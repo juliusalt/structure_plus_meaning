@@ -167,6 +167,16 @@ proof -
     by (rule native_root_family_read_environment[OF family boundary source slots])
 qed
 
+lemma native_package_roots_stable:
+  assumes package: "native_package_at E u r P"
+  shows "native_package_roots (native_package_environment E u r) u r=native_package_roots E u r"
+proof -
+  obtain Q where family: "native_root_family_at E u r Q" using package by (auto simp: native_package_at_def)
+  have copied: "native_root_family_at (native_package_environment E u r) u r Q"
+    by (rule native_package_environment_roots[OF package family])
+  show ?thesis by (simp only: native_package_roots_from_family[OF copied] native_package_roots_from_family[OF family])
+qed
+
 
 section \<open>Dependency traversal is unchanged by the derived restriction\<close>
 
@@ -192,10 +202,7 @@ proof -
   let ?B = "native_package_roots E u r"
   have ef: "environment_formed E"
     using native_package_projection(1)[OF package] by (simp add: native_package_formed_def)
-  obtain Q where family: "native_root_family_at E u r Q" using package by (auto simp: native_package_at_def)
-  have copied_family: "native_root_family_at ?F u r Q" by (rule native_package_environment_roots[OF package family])
-  have roots: "native_package_roots ?F u r = ?B"
-    by (simp only: native_package_roots_from_family[OF copied_family] native_package_roots_from_family[OF family])
+  have roots: "native_package_roots ?F u r = ?B" by (rule native_package_roots_stable[OF package])
   have subset: "native_definition_edges ?F \<subseteq> native_definition_edges E"
     by (rule native_definition_edges_included[OF native_package_environment_included ef])
   have upper: "native_package_sites ?F u r \<subseteq> native_package_sites E u r"

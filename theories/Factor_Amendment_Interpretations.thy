@@ -123,7 +123,8 @@ theorem current_interpretation_material_total:
     (\<forall>d\<in>system_definitions Q. \<forall>t.
       (schema_call_formed T (g d) t \<longleftrightarrow> schema_call_formed Q d t) \<and>
       ((g d,t)\<in>positive_meaning T \<longleftrightarrow> (d,t)\<in>positive_meaning Q)) \<and>
-    (\<forall>H. generation_program_scope H F v [] T \<longrightarrow> amendment_interpretation_at C q H M None [])"
+    (\<forall>H. generation_program_scope H F v [] T \<longrightarrow> amendment_interpretation_at C q H M None []) \<and>
+    native_package_roots F v []=system_definitions T"
 proof -
   have old: "closed_native_package_at E pu pr P" using current_entry_scope_closed[OF current] by blast
   obtain F v T a b f g Z where full:
@@ -138,8 +139,9 @@ proof -
       ((f d,t)\<in>positive_meaning T \<longleftrightarrow> (d,t)\<in>positive_meaning P)) \<and>
     (\<forall>d\<in>system_definitions Q. \<forall>t.
       (schema_call_formed T (g d) t \<longleftrightarrow> schema_call_formed Q d t) \<and>
-      ((g d,t)\<in>positive_meaning T \<longleftrightarrow> (d,t)\<in>positive_meaning Q))"
-    using native_historical_program_total[OF old other] by metis
+      ((g d,t)\<in>positive_meaning T \<longleftrightarrow> (d,t)\<in>positive_meaning Q)) \<and>
+    native_package_roots F v []=system_definitions T"
+    using native_historical_program_total_with_roots[OF old other] by metis
   have compiled: "closed_native_package_at F v [] T"
     "native_package_environment F v []=F" "program_interpretation P T a b" "a\<noteq>b"
     "inj_on f (system_definitions P)" "inj_on g (system_definitions Q)"
@@ -152,6 +154,7 @@ proof -
     "\<forall>d\<in>system_definitions Q. \<forall>t.
       (schema_call_formed T (g d) t \<longleftrightarrow> schema_call_formed Q d t) \<and>
       ((g d,t)\<in>positive_meaning T \<longleftrightarrow> (d,t)\<in>positive_meaning Q)"
+    "native_package_roots F v []=system_definitions T"
     using full by blast+
   have package: "native_package_at F v [] T" using compiled(1) by (simp add: closed_native_package_at_def)
   have formed: "environment_formed F"
@@ -200,6 +203,7 @@ text \<open>
   A finite interpreter and complete supporting value can be constructed before
   the candidate's cause, history, or adoption presentation. Every later formed
   generation carrying that exact program scope has the same interpretation.
+  The constructed package selects every resulting definition as an actual root.
   Future native calls extend the candidate scope and retain its canonical
   environment while preserving the original call and truth equations.
 

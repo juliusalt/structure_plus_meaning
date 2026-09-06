@@ -68,7 +68,7 @@ theorem program_interpretation_composition:
 
 section \<open>Every closed old program and arbitrary new program have such a bridge\<close>
 
-theorem native_historical_program_total:
+theorem native_historical_program_total_with_roots:
   fixes E :: "local_address option artifact_environment"
     and Q :: "local_address option native_system"
   assumes old: "closed_native_package_at E pu pr P" and other: "schema_system_formed Q"
@@ -84,7 +84,8 @@ theorem native_historical_program_total:
       ((f d,t)\<in>positive_meaning T \<longleftrightarrow> (d,t)\<in>positive_meaning P)) \<and>
     (\<forall>d\<in>system_definitions Q. \<forall>t.
       (schema_call_formed T (g d) t \<longleftrightarrow> schema_call_formed Q d t) \<and>
-      ((g d,t)\<in>positive_meaning T \<longleftrightarrow> (d,t)\<in>positive_meaning Q))"
+      ((g d,t)\<in>positive_meaning T \<longleftrightarrow> (d,t)\<in>positive_meaning Q)) \<and>
+    native_package_roots F v []=system_definitions T"
 proof -
   have package: "native_package_at E pu pr P" using old by (simp add: closed_native_package_at_def)
   have pf: "schema_system_formed P" by (rule native_package_system_formed[OF package])
@@ -111,7 +112,8 @@ proof -
     "inj_on h (system_definitions ?H)" "closed_native_package_at F v [] T"
     "native_package_environment F v []=F" "system_alpha_variant (rename_system h ?H) T"
     "positive_meaning T=map_prod h id ` positive_meaning ?H"
-    using program_compilation_total[OF hist.formed] by blast
+    "native_package_roots F v []=system_definitions T"
+    using program_compilation_total_with_roots[OF hist.formed] by (atomize_elim) assumption
   let ?f="\<lambda>d. h (Inl (Inl d))"
   let ?g="\<lambda>d. h (Inl (Inr d))"
   let ?a="h (Inr False)"
@@ -243,8 +245,27 @@ proof -
   show ?thesis
     by (rule exI[of _ F], rule exI[of _ v], rule exI[of _ T], rule exI[of _ ?a], rule exI[of _ ?b],
         rule exI[of _ ?f], rule exI[of _ ?g], rule exI[of _ C])
-      (use compiled(2,3) retained bridge distinct fi gi separate fresh all_defs original_calls other_calls in blast)
+      (use compiled(2,3,6) retained bridge distinct fi gi separate fresh all_defs original_calls other_calls in blast)
 qed
+
+corollary native_historical_program_total:
+  fixes E :: "local_address option artifact_environment"
+    and Q :: "local_address option native_system"
+  assumes old: "closed_native_package_at E pu pr P" and other: "schema_system_formed Q"
+  shows "\<exists>F v T a b f g C.
+    closed_native_package_at F v [] T \<and> native_package_environment F v []=F \<and>
+    program_scope_quoted_at C [] E pu pr P \<and> program_interpretation P T a b \<and>
+    a\<noteq>b \<and> inj_on f (system_definitions P) \<and> inj_on g (system_definitions Q) \<and>
+    f ` system_definitions P \<inter> g ` system_definitions Q={} \<and>
+    {a,b} \<inter> (f ` system_definitions P \<union> g ` system_definitions Q)={} \<and>
+    system_definitions T=insert b (insert a (f ` system_definitions P \<union> g ` system_definitions Q)) \<and>
+    (\<forall>d\<in>system_definitions P. \<forall>t.
+      (schema_call_formed T (f d) t \<longleftrightarrow> schema_call_formed P d t) \<and>
+      ((f d,t)\<in>positive_meaning T \<longleftrightarrow> (d,t)\<in>positive_meaning P)) \<and>
+    (\<forall>d\<in>system_definitions Q. \<forall>t.
+      (schema_call_formed T (g d) t \<longleftrightarrow> schema_call_formed Q d t) \<and>
+      ((g d,t)\<in>positive_meaning T \<longleftrightarrow> (d,t)\<in>positive_meaning Q))"
+  using native_historical_program_total_with_roots[OF old other] by metis
 
 section \<open>Future native bridge invocations keep the compiled scope\<close>
 
@@ -288,8 +309,10 @@ text \<open>
 
   The two entry roles may coincide in the contract when their meanings permit
   it. The construction supplies distinct ordinary definitions and keeps both
-  source copies disjoint. Across another bridge, the entire previous query
-  becomes ordinary argument data, giving the proved exact nested interpretation.
+  source copies disjoint. Its actual root selector exports every resulting
+  definition, including both complete copies and both interpreter entries.
+  Across another bridge, the entire previous query becomes ordinary argument
+  data, giving the proved exact nested interpretation.
 
   The contract does not itself check a submitted program by native rules.
   The construction supplies one sufficient class of exact bridges; it imposes

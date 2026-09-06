@@ -85,9 +85,10 @@ text \<open>
   The displayed predecessor entry permits every formed argument. This theorem
   supplies the missing retention construction; it does not infer comparison
   soundness or interpreter correctness from that permission. Its reports and
-  interpretation are explicit premises. Constructing a changed candidate with
-  both components from program syntax, native correctness admission, migration,
-  and complete genesis remain separate work.
+  interpretation are explicit premises. Factor_Interpretation_Construction
+  separately obtains both components from finite program syntax and constructs
+  the actual changed candidate with them. Native correctness admission,
+  migration, and complete genesis remain separate work.
 \<close>
 
 end

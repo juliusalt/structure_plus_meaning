@@ -2561,6 +2561,70 @@ material given the actual candidate, successful selection, assembly account,
 and independently established comparison and interpretation. Its predecessor
 policy is explicitly permissive. The theorem does not infer either semantic
 obligation from permission, and its conditional statement is not a joint
-construction of those obligations from syntax. Such a changed-candidate
-witness, native finite correctness admission, migration evidence, the full
-internal protocol, and genesis adequacy remain required.
+construction of those obligations from syntax. The following construction
+supplies that witness. Native finite correctness admission, migration evidence,
+the full internal protocol, and genesis adequacy remain required.
+
+## Complete reports use actual interfaces and actual public roots
+
+A finite ordinary clause family can describe an unbounded call domain. Each
+required definition contributes its actual interface pattern. Substituting
+that pattern at every present report endpoint preserves the whole argument,
+including repeated variables, nested pairs, exact payloads, and literal
+targets. The interface binder and each clause's binders retain separate scopes.
+The compiler handles their private coordinates. No ground sample, semantic
+lookup table, or new observation rule replaces those patterns.
+
+The general family permits overlapping patterns and arbitrary explicit
+declaration fields. Its exact output theorem does not silently infer
+functional or sound reporting. Those remain requirements of the separate
+comparison profile. Empty finite families still have a formed interface and
+no positive outputs. Distinct equal-pattern clauses keep their distinct
+occurrence coordinates.
+
+For the historical compilation class, the reporting correspondence pairs
+every required old definition with its copied definition. Complete interface
+agreement covers every admitted argument on both sides of each pair.
+Independent truth preservation justifies the preservation declaration.
+Every required candidate definition outside that copied image receives an
+explicit missing-old-counterpart row and intentional incompatibility. This
+includes the interpreter entries, the supplied other program, and any old
+copy outside the required old comparison domain.
+
+The missing row states absence from this declared correspondence. It does
+not assert that another interpretation is impossible. The two flag
+configurations used by this construction impose no partition on the general
+comparison profile. Reporting also needs no injectivity assumption on a
+supplied copy map; the historical compiler supplies injective maps and
+disjoint definition families as a sufficient case.
+
+The existing compiler already constructs a selector for every resulting
+definition. The strengthened theorem now exposes that exact fact and proves
+that the canonical package restriction preserves the selected roots. The
+earlier theorem statements remain available as direct corollaries. The
+historical compiler and its finite supporting-value construction carry that
+property forward. This describes the constructed packages; it does not
+require every possible future program to export all its definitions.
+
+The actual candidate comparison domain therefore includes every candidate
+definition. The old domain is still derived from the exact current scope,
+changed rows, and affected callers. The reporter cannot select a smaller
+boundary. The historical interpreter independently covers the entire old
+program, including definitions outside that comparison domain.
+
+The joint construction obtains the copied programs, interpreter, and reporter
+from finite program syntax before constructing the candidate's cause and
+publication. The same values occur inside dependency and assembly support,
+the continuation material, and the final accepted envelope. The actual
+candidate has more definitions than the old program and is therefore
+different. One fixed permissive native predecessor serves every future formed
+program with a selected entry; neither comparison soundness nor interpretation
+is an assumed semantic callback in that theorem.
+
+A selected new entry may refuse every call while the historical truth entry
+still gives the exact old answers. This distinguishes changing the selected
+policy from erasing earlier meaning. The predecessor's exact program and
+minimal acceptance environment survive certification. These are joint
+existence theorems under an explicitly permissive predecessor. Native
+admission of finite correctness evidence, structural migration evidence, the
+full internal protocol, reflection, and genesis remain required.

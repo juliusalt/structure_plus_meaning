@@ -41,13 +41,14 @@ proof -
     (use coordinates(1) native meaning in \<open>simp only: renamed_system_definitions\<close>)
 qed
 
-theorem program_compilation_total:
+theorem program_compilation_total_with_roots:
   assumes formed: "schema_system_formed P"
   shows "\<exists>g :: 'd \<Rightarrow> local_address option definition_site. \<exists>E u Q.
     inj_on g (system_definitions P) \<and> closed_native_package_at E u [] Q \<and>
     native_package_environment E u [] = E \<and>
     system_alpha_variant (rename_system g P) Q \<and>
-    positive_meaning Q = map_prod g id ` positive_meaning P"
+    positive_meaning Q = map_prod g id ` positive_meaning P \<and>
+    native_package_roots E u []=system_definitions Q"
 proof -
   obtain g :: "'d \<Rightarrow> local_address option definition_site" and F where compiled:
     "inj_on g (system_definitions P)" "native_package_formed F (g ` system_definitions P)"
@@ -56,21 +57,38 @@ proof -
     using program_native_representation[OF formed] by metis
   let ?Q = "native_program F (g ` system_definitions P)"
   obtain G u where selector: "native_package_at G u [] ?Q"
-    using native_dependency_package_selectable[OF compiled(2)] by blast
+    "native_package_roots G u []=g ` system_definitions P"
+    using native_dependency_package_selectable_with_roots[OF compiled(2)] by blast
   let ?E = "native_package_environment G u []"
-  have closed: "closed_native_package_at ?E u [] ?Q" by (rule native_package_closed_restriction[OF selector])
-  have canonical: "native_package_environment ?E u [] = ?E" by (rule native_package_environment_idempotent[OF selector])
+  have closed: "closed_native_package_at ?E u [] ?Q" by (rule native_package_closed_restriction[OF selector(1)])
+  have canonical: "native_package_environment ?E u [] = ?E" by (rule native_package_environment_idempotent[OF selector(1)])
+  have same_definitions: "system_definitions (rename_system g P)=system_definitions ?Q"
+    using compiled(3) unfolding system_alpha_variant_def by blast
+  have definitions: "system_definitions ?Q=g ` system_definitions P"
+    by (rule sym, rule same_definitions[unfolded renamed_system_definitions])
+  have roots: "native_package_roots ?E u []=system_definitions ?Q"
+    using native_package_roots_stable[OF selector(1)] selector(2) definitions by simp
   show ?thesis by (rule exI[of _ g], rule exI[of _ ?E], rule exI[of _ u], rule exI[of _ ?Q])
-    (use compiled(1,3,4) closed canonical in blast)
+    (use compiled(1,3,4) closed canonical roots in blast)
 qed
+
+corollary program_compilation_total:
+  assumes formed: "schema_system_formed P"
+  shows "\<exists>g :: 'd \<Rightarrow> local_address option definition_site. \<exists>E u Q.
+    inj_on g (system_definitions P) \<and> closed_native_package_at E u [] Q \<and>
+    native_package_environment E u [] = E \<and>
+    system_alpha_variant (rename_system g P) Q \<and>
+    positive_meaning Q = map_prod g id ` positive_meaning P"
+  using program_compilation_total_with_roots[OF formed] by blast
 
 text \<open>
   Every formed finite source system has an actual finite native program with
   exactly corresponding positive meaning. Definition coordinates are chosen
   injectively, and private interface and clause coordinates are handled by
   the compiler. The construction includes recursion and empty systems.
-  A structural root selector is constructed, and the grammar-derived dependency
-  restriction supplies a closed finite environment retaining the same program.
+  The constructed root selector selects exactly every resulting definition.
+  The grammar-derived dependency restriction preserves that exact root set
+  and supplies a closed finite environment retaining the same program.
 \<close>
 
 end

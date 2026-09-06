@@ -145,6 +145,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Seeded_Closure
     Factor_Incidence_Queries
     Factor_View_Definitions
+    Factor_Pattern_Families
     Factor_Tagged_Views
     Factor_Historical_Views
     Factor_Derivation
@@ -296,6 +297,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Comparison_Reports
     Factor_Report_Programs
     Factor_Report_Patterns
+    Factor_Report_Families
+    Factor_Copy_Reports
     Factor_Amendment_Reports
     Factor_Report_Examples
     Factor_Current_Companions
@@ -339,3 +342,4 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Amendment_Interpretations
     Factor_Transition_Interpretations
     Factor_Interpretation_Retention
+    Factor_Interpretation_Construction

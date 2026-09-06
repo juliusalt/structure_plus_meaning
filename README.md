@@ -235,8 +235,11 @@ declining a declaration proves no negative semantic fact. Preservation requires
 equal positive truth at the related calls. Finite ordinary reporting programs
 can describe infinite call relations, with a separate condition accounting for
 every positive output. Paired and unilateral patterns have exact meanings and
-one closed native compilation for all future terms. An actual current native scope
-has complete preserving reports; corresponding opposite truth policies
+one closed native compilation for all future terms. Finite families now use
+each actual interface pattern, retaining repeated variables and literal targets,
+to cover every admitted argument. A copied-call reporter preserves the required
+old calls and explicitly accounts for all additional candidate calls.
+An actual current native scope has complete preserving reports; corresponding opposite truth policies
 fail a preservation claim. The current frame and candidate fix the domains
 before the reporting program is supplied.
 
@@ -282,12 +285,21 @@ remaining material. Its exact old formation and truth equations cover every
 call, including definitions outside the comparison domain.
 
 The finite interpreter and value can be constructed before a candidate's
-history or cause. Given independently established comparison reports and
-interpretation, their combined retention through assembly, dependencies,
-continuation, and acceptance is total under the displayed permissive policy.
+history or cause. The joint construction now obtains both the interpreter and
+the complete native reporter from the old program and any supplied formed
+other program. Its actual root selector includes every candidate definition.
+The required old domain is independently derived; copied calls declare
+preservation, and every additional candidate call has an explicit unpaired row.
+The candidate has strictly more definitions than the old program.
+
+One fixed permissive native predecessor serves every future program with a
+selected entry. The exact reporter and interpreter occur inside its jointly
+constructed assembly, dependency, continuation, and acceptance material.
 The original acceptance record preserves the old program and minimal call
-scope. A changed-candidate joint witness from syntax, native correctness
-admission, migration, and full protocol and genesis adequacy remain.
+scope. The newly selected entry may refuse every call while the historical
+interpreter still returns the exact old answers. This proves joint inhabitation
+from syntax. Native correctness admission, migration, and full protocol and
+genesis adequacy remain.
 
 The program and call determine a least closed environment independently of
 proof retention, preserving their readings, truth, and exact program environment.

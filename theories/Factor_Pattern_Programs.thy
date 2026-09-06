@@ -67,6 +67,10 @@ fun exact_term_pattern :: "factor_term \<Rightarrow> 'a term_pattern" where
 | "exact_term_pattern (Payload_Term b)=Pattern_Payload b"
 | "exact_term_pattern (Pair_Term x y)=Pattern_Pair (exact_term_pattern x) (exact_term_pattern y)"
 
+lemma exact_term_pattern_substitute [simp]:
+  "pattern_substitute s (exact_term_pattern t)=exact_term_pattern t"
+  by (induction t) auto
+
 lemma exact_term_pattern_formed [simp]:
   "pattern_formed (exact_term_pattern t) \<longleftrightarrow> term_formed t"
   by (induction t) auto

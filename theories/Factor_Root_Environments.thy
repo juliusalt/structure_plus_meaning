@@ -55,11 +55,12 @@ proof -
   show ?thesis using source(1) rf inside by (auto simp: anchor_formed_def)
 qed
 
-theorem native_dependency_package_selectable:
+theorem native_dependency_package_selectable_with_roots:
   fixes E :: "local_address option artifact_environment"
   assumes package: "native_package_formed E D"
   shows "\<exists>F u. environment_formed F \<and> environment_included E F \<and>
-    native_package_at F u [] (native_program E D)"
+    native_package_at F u [] (native_program E D) \<and>
+    native_package_roots F u []=D"
 proof -
   have ef: "environment_formed E" using package by (simp add: native_package_formed_def)
   have finite_sites: "finite (native_definition_sites E D)" by (rule native_package_sites(2)[OF package])
@@ -81,8 +82,17 @@ proof -
   have native: "native_package_at F u [] (native_program E D)"
     unfolding native_package_at_def
     by (rule exI[of _ Q]) (use installed(3,4) copied in auto)
-  show ?thesis using installed(1,2) native by blast
+  have selected: "native_package_roots F u []=D"
+    using native_package_roots_from_family[OF installed(3)] installed(4) by simp
+  show ?thesis using installed(1,2) native selected by blast
 qed
+
+corollary native_dependency_package_selectable:
+  fixes E :: "local_address option artifact_environment"
+  assumes package: "native_package_formed E D"
+  shows "\<exists>F u. environment_formed F \<and> environment_included E F \<and>
+    native_package_at F u [] (native_program E D)"
+  using native_dependency_package_selectable_with_roots[OF package] by blast
 
 text \<open>
   Every finite recovered dependency package can receive a concrete structural

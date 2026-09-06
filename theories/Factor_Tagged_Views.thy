@@ -1,5 +1,5 @@
 theory Factor_Tagged_Views
-  imports Factor_View_Definitions Factor_Pattern_Programs
+  imports Factor_View_Definitions Factor_Pattern_Families
 begin
 
 section \<open>Exact data in a view's argument pattern\<close>
@@ -9,36 +9,6 @@ lemma tagged_pattern_accepts:
   shows "pattern_accepts (Pattern_Pair (exact_term_pattern z) p) x \<longleftrightarrow>
     (\<exists>t. x=Pair_Term z t \<and> pattern_accepts p t)"
   using label by (auto simp: pattern_accepts_def)
-
-lemma recognizer_schema_rule:
-  fixes p :: "'a term_pattern" and X :: "('d \<times> factor_term) set"
-  shows "schema_rule_instance (recognizer_schema p :: ('a,'s,'d) factor_schema) X t \<longleftrightarrow>
-    pattern_accepts p t"
-proof -
-  let ?S="recognizer_schema p :: ('a,'s,'d) factor_schema"
-  show ?thesis
-  proof
-    assume rule: "schema_rule_instance ?S X t"
-    obtain V and Q :: "('s \<times> ('d \<times> factor_term)) set" where inst: "schema_instance ?S V t Q"
-      using rule unfolding schema_rule_instance_def by blast
-    have formed: "term_formed t" using schema_instance_formed[OF inst] by blast
-    show "pattern_accepts p t" using inst formed
-      by (auto simp: schema_instance_def recognizer_schema_def schema_variables_def pattern_accepts_def)
-  next
-    assume accepts: "pattern_accepts p t"
-    obtain V where bound: "term_bindings_formed (pattern_variables p) V"
-      and head: "pattern_instance V p t" using accepts by (auto simp: pattern_accepts_def)
-    have formed: "pattern_formed p" by (rule pattern_instance_formed_pattern[OF head])
-    have inst: "schema_instance ?S V t {}"
-      using bound head formed
-      by (auto simp: schema_instance_def recognizer_schema_def schema_variables_def
-        schema_formed_def schema_premise_instance_def single_valued_def)
-    have material: "schema_material_satisfied ?S V"
-      by (simp add: schema_material_satisfied_def recognizer_schema_def)
-    show "schema_rule_instance ?S X t"
-      using inst material unfolding schema_rule_instance_def by blast
-  qed
-qed
 
 definition tagged_call_schema ::
   "'a \<Rightarrow> 's \<Rightarrow> factor_term \<Rightarrow> 'd \<Rightarrow> ('a,'s,'d) factor_schema" where

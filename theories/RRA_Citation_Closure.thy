@@ -27,6 +27,16 @@ definition request_environment ::
     \<lparr>environment_artifacts = {entry\<in>environment_artifacts E. fst entry \<in> requested_uses E Q},
       environment_bindings = {entry\<in>environment_bindings E. fst entry \<in> requested_slots E Q}\<rparr>"
 
+lemma citation_requests_union:
+  assumes "citation_requests_formed E Q" "citation_requests_formed E C"
+  shows "citation_requests_formed E (Q\<union>C)"
+  using assms by (auto simp: citation_requests_formed_def)
+
+lemma requested_slots_mono:
+  assumes "Q\<subseteq>C"
+  shows "requested_slots E Q\<subseteq>requested_slots E C"
+  using assms by (auto simp: requested_slots_def)
+
 lemma requested_slot_source:
   assumes "(u,k) \<in> requested_slots E Q"
   shows "u \<in> fst ` Q"
@@ -457,6 +467,17 @@ proof -
     show "entry \<in> environment_artifacts F" using needed by (simp add: entry artifact_at_def)
   qed
   show ?thesis using artifacts bindings by (simp add: environment_included_def)
+qed
+
+lemma requested_slots_extension:
+  assumes formed: "environment_formed E" and requests: "citation_requests_formed F Q"
+    and included: "environment_included F E"
+  shows "requested_slots E Q=requested_slots F Q"
+proof -
+  have sources: "\<And>u r R. (u,r)\<in>Q \<Longrightarrow> artifact_at E u R \<Longrightarrow> artifact_at F u R"
+    by (rule request_source_artifact_required[OF formed requests included])
+  show ?thesis using sources included
+    by (auto simp: requested_slots_def; blast intro: included_artifact[OF included])
 qed
 
 text \<open>

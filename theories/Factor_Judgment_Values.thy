@@ -10,8 +10,7 @@ definition judgment_value_presents ::
   "judgment_value_presents E pu pr au ar t \<longleftrightarrow>
     (pu,pr)\<in>environment_positions E \<and> (au,ar)\<in>environment_positions E \<and>
     (\<exists>e. environment_value_presents E e \<and>
-      t=Pair_Term e (Pair_Term (Pair_Term (use_data_term pu) (Payload_Term pr))
-        (Pair_Term (use_data_term au) (Payload_Term ar))))"
+      t=Pair_Term e (Pair_Term (site_data_term pu pr) (site_data_term au ar)))"
 
 theorem judgment_value_presents_unique:
   assumes first: "judgment_value_presents E pu pr au ar t"
@@ -19,21 +18,16 @@ theorem judgment_value_presents_unique:
   shows "E=F \<and> pu=qu \<and> pr=qr \<and> au=bu \<and> ar=br"
 proof -
   obtain e where left: "environment_value_presents E e"
-    "t=Pair_Term e (Pair_Term (Pair_Term (use_data_term pu) (Payload_Term pr))
-      (Pair_Term (use_data_term au) (Payload_Term ar)))"
+    "t=Pair_Term e (Pair_Term (site_data_term pu pr) (site_data_term au ar))"
     using first unfolding judgment_value_presents_def by blast
   obtain f where right: "environment_value_presents F f"
-    "t=Pair_Term f (Pair_Term (Pair_Term (use_data_term qu) (Payload_Term qr))
-      (Pair_Term (use_data_term bu) (Payload_Term br)))"
+    "t=Pair_Term f (Pair_Term (site_data_term qu qr) (site_data_term bu br))"
     using second unfolding judgment_value_presents_def by blast
-  have same: "e=f" and program: "use_data_term pu=use_data_term qu"
-    and call: "use_data_term au=use_data_term bu" and positions: "pr=qr \<and> ar=br"
+  have same: "e=f" and sites: "pu=qu \<and> pr=qr \<and> au=bu \<and> ar=br"
     using left(2) right(2) by simp_all
   have other: "environment_value_presents F e" using right(1) same by simp
   have env: "E=F" by (rule environment_value_presents_unique[OF left(1) other])
-  have pu: "pu=qu" by (rule injD[OF use_data_term_injective program])
-  have au: "au=bu" by (rule injD[OF use_data_term_injective call])
-  show ?thesis using env pu au positions by blast
+  show ?thesis using env sites by blast
 qed
 
 lemma judgment_value_presents_formed:
@@ -42,8 +36,7 @@ lemma judgment_value_presents_formed:
 proof -
   obtain e where sites: "(pu,pr)\<in>environment_positions E" "(au,ar)\<in>environment_positions E"
     and body: "environment_value_presents E e"
-    and encoded: "t=Pair_Term e (Pair_Term (Pair_Term (use_data_term pu) (Payload_Term pr))
-      (Pair_Term (use_data_term au) (Payload_Term ar)))"
+    and encoded: "t=Pair_Term e (Pair_Term (site_data_term pu pr) (site_data_term au ar))"
     using present unfolding judgment_value_presents_def by blast
   have ef: "environment_formed E" and formed: "term_formed e" and closed: "self_contained_term e"
     using environment_value_presents_formed[OF body] by auto
@@ -60,8 +53,7 @@ proof -
   obtain e where present: "environment_value_presents E e"
     using environment_value_presents_total[OF ef] by blast
   show ?thesis
-    by (rule exI[of _ "Pair_Term e (Pair_Term (Pair_Term (use_data_term pu) (Payload_Term pr))
-      (Pair_Term (use_data_term au) (Payload_Term ar)))"])
+    by (rule exI[of _ "Pair_Term e (Pair_Term (site_data_term pu pr) (site_data_term au ar))"])
        (use program app present in \<open>auto simp: judgment_value_presents_def\<close>)
 qed
 

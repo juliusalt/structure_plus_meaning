@@ -36,6 +36,20 @@ lemma use_data_term_formed [simp]: "term_formed (use_data_term u)"
 lemma use_data_term_self_contained [simp]: "self_contained_term (use_data_term u)"
   by (cases u) (auto simp: data_list_term_self_contained)
 
+definition site_data_term :: "local_address option \<Rightarrow> local_address \<Rightarrow> factor_term" where
+  "site_data_term u r=Pair_Term (use_data_term u) (Payload_Term r)"
+
+lemma site_data_term_eq [simp]:
+  "site_data_term u r=site_data_term v s \<longleftrightarrow> u=v \<and> r=s"
+  by (auto simp: site_data_term_def dest: injD[OF use_data_term_injective])
+
+lemma site_data_term_formed [simp]:
+  "term_formed (site_data_term u r)\<longleftrightarrow>octets_formed r"
+  by (simp add: site_data_term_def)
+
+lemma site_data_term_self_contained [simp]: "self_contained_term (site_data_term u r)"
+  by (simp add: site_data_term_def)
+
 text \<open>
   This is the common finite data representation of an optional coordinate.
   Environment-use coordinates and optional occurrence addresses use the same

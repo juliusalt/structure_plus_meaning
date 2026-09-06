@@ -61,6 +61,12 @@ lemma read_environment_mono:
   shows "environment_included (read_environment E U D) (read_environment E V C)"
   using assms by (auto simp: environment_included_def read_environment_def read_environment_uses_def)
 
+lemma request_environment_read_included:
+  assumes "image fst Q\<subseteq>U" "requested_slots E Q\<subseteq>D"
+  shows "environment_included (request_environment E Q) (read_environment E U D)"
+  unfolding request_environment_as_read_environment
+  by (rule read_environment_mono[OF assms])
+
 lemma read_environment_uses_subset:
   assumes "read_boundary_formed E U D"
   shows "read_environment_uses E U D \<subseteq> environment_uses E"
@@ -222,6 +228,29 @@ proof -
   qed
   show ?thesis using artifacts demands
     by (auto simp: environment_included_def read_environment_def artifact_at_def binds_slot_def)
+qed
+
+theorem read_environment_closed_fixed:
+  assumes boundary: "read_boundary_formed E U D" and closed: "environment_closed E B D"
+    and roots: "B\<subseteq>U"
+  shows "read_environment E U D=E"
+proof -
+  let ?F="read_environment E U D"
+  have ff: "environment_formed ?F" by (rule read_environment_formed[OF boundary])
+  have bindings: "environment_bindings ?F=environment_bindings E"
+    using closed by (auto simp: environment_closed_def read_environment_def rel_dom_def)
+  have edges: "environment_edges ?F=environment_edges E"
+    by (simp only: environment_edges_def binds_slot_def bindings)
+  have retained_roots: "B\<subseteq>environment_uses ?F"
+    using roots by (auto simp: read_environment_use_equation[OF boundary] read_environment_uses_def)
+  have reachable: "environment_reachable E B\<subseteq>environment_uses ?F"
+    using environment_reachable_in_uses[OF ff retained_roots]
+    by (simp only: environment_reachable_def edges)
+  have uses: "environment_uses E\<subseteq>read_environment_uses E U D"
+    using closed reachable by (simp add: environment_closed_def read_environment_use_equation[OF boundary])
+  have artifacts: "environment_artifacts ?F=environment_artifacts E"
+    using uses by (auto simp: environment_uses_def rel_dom_def read_environment_def)
+  show ?thesis by (rule artifact_environment.equality[OF artifacts bindings]) simp
 qed
 
 text \<open>

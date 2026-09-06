@@ -575,6 +575,110 @@ corollary generation_dependency_material_is_required:
   shows "environment_included (request_environment E (generation_requests E roots)) F"
   by (rule request_environment_least[OF generation_requests_formed[OF formed roots] smaller included])
 
+section \<open>Every successful reading requires the same recursive references\<close>
+
+lemma generation_request_edge_extension:
+  assumes gen: "generation_at F u r G" and included: "environment_included F E"
+    and formed: "environment_formed E"
+    and edge: "((u,r),(v,a))\<in>generation_request_edges E"
+  shows "((u,r),(v,a))\<in>generation_request_edges F"
+proof -
+  obtain R d where art: "artifact_at E u R"
+    and member: "d\<in>generation_predecessor_roots R r" and loc: "located_at E u d v a"
+    using edge by (auto simp: generation_request_edges_def)
+  obtain l M p c g where fields: "generation_fields_at F u r l M p c"
+    and refs: "\<forall>s d. (s,d)\<in>M \<longrightarrow>
+      (\<exists>w b. located_at F u d w b \<and> generation_at F w b (g s))"
+    using gen by (cases rule: generation_at.cases) blast
+  obtain S lr payr cr where source: "artifact_at F u S"
+    and shape: "generation_syntax_at S r lr M payr cr"
+    using generation_fields_syntax[OF fields] by blast
+  have old: "artifact_at E u S" by (rule included_artifact[OF included source])
+  have same: "R=S" by (rule environment_artifact_unique[OF formed art old])
+  have predecessor: "d\<in>rel_ran M"
+    using member generation_roots_from_syntax(2)[OF shape] same by simp
+  obtain s where pair: "(s,d)\<in>M" using predecessor by (auto simp: rel_ran_def)
+  obtain w b where other: "located_at F u d w b" using refs pair by blast
+  have other_old: "located_at E u d w b" by (rule included_located[OF included other])
+  have destination: "v=w \<and> a=b" by (rule located_at_unique[OF formed loc other_old])
+  show ?thesis using source member same other destination
+    by (auto simp: generation_request_edges_def)
+qed
+
+lemma generation_read_sites_extension:
+  assumes roots: "\<forall>u r. (u,r)\<in>roots \<longrightarrow> (\<exists>G. generation_at F u r G)"
+    and included: "environment_included F E" and formed: "environment_formed E"
+  shows "generation_read_sites E roots=generation_read_sites F roots"
+proof -
+  have edges: "generation_request_edges F\<subseteq>generation_request_edges E"
+    by (rule generation_request_edges_included[OF included])
+  have lower: "generation_read_sites F roots\<subseteq>generation_read_sites E roots"
+    using rtrancl_mono[OF edges] by (auto simp: generation_read_sites_def)
+  have upper: "generation_read_sites E roots\<subseteq>generation_read_sites F roots"
+  proof
+    fix t assume "t\<in>generation_read_sites E roots"
+    then obtain s where root: "s\<in>roots" and path: "(s,t)\<in>(generation_request_edges E)\<^sup>*"
+      by (auto simp: generation_read_sites_def)
+    have copied: "(s,t)\<in>(generation_request_edges F)\<^sup>*"
+      using path
+    proof (induction rule: rtrancl_induct)
+      case base
+      show ?case by simp
+    next
+      case (step y z)
+      obtain u r where y: "y=(u,r)" by (cases y)
+      obtain v a where z: "z=(v,a)" by (cases z)
+      have site: "(u,r)\<in>generation_read_sites F roots"
+        using root step.IH y by (auto simp: generation_read_sites_def)
+      obtain G where gen: "generation_at F u r G"
+        using generation_read_sites_have_cores[OF roots site] by blast
+      have edge: "((u,r),(v,a))\<in>generation_request_edges E" using step.hyps(2) y z by simp
+      have retained: "(y,z)\<in>generation_request_edges F"
+        using generation_request_edge_extension[OF gen included formed edge] y z by simp
+      show ?case by (rule rtrancl_into_rtrancl[OF step.IH retained])
+    qed
+    show "t\<in>generation_read_sites F roots" using root copied by (auto simp: generation_read_sites_def)
+  qed
+  show ?thesis using lower upper by blast
+qed
+
+theorem generation_requests_extension:
+  assumes roots: "\<forall>u r. (u,r)\<in>roots \<longrightarrow> (\<exists>G. generation_at F u r G)"
+    and included: "environment_included F E" and formed: "environment_formed E"
+  shows "generation_requests E roots=generation_requests F roots"
+proof -
+  have sites: "generation_read_sites E roots=generation_read_sites F roots"
+    by (rule generation_read_sites_extension[OF roots included formed])
+  have sources: "\<And>u r R. (u,r)\<in>generation_read_sites E roots \<Longrightarrow>
+    artifact_at E u R \<Longrightarrow> artifact_at F u R"
+  proof -
+    fix u r R assume site: "(u,r)\<in>generation_read_sites E roots" and art: "artifact_at E u R"
+    have retained: "(u,r)\<in>generation_read_sites F roots" using site sites by simp
+    obtain G where gen: "generation_at F u r G"
+      using generation_read_sites_have_cores[OF roots retained] by blast
+    obtain S lr M payr cr where source: "artifact_at F u S"
+      using generation_at_syntax[OF gen] by blast
+    have old: "artifact_at E u S" by (rule included_artifact[OF included source])
+    have same: "R=S" by (rule environment_artifact_unique[OF formed art old])
+    show "artifact_at F u R" using source same by simp
+  qed
+  show ?thesis using sites sources included
+    by (auto simp: generation_requests_def; blast intro: included_artifact[OF included])
+qed
+
+theorem generation_successful_reading_requires_dependencies:
+  assumes roots: "\<forall>u r. (u,r)\<in>roots \<longrightarrow> (\<exists>G. generation_at F u r G)"
+    and included: "environment_included F E"
+    and ef: "environment_formed E" and ff: "environment_formed F"
+  shows "environment_included (request_environment E (generation_requests E roots)) F"
+proof -
+  have retained: "citation_requests_formed F (generation_requests E roots)"
+    using generation_requests_formed[OF ff roots] generation_requests_extension[OF roots included ef] by simp
+  have source: "citation_requests_formed E (generation_requests E roots)"
+    using retained ef by (auto simp: citation_requests_formed_def; meson included_anchor[OF included])
+  show ?thesis by (rule request_environment_least[OF source retained included])
+qed
+
 text \<open>
   The selected generation roots determine all recursive read sites and all
   citation requests. Locus, payload, and cause citations observe exact targets;

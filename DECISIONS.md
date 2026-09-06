@@ -251,6 +251,18 @@ finite. Restriction preserves the exact cores, and reading the restricted
 package produces the same sites, requests, and slot demands. Closure is therefore
 checked against the restricted package's own grammar-derived boundary.
 
+RRA_Publication_Dependencies applies the same discipline to all three
+publication fields. The complete families determine every direct citation;
+only snapshot citations start recursive generation reading. The publication
+source is retained even when all families are empty. Dependency and evidence
+targets retain their exact artifacts without automatically reading their
+outgoing bindings. The restriction preserves the complete publication view,
+is closed from its source use, and derives the same requests and slots on
+rereading. Every included environment that still reads the publication
+contains this restriction. The corresponding generation theorem now also
+derives leastness from successful generation readings, without asking a caller
+to supply their request set.
+
 The generic citation utility does not let a certificate choose a sufficient
 subset of requests. Each other public reader must similarly establish its
 complete requests. Generation closure is proved; it is not evidence that the
@@ -1274,6 +1286,36 @@ Factor_Publication_Values retains the selected snapshot, dependencies, and
 evidence targets in the same way. All these values have complete finite native
 quotations without external slots and recover their source values uniquely.
 Equal publication views do not identify different native presentation sites.
+
+Factor_Site_Values supplies a complete environment-and-site quotation.
+Factor_Publication_Scopes applies the publication reader to those recovered
+data and requires its complete closure. The stored scope is exactly its own
+least publication restriction. The decoded view is derived, not stored again.
+Thus an exact quotation fixes the actual publication site, all meaning-bearing
+bindings needed to read it, and its view across outer environments. An exact
+artifact target alone would omit these bindings; a decoded view alone would
+omit the presentation site. The shared finite site-coordinate representation
+is also used in existing program-and-call quotations, with the same data
+layout as before.
+
+## Raw adoption and publication-relative currentness
+
+The raw adoption argument contains authority, generation, and purpose. Authority
+and purpose are exact targets used in those positions, with no intrinsic force
+assigned to their names or coordinates. A supplied ordinary positive definition
+decides adoption. Admission of that definition as a policy on these data
+requires both interface acceptance and truth to agree across every complete
+presentation. This is equivalent to factoring through the exact subject data;
+it does not admit a chosen serialization as a semantic distinction.
+
+Adoption can precede or exist without publication. Currentness separately
+requires an exact closed publication scope and selection of the adopted
+generation at the supplied locus. The actual native program and application
+retain the meaning boundary; the publication retains its own environment and
+site. The locus is recovered from the selected core. Cause validity, evidence,
+and derivation are absent from the raw authority layer's imports and judgments.
+Policy-admission evidence checking and the separate certified joins remain
+higher obligations. Concrete independence witnesses remain to be supplied.
 
 These representations supply inspectable data for later judgments. They do
 not validate causes or selected evidence, recognize currentness, or authorize

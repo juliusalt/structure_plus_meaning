@@ -71,6 +71,18 @@ lemma publication_at_formed:
   using assms unfolding publication_at_def publication_formed_def snapshot_at_def
   by (meson target_selection_formed)
 
+lemma publication_at_has_anchor:
+  assumes pub: "publication_at E u root P"
+  shows "\<exists>R. artifact_at E u R \<and> anchor_formed (R,root)"
+proof -
+  obtain R ps sr dr er where fields: "environment_formed E" "artifact_at E u R"
+    "record_at R root ps [sr,dr,er]"
+    using pub unfolding publication_at_def by blast
+  have formed: "exact_formed R" using fields(1,2) unfolding environment_formed_def by blast
+  have member: "root\<in>rra_carrier (object_structure R)" using fields(3) by (simp add: record_at_def)
+  show ?thesis using fields(2) formed member by (auto simp: anchor_formed_def)
+qed
+
 lemma published_core_formed:
   assumes "published E u root G"
   shows "generation_formed G"

@@ -12,7 +12,11 @@ finite evidence envelopes, scoped generation recovery, immutable selections,
 publications, and atomic transactions are proved. The Factor relation bridge
 has encoding, recovery, and complete local-match transport proofs. Citation
 requests determine least closed environments, and the generation grammar
-recovers its own finite recursive dependency boundary. Every formed finite generation core also has
+recovers its own finite recursive dependency boundary. Publications retain
+their source and all direct and recursive requests. This restriction preserves
+the exact view, is closed from the publication use, is stable on rereading,
+and is contained in every subenvironment that still reads the publication.
+Every formed finite generation core also has
 an actual closed presentation. Parent construction preserves existing uses and
 bindings and cites each predecessor at its supplied location. Exact-target, opaque-payload, and pair
 terms have native quotations, unique recovery, transport, and total construction
@@ -84,10 +88,19 @@ future formed payload. A recorded cause cannot change between the base and
 construction roles, and formation alone does not establish either validity.
 Complete artifacts, exact targets, generation cores, publication views, and
 native construction environments now also have self-contained quotations.
+Complete publication scopes retain their exact environment and site; the view
+is recovered from those data and remains fixed across enclosing environments.
 Every value, count, use, binding, recursive predecessor, and publication
 selection is recovered from the quotation's artifact without consulting an
 external binding. Unordered collections admit every complete presentation;
 their representation supplies no validity or adoption judgment.
+Raw adoption now applies an explicit ordinary positive definition to complete
+authority, generation, and purpose data, with formation and truth invariant
+across every complete presentation. Currentness additionally requires the
+generation selected at its locus in an exact closed publication scope.
+The raw authority layer imports no evidence, derivation, or replay theory.
+Its concrete independence examples and native admission-evidence checking
+remain open.
 The program and call determine a least closed environment independently of
 proof retention, preserving their readings, truth, and exact program environment.
 Complete finite representations now preserve exact artifact, environment, target,

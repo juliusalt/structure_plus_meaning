@@ -40,6 +40,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     RRA_Generation_Construction
     RRA_Selection
     RRA_Publication
+    RRA_Publication_Dependencies
     RRA_Transaction
     Factor_Structure
     Factor_Terms
@@ -236,3 +237,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Target_Values
     Factor_Generation_Values
     Factor_Publication_Values
+    Factor_Site_Values
+    Factor_Publication_Scopes
+    Factor_Adoption_Values
+    Factor_Authority

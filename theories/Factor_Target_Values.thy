@@ -31,6 +31,23 @@ lemma target_value_presents_formed:
   using assms artifact_value_presents_formed target_occurrence_data_formed
   by (auto simp: target_value_presents_def)
 
+lemma target_value_at_source:
+  assumes source: "artifact_value_presents R a"
+  shows "target_value_presents x (Pair_Term a opt) \<longleftrightarrow>
+    target_formed x \<and> target_artifact x=R \<and> opt=optional_payload_term (target_occurrence x)"
+proof
+  assume present: "target_value_presents x (Pair_Term a opt)"
+  have parts: "target_formed x" "artifact_value_presents (target_artifact x) a"
+    "opt=optional_payload_term (target_occurrence x)"
+    using present by (auto simp: target_value_presents_def)
+  have same: "target_artifact x=R" by (rule artifact_value_presents_unique[OF parts(2) source])
+  show "target_formed x \<and> target_artifact x=R \<and> opt=optional_payload_term (target_occurrence x)"
+    using parts same by blast
+next
+  assume "target_formed x \<and> target_artifact x=R \<and> opt=optional_payload_term (target_occurrence x)"
+  then show "target_value_presents x (Pair_Term a opt)" using source by (auto simp: target_value_presents_def)
+qed
+
 theorem target_value_presents_unique:
   assumes first: "target_value_presents x t" and second: "target_value_presents y t"
   shows "x=y"

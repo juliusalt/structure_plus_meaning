@@ -489,9 +489,19 @@ retain their arbitrary natural components. Four ordinary clauses admit exactly
 the existing citation grammar and a complete interior enumeration. They accept
 every interior order and retain the separation needed by quotation and pattern
 composition. One fixed native package supplies distinct target and citation
-entries for every future formed input. Citation interpretation, higher grammar,
-finite correctness evidence, reflection, and the full transition protocol remain
-required.
+entries for every future formed input.
+
+Environment lookup now admits the complete supplied data and selects actual
+artifact-use and binding rows. Artifact output is compared by exact identity,
+so its presentation may differ from the stored row. Two ordinary routing
+clauses retain both the destination use and the complete exact target.
+Separate views derive citation interpretation and occurrence location; whole
+targets have no occurrence location. Equal artifact values at different uses
+remain distinct destinations. All five entries have exact contracts over every
+input term, preserve every earlier meaning, and share one fixed native package
+for all future formed inputs. Joining these checks with the structural readers,
+higher grammar, finite correctness evidence, reflection, and the full transition
+protocol remains required.
 
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed

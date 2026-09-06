@@ -2746,6 +2746,47 @@ Two target clauses and four citation clauses extend the program to thirty-seven
 definitions and sixty-eight clauses. Exactness holds over every input term and
 every complete source presentation. One closed native package supplies distinct
 target and citation sites before all future formed inputs, preserving the
-canonical program environment in every application. Citation interpretation,
-higher grammar, finite correctness evidence, reflection, the complete transition
-protocol, and genesis remain required.
+canonical program environment in every application. The following development
+supplies citation interpretation; higher grammar, finite correctness evidence,
+reflection, the complete transition protocol, and genesis remain required.
+
+## Environment lookup preserves both exact values and actual uses
+
+The environment under examination is a complete ordinary data argument. Each
+lookup first admits both tables and their entire formation boundary. Artifact
+lookup selects one actual stored row, then compares its artifact with the
+requested output through the existing admitted identity definition. The selected
+row supplies a presentation witness; it does not fix the output's enumeration.
+Thus every complete output presentation is accepted even when its order differs
+from the artifact data stored inside the environment. Binding lookup selects
+the exact source use, opaque local slot, and destination use.
+
+An exact target does not determine a destination use. A formed environment may
+place the same complete artifact at different uses and bind them differently.
+The shared citation result therefore contains both the actual destination use
+and complete target data. Its route is derived from the citation's optional
+slot: absence selects the source use, and presence selects that source's actual
+binding. The displayed route abbreviation adds no primitive or new stored role.
+
+Two ordinary clauses implement those routing cases. Both pass the optional
+target address unchanged into target admission. Whole and occurrence targets
+therefore share routing while retaining their distinct formation conditions.
+The target-value fact formerly local to target admission moves to the shared
+value theory; target admission and citation resolution use the same recovery
+proof. No target representation or old contract changes in this step.
+
+One ordinary view exposes the target interpretation. Another requires a present
+occurrence and exposes the actual use and address. Whole-artifact citations have
+no occurrence location. This separation preserves callee locations even when
+target artifacts agree. Both views are derived from the shared result, and all
+contracts cover arbitrary input terms and every complete environment and target
+presentation. No executable reader or externally supplied truth predicate enters
+the clause premises.
+
+Five definitions and six ordinary clauses extend the complete program to
+forty-two definitions and seventy-four clauses. Every earlier entry preserves
+its meaning. One closed native package supplies distinct lookup, resolution,
+interpretation, and location sites before all future formed inputs, with its
+canonical program environment preserved. Composition with structural citation
+and higher readers, finite correctness evidence, the complete internal
+transition protocol, reflection, and genesis remain required.

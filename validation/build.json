@@ -1,7 +1,7 @@
 {
-  "invocation": "86adf1e8-5750-4039-abe1-da289d09bd9f",
+  "invocation": "8b3bdf39-c533-485d-b9f6-f955fda7f356",
   "status": "accepted",
-  "started_utc": "2026-09-06T22:33:01.505446+00:00",
+  "started_utc": "2026-09-06T23:09:13.128703+00:00",
   "command": [
     "isabelle",
     "build",
@@ -17,7 +17,7 @@
   "exit_code": 0,
   "session_diagnostics": "",
   "sources": {
-    "ROOT": "651e78527772fab0b3917262705749bdc82e4818973660bd556e4037646c59b8",
+    "ROOT": "df1f524505d1d9a8b6c9086ab2c8f53efce4a97707dab62937ed95cfba9b3f2d",
     "theories/Bootstrap_Finite_Closure.thy": "cbff1345a5a97a8108f2022d99345a7423e93cccc01580929d4054f42a5e031c",
     "theories/Bootstrap_Relations.thy": "82069762267d503d339290507262bc7f905543966f56a0601e30bd1c7b04184f",
     "theories/Factor_Adoption_Values.thy": "78990f18a78d11a363a26c5979106c2dcb5bf9125f01448bb3086045bffad6bd",
@@ -52,6 +52,8 @@
     "theories/Factor_Certified_Continuation.thy": "70f491ac7affdc91459c13889fbf8601e235408ed0c6601c94edc0c8658704bc",
     "theories/Factor_Certified_Recorded_Cause.thy": "8ec56e429b2592a81cfb063acad817460f63eb2f008e5665b97dd37c0f01710a",
     "theories/Factor_Citation_Admission.thy": "8e02f168bcb636e0c4fb979cfb316a18fc15f768798fd91bac15a7b280bbb1a7",
+    "theories/Factor_Citation_Interpretation.thy": "713e8a62dc063268162619bd5f28adf105091ae8703f51360f403990a679e2c6",
+    "theories/Factor_Citation_Resolution.thy": "329976f4b89b2f46d4764115531d9415ad291c2191b6949cf69266200c829fc8",
     "theories/Factor_Citation_Values.thy": "823055861cedcde3f8dd6eaa5007dcea0f29059733b1782d61e4f7bb71afd537",
     "theories/Factor_Cloned_Transport.thy": "529d9509300946f6486eee9a7756f3e83d8d499483a298ab17acf77f15376022",
     "theories/Factor_Comparison_Reports.thy": "74c92451acc8514f3e30fa06fbd3c889b446939c465ca2428ff55228a0c9b7f1",
@@ -107,6 +109,7 @@
     "theories/Factor_Encoding_Order_Audit.thy": "56aee92e5fefe9dab16b1fd19553ca842e430fbc5d2c02df4c2321dd483e4943",
     "theories/Factor_Environment_Admission.thy": "77a85610764af472ab784fdc9502cfa18c453145bb5dc798119b277534f06f9f",
     "theories/Factor_Environment_Comparison.thy": "9a5a54593ab301cdbc24fee66fbd58c5ef50d020edf82b1348399c7a6d169e63",
+    "theories/Factor_Environment_Lookup.thy": "b49e34bfac3546961d15e7f88a0ce55ce99b5a9e1331a9ae4a47e109da715c7e",
     "theories/Factor_Environment_Values.thy": "8a880b9caa36313c3a83fa5ea62bce6d3a5c2e7de71f22f24af2f59d1bc8df53",
     "theories/Factor_Executable_Calls.thy": "dbf384dfa51cefb3a9d60d875fbbf35badf3c4c05e43377c509f80652c303b67",
     "theories/Factor_Executable_Definitions.thy": "ff24a52decdf385b6065da03354ae6092de5eab2e6755f5978d7703e8c0ef6be",
@@ -283,8 +286,8 @@
     "theories/Factor_Table_Copy.thy": "baced2f7051133f843e3f9b0f2bc625622b88bf28378dc5fb865993a4dad01c1",
     "theories/Factor_Table_Syntax.thy": "1db72c41293cfa5a54c71fb1cdbb6230b4d94fff92169944993696eff613c453",
     "theories/Factor_Tagged_Views.thy": "e40a2722938dfdd61263d85116f736e6290401bbca66ef20b19d48e0ac5c447e",
-    "theories/Factor_Target_Admission.thy": "541e94a21b627bf3c20559c046235a448603831f5b0b7887f97e16976808ea4d",
-    "theories/Factor_Target_Values.thy": "c6582180aa2a07c47400a2592bf4b06770b3809d48d3f24092c2634b99dbd1ea",
+    "theories/Factor_Target_Admission.thy": "937d3f725437ebfa0ba249261fcc7599f318a1774936c6fa293da38a0b898353",
+    "theories/Factor_Target_Values.thy": "62d141afc9b326480db52cfe2c186b47e1bbd956bf5f221fea45a1f6a64c1084",
     "theories/Factor_Term_Encoding.thy": "197414f48d8ea69a94e62718f51ae4799938baf652a06f2287aa48c5d7511ca5",
     "theories/Factor_Terms.thy": "02cbf11175c008129ce15defebe1b812605963914d79c1e3c5f8e84ff031b781",
     "theories/Factor_Transaction_Values.thy": "3084add440ee474611869011c4c829752c59f50e8275558a8af12113893f0842",
@@ -374,6 +377,6 @@
   "isabelle_version": "Isabelle2025-2",
   "sources_unchanged": true,
   "tools_unchanged": true,
-  "finished_utc": "2026-09-06T22:34:08.029909+00:00",
-  "log_sha256": "e671b7a7f730939fb87ae0cef601e0e977bbb336d47fae9b7a201b96b826ff2f"
+  "finished_utc": "2026-09-06T23:10:20.632706+00:00",
+  "log_sha256": "24eb768a27c688bdf36f0876f6ceb6c225ac7cea8aa74f8138381556b1b4901b"
 }

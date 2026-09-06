@@ -189,19 +189,7 @@ corollary target_admission_at_source:
 proof -
   have shape: "target_value_presents x (Pair_Term a k) \<longleftrightarrow>
     target_artifact x=R \<and> target_formed x \<and> k=optional_payload_term (target_occurrence x)" for x
-  proof
-    assume present: "target_value_presents x (Pair_Term a k)"
-    have fields: "target_formed x" "artifact_value_presents (target_artifact x) a"
-      "k=optional_payload_term (target_occurrence x)"
-      using present by (auto simp: target_value_presents_def)
-    have same: "target_artifact x=R" by (rule artifact_value_presents_unique[OF fields(2) source])
-    show "target_artifact x=R \<and> target_formed x \<and> k=optional_payload_term (target_occurrence x)"
-      using same fields by blast
-  next
-    assume "target_artifact x=R \<and> target_formed x \<and> k=optional_payload_term (target_occurrence x)"
-    then show "target_value_presents x (Pair_Term a k)"
-      using source by (auto simp: target_value_presents_def)
-  qed
+    using target_value_at_source[OF source, of x k] by blast
   have targets: "(\<exists>x. target_artifact x=R \<and> target_formed x \<and>
     k=optional_payload_term (target_occurrence x)) \<longleftrightarrow>
     (\<exists>s. k=optional_payload_term s \<and> set_option s\<subseteq>rra_carrier (object_structure R))"

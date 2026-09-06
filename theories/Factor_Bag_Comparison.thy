@@ -10,8 +10,12 @@ abbreviation data_elements :: "factor_term list \<Rightarrow> bool" where
 definition data_list_nil_schema :: "(nat,nat,nat) factor_schema" where
   "data_list_nil_schema=data_rule (Pattern_Payload []) {}"
 
+definition list_step_schema :: "nat \<Rightarrow> nat \<Rightarrow> (nat,nat,nat) factor_schema" where
+  "list_step_schema element list=data_rule (Pattern_Pair data_x data_y)
+    {(0,element,data_x),(1,list,data_y)}"
+
 definition data_list_cons_schema :: "(nat,nat,nat) factor_schema" where
-  "data_list_cons_schema=data_rule (Pattern_Pair data_x data_y) {(0,2,data_x),(1,4,data_y)}"
+  "data_list_cons_schema=list_step_schema 2 4"
 
 definition data_list_clauses :: "(nat \<times> (nat,nat,nat) factor_schema) set" where
   "data_list_clauses={(0,data_list_nil_schema),(1,data_list_cons_schema)}"
@@ -55,7 +59,7 @@ definition bag_comparison_clauses :: "(nat \<times> (nat,nat,nat) factor_schema)
 definition bag_comparison_system :: "(nat,nat,nat,nat) schema_system" where
   "bag_comparison_system=add_view_definition data_selection_system 6 data_x bag_comparison_clauses"
 
-lemmas data_list_schema_defs = data_list_nil_schema_def data_list_cons_schema_def
+lemmas data_list_schema_defs = data_list_nil_schema_def data_list_cons_schema_def list_step_schema_def
 lemmas data_selection_schema_defs = data_selection_here_schema_def data_selection_later_schema_def selection_later_schema_def
 lemmas bag_schema_defs = bag_nil_schema_def bag_cons_schema_def bag_step_schema_def
 lemmas bag_system_defs = bag_comparison_system_def data_selection_system_def data_list_system_def
@@ -191,11 +195,11 @@ proof -
         assume schema: "S=data_list_cons_schema"
         have head: "term_formed (f 0) \<and> self_contained_term (f 0)"
           using support schema bag_comparison_recognizes[of "f 0"]
-          by (auto simp: data_list_cons_schema_def)
+          by (auto simp: data_list_cons_schema_def list_step_schema_def)
         obtain xs where tail: "f 1=data_list_term xs" "data_elements xs"
-          using support[rule_format, of 1 4 data_y] schema by (auto simp: data_list_cons_schema_def)
+          using support[rule_format, of 1 4 data_y] schema by (auto simp: data_list_cons_schema_def list_step_schema_def)
         show ?thesis by (intro exI[of _ "f 0#xs"])
-          (use head tail in \<open>simp add: schema data_list_cons_schema_def\<close>)
+          (use head tail in \<open>simp add: schema data_list_cons_schema_def list_step_schema_def\<close>)
       qed
     qed
   qed
@@ -222,9 +226,9 @@ next
   have result: "(4,evaluate_pattern ?f (schema_conclusion data_list_cons_schema))
     \<in>positive_meaning bag_comparison_system"
     by (rule bag_comparison_rule[where c=1])
-      (use Cons.prems head tail in \<open>auto simp: data_list_clauses_def data_list_cons_schema_def
+      (use Cons.prems head tail in \<open>auto simp: data_list_clauses_def data_list_cons_schema_def list_step_schema_def
         schema_variables_def data_list_term_formed\<close>)
-  show ?case using result by (simp add: data_list_cons_schema_def)
+  show ?case using result by (simp add: data_list_cons_schema_def list_step_schema_def)
 qed
 
 theorem data_list_exact:
@@ -334,6 +338,50 @@ next
   then show "(5,Pair_Term x (Pair_Term (data_list_term xs) (data_list_term ys)))
     \<in>positive_meaning bag_comparison_system"
     using data_selection_complete by blast
+qed
+
+abbreviation selected_data_member :: "factor_term \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "selected_data_member x t \<equiv>
+    \<exists>r. (5,Pair_Term x (Pair_Term t r))\<in>positive_meaning bag_comparison_system"
+
+lemma selected_data_member_exact:
+  "selected_data_member x t \<longleftrightarrow>
+    (\<exists>xs. t=data_list_term xs \<and> data_elements xs \<and> x\<in>set xs)"
+proof
+  assume "selected_data_member x t"
+  then obtain r where step: "(5,Pair_Term x (Pair_Term t r))\<in>positive_meaning bag_comparison_system" by blast
+  obtain pre post where parts: "t=data_list_term (pre@x#post)" "data_elements (pre@x#post)"
+    using data_selection_sound[OF step] by auto
+  show "\<exists>xs. t=data_list_term xs \<and> data_elements xs \<and> x\<in>set xs"
+    by (intro exI[of _ "pre@x#post"]) (use parts in auto)
+next
+  assume "\<exists>xs. t=data_list_term xs \<and> data_elements xs \<and> x\<in>set xs"
+  then obtain xs where parts: "t=data_list_term xs" "data_elements xs" "x\<in>set xs" by blast
+  obtain pre post where split: "xs=pre@x#post" using split_list[OF parts(3)] by blast
+  have step: "(5,Pair_Term x (Pair_Term t (data_list_term (pre@post))))\<in>positive_meaning bag_comparison_system"
+    using data_selection_complete[of pre x post] parts(1,2) split by simp
+  show "selected_data_member x t" using step by blast
+qed
+
+lemma selected_data_member_formed:
+  assumes "selected_data_member x t"
+  shows "term_formed x \<and> self_contained_term x \<and> term_formed t \<and> self_contained_term t"
+  using assms by (auto simp: selected_data_member_exact data_list_term_formed data_list_term_self_contained)
+
+lemma data_collection_selection:
+  assumes read: "data_collection_presents R A a"
+    and formed: "\<And>z t. z\<in>A \<Longrightarrow> R z t \<Longrightarrow> term_formed t \<and> self_contained_term t"
+  shows "(\<forall>z\<in>A. \<exists>t. selected_data_member t a \<and> R z t) \<and>
+    (\<forall>t. selected_data_member t a \<longrightarrow> (\<exists>z\<in>A. R z t))"
+proof -
+  obtain xs ts where parts: "set xs=A" "list_all2 R xs ts" "a=data_list_term ts"
+    using read unfolding data_collection_presents_def by blast
+  have members: "(\<forall>z\<in>A. \<exists>t\<in>set ts. R z t) \<and>
+    (\<forall>t\<in>set ts. \<exists>z\<in>A. R z t)" using list_all2_members[OF parts(2)] parts(1) by simp
+  have data: "data_elements ts" using formed members by blast
+  have actual: "selected_data_member t a \<longleftrightarrow> t\<in>set ts" for t
+    using data by (auto simp: selected_data_member_exact parts(3) data_list_term_injective)
+  show ?thesis using members by (auto simp only: actual)
 qed
 
 section \<open>The recursive comparison preserves every multiplicity\<close>

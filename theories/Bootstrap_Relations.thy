@@ -556,24 +556,72 @@ next
   show ?case by (cases ys) (simp_all add: Cons.IH)
 qed
 
+lemma single_valued_fst:
+  "single_valued R \<longleftrightarrow> inj_on fst R"
+proof
+  assume sv: "single_valued R"
+  show "inj_on fst R"
+  proof (rule inj_onI)
+    fix x y assume "x\<in>R" "y\<in>R" "fst x=fst y"
+    then show "x=y" using sv by (cases x; cases y) (auto simp: single_valued_def)
+  qed
+next
+  assume injective: "inj_on fst R"
+  have equal: "(x,y)=(x,z)" if "(x,y)\<in>R" "(x,z)\<in>R" for x y z
+    using injective[unfolded inj_on_def, rule_format, of "(x,y)" "(x,z)"] that by simp
+  show "single_valued R" using equal by (auto simp: single_valued_def)
+qed
+
+lemma distinct_keys_iff:
+  "distinct (map fst xs) \<longleftrightarrow> distinct xs \<and> single_valued (set xs)"
+  by (simp only: distinct_map single_valued_fst)
+
+lemma list_all2_function_restricted:
+  "list_all2 (\<lambda>x y. y=f x \<and> P x) xs ys \<longleftrightarrow>
+    ys=map f xs \<and> (\<forall>x\<in>set xs. P x)"
+  by (induction xs arbitrary: ys) (auto simp: list_all2_Cons1)
+
+lemma list_all2_function:
+  "list_all2 (\<lambda>x y. y=f x) xs ys \<longleftrightarrow> ys=map f xs"
+  using list_all2_function_restricted[where P="\<lambda>_. True", of f xs ys] by simp
+
+lemma list_all2_exists_left:
+  "(\<forall>y\<in>set ys. \<exists>x. R x y) \<longleftrightarrow> (\<exists>xs. list_all2 R xs ys)"
+  by (induction ys) (auto simp: list_all2_Cons2)
+
+lemma list_range_witnesses:
+  "(\<forall>y\<in>set ys. \<exists>x. y=f x) \<longleftrightarrow> (\<exists>xs. ys=map f xs)"
+  by (subst list_all2_exists_left) (simp only: list_all2_function)
+
+lemma list_range_restricted_witnesses:
+  "(\<forall>y\<in>set ys. \<exists>x. y=f x \<and> P x) \<longleftrightarrow>
+    (\<exists>xs. ys=map f xs \<and> (\<forall>x\<in>set xs. P x))"
+  by (subst list_all2_exists_left) (simp only: list_all2_function_restricted)
+
+lemma list_all2_members:
+  assumes "list_all2 R xs ys"
+  shows "(\<forall>x\<in>set xs. \<exists>y\<in>set ys. R x y) \<and>
+    (\<forall>y\<in>set ys. \<exists>x\<in>set xs. R x y)"
+  using assms by (induction rule: list_all2_induct) auto
+
+lemma finite_keyed_enumeration:
+  assumes fin: "finite V" and sv: "single_valued V"
+  shows "\<exists>qs. set qs=V \<and> distinct (map fst qs)"
+proof -
+  obtain qs where rows: "set qs=V" "distinct qs" using finite_distinct_list[OF fin] by blast
+  have keys: "distinct (map fst qs)" using rows sv by (simp add: distinct_keys_iff)
+  show ?thesis using rows(1) keys by blast
+qed
+
 lemma finite_functional_list:
   fixes M :: "('s \<times> 'a) set"
   assumes fin: "finite M" and sv: "single_valued M"
   shows "\<exists>ss xs. length ss = length xs \<and> distinct ss \<and> set (zip ss xs) = M"
 proof -
-  obtain es :: "('s \<times> 'a) list" where enumeration: "set es = M" and separate: "distinct es"
-    using finite_distinct_list[OF fin] by metis
-  have injective: "inj_on fst M"
-  proof (rule inj_onI)
-    fix x y assume first: "x \<in> M" and second: "y \<in> M" and same: "fst x = fst y"
-    have left: "(fst x,snd x) \<in> M" using first by simp
-    have right: "(fst x,snd y) \<in> M" using second same by simp
-    have outputs: "snd x = snd y" by (rule single_valued_outputs[OF sv left right])
-    show "x=y" using same outputs by (cases x; cases y) simp
-  qed
-  have distinct: "distinct (map fst es)" using separate injective enumeration by (simp add: distinct_map)
+  obtain es where enumeration: "set es=M" and keys: "distinct (map fst es)"
+    using finite_keyed_enumeration[OF fin sv] by blast
   show ?thesis by (rule exI[of _ "map fst es"], rule exI[of _ "map snd es"])
-    (use distinct enumeration in \<open>simp add: zip_map_fst_snd\<close>)
+    (use keys enumeration in \<open>simp add: zip_map_fst_snd\<close>)
 qed
 
 lemma distinct_list_rekey:

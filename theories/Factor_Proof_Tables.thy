@@ -135,16 +135,6 @@ end
 
 section \<open>Finite functional tables admit a complete row enumeration\<close>
 
-lemma finite_keyed_enumeration:
-  assumes fin: "finite V" and sv: "single_valued V"
-  shows "\<exists>qs. set qs=V \<and> distinct (map fst qs)"
-proof -
-  obtain qs where rows: "set qs=V" "distinct qs" using finite_distinct_list[OF fin] by blast
-  have injective: "inj_on fst V" using sv by (auto simp: single_valued_def inj_on_def)
-  have keys: "distinct (map fst qs)" using rows injective by (simp add: distinct_map)
-  show ?thesis using rows(1) keys by blast
-qed
-
 theorem binding_table_syntax_total:
   fixes V :: "(local_address option definition_site \<times> factor_term) set"
   assumes fin: "finite V" and sv: "single_valued V"

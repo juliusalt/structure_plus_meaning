@@ -1850,11 +1850,64 @@ complete presentation order and every valid child-artifact presentation.
 The chosen scope keeps environment admission explicit. The comparison itself
 does not enforce single-valued artifact and binding tables, binding-source
 slot membership, or target-use existence. These are premises of the current
-environment presentation relation and remain to be derived by a separate
-native admission definition. The raw comparison equation records exactly
+environment presentation relation and are derived by the separate admission
+definition below. The raw comparison equation records exactly
 what its existing clauses accept.
 
 All earlier interfaces and meanings are preserved. The complete environment
 comparison program has seventeen definitions and thirty-two clauses. Native
 compilation fixes one closed program before all future environment operands
 and preserves its canonical program environment in every actual application.
+
+## Environment admission checks every row and every scoped binding
+
+The existing environment representation fixes two complete finite tables:
+artifact-use rows and source-slot-target bindings. Admission now derives exactly
+their formation laws through ordinary definitions. It reuses the artifact
+admission program and adds no material observation or semantic primitive.
+
+The natural-component, finite-word, and optional-coordinate definitions follow
+their existing data shapes. Every natural component is permitted, including
+values outside the byte range. The chosen definition supplies the profile;
+a value does not acquire a nominal role from its representation alone. Shared
+list schemas traverse the complete list and final tail. Unary element checks
+carry no context field. Binding lists carry the actual artifact table into
+every element call, and their empty case still checks context formation.
+
+Key absence compares a supplied key with every key in a complete tail using
+the earlier data-inequality definition. Its empty case checks the supplied
+key through data recognition. Key uniqueness then requires absence from each
+tail. Values need only be formed terms here; the row-admission calls enforce
+their stronger profiles separately. The mathematical key theorem equates
+distinct keys with distinct rows and a single-valued row relation. Shared
+finite enumeration and list-witness lemmas now live in Bootstrap_Relations,
+so raw data checking does not depend on the native proof-table construction.
+
+A binding clause selects a source row and a target row from the same supplied
+artifact table, then selects the exact slot from the source artifact's carrier
+field. These are three distinct prospective premise sockets. Its complete
+assignment includes the three list remainders and every matched value.
+The source pattern needs the carrier field and the complete remaining
+artifact value; splitting the other fields again serves no additional purpose.
+
+The binding-query theorem is conditional on a complete admitted artifact-table
+presentation. The query alone can accept broader data, which its raw equation
+records. The final admission clause separately checks every artifact row and
+both key constraints. Its four distinct sockets therefore enforce every
+environment formation condition. Empty environments and finite binding cycles
+require no special clauses or recursive expansion of the use graph.
+
+A represented artifact can have several valid data presentations. Consequently,
+completeness selects an actual row of the supplied table and recovers that row's
+carrier presentation. Membership of a represented source does not authorize
+substituting a different presentation into the supplied list. The shared
+collection-selection theorem preserves this distinction in both directions.
+
+The complete program has twenty-eight definitions and fifty clauses. Admission
+accepts exactly the existing presentations of formed environments over the entire
+term domain. Admitted identity requires two admissions and the earlier environment
+comparison. One fixed closed native package contains distinct sites for both
+operations before any future formed argument is supplied; each application
+preserves the canonical program environment. This completes environment-data
+admission as a checker component. It leaves grammar-derived closure, application
+checking, policy authority, reflection, and amendment adoption as separate work.

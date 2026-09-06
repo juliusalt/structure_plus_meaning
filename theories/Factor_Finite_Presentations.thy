@@ -74,11 +74,7 @@ definition finite_set_presents ::
 lemma finite_set_presents_iff:
   "finite_set_presents f A t \<longleftrightarrow>
     (\<exists>xs. distinct xs \<and> set xs=A \<and> t=enumeration_term (map f xs))"
-proof -
-  have related: "list_all2 (\<lambda>a u. u=f a) xs ts \<longleftrightarrow> ts=map f xs" for xs ts
-    by (induction xs arbitrary: ts) (auto simp: list_all2_Cons1)
-  show ?thesis by (simp add: finite_set_presents_def finite_collection_presents_def related)
-qed
+  by (simp add: finite_set_presents_def finite_collection_presents_def list_all2_function)
 
 lemma finite_set_term_presents:
   assumes "finite A"

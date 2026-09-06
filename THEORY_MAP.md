@@ -5,7 +5,7 @@ record, not the completed graph proposed in `plan.md`.
 
 | Theory | Direct imports | Content |
 |---|---|---|
-| Bootstrap_Relations | Main | Finite extensional relations, exact maps, images, direct and transitive ancestry. |
+| Bootstrap_Relations | Main | Finite extensional relations, exact maps, images, direct and transitive ancestry; shared complete-list witnesses and finite keyed enumeration. |
 | RRA_Core | Bootstrap_Relations | One carrier and ternary incidence, restriction, renaming, bounded views, connectivity. |
 | RRA_Data | RRA_Core | Anonymous counted and functional attachments, restriction, compatible gluing, structured objects. |
 | RRA_Data_Views | RRA_Data | Legacy encodings, recovery, transport, and crossing-boundary comparisons; a leaf. |
@@ -203,6 +203,7 @@ record, not the completed graph proposed in `plan.md`.
 | Factor_Distinct_Payloads | Factor_Compiled_Applications, Factor_Self_Contained_Terms | Three ordinary schemas recognize every future finite distinct payload list through complete carrier enumeration; exact singleton recognition, payload inequality, and one fixed closed native compilation. |
 | Factor_Data_Comparison | Factor_Distinct_Payloads, Factor_View_Definitions, Factor_Rule_Instances | Ordinary recursive formation and exact inequality for all payload-and-pair data; preserved old meanings, complete input-domain soundness, and one fixed native compilation for all future terms. |
 | Factor_Bag_Comparison | Factor_Data_Comparison | Ordinary complete-list recognition, removal of one matching occurrence, and exact equality of all element counts; soundness over the entire input domain, preserved old meanings, and one fixed native compilation. |
+| Factor_List_Profiles | Factor_Bag_Comparison | Ordinary complete-list profiles over actual positive callees, with separate unary and supplied-context clauses; exact contracts for every input and every list element. |
 | Factor_Related_Bags | Factor_Bag_Comparison | Ordinary selection through an actual comparison callee and complete occurrence matching; exact raw-input contracts and equality of collection subjects across all complete child presentations. |
 | Factor_Artifact_Values | Factor_Self_Contained_Terms | Complete exact artifact data, counted multiplicity, unique recovery, and total self-contained native quotation. |
 | Factor_Artifact_Comparison | Factor_Bag_Comparison, Factor_Artifact_Values | Four ordinary field comparisons give exact artifact identity across every complete presentation, preserving counts and original coordinates; old meanings and one fixed native compilation are proved separately from artifact admission. |
@@ -210,6 +211,9 @@ record, not the completed graph proposed in `plan.md`.
 | Factor_Artifact_Admission | Factor_Material_Data_Projection | Complete material observation and ordinary projections derive exact artifact-data admission; a fresh definition joins both admissions with equality, and one closed native program gives both exact contracts for every future formed argument. |
 | Factor_Environment_Values | Factor_Artifact_Values, Factor_Coordinate_Values | Complete native artifact-use and binding data, exact recovery across outer environments, and total self-contained quotation. |
 | Factor_Environment_Comparison | Factor_Artifact_Admission, Factor_Related_Bags, Factor_Environment_Values | Exact use coordinates, admitted child-artifact equality, and complete binding comparison give environment identity across all formed presentations; preserved old meanings and one fixed native compilation. |
+| Factor_Coordinate_Admission | Factor_Environment_Comparison, Factor_List_Profiles | Ordinary admission of natural components, finite words, and exact optional coordinates; unbounded indices, preserved old meanings, and complete input contracts. |
+| Factor_Keyed_Lists | Factor_Coordinate_Admission | Ordinary key absence and complete key uniqueness using existing data inequality; exact contracts and transport to relational row presentations. |
+| Factor_Environment_Admission | Factor_Keyed_Lists | Complete environment-data admission enforces both functional tables and every binding source, target, and source slot; exact admitted identity and one closed native program for all future formed arguments. |
 | Factor_Judgment_Retention | Factor_Application_Retention | Least program-and-call environment, closed actual roots, stable restriction, exact program preservation, and truth invariance without proof retention. |
 | Factor_Complete_Data_Quotation | Factor_Self_Contained_Terms | Complete copies of payload-and-pair syntax under every formed injective readdressing; derived native reading, uniqueness, and totality without ignored material. |
 | Factor_Judgment_Values | Factor_Environment_Values, Factor_Complete_Data_Quotation | Complete self-contained scope values with actual program and call sites; the whole artifact determines its quotation root and exact scope independently of outer bindings. |

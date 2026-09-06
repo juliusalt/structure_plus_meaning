@@ -274,9 +274,19 @@ artifact equality on their values. A collection rule matches every occurrence
 through that fixed callee, covering different valid child presentations.
 Binding rows retain exact source, slot, and target coordinates. The resulting
 program proves environment identity across all formed presentations and has
-one closed native compilation for future operands. Native admission of the
-environment formation laws, comparison of generations, general native checking,
-reflection, and amendment remain separate work.
+one closed native compilation for future operands.
+
+Environment admission now checks the complete data presentation through ordinary
+rules as well. Shared list profiles check every element; coordinate admission
+covers all finite natural words; and key uniqueness checks both tables.
+Each binding selects its source row, target row, and source slot from the actual
+supplied artifact table. The resulting program accepts exactly presentations of
+formed finite environments, including the permitted empty and cyclic cases.
+A separate identity definition joins both admissions with the earlier comparison.
+One closed native program supplies distinct admission and identity sites before
+any future formed input is supplied. Grammar-derived closure, comparison of
+generations, general native checking, reflection, and amendment remain separate
+work.
 
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed

@@ -255,8 +255,13 @@ Ordinary recursive extensions now recognize all formed payload-and-pair data
 and compare them for exact inequality. Every child is checked, including those
 outside the first detected difference. All old program meanings remain fixed,
 and one closed native compilation handles all future comparison arguments.
-This compares the supplied terms; different enumerations of one represented
-subject still require an extensional comparison.
+This compares the supplied terms. Separate ordinary definitions now recognize
+complete data lists, remove one matching occurrence, and compare every element
+count. Four calls to this bag comparison give exact artifact equality across
+every complete enumeration order, retaining counted attachments and original
+addresses. Each program has one closed native compilation for all future
+arguments in its stated domain. Artifact admission and comparisons of other
+recursively presented subjects remain separate work.
 
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed

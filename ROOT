@@ -153,8 +153,10 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Self_Contained_Terms
     Factor_Distinct_Payloads
     Factor_Data_Comparison
+    Factor_Bag_Comparison
     Factor_Complete_Data_Quotation
     Factor_Artifact_Values
+    Factor_Artifact_Comparison
     Factor_Environment_Values
     Factor_Judgment_Values
     Factor_Judgment_Scopes

@@ -1731,5 +1731,44 @@ One closed native compilation serves every future formed comparison argument.
 The comparison concerns the exact supplied data terms. Two different collection
 enumerations can present one exact subject, so this result does not classify
 the represented subjects as different or remove the separate presentation
-invariance requirement. Extensional data readers, native checking, reflection,
+invariance requirement. General data readers, native checking, reflection,
 and amendment remain to be completed.
+
+## Collection comparison preserves counts through ordinary rules
+
+Complete data presentations admit every enumeration order. The chosen
+comparison therefore removes one matching occurrence from one list for each
+element of the other list, ending only when both are empty. A separate ordinary
+definition recognizes proper lists of formed payload-and-pair data. Removal
+checks the complete retained tail and every skipped element. It may skip an
+equal element to remove a later occurrence, so the rules do not introduce a
+first-match convention.
+
+Repeated occurrences of one scoped variable supply exact element equality.
+The residual list is a variable used in both prospective premises and is
+checked as part of their complete arguments. No host function computes an
+unchecked residual. Soundness identifies exactly one removed occurrence;
+completeness covers every possible position. The bag comparison's independent
+positive meaning is equality of every element count. The mathematical multiset
+used in that theorem supplies no additional semantic operator or structural
+rule for arbitrary premise families.
+
+The artifact comparison has one ordinary clause with four distinct premise
+sockets. Each calls the bag program on one pair of corresponding fields.
+Carrier, incidence, and functional fields have distinct source entries in the
+existing presentation relation, so their bag comparisons recover set equality.
+The counted attachment field retains all repetitions. Injectivity of the
+existing field encodings recovers exact original addresses, ordered incidence
+triples, and opaque values.
+
+The resulting theorem covers every complete presentation of both artifacts
+and gives exact artifact identity. It does not identify differently addressed
+isomorphic artifacts. Full artifact admission is also separate: other proper
+four-field data tuples can satisfy this comparison clause. The theorem states
+its artifact-presentation premises explicitly.
+
+All earlier interfaces and meanings remain fixed through the fresh definition
+extensions. Native compilation relocates their coordinates and fixes one
+closed program for every future argument in each stated comparison domain.
+Comparison of recursively presented environments and generations, native
+admission checking, reflection, and amendment remain to be completed.

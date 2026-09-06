@@ -506,8 +506,17 @@ recovers its citation and complete interior. Recognition remains independent of
 resolution. Two ordinary joins derive exactly the existing anchored target and
 occurrence-location judgments. The location retains its actual use, and every
 complete environment and target presentation is accepted. All three entries
-share one fixed native package for every future formed input. Recursive
-quotation, higher grammar, finite correctness evidence, reflection, and the full
+share one fixed native package for every future formed input.
+
+Literal targets now have an exact projection to every complete target-data
+presentation, using the existing artifact projection and observed carrier
+pairs. Ordinary recursive definitions concatenate complete lists and check
+inclusion by explicitly reusing the right collection. Derived union permits
+shared members; a separate entry admits distinct payload collections and
+checks their disjointness. All five operations have exact contracts over every
+term and share one fixed native package before arbitrary future formed inputs.
+They supply the operations needed for quotation metadata. Recursive quotation,
+higher grammar, finite correctness evidence, reflection, and the full
 transition protocol remain required.
 
 A concrete finite native equality program is recovered from one closed

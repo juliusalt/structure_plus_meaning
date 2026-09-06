@@ -2819,3 +2819,40 @@ sites before arbitrary future formed inputs, with its canonical environment
 preserved in every application. Recursive quotation, higher grammar, finite
 correctness evidence, the complete transition protocol, reflection, and genesis
 remain required.
+
+## Literal target projection and quotation collection operations
+
+A target's data presentation and its literal operand remain separate terms.
+Their relation is derived from observations already admitted. Whole targets
+call complete artifact projection. For an occurrence, the complete carrier
+observation contains a pair of its actual literal and opaque address. An
+ordinary lookup selects that pair, while artifact projection uses the same
+whole source. This enforces occurrence membership and permits every complete
+artifact presentation without another primitive, tagged term encoding, or
+external decoding function.
+
+Quotation needs two different ways to combine collections. Concatenation
+retains both orders and all repetitions. Inclusion checks each left element
+through the existing occurrence-selection definition and explicitly passes
+the whole right collection into the next recursive call. This derives set
+inclusion without changing the earlier counted-bag comparison. Both operations
+check every element and the final empty-payload tail, including the right
+operand of each empty case.
+
+Union concatenates its two inputs and checks inclusion against the proposed
+output in both directions. Its exact relation permits shared members, every
+output order, and repeated output entries. It imposes no separate uniqueness
+condition because callers may need membership union independently of a chosen
+enumeration profile. Quotation metadata will separately use the existing
+distinct-payload entry. Disjointness for those distinct enumerations is derived
+by requiring their concatenation to be a distinct payload list. Child
+interiors can therefore be separated without forbidding shared external slots.
+
+The five definitions contain eight clauses: seven are ordinary, and occurrence
+projection uses the existing complete material equation. They extend the
+program to fifty definitions and eighty-five clauses. Every prior entry
+preserves its meaning. Exact contracts cover every input term, and one closed
+native package supplies five distinct actual sites before all future formed
+operands, preserving its canonical environment in every application.
+Recursive quotation, higher grammar, finite correctness evidence, the complete
+transition protocol, reflection, and genesis remain required.

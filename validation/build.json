@@ -1,7 +1,7 @@
 {
-  "invocation": "36abd2ea-af68-4ead-9584-aa01231565b2",
+  "invocation": "7866b25c-beda-4b37-bb25-5a46b5b5c88e",
   "status": "accepted",
-  "started_utc": "2026-09-06T23:26:59.535875+00:00",
+  "started_utc": "2026-09-06T23:55:55.219433+00:00",
   "command": [
     "isabelle",
     "build",
@@ -17,7 +17,7 @@
   "exit_code": 0,
   "session_diagnostics": "",
   "sources": {
-    "ROOT": "862917c72c6cf577d00628dd711939e230c1f8fa30c15cd324e617075f766fc6",
+    "ROOT": "b4dbcc7567b989b6ab6c7b3cf0325723e7f118884785ca77862c812894506f25",
     "theories/Bootstrap_Finite_Closure.thy": "cbff1345a5a97a8108f2022d99345a7423e93cccc01580929d4054f42a5e031c",
     "theories/Bootstrap_Relations.thy": "82069762267d503d339290507262bc7f905543966f56a0601e30bd1c7b04184f",
     "theories/Factor_Adoption_Values.thy": "78990f18a78d11a363a26c5979106c2dcb5bf9125f01448bb3086045bffad6bd",
@@ -94,7 +94,9 @@
     "theories/Factor_Current_Site_Certificates.thy": "d6eade7b6aa50c786d2afa33ad5981f7125abef23f52df1a0db6adefd1c94b8f",
     "theories/Factor_Current_Site_Permission.thy": "6fd7f12e88e2dbb71cde1dba81c6f5518554bef88e1591e9542d4c02b080f38f",
     "theories/Factor_Current_Values.thy": "c8474afb79d90153fc7841c5ca2276e7134c38fb4141a5b5030c9ed899109a52",
+    "theories/Factor_Data_Collection_Operations.thy": "03488ff70f14ad73257210f2f02a8cef4632c92d6a94c79057c4cc33ca96652d",
     "theories/Factor_Data_Comparison.thy": "89ac99a9a7c0302cbfd35bad64c58925d740fcb1972631f3786505335b423577",
+    "theories/Factor_Data_List_Operations.thy": "a87942baa72a89ea9934ba6a7bbef3f96e7ffa051683c622008a4e704e6ffec6",
     "theories/Factor_Definition_Closure.thy": "1767298671649185798f9257e00959583a9005031ff93f25b23224d00cdea9c5",
     "theories/Factor_Definition_Code.thy": "7eb28fafebfddf49b0e367a62c2287ddd7f472442fb79f3880bee98676df2c49",
     "theories/Factor_Definition_Compilation.thy": "e6e0ec17ab57200fafecd35dc41f858416b0f450936ef6aa908ee9343ac45d85",
@@ -289,6 +291,7 @@
     "theories/Factor_Table_Syntax.thy": "1db72c41293cfa5a54c71fb1cdbb6230b4d94fff92169944993696eff613c453",
     "theories/Factor_Tagged_Views.thy": "e40a2722938dfdd61263d85116f736e6290401bbca66ef20b19d48e0ac5c447e",
     "theories/Factor_Target_Admission.thy": "937d3f725437ebfa0ba249261fcc7599f318a1774936c6fa293da38a0b898353",
+    "theories/Factor_Target_Projection.thy": "c6f210cda356c0d537840ec8908beedf9ff186688043b26263007d5a6e5bf4a0",
     "theories/Factor_Target_Values.thy": "62d141afc9b326480db52cfe2c186b47e1bbd956bf5f221fea45a1f6a64c1084",
     "theories/Factor_Term_Encoding.thy": "197414f48d8ea69a94e62718f51ae4799938baf652a06f2287aa48c5d7511ca5",
     "theories/Factor_Terms.thy": "02cbf11175c008129ce15defebe1b812605963914d79c1e3c5f8e84ff031b781",
@@ -379,6 +382,6 @@
   "isabelle_version": "Isabelle2025-2",
   "sources_unchanged": true,
   "tools_unchanged": true,
-  "finished_utc": "2026-09-06T23:28:06.645848+00:00",
-  "log_sha256": "94ccffaeef2d24ce304ec579cb36f240a830d4ff8740f53366ace61d1f9ebbdd"
+  "finished_utc": "2026-09-06T23:57:02.956715+00:00",
+  "log_sha256": "c5b2611640aaad6d1babd5c606209f108ab9241b09637e6bf1770a79dd020d8d"
 }

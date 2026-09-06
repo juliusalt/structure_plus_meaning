@@ -1,0 +1,12 @@
+default_permissions = "structure-git"
+approval_policy = "never"
+
+[permissions.structure-git]
+extends = "ceah-feldera"
+
+[permissions.structure-git.filesystem]
+"/home/julius/structure_and_semantics/.git" = "write"
+
+[permissions.structure-git.network.domains]
+"github.com" = "allow"
+"api.github.com" = "allow"

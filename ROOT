@@ -132,6 +132,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Program_Semantics
     Factor_Program_Compilation
     Factor_Positive_Locality
+    Factor_System_Unions
     Factor_Positive_Parametricity
     Factor_Material_Meaning
     Factor_Native_Meaning
@@ -144,6 +145,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Seeded_Closure
     Factor_Incidence_Queries
     Factor_View_Definitions
+    Factor_Tagged_Views
+    Factor_Historical_Views
     Factor_Derivation
     RRA_Fragment
     RRA_Assembly
@@ -273,6 +276,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Package_Omissions
     Factor_Continuation_Omissions
     Factor_Program_Scopes
+    Factor_Historical_Programs
     Factor_Current_Values
     Factor_Current_Scopes
     Factor_Generation_Programs

@@ -2453,3 +2453,67 @@ The witness's ordinary predecessor remains permissive. The complete internal
 checker must still establish the grammar and semantic obligations through its
 own ordinary rules; native quotation alone does not do so. Migration evidence,
 exact cross-version interpretation, and complete genesis adequacy also remain.
+
+## Historical interpretation has ordinary formation and truth entries
+
+A historical call must retain both its original application boundary and its
+truth. The bridge therefore exposes two ordinary entry roles. Both query
+interfaces accept formed terms; positive truth at the first entry means that
+the quoted old call is formed, while truth at the second means that it is
+true under the old program. The contract permits the roles to share an entry
+when their meanings agree. The uniform construction uses distinct definitions
+whose ordinary clauses carry the different checks.
+
+The historical query is the pair of the existing exact definition-site data
+and the entire old argument. No new definition-name token or role byte is
+introduced. The old program's complete canonical environment and package site
+remain available as a whole scope quotation. Those fields fix the historical
+context of the coordinates. The bridge does not equate the old environment
+with the newly compiled one, and it does not make equal coordinates in other
+scopes denote the same definition.
+
+For every old definition, one premise-free clause copies its full interface
+pattern behind that exact site value. A separate clause invokes the copied
+old definition through one actual prospective premise on the unchanged
+argument. Every old definition contributes both clauses, including definitions
+that have no true calls. This boundary is the entire old program, not the
+smaller comparison domain or a certificate-selected list of calls. Clause
+coordinates are chosen injectively from the complete finite definition set.
+
+The old and supplied other programs first receive disjoint definition sites.
+Their complete interfaces and clause families are retained, and all prospective
+callee occurrences are moved with their owners. Dependency closure and the
+independent positive operator prove exact preservation of both programs,
+including recursion and complete material equations. Literal targets and
+material operands do not change. The two new view entries have fresh sites
+and cannot supply additional rules to either retained source definition.
+
+The complete result is then compiled through the existing native compiler.
+Its source sum and Boolean coordinates allocate ordinary definition occurrences;
+they are erased by the structural compilation and do not select primitive
+truth branches. The result contains exactly the two copied definition families
+and the two new entries. Its maps are injective and the families and entries
+are disjoint. One finite compiled package works for all future arguments,
+with exact source call boundaries and exact historical output equations.
+
+This is a family of actual finite constructions, one for each supplied old
+program and other program. It is not yet a single generic native interpreter
+taking an arbitrary program as argument. No universal truth-equivalence
+decision procedure is assumed. The all-argument contracts follow from the
+explicit interface clauses, actual old callees, locality, and compilation,
+rather than a supplied interpretation or adequacy callback.
+
+Another exact bridge interprets the previous bridge's selected entries.
+The complete earlier query is retained as that call's ordinary argument.
+The resulting nested query preserves both old formation and old truth, with
+no change to the original argument or literal identities. This provides the
+exact composition step for retaining an older chain when later definitions
+use their own sites.
+
+The old scope quotation and bridge entries are not yet bound into the accepted
+transition envelope. Native checking must also admit an actual finite
+correctness certificate for the supported bridge class, while more general
+bridges may require other sound certificates. These results establish a
+sufficient construction and its exact semantics; they neither impose copying
+on every possible successor nor establish successor authority, complete
+protocol adequacy, or genesis.

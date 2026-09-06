@@ -255,8 +255,25 @@ old program and minimal call scope. A strict successor with an unchanged
 singleton program has actual complete preserving reports inside all these
 jointly constructed components. Its generation and publication snapshot change.
 The ordinary example policy remains permissive; native admission of the full
-grammar and semantic obligations, migration evidence, exact cross-version
-interpretation, and genesis adequacy remain open.
+grammar and semantic obligations, migration evidence, admission and retention
+of the historical interpretation bridge, and genesis adequacy remain open.
+
+A historical bridge now has an actual finite native construction for every
+closed old program and any supplied formed other program. Complete separated
+copies retain both programs' original application boundaries and meanings.
+Two ordinary entries expose the old formation relation and old truth through
+queries containing the original definition coordinates and entire argument.
+Every old definition contributes its exact interface and a fixed-callee clause;
+all future arguments are covered by the same compiled program. The complete
+output equations reject unrelated query shapes and unknown old coordinates.
+
+The original complete environment and program site have an exact scope
+quotation. This retains the historical context independently of the relocated
+implementation. Literal artifact operands stay exact. Through a later bridge,
+the whole earlier query becomes ordinary argument data and has the same
+historical meaning. The construction supplies a sufficient bridge class;
+its quotation and entries still need binding into accepted transition material,
+and native admission of arbitrary submitted bridges remains separate work.
 
 The program and call determine a least closed environment independently of
 proof retention, preserving their readings, truth, and exact program environment.

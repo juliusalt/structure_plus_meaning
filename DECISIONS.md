@@ -1315,7 +1315,27 @@ retain the meaning boundary; the publication retains its own environment and
 site. The locus is recovered from the selected core. Cause validity, evidence,
 and derivation are absent from the raw authority layer's imports and judgments.
 Policy-admission evidence checking and the separate certified joins remain
-higher obligations. Concrete independence witnesses remain to be supplied.
+higher obligations.
+
+The general native compiler preserves this policy admission as well as the
+ordinary formation and truth boundaries for every future argument. Its finite
+closed package stays fixed when actual future calls are added; all existing
+artifacts and bindings stay fixed too. Two premise-free ordinary programs have
+broad interfaces and respectively accept or refuse every complete adoption
+argument. A third inspects the exact optional occurrence coordinate of the
+purpose. That parameter is ordinary explicit policy data, with no privileged
+coordinate. All artifact and generation collection presentations have the same
+formation and truth.
+
+Actual native applications now exhibit adoption of a generation with an
+invalid recorded cause and refusal of an actual certified base generation.
+Both kinds of application are formed, and refusal uses a policy whose
+presentation invariance is proved. The identical authority, generation, and
+purpose can receive opposite decisions under these supplied programs. Cause
+and certificate imports enter only the independence theory above the policy
+layer. This proves that exact subject equality has no program-independent
+adoption force; authorization of cross-foundation interpretations still needs
+its own explicit transition judgment.
 
 These representations supply inspectable data for later judgments. They do
 not validate causes or selected evidence, recognize currentness, or authorize

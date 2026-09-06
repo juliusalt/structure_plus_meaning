@@ -99,8 +99,11 @@ authority, generation, and purpose data, with formation and truth invariant
 across every complete presentation. Currentness additionally requires the
 generation selected at its locus in an exact closed publication scope.
 The raw authority layer imports no evidence, derivation, or replay theory.
-Its concrete independence examples and native admission-evidence checking
-remain open.
+A fixed closed compilation preserves every future adoption argument. Ordinary
+native policies accept, refuse, or inspect an exact purpose coordinate while
+ignoring collection presentation order. Actual formed applications exhibit
+adoption of an invalid cause and refusal of a certified base cause. Native
+admission-evidence checking and cross-foundation authorization remain open.
 The program and call determine a least closed environment independently of
 proof retention, preserving their readings, truth, and exact program environment.
 Complete finite representations now preserve exact artifact, environment, target,

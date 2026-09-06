@@ -241,3 +241,6 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Publication_Scopes
     Factor_Adoption_Values
     Factor_Authority
+    Factor_Native_Authority
+    Factor_Authority_Programs
+    Factor_Authority_Independence

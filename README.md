@@ -255,8 +255,8 @@ old program and minimal call scope. A strict successor with an unchanged
 singleton program has actual complete preserving reports inside all these
 jointly constructed components. Its generation and publication snapshot change.
 The ordinary example policy remains permissive; native admission of the full
-grammar and semantic obligations, migration evidence, admission and retention
-of the historical interpretation bridge, and genesis adequacy remain open.
+grammar and semantic obligations, migration evidence, native admission of
+the historical interpretation bridge, and genesis adequacy remain open.
 
 A historical bridge now has an actual finite native construction for every
 closed old program and any supplied formed other program. Complete separated
@@ -271,9 +271,23 @@ The original complete environment and program site have an exact scope
 quotation. This retains the historical context independently of the relocated
 implementation. Literal artifact operands stay exact. Through a later bridge,
 the whole earlier query becomes ordinary argument data and has the same
-historical meaning. The construction supplies a sufficient bridge class;
-its quotation and entries still need binding into accepted transition material,
-and native admission of arbitrary submitted bridges remains separate work.
+historical meaning. The construction supplies a sufficient bridge class.
+
+The accepted comparison material now retains the two historical entry roles
+and further complete supporting material. The original current frame fixes the
+old context, and the candidate payload fixes the new context. Neither program
+scope is duplicated in this value. Both entries must belong to the actual
+candidate program; the whole accepted subject uniquely fixes them and the
+remaining material. Its exact old formation and truth equations cover every
+call, including definitions outside the comparison domain.
+
+The finite interpreter and value can be constructed before a candidate's
+history or cause. Given independently established comparison reports and
+interpretation, their combined retention through assembly, dependencies,
+continuation, and acceptance is total under the displayed permissive policy.
+The original acceptance record preserves the old program and minimal call
+scope. A changed-candidate joint witness from syntax, native correctness
+admission, migration, and full protocol and genesis adequacy remain.
 
 The program and call determine a least closed environment independently of
 proof retention, preserving their readings, truth, and exact program environment.

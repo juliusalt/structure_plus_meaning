@@ -1,7 +1,7 @@
 {
-  "invocation": "a58398c2-ab91-4738-b646-6e593a7260b7",
+  "invocation": "1d522ac8-c726-4381-ad7b-2d7e183570fe",
   "status": "accepted",
-  "started_utc": "2026-09-06T18:38:13.996646+00:00",
+  "started_utc": "2026-09-06T19:13:46.102690+00:00",
   "command": [
     "isabelle",
     "build",
@@ -17,7 +17,7 @@
   "exit_code": 0,
   "session_diagnostics": "",
   "sources": {
-    "ROOT": "a719b2a88ae93e236c12b2152bf624098e4687481a26d3794b1b85c8a801d512",
+    "ROOT": "be1fa81fe853b426d97c7fd9b588092392f3f07722d702a8d4a8e1ace971ce21",
     "theories/Bootstrap_Finite_Closure.thy": "cbff1345a5a97a8108f2022d99345a7423e93cccc01580929d4054f42a5e031c",
     "theories/Bootstrap_Relations.thy": "82069762267d503d339290507262bc7f905543966f56a0601e30bd1c7b04184f",
     "theories/Factor_Adoption_Values.thy": "78990f18a78d11a363a26c5979106c2dcb5bf9125f01448bb3086045bffad6bd",
@@ -26,6 +26,7 @@
     "theories/Factor_Amendment_Comparisons.thy": "8b60c0363575bf2ab3aba718c78c03f487d4d863902c096b49777de5af468158",
     "theories/Factor_Amendment_Dependencies.thy": "6361ca3f12668362819b68cb4698137e057301a716169c34bf21e0efe70edf16",
     "theories/Factor_Amendment_Domains.thy": "e541ce1f3d66af8e497ff84a7178a67054688cd2f529a98360b0a29d07e59bdc",
+    "theories/Factor_Amendment_Interpretations.thy": "926f48337d1e24605aee8031f9a44637a7e34fe07eb3277832696320b27f27b1",
     "theories/Factor_Amendment_Programs.thy": "9b3390634714e6f3721075db7dac2ed085bc0a56d6cf6a50725227c4fb54177b",
     "theories/Factor_Amendment_Reports.thy": "79744d17ca16c079798cf55afab9d3d04fb673cb7195c0485314bbe5a3672fad",
     "theories/Factor_Amendment_Values.thy": "e79106886b06af0a4c733a4c40f34a53e2fb16c131af8c431d835ce7dbdbf651",
@@ -146,11 +147,13 @@
     "theories/Factor_Graph_Metadata.thy": "252169eada393d036880b7e44f4fa81be31d42d9019e6eed4ea5e931e8f2d57f",
     "theories/Factor_Graph_Renaming.thy": "f15e677989cbc3cd33bd8e8e61696ccc10c7c57df994e6425755ba71e556f56a",
     "theories/Factor_Graph_Transport.thy": "e6d087a5f0cc7193b22bf25be35a64ba8d97ff46855a6f54d6d57eac801e378f",
-    "theories/Factor_Historical_Programs.thy": "4910ffded1758aeee8ee65a02c9a5c37b5d1b44d7ae24359d672aa415228db67",
+    "theories/Factor_Historical_Programs.thy": "8df5d5df43dc6ebf191cfd2d88edaf5f0f67712e80e63e441e9f724a35fdc6c7",
     "theories/Factor_Historical_Views.thy": "5d6ea17e64e3a95f685186ce229c77bf8baab12c0f9908e340ff380b6cbb9831",
     "theories/Factor_Incidence_Queries.thy": "96345d9f6ce65051b872c7d5fe1ddc39a6e03afae3ae649e9d00ddaf3f65ec60",
     "theories/Factor_Interface_Construction.thy": "c15bb382831763ad98b7a5b1246b253bff3d00b6dce568afb6aa59a2fadd374a",
     "theories/Factor_Interfaces.thy": "ade10a58a6a92741255d0a77e30b0a25d592749e632a28ea13ae86c0e646c1b8",
+    "theories/Factor_Interpretation_Retention.thy": "b2b2c4c211800a6a972e4011dd48d1d4f7bb341fa6660655775b762feb41b793",
+    "theories/Factor_Interpretation_Support.thy": "26ba85e9b16a3f45e4949530ffa7943fd14e4a0a291a6769dee8cef3173ffa13",
     "theories/Factor_Judgment_Retention.thy": "6f0f5757ec7458dc73a8d8be8c1efa773c5ee209338106a0d8729161c0ff670e",
     "theories/Factor_Judgment_Scopes.thy": "832d6f7b17aaa38a0b2230a899de420a1a7d5dd43e4e0a45ac8983f057c1288f",
     "theories/Factor_Judgment_Values.thy": "c120f55e3bd7ce0e198c6f76689293d2b40d841adc0b323bcf2d4f151aafe00c",
@@ -281,6 +284,7 @@
     "theories/Factor_Transition_Construction_Examples.thy": "eeda6d821196f74092c29c9c97c2f0eae35cb9785495a06e9dd7c87ac29b412c",
     "theories/Factor_Transition_Dependencies.thy": "40f8c981b20d34f1d1f0bb9e6412581edf97d7097cc02e821a5bdcfb8967854f",
     "theories/Factor_Transition_Examples.thy": "a835cf745374ae0d8dffd0edd8737f972b7bc995d6029d88a79daa8d52b84fb0",
+    "theories/Factor_Transition_Interpretations.thy": "a879077744b50711a08c7efc5229d5d8ec868c4b1414bded13bdbfd36c83e8ac",
     "theories/Factor_Transition_Selection.thy": "782468a681871fa8d5f040d4008487993d3311185e4f03c8b75da814faf5370c",
     "theories/Factor_Transition_Values.thy": "20b5c4d6464477f1a58bd45eb67b38fd5fddbc2661148b62697f201618ce552f",
     "theories/Factor_View_Definitions.thy": "480c9c98efb9cd386f73520dcc22768d2063fe668fd7d409c797ba68d2f6af8b",
@@ -358,6 +362,6 @@
   "isabelle_version": "Isabelle2025-2",
   "sources_unchanged": true,
   "tools_unchanged": true,
-  "finished_utc": "2026-09-06T18:39:16.150902+00:00",
-  "log_sha256": "8be8473c1d323b1a886a62a1c3c9cb7f0515484776c2d45b5a14f2ef8ca389d3"
+  "finished_utc": "2026-09-06T19:14:49.630862+00:00",
+  "log_sha256": "7feacfbc075ad4a85733657d3c9bec44ce80a1b0dc53c519a320c99290de9a82"
 }

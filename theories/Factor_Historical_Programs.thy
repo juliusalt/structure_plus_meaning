@@ -294,8 +294,9 @@ text \<open>
   The contract does not itself check a submitted program by native rules.
   The construction supplies one sufficient class of exact bridges; it imposes
   no global rule that every possible successor must be a syntactic copy.
-  Binding this material into accepted transitions, finite native admission of
-  its correctness, and the complete genesis mechanism remain separate work.
+  Later interpretation-support theories bind its entries into accepted
+  transitions. Finite native admission of its correctness and the complete
+  genesis mechanism remain separate work.
 \<close>
 
 end

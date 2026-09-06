@@ -2510,10 +2510,57 @@ no change to the original argument or literal identities. This provides the
 exact composition step for retaining an older chain when later definitions
 use their own sites.
 
-The old scope quotation and bridge entries are not yet bound into the accepted
-transition envelope. Native checking must also admit an actual finite
-correctness certificate for the supported bridge class, while more general
-bridges may require other sound certificates. These results establish a
-sufficient construction and its exact semantics; they neither impose copying
-on every possible successor nor establish successor authority, complete
-protocol adequacy, or genesis.
+The construction establishes one sufficient class of exact bridges and its
+semantics. It neither imposes copying on every successor nor establishes
+successor authority, complete protocol adequacy, or genesis. The following
+component binds its selected entries into the accepted transition. Native
+checking must still admit finite correctness evidence for this or another
+supported bridge class.
+
+## Historical entry selection reuses the exact retained scopes
+
+The current frame already fixes the old program's complete exact environment
+and package site. The candidate payload fixes its own complete exact program
+scope. The interpretation value therefore retains only two coordinates in
+that candidate scope, followed by one complete remaining environment and its
+actual selected site. Repeating either program or either scope would create
+a second field for a boundary already determined by the accepted subject.
+
+The two coordinates use the existing ordinary site-data representation. Their
+positions identify the formation and truth roles within this profile; no new
+name, role token, or primitive operation is added. The value admits coincident
+coordinates. The higher interpretation contract permits that coincidence only
+when one actual entry has both required meanings. Raw coordinate formation
+neither asserts candidate membership nor proves semantic correctness.
+
+The semantic profile recovers both exact scopes and checks the two selected
+entries in the actual candidate program. Its old domain is every definition
+and every admitted argument of the old program. Neither the comparison
+correspondence nor a selected public-root list can shrink that domain. The
+formation query and truth query remain separate, and both complete output
+equations exclude unknown old coordinates and unrelated query shapes.
+
+The value occupies the remaining scope inside comparison support. That value
+is already inside dependency support, assembly support, the continuation
+material, and the whole accepted envelope. Uniqueness composes through every
+layer, fixing both interpreter entries and all remaining fields while the
+accepted subject is fixed. All earlier transition components remain required.
+The predecessor's exact acceptance program and minimal call environment remain
+the ones retained by the final proof. Candidate interpreter clauses are
+ordinary submitted data for that acceptance; they cannot authorize adoption.
+
+For every actual current program and supplied formed other program, the
+historical construction now also supplies this finite value. Its full maps,
+disjointness, definition boundary, and preservation of both source programs
+remain in the result. The program and value precede the candidate's history,
+cause, and adoption presentation, so they can be placed in future supporting
+material without a circular quotation of the final accepted envelope.
+
+A separate retention theorem constructs the complete combined supporting
+material given the actual candidate, successful selection, assembly account,
+and independently established comparison and interpretation. Its predecessor
+policy is explicitly permissive. The theorem does not infer either semantic
+obligation from permission, and its conditional statement is not a joint
+construction of those obligations from syntax. Such a changed-candidate
+witness, native finite correctness admission, migration evidence, the full
+internal protocol, and genesis adequacy remain required.

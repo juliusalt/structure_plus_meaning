@@ -1,7 +1,7 @@
 {
-  "invocation": "ddd13c07-31ee-4e24-83a8-f6c8b96e6be3",
+  "invocation": "11d7131f-25a7-4cec-a726-299237b194ce",
   "status": "accepted",
-  "started_utc": "2026-09-06T13:13:19.526120+00:00",
+  "started_utc": "2026-09-06T13:59:58.404602+00:00",
   "command": [
     "isabelle",
     "build",
@@ -17,7 +17,7 @@
   "exit_code": 0,
   "session_diagnostics": "",
   "sources": {
-    "ROOT": "adf37dd8b7d4a930667c3c5eec16dc3fa62cdaf82a27687948f2b7533bb5de14",
+    "ROOT": "701713ac9b5966cb8cef1f72a521aa83c3dd41e7d914db0160887947f1b3cdaf",
     "theories/Bootstrap_Finite_Closure.thy": "cbff1345a5a97a8108f2022d99345a7423e93cccc01580929d4054f42a5e031c",
     "theories/Bootstrap_Relations.thy": "82069762267d503d339290507262bc7f905543966f56a0601e30bd1c7b04184f",
     "theories/Factor_Adoption_Values.thy": "78990f18a78d11a363a26c5979106c2dcb5bf9125f01448bb3086045bffad6bd",
@@ -25,6 +25,7 @@
     "theories/Factor_Amendment.thy": "0fa9423c651001c8d2fba60775bddbe2d2b859cb1c5c3fb00ace72f688cc44f7",
     "theories/Factor_Amendment_Domains.thy": "e541ce1f3d66af8e497ff84a7178a67054688cd2f529a98360b0a29d07e59bdc",
     "theories/Factor_Amendment_Programs.thy": "9b3390634714e6f3721075db7dac2ed085bc0a56d6cf6a50725227c4fb54177b",
+    "theories/Factor_Amendment_Reports.thy": "79744d17ca16c079798cf55afab9d3d04fb673cb7195c0485314bbe5a3672fad",
     "theories/Factor_Amendment_Values.thy": "e79106886b06af0a4c733a4c40f34a53e2fb16c131af8c431d835ce7dbdbf651",
     "theories/Factor_Application_Encoding.thy": "4bc0d06a039748d390bf7c268b7f4060487d59cb86548c045014e87583781506",
     "theories/Factor_Application_Retention.thy": "20dbd8fef67a813262ca8559d6ee1f1dddb0d66548d3829c5fc4c821c0fa5885",
@@ -47,6 +48,7 @@
     "theories/Factor_Certified_Continuation.thy": "70f491ac7affdc91459c13889fbf8601e235408ed0c6601c94edc0c8658704bc",
     "theories/Factor_Certified_Recorded_Cause.thy": "8ec56e429b2592a81cfb063acad817460f63eb2f008e5665b97dd37c0f01710a",
     "theories/Factor_Cloned_Transport.thy": "529d9509300946f6486eee9a7756f3e83d8d499483a298ab17acf77f15376022",
+    "theories/Factor_Comparison_Reports.thy": "0e626f396e32c6bd0329f0eb5aa0933b8c6b84440ab61ebd19951f54068b17d2",
     "theories/Factor_Compiled_Applications.thy": "d6725662d6c13c33d4acc395e63ffe424dab104f6b025d8faa7916532f5b504c",
     "theories/Factor_Complete_Data_Quotation.thy": "b9c7b7b6edd7c1d081182bba218173cf7c56059b6d8e77512b936d69a4b425be",
     "theories/Factor_Construction.thy": "67e371fe66fb56aef0af64507a32a99eb2be3b2ee964283742c1a01c982a73e9",
@@ -62,6 +64,7 @@
     "theories/Factor_Continuation_Values.thy": "f19f352b15646333682514102f8e526f6d6f13b16360c9678813b4b5aa9bfa04",
     "theories/Factor_Coordinate_Admission.thy": "6808b17c388f86dcb4b849bd05c2f6d403b04adc53e3280161103966c491303e",
     "theories/Factor_Coordinate_Values.thy": "22a0334ff6178e1d06c8319abe8a70506847294495efa85e03c8dea2bebe8787",
+    "theories/Factor_Correspondence_Reports.thy": "3bf40704b6a36fbed61efd93ff6a51f2d23a01505153ed1993949b9134cf323c",
     "theories/Factor_Current_Entries.thy": "edc6b379dff90329fb27c5aadc0d67a3ab3e87606340cabc2fa3e8a8e529a165",
     "theories/Factor_Current_Entry_Construction.thy": "cc940b2e01678d9a4aaaff8ece1087b7561305aa050d7d2d0ffc69249ad10e1c",
     "theories/Factor_Current_Programs.thy": "8ae127739e77702316de741061333441de7149c6c8fefe69e951d219cc5fb649",
@@ -203,6 +206,9 @@
     "theories/Factor_Related_Bags.thy": "6c3ff28f65be7cb0e70241eabb5f8de3fb3ae8dc58c4607b1c93e233a1188da7",
     "theories/Factor_Replay.thy": "682acaef0a78f8b85a5103bfaff3b21196d7b206785e09f0e2512bda596e16f1",
     "theories/Factor_Replay_Retention.thy": "31972049d4f5529c780b66ec5c212bbc6121d44d5f084f7325ecf7c8d7e4433a",
+    "theories/Factor_Report_Examples.thy": "2ab9fb421b3787afab94daa5894025ca669752f5b6aaaaa1f19f5ad865fc6492",
+    "theories/Factor_Report_Patterns.thy": "e452972030574d4896d635b822c478413f9980a601c469750987613983cfc29a",
+    "theories/Factor_Report_Programs.thy": "b65db56ec573f77002d39e746a04176e3ff1f2f7a275f3172766c2573caf88b7",
     "theories/Factor_Resource_Sensitivity.thy": "c7c4bce7804e9498232d466806371a11cb6ed3d753f459ade46baf5a588e302c",
     "theories/Factor_Root_Environments.thy": "f90300e5bd6be505a775eec31772438b262b2f8bbec804469d741d106516be74",
     "theories/Factor_Root_Syntax.thy": "f3f7e62dedd688dba8864346eef2bd8c975f1594f13ec8ddd1eaf9ceb07c4dd7",
@@ -311,6 +317,6 @@
   "isabelle_version": "Isabelle2025-2",
   "sources_unchanged": true,
   "tools_unchanged": true,
-  "finished_utc": "2026-09-06T13:14:18.384449+00:00",
-  "log_sha256": "44920b04c92ca85d217a0c2cf7b230e4e8a04759a123ed5fbc909cddf076dbbb"
+  "finished_utc": "2026-09-06T14:00:58.273965+00:00",
+  "log_sha256": "de0209723ff3a30a073b770cc6b67e5a1791717b9e222d28b0fff49b9cc17092"
 }

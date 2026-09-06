@@ -2022,3 +2022,67 @@ including the interaction of preservation and intentional incompatibility.
 Migration, interpretation, preservation, and incompatibility are not made into
 a partition here. The predecessor's policy must still check their actual
 material, continuation, interpretation bridge, and successor authority decision.
+
+## Complete reporting is distinct from universal preservation
+
+The required comparison domains remain those recovered from the actual current
+frame and candidate program. The structural reporting domain consists of their
+required definition sites. The judgment reporting domain consists of every call
+admitted at those sites, including every future argument. A certificate cannot
+supply either domain or silently omit an endpoint.
+
+A correspondence contains its actual pairs and an explicit missing-counterpart
+row for each endpoint with no declared partner. These rows are present exactly
+at those endpoints. They assert absence in the submitted correspondence, not
+impossibility of every other correspondence. Both domains are recovered again
+from complete rows. Structural correspondence is a declaration of migration;
+coverage alone proves neither an admissible assembly nor semantic preservation.
+
+Judgment reports contain one pair of optional endpoints and two separate
+declaration flags. Interpretation is the projection of paired endpoints.
+Preservation and intentional incompatibility are separately recovered from the
+flags. Every required call appears in a report, and every report contains both
+fields. Thus declaring no preservation still requires a complete explicit
+account. Requiring the positive preservation relation itself to cover every
+required call would rule out the intentional incompatibility allowed by D-9.
+The complete reporting obligation is fixed; the positive extension of each
+declared relation may differ.
+
+False means that this report makes no declaration of that kind. It does not
+prove inequality, failure of interpretation, or a negative semantic judgment.
+A preservation claim must relate two formed calls with equal independently
+defined positive truth. An absent counterpart must declare intentional
+incompatibility. A paired interpretation may make neither further declaration.
+The profile imposes no four-way partition or disjointness rule. An intentional
+incompatibility declaration is not a proof that the two meanings differ;
+a predecessor policy may impose additional requirements on such declarations.
+
+This is an explicit representation choice for the comparison profile. The two
+flags state separate claims without storing the judgment pair a second time.
+They are represented with existing payload-and-pair data. Definition coordinates
+remain relative to their two exact comparison scopes. Equal coordinates across
+those scopes do not establish exact artifact or environment identity.
+
+A finite ordinary program may describe an infinite judgment-report relation.
+The mathematical set is a derived meaning, not an infinite stored certificate
+field or an external truth callback. A no-extra condition requires every positive
+output at the report entry to have the complete report form. Domain coverage
+then rejects unformed or out-of-bound endpoints. Native compilation preserves
+all reports and this no-extra property for all future inputs.
+
+One ordinary pattern with a shared variable covers every formed argument at its
+paired endpoints. Either endpoint may instead be explicitly absent. The whole
+positive relation is proved from ordinary rules and has one closed native
+compilation. Complete comparisons between opposite constant policies fail when
+preservation is claimed and pass with declared incompatibility. A unilateral
+report covers every old call with an explicit missing counterpart. An actual
+current native singleton scope also has a separate complete native reporter
+preserving all its calls. That witness compares the same generation on both
+sides; it does not claim adoption of a new successor or validity of its cause.
+
+The reporter describes comparison material. Supplying it does not install its
+clauses in the predecessor's acceptance package. Its full native data
+representation, internal admission of coverage and preservation evidence,
+migration evidence, the cross-version bridge, predecessor continuation, and
+successor adoption still need the remaining joins. Later accepted policies may
+change this profile; it is not an immutable restriction on every successor.

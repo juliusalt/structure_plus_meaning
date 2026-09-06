@@ -150,6 +150,19 @@ outside the affected boundary preserve formation and truth. A concrete example
 shows why unchanged callers must be included when a callee changes. These domain
 results precede the certificate relations and do not authorize a transition.
 
+Comparison reports now account for every required structural endpoint and every
+admitted call. A missing counterpart is explicit. Each judgment correspondence
+carries independent preservation and intentional-incompatibility declarations;
+declining a declaration proves no negative semantic fact. Preservation requires
+equal positive truth at the related calls. Finite ordinary reporting programs
+can describe infinite call relations, with a separate condition accounting for
+every positive output. Paired and unilateral patterns have exact meanings and
+one closed native compilation for all future terms. An actual current native scope
+has complete preserving reports; corresponding opposite truth policies
+fail a preservation claim. The current frame and candidate fix the domains
+before the reporting program is supplied. Complete certificate grammar, native
+admission, migration evidence, and the succession joins remain open.
+
 The program and call determine a least closed environment independently of
 proof retention, preserving their readings, truth, and exact program environment.
 Complete finite representations now preserve exact artifact, environment, target,

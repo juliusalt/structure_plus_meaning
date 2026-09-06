@@ -288,3 +288,9 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Program_Changes
     Factor_Amendment_Domains
     Factor_Program_Change_Examples
+    Factor_Correspondence_Reports
+    Factor_Comparison_Reports
+    Factor_Report_Programs
+    Factor_Report_Patterns
+    Factor_Amendment_Reports
+    Factor_Report_Examples

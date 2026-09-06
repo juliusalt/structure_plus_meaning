@@ -1770,8 +1770,8 @@ its artifact-presentation premises explicitly.
 All earlier interfaces and meanings remain fixed through the fresh definition
 extensions. Native compilation relocates their coordinates and fixes one
 closed program for every future argument in each stated comparison domain.
-Comparison of recursively presented environments and generations, general
-native checking, reflection, and amendment remain to be completed.
+Comparison of generations, general native checking, reflection, and amendment
+remain to be completed. Environment comparison is derived below.
 
 ## Artifact admission derives from complete observed material
 
@@ -1807,9 +1807,54 @@ cannot pass this admission boundary. Admission concerns the entire submitted
 value; recovery of a particular supplied source uses the separate source-to-data
 relation. Different complete enumeration orders remain admissible.
 
-The final finite system has thirteen definitions and twenty-six clauses.
+The artifact-admission system has thirteen definitions and twenty-six clauses.
 Native compilation gives one closed package with distinct admission and
 identity sites, both serving every future formed argument while preserving
 the canonical program environment. This closes artifact-data admission as a
 component of native checking. It does not close native grammar admission,
 derivation checking, reflection, policy-admission evidence, or amendment.
+
+## Environment comparison calls the existing artifact identity definition
+
+A complete environment presentation contains a finite collection of
+artifact-use rows and a finite binding relation. The same artifact can have
+different valid data presentations, so exact term equality cannot compare
+its rows. Each new row comparison shares one exact use-coordinate variable
+and calls the existing admitted artifact equality definition on the two
+values. The use-data encoding is injective over all option-valued natural
+words; it imposes no byte restriction on use coordinates.
+
+The collection program selects one entry through that actual comparison
+definition, retains the checked residual, and recurses on the other list.
+Its exact meaning matches every occurrence through the callee's independently
+defined positive meaning. The proof covers every term and all possible
+selection positions. The skip and recursive-step schemas are shared with
+the earlier exact bag program, whose formation and meaning theorems remain
+unchanged.
+
+The general proof is relative to a formed program with the displayed complete
+clause families and explicit data boundaries. It does not require the
+comparison definition to be outside the program's positive dependency cycle.
+This permits later applications to recursively presented subjects without
+adding a host comparison callback. A proof-local decoder establishes that
+exact comparison of subjects lifts to exact comparison of their complete
+finite collection presentations; the decoder supplies no program operation.
+
+The binding field uses the earlier exact bag comparison. Injectivity of its
+source-use, original-slot, and target-use encoding, together with complete
+distinct-entry presentations, recovers equality of the entire binding
+relation. Binding cycles require no expansion of the use graph. The new
+environment theorem therefore gives exact environment identity across every
+complete presentation order and every valid child-artifact presentation.
+
+The chosen scope keeps environment admission explicit. The comparison itself
+does not enforce single-valued artifact and binding tables, binding-source
+slot membership, or target-use existence. These are premises of the current
+environment presentation relation and remain to be derived by a separate
+native admission definition. The raw comparison equation records exactly
+what its existing clauses accept.
+
+All earlier interfaces and meanings are preserved. The complete environment
+comparison program has seventeen definitions and thirty-two clauses. Native
+compilation fixes one closed program before all future environment operands
+and preserves its canonical program environment in every actual application.

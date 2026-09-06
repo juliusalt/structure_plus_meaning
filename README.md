@@ -266,8 +266,17 @@ converter recovers occurrence addresses from the complete carrier list and
 preserves payloads and pairs. A fresh equality definition requires admission of
 both operands, giving an exact contract over every input term. One closed native
 program supplies distinct admission and equality sites for all future formed
-arguments. Comparisons of other recursively presented subjects, general native
-checking, reflection, and amendment remain separate work.
+arguments.
+
+Complete environment presentations are now compared through ordinary rules as
+well. Artifact-use rows share an exact use coordinate and call admitted
+artifact equality on their values. A collection rule matches every occurrence
+through that fixed callee, covering different valid child presentations.
+Binding rows retain exact source, slot, and target coordinates. The resulting
+program proves environment identity across all formed presentations and has
+one closed native compilation for future operands. Native admission of the
+environment formation laws, comparison of generations, general native checking,
+reflection, and amendment remain separate work.
 
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed

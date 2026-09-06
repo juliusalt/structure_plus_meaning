@@ -254,6 +254,15 @@ lemma data_collection_presents_map:
   by (rule exI[of _ xs], rule exI[of _ "map f xs"])
      (use assms in \<open>simp add: list_all2_map2 list_all2_same\<close>)
 
+lemma data_collection_presents_function:
+  "data_collection_presents (\<lambda>a u. u=f a) A t \<longleftrightarrow>
+    (\<exists>xs. distinct xs \<and> set xs=A \<and> t=data_list_term (map f xs))"
+proof -
+  have related: "list_all2 (\<lambda>a u. u=f a) xs ts \<longleftrightarrow> ts=map f xs" for xs ts
+    by (induction xs arbitrary: ts) (auto simp: list_all2_Cons1)
+  show ?thesis by (simp add: data_collection_presents_def related)
+qed
+
 lemma data_collection_presents_total:
   assumes fin: "finite A" and each: "\<forall>a\<in>A. \<exists>t. read a t"
   shows "\<exists>t. data_collection_presents read A t"

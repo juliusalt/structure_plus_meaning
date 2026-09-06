@@ -24,10 +24,13 @@ definition data_selection_here_schema :: "(nat,nat,nat) factor_schema" where
     (Pattern_Pair data_x (Pattern_Pair (Pattern_Pair data_x data_y) data_y))
     {(0,2,data_x),(1,4,data_y)}"
 
-definition data_selection_later_schema :: "(nat,nat,nat) factor_schema" where
-  "data_selection_later_schema=data_rule
+definition selection_later_schema :: "nat \<Rightarrow> nat \<Rightarrow> (nat,nat,nat) factor_schema" where
+  "selection_later_schema data select=data_rule
     (Pattern_Pair data_x (Pattern_Pair (Pattern_Pair data_z data_y) (Pattern_Pair data_z data_w)))
-    {(0,2,data_z),(1,5,Pattern_Pair data_x (Pattern_Pair data_y data_w))}"
+    {(0,data,data_z),(1,select,Pattern_Pair data_x (Pattern_Pair data_y data_w))}"
+
+definition data_selection_later_schema :: "(nat,nat,nat) factor_schema" where
+  "data_selection_later_schema=selection_later_schema 2 5"
 
 definition data_selection_clauses :: "(nat \<times> (nat,nat,nat) factor_schema) set" where
   "data_selection_clauses={(0,data_selection_here_schema),(1,data_selection_later_schema)}"
@@ -38,10 +41,13 @@ definition data_selection_system :: "(nat,nat,nat,nat) schema_system" where
 definition bag_nil_schema :: "(nat,nat,nat) factor_schema" where
   "bag_nil_schema=data_rule (Pattern_Pair (Pattern_Payload []) (Pattern_Payload [])) {}"
 
+definition bag_step_schema :: "nat \<Rightarrow> nat \<Rightarrow> (nat,nat,nat) factor_schema" where
+  "bag_step_schema select bag=data_rule (Pattern_Pair (Pattern_Pair data_x data_y) data_z)
+    {(0,select,Pattern_Pair data_x (Pattern_Pair data_z data_w)),
+     (1,bag,Pattern_Pair data_y data_w)}"
+
 definition bag_cons_schema :: "(nat,nat,nat) factor_schema" where
-  "bag_cons_schema=data_rule (Pattern_Pair (Pattern_Pair data_x data_y) data_z)
-    {(0,5,Pattern_Pair data_x (Pattern_Pair data_z data_w)),
-     (1,6,Pattern_Pair data_y data_w)}"
+  "bag_cons_schema=bag_step_schema 5 6"
 
 definition bag_comparison_clauses :: "(nat \<times> (nat,nat,nat) factor_schema) set" where
   "bag_comparison_clauses={(0,bag_nil_schema),(1,bag_cons_schema)}"
@@ -50,8 +56,8 @@ definition bag_comparison_system :: "(nat,nat,nat,nat) schema_system" where
   "bag_comparison_system=add_view_definition data_selection_system 6 data_x bag_comparison_clauses"
 
 lemmas data_list_schema_defs = data_list_nil_schema_def data_list_cons_schema_def
-lemmas data_selection_schema_defs = data_selection_here_schema_def data_selection_later_schema_def
-lemmas bag_schema_defs = bag_nil_schema_def bag_cons_schema_def
+lemmas data_selection_schema_defs = data_selection_here_schema_def data_selection_later_schema_def selection_later_schema_def
+lemmas bag_schema_defs = bag_nil_schema_def bag_cons_schema_def bag_step_schema_def
 lemmas bag_system_defs = bag_comparison_system_def data_selection_system_def data_list_system_def
 
 lemma data_list_system_formed [simp]: "schema_system_formed data_list_system"
@@ -267,13 +273,13 @@ proof -
         assume schema: "S=data_selection_later_schema"
         have skipped: "term_formed (f 2) \<and> self_contained_term (f 2)"
           using support schema bag_comparison_recognizes[of "f 2"]
-          by (auto simp: data_selection_later_schema_def)
+          by (auto simp: data_selection_later_schema_def selection_later_schema_def)
         obtain pre post where tail: "f 1=data_list_term (pre@f 0#post)"
           "f 3=data_list_term (pre@post)" "data_elements (pre@f 0#post)"
           using support[rule_format, of 1 5 "Pattern_Pair data_x (Pattern_Pair data_y data_w)"] schema
-          by (auto simp: data_selection_later_schema_def)
+          by (auto simp: data_selection_later_schema_def selection_later_schema_def)
         show ?thesis by (intro exI[of _ "f 0"] exI[of _ "f 2#pre"] exI[of _ post])
-          (use skipped tail in \<open>simp add: schema data_selection_later_schema_def\<close>)
+          (use skipped tail in \<open>simp add: schema data_selection_later_schema_def selection_later_schema_def\<close>)
       qed
     qed
   qed
@@ -309,9 +315,9 @@ next
   have result: "(5,evaluate_pattern ?f (schema_conclusion data_selection_later_schema))
     \<in>positive_meaning bag_comparison_system"
     by (rule bag_comparison_rule[where c=1])
-      (use Cons.prems skipped tail in \<open>auto simp: data_selection_clauses_def data_selection_later_schema_def
+      (use Cons.prems skipped tail in \<open>auto simp: data_selection_clauses_def data_selection_later_schema_def selection_later_schema_def
         schema_variables_def data_list_term_formed\<close>)
-  show ?case using result by (simp add: data_selection_later_schema_def)
+  show ?case using result by (simp add: data_selection_later_schema_def selection_later_schema_def)
 qed
 
 theorem data_selection_exact:
@@ -361,18 +367,18 @@ proof -
         assume schema: "S=bag_cons_schema"
         have selection: "(5,Pair_Term (f 0) (Pair_Term (f 2) (f 3)))
           \<in>positive_meaning bag_comparison_system"
-          using support schema by (auto simp: bag_cons_schema_def)
+          using support schema by (auto simp: bag_cons_schema_def bag_step_schema_def)
         obtain pre post where selected: "f 2=data_list_term (pre@f 0#post)"
           "f 3=data_list_term (pre@post)" "data_elements (pre@f 0#post)"
           using data_selection_sound[OF selection] by auto
         obtain xs zs where compared: "f 1=data_list_term xs" "f 3=data_list_term zs"
           "data_elements xs" "data_elements zs" "mset xs=mset zs"
           using support[rule_format, of 1 6 "Pattern_Pair data_y data_w"] schema
-          by (auto simp: bag_cons_schema_def)
+          by (auto simp: bag_cons_schema_def bag_step_schema_def)
         have residual: "zs=pre@post" using selected(2) compared(2)
           by (simp add: data_list_term_injective)
         show ?thesis by (intro exI[of _ "f 0#xs"] exI[of _ "pre@f 0#post"])
-          (use selected compared residual in \<open>auto simp: schema bag_cons_schema_def\<close>)
+          (use selected compared residual in \<open>auto simp: schema bag_cons_schema_def bag_step_schema_def\<close>)
       qed
     qed
   qed
@@ -409,8 +415,8 @@ next
     \<in>positive_meaning bag_comparison_system"
     by (rule bag_comparison_rule[where c=1])
       (use Cons.prems(1,2) data selection tail in \<open>auto simp: bag_comparison_clauses_def
-        bag_cons_schema_def schema_variables_def data_list_term_formed\<close>)
-  show ?case using result by (simp add: bag_cons_schema_def)
+        bag_cons_schema_def bag_step_schema_def schema_variables_def data_list_term_formed\<close>)
+  show ?case using result by (simp add: bag_cons_schema_def bag_step_schema_def)
 qed
 
 theorem bag_comparison_exact:

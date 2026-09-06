@@ -244,6 +244,13 @@ callees, shared variables, and complete material premises. Their interfaces and
 meaning are explicit, all old calls and truth remain unchanged, and the views
 have native compilation.
 
+Three ordinary schemas also recognize every finite list of distinct opaque
+payloads. A complete carrier enumeration supplies distinctness, and an ordinary
+recursive definition projects its address fields. Singleton payload recognition
+and two-payload inequality follow, with one closed native program serving every
+future formed argument. This supplies a comparison needed for finite native
+checking without adding a primitive or interpreting payload bytes.
+
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed
 terms, with truth exactly when the two terms agree. Its argument domain and

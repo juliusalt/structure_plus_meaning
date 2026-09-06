@@ -1680,3 +1680,27 @@ and tools, malformed text, unfinished proofs, incomplete inventory, standalone
 builds, interrupt and terminate signals, and child-process cleanup. These are
 checks of validation reporting and execution; the mathematical evidence remains
 the accepted Isabelle theories and their stated assumptions.
+
+## Payload inequality derives from the complete carrier equation
+
+The finite material observation already exposes each exact carrier address as
+an opaque payload alongside its occurrence anchor. Its carrier list has no
+repeated entry. Since the exact address and opaque payload carriers are both
+formed octet words, every finite distinct payload list can be the complete
+carrier of a formed artifact with empty incidence and data.
+
+Factor_Distinct_Payloads expresses this through three ordinary schemas. Two
+recursively project the address fields from a carrier enumeration; the third
+requires that projection and the complete material equation. The independently
+defined positive meaning is exactly every finite list of distinct formed
+payloads. Singleton lists recognize payloads, and two-element lists compare
+them for inequality. A single closed native compilation preserves this meaning
+and its formed-call boundary for every future argument.
+
+The implementation choice is to use that existing capability before extending
+the language or changing the data representation. The witness artifact is an
+ordinary material operand. Its clauses cannot become active definitions, and
+its addresses do not name operations. The projection relation in the comparison
+proof is derived from the displayed program, rather than added to the semantic
+operator. This supplies a component for native checkers; general reflection,
+policy-admission evidence, and foundation amendment remain open.

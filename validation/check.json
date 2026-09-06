@@ -1,15 +1,15 @@
 {
-  "invocation": "20e56396-1cd9-469e-8215-d8a73eefa94a",
+  "invocation": "cc658e8c-b6be-4b25-8339-bef89d3f4511",
   "status": "accepted",
-  "started_utc": "2026-09-06T09:00:40.667192+00:00",
+  "started_utc": "2026-09-06T09:20:32.814713+00:00",
   "exit_code": 0,
   "build_receipt": "validation/build.json",
   "diagnostics_file": "validation/check-errors.log",
   "build_status": "accepted",
   "build_evidence": {
-    "invocation": "20e56396-1cd9-469e-8215-d8a73eefa94a",
+    "invocation": "cc658e8c-b6be-4b25-8339-bef89d3f4511",
     "status": "accepted",
-    "started_utc": "2026-09-06T09:00:40.668787+00:00",
+    "started_utc": "2026-09-06T09:20:32.816233+00:00",
     "command": [
       "isabelle",
       "build",
@@ -25,7 +25,7 @@
     "exit_code": 0,
     "session_diagnostics": "",
     "sources": {
-      "ROOT": "4d6a1942a08a7f09bb95b6a43bca32507594b2cff696c99243d8c5114e15a17e",
+      "ROOT": "ec13570ac8148a3646625f441077edb7bafdddc3e78dd581a284722bacd795ed",
       "theories/Bootstrap_Finite_Closure.thy": "cbff1345a5a97a8108f2022d99345a7423e93cccc01580929d4054f42a5e031c",
       "theories/Bootstrap_Relations.thy": "aaa46e7bc27369e32da5c231a6912981c17da3472114df8c69c3b74ff3236853",
       "theories/Factor_Adoption_Values.thy": "78990f18a78d11a363a26c5979106c2dcb5bf9125f01448bb3086045bffad6bd",
@@ -73,6 +73,7 @@
       "theories/Factor_Derivation.thy": "b2087943967e325ec78ca030fdfcd74df0f1363a4bd071bfffa1d6511a03554a",
       "theories/Factor_Derivation_Graphs.thy": "cb1ef1b6b2997f5d2a6652b1abac272a7a884330e9cf270ec646f205fec204f2",
       "theories/Factor_Derivation_Recovery.thy": "166aa5fb879a49ad58caff3883ba065187b21e44649a102469432dd8e3b4c6fc",
+      "theories/Factor_Distinct_Payloads.thy": "b86a6390412ede0e2cdc7b247dfb2c53744011b76a03dd50f0550738f081765d",
       "theories/Factor_Encoding_Order_Audit.thy": "56aee92e5fefe9dab16b1fd19553ca842e430fbc5d2c02df4c2321dd483e4943",
       "theories/Factor_Environment_Values.thy": "8a880b9caa36313c3a83fa5ea62bce6d3a5c2e7de71f22f24af2f59d1bc8df53",
       "theories/Factor_Executable_Calls.thy": "dbf384dfa51cefb3a9d60d875fbbf35badf3c4c05e43377c509f80652c303b67",
@@ -297,13 +298,13 @@
     "isabelle_version": "Isabelle2025-2",
     "sources_unchanged": true,
     "tools_unchanged": true,
-    "finished_utc": "2026-09-06T09:01:33.487847+00:00",
-    "log_sha256": "ff05a7dbaaaca8c0a863d98a9d88cde87d31e6a9816c9819b8852cb1fb14d302"
+    "finished_utc": "2026-09-06T09:21:25.826730+00:00",
+    "log_sha256": "f510851c5ca89a0a4796ce0f7361c2bf717c2d13eb59ae8e49cafdcd4abae13d"
   },
-  "theory_count": 263,
+  "theory_count": 264,
   "missing_theory_files": [],
   "unlisted_theories": [],
   "proof_escape_matches": [],
   "sources_and_tools_unchanged": true,
-  "finished_utc": "2026-09-06T09:01:33.534884+00:00"
+  "finished_utc": "2026-09-06T09:21:25.873754+00:00"
 }

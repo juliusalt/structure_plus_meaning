@@ -1,5 +1,5 @@
 theory Factor_Generation_Scopes
-  imports Factor_Judgment_Values Factor_Judgment_Retention RRA_Generation_Dependencies
+  imports Factor_Judgment_Scopes RRA_Generation_Dependencies
 begin
 
 section \<open>Recovering the self-contained scope recorded by a generation\<close>
@@ -69,31 +69,6 @@ proof -
   have cause: "generation_cause G=Occurrence_Anchor (C,cr)"
     by (rule generation_cause_location_target[OF parts(1-3)])
   show ?thesis by (rule generation_judgment_scope_from_core[OF target cause parts(4)])
-qed
-
-section \<open>Recording the minimal scope of any native program and call\<close>
-
-theorem native_judgment_recordable:
-  fixes E :: "local_address option artifact_environment"
-  assumes package: "native_package_at E pu pr P" and app: "native_application_at E au ar d t I K"
-  shows "\<exists>F C. judgment_value_quoted_at C [] F pu pr au ar \<and>
-    F=native_judgment_environment F pu pr au ar \<and>
-    native_package_at F pu pr P \<and> native_application_at F au ar d t I K \<and>
-    native_package_environment F pu pr=native_package_environment E pu pr"
-proof -
-  let ?F = "native_judgment_environment E pu pr au ar"
-  have kept: "native_package_at ?F pu pr P" "native_application_at ?F au ar d t I K" "environment_formed ?F"
-    using native_judgment_environment_recovers[OF package app] by blast+
-  have canonical: "?F=native_judgment_environment ?F pu pr au ar"
-    using native_judgment_environment_idempotent[OF package app] by simp
-  have program: "native_package_environment ?F pu pr=native_package_environment E pu pr"
-    by (rule native_judgment_program_environment[OF package app])
-  have sites: "(pu,pr)\<in>environment_positions ?F" "(au,ar)\<in>environment_positions ?F"
-    by (rule native_judgment_positions[OF kept(1,2)])+
-  obtain C where quote: "judgment_value_quoted_at C [] ?F pu pr au ar"
-    using judgment_value_quoted_total[OF kept(3) sites] by blast
-  show ?thesis by (rule exI[of _ ?F], rule exI[of _ C])
-    (use quote canonical kept(1,2) program in blast)
 qed
 
 text \<open>

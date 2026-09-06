@@ -155,6 +155,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Artifact_Values
     Factor_Environment_Values
     Factor_Judgment_Values
+    Factor_Judgment_Scopes
     Factor_Construction_Claims
     Factor_Construction_Presentations
     Factor_Construction_Recovery
@@ -243,4 +244,6 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Authority
     Factor_Native_Authority
     Factor_Authority_Programs
+    Factor_Authority_Scopes
+    Factor_Certified_Authority
     Factor_Authority_Independence

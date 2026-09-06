@@ -1337,7 +1337,24 @@ layer. This proves that exact subject equality has no program-independent
 adoption force; authorization of cross-foundation interpretations still needs
 its own explicit transition judgment.
 
-These representations supply inspectable data for later judgments. They do
+Adoption scopes now quote the minimal judgment environment and its two sites.
+The actual application recovers authority, generation, and purpose; the record
+adds no duplicate subject fields. The generic scope-recording theorem belongs
+below both generation causes and authority. Exact quotation targets fix the
+whole scope independently of any enclosing environment.
+
+The separate certification join requires the admitted policy, complete subject
+presentation, and closed generic replay. Replay soundness establishes the
+adoption decision. Every adopted call can acquire a retained certificate
+preserving both its program environment and its entire minimal judgment
+environment, and every complete permitted future presentation has a
+certificate. Certified currentness retains the same separate publication
+scope and selection. A concrete retained adoption certificate still accepts
+an invalid generation cause: the certificate proves this program's decision,
+not the subject's cause validity. Native checking of policy-admission evidence
+remains open.
+
+Data quotations supply inspectable material for later judgments. They do
 not validate causes or selected evidence, recognize currentness, or authorize
 adoption. Their recovery theorems also do not assert that an arbitrary program
 ignores presentation order. Any semantic use which claims to depend only on

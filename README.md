@@ -102,8 +102,11 @@ The raw authority layer imports no evidence, derivation, or replay theory.
 A fixed closed compilation preserves every future adoption argument. Ordinary
 native policies accept, refuse, or inspect an exact purpose coordinate while
 ignoring collection presentation order. Actual formed applications exhibit
-adoption of an invalid cause and refusal of a certified base cause. Native
-admission-evidence checking and cross-foundation authorization remain open.
+adoption of an invalid cause and refusal of a certified base cause. Every
+adoption has a retained certificate preserving its exact program and judgment
+scope; even certified adoption can accept an invalid cause. Complete scope
+quotations recover the subject from the actual call. Native admission-evidence
+checking and cross-foundation authorization remain open.
 The program and call determine a least closed environment independently of
 proof retention, preserving their readings, truth, and exact program environment.
 Complete finite representations now preserve exact artifact, environment, target,

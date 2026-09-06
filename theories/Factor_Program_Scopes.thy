@@ -50,6 +50,20 @@ lemma program_scope_is_minimal:
   shows "native_package_environment E u r=E"
   using assms unfolding program_scope_quoted_at_def by (meson native_package_closed_environment_fixed)
 
+theorem program_scope_whole_unique:
+  assumes first: "program_scope_quoted_at C q E u r P"
+    and second: "program_scope_quoted_at C s F v a Q"
+  shows "q=s \<and> E=F \<and> u=v \<and> r=a \<and> P=Q"
+proof -
+  obtain t where left: "complete_data_quoted_at C q t"
+    using first unfolding program_scope_quoted_at_def site_value_quoted_at_def by blast
+  obtain x where right: "complete_data_quoted_at C s x"
+    using second unfolding program_scope_quoted_at_def site_value_quoted_at_def by blast
+  have roots: "q=s" using complete_data_quotation_whole_unique[OF left right] by blast
+  have other: "program_scope_quoted_at C q F v a Q" using second roots by simp
+  show ?thesis using roots program_scope_quoted_unique[OF first other] by blast
+qed
+
 lemma program_scope_quoted_formed:
   assumes quote: "program_scope_quoted_at C q E u r P"
   shows "exact_formed C \<and> environment_formed E \<and> schema_system_formed P \<and> (u,r)\<in>environment_positions E"

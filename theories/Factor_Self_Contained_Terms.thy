@@ -10,6 +10,77 @@ fun self_contained_term :: "factor_term \<Rightarrow> bool" where
 | "self_contained_term (Pair_Term x y) =
     (self_contained_term x \<and> self_contained_term y)"
 
+lemma self_contained_syntax_nonroot:
+  assumes closed: "self_contained_term t"
+    and member: "a\<in>rra_carrier (object_structure (term_syntax t))" and nonroot: "a\<noteq>[]"
+  shows "a\<in>participation_occurrences (object_structure (term_syntax t)) \<union>
+    reached_occurrences (object_structure (term_syntax t))"
+  using closed member nonroot
+proof (induction t arbitrary: a)
+  case (Target_Term t)
+  then show ?case by simp
+next
+  case (Payload_Term v)
+  then show ?case by simp
+next
+  case (Pair_Term x y)
+  let ?L="object_structure (term_syntax x)"
+  let ?R="object_structure (term_syntax y)"
+  let ?S="object_structure (pair_syntax (term_syntax x) (term_syntax y))"
+  let ?U="participation_occurrences ?S \<union> reached_occurrences ?S"
+  have xf: "self_contained_term x" and yf: "self_contained_term y"
+    using Pair_Term.prems(1) by auto
+  have left: "Cons 2 ` rra_carrier ?L \<subseteq> ?U"
+  proof
+    fix a assume "a\<in>Cons 2 ` rra_carrier ?L"
+    then obtain b where position: "a=2#b" and inside: "b\<in>rra_carrier ?L" by blast
+    show "a\<in>?U"
+    proof (cases "b=[]")
+      case True
+      then show ?thesis using position by (simp add: pair_syntax_projections)
+    next
+      case False
+      have covered: "b\<in>participation_occurrences ?L \<union> reached_occurrences ?L"
+        by (rule Pair_Term.IH(1)[OF xf inside False])
+      show ?thesis using covered position by (auto simp: pair_syntax_projections)
+    qed
+  qed
+  have right: "Cons 3 ` rra_carrier ?R \<subseteq> ?U"
+  proof
+    fix a assume "a\<in>Cons 3 ` rra_carrier ?R"
+    then obtain b where position: "a=3#b" and inside: "b\<in>rra_carrier ?R" by blast
+    show "a\<in>?U"
+    proof (cases "b=[]")
+      case True
+      then show ?thesis using position by (simp add: pair_syntax_projections)
+    next
+      case False
+      have covered: "b\<in>participation_occurrences ?R \<union> reached_occurrences ?R"
+        by (rule Pair_Term.IH(2)[OF yf inside False])
+      show ?thesis using covered position by (auto simp: pair_syntax_projections)
+    qed
+  qed
+  have slots: "[0]\<in>?U" "[1]\<in>?U" by (simp_all add: pair_syntax_projections)
+  show ?case using Pair_Term.prems(2,3) left right slots
+    by (auto simp: pair_syntax_carrier)
+qed
+
+lemma self_contained_syntax_unreferenced:
+  assumes closed: "self_contained_term t"
+  shows "rra_carrier (object_structure (term_syntax t)) -
+    (participation_occurrences (object_structure (term_syntax t)) \<union>
+     reached_occurrences (object_structure (term_syntax t))) = {[]}"
+proof -
+  have root: "[]\<notin>participation_occurrences (object_structure (term_syntax t)) \<union>
+    reached_occurrences (object_structure (term_syntax t))"
+    using closed by (cases t) (auto simp: pair_syntax_projections)
+  have covered: "\<And>a. a\<in>rra_carrier (object_structure (term_syntax t)) \<Longrightarrow> a\<noteq>[] \<Longrightarrow>
+    a\<in>participation_occurrences (object_structure (term_syntax t)) \<union>
+      reached_occurrences (object_structure (term_syntax t))"
+    by (rule self_contained_syntax_nonroot[OF closed])
+  show ?thesis using root covered by auto
+qed
+
 lemma self_contained_term_literals_empty:
   assumes "self_contained_term t"
   shows "term_literal_bindings t={}"

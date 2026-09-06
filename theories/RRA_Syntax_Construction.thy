@@ -89,6 +89,11 @@ lemma payload_syntax_formed:
   by (auto simp: payload_syntax_def exact_formed_def object_formed_def rra_formed_def
       basis_formed_def basis_values_def bag_support_def single_valued_def octets_formed_def)
 
+lemma payload_syntax_projections [simp]:
+  "participation_occurrences (object_structure (payload_syntax v))={}"
+  "reached_occurrences (object_structure (payload_syntax v))={}"
+  by (auto simp: participation_occurrences_def reached_occurrences_def)
+
 lemma payload_syntax_recovers:
   "payload_leaf_at (payload_syntax v) [] v"
   by (auto simp: payload_leaf_at_def payload_syntax_def object_formed_def rra_formed_def
@@ -227,6 +232,38 @@ qed
 lemma pair_syntax_root [simp]:
   "[] \<in> rra_carrier (object_structure (pair_syntax R S))"
   by (simp add: pair_syntax_def)
+
+lemma pair_syntax_carrier:
+  "rra_carrier (object_structure (pair_syntax R S)) =
+    {[],[0],[1]} \<union> Cons 2 ` rra_carrier (object_structure R) \<union>
+      Cons 3 ` rra_carrier (object_structure S)"
+  by (simp add: pair_syntax_def)
+
+lemma pair_syntax_projections:
+  "participation_occurrences (object_structure (pair_syntax R S)) =
+    {[0],[1]} \<union> Cons 2 ` participation_occurrences (object_structure R) \<union>
+      Cons 3 ` participation_occurrences (object_structure S)"
+  "reached_occurrences (object_structure (pair_syntax R S)) =
+    {[1],[2],[3]} \<union> Cons 2 ` reached_occurrences (object_structure R) \<union>
+      Cons 3 ` reached_occurrences (object_structure S)"
+proof -
+  have part: "participation_occurrences (object_structure (pair_syntax R S)) =
+    {[0],[1]} \<union> participation_occurrences (push_structure (Cons 2) (object_structure R)) \<union>
+      participation_occurrences (push_structure (Cons 3) (object_structure S))"
+    by (auto simp: pair_syntax_def participation_occurrences_def)
+  have reached: "reached_occurrences (object_structure (pair_syntax R S)) =
+    {[1],[2],[3]} \<union> reached_occurrences (push_structure (Cons 2) (object_structure R)) \<union>
+      reached_occurrences (push_structure (Cons 3) (object_structure S))"
+    by (auto simp: pair_syntax_def reached_occurrences_def)
+  show "participation_occurrences (object_structure (pair_syntax R S)) =
+    {[0],[1]} \<union> Cons 2 ` participation_occurrences (object_structure R) \<union>
+      Cons 3 ` participation_occurrences (object_structure S)"
+    by (simp only: part participation_occurrences_push)
+  show "reached_occurrences (object_structure (pair_syntax R S)) =
+    {[1],[2],[3]} \<union> Cons 2 ` reached_occurrences (object_structure R) \<union>
+      Cons 3 ` reached_occurrences (object_structure S)"
+    by (simp only: reached reached_occurrences_push)
+qed
 
 lemma pair_syntax_no_counts [simp]:
   "bag_count (object_data (pair_syntax R S)) = (\<lambda>_. 0)"

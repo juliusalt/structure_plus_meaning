@@ -116,6 +116,12 @@ record the minimal adoption judgment scope and the exact publication scope;
 their native readings recover authority, generation, purpose, and locus without
 duplicate fields. Complete program-scope quotations likewise retain every
 dependency binding and derive the actual program.
+Within a complete payload-and-pair quotation, the structure determines its root
+uniquely under every admitted readdressing. A generation's whole-artifact payload
+can therefore retain the complete program scope without an extra root field.
+The currentness frame recovers that program through its selected generation.
+Actual base and construction generations retain these payloads and their separate
+cause certificates; program recovery alone still does not validate a cause.
 The program and call determine a least closed environment independently of
 proof retention, preserving their readings, truth, and exact program environment.
 Complete finite representations now preserve exact artifact, environment, target,

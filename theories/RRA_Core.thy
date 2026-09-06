@@ -87,6 +87,49 @@ lemma push_structure_carrier [simp]:
   "rra_carrier (push_structure f S) = f ` rra_carrier S"
   by (simp add: push_structure_def)
 
+lemma push_structure_incidence_member:
+  assumes edge: "(r,p,x)\<in>rra_incidence S"
+  shows "(f r,f p,f x)\<in>rra_incidence (push_structure f S)"
+proof -
+  let ?map="\<lambda>(r,p,x). (f r,f p,f x)"
+  have "?map (r,p,x)\<in>?map ` rra_incidence S" by (rule imageI[OF edge])
+  then show ?thesis by (simp add: push_structure_def)
+qed
+
+lemma participation_occurrences_push:
+  "participation_occurrences (push_structure f S) = f ` participation_occurrences S"
+proof (rule equalityI)
+  show "participation_occurrences (push_structure f S) \<subseteq> f ` participation_occurrences S"
+    by (auto simp: participation_occurrences_def push_structure_def)
+  show "f ` participation_occurrences S \<subseteq> participation_occurrences (push_structure f S)"
+  proof
+    fix a assume "a\<in>f ` participation_occurrences S"
+    then obtain r p x where edge: "(r,p,x)\<in>rra_incidence S" and position: "a=f p"
+      by (auto simp: participation_occurrences_def)
+    have "(f r,f p,f x)\<in>rra_incidence (push_structure f S)"
+      by (rule push_structure_incidence_member[OF edge])
+    then show "a\<in>participation_occurrences (push_structure f S)"
+      using position by (auto simp: participation_occurrences_def)
+  qed
+qed
+
+lemma reached_occurrences_push:
+  "reached_occurrences (push_structure f S) = f ` reached_occurrences S"
+proof (rule equalityI)
+  show "reached_occurrences (push_structure f S) \<subseteq> f ` reached_occurrences S"
+    by (auto simp: reached_occurrences_def push_structure_def)
+  show "f ` reached_occurrences S \<subseteq> reached_occurrences (push_structure f S)"
+  proof
+    fix a assume "a\<in>f ` reached_occurrences S"
+    then obtain r p x where edge: "(r,p,x)\<in>rra_incidence S" and position: "a=f x"
+      by (auto simp: reached_occurrences_def)
+    have "(f r,f p,f x)\<in>rra_incidence (push_structure f S)"
+      by (rule push_structure_incidence_member[OF edge])
+    then show "a\<in>reached_occurrences (push_structure f S)"
+      using position by (auto simp: reached_occurrences_def)
+  qed
+qed
+
 lemma push_structure_identity [simp]:
   "push_structure id S = S"
   by (cases S) (auto simp: push_structure_def)

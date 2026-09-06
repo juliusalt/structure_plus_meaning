@@ -1404,6 +1404,37 @@ do not authorize succession, select a universal acceptance program, validate a
 transition certificate, or supply a cross-version interpretation bridge.
 Those conditions must still be stated and checked by the amendment mechanism.
 
+## Whole program payloads recover their quotation root structurally
+
+The existing base and construction accounts apply to a whole artifact. A
+complete program-scope quotation also has a selected quotation root. Treating
+address `[]` as an implicit payload root would privilege a coordinate, while
+storing another root field would be redundant if the structure determines it.
+The complete payload-and-pair syntax does determine it: exactly one carrier
+position occurs in neither the second nor the third incidence projection.
+That position is the quotation root, and the property is preserved by every
+admitted injective readdressing. Equal complete artifacts therefore determine
+equal roots and equal recovered data, even when the roots were not supplied
+as equal premises. This theorem concerns the complete data profile; it does
+not impose tree structure or distinguished roles on arbitrary RRA artifacts.
+
+The chosen generation profile uses the complete program-scope artifact as its
+whole payload. Its root, complete minimal environment, actual program site,
+and native program are recovered rather than stored again. Identical payloads
+recover identical programs even in different formed generation cores. Their
+locus, predecessors, and cause remain separate content and still distinguish
+those cores. Complete currentness frames recover the selected program through
+their generation, keeping the adoption program and selected program distinct.
+
+Every actual native program has such a payload and an actual closed initial
+generation admitted by a supplied finite base policy, with separate retained
+certification. An existing admitted construction of a program-scope payload
+also produces an actual closed generation preserving the complete account and
+certificate. Conversely, every actual program can be carried by a formed
+generation whose cause is invalid. These joins establish payload identity
+and coexistence with the existing cause profiles. They do not choose a
+genesis authority, authorize amendment, or validate a transition certificate.
+
 ## Continuation keeps structural success and semantic permission separate
 
 The ordinary continuation argument has four positions: the before snapshot,

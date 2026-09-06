@@ -89,6 +89,52 @@ lemma complete_data_quotation_every_addressing:
   shows "complete_data_quoted_at (push_object f (term_syntax t)) (f []) t"
   using assms unfolding complete_data_quoted_at_def by blast
 
+section \<open>The complete structure determines its quotation root\<close>
+
+lemma unreferenced_positions_push:
+  assumes formed: "rra_formed S" and injective: "inj_on f (rra_carrier S)"
+  shows "rra_carrier (push_structure f S) -
+      (participation_occurrences (push_structure f S) \<union>
+       reached_occurrences (push_structure f S)) =
+    f ` (rra_carrier S - (participation_occurrences S \<union> reached_occurrences S))"
+proof -
+  have inside: "participation_occurrences S \<subseteq> rra_carrier S"
+    "reached_occurrences S \<subseteq> rra_carrier S"
+    using role_occurrences_in_carrier[OF formed] by blast+
+  show ?thesis using inside injective
+    by (auto simp: participation_occurrences_push reached_occurrences_push inj_on_def)
+qed
+
+theorem complete_data_quotation_root_boundary:
+  assumes quoted: "complete_data_quoted_at C r t"
+  shows "rra_carrier (object_structure C) -
+    (participation_occurrences (object_structure C) \<union>
+     reached_occurrences (object_structure C)) = {r}"
+proof -
+  obtain f where tf: "term_formed t" and closed: "self_contained_term t"
+    and address: "finite_addressing (rra_carrier (object_structure (term_syntax t))) f"
+    and source: "C=push_object f (term_syntax t)" and root: "r=f []"
+    using quoted unfolding complete_data_quoted_at_def by blast
+  have formed: "rra_formed (object_structure (term_syntax t))"
+    using term_syntax_formed[OF tf] by (simp add: exact_formed_def object_formed_def)
+  have injective: "inj_on f (rra_carrier (object_structure (term_syntax t)))"
+    using address by (simp add: finite_addressing_def)
+  show ?thesis using unreferenced_positions_push[OF formed injective]
+    self_contained_syntax_unreferenced[OF closed]
+    by (simp add: source root push_object_def)
+qed
+
+theorem complete_data_quotation_whole_unique:
+  assumes first: "complete_data_quoted_at C r t" and second: "complete_data_quoted_at C s v"
+  shows "r=s \<and> t=v"
+proof -
+  have roots: "r=s"
+    using complete_data_quotation_root_boundary[OF first]
+      complete_data_quotation_root_boundary[OF second] by simp
+  have other: "complete_data_quoted_at C r v" using second roots by simp
+  show ?thesis using roots complete_data_quotation_unique[OF first other] by blast
+qed
+
 text \<open>
   A standalone data quotation uses the complete payload-and-pair syntax,
   including its entire data basis. Every injective formed readdressing is
@@ -100,6 +146,13 @@ text \<open>
   self-contained data profile. It does not assert that every general native
   quotation is a member of this profile or discharge general quotation
   principality by definition.
+
+  In this complete profile, the root is the only carrier position that occurs
+  in neither the second nor the third incidence projection. This statement
+  survives every admitted readdressing. The whole artifact therefore
+  determines both the quotation root and the data term. No distinguished
+  address or stored root marker is required. This is a property of these
+  complete data copies, not a global restriction on RRA incidence.
 \<close>
 
 end

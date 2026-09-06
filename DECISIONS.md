@@ -1971,3 +1971,54 @@ supply the four certificate relations, structurally determined compatibility
 domains, the predecessor continuation derivation, the cross-version bridge,
 successor adoption, or native admission of the complete amendment mechanism.
 Those remain separate connected obligations.
+
+## Compatibility starts from the actual changed rows and affected callers
+
+The comparison boundary is fixed before a transition certificate makes claims.
+For the current positive class, a changed definition has a difference in its
+complete interface or clause rows. Introduced and removed definitions are
+included. The comparison uses the given definition coordinates in the two
+recovered programs. It neither identifies their exact environments nor treats
+a common coordinate as proof of equal artifact identity.
+
+This is a structural comparison. Private binder or clause relocation can change
+these rows while an explicit transport proves semantic preservation. Such a
+transport belongs to a separate comparison relation; change detection does not
+silently quotient the source structures or claim that every changed row changes
+truth. This retains the distinction between migration and semantic preservation.
+
+The affected boundary is the least backward closure of changed definitions
+through each program's prospective-callee graph. The ordinary definition closure
+follows callees; this closure instead follows their callers. It includes every
+definition whose complete prospective dependency closure reaches a changed row.
+Recursive cycles require no exception. Outside it, complete interfaces and
+clause families agree on a closed set, so every formed-call boundary and every
+positive meaning remains equal.
+
+The selected comparison profile takes all actual public roots and all affected
+definitions in each program. The native root family supplies the roots. The
+current frame determines the predecessor scope, and the candidate generation's
+whole program payload determines the other scope. Those exact values uniquely
+fix both domains. There is no certificate-provided root list, host registry,
+or independently stored change classification.
+
+Finite definition domains do not make their argument domains finite. Comparison
+covers every call admitted by the actual interfaces, including every future
+argument. A formed pattern always has an instance: assigning an empty payload
+to each variable gives a complete formed binding witness. Consequently every
+required definition contributes admitted calls. In a native package the domain
+is empty exactly when the recovered program has no definitions.
+
+The concrete example adds one premise-free clause at a callee. Its caller keeps
+the same complete rows but changes truth on every formed argument. The derived
+boundary includes that caller and the changed callee; an independent public
+definition keeps its meaning and remains in the public comparison domain.
+The resulting call boundary is the three definitions paired with all formed
+terms, rather than an enumerated sample.
+
+These results fix the complete comparison obligation for this profile. The four
+certificate relations still require their separate domains and coverage rules,
+including the interaction of preservation and intentional incompatibility.
+Migration, interpretation, preservation, and incompatibility are not made into
+a partition here. The predecessor's policy must still check their actual
+material, continuation, interpretation bridge, and successor authority decision.

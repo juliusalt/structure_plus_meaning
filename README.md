@@ -141,6 +141,15 @@ This establishes the raw acceptance invocation; certificate completeness,
 the predecessor continuation requirement, the cross-version bridge, successor
 adoption, and native admission of the complete mechanism remain open.
 
+The current frame and candidate's program payload also determine separate
+comparison domains. Complete changed interface and clause rows determine the
+affected callers in each program; the domain includes those definitions and
+every actual package root. Its argument boundary contains every call admitted
+by those interfaces. Every formed interface has an argument, and definitions
+outside the affected boundary preserve formation and truth. A concrete example
+shows why unchanged callers must be included when a callee changes. These domain
+results precede the certificate relations and do not authorize a transition.
+
 The program and call determine a least closed environment independently of
 proof retention, preserving their readings, truth, and exact program environment.
 Complete finite representations now preserve exact artifact, environment, target,

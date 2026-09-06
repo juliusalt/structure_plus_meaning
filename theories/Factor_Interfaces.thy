@@ -21,6 +21,19 @@ next
     using formed bindings by (auto simp: pattern_accepts_def)
 qed
 
+lemma pattern_accepts_total:
+  assumes formed: "pattern_formed p"
+  shows "\<exists>t. pattern_accepts p t"
+proof -
+  let ?V="image (\<lambda>a. (a,Payload_Term [])) (pattern_variables p)"
+  have bindings: "term_bindings_formed (pattern_variables p) ?V"
+    by (auto simp: term_bindings_formed_def single_valued_def rel_dom_def octets_formed_def)
+  have scope: "pattern_variables p\<subseteq>rel_dom ?V" by (auto simp: rel_dom_def)
+  obtain t where inst: "pattern_instance ?V p t" using pattern_instance_exists[OF formed scope] by blast
+  have tf: "term_formed t" by (rule pattern_instance_formed_term[OF bindings inst])
+  show ?thesis using bindings inst tf unfolding pattern_accepts_def by blast
+qed
+
 record ('a,'s,'d,'c) schema_system =
   system_interfaces :: "('d \<times> 'a term_pattern) set"
   system_clauses :: "(('d \<times> 'c) \<times> ('a,'s,'d) factor_schema) set"
@@ -45,6 +58,17 @@ lemma schema_call_formed_target:
   assumes "schema_call_formed P d t"
   shows "d \<in> system_definitions P \<and> term_formed t"
   using assms by (auto simp: schema_call_formed_def system_definitions_def rel_dom_def pattern_accepts_def)
+
+lemma schema_call_inhabited:
+  assumes formed: "schema_system_formed P" and member: "d\<in>system_definitions P"
+  shows "\<exists>t. schema_call_formed P d t"
+proof -
+  obtain p where row: "(d,p)\<in>system_interfaces P"
+    using member by (auto simp: system_definitions_def rel_dom_def)
+  have pf: "pattern_formed p" using formed row by (auto simp: schema_system_formed_def)
+  obtain t where arg: "pattern_accepts p t" using pattern_accepts_total[OF pf] by blast
+  show ?thesis using formed row arg unfolding schema_call_formed_def by blast
+qed
 
 lemma system_definitions_finite:
   assumes "schema_system_formed P"

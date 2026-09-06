@@ -301,3 +301,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Current_Certificates
     Factor_Predecessor_Continuation
     Factor_Continuation_Selection_Examples
+    Factor_Transition_Values
+    Factor_Current_Acceptance_Certificates
+    Factor_Continuation_Envelopes
+    Factor_Transition_Selection
+    Factor_Transition_Examples

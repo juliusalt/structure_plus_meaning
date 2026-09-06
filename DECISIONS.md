@@ -2109,8 +2109,9 @@ Current continuation invokes only its selected entry. Its native proof uses
 the exact predecessor program and has no open assumptions. The before snapshot
 is the snapshot of the predecessor's actual publication, not a second freely
 chosen subject. Structural transaction success remains an additional condition.
-The claimed after snapshot still needs to be joined to the successor's actual
-publication by the complete amendment mechanism.
+The selection component below joins the claimed after snapshot to the
+successor's actual publication. The complete mechanism must also validate
+the supporting material.
 
 A replay value stores one complete environment and three actual sites:
 program, call, and proof. Native readers recover the program, argument, graph,
@@ -2121,10 +2122,10 @@ retaining its original program and complete minimal call scope.
 
 The submitted continuation material precedes its proof record. It is not
 required to contain a complete quotation of that record, which would create
-a circular finite-data obligation. The final amendment certificate can bind
-the material, the selected continuation frame, and the separate proof record.
-Their precise integration with the successor and remaining evidence is still
-open; this component does not define legitimate succession.
+a circular finite-data obligation. The selection component below binds the
+material, selected continuation frame, and separate proof record to predecessor
+acceptance and the exact successor frame. Admission of the remaining evidence
+is still open; these components do not define complete legitimate succession.
 
 One explicit accepting adoption policy selects two distinct entries of a
 single native generation. Both entries admit every formed argument, including
@@ -2135,3 +2136,57 @@ that refusing entry. This exhibits the independence of adoption, structural
 success, continuation, replay, and amendment permission with actual finite
 programs. Its generation has only a formed cause target; no genesis or
 successor validity is asserted.
+
+## Acceptance binds the continuation record and exact successor frame
+
+A continuation envelope contains two complete exact artifact values: the
+companion current frame and the recorded closed continuation proof. Each
+artifact's complete structure determines its quotation root. The replayed
+call already contains the before snapshot, transaction, claimed after, and
+complete material scope. Repeating those fields in the envelope would add
+an independent consistency obligation without adding information.
+
+The material scope selects a complete data quotation containing the exact
+proposed successor frame and one complete supporting scope with an actual
+site. This is a staged certificate profile. The supporting scope is the
+place where the remaining assembly, dependency, comparison, and interpretation
+evidence must be checked; its formation does not check those conditions.
+
+The predecessor's actual amendment call accepts the candidate generation
+and the whole envelope as ordinary argument data. The exact binding path is
+therefore: accepted envelope, companion frame and continuation record,
+replayed call, complete material, exact successor frame. The successor frame
+must select that same candidate and its actual publication must have the
+proved successful after snapshot. Changing any recovered field cannot leave
+the same accepted envelope and call intact.
+
+Only the companion role is constrained to retain the predecessor's original
+adoption policy. The successor's authority, locus, purpose, and program may
+differ. The accepted material must identify that new frame exactly. Requiring
+equality of those successor fields would impose a protected boundary that D-9
+does not authorize.
+
+Acceptance itself has a separate closed replay record. Its program site is
+the one recovered from the predecessor's current frame, and the actual call
+uses that frame's selected entry. Every acceptance can acquire such a record
+without changing its complete minimal judgment scope or canonical program
+environment. Every permitted complete argument has an actual recorded native
+call. Equal whole records determine the candidate and envelope, and through
+the envelope the exact proposed successor frame. They do not identify two
+different presentation artifacts used to display the same predecessor frame.
+
+The construction is acyclic: proposed material precedes its continuation
+proof; that proof precedes the submitted envelope; acceptance of the envelope
+precedes the separate acceptance proof. No proof is required to quote itself.
+A fixed actual current program gives all these records for every future formed
+supporting scope while preserving its selected generation and publication.
+Its accepting entry permits every formed argument. This is a concrete witness
+for the binding and selection component and demonstrates why it is insufficient
+as the complete amendment protocol.
+
+No complete legitimate-succession claim is made by this component. An explicit
+historical predecessor relation, complete assembly and dependency evidence,
+comparison-report admission, and the cross-version interpretation bridge
+remain to be joined and internally checked. The genesis adequacy theorem must
+prove that a concrete predecessor policy enforces those conditions; a proof
+of its positive call alone cannot establish that property.

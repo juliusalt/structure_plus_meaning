@@ -73,6 +73,21 @@ proof -
   show ?thesis by (rule current_frame_value_presents_unique[OF left(1) other])
 qed
 
+theorem current_frame_whole_unique:
+  assumes first: "current_frame_quoted_at C q E pu pr au ar F v root"
+    and second: "current_frame_quoted_at C r D qu qr bu br N w s"
+  shows "q=r \<and> E=D \<and> pu=qu \<and> pr=qr \<and> au=bu \<and> ar=br \<and>
+    F=N \<and> v=w \<and> root=s"
+proof -
+  obtain t where left: "current_frame_value_presents E pu pr au ar F v root t"
+    "complete_data_quoted_at C q t" using first unfolding current_frame_quoted_at_def by blast
+  obtain a where right: "current_frame_value_presents D qu qr bu br N w s a"
+    "complete_data_quoted_at C r a" using second unfolding current_frame_quoted_at_def by blast
+  have same: "q=r \<and> t=a" by (rule complete_data_quotation_whole_unique[OF left(2) right(2)])
+  have other: "current_frame_value_presents D qu qr bu br N w s t" using right(1) same by simp
+  show ?thesis using same current_frame_value_presents_unique[OF left(1) other] by blast
+qed
+
 lemma current_frame_quoted_formed:
   assumes quote: "current_frame_quoted_at C q E pu pr au ar F v root"
   shows "exact_formed C \<and> environment_formed E \<and> environment_formed F \<and>

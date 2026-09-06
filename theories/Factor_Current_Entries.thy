@@ -80,6 +80,35 @@ lemma current_entry_scope_frame:
     current_scope_quoted_at C q H pu pr au ar A F v root l G p"
   using current unfolding current_entry_scope_quoted_at_def current_program_scope_quoted_at_def by blast
 
+lemma current_entry_scope_formed:
+  assumes current: "current_entry_scope_quoted_at C q A l G p E u r P d"
+  shows "exact_formed C \<and> generation_formed G"
+proof -
+  obtain H pu pr au ar F v root where scope:
+    "current_scope_quoted_at C q H pu pr au ar A F v root l G p"
+    using current_entry_scope_frame[OF current] by blast
+  show ?thesis using current_scope_quoted_formed[OF scope] by blast
+qed
+
+theorem current_entry_scope_whole_unique:
+  assumes first: "current_entry_scope_quoted_at C q A l G p E u r P d"
+    and second: "current_entry_scope_quoted_at C k B m H z F v s Q e"
+  shows "q=k \<and> A=B \<and> l=m \<and> G=H \<and> p=z \<and> E=F \<and> u=v \<and> r=s \<and> P=Q \<and> d=e"
+proof -
+  obtain D pu pr au ar N w root where left:
+    "current_scope_quoted_at C q D pu pr au ar A N w root l G p"
+    using current_entry_scope_frame[OF first] by blast
+  obtain D' qu qr bu br N' w' root' where right:
+    "current_scope_quoted_at C k D' qu qr bu br B N' w' root' m H z"
+    using current_entry_scope_frame[OF second] by blast
+  have frames: "current_frame_quoted_at C q D pu pr au ar N w root"
+    "current_frame_quoted_at C k D' qu qr bu br N' w' root'"
+    using left right by (auto simp: current_scope_quoted_at_def)
+  have roots: "q=k" using current_frame_whole_unique[OF frames] by blast
+  have other: "current_entry_scope_quoted_at C q B m H z F v s Q e" using second roots by simp
+  show ?thesis using roots current_entry_scope_unique[OF first other] by blast
+qed
+
 theorem current_entry_scope_quoted_total:
   fixes H F :: "local_address option artifact_environment"
   assumes current: "native_current H pu pr au ar A F v root l G p"

@@ -137,9 +137,10 @@ complete presentations. Its prospective callees determine a finite closure
 inside the predecessor package. Constructed future calls preserve that exact
 program environment and every existing artifact and binding. A concrete two-entry
 program shows that a true auxiliary call cannot replace the adopted entry.
-This establishes the raw acceptance invocation; the complete certificate,
-cross-version bridge, successor selection, and native admission of the complete
-mechanism remain open.
+This establishes the raw acceptance invocation. Closed replay now records that
+same invocation, retaining its exact program and complete minimal judgment
+scope. The complete certificate and native admission of the full mechanism
+remain open.
 
 Companion purposes now retain the same authority, generation, publication, and
 exact adoption-program scope and entry. Every companion purpose permitted by
@@ -151,9 +152,20 @@ proof sites; its readers derive the program, graph, and assumptions. Every
 current continuation has a finite record preserving its exact program and
 minimal call scope. A concrete ordinary program has a valid companion
 continuation proof and a successful unchanged snapshot while its amendment
-entry refuses every candidate. These are independent conditions. The final
-amendment join must bind these records in its accepted certificate and connect
-the claimed after snapshot to the successor's actual publication.
+entry refuses every candidate. These are independent conditions.
+
+A complete envelope now binds the companion frame and continuation record.
+The replayed call contains complete material that identifies the exact successor
+frame and supporting scope. The actual amendment call accepts that envelope
+and the candidate selected by the successor frame. The successor's publication
+must match the successful after snapshot. Its authority, locus, purpose, and
+program may differ; their exact frame is part of the accepted material.
+Every such selection has an acceptance record retaining the predecessor's
+program and minimal call scope. A fixed native program constructs both proof
+stages for every future formed supporting scope without a circular quotation.
+This selection component still requires complete assembly, dependency,
+comparison, historical-predecessor, and interpretation checks before it can
+serve as a complete amendment protocol.
 
 The current frame and candidate's program payload also determine separate
 comparison domains. Complete changed interface and clause rows determine the

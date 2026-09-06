@@ -480,8 +480,18 @@ path proves socket distinctness without another key check. Both admit exactly
 the existing relative grammar, including empty structures and shared endpoints.
 Family row order is immaterial; the record result has a unique represented
 order. One fixed native package supplies both entries over every future formed
-input. Citation and higher grammar admission, finite correctness evidence,
-reflection, and the full transition protocol remain required.
+input.
+
+Target-data admission checks complete artifact data and membership of each
+selected occurrence. Occurrence addresses now remain optional opaque payloads,
+so citation rules can preserve them directly. Environment-use coordinates
+retain their arbitrary natural components. Four ordinary clauses admit exactly
+the existing citation grammar and a complete interior enumeration. They accept
+every interior order and retain the separation needed by quotation and pattern
+composition. One fixed native package supplies distinct target and citation
+entries for every future formed input. Citation interpretation, higher grammar,
+finite correctness evidence, reflection, and the full transition protocol remain
+required.
 
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed

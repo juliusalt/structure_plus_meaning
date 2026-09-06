@@ -2702,6 +2702,50 @@ arbitrary future formed arguments. Each actual application preserves the
 canonical program environment. The exact contracts cover every input term
 and every admitted source presentation. Incoming edges and other source
 material remain present and do not invalidate relative grammar readings.
-This closes these two native grammar components; citation and higher grammar,
-finite correctness evidence, the full internal transition protocol,
-reflection, and genesis remain required.
+This closes these two native grammar components. Citation admission is
+developed next; higher grammar, finite correctness evidence, the full internal
+transition protocol, reflection, and genesis remain required.
+
+## Target addresses remain opaque through citation admission
+
+An exact occurrence address was previously presented using the natural-word
+encoding also used by environment coordinates. That choice was injective, but
+it required decomposing an opaque byte operand before native citation rules
+could pass it into target data. No such decomposition operation has been
+admitted or justified. The occurrence field now uses the ordinary empty or
+singleton payload list. Absence remains distinct from a present empty address,
+and the artifact still supplies the actual occurrence-membership boundary.
+Environment-use coordinates retain their existing natural-component encoding:
+their components need not be bytes. This change does not restrict those uses.
+
+Every formed target still has complete data and a finite quotation, and each
+presentation uniquely determines its target. The policy that observes an exact
+occurrence keeps its original all-coordinate theorem. A coordinate outside the
+byte profile cannot occur in
+a formed target, so the existing ordinary refusing policy realizes that case.
+There is no new test primitive or semantic role attached to the representation.
+
+The citation value has two independent optional operands: a source-local slot
+and a target address. Their positions supply their roles; the four constructor
+names are not stored. Four ordinary clauses recognize the existing relative
+geometry through complete headed material, data inequality, and bag comparison.
+The external occurrence form checks the three distinct structural positions,
+its two root edges, and the leaf's one functional payload with no counted data.
+Local targets may coincide with the root. The complete source remains supplied,
+including incoming incidence and unrelated material.
+
+The citation's interior is a separate checked output. Quotation and pattern
+composition need it independently of the exposed slot and recovered target.
+Its enumeration must contain exactly the actual root and optional address
+leaf, with no repeated occurrence and every order permitted. The output adds
+no role tag or duplicate target artifact. The raw shape inversion lemmas move
+unchanged from the executable theory into the shared structural theory; the
+native program calls only ordinary definitions already in its package.
+
+Two target clauses and four citation clauses extend the program to thirty-seven
+definitions and sixty-eight clauses. Exactness holds over every input term and
+every complete source presentation. One closed native package supplies distinct
+target and citation sites before all future formed inputs, preserving the
+canonical program environment in every application. Citation interpretation,
+higher grammar, finite correctness evidence, reflection, the complete transition
+protocol, and genesis remain required.

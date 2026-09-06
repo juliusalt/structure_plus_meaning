@@ -115,34 +115,38 @@ definition adoption_occurrence_pattern :: "local_address option \<Rightarrow> na
   "adoption_occurrence_pattern s=
     Pattern_Pair (Pattern_Variable 0)
       (Pattern_Pair (Pattern_Variable 1)
-        (Pattern_Pair (Pattern_Variable 2) (exact_term_pattern (use_data_term s))))"
+        (Pattern_Pair (Pattern_Variable 2) (exact_term_pattern (optional_payload_term s))))"
 
 lemma adoption_occurrence_pattern_formed [simp]:
-  "pattern_formed (adoption_occurrence_pattern s)"
+  "pattern_formed (adoption_occurrence_pattern s) \<longleftrightarrow> term_formed (optional_payload_term s)"
   by (simp add: adoption_occurrence_pattern_def)
 
 lemma adoption_occurrence_pattern_accepts:
   "pattern_accepts (adoption_occurrence_pattern s) t\<longleftrightarrow>
+    term_formed (optional_payload_term s) \<and>
     (\<exists>a g p. term_formed a \<and> term_formed g \<and> term_formed p \<and>
-      t=Pair_Term a (Pair_Term g (Pair_Term p (use_data_term s))))"
+      t=Pair_Term a (Pair_Term g (Pair_Term p (optional_payload_term s))))"
 proof
   assume "pattern_accepts (adoption_occurrence_pattern s) t"
   then obtain V where inst: "pattern_instance V (adoption_occurrence_pattern s) t"
     and formed: "term_formed t" by (auto simp: pattern_accepts_def)
-  show "\<exists>a g p. term_formed a \<and> term_formed g \<and> term_formed p \<and>
-      t=Pair_Term a (Pair_Term g (Pair_Term p (use_data_term s)))"
+  show "term_formed (optional_payload_term s) \<and>
+    (\<exists>a g p. term_formed a \<and> term_formed g \<and> term_formed p \<and>
+      t=Pair_Term a (Pair_Term g (Pair_Term p (optional_payload_term s))))"
     using inst formed by (auto simp: adoption_occurrence_pattern_def)
 next
-  assume "\<exists>a g p. term_formed a \<and> term_formed g \<and> term_formed p \<and>
-      t=Pair_Term a (Pair_Term g (Pair_Term p (use_data_term s)))"
+  assume "term_formed (optional_payload_term s) \<and>
+    (\<exists>a g p. term_formed a \<and> term_formed g \<and> term_formed p \<and>
+      t=Pair_Term a (Pair_Term g (Pair_Term p (optional_payload_term s))))"
   then obtain a g p where fields: "term_formed a" "term_formed g" "term_formed p"
-    and shape: "t=Pair_Term a (Pair_Term g (Pair_Term p (use_data_term s)))" by blast
+    "term_formed (optional_payload_term s)"
+    and shape: "t=Pair_Term a (Pair_Term g (Pair_Term p (optional_payload_term s)))" by blast
   let ?V="{(0,a),(1,g),(2,p)}"
   have bindings: "term_bindings_formed (pattern_variables (adoption_occurrence_pattern s)) ?V"
     using fields by (auto simp: term_bindings_formed_def adoption_occurrence_pattern_def
       single_valued_def rel_dom_def)
   have inst: "pattern_instance ?V (adoption_occurrence_pattern s) t"
-    using shape by (auto simp: adoption_occurrence_pattern_def)
+    using shape fields(4) by (auto simp: adoption_occurrence_pattern_def)
   have tf: "term_formed t" using fields shape by simp
   show "pattern_accepts (adoption_occurrence_pattern s) t"
     using bindings inst tf unfolding pattern_accepts_def by blast
@@ -156,14 +160,16 @@ proof -
     "target_value_presents purpose p" "t=Pair_Term a (Pair_Term g p)"
     using present unfolding adoption_value_presents_def by blast
   obtain v where purpose: "artifact_value_presents (target_artifact purpose) v"
-    "p=Pair_Term v (use_data_term (target_occurrence purpose))"
+    "p=Pair_Term v (optional_payload_term (target_occurrence purpose))"
     using fields(3) unfolding target_value_presents_def by blast
   have af: "term_formed a" using target_value_presents_formed[OF fields(1)] by blast
   have gf: "term_formed g" using generation_value_presents_formed[OF fields(2)] by blast
   have vf: "term_formed v" using artifact_value_presents_formed[OF purpose(1)] by blast
+  have sf: "term_formed (optional_payload_term (target_occurrence purpose))"
+    using fields(3) target_value_presents_formed target_occurrence_data_formed by blast
   show ?thesis
-    using fields(4) purpose(2) af gf vf
-    by (auto simp: adoption_occurrence_pattern_accepts dest: injD[OF use_data_term_injective])
+    using fields(4) purpose(2) af gf vf sf
+    by (auto simp: adoption_occurrence_pattern_accepts dest: injD[OF optional_payload_term_injective])
 qed
 
 theorem occurrence_adoption_program:
@@ -173,8 +179,21 @@ theorem occurrence_adoption_program:
     (\<forall>A G purpose t. adoption_value_presents A G purpose t \<longrightarrow>
       schema_call_formed Q d t \<and>
       ((d,t)\<in>positive_meaning Q\<longleftrightarrow>target_occurrence purpose=s))"
-  by (rule adoption_recognizer_program[
-    OF adoption_occurrence_pattern_formed adoption_occurrence_observation])
+proof (cases "term_formed (optional_payload_term s)")
+  case True
+  have formed: "pattern_formed (adoption_occurrence_pattern s)" using True by simp
+  show ?thesis by (rule adoption_recognizer_program[OF formed adoption_occurrence_observation])
+next
+  case False
+  have impossible: "target_occurrence purpose\<noteq>s"
+    if "adoption_value_presents A G purpose t" for A G purpose t
+  proof -
+    have formed: "target_formed purpose"
+      using that target_value_presents_formed unfolding adoption_value_presents_def by blast
+    show ?thesis using target_occurrence_data_formed[OF formed] False by auto
+  qed
+  show ?thesis using constant_adoption_program[of False] impossible by blast
+qed
 
 text \<open>
   The constant policies are two actual premise-free pattern programs: one has
@@ -187,7 +206,9 @@ text \<open>
   purpose data. It leaves all complete artifact and generation presentations
   unconstrained, so collection order cannot alter formation or truth. The
   selected coordinate is an explicit policy parameter with no intrinsic
-  authority. All three use only the existing pattern and positive-meaning rules.
+  authority. An address outside the byte profile cannot occur in any formed
+  target; the existence theorem then uses the ordinary refusing policy.
+  All three use only the existing pattern and positive-meaning rules.
 \<close>
 
 end

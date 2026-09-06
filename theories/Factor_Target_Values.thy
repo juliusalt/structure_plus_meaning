@@ -7,12 +7,28 @@ section \<open>A complete artifact and its optional occurrence\<close>
 definition target_value_presents :: "exact_target \<Rightarrow> factor_term \<Rightarrow> bool" where
   "target_value_presents x t \<longleftrightarrow> target_formed x \<and>
     (\<exists>v. artifact_value_presents (target_artifact x) v \<and>
-      t=Pair_Term v (use_data_term (target_occurrence x)))"
+      t=Pair_Term v (optional_payload_term (target_occurrence x)))"
+
+lemma target_occurrence_data_formed:
+  assumes "target_formed x"
+  shows "term_formed (optional_payload_term (target_occurrence x))"
+  using assms by (cases x) (auto simp: anchor_formed_def exact_formed_def octets_formed_def)
+
+lemma target_value_whole:
+  "target_value_presents (Whole_Artifact R) t \<longleftrightarrow>
+    (\<exists>a. artifact_value_presents R a \<and> t=Pair_Term a (Payload_Term []))"
+  using artifact_value_presents_formed by (auto simp: target_value_presents_def)
+
+lemma target_value_occurrence:
+  "target_value_presents (Occurrence_Anchor (R,r)) t \<longleftrightarrow>
+    r\<in>rra_carrier (object_structure R) \<and>
+    (\<exists>a. artifact_value_presents R a \<and> t=Pair_Term a (Pair_Term (Payload_Term r) (Payload_Term [])))"
+  using artifact_value_presents_formed by (auto simp: target_value_presents_def anchor_formed_def)
 
 lemma target_value_presents_formed:
   assumes "target_value_presents x t"
   shows "target_formed x \<and> term_formed t \<and> self_contained_term t"
-  using assms artifact_value_presents_formed
+  using assms artifact_value_presents_formed target_occurrence_data_formed
   by (auto simp: target_value_presents_def)
 
 theorem target_value_presents_unique:
@@ -20,18 +36,18 @@ theorem target_value_presents_unique:
   shows "x=y"
 proof -
   obtain v where left: "artifact_value_presents (target_artifact x) v"
-    "t=Pair_Term v (use_data_term (target_occurrence x))"
+    "t=Pair_Term v (optional_payload_term (target_occurrence x))"
     using first unfolding target_value_presents_def by blast
   obtain w where right: "artifact_value_presents (target_artifact y) w"
-    "t=Pair_Term w (use_data_term (target_occurrence y))"
+    "t=Pair_Term w (optional_payload_term (target_occurrence y))"
     using second unfolding target_value_presents_def by blast
-  have same: "v=w" and coordinate: "use_data_term (target_occurrence x)=use_data_term (target_occurrence y)"
+  have same: "v=w" and coordinate: "optional_payload_term (target_occurrence x)=optional_payload_term (target_occurrence y)"
     using left(2) right(2) by simp_all
   have other: "artifact_value_presents (target_artifact y) v" using right(1) same by simp
   have artifact: "target_artifact x=target_artifact y"
     by (rule artifact_value_presents_unique[OF left(1) other])
   have occurrence: "target_occurrence x=target_occurrence y"
-    by (rule injD[OF use_data_term_injective coordinate])
+    by (rule injD[OF optional_payload_term_injective coordinate])
   show ?thesis using artifact occurrence by (simp add: exact_target_identity)
 qed
 
@@ -58,6 +74,7 @@ qed
 text \<open>
   This is an inspectable data copy of an exact target. It retains every artifact
   field and distinguishes a whole artifact from its optional selected occurrence.
+  The selected address remains one opaque payload, including the empty address.
   Occurrence formation still requires the selected address to belong to that
   artifact. Its complete native quotation needs no external slot, so outer
   bindings cannot change the represented target.

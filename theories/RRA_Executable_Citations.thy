@@ -34,60 +34,6 @@ fun finite_raw_citation_at ::
       finite_headed_incidence (finite_structure C) d={||} \<and>
       finite_payload_at C d a \<and> I={|r,d|})"
 
-lemma raw_local_citation_iff:
-  "raw_citation_at R r (Local a) I \<longleftrightarrow> headed_incidence (object_structure R) r={(r,a)} \<and> I={r}"
-proof
-  assume read: "raw_citation_at R r (Local a) I"
-  show "headed_incidence (object_structure R) r={(r,a)} \<and> I={r}"
-    using read by (cases rule: raw_citation_at.cases) auto
-next
-  assume "headed_incidence (object_structure R) r={(r,a)} \<and> I={r}"
-  then show "raw_citation_at R r (Local a) I" by (auto intro: raw_citation_at.local)
-qed
-
-lemma raw_local_whole_citation_iff:
-  "raw_citation_at R r Local_Whole I \<longleftrightarrow> headed_incidence (object_structure R) r={} \<and> I={r}"
-proof
-  assume read: "raw_citation_at R r Local_Whole I"
-  show "headed_incidence (object_structure R) r={} \<and> I={r}"
-    using read by (cases rule: raw_citation_at.cases) auto
-next
-  assume "headed_incidence (object_structure R) r={} \<and> I={r}"
-  then show "raw_citation_at R r Local_Whole I" by (auto intro: raw_citation_at.local_whole)
-qed
-
-lemma raw_external_whole_citation_iff:
-  "raw_citation_at R r (External_Whole k) I \<longleftrightarrow>
-    r\<noteq>k \<and> headed_incidence (object_structure R) r={(k,k)} \<and> I={r}"
-proof
-  assume read: "raw_citation_at R r (External_Whole k) I"
-  show "r\<noteq>k \<and> headed_incidence (object_structure R) r={(k,k)} \<and> I={r}"
-    using read by (cases rule: raw_citation_at.cases) auto
-next
-  assume "r\<noteq>k \<and> headed_incidence (object_structure R) r={(k,k)} \<and> I={r}"
-  then show "raw_citation_at R r (External_Whole k) I" by (auto intro: raw_citation_at.external_whole)
-qed
-
-lemma raw_external_citation_iff:
-  "raw_citation_at R r (External k a) I \<longleftrightarrow>
-    (\<exists>d. distinct [r,k,d] \<and> headed_incidence (object_structure R) r={(r,k),(k,d)} \<and>
-      headed_incidence (object_structure R) d={} \<and> payload_at R d a \<and> I={r,d})"
-proof
-  assume read: "raw_citation_at R r (External k a) I"
-  show "\<exists>d. distinct [r,k,d] \<and> headed_incidence (object_structure R) r={(r,k),(k,d)} \<and>
-      headed_incidence (object_structure R) d={} \<and> payload_at R d a \<and> I={r,d}"
-    using read by (cases rule: raw_citation_at.cases) auto
-next
-  assume supplied: "\<exists>d. distinct [r,k,d] \<and> headed_incidence (object_structure R) r={(r,k),(k,d)} \<and>
-      headed_incidence (object_structure R) d={} \<and> payload_at R d a \<and> I={r,d}"
-  obtain d where separate: "distinct [r,k,d]" and head: "headed_incidence (object_structure R) r={(r,k),(k,d)}"
-    and leaf: "headed_incidence (object_structure R) d={}" and payload: "payload_at R d a" and interior: "I={r,d}"
-    using supplied by blast
-  have read: "raw_citation_at R r (External k a) {r,d}"
-    by (rule raw_citation_at.external[OF separate head leaf payload])
-  show "raw_citation_at R r (External k a) I" using read interior by simp
-qed
-
 lemma finite_raw_citation_at_correct:
   "finite_raw_citation_at C r c I \<longleftrightarrow> raw_citation_at (decode_finite_object C) r c (fset I)"
 proof -

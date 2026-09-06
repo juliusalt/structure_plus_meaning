@@ -175,6 +175,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Headed_Material
     Factor_Family_Admission
     Factor_Record_Admission
+    Factor_Target_Admission
+    Factor_Citation_Admission
     Factor_Judgment_Values
     Factor_Judgment_Scopes
     Factor_Construction_Claims
@@ -260,6 +262,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Lambda_Termination
     SK_Lambda_Termination
     Factor_Coordinate_Values
+    Factor_Citation_Values
     Factor_Target_Values
     Factor_Generation_Values
     Factor_Publication_Values

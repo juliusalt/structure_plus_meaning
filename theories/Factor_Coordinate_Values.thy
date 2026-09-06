@@ -36,6 +36,21 @@ lemma use_data_term_formed [simp]: "term_formed (use_data_term u)"
 lemma use_data_term_self_contained [simp]: "self_contained_term (use_data_term u)"
   by (cases u) (auto simp: data_list_term_self_contained)
 
+fun optional_payload_term :: "octets option \<Rightarrow> factor_term" where
+  "optional_payload_term None=Payload_Term []"
+| "optional_payload_term (Some v)=Pair_Term (Payload_Term v) (Payload_Term [])"
+
+lemma optional_payload_term_injective: "inj optional_payload_term"
+  by (rule injI; rename_tac u v; case_tac u; case_tac v) auto
+
+lemma optional_payload_term_formed [simp]:
+  "term_formed (optional_payload_term u) \<longleftrightarrow> (\<forall>v\<in>set_option u. octets_formed v)"
+  by (cases u) (auto simp: octets_formed_def)
+
+lemma optional_payload_term_self_contained [simp]:
+  "self_contained_term (optional_payload_term u)"
+  by (cases u) auto
+
 definition site_data_term :: "local_address option \<Rightarrow> local_address \<Rightarrow> factor_term" where
   "site_data_term u r=Pair_Term (use_data_term u) (Payload_Term r)"
 
@@ -51,9 +66,11 @@ lemma site_data_term_self_contained [simp]: "self_contained_term (site_data_term
   by (simp add: site_data_term_def)
 
 text \<open>
-  This is the common finite data representation of an optional coordinate.
-  Environment-use coordinates and optional occurrence addresses use the same
-  representation. The representation alone assigns neither role to a value.
+  Environment-use coordinates are arbitrary finite natural words and retain
+  their component presentation. Optional byte values instead stay opaque
+  payloads, with the ordinary zero-or-one list distinguishing absence from
+  a present empty value. A site combines its use with one opaque address.
+  These representations alone assign no semantic role or authority.
 \<close>
 
 end

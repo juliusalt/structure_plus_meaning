@@ -163,9 +163,9 @@ program may differ; their exact frame is part of the accepted material.
 Every such selection has an acceptance record retaining the predecessor's
 program and minimal call scope. A fixed native program constructs both proof
 stages for every future formed supporting scope without a circular quotation.
-This selection component is extended by separate assembly and history checks.
-Complete dependency, comparison, and interpretation admission still remain
-before it can serve as a complete amendment protocol.
+Separate assembly, history, and dependency components extend this selection
+relation. Comparison, migration, and exact cross-version interpretation still
+remain before it can serve as a complete amendment protocol.
 
 The supporting material now retains a separately adopted construction frame,
 its whole proof record, and one complete remaining scope. The construction
@@ -181,9 +181,29 @@ self-succession. One exact construction proof and recorded cause can accompany
 different histories without changing the account. A fixed native output policy
 serves every future valid account presentation and constructs actual candidate
 generations with that predecessor. These account witnesses supply no full
-successor adoption or genesis adequacy. The remaining scope still needs
-complete dependency evidence, comparison and migration admission, and an
-exact cross-version interpretation bridge.
+successor adoption or genesis adequacy. Dependency permission evidence is
+joined below; comparison and migration admission and an exact cross-version
+interpretation bridge remain.
+
+Both actual program scopes now determine the complete dependency evidence
+boundary. Every old and candidate definition is paired with its exact canonical
+environment. A separately adopted predecessor purpose judges permission for
+each such site as ordinary complete data. Its closed proof retains the old
+program and minimal call scope; it does not make the dependency's own calls
+true. A native example permits a definition that refuses every formed call.
+
+The submitted collection contains whole proof records whose actual arguments
+already identify their subjects. Every required subject has a proof, and every
+record must prove a required subject. The constructed collection can have every
+record needed for coverage, while additional valid evidence remains permitted.
+Removing the sole proof or including an unrelated subject fails coverage.
+Empty collections are formed data but cannot meet the actual nonempty domain.
+The accepted envelope fixes the collection and its remaining exact scope.
+One native policy supplies these records for every future program candidate;
+given the separate actual transition ingredients, all material precedes the
+continuation and acceptance records. The example policy grants every formed
+site permission, so its proofs establish no adequacy of dependency checking.
+The complete protocol and its native adequacy still need to be proved.
 
 The current frame and candidate's program payload also determine separate
 comparison domains. Complete changed interface and clause rows determine the

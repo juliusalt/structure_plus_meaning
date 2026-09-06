@@ -2185,12 +2185,12 @@ for the binding and selection component and demonstrates why it is insufficient
 as the complete amendment protocol.
 
 No complete legitimate-succession claim is made by this selection component.
-The account component below adds the historical predecessor and assembly
-evidence. Complete dependency evidence, comparison-report admission, and the
-cross-version interpretation bridge remain to be joined and internally
-checked. The genesis adequacy theorem must prove that a concrete predecessor
-policy enforces those conditions; a proof of its positive call alone cannot
-establish that property.
+The account and dependency components below add the historical predecessor,
+assembly evidence, and complete dependency permission coverage. Comparison
+admission, the cross-version interpretation bridge, and internal checking of
+the whole protocol remain. The genesis adequacy theorem must prove that a
+concrete predecessor policy enforces those conditions; a proof of its positive
+call alone cannot establish that property.
 
 ## Assembly evidence retains the candidate's exact recorded construction scope
 
@@ -2249,8 +2249,87 @@ later proofs for every remaining formed supporting scope. This conditional
 construction checks the order of the finite records without assuming that
 the candidate's supporting scope contains either later proof.
 
-Complete dependency evidence, comparison and migration admission, and exact
+The dependency component below requires permission evidence for every actual
+program definition subject. Comparison and migration admission and exact
 cross-version interpretation still need to be checked in the remaining bound
 scope. The full protocol must have an ordinary internal definition and a proved
 adequacy theorem. None of these component joins establishes policy adequacy
 merely from a proof that its acceptance call is true.
+
+## Dependency evidence is complete permission under the predecessor's selected policy
+
+Proposal §15.5 and plan O-61 require evidence for every retained and changed
+dependency. They do not specify that evidence's judgment family. This profile
+uses an ordinary predecessor permission on an exact environment and definition
+site. It does not identify that permission with the definition's meaning or
+with truth of every application at that definition. The choice keeps the
+dependency decision explicit and open to later authorized protocol changes.
+
+The required subjects are every definition of the predecessor's actual closed
+program and every definition of the candidate's actual closed program, each
+paired with its complete canonical environment. Both scopes are recovered
+before evidence is supplied. Public and affected comparison domains serve a
+different obligation and cannot replace this complete dependency boundary.
+Every required site has a native definition reading, and the actual current
+entry makes the boundary nonempty.
+
+The complete package environment is the site's context in this profile, even
+when that definition has a smaller unchanged active closure. This keeps the
+decision relative to its exact supplied scope under D-11. A coincident
+coordinate in a different environment is a different subject. Identical
+environment-and-site pairs are counted once, including when the candidate
+retains the whole predecessor program. The separately recovered program roots
+are not stored again in each subject.
+
+One companion current purpose selects the permission entry under the original
+predecessor adoption policy. It may differ from the amendment, continuation,
+and construction entries. Each permission call retains that exact old program
+and reads the submitted scope as ordinary complete data. The submitted
+dependency's clauses do not become rules of this call. The permission's
+formation and truth must agree across all complete presentations of its
+environment-and-site subject. One positive proof cannot establish that
+invariance condition by itself.
+
+The evidence body stores the companion frame, a finite collection of whole
+proof records, and one complete remaining scope with its actual site. Each
+record's actual argument already determines its subject, so no duplicate
+subject key or quotation root is stored. Every required subject has a record,
+and every supplied record must have a valid required subject. An unreadable
+record is not silently ignored. The same whole record cannot be reassigned to
+another scope or site.
+
+The collection lists exact proof objects. It does not add identifiers for
+repeated outer storage occurrences. Identical whole records occur once;
+different proofs of the same permission may accumulate. A complete collection
+can be constructed in which every record is needed for coverage. Removing its
+sole provider fails that required subject, while inserting another valid proof
+of a required permission preserves coverage. A valid proof of an unrelated
+subject is rejected. Empty collections remain formed data but fail every
+actual amendment dependency obligation.
+
+The existing accepted envelope fixes this collection and its remaining scope
+through the continuation and assembly material. Selection, construction,
+history, and dependency permission remain separate checked relations.
+Acceptance and its retained proof keep their original exact program and
+minimal judgment environment. Candidate scopes may contain different binding
+values as ordinary data; those values do not rebind the active predecessor
+environment.
+
+One fixed actual native policy supplies a nonempty complete proof collection
+for every future program candidate, with every constructed record needed.
+Given the separately supplied actual candidate frame, assembly certificate,
+historical edge, and successful publication transaction, it also constructs
+the dependency material before the continuation and acceptance records.
+This construction works for every remaining formed scope and needs no proof
+to quote itself.
+
+A native permission proof also coexists with refusal of every formed call at
+its permitted dependency, with all those call interfaces still formed. This
+exhibits the distinction between permission and the dependency's own truth.
+
+The example permission entry accepts every formed site argument. Complete
+evidence under it therefore does not establish adequate dependency checking.
+Comparison and migration admission, exact cross-version interpretation, an
+ordinary internal definition of the complete protocol, and its genesis
+adequacy theorem remain necessary. The finite coverage theorems are a
+component of that work, not a substitute for those semantic obligations.

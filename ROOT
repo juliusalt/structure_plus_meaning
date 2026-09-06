@@ -313,3 +313,11 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Assembly_Support
     Factor_Transition_Accounts
     Factor_Transition_Account_Examples
+    Factor_Site_Permission
+    Factor_Current_Site_Permission
+    Factor_Current_Site_Certificates
+    Factor_Amendment_Dependencies
+    Factor_Dependency_Support
+    Factor_Dependency_Evidence
+    Factor_Transition_Dependencies
+    Factor_Dependency_Evidence_Examples

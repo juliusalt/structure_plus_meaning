@@ -251,3 +251,9 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Authority_Scopes
     Factor_Certified_Authority
     Factor_Authority_Independence
+    Factor_Transaction_Values
+    Factor_Continuation_Values
+    Factor_Continuation
+    Factor_Native_Continuation
+    Factor_Continuation_Programs
+    Factor_Certified_Continuation

@@ -201,8 +201,14 @@ reduction to an SK head. The same equivalence holds for Factor certificates
 and closed native replay under one fixed finite package. This establishes the
 lambda-calculus encoding required by the universality obligation; literal
 source results are not identified with compiled normal forms.
-Native admission-evidence checking, validated continuation, general reflection,
-and concrete genesis remain open. A successful build does not establish those
+Continuation now applies an ordinary invariant policy to complete before,
+transaction, claimed-after, and submitted environment-and-site data. Advancement
+separately checks structural comparison and replacement. Actual formed native
+policies exhibit refusal of success and permission on conflict. One finite native
+compilation serves every complete future argument; separate replay certificates
+preserve the same program and complete minimal judgment scope.
+Native admission-evidence checking, the foundation amendment protocol, general
+reflection, and concrete genesis remain open. A successful build does not establish those
 unfinished claims.
 
 Finite extensional families now reduce to ordinary premise-free clauses while

@@ -19,34 +19,20 @@ theorem native_adoption_application_total:
     (\<forall>v\<in>environment_uses E. \<forall>R. artifact_at F v R\<longleftrightarrow>artifact_at E v R) \<and>
     (\<forall>v\<in>environment_uses E. \<forall>k w. binds_slot F v k w\<longleftrightarrow>binds_slot E v k w)"
 proof -
-  have ef: "environment_formed E"
-    using native_package_projection(1)[OF package] by (simp add: native_package_formed_def)
-  obtain R where source: "artifact_at E (fst d) R" "anchor_formed (R,snd d)"
-    using native_package_definition_anchor[OF package member] by blast
   have tf: "term_formed t" using adoption_value_presents_formed[OF present] by blast
-  let ?F="future_call_environment E (fst d) R (snd d) t"
-  let ?au="future_call_use E (fst d)"
-  have ff: "environment_formed ?F" by (rule future_call_environment_formed[OF ef source tf])
-  have included: "environment_included E ?F" by (rule future_call_includes_existing)
-  have fresh: "?au\<notin>environment_uses E" by (rule future_call_use_fresh[OF ef])
-  obtain I K where app: "native_application_at ?F ?au [] d t I K"
-    using future_call_representation[OF ef source tf] by auto
-  have preserved: "native_package_at ?F pu pr P"
-    by (rule future_call_preserves_program(1)[OF package source tf])
-  have canonical: "native_package_environment ?F pu pr=native_package_environment E pu pr"
-    by (rule future_call_preserves_program(2)[OF package source tf])
-  have boundary: "native_application_formed ?F pu pr ?au []\<longleftrightarrow>schema_call_formed P d t"
-    by (rule native_application_formed_with_reads[OF preserved app])
-  have truth: "native_adoption_judgment_at ?F pu pr ?au [] A G purpose\<longleftrightarrow>
-      factor_adopts P d A G purpose"
-    by (rule native_adoption_at_presentation[OF preserved app invariant present])
-  have arts: "\<forall>v\<in>environment_uses E. \<forall>S. artifact_at ?F v S\<longleftrightarrow>artifact_at E v S"
-    by (intro ballI allI) (rule future_call_existing_artifacts[OF ef source tf]; assumption)
-  have bindings: "\<forall>v\<in>environment_uses E. \<forall>k w. binds_slot ?F v k w\<longleftrightarrow>binds_slot E v k w"
-    by (intro ballI allI) (rule future_call_existing_bindings[OF ef]; assumption)
+  obtain F au I K where future: "environment_formed F" "environment_included E F"
+    "au\<notin>environment_uses E" "native_package_at F pu pr P"
+    "native_application_at F au [] d t I K"
+    "native_package_environment F pu pr=native_package_environment E pu pr"
+    "native_application_formed F pu pr au []\<longleftrightarrow>schema_call_formed P d t"
+    "\<forall>v\<in>environment_uses E. \<forall>R. artifact_at F v R\<longleftrightarrow>artifact_at E v R"
+    "\<forall>v\<in>environment_uses E. \<forall>k w. binds_slot F v k w\<longleftrightarrow>binds_slot E v k w"
+    using native_application_extension_total[OF package member tf] by blast
+  have truth: "native_adoption_judgment_at F pu pr au [] A G purpose\<longleftrightarrow>factor_adopts P d A G purpose"
+    by (rule native_adoption_at_presentation[OF future(4,5) invariant present])
   show ?thesis
-    by (rule exI[of _ ?F], rule exI[of _ ?au], rule exI[of _ I], rule exI[of _ K])
-       (use ff included fresh preserved app canonical boundary truth arts bindings in blast)
+    by (rule exI[of _ F], rule exI[of _ au], rule exI[of _ I], rule exI[of _ K])
+       (use future truth in blast)
 qed
 
 lemma compiled_adoption_permission:

@@ -31,31 +31,19 @@ theorem native_construction_application_total:
     (\<forall>v\<in>environment_uses E. \<forall>T. artifact_at F v T \<longleftrightarrow> artifact_at E v T) \<and>
     (\<forall>v\<in>environment_uses E. \<forall>k w. binds_slot F v k w \<longleftrightarrow> binds_slot E v k w)"
 proof -
-  have ef: "environment_formed E"
-    using native_package_projection(1)[OF package] by (simp add: native_package_formed_def)
-  obtain S where source: "artifact_at E (fst d) S" "anchor_formed (S,snd d)"
-    using native_package_definition_anchor[OF package member] by blast
   have tf: "term_formed t" by (rule construction_claim_presents_formed[OF built coords present])
-  let ?F = "future_call_environment E (fst d) S (snd d) t"
-  let ?au = "future_call_use E (fst d)"
-  have ff: "environment_formed ?F" by (rule future_call_environment_formed[OF ef source tf])
-  have included: "environment_included E ?F" by (rule future_call_includes_existing)
-  have fresh: "?au \<notin> environment_uses E" by (rule future_call_use_fresh[OF ef])
-  obtain I K where call: "native_application_at ?F ?au [] d t I K"
-    using future_call_representation[OF ef source tf] by auto
-  have preserved: "native_package_at ?F pu pr P"
-    by (rule future_call_preserves_program(1)[OF package source tf])
-  have canonical: "native_package_environment ?F pu pr = native_package_environment E pu pr"
-    by (rule future_call_preserves_program(2)[OF package source tf])
-  have truth: "native_positive_holds ?F pu pr ?au [] \<longleftrightarrow> factor_constructs P d xs B W R"
-    by (rule native_construction_permission_with_reads[OF preserved call built coords invariant present])
-  have arts: "\<forall>v\<in>environment_uses E. \<forall>T. artifact_at ?F v T \<longleftrightarrow> artifact_at E v T"
-    by (intro ballI allI) (rule future_call_existing_artifacts[OF ef source tf]; assumption)
-  have bindings: "\<forall>v\<in>environment_uses E. \<forall>k w. binds_slot ?F v k w \<longleftrightarrow> binds_slot E v k w"
-    by (intro ballI allI) (rule future_call_existing_bindings[OF ef]; assumption)
+  obtain F au I K where future: "environment_formed F" "environment_included E F"
+    "au\<notin>environment_uses E" "native_package_at F pu pr P"
+    "native_application_at F au [] d t I K"
+    "native_package_environment F pu pr=native_package_environment E pu pr"
+    "\<forall>v\<in>environment_uses E. \<forall>T. artifact_at F v T\<longleftrightarrow>artifact_at E v T"
+    "\<forall>v\<in>environment_uses E. \<forall>k w. binds_slot F v k w\<longleftrightarrow>binds_slot E v k w"
+    using native_application_extension_total[OF package member tf] by blast
+  have truth: "native_positive_holds F pu pr au []\<longleftrightarrow>factor_constructs P d xs B W R"
+    by (rule native_construction_permission_with_reads[OF future(4,5) built coords invariant present])
   show ?thesis
-    by (rule exI[of _ ?F], rule exI[of _ ?au], rule exI[of _ I], rule exI[of _ K])
-       (use ff included fresh call preserved canonical truth arts bindings in blast)
+    by (rule exI[of _ F], rule exI[of _ au], rule exI[of _ I], rule exI[of _ K])
+       (use future truth in blast)
 qed
 
 lemma compiled_construction_permission:

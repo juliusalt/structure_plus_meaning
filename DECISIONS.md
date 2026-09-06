@@ -1378,6 +1378,54 @@ adoption. Their recovery theorems also do not assert that an arbitrary program
 ignores presentation order. Any semantic use which claims to depend only on
 the represented value must establish that further invariance.
 
+## Continuation keeps structural success and semantic permission separate
+
+The ordinary continuation argument has four positions: the before snapshot,
+the structural transaction, an independently claimed after snapshot, and
+submitted material as a complete environment with an actual selected site.
+The advancement join checks the claimed after snapshot against the structural
+comparison and replacement result. Keeping this claim independent lets the
+same ordinary judgment inspect a proposal even when comparison fails, without
+manufacturing a successful structural transition.
+
+The material position is deliberately grammar-neutral. A policy may inspect
+construction accounts, dependency scopes, authority frames, or certificates
+there, but must state the corresponding requirements itself. Complete quotation
+retains every binding; a bare artifact would omit this information. No evidence
+validity callback or built-in amendment protocol is supplied. This is a choice
+of a general submission boundary for the underdetermined continuation profile.
+Foundation amendment must add its specifically enumerated material and exact
+predecessor authority frame in its own higher join.
+
+Snapshots retain complete exact generation cores and their recursive histories.
+The transaction keeps its four existing independent fields. All finite
+collections admit every complete presentation, and a continuation definition
+must preserve both interface acceptance and truth across them. An exact native
+call uniquely recovers the whole subject. The active program still comes from
+its actual package and dependency environment. Removing required material from
+a subenvironment prevents every continuation reading at that package site,
+regardless of the histories or other data supplied as arguments. A concrete
+witness retaining history while omitting a required semantic edge remains to
+be constructed; the general leastness theorem does not claim that witness.
+
+Two actual finite pattern policies accept and refuse every complete continuation
+argument with formed interfaces and proved invariance. Their native applications
+exhibit refusal of structural success and permission on conflict. The latter
+still fails the advancement join. These programs are witnesses, not selected
+universal policies. Historical predecessors, semantic dependencies, ordered
+construction inputs, and authority decisions are never equated by this layer.
+
+One common native application extension theorem now supplies the existing
+compilation, construction, adoption, and new continuation results. It preserves
+all old artifacts and bindings and the exact canonical program environment.
+A fixed finite compilation preserves every continuation argument. Generic scope
+quotation records its complete minimal judgment environment without duplicating
+the subject. Separate replay certifies every permitted call or complete future
+presentation while preserving that program and judgment scope. The submission
+inside the argument and the certificate of this judgment remain distinct.
+Policy-admission evidence checking and the foundation amendment protocol are
+still open.
+
 ## SK adequacy uses an ordinary finite program
 
 The active SK program stores three definitions and nine ordinary schemas.

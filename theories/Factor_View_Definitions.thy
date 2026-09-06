@@ -54,6 +54,51 @@ lemma added_view_definitions [simp]:
   "system_definitions (add_view_definition P d p C) = insert d (system_definitions P)"
   by (auto simp: system_definitions_def rel_dom_def)
 
+lemma add_recursive_definition_formed:
+  assumes source_formed: "schema_system_formed P" and fresh: "d\<notin>system_definitions P"
+    and interface_formed: "pattern_formed p" and finite_clauses: "finite C"
+    and functional_clauses: "single_valued C"
+    and clauses_formed: "\<forall>c S. (c,S)\<in>C \<longrightarrow> schema_formed S"
+    and callees: "\<forall>c S. (c,S)\<in>C \<longrightarrow> schema_dependencies S \<subseteq> insert d (system_definitions P)"
+  shows "schema_system_formed (add_view_definition P d p C)"
+proof -
+  let ?T="add_view_definition P d p C"
+  have no_interface: "(d,q)\<notin>system_interfaces P" for q
+    using fresh by (auto simp: system_definitions_def rel_dom_def)
+  have no_clause: "((d,c),S)\<notin>system_clauses P" for c S
+    using source_formed fresh by (auto simp: schema_system_formed_def)
+  have finite: "finite (system_interfaces ?T)" "finite (system_clauses ?T)"
+    using source_formed finite_clauses by (simp_all add: add_view_definition_def schema_system_formed_def)
+  have old_isv: "single_valued (system_interfaces P)" and old_csv: "single_valued (system_clauses P)"
+    using source_formed by (auto simp: schema_system_formed_def)
+  have isv: "single_valued (system_interfaces ?T)"
+    using old_isv no_interface by (auto simp: single_valued_def)
+  have csv: "single_valued (system_clauses ?T)"
+    using old_csv functional_clauses no_clause by (auto simp: single_valued_def; blast)
+  have interfaces: "\<forall>e q. (e,q)\<in>system_interfaces ?T \<longrightarrow> pattern_formed q"
+    using source_formed interface_formed by (auto simp: schema_system_formed_def)
+  have clauses: "\<forall>e c S. ((e,c),S)\<in>system_clauses ?T \<longrightarrow>
+    e\<in>system_definitions ?T \<and> schema_formed S \<and> schema_dependencies S \<subseteq> system_definitions ?T"
+    using source_formed clauses_formed callees by (auto simp: schema_system_formed_def; blast)
+  show ?thesis using finite isv csv interfaces clauses by (simp only: schema_system_formed_def)
+qed
+
+theorem added_definition_preserves_old:
+  assumes source: "schema_system_formed P" and target: "schema_system_formed (add_view_definition P d p C)"
+    and fresh: "d\<notin>system_definitions P" and member: "e\<in>system_definitions P"
+  shows "schema_call_formed (add_view_definition P d p C) e t \<longleftrightarrow> schema_call_formed P e t"
+    and "(e,t)\<in>positive_meaning (add_view_definition P d p C) \<longleftrightarrow> (e,t)\<in>positive_meaning P"
+proof -
+  have agree: "systems_agree_on P (add_view_definition P d p C) (system_definitions P)"
+    using fresh by (auto simp: systems_agree_on_def)
+  have closed: "system_dependency_closed P (system_definitions P)"
+    using system_dependency_boundary(1)[OF source] by (auto simp: system_dependency_closed_def)
+  show "schema_call_formed (add_view_definition P d p C) e t \<longleftrightarrow> schema_call_formed P e t"
+    using schema_call_agreement[OF source target agree member] by blast
+  show "(e,t)\<in>positive_meaning (add_view_definition P d p C) \<longleftrightarrow> (e,t)\<in>positive_meaning P"
+    using positive_meaning_dependency_locality[OF source target agree closed member] by blast
+qed
+
 locale positive_view =
   fixes P :: "('a,'s,'d,'c) schema_system" and d :: 'd and p :: "'a term_pattern"
     and C :: "('c \<times> ('a,'s,'d) factor_schema) set"
@@ -74,24 +119,8 @@ lemma no_old_clause: "((d,c),S) \<notin> system_clauses P"
   using source_formed fresh by (auto simp: schema_system_formed_def)
 
 lemma formed: "schema_system_formed extended"
-proof -
-  have finite: "finite (system_interfaces extended)" "finite (system_clauses extended)"
-    using source_formed finite_clauses by (simp_all add: add_view_definition_def schema_system_formed_def)
-  have old_isv: "single_valued (system_interfaces P)" and old_csv: "single_valued (system_clauses P)"
-    using source_formed by (auto simp: schema_system_formed_def)
-  have isv: "single_valued (system_interfaces extended)"
-    using old_isv no_old_interface by (auto simp: single_valued_def)
-  have csv: "single_valued (system_clauses extended)"
-    using old_csv functional_clauses no_old_clause
-    by (auto simp: single_valued_def; blast)
-  have interfaces: "\<forall>e q. (e,q) \<in> system_interfaces extended \<longrightarrow> pattern_formed q"
-    using source_formed interface_formed by (auto simp: schema_system_formed_def)
-  have clauses: "\<forall>e c S. ((e,c),S) \<in> system_clauses extended \<longrightarrow>
-    e \<in> system_definitions extended \<and> schema_formed S \<and>
-    schema_dependencies S \<subseteq> system_definitions extended"
-    using source_formed clauses_formed callees by (auto simp: schema_system_formed_def; blast)
-  show ?thesis using finite isv csv interfaces clauses by (simp only: schema_system_formed_def)
-qed
+  by (rule add_recursive_definition_formed[OF source_formed fresh interface_formed
+    finite_clauses functional_clauses clauses_formed]) (use callees in blast)
 
 lemma old_agreement: "systems_agree_on P extended (system_definitions P)"
   using fresh by (auto simp: systems_agree_on_def)

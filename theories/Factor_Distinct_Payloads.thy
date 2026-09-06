@@ -340,6 +340,17 @@ corollary unequal_payloads_exact:
     octets_formed a \<and> octets_formed b \<and> a\<noteq>b"
   using distinct_payload_list_exact[of "[a,b]"] by auto
 
+lemma distinct_payload_term_list_sound:
+  assumes holds: "(1,data_list_term ts)\<in>positive_meaning distinct_payloads_system"
+  shows "distinct ts \<and> (\<forall>t\<in>set ts. \<exists>v. octets_formed v \<and> t=Payload_Term v)"
+proof -
+  obtain A where parts: "distinct A" "\<forall>a\<in>set A. octets_formed a"
+    "data_list_term ts=data_list_term (map Payload_Term A)"
+    using distinct_payloads_positive_sound[OF holds] by blast
+  have same: "ts=map Payload_Term A" using parts(3) by (simp only: data_list_term_injective)
+  show ?thesis using parts(1,2) same by (auto simp: distinct_map inj_on_def)
+qed
+
 theorem native_distinct_payload_lists:
   "\<exists>E :: local_address option artifact_environment. \<exists>pu Q d. closed_native_package_at E pu [] Q \<and>
     (\<forall>t. term_formed t \<longrightarrow> (\<exists>F au I K.

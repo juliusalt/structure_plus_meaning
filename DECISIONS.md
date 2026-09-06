@@ -1704,3 +1704,32 @@ its addresses do not name operations. The projection relation in the comparison
 proof is derived from the displayed program, rather than added to the semantic
 operator. This supplies a component for native checkers; general reflection,
 policy-admission evidence, and foundation amendment remain open.
+
+## Complete data comparison uses ordinary recursive clauses
+
+The payload program now supports two explicit definition extensions. One
+recognizes exactly the formed payload-and-pair data terms. The other compares
+two such terms for exact inequality. Its five clauses inspect unequal payloads,
+a leaf-versus-pair shape, or one differing child. Every remaining child must
+still satisfy data formation, so finding one difference cannot admit an
+unexamined external target elsewhere in the input.
+
+The existing definition builder has a general formation theorem permitting
+self-calls alongside calls into the old program. The nonrecursive view theorem
+uses this shared result. Every old interface and complete clause family remains
+fixed, and dependency locality proves that all old meanings remain fixed even
+when the new definition recurses. The existing positive least fixed point
+continues to give recursion its only force.
+
+The rule-instance library now supplies a forward valuation projection for
+material programs, an introduction theorem for each ordinary clause inside
+such a program, and induction retaining the actual truth of every premise.
+These are proof tools over the existing operator and finite binder boundary.
+They add no evaluation callback or new language form.
+
+One closed native compilation serves every future formed comparison argument.
+The comparison concerns the exact supplied data terms. Two different collection
+enumerations can present one exact subject, so this result does not classify
+the represented subjects as different or remove the separate presentation
+invariance requirement. Extensional data readers, native checking, reflection,
+and amendment remain to be completed.

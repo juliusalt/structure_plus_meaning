@@ -251,6 +251,13 @@ and two-payload inequality follow, with one closed native program serving every
 future formed argument. This supplies a comparison needed for finite native
 checking without adding a primitive or interpreting payload bytes.
 
+Ordinary recursive extensions now recognize all formed payload-and-pair data
+and compare them for exact inequality. Every child is checked, including those
+outside the first detected difference. All old program meanings remain fixed,
+and one closed native compilation handles all future comparison arguments.
+This compares the supplied terms; different enumerations of one represented
+subject still require an extensional comparison.
+
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed
 terms, with truth exactly when the two terms agree. Its argument domain and

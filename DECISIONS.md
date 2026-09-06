@@ -2790,3 +2790,32 @@ interpretation, and location sites before all future formed inputs, with its
 canonical program environment preserved. Composition with structural citation
 and higher readers, finite correctness evidence, the complete internal
 transition protocol, reflection, and genesis remain required.
+
+## Structural citation reading remains separate from resolution
+
+The shared reader first recovers the exact source artifact at its actual use
+inside the complete supplied environment. It then invokes the existing citation
+admission definition on that artifact. The artifact presentation is a shared
+internal witness, so the result need not store another copy. The output keeps
+the citation and its complete interior enumeration for quotation composition.
+Every complete interior order is accepted, and repetition is rejected. The
+citation value and interior set are uniquely recovered at the given use and
+root. Structural recognition does not require the citation to resolve.
+
+Two further ordinary clauses join this reader to target interpretation and
+occurrence location. They derive precisely the existing anchored_at and
+located_at judgments. The projected interior is recoverable as a finite
+witness, which proves completeness of both views. Whole citations can yield
+targets but have no occurrence location. An occurrence location retains the
+actual destination use; a different use containing the same artifact cannot be
+substituted on the strength of exact target equality alone.
+
+No new observation or truth primitive is added. All three clauses call actual
+definitions already in the same package, and all earlier entries preserve their
+meaning. Exactness covers every input term and every complete environment and
+target presentation. The program now contains forty-five definitions and
+seventy-seven clauses. One closed native package provides three distinct reader
+sites before arbitrary future formed inputs, with its canonical environment
+preserved in every application. Recursive quotation, higher grammar, finite
+correctness evidence, the complete transition protocol, reflection, and genesis
+remain required.

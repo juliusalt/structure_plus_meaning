@@ -499,9 +499,16 @@ Separate views derive citation interpretation and occurrence location; whole
 targets have no occurrence location. Equal artifact values at different uses
 remain distinct destinations. All five entries have exact contracts over every
 input term, preserve every earlier meaning, and share one fixed native package
-for all future formed inputs. Joining these checks with the structural readers,
-higher grammar, finite correctness evidence, reflection, and the full transition
-protocol remains required.
+for all future formed inputs.
+
+The structural reader now selects the source at its actual environment use and
+recovers its citation and complete interior. Recognition remains independent of
+resolution. Two ordinary joins derive exactly the existing anchored target and
+occurrence-location judgments. The location retains its actual use, and every
+complete environment and target presentation is accepted. All three entries
+share one fixed native package for every future formed input. Recursive
+quotation, higher grammar, finite correctness evidence, reflection, and the full
+transition protocol remain required.
 
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed

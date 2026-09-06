@@ -180,6 +180,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Environment_Lookup
     Factor_Citation_Resolution
     Factor_Citation_Interpretation
+    Factor_Citation_Reading
+    Factor_Anchored_Admission
     Factor_Judgment_Values
     Factor_Judgment_Scopes
     Factor_Construction_Claims

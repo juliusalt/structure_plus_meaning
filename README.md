@@ -473,6 +473,16 @@ source; they do not enter this local projection. One fixed native program
 serves every future formed query. The higher grammar and protocol checks
 remain open.
 
+Family and record admission now use that complete material check. A family
+checks unique socket keys and empty material at every socket. A record follows
+the actual successor heads to the terminal socket; this finite deterministic
+path proves socket distinctness without another key check. Both admit exactly
+the existing relative grammar, including empty structures and shared endpoints.
+Family row order is immaterial; the record result has a unique represented
+order. One fixed native package supplies both entries over every future formed
+input. Citation and higher grammar admission, finite correctness evidence,
+reflection, and the full transition protocol remain required.
+
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed
 terms, with truth exactly when the two terms agree. Its argument domain and

@@ -115,35 +115,6 @@ proof -
        simp
 qed
 
-lemma record_path_first:
-  assumes "record_path S r p ps xs"
-  shows "ps\<noteq>[] \<and> hd ps=p"
-  using assms by (cases rule: record_path.cases) auto
-
-lemma record_path_empty [simp]:
-  "\<not> record_path S r p [] xs"
-  "\<not> record_path S r p ps []"
-  using record_path_nonempty record_path_lengths by fastforce+
-
-lemma record_path_cons_iff:
-  "record_path S r p (q#qs) (x#xs) \<longleftrightarrow>
-    p=q \<and> q\<noteq>r \<and> field_endpoint S r q x \<and>
-    ((qs=[] \<and> xs=[] \<and> headed_incidence S q={}) \<or>
-      (qs\<noteq>[] \<and> headed_incidence S q={(q,hd qs)} \<and> record_path S r (hd qs) qs xs))"
-proof
-  assume path: "record_path S r p (q#qs) (x#xs)"
-  show "p=q \<and> q\<noteq>r \<and> field_endpoint S r q x \<and>
-    ((qs=[] \<and> xs=[] \<and> headed_incidence S q={}) \<or>
-      (qs\<noteq>[] \<and> headed_incidence S q={(q,hd qs)} \<and> record_path S r (hd qs) qs xs))"
-    using path by (cases rule: record_path.cases) (auto dest: record_path_first)
-next
-  assume rhs: "p=q \<and> q\<noteq>r \<and> field_endpoint S r q x \<and>
-    ((qs=[] \<and> xs=[] \<and> headed_incidence S q={}) \<or>
-      (qs\<noteq>[] \<and> headed_incidence S q={(q,hd qs)} \<and> record_path S r (hd qs) qs xs))"
-  show "record_path S r p (q#qs) (x#xs)"
-    using rhs by (cases "qs=[]") (auto intro: record_path.path_last record_path.path_slot)
-qed
-
 fun finite_record_path ::
   "'a finite_rra_structure \<Rightarrow> 'a \<Rightarrow> 'a list \<Rightarrow> 'a list \<Rightarrow> bool" where
   "finite_record_path S r [] xs = False"

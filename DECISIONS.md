@@ -2663,3 +2663,45 @@ valid shared structures. Headed material is not identified with the complete
 relative footprint. Record order still comes from successor incidence. Native
 checking of the remaining grammar, finite correctness evidence, reflection, and
 the full amendment protocol remains required.
+
+## Family and record admission preserve their different ordering boundaries
+
+Both entries receive the same kind of ordinary argument: a complete artifact
+presentation, an exact root address, and complete socket-endpoint rows.
+Addresses remain opaque payloads. The root material check admits the source,
+selects an actual carrier occurrence, and checks every headed incidence and
+both empty local data fields. Thus an empty row list cannot admit an absent
+root. The interior is derived from that root and the row keys; no second
+interior field or role tag is stored.
+
+The family entry separately checks unique socket keys and uses the existing
+context-carrying list profile to check every socket. Each must differ from the
+root and have empty headed incidence and local data. Different sockets may
+have equal endpoints. The row list presents a finite relation, so every
+complete order is accepted and repetition of a row is rejected.
+
+The record entry follows successor incidence through the supplied rows. Its
+last socket must have an empty head; every preceding socket has exactly the
+one represented successor. A finite deterministic chain cannot revisit a
+socket: doing so would give two different tails from the same complete head.
+The new structural theorem derives distinct sockets and proves that combining
+this chain with the root graph is exactly the existing record relation.
+Consequently the record entry has no separate key-uniqueness premise. Its
+ordered output is unique, while endpoint repetition remains allowed.
+
+The shared ordinary-entry valuation lemma is a proof calculation for the
+unchanged consequence operator, including ordinary entries in programs that
+have material premises elsewhere. Existing record-path inversion lemmas move
+unchanged into the raw structural theory so both native and executable clients
+use the same facts. No executable checker or external grammar predicate becomes
+a premise of native truth.
+
+The five new definitions have eight ordinary clauses. The complete program has
+thirty-five definitions and sixty-two clauses. It compiles to distinct family and record sites before
+arbitrary future formed arguments. Each actual application preserves the
+canonical program environment. The exact contracts cover every input term
+and every admitted source presentation. Incoming edges and other source
+material remain present and do not invalidate relative grammar readings.
+This closes these two native grammar components; citation and higher grammar,
+finite correctness evidence, the full internal transition protocol,
+reflection, and genesis remain required.

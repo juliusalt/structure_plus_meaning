@@ -17,6 +17,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     RRA_Fresh_Uses
     RRA_Source_Clone
     RRA_Structural_Syntax
+    RRA_Record_Chains
     RRA_Executable_Syntax
     RRA_Executable_Records
     RRA_Executable_Citations
@@ -172,6 +173,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Environment_Admission
     Factor_Key_Fibres
     Factor_Headed_Material
+    Factor_Family_Admission
+    Factor_Record_Admission
     Factor_Judgment_Values
     Factor_Judgment_Scopes
     Factor_Construction_Claims

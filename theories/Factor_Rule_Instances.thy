@@ -256,6 +256,39 @@ lemma ordinary_positive_valuation_step:
   by (rule material_positive_valuation_step[OF clause assignment call _ support])
     (simp add: ordinary)
 
+lemma ordinary_positive_entry_valuation:
+  assumes ordinary: "\<And>c S. ((d,c),S)\<in>system_clauses P \<Longrightarrow> schema_material_premises S={}"
+  shows "(d,t)\<in>positive_meaning P \<longleftrightarrow>
+    (\<exists>c S f. ((d,c),S)\<in>system_clauses P \<and>
+      (\<forall>a\<in>schema_variables S. term_formed (f a)) \<and>
+      t=evaluate_pattern f (schema_conclusion S) \<and> schema_call_formed P d t \<and>
+      (\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
+        (e,evaluate_pattern f p)\<in>positive_meaning P))"
+proof
+  assume holds: "(d,t)\<in>positive_meaning P"
+  have consequence: "(d,t)\<in>schema_consequences P (positive_meaning P)"
+    using holds positive_meaning_unfold[of P] by blast
+  show "\<exists>c S f. ((d,c),S)\<in>system_clauses P \<and>
+      (\<forall>a\<in>schema_variables S. term_formed (f a)) \<and>
+      t=evaluate_pattern f (schema_conclusion S) \<and> schema_call_formed P d t \<and>
+      (\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
+        (e,evaluate_pattern f p)\<in>positive_meaning P)"
+    using schema_consequences_valuationD[OF consequence] by blast
+next
+  assume "\<exists>c S f. ((d,c),S)\<in>system_clauses P \<and>
+      (\<forall>a\<in>schema_variables S. term_formed (f a)) \<and>
+      t=evaluate_pattern f (schema_conclusion S) \<and> schema_call_formed P d t \<and>
+      (\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
+        (e,evaluate_pattern f p)\<in>positive_meaning P)"
+  then obtain c S f where clause: "((d,c),S)\<in>system_clauses P"
+    and assignment: "\<forall>a\<in>schema_variables S. term_formed (f a)"
+    and shape: "t=evaluate_pattern f (schema_conclusion S)" and call: "schema_call_formed P d t"
+    and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
+      (e,evaluate_pattern f p)\<in>positive_meaning P" by blast
+  show "(d,t)\<in>positive_meaning P"
+    using ordinary_positive_valuation_step[OF clause ordinary[OF clause] assignment _ support] call shape by simp
+qed
+
 theorem positive_valuation_induct:
   assumes holds: "(d,t)\<in>positive_meaning P"
     and step: "\<And>d c S f. ((d,c),S)\<in>system_clauses P \<Longrightarrow>
@@ -335,6 +368,8 @@ text \<open>
   The complete valuation equation retains every material premise with its
   five actual evaluated operands. Its introduction rule requires each complete
   material observation. The ordinary-clause rule is the empty-material case.
+  A complete ordinary entry also has an exact valuation equation inside a
+  program whose other definitions may contain material premises.
   Forward projection and induction may omit those conditions only because they
   start from actual consequences of the unchanged operator.
 \<close>

@@ -1,0 +1,146 @@
+theory Factor_Graph_Metadata
+  imports Factor_Realization Factor_Graph_Transport Factor_Program_Positions
+begin
+
+section \<open>Program metadata refers to actual source-environment positions\<close>
+
+fun graph_node_inputs_at ::
+  "'u artifact_environment \<Rightarrow> ('u definition_site \<times> 'n) set \<Rightarrow>
+    ('u definition_site,'u definition_site) schema_graph_node \<Rightarrow> bool" where
+  "graph_node_inputs_at E D Schema_Assertion \<longleftrightarrow> D={}"
+| "graph_node_inputs_at E D (Schema_Inference c V) \<longleftrightarrow>
+    c\<in>environment_positions E \<and> single_valued (fset V) \<and>
+    (\<forall>a t. (a,t)\<in>fset V \<longrightarrow> a\<in>environment_positions E \<and> term_formed t) \<and>
+    rel_dom D\<subseteq>environment_positions E"
+
+definition graph_metadata_at ::
+  "'u artifact_environment \<Rightarrow>
+    ('u definition_site,'u definition_site,'u definition_site,'n) schema_derivation_graph \<Rightarrow> bool" where
+  "graph_metadata_at E G \<longleftrightarrow>
+    (\<forall>n N. (n,N)\<in>fset (graph_inferences G) \<longrightarrow>
+      graph_node_inputs_at E (schema_graph_premises G n) N)"
+
+lemma graph_node_inputs_included:
+  assumes input: "graph_node_inputs_at E D N" and included: "environment_included E F"
+  shows "graph_node_inputs_at F D N"
+  using input environment_positions_included[OF included]
+  by (cases N) (auto simp del: environment_positions_member)
+
+lemma graph_node_inputs_map_targets:
+  "graph_node_inputs_at E (image (map_prod id h) D) N \<longleftrightarrow> graph_node_inputs_at E D N"
+  by (cases N) (simp_all add: pair_image_domain map_prod_def)
+
+lemma graph_metadata_rename:
+  assumes metadata: "graph_metadata_at E G" and formed: "schema_graph_formed G root"
+    and injective: "inj_on h (schema_graph_nodes G)"
+  shows "graph_metadata_at E (rename_schema_graph h G)"
+  unfolding graph_metadata_at_def
+proof (intro allI impI)
+  fix n N assume row: "(n,N)\<in>fset (graph_inferences (rename_schema_graph h G))"
+  obtain m where original: "(m,N)\<in>fset (graph_inferences G)" "n=h m"
+    using row by (auto simp: schema_graph_renamed_node)
+  have inside: "m\<in>schema_graph_nodes G" using original(1) by (auto simp: schema_graph_nodes_def rel_dom_def)
+  have previous: "graph_node_inputs_at E (schema_graph_premises G m) N"
+    using metadata original(1) by (auto simp: graph_metadata_at_def)
+  show "graph_node_inputs_at E (schema_graph_premises (rename_schema_graph h G) n) N"
+    using previous schema_graph_renamed_premises[OF formed injective inside] original(2)
+    by (simp add: graph_node_inputs_map_targets)
+qed
+
+lemma native_proof_node_inputs:
+  assumes node: "native_proof_node_at E u r N D I K"
+  shows "graph_node_inputs_at E D N"
+proof (cases rule: native_proof_node_at.cases[OF node, case_names assertion inference])
+  case (assertion R)
+  then show ?thesis by simp
+next
+  case (inference R ps c b p d C A V B L D' J W)
+  have reference: "site_citation_at E u c d C A"
+    and bindings: "native_binding_table_at E u b (fset V) B L"
+    and links: "native_discharge_table_at E u p D' J W" using inference by auto
+  have clause: "d\<in>environment_positions E" by (rule site_citation_properties(5)[OF reference])
+  have sv: "single_valued (fset V)" by (rule native_binding_table_properties(2)[OF bindings])
+  have arguments: "\<forall>a t. (a,t)\<in>fset V \<longrightarrow> a\<in>environment_positions E \<and> term_formed t"
+    by (rule native_binding_table_properties(7)[OF bindings])
+  have sockets: "rel_dom D'\<subseteq>environment_positions E"
+    using native_discharge_table_properties(7)[OF links] by (auto simp: rel_dom_def)
+  show ?thesis using inference clause sv arguments sockets by simp
+qed
+
+theorem native_graph_metadata:
+  assumes native: "native_schema_graph_at E root G"
+  shows "graph_metadata_at E G"
+  unfolding graph_metadata_at_def
+proof (intro allI impI)
+  fix n N assume row: "(n,N)\<in>fset (graph_inferences G)"
+  obtain I K where node: "native_proof_node_at E (fst n) (snd n) N (schema_graph_premises G n) I K"
+    using native_schema_graph_entry[OF native row] by blast
+  show "graph_node_inputs_at E (schema_graph_premises G n) N" by (rule native_proof_node_inputs[OF node])
+qed
+
+section \<open>Validity supplies all metadata requirements without an extra premise\<close>
+
+lemma checked_graph_node_inputs:
+  assumes package: "native_package_at E pu pr P"
+    and checked: "checks_schema_graph_node (positioned_program P) G J n N"
+  shows "graph_node_inputs_at E (schema_graph_premises G n) N"
+proof (cases N)
+  case Schema_Assertion
+  then show ?thesis using checked by simp
+next
+  case (Schema_Inference c V)
+  obtain Q where inst: "admitted_schema_instance (positioned_program P)
+      (fst (rel_value J n)) c (fset V) (snd (rel_value J n)) Q"
+    and domain: "rel_dom (schema_graph_premises G n)=rel_dom Q"
+    using checked Schema_Inference by auto
+  obtain S where clause: "((fst (rel_value J n),c),S)\<in>system_clauses (positioned_program P)"
+    and schema: "schema_instance S (fset V) (snd (rel_value J n)) Q"
+    using inst by (auto simp: admitted_schema_instance_def)
+  have reference: "c\<in>environment_positions E"
+    and positions: "schema_variables S\<union>schema_sockets S\<subseteq>environment_positions E"
+    using positioned_package_clause_positions[OF package clause] by auto
+  have bindings: "term_bindings_formed (schema_variables S) (fset V)"
+    and qdomain: "rel_dom Q=rel_dom (schema_premises S)"
+    using schema by (auto simp: schema_instance_def schema_premise_instance_def)
+  have keys: "rel_dom (fset V)\<subseteq>environment_positions E"
+    using bindings positions by (auto simp: term_bindings_formed_def)
+  have sv: "single_valued (fset V)" using bindings by (simp add: term_bindings_formed_def)
+  have arguments: "\<forall>a t. (a,t)\<in>fset V \<longrightarrow> a\<in>environment_positions E \<and> term_formed t"
+  proof (intro allI impI)
+    fix a t assume entry: "(a,t)\<in>fset V"
+    have key: "a\<in>rel_dom (fset V)" by (rule rel_domI[OF entry])
+    have position: "a\<in>environment_positions E" by (rule subsetD[OF keys key])
+    have tf: "term_formed t" using bindings entry unfolding term_bindings_formed_def by blast
+    show "a\<in>environment_positions E \<and> term_formed t" using position tf by blast
+  qed
+  have sockets: "rel_dom (schema_graph_premises G n)\<subseteq>environment_positions E"
+    using domain qdomain positions by (auto simp: schema_sockets_def)
+  show ?thesis using reference sv arguments sockets by (simp add: Schema_Inference)
+qed
+
+theorem derived_graph_metadata:
+  assumes package: "native_package_at E pu pr P"
+    and derived: "schema_graph_derives (positioned_program P) G root d t H"
+  shows "graph_metadata_at E G"
+proof -
+  obtain J where read: "schema_graph_reading (positioned_program P) G root d t J"
+    using derived by (auto simp: schema_graph_derives_def)
+  show ?thesis unfolding graph_metadata_at_def
+  proof (intro allI impI)
+    fix n N assume row: "(n,N)\<in>fset (graph_inferences G)"
+    have checked: "checks_schema_graph_node (positioned_program P) G J n N"
+      using read row by (auto simp: schema_graph_reading_def)
+    show "graph_node_inputs_at E (schema_graph_premises G n) N"
+      by (rule checked_graph_node_inputs[OF package checked])
+  qed
+qed
+
+text \<open>
+  Clause sites, binding keys, and premise sockets must refer to actual program
+  occurrences. Proof-node targets may be placed later. These requirements
+  follow from a valid derivation against the located program; graph topology
+  by itself does not supply them. The metadata predicate adds no stored field
+  and no proof rule, and it permits no implicit assertion from a missing link.
+\<close>
+
+end

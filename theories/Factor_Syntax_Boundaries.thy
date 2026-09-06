@@ -1,0 +1,82 @@
+theory Factor_Syntax_Boundaries
+  imports Factor_Presentation
+begin
+
+section \<open>Every recovered syntax demand lies in its source carrier\<close>
+
+lemma pattern_record_carrier:
+  assumes rec: "pattern_record_at E u V r ps I K" and source: "artifact_at E u R"
+  shows "I \<union> K \<subseteq> rra_carrier (object_structure R)"
+proof -
+  have ef: "environment_formed E" using rec by (simp add: pattern_record_at_def)
+  obtain S ports roots J where parts: "artifact_at E u S" "record_at S r ports roots"
+    "pattern_vector_at E u V roots ps J K" "I=insert r (set ports \<union> J)"
+    using rec by (auto simp: pattern_record_at_def)
+  have same: "S=R" by (rule environment_artifact_unique[OF ef parts(1) source])
+  have header: "insert r (set ports) \<subseteq> rra_carrier (object_structure R)"
+    using record_interior_in_carrier[OF parts(2)] same by simp
+  have body: "J \<union> K \<subseteq> rra_carrier (object_structure R)"
+    by (rule pattern_vector_carrier[OF parts(3) source])
+  show ?thesis using parts(4) header body by auto
+qed
+
+lemma native_material_carrier:
+  assumes "native_material_at E u V r M I K" "artifact_at E u R"
+  shows "I \<union> K \<subseteq> rra_carrier (object_structure R)"
+  using assms unfolding native_material_at_def by (rule pattern_record_carrier)
+
+lemma scoped_pattern_carrier:
+  assumes scoped: "scoped_pattern_at E u r p I K" and source: "artifact_at E u R"
+  shows "I \<union> K \<subseteq> rra_carrier (object_structure R)"
+proof -
+  have ef: "environment_formed E" using scoped by (simp add: scoped_pattern_at_def)
+  obtain S ports b q V J where parts: "artifact_at E u S" "record_at S r ports [b,q]"
+    "binder_scope_at S b V" "pattern_quoted_at E u V q p J K"
+    "I=insert r (set ports \<union> insert b V \<union> J)"
+    using scoped by (auto simp: scoped_pattern_at_def)
+  have same: "S=R" by (rule environment_artifact_unique[OF ef parts(1) source])
+  have header: "insert r (set ports) \<subseteq> rra_carrier (object_structure R)"
+    using record_interior_in_carrier[OF parts(2)] same by simp
+  have family: "family_at R b ((\<lambda>a. (a,a)) ` V)"
+    using parts(3) same by (simp add: binder_scope_at_def)
+  have domain: "rel_dom ((\<lambda>a. (a,a)) ` V) = V"
+    by (auto simp: rel_dom_def)
+  have scope: "insert b V \<subseteq> rra_carrier (object_structure R)"
+    using family_interior_in_carrier[OF family] by (simp add: domain)
+  have body: "J \<union> K \<subseteq> rra_carrier (object_structure R)"
+    using pattern_quoted_carrier[OF parts(4) source] by blast
+  show ?thesis using parts(5) header scope body by auto
+qed
+
+lemma prospective_call_carrier:
+  assumes call: "prospective_call_at E u V r d p I K" and source: "artifact_at E u R"
+  shows "I \<union> K \<subseteq> rra_carrier (object_structure R)"
+proof -
+  have ef: "environment_formed E" using call by (simp add: prospective_call_at_def)
+  obtain S ports c a cite C J A where parts: "artifact_at E u S" "record_at S r ports [c,a]"
+    "citation_at S c cite C" "pattern_quoted_at E u V a p J A"
+    "I=insert r (set ports \<union> C \<union> J)" "K=citation_slots cite \<union> A"
+    using call by (auto simp: prospective_call_at_def)
+  have same: "S=R" by (rule environment_artifact_unique[OF ef parts(1) source])
+  have header: "insert r (set ports) \<subseteq> rra_carrier (object_structure R)"
+    using record_interior_in_carrier[OF parts(2)] same by simp
+  have citation: "C \<union> citation_slots cite \<subseteq> rra_carrier (object_structure R)"
+    using citation_interior_in_carrier[OF parts(3)] citation_slots_in_carrier[OF parts(3)] same by auto
+  have body: "J \<union> A \<subseteq> rra_carrier (object_structure R)"
+    using pattern_quoted_carrier[OF parts(4) source] by blast
+  show ?thesis using parts(5,6) header citation body by auto
+qed
+
+lemma native_premise_carrier:
+  assumes premise: "native_premise_at E u V r p I K" and source: "artifact_at E u R"
+  shows "I \<union> K \<subseteq> rra_carrier (object_structure R)"
+  using premise
+proof (cases rule: native_premise_at.cases)
+  case (call d q)
+  show ?thesis by (rule prospective_call_carrier[OF call(2) source])
+next
+  case (material M)
+  show ?thesis by (rule native_material_carrier[OF material(2) source])
+qed
+
+end

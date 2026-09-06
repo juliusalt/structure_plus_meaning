@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rra.example/schemas/kernel/v1/live.schema.json",
+  "title": "RRA Live Profile Values",
+  "$defs": {
+    "refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "https://rra.example/schemas/kernel/v1/common.schema.json#/$defs/recordRef"
+      }
+    },
+    "generation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "format",
+        "locus",
+        "predecessors",
+        "payload",
+        "dependencies",
+        "evidence"
+      ],
+      "properties": {
+        "format": {
+          "const": "rra-generation-json-1"
+        },
+        "locus": {
+          "$ref": "https://rra.example/schemas/kernel/v1/common.schema.json#/$defs/hex"
+        },
+        "predecessors": {
+          "$ref": "#/$defs/refs"
+        },
+        "payload": {
+          "$ref": "https://rra.example/schemas/kernel/v1/common.schema.json#/$defs/recordRef"
+        },
+        "dependencies": {
+          "$ref": "#/$defs/refs"
+        },
+        "evidence": {
+          "$ref": "#/$defs/refs"
+        }
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/generation"
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "format",
+        "compare",
+        "write"
+      ],
+      "properties": {
+        "format": {
+          "const": "rra-transaction-json-1"
+        },
+        "compare": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "locus",
+              "expected"
+            ],
+            "properties": {
+              "locus": {
+                "$ref": "https://rra.example/schemas/kernel/v1/common.schema.json#/$defs/hex"
+              },
+              "expected": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "$ref": "https://rra.example/schemas/kernel/v1/common.schema.json#/$defs/recordRef"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "write": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "locus",
+              "payload",
+              "dependencies",
+              "evidence",
+              "additional_predecessors"
+            ],
+            "properties": {
+              "locus": {
+                "$ref": "https://rra.example/schemas/kernel/v1/common.schema.json#/$defs/hex"
+              },
+              "payload": {
+                "$ref": "https://rra.example/schemas/kernel/v1/common.schema.json#/$defs/recordRef"
+              },
+              "dependencies": {
+                "$ref": "#/$defs/refs"
+              },
+              "evidence": {
+                "$ref": "#/$defs/refs"
+              },
+              "additional_predecessors": {
+                "$ref": "#/$defs/refs"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "format",
+        "heads",
+        "protocols",
+        "executions",
+        "checker_runs",
+        "trust_decisions",
+        "policies",
+        "dependencies",
+        "evidence",
+        "provenance"
+      ],
+      "properties": {
+        "format": {
+          "const": "rra-publication-json-1"
+        },
+        "heads": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "locus",
+              "generation"
+            ],
+            "properties": {
+              "locus": {
+                "$ref": "https://rra.example/schemas/kernel/v1/common.schema.json#/$defs/hex"
+              },
+              "generation": {
+                "$ref": "https://rra.example/schemas/kernel/v1/common.schema.json#/$defs/recordRef"
+              }
+            }
+          }
+        },
+        "protocols": {
+          "$ref": "#/$defs/refs"
+        },
+        "executions": {
+          "$ref": "#/$defs/refs"
+        },
+        "checker_runs": {
+          "$ref": "#/$defs/refs"
+        },
+        "trust_decisions": {
+          "$ref": "#/$defs/refs"
+        },
+        "policies": {
+          "$ref": "#/$defs/refs"
+        },
+        "dependencies": {
+          "$ref": "#/$defs/refs"
+        },
+        "evidence": {
+          "$ref": "#/$defs/refs"
+        },
+        "provenance": {
+          "$ref": "#/$defs/refs"
+        }
+      }
+    }
+  ]
+}

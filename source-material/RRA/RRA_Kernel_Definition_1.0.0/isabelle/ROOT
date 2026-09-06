@@ -1,0 +1,9 @@
+session RRA_Kernel = HOL +
+  options [document = false]
+  theories
+    RRA_Core
+    RRA_Data
+    RRA_Artifact
+    RRA_Assembly
+    RRA_Live
+    RRA_Kernel

@@ -1,0 +1,10 @@
+WARNING: The directory '/home/oai/.cache/pip' or its parent directory is not owned or is not writable by the current user. The cache has been disabled. Check the permissions and owner of that directory. If executing pip with sudo, you should use sudo's -H flag.
+Processing /mnt/data/RRA_Kernel_Definition_1.0.0
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: rra-kernel
+  Building wheel for rra-kernel (pyproject.toml): started
+  Building wheel for rra-kernel (pyproject.toml): finished with status 'done'
+  Created wheel for rra-kernel: filename=rra_kernel-1.0.0-py3-none-any.whl size=17768 sha256=a7b3f5137adbbca446bff589eb001c00ddd138d95f7af3212c0136b698fbdb4f
+  Stored in directory: /tmp/pip-ephem-wheel-cache-w_evvwk_/wheels/14/5d/fc/e5e4e9641a5dc9ca5f0ad40cff7a90a23b8f6ab048160703dc
+Successfully built rra-kernel

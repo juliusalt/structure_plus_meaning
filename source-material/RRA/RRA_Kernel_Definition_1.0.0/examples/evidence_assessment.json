@@ -1,0 +1,12 @@
+{
+  "format":"rra-evidence-envelope-json-1",
+  "kind":"assessment",
+  "claims":[],
+  "executions":[],
+  "evidence":[],
+  "checker_runs":[],
+  "trust_decisions":[],
+  "results":[],
+  "residuals":[],
+  "provenance":[]
+}

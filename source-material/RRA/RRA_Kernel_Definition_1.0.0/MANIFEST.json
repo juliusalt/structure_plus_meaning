@@ -1,0 +1,388 @@
+{
+  "files": [
+    {
+      "path": "API.md",
+      "sha256": "f862f9928e18e68c535927573520aec843f9df470011dbb020c7923b54a325d7",
+      "size": 1529
+    },
+    {
+      "path": "CONFORMANCE.md",
+      "sha256": "e0470dfc252717966a4e49f09e22167194016ec97c34365cf787cefc938e38e6",
+      "size": 1498
+    },
+    {
+      "path": "README.md",
+      "sha256": "f4493ef56d1d80492c9ae3ef81d0baa85c00da2750b3f4d13b0c0cbe0b2d68c6",
+      "size": 1810
+    },
+    {
+      "path": "SHA256SUMS.txt",
+      "sha256": "c6aea4b7e1f5a7cccdb70a44bb3e3eb8816730c1fb19f316f0b851bb1e75a011",
+      "size": 215
+    },
+    {
+      "path": "SPECIFICATION.md",
+      "sha256": "de9bd036b362aea325cc91fd4be464ec3e1b58b955be303f5e5d251f53972f56",
+      "size": 18115
+    },
+    {
+      "path": "VERSION",
+      "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03",
+      "size": 6
+    },
+    {
+      "path": "build/lib/rra_kernel/__init__.py",
+      "sha256": "2830b467212489791b2d68169800bd3e14d177794df0901cf894b54a92250b01",
+      "size": 1565
+    },
+    {
+      "path": "build/lib/rra_kernel/__main__.py",
+      "sha256": "cdd43b35f87a800e18d42b38a51a69f8c8ffb5665c797e6f5c2243255bfec0c9",
+      "size": 1741
+    },
+    {
+      "path": "build/lib/rra_kernel/artifact.py",
+      "sha256": "ddd9bcb78bc2ec96a174bec40d6e562abbc276b9c05e3328508df7ae57816567",
+      "size": 3626
+    },
+    {
+      "path": "build/lib/rra_kernel/assembly.py",
+      "sha256": "63f435742d8ec6711b39935183154349ff1ffa2a654db411c7a7f8645a5e087d",
+      "size": 8593
+    },
+    {
+      "path": "build/lib/rra_kernel/assembly_codec.py",
+      "sha256": "5995a6bcba4b32b2785acdaa9b6f4abd2a5085437ad95a9237f64f2cc092db96",
+      "size": 3393
+    },
+    {
+      "path": "build/lib/rra_kernel/codec.py",
+      "sha256": "e2766d10987af85340f22fb3e0fb4681be1b95e8933f47ec43719921285a399c",
+      "size": 8980
+    },
+    {
+      "path": "build/lib/rra_kernel/core.py",
+      "sha256": "74c866b033627155afde5c398a2002ee91d522cb3368278ec006746adb1f68cd",
+      "size": 3161
+    },
+    {
+      "path": "build/lib/rra_kernel/data.py",
+      "sha256": "df61353cf0b9e7c97bda980791be59440038dd7b9d68fb889f5900882114c8fc",
+      "size": 5962
+    },
+    {
+      "path": "build/lib/rra_kernel/evidence.py",
+      "sha256": "15dd2672de9239907ff0fed795ec2b656318099dda1ae41ec9524a30867d3879",
+      "size": 4885
+    },
+    {
+      "path": "build/lib/rra_kernel/live.py",
+      "sha256": "362642b97118c44cb7e74b8b5f9f69bc7bb9668b7368867388590b8b7a321d69",
+      "size": 9864
+    },
+    {
+      "path": "build/lib/rra_kernel/py.typed",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "dist/rra_kernel-1.0.0-py3-none-any.whl",
+      "sha256": "a7b3f5137adbbca446bff589eb001c00ddd138d95f7af3212c0136b698fbdb4f",
+      "size": 17768
+    },
+    {
+      "path": "dist/rra_kernel_definition_source-1.0.0.zip",
+      "sha256": "7c1e6769f91d5e5aadb73297f51f12733264031ce9b0659d81d94d3514416a95",
+      "size": 118159
+    },
+    {
+      "path": "examples/assembly_witness.json",
+      "sha256": "909d94c72c5bbe50a8a4b20928a85b1b3afad51d72e4b4206cddd05a47479218",
+      "size": 533
+    },
+    {
+      "path": "examples/empty_record.json",
+      "sha256": "8842d16aa914e58e904b151a3965e06ffcc1cf2161427d9b92128512a2d0b6d9",
+      "size": 84
+    },
+    {
+      "path": "examples/evidence_assessment.json",
+      "sha256": "795addc7b64f9c8247acf3df2e54b0f1405406c0435ea9f375e1dd60ddce982d",
+      "size": 218
+    },
+    {
+      "path": "examples/functional_record.json",
+      "sha256": "41d5969f6c8c5abde85031f63599548e8a27513659c328d98992657e8a1e3aa9",
+      "size": 134
+    },
+    {
+      "path": "examples/parallel_record.json",
+      "sha256": "681970b12d245a5bbde6b9354437b3ccbc4d9e17b698de1a9e0376db88193d5e",
+      "size": 190
+    },
+    {
+      "path": "examples/transaction.json",
+      "sha256": "f2c12caa94218d3e23c1eee81faf9fdc0e4c4e80c8b2871ebaca117259b2ae21",
+      "size": 345
+    },
+    {
+      "path": "generated_test_status.txt",
+      "sha256": "d542c1c175ef19314b5a0a8c8e8b5ce1d5440c30912e1d8dacdcbc34033c3bac",
+      "size": 3994
+    },
+    {
+      "path": "install_test.txt",
+      "sha256": "375259979831e92a120495bcc4d2bbc8a19bb334ce4007b9710060a9ebe80535",
+      "size": 478
+    },
+    {
+      "path": "isabelle/README.md",
+      "sha256": "0fa3845116b4a9ea9573f227d22720d6a36629d1dc67adda31669bd5ce6920cc",
+      "size": 569
+    },
+    {
+      "path": "isabelle/ROOT",
+      "sha256": "b1d9a7ce865d02f636f583c20a77fff85e1a47d5c29dd11d6011bc38798357a7",
+      "size": 155
+    },
+    {
+      "path": "isabelle/RRA_Artifact.thy",
+      "sha256": "193d585444c410bcb5ef9efc5b31eb7bd0de95b4eea3cbde6b504c4cedc55046",
+      "size": 891
+    },
+    {
+      "path": "isabelle/RRA_Assembly.thy",
+      "sha256": "b408b638e6d69025adf15355d914bfc7cfba7fc7abb40212d06fc5136e2c3db5",
+      "size": 3613
+    },
+    {
+      "path": "isabelle/RRA_Core.thy",
+      "sha256": "a2ef480f44937b6dce49a8e507c9e1425e83ecd6b62a005b74fb59d0d27a579b",
+      "size": 1043
+    },
+    {
+      "path": "isabelle/RRA_Data.thy",
+      "sha256": "ea2335ffd60d64e9a9888f571d3d722252364e8d4a7944ccc197909496338cf9",
+      "size": 2592
+    },
+    {
+      "path": "isabelle/RRA_Kernel.thy",
+      "sha256": "4afca22288ed174cc0260a57124119d2a54d8081c6fb9989fd4df4906d8dcb63",
+      "size": 157
+    },
+    {
+      "path": "isabelle/RRA_Live.thy",
+      "sha256": "c0ffb3a6fdd0af9795453d368fb7cf68cf14a9cc97e65bf339aeaaef0ad5fbe3",
+      "size": 2048
+    },
+    {
+      "path": "isabelle_build.txt",
+      "sha256": "e774e173f6221c0fe5d0b83e1f1ff6933d4c5b92c1c52aa3e3f57893046619ee",
+      "size": 91
+    },
+    {
+      "path": "pyproject.toml",
+      "sha256": "0f0b5c4327efb70e6f31bb7cb51be34ffda2bc34a35bcf9df014ca890fe89c7f",
+      "size": 622
+    },
+    {
+      "path": "schemas/assembly.schema.json",
+      "sha256": "0019ca9cbd5113f5969cc3879ec6e3843fc3fc92e4054aeaccfa44fbd8b397f4",
+      "size": 1508
+    },
+    {
+      "path": "schemas/common.schema.json",
+      "sha256": "93f7968cb4b2ebc510a21f34f48b755d0a302c48f850a04bcb349e3945db32ed",
+      "size": 912
+    },
+    {
+      "path": "schemas/evidence.schema.json",
+      "sha256": "2531789402e5e603ac378848f75b1b96a8e616cbe6be7fd88b3a6c0b04d919b0",
+      "size": 5004
+    },
+    {
+      "path": "schemas/live.schema.json",
+      "sha256": "9928a3ac79e785690a16e47c086099b7e2965ab9930da3cd0c4631ab79ba2293",
+      "size": 4811
+    },
+    {
+      "path": "schemas/record.schema.json",
+      "sha256": "ef796bdf53a23b8b39bfe00346707a0f47bf28d55cb6bdf246e4845fcf24ba60",
+      "size": 3679
+    },
+    {
+      "path": "schemas/reference.schema.json",
+      "sha256": "6a24ec19f6495bf809a8cdbfc45f9158310b7231e110c8bcd557e4eb42850719",
+      "size": 940
+    },
+    {
+      "path": "schemas/registry.json",
+      "sha256": "1133da66983114d1f0cb3d992d917283d9b13be48f7976ec148b47b8764f2a33",
+      "size": 517
+    },
+    {
+      "path": "src/rra_kernel/__init__.py",
+      "sha256": "2830b467212489791b2d68169800bd3e14d177794df0901cf894b54a92250b01",
+      "size": 1565
+    },
+    {
+      "path": "src/rra_kernel/__main__.py",
+      "sha256": "cdd43b35f87a800e18d42b38a51a69f8c8ffb5665c797e6f5c2243255bfec0c9",
+      "size": 1741
+    },
+    {
+      "path": "src/rra_kernel/__pycache__/__init__.cpython-313.pyc",
+      "sha256": "bf0f5e3302ff09e7020a420f789ad99a6a3b7e967f23278a11f4db60387bed3f",
+      "size": 1478
+    },
+    {
+      "path": "src/rra_kernel/__pycache__/__main__.cpython-313.pyc",
+      "sha256": "b202457292b792af0016261a7a9e7829e8cde29766c2110c4afaa5d5c2aa7fc1",
+      "size": 2816
+    },
+    {
+      "path": "src/rra_kernel/__pycache__/artifact.cpython-313.pyc",
+      "sha256": "d01431bafeb3050775e9f98bf2451720cadb7b0c64d6022d6cb973d5bfac1356",
+      "size": 6902
+    },
+    {
+      "path": "src/rra_kernel/__pycache__/assembly.cpython-313.pyc",
+      "sha256": "1b10df48ce5dbb100d2fbbf5ed2c3af1c3f900413d8a3fca90863b175400dd16",
+      "size": 16101
+    },
+    {
+      "path": "src/rra_kernel/__pycache__/assembly_codec.cpython-313.pyc",
+      "sha256": "49b86a619f0094574448e1c95ed59ed5218a94ed540d87e9a52ec6a538ed2ce6",
+      "size": 5414
+    },
+    {
+      "path": "src/rra_kernel/__pycache__/codec.cpython-313.pyc",
+      "sha256": "f002b434678f4e87dee8c1fe1bf44bf43f64cf022d3e84eba10d5f635c3761de",
+      "size": 15669
+    },
+    {
+      "path": "src/rra_kernel/__pycache__/core.cpython-313.pyc",
+      "sha256": "ecf653d0e307efd42c67dad7875bf23ead8f0a12ba26531ca6be0398338f4f31",
+      "size": 5948
+    },
+    {
+      "path": "src/rra_kernel/__pycache__/data.cpython-313.pyc",
+      "sha256": "4c8b59e32fb1407726080ec228cac1c02cecb1e333169ef2f67d71d3636874bc",
+      "size": 12688
+    },
+    {
+      "path": "src/rra_kernel/__pycache__/evidence.cpython-313.pyc",
+      "sha256": "33c8975f8889415e29c73ec599308389f2645918213636a8d3685f2d9c8e79f0",
+      "size": 8530
+    },
+    {
+      "path": "src/rra_kernel/__pycache__/live.cpython-313.pyc",
+      "sha256": "8579534e46720ed2f9e83c6ae69ba2b4b0512c9d3e958a13ad5c3621fdaf23f1",
+      "size": 18573
+    },
+    {
+      "path": "src/rra_kernel/artifact.py",
+      "sha256": "ddd9bcb78bc2ec96a174bec40d6e562abbc276b9c05e3328508df7ae57816567",
+      "size": 3626
+    },
+    {
+      "path": "src/rra_kernel/assembly.py",
+      "sha256": "63f435742d8ec6711b39935183154349ff1ffa2a654db411c7a7f8645a5e087d",
+      "size": 8593
+    },
+    {
+      "path": "src/rra_kernel/assembly_codec.py",
+      "sha256": "5995a6bcba4b32b2785acdaa9b6f4abd2a5085437ad95a9237f64f2cc092db96",
+      "size": 3393
+    },
+    {
+      "path": "src/rra_kernel/codec.py",
+      "sha256": "e2766d10987af85340f22fb3e0fb4681be1b95e8933f47ec43719921285a399c",
+      "size": 8980
+    },
+    {
+      "path": "src/rra_kernel/core.py",
+      "sha256": "74c866b033627155afde5c398a2002ee91d522cb3368278ec006746adb1f68cd",
+      "size": 3161
+    },
+    {
+      "path": "src/rra_kernel/data.py",
+      "sha256": "df61353cf0b9e7c97bda980791be59440038dd7b9d68fb889f5900882114c8fc",
+      "size": 5962
+    },
+    {
+      "path": "src/rra_kernel/evidence.py",
+      "sha256": "15dd2672de9239907ff0fed795ec2b656318099dda1ae41ec9524a30867d3879",
+      "size": 4885
+    },
+    {
+      "path": "src/rra_kernel/live.py",
+      "sha256": "362642b97118c44cb7e74b8b5f9f69bc7bb9668b7368867388590b8b7a321d69",
+      "size": 9864
+    },
+    {
+      "path": "src/rra_kernel/py.typed",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "src/rra_kernel.egg-info/PKG-INFO",
+      "sha256": "1f29e5b615787e7f825a5b2817be9f10063ae784b9839c4034aabd4ddf902df6",
+      "size": 2123
+    },
+    {
+      "path": "src/rra_kernel.egg-info/SOURCES.txt",
+      "sha256": "b73a969f4b967eea3a77b0cb448b9a4e51975f949d3bb7d69deae8100a35870e",
+      "size": 523
+    },
+    {
+      "path": "src/rra_kernel.egg-info/dependency_links.txt",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "size": 1
+    },
+    {
+      "path": "src/rra_kernel.egg-info/entry_points.txt",
+      "sha256": "3c8c14195265e9d5feb5fd922a94cc56f969a05bf2c6ba478429053b0da48650",
+      "size": 56
+    },
+    {
+      "path": "src/rra_kernel.egg-info/top_level.txt",
+      "sha256": "7132e957bb5d9736b7c6312ffeffc75c304b2d02c3875eb90e094ebe660e3b0f",
+      "size": 11
+    },
+    {
+      "path": "tests/__pycache__/test_kernel.cpython-313.pyc",
+      "sha256": "bcbf1576cb5febd8bc150ed44952cd84ffc8f61e795a05307382f5c2d9f9c156",
+      "size": 26314
+    },
+    {
+      "path": "tests/test_kernel.py",
+      "sha256": "5f87d82733a1a239faeda052d1b214af839084b8976a0e8d5f3490a52d7232e6",
+      "size": 13456
+    },
+    {
+      "path": "validation/python_tests.txt",
+      "sha256": "4dc2faa329cc445689053514a3a2b97127eec5a257143448e7ca439db53ca8b0",
+      "size": 3994
+    },
+    {
+      "path": "validation/wheel_build.txt",
+      "sha256": "45b69b3b03b3d77221e696342abce8bdb221c0a69c14f68fdd830d602c664042",
+      "size": 926
+    },
+    {
+      "path": "validation/wheel_install.txt",
+      "sha256": "1a40eb3cb4b6d8b80a3490d2b5fc10152f61d600ef0967f8f277113f30571b63",
+      "size": 476
+    },
+    {
+      "path": "wheel_build.txt",
+      "sha256": "3964de1653fc23c46ed69614af6b1232d3171c0727c48e9ed972f92e0a37ef22",
+      "size": 926
+    }
+  ],
+  "format": "rra-kernel-release-manifest-1",
+  "manifest_self_excluded": true,
+  "release": "RRA Kernel Definition",
+  "version": "1.0.0"
+}

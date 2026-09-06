@@ -1,0 +1,222 @@
+theory Factor_Schema_Frames
+  imports Factor_Premise_Forests
+begin
+
+section \<open>Enclosing existing bodies with a complete schema frame\<close>
+
+definition schema_wrapper ::
+  "exact_artifact \<Rightarrow> local_address set \<Rightarrow> local_address \<Rightarrow>
+    local_address \<Rightarrow> local_address \<Rightarrow> local_address \<Rightarrow>
+    local_address list \<Rightarrow> (local_address \<times> local_address) set \<Rightarrow> exact_artifact" where
+  "schema_wrapper R V c b m r ps M =
+    record_wrapper (family_wrapper (family_wrapper R b ((\<lambda>a. (a,a)) ` V)) m M) r ps [b,c,m]"
+
+locale schema_frame =
+  fixes R :: exact_artifact and V :: "local_address set" and c b m r :: local_address
+    and ps :: "local_address list" and M :: "(local_address \<times> local_address) set"
+  assumes source_formed: "exact_formed R" and source_silent: "binder_silent R"
+    and vars_inside: "V \<subseteq> rra_carrier (object_structure R)"
+    and vars_boundary: "V \<subseteq> binder_addresses"
+    and conclusion_inside: "c \<in> rra_carrier (object_structure R)"
+    and family_finite: "finite M" and family_functional: "single_valued M"
+    and endpoints_inside: "rel_ran M \<subseteq> rra_carrier (object_structure R)"
+    and record_length: "length ps = 3" and headers_distinct: "distinct (b#m#r#ps)"
+    and sockets_separate: "({b,m,r} \<union> set ps) \<inter> rel_dom M = {}"
+    and headers_fresh: "({b,m,r} \<union> set ps \<union> rel_dom M) \<inter> rra_carrier (object_structure R) = {}"
+    and addresses: "\<forall>a\<in>{b,m,r} \<union> set ps \<union> rel_dom M. octets_formed a"
+begin
+
+abbreviation binder_body where "binder_body \<equiv> family_wrapper R b ((\<lambda>a. (a,a)) ` V)"
+abbreviation premise_body where "premise_body \<equiv> family_wrapper binder_body m M"
+abbreviation framed where "framed \<equiv> schema_wrapper R V c b m r ps M"
+
+lemma diagonal_domain [simp]: "rel_dom ((\<lambda>a. (a,a)) ` V) = V"
+  by (auto simp: rel_dom_def)
+
+lemma diagonal_range [simp]: "rel_ran ((\<lambda>a. (a,a)) ` V) = V"
+  by (auto simp: rel_ran_def)
+
+lemma source_object: "object_formed R"
+  using source_formed by (simp add: exact_formed_def)
+
+lemma vars_finite: "finite V"
+  by (rule finite_subset[OF vars_inside])
+     (use source_formed in \<open>simp add: exact_formed_def object_formed_def rra_formed_def\<close>)
+
+lemma variable_addresses: "\<forall>a\<in>V. octets_formed a"
+  using source_formed vars_inside by (auto simp: exact_formed_def)
+
+lemma binder_formed: "exact_formed binder_body"
+  by (rule family_wrapper_formed[OF source_formed])
+     (use vars_finite variable_addresses addresses in auto)
+
+lemma binder_carrier:
+  "rra_carrier (object_structure binder_body) = insert b (rra_carrier (object_structure R))"
+  using vars_inside by (auto simp: family_wrapper_def attach_structure_def family_object_def)
+
+lemma binder_reads:
+  "object_reads_agree R binder_body (rra_carrier (object_structure R))"
+  by (rule family_wrapper_reads) (use headers_fresh in blast)
+
+lemma binder_family:
+  "family_at binder_body b ((\<lambda>a. (a,a)) ` V)"
+proof -
+  have heads: "\<forall>a\<in>insert b V. headed_incidence (object_structure R) a = {}"
+    using source_silent vars_boundary headers_fresh formed_head_outside[OF source_object]
+    by (auto simp: binder_silent_def)
+  have data_formed: "basis_formed (rra_carrier (object_structure R)) (object_data R)"
+    using source_object by (simp add: object_formed_def)
+  have at_root: "restrict_basis {b} (object_data R) = empty_basis"
+    by (rule empty_restriction_outside[OF data_formed]) (use headers_fresh in blast)
+  have at_vars: "restrict_basis V (object_data R) = empty_basis"
+    by (rule empty_restriction_mono[OF _ vars_boundary])
+       (use source_silent in \<open>simp add: binder_silent_def\<close>)
+  have data: "restrict_basis (insert b V) (object_data R) = empty_basis"
+    using empty_restriction_union[of "{b}" V "object_data R"] at_root at_vars by simp
+  show ?thesis by (rule family_wrapper_recovers[OF binder_formed])
+    (use vars_finite vars_inside headers_fresh heads data in \<open>auto simp: single_valued_def\<close>)
+qed
+
+lemma premise_formed: "exact_formed premise_body"
+  by (rule family_wrapper_formed[OF binder_formed family_finite])
+     (use source_formed endpoints_inside addresses in \<open>auto simp: exact_formed_def\<close>)
+
+lemma premise_carrier:
+  "rra_carrier (object_structure premise_body) =
+    rra_carrier (object_structure R) \<union> {b,m} \<union> rel_dom M"
+  using vars_inside endpoints_inside
+  by (auto simp: family_wrapper_def attach_structure_def family_object_def)
+
+lemma premise_reads:
+  "object_reads_agree binder_body premise_body (rra_carrier (object_structure binder_body))"
+  by (rule family_wrapper_reads)
+     (use headers_fresh headers_distinct in \<open>auto simp: binder_carrier\<close>)
+
+lemma premise_family: "family_at premise_body m M"
+  by (rule family_wrapper_fresh_recovers[OF binder_formed premise_formed family_finite family_functional])
+     (use sockets_separate headers_fresh headers_distinct in \<open>auto simp: binder_carrier\<close>)
+
+lemma record_headers_fresh:
+  "insert r (set ps) \<inter> rra_carrier (object_structure premise_body) = {}"
+  using headers_fresh headers_distinct sockets_separate by (auto simp: premise_carrier)
+
+lemma formed: "exact_formed framed"
+  unfolding schema_wrapper_def
+  by (rule record_wrapper_formed[OF premise_formed])
+     (use conclusion_inside addresses in \<open>auto simp: premise_carrier\<close>)
+
+lemma framed_object: "object_formed framed"
+  using formed by (simp add: exact_formed_def)
+
+lemma record_read: "record_at framed r ps [b,c,m]"
+  unfolding schema_wrapper_def
+  by (rule record_wrapper_recovers[OF premise_formed _ _ _ record_headers_fresh])
+     (use formed record_length headers_distinct in \<open>auto simp: schema_wrapper_def\<close>)
+
+lemma record_reads:
+  "object_reads_agree premise_body framed (rra_carrier (object_structure premise_body))"
+  unfolding schema_wrapper_def by (rule record_wrapper_reads[OF record_headers_fresh])
+
+lemma reads:
+  "object_reads_agree R framed (rra_carrier (object_structure R))"
+  by (rule object_reads_agree_extend[OF object_reads_agree_extend[OF binder_reads premise_reads] record_reads])
+
+lemma binder_read: "binder_scope_at framed b V"
+proof -
+  have agreement: "object_reads_agree binder_body framed (rra_carrier (object_structure binder_body))"
+    by (rule object_reads_agree_extend[OF premise_reads record_reads])
+  have family: "family_at framed b ((\<lambda>a. (a,a)) ` V)"
+    by (rule family_at_read_transport[OF binder_family framed_object agreement])
+       (use vars_inside in \<open>auto simp: binder_carrier\<close>)
+  show ?thesis using family by (simp add: binder_scope_at_def)
+qed
+
+lemma family_read: "family_at framed m M"
+  by (rule family_at_read_transport[OF premise_family framed_object record_reads])
+     (auto simp: premise_carrier)
+
+lemma carrier:
+  "rra_carrier (object_structure framed) =
+    rra_carrier (object_structure R) \<union> {b,m,r} \<union> set ps \<union> rel_dom M"
+  using vars_inside endpoints_inside conclusion_inside
+  by (auto simp: schema_wrapper_def record_wrapper_def family_wrapper_def
+      attach_structure_def family_object_def record_structure_def)
+
+lemma data: "object_data framed = object_data R"
+  by (simp add: schema_wrapper_def record_wrapper_def family_wrapper_def attach_structure_def)
+
+end
+
+section \<open>Fresh frames exist for every finite list of body roots\<close>
+
+lemma fresh_schema_headers:
+  assumes fin: "finite U"
+  shows "\<exists>b m r ps ss. length ps = 3 \<and> length ss = n \<and>
+    distinct (b#m#r#(ps@ss)) \<and> ({b,m,r} \<union> set ps \<union> set ss) \<inter> U = {} \<and>
+    (\<forall>a\<in>{b,m,r} \<union> set ps \<union> set ss. octets_formed a)"
+proof -
+  let ?b = "fresh_address U"
+  let ?m = "fresh_address (insert ?b U)"
+  let ?r = "fresh_address (insert ?m (insert ?b U))"
+  let ?A = "insert ?r (insert ?m (insert ?b U))"
+  let ?ps = "take 3 (fresh_addresses ?A (3+n))"
+  let ?ss = "drop 3 (fresh_addresses ?A (3+n))"
+  have shape: "fresh_addresses U (6+n) = ?b # ?m # ?r # fresh_addresses ?A (3+n)"
+    by (simp add: numeral_eq_Suc)
+  have separate: "distinct (fresh_addresses U (6+n)) \<and> set (fresh_addresses U (6+n)) \<inter> U = {}"
+    by (rule fresh_addresses_disjoint[OF fin])
+  have addresses: "\<forall>a\<in>set (fresh_addresses U (6+n)). octets_formed a"
+    by (rule fresh_addresses_formed)
+  have split_set: "set ?ps \<union> set ?ss = set (fresh_addresses ?A (3+n))"
+  proof -
+    have "set ?ps \<union> set ?ss = set (?ps @ ?ss)" by (rule sym, rule set_append)
+    also have "\<dots> = set (fresh_addresses ?A (3+n))" by (simp only: append_take_drop_id)
+    finally show ?thesis .
+  qed
+  have header_set: "{?b,?m,?r} \<union> set ?ps \<union> set ?ss = set (fresh_addresses U (6+n))"
+    using split_set shape by auto
+  have header_list: "?b#?m#?r#(?ps@?ss) = fresh_addresses U (6+n)"
+    using shape by simp
+  have result: "length ?ps = 3 \<and> length ?ss = n \<and>
+    distinct (?b#?m#?r#(?ps@?ss)) \<and> ({?b,?m,?r} \<union> set ?ps \<union> set ?ss) \<inter> U = {} \<and>
+    (\<forall>a\<in>{?b,?m,?r} \<union> set ?ps \<union> set ?ss. octets_formed a)"
+    using separate addresses by (simp only: header_set header_list) simp
+  show ?thesis by (rule exI[of _ ?b], rule exI[of _ ?m], rule exI[of _ ?r],
+    rule exI[of _ ?ps], rule exI[of _ ?ss]) (rule result)
+qed
+
+theorem schema_frame_total:
+  assumes rf: "exact_formed R" and silent: "binder_silent R"
+    and vars: "V \<subseteq> rra_carrier (object_structure R)" "V \<subseteq> binder_addresses"
+    and concl: "c \<in> rra_carrier (object_structure R)"
+    and roots: "set xs \<subseteq> rra_carrier (object_structure R)"
+  shows "\<exists>b m r ps ss. length ss = length xs \<and> distinct ss \<and>
+    schema_frame R V c b m r ps (set (zip ss xs))"
+proof -
+  have fin: "finite (rra_carrier (object_structure R))"
+    using rf by (simp add: exact_formed_def object_formed_def rra_formed_def)
+  obtain b m r :: local_address and ps ss :: "local_address list" where head:
+    "length ps = 3" "length ss = length xs" "distinct (b#m#r#(ps@ss))"
+    "({b,m,r} \<union> set ps \<union> set ss) \<inter> rra_carrier (object_structure R) = {}"
+    "\<forall>a\<in>{b,m,r} \<union> set ps \<union> set ss. octets_formed a"
+    using fresh_schema_headers[OF fin, where n="length xs"]
+    by metis
+  have dom: "rel_dom (set (zip ss xs)) = set ss" by (rule zip_domain[OF head(2)])
+  have ran: "rel_ran (set (zip ss xs)) = set xs" by (rule zip_range[OF head(2)])
+  have sv: "single_valued (set (zip ss xs))"
+    by (rule single_valued_zip) (use head(3) in simp)
+  have frame: "schema_frame R V c b m r ps (set (zip ss xs))"
+    by (rule schema_frame.intro[OF rf silent vars concl _ sv])
+       (use roots head in \<open>auto simp: dom ran distinct_append\<close>)
+  show ?thesis using frame head(2,3) by auto
+qed
+
+text \<open>
+  The frame contains precisely its record, the diagonal binder declaration,
+  and the identified premise family. Every body endpoint is an existing
+  occurrence. Fresh headers are constructed from a finite carrier, and every
+  old headed incidence and all old data are preserved. Repeated endpoints and
+  the empty premise list are both allowed.
+\<close>
+
+end

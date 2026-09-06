@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rra.example/schemas/kernel/v1/reference.schema.json",
+  "title": "RRA SHA-256 Exact-Record Reference and Citation",
+  "$defs": {
+    "exactRecordRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile", "algorithm", "digest"],
+      "properties": {
+        "profile": {"const": "rra-record-json-1"},
+        "algorithm": {"const": "sha256"},
+        "digest": {"$ref": "https://rra.example/schemas/kernel/v1/common.schema.json#/$defs/sha256"}
+      }
+    }
+  },
+  "oneOf": [
+    {"$ref": "#/$defs/exactRecordRef"},
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["record", "address"],
+      "properties": {
+        "record": {"$ref": "#/$defs/exactRecordRef"},
+        "address": {"$ref": "https://rra.example/schemas/kernel/v1/common.schema.json#/$defs/hex"}
+      }
+    }
+  ]
+}

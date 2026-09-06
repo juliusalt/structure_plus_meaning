@@ -1,0 +1,302 @@
+theory Factor_Executable_Calls
+  imports Factor_Executable_Scopes Factor_Applications
+begin
+
+section \<open>Reading a citation's actual dependency location\<close>
+
+definition finite_location_readings ::
+  "'u finite_artifact_environment \<Rightarrow> 'u \<Rightarrow> finite_exact_artifact \<Rightarrow>
+    local_address \<Rightarrow> 'u definition_site finite_syntax_reading fset" where
+  "finite_location_readings E u C r = ffUnion (fimage (\<lambda>(c,I).
+    fimage (\<lambda>d. (d,I,finite_citation_slots c)) (finite_citation_locations E u c))
+      (finite_citation_candidates C r))"
+
+lemma finite_location_readings_member:
+  "(d,I,K) |\<in>| finite_location_readings E u C r \<longleftrightarrow>
+    (\<exists>c. citation_at (decode_finite_object C) r c (fset I) \<and>
+      citation_location (decode_finite_environment E) u c (fst d) (snd d) \<and>
+      K=finite_citation_slots c)"
+  by (cases d; simp only: finite_location_readings_def finite_union_image_member
+      split_paired_Ex prod.case finite_image_member prod.inject finite_citation_candidates_correct
+      finite_citation_locations_correct fst_conv snd_conv; auto; blast)
+
+section \<open>The same record geometry supports ground and prospective calls\<close>
+
+definition finite_call_readings ::
+  "'u finite_artifact_environment \<Rightarrow> 'u \<Rightarrow> local_address fset \<Rightarrow>
+    local_address \<Rightarrow> (local_address \<Rightarrow> 'a finite_syntax_reading fset) \<Rightarrow>
+    ('u definition_site \<times> 'a) finite_syntax_reading fset" where
+  "finite_call_readings E u V r reads = (if finite_environment_formed E then
+    ffUnion (fimage (\<lambda>C. finite_two_field_record C r (\<lambda>ps c a.
+      finite_join_readings Pair V r ps (finite_location_readings E u C c) (reads a)))
+      (finite_artifacts_at E u)) else {||})"
+
+lemma finite_call_readings_step:
+  "((d,p),I,K) |\<in>| finite_call_readings E u V r reads \<longleftrightarrow>
+    finite_environment_formed E \<and>
+    (\<exists>C ps c a A B J W. C |\<in>| finite_artifacts_at E u \<and>
+      record_at (decode_finite_object C) r ps [c,a] \<and>
+      (d,A,B) |\<in>| finite_location_readings E u C c \<and> (p,J,W) |\<in>| reads a \<and>
+      I=finsert r (fset_of_list ps |\<union>| A |\<union>| J) \<and> K=B |\<union>| W \<and>
+      finsert r (fset_of_list ps) |\<inter>| (A |\<union>| J)={||} \<and>
+      A |\<inter>| J={||} \<and> I |\<inter>| (K |\<union>| V)={||})"
+proof -
+  have outer: "((d,p),I,K) |\<in>| finite_call_readings E u V r reads \<longleftrightarrow>
+    finite_environment_formed E \<and> (\<exists>C ps c a. C |\<in>| finite_artifacts_at E u \<and>
+      record_at (decode_finite_object C) r ps [c,a] \<and>
+      ((d,p),I,K) |\<in>| finite_join_readings Pair V r ps
+        (finite_location_readings E u C c) (reads a))"
+    by (auto simp: finite_call_readings_def finite_union_image_member
+        finite_two_field_record_member split: if_splits)
+  have join: "((d,p),I,K) |\<in>| finite_join_readings Pair V r ps X Y \<longleftrightarrow>
+    (\<exists>A B J W. (d,A,B) |\<in>| X \<and> (p,J,W) |\<in>| Y \<and>
+      I=finsert r (fset_of_list ps |\<union>| A |\<union>| J) \<and> K=B |\<union>| W \<and>
+      finsert r (fset_of_list ps) |\<inter>| (A |\<union>| J)={||} \<and>
+      A |\<inter>| J={||} \<and> I |\<inter>| (K |\<union>| V)={||})" for ps X Y
+  proof
+    assume member: "((d,p),I,K) |\<in>| finite_join_readings Pair V r ps X Y"
+    obtain x L A y Q B where left: "(x,L,A) |\<in>| X" and right: "(y,Q,B) |\<in>| Y"
+      and pair: "(d,p)=(x,y)"
+      and physical: "I=finsert r (fset_of_list ps |\<union>| L |\<union>| Q)" "K=A |\<union>| B"
+        "finsert r (fset_of_list ps) |\<inter>| (L |\<union>| Q)={||}"
+        "L |\<inter>| Q={||}" "I |\<inter>| (K |\<union>| V)={||}"
+      using member by (simp only: finite_join_readings_member; auto)
+    show "\<exists>A B J W. (d,A,B) |\<in>| X \<and> (p,J,W) |\<in>| Y \<and>
+      I=finsert r (fset_of_list ps |\<union>| A |\<union>| J) \<and> K=B |\<union>| W \<and>
+      finsert r (fset_of_list ps) |\<inter>| (A |\<union>| J)={||} \<and>
+      A |\<inter>| J={||} \<and> I |\<inter>| (K |\<union>| V)={||}"
+      by (rule exI[of _ L], rule exI[of _ A], rule exI[of _ Q], rule exI[of _ B])
+         (use left right pair physical in auto)
+  next
+    assume read: "\<exists>A B J W. (d,A,B) |\<in>| X \<and> (p,J,W) |\<in>| Y \<and>
+      I=finsert r (fset_of_list ps |\<union>| A |\<union>| J) \<and> K=B |\<union>| W \<and>
+      finsert r (fset_of_list ps) |\<inter>| (A |\<union>| J)={||} \<and>
+      A |\<inter>| J={||} \<and> I |\<inter>| (K |\<union>| V)={||}"
+    obtain A B J W where left: "(d,A,B) |\<in>| X" and right: "(p,J,W) |\<in>| Y"
+      and physical: "I=finsert r (fset_of_list ps |\<union>| A |\<union>| J)" "K=B |\<union>| W"
+        "finsert r (fset_of_list ps) |\<inter>| (A |\<union>| J)={||}"
+        "A |\<inter>| J={||}" "I |\<inter>| (K |\<union>| V)={||}"
+      using read by auto
+    show "((d,p),I,K) |\<in>| finite_join_readings Pair V r ps X Y"
+      unfolding finite_join_readings_member
+      by (rule exI[of _ d], rule exI[of _ A], rule exI[of _ B],
+          rule exI[of _ p], rule exI[of _ J], rule exI[of _ W])
+         (use left right physical in auto)
+  qed
+  show ?thesis by (simp only: outer join ex_simps)
+qed
+
+section \<open>Ground applications retain their exact argument\<close>
+
+definition finite_application_readings ::
+  "'u finite_artifact_environment \<Rightarrow> 'u \<Rightarrow> local_address \<Rightarrow>
+    ('u definition_site \<times> finite_factor_term) finite_syntax_reading fset" where
+  "finite_application_readings E u r = finite_call_readings E u {||} r (finite_term_readings E u)"
+
+theorem finite_application_readings_correct:
+  "((d,t),I,K) |\<in>| finite_application_readings E u r \<longleftrightarrow>
+    native_application_at (decode_finite_environment E) u r d (decode_finite_term t) (fset I) (fset K)"
+proof
+  assume member: "((d,t),I,K) |\<in>| finite_application_readings E u r"
+  obtain C ps c a A B J W where ef: "finite_environment_formed E"
+    and source: "C |\<in>| finite_artifacts_at E u"
+    and rec: "record_at (decode_finite_object C) r ps [c,a]"
+    and location: "(d,A,B) |\<in>| finite_location_readings E u C c"
+    and argument: "(t,J,W) |\<in>| finite_term_readings E u a"
+    and boundary: "I=finsert r (fset_of_list ps |\<union>| A |\<union>| J)" "K=B |\<union>| W"
+      "finsert r (fset_of_list ps) |\<inter>| (A |\<union>| J)={||}"
+      "A |\<inter>| J={||}" "I |\<inter>| (K |\<union>| {||})={||}"
+    using member by (simp only: finite_application_readings_def finite_call_readings_step; auto)
+  obtain cite where citation: "citation_at (decode_finite_object C) c cite (fset A)"
+    and loc: "citation_location (decode_finite_environment E) u cite (fst d) (snd d)"
+    and slots: "B=finite_citation_slots cite"
+    using location by (simp only: finite_location_readings_member; blast)
+  have formed: "environment_formed (decode_finite_environment E)"
+    using ef by (simp add: finite_environment_formed_correct)
+  have art: "artifact_at (decode_finite_environment E) u (decode_finite_object C)"
+    using source by (simp add: finite_artifacts_at_member)
+  have body: "term_quoted_at (decode_finite_environment E) u a (decode_finite_term t) (fset J) (fset W)"
+    using argument by (simp add: finite_term_readings_correct)
+  show "native_application_at (decode_finite_environment E) u r d (decode_finite_term t) (fset I) (fset K)"
+    unfolding native_application_at_def
+    apply (rule conjI[OF formed])
+    apply (rule exI[of _ "decode_finite_object C"])
+    apply (rule exI[of _ ps], rule exI[of _ c], rule exI[of _ a], rule exI[of _ cite])
+    apply (rule exI[of _ "fset A"], rule exI[of _ "fset J"], rule exI[of _ "fset W"])
+    using art rec citation loc body boundary slots
+    by (auto simp: fset_inject[symmetric] fset_of_list.rep_eq finite_citation_slots_correct)
+next
+  assume read: "native_application_at (decode_finite_environment E) u r d (decode_finite_term t) (fset I) (fset K)"
+  obtain C ps c a cite L J W where ef: "environment_formed (decode_finite_environment E)"
+    and source: "C |\<in>| finite_artifacts_at E u"
+    and rec: "record_at (decode_finite_object C) r ps [c,a]"
+    and citation: "citation_at (decode_finite_object C) c cite L"
+    and loc: "citation_location (decode_finite_environment E) u cite (fst d) (snd d)"
+    and body: "term_quoted_at (decode_finite_environment E) u a (decode_finite_term t) J W"
+    and boundary: "insert r (set ps) \<inter> (L \<union> J)={}" "L \<inter> J={}"
+      "fset I=insert r (set ps \<union> L \<union> J)" "fset K=citation_slots cite \<union> W"
+      "fset I \<inter> fset K={}"
+    using read by (auto simp: native_application_at_def finite_artifacts_at_member)
+  obtain A where candidate: "(cite,A) |\<in>| finite_citation_candidates C c" and represented: "fset A=L"
+    using finite_citation_candidates_complete[OF citation] by blast
+  have location: "(d,A,finite_citation_slots cite) |\<in>| finite_location_readings E u C c"
+    using citation loc represented by (auto simp: finite_location_readings_member)
+  have fin: "finite J" "finite W" using term_quoted_finite[OF body] by auto
+  have interior: "fset (Abs_fset J)=J" by (rule Abs_fset_inverse) (simp add: fin)
+  have external: "fset (Abs_fset W)=W" by (rule Abs_fset_inverse) (simp add: fin)
+  have argument: "(t,Abs_fset J,Abs_fset W) |\<in>| finite_term_readings E u a"
+    using body interior external by (simp add: finite_term_readings_correct)
+  have physical: "I=finsert r (fset_of_list ps |\<union>| A |\<union>| Abs_fset J)"
+    "K=finite_citation_slots cite |\<union>| Abs_fset W"
+    "finsert r (fset_of_list ps) |\<inter>| (A |\<union>| Abs_fset J)={||}"
+    "A |\<inter>| Abs_fset J={||}" "I |\<inter>| (K |\<union>| {||})={||}"
+    using boundary represented interior external
+    by (simp_all add: fset_inject[symmetric] fset_of_list.rep_eq finite_citation_slots_correct)
+  show "((d,t),I,K) |\<in>| finite_application_readings E u r"
+    unfolding finite_application_readings_def finite_call_readings_step
+    apply (rule conjI)
+     apply (use ef in \<open>simp add: finite_environment_formed_correct\<close>)
+    apply (rule exI[of _ C], rule exI[of _ ps], rule exI[of _ c], rule exI[of _ a])
+    apply (rule exI[of _ A], rule exI[of _ "finite_citation_slots cite"])
+    apply (rule exI[of _ "Abs_fset J"], rule exI[of _ "Abs_fset W"])
+    using source rec location argument physical by blast
+qed
+
+theorem finite_application_readings_complete:
+  assumes read: "native_application_at (decode_finite_environment E) u r d t I K"
+  shows "\<exists>T F W. ((d,T),F,W) |\<in>| finite_application_readings E u r \<and>
+    decode_finite_term T=t \<and> fset F=I \<and> fset W=K"
+proof -
+  have formed: "term_formed t" and fi: "finite I" and fk: "finite K"
+    using native_application_properties[OF read] by auto
+  have encoded: "decode_finite_term (finite_term_of t)=t" by (rule decode_finite_term_of[OF formed])
+  have interior: "fset (Abs_fset I)=I" by (rule Abs_fset_inverse) (simp add: fi)
+  have slots: "fset (Abs_fset K)=K" by (rule Abs_fset_inverse) (simp add: fk)
+  have member: "((d,finite_term_of t),Abs_fset I,Abs_fset K) |\<in>| finite_application_readings E u r"
+    using read encoded interior slots by (simp add: finite_application_readings_correct)
+  show ?thesis using member encoded interior slots by blast
+qed
+
+corollary finite_application_readings_unique:
+  assumes "((d,t),I,K) |\<in>| finite_application_readings E u r" "((e,x),J,W) |\<in>| finite_application_readings E u r"
+  shows "d=e \<and> t=x \<and> I=J \<and> K=W"
+proof -
+  have first: "native_application_at (decode_finite_environment E) u r d (decode_finite_term t) (fset I) (fset K)"
+    and second: "native_application_at (decode_finite_environment E) u r e (decode_finite_term x) (fset J) (fset W)"
+    using assms by (simp_all add: finite_application_readings_correct)
+  show ?thesis using native_application_unique[OF first second] by (simp add: fset_inject)
+qed
+
+section \<open>Prospective calls retain their complete variable scope\<close>
+
+definition finite_prospective_call_readings ::
+  "'u finite_artifact_environment \<Rightarrow> 'u \<Rightarrow> local_address fset \<Rightarrow> local_address \<Rightarrow>
+    ('u definition_site \<times> local_address finite_term_pattern) finite_syntax_reading fset" where
+  "finite_prospective_call_readings E u V r = finite_call_readings E u V r (finite_pattern_readings E u V)"
+
+theorem finite_prospective_call_readings_correct:
+  "((d,t),I,K) |\<in>| finite_prospective_call_readings E u V r \<longleftrightarrow>
+    prospective_call_at (decode_finite_environment E) u (fset V) r d (decode_finite_pattern t) (fset I) (fset K)"
+proof
+  assume member: "((d,t),I,K) |\<in>| finite_prospective_call_readings E u V r"
+  obtain C ps c a A B J W where ef: "finite_environment_formed E"
+    and source: "C |\<in>| finite_artifacts_at E u"
+    and rec: "record_at (decode_finite_object C) r ps [c,a]"
+    and location: "(d,A,B) |\<in>| finite_location_readings E u C c"
+    and argument: "(t,J,W) |\<in>| finite_pattern_readings E u V a"
+    and boundary: "I=finsert r (fset_of_list ps |\<union>| A |\<union>| J)" "K=B |\<union>| W"
+      "finsert r (fset_of_list ps) |\<inter>| (A |\<union>| J)={||}"
+      "A |\<inter>| J={||}" "I |\<inter>| (K |\<union>| V)={||}"
+    using member by (simp only: finite_prospective_call_readings_def finite_call_readings_step; auto)
+  obtain cite where citation: "citation_at (decode_finite_object C) c cite (fset A)"
+    and loc: "citation_location (decode_finite_environment E) u cite (fst d) (snd d)"
+    and slots: "B=finite_citation_slots cite"
+    using location by (simp only: finite_location_readings_member; blast)
+  have formed: "environment_formed (decode_finite_environment E)"
+    using ef by (simp add: finite_environment_formed_correct)
+  have art: "artifact_at (decode_finite_environment E) u (decode_finite_object C)"
+    using source by (simp add: finite_artifacts_at_member)
+  have body: "pattern_quoted_at (decode_finite_environment E) u (fset V) a (decode_finite_pattern t) (fset J) (fset W)"
+    using argument by (simp add: finite_pattern_readings_correct)
+  show "prospective_call_at (decode_finite_environment E) u (fset V) r d (decode_finite_pattern t) (fset I) (fset K)"
+    unfolding prospective_call_at_def
+    apply (rule conjI[OF formed])
+    apply (rule exI[of _ "decode_finite_object C"])
+    apply (rule exI[of _ ps], rule exI[of _ c], rule exI[of _ a], rule exI[of _ cite])
+    apply (rule exI[of _ "fset A"], rule exI[of _ "fset J"], rule exI[of _ "fset W"])
+    using art rec citation loc body boundary slots
+    by (auto simp: fset_inject[symmetric] fset_of_list.rep_eq finite_citation_slots_correct)
+next
+  assume read: "prospective_call_at (decode_finite_environment E) u (fset V) r d (decode_finite_pattern t) (fset I) (fset K)"
+  obtain C ps c a cite L J W where ef: "environment_formed (decode_finite_environment E)"
+    and source: "C |\<in>| finite_artifacts_at E u"
+    and rec: "record_at (decode_finite_object C) r ps [c,a]"
+    and citation: "citation_at (decode_finite_object C) c cite L"
+    and loc: "citation_location (decode_finite_environment E) u cite (fst d) (snd d)"
+    and body: "pattern_quoted_at (decode_finite_environment E) u (fset V) a (decode_finite_pattern t) J W"
+    and boundary: "insert r (set ps) \<inter> (L \<union> J)={}" "L \<inter> J={}"
+      "fset I=insert r (set ps \<union> L \<union> J)" "fset K=citation_slots cite \<union> W"
+      "fset I \<inter> (fset K \<union> fset V)={}"
+    using read by (auto simp: prospective_call_at_def finite_artifacts_at_member)
+  obtain A where candidate: "(cite,A) |\<in>| finite_citation_candidates C c" and represented: "fset A=L"
+    using finite_citation_candidates_complete[OF citation] by blast
+  have location: "(d,A,finite_citation_slots cite) |\<in>| finite_location_readings E u C c"
+    using citation loc represented by (auto simp: finite_location_readings_member)
+  have fin: "finite J" "finite W" using pattern_quoted_boundary[OF body] by auto
+  have interior: "fset (Abs_fset J)=J" by (rule Abs_fset_inverse) (simp add: fin)
+  have external: "fset (Abs_fset W)=W" by (rule Abs_fset_inverse) (simp add: fin)
+  have argument: "(t,Abs_fset J,Abs_fset W) |\<in>| finite_pattern_readings E u V a"
+    using body interior external by (simp add: finite_pattern_readings_correct)
+  have physical: "I=finsert r (fset_of_list ps |\<union>| A |\<union>| Abs_fset J)"
+    "K=finite_citation_slots cite |\<union>| Abs_fset W"
+    "finsert r (fset_of_list ps) |\<inter>| (A |\<union>| Abs_fset J)={||}"
+    "A |\<inter>| Abs_fset J={||}" "I |\<inter>| (K |\<union>| V)={||}"
+    using boundary represented interior external
+    by (simp_all add: fset_inject[symmetric] fset_of_list.rep_eq finite_citation_slots_correct)
+  show "((d,t),I,K) |\<in>| finite_prospective_call_readings E u V r"
+    unfolding finite_prospective_call_readings_def finite_call_readings_step
+    apply (rule conjI)
+     apply (use ef in \<open>simp add: finite_environment_formed_correct\<close>)
+    apply (rule exI[of _ C], rule exI[of _ ps], rule exI[of _ c], rule exI[of _ a])
+    apply (rule exI[of _ A], rule exI[of _ "finite_citation_slots cite"])
+    apply (rule exI[of _ "Abs_fset J"], rule exI[of _ "Abs_fset W"])
+    using source rec location argument physical by blast
+qed
+
+theorem finite_prospective_call_readings_complete:
+  assumes read: "prospective_call_at (decode_finite_environment E) u (fset V) r d t I K"
+  shows "\<exists>T F W. ((d,T),F,W) |\<in>| finite_prospective_call_readings E u V r \<and>
+    decode_finite_pattern T=t \<and> fset F=I \<and> fset W=K"
+proof -
+  have formed: "pattern_formed t" and fi: "finite I" and fk: "finite K"
+    using prospective_call_formed[OF read] by auto
+  have encoded: "decode_finite_pattern (finite_pattern_of t)=t" by (rule decode_finite_pattern_of[OF formed])
+  have interior: "fset (Abs_fset I)=I" by (rule Abs_fset_inverse) (simp add: fi)
+  have slots: "fset (Abs_fset K)=K" by (rule Abs_fset_inverse) (simp add: fk)
+  have member: "((d,finite_pattern_of t),Abs_fset I,Abs_fset K) |\<in>| finite_prospective_call_readings E u V r"
+    using read encoded interior slots by (simp add: finite_prospective_call_readings_correct)
+  show ?thesis using member encoded interior slots by blast
+qed
+
+corollary finite_prospective_call_readings_unique:
+  assumes "((d,t),I,K) |\<in>| finite_prospective_call_readings E u V r" "((e,x),J,W) |\<in>| finite_prospective_call_readings E u V r"
+  shows "d=e \<and> t=x \<and> I=J \<and> K=W"
+proof -
+  have first: "prospective_call_at (decode_finite_environment E) u (fset V) r d (decode_finite_pattern t) (fset I) (fset K)"
+    and second: "prospective_call_at (decode_finite_environment E) u (fset V) r e (decode_finite_pattern x) (fset J) (fset W)"
+    using assms by (simp_all add: finite_prospective_call_readings_correct)
+  show ?thesis using prospective_call_unique[OF first second] by (simp add: fset_inject)
+qed
+
+export_code finite_application_readings finite_prospective_call_readings checking SML
+
+text \<open>
+  A call's citation recovers its use occurrence and local definition position.
+  Ground arguments and prospective patterns use the same exact record geometry,
+  with the latter retaining its supplied variable scope. Every native call over
+  the represented environment has a finite reading with the same interior and
+  external slots. Reading syntax does not decide the call's truth or admit it
+  through an interface; those are separately defined judgments.
+\<close>
+
+end

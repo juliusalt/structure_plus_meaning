@@ -1,0 +1,395 @@
+theory Factor_Packages
+  imports Factor_Presentation RRA_Citation_Closure
+begin
+
+section \<open>Definition dependencies are recovered from prospective calls\<close>
+
+lemma native_schema_dependency_target:
+  assumes schema: "native_schema_at E u r S" and dependency: "d \<in> schema_dependencies S"
+  shows "d \<in> environment_positions E"
+proof -
+  obtain m V where family: "native_premise_family_at E u V m (schema_premises S) (schema_material_premises S)"
+    using schema by (auto simp: native_schema_at_def)
+  obtain s p where member: "(s,d,p) \<in> schema_premises S"
+    using dependency by (auto simp: schema_dependencies_def rel_ran_def)
+  obtain a I K where call: "prospective_call_at E u V a d p I K"
+    using native_premise_family_call_origin[OF family member] by blast
+  obtain R where target: "artifact_at E (fst d) R" "anchor_formed (R,snd d)"
+    using prospective_call_has_target[OF call] by blast
+  show ?thesis using target by (cases d) (auto simp: anchor_formed_def)
+qed
+
+lemma native_definition_position:
+  assumes "native_definition_at E u r p C"
+  shows "(u,r) \<in> environment_positions E"
+  using assms by (auto simp: native_definition_at_def record_at_def)
+
+lemma native_definition_clause_origin:
+  assumes source: "native_definition_at E u r p C" and member: "(c,S) \<in> C"
+  shows "\<exists>a. native_schema_at E u a S"
+proof -
+  obtain m where family: "native_schema_family_at E u m C"
+    using source by (auto simp: native_definition_at_def)
+  show ?thesis using native_schema_family_origin[OF family member] by blast
+qed
+
+definition native_definition_edges ::
+  "'u artifact_environment \<Rightarrow> ('u definition_site \<times> 'u definition_site) set" where
+  "native_definition_edges E = {(d,e). \<exists>p C c S.
+    native_definition_at E (fst d) (snd d) p C \<and> (c,S) \<in> C \<and> e \<in> schema_dependencies S}"
+
+lemma native_definition_edge_boundary:
+  assumes edge: "(d,e) \<in> native_definition_edges E"
+  shows "d \<in> environment_positions E \<and> e \<in> environment_positions E"
+proof -
+  obtain p C c S where source: "native_definition_at E (fst d) (snd d) p C"
+    "(c,S) \<in> C" "e \<in> schema_dependencies S"
+    using edge by (auto simp: native_definition_edges_def)
+  have d: "d \<in> environment_positions E" using native_definition_position[OF source(1)] by simp
+  obtain a where schema: "native_schema_at E (fst d) a S"
+    using native_definition_clause_origin[OF source(1,2)] by blast
+  have e: "e \<in> environment_positions E" by (rule native_schema_dependency_target[OF schema source(3)])
+  show ?thesis using d e by blast
+qed
+
+lemma native_definition_edges_finite:
+  assumes "environment_formed E"
+  shows "finite (native_definition_edges E)"
+proof -
+  have subset: "native_definition_edges E \<subseteq> environment_positions E \<times> environment_positions E"
+    using native_definition_edge_boundary[of _ _ E] by auto
+  show ?thesis by (rule finite_subset[OF subset]) (simp add: environment_positions_finite[OF assms])
+qed
+
+definition native_definition_sites ::
+  "'u artifact_environment \<Rightarrow> 'u definition_site set \<Rightarrow> 'u definition_site set" where
+  "native_definition_sites E roots = {d. \<exists>r\<in>roots. (r,d) \<in> (native_definition_edges E)\<^sup>*}"
+
+lemma native_definition_roots:
+  "roots \<subseteq> native_definition_sites E roots"
+  by (auto simp: native_definition_sites_def)
+
+lemma native_definition_step:
+  assumes site: "d \<in> native_definition_sites E roots" and edge: "(d,e) \<in> native_definition_edges E"
+  shows "e \<in> native_definition_sites E roots"
+proof -
+  obtain r where root: "r \<in> roots" and path: "(r,d) \<in> (native_definition_edges E)\<^sup>*"
+    using site by (auto simp: native_definition_sites_def)
+  have extended: "(r,e) \<in> (native_definition_edges E)\<^sup>*" by (rule rtrancl_into_rtrancl[OF path edge])
+  show ?thesis using root extended by (auto simp: native_definition_sites_def)
+qed
+
+lemma native_definition_sites_least:
+  assumes roots: "roots \<subseteq> U"
+    and closed: "\<And>d e. d \<in> U \<Longrightarrow> (d,e) \<in> native_definition_edges E \<Longrightarrow> e \<in> U"
+  shows "native_definition_sites E roots \<subseteq> U"
+proof
+  fix d assume "d \<in> native_definition_sites E roots"
+  then obtain r where root: "r \<in> roots" and path: "(r,d) \<in> (native_definition_edges E)\<^sup>*"
+    by (auto simp: native_definition_sites_def)
+  have base: "r \<in> U" using root roots by blast
+  show "d \<in> U" using path
+    by (induction rule: rtrancl_induct) (use base closed in auto)
+qed
+
+lemma native_definition_sites_boundary:
+  assumes "roots \<subseteq> environment_positions E"
+  shows "native_definition_sites E roots \<subseteq> environment_positions E"
+  by (rule native_definition_sites_least[OF assms])
+     (use native_definition_edge_boundary[of _ _ E] in blast)
+
+definition native_package_formed ::
+  "'u artifact_environment \<Rightarrow> 'u definition_site set \<Rightarrow> bool" where
+  "native_package_formed E roots \<longleftrightarrow> environment_formed E \<and>
+    (\<forall>d\<in>native_definition_sites E roots. \<exists>p C. native_definition_at E (fst d) (snd d) p C)"
+
+lemma native_package_sites:
+  assumes package: "native_package_formed E roots"
+  shows "native_definition_sites E roots \<subseteq> environment_positions E"
+    and "finite (native_definition_sites E roots)"
+proof -
+  show subset: "native_definition_sites E roots \<subseteq> environment_positions E"
+  proof
+    fix d assume "d \<in> native_definition_sites E roots"
+    then obtain p C where read: "native_definition_at E (fst d) (snd d) p C"
+      using package by (auto simp: native_package_formed_def)
+    show "d \<in> environment_positions E" using native_definition_position[OF read] by simp
+  qed
+  have ef: "environment_formed E" using package by (simp add: native_package_formed_def)
+  show "finite (native_definition_sites E roots)"
+    by (rule finite_subset[OF subset environment_positions_finite[OF ef]])
+qed
+
+theorem native_package_rejects_missing_callee:
+  assumes package: "native_package_formed E roots"
+    and site: "d \<in> native_definition_sites E roots"
+    and read: "native_definition_at E (fst d) (snd d) p C"
+    and clause: "(c,S) \<in> C" and dependency: "e \<in> schema_dependencies S"
+  shows "\<exists>q D. native_definition_at E (fst e) (snd e) q D"
+proof -
+  have edge: "(d,e) \<in> native_definition_edges E"
+    using read clause dependency unfolding native_definition_edges_def by blast
+  have reached: "e \<in> native_definition_sites E roots" by (rule native_definition_step[OF site edge])
+  show ?thesis using package reached by (auto simp: native_package_formed_def)
+qed
+
+section \<open>The complete recovered finite system\<close>
+
+definition native_definition_graph ::
+  "'u artifact_environment \<Rightarrow> 'u definition_site set \<Rightarrow>
+    ('u definition_site \<times> (local_address term_pattern \<times> (local_address \<times> 'u native_schema) set)) set" where
+  "native_definition_graph E roots = {(d,p,C). d \<in> native_definition_sites E roots \<and>
+    native_definition_at E (fst d) (snd d) p C}"
+
+lemma native_definition_graph_unique:
+  "single_valued (native_definition_graph E roots)"
+proof (unfold single_valued_def, intro allI impI)
+  fix d x y
+  assume first: "(d,x) \<in> native_definition_graph E roots" and second: "(d,y) \<in> native_definition_graph E roots"
+  obtain p C where x: "x = (p,C)" by (cases x)
+  obtain q D where y: "y = (q,D)" by (cases y)
+  have a: "native_definition_at E (fst d) (snd d) p C"
+    and b: "native_definition_at E (fst d) (snd d) q D"
+    using first second by (auto simp: native_definition_graph_def x y)
+  show "x = y" using native_definition_unique[OF a b] by (simp add: x y)
+qed
+
+lemma native_definition_graph_domain:
+  assumes "native_package_formed E roots"
+  shows "rel_dom (native_definition_graph E roots) = native_definition_sites E roots"
+  using assms by (auto simp: rel_dom_def native_definition_graph_def native_package_formed_def)
+
+lemma native_definition_graph_finite:
+  assumes "native_package_formed E roots"
+  shows "finite (native_definition_graph E roots)"
+  by (rule finite_single_valued[OF _ native_definition_graph_unique])
+     (simp add: native_definition_graph_domain[OF assms] native_package_sites(2)[OF assms])
+
+definition native_program ::
+  "'u artifact_environment \<Rightarrow> 'u definition_site set \<Rightarrow> 'u native_system" where
+  "native_program E roots =
+    \<lparr>system_interfaces = {(d,p). \<exists>C. (d,p,C) \<in> native_definition_graph E roots},
+      system_clauses = {((d,c),S). \<exists>p C. (d,p,C) \<in> native_definition_graph E roots \<and> (c,S) \<in> C}\<rparr>"
+
+lemma native_program_interfaces [simp]:
+  "(d,p) \<in> system_interfaces (native_program E roots) \<longleftrightarrow>
+    (\<exists>C. (d,p,C) \<in> native_definition_graph E roots)"
+  by (simp add: native_program_def)
+
+lemma native_program_clauses [simp]:
+  "((d,c),S) \<in> system_clauses (native_program E roots) \<longleftrightarrow>
+    (\<exists>p C. (d,p,C) \<in> native_definition_graph E roots \<and> (c,S) \<in> C)"
+  by (simp add: native_program_def)
+
+lemma native_program_definitions:
+  assumes "native_package_formed E roots"
+  shows "system_definitions (native_program E roots) = native_definition_sites E roots"
+  using native_definition_graph_domain[OF assms]
+  by (auto simp: system_definitions_def rel_dom_def)
+
+lemma native_program_complete_at:
+  assumes site: "d \<in> native_definition_sites E roots"
+    and read: "native_definition_at E (fst d) (snd d) p C"
+  shows "(d,q) \<in> system_interfaces (native_program E roots) \<longleftrightarrow> q = p"
+    and "((d,c),S) \<in> system_clauses (native_program E roots) \<longleftrightarrow> (c,S) \<in> C"
+proof -
+  have exact: "\<And>q D. (d,q,D) \<in> native_definition_graph E roots \<longleftrightarrow> q = p \<and> D = C"
+  proof -
+    fix q D
+    have unique: "native_definition_at E (fst d) (snd d) q D \<Longrightarrow> q = p \<and> D = C"
+      using native_definition_unique[OF _ read] by blast
+    show "(d,q,D) \<in> native_definition_graph E roots \<longleftrightarrow> q = p \<and> D = C"
+      using unique site read by (auto simp: native_definition_graph_def)
+  qed
+  show "(d,q) \<in> system_interfaces (native_program E roots) \<longleftrightarrow> q = p"
+    by (simp only: native_program_interfaces exact) auto
+  show "((d,c),S) \<in> system_clauses (native_program E roots) \<longleftrightarrow> (c,S) \<in> C"
+    by (simp only: native_program_clauses exact) auto
+qed
+
+theorem native_program_formed:
+  assumes package: "native_package_formed E roots"
+  shows "schema_system_formed (native_program E roots)"
+proof -
+  let ?G = "native_definition_graph E roots"
+  let ?P = "native_program E roots"
+  have gfinite: "finite ?G" by (rule native_definition_graph_finite[OF package])
+  have interface_image: "system_interfaces ?P = (\<lambda>(d,p,C). (d,p)) ` ?G"
+    by (auto simp: native_program_def intro: rev_image_eqI)
+  have finite_interfaces: "finite (system_interfaces ?P)" by (simp add: interface_image gfinite)
+  have interface_unique: "single_valued (system_interfaces ?P)"
+    using native_definition_graph_unique[of E roots]
+    by (auto simp: single_valued_def; blast)
+  have patterns: "\<forall>d p. (d,p) \<in> system_interfaces ?P \<longrightarrow> pattern_formed p"
+    using native_definition_formed[of E]
+    by (auto simp: native_definition_graph_def; blast)
+  have clause_union: "system_clauses ?P = (\<Union>(d,p,C)\<in>?G. (\<lambda>(c,S). ((d,c),S)) ` C)"
+    by (auto simp: native_program_def intro: rev_image_eqI)
+  have finite_clauses: "finite (system_clauses ?P)"
+    unfolding clause_union
+  proof (rule finite_UN_I[OF gfinite])
+    fix entry assume member: "entry \<in> ?G"
+    obtain d p C where shape: "entry = (d,p,C)" by (cases entry) auto
+    have read: "native_definition_at E (fst d) (snd d) p C"
+      using member by (simp add: native_definition_graph_def shape)
+    have "finite C" using native_definition_formed[OF read] by blast
+    then show "finite (case entry of (d,p,C) \<Rightarrow> (\<lambda>(c,S). ((d,c),S)) ` C)" by (simp add: shape)
+  qed
+  have clause_unique: "single_valued (system_clauses ?P)"
+  proof (unfold single_valued_def, intro allI impI)
+    fix key S T assume a: "(key,S) \<in> system_clauses ?P" and b: "(key,T) \<in> system_clauses ?P"
+    obtain d c where key: "key = (d,c)" by (cases key)
+    obtain p C where left: "(d,p,C) \<in> ?G" "(c,S) \<in> C" using a by (auto simp: key)
+    obtain q D where right: "(d,q,D) \<in> ?G" "(c,T) \<in> D" using b by (auto simp: key)
+    have same: "(p,C) = (q,D)"
+      by (rule single_valued_outputs[OF native_definition_graph_unique left(1) right(1)])
+    have read: "native_definition_at E (fst d) (snd d) p C"
+      using left(1) by (simp add: native_definition_graph_def)
+    have csv: "single_valued C" using native_definition_formed[OF read] by blast
+    have other: "(c,T) \<in> C" using right(2) same by simp
+    show "S = T" by (rule single_valued_outputs[OF csv left(2) other])
+  qed
+  have clauses: "\<forall>d c S. ((d,c),S) \<in> system_clauses ?P \<longrightarrow>
+    d \<in> system_definitions ?P \<and> schema_formed S \<and> schema_dependencies S \<subseteq> system_definitions ?P"
+  proof (intro allI impI)
+    fix d c S assume member: "((d,c),S) \<in> system_clauses ?P"
+    obtain p C where graph: "(d,p,C) \<in> ?G" and clause: "(c,S) \<in> C" using member by auto
+    have site: "d \<in> native_definition_sites E roots"
+      and read: "native_definition_at E (fst d) (snd d) p C"
+      using graph by (auto simp: native_definition_graph_def)
+    have formed: "schema_formed S" using native_definition_formed[OF read] clause by blast
+    have deps: "schema_dependencies S \<subseteq> native_definition_sites E roots"
+    proof
+      fix e assume dep: "e \<in> schema_dependencies S"
+      have edge: "(d,e) \<in> native_definition_edges E"
+        using read clause dep unfolding native_definition_edges_def by blast
+      show "e \<in> native_definition_sites E roots" by (rule native_definition_step[OF site edge])
+    qed
+    show "d \<in> system_definitions ?P \<and> schema_formed S \<and> schema_dependencies S \<subseteq> system_definitions ?P"
+      using site formed deps by (simp add: native_program_definitions[OF package])
+  qed
+  show ?thesis using finite_interfaces interface_unique patterns finite_clauses clause_unique clauses
+    by (simp add: schema_system_formed_def)
+qed
+
+theorem native_program_dependency_edges:
+  shows "system_dependency_edges (native_program E roots) =
+    {(d,e)\<in>native_definition_edges E. d \<in> native_definition_sites E roots}"
+  by (auto simp: system_dependency_edges_def native_definition_edges_def native_definition_graph_def; blast)
+
+
+section \<open>A native citation family selects the package roots\<close>
+
+definition native_root_family_at ::
+  "'u artifact_environment \<Rightarrow> 'u \<Rightarrow> local_address \<Rightarrow>
+    (local_address \<times> 'u definition_site) set \<Rightarrow> bool" where
+  "native_root_family_at E u r Q \<longleftrightarrow> environment_formed E \<and>
+    (\<exists>R M. artifact_at E u R \<and> family_at R r M \<and>
+      finite Q \<and> single_valued Q \<and> rel_dom Q = rel_dom M \<and>
+      (\<forall>s a. (s,a) \<in> M \<longrightarrow>
+        (\<exists>d. (s,d) \<in> Q \<and> located_at E u a (fst d) (snd d))))"
+
+theorem native_root_family_unique:
+  assumes first: "native_root_family_at E u r Q" and second: "native_root_family_at E u r W"
+  shows "Q = W"
+proof -
+  have ef: "environment_formed E" using first by (simp add: native_root_family_at_def)
+  obtain R M where left: "artifact_at E u R" "family_at R r M"
+    "single_valued Q" "rel_dom Q = rel_dom M"
+    "\<forall>s a. (s,a) \<in> M \<longrightarrow> (\<exists>d. (s,d) \<in> Q \<and> located_at E u a (fst d) (snd d))"
+    using first by (auto simp: native_root_family_at_def)
+  obtain S N where right: "artifact_at E u S" "family_at S r N"
+    "single_valued W" "rel_dom W = rel_dom N"
+    "\<forall>s a. (s,a) \<in> N \<longrightarrow> (\<exists>d. (s,d) \<in> W \<and> located_at E u a (fst d) (snd d))"
+    using second by (auto simp: native_root_family_at_def)
+  have art: "S = R" by (rule environment_artifact_unique[OF ef right(1) left(1)])
+  have family: "family_at R r N" using right(2) art by simp
+  have same: "N = M" by (rule family_at_unique[OF family left(2)])
+  have domain: "rel_dom W = rel_dom M" using right(4) same by simp
+  have reads: "\<forall>s a. (s,a) \<in> M \<longrightarrow>
+    (\<exists>d. (s,d) \<in> W \<and> located_at E u a (fst d) (snd d))" using right(5) same by simp
+  have unique: "\<And>a d e. located_at E u a (fst d) (snd d) \<Longrightarrow>
+    located_at E u a (fst e) (snd e) \<Longrightarrow> d = e"
+    using located_at_unique[OF ef, of u] by (metis prod.expand)
+  show ?thesis by (rule complete_socket_reading_unique[OF left(3-5) right(3) domain reads unique])
+qed
+
+lemma native_root_family_origin:
+  assumes family: "native_root_family_at E u r Q" and member: "(s,d) \<in> Q"
+  shows "\<exists>R M a. artifact_at E u R \<and> family_at R r M \<and>
+    (s,a) \<in> M \<and> located_at E u a (fst d) (snd d)"
+proof -
+  obtain R M where source: "artifact_at E u R" "family_at R r M"
+    "single_valued Q" "rel_dom Q = rel_dom M"
+    "\<forall>s a. (s,a) \<in> M \<longrightarrow> (\<exists>d. (s,d) \<in> Q \<and> located_at E u a (fst d) (snd d))"
+    using family by (auto simp: native_root_family_at_def)
+  have key: "s \<in> rel_dom M" using rel_domI[OF member] source(4) by simp
+  obtain a where field: "(s,a) \<in> M" using key by (auto simp: rel_dom_def)
+  obtain e where target: "(s,e) \<in> Q" "located_at E u a (fst e) (snd e)"
+    using source(5) field by blast
+  have same: "e = d" by (rule single_valued_outputs[OF source(3) target(1) member])
+  show ?thesis using source(1,2) field target(2) same by blast
+qed
+
+lemma native_root_family_formed:
+  assumes family: "native_root_family_at E u r Q"
+  shows "finite Q \<and> single_valued Q \<and> rel_ran Q \<subseteq> environment_positions E"
+proof -
+  have base: "finite Q \<and> single_valued Q" using family by (auto simp: native_root_family_at_def)
+  have boundary: "rel_ran Q \<subseteq> environment_positions E"
+  proof
+    fix d assume "d \<in> rel_ran Q"
+    then obtain s where member: "(s,d) \<in> Q" by (auto simp: rel_ran_def)
+    obtain a where loc: "located_at E u a (fst d) (snd d)"
+      using native_root_family_origin[OF family member] by blast
+    obtain R where art: "artifact_at E (fst d) R" and anchor: "anchor_formed (R,snd d)"
+      using located_at_has_artifact[OF loc] by blast
+    show "d \<in> environment_positions E" using art anchor by (cases d) (auto simp: anchor_formed_def)
+  qed
+  show ?thesis using base boundary by blast
+qed
+
+definition native_package_at ::
+  "'u artifact_environment \<Rightarrow> 'u \<Rightarrow> local_address \<Rightarrow> 'u native_system \<Rightarrow> bool" where
+  "native_package_at E u r P \<longleftrightarrow> (\<exists>Q. native_root_family_at E u r Q \<and>
+    native_package_formed E (rel_ran Q) \<and> P = native_program E (rel_ran Q))"
+
+theorem native_package_unique:
+  assumes first: "native_package_at E u r P" and second: "native_package_at E u r T"
+  shows "P = T"
+proof -
+  obtain Q where left: "native_root_family_at E u r Q" "P = native_program E (rel_ran Q)"
+    using first by (auto simp: native_package_at_def)
+  obtain W where right: "native_root_family_at E u r W" "T = native_program E (rel_ran W)"
+    using second by (auto simp: native_package_at_def)
+  have same: "Q = W" by (rule native_root_family_unique[OF left(1) right(1)])
+  show ?thesis using left(2) right(2) same by simp
+qed
+
+lemma native_package_system_formed:
+  assumes "native_package_at E u r P"
+  shows "schema_system_formed P"
+  using assms native_program_formed by (auto simp: native_package_at_def)
+
+lemma native_package_complete_roots:
+  assumes package: "native_package_at E u r P" and roots: "native_root_family_at E u r Q"
+  shows "system_definitions P = native_definition_sites E (rel_ran Q)"
+proof -
+  obtain W where read: "native_root_family_at E u r W"
+    and formed: "native_package_formed E (rel_ran W)" and prog: "P = native_program E (rel_ran W)"
+    using package by (auto simp: native_package_at_def)
+  have same: "W = Q" by (rule native_root_family_unique[OF read roots])
+  show ?thesis using native_program_definitions[OF formed] prog same by simp
+qed
+
+text \<open>
+  The roots select definitions. Reading a definition exposes its complete
+  clause family and every prospective callee. Reachability follows those
+  callees, and package formation requires a definition at every reached site.
+  The environment's finite set of positions is only a finiteness bound.
+  It does not choose definitions or supply an ambient registry. Positive
+  recursion may form cycles in this finite dependency graph; truth is fixed
+  separately by the positive consequence operator.
+\<close>
+
+end

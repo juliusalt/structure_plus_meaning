@@ -1,0 +1,85 @@
+theory Factor_Syntax_Copy
+  imports Factor_Interface_Construction Factor_Schema_Totality
+begin
+
+section \<open>Recovering complete compiled blocks after an injective copy\<close>
+
+lemma compiled_schema_copy:
+  fixes E :: "local_address option artifact_environment"
+  assumes rf: "exact_formed R"
+    and bounds: "rel_dom L \<union> rel_dom C \<subseteq> rra_carrier (object_structure R)"
+    and recover: "\<forall>F v. environment_formed F \<longrightarrow> artifact_at F v R \<longrightarrow>
+      syntax_references F v L C \<longrightarrow> native_schema_at F v r A"
+    and dependencies: "schema_dependencies A \<subseteq> rel_ran C"
+    and ef: "environment_formed E" and target: "artifact_at E u S"
+    and injective: "inj f" and addressing: "finite_addressing (rra_carrier (object_structure R)) f"
+    and reads: "object_reads_agree (push_object f R) S (f ` rra_carrier (object_structure R))"
+    and refs: "syntax_references E u (map_slot_keys f L) (map_slot_keys f C)"
+  shows "native_schema_at E u (f r) (rename_schema f f id A)"
+proof -
+  let ?z = "clone_source_use E u"
+  let ?F = "clone_source_environment E u R f ?z"
+  have fresh: "?z \<notin> environment_uses E" by (rule clone_source_use_fresh[OF ef])
+  have ff: "environment_formed ?F" by (rule clone_environment_formed[OF ef rf fresh])
+  have source: "artifact_at ?F ?z R" by (simp add: clone_artifact_iff)
+  have clone_refs: "syntax_references ?F ?z L C"
+    by (rule cloned_syntax_references[OF ef fresh bounds refs])
+  have original: "native_schema_at ?F ?z r A" using recover ff source clone_refs by blast
+  have copy: "native_syntax_copy ?F ?z R E u S f (relocated_site ?z u f)"
+    by (rule clone_environment_is_native_copy[OF ef rf fresh target injective addressing reads])
+  have agreement: "\<forall>d\<in>schema_dependencies A. relocated_site ?z u f d = id d"
+  proof (intro ballI)
+    fix d assume member: "d \<in> schema_dependencies A"
+    have in_range: "d \<in> rel_ran C" using dependencies member by blast
+    obtain k where entry: "(k,d) \<in> C" using in_range by (auto simp: rel_ran_def)
+    have outside: "fst d \<noteq> ?z" by (rule cloned_reference_site_outside[OF ef fresh clone_refs entry])
+    show "relocated_site ?z u f d = id d" using outside by (cases d) simp
+  qed
+  have same: "rename_schema f f (relocated_site ?z u f) A = rename_schema f f id A"
+    by (rule rename_schema_agreement) (use agreement in auto)
+  show ?thesis using native_syntax_copy.copy_schema[OF copy original] same by simp
+qed
+
+lemma compiled_interface_copy:
+  fixes E :: "local_address option artifact_environment"
+  assumes rf: "exact_formed R"
+    and bounds: "rel_dom L \<subseteq> rra_carrier (object_structure R)"
+    and recover: "\<forall>F :: local_address option artifact_environment. \<forall>v.
+      environment_formed F \<longrightarrow> artifact_at F v R \<longrightarrow> syntax_references F v L {} \<longrightarrow>
+      (\<exists>I K. scoped_pattern_at F v r p I K \<and> rra_carrier (object_structure R) = I \<union> K)"
+    and ef: "environment_formed E" and target: "artifact_at E u S"
+    and injective: "inj f" and addressing: "finite_addressing (rra_carrier (object_structure R)) f"
+    and reads: "object_reads_agree (push_object f R) S (f ` rra_carrier (object_structure R))"
+    and refs: "syntax_references E u (map_slot_keys f L) {}"
+  shows "\<exists>I K. scoped_pattern_at E u (f r) (rename_pattern f p) I K \<and>
+    f ` rra_carrier (object_structure R) = I \<union> K"
+proof -
+  let ?z = "clone_source_use E u"
+  let ?F = "clone_source_environment E u R f ?z"
+  have fresh: "?z \<notin> environment_uses E" by (rule clone_source_use_fresh[OF ef])
+  have ff: "environment_formed ?F" by (rule clone_environment_formed[OF ef rf fresh])
+  have source: "artifact_at ?F ?z R" by (simp add: clone_artifact_iff)
+  have bound: "rel_dom L \<union> rel_dom {} \<subseteq> rra_carrier (object_structure R)" using bounds by simp
+  have actual: "syntax_references E u (map_slot_keys f L) (map_slot_keys f {})"
+    using refs by (simp add: map_slot_keys_def)
+  have clone_refs: "syntax_references ?F ?z L {}"
+    by (rule cloned_syntax_references[OF ef fresh bound actual])
+  obtain I K where original: "scoped_pattern_at ?F ?z r p I K"
+    "rra_carrier (object_structure R) = I \<union> K" using recover ff source clone_refs by blast
+  have copy: "native_syntax_copy ?F ?z R E u S f (relocated_site ?z u f)"
+    by (rule clone_environment_is_native_copy[OF ef rf fresh target injective addressing reads])
+  have scoped: "scoped_pattern_at E u (f r) (rename_pattern f p) (f ` I) (f ` K)"
+    by (rule native_syntax_copy.copy_scoped_pattern[OF copy original(1)])
+  show ?thesis by (rule exI[of _ "f ` I"], rule exI[of _ "f ` K"])
+    (use scoped original(2) in \<open>simp add: image_Un\<close>)
+qed
+
+text \<open>
+  A complete block is read through a fresh auxiliary copy of the actual
+  destination references, then transported back to that destination. Every
+  callee target belongs to the existing environment, so its use and local
+  address stay fixed. All private syntax positions move injectively. The
+  auxiliary use is a proof construction and is absent from the final quotation.
+\<close>
+
+end

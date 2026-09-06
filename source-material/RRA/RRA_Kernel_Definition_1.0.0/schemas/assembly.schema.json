@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rra.example/schemas/kernel/v1/assembly.schema.json",
+  "title": "RRA Compact Exact Assembly Witness",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "data_kind", "pieces", "output", "origins"],
+  "properties": {
+    "format": {"const": "rra-assembly-witness-json-1"},
+    "data_kind": {"enum": ["none", "bag", "functional", "node"]},
+    "pieces": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["slot", "record"],
+        "properties": {
+          "slot": {"$ref": "https://rra.example/schemas/kernel/v1/common.schema.json#/$defs/hex"},
+          "record": {"$ref": "https://rra.example/schemas/kernel/v1/record.schema.json"}
+        }
+      }
+    },
+    "output": {"$ref": "https://rra.example/schemas/kernel/v1/record.schema.json"},
+    "origins": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["slot", "source", "target"],
+        "properties": {
+          "slot": {"$ref": "https://rra.example/schemas/kernel/v1/common.schema.json#/$defs/hex"},
+          "source": {"$ref": "https://rra.example/schemas/kernel/v1/common.schema.json#/$defs/hex"},
+          "target": {"$ref": "https://rra.example/schemas/kernel/v1/common.schema.json#/$defs/hex"}
+        }
+      }
+    }
+  }
+}

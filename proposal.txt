@@ -1,0 +1,1449 @@
+OWNER STATEMNT:
+Ok review your previous proposal and try to improve it. Again what is authoritative are my comments and intent derived from them when you have any choices to make or questions to answer. If you can reasonably argument that my comments and the intent derived from them and from RRA and Factor packages are not enough to make a particular decision that has to be made when you write the proposal, then write your reasoning and leave TODO spot rather than deciding by yourself what to do - however the reason must be substantive and it is not a license for you to leave TODO's everywhere. Write it in the style that is consistent with my derived values and intent. Do not add notions and definitions that go against my intent and my values - the proposal needs to be written with the same values and philosophy that the complete system carries. The structure of the proposal also has to follow my values and intent not just be flat while the meaning is encoded in nominal reading.
+LLM RESPONSE:
+# Revised Proposal for an RRA–Factor Structural Software Foundation
+
+## 0. Status and authority
+
+This proposal is governed by the following precedence relation:
+
+$$
+\boxed{
+\text{explicit user statements}
+\succ
+\text{intent necessarily implied by them}
+\succ
+\text{broad RRA and Factor architecture}
+\succ
+\text{individual package details}
+\succ
+\text{previous assistant proposals}
+}
+$$
+
+A lower-precedence source may clarify a higher-precedence source but may not override it.
+
+The supplied packages are therefore treated as follows:
+
+* their broad direction and division of responsibility are evidence of intent;
+* their individual encodings, catalogues, signatures, field selections, and algorithms are provisional;
+* their definitions become normative only when restated and accepted in the Isabelle/HOL development;
+* the previous proposal has no independent authority.
+
+A `TODO` appears only where the authoritative material leaves two or more materially different choices and none follows from the governing commitments. Each such `TODO` identifies the missing decision and the criterion by which it should be resolved.
+
+---
+
+# 1. Corrections to the previous proposal
+
+The previous proposal had the correct central direction:
+
+$$
+\boxed{
+\text{RRA supplies structure}
+\qquad
+\text{Factor supplies semantics}
+}
+$$
+
+It also correctly rejected an independent state-machine or effect semantics and placed the initial normative definitions in Isabelle/HOL.
+
+It nevertheless made several decisions that were not justified.
+
+First, it treated the RRA live-head map as though it were necessarily an ambient mutable state. That is not required. A live state and a transaction may be defined as finite mathematical values and a pure relation between them. The implementation may mutate storage, but no mutation operation needs semantic force.
+
+Second, it suggested that the RRA assembly map \(q\) should replace Factor’s fresh-position map \(\alpha\). That may ultimately be correct, but it must be proved from the exact integrated representation. The two maps cannot be identified merely because both mention output positions.
+
+Third, it proposed replacing Factor’s retained proof envelope with the RRA Evidence Envelope. This collapsed two distinct functions:
+
+* RRA Evidence records exact linkage;
+* Factor replay determines whether retained structure realizes a valid derivation.
+
+They should be connected, not identified.
+
+Fourth, it proposed collapsing Factor frontiers and RRA trajectories. The current materials use them at different scopes:
+
+* Factor frontiers account for admitted occurrences and causal availability inside a fixed model;
+* RRA trajectories account for succession between exact generations.
+
+They may later admit a derivation relation, but they are not presently the same fact.
+
+Fifth, it suggested eliminating or structurally expanding RRA data profiles. The supplied intent determines that data has no intrinsic semantics, but it does not determine whether the four existing structural data profiles are minimal or redundant.
+
+Finally, it introduced several new named relations where existing Factor relations or structurally recognized applications should have been used. The revised proposal introduces no primitive solely to obtain convenient terminology.
+
+---
+
+# 2. Admission condition for every foundational distinction
+
+The complete system is intended to be irredundant and sufficient. Those terms impose a condition on every proposed primitive, field, relation, and layer.
+
+A normative distinction \(d\) may be admitted only when all three conditions hold.
+
+## 2.1 Sufficiency
+
+The complete supplied boundary determines every judgment that depends on \(d\).
+
+There must be no hidden input from:
+
+* names;
+* host types;
+* registries;
+* evaluator modes;
+* parser choices;
+* storage locations;
+* current process state;
+* omitted-field conventions;
+* lookup order;
+* an ambient “latest version.”
+
+For each public judgment \(J\), there must be a finite boundary \(\partial J\) such that agreement on \(\partial J\) preserves formation and truth:
+
+$$
+M\!\restriction_{\partial J}
+=
+M'\!\restriction_{\partial J}
+\quad\Longrightarrow\quad
+\bigl(
+\operatorname{Formed}_{M}(J)
+\leftrightarrow
+\operatorname{Formed}_{M'}(J)
+\bigr)
+$$
+
+and, whenever formed,
+
+$$
+M\models J
+\quad\Longleftrightarrow\quad
+M'\models J.
+$$
+
+## 2.2 Irredundancy
+
+A distinction is not primitive when it is uniquely derivable from earlier structure.
+
+If two stored fields always determine one another, only one is normative. The other may be a derived projection.
+
+If a proposed primitive can be removed without making two required cases structurally indistinguishable, it must be removed.
+
+Conversely, two relations must not be collapsed merely because their values sometimes coincide. They may be identified only after proving that each is uniquely recoverable from the other over the complete intended domain.
+
+## 2.3 Necessity
+
+Removing the distinction must prevent some required structural or semantic case from being represented or distinguished.
+
+Convenience, familiar terminology, implementation efficiency, or resemblance to an existing programming language does not establish necessity.
+
+The intended admission test is therefore:
+
+$$
+\boxed{
+\operatorname{Admit}(d)
+\iff
+\operatorname{SufficientBoundary}(d)
+\land
+\operatorname{NotDerivableEarlier}(d)
+\land
+\operatorname{Required}(d)
+}
+$$
+
+This is a design criterion to be formalized in the Isabelle development where applicable. It is not itself proposed as an additional semantic primitive.
+
+---
+
+# 3. The foundation is a dependency structure, not a flat catalogue
+
+The system has two interacting dependency orders.
+
+The first is the order in which structural facts become available:
+
+$$
+\begin{array}{ccccc}
+&&\mathsf{R}_0&&\\
+&&\downarrow&&\\
+&&\mathsf{R}_X&&\\
+&\swarrow&\downarrow&\searrow&\\
+\mathsf{R}_A&\quad&\mathsf{R}_E&\quad&\mathsf{R}_T
+\end{array}
+$$
+
+where:
+
+* \(\mathsf{R}_0\) is finite RRA structure and bounded views;
+* \(\mathsf{R}_X\) is exact artifact identity, reference, and citation;
+* \(\mathsf{R}_A\) is assembly;
+* \(\mathsf{R}_E\) is evidential linkage;
+* \(\mathsf{R}_T\) is trajectory, live-view, transaction, and publication structure.
+
+The three branches do not need to be artificially linearized. They share exact artifacts but add different structural facts.
+
+The second order is semantic:
+
+$$
+\begin{array}{ccccc}
+\mathsf{F}_{\mathrm{form}}
+&\longrightarrow&
+\mathsf{F}_{\mathrm{meaning}}
+&\longrightarrow&
+\mathsf{F}_{\mathrm{derive}}
+\\[0.4em]
+&&\downarrow&&\downarrow\\
+&&\mathsf{F}_{\mathrm{authority}}
+&&\mathsf{F}_{\mathrm{replay}}
+\end{array}
+$$
+
+Factor’s current proposal already enforces the essential direction: meaning precedes evidence, retained realization does not make a derivation valid, and implementation cannot change a fixed judgment. 
+
+The integration occurs through three conjunctions:
+
+$$
+\boxed{
+\begin{aligned}
+\text{Factor construction}
+&=
+\text{RRA assembly}
+\;\land\;
+\text{Factor admissibility},
+\\[0.3em]
+\text{Factor replay}
+&=
+\text{RRA evidence formation}
+\;\land\;
+\text{Factor derivation}
+\;\land\;
+\text{structural realization},
+\\[0.3em]
+\text{Factor continuation}
+&=
+\text{RRA trajectory transition}
+\;\land\;
+\text{Factor continuation meaning}.
+\end{aligned}}
+$$
+
+Neither side of any conjunction acquires the function of the other.
+
+The rest of this proposal follows this dependency structure.
+
+---
+
+# 4. \(\mathsf{R}_0\): finite structure without domain meaning
+
+An RRA structure is:
+
+$$
+S=(U,I),
+\qquad
+I\subseteq U\times U\times U,
+$$
+
+with finite \(U\) and \(I\).
+
+For
+
+$$
+(r,p,x)\in I,
+$$
+
+the three positions have only their minimal structural readings:
+
+* \(r\) is the relation occurrence;
+* \(p\) is the participation occurrence;
+* \(x\) is the reached occurrence.
+
+These are positions in incidence, not intrinsic sorts.
+
+No primitive distinction is made between:
+
+* objects and relations;
+* values and types;
+* programs and data;
+* terms and proofs;
+* entities and metadata;
+* structures and descriptions of structures.
+
+Any such distinction is additional structure interpreted by Factor.
+
+A formed RRA structure may contain any finite incidence pattern, including self-incidence, cycles, sharing, and relations whose reached occurrences are themselves relation or participation occurrences.
+
+## 4.1 Bounded views
+
+A bounded view
+
+$$
+(S,b)
+$$
+
+distinguishes selected atoms for one use of \(S\).
+
+The keys of \(b\):
+
+* belong to the external statement of the view;
+* do not become stored properties of the selected atoms;
+* are fixed when comparing that view;
+* may be replaced by a structurally represented interface when the definition is reflected internally.
+
+A bounded view is therefore the initial metalevel mechanism by which a structural predicate exposes its arguments without assigning permanent kinds to them.
+
+## 4.2 No structural fact implies domain semantics
+
+RRA formation establishes only that the structural object is formed.
+
+In particular:
+
+$$
+\operatorname{Formed}_{RRA}(S)
+\not\Rightarrow
+\operatorname{Type}(S),
+$$
+
+$$
+\operatorname{Formed}_{RRA}(S)
+\not\Rightarrow
+\operatorname{True}(S),
+$$
+
+and:
+
+$$
+\operatorname{Formed}_{RRA}(S)
+\not\Rightarrow
+\operatorname{Program}(S).
+$$
+
+These notions may be defined by Factor, but none is recoverable from RRA formation alone.
+
+---
+
+# 5. Data between \(\mathsf{R}_0\) and \(\mathsf{R}_X\)
+
+A structured object may attach opaque finite data to its atoms.
+
+The fixed requirement is semantic opacity:
+
+$$
+\boxed{
+\text{attached octets have exact identity but no intrinsic Factor meaning}
+}
+$$
+
+An octet string is not intrinsically:
+
+* text;
+* a number;
+* a path;
+* a program;
+* a name;
+* a relation identifier;
+* a type tag.
+
+Any such reading is supplied by an exact Factor interpretation.
+
+A data profile may impose structural constraints—for example functionality or multiplicity—without thereby assigning meaning to the bytes.
+
+### TODO D — minimal data-profile basis
+
+The supplied RRA design contains no-data, bag, functional, and node profiles. The authoritative intent establishes that data is semantically opaque, but it does not establish whether these four profiles are all independently necessary.
+
+There are materially different possibilities:
+
+1. retain all four as irreducible structural profiles;
+2. retain a smaller basis and derive the others;
+3. encode some or all data occurrences through ordinary RRA incidence;
+4. separate external byte payloads from structurally addressable data occurrences more sharply.
+
+This cannot be decided from semantic neutrality alone. The decision must follow proofs or counterexamples concerning:
+
+* preservation of exact identity;
+* multiplicity;
+* addressability of equal occurrences;
+* assembly pushforward;
+* boundary locality;
+* whether one profile can faithfully and canonically represent another without adding semantic assumptions.
+
+Until those results exist, semantic opacity is fixed but the minimal profile set is not.
+
+---
+
+# 6. \(\mathsf{R}_X\): exact artifacts without semantic equivalence
+
+An exact artifact fixes the complete finite value of:
+
+* its addressed carrier;
+* its incidence;
+* its selected data profile;
+* every data binding and multiplicity.
+
+Its identity is that complete exact value.
+
+The system keeps three relations distinct:
+
+$$
+R=R'
+$$
+
+for exact artifact equality,
+
+$$
+R\cong R'
+$$
+
+for structural or data-preserving isomorphism, and
+
+$$
+R\equiv_{\Phi}R'
+$$
+
+for semantic equivalence under Factor foundation \(\Phi\), when such an equivalence has been defined.
+
+No one is substituted for another without an explicit theorem.
+
+A reference identifies an exact artifact under a non-rebinding reference profile. A citation
+
+$$
+(ref,a)
+$$
+
+identifies one exact addressed occurrence inside it.
+
+A citation does not itself establish:
+
+* the type of \(a\);
+* continuity of \(a\) across generations;
+* ownership;
+* semantic equality;
+* authority;
+* truth.
+
+Those remain separate Factor judgments.
+
+---
+
+# 7. The three structural branches
+
+## 7.1 \(\mathsf{R}_A\): assembly accounts for reuse and identity sharing
+
+An assembly begins with a finite family of piece occurrences:
+
+$$
+P:s\mapsto O_s.
+$$
+
+The slot \(s\) distinguishes one use of a piece from every other use, including another use of the same exact artifact.
+
+The copied carrier is:
+
+$$
+C_P=\{(s,u)\mid u\in U_{O_s}\}.
+$$
+
+A total surjection
+
+$$
+q:C_P\twoheadrightarrow U_R
+$$
+
+then determines:
+
+* which copied occurrences remain distinct;
+* which become identified;
+* the complete output carrier;
+* the pushforward of incidence;
+* the pushforward of the selected data profile.
+
+A valid witness \(W=(P,R,q,\ldots)\) must account for all output structure and no more:
+
+$$
+\boxed{
+\text{every output occurrence, incidence, and data item has an exact input origin}
+}
+$$
+
+Assembly has no domain-semantic force.
+
+Thus:
+
+$$
+K2(W)
+\not\Rightarrow
+\text{the gluing was semantically valid}.
+$$
+
+It establishes only that the claimed output is exactly the quotient realization of the supplied pieces under \(q\).
+
+### Introduced structure
+
+Assembly does not create unexplained incidence.
+
+When a Factor construction introduces structure not present in an ordinary input, that structure must enter through an explicit contributing piece:
+
+* a constructor artifact;
+* a template use;
+* a literal structured object;
+* a selected base artifact.
+
+“Fresh” then means fresh in the output’s identity and use, not without structural origin.
+
+## 7.2 \(\mathsf{R}_E\): evidence records exact linkage
+
+The Evidence profile records exact relationships among artifacts and citations, such as:
+
+* subject;
+* claimed result;
+* protocol;
+* input;
+* output;
+* correspondence;
+* derivation artifact;
+* source;
+* residual;
+* provenance;
+* checker result;
+* authority decision.
+
+Its foundational judgment is formation only.
+
+Therefore:
+
+$$
+\operatorname{EvidenceFormed}(E)
+\not\Rightarrow
+\operatorname{Derives}(E),
+$$
+
+$$
+\operatorname{EvidenceFormed}(E)
+\not\Rightarrow
+\operatorname{True}(E),
+$$
+
+and:
+
+$$
+\operatorname{EvidenceFormed}(E)
+\not\Rightarrow
+\operatorname{Authorized}(E).
+$$
+
+Named envelope forms in a wire format are presentations. In the reflective foundation, their relevant distinctions must be determined by complete structural equations or by explicit Factor semantic definitions, not by a host-language variant tag.
+
+Evidence must be able to retain exact association with internal proof and assembly positions. This may be done by direct citations or by exact correspondence artifacts whose endpoint citations are complete. Neither mechanism changes evidential formation into proof validity.
+
+## 7.3 \(\mathsf{R}_T\): trajectory is exact change structure
+
+A generation is an immutable exact value:
+
+$$
+G=(\ell,\operatorname{pred},\operatorname{payload},
+   \operatorname{dependencies},\operatorname{evidence}).
+$$
+
+A live view contains a finite map from loci to selected current generation references together with the exact retained generation values required to interpret it.
+
+This does not introduce metaphysical mutable state.
+
+A live view \(H\) is a finite mathematical value. A transaction is a pure relation—or a partial function if uniqueness is proved—between finite values:
+
+$$
+\operatorname{Transact}(H,\tau,H',r).
+$$
+
+Its success case states that \(H'\) contains the complete successor heads and generations. Its conflict case states that no successor live view is produced and returns the exact observed comparison boundary.
+
+“Atomic” means that the relation has no valid partial-success result. It does not make storage mutation a semantic primitive.
+
+An implementation may use locks, compare-and-swap, consensus, append-only storage, or another mechanism. Those procedures do not define `Transact`.
+
+### Branches and convergence
+
+The profile permits distributed development without requiring one global processing point.
+
+Independent loci or branches may advance independently. Later generations may cite several predecessors. Factor may define merge or convergence relations over those generations.
+
+Whether a protocol is:
+
+* convergent;
+* commutative;
+* idempotent;
+* monotone;
+* eventually consistent;
+
+is a Factor theorem about that protocol, not a built-in consequence of trajectory formation.
+
+### Publication
+
+A publication is an exact finite snapshot of selected locus-generation pairs and the exact dependencies, evidence, and authority material selected with them.
+
+It performs no ambient live lookup after formation.
+
+---
+
+# 8. \(\mathsf{F}_{\mathrm{form}}\): Factor structure is an interpretation of RRA
+
+Factor must not retain a second independent normative carrier.
+
+The current Factor draft uses one universe and treats occurrences, frontiers, contexts, proofs, authority instances, and other roles as structurally selected views rather than disjoint sorts.  The integrated foundation preserves this principle but makes the universe an RRA carrier.
+
+There must be a structurally complete interpretation from an exact RRA artifact or bounded view to the Factor relations needed by the semantic kernel.
+
+Conceptually:
+
+$$
+\operatorname{FactorModel}(R)
+$$
+
+means that exact RRA artifact \(R\) admits one valid Factor structural projection.
+
+That projection may expose relations corresponding to:
+
+$$
+\operatorname{Own},\quad
+\operatorname{End},\quad
+\operatorname{Next},\quad
+\operatorname{Bind},
+$$
+
+but these are not separately supplied tables once RRA is foundational. They are uniquely obtained from the RRA representation.
+
+A Factor formation judgment may not depend on a relation name or decoder supplied outside the complete structure.
+
+### TODO F — exact Factor representation over RRA
+
+The authoritative material determines that Factor structure must be grounded in RRA and must not become a second ontology. It does not determine the exact faithful representation.
+
+At least two materially different strategies remain:
+
+1. identify some Factor relations directly with projections of RRA incidence;
+2. represent all Factor relations by complete higher-order RRA patterns.
+
+The choice affects:
+
+* representation of open positions;
+* order;
+* binding;
+* multiplicity;
+* complete incident boundaries;
+* proof-pattern recognition;
+* the size and complexity of reflection theorems;
+* whether the mapping is definitional or merely isomorphic.
+
+A valid choice must provide:
+
+$$
+\operatorname{decode}_F:
+RRA\text{-artifact}\rightharpoonup Factor\text{-structure}
+$$
+
+with proofs of:
+
+* functional recognition;
+* complete rejection of malformed representations;
+* preservation and reflection of every Factor structural relation;
+* compatibility with bounded views and exact citations;
+* renaming invariance;
+* absence of nominal or host-tag selection;
+* no duplicated authoritative fact.
+
+No particular encoding is selected by this proposal.
+
+---
+
+# 9. \(\mathsf{F}_{\mathrm{meaning}}\): semantics is explicit and prior to evidence
+
+Every Factor semantic judgment is relative to one exact Factor foundation and one complete finite application boundary.
+
+Write:
+
+$$
+\operatorname{Formed}_{\Phi}(J)
+$$
+
+for application formation under exact foundation artifact \(\Phi\), and:
+
+$$
+\Phi\models J
+$$
+
+for its truth.
+
+The application boundary must structurally determine:
+
+* the exact semantic definition target;
+* every ordinary argument;
+* every bound or hypothetical argument;
+* every identity, aliasing, multiplicity, and sharing equation required for formation;
+* every exact external endpoint that must remain fixed.
+
+It must contain no:
+
+* proof choice;
+* evidence result;
+* implementation mode;
+* checker identity;
+* cached truth value;
+* hidden decoder.
+
+This matches the broad Factor design, in which the application boundary excludes proof and implementation discriminators and structure rather than a relation name selects the judgment. 
+
+A semantic definition’s dependency boundary must be finite and explicit. Direct circularity that would allow a definition to select its own truth is malformed unless it belongs to one separately defined well-founded or monotone fixed-point construction.
+
+Proof dependencies and retained ancestry do not participate in the prior determination of meaning.
+
+---
+
+# 10. Factor as the programming language
+
+“Program” is not a new primitive sort.
+
+A program is a Factor semantic definition whose formed application boundary exposes the structure needed to determine an output construction.
+
+A program application is an ordinary formed Factor judgment. Its program target, inputs, construction parameters, and claimed output are recovered from the complete structural boundary.
+
+The central programming relation remains Factor application. No separate RRA virtual-machine semantics is introduced.
+
+## 10.1 Computation
+
+A computation is the existence of a finite structurally accounted application:
+
+$$
+\exists W.\;
+\operatorname{Apply}_{\Phi}(J,W).
+$$
+
+The witness \(W\) includes the exact construction account required by the application.
+
+An implementation “runs” the program by attempting to construct such a witness and result.
+
+The search strategy has no semantic force.
+
+Consequently:
+
+* failure to find a result does not prove nonexistence;
+* different strategies may find different valid results when the relation is nondeterministic;
+* determinism is a theorem about the Factor relation;
+* totality is a theorem about the Factor relation;
+* termination is a theorem about a selected construction procedure or a structurally defined decreasing derivation.
+
+## 10.2 No state or effect semantics
+
+There is no foundational relation of the form:
+
+$$
+(\text{program},\text{machine state})
+\longrightarrow
+\text{machine state}'.
+$$
+
+There is no primitive effect operation.
+
+A long-lived computation may be represented by a trajectory of exact partial constructions, claims, results, or derivations. Each generation is an immutable structure. The relation between generations is defined by Factor over the RRA trajectory.
+
+An external observation enters as an exact artifact with provenance and any adopted interpretation. An intended external action is represented as an exact publication or claim. The physical realization between them is not assigned semantic force by the foundation.
+
+This does not prevent software from interacting with the world. It prevents the physical realization mechanism from defining the program’s formal meaning.
+
+## 10.3 Computational sufficiency
+
+Factor must be shown capable of representing general computation through finite structural construction and derivation.
+
+This requires an adequacy theorem with respect to a known universal pure calculus, but the calculus is used only to establish expressive sufficiency. It does not become a second semantic foundation.
+
+### TODO U — universality witness
+
+The intent requires computational universality without state or effects, but does not select the reference calculus.
+
+Plausible witnesses include:
+
+* untyped lambda calculus;
+* combinatory logic;
+* a term-rewriting calculus;
+* another finite relational construction calculus.
+
+The choice materially affects:
+
+* the required Factor constructions;
+* treatment of binding;
+* representation of sharing;
+* finite result derivations;
+* the account of divergence;
+* the complexity of the Isabelle proof.
+
+The selected calculus should minimize new Factor primitives and make the adequacy proof expose any genuine insufficiency in the current Factor construction basis.
+
+---
+
+# 11. First join: Factor application and RRA assembly
+
+Factor application and RRA assembly must be integrated by conjunction, not by replacement.
+
+The required form is:
+
+$$
+\boxed{
+\operatorname{Apply}_{\Phi}(J,W)
+\iff
+K2(W)
+\land
+\operatorname{ApplicationBoundary}_{\Phi}(J,W)
+\land
+\operatorname{Admissible}_{\Phi}(J,W)
+}
+$$
+
+where:
+
+* \(K2(W)\) establishes exact structural construction;
+* `ApplicationBoundary` establishes that the pieces, output, and correspondence belong to this exact Factor application;
+* `Admissible` establishes the Factor-semantic construction conditions.
+
+The current Factor `Apply` is already intended to be finite, pure, and independent of model state, proof, authority, storage, and external interpretation.  The integration preserves that property.
+
+## 11.1 Contributions and omissions
+
+A Factor application may semantically:
+
+* retain source structure;
+* discharge a requirement;
+* instantiate open structure;
+* introduce a target;
+* redirect an exposed boundary;
+* reuse another occurrence.
+
+RRA Assembly itself cannot silently delete source structure or create structure without a piece.
+
+The application boundary must therefore determine a complete family of contributing pieces. Anything omitted from the result remains visible as omitted source structure in the application evidence; it is not represented as having been destroyed.
+
+New output structure originates from explicit constructor or template pieces.
+
+## 11.2 Relation between \(q\), \(\alpha\), and other Factor maps
+
+The assembly map \(q\) is the authoritative account of structural source-to-output identity.
+
+Factor may still require semantic maps expressing choices such as assignment or requirement matching.
+
+No map is removed merely because it mentions the same positions as \(q\). No map is retained when it is fully derivable from:
+
+* \(q\);
+* the complete application boundary;
+* the selected pieces;
+* the Factor semantic constraints.
+
+### TODO A — exact application decomposition
+
+The broad intent requires every Factor result to have a complete assembly account. The existing materials do not yet determine:
+
+* how a Factor body is decomposed into contributing RRA pieces;
+* which constructor pieces supply introduced positions and incidence;
+* how discharged requirements are represented in the retained evidence;
+* whether the current fresh-position map \(\alpha\) is fully determined by \(q\);
+* which parts of \(\sigma\) and \(\mu\) remain independent semantic choices.
+
+This must be settled by defining an exact piece projection and proving an adequacy theorem:
+
+$$
+\operatorname{Apply}^{\mathrm{old}}(\ldots)=B
+\quad\Longleftrightarrow\quad
+\exists P,q.\;
+\operatorname{Pieces}(\ldots,P)
+\land
+K2(P,q,B)
+\land
+\operatorname{FactorConstraints}(\ldots,q).
+$$
+
+Only after this theorem is available can overlapping maps be removed.
+
+---
+
+# 12. Second join: Factor derivation, RRA Evidence, and replay
+
+A Factor derivation is a finite semantic proof object.
+
+An RRA Evidence Envelope is an exact linkage object.
+
+They are related but not identical.
+
+A derivation artifact is itself an exact RRA artifact. An Evidence Envelope identifies:
+
+* the claimed judgment;
+* the exact derivation artifact;
+* its foundation and context;
+* required assembly witnesses;
+* exact sources and assumptions;
+* retained correspondences;
+* residual obligations;
+* provenance.
+
+Factor then defines whether the linked derivation is valid and whether the retained structure realizes it.
+
+The required form is:
+
+$$
+\boxed{
+\operatorname{Replay}_{\Phi}(J,d,E)
+\iff
+\operatorname{EvidenceFormed}(E)
+\land
+\operatorname{Derives}_{\Phi}(J,d)
+\land
+\operatorname{Realizes}_{\Phi}(E,J,d)
+\land
+\operatorname{RetentionBoundary}_{\Phi}(E)
+}
+$$
+
+This preserves the current Factor separation. Its present replay relation explicitly conjoins derivation validity, realization, and retained ancestry rather than allowing any one to stand for the others. 
+
+## 12.1 Assumptions and residuals
+
+An open proof assumption is an exact boundary fact.
+
+It is not:
+
+* a global hypothesis;
+* an ambient axiom registry entry;
+* a failed proof;
+* a truth value;
+* an implementation promise.
+
+The derivation must project its complete finite assumption family. The Evidence Envelope may retain that family and its origins.
+
+A residual likewise records an exact unresolved object. It does not imply failure or falsity unless a separate Factor definition assigns that meaning.
+
+## 12.2 Finite verification
+
+Given complete finite:
+
+* Factor foundation;
+* application boundary;
+* derivation;
+* evidence envelope;
+* realization correspondence;
+
+the corresponding replay checker must terminate.
+
+This does not imply that:
+
+* truth is decidable;
+* proof search terminates;
+* a derivation exists;
+* absence of a derivation proves a negative judgment.
+
+### Evidence granularity requirement
+
+The integrated evidence representation must be able to recover every exact internal occurrence needed by replay.
+
+The final representation may use:
+
+* direct RRA citations; or
+* exact correspondence artifacts from envelope-level references to internal citations.
+
+Whichever representation is chosen must be complete and functional. Evidence must not rely on human-readable path expressions or positional conventions outside the exact artifact.
+
+---
+
+# 13. Third join: RRA trajectories and Factor continuation
+
+RRA determines whether a trajectory, generation, live view, transaction request, result, or publication is structurally formed.
+
+Factor determines what such a transition means.
+
+The required relation has the form:
+
+$$
+\boxed{
+\operatorname{Advance}_{\Phi}(H,\tau,H',E)
+\iff
+\operatorname{RRAAdvance}(H,\tau,H')
+\land
+\operatorname{Continuation}_{\Phi}(H,\tau,H',E)
+}
+$$
+
+where:
+
+* `RRAAdvance` is the pure structural transaction relation;
+* `Continuation` is the exact Factor-semantic condition governing the transition;
+* \(E\) identifies its construction, evidence, authority, and dependencies.
+
+## 13.1 Currentness
+
+A supplied live view may select one current generation for each locus in its domain.
+
+This is an exact fact about that live view.
+
+It is not an ambient universal fact.
+
+Thus currentness always has a structural boundary:
+
+$$
+\operatorname{Current}(H,\ell,g).
+$$
+
+A publication fixes a selection from a live view and does not change when later live views are formed.
+
+Factor authority may determine that a publication is adopted for a specified purpose. Adoption does not prove the published claims.
+
+The present Factor authority material already separates release, liveness, proof, and interpretation: a release records exact publication structure without a liveness value, and structural correspondence alone does not authorize an external interpretation. 
+
+## 13.2 Factor frontiers and RRA generations
+
+The two relations remain distinct unless a theorem identifies them.
+
+Factor frontier ancestry presently concerns availability and cause inside one fixed finite Factor model.
+
+RRA generation ancestry concerns succession of exact generation artifacts.
+
+A generation payload may contain a Factor model whose internal frontiers account for its admitted occurrences. Its evidence may cite parent generations and internal causes.
+
+The distinction is:
+
+$$
+\boxed{
+\text{trajectory predecessor}
+\neq
+\text{semantic dependency}
+\neq
+\text{assembly origin}
+\neq
+\text{proof premise}
+}
+$$
+
+Each has its own complete boundary.
+
+If a future restricted Factor profile proves one relation uniquely recoverable from another, the redundant representation should then be removed from that profile. No such equivalence is assumed here.
+
+---
+
+# 14. Authority and interpretation
+
+Authority is a Factor semantic protocol over exact RRA structure.
+
+It may determine that a specific authority structure:
+
+* adopts a claim;
+* selects a version;
+* authorizes a continuation;
+* publishes a release;
+* adopts an internal-to-external interpretation.
+
+Authority does not determine truth merely by selection.
+
+Proof does not determine adoption merely by validity.
+
+An exact structural correspondence does not determine external interpretation merely by existing.
+
+Accordingly:
+
+$$
+\operatorname{Adopts}_{\Phi}(A,J)
+\not\Rightarrow
+\Phi\models J
+$$
+
+unless a separately defined authority protocol includes and justifies that implication.
+
+Likewise:
+
+$$
+\Phi\models J
+\not\Rightarrow
+\operatorname{Adopts}_{\Phi}(A,J).
+$$
+
+A usable adopted result may require both, but that is a conjunction rather than an identification.
+
+---
+
+# 15. The Isabelle/HOL bootstrap
+
+Before reflection, the normative system is the closed Isabelle/HOL development.
+
+The bootstrap object is not merely a collection of prose files. It consists of:
+
+* the exact Isabelle theory sources;
+* their exact import closure;
+* the specified Isabelle/HOL version and required base sessions;
+* the successfully checked theorem dependency graph.
+
+No separately authored executable implementation is normative.
+
+## 15.1 Theory dependency must mirror semantic dependency
+
+The Isabelle theories should follow the same graph as the proposed foundation:
+
+$$
+\begin{array}{ccccc}
+\mathsf{R}_0
+&\longrightarrow&
+\mathsf{R}_X
+&\longrightarrow&
+\{\mathsf{R}_A,\mathsf{R}_E,\mathsf{R}_T\}
+\\
+\downarrow&&&&\downarrow\\
+\mathsf{F}_{\mathrm{form}}
+&\longrightarrow&
+\mathsf{F}_{\mathrm{meaning}}
+&\longrightarrow&
+\{\mathsf{F}_{\mathrm{apply}},
+  \mathsf{F}_{\mathrm{derive}},
+  \mathsf{F}_{\mathrm{continuation}}\}
+\\
+&&&&\downarrow\\
+&&&&
+\mathsf{Reflection}
+\end{array}
+$$
+
+A later theory may use an earlier relation. An earlier theory may not depend on proof, replay, authority, implementation, or reflection defined later.
+
+In particular:
+
+* RRA formation does not depend on Factor;
+* Factor meaning does not depend on proof;
+* derivation does not depend on retained realization;
+* replay may depend on derivation and evidence;
+* implementation correctness may depend on all normative relations;
+* no normative relation depends on implementation behavior.
+
+This reflects the existing Factor boundary, under which implementation devices such as encodings, indexes, and caches have no semantic or replay force. 
+
+## 15.2 Reification
+
+Once the external Isabelle definitions are complete, the foundation is represented as exact RRA artifacts.
+
+The reflected foundation must contain structural representations sufficient to recover:
+
+* RRA formation and exactness;
+* assembly formation;
+* evidence formation;
+* trajectory formation;
+* Factor structural recognition;
+* Factor semantic definitions;
+* application;
+* derivation;
+* replay;
+* continuation and authority.
+
+It need not initially internalize all of Isabelle/HOL. It must internalize the exact finite foundation required to interpret and check the system’s own public judgments.
+
+## 15.3 No self-authorization
+
+Let the reflected genesis foundation be \(\Phi_0\).
+
+The fact that \(\Phi_0\) describes RRA and Factor does not make it normative.
+
+Its initial authority comes from Isabelle theorems establishing correspondence between:
+
+* the external Isabelle definitions;
+* the exact RRA representation;
+* the internal Factor interpretation.
+
+For every public bootstrap judgment \(J\), the required adequacy theorem has the form:
+
+$$
+\boxed{
+J_{\mathrm{HOL}}(x)
+\iff
+\operatorname{ReflectedJudgment}_{\Phi_0}
+  (\ulcorner x\urcorner)
+}
+$$
+
+over the exact declared representation domain.
+
+Separate theorems must establish:
+
+* formation preservation and reflection;
+* exact-boundary preservation;
+* soundness of reflected derivations;
+* completeness where claimed;
+* agreement of finite checkers;
+* absence of hidden external arguments.
+
+Only then may \(\Phi_0\) be used as the internal normative reference for later Factor artifacts.
+
+## 15.4 The genesis publication
+
+The genesis publication must fix:
+
+* the exact reference to \(\Phi_0\);
+* every exact dependency required to interpret it;
+* the exact bootstrap Isabelle session identity;
+* the exact adequacy results;
+* the authority relation under which it is adopted;
+* its genesis trajectory generation.
+
+The Isabelle presentation and \(\Phi_0\) do not constitute two competing meanings. The adequacy theorem establishes that they are two exact presentations of one bootstrap meaning over the stated domain.
+
+## 15.5 Later foundation generations
+
+A later foundation \(\Phi_1\) is a new exact generation.
+
+It must not alter the meaning of artifacts interpreted under \(\Phi_0\).
+
+Every semantic artifact therefore identifies its exact foundation version.
+
+A proposed successor must supply:
+
+* its exact predecessor;
+* an assembly account of reused and introduced foundation structure;
+* evidence for every retained and changed dependency;
+* a Factor derivation under the predecessor’s continuation rules;
+* an authority decision selecting the successor.
+
+### TODO R — amendment boundary after reflection
+
+The user intent establishes that Isabelle/HOL is normative before reflective normativity is available. It does not fully determine which later changes may be authorized entirely inside the reflected system.
+
+Two materially different policies are possible:
+
+1. every successor satisfying the internally represented continuation relation is sufficient;
+2. changes to a protected bootstrap boundary require a new Isabelle adequacy theorem, while ordinary extensions may proceed internally.
+
+This affects whether the foundation can revise:
+
+* its own reflection relation;
+* its authority protocol;
+* the criterion for admitting new primitives;
+* the meaning of exact identity;
+* the continuation rule itself.
+
+The decision must identify an exact protected boundary. Otherwise the system risks either:
+
+* circular self-expansion with no stable root; or
+* unnecessary permanent dependence on external Isabelle updates for ordinary development.
+
+The current intent does not select the boundary, so it remains unresolved.
+
+---
+
+# 16. Proof obligations arranged by dependency
+
+A later stratum must not be admitted until the obligations connecting it to its predecessors have been proved.
+
+## 16.1 From \(\mathsf{R}_0\) to exact artifacts
+
+Required:
+
+* formation decidability for supplied finite structure;
+* equality and isomorphism laws;
+* bounded-view preservation;
+* renaming invariance;
+* exact identity distinct from isomorphism;
+* reference non-rebinding;
+* citation exactness.
+
+## 16.2 From exact artifacts to assembly
+
+Required:
+
+* copied-carrier disjointness;
+* equivalence-kernel correctness;
+* quotient-incidence exactness;
+* profile-specific data pushforward;
+* output surjectivity;
+* no-extra output;
+* invariance under piece-slot and internal-address renaming where permitted.
+
+## 16.3 From exact artifacts to evidence
+
+Required:
+
+* exact resolution of every reference and citation;
+* complete envelope boundary;
+* absence of hidden semantic force;
+* invariance under changes outside the envelope boundary;
+* separation of absence, malformed linkage, and semantically false claims.
+
+## 16.4 From exact artifacts to trajectories
+
+Required:
+
+* generation exactness;
+* predecessor acyclicity;
+* head-reference resolution;
+* transaction relation determinacy where claimed;
+* conflict completeness;
+* no partial-success result;
+* publication stability;
+* no ambient lookup after publication.
+
+## 16.5 From RRA to Factor formation
+
+Required:
+
+* faithful and functional Factor projection;
+* complete rejection of malformed or multiply interpreted structures;
+* no nominal discriminator;
+* preservation of multiplicity, identity, aliasing, sharing, and boundary incidence;
+* locality and renaming invariance;
+* finite audit of semantic dependencies.
+
+## 16.6 From Factor meaning and assembly to application
+
+Required:
+
+* exact application-piece projection;
+* construction–assembly adequacy;
+* complete source-to-output origin;
+* no semantically relevant result outside \(q\);
+* explicit treatment of omitted source structure;
+* proof that every retained auxiliary map is independent or derived.
+
+## 16.7 From Factor derivation and RRA Evidence to replay
+
+Required:
+
+* derivation soundness;
+* exact assumption projection;
+* realization completeness;
+* evidence locality;
+* retained ancestry correctness;
+* finite replay checking;
+* proof that evidence retention cannot create validity.
+
+## 16.8 From Factor meaning and RRA trajectories to continuation
+
+Required:
+
+* structural transition formation independent of authority;
+* continuation semantics independent of implementation;
+* branch and merge representation;
+* publication immutability;
+* authority noninterference;
+* proof that historical ancestry cannot reconstruct an omitted semantic dependency or authority edge.
+
+## 16.9 From the entire external foundation to reflection
+
+Required:
+
+* exact quotation;
+* formation preservation and reflection;
+* semantic soundness;
+* semantic completeness over the claimed domain;
+* checker agreement;
+* version-relative interpretation;
+* conservative successor behavior.
+
+---
+
+# 17. Development order
+
+The implementation-independent work should proceed in this order:
+
+$$
+\boxed{
+\begin{array}{c}
+\text{RRA finite structure and boundaries}\\
+\downarrow\\
+\text{data-profile decision sufficient for bootstrap}\\
+\downarrow\\
+\text{exact artifacts, references, and citations}\\
+\downarrow\\
+\text{assembly, evidence, and trajectory as parallel structural branches}\\
+\downarrow\\
+\text{faithful Factor representation over RRA}\\
+\downarrow\\
+\text{Factor formation and semantic dependency audit}\\
+\downarrow\\
+\text{Factor application constrained by RRA assembly}\\
+\downarrow\\
+\text{Factor derivation and replay over RRA evidence}\\
+\downarrow\\
+\text{Factor continuation and authority over RRA trajectories}\\
+\downarrow\\
+\text{computational sufficiency}\\
+\downarrow\\
+\text{reflection and genesis publication}
+\end{array}}
+$$
+
+No parser, runtime, repository, compiler, package manager, or optimizer is part of the normative bootstrap unless it is itself required by and defined in Isabelle/HOL.
+
+After reflection, these may be defined as Factor programs whose products are exact RRA artifacts accompanied by:
+
+* assembly witnesses;
+* evidence envelopes;
+* trajectory generations;
+* Factor derivations where certification is claimed.
+
+Their execution mechanisms remain realizations, not meanings.
+
+---
+
+# 18. The resulting system
+
+The completed foundation has one structural basis and one semantic language.
+
+$$
+\boxed{
+\begin{array}{c}
+\text{domain theories and software}\\
+\downarrow\\
+\textbf{Factor}\\
+\text{formation, meaning, application, derivation, replay, authority}\\
+\downarrow\\
+\textbf{RRA}\\
+\text{incidence, exact identity, assembly, evidence, trajectory}
+\end{array}}
+$$
+
+This diagram does not mean that Factor merely reads RRA data.
+
+Factor definitions, programs, applications, derivations, evidence realizations, authorities, and foundation versions are themselves exact RRA structures.
+
+Nor does it mean that RRA structures carry Factor meaning intrinsically.
+
+Their meaning exists only under exact Factor definitions and complete application boundaries.
+
+The three central integration laws are:
+
+$$
+\boxed{
+\begin{aligned}
+\text{construction}
+&=
+\text{assembly}
+\land
+\text{Factor admissibility},
+\\
+\text{certified retention}
+&=
+\text{evidence formation}
+\land
+\text{Factor derivation}
+\land
+\text{realization},
+\\
+\text{meaningful continuation}
+&=
+\text{trajectory transition}
+\land
+\text{Factor continuation}.
+\end{aligned}}
+$$
+
+The constitutional invariant is:
+
+$$
+\boxed{
+\text{structure never silently acquires semantics,
+and semantics never depends on structure that is not explicitly present.}
+}
+$$
+
+The corresponding completeness invariant is:
+
+$$
+\boxed{
+\text{every result has an exact structural origin,
+every claim has an exact semantic boundary,
+every retained justification has an exact evidence boundary,
+and every continuation has an exact predecessor boundary.}
+}
+$$

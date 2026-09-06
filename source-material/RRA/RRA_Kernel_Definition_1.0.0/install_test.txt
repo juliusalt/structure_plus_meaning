@@ -1,0 +1,6 @@
+WARNING: The directory '/home/oai/.cache/pip' or its parent directory is not owned or is not writable by the current user. The cache has been disabled. Check the permissions and owner of that directory. If executing pip with sudo, you should use sudo's -H flag.
+Processing ./dist/rra_kernel-1.0.0-py3-none-any.whl
+Installing collected packages: rra-kernel
+Successfully installed rra-kernel-1.0.0
+installed-library-smoke: PASS
+invalid: record input is not the canonical encoding

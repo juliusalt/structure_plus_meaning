@@ -1,0 +1,11 @@
+{
+  "format": "rra-transaction-json-1",
+  "compare": [{"locus":"00","expected":null}],
+  "write": [{
+    "locus":"00",
+    "payload":{"profile":"rra-record-json-1","algorithm":"sha256","digest":"0000000000000000000000000000000000000000000000000000000000000000"},
+    "dependencies":[],
+    "evidence":[],
+    "additional_predecessors":[]
+  }]
+}

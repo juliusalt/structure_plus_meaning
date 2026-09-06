@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rra.example/schemas/kernel/v1/evidence.schema.json",
+  "title": "RRA Evidence Envelope Family",
+  "$defs": {
+    "ref": {"$ref": "https://rra.example/schemas/kernel/v1/common.schema.json#/$defs/recordRef"},
+    "refs": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/ref"}},
+    "protocol": {
+      "type": "object", "additionalProperties": false,
+      "required": ["format", "kind", "specification", "dependencies", "input_profiles", "output_profiles", "context_profiles", "executors_or_checkers"],
+      "properties": {
+        "format": {"const": "rra-evidence-envelope-json-1"}, "kind": {"const": "protocol"},
+        "specification": {"$ref": "#/$defs/ref"}, "dependencies": {"$ref": "#/$defs/refs"},
+        "input_profiles": {"$ref": "#/$defs/refs"}, "output_profiles": {"$ref": "#/$defs/refs"},
+        "context_profiles": {"$ref": "#/$defs/refs"}, "executors_or_checkers": {"$ref": "#/$defs/refs"}
+      }
+    },
+    "claim": {
+      "type": "object", "additionalProperties": false,
+      "required": ["format", "kind", "claim", "protocols", "context", "dependencies", "provenance"],
+      "properties": {
+        "format": {"const": "rra-evidence-envelope-json-1"}, "kind": {"const": "claim"},
+        "claim": {"$ref": "#/$defs/ref"}, "protocols": {"$ref": "#/$defs/refs"},
+        "context": {"$ref": "#/$defs/refs"}, "dependencies": {"$ref": "#/$defs/refs"},
+        "provenance": {"$ref": "#/$defs/refs"}
+      }
+    },
+    "execution": {
+      "type": "object", "additionalProperties": false,
+      "required": ["format", "kind", "protocol", "executor", "inputs", "outputs", "context", "correspondences", "residuals", "provenance"],
+      "properties": {
+        "format": {"const": "rra-evidence-envelope-json-1"}, "kind": {"const": "execution"},
+        "protocol": {"$ref": "#/$defs/ref"}, "executor": {"$ref": "#/$defs/ref"},
+        "inputs": {"type": "array", "items": {"$ref": "#/$defs/ref"}},
+        "outputs": {"type": "array", "items": {"$ref": "#/$defs/ref"}},
+        "context": {"$ref": "#/$defs/refs"}, "correspondences": {"$ref": "#/$defs/refs"},
+        "residuals": {"$ref": "#/$defs/refs"}, "provenance": {"$ref": "#/$defs/refs"}
+      }
+    },
+    "evidence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["format", "kind", "subjects", "evidence", "sources", "correspondences", "residuals", "provenance"],
+      "properties": {
+        "format": {"const": "rra-evidence-envelope-json-1"}, "kind": {"const": "evidence"},
+        "subjects": {"$ref": "#/$defs/refs"}, "evidence": {"$ref": "#/$defs/refs"},
+        "sources": {"$ref": "#/$defs/refs"}, "correspondences": {"$ref": "#/$defs/refs"},
+        "residuals": {"$ref": "#/$defs/refs"}, "provenance": {"$ref": "#/$defs/refs"}
+      }
+    },
+    "checker_run": {
+      "type": "object", "additionalProperties": false,
+      "required": ["format", "kind", "checker", "subjects", "inputs", "output", "environment", "provenance"],
+      "properties": {
+        "format": {"const": "rra-evidence-envelope-json-1"}, "kind": {"const": "checker_run"},
+        "checker": {"$ref": "#/$defs/ref"}, "subjects": {"type": "array", "items": {"$ref": "#/$defs/ref"}},
+        "inputs": {"type": "array", "items": {"$ref": "#/$defs/ref"}}, "output": {"$ref": "#/$defs/ref"},
+        "environment": {"$ref": "#/$defs/refs"}, "provenance": {"$ref": "#/$defs/refs"}
+      }
+    },
+    "trust_decision": {
+      "type": "object", "additionalProperties": false,
+      "required": ["format", "kind", "basis", "subject", "purpose", "decision", "evidence", "provenance"],
+      "properties": {
+        "format": {"const": "rra-evidence-envelope-json-1"}, "kind": {"const": "trust_decision"},
+        "basis": {"$ref": "#/$defs/ref"}, "subject": {"$ref": "#/$defs/ref"},
+        "purpose": {"$ref": "#/$defs/ref"}, "decision": {"$ref": "#/$defs/ref"},
+        "evidence": {"$ref": "#/$defs/refs"}, "provenance": {"$ref": "#/$defs/refs"}
+      }
+    },
+    "assessment": {
+      "type": "object", "additionalProperties": false,
+      "required": ["format", "kind", "claims", "executions", "evidence", "checker_runs", "trust_decisions", "results", "residuals", "provenance"],
+      "properties": {
+        "format": {"const": "rra-evidence-envelope-json-1"}, "kind": {"const": "assessment"},
+        "claims": {"$ref": "#/$defs/refs"}, "executions": {"$ref": "#/$defs/refs"},
+        "evidence": {"$ref": "#/$defs/refs"}, "checker_runs": {"$ref": "#/$defs/refs"},
+        "trust_decisions": {"$ref": "#/$defs/refs"}, "results": {"$ref": "#/$defs/refs"},
+        "residuals": {"$ref": "#/$defs/refs"}, "provenance": {"$ref": "#/$defs/refs"}
+      }
+    }
+  },
+  "oneOf": [
+    {"$ref": "#/$defs/protocol"}, {"$ref": "#/$defs/claim"},
+    {"$ref": "#/$defs/execution"}, {"$ref": "#/$defs/evidence"},
+    {"$ref": "#/$defs/checker_run"}, {"$ref": "#/$defs/trust_decision"},
+    {"$ref": "#/$defs/assessment"}
+  ]
+}

@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rra.example/schemas/kernel/v1/record.schema.json",
+  "title": "RRA Exact Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "positions", "incidence", "data"],
+  "properties": {
+    "format": {"const": "rra-record-json-1"},
+    "positions": {
+      "type": "array",
+      "items": {"$ref": "https://rra.example/schemas/kernel/v1/common.schema.json#/$defs/hex"},
+      "uniqueItems": true
+    },
+    "incidence": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "prefixItems": [
+          {"$ref": "https://rra.example/schemas/kernel/v1/common.schema.json#/$defs/hex"},
+          {"$ref": "https://rra.example/schemas/kernel/v1/common.schema.json#/$defs/hex"},
+          {"$ref": "https://rra.example/schemas/kernel/v1/common.schema.json#/$defs/hex"}
+        ],
+        "items": false,
+        "minItems": 3,
+        "maxItems": 3
+      },
+      "uniqueItems": true
+    },
+    "data": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind"],
+          "properties": {"kind": {"const": "none"}}
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "entries"],
+          "properties": {
+            "kind": {"const": "bag"},
+            "entries": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["owner", "value", "count"],
+                "properties": {
+                  "owner": {"$ref": "https://rra.example/schemas/kernel/v1/common.schema.json#/$defs/hex"},
+                  "value": {"$ref": "https://rra.example/schemas/kernel/v1/common.schema.json#/$defs/hex"},
+                  "count": {"type": "integer", "minimum": 1}
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "entries"],
+          "properties": {
+            "kind": {"const": "functional"},
+            "entries": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["owner", "value"],
+                "properties": {
+                  "owner": {"$ref": "https://rra.example/schemas/kernel/v1/common.schema.json#/$defs/hex"},
+                  "value": {"$ref": "https://rra.example/schemas/kernel/v1/common.schema.json#/$defs/hex"}
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "entries"],
+          "properties": {
+            "kind": {"const": "node"},
+            "entries": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["node", "owner", "value"],
+                "properties": {
+                  "node": {"$ref": "https://rra.example/schemas/kernel/v1/common.schema.json#/$defs/hex"},
+                  "owner": {"$ref": "https://rra.example/schemas/kernel/v1/common.schema.json#/$defs/hex"},
+                  "value": {"$ref": "https://rra.example/schemas/kernel/v1/common.schema.json#/$defs/hex"}
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,70 @@
+theory Factor_Interface_Construction
+  imports Factor_Reference_Tables
+begin
+
+section \<open>Scoped interface code in any actual destination environment\<close>
+
+theorem interface_syntax_total:
+  assumes formed: "pattern_formed p"
+  shows "\<exists>R r f L. exact_formed R \<and> inj_on f (pattern_variables p) \<and>
+    reference_table_formed L {} \<and> rel_dom L \<subseteq> rra_carrier (object_structure R) \<and>
+    bag_count (object_data R) = (\<lambda>_. 0) \<and> r \<in> rra_carrier (object_structure R) \<and>
+    (\<forall>E u. environment_formed E \<longrightarrow> artifact_at E u R \<longrightarrow>
+      syntax_references E u L {} \<longrightarrow>
+      (\<exists>I K. scoped_pattern_at E u r (rename_pattern f p) I K \<and>
+        rra_carrier (object_structure R) = I \<union> K))"
+proof -
+  obtain f where addressing: "binder_addressing (pattern_variables p) f"
+    using binder_addressing_exists[OF pattern_variables_finite, of p] by blast
+  let ?R = "pattern_syntax f p"
+  let ?V = "f ` pattern_variables p"
+  let ?L = "pattern_literal_bindings p"
+  have rf: "exact_formed ?R" by (rule pattern_syntax_formed[OF formed addressing])
+  have fin: "finite (rra_carrier (object_structure ?R))"
+    using rf by (simp add: exact_formed_def object_formed_def rra_formed_def)
+  obtain b r s t where positions: "distinct [b,r,s,t]"
+    "{b,r,s,t} \<inter> rra_carrier (object_structure ?R) = {}"
+    "\<forall>a\<in>{b,r,s,t}. octets_formed a"
+    using fresh_four_addresses[OF fin] by metis
+  let ?T = "scope_wrapper ?R ?V b r s t"
+  have carrier: "rra_carrier (object_structure ?R) =
+    pattern_syntax_interior p \<union> rel_dom ?L \<union> ?V"
+    by (rule pattern_syntax_carrier[OF addressing])
+  have inside: "?V \<subseteq> rra_carrier (object_structure ?R)" using carrier by blast
+  have tf: "exact_formed ?T" by (rule scope_wrapper_formed[OF rf pattern_syntax_root inside positions(3)])
+  have finj: "inj_on f (pattern_variables p)"
+    using addressing by (simp add: binder_addressing_def finite_addressing_def)
+  have profile: "reference_table_formed ?L {}"
+    by (rule reference_table_literals[OF pattern_literal_bindings_finite
+        pattern_literal_bindings_functional pattern_literal_bindings_formed[OF formed]])
+  have bounds: "rel_dom ?L \<subseteq> rra_carrier (object_structure ?T)"
+    using carrier by (auto simp: scope_wrapper_def)
+  have counts: "bag_count (object_data ?T) = (\<lambda>_. 0)" by (simp add: scope_wrapper_def)
+  have root: "r \<in> rra_carrier (object_structure ?T)" by (simp add: scope_wrapper_def)
+  have recover: "\<forall>E u. environment_formed E \<longrightarrow> artifact_at E u ?T \<longrightarrow>
+    syntax_references E u ?L {} \<longrightarrow>
+    (\<exists>I K. scoped_pattern_at E u r (rename_pattern f p) I K \<and>
+      rra_carrier (object_structure ?T) = I \<union> K)"
+  proof (intro allI impI)
+    fix E u assume ef: "environment_formed E" and source: "artifact_at E u ?T"
+      and refs: "syntax_references E u ?L {}"
+    have literal_values: "\<forall>k\<in>rel_dom ?L. external_slot_values E u k = {R. (k,R) \<in> ?L}"
+      by (intro ballI) (rule reference_literal_values[OF refs pattern_literal_bindings_functional]; assumption)
+    show "\<exists>I K. scoped_pattern_at E u r (rename_pattern f p) I K \<and>
+      rra_carrier (object_structure ?T) = I \<union> K"
+      using scoped_pattern_syntax_recovers[OF formed addressing positions ef source literal_values] by blast
+  qed
+  show ?thesis by (rule exI[of _ ?T], rule exI[of _ r], rule exI[of _ f], rule exI[of _ ?L])
+    (use tf finj profile bounds counts root recover in blast)
+qed
+
+text \<open>
+  Every formed interface pattern has a finite scoped code block. Its complete
+  variable family is derived from the actual pattern. The native reader
+  recovers that pattern in any formed destination supplying the code and its
+  literal references. The carrier is exactly the recovered interior and slots.
+  This theorem supplies construction facts for enclosing whole definitions;
+  no new semantic condition is imposed on the interface language.
+\<close>
+
+end

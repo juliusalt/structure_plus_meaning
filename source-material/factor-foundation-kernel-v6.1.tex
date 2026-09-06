@@ -1,0 +1,3541 @@
+\documentclass[11pt,twoside]{article}
+
+\usepackage[margin=0.92in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools,amsthm}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+
+\definecolor{FactorBlue}{RGB}{29,72,111}
+\definecolor{FactorDark}{RGB}{38,43,48}
+\definecolor{FactorGray}{RGB}{246,248,250}
+
+\hypersetup{%
+  colorlinks=true,
+  linkcolor=FactorBlue,
+  urlcolor=FactorBlue,
+  pdftitle={Factor: A Construction, Proof, and Retained-Replay Kernel},
+  pdfauthor={Foundation proposal},
+  pdfsubject={A self-contained foundation proposal for Factor}
+}
+
+\fancypagestyle{factor}{%
+  \fancyhf{}%
+  \fancyhead[LO,LE]{Factor: A Construction, Proof, and Retained-Replay Kernel}%
+  \fancyhead[RO,RE]{Proposal 6.1}%
+  \fancyfoot[CO,CE]{\thepage}%
+}
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \fancyhead[LO,LE]{Factor: A Construction, Proof, and Retained-Replay Kernel}%
+  \fancyhead[RO,RE]{Proposal 6.1}%
+  \fancyfoot[CO,CE]{\thepage}%
+}
+\pagestyle{factor}
+\setlength{\headheight}{14pt}
+\raggedbottom{}
+\setlength{\emergencystretch}{3em}
+
+\titleformat{\section}{\Large\bfseries\color{FactorDark}}{\thesection}{0.7em}{}
+\titleformat{\subsection}{\large\bfseries\color{FactorDark}}{\thesubsection}{0.7em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{FactorDark}}{\thesubsubsection}{0.7em}{}
+
+\newcommand{\boxtext}[1]{%
+\begin{center}
+\fcolorbox{FactorBlue}{FactorGray}{%
+\begin{minipage}{0.90\textwidth}
+#1
+\end{minipage}}
+\end{center}}
+
+\newcommand{\Apply}{\mathsf{Apply}}
+\newcommand{\Closure}{\mathsf{Closure}}
+\newcommand{\Reach}{\mathsf{Reach}}
+\newcommand{\SameStructure}{\mathsf{SameStructure}}
+\newcommand{\BoundaryCorresponds}{\mathsf{BoundaryCorresponds}}
+\newcommand{\Derivable}{\mathsf{Derivable}}
+\newcommand{\Novel}{\mathsf{Novel}}
+\newcommand{\Family}{\mathsf{Family}}
+\newcommand{\Necessary}{\mathsf{Necessary}}
+\newcommand{\Formed}{\mathsf{Formed}}
+\newcommand{\Replay}{\mathsf{Replay}}
+\newcommand{\RealizedAt}{\mathsf{RealizedAt}}
+\newcommand{\Proves}{\mathsf{Proves}}
+\newcommand{\Derives}{\mathsf{Derives}}
+\newcommand{\ValidDerivation}{\mathsf{ValidDerivation}}
+\newcommand{\CandidateAt}{\mathsf{CandidateAt}}
+\newcommand{\MatchAt}{\mathsf{MatchAt}}
+\newcommand{\CompleteMatch}{\mathsf{CompleteMatch}}
+\newcommand{\FiniteMember}{\mathsf{FiniteMember}}
+\newcommand{\UniversalAdmissible}{\mathsf{UniversalAdmissible}}
+\newcommand{\ProjectsAt}{\mathsf{ProjectsAt}}
+\newcommand{\Rec}{\mathsf{Rec}}
+\newcommand{\Fam}{\mathsf{Fam}}
+\newcommand{\RefPos}{\mathsf{Ref}}
+\newcommand{\ExactMatch}{\mathsf{ExactMatch}}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\title{\textbf{Factor: A Construction, Proof, and Retained-Replay Kernel}\\[0.35em]
+\large A self-contained proposal}
+\author{Foundation proposal}
+\date{Proposal 6.1 --- August 15, 2026}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+
+\begin{abstract}
+Factor gives structural meaning to finite constructions without granting force to
+names, encodings, proof layouts, or storage choices.  Its normative input is an
+abstract finite table over one closed structural signature; decoding bytes or host
+objects into that table is not a Factor judgment.  Canonical encoding profiles
+remain external maps but must satisfy stated totality, injectivity, round-trip, and
+same-input obligations.  Every semantic relation is interpreted in one explicitly
+fixed finite Factor model.  A closed catalogue
+checks supplied finite derivation graphs independently of storage.  A separate
+structural realization maps those derivations to retained fragments, and one replay
+relation combines derivation validity, realization, and ancestry.
+
+Semantic truth may be undecidable.  Reference checks nevertheless terminate
+because they inspect only finite supplied structure.  Optional authority can select
+exact claims and adopt external interpretations, but raw adoption neither proves a
+claim nor chooses retained evidence.  Caches, indexes, creation procedures, and
+physical storage remain nonsemantic.
+\end{abstract}
+
+\setcounter{tocdepth}{2}
+\newpage
+\tableofcontents
+\newpage
+
+\section*{Purpose and dependency boundary}
+\addcontentsline{toc}{section}{Purpose and dependency boundary}
+
+Factor answers:
+
+\begin{quote}
+Which earlier constructions produce this occurrence, and which inputs entered
+without a retained derivation?
+\end{quote}
+
+An underived cause says only that no derivation was retained for that admission.
+It does not assert truth, independence, novelty, authority, or external meaning.
+An encoding or structural correspondence creates no commitment.  Only explicit
+authority structure adopts or publishes an external interpretation.
+
+Here \emph{encoding} means a byte string, database row, host object, or other
+carrier outside the formal model.  The proposal necessarily assigns internal
+Factor syntax a fixed meaning through the closed primitive signature and formulas
+below.  Recognizing that formal syntax forms a Factor cause or judgment is not an
+adoption of an external interpretation.
+
+The proposal has four layers:
+
+\begin{enumerate}[leftmargin=2.2em]
+  \item semantic Factor relations;
+  \item finite storage-independent derivations, conditional proof validity, and
+        global proof validity;
+  \item structural realization, retained fragments and selector links, and
+        normative replay at a site; and
+  \item creation, deployment, caching, indexing, and implementation work.
+\end{enumerate}
+
+\boxtext{%
+\[
+\begin{array}{c}
+\text{semantic relations}\\[-0.1em]
+\downarrow\\[-0.1em]
+\text{finite structural derivations}\\[-0.1em]
+\downarrow\\[-0.1em]
+\text{retained realization and replay}\\[-0.1em]
+\downarrow\\[-0.1em]
+\text{implementation}
+\end{array}
+\]
+No arrow points in the opposite direction.}
+
+Meaning is fixed before evidence.  Proof can establish an already meaningful
+judgment but cannot create its meaning.  Realization can retain a derivation but
+cannot make that derivation valid.  Implementation can accelerate any fixed check
+but cannot change its answer.
+
+\section*{Metalevel: finite Factor models}
+\addcontentsline{toc}{section}{Metalevel: finite Factor models}
+
+\subsection*{One structural universe and its irreducible signature}
+
+All positions and values in a normative Factor input inhabit one universe \(U\).
+Occurrences, frontiers, contexts, frames, proof nodes, witnesses, authority
+instances, and bridges are predicates or views selected by structure.  They are
+not disjoint sorts.  A place accepts any value whose supplied structure satisfies
+its fixed incident equations.
+
+A normative finite input is the mathematical structure
+\[
+ G=(U_G,\operatorname{Own}_G,\operatorname{End}_G,
+       \operatorname{Next}_G,\operatorname{Bind}_G),
+ \qquad U_G\subseteq U,
+\]
+whose five components are literal finite tables, not procedures.  Equality is
+ordinary equality in \(U\).  Call the resulting closed signature \(\Sigma_F\).
+Its only primitive readings are:
+
+\begin{itemize}[leftmargin=2em]
+  \item \(\operatorname{Own}_G(a,p)\): \(p\) is an immediate position owned by
+        \(a\);
+  \item \(\operatorname{End}_G(p,x)\): incidence position \(p\) has endpoint
+        \(x\);
+  \item \(\operatorname{Next}_G(p,q)\): \(q\) is the explicitly ordered next
+        sibling of \(p\); and
+  \item \(\operatorname{Bind}_G(k,p)\): key value \(k\) is bound to exact
+        graph position \(p\).
+\end{itemize}
+
+Every graph-backed owner, local position, value, and endpoint is in \(U_G\); thus
+\(\operatorname{Pos}(G)=U_G\) when a carrier rather than a role is required.
+Distinct incidence positions represent multiplicity even when their endpoints are
+equal.  Direction and encoded order are represented by endpoint placement and
+\(\operatorname{Next}_G\), not by labels.  Immediate ownership is functional in
+its second component and acyclic.  An endpoint place has one endpoint, and
+\(\operatorname{Next}_G\) relates only positions with the same immediate owner,
+with at most one predecessor and successor.  The binding table is partial in its
+first component.  A value is a key only because it occurs at a key place fixed by
+one of the structural equations below.  Absence of a pair in an explicitly
+restricted finite binding table is a failed lookup extensionally.
+
+Supplied hypothetical structures use the same four structural relations
+\(\operatorname{Own},\operatorname{End},\operatorname{Next},\operatorname{Bind}\)
+on their finite positions; their graph-facing endpoints and binding results are
+exact positions and tuples of \(G\).  They do not introduce a second syntax.
+
+\subsection*{Exact record notation and the recognition boundary}
+
+The following notation is normative.  It reduces every later record and pattern
+claim to the primitive tables.  For distinct \(x_1,\ldots,x_n\),
+\[
+\begin{split}
+ \Rec_G(r;x_1,\ldots,x_n)\quad\Longleftrightarrow\quad{}
+ &\forall x\,[\operatorname{Own}_G(r,x)
+             \leftrightarrow \textstyle\bigvee_{i=1}^{n}x=x_i]\\
+ &{}\land
+ \forall x,y\,[\operatorname{Own}_G(r,x)\land
+                \operatorname{Own}_G(r,y)\Rightarrow\\[-0.4em]
+ &\hspace{7.3em}(\operatorname{Next}_G(x,y)
+      \leftrightarrow
+      \textstyle\bigvee_{i=1}^{n-1}(x=x_i\land y=x_{i+1}))].
+\end{split}
+\]
+For an exact finite set \(X\),
+\[
+ \Fam_G(r;X)\Longleftrightarrow
+ \bigl(\forall x\,[\operatorname{Own}_G(r,x)\leftrightarrow x\in X]\bigr)
+ \land\neg\exists x,y\in X\ \operatorname{Next}_G(x,y).
+\]
+An ordered family is a \(\Rec\) with its displayed finite sequence.  An optional
+field is a \(\Fam\) of cardinality zero or one.  Finally,
+\[
+ \RefPos_G(q;x)\Longleftrightarrow
+ \bigl(\forall y\,[\operatorname{End}_G(q,y)\leftrightarrow y=x]\bigr)
+ \land\neg\exists s\,\operatorname{Own}_G(q,s).
+\]
+A pair record is fixed by
+\[
+ \operatorname{PairAt}_G(q;a,b)\Longleftrightarrow
+ \exists k,v\,[\Rec_G(q;k,v)\land\RefPos_G(k;a)
+                         \land\RefPos_G(v;b)].
+\]
+A finite relation or map is then fixed by
+\[
+\begin{split}
+ \operatorname{RelationRecord}_G(r)\Longleftrightarrow{}&
+ \exists X\,[\Fam_G(r;X)
+   \land\forall q\in X\ \exists!a,b\,\operatorname{PairAt}_G(q;a,b)\\[-0.3em]
+ &\quad{}\land\forall q,q'\in X\ \forall a,b\,[
+   \operatorname{PairAt}_G(q;a,b)\land
+   \operatorname{PairAt}_G(q';a,b)\Rightarrow q=q']],\\
+ \operatorname{MapRecord}_G(r)\Longleftrightarrow{}&
+ \operatorname{RelationRecord}_G(r)\\[-0.3em]
+ &{}\land\forall q,q',a,b,b'\,[
+   \operatorname{Own}_G(r,q)\land\operatorname{Own}_G(r,q')\\[-0.3em]
+ &\hspace{5em}{}\land\operatorname{PairAt}_G(q;a,b)
+   \land\operatorname{PairAt}_G(q';a,b')\Rightarrow q=q'].
+\end{split}
+\]
+Its projected endpoint relation is not discretionary:
+\[
+ \operatorname{Pairs}_G(r)=
+ \{(a,b):\exists q\,[\operatorname{Own}_G(r,q)
+                   \land\operatorname{PairAt}_G(q;a,b)]\}.
+\]
+Whenever a later relation/map argument is denoted by \(V,\sigma,\mu,\alpha,m\),
+the root remains part of its exact boundary and the mathematical relation is this
+unique \(\operatorname{Pairs}\) projection.  These equations distinguish a
+missing member, duplicate position, repeated endpoint, and encoded order without
+a kind tag.
+
+For a finite pattern \(K\) with internal positions \(I_K\), external parameters
+\(A_K\), and a proposed map \(\eta\), write
+\(\ExactMatch_G(K,\eta)\) exactly when \(\eta\) is one-to-one on \(I_K\), fixes
+the supplied members of \(A_K\), and, for each
+\(R\in\{\operatorname{Own},\operatorname{End},\operatorname{Next},
+\operatorname{Bind}\}\),
+\[
+ R_G(\eta\vec x)\quad\Longleftrightarrow\quad R_K(\vec x)
+\]
+for every tuple incident with an internal position, including every
+boundary-crossing tuple.  The image contains the whole owned closure of the pattern
+and no other owned position.  Finite family variables in \(K\) range over the
+exact displayed \(\Fam\), so this is a finite relational check, not matching by a
+name or by an omitted tail.  ``Contains exactly'', ``exposes'', ``structural
+pattern'', and ``complete/no-extra'' below are abbreviations for these
+reflection equations.
+
+The top-level grammar used later is fixed here.  Each row is completed by the
+payload equations in the cited section; there is no additional recognizer.
+
+\begin{center}
+\begin{tabularx}{0.98\textwidth}{@{}>{\raggedright\arraybackslash}p{0.19\textwidth}
+                                      >{\raggedright\arraybackslash}p{0.37\textwidth}
+                                      X@{}}
+\toprule
+Structure & Exact root spine & Payload roots\\
+\midrule
+five-part body & \(\Rec_G(B;R,P,Q,T,N)\) & exact reference, place,
+requirement, target, and declaration families\\
+frontier & \(\Rec_G(f;P,e)\) & parent-reference family \(P\) and optional
+entry reference \(e\)\\
+base occurrence & \(\Rec_G(o;\kappa),\ \Rec_G(\kappa;B)\) & one formed body
+record \(B\)\\
+derived occurrence &
+\(\Rec_G(o;\kappa),\ \Rec_G(\kappa;s,V,\sigma,\mu,\alpha)\) & one source
+reference and four exact finite relation/map records\\
+structural view & \(\Rec_G(E;A,C)\) & interface \(A\) and closed clause graph
+\(C\)\\
+finite relation & \(\Rec_G(E;A,T,e)\) & interface \(A\), exact tuple family
+\(T\), and structural comparison boundary \(e\)\\
+semantic closure & \(\Rec_G(E;A,S,t)\) & interface, seed, and
+\(\RefPos_G(t;\operatorname{Step})\)\\
+finite domain & \(\Rec_G(D;M)\) & exact member-reference family \(M\)\\
+admissibility schema & \(\Rec_G(S;B,E,H,C,T,D)\) & binders, equations,
+hypotheses, conclusion, fixed targets, and guards\\
+retained envelope & \(\Rec_G(p;t,C,F,Q,L)\) & target reference, conclusion
+boundary, fragments, path graph, and selector links\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+The structural-view clause grammar and every other payload grammar are the closed
+finite alternatives displayed in their authoritative sections, each expressed by
+\(\Rec\), \(\Fam\), \(\RefPos\), and \(\ExactMatch\).  A pattern name in prose
+does not occur in \(G\) and cannot select a row.  Two simultaneous rows, no row,
+or two matches with different field projections make the proposed structure
+malformed.
+
+This signature is the proposal's irreducible mathematical base.  Factor does
+\emph{not} map bytes, database records, host objects, or wire tags into it, and it
+cannot certify that two such adapters intend the same primitive tables.  Doing so
+would require another interpretation function.  Section~\ref{sec:implementation}
+therefore states the minimum external contract for a canonical encoding profile:
+total deterministic parsing with explicit rejection, total injective encoding on
+a declared domain, exact round trips, and a literal same-input criterion.  No
+particular profile or parser is supplied here, and profile conformance remains an
+external claim rather than a Factor judgment.
+
+\subsection*{Five-part bodies and pure application}
+
+A carried body is the finite record
+\[
+  B=(R,P,Q,T,N),
+\]
+meaning the exact spine \(\Rec(B;R,P,Q,T,N)\) in the supplied structural
+tables.  Each of \(R,P,Q,T,N\) is an exact \(\Fam\) (or an explicitly ordered
+\(\Rec\) where order is part of the body), and every member has the complete
+endpoint pattern required by its collection.  In primitive notation, define
+\[
+ \operatorname{Empty}_G(q)\Longleftrightarrow
+ \neg\exists x\,[\operatorname{Own}_G(q,x)\lor\operatorname{End}_G(q,x)],
+\]
+and let \(\operatorname{OrderedRefs}_G(r;x_1,\ldots,x_n)\) mean
+\(\exists e_1,\ldots,e_n\,[\Rec_G(r;e_1,\ldots,e_n)\land
+  \bigwedge_i\RefPos_G(e_i;x_i)]\) for \(n\ge1\), and
+\(\operatorname{Empty}_G(r)\) for \(n=0\).  The five member predicates are
+\[
+\begin{aligned}
+ \operatorname{ReferenceItem}_G(r)
+  &\Longleftrightarrow
+    \exists n\ge1,\vec x\ \operatorname{OrderedRefs}_G(r;\vec x),\\
+ \operatorname{OpenItem}_G(p)
+  &\Longleftrightarrow \operatorname{Empty}_G(p),\\
+ \operatorname{RequirementItem}_G(q)
+  &\Longleftrightarrow
+    \exists O,E,X,\vec x\,[\Rec_G(q;O,E)
+       \land\Fam_G(O;X)\\[-0.4em]
+  &\hspace{6em}{}\land
+    \forall a\in X\ \exists y\,\RefPos_G(a;y)
+    \\[-0.4em]
+  &\hspace{6em}{}\land\operatorname{OrderedRefs}_G(E;\vec x)
+    \land(X\ne\varnothing\lor |\vec x|>0)],\\
+ \operatorname{TargetItem}_G(t)
+  &\Longleftrightarrow
+    \exists e,x\,[\Rec_G(t;e)\land\RefPos_G(e;x)],\\
+ \operatorname{NewItem}_G(n)
+  &\Longleftrightarrow
+    \exists p\,[\Rec_G(n;p)\land\operatorname{Empty}_G(p)].
+\end{aligned}
+\]
+The two requirement fields are respectively its exact unordered open-endpoint
+family and its ordered resolved-endpoint record; their union is nonempty.  Open references may end
+at hypothetical places; resolved references end at exact supplied occurrences or
+graph positions.  Collection membership fixes which displayed predicate applies,
+so the same endpoint value may occur in several roles without a value sort.
+
+Writing \(X_C\) for the exact child set of collection root \(C\), define
+\[
+\begin{split}
+ \operatorname{BodyRecord}_G(B)\Longleftrightarrow
+ \exists R,P,Q,T,N,X_R,X_P,X_Q,X_T,X_N\,[{}&
+ \Rec_G(B;R,P,Q,T,N)\\
+ &{}\land\bigwedge_C\Fam_G(C;X_C)\\
+ &{}\land\forall r\in X_R\ \operatorname{ReferenceItem}_G(r)\\
+ &{}\land\forall p\in X_P\ \operatorname{OpenItem}_G(p)\\
+ &{}\land\forall q\in X_Q\ \operatorname{RequirementItem}_G(q)\\
+ &{}\land\forall t\in X_T\ \operatorname{TargetItem}_G(t)\\
+ &{}\land\forall n\in X_N\ \operatorname{NewItem}_G(n)].
+\end{split}
+\]
+where \(R\) contains outgoing references, \(P\) open places, \(Q\) required links,
+\(T\) introduced targets, and \(N\) new-place declarations.  Membership in these
+five collections is primitive positional structure.  Each item retains its owner,
+local position, direction where present, endpoints, multiplicity, aliasing, and
+sharing.  No item carries a role name.
+
+For a source body \(B_{\mathrm{src}}\), a finite family \(U_0\) of explicitly
+supplied bodies, a partial assignment \(\sigma\) of source places, an injective
+match \(\mu\) from every resolved requirement to a distinct matching reference,
+and a fresh-position pairing \(\alpha\), define the graph-independent partial
+function
+\[
+  \Apply(B_{\mathrm{src}},U_0,\sigma,\mu,\alpha)=B_{\mathrm{out}}.
+\]
+The domain of \(\alpha\) is exactly the unassigned places, new-place declarations,
+unresolved requirements, and introduced targets.  Its range is exactly the fresh
+output positions.  The source position determines the output collection; \(\alpha\)
+contains no role field.
+
+The operation is defined exactly when:
+
+\begin{enumerate}[leftmargin=2.2em]
+  \item every owner and position cited by \(U_0,\sigma,\mu,\alpha\) exists in the
+        supplied finite material;
+  \item \(\sigma\) is a partial function on \(P\);
+  \item after assignment, \(\mu\) is total on the resolved requirements,
+        injective, and selects references with the exact direction and endpoints;
+  \item \(\alpha\) has the exact domain and range just stated and is one-to-one;
+        and
+  \item the candidate output contains all and only the items given by the output
+        equations that follow.
+\end{enumerate}
+
+The output equations are:
+
+\begin{itemize}[leftmargin=2em]
+  \item an unassigned source place remains one ordinary open place;
+  \item a new-place declaration becomes one ordinary open place and no declaration
+        remains;
+  \item a resolved requirement is discharged after its matched reference passes;
+  \item an unresolved requirement remains, with every resolved endpoint retained
+        and every open endpoint redirected through \(\alpha\);
+  \item a resolved introduced target becomes one distinct outgoing reference from
+        the result to the resolved occurrence; and
+  \item an unresolved introduced target remains and points to its redirected
+        result place.
+\end{itemize}
+
+Source references remain owned by the source and are not copied.  There is no
+other output item.
+
+\(\Apply\) reads no model, frontier, admission, proof, authority, storage, or
+external meaning.  It terminates on fixed finite inputs and is deterministic once
+\(\alpha\) is fixed.  Two fresh-position choices differ only by a bijective
+renaming of result positions.
+
+\subsection*{Model-formation conditions}
+
+A \emph{Factor model} is a finite graph satisfying all of the following metalevel
+conditions.
+
+\begin{enumerate}[leftmargin=2.2em]
+  \item Every value occupying a binding-key place has at most one binding.
+  \item Every cited owner, local position, endpoint, and binding endpoint exists,
+        and every finite record satisfies its displayed ownership and incidence
+        equations.
+  \item Each frontier satisfies \(\Rec_G(f;P,e)\), where \(P\) is its exact
+        \(\Fam\) of parent-frontier references and \(e\) is an optional
+        occurrence-reference \(\Fam\).  An
+        initial frontier has empty \(P\) and no entry.  A noninitial frontier has
+        nonempty \(P\) and exactly one entry.
+  \item The frontier-parent graph is finite and acyclic.  One occurrence is the
+        entry of at most one frontier.
+  \item Every occurrence entry has exactly one of the two structurally disjoint
+        cause shapes in Section~\ref{sec:kernel}: a base cause carrying one exact
+        body, or a derived cause carrying one source, one complete selected
+        occurrence/position map, and the maps \(\sigma,\mu,\alpha\).  The first
+        shape has no application positions; the second has all and only the
+        application positions.
+  \item An occurrence entered by a frontier is absent from every strict parent
+        development.  Every source, selected input, matched-reference owner,
+        external endpoint, and other support used by its cause belongs to the
+        required parent development.
+  \item A base cause introduces its exact body.  A derived cause satisfies the
+        authoritative body equation of Section~\ref{sec:kernel} against bodies
+        obtained from strict ancestors.  Every admission and carried record
+        satisfies the complete/no-extra equations stated there.
+\end{enumerate}
+
+These conditions restrict the domain over which all Factor relations are
+interpreted.  They are not a Factor semantic relation, not a judgment, and not a
+conclusion that proof or replay can establish.  A storage system may construct or
+incrementally check a candidate graph, but those acts add no semantic fact.
+
+\boxtext{\textbf{Fixed-model convention.}  For the rest of the authoritative
+sections, fix one Factor model \(G\).  Every
+semantic, proof, realization, and replay relation is relative to this same \(G\).
+The parameter identifies immutable structure, not a repository handle, storage
+address, realization site, or validator state.}
+
+\section{Semantic kernel}\label{sec:kernel}
+
+\subsection{Frontiers, developments, and admission}
+
+Write
+\[
+\begin{split}
+ \operatorname{FrontierRecord}_G(f;P,e,X_P,X_e)
+ \Longleftrightarrow{}&\Rec_G(f;P,e)\land\Fam_G(P;X_P)
+                  \land\Fam_G(e;X_e)\\
+ &{}\land |X_e|\le1
+ \land\forall q\in X_P\ \exists g\,\RefPos_G(q;g)\\
+ &{}\land\forall q\in X_e\ \exists o\,\RefPos_G(q;o).
+\end{split}
+\]
+Model formation requires one such projection for every frontier root and requires
+all referenced \(g,o\) to satisfy their respective frontier and occurrence
+equations.  Let \(\operatorname{Parents}_G(f)\) be the endpoints of the references
+in \(X_P\), and let \(\operatorname{Entry}_G(f)\) be absent or the one endpoint
+from \(X_e\).  For this unique projection, let \(\Delta_G(f)\) be the occurrence
+entries in the finite parent closure of \(f\), including
+\(\operatorname{Entry}_G(f)\) when present, and write
+\[
+  \Delta_G(P)=\bigcup_{g\in P}\Delta_G(g)
+  \qquad(P\text{ an exact frontier set}).
+\]
+The relation
+\[
+  \operatorname{AdmittedAt}_G(o,f)
+\]
+holds exactly when
+\[
+ \exists P,e,X_P,X_e,q\,[
+ \operatorname{FrontierRecord}_G(f;P,e,X_P,X_e)
+ \land q\in X_e\land\RefPos_G(q;o)].
+\]
+An occurrence does
+not carry a frontier back-reference.
+
+The cause of an admitted occurrence \(o\) has exactly one of these shapes:
+\[
+\begin{array}{ll}
+\text{base:}    & \operatorname{BaseCause}_G(o;B),\\[0.2em]
+\text{derived:} & \operatorname{DerivedCause}_G
+                    (o;o_{\mathrm{src}},V,\sigma,\mu,\alpha).
+\end{array}
+\]
+These names abbreviate explicit substrate formulas, not a stored kind or a fixed
+decoder.  In full,
+\[
+\begin{split}
+ \operatorname{BaseCause}_G(o;B)\Longleftrightarrow{}&
+ \exists\kappa\,[\Rec_G(o;\kappa)\land\Rec_G(\kappa;B)
+                 \land\operatorname{BodyRecord}_G(B)],\\
+ \operatorname{DerivedCause}_G
+   (o;o_{\mathrm{src}},V,\sigma,\mu,\alpha)
+ &\Longleftrightarrow
+ \exists\kappa,s\,[\Rec_G(o;\kappa)
+       \land\Rec_G(\kappa;s,V,\sigma,\mu,\alpha)\\[-0.4em]
+ &\hspace{4.5em}{}\land\RefPos_G(s;o_{\mathrm{src}})
+       \land\operatorname{RelationRecord}_G(V)\\[-0.4em]
+ &\hspace{4.5em}{}\land\operatorname{MapRecord}_G(\sigma)
+       \land\operatorname{MapRecord}_G(\mu)
+       \land\operatorname{MapRecord}_G(\alpha)].
+\end{split}
+\]
+Here \(\operatorname{BodyRecord}_G(B)\) is exactly the five-field \(\Rec\) and
+its five complete family equations above.  The predicates
+\(\operatorname{RelationRecord}\) and
+\(\operatorname{MapRecord}\) are exactly the \(\Fam\)-of-pairs equations from the
+substrate, with map-key functionality for the latter.  The first formula has one
+cause field and therefore no application position.  The second has all and only
+the displayed source, selected relation, assignment, reference match, and position
+pairing fields; it has no copied input or output body.  Exact \(\Rec\) reflection
+makes the shapes disjoint and gives their recognition an internal finite criterion.
+
+For the parent collection \(P\) of the frontier admitting a derived \(o\), define
+\[
+  U_{G,P}(x)=\operatorname{Body}_G(x)
+  \qquad\text{for every selected occurrence }x\text{ in }V.
+\]
+\(V\) contains exactly every assignment value, matched-reference owner, and other
+stored occurrence body required by the fixed \(\Apply\) equations, with no missing
+or unused member.  Each selected \(x\) lies in \(\Delta_G(P)\).  The authoritative
+body equations are
+\[
+\begin{aligned}
+ \operatorname{BaseCause}_G(o;B)
+   &\Longrightarrow \operatorname{Body}_G(o)=B,\\
+ \operatorname{DerivedCause}_G(o;o_{\mathrm{src}},V,\sigma,\mu,\alpha)
+   &\Longrightarrow
+   \operatorname{Body}_G(o)=
+     \Apply(\operatorname{Body}_G(o_{\mathrm{src}}),
+            U_{G,P},\sigma,\mu,\alpha).
+\end{aligned}
+\]
+A hypothetical description application may still supply hypothetical bodies
+explicitly, because those bodies are not occurrence materializations in \(G\).
+
+\begin{theorem}[Body existence and uniqueness]\label{thm:body}
+Every admitted occurrence in \(G\) has one existing, unique
+\(\operatorname{Body}_G\), and its evaluation terminates.
+\end{theorem}
+
+\begin{proof}
+The finite acyclic frontier graph makes strict parent ancestry well founded.  A
+base body is immediate.  Every source and selected stored input of a derived cause
+is in a strict parent development, so well-founded recursion supplies its unique
+body.  The finite \(\Apply\) equation then supplies one unique result.  Induction
+over ancestry proves the claim.
+\end{proof}
+
+The source, selected occurrence identities and exact selected positions are
+causal facts.  A separately materialized result body or copied input body is not.
+
+\subsection{Structural ancestry and immediate provenance}
+
+Write
+\[
+  x<_{\mathrm{anc},G}o
+\]
+when \(o\) is admitted by a frontier with parents \(P\) and
+\(x\in\Delta_G(P)\).  The analogous strict frontier relation is transitive parent
+ancestry.  Both are well founded because the model is finite and the parent graph
+is acyclic.  No numeric rank is semantic or stored.
+
+For \(a,b\in\Delta_G(f)\), define
+\[
+  \operatorname{DirectDep}_{G,f}(a,b)
+\]
+from one actual immediate cause or endpoint position of \(a\).  A derived
+occurrence depends directly on its source, every occurrence selected by the
+complete/no-extra \(V\), and every exact external occurrence endpoint used by
+\(\Apply\).  A base occurrence depends directly on each external occurrence
+endpoint in its body.  Inverse notation may be used locally, but there is no second
+dependency definition.  Transitive provenance follows the finite ancestry and
+ends at base causes.
+
+\subsection{Kernel consequences and example}
+
+The kernel adds no implicit identity, reversal, composition, transitivity,
+projection, copying, deletion, weakening, state preservation, consumption,
+resource semantics, authority, or negative fact.  A place invokes no predicate
+callback and asks for no declared class.  The caller supplies fillers, references,
+and finite evidence; omission proves nothing.
+
+Consider two equal-looking admitted occurrences.  If their causes are distinct base
+patterns, they remain two distinct underived inputs.  If one has a derived cause,
+its body is fixed by its source, complete \(V\), and \(\Apply\) maps.  Structural
+equality may later compare their bodies, but it neither merges their identities nor
+changes either cause.
+
+\begin{theorem}[Renaming and stored application]\label{thm:kernel-renaming}
+A one-to-one renaming of bound owner/local positions that fixes graph-backed
+endpoints preserves every kernel equation.  Every derived cause projects to one
+\(\Apply\) instance.  Conversely, a finite hypothetical \(\Apply\) chain may be
+represented by derived causes in a Factor model once its entries and ancestry
+satisfy model formation.
+\end{theorem}
+
+\section{Semantic relations}\label{sec:semantics}
+
+\subsection{Formation, ownership, and application boundaries}
+
+A semantic query exists only after its arguments form.  Write
+\[
+  \Formed_G(J)
+\]
+for this metalevel formation predicate.  Every proposal-defined relation below
+displays a finite argument interface and a truth clause.  An extension judgment
+must expose both an argument interface and one structural semantic presentation
+from the next subsection.  An interface determines which tuples form; it does not
+determine their truth.
+
+For every finite supplied argument structure \(A\), let
+\[
+  \operatorname{Pos}(A)
+\]
+be exactly the positions transitively owned by \(A\).  A reference position owned
+by \(A\) may end at an exact position in \(G\); that endpoint is outside
+\(\operatorname{Pos}(A)\), is fixed under renaming, and is not mapped with \(A\).
+A binder-owned hypothetical root and all positions transitively owned by it are
+inside \(\operatorname{Pos}(A)\) and are renamed together.  This one ownership
+boundary applies to every semantic argument and, later, to derivation structure.
+
+Relative to its fixed argument interface and semantic presentation,
+\(\Formed_G(J)\) holds exactly when:
+
+\begin{enumerate}[leftmargin=2.2em]
+  \item every supplied argument has the complete finite structure fixed for its
+        exposed place;
+  \item every graph-facing key value and external endpoint resolves uniquely in
+        \(G\);
+  \item every graph-backed argument occupies its required actual place and passes
+        the ownership, endpoint, identity, sharing, and enclosing equations;
+  \item every bound hypothetical root passes the same local equations without a
+        requirement that it occur in \(G\); and
+  \item all cross-argument identity, aliasing, sharing, incidence, multiplicity,
+        order, and enclosing equations hold.
+\end{enumerate}
+
+Alongside formation, define the complete semantic boundary
+\[
+  \operatorname{AppBoundary}_G(J).
+\]
+It is exactly the finite structure used by the formation clause to recover the
+fixed semantic definition target, every supplied ordinary argument, every
+argument-place binding, and every equation needed to form the application.  It
+contains no truth-evaluation footprint, proof structure, registry handle, or
+implementation discriminator.  Two \(\ExactMatch\) witnesses over the same
+primitive tables must project the same target, arguments, formation equations,
+and formed judgment under permitted owned-position renaming; otherwise the raw
+tuple is unformed.  No application decoder is an additional argument.
+
+Graph-backed status and hypothetical status follow from
+\(\operatorname{Pos}(A)\) and endpoint incidence.  No value stores a relation
+name, argument type, query kind, storage-status bit, or validity bit.  Keep the
+following cases distinct:
+
+\begin{enumerate}[leftmargin=2.2em]
+  \item an unformed raw tuple supplies no semantic query, positive result, negative
+        result, or semantic diagnostic;
+  \item a formed judgment has its stated truth value in \(G\); a signed negative
+        judgment exists only when this proposal gives it its own finite formed
+        interface and truth clause; and
+  \item unavailable evidence leaves formation and truth unchanged and establishes
+        no negation.
+\end{enumerate}
+
+\subsection{Functional structural meaning for extension roots}
+
+An extension semantic presentation is one exact rooted position \(E\) and the
+finite structure it transitively owns.  Its complete root boundary contains
+exactly its argument-interface operands, truth-bearing payload operands, and their
+ownership and incidence equations.  Its three candidate predicates are the
+following explicit formulas:
+\[
+\begin{aligned}
+ \operatorname{ViewShape}_G(E;A,C)
+   &\Longleftrightarrow \Rec_G(E;A,C)
+      \land\operatorname{ClauseGraph}_G(C,A),\\
+ \operatorname{ExtShape}_G(E;A,T,e)
+   &\Longleftrightarrow \Rec_G(E;A,T,e)\\[-0.3em]
+   &\qquad{}\land\operatorname{TupleFamily}_G(T,A)
+      \land\operatorname{ComparisonBoundary}_G(e,A,T),\\
+ \operatorname{ClosureShape}_G(E;A,S,t)
+   &\Longleftrightarrow \Rec_G(E;A,S,t)
+      \land\operatorname{SeedFamily}_G(S,A)\\[-0.3em]
+   &\qquad{}\land\exists s\,[\RefPos_G(t;s)
+                         \land\operatorname{FiniteStep}_G(s,A)].
+\end{aligned}
+\]
+For the unique ordered interface projection
+\(\operatorname{Interface}_G(A;a_1,\ldots,a_n)\), define
+\[
+\begin{split}
+ \operatorname{TupleFamily}_G(T,A)\Longleftrightarrow
+ \exists X\,[\Fam_G(T;X)\land
+ \forall q\in X\ \exists y_1,\ldots,y_n\,[{}&
+ \operatorname{OrderedRefs}_G(q;y_1,\ldots,y_n)\\[-0.3em]
+ &{}\land\bigwedge_i
+ \operatorname{InterfaceBoundary}_G(a_i,y_i)]],
+\end{split}
+\]
+where \(\operatorname{InterfaceBoundary}\) is exactly the ownership/incidence
+boundary equation already used to form that argument place.  The seed-family
+formula is the same equation at the unary closure interface, with \(T\) replaced
+by \(S\).  The predicate \(\operatorname{FiniteStep}\)
+is the already formed finite-premise application-boundary equation for its exact
+target.  The predicate \(\operatorname{ComparisonBoundary}_G(e,A,T)\) holds exactly when
+\(\Rec_G(e;I,X)\), \(I\) is the \(\Fam\) of all and only binder-owned positions
+in \(A,T\), and \(X\) is the \(\Fam\) of exact reference positions for every
+boundary-crossing endpoint; the incidence equations of both families are
+reflected.  Thus \(e\) is determined by \(A,T\), has owned structure, and cannot
+be the reference field \(t\) of a closure shape.
+
+\begin{lemma}[Presentation-shape separation]\label{lem:presentation-separation}
+No rooted position \(E\) satisfies two of
+\(\operatorname{ViewShape}_G\), \(\operatorname{ExtShape}_G\), and
+\(\operatorname{ClosureShape}_G\).  This remains true at a unary interface where
+the tuple-family and seed-family equations coincide.
+\end{lemma}
+
+\begin{proof}
+A view root has exactly two immediate children, whereas an extensional or closure
+root has exactly three, so exact \(\Rec\) reflection separates the view case.
+If the latter two predicates both held, their exact ordered root spines would
+force \(T=S\) and \(e=t\).  The comparison-boundary equation requires
+\(\Rec_G(e;I,X)\), so \(e\) owns exactly two positions.  The closure equation
+requires \(\RefPos_G(t;s)\), which forbids \(t\) from owning any position.  This
+contradiction is independent of the equations for \(T\) and \(S\).
+\end{proof}
+
+Let \(\operatorname{ClOwn}_G(C)\) be the least set containing \(C\) and closed
+under \(\operatorname{Own}_G\).  The predicate
+\(\operatorname{ClauseGraph}_G(C,A)\) holds exactly when there is a unique finite
+pair \((N_C,r_C)\) such that:
+
+\begin{enumerate}[leftmargin=2.2em]
+  \item \(N_C\subseteq\operatorname{ClOwn}_G(C)\) and \(r_C\in N_C\);
+  \item every \(n\in N_C\) satisfies exactly one reflected row below, relative
+        to the fixed interface \(A\) and node set \(N_C\), and all complete
+        matches of that row agree on its displayed field projections;
+  \item every branch member ends in \(N_C\), and these endpoints induce the
+        child-edge relation;
+  \item \(r_C\) is its unique node with no incoming child edge, every node is
+        reachable from \(r_C\), and the child-edge relation is acyclic; and
+  \item every position of \(\operatorname{ClOwn}_G(C)\) is \(C\) or belongs to
+        one of those complete row matches, and those matches preserve and reflect
+        every incident primitive tuple, including every boundary-crossing tuple.
+\end{enumerate}
+
+Uniqueness here is an ordinary finite relational check.  No proposed partition,
+unreachable owned structure, or alternative field projection is ignored.  To
+make each row's topology literal, define
+\[
+\begin{aligned}
+ \operatorname{Wrap}^0_G(q;x)&\Longleftrightarrow\RefPos_G(q;x),\\
+ \operatorname{Wrap}^{i+1}_G(q;x)&\Longleftrightarrow
+   \exists q'\,[\Rec_G(q;q')\land\operatorname{Wrap}^{i}_G(q';x)],\\
+ \operatorname{Branch}^0_G(F;Y,N)&\Longleftrightarrow
+   \Fam_G(F;Y)\land Y\ne\varnothing\\[-0.3em]
+ &\qquad{}\land\forall u\in Y\ \exists c\,
+       [\RefPos_G(u;c)\land c\in N]\\[-0.3em]
+ &\qquad{}\land\forall u,v\in Y\ \forall c\,
+   [\RefPos_G(u;c)\land\RefPos_G(v;c)\Rightarrow u=v],\\
+ \operatorname{Branch}^{i+1}_G(F;Y,N)&\Longleftrightarrow
+   \exists F'\,[\Rec_G(F;F')\land
+                    \operatorname{Branch}^{i}_G(F';Y,N)].
+\end{aligned}
+\]
+The endpoint in each member of a branch family is its child node.  Because
+\(\operatorname{AppBoundary}_G(J)\) functionally recovers its one exact definition
+target, write that position as \(\operatorname{Target}_G(J)\), and define the
+complete formed-application operand
+\[
+ \operatorname{AppLeaf}_G(L;t,J)\Longleftrightarrow
+ \Rec_G(L;t,J)\land\operatorname{AppBoundary}_G(J)
+ \land\RefPos_G(t;\operatorname{Target}_G(J)).
+\]
+The ordered pair inside \(L\) is part of application formation: it exposes both
+the target incidence and the entire application boundary, rather than acting as a
+constructor tag.
+
+\begin{center}
+\begin{tabularx}{0.96\textwidth}{@{}>{\raggedright\arraybackslash}p{0.22\textwidth}
+                                      >{\raggedright\arraybackslash}p{0.35\textwidth}
+                                      X@{}}
+\toprule
+Clause & Exact structure & Truth contribution\\
+\midrule
+equality & \(\Rec(n;a,b)\), \(\operatorname{Wrap}^0(a;x)\),
+\(\operatorname{Wrap}^0(b;y)\) & \(x=y\)\\
+ownership & \(\Rec(n;a,b)\), \(\operatorname{Wrap}^1(a;x)\),
+\(\operatorname{Wrap}^0(b;y)\) & \(\operatorname{Own}(x,y)\)\\
+endpoint & \(\Rec(n;a,b)\), \(\operatorname{Wrap}^0(a;x)\),
+\(\operatorname{Wrap}^1(b;y)\) & \(\operatorname{End}(x,y)\)\\
+successor & \(\Rec(n;a,b)\), \(\operatorname{Wrap}^1(a;x)\),
+\(\operatorname{Wrap}^1(b;y)\) & \(\operatorname{Next}(x,y)\)\\
+binding & \(\Rec(n;a,b)\), \(\operatorname{Wrap}^2(a;x)\),
+\(\operatorname{Wrap}^0(b;y)\) & \(\operatorname{Bind}(x,y)\)\\
+formed application & \(\Rec(n;L)\),
+\(\operatorname{AppLeaf}(L;t,J)\) & truth of the one formed judgment \(J\)\\
+conjunction & \(\Rec(n;F)\), \(\operatorname{Branch}^0(F;Y,N_C)\)
+& conjunction of the child clauses named by \(Y\)\\
+projection & \(\Rec(n;q,F)\), \(\operatorname{Wrap}^0(q;c)\),
+\(\operatorname{Branch}^1(F;Y,N_C)\), and
+\(\exists u\in Y\ \RefPos(u;c)\) & truth of the referenced child \(c\)\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{lemma}[Clause-constructor separation]\label{lem:clause-separation}
+For a fixed complete clause-graph candidate, no node satisfies two rows of the
+eight-row table.  In particular, a projection over a singleton child family does
+not also satisfy the endpoint row.
+\end{lemma}
+
+\begin{proof}
+Root arity separates the two one-field rows from all six two-field rows.  If a
+one-field node satisfied both remaining rows, its sole operand would both be an
+\(\operatorname{AppLeaf}\), whose two owned children have an ordered
+\(\operatorname{Next}\) edge, and a \(\operatorname{Branch}^0\), which forbids
+every \(\operatorname{Next}\) edge between its owned children.
+
+For the five primitive two-field rows, the wrapper-depth pairs are respectively
+\[
+ (0,0),\quad(1,0),\quad(0,1),\quad(1,1),\quad(2,0).
+\]
+Exact singleton ownership and the terminal \(\RefPos\) equation make distinct
+depths incompatible.  The remaining
+projection row has first depth \(0\), while its second operand satisfies
+\(\operatorname{Branch}^1_G(F;Y,N_C)\): it owns one position \(F'\), and \(F'\)
+owns the nonempty family \(Y\).  It therefore satisfies neither
+\(\operatorname{Wrap}^0\), which owns nothing, nor
+\(\operatorname{Wrap}^1\), whose sole child is a \(\RefPos\) and owns nothing.
+Those are the only primitive second-operand possibilities compatible with first
+depth \(0\).  If \(Y=\{u\}\), then
+\(\Fam_G(F';\{u\})\) can indeed have the same local owner/next equations as
+\(\Rec_G(F';u)\); nevertheless \(F'\) owns \(u\), whereas the endpoint row would
+require \(F'\) itself to be a \(\RefPos\).  The extra family level therefore
+separates exactly the singleton case.
+\end{proof}
+
+The wrapper, branch, and application-bundle topology is operation-defining syntax
+and is included in the meaning boundary; it is not ignored metadata.  Every node,
+child reference, and crossing incidence belongs to exactly one displayed clause
+equation.  Consequently the clause grammar has a finite, directly checkable
+criterion over
+\(\operatorname{Own},\operatorname{End},\operatorname{Next},
+\operatorname{Bind}\), with no callback or prose-selected interpretation.
+
+Exactly one of the following pairwise structurally disjoint complete/no-extra
+shape predicates must hold at \(E\).
+
+\begin{enumerate}[leftmargin=2.2em]
+  \item \textbf{Structural view.}  A finite clause graph exposes a conjunction or
+        projection.  Each leaf is either a primitive proposal-fixed ownership,
+        incidence, equality, endpoint, or binding equation, or a complete
+        formed-application template for one fixed target and all arguments.
+        Truth is exactly the indicated conjunction or projection of the primitive
+        equations and formed leaf judgments.
+  \item \textbf{Finite extensional relation.}  A complete finite tuple family
+        \(T_E\) contains exactly the admitted argument tuples.  Its displayed
+        comparison boundary \(e\) contains every owned position that may be
+        renamed and every external endpoint that must remain fixed, with no truth
+        bit.  The relation holds of \(\vec a\) exactly when \(\vec a\) equals one
+        tuple by that root-preserving boundary comparison.
+  \item \textbf{Fixed semantic closure.}  The payload exposes one exact finite seed
+        \(S_E\) and one exact already formed finite-premise step-definition target
+        \(\operatorname{Step}_{E,G}\).  Its unary relation is
+        \[
+          y\in\Closure_{G,\operatorname{Step}_E}(S_E).
+        \]
+        The step definition cannot inspect that closure.
+\end{enumerate}
+
+The patterns differ by the displayed meaning-bearing ownership and incidence,
+never by a host marker, priority, kind field, or nominal constructor.  Satisfying
+none or more than one makes the root malformed.  Two witnesses for one predicate
+must agree on the whole boundary, target, binding, truth payload, formed judgment,
+and truth clause under permitted renaming.  No residual position, edge, owner, or
+closed substructure may exist only to select a pattern.
+
+An argument-interface operand must participate in formation independently of
+pattern selection.  Every truth-payload operand must participate in that pattern's
+truth definition.  A judgment-template leaf instantiates the whole
+\(\operatorname{AppLeaf}_G(L;t,J_\ell)\), including the whole
+\(\operatorname{AppBoundary}_G(J_\ell)\) and a reference to the same fixed target;
+it is not a link to a relation name.  The stored template neither proves the leaf
+nor contains a truth value; the enclosing view clause invokes the already defined
+truth of \(J_\ell\).  The template contains no closure expansion, quantified
+family, evidence, or implementation input unless that object is itself an
+ordinary formation argument.
+
+The identity of a graph-backed presentation contains its exact owner/local root in
+\(G\); isomorphic roots at different graph positions remain different relations.
+A binder-owned hypothetical presentation is compared by one root-preserving
+ownership/incidence isomorphism that renames all and only its internal bound
+positions, transports its argument binding, preserves and reflects order,
+multiplicity, identity, aliasing, sharing, and enclosing equations, and fixes every
+external graph position, graph-facing key value, and graph-backed definition root.
+The same equality applies to an admissibility schema root.  A root argument is
+never an allocation handle, hash, byte string, or implementation address.
+
+\subsection{Finite audit of meaning dependencies}\label{sec:audit}
+
+Each exact extension root or admissibility schema root \(r\) has one finite
+formation-and-truth audit.  Let \(\operatorname{RootCarrier}_G(r)\) contain:
+
+\begin{itemize}[leftmargin=2em]
+  \item every root in finite \(G\) satisfying one of the explicit presentation,
+        schema, or finite-step shape predicates;
+  \item \(r\) and every such candidate root transitively owned by \(r\); and
+  \item every such root owned by a finite hypothetical structure explicitly
+        supplied in the unique boundary of \(r\).
+\end{itemize}
+
+This is a finite bounding set, not an edge set or a truth quantification.
+Proposal-owned definitions have two node forms.  A construction whose outgoing
+meaning dependencies never depend on a supplied argument has one proposal-fixed
+definition node.  An application that structurally binds a target consumed by its
+dependency equation has one structural occurrence
+\[
+  \operatorname{DefOcc}_G(a).
+\]
+Here \(a\) contains the complete application-pattern incidence and the exact
+dependency-bearing target-binding incidence projected from the unique
+\(\ExactMatch\) witness for
+\(\operatorname{AppBoundary}_G(J)\).  It retains ordinary argument-place shape but
+not actual roots at data-only places.  Clause text, clause identity, and equation
+names are not components of \(a\).
+
+The target incidence preserves and reflects exact target identity, ownership,
+multiplicity, aliasing, sharing, and only the order encoded by the source.  An
+argument enters \(a\) exactly when the fixed structural
+dependency-target projection contains its target-binding incidence.  No
+counterfactual test asks whether changing that argument could change a dependency.
+A position that is both an ordinary argument and dependency-bearing remains in
+both projections.
+
+At one application boundary, all clauses projecting the same \(a\) must recover
+the same formed application and outgoing dependency set.  Disagreement makes the
+application unformed.  Equal occurrences projected from different boundaries may
+have different data-only arguments, but their outgoing dependency set must agree;
+dependencies are never unioned across other occurrences.
+
+Let \(\operatorname{OccurrenceCarrier}_G(r)\) contain only the
+\(\operatorname{DefOcc}_G(a)\) values exposed by complete raw application
+boundaries of \(r\) and of exact definition targets recursively exposed from those
+boundaries.  This expansion is bounded by
+\(\operatorname{RootCarrier}_G(r)\) and the finite proposal clauses.  Define
+\[
+\begin{split}
+ \operatorname{AuditCarrier}_G(r)
+   ={}&\operatorname{RootCarrier}_G(r)\\
+      &{}\cup\{\text{proposal-fixed definition nodes}\}\\
+      &{}\cup\operatorname{OccurrenceCarrier}_G(r).
+\end{split}
+\]
+
+A dependency target is an extension-presentation root, an exact
+admissibility-schema root, a proposal-fixed definition node, or a structural
+\(\operatorname{DefOcc}_G(a)\).  The admissibility case targets the supplied
+schema root, not a relation with a substitutable schema argument.  Each target
+belongs to the carrier and is fixed before binder substitution.  A graph scan,
+key lookup, registry, ambient relation set, or variable target cannot select one.
+
+Add \(x\to y\) exactly when the formation or truth clause of \(x\) invokes the
+formation or truth of \(y\).  Edges are projected from complete
+\(\ExactMatch\) witnesses over the primitive tables
+before the starting judgment is accepted as formed.  A view reaches every
+judgment-template target, a semantic closure reaches its exact step target, a
+property-projection occurrence reaches its exact property target, and an
+admissibility schema reaches every fixed target and formation dependency of its
+hypotheses and conclusion.
+Every proposal-fixed node has its one proposal-stated outgoing set; every
+structural occurrence has the set determined by its dependency equation and exact
+target-binding incidence.
+
+The semantic audit is the least dependency closure of \(\{r\}\) inside the exact
+finite carrier.  The induced combined formation-and-truth graph must be acyclic.
+Direct or mutual cycles, targets outside the carrier, variable targets, and targets
+selected only after substitution make the presentation unformed.  Internal
+iteration in least closure is not a dependency back edge: its already formed step
+target is fixed before the closure and cannot depend back on it.  Proof edges and
+retained ancestry never participate in this audit.
+
+\begin{theorem}[Meaning determinacy]\label{thm:meaning}
+The three presentation predicates are disjoint, functional, and exhaustive
+on every formed presentation root.  Root equality transports every node's unique
+outgoing dependency set.  The three carriers and their reachable dependency
+closure are exact, finite, decidable, and invariant under permitted renaming.
+Every formed extension or admissibility judgment therefore has one well-founded
+formation and truth definition.
+\end{theorem}
+
+\subsection{Least closure and contexts}
+
+For exact finite seed \(S\) and an already fixed finite-premise structural relation
+\(\operatorname{Step}_G(P,y)\), define once
+\[
+  \Closure_{G,\operatorname{Step}}(S)
+\]
+as the least set containing \(S\) and closed under
+\(\operatorname{Step}_G\).  The step may inspect only the finite material of one
+proposed instance.  It cannot inspect this closure or a property later evaluated
+over it.  Closure is semantic meaning, not an instruction to enumerate its
+members.  Stage numbers may occur inside a theorem proof but are not semantic
+relations.
+
+A context at frontier \(f\) is exactly an exact finite set \(X\) satisfying
+\[
+  X\subseteq\Delta_G(f)
+  \quad\text{and}\quad
+  x\in X\land\operatorname{DirectDep}_{G,f}(x,y)
+  \Longrightarrow y\in X.
+\]
+No constructor is required for validity.  A whole development, downward closure,
+removal of an occurrence and its dependents, and finite union are ways to calculate
+such a set.  Their finite descriptors are optional evidence for those calculations,
+not different context meanings.  Context is an exact argument of a scoped
+judgment, never a search filter or trust assumption.
+
+\subsection{Descriptions, equality, reachability, and novelty}
+
+A rooted description over \(G\) is a finite graph with one stored occurrence root
+or one bound hypothetical root.  Bound nodes carry five-part bodies.  Endpoints may
+name bound nodes or exact external positions in \(G\).  Bound names may be renamed;
+external graph positions may not.  Causes, frontiers, encodings, and storage
+locations are absent.
+
+\[
+  \SameStructure_G(d_1,d_2;\theta)
+\]
+holds when the supplied root-preserving node/position bijection \(\theta\)
+preserves and reflects all five collections, ownership, direction, endpoints,
+multiplicity, sharing, aliasing, and open obligations.  The root address is ignored,
+but every nonroot external graph endpoint is exact.  This is isolated structural
+equality, not a substitution rule for identity-sensitive application.
+When the witness is omitted, use the existential abbreviation
+\[
+ \SameStructure_G(d_1,d_2)
+ \Longleftrightarrow
+ \exists\theta:\SameStructure_G(d_1,d_2;\theta).
+\]
+
+Let \(\partial_G d\) contain every exact external graph endpoint and the root
+position when the root is graph-backed.  The relation
+\[
+  \BoundaryCorresponds_G(d_1,d_2;\theta,\beta)
+\]
+uses a root-preserving node/position map \(\theta\) and explicit boundary bijection
+\(\beta\).  Roots are both bound or both graph-backed.  Bound endpoints follow
+\(\theta\); graph endpoints follow \(\beta\).  Families of such maps used by one
+application are compatible exactly when their embedded unions are partial
+bijections on both occurrence references and owner/local positions.  Identity
+\(\beta\) is called use equivalence only as a local abbreviation.
+
+\begin{theorem}[Boundary-aware congruence]\label{thm:congruence}
+Jointly compatible boundary correspondences for the source, inputs, and
+reference-owner descriptions transport one complete description-level
+\(\Apply\) instance to a corresponding instance, including assignment, match,
+sharing, and fresh-position pairing.  The outputs satisfy the induced boundary
+correspondence.  No such claim follows from root-erasing structural equality
+alone.
+\end{theorem}
+
+For a context \(X\), let \(\operatorname{Seed}_{G}(X)\) contain the exact stored
+descriptions rooted in \(X\).  Write
+\[
+  \operatorname{DescriptionStep}_G(P,y)
+\]
+for one complete description-level \(\Apply\) whose source, every input, and every
+reference-owner description occurs in finite support \(P\), with every map,
+multiplicity, and sharing choice exposed.
+Define
+\[
+\begin{aligned}
+  \Reach_G(X)
+    &=\Closure_{G,\operatorname{DescriptionStep}}
+         (\operatorname{Seed}_{G}(X)),\\
+  \Derivable_{G;X}(r)
+    &\Longleftrightarrow
+      \exists d\in\Reach_G(X)\ \SameStructure_G(d,r),\\
+  \Novel_{G;X}(r)
+    &\Longleftrightarrow \neg\Derivable_{G;X}(r).
+\end{aligned}
+\]
+A description belongs to reachability exactly when a finite valid application
+trace reaches it up to renaming of bound positions.  Positive derivability is
+semidecidable; novelty need not be decidable.  Failure to find a trace establishes
+nothing.
+
+For \(c\in\Delta_G(f)\), let \(X_{G,f,c}\) be the exact context obtained by removing
+\(c\) and every occurrence that depends transitively on \(c\).  Current scope is
+the pair \((X_{G,f,c},r)\).  Contextual scope is any supplied valid pair \((X,r)\).
+Admission scope is current scope at the unique frontier admitting \(c\).  These are
+abbreviations deriving one exact semantic pair, not scope kinds.  At admission,
+\(X_{G,f,c}\) is the parent development; hence a derived occurrence is derivable
+there and cannot be novel in admission scope.  A base cause is necessary but not
+sufficient for admission-scope novelty.
+
+\subsection{Factorization, bases, and correspondence}
+
+Fix context \(X\).  A factorization supplies a finite composition \(L\) of
+description applications from \(X\), final description \(D_L\), candidate \(D\),
+and zero or one remainder.  With empty remainder it holds exactly when
+\(\SameStructure_G(D,D_L)\).  With a nonempty remainder it supplies a disjoint
+nonempty partition of the nodes of \(D\), one rooted expanded part containing the
+root, one well-formed rooted remainder, and a complete interface table.
+
+Every item stays with its owner.  External endpoints remain exact.  A crossing
+required-link or introduced-target endpoint is redirected to one ordinary boundary
+place; a crossing outgoing reference becomes one distinct introduced target to
+such a place.  Endpoints to the same opposite node share a place, endpoints to
+different nodes do not, and multiplicity is preserved.  The interface has exactly
+one entry per cut endpoint.  The finite operation
+\(\operatorname{Glue}\) is named only for this nonempty cut and reverses every
+rewrite.  Factorization requires
+\[
+  \SameStructure_G(\operatorname{Glue}(D_e,r,I),D)
+  \quad\text{and}\quad
+  \SameStructure_G(D_e,D_L).
+\]
+Several factorizations may hold.  Boundary places are ordinary places; only the
+supplied interface participates in glue.
+
+For background context \(X\) and finite candidate set \(Q\), basis truth is the
+conjunction of sufficiency and irredundancy.  Sufficiency says each exact target is
+derivable from the dependency closure of \(X\cup Q\).  For \(q\in Q\), form the
+dependency closure of \(X\cup(Q\setminus\{q\})\).  If it reintroduces \(q\),
+irredundancy fails.  Otherwise irredundancy is exactly novelty of the rooted
+remainder carried by \(q\) in that context.  No origin-based exclusion is added.
+
+A projected correspondence fixes one finite acyclic projection schema \(\tau\)
+and construction \(\pi\) before its endpoints.  Both finite traces instantiate
+that same schema and their results satisfy
+\(\BoundaryCorresponds_G\).  Unrelated obtainable results do not correspond.
+A recovery construction is also fixed before its result and may inspect its
+endpoint only through the stated correspondence.  One-way correspondence proves
+one inclusion; exact transport requires a reverse construction or completeness
+argument, and projection needs a lifting argument when it can merge structure.
+Correspondence remains internal and grants no external interpretation.
+
+\subsection{Generated families and recognition}\label{sec:families}
+
+For exact context \(X\), let \(\mathcal D_{G,X}\) contain exactly the rooted
+descriptions whose graph-backed root and every exact external endpoint belong to
+\(X\).  Fix a finite seed \(S\subseteq\mathcal D_{G,X}\) and a finite construction
+family \(\vec M\) before the seed.  A generator step
+\[
+  \operatorname{GeneratorStep}_{G;X,\vec M}(P,y)
+\]
+is one complete \(\Apply\) instance whose source is an exact indexed member of
+\(\vec M\), whose premise support \(P\), result \(y\), maps, multiplicity, and
+sharing are exposed, and whose every graph occurrence belongs to \(X\).  Every
+premise and result lies in \(\mathcal D_{G,X}\).  Selecting a member of \(\vec M\)
+does not add it to the generated family.
+
+Use the local abbreviation
+\[
+ \operatorname{StructuralEqualityStep}_{G,X}(P,y)
+ \Longleftrightarrow
+ P=\{x\}\land x,y\in\mathcal D_{G,X}
+       \land\SameStructure_G(x,y).
+\]
+Then
+\[
+  \Family_{G;X,S,\vec M}
+  =
+  \Closure_{G,\,
+    \operatorname{GeneratorStep}_{G;X,\vec M}
+      \cup\operatorname{StructuralEqualityStep}_{G,X}}(S).
+\]
+The explicit domain guard prevents root-erasing equality from importing a stored
+root outside \(X\).  Generation is exact even when membership is undecidable.
+
+For an already formed structural property \(K_G(d)\), define
+\[
+  \Necessary_{G;X,S,\vec M}(K)
+  \Longleftrightarrow
+  \forall d\,
+  \bigl(d\in\Family_{G;X,S,\vec M}\Longrightarrow K_G(d)\bigr).
+\]
+The semantic meaning is universal truth over this generated family.  Finite seed,
+preservation, and equality-transport derivations can prove it later but do not
+define it.  Universal correspondence and recovered necessary structure are
+instances with their correspondence schema or recovery construction fixed before
+the quantification.
+
+An optional recognizer is a finite family of rooted structural patterns.  Its
+variables are actual open places.  Repeated uses are positions linked to the same
+place.  A recursive use is an actual child-match edge whose subject is filled from
+that place and which carries a positive proper-subdescription decrease.  No
+variable set, recursive subset, hole role, or enable bit is stored.
+\(\operatorname{Recognizes}_G(\vec N,d)\) is the least structural matching relation
+induced by those places and child edges.
+
+Recognizer adequacy has two separate semantic directions:
+\[
+\begin{aligned}
+ \operatorname{RecognizerForward}_{G}(X,S,\vec M,\vec N)
+ &\Longleftrightarrow
+ \forall d\,
+   (d\in\Family_{G;X,S,\vec M}
+      \Rightarrow\operatorname{Recognizes}_G(\vec N,d)),\\
+ \operatorname{RecognizerReverse}_{G}(X,S,\vec M,\vec N)
+ &\Longleftrightarrow
+ \forall d\in\mathcal D_{G,X}\,
+   (\operatorname{Recognizes}_G(\vec N,d)
+      \Rightarrow d\in\Family_{G;X,S,\vec M}).
+\end{aligned}
+\]
+Their conjunction may be called exact recognition in prose.  Reverse adequacy
+requires each generator premise either to have an independent finite family trace
+or to be recovered as a pattern-bound smaller subdescription, preserving identity,
+positions, multiplicity, and sharing.  An erased ungrounded predecessor is not
+visible.  This premise-visibility condition limits this finite exactness method,
+not generated-family membership.
+
+\subsection{Structural property projection}
+
+Preservation, transport, necessity, and invariant novelty quantify only over
+properties whose meanings already exist.  Fix one exact formed application target
+for a semantic relation \(B_G\), one rooted subject position \(q\) and every
+position in its identity/alias class forced by ownership and sharing, every
+remaining exact argument \(\vec a\), and the simultaneous replacement and
+enclosing-formation equations.  Define
+\[
+  K_{G;B,q,\vec a}(x)
+  \Longleftrightarrow
+  B_G(a_1,\ldots,x,\ldots,a_n)
+\]
+after simultaneous replacement of exactly that alias class.
+
+The subject may be binder-owned hypothetical structure.  Equal-looking positions
+outside the forced alias class are not replaced.  Projection identity is the exact
+formed tuple \((G;B,q,\vec a)\) with its aliasing and enclosing structure, modulo
+permitted renaming of bound internal owners.  A relation name, executable predicate,
+callback, or later evidence layout exposes no property.
+
+The complete projection application produces one
+\(\operatorname{DefOcc}_G(a)\) whose target-binding incidence contains exact target
+\(B\).  Its semantic audit reaches \(B\) and the fixed projection dependencies.
+Projections over different targets remain different occurrences and their
+dependencies are never merged.
+
+\subsection{Optional raw authority and bridges}\label{sec:authority}
+
+Authority is an optional semantic protocol over exact structure in \(G\).  Its
+ordinary argument \(A\) selects one initialization structure; it is not an
+authority kind or namespace.  Every public authority judgment supplies its exact
+frame.  A complete raw frame is
+\[
+  \xi=(v,f,V,Q,T;\delta_V,\delta_S),
+\]
+with exact version and frontier positions, proposed version view \(V\),
+continuation-selection view \(Q\), selected set \(T\), and their two complete
+descriptors.  Failure of one of these structural places makes a raw tuple
+unformed.  If all places form but a containment or authority condition fails, the
+positive predicate is false.  A negative authority judgment exists only when its
+separately defined finite complement is supplied.
+
+One exact direct view edge reads one actual link and its endpoints, without reading
+a path or later predicate.  The version view is its least closure from the exact
+version.  One exact continuation edge and one exact terminal-selection edge are
+defined in the same direct way from \(A\)'s fixed structural selection schema.
+The selection view is continuation closure; selected targets are exactly the
+terminal endpoints arising from it.  Descriptors prove exact generation and
+closure and include every direct endpoint.  Selection is set-valued; a required
+uniqueness equation rejects a conflict instead of choosing by priority.
+
+Use the proposal-fixed direct-closure projections
+\[
+\begin{aligned}
+ \operatorname{ViewStep}_{A,G}(P,y)
+ &\Longleftrightarrow
+   \exists x\in P:\operatorname{ViewEdge}_{A,G}(x,y),\\
+ \operatorname{SelectStep}_{A,G}(P,y)
+ &\Longleftrightarrow
+   \exists x\in P:\operatorname{SelectEdge}_{A,G}(x,y).
+\end{aligned}
+\]
+First define the version-independent frame core
+\[
+\begin{split}
+ \operatorname{FrameBoundary}_{A,G}(\xi)
+ \Longleftrightarrow{}&
+ \delta_V\text{ validates }
+       V=\Closure_{G,\operatorname{ViewStep}_{A}}(\{v\})\\
+ &{}\land V\subseteq\Delta_G(f)\\
+ &{}\land \delta_S\text{ validates }
+       \Bigl[
+       Q=\Closure_{G,\operatorname{SelectStep}_{A}}(\{v\})\\
+ &\hspace{11em}\land
+       T=\{x:\exists a\in Q\
+          \operatorname{SelectTarget}_{A,G}(a,x)\}
+       \Bigr].
+\end{split}
+\]
+Both descriptor validations are complete/no-extra and include every direct
+endpoint.  Every raw core below is evaluated only after the complete frame
+structure forms, includes this frame-boundary condition, and invokes neither
+\(\operatorname{Version}_{A,G}\) nor a public authority wrapper.
+
+In particular,
+\(\operatorname{TransitionCore}_{A,G}(\xi,e,\xi')\) holds exactly when the
+complete/no-extra transition structure at \(e\) names the exact predecessor
+\(v_\xi\), an exact selected grounded method and authorized-use link, the exact
+successor \(v_{\xi'}\), both frame boundaries, every explicitly changed or reused
+selection, and every raw grounding or authority-core premise required by those
+changes.  The successor boundary owns this generating link and admits no second
+generating transition.  The core contains no proof, realization, replay,
+retained-ancestry, or implementation premise.  Project it to
+\[
+\begin{aligned}
+ \operatorname{TransitionStep}_{A,G}(P,y)
+ &\Longleftrightarrow
+   \exists x,e,\xi,\xi':\
+   x\in P\land v_\xi=x\land v_{\xi'}=y\\[-0.2em]
+ &\hspace{7em}\land
+   \operatorname{TransitionCore}_{A,G}(\xi,e,\xi').
+\end{aligned}
+\]
+The support condition \(x\in P\) is the first conjunct of the existential.
+If \(v_A\) is the exact initialized version exposed by \(A\), define
+\[
+ \operatorname{Version}_{A,G}(v)
+ \Longleftrightarrow
+ v\in\Closure_{G,\operatorname{TransitionStep}_{A}}(\{v_A\}).
+\]
+Every noninitial version therefore exposes the actual transition that generates
+it.  Neither order nor ancestry reconstructs that edge.
+Now define
+\[
+ \operatorname{PublicFrame}_{A,G}(\xi)
+ \Longleftrightarrow
+ \operatorname{FrameBoundary}_{A,G}(\xi)
+ \land\operatorname{Version}_{A,G}(v).
+\]
+Every public positive authority relation below is exactly this frame restriction
+conjoined with its displayed raw core relation; no ambient frame collection is
+consulted.
+
+Grounding is one least closure from the fixed local grounding leaves and actual
+support edges in the supplied frame.  A leaf is an exact initialization-audit root
+or current audit-backed external binding with no grounding edge.  A nonleaf enters
+when one complete local structural pattern passes and every exact support-edge
+target is already in the closure.  The direct edge, not ancestry, identifies each
+support.  Terminal/nonterminal names and closure stages are proof conveniences,
+not semantic relations or stored fields.
+The fixed leaf, local-pattern, and support-edge predicates call no transition core,
+version closure, public wrapper, replay relation, or later authority result.  Thus
+the exact transition step may depend on grounding without grounding depending back
+on versionhood.
+
+For an exact claim root, derive the functional projection
+\[
+  \operatorname{ClaimCore}_{A,G}(\xi,\mathit{claim})=(J,z).
+\]
+It reads only the fixed claim and target positions: \(J\) is the formed semantic
+judgment asserted by the core and \(z\) is one actual owner/local root position in
+\(G\).  Evidence sites, proof fragments, and retained boundaries are excluded.
+Adding or moving structure outside those positions cannot change the projection.
+
+Raw adoption is the exact structural selection
+\[
+  \operatorname{Adopts}_{A,G}(\xi,\mathit{claim},J,z).
+\]
+It holds exactly when an actual selected-claim link in the frame targets that exact
+claim and its functional core is \((J,z)\).  It is extensional in the frame, exact
+claim identity, and core pair.  Another claim with the same \((J,z)\) is not thereby
+adopted.  Adoption says nothing about proof validity, evidence source, retained
+realization, ancestry, or usability.
+
+The remaining raw relations use the same discipline:
+
+\begin{itemize}[leftmargin=2em]
+  \item a claim, support, challenge, response, quarantine, replacement, method, or
+        external binding holds only from its complete exact local pattern, selected
+        endpoints, and the one grounding closure;
+  \item defeat is a selected grounded challenge with no selected grounded response
+        in the exact finite selected set; quarantine and its discharge use their
+        own complete finite complements;
+  \item a replacement points through an exact replacement link to a selected,
+        grounded, supported successor claim;
+  \item an active claim is selected and supported and is neither defeated,
+        quarantined, nor replaced under those exact finite relations;
+  \item an authorized method use names the exact selected method and exact
+        authorized-use link; ordering or ancestry cannot reconstruct that link;
+  \item a transition names its exact predecessor, transition step, and successor;
+        a version is the least closure from initialization under those exact
+        transitions;
+  \item a release names its exact released structure, publication state, manifest
+        fillings, and authority bindings; it stores no liveness value; and
+  \item an interpretation is governed only when an exact active claim adopts its
+        internal/external binding.  Structural correspondence alone never does so.
+\end{itemize}
+
+All of these are semantic relations over exact frames and positions.  They contain
+no retained-replay premise, proof source, diagnostic relation, method installation,
+candidate seed, implementation-reader binding, affected-result relation, or cache
+rule.
+
+A bridge has ordered source and target positions, exact source and target frames,
+exact state descriptors, explicit node/position/boundary maps, and its exact
+structural correspondence, coverage, recovery, and lifting premises.  The ordered
+arguments determine direction; no direction field is stored.  Forward and reverse
+are separate relations over swapped arguments.  One-way structure proves only its
+direction.  A bridge gains authority only when an exact authority claim adopts it.
+Ancestry may later establish retention but never reconstructs a bridge endpoint,
+transition, release, or direction.
+
+\begin{theorem}[Raw-authority noninterference]\label{thm:raw-authority}
+If two models agree on the exact frame, selected claim, its formed core
+\((J,z)\), and every raw-authority support position, then changes confined to
+evidence realization, retained realization-selector links, or separately supplied
+\(\operatorname{DirectUseAt}_G\) consumer structure cannot change
+\(\operatorname{ClaimCore}\) or \(\operatorname{Adopts}\).
+\end{theorem}
+
+\subsection{Finite domains and universal admissibility}\label{sec:admissibility}
+
+Define the one proposal-fixed finite guard relation
+\[
+  \FiniteMember_G(D,x).
+\]
+Its raw domain criterion is the explicit formula
+\[
+ \operatorname{DomainShape}_G(D;M,X)
+ \Longleftrightarrow
+ \Rec_G(D;M)\land\Fam_G(M;X)\land
+ \forall q\in X\ \exists!x\,\RefPos_G(q;x).
+\]
+Define
+\(\operatorname{Members}_G(D)=
+  \{(q,x):\exists M,X\,[\operatorname{DomainShape}_G(D;M,X)
+       \land q\in X\land\RefPos_G(q;x)]\}\), retaining the distinct member
+positions \(q\) for multiplicity and any order explicitly represented inside a
+member record.  There is no domain decoder.  For a permitted root \(x\), let
+\(B_x\) contain
+the root and every transitively owned internal position.  Its comparison boundary
+also records every ownership or reference incidence touching the interior and
+every exposed external endpoint and equation.
+
+\[
+  \operatorname{MemberIso}_G(D;x,y)
+\]
+holds by one root-preserving bijection \(B_x\to B_y\) that sends all and only
+internally owned positions to internally owned positions, preserves and reflects
+ownership, ordered endpoint incidence, identity, multiplicity, aliasing, sharing,
+and every exposed boundary equation, and fixes every graph position outside both
+interiors, every graph-facing key value, and every restricted binding result.  Its
+inverse witnesses the same comparison from \(y\) to \(x\); the relation is
+symmetric, not candidate-to-representative oriented.
+
+\(D\) is formed only when its \(\operatorname{DomainShape}\) projection is
+functional and no two distinct listed positions \((q,x),(q',y)\), with
+\(q\ne q'\), satisfy the member-isomorphism relation on \(x,y\).  The empty
+family is permitted.
+Duplicates make \(D\) malformed rather than disappearing.
+
+The judgment \(\Formed_G(\FiniteMember_G(D,x))\) holds exactly when \(D\) has one
+duplicate-free finite payload and \(x\) has the required rooted boundary.  Define
+\[
+\begin{aligned}
+ \FiniteMember_G(D,x)
+ \quad\Longleftrightarrow\quad&
+ \Formed_G(\FiniteMember_G(D,x))\\[-0.2em]
+ &{}\land
+ \exists!\,(q,y)\in\operatorname{Members}_G(D):\\[-0.2em]
+ &\operatorname{MemberIso}_G(D;x,y).
+\end{aligned}
+\]
+\(\FiniteMember\) is one proposal-fixed audit node reading raw \(D,x\); it does
+not create a family of named domain predicates.
+
+Now fix one exact finite structural schema root \(S\).  Its structural criterion is
+\[
+\begin{split}
+ \operatorname{SchemaShape}_G(S;B,E,H,C,T,D)
+ &\Longleftrightarrow \Rec_G(S;B,E,H,C,T,D)\\
+ &{}\land\operatorname{BinderFamily}_G(B)
+ \land\operatorname{EquationFamily}_G(E,B)\\
+ &{}\land\operatorname{ApplicationFamily}_G(H,T)
+ \land\operatorname{ConclusionApplication}_G(C,T)\\
+ &{}\land\operatorname{FixedTargetFamily}_G(T)
+ \land\operatorname{GuardFamily}_G(D,B).
+\end{split}
+\]
+The payload names in this display are abbreviations for the following exact
+record equations.  In particular, \(\operatorname{BinderFamily}_G(B)\) means
+\(\Fam_G(B;X_B)\), with each \(b\in X_B\) satisfying
+\(\Rec_G(b;r_b)\) for one complete finite hypothetical root \(r_b\).
+\(\operatorname{EquationFamily}_G(E,B)\) means \(\Fam_G(E;X_E)\), with every
+\(q\in X_E\) satisfying
+\[
+ \exists l,r,x,y\,[\Rec_G(q;l,r)\land\RefPos_G(l;x)
+   \land\RefPos_G(r;y)\land x,y\in
+   \operatorname{Pos}(\{r_b:b\in X_B\})].
+\]
+\(\operatorname{FixedTargetFamily}_G(T)\) means \(\Fam_G(T;X_T)\) and exactly
+one target endpoint for each member.  The predicate
+\(\operatorname{ApplicationFamily}_G(H,T)\)
+means \(\Fam_G(H;X_H)\), with every \(a\in X_H\) satisfying
+\[
+ \exists t,J,z\,[\Rec_G(a;t,J)\land\RefPos_G(t;z)
+   \land z\in\operatorname{Endpoints}_G(X_T)
+   \land\operatorname{ApplicationRecord}_G(J;z)],
+\]
+where \(\operatorname{ApplicationRecord}_G(J;z)\) means that \(J\) is exactly
+the whole \(\operatorname{AppBoundary}\) record formed at target \(z\), not a
+relation name.  The predicate \(\operatorname{ConclusionApplication}_G(C,T)\)
+is the same two-field equation for exactly one application rather than a family.
+Finally, \(\operatorname{GuardFamily}_G(D,B)\) means \(\Fam_G(D;X_D)\), with
+every \(g\in X_D\) satisfying
+\[
+\begin{aligned}
+ \exists b,d,r_b,D_0\,[{}&\Rec_G(g;b,d)
+ \land\RefPos_G(b;r_b)\land\RefPos_G(d;D_0)\\[-0.3em]
+ &{}\land\exists q\in X_B\,\Rec_G(q;r_b)\\[-0.3em]
+ &{}\land\exists M,X\,\operatorname{DomainShape}_G(D_0;M,X)].
+\end{aligned}
+\]
+Here \(\operatorname{Endpoints}_G(X)\) is the set obtained by the unique
+\(\RefPos\) projections of members of \(X\).  No payload record and no target or
+guard may be unused.  These are finite formulas over the primitive tables, not an
+invocation of a schema decoder.  Two witnesses must project the same binder roots,
+equations, hypothesis and conclusion boundaries, fixed targets, and guards under
+permitted owned-position renaming.  Define
+\(\Formed_G(\UniversalAdmissible_G(S))\) to hold exactly when this unique
+\(\operatorname{SchemaShape}\) witness
+exists, every exposed structural place and fixed target has its required formation
+boundary, every guarded domain has its duplicate-free formed payload, and the
+finite semantic audit rooted at this exact schema passes.  In particular, formation
+implies that there is no nonempty semantic-dependency path from the schema back to
+itself.  It does not require enumerating or accepting any substitution.
+
+A root substitution \(\theta\) maps every binder root to one finite hypothetical
+image root, with no missing or extra root.  Its induced position map
+\(\widehat\theta\) preserves and reflects ownership, incidence, identity,
+aliasing, sharing, and every substitution equation.  Additional internal image
+positions are allowed only where the exposed argument interface permits them.
+
+\(\operatorname{FormedInstantiations}_G(S,\theta)\) is a total relation on finite
+substitution candidates.  It holds exactly when substitution makes every
+hypothesis and the one conclusion boundary recover one exact judgment under its
+already fixed target and each recovered judgment is formed.  Missing, extra,
+multiply recognized, target-changing, or unformed applications make it false.  Only
+then are \(\operatorname{Hyp}_G(S,\theta)\) and
+\(\operatorname{Con}_G(S,\theta)\) defined.
+
+From the unique \(\operatorname{SchemaShape}\) witness derive the least exact projection
+\[
+  \operatorname{SchemaBoundary}_G(S)
+    =(B_S,P_S,I_S,R_S),
+  \qquad R_S=\operatorname{Bind}_G|_{I_S},
+\]
+by these rules:
+
+\begin{enumerate}[leftmargin=2.2em]
+  \item \(B_S\) contains exactly the binder roots, substitution equations,
+        hypothesis and conclusion application boundaries, fixed
+        definition/context/domain roots, guards, schema-owned domain payloads,
+        formation-target projections, and all recovered incidence equations.
+  \item Seed \(P_S\) with every graph-backed root, external endpoint, and
+        graph-backed key place in those operands.
+  \item When a formation or exact/no-extra equation is rooted in \(P_S\), add its
+        owner, complete incident boundary, and all incidence endpoints.
+  \item When a graph-backed definition, context, or domain root enters \(P_S\),
+        add the complete operands and external endpoints from its formation
+        boundary and reachable raw semantic audit.  For a finite guard, add the
+        complete member payload.
+  \item When a key place enters, add its value to \(I_S\), include its positive or
+        absent result in \(R_S\), and add every positive endpoint to \(P_S\).
+  \item Repeat the preceding closure rules to their least fixed point.
+\end{enumerate}
+
+For a complete substitution image, let
+\[
+  \operatorname{FullImageBoundary}_G(\theta)
+    =(P_\theta,I_\theta,R_\theta)
+\]
+traverse every position owned by every image root, including unused internal
+structure.  It records all external graph endpoints, all image key values, and
+\(R_\theta=\operatorname{Bind}_G|_{I_\theta}\), including absence.
+
+\(\operatorname{BoundaryAgreement}_G(S,\theta,\widehat\theta)\) holds exactly when
+one functional correspondence \(\beta_\theta\), induced by
+\(\widehat\theta\) on binder-owned positions and identity on fixed positions, maps
+the complete schema-visible boundary onto the complete instantiated boundary,
+preserves and reflects all ownership and incidence equations, fixed targets,
+guards, key places and values, and additionally
+\[
+  P_\theta\subseteq P_S,\qquad
+  I_\theta\subseteq I_S,\qquad
+  R_\theta=R_S|_{I_\theta}.
+\]
+Thus even unused image structure cannot introduce a new graph reference or key.
+
+Define, in dependency order,
+\[
+\begin{aligned}
+ &\operatorname{PermBind}_G(S,\theta)\\
+ &\quad\Longleftrightarrow
+ \operatorname{RootSubstitution}_S(\theta,\widehat\theta)\\
+ &\qquad{}\land
+ \operatorname{BoundaryAgreement}_G(S,\theta,\widehat\theta)\\
+ &\qquad{}\land
+ \operatorname{FormedInstantiations}_G(S,\theta)\\
+ &\qquad{}\land
+ \bigwedge_{(x,D)\in\operatorname{DomainGuards}(S)}
+ \begin{aligned}[t]
+   [&\Formed_G(\FiniteMember_G(D,\widehat\theta(x)))\\[-0.2em]
+    &{}\land\FiniteMember_G(D,\widehat\theta(x))],
+ \end{aligned}
+\end{aligned}
+\]
+and
+\[
+\begin{aligned}
+ &\UniversalAdmissible_G(S)\\
+ &\quad\Longleftrightarrow
+ \forall\theta\text{ with }\operatorname{PermBind}_G(S,\theta):\\[-0.2em]
+ &\hspace{4em}\Bigl[
+  \bigwedge_{J_H\in\operatorname{Hyp}_G(S,\theta)}
+          J_H\text{ is true in }G
+  \Longrightarrow
+  \operatorname{Con}_G(S,\theta)\text{ is true in }G
+ \Bigr].
+\end{aligned}
+\]
+The quantification may be infinite; this is semantic meaning, not an enumeration
+instruction.  No ambient scan discovers substitutions.  A deliberately finite
+domain is exposed by an ordinary guard argument.
+
+\begin{theorem}[Finite-domain and schema boundary]\label{thm:schema}
+\(\operatorname{MemberIso}_G\) is a decidable equivalence on permitted rooted
+interiors, and \(\FiniteMember_G\) is functional and renaming invariant.
+\(\operatorname{SchemaBoundary}_G\),
+\(\operatorname{FullImageBoundary}_G\), \(\beta_\theta\), and
+\(\operatorname{FormedInstantiations}_G\) are functional, finite, decidable, and
+renaming invariant.  So is formation of
+\(\UniversalAdmissible_G(S)\); \(\operatorname{PermBind}_G\) is false whenever an
+instantiated hypothesis or conclusion is unformed, is decidable for each supplied
+finite substitution, and is renaming invariant.  If two Factor models agree on the
+complete schema boundary, domain payload, formation projections, incident
+equations, and restricted binding results, they have the same permitted binding
+family.
+\end{theorem}
+
+Consequently, extending a model only outside this complete boundary cannot create
+a permitted substitution.  The admissibility judgment for \(S\) is a property of
+that exact schema, not registry membership, a temporal stratum, or a fact made true
+by retaining evidence.
+
+\subsection{Semantic-root example}
+
+Let two exact extension roots have the same ordinary argument places but different
+truth payloads: one projects an ownership equation and the other a finite
+extensional tuple family.  Their argument-only shapes coincide, but their complete
+\(\operatorname{AppBoundary}_G\) values contain different exact definition roots
+and meaning-bearing incidence.  They are distinct semantic relations.  Adding a
+marker to choose between them would be malformed; their functional root predicates
+already determine their meanings.
+
+\section{Closed generic proof forms}\label{sec:proof-forms}
+
+\subsection{The common argument boundary}
+
+Only for an already formed judgment, derive
+\[
+  \operatorname{ArgBoundary}_G(J)
+   =\operatorname{ArgProjection}_G
+        (\operatorname{AppBoundary}_G(J)).
+\]
+The projection is complete/no-extra and determined only by actual incidence:
+
+\begin{enumerate}[leftmargin=2.2em]
+  \item seed it with every target reached through an ordinary argument-place
+        incidence used by the formed-application equation, retaining actual
+        multiplicity and endpoint order;
+  \item for each seed include exactly the part of its finite rooted boundary
+        exposed in \(\operatorname{AppBoundary}_G(J)\): transitively owned
+        positions, ordinary argument-boundary endpoints, and all ownership,
+        ordered-endpoint, identity, multiplicity, aliasing, and sharing equations
+        among them;
+  \item retain a position reached through both argument and definition-target
+        incidence, but exclude positions and incidence reached only through a
+        definition target; and
+  \item take exactly this closure, rejecting every omission or extra position.
+\end{enumerate}
+
+The projection is total, functional, and renaming invariant.  It contains no
+target-only discriminator.  Two supplied judgments may therefore share one
+\(\operatorname{ArgBoundary}_G\) while having different fixed semantic targets.
+The supplied \(J\), not proof structure, selects the requested meaning.
+
+For finite derivation structure \(d\), use Section~\ref{sec:semantics}'s ownership
+rule unchanged: \(\operatorname{Pos}(d)\) is exactly the positions transitively
+owned by \(d\).  An owned reference may expose an exact endpoint in \(G\) outside
+that domain; a binder-owned hypothetical position is inside.  No proof-specific
+storage status is introduced.
+
+\subsection{Complete generic catalogue}
+
+The following proposal-owned catalogue is closed.  Form names are exposition only.
+Structural applicability, not a relation-signature whitelist or stored selector,
+determines which forms match.
+Any \(\Formed_G(J)\), including an extension judgment, may instantiate every form
+whose structural parameter and evidence equations fit it.  The catalogue is
+closed in checking algorithms, not in semantic judgment signatures.
+
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.20\textwidth}
+                  >{\raggedright\arraybackslash}p{0.72\textwidth}}
+\toprule
+Checker form & Exact finite obligation\\
+\midrule
+\endhead%
+Direct finite &
+Exactly one enumerated DF clause in the DF tables below, under
+that clause's complete raw pattern.\\
+Acyclic trace &
+One finite rooted evidence DAG for an already defined step relation.  Each step
+has its fixed finite witness or an open premise; antecedents precede their uses in
+the derived topological order; no supplying proof node is embedded in local
+evidence.\\
+Complete enumeration &
+For an explicit formed finite \(D\), exactly one representative of each
+\(\operatorname{MemberIso}_G\) class denoted by its payload and none extra; every
+representative passes the displayed finite obligations and the exact semantic
+projection equals the claimed set.\\
+Exact composite &
+Every displayed semantic conjunct projects one actual open premise for its exact
+formed judgment.  No local checker declares those premises true.\\
+Parametric structural rule &
+One finite schema with fixed local formation, substitution, and structural-decrease
+checks; every semantic hypothesis is open, and an extension schema also exposes
+the exact \(\UniversalAdmissible_G(S)\) premise.\\
+Complete negative &
+The formed semantic relation exposes one exact finite complement domain; evidence
+enumerates it completely and supplies every required positive mismatch.\\
+Structural pattern &
+One exact rooted-pattern match with actual open places, repeated links,
+child-match edges, and edge-local positive decrease checks.\\
+Exact reuse &
+One open premise requiring the identical formed judgment, including all arguments,
+fixed endpoints, identity, and aliasing equations.\\
+\bottomrule
+\end{longtable}
+
+Exact reuse is available for every \(\Formed_G(J)\).  Its sole open premise is
+that identical \(J\), so it cannot establish \(J\) without an acyclic discharge
+from elsewhere or an external boundary assertion.
+
+Each form has one finite structural applicability schema and one total terminating
+checker.  Its raw pattern exposes:
+
+\begin{itemize}[leftmargin=2em]
+  \item the common unlabelled conclusion-argument places;
+  \item every structural parameter position;
+  \item every actual open-premise socket and its prospective application boundary;
+  \item every local-witness, raw key/reference, ownership, and incidence position,
+        with no missing or unused position;
+  \item constructive seeds and finite owner/incidence/complete-star closure rules
+        for its declared inputs;
+  \item every rooted subject used by an already formed property projection; and
+  \item exact positive complement or coverage material where required.
+\end{itemize}
+
+No Factor value contains a form name, relation name, callback, rule identifier,
+direction field, extension slot, or checker index.  A form can consume a newly
+supplied semantic relation only through the ordinary structural parameter places
+above.  No form concludes that \(G\) is a Factor model.
+
+\subsection{Declared-input profiles for the primitive clauses}
+
+Every primitive row below names one of these exact Section~\ref{sec:local-match}
+projection profiles.  In all profiles, first seed \(L_\chi\) with every actual
+proof-owned conclusion-argument, operand, descriptor, map, and witness position
+listed in the row.  Close under owners and the row's full incidence equations.
+Whenever an equation quantifies over a complete incident boundary, include its
+complete star.  An external endpoint seeds \(P_\chi\); every graph-backed operand,
+definition, domain, and member root also seeds \(P_\chi\).  Close \(P_\chi\) under
+the same listed owner, complete-star, endpoint, and formed-application-boundary
+steps.  Every reached key value enters \(I_\chi\);
+\(R_\chi=\operatorname{Bind}_G|_{I_\chi}\), including absence, and every positive
+binding endpoint enters \(P_\chi\).
+
+\begin{description}[leftmargin=3.3em,style=nextline]
+  \item[\(\mathsf{PA}\) --- exact atoms.]
+    The seeds are the two complete supplied atoms or incidence tuples and, for
+    disequality, the positive mismatch position or endpoint.
+  \item[\(\mathsf{PC}\) --- finite carriers.]
+    The seeds include every position and member of every supplied sequence, set,
+    relation, output carrier, partition block, and coverage descriptor.  A negative
+    row includes every compared member and positive mismatch witness.
+  \item[\(\mathsf{PM}\) --- finite relation maps.]
+    The seeds include every pair of each relation, displayed domain and codomain,
+    every intermediate relation for composition, and every exact output pair.
+  \item[\(\mathsf{PN}\) --- finite measures.]
+    The seeds include every numeral and every complete finite collection whose
+    cardinality occurs, together with all summand and comparison positions.
+  \item[\(\mathsf{PI}\) --- structural isomorphism.]
+    The seeds include both complete rooted interiors, their complete comparison
+    boundaries, and every pair in the supplied bijection.
+  \item[\(\mathsf{PP}\) --- application.]
+    The seeds include the source and input bodies, assignment, reference-owner
+    positions, link match, fresh-position pairing, and the exact result body.
+\end{description}
+
+These are constructive projection definitions, not descriptions of runtime reads.
+The fixed checker and its equations are not members of \(\chi\).
+
+\subsection{DF-1: exact atoms}\label{sec:df1}
+
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.16\textwidth}
+                  >{\raggedright\arraybackslash}p{0.61\textwidth}
+                  >{\raggedright\arraybackslash}p{0.13\textwidth}}
+\caption{Complete DF-1 catalogue}\label{tab:df1}\\
+\toprule
+Clause & Complete raw conclusion, operands, and witness & Inputs\\
+\midrule
+\endfirsthead%
+\toprule
+Clause & Complete raw conclusion, operands, and witness & Inputs\\
+\midrule
+\endhead%
+DF1-U-EQ & \(u=v\) for two supplied values of \(U\); the two operand places are
+complete. & \(\mathsf{PA}\)\\
+DF1-U-NE & \(u\ne v\); the witness is their exact positive value mismatch. &
+\(\mathsf{PA}\)\\
+DF1-POS-EQ & equality of two supplied owner/local positions, including owners and
+local coordinates. & \(\mathsf{PA}\)\\
+DF1-POS-NE & disequality of owner/local positions, with the differing owner or
+local coordinate exposed. & \(\mathsf{PA}\)\\
+DF1-END-EQ & equality of two exact supplied endpoints, including graph-backed or
+bound-root status. & \(\mathsf{PA}\)\\
+DF1-END-NE & endpoint disequality, with the differing endpoint component exposed.
+& \(\mathsf{PA}\)\\
+DF1-INC-EQ & equality of two supplied ordered incidence tuples, position by
+position and with equal length. & \(\mathsf{PA}\)\\
+DF1-INC-NE & ordered-incidence disequality, with a length mismatch or one exact
+differing indexed component. & \(\mathsf{PA}\)\\
+\bottomrule
+\end{longtable}
+
+\subsection{DF-2: finite extensional carriers}\label{sec:df2}
+
+A finite sequence is compared as its complete ordered index/value relation.  A
+duplicate-free set is compared extensionally.  A finite relation is compared as
+its complete pair set.  The following thirty rows are distinct clauses.
+
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.17\textwidth}
+                  >{\raggedright\arraybackslash}p{0.60\textwidth}
+                  >{\raggedright\arraybackslash}p{0.12\textwidth}}
+\caption{Complete DF-2 catalogue}\label{tab:df2}\\
+\toprule
+Clause & Complete raw conclusion, operands, and witness & Inputs\\
+\midrule
+\endfirsthead%
+\toprule
+Clause & Complete raw conclusion, operands, and witness & Inputs\\
+\midrule
+\endhead%
+DF2-MEM-SEQ & One supplied index/value pair occurs in the complete finite
+sequence descriptor. & \(\mathsf{PC}\)\\
+DF2-MEM-SET & One supplied value occurs in the complete duplicate-free set. &
+\(\mathsf{PC}\)\\
+DF2-MEM-REL & One supplied ordered pair occurs in the complete finite relation. &
+\(\mathsf{PC}\)\\
+DF2-NMEM-SEQ & The complete sequence is supplied and the candidate pair has a
+positive mismatch against every indexed pair. & \(\mathsf{PC}\)\\
+DF2-NMEM-SET & The complete set is supplied and the value has a positive mismatch
+against every member. & \(\mathsf{PC}\)\\
+DF2-NMEM-REL & The complete relation is supplied and the pair has a positive
+mismatch against every pair. & \(\mathsf{PC}\)\\
+DF2-EQ-SEQ & Two complete sequences have the same length and equal indexed values.
+& \(\mathsf{PC}\)\\
+DF2-EQ-SET & Two complete duplicate-free sets contain exactly the same values. &
+\(\mathsf{PC}\)\\
+DF2-EQ-REL & Two complete finite relations contain exactly the same ordered pairs.
+& \(\mathsf{PC}\)\\
+DF2-SUB-SEQ & Every index/value pair of the first complete sequence occurs in the
+second at that same index. & \(\mathsf{PC}\)\\
+DF2-SUB-SET & Every member of the first complete set occurs in the second. &
+\(\mathsf{PC}\)\\
+DF2-SUB-REL & Every pair of the first complete relation occurs in the second. &
+\(\mathsf{PC}\)\\
+DF2-DISJ-SEQ & The complete index/value pair sets of two sequences are disjoint. &
+\(\mathsf{PC}\)\\
+DF2-DISJ-SET & Two complete sets have no common value, with all pairwise
+disequalities exposed. & \(\mathsf{PC}\)\\
+DF2-DISJ-REL & Two complete relations have no common ordered pair. &
+\(\mathsf{PC}\)\\
+DF2-UNION-SEQ & The output sequence's complete index/value relation is exactly the
+compatible union of the two input relations; shared indices have equal values. &
+\(\mathsf{PC}\)\\
+DF2-UNION-SET & The output set is exactly the union of two complete sets. &
+\(\mathsf{PC}\)\\
+DF2-UNION-REL & The output relation is exactly the union of two complete
+relations. & \(\mathsf{PC}\)\\
+DF2-INTER-SEQ & The output index/value relation is exactly the intersection of two
+complete sequence relations. & \(\mathsf{PC}\)\\
+DF2-INTER-SET & The output set is exactly the intersection of two complete sets.
+& \(\mathsf{PC}\)\\
+DF2-INTER-REL & The output relation is exactly the intersection of two complete
+relations. & \(\mathsf{PC}\)\\
+DF2-DIFF-SEQ & The output index/value relation is exactly the first complete
+sequence relation minus the second. & \(\mathsf{PC}\)\\
+DF2-DIFF-SET & The output set is exactly the first complete set minus the second.
+& \(\mathsf{PC}\)\\
+DF2-DIFF-REL & The output relation is exactly the first complete relation minus
+the second. & \(\mathsf{PC}\)\\
+DF2-PART-SEQ & The supplied complete block family is pairwise disjoint and its
+union is exactly the sequence's index/value relation. & \(\mathsf{PC}\)\\
+DF2-PART-SET & The supplied complete block family is pairwise disjoint and its
+union is exactly the set. & \(\mathsf{PC}\)\\
+DF2-PART-REL & The supplied complete block family is pairwise disjoint and its
+union is exactly the relation. & \(\mathsf{PC}\)\\
+DF2-COVER-SEQ & Every and only pair in the complete sequence descriptor occurs in
+the supplied covering family. & \(\mathsf{PC}\)\\
+DF2-COVER-SET & Every and only member of the complete set occurs in the supplied
+covering family. & \(\mathsf{PC}\)\\
+DF2-COVER-REL & Every and only pair of the complete relation occurs in the
+supplied covering family. & \(\mathsf{PC}\)\\
+\bottomrule
+\end{longtable}
+
+\subsection{DF-3: finite relation maps}\label{sec:df3}
+
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.18\textwidth}
+                  >{\raggedright\arraybackslash}p{0.59\textwidth}
+                  >{\raggedright\arraybackslash}p{0.12\textwidth}}
+\caption{Complete DF-3 catalogue}\label{tab:df3}\\
+\toprule
+Clause & Complete raw conclusion, operands, and witness & Inputs\\
+\midrule
+\endfirsthead%
+\toprule
+Clause & Complete raw conclusion, operands, and witness & Inputs\\
+\midrule
+\endhead%
+DF3-DOM & The supplied set is exactly the first-component domain of every pair in
+the complete relation. & \(\mathsf{PM}\)\\
+DF3-RANGE & The supplied set is exactly the second-component range of every pair.
+& \(\mathsf{PM}\)\\
+DF3-RESTRICT & The output is exactly the supplied relation restricted to the
+displayed domain. & \(\mathsf{PM}\)\\
+DF3-ID & The supplied relation contains exactly \((x,x)\) for each member of the
+displayed finite domain. & \(\mathsf{PM}\)\\
+DF3-INVERSE & The output contains exactly the coordinate reversals of every pair
+in the input relation. & \(\mathsf{PM}\)\\
+DF3-COMP & The output contains exactly each \((x,z)\) having an exposed
+intermediate \(y\) in the two complete input relations. & \(\mathsf{PM}\)\\
+DF3-FUNCTION & No two pairs with equal first component have unequal second
+components; all pairs are supplied. & \(\mathsf{PM}\)\\
+DF3-TOTAL & The relation is functional and its exact domain equals the displayed
+finite domain. & \(\mathsf{PM}\)\\
+DF3-INJECTIVE & Equal second components imply equal first components in the
+complete relation. & \(\mathsf{PM}\)\\
+DF3-SURJECTIVE & The complete range equals the displayed finite codomain. &
+\(\mathsf{PM}\)\\
+DF3-PBIJ & The relation is functional and injective between its exact displayed
+domain and range. & \(\mathsf{PM}\)\\
+DF3-BIJ & The relation is functional, displayed-domain total, injective, and
+surjective onto the displayed codomain. & \(\mathsf{PM}\)\\
+\bottomrule
+\end{longtable}
+
+\subsection{DF-4: finite measures}\label{sec:df4}
+
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.18\textwidth}
+                  >{\raggedright\arraybackslash}p{0.59\textwidth}
+                  >{\raggedright\arraybackslash}p{0.12\textwidth}}
+\caption{Complete DF-4 catalogue}\label{tab:df4}\\
+\toprule
+Clause & Complete raw conclusion, operands, and witness & Inputs\\
+\midrule
+\endfirsthead%
+\toprule
+Clause & Complete raw conclusion, operands, and witness & Inputs\\
+\midrule
+\endhead%
+DF4-NUMERAL & A supplied natural term is exactly the supplied numeral. &
+\(\mathsf{PN}\)\\
+DF4-CARD & A supplied natural term equals the cardinality of one complete finite
+sequence, set, or relation. & \(\mathsf{PN}\)\\
+DF4-SUM & A supplied natural term is the finite sum of the complete supplied term
+sequence. & \(\mathsf{PN}\)\\
+DF4-EQ & Two terms built only by DF4-NUMERAL, DF4-CARD, and DF4-SUM have equal
+natural values. & \(\mathsf{PN}\)\\
+DF4-LE & Two such terms satisfy \(\leq\). & \(\mathsf{PN}\)\\
+DF4-LT & Two such terms satisfy \(<\), including structural-size decrease. &
+\(\mathsf{PN}\)\\
+\bottomrule
+\end{longtable}
+
+\subsection{DF-5 and DF-6}\label{sec:df56}
+
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.18\textwidth}
+                  >{\raggedright\arraybackslash}p{0.59\textwidth}
+                  >{\raggedright\arraybackslash}p{0.12\textwidth}}
+\caption{Complete DF-5 and DF-6 catalogue}\label{tab:df6}\\
+\toprule
+Clause & Complete raw conclusion, operands, and witness & Inputs\\
+\midrule
+\endfirsthead%
+\toprule
+Clause & Complete raw conclusion, operands, and witness & Inputs\\
+\midrule
+\endhead%
+DF5-ISO & One supplied finite root-preserving position bijection has exact domain
+and range and preserves and reflects ownership, ordered endpoint incidence,
+identity, multiplicity, aliasing, sharing, and fixed external endpoints.  This is
+the sole proof-side isomorphism primitive. & \(\mathsf{PI}\)\\
+DF6-APPLY & One complete five-argument \(\Apply\) instance, with its source,
+inputs, reference owners, assignment, link match, fresh-position pairing, and
+exact five-collection result. & \(\mathsf{PP}\)\\
+\bottomrule
+\end{longtable}
+
+The catalogue therefore has exactly \(8+30+12+6+1+1=58\) primitive clauses.
+The DF labels authorize no unlisted operation.  A local admission view, authority
+predicate, projection, constructor equation, or arithmetic operator is not direct
+merely because it is finite.  It must reduce through its semantic definition to
+one listed row, fit another generic form, or occur as an open premise.  Adding a
+primitive row requires a later proposal.
+
+\subsection{Input projections for the remaining forms}
+
+The remaining form schemas use the common closure rules above and the following
+complete seeds.
+
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.20\textwidth}
+                  >{\raggedright\arraybackslash}p{0.72\textwidth}}
+\toprule
+Form & Exact \(L_\chi\) seeds and additional closure\\
+\midrule
+\endhead%
+Acyclic trace &
+Every trace node, step-witness position, premise occurrence, root/result boundary,
+and local order edge.  Close over each supplied step's complete argument boundary;
+graph-backed step targets and endpoints enter \(P_\chi\).\\
+Complete enumeration &
+The whole proof-owned descriptor, every representative interior and boundary,
+every class-comparison map, and the exact projected output set.  A graph-backed
+domain or member root enters \(P_\chi\).\\
+Exact composite &
+Every conjunct application boundary and every actual open socket, with its
+prospective argument tuple and fixed target.  Close over the complete exposed
+argument boundaries, not the truth definitions.\\
+Parametric structural rule &
+The complete schema evidence, binder roots, substitution positions, every local
+evidence node, every open socket, all substitution and strict-decrease maps, and
+the conclusion boundary.  Graph-backed schema, target, domain, and argument roots
+enter \(P_\chi\).\\
+Complete negative &
+The complete finite complement-domain descriptor, every candidate, and every
+positive mismatch position.  Include the entire graph-backed domain payload in
+\(P_\chi\) when applicable.\\
+Structural pattern &
+The whole rooted pattern image, each open place and repeated link, every child
+edge, child subject, and positive proper-subdescription witness.\\
+Exact reuse &
+The conclusion boundary, one open socket, and the socket's complete identical
+prospective application boundary.\\
+\bottomrule
+\end{longtable}
+
+For each form, the proposal-fixed raw schema also lists all key/reference places.
+Those values and results enter \(I_\chi,R_\chi\) by the common rule.  There is no
+equation-list component, checker identity, or observed-read component.
+
+\subsection{Extensional bindings and images}
+
+For one raw generic-form pattern, a local binding \(m\) is the finite relation of
+pairs \((u,v)\) from its proposal-displayed owner/local positions \(u\) to actual
+positions \(v\) in a supplied derivation.  It preserves and reflects ownership,
+incidence, equality, aliasing, and sharing.  Its domain is the finite pattern
+structure modulo permitted renaming, not a schema or pattern-object identity.
+Two bindings are equal exactly when an incidence-preserving isomorphism of their
+pattern sides makes their actual position-pair relations equal while fixing exact
+semantic endpoints in \(G\).
+
+\(\operatorname{Image}_d(m)\) is only the actual finite positions selected in
+\(d\), with ownership and incidence induced from \(d\).  It contains no
+pattern-side position and no incidence object separate from its owned positions.
+Every image contains the complete common conclusion boundary.
+
+For fixed formed \(J\), each raw match projects:
+
+\begin{itemize}[leftmargin=2em]
+  \item the common conclusion-argument places relative to
+        \(\operatorname{ArgBoundary}_G(J)\);
+  \item the four declared-input components, including every local witness position
+        but no checker identity; and
+  \item every open socket, prospective premise tuple, and fixed intended semantic
+        target.
+\end{itemize}
+
+It contains no discharge choice and no assumption.  For fixed
+\((G,J,d,k,w)\), two complete raw matches with equal
+\(\operatorname{Image}_d(m)\) must project the same arguments, prospective premise
+tuples and targets, and coherent declared inputs: \(L_\chi\) agrees by permitted
+induced-structure isomorphism, while \(P_\chi,I_\chi,R_\chi\) agree exactly.
+Different fixed checkers may apply.  Several coherent bindings and clauses may
+share one image and remain disjunctive.  No coherence condition compares different
+supplied judgments.
+
+\subsection{Parametric structural-rule format}
+
+The parametric form is evidence inside this fixed catalogue, not a way to install
+proof semantics.  One applicable instance exposes:
+
+\begin{itemize}[leftmargin=2em]
+  \item any exact property projection \(K_{G;B,q,\vec a}\), including its forced
+        alias class and remaining arguments;
+  \item every actual open premise and repeated-use link;
+  \item the requested output judgment at the common conclusion boundary;
+  \item every fixed helper judgment as an ordinary open premise;
+  \item for an extension schema \(S\), the exact formed judgment
+        \(\UniversalAdmissible_G(S)\) as another open premise;
+  \item every template-local evidence node and incidence edge;
+  \item every fixed finite graph-formation, substitution, local-check, and
+        structural-decrease obligation; and
+  \item the topological order derived from the template-local evidence graph.
+\end{itemize}
+
+The total checker verifies that the finite parametric DAG is valid structure, maps
+retain functional keys, sets retain distinct members, endpoints resolve, semantic
+hypotheses occupy actual open sockets, binder-derived owner domains are disjoint,
+and undeclared identity, aliasing, sharing, or owner collision is absent.  It
+contains no supplying proof node; supplying nodes belong only to the complete
+derivation in Section~\ref{sec:derivations}.
+
+If the schema contains a local recursive use, that use has an explicit dependency
+edge and an incidence-preserving injection from the dependent use's transitively
+owned positions into a strict subset of the source use's positions.  This strict
+finite owned-substructure decrease is the well-founded condition.  No registration
+time, retention order, or nominal earlier-rule order participates.
+
+The proposal proves one substitution theorem for this generic form: truth of
+\(\UniversalAdmissible_G(S)\) and every instantiated semantic hypothesis, together
+with the finite local conditions, implies the instantiated conclusion.  The
+checker validates one supplied finite substitution and never enumerates the
+schema's permitted binding family or invokes the conclusion relation to decide
+whether the template passes.
+
+Distinct open places imply neither equality nor disequality.  Repeated identity or
+sharing exists only through actual links to the same place.  Any additional
+equality or disequality must be an exact structural antecedent or an ordinary open
+premise.
+
+\subsection{Complete decomposition tables}
+
+The following are the only step and transport decomposition tables.  Row names are
+exposition; the complete ordinary positions and incidence shown by each row select
+it.  Within these two tables only, \(\mathsf{DS}\), \(\mathsf{GS}\),
+\(\mathsf{ES}\), and \(\mathsf{FS}\) abbreviate the description, generator,
+structural-equality, and combined family step relations.  Likewise
+\(\mathsf{SS}\), \(\mathsf{BC}\), \(\mathsf{UE}\), \(\mathsf{FC}\), and
+\(\mathsf{PC}\) abbreviate structural equality, boundary correspondence,
+identity-boundary correspondence, full correspondence, and projected
+correspondence.  These abbreviations add no relation.
+
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.20\textwidth}
+                  >{\raggedright\arraybackslash}p{0.30\textwidth}
+                  >{\raggedright\arraybackslash}p{0.42\textwidth}}
+\caption{Complete DEC-S table}\label{tab:decs}\\
+\toprule
+Row & Exact step relation & Complete decomposition\\
+\midrule
+\endfirsthead%
+\toprule
+Row & Exact step relation & Complete decomposition\\
+\midrule
+\endhead%
+DEC-S-DESCRIPTION &
+\(\mathsf{DS}_G(P,y)\) &
+One complete description \(\Apply\) and join; source, every input and
+reference-owner description, exact support \(P\), assignment, match, fresh map,
+multiplicity, sharing, and result \(y\) are exposed.\\
+DEC-S-GENERATOR &
+\(\mathsf{GS}_{G;X,\vec M}(P,y)\) &
+One exact indexed source member of \(\vec M\), one complete description
+\(\Apply\), exactly support \(P\), result \(y\), and all context/domain guards and
+maps are exposed.\\
+DEC-S-EQUALITY &
+\(\mathsf{ES}_{G,X}(P,y)\) &
+Exactly \(P=\{x\}\), \(x,y\in\mathcal D_{G,X}\), and one complete
+\(\SameStructure_G(x,y)\) map.\\
+DEC-S-FAMILY &
+\(\mathsf{FS}_{G;X,\vec M}(P,y)\) &
+The complete disjoint structural union of the preceding generator and equality
+raw patterns.  Every matching alternative is included; no flag selects one.\\
+\bottomrule
+\end{longtable}
+
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.20\textwidth}
+                  >{\raggedright\arraybackslash}p{0.30\textwidth}
+                  >{\raggedright\arraybackslash}p{0.42\textwidth}}
+\caption{Complete DEC-R table}\label{tab:decr}\\
+\toprule
+Row & Exact transport relation & Complete decomposition\\
+\midrule
+\endfirsthead%
+\toprule
+Row & Exact transport relation & Complete decomposition\\
+\midrule
+\endhead%
+DEC-R-SAME &
+\(\mathsf{SS}_G(x,x')\) &
+Both complete rooted interiors and one exact node/position bijection preserving
+and reflecting every structural equation.\\
+DEC-R-BOUNDARY &
+\(\mathsf{BC}_G(x,x';\theta,\beta)\) &
+Both complete boundaries, node/position map, external boundary map, and every
+joint compatibility equation used by the requested instance.\\
+DEC-R-USE &
+\(\mathsf{UE}_G(x,x';\theta)\) &
+The complete DEC-R-BOUNDARY structure plus the exact equation that every external
+boundary endpoint is fixed.\\
+DEC-R-FULL &
+\(\mathsf{FC}_G(x,x';\theta,\beta)\) &
+The complete boundary-correspondence operands projected by the full
+correspondence application, with no additional mode position.\\
+DEC-R-PROJECTED &
+\(\mathsf{PC}_{G;X,\pi,\tau}(x,x')\) &
+The fixed projection schema, both complete instantiation traces, projected
+endpoints, node/position/boundary maps, multiplicity, sharing, and result
+correspondence.\\
+\bottomrule
+\end{longtable}
+
+The identity of a decomposition match is its structural-isomorphism class.
+Graph-backed owners, occurrence identities, external endpoints, positions,
+multiplicity, aliasing, sharing, and constructor order remain exact.  Only
+decomposition-local bound owners may be bijectively renamed.  No byte, hash,
+opaque-owner order, traversal order, or least representative is used.
+
+A complete-enumeration descriptor fixes exact formed \(D\) before proof and
+contains one arbitrary structurally valid representative of every
+\(\operatorname{MemberIso}_G\) class denoted by \(D\), and none extra.  Finite
+DF2 and DF5 checks establish coverage without open premises merely for replaying
+those checks.  Distinct decomposition classes may project the same semantic
+\((P,y)\); exact equality is required only after projecting the complete descriptor
+to the semantic pair set.
+
+\subsection{Recognition's separate pattern format}
+
+Recognizer evidence uses the semantic pattern format from
+Section~\ref{sec:families}, not the parametric-rule template:
+
+\begin{itemize}[leftmargin=2em]
+  \item one fixed rooted shape with actual open places;
+  \item repeated positions linked to the same place;
+  \item actual child-match edges filled from those places; and
+  \item one positive proper-subdescription check at each recursive edge.
+\end{itemize}
+
+The direct form checks one match.  Separate forward and reverse forms check their
+finite coverage and reconstruction obligations.  Their conjunction has no third
+form.  An extension cannot add a recognizer checker, proof primitive, callback, or
+ambient admissible-rule registry.
+
+Every preservation, transport, coverage, necessity, recognition direction, bridge
+result, or schema admissibility result can later be used only through an ordinary
+premise edge or boundary assertion.  Exact reuse imposes the same discharge rule.
+A retained realization never extends this catalogue.  Complete negative applies
+only to a semantic relation with a fixed finite complement and positive mismatch
+evidence; failed search, an absent match, or generic validation failure never
+qualifies.
+
+\begin{theorem}[Catalogue closure and erasure]\label{thm:catalogue}
+For each row and generic form, structural applicability, the local checker, and its
+declared-input projection are total and terminating on supplied finite structure.
+The catalogue contains exactly the forms and primitive rows displayed above.
+Erasing names, serialization labels, host types, and dispatch metadata preserves
+\(\operatorname{AppBoundary}_G\), \(\operatorname{ArgBoundary}_G\), every raw
+match, and every declared input.
+\end{theorem}
+
+\section{Local matching in one finite derivation}\label{sec:local-match}
+
+\subsection{Complete raw matching}
+
+Let \(d\) be supplied finite Factor structure, \(k\) an actual local root, and
+\(w\) the exact ownership/incidence-delimited neighborhood derived at \(k\).
+\(w\) is not stored.  The layer receives an already formed requested judgment
+\(J\), but raw matching performs no graph lookup, semantic formation of a
+prospective premise, or resolved conclusion comparison.
+
+For exposition, write
+\[
+  \operatorname{LocalMatch}_{F}(J,d,k;w,m)
+\]
+when one fixed catalogue clause's raw pattern matches every required
+proof-owned conclusion-argument place, raw key/reference place,
+prospective-premise socket, local-witness place, and ownership/incidence equation,
+with no missing or extra pair.  A missing local place means that clause has no raw
+match.  An exact external endpoint already present as an ordinary argument of
+\(J\) may be compared as an atom, but no binding lookup or graph traversal occurs.
+
+This notation is clause-local exposition, not a stored relation or selected-form
+argument.  Matching is relational: several complete \(m\) values and several
+clauses may match the same actual image.  Each \(m\) is one complete extensional
+binding as defined in Section~\ref{sec:proof-forms}.
+
+\subsection{Declared inputs before resolved checks}
+
+For each complete raw match, derive
+\[
+\begin{split}
+ \operatorname{DeclaredInputs}_{F,G}(J,d,k,w,m)
+   &=\chi,\\
+ \chi&=(L_\chi,P_\chi,I_\chi,R_\chi),\\
+ R_\chi&=\operatorname{Bind}_G|_{I_\chi}.
+\end{split}
+\]
+The applicable row's profile and the remaining-form table in
+Section~\ref{sec:proof-forms} give constructive seeds and closure:
+
+\begin{enumerate}[leftmargin=2.2em]
+  \item seed \(L_\chi\) with the actual positions paired to conclusion, premise,
+        local-witness, finite-domain, operand, map, and supplied-equation places;
+  \item close it under the clause's owner and incidence rules, including the
+        complete incident star wherever an exact/no-extra equation quantifies over
+        that star;
+  \item seed \(P_\chi\) with every graph-backed argument, endpoint, definition,
+        context, domain, and member projected from \(J\) or a matched reference;
+  \item close it under the listed finite owner, complete-star, endpoint, and
+        formed-application-boundary rules;
+  \item put every reached key value in \(I_\chi\), retain its positive or absent
+        result in \(R_\chi\), and add every positive binding endpoint to
+        \(P_\chi\); and
+  \item take the least simultaneous closure.
+\end{enumerate}
+
+Fixed finite \(G,d,m\), and clause make this bundle finite and unique.  A
+proof-owned descriptor, local member, reference, or witness is in \(L_\chi\); an
+exact graph domain/member position or endpoint is in \(P_\chi\); a key and its
+positive or absent result are in \(I_\chi,R_\chi\).  A complete enumeration covers
+exactly the \(\operatorname{MemberIso}_G\) classes already denoted by its fixed
+domain.  It cannot infer a domain by scanning \(G\), invent an order, or copy a
+graph position into local proof evidence.
+
+\subsection{Candidate and resolved match relations}
+
+Define
+\[
+  \CandidateAt_G(J,d,k;w,m,\chi)
+\]
+as the finite disjunction of all fixed catalogue clauses, each requiring one
+complete raw local match and its uniquely derived four-component bundle.  The
+projection does not filter a completed raw match.  No selected form, clause, or
+candidate value witnesses the disjunction.  Neither \(d\) nor a later selector
+stores \(J,w,m,\chi\), or a clause.
+
+Define
+\[
+  \MatchAt_G(J,d,k;w,m,\chi)
+\]
+by adjoining all resolved conditions to that candidate:
+
+\begin{enumerate}[leftmargin=2.2em]
+  \item \(\Formed_G(J)\) and exact structural equality of the actual common
+        conclusion boundary \(C_k\) with \(\operatorname{ArgBoundary}_G(J)\);
+  \item graph-relative formation and applicability of every fixed semantic
+        parameter;
+  \item exact resolution of every declared key and reference comparison;
+  \item recovery of one exact \(\Formed_G(J_r)\) from every prospective-premise
+        application, and equality of its socket boundary with
+        \(\operatorname{ArgBoundary}_G(J_r)\); and
+  \item success of the proposal-authored total finite checker over the declared
+        structural inputs and positive witness positions.
+\end{enumerate}
+
+A boundary mismatch, malformed external or premise application, absent or wrong
+lookup, failed applicability equation, or failed checker leaves
+\(\CandidateAt_G\), its raw \(m\), and all of \(\chi\) intact.  Every structural
+input that may vary between Factor models is declared before the result.  A fixed
+checker cannot call an ambient oracle, registry, callback, extension evaluator,
+unbounded search, or the semantic conclusion relation.
+
+Only a passing resolved match derives
+\[
+  \operatorname{PremiseNeed}_G(m,r;J_r),
+\]
+where \(r\) is the actual socket and \(J_r\) the exact formed judgment recovered
+there.  Two equal judgments at different sockets remain two needs.  Needs from
+alternative matches are never unioned.  Local matching does not choose how a need
+is discharged.
+
+\begin{theorem}[Raw-match determinacy and failure preservation]%
+\label{thm:local-determinacy}
+Declared inputs are functional for each complete raw match; raw matching itself
+need not be functional.  For fixed \(J\), equal actual images have coherent
+arguments, prospective premises, targets, and four-component bundles.  Candidate
+and resolved-match truth are determined only by the complete raw match, fixed
+clause equations, and declared bundle.  Every raw candidate and bundle persists
+through resolved failure.
+\end{theorem}
+
+\begin{theorem}[Locality of resolved matching]\label{thm:match-locality}
+For every clause with a raw match at a selected image, if Factor models \(G,G'\)
+agree on the complete raw formation inputs, all four declared components, complete
+incident stars, exact endpoints, and positive or absent restricted binding results,
+then the raw match, its declared bundle, every prospective-premise projection, and
+the disjunction of passing resolved matches agree in \(G,G'\).  Schema-dependent
+forms use the complete-image invariance of
+\(\operatorname{PermBind}\).
+\end{theorem}
+
+\section{Complete finite derivations}\label{sec:derivations}
+
+\subsection{Derivation structure and actual-side selection}
+
+A finite derivation \(d\) contains only positions, ownership and incidence, one
+common unlabelled conclusion boundary at each local root, local evidence, open
+premise sockets with that same boundary format, proof-supplying edges, and
+boundary-assertion witnesses.  These are structural views, not stored kinds.
+\(d\) stores no local judgment, neighborhood, raw match, declared bundle,
+selection, or assumption set.  Exact endpoints in \(G\) referenced by its positions
+are outside \(\operatorname{Pos}(d)\).
+
+Supply separately one finite extensional actual-side selection
+\[
+  h\subseteq
+  \{\text{actual local roots of }d\}\times\operatorname{Pos}(d).
+\]
+For local root \(k\), write \(h_k=\{q:(k,q)\in h\}\).  It is one exact
+actual-side substructure with ownership, incidence, and boundary inherited from
+\(d\).  It includes each local evidence edge, socket, or link position selected by
+the generic pattern, but excludes the proof-supplying edge or boundary-witness
+position that later discharges an open socket.
+
+\(h_k\) selects a local match exactly when some catalogue binding \(m_k\) has
+\(\operatorname{Image}_d(m_k)=h_k\).  Pattern positions are never members of
+\(h\).  For fixed required \(J_k\), static image coherence determines the
+arguments, prospective premises, intended targets, and four-component bundle,
+while allowing several coherent clauses with different fixed checkers.  The image
+does not determine \(J_k\), discharge a premise, or project an assumption.
+
+Equality of \(h\) fixes this relation on actual positions modulo one permitted
+renaming of owners wholly internal to \(d\).  Form identifiers, schema identities,
+pattern objects, serialization, and check order are absent.  The complete
+derivation witness for supplied \(J\) is \((d,h)\); neither component alone is
+complete.
+
+\subsection{Complete matching of one reading}
+
+Define
+\[
+  \CompleteMatch_G(J,d,h).
+\]
+At the unique root \(k_0\), set \(J_{k_0}=J\).  At every nonroot node,
+\(J_k\) is derived from the exact prospective premise at its incoming proof edge.
+All incoming edges to a shared node must derive the same formed judgment.
+
+The relation holds exactly when:
+
+\begin{enumerate}[leftmargin=2.2em]
+  \item \(d\) has one structural root \(k_0\).  For some
+        \(w_0,m_0,\chi_0\), the resolved-match relation passes at
+        \((J,d,k_0)\), \(h_{k_0}\) is exactly the image of \(m_0\), and
+        \(C_{k_0}\) is structurally equal to
+        \(\operatorname{ArgBoundary}_G(J)\);
+  \item every node reached from \(k_0\) through proof edges at selected sockets
+        has exactly one restriction \(h_k\) that is the image of some \(m_k\)
+        whose resolved-match relation passes for \((J_k,d,k)\), and every pair in
+        \(h\) belongs to one such reached node and image;
+  \item every selected premise need at socket \(r\), binding \(m_k\), and formed
+        judgment \(J_r\) has exactly one of two structurally disjoint actual
+        discharge shapes:
+        \begin{enumerate}[label=\alph*.,leftmargin=2em]
+          \item one proof edge to a node whose selected image passes
+                \(\MatchAt_G\) for the identical \(J_r\); or
+          \item one complete boundary-assertion witness whose exact projection is
+                formed \(J_r\), asserting but not proving it;
+        \end{enumerate}
+        and both the socket and supplying conclusion boundaries equal the exact
+        argument boundary of \(J_r\);
+  \item every proof edge and boundary witness uniquely discharges one selected
+        socket, with no missing or unused discharge;
+  \item every proof node is proof-edge reachable from the root and the proof-edge
+        graph is acyclic, with its topological order derived rather than stored;
+  \item a supplying node is shared only when every incoming edge requires the
+        identical formed judgment, including all arguments and aliasing equations;
+        and
+  \item every conclusion boundary, local witness, edge, socket, and boundary
+        witness occurs exactly where projected, with no disconnected or unused
+        position or incidence in \(d\).
+\end{enumerate}
+
+Proof-edge acyclicity is separate from the semantic formation-and-truth acyclicity
+of Section~\ref{sec:audit}.  Neither supplies the other.
+
+The no-unused conditions range over all positions and incidence of \(d\), not only
+an \(h\)-selected subgraph.  Thus two passing selections use all the same proof
+nodes, edges, sockets, boundaries, and witnesses, but may group or interpret them
+through different actual-side images and project different premise judgments.
+An alternative needing another position or incidence needs a different \(d\).
+
+Conversely, one \((d,h)\) may pass for distinct supplied \(J_1,J_2\) when each
+independently fits the generic catalogue and recursively required premises.  Each
+validation derives its own premise meanings from the supplied judgment.  The
+checker validates only the supplied \(h\); it neither enumerates other selections
+nor requires their projections to agree.
+
+\subsection{Assumptions and conditional derivation}
+
+After a complete match, let
+\[
+  \operatorname{Assumptions}_G(J,d,h)
+\]
+be the exact finite family containing one
+\(((k,r),J_r)\) for every selected premise socket discharged by a boundary
+assertion.  The origin \((k,r)\) preserves multiplicity.  A boundary witness
+contains its exact assertion subject, frame, version, frontier, and boundary
+binding.  No ambient assumption registry contributes.
+
+Define
+\[
+  \Derives_G(\Gamma,J,d,h)
+  \Longleftrightarrow
+  \CompleteMatch_G(J,d,h)
+  \land
+  \Gamma=\operatorname{Assumptions}_G(J,d,h).
+\]
+\(\Gamma\) is neither stored in \(d\) nor independently selected.  It exposes the
+exact boundary-discharge projection of supplied \((J,d,h)\).  Another selection,
+or another supplied judgment independently validated by the same \((d,h)\), may
+project a different \(\Gamma\).
+
+The dependency order is therefore
+\[
+\begin{array}{rcl}
+\operatorname{LocalMatch}_F
+ &\longrightarrow& \text{complete raw }m,\\
+\CandidateAt_G
+ &\longrightarrow& \text{arguments, prospective premises, and }\chi,\\
+\MatchAt_G
+ &\longrightarrow& \text{resolved formation, lookup, and checker success},\\
+\CompleteMatch_G
+ &\longrightarrow& \text{actual edge/boundary discharge incidence},\\
+\operatorname{Assumptions}_G
+ &\longrightarrow& \text{the exact }\Gamma.
+\end{array}
+\]
+
+Define closed validity and mathematical proof existence only now:
+\[
+\begin{split}
+ \ValidDerivation_G(J,d,h)
+ &\Longleftrightarrow \Derives_G(\varnothing,J,d,h),\\
+ \Proves_G(J)
+ &\Longleftrightarrow
+ \exists\text{ finite }d,h:\ValidDerivation_G(J,d,h).
+\end{split}
+\]
+\(\Proves_G\) is a mathematical existence statement, not semantic truth and not a
+search procedure.  Reference validation checks supplied \((d,h)\); failure to
+supply one proves no negation.
+
+Replacing a boundary assertion at one socket by a valid proof edge is the
+structural change that closes that assumption.  No flag or premise class does so.
+Exact reuse uses an identical-judgment socket: an edge closes it, a boundary
+assertion leaves it conditional, and a self-edge or cycle fails acyclicity.
+
+\subsection{Soundness, termination, and proof locality}
+
+\begin{theorem}[Conditional derivation soundness]\label{thm:derivation-soundness}
+For every generic form, a passing instance has a true conclusion whenever all
+formed judgments at its open premises are true.  Consequently,
+\[
+\begin{split}
+ \Derives_G(\Gamma,J,d,h)
+ \land
+ \bigwedge_{((k,r),J_r)\in\Gamma}
+       (J_r\text{ is true in }G)
+ &\Longrightarrow J\text{ is true in }G,\\
+ \ValidDerivation_G(J,d,h)
+ &\Longrightarrow J\text{ is true in }G,\\
+ \Proves_G(J)
+ &\Longrightarrow J\text{ is true in }G.
+\end{split}
+\]
+\end{theorem}
+
+\begin{proof}
+Each primitive row checks its displayed semantic equation directly.  Trace,
+enumeration, composite, negative, pattern, reuse, and parametric forms have the
+soundness clauses stated in Section~\ref{sec:proof-forms}; the parametric case also
+uses truth of its exact admissibility premise.  Induct over the topological order of
+the proof edges selected by \(h\).  Edge-discharged premises obtain truth from
+earlier nodes.  Boundary-discharged premises remain precisely the hypotheses in
+\(\Gamma\).  The root then has truth \(J\).
+\end{proof}
+
+\begin{theorem}[Finite derivation checking]\label{thm:derivation-termination}
+Checking supplied finite \((G,J,d,h)\) terminates.  It performs no search for a
+missing node or alternative selection, invokes no semantic truth oracle, and
+enumerates no unbounded schema domain.
+\end{theorem}
+
+\begin{theorem}[Layer-2 locality]\label{thm:proof-locality}
+If two Factor models agree on every raw formation input, complete incident star,
+four-component declared bundle, fixed endpoint, and positive or absent restricted
+binding result for every raw match at every selected image, then they agree on
+\(\CompleteMatch_G\), \(\operatorname{Assumptions}_G\), and \(\Derives_G\),
+including false results.  This statement contains no retained image, realization
+site, access trace, or implementation strategy.
+\end{theorem}
+
+Permitted renaming of owners wholly internal to \(d\) transports \(h\), each local
+binding, premise edge, boundary witness, and assumption origin while fixing exact
+semantic endpoints in \(G\), and preserves \(\Derives_G\).
+
+\subsection{Derivation examples}
+
+One finite \(d\) may contain two symmetric complete local-evidence substructures
+and discharge positions arranged so that two distinct selections each account for
+every position and incidence.  One selection can project a boundary assertion at
+the first socket and an edge at the second; the other can reverse those
+interpretations.  They yield different conditional \(\Gamma\) values without a
+stored mode.  If either reading needed an extra witness position, it would require
+a different \(d\).
+
+The same actual selection may also fit two supplied judgments whose
+\(\operatorname{ArgBoundary}_G\) values coincide, provided each semantic target
+independently satisfies a passing generic-form instance and all recursively
+projected premises.  The supplied judgment, not \(h\), asks the semantic question.
+
+\section{Structural realization and normative replay}\label{sec:replay}
+
+\subsection{Closed retained format and structural projection}
+
+This layer uses the same fixed model \(G\).  Model formation is already a
+metalevel precondition; it is not replay evidence.
+
+There is one closed proposal-authored realization formula.  It contains no
+semantic clause, proof rule, premise meaning, assumption truth, or proof checker.
+Its root criterion is
+\[
+\begin{split}
+ \operatorname{EnvelopeShape}_G(p,z;C,F,Q,L)\Longleftrightarrow
+ \exists t\,[{}&\Rec_G(p;t,C,F,Q,L)\land\RefPos_G(t;z)\\
+ &{}\land\operatorname{ConclusionImage}_G(C,z)
+ \land\operatorname{FragmentFamily}_G(F)\\
+ &{}\land\operatorname{PathGraph}_G(Q;p,z,F)
+ \land\operatorname{SelectorFamily}_G(L,F)].
+\end{split}
+\]
+The four payload predicates are finite substrate equations:
+
+\begin{itemize}[leftmargin=2em]
+  \item \(\operatorname{ConclusionImage}_G(C,z)\) says that \(C\) owns exactly
+        one complete unlabelled conclusion-boundary image and its one external
+        target reference is \(z\);
+  \item \(\operatorname{FragmentFamily}_G(F)\) says that \(F\) is an exact
+        \(\Fam\) of reference positions to distinct retained fragment roots, each
+        root owning one complete fragment in the layer-2 proof grammar;
+  \item \(\operatorname{PathGraph}_G(Q;p,z,F)\) says that \(Q\) is an exact
+        \(\Fam\) of two-reference \(\Rec\) edge records, every edge is ordinary
+        ownership or \(\operatorname{End}\) incidence in \(G\), every target and
+        fragment root is reachable from \(p\), and every listed edge occurs in at
+        least one such path; and
+  \item \(\operatorname{SelectorFamily}_G(L,F)\) says that \(L\) is an exact
+        \(\Fam\) of two-reference \(\Rec\) link records whose endpoints lie in
+        the fragment-owned proof image.
+\end{itemize}
+
+Every family member and endpoint is quantified by these equations, and
+\(\Rec_G(p;t,C,F,Q,L)\) forbids a sixth field.  Thus the envelope has the following
+exact meaning-bearing components:
+
+\begin{itemize}[leftmargin=2em]
+  \item one target binding to exact actual root position \(z\), together with the
+        retained image of the common unlabelled conclusion boundary;
+  \item finite retained proof fragments and their structurally exposed roots;
+  \item one shared finite path subgraph from \(p\) to every exposed target and
+        fragment root; and
+  \item complete/no-extra ordinary owned selector-link positions whose endpoints
+        are retained proof-image positions.
+\end{itemize}
+
+Each path step is ordinary ownership incidence or an actual reference with its
+exact endpoint.  Paths may share prefixes.  A path is not duplicated for internal
+positions of a fragment.  Every exposed root is reachable, every path edge
+contributes to a reachability, and every retained position projected as abstract
+proof structure occurs under exactly one fragment root by ordinary ownership and
+incidence.  Target-envelope, path, and selector-link positions are each accounted
+for by their own equations.  Merely traversing such scaffolding does not make it a
+proof-image position.  Missing, overlapping, arbitrary, or unused structure
+rejects the format.
+
+Let \(I_{G,F}\) be the union of the exact owned closures of the fragment roots,
+restricted to positions satisfying one of the closed layer-2 proof-record
+equations.  Formation requires those closures to be pairwise disjoint and every
+position under a fragment root to be accepted by exactly one proof-record
+equation.  Define the structural projection relation
+\[
+  \ProjectsAt_G(c,p,z;\bar d,\bar h,e)
+\]
+to hold exactly when \(c\) is admitted, \(p\in\operatorname{Body}_G(c)\), there
+are unique \(C,F,Q,L\) satisfying \(\operatorname{EnvelopeShape}_G(p,z;C,F,Q,L)\),
+and:
+
+\begin{enumerate}[leftmargin=2.2em]
+  \item \(e\) is a bijection
+\[
+  e:\operatorname{Pos}(\bar d)\longrightarrow\operatorname{Pos}(G)
+\]
+        with range exactly \(I_{G,F}\);
+  \item transporting the restrictions of
+        \(\operatorname{Own}_G,\operatorname{End}_G,
+        \operatorname{Next}_G,\operatorname{Bind}_G\) on \(I_{G,F}\) backward
+        through \(e\) gives exactly the primitive tables of \(\bar d\), including
+        every common conclusion boundary and no scaffold position; and
+  \item \(\bar h\) is exactly
+        \[
+          \{(e^{-1}(x),e^{-1}(y)):
+             \text{one and only one link record in }L
+             \text{ has endpoints }x,y\}.
+        \]
+\end{enumerate}
+
+This is a restriction, inverse image, and finite equality of primitive tables.  It
+does not invoke a decoder or a judgment of sameness of meaning.  Incidences are
+transported as relations rather than mapped as separate objects.  Envelope, path,
+or selector positions alone create no member of \(\operatorname{range}(e)\).
+
+No canonical representative or owner order is chosen.  Exact occurrence
+identities, \(c,p,z\), graph-backed external endpoints, and every boundary-crossing
+owner remain fixed and outside \(\operatorname{Pos}(\bar d)\).  The projection checks
+only complete/no-extra realization structure.  It does not resolve a local proof
+match, validate a proof edge, or interpret a semantic judgment.
+
+\begin{theorem}[Structural-projection determinacy]\label{thm:projection}
+If two outputs project from the same \((G,c,p,z)\), there is one unique permitted
+structural isomorphism
+\(\phi:\bar d_1\cong\bar d_2\) transporting \(\bar h_1\) to \(\bar h_2\) and
+satisfying
+\[
+  e_2(\phi(q))=e_1(q)
+  \qquad(q\in\operatorname{Pos}(\bar d_1)).
+\]
+The origin maps make \(\phi\) unique even when the abstract proof has internal
+automorphisms.
+\end{theorem}
+
+\subsection{The realization correspondence}
+
+Let \(\iota:d\cong\bar d\) be a permitted incidence-preserving structural
+isomorphism that fixes every external endpoint in \(G\).  The argument \(b\) is the
+finite metalevel correspondence
+\[
+  b=\{(q,e(\iota(q))):q\in\operatorname{Pos}(d)\}.
+\]
+Its domain is exactly \(\operatorname{Pos}(d)\).  It preserves and reflects
+ownership, ordered endpoint incidence, multiplicity, identity, aliasing, sharing,
+conclusion boundaries, and open endpoints.  Graph-backed endpoints in \(G\) are
+fixed by \(\iota\) rather than included in \(b\); binder-owned hypothetical
+positions belong to \(\operatorname{Pos}(d)\) and are included.
+
+The storage representation does not contain \(b\).  It retains only the ordinary
+structures quantified by \(\operatorname{EnvelopeShape}\) and \(\ProjectsAt\).
+Changing abstract representatives transports
+\(\iota,e,b,\bar h\) together and changes no realization fact.
+
+For every \((k,q)\in h\), the selector subgraph contains exactly one ordinary
+owned link whose endpoints are \(b(k)\) and \(b(q)\), and contains no other
+selector link.  Equivalently, \(\iota\) transports \(h\) exactly to \(\bar h\).
+Selector links contain no catalogue pattern position, local binding, form
+identity, or copy of a proof pattern.
+
+\subsection{Pure structural realization}
+
+Define
+\[
+  \RealizedAt(G;J,d,h,z,c,p,b).
+\]
+\(z\) is one actual graph-backed owner/local root position, not a set or metalevel
+target.  The occurrence \(c\) is admitted and
+\(p\in\operatorname{Body}_G(c)\).  The envelope at
+\(p\) satisfies one \(\operatorname{EnvelopeShape}\), and its proof image is
+projected by \(\ProjectsAt_G\).  The relation holds exactly when:
+
+\begin{enumerate}[leftmargin=2.2em]
+  \item \(\Formed_G(J)\), \(d\) has one structural root \(k_0\), and
+        \(C_{k_0}\) is structurally equal to
+        \(\operatorname{ArgBoundary}_G(J)\);
+  \item the envelope binds the projected image of that boundary exactly to \(z\),
+        preserving every supplied argument, graph endpoint, identity, aliasing,
+        sharing, order, and incidence equation, including mapped finite
+        binder-owned hypothetical structure;
+  \item there exist \(\bar d,\bar h,e,\iota\) with
+        \(\ProjectsAt_G(c,p,z;\bar d,\bar h,e)\),
+        \(\iota:d\cong\bar d\) exact on \(\operatorname{Pos}(d)\), every external
+        endpoint fixed, and \(b=\{(q,e(\iota(q)))\}\) with no missing or extra pair;
+  \item \(\iota\) transports \(h\) exactly to \(\bar h\); and
+  \item fragments may be distributed among \(c\) and referenced occurrences, but
+        every conclusion boundary, proof edge, socket, local witness, and boundary
+        witness is reconstructed exactly and every fragment root is reached by the
+        shared path.
+\end{enumerate}
+
+\(\RealizedAt\) is pure layout and correspondence.  It performs no resolved local
+matching, complete derivation check, proof-edge acyclicity check, soundness check,
+or assumption-truth check.  It may hold for a structurally realized invalid
+\((d,h)\).  A retained fragment can participate in several realization envelopes.
+For a fixed envelope, different supplied \((d,h,b)\) witnesses differ only by the
+permitted origin-preserving isomorphism.
+
+\subsection{Containing occurrences}
+
+For an actual stored position \(s\), define
+\[
+  \operatorname{ContainingOccurrence}_G(s)
+\]
+by following the exact finite ownership chain to the nearest admitted occurrence
+whose body contains that chain.  If none exists or uniqueness fails, the
+projection is undefined.  When \(s\) itself is an admitted occurrence root, it is
+its own containing occurrence.  No occurrence-kind tag participates.
+
+\(b\) maps ordinary positions only.  Proof-edge and link incidence is represented
+by ordinary owned positions and preserved as a relation.  Thus every
+\(s\in\operatorname{range}(b)\) is a legitimate argument of this projection.
+
+\subsection{The sole retained-validity relation}
+
+Define
+\[
+\begin{split}
+ &\Replay(G;\Gamma,J,d,h,z,c,p,b)\\
+ &\quad\Longleftrightarrow\
+ \Derives_G(\Gamma,J,d,h)\\
+ &\qquad{}\land\RealizedAt(G;J,d,h,z,c,p,b)\\
+ &\qquad{}\land
+   \operatorname{ContainingOccurrence}_G(z)<_{\mathrm{anc},G}c\\
+ &\qquad{}\land
+   \forall s\in\operatorname{range}(b):\
+   \left[
+     \operatorname{ContainingOccurrence}_G(s)=c
+     \ \lor\
+     \operatorname{ContainingOccurrence}_G(s)<_{\mathrm{anc},G}c
+   \right].
+\end{split}
+\]
+This is the complete conjunct list.  The path selects fragment roots; ordinary
+ownership reconstructs their internal images.  The final conjuncts validate only
+the containing occurrences and ancestry of selected positions.  Supplying proofs
+are not recursively replayed because every proof node and edge already occurs in
+finite \(d\), and \(h\) already fixes the reading.  Every mapped boundary assertion
+is retained, but replay does not assert its truth.
+
+An exact tuple satisfying this relation is called a \emph{certified realization}
+in prose.  It is closed when \(\Gamma=\varnothing\) and conditional otherwise.
+There is no certificate sort or second certified relation.  Existence claims
+quantify directly over \(\Replay\).  Failure to supply an exact tuple establishes
+no negative fact and grants no permission to search for one.
+
+\begin{theorem}[Replay consequences and termination]\label{thm:replay}
+A closed replay implies
+\(\ValidDerivation_G(J,d,h)\), \(\Proves_G(J)\), and truth of \(J\) in \(G\).
+A conditional replay preserves its exact assumption projection and does not turn a
+boundary assertion into truth.  Reference replay terminates on finite supplied
+\((G,d,h,b)\).
+\end{theorem}
+
+\subsection{Finite locality without a normative footprint}
+
+Replay has no dependency-footprint argument or output.  For each supplied tuple,
+its truth or falsehood is nevertheless determined by finite structural inputs:
+
+\begin{itemize}[leftmargin=2em]
+  \item judgment and prospective-premise formation, including presentation or
+        schema boundaries and finite semantic audits;
+  \item every raw match at a selected image, its four declared components, and
+        every resolved comparison;
+  \item every explicit envelope/projection alternative, realization structure,
+        the supplied \(b\) boundary,
+        containing-owner chains, admission causes, frontiers, and ancestry; and
+  \item complete incident stars, fixed endpoints, and positive or absent restricted
+        binding results used by those checks.
+\end{itemize}
+
+This finite locality does not evaluate semantic truth merely because a semantic
+target occurs in a formation audit.  It never enumerates substitutions quantified
+by \(\UniversalAdmissible_G\).  The nonnormative appendix gives a constructive
+sufficient-footprint proof.
+
+\begin{theorem}[Two-sided replay locality]\label{thm:replay-locality}
+If Factor models \(G,G'\) agree on one sufficient finite structural footprint of
+the kind above, including all fixed endpoints and restricted binding results, then
+the same supplied tuple has the same \(\Replay\) truth value in both models.  Both
+models independently satisfy metalevel model formation.
+\end{theorem}
+
+An implementation may use the appendix footprint, a conservative finite superset,
+the whole finite model, or full recomputation.  Extra positions chosen for
+invalidation do not become semantic dependencies.
+
+\subsection{Retained external assumptions}
+
+For a passing derivation and realization, let the unique complete finite value
+\(\operatorname{BoundaryImage}_{G,z,c,p,b}(k,r)\) contain the exact stored images
+of the premise socket and its finite boundary witness, the relevant envelope/path
+positions, and the projection-origin correspondence from which those images follow.
+Let
+\[
+  \operatorname{RetainedOrigin}_{b}(k,r)=(b(k),b(r)).
+\]
+Define the public projection
+\[
+\begin{split}
+ &\operatorname{ExternalReq}
+       (G;\Gamma,J,d,h,z,c,p,b)\\
+ &\quad=
+ \left\{
+ \left(
+  \operatorname{RetainedOrigin}_{b}(k,r),
+  \bigl(J_r,\operatorname{BoundaryImage}_{G,z,c,p,b}(k,r)\bigr)
+ \right):
+ ((k,r),J_r)\in\Gamma
+ \right\}.
+\end{split}
+\]
+There is no tag or tagged union.  Injectivity of \(b\) keeps equal-looking
+assertions at different sockets distinct.  Edge-discharged premises have no
+external entry, and no recursive union is needed because the complete reading
+already contains every supplying node.
+
+\begin{theorem}[Complete transport of external requirements]%
+\label{thm:external-transport}
+Let \(\rho\) be a permitted renaming internal to \(d\).  Transport \(d,h,(k,r)\)
+and bound positions of each \(J_r\), fix every exact graph endpoint, and transport
+the realization witnesses so \(b'(\rho(q))=b(q)\).  Then retained boundary images
+remain the same exact graph positions while abstract coordinates transport by
+\(\rho\) and the induced structural-projection isomorphism.  The public origin stays
+\((b(k),b(r))\), and the complete \(\operatorname{ExternalReq}\) value is equal
+under that transport.
+\end{theorem}
+
+\subsection{Direct retained use and usable adoption}
+
+A raw authority claim and a replayed realization become connected only through a
+supplied actual consumer position.  All four arguments below are supplied graph
+positions.  Define
+\[
+  \operatorname{DirectUseAt}_G(c,p,u,x)
+\]
+by the exact equation
+\[
+\begin{split}
+ \operatorname{DirectUseAt}_G(c,p,u,x)\Longleftrightarrow{}&
+ (\exists f\,\operatorname{AdmittedAt}_G(c,f))
+       \land p,u\in\operatorname{Body}_G(c)\\
+ &{}\land\exists a,b\,[\Rec_G(u;a,b)
+                    \land\RefPos_G(a;p)\land\RefPos_G(b;x)].
+\end{split}
+\]
+Thus the complete structure rooted at \(u\) owns exactly two ordinary reference
+positions in encoded order with endpoint tuple \((p,x)\).  There is no missing or
+extra owned position, reference, or endpoint.  The tuple is actual ordered
+incidence, not a stored site/object role or direction field.
+
+The consumer at \(u\) refers to \(p\) through that tuple, but it is outside the realization
+envelope and is not quantified by \(\operatorname{EnvelopeShape}\) or
+\(\ProjectsAt\).  The relation is finite and
+renaming invariant while fixing its supplied graph positions.  It is functional:
+if the same \(c,u\) passes with \((p,x)\) and \((p',x')\), then \(p=p'\) and
+\(x=x'\).  Two \(\Rec\) witnesses with disagreeing endpoint projections make the
+relation false.
+
+\begin{theorem}[Direct-use exactness]\label{thm:direct-use}
+\(\operatorname{DirectUseAt}_G\) is finite and invariant under every permitted
+internal renaming that fixes its supplied graph positions.  If both
+\(\operatorname{DirectUseAt}_G(c,p,u,x)\) and
+\(\operatorname{DirectUseAt}_G(c,p',u,x')\) hold, then \(p=p'\) and \(x=x'\).
+Two complete \(\Rec\) witnesses for \(u\) that disagree on either endpoint make
+the relation false rather than selecting one by priority.
+\end{theorem}
+
+Define
+\[
+\begin{split}
+ &\operatorname{UsableAdoption}_{A,G}
+       (\xi,\mathit{claim},z,d,h,c,p,u,b)\\
+ &\quad\Longleftrightarrow
+ \exists J,\Gamma\text{ finite}:\
+   \Formed_G(J)\\
+ &\qquad{}\land
+   \operatorname{ClaimCore}_{A,G}(\xi,\mathit{claim})=(J,z)\\
+ &\qquad{}\land
+   \operatorname{Adopts}_{A,G}(\xi,\mathit{claim},J,z)\\
+ &\qquad{}\land
+   \Replay(G;\Gamma,J,d,h,z,c,p,b)\\
+ &\qquad{}\land
+   \operatorname{DirectUseAt}_G(c,p,u,\mathit{claim}).
+\end{split}
+\]
+\(\Gamma\) is unique because replay fixes it as
+\(\operatorname{Assumptions}_G(J,d,h)\).  The use is unconditional exactly when
+it is empty.  Proving the same \((J,z)\) without a direct link to the exact adopted
+claim is insufficient.
+
+When a replayed transition, release, or bridge result is consumed, its caller
+likewise supplies an actual \(u\), checks the raw direct semantic relation, and
+applies \(\operatorname{DirectUseAt}_G\) to the exact used object.  Mapped support
+occurrences precede the carrying realization.  Both ordered bridge endpoints
+precede its realization but need not be ancestors of one another.  Ancestry
+establishes retention only and never reconstructs a semantic edge or direction.
+
+\subsection{Realization examples}
+
+Suppose \(J\) has one graph-backed argument and one binder-owned hypothetical
+argument.  A realization fixes the first argument's exact endpoint in \(G\), maps
+every owned position of the second through \(b\), and can retain two proof
+fragments whose paths share one prefix from \(p\).  The shared prefix is scaffolding,
+not duplicated proof structure.
+
+If one retained premise socket changes from a boundary witness to an edge targeting
+an independently valid supplying node, the new \(d,h\) has that origin removed
+from \(\Gamma\) and from \(\operatorname{ExternalReq}\).  No assumption flag
+changes.  Likewise, moving direct-use structure can change usable adoption while
+the exact raw claim adoption remains unchanged.
+
+\section{Implementation boundary and reference equivalence}\label{sec:implementation}
+
+Encoding tags, hashes, compiled recognizers, caches, indexes, dispatch metadata,
+database layout, and host-language types have no semantic, derivation,
+realization, or replay force.  An implementation may validate or incrementally
+maintain the metalevel fact that an input graph is a Factor model before invoking
+the proposal's relations.  It may cache valid derivations, compile the fixed local
+checkers, index retained citations and external requirements, reconstruct transient
+\(b\), memoize realization comparisons, or invalidate on any conservative set.
+
+The model component of the input at this boundary is the literal tuple
+\[
+(U_G,\operatorname{Own}_G,\operatorname{End}_G,
+ \operatorname{Next}_G,\operatorname{Bind}_G).
+\]
+Every supplied finite argument
+\(A\) contributes its literal carrier and restrictions of those same primitive
+tables, including all boundary-crossing endpoints and restricted binding results;
+supplied finite relations such as \(h,b,\theta\) contribute their literal pair
+sets.  Let \(\mathcal I=(G;\vec A;\vec M)\) denote that whole mathematical input.
+It is not bytes and is not the output of a proposal-owned decoder.  First write
+\[
+\begin{aligned}
+ G\equiv_{\Sigma_F}G'\quad\Longleftrightarrow\quad{}
+ &U_G=U_{G'}
+ \land\operatorname{Own}_G=\operatorname{Own}_{G'}\\
+ &{}\land\operatorname{End}_G=\operatorname{End}_{G'}
+ \land\operatorname{Next}_G=\operatorname{Next}_{G'}\\
+ &{}\land\operatorname{Bind}_G=\operatorname{Bind}_{G'}.
+\end{aligned}
+\]
+and define
+\[
+ \mathcal I\equiv_{\Sigma_F}\mathcal I'
+ \Longleftrightarrow
+ G\equiv_{\Sigma_F}G'
+ \land|\vec A|=|\vec A'|
+ \land\bigwedge_{i=1}^{|\vec A|}
+       \operatorname{Tables}(A_i)=\operatorname{Tables}(A_i')
+ \land|\vec M|=|\vec M'|
+ \land\bigwedge_{j=1}^{|\vec M|}M_j=M_j'.
+\]
+This is literal extensional equality of every finite input table and relation, not
+merely equality of roots or host values.  A renamed input instead supplies one
+explicit bijection preserving and reflecting every primitive tuple of \(G\) and
+every \(A_i\), and transports each \(M_j\); it does not ask whether two encodings
+have the same meaning.
+
+\subsection{Canonical encoding-profile contract}
+
+Factor does not choose a byte or host representation, but an artifact claiming to
+be a \emph{canonical Factor encoding profile} must meet a fixed metalevel
+contract.  A profile \(P\) publishes an exact specification and version, an
+external carrier \(W_P\) that includes malformed as well as well-formed finite
+words, and a declared nonempty supported domain
+\(D_P\) of complete finite inputs \(\mathcal I\).  A constrained profile states
+its domain constraints; it may not silently treat an unsupported input as a
+different supported one.  The exact profile, not merely a profile name, is agreed
+before parsing.
+
+The profile supplies total single-valued maps
+\[
+\begin{aligned}
+ \operatorname{Parse}_P &: W_P\longrightarrow
+                 D_P\mathbin{\sqcup}\{\mathsf{reject}\},\\
+ \operatorname{Encode}_P &: D_P\longrightarrow W_P .
+\end{aligned}
+\]
+The published grammar must determine both maps by terminating effective
+procedures.  Total parsing means that every external word terminates with either
+one complete table-bundle result or the one explicit result
+\(\mathsf{reject}\); truncation, an unknown field, an out-of-domain atom, or
+ambiguity never leaves interpretation undefined.  Total encoding terminates on
+all of \(D_P\).  For every
+\(\mathcal I,\mathcal I'\in D_P\) and \(w\in W_P\), the profile laws are
+\[
+\begin{aligned}
+ \operatorname{Parse}_P(\operatorname{Encode}_P(\mathcal I))
+     &\equiv_{\Sigma_F}\mathcal I,\\
+ \operatorname{Parse}_P(w)=\mathcal I
+     &\Longrightarrow \operatorname{Encode}_P(\mathcal I)=w,\\
+ \operatorname{Encode}_P(\mathcal I)
+     =\operatorname{Encode}_P(\mathcal I')
+     &\Longleftrightarrow
+       \mathcal I\equiv_{\Sigma_F}\mathcal I'.
+\end{aligned}
+\]
+The first is exact round trip, the second rejects noncanonical alternatives, and
+the third is injectivity together with extensional stability.  A profile that
+intentionally accepts several surface forms instead supplies a total
+normalization into such a canonical profile; those surface forms are not
+themselves the canonical encoding.
+
+The specification must account for every component used in
+\(\mathcal I\equiv_{\Sigma_F}\): carrier identities; the arity and order of
+\(\vec A,\vec M\); every
+\(\operatorname{Own}\), \(\operatorname{End}\), \(\operatorname{Next}\), and
+\(\operatorname{Bind}\) tuple; the restricted primitive tables and every
+boundary-crossing endpoint of each supplied finite argument; and every pair,
+including the empty pair set, of each supplied relation.  It must preserve
+distinct incidence positions, repeated endpoints, aliasing, sharing, encoded
+order, and absent restricted bindings.  It may not consult an ambient registry,
+locale, mutable default, host class, or omitted-field convention, silently
+collapse duplicate rows, or synthesize a missing table.  Rejection forms no
+Factor query and establishes no negative Factor fact.
+
+For accepted words under one exact profile, define
+\[
+ w\equiv_P w'
+ \Longleftrightarrow
+ \exists\mathcal I,\mathcal I'\,
+ [\operatorname{Parse}_P(w)=\mathcal I
+  \land\operatorname{Parse}_P(w')=\mathcal I'
+  \land\mathcal I\equiv_{\Sigma_F}\mathcal I'].
+\]
+This is the wire-level meaning of the phrase \emph{the same input}.  It is
+defined by the published maps and literal table equality, not by similarity of
+names or intention.  For two different profiles \(P,Q\), byte equality has no
+force: their accepted results must first be compared by
+\(\equiv_{\Sigma_F}\), or transported by one explicit primitive-table
+isomorphism.
+
+\begin{lemma}[Canonical-profile same-input criterion]\label{lem:profile}
+For \(w,w'\) accepted by one canonical profile \(P\),
+\(w\equiv_P w'\) if and only if \(w=w'\).  Two adapters proved conforming to that
+same \(P\) therefore return extensionally equal inputs, or both return
+\(\mathsf{reject}\), on the same external word.
+\end{lemma}
+
+\begin{proof}
+If the parsed inputs are extensionally equal, injectivity makes their canonical
+encodings equal, and the second profile law identifies those encodings with
+\(w,w'\).  The converse follows from single-valued parsing.  The adapter statement
+then follows by equality with the same total \(\operatorname{Parse}_P\).
+\end{proof}
+
+For example, a profile may restrict its complete input carrier to
+\(\{0,\ldots,n-1\}\).  One length-delimited word records \(n\), then the four
+lexicographically ordered primitive relation tables, then a length-delimited block
+for every supplied argument and relation.  Zero lengths encode empty
+\(\operatorname{Bind}\) and pair tables.  Its parser rejects unsorted or duplicate
+rows, out-of-range atoms, wrong lengths, omitted blocks, and trailing material;
+its encoder emits the unique ordered form.  The example assigns no meaning to a
+tag: it simply gives one auditable representation of the literal tables for its
+declared domain.
+
+A concrete adapter \(D\) is \emph{\(P\)-conforming} exactly when
+\(D(w)=\operatorname{Parse}_P(w)\) for every \(w\in W_P\), including rejection
+cases.  Testing or proving this equality is external implementation work.  Neither
+the profile maps nor their conformance is a Factor relation.  Two incompatible
+parse maps are two different profiles even if their documents reuse one identifier;
+their adapters cannot both satisfy the same \(P\)-conformance claim.
+
+An implementation is \emph{reference-conforming} exactly when, for every Factor
+input \(\mathcal I\) presented as those tables and every exact argument tuple,
+each exposed result equals the authoritative mathematical relation on that tuple.  This is an
+external extensional criterion, not a Factor judgment or an internally generated
+certificate.  No \(\operatorname{Conforms}\) relation is defined; determining
+whether arbitrary implementation code meets the criterion is outside Factor.  The
+compared results are:
+
+\begin{itemize}[leftmargin=2em]
+  \item semantic formation and truth for every relation it exposes;
+  \item complete raw local matches and their four-component declared inputs;
+  \item resolved \(\MatchAt_G\), complete derivation, and assumption projections;
+  \item \(\operatorname{EnvelopeShape}\), \(\ProjectsAt\), and realization
+        results; and
+  \item \(\Replay\) truth and every derived semantic output.
+\end{itemize}
+
+Dependency-set identity, minimality, access order, and cache-invalidation strategy
+are not conformance outputs.  No cache or index supplies a missing match,
+derivation, assumption, correspondence, direct semantic edge, or ancestry edge.
+
+Only here may \emph{build} abbreviate \(\Apply\) followed by an external storage
+action.  It has no Factor relation of its own.  A physical encoding may materialize
+a derived output body or copied input bodies for integrity checking, but those are
+erasable caches: the reference body is derived from ancestry and the authoritative
+cause.  Creation APIs, repository copying, byte encodings, capability tiers,
+bootstrap installations, and index designs remain outside the proposal.
+
+The following is a corollary of this definition and the structural-transport
+theorems, not an internal certification theorem.
+
+\begin{corollary}[Extensional implementation agreement]\label{thm:conformance}
+Two reference-conforming implementations given
+\(\mathcal I\equiv_{\Sigma_F}\mathcal I'\) return identical reference results.
+If instead their complete inputs are related by one explicit primitive-table isomorphism,
+their results are related by the induced structural transport.  Additional reads,
+short-circuiting, physical layout, cached intermediates, and conservative
+invalidation supersets cannot change either conclusion.
+\end{corollary}
+
+This corollary alone deliberately does not compare two adapters from a common byte
+string, database row, host object, tag set, or serialization.  If two adapters are
+separately proved \(P\)-conforming to the same exact canonical profile, the
+Lemma~\ref{lem:profile} first supplies the same \(\mathcal I\), after which the corollary
+applies.  If they produce different primitive tables, at least one adapter fails
+that common profile claim or the adapters are using different profiles.  In the
+latter case the proposal does not select an interpretation: the parsed table
+bundles must satisfy \(\equiv_{\Sigma_F}\), or one explicit table isomorphism
+must be supplied, before reference results can be compared.  These adapter and
+profile premises are auditable external obligations, not Factor facts silently
+assumed by the corollary.
+
+A positive finite fact and a complete negative fact remain different.  For
+example, one exact mismatching endpoint proves two supplied endpoints unequal.
+To prove that no member of an explicit finite domain matches a candidate, the
+complete-negative form supplies the whole duplicate-free domain and one positive
+mismatch for every member.  Failure of an index or search proves neither claim.
+
+\boxtext{\textbf{Authority of definitions.}  The metalevel model conditions and
+Sections 1--7 give the complete proposal.
+Later appendices prove consequences and give nonnormative bookkeeping; they add no
+Factor relation or competing validity condition.}
+
+\appendix
+
+\section{Nonnormative proof of replay locality}\label{app:locality}
+
+\textbf{Status.}  This appendix is nonnormative.  It constructs one sufficient
+finite set for the proof of Theorem~\ref{thm:replay-locality}.  The set has no
+public Factor name, is not a replay input or output, and need not be minimal,
+unique, canonical, retained, or returned by an implementation.
+
+For one supplied tuple, begin with a finite worklist and finite sets of graph
+positions, key values, and restricted binding results.
+
+\begin{enumerate}[leftmargin=2.2em]
+  \item Add the complete inputs deciding formation of the root judgment and every
+        structurally reached prospective premise: application boundaries,
+        presentation or schema boundaries, raw finite meaning carriers, dependency
+        edges, and the acyclicity audit.  Do not add semantic truth values or
+        positions used only to evaluate a truth clause.
+  \item At every selected actual image, add every complete raw match of every fixed
+        catalogue clause, all four declared components, complete incident stars,
+        resolved comparisons, fixed checker operands, and each independently
+        formed child edge.  Preserve candidates that fail later; do not stop at the
+        first failure.
+  \item Add every \(\operatorname{EnvelopeShape}\) and \(\ProjectsAt\)
+        alternative, envelope boundary, fragment root,
+        shared-path and selector-link position, supplied \(b\) boundary, and exact
+        target comparison needed to preserve success or failure of realization.
+  \item Add every containing-owner chain, admission cause, authoritative body
+        dependency, frontier, and recursively reached parent boundary required to
+        preserve both positive and negative ancestry checks.
+  \item Whenever one of those fixed equations quantifies over a complete incident
+        star, add the whole star.  Add every exact endpoint.  For every reached key
+        add its positive or absent restricted binding result and, when positive,
+        its endpoint.  Continue until the finite worklist is empty.
+\end{enumerate}
+
+Finiteness follows because \(G,d,h,b\), every raw pattern, and every fixed
+formation carrier are finite; each closure step adds positions from those finite
+objects.  The construction never expands a semantic closure, enumerates the
+possibly infinite substitutions in \(\UniversalAdmissible_G\), or evaluates a
+truth clause solely because its definition target is audited.
+
+Agreement of two Factor models on the resulting structural boundary preserves
+the functional presentation predicates and their acyclicity, every raw candidate and
+declared bundle, every resolved success or failure, and every prospective premise.
+In particular, agreement on a restricted binding with no pair preserves that
+failed lookup as absence; no first-failure path can turn it into a positive result.
+Induction over the supplied proof-edge order preserves
+\(\CompleteMatch_G\), \(\operatorname{Assumptions}_G\), and \(\Derives_G\).
+The envelope/projection alternatives and origin maps then agree up to their unique
+origin-preserving isomorphism.  Owner-chain and frontier agreement preserves
+containment and ancestry in both directions.  The complete replay conjunction
+therefore has the same truth value.
+
+Processing all alternatives simultaneously proves independence from checker order,
+short-circuiting, and a failure in a sibling or parent candidate.  A source failure
+cannot suppress an independently formed child.  An implementation may use a larger
+set or the entire model; those extra positions do not become semantic dependencies.
+Exact retained citations and \(\operatorname{ExternalReq}\) are structural outputs,
+whereas this worklist is only proof bookkeeping.
+
+\section{Proofs of structural metatheorems}\label{app:proofs}
+
+\subsection{Model, ownership, and meaning}
+
+Finite acyclicity of the frontier-parent relation makes strict ancestry well
+founded: every nonempty descending chain would repeat a frontier and form a cycle.
+This proves the recursion premise in Theorem~\ref{thm:body}.  Existence follows by
+well-founded recursion; uniqueness follows because each base cause carries one body
+and each derived cause has one complete \(V\) and deterministic \(\Apply\).
+Renaming transports every owner, endpoint, and map equation bijectively, proving
+Theorem~\ref{thm:kernel-renaming}.
+
+\(\operatorname{Pos}(A)\) is functional because transitive ownership in finite
+structure has an exact least closure.  External endpoints are never owned and
+binder-owned descendants always are, so permitted renaming preserves and reflects
+the boundary.  The formation equations then determine one
+\(\operatorname{AppBoundary}_G\).  The incidence-derived seeds and least closure
+determine one \(\operatorname{ArgBoundary}_G\); the exclusion of target-only
+incidence proves that equal argument projections do not merge semantic targets.
+
+For Theorem~\ref{thm:meaning}, Lemma~\ref{lem:presentation-separation} separates
+the three presentation patterns even when the extensional tuple family and unary
+closure seed have the same shape.  In the structural-view case,
+Lemma~\ref{lem:clause-separation} proves pairwise disjointness of all eight clause
+rows, including the singleton-family projection case; exact boundary exhaustion
+forbids a missing row, hybrid, or residual marker.  Functionality then follows
+from the exact \(\Rec\) spines, reflected payload grammars, and agreement condition
+on two \(\ExactMatch\) witnesses.  Root equality transports complete boundaries
+and therefore transports each fixed outgoing edge.  Identity, inverse, and
+composition show that the stated graph-backed-or-hypothetical root comparison is an
+equivalence.  The same transport preserves each incidence-defined
+\(\operatorname{DefOcc}_G(a)\) and its unique outgoing dependency set.  The root
+carrier is bounded by finite \(G\) plus finitely supplied hypothetical roots; the
+occurrence carrier is bounded by those roots and finitely many proposal clauses.
+Their union is finite, so reachability and cycle detection are decidable.  Acyclic
+dependency recursion supplies one formation and truth meaning.
+
+\subsection{Semantic structural relations}
+
+\(\SameStructure_G\) is an equivalence by identity, inverse, and composition of
+its exact bijections.  The proof of Theorem~\ref{thm:congruence} transports each
+finite \(\Apply\) operand through jointly compatible node, position, and boundary
+partial bijections.  They preserve resolved requirements and injective matches,
+and extending the maps by the fresh pairing yields the output correspondence.
+Root-erasing equality alone lacks the external-boundary equations and therefore
+does not support this transport.
+
+Least closure supplies the trace characterization of reachability by induction on
+finite trace length in one direction and on membership derivations in the other.
+Factorization glue is deterministic because the complete interface has one inverse
+rewrite per cut endpoint.  Generated-family equality closure stays inside
+\(\mathcal D_{G,X}\) by its explicit guards.  Induction on its least closure proves
+the usual seed-and-preservation theorem used by necessity.
+
+Property projection is deterministic because the formed application boundary
+fixes the exact subject position, forced alias class, remaining arguments, and
+simultaneous enclosing equations.  The exact target incidence creates one
+\(\operatorname{DefOcc}_G(a)\); merging occurrences for other targets would change
+that incidence and is forbidden by the audit equality.
+
+\subsection{Finite domains and admissibility}
+
+Identity, inverse, and composition of complete root-boundary bijections prove that
+\(\operatorname{MemberIso}_G\) is an equivalence.  Every outside graph position is
+fixed in both directions, so symmetry cannot swap external endpoints.  Finite
+enumeration of root-preserving bijections proves decidability.  Duplicate-free
+payloads then make the matching representative unique.
+
+The six least-boundary rules for \(\operatorname{SchemaBoundary}_G\) are monotone
+over finite \(G\) and terminate at one least fixed point.  Traversal of each finite
+image similarly determines \(\operatorname{FullImageBoundary}_G\).
+Exact-domain/range and incidence reflection make \(\beta_\theta\) functional.
+Formation of instantiated boundaries is a finite total check.  Model agreement on
+these complete operands preserves every conjunct of
+\(\operatorname{PermBind}_G\), including its failure when an instantiation is
+unformed.  The unique \(\operatorname{SchemaShape}\) projection,
+duplicate-free guard formation, and finite
+cycle detection make admissibility formation functional, decidable, and
+renaming-invariant.  The audit includes all fixed hypothesis and conclusion
+targets, so admissibility cannot approve itself through a meaning cycle.  These
+facts prove Theorem~\ref{thm:schema}.
+
+\subsection{Catalogue, matching, and derivations}
+
+The DF tables enumerate every primitive operator and every
+permitted carrier variant.  Each raw pattern is finite and each input profile is a
+least closure over finite structure.  The remaining generic forms have the same
+property.  This proves termination and exhaustiveness in
+Theorem~\ref{thm:catalogue}; a clause absent from the tables has no direct
+applicability equation.  In the parametric form, its finite substitution and
+boundary checks establish one permitted \(\theta\); truth of the exact
+admissibility premise and every instantiated open hypothesis then gives the
+instantiated conclusion by the universal clause.  Thus the form's substitution
+theorem invokes no installed rule or conclusion oracle.
+
+For a fixed completed raw match, the row fixes all seeds and closure rules, so
+\(\operatorname{DeclaredInputs}\) is functional.  Equal images transport these
+seeds and equations and therefore have coherent projections.  Resolved checks add
+conjuncts without changing the raw binding or bundle, proving
+Theorem~\ref{thm:local-determinacy}.  Exact agreement of complete stars and
+restricted binding results preserves each conjunct in both directions, proving
+Theorem~\ref{thm:match-locality}.
+
+Every complete reading uses all positions of \(d\); acyclicity gives a finite
+topological order.  Induction in that order proves
+Theorem~\ref{thm:derivation-soundness}.  Local checker termination and finite graph
+traversal prove Theorem~\ref{thm:derivation-termination}.  Applying
+Theorem~\ref{thm:match-locality} independently at every selected image, including
+all failed alternatives, preserves the complete discharge incidence and exact
+assumption projection.  This proves Theorem~\ref{thm:proof-locality}.
+
+\subsection{Projection, replay, external requirements, and authority}
+
+The explicit proof-image restriction assigns every projected proof position one
+retained origin.  Composing the two origin bijections yields the isomorphism in
+Theorem~\ref{thm:projection}; equality at every retained origin makes it unique.
+Composition with \(\iota\) gives an exact \(b\), and the selector equations
+transport \(h\) without copying catalogue positions.
+
+Realization is finite structural comparison.  Containment follows finite owner
+chains, and ancestry follows finite frontier parents.  Conjoining these checks
+with finite derivation checking proves replay termination.  Closed replay invokes
+Theorem~\ref{thm:derivation-soundness}, proving
+Theorem~\ref{thm:replay}.  Appendix~\ref{app:locality} proves the two-sided locality
+claim without adding a semantic footprint.
+
+Under a permitted internal renaming, \(b'(\rho(q))=b(q)\) fixes every public
+retained origin.  The induced structural-projection isomorphism transports the
+abstract coordinates while the graph images stay exact, proving
+Theorem~\ref{thm:external-transport}.  The two-reference complete/no-extra
+equation at \(u\) makes \(\operatorname{DirectUseAt}_G\) finite and functional:
+two passing endpoint tuples must be the same ordered tuple.  Incidence-preserving
+renaming transports that unique tuple while fixing its supplied graph positions,
+which proves Theorem~\ref{thm:direct-use}.
+
+Finally, raw claim-core and adoption projections read only their fixed frame,
+claim, target, and raw support positions.  Realization and consumer positions lie
+outside that projection, so changing only them preserves the raw result.  This
+proves Theorem~\ref{thm:raw-authority}; usable adoption can still change because it
+has the separate replay and direct-use conjuncts.
+
+\subsection{Reference equivalence}
+
+Every reference relation is a mathematical function or relation of the literal
+primitive tables and supplied finite relations.  The definition of reference conformance
+therefore gives identical outputs when
+\(\mathcal I\equiv_{\Sigma_F}\mathcal I'\).  The proposal's
+renaming theorems give the transported result for an explicit primitive-table
+isomorphism.  A cache, type, index, or access trace is absent from every
+authoritative argument and cannot justify another answer.  This yields
+Corollary~\ref{thm:conformance}.  On its own it supplies no premise about
+independently written encoding adapters.  Lemma~\ref{lem:profile} supplies that
+premise only after each adapter has separately met the same published
+\(P\)-conformance criterion; arbitrary or cross-profile adapters remain outside
+the corollary.
+
+\end{document}

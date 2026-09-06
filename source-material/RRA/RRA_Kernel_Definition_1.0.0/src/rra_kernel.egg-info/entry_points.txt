@@ -1,0 +1,2 @@
+[console_scripts]
+rra-kernel = rra_kernel.__main__:main

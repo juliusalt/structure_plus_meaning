@@ -1,0 +1,84 @@
+theory Factor_Schema_Lists
+  imports Factor_Schema_Frames
+begin
+
+section \<open>Separating the two forms of an identified mixed family\<close>
+
+definition left_sockets :: "('s \<times> ('a+'b)) set \<Rightarrow> ('s \<times> 'a) set" where
+  "left_sockets M = {(s,x). (s,Inl x) \<in> M}"
+
+definition right_sockets :: "('s \<times> ('a+'b)) set \<Rightarrow> ('s \<times> 'b) set" where
+  "right_sockets M = {(s,x). (s,Inr x) \<in> M}"
+
+lemma socket_sum_split [simp]:
+  fixes M :: "('s \<times> ('a+'b)) set"
+  shows "socket_sum (left_sockets M) (right_sockets M) = M"
+proof (rule set_eqI)
+  fix entry :: "'s \<times> ('a+'b)"
+  obtain s t where pair: "entry = (s,t)" by (cases entry)
+  show "entry \<in> socket_sum (left_sockets M) (right_sockets M) \<longleftrightarrow> entry \<in> M"
+    by (cases t) (auto simp: pair socket_sum_def left_sockets_def right_sockets_def)
+qed
+
+lemma left_sockets_sum [simp]: "left_sockets (socket_sum Q C) = Q"
+  by (auto simp: left_sockets_def)
+
+lemma right_sockets_sum [simp]: "right_sockets (socket_sum Q C) = C"
+  by (auto simp: right_sockets_def)
+
+lemma left_sockets_member [simp]: "(s,x) \<in> left_sockets M \<longleftrightarrow> (s,Inl x) \<in> M"
+  by (simp add: left_sockets_def)
+
+lemma right_sockets_member [simp]: "(s,x) \<in> right_sockets M \<longleftrightarrow> (s,Inr x) \<in> M"
+  by (simp add: right_sockets_def)
+
+definition schema_list_projection ::
+  "('a \<Rightarrow> local_address) \<Rightarrow> 'a term_pattern \<Rightarrow> local_address list \<Rightarrow>
+    ('a,'u) premise_template list \<Rightarrow> 'u native_schema" where
+  "schema_list_projection f p ss ts =
+    \<lparr>schema_conclusion = rename_pattern f p,
+     schema_premises = left_sockets (set (zip ss (map (template_projection f) ts))),
+     schema_material_premises = right_sockets (set (zip ss (map (template_projection f) ts)))\<rparr>"
+
+lemma schema_list_socket_sum:
+  "socket_sum (schema_premises (schema_list_projection f p ss ts))
+    (schema_material_premises (schema_list_projection f p ss ts)) =
+    set (zip ss (map (template_projection f) ts))"
+  by (simp add: schema_list_projection_def)
+
+lemma template_projection_variables:
+  "(case template_projection f t of Inl dp \<Rightarrow> pattern_variables (snd dp)
+      | Inr M \<Rightarrow> material_variables M) = f ` template_variables t"
+  by (cases t) (auto simp: renamed_material_variables rename_pattern_variables split: prod.splits)
+
+lemma schema_variables_from_sum:
+  "schema_variables S = pattern_variables (schema_conclusion S) \<union>
+    (\<Union>(s,t)\<in>socket_sum (schema_premises S) (schema_material_premises S).
+      case t of Inl dp \<Rightarrow> pattern_variables (snd dp) | Inr M \<Rightarrow> material_variables M)"
+  by (auto simp: schema_variables_def socket_sum_def split: prod.splits)
+
+lemma schema_list_variables:
+  assumes len: "length ss = length ts"
+  shows "schema_variables (schema_list_projection f p ss ts) =
+    f ` (pattern_variables p \<union> template_list_variables ts)"
+proof -
+  have range: "rel_ran (set (zip ss (map (template_projection f) ts))) =
+    template_projection f ` set ts"
+    using zip_range[of ss "map (template_projection f) ts"] len by simp
+  have union: "(\<Union>(s,t)\<in>set (zip ss (map (template_projection f) ts)).
+      case t of Inl dp \<Rightarrow> pattern_variables (snd dp) | Inr M \<Rightarrow> material_variables M) =
+    (\<Union>t\<in>set ts. f ` template_variables t)"
+    by (simp only: relation_range_union range) (simp add: template_projection_variables)
+  show ?thesis
+    by (simp only: schema_variables_from_sum schema_list_socket_sum schema_list_projection_def
+        factor_schema.select_convs socket_sum_split rename_pattern_variables union template_list_variables_def image_Un image_UN)
+qed
+
+text \<open>
+  List order supplies fresh socket occurrences during construction. The native
+  projection remains a complete finite identified family. Equal body values
+  at different sockets are retained, and separating calls from material
+  observations loses no entry or socket identity.
+\<close>
+
+end

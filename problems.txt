@@ -1,0 +1,1364 @@
+
+# Review conclusion
+
+I reviewed the actual archive, its nineteen normative Isabelle theories, its theory dependency graph, its nonnormative audit material, and the supplied reviewer’s report.
+
+The package is **not yet a complete Isabelle/HOL bootstrap of the intended system**. It is also not merely a complete design awaiting an Isabelle build. Several of its central definitions embody assumptions that are either:
+
+1. inconsistent with your stated structural and semantic commitments;
+2. weaker than their names and accompanying prose claim;
+3. unresolved design choices that should have remained explicit;
+4. conditions describing what a future bootstrap must prove rather than proofs that the delivered bootstrap has achieved it.
+
+The reviewer correctly found many concrete deficiencies, including the missing connection between construction inputs and assembly pieces, the vacuous form of reflection, the assumed computational-completeness property, the resolver problem, trajectory weaknesses, the empty-piece-family profile ambiguity, and broken audit expressions.   
+
+My assessment is less favorable than the reviewer’s overall architectural score because the most important mismatch is structural: **the actual theory graph and actual definition of Factor do not have the architecture claimed by the package’s prose**.
+
+The fresh archive’s manifest verifies, and I independently found no visible `sorry`, `oops`, `axiomatization`, or similar proof escape. But Isabelle was not available, so none of the theories has been accepted by Isabelle in this delivery environment. 
+
+---
+
+# 1. The actual dependency structure contradicts the intended architecture
+
+The intended foundation has parallel structural branches and later semantic joins:
+
+$$
+\begin{array}{c}
+\text{RRA Core}
+\longrightarrow
+\text{Exact Artifacts}
+\\[0.4em]
+\phantom{\text{RRA Core}}
+\searrow
+\begin{array}{ccc}
+\text{Assembly} & \text{Evidence} & \text{Trajectory}
+\end{array}
+\\[0.6em]
+\text{Factor Formation}
+\longrightarrow
+\text{Factor Meaning}
+\\[0.4em]
+\begin{array}{ccc}
+\text{Construction} & \text{Derivation} & \text{Authority}
+\end{array}
+\\[0.4em]
+\text{Construction joins Assembly}
+\\
+\text{Replay joins Derivation and Evidence}
+\\
+\text{Continuation joins Meaning and Trajectory}
+\end{array}
+$$
+
+The archive instead implements an almost completely linear chain:
+
+$$
+\begin{aligned}
+&\texttt{RRA\_Core}
+\to
+\texttt{RRA\_Data}
+\to
+\texttt{RRA\_Exact}
+\to
+\texttt{RRA\_Structural\_Syntax}
+\\
+&\to
+\texttt{RRA\_Fragment}
+\to
+\texttt{RRA\_Assembly}
+\to
+\texttt{RRA\_Evidence}
+\to
+\texttt{RRA\_Trajectory}
+\\
+&\to
+\texttt{Factor\_Combinator\_Core}
+\to
+\texttt{Factor\_Semantics}
+\to
+\texttt{Factor\_Derivation}
+\\
+&\to
+\texttt{Factor\_Construction}
+\to
+\texttt{Factor\_Evidence}
+\to
+\texttt{Factor\_Authority}
+\\
+&\to
+\texttt{Foundation\_Reflection}
+\to
+\texttt{Foundation\_Genesis}
+\to
+\texttt{Foundation\_Computational\_Sufficiency}.
+\end{aligned}
+$$
+
+This is not just a harmless build order. Isabelle imports establish logical dependency.
+
+Several dependencies are contrary to the intended order:
+
+* `RRA_Evidence` imports `RRA_Assembly`, although its definitions use no assembly concept.
+* `RRA_Trajectory` imports `RRA_Evidence`, although its basic generation and publication formation uses only exact anchors and structural syntax.
+* `Factor_Combinator_Core` imports `RRA_Trajectory`, although SK term formation uses neither trajectories nor evidence.
+* `Factor_Semantics` consequently depends transitively on Assembly, Evidence, and Trajectory.
+* `Factor_Construction` imports `Factor_Derivation`, despite using no derivation predicate.
+* Raw adoption and currentness in `Factor_Authority` depend transitively on evidence and proof because the whole authority theory imports `Factor_Evidence`.
+* Computational sufficiency imports Genesis, although computational adequacy should be a condition needed to establish a complete genesis, not something whose mathematical development depends on genesis already being available.
+
+This matters because your requirement was not merely that prose *describe* the right separation. The formal structure itself must embody it.
+
+The package’s `THEORY_MAP.md` says that the order is “intentionally not flat,” but the delivered import graph is effectively one total chain. That is a direct inconsistency between the explanatory document and the normative theories.
+
+## Required correction
+
+The theories must be reorganized into a real dependency DAG. At minimum:
+
+* Assembly, Evidence, and Trajectory should be independent branches over the smallest common exact-structural basis they actually require.
+* Factor formation and meaning must not depend on Evidence, Trajectory, or Derivation.
+* Factor Construction should import Factor meaning together with Assembly and Fragment.
+* Factor Derivation should import Factor meaning independently of Construction.
+* Replay or certification should join Derivation, Construction, and Evidence.
+* Raw Authority should depend on Factor meaning and Trajectory, while certified uses of authority may additionally depend on Evidence.
+* Computational adequacy should be developed before the complete-genesis theorem that requires it.
+
+This is the first repair because every later proof otherwise certifies the wrong dependency architecture.
+
+---
+
+# 2. The delivered `Factor_Semantics` is not the intended Factor language
+
+The package’s most important substantive mistake is its replacement of Factor by a finite ground Horn closure plus one hard-coded SK relation.
+
+In `Factor_Semantics.thy`:
+
+```isabelle
+record factor_clause_projection =
+  clause_premises :: "exact_anchor set"
+  clause_conclusion :: exact_anchor
+```
+
+and:
+
+```isabelle
+inductive_set factor_closure ...
+```
+
+followed by:
+
+```isabelle
+factor_holds ρ Φ j ⟷
+  ...
+  (combinator_construction_holds ρ Φ j ∨
+   j ∈ factor_closure clauses seeds)
+```
+
+See `Factor_Semantics.thy:67–98` and `189–206`.
+
+For fixed \(\rho\) and \(\Phi\), this is essentially a finite propositional Horn theory over exact judgment anchors.
+
+It has no general structural mechanism for:
+
+* binders;
+* variables;
+* structural substitution;
+* application schemas;
+* universally quantified construction rules;
+* local structural matching;
+* definition-specific formation boundaries;
+* parameterized semantic presentations;
+* generic relations over future inputs.
+
+A Factor judgment is merely projected as:
+
+$$
+(\text{definition anchor},\text{argument-anchor list}).
+$$
+
+Nothing in `formed_factor_judgment` checks that the referenced definition structurally declares:
+
+* the permitted number of arguments;
+* the required argument boundaries;
+* aliasing or sharing constraints;
+* formation conditions;
+* the semantics of applying that definition.
+
+It only checks that a two-field record can be decoded uniquely.
+
+## 2.1 A finite catalogue cannot be the programming language
+
+Because:
+
+* the resolver is finite;
+* every artifact in it is finite;
+* foundation seeds and clauses are finite;
+* clauses contain exact ground anchors rather than structural schemas;
+
+a fixed foundation can directly determine only finitely many ordinary ground judgments.
+
+For example, there is no way in this system to define a generic identity program:
+
+$$
+\operatorname{Id}(x,x)
+$$
+
+for every future formed structure \(x\), unless every individual application has already been included as a ground judgment or receives special metalevel treatment like SK.
+
+That is not yet a programming language on which arbitrary software can be built. It is a finite fact-and-rule catalogue with one externally privileged reduction relation.
+
+## 2.2 It silently selects structural proof principles
+
+`clause_premises` is a set.
+
+Consequently, the semantic core silently makes the following choices:
+
+* premise order has no force;
+* repeated equal premises collapse;
+* contraction is implicit;
+* exchange is implicit;
+* multiplicity of premise use is not preserved;
+* satisfaction is monotone in accumulated closure.
+
+Those may be valid principles for one logic. They are not neutral enough to underlie every semantic system.
+
+The broad Factor design explicitly avoids silently adding copying, deletion, weakening, state preservation, consumption, or similar structural consequences.  The bootstrap’s ground-set closure reintroduces some of these choices through the mathematical representation of premises.
+
+This does not mean Factor may never define a monotone Horn relation. It means **monotone Horn closure cannot silently be the one universal form of Factor meaning**.
+
+## 2.3 `foundation_dependencies` has no semantic function
+
+`foundation_dependencies` is structurally present and checked only for anchor formation:
+
+* `Factor_Semantics.thy:94–99`;
+* `120–152`.
+
+It is not used by `factor_holds`, the clause closure, construction, derivation, or a semantic dependency audit.
+
+Therefore it currently has one of two defects:
+
+* it is redundant structure with no normative consequence; or
+* it purports to be a dependency boundary but does not constrain the semantics it is supposed to account for.
+
+Either way, it conflicts with the intended irredundancy and sufficiency discipline.
+
+## Required correction
+
+Before completing reflection or universality, the bootstrap needs a general **structurally parameterized Factor definition mechanism** over RRA.
+
+The precise minimal mechanism is not determined by your comments alone. It must support arbitrary structurally formed applications without reintroducing an independent syntax or nominal dispatcher.
+
+### TODO — minimal Factor definition form
+
+The design must determine the minimal RRA topology sufficient to expose:
+
+* a complete argument boundary;
+* bound and fixed positions;
+* structural matching and substitution;
+* the semantic body;
+* direct semantic dependencies;
+* whatever well-founded or least-fixed-point construction is permitted.
+
+The existing Factor proposal contains candidate mechanisms—structural views, extensional relations, closure definitions, application boundaries, and admissibility schemas—but their individual details are provisional. They should be mined for requirements, not copied wholesale.
+
+The decision is complete only after proving functional recovery, no-extra formation, renaming invariance, dependency locality, and sufficient expressive power.
+
+---
+
+# 3. SK has become a second semantic foundation
+
+The user instruction allowed any convenient universal calculus to be chosen **as an adequacy witness**.
+
+The package instead makes SK part of the definition of Factor truth.
+
+`Factor_Combinator_Core.thy` introduces:
+
+```isabelle
+datatype sk_term = ...
+inductive sk_step ...
+```
+
+Then `Factor_Semantics.thy` defines:
+
+```isabelle
+combinator_construction_holds ...
+```
+
+which directly contains:
+
+```isabelle
+sk_step t u
+```
+
+and `factor_holds` gives this relation primitive semantic force.
+
+That means the actual semantic architecture is:
+
+$$
+\boxed{
+\text{Factor ground closure}
++
+\text{externally defined Isabelle SK semantics}
+}
+$$
+
+rather than:
+
+$$
+\boxed{
+\text{Factor language}
+\quad\text{proved capable of representing SK}
+}
+$$
+
+The reviewer notices this and correctly says it must be temporary if it is retained at all. 
+
+## 3.1 The topology does not define the SK reduction rules
+
+`raw_combinator_step_definition` recognizes a root containing an \(S\)-shaped child and a \(K\)-shaped child.
+
+That topology does not structurally contain the equations:
+
+$$
+Kxy\to x
+$$
+
+and:
+
+$$
+Sxyz\to xz(yz).
+$$
+
+Those equations remain in the Isabelle inductive definition `sk_step`.
+
+The recognized `[S,K]` structure therefore functions as a structurally disguised token selecting a metalevel semantic primitive.
+
+It is better than a byte opcode, but it still does not satisfy the requirement that meaning be reflectively determined by structure. The topology selects a rule whose content is elsewhere.
+
+## 3.2 The universality predicate is weak enough to be vacuous
+
+`sk_program_complete` quantifies only over terms already quoted through one fixed finite resolver:
+
+```isabelle
+quoted_sk_term ρ input t ∧ sk_step t u
+```
+
+If the resolver contains the topology-recognized \(S\), \(K\), and \(SK\) structures but no reducible quoted term, the completeness antecedent is false for every quoted input.
+
+Thus `sk_program_complete` can satisfy its completeness clause without demonstrating even one nontrivial reduction.
+
+Even apart from that vacuity, the actual completeness obligation is placed inside the definition of `sk_program_complete`, and all later simulation lemmas assume it. No concrete program is proved complete. The reviewer correctly identifies this general problem. 
+
+## Required correction
+
+SK should be moved out of the primitive definition of `factor_holds`.
+
+The correct direction is:
+
+$$
+\text{general Factor semantics}
+\longrightarrow
+\text{structural Factor definition of SK}
+\longrightarrow
+\text{adequacy theorem}.
+$$
+
+The final theorem must be uniform over arbitrary formed quoted terms, not merely terms already occurring in a fixed finite resolver.
+
+The choice of SK itself is resolved by your instruction and does not require a TODO. What remains missing is the actual encoding and proof.
+
+---
+
+# 4. The quotation requirement has not been met
+
+Your instruction was precise:
+
+1. the quotation topology should itself be structurally determined; or
+2. if there is no privileged topology, all admissible choices must be shown behaviorally equivalent, and Factor reasoning must transport between them.
+
+The package does neither.
+
+## 4.1 `quotation_geometry` is an external function pair
+
+In `RRA_Structural_Syntax.thy:139–149`:
+
+```isabelle
+record 's quotation_geometry =
+  quote_value :: "'s ⇒ exact_artifact"
+  read_value :: "exact_artifact ⇒ 's option"
+```
+
+Faithfulness requires essentially:
+
+$$
+read(quote(x))=Some(x).
+$$
+
+It does not require:
+
+* the reader to be structurally defined;
+* the quote to have a complete RRA boundary;
+* preservation of incidence;
+* preservation of exact citations;
+* preservation of assembly structure;
+* preservation of evidence or trajectory relationships;
+* no-extra quotation scaffolding;
+* a Factor derivation implementing transport.
+
+## 4.2 The behavioral-equivalence theorem is a decoder tautology
+
+`Foundation_Reflection.thy:18–39` proves that for any metalevel predicate \(B\):
+
+$$
+B(read_Q(quote_Q(x)))
+\leftrightarrow
+B(read_{Q'}(quote_{Q'}(x))).
+$$
+
+Both sides reduce to \(B(x)\).
+
+This establishes that two externally trusted left inverses return the same source object. It does **not** establish contextual equivalence of the quoted artifacts under Factor.
+
+A Factor context may inspect:
+
+* exact artifact identity;
+* incidence topology;
+* local addresses;
+* exposed boundaries;
+* citation structure;
+* assembly origins.
+
+Two different quotations can differ on all of these. The package proves equivalence only after erasing those differences through an external reader.
+
+The statement in `Foundation_Reflection.thy:41–46` that the theorem covers Factor closure, construction, derivation, replay, and authority is therefore unsupported. Such predicates operate on exact artifacts, anchors, resolvers, and foundations; they are not simply predicates of a decoded abstract source value.
+
+## 4.3 Identity quotation is not reflection
+
+The chosen `reflexive_geometry` is:
+
+```isabelle
+quote_value = id
+read_value = ...
+```
+
+This shows that an already exact RRA artifact can be returned unchanged.
+
+It does not provide:
+
+* a quotation of the Isabelle definitions;
+* a structural representation of the semantic clauses;
+* an internal Factor interpreter for those representations;
+* a proof that the field-chain record topology is inessential;
+* a transport construction expressible in Factor.
+
+An exact artifact being identical to itself is not the same as the foundation having reflectively represented its own normative definitions.
+
+## Required correction
+
+The real transport statement must relate translated Factor contexts and judgments, for example schematically:
+
+$$
+\operatorname{Holds}_{\Phi_Q}(J_Q)
+\iff
+\operatorname{Holds}_{\Phi_{Q'}}
+   (T_{Q,Q'}(J_Q)),
+$$
+
+where \(T_{Q,Q'}\):
+
+* is itself structurally represented;
+* transports complete boundaries and citations;
+* preserves and reflects the required RRA relations;
+* has a Factor derivation of its correctness;
+* is invertible up to the chosen structural equivalence.
+
+Only after such a result is proved may one representative topology be selected without semantic privilege.
+
+---
+
+# 5. K2 is good internally, but construction is not from the declared inputs
+
+The strongest part of the package is the internal `K2` definition.
+
+It correctly requires:
+
+* a formed finite piece family;
+* a total single-valued source-to-output relation;
+* complete output-carrier range;
+* exact transported incidence;
+* profile-specific data transport.
+
+Its no-unexplained-output theorem is a real and useful constitutional result.
+
+The defect begins at the Factor join.
+
+In `Factor_Construction.thy:42–51`, `factor_constructs` requires:
+
+* a structurally recovered construction judgment;
+* `factor_holds`;
+* a formed assembly quote;
+* a K2 witness;
+* agreement between the assembly output and cited output.
+
+It does not require the assembly pieces to be derived from:
+
+* `construction_inputs`;
+* selected fragments of those inputs;
+* constructor or template pieces authorized by the program;
+* explicitly admitted base artifacts.
+
+The reviewer’s self-assembly counterexample is valid. 
+
+If \(B\) is the cited output, a witness can use \(B\) itself as its sole input piece and map it identically to \(B\). K2 then explains \(B\) from \(B\), not from the program’s declared input \(A\).
+
+The system consequently proves:
+
+> the output has an origin in some assembly piece,
+
+but not:
+
+> the output has an admissible origin in this program’s declared inputs and constructors.
+
+That distinction is central to the intended notion of computation.
+
+## 5.1 `RRA_Fragment` is disconnected
+
+`RRA_Fragment.thy` introduces:
+
+$$
+(\text{source artifact},\text{selected carrier}).
+$$
+
+But neither `RRA_Assembly.thy` nor `Factor_Construction.thy` uses `exact_fragment`.
+
+An assembly piece is only:
+
+$$
+(\text{slot},\text{exact artifact}).
+$$
+
+Once fragment material is restricted into a new exact artifact, K2 no longer records that it came from an exact selection of a particular source.
+
+The reviewer correctly identifies this broken provenance chain. 
+
+The required chain is:
+
+$$
+\boxed{
+\text{declared input occurrence}
+\longrightarrow
+\text{selected fragment occurrence}
+\longrightarrow
+q
+\longrightarrow
+\text{output occurrence}.
+}
+$$
+
+The source and selection should not be duplicated as arbitrary metadata. They should determine the piece material.
+
+## 5.2 Fragment completeness currently covers incidence but not all data
+
+`fragment_boundary` records only crossing RRA incidence.
+
+For the node data profile, a tuple:
+
+$$
+(d,a,v)
+$$
+
+may cross the selected carrier boundary—for example \(d\) is selected while \(a\) is omitted. `restrict_data` drops such a tuple, but `fragment_boundary` does not record it.
+
+Therefore the claimed boundary-complete fragment is not boundary-complete for the full structured object.
+
+## 5.3 Empty piece families do not determine a data profile
+
+For an empty piece family:
+
+```isabelle
+family_has_profile P k =
+  (∀s ∈ piece_slots P. ...)
+```
+
+is true for every profile.
+
+The same empty pieces and empty origin can therefore justify outputs with:
+
+* `No_Data`;
+* empty functional data;
+* empty bag data;
+* empty node data.
+
+The reviewer correctly identifies this. 
+
+The selected profile is part of exact assembly formation and must remain explicit even when the family is empty.
+
+## 5.4 `function_like` ignores data and the selected result boundary
+
+`Factor_Construction.thy:85–97` compares only:
+
+```isabelle
+rra_isomorphic
+  (object_structure output1)
+  (object_structure output2)
+```
+
+It ignores:
+
+* output data;
+* the data profile;
+* the cited output occurrence;
+* the bounded result interface;
+* any Factor-defined semantic equivalence.
+
+This is an unjustified and unnecessary definition. It should be removed until the relevant equality is supplied explicitly by a program or semantic theory.
+
+---
+
+# 6. Reflection and genesis state the desired result as premises
+
+The reviewer’s diagnosis here is correct, but the problem is even stronger.
+
+## 6.1 `external_truth` is an arbitrary field
+
+`Foundation_Reflection.thy` defines:
+
+```isabelle
+record reflection_specification =
+  reflection_domain :: "exact_anchor set"
+  external_truth :: "exact_anchor set"
+```
+
+and then puts the intended adequacy result directly into `reflection_valid`:
+
+```isabelle
+∀j ∈ reflection_domain X.
+  (j ∈ external_truth X) ⟷
+  factor_holds ρ (reflected_foundation B) j
+```
+
+`reflection_handoff` simply unfolds this assumption.
+
+There is no independently defined relation corresponding to the actual Isabelle bootstrap judgments.
+
+Worse, the “external” side already has type `exact_anchor`. It is not a quotation of an external Isabelle syntax or public Isabelle judgment. Both sides already inhabit the internally chosen anchor representation.
+
+## 6.2 The reflection domain can be empty
+
+Nothing requires:
+
+* a nonempty domain;
+* inclusion of every public bootstrap judgment;
+* closure under formed applications;
+* inclusion of all semantic definitions;
+* a concrete enumeration or characteristic condition.
+
+With:
+
+$$
+reflection\_domain=\varnothing,
+\qquad
+external\_truth=\varnothing,
+$$
+
+the adequacy clause is vacuous.
+
+The evidence-link obligation is then also empty because `reflected_definitions` is empty.
+
+## 6.3 No concrete reflected foundation exists
+
+The package defines predicates such as:
+
+$$
+reflection\_valid(\rho,X,B),
+$$
+
+$$
+genesis\_formed(\rho,X,G),
+$$
+
+and:
+
+$$
+complete\_genesis(\rho,X,G).
+$$
+
+It supplies no concrete:
+
+$$
+\rho_0,\quad
+X_0,\quad
+\Phi_0,\quad
+B_0,\quad
+G_0
+$$
+
+and no theorem proving:
+
+$$
+complete\_genesis(\rho_0,X_0,G_0).
+$$
+
+The reviewer correctly distinguishes a framework specifying what a witness should satisfy from a completed handoff that actually constructs and proves the witness. 
+
+## 6.4 The non-self-authorization lemmas do not establish non-circularity
+
+For example:
+
+```isabelle
+lemma genesis_is_not_self_authorized:
+  assumes "genesis_formed ρ X G"
+  shows "reflection_valid ..."
+```
+
+This extracts one conjunct from `genesis_formed`.
+
+It does not prove that the genesis authority originates externally, that the reflection theorem is non-circular, or that the foundation has not selected its own meaning.
+
+The theorem name claims substantially more than its conclusion establishes.
+
+## Required correction
+
+The package needs an actual externally defined bootstrap judgment relation:
+
+$$
+\operatorname{BootstrapHolds}_{HOL}(j),
+$$
+
+an actual quotation:
+
+$$
+\ulcorner j\urcorner,
+$$
+
+an actual exact foundation \(\Phi_0\), and a theorem:
+
+$$
+\operatorname{BootstrapHolds}_{HOL}(j)
+\iff
+\operatorname{FactorHolds}_{\Phi_0}
+  (\ulcorner j\urcorner)
+$$
+
+for the precisely defined public domain.
+
+Only after that theorem exists should the handoff and genesis be defined.
+
+---
+
+# 7. Exact references are not non-rebinding across semantic contexts
+
+`resolver_non_rebinding` proves only:
+
+$$
+resolves(\rho,r,R)
+\land
+resolves(\rho,r,R')
+\Longrightarrow R=R'.
+$$
+
+It says nothing about two different resolver arguments.
+
+Thus both may hold:
+
+$$
+resolves(\rho_1,r,R_1),
+\qquad
+resolves(\rho_2,r,R_2),
+\qquad
+R_1\ne R_2.
+$$
+
+Nearly every Factor predicate takes \(\rho\). The same stored anchor may therefore denote a different exact artifact under another supplied resolver.
+
+The reviewer correctly identifies this as weaker than the intended reference identity. 
+
+There is a second problem: aliases are permitted, but semantic equality is normally exact equality of `exact_anchor`.
+
+If:
+
+$$
+resolves(\rho,r_1,R)
+$$
+
+and:
+
+$$
+resolves(\rho,r_2,R),
+$$
+
+then:
+
+$$
+Whole\_Artifact(r_1)
+\ne
+Whole\_Artifact(r_2)
+$$
+
+even though both resolve to the same exact artifact. Ground clause closure and set membership can therefore depend on reference spelling, despite the claim that the artifact’s identity is its exact record rather than its reference.
+
+### TODO — exact reference discipline
+
+Your intent determines that references must not silently change semantic targets and that reference spelling must not replace exact artifact identity. It does not determine which mechanism should enforce that.
+
+At least three materially different solutions exist:
+
+1. content-determined references with verified resolution;
+2. an exact resolver artifact plus an extension relation proving preservation of all prior bindings;
+3. semantic anchor equality by resolved artifact and local address, with aliases treated extensionally.
+
+The selected solution must preserve exact citations, permit whatever aliasing is intentionally retained, and support reflective use without an unstructured ambient resolver.
+
+The current package has not made that decision and should not claim the issue closed.
+
+---
+
+# 8. Trajectory formation is not yet an exact account of development
+
+## 8.1 Predecessors need not be generations
+
+`generation_predecessors` is an arbitrary set of `exact_anchor`.
+
+`trajectory_formed` does not require each predecessor to resolve to a formed generation. It merely constructs predecessor edges and checks that the resulting local relation is acyclic.
+
+An arbitrary non-generation anchor can therefore be accepted as a predecessor. The reviewer correctly identifies this defect. 
+
+## 8.2 Generation identity is tied to a containing trajectory artifact
+
+The package defines:
+
+$$
+generation\_identity(T,g)
+=
+Occurrence\_Citation(trajectory\_reference(T),g).
+$$
+
+If a new exact trajectory artifact is formed to contain a later generation, it has another artifact reference. An otherwise unchanged earlier generation copied into it obtains another identity.
+
+If the old trajectory artifact is never replaced, it cannot contain later local generation roots.
+
+This leaves no satisfactory account of stable generation identity across trajectory extension.
+
+A robust design must make generation identity exact and stable independently of unrelated changes to a container artifact, or must define the precise persistent-chunk structure by which old generation citations remain unchanged.
+
+### TODO — exact generation containment
+
+The intent requires immutable generations and exact ancestry but does not uniquely determine whether:
+
+* each generation is a separate exact artifact;
+* a trajectory is an immutable batch whose predecessors may reference earlier batches;
+* generations use content identity independent of their containing artifact;
+* another persistent structural arrangement is used.
+
+Whichever choice is made must prove stable identity, exact predecessor resolution, and global acyclicity over the supplied retained boundary.
+
+## 8.3 Predecessors and dependencies are conflated during advancement
+
+`factor_advances` requires:
+
+```isabelle
+generation_predecessors G ∪ generation_dependencies G =
+  set (construction_inputs C)
+```
+
+This erases several distinctions:
+
+* predecessor versus dependency;
+* input order;
+* repeated input occurrences;
+* the reason each input participates;
+* whether every predecessor is a construction input;
+* whether every semantic dependency should be an assembly contributor.
+
+The distinction:
+
+$$
+\text{historical succession}
+\ne
+\text{semantic dependency}
+\ne
+\text{construction input}
+$$
+
+is central to the intended system. It cannot be preserved merely by storing two fields and then equating their union to one undifferentiated set.
+
+## 8.4 Foundation succession is underconstrained
+
+`foundation_successor` requires the successor publication merely to be formed.
+
+It does not require that publication to:
+
+* select the successor generation;
+* select the foundation locus;
+* be adopted by an authority;
+* cite the successor foundation;
+* cite the construction evidence;
+* identify the predecessor foundation as a predecessor or protected dependency.
+
+Nor is there an exact continuation program restricting what constitutes an admissible foundation change.
+
+Because construction itself is currently underconstrained, an arbitrary artifact can in principle become a “successor foundation” through a true ground judgment and self-assembly.
+
+## 8.5 Removing structural transaction semantics was not forced by your intent
+
+The package treats the absence of any head map or transaction relation as a resolved design choice.
+
+Your stated objection was to state or effects **that are not grounded in a purely structural semantic basis**. It did not require deleting every structural representation of live views, comparison, conflict, or atomic before/after transitions.
+
+A finite live view can be an exact RRA structure. A transaction can be a pure Factor relation between exact before and after views:
+
+$$
+\operatorname{Transact}_{\Phi}(H,\tau,H',result).
+$$
+
+No mutable machine state is thereby made foundational.
+
+The package has therefore conflated:
+
+* a mutable implementation operation, which should be nonnormative;
+* a pure structural transition relation, which may be a useful part of the intended Live Trajectory profile.
+
+The earlier discussion about concurrency and eventual consistency is evidence that this capability should not be discarded without an explicit decision.
+
+### TODO — structural live-view boundary
+
+The foundation must determine whether the normative Live profile includes:
+
+* exact current-selection views;
+* compare expectations;
+* conflict results;
+* atomic multi-locus before/after relations.
+
+The implementation must remain nonsemantic in every case. The current material does not justify eliminating this structural relation entirely.
+
+---
+
+# 9. Evidence is structurally promising but certification is too weak
+
+The generic RRA Evidence Envelope is aligned with your intent:
+
+* no nominal envelope kind;
+* exact anchors and links only;
+* no truth or authority consequence from formation.
+
+The problem occurs in `Factor_Evidence`.
+
+`required_certificate_links` requires only:
+
+$$
+(j,D),\qquad
+(j,A),\qquad
+(D,\Phi).
+$$
+
+`factor_certifies` then requires those three links merely to be a subset of the envelope’s links.
+
+There is no complete structural certificate projection accounting for:
+
+* program;
+* declared inputs;
+* exact output boundary;
+* assumptions;
+* proof-node-to-retained-position correspondence;
+* assembly-piece justification;
+* residuals;
+* source provenance.
+
+Some may be recoverable indirectly from \(j,D,A\), but that recovery is neither defined nor proved.
+
+## 9.1 Replay has been defined as an alias
+
+```isabelle
+factor_replays ... ⟷ factor_certifies ...
+```
+
+This silently decides that:
+
+> an exact derivation artifact linked to its assembly and foundation already constitutes complete retained replay.
+
+That may eventually be the irredundant result. But the broad Factor architecture deliberately distinguished derivation validity, retained structural realization, and replay. Its existing replay relation conjoins derivation, realization, and ancestry rather than identifying them. 
+
+The package must not collapse these merely for convenience.
+
+### TODO — derivation identity versus retained realization
+
+There are two legitimate possibilities:
+
+1. every Factor derivation is already one exact RRA artifact whose complete internal positions are the retained realization, making a separate realization relation redundant;
+2. derivations may be realized through selected fragments, reused proof structures, or distributed evidence artifacts, requiring a separate correspondence and retention condition.
+
+The intent does not determine this without a proof that the first representation preserves every required use of retained fragments, shared proofs, assumptions, citations, and ancestry.
+
+The package should retain this as an open decision rather than declaring replay equal to certification.
+
+---
+
+# 10. “Complete/no-extra” boundaries have not actually been established
+
+Many definitions use:
+
+```isabelle
+rooted_complete S root
+```
+
+But `rooted_complete` means only:
+
+* the root is in the carrier;
+* every carrier occurrence is connected to the root through incidence adjacency.
+
+It does not mean that every incidence belongs to the recognized record, judgment, derivation, foundation, envelope, or trajectory grammar.
+
+For example, a root may still participate as a reached or participation occurrence in additional incidence not inspected by `record_at`, while the artifact remains connected and the record projection remains unchanged.
+
+The package repeatedly claims:
+
+* complete topology;
+* no-extra structure;
+* exact structural recognition;
+* every position accounted for.
+
+Those claims require stronger definitions than connectedness.
+
+This is especially important because the broad Factor design treats complete incident boundaries, boundary crossings, multiplicity, sharing, and no-extra matching as constitutive of formation—not as optional audit data.
+
+## Required correction
+
+Each reflected structure must define its own complete structural footprint:
+
+* owned or internally included positions;
+* every permitted internal incidence;
+* every boundary-crossing incidence;
+* every permitted external endpoint;
+* a statement that no other relevant position or incidence occurs.
+
+A generic connected-root predicate may remain useful, but it cannot stand for complete structural recognition.
+
+---
+
+# 11. Other local defects that reveal larger unresolved choices
+
+## 11.1 Functional payload is privileged as metasyntax
+
+Anchors, assembly-origin entries, references, and addresses are quoted through `Functional_Data`.
+
+This means the metasyntax for many foundational structures depends specifically on the functional profile.
+
+An arbitrary exact artifact using no-data, bag, or node data is not itself an artifact containing those anchor encodings. This sits uneasily with the claim that reflexive quotation is identity for every exact artifact.
+
+The package needs either:
+
+* a structurally separate quotation artifact;
+* a profile-independent structural anchor representation;
+* or a theorem explaining why use of functional payload is behaviorally inessential.
+
+No such justification is present.
+
+## 11.2 The chosen record topology remains privileged
+
+`field_code` assigns field position by incidence-chain length.
+
+This is a concrete representational choice. Nothing proves that replacing it with another faithful field topology preserves and reflects all Factor applications, assembly citations, evidence links, and trajectories.
+
+The generic decoder theorem discussed earlier does not discharge this obligation.
+
+## 11.3 `RRA_Exact.thy.tmp` is an empty delivered file
+
+It is not named in `ROOT`, so it is not normative. It should nevertheless be removed. Its inclusion in the manifest and `theories/` directory weakens delivery discipline and can confuse automated inspection.
+
+## 11.4 Several “audit theorems” only unfold premises
+
+For example:
+
+* `audit_reflection_is_external_internal_agreement`;
+* `complete_genesis_has_reflection_and_computation`;
+* `genesis_has_external_internal_agreement`.
+
+These do not independently establish the named properties. They restate conjuncts already placed in definitions such as `reflection_valid` and `complete_genesis`.
+
+That is logically legitimate as interface exposition, but the package presents them as evidence that constitutional properties have been achieved. They are not substitutes for non-vacuous existence and adequacy theorems.
+
+---
+
+# 12. The nonnormative audit cannot support the package’s completion claim
+
+The reviewer correctly reports a malformed regular expression in `check_static.sh`. 
+
+I reproduced the problem:
+
+* `check_static.sh` prints two `grep: Unmatched ( or \(` errors;
+* because each failing `grep` occurs inside an `if`, exit status 2 is treated as the “not found” branch;
+* the script returns success and writes `PASS`.
+
+I also found that `check_lines.sh` fails in this environment because it uses a nonportable three-argument `awk match(...)` expression. It returns status 2 before completing its checks.
+
+The delivered `FINAL_LINE_AUDIT.md` ends partway through the declaration scan, confirming that the supposed final line audit did not finish.
+
+The audit scripts are nonnormative, so these defects do not by themselves invalidate an Isabelle theorem. They do invalidate the package’s claim that its repeated final review successfully exhausted the source.
+
+The lexical architecture scripts are also too weak to establish their named properties. For example:
+
+* checking that `Factor_Construction.thy` contains the strings `K2` and `assembly` does not establish construction–assembly adequacy;
+* checking that a file contains `least` or `inductive` does not establish semantic sufficiency;
+* checking that computational-sufficiency source contains the word `complete` does not establish completeness.
+
+A fresh archive manifest passes, and the normative theories appear free of explicit proof escapes. But until an Isabelle build succeeds, even syntactic and type correctness remains unconfirmed.
+
+---
+
+# 13. Assessment of the supplied reviewer
+
+## Findings I accept
+
+The reviewer is correct that:
+
+1. construction is not tied to declared inputs;
+2. fragments are disconnected from assembly provenance;
+3. reflection assumes the intended equivalence;
+4. no concrete complete genesis is constructed;
+5. computational completeness is assumed rather than established;
+6. resolver non-rebinding is only local to one resolver;
+7. trajectory predecessor formation is too weak;
+8. predecessor and dependency distinctions are conflated;
+9. empty assembly families have an ambiguous profile;
+10. the audit scripts can report false passes.
+
+These are substantial, well-supported findings.
+
+## Findings that require qualification
+
+### “The one-substrate principle is real”
+
+It is partly real: Factor does not define a second `Own/End/Next/Bind` carrier.
+
+But two external semantic substrates remain:
+
+* arbitrary resolver relations;
+* `sk_term` and `sk_step`, which directly determine `factor_holds`.
+
+So one substrate has not yet been achieved at the semantic level.
+
+### “Topological SK is faithful to the philosophy”
+
+Only the term constructors are topologically recognized.
+
+The reduction rules themselves remain hard-coded in Isabelle and are selected by a magic topology. This is not yet a structurally defined Factor program.
+
+### “No mutable head is clean”
+
+The absence of ambient mutable state is aligned with your intent.
+
+Eliminating every structural transaction or live-view relation is not forced by that intent. The reviewer accepts that elimination too readily.
+
+### “Replay simplification may be right”
+
+That is possible, but it has not been proved. Given that retained replay is part of Factor’s broad purpose, the package should have left an explicit decision boundary rather than silently equating replay and certification.
+
+### “Architecture: 9/10”
+
+I do not agree. The prose architecture is disciplined, but the normative import graph is linear in the wrong direction, the Factor semantics is a finite ground closure with an external SK exception, and the reflection layer does not perform actual reflection.
+
+The package contains good architectural intentions, but architecture must be assessed from the theories, not primarily from the commentary.
+
+---
+
+# 14. What should be retained
+
+The package should not be discarded wholesale.
+
+The following are sound starting points:
+
+* the minimal RRA carrier and ternary incidence;
+* the distinction between exact equality and structural isomorphism;
+* bounded views as external argument selections;
+* the internal core of K2 and its no-unexplained-output condition;
+* generic, semantically inert evidence links;
+* exact, authority- and publication-relative currentness rather than ambient currentness;
+* SK as a convenient external adequacy target;
+* Isabelle/HOL as the sole pre-reflective normative source;
+* the prohibition on deriving semantic force from implementation.
+
+These should be retained while removing the definitions that currently bypass or weaken them.
+
+---
+
+# 15. Required reconstruction order
+
+The correct next step is not to add more theorem names around the current predicates.
+
+## 15.1 Rebuild the theory graph
+
+Make the Isabelle dependency DAG express the actual constitutional order.
+
+This should happen before substantive proofs, because otherwise later theories certify a dependency structure that should not exist.
+
+## 15.2 Define general Factor meaning over RRA
+
+Replace the finite ground-only closure as the universal semantic mechanism.
+
+Establish:
+
+* structurally determined definitions;
+* complete application boundaries;
+* parameterized structural matching;
+* explicit semantic dependencies;
+* no nominal dispatch;
+* no implicit structural proof rules.
+
+SK must no longer be part of `factor_holds`.
+
+## 15.3 Complete construction provenance
+
+Define the exact relationship:
+
+$$
+\text{declared input}
+\to
+\text{selected fragment}
+\to
+\text{assembly piece}
+\to
+q
+\to
+\text{output}.
+$$
+
+Then prove both directions:
+
+$$
+\operatorname{FactorConstructs}
+\Longrightarrow
+\operatorname{AdmissibleK2Assembly}
+$$
+
+and:
+
+$$
+\operatorname{AdmissibleK2Assembly}
+\Longrightarrow
+\operatorname{FactorConstructs}.
+$$
+
+Fix the empty-profile ambiguity and account for crossing data.
+
+## 15.4 Fix exact reference and generation identity
+
+Before reflection, establish:
+
+* resolver coherence across extension or a content-determined reference discipline;
+* alias-invariant semantics where aliases are allowed;
+* stable generation identity;
+* exact predecessor resolution;
+* separation of succession, dependency, and construction input.
+
+## 15.5 Resolve retained replay structurally
+
+Either prove that one exact derivation artifact already contains the complete retained realization, or restore a separate realization correspondence over RRA Evidence.
+
+Do not choose by abbreviation.
+
+## 15.6 Establish actual structural quotation
+
+Define a quotation whose topology contains enough information to recover the definitions being quoted.
+
+Prove contextual transport through Factor reasoning—not merely equality after an external decoder.
+
+## 15.7 Construct the actual adequacy witnesses
+
+The decisive theorems are not more implications from predicates called `valid` or `complete`.
+
+They are concrete results of the form:
+
+$$
+\exists \Phi_{\mathrm{SK}}.\;
+\operatorname{FactorEncodesSK}(\Phi_{\mathrm{SK}})
+$$
+
+and:
+
+$$
+\operatorname{BootstrapHolds}_{HOL}(j)
+\iff
+\operatorname{FactorHolds}_{\Phi_0}(\ulcorner j\urcorner),
+$$
+
+followed by an actual:
+
+$$
+\operatorname{CompleteGenesis}(\rho_0,\Phi_0,G_0).
+$$
+
+The constructions must be non-vacuous and uniform over their declared domains.
+
+## 15.8 Build with Isabelle and replace lexical gates
+
+Only after the semantic reconstruction should the package claim completion.
+
+The final delivery gate must include:
+
+* a successful Isabelle build;
+* reproducible theory-source identities;
+* corrected scripts that fail on tool errors;
+* explicit non-vacuity checks;
+* no incomplete “PASS” reports.
+
+---
+
+# Final judgment
+
+The archive is best described as:
+
+$$
+\boxed{
+\text{a promising formal bootstrap framework with a useful K2 core,
+not a completed bootstrap and not yet the intended Factor language}
+}
+$$
+
+Its principal problem is not simply that difficult proofs remain unfinished. It currently formalizes several wrong or unjustified reductions:
+
+$$
+\text{Factor semantics}
+\rightsquigarrow
+\text{finite ground Horn closure plus privileged SK},
+$$
+
+$$
+\text{quotation transport}
+\rightsquigarrow
+\text{external decode–encode identity},
+$$
+
+$$
+\text{construction provenance}
+\rightsquigarrow
+\text{origin from arbitrary pieces},
+$$
+
+$$
+\text{reflection}
+\rightsquigarrow
+\text{a supplied external-truth set},
+$$
+
+and:
+
+$$
+\text{development}
+\rightsquigarrow
+\text{a static generation container with underconstrained succession}.
+$$
+
+Those reductions are not consequences of your intent.
+
+The invariant that should govern the reconstruction remains:
+
+$$
+\boxed{
+\begin{array}{c}
+\text{RRA completely accounts for what structure is present,}\\
+\text{Factor alone determines what that structure means,}\\
+\text{and neither account may rely on anything not present}\\
+\text{in its complete exact boundary.}
+\end{array}}
+$$
+
+The package’s prose states something close to this. Its normative theories do not yet establish it.

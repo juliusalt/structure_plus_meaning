@@ -1,0 +1,42 @@
+test_canonical_round_trip_all_profiles (test_kernel.ArtifactTests.test_canonical_round_trip_all_profiles) ... ok
+test_duplicate_json_key_rejected (test_kernel.ArtifactTests.test_duplicate_json_key_rejected) ... ok
+test_memory_resolver_is_non_rebinding (test_kernel.ArtifactTests.test_memory_resolver_is_non_rebinding) ... ok
+test_noncanonical_input_rejected (test_kernel.ArtifactTests.test_noncanonical_input_rejected) ... ok
+test_record_requires_byte_addresses (test_kernel.ArtifactTests.test_record_requires_byte_addresses) ... ok
+test_reference_and_citation (test_kernel.ArtifactTests.test_reference_and_citation) ... ok
+test_shipped_record_examples_are_canonical (test_kernel.ArtifactTests.test_shipped_record_examples_are_canonical) ... ok
+test_arbitrary_structural_merge (test_kernel.AssemblyTests.test_arbitrary_structural_merge) ... ok
+test_bag_counts_sum_after_merge (test_kernel.AssemblyTests.test_bag_counts_sum_after_merge) ... ok
+test_discrete_quotient_preserves_two_equal_pieces (test_kernel.AssemblyTests.test_discrete_quotient_preserves_two_equal_pieces) ... ok
+test_empty_family_has_explicit_profile (test_kernel.AssemblyTests.test_empty_family_has_explicit_profile) ... ok
+test_exact_witness (test_kernel.AssemblyTests.test_exact_witness) ... ok
+test_functional_conflict_blocks_profile_quotient (test_kernel.AssemblyTests.test_functional_conflict_blocks_profile_quotient) ... ok
+test_missing_origin_rejected (test_kernel.AssemblyTests.test_missing_origin_rejected) ... ok
+test_node_conflict_blocks_profile_quotient (test_kernel.AssemblyTests.test_node_conflict_blocks_profile_quotient) ... ok
+test_shipped_assembly_witness_decodes_and_verifies (test_kernel.AssemblyTests.test_shipped_assembly_witness_decodes_and_verifies) ... ok
+test_unexplained_output_position_rejected (test_kernel.AssemblyTests.test_unexplained_output_position_rejected) ... ok
+test_bag_duplicate_key_rejected (test_kernel.DataTests.test_bag_duplicate_key_rejected) ... ok
+test_bag_is_extensional_not_ordered (test_kernel.DataTests.test_bag_is_extensional_not_ordered) ... ok
+test_functional_duplicate_owner_rejected (test_kernel.DataTests.test_functional_duplicate_owner_rejected) ... ok
+test_node_coordinates_must_be_structural (test_kernel.DataTests.test_node_coordinates_must_be_structural) ... ok
+test_payload_preserving_isomorphism (test_kernel.DataTests.test_payload_preserving_isomorphism) ... ok
+test_conflict_changes_nothing (test_kernel.EvidenceAndLiveTests.test_conflict_changes_nothing) ... ok
+test_evidence_envelopes_only_link_exact_refs (test_kernel.EvidenceAndLiveTests.test_evidence_envelopes_only_link_exact_refs) ... ok
+test_genesis_transaction (test_kernel.EvidenceAndLiveTests.test_genesis_transaction) ... ok
+test_return_to_old_payload_creates_new_generation (test_kernel.EvidenceAndLiveTests.test_return_to_old_payload_creates_new_generation) ... ok
+test_all_schemas_are_valid_draft_2020_12 (test_kernel.SchemaTests.test_all_schemas_are_valid_draft_2020_12) ... ok
+test_examples_validate_when_jsonschema_is_available (test_kernel.SchemaTests.test_examples_validate_when_jsonschema_is_available) ... ok
+test_registry_uses_absolute_ids_and_resolves_local_files (test_kernel.SchemaTests.test_registry_uses_absolute_ids_and_resolves_local_files) ... ok
+test_boundary_requires_same_domain_including_absence (test_kernel.StructureTests.test_boundary_requires_same_domain_including_absence) ... ok
+test_cycles_and_self_incidence_form (test_kernel.StructureTests.test_cycles_and_self_incidence_form) ... ok
+test_empty_structure_forms (test_kernel.StructureTests.test_empty_structure_forms) ... ok
+test_isolated_position_is_retained (test_kernel.StructureTests.test_isolated_position_is_retained) ... ok
+test_out_of_carrier_rejected (test_kernel.StructureTests.test_out_of_carrier_rejected) ... ok
+test_supplied_isomorphism (test_kernel.StructureTests.test_supplied_isomorphism) ... ok
+
+----------------------------------------------------------------------
+Ran 35 tests in 0.758s
+
+OK
+
+PASS

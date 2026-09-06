@@ -1,0 +1,8 @@
+{
+  "https://rra.example/schemas/kernel/v1/common.schema.json": "common.schema.json",
+  "https://rra.example/schemas/kernel/v1/record.schema.json": "record.schema.json",
+  "https://rra.example/schemas/kernel/v1/reference.schema.json": "reference.schema.json",
+  "https://rra.example/schemas/kernel/v1/assembly.schema.json": "assembly.schema.json",
+  "https://rra.example/schemas/kernel/v1/evidence.schema.json": "evidence.schema.json",
+  "https://rra.example/schemas/kernel/v1/live.schema.json": "live.schema.json"
+}

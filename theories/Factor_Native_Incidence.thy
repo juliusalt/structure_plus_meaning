@@ -1,0 +1,639 @@
+theory Factor_Native_Incidence
+  imports Factor_Material_Meaning Factor_Native_Meaning Factor_Application_Encoding
+begin
+
+section \<open>A native program with one complete material premise\<close>
+
+definition incidence_artifact :: exact_artifact where
+  "incidence_artifact =
+    \<lparr>object_structure = \<lparr>rra_carrier = (\<lambda>n. [n]) ` {..<43},
+      rra_incidence = {([0],[41],[42]),
+        ([42],[42],[Suc 0]),
+        ([Suc 0],[37],[2]),
+        ([Suc 0],[38],[6]),
+        ([37],[37],[38]),
+        ([2],[39],[3]),
+        ([2],[40],[5]),
+        ([39],[39],[40]),
+        ([3],[4],[4]),
+        ([5],[5],[4]),
+        ([6],[7],[8]),
+        ([8],[34],[9]),
+        ([8],[35],[11]),
+        ([8],[36],[17]),
+        ([34],[34],[35]),
+        ([35],[35],[36]),
+        ([9],[10],[10]),
+        ([9],[12],[12]),
+        ([9],[13],[13]),
+        ([9],[14],[14]),
+        ([9],[15],[15]),
+        ([9],[16],[16]),
+        ([11],[11],[10]),
+        ([17],[18],[19]),
+        ([19],[29],[20]),
+        ([19],[30],[21]),
+        ([19],[31],[22]),
+        ([19],[32],[23]),
+        ([19],[33],[24]),
+        ([29],[29],[30]),
+        ([30],[30],[31]),
+        ([31],[31],[32]),
+        ([32],[32],[33]),
+        ([20],[20],[10]),
+        ([21],[21],[12]),
+        ([23],[23],[15]),
+        ([24],[24],[16]),
+        ([22],[27],[25]),
+        ([22],[28],[26]),
+        ([27],[27],[28]),
+        ([25],[25],[13]),
+        ([26],[26],[14])}\<rparr>,
+      object_data = empty_basis\<rparr>"
+
+lemma incidence_artifact_carrier [simp]:
+  "[n] \<in> rra_carrier (object_structure incidence_artifact) \<longleftrightarrow> n < 43"
+  by (auto simp: incidence_artifact_def)
+
+lemma incidence_artifact_data [simp]: "object_data incidence_artifact = empty_basis"
+  by (simp add: incidence_artifact_def)
+
+lemma incidence_object_formed: "object_formed incidence_artifact"
+  by (auto simp: incidence_artifact_def object_formed_def rra_formed_def intro: rev_image_eqI)
+
+lemma incidence_artifact_formed: "exact_formed incidence_artifact"
+  using incidence_object_formed
+  by (auto simp: exact_formed_def incidence_artifact_def octets_formed_def)
+
+definition incidence_environment :: "local_address option artifact_environment" where
+  "incidence_environment = literal_environment incidence_artifact {}"
+
+lemma incidence_environment_formed [simp]: "environment_formed incidence_environment"
+  unfolding incidence_environment_def
+  by (rule literal_environment_formed[OF incidence_artifact_formed])
+     (auto simp: single_valued_def rel_dom_def)
+
+lemma incidence_environment_artifact [simp]:
+  "artifact_at incidence_environment None R \<longleftrightarrow> R = incidence_artifact"
+  by (simp add: incidence_environment_def)
+
+lemma incidence_environment_no_bindings [simp]:
+  "environment_bindings incidence_environment = {}"
+  by (simp add: incidence_environment_def literal_environment_def rel_dom_def)
+
+lemma incidence_heads [simp]:
+  "headed_incidence (object_structure incidence_artifact) [0] = {([41],[42])}"
+  "headed_incidence (object_structure incidence_artifact) [Suc 0] = {([37],[2]),([38],[6])}"
+  "headed_incidence (object_structure incidence_artifact) [2] = {([39],[3]),([40],[5])}"
+  "headed_incidence (object_structure incidence_artifact) [3] = {([4],[4])}"
+  "headed_incidence (object_structure incidence_artifact) [4] = {}"
+  "headed_incidence (object_structure incidence_artifact) [5] = {([5],[4])}"
+  "headed_incidence (object_structure incidence_artifact) [6] = {([7],[8])}"
+  "headed_incidence (object_structure incidence_artifact) [7] = {}"
+  "headed_incidence (object_structure incidence_artifact) [8] = {([34],[9]),([35],[11]),([36],[17])}"
+  "headed_incidence (object_structure incidence_artifact) [9] = {([10],[10]),([12],[12]),([13],[13]),([14],[14]),([15],[15]),([16],[16])}"
+  "headed_incidence (object_structure incidence_artifact) [10] = {}"
+  "headed_incidence (object_structure incidence_artifact) [11] = {([11],[10])}"
+  "headed_incidence (object_structure incidence_artifact) [12] = {}"
+  "headed_incidence (object_structure incidence_artifact) [13] = {}"
+  "headed_incidence (object_structure incidence_artifact) [14] = {}"
+  "headed_incidence (object_structure incidence_artifact) [15] = {}"
+  "headed_incidence (object_structure incidence_artifact) [16] = {}"
+  "headed_incidence (object_structure incidence_artifact) [17] = {([18],[19])}"
+  "headed_incidence (object_structure incidence_artifact) [18] = {}"
+  "headed_incidence (object_structure incidence_artifact) [19] = {([29],[20]),([30],[21]),([31],[22]),([32],[23]),([33],[24])}"
+  "headed_incidence (object_structure incidence_artifact) [20] = {([20],[10])}"
+  "headed_incidence (object_structure incidence_artifact) [21] = {([21],[12])}"
+  "headed_incidence (object_structure incidence_artifact) [22] = {([27],[25]),([28],[26])}"
+  "headed_incidence (object_structure incidence_artifact) [23] = {([23],[15])}"
+  "headed_incidence (object_structure incidence_artifact) [24] = {([24],[16])}"
+  "headed_incidence (object_structure incidence_artifact) [25] = {([25],[13])}"
+  "headed_incidence (object_structure incidence_artifact) [26] = {([26],[14])}"
+  "headed_incidence (object_structure incidence_artifact) [27] = {([27],[28])}"
+  "headed_incidence (object_structure incidence_artifact) [28] = {}"
+  "headed_incidence (object_structure incidence_artifact) [29] = {([29],[30])}"
+  "headed_incidence (object_structure incidence_artifact) [30] = {([30],[31])}"
+  "headed_incidence (object_structure incidence_artifact) [31] = {([31],[32])}"
+  "headed_incidence (object_structure incidence_artifact) [32] = {([32],[33])}"
+  "headed_incidence (object_structure incidence_artifact) [33] = {}"
+  "headed_incidence (object_structure incidence_artifact) [34] = {([34],[35])}"
+  "headed_incidence (object_structure incidence_artifact) [35] = {([35],[36])}"
+  "headed_incidence (object_structure incidence_artifact) [36] = {}"
+  "headed_incidence (object_structure incidence_artifact) [37] = {([37],[38])}"
+  "headed_incidence (object_structure incidence_artifact) [38] = {}"
+  "headed_incidence (object_structure incidence_artifact) [39] = {([39],[40])}"
+  "headed_incidence (object_structure incidence_artifact) [40] = {}"
+  "headed_incidence (object_structure incidence_artifact) [41] = {}"
+  "headed_incidence (object_structure incidence_artifact) [42] = {([42],[Suc 0])}"
+  by (auto simp: incidence_artifact_def headed_incidence_def)
+
+lemma incidence_records:
+  assumes "(r,ps,xs) \<in> {
+    ([Suc 0],[[37],[38]],[[2],[6]]),
+    ([2],[[39],[40]],[[3],[5]]),
+    ([8],[[34],[35],[36]],[[9],[11],[17]]),
+    ([19],[[29],[30],[31],[32],[33]],[[20],[21],[22],[23],[24]]),
+    ([22],[[27],[28]],[[25],[26]])}"
+  shows "record_at incidence_artifact r ps xs"
+proof -
+  have template: "record_at (record_object r ps xs :: exact_artifact) r ps xs"
+    using assms by (auto intro!: record_object_recovers)
+  have reads: "object_reads_agree (record_object r ps xs :: exact_artifact)
+    incidence_artifact (insert r (set ps))"
+    using assms by (auto simp only: insert_iff singleton_iff prod.inject;
+        auto simp: object_reads_agree_def record_object_def record_structure_def;
+        auto simp: headed_incidence_def incidence_artifact_def)
+  show ?thesis by (rule record_at_read_transport[OF template incidence_object_formed reads]) simp
+qed
+
+lemma incidence_families:
+  assumes "(r,M) \<in> {
+    ([0],{([41],[42])}), ([3],{([4],[4])}), ([6],{([7],[8])}),
+    ([9],{([10],[10]),([12],[12]),([13],[13]),([14],[14]),([15],[15]),([16],[16])}),
+    ([17],{([18],[19])})}"
+  shows "family_at incidence_artifact r M"
+  using assms incidence_object_formed
+  by (auto simp: family_at_def single_valued_def rel_dom_def)
+
+lemma incidence_local_citations:
+  assumes "(r,a) \<in> {([5],[4]),([11],[10]),([20],[10]),([21],[12]),
+    ([23],[15]),([24],[16]),([25],[13]),([26],[14]),([42],[Suc 0])}"
+  shows "citation_at incidence_artifact r (Local a) {r}"
+proof -
+  have head: "headed_incidence (object_structure incidence_artifact) r = {(r,a)}"
+    using assms by auto
+  have raw: "raw_citation_at incidence_artifact r (Local a) {r}" by (rule raw_citation_at.local[OF head])
+  show ?thesis using assms raw incidence_artifact_formed by (auto simp: citation_at_def)
+qed
+
+definition native_incidence_material :: "local_address material_pattern" where
+  "native_incidence_material =
+    \<lparr>material_source=Pattern_Variable [10], material_atoms=Pattern_Variable [12],
+     material_edges=Pattern_Pair (Pattern_Variable [13]) (Pattern_Variable [14]),
+     material_counts=Pattern_Variable [15], material_functions=Pattern_Variable [16]\<rparr>"
+
+definition native_incidence_schema :: "local_address option native_schema" where
+  "native_incidence_schema =
+    \<lparr>schema_conclusion=Pattern_Variable [10], schema_premises={},
+     schema_material_premises={([18],native_incidence_material)}\<rparr>"
+
+definition native_incidence_program :: "local_address option native_system" where
+  "native_incidence_program =
+    \<lparr>system_interfaces={((None,[Suc 0]),Pattern_Variable [4])},
+     system_clauses={(((None,[Suc 0]),[7]),native_incidence_schema)}\<rparr>"
+
+lemma native_incidence_variables:
+  "schema_variables native_incidence_schema = {[10],[12],[13],[14],[15],[16]}"
+  by (auto simp: native_incidence_schema_def schema_variables_def native_incidence_material_def
+      material_variables_def material_fields_def)
+
+lemma incidence_variable_patterns:
+  assumes shape: "(r,a) \<in> {([5],[4]),([11],[10]),([20],[10]),([21],[12]),
+    ([23],[15]),([24],[16]),([25],[13]),([26],[14])}"
+    and member: "a \<in> V" and separate: "r \<notin> V"
+  shows "pattern_quoted_at incidence_environment None V r (Pattern_Variable a) {r} {}"
+proof -
+  have cite: "citation_at incidence_artifact r (Local a) {r}"
+    by (rule incidence_local_citations) (use shape in auto)
+  have art: "artifact_at incidence_environment None incidence_artifact" by simp
+  show ?thesis by (rule pattern_quoted_at.variable[OF incidence_environment_formed art cite member])
+    (use separate in auto)
+qed
+
+lemma incidence_scoped_interface:
+  "scoped_pattern_at incidence_environment None [2] (Pattern_Variable [4]) {[2],[39],[40],[3],[4],[5]} {}"
+proof -
+  have rec: "record_at incidence_artifact [2] [[39],[40]] [[3],[5]]" by (rule incidence_records) simp
+  have family: "family_at incidence_artifact [3] {([4],[4])}" by (rule incidence_families) simp
+  have scope: "binder_scope_at incidence_artifact [3] {[4]}" using family by (simp add: binder_scope_at_def)
+  have quote: "pattern_quoted_at incidence_environment None {[4]} [5] (Pattern_Variable [4]) {[5]} {}"
+    by (rule incidence_variable_patterns) auto
+  show ?thesis unfolding scoped_pattern_at_def
+    by (rule conjI[OF incidence_environment_formed], rule exI[of _ incidence_artifact],
+        rule exI[of _ "[[39],[40]]"], rule exI[of _ "[3]"], rule exI[of _ "[5]"],
+        rule exI[of _ "{[4]}"], rule exI[of _ "{[5]}"])
+       (use rec scope quote in auto)
+qed
+
+lemma incidence_edge_pattern:
+  "pattern_quoted_at incidence_environment None {[10],[12],[13],[14],[15],[16]} [22]
+    (Pattern_Pair (Pattern_Variable [13]) (Pattern_Variable [14])) {[22],[27],[28],[25],[26]} {}"
+proof -
+  let ?V = "{[10],[12],[13],[14],[15],[16]}"
+  have rec: "record_at incidence_artifact [22] [[27],[28]] [[25],[26]]" by (rule incidence_records) simp
+  have left: "pattern_quoted_at incidence_environment None ?V [25] (Pattern_Variable [13]) {[25]} {}"
+    by (rule incidence_variable_patterns) auto
+  have right: "pattern_quoted_at incidence_environment None ?V [26] (Pattern_Variable [14]) {[26]} {}"
+    by (rule incidence_variable_patterns) auto
+  have art: "artifact_at incidence_environment None incidence_artifact" by simp
+  have quote: "pattern_quoted_at incidence_environment None ?V [22]
+    (Pattern_Pair (Pattern_Variable [13]) (Pattern_Variable [14]))
+    (insert [22] (set [[27],[28]] \<union> {[25]} \<union> {[26]})) ({} \<union> {})"
+    by (rule pattern_quoted_at.pair[OF incidence_environment_formed art rec left right]) auto
+  show ?thesis using quote by (simp add: insert_commute)
+qed
+
+lemma incidence_material_at:
+  "native_material_at incidence_environment None {[10],[12],[13],[14],[15],[16]} [19]
+    native_incidence_material {[19],[29],[30],[31],[32],[33],[20],[21],[22],[27],[28],[25],[26],[23],[24]} {}"
+proof -
+  let ?V = "{[10],[12],[13],[14],[15],[16]}"
+  have source: "pattern_quoted_at incidence_environment None ?V [20] (Pattern_Variable [10]) {[20]} {}"
+    and atoms: "pattern_quoted_at incidence_environment None ?V [21] (Pattern_Variable [12]) {[21]} {}"
+    and counts: "pattern_quoted_at incidence_environment None ?V [23] (Pattern_Variable [15]) {[23]} {}"
+    and funcs: "pattern_quoted_at incidence_environment None ?V [24] (Pattern_Variable [16]) {[24]} {}"
+    by (rule incidence_variable_patterns; auto)+
+  have empty: "pattern_vector_at incidence_environment None ?V [] [] {} {}"
+    by (rule pattern_vector_at.empty[OF incidence_environment_formed])
+  have last: "pattern_vector_at incidence_environment None ?V [[24]] [Pattern_Variable [16]] {[24]} {}"
+    using pattern_vector_at.cons[OF funcs empty] by (auto simp: insert_commute)
+  have two: "pattern_vector_at incidence_environment None ?V [[23],[24]]
+    [Pattern_Variable [15],Pattern_Variable [16]] {[23],[24]} {}"
+    using pattern_vector_at.cons[OF counts last] by (auto simp: insert_commute)
+  have three: "pattern_vector_at incidence_environment None ?V [[22],[23],[24]]
+    [Pattern_Pair (Pattern_Variable [13]) (Pattern_Variable [14]),Pattern_Variable [15],Pattern_Variable [16]]
+    {[22],[27],[28],[25],[26],[23],[24]} {}"
+    using pattern_vector_at.cons[OF incidence_edge_pattern two] by (auto simp: insert_commute)
+  have four: "pattern_vector_at incidence_environment None ?V [[21],[22],[23],[24]]
+    [Pattern_Variable [12],Pattern_Pair (Pattern_Variable [13]) (Pattern_Variable [14]),Pattern_Variable [15],Pattern_Variable [16]]
+    {[21],[22],[27],[28],[25],[26],[23],[24]} {}"
+    using pattern_vector_at.cons[OF atoms three] by (auto simp: insert_commute)
+  have vector: "pattern_vector_at incidence_environment None ?V [[20],[21],[22],[23],[24]]
+    (material_fields native_incidence_material) {[20],[21],[22],[27],[28],[25],[26],[23],[24]} {}"
+    using pattern_vector_at.cons[OF source four]
+    by (auto simp: material_fields_def native_incidence_material_def insert_commute)
+  have rec: "record_at incidence_artifact [19] [[29],[30],[31],[32],[33]] [[20],[21],[22],[23],[24]]"
+    by (rule incidence_records) simp
+  show ?thesis unfolding native_material_at_def pattern_record_at_def
+    by (rule conjI[OF incidence_environment_formed], rule exI[of _ incidence_artifact],
+        rule exI[of _ "[[29],[30],[31],[32],[33]]"], rule exI[of _ "[[20],[21],[22],[23],[24]]"],
+        rule exI[of _ "{[20],[21],[22],[27],[28],[25],[26],[23],[24]}"])
+       (use rec vector in auto)
+qed
+
+lemma incidence_schema_at:
+  "native_schema_at incidence_environment None [8] native_incidence_schema"
+proof -
+  let ?V = "{[10],[12],[13],[14],[15],[16]}"
+  have rec: "record_at incidence_artifact [8] [[34],[35],[36]] [[9],[11],[17]]" by (rule incidence_records) simp
+  have family: "family_at incidence_artifact [9] {([10],[10]),([12],[12]),([13],[13]),([14],[14]),([15],[15]),([16],[16])}"
+    by (rule incidence_families) simp
+  have scope: "binder_scope_at incidence_artifact [9] ?V" using family by (simp add: binder_scope_at_def)
+  have raw: "family_at incidence_artifact [17] {([18],[19])}" by (rule incidence_families) simp
+  have material: "native_premise_at incidence_environment None ?V [19] (Inr native_incidence_material)
+    {[19],[29],[30],[31],[32],[33],[20],[21],[22],[27],[28],[25],[26],[23],[24]} {}"
+    by (rule native_premise_at.material[OF incidence_material_at])
+  have body: "native_premise_family_at incidence_environment None ?V [17] {} {([18],native_incidence_material)}"
+    unfolding native_premise_family_at_def
+    by (rule conjI[OF incidence_environment_formed], rule exI[of _ incidence_artifact], rule exI[of _ "{([18],[19])}"])
+       (use raw material in \<open>auto simp: socket_sum_single_valued socket_sum_def single_valued_def rel_dom_def; blast intro: native_premise_at.material\<close>)
+  have conclusion: "pattern_quoted_at incidence_environment None ?V [11] (Pattern_Variable [10]) {[11]} {}"
+    by (rule incidence_variable_patterns) auto
+  have head: "pattern_quoted_at incidence_environment None ?V [11] (schema_conclusion native_incidence_schema) {[11]} {}"
+    using conclusion by (simp add: native_incidence_schema_def)
+  show ?thesis unfolding native_schema_at_def
+    by (rule conjI[OF incidence_environment_formed], rule exI[of _ incidence_artifact],
+        rule exI[of _ "[[34],[35],[36]]"], rule exI[of _ "[9]"], rule exI[of _ "[11]"],
+        rule exI[of _ "[17]"], rule exI[of _ "?V"], rule exI[of _ "{[11]}"], rule exI[of _ "{}"])
+       (use rec scope head body in \<open>auto simp: native_incidence_schema_def schema_variables_def native_incidence_material_def material_variables_def material_fields_def\<close>)
+qed
+
+lemma incidence_definition_at:
+  "native_definition_at incidence_environment None [Suc 0] (Pattern_Variable [4]) {([7],native_incidence_schema)}"
+proof -
+  have rec: "record_at incidence_artifact [Suc 0] [[37],[38]] [[2],[6]]" by (rule incidence_records) simp
+  have family: "family_at incidence_artifact [6] {([7],[8])}" by (rule incidence_families) simp
+  have clauses: "native_schema_family_at incidence_environment None [6] {([7],native_incidence_schema)}"
+    unfolding native_schema_family_at_def
+    by (rule conjI[OF incidence_environment_formed], rule exI[of _ incidence_artifact], rule exI[of _ "{([7],[8])}"])
+       (use family incidence_schema_at in \<open>auto simp: single_valued_def rel_dom_def\<close>)
+  show ?thesis unfolding native_definition_at_def
+    by (rule conjI[OF incidence_environment_formed], rule exI[of _ incidence_artifact],
+        rule exI[of _ "[[37],[38]]"], rule exI[of _ "[2]"], rule exI[of _ "[6]"],
+        rule exI[of _ "{[2],[39],[40],[3],[4],[5]}"], rule exI[of _ "{}"])
+       (use rec incidence_scoped_interface clauses in auto)
+qed
+
+
+lemma incidence_root_family:
+  "native_root_family_at incidence_environment None [0] {([41],None,[Suc 0])}"
+proof -
+  have family: "family_at incidence_artifact [0] {([41],[42])}" by (rule incidence_families) simp
+  have cite: "citation_at incidence_artifact [42] (Local [Suc 0]) {[42]}" by (rule incidence_local_citations) simp
+  have location: "citation_location incidence_environment None (Local [Suc 0]) None [Suc 0]"
+    using incidence_artifact_formed by (auto simp: anchor_formed_def)
+  have art: "artifact_at incidence_environment None incidence_artifact" by simp
+  have loc: "located_at incidence_environment None [42] None [Suc 0]"
+    using art cite location unfolding located_at_def by blast
+  show ?thesis unfolding native_root_family_at_def
+    by (rule conjI[OF incidence_environment_formed], rule exI[of _ incidence_artifact], rule exI[of _ "{([41],[42])}"])
+       (use family loc in \<open>auto simp: single_valued_def rel_dom_def\<close>)
+qed
+
+lemma incidence_definition_no_dependencies:
+  "((None,[Suc 0]),e) \<notin> native_definition_edges incidence_environment"
+proof
+  assume edge: "((None,[Suc 0]),e) \<in> native_definition_edges incidence_environment"
+  obtain p C c S where parts: "native_definition_at incidence_environment None [Suc 0] p C"
+    "(c,S) \<in> C" "e \<in> schema_dependencies S"
+    using edge by (auto simp: native_definition_edges_def)
+  have same: "p = Pattern_Variable [4] \<and> C = {([7],native_incidence_schema)}"
+    by (rule native_definition_unique[OF parts(1) incidence_definition_at])
+  have schema: "S = native_incidence_schema" using same parts(2) by simp
+  show False using parts(3) schema
+    by (simp add: schema_dependencies_def native_incidence_schema_def rel_ran_def)
+qed
+
+lemma incidence_definition_sites:
+  "native_definition_sites incidence_environment {(None,[Suc 0])} = {(None,[Suc 0])}"
+proof -
+  have upper: "native_definition_sites incidence_environment {(None,[Suc 0])} \<subseteq> {(None,[Suc 0])}"
+    by (rule native_definition_sites_least[OF subset_refl])
+       (use incidence_definition_no_dependencies in auto)
+  have lower: "{(None,[Suc 0])} \<subseteq> native_definition_sites incidence_environment {(None,[Suc 0])}" by (rule native_definition_roots)
+  show ?thesis using upper lower by blast
+qed
+
+lemma incidence_package_formed:
+  "native_package_formed incidence_environment {(None,[Suc 0])}"
+  using incidence_environment_formed incidence_definition_at
+  by (auto simp: native_package_formed_def incidence_definition_sites; blast)
+
+lemma incidence_program_projection:
+  "native_program incidence_environment {(None,[Suc 0])} = native_incidence_program"
+proof -
+  have exact: "\<And>p C. native_definition_at incidence_environment None [Suc 0] p C \<longleftrightarrow>
+    p = Pattern_Variable [4] \<and> C = {([7],native_incidence_schema)}"
+  proof -
+    fix p C
+    show "native_definition_at incidence_environment None [Suc 0] p C \<longleftrightarrow>
+      p = Pattern_Variable [4] \<and> C = {([7],native_incidence_schema)}"
+      using native_definition_unique[OF _ incidence_definition_at] incidence_definition_at by blast
+  qed
+  have graph: "native_definition_graph incidence_environment {(None,[Suc 0])} =
+    {((None,[Suc 0]),Pattern_Variable [4],{([7],native_incidence_schema)})}"
+    by (auto simp: native_definition_graph_def incidence_definition_sites exact)
+  show ?thesis by (auto simp: native_program_def graph native_incidence_program_def)
+qed
+
+theorem native_incidence_package:
+  "native_package_at incidence_environment None [0] native_incidence_program"
+  unfolding native_package_at_def
+  by (rule exI[of _ "{([41],None,[Suc 0])}"])
+     (use incidence_root_family incidence_package_formed incidence_program_projection in \<open>auto simp: rel_ran_def\<close>)
+
+theorem native_incidence_closed:
+  "closed_native_package_at incidence_environment None [0] native_incidence_program"
+proof -
+  have boundary: "read_boundary_formed incidence_environment (native_package_sources incidence_environment None [0])
+    (native_package_demands incidence_environment None [0])"
+    by (rule native_package_read_boundary[OF native_incidence_package])
+  have demands: "native_package_demands incidence_environment None [0] = {}"
+    using boundary by (auto simp: read_boundary_formed_def rel_dom_def)
+  have closed: "environment_closed incidence_environment {None} {}"
+    using literal_environment_closed[of incidence_artifact "{}"] incidence_environment_formed
+    by (simp add: incidence_environment_def rel_dom_def)
+  show ?thesis using native_incidence_package closed demands by (simp add: closed_native_package_at_def)
+qed
+
+
+lemma native_incidence_system_formed [simp]:
+  "schema_system_formed native_incidence_program"
+  by (rule native_package_system_formed[OF native_incidence_package])
+
+
+
+lemma native_incidence_admits_material:
+  assumes observed: "material_observation s a (Pair_Term h t) b f"
+  shows "((None,[Suc 0]),s) \<in> positive_meaning native_incidence_program"
+proof -
+  let ?V = "{([10],s),([12],a),([13],h),([14],t),([15],b),([16],f)}"
+  have formed: "term_formed s" "term_formed a" "term_formed h" "term_formed t" "term_formed b" "term_formed f"
+    using material_observation_formed[OF observed] by auto
+  have bindings: "term_bindings_formed (schema_variables native_incidence_schema) ?V"
+    using formed by (auto simp: native_incidence_variables term_bindings_formed_def single_valued_def rel_dom_def)
+  have sf: "schema_formed native_incidence_schema"
+    using native_incidence_system_formed by (simp add: schema_system_formed_def native_incidence_program_def)
+  have inst: "schema_instance native_incidence_schema ?V s {}"
+    using sf bindings by (auto simp: schema_instance_def native_incidence_schema_def
+        schema_premise_instance_def single_valued_def rel_dom_def)
+  have material_inst: "material_pattern_instance ?V native_incidence_material s a (Pair_Term h t) b f"
+    by (simp add: material_pattern_instance_def native_incidence_material_def)
+  have material: "schema_material_satisfied native_incidence_schema ?V"
+    using material_inst observed
+    by (auto simp: schema_material_satisfied_def native_incidence_schema_def material_pattern_satisfied_def; blast)
+  have call: "schema_call_formed native_incidence_program (None,[Suc 0]) s"
+    using formed(1) native_incidence_system_formed by (simp add: schema_call_formed_def native_incidence_program_def)
+  have admitted: "admitted_schema_instance native_incidence_program (None,[Suc 0]) [7] ?V s {}"
+    using call inst material by (auto simp: admitted_schema_instance_def native_incidence_program_def)
+  show ?thesis by (rule positive_meaning_step[OF admitted]) simp
+qed
+
+theorem native_incidence_holds:
+  assumes formed: "exact_formed R" and nonempty: "rra_incidence (object_structure R) \<noteq> {}"
+  shows "((None,[Suc 0]),Target_Term (Whole_Artifact R)) \<in> positive_meaning native_incidence_program"
+proof -
+  obtain a e b f where observed: "material_observation (Target_Term (Whole_Artifact R)) a e b f"
+    using material_observation_total[OF formed] by blast
+  obtain h t where shape: "e=Pair_Term h t"
+    using nonempty_material_enumeration_has_pair[OF observed nonempty] by blast
+  have material: "material_observation (Target_Term (Whole_Artifact R)) a (Pair_Term h t) b f"
+    using observed shape by simp
+  show ?thesis by (rule native_incidence_admits_material[OF material])
+qed
+
+lemma native_incidence_material_forces_nonempty:
+  assumes schema: "schema_instance native_incidence_schema V t Q"
+    and material: "schema_material_satisfied native_incidence_schema V"
+  shows "\<exists>R. t=Target_Term (Whole_Artifact R) \<and> exact_formed R \<and>
+    rra_incidence (object_structure R) \<noteq> {}"
+proof -
+  have sv: "single_valued V" and head: "([10],t) \<in> V"
+    using schema by (auto simp: schema_instance_def native_incidence_schema_def term_bindings_formed_def)
+  obtain s a e b f where inst: "material_pattern_instance V native_incidence_material s a e b f"
+    and observed: "material_observation s a e b f"
+    using material by (auto simp: schema_material_satisfied_def native_incidence_schema_def material_pattern_satisfied_def)
+  have source: "([10],s) \<in> V" and pair: "\<exists>h z. e=Pair_Term h z"
+    using inst by (auto simp: material_pattern_instance_def native_incidence_material_def)
+  have same: "t=s" by (rule single_valued_outputs[OF sv head source])
+  obtain R A E B F where value_shape: "s=Target_Term (Whole_Artifact R)"
+    and enumeration: "artifact_enumeration R A E B F"
+    using observed by (auto simp: material_observation_def)
+  have rf: "exact_formed R" by (rule artifact_enumeration_material(1)[OF enumeration])
+  have typed: "material_observation (Target_Term (Whole_Artifact R)) a e b f"
+    using observed value_shape by simp
+  have nonempty: "rra_incidence (object_structure R) \<noteq> {}"
+    using material_observation_incidence_empty[OF typed] pair by auto
+  show ?thesis using same value_shape rf nonempty by blast
+qed
+
+theorem native_incidence_exact:
+  "((None,[Suc 0]),t) \<in> positive_meaning native_incidence_program \<longleftrightarrow>
+    (\<exists>R. t=Target_Term (Whole_Artifact R) \<and> exact_formed R \<and>
+      rra_incidence (object_structure R) \<noteq> {})"
+proof
+  assume holds: "((None,[Suc 0]),t) \<in> positive_meaning native_incidence_program"
+  obtain c V Q where inst: "admitted_schema_instance native_incidence_program (None,[Suc 0]) c V t Q"
+    using holds by (subst (asm) positive_meaning_unfold) (auto simp: schema_consequences_def)
+  have schema: "schema_instance native_incidence_schema V t Q"
+    and material: "schema_material_satisfied native_incidence_schema V"
+    using inst by (auto simp: admitted_schema_instance_def native_incidence_program_def)
+  show "\<exists>R. t=Target_Term (Whole_Artifact R) \<and> exact_formed R \<and>
+    rra_incidence (object_structure R) \<noteq> {}"
+    by (rule native_incidence_material_forces_nonempty[OF schema material])
+next
+  assume "\<exists>R. t=Target_Term (Whole_Artifact R) \<and> exact_formed R \<and>
+    rra_incidence (object_structure R) \<noteq> {}"
+  then show "((None,[Suc 0]),t) \<in> positive_meaning native_incidence_program"
+    using native_incidence_holds by blast
+qed
+
+
+
+theorem native_incidence_has_infinite_meaning:
+  "infinite {t. ((None,[Suc 0]),t) \<in> positive_meaning native_incidence_program}"
+proof
+  assume finite: "finite {t. ((None,[Suc 0]),t) \<in> positive_meaning native_incidence_program}"
+  let ?f = "\<lambda>n. Target_Term (Whole_Artifact (loop_artifact (unary_address n)))"
+  have each: "\<And>n. ((None,[Suc 0]),?f n) \<in> positive_meaning native_incidence_program"
+  proof -
+    fix n
+    have formed: "exact_formed (loop_artifact (unary_address n))"
+      by (rule loop_artifact_formed[OF unary_address_formed])
+    have nonempty: "rra_incidence (object_structure (loop_artifact (unary_address n))) \<noteq> {}"
+      by (simp add: loop_artifact_def)
+    show "((None,[Suc 0]),?f n) \<in> positive_meaning native_incidence_program"
+      by (rule native_incidence_holds[OF formed nonempty])
+  qed
+  have injective: "inj ?f" by (rule injI) (auto simp: loop_artifact_def)
+  have subset: "range ?f \<subseteq> {t. ((None,[Suc 0]),t) \<in> positive_meaning native_incidence_program}"
+    using each by auto
+  have fin: "finite (range ?f)" by (rule finite_subset[OF subset finite])
+  have "finite (UNIV :: nat set)" by (rule finite_imageD[OF fin injective])
+  then show False by simp
+qed
+
+section \<open>The same fixed program receives future native calls\<close>
+
+definition incidence_query_environment ::
+  "factor_term \<Rightarrow> local_address option artifact_environment" where
+  "incidence_query_environment t = call_environment incidence_artifact [Suc 0] t"
+
+lemma incidence_definition_anchor:
+  "anchor_formed (incidence_artifact,[Suc 0])"
+  using incidence_artifact_formed by (simp add: anchor_formed_def)
+
+lemma incidence_query_environment_formed:
+  assumes "term_formed t"
+  shows "environment_formed (incidence_query_environment t)"
+  unfolding incidence_query_environment_def
+  by (rule call_environment_formed[OF incidence_definition_anchor assms])
+
+lemma incidence_query_includes_program:
+  "environment_included incidence_environment (incidence_query_environment t)"
+  unfolding incidence_environment_def incidence_query_environment_def by (rule call_environment_extends_target)
+
+lemma incidence_query_program:
+  assumes "term_formed t"
+  shows "native_package_at (incidence_query_environment t) None [0] native_incidence_program"
+  by (rule native_package_included[OF native_incidence_package incidence_query_includes_program
+        incidence_query_environment_formed[OF assms]])
+
+lemma incidence_query_application:
+  assumes "term_formed t"
+  shows "\<exists>I K. native_application_at (incidence_query_environment t) (Some []) [] (None,[Suc 0]) t I K"
+  using native_application_representation[OF incidence_definition_anchor assms]
+  unfolding incidence_query_environment_def by blast
+
+theorem native_incidence_future_application_formed:
+  assumes formed: "term_formed t"
+  shows "native_application_formed (incidence_query_environment t) None [0] (Some []) []"
+proof -
+  have package: "native_package_at (incidence_query_environment t) None [0] native_incidence_program"
+    by (rule incidence_query_program[OF formed])
+  obtain I K where app: "native_application_at (incidence_query_environment t) (Some []) [] (None,[Suc 0]) t I K"
+    using incidence_query_application[OF formed] by blast
+  have call: "schema_call_formed native_incidence_program (None,[Suc 0]) t"
+    using formed native_incidence_system_formed by (simp add: schema_call_formed_def native_incidence_program_def)
+  show ?thesis using package app call unfolding native_application_formed_def by blast
+qed
+
+theorem native_incidence_future_truth:
+  assumes formed: "term_formed t"
+  shows "native_positive_holds (incidence_query_environment t) None [0] (Some []) [] \<longleftrightarrow>
+    (\<exists>R. t = Target_Term (Whole_Artifact R) \<and> exact_formed R \<and> rra_incidence (object_structure R) \<noteq> {})"
+proof -
+  have package: "native_package_at (incidence_query_environment t) None [0] native_incidence_program"
+    by (rule incidence_query_program[OF formed])
+  obtain I K where app: "native_application_at (incidence_query_environment t) (Some []) [] (None,[Suc 0]) t I K"
+    using incidence_query_application[OF formed] by blast
+  show ?thesis by (simp only: native_positive_holds_with_reads[OF package app] native_incidence_exact)
+qed
+
+corollary native_incidence_of_future_artifacts:
+  assumes formed: "exact_formed R"
+  shows "native_positive_holds (incidence_query_environment (Target_Term (Whole_Artifact R))) None [0] (Some []) []
+    \<longleftrightarrow> rra_incidence (object_structure R) \<noteq> {}"
+proof -
+  have tf: "term_formed (Target_Term (Whole_Artifact R))" using formed by simp
+  show ?thesis using native_incidence_future_truth[OF tf] formed by auto
+qed
+
+lemma incidence_future_calls_injective:
+  assumes tf: "term_formed t" and sf: "term_formed s"
+    and same: "incidence_query_environment t = incidence_query_environment s"
+  shows "t = s"
+proof -
+  obtain I K where left: "native_application_at (incidence_query_environment t) (Some []) [] (None,[Suc 0]) t I K"
+    using incidence_query_application[OF tf] by blast
+  obtain J W where right: "native_application_at (incidence_query_environment s) (Some []) [] (None,[Suc 0]) s J W"
+    using incidence_query_application[OF sf] by blast
+  have other: "native_application_at (incidence_query_environment t) (Some []) [] (None,[Suc 0]) s J W"
+    using right same by simp
+  show ?thesis using native_application_unique[OF left other] by blast
+qed
+
+
+theorem incidence_future_program_environment_unchanged:
+  assumes formed: "term_formed t"
+  shows "native_package_environment (incidence_query_environment t) None [0] = incidence_environment"
+proof -
+  let ?F = "incidence_query_environment t"
+  let ?P = "native_package_environment ?F None [0]"
+  have package: "native_package_at ?F None [0] native_incidence_program" by (rule incidence_query_program[OF formed])
+  have upper: "environment_included ?P incidence_environment"
+    by (rule native_package_dependency_material_required[OF package native_incidence_package incidence_query_includes_program])
+  have source: "None \<in> native_package_sources ?F None [0]" by (simp add: native_package_sources_def)
+  have art: "artifact_at ?F None incidence_artifact" unfolding incidence_query_environment_def by (rule call_environment_target)
+  have retained: "artifact_at ?P None incidence_artifact"
+    using art by (simp only: native_package_environment_sources[OF source])
+  have lower: "environment_included incidence_environment ?P"
+    using retained by (auto simp: incidence_environment_def literal_environment_def rel_dom_def
+        environment_included_def artifact_at_def)
+  show ?thesis by (rule environment_included_antisym[OF upper lower])
+qed
+
+theorem native_incidence_has_infinite_future_calls:
+  "infinite (incidence_query_environment ` {t. term_formed t})"
+proof
+  assume finite: "finite (incidence_query_environment ` {t. term_formed t})"
+  have injective: "inj_on incidence_query_environment {t. term_formed t}"
+    by (rule inj_onI) (auto intro: incidence_future_calls_injective)
+  have "finite {t. term_formed t}" by (rule finite_imageD[OF finite injective])
+  then show False using future_term_domain_is_infinite by blast
+qed
+
+
+text \<open>
+  This witness has forty-three occurrences. Every record field, family socket,
+  binder, and variable citation participates in the recovered program. Its one
+  material premise has five ordinary operands. The nonempty edge-list pattern
+  is part of this clause, rather than a special case in the generic semantics.
+
+  Each future call has a finite native representation. Its argument may name any
+  formed exact artifact, and closing the program in that call environment returns
+  the identical original environment. The true argument family is infinite.
+  General construction of every finite native program is a separate obligation.
+\<close>
+
+end

@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rra.example/schemas/kernel/v1/common.schema.json",
+  "title": "RRA Kernel Common Values",
+  "$defs": {
+    "hex": {
+      "type": "string",
+      "pattern": "^(?:[0-9a-f]{2})*$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "recordRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile",
+        "algorithm",
+        "digest"
+      ],
+      "properties": {
+        "profile": {
+          "type": "string",
+          "minLength": 1
+        },
+        "algorithm": {
+          "type": "string",
+          "minLength": 1
+        },
+        "digest": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/hex"
+            },
+            {
+              "minLength": 2
+            }
+          ]
+        }
+      }
+    }
+  }
+}

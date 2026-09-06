@@ -1,0 +1,13 @@
+{
+  "format": "rra-assembly-witness-json-1",
+  "data_kind": "none",
+  "pieces": [
+    {"slot":"00","record":{"data":{"kind":"none"},"format":"rra-record-json-1","incidence":[],"positions":["00"]}},
+    {"slot":"01","record":{"data":{"kind":"none"},"format":"rra-record-json-1","incidence":[],"positions":["00"]}}
+  ],
+  "output": {"data":{"kind":"none"},"format":"rra-record-json-1","incidence":[],"positions":["ff"]},
+  "origins": [
+    {"slot":"00","source":"00","target":"ff"},
+    {"slot":"01","source":"00","target":"ff"}
+  ]
+}

@@ -1,0 +1,77 @@
+"""Relational Record Architecture kernel reference model."""
+
+from .artifact import Citation, ExactRecord, MemoryResolver, RecordRef, ResolverError, citation_resolves, reference_for, verifies
+from .assembly import (
+    AssemblyError,
+    Copied,
+    ExactAssemblyWitness,
+    ExactPiece,
+    Gluing,
+    Origin,
+    Piece,
+    PieceFamily,
+    discrete_gluing,
+    k1,
+    k2,
+    pushforward,
+    quotient,
+    verify_witness,
+)
+from .assembly_codec import decode_witness, encode_witness, validate_witness_bytes
+from .core import FormationError, Structure, is_bounded_isomorphism, is_isomorphism
+from .data import (
+    BagData,
+    BagEntry,
+    DataKind,
+    FunctionalData,
+    FunctionalEntry,
+    NodeData,
+    NodeEntry,
+    NoData,
+    Object,
+    is_object_isomorphism,
+)
+
+__all__ = [
+    "AssemblyError",
+    "BagData",
+    "BagEntry",
+    "Citation",
+    "Copied",
+    "DataKind",
+    "ExactAssemblyWitness",
+    "ExactPiece",
+    "ExactRecord",
+    "FormationError",
+    "FunctionalData",
+    "FunctionalEntry",
+    "Gluing",
+    "MemoryResolver",
+    "NodeData",
+    "NodeEntry",
+    "NoData",
+    "Object",
+    "Origin",
+    "Piece",
+    "PieceFamily",
+    "RecordRef",
+    "ResolverError",
+    "Structure",
+    "citation_resolves",
+    "decode_witness",
+    "discrete_gluing",
+    "encode_witness",
+    "is_bounded_isomorphism",
+    "is_isomorphism",
+    "is_object_isomorphism",
+    "k1",
+    "k2",
+    "pushforward",
+    "quotient",
+    "reference_for",
+    "verifies",
+    "validate_witness_bytes",
+    "verify_witness",
+]
+
+__version__ = "1.0.0"

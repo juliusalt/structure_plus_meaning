@@ -2184,9 +2184,73 @@ Its accepting entry permits every formed argument. This is a concrete witness
 for the binding and selection component and demonstrates why it is insufficient
 as the complete amendment protocol.
 
-No complete legitimate-succession claim is made by this component. An explicit
-historical predecessor relation, complete assembly and dependency evidence,
-comparison-report admission, and the cross-version interpretation bridge
-remain to be joined and internally checked. The genesis adequacy theorem must
-prove that a concrete predecessor policy enforces those conditions; a proof
-of its positive call alone cannot establish that property.
+No complete legitimate-succession claim is made by this selection component.
+The account component below adds the historical predecessor and assembly
+evidence. Complete dependency evidence, comparison-report admission, and the
+cross-version interpretation bridge remain to be joined and internally
+checked. The genesis adequacy theorem must prove that a concrete predecessor
+policy enforces those conditions; a proof of its positive call alone cannot
+establish that property.
+
+## Assembly evidence retains the candidate's exact recorded construction scope
+
+The staged transition profile checks a separately adopted construction purpose
+of the predecessor. Like the continuation role, this purpose uses the same
+authority, generation, publication, and original adoption-program scope and
+entry. Its selected construction entry may differ from the amendment and
+continuation entries. This is a concrete protocol choice: it keeps construction
+permission under explicit predecessor authority. It is not an immutable rule
+for every successor protocol that the predecessor may later authorize.
+
+The construction call already determines the full input list, base entries,
+selected pieces, complete origins, and output. Its ordinary permission keeps
+structural assembly validity and presentation invariance distinct from the
+truth of one serialized call. The retained closed replay must use that actual
+selected entry and exact predecessor program. Every permitted complete account
+has such an actual native call and proof.
+
+The candidate's recorded cause must quote exactly the minimal program-and-call
+scope of that replay. Equality only of its decoded account, program value, or
+root artifact would permit a different dependency environment. The proof can
+retain additional required proof material, but the recorded cause retains
+only its independently derived minimal judgment scope. Every outer
+presentation of the same candidate then recovers the existing certified
+recorded construction cause. The assembly output must be that candidate's
+exact payload.
+
+The supporting material stores the construction frame and whole replay record
+once, followed by one complete remaining scope and its actual site. The account
+and candidate are recovered through their existing records. The accepted
+continuation envelope fixes all these exact fields; a different proof or
+remaining scope cannot replace them inside the same accepted target. Data
+formation admits every complete presentation without asserting acceptance
+invariance across different exact submitted artifacts.
+
+The actual current generation must separately occur in the candidate's direct
+predecessor family. This choice follows the required exact predecessor in
+proposal §15.5 and plan O-61, while retaining additional direct predecessors.
+It does not require the predecessor to occur in the construction input list,
+make it a semantic dependency, or equate any of those boundaries. The generation
+size theorem proves strict succession. The earlier unchanged-generation
+selection witness therefore fails this stronger account profile.
+
+One exact construction proof and recorded cause can accompany two actual closed
+generations with different histories. A fixed native output policy also serves
+every future valid account presentation and supplies a candidate with the
+current generation as a direct predecessor. Its empty assembly is an explicit
+instance. These witnesses establish the construction and history joins; they
+do not adopt arbitrary output artifacts as successor programs or establish
+genesis adequacy.
+
+Given an actual candidate frame, its matching assembly proof, the historical
+edge, and a successful transaction between the actual publication snapshots,
+a universal current entry constructs the complete account material and both
+later proofs for every remaining formed supporting scope. This conditional
+construction checks the order of the finite records without assuming that
+the candidate's supporting scope contains either later proof.
+
+Complete dependency evidence, comparison and migration admission, and exact
+cross-version interpretation still need to be checked in the remaining bound
+scope. The full protocol must have an ordinary internal definition and a proved
+adequacy theorem. None of these component joins establishes policy adequacy
+merely from a proof that its acceptance call is true.

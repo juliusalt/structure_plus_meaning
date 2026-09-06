@@ -306,3 +306,10 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Continuation_Envelopes
     Factor_Transition_Selection
     Factor_Transition_Examples
+    Factor_Current_Construction
+    Factor_Current_Construction_Certificates
+    Factor_Generation_Replay_Causes
+    Factor_Predecessor_Assembly
+    Factor_Assembly_Support
+    Factor_Transition_Accounts
+    Factor_Transition_Account_Examples

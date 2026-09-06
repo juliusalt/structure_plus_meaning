@@ -163,9 +163,27 @@ program may differ; their exact frame is part of the accepted material.
 Every such selection has an acceptance record retaining the predecessor's
 program and minimal call scope. A fixed native program constructs both proof
 stages for every future formed supporting scope without a circular quotation.
-This selection component still requires complete assembly, dependency,
-comparison, historical-predecessor, and interpretation checks before it can
-serve as a complete amendment protocol.
+This selection component is extended by separate assembly and history checks.
+Complete dependency, comparison, and interpretation admission still remain
+before it can serve as a complete amendment protocol.
+
+The supporting material now retains a separately adopted construction frame,
+its whole proof record, and one complete remaining scope. The construction
+entry belongs to the exact predecessor program. Its account must produce the
+candidate's exact payload, and the candidate's cause must quote precisely that
+proof's minimal program-and-call scope. Every outer presentation of the
+candidate recovers the same certified recorded construction. The accepted
+envelope fixes the construction evidence and remaining scope.
+
+Historical succession separately requires the actual current generation in the
+candidate's direct predecessor family. The generation size theorem excludes
+self-succession. One exact construction proof and recorded cause can accompany
+different histories without changing the account. A fixed native output policy
+serves every future valid account presentation and constructs actual candidate
+generations with that predecessor. These account witnesses supply no full
+successor adoption or genesis adequacy. The remaining scope still needs
+complete dependency evidence, comparison and migration admission, and an
+exact cross-version interpretation bridge.
 
 The current frame and candidate's program payload also determine separate
 comparison domains. Complete changed interface and clause rows determine the

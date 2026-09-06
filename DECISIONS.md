@@ -1298,6 +1298,17 @@ omit the presentation site. The shared finite site-coordinate representation
 is also used in existing program-and-call quotations, with the same data
 layout as before.
 
+Every formed publication view now has an actual closed native presentation.
+The constructor places complete citation families inside an explicit record.
+Snapshot citations bind to the existing generation uses, preserving their
+recursive reference environments even when artifact values coincide. The
+other two families read exact dependency and evidence targets. Finite distinct
+lists choose construction layouts only; all selections are recovered through
+the existing incidence readers. Empty fields use the same construction.
+The grammar-derived restriction removes unrelated environment material and
+keeps the complete view. No authority or cause-validity premise enters this
+construction.
+
 ## Raw adoption and publication-relative currentness
 
 The raw adoption argument contains authority, generation, and purpose. Authority
@@ -1314,8 +1325,7 @@ generation at the supplied locus. The actual native program and application
 retain the meaning boundary; the publication retains its own environment and
 site. The locus is recovered from the selected core. Cause validity, evidence,
 and derivation are absent from the raw authority layer's imports and judgments.
-Policy-admission evidence checking and the separate certified joins remain
-higher obligations.
+Policy-admission evidence checking remains a higher obligation.
 
 The general native compiler preserves this policy admission as well as the
 ordinary formation and truth boundaries for every future argument. Its finite
@@ -1353,6 +1363,14 @@ scope and selection. A concrete retained adoption certificate still accepts
 an invalid generation cause: the certificate proves this program's decision,
 not the subject's cause validity. Native checking of policy-admission evidence
 remains open.
+
+Actual publication and policy witnesses now vary currentness independently
+while holding the exact generation fixed. The same positive adoption applies
+to a closed publication selecting that core and to an actual empty publication;
+only the former supplies currentness. Holding one actual selecting publication
+fixed, two formed admitted policy applications give opposite currentness
+decisions. A retained currentness certificate can select a generation whose
+recorded cause is invalid. These joins introduce no new field into the core.
 
 Data quotations supply inspectable material for later judgments. They do
 not validate causes or selected evidence, recognize currentness, or authorize

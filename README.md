@@ -90,6 +90,8 @@ Complete artifacts, exact targets, generation cores, publication views, and
 native construction environments now also have self-contained quotations.
 Complete publication scopes retain their exact environment and site; the view
 is recovered from those data and remains fixed across enclosing environments.
+Every formed publication view now has an actual closed native presentation,
+including empty selections, with each selected core's reference scope retained.
 Every value, count, use, binding, recursive predecessor, and publication
 selection is recovered from the quotation's artifact without consulting an
 external binding. Unordered collections admit every complete presentation;
@@ -107,6 +109,9 @@ adoption has a retained certificate preserving its exact program and judgment
 scope; even certified adoption can accept an invalid cause. Complete scope
 quotations recover the subject from the actual call. Native admission-evidence
 checking and cross-foundation authorization remain open.
+Actual closed publications and admitted policy calls independently vary
+currentness while the exact generation stays fixed. Certified currentness can
+also select a generation with an invalid cause.
 The program and call determine a least closed environment independently of
 proof retention, preserving their readings, truth, and exact program environment.
 Complete finite representations now preserve exact artifact, environment, target,

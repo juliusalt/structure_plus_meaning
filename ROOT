@@ -198,6 +198,10 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Proof_Rows
     RRA_Syntax_Families
     RRA_Syntax_Records
+    RRA_Collection_Frames
+    RRA_Collection_References
+    RRA_Collection_Selections
+    RRA_Publication_Construction
     Factor_Record_Syntax
     Factor_Table_Assembly
     Factor_Proof_Row_Copy

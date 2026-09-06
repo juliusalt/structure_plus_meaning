@@ -260,3 +260,6 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     RRA_Binding_Omissions
     Factor_Package_Omissions
     Factor_Continuation_Omissions
+    Factor_Program_Scopes
+    Factor_Current_Values
+    Factor_Current_Scopes

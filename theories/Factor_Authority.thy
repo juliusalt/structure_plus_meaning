@@ -250,6 +250,15 @@ proof -
   show ?thesis using selected same snapshot_lookup_some[OF formed, of l G] by simp
 qed
 
+lemma native_current_locus:
+  assumes current: "native_current E pu pr au ar A F v root l G purpose"
+  shows "generation_locus G=l"
+proof -
+  obtain P where closed: "publication_environment_closed F v root P" using current unfolding native_current_def by blast
+  have pub: "publication_at F v root P" using closed by (simp add: publication_environment_closed_def)
+  show ?thesis using native_current_selected[OF current pub] by blast
+qed
+
 theorem native_current_generation_unique:
   assumes first: "native_current E pu pr au ar A F v root l G purpose"
     and second: "native_current H qu qr bu br B F v root l K other"

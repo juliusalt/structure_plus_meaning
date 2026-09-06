@@ -111,7 +111,11 @@ quotations recover the subject from the actual call. Native admission-evidence
 checking and cross-foundation authorization remain open.
 Actual closed publications and admitted policy calls independently vary
 currentness while the exact generation stays fixed. Certified currentness can
-also select a generation with an invalid cause.
+also select a generation with an invalid cause. Complete currentness quotations
+record the minimal adoption judgment scope and the exact publication scope;
+their native readings recover authority, generation, purpose, and locus without
+duplicate fields. Complete program-scope quotations likewise retain every
+dependency binding and derive the actual program.
 The program and call determine a least closed environment independently of
 proof retention, preserving their readings, truth, and exact program environment.
 Complete finite representations now preserve exact artifact, environment, target,

@@ -1378,6 +1378,32 @@ adoption. Their recovery theorems also do not assert that an arbitrary program
 ignores presentation order. Any semantic use which claims to depend only on
 the represented value must establish that further invariance.
 
+## Complete program and currentness scopes remain inspectable data
+
+A program-scope quotation stores its complete finite environment and selected
+site. The native package reader derives the program, and closedness entails
+that the stored environment is exactly the minimal program scope. There is no
+second stored program field. Every actual package, including an empty one,
+has such a quotation. Retaining that scope in a formed future environment
+preserves the program and the formation and truth of arbitrary actual future
+calls; their arguments need not lie inside the recorded program environment.
+
+A currentness frame has two ordinary data fields: a complete program-and-call
+scope and a complete publication scope with its site. The raw value establishes
+neither role. The currentness reader checks adoption under the actual program,
+selection in the exact closed publication, and the minimal judgment boundary.
+Authority, generation, and purpose come from the call; the locus comes from
+the generation. They are recovered fields rather than duplicate stored data.
+Every currentness judgment has a finite complete frame quotation preserving
+its original publication scope. Equal quotation targets fix both environments,
+all sites, and the whole subject independently of any enclosing bindings.
+
+These records provide the complete program and currentness data required by a
+future predecessor-relative amendment judgment. Their formation and recovery
+do not authorize succession, select a universal acceptance program, validate a
+transition certificate, or supply a cross-version interpretation bridge.
+Those conditions must still be stated and checked by the amendment mechanism.
+
 ## Continuation keeps structural success and semantic permission separate
 
 The ordinary continuation argument has four positions: the before snapshot,

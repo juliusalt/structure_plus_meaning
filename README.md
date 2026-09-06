@@ -74,10 +74,15 @@ Construction certification is a separate join that preserves its full account
 and requires presentation-invariant permission.
 Cause validation follows the generation's actual citation and checks the
 construction account and exact output. The recorded profile contains its whole
-program-and-call scope as exact data. Equal recorded causes determine equal
+program-and-call scope as exact data. Its whole artifact determines the
+quotation root, so the cause target stores no additional root coordinate.
+The generation's reading retains that artifact and its complete native data
+reading uses no external slots. Equal recorded causes determine equal
 accounts across outer environments, and any presentation of the same core
 preserves validity. Every valid recorded construction has a separate retained
 certificate that preserves its exact program-and-call scope.
+Construction permission and the raw cause profiles import neither derivation
+nor evidence; their proof adequacy and certification results sit above them.
 Every admitted native construction also has an actual closed generation
 presentation containing that cause, with the stated locus and predecessor set.
 Base admission applies an explicit native definition to a whole-artifact

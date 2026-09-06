@@ -1188,6 +1188,32 @@ has a recordable scope with its exact program environment preserved.
 Factor_Generation_Construction supplies the actual generation presentation as
 a further join.
 
+The complete-data root theorem now removes the cause quotation's separately
+stored root coordinate. The recorded profile cites the whole scope artifact;
+its structure uniquely recovers the root, full environment, and both inner
+sites. This choice applies P-3 over the complete standalone data profile. The
+general occurrence-target form and the bare application cause reader still
+retain their explicit occurrence boundary: that broader domain does not have
+this whole-artifact root-recovery theorem.
+
+The actual generation's citation ensures that the whole cause artifact is
+present in its environment. Its complete native data reading requires no
+external slots. The encoded inner environment still retains every binding
+needed to judge the cause; no enclosing binding is substituted for it. Base
+and construction generation witnesses use this whole-value cause profile and
+retain their separate certificates. Their invalid-cause counterexample uses
+the empty artifact, which cannot carry a complete quotation. Whole-artifact
+cause syntax alone no longer supplies the reason for invalidity.
+
+The import audit also exposed a finite-derivation adequacy theorem in the raw
+construction-presentation theory. Its statement and proof now live in
+Factor_Certified_Construction. The presentation theory imports positive meaning
+directly, and Factor_Cause imports only construction presentations, native
+meaning, and the generation reader it uses. Raw construction permission and
+both recorded cause profiles therefore have no derivation, replay, or evidence
+dependency. Their finite derivation and retained certification results remain
+available above that boundary.
+
 ## Recorded construction certificates preserve the exact scope
 
 Generic replay construction now preserves the exact least program-and-call

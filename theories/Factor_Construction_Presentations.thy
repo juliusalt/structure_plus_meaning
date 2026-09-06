@@ -1,5 +1,5 @@
 theory Factor_Construction_Presentations
-  imports Factor_Construction_Claims Factor_Finite_Presentations Factor_Derivation
+  imports Factor_Construction_Claims Factor_Finite_Presentations Factor_Positive_Meaning
 begin
 
 section \<open>Complete accounts without a privileged enumeration\<close>
@@ -324,13 +324,6 @@ theorem factor_construction_assembly:
   assumes "factor_constructs P d xs B W R"
   shows "K2 (construction_assembly xs B W) \<and> R=assembly_output (construction_assembly xs B W)"
   using assms by (simp add: factor_constructs_def source_constructs_iff_K2)
-
-theorem factor_construction_derivation:
-  "factor_constructs P d xs B W R \<longleftrightarrow>
-    source_constructs xs B W R \<and> construction_coordinates_formed B W \<and>
-    construction_permission_invariant P d \<and>
-    (\<exists>t tree. construction_claim_presents xs B W R t \<and> checks_schema_proof P tree d t)"
-  by (simp add: factor_constructs_def schema_proof_adequate)
 
 text \<open>
   Invariance is an explicit admissibility obligation for interpreting a chosen

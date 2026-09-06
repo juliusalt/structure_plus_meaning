@@ -9,24 +9,24 @@ theorem native_program_base_generation_total:
   assumes package: "native_package_at E pu pr P" and locus: "target_formed l"
   shows "\<exists>C D. \<exists>A :: local_address option artifact_environment. \<exists>u H root.
     program_scope_quoted_at C [] (native_package_environment E pu pr) pu pr P \<and>
-    generation_at A u [] (Generation l {||} (Whole_Artifact C) (Occurrence_Anchor (D,[]))) \<and>
+    generation_at A u [] (Generation l {||} (Whole_Artifact C) (Whole_Artifact D)) \<and>
     generation_environment_closed A {(u,[])} \<and>
-    generation_program_scope (Generation l {||} (Whole_Artifact C) (Occurrence_Anchor (D,[])))
+    generation_program_scope (Generation l {||} (Whole_Artifact C) (Whole_Artifact D))
       (native_package_environment E pu pr) pu pr P \<and>
-    recorded_base_cause_at A u [] (Generation l {||} (Whole_Artifact C) (Occurrence_Anchor (D,[]))) C \<and>
-    certified_base_cause_at A u [] (Generation l {||} (Whole_Artifact C) (Occurrence_Anchor (D,[]))) H root C"
+    recorded_base_cause_at A u [] (Generation l {||} (Whole_Artifact C) (Whole_Artifact D)) C \<and>
+    certified_base_cause_at A u [] (Generation l {||} (Whole_Artifact C) (Whole_Artifact D)) H root C"
 proof -
   obtain C where formed: "exact_formed C"
     and quote: "program_scope_quoted_at C [] (native_package_environment E pu pr) pu pr P"
     using program_scope_quoted_total[OF package] by blast
   obtain D and A :: "local_address option artifact_environment" and u H root where
-    gen: "generation_at A u [] (Generation l {||} (Whole_Artifact C) (Occurrence_Anchor (D,[])))"
+    gen: "generation_at A u [] (Generation l {||} (Whole_Artifact C) (Whole_Artifact D))"
     and closed: "generation_environment_closed A {(u,[])}"
-    and valid: "recorded_base_cause_at A u [] (Generation l {||} (Whole_Artifact C) (Occurrence_Anchor (D,[]))) C"
+    and valid: "recorded_base_cause_at A u [] (Generation l {||} (Whole_Artifact C) (Whole_Artifact D)) C"
     and certified: "certified_base_cause_at A u []
-      (Generation l {||} (Whole_Artifact C) (Occurrence_Anchor (D,[]))) H root C"
+      (Generation l {||} (Whole_Artifact C) (Whole_Artifact D)) H root C"
     using every_formed_payload_has_a_certified_base_generation[OF formed locus] by blast
-  have scope: "generation_program_scope (Generation l {||} (Whole_Artifact C) (Occurrence_Anchor (D,[])))
+  have scope: "generation_program_scope (Generation l {||} (Whole_Artifact C) (Whole_Artifact D))
     (native_package_environment E pu pr) pu pr P"
     by (rule generation_program_scope_from_payload[OF generation_at_formed[OF gen] _ quote]) simp
   show ?thesis using quote gen closed scope valid certified by blast
@@ -38,20 +38,20 @@ theorem constructed_program_generation_total:
     and judged: "construction_judgment_at E xu xr au ar xs B W C"
     and locus: "target_formed l" and predecessors: "\<forall>G\<in>fset V. generation_formed G"
   shows "\<exists>D. \<exists>A :: local_address option artifact_environment. \<exists>u H root.
-    generation_at A u [] (Generation l V (Whole_Artifact C) (Occurrence_Anchor (D,[]))) \<and>
+    generation_at A u [] (Generation l V (Whole_Artifact C) (Whole_Artifact D)) \<and>
     generation_environment_closed A {(u,[])} \<and>
-    generation_program_scope (Generation l V (Whole_Artifact C) (Occurrence_Anchor (D,[]))) F pu pr P \<and>
-    recorded_construction_cause_at A u [] (Generation l V (Whole_Artifact C) (Occurrence_Anchor (D,[]))) xs B W C \<and>
-    certified_recorded_cause_at A u [] (Generation l V (Whole_Artifact C) (Occurrence_Anchor (D,[]))) H root xs B W C"
+    generation_program_scope (Generation l V (Whole_Artifact C) (Whole_Artifact D)) F pu pr P \<and>
+    recorded_construction_cause_at A u [] (Generation l V (Whole_Artifact C) (Whole_Artifact D)) xs B W C \<and>
+    certified_recorded_cause_at A u [] (Generation l V (Whole_Artifact C) (Whole_Artifact D)) H root xs B W C"
 proof -
   obtain D and A :: "local_address option artifact_environment" and u H root where
-    gen: "generation_at A u [] (Generation l V (Whole_Artifact C) (Occurrence_Anchor (D,[])))"
+    gen: "generation_at A u [] (Generation l V (Whole_Artifact C) (Whole_Artifact D))"
     and closed: "generation_environment_closed A {(u,[])}"
-    and valid: "recorded_construction_cause_at A u [] (Generation l V (Whole_Artifact C) (Occurrence_Anchor (D,[]))) xs B W C"
+    and valid: "recorded_construction_cause_at A u [] (Generation l V (Whole_Artifact C) (Whole_Artifact D)) xs B W C"
     and certified: "certified_recorded_cause_at A u []
-      (Generation l V (Whole_Artifact C) (Occurrence_Anchor (D,[]))) H root xs B W C"
+      (Generation l V (Whole_Artifact C) (Whole_Artifact D)) H root xs B W C"
     using native_construction_generation_total[OF judged locus predecessors] by blast
-  have scope: "generation_program_scope (Generation l V (Whole_Artifact C) (Occurrence_Anchor (D,[]))) F pu pr P"
+  have scope: "generation_program_scope (Generation l V (Whole_Artifact C) (Whole_Artifact D)) F pu pr P"
     by (rule generation_program_scope_from_payload[OF generation_at_formed[OF gen] _ quote]) simp
   show ?thesis using gen closed scope valid certified by blast
 qed
@@ -75,7 +75,7 @@ proof -
   have scope: "generation_program_scope ?G (native_package_environment E pu pr) pu pr P"
     by (rule generation_program_scope_from_payload[OF gf _ quote]) simp
   have invalid: "\<not>generation_cause_valid_at A u [] ?G"
-    by (rule whole_cause_is_not_valid) simp
+    by (rule empty_cause_is_not_valid) simp
   show ?thesis using gen closed scope invalid by blast
 qed
 

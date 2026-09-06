@@ -1,5 +1,5 @@
 theory Factor_Cause
-  imports Factor_Native_Construction RRA_Generation_Dependencies
+  imports Factor_Construction_Presentations Factor_Native_Meaning RRA_Generation_Dependencies
 begin
 
 section \<open>Construction validity is a separate judgment\<close>

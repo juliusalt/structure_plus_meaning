@@ -164,6 +164,18 @@ lemma generation_at_environment_formed:
   using assms by (cases rule: generation_at.cases)
     (auto dest: generation_fields_formed)
 
+lemma generation_cause_artifact:
+  assumes gen: "generation_at E u r G"
+  shows "\<exists>v. artifact_at E v (target_artifact (generation_cause G))"
+proof -
+  obtain l M p c where fields: "generation_fields_at E u r l M p c"
+    and cause: "generation_cause G=c"
+    using gen by (cases rule: generation_at.cases) auto
+  obtain cr where cited: "anchored_at E u cr c"
+    using fields unfolding generation_fields_at_def by blast
+  show ?thesis using anchored_at_target_artifact[OF cited] cause by simp
+qed
+
 lemma generation_base_at:
   assumes fields: "generation_fields_at E u r l {} p c"
   shows "generation_at E u r (Generation l {||} p c)"

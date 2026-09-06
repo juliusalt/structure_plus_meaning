@@ -55,24 +55,24 @@ lemma valid_generation_is_read:
   shows "generation_at E u r G"
   using valid_generation_has_scope[OF assms] unfolding generation_judgment_scope_at_def by blast
 
-lemma valid_generation_cause_is_occurrence:
+lemma valid_generation_cause_is_whole:
   assumes valid: "generation_cause_valid_at E u r G"
-  shows "\<exists>C a. generation_cause G=Occurrence_Anchor (C,a) \<and> anchor_formed (C,a)"
+  shows "\<exists>C a. generation_cause G=Whole_Artifact C \<and> anchor_formed (C,a)"
 proof -
   obtain F pu pr au ar where scope: "generation_judgment_scope_at E u r G F pu pr au ar"
     using valid_generation_has_scope[OF valid] by blast
-  obtain C a where cause: "generation_cause G=Occurrence_Anchor (C,a)"
+  obtain C a where cause: "generation_cause G=Whole_Artifact C"
     and quote: "judgment_value_quoted_at C a F pu pr au ar"
     using generation_judgment_scope_cause[OF scope] by blast
   show ?thesis using cause judgment_value_quoted_anchor[OF quote] by blast
 qed
 
-theorem whole_cause_is_not_valid:
-  assumes "generation_cause G=Whole_Artifact R"
+theorem empty_cause_is_not_valid:
+  assumes "generation_cause G=Whole_Artifact empty_artifact"
   shows "\<not>generation_cause_valid_at E u r G"
 proof
   assume valid: "generation_cause_valid_at E u r G"
-  show False using valid_generation_cause_is_occurrence[OF valid] assms by simp
+  show False using valid_generation_cause_is_whole[OF valid] assms empty_artifact_has_no_anchor by auto
 qed
 
 theorem generation_formation_does_not_validate_its_cause:
@@ -86,7 +86,7 @@ proof -
   have formed: "generation_formed ?G" by (rule generation_at_formed[OF gen])
   have whole: "generation_cause ?G=?T" by simp
   have invalid: "\<not>generation_cause_valid_at ?E False [] ?G"
-    by (rule whole_cause_is_not_valid[OF whole])
+    by (rule empty_cause_is_not_valid[OF whole])
   show ?thesis using gen formed invalid by blast
 qed
 

@@ -45,24 +45,24 @@ theorem certified_cause_can_be_refused:
     and payload: "exact_formed R" and locus: "target_formed l"
   shows "\<exists>C. \<exists>E :: local_address option artifact_environment. \<exists>u H root.
     \<exists>F :: local_address option artifact_environment. \<exists>pu au Q d t I K.
-    generation_at E u [] (Generation l {||} (Whole_Artifact R) (Occurrence_Anchor (C,[]))) \<and>
+    generation_at E u [] (Generation l {||} (Whole_Artifact R) (Whole_Artifact C)) \<and>
     generation_environment_closed E {(u,[])} \<and>
-    generation_cause_valid_at E u [] (Generation l {||} (Whole_Artifact R) (Occurrence_Anchor (C,[]))) \<and>
-    certified_base_cause_at E u [] (Generation l {||} (Whole_Artifact R) (Occurrence_Anchor (C,[]))) H root R \<and>
+    generation_cause_valid_at E u [] (Generation l {||} (Whole_Artifact R) (Whole_Artifact C)) \<and>
+    certified_base_cause_at E u [] (Generation l {||} (Whole_Artifact R) (Whole_Artifact C)) H root R \<and>
     native_package_at F pu [] Q \<and> native_application_at F au [] d t I K \<and>
     adoption_permission_invariant Q d \<and>
-    adoption_value_presents A (Generation l {||} (Whole_Artifact R) (Occurrence_Anchor (C,[]))) p t \<and>
+    adoption_value_presents A (Generation l {||} (Whole_Artifact R) (Whole_Artifact C)) p t \<and>
     native_application_formed F pu [] au [] \<and>
     \<not>native_adoption_judgment_at F pu [] au [] A
-      (Generation l {||} (Whole_Artifact R) (Occurrence_Anchor (C,[]))) p"
+      (Generation l {||} (Whole_Artifact R) (Whole_Artifact C)) p"
 proof -
   obtain C and E :: "local_address option artifact_environment" and u H root where certified:
-    "generation_at E u [] (Generation l {||} (Whole_Artifact R) (Occurrence_Anchor (C,[])))"
+    "generation_at E u [] (Generation l {||} (Whole_Artifact R) (Whole_Artifact C))"
     "generation_environment_closed E {(u,[])}"
-    "recorded_base_cause_at E u [] (Generation l {||} (Whole_Artifact R) (Occurrence_Anchor (C,[]))) R"
-    "certified_base_cause_at E u [] (Generation l {||} (Whole_Artifact R) (Occurrence_Anchor (C,[]))) H root R"
+    "recorded_base_cause_at E u [] (Generation l {||} (Whole_Artifact R) (Whole_Artifact C)) R"
+    "certified_base_cause_at E u [] (Generation l {||} (Whole_Artifact R) (Whole_Artifact C)) H root R"
     using every_formed_payload_has_a_certified_base_generation[OF payload locus] by blast
-  let ?G="Generation l {||} (Whole_Artifact R) (Occurrence_Anchor (C,[]))"
+  let ?G="Generation l {||} (Whole_Artifact R) (Whole_Artifact C)"
   have valid: "generation_cause_valid_at E u [] ?G"
     using certified(3) unfolding generation_cause_valid_at_def by blast
   have formed: "generation_formed ?G" by (rule generation_at_formed[OF certified(1)])

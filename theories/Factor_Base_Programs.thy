@@ -85,10 +85,10 @@ qed
 corollary every_formed_payload_has_a_certified_base_generation:
   assumes formed: "exact_formed R" and locus: "target_formed l"
   shows "\<exists>C. \<exists>E :: local_address option artifact_environment. \<exists>u H root.
-    generation_at E u [] (Generation l {||} (Whole_Artifact R) (Occurrence_Anchor (C,[]))) \<and>
+    generation_at E u [] (Generation l {||} (Whole_Artifact R) (Whole_Artifact C)) \<and>
     generation_environment_closed E {(u,[])} \<and>
-    recorded_base_cause_at E u [] (Generation l {||} (Whole_Artifact R) (Occurrence_Anchor (C,[]))) R \<and>
-    certified_base_cause_at E u [] (Generation l {||} (Whole_Artifact R) (Occurrence_Anchor (C,[]))) H root R"
+    recorded_base_cause_at E u [] (Generation l {||} (Whole_Artifact R) (Whole_Artifact C)) R \<and>
+    certified_base_cause_at E u [] (Generation l {||} (Whole_Artifact R) (Whole_Artifact C)) H root R"
 proof -
   obtain E :: "local_address option artifact_environment" and pu Q d
     where package: "closed_native_package_at E pu [] Q" and future:
@@ -106,12 +106,12 @@ proof -
     using future[rule_format, OF formed] by blast
   have empty: "\<forall>G\<in>fset {||}. generation_formed G" by simp
   obtain C and A :: "local_address option artifact_environment" and u
-    where gen: "generation_at A u [] (Generation l {||} (Whole_Artifact R) (Occurrence_Anchor (C,[])))"
+    where gen: "generation_at A u [] (Generation l {||} (Whole_Artifact R) (Whole_Artifact C))"
     and closed: "generation_environment_closed A {(u,[])}"
-    and valid: "recorded_base_cause_at A u [] (Generation l {||} (Whole_Artifact R) (Occurrence_Anchor (C,[]))) R"
+    and valid: "recorded_base_cause_at A u [] (Generation l {||} (Whole_Artifact R) (Whole_Artifact C)) R"
     using base_admission_generation_total[OF admitted locus empty] by blast
   obtain H root where certified:
-    "certified_base_cause_at A u [] (Generation l {||} (Whole_Artifact R) (Occurrence_Anchor (C,[]))) H root R"
+    "certified_base_cause_at A u [] (Generation l {||} (Whole_Artifact R) (Whole_Artifact C)) H root R"
     using recorded_base_certification_total[OF valid] by blast
   show ?thesis using gen closed valid certified by blast
 qed

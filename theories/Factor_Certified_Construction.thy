@@ -2,6 +2,15 @@ theory Factor_Certified_Construction
   imports Factor_Replay Factor_Native_Construction
 begin
 
+section \<open>Construction permission has a finite derivation\<close>
+
+theorem factor_construction_derivation:
+  "factor_constructs P d xs B W R \<longleftrightarrow>
+    source_constructs xs B W R \<and> construction_coordinates_formed B W \<and>
+    construction_permission_invariant P d \<and>
+    (\<exists>t tree. construction_claim_presents xs B W R t \<and> checks_schema_proof P tree d t)"
+  by (simp add: factor_constructs_def schema_proof_adequate)
+
 section \<open>Construction certification adds its own complete account\<close>
 
 definition certified_construction_at ::

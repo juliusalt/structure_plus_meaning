@@ -178,9 +178,9 @@ theorem base_admission_generation_total:
     judgment_value_quoted_at C [] F pu pr au ar \<and>
     F=native_judgment_environment F pu pr au ar \<and>
     native_package_environment F pu pr=native_package_environment E pu pr \<and>
-    generation_at A u [] (Generation l P (Whole_Artifact R) (Occurrence_Anchor (C,[]))) \<and>
+    generation_at A u [] (Generation l P (Whole_Artifact R) (Whole_Artifact C)) \<and>
     generation_environment_closed A {(u,[])} \<and>
-    recorded_base_cause_at A u [] (Generation l P (Whole_Artifact R) (Occurrence_Anchor (C,[]))) R"
+    recorded_base_cause_at A u [] (Generation l P (Whole_Artifact R) (Whole_Artifact C)) R"
 proof -
   obtain F C where quote: "judgment_value_quoted_at C [] F pu pr au ar"
     and canonical: "F=native_judgment_environment F pu pr au ar"
@@ -188,14 +188,14 @@ proof -
     and program: "native_package_environment F pu pr=native_package_environment E pu pr"
     using base_admission_recordable[OF admitted] by blast
   have rf: "exact_formed R" by (rule base_admission_formed[OF admitted])
-  have anchor: "anchor_formed (C,[])" by (rule judgment_value_quoted_anchor[OF quote])
-  let ?G = "Generation l P (Whole_Artifact R) (Occurrence_Anchor (C,[]))"
+  have cf: "exact_formed C" using judgment_value_quoted_formed[OF quote] by blast
+  let ?G = "Generation l P (Whole_Artifact R) (Whole_Artifact C)"
   have formed: "generation_formed ?G"
-    by (rule generation_formed.formed[OF locus _ _ predecessors]) (use rf anchor in simp_all)
+    by (rule generation_formed.formed[OF locus _ _ predecessors]) (use rf cf in simp_all)
   obtain A :: "local_address option artifact_environment" and u where gen: "generation_at A u [] ?G"
     and closed: "generation_environment_closed A {(u,[])}"
     using closed_generation_presentation_total[OF formed] by blast
-  have cause: "generation_cause ?G=Occurrence_Anchor (C,[])" by simp
+  have cause: "generation_cause ?G=Whole_Artifact C" by simp
   have scope: "generation_judgment_scope_at A u [] ?G F pu pr au ar"
     by (rule generation_judgment_scope_from_core[OF gen cause quote])
   have valid: "recorded_base_cause_at A u [] ?G R"

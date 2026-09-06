@@ -104,6 +104,11 @@ lemma citation_interpretation_formed:
   shows "target_formed t"
   using assms by (cases c) auto
 
+lemma citation_interpretation_artifact:
+  assumes "interpret_citation E u c t"
+  shows "\<exists>v. artifact_at E v (target_artifact t)"
+  using assms by (cases c) auto
+
 fun citation_location ::
   "'u artifact_environment \<Rightarrow> 'u \<Rightarrow> citation \<Rightarrow> 'u \<Rightarrow>
    local_address \<Rightarrow> bool" where

@@ -79,6 +79,20 @@ proof -
   show ?thesis by (rule judgment_value_presents_unique[OF left(1) other])
 qed
 
+theorem judgment_value_whole_unique:
+  assumes first: "judgment_value_quoted_at C r E pu pr au ar"
+    and second: "judgment_value_quoted_at C s F qu qr bu br"
+  shows "r=s \<and> E=F \<and> pu=qu \<and> pr=qr \<and> au=bu \<and> ar=br"
+proof -
+  obtain t where left: "complete_data_quoted_at C r t"
+    using first unfolding judgment_value_quoted_at_def by blast
+  obtain v where right: "complete_data_quoted_at C s v"
+    using second unfolding judgment_value_quoted_at_def by blast
+  have roots: "r=s" using complete_data_quotation_whole_unique[OF left right] by blast
+  have other: "judgment_value_quoted_at C r F qu qr bu br" using second roots by simp
+  show ?thesis using roots judgment_value_quoted_unique[OF first other] by blast
+qed
+
 lemma judgment_value_quoted_formed:
   assumes "judgment_value_quoted_at C r E pu pr au ar"
   shows "exact_formed C \<and> environment_formed E \<and>
@@ -133,8 +147,9 @@ qed
 text \<open>
   The value contains one complete environment and two actual sites: the program
   root and the call root. The whole standalone quotation is a complete
-  readdressed copy of its data syntax. Its exact artifact and root determine
-  every represented value and coordinate, independently of outer bindings.
+  readdressed copy of its data syntax. Its whole exact artifact determines
+  the quotation root and every represented value and coordinate,
+  independently of outer bindings.
 
   This is inspectable scope data. The program and application still need their
   native grammar checks, and minimal reference closure is checked separately.

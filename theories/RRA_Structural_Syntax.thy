@@ -514,6 +514,11 @@ lemma anchored_at_target_formed:
   using assms unfolding anchored_at_def
   by (meson citation_interpretation_formed)
 
+lemma anchored_at_target_artifact:
+  assumes "anchored_at E u r t"
+  shows "\<exists>v. artifact_at E v (target_artifact t)"
+  using assms unfolding anchored_at_def by (meson citation_interpretation_artifact)
+
 lemma anchored_at_environment_locality:
   assumes agree: "environment_agrees_on E F U"
     and closed: "environment_edge_closed E U" and member: "u \<in> U"

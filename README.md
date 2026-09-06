@@ -260,8 +260,14 @@ complete data lists, remove one matching occurrence, and compare every element
 count. Four calls to this bag comparison give exact artifact equality across
 every complete enumeration order, retaining counted attachments and original
 addresses. Each program has one closed native compilation for all future
-arguments in its stated domain. Artifact admission and comparisons of other
-recursively presented subjects remain separate work.
+arguments in its stated domain. Complete artifact-data admission now follows
+from one material observation and ordinary field projections. A shared recursive
+converter recovers occurrence addresses from the complete carrier list and
+preserves payloads and pairs. A fresh equality definition requires admission of
+both operands, giving an exact contract over every input term. One closed native
+program supplies distinct admission and equality sites for all future formed
+arguments. Comparisons of other recursively presented subjects, general native
+checking, reflection, and amendment remain separate work.
 
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed

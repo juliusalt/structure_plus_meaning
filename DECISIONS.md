@@ -1770,5 +1770,46 @@ its artifact-presentation premises explicitly.
 All earlier interfaces and meanings remain fixed through the fresh definition
 extensions. Native compilation relocates their coordinates and fixes one
 closed program for every future argument in each stated comparison domain.
-Comparison of recursively presented environments and generations, native
-admission checking, reflection, and amendment remain to be completed.
+Comparison of recursively presented environments and generations, general
+native checking, reflection, and amendment remain to be completed.
+
+## Artifact admission derives from complete observed material
+
+The complete material equation already exposes every artifact table and pairs
+each occurrence anchor with its exact original address. Two ordinary lookup
+clauses recover that address. A single recursive conversion definition handles
+the observation terminator, occurrence anchors, opaque payloads, and pairs.
+Incidence and attachment lists use this same definition. Their conversion
+theorems retain order, all incidence endpoints, every counted repetition, and
+the exact opaque values. The earlier carrier projection supplies the remaining
+field.
+
+The implementation choice is to derive artifact admission from this existing
+complete equation and the displayed projections. A new mixed clause requires
+all four projections and that material observation at five distinct premise
+sockets. Its whole-source-to-data relation is exactly the established artifact
+presentation relation. One ordinary clause supplies the source through its
+complete finite variable assignment, so admission requires no external source
+target in the submitted data argument. The source is a material operand; its definitions
+receive no authority in the fixed program.
+
+The proof library now gives an exact valuation equation for all schemas,
+including every material socket and its five evaluated operands. The mixed
+introduction rule requires those actual observations. Ordinary introduction
+follows when the selected clause has no material premises. These results
+calculate existing finite instances and leave the semantic operator unchanged.
+
+The earlier four-field comparison retains its stated domain and meaning.
+Another fresh definition joins two complete admissions with that comparison.
+Its truth on every term is exactly a pair of presentations of the same formed
+artifact. Malformed lists and data tuples that present no formed artifact
+cannot pass this admission boundary. Admission concerns the entire submitted
+value; recovery of a particular supplied source uses the separate source-to-data
+relation. Different complete enumeration orders remain admissible.
+
+The final finite system has thirteen definitions and twenty-six clauses.
+Native compilation gives one closed package with distinct admission and
+identity sites, both serving every future formed argument while preserving
+the canonical program environment. This closes artifact-data admission as a
+component of native checking. It does not close native grammar admission,
+derivation checking, reflection, policy-admission evidence, or amendment.

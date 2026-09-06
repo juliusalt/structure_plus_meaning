@@ -83,6 +83,20 @@ proof -
   show ?thesis using finite isv csv interfaces clauses by (simp only: schema_system_formed_def)
 qed
 
+lemma added_variable_calls:
+  assumes source: "schema_system_formed P"
+    and target: "schema_system_formed (add_view_definition P d (Pattern_Variable a) C)"
+    and prior: "schema_call_formed P e t \<longleftrightarrow> e\<in>system_definitions P \<and> term_formed t"
+  shows "schema_call_formed (add_view_definition P d (Pattern_Variable a) C) e t \<longleftrightarrow>
+    e\<in>system_definitions (add_view_definition P d (Pattern_Variable a) C) \<and> term_formed t"
+proof -
+  have calculated: "schema_call_formed (add_view_definition P d (Pattern_Variable a) C) e t \<longleftrightarrow>
+    (e=d \<and> term_formed t) \<or> schema_call_formed P e t"
+    by (simp only: schema_call_formed_def source target added_view_interfaces) auto
+  show ?thesis by (simp only: calculated prior added_view_definitions) auto
+qed
+
+
 theorem added_definition_preserves_old:
   assumes source: "schema_system_formed P" and target: "schema_system_formed (add_view_definition P d p C)"
     and fresh: "d\<notin>system_definitions P" and member: "e\<in>system_definitions P"

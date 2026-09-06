@@ -1,7 +1,7 @@
 {
-  "invocation": "4576b0b8-583e-4267-885d-5a51d0215be0",
+  "invocation": "b9d51939-66dc-4911-8afc-0ac7cc624132",
   "status": "accepted",
-  "started_utc": "2026-09-06T10:05:29.101996+00:00",
+  "started_utc": "2026-09-06T10:47:45.954459+00:00",
   "command": [
     "isabelle",
     "build",
@@ -9,7 +9,7 @@
     "-o",
     "threads=12",
     "-o",
-    "timeout=60",
+    "timeout=120",
     "-D",
     "/home/julius/structure_and_semantics"
   ],
@@ -17,7 +17,7 @@
   "exit_code": 0,
   "session_diagnostics": "",
   "sources": {
-    "ROOT": "a88d8bcc4c1f274d5c9fab7f3168647264ef2fb9d5a8b25cade62af2704d4acb",
+    "ROOT": "27bf2eb3d321662d692dd82870a4d88df861446bc9c6b77192136f98c487dcd3",
     "theories/Bootstrap_Finite_Closure.thy": "cbff1345a5a97a8108f2022d99345a7423e93cccc01580929d4054f42a5e031c",
     "theories/Bootstrap_Relations.thy": "aaa46e7bc27369e32da5c231a6912981c17da3472114df8c69c3b74ff3236853",
     "theories/Factor_Adoption_Values.thy": "78990f18a78d11a363a26c5979106c2dcb5bf9125f01448bb3086045bffad6bd",
@@ -25,6 +25,7 @@
     "theories/Factor_Application_Encoding.thy": "4bc0d06a039748d390bf7c268b7f4060487d59cb86548c045014e87583781506",
     "theories/Factor_Application_Retention.thy": "20dbd8fef67a813262ca8559d6ee1f1dddb0d66548d3829c5fc4c821c0fa5885",
     "theories/Factor_Applications.thy": "c983baf562e5a186a99ba43b836f3ca101c94c88273dd2ffc7a7f8b428513675",
+    "theories/Factor_Artifact_Admission.thy": "de649ee808328356a67e2d9c81e76de8b8b36045fec304b8dbcc8ed960fdb665",
     "theories/Factor_Artifact_Comparison.thy": "fbd53682bafd968bb2d059c01cffc3a7cb1df2f2859f1987472a8ecc2f7fb456",
     "theories/Factor_Artifact_Values.thy": "a7d22519293f6683ae238c800ee734f994fdf0a41a02c8ba454713af34f977c0",
     "theories/Factor_Authority.thy": "96874f085f24ac05d04c5106b7f0b1206986f4009abe1358cdebc421d9fdf7ed",
@@ -119,6 +120,7 @@
     "theories/Factor_Judgment_Scopes.thy": "832d6f7b17aaa38a0b2230a899de420a1a7d5dd43e4e0a45ac8983f057c1288f",
     "theories/Factor_Judgment_Values.thy": "c120f55e3bd7ce0e198c6f76689293d2b40d841adc0b323bcf2d4f151aafe00c",
     "theories/Factor_Lambda.thy": "8a82c1f1fde63c973175c132257a03a5a951d7529f28acff0a771b0dd8885049",
+    "theories/Factor_Material_Data_Projection.thy": "4417f004e3362d37e2b15a305c647af17e3b89298166a16bb8bec4cb68497c9a",
     "theories/Factor_Material_Encoding.thy": "ac7df58f90cb4d68eadb5f2385c07f0e5534634abcce7d7048395b0aa5e10fa9",
     "theories/Factor_Material_Meaning.thy": "1e8d3d43fc03e81b402cd0f56bbb73bbb64876f49a5bc2e51d7a9fb3af1acb1a",
     "theories/Factor_Material_Observation.thy": "b6a98e87922f1f7f5724fb5ba20f635a1f387678906a9149f739acafa925067d",
@@ -188,7 +190,7 @@
     "theories/Factor_Resource_Sensitivity.thy": "c7c4bce7804e9498232d466806371a11cb6ed3d753f459ade46baf5a588e302c",
     "theories/Factor_Root_Environments.thy": "f90300e5bd6be505a775eec31772438b262b2f8bbec804469d741d106516be74",
     "theories/Factor_Root_Syntax.thy": "f3f7e62dedd688dba8864346eef2bd8c975f1594f13ec8ddd1eaf9ceb07c4dd7",
-    "theories/Factor_Rule_Instances.thy": "0065c51c9499941097576d57cee43691eadbc0311db5123095ad3b12a3543035",
+    "theories/Factor_Rule_Instances.thy": "fb2e81ab2147d46c052c480f31c935a595b5e8884b627ff376c74200401d54bd",
     "theories/Factor_SK.thy": "d6092eef556032139e8b5e51e839803ef6f19e200a0b8f1db7b4d8e3ab89e18f",
     "theories/Factor_SK_Program.thy": "e150290e8565ec78e3a00a3dc0bdc2ce1b9940622567f3ae8bbbb11ace7869a8",
     "theories/Factor_Schema_Bodies.thy": "7f30e721938e69a52be295d54ab5e3361ab169194673d831554a0e86926a3203",
@@ -220,7 +222,7 @@
     "theories/Factor_Term_Encoding.thy": "197414f48d8ea69a94e62718f51ae4799938baf652a06f2287aa48c5d7511ca5",
     "theories/Factor_Terms.thy": "02cbf11175c008129ce15defebe1b812605963914d79c1e3c5f8e84ff031b781",
     "theories/Factor_Transaction_Values.thy": "3084add440ee474611869011c4c829752c59f50e8275558a8af12113893f0842",
-    "theories/Factor_View_Definitions.thy": "8fb5650cbbf84e28a5b8d4549cb638b81837e9771b39718974b0d047b66abcb7",
+    "theories/Factor_View_Definitions.thy": "480c9c98efb9cd386f73520dcc22768d2063fe668fd7d409c797ba68d2f6af8b",
     "theories/Lambda_Applications.thy": "45d70982010d27614ff5ea9e6ba8cdc34b4d428b53e9bfb17f4847ed11a78dd5",
     "theories/Lambda_Closure_Interpretation.thy": "3f8a0b500123b0ff21545bcc0c11d0c6cd028aae3a372b94ed541065b997fbce",
     "theories/Lambda_Closures.thy": "59baaa2390f0af37352ff8321f4a6c27690f813085b247e9103e3a32b8b0d276",
@@ -293,6 +295,6 @@
   "isabelle_version": "Isabelle2025-2",
   "sources_unchanged": true,
   "tools_unchanged": true,
-  "finished_utc": "2026-09-06T10:06:23.928033+00:00",
-  "log_sha256": "c31e2b65c2e09cb6fc37b977c4074c8d2e1ef7639522f04e284ad196514c1ccf"
+  "finished_utc": "2026-09-06T10:48:41.825482+00:00",
+  "log_sha256": "99fc61b6bd70b4193cdc2b3ea4a50c86d387361bcff56202f25b87a89b62c7f5"
 }

@@ -116,6 +116,126 @@ qed
 
 section \<open>Derived valuation rules and induction\<close>
 
+
+abbreviation evaluate_material_satisfaction ::
+  "('a \<Rightarrow> factor_term) \<Rightarrow> 'a material_pattern \<Rightarrow> bool" where
+  "evaluate_material_satisfaction f M \<equiv>
+    material_observation (evaluate_pattern f (material_source M))
+      (evaluate_pattern f (material_atoms M)) (evaluate_pattern f (material_edges M))
+      (evaluate_pattern f (material_counts M)) (evaluate_pattern f (material_functions M))"
+
+lemma evaluate_material_instance:
+  assumes formed: "material_pattern_formed M"
+    and assignment: "\<forall>a\<in>material_variables M. (a,f a)\<in>V"
+  shows "material_pattern_instance V M
+    (evaluate_pattern f (material_source M)) (evaluate_pattern f (material_atoms M))
+    (evaluate_pattern f (material_edges M)) (evaluate_pattern f (material_counts M))
+    (evaluate_pattern f (material_functions M))"
+  unfolding material_pattern_instance_def
+  by (intro conjI; rule evaluate_pattern_instance)
+    (use formed assignment in \<open>auto simp: material_pattern_formed_def material_variables_def material_fields_def\<close>)
+
+lemma schema_material_evaluation:
+  assumes inst: "schema_instance S V t Q"
+    and assignment: "\<forall>a\<in>schema_variables S. (a,f a)\<in>V"
+  shows "schema_material_satisfied S V \<longleftrightarrow>
+    (\<forall>s M. (s,M)\<in>schema_material_premises S \<longrightarrow> evaluate_material_satisfaction f M)"
+proof -
+  have sv: "single_valued V" using inst
+    by (simp add: schema_instance_def term_bindings_formed_def)
+  have each: "material_pattern_satisfied V M \<longleftrightarrow> evaluate_material_satisfaction f M"
+    if member: "(s,M)\<in>schema_material_premises S" for s M
+  proof -
+    have formed: "material_pattern_formed M" using inst member
+      by (auto simp: schema_instance_def schema_formed_def)
+    have assigned: "\<forall>a\<in>material_variables M. (a,f a)\<in>V"
+      using assignment member by (auto simp: schema_variables_def)
+    show ?thesis
+      by (rule material_pattern_satisfied_at_instance[OF sv evaluate_material_instance[OF formed assigned]])
+  qed
+  show ?thesis using each unfolding schema_material_satisfied_def by blast
+qed
+
+theorem schema_consequences_material_valuation:
+  "(d,t)\<in>schema_consequences P X \<longleftrightarrow>
+    (\<exists>c S f. ((d,c),S)\<in>system_clauses P \<and>
+      (\<forall>a\<in>schema_variables S. term_formed (f a)) \<and>
+      t=evaluate_pattern f (schema_conclusion S) \<and> schema_call_formed P d t \<and>
+      (\<forall>s M. (s,M)\<in>schema_material_premises S \<longrightarrow> evaluate_material_satisfaction f M) \<and>
+      (\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
+        schema_call_formed P e (evaluate_pattern f p) \<and> (e,evaluate_pattern f p)\<in>X))"
+proof
+  assume member: "(d,t)\<in>schema_consequences P X"
+  obtain c V Q S where clause: "((d,c),S)\<in>system_clauses P"
+    and inst: "schema_instance S V t Q" and call: "schema_call_formed P d t"
+    and material: "schema_material_satisfied S V"
+    and body: "\<forall>s e x. (s,e,x)\<in>Q \<longrightarrow> schema_call_formed P e x \<and> (e,x)\<in>X"
+    using member by (auto simp: schema_consequences_def admitted_schema_instance_def)
+  obtain f where assignment: "\<forall>a\<in>schema_variables S. (a,f a)\<in>V \<and> term_formed (f a)"
+    and head: "t=evaluate_pattern f (schema_conclusion S)"
+    and evaluated: "Q=evaluate_schema_premises f S"
+    using schema_instance_evaluation[OF inst] by blast
+  have observations: "\<forall>s M. (s,M)\<in>schema_material_premises S \<longrightarrow> evaluate_material_satisfaction f M"
+    using schema_material_evaluation[OF inst, of f] assignment material by blast
+  have support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
+    schema_call_formed P e (evaluate_pattern f p) \<and> (e,evaluate_pattern f p)\<in>X"
+    using body evaluated by auto
+  show "\<exists>c S f. ((d,c),S)\<in>system_clauses P \<and>
+    (\<forall>a\<in>schema_variables S. term_formed (f a)) \<and>
+    t=evaluate_pattern f (schema_conclusion S) \<and> schema_call_formed P d t \<and>
+    (\<forall>s M. (s,M)\<in>schema_material_premises S \<longrightarrow> evaluate_material_satisfaction f M) \<and>
+    (\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
+      schema_call_formed P e (evaluate_pattern f p) \<and> (e,evaluate_pattern f p)\<in>X)"
+    using clause assignment head call observations support by blast
+next
+  assume witness: "\<exists>c S f. ((d,c),S)\<in>system_clauses P \<and>
+    (\<forall>a\<in>schema_variables S. term_formed (f a)) \<and>
+    t=evaluate_pattern f (schema_conclusion S) \<and> schema_call_formed P d t \<and>
+    (\<forall>s M. (s,M)\<in>schema_material_premises S \<longrightarrow> evaluate_material_satisfaction f M) \<and>
+    (\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
+      schema_call_formed P e (evaluate_pattern f p) \<and> (e,evaluate_pattern f p)\<in>X)"
+  obtain c S f where clause: "((d,c),S)\<in>system_clauses P"
+    and assignment: "\<forall>a\<in>schema_variables S. term_formed (f a)"
+    and head: "t=evaluate_pattern f (schema_conclusion S)" and call: "schema_call_formed P d t"
+    and observations: "\<forall>s M. (s,M)\<in>schema_material_premises S \<longrightarrow> evaluate_material_satisfaction f M"
+    and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
+      schema_call_formed P e (evaluate_pattern f p) \<and> (e,evaluate_pattern f p)\<in>X"
+    using witness by blast
+  have sf: "schema_formed S" using call clause
+    by (auto simp: schema_call_formed_def schema_system_formed_def)
+  let ?V="(\<lambda>a. (a,f a)) ` schema_variables S"
+  let ?Q="evaluate_schema_premises f S"
+  have inst: "schema_instance S ?V t ?Q" using schema_evaluation_instance[OF sf assignment] head by simp
+  have material: "schema_material_satisfied S ?V"
+    using schema_material_evaluation[OF inst, of f] observations by simp
+  have admitted: "admitted_schema_instance P d c ?V t ?Q"
+    using clause call inst material support by (auto simp: admitted_schema_instance_def)
+  have supported: "\<forall>s e x. (s,e,x)\<in>?Q \<longrightarrow> (e,x)\<in>X"
+    using support by auto
+  have entry: "\<exists>c V Q. admitted_schema_instance P d c V t Q \<and>
+    (\<forall>s e x. (s,e,x)\<in>Q \<longrightarrow> (e,x)\<in>X)"
+    by (rule exI[of _ c], rule exI[of _ ?V], rule exI[of _ ?Q])
+      (use admitted supported in blast)
+  show "(d,t)\<in>schema_consequences P X" using entry by (simp add: schema_consequences_def)
+qed
+
+lemma material_positive_valuation_step:
+  assumes clause: "((d,c),S)\<in>system_clauses P"
+    and assignment: "\<forall>a\<in>schema_variables S. term_formed (f a)"
+    and call: "schema_call_formed P d (evaluate_pattern f (schema_conclusion S))"
+    and material: "\<forall>s M. (s,M)\<in>schema_material_premises S \<longrightarrow> evaluate_material_satisfaction f M"
+    and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
+      (e,evaluate_pattern f p)\<in>positive_meaning P"
+  shows "(d,evaluate_pattern f (schema_conclusion S))\<in>positive_meaning P"
+proof -
+  have children: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
+    schema_call_formed P e (evaluate_pattern f p) \<and> (e,evaluate_pattern f p)\<in>positive_meaning P"
+    using support by (auto intro: positive_meaning_formed)
+  show ?thesis
+    by (subst positive_meaning_unfold, subst schema_consequences_material_valuation)
+      (use clause assignment call material children in blast)
+qed
+
 lemma schema_consequences_valuationD:
   assumes member: "(d,t)\<in>schema_consequences P X"
   shows "\<exists>c S f. ((d,c),S)\<in>system_clauses P \<and>
@@ -123,20 +243,7 @@ lemma schema_consequences_valuationD:
     t=evaluate_pattern f (schema_conclusion S) \<and> schema_call_formed P d t \<and>
     (\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
       schema_call_formed P e (evaluate_pattern f p) \<and> (e,evaluate_pattern f p)\<in>X)"
-proof -
-  obtain c V Q S where clause: "((d,c),S)\<in>system_clauses P"
-    and inst: "schema_instance S V t Q" and call: "schema_call_formed P d t"
-    and body: "\<forall>s e x. (s,e,x)\<in>Q \<longrightarrow> schema_call_formed P e x \<and> (e,x)\<in>X"
-    using member by (auto simp: schema_consequences_def admitted_schema_instance_def)
-  obtain f where assignment: "\<forall>a\<in>schema_variables S. term_formed (f a)"
-    and head: "t=evaluate_pattern f (schema_conclusion S)"
-    and evaluated: "Q=evaluate_schema_premises f S"
-    using schema_instance_evaluation[OF inst] by blast
-  have support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
-    schema_call_formed P e (evaluate_pattern f p) \<and> (e,evaluate_pattern f p)\<in>X"
-    using body evaluated by auto
-  show ?thesis using clause assignment head call support by blast
-qed
+  using member by (auto simp: schema_consequences_material_valuation)
 
 lemma ordinary_positive_valuation_step:
   assumes clause: "((d,c),S)\<in>system_clauses P"
@@ -146,23 +253,8 @@ lemma ordinary_positive_valuation_step:
     and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
       (e,evaluate_pattern f p)\<in>positive_meaning P"
   shows "(d,evaluate_pattern f (schema_conclusion S))\<in>positive_meaning P"
-proof -
-  have sf: "schema_formed S" using call clause
-    by (auto simp: schema_call_formed_def schema_system_formed_def)
-  let ?V="(\<lambda>a. (a,f a)) ` schema_variables S"
-  let ?Q="evaluate_schema_premises f S"
-  have inst: "schema_instance S ?V (evaluate_pattern f (schema_conclusion S)) ?Q"
-    by (rule schema_evaluation_instance[OF sf assignment])
-  have material: "schema_material_satisfied S ?V"
-    by (rule empty_schema_material_satisfied[OF ordinary])
-  have children: "\<forall>s e x. (s,e,x)\<in>?Q \<longrightarrow>
-    schema_call_formed P e x \<and> (e,x)\<in>positive_meaning P"
-    using support by (auto intro: positive_meaning_formed)
-  have admitted: "admitted_schema_instance P d c ?V
-    (evaluate_pattern f (schema_conclusion S)) ?Q"
-    using call clause inst material children unfolding admitted_schema_instance_def by blast
-  show ?thesis by (rule positive_meaning_step[OF admitted]) (use children in blast)
-qed
+  by (rule material_positive_valuation_step[OF clause assignment call _ support])
+    (simp add: ordinary)
 
 theorem positive_valuation_induct:
   assumes holds: "(d,t)\<in>positive_meaning P"
@@ -209,41 +301,16 @@ theorem schema_consequences_valuation:
       t=evaluate_pattern f (schema_conclusion S) \<and> schema_call_formed P d t \<and>
       (\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
         schema_call_formed P e (evaluate_pattern f p) \<and> (e,evaluate_pattern f p)\<in>X))"
-proof
-  assume member: "(d,t)\<in>schema_consequences P X"
-  show "\<exists>c S f. ((d,c),S)\<in>system_clauses P \<and>
-    (\<forall>a\<in>schema_variables S. term_formed (f a)) \<and>
-    t=evaluate_pattern f (schema_conclusion S) \<and> schema_call_formed P d t \<and>
-    (\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
-      schema_call_formed P e (evaluate_pattern f p) \<and> (e,evaluate_pattern f p)\<in>X)"
-    using schema_consequences_valuationD[OF member] by blast
-next
-  assume witness: "\<exists>c S f. ((d,c),S)\<in>system_clauses P \<and>
-    (\<forall>a\<in>schema_variables S. term_formed (f a)) \<and>
-    t=evaluate_pattern f (schema_conclusion S) \<and> schema_call_formed P d t \<and>
-    (\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
-      schema_call_formed P e (evaluate_pattern f p) \<and> (e,evaluate_pattern f p)\<in>X)"
-  obtain c S f where clause: "((d,c),S)\<in>system_clauses P"
-    and assignment: "\<forall>a\<in>schema_variables S. term_formed (f a)"
-    and head: "t=evaluate_pattern f (schema_conclusion S)" and call: "schema_call_formed P d t"
-    and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
-      schema_call_formed P e (evaluate_pattern f p) \<and> (e,evaluate_pattern f p)\<in>X"
-    using witness by blast
-  have sf: "schema_formed S" using formed clause by (auto simp: schema_system_formed_def)
-  let ?V = "(\<lambda>a. (a,f a)) ` schema_variables S"
-  let ?Q = "evaluate_schema_premises f S"
-  have inst: "schema_instance S ?V t ?Q" using schema_evaluation_instance[OF sf assignment] head by simp
-  have material: "schema_material_satisfied S ?V"
-    using ordinary clause by (auto simp: system_observation_free_def schema_material_satisfied_def)
-  have admitted: "admitted_schema_instance P d c ?V t ?Q"
-    using clause call inst material support by (auto simp: admitted_schema_instance_def)
-  have supported: "\<forall>s e x. (s,e,x)\<in>?Q \<longrightarrow> (e,x)\<in>X"
-    using support by auto
-  have entry: "\<exists>c V Q. admitted_schema_instance P d c V t Q \<and>
-    (\<forall>s e x. (s,e,x)\<in>Q \<longrightarrow> (e,x)\<in>X)"
-    by (rule exI[of _ c], rule exI[of _ ?V], rule exI[of _ ?Q])
-       (use admitted supported in blast)
-  show "(d,t)\<in>schema_consequences P X" using entry by (simp add: schema_consequences_def)
+proof -
+  have material: "\<forall>s M. (s,M)\<in>schema_material_premises S \<longrightarrow> evaluate_material_satisfaction f M"
+    if clause: "((d,c),S)\<in>system_clauses P" for c S f
+  proof -
+    have empty: "schema_material_premises S={}"
+      using ordinary clause by (auto simp: system_observation_free_def)
+    show ?thesis by (simp add: empty)
+  qed
+  show ?thesis
+    by (simp only: schema_consequences_material_valuation) (use material in blast)
 qed
 
 corollary positive_valuation_step:
@@ -265,10 +332,11 @@ text \<open>
   no operation to the language. Premise sockets remain separate occurrences,
   including when their evaluated calls agree.
 
-  The forward projection and induction also apply to programs with material
-  premises. They start from actual consequences of the unchanged operator.
-  The introduction rule applies to an ordinary clause inside such a program;
-  it cannot bypass a material premise in the selected clause.
+  The complete valuation equation retains every material premise with its
+  five actual evaluated operands. Its introduction rule requires each complete
+  material observation. The ordinary-clause rule is the empty-material case.
+  Forward projection and induction may omit those conditions only because they
+  start from actual consequences of the unchanged operator.
 \<close>
 
 end

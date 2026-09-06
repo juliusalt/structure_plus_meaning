@@ -1911,3 +1911,63 @@ operations before any future formed argument is supplied; each application
 preserves the canonical program environment. This completes environment-data
 admission as a checker component. It leaves grammar-derived closure, application
 checking, policy authority, reflection, and amendment adoption as separate work.
+
+## The adopted purpose selects the current amendment entry
+
+The currentness frame already determines an exact authority, generation, and
+purpose through its actual adoption call and closed publication. The selected
+generation's payload already determines a complete closed program scope.
+The remaining entry cannot be chosen by an existential search for any true
+definition: a permissive auxiliary would then replace the authorized policy.
+
+For this profile, the purpose is a whole-artifact complete quotation of an
+exact environment-use and address pair. The complete structure determines
+the quotation root, and the program scope comes from the generation payload.
+No root marker, second environment copy, or second authority field is stored.
+The designation includes the use coordinate because equal artifacts may occur
+at differently bound uses. It may select any actual definition of the recovered
+package; the existing root family is not restricted to a singleton. This is
+a choice of purpose profile, not an intrinsic role attached to all purpose
+targets or a new primitive operation.
+
+The amendment argument contains the complete current-frame value, candidate
+generation, and certificate target. The frame includes both the minimal adoption
+judgment scope and closed publication scope. Its adoption call contains the
+predecessor generation and purpose, and that generation's payload contains the
+predecessor package. Repeating those fields would serve no independent purpose.
+Every complete presentation is admitted, including different internal collection
+orders. Formation and truth invariance is an explicit policy admission condition;
+the particular outer quotation used to record a frame does not select a preferred
+enumeration for the acceptance argument.
+
+Definition closure follows the actual prospective callees. It is least, finite
+inside a formed system, and equal to native definition reachability for roots
+inside a native package. Every admitted instance inside that closure calls only
+members. Complete interfaces and clause families on the closure determine
+formation and truth on every argument. Complete package formation still checks
+the entire predecessor package. This closure bounds possible recursive calls;
+it is not described as the exact set invoked in each derivation.
+
+Raw current acceptance requires the selected program and entry, the exact frame
+data, an actual native application, and the invariant policy's positive truth.
+Its enclosing environment must retain the predecessor's exact program scope.
+The canonical program environment is therefore identical. Future call
+construction also preserves every old artifact and binding. The upstream
+adoption program keeps its own recorded scope; no theorem silently identifies
+it with the program selected by the generation.
+
+The generic singleton-publication construction now lives with the raw
+publication constructors. Together with an explicit ordinary adoption policy,
+it gives actual current frames for every entry of every closed native program.
+A displayed two-entry program has one premise-free variable clause at one
+entry and no clauses at the other. Both interfaces admit every formed term.
+One compilation preserves both meanings for every future argument. Actual
+current frames and calls show acceptance and refusal under the chosen entry;
+a true call to the auxiliary entry still cannot serve as current acceptance.
+These witnesses do not validate their generated cores' causes.
+
+This batch establishes the acceptance invocation and its locality. It does not
+supply the four certificate relations, structurally determined compatibility
+domains, the predecessor continuation derivation, the cross-version bridge,
+successor adoption, or native admission of the complete amendment mechanism.
+Those remain separate connected obligations.

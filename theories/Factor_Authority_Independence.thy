@@ -103,23 +103,6 @@ qed
 
 section \<open>Actual publications and explicit policies vary independently\<close>
 
-lemma singleton_publication_exists:
-  assumes formed: "generation_formed G"
-  shows "\<exists>F :: local_address option artifact_environment. \<exists>v P.
-    publication_environment_closed F v [] P \<and> publication_snapshot P={|G|} \<and>
-    snapshot_lookup (publication_snapshot P) (generation_locus G)=Some G"
-proof -
-  let ?P="\<lparr>publication_snapshot={|G|}, publication_dependencies={||}, publication_evidence={||}\<rparr>"
-  have sf: "snapshot_formed {|G|}" using formed by (simp add: snapshot_formed_def selection_formed_def)
-  have pf: "publication_formed ?P" using sf by (simp add: publication_formed_def)
-  obtain F :: "local_address option artifact_environment" and v where pub: "publication_environment_closed F v [] ?P"
-    using closed_publication_presentation_total[OF pf] by blast
-  have selected: "snapshot_lookup {|G|} (generation_locus G)=Some G"
-    by (rule snapshot_lookup_member[OF sf]) simp
-  show ?thesis by (rule exI[of _ F], rule exI[of _ v], rule exI[of _ ?P])
-    (use pub selected in simp)
-qed
-
 theorem currentness_varies_with_publication:
   assumes authority: "target_formed A" and core: "generation_formed G" and purpose: "target_formed p"
   shows "\<exists>E :: local_address option artifact_environment. \<exists>pu au.

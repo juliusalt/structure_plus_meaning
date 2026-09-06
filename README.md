@@ -127,6 +127,20 @@ can therefore retain the complete program scope without an extra root field.
 The currentness frame recovers that program through its selected generation.
 Actual base and construction generations retain these payloads and their separate
 cause certificates; program recovery alone still does not validate a cause.
+
+An adopted purpose can now designate one exact entry within that recovered
+program scope through a complete coordinate quotation. The actual currentness
+frame fixes the program and entry together. Amendment permission at that entry
+takes the complete current frame, candidate generation, and certificate target
+as ordinary data and requires formation and truth invariance across all their
+complete presentations. Its prospective callees determine a finite closure
+inside the predecessor package. Constructed future calls preserve that exact
+program environment and every existing artifact and binding. A concrete two-entry
+program shows that a true auxiliary call cannot replace the adopted entry.
+This establishes the raw acceptance invocation; certificate completeness,
+the predecessor continuation requirement, the cross-version bridge, successor
+adoption, and native admission of the complete mechanism remain open.
+
 The program and call determine a least closed environment independently of
 proof retention, preserving their readings, truth, and exact program environment.
 Complete finite representations now preserve exact artifact, environment, target,

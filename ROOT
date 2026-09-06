@@ -278,3 +278,10 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Generation_Programs
     Factor_Current_Programs
     Factor_Program_Generation_Causes
+    Factor_Definition_Closure
+    Factor_Current_Entries
+    Factor_Amendment_Values
+    Factor_Amendment
+    Factor_Native_Amendment
+    Factor_Current_Entry_Construction
+    Factor_Amendment_Programs

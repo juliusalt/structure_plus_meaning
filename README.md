@@ -462,6 +462,17 @@ any future formed input is supplied. Grammar-derived closure, comparison of
 generations, general native checking, reflection, and amendment remain separate
 work.
 
+One ordinary recursive collector now retains every value at a supplied key.
+Repeated equal values remain separate occurrences. A further clause admits the
+whole source artifact, selects an actual carrier address, and compares all
+headed incidences and both local data components as counted collections.
+Its result is exact across every complete source presentation and local
+enumeration order. Empty data and a functional payload leaf agree with the
+existing grammar. Incoming edges and material at other heads remain in the
+source; they do not enter this local projection. One fixed native program
+serves every future formed query. The higher grammar and protocol checks
+remain open.
+
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed
 terms, with truth exactly when the two terms agree. Its argument domain and
@@ -488,7 +499,7 @@ existing environments with outgoing bindings. Every old artifact value and
 binding is preserved, and the canonical closed program environment is identical
 before and after the extension.
 
-Run `python3 tools/check.py --threads 12 --timeout 60` for one combined build,
+Run `python3 tools/check.py --threads 12 --timeout 90` for one combined build,
 complete error collection, theory-inventory check, and unfinished-proof scan.
 Reports are written to `validation/check.json` and `validation/check-errors.log`.
 The underlying `python3 tools/build.py` wrapper records the Isabelle

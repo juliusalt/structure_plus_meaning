@@ -2628,3 +2628,38 @@ minimal acceptance environment survive certification. These are joint
 existence theorems under an explicitly permissive predecessor. Native
 admission of finite correctness evidence, structural migration evidence, the
 full internal protocol, reflection, and genesis remain required.
+
+## Headed grammar observations collect every local entry
+
+The chosen admission route uses the existing complete artifact-data relation.
+A generic ordinary recursive definition collects values at one exact supplied
+key. Repeated pattern variables enforce equality in the keep clause; the
+existing data inequality definition justifies the skip clause. Every row and
+the final tail are inspected. The collector preserves the supplied order and
+every repeated value. It requires formed self-contained keys and formed values,
+without imposing uniqueness or a stronger value profile.
+
+A fresh clause separately admits the whole source artifact and selects the
+requested address from its actual carrier. Three collector calls recover every
+headed incidence, counted attachment, and functional attachment at that address.
+Three bag comparisons check the submitted local fields, permitting every complete
+order. The complete variable boundary includes the three collected lists and
+the carrier-selection remainder; the eight prospective premises retain distinct
+socket occurrences.
+
+The exact contract derives distinct incidence and functional entries from the
+source's admitted set fields. Counted attachments instead retain their exact
+multiplicities. Empty local data and a functional payload leaf recover precisely
+the existing structural grammar conditions. Source and output enumeration order
+have no semantic authority. The thirty-definition, fifty-four-clause program
+compiles once before arbitrary future formed inputs and preserves its canonical
+program environment in every actual application.
+
+The complete source stays in the argument. Incoming incidence and material at
+other heads remain supplied, although they do not enter the headed projection.
+This distinction preserves the relative record, family, and citation grammars;
+requiring the source to equal an isolated canonical syntax object would reject
+valid shared structures. Headed material is not identified with the complete
+relative footprint. Record order still comes from successor incidence. Native
+checking of the remaining grammar, finite correctness evidence, reflection, and
+the full amendment protocol remains required.

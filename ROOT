@@ -170,6 +170,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Coordinate_Admission
     Factor_Keyed_Lists
     Factor_Environment_Admission
+    Factor_Key_Fibres
+    Factor_Headed_Material
     Factor_Judgment_Values
     Factor_Judgment_Scopes
     Factor_Construction_Claims

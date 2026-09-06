@@ -2086,3 +2086,52 @@ representation, internal admission of coverage and preservation evidence,
 migration evidence, the cross-version bridge, predecessor continuation, and
 successor adoption still need the remaining joins. Later accepted policies may
 change this profile; it is not an immutable restriction on every successor.
+
+## Continuation roles retain the predecessor's actual adoption policy
+
+The adopted amendment purpose fixes its acceptance entry. A continuation role
+may use another entry of the same selected generation, but an arbitrary true
+call in that program does not select the role. The companion profile requires
+an actual second adoption under the same entry of the same complete adoption
+program. Both current frames retain the same authority, exact generation, and
+closed publication scope. The two purposes may differ.
+
+The adoption program and the program carried by the selected generation remain
+distinct. Each is recovered from its own existing complete scope. Requiring
+the same adoption program value or root artifact would be too weak: bindings
+and the invoked adoption entry are also fixed. No duplicate authority,
+generation, policy, or publication fields are stored by this relation.
+Every companion purpose permitted by the original policy has an actual current
+frame. This requirement concerns role selection within one predecessor
+generation; it does not force a successor to retain that adoption protocol.
+
+Current continuation invokes only its selected entry. Its native proof uses
+the exact predecessor program and has no open assumptions. The before snapshot
+is the snapshot of the predecessor's actual publication, not a second freely
+chosen subject. Structural transaction success remains an additional condition.
+The claimed after snapshot still needs to be joined to the successor's actual
+publication by the complete amendment mechanism.
+
+A replay value stores one complete environment and three actual sites:
+program, call, and proof. Native readers recover the program, argument, graph,
+and assumption boundary. Those derived values are not stored again. The whole
+data quotation determines its own root and is readable without external slots.
+Every native replay is recordable, and every current continuation has a record
+retaining its original program and complete minimal call scope.
+
+The submitted continuation material precedes its proof record. It is not
+required to contain a complete quotation of that record, which would create
+a circular finite-data obligation. The final amendment certificate can bind
+the material, the selected continuation frame, and the separate proof record.
+Their precise integration with the successor and remaining evidence is still
+open; this component does not define legitimate succession.
+
+One explicit accepting adoption policy selects two distinct entries of a
+single native generation. Both entries admit every formed argument, including
+every complete future amendment argument. The continuation entry accepts and
+has a closed recorded proof over the actual unchanged publication snapshot. The other entry
+refuses every amendment argument. The true continuation call cannot count at
+that refusing entry. This exhibits the independence of adoption, structural
+success, continuation, replay, and amendment permission with actual finite
+programs. Its generation has only a formed cause target; no genesis or
+successor validity is asserted.

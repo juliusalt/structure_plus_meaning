@@ -137,9 +137,23 @@ complete presentations. Its prospective callees determine a finite closure
 inside the predecessor package. Constructed future calls preserve that exact
 program environment and every existing artifact and binding. A concrete two-entry
 program shows that a true auxiliary call cannot replace the adopted entry.
-This establishes the raw acceptance invocation; certificate completeness,
-the predecessor continuation requirement, the cross-version bridge, successor
-adoption, and native admission of the complete mechanism remain open.
+This establishes the raw acceptance invocation; the complete certificate,
+cross-version bridge, successor selection, and native admission of the complete
+mechanism remain open.
+
+Companion purposes now retain the same authority, generation, publication, and
+exact adoption-program scope and entry. Every companion purpose permitted by
+that actual policy has a current frame. Its continuation call uses the entry
+selected by its own purpose and preserves the predecessor program. The before
+snapshot is recovered from the predecessor's actual publication.
+A replay record contains one complete environment and the program, call, and
+proof sites; its readers derive the program, graph, and assumptions. Every
+current continuation has a finite record preserving its exact program and
+minimal call scope. A concrete ordinary program has a valid companion
+continuation proof and a successful unchanged snapshot while its amendment
+entry refuses every candidate. These are independent conditions. The final
+amendment join must bind these records in its accepted certificate and connect
+the claimed after snapshot to the successor's actual publication.
 
 The current frame and candidate's program payload also determine separate
 comparison domains. Complete changed interface and clause rows determine the

@@ -294,3 +294,10 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Report_Patterns
     Factor_Amendment_Reports
     Factor_Report_Examples
+    Factor_Current_Companions
+    Factor_Current_Continuation
+    Factor_Replay_Values
+    Factor_Replay_Scopes
+    Factor_Current_Certificates
+    Factor_Predecessor_Continuation
+    Factor_Continuation_Selection_Examples

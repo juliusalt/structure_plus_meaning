@@ -180,10 +180,10 @@ candidate's direct predecessor family. The generation size theorem excludes
 self-succession. One exact construction proof and recorded cause can accompany
 different histories without changing the account. A fixed native output policy
 serves every future valid account presentation and constructs actual candidate
-generations with that predecessor. These account witnesses supply no full
-successor adoption or genesis adequacy. Dependency permission evidence is
-joined below; comparison and migration admission and an exact cross-version
-interpretation bridge remain.
+generations with that predecessor. Construction evidence alone supplies no
+successor adoption; the joint construction below also provides that actual
+frame. Dependency permission evidence is joined below. Comparison, migration,
+cross-version interpretation, and genesis adequacy remain.
 
 Both actual program scopes now determine the complete dependency evidence
 boundary. Every old and candidate definition is paired with its exact canonical
@@ -204,6 +204,20 @@ given the separate actual transition ingredients, all material precedes the
 continuation and acceptance records. The example policy grants every formed
 site permission, so its proofs establish no adequacy of dependency checking.
 The complete protocol and its native adequacy still need to be proved.
+
+These components now have a joint construction for every supplied closed
+successor program and selected entry. Exact whole-source reuse accounts for
+its complete program payload, and the predecessor's construction proof gives
+the new generation its recorded cause. Dependency proofs are obtained before
+an actual publication selects the new generation and cites those proofs and
+the construction record. The replacement compares only its changed locus and
+preserves all other selections. That exact publication belongs to the new
+currentness frame; supporting material precedes the continuation and acceptance
+records. The old program and minimal acceptance scope survive certification.
+One fixed native predecessor policy serves all future closed candidates.
+An actual successor with a different program and no true calls also passes
+these components under that permissive policy, so preservation and complete
+protocol adequacy remain separate obligations.
 
 The current frame and candidate's program payload also determine separate
 comparison domains. Complete changed interface and clause rows determine the

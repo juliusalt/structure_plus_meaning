@@ -2333,3 +2333,71 @@ Comparison and migration admission, exact cross-version interpretation, an
 ordinary internal definition of the complete protocol, and its genesis
 adequacy theorem remain necessary. The finite coverage theorems are a
 component of that work, not a substitute for those semantic obligations.
+
+## Successor components have one finite construction order
+
+The earlier account and dependency totality theorems assumed a candidate
+currentness frame, its construction evidence, a historical edge, and a
+successful publication transaction. Those assumptions could not establish
+that all the ingredients coexist. The empty assembly witness had no program
+payload, while the unchanged-selection witness had no strict historical edge.
+The new joint construction supplies all these ingredients for every closed
+candidate program and actual selected definition.
+
+One piece selects an already supplied source's whole carrier. Its complete
+origin map returns every copied atom to the same address and recovers the
+exact incidence, anonymous counts, and functional bindings. The concrete
+construction account declares one input occurrence and no base sources.
+This is a reusable source account with an explicit boundary, not an origin
+claim before that source was supplied. Permitting it cannot by itself prove
+adequacy of construction or genesis.
+
+The old current program is fixed before future candidate programs are
+supplied. A complete quotation of the candidate's closed program scope becomes
+that declared input and exact output. The predecessor's construction proof
+is obtained next. The candidate then records the proof's minimal call scope
+as its cause and the actual old generation as its direct predecessor. The
+candidate's definitions supply ordinary data for dependency permission proofs
+under the same old program.
+
+The replacement transaction expects exactly the old generation and proposes
+the new generation at the same locus. Its comparison boundary contains only
+that locus. This choice avoids adding unrelated selections to the expectation
+while preserving all of them in the resulting snapshot. A different observed
+generation conflicts. The historical edge makes the generation and snapshot
+changes strict; transaction success alone would not do so.
+
+The successor publication is constructed after the construction and dependency
+records exist. It selects the new generation and cites exactly those complete
+proof artifacts in its evidence selection. This gives a concrete instance of
+the evidence-citing publication requested in problems §8.4. A separate ordinary
+adoption call creates the actual successor currentness frame and retains that
+exact publication environment. No truth requirement is placed on the entry
+being adopted.
+
+The publication's extra dependency-target selection is empty in this witness.
+The complete program payload already retains its scoped definitions, and the
+dependency permission subject boundary is separately derived from the old and
+new complete program environments. This is an explicit example choice, not
+a general rule forbidding additional publication dependencies. The existing
+component relation also does not yet make this particular evidence selection
+mandatory for every accepted transition.
+
+The same proof objects are referenced in the publication and the supporting
+material. Their values and purposes agree; no alternate account or copied
+subject key is introduced. The supporting material is then completed, the
+continuation record is produced, and finally its whole envelope is accepted.
+The successor publication is not required to contain either later proof.
+Requiring the publication to contain that acceptance record would feed the
+record back through its own complete currentness-frame argument. This
+construction needs no such recursive quotation.
+
+One actual permissive native predecessor serves every future closed candidate
+program and every remaining formed supporting scope. All original predecessor
+program bindings and the exact minimal acceptance scope survive certification.
+An explicit one-entry successor program has a formed interface for every
+formed term and no clauses, hence no positive calls. It differs from the
+two-entry predecessor yet receives the same component evidence and acceptance.
+This counterexample makes the limit concrete: joint existence, complete proof
+coverage, and actual publication do not establish preservation or adequate
+checking of comparison, migration, cross-version interpretation, or genesis.

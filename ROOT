@@ -321,3 +321,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Dependency_Evidence
     Factor_Transition_Dependencies
     Factor_Dependency_Evidence_Examples
+    RRA_Assembly_Reuse
+    Factor_Construction_Reuse
+    RRA_Replacement
+    Factor_Current_Entry_Publications
+    Factor_Transition_Construction_Examples

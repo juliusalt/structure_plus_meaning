@@ -47,6 +47,18 @@ proof -
   with assms show ?thesis by (simp add: environment_formed_def)
 qed
 
+lemma environment_binding_uses:
+  assumes formed: "environment_formed E" and binding: "binds_slot E u k v"
+  shows "u\<in>environment_uses E" and "v\<in>environment_uses E"
+proof -
+  obtain R where source: "artifact_at E u R"
+    using formed binding unfolding environment_formed_def by blast
+  show "u\<in>environment_uses E" using source
+    by (auto simp: environment_uses_def artifact_at_def rel_dom_def)
+  show "v\<in>environment_uses E"
+    using formed binding unfolding environment_formed_def by blast
+qed
+
 text \<open>
   A use occurrence identifies one placement in the supplied finite package.
   Equal artifact values may have distinct use occurrences and distinct outgoing

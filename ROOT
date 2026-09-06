@@ -257,3 +257,6 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Native_Continuation
     Factor_Continuation_Programs
     Factor_Certified_Continuation
+    RRA_Binding_Omissions
+    Factor_Package_Omissions
+    Factor_Continuation_Omissions

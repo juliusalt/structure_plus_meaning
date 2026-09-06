@@ -206,7 +206,11 @@ transaction, claimed-after, and submitted environment-and-site data. Advancement
 separately checks structural comparison and replacement. Actual formed native
 policies exhibit refusal of success and permission on conflict. One finite native
 compilation serves every complete future argument; separate replay certificates
-preserve the same program and complete minimal judgment scope.
+preserve the same program and complete minimal judgment scope. An actual
+omission witness retains every artifact, the identical call, and complete
+nonempty history while removing one required program binding. An ancestor still
+carries the definition artifact, but that history cannot restore the program
+reading at the specified package site.
 Native admission-evidence checking, the foundation amendment protocol, general
 reflection, and concrete genesis remain open. A successful build does not establish those
 unfinished claims.

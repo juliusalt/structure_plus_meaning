@@ -1404,9 +1404,17 @@ must preserve both interface acceptance and truth across them. An exact native
 call uniquely recovers the whole subject. The active program still comes from
 its actual package and dependency environment. Removing required material from
 a subenvironment prevents every continuation reading at that package site,
-regardless of the histories or other data supplied as arguments. A concrete
-witness retaining history while omitting a required semantic edge remains to
-be constructed; the general leastness theorem does not claim that witness.
+regardless of the histories or other data supplied as arguments. The general leastness theorem is now supplemented by an actual witness. A
+nonempty program receives a complete external root selector. An independently
+placed generation scope contains a successor and an ancestor whose exact payload
+is a definition artifact of that program. An admitted native policy permits
+advancement on that history. The compared environment omits exactly one binding
+required by the program selector while retaining every artifact, the identical
+native call and argument, and the entire history scope with all its bindings.
+No program can be read at the stated package site after the omission. Having
+the definition artifact available historically therefore cannot reconstruct its
+missing semantic reference. The omission is a comparison of two supplied finite
+environment values, not an authorized update to a foundation.
 
 Two actual finite pattern policies accept and refuse every complete continuation
 argument with formed interfaces and proved invariance. Their native applications

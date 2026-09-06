@@ -2401,3 +2401,55 @@ two-entry predecessor yet receives the same component evidence and acceptance.
 This counterexample makes the limit concrete: joint existence, complete proof
 coverage, and actual publication do not establish preservation or adequate
 checking of comparison, migration, cross-version interpretation, or genesis.
+
+## Complete comparison data belongs to the accepted envelope
+
+The comparison profile now has an explicit finite submitted representation.
+Its structural correspondence is a complete collection of optional definition
+coordinate pairs. Every exact row occurs once, with all collection orders
+admitted. Absence uses existing payload-and-pair data; no coordinate value
+acquires a reserved semantic name. Raw formation permits an empty correspondence
+or a row outside the eventual domain. The higher comparison profile rejects
+those cases against the actual predecessor and candidate scopes.
+
+The reporter is stored as one complete environment, its package site, and its
+selected definition site. Both sites must exist as raw data. The higher reader
+requires an actual closed native package and membership of the selected entry.
+The environment occurs once, and the recovered program is not stored a second
+time. No particular report call is needed to select an entry that describes
+all future reports. The reporter has no separate adoption frame: it is proposed
+comparison material judged through the predecessor's acceptance of the whole
+envelope. This is a representation choice, not an additional source of
+authority for its clauses.
+
+The finite structural rows use coordinates relative to the two program scopes
+already fixed by the current frame and candidate generation. Those environments
+and their public roots are not repeated in each row or supplied as alternative
+domain fields. Equal coordinates in different scopes do not identify their
+definitions. The potentially infinite judgment-report relation is derived from
+the selected ordinary reporter entry. It remains subject to complete coverage,
+the complete positive-output condition, and independent preservation soundness.
+No infinite report table or semantic truth callback is stored.
+
+The comparison value also retains one complete remaining scope with an actual
+site for further migration and interpretation material. It occupies the
+previously open scope inside dependency support, which is already inside
+assembly support, the continuation material, and the exact accepted envelope.
+Whole-value recovery prevents another reporter, entry, correspondence, or
+remaining scope from being substituted while that accepted subject is fixed.
+The acceptance proof retains the exact predecessor program and minimal call
+environment; the reporter does not become an active rule of that program.
+
+Every complete mathematical report profile has an actual finite native data
+quotation. A joint witness constructs a strict new generation of a singleton
+program and complete preserving reports for all its admitted arguments.
+Its program meaning is unchanged, while its generation and selected snapshot
+change. The actual construction cause, predecessor edge, dependency evidence,
+publication, successor adoption, continuation, and acceptance coexist with
+that retained reporter and every supplied remaining formed scope.
+
+These results establish the data and binding of the comparison component.
+The witness's ordinary predecessor remains permissive. The complete internal
+checker must still establish the grammar and semantic obligations through its
+own ordinary rules; native quotation alone does not do so. Migration evidence,
+exact cross-version interpretation, and complete genesis adequacy also remain.

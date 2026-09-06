@@ -238,8 +238,25 @@ every positive output. Paired and unilateral patterns have exact meanings and
 one closed native compilation for all future terms. An actual current native scope
 has complete preserving reports; corresponding opposite truth policies
 fail a preservation claim. The current frame and candidate fix the domains
-before the reporting program is supplied. Complete certificate grammar, native
-admission, migration evidence, and the succession joins remain open.
+before the reporting program is supplied.
+
+The submitted comparison value now stores the finite structural correspondence,
+one complete reporter environment with its package and selected entry sites,
+and one remaining complete scope. Every complete presentation has the same
+recovered fields. The reporter's program and unbounded report relation are
+derived from that data. The old and candidate scopes already determine the
+endpoint contexts and required domains.
+
+This value occurs inside the accepted dependency and assembly material.
+The whole envelope fixes its correspondence, reporter, entry, and remaining
+scope; extracting them preserves complete call coverage and preservation
+soundness. Acceptance certification retains that same envelope and the exact
+old program and minimal call scope. A strict successor with an unchanged
+singleton program has actual complete preserving reports inside all these
+jointly constructed components. Its generation and publication snapshot change.
+The ordinary example policy remains permissive; native admission of the full
+grammar and semantic obligations, migration evidence, exact cross-version
+interpretation, and genesis adequacy remain open.
 
 The program and call determine a least closed environment independently of
 proof retention, preserving their readings, truth, and exact program environment.

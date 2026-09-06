@@ -326,3 +326,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     RRA_Replacement
     Factor_Current_Entry_Publications
     Factor_Transition_Construction_Examples
+    Factor_Program_Entry_Values
+    Factor_Comparison_Support
+    Factor_Amendment_Comparisons
+    Factor_Transition_Comparisons
+    Factor_Transition_Comparison_Examples

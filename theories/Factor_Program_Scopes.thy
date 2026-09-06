@@ -25,6 +25,17 @@ proof -
   show ?thesis using source(1) root by auto
 qed
 
+lemma native_package_entry_position:
+  assumes package: "native_package_at E u r P" and member: "d\<in>system_definitions P"
+  shows "d\<in>environment_positions E"
+proof -
+  have formed: "native_package_formed E (native_package_roots E u r)"
+    by (rule native_package_projection(1)[OF package])
+  have site: "d\<in>native_definition_sites E (native_package_roots E u r)"
+    using member native_package_projection(3)[OF package] by (simp add: native_package_sites_def)
+  show ?thesis using native_package_sites(1)[OF formed] site by blast
+qed
+
 definition program_scope_quoted_at ::
   "exact_artifact \<Rightarrow> local_address \<Rightarrow> local_address option artifact_environment \<Rightarrow>
     local_address option \<Rightarrow> local_address \<Rightarrow> local_address option native_system \<Rightarrow> bool" where

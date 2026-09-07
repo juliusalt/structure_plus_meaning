@@ -1,7 +1,7 @@
 {
-  "invocation": "0e82908b-64e2-4645-bd9a-33e68ae7e6bc",
+  "invocation": "7247066f-570a-42c9-b437-152e8d0d564f",
   "status": "accepted",
-  "started_utc": "2026-09-07T17:34:33.360621+00:00",
+  "started_utc": "2026-09-07T18:05:27.531136+00:00",
   "command": [
     "isabelle",
     "build",
@@ -17,7 +17,7 @@
   "exit_code": 0,
   "session_diagnostics": "",
   "sources": {
-    "ROOT": "231a258edd169a5f4b1ce7ee93eaf1ff8ef83dfbc87095c8343ceff3303a04df",
+    "ROOT": "32f0d9bec7ab89a13aa3b66cd06660cf3b20bc6ece091af802248640821e7431",
     "theories/Bootstrap_Finite_Closure.thy": "cbff1345a5a97a8108f2022d99345a7423e93cccc01580929d4054f42a5e031c",
     "theories/Bootstrap_Relations.thy": "82069762267d503d339290507262bc7f905543966f56a0601e30bd1c7b04184f",
     "theories/Factor_Admitted_Instantiation.thy": "b237803caf4604948527e328aca1bda476f26c6ff7bc0569efe8530a2758fdf4",
@@ -250,6 +250,7 @@
     "theories/Factor_Program_Entry_Values.thy": "4e6f94c3d92d1075f9f30c2655c0d58accb468908c18999e47e0d6cfcf730798",
     "theories/Factor_Program_Generation_Causes.thy": "4ed966e965e6dac78ee1c94cb26416d5b1baca55b69b013a3f00fa58e92ab6c4",
     "theories/Factor_Program_Positions.thy": "a6b358adf76f86dc054a693346cd7c1f72c90a7bdf6dc2173ac92078dd2abc94",
+    "theories/Factor_Program_Reflection.thy": "14ab336e3dc3d087742a93dcae2b0610e06390d2ee7f49aca704bcb84ad8d3f9",
     "theories/Factor_Program_Scopes.thy": "259292e232690dbc2ebf8924965786139a71e5e741b5d8a49d4d1e2d659274c8",
     "theories/Factor_Program_Semantics.thy": "d589b9bd2010557e3ec50bd50c935981364e951a672551453657f52b7b1f673d",
     "theories/Factor_Proof_Bound_Checking.thy": "2360d750ab50df229b230216b653568dbff09c7eb9c7876719544ab6cc31a366",
@@ -306,6 +307,7 @@
     "theories/Factor_Report_Families.thy": "1b95bfc077372cf9e4e738044bb297fa7c32da28c36677b61a09d0f512e8b278",
     "theories/Factor_Report_Patterns.thy": "e452972030574d4896d635b822c478413f9980a601c469750987613983cfc29a",
     "theories/Factor_Report_Programs.thy": "b65db56ec573f77002d39e746a04176e3ff1f2f7a275f3172766c2573caf88b7",
+    "theories/Factor_Represented_Interpretations.thy": "5b6376dac3e50b6bd4c1e7c44ef68d81833038f08224bef5f6f3605935e5df26",
     "theories/Factor_Resource_Sensitivity.thy": "c7c4bce7804e9498232d466806371a11cb6ed3d753f459ade46baf5a588e302c",
     "theories/Factor_Retention_Admission.thy": "60623301b6e1d0e55ae4255e1275756e92f42a66cd133d0a9ff3b3f1f8247e75",
     "theories/Factor_Retention_Observations.thy": "5f8ea79b1308e6e08a07725fd615a9d1e7279e9d3378fac781300f85a0e0ac09",
@@ -452,6 +454,6 @@
   "isabelle_version": "Isabelle2025-2",
   "sources_unchanged": true,
   "tools_unchanged": true,
-  "finished_utc": "2026-09-07T17:36:18.761178+00:00",
-  "log_sha256": "9fce930a7e78fbfbcdba2e52c78fce1daf52c2e4646dd30882fb0e3e5526062a"
+  "finished_utc": "2026-09-07T18:07:12.980867+00:00",
+  "log_sha256": "c6c0d33977475fe3d519b31ddf1484b936ba47ba921a6adadb35aa6d1922444f"
 }

@@ -3674,3 +3674,43 @@ hundred and ninety-three clauses. Exact positive recognition does not imply
 termination for false queries or prove universal correctness of a submitted
 historical interpreter. That correctness, full protocol admission, general
 reflection, genesis, quotation determination, and the final audits remain.
+
+## Formation and meaning reflection share a represented source
+
+The existing formation admission and positive query have the same complete
+source-and-call argument. Retain their separate entries in one fixed native
+program. Formation remains the independent package-interface relation, and
+truth remains the independent least positive fixed point. Neither becomes a
+supplied callback. Exactness over every input term establishes the output
+boundary as well as agreement on represented calls. Generic equality gives
+an infinite family of true reflected calls and a formed false call, so the
+reflected domain is neither empty nor a finite sample and formation is not
+identified with truth.
+
+A historical interpreter can now use the original program as ordinary data.
+The inferred construction choice is to specialize the fixed checker with two
+ordinary clauses. Each retains the complete environment and actual package
+coordinates through the existing exact-term pattern operation; the conclusion
+keeps one arbitrary future operand. One clause calls formation admission and
+the other calls the positive query. There is no new quotation encoding,
+variable-length family of source-specific active rules, or truth primitive.
+The two clauses express different public relations even though their source
+constants agree.
+
+The independently specified historical interpretation contract is proved for
+every native source package. The whole source environment may contain material
+beyond that package. Different complete presentations and formed extensions
+produce identical interpretation results for all operands. The constructed
+program preserves every earlier checker call and meaning; its exact definition
+set is the fixed checker plus the two new entries, transported by compilation.
+Every resulting definition is exported as an actual root. Complete supporting
+material is available to the current frame before any candidate history,
+cause, or adoption presentation is fixed.
+
+The earlier historical construction remains useful because it additionally
+preserves direct calls to separately copied old and other programs. The new
+construction proves a different sufficient class with one uniform interpreter.
+Neither construction admits an arbitrary submitted interpreter's universal
+correctness evidence inside the predecessor. That finite evidence profile,
+full transition-protocol admission, the remaining reflection strata, genesis,
+quotation determination, and final repository audits remain open.

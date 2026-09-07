@@ -750,9 +750,26 @@ One closed native program with one hundred and sixteen definitions and one
 hundred and ninety-three clauses fixes its entries before all future supplied
 programs and operands. All complete presentations are admitted, including
 input environments containing additional material. This proves exact positive
-recognition; termination on false calls is not claimed. Universal correctness
-of submitted interpreters, full transition-protocol admission, general
-reflection, genesis, and quotation determination remain open.
+recognition; termination on false calls is not claimed.
+
+Formation and positive meaning now have separate exact entries in one fixed
+native program. Both interpret the same actual supplied package and cover all
+input terms. Generic equality provides infinitely many reflected true calls
+and a formed call that is false. The independent interface boundary and least
+fixed point are related to these ordinary entries by proofs, with no supplied
+truth relation.
+
+Two further ordinary clauses can retain a complete source environment and its
+actual package coordinates as exact patterns. Their future operand remains
+arbitrary. Native compilation gives the existing historical interpretation
+contract for every native source package, with exactly the fixed checker and
+the two added definitions. Complete presentation changes and formed environment
+extensions preserve both meanings. The actual current frame receives complete
+interpreter material before candidate history, cause, or adoption is chosen.
+This construction complements the earlier bridge that preserves direct copies
+of independent programs. Universal correctness admission for submitted
+interpreters, full transition-protocol admission, the remaining reflection
+strata, genesis, and quotation determination remain open.
 
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed

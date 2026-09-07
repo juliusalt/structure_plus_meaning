@@ -252,6 +252,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Replay_Admission
     Factor_Environment_Inclusion
     Factor_Positive_Admission
+    Factor_Program_Reflection
     Factor_Judgment_Values
     Factor_Judgment_Scopes
     Factor_Construction_Claims
@@ -426,6 +427,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Transition_Comparison_Examples
     Factor_Interpretation_Support
     Factor_Amendment_Interpretations
+    Factor_Represented_Interpretations
     Factor_Transition_Interpretations
     Factor_Interpretation_Retention
     Factor_Interpretation_Construction

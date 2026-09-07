@@ -3504,6 +3504,54 @@ source presentation, and preserve earlier meanings. One fixed closed native
 program provides four distinct sites before all future formed operands and
 retains its canonical environment. It has ninety-nine definitions and one
 hundred and fifty-nine clauses. This admits graph structure independently of
-a supplied root claim. Ordinary checking of complete derivations and replay
-retention remains, as do the full transition protocol, reflection, genesis,
-and general quotation determination.
+a supplied root claim. The following claim-table construction supplies the
+complete derivation join. Replay retention remains separate, as do the full
+transition protocol, reflection, genesis, and general quotation determination.
+
+## Complete derivations use one shared claim table
+
+Four definitions with eight ordinary clauses derive row-key qualification,
+complete keyed-row joins, checking of all supplied node claims, and native
+derivation admission. The derivation entry receives the actual package site,
+proof root, supplied call, and complete identified assertion boundary. It
+admits exactly the existing graph derivation in that actual package.
+
+The inferred interface choice is one finite functional table from actual
+node sites to calls. It is a temporary witness, separate from the native
+node fields. Every node is an actual member of the same admitted rooted
+graph. Every inference joins all of its actual premise sockets to that same
+table. The complete traversal and root lookup force the table to contain
+exactly the reachable nodes. One shared node has one call even when several
+incoming sockets or definition clause families could otherwise permit
+different claims.
+
+Qualification uses the semantic use of the owning definition. A local
+definition address is not part of a binder, socket, or clause site. One
+ordinary pair construction handles binding keys and premise keys, preserving
+all values and their order. The positioned-instance inverse follows from
+the exact binding and premise domains and recovers the actual local package
+instance, including all material conditions and callee interfaces.
+
+Key uniqueness is checked once at the traversal's empty clause. The complete
+table is then shared unchanged by every recursive call and child lookup.
+The standalone walker may check a sublist; its exact contract exposes that
+sublist and the full table separately. An empty walk retains arbitrary formed
+context fields and a checked table. The derivation wrapper traverses the
+entire table and requires its root entry, so a witness cannot omit the root
+or all native readings. No topological order is required for these claims;
+the separate graph admission already establishes finite acyclicity.
+
+Assertions select their complete rows in traversal order. Their output is
+constructed directly, preserving arbitrary formed call terms, including
+literal targets. Every distinct enumeration of the exact assertion boundary
+extends to a complete claim-table enumeration. Equal calls at different
+assertion sites remain distinct assumptions. A closed derivation establishes
+its supplied call's positive meaning; conditional assertions retain their
+independent truth requirement.
+
+The complete program has one hundred and three definitions and one hundred
+and sixty-seven clauses. Four distinct sites in one fixed closed native
+program precede every future formed operand and preserve its canonical
+environment. The replay join must bind an actual application to its derivation
+and closed retention. Full transition protocol, reflection, genesis, and
+general quotation determination remain open.

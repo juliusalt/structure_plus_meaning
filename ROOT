@@ -234,6 +234,12 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Proof_Bound_Checking
     Factor_Proof_Graph_Admission
     Factor_Proof_Graph_Membership
+    Factor_Row_Qualification
+    Factor_Keyed_Row_Join
+    Factor_Proof_Claim_Values
+    Factor_Proof_Claim_Instances
+    Factor_Proof_Claim_Checking
+    Factor_Derivation_Admission
     Factor_Judgment_Values
     Factor_Judgment_Scopes
     Factor_Construction_Claims
@@ -250,6 +256,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Graph_Renaming
     Factor_Graph_Transport
     Factor_Program_Positions
+    Factor_Positioned_Instances
     Factor_Graph_Metadata
     Factor_Native_References
     Factor_Native_Tables

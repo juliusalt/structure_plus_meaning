@@ -395,8 +395,9 @@ text \<open>
   terms and preserve every earlier meaning. One fixed closed native program
   provides four distinct sites before all future formed operands and retains
   its canonical environment. It has ninety-nine definitions and one hundred
-  and fifty-nine clauses. Ordinary derivation and replay-retention checking
-  remains, as do the full transition protocol, reflection, and genesis.
+  and fifty-nine clauses. The subsequent claim checker joins this structure
+  to the actual package instances and supplied root call. Replay retention
+  remains a separate requirement.
 \<close>
 
 end

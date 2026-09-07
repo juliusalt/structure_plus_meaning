@@ -644,6 +644,7 @@ all independent source and row presentations. Outputs are unique up to row
 enumeration. Missing or extra call sockets, unsatisfied material conditions,
 and unformed callees cannot be omitted. Seven new entries preserve earlier
 meanings and share one fixed closed native program before future operands.
+
 Native proof-metadata checking now reads located citations, two-endpoint
 links, complete binding and premise-link tables, and both node forms through
 ordinary clauses. The two table readers share a complete traversal and
@@ -673,8 +674,28 @@ its reachable sites. Neither a larger bound nor shared syntax changes that
 projection. Four new entries have exact all-term contracts, admit every source
 presentation, preserve earlier meanings, and share one fixed closed native
 program with ninety-nine definitions and one hundred and fifty-nine clauses.
-Ordinary derivation and replay-retention checking remains, as do the full
-transition protocol, reflection, and genesis.
+
+Complete derivation admission now checks one shared table containing a call
+for every actual node. Each premise must find exactly one required child call
+in that same table. The supplied root call and complete premise coverage force
+the table's domain to be exactly the admitted graph. Shared inference nodes
+therefore retain one consistent claim.
+
+A single ordinary key-qualification operation handles both binding and socket
+rows. It uses the owning definition's semantic use and preserves every value.
+Each inference checks the actual package clause, complete bindings, material
+conditions, and all prospective interfaces. Assertions contribute exactly
+their identified claims. Every distinct assertion-boundary order is admitted,
+including equal calls at different sites and arbitrary formed literal values.
+The table is an internal witness; native nodes retain their existing fields.
+
+Four entries with eight ordinary clauses have exact all-term contracts,
+preserve earlier meanings, and share one fixed closed native program before
+future operands, with one hundred and three definitions and one hundred and
+sixty-seven clauses. A closed derivation establishes its supplied call's
+positive meaning. The remaining replay join must bind the actual application
+to this derivation and check its closed retention. The full transition
+protocol, reflection, genesis, and general quotation determination remain.
 
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed

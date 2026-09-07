@@ -18,10 +18,15 @@ qed
 abbreviation formed_key_rows :: "(factor_term\<times>factor_term) list \<Rightarrow> bool" where
   "formed_key_rows xs \<equiv> \<forall>(k,v)\<in>set xs. term_formed k \<and> self_contained_term k \<and> term_formed v"
 
+lemma pair_list_term_formed_iff:
+  "term_formed (pair_list_term xs) \<longleftrightarrow>
+    (\<forall>(k,v)\<in>set xs. term_formed k \<and> term_formed v)"
+  by (auto simp: data_list_term_formed)
+
 lemma pair_list_term_formed:
   assumes "formed_key_rows xs"
   shows "term_formed (pair_list_term xs)"
-  using assms by (auto simp: data_list_term_formed)
+  using assms by (auto simp: pair_list_term_formed_iff)
 
 definition key_absence_nil_schema :: "(nat,nat,nat) factor_schema" where
   "key_absence_nil_schema=data_rule (Pattern_Pair data_x (Pattern_Payload [])) {(0,2,data_x)}"

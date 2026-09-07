@@ -186,6 +186,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Data_List_Operations
     Factor_Data_Collection_Operations
     Factor_Quotation_Admission
+    Factor_Binding_Admission
+    Factor_Binder_Admission
     Factor_Judgment_Values
     Factor_Judgment_Scopes
     Factor_Construction_Claims

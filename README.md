@@ -526,6 +526,15 @@ sets. One fixed native reader serves all future formed operands. Higher
 grammar, finite correctness evidence, reflection, and the full transition
 protocol remain required.
 
+Complete substitution tables now admit arbitrary formed term values, including
+literal targets. Their full key multiset must equal the declared distinct
+scope, enforcing one value per binder while allowing independent table and
+scope orders. Binder admission derives the existing complete family grammar
+by sharing each socket's address with its endpoint. It preserves empty-scope
+root checks, all source presentations, and every distinct scope order. All four
+operations have exact contracts over every input term and share one fixed
+native program before arbitrary future formed operands.
+
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed
 terms, with truth exactly when the two terms agree. Its argument domain and

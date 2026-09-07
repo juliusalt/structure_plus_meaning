@@ -1,0 +1,435 @@
+theory Factor_Binder_Admission
+  imports Factor_Binding_Admission
+begin
+
+section \<open>Each declared occurrence is its own endpoint\<close>
+
+definition diagonal_rows_cons_schema :: "(nat,nat,nat) factor_schema" where
+  "diagonal_rows_cons_schema=data_rule
+    (Pattern_Pair (Pattern_Pair data_x data_y) (Pattern_Pair (Pattern_Pair data_x data_x) data_z))
+    {(0,53,Pattern_Pair data_y data_z)}"
+
+definition diagonal_rows_clauses :: "(nat \<times> (nat,nat,nat) factor_schema) set" where
+  "diagonal_rows_clauses={(0,bag_nil_schema),(1,diagonal_rows_cons_schema)}"
+
+definition diagonal_rows_system :: "(nat,nat,nat,nat) schema_system" where
+  "diagonal_rows_system=add_view_definition binding_admission_system 53 data_x diagonal_rows_clauses"
+
+lemma diagonal_rows_system_formed [simp]: "schema_system_formed diagonal_rows_system"
+  unfolding diagonal_rows_system_def
+  by (rule add_recursive_definition_formed[OF binding_admission_system_formed])
+    (auto simp: diagonal_rows_clauses_def bag_nil_schema_def diagonal_rows_cons_schema_def
+      schema_formed_def schema_dependencies_def single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma diagonal_rows_definitions [simp]:
+  "system_definitions diagonal_rows_system=insert 53 (system_definitions binding_admission_system)"
+  by (simp add: diagonal_rows_system_def)
+
+lemma diagonal_rows_call:
+  "schema_call_formed diagonal_rows_system d t \<longleftrightarrow>
+    d\<in>system_definitions diagonal_rows_system \<and> term_formed t"
+  using added_variable_calls[OF binding_admission_system_formed
+    diagonal_rows_system_formed[unfolded diagonal_rows_system_def] binding_admission_call]
+  by (simp only: diagonal_rows_system_def[symmetric])
+
+lemma diagonal_rows_old_meaning:
+  assumes "d\<in>system_definitions binding_admission_system"
+  shows "(d,t)\<in>positive_meaning diagonal_rows_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning binding_admission_system"
+  using added_definition_preserves_old(2)[OF binding_admission_system_formed
+    diagonal_rows_system_formed[unfolded diagonal_rows_system_def], of d t] assms
+  by (auto simp: diagonal_rows_system_def)
+
+lemma diagonal_rows_clause [simp]:
+  "((53,c),S)\<in>system_clauses diagonal_rows_system \<longleftrightarrow> (c,S)\<in>diagonal_rows_clauses"
+proof -
+  have owned: "((d,c),S)\<in>system_clauses binding_admission_system \<Longrightarrow>
+    d\<in>system_definitions binding_admission_system" for d c S
+    using binding_admission_system_formed unfolding schema_system_formed_def by blast
+  have absent: "((53,c),S)\<notin>system_clauses binding_admission_system" by (auto dest: owned)
+  show ?thesis using absent by (simp add: diagonal_rows_system_def)
+qed
+
+theorem diagonal_rows_sound:
+  assumes holds: "(53,t)\<in>positive_meaning diagonal_rows_system"
+  shows "\<exists>xs. t=Pair_Term (data_list_term xs) (pair_list_term (map (\<lambda>x. (x,x)) xs)) \<and>
+    term_formed (data_list_term xs)"
+proof -
+  let ?Q="\<lambda>t. \<exists>xs. t=Pair_Term (data_list_term xs) (pair_list_term (map (\<lambda>x. (x,x)) xs)) \<and>
+    term_formed (data_list_term xs)"
+  have invariant: "(53::nat)=53 \<longrightarrow> ?Q t"
+  proof (rule positive_valuation_induct[OF holds, where property="\<lambda>d t. d=53 \<longrightarrow> ?Q t"])
+    fix d c S h
+    assume clause: "((d,c),S)\<in>system_clauses diagonal_rows_system"
+      and assignment: "\<forall>a\<in>schema_variables S. term_formed (h a)"
+      and call: "schema_call_formed diagonal_rows_system d (evaluate_pattern h (schema_conclusion S))"
+      and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
+        (e,evaluate_pattern h p)\<in>positive_meaning diagonal_rows_system \<and>
+        (e=53 \<longrightarrow> ?Q (evaluate_pattern h p))"
+    show "d=53 \<longrightarrow> ?Q (evaluate_pattern h (schema_conclusion S))"
+    proof
+      assume "d=53"
+      then have alternatives: "S=bag_nil_schema \<or> S=diagonal_rows_cons_schema"
+        using clause by (auto simp: diagonal_rows_clauses_def)
+      then show "?Q (evaluate_pattern h (schema_conclusion S))"
+      proof
+        assume schema: "S=bag_nil_schema"
+        show ?thesis by (rule exI[of _ "[]"]) (simp add: schema bag_nil_schema_def octets_formed_def)
+      next
+        assume schema: "S=diagonal_rows_cons_schema"
+        have first: "term_formed (h 0)"
+          using assignment by (auto simp: schema diagonal_rows_cons_schema_def schema_variables_def)
+        obtain xs where tail: "h 1=data_list_term xs" "h 2=pair_list_term (map (\<lambda>x. (x,x)) xs)"
+          "term_formed (data_list_term xs)"
+          using support[rule_format, of 0 53 "Pattern_Pair data_y data_z"]
+          by (auto simp: schema diagonal_rows_cons_schema_def)
+        show ?thesis by (rule exI[of _ "h 0#xs"])
+          (use first tail in \<open>simp add: schema diagonal_rows_cons_schema_def\<close>)
+      qed
+    qed
+  qed
+  show ?thesis using invariant by simp
+qed
+
+theorem diagonal_rows_complete:
+  assumes "term_formed (data_list_term xs)"
+  shows "(53,Pair_Term (data_list_term xs) (pair_list_term (map (\<lambda>x. (x,x)) xs)))
+    \<in>positive_meaning diagonal_rows_system"
+  using assms
+proof (induction xs)
+  case Nil
+  have result: "(53,evaluate_pattern (\<lambda>_. Payload_Term []) (schema_conclusion bag_nil_schema))
+    \<in>positive_meaning diagonal_rows_system"
+    by (rule ordinary_positive_valuation_step[where c=0])
+      (auto simp: diagonal_rows_clauses_def bag_nil_schema_def schema_variables_def diagonal_rows_call octets_formed_def)
+  show ?case using result by (simp add: bag_nil_schema_def)
+next
+  case (Cons x xs)
+  have tail: "(53,Pair_Term (data_list_term xs) (pair_list_term (map (\<lambda>x. (x,x)) xs)))
+      \<in>positive_meaning diagonal_rows_system"
+    using Cons by simp
+  let ?h="\<lambda>i::nat. if i=0 then x else if i=1 then data_list_term xs else pair_list_term (map (\<lambda>x. (x,x)) xs)"
+  have result: "(53,evaluate_pattern ?h (schema_conclusion diagonal_rows_cons_schema))
+    \<in>positive_meaning diagonal_rows_system"
+    by (rule ordinary_positive_valuation_step[where c=1])
+      (use Cons.prems tail in \<open>auto simp: diagonal_rows_clauses_def diagonal_rows_cons_schema_def
+        schema_variables_def diagonal_rows_call pair_list_term_formed_iff data_list_term_formed\<close>)
+  show ?case using result by (simp add: diagonal_rows_cons_schema_def)
+qed
+
+theorem diagonal_rows_exact:
+  "(53,t)\<in>positive_meaning diagonal_rows_system \<longleftrightarrow>
+    (\<exists>xs. t=Pair_Term (data_list_term xs) (pair_list_term (map (\<lambda>x. (x,x)) xs)) \<and>
+      term_formed (data_list_term xs))"
+  using diagonal_rows_sound diagonal_rows_complete by blast
+
+corollary diagonal_rows_at_list:
+  "(53,Pair_Term (data_list_term xs) r)\<in>positive_meaning diagonal_rows_system \<longleftrightarrow>
+    term_formed (data_list_term xs) \<and> r=pair_list_term (map (\<lambda>x. (x,x)) xs)"
+  by (simp only: diagonal_rows_exact factor_term.inject data_list_term_injective) auto
+
+lemma diagonal_address_rows:
+  "pair_list_term (map (\<lambda>x. (x,x)) xs)=data_list_term (map address_pair_data ys) \<longleftrightarrow>
+    xs=map (\<lambda>(a,b). Payload_Term a) ys \<and> (\<forall>(a,b)\<in>set ys. a=b)"
+proof (induction ys arbitrary: xs)
+  case Nil
+  show ?case by (cases xs) auto
+next
+  case (Cons y ys)
+  obtain a b where row: "y=(a,b)" by (cases y) auto
+  show ?case by (cases xs) (use Cons.IH in \<open>auto simp: row address_pair_data_def\<close>)
+qed
+
+section \<open>Complete binder families use existing family admission\<close>
+
+abbreviation binder_admission_result :: "factor_term \<Rightarrow> bool" where
+  "binder_admission_result z \<equiv> \<exists>R a r Vs.
+    z=rooted_rows_argument a (Payload_Term r) (data_list_term (map Payload_Term Vs)) \<and>
+    artifact_value_presents R a \<and> distinct Vs \<and> binder_scope_at R r (set Vs)"
+
+definition binder_admission_schema :: "(nat,nat,nat) factor_schema" where
+  "binder_admission_schema=data_rule (Pattern_Pair (Pattern_Pair data_x data_y) data_z)
+    {(0,53,Pattern_Pair data_z data_w),(1,32,Pattern_Pair (Pattern_Pair data_x data_y) data_w)}"
+
+definition binder_admission_system :: "(nat,nat,nat,nat) schema_system" where
+  "binder_admission_system=add_view_definition diagonal_rows_system 54 data_x {(0,binder_admission_schema)}"
+
+interpretation binder_admission_view: positive_view diagonal_rows_system 54 data_x "{(0,binder_admission_schema)}"
+  by (rule positive_view.intro)
+    (auto simp: binder_admission_schema_def schema_formed_def schema_dependencies_def
+      single_valued_def rel_dom_def rel_ran_def)
+
+lemma binder_admission_system_formed [simp]: "schema_system_formed binder_admission_system"
+  using binder_admission_view.formed by (simp only: binder_admission_system_def)
+
+lemma binder_admission_definitions [simp]:
+  "system_definitions binder_admission_system=insert 54 (system_definitions diagonal_rows_system)"
+  by (simp add: binder_admission_system_def)
+
+lemma binder_admission_call:
+  "schema_call_formed binder_admission_system d t \<longleftrightarrow>
+    d\<in>system_definitions binder_admission_system \<and> term_formed t"
+  using added_variable_calls[OF diagonal_rows_system_formed
+    binder_admission_system_formed[unfolded binder_admission_system_def] diagonal_rows_call]
+  by (simp only: binder_admission_system_def[symmetric])
+
+lemma binder_admission_old_meaning:
+  assumes "d\<in>system_definitions diagonal_rows_system"
+  shows "(d,t)\<in>positive_meaning binder_admission_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning diagonal_rows_system"
+  using added_definition_preserves_old(2)[OF diagonal_rows_system_formed
+    binder_admission_system_formed[unfolded binder_admission_system_def], of d t] assms
+  by (auto simp: binder_admission_system_def)
+
+lemma binder_admission_clause [simp]:
+  "((54,c),S)\<in>system_clauses binder_admission_system \<longleftrightarrow> (c,S)\<in>{(0,binder_admission_schema)}"
+proof -
+  have owned: "((d,c),S)\<in>system_clauses diagonal_rows_system \<Longrightarrow>
+    d\<in>system_definitions diagonal_rows_system" for d c S
+    using diagonal_rows_system_formed unfolding schema_system_formed_def by blast
+  have absent: "((54,c),S)\<notin>system_clauses diagonal_rows_system" by (auto dest: owned)
+  show ?thesis using absent by (simp add: binder_admission_system_def)
+qed
+
+lemma binder_admission_quotation_meaning:
+  assumes "d\<in>system_definitions quotation_admission_system"
+  shows "(d,t)\<in>positive_meaning binder_admission_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning quotation_admission_system"
+  using binder_admission_old_meaning[of d t] diagonal_rows_old_meaning[of d t]
+    binding_admission_old_meaning[of d t] row_keys_old_meaning[OF assms, of t] assms by auto
+
+lemma binder_admission_components:
+  "(53,t)\<in>positive_meaning binder_admission_system \<longleftrightarrow> (53,t)\<in>positive_meaning diagonal_rows_system"
+  "(32,t)\<in>positive_meaning binder_admission_system \<longleftrightarrow> (32,t)\<in>positive_meaning family_admission_system"
+  using binder_admission_old_meaning[of 53 t] binder_admission_quotation_meaning[of 32 t]
+    quotation_admission_record_meaning[of 32 t] record_admission_family[of t] by auto
+
+lemma binder_admission_valuation:
+  "(54,t)\<in>positive_meaning binder_admission_system \<longleftrightarrow>
+    (\<exists>h::nat\<Rightarrow>factor_term. (\<forall>i\<in>{0,1,2,3}. term_formed (h i)) \<and>
+      t=rooted_rows_argument (h 0) (h 1) (h 2) \<and>
+      (53,Pair_Term (h 2) (h 3))\<in>positive_meaning diagonal_rows_system \<and>
+      (32,rooted_rows_argument (h 0) (h 1) (h 3))\<in>positive_meaning family_admission_system)"
+  by (subst ordinary_positive_entry_valuation)
+    (auto simp: binder_admission_schema_def schema_variables_def binder_admission_call binder_admission_components)
+
+lemma binder_admission_fields:
+  "(54,t)\<in>positive_meaning binder_admission_system \<longleftrightarrow>
+    (\<exists>a r v m. t=rooted_rows_argument a r v \<and>
+      (53,Pair_Term v m)\<in>positive_meaning diagonal_rows_system \<and>
+      (32,rooted_rows_argument a r m)\<in>positive_meaning family_admission_system)"
+proof
+  assume "(54,t)\<in>positive_meaning binder_admission_system"
+  then show "\<exists>a r v m. t=rooted_rows_argument a r v \<and>
+      (53,Pair_Term v m)\<in>positive_meaning diagonal_rows_system \<and>
+      (32,rooted_rows_argument a r m)\<in>positive_meaning family_admission_system"
+    by (simp only: binder_admission_valuation) blast
+next
+  assume "\<exists>a r v m. t=rooted_rows_argument a r v \<and>
+      (53,Pair_Term v m)\<in>positive_meaning diagonal_rows_system \<and>
+      (32,rooted_rows_argument a r m)\<in>positive_meaning family_admission_system"
+  then obtain a r v m where parts: "t=rooted_rows_argument a r v"
+    "(53,Pair_Term v m)\<in>positive_meaning diagonal_rows_system"
+    "(32,rooted_rows_argument a r m)\<in>positive_meaning family_admission_system" by blast
+  have formed: "term_formed a" "term_formed r" "term_formed v" "term_formed m"
+    using schema_call_formed_target[OF positive_meaning_formed[OF parts(2)]]
+      schema_call_formed_target[OF positive_meaning_formed[OF parts(3)]] by auto
+  show "(54,t)\<in>positive_meaning binder_admission_system"
+    by (simp only: binder_admission_valuation,
+      rule exI[of _ "\<lambda>i::nat. if i=0 then a else if i=1 then r else if i=2 then v else m"])
+      (use parts formed in auto)
+qed
+
+theorem binder_admission_exact:
+  "(54,z)\<in>positive_meaning binder_admission_system \<longleftrightarrow> binder_admission_result z"
+proof
+  assume holds: "(54,z)\<in>positive_meaning binder_admission_system"
+  obtain a k v m where fields: "z=rooted_rows_argument a k v"
+    "(53,Pair_Term v m)\<in>positive_meaning diagonal_rows_system"
+    "(32,rooted_rows_argument a k m)\<in>positive_meaning family_admission_system"
+    using holds by (simp only: binder_admission_fields) blast
+  obtain xs where diagonal: "v=data_list_term xs" "m=pair_list_term (map (\<lambda>x. (x,x)) xs)"
+    using fields(2) by (auto simp: diagonal_rows_exact)
+  obtain R r ys where source: "artifact_value_presents R a" and shape: "k=Payload_Term r"
+    "m=data_list_term (map address_pair_data ys)" and rows: "distinct ys" "family_at R r (set ys)"
+    using fields(3) by (auto simp: family_admission_exact)
+  have equality: "pair_list_term (map (\<lambda>x. (x,x)) xs)=data_list_term (map address_pair_data ys)"
+    using diagonal(2) shape(2) by simp
+  have joined: "xs=map (\<lambda>(a,b). Payload_Term a) ys" "\<forall>(a,b)\<in>set ys. a=b"
+    using equality[unfolded diagonal_address_rows] by auto
+  let ?Vs="map fst ys"
+  have list: "xs=map Payload_Term ?Vs" using joined(1) by (simp add: map_map comp_def case_prod_unfold)
+  have distinct: "distinct ?Vs" using rows by (auto simp: distinct_keys_iff family_at_def)
+  have diagonal_list: "map (\<lambda>(a,b). (a,a)) ys=ys"
+    using joined(2) by (induction ys) (auto split: prod.splits)
+  have graph: "set ys=image (\<lambda>a. (a,a)) (set ?Vs)"
+    using arg_cong[OF diagonal_list, of set] by (simp add: image_image case_prod_unfold)
+  have read: "binder_scope_at R r (set ?Vs)"
+    using rows(2) by (simp only: binder_scope_at_def graph[symmetric])
+  show "binder_admission_result z"
+    by (rule exI[of _ R], rule exI[of _ a], rule exI[of _ r], rule exI[of _ ?Vs])
+      (use fields(1) source shape(1) diagonal(1) list distinct read in simp)
+next
+  assume admitted: "binder_admission_result z"
+  obtain R a r Vs where parts: "z=rooted_rows_argument a (Payload_Term r) (data_list_term (map Payload_Term Vs))"
+    "artifact_value_presents R a" "distinct Vs" "binder_scope_at R r (set Vs)"
+    using admitted by blast
+  have bytes: "\<forall>x\<in>set Vs. octets_formed x"
+    using binder_scope_properties(2)[OF parts(4)] artifact_value_presents_formed[OF parts(2)]
+    by (auto simp: exact_formed_def)
+  let ?m="pair_list_term (map (\<lambda>x. (x,x)) (map Payload_Term Vs))"
+  have diagonal: "(53,Pair_Term (data_list_term (map Payload_Term Vs)) ?m)\<in>positive_meaning diagonal_rows_system"
+    by (rule diagonal_rows_complete) (use bytes in \<open>simp add: data_list_term_formed\<close>)
+  have equality: "?m=data_list_term (map address_pair_data (map (\<lambda>a. (a,a)) Vs))"
+    by (simp add: map_map comp_def address_pair_data_def)
+  have family: "(32,rooted_rows_argument a (Payload_Term r) ?m)\<in>positive_meaning family_admission_system"
+    by (simp only: equality family_admission_rows[OF parts(2)])
+      (use parts(3,4) in \<open>auto simp: binder_scope_at_def distinct_map inj_on_def\<close>)
+  show "(54,z)\<in>positive_meaning binder_admission_system"
+    by (simp only: binder_admission_fields, rule exI[of _ a], rule exI[of _ "Payload_Term r"],
+      rule exI[of _ "data_list_term (map Payload_Term Vs)"], rule exI[of _ ?m])
+      (use parts(1) diagonal family in blast)
+qed
+
+corollary binder_admission_at_source:
+  assumes source: "artifact_value_presents R a"
+  shows "(54,rooted_rows_argument a r v)\<in>positive_meaning binder_admission_system \<longleftrightarrow>
+    (\<exists>b Vs. r=Payload_Term b \<and> v=data_list_term (map Payload_Term Vs) \<and>
+      distinct Vs \<and> binder_scope_at R b (set Vs))"
+  using artifact_value_presents_unique[OF _ source]
+  by (auto simp: binder_admission_exact intro: source)
+
+corollary binder_admission_on_values:
+  assumes source: "artifact_value_presents R a"
+  shows "(54,rooted_rows_argument a (Payload_Term r) (data_list_term (map Payload_Term Vs)))
+    \<in>positive_meaning binder_admission_system \<longleftrightarrow> distinct Vs \<and> binder_scope_at R r (set Vs)"
+  by (simp add: binder_admission_at_source[OF source] data_list_term_injective
+    injective_mapped_lists[OF payload_term_inj])
+
+corollary binder_admission_presentation_invariance:
+  assumes "artifact_value_presents R a" "artifact_value_presents R b"
+  shows "(54,rooted_rows_argument a r v)\<in>positive_meaning binder_admission_system \<longleftrightarrow>
+    (54,rooted_rows_argument b r v)\<in>positive_meaning binder_admission_system"
+  by (simp only: binder_admission_at_source[OF assms(1)] binder_admission_at_source[OF assms(2)])
+
+corollary binder_admission_orders:
+  assumes source: "artifact_value_presents R a" and same: "mset Vs=mset Ws"
+  shows "(54,rooted_rows_argument a (Payload_Term r) (data_list_term (map Payload_Term Vs)))
+      \<in>positive_meaning binder_admission_system \<longleftrightarrow>
+    (54,rooted_rows_argument a (Payload_Term r) (data_list_term (map Payload_Term Ws)))
+      \<in>positive_meaning binder_admission_system"
+  using mset_eq_imp_distinct_iff[OF same] mset_eq_setD[OF same]
+  by (simp only: binder_admission_on_values[OF source])
+
+corollary binder_admission_scope_unique:
+  assumes source: "artifact_value_presents R a"
+    and first: "(54,rooted_rows_argument a (Payload_Term r) (data_list_term (map Payload_Term Vs)))
+      \<in>positive_meaning binder_admission_system"
+    and second: "(54,rooted_rows_argument a (Payload_Term r) (data_list_term (map Payload_Term Ws)))
+      \<in>positive_meaning binder_admission_system"
+  shows "set Vs=set Ws"
+  using first second binder_scope_unique[of R r "set Vs" "set Ws"]
+  by (simp only: binder_admission_on_values[OF source])
+
+section \<open>One native program supplies all four operations for future operands\<close>
+
+lemma binder_admission_prior_entries:
+  "(51,t)\<in>positive_meaning binder_admission_system \<longleftrightarrow> (51,t)\<in>positive_meaning row_keys_system"
+  "(52,t)\<in>positive_meaning binder_admission_system \<longleftrightarrow> (52,t)\<in>positive_meaning binding_admission_system"
+  using binder_admission_old_meaning[of 51 t] binder_admission_old_meaning[of 52 t]
+    diagonal_rows_old_meaning[of 51 t] diagonal_rows_old_meaning[of 52 t]
+    binding_admission_components(1)[of t] by auto
+
+abbreviation binder_operation_result :: "nat \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "binder_operation_result d t \<equiv>
+    (d=51 \<and> (\<exists>xs. t=Pair_Term (pair_list_term xs) (data_list_term (map fst xs)) \<and>
+      term_formed (pair_list_term xs))) \<or>
+    (d=52 \<and> binding_admission_result t) \<or>
+    (d=53 \<and> (\<exists>xs. t=Pair_Term (data_list_term xs) (pair_list_term (map (\<lambda>x. (x,x)) xs)) \<and>
+      term_formed (data_list_term xs))) \<or>
+    (d=54 \<and> binder_admission_result t)"
+
+lemma binder_operations_exact:
+  assumes "d\<in>{51,52,53,54}"
+  shows "(d,t)\<in>positive_meaning binder_admission_system \<longleftrightarrow> binder_operation_result d t"
+proof -
+  consider (c51) "d=51" | (c52) "d=52" | (c53) "d=53" | (c54) "d=54" using assms by auto
+  then show ?thesis
+  proof cases
+    case c51
+    then show ?thesis by (simp add: binder_admission_prior_entries row_keys_exact)
+  next
+    case c52
+    then show ?thesis by (simp add: binder_admission_prior_entries binding_admission_exact)
+  next
+    case c53
+    then show ?thesis by (simp add: binder_admission_components(1) diagonal_rows_exact)
+  next
+    case c54
+    then show ?thesis by (simp add: binder_admission_exact)
+  qed
+qed
+
+theorem native_binder_operations:
+  "\<exists>E :: local_address option artifact_environment. \<exists>pu Q g.
+    closed_native_package_at E pu [] Q \<and> inj_on g {51::nat,52,53,54} \<and>
+    (\<forall>d\<in>{51,52,53,54}. \<forall>t. term_formed t \<longrightarrow>
+      (\<exists>F au I K. environment_formed F \<and> environment_included E F \<and> au\<notin>environment_uses E \<and>
+        native_package_at F pu [] Q \<and> native_application_at F au [] (g d) t I K \<and>
+        native_package_environment F pu []=E \<and> native_application_formed F pu [] au [] \<and>
+        (native_positive_holds F pu [] au [] \<longleftrightarrow> binder_operation_result d t)))"
+proof -
+  obtain g :: "nat \<Rightarrow> local_address option definition_site"
+    and E :: "local_address option artifact_environment" and pu Q
+    where injective: "inj_on g (system_definitions binder_admission_system)"
+    and closed: "closed_native_package_at E pu [] Q"
+    and future: "\<forall>d\<in>system_definitions binder_admission_system. \<forall>t. term_formed t \<longrightarrow>
+      (\<exists>F au I K. environment_formed F \<and> environment_included E F \<and> au\<notin>environment_uses E \<and>
+        native_package_at F pu [] Q \<and> native_application_at F au [] (g d) t I K \<and>
+        native_package_environment F pu []=E \<and>
+        (native_application_formed F pu [] au [] \<longleftrightarrow> schema_call_formed binder_admission_system d t) \<and>
+        (native_positive_holds F pu [] au [] \<longleftrightarrow> (d,t)\<in>positive_meaning binder_admission_system) \<and>
+        (\<forall>v\<in>environment_uses E. \<forall>R. artifact_at F v R \<longleftrightarrow> artifact_at E v R) \<and>
+        (\<forall>v\<in>environment_uses E. \<forall>k w. binds_slot F v k w \<longleftrightarrow> binds_slot E v k w))"
+    using compiled_program_future_applications[OF binder_admission_system_formed] by blast
+  have sites: "inj_on g {51,52,53,54}" by (rule inj_on_subset[OF injective]) auto
+  show ?thesis
+  proof (rule exI[of _ E], rule exI[of _ pu], rule exI[of _ Q], rule exI[of _ g], intro conjI ballI allI impI)
+    show "closed_native_package_at E pu [] Q" by (rule closed)
+    show "inj_on g {51,52,53,54}" by (rule sites)
+  next
+    fix d :: nat and t :: factor_term
+    assume selected: "d\<in>{51,52,53,54}" and tf: "term_formed t"
+    have member: "d\<in>system_definitions binder_admission_system" using selected by auto
+    obtain F au I K where parts: "environment_formed F" "environment_included E F" "au\<notin>environment_uses E"
+      "native_package_at F pu [] Q" "native_application_at F au [] (g d) t I K"
+      "native_package_environment F pu []=E"
+      "native_application_formed F pu [] au [] \<longleftrightarrow> schema_call_formed binder_admission_system d t"
+      "native_positive_holds F pu [] au [] \<longleftrightarrow> (d,t)\<in>positive_meaning binder_admission_system"
+      using future[rule_format, OF member tf] by blast
+    show "\<exists>F au I K. environment_formed F \<and> environment_included E F \<and> au\<notin>environment_uses E \<and>
+      native_package_at F pu [] Q \<and> native_application_at F au [] (g d) t I K \<and>
+      native_package_environment F pu []=E \<and> native_application_formed F pu [] au [] \<and>
+      (native_positive_holds F pu [] au [] \<longleftrightarrow> binder_operation_result d t)"
+      by (rule exI[of _ F], rule exI[of _ au], rule exI[of _ I], rule exI[of _ K])
+        (use parts tf member binder_operations_exact[OF selected] in \<open>auto simp: binder_admission_call\<close>)
+  qed
+qed
+
+text \<open>
+  The diagonal operation preserves every list occurrence and shares each row's
+  key and value through the same pattern variable. The binder entry joins these
+  exact rows to the existing family checker. Actual payload addresses, unique
+  sockets, a complete root, and empty local material follow from family admission;
+  no additional distinctness or local-data premise is needed. Empty scopes still
+  require their actual family root, and every complete distinct scope order is
+  accepted under every complete source presentation.
+
+  The four new definitions have six ordinary clauses and preserve all earlier
+  meanings. One closed native program has four distinct sites before any future
+  formed operand, with exact all-term contracts and its canonical environment
+  unchanged. Pattern and schema admission, finite correctness evidence, and the
+  complete transition protocol remain separate.
+\<close>
+
+end

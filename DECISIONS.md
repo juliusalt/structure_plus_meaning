@@ -2896,3 +2896,41 @@ The program now has fifty-one definitions and eighty-eight clauses. No new
 primitive is added. Higher grammar, finite correctness evidence, the complete
 transition protocol, reflection, genesis, and general quotation determination
 remain required.
+
+## Binder families and complete substitution tables
+
+Four definitions with six ordinary clauses derive the existing binder grammar
+and complete finite substitution tables. The two recursive list operations
+reuse the existing empty-row clause and inspect every row and final boundary.
+No additional observation is introduced.
+
+The key projection preserves the entire key sequence, including multiplicity.
+Its keys and values may be arbitrary formed terms. The separate table entry
+requires a distinct declared payload scope and compares its multiset with the
+projected keys. Thus every declared occurrence has exactly one value, missing
+and extra keys are rejected, and the scope and table may be independently
+ordered. Functionality follows from counted comparison; a further keyed-list
+premise would be redundant. Table values retain the complete term profile,
+including literal targets. They are not restricted to self-contained data.
+
+A table is represented by the existing complete list of key/value pairs.
+Payload keys carry the actual binder addresses, with no fresh tags or chosen
+order. The exact contract is the existing finite functional binding relation
+over precisely the declared scope, together with distinct enumerations and
+formed address payloads. The singleton theorem covers every formed value.
+Every admitted table supplies one unique formed value for each declared key.
+
+The diagonal operation shares a single pattern variable in both fields of
+each row. Binder admission joins those rows to the existing complete family
+checker. Family admission supplies actual payload addresses, unique sockets,
+separation from the root, and empty local material. Each socket's endpoint must
+be that same occurrence. Empty scopes still require an admitted family root.
+Every complete artifact presentation and distinct scope order is accepted,
+and the recovered scope is unique.
+
+All four entries have exact contracts over every input term and preserve every
+prior meaning. One closed native program supplies four distinct sites before
+arbitrary future formed operands, retaining its canonical environment. The
+program has fifty-five definitions and ninety-four clauses. Pattern and schema
+admission, finite correctness evidence, the complete transition protocol,
+reflection, genesis, and general quotation determination remain required.

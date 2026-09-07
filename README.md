@@ -603,7 +603,19 @@ definition admits an operand. At a reached site of an already formed package,
 the entry agrees exactly with the program's call-formation judgment. All four
 entries have exact contracts over every term and source presentation, preserve
 earlier meanings, and share one fixed native program before future operands.
-Native package admission and complete admitted instances remain required.
+
+Native package closure now has an ordinary admission entry over supplied root-site
+lists. Complete schema instances project exactly their actual prospective
+callees; every actual clause and every definition in a hidden finite bound is
+checked. The roots must be included in that bound. This is proved equivalent
+to the existing least package closure, including cycles. Additional checked
+witness members never replace the semantic package or select its dependencies.
+Empty clause families retain their bound check, empty root lists still admit
+the environment, and unreadable reached definitions cannot be omitted. Five
+entries have exact all-term contracts, preserve earlier meanings, permit every
+complete source presentation, and share one fixed native program before future
+operands. Actual package-root reading, reached-site call admission, and complete
+admitted instances remain required.
 
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed

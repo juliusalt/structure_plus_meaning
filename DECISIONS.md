@@ -3223,3 +3223,54 @@ environment. It has seventy-three definitions and one hundred and twenty
 clauses. Native package admission, complete admitted instances, finite evidence
 checking, the full transition protocol, reflection, genesis, and general
 quotation determination remain required.
+
+## Finite checked witnesses preserve the actual least package closure
+
+Five definitions with seven ordinary clauses derive package closure over
+supplied root-site lists. They reuse complete schema instantiation, row-value
+and row-key projection, list inclusion, definition-interface admission, actual
+record and family reading, and the existing context-carrying list profile.
+The source schema's complete instance has exactly its actual prospective
+callees, regardless of substitution or row order. Material truth is not needed
+to read those dependencies.
+
+The definition operation admits the actual interface and complete clause
+family, rereads that same actual record and graph, and checks every schema
+endpoint against one unchanged bound. Unique source and schema recovery
+identifies the checked endpoints with precisely the definition's clauses.
+Distinct sockets may share endpoints or equal schemas. An independent
+empty-list inclusion call checks the complete bound even when there are no
+clauses. Every bound element is then checked as an actual definition, including
+all of that definition's callees.
+
+The package operation admits the entire source environment and includes every
+supplied root in a hidden finite bound. The bound is a witness to successful
+closure checking, not an added native field or semantic definition domain.
+The proof establishes both directions: every successful bound contains the
+existing least root closure, and that finite closure itself provides a
+successful bound whenever the raw package is formed. Additional checked
+members, repetition, and enumeration order therefore cannot change the
+semantic package. An unreadable reached definition cannot be omitted.
+
+This witness choice is not fixed by the supplied material. It is admitted
+because it derives the required closure check from existing operations while
+preserving the exact raw meaning. Every callee is selected by its actual
+prospective citation and then compared with the supplied bound. The witness
+does not select a callee, dispatch a definition by a nominal name, scan every
+environment position, or replace the actual least closure. Cycles are admitted
+under the existing positive semantics without an acyclicity condition, depth
+limit, or preselected traversal order.
+
+All five operations have exact contracts over every term and preserve earlier
+meanings. Every complete source presentation is permitted. The package entry
+accepts every supplied list with the same root set. Its empty-root case still
+checks the source environment, even when that environment is empty. One fixed
+closed native program supplies five distinct sites before future formed
+operands and retains its canonical environment. It has seventy-eight
+definitions and one hundred and twenty-seven clauses.
+
+The supplied root-site list is still an ordinary argument to this entry.
+Reading the actual native package-root family, joining call admission with
+actual reached-site membership, complete admitted instances, finite evidence
+checking, the full transition protocol, reflection, genesis, and general
+quotation determination remain required.

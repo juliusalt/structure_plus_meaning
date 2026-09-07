@@ -110,9 +110,10 @@ proof -
       (use raw conclusion in \<open>simp add: schema schema_admission_schema_def\<close>)
 qed
 
-theorem schema_admission_complete:
+theorem schema_instantiation_inhabited:
   assumes source: "environment_value_presents E e" and raw: "native_schema_at E u r S"
-  shows "(69,source_root_argument e (use_data_term u) (Payload_Term r))\<in>positive_meaning schema_admission_system"
+  shows "\<exists>xs t qs cs. (65,schema_instantiation_argument e (use_data_term u) (Payload_Term r)
+    (binding_rows_term xs) t (call_instance_rows_term qs) (binding_rows_term cs))\<in>positive_meaning schema_instantiation_system"
 proof -
   let ?B="image (\<lambda>a. (a,Payload_Term [])) (schema_variables S)"
   have finite: "finite (schema_variables S)" by (rule schema_variables_finite[OF native_schema_formed[OF raw]])
@@ -124,8 +125,13 @@ proof -
   obtain t qs cs where inst: "(65,schema_instantiation_argument e (use_data_term u) (Payload_Term r)
       (binding_rows_term xs) t (call_instance_rows_term qs) (binding_rows_term cs))\<in>positive_meaning schema_instantiation_system"
     using schema_instantiation_total[OF source raw table rows(2)] by blast
-  show ?thesis by (rule schema_admission_step[OF inst])
+  show ?thesis using inst by blast
 qed
+
+theorem schema_admission_complete:
+  assumes source: "environment_value_presents E e" and raw: "native_schema_at E u r S"
+  shows "(69,source_root_argument e (use_data_term u) (Payload_Term r))\<in>positive_meaning schema_admission_system"
+  using schema_instantiation_inhabited[OF source raw] schema_admission_step by blast
 
 theorem schema_admission_exact:
   "(69,z)\<in>positive_meaning schema_admission_system \<longleftrightarrow> schema_admission_result z"

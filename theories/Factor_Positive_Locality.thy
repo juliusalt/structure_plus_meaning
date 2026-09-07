@@ -133,6 +133,33 @@ next
     by (rule positive_meaning_local_inclusion[OF tf pf reverse tclosed root holds])
 qed
 
+
+section \<open>Shared complete definitions close their own dependency boundary\<close>
+
+lemma systems_agree_on_intersection_closed:
+  assumes formed: "schema_system_formed P" "schema_system_formed Q"
+    and agree: "systems_agree_on P Q (system_definitions P \<inter> system_definitions Q)"
+  shows "system_dependency_closed P (system_definitions P \<inter> system_definitions Q)"
+proof (unfold system_dependency_closed_def, intro ballI allI impI)
+  fix d e
+  assume member: "d\<in>system_definitions P \<inter> system_definitions Q"
+    and edge: "(d,e)\<in>system_dependency_edges P"
+  have other: "(d,e)\<in>system_dependency_edges Q"
+    using systems_agree_on_dependencies[OF agree member] edge by blast
+  show "e\<in>system_definitions P \<inter> system_definitions Q"
+    using system_dependency_boundary(1)[OF formed(1)] system_dependency_boundary(1)[OF formed(2)]
+      edge other by blast
+qed
+
+theorem positive_meaning_shared_definitions:
+  assumes formed: "schema_system_formed P" "schema_system_formed Q"
+    and agree: "systems_agree_on P Q (system_definitions P \<inter> system_definitions Q)"
+    and member: "d\<in>system_definitions P" "d\<in>system_definitions Q"
+  shows "(d,t)\<in>positive_meaning P \<longleftrightarrow> (d,t)\<in>positive_meaning Q"
+  by (rule positive_meaning_dependency_locality[OF formed agree
+        systems_agree_on_intersection_closed[OF formed agree]])
+     (use member in blast)
+
 text \<open>
   This locality result fixes the interface and complete clause family at every
   definition in a dependency-closed set. Definitions outside that set may

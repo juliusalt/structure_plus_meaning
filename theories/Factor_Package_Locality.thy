@@ -1,5 +1,5 @@
 theory Factor_Package_Locality
-  imports Factor_Package_Dependencies
+  imports Factor_Package_Dependencies Factor_Positive_Locality
 begin
 
 section \<open>A formed extension cannot change a recovered package\<close>
@@ -106,6 +106,78 @@ proof -
   qed
 qed
 
+
+
+section \<open>Packages in one environment agree at every shared definition\<close>
+
+lemma native_package_definition_exists:
+  assumes package: "native_package_at E u r P" and member: "d\<in>system_definitions P"
+  shows "\<exists>p C. native_definition_at E (fst d) (snd d) p C"
+proof -
+  obtain Q where roots: "native_root_family_at E u r Q"
+    and formed: "native_package_formed E (rel_ran Q)" and program: "P=native_program E (rel_ran Q)"
+    using package unfolding native_package_at_def by blast
+  have site: "d\<in>native_definition_sites E (rel_ran Q)"
+    using member native_program_definitions[OF formed] program by simp
+  show ?thesis using formed site by (simp add: native_package_formed_def)
+qed
+
+lemma native_package_complete_at:
+  assumes package: "native_package_at E u r P" and member: "d\<in>system_definitions P"
+    and read: "native_definition_at E (fst d) (snd d) p C"
+  shows "(d,q)\<in>system_interfaces P \<longleftrightarrow> q=p"
+    and "((d,c),S)\<in>system_clauses P \<longleftrightarrow> (c,S)\<in>C"
+proof -
+  obtain Q where roots: "native_root_family_at E u r Q"
+    and formed: "native_package_formed E (rel_ran Q)" and program: "P=native_program E (rel_ran Q)"
+    using package unfolding native_package_at_def by blast
+  have site: "d\<in>native_definition_sites E (rel_ran Q)"
+    using member native_program_definitions[OF formed] program by simp
+  show "(d,q)\<in>system_interfaces P \<longleftrightarrow> q=p"
+    "((d,c),S)\<in>system_clauses P \<longleftrightarrow> (c,S)\<in>C"
+    using native_program_complete_at[OF site read] by (simp_all only: program)
+qed
+
+theorem native_packages_agree_on_shared_definitions:
+  assumes first: "native_package_at E u r P" and second: "native_package_at E v s Q"
+  shows "systems_agree_on P Q (system_definitions P \<inter> system_definitions Q)"
+proof -
+  have agreement: "(\<forall>p. (d,p)\<in>system_interfaces P \<longleftrightarrow> (d,p)\<in>system_interfaces Q) \<and>
+    (\<forall>c S. ((d,c),S)\<in>system_clauses P \<longleftrightarrow> ((d,c),S)\<in>system_clauses Q)"
+    if member: "d\<in>system_definitions P \<inter> system_definitions Q" for d
+  proof -
+    have left: "d\<in>system_definitions P" and right: "d\<in>system_definitions Q" using member by auto
+    obtain p C where read: "native_definition_at E (fst d) (snd d) p C"
+      using native_package_definition_exists[OF first left] by blast
+    show ?thesis
+      by (simp only: native_package_complete_at[OF first left read]
+          native_package_complete_at[OF second right read]; blast)
+  qed
+  show ?thesis using agreement by (auto simp: systems_agree_on_def)
+qed
+
+theorem native_packages_shared_call:
+  assumes first: "native_package_at E u r P" and second: "native_package_at E v s Q"
+    and member: "d\<in>system_definitions P" "d\<in>system_definitions Q"
+  shows "schema_call_formed P d t \<longleftrightarrow> schema_call_formed Q d t"
+  by (rule schema_call_agreement[OF native_package_system_formed[OF first]
+      native_package_system_formed[OF second] native_packages_agree_on_shared_definitions[OF first second]])
+     (use member in blast)
+
+theorem native_packages_shared_meaning:
+  assumes first: "native_package_at E u r P" and second: "native_package_at E v s Q"
+    and member: "d\<in>system_definitions P" "d\<in>system_definitions Q"
+  shows "(d,t)\<in>positive_meaning P \<longleftrightarrow> (d,t)\<in>positive_meaning Q"
+  by (rule positive_meaning_shared_definitions[OF native_package_system_formed[OF first]
+      native_package_system_formed[OF second] native_packages_agree_on_shared_definitions[OF first second] member])
+
+text \<open>
+  A shared definition has one interface and one complete clause family at its
+  actual use and address. Formation places each of its callees in both packages,
+  so their shared definition set is dependency closed. Different root selectors
+  and additional definitions therefore preserve every shared call and its truth.
+  No complete copy of either package's unrelated definitions is required.
+\<close>
 
 section \<open>Every retained slot is required by a valid reading\<close>
 

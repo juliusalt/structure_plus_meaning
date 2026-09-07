@@ -4,8 +4,8 @@ begin
 
 section \<open>Ordinary recursive definitions over the existing payload program\<close>
 
-abbreviation data_rule :: "nat term_pattern \<Rightarrow>
-  (nat \<times> (nat \<times> nat term_pattern)) set \<Rightarrow> (nat,nat,nat) factor_schema" where
+abbreviation data_rule :: "'a term_pattern \<Rightarrow>
+  ('s \<times> ('d \<times> 'a term_pattern)) set \<Rightarrow> ('a,'s,'d) factor_schema" where
   "data_rule h B \<equiv> \<lparr>schema_conclusion=h, schema_premises=B, schema_material_premises={}\<rparr>"
 
 abbreviation data_x :: "nat term_pattern" where "data_x \<equiv> Pattern_Variable 0"

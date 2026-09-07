@@ -133,6 +133,18 @@ both admitted readings. This does not close whole-program interpreter
 admission or the separate quotation-identity obligations O-43 through O-45
 and O-79 through O-80.
 
+Factor_Scope_Forwarding and Factor_Scope_Admission extend that finite component
+to whole definitions. One ordinary clause checks the full native definition,
+variable interface, complete singleton schema family, sole fixed-scope call,
+and empty material relation through paired readings. In a formed package
+containing the admitted entry, forwarding is exact for every future term.
+Shared definitions in formed packages in one
+environment have identical calls and meanings, without a supplied closure
+certificate. Actual native forwarding definitions and one fixed native checker
+are constructed. This advances O-18 and the correctness evidence for O-60;
+binding both historical roles to the actual candidate and a fixed proven
+interpreter is still required.
+
 The final audit has not begun. It must include all active source and tools,
 all explanatory documents, and every supplied unique text, with duplicate
 and binary/archive contents accounted for explicitly.

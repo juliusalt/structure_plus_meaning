@@ -3748,3 +3748,54 @@ itself about agreement of arbitrary programs from finitely many executions.
 Whole-program interpreter admission still needs complete structure and actual
 semantic dependencies. General quotation determination, the full transition
 protocol, remaining reflection strata, genesis, and final audits remain open.
+
+## Complete scope forwarding from finite native evidence
+
+The existing scope-call schema now has explicit polymorphic binder, socket, and
+callee parameters. Its earlier numeric construction remains the instance with
+binder and socket zero. The ordinary empty-material schema abbreviation is also
+polymorphic. These changes reuse the same fields and clause rather than adding
+another native operation for specialization.
+
+The selected sufficient definition profile has a variable interface, exactly
+one clause, a variable conclusion, exactly one prospective callee, and no
+material conditions. That call retains three fixed scope operands and the
+arbitrary future input. Interface and clause binders are independent. Their
+actual addresses, the clause socket, and its premise socket are recovered
+witnesses; they are not fixed semantic names.
+
+Eight ordinary premises check the entire profile. Existing definition admission
+retains its enclosing grammar and separation conditions. Artifact lookup and
+the complete record and family readers identify the interface and the sole
+schema at their actual roots. Two interface readings and two complete schema
+readings determine the expected syntax. Both schema readings return the empty
+material relation. The selected callee stays ordinary data throughout this
+admission; it is not dynamically invoked to establish the submitted claim.
+The checker rejects empty clause families, additional clause sockets, and any
+material condition.
+
+The semantic justification uses an additional general locality consequence.
+When two formed programs agree on their shared definitions, that intersection
+is dependency closed: every shared definition's callee belongs to both
+programs. Two native packages in the same environment have precisely that
+agreement because an actual definition has one complete reading. Every shared
+call therefore has the same formation and truth under either package. This
+allows a proven callee to retain its established meaning in a candidate package
+without imposing a copy of every unrelated definition or an additional
+registry of trusted sites.
+
+Every admitted forwarding entry in a formed package has an equation over all
+future terms, including the complete call boundary. Definition admission alone
+does not establish membership in such a package. Every formed scope has a native forwarding
+definition over an existing anchored callee; installation preserves all prior
+artifact values and bindings. Every actual profile admits every complete
+environment presentation. One fixed closed native checker serves all later
+submitted terms and retains its original scope.
+
+The profile is sufficient and intentionally specific. It does not decide
+equivalence of arbitrary programs or establish that an arbitrary chosen callee
+is an interpreter. The next historical admission join must fix an independently
+proved interpreter before candidates, retain its complete environment, and
+bind both checked entries to the actual candidate program. The full transition
+protocol, remaining reflection strata, genesis, quotation identity obligations,
+and final repository audits remain open.

@@ -1,69 +1,18 @@
 theory Factor_Represented_Interpretations
-  imports Factor_Program_Reflection Factor_Amendment_Interpretations
+  imports Factor_Program_Reflection Factor_Amendment_Interpretations Factor_Scope_Forwarding
 begin
 
 section \<open>A supplied scope becomes ordinary fixed argument data\<close>
 
-definition scope_call_schema ::
-  "nat \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> (nat,nat,nat) factor_schema" where
-  "scope_call_schema k e u r=data_rule data_x
-    {(0,k,package_subject_pattern (exact_term_pattern e) (exact_term_pattern u) (exact_term_pattern r) data_x)}"
-
-lemma scope_call_schema_formed [simp]:
-  "schema_formed (scope_call_schema k e u r) \<longleftrightarrow>
-    term_formed e \<and> term_formed u \<and> term_formed r"
-  by (simp add: scope_call_schema_def schema_formed_def single_valued_def)
-
-lemma scope_call_schema_variables [simp]:
-  "schema_variables (scope_call_schema k e u r)={0}"
-  by (simp add: scope_call_schema_def schema_variables_def)
-
-lemma scope_call_schema_dependencies [simp]:
-  "schema_dependencies (scope_call_schema k e u r)={k}"
-  by (auto simp: scope_call_schema_def schema_dependencies_def rel_ran_def)
-
-lemma scope_call_schema_rule:
-  "schema_rule_instance (scope_call_schema k e u r) X z \<longleftrightarrow>
-    term_formed e \<and> term_formed u \<and> term_formed r \<and> term_formed z \<and>
-    (k,package_subject_argument e u r z)\<in>X"
-proof
-  assume rule: "schema_rule_instance (scope_call_schema k e u r) X z"
-  obtain V Q where inst: "schema_instance (scope_call_schema k e u r) V z Q"
-    and support: "\<forall>s d t. (s,d,t)\<in>Q \<longrightarrow> (d,t)\<in>X"
-    using rule by (auto simp: schema_rule_instance_def)
-  have fields: "term_formed e" "term_formed u" "term_formed r"
-    and bindings: "term_bindings_formed {0} V" and bound: "(0,z)\<in>V"
-    using inst by (auto simp: schema_instance_def scope_call_schema_def schema_formed_def schema_variables_def)
-  have argument: "term_formed z" using bindings bound by (auto simp: term_bindings_formed_def)
-  have premise: "(0,k,package_subject_argument e u r z)\<in>Q"
-    using schema_instance_premise_iff[OF inst, of 0 k "package_subject_argument e u r z"]
-    by (simp add: scope_call_schema_def fields bound)
-  show "term_formed e \<and> term_formed u \<and> term_formed r \<and> term_formed z \<and>
-    (k,package_subject_argument e u r z)\<in>X"
-    using fields argument support premise by blast
-next
-  assume parts: "term_formed e \<and> term_formed u \<and> term_formed r \<and> term_formed z \<and>
-    (k,package_subject_argument e u r z)\<in>X"
-  have inst: "schema_instance (scope_call_schema k e u r) {(0,z)} z
-      {(0,k,package_subject_argument e u r z)}"
-    using parts
-    by (auto simp: schema_instance_def scope_call_schema_def schema_variables_def schema_formed_def
-        term_bindings_formed_def schema_premise_instance_def single_valued_def rel_dom_def)
-  have material: "schema_material_satisfied (scope_call_schema k e u r) {(0,z)}"
-    by (simp add: schema_material_satisfied_def scope_call_schema_def)
-  show "schema_rule_instance (scope_call_schema k e u r) X z"
-    using inst material parts unfolding schema_rule_instance_def by blast
-qed
-
 definition scope_formation_system ::
   "factor_term \<Rightarrow> local_address option \<Rightarrow> local_address \<Rightarrow> (nat,nat,nat,nat) schema_system" where
   "scope_formation_system e u r=add_view_definition native_positive_admission_system 116 data_x
-    {(0,scope_call_schema 84 e (use_data_term u) (Payload_Term r))}"
+    {(0,scope_call_schema 0 0 84 e (use_data_term u) (Payload_Term r))}"
 
 definition scope_interpretation_system ::
   "factor_term \<Rightarrow> local_address option \<Rightarrow> local_address \<Rightarrow> (nat,nat,nat,nat) schema_system" where
   "scope_interpretation_system e u r=add_view_definition (scope_formation_system e u r) 117 data_x
-    {(0,scope_call_schema 114 e (use_data_term u) (Payload_Term r))}"
+    {(0,scope_call_schema 0 0 114 e (use_data_term u) (Payload_Term r))}"
 
 lemma scope_query_positive_argument:
   assumes "(k,package_subject_argument e u r z)\<in>positive_meaning Q"
@@ -83,11 +32,11 @@ lemma source_fields:
   by auto
 
 sublocale admission: positive_view native_positive_admission_system 116 data_x
-  "{(0,scope_call_schema 84 e (use_data_term pu) (Payload_Term pr))}"
+  "{(0,scope_call_schema 0 0 84 e (use_data_term pu) (Payload_Term pr))}"
   by (rule positive_view.intro) (use source_fields in \<open>auto simp: single_valued_def\<close>)
 
 sublocale truth: positive_view "scope_formation_system e pu pr" 117 data_x
-  "{(0,scope_call_schema 114 e (use_data_term pu) (Payload_Term pr))}"
+  "{(0,scope_call_schema 0 0 114 e (use_data_term pu) (Payload_Term pr))}"
   by (rule positive_view.intro)
      (use source_fields admission.formed in \<open>auto simp: scope_formation_system_def single_valued_def\<close>)
 

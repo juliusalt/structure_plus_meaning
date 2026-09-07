@@ -811,6 +811,21 @@ existing environments with outgoing bindings. Every old artifact value and
 binding is preserved, and the canonical closed program environment is identical
 before and after the extension.
 
+Finite admission now checks an entire scope-forwarding definition. Its ordinary
+clause reads the actual interface, complete singleton clause family, and two
+complete instances of the sole schema, including empty material outputs.
+In a formed package containing the admitted entry, every formed argument is
+accepted and its meaning is exactly the callee's meaning at the fixed scope.
+Two formed packages in the same environment agree at every shared definition;
+formation itself closes their shared dependency boundary. This permits the
+callee's independently established package to supply that equation without
+requiring every unrelated definition to be copied into the candidate.
+Every such definition has an actual native construction over an existing callee,
+preserving prior artifacts and bindings, and every complete source presentation
+has admission. A fixed native checker precedes all future submitted terms.
+Binding both historical entry roles to the actual candidate package and to
+one fixed proven interpreter remains the next admission join.
+
 Run `python3 tools/check.py --threads 12 --timeout 90` for one combined build,
 complete error collection, theory-inventory check, and unfinished-proof scan.
 Reports are written to `validation/check.json` and `validation/check-errors.log`.

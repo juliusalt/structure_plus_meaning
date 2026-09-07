@@ -434,3 +434,5 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Pattern_Determination
     Factor_Schema_Determination
     Factor_Native_Syntax_Determination
+    Factor_Scope_Forwarding
+    Factor_Scope_Admission

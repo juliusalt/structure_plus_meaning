@@ -590,8 +590,20 @@ material output row. Their composition with schema instantiation is proved
 equivalent to the existing schema material-satisfaction judgment. Empty supplied
 rows cannot omit actual material sockets. All four entries have exact all-term
 contracts, preserve earlier meanings, and share one fixed native program before
-future operands. Definition interfaces, prospective-call truth, and finite
-evidence checking remain separate.
+future operands. Prospective-call truth and finite evidence checking remain
+separate.
+
+Schema admission now follows from complete instantiation independently of
+material and prospective-call truth. Complete clause-family admission checks
+every actual socket and retains the actual root even for an empty family.
+Distinct sockets may share endpoints or equal schemas. Definition admission
+combines that complete family with the actual scoped interface at a supplied
+operand, preserving exactly the existing separation conditions. Every valid
+definition admits an operand. At a reached site of an already formed package,
+the entry agrees exactly with the program's call-formation judgment. All four
+entries have exact contracts over every term and source presentation, preserve
+earlier meanings, and share one fixed native program before future operands.
+Native package admission and complete admitted instances remain required.
 
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed

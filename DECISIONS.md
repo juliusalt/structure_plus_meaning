@@ -3180,3 +3180,46 @@ instance additionally requires the actual program's head and prospective-call
 interfaces. Those checks, definition and package admission, prospective-call
 truth, finite evidence checking, the full transition protocol, reflection,
 genesis, and general quotation determination remain required.
+
+## Grammar admission precedes material and prospective-call truth
+
+Four definitions with five ordinary clauses extend the admitted native reader.
+Schema admission existentially hides a complete instance under a complete
+substitution. Every formed schema has such an instance. The proof uses an
+empty-payload value for each variable only to establish inhabitation; the
+operation does not store or constrain substitutions to those values. Material
+checking is a separate operation. A false material condition or unsupported
+prospective call therefore does not make otherwise valid schema syntax unreadable.
+
+The schema-root list reuses the existing context-carrying profile. Its empty
+case accepts any formed context, so it alone does not claim that a source was
+inspected. The clause-family operation separately reads the actual source and
+complete family graph, projects all endpoints in the chosen row order, and
+checks every endpoint. It retains the actual root for an empty family. A
+complete finite functional schema table is constructed by composing the actual
+socket graph with unique native schema readings. Distinct sockets may still
+share endpoints or equal schemas. No schema codec, selected subset, or
+additional family primitive is introduced.
+
+Definition-interface admission takes the complete source, actual use, actual
+root, and supplied operand. One ordinary clause reads the actual two-field
+record, instantiates its actual scoped interface, admits its complete clause
+family, and checks the existing three separation conditions. The interface's
+external slots and the interiors of different clauses acquire no additional
+separation requirements. Hidden substitution and metadata witnesses are exact
+instances of the existing grammar; they are not new definition fields.
+
+Every valid native definition admits an operand, including a definition with
+an empty or unsatisfiable clause family. At an actual reached site of an already
+formed package, the operation is equivalent to that program's call formation.
+The package and site hypotheses remain explicit: reading one definition does
+not establish the complete closure of its prospective callees.
+
+All four entries have exact contracts over every term, preserve earlier
+meanings, and permit every complete environment presentation. An unreadable
+actual clause cannot be omitted. One fixed closed native program supplies four
+distinct sites before all future formed operands and retains its canonical
+environment. It has seventy-three definitions and one hundred and twenty
+clauses. Native package admission, complete admitted instances, finite evidence
+checking, the full transition protocol, reflection, genesis, and general
+quotation determination remain required.

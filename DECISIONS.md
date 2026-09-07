@@ -3855,3 +3855,52 @@ scope and every old artifact and binding preserved. This does not require a
 decision procedure for arbitrary program equivalence. Complete transition
 admission, further reflection strata, genesis, quotation identity, and the final
 repository audits remain open.
+
+## Native admission of minimal package scopes
+
+The existing program-scope value stores a complete environment and its actual
+site. A native package can be readable inside a larger environment, so package
+formation alone does not admit this recorded scope. The new retention entry
+also requires the supplied environment to be exactly the package grammar's
+canonical restriction. This is proved equivalent to the existing closure
+condition rather than introduced as a second primitive notion.
+
+Three ordinary source clauses account for the root use, reached definition
+uses, and actual binding targets. Two slot clauses inspect the root citation
+family and every reached definition. They reuse the existing complete readers
+and slot-observation results. The partial helpers retain their precise
+boundaries: one readable citation does not establish a whole package. Two
+instances of the existing generic context-list profile check every stored key,
+and the final ordinary clause separately admits the actual package.
+
+The key lists are projected from the complete supplied environment. They are
+private witnesses bound by those projections; a chosen subset cannot replace
+either list. Actual package formation supplies every required read, and the
+two reverse inclusions exclude surplus environment rows. Together they entail
+exact equality with the minimal environment. Needed whole artifact values
+remain intact, including material outside the read syntax. A binding at a
+needed artifact use must still have its own grammatical demand. This preserves
+the distinction between retaining an exact value and reading syntax through it.
+
+The context expands to the existing site value, with no additional stored
+package value or root marker. An empty root family still requires its actual
+artifact and admits exactly one retained use with no bindings. Every formed
+package supplies an admitted canonical restriction, including empty packages
+and packages with positive dependency cycles. No application, proof graph,
+or positive truth premise is imposed on package retention.
+
+The generic program extends the earlier forwarding program at fresh local
+coordinates 118 through 122. The separately configured interpreter entry 117
+remains in its existing program; package retention needs no fixed-reference
+configuration. These numbers locate definitions within each finite source
+program and do not acquire global semantic force. All earlier entries of the
+extended generic program retain their meanings. Five distinct native entries
+are fixed before all future submitted terms, with the original minimal program
+scope and every old artifact and outgoing binding preserved.
+
+For a complete data quotation already established independently, the admitted
+body is exactly a program-scope quotation. That implication does not yet make
+whole-artifact quotation an internally checked judgment. Its ordinary
+admission, higher generation and authority readers, complete transition
+material, remaining reflection strata, genesis, and the final repository
+audits remain to be completed.

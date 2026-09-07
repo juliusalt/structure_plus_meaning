@@ -837,6 +837,21 @@ Source, candidate, and reference presentation choices preserve admission.
 The complete transition protocol, remaining reflection strata, and genesis
 remain open.
 
+Package-scope retention now has five ordinary entries with ten clauses.
+The actual package fixes its reached definition uses and all root and
+definition slot demands. Both complete stored key lists are projected from
+the supplied environment, and every key is checked. Admission is exactly the
+existing site value with a closed native package, equivalently equality with
+its canonical package environment. Whole artifact values remain intact;
+every stored binding needs its own grammatical use. An empty package retains
+exactly its actual root artifact and no bindings. Every canonical restriction
+and every complete presentation is admitted. One fixed native program serves
+all future inputs at distinct entries while preserving its original program
+scope and every prior artifact and binding. Given an independently established
+complete data quotation, admission of its body is exactly the existing
+program-scope quotation relation. Whole-artifact quotation admission and the
+higher generation and authority readers remain to be supplied.
+
 Run `python3 tools/check.py --threads 12 --timeout 90` for one combined build,
 complete error collection, theory-inventory check, and unfinished-proof scan.
 Reports are written to `validation/check.json` and `validation/check-errors.log`.

@@ -1,7 +1,7 @@
 {
-  "invocation": "5fbf4e12-d106-48c9-adc0-b59bc0c9460b",
+  "invocation": "5fa53a5f-5ad7-46d7-8c34-58d0e9cc0568",
   "status": "accepted",
-  "started_utc": "2026-09-07T20:43:55.478586+00:00",
+  "started_utc": "2026-09-07T21:29:14.284814+00:00",
   "command": [
     "isabelle",
     "build",
@@ -17,7 +17,7 @@
   "exit_code": 0,
   "session_diagnostics": "",
   "sources": {
-    "ROOT": "9bc8c23145d82fcb20e576d34f766b909af328b12be06e24fa1da4e6f27142f6",
+    "ROOT": "30fbc636813e8d65c47479e72869b63f1e301dde261adc5611db7a526b6c58f8",
     "theories/Bootstrap_Finite_Closure.thy": "cbff1345a5a97a8108f2022d99345a7423e93cccc01580929d4054f42a5e031c",
     "theories/Bootstrap_Relations.thy": "82069762267d503d339290507262bc7f905543966f56a0601e30bd1c7b04184f",
     "theories/Factor_Admitted_Instantiation.thy": "b237803caf4604948527e328aca1bda476f26c6ff7bc0569efe8530a2758fdf4",
@@ -216,10 +216,14 @@
     "theories/Factor_Native_Transport.thy": "d73803b16f5604098cfb923c27b035bbbfb36993707d78b825e0c15cc2fc605b",
     "theories/Factor_Package_Admission.thy": "be16f5ac029a331790e0fed3bce52866e37dfa0c81ccd0f1a08d08402dd5805f",
     "theories/Factor_Package_Closure_Admission.thy": "342cb1610b9f1982e39d5a99bd508747aae198eab71cf9cca9df21dfe95b11f1",
+    "theories/Factor_Package_Coverage.thy": "cadef706fb27cdfb36832d2a1f9feeb71665346240e6f013bb0a0205e1bc77cf",
     "theories/Factor_Package_Dependencies.thy": "7c3105e1bd72c91d17110cc62db9cb54a7030e21ef56278abeb02aab820ff7ac",
     "theories/Factor_Package_Locality.thy": "2b5d5c4397dea6b4140e43894ce9295a14dafb9335d7daf4717c50d555751de9",
     "theories/Factor_Package_Membership.thy": "48a502cb18d81ae3eda1b8abb2f20f3c8bf2897a955ee322282b4227989103d3",
     "theories/Factor_Package_Omissions.thy": "cc6799a3ca40fb8ef23c53b772335fe0e562537aedd90fc7e2fb6ec04164bbd5",
+    "theories/Factor_Package_Retention_Admission.thy": "79b4bcd5a4cdd54ce6cb1d33d4edff96cb223f6f6f5c02f35ef114258a948575",
+    "theories/Factor_Package_Slot_Reading.thy": "85b667f72b3bc3c7d5a9064bba4ec9e68c955803f03823c66037b7baf30a583a",
+    "theories/Factor_Package_Source_Reading.thy": "ceb4ce68b517d7d329b34941c28ebd5c3348c368d43e0917ff7c7be6da501533",
     "theories/Factor_Packages.thy": "e41259546877610ad2ed1bb3e1d86f843473decaa24ee41da4f78fdda7f071d0",
     "theories/Factor_Pattern_Determination.thy": "0219b40b0769574acf600890e3cbad10f8e10e2eb3ba61b9e6081eb7314667a2",
     "theories/Factor_Pattern_Encoding.thy": "32b4d7ff3881d3fe2c2168aeec9335acf30c2c4418dd4dd248b5a35e72730756",
@@ -461,6 +465,6 @@
   "isabelle_version": "Isabelle2025-2",
   "sources_unchanged": true,
   "tools_unchanged": true,
-  "finished_utc": "2026-09-07T20:45:43.702560+00:00",
-  "log_sha256": "ae6a4e297cc71f2939ab7b5ef34f1d704c9a7bd616f8fcf2f711538e8eef82f5"
+  "finished_utc": "2026-09-07T21:31:10.799624+00:00",
+  "log_sha256": "973dd89d065507d62369ef3f673ab0c8bd2e2a599fce6343611490e634d698ca"
 }

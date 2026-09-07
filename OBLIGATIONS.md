@@ -162,6 +162,22 @@ addresses O-18, O-60, and O-69 through O-72 for this structural correctness clas
 Complete transition-material admission, additional reflection strata, genesis,
 and quotation identity remain open.
 
+Factor_Package_Source_Reading, Factor_Package_Slot_Reading,
+Factor_Package_Coverage, and Factor_Package_Retention_Admission now admit
+the complete minimal native package scope as the existing environment-and-site
+value. Every stored artifact use and binding key is projected from the complete
+supplied environment and checked against the actual package grammar. Coverage
+is equivalent to the existing closed environment and to equality with its
+canonical restriction. Empty packages retain one actual root artifact and no
+bindings; unused rows are rejected, and all complete presentations are admitted.
+Five ordinary entries share a fixed native program before future inputs while
+preserving its original scope and all prior artifacts and bindings. For an
+independently established complete data quotation, admission of its body
+recovers the existing program-scope quotation. This advances the native grammar
+and dependency checks for O-18 and O-40. Whole-artifact quotation admission,
+higher generation and authority readers, complete transition material,
+remaining reflection strata, and genesis are still required.
+
 The final audit has not begun. It must include all active source and tools,
 all explanatory documents, and every supplied unique text, with duplicate
 and binary/archive contents accounted for explicitly.

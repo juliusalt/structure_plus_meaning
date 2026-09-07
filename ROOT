@@ -438,3 +438,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Scope_Admission
     Factor_Scope_Interpreters
     Factor_Interpreter_Admission
+    Factor_Package_Source_Reading
+    Factor_Package_Slot_Reading
+    Factor_Package_Coverage
+    Factor_Package_Retention_Admission

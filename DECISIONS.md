@@ -3083,3 +3083,51 @@ operands and retains its canonical environment. The program now has sixty-three
 definitions and one hundred and six clauses. Complete premise, schema, package,
 and finite evidence admission, the transition protocol, reflection, genesis,
 and general quotation determination remain required.
+
+## Mixed premise instantiation preserves the complete socket boundary
+
+Two definitions with four ordinary clauses instantiate ordered premise rows and
+the actual complete family. The row operation copies each socket to its call or
+material output. Calls retain the callee use, address, and actual substituted
+argument. Material rows retain the existing five-operand tuple. Their roles are
+recovered from the source's two-field and five-field records; no discriminator
+or separate pattern encoding is added to the argument data.
+
+The row operation requires formed payload socket keys and shares the complete
+scope and binding table across its children. It preserves repeated source rows,
+and its used-variable result is a complete distinct membership union. Each
+child retains its own existing syntax and slot checks. The family grammar does
+not require separation between different premise interiors, so the family
+reader adds no global separation check. Shared endpoints and shared syntax
+remain admissible wherever the existing relative grammar permits them.
+
+The family entry first selects the actual artifact and admits the complete
+family graph. This supplies its finite functional socket boundary, including
+an actual root for an empty family. Row traversal then accounts for every
+socket exactly once in the corresponding output. Distinct sockets remain
+distinct when their endpoints or instantiated values agree. Missing, extra,
+and overlapping call/material socket domains cannot pass that boundary.
+
+The mathematical call projection is proved equivalent to the existing schema
+premise instance under complete formed bindings. The material projection fixes
+one five-operand tuple per material socket. Neither projection asserts callee
+truth or satisfaction of a material observation. These remain separate
+judgments over the resulting operands.
+
+Call and material output orders are independent. For every pair of complete
+distinct output enumerations, a corresponding complete enumeration of the same
+actual source family exists. This construction does not use data-only bag
+comparison on the instantiated values: those values may contain literal
+targets. Within an ordered row traversal, each output part preserves the input's
+relative order. The family root has no represented order and admits every such
+complete presentation.
+
+Both entries have exact contracts over every term and preserve all previous
+meanings. Complete source presentations and independent scope, substitution,
+call-row, material-row, and variable-use orders are accepted. Family outputs
+are unique up to enumeration and total for valid inputs with complete formed
+bindings. One fixed closed native program supplies two distinct sites before
+all future formed operands and retains its canonical environment. It has
+sixty-five definitions and one hundred and ten clauses. Schema and package
+admission, finite evidence checking, the complete transition protocol,
+reflection, genesis, and general quotation determination remain required.

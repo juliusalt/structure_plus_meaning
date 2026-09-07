@@ -568,6 +568,17 @@ entries have exact all-term contracts and preserved earlier meanings, with every
 source and metadata presentation, unique total instances for valid inputs, and
 one fixed native program before future operands.
 
+Mixed premise instantiation now traverses every actual family socket under
+one complete substitution. Calls retain their callee locations and arguments;
+material rows retain all five operands, with satisfaction checked separately.
+The two output collections accept independent orders and preserve distinct
+sockets whose endpoints or instances agree. The reader permits shared premise
+interiors wherever the existing family grammar does, and an empty family keeps
+its actual source and root checks. Both entries have exact all-term contracts
+and preserved earlier meanings. Family outputs are unique up to enumeration
+and total for valid inputs, with missing and extra sockets rejected and one
+fixed native program before future operands.
+
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed
 terms, with truth exactly when the two terms agree. Its argument domain and

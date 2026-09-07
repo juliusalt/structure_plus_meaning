@@ -4,12 +4,6 @@ begin
 
 section \<open>Pattern depth is bounded by its private interior\<close>
 
-lemma pattern_quotation_has_artifact:
-  assumes "pattern_quoted_at E u V r p I K"
-  shows "\<exists>R. artifact_at E u R"
-  using assms by (cases rule: pattern_quoted_at.cases)
-    (auto dest: term_quoted_has_artifact)
-
 fun factor_pattern_depth :: "'a term_pattern \<Rightarrow> nat" where
   "factor_pattern_depth (Pattern_Variable a)=1"
 | "factor_pattern_depth (Pattern_Target t)=1"

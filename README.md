@@ -535,6 +535,17 @@ root checks, all source presentations, and every distinct scope order. All four
 operations have exact contracts over every input term and share one fixed
 native program before arbitrary future formed operands.
 
+Pattern instantiation now reads the actual source with its complete declared
+scope and substitution table. Local variable citations obtain their values
+through complete key collection; constant branches reuse term quotation, and
+pairs recurse with exact variable-use and syntax metadata. Repeated variable
+and external-slot references are permitted while syntax interiors stay
+separate. The enclosing scoped check reads the actual binder family and requires
+its declarations to equal the variables used by the body. Every complete table
+and metadata order is accepted, and each valid scoped pattern and formed table
+has one result. Both entries have exact contracts over all input terms, preserve
+earlier meanings, and share one fixed native program before future operands.
+
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed
 terms, with truth exactly when the two terms agree. Its argument domain and

@@ -338,6 +338,46 @@ corollary binding_admission_orders:
     mset_eq_setD[OF assms(1)] mset_eq_setD[OF assms(2)]
   by (simp only: binding_admission_on_values)
 
+lemma key_values_singleton:
+  assumes "distinct xs" "single_valued (set xs)"
+  shows "key_values k xs=[t] \<longleftrightarrow> (k,t)\<in>set xs"
+proof
+  assume "key_values k xs=[t]"
+  then show "(k,t)\<in>set xs" using key_values_set[of k xs] by auto
+next
+  assume row: "(k,t)\<in>set xs"
+  have members: "set (key_values k xs)={t}"
+    using row assms(2) by (auto simp: key_values_set single_valued_def)
+  show "key_values k xs=[t]"
+    by (rule distinct_singleton_enumeration[OF key_values_distinct[OF assms(1)] members])
+qed
+
+corollary binding_admission_fibre:
+  assumes table: "(52,Pair_Term (data_list_term (map Payload_Term Vs)) (binding_rows_term xs))
+      \<in>positive_meaning binding_admission_system"
+  shows "(28,key_fibre_argument (Payload_Term a) (binding_rows_term xs) (data_list_term [t]))
+      \<in>positive_meaning key_fibre_system \<longleftrightarrow> (a,t)\<in>set xs"
+proof -
+  have scope: "distinct xs" "\<forall>a\<in>set Vs. octets_formed a" "term_bindings_formed (set Vs) (set xs)"
+    using table[unfolded binding_admission_on_values] by auto
+  have single: "single_valued (set xs)" using scope(3) by (simp add: term_bindings_formed_def)
+  have domain: "rel_dom (set xs)=set Vs" using scope(3) by (simp add: term_bindings_formed_def)
+  have keys: "octets_formed j" if "(j,v)\<in>set xs" for j v
+  proof -
+    have member: "j\<in>rel_dom (set xs)" using that by (auto simp: rel_dom_def)
+    have "j\<in>set Vs" using member by (simp only: domain)
+    then show ?thesis using scope(2) by blast
+  qed
+  have formed: "formed_key_rows (map (\<lambda>(a,t). (Payload_Term a,t)) xs)"
+    using scope(3) by (auto simp: term_bindings_formed_def dest: keys)
+  have mapped: "key_values (Payload_Term a) (map (\<lambda>(j,v). (Payload_Term j,v)) xs)=key_values a xs"
+    using key_values_map[OF payload_term_inj, where k=a and g=id and xs=xs] by simp
+  have singleton: "[t]=key_values a xs \<longleftrightarrow> (a,t)\<in>set xs"
+    using key_values_singleton[OF scope(1) single, of a t] by auto
+  show ?thesis by (simp only: key_fibre_lists mapped data_list_term_injective singleton)
+    (use formed in \<open>auto dest: keys\<close>)
+qed
+
 corollary binding_admission_lookup:
   assumes "(52,Pair_Term (data_list_term (map Payload_Term Vs)) (binding_rows_term xs))
       \<in>positive_meaning binding_admission_system" "a\<in>set Vs"

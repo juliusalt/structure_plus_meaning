@@ -124,6 +124,99 @@ next
   show ?case using term_quoted_carrier[OF payload.hyps(1) payload.prems] by simp
 qed
 
+lemma pattern_quotation_has_artifact:
+  assumes "pattern_quoted_at E u V r p I K"
+  shows "\<exists>R. artifact_at E u R"
+  using assms by (cases rule: pattern_quoted_at.cases)
+    (auto dest: term_quoted_has_artifact)
+
+lemma pattern_quoted_addresses_formed:
+  assumes quote: "pattern_quoted_at E u V r p I K"
+  shows "\<forall>a\<in>I\<union>K\<union>pattern_variables p. octets_formed a"
+proof -
+  obtain R where art: "artifact_at E u R" using pattern_quotation_has_artifact[OF quote] by blast
+  have formed: "exact_formed R"
+    using pattern_quoted_formed[OF quote] art by (auto simp: environment_formed_def)
+  show ?thesis using pattern_quoted_carrier[OF quote art] formed by (auto simp: exact_formed_def)
+qed
+
+lemma term_quotation_constant_pattern:
+  assumes quote: "term_quoted_at E u r t I K" and separate: "I\<inter>V={}"
+  shows "\<exists>p. pattern_quoted_at E u V r p I K \<and> pattern_variables p={} \<and> pattern_instance B p t"
+  using quote separate
+proof (induction rule: term_quoted_at.induct)
+  case (target u R r c I t)
+  have reading: "term_quoted_at E u r (Target_Term t) I (citation_slots c)"
+    by (rule term_quoted_at.target[OF target.hyps])
+  have pattern: "pattern_quoted_at E u V r (Pattern_Target t) I (citation_slots c)"
+    by (rule pattern_quoted_at.target[OF reading target.prems])
+  show ?case by (rule exI[of _ "Pattern_Target t"])
+    (use pattern term_quoted_formed[OF reading] in auto)
+next
+  case (pair u R r ps l q x L A y Q C)
+  have separate: "L\<inter>V={}" "Q\<inter>V={}" using pair.prems by blast+
+  obtain p where left: "pattern_quoted_at E u V l p L A" "pattern_variables p={}" "pattern_instance B p x"
+    using pair.IH(1)[OF separate(1)] by blast
+  obtain s where right: "pattern_quoted_at E u V q s Q C" "pattern_variables s={}" "pattern_instance B s y"
+    using pair.IH(2)[OF separate(2)] by blast
+  have boundary: "insert r (set ps\<union>L\<union>Q)\<inter>(A\<union>C\<union>V)={}"
+    using pair.hyps(8) pair.prems by blast
+  have pattern: "pattern_quoted_at E u V r (Pattern_Pair p s)
+      (insert r (set ps\<union>L\<union>Q)) (A\<union>C)"
+    by (rule pattern_quoted_at.pair[OF pair.hyps(1-3) left(1) right(1) pair.hyps(6,7) boundary])
+  show ?case by (rule exI[of _ "Pattern_Pair p s"]) (use pattern left right in auto)
+next
+  case (payload u R r v)
+  have reading: "term_quoted_at E u r (Payload_Term v) {r} {}"
+    by (rule term_quoted_at.payload[OF payload.hyps])
+  have pattern: "pattern_quoted_at E u V r (Pattern_Payload v) {r} {}"
+    by (rule pattern_quoted_at.payload[OF reading payload.prems])
+  show ?case by (rule exI[of _ "Pattern_Payload v"])
+    (use pattern term_quoted_formed[OF reading] in auto)
+qed
+
+lemma constant_pattern_quoted_term:
+  assumes quote: "pattern_quoted_at E u V r p I K" and unused: "pattern_variables p={}"
+    and inst: "pattern_instance B p t"
+  shows "term_quoted_at E u r t I K"
+  using quote unused inst
+proof (induction arbitrary: t rule: pattern_quoted_at.induct)
+  case (variable R r a I)
+  then show ?case by simp
+next
+  case (target r x I K)
+  then show ?case by auto
+next
+  case (pair R r ps l q p L A s Q C)
+  obtain x y where parts: "t=Pair_Term x y" "pattern_instance B p x" "pattern_instance B s y"
+    using pair.prems(2) by auto
+  have unused: "pattern_variables p={}" "pattern_variables s={}" using pair.prems(1) by auto
+  have left: "term_quoted_at E u l x L A" by (rule pair.IH(1)[OF unused(1) parts(2)])
+  have right: "term_quoted_at E u q y Q C" by (rule pair.IH(2)[OF unused(2) parts(3)])
+  have boundary: "insert r (set ps\<union>L\<union>Q)\<inter>(A\<union>C)={}" using pair.hyps(8) by blast
+  show ?case using term_quoted_at.pair[OF pair.hyps(1-3) left right pair.hyps(6,7) boundary] parts(1) by simp
+next
+  case (payload r v I K)
+  then show ?case by auto
+qed
+
+theorem constant_pattern_quotation:
+  "term_quoted_at E u r t I K \<and> I\<inter>V={} \<longleftrightarrow>
+    (\<exists>p. pattern_quoted_at E u V r p I K \<and> pattern_variables p={} \<and> pattern_instance B p t)"
+proof
+  assume "term_quoted_at E u r t I K \<and> I\<inter>V={}"
+  then have quote: "term_quoted_at E u r t I K" and separate: "I\<inter>V={}" by auto
+  show "\<exists>p. pattern_quoted_at E u V r p I K \<and> pattern_variables p={} \<and> pattern_instance B p t"
+    by (rule term_quotation_constant_pattern[OF quote separate])
+next
+  assume "\<exists>p. pattern_quoted_at E u V r p I K \<and> pattern_variables p={} \<and> pattern_instance B p t"
+  then obtain p where parts: "pattern_quoted_at E u V r p I K" "pattern_variables p={}" "pattern_instance B p t"
+    by blast
+  have quote: "term_quoted_at E u r t I K" by (rule constant_pattern_quoted_term[OF parts])
+  have separate: "I\<inter>V={}" using pattern_quoted_boundary[OF parts(1)] by blast
+  show "term_quoted_at E u r t I K \<and> I\<inter>V={}" using quote separate by blast
+qed
+
 lemma target_quotation_has_external_citation:
   assumes quote: "term_quoted_at E u r (Target_Term t) I K" and art: "artifact_at E u R"
   shows "\<exists>c. citation_at R r c I \<and> citation_slots c = K \<and> K \<noteq> {} \<and> interpret_citation E u c t"

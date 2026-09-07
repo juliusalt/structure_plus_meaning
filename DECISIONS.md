@@ -2934,3 +2934,58 @@ arbitrary future formed operands, retaining its canonical environment. The
 program has fifty-five definitions and ninety-four clauses. Pattern and schema
 admission, finite correctness evidence, the complete transition protocol,
 reflection, genesis, and general quotation determination remain required.
+
+## Pattern instances are read from the actual source and complete scope
+
+Two definitions with four ordinary clauses derive pattern instantiation and
+the existing enclosing scoped-pattern judgment. Their operands retain the
+complete environment, actual source use and root, complete substitution table,
+resulting term, and exact metadata. The relative entry also retains the declared
+scope and the set of variables actually used by the body. No new pattern tags,
+pattern codec, substitution callback, or material primitive is introduced.
+
+The relative entry has variable, constant, and pair clauses. A local citation
+retains its actual binder address and reads the unique value from the admitted
+table's complete key fibre. Table admission already supplies precisely one
+formed value per declared occurrence. This includes literal targets and arbitrary
+formed pairs. The fibre theorem derives singleton lookup from complete collection
+and functionality; it does not add an external lookup operation.
+
+A separate theorem proves that term quotation is exactly a quoted pattern with
+no variables, instantiated under arbitrary bindings, with its interior outside
+the declared scope. The constant clause therefore reuses the existing reader
+for all constant branches. Constant pairs can also use the recursive pair
+clause. This overlap permits additional derivations of the same judgment; the
+exact contract proves that it adds no other results. The constant clause is
+needed for leaves, and the pair clause is needed for pairs containing variables.
+Reusing the complete reader avoids separate duplicate target and payload logic.
+
+Both recursive pattern calls receive the same complete scope and table. Their
+admission supplies the parent table condition, so the pair clause does not
+repeat it. Counted concatenation retains every syntax occurrence and rejects
+shared interiors. Used-variable and external-slot collections use membership
+union: either may be shared across children. Those two sets may also intersect
+where the relative grammar permits it. The interior must be separate from the
+external slots and the declared scope. The proposed used-variable enumeration
+has its own distinctness check.
+
+The enclosing entry reads the actual binder family, applies the body entry,
+and compares the complete used-variable and declared-scope collections. This
+requires every declaration to be used. The table domain is then exactly the
+recovered pattern's variable set. Counted interior composition includes the
+outer record, binder root and every binder occurrence, and the entire body.
+The final boundary separates all of that material from external slots.
+
+Soundness and completeness hold over every input term and every complete
+environment, scope, table, and metadata presentation. Different orders remain
+independent. Resulting terms and metadata sets are unique, and every valid
+scoped pattern with a complete formed table has one result. The recovered
+pattern remains the independently defined structural reading of the source,
+not another operand chosen by the caller.
+
+All earlier meanings are preserved. One closed native program contains two
+distinct new sites before arbitrary future formed operands and retains its
+canonical environment. It now has fifty-seven definitions and ninety-eight
+clauses. Schema and package admission, finite correctness evidence, the complete
+transition protocol, reflection, genesis, and general quotation determination
+remain required.

@@ -20,6 +20,11 @@ lemma citation_data_term_formed [simp]:
 lemma citation_data_term_self_contained [simp]: "self_contained_term (citation_data_term c)"
   by (cases c) auto
 
+lemma citation_data_local_fields:
+  "citation_data_term c=Pair_Term (Payload_Term []) (data_list_term [a]) \<longleftrightarrow>
+    (\<exists>b. a=Payload_Term b \<and> c=Local b)"
+  by (cases c) auto
+
 lemma citation_data_external_fields:
   assumes "citation_data_term c=Pair_Term (data_list_term [k]) a"
   shows "\<exists>s. k=Payload_Term s \<and> citation_slots c={s}"

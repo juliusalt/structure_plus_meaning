@@ -250,6 +250,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Replay_Coverage
     Factor_Retention_Admission
     Factor_Replay_Admission
+    Factor_Environment_Inclusion
+    Factor_Positive_Admission
     Factor_Judgment_Values
     Factor_Judgment_Scopes
     Factor_Construction_Claims

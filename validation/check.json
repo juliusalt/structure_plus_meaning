@@ -1,15 +1,15 @@
 {
-  "invocation": "01d73099-b5ac-43bf-879f-37d2e99b4f9c",
+  "invocation": "0e82908b-64e2-4645-bd9a-33e68ae7e6bc",
   "status": "accepted",
-  "started_utc": "2026-09-07T16:58:49.121683+00:00",
+  "started_utc": "2026-09-07T17:34:33.359296+00:00",
   "exit_code": 0,
   "build_receipt": "validation/build.json",
   "diagnostics_file": "validation/check-errors.log",
   "build_status": "accepted",
   "build_evidence": {
-    "invocation": "01d73099-b5ac-43bf-879f-37d2e99b4f9c",
+    "invocation": "0e82908b-64e2-4645-bd9a-33e68ae7e6bc",
     "status": "accepted",
-    "started_utc": "2026-09-07T16:58:49.122759+00:00",
+    "started_utc": "2026-09-07T17:34:33.360621+00:00",
     "command": [
       "isabelle",
       "build",
@@ -25,7 +25,7 @@
     "exit_code": 0,
     "session_diagnostics": "",
     "sources": {
-      "ROOT": "371eb1c3e1d98fc1a266fa1c74cf68da17a5822c319cd17085207a809beb7b14",
+      "ROOT": "231a258edd169a5f4b1ce7ee93eaf1ff8ef83dfbc87095c8343ceff3303a04df",
       "theories/Bootstrap_Finite_Closure.thy": "cbff1345a5a97a8108f2022d99345a7423e93cccc01580929d4054f42a5e031c",
       "theories/Bootstrap_Relations.thy": "82069762267d503d339290507262bc7f905543966f56a0601e30bd1c7b04184f",
       "theories/Factor_Admitted_Instantiation.thy": "b237803caf4604948527e328aca1bda476f26c6ff7bc0569efe8530a2758fdf4",
@@ -136,6 +136,7 @@
       "theories/Factor_Encoding_Order_Audit.thy": "56aee92e5fefe9dab16b1fd19553ca842e430fbc5d2c02df4c2321dd483e4943",
       "theories/Factor_Environment_Admission.thy": "77a85610764af472ab784fdc9502cfa18c453145bb5dc798119b277534f06f9f",
       "theories/Factor_Environment_Comparison.thy": "9a5a54593ab301cdbc24fee66fbd58c5ef50d020edf82b1348399c7a6d169e63",
+      "theories/Factor_Environment_Inclusion.thy": "1db1576efd2393855d9715ebb8dcd58c3fbad799809208e0cf061827d624326d",
       "theories/Factor_Environment_Lookup.thy": "b49e34bfac3546961d15e7f88a0ce55ce99b5a9e1331a9ae4a47e109da715c7e",
       "theories/Factor_Environment_Values.thy": "8a880b9caa36313c3a83fa5ea62bce6d3a5c2e7de71f22f24af2f59d1bc8df53",
       "theories/Factor_Executable_Calls.thy": "dbf384dfa51cefb3a9d60d875fbbf35badf3c4c05e43377c509f80652c303b67",
@@ -233,6 +234,7 @@
       "theories/Factor_Pattern_Programs.thy": "46c8ea6ad1c32a059df7191264a1fb56442369b0ce50963a1b6e45101aa0ff42",
       "theories/Factor_Patterns.thy": "df47c5c126ac2a012325a3cc8988d140cdeebdf26e2d4c6de00ffdcd86c32960",
       "theories/Factor_Positioned_Instances.thy": "903db6a8704c6eceb930b6f9a6005d4e46295a3329ec29f72bac0053271a8fc9",
+      "theories/Factor_Positive_Admission.thy": "237868bf414e3caccdb9a29ce1e0379e3b35e488812315d911d134d396549f73",
       "theories/Factor_Positive_Locality.thy": "0ead8ae5b7b8a0c48fb820c977a3fc2a109d92f736a1cc4c485de865ac15887a",
       "theories/Factor_Positive_Meaning.thy": "343f48f205d6c7f9380b06c482cb1aeae06e5faf4ea791f2637941c451a0ae92",
       "theories/Factor_Positive_Parametricity.thy": "5c2dbb4e0ca1385d4f6679ec462fb0a3882304597890f399a2ce47849dda9bd0",
@@ -458,13 +460,13 @@
     "isabelle_version": "Isabelle2025-2",
     "sources_unchanged": true,
     "tools_unchanged": true,
-    "finished_utc": "2026-09-07T17:00:33.899817+00:00",
-    "log_sha256": "b64f7826234cfda972f81d7dd6e99758f58f46315f332115dae662f6da8b7506"
+    "finished_utc": "2026-09-07T17:36:18.761178+00:00",
+    "log_sha256": "9fce930a7e78fbfbcdba2e52c78fce1daf52c2e4646dd30882fb0e3e5526062a"
   },
-  "theory_count": 424,
+  "theory_count": 426,
   "missing_theory_files": [],
   "unlisted_theories": [],
   "proof_escape_matches": [],
   "sources_and_tools_unchanged": true,
-  "finished_utc": "2026-09-07T17:00:33.988118+00:00"
+  "finished_utc": "2026-09-07T17:36:18.887249+00:00"
 }

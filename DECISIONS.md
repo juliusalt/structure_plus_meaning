@@ -3632,3 +3632,45 @@ program before every future formed operand are proved. The complete program
 has one hundred and twelve definitions and one hundred and eighty-eight
 clauses. Full transition-protocol admission, reflection, genesis, and general
 quotation determination remain open, followed by the requested final audits.
+
+## Positive meaning is recognized with the supplied program as data
+
+The independent positive meaning already has finite closed graph completeness,
+and every such graph has a native realization extending the original complete
+environment. Compose those results with ordinary derivation admission. The
+result is one fixed native positive interpreter before the program being
+queried and its future operands, rather than a new compilation for each query.
+No semantic callback is added to the operator.
+
+The query retains every original artifact and binding in a private formed
+extension. Its original actual package is admitted before proof checking.
+Package locality proves that the extension recovers the same program. The
+proof must be closed and have the supplied callee and operand at its root.
+Soundness recovers the original least-fixed-point meaning; completeness
+constructs the finite witness. Proof existence is a derived characterization
+and does not replace the definition of meaning.
+
+Complete environment inclusion needs two different existing comparisons.
+Artifact rows use admitted lookup at the exact use so every complete child
+presentation is permitted. Exact byte equality of the rows would wrongly
+reject different enumerations of one artifact. Binding rows have a fixed
+injective encoding, so ordinary data inclusion suffices. Both whole
+environments are admitted, including the empty case. The artifact-list helper
+keeps the existing partial empty-list contract; the enclosing entry supplies
+the environment formation boundary.
+
+Keeping the entire input environment is an inferred choice. A judgment can be
+queried in a containing environment with material beyond its minimal scope;
+requiring closed replay retention there would impose an unrelated input
+restriction. The internal proof extension is not a stored judgment field.
+The final entry reads the existing actual application and passes its callee
+and operand to the query in the same represented environment. The existing
+judgment value already stores exactly the required environment and sites.
+
+Four entries add five ordinary clauses and preserve all earlier meanings.
+Their exact contracts cover all input terms and all complete presentations.
+One closed native program has one hundred and sixteen definitions and one
+hundred and ninety-three clauses. Exact positive recognition does not imply
+termination for false queries or prove universal correctness of a submitted
+historical interpreter. That correctness, full protocol admission, general
+reflection, genesis, quotation determination, and the final audits remain.

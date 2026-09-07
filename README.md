@@ -727,8 +727,32 @@ their existing roles.
 Six entries add fifteen ordinary clauses and preserve earlier meanings.
 One fixed closed native program supplies six distinct entry sites before any
 future formed operand, with one hundred and twelve definitions and one hundred
-and eighty-eight clauses. Full transition-protocol admission, reflection,
-genesis, and general quotation determination remain open.
+and eighty-eight clauses.
+
+Positive meaning can now be queried through one fixed native program while
+the program being queried is supplied as complete data. The query admits its
+actual package, admits a private environment extension, and checks a closed
+proof of the supplied call there. The construction preserves every original
+artifact and binding. Package locality and closed soundness recover exactly
+the independently defined meaning; finite proof completeness supplies a
+witness for every positive call.
+
+Environment inclusion checks every source artifact row through the existing
+admitted lookup at its exact use. Different complete presentations of the same
+artifact remain interchangeable. Binding rows have an injective data encoding
+and use the existing subset operation. Both complete environments are admitted,
+including empty ones. The actual-judgment entry reads the existing application
+and supplies that same callee and operand to the query in the same environment.
+Its input is the existing judgment value, with no stored proof field.
+
+Four entries add five ordinary clauses and preserve every earlier meaning.
+One closed native program with one hundred and sixteen definitions and one
+hundred and ninety-three clauses fixes its entries before all future supplied
+programs and operands. All complete presentations are admitted, including
+input environments containing additional material. This proves exact positive
+recognition; termination on false calls is not claimed. Universal correctness
+of submitted interpreters, full transition-protocol admission, general
+reflection, genesis, and quotation determination remain open.
 
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed

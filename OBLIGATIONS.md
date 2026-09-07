@@ -105,8 +105,18 @@ replay join. They check every stored use and binding key under the actual
 package, application, and graph, then bind the actual application call to its
 derivation. Six ordinary entries preserve all presentations, assertion orders,
 and earlier meanings in one fixed native program before future operands.
-Full transition-protocol admission, reflection, genesis, and general quotation
-determination remain open.
+Factor_Environment_Inclusion and Factor_Positive_Admission now add exact
+ordinary inclusion and positive-meaning queries. The original complete
+environment is retained in a private extension with a closed proof; finite
+proof completeness and native realization establish existence exactly when
+the independently defined positive meaning holds. The actual-judgment entry
+uses the existing environment-and-sites value and the actual application's
+call. All complete presentations and all earlier meanings are preserved.
+One fixed native program precedes arbitrary supplied programs and operands.
+This further addresses O-18, O-40, and the positive part of O-53; it does not
+establish universal correctness of arbitrary submitted interpreters or
+termination on false queries. Full transition-protocol admission, general
+reflection, genesis, and quotation determination remain open.
 
 The final audit has not begun. It must include all active source and tools,
 all explanatory documents, and every supplied unique text, with duplicate

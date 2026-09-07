@@ -192,6 +192,10 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Scoped_Instantiation
     Factor_Prospective_Instantiation
     Factor_Application_Reading
+    Factor_Row_Values
+    Factor_Vector_Instantiation
+    Factor_Record_Instantiation
+    Factor_Material_Instantiation
     Factor_Judgment_Values
     Factor_Judgment_Scopes
     Factor_Construction_Claims

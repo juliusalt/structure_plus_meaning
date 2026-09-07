@@ -557,6 +557,17 @@ one fixed native program before future operands. Definition formation,
 package membership, interface acceptance, and application truth remain
 separate judgments.
 
+Ordered vector and record instantiation now share those complete bindings
+across every field. Complete row projections preserve socket and field order;
+counted interiors forbid reused syntax while variables and slots may be shared.
+An empty vector requires no source occurrence, and an empty record retains its
+actual root check. The material entry specializes the existing five-field record
+and returns the existing material tuple. It keeps structural reading and
+substitution separate from satisfaction of the material equation. All four new
+entries have exact all-term contracts and preserved earlier meanings, with every
+source and metadata presentation, unique total instances for valid inputs, and
+one fixed native program before future operands.
+
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed
 terms, with truth exactly when the two terms agree. Its argument domain and

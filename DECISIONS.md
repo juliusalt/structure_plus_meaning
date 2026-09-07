@@ -3037,3 +3037,49 @@ unchanged. The program now has fifty-nine definitions and one hundred clauses.
 Schema and package admission, finite correctness evidence, the complete
 transition protocol, reflection, genesis, and general quotation determination
 remain required.
+
+## Ordered field instantiation preserves the independent grammar boundaries
+
+Four definitions with six ordinary clauses derive complete row-value projection,
+vector instantiation, record instantiation, and five-field material instantiation.
+Row projection preserves every supplied occurrence in its original order. Values
+may be any formed term, including literal targets. Applying a payload-and-pair
+data recognizer to these results would wrongly restrict ordinary substitutions.
+
+The vector entry instantiates each actual pattern root under the same complete
+declared scope and binding table. Counted comparison of the joined interiors
+forbids reused syntax occurrences. Membership unions permit shared variables and
+external slots; those reference sets may intersect where the relative grammar
+permits it. The used-variable enumeration is distinct and complete, independently
+of the declared scope. Field order is retained rather than treated as another
+unordered metadata presentation.
+
+The empty-vector clause admits the complete environment, use coordinate, and
+binding table. It does not require an artifact at that use: the independently
+defined empty-vector judgment has no source occurrence. The nonempty clause
+obtains actual source reading from its head pattern. Its recursive child calls
+supply the complete-table checks, so it adds no separate table premise.
+
+The record entry first reads its actual artifact and record root. Complete key
+and value projections recover the ordered sockets and pattern roots from those
+same rows. The vector entry checks all fields, including zero fields, while
+counted composition includes the record root, every socket, and the entire
+vector interior. The whole interior remains separate from external slots and
+the declared scope. Empty records therefore retain their actual root check.
+
+The material entry is a one-clause specialization to the existing five-field
+record. Its output uses the already defined material tuple, and the recovered
+material pattern remains determined by the source. No discriminator, separate
+pattern codec, or material truth premise is introduced. Reading and substitution
+do not assert satisfaction of the complete material equation; that remains the
+separate material observation over the five resulting operands.
+
+All four entries have exact contracts over every term and preserve all previous
+meanings. Complete environment presentations and independent scope, table, and
+metadata orders are accepted. Vector, record, and material instances have unique
+results and are total for valid inputs with complete formed bindings. One fixed
+closed native program contains four distinct sites before all future formed
+operands and retains its canonical environment. The program now has sixty-three
+definitions and one hundred and six clauses. Complete premise, schema, package,
+and finite evidence admission, the transition protocol, reflection, genesis,
+and general quotation determination remain required.

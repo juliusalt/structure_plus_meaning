@@ -1,7 +1,7 @@
 {
-  "invocation": "bd3e1d6b-b573-4237-89c2-52ce24dc415a",
+  "invocation": "1ed69659-9902-4a13-b06a-9b94fd774107",
   "status": "accepted",
-  "started_utc": "2026-09-07T06:01:16.863186+00:00",
+  "started_utc": "2026-09-07T06:28:15.412114+00:00",
   "command": [
     "isabelle",
     "build",
@@ -17,7 +17,7 @@
   "exit_code": 0,
   "session_diagnostics": "",
   "sources": {
-    "ROOT": "55a9880b2af9817a3df5380120cb4cb6a272c5879863cb7ff41a14648de62361",
+    "ROOT": "d01b6b3a632b37bed8f98e7af05369eb70fa82a24cd83ab4beff4cbe16f3cb09",
     "theories/Bootstrap_Finite_Closure.thy": "cbff1345a5a97a8108f2022d99345a7423e93cccc01580929d4054f42a5e031c",
     "theories/Bootstrap_Relations.thy": "82069762267d503d339290507262bc7f905543966f56a0601e30bd1c7b04184f",
     "theories/Factor_Adoption_Values.thy": "78990f18a78d11a363a26c5979106c2dcb5bf9125f01448bb3086045bffad6bd",
@@ -179,6 +179,7 @@
     "theories/Factor_Keyed_Lists.thy": "2ed3c364ebc88cf13756bbd963f347677fcc0491a5582ea8098dc5a477ecc552",
     "theories/Factor_Lambda.thy": "8a82c1f1fde63c973175c132257a03a5a951d7529f28acff0a771b0dd8885049",
     "theories/Factor_List_Profiles.thy": "83ee15aab2904f0dc3011a883039acc40d69a5391e58dd274ee4fc4c892da72f",
+    "theories/Factor_Located_List.thy": "d88b45de91b42fbf6b377ab11342d18cb300fd121229d9b5385c3cf78581d6fb",
     "theories/Factor_Material_Checking.thy": "c7d26e4b2c63ab64be8fbcb40a9a088b12a2056eb2ff637269a3378cb6e3dcb9",
     "theories/Factor_Material_Data_Projection.thy": "4417f004e3362d37e2b15a305c647af17e3b89298166a16bb8bec4cb68497c9a",
     "theories/Factor_Material_Encoding.thy": "ac7df58f90cb4d68eadb5f2385c07f0e5534634abcce7d7048395b0aa5e10fa9",
@@ -198,7 +199,8 @@
     "theories/Factor_Native_SK.thy": "7fd976f928d7939369cb467ddd9586dfda532ff0f050754ef77e07ebdcf571f2",
     "theories/Factor_Native_Tables.thy": "d5a85bdb00bcba6b8e53eb281abc69a9fc1924ae40d583697a6715b1c27e16f1",
     "theories/Factor_Native_Transport.thy": "d73803b16f5604098cfb923c27b035bbbfb36993707d78b825e0c15cc2fc605b",
-    "theories/Factor_Package_Closure_Admission.thy": "a193eb3278c8933ba6785c50dc5c1c979eaac3c3764773dd0ea6d0a0708353bb",
+    "theories/Factor_Package_Admission.thy": "22a9b72218b0d4384b0528219b129c1be1e58520f7be19e5c057164f7bdeffa1",
+    "theories/Factor_Package_Closure_Admission.thy": "342cb1610b9f1982e39d5a99bd508747aae198eab71cf9cca9df21dfe95b11f1",
     "theories/Factor_Package_Dependencies.thy": "7c3105e1bd72c91d17110cc62db9cb54a7030e21ef56278abeb02aab820ff7ac",
     "theories/Factor_Package_Locality.thy": "02fe10ca2436bcdde98d4223de9f4288251e3211229262432cd6cc514eb47efa",
     "theories/Factor_Package_Omissions.thy": "cc6799a3ca40fb8ef23c53b772335fe0e562537aedd90fc7e2fb6ec04164bbd5",
@@ -273,6 +275,7 @@
     "theories/Factor_Report_Programs.thy": "b65db56ec573f77002d39e746a04176e3ff1f2f7a275f3172766c2573caf88b7",
     "theories/Factor_Resource_Sensitivity.thy": "c7c4bce7804e9498232d466806371a11cb6ed3d753f459ade46baf5a588e302c",
     "theories/Factor_Root_Environments.thy": "11dcf3814e3681a2819adc8b0181649a3b6c842a81559ce6e53e5be4054adf71",
+    "theories/Factor_Root_Family_Reading.thy": "06c3b2bd31611b7b221a9cb713793a417122430273b4e6acda06025089f0730d",
     "theories/Factor_Root_Syntax.thy": "f3f7e62dedd688dba8864346eef2bd8c975f1594f13ec8ddd1eaf9ceb07c4dd7",
     "theories/Factor_Row_Values.thy": "8a1c922d884023ae670c8393f1c42fac62ee01258996ae134b778b9161d6ffb0",
     "theories/Factor_Rule_Instances.thy": "fd04807ecafa27cf0353dc3bf2bbb0d4b9ae8164048ca23c6e71ea3674dccede",
@@ -405,6 +408,6 @@
   "isabelle_version": "Isabelle2025-2",
   "sources_unchanged": true,
   "tools_unchanged": true,
-  "finished_utc": "2026-09-07T06:02:36.860460+00:00",
-  "log_sha256": "4bcb486a0ab02561d469500e9794919623719148c85bde63d3f3414452f4db4c"
+  "finished_utc": "2026-09-07T06:29:35.810356+00:00",
+  "log_sha256": "de2a8db002f7c250376387a88f1ae7c707702aea042f970127a9c602ed24ffa8"
 }

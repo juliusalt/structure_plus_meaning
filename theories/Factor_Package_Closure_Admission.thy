@@ -371,10 +371,11 @@ text \<open>
 
   One fixed closed native program has five distinct sites before future formed
   operands and retains its canonical environment. It has seventy-eight
-  definitions and one hundred and twenty-seven clauses. Reading the actual
-  native package-root family, admitting calls at reached sites, complete
-  admitted instances, finite evidence checking, the full transition protocol,
-  reflection, and genesis remain required.
+  definitions and one hundred and twenty-seven clauses. This entry takes
+  supplied roots. The subsequent root-family reader and package admission
+  compose it with actual package roots. Admitting calls at reached sites,
+  complete admitted instances, finite evidence checking, the full transition
+  protocol, reflection, and genesis remain required.
 \<close>
 
 end

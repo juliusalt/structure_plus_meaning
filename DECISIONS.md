@@ -3269,8 +3269,51 @@ closed native program supplies five distinct sites before future formed
 operands and retains its canonical environment. It has seventy-eight
 definitions and one hundred and twenty-seven clauses.
 
-The supplied root-site list is still an ordinary argument to this entry.
-Reading the actual native package-root family, joining call admission with
+The supplied root-site list is an ordinary argument to this entry. Actual
+package-root reading is composed with it below. Joining call admission with
 actual reached-site membership, complete admitted instances, finite evidence
 checking, the full transition protocol, reflection, genesis, and general
 quotation determination remain required.
+
+## Actual package roots preserve their complete occurrence correspondence
+
+Three definitions with four ordinary clauses compose the existing located
+citation, complete list, row projection, actual artifact and family reading,
+and supplied-root closure entries. No new grammar form or semantic primitive
+is admitted.
+
+The location-list entry carries the same source environment and use into
+every reference-destination pair. Its standalone empty case accepts any
+formed context. The root-family reader separately reads the actual artifact
+and complete family graph, projects every reference endpoint, and constrains
+the first projection of one complete located-pair list to that entire
+endpoint list. Its second projection supplies the destination list. Both
+projections traverse the same pairs, so there is exactly one destination
+occurrence per actual socket.
+
+The list presentation is a derived interface choice. Every distinct
+enumeration of the actual family and its corresponding destination list is
+admitted. Distinct sockets may share a reference endpoint or located
+destination. Repeated destinations remain present; equality of destination
+sets alone is insufficient for this reader's exact contract. Family formation
+already supplies unique socket keys. The proof reconstructs the raw root
+family by pairing those keys with the corresponding destinations, proves its
+exact domain and range, and uses raw uniqueness to identify every recovered
+family. This graph is a proof witness, not a new native field or stored
+semantic encoding.
+
+The package entry hides that complete destination list and joins the reader
+to the existing closure checker. Its answer is exactly existence of the
+native package at the supplied actual root. The original least definition
+closure determines the program; neither enumeration order nor a larger
+checked closure bound can replace it. Source lookup and actual family
+formation remain necessary for empty packages. Every reached definition is
+still required, including callees in positive cycles.
+
+All three entries have exact contracts over every term, permit every complete
+source presentation, and preserve earlier meanings. One fixed closed native
+program has three distinct sites before future formed operands and retains
+its canonical environment. It has eighty-one definitions and one hundred
+and thirty-one clauses. Reached-site call admission, complete admitted
+instances, finite evidence checking, the full transition protocol,
+reflection, genesis, and general quotation determination remain required.

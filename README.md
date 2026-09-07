@@ -614,8 +614,20 @@ Empty clause families retain their bound check, empty root lists still admit
 the environment, and unreadable reached definitions cannot be omitted. Five
 entries have exact all-term contracts, preserve earlier meanings, permit every
 complete source presentation, and share one fixed native program before future
-operands. Actual package-root reading, reached-site call admission, and complete
-admitted instances remain required.
+operands.
+
+Actual native package admission now joins that closure check to complete
+root-family reading. Every actual socket contributes its located destination,
+including repeated destinations at distinct sockets. Existing list and row
+projections enforce the complete correspondence without another primitive.
+Every corresponding family enumeration is accepted; output occurrence counts
+are preserved. The uniquely recovered root family fixes the semantic package's
+root set. An empty package retains an actual artifact and empty family root,
+and an unreadable reached definition cannot be omitted. Three new entries
+have exact all-term contracts, permit every complete source presentation,
+preserve earlier meanings, and share one fixed closed native program before
+future operands. Reached-site call admission and complete admitted instances
+remain required.
 
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed

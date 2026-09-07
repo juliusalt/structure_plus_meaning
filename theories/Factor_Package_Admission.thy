@@ -1,0 +1,284 @@
+theory Factor_Package_Admission
+  imports Factor_Root_Family_Reading
+begin
+
+section \<open>Actual roots and their complete definition closure\<close>
+
+abbreviation package_admission_result :: "factor_term \<Rightarrow> bool" where
+  "package_admission_result z \<equiv> \<exists>E e u r P.
+    z=source_root_argument e (use_data_term u) (Payload_Term r) \<and>
+    environment_value_presents E e \<and> native_package_at E u r P"
+
+definition package_admission_schema :: "(nat,nat,nat) factor_schema" where
+  "package_admission_schema=data_rule (source_root_pattern data_x data_y data_z)
+    {(0,79,citation_observation_pattern data_x data_y data_z data_w),
+     (1,77,Pattern_Pair data_x data_w)}"
+
+definition package_admission_system :: "(nat,nat,nat,nat) schema_system" where
+  "package_admission_system=add_view_definition root_family_reading_system 80 data_x {(0,package_admission_schema)}"
+
+lemma package_admission_system_formed [simp]: "schema_system_formed package_admission_system"
+  unfolding package_admission_system_def
+  by (rule add_recursive_definition_formed[OF root_family_reading_system_formed])
+    (auto simp: package_admission_schema_def
+      schema_formed_def schema_dependencies_def single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma package_admission_definitions [simp]:
+  "system_definitions package_admission_system=insert 80 (system_definitions root_family_reading_system)"
+  by (simp add: package_admission_system_def)
+
+lemma package_admission_call:
+  "schema_call_formed package_admission_system d t \<longleftrightarrow>
+    d\<in>system_definitions package_admission_system \<and> term_formed t"
+  using added_variable_calls[OF root_family_reading_system_formed
+    package_admission_system_formed[unfolded package_admission_system_def] root_family_reading_call]
+  by (simp only: package_admission_system_def[symmetric])
+
+lemma package_admission_old_meaning:
+  assumes "d\<in>system_definitions root_family_reading_system"
+  shows "(d,t)\<in>positive_meaning package_admission_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning root_family_reading_system"
+  using added_definition_preserves_old(2)[OF root_family_reading_system_formed
+    package_admission_system_formed[unfolded package_admission_system_def], of d t] assms
+  by (auto simp: package_admission_system_def)
+
+lemma package_admission_clause [simp]:
+  "((80,c),S)\<in>system_clauses package_admission_system \<longleftrightarrow> (c,S)\<in>{(0,package_admission_schema)}"
+proof -
+  have owned: "((d,c),S)\<in>system_clauses root_family_reading_system \<Longrightarrow>
+    d\<in>system_definitions root_family_reading_system" for d c S
+    using root_family_reading_system_formed unfolding schema_system_formed_def by blast
+  have absent: "((80,c),S)\<notin>system_clauses root_family_reading_system" by (auto dest: owned)
+  show ?thesis using absent by (simp add: package_admission_system_def)
+qed
+
+lemma package_admission_previous_meaning:
+  assumes "d\<in>system_definitions package_closure_admission_system"
+  shows "(d,t)\<in>positive_meaning package_admission_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning package_closure_admission_system"
+  using package_admission_old_meaning[of d t] root_family_reading_previous_meaning[OF assms, of t] assms by auto
+
+lemma package_admission_components:
+  "(79,t)\<in>positive_meaning package_admission_system \<longleftrightarrow>
+    (79,t)\<in>positive_meaning root_family_reading_system"
+  "(77,t)\<in>positive_meaning package_admission_system \<longleftrightarrow>
+    (77,t)\<in>positive_meaning package_closure_admission_system"
+  using package_admission_old_meaning[of 79 t] package_admission_previous_meaning[of 77 t] by auto
+
+lemma package_admission_step:
+  assumes roots: "(79,citation_observation_argument e u r w)\<in>positive_meaning root_family_reading_system"
+    and closure: "(77,Pair_Term e w)\<in>positive_meaning package_closure_admission_system"
+  shows "(80,source_root_argument e u r)\<in>positive_meaning package_admission_system"
+proof -
+  have formed: "term_formed e" "term_formed u" "term_formed r" "term_formed w"
+    using schema_call_formed_target[OF positive_meaning_formed[OF roots]] by auto
+  let ?h="\<lambda>n::nat. if n=0 then e else if n=1 then u else if n=2 then r else w"
+  have result: "(80,evaluate_pattern ?h (schema_conclusion package_admission_schema))\<in>positive_meaning package_admission_system"
+    by (rule ordinary_positive_valuation_step[where c=0])
+      (use formed assms in \<open>auto simp: package_admission_schema_def schema_variables_def
+        package_admission_call package_admission_components\<close>)
+  show ?thesis using result by (simp add: package_admission_schema_def)
+qed
+
+theorem package_admission_sound:
+  assumes holds: "(80,z)\<in>positive_meaning package_admission_system"
+  shows "package_admission_result z"
+proof -
+  have consequence: "(80,z)\<in>schema_consequences package_admission_system (positive_meaning package_admission_system)"
+    using holds positive_meaning_unfold[of package_admission_system] by blast
+  obtain n S h where clause: "((80,n),S)\<in>system_clauses package_admission_system"
+    and conclusion: "z=evaluate_pattern h (schema_conclusion S)"
+    and support: "\<forall>s d p. (s,d,p)\<in>schema_premises S \<longrightarrow>
+      (d,evaluate_pattern h p)\<in>positive_meaning package_admission_system"
+    using schema_consequences_valuationD[OF consequence] by blast
+  have schema: "S=package_admission_schema" using clause by simp
+  have calls: "(79,citation_observation_argument (h 0) (h 1) (h 2) (h 3))\<in>positive_meaning root_family_reading_system"
+    "(77,Pair_Term (h 0) (h 3))\<in>positive_meaning package_closure_admission_system"
+    using support by (auto simp: schema package_admission_schema_def package_admission_components)
+  obtain E u r ds where source: "environment_value_presents E (h 0)" "h 1=use_data_term u" "h 2=Payload_Term r"
+    "h 3=data_list_term (map (\<lambda>d. definition_site_value d) ds)"
+    using calls(1) by (simp only: root_family_reading_exact factor_term.inject) blast
+  have roots: "(79,citation_observation_argument (h 0) (use_data_term u) (Payload_Term r)
+      (data_list_term (map (\<lambda>d. definition_site_value d) ds)))\<in>positive_meaning root_family_reading_system"
+    using calls(1) by (simp only: source)
+  obtain Q where recovered: "native_root_family_at E u r Q" "rel_ran Q=set ds"
+    using root_family_reading_recovers[OF source(1) roots] by blast
+  have closure: "native_package_formed E (set ds)"
+    using calls(2) by (simp only: source(4) package_closure_admission_on_values[OF source(1)])
+  have raw: "native_package_at E u r (native_program E (rel_ran Q))"
+    using recovered closure by (auto simp: native_package_at_def)
+  show ?thesis
+    by (rule exI[of _ E], rule exI[of _ "h 0"], rule exI[of _ u], rule exI[of _ r],
+      rule exI[of _ "native_program E (rel_ran Q)"])
+      (use source raw conclusion in \<open>simp add: schema package_admission_schema_def\<close>)
+qed
+
+theorem package_admission_complete:
+  assumes source: "environment_value_presents E e" and raw: "native_package_at E u r P"
+  shows "(80,source_root_argument e (use_data_term u) (Payload_Term r))\<in>positive_meaning package_admission_system"
+proof -
+  obtain Q where family: "native_root_family_at E u r Q" and package: "native_package_formed E (rel_ran Q)"
+    using raw by (auto simp: native_package_at_def)
+  obtain ds where roots: "(79,citation_observation_argument e (use_data_term u) (Payload_Term r)
+      (data_list_term (map (\<lambda>d. definition_site_value d) ds)))\<in>positive_meaning root_family_reading_system"
+    and range: "rel_ran Q=set ds" using root_family_reading_total[OF source family] by blast
+  have closure: "(77,Pair_Term e (data_list_term (map (\<lambda>d. definition_site_value d) ds)))
+      \<in>positive_meaning package_closure_admission_system"
+    by (simp only: package_closure_admission_on_values[OF source]) (use package range in simp)
+  show ?thesis by (rule package_admission_step[OF roots closure])
+qed
+
+theorem package_admission_exact:
+  "(80,z)\<in>positive_meaning package_admission_system \<longleftrightarrow> package_admission_result z"
+  using package_admission_sound package_admission_complete by blast
+
+corollary package_admission_at_source:
+  assumes source: "environment_value_presents E e"
+  shows "(80,source_root_argument e u r)\<in>positive_meaning package_admission_system \<longleftrightarrow>
+    (\<exists>v b P. u=use_data_term v \<and> r=Payload_Term b \<and> native_package_at E v b P)"
+proof -
+  have unique: "F=E" if "environment_value_presents F e" for F
+    by (rule environment_value_presents_unique[OF that source])
+  show ?thesis by (simp only: package_admission_exact factor_term.inject) (use source unique in blast)
+qed
+
+corollary package_admission_on_values:
+  assumes source: "environment_value_presents E e"
+  shows "(80,source_root_argument e (use_data_term u) (Payload_Term r))\<in>positive_meaning package_admission_system
+    \<longleftrightarrow> (\<exists>P. native_package_at E u r P)"
+  by (simp only: package_admission_at_source[OF source] inj_eq[OF use_data_term_injective] factor_term.inject) blast
+
+corollary package_admission_at_roots:
+  assumes source: "environment_value_presents E e" and roots: "native_root_family_at E u r Q"
+  shows "(80,source_root_argument e (use_data_term u) (Payload_Term r))\<in>positive_meaning package_admission_system
+    \<longleftrightarrow> native_package_formed E (rel_ran Q)"
+proof
+  assume holds: "(80,source_root_argument e (use_data_term u) (Payload_Term r))\<in>positive_meaning package_admission_system"
+  obtain P where raw: "native_package_at E u r P"
+    using holds by (simp only: package_admission_on_values[OF source]) blast
+  obtain W where read: "native_root_family_at E u r W" and formed: "native_package_formed E (rel_ran W)"
+    using raw by (auto simp: native_package_at_def)
+  have same: "W=Q" by (rule native_root_family_unique[OF read roots])
+  show "native_package_formed E (rel_ran Q)" using formed same by simp
+next
+  assume formed: "native_package_formed E (rel_ran Q)"
+  have raw: "native_package_at E u r (native_program E (rel_ran Q))"
+    unfolding native_package_at_def by (rule exI[of _ Q]) (use roots formed in simp)
+  show "(80,source_root_argument e (use_data_term u) (Payload_Term r))\<in>positive_meaning package_admission_system"
+    by (rule package_admission_complete[OF source raw])
+qed
+
+corollary package_admission_presentation_invariance:
+  assumes "environment_value_presents E e" "environment_value_presents E f"
+  shows "(80,source_root_argument e u r)\<in>positive_meaning package_admission_system \<longleftrightarrow>
+    (80,source_root_argument f u r)\<in>positive_meaning package_admission_system"
+  by (simp only: package_admission_at_source[OF assms(1)] package_admission_at_source[OF assms(2)])
+
+corollary package_admission_empty:
+  assumes source: "environment_value_presents E e" and artifact: "artifact_at E u R" and family: "family_at R r {}"
+  shows "(80,source_root_argument e (use_data_term u) (Payload_Term r))\<in>positive_meaning package_admission_system"
+proof -
+  have roots: "(79,citation_observation_argument e (use_data_term u) (Payload_Term r) (Payload_Term []))
+      \<in>positive_meaning root_family_reading_system"
+    by (simp only: root_family_reading_empty[OF source]) (use artifact family in blast)
+  show ?thesis by (rule package_admission_step[OF roots package_closure_admission_empty[OF source]])
+qed
+
+corollary package_admission_rejects_unreadable_site:
+  assumes source: "environment_value_presents E e" and roots: "native_root_family_at E u r Q"
+    and reached: "d\<in>native_definition_sites E (rel_ran Q)"
+    and missing: "\<not>(\<exists>p C. native_definition_at E (fst d) (snd d) p C)"
+  shows "(80,source_root_argument e (use_data_term u) (Payload_Term r))\<notin>positive_meaning package_admission_system"
+  by (simp only: package_admission_at_roots[OF source roots])
+    (use reached missing in \<open>auto simp: native_package_formed_def\<close>)
+
+section \<open>Three fixed native entries precede all future operands\<close>
+
+lemma package_admission_operation_components:
+  "(78,t)\<in>positive_meaning package_admission_system \<longleftrightarrow> (78,t)\<in>positive_meaning located_list_system"
+  "(79,t)\<in>positive_meaning package_admission_system \<longleftrightarrow> (79,t)\<in>positive_meaning root_family_reading_system"
+  using package_admission_old_meaning[of 78 t] root_family_reading_old_meaning[of 78 t]
+    package_admission_old_meaning[of 79 t] by auto
+
+abbreviation package_admission_operation_result :: "nat \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "package_admission_operation_result d t \<equiv>
+    (d=78 \<and> located_list_result t) \<or> (d=79 \<and> root_family_reading_result t) \<or>
+    (d=80 \<and> package_admission_result t)"
+
+lemma package_admission_operations_exact:
+  assumes "d\<in>{78,79,80}"
+  shows "(d,t)\<in>positive_meaning package_admission_system \<longleftrightarrow> package_admission_operation_result d t"
+proof -
+  consider "d=78" | "d=79" | "d=80" using assms by auto
+  then show ?thesis
+    by cases (simp_all add: package_admission_operation_components located_list_exact
+      root_family_reading_exact package_admission_exact)
+qed
+
+theorem native_package_admission_operations:
+  "\<exists>E :: local_address option artifact_environment. \<exists>pu Q g.
+    closed_native_package_at E pu [] Q \<and> inj_on g {78::nat,79,80} \<and>
+    (\<forall>d\<in>{78,79,80}. \<forall>t. term_formed t \<longrightarrow>
+      (\<exists>F au I K. environment_formed F \<and> environment_included E F \<and> au\<notin>environment_uses E \<and>
+        native_package_at F pu [] Q \<and> native_application_at F au [] (g d) t I K \<and>
+        native_package_environment F pu []=E \<and> native_application_formed F pu [] au [] \<and>
+        (native_positive_holds F pu [] au [] \<longleftrightarrow> package_admission_operation_result d t)))"
+proof -
+  obtain g :: "nat \<Rightarrow> local_address option definition_site"
+    and E :: "local_address option artifact_environment" and pu Q
+    where injective: "inj_on g (system_definitions package_admission_system)"
+    and closed: "closed_native_package_at E pu [] Q"
+    and future: "\<forall>d\<in>system_definitions package_admission_system. \<forall>t. term_formed t \<longrightarrow>
+      (\<exists>F au I K. environment_formed F \<and> environment_included E F \<and> au\<notin>environment_uses E \<and>
+        native_package_at F pu [] Q \<and> native_application_at F au [] (g d) t I K \<and>
+        native_package_environment F pu []=E \<and>
+        (native_application_formed F pu [] au [] \<longleftrightarrow> schema_call_formed package_admission_system d t) \<and>
+        (native_positive_holds F pu [] au [] \<longleftrightarrow> (d,t)\<in>positive_meaning package_admission_system) \<and>
+        (\<forall>v\<in>environment_uses E. \<forall>R. artifact_at F v R \<longleftrightarrow> artifact_at E v R) \<and>
+        (\<forall>v\<in>environment_uses E. \<forall>k w. binds_slot F v k w \<longleftrightarrow> binds_slot E v k w))"
+    using compiled_program_future_applications[OF package_admission_system_formed] by blast
+  have sites: "inj_on g {78,79,80}" by (rule inj_on_subset[OF injective]) auto
+  show ?thesis
+  proof (rule exI[of _ E], rule exI[of _ pu], rule exI[of _ Q], rule exI[of _ g], intro conjI ballI allI impI)
+    show "closed_native_package_at E pu [] Q" by (rule closed)
+    show "inj_on g {78,79,80}" by (rule sites)
+  next
+    fix d :: nat and t :: factor_term
+    assume selected: "d\<in>{78,79,80}" and tf: "term_formed t"
+    have member: "d\<in>system_definitions package_admission_system" using selected by auto
+    obtain F au I K where parts: "environment_formed F" "environment_included E F" "au\<notin>environment_uses E"
+      "native_package_at F pu [] Q" "native_application_at F au [] (g d) t I K"
+      "native_package_environment F pu []=E"
+      "native_application_formed F pu [] au [] \<longleftrightarrow> schema_call_formed package_admission_system d t"
+      "native_positive_holds F pu [] au [] \<longleftrightarrow> (d,t)\<in>positive_meaning package_admission_system"
+      using future[rule_format, OF member tf] by blast
+    show "\<exists>F au I K. environment_formed F \<and> environment_included E F \<and> au\<notin>environment_uses E \<and>
+      native_package_at F pu [] Q \<and> native_application_at F au [] (g d) t I K \<and>
+      native_package_environment F pu []=E \<and> native_application_formed F pu [] au [] \<and>
+      (native_positive_holds F pu [] au [] \<longleftrightarrow> package_admission_operation_result d t)"
+      by (rule exI[of _ F], rule exI[of _ au], rule exI[of _ I], rule exI[of _ K])
+        (use parts tf member package_admission_operations_exact[OF selected] in \<open>auto simp: package_admission_call\<close>)
+  qed
+qed
+
+text \<open>
+  The package argument supplies the complete environment, source use, and
+  actual root. The clause reads every socket of that actual citation family,
+  retains every located destination, and passes the resulting complete list
+  to the existing package-closure entry. Acceptance is exactly existence of
+  the raw native package, independently of any application or truth judgment.
+
+  The semantic system remains the existing least closure from those actual
+  roots. An empty package still has an actual source and empty root family.
+  Unreadable reached definitions cannot be omitted, and cycles remain
+  permitted. Every complete environment presentation has the same answer.
+
+  All three entries have exact contracts over every term and preserve earlier
+  meanings. One fixed closed native program has three distinct sites before
+  all future formed operands and retains its canonical environment. It has
+  eighty-one definitions and one hundred and thirty-one clauses. Reached-site
+  call admission, complete admitted instances, finite evidence checking,
+  the full transition protocol, reflection, and genesis remain required.
+\<close>
+
+end

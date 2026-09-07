@@ -661,8 +661,8 @@ text \<open>
   checker precedes all future input terms while preserving its original scope.
 
   This sufficient definition profile does not decide equivalence of arbitrary
-  programs. Historical interpreter admission still has to bind both entries to
-  the actual submitted package and retain a fixed, independently proved
+  programs. The separate interpreter admission theory binds both entries to
+  the actual submitted package and retains a fixed, independently proved
   interpreter as their common semantic dependency.
 \<close>
 

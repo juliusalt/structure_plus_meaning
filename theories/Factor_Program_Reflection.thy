@@ -187,8 +187,9 @@ text \<open>
 
   Generic equality provides infinitely many reflected true calls and a
   formed call that is false. Formation is not identified with truth.
-  The remaining reflection strata, universal correctness admission for
-  submitted interpreters, and the full genesis theorem are separate joins.
+  The separate scope-interpreter admission theory supplies a finite correctness
+  class for submitted interpreters. The remaining reflection strata and the
+  full genesis theorem are separate joins.
 \<close>
 
 end

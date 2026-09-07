@@ -823,8 +823,19 @@ requiring every unrelated definition to be copied into the candidate.
 Every such definition has an actual native construction over an existing callee,
 preserving prior artifacts and bindings, and every complete source presentation
 has admission. A fixed native checker precedes all future submitted terms.
-Binding both historical entry roles to the actual candidate package and to
-one fixed proven interpreter remains the next admission join.
+Whole-interpreter admission now binds both historical roles to actual candidate
+members and to one fixed, proved universal interpreter. Eleven ordinary premises
+check the complete forwarding definitions and compare complete environments.
+A private common extension retains the candidate and reference scopes, including
+a reference selector omitted by the candidate's minimal scope. The forwarding
+entries may store different complete presentations of the same original source;
+both directions of inclusion establish exact agreement with that source.
+Admission entails the existing historical formation and truth equations over
+all terms. Every native source program has a closed admitted candidate with
+two fresh entries, and one fixed native checker precedes all later inputs.
+Source, candidate, and reference presentation choices preserve admission.
+The complete transition protocol, remaining reflection strata, and genesis
+remain open.
 
 Run `python3 tools/check.py --threads 12 --timeout 90` for one combined build,
 complete error collection, theory-inventory check, and unfinished-proof scan.

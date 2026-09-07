@@ -142,8 +142,25 @@ Shared definitions in formed packages in one
 environment have identical calls and meanings, without a supplied closure
 certificate. Actual native forwarding definitions and one fixed native checker
 are constructed. This advances O-18 and the correctness evidence for O-60;
-binding both historical roles to the actual candidate and a fixed proven
-interpreter is still required.
+the following whole-interpreter profile supplies the remaining membership
+and fixed-reference conditions.
+
+Factor_Scope_Interpreters and Factor_Interpreter_Admission now admit a complete
+sufficient historical interpreter class through eleven ordinary premises.
+Both entries belong to the actual candidate package. A fixed, independently
+proved universal interpreter precedes every source and candidate; its complete
+environment and the candidate's environment are retained in a common formed
+extension. Separate internal source presentations are compared in both
+directions against the complete original source. Admission entails
+program_interpretation over all terms, and distinct reference roles force
+distinct candidate entries. Every native source package has a closed admitted
+candidate containing exactly the reference definitions and two fresh entries.
+All complete source, candidate, and reference presentations preserve admission.
+One fixed native checker supplies exact future calls while retaining its
+original program scope and all prior artifacts and bindings. This further
+addresses O-18, O-60, and O-69 through O-72 for this structural correctness class.
+Complete transition-material admission, additional reflection strata, genesis,
+and quotation identity remain open.
 
 The final audit has not begun. It must include all active source and tools,
 all explanatory documents, and every supplied unique text, with duplicate

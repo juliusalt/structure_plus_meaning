@@ -3799,3 +3799,59 @@ proved interpreter before candidates, retain its complete environment, and
 bind both checked entries to the actual candidate program. The full transition
 protocol, remaining reflection strata, genesis, quotation identity obligations,
 and final repository audits remain open.
+
+## Whole-interpreter admission with a fixed semantic reference
+
+A finite correctness class now connects the admitted forwarding definitions to
+the complete historical interpretation contract. The checker contains the exact
+reference environment and its two actual callee coordinates as literal data.
+The final existence theorem obtains that reference from the previously proved
+universal formation and meaning interpreter before selecting any old source,
+candidate, or future argument. Both its reference and checker environments use
+the existing optional finite-word use coordinates of the native compiler.
+Candidate material cannot choose a different reference or supply a truth
+predicate.
+
+Eleven ordinary premises suffice. They admit the old package, require each
+selected entry to belong to the actual candidate package, admit each complete
+forwarding definition, compare two internal source presentations with the
+complete public source in both directions, and retain the reference and
+candidate environments in a common formed extension. The selected entries'
+complete singleton clauses and empty material relations are checked by the
+existing definition admission. No execution of candidate clauses establishes
+their correctness.
+
+The common extension is necessary because a candidate's canonical scope can
+omit the reference program's root selector while retaining the definitions it
+uses. Requiring the entire reference environment to be part of that canonical
+candidate would impose irrelevant selector material. Instead, a private finite
+extension contains both complete environments and preserves their native
+packages. Formation prevents conflicting artifacts or bindings, and shared
+definition agreement transfers the reference semantics to the candidate.
+The reference remains fixed even though this finite extension is a witness.
+
+The two forwarding entries may retain different complete presentations of the
+old source environment. Requiring literal equality with the submitted source
+value would make admission depend on collection enumeration. Two existing
+inclusion calls in each direction establish equality of the complete recovered
+environments. They permit all presentation choices without admitting a smaller
+source domain. The old package's actual use and root are shared by both roles.
+
+The construction installs two fresh native definitions over the fixed reference
+program, selects all resulting definitions, and takes the canonical closed
+restriction. It supplies an admitted candidate for every native source package,
+including programs whose active use coordinates conflict with the reference:
+the old source is literal data. The resulting program contains exactly the
+reference definitions and those two entries. Existing artifacts and outgoing
+bindings survive each installation. Both historical call boundaries and both
+truth equations hold over all terms; distinct reference entries force distinct
+candidate entries.
+
+The ordinary admission equation is exact for this sufficient structural class,
+including all complete source, candidate, and reference presentations. Earlier
+checker entries keep their meanings. A native compilation fixed before all
+future submitted terms supplies actual calls with its original minimal program
+scope and every old artifact and binding preserved. This does not require a
+decision procedure for arbitrary program equivalence. Complete transition
+admission, further reflection strata, genesis, quotation identity, and the final
+repository audits remain open.

@@ -9,6 +9,13 @@ definitions with the intended system remains a separate review obligation.
 Each choice below records its reason and its limits. Proof references are added
 only after the corresponding theory is accepted.
 
+The owner corrected the presentation requirement on 2026-09-08. That correction
+supersedes every earlier single-grammar or quotation-principality requirement,
+including historical expectations recorded below. The active requirement is
+exactness of admissible presentations and of their intrinsic relations and
+composition throughout the system. Existing proofs of recovery, construction,
+and transport remain evidence for their stated classes and boundaries.
+
 ## Source and build boundary
 
 The theory source uses Isabelle symbol escapes. This is a source representation
@@ -45,12 +52,25 @@ the same new basis. The reconstruction preserves recovery within each legacy
 view, with that view explicit in the migration account. It does not restore a
 profile discriminator inside the new core to preserve this discarded distinction.
 
-## Quotation
+## Presentation exactness, including quotation
 
-The plan asks for determination of a quotation grammar from completeness,
-recovery, no-extra structure, and fixed boundaries. These conditions must be
-tested independently of a selected grammar. Uniqueness within a grammar will
-not be reported as determination of the grammar.
+The owner's correction requires each notion to constrain its admissible
+presentations so every admitted member is exact. Required material,
+distinctions, and intrinsic relations are preserved; unsupported facts and
+semantic rules are not introduced. Presentation structure is permitted and
+accounted for. "Notion" is an informal word here, not a primitive kind.
+
+This applies throughout citation, binding, environment, assembly, derivation,
+retention, quotation, semantic definition, and the higher system. The
+presentation account must also preserve and reflect each intrinsic link.
+Individually exact presentations do not supply a composition theorem. Structural
+compatibility and the shared boundary must be explicit and proved.
+
+No intrinsically privileged topology or principal grammar is required.
+Functional recovery in a declared class and canonical construction remain
+useful local properties. Choosing that class and proving those properties
+does not establish an exclusive presentation choice. The plan and obligation
+ledger now state these amended requirements.
 
 ## Assembly output
 
@@ -129,9 +149,9 @@ is no additional order information to represent.
 Families expose the socket-to-endpoint relation, rather than only its range.
 Distinct sockets reaching one endpoint remain distinct. Field order is recovered
 only when successor incidence supplies it. These grammars are explicit admitted
-views; their principality among arbitrary encodings is not assumed.
+views, with exactness and composition required over their declared boundaries.
 
-## What quotation determination requires
+## What the representation audit establishes
 
 `RRA_Representation_Audit.recoverable_encodings_need_not_be_isomorphic`
 constructs a formed addressed object with every carrier atom exposed at its
@@ -141,12 +161,16 @@ binding, and has exactly one output incidence per source incidence. The original
 and rotated example nevertheless admit no atom isomorphism.
 
 Thus recovery, complete material accounting, and boundary fixity do not force
-primitive orientation. The reconstruction chooses quotation that preserves each
-primitive incidence coordinate and each data attachment through an explicit
-carrier correspondence. This strengthens the quotation boundary. It is justified
-by retaining the already declared RRA primitives, and is stated separately from
-the weaker conditions in the plan. `RRA_Data.bounded_copies_agree` proves that two
-such copies of one bounded object are isomorphic with their boundary preserved.
+one presentation topology. Copies preserving each primitive incidence
+coordinate and data attachment through an explicit carrier correspondence form
+one useful declared class. `RRA_Data.bounded_copies_agree` proves that two such
+copies of one bounded object are isomorphic with their boundary preserved.
+
+The owner's correction removes the demand to make this class intrinsically
+privileged. Other presentations may preserve the same required content through
+different explicit correspondences. Their admissibility depends on exactness
+for the represented notion and its intrinsic relations, including composition.
+Reversibility alone supplies no theorem about those linked relations.
 
 This result is not reflective adequacy. A compiler between distinct source
 languages still needs a meaning-preservation proof, and bootstrap reflection
@@ -296,10 +320,11 @@ the reader does not test their bytes. Injective position maps preserve the
 reading when the used syntax observations and exact external artifact values
 agree. A remote occurrence address remains unchanged as an opaque operand.
 
-These results do not establish general principality or admit a complete
-semantic basis. In particular, total representability is not a proof that all
-presentations of the same term have isomorphic complete carriers. The
-presentation and candidate-form audit remains a separate obligation.
+These results establish this term presentation class and its stated transport
+boundary. They do not admit a complete semantic basis or discharge every
+intrinsic link. Total representability does not require all presentations of the
+same term to have isomorphic complete carriers. The presentation and
+candidate-form audit remains a separate obligation.
 
 ## Generic positive schemas and finite derivations
 
@@ -391,7 +416,8 @@ environment. The program's finite environment does not bound future arguments.
 
 These results concern the admitted positive schema class. They do not yet admit
 the other candidate semantic forms, prove complete native presentation
-construction, establish general quotation principality, or implement reflection.
+construction, complete the presentation exactness and composition audit, or
+implement reflection.
 
 
 ## The positive class does not supply structural observation
@@ -518,12 +544,12 @@ complete native transport conditions directly, including when an external call
 becomes a self call in the destination. There is no assumed semantic-reader or
 truth-preservation callback.
 
-This construction supports a finite mixed list of call and material bodies under
-one shared binder scope. Each body's recovered premise, interior, and slot set
-is preserved. Separately, exact inverse maps show that binder and socket
-renaming both preserves and reflects complete rule instances and interface
-acceptance. These results do not yet constitute a general native program
-constructor or settle quotation principality.
+This construction supports a finite mixed list of call and material bodies
+under one shared binder scope. Each body's recovered premise, interior, and
+slot set is preserved. Separately, exact inverse maps show that binder and
+socket renaming both preserves and reflects complete rule instances and
+interface acceptance. These results do not yet constitute a general native
+program constructor or settle presentation exactness and composition.
 
 
 ## Finite schema construction and its reference boundary
@@ -545,8 +571,8 @@ references at previously unbound slots, with fresh uses for exact literal values
 Every formed finite schema now has an actual native quotation over any formed
 environment supplying its callee anchors. Compilation adds a fresh code use and
 preserves every artifact and binding at every old use. Callee-free schemas need
-no initial package. Whole definition and program construction and quotation
-principality remain separate obligations.
+no initial package. Whole definition and program construction and presentation
+exactness and composition remain separate obligations.
 
 ## Independent clause scopes and fixed definition construction roots
 
@@ -811,8 +837,9 @@ intended independence, and both binding and premise-link tables instantiate it.
 Every positive native application has a realized proof with no assumptions,
 while its selected program environment stays identical. This closes the native
 construction gap for the supported positive graph class. The combined
-retention/replay boundary is addressed below. Native admission evidence, general
-quotation principality, and the final alignment audit remain open.
+retention/replay boundary is addressed below. Native admission evidence,
+general presentation exactness and composition, and the final alignment audit
+remain open.
 
 ## Generic replay and its exact retained boundary
 
@@ -1170,8 +1197,9 @@ result. This removes an unnecessary dependency from the cause's scope boundary.
 Factor_Complete_Data_Quotation restricts standalone data quotations to complete
 copies of their payload-and-pair syntax, under every formed injective
 readdressing. Its ordinary native reader is derived. This excludes ignored
-attachments as well as unused carrier positions. The theorem concerns this
-data profile; it does not claim general native quotation principality.
+attachments as well as unused carrier positions. The theorem concerns this data
+profile; it does not claim exactness and composition of every other
+presentation class.
 
 Factor_Judgment_Values quotes a whole environment and its actual program and
 call sites. Factor_Recorded_Cause follows the generation's citation to this
@@ -1247,8 +1275,10 @@ Injective use transport and fresh composition allow every finite predecessor
 family to coexist. Induction over the finite core then supplies an actual
 presentation for every formed generation, including the empty predecessor
 case. The grammar-derived restriction gives a closed presentation of the same
-core. This establishes existence and unique recovery; canonical quotation up
-to bounded structural isomorphism remains a separate obligation.
+core. This establishes total coverage and unique recovery for the declared
+class. The remaining presentation obligation concerns complete exactness and
+the generation's intrinsic links to its predecessors, payload, and cause,
+under the owner's amended requirements.
 
 Factor_Generation_Construction combines that result with the minimal recorded
 scope and separate certificate. Every admitted native construction can be
@@ -2894,8 +2924,8 @@ before every future formed operand while preserving its canonical environment.
 
 The program now has fifty-one definitions and eighty-eight clauses. No new
 primitive is added. Higher grammar, finite correctness evidence, the complete
-transition protocol, reflection, genesis, and general quotation determination
-remain required.
+transition protocol, reflection, genesis, and the remaining presentation
+exactness and composition audit remain required.
 
 ## Binder families and complete substitution tables
 
@@ -2933,7 +2963,8 @@ prior meaning. One closed native program supplies four distinct sites before
 arbitrary future formed operands, retaining its canonical environment. The
 program has fifty-five definitions and ninety-four clauses. Pattern and schema
 admission, finite correctness evidence, the complete transition protocol,
-reflection, genesis, and general quotation determination remain required.
+reflection, genesis, and the remaining presentation exactness and composition
+audit remain required.
 
 ## Pattern instances are read from the actual source and complete scope
 
@@ -2986,9 +3017,9 @@ not another operand chosen by the caller.
 All earlier meanings are preserved. One closed native program contains two
 distinct new sites before arbitrary future formed operands and retains its
 canonical environment. It now has fifty-seven definitions and ninety-eight
-clauses. Schema and package admission, finite correctness evidence, the complete
-transition protocol, reflection, genesis, and general quotation determination
-remain required.
+clauses. Schema and package admission, finite correctness evidence, the
+complete transition protocol, reflection, genesis, and the remaining
+presentation exactness and composition audit remain required.
 
 ## Prospective instances retain actual callees and recover ground applications
 
@@ -3035,8 +3066,8 @@ preserved, and one fixed closed native program contains two distinct new sites
 before arbitrary future formed operands. Its canonical environment remains
 unchanged. The program now has fifty-nine definitions and one hundred clauses.
 Schema and package admission, finite correctness evidence, the complete
-transition protocol, reflection, genesis, and general quotation determination
-remain required.
+transition protocol, reflection, genesis, and the remaining presentation
+exactness and composition audit remain required.
 
 ## Ordered field instantiation preserves the independent grammar boundaries
 
@@ -3076,13 +3107,14 @@ separate material observation over the five resulting operands.
 
 All four entries have exact contracts over every term and preserve all previous
 meanings. Complete environment presentations and independent scope, table, and
-metadata orders are accepted. Vector, record, and material instances have unique
-results and are total for valid inputs with complete formed bindings. One fixed
-closed native program contains four distinct sites before all future formed
-operands and retains its canonical environment. The program now has sixty-three
-definitions and one hundred and six clauses. Complete premise, schema, package,
-and finite evidence admission, the transition protocol, reflection, genesis,
-and general quotation determination remain required.
+metadata orders are accepted. Vector, record, and material instances have
+unique results and are total for valid inputs with complete formed bindings.
+One fixed closed native program contains four distinct sites before all future
+formed operands and retains its canonical environment. The program now has
+sixty-three definitions and one hundred and six clauses. Complete premise,
+schema, package, and finite evidence admission, the transition protocol,
+reflection, genesis, and the remaining presentation exactness and composition
+audit remain required.
 
 ## Mixed premise instantiation preserves the complete socket boundary
 
@@ -3130,7 +3162,8 @@ bindings. One fixed closed native program supplies two distinct sites before
 all future formed operands and retains its canonical environment. It has
 sixty-five definitions and one hundred and ten clauses. Schema and package
 admission, finite evidence checking, the complete transition protocol,
-reflection, genesis, and general quotation determination remain required.
+reflection, genesis, and the remaining presentation exactness and composition
+audit remain required.
 
 ## Whole-schema instantiation and material checking have separate meanings
 
@@ -3179,7 +3212,8 @@ definitions and one hundred and fifteen clauses. The complete admitted-schema
 instance additionally requires the actual program's head and prospective-call
 interfaces. Those checks, definition and package admission, prospective-call
 truth, finite evidence checking, the full transition protocol, reflection,
-genesis, and general quotation determination remain required.
+genesis, and the remaining presentation exactness and composition audit remain
+required.
 
 ## Grammar admission precedes material and prospective-call truth
 
@@ -3222,7 +3256,7 @@ distinct sites before all future formed operands and retains its canonical
 environment. It has seventy-three definitions and one hundred and twenty
 clauses. Native package admission, complete admitted instances, finite evidence
 checking, the full transition protocol, reflection, genesis, and general
-quotation determination remain required.
+presentation exactness and composition remain required.
 
 ## Finite checked witnesses preserve the actual least package closure
 
@@ -3273,7 +3307,7 @@ The supplied root-site list is an ordinary argument to this entry. Actual
 package-root reading is composed with it below. Joining call admission with
 actual reached-site membership, complete admitted instances, finite evidence
 checking, the full transition protocol, reflection, genesis, and general
-quotation determination remain required.
+presentation exactness and composition remain required.
 
 ## Actual package roots preserve their complete occurrence correspondence
 
@@ -3312,12 +3346,12 @@ still required, including callees in positive cycles.
 
 All three entries have exact contracts over every term, permit every complete
 source presentation, and preserve earlier meanings. One fixed closed native
-program has three distinct sites before future formed operands and retains
-its canonical environment. It has eighty-one definitions and one hundred
-and thirty-one clauses. The following entries join reached-site and interface
+program has three distinct sites before future formed operands and retains its
+canonical environment. It has eighty-one definitions and one hundred and
+thirty-one clauses. The following entries join reached-site and interface
 admission to complete instances. Finite evidence checking, the full transition
-protocol, reflection, genesis, and general quotation determination remain
-required.
+protocol, reflection, genesis, and the remaining presentation exactness and
+composition audit remain required.
 
 ## Actual clause membership and every call share one package
 
@@ -3383,8 +3417,8 @@ All seven entries have exact contracts over every term and preserve earlier
 meanings. One fixed closed native program has seven distinct sites before
 future formed operands and retains its canonical environment. It has
 eighty-eight definitions and one hundred and forty clauses. Finite correctness
-evidence checking, the full transition protocol, reflection, genesis, and
-general quotation determination remain required.
+evidence checking, the full transition protocol, reflection, genesis, and the
+remaining presentation exactness and composition audit remain required.
 
 ## Native proof metadata preserves actual rows and independent validity
 
@@ -3443,13 +3477,13 @@ instance, or that an assumption is true. Those checks belong to the
 independent graph and derivation relations and the ordinary finite evidence
 checker built above this metadata layer.
 
-All seven entries have exact contracts over every term and preserve all
-earlier meanings. One fixed closed native program provides seven distinct
-sites before all future formed operands and retains its canonical
-environment. It has ninety-five definitions and one hundred and fifty
-clauses. The following entries separately derive complete finite graph
-admission and reachability. Derivation, replay retention, the full transition
-protocol, reflection, genesis, and general quotation determination remain
+All seven entries have exact contracts over every term and preserve all earlier
+meanings. One fixed closed native program provides seven distinct sites before
+all future formed operands and retains its canonical environment. It has
+ninety-five definitions and one hundred and fifty clauses. The following
+entries separately derive complete finite graph admission and reachability.
+Derivation, replay retention, the full transition protocol, reflection,
+genesis, and the remaining presentation exactness and composition audit remain
 required.
 
 ## Native graph admission retains actual closure and shared nodes
@@ -3503,10 +3537,11 @@ All four entries have exact contracts over every term, admit every complete
 source presentation, and preserve earlier meanings. One fixed closed native
 program provides four distinct sites before all future formed operands and
 retains its canonical environment. It has ninety-nine definitions and one
-hundred and fifty-nine clauses. This admits graph structure independently of
-a supplied root claim. The following claim-table construction supplies the
+hundred and fifty-nine clauses. This admits graph structure independently of a
+supplied root claim. The following claim-table construction supplies the
 complete derivation join. Replay retention remains separate, as do the full
-transition protocol, reflection, genesis, and general quotation determination.
+transition protocol, reflection, genesis, and the remaining presentation
+exactness and composition audit.
 
 ## Complete derivations use one shared claim table
 
@@ -3549,12 +3584,12 @@ assertion sites remain distinct assumptions. A closed derivation establishes
 its supplied call's positive meaning; conditional assertions retain their
 independent truth requirement.
 
-The complete program has one hundred and three definitions and one hundred
-and sixty-seven clauses. Four distinct sites in one fixed closed native
-program precede every future formed operand and preserve its canonical
-environment. The replay join must bind an actual application to its derivation
-and closed retention. Full transition protocol, reflection, genesis, and
-general quotation determination remain open.
+The complete program has one hundred and three definitions and one hundred and
+sixty-seven clauses. Four distinct sites in one fixed closed native program
+precede every future formed operand and preserve its canonical environment. The
+replay join must bind an actual application to its derivation and closed
+retention. Full transition protocol, reflection, genesis, and the remaining
+presentation exactness and composition audit remain open.
 
 ## Slot reading exposes existing syntax projections independently of truth
 
@@ -3628,10 +3663,11 @@ shared nodes and arbitrary formed call terms retain their existing meanings.
 
 Six entries add fifteen ordinary clauses. All input-term contracts, complete
 presentations, assumption orders, earlier meanings, and the fixed native
-program before every future formed operand are proved. The complete program
-has one hundred and twelve definitions and one hundred and eighty-eight
-clauses. Full transition-protocol admission, reflection, genesis, and general
-quotation determination remain open, followed by the requested final audits.
+program before every future formed operand are proved. The complete program has
+one hundred and twelve definitions and one hundred and eighty-eight clauses.
+Full transition-protocol admission, reflection, genesis, and general
+presentation exactness and composition remain open, followed by the requested
+final audits.
 
 ## Positive meaning is recognized with the supplied program as data
 
@@ -3667,13 +3703,13 @@ The final entry reads the existing actual application and passes its callee
 and operand to the query in the same represented environment. The existing
 judgment value already stores exactly the required environment and sites.
 
-Four entries add five ordinary clauses and preserve all earlier meanings.
-Their exact contracts cover all input terms and all complete presentations.
-One closed native program has one hundred and sixteen definitions and one
-hundred and ninety-three clauses. Exact positive recognition does not imply
-termination for false queries or prove universal correctness of a submitted
-historical interpreter. That correctness, full protocol admission, general
-reflection, genesis, quotation determination, and the final audits remain.
+Four entries add five ordinary clauses and preserve all earlier meanings. Their
+exact contracts cover all input terms and all complete presentations. One
+closed native program has one hundred and sixteen definitions and one hundred
+and ninety-three clauses. Exact positive recognition does not imply termination
+for false queries or prove universal correctness of a submitted historical
+interpreter. That correctness, full protocol admission, general reflection,
+genesis, presentation exactness and composition, and the final audits remain.
 
 ## Formation and meaning reflection share a represented source
 
@@ -3711,9 +3747,10 @@ The earlier historical construction remains useful because it additionally
 preserves direct calls to separately copied old and other programs. The new
 construction proves a different sufficient class with one uniform interpreter.
 Neither construction admits an arbitrary submitted interpreter's universal
-correctness evidence inside the predecessor. That finite evidence profile,
-full transition-protocol admission, the remaining reflection strata, genesis,
-quotation determination, and final repository audits remain open.
+correctness evidence inside the predecessor. That finite evidence profile, full
+transition-protocol admission, the remaining reflection strata, genesis,
+presentation exactness and composition, and final repository audits remain
+open.
 
 ## Two complete substitutions determine pattern and schema syntax
 
@@ -3742,12 +3779,13 @@ is relative to the actual binder coordinates; it does not silently identify
 renamed syntax or distinct artifact values. Existing presentation and ordering
 theorems continue to apply.
 
-No operator definition, ordinary entry, or primitive observation is added.
-This grammar result supports finite correctness evidence and says nothing by
-itself about agreement of arbitrary programs from finitely many executions.
+No operator definition, ordinary entry, or primitive observation is added. This
+grammar result supports finite correctness evidence and says nothing by itself
+about agreement of arbitrary programs from finitely many executions.
 Whole-program interpreter admission still needs complete structure and actual
-semantic dependencies. General quotation determination, the full transition
-protocol, remaining reflection strata, genesis, and final audits remain open.
+semantic dependencies. The remaining presentation exactness and composition
+audit, the full transition protocol, remaining reflection strata, genesis, and
+final audits remain open.
 
 ## Complete scope forwarding from finite native evidence
 
@@ -3795,10 +3833,10 @@ submitted terms and retains its original scope.
 The profile is sufficient and intentionally specific. It does not decide
 equivalence of arbitrary programs or establish that an arbitrary chosen callee
 is an interpreter. The next historical admission join must fix an independently
-proved interpreter before candidates, retain its complete environment, and
-bind both checked entries to the actual candidate program. The full transition
-protocol, remaining reflection strata, genesis, quotation identity obligations,
-and final repository audits remain open.
+proved interpreter before candidates, retain its complete environment, and bind
+both checked entries to the actual candidate program. The full transition
+protocol, remaining reflection strata, genesis, presentation-class and
+intrinsic-link obligations, and final repository audits remain open.
 
 ## Whole-interpreter admission with a fixed semantic reference
 
@@ -3853,8 +3891,8 @@ checker entries keep their meanings. A native compilation fixed before all
 future submitted terms supplies actual calls with its original minimal program
 scope and every old artifact and binding preserved. This does not require a
 decision procedure for arbitrary program equivalence. Complete transition
-admission, further reflection strata, genesis, quotation identity, and the final
-repository audits remain open.
+admission, further reflection strata, genesis, presentation exactness and
+composition, and the final repository audits remain open.
 
 ## Native admission of minimal package scopes
 
@@ -3899,8 +3937,143 @@ are fixed before all future submitted terms, with the original minimal program
 scope and every old artifact and outgoing binding preserved.
 
 For a complete data quotation already established independently, the admitted
-body is exactly a program-scope quotation. That implication does not yet make
-whole-artifact quotation an internally checked judgment. Its ordinary
-admission, higher generation and authority readers, complete transition
-material, remaining reflection strata, genesis, and the final repository
-audits remain to be completed.
+body is exactly a program-scope quotation. That implication supplies the
+package side of the following whole-artifact reading and composition result.
+Higher generation and authority readers, complete transition material,
+remaining reflection strata, genesis, and the final repository audits remain
+to be completed.
+
+## Complete quotation and its stored program scope
+
+The next class uses the existing payload-and-pair quotation profile and its
+complete artifact data. Native reading with an empty external-slot boundary
+already forces a self-contained term. An additional self-containment premise
+would check a fact derived from that boundary, so the ordinary complete-data
+entry omits it.
+
+The reverse quotation theorem reconstructs an injective syntax copy on the
+actual read interior. It joins the exact pair header with two disjoint child
+readings. It permits incoming structure at the boundary of a subterm. When the
+interior is the entire artifact carrier, agreement on every headed incidence
+and the full data basis entails exact object equality. This proves equivalence
+between the existing complete-copy condition and the ordinary whole-carrier
+reader, without changing either relation to assume that equivalence.
+
+The ordinary entry derives a one-artifact environment from the complete
+supplied artifact value and uses its actual carrier list as the quotation
+interior. The existing reader admits that environment and its source data.
+The local None use is a coordinate inside this derived environment; it is
+not an external authority, caller binding, or global semantic discriminator.
+Every complete artifact presentation is accepted. The exact original
+addresses, every incidence, and both data components are retained.
+
+The linked scope entry instantiates the general constrained-reading schema.
+The first premise reads the whole quotation and returns its actual body; the
+second admits that same body as a closed native package scope. A chosen
+alternative body representing the same environment cannot replace the stored
+body. The root is a private witness because the complete artifact determines
+it within this class. The general determined-component construction uses the
+independently proved link from environment and program site to the native
+program, so no additional program value is stored.
+
+Existential body admission is exactly the existing program-scope quotation
+relation. More specifically, the recovered scope preserves and reflects call
+formation and positive meaning for every actual future application in any
+formed extension retaining it. This proves the intrinsic connection between
+artifact data, quotation, environment, package retention, semantic definition,
+and application. Exactness of those separate values alone was not used as a
+substitute for this composition result.
+
+Fresh local entries 123 and 124 extend the generic package-retention program.
+Their clauses use the existing quotation and retention entries; they add no
+material primitive or semantic dispatch by a metalevel notion kind. One fixed
+native compilation precedes all future formed operands. Every old meaning, the
+fixed minimal program scope, and all prior artifact values and bindings are
+preserved.
+
+This is an exact admitted presentation class and an explicit linked
+composition, not a claim that only this topology is adequate. The owner's
+correction also revises D-6, the generation-presentation obligation, the
+presentation obligations, the work order, and the delivery gate. Remaining
+work must audit the admissible class and intrinsic relations of every
+presented notion, then complete higher generation and authority reading,
+transition material, reflection, genesis, and the requested final audits.
+
+## General presentation theory follows recurring requirements
+
+The owner requires a general presentation theory, used for its own relevant
+notions and throughout the system, and expressly leaves its scope to evidence.
+Composition is part of that direction. Existing exact classes already expose
+further recurring needs: total coverage, admissibility, complete occurrences,
+constraints, changes of presentation, intrinsic relations, and recursive
+meaning. The initial scope is selected from those needs.
+
+| Evidence in the system | Selected general construction |
+|---|---|
+| Artifact and environment readers admit complete enumerations, and quotation admits addressed copies | Class coverage and recovery, compatible alternatives, and composition through complete intermediate presentations. |
+| Records retain distinct fields; lists and premise families retain occurrences; finite collections admit every enumeration | Product and sequence construction, followed by the explicit distinctness and exact-membership conditions of finite collections. |
+| Package, graph, binding, and table readers join facts about a common source | Constraints and joint classes with soundness for every retained presentation and compatible witnesses for every required subject. |
+| A complete environment and site determine the actual native program | A functional-link construction that recovers the determined component without storing it again. |
+| Identity, interpretation, and other intrinsic relations must survive presentation changes | Presented predicates and relations, with exactness supplied by independent native contracts, and explicit shared arguments and intermediate domains. |
+| Ordinary definitions, list readers, and program relocation have positive recursion | Exact transport of the actual consequence operators on a proved closed support domain, followed by least-fixed-point transport. |
+| The presentation theory uses actual reader definitions and program scopes | Native compilation of the ordinary composition schema and application of the same class constructors to the reader's own scope. |
+
+The proof locale called presentation_class records subject coverage,
+presentation admissibility, and unique recovery of the entire declared
+subject. Coverage and recovery alone do not certify a complete physical
+account or intrinsic relation. Those facts must be established by the
+independent readers and structural boundaries in an application. The typed
+parameters introduce no primitive kind of notion and no generic native
+predicate callback.
+
+A constraint can have no valid subjects. The general class theorem permits
+that empty domain and proves that admissible presentations exist exactly
+when subjects exist. Totality therefore prevents an empty class from
+representing a required subject. Inhabited application domains still need
+constructed witnesses; an empty restriction cannot discharge their adequacy.
+This clarifies O-79 without weakening its prohibition on vacuous evidence.
+
+The relation constructions state preservation and reflection over all
+representatives of the supplied classes. Their conjunction rule identifies
+the recovered subjects at shared arguments. Relational composition additionally
+requires a presented intermediate domain. Where physical compatibility narrows
+a product, the joint class rule requires both soundness of the retained pairs
+and a compatible witness for every required linked pair. A formal example
+shows why separate total coverage cannot establish a shared witness.
+
+Products and lists retain their roles and repeated occurrences. A finite
+collection separately requires distinct subjects and exact set membership;
+its order is a presentation witness. These different subjects are not
+identified by using the same data-list constructor. The native list and
+context-list profiles instantiate the generic sequence class, including the
+same context in every call and its formation in the empty case.
+
+Program relocation now uses the general fixed-point rule. Its previously
+proved consequence equation and actual definition boundary discharge the
+hypotheses; its public formation and meaning contracts remain unchanged.
+The theorem does not infer recursive correctness from separately asserted
+component meanings.
+
+The program-scope class is derived through the general functional-link and
+quotation constructions. Environment and site retain their own complete
+presentation; the native package relation determines the program. Complete
+quotation then preserves the exact intermediate body. The native scope
+reader is an instance of the generic ordinary constrained-reading schema,
+whose two premises inspect that identical body.
+
+The fixed native reader's own scope uses these same class constructions.
+Every compatible complete presentation of that scope is admitted by an
+actual call to its own compiled reading entry. The original program is fixed
+before these operands, and all of its artifacts, bindings, and minimal
+environment remain intact. This establishes a concrete self-application
+result for the operative theory. It does not establish native presentation
+and checking of all presentation contracts and exactness proofs. O-85 keeps
+those requirements explicit.
+
+Further generic results must have a concrete structural or semantic need and
+a proved application boundary. Arbitrary joins, quotient identifications, or
+universal predicates acquire no force from this framework. The remaining
+system-wide presentation work uses these constructions where applicable and
+records the reason for any required special case. O-84 tracks that work and
+any justified extension of scope; no claim of an exhaustive presentation
+calculus or a completed self-contained foundation is made by this batch.

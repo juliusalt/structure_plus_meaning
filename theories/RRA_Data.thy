@@ -88,6 +88,12 @@ lemma restrict_basis_formed:
   using assms
   by (auto simp: basis_formed_def bag_support_restrict single_valued_def)
 
+lemma restrict_basis_carrier:
+  assumes "basis_formed U D"
+  shows "restrict_basis U D=D"
+  using assms
+  by (auto simp: basis_identity restrict_basis_def fun_eq_iff basis_formed_def bag_support_def)
+
 lemma basis_values_restrict:
   "basis_values (restrict_basis A D) \<subseteq> basis_values D"
   by (auto simp: basis_values_def bag_support_def restrict_basis_def)
@@ -536,6 +542,22 @@ proof -
   show ?thesis
     using formed target push_structure_iso[OF source injective]
     by (simp add: object_isomorphism_def push_object_def)
+qed
+
+lemma push_object_cong:
+  assumes formed: "object_formed obj"
+    and agree: "\<And>a. a\<in>rra_carrier (object_structure obj) \<Longrightarrow> f a=g a"
+  shows "push_object f obj=push_object g obj"
+proof -
+  have structural: "rra_formed (object_structure obj)"
+    and data: "basis_formed (rra_carrier (object_structure obj)) (object_data obj)"
+    using formed by (auto simp: object_formed_def)
+  have same_structure: "push_structure f (object_structure obj)=push_structure g (object_structure obj)"
+    by (rule push_structure_cong[OF structural agree])
+  have same_data: "push_basis (rra_carrier (object_structure obj)) f (object_data obj)=
+    push_basis (rra_carrier (object_structure obj)) g (object_data obj)"
+    by (rule push_basis_cong[OF data]) (use agree in blast)
+  show ?thesis by (simp add: push_object_def same_structure same_data)
 qed
 
 lemma push_object_composes:

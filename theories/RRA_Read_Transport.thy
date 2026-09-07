@@ -54,9 +54,11 @@ proof -
   show ?thesis by (rule object_reads_agree_trans[OF first object_reads_agree_mono[OF second inside]])
 qed
 
-lemma object_reads_agree_push:
+lemma object_reads_agree_push_on:
   assumes rf: "object_formed R" and sf: "object_formed S"
-    and injective: "inj f" and reads: "object_reads_agree R S I"
+    and rinj: "inj_on f (rra_carrier (object_structure R))"
+    and sinj: "inj_on f (rra_carrier (object_structure S))"
+    and reads: "object_reads_agree R S I"
   shows "object_reads_agree (push_object f R) (push_object f S) (f ` I)"
 proof -
   let ?U = "rra_carrier (object_structure R)"
@@ -65,7 +67,6 @@ proof -
     and rdata: "basis_formed ?U (object_data R)" and sdata: "basis_formed ?W (object_data S)"
     and rfinite: "finite ?U" and sfinite: "finite ?W"
     using rf sf by (auto simp: object_formed_def rra_formed_def)
-  have rinj: "inj_on f ?U" and sinj: "inj_on f ?W" using injective by (auto simp: inj_on_def)
   have ri: "I \<subseteq> ?U" and si: "I \<subseteq> ?W"
     and original_data: "restrict_basis I (object_data R) = restrict_basis I (object_data S)"
     using reads by (auto simp: object_reads_agree_def)
@@ -116,6 +117,67 @@ proof -
     using counts bindings by (auto simp: basis_identity restrict_basis_def fun_eq_iff)
   show ?thesis using ri si heads data
     by (auto simp: object_reads_agree_def push_object_def push_structure_def)
+qed
+
+lemma object_reads_agree_push:
+  assumes rf: "object_formed R" and sf: "object_formed S"
+    and injective: "inj f" and reads: "object_reads_agree R S I"
+  shows "object_reads_agree (push_object f R) (push_object f S) (f ` I)"
+  by (rule object_reads_agree_push_on[OF rf sf _ _ reads])
+    (use injective in \<open>auto simp: inj_on_def\<close>)
+
+lemma object_reads_agree_union:
+  assumes "object_reads_agree R S I" "object_reads_agree R S J"
+  shows "object_reads_agree R S (I\<union>J)"
+proof -
+  have first: "restrict_basis I (object_data R)=restrict_basis I (object_data S)"
+    and second: "restrict_basis J (object_data R)=restrict_basis J (object_data S)"
+    using assms by (simp_all add: object_reads_agree_def)
+  have count: "bag_count (object_data R) (a,b)=bag_count (object_data S) (a,b)"
+    if equal: "restrict_basis U (object_data R)=restrict_basis U (object_data S)" and inside: "a\<in>U"
+    for U a b
+    using arg_cong[OF equal, of "\<lambda>D. bag_count D (a,b)"] inside
+    by (simp add: restrict_basis_def)
+  have left_count: "bag_count (object_data R) (a,b)=bag_count (object_data S) (a,b)"
+    if "a\<in>I" for a b by (rule count[OF first that])
+  have right_count: "bag_count (object_data R) (a,b)=bag_count (object_data S) (a,b)"
+    if "a\<in>J" for a b by (rule count[OF second that])
+  show ?thesis using assms
+    by (auto simp: object_reads_agree_def basis_identity restrict_basis_def fun_eq_iff
+      intro: left_count right_count)
+qed
+
+lemma object_reads_agree_complete:
+  assumes rf: "object_formed R" and sf: "object_formed S"
+    and carrier: "rra_carrier (object_structure R)=rra_carrier (object_structure S)"
+    and reads: "object_reads_agree R S (rra_carrier (object_structure R))"
+  shows "R=S"
+proof -
+  let ?U="rra_carrier (object_structure R)"
+  have heads: "\<And>a. a\<in>?U \<Longrightarrow>
+    headed_incidence (object_structure R) a=headed_incidence (object_structure S) a"
+    using reads by (simp add: object_reads_agree_def)
+  have edges: "rra_incidence (object_structure R)=rra_incidence (object_structure S)"
+  proof (rule set_eqI)
+    fix z
+    show "z\<in>rra_incidence (object_structure R) \<longleftrightarrow>
+      z\<in>rra_incidence (object_structure S)"
+    proof -
+      obtain a b c where shape: "z=(a,b,c)" by (cases z)
+      have inside: "a\<in>?U" if "z\<in>rra_incidence (object_structure R) \<or>
+        z\<in>rra_incidence (object_structure S)"
+        using that rf sf carrier by (auto simp: shape object_formed_def rra_formed_def)
+      show ?thesis using heads inside by (auto simp: shape headed_incidence_def)
+    qed
+  qed
+  have structural: "object_structure R=object_structure S"
+    using carrier edges by (simp add: rra_identity)
+  have rb: "basis_formed ?U (object_data R)" and sb: "basis_formed ?U (object_data S)"
+    using rf sf carrier by (auto simp: object_formed_def)
+  have data: "object_data R=object_data S"
+    using reads by (simp add: object_reads_agree_def restrict_basis_carrier[OF rb]
+      restrict_basis_carrier[OF sb])
+  show ?thesis using structural data by (simp add: object_identity)
 qed
 
 lemma object_reads_payload:
@@ -236,8 +298,10 @@ text \<open>
   This agreement describes the fields read by the syntax recognizers. It is
   weaker than complete incident-star equality: an enclosing record can add
   incoming incidences at a quoted root. Those incidences remain part of the
-  target's explicit footprint boundary. This relation neither identifies exact
-  artifacts nor establishes semantic agreement on observed exact targets.
+  target's explicit footprint boundary. Agreement on a proper read region
+  need not identify exact artifacts. For formed objects with the same carrier,
+  agreement over that whole carrier entails exact equality. Semantic agreement on
+  observed exact targets requires its own linked interpretation argument.
 \<close>
 
 end

@@ -143,9 +143,9 @@ text \<open>
 
   The whole-copy condition excludes ignored attachments and other material
   that the ordinary subterm reader need not inspect. It describes this
-  self-contained data profile. It does not assert that every general native
-  quotation is a member of this profile or discharge general quotation
-  principality by definition.
+  self-contained data profile. General quotations can use other presentation
+  classes with their own exactness and intrinsic-relation obligations. Selecting
+  this class gives it no intrinsic privilege among adequate presentations.
 
   In this complete profile, the root is the only carrier position that occurs
   in neither the second nor the third incidence projection. This statement

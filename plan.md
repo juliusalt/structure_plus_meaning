@@ -18,6 +18,20 @@ $$
 }
 $$
 
+The owner's correction of 2026-09-08 supersedes all earlier single-grammar and
+quotation-principality requirements, including their formulations of D-6,
+O-44, O-79, and O-80. It governs every notion that needs a presentation.
+Admissible presentations must preserve all required content and intrinsic
+relations and introduce no unsupported facts. Their own presentation structure
+is accounted for explicitly. Separate exactness results do not establish
+compatibility or composition of intrinsically linked notions.
+
+The owner also requires a general presentation theory, used both for its own
+relevant notions and for the rest of the system. Its scope is determined by
+evidence and may extend beyond composition. Repeated presentation work must
+use justified general constructions instead of accumulating independent
+definitions and proofs for each new case.
+
 ### 0.2 Status of every decision in this document
 
 An earlier draft of this plan labelled eleven items "owner decisions" and gave
@@ -99,6 +113,38 @@ primitives; P-3 alone would collapse distinctions. Distinctness is preserved at
 the level of *judgments*; whether a judgment is primitive or derived is settled
 by P-3. Nothing in P-2 licenses a new primitive relation merely to keep two
 facts apart on paper.
+
+**P-4 — Exact presentation classes and intrinsic relations.** *(Explicit,
+owner correction of 2026-09-08.)*
+
+For each notion, state its required content, distinctions, and intrinsic
+relations independently of a proposed presentation. Constrain its admissible
+presentations by explicit structural criteria, then prove that every admitted
+presentation preserves that content and those relations exactly. Nothing
+required is lost and nothing unsupported acquires force. Presentations have
+structure; the account must distinguish that structure from additional facts
+about the presented notion.
+
+Citation, binding, environment, assembly, derivation, retention, quotation,
+and semantic definition are all subject to this requirement. Their intrinsic
+links belong to the exactness account. Where presentations compose, prove
+preservation and reflection of the linked relation over their complete shared
+boundary and state the structural compatibility conditions. Individual
+exactness alone supplies no composition theorem.
+
+"Notion" is an informal word for what is being presented, not a new primitive
+kind. No unique quotation topology, unique grammar, or universal isomorphism
+between adequate presentations is required. Functional recovery within a
+specified class and a convenient canonical witness remain useful proved
+properties; neither establishes that the class is intrinsically privileged.
+
+Develop reusable theory where recurring obligations justify it. Current
+evidence includes constraints and coverage, complete products and occurrence
+families, changes of presentation, intrinsic relations, shared context,
+determined components, and positive recursion. The theory must supply the
+hypotheses under which these constructions preserve the required distinctions.
+Its own operative structures, definitions, and proof claims receive
+presentations and intrinsic-link checks under the same discipline.
 
 ### 0.4 What this plan is
 
@@ -228,9 +274,10 @@ order are nonnormative realization mechanisms.
 Generation identity is exact generation content, independent of containment.
 Trajectory artifacts, manifests, publications, and batches may select generation
 identities but never contribute to them. Adding a successor creates a new
-generation; no predecessor is copied, rewritten, or re-identified. Generation
-quotation is injective and canonical, predecessors resolve to exact formed
-generations, and acyclicity is over the predecessor relation itself.
+generation; no predecessor is copied, rewritten, or re-identified. Every
+admissible generation presentation recovers the exact generation content under
+D-6. Predecessors resolve to exact formed generations, and acyclicity is over
+the predecessor relation itself.
 
 *Amendment (owner, this session).* The principle is kept and *generation
 content* is narrowed:
@@ -273,22 +320,39 @@ sharing, assumptions, and external anchors. Replay combines derivation validity,
 realization, and an explicit retention boundary. No abbreviation identifies
 replay with certification without a recovery theorem.
 
-**D-6 — Quotation.** *(Endorsed.)*
-One structurally defined quotation relation, recognized by RRA structure itself
-rather than by an external decoder; complete and no-extra; unique up to
-permitted renaming of internal quotation occurrences with all exact anchors and
-exposed boundaries fixed. The `quotation_geometry`/`read_value` equivalence
-theorem is removed from the normative argument. Alternative representations may
-later be related by explicit Factor bridges; they are not alternative normative
-quotations. `Functional_Data` is not privileged for anchor identity; the
-incidence-chain `field_code` is provisional.
+**D-6 — Exact presentations, including quotation.** *(Explicit, owner
+correction of 2026-09-08.)*
 
-*Note on the original instruction.* The owner's earlier instruction offered two
-paths: a structurally determined topology, or admissible alternatives proved
-behaviorally equivalent with Factor transport. D-6 selects the first. That
-choice is settled; what the earlier draft got wrong was the obligation, which
-established uniqueness *inside* a chosen grammar rather than determination *of*
-the grammar. §6.13 repairs that.
+The requirement is exactness of admissible presentation classes. Each notion
+constrains the presentations that can represent it: every admitted member
+preserves all required material, distinctions, and intrinsically linked
+relations, and adds no unsupported fact or semantic rule. Presentation
+structure is permitted and must be accounted for. Exactness includes the
+composition of presentations of intrinsically related notions.
+
+Quotation obeys this same discipline. Structural quotation readers and their
+ordinary definitions must recover the represented content and its full
+dependency boundary, with total witnesses over their stated domains and
+explicit compatibility with linked readers. Multiple topologies may satisfy
+these requirements. Choosing a grammar and proving uniqueness within it
+establishes no intrinsic privilege for that grammar. Alternative presentations
+need the exactness and composition results appropriate to their boundaries;
+an arbitrary external decoder or an assumed behavioral equivalence supplies
+neither.
+
+This supersedes the former selection of one structural grammar and the
+quotation-principality and universal-isomorphism obligations built on it.
+Existing totality, recovery, locality, and transport theorems retain their
+stated domains. Their usefulness does not depend on proving that no other
+adequate presentation exists.
+
+Use a general presentation theory to obtain these classes and their compatible
+relations. Its scope follows concrete needs in this system and in the theory
+itself; composition is a required part, not an exhaustive scope declaration.
+The application must identify the independent subject, the structural
+admission conditions, and the general construction used. A new definition
+for each case is justified only when an existing construction does not
+faithfully express the needed boundary.
 
 **D-7 — Premise structure.** *(Endorsed.)*
 Premises are not a set of judgments. A schema or rule instance exposes a finite
@@ -458,6 +522,7 @@ $$
 | P-1 structural dependence | §6.3 citations, §6.6 assembly, §6.11 premise sockets, §6.12 dependency audit, §6.13 quotation, §6.19 SK out of truth |
 | P-2 non-conflation | §6.8 generation core, §6.15 derivation/realization/retention, §6.16 predecessor/dependency/input, §6.17 adoption/validity, §6.18 certificate relations |
 | P-3 irredundancy | §6.1 data basis, §6.10 no second Factor signature, §6.11 catalogue admission, §6.14 removal of `function_like` |
+| P-4 presentation exactness and intrinsic relations | Every presentation stratum; explicit compatibility and composition at each intrinsic link, including §6.13 quotation |
 
 ---
 
@@ -497,7 +562,7 @@ the annotations.
 | `RRA_Publication` | `RRA_Selection` | publications with dependency and evidence selections | — |
 | `RRA_Transaction` | `RRA_Selection` | `Transact`, compare, conflict, multi-locus update (D-3) | `RRA_Publication` |
 | `Factor_Structure` | `RRA_Structural_Syntax` | the recognized Factor-structure pattern and its projections (D-10) | `RRA_Evidence`, `RRA_Assembly`, `RRA_Generation` |
-| `Factor_Quotation` | `Factor_Structure` | the general structural quotation grammar, `PrincipalQuotation` (D-6) | anything semantic |
+| `Factor_Quotation` | `Factor_Structure` | structural quotation classes, exact recovery and linked presentation boundaries (D-6) | anything semantic |
 | `Factor_Presentation` | `Factor_Quotation` | candidate definition presentations (D-1) | — |
 | `Factor_Application` | `Factor_Presentation` | formation, application boundary, target | — |
 | `Factor_Dependency` | `Factor_Application` | the finite meaning-dependency audit | — |
@@ -785,12 +850,16 @@ Factor meaning. Anchor recognition goes through `functional_payload` (`:97`);
 
 **Warrant.** §5's second rule for the misplaced utility; **D-6** for the rest.
 
-**Change.** Move `anchor_family_at` here. Anchor recognition is justified as
-part of the grammar of §6.13 or replaced. `field_code` is provisional in exactly
-D-6's sense.
+**Change.** Move `anchor_family_at` here. State the admitted record, family,
+and citation patterns and prove exact recognition over their full boundaries.
+Their field order and data roles are presentation structure with explicit
+readers. No proof of intrinsic uniqueness of those patterns is required.
+Their links to targets, bindings, environments, and higher presented notions
+must satisfy the common exactness and composition obligations.
 
-**Obligation.** **O-18** anchor recognition is functional, complete, no-extra,
-and depends on no unstated encoding convention.
+**Obligation.** **O-18** anchor recognition is structural, functional, complete,
+and no-extra over its declared admissible class, with explicit target and
+environment dependencies and no unstated encoding convention.
 
 ### 6.5 Fragments — `RRA_Fragment`
 
@@ -884,7 +953,7 @@ $$
 $$
 
 **Obligations.**
-**O-21** generation quotation is injective on cores, and canonical *up to* $\cong_{\partial}$ — the equality D-6 makes available. From $\mathit{Quote}(G,R)\wedge\mathit{Quote}(G,R')$ one may conclude $R\cong_{\partial}R'$, not $R=R'$ as exact addressed artifacts. A unique exact canonical presentation is a strictly stronger claim requiring an addressing result, and the word "canonical" may not carry it unproved.
+**O-21** every formed generation core has an admitted presentation and each admitted presentation recovers exactly one core, including its exact locus, predecessor relation, payload, and recorded cause. The intrinsic links to predecessor resolution, cause recording, and the relevant retained environment are preserved and reflected. Different adequate presentations need not be isomorphic. Any canonical construction or transport theorem states its own class and boundary; it establishes no exclusive presentation choice.
 **O-22** every predecessor resolves to an exact formed generation.
 **O-23** acyclicity over the predecessor relation, on the retained boundary.
 **O-24** identity is invariant under every change to a containing or selecting artifact.
@@ -1030,62 +1099,89 @@ considered exception.
 **O-42** direct circularity letting a definition select its own truth is unformed, outside one separately defined well-founded or monotone construction.
 **O-83** the admission verdict for every imported audit component, with its reason.
 
-### 6.13 Quotation — `Factor_Quotation`, `Foundation_Quotation`
+### 6.13 General presentation theory and quotation — `Presentation_Classes`, `Presentation_Relations`, `Presentation_Closure`, `Factor_Presentation_Classes`
 
-**Defect.** `quotation_geometry` (`RRA_Structural_Syntax.thy:139`) is an external
-function pair; the transport theorem (`Foundation_Reflection.thy:27`) reduces to
-$B(x)\leftrightarrow B(x)$; `reflexive_geometry` shows an artifact is itself.
+**Defect.** The archived `quotation_geometry` was an external function pair,
+and its purported transport theorem reduced to $B(x)\leftrightarrow B(x)$.
+The previous plan also required one intrinsically determined quotation
+grammar. The owner has superseded that requirement: restricting the considered
+grammars and proving uniqueness among them is not the desired result.
 
-**Warrant.** **D-6**.
+**Warrant.** **P-4** and the amended **D-6** apply throughout the system.
 
-**Change.** Remove the geometry machinery from the normative argument. Define
-one structural quotation relation recognized by RRA structure itself.
+**Change.** Develop a reusable presentation theory, with its scope justified
+by the system's actual requirements. Use its constructions for the theory's
+own relevant notions and throughout the system. State required content and
+intrinsic relations independently, constrain the admissible presentations,
+and prove exactness for every admitted member. Concrete quotation grammars
+and compilers instantiate this theory under the same discipline as citations,
+bindings, environments, assemblies, derivations, retention boundaries, and
+semantic definitions.
 
-**The obligation the earlier draft got wrong.** Its obligations established
-uniqueness *inside* a chosen grammar. A grammar can be internally functional and
-still be one arbitrary choice among behaviorally distinguishable grammars. D-6
-selects structural determination, so that is what must be proved:
+The current scope has the following evidence and proof boundaries:
 
-$$
-\boxed{
-\mathit{PrincipalQuotation}(Q)\ \wedge\ \mathit{PrincipalQuotation}(Q')
-\ \Longrightarrow\ Q\cong_{\partial}Q'
-}
-$$
+| Recurring requirement | General result needed |
+|---|---|
+| Complete values admit different enumerations and physical copies | Coverage, admissibility, unique recovery of the entire subject, compatible alternatives, and changes of presentation. Recovery alone does not establish a material account or intrinsic-link exactness. |
+| Records, lists, premise families, and tables combine components | Products, complete sequences, and finite collections with explicit roles, positions, multiplicity, and distinctness conditions appropriate to the subject. |
+| A package or derivation uses a common environment, scope, or occurrence | Constrained and joint classes with soundness for every retained presentation and jointly available witnesses for every required subject. |
+| A complete environment and site determine a native program | A derived-component rule based on the independently proved functional link, retaining both judgments without storing a duplicate program value. |
+| Semantic observations must survive changes of presentation | Preservation and reflection of the independently stated predicates and relations, with explicit shared arguments and intermediate domains. |
+| Definitions and readers may be positively recursive | Exact consequence transport on a proved closed support domain before taking least fixed points. |
+| The presentation theory has operative definitions and rules of its own | Ordinary native schemas and programs, exact presentations of their scopes, and applications of those definitions to compatible presentations of their own structures. |
 
-where the isomorphism fixes all exact anchors and exposed boundaries. The
-property $\mathit{PrincipalQuotation}$ must follow from the requirements of
-quotation — completeness, no-extra, recovery, boundary fixity — and must not
-merely name the grammar chosen. Until this closes, no representative may be
-called irrelevant.
+These results are justified by existing collection, table, quotation, scope,
+and program machinery. Their proof parameters are typed relations, not a
+universal datatype of notions. An arbitrary mathematical relation is not
+thereby a native definition. Operative admission and composition use actual
+ordinary callees whose contracts have been proved. The scope remains open to
+further justified needs; a speculative catalogue of operators supplies no
+additional obligation or semantic primitive.
 
-Split into the general grammar, which SK adequacy needs, and the concrete
-quotation of bootstrap judgment families, which precedes reflection.
+The proof must account for every required field, distinction, dependency, and
+occurrence. It must also show that presentation structure introduces no
+unsupported fact or rule of the presented notion. Structural order or sharing
+may be meaningful, or may serve a stated representation role; neither is
+silently inferred from the host formalization. A clause declaring an encoding
+"exact" is not evidence of exactness.
 
-**Two things the implication does not supply.**
+For every intrinsic relation, give the corresponding structural compatibility
+conditions and prove preservation and reflection of the relation through the
+linked presentations. A citation must reach the same exact target through its
+binding and environment; a presented derivation must use the recovered rule,
+premise occurrences, and retained interpretation; a stored program scope must
+determine the actual definitions and meaning of calls in that scope. These
+are joint obligations, not consequences of separate recovery theorems alone.
 
-*Existence.* The displayed implication holds vacuously if nothing satisfies
-$\mathit{PrincipalQuotation}$. The delivery gate rejects vacuity generally, but
-the obligation belongs here, where the property is introduced: a constructed $Q$,
-with total representability over the declared quotation domain. And completeness,
-no-extra recognition, recovery, and boundary fixity do not by themselves imply
-that only one grammar exists — that implication *is* the substantive theorem.
+Require total representability over each independently stated domain and
+constructed witnesses wherever inhabitance is claimed. A constraint may have
+no valid subjects; that empty case cannot establish adequacy for a larger
+inhabited domain. Totality forces an admissible presentation for every required
+subject while allowing several topologies. Functional recovery, a canonical
+constructor, or uniqueness of a root within one complete profile does not
+require every presentation of the notion to have the same topology. Claimed
+independence, renaming, or transport properties are proved only with their
+actual boundaries.
 
-*Independence from the geometry it is meant to justify.* §6.4 leaves `field_code`
-and anchor recognition provisional and defers them to this grammar. A proof may
-not then fix an arbitrary record geometry in `RRA_Structural_Syntax`, show
-quotation unique *relative to that geometry*, and present the result as
-determination from RRA alone. That is circular. Two routes are admissible: fold
-the lower-level representational choices into the determination argument, or give
-them their own adequacy and independence results first. Either is acceptable;
-neither may be skipped.
+The general term and definition classes support computation and program
+formation. Concrete presentations of bootstrap judgments and their intrinsic
+links precede the corresponding reflection strata. No generic metalevel
+datatype of "notions" is added.
 
 **Obligations.**
-**O-43** recognition is structural, functional, complete, and no-extra.
-**O-44** determination: the principality theorem above.
-**O-45** the grammar recovers the definitions quoted, not merely a value a trusted reader returns.
-**O-79** existence: a constructed $Q$ with $\mathit{PrincipalQuotation}(Q)$, total over the declared domain.
-**O-80** the determination argument does not presuppose the provisional geometry of §6.4; whichever admissible route is taken is stated and discharged.
+**O-43** each structural reader admits exactly its declared presentation class, recovers all required content and boundaries, and rejects unsupported material or claimed fields within that account.
+**O-44** every member of each admissible presentation class is exact for the presented notion. The class constraints and the independently stated content establish the result; uniqueness of a selected topology is not a requirement.
+**O-45** presented semantic definitions recover their actual rules, interfaces, premise occurrences, and dependencies, and preserve and reflect their applications and meaning through the linked presentations.
+**O-79** each claimed presentation domain has total finite representability, with constructed witnesses for every claimed inhabited domain. An empty constrained domain cannot establish adequacy for a larger inhabited domain. A generic intended domain is not reduced to finitely enumerated ground examples.
+**O-80** intrinsic relations between presented notions are preserved and reflected by the jointly admissible presentations. Explicit composition theorems account for shared material, exact targets, binding scopes, occurrence identity, and dependencies wherever relevant. Separate exactness does not discharge this obligation.
+**O-84** develop and apply a general presentation theory whose scope is justified by recurring requirements. Each construction states and proves the conditions needed for exactness, joint coverage, and native interpretation where required. Existing and new presentations use these results wherever applicable; residual special cases state the boundary that requires separate treatment.
+**O-85** the presentation theory's own relevant structures, definitions, contracts, and proofs receive exact presentations and explicit intrinsic-link results under the same discipline. Native self-application of an operative reader is one result within this obligation; it does not by itself establish native checking of all presentation contracts or exactness proofs.
+
+O-44 and O-80 govern every presentation stratum. The ledger must identify the
+class, represented domain, intrinsic links, admitted structural criteria,
+accepted theorems, and any remaining compatibility or composition work.
+Historical requests for quotation principality are superseded rather than
+retained as additional delivery conditions.
 
 ### 6.14 First join: construction — `Factor_Construction`
 
@@ -1441,7 +1537,7 @@ of D-11.
 | `factor_replays` as an alias | **D-5**, **P-2** |
 | `function_like` | **P-3**; substitutes isomorphism for exact identity without a theorem |
 | `external_truth` | the result to be proved may not be a supplied field |
-| `quotation_geometry`, `faithful_geometry`, `requote`, `reflexive_geometry`, and the behavioral-equivalence theorem | **D-6**; the theorem reduces to $B(x)\leftrightarrow B(x)$ |
+| `quotation_geometry`, `faithful_geometry`, `requote`, `reflexive_geometry`, and the behavioral-equivalence theorem | Their supplied decoder and tautological equivalence prove neither presentation exactness nor composition; amended **D-6** permits adequately justified alternatives |
 | `artifact_resolver` in normative signatures | **D-2** |
 | the predecessor–dependency union equation | **P-2** |
 | evidence, publication, authority, and trust fields from generation identity | **D-4** as amended; retention is not succession |
@@ -1493,7 +1589,7 @@ exposes boundaries; it does not stand in for results.
 | Factor structure | O-30 … O-34 |
 | Presentation, application, meaning | O-35 … O-40 |
 | Dependency audit | O-41, O-42, O-83 |
-| Quotation | O-43, O-44, O-45, O-79, O-80 |
+| General presentation theory and quotation; O-44 and O-80 apply throughout | O-43, O-44, O-45, O-79, O-80, O-84, O-85 |
 | Construction | O-46, O-47, O-48 |
 | Realization, replay, certified construction | O-49 … O-53, O-81 |
 | Continuation and authority | O-54, O-55 |
@@ -1516,7 +1612,10 @@ exposes boundaries; it does not stand in for results.
    (§6.5 – §6.9), parallel once step 3 lands.
 6. **Factor structure and its bridge theorem** (§6.10). D-10 makes this the hinge:
    until it closes, "Factor over RRA" is a claim.
-7. **Quotation grammar and principality** (§6.13, general part).
+7. **General presentation theory, its own presentations, and quotation
+   exactness** (§6.13). Derive the scope from concrete requirements, establish
+   reusable constructions and explicit compatibility at intrinsic links, and
+   use them throughout later presentation strata.
 8. **Presentation, application, dependency audit, meaning** (§6.11, §6.12),
    with the candidate admission verdicts.
 9. **The three joins** (§6.14 – §6.17).
@@ -1535,10 +1634,18 @@ or does not. The rest are prerequisites, not progress toward them.
   identities and a stated Isabelle version and base session.
 * No `sorry`, `oops`, `axiomatization`, or equivalent escape.
 * Every obligation in §9 closed by an accepted theorem.
+* Every admitted presentation class accounts for its notion's content and
+  intrinsic relations, with accepted compatibility and composition results.
+  No single-grammar or quotation-principality condition is imposed.
+* The general presentation theory has a scope justified by evidence and is used
+  for its own relevant notions and throughout the system. Each operative native
+  instance has actual clauses and proved contracts; proof-language predicates
+  do not acquire native force merely by being parameters of a theorem.
 * Every existence claim discharged by a construction, not a predicate named for
   the property.
-* Explicit non-vacuity: no adequacy or completeness clause satisfied by an empty
-  domain, an empty antecedent, or a ground-only domain.
+* Explicit non-vacuity: adequacy for an intended inhabited domain is not
+  discharged by an empty or ground-only restriction. Claimed inhabitance has
+  constructed witnesses, and empty constrained cases remain explicit.
 * Audit tooling fails on tool error rather than reporting a pass, and no lexical
   scan is presented as establishing a mathematical property.
 
@@ -1591,9 +1698,9 @@ be the same thing (**P-3** on §5).
 **Q-5** which v6.1 presentation forms and clause rows survive **O-40**.
 **Q-6** whether any recovered Factor relation simplifies extensionally to a
 direct incidence projection (**D-10**'s allowance; derived, never foundational).
-**Q-7** whether the two admissible routes of **O-80** — folding the record
-geometry into the determination argument, or giving it prior independence results
-— are both available, and which is taken.
+**Q-7** which structural compatibility conditions and composition theorems
+discharge **O-80** at each intrinsic link. The former choice between two
+quotation-determination arguments is superseded by the owner's correction.
 **Q-8** whether `Factor_Cause` and `Factor_Certified_Construction` are two
 theories or one (**P-3** on §5); they were separated because their imports
 differ, which is evidence but not proof.
@@ -1606,7 +1713,7 @@ differ, which is evidence but not proof.
 |---|---|
 | 1. Correct the authority classification | **Accepted in full.** §0.2. Reinforced by the owner's statement that the answers were LLM-composed and broadly representative. |
 | 2. Replace P-1 and P-2 | **Accepted.** P-1 restated as structural dependence; P-2 split into non-conflation and P-3 irredundancy, enforced as a pair. |
-| 3. Restore the two-path quotation requirement | **Partly accepted.** The *choice* is not reopened — D-6 selects structural determination. The *obligation* is repaired: §6.13 now requires principality, not uniqueness inside a chosen grammar. |
+| 3. Restore the two-path quotation requirement | **Superseded by the owner on 2026-09-08.** Amended D-6 requires exact admissible presentation classes and exact intrinsic relations throughout the system. No unique topology or principal grammar is required. |
 | 4. Demote the data basis | **Partly accepted.** D-8's direction stands; $\varphi$ faces the admission test by owner ruling; the migration obligation is corrected from exact identity to faithfulness; node ownership is decoupled from quotation. |
 | 5. Closed-anchor TODO; fix cross-profile theorem | **Accepted.** The theorem is withdrawn as wrong; D-11 supplies citations, environments, and self-reference. Calling this "resolved" overstated it: D-11 settles the *direction* of the anchor problem, not its composition. See the second review, row C-1. |
 | 6. Footprints relative, not globally closed | **Accepted in full.** §6.2. |
@@ -1629,8 +1736,8 @@ of defect this pass repairs.
 | **C-1** environments must compose: structural occurrence is not closed semantic use; slots need a scoping rule under repeated reuse; $\mathcal{E}_0$ must not bound future arguments | **Accepted in full.** §6.3, O-74 … O-76. The third is the sharpest: without it the archive's finite-ground limitation returns through the environment instead of the clause set. |
 | **C-2** counterexample to the naive elimination of $\varphi$ | **Accepted, and verified independently** against `RRA_Assembly.thy:119` and `:105`. Bag pushforward sums over the fibre; functional pushforward is a set image and merges idempotently. O-7 is now a commuting square, not a statement about values. |
 | **C-3** O-5 was not satisfiable as written | **Accepted.** A pushforward cannot be total on all candidate gluings and undefined on conflict. Replaced by a total compatibility check plus a determined pushforward on the compatible domain. |
-| **C-4** principality needs an existence obligation, and must not presuppose the geometry it justifies | **Accepted in full.** O-79, O-80. The circularity was real: §6.4 defers `field_code` to §6.13, which would then have proved determination relative to it. |
-| **C-5** "injective and canonical" does not follow from uniqueness up to $\cong_{\partial}$ | **Accepted.** O-21 now states which claim it makes. This was §8's own naming rule failing on the plan's text. |
+| **C-4** principality needs an existence obligation, and must not presuppose the geometry it justifies | **Principality superseded by the owner on 2026-09-08.** Non-vacuous construction remains in O-79. O-44 and O-80 now require presentation exactness and explicit composition for intrinsic links; assumed adequacy or compatibility cannot count as its own proof. |
+| **C-5** "injective and canonical" does not follow from uniqueness up to $\cong_{\partial}$ | **Naming correction retained; presentation requirement amended.** O-21 requires exact core recovery and intrinsic links, without requiring all adequate generation presentations to be isomorphic. |
 | **C-6** generation formation cannot validate a cause; the join has no location | **Accepted in full.** §6.8, `Factor_Cause`, O-78. |
 | **C-7** generic replay must not be construction-specific | **Accepted in full.** §6.15, `Factor_Certified_Construction`, O-81. |
 | **C-8** §6.8 and Open-2 were both unconditional | **Accepted.** The internal contradiction was real. Open-2 is now resolved as Entailed, with the reviewer's sharpening — does the judgment identify one account or assert that one exists — supplying the argument. |

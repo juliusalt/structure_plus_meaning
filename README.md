@@ -5,6 +5,31 @@ material. The owner's principles govern the reconstruction: structurality,
 explicitness, non-conflation, irredundancy, and non-nominality. Individual claims
 in the supplied documents remain subject to proof and alignment review.
 
+The owner's correction of 2026-09-08 replaces the earlier single-grammar and
+quotation-principality requirements. Every notion needing a presentation must
+constrain its admissible class so each admitted presentation preserves all
+required content and adds no unsupported fact. Presentation structure is
+accounted for explicitly. Intrinsic relations and composition with other
+presented notions require joint exactness proofs. This applies to citation,
+binding, environment, assembly, derivation, retention, quotation, and semantic
+definition throughout the system. No primitive kind of "notion" is introduced.
+
+The owner also requires a general presentation theory, used for its own
+relevant notions and for the rest of the system, with its scope justified by
+evidence. The initial theory covers class coverage and recovery, constraints,
+products and complete occurrence families, compatible alternatives, changes
+of presentation, intrinsically determined components, relations, and positive
+recursion. Its conditions preserve the distinctions required by each subject.
+Recovery alone establishes neither a complete material account nor the
+exactness of intrinsic relations.
+
+The general rules now derive term products and lists, complete finite
+collections, site quotations, and stored program scopes. Existing native list,
+artifact, environment, and equality readers provide actual admission and
+relation contracts. Program relocation uses the general fixed-point theorem
+after its independently proved consequence equation. A reusable ordinary
+reader composition checks the actual returned body through a second callee.
+
 The work is incomplete. The current active session establishes the structural
 and data basis, relative footprints, exact artifacts, fragments, and assembly.
 Scoped citation environments, structural citation recognition, record and family representations,
@@ -769,7 +794,7 @@ interpreter material before candidate history, cause, or adoption is chosen.
 This construction complements the earlier bridge that preserves direct copies
 of independent programs. Universal correctness admission for submitted
 interpreters, full transition-protocol admission, the remaining reflection
-strata, genesis, and quotation determination remain open.
+strata, genesis, and the system-wide presentation and composition audit remain open.
 
 Two explicit substitutions now determine a complete pattern and schema. The
 first gives every binder its distinct address payload; the second gives every
@@ -783,7 +808,7 @@ The existing native readers give exact criteria for relative patterns, scoped
 patterns, and complete schemas using these two readings. Every native schema
 has both finite admitted readings. This adds no operator or entry and provides
 a syntax component for finite correctness evidence. Whole-program interpreter
-admission and general determination of quoted artifact identity remain separate.
+admission and the remaining presentation-class and intrinsic-relation audit remain separate.
 
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed
@@ -849,10 +874,39 @@ and every complete presentation is admitted. One fixed native program serves
 all future inputs at distinct entries while preserving its original program
 scope and every prior artifact and binding. Given an independently established
 complete data quotation, admission of its body is exactly the existing
-program-scope quotation relation. Whole-artifact quotation admission and the
-higher generation and authority readers remain to be supplied.
+program-scope quotation relation.
 
-Run `python3 tools/check.py --threads 12 --timeout 90` for one combined build,
+Complete artifact quotation now has an ordinary admission rule. A native
+payload-and-pair reading determines an injective syntax copy on precisely its
+interior. When that interior is the full carrier, equality of every read head
+and all data gives exact equality with the complete copy. The new entry uses
+the actual artifact value's entire carrier in a derived one-artifact
+environment. Its empty slot boundary already entails self-containment.
+Every complete artifact presentation and every formed injective copy is
+admitted, with the actual root and body recovered uniquely within this class.
+
+The general constrained-reading constructor joins that complete reading to
+package-scope retention. The scope class is derived from its presented
+environment and site, the uniquely determined native program, and complete
+quotation. Its ordinary instance recovers the actual stored body and admits
+exactly the existing whole-artifact program-scope quotation relation. The
+recovered environment and program site determine formation and meaning of
+all actual future applications
+in formed extensions retaining that scope. These linked results connect
+artifact data, quotation, environment, package, and semantic definition.
+One fixed native program supplies both entries before future inputs and
+preserves its original scope and every old artifact and binding. The same
+class construction presents the native reader's own scope, and every
+compatible complete presentation is admitted by an actual call to its own
+compiled reading entry. The original scope remains fixed while these
+presentations become future operands.
+
+Further application of the general theory, native presentations and checking
+of its remaining contracts and proofs, higher generation and authority
+readers, complete transition material, remaining reflection strata, genesis,
+and the system-wide presentation audit remain open.
+
+Run `python3 tools/check.py --threads 12 --timeout 300` for one combined build,
 complete error collection, theory-inventory check, and unfinished-proof scan.
 Reports are written to `validation/check.json` and `validation/check-errors.log`.
 The underlying `python3 tools/build.py` wrapper records the Isabelle

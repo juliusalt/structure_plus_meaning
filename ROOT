@@ -3,6 +3,9 @@ session RRA_Factor_Structural_Bootstrap = HOL +
   sessions "HOL-Library"
   directories "theories"
   theories
+    Presentation_Classes
+    Presentation_Relations
+    Presentation_Closure
     Bootstrap_Relations
     Bootstrap_Finite_Closure
     RRA_Core
@@ -162,6 +165,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_List_Profiles
     Factor_Related_Bags
     Factor_Complete_Data_Quotation
+    Factor_Complete_Data_Recognition
     Factor_Artifact_Values
     Factor_Artifact_Comparison
     Factor_Material_Data_Projection
@@ -442,3 +446,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Package_Slot_Reading
     Factor_Package_Coverage
     Factor_Package_Retention_Admission
+    Factor_Complete_Data_Admission
+    Factor_Presentation_Classes
+    Factor_Constrained_Readings
+    Factor_Program_Scope_Reading

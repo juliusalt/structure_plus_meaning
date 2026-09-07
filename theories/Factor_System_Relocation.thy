@@ -1,5 +1,5 @@
 theory Factor_System_Relocation
-  imports Factor_System_Renaming Factor_System_Alpha
+  imports Factor_System_Renaming Factor_System_Alpha Presentation_Closure
 begin
 
 section \<open>Conjugate consequence operators under injective in_definitions relocation\<close>
@@ -74,49 +74,39 @@ theorem renamed_system_positive_meaning:
   assumes formed: "schema_system_formed P" and injective: "inj_on g (system_definitions P)"
   shows "positive_meaning (rename_system g P) = map_prod g id ` positive_meaning P"
 proof -
-  let ?D = "system_definitions P"
-  let ?Q = "rename_system g P"
-  let ?B = "{(d,t). d\<in>?D \<and> (g d,t) \<in> positive_meaning ?Q}"
-  have source_bound: "positive_meaning P \<subseteq> ?D \<times> UNIV"
+  let ?D="system_definitions P \<times> (UNIV::factor_term set)"
+  let ?read="\<lambda>q::'d\<times>factor_term. \<lambda>p. p=map_prod g id q"
+  have lift: "presented_set ?read X=image (map_prod g id) X" for X
+    by (auto simp only: presented_set_def image_def)
+  have boundary: "schema_consequences P X\<subseteq>?D" for X
   proof
-    fix call :: "'d \<times> factor_term" assume member: "call \<in> positive_meaning P"
-    obtain d t where shape: "call=(d,t)" by (cases call)
-    have actual: "(d,t) \<in> positive_meaning P" using member shape by simp
-    have call: "schema_call_formed P d t" by (rule positive_meaning_formed[OF actual])
-    show "call \<in> ?D \<times> UNIV" using schema_call_formed_target[OF call] shape by auto
+    fix q assume member: "q\<in>schema_consequences P X"
+    obtain d t where shape: "q=(d,t)" by (cases q)
+    have call: "schema_call_formed P d t" using member shape by (simp add: schema_consequence_rule)
+    show "q\<in>?D" using schema_call_formed_target[OF call] shape by auto
   qed
-  have image_closed: "schema_consequences ?Q (map_prod g id ` positive_meaning P) \<subseteq> map_prod g id ` positive_meaning P"
-    by (simp only: renamed_system_consequences[OF formed injective source_bound] positive_meaning_unfold[symmetric])
-  have target_subset: "positive_meaning ?Q \<subseteq> map_prod g id ` positive_meaning P"
-    by (rule positive_meaning_least[OF image_closed])
-  have inverse_bound: "?B \<subseteq> ?D \<times> UNIV" by auto
-  have mapped_inverse: "map_prod g id ` ?B \<subseteq> positive_meaning ?Q" by auto
-  have consequence_subset: "schema_consequences ?Q (map_prod g id ` ?B) \<subseteq> schema_consequences ?Q (positive_meaning ?Q)"
-    by (rule monoD[OF schema_consequences_mono mapped_inverse])
-  have image_step: "map_prod g id ` schema_consequences P ?B \<subseteq> positive_meaning ?Q"
-    using consequence_subset
-    by (simp only: renamed_system_consequences[OF formed injective inverse_bound] positive_meaning_unfold[symmetric])
-  have inverse_closed: "schema_consequences P ?B \<subseteq> ?B"
-  proof
-    fix call :: "'d \<times> factor_term" assume member: "call \<in> schema_consequences P ?B"
-    obtain d t where shape: "call=(d,t)" by (cases call)
-    have accepted: "schema_call_formed P d t" using member shape by (simp add: schema_consequence_rule)
-    have in_definitions: "d \<in> ?D" using schema_call_formed_target[OF accepted] by blast
-    have mapped: "map_prod g id call \<in> map_prod g id ` schema_consequences P ?B" by (rule imageI[OF member])
-    have target: "(g d,t) \<in> positive_meaning ?Q" using image_step mapped shape by auto
-    show "call \<in> ?B" using in_definitions target shape by simp
+  have transported: "lfp (schema_consequences (rename_system g P)) =
+    presented_set ?read (lfp (schema_consequences P))"
+  proof (rule presented_least_fixed_point_on[where D="?D",
+      OF schema_consequences_mono schema_consequences_mono])
+    fix X assume "X\<subseteq>?D"
+    show "schema_consequences P X\<subseteq>?D" by (rule boundary)
+  next
+    fix X assume support: "X\<subseteq>?D"
+    show "schema_consequences (rename_system g P) (presented_set ?read X) =
+      presented_set ?read (schema_consequences P X)"
+      by (simp only: lift renamed_system_consequences[OF formed injective support])
   qed
-  have inverse_subset: "positive_meaning P \<subseteq> ?B" by (rule positive_meaning_least[OF inverse_closed])
-  have source_subset: "map_prod g id ` positive_meaning P \<subseteq> positive_meaning ?Q"
-    by (rule subset_trans[OF image_mono[OF inverse_subset] mapped_inverse])
-  show ?thesis using target_subset source_subset by blast
+  show ?thesis using transported by (simp only: positive_meaning_def lift)
 qed
 
 text \<open>
   Relocation commutes with the independent positive consequence operator on
   support relations over the source definitions. Every least-fixed-point fact
-  lies within that boundary. The two least fixed points therefore correspond
-  exactly under the injective definition map, with argument terms unchanged.
+  lies within that boundary. The general presentation fixed-point rule then
+  gives exact correspondence under the injective definition map, with argument
+  terms unchanged. Formation and the consequence equation are established here
+  before that rule is applied.
 \<close>
 
 end

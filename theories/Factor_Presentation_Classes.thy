@@ -1,0 +1,290 @@
+theory Factor_Presentation_Classes
+  imports Presentation_Closure Factor_Environment_Admission Factor_Site_Values
+    Factor_Complete_Data_Recognition
+begin
+
+section \<open>Term constructors carry the generic class constructions\<close>
+
+theorem factor_pair_presentation_class:
+  assumes left: "presentation_class R D A" and right: "presentation_class S E B"
+  shows "presentation_class
+    (\<lambda>z t. \<exists>p q. R (fst z) p \<and> S (snd z) q \<and> t=Pair_Term p q)
+    (\<lambda>z. D (fst z) \<and> E (snd z))
+    (\<lambda>t. \<exists>p q. A p \<and> B q \<and> t=Pair_Term p q)"
+proof -
+  interpret left: presentation_class R D A by (rule left)
+  interpret right: presentation_class S E B by (rule right)
+  let ?pairs="\<lambda>z p. R (fst z) (fst p) \<and> S (snd z) (snd p)"
+  let ?allowed="\<lambda>p. A (fst p) \<and> B (snd p)"
+  let ?form="\<lambda>p. Pair_Term (fst p) (snd p)"
+  have pair: "presentation_class ?pairs (\<lambda>z. D (fst z) \<and> E (snd z)) ?allowed"
+    by (rule presentation_class_product[OF assms])
+  have injective: "inj_on ?form {p. ?allowed p}" by (auto simp: inj_on_def)
+  have constructor: "presentation_class (\<lambda>p t. ?allowed p \<and> t=?form p) ?allowed
+    (\<lambda>t. \<exists>p. ?allowed p \<and> t=?form p)"
+    by (rule injective_presentation_class[OF injective])
+  have composed: "presentation_class
+    (composed_presentation ?pairs (\<lambda>p t. ?allowed p \<and> t=?form p))
+    (\<lambda>z. D (fst z) \<and> E (snd z)) (\<lambda>t. \<exists>p. ?allowed p \<and> t=?form p)"
+    by (rule presentation_class_compose[OF pair constructor])
+  have reads: "composed_presentation ?pairs (\<lambda>p t. ?allowed p \<and> t=?form p) =
+    (\<lambda>z t. \<exists>p q. R (fst z) p \<and> S (snd z) q \<and> t=Pair_Term p q)"
+    by (intro ext)
+      (use left.presentation_boundary right.presentation_boundary in
+        \<open>auto simp: composed_presentation_def; metis fst_conv snd_conv\<close>)
+  have allowed: "(\<lambda>t. \<exists>p. ?allowed p \<and> t=?form p) =
+    (\<lambda>t. \<exists>p q. A p \<and> B q \<and> t=Pair_Term p q)"
+    by (rule ext) (auto; metis fst_conv snd_conv)
+  show ?thesis using composed by (simp only: reads allowed)
+qed
+
+definition data_sequence_presents ::
+  "('a \<Rightarrow> factor_term \<Rightarrow> bool) \<Rightarrow> 'a list \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "data_sequence_presents read xs t \<longleftrightarrow>
+    (\<exists>ps. list_all2 read xs ps \<and> t=data_list_term ps)"
+
+theorem data_sequence_presentation_class:
+  assumes source: "presentation_class read D A"
+  shows "presentation_class (data_sequence_presents read)
+    (\<lambda>xs. \<forall>a\<in>set xs. D a) (\<lambda>t. \<exists>ps. (\<forall>p\<in>set ps. A p) \<and> t=data_list_term ps)"
+proof -
+  interpret source: presentation_class read D A by (rule source)
+  let ?allowed="\<lambda>ps. \<forall>p\<in>set ps. A p"
+  have injective: "inj_on data_list_term {ps. ?allowed ps}"
+    by (auto simp: inj_on_def data_list_term_injective)
+  have constructor: "presentation_class (\<lambda>ps t. ?allowed ps \<and> t=data_list_term ps)
+    ?allowed (\<lambda>t. \<exists>ps. ?allowed ps \<and> t=data_list_term ps)"
+    by (rule injective_presentation_class[OF injective])
+  have composed: "presentation_class
+    (composed_presentation (list_all2 read) (\<lambda>ps t. ?allowed ps \<and> t=data_list_term ps))
+    (\<lambda>xs. \<forall>a\<in>set xs. D a) (\<lambda>t. \<exists>ps. ?allowed ps \<and> t=data_list_term ps)"
+    by (rule presentation_class_compose[OF source.lists constructor])
+  have reads: "composed_presentation (list_all2 read) (\<lambda>ps t. ?allowed ps \<and> t=data_list_term ps)
+    =data_sequence_presents read"
+    by (intro ext)
+      (use source.list_boundaries in \<open>auto simp: composed_presentation_def data_sequence_presents_def\<close>)
+  show ?thesis using composed by (simp only: reads)
+qed
+
+theorem data_collection_presentation_class:
+  assumes source: "presentation_class read D A"
+  shows "presentation_class (data_collection_presents read)
+    (\<lambda>S. finite S \<and> (\<forall>a\<in>S. D a))
+    (presented_predicate (data_sequence_presents read) distinct)"
+proof -
+  interpret source: presentation_class read D A by (rule source)
+  show ?thesis
+  proof (unfold_locales)
+    fix S t assume read: "data_collection_presents read S t"
+    show "finite S \<and> (\<forall>a\<in>S. D a)"
+      using data_collection_presents_finite[OF read] data_collection_presents_sources[OF read]
+        source.subject_boundary by blast
+    show "presented_predicate (data_sequence_presents read) distinct t"
+      using read by (auto simp: data_collection_presents_def data_sequence_presents_def presented_predicate_def)
+  next
+    fix S assume domain: "finite S \<and> (\<forall>a\<in>S. D a)"
+    show "\<exists>t. data_collection_presents read S t"
+      by (rule data_collection_presents_total) (use domain source.total in blast)+
+  next
+    fix t assume "presented_predicate (data_sequence_presents read) distinct t"
+    then show "\<exists>S. data_collection_presents read S t"
+      by (auto simp: data_collection_presents_def data_sequence_presents_def presented_predicate_def)
+  next
+    fix S t T assume first: "data_collection_presents read S t"
+      and second: "data_collection_presents read T t"
+    show "S=T" by (rule data_collection_presents_unique[OF first second])
+      (use source.recovery in blast)
+  qed
+qed
+
+section \<open>Existing recursive clauses admit the constructed list classes\<close>
+
+context list_profile
+begin
+
+theorem presentation_class:
+  assumes element: "presentation_class read D (\<lambda>t. (element_site,t)\<in>positive_meaning P)"
+  shows "presentation_class (data_sequence_presents read) (\<lambda>xs. \<forall>a\<in>set xs. D a)
+    (\<lambda>t. (list_site,t)\<in>positive_meaning P)"
+proof -
+  have source: "presentation_class (data_sequence_presents read) (\<lambda>xs. \<forall>a\<in>set xs. D a)
+    (\<lambda>t. \<exists>ps. (\<forall>p\<in>set ps. (element_site,p)\<in>positive_meaning P) \<and> t=data_list_term ps)"
+    by (rule data_sequence_presentation_class[OF element])
+  have admission: "(\<lambda>t. \<exists>ps. (\<forall>p\<in>set ps. (element_site,p)\<in>positive_meaning P)
+      \<and> t=data_list_term ps) = (\<lambda>t. (list_site,t)\<in>positive_meaning P)"
+    by (rule ext) (simp only: exact; blast)
+  show ?thesis using source by (simp only: admission)
+qed
+
+end
+
+context context_list_profile
+begin
+
+theorem presentation_class:
+  assumes context_formed: "term_formed c"
+    and element: "presentation_class read D (\<lambda>t. (element_site,Pair_Term c t)\<in>positive_meaning P)"
+  shows "presentation_class (data_sequence_presents read) (\<lambda>xs. \<forall>a\<in>set xs. D a)
+    (\<lambda>t. (list_site,Pair_Term c t)\<in>positive_meaning P)"
+proof -
+  have source: "presentation_class (data_sequence_presents read) (\<lambda>xs. \<forall>a\<in>set xs. D a)
+    (\<lambda>t. \<exists>ps. (\<forall>p\<in>set ps. (element_site,Pair_Term c p)\<in>positive_meaning P)
+      \<and> t=data_list_term ps)"
+    by (rule data_sequence_presentation_class[OF element])
+  have admission: "(\<lambda>t. \<exists>ps. (\<forall>p\<in>set ps. (element_site,Pair_Term c p)\<in>positive_meaning P)
+      \<and> t=data_list_term ps) = (\<lambda>t. (list_site,Pair_Term c t)\<in>positive_meaning P)"
+    by (rule ext) (use context_formed in \<open>auto simp: exact\<close>)
+  show ?thesis using source by (simp only: admission)
+qed
+
+end
+
+section \<open>Whole artifacts and environments have native class admission\<close>
+
+interpretation artifact_presentations: presentation_class artifact_value_presents exact_formed
+  "\<lambda>t. (11,t)\<in>positive_meaning artifact_admission_system"
+  by (unfold_locales)
+    (use artifact_value_presents_formed artifact_value_presents_total artifact_value_presents_unique in
+      \<open>auto simp: artifact_admission_exact; blast\<close>)+
+
+interpretation environment_presentations: presentation_class environment_value_presents environment_formed
+  "\<lambda>t. (26,t)\<in>positive_meaning environment_admission_system"
+  by (unfold_locales)
+    (use environment_value_presents_formed environment_value_presents_total environment_value_presents_unique in
+      \<open>auto simp: environment_admission_exact; blast\<close>)+
+
+theorem artifact_identity_presented:
+  "(12,Pair_Term p q)\<in>positive_meaning artifact_identity_system \<longleftrightarrow>
+    presented_relation artifact_value_presents artifact_value_presents (=) p q"
+  by (auto simp: artifact_identity_exact presented_relation_def)
+
+theorem environment_identity_presented:
+  "(27,Pair_Term p q)\<in>positive_meaning environment_identity_system \<longleftrightarrow>
+    presented_relation environment_value_presents environment_value_presents (=) p q"
+  by (auto simp: environment_identity_exact presented_relation_def)
+
+section \<open>Quoting a class preserves its complete intermediate term\<close>
+
+interpretation complete_data_presentations: presentation_class
+  "\<lambda>t p. complete_data_quoted_at (fst p) (snd p) t"
+  "\<lambda>t. term_formed t \<and> self_contained_term t"
+  "\<lambda>p. \<exists>t. self_contained_quoted_at (fst p) (snd p) t (rra_carrier (object_structure (fst p)))"
+proof (unfold_locales)
+  fix t p assume read: "complete_data_quoted_at (fst p) (snd p) t"
+  show "term_formed t \<and> self_contained_term t"
+    using read by (simp add: complete_data_quoted_at_def)
+  show "\<exists>t. self_contained_quoted_at (fst p) (snd p) t (rra_carrier (object_structure (fst p)))"
+    using complete_data_quotation_native[OF read] by blast
+next
+  fix t assume formed: "term_formed t \<and> self_contained_term t"
+  show "\<exists>p. complete_data_quoted_at (fst p) (snd p) t"
+    by (rule exI[of _ "(term_syntax t,[])"])
+      (use complete_data_quotation_total formed in auto)
+next
+  fix p
+  assume "\<exists>t. self_contained_quoted_at (fst p) (snd p) t (rra_carrier (object_structure (fst p)))"
+  then show "\<exists>t. complete_data_quoted_at (fst p) (snd p) t"
+    by (simp only: complete_data_quotation_native_iff)
+next
+  fix a p b
+  assume "complete_data_quoted_at (fst p) (snd p) a" "complete_data_quoted_at (fst p) (snd p) b"
+  then show "a=b" by (rule complete_data_quotation_unique)
+qed
+
+theorem complete_quotation_presentation_class:
+  assumes source: "presentation_class read D A"
+    and boundary: "\<And>t. A t \<Longrightarrow> term_formed t \<and> self_contained_term t"
+  shows "presentation_class
+    (composed_presentation read (\<lambda>t p. complete_data_quoted_at (fst p) (snd p) t)) D
+    (\<lambda>p. \<exists>t. A t \<and> complete_data_quoted_at (fst p) (snd p) t)"
+proof -
+  let ?quote="\<lambda>t p. complete_data_quoted_at (fst p) (snd p) t"
+  let ?native="\<lambda>p. \<exists>t. self_contained_quoted_at (fst p) (snd p) t
+    (rra_carrier (object_structure (fst p)))"
+  have result: "presentation_class (composed_presentation read ?quote) D
+    (\<lambda>p. ?native p \<and> (\<exists>t. A t \<and> ?quote t p))"
+    by (rule presentation_class_compose_on[OF source
+        complete_data_presentations.presentation_class_axioms boundary])
+  have same: "(\<lambda>p. ?native p \<and> (\<exists>t. A t \<and> ?quote t p)) =
+    (\<lambda>p. \<exists>t. A t \<and> ?quote t p)"
+    by (rule ext) (use complete_data_quotation_native in blast)
+  show ?thesis using result by (simp only: same)
+qed
+
+interpretation site_presentations: presentation_class
+  "\<lambda>z t. site_value_presents (fst z) (fst (snd z)) (snd (snd z)) t"
+  "\<lambda>z. environment_formed (fst z) \<and> snd z\<in>environment_positions (fst z)"
+  "\<lambda>t. \<exists>E u r. site_value_presents E u r t"
+proof (unfold_locales)
+  fix z t assume read: "site_value_presents (fst z) (fst (snd z)) (snd (snd z)) t"
+  show "environment_formed (fst z) \<and> snd z\<in>environment_positions (fst z)"
+    using site_value_presents_formed[OF read] read by (auto simp: site_value_presents_def)
+  show "\<exists>E u r. site_value_presents E u r t" using read by blast
+next
+  fix z :: "local_address option artifact_environment \<times> (local_address option\<times>local_address)"
+  assume domain: "environment_formed (fst z) \<and> snd z\<in>environment_positions (fst z)"
+  show "\<exists>t. site_value_presents (fst z) (fst (snd z)) (snd (snd z)) t"
+    by (rule site_value_presents_total) (use domain in auto)
+next
+  fix t assume "\<exists>E u r. site_value_presents E u r t"
+  then obtain E u r where read: "site_value_presents E u r t" by blast
+  show "\<exists>z. site_value_presents (fst z) (fst (snd z)) (snd (snd z)) t"
+    by (rule exI[of _ "(E,u,r)"]) (use read in simp)
+next
+  fix a t b
+  assume first: "site_value_presents (fst a) (fst (snd a)) (snd (snd a)) t"
+    and second: "site_value_presents (fst b) (fst (snd b)) (snd (snd b)) t"
+  show "a=b" using site_value_presents_unique[OF first second] by (cases a; cases b) auto
+qed
+
+theorem site_quotation_presentation_class:
+  "presentation_class
+    (\<lambda>z p. site_value_quoted_at (fst p) (snd p) (fst z) (fst (snd z)) (snd (snd z)))
+    (\<lambda>z. environment_formed (fst z) \<and> snd z\<in>environment_positions (fst z))
+    (\<lambda>p. \<exists>E u r. site_value_quoted_at (fst p) (snd p) E u r)"
+proof -
+  let ?site="\<lambda>z t. site_value_presents (fst z) (fst (snd z)) (snd (snd z)) t"
+  let ?quote="\<lambda>t p. complete_data_quoted_at (fst p) (snd p) t"
+  let ?body="\<lambda>t. \<exists>E u r. site_value_presents E u r t"
+  have composed: "presentation_class (composed_presentation ?site ?quote)
+    (\<lambda>z. environment_formed (fst z) \<and> snd z\<in>environment_positions (fst z))
+    (\<lambda>p. \<exists>t. ?body t \<and> ?quote t p)"
+    by (rule complete_quotation_presentation_class[OF site_presentations.presentation_class_axioms])
+      (use site_value_presents_formed in blast)
+  have reads: "composed_presentation ?site ?quote =
+    (\<lambda>z p. site_value_quoted_at (fst p) (snd p) (fst z) (fst (snd z)) (snd (snd z)))"
+    by (intro ext) (simp only: composed_presentation_def site_value_quoted_at_def)
+  have admission: "(\<lambda>p. \<exists>t. ?body t \<and> ?quote t p) =
+    (\<lambda>p. \<exists>E u r. site_value_quoted_at (fst p) (snd p) E u r)"
+    by (rule ext) (auto simp: site_value_quoted_at_def)
+  show ?thesis using composed by (simp only: reads admission)
+qed
+
+section \<open>The actual schema consequence operator remains the proof boundary\<close>
+
+theorem schema_presented_least_fixed_point:
+  assumes monotone: "mono F"
+    and step: "\<And>X. schema_consequences P (presented_set read X)=presented_set read (F X)"
+  shows "positive_meaning P=presented_set read (lfp F)"
+  unfolding positive_meaning_def
+  by (rule presented_least_fixed_point[OF monotone schema_consequences_mono step])
+
+text \<open>
+  Product and sequence presentations are instances of the general class
+  constructions using the existing pair and data-list constructors. Finite
+  collections add exact membership and distinct subjects while permitting
+  every enumeration. The existing native list profiles supply admission,
+  including the same explicit context at every recursive call.
+
+  Artifact and environment admission and equality are the meanings of existing
+  ordinary definitions. Their complete values include every stored position,
+  data component, use, and binding. Their class instances reuse those contracts.
+  Site quotation composes the site class with complete term quotation and
+  retains the actual-position constraint in the represented environment.
+
+  The final theorem applies the general fixed-point rule only after an equation
+  has been proved for the actual schema consequence operator. No arbitrary
+  mathematical predicate becomes a native primitive through these results.
+\<close>
+
+end

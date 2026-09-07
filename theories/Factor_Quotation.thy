@@ -356,10 +356,10 @@ text \<open>
   occurrences remain outside that interior. These are semantic operands and
   structural equations; no constructor name is attached as data.
 
-  This is an admitted term quotation class, not a general principality or
-  bootstrap reflection theorem. The encoding theory constructs complete finite
-  witnesses for every formed term. Transport preserves
-  its term when the injected syntax observations and external slot values
+  This is an admitted term quotation class. The encoding theory constructs
+  complete finite witnesses for every formed term. Exactness applies to the
+  represented term and its linked citation and binding boundary. Transport
+  preserves its term when the injected syntax observations and external slot values
   agree; opaque target addresses are not renamed with quotation positions.
 \<close>
 

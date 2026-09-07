@@ -693,9 +693,8 @@ Four entries with eight ordinary clauses have exact all-term contracts,
 preserve earlier meanings, and share one fixed closed native program before
 future operands, with one hundred and three definitions and one hundred and
 sixty-seven clauses. A closed derivation establishes its supplied call's
-positive meaning. The remaining replay join must bind the actual application
-to this derivation and check its closed retention. The full transition
-protocol, reflection, genesis, and general quotation determination remain.
+positive meaning. Replay admission below binds the actual application to this
+derivation and checks its closed retention.
 
 Ordinary slot reading now recovers the exact premise, schema, and definition
 slot projections. It reuses complete instantiation, actual binders and records,
@@ -708,8 +707,28 @@ Three entries with six ordinary clauses preserve all source presentations,
 scope orders, and earlier meanings. One fixed closed native program serves
 every future formed operand, with one hundred and six definitions and one
 hundred and seventy-three clauses. These supply the definition-slot component
-needed for complete replay retention; coverage and the application/derivation
-join remain to be composed.
+used by complete replay retention.
+
+Complete replay admission now uses the existing value containing one complete
+environment and three actual sites. Five source branches and four slot branches
+recover the exact retention boundary. Two ordinary list profiles check every
+key projected from the stored artifact and binding lists. Under the actual
+package, application, and graph readings, these checks are exactly closed
+retention; they require no derivation-validity or truth premise.
+
+The retention entry exposes the actual application's callee and operand.
+The replay clause supplies that same call to derivation admission in the same
+environment. Its result is exactly native replay with every distinct ordering
+of the unique identified assumption boundary. A closed admitted replay proves
+the application's native positive meaning. Shared uses, passive literal
+targets, all complete presentations, and arbitrary formed call terms retain
+their existing roles.
+
+Six entries add fifteen ordinary clauses and preserve earlier meanings.
+One fixed closed native program supplies six distinct entry sites before any
+future formed operand, with one hundred and twelve definitions and one hundred
+and eighty-eight clauses. Full transition-protocol admission, reflection,
+genesis, and general quotation determination remain open.
 
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed

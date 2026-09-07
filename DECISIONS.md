@@ -3590,3 +3590,45 @@ meanings remain unchanged. One closed native program with one hundred and six
 definitions and one hundred and seventy-three clauses fixes three distinct
 entry sites before any future formed operand. Replay-retention coverage and
 the actual application/derivation join remain open.
+
+## Replay admission composes complete coverage with the actual application
+
+The existing replay value already stores the complete environment once and
+three actual sites. Reuse that value. The replay query supplies a complete
+assertion-boundary enumeration as its result; no program, call, graph, or
+assumption field is added to the stored value.
+
+Under actual package, application, and graph readings, closed retention is
+equivalent to two finite inclusions. Every stored binding key must belong to
+the grammar's demand set. Every stored use must be a structural source or an
+actual binding target. The existing reachability results prove this
+equivalence, including passive literal targets and shared uses. Whole artifact
+values remain the retention unit.
+
+The source and slot helpers read the role used by their selected branch.
+Other context fields need only be formed until the enclosing retention entry
+admits all three roles. This is an inferred composition choice: keep the
+helpers' exact partial contracts and establish the common formation boundary
+at the join. Rechecking every role inside every branch adds no independent
+condition. Source coverage alone does not justify a stored binding, and a
+binding cycle cannot justify keys that no selected grammar reads.
+
+Two existing row projections recover every key from the actual complete
+environment lists. Two ordinary context-list profiles then check all those
+keys and the final list boundaries. Private witnesses cannot substitute
+smaller coverage lists. Canonical restriction always supplies an admitted
+retention value, independently of derivation validity and call truth.
+
+The retention entry also returns the application's actual callee and operand.
+The replay clause supplies those same two values, in the same environment, to
+derivation admission. This intermediate result is derived and is not stored in
+the replay value. Thus a proof of a different call cannot complete the join.
+Every distinct enumeration of the exact identified assumptions is admitted;
+shared nodes and arbitrary formed call terms retain their existing meanings.
+
+Six entries add fifteen ordinary clauses. All input-term contracts, complete
+presentations, assumption orders, earlier meanings, and the fixed native
+program before every future formed operand are proved. The complete program
+has one hundred and twelve definitions and one hundred and eighty-eight
+clauses. Full transition-protocol admission, reflection, genesis, and general
+quotation determination remain open, followed by the requested final audits.

@@ -244,6 +244,12 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Premise_Slot_Reading
     Factor_Schema_Slot_Reading
     Factor_Definition_Slot_Reading
+    Factor_Retention_Observations
+    Factor_Replay_Source_Reading
+    Factor_Replay_Slot_Reading
+    Factor_Replay_Coverage
+    Factor_Retention_Admission
+    Factor_Replay_Admission
     Factor_Judgment_Values
     Factor_Judgment_Scopes
     Factor_Construction_Claims

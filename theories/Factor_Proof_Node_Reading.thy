@@ -614,9 +614,9 @@ text \<open>
   terms and preserve every earlier meaning. One fixed closed native program
   supplies seven distinct sites before all future formed operands and retains
   its canonical environment. It has ninety-five definitions and one hundred
-  and fifty clauses. Ordinary native checking of complete finite graphs,
-  derivations, and replay retention remains. The full transition protocol,
-  reflection, and genesis also remain.
+  and fifty clauses. Further entries separately derive complete native graph
+  admission and reachability. Derivation and replay-retention checking remains,
+  as do the full transition protocol, reflection, and genesis.
 \<close>
 
 end

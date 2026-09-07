@@ -658,9 +658,23 @@ clause site, complete bindings, and complete links, with no added role tag,
 conclusion, or assumption field. Every complete value uniquely recovers the
 node and links. All source and independent field presentations are admitted.
 Seven entries have exact all-term contracts, preserve earlier meanings, and
-share one fixed closed native program before future operands. Ordinary native
-checking of complete graphs, derivations, and replay retention remains, as do
-the full transition protocol, reflection, and genesis.
+share one fixed closed native program before future operands.
+
+Complete native graph admission now composes those readers with ordinary
+finite-list and key operations. Every premise target lies in its parent's
+strict remaining tail, preserving shared inference nodes while ruling out
+cycles. The complete assertion-origin list retains every parent and socket;
+unique target keys impose exactly the existing assertion-use boundary. A root
+assertion requires no origin and has a single-node graph.
+
+The checked bound is an internal witness. The admitted graph remains the
+unique actual root closure, and a separate ordinary traversal recovers exactly
+its reachable sites. Neither a larger bound nor shared syntax changes that
+projection. Four new entries have exact all-term contracts, admit every source
+presentation, preserve earlier meanings, and share one fixed closed native
+program with ninety-nine definitions and one hundred and fifty-nine clauses.
+Ordinary derivation and replay-retention checking remains, as do the full
+transition protocol, reflection, and genesis.
 
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed

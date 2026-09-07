@@ -3447,6 +3447,63 @@ All seven entries have exact contracts over every term and preserve all
 earlier meanings. One fixed closed native program provides seven distinct
 sites before all future formed operands and retains its canonical
 environment. It has ninety-five definitions and one hundred and fifty
-clauses. Ordinary native checking of complete finite graphs, derivations,
-and replay retention remains. The full transition protocol, reflection,
-genesis, and general quotation determination remain required.
+clauses. The following entries separately derive complete finite graph
+admission and reachability. Derivation, replay retention, the full transition
+protocol, reflection, genesis, and general quotation determination remain
+required.
+
+## Native graph admission retains actual closure and shared nodes
+
+Four definitions with nine ordinary clauses derive complete premise-link
+checking, finite node-bound checking, native graph admission, and actual
+reached-site membership. They compose existing node reading, complete key
+collection, key absence, key uniqueness, data recognition, append, and
+selection. No graph, derivation, replay, or evidence predicate occurs in a
+program clause.
+
+A list of actual node sites with their complete recovered values is an
+internal witness. Each node's premise targets must lie in its strict remaining
+tail. This order is a derived interface choice: it witnesses finite acyclicity
+without storing a rank, order, or new field in a native proof. Every finite
+closed acyclic graph has such an enumeration. Different parents may point
+to the same later inference node.
+
+Each premise lookup must return exactly one child value. An empty value
+identifies the existing assertion form and contributes its actual target
+site paired with its parent and socket. A three-field value identifies the
+existing inference form and contributes no assertion origin. The traversal
+checks every link and its final boundary. A bound reads every listed value
+from the same complete source presentation; the link traversal alone does
+not establish native metadata.
+
+The complete origin list follows the chosen node and link enumeration.
+Every origin occurs once because bound sites and each node's actual premise
+rows are distinct. Ordinary key uniqueness is therefore exactly functional
+assertion use. Distinct premise sockets cannot share an assertion, even when
+their claims would agree. Shared inference nodes remain permitted. A root
+assertion needs no incoming origin and has exactly itself as its graph;
+every nonroot assertion in an admitted rooted graph has one origin.
+
+Bound values may contain arbitrary formed literal targets. Key operations
+inspect their keys without subjecting their values to data-only comparison.
+Only the recovered site-and-origin rows pass through data append. Each node
+retains exactly the raw grammar's syntax boundary; there is no additional
+global disjointness condition across different nodes.
+
+The standalone empty bound admits any formed context and returns no origins.
+Graph admission separately requires actual root membership through the
+complete key collector, so that case cannot admit an empty graph or an
+unreadable root. A larger checked bound may witness existence, but the graph
+is always the actual least root closure with every complete node and premise
+relation retained. Its projection is unique. The membership entry starts at
+that admitted root and follows actual premise rows; extra bound members
+cannot enter its result.
+
+All four entries have exact contracts over every term, admit every complete
+source presentation, and preserve earlier meanings. One fixed closed native
+program provides four distinct sites before all future formed operands and
+retains its canonical environment. It has ninety-nine definitions and one
+hundred and fifty-nine clauses. This admits graph structure independently of
+a supplied root claim. Ordinary checking of complete derivations and replay
+retention remains, as do the full transition protocol, reflection, genesis,
+and general quotation determination.

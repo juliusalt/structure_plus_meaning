@@ -227,6 +227,13 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Binding_Table_Reading
     Factor_Discharge_Table_Reading
     Factor_Proof_Node_Reading
+    Factor_Finite_Graph_Order
+    Factor_Proof_Graph_Bounds
+    Factor_Proof_Link_Checking
+    Factor_Proof_Bound_Values
+    Factor_Proof_Bound_Checking
+    Factor_Proof_Graph_Admission
+    Factor_Proof_Graph_Membership
     Factor_Judgment_Values
     Factor_Judgment_Scopes
     Factor_Construction_Claims

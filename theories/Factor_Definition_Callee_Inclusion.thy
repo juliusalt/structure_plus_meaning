@@ -4,10 +4,10 @@ begin
 
 section \<open>Complete family properties belong to every actual socket\<close>
 
-lemma native_schema_family_property:
+lemma native_schema_family_at_graph:
   assumes family: "native_schema_family_at E u r C" and source: "artifact_at E u R" and graph: "family_at R r M"
-  shows "(\<forall>s S. (s,S)\<in>C \<longrightarrow> P S) \<longleftrightarrow>
-    (\<forall>s a. (s,a)\<in>M \<longrightarrow> (\<exists>S. native_schema_at E u a S \<and> P S))"
+  shows "(c,S)\<in>C \<longleftrightarrow> (\<exists>a. (c,a)\<in>M \<and> native_schema_at E u a S)"
+    and "\<forall>s a. (s,a)\<in>M \<longrightarrow> (\<exists>S. (s,S)\<in>C \<and> native_schema_at E u a S)"
 proof -
   obtain A N where parts: "environment_formed E" "artifact_at E u A" "family_at A r N"
     "single_valued C" "rel_dom C=rel_dom N"
@@ -19,24 +19,42 @@ proof -
   have domain: "rel_dom C=rel_dom M" using parts(5) edges by simp
   have reads: "\<forall>s a. (s,a)\<in>M \<longrightarrow> (\<exists>S. (s,S)\<in>C \<and> native_schema_at E u a S)"
     using parts(6) edges by simp
-  show ?thesis
+  show "(c,S)\<in>C \<longleftrightarrow> (\<exists>a. (c,a)\<in>M \<and> native_schema_at E u a S)"
   proof
-    assume property: "\<forall>s S. (s,S)\<in>C \<longrightarrow> P S"
-    show "\<forall>s a. (s,a)\<in>M \<longrightarrow> (\<exists>S. native_schema_at E u a S \<and> P S)"
-      using reads property by blast
+    assume member: "(c,S)\<in>C"
+    have "c\<in>rel_dom M" using member domain by (auto simp: rel_dom_def)
+    then obtain a where edge: "(c,a)\<in>M" by (auto simp: rel_dom_def)
+    obtain T where read: "(c,T)\<in>C" "native_schema_at E u a T" using reads edge by blast
+    have same: "T=S" by (rule single_valued_outputs[OF parts(4) read(1) member])
+    show "\<exists>a. (c,a)\<in>M \<and> native_schema_at E u a S" using edge read(2) same by blast
   next
-    assume property: "\<forall>s a. (s,a)\<in>M \<longrightarrow> (\<exists>S. native_schema_at E u a S \<and> P S)"
-    show "\<forall>s S. (s,S)\<in>C \<longrightarrow> P S"
-    proof (intro allI impI)
-      fix s S assume member: "(s,S)\<in>C"
-      have "s\<in>rel_dom M" using member domain by (auto simp: rel_dom_def)
-      then obtain a where edge: "(s,a)\<in>M" by (auto simp: rel_dom_def)
-      obtain T where read: "(s,T)\<in>C" "native_schema_at E u a T" using reads edge by blast
-      have same: "T=S" by (rule single_valued_outputs[OF parts(4) read(1) member])
-      obtain U where recovered: "native_schema_at E u a U" "P U" using property edge by blast
-      have equal: "T=U" by (rule native_schema_unique[OF read(2) recovered(1)])
-      show "P S" using recovered(2) same equal by simp
-    qed
+    assume "\<exists>a. (c,a)\<in>M \<and> native_schema_at E u a S"
+    then obtain a where edge: "(c,a)\<in>M" and raw: "native_schema_at E u a S" by blast
+    obtain T where read: "(c,T)\<in>C" "native_schema_at E u a T" using reads edge by blast
+    have same: "T=S" by (rule native_schema_unique[OF read(2) raw])
+    show "(c,S)\<in>C" using read(1) same by simp
+  qed
+  show "\<forall>s a. (s,a)\<in>M \<longrightarrow> (\<exists>S. (s,S)\<in>C \<and> native_schema_at E u a S)" by (rule reads)
+qed
+
+lemma native_schema_family_property:
+  assumes family: "native_schema_family_at E u r C" and source: "artifact_at E u R" and graph: "family_at R r M"
+  shows "(\<forall>s S. (s,S)\<in>C \<longrightarrow> P S) \<longleftrightarrow>
+    (\<forall>s a. (s,a)\<in>M \<longrightarrow> (\<exists>S. native_schema_at E u a S \<and> P S))"
+proof
+  assume property: "\<forall>s S. (s,S)\<in>C \<longrightarrow> P S"
+  show "\<forall>s a. (s,a)\<in>M \<longrightarrow> (\<exists>S. native_schema_at E u a S \<and> P S)"
+    using native_schema_family_at_graph(2)[OF family source graph] property by blast
+next
+  assume property: "\<forall>s a. (s,a)\<in>M \<longrightarrow> (\<exists>S. native_schema_at E u a S \<and> P S)"
+  show "\<forall>s S. (s,S)\<in>C \<longrightarrow> P S"
+  proof (intro allI impI)
+    fix s S assume member: "(s,S)\<in>C"
+    obtain a where edge: "(s,a)\<in>M" and raw: "native_schema_at E u a S"
+      using member by (simp only: native_schema_family_at_graph(1)[OF family source graph]) blast
+    obtain T where read: "native_schema_at E u a T" "P T" using property edge by blast
+    have same: "S=T" by (rule native_schema_unique[OF raw read(1)])
+    show "P S" using read(2) same by simp
   qed
 qed
 

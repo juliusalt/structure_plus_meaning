@@ -211,6 +211,13 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Located_List
     Factor_Root_Family_Reading
     Factor_Package_Admission
+    Factor_Definition_Clause_Reading
+    Factor_Definition_Edge_Reading
+    Factor_Package_Membership
+    Factor_Program_Call_Admission
+    Factor_Application_Admission
+    Factor_Program_Call_List
+    Factor_Admitted_Instantiation
     Factor_Judgment_Values
     Factor_Judgment_Scopes
     Factor_Construction_Claims

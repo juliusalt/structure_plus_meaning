@@ -626,8 +626,26 @@ root set. An empty package retains an actual artifact and empty family root,
 and an unreadable reached definition cannot be omitted. Three new entries
 have exact all-term contracts, permit every complete source presentation,
 preserve earlier meanings, and share one fixed closed native program before
-future operands. Reached-site call admission and complete admitted instances
-remain required.
+future operands.
+
+Actual definition-clause selection now retains both the requested socket and
+its unique schema root. Complete instance projections recover the actual
+prospective edges, and positive traversal from admitted package roots reaches
+exactly the existing definition domain, including cycles. The shared call
+entry checks membership and the actual interface at the supplied operand.
+Every reached definition admits some operand. Actual application admission
+joins its complete reading to that same call boundary.
+
+Complete admitted-instance checking now joins the actual package clause,
+one complete substitution, every material condition, and the head and all
+prospective-call interfaces. It derives exactly the existing admitted-instance
+relation, preserving every socket, arbitrary formed literal operands, and
+all independent source and row presentations. Outputs are unique up to row
+enumeration. Missing or extra call sockets, unsatisfied material conditions,
+and unformed callees cannot be omitted. Seven new entries preserve earlier
+meanings and share one fixed closed native program before future operands.
+Finite correctness evidence checking, the full transition protocol,
+reflection, and genesis remain required.
 
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed

@@ -3314,6 +3314,74 @@ All three entries have exact contracts over every term, permit every complete
 source presentation, and preserve earlier meanings. One fixed closed native
 program has three distinct sites before future formed operands and retains
 its canonical environment. It has eighty-one definitions and one hundred
-and thirty-one clauses. Reached-site call admission, complete admitted
-instances, finite evidence checking, the full transition protocol,
-reflection, genesis, and general quotation determination remain required.
+and thirty-one clauses. The following entries join reached-site and interface
+admission to complete instances. Finite evidence checking, the full transition
+protocol, reflection, genesis, and general quotation determination remain
+required.
+
+## Actual clause membership and every call share one package
+
+Seven definitions with nine ordinary clauses derive actual clause selection,
+definition edges, package membership, generic call admission, actual
+application admission, complete call lists, and admitted schema instances.
+They reuse existing grammar, complete instantiation, material checking, row
+projection, selection, and context-carrying lists. No semantic primitive is
+added.
+
+A clause socket selects its actual row in the actual definition's complete
+family. The result retains the unique schema root at that row. Equal schemas
+at other roots cannot substitute for it. A shared raw family lemma now
+identifies both complete socket coverage and the schema at each actual row;
+the previous universal family-property proof reuses that result. Actual
+clauses and complete instance projections then expose exactly the existing
+prospective definition edges, independently of material and call truth.
+
+Package membership starts from the admitted actual root family and follows
+those actual edges by positive recursion. The proof identifies its result
+with the existing least reached definition domain in both directions.
+Hidden closure bounds cannot supply additional members. An empty package
+has no members, and positive dependency cycles require no acyclicity
+condition or traversal limit.
+
+The package context groups the complete environment, package use, and package
+root, then accompanies a supplied subject. This tuple grouping is a derived
+interface choice that permits reuse of the existing context-carrying list
+profile. The same context is used for a definition site, a callee-operand
+pair, an actual application site, and a complete call list. Each operation
+has its own actual fixed native entry; these subject layouts add no native
+grammar constructor or nominal dispatcher.
+
+The shared call entry checks both membership in that actual package and
+the actual definition interface at the supplied operand. Every reached
+definition has some admissible operand. Application admission reuses the
+complete application reader and then this same call entry. The list entry
+checks every callee and operand against one unchanged package. Operands may
+be arbitrary formed terms, including literal targets. Repeated equal calls
+remain separate occurrences. Its standalone empty case only admits context
+formation; the complete instance entry separately admits its head call and
+package even when the call list is empty.
+
+The complete instance entry binds the head and complete substitution to an
+actual clause of the actual reached definition. Its material conditions and
+every ordinary premise come from the same complete schema instance. It
+checks the head interface and all prospective-call interfaces under the
+same package. Every material row is read and checked before the hidden
+material list is discarded. That list is an existential witness in this view;
+the existing admitted-instance relation already has no material-row output
+field. Complete binding and call rows remain supplied explicitly.
+
+Acceptance is exactly the existing admitted-instance relation with distinct
+complete row presentations. Every admitted instance permits all independent
+row orders and every complete source presentation. Given its substitution,
+the result is unique up to row enumeration. This does not require an
+instance to exist when a clause's interfaces or material equations prevent
+one. Missing or extra call sockets, false material conditions, and unformed
+prospective callees are rejected. Prospective-call truth remains separate
+from their formation.
+
+All seven entries have exact contracts over every term and preserve earlier
+meanings. One fixed closed native program has seven distinct sites before
+future formed operands and retains its canonical environment. It has
+eighty-eight definitions and one hundred and forty clauses. Finite correctness
+evidence checking, the full transition protocol, reflection, genesis, and
+general quotation determination remain required.

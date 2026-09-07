@@ -276,9 +276,10 @@ text \<open>
   All three entries have exact contracts over every term and preserve earlier
   meanings. One fixed closed native program has three distinct sites before
   all future formed operands and retains its canonical environment. It has
-  eighty-one definitions and one hundred and thirty-one clauses. Reached-site
-  call admission, complete admitted instances, finite evidence checking,
-  the full transition protocol, reflection, and genesis remain required.
+  eighty-one definitions and one hundred and thirty-one clauses. Subsequent
+  entries join reached-site and interface admission to complete instances.
+  Finite evidence checking, the full transition protocol, reflection, and
+  genesis remain required.
 \<close>
 
 end

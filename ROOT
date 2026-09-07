@@ -199,6 +199,9 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Premise_Instances
     Factor_Premise_Row_Instantiation
     Factor_Premise_Family_Instantiation
+    Factor_Schema_Instantiation
+    Factor_Material_Checking
+    Factor_Schema_Material_Checking
     Factor_Judgment_Values
     Factor_Judgment_Scopes
     Factor_Construction_Claims

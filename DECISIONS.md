@@ -3131,3 +3131,52 @@ all future formed operands and retains its canonical environment. It has
 sixty-five definitions and one hundred and ten clauses. Schema and package
 admission, finite evidence checking, the complete transition protocol,
 reflection, genesis, and general quotation determination remain required.
+
+## Whole-schema instantiation and material checking have separate meanings
+
+Four definitions with five clauses extend the admitted reader. Whole-schema
+instantiation uses one ordinary clause to read the actual three-field record,
+binder family, conclusion, and complete mixed premise family. One complete
+binding table accompanies every pattern. The union of all used variables must
+equal the actual declared scope. A variable used only in a material operand is
+therefore required just as a variable used in the conclusion or a call is.
+
+The disjointness conditions are represented separately because the existing
+schema grammar does not specify one aggregate interior. The outer record must
+be disjoint from the binder interior, conclusion interior, and family root.
+Both the binder root and family root are outside the conclusion interior and
+distinct from each other. A family root is not additionally required to be
+outside the declared variable set. Nor are different premise interiors required
+to be disjoint, or new restrictions imposed on external slots. These choices
+preserve the established relative grammar over its full domain. No additional
+schema encoding or nominal discriminator is introduced.
+
+The material-observation entry uses the existing material premise and reuses
+its existing five-variable pattern. Its argument is the existing five-operand
+tuple, and its truth is exactly the complete material equation. The row entry
+uses ordinary recursion to check every supplied socket key and operand tuple,
+including the final empty tail. It preserves the supplied sequence, including
+repeated rows. Its own meaning does not claim that the sequence is a complete
+schema family; that boundary belongs to the schema-instantiation entry.
+
+The final ordinary clause joins those separate entries. The equivalence proof
+starts from every actual material pattern's instance under the same complete
+binding table. It establishes exactly the existing schema material-satisfaction
+judgment. Missing, extra, or role-swapped socket domains cannot pass schema
+instantiation, even if every supplied material row individually holds. An empty
+material list cannot stand in for a nonempty actual material projection.
+
+All four entries have exact contracts over every term and preserve earlier
+meanings. Both schema entries permit every complete source presentation and
+independent substitution, call-row, and material-row orders. Their conclusions
+and projections are unique up to enumeration. Schema instantiation is total for
+valid native schemas and complete formed bindings. The combined entry has an
+output exactly when the actual material equations hold.
+
+One fixed closed native program supplies four distinct sites before all future
+formed operands and retains its canonical environment. It has sixty-nine
+definitions and one hundred and fifteen clauses. The complete admitted-schema
+instance additionally requires the actual program's head and prospective-call
+interfaces. Those checks, definition and package admission, prospective-call
+truth, finite evidence checking, the full transition protocol, reflection,
+genesis, and general quotation determination remain required.

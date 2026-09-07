@@ -579,6 +579,20 @@ and preserved earlier meanings. Family outputs are unique up to enumeration
 and total for valid inputs, with missing and extra sockets rejected and one
 fixed native program before future operands.
 
+Whole-schema instantiation now joins the actual binder, conclusion, and mixed
+premise family under one complete substitution. Every declared variable must be
+used, and the existing schema separation conditions are preserved individually.
+The conclusion and both complete socket projections are unique up to their
+independent enumeration orders.
+
+Separate entries check the existing five-operand material equation and every
+material output row. Their composition with schema instantiation is proved
+equivalent to the existing schema material-satisfaction judgment. Empty supplied
+rows cannot omit actual material sockets. All four entries have exact all-term
+contracts, preserve earlier meanings, and share one fixed native program before
+future operands. Definition interfaces, prospective-call truth, and finite
+evidence checking remain separate.
+
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed
 terms, with truth exactly when the two terms agree. Its argument domain and

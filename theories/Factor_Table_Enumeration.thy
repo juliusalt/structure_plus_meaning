@@ -1,0 +1,220 @@
+theory Factor_Table_Enumeration
+  imports Factor_Table_Assembly
+begin
+
+section \<open>Counted interiors retain every row occurrence\<close>
+
+lemma distinct_concat_indexed:
+  "distinct (concat xs) \<longleftrightarrow>
+    (\<forall>i<length xs. distinct (xs!i)) \<and>
+    (\<forall>i<length xs. \<forall>j<length xs. i\<noteq>j \<longrightarrow> set (xs!i)\<inter>set (xs!j)={})"
+proof (induction xs)
+  case Nil
+  then show ?case by simp
+next
+  case (Cons x xs)
+  show ?case
+  proof
+    assume distinct: "distinct (concat (x#xs))"
+    have first: "distinct x" and tail: "distinct (concat xs)"
+      and separate: "set x\<inter>set (concat xs)={}" using distinct by auto
+    have rows: "\<forall>i<length xs. distinct (xs!i)"
+      and pairs: "\<forall>i<length xs. \<forall>j<length xs. i\<noteq>j \<longrightarrow> set (xs!i)\<inter>set (xs!j)={}"
+      using tail Cons.IH by blast+
+    have all: "\<forall>i<length (x#xs). distinct ((x#xs)!i)"
+      by (intro allI impI; rename_tac i; case_tac i) (use first rows in auto)
+    have head_child: "set x\<inter>set (xs!i)={}" if "i<length xs" for i
+    proof -
+      have member: "xs!i\<in>set xs" by (rule nth_mem[OF that])
+      have included: "set (xs!i)\<subseteq>set (concat xs)" using member by auto
+      show ?thesis using separate included by blast
+    qed
+    have pair: "\<forall>i<length (x#xs). \<forall>j<length (x#xs).
+      i\<noteq>j \<longrightarrow> set ((x#xs)!i)\<inter>set ((x#xs)!j)={}"
+      by (intro allI impI; rename_tac i j; case_tac i; case_tac j)
+        (use pairs head_child in auto)
+    show "(\<forall>i<length (x#xs). distinct ((x#xs)!i)) \<and>
+      (\<forall>i<length (x#xs). \<forall>j<length (x#xs). i\<noteq>j \<longrightarrow> set ((x#xs)!i)\<inter>set ((x#xs)!j)={})"
+      using all pair by blast
+  next
+    assume indexed: "(\<forall>i<length (x#xs). distinct ((x#xs)!i)) \<and>
+      (\<forall>i<length (x#xs). \<forall>j<length (x#xs). i\<noteq>j \<longrightarrow> set ((x#xs)!i)\<inter>set ((x#xs)!j)={})"
+    have all_rows: "\<forall>i<length (x#xs). distinct ((x#xs)!i)"
+      and all_pairs: "\<forall>i<length (x#xs). \<forall>j<length (x#xs).
+        i\<noteq>j \<longrightarrow> set ((x#xs)!i)\<inter>set ((x#xs)!j)={}"
+      using indexed by blast+
+    have first: "distinct x" using all_rows[rule_format, of 0] by simp
+    have row: "distinct (xs!i)" if "i<length xs" for i
+      using all_rows[rule_format, of "Suc i"] that by simp
+    have pair: "set (xs!i)\<inter>set (xs!j)={}" if "i<length xs" "j<length xs" "i\<noteq>j" for i j
+      using all_pairs[rule_format, of "Suc i" "Suc j"] that by simp
+    have rows: "\<forall>i<length xs. distinct (xs!i)" using row by blast
+    have pairs: "\<forall>i<length xs. \<forall>j<length xs. i\<noteq>j \<longrightarrow> set (xs!i)\<inter>set (xs!j)={}"
+      using pair by blast
+    have each: "set x\<inter>set (xs!i)={}" if "i<length xs" for i
+      using all_pairs[rule_format, of 0 "Suc i"] that by simp
+    have each_set: "set x\<inter>set y={}" if member: "y\<in>set xs" for y
+    proof -
+      obtain i where index: "i<length xs" "xs!i=y"
+        using iffD1[OF in_set_conv_nth member] by blast
+      show ?thesis using each[OF index(1)] index(2) by simp
+    qed
+    have separate: "set x\<inter>set (concat xs)={}" using each_set by auto
+    have tail: "distinct (concat xs)" using Cons.IH rows pairs by blast
+    show "distinct (concat (x#xs))" using first tail separate by simp
+  qed
+qed
+
+section \<open>Every complete output order has corresponding actual physical rows\<close>
+
+theorem native_table_enumeration:
+  fixes read :: "local_address \<Rightarrow> ('k\<times>'v) \<Rightarrow> local_address set \<Rightarrow> local_address set \<Rightarrow> bool"
+  assumes table: "native_table_at E u r read (set qs) I K" and order: "distinct qs"
+    and finite_rows: "\<And>a q J A. read a q J A \<Longrightarrow> finite J \<and> finite A"
+  shows "\<exists>R ps rs Js As. artifact_at E u R \<and> family_at R r (set (zip ps rs)) \<and>
+    distinct ps \<and> distinct (map fst qs) \<and>
+    length ps=length qs \<and> length rs=length qs \<and> length Js=length qs \<and> length As=length qs \<and>
+    (\<forall>i<length qs. read (rs!i) (qs!i) (set (Js!i)) (set (As!i)) \<and> distinct (Js!i) \<and> distinct (As!i)) \<and>
+    distinct (concat Js) \<and> insert r (set ps)\<inter>set (concat Js)={} \<and>
+    I=insert r (set ps\<union>set (concat Js)) \<and> K=set (concat As) \<and> I\<inter>K={}"
+proof -
+  obtain R M where source: "artifact_at E u R" and family: "family_at R r M"
+    and fields: "single_valued (native_table_rows M read)"
+      "rel_dom (native_table_rows M read)=rel_dom M"
+      "inj_on (native_row_keys (native_table_rows M read)) (rel_dom (native_table_rows M read))"
+      "\<forall>s q J A t z L B. (s,q,J,A)\<in>native_table_rows M read \<longrightarrow>
+        (t,z,L,B)\<in>native_table_rows M read \<longrightarrow> s\<noteq>t \<longrightarrow> J\<inter>L={}"
+      "insert r (rel_dom M)\<inter>native_row_interiors (native_table_rows M read)={}"
+      "set qs=native_row_values (native_table_rows M read)"
+      "I=insert r (rel_dom M\<union>native_row_interiors (native_table_rows M read))"
+      "K=native_row_slots (native_table_rows M read)" "I\<inter>K={}"
+    using table by (auto simp: native_table_at_def Let_def)
+  let ?H="native_table_rows M read"
+  let ?P="\<lambda>q (s,a,J,A). (s,a)\<in>M \<and> read a q (set J) (set A) \<and> distinct J \<and> distinct A"
+  have witnesses: "\<forall>q\<in>set qs. \<exists>x. ?P q x"
+  proof (intro ballI)
+    fix q assume member: "q\<in>set qs"
+    obtain s a J A where row: "(s,a)\<in>M" "read a q J A"
+      using member fields(6) by (auto simp: native_row_value_member native_table_rows_member)
+    obtain Js where js: "set Js=J" "distinct Js"
+      using finite_distinct_list finite_rows[OF row(2)] by blast
+    obtain As where as_rows: "set As=A" "distinct As"
+      using finite_distinct_list finite_rows[OF row(2)] by blast
+    show "\<exists>x. ?P q x" by (rule exI[of _ "(s,a,Js,As)"]) (use row js as_rows in simp)
+  qed
+  obtain f where choice: "\<forall>q\<in>set qs. ?P q (f q)" using bchoice[OF witnesses] by blast
+  let ?s="\<lambda>q. fst (f q)"
+  let ?a="\<lambda>q. fst (snd (f q))"
+  let ?J="\<lambda>q. fst (snd (snd (f q)))"
+  let ?A="\<lambda>q. snd (snd (snd (f q)))"
+  have chosen: "(?s q,?a q)\<in>M" "read (?a q) q (set (?J q)) (set (?A q))"
+    "distinct (?J q)" "distinct (?A q)" if "q\<in>set qs" for q
+  proof -
+    have selected: "(?s q,?a q)\<in>M \<and> read (?a q) q (set (?J q)) (set (?A q)) \<and>
+      distinct (?J q) \<and> distinct (?A q)"
+      using choice[rule_format, OF that] by (simp add: split_def)
+    show "(?s q,?a q)\<in>M" "read (?a q) q (set (?J q)) (set (?A q))"
+      "distinct (?J q)" "distinct (?A q)" using selected by blast+
+  qed
+  have chosen_row: "(?s q,q,set (?J q),set (?A q))\<in>?H" if "q\<in>set qs" for q
+    using chosen(1,2)[OF that] by (auto simp: native_table_rows_member)
+  have origin: "q\<in>set qs \<and> s=?s q \<and> J=set (?J q) \<and> A=set (?A q)"
+    if actual: "(s,q,J,A)\<in>?H" for s q J A
+  proof -
+    have member: "q\<in>set qs" using actual fields(6) by (auto simp: native_row_value_member)
+    have other: "(?s q,q,set (?J q),set (?A q))\<in>?H" by (rule chosen_row[OF member])
+    have keys: "native_row_keys ?H s=fst q" "native_row_keys ?H (?s q)=fst q"
+      using rel_value_eq[OF fields(1) actual] rel_value_eq[OF fields(1) other]
+      by (simp_all add: native_row_keys_def)
+    have sd: "s\<in>rel_dom ?H" by (rule rel_domI[OF actual])
+    have td: "?s q\<in>rel_dom ?H" by (rule rel_domI[OF other])
+    have same: "s=?s q" by (rule inj_onD[OF fields(3) _ sd td]) (simp add: keys)
+    have same_fields: "(q,J,A)=(q,set (?J q),set (?A q))"
+      using single_valued_outputs[OF fields(1) actual] other same by blast
+    show ?thesis using member same same_fields by simp
+  qed
+  let ?ps="map ?s qs"
+  let ?rs="map ?a qs"
+  let ?Js="map ?J qs"
+  let ?As="map ?A qs"
+  have occurrence_map: "inj_on ?s (set qs)"
+  proof (rule inj_onI)
+    fix q z assume q: "q\<in>set qs" and z: "z\<in>set qs" and same: "?s q=?s z"
+    have left: "(?s q,q,set (?J q),set (?A q))\<in>?H" by (rule chosen_row[OF q])
+    have right: "(?s q,z,set (?J z),set (?A z))\<in>?H" using chosen_row[OF z] same by simp
+    show "q=z" using single_valued_outputs[OF fields(1) left right] by simp
+  qed
+  have ports: "distinct ?ps" using order occurrence_map by (simp add: distinct_map)
+  have output_keys: "distinct (map fst qs)"
+    using order native_row_values_functional[OF fields(1,3)] fields(6) by (simp add: distinct_keys_iff)
+  have complete: "M=set (zip ?ps ?rs)"
+  proof (rule set_eqI)
+    fix x :: "local_address\<times>local_address"
+    obtain s a where shape: "x=(s,a)" by (cases x)
+    show "x\<in>M \<longleftrightarrow> x\<in>set (zip ?ps ?rs)"
+    proof
+      assume member: "x\<in>M"
+      have sd: "s\<in>rel_dom ?H" using member shape fields(2) by (auto simp: rel_dom_def)
+      obtain q J A where row: "(s,q,J,A)\<in>?H" using sd by (auto simp: rel_dom_def)
+      have at: "q\<in>set qs" "s=?s q" using origin[OF row] by blast+
+      have raw: "(s,a)\<in>M" and other: "(s,?a q)\<in>M" using member shape chosen(1)[OF at(1)] at(2) by simp_all
+      have same: "a=?a q" by (rule single_valued_outputs[OF _ raw other]) (use family in \<open>simp add: family_at_def\<close>)
+      obtain i where index: "i<length qs" "qs!i=q"
+        using iffD1[OF in_set_conv_nth at(1)] by blast
+      show "x\<in>set (zip ?ps ?rs)" by (simp only: in_set_zip; rule exI[of _ i])
+        (use index shape at(2) same in auto)
+    next
+      assume member: "x\<in>set (zip ?ps ?rs)"
+      obtain i where index: "i<length qs" "s=?s (qs!i)" "a=?a (qs!i)"
+        using member shape by (auto simp: in_set_zip)
+      show "x\<in>M" using chosen(1)[OF nth_mem[OF index(1)]] index shape by simp
+    qed
+  qed
+  have domain: "rel_dom M=set ?ps" using complete zip_domain[of ?ps ?rs] by simp
+  have interiors: "native_row_interiors ?H=set (concat ?Js)"
+  proof (rule set_eqI)
+    fix a
+    show "a\<in>native_row_interiors ?H \<longleftrightarrow> a\<in>set (concat ?Js)"
+      using origin chosen_row by (auto simp: native_row_interior_member; blast)
+  qed
+  have slots: "native_row_slots ?H=set (concat ?As)"
+  proof (rule set_eqI)
+    fix a
+    show "a\<in>native_row_slots ?H \<longleftrightarrow> a\<in>set (concat ?As)"
+      using origin chosen_row by (auto simp: native_row_slot_member; blast)
+  qed
+  have row_reads: "\<forall>i<length qs. read (?rs!i) (qs!i) (set (?Js!i)) (set (?As!i)) \<and>
+      distinct (?Js!i) \<and> distinct (?As!i)"
+    using chosen by (auto dest: nth_mem)
+  have row_separation: "\<forall>i<length qs. \<forall>j<length qs. i\<noteq>j \<longrightarrow> set (?Js!i)\<inter>set (?Js!j)={}"
+  proof (intro allI impI)
+    fix i j assume il: "i<length qs" and jl: "j<length qs" and different: "i\<noteq>j"
+    have sites: "?s (qs!i)\<noteq>?s (qs!j)"
+      using ports il jl different by (auto simp: distinct_conv_nth)
+    have separated: "set (?J (qs!i))\<inter>set (?J (qs!j))={}"
+      by (rule fields(4)[rule_format, OF chosen_row[OF nth_mem[OF il]]
+        chosen_row[OF nth_mem[OF jl]] sites])
+    show "set (?Js!i)\<inter>set (?Js!j)={}"
+      using separated il jl by simp
+  qed
+  have separate_interiors: "distinct (concat ?Js)"
+    by (simp only: distinct_concat_indexed) (use row_reads row_separation in auto)
+  show ?thesis
+    by (rule exI[of _ R], rule exI[of _ ?ps], rule exI[of _ ?rs], rule exI[of _ ?Js], rule exI[of _ ?As])
+      (use source family complete ports output_keys row_reads separate_interiors fields(5,7-9) domain interiors slots in auto)
+qed
+
+text \<open>
+  Every distinct enumeration of the complete decoded table has a matching
+  enumeration of its actual physical sockets. The correspondence follows
+  from the table's injective decoded keys and complete functional row reading.
+  It applies to arbitrary row values and uses no ordering or data-only
+  comparison on those values. Repeated values at different keys remain valid.
+
+  Interior lists are temporary witnesses of the existing finite sets. Their
+  concatenation is distinct exactly when every row interior is distinct and
+  interiors at different list occurrences are disjoint. Empty interiors do
+  not need an artificial occurrence value.
+\<close>
+
+end

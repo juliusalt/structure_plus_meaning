@@ -218,6 +218,15 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Application_Admission
     Factor_Program_Call_List
     Factor_Admitted_Instantiation
+    Factor_Boundary_Lists
+    Factor_Site_Citation_Reading
+    Factor_Site_Link_Reading
+    Factor_Application_Vector
+    Factor_Site_Link_Vector
+    Factor_Table_Reading_Profiles
+    Factor_Binding_Table_Reading
+    Factor_Discharge_Table_Reading
+    Factor_Proof_Node_Reading
     Factor_Judgment_Values
     Factor_Judgment_Scopes
     Factor_Construction_Claims
@@ -237,6 +246,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Graph_Metadata
     Factor_Native_References
     Factor_Native_Tables
+    Factor_Table_Metadata
     Factor_Proof_Metadata
     Factor_Realization
     Factor_Application_Retention
@@ -268,6 +278,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     RRA_Publication_Construction
     Factor_Record_Syntax
     Factor_Table_Assembly
+    Factor_Table_Enumeration
     Factor_Proof_Row_Copy
     Factor_Table_Syntax
     Factor_Proof_Tables

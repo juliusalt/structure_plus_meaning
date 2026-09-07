@@ -3385,3 +3385,68 @@ future formed operands and retains its canonical environment. It has
 eighty-eight definitions and one hundred and forty clauses. Finite correctness
 evidence checking, the full transition protocol, reflection, genesis, and
 general quotation determination remain required.
+
+## Native proof metadata preserves actual rows and independent validity
+
+Seven definitions with ten ordinary clauses derive located citation reading,
+two-endpoint links, complete binding and premise-link vectors and tables,
+and the existing assertion and inference metadata. They compose already
+admitted grammar, location, row projection, key uniqueness, and collection
+operations. No semantic primitive is added.
+
+The existing binding and discharge table projections and properties move
+from Factor_Proof_Metadata to Factor_Table_Metadata. Their definitions and
+statements are unchanged. Table admission therefore does not import the
+proof-node datatype or derivation. The node reader imports the existing
+datatype and raw node grammar to state its exact contract. Its ordinary
+clauses contain no graph-validity, derivation, replay, or evidence predicate.
+
+The list profile reuses the existing reading-argument grouping: one context
+accompanies the root, result, interior, and external slots. The concrete
+readers use the environment and actual source use as that context. The
+standalone empty vector only admits context formation. Each table separately
+reads its actual artifact and complete family, including when the family is
+empty. No dummy source read or hidden empty-table exception is added.
+
+Every physical socket contributes one row result. Both the raw table and
+the ordinary checker require injective decoded keys, even when two values
+agree. Completeness holds for every distinct output enumeration: the proof
+derives a corresponding enumeration of the actual sockets from the raw
+table's complete functional reading and key injectivity. That order is a
+temporary witness. The table gains no represented order, and arbitrary
+formed binding values, including literal targets, pass directly through the
+reader. A data-only comparison of row values would have narrowed that
+boundary and is not used.
+
+Interior combination preserves counts. The family root and sockets, each
+row record, and all child interiors contribute exactly once, enforcing the
+existing physical separation conditions. External slots combine by
+membership and may be shared. Complete output, interior, and slot orders
+remain independent. The common table proof supplies exact recovery,
+repeated-key rejection, source-presentation invariance, and uniqueness for
+both binding and premise-link tables.
+
+The recovered node value uses the arity already present in the native
+grammar. An assertion has the empty value. An inference has three fields:
+its actual clause site, complete binding rows keyed by actual variable sites,
+and complete premise links keyed by actual socket sites. This is a derived
+value-presentation choice; it adds no stored field or constructor tag to the
+native grammar. The two finite collections permit every complete order.
+Each complete value uniquely recovers the node and its discharge relation,
+and every native node has such a value. No conclusion or assumption
+collection is duplicated in the node.
+
+Node admission recovers exactly the raw syntax and boundary. It does not
+establish that links form a rooted acyclic graph, that assertions have the
+required distinct origins, that a selected clause admits the claimed
+instance, or that an assumption is true. Those checks belong to the
+independent graph and derivation relations and the ordinary finite evidence
+checker built above this metadata layer.
+
+All seven entries have exact contracts over every term and preserve all
+earlier meanings. One fixed closed native program provides seven distinct
+sites before all future formed operands and retains its canonical
+environment. It has ninety-five definitions and one hundred and fifty
+clauses. Ordinary native checking of complete finite graphs, derivations,
+and replay retention remains. The full transition protocol, reflection,
+genesis, and general quotation determination remain required.

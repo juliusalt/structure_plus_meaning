@@ -1,0 +1,212 @@
+theory Factor_Site_Citation_Reading
+  imports Factor_Boundary_Lists Factor_Native_References
+begin
+
+section \<open>A located citation retains its exact interior and exposed slot\<close>
+
+abbreviation site_citation_reading_result :: "factor_term\<Rightarrow>bool" where
+  "site_citation_reading_result z \<equiv> \<exists>E e u r d Is Ks.
+    z=term_quotation_argument e (use_data_term u) (Payload_Term r) (definition_site_value d)
+      (data_list_term (map Payload_Term Is)) (data_list_term (map Payload_Term Ks)) \<and>
+    environment_value_presents E e \<and> distinct Is \<and> distinct Ks \<and>
+    site_citation_at E u r d (set Is) (set Ks)"
+
+lemma citation_slot_enumeration:
+  assumes "distinct Ks" "set Ks=citation_slots c"
+  shows "\<exists>a. citation_data_term c=Pair_Term (data_list_term (map Payload_Term Ks)) a"
+  using assms by (cases c) (auto dest: distinct_singleton_enumeration)
+
+definition site_citation_reading_schema :: "(nat,nat,nat) factor_schema" where
+  "site_citation_reading_schema=data_rule
+    (term_quotation_pattern data_x data_y data_z data_w (Pattern_Variable 4) (Pattern_Variable 5))
+    {(0,42,citation_reading_pattern data_x data_y data_z
+       (Pattern_Pair (Pattern_Variable 5) (Pattern_Variable 6)) (Pattern_Variable 4)),
+     (1,41,citation_observation_pattern data_x data_y
+       (Pattern_Pair (Pattern_Variable 5) (Pattern_Variable 6)) data_w)}"
+
+definition site_citation_reading_system :: "(nat,nat,nat,nat) schema_system" where
+  "site_citation_reading_system=add_view_definition admitted_instantiation_system 88 data_x {(0,site_citation_reading_schema)}"
+
+lemma site_citation_reading_system_formed [simp]: "schema_system_formed site_citation_reading_system"
+  unfolding site_citation_reading_system_def
+  by (rule add_recursive_definition_formed[OF admitted_instantiation_system_formed])
+    (auto simp: site_citation_reading_schema_def
+      schema_formed_def schema_dependencies_def single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma site_citation_reading_definitions [simp]:
+  "system_definitions site_citation_reading_system=insert 88 (system_definitions admitted_instantiation_system)"
+  by (simp add: site_citation_reading_system_def)
+
+lemma site_citation_reading_call:
+  "schema_call_formed site_citation_reading_system d t \<longleftrightarrow>
+    d\<in>system_definitions site_citation_reading_system \<and> term_formed t"
+  using added_variable_calls[OF admitted_instantiation_system_formed
+    site_citation_reading_system_formed[unfolded site_citation_reading_system_def] admitted_instantiation_call]
+  by (simp only: site_citation_reading_system_def[symmetric])
+
+lemma site_citation_reading_old_meaning:
+  assumes "d\<in>system_definitions admitted_instantiation_system"
+  shows "(d,t)\<in>positive_meaning site_citation_reading_system \<longleftrightarrow> (d,t)\<in>positive_meaning admitted_instantiation_system"
+  using added_definition_preserves_old(2)[OF admitted_instantiation_system_formed
+    site_citation_reading_system_formed[unfolded site_citation_reading_system_def], of d t] assms
+  by (auto simp: site_citation_reading_system_def)
+
+lemma site_citation_reading_clause [simp]:
+  "((88,c),S)\<in>system_clauses site_citation_reading_system \<longleftrightarrow> (c,S)\<in>{(0,site_citation_reading_schema)}"
+proof -
+  have owned: "((d,c),S)\<in>system_clauses admitted_instantiation_system \<Longrightarrow>
+    d\<in>system_definitions admitted_instantiation_system" for d c S
+    using admitted_instantiation_system_formed unfolding schema_system_formed_def by blast
+  have absent: "((88,c),S)\<notin>system_clauses admitted_instantiation_system" by (auto dest: owned)
+  show ?thesis using absent by (simp add: site_citation_reading_system_def)
+qed
+
+lemmas site_citation_reading_base_meaning=site_citation_reading_old_meaning
+
+lemma site_citation_reading_components:
+  "(42,t)\<in>positive_meaning site_citation_reading_system \<longleftrightarrow> (42,t)\<in>positive_meaning citation_reading_system"
+  "(41,t)\<in>positive_meaning site_citation_reading_system \<longleftrightarrow> (41,t)\<in>positive_meaning citation_location_system"
+  using site_citation_reading_old_meaning[of 42 t] metadata_reading_components(4)[of t]
+    site_citation_reading_old_meaning[of 41 t] metadata_reading_components(5)[of t] by auto
+
+lemma site_citation_reading_valuation:
+  "(88,z)\<in>positive_meaning site_citation_reading_system \<longleftrightarrow>
+    (\<exists>h::nat\<Rightarrow>factor_term. (\<forall>i\<in>{0,1,2,3,4,5,6}. term_formed (h i)) \<and>
+      z=term_quotation_argument (h 0) (h 1) (h 2) (h 3) (h 4) (h 5) \<and>
+      (42,citation_reading_argument (h 0) (h 1) (h 2) (Pair_Term (h 5) (h 6)) (h 4))\<in>positive_meaning citation_reading_system \<and>
+      (41,citation_observation_argument (h 0) (h 1) (Pair_Term (h 5) (h 6)) (h 3))\<in>positive_meaning citation_location_system)"
+  by (subst ordinary_positive_entry_valuation)
+    (auto simp: site_citation_reading_schema_def schema_variables_def site_citation_reading_call site_citation_reading_components)
+
+lemma site_citation_reading_step:
+  assumes citation: "(42,citation_reading_argument e u r (Pair_Term k a) i)\<in>positive_meaning citation_reading_system"
+    and location: "(41,citation_observation_argument e u (Pair_Term k a) d)\<in>positive_meaning citation_location_system"
+  shows "(88,term_quotation_argument e u r d i k)\<in>positive_meaning site_citation_reading_system"
+proof -
+  have formed: "term_formed e" "term_formed u" "term_formed r" "term_formed d" "term_formed i" "term_formed k" "term_formed a"
+    using schema_call_formed_target[OF positive_meaning_formed[OF citation]]
+      schema_call_formed_target[OF positive_meaning_formed[OF location]] by auto
+  let ?h="\<lambda>n::nat. if n=0 then e else if n=1 then u else if n=2 then r else if n=3 then d
+    else if n=4 then i else if n=5 then k else a"
+  show ?thesis by (simp only: site_citation_reading_valuation; rule exI[of _ ?h]) (use formed assms in auto)
+qed
+
+theorem site_citation_reading_sound:
+  assumes holds: "(88,z)\<in>positive_meaning site_citation_reading_system"
+  shows "site_citation_reading_result z"
+proof -
+  obtain h :: "nat\<Rightarrow>factor_term" where shape: "z=term_quotation_argument (h 0) (h 1) (h 2) (h 3) (h 4) (h 5)"
+    and calls: "(42,citation_reading_argument (h 0) (h 1) (h 2) (Pair_Term (h 5) (h 6)) (h 4))\<in>positive_meaning citation_reading_system"
+      "(41,citation_observation_argument (h 0) (h 1) (Pair_Term (h 5) (h 6)) (h 3))\<in>positive_meaning citation_location_system"
+    using holds by (simp only: site_citation_reading_valuation) blast
+  obtain E u r c Is R where source: "environment_value_presents E (h 0)" "h 1=use_data_term u"
+    "h 2=Payload_Term r" "Pair_Term (h 5) (h 6)=citation_data_term c"
+    "h 4=data_list_term (map Payload_Term Is)" "distinct Is" "artifact_at E u R" "citation_at R r c (set Is)"
+    using calls(1) by (simp only: citation_reading_exact factor_term.inject) blast
+  obtain Ks where slots: "h 5=data_list_term (map Payload_Term Ks)" "distinct Ks" "set Ks=citation_slots c"
+    using citation_data_slot_fields[OF source(4)[symmetric]] by blast
+  obtain v a where location: "h 3=site_data_term v a" "citation_location E u c v a"
+    using calls(2) by (simp only: citation_location_at_source[OF source(1)] source(2,4)
+      inj_eq[OF use_data_term_injective] inj_eq[OF citation_data_term_injective]) blast
+  have ef: "environment_formed E" using environment_value_presents_formed[OF source(1)] by blast
+  have raw: "site_citation_at E u r (v,a) (set Is) (set Ks)"
+    unfolding site_citation_at_def
+    by (rule conjI[OF ef], rule exI[of _ R], rule exI[of _ c]) (use source location slots in simp)
+  show ?thesis
+    by (rule exI[of _ E], rule exI[of _ "h 0"], rule exI[of _ u], rule exI[of _ r],
+      rule exI[of _ "(v,a)"], rule exI[of _ Is], rule exI[of _ Ks])
+      (use shape source slots location raw in auto)
+qed
+
+theorem site_citation_reading_complete:
+  assumes source: "environment_value_presents E e" and order: "distinct Is" "distinct Ks"
+    and raw: "site_citation_at E u r d (set Is) (set Ks)"
+  shows "(88,term_quotation_argument e (use_data_term u) (Payload_Term r) (definition_site_value d)
+    (data_list_term (map Payload_Term Is)) (data_list_term (map Payload_Term Ks)))\<in>positive_meaning site_citation_reading_system"
+proof -
+  obtain R c where parts: "artifact_at E u R" "citation_at R r c (set Is)"
+    "citation_location E u c (fst d) (snd d)" "set Ks=citation_slots c"
+    using raw by (auto simp: site_citation_at_def)
+  obtain a where encoded: "citation_data_term c=Pair_Term (data_list_term (map Payload_Term Ks)) a"
+    using citation_slot_enumeration[OF order(2) parts(4)] by blast
+  have citation: "(42,citation_reading_argument e (use_data_term u) (Payload_Term r)
+      (Pair_Term (data_list_term (map Payload_Term Ks)) a) (data_list_term (map Payload_Term Is)))\<in>positive_meaning citation_reading_system"
+    using citation_reading_complete[OF source parts(1) order(1) parts(2)] by (simp only: encoded)
+  have location: "(41,citation_observation_argument e (use_data_term u)
+      (Pair_Term (data_list_term (map Payload_Term Ks)) a) (definition_site_value d))\<in>positive_meaning citation_location_system"
+    using citation_location_complete[OF source parts(3)] by (simp only: encoded)
+  show ?thesis by (rule site_citation_reading_step[OF citation location])
+qed
+
+theorem site_citation_reading_exact:
+  "(88,z)\<in>positive_meaning site_citation_reading_system \<longleftrightarrow> site_citation_reading_result z"
+  using site_citation_reading_sound site_citation_reading_complete by blast
+
+corollary site_citation_reading_at_source:
+  assumes source: "environment_value_presents E e"
+  shows "(88,term_quotation_argument e u r d i k)\<in>positive_meaning site_citation_reading_system \<longleftrightarrow>
+    (\<exists>v a c Is Ks. u=use_data_term v \<and> r=Payload_Term a \<and> d=definition_site_value c \<and>
+      i=data_list_term (map Payload_Term Is) \<and> k=data_list_term (map Payload_Term Ks) \<and>
+      distinct Is \<and> distinct Ks \<and> site_citation_at E v a c (set Is) (set Ks))"
+proof
+  assume holds: "(88,term_quotation_argument e u r d i k)\<in>positive_meaning site_citation_reading_system"
+  obtain F v a c Is Ks where parts: "environment_value_presents F e" "u=use_data_term v" "r=Payload_Term a"
+    "d=definition_site_value c" "i=data_list_term (map Payload_Term Is)" "k=data_list_term (map Payload_Term Ks)"
+    "distinct Is" "distinct Ks" "site_citation_at F v a c (set Is) (set Ks)"
+    using holds by (simp only: site_citation_reading_exact factor_term.inject) blast
+  have same: "F=E" by (rule environment_value_presents_unique[OF parts(1) source])
+  show "\<exists>v a c Is Ks. u=use_data_term v \<and> r=Payload_Term a \<and> d=definition_site_value c \<and>
+      i=data_list_term (map Payload_Term Is) \<and> k=data_list_term (map Payload_Term Ks) \<and>
+      distinct Is \<and> distinct Ks \<and> site_citation_at E v a c (set Is) (set Ks)"
+    by (rule exI[of _ v], rule exI[of _ a], rule exI[of _ c], rule exI[of _ Is], rule exI[of _ Ks])
+      (use parts same in auto)
+next
+  assume "\<exists>v a c Is Ks. u=use_data_term v \<and> r=Payload_Term a \<and> d=definition_site_value c \<and>
+      i=data_list_term (map Payload_Term Is) \<and> k=data_list_term (map Payload_Term Ks) \<and>
+      distinct Is \<and> distinct Ks \<and> site_citation_at E v a c (set Is) (set Ks)"
+  then show "(88,term_quotation_argument e u r d i k)\<in>positive_meaning site_citation_reading_system"
+    using site_citation_reading_complete[OF source] by blast
+qed
+
+corollary site_citation_reading_on_values:
+  assumes source: "environment_value_presents E e"
+  shows "(88,term_quotation_argument e (use_data_term u) (Payload_Term r) (definition_site_value d)
+      (data_list_term (map Payload_Term Is)) (data_list_term (map Payload_Term Ks)))\<in>positive_meaning site_citation_reading_system
+      \<longleftrightarrow> distinct Is \<and> distinct Ks \<and> site_citation_at E u r d (set Is) (set Ks)"
+  by (simp only: site_citation_reading_at_source[OF source] inj_eq[OF use_data_term_injective]
+    definition_site_value_eq factor_term.inject data_list_term_injective injective_mapped_lists[OF payload_term_inj]) blast
+
+corollary site_citation_reading_presentation_invariance:
+  assumes "environment_value_presents E e" "environment_value_presents E f"
+  shows "(88,term_quotation_argument e u r d i k)\<in>positive_meaning site_citation_reading_system \<longleftrightarrow>
+    (88,term_quotation_argument f u r d i k)\<in>positive_meaning site_citation_reading_system"
+  by (simp only: site_citation_reading_at_source[OF assms(1)] site_citation_reading_at_source[OF assms(2)])
+
+corollary site_citation_reading_result_unique:
+  assumes source: "environment_value_presents E e"
+    and first: "(88,term_quotation_argument e (use_data_term u) (Payload_Term r) (definition_site_value d)
+      (data_list_term (map Payload_Term Is)) (data_list_term (map Payload_Term Ks)))\<in>positive_meaning site_citation_reading_system"
+    and second: "(88,term_quotation_argument e (use_data_term u) (Payload_Term r) (definition_site_value c)
+      (data_list_term (map Payload_Term Js)) (data_list_term (map Payload_Term As)))\<in>positive_meaning site_citation_reading_system"
+  shows "d=c \<and> mset Is=mset Js \<and> mset Ks=mset As"
+proof -
+  have left: "distinct Is \<and> distinct Ks \<and> site_citation_at E u r d (set Is) (set Ks)"
+    using first by (simp only: site_citation_reading_on_values[OF source])
+  have right: "distinct Js \<and> distinct As \<and> site_citation_at E u r c (set Js) (set As)"
+    using second by (simp only: site_citation_reading_on_values[OF source])
+  have first_raw: "site_citation_at E u r d (set Is) (set Ks)" using left by blast
+  have second_raw: "site_citation_at E u r c (set Js) (set As)" using right by blast
+  have same: "d=c \<and> set Is=set Js \<and> set Ks=set As"
+    by (rule site_citation_unique[OF first_raw second_raw])
+  show ?thesis using left right same distinct_source_mset[of Is Js] distinct_source_mset[of Ks As] by auto
+qed
+
+text \<open>
+  The same recovered citation supplies both its exact local interior and
+  its occurrence location. Its optional slot field already presents exactly
+  the exposed slot set, so no separate slot computation or discriminator is
+  added. Actual target uses remain distinct even when their artifacts agree.
+  This reader has no definition-admission, call-formation, or truth premise.
+\<close>
+
+end

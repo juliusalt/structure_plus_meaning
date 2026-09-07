@@ -644,8 +644,23 @@ all independent source and row presentations. Outputs are unique up to row
 enumeration. Missing or extra call sockets, unsatisfied material conditions,
 and unformed callees cannot be omitted. Seven new entries preserve earlier
 meanings and share one fixed closed native program before future operands.
-Finite correctness evidence checking, the full transition protocol,
-reflection, and genesis remain required.
+Native proof-metadata checking now reads located citations, two-endpoint
+links, complete binding and premise-link tables, and both node forms through
+ordinary clauses. The two table readers share a complete traversal and
+boundary proof. Every actual row is retained; repeated decoded keys are
+rejected, and binding values may be any formed terms, including literal targets.
+Every complete table order has corresponding actual physical rows. Empty
+tables retain their actual source and family root. Counted interiors forbid
+reused syntax, while external slots and proof targets may be shared.
+
+An assertion returns the empty value. An inference returns its existing
+clause site, complete bindings, and complete links, with no added role tag,
+conclusion, or assumption field. Every complete value uniquely recovers the
+node and links. All source and independent field presentations are admitted.
+Seven entries have exact all-term contracts, preserve earlier meanings, and
+share one fixed closed native program before future operands. Ordinary native
+checking of complete graphs, derivations, and replay retention remains, as do
+the full transition protocol, reflection, and genesis.
 
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed

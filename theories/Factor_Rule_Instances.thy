@@ -289,6 +289,47 @@ next
     using ordinary_positive_valuation_step[OF clause ordinary[OF clause] assignment _ support] call shape by simp
 qed
 
+lemma ordinary_single_clause_valuation:
+  assumes family: "\<And>c T. ((d,c),T)\<in>system_clauses P \<longleftrightarrow> c=c0 \<and> T=S"
+    and ordinary: "schema_material_premises S={}"
+    and call: "\<And>f. (\<forall>a\<in>schema_variables S. term_formed (f a)) \<Longrightarrow>
+      schema_call_formed P d (evaluate_pattern f (schema_conclusion S))"
+  shows "(d,t)\<in>positive_meaning P \<longleftrightarrow>
+    (\<exists>f. (\<forall>a\<in>schema_variables S. term_formed (f a)) \<and>
+      t=evaluate_pattern f (schema_conclusion S) \<and>
+      (\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
+        (e,evaluate_pattern f p)\<in>positive_meaning P))"
+proof
+  assume holds: "(d,t)\<in>positive_meaning P"
+  have consequence: "(d,t)\<in>schema_consequences P (positive_meaning P)"
+    using holds positive_meaning_unfold[of P] by blast
+  obtain c T f where parts: "((d,c),T)\<in>system_clauses P"
+    "\<forall>a\<in>schema_variables T. term_formed (f a)"
+    "t=evaluate_pattern f (schema_conclusion T)"
+    "\<forall>s e p. (s,e,p)\<in>schema_premises T \<longrightarrow>
+      (e,evaluate_pattern f p)\<in>positive_meaning P"
+    using schema_consequences_valuationD[OF consequence] by blast
+  have same: "T=S" using parts(1) family by blast
+  show "\<exists>f. (\<forall>a\<in>schema_variables S. term_formed (f a)) \<and>
+    t=evaluate_pattern f (schema_conclusion S) \<and>
+    (\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
+      (e,evaluate_pattern f p)\<in>positive_meaning P)"
+    by (rule exI[of _ f]) (use parts same in simp)
+next
+  assume "\<exists>f. (\<forall>a\<in>schema_variables S. term_formed (f a)) \<and>
+    t=evaluate_pattern f (schema_conclusion S) \<and>
+    (\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
+      (e,evaluate_pattern f p)\<in>positive_meaning P)"
+  then obtain f where parts: "\<forall>a\<in>schema_variables S. term_formed (f a)"
+    "t=evaluate_pattern f (schema_conclusion S)"
+    "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
+      (e,evaluate_pattern f p)\<in>positive_meaning P" by blast
+  have clause: "((d,c0),S)\<in>system_clauses P" by (simp only: family; simp)
+  have result: "(d,evaluate_pattern f (schema_conclusion S))\<in>positive_meaning P"
+    by (rule ordinary_positive_valuation_step[OF clause ordinary parts(1) call[OF parts(1)] parts(3)])
+  show "(d,t)\<in>positive_meaning P" using result parts(2) by simp
+qed
+
 theorem positive_valuation_induct:
   assumes holds: "(d,t)\<in>positive_meaning P"
     and step: "\<And>d c S f. ((d,c),S)\<in>system_clauses P \<Longrightarrow>
@@ -370,6 +411,8 @@ text \<open>
   material observation. The ordinary-clause rule is the empty-material case.
   A complete ordinary entry also has an exact valuation equation inside a
   program whose other definitions may contain material premises.
+  A single-clause entry retains the same valuation witness in both directions;
+  its head interface is discharged only when every formed valuation meets it.
   Forward projection and induction may omit those conditions only because they
   start from actual consequences of the unchanged operator.
 \<close>

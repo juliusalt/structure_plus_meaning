@@ -20,6 +20,16 @@ lemma citation_data_term_formed [simp]:
 lemma citation_data_term_self_contained [simp]: "self_contained_term (citation_data_term c)"
   by (cases c) auto
 
+lemma citation_data_external_fields:
+  assumes "citation_data_term c=Pair_Term (data_list_term [k]) a"
+  shows "\<exists>s. k=Payload_Term s \<and> citation_slots c={s}"
+  using assms by (cases c) auto
+
+lemma citation_data_external_shape:
+  assumes "citation_slots c\<noteq>{}"
+  shows "\<exists>s a. citation_data_term c=Pair_Term (data_list_term [Payload_Term s]) a \<and> citation_slots c={s}"
+  using assms by (cases c) auto
+
 lemma citation_data_formed_at:
   assumes read: "citation_at R r c I"
   shows "term_formed (citation_data_term c)"

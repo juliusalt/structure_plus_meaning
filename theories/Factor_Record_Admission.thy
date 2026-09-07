@@ -418,6 +418,38 @@ corollary record_admission_rows:
   by (simp add: record_admission_at_source[OF source] data_list_term_injective
     injective_mapped_lists[OF address_pair_data_injective])
 
+corollary record_admission_pair_fields:
+  assumes source: "artifact_value_presents R a"
+  shows "(34,rooted_rows_argument a k (data_list_term [Pair_Term p l,Pair_Term q m]))
+    \<in>positive_meaning record_admission_system \<longleftrightarrow>
+    (\<exists>r p' l' q' m'. k=Payload_Term r \<and> p=Payload_Term p' \<and> l=Payload_Term l' \<and>
+      q=Payload_Term q' \<and> m=Payload_Term m' \<and> record_at R r [p',q'] [l',m'])"
+proof
+  assume holds: "(34,rooted_rows_argument a k (data_list_term [Pair_Term p l,Pair_Term q m]))
+    \<in>positive_meaning record_admission_system"
+  obtain r xs where fields: "k=Payload_Term r"
+    "data_list_term [Pair_Term p l,Pair_Term q m]=data_list_term (map address_pair_data xs)"
+    "record_at R r (map fst xs) (map snd xs)"
+    using holds by (auto simp: record_admission_at_source[OF source])
+  have "map address_pair_data xs=[Pair_Term p l,Pair_Term q m]"
+    using fields(2) by (simp only: data_list_term_injective)
+  then obtain p' l' q' m' where rows: "xs=[(p',l'),(q',m')]"
+    "p=Payload_Term p'" "l=Payload_Term l'" "q=Payload_Term q'" "m=Payload_Term m'"
+    by (auto simp: map_eq_Cons_conv address_pair_data_def split: prod.splits)
+  show "\<exists>r p' l' q' m'. k=Payload_Term r \<and> p=Payload_Term p' \<and> l=Payload_Term l' \<and>
+      q=Payload_Term q' \<and> m=Payload_Term m' \<and> record_at R r [p',q'] [l',m']"
+    using fields rows by auto
+next
+  assume "\<exists>r p' l' q' m'. k=Payload_Term r \<and> p=Payload_Term p' \<and> l=Payload_Term l' \<and>
+      q=Payload_Term q' \<and> m=Payload_Term m' \<and> record_at R r [p',q'] [l',m']"
+  then obtain r p' l' q' m' where fields: "k=Payload_Term r" "p=Payload_Term p'" "l=Payload_Term l'"
+    "q=Payload_Term q'" "m=Payload_Term m'" "record_at R r [p',q'] [l',m']" by blast
+  show "(34,rooted_rows_argument a k (data_list_term [Pair_Term p l,Pair_Term q m]))
+    \<in>positive_meaning record_admission_system"
+    using record_admission_rows[OF source, of r "[(p',l'),(q',m')]"] fields
+    by (simp add: address_pair_data_def)
+qed
+
 corollary record_admission_order_unique:
   assumes source: "artifact_value_presents R a"
     and first: "(34,rooted_rows_argument a (Payload_Term r) (data_list_term (map address_pair_data xs)))

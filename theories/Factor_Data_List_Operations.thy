@@ -162,6 +162,12 @@ corollary data_append_lists:
     data_elements xs \<and> data_elements ys \<and> zs=xs@ys"
   by (auto simp: data_append_exact data_list_term_injective)
 
+corollary data_append_at_lists:
+  "(46,collection_join_argument (data_list_term xs) (data_list_term ys) z)
+    \<in>positive_meaning data_append_system \<longleftrightarrow>
+    data_elements xs \<and> data_elements ys \<and> z=data_list_term (xs@ys)"
+  by (simp only: data_append_exact factor_term.inject data_list_term_injective) auto
+
 section \<open>Inclusion explicitly reuses the complete right collection\<close>
 
 definition data_subset_nil_schema :: "(nat,nat,nat) factor_schema" where

@@ -242,6 +242,17 @@ proof -
   show ?thesis using art formed carrier by blast
 qed
 
+lemma term_quoted_addresses_formed:
+  assumes quote: "term_quoted_at E u r t I K"
+  shows "\<forall>a\<in>I\<union>K. octets_formed a"
+proof -
+  obtain R where actual: "artifact_at E u R" and formed: "exact_formed R"
+    using term_quoted_has_artifact[OF quote] by blast
+  have inside: "I\<union>K\<subseteq>rra_carrier (object_structure R)"
+    by (rule term_quoted_carrier[OF quote actual])
+  show ?thesis using formed inside by (auto simp: exact_formed_def)
+qed
+
 lemma injective_images_disjoint:
   assumes "inj_on f U" "A \<subseteq> U" "B \<subseteq> U" "A \<inter> B = {}"
   shows "f ` A \<inter> f ` B = {}"

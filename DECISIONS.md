@@ -2856,3 +2856,43 @@ native package supplies five distinct actual sites before all future formed
 operands, preserving its canonical environment in every application.
 Recursive quotation, higher grammar, finite correctness evidence, the complete
 transition protocol, reflection, and genesis remain required.
+
+## Recursive quotation through ordinary native clauses
+
+The existing term grammar is now derived by one recursive definition with
+three ordinary clauses. Its argument contains the complete supplied
+environment, actual use and root, recovered term, interior enumeration, and
+external-slot enumeration. The recovered term uses the existing literal,
+payload, and pair operands directly; no further tagged encoding is introduced.
+Payload leaves join actual source lookup to the complete headed material
+relation. External targets join structural citation reading to interpretation
+and the already derived literal-target projection. The shared target data
+forces interpretation and literal projection to agree on the exact target.
+
+For a pair, the ordinary record checker supplies both ordered sockets and
+child roots. Recursive calls recover the child terms and metadata. Two
+concatenations retain the root, sockets, and every child interior occurrence.
+The counted comparison then checks the proposed interior, whose distinctness
+is required by the final interior/slot separation call. This derives separation
+of the record and both child interiors without additional admission clauses.
+It also accepts every complete interior order.
+
+External slots use membership union because both children may cite the same
+slot. Distinctness is imposed on the proposed complete slot enumeration, and
+the final boundary separates that enumeration from the quotation interior.
+No separation condition is imposed between the children's slot sets. The
+completeness proof chooses finite child enumerations only as internal witnesses
+and works for every supplied distinct interior and slot order.
+
+Soundness is proved by induction over the generic positive meaning, and
+completeness by induction over the independently defined quotation grammar.
+The all-term contract includes input admission; no caller-side formation
+assumption can hide a malformed accepted value. Every complete environment
+presentation has the same results. The term and metadata sets are unique.
+All earlier meanings are preserved, and one closed native reader is fixed
+before every future formed operand while preserving its canonical environment.
+
+The program now has fifty-one definitions and eighty-eight clauses. No new
+primitive is added. Higher grammar, finite correctness evidence, the complete
+transition protocol, reflection, genesis, and general quotation determination
+remain required.

@@ -515,9 +515,16 @@ inclusion by explicitly reusing the right collection. Derived union permits
 shared members; a separate entry admits distinct payload collections and
 checks their disjointness. All five operations have exact contracts over every
 term and share one fixed native package before arbitrary future formed inputs.
-They supply the operations needed for quotation metadata. Recursive quotation,
-higher grammar, finite correctness evidence, reflection, and the full
-transition protocol remain required.
+Three ordinary clauses now derive recursive term quotation from those
+operations. The reader admits payload leaves, external literal targets, and
+ordered pairs with the exact grammar-defined interior and slots. Counted
+comparison against a distinct interior enforces separation of the record and
+both child interiors while allowing every complete order. Slot union permits
+sharing between the children. Exactness covers every input term and every
+complete environment presentation, with a unique recovered term and metadata
+sets. One fixed native reader serves all future formed operands. Higher
+grammar, finite correctness evidence, reflection, and the full transition
+protocol remain required.
 
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed

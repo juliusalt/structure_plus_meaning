@@ -441,6 +441,32 @@ corollary headed_material_leaf:
   using artifact_value_presents_formed[OF source]
   by (simp add: headed_material_at_source[OF source] headed_material_payload_leaf[simplified])
 
+corollary headed_material_leaf_fields:
+  assumes source: "artifact_value_presents R a"
+  shows "(29,headed_material_argument a k (Payload_Term []) (Payload_Term []) (data_list_term [v]))
+    \<in>positive_meaning headed_material_system \<longleftrightarrow>
+    (\<exists>r b. k=Payload_Term r \<and> v=Payload_Term b \<and> payload_leaf_at R r b)"
+proof
+  assume holds: "(29,headed_material_argument a k (Payload_Term []) (Payload_Term []) (data_list_term [v]))
+    \<in>positive_meaning headed_material_system"
+  obtain r where root: "k=Payload_Term r"
+    and present: "headed_material_presents R r (Payload_Term []) (Payload_Term []) (data_list_term [v])"
+    using holds by (auto simp: headed_material_at_source[OF source])
+  obtain F where field: "data_list_term [v]=data_list_term (map Payload_Term F)"
+    using present by (auto simp only: headed_material_presents_def)
+  have "map Payload_Term F=[v]" using field by (simp only: data_list_term_injective)
+  then obtain b where literal: "v=Payload_Term b" by (auto simp: map_eq_Cons_conv)
+  have leaf: "payload_leaf_at R r b"
+    using holds by (simp add: root literal headed_material_leaf[OF source, simplified])
+  show "\<exists>r b. k=Payload_Term r \<and> v=Payload_Term b \<and> payload_leaf_at R r b"
+    using root literal leaf by blast
+next
+  assume "\<exists>r b. k=Payload_Term r \<and> v=Payload_Term b \<and> payload_leaf_at R r b"
+  then show "(29,headed_material_argument a k (Payload_Term []) (Payload_Term []) (data_list_term [v]))
+    \<in>positive_meaning headed_material_system"
+    by (auto simp: headed_material_leaf[OF source, simplified])
+qed
+
 section \<open>One closed native checker serves every future formed input\<close>
 
 theorem native_headed_material_checking:

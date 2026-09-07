@@ -137,6 +137,13 @@ corollary data_union_shared_member:
     \<in>positive_meaning data_union_system"
   by (simp only: data_union_lists) (use assms in auto)
 
+corollary data_union_payload_lists:
+  "(48,collection_join_argument (data_list_term (map Payload_Term A))
+    (data_list_term (map Payload_Term B)) (data_list_term (map Payload_Term C)))
+    \<in>positive_meaning data_union_system \<longleftrightarrow>
+    (\<forall>a\<in>set A\<union>set B\<union>set C. octets_formed a) \<and> set C=set A\<union>set B"
+  by (simp only: data_union_lists) auto
+
 section \<open>Disjointness of complete distinct payload collections\<close>
 
 definition payload_disjoint_schema :: "(nat,nat,nat) factor_schema" where

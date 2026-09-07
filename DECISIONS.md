@@ -3714,3 +3714,37 @@ Neither construction admits an arbitrary submitted interpreter's universal
 correctness evidence inside the predecessor. That finite evidence profile,
 full transition-protocol admission, the remaining reflection strata, genesis,
 quotation determination, and final repository audits remain open.
+
+## Two complete substitutions determine pattern and schema syntax
+
+The inferred choice is to reuse the existing instantiation readers for finite
+syntax evidence. A new tagged pattern codec is unnecessary for this purpose.
+One substitution maps each scoped variable injectively to a payload; the other
+maps every variable to one target. Constructor separation and structural
+induction recover the entire pattern. The target has no distinguished semantic
+role: the algebraic theorem permits any target, and native evidence uses the
+already formed whole empty artifact. Native binder addresses themselves supply
+the injective payloads, with their formation derived from the actual binder.
+
+The schema result retains its conclusion, every prospective socket and callee,
+and all five operands at every material socket. Functional source rows align
+the two readings at the same socket. Complete material output is necessary:
+two different schemas can have identical conclusion and prospective instances
+under every substitution while one adds a material condition. Instantiation
+continues to make no assertion that that condition is satisfied.
+
+The exact native criteria use the existing source environment, actual use and
+root, complete bindings, and complete output metadata. For schemas, the finite
+reference outputs are first calculated from the expected syntax. Two admitted
+readings at the same actual source then prove that this expected schema is the
+one recovered there. Every native schema supplies both readings. The comparison
+is relative to the actual binder coordinates; it does not silently identify
+renamed syntax or distinct artifact values. Existing presentation and ordering
+theorems continue to apply.
+
+No operator definition, ordinary entry, or primitive observation is added.
+This grammar result supports finite correctness evidence and says nothing by
+itself about agreement of arbitrary programs from finitely many executions.
+Whole-program interpreter admission still needs complete structure and actual
+semantic dependencies. General quotation determination, the full transition
+protocol, remaining reflection strata, genesis, and final audits remain open.

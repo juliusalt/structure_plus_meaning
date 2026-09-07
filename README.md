@@ -771,6 +771,20 @@ of independent programs. Universal correctness admission for submitted
 interpreters, full transition-protocol admission, the remaining reflection
 strata, genesis, and quotation determination remain open.
 
+Two explicit substitutions now determine a complete pattern and schema. The
+first gives every binder its distinct address payload; the second gives every
+binder one formed target. Constructor separation recovers each literal,
+variable occurrence, and pair. Complete socket rows recover every prospective
+callee and all five material patterns. A counterexample shows that conclusion
+and prospective instances alone miss material differences even when every
+substitution is considered.
+
+The existing native readers give exact criteria for relative patterns, scoped
+patterns, and complete schemas using these two readings. Every native schema
+has both finite admitted readings. This adds no operator or entry and provides
+a syntax component for finite correctness evidence. Whole-program interpreter
+admission and general determination of quoted artifact identity remain separate.
+
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed
 terms, with truth exactly when the two terms agree. Its argument domain and

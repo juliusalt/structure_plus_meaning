@@ -124,6 +124,15 @@ and supplies current-frame material before candidate generations. This advances
 O-60 and O-69 through O-72. Full transition-protocol admission, the remaining
 reflection strata, genesis, and quotation determination remain open.
 
+Factor_Pattern_Determination, Factor_Schema_Determination, and
+Factor_Native_Syntax_Determination add a finite syntax component for O-18 and
+the correctness evidence still needed by O-60. Two complete substitutions
+identify the exact pattern or schema through the existing ordinary readers,
+including every material field, socket, and callee. Every native schema has
+both admitted readings. This does not close whole-program interpreter
+admission or the separate quotation-identity obligations O-43 through O-45
+and O-79 through O-80.
+
 The final audit has not begun. It must include all active source and tools,
 all explanatory documents, and every supplied unique text, with duplicate
 and binary/archive contents accounted for explicitly.

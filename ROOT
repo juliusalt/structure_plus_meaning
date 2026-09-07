@@ -240,6 +240,10 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Proof_Claim_Instances
     Factor_Proof_Claim_Checking
     Factor_Derivation_Admission
+    Factor_Slot_Observations
+    Factor_Premise_Slot_Reading
+    Factor_Schema_Slot_Reading
+    Factor_Definition_Slot_Reading
     Factor_Judgment_Values
     Factor_Judgment_Scopes
     Factor_Construction_Claims

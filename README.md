@@ -697,6 +697,20 @@ positive meaning. The remaining replay join must bind the actual application
 to this derivation and check its closed retention. The full transition
 protocol, reflection, genesis, and general quotation determination remain.
 
+Ordinary slot reading now recovers the exact premise, schema, and definition
+slot projections. It reuses complete instantiation, actual binders and records,
+and actual family endpoints. Private substitutions witness syntax; they impose
+no call-truth or material-satisfaction condition. The contracts also preserve
+the existing partial projections, so whole-role admission remains a separate
+requirement. Every returned slot is bound in the represented environment.
+
+Three entries with six ordinary clauses preserve all source presentations,
+scope orders, and earlier meanings. One fixed closed native program serves
+every future formed operand, with one hundred and six definitions and one
+hundred and seventy-three clauses. These supply the definition-slot component
+needed for complete replay retention; coverage and the application/derivation
+join remain to be composed.
+
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed
 terms, with truth exactly when the two terms agree. Its argument domain and

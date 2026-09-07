@@ -93,6 +93,15 @@ are historical and are not counted as implementation evidence.
 | O-82 | Partial | Future argument extensions preserve every old binding, including meaning-bearing bindings. Current acceptance requires retention of the program scope fixed by the adopted generation; its canonical program environment is proved identical. Factor_Transition_Selection rejects any different artifact or binding at an existing predecessor position in the accepted selection invocation. Acceptance certification preserves the same program and complete minimal judgment scope. General foundation transitions and their complete admission conditions remain to be implemented. |
 | O-83 | Open | Not yet implemented in the reconstructed system. |
 
+Further progress on O-16, O-18, and O-40 is supplied by
+Factor_Slot_Observations and the three Slot_Reading theories. Six ordinary
+clauses recover exactly the existing premise, schema, and definition slot
+projections, including partial enclosing records, without call truth or
+material satisfaction. All-term contracts, actual binding coverage, source
+and scope-order invariance, preserved meanings, and three fixed native entries
+are proved. Replay still needs complete environment coverage joined to the
+actual package, application, and graph.
+
 The final audit has not begun. It must include all active source and tools,
 all explanatory documents, and every supplied unique text, with duplicate
 and binary/archive contents accounted for explicitly.

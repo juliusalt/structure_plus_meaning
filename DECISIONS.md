@@ -3555,3 +3555,38 @@ program precede every future formed operand and preserve its canonical
 environment. The replay join must bind an actual application to its derivation
 and closed retention. Full transition protocol, reflection, genesis, and
 general quotation determination remain open.
+
+## Slot reading exposes existing syntax projections independently of truth
+
+Replay retention needs the references actually read by each selected grammar.
+The existing definition and schema slot projections already specify those
+references. Preserve their meaning and derive their ordinary reading through
+the existing instantiation operations.
+
+Every finite scope has a complete formed substitution. Pattern, prospective,
+and material instantiation is total under such a substitution. The slot reader
+can therefore hide that table and its resulting values after selecting an
+actual member of the complete slot output. This introduces no call-truth or
+material-satisfaction premise and requires no additional pattern value format.
+
+The premise entry retains an explicit distinct enumeration of the declared
+scope. Schema reading obtains that scope from its actual binder, then reads
+either the conclusion or a premise at an actual complete-family endpoint.
+Definition reading obtains the actual interface and schema family from its
+two-field record. All coordinates retain their existing owning use.
+
+These are exactly the existing partial slot projections. A readable field can
+contribute a slot even if another part of its enclosing definition or schema
+fails admission. Keeping that distinction is an inferred implementation choice:
+whole-role admission belongs at the caller that needs it. In replay retention,
+the actual package, application, and graph must establish the global grammar
+before coverage by these projections can establish the closed environment.
+A supplied collection cannot choose that boundary.
+
+Three entries add six ordinary clauses. Their contracts cover all terms,
+preserve every complete source presentation and every distinct scope order,
+and prove that every reported slot is bound in the same environment. All old
+meanings remain unchanged. One closed native program with one hundred and six
+definitions and one hundred and seventy-three clauses fixes three distinct
+entry sites before any future formed operand. Replay-retention coverage and
+the actual application/derivation join remain open.

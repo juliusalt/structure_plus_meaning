@@ -70,6 +70,46 @@ proof -
   show ?thesis using target by (cases d) (auto simp: anchor_formed_def)
 qed
 
+theorem native_application_empty_scope:
+  "native_application_at E u r d t I K \<longleftrightarrow>
+    (\<exists>p. prospective_call_at E u {} r d p I K \<and> pattern_instance B p t)"
+proof
+  assume app: "native_application_at E u r d t I K"
+  obtain R ps c a cite C J A where parts:
+    "environment_formed E" "artifact_at E u R" "record_at R r ps [c,a]"
+    "citation_at R c cite C" "citation_location E u cite (fst d) (snd d)"
+    "term_quoted_at E u a t J A"
+    "insert r (set ps)\<inter>(C\<union>J)={}" "C\<inter>J={}"
+    "I=insert r (set ps\<union>C\<union>J)" "K=citation_slots cite\<union>A" "I\<inter>K={}"
+    using app by (auto simp: native_application_at_def)
+  obtain p where body: "pattern_quoted_at E u {} a p J A" "pattern_instance B p t"
+    using term_quotation_constant_pattern[OF parts(6), where V="{}" and B=B] by auto
+  have prospective: "prospective_call_at E u {} r d p I K"
+    unfolding prospective_call_at_def
+    by (intro conjI, rule parts(1), rule exI[of _ R], rule exI[of _ ps], rule exI[of _ c],
+      rule exI[of _ a], rule exI[of _ cite], rule exI[of _ C], rule exI[of _ J], rule exI[of _ A])
+      (use parts body in auto)
+  show "\<exists>p. prospective_call_at E u {} r d p I K \<and> pattern_instance B p t"
+    using prospective body(2) by blast
+next
+  assume "\<exists>p. prospective_call_at E u {} r d p I K \<and> pattern_instance B p t"
+  then obtain p where call: "prospective_call_at E u {} r d p I K" and inst: "pattern_instance B p t" by blast
+  obtain R ps c a cite C J A where parts:
+    "environment_formed E" "artifact_at E u R" "record_at R r ps [c,a]"
+    "citation_at R c cite C" "citation_location E u cite (fst d) (snd d)"
+    "pattern_quoted_at E u {} a p J A"
+    "insert r (set ps)\<inter>(C\<union>J)={}" "C\<inter>J={}"
+    "I=insert r (set ps\<union>C\<union>J)" "K=citation_slots cite\<union>A" "I\<inter>K={}"
+    using call by (auto simp: prospective_call_at_def)
+  have unused: "pattern_variables p={}" using pattern_quoted_formed[OF parts(6)] by auto
+  have body: "term_quoted_at E u a t J A" by (rule constant_pattern_quoted_term[OF parts(6) unused inst])
+  show "native_application_at E u r d t I K"
+    unfolding native_application_at_def
+    by (intro conjI, rule parts(1), rule exI[of _ R], rule exI[of _ ps], rule exI[of _ c],
+      rule exI[of _ a], rule exI[of _ cite], rule exI[of _ C], rule exI[of _ J], rule exI[of _ A])
+      (use parts body in auto)
+qed
+
 definition native_application_formed ::
   "'u artifact_environment \<Rightarrow> 'u \<Rightarrow> local_address \<Rightarrow>
     'u \<Rightarrow> local_address \<Rightarrow> bool" where

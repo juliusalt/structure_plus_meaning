@@ -2989,3 +2989,51 @@ canonical environment. It now has fifty-seven definitions and ninety-eight
 clauses. Schema and package admission, finite correctness evidence, the complete
 transition protocol, reflection, genesis, and general quotation determination
 remain required.
+
+## Prospective instances retain actual callees and recover ground applications
+
+Two definitions with one ordinary clause each derive prospective-call
+instantiation and ground application reading. The first joins the existing
+two-field record, structural citation reader, occurrence-location reader,
+and pattern instantiator. It receives the complete environment, actual
+source use and root, declared scope and substitution table, resolved callee,
+substituted argument, and exact used-variable, interior, and slot collections.
+The recovered argument pattern remains the independently defined structural
+reading of the source; no pattern codec or external substitution callback is
+added.
+
+The callee is its actual use and occurrence address. Exact artifact values
+do not replace use identity, even when two uses contain equal artifacts.
+The location operation already rejects whole-artifact citations, so the
+call clause needs no extra constructor test. It does not require the
+located occurrence to be a formed definition. Definition recovery, package
+membership, interface acceptance, and positive truth retain their separate
+judgments, including for a local or self citation.
+
+The body operation already admits the complete table and its declared scope.
+The enclosing clause does not repeat that check. Its used-variable collection
+is the body's exact set and need not exhaust the declared scope. Counted
+concatenation of the record, citation, and body interiors enforces all syntax
+separations. Membership union permits shared external slots. The complete
+interior is disjoint from both slots and declared variables, while those two
+reference sets may intersect where the relative grammar permits it.
+
+A separate theorem proves that an existing ground application is exactly
+an empty-scope prospective call instantiated under any binding relation.
+An empty scope forces the pattern to be ground, and the earlier constant
+quotation theorem recovers the same argument term. This proof preserves
+the same record, citation, roots, interior, and slots in both directions.
+The native application entry specializes the scope, table, and used-variable
+collection to empty values. It introduces no binder node and changes no
+existing application geometry.
+
+Both entries have exact contracts over every input term, all complete source
+presentations, and independent distinct metadata orders. Prospective instances
+are total for valid calls with complete formed bindings. The resolved callee,
+substituted argument, and metadata sets are unique. All prior meanings are
+preserved, and one fixed closed native program contains two distinct new sites
+before arbitrary future formed operands. Its canonical environment remains
+unchanged. The program now has fifty-nine definitions and one hundred clauses.
+Schema and package admission, finite correctness evidence, the complete
+transition protocol, reflection, genesis, and general quotation determination
+remain required.

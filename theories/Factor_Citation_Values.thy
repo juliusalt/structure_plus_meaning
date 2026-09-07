@@ -35,6 +35,28 @@ lemma citation_data_external_shape:
   shows "\<exists>s a. citation_data_term c=Pair_Term (data_list_term [Payload_Term s]) a \<and> citation_slots c={s}"
   using assms by (cases c) auto
 
+lemma citation_data_slot_shape:
+  "\<exists>Ss a. citation_data_term c=Pair_Term (data_list_term (map Payload_Term Ss)) a \<and>
+    distinct Ss \<and> set Ss=citation_slots c"
+proof (cases c)
+  case (Local r)
+  then show ?thesis by (rule_tac x="[]" in exI) auto
+next
+  case (External k r)
+  then show ?thesis by (rule_tac x="[k]" in exI) auto
+next
+  case Local_Whole
+  then show ?thesis by (rule_tac x="[]" in exI) auto
+next
+  case (External_Whole k)
+  then show ?thesis by (rule_tac x="[k]" in exI) auto
+qed
+
+lemma citation_data_slot_fields:
+  assumes "citation_data_term c=Pair_Term s a"
+  shows "\<exists>Ss. s=data_list_term (map Payload_Term Ss) \<and> distinct Ss \<and> set Ss=citation_slots c"
+  using citation_data_slot_shape[of c] assms by auto
+
 lemma citation_data_formed_at:
   assumes read: "citation_at R r c I"
   shows "term_formed (citation_data_term c)"

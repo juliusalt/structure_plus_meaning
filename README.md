@@ -546,6 +546,17 @@ and metadata order is accepted, and each valid scoped pattern and formed table
 has one result. Both entries have exact contracts over all input terms, preserve
 earlier meanings, and share one fixed native program before future operands.
 
+Prospective call instantiation now joins citation reading, actual callee
+location, and argument substitution with the complete scope and bindings. It
+retains exact used-variable, interior, and slot collections while permitting
+shared external references. The callee's use and address stay distinct from
+its artifact value. A proved empty-scope specialization recovers the existing
+two-field ground application without an added binder root. Both entries have
+exact contracts for all terms, every presentation order, unique results, and
+one fixed native program before future operands. Definition formation,
+package membership, interface acceptance, and application truth remain
+separate judgments.
+
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed
 terms, with truth exactly when the two terms agree. Its argument domain and

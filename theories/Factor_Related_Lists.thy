@@ -155,31 +155,13 @@ theorem readings:
   shows "(list_site,context_relation_argument a (data_list_term ps) (data_list_term qs))\<in>positive_meaning P
     \<longleftrightarrow> list_all2 C xs ys"
 proof -
-  have correspondence: "list_all2 (related a) ps qs \<longleftrightarrow> list_all2 C xs ys"
-    using first second
-  proof (induction xs arbitrary: ps ys qs)
-    case Nil
-    then show ?case by auto
-  next
-    case (Cons x xs)
-    note IH=Cons.IH
-    note input=Cons.prems
-    obtain p ts where left: "ps=p#ts" "R x p" "list_all2 R xs ts"
-      using input(1) by (auto simp: list_all2_Cons1)
-    show ?case
-    proof (cases ys)
-      case Nil
-      then have "qs=[]" using input(2) by simp
-      then show ?thesis by (simp add: left(1) Nil)
-    next
-      case (Cons y zs)
-      obtain q us where right: "qs=q#us" "S y q" "list_all2 S zs us"
-        using input(2) by (auto simp: Cons list_all2_Cons1)
-      have tail: "list_all2 (related a) ts us \<longleftrightarrow> list_all2 C xs zs"
-        by (rule IH[OF left(3) right(3)])
-      show ?thesis by (simp add: left(1) right(1) Cons tail compare[OF left(2) right(2)])
-    qed
-  qed
+  have element: "rel_fun R (rel_fun S (=)) C (related a)"
+    using compare by (simp add: rel_fun_def)
+  have lifted: "rel_fun (list_all2 R) (rel_fun (list_all2 S) (=))
+      (list_all2 C) (list_all2 (related a))"
+    using list.rel_transfer[where Sa=R and Sc=S] element by (auto simp: rel_fun_def)
+  have correspondence: "list_all2 C xs ys=list_all2 (related a) ps qs"
+    by (rule rel_funD[OF rel_funD[OF lifted first] second])
   show ?thesis by (simp only: lists formed correspondence simp_thms)
 qed
 

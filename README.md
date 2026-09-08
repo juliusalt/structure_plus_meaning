@@ -1203,6 +1203,29 @@ and bindings. Complete native gluing and attachment pushforward, construction
 permission and its global invariance, mathematical proof presentations, and
 the final repository audit remain open.
 
+
+Higher-order contract constructions now separate recognition of a proposed
+relationship from its complete admission boundary. Comparison and identification
+of implementations reduce to the independently specified subject relations.
+Lists and products lift whole contracts, and shared-source pairing combines
+determined results. These rules reuse existing class, transport, and relation
+machinery. The generation traversal's detailed correspondence induction is
+replaced by Isabelle's general list relation transport theorem, preserving its
+statement and the two existing generation uses. The same native traversal now
+exports complete sequence relation and mapping contracts from one element
+contract, including every admitted output presentation.
+
+Finite attachment transport is proved for arbitrary maps, carrier types, and
+value types. Mapping the complete list computes the existing pushforward count
+exactly; functionality of the complete functional image is precisely its
+compatibility condition. Complete piece enumerations then recover copied
+carriers, incidence, counts, and bindings. An exact finite criterion characterizes
+assembly against any complete output enumeration. One output witness removes
+duplicates only from set fields and retains all counted occurrences. These
+results establish the mathematical correspondence for native gluing; the
+complete native assembly program and global construction-permission invariance
+remain open.
+
 The remaining work includes construction-cause validity and authority readers, complete
 transition material, reflection, genesis, and the system-wide presentation
 audit. Native presentations and checking of the remaining mathematical

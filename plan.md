@@ -155,6 +155,26 @@ recursion. The theory must supply the hypotheses under which these constructions
 Its own operative structures, definitions, and proof claims receive
 presentations and intrinsic-link checks under the same discipline.
 
+
+**P-5 — Meaningful higher-order depth.** *(Explicit, owner clarification of
+2026-09-08.)*
+
+Obtain particular requirements by specializing or composing independently
+meaningful notions where the evidence supports such a hierarchy. General
+relationships should discharge the details they determine for whole classes
+of uses. A more specific level establishes the remaining conditions without
+restating those discharged arguments. Exact local contracts allow each level
+to rely on established meaning without reopening its internal presentation.
+
+Apply the same discipline to recognizing specializations and choosing or
+comparing compositions. Record reusable criteria and proofs for those
+relationships, together with the evidence that a proposed general notion
+is coherent beyond the current use. Where possible, continue this decomposition
+until the immediate obligations at each rule no longer grow with the internals
+of the requirement. This is an investigative direction, not an assumption that
+every requirement has such a hierarchy, a universal notion type, or a reason
+to add layers that merely rename detail.
+
 ### 0.4 What this plan is
 
 This plan establishes nothing. It records defects, the authority that governs
@@ -933,6 +953,29 @@ operations before future operands and retains its original scope, artifacts,
 and bindings. Complete native gluing and attachment pushforward, construction
 permission and its global invariance, mathematical proof presentations, and
 the final repository audit remain open.
+
+
+Higher-order contract constructions now separate recognition of a proposed
+relationship from its complete admission boundary. Comparison and identification
+of implementations reduce to the independently specified subject relations.
+Lists and products lift whole contracts, and shared-source pairing combines
+determined results. These rules reuse existing class, transport, and relation
+machinery. The generation traversal's detailed correspondence induction is
+replaced by Isabelle's general list relation transport theorem, preserving its
+statement and the two existing generation uses. The same native traversal now
+exports complete sequence relation and mapping contracts from one element
+contract, including every admitted output presentation.
+
+Finite attachment transport is proved for arbitrary maps, carrier types, and
+value types. Mapping the complete list computes the existing pushforward count
+exactly; functionality of the complete functional image is precisely its
+compatibility condition. Complete piece enumerations then recover copied
+carriers, incidence, counts, and bindings. An exact finite criterion characterizes
+assembly against any complete output enumeration. One output witness removes
+duplicates only from set fields and retains all counted occurrences. These
+results establish the mathematical correspondence for native gluing; the
+complete native assembly program and global construction-permission invariance
+remain open.
 
 ### 6.7 Evidence — `RRA_Evidence`
 

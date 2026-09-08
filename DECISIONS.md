@@ -5271,3 +5271,98 @@ independent notions and use existing ordinary mechanisms. Complete native
 gluing and attachment pushforward remain the next implementation boundary;
 construction permission and its global invariance remain distinct. This batch
 does not close mathematical proof presentation or the final repository audit.
+
+
+## Higher-order reasoning has a reusable recognition boundary
+
+The owner's clarification is applied before accepting the pending gluing
+work. The draft was still isolated, so its structure could be assessed without
+changing an accepted assembly notion. This review concerns meaningful depth:
+independent notions and relationships that settle whole classes of uses, with
+only the remaining conditions left to the next level.
+
+The existing machinery already supports several such levels. Class coverage
+and recovery justify semantic correspondence; correspondence and owned relation
+contracts justify adaptation and composition; function contracts specialize
+relations to determined outputs. Constraints, products, and covered images
+then construct several of the current finite classes. The remaining weakness
+was that some consumers still reconstructed relationships that those levels
+could establish generally. The generation correspondence traversal, for
+example, performed its own list induction after the element relationship had
+already been established.
+
+The accepted change uses the standard higher-order function relation in
+Isabelle to express preservation of related arguments. Its list relator already
+transports a relation between element relations to a relation between whole
+sequence relations. Factor_Related_Lists now applies that theorem directly.
+Its exact statement, locale assumptions, native clauses, and the two existing
+generation uses remain unchanged. No parallel hierarchy or new universal
+notion type is introduced for a relationship the library already supplies.
+
+Presentation_Contract_Constructions connects that reasoning to complete local
+contracts. Agreement on related arguments and a proved admission boundary
+characterize an exact implementation contract. The recognition rule separates
+the two conditions; a concrete counterexample shows why agreement on valid
+arguments alone is insufficient. The subjects and their intended relation are
+specified before this recognition test. Passing it does not justify choosing
+that relation as the intended notion.
+
+The comparison and identification rules concern relationships between whole
+contracts. With complete classes at both boundaries, implication or equality
+of the subject relations is equivalent to implication or equality of their
+implementations. These rules let a proposed specialization or replacement be
+checked at its semantic boundary. They also propagate a semantic counterexample
+back to the claimed implementation relationship. Adaptation handles changes
+of presentation before this comparison when the classes differ.
+
+List lifting is derived through ordinary relational composition and the
+standard list relator. Product lifting combines independently owned contracts.
+Function graphs specialize those results; shared-source pairing keeps the
+same recovered source in both component operations. The sequence term encoding
+then composes with that established list relationship. The native traversal
+needs one complete element contract and its actual formed context to export
+the whole sequence contract, including all compatible outputs. A consumer
+does not repeat the recursive native proof or assume unique presentations.
+
+Each of these rules has a fixed immediate interface. Nested products, lists,
+and compositions can grow without enlarging an individual rule's premises to
+include all internal proofs. This is the supported local bound. The number of
+distinct semantic conditions can still grow, and no theorem asserts that every
+requirement admits such a decomposition. Finding an appropriate independent
+notion is also not claimed to be a complete automated procedure.
+
+The reusable investigation is therefore explicit. First identify the content
+and intrinsic relations that must remain distinguished. Compare candidate
+general notions at that semantic boundary, using recognition, specialization,
+transport, and contract comparison to validate the proposed relationship.
+Apply a proved construction rule and record which conditions it discharges.
+Investigate the residual conditions in the same way. Keep a further layer only
+when it supplies a relationship or proof that subsequent uses can consume
+without restating the hidden detail. Counterexamples and failed domain or
+coverage conditions remain evidence against the candidate decomposition.
+
+The gluing development provides a separate application of that discipline.
+Attachment pushforward is established first for arbitrary finite carrier and
+value types and arbitrary maps. Its one count law serves every counted source;
+the existing functional compatibility law accounts for the set image. Indexed
+piece enumerations specialize those operations through the already independent
+piece-family relation. The assembly-specific work is the correspondence between
+its occurrence keys, complete origin domain, and four existing output fields.
+It does not re-establish finite pushforward for each field or add new primitive
+fields to an assembly witness.
+
+Every formed piece family has a complete enumeration in every supplied order
+of its slots. Equal artifacts in different slots remain different occurrences.
+The finite assembly criterion accepts any complete target enumeration. A
+constructive output witness removes duplicates from the carrier, incidence,
+and functional lists after mapping; its counted list retains every occurrence.
+This is one witness, not a preferred presentation. Shared destinations are
+permitted, with functional conflicts excluded by the original target formation.
+
+Choosing these construction and recognition rules is evidence-driven, not a
+prescription to use one formal hierarchy everywhere. The broader O-84 audit
+must continue looking for reusable relationships and remaining repeated local
+arguments. Complete native gluing, global permission invariance, construction
+and authority, higher protocols, reflection, genesis, native mathematical proof
+presentation, and the final every-line audit remain open. No obligation state
+is promoted by this batch.

@@ -77,8 +77,12 @@ Recorded-scope classes link the native cause citation and its actual artifact
 use to the complete stored body and an independently presented expected
 context. Every formed context has a recording witness. A formed false native
 call has a complete recorded scope and quotation while its cause remains
-invalid. Native checks of separately claimed retained environments, recorded
-scopes, cause validity, and the higher protocol relations remain.
+invalid. Four ordinary entries now admit exactly recorded-cause scopes and
+complete program scopes carried by payloads, with compatible reports. Shared
+context and quotation contracts keep the two subject domains separate. Every
+formed judgment context and closed program scope can be carried independently
+by one generation. Native checks of separately claimed retained environments,
+cause validity, and the higher protocol relations remain.
 
 The work is incomplete. The current active session establishes the structural
 and data basis, relative footprints, exact artifacts, fragments, and assembly.
@@ -1045,13 +1049,40 @@ operands. Its base is the least complete-definition closure of eight actual
 external callees in the joined citation and value program. Retention preserves
 source admission, all expected-core readings, and every complete-row test.
 The source also determines its least retained environment without an extra
-stored field. Checking a separately submitted environment claim or recorded
-scope requires its own further operation.
+stored field. Checking a separately submitted environment claim still requires
+its own operation.
 
-Further application of the general theory, native presentations and checking
-of its remaining contracts and proofs, recorded-scope and authority readers,
-complete transition material, remaining reflection strata, genesis, and the
-system-wide presentation audit remain open.
+Site and judgment contexts now have exact native admission and identity
+contracts. A site uses actual artifact lookup and occurrence membership; a
+judgment shares one complete environment between its two sites. The judgment
+artifact reader retains only quotation and context comparison dependencies.
+Its complete clause closure excludes package, application, replay, positive
+judgment, and package-retention admission. The separate program-scope reader
+uses the existing closed-package class, which determines its least scope and
+unique program from the represented site.
+
+A generic two-premise reader compares the actual quoted body with every
+compatible expected presentation. Both scope readers consume its canonical
+function contract. A complete-family projection contract is also shared with
+the earlier fresh-view theorem. Complete-definition agreement composes the
+local programs without changing either subject domain or stored program.
+
+The generation scope program reads its actual complete core before selecting
+the whole cause or payload artifact. Four ordinary entries admit precisely
+the independent source and report classes. Their local relation and function
+contracts supply compatible outputs, presentation invariance, and rejection
+of another scope. Least source retention preserves every native report, and
+material recovery keeps the actual citation, artifact use, and complete body.
+The two scopes can vary independently. A false native call has an admitted
+recorded scope, and every program can be carried with an invalid cause.
+
+Three fixed native programs supply four context operations, five scope
+operations, and four generation scope operations before future operands.
+Each preserves its original complete scope, artifacts, and bindings.
+The remaining work includes separately claimed generation retention, cause
+validity and authority readers, complete transition material, reflection,
+genesis, and the system-wide presentation audit. Native presentations and
+checking of the remaining mathematical contracts and proofs stay open.
 
 Run `python3 tools/check.py --threads 12 --timeout 300` for one combined build,
 complete error collection, theory-inventory check, and unfinished-proof scan.

@@ -4738,3 +4738,111 @@ scopes, cause validity, higher protocol, reflection, and genesis remain. The
 new mathematical contracts and proofs retain the native presentation and
 checking obligation under O-85. The wider obligation states remain partial,
 and the final every-line audit has not begun.
+
+## Independent context and scope contracts compose through actual quoted bodies
+
+A formed site context consists of a complete environment and one actual
+position in it. A formed judgment context contains two such positions in the
+same environment. Those notions precede program grammar, application
+formation, role, truth, and cause validity. The existing closed program-scope
+notion adds a native package and the least environment required to read it.
+Its program is already determined by the selected site. The implementation
+keeps these independent domains and their existing intrinsic relations.
+
+The four context clauses use actual artifact lookup and occurrence-target
+admission, then share one environment between judgment sites. Identity keeps
+the coordinate fields and compares complete environments. Equal environments
+and unchanged coordinates imply the second context's admission, so a second
+admission premise would repeat an established condition. Their least base is
+the complete-definition closure of the three actual external callees.
+
+A complete quoted artifact determines its actual data body. The existing
+artifact class, determined-component construction, and covered image rule
+give this body class without storing the body or its root twice. Every formed
+self-contained body has a complete quotation. Composing this class with an
+independent context class presents the context through the exact stored body.
+This construction is justified by complete quotation itself; it does not
+select an exclusive topology for other presentations of the context.
+
+Factor_Transported_Readings supplies one ordinary schema with two actual
+premises. The first returns its actual body with a private witness; the second
+compares that same body with the expected report. Its complete-family meaning
+holds for every input term. Canonical comparison then gives a generic total
+function contract from the composed source class to the expected class. Both
+judgment and program scope readers consume this one contract. Expected
+presentations may vary while the artifact continues to quote its own body.
+
+The existing reader-projection schema is reused for source-only admission.
+A complete-family locale now contains its local equation, including grouped
+programs and positive cycles. The earlier fresh-view theorem consumes this
+locale and retains its original statement and assumptions. All other earlier
+statements, native clauses, assumption scopes, and proofs remain unchanged.
+
+The judgment reader retains the least closure of complete quotation and
+judgment-context identity. Its formal complete-definition boundary excludes
+package admission, application admission, replay admission, positive judgment,
+and package retention. The program reader separately uses the existing
+closed-package scope class. One scope-identity clause admits the source and
+compares its site context; the same complete context determines the second
+scope and its program. No duplicate program value or admission is stored.
+
+The existing complete quotation code is shared through complete-definition
+agreement. Its legacy proof import chain is broader than the judgment
+reader's operative closure. That closure, its preserved complete clauses,
+and the exact independent class establish the semantic boundary. Cloning the
+quotation code merely to shorten imports would duplicate an implementation.
+The broader file-organization audit remains part of the system-wide review.
+
+The actual generation source links to two independent notions: the judgment
+context quoted by its whole cause and the closed program scope quoted by its
+whole payload. The recorded-scope relation and classes are preserved. The
+payload relation composes the already specified actual generation and carried
+program relations. Determined components give source classes without another
+stored context; linked products give every compatible complete report.
+
+The four generation clauses first consume the complete actual source-to-core
+conversion. A report then selects the whole cause or payload field and calls
+its local scope reader. The two source admissions project those reports.
+Their least base is determined by three actual external callees: complete
+generation reporting, judgment artifact reporting, and program artifact
+reporting. All private fields occur in actual positive calls. No external
+truth callback, failed-call premise, operative bound, or new primitive is
+introduced.
+
+The generation owner derives the selected whole artifact from its already
+proved value contract. The scope owner derives the subject through complete
+quotation and canonical correspondence. Their linked native classes and
+relation and function contracts own this result locally. Clients obtain every
+compatible output, invariance, and rejection of a different recovered scope
+from those contracts. The actual stored body is retained throughout.
+
+Least generation source restriction preserves every scope report and both
+source admissions. The material contracts retain the exact native citation,
+its local or externally bound artifact use, the complete quote, and the empty
+slot boundary. Every formed judgment context can be recorded with any formed
+payload and predecessor set. Every closed program scope can be carried with
+any formed cause and predecessor set. Independently chosen subjects of the
+two classes can coexist in one actual generation whose source environment
+is already least. Neither role requires the other.
+
+A formed false native call has an admitted recorded scope and report while
+its cause is invalid. Every actual program also has an admitted payload scope
+in a generation with an invalid cause. These witnesses preserve the separation
+between scope recovery and validity, construction permission, authority,
+adoption, or amendment acceptance.
+
+The thirteen native definitions have thirteen ordinary clauses at incidental
+construction coordinates 156 through 168. Four serve contexts, five serve
+scope identity and quotation reports, and four serve generation scopes.
+Three fixed closed native programs supply these entries before any future
+formed operand, preserving each entire original scope, artifact, and binding.
+Complete-definition agreement preserves all component meanings; it does not
+identify the smaller programs with their sources or change an adopted scope.
+
+The choices of one shared transported-reader contract, determined artifact
+body class, least dependency bases, and separate context domains are justified
+above. Separately submitted claimed retained environments, cause validity,
+higher protocol admission, reflection, genesis, and the system-wide audit
+remain. Native mathematical-contract and exactness-proof presentations remain
+under O-85. All broader obligation states stay partial, and the final
+every-line audit has not begun.

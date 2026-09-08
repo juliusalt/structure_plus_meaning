@@ -134,6 +134,54 @@ next
       (use inst material parts in auto)
 qed
 
+section \<open>A complete projection family has the same local meaning\<close>
+
+locale reader_projection_profile =
+  fixes P :: "('a,'s,'d,'c) schema_system" and entry reader :: 'd
+    and x y :: 'a and socket :: 's and clause :: 'c
+  assumes system_formed: "schema_system_formed P"
+    and variables: "x\<noteq>y"
+    and family: "\<And>c S. ((entry,c),S)\<in>system_clauses P \<longleftrightarrow>
+      c=clause \<and> S=reader_projection_clause x y socket reader"
+    and call: "\<And>t. schema_call_formed P entry t \<longleftrightarrow> term_formed t"
+begin
+
+lemma valuation:
+  "(entry,p)\<in>positive_meaning P \<longleftrightarrow>
+    (\<exists>h. term_formed (h x) \<and> term_formed (h y) \<and> p=h x \<and>
+      (reader,Pair_Term (h x) (h y))\<in>positive_meaning P)"
+proof -
+  have accepts: "schema_call_formed P entry
+      (evaluate_pattern h (schema_conclusion (reader_projection_clause x y socket reader)))"
+    if "\<forall>a\<in>schema_variables (reader_projection_clause x y socket reader). term_formed (h a)" for h
+    using that by (auto simp: call reader_projection_clause_def schema_variables_def)
+  show ?thesis
+    apply (subst ordinary_single_clause_valuation[OF family reader_projection_clause_ordinary])
+     apply (fact accepts)
+    apply (rule ex_cong1)
+    apply (simp add: reader_projection_clause_def schema_variables_def conj_ac all_conj_distrib imp_conjL)
+    done
+qed
+
+theorem exact:
+  "(entry,p)\<in>positive_meaning P \<longleftrightarrow>
+    (\<exists>q. (reader,Pair_Term p q)\<in>positive_meaning P)"
+proof
+  assume "(entry,p)\<in>positive_meaning P"
+  then show "\<exists>q. (reader,Pair_Term p q)\<in>positive_meaning P"
+    by (simp only: valuation) blast
+next
+  assume "\<exists>q. (reader,Pair_Term p q)\<in>positive_meaning P"
+  then obtain q where read: "(reader,Pair_Term p q)\<in>positive_meaning P" by blast
+  have formed: "term_formed p" "term_formed q"
+    using schema_call_formed_target[OF positive_meaning_formed[OF read]] by auto
+  show "(entry,p)\<in>positive_meaning P"
+    by (simp only: valuation; rule exI[of _ "\<lambda>a. if a=x then p else q"])
+      (use variables read formed in auto)
+qed
+
+end
+
 section \<open>Fresh views use the existing program's actual reader\<close>
 
 theorem reader_projection_view:
@@ -159,11 +207,13 @@ theorem reader_projection_view_meaning:
 proof -
   interpret view: positive_view P entry "Pattern_Variable i" "{(c,reader_projection_clause x y s reader)}"
     by (rule view)
-  have formed: "term_formed p \<and> term_formed q"
-    if "(reader,Pair_Term p q)\<in>positive_meaning P" for q
-    using schema_call_formed_target[OF positive_meaning_formed[OF that]] by simp
-  show ?thesis using view.view_meaning[of p] formed
-    by (auto simp: reader_projection_rule[OF variables])
+  interpret projection: reader_projection_profile
+    "add_view_definition P entry (Pattern_Variable i) {(c,reader_projection_clause x y s reader)}"
+    entry reader x y s c
+    by (unfold_locales)
+      (use view.formed variables view.no_old_clause view.view_call in auto)
+  have member: "reader\<in>system_definitions P" using view.callees by simp
+  show ?thesis by (simp only: projection.exact view.old_meaning[OF member])
 qed
 
 theorem fixed_result_view_meaning:

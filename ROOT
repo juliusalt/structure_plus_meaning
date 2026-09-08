@@ -495,3 +495,16 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Generation_Source_Admission
     Factor_Generation_Predecessor_Admission
     Factor_Generation_Source_Contracts
+    Factor_Quoted_Artifacts
+    Factor_Transported_Readings
+    Factor_Context_Clauses
+    Factor_Context_Admission
+    Factor_Scope_Reading_Base
+    Factor_Judgment_Scope_Reading
+    Factor_Program_Scope_Reports
+    Factor_Scope_Programs
+    Factor_Generation_Program_Presentations
+    Factor_Generation_Scope_Base
+    Factor_Generation_Scope_Clauses
+    Factor_Generation_Scope_Admission
+    Factor_Generation_Scope_Contracts

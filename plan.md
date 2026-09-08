@@ -996,8 +996,14 @@ between the source and value classes of the same core. The predecessor-report
 operation is a total function on actual sources. One fixed native program
 precedes future operands, and native admission and reports are preserved by
 the least required source environment. The source determines that environment
-without storing it again. Native checks of a separately submitted retained
-environment, recorded scopes, cause validity, and the higher protocol remain.
+without storing it again. Four further ordinary entries now recover the
+recorded-cause judgment scope and the program scope carried by a whole payload.
+They first use complete source conversion, then the independently owned scope
+readers. Source classes derive the context without a duplicate stored field;
+report classes retain every compatible expected presentation. The native
+contracts preserve the actual quoted body, citation use, least source
+retention, and independence from cause validity. Separately submitted retained
+environments, cause validity, and the higher protocol remain.
 
 **Obligations.**
 **O-21** every formed generation core has an admitted presentation and each admitted presentation recovers exactly one core, including its exact locus, predecessor relation, payload, and recorded cause. The intrinsic links to predecessor resolution, cause recording, and the relevant retained environment are preserved and reflected. Different adequate presentations need not be isomorphic. Any canonical construction or transport theorem states its own class and boundary; it establishes no exclusive presentation choice.
@@ -1253,7 +1259,9 @@ changing its contract. Complete-definition admission transfers both universal
 rule equations, including to compiled instances. Four ordinary replay entries
 check conditional and closed source contexts and compatible complete quotations
 of their actual bodies. The same quoted-body construction also supplies the
-existing program-scope reader's class.
+existing program-scope reader's class. A complete-family projection locale
+now contains the shared equation for fresh views, grouped programs, and
+positive cycles; the earlier fresh-view theorem consumes that contract.
 
 One fixed native replay reader has positive calls and complete presentations
 of closed proofs for every positive call of its own actual program. Every
@@ -1309,9 +1317,35 @@ now have their own ordinary program and exported local contracts. Generic
 sequence and multiset reading theorems are reused within its recursive proof.
 The source-to-value operation instantiates canonical semantic correspondence;
 the predecessor report instantiates a total map. Least retained environments
-preserve the native results. Separately submitted retention claims, recorded
-scopes, and higher protocol readers remain. The mathematical contracts and
-their native proof presentations remain within O-85.
+preserve the native results.
+
+The context notion now owns native site and judgment admission and identity.
+It uses actual artifact lookup, occurrence membership, and complete environment
+correspondence without adding a program role or truth premise. A complete
+quoted artifact determines its actual data body. One generic ordinary reader
+composes that body with its independent subject class and compares it with
+every compatible expected presentation. Its canonical function contract is
+used for both judgment scopes and closed program scopes. The judgment
+reader's complete definition closure excludes package and positive-judgment
+checkers; the program reader keeps its existing minimal-package condition.
+The proof imports of the legacy quotation theory remain broader than this
+operative closure. Neither import history nor a larger composed source
+program changes the selected reader's actual dependency boundary.
+
+The generation scope program reads its actual source and complete core before
+selecting the whole cause or payload artifact. Its four ordinary entries
+admit exactly the independent linked source and report classes. Local relation
+and total function contracts supply presentation invariance, every compatible
+output, and wrong-scope rejection. The material and retention theorems retain
+each actual citation use and complete body. Any formed judgment context and
+closed program scope can be carried independently by one actual generation.
+Readable recorded scopes and payload programs do not validate a cause.
+Three fixed native compilations supply the context, scope, and generation
+scope operations before all future formed operands, preserving the complete
+original programs, scopes, artifacts, and bindings. Separately submitted
+retention claims, cause validity, and higher protocol readers remain. The
+mathematical contracts and their native proof presentations remain within
+O-85.
 
 These results are justified by existing collection, table, quotation, scope,
 and program machinery. Their proof parameters are typed relations, not a

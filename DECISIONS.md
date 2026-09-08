@@ -5201,3 +5201,73 @@ and presentations. Construction-cause validation, authority, higher protocols,
 reflection, genesis, and the system-wide presentation audit remain open.
 The new mathematical contracts and proofs retain O-85. Broader obligation
 states are unchanged, and the final every-line audit has not begun.
+
+## Finite tables own the piece and origin presentation boundary
+
+The independent table is a finite functional relation. Its keys distinguish
+rows; its values need not distinguish them. This is already the structure of
+piece families and origin maps. Neither a sorted serialization nor an ordered
+piece list is substituted for that relation.
+
+The general table class is derived from independent key and value classes:
+products retain both row roles, complete collections retain every row exactly
+once, and a subdomain restriction requires functionality of the recovered
+relation. The class permits several presentations of each key and value.
+Every order and every compatible component presentation remains available.
+The restriction does not erase repeated values at different keys.
+
+The existing finite-table presentation uses a target term as its empty-list
+terminator. The data form uses an empty payload. Both retain their original
+readings. Exact retermination recovers the whole intermediate list and derives
+the earlier finite-collection class by generic composition. The existing table
+class then follows by the same product and subdomain rules. The general
+correspondence connects all presentations of the same table, including different
+orders and value forms. No new proof of semantic compatibility is required of
+a client using those exported classes. Actual physical table sources and their
+socket boundaries remain separate observed material.
+
+Piece families keep the existing arbitrary occurrence-key type. Their domain
+is the original piece-family formation condition together with the explicit
+key-class domain. A class covering every key therefore covers every original
+formed piece family. Origins use a product key consisting of the piece slot
+and its local address; their values are output addresses. No ordering or
+global numbering of piece occurrences is imposed.
+
+The assembly source class uses exactly the existing pieces and origins and
+is restricted by the unchanged K2 relation. Its report presents the determined
+output. Coverage follows from the original assembly results and the generic
+component classes. This accounts jointly for the actual map, full carrier,
+incidence, counted attachments, and compatible functional attachments. The
+output is not an additional primitive field of the witness.
+
+The native implementation in this batch chooses formed byte addresses as its
+key instance. This is a sufficient concrete class, not a restriction on the
+independent arbitrary-key assembly notion. It permits direct use of the
+existing ordinary key-uniqueness checker. That checker compares the actual
+encoded keys, so its exported generic implementation contract explicitly
+requires an injective key encoding. It is not claimed to test semantic equality
+of arbitrary relational key presentations. Artifact values retain every
+complete presentation and need no unique encoding.
+
+Six definitions use eight ordinary clauses: one row rule, two complete-list
+rules, and one table rule for each of pieces and origins. Each table rule
+has two separate premise sockets for complete row admission and key uniqueness.
+The actual external dependencies are exactly payload admission, artifact
+admission, and keyed-list admission. The program retains their least closed
+base and preserves its complete definitions and meanings. The two public
+entries are fixed before every future operand is supplied.
+
+Empty tables are admitted. Equal artifacts at distinct slots remain two piece
+occurrences; distinct copied addresses may have the same destination. Duplicate
+source keys are rejected even when their values agree. Native table admission
+does not assert complete origin coverage or functional-data compatibility.
+The explicit empty-origin result shows that a table can be admitted while K2
+fails for a nonempty copied carrier. Every formed K2 source nevertheless has
+admitted component tables and every compatible complete report quotation.
+
+The concrete key instance, terminator adaptation, and split between row checks
+and key uniqueness are reasoned implementation choices. They preserve the
+independent notions and use existing ordinary mechanisms. Complete native
+gluing and attachment pushforward remain the next implementation boundary;
+construction permission and its global invariance remain distinct. This batch
+does not close mathematical proof presentation or the final repository audit.

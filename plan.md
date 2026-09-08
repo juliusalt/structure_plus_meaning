@@ -916,6 +916,24 @@ its defect is at the Factor join.
 **Obligation.** **O-20** the output basis is determined by the witness for every
 piece family, including the empty one.
 
+Finite functional tables now have a general complete class over independent
+key and value classes. The existing enumeration form is derived through an
+exact change of its complete list terminator. Piece-family, origin, assembly
+source, and assembly report classes use products, collections, and observations;
+the original arbitrary-key assembly witness remains unchanged.
+
+Six definitions with eight ordinary clauses give exact native piece-table and
+origin-table admission over the least closure of three actual external entries.
+Every compatible artifact presentation is admitted. Equal pieces at different
+slots and distinct origins with one destination are accepted; duplicate source
+keys are rejected. Empty tables are accepted, while empty origins cannot cover
+a nonempty copied carrier. Every formed assembly has admitted component tables
+and complete report quotations. One fixed native program supplies both table
+operations before future operands and retains its original scope, artifacts,
+and bindings. Complete native gluing and attachment pushforward, construction
+permission and its global invariance, mathematical proof presentations, and
+the final repository audit remain open.
+
 ### 6.7 Evidence — `RRA_Evidence`
 
 **Defect.** Imports `RRA_Assembly`, uses no assembly concept.

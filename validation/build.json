@@ -1,7 +1,7 @@
 {
-  "invocation": "b19579fd-a932-4761-ac43-3832e410a996",
+  "invocation": "c3b6dd61-0969-4b5d-be98-85dd67d42417",
   "status": "accepted",
-  "started_utc": "2026-09-08T21:37:27.117970+00:00",
+  "started_utc": "2026-09-08T22:18:41.501832+00:00",
   "command": [
     "/opt/isabelle/bin/isabelle",
     "build",
@@ -17,7 +17,7 @@
   "exit_code": 0,
   "session_diagnostics": "",
   "sources": {
-    "ROOT": "29f333141c68ce6aa3315afd6382539d10b1d420fc67c2501df8633445e5cbc1",
+    "ROOT": "05b7310c8aa24f540085a515007b8821be054de908190da3841be3d8226e1451",
     "theories/Bag_Difference_Witnesses.thy": "d5b919d0e2fb895fcb241ca351faa839a108a639a4f374b724941439746efe33",
     "theories/Bag_Readings.thy": "03d4158d527863bfd03904cfb3ae2b13f3caf62fc9ef8f9a0644754dae34cbae",
     "theories/Bootstrap_Finite_Closure.thy": "cbff1345a5a97a8108f2022d99345a7423e93cccc01580929d4054f42a5e031c",
@@ -44,6 +44,7 @@
     "theories/Factor_Artifact_Comparison.thy": "fbd53682bafd968bb2d059c01cffc3a7cb1df2f2859f1987472a8ecc2f7fb456",
     "theories/Factor_Artifact_Difference.thy": "fbbf8ec0107cff8cc3f8f17ae75080ccf6eeab99fc20178508a92417bfb1d814",
     "theories/Factor_Artifact_Values.thy": "a7d22519293f6683ae238c800ee734f994fdf0a41a02c8ba454713af34f977c0",
+    "theories/Factor_Assembly_Presentations.thy": "77581c60504de149b7efca265a5c4c8b46b47928d2b7a046f4ee0e1b4589273c",
     "theories/Factor_Assembly_Support.thy": "ecc90d4043d77c604d8b7cde9690c4fe0952663ceae10e468a3d13d3be48e2c4",
     "theories/Factor_Authority.thy": "96874f085f24ac05d04c5106b7f0b1206986f4009abe1358cdebc421d9fdf7ed",
     "theories/Factor_Authority_Independence.thy": "3587cf5526fbe2680e5fa119b001cb570cc8ba63a059e69135f5f335b56c9d26",
@@ -449,6 +450,9 @@
     "theories/Factor_Site_Values.thy": "1e76521e7d152b5f7549ab3784f6332e4c2bde47870c811cf6b236e59b83dfd7",
     "theories/Factor_Slot_Observations.thy": "e61e0f52db3a555ac6d1f16a7a4234a7fc90c64c71eeb9f65ea169508dcd124c",
     "theories/Factor_Structural_Collections.thy": "c1ba5a8e534973cfdcb89787629a4440b25ed150909f00b46b99864a56a4f174",
+    "theories/Factor_Structural_Table_Admission.thy": "838e1112106278fb528e7b2f68716d85277da2d723ea2db4333a3a0f053474aa",
+    "theories/Factor_Structural_Table_Clauses.thy": "2ea190fe7a83bad81e9a865d219e9d568d1c1a2140e06e502bb8fe9da3d724e0",
+    "theories/Factor_Structural_Table_Contracts.thy": "79fdc6a4af27e52de9b7bb8dfec60e33a0d3c99befa8e48cec4093894f58540a",
     "theories/Factor_Structure.thy": "6504e3710b6151d2793f8671e43d57fdd30863b14913d6ea3ff4a5f3ba51a231",
     "theories/Factor_Syntax_Boundaries.thy": "d8e2a61c42a5fa850af78c8f7d554130f8e1b94ae8539bba54fd57651654b8f8",
     "theories/Factor_Syntax_Copy.thy": "9d5882bc9c6bb002fb4742af0af81f2c249726674476ea7c01ee82548b630fff",
@@ -459,10 +463,12 @@
     "theories/Factor_System_Renaming.thy": "4d0906fa6559ce0f6d1f60f43fd26717166a3cf5d57b6d1a8178d201732bf352",
     "theories/Factor_System_Restriction.thy": "ae5548a5c0d0f30959afe73a033ad95a468ba988e7c108994252b478ab192d1a",
     "theories/Factor_System_Unions.thy": "c0626aa280e5f72ea93b9dde0cb25a29f9c4a868b1bbaac72642a8f7f1e580cb",
+    "theories/Factor_Table_Admission_Profiles.thy": "0cdcdb981732cf7d10fedf34fba22ba2b298bafaafc2884fb0f0657b35352035",
     "theories/Factor_Table_Assembly.thy": "c4386068cab397cd9f9dad9026206f06f179cca4036efe97c49185fd8e4d17ec",
     "theories/Factor_Table_Copy.thy": "baced2f7051133f843e3f9b0f2bc625622b88bf28378dc5fb865993a4dad01c1",
     "theories/Factor_Table_Enumeration.thy": "32d2d325f556d4d5af688c85a14ca9469eea04c7509acdf14c805cc965a89c1d",
     "theories/Factor_Table_Metadata.thy": "1a96a57f73d6db2a5d1c42b2c43249d1349195c2de387c812dd384e9c14accd3",
+    "theories/Factor_Table_Presentations.thy": "e9e9ce124679228e61fae2eec145324b1680cac303eec2441ee91f65286160d9",
     "theories/Factor_Table_Reading_Profiles.thy": "b347ddab629993d9bb757b6d7b9e26a4e43c0f718100fc482649958ecc20aa2f",
     "theories/Factor_Table_Syntax.thy": "1db72c41293cfa5a54c71fb1cdbb6230b4d94fff92169944993696eff613c453",
     "theories/Factor_Tagged_Views.thy": "e40a2722938dfdd61263d85116f736e6290401bbca66ef20b19d48e0ac5c447e",
@@ -568,6 +574,6 @@
   "isabelle_version": "Isabelle2025-2",
   "sources_unchanged": true,
   "tools_unchanged": true,
-  "finished_utc": "2026-09-08T21:41:51.673926+00:00",
-  "log_sha256": "47f0fdc0a5292adbdbccfc2e603a441c5382a70b48ea600942dd932c635516e9"
+  "finished_utc": "2026-09-08T22:23:10.852441+00:00",
+  "log_sha256": "b2b9be75ccffecfe7970e77474a14298e1423a48622cc84b088b33e1008dc3c9"
 }

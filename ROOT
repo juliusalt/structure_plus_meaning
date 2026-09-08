@@ -545,3 +545,9 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Fragment_Admission
     Factor_Fragment_Projections
     Factor_Fragment_Contracts
+    Factor_Table_Presentations
+    Factor_Table_Admission_Profiles
+    Factor_Assembly_Presentations
+    Factor_Structural_Table_Clauses
+    Factor_Structural_Table_Admission
+    Factor_Structural_Table_Contracts

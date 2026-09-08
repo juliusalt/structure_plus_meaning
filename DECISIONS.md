@@ -5366,3 +5366,57 @@ arguments. Complete native gluing, global permission invariance, construction
 and authority, higher protocols, reflection, genesis, native mathematical proof
 presentation, and the final every-line audit remain open. No obligation state
 is promoted by this batch.
+
+
+## Concatenation is a fold over actual terms
+
+Native gluing needs to collect the contributions of every source piece. The
+existing correspondence traversal already supplies mapping from one owned
+element contract. The remaining list operation is ordinary concatenation.
+It has meaning independently of gluing, and it is an append specialization
+of the standard right fold. That relationship supplies a reusable recursive
+argument instead of a separate recursion for each assembly field.
+
+List_Relation_Folds composes step relations using the library's existing
+right fold and relational composition. It permits partial and multivalued
+steps. One encoded step equation, a seed boundary, and closure of the state
+domain determine an entire encoded fold. The equation does not need an
+injective encoding; recovery is separately required when constructing a
+complete presentation class. No new truth mechanism is introduced.
+
+Factor_List_Folds gives this operation two ordinary native clauses. The
+recursive tail and the actual step callee have distinct premise sockets and
+share the same intermediate result. The complete proof permits positive
+dependency cycles in the supplied system. Consumers use the exported fold
+contract without repeating its native induction.
+
+The empty clause returns its seed literally and checks only its formation.
+This exposed a reusable condition on a proposed semantic interpretation.
+Literal copying is a complete semantic identity operation exactly when each
+subject has one presentation. Presentation_Contract_Constructions proves
+both directions and gives a class with two equivalent forms where copying
+fails the complete identity contract. This criterion also applies to a
+table lookup that returns a stored term. Semantic equality or transport is
+needed when a consumer must admit every equivalent output form.
+
+The concatenation instance therefore declares its subject as sequences of
+actual formed self-contained data terms. The existing append callee owns
+that data boundary. Fixing the seed to the empty list gives ordinary concat,
+with all term details and occurrences retained. Empty inner lists contribute
+no elements; repeated equal elements still contribute separately. The
+accepted contract does not quotient those elements by an unrelated semantic
+class. Output artifact comparison will supply that later assembly boundary.
+
+The native instance has two definitions and three clauses. Its sole external
+callee is append; the least complete dependency closure determines the base.
+The generic recursive-group construction preserves that base's actual
+interfaces, clause families, call boundaries, and meanings. One fixed native
+operation precedes every future operand and preserves the compiled scope,
+artifacts, and bindings.
+
+The mapping-to-concatenation rule now requires only an element equation, its
+data boundary, and the owned concatenation equation in the same program.
+These discharge traversal, order, and multiplicity. Origin lookup, complete
+coverage, and comparison with all four output fields remain assembly work.
+The new mathematical results retain O-85; all broader obligation states and
+the final every-line audit remain open.

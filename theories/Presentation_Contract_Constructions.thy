@@ -233,4 +233,48 @@ text \<open>
   in an arbitrary requirement or the effort of discovering a suitable hierarchy.
 \<close>
 
+section \<open>Literal copying has a precise semantic identity boundary\<close>
+
+theorem literal_copy_contract_iff:
+  assumes source: "presentation_class R D A"
+  shows "presented_function_contract R D A R D A id (\<lambda>p q. A p \<and> q=p) \<longleftrightarrow>
+    (\<forall>a p q. R a p \<longrightarrow> R a q \<longrightarrow> p=q)"
+proof -
+  interpret source: presentation_class R D A by (rule source)
+  show ?thesis
+  proof
+    assume contract: "presented_function_contract R D A R D A id (\<lambda>p q. A p \<and> q=p)"
+    interpret copy: presented_function_contract R D A R D A id "\<lambda>p q. A p \<and> q=p" by (rule contract)
+    show "\<forall>a p q. R a p \<longrightarrow> R a q \<longrightarrow> p=q"
+      using copy.output by auto
+  next
+    assume unique: "\<forall>a p q. R a p \<longrightarrow> R a q \<longrightarrow> p=q"
+    have exact: "(A p \<and> q=p) \<longleftrightarrow> presented_relation R R (\<lambda>a b. b=id a) p q" for p q
+      using unique source.admitted source.presentation_boundary
+      by (auto simp: presented_relation_def; blast)
+    show "presented_function_contract R D A R D A id (\<lambda>p q. A p \<and> q=p)"
+      using source exact by (simp add: presented_function_contract_def presented_function_contract_axioms_def
+        presented_relation_contract_def presented_relation_contract_axioms_def)
+  qed
+qed
+
+corollary literal_copy_does_not_represent_all_equivalent_outputs:
+  "presentation_class (\<lambda>_::unit. \<lambda>_::bool. True) (\<lambda>_. True) (\<lambda>_. True) \<and>
+    \<not>presented_function_contract (\<lambda>_::unit. \<lambda>_::bool. True) (\<lambda>_. True) (\<lambda>_. True)
+      (\<lambda>_::unit. \<lambda>_::bool. True) (\<lambda>_. True) (\<lambda>_. True) id (\<lambda>p q. q=p)"
+proof -
+  have source: "presentation_class (\<lambda>_::unit. \<lambda>_::bool. True) (\<lambda>_. True) (\<lambda>_. True)"
+    by (simp add: presentation_class_def)
+  show ?thesis using source literal_copy_contract_iff[OF source]
+    by (auto; metis bool.distinct(1))
+qed
+
+text \<open>
+  Copying preserves an actual presentation. It realizes a complete semantic
+  identity contract precisely when each subject has one presentation. This
+  criterion applies to stored-value lookup, copied fold seeds, and other
+  literal projections. When several forms present the same subject, semantic
+  comparison or transport supplies the missing output correspondence.
+\<close>
+
 end

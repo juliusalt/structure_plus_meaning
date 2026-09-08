@@ -1226,6 +1226,18 @@ results establish the mathematical correspondence for native gluing; the
 complete native assembly program and global construction-permission invariance
 remain open.
 
+Native concatenation now specializes a general relational right fold to the
+existing append operation and an empty seed. Its two definitions and three
+ordinary clauses use the least closure of one external callee. A complete
+function contract retains actual data terms, order, and every repeated
+occurrence. The existing mapping traversal composes with concatenation through
+one complete intermediate list. A general criterion identifies the remaining
+semantic boundary: literal copying gives a complete identity contract exactly
+when each subject has one presentation. One fixed native concatenation entry
+precedes future operands. Native assembly still needs complete origin lookup,
+coverage, and output-field comparisons; mathematical proof checking and the
+broader obligations remain open.
+
 The remaining work includes construction-cause validity and authority readers, complete
 transition material, reflection, genesis, and the system-wide presentation
 audit. Native presentations and checking of the remaining mathematical

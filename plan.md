@@ -967,6 +967,25 @@ $$
 \text{this cause validly accounts for the payload}
 $$
 
+**Implemented value boundary.** The existing complete four-field value class
+now has ordinary admission, identity, inequality, and finite-collection
+contracts in Factor_Generation_Contracts. The eight definitions are one
+positive recursive group: predecessor distinctness needs comparison, and
+comparison admits both complete generation values. The joint proof uses
+strict descent through presented predecessor subterms and the generic list,
+bag, target, and finite-set contracts. Every finite value presentation is
+covered, with total witnesses for arbitrary formed cores and collections.
+Different presentations of one predecessor cannot count as distinct members.
+
+The local program retains the least dependency-closed part of the existing
+target program containing its five actual external callees. This constructs
+a new program from complete definitions; it does not change an adopted scope
+or identify the smaller program with its source. A separate union with the
+earlier reader program preserves both meanings. Fixed native compilations
+precede every future formed operand and preserve their original material.
+Native admission of actual generation sources, citation rows, retained scopes,
+recorded cause validity, and the higher protocol remains.
+
 **Obligations.**
 **O-21** every formed generation core has an admitted presentation and each admitted presentation recovers exactly one core, including its exact locus, predecessor relation, payload, and recorded cause. The intrinsic links to predecessor resolution, cause recording, and the relevant retained environment are preserved and reflected. Different adequate presentations need not be isomorphic. Any canonical construction or transport theorem states its own class and boundary; it establishes no exclusive presentation choice.
 **O-22** every predecessor resolves to an exact formed generation.
@@ -1264,11 +1283,17 @@ recorded, with an already minimal outer generation scope. A formed false
 native equality call supplies a complete scope report and quotation while
 its recorded cause remains invalid.
 
-These are class, relation, and construction results. The existing target
-entry already admits the target class. Native admission of the remaining
-recursive generation and higher protocol relations still requires ordinary
-clauses with exact contracts. The new mathematical class contracts and their
-native proof presentations remain within O-85.
+These class, relation, and construction results now support ordinary
+generation value admission and comparison. The generation notion owns their
+joint exactness proof and exports the local relation contracts. Generic
+positive bag witnesses and complete collection profiles are used inside that
+proof. The final finite-set class consumes the exported inequality contract,
+and generic adaptation and composition serve later uses. The helper program
+requires several positive steps, so a one-step consequence correspondence is
+not asserted. Finite subterm descent supplies the local joint proof without
+an operative bound. Native admission of actual generation sources, their
+cited rows and scopes, and higher protocol relations remains. The mathematical
+contracts and their native proof presentations remain within O-85.
 
 These results are justified by existing collection, table, quotation, scope,
 and program machinery. Their proof parameters are typed relations, not a

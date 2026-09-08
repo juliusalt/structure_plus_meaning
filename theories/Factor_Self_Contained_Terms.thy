@@ -202,6 +202,27 @@ lemma data_list_term_self_contained:
     (\<forall>t\<in>set ts. self_contained_term t)"
   by (induction ts) auto
 
+lemma data_list_term_member_height:
+  assumes "x\<in>set xs"
+  shows "term_height x<term_height (data_list_term xs)"
+  using assms
+proof (induction xs)
+  case Nil
+  then show ?case by simp
+next
+  case (Cons y ys)
+  show ?case
+  proof (cases "x=y")
+    case True
+    then show ?thesis by simp
+  next
+    case False
+    have inside: "x\<in>set ys" using Cons.prems False by simp
+    have smaller: "term_height x<term_height (data_list_term ys)" by (rule Cons.IH[OF inside])
+    show ?thesis by (rule less_le_trans[OF smaller]) simp
+  qed
+qed
+
 lemma injective_mapped_lists:
   assumes "inj f"
   shows "map f xs=map f ys \<longleftrightarrow> xs=ys"

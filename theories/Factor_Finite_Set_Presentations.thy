@@ -14,6 +14,16 @@ proof -
   show ?thesis by (auto simp: data_collection_presents_def rows)
 qed
 
+lemma list_all2_presentation_constraint:
+  "list_all2 (\<lambda>a p. R a p \<and> Q p) xs ps \<longleftrightarrow>
+    list_all2 R xs ps \<and> (\<forall>p\<in>set ps. Q p)"
+  by (induction xs arbitrary: ps) (auto simp: list_all2_Cons1)
+
+lemma data_collection_presents_presentation_constraint:
+  "data_collection_presents (\<lambda>a p. R a p \<and> Q p) A (data_list_term ps) \<longleftrightarrow>
+    data_collection_presents R A (data_list_term ps) \<and> (\<forall>p\<in>set ps. Q p)"
+  by (auto simp: data_collection_presents_def list_all2_presentation_constraint data_list_term_injective)
+
 section \<open>Finite sets use the existing complete collection presentations\<close>
 
 abbreviation data_fset_presents ::

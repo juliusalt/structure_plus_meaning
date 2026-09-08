@@ -4488,5 +4488,140 @@ discipline to the other notions and reconsider inherited scopes wherever they
 are broader than their independent dependencies. O-43, O-44, O-80, O-84, and
 O-85 remain partial. In particular, mathematical correspondence does not prove
 native implementation of arbitrary relations or present all mathematical
-contracts and exactness proofs. Recursive generation admission, higher
+contracts and exactness proofs. Native generation source admission, higher
 protocol and reflection work, genesis, and the final every-line audit remain.
+The following value-program addition closes admission and comparison for the
+independently defined recursive core class.
+
+## Generation values own a positive admission and comparison group
+
+The independent generation core already contains exactly a locus, a finite
+set of exact predecessor cores, a payload target, and a recorded cause target.
+Its formation relation predates this reader. The general presentation theory
+already derives the complete recursive value class from those four fields.
+This addition implements that existing notion and its identity and inequality
+relations, then exports contracts for later clients. Cause validity, source
+citation reading, retention, publication, and authority have separate subjects
+and boundaries; value admission does not establish those judgments.
+
+The existing representation uses nested pairs for the four roles and a
+complete distinct-subject list for the finite predecessor set. The reader
+keeps this class because its coverage, recovery, and material boundary are
+already proved. It admits every order and every permitted member presentation.
+No order is imposed on the predecessor subject. No new tag, duplicated field,
+chosen representative, comparison key, or depth limit is introduced. Another
+exact presentation of this same core can use the general correspondence and
+local-contract laws without requiring each client to repeat this proof.
+
+Admission and comparison are intrinsically linked at the implementation
+boundary. A predecessor list must contain distinct cores, which requires core
+inequality. Core inequality in turn admits both complete operands before
+comparing their fields. Implementing the entries as independently closed
+successive views would either miss this recursion or assume a result still
+being constructed. The chosen program therefore contains one finite positive
+group. Its least meaning is the existing monotone consequence construction;
+unsupported cycles cannot supply their own support.
+
+Factor_Recursive_Groups formalizes this construction independently of
+generations. Relative formation changes only the allowed dependency domain:
+every finite functional interface and clause family, owned head, formed
+pattern, and complete schema remains required. An ordinary union with a
+formed base closes a group with fresh definition coordinates. The old base
+has no new callees, so all its call boundaries and meaning are preserved.
+The unclosed group has no claimed separate native meaning. Its external
+dependency set is derived from actual prospective callees, rather than
+stored as another registry or trusted certificate.
+
+The initial draft inherited the whole target-difference program. Its
+accumulated environment and record definitions were not all needed by the
+generation notion. Factor_System_Restriction now retains complete definitions
+on an actual dependency-closed boundary, with formation, all-call agreement,
+and leastness proved generically. The generation base is the least closure
+of the group's actual external callees: data admission, data-list admission,
+target admission, target identity, and target inequality. The chosen source
+is the already formed target program; no malformed source is silently repaired.
+Restriction constructs a new program. It does not equate that program's exact
+identity or quoted scope with its source, or alter an already adopted scope.
+
+The eight new entries use construction coordinates 139 through 146. The
+particular numerals have no semantic role under existing injective relocation
+and compilation. Admission has one clause for the four fields. Identity has
+one clause requiring complete admission of both cores and identity of all
+four fields. Inequality has four alternatives, each retaining complete
+admission and witnessing a difference in one field. Two complete-list
+traversals check separation and element admission. Selection, bag identity,
+and bag inequality supply the remaining positive recursion. These families
+contain seventeen ordinary clauses in total.
+
+The bag-difference proof is factored through an independent finite witness
+relation. Its three forms are an excess occurrence, a head unequal to every
+member of the other list, or a remaining difference after one equal member
+has been removed. Under equality and inequality equations on the compared
+member presentations, these witnesses hold exactly for unequal multisets.
+Multiplicity is retained. The mathematical inverse used in the proof recovers
+the unique underlying subject; it does not select or normalize a presentation.
+
+Factor_Related_Difference implements those witnesses through actual ordinary
+comparison callees. Its raw all-term contract includes complete data lists,
+one-occurrence removal, and the entire remaining boundary. In the missing-head
+case an empty other list still requires the head's data admission and the
+complete first tail. The shared empty context traversal itself requires only
+context formation. The raw helper can therefore have a witness on data that
+are not both complete collections of generation cores. Its exported raw
+contract states this fact. Whole generation comparison separately admits both
+complete cores before using the helper. No negative premise or failed-call
+test is added to the positive language.
+
+The proof first derives the exact equations of the actual clauses and shows
+that every admitted generation has a complete self-contained data boundary.
+It then proves admission, identity, and inequality together by finite term
+height. Every presented predecessor is a strict subterm of its enclosing
+value. At a bound, the previously established inequality equations admit
+exactly distinct predecessor cores; their full set and the three target
+fields recover the parent. The new admission equation and the smaller-core
+comparisons then establish both comparisons at that bound. Invalid inputs
+are included in the admission proof, so soundness does not presuppose a
+recovered core. Every finite term lies below some bound.
+
+This local proof uses the exported target comparison contracts and the generic
+separation, finite-set, related-bag, and positive-witness results. The helper
+definitions take several ordinary positive steps. A one-step consequence
+correspondence between an abstract core operator and this expanded program
+is therefore not claimed. The finite bounds and temporary presentation
+constraints belong only to the proof. They neither limit operative inputs
+nor introduce a stored rank. The exported generation contracts have no bound.
+
+The completed generation relation contracts provide all-term exactness,
+including rejection of malformed operands, and invariance across every
+presentation of the same cores. The generic separated-collection theorem
+then consumes the generation notion's own inequality contract and derives
+the complete finite-set admission class. Two presentations of the same core
+cannot form two distinct predecessors. The empty collection is admitted.
+Totality covers every formed core and every finite set of formed cores;
+generic base and singleton-successor constructions witness both predecessor
+cases without validating the recorded cause.
+
+Factor_Compiled_Applications exports a reusable consequence of its existing
+compiler: selected operations with already proved all-term contracts obtain
+one fixed native program before future operands. The expected relation is a
+proof contract for an actual formed program, not a method of compiling an
+arbitrary mathematical predicate. The generation instance fixes eight
+distinct sites, preserves its complete original scope, and retains every
+artifact and outgoing binding when later operands are constructed.
+
+Factor_Generation_Value_Programs is a separate integration with the existing
+comparison and replay program. Complete agreement is proved on their shared
+target base before ordinary union is formed. Both programs' calls and meanings
+are preserved. The fixed combined compilation offers all fifteen target
+comparison and generation operations for future operands. The earlier
+Factor_Generation_Programs theory, which preserves quoted program scopes in
+generation payloads, is a different relation and remains unchanged.
+
+The choices of a positive group, reuse of the existing value class, least
+complete-definition base, finite-subterm proof, and separate reader integration
+are justified above. They do not settle every possible implementation of the
+notion. Native admission of actual generation sources, cited predecessor rows,
+retained environments and recorded scopes, and higher protocol relations
+remains. The mathematical contracts and exactness proofs still need native
+presentations and checking under O-85. The wider obligation states remain
+partial, and the final every-line audit has not begun.

@@ -167,12 +167,78 @@ theorem compiled_program_future_applications:
       (intro conjI; assumption)
   done
 
+section \<open>Local operation contracts survive the same fixed compilation\<close>
+
+theorem compiled_exact_operations:
+  fixes P :: "('a,'s,'d,'c) schema_system"
+  assumes formed: "schema_system_formed P" and selected: "D\<subseteq>system_definitions P"
+    and calls: "\<And>d t. d\<in>D \<Longrightarrow> schema_call_formed P d t \<longleftrightarrow> term_formed t"
+    and exact: "\<And>d t. d\<in>D \<Longrightarrow> (d,t)\<in>positive_meaning P \<longleftrightarrow> J d t"
+  shows "\<exists>E :: local_address option artifact_environment. \<exists>pu Q g.
+    closed_native_package_at E pu [] Q \<and> native_package_environment E pu []=E \<and> inj_on g D \<and>
+    (\<forall>d\<in>D. \<forall>t. term_formed t \<longrightarrow>
+      (\<exists>F au I K. environment_formed F \<and> environment_included E F \<and> au\<notin>environment_uses E \<and>
+        native_package_at F pu [] Q \<and> native_application_at F au [] (g d) t I K \<and>
+        native_package_environment F pu []=E \<and> native_application_formed F pu [] au [] \<and>
+        (native_positive_holds F pu [] au [] \<longleftrightarrow> J d t) \<and>
+        (\<forall>v\<in>environment_uses E. \<forall>R. artifact_at F v R \<longleftrightarrow> artifact_at E v R) \<and>
+        (\<forall>v\<in>environment_uses E. \<forall>k w. binds_slot F v k w \<longleftrightarrow> binds_slot E v k w)))"
+proof -
+  obtain g :: "'d \<Rightarrow> local_address option definition_site"
+    and E :: "local_address option artifact_environment" and pu Q
+    where injective: "inj_on g (system_definitions P)"
+    and closed: "closed_native_package_at E pu [] Q"
+    and scope: "native_package_environment E pu []=E"
+    and future: "\<forall>d\<in>system_definitions P. \<forall>t. term_formed t \<longrightarrow>
+      (\<exists>F au I K. environment_formed F \<and> environment_included E F \<and> au\<notin>environment_uses E \<and>
+        native_package_at F pu [] Q \<and> native_application_at F au [] (g d) t I K \<and>
+        native_package_environment F pu []=E \<and>
+        (native_application_formed F pu [] au [] \<longleftrightarrow> schema_call_formed P d t) \<and>
+        (native_positive_holds F pu [] au [] \<longleftrightarrow> (d,t)\<in>positive_meaning P) \<and>
+        (\<forall>v\<in>environment_uses E. \<forall>R. artifact_at F v R \<longleftrightarrow> artifact_at E v R) \<and>
+        (\<forall>v\<in>environment_uses E. \<forall>k w. binds_slot F v k w \<longleftrightarrow> binds_slot E v k w))"
+    using compiled_program_with_future_applications[OF formed]
+    by (elim exE conjE) (rule that; assumption)
+  have sites: "inj_on g D" by (rule inj_on_subset[OF injective selected])
+  show ?thesis
+  proof (rule exI[of _ E], rule exI[of _ pu], rule exI[of _ Q], rule exI[of _ g], intro conjI ballI allI impI)
+    show "closed_native_package_at E pu [] Q" by (rule closed)
+    show "native_package_environment E pu []=E" by (rule scope)
+    show "inj_on g D" by (rule sites)
+  next
+    fix d :: 'd and t :: factor_term
+    assume member: "d\<in>D" and arg: "term_formed t"
+    have inside: "d\<in>system_definitions P" using selected member by blast
+    obtain F au I K where parts: "environment_formed F" "environment_included E F" "au\<notin>environment_uses E"
+      "native_package_at F pu [] Q" "native_application_at F au [] (g d) t I K"
+      "native_package_environment F pu []=E"
+      "native_application_formed F pu [] au [] \<longleftrightarrow> schema_call_formed P d t"
+      "native_positive_holds F pu [] au [] \<longleftrightarrow> (d,t)\<in>positive_meaning P"
+      "\<forall>v\<in>environment_uses E. \<forall>R. artifact_at F v R \<longleftrightarrow> artifact_at E v R"
+      "\<forall>v\<in>environment_uses E. \<forall>k w. binds_slot F v k w \<longleftrightarrow> binds_slot E v k w"
+      using future[rule_format, OF inside arg]
+      by (elim exE conjE) (rule that; assumption)
+    show "\<exists>F au I K. environment_formed F \<and> environment_included E F \<and> au\<notin>environment_uses E \<and>
+      native_package_at F pu [] Q \<and> native_application_at F au [] (g d) t I K \<and>
+      native_package_environment F pu []=E \<and> native_application_formed F pu [] au [] \<and>
+      (native_positive_holds F pu [] au [] \<longleftrightarrow> J d t) \<and>
+      (\<forall>v\<in>environment_uses E. \<forall>R. artifact_at F v R \<longleftrightarrow> artifact_at E v R) \<and>
+      (\<forall>v\<in>environment_uses E. \<forall>k w. binds_slot F v k w \<longleftrightarrow> binds_slot E v k w)"
+      by (rule exI[of _ F], rule exI[of _ au], rule exI[of _ I], rule exI[of _ K])
+        (use parts arg calls[OF member] exact[OF member] in blast)
+  qed
+qed
+
 text \<open>
   A single finite closed compilation serves every formed future argument at
   every source definition. Each call has actual native syntax, the original
   interface boundary, and exactly the original positive truth. The canonical
   program environment and all of its existing artifacts and bindings remain
-  unchanged when those future arguments are added.
+  unchanged when those future arguments are added. Selected operations may
+  export their already proved local equations through the same construction.
+  The expected relation in that theorem is a proof contract for the supplied
+  actual program; it does not provide a new primitive or a method to compile
+  an arbitrary mathematical predicate.
 \<close>
 
 end

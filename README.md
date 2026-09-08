@@ -58,10 +58,14 @@ readers and compatible quotation checks. One fixed compiled reader admits
 presentations of closed proofs of every positive call of its own program.
 
 Compatible families and directed unions now supply recursive generation
-classes from finite size bounds. Target and finite-set constructions also
-derive the existing snapshot, publication, and transaction classes under
-their unchanged formation conditions. A transaction with its supplied
-initial snapshot determines its complete success or conflict outcome.
+classes from finite size bounds. Eight ordinary definitions jointly admit
+complete generation values, compare their identity and inequality, and admit
+finite collections of distinct cores. Their local contracts cover every
+input term and every presentation of a formed core. Repeated predecessors
+are rejected even when their presentations differ. Target and finite-set
+constructions also derive the existing snapshot, publication, and transaction
+classes under their unchanged formation conditions. A transaction with its
+supplied initial snapshot determines its complete success or conflict outcome.
 
 Generation source and report classes retain every actual predecessor socket,
 citation endpoint, destination use and address, and recovered core. Their
@@ -70,8 +74,8 @@ Recorded-scope classes link the native cause citation and its actual artifact
 use to the complete stored body and an independently presented expected
 context. Every formed context has a recording witness. A formed false native
 call has a complete recorded scope and quotation while its cause remains
-invalid. Native admission of the remaining generation and protocol relations
-is still required.
+invalid. Native reading of actual generation sources, cited predecessor rows,
+retained scopes, and the higher protocol relations is still required.
 
 The work is incomplete. The current active session establishes the structural
 and data basis, relative footprints, exact artifacts, fragments, and assembly.
@@ -542,8 +546,8 @@ supplied artifact table. The resulting program accepts exactly presentations of
 formed finite environments, including the permitted empty and cyclic cases.
 A separate identity definition joins both admissions with the earlier comparison.
 One closed native program supplies distinct admission and identity sites before
-any future formed input is supplied. Grammar-derived closure, comparison of
-generations, general native checking, reflection, and amendment remain separate
+any future formed input is supplied. Grammar-derived closure for higher readers,
+native generation source reading, reflection, and amendment remain separate
 work.
 
 One ordinary recursive collector now retains every value at a supplied key.
@@ -1008,8 +1012,24 @@ conditional replay and quotation, while the closed entries reject it.
 These are native proofs of operative judgments; the remaining mathematical
 contract and exactness-proof presentations are still required.
 
+The generation value program owns admission, identity, inequality, finite
+collection admission, and their complete list and bag helpers. Seventeen
+ordinary clauses realize these eight operations together. A generic positive
+group construction derives formation and preserves its base meanings. The
+base is the least closed restriction containing the group's five actual
+external callees; every retained definition keeps all its clauses. The
+generation proof consumes the target notion's exported comparison contracts
+and generic finite-set and positive bag-witness theorems.
+
+One fixed native compilation serves every future formed value operand. A
+separate integration joins this local program with the earlier comparison
+and replay program, preserves both complete meanings, and fixes fifteen
+comparison and generation operation sites. Both compilations preserve their
+original scopes, artifacts, and bindings. Neither the finite proof bounds
+nor the dependency restriction add a stored field or alter an adopted scope.
+
 Further application of the general theory, native presentations and checking
-of its remaining contracts and proofs, higher generation and authority
+of its remaining contracts and proofs, actual generation source and authority
 readers, complete transition material, remaining reflection strata, genesis,
 and the system-wide presentation audit remain open.
 

@@ -476,3 +476,12 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Artifact_Difference
     Factor_Target_Comparison
     Factor_Comparison_Programs
+    Bag_Difference_Witnesses
+    Factor_System_Restriction
+    Factor_Recursive_Groups
+    Factor_Related_Difference
+    Factor_Generation_Clauses
+    Factor_Generation_Equations
+    Factor_Generation_Admission
+    Factor_Generation_Contracts
+    Factor_Generation_Value_Programs

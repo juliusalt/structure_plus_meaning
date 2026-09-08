@@ -253,6 +253,40 @@ proof -
   show ?thesis by (rule artifact_environment.equality[OF artifacts bindings]) simp
 qed
 
+
+lemma read_environment_fixed_required_coverage:
+  "read_environment E U D=E \<longleftrightarrow>
+    environment_uses E\<subseteq>read_environment_uses E U D \<and>
+    rel_dom (environment_bindings E)\<subseteq>D"
+proof
+  assume fixed: "read_environment E U D=E"
+  have uses: "environment_uses E\<subseteq>read_environment_uses E U D"
+  proof
+    fix u assume "u\<in>environment_uses E"
+    then obtain R where source: "artifact_at E u R"
+      by (auto simp: environment_uses_def rel_dom_def artifact_at_def)
+    have "artifact_at (read_environment E U D) u R" by (simp only: fixed; rule source)
+    then show "u\<in>read_environment_uses E U D" by simp
+  qed
+  have slots: "rel_dom (environment_bindings E)\<subseteq>D"
+  proof
+    fix x assume "x\<in>rel_dom (environment_bindings E)"
+    then obtain v where binding: "(x,v)\<in>environment_bindings E" by (auto simp: rel_dom_def)
+    have "(x,v)\<in>environment_bindings (read_environment E U D)" by (simp only: fixed; rule binding)
+    then show "x\<in>D" by (simp add: read_environment_def)
+  qed
+  show "environment_uses E\<subseteq>read_environment_uses E U D \<and>
+    rel_dom (environment_bindings E)\<subseteq>D" using uses slots by blast
+next
+  assume coverage: "environment_uses E\<subseteq>read_environment_uses E U D \<and>
+    rel_dom (environment_bindings E)\<subseteq>D"
+  have artifacts: "environment_artifacts (read_environment E U D)=environment_artifacts E"
+    using coverage by (auto simp: read_environment_def environment_uses_def rel_dom_def)
+  have bindings: "environment_bindings (read_environment E U D)=environment_bindings E"
+    using coverage by (auto simp: read_environment_def rel_dom_def)
+  show "read_environment E U D=E" by (rule artifact_environment.equality[OF artifacts bindings]) simp
+qed
+
 text \<open>
   This finite restriction is a general helper. A higher grammar must determine
   both the structural source uses and every demanded slot. Structural reads can

@@ -1,7 +1,7 @@
 {
-  "invocation": "a4820f3f-614d-4260-ac7a-8ded598bef24",
+  "invocation": "63392221-af2e-4f9f-88bc-e0c56603b66e",
   "status": "accepted",
-  "started_utc": "2026-09-08T16:46:17.738526+00:00",
+  "started_utc": "2026-09-08T18:25:48.476295+00:00",
   "command": [
     "/opt/isabelle/bin/isabelle",
     "build",
@@ -17,7 +17,7 @@
   "exit_code": 0,
   "session_diagnostics": "",
   "sources": {
-    "ROOT": "55188c7ca63c66740779db48942502aff3ca1a5b8a813529088b722e033baffb",
+    "ROOT": "004dbd542729e1b8280f1af33405caf94ec239460230126e31be704cdedf4e02",
     "theories/Bag_Difference_Witnesses.thy": "d5b919d0e2fb895fcb241ca351faa839a108a639a4f374b724941439746efe33",
     "theories/Bag_Readings.thy": "03d4158d527863bfd03904cfb3ae2b13f3caf62fc9ef8f9a0644754dae34cbae",
     "theories/Bootstrap_Finite_Closure.thy": "cbff1345a5a97a8108f2022d99345a7423e93cccc01580929d4054f42a5e031c",
@@ -228,10 +228,18 @@
     "theories/Factor_Interpretation_Retention.thy": "ebce6255104ddb0401377b28a9d994299fcb81ab738ff401ab902985793f97f9",
     "theories/Factor_Interpretation_Support.thy": "26ba85e9b16a3f45e4949530ffa7943fd14e4a0a291a6769dee8cef3173ffa13",
     "theories/Factor_Interpreter_Admission.thy": "a61f10004835ef21e209ae5aacd93e3210107d5d4d1c43d15309109fa6b6573d",
+    "theories/Factor_Judgment_Dependency_Contracts.thy": "33c59a9d46d8c5dce7b794d99fc393349f1049bf250e75023d5d8ddf4039495c",
+    "theories/Factor_Judgment_Dependency_Reading.thy": "a06447989befe160311991e7442ca0b6d03ae4f016aa2ff563da810401c195dd",
     "theories/Factor_Judgment_Presentations.thy": "b4d4ec4ba9445d33cac83920ce76845d89cba45c960abe73d2a34be48d44b91f",
     "theories/Factor_Judgment_Retention.thy": "6f0f5757ec7458dc73a8d8be8c1efa773c5ee209338106a0d8729161c0ff670e",
+    "theories/Factor_Judgment_Retention_Admission.thy": "6e3512b456b53c164afefe489e355fc0ee24bca4ccd8de43185b4e99256954ec",
+    "theories/Factor_Judgment_Retention_Base.thy": "b5df46a05d5ba33533a7131154da14d72987e4611c6db8d0095d894a57fb31fc",
+    "theories/Factor_Judgment_Retention_Clauses.thy": "dddcf25af3e193fa8da1a2bb43ce4bdc31691577330aadfcd4cc9da1f17b6443",
+    "theories/Factor_Judgment_Retention_Contracts.thy": "43885381f2168de608d4c6f98cb7540c0167020f8d1f790cf2bb7263b56d2b2c",
+    "theories/Factor_Judgment_Retention_Presentations.thy": "57425d763c7e0e286460c77a83745274f50e1b5b512d66b9df42cdd91e883685",
     "theories/Factor_Judgment_Scope_Reading.thy": "edb581aeac8f8cd787d1a76e2ed7e27a88f23adf10a27d44a9b94a6ebc69fa27",
     "theories/Factor_Judgment_Scopes.thy": "832d6f7b17aaa38a0b2230a899de420a1a7d5dd43e4e0a45ac8983f057c1288f",
+    "theories/Factor_Judgment_Source_Admission.thy": "e4614de3a498d28e88cc4a30113eddca342b59d81e5bd678942c73f3e9acdab9",
     "theories/Factor_Judgment_Values.thy": "c120f55e3bd7ce0e198c6f76689293d2b40d841adc0b323bcf2d4f151aafe00c",
     "theories/Factor_Key_Fibres.thy": "8bfe7c294bcb887384b7e299410462d3d0db51f20ac795fbf9777a4d76f67855",
     "theories/Factor_Keyed_Lists.thy": "2ed3c364ebc88cf13756bbd963f347677fcc0491a5582ea8098dc5a477ecc552",
@@ -509,7 +517,7 @@
     "theories/RRA_Publication.thy": "610b397c95dee0ecf0efc37d9ee9525114fac4340d751a408683cbdcd9ed4cc4",
     "theories/RRA_Publication_Construction.thy": "c517e0fe8455106859b6bc16f558c4e9461dcc7fbe7743acfa1c55cd032080cc",
     "theories/RRA_Publication_Dependencies.thy": "28eab6e88621fa9c62b4ce6d231239d2419323fe3ce5ddf996afa6d61e17e16e",
-    "theories/RRA_Read_Environment.thy": "80e997becb9352ae1d0511c53f58e7d53822cb260d1b350ac51f9090ad4a2298",
+    "theories/RRA_Read_Environment.thy": "872adda163ab54511e212a37afb62d8a5d02ce81b4ee66146571ae650be222f1",
     "theories/RRA_Read_Transport.thy": "a787325f90e94706ec1614ec6459b4e41953d36c48c6c32fb440dbd40a8047b6",
     "theories/RRA_Record_Chains.thy": "8d299f9fbe6ec3f07a9a48a53220eb82d9e81897a8fbef1e6aa82b5412c5a49c",
     "theories/RRA_Replacement.thy": "7cf7e939c8831289f100d0b2d568eb4273ac7954c5b63d098f6f45ce28b7647a",
@@ -541,6 +549,6 @@
   "isabelle_version": "Isabelle2025-2",
   "sources_unchanged": true,
   "tools_unchanged": true,
-  "finished_utc": "2026-09-08T16:49:25.969290+00:00",
-  "log_sha256": "144d641f371a3de138557a555b3f30071fbd0dba31268ff67868c67852339596"
+  "finished_utc": "2026-09-08T18:29:09.214353+00:00",
+  "log_sha256": "8eeaf2027cf97e86f51d989835f96f22dd467d017ea800784f81eb896d522a5d"
 }

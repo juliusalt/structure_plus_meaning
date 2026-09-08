@@ -4942,3 +4942,95 @@ Cause validity, authority, higher protocol admission, reflection, genesis, and
 the system-wide presentation audit remain. Native mathematical-contract and
 exactness-proof presentations remain under O-85. Broader obligation states
 are unchanged, and the final every-line audit has not begun.
+
+
+## Judgment retention owns the exact program and call boundary
+
+The independent notion already exists in Factor_Judgment_Retention: the
+complete environment read by one native package and one actual application.
+It determines a least source-and-slot restriction independently of any
+derivation, replay graph, truth, cause role, or authority. The new native
+contract implements this existing notion before recorded cause validation
+uses it.
+
+The subject remains the existing judgment context: one complete environment
+and its actual program and call sites. Package and raw application reading
+constrain that context. Neither callee membership in the package nor
+interface acceptance is a condition of raw reading. Positive truth remains
+separate as well. The recovered program, callee, operand, interior, and slot
+metadata are determined by this source; adding them to its stored value
+would duplicate that basis. Generic subdomain, product, and complete
+quotation constructions derive source, closed-source, and report classes.
+This reuses an established presentation without claiming that its pair
+arrangement is intrinsically privileged.
+
+Seven native definitions have thirteen ordinary clauses. Source admission
+checks the actual package and application in the same complete environment.
+The slot query is the union of both grammars' actual demands. The use query
+covers the two roots, every reached definition source, and the actual targets
+of those demanded bindings. No stored dependency certificate or guessed
+traversal bound is introduced.
+
+The older package source query includes targets of every stored binding.
+Its conjunction with the complete binding coverage test is exact for its
+existing closed-package judgment. That does not make the broader query an
+exact required-use relation on arbitrary readable sources. The new use
+query therefore requires an actual demanded slot before following its
+binding. An unused binding cannot justify its own target. The earlier query
+and its accepted statements remain unchanged.
+
+Two generic list profiles check every key of both complete environment
+tables. Their empty case keeps its ordinary formed-context domain.
+Closed-source admission separately requires readability and both table
+coverage checks. A general fixed-point coverage theorem belongs in
+RRA_Read_Environment because it concerns the independently defined
+source-and-slot restriction. Its statement holds without a higher grammar
+assumption and is used at the judgment boundary.
+
+A retained-environment report checks closed readability at the same two
+sites in its claimed environment and checks complete inclusion in the
+source. The existing extension theorem then recovers source readability and
+equality with its least environment. Requiring a second native check of that
+same source would duplicate a derived fact. The report still compares both
+complete environments; matching only domains would fail to preserve stored
+values and binding targets.
+
+Local relation contracts own exact slot and use queries. A total function
+contract owns the least-environment result and exposes every compatible
+output presentation. General transport, invariance, and composition are
+therefore available without representation-specific proofs at later uses.
+Wrong environments, changed use or binding domains, and nonminimal supplied
+scopes are rejected.
+
+Accepted reports retain each exact artifact value and every demanded binding
+at its actual use and slot. They preserve both complete readings, all
+application metadata, call formation, truth, and the independently determined
+program scope. Every slot, use, and list query is invariant under least
+restriction. Retention reports are idempotent; closed-source admission can
+change from false to true when an oversized environment is restricted.
+
+Every readable source has native closed material and complete source and
+report quotations. An existing formed false equality call supplies a
+non-vacuity witness: its retained scope is admitted, its report is accepted,
+and native positive admission still rejects the call. Retention supplies no
+truth or cause-validity rule.
+
+The native base is the least complete-definition closure of eight actual
+external callees. Complete definition agreement preserves the existing
+package, slot, and inclusion contracts. The derived upper boundary excludes
+call-formation, proof, replay, truth, scope, and the older broad source
+query. Historical theory imports are broader than the operative program;
+that organization remains part of the later repository audit. One fixed
+native compilation precedes every future operand and preserves its original
+program scope, artifacts, and outgoing bindings.
+
+The choices to use the existing context class, expose exact dependency
+queries, keep list admission general, and derive original-source admission
+from a closed included claim are justified above. All earlier definitions,
+statements, assumption scopes, and proofs remain unchanged. The general
+coverage theorem is an addition, not a change to the earlier restriction.
+
+Native cause validation, authority, higher protocol admission, reflection,
+genesis, and the system-wide presentation audit remain. The new mathematical
+contracts and proofs retain O-85. Broader obligation states are unchanged,
+and the final every-line audit has not begun.

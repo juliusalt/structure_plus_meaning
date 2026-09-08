@@ -1372,6 +1372,31 @@ callees and excludes replay and scope checkers. Cause validity and higher
 protocol readers remain. The mathematical contracts and their native proof
 presentations remain within O-85.
 
+
+The independent program-and-call retention boundary now owns native source,
+dependency, closed-scope, and report contracts. Its source class constrains
+the existing shared judgment context by actual package and raw application
+reading, without requiring interface acceptance or truth. The determined
+program, call, and metadata need no additional stored fields.
+
+Seven ordinary entries with thirteen clauses recover exact required slots
+and uses, check both complete environment tables through generic lists, and
+admit the least-environment report. Only demanded bindings can justify their
+targets. A general fixed-point coverage lemma belongs to source-and-slot
+retention. Closed reading in the claimed environment and complete inclusion
+derive the original reading and exact leastness.
+
+The local contracts cover every input and compatible presentation, reject
+incorrect environments, and preserve both complete readings, all material,
+formation, truth, program scope, and every dependency, list, and retention
+report. Every readable source has closed material and complete quotations;
+a formed false call also has accepted retention. The least program base
+follows eight actual external callees and excludes proof, replay, truth,
+call-formation, scope, and the older broad source query. One fixed native
+compilation precedes future operands. Recorded cause validation consumes
+this boundary separately, and native mathematical-proof presentation remains
+within O-85.
+
 These results are justified by existing collection, table, quotation, scope,
 and program machinery. Their proof parameters are typed relations, not a
 universal datatype of notions. An arbitrary mathematical relation is not

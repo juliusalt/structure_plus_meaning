@@ -518,3 +518,11 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Generation_Retention_Admission
     Factor_Generation_Dependency_Contracts
     Factor_Generation_Retention_Contracts
+    Factor_Judgment_Retention_Presentations
+    Factor_Judgment_Retention_Base
+    Factor_Judgment_Retention_Clauses
+    Factor_Judgment_Source_Admission
+    Factor_Judgment_Dependency_Reading
+    Factor_Judgment_Retention_Admission
+    Factor_Judgment_Dependency_Contracts
+    Factor_Judgment_Retention_Contracts

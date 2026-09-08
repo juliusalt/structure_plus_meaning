@@ -84,7 +84,12 @@ formed judgment context and closed program scope can be carried independently
 by one generation. Nine further ordinary entries now check the exact recursive
 dependency sets, closed generation sources, and separately claimed retained
 environments. The report function accepts every presentation of the source's
-least required environment. Cause validity and higher protocol readers remain.
+least required environment. Seven ordinary entries now supply the separate
+program-and-call retention boundary. They admit actual readable sources,
+query exact required uses and slots, check both complete tables, and return
+every presentation of the least environment. Formation and truth are
+preserved by retention; an actual false call also admits a closed scope.
+Cause validity and higher protocol readers remain.
 
 The work is incomplete. The current active session establishes the structural
 and data basis, relative footprints, exact artifacts, fragments, and assembly.
@@ -1110,6 +1115,37 @@ definitions compose it with generation reading before the least base is
 selected from the nine actual external callees. The resulting native program
 excludes replay and scope checkers and is fixed before all future operands,
 preserving its original scope, artifacts, and bindings.
+
+
+The judgment retention program supplies seven entries with thirteen ordinary
+clauses. Its source is the existing environment with actual program and call
+sites, constrained by package and raw application reading. It imposes no
+callee-membership, interface-acceptance, or truth condition. The two readers'
+determined values and metadata need no additional stored field.
+
+The slot query follows both grammars. A required use is a root, a reached
+definition source, or the target of a demanded binding. The older package
+source query remains suitable for its paired coverage test; its broader set
+of binding targets is not used as the exact required-use relation here.
+Generic list contracts check every stored key in both environment tables.
+A general fixed-point coverage lemma belongs to source-and-slot retention
+and is reused at the judgment boundary.
+
+Closed reading in a claimed environment and complete inclusion in the source
+characterize its least environment. Local relation and function contracts
+cover all inputs and all compatible presentations. Wrong environments, uses,
+and binding domains are rejected. Accepted reports preserve all actual
+material, both full readings and their metadata, call formation, truth, and
+the independently determined program scope. Every dependency and list query
+and every retention report survives restriction.
+
+Every readable source has native closed material and complete source and
+report quotations. A formed false call has accepted retention while the
+positive-judgment reader rejects it. The retained program is the least
+closure of eight actual external callees; it excludes call formation,
+proof, replay, truth, and scope checkers. One fixed native compilation
+precedes every future operand and preserves its original scope, artifacts,
+and bindings.
 
 The remaining work includes cause validity and authority readers, complete
 transition material, reflection, genesis, and the system-wide presentation

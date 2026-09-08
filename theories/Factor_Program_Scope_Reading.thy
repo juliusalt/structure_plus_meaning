@@ -139,6 +139,24 @@ theorem program_scope_reading_exact:
   by (simp only: program_scope_reading_fields complete_data_admission_exact package_retention_admission_exact)
     blast
 
+theorem program_scope_reading_presentation_class:
+  "presentation_class (composed_presentation program_scope_value_presents quoted_body_presents)
+    program_scope_subject (\<lambda>z. (124,z)\<in>positive_meaning program_scope_reading_system)"
+proof -
+  have composed: "presentation_class
+      (composed_presentation program_scope_value_presents quoted_body_presents)
+      program_scope_subject
+      (\<lambda>z. \<exists>t. (122,t)\<in>positive_meaning package_retention_admission_system \<and> quoted_body_presents t z)"
+    by (rule quoted_body_presentation_class[OF program_scope_value_presentation_class])
+      (use site_value_presents_formed in \<open>auto simp: package_retention_admission_exact; blast\<close>)
+  have admission: "(\<lambda>z. \<exists>t. (122,t)\<in>positive_meaning package_retention_admission_system \<and>
+        quoted_body_presents t z) =
+      (\<lambda>z. (124,z)\<in>positive_meaning program_scope_reading_system)"
+    by (rule ext) (simp only: package_retention_admission_exact quoted_body_presents_def
+      program_scope_reading_exact; blast)
+  show ?thesis using composed by (simp only: admission)
+qed
+
 theorem program_scope_reading_class_relation:
   "(124,Pair_Term c t)\<in>positive_meaning program_scope_reading_system \<longleftrightarrow>
     presented_relation artifact_value_presents (=)

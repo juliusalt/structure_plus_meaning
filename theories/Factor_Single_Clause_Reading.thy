@@ -1,5 +1,5 @@
 theory Factor_Single_Clause_Reading
-  imports Factor_Schema_Reading Factor_Scope_Admission
+  imports Factor_Schema_Reading Factor_Scope_Admission Factor_Reader_Clauses
 begin
 
 section \<open>A complete variable interface and one arbitrary schema\<close>
@@ -559,44 +559,26 @@ section \<open>A fixed reference becomes ordinary checking code\<close>
 definition reference_contract_schema :: "factor_term \<Rightarrow> (nat,nat,nat) factor_schema" where
   "reference_contract_schema v=data_rule data_x {(0,127,Pattern_Pair data_x (exact_term_pattern v))}"
 
+lemma reference_contract_schema_coordinates:
+  "reference_contract_schema v=fixed_result_clause (0::nat) (0::nat) (127::nat) v"
+  by (simp add: reference_contract_schema_def fixed_result_clause_def)
+
 lemma reference_contract_schema_formed [simp]:
   "schema_formed (reference_contract_schema v) \<longleftrightarrow> term_formed v"
-  by (simp add: reference_contract_schema_def schema_formed_def single_valued_def)
+  by (simp only: reference_contract_schema_coordinates fixed_result_clause_formed)
 
 lemma reference_contract_schema_variables [simp]:
   "schema_variables (reference_contract_schema v)={0}"
-  by (simp add: reference_contract_schema_def schema_variables_def)
+  by (simp only: reference_contract_schema_coordinates fixed_result_clause_variables)
 
 lemma reference_contract_schema_dependencies [simp]:
   "schema_dependencies (reference_contract_schema v)={127}"
-  by (auto simp: reference_contract_schema_def schema_dependencies_def rel_ran_def)
+  by (simp only: reference_contract_schema_coordinates fixed_result_clause_dependencies)
 
 lemma reference_contract_rule:
   "schema_rule_instance (reference_contract_schema v) X p \<longleftrightarrow>
     term_formed v \<and> term_formed p \<and> (127,Pair_Term p v)\<in>X"
-proof
-  assume rule: "schema_rule_instance (reference_contract_schema v) X p"
-  obtain V Q where inst: "schema_instance (reference_contract_schema v) V p Q"
-    and support: "\<forall>s d x. (s,d,x)\<in>Q \<longrightarrow> (d,x)\<in>X"
-    using rule by (auto simp: schema_rule_instance_def)
-  have formed: "term_formed v" and bound: "(0,p)\<in>V"
-    and bindings: "term_bindings_formed {0} V"
-    using inst by (auto simp: schema_instance_def reference_contract_schema_def schema_variables_def schema_formed_def)
-  have premise: "(0,127,Pair_Term p v)\<in>Q"
-    using schema_instance_premise_iff[OF inst, of 0 127 "Pair_Term p v"] bound formed
-    by (simp add: reference_contract_schema_def)
-  show "term_formed v \<and> term_formed p \<and> (127,Pair_Term p v)\<in>X"
-    using formed bindings bound support premise by (auto simp: term_bindings_formed_def)
-next
-  assume parts: "term_formed v \<and> term_formed p \<and> (127,Pair_Term p v)\<in>X"
-  have inst: "schema_instance (reference_contract_schema v) {(0,p)} p {(0,127,Pair_Term p v)}"
-    using parts by (auto simp: schema_instance_def reference_contract_schema_def schema_variables_def
-      schema_formed_def term_bindings_formed_def schema_premise_instance_def single_valued_def rel_dom_def)
-  have material: "schema_material_satisfied (reference_contract_schema v) {(0,p)}"
-    by (simp add: schema_material_satisfied_def reference_contract_schema_def)
-  show "schema_rule_instance (reference_contract_schema v) X p"
-    using inst material parts by (auto simp: schema_rule_instance_def)
-qed
+  by (simp only: reference_contract_schema_coordinates fixed_result_rule)
 
 lemma reference_contract_view_exists:
   assumes "term_formed v"

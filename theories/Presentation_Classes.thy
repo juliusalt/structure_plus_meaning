@@ -194,6 +194,64 @@ proof -
   show ?thesis using composed by (simp only: reading admission)
 qed
 
+section \<open>Presented records determine derived subjects on a covered domain\<close>
+
+theorem presentation_class_image:
+  assumes source: "presentation_class R D A"
+    and boundary: "\<And>a. D a \<Longrightarrow> E (f a)"
+    and coverage: "\<And>b. E b \<Longrightarrow> \<exists>a. D a \<and> f a=b"
+  shows "presentation_class (\<lambda>b p. \<exists>a. R a p \<and> f a=b) E A"
+proof -
+  interpret source: presentation_class R D A by (rule source)
+  show ?thesis
+  proof (unfold_locales)
+    fix b p assume presented: "\<exists>a. R a p \<and> f a=b"
+    then obtain a where parts: "R a p" "f a=b" by blast
+    have domain: "D a" by (rule source.subject_boundary[OF parts(1)])
+    show "E b" using boundary[OF domain] parts(2) by simp
+    show "A p" by (rule source.presentation_boundary[OF parts(1)])
+  next
+    fix b assume domain: "E b"
+    obtain a where parts: "D a" "f a=b" using coverage[OF domain] by blast
+    obtain p where presented: "R a p" using source.total[OF parts(1)] by blast
+    show "\<exists>p. \<exists>a. R a p \<and> f a=b"
+      by (rule exI[of _ p], rule exI[of _ a]) (use presented parts(2) in simp)
+  next
+    fix p assume admitted: "A p"
+    obtain a where presented: "R a p" using source.admitted[OF admitted] by blast
+    show "\<exists>b. \<exists>a. R a p \<and> f a=b"
+      by (rule exI[of _ "f a"], rule exI[of _ a]) (use presented in simp)
+  next
+    fix b p c assume first: "\<exists>a. R a p \<and> f a=b" and second: "\<exists>a. R a p \<and> f a=c"
+    obtain a where left: "R a p" "f a=b" using first by blast
+    obtain k where right: "R k p" "f k=c" using second by blast
+    have same: "a=k" by (rule source.recovery[OF left(1) right(1)])
+    show "b=c" using left(2) right(2) same by simp
+  qed
+qed
+
+corollary presentation_class_subdomain:
+  assumes source: "presentation_class R D A"
+    and boundary: "\<And>a. E a \<Longrightarrow> D a"
+  shows "presentation_class (\<lambda>a p. E a \<and> R a p) E
+    (\<lambda>p. \<exists>a. E a \<and> R a p)"
+  by (rule presentation_class_observations[OF source, where observe="\<lambda>a. a"])
+    (use boundary in auto)
+
+text \<open>
+  A derived subject has a presentation through a complete record when the
+  record's projection stays within the independently stated subject domain
+  and covers every member of that domain. The same presentation still recovers
+  the original record. Its other fields may account for presentation structure;
+  the relations among those fields remain available through that original
+  reading.
+
+  Changing the represented subject supplies no identification between the
+  original record and its projection. Exact intrinsic relations and material
+  accounts remain explicit obligations. The subdomain rule is the identity
+  case of the earlier observation construction.
+\<close>
+
 section \<open>Products require every component and retain their roles\<close>
 
 theorem presentation_class_product:

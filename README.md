@@ -32,7 +32,13 @@ reader composition checks the actual returned body through a second callee.
 Jointly determining observations now derive complete schema reports from
 products and finite collections. Ordinary readers check those reports against
 actual schemas and complete definition profiles, and fixed references become native
-checking code for future submissions.
+checking code for future submissions. The same general constructions now
+derive source, judgment, and replay context classes. The native derivation and
+replay classes retain their actual programs, calls, proof graphs, complete
+claim assignments, and assertion boundaries.
+Ordinary projection and fixed-result rules give conditional and closed replay
+readers and compatible quotation checks. One fixed compiled reader admits
+presentations of closed proofs of every positive call of its own program.
 
 The work is incomplete. The current active session establishes the structural
 and data basis, relative footprints, exact artifacts, fragments, and assembly.
@@ -929,6 +935,29 @@ is admitted by a call to that same reader. The original program scope,
 artifacts, and outgoing bindings remain intact. The reference checks recover
 complete finite syntax; the stated schema theorems supply their semantic
 consequences. They do not check arbitrary mathematical claims.
+
+Native proof and replay presentations now come from the general product,
+collection, subdomain, determined-component, and quotation constructions.
+A covered image rule presents derived subjects through complete records;
+finite collections and the artifact/body class reuse it. The complete replay
+context determines the program, application, proof graph, complete reading, and
+identified assertions. Closure recovers exactly the replay retention boundary.
+
+Two ordinary one-premise schemas provide projection and fixed-result checking.
+Complete-definition reports transfer their rule equations and those of their
+compiled instances. Four replay entries admit conditional or closed contexts
+and their compatible complete quotations. Every valid native replay has
+presentations, and all compatible presentations preserve the reader results.
+
+One fixed native replay reader has a positive-call witness. Every positive
+call of that actual program has a closed native replay with the program and
+minimal judgment scope preserved. Every compatible quotation of the replay
+has a positive checking call in the same original compilation. All original
+program artifacts and outgoing bindings survive proof construction, replay
+restriction, and checking. A concrete false equality call has an admitted
+conditional replay and quotation, while the closed entries reject it.
+These are native proofs of operative judgments; the remaining mathematical
+contract and exactness-proof presentations are still required.
 
 Further application of the general theory, native presentations and checking
 of its remaining contracts and proofs, higher generation and authority

@@ -1128,6 +1128,7 @@ The current scope has the following evidence and proof boundaries:
 | A complete environment and site determine a native program | A derived-component rule based on the independently proved functional link, retaining both judgments without storing a duplicate program value. |
 | Semantic observations must survive changes of presentation | Preservation and reflection of the independently stated predicates and relations, with explicit shared arguments and intermediate domains. |
 | Definitions and readers may be positively recursive | Exact consequence transport on a proved closed support domain before taking least fixed points. |
+| A complete presented record also presents a derived subject | An image rule with an independently stated target domain and total coverage; the original record and its intrinsic relations remain recoverable. Finite collections and complete artifact/body records instantiate it. |
 | Complete finite syntax is determined by several readings together | Observation classes derived from a complete presented record and an observation map proved injective on the required subject domain. Every conclusion, call occurrence, callee, and material operand remains present. |
 | The presentation theory has operative definitions and rules of its own | Ordinary native schemas and programs, exact presentations of their scopes and complete schema reports, native checks against fixed reference data, and applications of those readers to every compatible presentation of their own clauses. |
 
@@ -1147,8 +1148,32 @@ expected clause, its variable interface, and its actual callees. In a formed
 package, the admitted definition has exactly the two-call meaning on the
 same returned body. The schema reader also checks compatible reports of all
 of its own compiled clauses. These are finite syntax contracts with proved
-semantic consequences. Full native presentations and checks of the remaining
-mathematical contracts and proof records stay within O-85.
+semantic consequences.
+
+Source and context classes, followed by native derivation and replay classes,
+now use the general product, collection, subdomain, determined-component,
+image, and quotation constructions. The complete replay context determines
+the actual program, application,
+proof graph, complete claim assignment, and identified assertion boundary.
+The native derivation and replay relations supply their joint constraints.
+Closed replay is the restriction to the empty assertion boundary.
+
+Two generic one-premise rules provide result projection and fixed-result
+checking. They generalize the earlier literal-reference checker without
+changing its contract. Complete-definition admission transfers both universal
+rule equations, including to compiled instances. Four ordinary replay entries
+check conditional and closed source contexts and compatible complete quotations
+of their actual bodies. The same quoted-body construction also supplies the
+existing program-scope reader's class.
+
+One fixed native replay reader has positive calls and complete presentations
+of closed proofs for every positive call of its own actual program. Every
+compatible quotation is admitted by the same fixed closed-replay entry.
+Proof construction, replay restriction, and checking preserve every original
+program artifact and outgoing binding. A formed false equality call supplies
+a conditional replay rejected by the closed entries. Full native
+presentations and checks of the remaining mathematical contracts and their
+exactness proofs stay within O-85.
 
 These results are justified by existing collection, table, quotation, scope,
 and program machinery. Their proof parameters are typed relations, not a
@@ -1266,7 +1291,13 @@ $$
 $$
 
 Realization preserves exact identity, sharing, assumptions, and external
-anchors.
+anchors. The general presentation constructions now derive the complete
+native derivation and replay classes. The program, graph, complete reading,
+and assertion boundary are recovered through their actual source relations.
+Replay also retains the application and its exact interpretation scope.
+Conditional admission alone supplies no truth for the assertions; the empty
+boundary gives closed soundness. The four ordinary replay readers and their
+own-program proof presentations instantiate these distinctions.
 
 **Replay is generic; certification is a further join.** An earlier draft required
 the certificate projection to be complete over program, declared inputs, output

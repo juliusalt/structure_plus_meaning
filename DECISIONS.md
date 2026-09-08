@@ -4158,3 +4158,93 @@ contract, and operative self-application. Native presentations and checks
 for further mathematical contracts and proof records remain open, along
 with the higher protocol, reflection, genesis, and the final repository
 audit. No single grammar or privileged presentation topology is reinstated.
+
+## Proof presentations retain their actual program and assertion boundary
+
+The complete record of a notion can also present a component derived from
+that record. Finite collections already required this: a complete distinct
+sequence presents its membership set while retaining its enumeration as
+presentation structure. Complete artifact/body records have the same need:
+the entire source artifact and its actual quotation present the returned
+body. These two existing uses justify the general covered-image rule.
+It requires an independently stated target domain and coverage of every
+required target. The source record remains exactly recoverable; the image
+operation introduces no identification of that record with its subject.
+
+The finite-collection class now follows from the sequence class, a subdomain
+restriction, and this image rule. Its previous contract is preserved.
+The quoted-body class follows from complete artifact data paired with a term,
+the complete quotation relation, and projection to that term. Every formed
+self-contained term has a witness. The program-scope reader now also has
+the corresponding class over its actual artifact/body argument.
+
+The existing source-reader argument, standalone site value, judgment value,
+and replay value retain different pair arrangements. Generic products and
+an injective coordinate change derive their classes from the same complete
+environment presentation. Subdomains require all selected sites to belong to
+that represented environment. The coordinate change imposes no preferred
+topology and does not alter any existing reader contract.
+
+A native derivation record contains its source and program site, proof root,
+complete root call, and complete collection of identified assertions.
+Products and collection classes construct the record class; the independent
+native derivation relation supplies its validity constraint. The actual
+program, native graph, and complete claim assignment are uniquely determined
+by that same record. Functional-link construction recovers those components
+without storing another copy of them. Entry 102 admits exactly the resulting
+class, and every valid native derivation has an admitted presentation.
+
+A replay context additionally includes the actual application. The source
+alone determines its assertion boundary through the native graph reading.
+The source class therefore derives that boundary privately. A separate joint
+class relates the context to a complete explicit assertion report through
+entry 111. Its compatible domain is exactly the existing replay relation.
+The richer reading class recovers the actual program, application, syntax
+interior and slot boundary, graph, and complete claim assignment together.
+The retention theorem proves equality with the actual replay restriction.
+
+Closed replay is the subdomain with an empty assertion boundary. Two generic
+ordinary schemas provide projection of a reader result and matching against
+a fixed literal result. Their variables, premise socket, actual callee, and
+whole rule equations are explicit. The previous reference-contract schema
+is a fixed-result instance and keeps its old statement. Complete-definition
+admission transfers the two generic meanings, and native construction
+preserves every prior artifact and outgoing binding. A generic compilation
+lemma recovers admitted reports for actual compiled singleton definitions.
+
+The four replay entries instantiate those two rules and the existing
+constrained-reading rule. They check conditional replay sources, closed
+sources, and compatible complete quotations of each. Every native replay
+has total quotation witnesses. Each source artifact must quote the body
+actually supplied to its constraint; changing a body presentation requires
+a compatible artifact. All compatible artifact and body presentations are
+covered by the same relation equations.
+
+One closed native compilation is fixed before future operands. Its four
+actual definitions have complete reference reports checked by the existing
+definition reader. Its positive-call domain is inhabited by complete
+quotation of the empty payload. Every positive call of the actual compiled
+program has a native closed replay preserving that program and the minimal
+judgment scope. Proof construction first preserves all existing material;
+replay restriction retains the original program. The proof checks all
+outgoing bindings at every original program use, since equality of the
+canonical package environment alone would not exclude additional bindings
+at those uses.
+
+Every compatible complete quotation of each such proof has a positive
+application of the original compilation's closed-replay entry. The original
+program artifacts and bindings are preserved in that checking application
+as well. This checking call is itself among the positive calls covered by
+the theorem, with no new program chosen after the proof operand.
+
+Assertions retain their conditional status. A formed false equality call
+has an assertion graph, a native conditional replay, and a complete quotation
+admitted by the conditional reader. Both closed entries reject that same
+context. Presentation, native realization, and retention do not prove the
+asserted call.
+
+These results present native proofs of operative reader judgments under the
+same general theory used for the rest of this batch. O-85 still requires
+native presentations and checks of the remaining mathematical contracts and
+exactness proofs with their intrinsic relations. The higher protocol,
+reflection, genesis, and final repository audit also remain open.

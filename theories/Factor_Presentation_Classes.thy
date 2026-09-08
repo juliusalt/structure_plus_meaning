@@ -134,29 +134,34 @@ theorem data_collection_presentation_class:
     (\<lambda>S. finite S \<and> (\<forall>a\<in>S. D a))
     (presented_predicate (data_sequence_presents read) distinct)"
 proof -
-  interpret source: presentation_class read D A by (rule source)
-  show ?thesis
-  proof (unfold_locales)
-    fix S t assume read: "data_collection_presents read S t"
-    show "finite S \<and> (\<forall>a\<in>S. D a)"
-      using data_collection_presents_finite[OF read] data_collection_presents_sources[OF read]
-        source.subject_boundary by blast
-    show "presented_predicate (data_sequence_presents read) distinct t"
-      using read by (auto simp: data_collection_presents_def data_sequence_presents_def presented_predicate_def)
+  interpret sequences: presentation_class "data_sequence_presents read"
+    "\<lambda>xs. \<forall>a\<in>set xs. D a"
+    "\<lambda>t. \<exists>ps. (\<forall>p\<in>set ps. A p) \<and> t=data_list_term ps"
+    by (rule data_sequence_presentation_class[OF source])
+  let ?B="\<lambda>xs. distinct xs \<and> (\<forall>a\<in>set xs. D a)"
+  let ?R="\<lambda>xs t. ?B xs \<and> data_sequence_presents read xs t"
+  let ?C="\<lambda>t. \<exists>xs. ?R xs t"
+  have restricted: "presentation_class ?R ?B ?C"
+    by (rule presentation_class_subdomain[OF sequences.presentation_class_axioms]) simp
+  have projected: "presentation_class (\<lambda>S t. \<exists>xs. ?R xs t \<and> set xs=S)
+      (\<lambda>S. finite S \<and> (\<forall>a\<in>S. D a)) ?C"
+  proof (rule presentation_class_image[OF restricted])
+    fix xs assume "?B xs"
+    then show "finite (set xs) \<and> (\<forall>a\<in>set xs. D a)" by simp
   next
     fix S assume domain: "finite S \<and> (\<forall>a\<in>S. D a)"
-    show "\<exists>t. data_collection_presents read S t"
-      by (rule data_collection_presents_total) (use domain source.total in blast)+
-  next
-    fix t assume "presented_predicate (data_sequence_presents read) distinct t"
-    then show "\<exists>S. data_collection_presents read S t"
-      by (auto simp: data_collection_presents_def data_sequence_presents_def presented_predicate_def)
-  next
-    fix S t T assume first: "data_collection_presents read S t"
-      and second: "data_collection_presents read T t"
-    show "S=T" by (rule data_collection_presents_unique[OF first second])
-      (use source.recovery in blast)
+    obtain xs where enumeration: "distinct xs" "set xs=S"
+      using finite_distinct_list[OF conjunct1[OF domain]] by blast
+    show "\<exists>xs. ?B xs \<and> set xs=S"
+      by (rule exI[of _ xs]) (use enumeration domain in simp)
   qed
+  have exact_read: "(\<lambda>S t. \<exists>xs. ?R xs t \<and> set xs=S)=data_collection_presents read"
+    by (intro ext)
+      (use sequences.subject_boundary in
+        \<open>auto simp: data_collection_presents_def data_sequence_presents_def; blast\<close>)
+  have admission: "?C=presented_predicate (data_sequence_presents read) distinct"
+    by (rule ext) (use sequences.subject_boundary in \<open>auto simp: presented_predicate_def\<close>)
+  show ?thesis using projected by (simp only: exact_read admission)
 qed
 
 corollary injective_data_collection_class:
@@ -290,6 +295,101 @@ proof -
     by (rule ext) (use complete_data_quotation_native in blast)
   show ?thesis using result by (simp only: same)
 qed
+
+section \<open>A complete artifact and its actual decoded body present that body\<close>
+
+definition quoted_body_presents :: "factor_term \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "quoted_body_presents t z \<longleftrightarrow>
+    (\<exists>C c r. z=Pair_Term c t \<and> artifact_value_presents C c \<and> complete_data_quoted_at C r t)"
+
+theorem quoted_body_presentation:
+  "presentation_class quoted_body_presents
+    (\<lambda>t. term_formed t \<and> self_contained_term t) (\<lambda>z. \<exists>t. quoted_body_presents t z)"
+proof -
+  have terms: "presentation_class (=) (\<lambda>_::factor_term. True) (\<lambda>_. True)"
+    by (unfold_locales) auto
+  let ?A="\<lambda>p. \<exists>c t. (11,c)\<in>positive_meaning artifact_admission_system \<and> p=Pair_Term c t"
+  have records: "presentation_class (factor_pair_presents artifact_value_presents (=))
+      (\<lambda>z. exact_formed (fst z)) ?A"
+    using factor_pair_class[OF artifact_presentations.presentation_class_axioms terms] by simp
+  let ?D="\<lambda>z. \<exists>r. complete_data_quoted_at (fst z) r (snd z)"
+  let ?R="\<lambda>z p. ?D z \<and> factor_pair_presents artifact_value_presents (=) z p"
+  let ?B="\<lambda>p. \<exists>z. ?R z p"
+  have constrained: "presentation_class ?R ?D ?B"
+    by (rule presentation_class_subdomain[OF records])
+      (use complete_data_quotation_formed in blast)
+  have projected: "presentation_class (\<lambda>t p. \<exists>z. ?R z p \<and> snd z=t)
+      (\<lambda>t. term_formed t \<and> self_contained_term t) ?B"
+  proof (rule presentation_class_image[OF constrained])
+    fix z assume "?D z"
+    then show "term_formed (snd z) \<and> self_contained_term (snd z)"
+      by (auto simp: complete_data_quoted_at_def)
+  next
+    fix t assume formed: "term_formed t \<and> self_contained_term t"
+    have quoted: "complete_data_quoted_at (term_syntax t) [] t"
+      by (rule complete_data_quotation_total) (use formed in auto)
+    show "\<exists>z. ?D z \<and> snd z=t"
+      by (rule exI[of _ "(term_syntax t,t)"]) (use quoted in auto)
+  qed
+  have reading: "(\<lambda>t p. \<exists>z. ?R z p \<and> snd z=t)=quoted_body_presents"
+    by (intro ext)
+      (auto simp: quoted_body_presents_def factor_pair_presents_def; metis fst_conv snd_conv)
+  have result: "presentation_class quoted_body_presents
+      (\<lambda>t. term_formed t \<and> self_contained_term t) ?B"
+    using projected by (simp only: reading)
+  interpret bodies: presentation_class quoted_body_presents
+    "\<lambda>t. term_formed t \<and> self_contained_term t" ?B by (rule result)
+  have admission: "?B=(\<lambda>z. \<exists>t. quoted_body_presents t z)"
+    by (rule ext) (rule bodies.admissible_iff)
+  show ?thesis using result by (simp only: admission)
+qed
+
+interpretation quoted_bodies: presentation_class quoted_body_presents
+  "\<lambda>t. term_formed t \<and> self_contained_term t" "\<lambda>z. \<exists>t. quoted_body_presents t z"
+  by (rule quoted_body_presentation)
+
+lemma quoted_body_at_pair:
+  "quoted_body_presents t (Pair_Term c v) \<longleftrightarrow>
+    v=t \<and> (\<exists>C r. artifact_value_presents C c \<and> complete_data_quoted_at C r t)"
+  by (auto simp: quoted_body_presents_def)
+
+lemma quoted_body_presents_formed:
+  assumes "quoted_body_presents t z"
+  shows "term_formed z \<and> self_contained_term z"
+proof -
+  obtain C c r where parts: "z=Pair_Term c t" "artifact_value_presents C c" "complete_data_quoted_at C r t"
+    using assms by (auto simp: quoted_body_presents_def)
+  have body: "term_formed t \<and> self_contained_term t"
+    by (rule quoted_bodies.subject_boundary[OF assms])
+  show ?thesis using artifact_value_presents_formed[OF parts(2)] body parts(1) by simp
+qed
+
+theorem quoted_body_presentation_class:
+  assumes source: "presentation_class R D A"
+    and boundary: "\<And>t. A t \<Longrightarrow> term_formed t \<and> self_contained_term t"
+  shows "presentation_class (composed_presentation R quoted_body_presents) D
+    (\<lambda>z. \<exists>t. A t \<and> quoted_body_presents t z)"
+proof -
+  have result: "presentation_class (composed_presentation R quoted_body_presents) D
+      (\<lambda>z. (\<exists>v. quoted_body_presents v z) \<and> (\<exists>t. A t \<and> quoted_body_presents t z))"
+    by (rule presentation_class_compose_on[OF source quoted_bodies.presentation_class_axioms boundary])
+  have admission: "(\<lambda>z. (\<exists>v. quoted_body_presents v z) \<and> (\<exists>t. A t \<and> quoted_body_presents t z)) =
+      (\<lambda>z. \<exists>t. A t \<and> quoted_body_presents t z)"
+    by (rule ext) blast
+  show ?thesis using result by (simp only: admission)
+qed
+
+text \<open>
+  The artifact value presents the complete physical source. Its complete
+  quotation relation checks the exact returned term. Projection makes that
+  term the represented subject while keeping the full source account in the
+  presentation. Every formed self-contained term has such a record, and every
+  complete artifact presentation remains available.
+
+  Composition with another class retains this actual intermediate term.
+  Different terms presenting the same semantic subject can use different
+  complete quotations; a fixed artifact still determines its own exact body.
+\<close>
 
 interpretation site_presentations: presentation_class
   "\<lambda>z t. site_value_presents (fst z) (fst (snd z)) (snd (snd z)) t"

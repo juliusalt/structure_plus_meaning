@@ -329,9 +329,10 @@ text \<open>
   every expected-core reading, and all complete-row tests. The leastness
   theorem ranges over every included environment that still passes admission.
 
-  This does not add an operation accepting a separately supplied claimed
-  retained environment or a recorded-cause scope. Those further report checks,
-  cause validity, higher protocol relations, and native checking of the
+  Factor_Generation_Scope_Contracts supplies the separate recorded-cause and
+  payload-scope reports. Factor_Generation_Retention_Contracts supplies claims
+  of the least retained environment through the source's existing determined
+  class. Cause validity, higher protocol relations, and native checking of
   mathematical presentation contracts and proofs remain separate work.
 
   The compiled program and its nine distinct operation sites are fixed before

@@ -4846,3 +4846,99 @@ higher protocol admission, reflection, genesis, and the system-wide audit
 remain. Native mathematical-contract and exactness-proof presentations remain
 under O-85. All broader obligation states stay partial, and the final
 every-line audit has not begun.
+
+## Claimed generation retention follows the actual dependency relation
+
+A complete generation source already determines its least required
+environment. A submitted retention report presents that same environment
+alongside the source. The source class and its determined-retention class
+remain unchanged. A product constrained by this existing intrinsic relation
+gives the report class; a subdomain gives closed sources. Complete quotation
+composes with both classes, and every formed core has a closed witness.
+
+Closed reading in a claimed environment and inclusion in the original source
+are sufficient to recover the source reading and equality with its least
+environment. The proof uses the existing leastness and fixed-environment
+theorems in both directions. The native report therefore has those two
+premises. A second admission of the original source would repeat a result
+already entailed by the actual claim.
+
+The dependency program exposes independently specified notions in five
+entries. Recursive read sites start from actual source admission and follow
+complete predecessor reports. Selection preserves each socket, citation
+endpoint, destination use and address, and child core. The positive proof
+gives only reachable sites; path induction gives every reachable site.
+Neither a stored path nor a depth bound is part of the operation.
+
+Citation-root recognition uses the complete record and predecessor-family
+layout. It is available independently of successful generation reading or
+citation interpretation. Recursive requests then combine actual read sites
+with those roots. Demanded slots come from the complete actual citation
+reader. Required uses are read sources or targets of demanded slots, giving
+that query its own exact meaning before closure is checked. A stored binding
+outside the request set cannot justify its own target.
+
+Two existing generic list profiles traverse the keys projected from both
+complete environment tables. Their empty case checks context formation;
+closed-source admission supplies the complete generation role. No selected
+sublist is supplied by a certificate. Coverage is equivalent to the existing
+closed environment and to its being fixed by the least restriction. Keeping
+a whole locus, payload, or cause artifact does not continue generation reading
+inside it. Actual predecessor citations alone continue that reading.
+
+Each dependency relation owns its presentation contract over the complete
+source class. A generic known-source relation law exposes every compatible
+output. It applies to partial relations without asserting an output when the
+relation has none. The existing function-output proof and all four dependency
+contracts consume the law. Its source domain and target relation remain
+independently specified; this is not a universal datatype of notions.
+
+Complete environment inclusion now owns its local relation contract. Its
+earlier program construction follows replay admission, but its actual clause
+dependencies are within ordinary data, lookup, and the two inclusion
+definitions. That closed boundary is proved from complete clause families.
+Shared-definition agreement joins inclusion with generation source reading,
+preserving both complete meanings before the least base is selected.
+
+Nine actual external callees determine that base. The final program has nine
+new ordinary definitions and fourteen clauses at incidental construction
+coordinates 169 through 177. Its formal dependency boundary excludes replay,
+positive-judgment, and scope checkers. The proof import chain includes earlier
+results that justify these boundaries and the preservation corollaries; it
+does not enlarge the retained program. The wider file-organization audit is
+still required.
+
+The native closed-source and report equations cover every input term and
+every permitted environment presentation. A total function contract exposes
+the least-environment result. Different table orders and complete artifact
+presentations remain available. Missing or extra uses and binding slots are
+rejected, and exact environment identity also rejects changed stored values
+and bindings at unchanged keys. Exact uses and distinct binding aliases remain
+part of the retained material.
+
+The report recovers a closed source using its supplied environment
+presentation. All recursive dependency queries and existing source,
+predecessor, recorded-scope, and payload-scope reports are preserved by
+restriction. Retention reports themselves are preserved by idempotence.
+Closed-source admission intentionally tests whether the supplied environment
+is already least; restriction can change that result from false to true.
+
+Every formed core has admitted closed material and a complete report quotation.
+An existing actual invalid-cause witness also has an accepted closed source
+and retention report. Retention therefore remains separate from cause
+validity, construction permission, authority, adoption, and amendment.
+One fixed native program supplies all nine entries before future operands,
+preserving the entire original scope, every artifact, and every binding.
+
+The choices to expose the exact dependency sets, use complete table coverage,
+derive original-source admission from the claim, and export local relation
+and function contracts are justified above. The only changed earlier proof is
+the generic function-output proof, whose statement is preserved and now uses
+the more general known-source law. All other earlier definitions, statements,
+assumption scopes, and proofs are preserved. The earlier source-contract
+explanation now points to the implemented scope and retention readers.
+
+Cause validity, authority, higher protocol admission, reflection, genesis, and
+the system-wide presentation audit remain. Native mathematical-contract and
+exactness-proof presentations remain under O-85. Broader obligation states
+are unchanged, and the final every-line audit has not begun.

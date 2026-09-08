@@ -26,6 +26,11 @@ theorem at:
   by (simp only: exact presented_relation_at[OF left.presentation_class_axioms
       right.presentation_class_axioms assms])
 
+theorem at_source:
+  assumes "R a p"
+  shows "observe p q \<longleftrightarrow> (\<exists>b. S b q \<and> relation a b)"
+  using assms left.recovery by (auto simp: exact presented_relation_def; blast)
+
 lemma boundaries:
   assumes "observe p q"
   shows "A p \<and> B q"
@@ -149,7 +154,7 @@ theorem total:
 theorem "output":
   assumes "R a p"
   shows "operation p q \<longleftrightarrow> S (f a) q"
-  using assms left.recovery by (auto simp: exact presented_relation_def; blast)
+  by (simp only: at_source[OF assms]; simp)
 
 theorem output_equivalence:
   assumes "operation p q" "operation p r"

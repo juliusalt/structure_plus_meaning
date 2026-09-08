@@ -81,8 +81,10 @@ invalid. Four ordinary entries now admit exactly recorded-cause scopes and
 complete program scopes carried by payloads, with compatible reports. Shared
 context and quotation contracts keep the two subject domains separate. Every
 formed judgment context and closed program scope can be carried independently
-by one generation. Native checks of separately claimed retained environments,
-cause validity, and the higher protocol relations remain.
+by one generation. Nine further ordinary entries now check the exact recursive
+dependency sets, closed generation sources, and separately claimed retained
+environments. The report function accepts every presentation of the source's
+least required environment. Cause validity and higher protocol readers remain.
 
 The work is incomplete. The current active session establishes the structural
 and data basis, relative footprints, exact artifacts, fragments, and assembly.
@@ -1049,8 +1051,8 @@ operands. Its base is the least complete-definition closure of eight actual
 external callees in the joined citation and value program. Retention preserves
 source admission, all expected-core readings, and every complete-row test.
 The source also determines its least retained environment without an extra
-stored field. Checking a separately submitted environment claim still requires
-its own operation.
+stored field. The retention program below now checks a separately submitted
+environment claim against that same determined environment.
 
 Site and judgment contexts now have exact native admission and identity
 contracts. A site uses actual artifact lookup and occurrence membership; a
@@ -1079,10 +1081,40 @@ recorded scope, and every program can be carried with an invalid cause.
 Three fixed native programs supply four context operations, five scope
 operations, and four generation scope operations before future operands.
 Each preserves its original complete scope, artifacts, and bindings.
-The remaining work includes separately claimed generation retention, cause
-validity and authority readers, complete transition material, reflection,
-genesis, and the system-wide presentation audit. Native presentations and
-checking of the remaining mathematical contracts and proofs stay open.
+The generation retention program has nine ordinary entries with fourteen
+clauses. Its read-site entry follows actual complete predecessor reports.
+Its other dependency entries recover every citation root, recursive request,
+demanded binding slot, and required artifact use. A required binding target
+comes from a demanded slot. Whole field artifacts are retained without
+automatically reading their contents as further generations.
+
+Two generic list contracts check every key of both complete environment
+tables. Closed-source admission is equivalent to the existing closed reading.
+A retention report checks that reading in its claimed environment and checks
+inclusion in the supplied source. These facts recover the original generation
+reading and equality with its least environment; no duplicate source check or
+stored dependency certificate is required.
+
+Local relation and function contracts cover every input and every compatible
+environment presentation. Missing or extra uses and binding slots are
+rejected, as is every other different environment. Restriction preserves all
+dependency queries and existing core, predecessor, and scope reports, as well
+as the retention report itself. Every formed core has native closed material
+and a complete report quotation. Actual invalid causes also admit retention.
+
+A generic known-source relation law now exposes every allowed output from
+the local contract. The existing function-output theorem and all four
+dependency readers consume it. Environment inclusion has its own relation
+contract and a proved data-and-lookup dependency boundary. Complete shared
+definitions compose it with generation reading before the least base is
+selected from the nine actual external callees. The resulting native program
+excludes replay and scope checkers and is fixed before all future operands,
+preserving its original scope, artifacts, and bindings.
+
+The remaining work includes cause validity and authority readers, complete
+transition material, reflection, genesis, and the system-wide presentation
+audit. Native presentations and checking of the remaining mathematical
+contracts and proofs stay open.
 
 Run `python3 tools/check.py --threads 12 --timeout 300` for one combined build,
 complete error collection, theory-inventory check, and unfinished-proof scan.

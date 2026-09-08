@@ -1002,8 +1002,22 @@ They first use complete source conversion, then the independently owned scope
 readers. Source classes derive the context without a duplicate stored field;
 report classes retain every compatible expected presentation. The native
 contracts preserve the actual quoted body, citation use, least source
-retention, and independence from cause validity. Separately submitted retained
-environments, cause validity, and the higher protocol remain.
+retention, and independence from cause validity.
+
+The retained-environment boundary now has nine ordinary entries with fourteen
+clauses in Factor_Generation_Retention_Contracts. The existing recursive read
+sites, citation roots, requests, demanded slots, and required uses have exact
+native relation contracts. Complete key projections and generic list checks
+account for both actual environment tables. Closed reading in the claimed
+environment and inclusion in the original source characterize exactly the
+least environment; the original source reading follows without another
+premise. The linked report class presents that same determined environment.
+Its total function contract supplies every compatible output and rejects
+incorrect claims. Every formed core has admitted closed material and a
+complete report quotation, including examples whose causes are invalid.
+Existing dependency queries and source, predecessor, and scope reports survive
+restriction. One fixed native program precedes future operands. Cause validity
+and the higher protocol remain.
 
 **Obligations.**
 **O-21** every formed generation core has an admitted presentation and each admitted presentation recovers exactly one core, including its exact locus, predecessor relation, payload, and recorded cause. The intrinsic links to predecessor resolution, cause recording, and the relevant retained environment are preserved and reflected. Different adequate presentations need not be isomorphic. Any canonical construction or transport theorem states its own class and boundary; it establishes no exclusive presentation choice.
@@ -1342,10 +1356,21 @@ closed program scope can be carried independently by one actual generation.
 Readable recorded scopes and payload programs do not validate a cause.
 Three fixed native compilations supply the context, scope, and generation
 scope operations before all future formed operands, preserving the complete
-original programs, scopes, artifacts, and bindings. Separately submitted
-retention claims, cause validity, and higher protocol readers remain. The
-mathematical contracts and their native proof presentations remain within
-O-85.
+original programs, scopes, artifacts, and bindings.
+
+The generic relation contract now exposes every permitted output once its
+source subject is known. The existing function-output theorem and four native
+generation dependency relations reuse this law. Environment inclusion owns a
+local relation contract and a complete data-and-lookup dependency boundary.
+Generation retention composes these independently specified notions through
+their actual contracts and shared definitions. Its nine ordinary entries
+admit exactly the closed-source and linked least-environment classes.
+Complete table coverage, all compatible outputs, incorrect-claim rejection,
+material retention, idempotence, arbitrary-core totality, and invalid-cause
+witnesses are proved. The least program base follows nine actual external
+callees and excludes replay and scope checkers. Cause validity and higher
+protocol readers remain. The mathematical contracts and their native proof
+presentations remain within O-85.
 
 These results are justified by existing collection, table, quotation, scope,
 and program machinery. Their proof parameters are typed relations, not a

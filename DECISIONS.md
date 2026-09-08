@@ -3999,14 +3999,16 @@ work must audit the admissible class and intrinsic relations of every
 presented notion, then complete higher generation and authority reading,
 transition material, reflection, genesis, and the requested final audits.
 
-## General presentation theory follows recurring requirements
+## Initial general presentation scope and its limits
 
 The owner requires a general presentation theory, used for its own relevant
 notions and throughout the system, and expressly leaves its scope to evidence.
-Composition is part of that direction. Existing exact classes already expose
-further recurring needs: total coverage, admissibility, complete occurrences,
-constraints, changes of presentation, intrinsic relations, and recursive
-meaning. The initial scope is selected from those needs.
+The initial scope addressed coverage, admissibility, complete occurrences,
+constraints, intermediate presentation recovery, intrinsic relations, and
+recursive meaning. The later clarification requires notions to be independent
+of uses and guarantees to remain local to them. The assessment below records
+why this initial layer was useful but insufficient and derives the added
+correspondence and local-contract layer from that clarified direction.
 
 | Evidence in the system | Selected general construction |
 |---|---|
@@ -4021,8 +4023,9 @@ meaning. The initial scope is selected from those needs.
 The proof locale called presentation_class records subject coverage,
 presentation admissibility, and unique recovery of the entire declared
 subject. Coverage and recovery alone do not certify a complete physical
-account or intrinsic relation. Those facts must be established by the
-independent readers and structural boundaries in an application. The typed
+account or intrinsic relation. Those facts belong to the independent notion
+or intrinsically linked group and its locally established reader contracts.
+The typed
 parameters introduce no primitive kind of notion and no generic native
 predicate callback.
 
@@ -4070,8 +4073,10 @@ result for the operative theory. It does not establish native presentation
 and checking of all presentation contracts and exactness proofs. O-85 keeps
 those requirements explicit.
 
-Further generic results must have a concrete structural or semantic need and
-a proved application boundary. Arbitrary joins, quotient identifications, or
+Further generic results must have an independently stated subject and a
+reasoned structural or semantic scope. Applications supply evidence of useful
+constructions; they do not define the notions or enlarge their semantic
+boundaries. Arbitrary joins, quotient identifications, or
 universal predicates acquire no force from this framework. The remaining
 system-wide presentation work uses these constructions where applicable and
 records the reason for any required special case. O-84 tracks that work and
@@ -4338,3 +4343,150 @@ native primitives. Ordinary admission still requires its own exact program.
 The new mathematical class contracts also retain the native proof obligations
 under O-85. The wider protocol, reflection, genesis, and final repository
 audit remain open.
+
+## Notions own their presentation and implementation contracts
+
+The owner's further clarification is authoritative: define notions and their
+intrinsic relations independently of requirements, present them exactly, and
+then use or compose them. Locality, compositionality, separation,
+specialization, and instantiation are the intended effects. An intrinsically
+linked group may own a joint boundary. Requiring every use to reestablish
+meaning transport would make that boundary grow with its clients.
+
+The existing machinery was useful but insufficient. The class locale covers
+the independently stated subject domain, admits exactly its presentations,
+and uniquely recovers every complete subject. Products, collections, images,
+constraints, and exact consequence transport already provide reusable proofs.
+Presented predicates and relations admit every representative of a class.
+However, the existing composition construction recovers the *entire
+intermediate presentation*. That is appropriate for quotation. It does not
+by itself express conversion between different presentations of the same
+underlying subject. The relation-composition theorem also used one common
+intermediate class. Text assigning further obligations to each application
+left the intended semantic boundary too broad.
+
+Coverage and recovery also leave an interface gap. A class can recover one
+unit subject from both boolean presentations while an observation distinguishes
+the booleans. Presentation_Contracts proves this counterexample and an exact
+factorization criterion. An observation descends to the subject exactly when
+it rejects inadmissible inputs and is constant on all presentations of each
+subject. This is a diagnostic criterion. The intended predicate and subject
+still require an independent definition; a client's desired observation
+does not manufacture the notion that justifies it.
+
+The chosen correspondence relates every pair of presentations recovering the
+same independently fixed subject. The owner did not prescribe a function,
+normal form, or selected representative. The relational choice preserves
+every admitted presentation and derives totality in both directions from
+each class's own coverage. Recovery proves coherence under identity, reversal,
+and composition. It uniformly transports all independently stated predicates
+and relations. Relational composition can therefore use different
+intermediate classes without a new proof for each pairing. Product, sequence,
+set, and least-fixed-point laws extend the same correspondence. Recursive
+implementations still establish their actual consequence equations locally.
+
+The subject type, domain, and reading relation remain explicit proof
+parameters. No universal datatype or primitive classification of notions is
+introduced. A single raw term can have different readings in different
+contexts; those contexts are not erased into an ambiguous grammar union.
+Specialization selects a subject subdomain and retains every presentation of
+its members. Instantiation uses an independently stated map between domains.
+Its local contract provides outputs for every admitted input, makes outputs
+unique up to recovered subject, and composes with another map through the
+same correspondence. A map may identify different source values when its
+independent definition says so; it does not thereby identify their source
+notion.
+
+Each actual reader establishes its exact relation contract in the module
+owning the notion or intrinsic group. Generic adaptation, specialization,
+and composition then derive the contracts used by clients. The contract
+requires its whole admitted domain, including invalid-input rejection.
+This is the selected implementation interface. It avoids a separate semantic
+transport obligation for each consumer while preserving explicit proof of
+every newly supplied implementation.
+
+Intrinsic links are defined in the complete joint subject domain. A product
+presentation includes every pair of component presentations of linked
+subjects. Any separately exact physical joint class then covers that whole
+domain, so its local contract provides a result for every valid input pair.
+This statement permits conversion to an appropriate joint presentation; it
+does not assert that arbitrary supplied material can be literally glued.
+More general intrinsic groups can be specified together without decomposing
+them into a binary product. Material observations remain on the actual
+source or occurrence notion whenever its intrinsic relations inspect them.
+
+Artifact and environment identity instantiate the local reader contract.
+The quotation example deliberately uses different presentation types. A
+direct artifact value can correspond to a quotation storing another complete
+value presentation of the same artifact. The source still determines its
+exact stored body. A theorem retains both facts when the two bodies differ.
+The earlier complete-intermediate quotation construction remains intact.
+The new mathematical adapters supply no generic native predicate callback or
+executable representative-selection operation.
+
+Counted bags have an independent multiset domain. Their presentation class is
+the covered image of complete sequences under the multiset map. This forgets
+enumeration order while retaining every multiplicity. It covers all bags of
+admitted members and every permitted member presentation. Complete data bags
+instantiate this rule, and the existing list and equality readers supply
+their native admission and identity contracts. This gives bag meaning before
+the artifact comparison uses it. Finite sets instead use distinct subjects;
+the same list constructor does not conflate the two notions.
+
+The new positive bag-inequality program has three alternatives: an extra
+occurrence after the first list is empty, a head absent from the entire other
+list, or inequality after one equal occurrence is removed. Removal preserves
+the difference in multiplicities, and every unequal pair has a finite witness.
+The absence helper uses the existing complete context-list clauses. In its
+empty case only the context's term formation is required; its exact raw
+contract states that boundary. The bag checker separately admits the missing
+head and every remaining data element. Mathematical complementation occurs
+in the soundness and completeness proof, not as a negative native premise.
+
+Artifact inequality admits both complete artifacts and witnesses a difference
+in one of their four actual data fields. It exports the local artifact
+inequality contract. Target comparison retains the whole independent artifact
+and optional occurrence; the latter remains an actual member of that artifact.
+A whole target differs from an occurrence at the empty address. The generic
+separated-list profile consumes the target inequality contract and derives
+complete finite-set admission. Every order and presentation is retained, and
+different presentations of the same target cannot appear as distinct members.
+The empty collection is admitted. These choices follow the already defined
+bag, artifact, target, and finite-set subjects, rather than a later generation
+reader's particular requirements.
+
+The draft initially inherited the complete replay program in the bag module
+solely to allocate later entry sites. That would unnecessarily enlarge the
+low-level construction boundary. The corrected design gives bags their own
+program over existing bag operations, composes artifact comparison locally,
+and then composes target comparison under its existing admission. A separate
+module integrates the resulting target collection program with replay.
+Factor_System_Composition proves that formed programs with complete agreement
+on shared definitions have a formed ordinary union preserving both programs'
+call boundaries and meanings. Its proof uses the existing closed-dependency
+locality theorem. Fresh-definition agreement and transitivity keep the
+structural reuse proofs separate from the meaning proofs of the readers.
+This additional construction is justified by actual reusable program notions
+and applies wherever complete definitions are shared.
+
+The seven native entry coordinates remain 132 through 138 so integration
+with the accepted replay program is fresh. They are ordinary construction
+coordinates, and existing injective relocation and native compilation remove
+any significance from those particular numbers. Sixteen ordinary clauses
+provide absence, counted and artifact inequality, target identity and
+inequality, and the two complete collection traversals. The integrated
+program preserves every earlier replay and local comparison meaning. Its
+closed native compilation precedes all future formed operands, with distinct
+entries and exact preservation of its original scope, artifacts, and bindings
+across applications.
+
+The scope of this addition is reasoned rather than claimed exhaustive. It
+addresses the general semantic boundary, coherent composition, specialization,
+instantiation, intrinsic joint domains, actual program sharing, and concrete
+native comparison uses. The remaining audit must apply the local-contract
+discipline to the other notions and reconsider inherited scopes wherever they
+are broader than their independent dependencies. O-43, O-44, O-80, O-84, and
+O-85 remain partial. In particular, mathematical correspondence does not prove
+native implementation of arbitrary relations or present all mathematical
+contracts and exactness proofs. Recursive generation admission, higher
+protocol and reflection work, genesis, and the final every-line audit remain.

@@ -466,3 +466,13 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Replay_Self_Presentation
     Factor_Generation_Presentations
     Factor_Generation_Scope_Presentations
+    Presentation_Transport
+    Presentation_Contracts
+    Factor_Presentation_Transport
+    Factor_Bag_Presentations
+    Factor_System_Composition
+    Factor_Separated_Lists
+    Factor_Bag_Difference
+    Factor_Artifact_Difference
+    Factor_Target_Comparison
+    Factor_Comparison_Programs

@@ -32,6 +32,15 @@ evidence and may extend beyond composition. Repeated presentation work must
 use justified general constructions instead of accumulating independent
 definitions and proofs for each new case.
 
+The owner's further clarification makes the direction explicit: notions and
+their intrinsic relations are defined independently of requirements. Establish
+their exact presentation and implementation contracts locally, then use or
+compose those contracts. Intrinsically linked notions may have one complete
+joint boundary. A use must not redefine the subject or accumulate new
+representation-specific meaning proofs. Classes of the same independent
+subject domain have a canonical semantic correspondence; physical sharing
+of actual source material is a separate, explicitly owned relation.
+
 ### 0.2 Status of every decision in this document
 
 An earlier draft of this plan labelled eleven items "owner decisions" and gave
@@ -323,8 +332,9 @@ replay with certification without a recovery theorem.
 **D-6 — Exact presentations, including quotation.** *(Explicit, owner
 correction of 2026-09-08.)*
 
-The requirement is exactness of admissible presentation classes. Each notion
-constrains the presentations that can represent it: every admitted member
+The notion and its intrinsic relations are specified independently of what
+an application needs. Its local contract constrains the presentations that
+can represent it: every admitted member
 preserves all required material, distinctions, and intrinsically linked
 relations, and adds no unsupported fact or semantic rule. Presentation
 structure is permitted and must be accounted for. Exactness includes the
@@ -347,12 +357,17 @@ stated domains. Their usefulness does not depend on proving that no other
 adequate presentation exists.
 
 Use a general presentation theory to obtain these classes and their compatible
-relations. Its scope follows concrete needs in this system and in the theory
-itself; composition is a required part, not an exhaustive scope declaration.
-The application must identify the independent subject, the structural
-admission conditions, and the general construction used. A new definition
-for each case is justified only when an existing construction does not
-faithfully express the needed boundary.
+relations. Its scope follows the independently defined notions and recurring
+relations in this system and in the theory itself. Composition is a required
+part, not an exhaustive scope declaration. The owning notion or intrinsically
+linked group states the complete domain, structural account, intrinsic links,
+and implementation contracts. A class proves these locally. Uses select,
+specialize, instantiate, or compose exported contracts through the general
+laws. Different exact classes of the same domain do not require a new semantic
+compatibility proof for each use; their canonical correspondence is derived
+once. An actual shared source or quoted body remains part of the subject
+whenever an intrinsic relation observes it. A special construction needs a
+reason why the existing general rules do not express that independent boundary.
 
 **D-7 — Premise structure.** *(Endorsed.)*
 Premises are not a set of judgments. A schema or rule instance exposes a finite
@@ -1099,7 +1114,7 @@ considered exception.
 **O-42** direct circularity letting a definition select its own truth is unformed, outside one separately defined well-founded or monotone construction.
 **O-83** the admission verdict for every imported audit component, with its reason.
 
-### 6.13 General presentation theory and quotation — `Presentation_Classes`, `Presentation_Relations`, `Presentation_Closure`, `Factor_Presentation_Classes`
+### 6.13 General presentation theory and quotation — `Presentation_Classes`, `Presentation_Transport`, `Presentation_Contracts`, `Factor_Presentation_Classes`
 
 **Defect.** The archived `quotation_geometry` was an external function pair,
 and its purported transport theorem reduced to $B(x)\leftrightarrow B(x)$.
@@ -1109,28 +1124,70 @@ grammars and proving uniqueness among them is not the desired result.
 
 **Warrant.** **P-4** and the amended **D-6** apply throughout the system.
 
-**Change.** Develop a reusable presentation theory, with its scope justified
-by the system's actual requirements. Use its constructions for the theory's
-own relevant notions and throughout the system. State required content and
-intrinsic relations independently, constrain the admissible presentations,
-and prove exactness for every admitted member. Concrete quotation grammars
+**Change.** Develop a reusable presentation theory around independently
+specified notions and their intrinsic relations. Use its constructions for
+the theory's own relevant notions and throughout the system. Each notion or
+intrinsically linked group owns its complete domain and local presentation
+and implementation contracts. Prove exactness for every admitted member,
+then use the generic laws to transport and compose those contracts. Concrete
+quotation grammars
 and compilers instantiate this theory under the same discipline as citations,
 bindings, environments, assemblies, derivations, retention boundaries, and
 semantic definitions.
 
 The current scope has the following evidence and proof boundaries:
 
-| Recurring requirement | General result needed |
+| Independent notion or recurring relation | General result |
 |---|---|
 | Complete values admit different enumerations and physical copies | Coverage, admissibility, unique recovery of the entire subject, compatible alternatives, and changes of presentation. Recovery alone does not establish a material account or intrinsic-link exactness. |
 | Records, lists, premise families, and tables combine components | Products, complete sequences, and finite collections with explicit roles, positions, multiplicity, and distinctness conditions appropriate to the subject. |
 | A package or derivation uses a common environment, scope, or occurrence | Constrained and joint classes with soundness for every retained presentation and jointly available witnesses for every required subject. |
 | A complete environment and site determine a native program | A derived-component rule based on the independently proved functional link, retaining both judgments without storing a duplicate program value. |
 | Semantic observations must survive changes of presentation | Preservation and reflection of the independently stated predicates and relations, with explicit shared arguments and intermediate domains. |
+| Different exact classes present the same independent subject domain | Canonical correspondence contains every pair recovering the same subject. Totality, reversal, composition, and uniform predicate and relation transport follow from local class contracts. |
+| Actual implementations realize independent relations or maps | Local exact relation contracts export invariance, adaptation, specialization, and composition across different intermediate classes. Maps have total outputs, unique up to subject correspondence. |
+| Intrinsically linked subjects form one complete domain | The joint domain includes the intrinsic relation. All component presentations of linked subjects form a logical joint class, and any separately exact physical joint class covers that whole domain. |
+| Locally defined programs share actual definitions | Complete interface and clause agreement on their overlap permits ordinary program union and preserves each program's call boundaries and positive meaning. |
 | Definitions and readers may be positively recursive | Exact consequence transport on a proved closed support domain before taking least fixed points. |
 | A complete presented record also presents a derived subject | An image rule with an independently stated target domain and total coverage; the original record and its intrinsic relations remain recoverable. Finite collections and complete artifact/body records instantiate it. |
 | Complete finite syntax is determined by several readings together | Observation classes derived from a complete presented record and an observation map proved injective on the required subject domain. Every conclusion, call occurrence, callee, and material operand remains present. |
 | The presentation theory has operative definitions and rules of its own | Ordinary native schemas and programs, exact presentations of their scopes and complete schema reports, native checks against fixed reference data, and applications of those readers to every compatible presentation of their own clauses. |
+
+The initial coverage and recovery machinery is useful but insufficient by
+itself. Its composition construction preserves a complete intermediate
+presentation, as quotation requires. Its shared-class relation theorem does
+not itself compose different intermediate presentations of one notion.
+Presentation_Transport supplies the missing subject-preserving correspondence
+and coherent relation laws. This correspondence permits all equivalent
+presentations and keeps the reading context explicit; it does not merge
+ambiguous raw grammars or select a normal form.
+
+Presentation_Contracts localizes implementation exactness and derives clients'
+adaptation and composition. It also proves a factorization criterion and a
+counterexample: complete recovery of a unit subject can coexist with a boolean
+observation that distinguishes its presentations. Such an observation needs
+an independently justified subject boundary. It cannot define that boundary
+from an application's desired result. Intrinsic groups use one complete joint
+domain; physical composition then instantiates its local coverage contract.
+
+Factor_Presentation_Transport applies the contracts to existing artifact and
+environment identity and to quotation, preserving each actual quoted body.
+Factor_Bag_Presentations derives counted bags through covered images of
+complete sequences. Their identity and inequality contracts retain every
+multiplicity. The generic separated-list profile consumes the owning notion's
+inequality contract and derives the complete finite-collection class.
+Target identity and inequality retain the independent artifact and optional
+occurrence boundary, including the distinction between a whole artifact and
+an occurrence at the empty address.
+
+The new bag, artifact, and target readers own local ordinary programs.
+Factor_System_Composition joins programs whose complete shared definitions
+agree, preserving both meanings through the existing dependency-locality
+theorem. Factor_Comparison_Programs separately joins target collection with
+replay. Seven new definitions with sixteen ordinary clauses have complete
+contracts in the combined program. One closed native program has distinct
+entries before all future formed operands and preserves its exact original
+scope, artifacts, and bindings across those applications.
 
 Jointly determining observations now supply exact schema reports through
 these general constructions. The report retains one complete binder and
@@ -1228,9 +1285,11 @@ may be meaningful, or may serve a stated representation role; neither is
 silently inferred from the host formalization. A clause declaring an encoding
 "exact" is not evidence of exactness.
 
-For every intrinsic relation, give the corresponding structural compatibility
-conditions and prove preservation and reflection of the relation through the
-linked presentations. A citation must reach the same exact target through its
+For every intrinsic relation, the owning notion or intrinsically linked group
+states the complete boundary and proves its local implementation contracts.
+The general correspondence and composition laws then preserve and reflect
+that relation across every declared presentation class. A citation must reach
+the same exact target through its
 binding and environment; a presented derivation must use the recovered rule,
 premise occurrences, and retained interpretation; a stored program scope must
 determine the actual definitions and meaning of calls in that scope. These
@@ -1257,7 +1316,7 @@ datatype of "notions" is added.
 **O-45** presented semantic definitions recover their actual rules, interfaces, premise occurrences, and dependencies, and preserve and reflect their applications and meaning through the linked presentations.
 **O-79** each claimed presentation domain has total finite representability, with constructed witnesses for every claimed inhabited domain. An empty constrained domain cannot establish adequacy for a larger inhabited domain. A generic intended domain is not reduced to finitely enumerated ground examples.
 **O-80** intrinsic relations between presented notions are preserved and reflected by the jointly admissible presentations. Explicit composition theorems account for shared material, exact targets, binding scopes, occurrence identity, and dependencies wherever relevant. Separate exactness does not discharge this obligation.
-**O-84** develop and apply a general presentation theory whose scope is justified by recurring requirements. Each construction states and proves the conditions needed for exactness, joint coverage, and native interpretation where required. Existing and new presentations use these results wherever applicable; residual special cases state the boundary that requires separate treatment.
+**O-84** develop and apply a general presentation theory whose scope is justified by independently defined notions and their recurring relations. Local contracts contain each notion's guarantees; clients use generic adaptation, specialization, instantiation, and composition instead of repeating representation-specific meaning proofs. Each construction states and proves the conditions needed for exactness, joint coverage, and native interpretation where required. Existing and new presentations use these results wherever applicable; residual special cases state the boundary that requires separate treatment.
 **O-85** the presentation theory's own relevant structures, definitions, contracts, and proofs receive exact presentations and explicit intrinsic-link results under the same discipline. Native self-application of an operative reader is one result within this obligation; it does not by itself establish native checking of all presentation contracts or exactness proofs.
 
 O-44 and O-80 govern every presentation stratum. The ledger must identify the
@@ -1702,9 +1761,9 @@ exposes boundaries; it does not stand in for results.
 6. **Factor structure and its bridge theorem** (§6.10). D-10 makes this the hinge:
    until it closes, "Factor over RRA" is a claim.
 7. **General presentation theory, its own presentations, and quotation
-   exactness** (§6.13). Derive the scope from concrete requirements, establish
-   reusable constructions and explicit compatibility at intrinsic links, and
-   use them throughout later presentation strata.
+   exactness** (§6.13). Establish independently defined notions and their
+   intrinsic groups, derive exact local contracts and reusable correspondence
+   laws, and use those contracts throughout later presentation strata.
 8. **Presentation, application, dependency audit, meaning** (§6.11, §6.12),
    with the candidate admission verdicts.
 9. **The three joins** (§6.14 – §6.17).
@@ -1726,6 +1785,8 @@ or does not. The rest are prerequisites, not progress toward them.
 * Every admitted presentation class accounts for its notion's content and
   intrinsic relations, with accepted compatibility and composition results.
   No single-grammar or quotation-principality condition is imposed.
+  Notions remain independent of uses. Their semantic guarantees are locally
+  owned, and exact classes of the same domain compose through reusable laws.
 * The general presentation theory has a scope justified by evidence and is used
   for its own relevant notions and throughout the system. Each operative native
   instance has actual clauses and proved contracts; proof-language predicates

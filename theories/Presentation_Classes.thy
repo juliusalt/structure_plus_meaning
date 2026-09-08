@@ -450,12 +450,17 @@ text \<open>
   The locale records total coverage, admissibility, and recovery of the entire
   declared subject. It does not by itself establish an account of the physical
   material or of any relation to another subject. Those obligations belong to
-  the independent subject and presentation relations in each application.
+  the independently defined notion or intrinsically linked group. Each class
+  and implementation establishes its contract at that local boundary; clients
+  use the exported generic transport and composition laws.
 
   A constrained class needs soundness for every retained presentation and a
   compatible witness for every required subject. Two separately total classes
-  need not have a common witness. The joint construction therefore includes
-  that obligation. Lists retain positions and repeated occurrences; products
+  need not have a common physical witness. The joint construction therefore
+  includes that material obligation. Presentation_Transport separately derives
+  semantic correspondence between all exact classes of the same subject
+  domain; a shared physical witness is not required for that correspondence.
+  Lists retain positions and repeated occurrences; products
   retain both roles. These constructions impose no exchange rule.
 
   Composition recovers the complete intermediate presentation before recovering

@@ -78,7 +78,7 @@ lemma presented_relation_alternatives:
     presented_relation A B R p q \<or> presented_relation A B S p q"
   by (auto simp: presented_relation_def)
 
-section \<open>Relational composition needs a shared intermediate presentation\<close>
+section \<open>Relational composition through one intermediate class\<close>
 
 theorem presented_relation_compose:
   assumes middle: "presentation_class B D X"
@@ -117,22 +117,24 @@ lemma presented_predicate_change:
   by (auto simp: presented_predicate_def composed_presentation_def)
 
 text \<open>
-  These relations specify preservation and reflection of an independently
-  stated predicate or relation. A native reader must prove that its actual
-  meaning equals the appropriate presented relation. Defining the lift does
-  not supply that proof.
+  These relations preserve and reflect independently stated predicates and
+  intrinsic relations. An actual reader establishes its exact meaning at the
+  boundary of the owning notion or intrinsically linked group. Defining a lift
+  alone does not establish that local implementation contract.
 
-  Conjunction uses recovery to identify both subjects. Relational composition
-  additionally uses one common intermediate presentation and total coverage of
-  its subject domain. Omitting that domain could claim a witness that has no
-  presentation. Independently proving the component classes supplies neither
-  a shared context nor the exactness of a reader's intrinsic links.
+  The composition theorem in this layer uses one common intermediate class
+  and its entire subject domain. Presentation_Transport derives composition
+  across different intermediate classes through their canonical semantic
+  correspondence. Each class establishes coverage and recovery once; clients
+  need no separate meaning-transport proof for each combination.
 
-  The relations above admit every representative of their stated classes.
-  When physical compatibility restricts which representatives can be joined,
-  the joint class construction supplies a separate soundness and coverage
-  obligation. Representation-sensitive observations remain observations of the
-  actual representation unless an invariance theorem has been established.
+  Every representative of each stated class is admitted. A physical joint
+  presentation additionally has a complete material account and a sound,
+  covered relation to its independent joint subject. Those obligations remain
+  local to that class. Representation-sensitive observations belong to the
+  actual source or presentation notion unless they factor through the declared
+  semantic subject; Presentation_Contracts proves the criterion and exports
+  reusable implementation, adaptation, and composition contracts.
 \<close>
 
 end

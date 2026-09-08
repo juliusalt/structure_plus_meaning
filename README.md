@@ -23,6 +23,23 @@ recursion. Its conditions preserve the distinctions required by each subject.
 Recovery alone establishes neither a complete material account nor the
 exactness of intrinsic relations.
 
+The owner's further clarification fixes the direction of this work: define
+notions and their intrinsic links independently of requirements, establish
+their exact local contracts, and use or compose those contracts. The new
+transport layer derives total correspondence between all exact classes of the
+same subject domain. It transports predicates, relations, and recursive
+meanings uniformly. Reader contracts compose across different intermediate
+presentations; specialization retains all presentations of selected subjects,
+and instantiation uses an independently stated map between domains.
+
+The relation contract belongs to the notion or intrinsically linked group.
+Artifact and environment identity now export it, and the quotation example
+preserves the actual stored body while transporting its underlying subject.
+An observation that varies between presentations of the same subject cannot
+silently become a semantic property of that subject. Coverage and recovery
+alone do not establish that boundary. The remaining audit must apply these
+contracts throughout the system and present their mathematical proofs natively.
+
 The general rules now derive term products and lists, complete finite
 collections, site quotations, and stored program scopes. Existing native list,
 artifact, environment, and equality readers provide actual admission and
@@ -492,6 +509,22 @@ preserves payloads and pairs. A fresh equality definition requires admission of
 both operands, giving an exact contract over every input term. One closed native
 program supplies distinct admission and equality sites for all future formed
 arguments.
+
+Counted bags now have their own complete presentation class and exported
+identity and inequality contracts. Ordinary positive clauses witness a
+missing or extra occurrence, or remove one equal occurrence and continue.
+Artifact inequality uses those counts under admission of both complete
+artifacts. Target equality and inequality additionally retain the exact
+optional occurrence. A generic separation profile consumes that local
+inequality contract and admits every complete finite set of distinct targets,
+including every order and every member presentation.
+
+The bag reader owns a local program over the existing bag operations.
+Artifact and target programs compose with it through complete shared-definition
+agreement. A separate integration module joins target collection with replay,
+preserving both programs' entire meanings. Seven new entries use sixteen
+ordinary clauses; one fixed closed native program serves all future formed
+arguments with its original scope, artifacts, and bindings preserved.
 
 Complete environment presentations are now compared through ordinary rules as
 well. Artifact-use rows share an exact use coordinate and call admitted

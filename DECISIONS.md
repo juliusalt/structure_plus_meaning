@@ -5034,3 +5034,88 @@ Native cause validation, authority, higher protocol admission, reflection,
 genesis, and the system-wide presentation audit remain. The new mathematical
 contracts and proofs retain O-85. Broader obligation states are unchanged,
 and the final every-line audit has not begun.
+
+
+## Native base validation follows the declaration and its recorded material
+
+The independently defined base judgment is a supplied native definition's
+positive application to the exact whole-artifact payload. Recorded base cause
+additionally requires that the generation's actual whole cause quote the
+complete minimal program-and-call scope and that its actual payload equal
+the declared artifact. These definitions precede the new native clauses and
+remain unchanged. The reader implements their complete conjunction.
+
+The source classes use the existing complete judgment and generation sources.
+The actual application determines the base artifact; the complete recorded
+cause determines the recorded artifact. A generic determined-component class
+exposes those values without storing a second payload in a source. A report
+pairs the source with any complete presentation of that same exact artifact.
+Generic products, subdomains, and complete quotation provide these classes.
+The chosen report arrangement is an existing presentation construction, not
+a privileged topology for base declarations.
+
+Four native definitions have four ordinary clauses. Base reports call the
+existing positive-judgment reader, read the actual application, and use the
+existing material literal projection. Recorded reports read the actual core
+payload, recover the actual recorded judgment through the scope contract,
+require its least environment through judgment retention, and apply the base
+report contract to that same judgment and payload. The two source admissions
+use the generic projection clause.
+
+The repeated source and application readings select already determined
+components. They do not introduce a second judgment, a stored proof, an
+independent payload declaration, or an externally supplied truth predicate.
+Truth has its earlier independent least-positive meaning and exact native
+reader. The recorded scope can be presented compatibly when checked, while
+the actual whole cause artifact, its stored body, and its actual citation use
+remain fixed by the source relation.
+
+Local relation contracts cover all complete contexts and all generation
+sources; false or unreadable contexts gain no admission. Determined-output
+contracts admit exactly every complete presentation of the payload. Clients
+inherit general adaptation and composition. The recorded checker consumes
+the base contract at its own boundary rather than repeating its truth or
+representation argument. Nonminimal recorded environments, false actual
+declarations, and mismatched payloads are rejected. Base admission itself
+does not require a minimal supplied environment; least restriction preserves
+it. Recorded base cause requires that the environment actually quoted in its
+cause already be minimal.
+
+Complete-definition agreement is proved before combining reader programs.
+A new general covered-domain union law joins the two component agreements.
+A new general definition-group law preserves an existing group when its base
+is enlarged by agreeing definitions. Both preserve full interfaces and clause
+families, not just meanings at selected arguments. The operative base is the
+least complete-definition closure of six actual external callees. The larger
+source used to construct that base is not the final operative program.
+Historical import breadth remains part of the later organization audit.
+
+Accepted native reports recover the actual whole cause body, the declared
+literal and its positive call, exact least retention, and the generation's
+actual payload. Every report and source-admission result is preserved under
+least source restriction. Equal cause and payload fields preserve recorded
+base validity across different outer environments and historical predecessor
+families. Neither predecessor emptiness nor a continuation rule is imposed.
+
+Every valid declaration with any formed predecessor family has an actual
+closed generation and native source and report material. The earlier explicit
+finite base policy supplies witnesses for every formed payload and locus.
+Complete source and report quotations are constructed. An actual formed false
+declaration supplies readable native scope material while all base reports
+and recorded-base validation reject it. One fixed closed native program has
+four distinct operation sites before all future formed inputs, preserving
+its original program scope, artifacts, and outgoing bindings.
+
+The choices to expose a determined payload source and a separate report,
+reuse the existing context classes, compose full shared definitions, and
+keep arbitrary formed predecessor families are reasoned above. All earlier
+definitions, statements, assumption scopes, and proofs are preserved. The
+two general agreement theorems are additions to their owning theories.
+
+Construction permission still requires formation and truth to be invariant
+over all compatible presentations of every valid account. Ordinary positive
+truth alone does not establish that global condition. Its native realization,
+construction-cause validation, authority, the higher transition protocol,
+reflection, genesis, and the system-wide presentation audit remain open.
+The new mathematical contracts and proofs retain O-85. Broader obligation
+states are unchanged, and the final every-line audit has not begun.

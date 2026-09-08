@@ -1397,6 +1397,33 @@ compilation precedes future operands. Recorded cause validation consumes
 this boundary separately, and native mathematical-proof presentation remains
 within O-85.
 
+Base admission and recorded base cause now have four native entries with
+four ordinary clauses. Their independent definitions remain unchanged. The
+actual judgment determines a declared whole-artifact payload; its source
+stores no additional payload field. Reports admit every complete presentation
+of that artifact. A recorded cause additionally fixes the actual quoted
+judgment, its least program-and-call environment, positive truth, and equality
+with the generation's actual payload.
+
+Local relation and determined-output contracts own these links. False
+declarations, nonminimal recorded scopes, and wrong payloads are rejected.
+Every report survives least source retention. Complete native material is
+available for each valid declaration and every formed predecessor family;
+an explicit finite base policy supplies examples for every formed payload.
+A formed false declaration has readable scope material and rejected native
+base validation.
+
+Shared interfaces and entire clause families agree before program composition.
+Two general agreement laws handle a covered union and a definition group on
+an enlarged agreeing base. The native reader retains the least closure of six
+actual external callees. One fixed compilation precedes every future formed
+operand and preserves its original scope, artifacts, and bindings.
+
+Construction permission retains its global formation-and-truth invariance
+condition over all compatible account presentations. A positive call alone
+does not prove that universal contract. Its native realization and the
+higher protocol remain separate work; O-85 also remains open.
+
 These results are justified by existing collection, table, quotation, scope,
 and program machinery. Their proof parameters are typed relations, not a
 universal datatype of notions. An arbitrary mathematical relation is not

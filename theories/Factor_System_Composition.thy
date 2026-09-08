@@ -129,6 +129,21 @@ proof -
     by (simp only: system_union_commute)
 qed
 
+theorem systems_agree_on_union_domain:
+  assumes left: "schema_system_formed P" and right: "schema_system_formed Q"
+    and first: "systems_agree_on T P (U\<inter>system_definitions P)"
+    and second: "systems_agree_on T Q (U\<inter>system_definitions Q)"
+    and covered: "U\<subseteq>system_definitions P\<union>system_definitions Q"
+  shows "systems_agree_on T (system_union P Q) U"
+proof -
+  have left_owned: "((d,c),S)\<in>system_clauses P \<Longrightarrow> d\<in>system_definitions P" for d c S
+    using left unfolding schema_system_formed_def by blast
+  have right_owned: "((d,c),S)\<in>system_clauses Q \<Longrightarrow> d\<in>system_definitions Q" for d c S
+    using right unfolding schema_system_formed_def by blast
+  show ?thesis using first second covered left_owned right_owned
+    by (auto simp: systems_agree_on_def system_definitions_def rel_dom_def; blast)
+qed
+
 theorem system_union_agree_call:
   assumes left: "schema_system_formed P" and right: "schema_system_formed Q"
     and agree: "systems_agree_on P Q (system_definitions P \<inter> system_definitions Q)"

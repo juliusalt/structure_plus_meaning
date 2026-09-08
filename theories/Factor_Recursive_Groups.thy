@@ -155,6 +155,20 @@ proof -
   show ?thesis by (simp only: calls prior system_union_definitions domain) blast
 qed
 
+theorem rebased_agreement:
+  assumes target: "schema_system_formed R"
+    and agreement: "systems_agree_on P R (system_definitions P)"
+    and fresh: "system_definitions R\<inter>system_definitions Q={}"
+  shows "systems_agree_on extended (system_union R Q) (system_definitions extended)"
+proof -
+  have absent_interface: "(d,p)\<notin>system_interfaces R" if "d\<in>system_definitions Q" for d p
+    using fresh that by (auto simp: system_definitions_def rel_dom_def)
+  have absent_clause: "((d,c),S)\<notin>system_clauses R" if "d\<in>system_definitions Q" for d c S
+    using target fresh that unfolding schema_system_formed_def by blast
+  show ?thesis using agreement no_old_interface no_old_clause absent_interface absent_clause
+    by (auto simp: systems_agree_on_def)
+qed
+
 theorem native_total:
   "\<exists>g :: 'd \<Rightarrow> local_address option definition_site. \<exists>E u T.
     inj_on g (system_definitions P\<union>system_definitions Q) \<and> closed_native_package_at E u [] T \<and>

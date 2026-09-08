@@ -1147,7 +1147,29 @@ proof, replay, truth, and scope checkers. One fixed native compilation
 precedes every future operand and preserves its original scope, artifacts,
 and bindings.
 
-The remaining work includes cause validity and authority readers, complete
+Base admission and recorded base cause now have four native entries with
+four ordinary clauses. Their independent definitions remain unchanged. The
+actual judgment determines a declared whole-artifact payload; its source
+stores no additional payload field. Reports admit every complete presentation
+of that artifact. A recorded cause additionally fixes the actual quoted
+judgment, its least program-and-call environment, positive truth, and equality
+with the generation's actual payload.
+
+Local relation and determined-output contracts own these links. False
+declarations, nonminimal recorded scopes, and wrong payloads are rejected.
+Every report survives least source retention. Complete native material is
+available for each valid declaration and every formed predecessor family;
+an explicit finite base policy supplies examples for every formed payload.
+A formed false declaration has readable scope material and rejected native
+base validation.
+
+Shared interfaces and entire clause families agree before program composition.
+Two general agreement laws handle a covered union and a definition group on
+an enlarged agreeing base. The native reader retains the least closure of six
+actual external callees. One fixed compilation precedes every future formed
+operand and preserves its original scope, artifacts, and bindings.
+
+The remaining work includes construction-cause validity and authority readers, complete
 transition material, reflection, genesis, and the system-wide presentation
 audit. Native presentations and checking of the remaining mathematical
 contracts and proofs stay open.

@@ -354,6 +354,65 @@ proof -
   qed
 qed
 
+section \<open>Compatible families cover the union of their subject domains\<close>
+
+theorem presentation_class_family:
+  assumes classes: "\<And>i. i\<in>I \<Longrightarrow> presentation_class (R i) (D i) (A i)"
+    and overlap: "\<And>i j a b p. i\<in>I \<Longrightarrow> j\<in>I \<Longrightarrow>
+      R i a p \<Longrightarrow> R j b p \<Longrightarrow> a=b"
+  shows "presentation_class (\<lambda>a p. \<exists>i\<in>I. R i a p)
+    (\<lambda>a. \<exists>i\<in>I. D i a) (\<lambda>p. \<exists>i\<in>I. A i p)"
+proof (unfold_locales)
+  fix a p assume "\<exists>i\<in>I. R i a p"
+  then obtain i where member: "i\<in>I" and read: "R i a p" by blast
+  interpret one: presentation_class "R i" "D i" "A i" by (rule classes[OF member])
+  show "\<exists>i\<in>I. D i a" using member one.subject_boundary[OF read] by blast
+  show "\<exists>i\<in>I. A i p" using member one.presentation_boundary[OF read] by blast
+next
+  fix a assume "\<exists>i\<in>I. D i a"
+  then obtain i where member: "i\<in>I" and domain: "D i a" by blast
+  interpret one: presentation_class "R i" "D i" "A i" by (rule classes[OF member])
+  show "\<exists>p. \<exists>i\<in>I. R i a p" using member one.total[OF domain] by blast
+next
+  fix p assume "\<exists>i\<in>I. A i p"
+  then obtain i where member: "i\<in>I" and allowed: "A i p" by blast
+  interpret one: presentation_class "R i" "D i" "A i" by (rule classes[OF member])
+  show "\<exists>a. \<exists>i\<in>I. R i a p" using member one.admitted[OF allowed] by blast
+next
+  fix a p b assume "\<exists>i\<in>I. R i a p" "\<exists>i\<in>I. R i b p"
+  then show "a=b" using overlap by blast
+qed
+
+corollary presentation_class_directed_union:
+  assumes classes: "\<And>i. i\<in>I \<Longrightarrow> presentation_class (R i) (D i) (A i)"
+    and directed: "\<And>i j. i\<in>I \<Longrightarrow> j\<in>I \<Longrightarrow>
+      \<exists>k\<in>I. (\<forall>a p. R i a p \<longrightarrow> R k a p) \<and>
+        (\<forall>a p. R j a p \<longrightarrow> R k a p)"
+  shows "presentation_class (\<lambda>a p. \<exists>i\<in>I. R i a p)
+    (\<lambda>a. \<exists>i\<in>I. D i a) (\<lambda>p. \<exists>i\<in>I. A i p)"
+proof (rule presentation_class_family[OF classes])
+  fix i j a b p assume members: "i\<in>I" "j\<in>I" and reads: "R i a p" "R j b p"
+  obtain k where member: "k\<in>I"
+    and inclusions: "\<forall>a p. R i a p \<longrightarrow> R k a p" "\<forall>a p. R j a p \<longrightarrow> R k a p"
+    using directed[OF members] by blast
+  interpret upper: presentation_class "R k" "D k" "A k" by (rule classes[OF member])
+  have common: "R k a p" "R k b p" using inclusions reads by blast+
+  show "a=b" by (rule upper.recovery[OF common])
+qed
+
+text \<open>
+  A family covers exactly the union of its stated subject domains. Every
+  presentation shared by two members must recover the same subject. Directed
+  inclusion supplies that agreement through a common class. An empty family
+  covers no subjects; it does not establish coverage of an independently
+  larger domain.
+
+  Finite recursive structures can be covered by increasing size bounds. The
+  bounds index the proof and need not be stored in the presentations. The
+  construction preserves every presentation admitted at any bound, rather
+  than selecting a representative from each class.
+\<close>
+
 section \<open>Alternative forms require agreement where they overlap\<close>
 
 theorem presentation_class_alternatives:
@@ -363,21 +422,22 @@ theorem presentation_class_alternatives:
 proof -
   interpret first: presentation_class R D A by (rule first)
   interpret second: presentation_class S D B by (rule second)
-  show ?thesis
-  proof (unfold_locales)
-    fix a p assume read: "R a p \<or> S a p"
-    show "D a" using read first.subject_boundary second.subject_boundary by blast
-    show "A p \<or> B p" using read first.presentation_boundary second.presentation_boundary by blast
-  next
-    fix a assume domain: "D a"
-    show "\<exists>p. R a p \<or> S a p" using first.total[OF domain] by blast
-  next
-    fix p assume allowed: "A p \<or> B p"
-    show "\<exists>a. R a p \<or> S a p" using allowed first.admitted second.admitted by blast
-  next
-    fix a p b assume left: "R a p \<or> S a p" and right: "R b p \<or> S b p"
-    show "a=b" using left right first.recovery second.recovery overlap by blast
+  have classes: "presentation_class (if b then R else S) D (if b then A else B)" for b
+    using first.presentation_class_axioms second.presentation_class_axioms by (cases b) auto
+  have reverse: "S a p \<Longrightarrow> R b p \<Longrightarrow> a=b" for a p b
+  proof -
+    assume s: "S a p" and r: "R b p"
+    have "b=a" by (rule overlap[OF r s])
+    then show "a=b" by (rule sym)
   qed
+  have agreement: "(if i then R else S) a p \<Longrightarrow> (if j then R else S) b p \<Longrightarrow> a=b" for i j a b p
+    using first.recovery second.recovery overlap reverse by (cases i; cases j) auto
+  have family: "presentation_class
+      (\<lambda>a p. \<exists>b\<in>(UNIV::bool set). (if b then R else S) a p)
+      (\<lambda>a. \<exists>b\<in>(UNIV::bool set). D a)
+      (\<lambda>p. \<exists>b\<in>(UNIV::bool set). (if b then A else B) p)"
+    by (rule presentation_class_family) (use classes agreement in auto)
+  show ?thesis using family by (simp add: ex_bool_eq disj_commute)
 qed
 
 theorem separate_coverage_has_no_joint_witness:

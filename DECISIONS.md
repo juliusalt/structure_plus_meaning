@@ -4248,3 +4248,93 @@ same general theory used for the rest of this batch. O-85 still requires
 native presentations and checks of the remaining mathematical contracts and
 exactness proofs with their intrinsic relations. The higher protocol,
 reflection, genesis, and final repository audit also remain open.
+
+## Recursive classes retain their actual generation links
+
+The existing generation value is recursive, while its predecessor collection
+is a finite set. A separate uniqueness and construction argument for each
+recursive profile would repeat the same class reasoning. The new family rule
+therefore covers a union of independently stated domains, with agreement on
+every shared presentation. Directed inclusion supplies that agreement through
+a common class. The earlier two-alternative theorem now follows from this
+general rule.
+
+Generation classes are built at finite size bounds using target products,
+complete finite-set classes, and injective field observations. The existing
+predecessor-size theorem supplies the smaller child bounds. Taking the
+directed union covers every formed finite core and every old value
+presentation. The size bound is a proof index, not stored information or a
+restriction to a fixed finite domain. No representative is selected from the
+admitted class.
+
+Finite sets are obtained from the existing complete collection class through
+the covered image rule. Its independent domain contains all finite sets of
+allowed elements. Every complete order and every permitted member
+presentation remains available. Snapshot, publication, and transaction classes
+then reuse products, subdomains, and observations. Their original formation
+conditions remain intact, including one generation per selected locus, the
+two absence boundaries, their disjointness from the respective selections,
+and the restriction of changed loci to compared loci. The earlier totality
+and recovery statements are retained as consequences of these classes.
+
+A transaction's four fields do not determine an outcome without the supplied
+initial snapshot. Their joint context does. The determined-component
+construction presents the entire execution result from that context, without
+adding an outcome field to the transaction. A successful result retains the
+exact update and lookup at every locus. A conflict retains the complete
+comparison domain and every observed value, with no output snapshot.
+
+A generation source presentation retains the actual environment and selected
+site. The existing native reading uniquely supplies the core. Its covered
+image presents every formed core while leaving the complete source context
+recoverable from the presentation. A separate report class relates that
+source to an independently presented expected core; equality of unrelated
+displayed values is not substituted for the actual source reading.
+
+Predecessor rows retain the socket, citation endpoint, actual destination use
+and address, and exact child core. Their parent environment is retained by the
+source context. Standalone row formation specifies the coordinate and core
+domain. The joint report constraint additionally requires exactly the
+collection read from the actual source. Its socket domain is complete, and
+its rows are in bijection with the predecessor cores. A different site
+presenting an equal core is not thereby an actual cited destination. Strict
+core descent proves well-foundedness on the recursively read native sites;
+the size assignment remains part of the proof.
+
+The generation environment is precisely the existing citation-request
+restriction at the selected root. Generation reading is preserved and
+reflected for every proposed core under a formed environment. If the source
+actually reads a generation, every recursive predecessor row and request is
+preserved, and the restriction is closed and idempotent. It fixes an already
+closed generation environment and is included in every retained
+subenvironment that can still read the root. Its equations account for every
+retained artifact and binding. General request-restriction lemmas supply
+idempotence and equality under complete use and binding-key coverage.
+
+The whole recorded cause determines its quoted judgment context. Its class
+derives that context without duplicating it in the source value. The material
+theorem follows the actual cause citation to its local or externally bound
+artifact use and reads that artifact's complete body without slots. An
+expected context report may use another allowed presentation of the recovered
+context. The cause artifact still has to quote its own actual body; the
+expected report is not silently treated as that body. The explicit relation
+equation preserves this distinction across outer presentations of the same
+core.
+
+Every formed context, meaning a formed environment with both actual selected
+sites, can be recorded with any formed locus, payload, and finite formed
+predecessor collection. The construction supplies an already minimal outer
+generation environment. Every recorded scope has complete report and
+quotation witnesses. A concrete formed false native equality call also has
+such a recorded scope and quotation, while its generation cause is invalid.
+Scope recovery therefore establishes neither a true call nor a valid base
+or construction role.
+
+The existing ordinary target entry admits the derived target class. This
+batch adds no ordinary clause for the remaining recursive generation or
+higher protocol relations. Their class constraints refer to the independent
+native readings whose links are proved here; those predicates are not new
+native primitives. Ordinary admission still requires its own exact program.
+The new mathematical class contracts also retain the native proof obligations
+under O-85. The wider protocol, reflection, genesis, and final repository
+audit remain open.

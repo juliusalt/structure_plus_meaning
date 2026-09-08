@@ -102,6 +102,19 @@ lemma source_root_presents_fields:
     (\<exists>e. environment_value_presents E e \<and> t=Pair_Term (Pair_Term e (use_data_term u)) (Payload_Term r))"
   by (simp only: source_root_presents_def fst_conv snd_conv)
 
+lemma source_root_presents_formed:
+  assumes presented: "source_root_presents (E,(u,r)) t"
+  shows "term_formed t \<and> self_contained_term t"
+proof -
+  obtain e where source: "environment_value_presents E e" and site: "(u,r)\<in>environment_positions E"
+    and shape: "t=Pair_Term (Pair_Term e (use_data_term u)) (Payload_Term r)"
+    using presented by (auto simp: source_root_presents_fields)
+  have formed: "environment_formed E" "term_formed e" "self_contained_term e"
+    using environment_value_presents_formed[OF source] by blast+
+  have address: "octets_formed r" using environment_position_address[OF formed(1) site] by simp
+  show ?thesis using formed(2,3) address shape by simp
+qed
+
 theorem judgment_context_presentation_class:
   "presentation_class judgment_context_presents judgment_context_formed
     (\<lambda>t. \<exists>z. judgment_context_presents z t)"

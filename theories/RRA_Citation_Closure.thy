@@ -266,6 +266,30 @@ lemma requested_uses_after_restriction [simp]:
   "requested_uses (request_environment E Q) Q = requested_uses E Q"
   by (auto simp: requested_uses_def)
 
+lemma request_environment_idempotent:
+  "request_environment (request_environment E Q) Q=request_environment E Q"
+proof -
+  let ?F="request_environment E Q"
+  have shape: "request_environment ?F Q =
+    \<lparr>environment_artifacts={entry\<in>environment_artifacts ?F. fst entry\<in>requested_uses E Q},
+      environment_bindings={entry\<in>environment_bindings ?F. fst entry\<in>requested_slots E Q}\<rparr>"
+    by (simp only: request_environment_def[of ?F Q]
+      requested_uses_after_restriction requested_slots_after_restriction)
+  show ?thesis by (simp only: shape) (simp add: request_environment_def)
+qed
+
+lemma request_environment_fixed_coverage:
+  assumes uses: "environment_uses E\<subseteq>requested_uses E Q"
+    and slots: "rel_dom (environment_bindings E)\<subseteq>requested_slots E Q"
+  shows "request_environment E Q=E"
+proof -
+  have artifacts: "{entry\<in>environment_artifacts E. fst entry\<in>requested_uses E Q}=environment_artifacts E"
+    using uses by (auto simp: environment_uses_def rel_dom_def)
+  have bindings: "{entry\<in>environment_bindings E. fst entry\<in>requested_slots E Q}=environment_bindings E"
+    using slots by (auto simp: rel_dom_def)
+  show ?thesis using artifacts bindings by (cases E) (simp add: request_environment_def)
+qed
+
 lemma included_anchor:
   assumes "environment_included E F" "anchored_at E u r t"
   shows "anchored_at F u r t"

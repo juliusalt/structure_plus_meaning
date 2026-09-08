@@ -1175,6 +1175,44 @@ a conditional replay rejected by the closed entries. Full native
 presentations and checks of the remaining mathematical contracts and their
 exactness proofs stay within O-85.
 
+Compatible presentation families now cover the union of their stated domains.
+A directed family derives overlap agreement through a common class. Finite
+generation cores provide a concrete recursive application: target products,
+complete finite sets, and injective field observations give each bounded
+class, and the union covers every formed core and every existing value
+presentation. Size bounds index the proof and add no stored field. The earlier
+two-alternative theorem is an instance of the same general family rule.
+
+The resulting classes also derive complete snapshot, publication, and
+transaction values under their unchanged formation conditions. The supplied
+initial snapshot and four transaction fields determine the complete result.
+Its presentation preserves either the exact update or the whole failed
+comparison, including every observed locus and value.
+
+Generation source classes retain their actual environment and site. Joint
+reports preserve the source reading, every predecessor socket and citation
+endpoint, the actual destination use and address, and each exact child core.
+Their native row collection is in bijection with the predecessor cores.
+Strict core descent establishes well-foundedness on the actual recursive
+read sites. The grammar-derived restriction preserves every row and request,
+is closed and idempotent, and is least among subenvironments that can still
+read the generation.
+
+Recorded-scope classes recover the context from the whole cause artifact.
+Their material theorem retains the actual native citation, its local or
+externally bound artifact use, and the complete body read without slots.
+An expected report can use another presentation of the same context; the
+cause artifact still quotes its own body. Every formed context can be
+recorded, with an already minimal outer generation scope. A formed false
+native equality call supplies a complete scope report and quotation while
+its recorded cause remains invalid.
+
+These are class, relation, and construction results. The existing target
+entry already admits the target class. Native admission of the remaining
+recursive generation and higher protocol relations still requires ordinary
+clauses with exact contracts. The new mathematical class contracts and their
+native proof presentations remain within O-85.
+
 These results are justified by existing collection, table, quotation, scope,
 and program machinery. Their proof parameters are typed relations, not a
 universal datatype of notions. An arbitrary mathematical relation is not

@@ -448,6 +448,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Package_Retention_Admission
     Factor_Complete_Data_Admission
     Factor_Presentation_Classes
+    Factor_Finite_Set_Presentations
+    Factor_Target_Presentations
     Factor_Constrained_Readings
     Factor_Program_Scope_Reading
     Factor_Schema_Observations
@@ -462,3 +464,5 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Replay_Presentations
     Factor_Replay_Reading
     Factor_Replay_Self_Presentation
+    Factor_Generation_Presentations
+    Factor_Generation_Scope_Presentations

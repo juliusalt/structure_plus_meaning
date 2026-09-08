@@ -40,6 +40,22 @@ Ordinary projection and fixed-result rules give conditional and closed replay
 readers and compatible quotation checks. One fixed compiled reader admits
 presentations of closed proofs of every positive call of its own program.
 
+Compatible families and directed unions now supply recursive generation
+classes from finite size bounds. Target and finite-set constructions also
+derive the existing snapshot, publication, and transaction classes under
+their unchanged formation conditions. A transaction with its supplied
+initial snapshot determines its complete success or conflict outcome.
+
+Generation source and report classes retain every actual predecessor socket,
+citation endpoint, destination use and address, and recovered core. Their
+least retained environment preserves every recursive row and request.
+Recorded-scope classes link the native cause citation and its actual artifact
+use to the complete stored body and an independently presented expected
+context. Every formed context has a recording witness. A formed false native
+call has a complete recorded scope and quotation while its cause remains
+invalid. Native admission of the remaining generation and protocol relations
+is still required.
+
 The work is incomplete. The current active session establishes the structural
 and data basis, relative footprints, exact artifacts, fragments, and assembly.
 Scoped citation environments, structural citation recognition, record and family representations,

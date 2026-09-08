@@ -11,40 +11,45 @@ definition publication_value_presents :: "publication_view \<Rightarrow> factor_
       data_collection_presents target_value_presents (fset (publication_evidence P)) e \<and>
       t=Pair_Term s (Pair_Term d e))"
 
+theorem publication_value_presentation_class:
+  "presentation_class publication_value_presents publication_formed
+    (\<lambda>t. \<exists>P. publication_value_presents P t)"
+proof -
+  let ?G="presented_predicate (data_sequence_presents generation_value_presents) distinct"
+  let ?T="presented_predicate (data_sequence_presents target_value_presents) distinct"
+  let ?tail="\<lambda>t. \<exists>p q. ?T p \<and> ?T q \<and> t=Pair_Term p q"
+  let ?A="\<lambda>t. \<exists>p q. ?G p \<and> ?tail q \<and> t=Pair_Term p q"
+  let ?R="factor_pair_presents (data_fset_presents generation_value_presents)
+    (factor_pair_presents (data_fset_presents target_value_presents) (data_fset_presents target_value_presents))"
+  let ?D="\<lambda>z. (\<forall>G\<in>fset (fst z). generation_formed G) \<and>
+    ((\<forall>x\<in>fset (fst (snd z)). target_formed x) \<and> (\<forall>x\<in>fset (snd (snd z)). target_formed x))"
+  have fields: "presentation_class ?R ?D ?A"
+    by (rule factor_pair_class[OF data_fset_presentation_class[OF generation_value_presentation_class]
+      factor_pair_class[OF data_fset_presentation_class[OF target_value_presentation_class]
+        data_fset_presentation_class[OF target_value_presentation_class]]])
+  let ?observe="\<lambda>P. (publication_snapshot P,(publication_dependencies P,publication_evidence P))"
+  have observed: "presentation_class (\<lambda>P t. publication_formed P \<and> ?R (?observe P) t)
+      publication_formed (\<lambda>t. \<exists>P. publication_formed P \<and> ?R (?observe P) t)"
+  proof (rule presentation_class_observations[OF fields])
+    fix P assume "publication_formed P"
+    then show "?D (?observe P)" by (simp add: publication_formed_def snapshot_formed_def selection_formed_def)
+  next
+    fix P Q assume "publication_formed P" "publication_formed Q" "?observe P=?observe Q"
+    then show "P=Q" by (simp add: publication_view_identity)
+  qed
+  have reading: "(publication_formed P \<and> ?R (?observe P) t) \<longleftrightarrow> publication_value_presents P t" for P t
+    by (auto simp: publication_value_presents_def factor_pair_presents_def; blast)
+  show ?thesis using observed by (simp only: reading)
+qed
+
+interpretation publication_values: presentation_class publication_value_presents publication_formed
+  "\<lambda>t. \<exists>P. publication_value_presents P t"
+  by (rule publication_value_presentation_class)
+
 theorem publication_value_presents_unique:
   assumes first: "publication_value_presents P t" and second: "publication_value_presents Q t"
   shows "P=Q"
-proof -
-  obtain s d e where left:
-    "data_collection_presents generation_value_presents (fset (publication_snapshot P)) s"
-    "data_collection_presents target_value_presents (fset (publication_dependencies P)) d"
-    "data_collection_presents target_value_presents (fset (publication_evidence P)) e"
-    "t=Pair_Term s (Pair_Term d e)"
-    using first unfolding publication_value_presents_def by blast
-  obtain s' d' e' where right:
-    "data_collection_presents generation_value_presents (fset (publication_snapshot Q)) s'"
-    "data_collection_presents target_value_presents (fset (publication_dependencies Q)) d'"
-    "data_collection_presents target_value_presents (fset (publication_evidence Q)) e'"
-    "t=Pair_Term s' (Pair_Term d' e')"
-    using second unfolding publication_value_presents_def by blast
-  have same: "s'=s" "d'=d" "e'=e" using left(4) right(4) by simp_all
-  have other:
-    "data_collection_presents generation_value_presents (fset (publication_snapshot Q)) s"
-    "data_collection_presents target_value_presents (fset (publication_dependencies Q)) d"
-    "data_collection_presents target_value_presents (fset (publication_evidence Q)) e"
-    using right same by simp_all
-  have snapshots: "fset (publication_snapshot P)=fset (publication_snapshot Q)"
-    by (rule data_collection_presents_unique[OF left(1) other(1)])
-      (rule generation_value_presents_unique; assumption)
-  have dependencies: "fset (publication_dependencies P)=fset (publication_dependencies Q)"
-    by (rule data_collection_presents_unique[OF left(2) other(2)])
-      (rule target_value_presents_unique; assumption)
-  have evidence: "fset (publication_evidence P)=fset (publication_evidence Q)"
-    by (rule data_collection_presents_unique[OF left(3) other(3)])
-      (rule target_value_presents_unique; assumption)
-  show ?thesis using snapshots dependencies evidence
-    by (simp add: publication_view_identity fset_inject)
-qed
+  by (rule publication_values.recovery[OF first second])
 
 lemma publication_value_presents_formed:
   assumes "publication_value_presents P t"
@@ -74,29 +79,15 @@ qed
 theorem publication_value_presents_total:
   assumes formed: "publication_formed P"
   shows "\<exists>t. publication_value_presents P t"
-proof -
-  have cores: "\<forall>G\<in>fset (publication_snapshot P). generation_formed G"
-    and deps: "\<forall>x\<in>fset (publication_dependencies P). target_formed x"
-    and evid: "\<forall>x\<in>fset (publication_evidence P). target_formed x"
-    using formed by (auto simp: publication_formed_def snapshot_formed_def selection_formed_def)
-  have each_core: "\<forall>G\<in>fset (publication_snapshot P). \<exists>t. generation_value_presents G t"
-    using cores generation_value_presents_total by blast
-  have each_dep: "\<forall>x\<in>fset (publication_dependencies P). \<exists>t. target_value_presents x t"
-    using deps target_value_presents_total by blast
-  have each_evid: "\<forall>x\<in>fset (publication_evidence P). \<exists>t. target_value_presents x t"
-    using evid target_value_presents_total by blast
-  obtain s where snapshot:
-    "data_collection_presents generation_value_presents (fset (publication_snapshot P)) s"
-    using data_collection_presents_total[OF finite_fset each_core] by blast
-  obtain d where dependencies:
-    "data_collection_presents target_value_presents (fset (publication_dependencies P)) d"
-    using data_collection_presents_total[OF finite_fset each_dep] by blast
-  obtain e where evidence:
-    "data_collection_presents target_value_presents (fset (publication_evidence P)) e"
-    using data_collection_presents_total[OF finite_fset each_evid] by blast
-  show ?thesis using formed snapshot dependencies evidence
-    unfolding publication_value_presents_def by blast
-qed
+  by (rule publication_values.total[OF formed])
+
+theorem publication_quotation_presentation_class:
+  "presentation_class
+    (composed_presentation publication_value_presents (\<lambda>t p. complete_data_quoted_at (fst p) (snd p) t))
+    publication_formed
+    (\<lambda>p. \<exists>t. (\<exists>P. publication_value_presents P t) \<and> complete_data_quoted_at (fst p) (snd p) t)"
+  by (rule complete_quotation_presentation_class[OF publication_value_presentation_class])
+    (use publication_value_presents_formed in blast)
 
 theorem publication_value_quotation_total:
   assumes "publication_formed P"
@@ -115,6 +106,11 @@ text \<open>
   complete order. Complete native quotation determines these recovered fields
   independently of outer bindings. Equal publication views do not identify
   their different presentation sites.
+
+  Finite-set classes and products supply the complete field record. The
+  observation construction restricts it to the existing publication-formation
+  domain and recovers the whole view. Totality and uniqueness follow from
+  that class, and quotation composes with the entire value.
 
   The representation has no validity or adoption field. An evidence selection
   remains a selection of exact material, and snapshot formation checks only

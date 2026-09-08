@@ -5119,3 +5119,85 @@ construction-cause validation, authority, the higher transition protocol,
 reflection, genesis, and the system-wide presentation audit remain open.
 The new mathematical contracts and proofs retain O-85. Broader obligation
 states are unchanged, and the final every-line audit has not begun.
+
+
+## Native fragment operations follow exact source selection
+
+The existing fragment notion is one exact artifact and one finite selected
+subset of its carrier. Selected material, omitted addresses, remainder, and
+crossing incidence are derived from that basis. Their independent meanings,
+formation conditions, partition theorems, and source reconstruction remain
+unchanged. Establishing their complete native contracts before using them in
+assembly follows the owner's direction to let notions determine their local
+boundaries.
+
+A source presents the complete artifact and exact selection through the
+general product and observation constructions. It adds no stored material,
+omission, boundary, remainder, or correctness proof. Complete payload and
+incidence collections derive from the generic finite-set class. Attachment
+and incidence element classes derive from ordinary products of opaque bytes.
+All addresses retain their exact values. Incidence has three distinct roles;
+the same address may occur in several roles. Only whole repeated triples are
+excluded from a set enumeration.
+
+The chosen combined report presents the source, selected material, crossing
+incidence, and remainder. These three views reconstruct the full artifact.
+An additional omission field is unnecessary there because the remainder's
+carrier already supplies it. Omitted-address reading is exposed separately
+as a derived query. These are presentation and operation choices, not changes
+to the fragment basis or claims that every compatible class must use this
+arrangement.
+
+Twenty-two ordinary definitions have forty-two clauses. Eight local predicate
+entries implement payload membership, attachment membership, wholly selected
+incidence, wholly omitted incidence, and their explicit complements. The
+complement theorem in the general presentation layer requires both valid
+presentation domains. A malformed input therefore cannot pass by failure of
+a positive membership call. Native absence uses the existing complete list
+of positive inequalities; no negative native premise is introduced.
+
+A single generic three-clause filter follows the actual keep and omit
+judgments under the same context. It preserves input order and every retained
+occurrence. Its proof concerns actual intermediate term lists. Eight uses
+instantiate that proof with the complete local relation contracts. They do
+not assert that an arbitrary element class has only one presentation. Final
+artifact and finite-collection comparisons supply every compatible output
+presentation. This separates the intermediate list algorithm from the full
+semantic output contract without requiring an output normalization.
+
+Source admission requires a complete formed artifact and selection, filters
+the original carrier, and compares the resulting set with the entire supplied
+selection. Thus no selected address can be invented. Material and remainder
+filter every incidence, counted attachment, and functional attachment in its
+proper role. Every retained counted occurrence remains present. Boundary
+reading keeps incidence that is neither wholly selected nor wholly omitted.
+The complete outside conditions permit repeated addresses within a triple.
+
+The general encoded-collection comparison proves closure over every output
+term. Artifact admission owns the analogous guarded comparison law. The four
+fragment functions expose complete locally owned output contracts. The report
+consumes those contracts at exactly the same source, accepts every compatible
+combination, and recovers the original carrier, incidence, both data components,
+and selected carrier. Wrong reports and invalid selections are rejected.
+
+The program base is the least complete-definition closure of six actual
+external callees. Existing interfaces, clause families, and meanings remain
+complete. New clauses use existing data, comparison, selection, absence, and
+artifact admission operations; they add no observation primitive, oracle,
+truth parameter, or stored semantic witness. One fixed closed native program
+has six distinct public entries before all future formed operands and
+preserves its original scope, artifacts, and outgoing bindings.
+
+Every formed fragment has admitted source material, every compatible report,
+and complete source and report quotations. The empty and full selections fall
+within the same universal contracts. All earlier definitions, statements,
+assumption scopes, and proofs remain unchanged. The two earlier theories gain
+only the general domain-relative complement and owned admitted-output lemmas.
+
+Structural assembly, its complete origins and gluing conditions, and the
+universally invariant construction-permission judgment remain separate work.
+A positive permission call does not establish invariance over all accounts
+and presentations. Construction-cause validation, authority, higher protocols,
+reflection, genesis, and the system-wide presentation audit remain open.
+The new mathematical contracts and proofs retain O-85. Broader obligation
+states are unchanged, and the final every-line audit has not begun.

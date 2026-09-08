@@ -891,6 +891,16 @@ remainder for data as for the carrier.
 omitted remainder including data are simultaneously recoverable from one
 fragment witness, and no data item crosses.
 
+Native realization now follows the independent fragment definition. Complete
+source and report classes, exact admission, four complete projection contracts,
+and one fixed native program are proved in the `Factor_Fragment_*` theories.
+The report retains the source and presents material, crossing incidence, and
+remainder; its reconstruction theorem includes every attachment count and
+functional binding. General complement is relative to both presentation
+domains, and ordinary filters require explicit complementary evidence.
+These fragment results supply the later assembly work without changing the
+construction-permission invariant or its separate proof obligation.
+
 ### 6.6 Assembly — `RRA_Assembly`
 
 **Defect.** `family_has_profile` is vacuous on an empty family.
@@ -1418,6 +1428,22 @@ Two general agreement laws handle a covered union and a definition group on
 an enlarged agreeing base. The native reader retains the least closure of six
 actual external callees. One fixed compilation precedes every future formed
 operand and preserves its original scope, artifacts, and bindings.
+
+The independent fragment now has exact native admission and four projection
+contracts for selected material, omitted material, omitted addresses, and
+crossing incidence. Its complete source and selection remain the only stored
+basis. Generic products and observations give complete source and report
+classes. A shared positive filter preserves every retained list occurrence;
+owned artifact and collection comparisons admit every compatible output order.
+The combined report reconstructs the full original artifact, including both
+data components. Invalid selections and altered reports are rejected.
+
+The program has twenty-two definitions and forty-two ordinary clauses over
+the least closure of six actual external callees. Six public operation sites
+are fixed before all future operands and retain the original scope, artifacts,
+and bindings. Structural assembly and the global invariance of construction
+permission remain separate obligations. The mathematical proof-presentation
+obligation and the final repository audit remain open.
 
 Construction permission retains its global formation-and-truth invariance
 condition over all compatible account presentations. A positive call alone

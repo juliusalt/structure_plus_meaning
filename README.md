@@ -1169,12 +1169,28 @@ an enlarged agreeing base. The native reader retains the least closure of six
 actual external callees. One fixed compilation precedes every future formed
 operand and preserves its original scope, artifacts, and bindings.
 
+The independent fragment now has exact native admission and four projection
+contracts for selected material, omitted material, omitted addresses, and
+crossing incidence. Its complete source and selection remain the only stored
+basis. Generic products and observations give complete source and report
+classes. A shared positive filter preserves every retained list occurrence;
+owned artifact and collection comparisons admit every compatible output order.
+The combined report reconstructs the full original artifact, including both
+data components. Invalid selections and altered reports are rejected.
+
+The program has twenty-two definitions and forty-two ordinary clauses over
+the least closure of six actual external callees. Six public operation sites
+are fixed before all future operands and retain the original scope, artifacts,
+and bindings. Structural assembly and the global invariance of construction
+permission remain separate obligations. The mathematical proof-presentation
+obligation and the final repository audit remain open.
+
 The remaining work includes construction-cause validity and authority readers, complete
 transition material, reflection, genesis, and the system-wide presentation
 audit. Native presentations and checking of the remaining mathematical
 contracts and proofs stay open.
 
-Run `python3 tools/check.py --threads 12 --timeout 300` for one combined build,
+Run `python3 tools/check.py --threads 12 --timeout 900` for one combined build,
 complete error collection, theory-inventory check, and unfinished-proof scan.
 Reports are written to `validation/check.json` and `validation/check-errors.log`.
 The underlying `python3 tools/build.py` wrapper records the Isabelle

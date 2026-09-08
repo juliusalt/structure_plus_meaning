@@ -218,6 +218,14 @@ next
   show "(11,t)\<in>positive_meaning artifact_admission_system" using result by (simp add: artifact_admission_schema_def)
 qed
 
+theorem artifact_comparison_admitted_output:
+  assumes source: "artifact_value_presents R p"
+  shows "((11,q)\<in>positive_meaning artifact_admission_system \<and>
+      (7,Pair_Term p q)\<in>positive_meaning artifact_comparison_system) \<longleftrightarrow>
+    artifact_value_presents R q"
+  using artifact_comparison_exact[OF source]
+  by (auto simp: artifact_admission_exact)
+
 definition artifact_identity_schema :: "(nat,nat,nat) factor_schema" where
   "artifact_identity_schema=data_rule (Pattern_Pair data_x data_y)
     {(0,11,data_x),(1,11,data_y),(2,7,Pattern_Pair data_x data_y)}"

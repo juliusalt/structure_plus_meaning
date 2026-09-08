@@ -60,6 +60,34 @@ theorem presented_relation_invariance:
   by (simp only: exact presented_relation_at[OF left right first]
       presented_relation_at[OF left right second])
 
+section \<open>Complement is relative to both complete presentation domains\<close>
+
+theorem presented_relation_complement:
+  assumes left: "presentation_class R D A" and right: "presentation_class S E B"
+  shows "presented_relation R S (\<lambda>a b. \<not>L a b) p q \<longleftrightarrow>
+    A p \<and> B q \<and> \<not>presented_relation R S L p q"
+proof -
+  interpret left: presentation_class R D A by (rule left)
+  interpret right: presentation_class S E B by (rule right)
+  show ?thesis
+  proof
+    assume negative: "presented_relation R S (\<lambda>a b. \<not>L a b) p q"
+    obtain a b where parts: "R a p" "S b q" "\<not>L a b"
+      using negative unfolding presented_relation_def by blast
+    have absent: "\<not>presented_relation R S L p q"
+      using parts(3) presented_relation_at[OF left right parts(1,2)] by blast
+    show "A p \<and> B q \<and> \<not>presented_relation R S L p q"
+      using absent left.presentation_boundary[OF parts(1)] right.presentation_boundary[OF parts(2)] by blast
+  next
+    assume negative: "A p \<and> B q \<and> \<not>presented_relation R S L p q"
+    obtain a b where parts: "R a p" "S b q" using negative left.admitted right.admitted by blast
+    have absent: "\<not>L a b"
+      using negative presented_relation_at[OF left right parts] by blast
+    show "presented_relation R S (\<lambda>a b. \<not>L a b) p q"
+      using parts absent unfolding presented_relation_def by blast
+  qed
+qed
+
 section \<open>Conjunction shares the same recovered arguments\<close>
 
 theorem presented_relation_conjunction:

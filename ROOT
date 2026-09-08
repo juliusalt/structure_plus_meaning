@@ -533,3 +533,15 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Base_Cause_Contracts
     Factor_Base_Cause_Presentations
     Factor_Recorded_Base_Admission
+    Factor_Collection_Comparisons
+    Factor_Structural_Collections
+    Factor_Fragment_Presentations
+    Factor_Fragment_Enumerations
+    Factor_Context_Filters
+    Factor_Fragment_Clauses
+    Factor_Fragment_Equations
+    Factor_Fragment_Predicates
+    Factor_Fragment_Filters
+    Factor_Fragment_Admission
+    Factor_Fragment_Projections
+    Factor_Fragment_Contracts

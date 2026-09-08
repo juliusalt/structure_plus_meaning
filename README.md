@@ -29,6 +29,10 @@ artifact, environment, and equality readers provide actual admission and
 relation contracts. Program relocation uses the general fixed-point theorem
 after its independently proved consequence equation. A reusable ordinary
 reader composition checks the actual returned body through a second callee.
+Jointly determining observations now derive complete schema reports from
+products and finite collections. Ordinary readers check those reports against
+actual schemas and complete definition profiles, and fixed references become native
+checking code for future submissions.
 
 The work is incomplete. The current active session establishes the structural
 and data basis, relative footprints, exact artifacts, fragments, and assembly.
@@ -900,6 +904,31 @@ class construction presents the native reader's own scope, and every
 compatible complete presentation is admitted by an actual call to its own
 compiled reading entry. The original scope remains fixed while these
 presentations become future operands.
+
+Complete schema reports now retain one binder enumeration and two complete
+readings of the conclusion, identified prospective calls, and material
+operand tuples. The general observation rule derives their presentation
+class from the proved determination of syntax. Ordinary binding traversal
+and the existing instantiation readers check the report against one actual
+source schema. Output orders are independent; source and report presentations
+preserve admission. Generic pair and constraint rules also give the combined
+source/report classes with explicit joint coverage.
+
+The complete-definition reader additionally checks a variable interface and
+the entire singleton clause family. It accepts arbitrary schemas within that
+profile, including material premises, and rejects changed interfaces or
+clauses. Fixed reports can be stored in ordinary checking code before all
+future submitted source sites. For reader composition, admission proves the
+actual callee boundary and the two-call meaning on the same returned body
+for every future term. Compiled definitions and their admitted reports exist
+over supplied callee anchors, with private coordinates changed injectively.
+
+The schema reader's own compiled program is nonempty. Every one of its
+clauses has compatible source and report presentations, and every such pair
+is admitted by a call to that same reader. The original program scope,
+artifacts, and outgoing bindings remain intact. The reference checks recover
+complete finite syntax; the stated schema theorems supply their semantic
+consequences. They do not check arbitrary mathematical claims.
 
 Further application of the general theory, native presentations and checking
 of its remaining contracts and proofs, higher generation and authority

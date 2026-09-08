@@ -4077,3 +4077,84 @@ system-wide presentation work uses these constructions where applicable and
 records the reason for any required special case. O-84 tracks that work and
 any justified extension of scope; no claim of an exhaustive presentation
 calculus or a completed self-contained foundation is made by this batch.
+
+## Complete observations support native reference contracts
+
+The presentation theory's own rules need complete data and native checks.
+Existing pattern and schema determination provides concrete evidence for
+one further general construction: a complete family of observations can
+present its subject when the observation map is proved injective on the
+required domain. Presentation_Classes derives this rule through ordinary
+class composition. It does not introduce a universal observation primitive.
+
+Factor_Schema_Observations applies the rule to the existing grammar theorem.
+Its independent domain requires a formed complete schema and formed binder,
+socket, and callee-root coordinates. One complete binder and two full
+outputs determine the schema. Each output retains the conclusion, every
+prospective occurrence and actual callee, and every five-operand material
+tuple. Material truth is a separate judgment. Empty families and schemas
+with unsatisfied premises remain eligible.
+
+The report class uses the existing product and collection constructions.
+Every collection admits every complete enumeration, independently in each
+output part. The native binder traversal obtains both private substitution
+tables from the public binder enumeration; the tables are witnesses, not
+additional stored fields of the reported schema. Distinctness and complete
+variable use are checked by the existing actual-schema instantiation rule.
+
+Factor_Schema_Reading supplies the native intrinsic link between one
+complete source site and that reference report. Its three ordinary premises
+construct the two tables and check both outputs against the same actual
+schema. Generic pair and constraint rules derive the compatible source/report
+classes, with coverage for every required linked subject. Accepted reports
+identify complete syntax. This supports universal
+instance and rule consequences proved for that syntax, without inferring
+program behavior from finitely many executions.
+
+Schema identity alone does not establish a definition's complete behavior.
+Factor_Single_Clause_Reading therefore checks the entire variable interface
+and singleton clause family, then uses the general report reader. This
+sufficient profile covers the composition rule and accepts arbitrary ordinary
+and material schemas. The complete source site retains its private interface
+binder and clause socket, so those coordinates need not be repeated in the
+schema report. Extra clauses, changed interfaces, and a changed expected
+schema are rejected.
+
+A fixed reference report can be stored as literal pattern data in a fresh
+ordinary view. The existing native compiler turns that view into checking
+code before every future submitted source. Its all-term contract is exactly
+the complete-definition relation for the fixed schema. The expected report
+does not authorize an arbitrary mathematical assertion: only an independently
+proved rule theorem supplies a semantic consequence of its admission.
+
+Factor_Constrained_Contracts applies these results to the earlier reading
+composition. Three variable roles remain independent and both premise
+occurrences remain distinct even when their callees coincide. Native
+admission already entails socket separation; the meaning theorem does not
+add it as a redundant hypothesis. In a formed containing package, both actual
+callees are present and the definition has exactly their two linked calls
+on the same returned body. This holds for all terms in the independently
+defined least positive meaning, including positive dependency cycles.
+Construction over supplied callee anchors gives an actual definition and
+admitted reports, with injective changes of private coordinates and a rule
+equation for every future supporting relation.
+
+The native schema reader is also fixed before reports of its own clauses.
+Its compiled program is nonempty, every actual clause has source and report
+presentations, and every compatible pair has a true call to that same
+reader. Future operands preserve the original scope, all artifact values,
+and every old outgoing binding. The stronger general compilation theorem
+retains the structural variant and all-future application witnesses together;
+the previous compilation contract is preserved as a consequence.
+
+Complete singleton families recur in both native definition construction and
+the earlier forwarding proof. A generic schema-family recovery lemma now
+serves both. The forwarding theorem's statement is unchanged; its former
+case-specific family argument is removed.
+
+These results advance O-84 and O-85 through reusable observation classes,
+native reference data, complete definition checks, a proved composition
+contract, and operative self-application. Native presentations and checks
+for further mathematical contracts and proof records remain open, along
+with the higher protocol, reflection, genesis, and the final repository
+audit. No single grammar or privileged presentation topology is reinstated.

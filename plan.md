@@ -141,8 +141,8 @@ properties; neither establishes that the class is intrinsically privileged.
 Develop reusable theory where recurring obligations justify it. Current
 evidence includes constraints and coverage, complete products and occurrence
 families, changes of presentation, intrinsic relations, shared context,
-determined components, and positive recursion. The theory must supply the
-hypotheses under which these constructions preserve the required distinctions.
+determined components, jointly determining observations, and positive
+recursion. The theory must supply the hypotheses under which these constructions preserve the required distinctions.
 Its own operative structures, definitions, and proof claims receive
 presentations and intrinsic-link checks under the same discipline.
 
@@ -1128,7 +1128,27 @@ The current scope has the following evidence and proof boundaries:
 | A complete environment and site determine a native program | A derived-component rule based on the independently proved functional link, retaining both judgments without storing a duplicate program value. |
 | Semantic observations must survive changes of presentation | Preservation and reflection of the independently stated predicates and relations, with explicit shared arguments and intermediate domains. |
 | Definitions and readers may be positively recursive | Exact consequence transport on a proved closed support domain before taking least fixed points. |
-| The presentation theory has operative definitions and rules of its own | Ordinary native schemas and programs, exact presentations of their scopes, and applications of those definitions to compatible presentations of their own structures. |
+| Complete finite syntax is determined by several readings together | Observation classes derived from a complete presented record and an observation map proved injective on the required subject domain. Every conclusion, call occurrence, callee, and material operand remains present. |
+| The presentation theory has operative definitions and rules of its own | Ordinary native schemas and programs, exact presentations of their scopes and complete schema reports, native checks against fixed reference data, and applications of those readers to every compatible presentation of their own clauses. |
+
+Jointly determining observations now supply exact schema reports through
+these general constructions. The report retains one complete binder and
+two complete output records, including every call occurrence and all five
+operands of each material premise. An ordinary reader compares the report
+with the actual schema at its source site. A further reader checks the
+whole variable interface and singleton clause family of a definition.
+The compatible source/report classes are derived by constraining the generic
+pair class with the independently proved native relation. Their joint
+coverage is explicit. An expected report can be stored as literal data in
+ordinary checking code before future submitted definitions.
+
+For the reading-composition rule, native admission recovers the complete
+expected clause, its variable interface, and its actual callees. In a formed
+package, the admitted definition has exactly the two-call meaning on the
+same returned body. The schema reader also checks compatible reports of all
+of its own compiled clauses. These are finite syntax contracts with proved
+semantic consequences. Full native presentations and checks of the remaining
+mathematical contracts and proof records stay within O-85.
 
 These results are justified by existing collection, table, quotation, scope,
 and program machinery. Their proof parameters are typed relations, not a

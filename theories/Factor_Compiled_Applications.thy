@@ -85,10 +85,12 @@ qed
 
 section \<open>One closed finite native program for all future formed arguments\<close>
 
-theorem compiled_program_future_applications:
+theorem compiled_program_with_future_applications:
   assumes formed: "schema_system_formed P"
   shows "\<exists>g :: 'd \<Rightarrow> local_address option definition_site. \<exists>E pu Q.
     inj_on g (system_definitions P) \<and> closed_native_package_at E pu [] Q \<and>
+    native_package_environment E pu []=E \<and> system_alpha_variant (rename_system g P) Q \<and>
+    positive_meaning Q=image (map_prod g id) (positive_meaning P) \<and>
     (\<forall>d\<in>system_definitions P. \<forall>t. term_formed t \<longrightarrow>
       (\<exists>F au I K. environment_formed F \<and> environment_included E F \<and> au \<notin> environment_uses E \<and>
         native_package_at F pu [] Q \<and> native_application_at F au [] (g d) t I K \<and>
@@ -143,8 +145,27 @@ proof -
          (use future(1-5,9,10) canonical boundary truth in blast)
   qed
   show ?thesis by (rule exI[of _ g], rule exI[of _ E], rule exI[of _ pu], rule exI[of _ Q])
-    (use compiled(1,2) all_calls in blast)
+    (use compiled all_calls in blast)
 qed
+
+theorem compiled_program_future_applications:
+  assumes formed: "schema_system_formed P"
+  shows "\<exists>g :: 'd \<Rightarrow> local_address option definition_site. \<exists>E pu Q.
+    inj_on g (system_definitions P) \<and> closed_native_package_at E pu [] Q \<and>
+    (\<forall>d\<in>system_definitions P. \<forall>t. term_formed t \<longrightarrow>
+      (\<exists>F au I K. environment_formed F \<and> environment_included E F \<and> au \<notin> environment_uses E \<and>
+        native_package_at F pu [] Q \<and> native_application_at F au [] (g d) t I K \<and>
+        native_package_environment F pu [] = E \<and>
+        (native_application_formed F pu [] au [] \<longleftrightarrow> schema_call_formed P d t) \<and>
+        (native_positive_holds F pu [] au [] \<longleftrightarrow> (d,t) \<in> positive_meaning P) \<and>
+        (\<forall>v\<in>environment_uses E. \<forall>R. artifact_at F v R \<longleftrightarrow> artifact_at E v R) \<and>
+        (\<forall>v\<in>environment_uses E. \<forall>k w. binds_slot F v k w \<longleftrightarrow> binds_slot E v k w)))"
+  using compiled_program_with_future_applications[OF formed]
+  apply (elim exE conjE)
+  subgoal for g E pu Q
+    by (rule exI[of _ g], rule exI[of _ E], rule exI[of _ pu], rule exI[of _ Q])
+      (intro conjI; assumption)
+  done
 
 text \<open>
   A single finite closed compilation serves every formed future argument at

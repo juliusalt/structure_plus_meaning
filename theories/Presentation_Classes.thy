@@ -165,6 +165,35 @@ theorem injective_presentation_class:
     (\<lambda>p. \<exists>a. D a \<and> p=f a)"
   by (unfold_locales) (use injective in \<open>auto simp: inj_on_def\<close>)
 
+section \<open>Jointly determining observations give a change of subject\<close>
+
+theorem presentation_class_observations:
+  assumes records: "presentation_class read E A"
+    and boundary: "\<And>a. D a \<Longrightarrow> E (observe a)"
+    and determines: "\<And>a b. D a \<Longrightarrow> D b \<Longrightarrow> observe a=observe b \<Longrightarrow> a=b"
+  shows "presentation_class (\<lambda>a p. D a \<and> read (observe a) p) D
+    (\<lambda>p. \<exists>a. D a \<and> read (observe a) p)"
+proof -
+  interpret records: presentation_class read E A by (rule records)
+  have injective: "inj_on observe {a. D a}"
+    using determines by (auto simp: inj_on_def)
+  have first: "presentation_class (\<lambda>a v. D a \<and> v=observe a) D
+      (\<lambda>v. \<exists>a. D a \<and> v=observe a)"
+    by (rule injective_presentation_class[OF injective])
+  have composed: "presentation_class
+      (composed_presentation (\<lambda>a v. D a \<and> v=observe a) read) D
+      (\<lambda>p. A p \<and> (\<exists>v. (\<exists>a. D a \<and> v=observe a) \<and> read v p))"
+    by (rule presentation_class_compose_on[OF first records])
+      (use boundary in blast)
+  have reading: "composed_presentation (\<lambda>a v. D a \<and> v=observe a) read =
+      (\<lambda>a p. D a \<and> read (observe a) p)"
+    by (intro ext) (auto simp: composed_presentation_def)
+  have admission: "(\<lambda>p. A p \<and> (\<exists>v. (\<exists>a. D a \<and> v=observe a) \<and> read v p)) =
+      (\<lambda>p. \<exists>a. D a \<and> read (observe a) p)"
+    by (rule ext) (use records.presentation_boundary in blast)
+  show ?thesis using composed by (simp only: reading admission)
+qed
+
 section \<open>Products require every component and retain their roles\<close>
 
 theorem presentation_class_product:
@@ -314,8 +343,13 @@ text \<open>
   Composition recovers the complete intermediate presentation before recovering
   its subject. An intrinsically determined component is recovered through its
   independently proved functional link, without storing a duplicate value.
-  Alternatives need agreement on overlapping forms. Neither rule chooses a
-  privileged topology or a preferred representative. The parameters
+  A jointly determining family of observations can replace a literal copy
+  when its complete record has a presentation and its observation map is
+  injective on the required subject domain. The observation theorem derives
+  this class through the same composition rule; it gives no native force to
+  an arbitrary mathematical observation. Alternatives need agreement on
+  overlapping forms. Neither construction chooses a privileged topology or
+  a preferred representative. The parameters
   are ordinary typed relations in the proof language, not a new primitive kind
   or an assertion that arbitrary predicates have native semantic definitions.
 \<close>

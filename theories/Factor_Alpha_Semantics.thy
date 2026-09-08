@@ -184,6 +184,25 @@ proof -
   show ?thesis using original source(2) projected(2) same by blast
 qed
 
+lemma schema_family_variant_singleton:
+  assumes variant: "schema_family_variant h {(c,S)} D"
+  shows "\<exists>T. D={(h c,T)} \<and> schema_alpha_variant S T"
+proof -
+  obtain T where entry: "(h c,T)\<in>D" "schema_alpha_variant S T"
+    using schema_family_variant_entry[OF variant, of c S] by auto
+  have functional: "single_valued D" using variant by (simp add: schema_family_variant_def)
+  have subset: "D\<subseteq>{(h c,T)}"
+  proof
+    fix q assume member: "q\<in>D"
+    obtain d U where shape: "q=(d,U)" by (cases q)
+    have row: "(d,U)\<in>D" using member shape by simp
+    have key: "d=h c" using schema_family_variant_origin[OF variant row] by auto
+    have same: "U=T" using single_valued_outputs[OF functional row] entry(1) key by blast
+    show "q\<in>{(h c,T)}" using shape key same by simp
+  qed
+  show ?thesis by (rule exI[of _ T]) (use subset entry in auto)
+qed
+
 lemma schema_family_variant_rules:
   assumes variant: "schema_family_variant h C D"
   shows "(\<exists>c T. (c,T) \<in> D \<and> schema_rule_instance T X t) \<longleftrightarrow>

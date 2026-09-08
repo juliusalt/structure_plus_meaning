@@ -227,37 +227,10 @@ proof -
     "\<forall>w\<in>environment_uses E. \<forall>R. artifact_at F w R \<longleftrightarrow> artifact_at E w R"
     "\<forall>w\<in>environment_uses E. \<forall>s x. binds_slot F w s x \<longleftrightarrow> binds_slot E w s x"
     using definition_environment_compilation[OF pf fin functional sf formed targets] by blast
-  obtain T where entry: "(h (),T)\<in>D" "schema_alpha_variant ?S T"
-    using schema_family_variant_entry[OF compiled(5), of "()" ?S] by auto
+  obtain T where singleton: "D={(h (),T)}" and alpha: "schema_alpha_variant ?S T"
+    using schema_family_variant_singleton[OF compiled(5)] by blast
   obtain f' h' where variant: "T=rename_schema f' h' id ?S"
-    using entry(2) by (auto simp: schema_alpha_variant_def)
-  have singleton: "D={(h (),T)}"
-  proof
-    show "D\<subseteq>{(h (),T)}"
-    proof
-      fix q assume member: "q\<in>D"
-      obtain c U where shape: "q=(c,U)" by (cases q)
-      have row: "(c,U)\<in>D" using member shape by simp
-      have range: "range h={h ()}"
-      proof
-        show "range h\<subseteq>{h ()}"
-        proof
-          fix x assume "x\<in>range h"
-          then obtain v where x: "x=h v" by blast
-          have unit: "v=()" by (cases v) simp
-          show "x\<in>{h ()}" using x unit by simp
-        qed
-        show "{h ()}\<subseteq>range h" by auto
-      qed
-      have domain: "rel_dom D={h ()}"
-        using compiled(5) by (simp add: schema_family_variant_def rel_dom_def range)
-      have key: "c=h ()" using rel_domI[OF row] domain by simp
-      have functional: "single_valued D" using compiled(5) by (simp add: schema_family_variant_def)
-      have same_output: "U=T" using single_valued_outputs[OF functional row] entry(1) key by blast
-      show "q\<in>{(h (),T)}" using shape key same_output by simp
-    qed
-    show "{(h (),T)}\<subseteq>D" using entry(1) by auto
-  qed
+    using alpha by (auto simp: schema_alpha_variant_def)
   have read: "native_scope_forwarding_at F u [] k e v a"
     unfolding native_scope_forwarding_at_def
     by (rule exI[of _ "f ()"], rule exI[of _ "h ()"],

@@ -5,6 +5,16 @@ begin
 
 section \<open>Term constructors carry the generic class constructions\<close>
 
+definition factor_pair_presents ::
+  "('a \<Rightarrow> factor_term \<Rightarrow> bool) \<Rightarrow> ('b \<Rightarrow> factor_term \<Rightarrow> bool) \<Rightarrow>
+    ('a\<times>'b) \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "factor_pair_presents R S z t \<longleftrightarrow>
+    (\<exists>p q. R (fst z) p \<and> S (snd z) q \<and> t=Pair_Term p q)"
+
+lemma factor_pair_presents_at [simp]:
+  "factor_pair_presents R S (a,b) (Pair_Term p q) \<longleftrightarrow> R a p \<and> S b q"
+  by (auto simp: factor_pair_presents_def)
+
 theorem factor_pair_presentation_class:
   assumes left: "presentation_class R D A" and right: "presentation_class S E B"
   shows "presentation_class
@@ -36,6 +46,58 @@ proof -
     (\<lambda>t. \<exists>p q. A p \<and> B q \<and> t=Pair_Term p q)"
     by (rule ext) (auto; metis fst_conv snd_conv)
   show ?thesis using composed by (simp only: reads allowed)
+qed
+
+corollary factor_pair_class:
+  assumes "presentation_class R D A" "presentation_class S E B"
+  shows "presentation_class (factor_pair_presents R S)
+    (\<lambda>z. D (fst z) \<and> E (snd z))
+    (\<lambda>t. \<exists>p q. A p \<and> B q \<and> t=Pair_Term p q)"
+  using factor_pair_presentation_class[OF assms]
+  by (simp only: presentation_class_def factor_pair_presents_def)
+
+theorem factor_relation_presentation_class:
+  assumes left: "presentation_class R D A" and right: "presentation_class S E B"
+    and exact: "\<And>p q. observe (Pair_Term p q) \<longleftrightarrow> presented_relation R S link p q"
+    and shape: "\<And>t. observe t \<Longrightarrow> \<exists>p q. t=Pair_Term p q"
+  shows "presentation_class (\<lambda>z t. factor_pair_presents R S z t \<and> observe t)
+    (\<lambda>z. (D (fst z) \<and> E (snd z)) \<and> link (fst z) (snd z)) observe"
+proof -
+  interpret left: presentation_class R D A by (rule left)
+  interpret right: presentation_class S E B by (rule right)
+  let ?allowed="\<lambda>t. \<exists>p q. A p \<and> B q \<and> t=Pair_Term p q"
+  interpret pair: presentation_class "factor_pair_presents R S"
+    "\<lambda>z. D (fst z) \<and> E (snd z)" ?allowed
+    by (rule factor_pair_class[OF assms(1,2)])
+  have constrained: "presentation_class (\<lambda>z t. factor_pair_presents R S z t \<and> observe t)
+      (\<lambda>z. (D (fst z) \<and> E (snd z)) \<and> link (fst z) (snd z))
+      (\<lambda>t. ?allowed t \<and> observe t)"
+  proof (rule pair.constrain)
+    fix z t assume read: "factor_pair_presents R S z t" and checked: "observe t"
+    obtain p q where parts: "R (fst z) p" "S (snd z) q" "t=Pair_Term p q"
+      using read by (auto simp: factor_pair_presents_def)
+    show "link (fst z) (snd z)"
+      using checked by (simp only: parts(3) exact presented_relation_at[OF left right parts(1,2)])
+  next
+    fix z assume domain: "D (fst z) \<and> E (snd z)" and relation: "link (fst z) (snd z)"
+    obtain p q where parts: "R (fst z) p" "S (snd z) q"
+      using left.total right.total domain by blast
+    have checked: "observe (Pair_Term p q)"
+      using relation by (simp only: exact presented_relation_at[OF left right parts])
+    show "\<exists>t. factor_pair_presents R S z t \<and> observe t"
+      by (rule exI[of _ "Pair_Term p q"])
+        (use parts checked in \<open>auto simp: factor_pair_presents_def\<close>)
+  qed
+  have admitted: "?allowed t" if checked: "observe t" for t
+  proof -
+    obtain p q where shape_value: "t=Pair_Term p q" using shape[OF checked] by blast
+    obtain a b where parts: "R a p" "S b q"
+      using checked by (simp only: shape_value exact presented_relation_def) blast
+    show ?thesis using shape_value left.presentation_boundary[OF parts(1)] right.presentation_boundary[OF parts(2)] by blast
+  qed
+  have admission: "(\<lambda>t. ?allowed t \<and> observe t)=observe"
+    by (rule ext) (use admitted in blast)
+  show ?thesis using constrained by (simp only: admission)
 qed
 
 definition data_sequence_presents ::
@@ -95,6 +157,24 @@ proof -
     show "S=T" by (rule data_collection_presents_unique[OF first second])
       (use source.recovery in blast)
   qed
+qed
+
+corollary injective_data_collection_class:
+  assumes injective: "inj f"
+  shows "presentation_class (data_collection_presents (\<lambda>a t. t=f a)) finite
+    (\<lambda>t. \<exists>xs. distinct xs \<and> t=data_list_term (map f xs))"
+proof -
+  have element: "presentation_class (\<lambda>a t. t=f a) (\<lambda>_. True) (\<lambda>t. \<exists>a. t=f a)"
+    using injective_presentation_class[where f=f and D="\<lambda>_. True"] injective by simp
+  have collection: "presentation_class (data_collection_presents (\<lambda>a t. t=f a))
+    (\<lambda>S. finite S \<and> (\<forall>a\<in>S. True))
+    (presented_predicate (data_sequence_presents (\<lambda>a t. t=f a)) distinct)"
+    by (rule data_collection_presentation_class[OF element])
+  have domain: "(\<lambda>S. finite S \<and> (\<forall>a\<in>S. True))=finite" by simp
+  have admission: "presented_predicate (data_sequence_presents (\<lambda>a t. t=f a)) distinct =
+    (\<lambda>t. \<exists>xs. distinct xs \<and> t=data_list_term (map f xs))"
+    by (rule ext) (auto simp: presented_predicate_def data_sequence_presents_def list_all2_function)
+  show ?thesis using collection by (simp only: domain admission)
 qed
 
 section \<open>Existing recursive clauses admit the constructed list classes\<close>

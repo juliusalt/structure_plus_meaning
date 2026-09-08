@@ -450,3 +450,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Presentation_Classes
     Factor_Constrained_Readings
     Factor_Program_Scope_Reading
+    Factor_Schema_Observations
+    Factor_Reference_Bindings
+    Factor_Schema_Reading
+    Factor_Single_Clause_Reading
+    Factor_Constrained_Contracts

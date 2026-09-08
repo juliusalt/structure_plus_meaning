@@ -1,5 +1,5 @@
 theory Factor_Related_Bags
-  imports Factor_Bag_Comparison
+  imports Factor_Bag_Comparison Bag_Readings
 begin
 
 section \<open>Selection through an actual comparison definition\<close>
@@ -251,6 +251,31 @@ corollary comparison_lists:
     data_elements xs \<and> data_elements ys \<and> rel_mset related (mset xs) (mset ys)"
   by (auto simp: comparison_exact data_list_term_injective)
 
+section \<open>Member readings preserve sequence multiplicities\<close>
+
+theorem comparison_readings:
+  assumes first: "list_all2 read xs ps" and second: "list_all2 read ys qs"
+    and compare: "\<And>z w x y. read z x \<Longrightarrow> read w y \<Longrightarrow> related x y \<longleftrightarrow> z=w"
+  shows "(bag_site,Pair_Term (data_list_term ps) (data_list_term qs))\<in>positive_meaning P
+    \<longleftrightarrow> mset xs=mset ys"
+proof -
+  have unique: "z=w" if "read z x" "read w x" for z w x
+  proof -
+    have "related x x" using compare[OF that(1) that(1)] by simp
+    then show ?thesis using compare[OF that(1,2)] by blast
+  qed
+  have formed: "term_formed x \<and> self_contained_term x" if "read z x" for z x
+  proof -
+    have "related x x" using compare[OF that that] by simp
+    then show ?thesis using comparison_data by blast
+  qed
+  have data: "data_elements ps" "data_elements qs"
+    using list_all2_members[OF first] list_all2_members[OF second] formed by blast+
+  have matching: "rel_mset related (mset ps) (mset qs) \<longleftrightarrow> mset xs=mset ys"
+    by (rule rel_mset_readings[where R=read and C=related, OF first second unique compare])
+  show ?thesis using data by (simp only: comparison_lists matching; blast)
+qed
+
 section \<open>Complete collection presentations recover equality of their subjects\<close>
 
 theorem comparison_collections:
@@ -259,52 +284,13 @@ theorem comparison_collections:
     and compare: "\<And>z w x y. read z x \<Longrightarrow> read w y \<Longrightarrow> related x y \<longleftrightarrow> z=w"
   shows "(bag_site,Pair_Term a b)\<in>positive_meaning P \<longleftrightarrow> A=B"
 proof -
-  have unique: "z=w" if "read z x" "read w x" for z w x
-  proof -
-    have "related x x" using compare[OF that(1) that(1)] by simp
-    then show ?thesis using compare[OF that(1,2)] by blast
-  qed
-  let ?D="\<lambda>x. SOME z. read z x"
-  have decode: "?D x=z" if "read z x" for z x
-    by (rule some_equality[where P="\<lambda>w. read w x", OF that]) (use unique that in blast)
-  have lists: "map ?D ts=xs \<and> (\<forall>x\<in>set ts. read (?D x) x)"
-    if "list_all2 read xs ts" for xs ts
-    using that
-  proof (induction xs arbitrary: ts)
-    case Nil
-    then show ?case by simp
-  next
-    case (Cons z xs)
-    obtain x us where shape: "ts=x#us" and head: "read z x" and tail: "list_all2 read xs us"
-      using Cons.prems by (auto simp: list_all2_Cons1)
-    have decoded: "?D x=z" by (rule decode[OF head])
-    show ?case using Cons.IH[OF tail] head decoded shape by simp
-  qed
-  have formed: "term_formed x \<and> self_contained_term x" if "read z x" for z x
-  proof -
-    have "related x x" using compare[OF that that] by simp
-    then show ?thesis using comparison_data by blast
-  qed
-  obtain xs ts where first: "distinct xs" "set xs=A" "list_all2 read xs ts" "a=data_list_term ts"
+  obtain xs ps where first: "distinct xs" "set xs=A" "list_all2 read xs ps" "a=data_list_term ps"
     using left unfolding data_collection_presents_def by blast
-  obtain ys us where second: "distinct ys" "set ys=B" "list_all2 read ys us" "b=data_list_term us"
+  obtain ys qs where second: "distinct ys" "set ys=B" "list_all2 read ys qs" "b=data_list_term qs"
     using right unfolding data_collection_presents_def by blast
-  have decoded: "map ?D ts=xs" "map ?D us=ys"
-    and readings: "\<forall>x\<in>set ts. read (?D x) x" "\<forall>y\<in>set us. read (?D y) y"
-    using lists[OF first(3)] lists[OF second(3)] by auto
-  have data: "data_elements ts" "data_elements us" using readings formed by blast+
-  have agreement: "rel_mset related (mset ts) (mset us) =
-    rel_mset (\<lambda>x y. ?D x=?D y) (mset ts) (mset us)"
-    by (rule multiset.rel_cong[OF refl refl])
-      (use readings compare in auto)
-  have mapped: "rel_mset (=) (image_mset ?D (mset ts)) (image_mset ?D (mset us)) =
-    rel_mset (\<lambda>x y. ?D x=?D y) (mset ts) (mset us)"
-    by (simp only: multiset.rel_map)
-  have matching: "rel_mset related (mset ts) (mset us) \<longleftrightarrow> mset xs=mset ys"
-    using agreement mapped by (simp only: multiset.rel_eq mset_map[symmetric] decoded)
   have identity: "mset xs=mset ys \<longleftrightarrow> A=B"
     using set_eq_iff_mset_eq_distinct[OF first(1) second(1)] first(2) second(2) by blast
-  show ?thesis using data by (simp add: first(4) second(4) comparison_lists matching identity)
+  show ?thesis by (simp only: first(4) second(4) comparison_readings[OF first(3) second(3) compare] identity)
 qed
 
 end
@@ -323,7 +309,7 @@ text \<open>
   every occurrence through the fixed comparison definition.
 
   When that callee compares presentations of one subject exactly, the lifted
-  rule compares complete finite collection presentations exactly. Every source
+  rule compares the recovered multisets and complete finite collections exactly. Every source
   entry remains present once, every child presentation may vary, and every
   enumeration order is admitted. The mathematical decoder used in that proof
   is a local witness; it is absent from the program and its semantic operator.

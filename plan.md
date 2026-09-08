@@ -983,8 +983,21 @@ a new program from complete definitions; it does not change an adopted scope
 or identify the smaller program with its source. A separate union with the
 earlier reader program preserves both meanings. Fixed native compilations
 precede every future formed operand and preserve their original material.
-Native admission of actual generation sources, citation rows, retained scopes,
-recorded cause validity, and the higher protocol remains.
+The source boundary now has nine ordinary definitions and eleven clauses in
+Factor_Generation_Source_Contracts. Existing record, family, environment,
+location, and generation-value contracts provide its complete components.
+Shared-context sequence correspondence retains every socket and cited site;
+multiset correspondence preserves every predecessor occurrence. The joint
+finite-core proof covers all source and expected-value presentations. A report
+may enumerate the complete predecessor relation in any order.
+
+The exported source-to-core operation is the general semantic correspondence
+between the source and value classes of the same core. The predecessor-report
+operation is a total function on actual sources. One fixed native program
+precedes future operands, and native admission and reports are preserved by
+the least required source environment. The source determines that environment
+without storing it again. Native checks of a separately submitted retained
+environment, recorded scopes, cause validity, and the higher protocol remain.
 
 **Obligations.**
 **O-21** every formed generation core has an admitted presentation and each admitted presentation recovers exactly one core, including its exact locus, predecessor relation, payload, and recorded cause. The intrinsic links to predecessor resolution, cause recording, and the relevant retained environment are preserved and reflected. Different adequate presentations need not be isomorphic. Any canonical construction or transport theorem states its own class and boundary; it establishes no exclusive presentation choice.
@@ -1291,9 +1304,14 @@ proof. The final finite-set class consumes the exported inequality contract,
 and generic adaptation and composition serve later uses. The helper program
 requires several positive steps, so a one-step consequence correspondence is
 not asserted. Finite subterm descent supplies the local joint proof without
-an operative bound. Native admission of actual generation sources, their
-cited rows and scopes, and higher protocol relations remains. The mathematical
-contracts and their native proof presentations remain within O-85.
+an operative bound. Actual generation sources and complete cited-row reports
+now have their own ordinary program and exported local contracts. Generic
+sequence and multiset reading theorems are reused within its recursive proof.
+The source-to-value operation instantiates canonical semantic correspondence;
+the predecessor report instantiates a total map. Least retained environments
+preserve the native results. Separately submitted retention claims, recorded
+scopes, and higher protocol readers remain. The mathematical contracts and
+their native proof presentations remain within O-85.
 
 These results are justified by existing collection, table, quotation, scope,
 and program machinery. Their proof parameters are typed relations, not a

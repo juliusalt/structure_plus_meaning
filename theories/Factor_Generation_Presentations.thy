@@ -184,6 +184,27 @@ definition generation_predecessor_rows ::
       (s,d)\<in>M \<and> located_at E u d (fst z) (snd z) \<and>
       generation_at E (fst z) (snd z) H}"
 
+abbreviation generation_predecessor_socket_row where
+  "generation_predecessor_socket_row row \<equiv> (fst row,fst (snd row))"
+
+lemma generation_predecessor_rows_at_source_fields:
+  assumes fields: "generation_fields_at E u r l M p c"
+  shows "(s,(d,(z,H)))\<in>generation_predecessor_rows E u r \<longleftrightarrow>
+    (s,d)\<in>M \<and> located_at E u d (fst z) (snd z) \<and> generation_at E (fst z) (snd z) H"
+proof
+  assume "(s,(d,(z,H)))\<in>generation_predecessor_rows E u r"
+  then obtain l' M' p' c' where actual: "generation_fields_at E u r l' M' p' c'"
+    and parts: "(s,d)\<in>M'" "located_at E u d (fst z) (snd z)" "generation_at E (fst z) (snd z) H"
+    by (auto simp: generation_predecessor_rows_def)
+  have "M=M'" using generation_fields_unique[OF fields actual] by blast
+  then show "(s,d)\<in>M \<and> located_at E u d (fst z) (snd z) \<and> generation_at E (fst z) (snd z) H"
+    using parts by blast
+next
+  assume "(s,d)\<in>M \<and> located_at E u d (fst z) (snd z) \<and> generation_at E (fst z) (snd z) H"
+  then show "(s,(d,(z,H)))\<in>generation_predecessor_rows E u r"
+    using fields by (auto simp: generation_predecessor_rows_def)
+qed
+
 lemma generation_predecessor_rows_at_fields:
   assumes fields: "generation_fields_at E u r l M p c"
     and assigned: "\<forall>s d. (s,d)\<in>M \<longrightarrow>
@@ -337,6 +358,51 @@ proof -
   show "single_valued ?L" by (rule functional)
   show "bij_betw ?last ?L (fset (generation_predecessors G))"
     using distinct range predecessors by (simp only: bij_betw_def)
+qed
+
+theorem generation_predecessor_rows_projection:
+  assumes source: "generation_at E u r G" and fields: "generation_fields_at E u r l M p c"
+  shows "bij_betw generation_predecessor_socket_row (generation_predecessor_rows E u r) M"
+proof -
+  let ?L="generation_predecessor_rows E u r"
+  obtain l' M' p' c' g where actual: "generation_fields_at E u r l' M' p' c'"
+    and assigned: "\<forall>s d. (s,d)\<in>M' \<longrightarrow>
+      (\<exists>v a. located_at E u d v a \<and> generation_at E v a (g s))"
+    using source by (cases rule: generation_at.cases) blast
+  have same: "M=M'" using generation_fields_unique[OF fields actual] by blast
+  have range: "image generation_predecessor_socket_row ?L=M"
+  proof (rule set_eqI)
+    fix edge :: "local_address\<times>local_address"
+    obtain s d where edge: "edge=(s,d)" by (cases edge)
+    show "edge\<in>image generation_predecessor_socket_row ?L \<longleftrightarrow> edge\<in>M"
+    proof
+      assume "edge\<in>image generation_predecessor_socket_row ?L"
+      then obtain row where member: "row\<in>?L" and projection: "edge=generation_predecessor_socket_row row" by blast
+      obtain k e z H where shape: "row=(k,(e,(z,H)))"
+        by (rule that[of "fst row" "fst (snd row)" "fst (snd (snd row))" "snd (snd (snd row))"]) simp
+      show "edge\<in>M" using member projection
+        by (simp add: shape generation_predecessor_rows_at_source_fields[OF fields])
+    next
+      assume "edge\<in>M"
+      then obtain v a where child: "located_at E u d v a" "generation_at E v a (g s)"
+        using assigned same edge by blast
+      have member: "(s,(d,((v,a),g s)))\<in>?L"
+        using child \<open>edge\<in>M\<close> by (simp add: edge generation_predecessor_rows_at_source_fields[OF fields])
+      show "edge\<in>image generation_predecessor_socket_row ?L"
+        by (rule image_eqI[where x="(s,(d,((v,a),g s)))"]) (use member edge in auto)
+    qed
+  qed
+  have functional: "single_valued ?L" by (rule generation_predecessor_rows_complete(2)[OF source])
+  have injective: "inj_on generation_predecessor_socket_row ?L"
+  proof (rule inj_onI)
+    fix x y assume members: "x\<in>?L" "y\<in>?L" and same: "generation_predecessor_socket_row x=generation_predecessor_socket_row y"
+    have key: "fst x=fst y" using same by simp
+    have first: "(fst x,snd x)\<in>?L" using members(1) by simp
+    have second: "(fst x,snd y)\<in>?L" using members(2) key by simp
+    have tail: "snd x=snd y" by (rule single_valued_outputs[OF functional first second])
+    show "x=y" using key tail by (simp add: prod_eq_iff)
+  qed
+  show ?thesis using injective range by (simp only: bij_betw_def)
 qed
 
 lemma generation_predecessor_row_reads:
@@ -713,6 +779,13 @@ proof -
   show ?thesis using generation_value_presents_formed[OF core] coordinates encoded by simp
 qed
 
+lemma generation_predecessor_row_presents_fields:
+  "generation_predecessor_row_presents (s,(d,((v,a),H))) t \<longleftrightarrow>
+    (\<exists>h. t=Pair_Term (Payload_Term s) (Pair_Term (Payload_Term d) (Pair_Term (site_data_term v a) h)) \<and>
+      octets_formed s \<and> octets_formed d \<and> octets_formed a \<and> generation_value_presents H h)"
+  using generation_value_presents_formed
+  by (auto simp: generation_predecessor_row_presents_def generation_predecessor_row_formed_def factor_pair_presents_def)
+
 lemma generation_predecessor_rows_formed:
   assumes member: "row\<in>generation_predecessor_rows E u r"
   shows "generation_predecessor_row_formed row"
@@ -887,8 +960,9 @@ text \<open>
   compatibility; separate class recovery is not substituted for those proofs.
 
   These class and relation theorems do not add a native admission clause.
-  Native checking of the remaining recursive generation and higher protocol
-  relations still requires an ordinary program with its own exact contract.
+  Factor_Generation_Source_Contracts supplies the ordinary source and complete
+  report program through these existing classes and intrinsic relations.
+  Higher protocol readers retain their separate implementation obligations.
 \<close>
 
 end

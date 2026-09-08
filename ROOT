@@ -485,3 +485,13 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Generation_Admission
     Factor_Generation_Contracts
     Factor_Generation_Value_Programs
+    Bag_Readings
+    Factor_Related_Lists
+    RRA_Generation_Lists
+    Factor_Generation_Source_Base
+    Factor_Generation_Source_Clauses
+    Factor_Generation_Field_Admission
+    Factor_Generation_Source_Equations
+    Factor_Generation_Source_Admission
+    Factor_Generation_Predecessor_Admission
+    Factor_Generation_Source_Contracts

@@ -1,5 +1,5 @@
 theory Bag_Difference_Witnesses
-  imports Bootstrap_Relations "HOL-Library.Multiset"
+  imports Bag_Readings
 begin
 
 section \<open>Positive witnesses for a difference in multiplicities\<close>
@@ -87,24 +87,10 @@ theorem bag_difference_witness_readings:
   shows "bag_difference_witness same apart ps qs \<longleftrightarrow> mset xs\<noteq>mset ys"
 proof -
   let ?f="\<lambda>p. THE a. read a p"
-  have decode: "?f p=a" if "read a p" for a p
-    by (rule the_equality[where P="\<lambda>z. read z p" and a=a]) (use recovery that in blast)+
-  have decoded: "map ?f us=zs \<and> (\<forall>p\<in>set us. read (?f p) p)"
-    if "list_all2 read zs us" for zs us
-    using that
-  proof (induction zs arbitrary: us)
-    case Nil
-    then show ?case by simp
-  next
-    case (Cons z zs)
-    obtain p ps where parts: "us=p#ps" "read z p" "list_all2 read zs ps"
-      using Cons.prems by (auto simp: list_all2_Cons1)
-    show ?case using Cons.IH[OF parts(3)] parts(2) decode[OF parts(2)]
-      by (simp add: parts(1))
-  qed
   have first_values: "map ?f ps=xs" "\<forall>p\<in>set ps. read (?f p) p"
     and second_values: "map ?f qs=ys" "\<forall>q\<in>set qs. read (?f q) q"
-    using decoded[OF first] decoded[OF second] by auto
+    using functional_list_readings[where R=read, OF first recovery]
+      functional_list_readings[where R=read, OF second recovery] by auto
   have same: "\<forall>p\<in>set ps. \<forall>q\<in>set qs. same p q \<longleftrightarrow> ?f p=?f q"
     and apart: "\<forall>p\<in>set ps. \<forall>q\<in>set qs. apart p q \<longleftrightarrow> ?f p\<noteq>?f q"
     using first_values(2) second_values(2) equal unequal by blast+

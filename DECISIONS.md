@@ -4625,3 +4625,116 @@ retained environments and recorded scopes, and higher protocol relations
 remains. The mathematical contracts and exactness proofs still need native
 presentations and checking under O-85. The wider obligation states remain
 partial, and the final every-line audit has not begun.
+
+## Actual generation sources own their recursive reading contracts
+
+The generation source notion predates this program. It contains the actual
+environment and selected site; the existing recursive reading determines its
+core. A core report pairs that source with any value presentation of the core
+actually read there. A predecessor report contains every native socket,
+citation endpoint, actual destination use and address, and child core. These
+existing domains and relations determine the implementation boundary.
+
+The selected program has nine definitions at construction coordinates 147
+through 155 and eleven ordinary clauses. The coordinates are incidental under
+existing injective relocation. The syntax entry calls the complete four-field
+record and family readers. The field entry looks up the source artifact and
+reads the locus, payload, and recorded cause in the same environment. A child
+row calls actual citation location and the recursive core report, copying its
+socket and citation endpoint into the result. Its value projection shares
+that same row reading. Core reports admit the complete expected value and
+match every produced child occurrence to the expected predecessor collection.
+Source admission projects a core report. Complete predecessor reports admit
+the parent source and traverse its complete family.
+
+Sequence correspondence is an independent recurring relation. The chosen
+Factor_Related_Lists profile has two ordinary clauses and one actual callee;
+it keeps the same context in every corresponding pair. Its raw all-term
+contract includes both complete list boundaries. Empty lists require only
+context formation. No environment or element admission is inferred from that
+case. The source and report entries provide their own actual context and
+parent checks. A local member-reading theorem transports arbitrary independent
+sequence relations after the callee's own meaning equation is established.
+
+The bag proof previously exposed only distinct collections, while the source
+reader first produces a sequence whose multiplicity must be established.
+Bag_Readings now owns unique member recovery and exact multiset transport.
+Factor_Related_Bags exposes the sequence theorem and derives its existing
+collection theorem from it. Bag_Difference_Witnesses reuses the same recovery
+lemma. Both earlier public theorem statements and all earlier native clauses
+are preserved; only the two duplicated recovery proofs are refactored.
+
+RRA_Generation_Lists gives a presentation-independent equation for the original
+generation relation. Complete socket enumerations and distinct child sequences
+recover its injective socket assignment, and every original reading supplies
+such a sequence for every complete enumeration. It changes no generation
+field, formation condition, citation meaning, or primitive reading rule.
+
+The program base first joins the existing citation and generation-value
+programs only after complete shared-definition agreement. The source group
+then retains the least actual dependency closure of eight external callees:
+payload recognition, family and record admission, artifact lookup, anchored
+target and occurrence location, generation-value admission, and generation
+bag identity. Every retained definition keeps its complete interface and
+clause family. This constructs a new program and preserves both old meanings;
+it does not identify the smaller program with its source or change an adopted
+scope. The native clause module depends on these local components. The proof
+of the existing source class reuses the pure context data in
+Factor_Replay_Values; no replay judgment or higher protocol enters the source
+program's meaning boundary.
+
+The recursive proof is joint over the finite expected core. Its already
+proved value contract first recovers the complete core. The generic bag
+contract establishes all child multiplicities and membership in its expected
+predecessor set. Every child is therefore strictly smaller, so the local
+induction hypothesis applies at the actual cited site. Generic sequence
+transport and the independent socket-enumeration equation recover the native
+parent reading. Completeness accepts arbitrary source and value presentations
+with independently ordered predecessor lists. The bound is a proof measure;
+no rank, limit, chosen representative, negative premise, or external truth
+callback is stored in the program. Several helper calls take several positive
+steps, so a one-step abstract consequence correspondence is not claimed.
+
+The complete native predecessor relation is in bijection with its socket
+projection. A report can therefore use any order: projecting its rows gives a
+complete family enumeration in that same order. Each row retains the cited
+use and address even when another site presents an equal core. Whole parent
+admission enforces distinct predecessor cores. The exported contracts reject
+missing, unrelated, and repeated rows, including repeated presentations of the
+same row. Empty reports retain the parent and empty-family checks.
+
+The source-to-value operation is proved equal to the general canonical
+semantic correspondence between two complete classes of the same core. It
+inherits the generic total function contract. The complete predecessor report
+also exports a total function contract on actual source subjects. These are
+locally owned implementation results; later clients use their adaptation,
+instantiation, and composition laws without repeating this recursive proof.
+Every formed finite core has an actual admitted source, a core report, and a
+complete predecessor report. Base and nonempty predecessor witnesses follow
+from that full-domain construction.
+
+Source admission also admits the existing determined retention class: the
+source determines the least required environment without another stored
+field. Replacing an environment by that restriction preserves native source
+admission, every expected-core reading, and every complete-row test. Any
+included environment that still passes source admission contains that least
+restriction. The earlier closure, idempotence, exact artifact and binding,
+and recursive-row and request equations remain the account of its content.
+This batch adds no checker for a separately submitted claimed retained
+environment or recorded-cause context; those report relations need their own
+ordinary clauses. Recording a cause still does not validate it.
+
+One fixed closed native compilation supplies all nine operation sites before
+arbitrary future formed operands. Its original complete scope, artifacts, and
+outgoing bindings survive those applications. Integration with the broader
+reader program can use complete-definition agreement when the later scope
+and protocol readers are joined; no broader proof import selects this local
+program's operative dependency boundary.
+
+The choices of shared-context sequence clauses, the least complete-definition
+base, joint finite-core induction, and reuse of the existing source and report
+classes are justified above. Separately submitted retention claims, recorded
+scopes, cause validity, higher protocol, reflection, and genesis remain. The
+new mathematical contracts and proofs retain the native presentation and
+checking obligation under O-85. The wider obligation states remain partial,
+and the final every-line audit has not begun.

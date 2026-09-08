@@ -68,14 +68,17 @@ classes under their unchanged formation conditions. A transaction with its
 supplied initial snapshot determines its complete success or conflict outcome.
 
 Generation source and report classes retain every actual predecessor socket,
-citation endpoint, destination use and address, and recovered core. Their
-least retained environment preserves every recursive row and request.
+citation endpoint, destination use and address, and recovered core. Nine
+ordinary definitions now admit exactly those sources, core reports, and
+complete predecessor reports. Every presentation and report order is covered.
+Their least retained environment preserves every recursive row and request,
+as well as the native admission and report results.
 Recorded-scope classes link the native cause citation and its actual artifact
 use to the complete stored body and an independently presented expected
 context. Every formed context has a recording witness. A formed false native
 call has a complete recorded scope and quotation while its cause remains
-invalid. Native reading of actual generation sources, cited predecessor rows,
-retained scopes, and the higher protocol relations is still required.
+invalid. Native checks of separately claimed retained environments, recorded
+scopes, cause validity, and the higher protocol relations remain.
 
 The work is incomplete. The current active session establishes the structural
 and data basis, relative footprints, exact artifacts, fragments, and assembly.
@@ -546,9 +549,8 @@ supplied artifact table. The resulting program accepts exactly presentations of
 formed finite environments, including the permitted empty and cyclic cases.
 A separate identity definition joins both admissions with the earlier comparison.
 One closed native program supplies distinct admission and identity sites before
-any future formed input is supplied. Grammar-derived closure for higher readers,
-native generation source reading, reflection, and amendment remain separate
-work.
+any future formed input is supplied. Grammar-derived closure for further
+higher readers, reflection, and amendment remain separate work.
 
 One ordinary recursive collector now retains every value at a supplied key.
 Repeated equal values remain separate occurrences. A further clause admits the
@@ -1028,10 +1030,28 @@ comparison and generation operation sites. Both compilations preserve their
 original scopes, artifacts, and bindings. Neither the finite proof bounds
 nor the dependency restriction add a stored field or alter an adopted scope.
 
+The generation source program now reads the complete four-field record,
+recovers all three targets in the actual environment, and follows every
+predecessor citation to its actual destination. Generic shared-context list
+relations preserve each socket and output row. Generic bag reading preserves
+multiplicity while the existing core contract rejects repeated predecessors.
+The local recursive proof admits every source and expected-value presentation.
+The source-to-value operation is the general semantic correspondence between
+two classes of the same core. The complete predecessor-report operation is a
+total function on actual sources with every output presentation available.
+
+One fixed native compilation supplies all nine source operations before future
+operands. Its base is the least complete-definition closure of eight actual
+external callees in the joined citation and value program. Retention preserves
+source admission, all expected-core readings, and every complete-row test.
+The source also determines its least retained environment without an extra
+stored field. Checking a separately submitted environment claim or recorded
+scope requires its own further operation.
+
 Further application of the general theory, native presentations and checking
-of its remaining contracts and proofs, actual generation source and authority
-readers, complete transition material, remaining reflection strata, genesis,
-and the system-wide presentation audit remain open.
+of its remaining contracts and proofs, recorded-scope and authority readers,
+complete transition material, remaining reflection strata, genesis, and the
+system-wide presentation audit remain open.
 
 Run `python3 tools/check.py --threads 12 --timeout 300` for one combined build,
 complete error collection, theory-inventory check, and unfinished-proof scan.

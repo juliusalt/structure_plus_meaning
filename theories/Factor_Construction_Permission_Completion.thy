@@ -304,9 +304,9 @@ text \<open>
   supplies actual code, complete definition reports, and accepted ordinary
   whole-definition evidence. This does not replace an existing cause's policy.
 
-  A single native checker for the whole sufficient profile, including the
-  common-environment and fixed-reference checks, remains to be joined. The
-  theorem is not an exact checker for every semantically invariant program.
+  Factor_Construction_Permission_Admission joins the whole sufficient profile
+  through one native checker, including common-environment and fixed-reference
+  checks. This profile does not decide every semantically invariant program.
   Native presentation of the mathematical comparison and saturation proofs,
   higher protocols, reflection, and genesis retain their separate obligations.
 \<close>

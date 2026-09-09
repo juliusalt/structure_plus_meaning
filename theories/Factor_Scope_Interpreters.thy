@@ -1,5 +1,5 @@
 theory Factor_Scope_Interpreters
-  imports Factor_Scope_Forwarding Factor_Program_Reflection Factor_Historical_Programs
+  imports Factor_Scope_Forwarding Factor_Program_Reflection Factor_Historical_Programs Factor_Package_Extensions
 begin
 
 section \<open>Adding a forwarding entry preserves the complete existing program\<close>
@@ -8,13 +8,7 @@ lemma native_package_definition_edge_closed:
   assumes package: "native_package_at E u r P" and member: "d\<in>system_definitions P"
     and edge: "(d,e)\<in>native_definition_edges E"
   shows "e\<in>system_definitions P"
-proof -
-  have definitions: "system_definitions P=native_definition_sites E (native_package_roots E u r)"
-    using native_package_projection(3)[OF package] by (simp add: native_package_sites_def)
-  have reached: "d\<in>native_definition_sites E (native_package_roots E u r)"
-    using member definitions by simp
-  show ?thesis using native_definition_step[OF reached edge] definitions by simp
-qed
+  by (rule native_package_edge_closed[OF assms])
 
 lemma native_scope_forwarding_edge:
   assumes forwarding: "native_scope_forwarding_at E (fst d) (snd d) k x y z"
@@ -86,36 +80,23 @@ proof -
     have member: "d\<in>system_definitions P" using member False by simp
     show ?thesis using native_package_definition_edge_closed[OF copied member edge] by simp
   qed
-  have sites: "native_definition_sites H ?U=?U"
-  proof (rule subset_antisym)
-    show "native_definition_sites H ?U\<subseteq>?U"
-      by (rule native_definition_sites_least[OF subset_refl closed])
-    show "?U\<subseteq>native_definition_sites H ?U" by (rule native_definition_roots)
-  qed
-  have dependency: "native_package_formed H ?U"
-    unfolding native_package_formed_def sites
-    by (rule conjI[OF installed(1)], intro ballI, rule reads, assumption)
   have fin: "finite ?U" using system_definitions_finite[OF native_package_system_formed[OF package]] by simp
-  have targets: "\<forall>d\<in>?U. \<exists>R. artifact_at H (fst d) R \<and> anchor_formed (R,snd d)"
-  proof (intro ballI)
+  have selectable: "\<exists>F v Q. environment_formed F \<and> environment_included H F \<and>
+    native_package_at F v [] Q \<and> system_definitions Q=?U \<and>
+    (\<forall>w\<in>environment_uses H. \<forall>R. artifact_at F w R \<longleftrightarrow> artifact_at H w R) \<and>
+    (\<forall>w\<in>environment_uses H. \<forall>s a. binds_slot F w s a \<longleftrightarrow> binds_slot H w s a)"
+  proof (rule native_definition_family_selectable[OF installed(1) fin])
     fix d assume member: "d\<in>?U"
-    obtain p C where read: "native_definition_at H (fst d) (snd d) p C"
-      using reads[OF member] by blast
-    show "\<exists>R. artifact_at H (fst d) R \<and> anchor_formed (R,snd d)"
-      by (rule native_definition_has_anchor[OF read])
+    show "\<exists>p C. native_definition_at H (fst d) (snd d) p C" by (rule reads[OF member])
+  next
+    fix d e assume member: "d\<in>?U" and edge: "(d,e)\<in>native_definition_edges H"
+    show "e\<in>?U" by (rule closed[OF member edge])
   qed
-  obtain F v L where selected: "environment_formed F" "environment_included H F"
-    "native_root_family_at F v [] L" "rel_ran L=?U"
+  obtain F v Q where selected: "environment_formed F" "environment_included H F"
+    "native_package_at F v [] Q" "system_definitions Q=?U"
     "\<forall>w\<in>environment_uses H. \<forall>R. artifact_at F w R \<longleftrightarrow> artifact_at H w R"
     "\<forall>w\<in>environment_uses H. \<forall>s a. binds_slot F w s a \<longleftrightarrow> binds_slot H w s a"
-    using root_family_environment_total[OF installed(1) fin targets] by (elim exE conjE) (rule that; assumption)
-  have kept: "native_package_formed F ?U \<and> native_program F ?U=native_program H ?U"
-    by (rule native_dependency_package_included[OF dependency selected(2,1)])
-  have result: "native_package_at F v [] (native_program H ?U)"
-    unfolding native_package_at_def
-    by (rule exI[of _ L]) (use selected(3,4) kept in auto)
-  have definitions: "system_definitions (native_program H ?U)=?U"
-    by (simp only: native_program_definitions[OF dependency] sites)
+    using selectable by blast
   have forwarding: "native_scope_forwarding_at F u [] k x y z"
     by (rule native_scope_forwarding_included[OF installed(4) selected(2,1)])
   have included: "environment_included E F" by (rule environment_included_trans[OF installed(2) selected(2)])
@@ -135,9 +116,9 @@ proof -
       by (simp only: selected(6)[rule_format, OF in_H] installed(6)[rule_format, OF old_use])
   qed
   show ?thesis by (rule exI[of _ F], rule exI[of _ u], rule exI[of _ v],
-      rule exI[of _ "native_program H ?U"], rule conjI[OF selected(1)],
+      rule exI[of _ Q], rule conjI[OF selected(1)],
       rule conjI[OF included], rule conjI[OF installed(3)], rule conjI[OF fresh],
-      rule conjI[OF result], rule conjI[OF definitions], rule conjI[OF forwarding],
+      rule conjI[OF selected(3)], rule conjI[OF selected(4)], rule conjI[OF forwarding],
       rule conjI[OF artifacts], rule bindings)
 qed
 

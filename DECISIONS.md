@@ -6049,3 +6049,92 @@ complete comparator bound. These two additional theorems preserve every
 existing statement and keep the client's dependency condition local. They
 describe construction coordinates for this finite program, not a semantic
 privilege of those coordinates after native compilation.
+
+
+## A native profile check consumes complete syntax and preserved reference meaning
+
+The remaining gap in the preceding sufficient permission construction was a
+single operative check of its finite evidence. The chosen independent profile
+requires an actual member of the original complete package, a whole variable
+interface with exactly the related-witness clause, and a common formed
+environment retaining both the candidate and a fixed reference. The reference
+program's comparison contract is established independently. No candidate
+semantics or positive sample supplies that contract.
+
+The complete schema-observation class already determines syntax. Its report
+retains the binder and both entire output families, with the actual prospective
+callees and empty material families. A private constructed report orders the two
+roles, but covers every permitted native binder and socket coordinate. Complete
+binder admission forces the two variables to differ. Functionality of the
+prospective rows forces distinct sockets because one argument is a pair and the
+other a payload in the determining observation. Additional inequality calls
+would repeat consequences of this complete boundary and are therefore omitted.
+
+Four identified ordinary premises suffice: actual package membership, complete
+definition reading, and the two environment inclusions. Membership already
+admits the complete package. The existing variable-interface and singleton
+reader already rejects omitted alternatives and unsupported material. The
+common environment is private finite evidence; it cannot change either retained
+artifact or any existing interpretation. It may retain a reference root selector
+that the candidate's least package scope omits.
+
+The original program-entry value is used without changing its grouping. Its
+class follows from the complete site class, a literal site-coordinate class,
+and restriction to actual occurrence in the same environment. No duplicate
+program is stored. The independent native profile then restricts that complete
+context class. Exact all-input admission and presentation invariance preserve
+every compatible source and fixed-reference presentation.
+
+Composition requires complete agreement of the reader programs' shared
+definitions. The whole-definition reader now owns its all-value equation,
+complete base agreement, and definition bound. The combined implementation
+retains the least closure of the three actual callees. It adds one definition
+with four ordinary premises and one fixed native compilation before future
+inputs. Coordinate bounds establish construction freshness; they give the
+chosen numbers no semantic privilege after compilation.
+
+The generative obligation also exposed repeated package-selection reasoning.
+One general theorem now consumes a closed finite family of actual complete
+definition readings and constructs its exact root selector. The earlier
+forwarding theorem keeps its complete public statement and uses this theorem.
+A second general construction installs any formed ordinary or material clause
+whose actual callees belong to an existing package. Its private coordinates may
+be renamed, while all original call boundaries, meanings, artifacts, and
+outgoing bindings remain unchanged. The related-test candidate construction
+specializes those results. This is a reusable construction with multiple
+consumers, rather than a profile-specific duplicate of closure and selection.
+
+The independently compiled construction comparator fixes the semantic reference
+before the native profile checker and every future candidate. Successful profile
+admission entails the existing saturation equation and global formation-and-truth
+invariance of the actual submitted program. The same residual mechanism then
+discharges its permission family. Recorded construction still separately needs
+the original least scope, exact payload, complete account, and positive truth.
+Neither evidence nor an alternative policy is inserted into generation identity.
+
+Every compatible package containing both callees has a constructed closed
+candidate and every complete context presentation is accepted. The final fixed
+native checker has an actual admitted input, independently of whether a chosen
+underlying test accepts a construction. The earlier noninvariant policies retain
+their meanings; this construction does not justify replacing them. The profile
+is exact as a sufficient structural class, not a decision procedure for global
+invariance of every positive program. Broader behavior coverage and general
+recorded-cause admission remain explicit further work.
+
+All 608 other accepted theories and every repository validation tool remain
+byte-identical. The two proof-bearing edits preserve every prior scoped public
+contract; the completed-policy theory receives only a corrected progress note.
+The two added imports supply actually consumed general agreement and selection
+theorems. Frozen review records these dependency additions explicitly. Obligation
+statuses are unchanged. Native mathematical-proof presentation, higher protocols,
+reflection, genesis, the broader application audit, and the final every-line
+review remain open. No stopping claim for the whole foundation is made.
+
+The frozen proof run exposed two missing ownership references. The new clause
+package constructor now imports Factor_Program_Scopes for its actual root,
+entry, and closed-environment contracts. The new program-entry field theorem
+now writes its locally owned site_data_term encoding explicitly; the earlier
+unavailable shorthand had been parsed as a free function and was not proved.
+This correction avoids importing an unrelated callee-admission program merely
+for that shorthand. The revision preserves all previously accepted statements
+and every other frozen new declaration and assumption.

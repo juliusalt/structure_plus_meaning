@@ -1753,10 +1753,38 @@ The constructed example has actual native code and checked complete-definition
 evidence. Its new permission entry accepts both base orders; its literal test
 and the earlier order-sensitive program retain their noninvariant meanings.
 Agreement of completion with an original observation uses the same exact
-obligation evaluator. No existing cause or policy is replaced. Joining one
-fixed native checker for the whole sufficient profile remains open, alongside
-general recorded-cause admission, mathematical-proof presentation, higher
-protocols, reflection, genesis, and the final repository audit.
+obligation evaluator. No existing cause or policy is replaced. The whole native profile
+check and its remaining semantic boundaries are described below.
+
+A single ordinary native checker now admits the complete related-test profile.
+Four identified premises check membership in the actual candidate package,
+the whole variable-interface and singleton definition, and inclusion of both
+the candidate and independently fixed reference in one formed environment.
+The complete schema report derives distinct binders and premise sockets;
+private report order does not impose an order on the source definition.
+
+The existing program-entry value has a locally owned class derived by products
+and restriction. The profile specializes that complete class. Admission is exact
+for every raw input, preserves every permitted source and reference presentation,
+and rejects missing entries, changed interfaces, extra clauses, and changed
+profile syntax. Whole component agreement preserves the three existing callees;
+the program retains their least actual dependency closure. One closed native
+checker is fixed before every future candidate and application.
+
+Generic complete-family selection now supplies both forwarding and arbitrary
+single-clause package extensions. Construction retains every old artifact,
+outgoing binding, call boundary, and positive meaning. Every compatible package
+with the comparison and an actual test has an admitted closed candidate with
+one new permission definition. Private compilation coordinates remain free.
+
+The independently compiled complete account comparator makes admitted profiles
+globally invariant over construction presentations. The same exact obligation
+account discharges their permission conditions and joins the original recorded
+cause's least scope, payload, complete account, and positive truth. A fixed
+native reference and checker have constructed admitted inputs. This sufficient
+profile does not decide invariance of arbitrary programs. General recorded-cause
+admission, native mathematical contracts and proofs, higher protocols, reflection,
+genesis, and the final repository audit remain open.
 
 These results are justified by existing collection, table, quotation, scope,
 and program machinery. Their proof parameters are typed relations, not a

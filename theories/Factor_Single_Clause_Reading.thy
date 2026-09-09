@@ -1,5 +1,5 @@
 theory Factor_Single_Clause_Reading
-  imports Factor_Schema_Reading Factor_Scope_Admission Factor_Reader_Clauses
+  imports Factor_Schema_Reading Factor_Scope_Admission Factor_Reader_Clauses Factor_System_Composition
 begin
 
 section \<open>A complete variable interface and one arbitrary schema\<close>
@@ -209,6 +209,16 @@ lemma single_clause_reading_base_meaning:
     (d,t)\<in>positive_meaning definition_call_admission_system"
   using assms single_clause_reading_old_meaning[of d t] schema_reading_old_meaning[of d t]
     reference_bindings_old_meaning[of d t] by auto
+
+lemma single_clause_reading_definition_bound:
+  "system_definitions single_clause_reading_system\<subseteq>{..127}"
+  by auto
+
+lemma single_clause_reading_base_agreement:
+  "systems_agree_on definition_call_admission_system single_clause_reading_system
+    (system_definitions definition_call_admission_system)"
+  by (simp add: systems_agree_on_added single_clause_reading_system_def
+    schema_reading_system_def reference_bindings_system_def)
 
 lemma single_clause_reading_components:
   "(72,t)\<in>positive_meaning single_clause_reading_system \<longleftrightarrow>
@@ -424,6 +434,34 @@ next
   show "(127,z)\<in>positive_meaning single_clause_reading_system"
     using single_clause_reading_complete[OF source(1) parts(3,4)] parts(1) source(2)
     by (simp only: site_data_term_def)
+qed
+
+corollary single_clause_reading_on_values:
+  assumes source: "environment_value_presents E e"
+  shows "(127,schema_reference_argument e (use_data_term u) (Payload_Term r) v)
+      \<in>positive_meaning single_clause_reading_system \<longleftrightarrow>
+    (\<exists>S. native_single_clause_at E u r S \<and> schema_reference_presents S v)"
+proof
+  assume holds: "(127,schema_reference_argument e (use_data_term u) (Payload_Term r) v)
+    \<in>positive_meaning single_clause_reading_system"
+  obtain F w a S p q where parts:
+    "schema_reference_argument e (use_data_term u) (Payload_Term r) v=Pair_Term p q"
+    "site_value_presents F w a p" "native_single_clause_at F w a S" "schema_reference_presents S q"
+    using single_clause_reading_sound[OF holds] by blast
+  obtain f where fields: "environment_value_presents F f" "p=Pair_Term f (site_data_term w a)"
+    using parts(2) by (auto simp: site_value_presents_def)
+  have same: "f=e" "w=u" "a=r" "q=v"
+    using parts(1) fields(2) by (auto simp: site_data_term_def inj_eq[OF use_data_term_injective])
+  have presented: "environment_value_presents F e" using fields(1) same(1) by simp
+  have environment: "F=E" by (rule environment_value_presents_unique[OF presented source])
+  show "\<exists>S. native_single_clause_at E u r S \<and> schema_reference_presents S v"
+    by (rule exI[of _ S]) (use parts(3,4) same environment in simp)
+next
+  assume "\<exists>S. native_single_clause_at E u r S \<and> schema_reference_presents S v"
+  then obtain S where parts: "native_single_clause_at E u r S" "schema_reference_presents S v" by blast
+  show "(127,schema_reference_argument e (use_data_term u) (Payload_Term r) v)
+    \<in>positive_meaning single_clause_reading_system"
+    by (rule single_clause_reading_complete[OF source parts])
 qed
 
 theorem single_clause_reading_presented_relation:

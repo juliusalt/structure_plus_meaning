@@ -5953,3 +5953,99 @@ reflection, genesis, native mathematical-proof presentation, and the final
 every-line audit. The existing obligations retain their status. This is a
 further application of the represented evaluation cycle, not a claim that the
 whole foundation has reached a justified stopping point.
+
+
+## Native correspondence makes a checked permission clause meaningful
+
+The existing global permission condition must remain a property of the actual
+program named by a construction or cause. One positive call cannot establish
+it. The interpreter-admission work supplies a relevant precedent: whole
+definition reading can check a sufficient structural profile, whose universal
+meaning is proved against an independently fixed reference. It does not decide
+every semantic correctness property of arbitrary programs.
+
+The proposed permission profile uses the already defined existential completion.
+Two identified premises share one actual witness: the first compares the
+submitted account with that witness and the second applies the actual test to
+it. The first requirement is therefore a native complete correspondence
+contract, not merely admission or equality of one serialization. The earlier
+construction field-generator theorem remains valid; its local global-condition
+reduction is separate from this implementation of the full correspondence.
+
+The existing bag-matching proof assumed self-contained data at every element.
+Construction bases contain literal whole-artifact values, so that assumption
+cannot serve their complete original presentation class. The independent
+matching relationship is between occurrences under a supplied element relation.
+Its proof needs the corresponding element boundary and formation, but does not
+otherwise inspect self-containment. Exposing that parameter supplies the exact
+generalization required here. The original related_bags locale and all its
+public theorem statements remain unchanged; their proofs now specialize the
+general related_occurrences proof. Both ordinary clause families also remain
+unchanged. Existing clients continue to receive their original data contract.
+
+Complete conversion changes only a list terminator. A separate ordinary clause
+uses two such conversions and the same actual occurrence-comparison callee.
+The general collection law then compares every permitted enumeration, including
+independent member presentations. Formation remains explicit at every member.
+The source does not acquire a preferred sorting or a second stored account.
+
+The construction specialization admits both whole original accounts, compares
+every base and origin row literally, and compares selection rows through their
+exact key, source coordinate, and complete selected-atom collection. The two
+ordered input lists and exact outputs are shared literal fields. Eleven
+definitions contain sixteen ordinary clauses; their base is the least closure
+of the two actual external callees for conversion and construction admission.
+The proof exports the complete identity function contract on accounts and a
+closed native correspondence reference before any future policy or operand.
+
+The two-premise permission clause has a rule equation for every supporting
+relation. Its witness variables and premise sockets retain distinct roles;
+neither is merged even when callees or values coincide. Fresh views preserve
+the actual old program. Complete native definition reading inspects the entire
+variable interface and singleton clause family, so hidden alternatives and
+material conditions cannot enter the claimed equation. Compilation supplies
+actual admitted instances over every formed environment with both anchored
+callees. The comparison callee's meaning is still independent evidence.
+
+Shared-definition agreement transfers that fixed comparison meaning to the
+actual candidate package in a common formed environment. General saturation
+then proves formation and truth invariance. The original cause reduction
+consumes this result alongside its other four conditions. A larger evidence
+environment can retain a reference root omitted by the original minimal
+judgment scope; inclusion preserves the original program and does not change
+the recorded scope or payload. No cause is silently evaluated under a wrapper.
+
+The example expressly constructs a new completed policy. Its native code has
+checked complete-definition evidence and accepts both presentations of the
+two-base account. Its own literal test and the earlier order-sensitive program
+remain noninvariant. Thus completion is useful as a construction while its
+agreement with an original observation still enters the same exact obligation
+reduction. This is not a proof that every submitted original policy can be
+replaced, or that positive execution proves a universal property.
+
+All 606 other accepted theories and every repository validation tool remain
+byte-identical. The matching refactor preserves all previous declarations and
+their enclosing assumptions. Validation separately checks those scoped public
+contracts, the frozen new declarations, all existing failure fixtures, and the
+full theory graph. The obligation statuses remain unchanged. A single native
+checker for the whole sufficient profile, general recorded-cause admission,
+native mathematical-proof presentation, higher protocols, reflection, genesis,
+and the final every-line audit remain open. The present profile is a supplied
+candidate evaluated through existing contracts, not a stopping claim for the
+whole investigation.
+
+The frozen diagnostics identified reserved spellings used for assumption
+labels and an origin-list variable. Replacing those names changes no logical
+condition or premise. The import review also removed a forwarding theory
+already inherited through the three owning contracts; shared-package meaning
+belongs to their existing locality ancestor. The revised freezes record these
+syntax and dependency edits separately from proof repairs.
+
+The proof review exposed a remaining dependency in the first draft of the
+permission client: freshness still inspected two earlier program layers.
+The comparator now owns the bounds of its actual base and complete definition
+domain. Its group proof uses the base bound; later extensions use only the
+complete comparator bound. These two additional theorems preserve every
+existing statement and keep the client's dependency condition local. They
+describe construction coordinates for this finite program, not a semantic
+privilege of those coordinates after native compilation.

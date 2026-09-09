@@ -17,9 +17,14 @@ definition related_selection_clauses ::
 definition related_bag_clauses :: "nat \<Rightarrow> nat \<Rightarrow> (nat \<times> (nat,nat,nat) factor_schema) set" where
   "related_bag_clauses select bag={(0,bag_nil_schema),(1,bag_step_schema select bag)}"
 
-locale related_bags =
+abbreviation boundary_elements ::
+  "(factor_term \<Rightarrow> bool) \<Rightarrow> factor_term list \<Rightarrow> bool" where
+  "boundary_elements D xs \<equiv> \<forall>x\<in>set xs. term_formed x \<and> D x"
+
+locale related_occurrences =
   fixes P :: "(nat,nat,nat,nat) schema_system"
     and data_site list_site compare_site select_site bag_site :: nat
+    and element_boundary :: "factor_term \<Rightarrow> bool"
   assumes system_formed: "schema_system_formed P"
     and selection_family: "\<And>c S. ((select_site,c),S)\<in>system_clauses P \<longleftrightarrow>
       (c,S)\<in>related_selection_clauses data_site list_site compare_site select_site"
@@ -28,11 +33,11 @@ locale related_bags =
     and selection_call: "\<And>t. schema_call_formed P select_site t \<longleftrightarrow> term_formed t"
     and bag_call: "\<And>t. schema_call_formed P bag_site t \<longleftrightarrow> term_formed t"
     and data_meaning: "\<And>t. (data_site,t)\<in>positive_meaning P \<longleftrightarrow>
-      term_formed t \<and> self_contained_term t"
+      term_formed t \<and> element_boundary t"
     and list_meaning: "\<And>t. (list_site,t)\<in>positive_meaning P \<longleftrightarrow>
-      (\<exists>xs. t=data_list_term xs \<and> data_elements xs)"
+      (\<exists>xs. t=data_list_term xs \<and> boundary_elements element_boundary xs)"
     and comparison_data: "\<And>x y. (compare_site,Pair_Term x y)\<in>positive_meaning P \<Longrightarrow>
-      term_formed x \<and> self_contained_term x \<and> term_formed y \<and> self_contained_term y"
+      term_formed x \<and> element_boundary x \<and> term_formed y \<and> element_boundary y"
 begin
 
 abbreviation related where
@@ -60,11 +65,11 @@ theorem selection_sound:
   assumes holds: "(select_site,t)\<in>positive_meaning P"
   shows "\<exists>x y pre post. t=Pair_Term x
     (Pair_Term (data_list_term (pre@y#post)) (data_list_term (pre@post))) \<and>
-    data_elements (pre@y#post) \<and> related x y"
+    boundary_elements element_boundary (pre@y#post) \<and> related x y"
 proof -
   let ?Q="\<lambda>t. \<exists>x y pre post. t=Pair_Term x
     (Pair_Term (data_list_term (pre@y#post)) (data_list_term (pre@post))) \<and>
-    data_elements (pre@y#post) \<and> related x y"
+    boundary_elements element_boundary (pre@y#post) \<and> related x y"
   have invariant: "select_site=select_site \<longrightarrow> ?Q t"
   proof (rule positive_valuation_induct[OF holds, where property="\<lambda>d t. d=select_site \<longrightarrow> ?Q t"])
     fix d c S f
@@ -85,18 +90,18 @@ proof -
         assume schema: "S=related_selection_here_schema compare_site list_site"
         have compared: "related (f 0) (f 1)" and list: "(list_site,f 2)\<in>positive_meaning P"
           using support schema by (auto simp: related_selection_here_schema_def)
-        have head: "term_formed (f 1) \<and> self_contained_term (f 1)"
+        have head: "term_formed (f 1) \<and> element_boundary (f 1)"
           using comparison_data[OF compared] by blast
-        obtain post where tail: "f 2=data_list_term post" "data_elements post"
+        obtain post where tail: "f 2=data_list_term post" "boundary_elements element_boundary post"
           using list by (auto simp: list_meaning)
         show ?thesis by (intro exI[of _ "f 0"] exI[of _ "f 1"] exI[of _ "[]"] exI[of _ post])
           (use head tail compared in \<open>simp add: schema related_selection_here_schema_def\<close>)
       next
         assume schema: "S=selection_later_schema data_site select_site"
-        have skipped: "term_formed (f 2) \<and> self_contained_term (f 2)"
+        have skipped: "term_formed (f 2) \<and> element_boundary (f 2)"
           using support schema by (auto simp: selection_later_schema_def data_meaning)
         obtain y pre post where tail: "f 1=data_list_term (pre@y#post)"
-          "f 3=data_list_term (pre@post)" "data_elements (pre@y#post)" "related (f 0) y"
+          "f 3=data_list_term (pre@post)" "boundary_elements element_boundary (pre@y#post)" "related (f 0) y"
           using support[rule_format, of 1 select_site "Pattern_Pair data_x (Pattern_Pair data_y data_w)"] schema
           by (auto simp: selection_later_schema_def)
         show ?thesis by (intro exI[of _ "f 0"] exI[of _ y] exI[of _ "f 2#pre"] exI[of _ post])
@@ -108,7 +113,7 @@ proof -
 qed
 
 theorem selection_complete:
-  assumes "data_elements (pre@y#post)" "related x y"
+  assumes "boundary_elements element_boundary (pre@y#post)" "related x y"
   shows "(select_site,Pair_Term x
     (Pair_Term (data_list_term (pre@y#post)) (data_list_term (pre@post))))\<in>positive_meaning P"
   using assms
@@ -146,7 +151,7 @@ theorem selection_exact:
   "(select_site,t)\<in>positive_meaning P \<longleftrightarrow>
     (\<exists>x y pre post. t=Pair_Term x
       (Pair_Term (data_list_term (pre@y#post)) (data_list_term (pre@post))) \<and>
-      data_elements (pre@y#post) \<and> related x y)"
+      boundary_elements element_boundary (pre@y#post) \<and> related x y)"
   using selection_sound selection_complete by blast
 
 section \<open>Matching every occurrence through that same definition\<close>
@@ -154,10 +159,10 @@ section \<open>Matching every occurrence through that same definition\<close>
 theorem comparison_sound:
   assumes holds: "(bag_site,t)\<in>positive_meaning P"
   shows "\<exists>xs ys. t=Pair_Term (data_list_term xs) (data_list_term ys) \<and>
-    data_elements xs \<and> data_elements ys \<and> rel_mset related (mset xs) (mset ys)"
+    boundary_elements element_boundary xs \<and> boundary_elements element_boundary ys \<and> rel_mset related (mset xs) (mset ys)"
 proof -
   let ?Q="\<lambda>t. \<exists>xs ys. t=Pair_Term (data_list_term xs) (data_list_term ys) \<and>
-    data_elements xs \<and> data_elements ys \<and> rel_mset related (mset xs) (mset ys)"
+    boundary_elements element_boundary xs \<and> boundary_elements element_boundary ys \<and> rel_mset related (mset xs) (mset ys)"
   have invariant: "bag_site=bag_site \<longrightarrow> ?Q t"
   proof (rule positive_valuation_induct[OF holds, where property="\<lambda>d t. d=bag_site \<longrightarrow> ?Q t"])
     fix d c S f
@@ -181,15 +186,15 @@ proof -
         have selection: "(select_site,Pair_Term (f 0) (Pair_Term (f 2) (f 3)))\<in>positive_meaning P"
           using support schema by (auto simp: bag_step_schema_def)
         obtain y pre post where selected: "f 2=data_list_term (pre@y#post)"
-          "f 3=data_list_term (pre@post)" "data_elements (pre@y#post)" "related (f 0) y"
+          "f 3=data_list_term (pre@post)" "boundary_elements element_boundary (pre@y#post)" "related (f 0) y"
           using selection_sound[OF selection] by auto
         obtain xs zs where compared: "f 1=data_list_term xs" "f 3=data_list_term zs"
-          "data_elements xs" "data_elements zs" "rel_mset related (mset xs) (mset zs)"
+          "boundary_elements element_boundary xs" "boundary_elements element_boundary zs" "rel_mset related (mset xs) (mset zs)"
           using support[rule_format, of 1 bag_site "Pattern_Pair data_y data_w"] schema
           by (auto simp: bag_step_schema_def)
         have residual: "zs=pre@post" using selected(2) compared(2)
           by (simp add: data_list_term_injective)
-        have head: "term_formed (f 0) \<and> self_contained_term (f 0)"
+        have head: "term_formed (f 0) \<and> element_boundary (f 0)"
           using comparison_data[OF selected(4)] by blast
         have matching: "rel_mset related (mset (f 0#xs)) (mset (pre@y#post))"
           using rel_mset_Plus[OF selected(4) compared(5)] by (simp add: residual)
@@ -202,7 +207,7 @@ proof -
 qed
 
 theorem comparison_complete:
-  assumes "data_elements xs" "data_elements ys" "rel_mset related (mset xs) (mset ys)"
+  assumes "boundary_elements element_boundary xs" "boundary_elements element_boundary ys" "rel_mset related (mset xs) (mset ys)"
   shows "(bag_site,Pair_Term (data_list_term xs) (data_list_term ys))\<in>positive_meaning P"
   using assms
 proof (induction xs arbitrary: ys)
@@ -224,7 +229,7 @@ next
   qed
   obtain pre post where split: "ys=pre@y#post" using split_list[OF inside] by blast
   have residual: "N=mset (pre@post)" using removal(1) by (simp add: split)
-  have data: "data_elements (pre@y#post)" using Cons.prems(2) split by simp
+  have data: "boundary_elements element_boundary (pre@y#post)" using Cons.prems(2) split by simp
   have selection: "(select_site,Pair_Term x
     (Pair_Term (data_list_term ys) (data_list_term (pre@post))))\<in>positive_meaning P"
     using selection_complete[OF data removal(2)] split by simp
@@ -243,12 +248,12 @@ qed
 theorem comparison_exact:
   "(bag_site,t)\<in>positive_meaning P \<longleftrightarrow>
     (\<exists>xs ys. t=Pair_Term (data_list_term xs) (data_list_term ys) \<and>
-      data_elements xs \<and> data_elements ys \<and> rel_mset related (mset xs) (mset ys))"
+      boundary_elements element_boundary xs \<and> boundary_elements element_boundary ys \<and> rel_mset related (mset xs) (mset ys))"
   using comparison_sound comparison_complete by blast
 
 corollary comparison_lists:
   "(bag_site,Pair_Term (data_list_term xs) (data_list_term ys))\<in>positive_meaning P \<longleftrightarrow>
-    data_elements xs \<and> data_elements ys \<and> rel_mset related (mset xs) (mset ys)"
+    boundary_elements element_boundary xs \<and> boundary_elements element_boundary ys \<and> rel_mset related (mset xs) (mset ys)"
   by (auto simp: comparison_exact data_list_term_injective)
 
 section \<open>Member readings preserve sequence multiplicities\<close>
@@ -264,12 +269,12 @@ proof -
     have "related x x" using compare[OF that(1) that(1)] by simp
     then show ?thesis using compare[OF that(1,2)] by blast
   qed
-  have formed: "term_formed x \<and> self_contained_term x" if "read z x" for z x
+  have formed: "term_formed x \<and> element_boundary x" if "read z x" for z x
   proof -
     have "related x x" using compare[OF that that] by simp
     then show ?thesis using comparison_data by blast
   qed
-  have data: "data_elements ps" "data_elements qs"
+  have data: "boundary_elements element_boundary ps" "boundary_elements element_boundary qs"
     using list_all2_members[OF first] list_all2_members[OF second] formed by blast+
   have matching: "rel_mset related (mset ps) (mset qs) \<longleftrightarrow> mset xs=mset ys"
     by (rule rel_mset_readings[where R=read and C=related, OF first second unique compare])
@@ -295,7 +300,114 @@ qed
 
 end
 
+
+locale related_bags =
+  fixes P :: "(nat,nat,nat,nat) schema_system"
+    and data_site list_site compare_site select_site bag_site :: nat
+  assumes system_formed: "schema_system_formed P"
+    and selection_family: "\<And>c S. ((select_site,c),S)\<in>system_clauses P \<longleftrightarrow>
+      (c,S)\<in>related_selection_clauses data_site list_site compare_site select_site"
+    and bag_family: "\<And>c S. ((bag_site,c),S)\<in>system_clauses P \<longleftrightarrow>
+      (c,S)\<in>related_bag_clauses select_site bag_site"
+    and selection_call: "\<And>t. schema_call_formed P select_site t \<longleftrightarrow> term_formed t"
+    and bag_call: "\<And>t. schema_call_formed P bag_site t \<longleftrightarrow> term_formed t"
+    and data_meaning: "\<And>t. (data_site,t)\<in>positive_meaning P \<longleftrightarrow>
+      term_formed t \<and> self_contained_term t"
+    and list_meaning: "\<And>t. (list_site,t)\<in>positive_meaning P \<longleftrightarrow>
+      (\<exists>xs. t=data_list_term xs \<and> data_elements xs)"
+    and comparison_data: "\<And>x y. (compare_site,Pair_Term x y)\<in>positive_meaning P \<Longrightarrow>
+      term_formed x \<and> self_contained_term x \<and> term_formed y \<and> self_contained_term y"
+begin
+
+sublocale matching: related_occurrences P data_site list_site compare_site select_site bag_site self_contained_term
+  by (unfold_locales)
+    (use system_formed selection_family bag_family selection_call bag_call
+      data_meaning list_meaning comparison_data in auto)
+
+abbreviation related where
+  "related x y \<equiv> (compare_site,Pair_Term x y)\<in>positive_meaning P"
+
+lemma rule:
+  assumes clause: "((d,c),S)\<in>system_clauses P"
+    and selected: "d\<in>{select_site,bag_site}"
+    and ordinary: "schema_material_premises S={}"
+    and assignment: "\<forall>a\<in>schema_variables S. term_formed (f a)"
+    and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
+      (e,evaluate_pattern f p)\<in>positive_meaning P"
+  shows "(d,evaluate_pattern f (schema_conclusion S))\<in>positive_meaning P"
+  by (rule matching.rule) (fact assms)+
+
+theorem selection_sound:
+  assumes holds: "(select_site,t)\<in>positive_meaning P"
+  shows "\<exists>x y pre post. t=Pair_Term x
+    (Pair_Term (data_list_term (pre@y#post)) (data_list_term (pre@post))) \<and>
+    data_elements (pre@y#post) \<and> related x y"
+  by (rule matching.selection_sound) (fact assms)+
+
+theorem selection_complete:
+  assumes "data_elements (pre@y#post)" "related x y"
+  shows "(select_site,Pair_Term x
+    (Pair_Term (data_list_term (pre@y#post)) (data_list_term (pre@post))))\<in>positive_meaning P"
+  by (rule matching.selection_complete) (fact assms)+
+
+theorem selection_exact:
+  "(select_site,t)\<in>positive_meaning P \<longleftrightarrow>
+    (\<exists>x y pre post. t=Pair_Term x
+      (Pair_Term (data_list_term (pre@y#post)) (data_list_term (pre@post))) \<and>
+      data_elements (pre@y#post) \<and> related x y)"
+  by (rule matching.selection_exact)
+
+section \<open>Matching every occurrence through that same definition\<close>
+
+theorem comparison_sound:
+  assumes holds: "(bag_site,t)\<in>positive_meaning P"
+  shows "\<exists>xs ys. t=Pair_Term (data_list_term xs) (data_list_term ys) \<and>
+    data_elements xs \<and> data_elements ys \<and> rel_mset related (mset xs) (mset ys)"
+  by (rule matching.comparison_sound) (fact assms)+
+
+theorem comparison_complete:
+  assumes "data_elements xs" "data_elements ys" "rel_mset related (mset xs) (mset ys)"
+  shows "(bag_site,Pair_Term (data_list_term xs) (data_list_term ys))\<in>positive_meaning P"
+  by (rule matching.comparison_complete) (fact assms)+
+
+theorem comparison_exact:
+  "(bag_site,t)\<in>positive_meaning P \<longleftrightarrow>
+    (\<exists>xs ys. t=Pair_Term (data_list_term xs) (data_list_term ys) \<and>
+      data_elements xs \<and> data_elements ys \<and> rel_mset related (mset xs) (mset ys))"
+  by (rule matching.comparison_exact)
+
+corollary comparison_lists:
+  "(bag_site,Pair_Term (data_list_term xs) (data_list_term ys))\<in>positive_meaning P \<longleftrightarrow>
+    data_elements xs \<and> data_elements ys \<and> rel_mset related (mset xs) (mset ys)"
+  by (rule matching.comparison_lists)
+
+section \<open>Member readings preserve sequence multiplicities\<close>
+
+theorem comparison_readings:
+  assumes first: "list_all2 read xs ps" and second: "list_all2 read ys qs"
+    and compare: "\<And>z w x y. read z x \<Longrightarrow> read w y \<Longrightarrow> related x y \<longleftrightarrow> z=w"
+  shows "(bag_site,Pair_Term (data_list_term ps) (data_list_term qs))\<in>positive_meaning P
+    \<longleftrightarrow> mset xs=mset ys"
+  by (rule matching.comparison_readings) (fact assms)+
+
+section \<open>Complete collection presentations recover equality of their subjects\<close>
+
+theorem comparison_collections:
+  assumes left: "data_collection_presents read A a"
+    and right: "data_collection_presents read B b"
+    and compare: "\<And>z w x y. read z x \<Longrightarrow> read w y \<Longrightarrow> related x y \<longleftrightarrow> z=w"
+  shows "(bag_site,Pair_Term a b)\<in>positive_meaning P \<longleftrightarrow> A=B"
+  by (rule matching.comparison_collections) (fact assms)+
+
+end
+
 text \<open>
+  Matching first exposes an arbitrary element boundary. Formation remains
+  explicit at every occurrence. The existing self-contained data contract
+  is a specialization of that same proof and retains all its public laws.
+  Literal artifact values can therefore use the general boundary without
+  weakening the data specialization or changing either clause family.
+
   The two clause families call explicit definition coordinates in an actual
   formed program. The relation in the exact comparison theorem is the positive
   meaning of that program's comparison call. No external predicate enters the

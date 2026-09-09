@@ -1722,6 +1722,42 @@ permission checker or replace the program named by a cause. Native admission
 of that mathematical evidence, general recorded construction checking, higher
 protocols, reflection, genesis, O-85, and the final repository audit remain open.
 
+Complete construction correspondence now has an ordinary native implementation.
+Eleven definitions with sixteen clauses use the least closure of complete
+retermination and construction admission. Both accounts are admitted in full.
+Base and origin rows retain literal values; selection rows retain exact keys,
+source coordinates, and every selected atom. All permitted nested and outer
+orders are compared, while the ordered inputs and exact output remain fixed.
+The resulting complete identity function contract supplies every presentation
+of the same account. Its own definition bounds support fresh downstream
+extensions without reopening earlier programs. One closed native reference
+precedes future operands.
+
+The occurrence-matching proof now exposes an arbitrary element boundary with
+formation explicit at every use. The existing self-contained bag interface
+retains all its contracts as a specialization. This justified generalization
+lets literal artifact values use the same proof instead of a parallel matcher.
+Complete terminator conversion and collection comparison remain separate
+operations with a proved composition contract.
+
+A reusable two-premise clause tests an actual related witness. When its
+comparison dependency has the complete correspondence contract, its meaning
+is the previously defined invariant completion. Whole-definition admission
+checks the actual singleton clause and variable interface; shared-definition
+agreement transfers an independently proved reference to the actual program.
+This gives a sufficient global invariance theorem. The original recorded-cause
+reduction combines it with exact scope, payload, account, and positive truth.
+An extended evidence environment preserves the original recorded program.
+
+The constructed example has actual native code and checked complete-definition
+evidence. Its new permission entry accepts both base orders; its literal test
+and the earlier order-sensitive program retain their noninvariant meanings.
+Agreement of completion with an original observation uses the same exact
+obligation evaluator. No existing cause or policy is replaced. Joining one
+fixed native checker for the whole sufficient profile remains open, alongside
+general recorded-cause admission, mathematical-proof presentation, higher
+protocols, reflection, genesis, and the final repository audit.
+
 These results are justified by existing collection, table, quotation, scope,
 and program machinery. Their proof parameters are typed relations, not a
 universal datatype of notions. An arbitrary mathematical relation is not

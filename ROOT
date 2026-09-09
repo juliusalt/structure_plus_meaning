@@ -610,3 +610,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Presentation_Generators
     Factor_Construction_Invariance
     Factor_Recorded_Construction_Obligations
+    Factor_Collection_Correspondence
+    Factor_Construction_Comparison
+    Factor_Related_Test_Clauses
+    Factor_Construction_Permission_Completion

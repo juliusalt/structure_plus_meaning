@@ -1408,6 +1408,35 @@ families. Logical completion does not change an assertion node into a proof
 edge. Native presentation of these mathematical accounts and proofs remains
 under O-85, alongside the broader O-84 application and alignment audit.
 
+Construction permission now has an exact reduction to changes of one complete
+unordered field at a time. Every pair of valid complete claims is connected
+by three such changes, with the same ordered inputs, exact sources, selections,
+origins, and output. The selection field retains every nested set presentation.
+The generic generator contract proves subject preservation and complete path
+coverage before reducing global observation invariance to local conditions.
+This bounds the number of changed outer fields, not the complexity inside one.
+
+Each condition retains its actual observation and both compared terms.
+Formation and truth occupy separate parent positions. The concrete structural
+checker discharges the whole family; the order-sensitive counterexample leaves
+a residual. The same evaluator examines existential completion through all
+equivalent presentations. Completion is the least invariant extension and
+agrees with the original test exactly when that test was already invariant.
+Its intended meaning still requires soundness and coverage. Separately completed
+tests need not have a common witness, so their conjunction is not silently moved
+inside one existential completion.
+
+Recorded construction validity has an exact five-condition reduction after
+reading its actual scope, package, and call: least scope, exact payload, complete
+account, global permission invariance, and positive truth. Local permission
+evidence discharges the fourth condition through the general reduction. A true
+call alone leaves it outstanding; altered payloads and extra recorded scope
+remain false conditions. The recorded program and original judgments retain
+their meanings. These mathematical contracts do not add a native universal
+permission checker or replace the program named by a cause. Native admission
+of that mathematical evidence, general recorded construction checking, higher
+protocols, reflection, genesis, O-85, and the final repository audit remain open.
+
 The remaining work includes construction-cause validity and authority readers, complete
 transition material, reflection, genesis, and the system-wide presentation
 audit. Native presentations and checking of the remaining mathematical

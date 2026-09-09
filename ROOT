@@ -605,3 +605,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Method_Development
     Presentation_Development
     Factor_Inference_Development
+    Observation_Invariance
+    Presentation_Completion
+    Presentation_Generators
+    Factor_Construction_Invariance
+    Factor_Recorded_Construction_Obligations

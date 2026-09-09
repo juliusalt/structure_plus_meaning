@@ -5886,3 +5886,70 @@ construction causes, higher protocols, reflection, genesis, and the final
 every-line audit retain their outstanding work. These choices must be
 evaluated through the same discipline as their evidence becomes available;
 no overall obligation status is promoted by this batch.
+
+
+## Local invariance is a proved reduction of the existing global requirement
+
+The next construction and cause work must retain the actual supplied permission
+program. Its existing formation-and-truth invariance condition is global over
+every complete valid account. Replaying one call does not establish that
+condition. The recorded cause also fixes the complete minimal program-and-call
+environment; replacing its program by a wrapper would change that content.
+
+The independent general relationship is invariance under a relation and its
+finite-path closure. The standard function relator states it without a new
+primitive notion of predicates. A proposed presentation generator is admissible
+only when it preserves the independently fixed subject and covers every pair
+of presentations by a path. Under those two obligations, edge observations
+are exactly the global invariance requirement. The empty-generator example
+rejects a vacuous local check with missing coverage. Refinement uses the same
+criterion by simulating every old edge with a path of new ones.
+
+For construction claims, the three unordered fields form a complete product
+of presentations of the fixed base, selection, and origin values. Replacing
+them in turn gives three actual intermediate claims of that same account.
+This proof supplies generator coverage; it is not assumed from a convenient
+sample. The existing five-field format and every nested selected-set order
+remain admitted. Ordered input occurrences, unused source material, and the
+exact claimed output stay fixed. The chosen local boundary is one whole outer
+field. Further descent inside a field may refine it through the generic path
+simulation criterion; no constant bound on internal condition complexity or
+execution cost is claimed by the three-step result.
+
+The candidate enters the existing exact obligation reduction. Each local
+condition keeps the observation function and both terms. Separate formation
+and truth positions qualify these endpoint occurrences, so equal outcomes do
+not merge obligations. The concrete structural admission theorem settles the
+whole family. The previously proved order-sensitive program leaves a residual,
+which cannot be removed by established true conditions.
+
+Existential completion was also considered because it supplies an invariant
+observation for every raw predicate. It is useful as a general mathematical
+construction: it is the least invariant extension on a complete class and is
+idempotent. It is not a justification for changing the existing permission
+policy. Its agreement with the original observation is exactly invariance,
+and that agreement is itself evaluated by the same condition family. An
+independent intended meaning retains separate soundness and true-subject
+coverage requirements. The concrete order counterexample gains a formerly
+false answer after completion while its original program remains inadmissible.
+Two separately completed tests may also require incompatible presentations;
+their conjunction cannot replace a shared existential witness.
+
+The cause specialization keeps its independent original meaning. After actual
+scope, package, and application reading, exact reduction exposes five positions:
+least environment, exact payload, complete account, global permission admission,
+and positive truth. A generic discharge combines local permission evidence with
+the other established conditions. Positive truth alone leaves the global
+condition; wrong payload and excess scope remain explicit false conditions.
+The account stores its original basis, with pieces and output derived. No proof
+field, preferred ordering, alternative program, or new consequence rule is added.
+
+All previously accepted theories and repository validation tools remain byte
+identical in this batch. The new results are mathematical contracts and exact
+reductions. Finiteness of the five-position cause family does not make each
+condition decidable. Native admission of global invariance evidence and the
+general recorded construction checker remain open, as do higher protocols,
+reflection, genesis, native mathematical-proof presentation, and the final
+every-line audit. The existing obligations retain their status. This is a
+further application of the represented evaluation cycle, not a claim that the
+whole foundation has reached a justified stopping point.

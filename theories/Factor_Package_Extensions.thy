@@ -28,9 +28,9 @@ qed
 
 section \<open>A complete closed finite family receives an exact root selector\<close>
 
-theorem native_definition_family_selectable:
+theorem native_definition_family_selection:
   fixes E :: "local_address option artifact_environment"
-  assumes environment: "environment_formed E" and finite: "finite D"
+  assumes environment: "environment_formed E"
     and readings: "\<And>d. d\<in>D \<Longrightarrow> \<exists>p C. native_definition_at E (fst d) (snd d) p C"
     and closed: "\<And>d e. d\<in>D \<Longrightarrow> (d,e)\<in>native_definition_edges E \<Longrightarrow> e\<in>D"
   shows "\<exists>F u Q. environment_formed F \<and> environment_included E F \<and>
@@ -55,7 +55,7 @@ proof -
     "native_root_family_at F u [] L" "rel_ran L=D"
     "\<forall>w\<in>environment_uses E. \<forall>A. artifact_at F w A \<longleftrightarrow> artifact_at E w A"
     "\<forall>w\<in>environment_uses E. \<forall>s x. binds_slot F w s x \<longleftrightarrow> binds_slot E w s x"
-    using root_family_environment_total[OF environment finite targets] by blast
+    using root_family_environment_extension[OF environment targets] by blast
   have kept: "native_package_formed F D \<and> native_program F D=native_program E D"
     by (rule native_dependency_package_included[OF dependency selected(2,1)])
   have package: "native_package_at F u [] (native_program E D)"
@@ -65,6 +65,17 @@ proof -
   show ?thesis by (rule exI[of _ F], rule exI[of _ u], rule exI[of _ "native_program E D"])
     (use selected(1,2,5,6) package definitions in blast)
 qed
+
+theorem native_definition_family_selectable:
+  fixes E :: "local_address option artifact_environment"
+  assumes environment: "environment_formed E" and finite: "finite D"
+    and readings: "\<And>d. d\<in>D \<Longrightarrow> \<exists>p C. native_definition_at E (fst d) (snd d) p C"
+    and closed: "\<And>d e. d\<in>D \<Longrightarrow> (d,e)\<in>native_definition_edges E \<Longrightarrow> e\<in>D"
+  shows "\<exists>F u Q. environment_formed F \<and> environment_included E F \<and>
+    native_package_at F u [] Q \<and> system_definitions Q=D \<and>
+    (\<forall>w\<in>environment_uses E. \<forall>A. artifact_at F w A \<longleftrightarrow> artifact_at E w A) \<and>
+    (\<forall>w\<in>environment_uses E. \<forall>s x. binds_slot F w s x \<longleftrightarrow> binds_slot E w s x)"
+  by (rule native_definition_family_selection[OF environment readings closed])
 
 text \<open>
   Selection consumes the actual complete definition readings and closure under

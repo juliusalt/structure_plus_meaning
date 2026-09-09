@@ -1,5 +1,5 @@
 theory Factor_Positive_Admission
-  imports Factor_Environment_Inclusion Factor_Native_Proofs
+  imports Factor_Environment_Inclusion Factor_Native_Proofs Factor_System_Composition
 begin
 
 section \<open>Positive meaning supplies a closed proof in an extension\<close>
@@ -55,6 +55,15 @@ lemma positive_query_system_formed [simp]: "schema_system_formed positive_query_
 lemma positive_query_definitions [simp]:
   "system_definitions positive_query_system=insert 114 (system_definitions environment_inclusion_system)"
   by (simp add: positive_query_system_def)
+
+lemma positive_query_definition_bound:
+  "system_definitions positive_query_system\<subseteq>{..114}"
+  by auto
+
+lemma positive_query_base_agreement:
+  "systems_agree_on environment_inclusion_system positive_query_system
+    (system_definitions environment_inclusion_system)"
+  by (simp add: positive_query_system_def systems_agree_on_added)
 
 lemma positive_query_call:
   "schema_call_formed positive_query_system d t \<longleftrightarrow>

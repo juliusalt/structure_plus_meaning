@@ -320,6 +320,13 @@ proof -
     using sources[of 244] by auto
 qed
 
+lemma construction_components_row_agreement:
+  "systems_agree_on row_values_system construction_components_system (system_definitions row_values_system)"
+  by (rule whole_agreement_transitive[OF construction_sequence_row_agreement],
+      rule whole_agreement_transitive[OF construction_base_sequence_agreement],
+      rule whole_agreement_transitive[OF construction_fragment_prefix_agreement],
+      rule whole_agreement_transitive[OF construction_source_prefix_agreement construction_components_prefix_agreement])
+
 text \<open>
   Whole agreement, covered union, rooted restriction, and group rebasing
   account for the common definitions. The source, fragment, and assembly

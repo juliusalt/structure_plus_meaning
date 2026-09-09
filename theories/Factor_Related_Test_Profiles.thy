@@ -134,12 +134,15 @@ qed
 
 section \<open>Every compatible pair of actual callees supports a closed candidate\<close>
 
-theorem native_related_test_package_total:
+theorem native_related_test_package_completion:
   assumes reference: "environment_formed C" "environment_included C E"
     and package: "native_package_at E pu pr P" and callees: "k\<in>system_definitions P" "test\<in>system_definitions P"
   shows "\<exists>F u Q d. closed_native_package_at F u [] Q \<and> native_package_environment F u []=F \<and>
     d\<notin>system_definitions P \<and> system_definitions Q=insert d (system_definitions P) \<and>
     native_related_test_package C k F u [] d \<and>
+    (\<forall>z. schema_call_formed Q d z \<longleftrightarrow> term_formed z) \<and>
+    (\<forall>z. (d,z)\<in>positive_meaning Q \<longleftrightarrow>
+      (\<exists>q. (k,Pair_Term z q)\<in>positive_meaning P \<and> (test,q)\<in>positive_meaning P)) \<and>
     (\<forall>e\<in>system_definitions P. \<forall>z.
       (schema_call_formed Q e z \<longleftrightarrow> schema_call_formed P e z) \<and>
       ((e,z)\<in>positive_meaning Q \<longleftrightarrow> (e,z)\<in>positive_meaning P))"
@@ -166,9 +169,32 @@ proof -
     unfolding native_related_test_package_def
     by (rule conjI[OF reference(1)], rule exI[of _ Q], rule exI[of _ H], rule exI[of _ test])
       (use candidate built(1,5) included roles native_package_environment_included[of H u "[]"] in auto)
+  have member: "(v,[])\<in>system_definitions Q" using built(5) by simp
+  have read: "native_related_test_at H (fst (v,[])) (snd (v,[])) k test" using roles by simp
+  have call: "schema_call_formed Q (v,[]) z \<longleftrightarrow> term_formed z" for z
+    by (rule native_related_test_meaning(1)[OF built(4) member read])
+  have compared: "(k,Pair_Term z q)\<in>positive_meaning Q \<longleftrightarrow>
+      (k,Pair_Term z q)\<in>positive_meaning P" for z q
+    using built(8)[rule_format, OF callees(1)] by blast
+  have tested: "(test,q)\<in>positive_meaning Q \<longleftrightarrow> (test,q)\<in>positive_meaning P" for q
+    using built(8)[rule_format, OF callees(2)] by blast
+  have meaning: "((v,[]),z)\<in>positive_meaning Q \<longleftrightarrow>
+      (\<exists>q. (k,Pair_Term z q)\<in>positive_meaning P \<and> (test,q)\<in>positive_meaning P)" for z
+    by (simp only: native_related_test_meaning(3)[OF built(4) member read] compared tested)
   show ?thesis by (rule exI[of _ ?F], rule exI[of _ u], rule exI[of _ Q], rule exI[of _ "(v,[])"])
-    (use closed native_package_closed_environment_fixed[OF closed] built(3,5,8) profile in blast)
+    (use closed native_package_closed_environment_fixed[OF closed] built(3,5,8) profile call meaning in blast)
 qed
+
+theorem native_related_test_package_total:
+  assumes reference: "environment_formed C" "environment_included C E"
+    and package: "native_package_at E pu pr P" and callees: "k\<in>system_definitions P" "test\<in>system_definitions P"
+  shows "\<exists>F u Q d. closed_native_package_at F u [] Q \<and> native_package_environment F u []=F \<and>
+    d\<notin>system_definitions P \<and> system_definitions Q=insert d (system_definitions P) \<and>
+    native_related_test_package C k F u [] d \<and>
+    (\<forall>e\<in>system_definitions P. \<forall>z.
+      (schema_call_formed Q e z \<longleftrightarrow> schema_call_formed P e z) \<and>
+      ((e,z)\<in>positive_meaning Q \<longleftrightarrow> (e,z)\<in>positive_meaning P))"
+  using native_related_test_package_completion[OF reference package callees] by blast
 
 text \<open>
   This independent finite profile requires membership in the actual complete

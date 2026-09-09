@@ -1,5 +1,5 @@
 theory Factor_Scope_Forwarding
-  imports Factor_Package_Membership Factor_Pattern_Determination
+  imports Factor_Package_Membership Factor_Pattern_Determination Factor_Argument_Clauses
     Factor_Definition_Environments Factor_Root_Environments
 begin
 
@@ -37,32 +37,10 @@ lemma scope_call_schema_rule:
   "schema_rule_instance (scope_call_schema b s k e u r) X z \<longleftrightarrow>
     term_formed e \<and> term_formed u \<and> term_formed r \<and> term_formed z \<and>
     (k,package_subject_argument e u r z)\<in>X"
-proof
-  assume rule: "schema_rule_instance (scope_call_schema b s k e u r) X z"
-  obtain V Q where inst: "schema_instance (scope_call_schema b s k e u r) V z Q"
-    and support: "\<forall>s d t. (s,d,t)\<in>Q \<longrightarrow> (d,t)\<in>X"
-    using rule by (auto simp: schema_rule_instance_def)
-  have fields: "term_formed e" "term_formed u" "term_formed r"
-    and bindings: "term_bindings_formed {b} V" and bound: "(b,z)\<in>V"
-    using inst by (auto simp: schema_instance_def scope_call_schema_def schema_formed_def schema_variables_def)
-  have argument: "term_formed z" using bindings bound by (auto simp: term_bindings_formed_def)
-  have premise: "(s,k,package_subject_argument e u r z)\<in>Q"
-    using schema_instance_premise_iff[OF inst, of s k "package_subject_argument e u r z"]
-    by (simp add: scope_call_schema_def fields bound)
-  show "term_formed e \<and> term_formed u \<and> term_formed r \<and> term_formed z \<and>
-    (k,package_subject_argument e u r z)\<in>X"
-    using fields argument support premise by blast
-next
-  assume parts: "term_formed e \<and> term_formed u \<and> term_formed r \<and> term_formed z \<and>
-    (k,package_subject_argument e u r z)\<in>X"
-  have inst: "schema_instance (scope_call_schema b s k e u r) {(b,z)} z
-      {(s,k,package_subject_argument e u r z)}"
-    by (rule scope_call_schema_instance) (use parts in auto)
-  have material: "schema_material_satisfied (scope_call_schema b s k e u r) {(b,z)}"
-    by (simp add: schema_material_satisfied_def scope_call_schema_def)
-  show "schema_rule_instance (scope_call_schema b s k e u r) X z"
-    using inst material parts unfolding schema_rule_instance_def by blast
-qed
+  using argument_call_rule[of
+    "package_subject_pattern (exact_term_pattern e) (exact_term_pattern u)
+      (exact_term_pattern r) (Pattern_Variable b)" b s k X z]
+  by (simp add: scope_call_schema_def argument_call_clause_def)
 
 lemma rename_exact_term_pattern [simp]:
   "rename_pattern f (exact_term_pattern t)=exact_term_pattern t"

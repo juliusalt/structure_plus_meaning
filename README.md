@@ -1501,6 +1501,39 @@ profile does not decide invariance of arbitrary programs. General recorded-cause
 admission, native mathematical contracts and proofs, higher protocols, reflection,
 genesis, and the final repository audit remain open.
 
+The sufficient native profile now covers the invariant completion of every
+actual native test and every entry of every formed finite positive program.
+One reference combines complete account comparison with the universal positive
+query. Its actual shared definitions agree through restriction and independent
+group extension; its native program retains the least closure of both entries.
+
+A supplied test is complete program data in a new fixed-argument clause.
+Its environment need not share compatible private uses with the reference.
+Every future operand has exactly the original test's positive truth. A second
+new clause supplies the least invariant completion, with its actual test callee
+identified in the construction contract. All previous reference calls and
+meanings remain unchanged.
+
+The same observation reduction evaluates agreement with the original test.
+Completed decisions agree exactly when the original truth is invariant on the
+complete account class. Completed truth is false outside that boundary. The
+new variable interface remains separate from an original call-formation
+boundary; truth coverage does not claim equality of those interfaces.
+
+One actual native checker precedes every future source program and admits
+every complete presentation of each constructed policy. Its actual applications
+retain the original checker scope, artifacts, and bindings. Empty positive
+meanings are included; an empty source program supplies no actual test entry.
+Generic argument clauses also supply the previous fixed-result and fixed-scope
+rules. Root selection derives finiteness from the actual formed environment,
+and component agreements are consumed through their owning contracts.
+
+This establishes coverage of invariant permission decisions by constructed
+admitted policies. It does not decide invariance of arbitrary original code,
+replace any recorded program, or give a new policy authority. General recorded
+construction admission, native mathematical contracts and proofs, higher
+protocols, reflection, genesis, and the final repository audit remain open.
+
 The remaining work includes construction-cause validity and authority readers, complete
 transition material, reflection, genesis, and the system-wide presentation
 audit. Native presentations and checking of the remaining mathematical

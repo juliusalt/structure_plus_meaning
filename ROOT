@@ -621,3 +621,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Related_Test_Profiles
     Factor_Related_Test_Admission
     Factor_Construction_Permission_Admission
+    Factor_Argument_Clauses
+    Factor_Argument_Packages
+    Factor_Construction_Query
+    Factor_Program_Tests
+    Factor_Construction_Permission_Coverage

@@ -1,6 +1,6 @@
 theory Factor_Environment_Inclusion_Contracts
   imports Factor_Environment_Inclusion Factor_Presentation_Classes
-    Presentation_Contracts Factor_System_Composition
+    Presentation_Contracts Factor_System_Composition Factor_Component_Agreement Factor_Row_Value_Agreement
 begin
 
 section \<open>Complete environment inclusion owns its relation contract\<close>
@@ -20,58 +20,65 @@ interpretation environment_inclusion_contract: presented_relation_contract
 
 section \<open>The actual inclusion clauses require only data and lookup definitions\<close>
 
+lemma environment_inclusion_package_agreement:
+  "systems_agree_on package_membership_system environment_inclusion_system
+    (system_definitions package_membership_system)"
+  by (simp add: systems_agree_on_added
+    environment_inclusion_system_def artifact_inclusion_system_def replay_admission_system_def
+    retention_admission_system_def replay_slot_list_system_def replay_source_list_system_def
+    replay_slot_reading_system_def replay_source_reading_system_def definition_slot_reading_system_def
+    schema_slot_reading_system_def premise_slot_reading_system_def derivation_admission_system_def
+    proof_claim_checking_system_def keyed_row_join_system_def row_qualification_system_def
+    proof_graph_membership_system_def proof_graph_admission_system_def proof_bound_checking_system_def
+    proof_link_checking_system_def proof_node_reading_system_def discharge_table_reading_system_def
+    binding_table_reading_system_def site_link_vector_system_def application_vector_system_def
+    site_link_reading_system_def site_citation_reading_system_def admitted_instantiation_system_def
+    program_call_list_system_def application_admission_system_def program_call_admission_system_def)
+
+lemma environment_inclusion_definition_agreement:
+  "systems_agree_on definition_call_admission_system environment_inclusion_system
+    (system_definitions definition_call_admission_system)"
+proof -
+  have prefix: "systems_agree_on definition_call_admission_system package_membership_system
+      (system_definitions definition_call_admission_system)"
+    by (simp add: systems_agree_on_added package_membership_system_def
+      definition_edge_reading_system_def definition_clause_reading_system_def
+      package_admission_system_def root_family_reading_system_def located_list_system_def
+      package_closure_admission_system_def definition_callee_list_system_def
+      definition_callee_inclusion_system_def schema_callee_list_system_def schema_callee_inclusion_system_def)
+  show ?thesis by (rule whole_agreement_transitive[OF prefix environment_inclusion_package_agreement])
+qed
+
+lemma environment_inclusion_row_values_agreement:
+  "systems_agree_on row_values_system environment_inclusion_system (system_definitions row_values_system)"
+proof -
+  have prefix: "systems_agree_on row_values_system definition_call_admission_system
+      (system_definitions row_values_system)"
+    by (simp add: systems_agree_on_added definition_call_admission_system_def
+      schema_family_admission_system_def schema_root_list_system_def schema_admission_system_def
+      schema_material_checking_system_def material_rows_checking_system_def material_checking_system_def
+      schema_instantiation_system_def premise_family_instantiation_system_def premise_rows_system_def
+      material_instantiation_system_def record_instantiation_system_def vector_instantiation_system_def)
+  show ?thesis by (rule whole_agreement_transitive[OF prefix environment_inclusion_definition_agreement])
+qed
+
 lemma environment_inclusion_located_agreement:
   "systems_agree_on located_admission_system environment_inclusion_system
     (system_definitions located_admission_system)"
-  by (simp add: systems_agree_on_added
-    environment_inclusion_system_def artifact_inclusion_system_def replay_admission_system_def
-    retention_admission_system_def replay_slot_list_system_def replay_source_list_system_def
-    replay_slot_reading_system_def replay_source_reading_system_def definition_slot_reading_system_def
-    schema_slot_reading_system_def premise_slot_reading_system_def derivation_admission_system_def
-    proof_claim_checking_system_def keyed_row_join_system_def row_qualification_system_def
-    proof_graph_membership_system_def proof_graph_admission_system_def proof_bound_checking_system_def
-    proof_link_checking_system_def proof_node_reading_system_def discharge_table_reading_system_def
-    binding_table_reading_system_def site_link_vector_system_def application_vector_system_def
-    site_link_reading_system_def site_citation_reading_system_def admitted_instantiation_system_def
-    program_call_list_system_def application_admission_system_def program_call_admission_system_def
-    package_membership_system_def definition_edge_reading_system_def definition_clause_reading_system_def
-    package_admission_system_def root_family_reading_system_def located_list_system_def
-    package_closure_admission_system_def definition_callee_list_system_def definition_callee_inclusion_system_def
-    schema_callee_list_system_def schema_callee_inclusion_system_def definition_call_admission_system_def
-    schema_family_admission_system_def schema_root_list_system_def schema_admission_system_def
-    schema_material_checking_system_def material_rows_checking_system_def material_checking_system_def
-    schema_instantiation_system_def premise_family_instantiation_system_def premise_rows_system_def
-    material_instantiation_system_def record_instantiation_system_def vector_instantiation_system_def
-    row_values_system_def application_reading_system_def prospective_instantiation_system_def
-    scoped_instantiation_system_def pattern_instantiation_system_def binder_admission_system_def
-    diagonal_rows_system_def binding_admission_system_def row_keys_system_def
-    quotation_admission_system_def payload_disjoint_system_def data_union_system_def
-    data_subset_system_def data_append_system_def target_projection_system_def)
+proof -
+  have prefix: "systems_agree_on located_admission_system data_append_system
+      (system_definitions located_admission_system)"
+    by (simp add: systems_agree_on_added data_append_system_def target_projection_system_def)
+  have rows: "systems_agree_on located_admission_system row_values_system
+      (system_definitions located_admission_system)"
+    by (rule whole_agreement_transitive[OF prefix row_values_append_agreement])
+  show ?thesis by (rule whole_agreement_transitive[OF rows environment_inclusion_row_values_agreement])
+qed
 
 lemma environment_inclusion_row_keys_agreement:
   "systems_agree_on row_keys_system environment_inclusion_system (system_definitions row_keys_system)"
-  by (simp add: systems_agree_on_added
-    environment_inclusion_system_def artifact_inclusion_system_def replay_admission_system_def
-    retention_admission_system_def replay_slot_list_system_def replay_source_list_system_def
-    replay_slot_reading_system_def replay_source_reading_system_def definition_slot_reading_system_def
-    schema_slot_reading_system_def premise_slot_reading_system_def derivation_admission_system_def
-    proof_claim_checking_system_def keyed_row_join_system_def row_qualification_system_def
-    proof_graph_membership_system_def proof_graph_admission_system_def proof_bound_checking_system_def
-    proof_link_checking_system_def proof_node_reading_system_def discharge_table_reading_system_def
-    binding_table_reading_system_def site_link_vector_system_def application_vector_system_def
-    site_link_reading_system_def site_citation_reading_system_def admitted_instantiation_system_def
-    program_call_list_system_def application_admission_system_def program_call_admission_system_def
-    package_membership_system_def definition_edge_reading_system_def definition_clause_reading_system_def
-    package_admission_system_def root_family_reading_system_def located_list_system_def
-    package_closure_admission_system_def definition_callee_list_system_def definition_callee_inclusion_system_def
-    schema_callee_list_system_def schema_callee_inclusion_system_def definition_call_admission_system_def
-    schema_family_admission_system_def schema_root_list_system_def schema_admission_system_def
-    schema_material_checking_system_def material_rows_checking_system_def material_checking_system_def
-    schema_instantiation_system_def premise_family_instantiation_system_def premise_rows_system_def
-    material_instantiation_system_def record_instantiation_system_def vector_instantiation_system_def
-    row_values_system_def application_reading_system_def prospective_instantiation_system_def
-    scoped_instantiation_system_def pattern_instantiation_system_def binder_admission_system_def
-    diagonal_rows_system_def binding_admission_system_def)
+  by (rule whole_agreement_transitive[OF row_values_row_keys_agreement
+    environment_inclusion_row_values_agreement])
 
 lemma environment_inclusion_located_meaning:
   assumes "d\<in>system_definitions located_admission_system"

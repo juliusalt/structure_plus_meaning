@@ -1,5 +1,5 @@
 theory Factor_Reader_Clauses
-  imports Factor_Data_Comparison Factor_Pattern_Programs
+  imports Factor_Argument_Clauses
 begin
 
 section \<open>An ordinary premise either supplies a result or matches a fixed one\<close>
@@ -106,33 +106,8 @@ qed
 theorem fixed_result_rule:
   "schema_rule_instance (fixed_result_clause x s reader v) X p \<longleftrightarrow>
     term_formed v \<and> term_formed p \<and> (reader,Pair_Term p v)\<in>X"
-proof
-  let ?S="fixed_result_clause x s reader v"
-  assume rule: "schema_rule_instance ?S X p"
-  obtain V Q where inst: "schema_instance ?S V p Q"
-    and support: "\<forall>s d t. (s,d,t)\<in>Q \<longrightarrow> (d,t)\<in>X"
-    using rule by (auto simp: schema_rule_instance_def)
-  have formed: "term_formed v" and bound: "(x,p)\<in>V"
-    and bindings: "term_bindings_formed {x} V"
-    using inst by (auto simp: schema_instance_def fixed_result_clause_def schema_variables_def schema_formed_def)
-  have premise: "(s,reader,Pair_Term p v)\<in>Q"
-    using schema_instance_premise_iff[OF inst, of s reader "Pair_Term p v"] bound formed
-    by (simp add: fixed_result_clause_def)
-  show "term_formed v \<and> term_formed p \<and> (reader,Pair_Term p v)\<in>X"
-    using formed bindings bound support premise by (auto simp: term_bindings_formed_def)
-next
-  let ?S="fixed_result_clause x s reader v"
-  assume parts: "term_formed v \<and> term_formed p \<and> (reader,Pair_Term p v)\<in>X"
-  have inst: "schema_instance ?S {(x,p)} p {(s,reader,Pair_Term p v)}"
-    using parts by (auto simp: schema_instance_def fixed_result_clause_def schema_variables_def
-      schema_formed_def term_bindings_formed_def schema_premise_instance_def single_valued_def rel_dom_def)
-  have material: "schema_material_satisfied ?S {(x,p)}"
-    by (simp add: schema_material_satisfied_def)
-  show "schema_rule_instance ?S X p"
-    unfolding schema_rule_instance_def
-    by (rule exI[of _ "{(x,p)}"], rule exI[of _ "{(s,reader,Pair_Term p v)}"])
-      (use inst material parts in auto)
-qed
+  using argument_call_rule[of "Pattern_Pair (Pattern_Variable x) (exact_term_pattern v)" x s reader X p]
+  by (simp add: fixed_result_clause_def argument_call_clause_def)
 
 section \<open>A complete projection family has the same local meaning\<close>
 

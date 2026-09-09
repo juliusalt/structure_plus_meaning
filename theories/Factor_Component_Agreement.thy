@@ -33,6 +33,20 @@ theorem rooted_agreement_transfer:
   by (rule systems_agree_on_transitive[OF systems_agree_on_sym[OF rooted_system_agreement]],
       rule systems_agree_on_subdomain[OF assms rooted_system_subdomain])
 
+theorem rooted_overlap_agreement:
+  assumes agreement: "systems_agree_on P Q (system_definitions P\<inter>system_definitions Q)"
+  shows "systems_agree_on (rooted_system P roots) Q
+    (system_definitions (rooted_system P roots)\<inter>system_definitions Q)"
+proof -
+  let ?U="system_definitions (rooted_system P roots)\<inter>system_definitions Q"
+  have first: "systems_agree_on (rooted_system P roots) P ?U"
+    by (rule systems_agree_on_subdomain[OF systems_agree_on_sym[OF rooted_system_agreement]]) blast
+  have boundary: "?U\<subseteq>system_definitions P\<inter>system_definitions Q"
+    using rooted_system_subdomain[of P roots] by blast
+  show ?thesis by (rule systems_agree_on_transitive[OF first
+    systems_agree_on_subdomain[OF agreement boundary]])
+qed
+
 context positive_definition_group
 begin
 
@@ -43,6 +57,19 @@ theorem rebased_group:
   shows "positive_definition_group R Q"
   by (rule positive_definition_group.intro[OF target _ fresh],
       rule schema_system_formed_over_mono[OF group_formed whole_agreement_definitions[OF agreement]])
+
+theorem extended_overlap_agreement:
+  assumes agreement: "systems_agree_on P R (system_definitions P\<inter>system_definitions R)"
+    and fresh: "system_definitions Q\<inter>system_definitions R={}"
+  shows "systems_agree_on extended R (system_definitions extended\<inter>system_definitions R)"
+proof -
+  have domain: "system_definitions extended\<inter>system_definitions R=
+      system_definitions P\<inter>system_definitions R"
+    using fresh by (auto simp: system_union_definitions)
+  have first: "systems_agree_on extended P (system_definitions P\<inter>system_definitions R)"
+    by (rule systems_agree_on_subdomain[OF systems_agree_on_sym[OF old_agreement]]) blast
+  show ?thesis unfolding domain by (rule systems_agree_on_transitive[OF first agreement])
+qed
 
 end
 

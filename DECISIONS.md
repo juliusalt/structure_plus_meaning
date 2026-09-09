@@ -6138,3 +6138,103 @@ unavailable shorthand had been parsed as a free function and was not proved.
 This correction avoids importing an unrelated callee-admission program merely
 for that shorthand. The revision preserves all previously accepted statements
 and every other frozen new declaration and assumption.
+
+
+## Native invariant completions cover every supplied finite positive test
+
+The preceding sufficient profile admitted only candidates already sharing the
+fixed comparison reference. The next independent requirement is coverage:
+construct an admitted invariant completion for every actual native test, then
+use native program compilation to cover every entry of every formed finite
+positive program. This does not require deciding the original test's global
+invariance. It requires a construction whose exact meaning is established
+independently and whose agreement condition is evaluated explicitly.
+
+The existing universal positive query already receives the original complete
+environment, package site, entry, and arbitrary operand as ordinary data. A new
+one-premise clause fixes that source data and forwards the future operand to
+the actual query callee. The original source's private uses need not coexist
+with the reference's uses. No candidate-selected truth predicate is installed
+as operative code. The new test's positive truth equals the original test's
+truth at every operand, including when the source contains material clauses.
+
+The account comparator and positive query need one shared reference before
+future tests. Their common definitions are actual identical row operations.
+Two general composition laws propagate overlap agreement through rooted
+restriction and through an independent recursive group. Applying these laws
+twice retains both original programs. The final native reference is their
+least actual two-entry dependency closure. It does not duplicate shared helpers
+merely to avoid accounting for their common material.
+
+Argument construction is a justified common abstraction: fixed-result checking,
+fixed-scope forwarding, and the supplied program test each use one actual callee
+and one identified premise with a fixed argument pattern. The pattern's only
+variable is the future operand, which may be repeated or omitted. The general
+rule preserves arbitrary formed literals and all-support meaning. Formation
+of the operand remains required even when the pattern omits it. The existing
+two rules keep their complete public statements and consume this rule.
+The generic single-clause package compiler supplies native syntax and its
+private coordinate variants, then preserves every old call and meaning.
+
+The related-test package constructor previously exposed a profile and preserved
+old meanings, but its public result did not identify which supplied test drove
+the new entry. The stronger construction contract now exposes that exact
+two-callee equation and the new entry's call boundary. The previous totality
+theorem is a corollary with its original complete statement. This makes the
+universal completion proof consume the constructor's contract directly.
+
+The completion has exactly two fresh definitions beyond the fixed reference:
+the test and the related-witness permission. They remain distinct from each
+other and from every old reference entry. The test retains the original source
+truth; the permission is its independently defined least invariant completion.
+The reference's old interfaces and meanings remain unchanged. The same native
+profile checker admits every complete context presentation of this candidate.
+Its native code is fixed before all future source programs, and each such
+presentation has an actual formed positive application retaining the checker
+scope, artifacts, and outgoing bindings.
+
+The exact criterion for agreement with the original decisions is the existing
+observation reduction. Soundly settled facts remove only their established
+obligation occurrences. Completion agrees with the boundary-restricted original
+truth exactly when that truth is invariant on the complete account class.
+Every globally invariant original permission therefore has an admitted policy
+with the same decisions on complete accounts. Completion remains false outside
+that class. A variable interface in the new code is not asserted to preserve
+an arbitrary original interface, even when its positive truth is invariant.
+
+This evaluates a supplied construction candidate through the existing complete
+meaning and residual mechanisms. It does not use a successful construction as
+a stopping claim for arbitrary-code admission, reflection, or the whole system.
+Empty positive meanings are covered. An empty program supplies no actual entry;
+the theorem's entry premise reflects that boundary. Earlier constructed
+positive and noninvariant examples remain unchanged, and completion still
+does not authorize replacing their programs or their recorded causes.
+
+Two ownership repairs accompany the construction. Actual anchored targets in
+a formed environment already lie in its finite position family, so root and
+complete-definition selection now derive finiteness internally. Existing
+finite-premise statements remain corollaries. The complete environment-inclusion
+agreements, positive-query base agreement, and construction row agreement now
+belong to their component owners. Later clients compose those facts instead
+of reopening the earlier native reader implementations.
+
+All 605 other accepted theories and every repository validation tool remain
+byte-identical. Every earlier public declaration and its enclosing assumptions
+is preserved. The explicit import changes retain all earlier ancestors; the
+fixed-result theory reaches its previous parents through the new common rule
+owner. Frozen declarations, scopes, imports, source identities, existing failure
+fixtures, and the full session are checked together. Obligation statuses remain
+unchanged. General recorded-construction admission, native mathematical-proof
+checking, higher protocols, reflection, genesis, and the final every-line audit
+remain open.
+
+The frozen proof run exposed a coordinate boundary in the first completion
+proof: its source theorem permits arbitrary use types, whereas complete
+environment quotation uses native option-address coordinates. The general
+source contract is retained. A new shared program_test_completion theorem
+uses the existing injective program compiler once, then quotes that exact
+native representation. Both the original native-source theorem and the
+abstract-program theorem consume this stronger construction directly. No
+existing declaration or assumption is narrowed, and no double compilation
+is required. The explicit revision adds this one general theorem; the other
+diagnostic repairs change only binder, formation, and account witness proofs.

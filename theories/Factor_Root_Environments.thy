@@ -4,15 +4,31 @@ begin
 
 section \<open>Installing an actual complete root selector over an existing environment\<close>
 
-theorem root_family_environment_total:
+lemma anchored_family_finite:
+  assumes "environment_formed E"
+    "\<forall>d\<in>D. \<exists>R. artifact_at E (fst d) R \<and> anchor_formed (R,snd d)"
+  shows "finite D"
+proof -
+  have inside: "D\<subseteq>environment_positions E"
+  proof
+    fix d assume "d\<in>D"
+    then obtain R where target: "artifact_at E (fst d) R" "anchor_formed (R,snd d)"
+      using assms(2) by blast
+    show "d\<in>environment_positions E" using target by (cases d) (auto simp: anchor_formed_def)
+  qed
+  show ?thesis by (rule finite_subset[OF inside environment_positions_finite[OF assms(1)]])
+qed
+
+theorem root_family_environment_extension:
   fixes E :: "local_address option artifact_environment"
-  assumes ef: "environment_formed E" and fin: "finite D"
+  assumes ef: "environment_formed E"
     and targets: "\<forall>d\<in>D. \<exists>R. artifact_at E (fst d) R \<and> anchor_formed (R,snd d)"
   shows "\<exists>F u Q. environment_formed F \<and> environment_included E F \<and> u \<notin> environment_uses E \<and>
     native_root_family_at F u [] Q \<and> rel_ran Q = D \<and>
     (\<forall>v\<in>environment_uses E. \<forall>R. artifact_at F v R \<longleftrightarrow> artifact_at E v R) \<and>
     (\<forall>v\<in>environment_uses E. \<forall>k w. binds_slot F v k w \<longleftrightarrow> binds_slot E v k w)"
 proof -
+  have fin: "finite D" by (rule anchored_family_finite[OF ef targets])
   obtain ds :: "local_address option definition_site list" where enumeration: "set ds=D" "distinct ds"
     using finite_distinct_list[OF fin] by metis
   have addresses: "\<forall>d\<in>set ds. octets_formed (snd d)"
@@ -43,6 +59,16 @@ proof -
     (use installed read range in blast)
 qed
 
+theorem root_family_environment_total:
+  fixes E :: "local_address option artifact_environment"
+  assumes ef: "environment_formed E" and fin: "finite D"
+    and targets: "\<forall>d\<in>D. \<exists>R. artifact_at E (fst d) R \<and> anchor_formed (R,snd d)"
+  shows "\<exists>F u Q. environment_formed F \<and> environment_included E F \<and> u \<notin> environment_uses E \<and>
+    native_root_family_at F u [] Q \<and> rel_ran Q = D \<and>
+    (\<forall>v\<in>environment_uses E. \<forall>R. artifact_at F v R \<longleftrightarrow> artifact_at E v R) \<and>
+    (\<forall>v\<in>environment_uses E. \<forall>k w. binds_slot F v k w \<longleftrightarrow> binds_slot E v k w)"
+  by (rule root_family_environment_extension[OF ef targets])
+
 lemma native_definition_has_anchor:
   assumes read: "native_definition_at E u r p C"
   shows "\<exists>R. artifact_at E u R \<and> anchor_formed (R,r)"
@@ -63,9 +89,7 @@ theorem native_dependency_package_selectable_with_roots:
     native_package_roots F u []=D"
 proof -
   have ef: "environment_formed E" using package by (simp add: native_package_formed_def)
-  have finite_sites: "finite (native_definition_sites E D)" by (rule native_package_sites(2)[OF package])
   have roots: "D \<subseteq> native_definition_sites E D" by (rule native_definition_roots)
-  have fin: "finite D" by (rule finite_subset[OF roots finite_sites])
   have targets: "\<forall>d\<in>D. \<exists>R. artifact_at E (fst d) R \<and> anchor_formed (R,snd d)"
   proof (intro ballI)
     fix d assume member: "d \<in> D"
@@ -76,7 +100,7 @@ proof -
   qed
   obtain F u Q where installed: "environment_formed F" "environment_included E F"
     "native_root_family_at F u [] Q" "rel_ran Q=D"
-    using root_family_environment_total[OF ef fin targets] by metis
+    using root_family_environment_extension[OF ef targets] by metis
   have copied: "native_package_formed F D \<and> native_program F D = native_program E D"
     by (rule native_dependency_package_included[OF package installed(2,1)])
   have native: "native_package_at F u [] (native_program E D)"

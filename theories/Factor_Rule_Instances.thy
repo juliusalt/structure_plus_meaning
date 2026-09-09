@@ -20,6 +20,11 @@ lemma evaluate_pattern_formed:
   shows "term_formed (evaluate_pattern f p)"
   using assms by (induction p) auto
 
+lemma evaluate_pattern_cong:
+  assumes "\<And>a. a\<in>pattern_variables p \<Longrightarrow> f a=g a"
+  shows "evaluate_pattern f p=evaluate_pattern g p"
+  using assms by (induction p) auto
+
 lemma pattern_instance_evaluation:
   assumes sv: "single_valued V" and inst: "pattern_instance V p t"
     and assignment: "\<forall>a\<in>pattern_variables p. (a,f a)\<in>V"

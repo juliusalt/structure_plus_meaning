@@ -86,12 +86,11 @@ proof -
     have old: "d\<in>system_definitions P" using member False by simp
     show ?thesis using native_package_edge_closed[OF copied old edge] by simp
   qed
-  have finite: "finite ?D" using system_definitions_finite[OF native_package_system_formed[OF package]] by simp
   have selectable: "\<exists>F v Q. environment_formed F \<and> environment_included H F \<and>
     native_package_at F v [] Q \<and> system_definitions Q=?D \<and>
     (\<forall>w\<in>environment_uses H. \<forall>A. artifact_at F w A \<longleftrightarrow> artifact_at H w A) \<and>
     (\<forall>w\<in>environment_uses H. \<forall>s x. binds_slot F w s x \<longleftrightarrow> binds_slot H w s x)"
-  proof (rule native_definition_family_selectable[OF installed(1) finite])
+  proof (rule native_definition_family_selection[OF installed(1)])
     fix d assume member: "d\<in>?D"
     show "\<exists>p C. native_definition_at H (fst d) (snd d) p C" by (rule reads[OF member])
   next

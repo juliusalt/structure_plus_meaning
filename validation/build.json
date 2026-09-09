@@ -1,7 +1,7 @@
 {
-  "invocation": "48d84a7d-be10-4d33-9e8a-f6255f6fc671",
+  "invocation": "52732643-6e16-48ce-b955-ac9c29a99fd0",
   "status": "accepted",
-  "started_utc": "2026-09-09T03:43:51.887270+00:00",
+  "started_utc": "2026-09-09T04:54:32.460708+00:00",
   "command": [
     "/opt/isabelle/bin/isabelle",
     "build",
@@ -17,7 +17,7 @@
   "exit_code": 0,
   "session_diagnostics": "",
   "sources": {
-    "ROOT": "7d3a20e1f80821d2fe4d048b8b4f167d364ace8f7dd75765cf4ef38bd014cc97",
+    "ROOT": "416d236d8dc329931cf76d90f8b1093cd1ae26e3b2fbbdc1a604320ee96183d5",
     "theories/Bag_Difference_Witnesses.thy": "d5b919d0e2fb895fcb241ca351faa839a108a639a4f374b724941439746efe33",
     "theories/Bag_Readings.thy": "03d4158d527863bfd03904cfb3ae2b13f3caf62fc9ef8f9a0644754dae34cbae",
     "theories/Bootstrap_Finite_Closure.thy": "cbff1345a5a97a8108f2022d99345a7423e93cccc01580929d4054f42a5e031c",
@@ -96,6 +96,7 @@
     "theories/Factor_Complete_Data_Admission.thy": "dd6c6b1e56315c163927f849fe6281c6eb9ac3834d25453ff3030ae8995030c7",
     "theories/Factor_Complete_Data_Quotation.thy": "2c108ba4a4c412c480dc163a67d418b013972d087efb18c46a4dc4089f119202",
     "theories/Factor_Complete_Data_Recognition.thy": "1875f84d3d68fa1209b683c064eef11ff7f25279f9af30f64bb18b7db3188ba5",
+    "theories/Factor_Composed_Readings.thy": "bda422ffc57cfdf88cc689cabd407bf6b711b94631da9788192b1ed3da85f64c",
     "theories/Factor_Constrained_Contracts.thy": "7fee7350ed9dfbb47a7b6334214843633ff7c005ef0677c4257862db01c6842a",
     "theories/Factor_Constrained_Readings.thy": "ae923ae14ef3f01f3ef888a12afc83cc1d1ffaaf5a891ed1dca1294125a6c348",
     "theories/Factor_Construction.thy": "67e371fe66fb56aef0af64507a32a99eb2be3b2ee964283742c1a01c982a73e9",
@@ -467,6 +468,11 @@
     "theories/Factor_Site_Permission.thy": "aa67b5ed44103451b0ec74aa46c489aecc549eed3dbb442478966548cbeb0e5c",
     "theories/Factor_Site_Values.thy": "1e76521e7d152b5f7549ab3784f6332e4c2bde47870c811cf6b236e59b83dfd7",
     "theories/Factor_Slot_Observations.thy": "e61e0f52db3a555ac6d1f16a7a4234a7fc90c64c71eeb9f65ea169508dcd124c",
+    "theories/Factor_Source_Admission.thy": "16be9e71c4a1aeb5f41ff6db5222c831b354bac275f97d527ac3e824fc18a171",
+    "theories/Factor_Source_Clauses.thy": "df91c262472024878916419db77dae7d19bb7d4f9008a7a81ada426e7ef27ef2",
+    "theories/Factor_Source_Contracts.thy": "21579c4e3cf7abd640780baa7134d8ee6f5c3307c0792a75a44cc729be2f5fa6",
+    "theories/Factor_Source_Lookup.thy": "a5f762bc4d93a38ab2f8a92bf0a7db83743b38f8e7cfe5f25a92653a6af5b6b6",
+    "theories/Factor_Source_Presentations.thy": "00592097ada5f8ff4e373607e85d04e642a05a5086c126786dc2e2afa5eb3211",
     "theories/Factor_Structural_Collections.thy": "c1ba5a8e534973cfdcb89787629a4440b25ed150909f00b46b99864a56a4f174",
     "theories/Factor_Structural_Table_Admission.thy": "838e1112106278fb528e7b2f68716d85277da2d723ea2db4333a3a0f053474aa",
     "theories/Factor_Structural_Table_Clauses.thy": "c6510e87a9e434bb66308cfc5fca7dbfebffceac51f981b4e1dee6ec57b1011e",
@@ -483,6 +489,7 @@
     "theories/Factor_System_Unions.thy": "c0626aa280e5f72ea93b9dde0cb25a29f9c4a868b1bbaac72642a8f7f1e580cb",
     "theories/Factor_Table_Admission_Profiles.thy": "f354570c52f048ade765f825f84285973eb1cbf99c258967933fa6c9663bd506",
     "theories/Factor_Table_Assembly.thy": "c4386068cab397cd9f9dad9026206f06f179cca4036efe97c49185fd8e4d17ec",
+    "theories/Factor_Table_Boundaries.thy": "fd19d97112a36051dbb426c0ad6e6c8eedf97dc0a57b1ec482b838fd249d552c",
     "theories/Factor_Table_Copy.thy": "baced2f7051133f843e3f9b0f2bc625622b88bf28378dc5fb865993a4dad01c1",
     "theories/Factor_Table_Enumeration.thy": "32d2d325f556d4d5af688c85a14ca9469eea04c7509acdf14c805cc965a89c1d",
     "theories/Factor_Table_Literal_Lookup.thy": "c4e412c4b39d317bd4327ad72ea054602696262e67682dbd026588794bdcfefb",
@@ -601,6 +608,6 @@
   "isabelle_version": "Isabelle2025-2",
   "sources_unchanged": true,
   "tools_unchanged": true,
-  "finished_utc": "2026-09-09T03:48:14.085875+00:00",
-  "log_sha256": "b3e9f5b5cc60989e957c35f07b99fac1246eee4f3059db981a5b17ae82c48663"
+  "finished_utc": "2026-09-09T04:58:52.835616+00:00",
+  "log_sha256": "c15adb91ef26708eea39fdc5ad0249e6bffdf8d3342c2c985b67bb47e1119e89"
 }

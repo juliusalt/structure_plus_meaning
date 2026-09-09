@@ -578,3 +578,10 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Term_Sequence_Operations
     Factor_Term_Sequence_Contracts
     Factor_Table_Literal_Lookup
+    Factor_Table_Boundaries
+    Factor_Composed_Readings
+    Factor_Source_Presentations
+    Factor_Source_Clauses
+    Factor_Source_Admission
+    Factor_Source_Lookup
+    Factor_Source_Contracts

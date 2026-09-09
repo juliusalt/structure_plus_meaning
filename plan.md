@@ -1583,9 +1583,28 @@ full boundary: keys require self-contained data, while values need only be
 formed terms. Their earlier stronger-input theorems reuse these general laws.
 Complete literal-table lookup reuses the existing key collector. A singleton
 fibre alone does not admit the whole table, as duplicated unrelated keys show.
-These are source-lookup prerequisites. Complete construction admission,
-global permission invariance, recorded construction causes, native mathematical
-proof presentation, and the final repository audit remain open.
+Complete source admission and lookup now compose those prerequisites.
+Whole-artifact literals, ordered input occurrences, and complete base tables
+have owned presentation classes. Products and restriction give the exact
+query domain: the supplied source must actually exist. Both native lookup
+branches first admit the entire context, including all unused members.
+The existing position operation retains repeated input occurrences; the
+existing key collector is used only with an admitted complete functional table.
+
+The original natural and payload forms keep input positions and base keys
+distinct. Native retermination preserves the actual input and table order.
+Missing sources, end positions, malformed unused members, and duplicate
+unrelated rows remain rejected. General table-boundary laws lift component
+restrictions; a general two-reader profile composes complete function contracts
+through one actual intermediate presentation. Source lookup uses that profile
+with whole-artifact projection to return every compatible artifact-data form.
+
+Eight definitions contain eleven ordinary clauses over the least closure of
+six actual external callees. Four public sites precede all future operands,
+preserving exact program scope, artifacts, and bindings. Source availability
+is established; complete construction admission, global permission invariance,
+recorded construction causes, native mathematical-proof presentation, and
+the final repository audit remain open.
 
 Construction permission retains its global formation-and-truth invariance
 condition over all compatible account presentations. A positive call alone

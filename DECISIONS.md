@@ -5615,3 +5615,66 @@ These source-lookup contracts prepare complete construction admission and its
 recorded cause join. Their global permission condition and O-85 mathematical
 proof presentations remain open, as do higher protocols and the final
 repository audit. This batch changes no overall obligation state.
+
+
+## Complete source lookup composes existing boundary notions
+
+The independently defined source context contains an ordered artifact list
+and a finite functional base table. Its query also contains an actual input
+position or base key. Existing construction, selection, and permission
+definitions retain their meanings. This batch makes source availability
+native before joining it to fragment selection and complete construction.
+
+Whole-artifact literals have a complete class derived from their injective
+existing constructor. The material-projection reader supplies all artifact
+data presentations and, by ordinary projection, literal admission. The input
+sequence retains order and repeated occurrences. The base table retains all
+keys and exact artifact values in every complete row order. General products,
+table classes, retermination, and subdomain restriction supply the context
+and query classes. No stored result, source-role tag, or canonical table order
+is introduced. The existing source function is used only under actual source
+membership; its total host-language default is never a successful result.
+
+The chosen implementation admits the whole context before either lookup
+branch. An alternative could distribute the guards across the branches, but
+one common source contract keeps the complete boundary local and makes unused
+members explicit. The existing list-position operation handles input sources.
+The existing key collector handles base sources only after whole-table
+functionality and every row's formation have been established. Its singleton
+result therefore denotes precisely the actual entry. A duplicated unrelated
+key still permits singleton collection at another key but is rejected by
+source admission. Missing keys and end positions remain outside the query
+domain, even if a later fragment would select no atoms.
+
+The original natural and payload constructors separate the two source roles.
+Changing the natural representation without a role boundary would conflate
+input position zero with the empty base key, so this implementation uses the
+already proved exact terminator conversion instead. A witness admits both
+roles in one context with independently supplied artifact values. Repeated
+input positions remain different queries even when their outputs agree.
+
+Two general additions contain recurring reasoning. Table component restrictions
+lift through the complete row relation, and formed values need not be
+self-contained. Retermination transports relational key and value classes.
+The ordinary two-reader composition profile shares one actual intermediate
+term at separate premise sockets; complete contracts with that same class
+give a complete composed function contract through the existing relational
+composition theorem. Different intermediate classes still need their proved
+correspondence. This profile is justified independently by sequential reading
+and is instantiated here to convert the exact looked-up literal into every
+artifact-data presentation. No representation-specific conversion proof is
+carried into that client.
+
+The native lookup pairs the complete query `(context,index)` with its
+result. This is the binary relation boundary consumed by the general
+composition profile; grouping the existing fields adds no stored value.
+
+Eight definitions contain eleven ordinary clauses over the least closure of
+six actual external callees. Complete agreement preserves their original
+interfaces, clause families, and meanings. Four public operation sites are
+fixed before future operands, preserving the exact native scope and every
+original artifact and binding. This establishes source availability, not a
+construction policy's permission or global invariance. Complete construction
+admission, recorded construction causes, higher protocols, reflection,
+genesis, native mathematical-proof presentation, and the final repository
+audit remain open. No overall obligation state is promoted.

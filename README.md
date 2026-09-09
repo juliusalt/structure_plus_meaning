@@ -98,6 +98,13 @@ and stopping. Candidate generation may remain external. The same account must
 accept a candidate that is itself a generalization method. Prose instructions
 alone do not satisfy this requirement.
 
+The owner's subsequent clarification requires depth assessment to retain
+the reasons for its conclusions. Relevant case relationships determine which
+observations are adequate, where useful generalizations may lie, how their
+search is guided, and how candidates are compared. Observation choice and
+search-scope coverage must themselves enter the reusable evaluation account.
+A conclusion about one chosen measure does not settle a broader depth question.
+
 The work is incomplete. The current active session establishes the structural
 and data basis, relative footprints, exact artifacts, fragments, and assembly.
 Scoped citation environments, structural citation recognition, record and family representations,
@@ -1368,13 +1375,13 @@ Finite functional inference rules determine a least closure from established
 seeds. An exact comparison criterion reduces preservation of every conditional
 use to the immediate source rules. Unsupported cycles supply no proof.
 
-A declared immediate-premise bound exposes a method's conditional capability.
-Selection preserves existing capability; maximality permits incomparable
-alternatives, while complete coverage accounts for every alternative.
-A finite frontier justifies stopping only through a proved dominating cover
-of the intended scope. Reachability includes paths through plateaus. Semantic
-completeness gives a separate stopping proof over an infinite class of methods.
-Neither stopping criterion implies completion of an unrelated requirement.
+An immediate-premise bound exposes one conditional-capability question.
+The general selection order accepts witnessed uses from multiple meaningful
+facets. An observation basis must preserve and reflect the independently
+stated comparison; a covering method must account for the intended candidate
+scope. Directed losses and gains retain both improvements and tradeoffs.
+The depth investigation below evaluates these choices and uses their reasons
+to direct further search. The earlier bounded comparison remains one case.
 
 The finite evaluator checks the entire supplied rule table and obligation
 family, computes their exact least closure, and reports the exact remaining
@@ -1383,7 +1390,7 @@ boundary and exports to SML. Rule formation does not establish semantic
 soundness, and a finite supplied table does not silently cover an infinite
 method. General closure remains a mathematical derivability account.
 
-Arbitrary finite conjunctions demonstrate the full comparison: flat and binary
+Arbitrary finite conjunctions demonstrate that comparison: flat and binary
 methods have equal unbounded conditional capability, but only the binary
 method retains it with two immediate premises. Semantic completeness proves
 coverage of every uniformly sound conjunction method at that bound. Missing
@@ -1407,6 +1414,43 @@ general closure, and actual conditional graphs provide their exact assertion
 families. Logical completion does not change an assertion node into a proof
 edge. Native presentation of these mathematical accounts and proofs remains
 under O-85, alongside the broader O-84 application and alignment audit.
+
+Depth investigation now retains the reasons that connect assessment, search,
+comparison, and stopping. A profile qualifies each witnessed use by its facet.
+An inadequate observation choice exposes the actual candidate pair it fails
+to distinguish. An adequate larger family supplies a missing facet and witness;
+if the whole proposed observation language is inadequate, that failure remains
+visible. The intended comparison is specified before observations are selected.
+
+The same evaluator examines the observation method and an explicit covering
+method that names a representative for every alternative. Their conditions,
+and the final frontier comparisons, retain all origins. A missing use determines
+a preserving attainment goal. Backward demand follows actual inference rules,
+retains every premise occurrence, and preserves every answer and residual for
+the requested goals. Targeted development retains complete paths, including
+plateaus. Reachability alone never establishes a proof.
+
+The conjunction case shows why the earlier justification was insufficient.
+Concatenation preserves the binary method's complete two-premise capability,
+and supports balanced constructions for arbitrary finite lists. An unbounded
+family has strict dependency-round gains. Round observations retain the earlier
+conditional capability, so the stronger basis need not duplicate it.
+
+The reader case has an exact case-dependent criterion: input coverage is
+adequate for comparing all sound total identity witnesses precisely when
+presentations are unique. Otherwise, actual compatible outputs witness the
+missing distinction and direct the existing completion construction. The
+complete reader covers the whole witness class through an explicit covering
+method. Output observations already determine input availability.
+
+Establishment size and reuse scope remain explicit as well: sharing an established
+body benefits repeated uses, while establishing an unused body still has a size.
+These structural counts and proof rounds do not stand in for elapsed time.
+The finite specialization returns all comparison mismatches, demanded conditions,
+and their actual rule and premise reasons, and preserves the original evaluator
+including rejection of unused malformed rules. It exports to SML. Native
+checking of these mathematical contracts, their broader application, and the
+final repository audit remain under O-84 and O-85.
 
 Construction permission now has an exact reduction to changes of one complete
 unordered field at a time. Every pair of valid complete claims is connected

@@ -629,3 +629,11 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Construction_Cause_Presentations
     Factor_Construction_Cause_Readings
     Factor_Construction_Cause_Material
+    Candidate_Observations
+    Inference_Demands
+    Candidate_Investigation
+    Inference_Rounds
+    Method_Investigation
+    Conjunction_Investigation
+    Presentation_Investigation
+    Finite_Investigation

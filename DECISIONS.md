@@ -5806,15 +5806,16 @@ and residual definitions for an actual complete table. Standard monotone
 iteration supplies termination and leastness; an SML export checks that this
 finite specialization has operative code. It is not a new native Factor entry.
 
-For investigating depth, the chosen observable is capability under a declared
-bound on immediate premise occurrences. This choice is not forced by intent:
-it measures one explicit aspect of locality, without choosing an arbitrary
-weighted score. It does not claim to measure all condition complexity, proof
-size, execution cost, or semantic usefulness. A complicated opaque premise
-does not become simple because it occupies one socket. Its own reduction can
-be investigated with the same machinery. Establishing and installing a
-derived rule also has a prior proof obligation; its later interface size
-does not erase that work.
+The immediate-premise bound establishes a particular locality comparison.
+It is insufficient as the justification for a broader depth decision. The
+owner's subsequent correction requires the choice of observations and search
+scope to be assessed, and the resulting reasons to guide the investigation.
+The later depth account below supplies those relationships. In particular,
+concatenation preserves the binary method's complete capability at this bound
+while improving dependency rounds through an unbounded family. Completeness
+for the earlier observable therefore does not settle the relevant comparison.
+The establishment of a derived rule remains a separate obligation from its
+later use.
 
 Selection is consequently a partial order. A maximal candidate has no
 dominating alternative, but incomparable alternatives may remain. Complete
@@ -6324,3 +6325,122 @@ the correction supplies Isabelle's required lexical form. The frozen batch
 was archived and renewed explicitly for that syntax correction. Other repairs
 instantiate the declared relation and provide its actual witnesses without
 changing any statement, definition, scope, or import.
+
+
+## Depth investigation retains reasons and governs its own observations and scope
+
+The owner's further 2026-09-09 correction concerns the effectiveness of the
+complete development process. A weak depth decision can prevent useful
+general notions from being used where they matter most. Reasons must expose
+what is missing and direct the choice of search goals, transformations, and
+comparisons. Merely replacing one scalar by several unchecked scores would
+leave the same problem.
+
+The recorded-construction milestone was already applied, reviewed, and in its
+full-session check. It was validated and delivered first, preserving a complete
+accepted boundary. Investigation of this correction then took priority over
+physical composition of the construction readers. That composition remains
+open and will consume the resulting discipline.
+
+The existing selection theorems already accept arbitrary capability sets.
+The missing relationship was between the independently intended comparison,
+the observations selected to assess it, and the search that consumes the
+assessment. The new account reuses those selection and reduction theorems.
+It introduces no primitive notion kind, privileged method level, or externally
+trusted decision flag.
+
+### The comparison question precedes its observations
+
+An observation profile retains a facet and an actual witnessed use. Its two
+directed differences expose both gains and losses. A preservation claim must
+account for the whole current profile; a new use with a loss elsewhere remains
+an explicit tradeoff. No arbitrary weighted ranking resolves incomparable
+cases.
+
+The intended comparison is specified from the independent subject and its
+relevant uses before observations are selected. An observation basis must
+preserve and reflect that comparison on the stated candidate domain. Its
+failure retains the actual pair of candidates. When an adequate larger family
+is available, the failure identifies an omitted facet and distinguishing use.
+Adding that facet strictly improves the observation method's discrimination.
+If even the whole proposed observation language misses the distinction, the
+counterexample remains a condition for further development.
+
+This makes observational adequacy an evaluated claim, rather than an inference
+from choosing a measurable feature. A general down-set construction proves
+that preorders have observation bases; it does not make their arbitrary
+semantics executable. Finite candidate domains have finite bases when the
+whole observation family is adequate. Neither existence theorem establishes
+that a finite candidate domain covers all relevant future developments.
+Essential-facet witnesses separately justify irredundancy.
+
+### Reasons determine further work
+
+A missing use determines an attainment goal that also retains the current
+profile. Available inference rules expose their complete premise families;
+backward demand preserves the actual rule and each identified use of a
+condition. Established evidence ends its own expansion. Alternatives remain
+separate rules and their premises remain conjunctive. Restricting inference
+to that complete demand preserves every original answer and residual for the
+requested goals. An unsupported reachable cycle still supplies no proof.
+
+The target also determines a relation of development steps. Its completeness
+theorem preserves every path to the requested result, including plateaus and
+intermediate states that do not themselves improve a measure. The theorem is
+relative to the actual supplied development relation. Its intended coverage
+requires separate evidence; a finite edge list does not certify that coverage.
+
+A covering method names the representative for every alternative in the
+intended candidate scope. Its membership and preservation claims have their
+own complete condition family. The same evaluator assesses observation
+selection, the covering method, and the final frontier comparisons. The
+combined stopping theorem consumes their separate rule-soundness and
+established-evidence accounts. It retains the reasons for closing the stated
+comparison question and cannot use the frontier as its own coverage proof.
+
+### Evidence for the chosen facets and constructions
+
+The choices are justified by existing relationships in the package:
+
+| Choice | Evidence and resulting use |
+|---|---|
+| Retain dependency rounds as well as logical consequences | Inference has actual finite premise dependencies. The union of all rounds is exactly the earlier closure, while local round preservation has its own exact simulation criterion. Thus rounds add a justified distinction and their projection recovers conditional capability. |
+| Investigate concatenation after binary conjunction is width-complete | Concatenation is an independent list relationship and head-tail introduction is its specialization. Balanced construction covers arbitrary finite lists. A repeated list of length two to the n needs only n concatenation rounds, while the binary method from singleton seeds cannot exceed length n plus one in those rounds. The strict gain persists for every n at least two, despite equal complete two-premise capability. |
+| Compare every compatible reader output | The existing function contract quantifies every permitted output presentation. All sound total identity witnesses already have the same input coverage. Input-only observations are adequate for their whole comparison exactly when presentations are unique. Otherwise, two actual presentations expose the missing use and direct the existing completion construction. |
+| Remove weaker observations already determined by stronger ones | Round observations already retain conditional capability. Complete output observations already determine input availability. The stronger basis therefore need not duplicate the weaker facet in these cases. The same candidate evaluator justifies the observation selection. |
+| Include establishment size and reuse scope when that is the question | A finite shared body, its copied occurrences, and client interfaces give explicit structural counts. Sharing reduces size for repeated uses, while an unused established body still contributes size. The workload is part of the comparison domain. These counts are not elapsed time or evidence that the body is valid. |
+| Keep setup proof obligations separate from later interface depth | Derived-rule completion is conservative, but an installed shortcut can expose a one-round use whose establishment in the source needs two rounds. The round comparison reduction retains that extra condition instead of treating the shortcut as free. |
+
+The reader application supplies an explicit cover of the entire sound total
+witness class, not only the two exhibited implementations. The conjunction
+application preserves the earlier infinite-class completeness theorem and
+exhibits a further relevant distinction that it cannot settle. These two cases
+also differ in when depth is needed: presentation uniqueness makes the weaker
+reader observation adequate, while nonuniqueness yields a constructive reason
+to develop it.
+
+### Operative finite accounts and remaining work
+
+The finite implementation returns all observation-basis mismatches, candidate
+losses, demanded conditions, and the full rule and premise occurrence behind
+each reason. It is proved equal to the general account. Guided evaluation
+preserves the original evaluator exactly and still rejects unused malformed
+rules by checking the complete original table. A submitted finite observation
+table must separately be related to the independently meaningful observations.
+Its SML export checks operative code without turning a table entry into a
+proof of semantic adequacy.
+
+All 626 accepted theories and every validation tool remain byte-identical.
+The eight new theories, revised explanation, admission and obligation records,
+frozen declarations and contexts, failure fixtures, and full session are
+validated together. The older immediate-premise paragraph is corrected
+directly; the new account does not rely on its disclaimers as a justification.
+
+The selected comparison meanings and observation families are explicit choices
+for review. Their alignment is supported here by actual dependency structure,
+complete presentation contracts, preservation, and structural reuse. Other
+case-specific meanings can enter the same typed reduction and investigation
+account, including proposals about the comparison method itself. Native
+checking of these mathematical soundness, basis, and coverage proofs, wider
+application throughout the repository, physical construction-reader composition,
+and the final every-line alignment audit remain open.

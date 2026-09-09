@@ -65,6 +65,23 @@ lemma data_table_at_list:
       list_all2 (factor_pair_presents K V) xs ts)"
   by (auto simp: data_table_presents_def data_collection_presents_def data_list_term_injective)
 
+lemma data_table_literal_enumeration:
+  "data_table_presents (\<lambda>k p. p=f k) (\<lambda>v q. q=g v) Q t \<longleftrightarrow>
+    (\<exists>xs. distinct xs \<and> set xs=Q \<and> single_valued Q \<and>
+      t=data_list_term (map (\<lambda>z. Pair_Term (f (fst z)) (g (snd z))) xs))"
+proof -
+  have element: "factor_pair_presents (\<lambda>k p. p=f k) (\<lambda>v q. q=g v)=
+      (\<lambda>z p. Pair_Term (f (fst z)) (g (snd z))=p)"
+    by (intro ext) (auto simp: factor_pair_presents_def)
+  have mapped: "list_all2 (=) (map (\<lambda>z. Pair_Term (f (fst z)) (g (snd z))) xs) ts =
+      list_all2 (\<lambda>z p. Pair_Term (f (fst z)) (g (snd z))=p) xs ts" for xs ts
+    by (simp only: list_all2_map1)
+  have rows: "list_all2 (factor_pair_presents (\<lambda>k p. p=f k) (\<lambda>v q. q=g v)) xs ts \<longleftrightarrow>
+      ts=map (\<lambda>z. Pair_Term (f (fst z)) (g (snd z))) xs" for xs ts
+    by (simp only: element mapped[symmetric] list_all2_eq[symmetric]) blast
+  show ?thesis by (auto simp: data_table_presents_def data_collection_presents_def rows)
+qed
+
 section \<open>The earlier enumeration form changes only the complete list terminator\<close>
 
 definition enumeration_retermination :: "factor_term \<Rightarrow> factor_term \<Rightarrow> bool" where
@@ -82,6 +99,16 @@ lemma finite_collection_retermination:
     composed_presentation (data_collection_presents R) enumeration_retermination Q q"
   by (auto simp: finite_collection_presents_def data_collection_presents_def
     composed_presentation_def enumeration_retermination_def data_list_term_injective; blast)
+
+lemma finite_table_retermination:
+  "finite_table_presents K V Q q \<longleftrightarrow>
+    composed_presentation (data_table_presents (\<lambda>k p. p=K k) V) enumeration_retermination Q q"
+proof -
+  have row: "table_entry_presents K V=factor_pair_presents (\<lambda>k p. p=K k) V"
+    by (intro ext) (auto simp: table_entry_presents_def factor_pair_presents_def)
+  show ?thesis by (auto simp: finite_table_presents_def data_table_presents_def
+    finite_collection_retermination row composed_presentation_def)
+qed
 
 theorem finite_collection_presentation_class:
   assumes elements: "presentation_class R D A"

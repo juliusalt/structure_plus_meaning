@@ -329,17 +329,56 @@ next
   show ?case by (intro exI[of _ "(key z,v)#rows"]) (use parts(1) first tail in simp)
 qed
 
-theorem keyed_list_relational:
-  assumes read: "list_all2 R xs ts" and data: "data_elements ts"
+theorem keyed_list_relational_formed:
+  assumes read: "list_all2 R xs ts" and formed: "\<forall>t\<in>set ts. term_formed t"
+    and keys: "\<forall>z\<in>set xs. self_contained_term (key z)"
     and shape: "\<And>z t. R z t \<Longrightarrow> \<exists>v. t=Pair_Term (key z) v"
   shows "(21,data_list_term ts)\<in>positive_meaning keyed_list_system \<longleftrightarrow> distinct (map key xs)"
 proof -
   obtain rows where parts: "ts=map (\<lambda>(k,v). Pair_Term k v) rows" "map fst rows=map key xs"
     using list_all2_pair_entries[where R=R and key=key, OF read shape] by blast
-  have formed: "formed_key_rows rows" using data parts(1) by auto
+  have same_keys: "fst ` set rows=key ` set xs"
+    using arg_cong[OF parts(2), where f=set] by simp
+  have each_key: "\<forall>z\<in>set rows. self_contained_term (fst z)"
+  proof (intro ballI)
+    fix z assume member: "z\<in>set rows"
+    have image: "fst z\<in>fst ` set rows" by (rule imageI[OF member])
+    have key_image: "fst z\<in>key ` set xs" using image by (simp only: same_keys)
+    obtain w where source: "w\<in>set xs" "fst z=key w" using key_image by blast
+    show "self_contained_term (fst z)" using keys source by simp
+  qed
+  have boundary: "formed_key_rows rows" using formed each_key parts(1) by auto
   have input: "data_list_term ts=pair_list_term rows" using parts(1) by simp
-  show ?thesis using formed parts(2)
+  show ?thesis using boundary parts(2)
     by (auto simp: input keyed_list_exact pair_list_term_injective)
+qed
+
+theorem keyed_list_encoded_keys_formed:
+  assumes read: "list_all2 R xs ts" and formed: "\<forall>t\<in>set ts. term_formed t"
+    and keys: "\<forall>z\<in>set xs. self_contained_term (f (fst z))" and injective: "inj f"
+    and shape: "\<And>z t. R z t \<Longrightarrow> \<exists>v. t=Pair_Term (f (fst z)) v"
+  shows "(21,data_list_term ts)\<in>positive_meaning keyed_list_system \<longleftrightarrow>
+    distinct xs \<and> single_valued (set xs)"
+proof -
+  have exact: "(21,data_list_term ts)\<in>positive_meaning keyed_list_system \<longleftrightarrow>
+      distinct (map (\<lambda>z. f (fst z)) xs)"
+    by (rule keyed_list_relational_formed[where R=R and key="\<lambda>z. f (fst z)", OF read formed keys shape])
+  have mapped: "map (\<lambda>z. f (fst z)) xs=map f (map fst xs)" by simp
+  have restricted: "inj_on f (set (map fst xs))" using injective by (auto simp: inj_on_def inj_def)
+  have unique: "distinct (map (\<lambda>z. f (fst z)) xs) \<longleftrightarrow> distinct (map fst xs)"
+    using restricted by (simp only: mapped distinct_map) blast
+  show ?thesis using exact unique by (simp only: distinct_keys_iff)
+qed
+
+theorem keyed_list_relational:
+  assumes read: "list_all2 R xs ts" and data: "data_elements ts"
+    and shape: "\<And>z t. R z t \<Longrightarrow> \<exists>v. t=Pair_Term (key z) v"
+  shows "(21,data_list_term ts)\<in>positive_meaning keyed_list_system \<longleftrightarrow> distinct (map key xs)"
+proof -
+  have formed: "\<forall>t\<in>set ts. term_formed t" using data by blast
+  have keys: "\<forall>z\<in>set xs. self_contained_term (key z)"
+    using read data by (induction xs arbitrary: ts) (auto simp: list_all2_Cons1 dest: shape)
+  show ?thesis by (rule keyed_list_relational_formed[OF read formed keys shape])
 qed
 
 theorem keyed_list_encoded_keys:
@@ -348,14 +387,15 @@ theorem keyed_list_encoded_keys:
   shows "(21,data_list_term ts)\<in>positive_meaning keyed_list_system \<longleftrightarrow>
     distinct xs \<and> single_valued (set xs)"
 proof -
-  have exact: "(21,data_list_term ts)\<in>positive_meaning keyed_list_system \<longleftrightarrow>
-    distinct (map (\<lambda>z. f (fst z)) xs)"
-    by (rule keyed_list_relational[where R=R and key="\<lambda>z. f (fst z)", OF read data shape])
-  have mapped: "map (\<lambda>z. f (fst z)) xs=map f (map fst xs)" by simp
-  have restricted: "inj_on f (set (map fst xs))" using injective by (auto simp: inj_on_def inj_def)
-  have keys: "distinct (map (\<lambda>z. f (fst z)) xs) \<longleftrightarrow> distinct (map fst xs)"
-    using restricted by (simp only: mapped distinct_map) blast
-  show ?thesis using exact keys by (simp only: distinct_keys_iff)
+  have formed: "\<forall>t\<in>set ts. term_formed t" using data by blast
+  obtain rows where parts: "ts=map (\<lambda>(k,v). Pair_Term k v) rows"
+    "map fst rows=map (\<lambda>z. f (fst z)) xs"
+    using list_all2_pair_entries[where R=R and key="\<lambda>z. f (fst z)", OF read shape] by blast
+  have row_data: "formed_key_rows rows" using data parts(1) by auto
+  have table_keys: "\<forall>k\<in>set (map fst rows). self_contained_term k" using row_data by auto
+  have keys: "\<forall>z\<in>set xs. self_contained_term (f (fst z))"
+    using table_keys[unfolded parts(2)] by simp
+  show ?thesis by (rule keyed_list_encoded_keys_formed[OF read formed keys injective shape])
 qed
 
 text \<open>
@@ -365,7 +405,9 @@ text \<open>
   No negative premise or external table predicate is added.
 
   Keys must be formed self-contained data. Values need only be formed terms;
-  a caller supplies any stronger value profile separately. The relational
+  a caller supplies any stronger value profile separately. The generalized
+  relational theorem uses precisely this boundary; the earlier data-row
+  theorem is its stronger-input instance. The relational
   presentation theorem therefore transports the same actual program check
   to both artifact rows and source-slot binding rows without choosing an
   order or a canonical representation of their values.

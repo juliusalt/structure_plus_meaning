@@ -5558,3 +5558,60 @@ renames the final assembly claim. Native mathematical presentations and checks
 of the new proofs remain under O-85. Construction permission and its global
 invariance, higher protocols, reflection, genesis, and the final every-line
 audit remain open; no overall obligation state is promoted by this batch.
+
+
+## Term sequences and complete key lookup precede construction admission
+
+The existing construction claim retains ordered artifact inputs, unordered
+functional tables, structural natural indices, and the earlier complete-list
+terminator. Input repetitions are meaningful. Whole-artifact references are
+formed terms but are not self-contained data terms. Those distinctions make
+the earlier data-only selection contract too narrow for direct source lookup.
+The account and permission definitions remain unchanged.
+
+The chosen next batch establishes independently useful sequence and table
+operations before composing construction admission. The already proved native
+right fold supplies all traversal reasoning. One ordinary constructor keeps
+each head; another replaces it by the existing empty payload. Their folds
+retain arbitrary formed terminal seeds. The existing empty payload and empty
+artifact target specialize this operation to the two established list formats.
+The same operation relates the established natural encodings. No source-role
+tag or replacement account format is introduced.
+
+A list position is the whole sequence with a bounded natural index. The chosen
+native implementation reconstructs it from a prefix, selected head, and tail,
+and counts that identical prefix. A direct recursive index reader would also
+be possible. Reusing the fold instead settles recursive semantics through
+existing contracts and leaves only the general prefix equation locally.
+Its three premises have distinct sockets. The independent complete-list guard
+is necessary: a formed improper suffix passes reconstruction and zero-prefix
+counting but fails full admission. No out-of-range default becomes a result.
+
+The element subject is the actual formed term. Generic products, sequence
+lifting, and domain restriction give complete classes for folds and positions.
+Their function contracts inherit totality, every compatible term output,
+invariance, adaptation, and composition. This literal operation does not by
+itself supply every presentation of a different element notion. Terminator
+conversion likewise retains one actual ordered sequence; semantic identity
+between arbitrary finite-table enumerations remains the separate table-class
+correspondence. The mathematical pair of fold operands is a presentation of
+the two actual call fields, not an extra stored wrapper.
+
+The native key checker already requires self-contained keys and only formed
+values. Its generalized relational theorem and the general table-admission
+profile now expose precisely that boundary. The earlier data-row results are
+stronger-input instances with unchanged statements. Complete functional-table
+lookup specializes the existing collector to a singleton fibre. It retains
+the supplied literal value, including whole-artifact references. A successful
+singleton fibre cannot establish global key uniqueness; a table with duplicate
+unrelated keys is a proved counterexample. Whole source admission remains an
+explicit premise for subsequent composition.
+
+Five new native definitions contain seven ordinary clauses and no external
+callees. Three public operation sites precede all future formed operands and
+preserve the compiled program environment, artifacts, and bindings. No native
+consequence primitive, canonical table order, or permission policy is added.
+These source-lookup contracts prepare complete construction admission and its
+recorded cause join. Their global permission condition and O-85 mathematical
+proof presentations remain open, as do higher protocols and the final
+repository audit. This batch changes no overall obligation state.

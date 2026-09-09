@@ -1283,6 +1283,30 @@ presentation, the remaining higher protocols, and the final repository audit
 remain open. Overall obligation states are unchanged.
 
 
+Complete operations on sequences of formed terms now reuse the general
+relational fold. Pairing changes the terminal seed while retaining every
+actual element; counting replaces each head by the existing unit payload.
+Position selection reconstructs the complete list from a prefix, selected
+head, and tail, and counts that same prefix. Its independent whole-list guard
+rejects an improper suffix even when the requested position is zero.
+
+Products, sequence lifting, and restriction supply complete seed and position
+classes. Local function contracts cover arbitrary formed terms, including
+whole-artifact references, and preserve repeated input occurrences. Exact
+retermination connects the two existing list formats and natural encodings;
+finite-table conversion retains the actual supplied row order. Five native
+definitions with seven ordinary clauses have no external callees. Three public
+sites are fixed before future operands, retaining scope, artifacts, and bindings.
+
+The existing key checker and complete row-admission profile now export their
+full boundary: keys require self-contained data, while values need only be
+formed terms. Their earlier stronger-input theorems reuse these general laws.
+Complete literal-table lookup reuses the existing key collector. A singleton
+fibre alone does not admit the whole table, as duplicated unrelated keys show.
+These are source-lookup prerequisites. Complete construction admission,
+global permission invariance, recorded construction causes, native mathematical
+proof presentation, and the final repository audit remain open.
+
 The remaining work includes construction-cause validity and authority readers, complete
 transition material, reflection, genesis, and the system-wide presentation
 audit. Native presentations and checking of the remaining mathematical

@@ -25,6 +25,35 @@ lemma key_values_distinct:
   shows "distinct (key_values k xs)"
   using assms by (induction xs) (auto simp: key_values_set split: prod.splits)
 
+lemma key_values_singleton:
+  assumes "distinct (map fst xs)"
+  shows "key_values k xs=[v] \<longleftrightarrow> (k,v)\<in>set xs"
+  using assms
+proof (induction xs)
+  case Nil
+  then show ?case by simp
+next
+  case (Cons z xs)
+  obtain a b where row: "z=(a,b)" by (cases z) auto
+  have distinct: "distinct (map fst xs)" using Cons.prems by simp
+  show ?case
+  proof (cases "a=k")
+    case True
+    have absent: "\<forall>w\<in>set xs. fst w\<noteq>k" using Cons.prems True by (auto simp: row)
+    have removed: "filter (\<lambda>w. fst w=k) xs=[]" using absent by (simp add: filter_empty_conv)
+    have empty: "key_values k xs=[]" by (simp add: key_values_def removed)
+    show ?thesis using absent True empty by (auto simp: row)
+  next
+    case False
+    show ?thesis using Cons.IH[OF distinct] False by (simp add: row)
+  qed
+qed
+
+lemma key_values_mapped_singleton:
+  assumes "distinct (map fst xs)"
+  shows "map g (key_values k xs)=[q] \<longleftrightarrow> (\<exists>v. (k,v)\<in>set xs \<and> q=g v)"
+  by (auto simp: map_eq_Cons_conv key_values_singleton[OF assms])
+
 lemma key_values_map:
   assumes "inj f"
   shows "key_values (f k) (map (\<lambda>(j,v). (f j,g v)) xs)=map g (key_values k xs)"

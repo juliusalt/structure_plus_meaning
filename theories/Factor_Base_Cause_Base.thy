@@ -282,6 +282,151 @@ proof -
     using base_cause_retention_meaning[of 183 t] by auto
 qed
 
+section \<open>Later readers reuse the complete shared row and difference boundaries\<close>
+
+lemma base_cause_component_domain_bounds:
+  "system_definitions base_cause_components_system\<subseteq>{..184}"
+  "system_definitions base_cause_components_system\<inter>{124,125,126,127}={}"
+proof -
+  let ?D="{..123}\<union>{132..184}"
+  have target: "system_definitions generation_target_system\<subseteq>?D"
+    by (rule subset_trans[OF generation_target_subdomain]) auto
+  have value_bound: "system_definitions generation_value_system\<subseteq>?D"
+    using target by auto
+  have source_base: "system_definitions generation_source_base_system\<subseteq>?D"
+    by (rule subset_trans[OF generation_source_base_subdomain]) (use value_bound in auto)
+  have source: "system_definitions generation_source_system\<subseteq>?D"
+    using source_base by auto
+  have context_base: "system_definitions context_base_system\<subseteq>?D"
+    by (rule subset_trans[OF context_base_subdomain]) auto
+  have scope: "system_definitions scope_programs_system\<subseteq>?D"
+    by (rule subset_trans[OF scope_programs_boundary]) (use context_base in auto)
+  have scope_base: "system_definitions generation_scope_base_system\<subseteq>?D"
+    by (rule subset_trans[OF generation_scope_base_subdomain]) (use source scope in auto)
+  show "system_definitions base_cause_components_system\<subseteq>{..184}"
+    "system_definitions base_cause_components_system\<inter>{124,125,126,127}={}"
+    using scope_base by auto
+qed
+
+lemma base_cause_inclusion_agreement:
+  "systems_agree_on environment_inclusion_system base_cause_components_system
+    (system_definitions environment_inclusion_system)"
+proof -
+  have quoted: "systems_agree_on environment_inclusion_system complete_data_admission_system
+      (system_definitions environment_inclusion_system)"
+    by (rule whole_agreement_transitive[OF judgment_retention_inclusion_agreement base_cause_slot_agreement])
+  have source: "systems_agree_on environment_inclusion_system base_cause_source_system
+      (system_definitions environment_inclusion_system)"
+    by (rule whole_agreement_transitive[OF quoted base_cause_complete_agreement])
+  have retained: "systems_agree_on base_cause_source_system base_cause_components_system
+      (system_definitions base_cause_source_system)"
+    using base_cause_retention_group.old_agreement by (simp only: base_cause_components_system_def)
+  show ?thesis by (rule whole_agreement_transitive[OF source retained])
+qed
+
+lemma base_cause_row_agreement:
+  "systems_agree_on row_values_system base_cause_components_system (system_definitions row_values_system)"
+  by (rule whole_agreement_transitive[OF environment_inclusion_row_values_agreement base_cause_inclusion_agreement])
+
+lemma base_cause_bag_overlap_agreement:
+  "systems_agree_on base_cause_components_system bag_difference_system
+    (system_definitions base_cause_components_system\<inter>system_definitions bag_difference_system)"
+proof -
+  have quoted: "systems_agree_on environment_inclusion_system complete_data_admission_system
+      (system_definitions environment_inclusion_system)"
+    by (rule whole_agreement_transitive[OF judgment_retention_inclusion_agreement base_cause_slot_agreement])
+  have rows: "systems_agree_on row_values_system complete_data_admission_system (system_definitions row_values_system)"
+    by (rule whole_agreement_transitive[OF environment_inclusion_row_values_agreement quoted])
+  have bags: "systems_agree_on bag_comparison_system complete_data_admission_system
+      (system_definitions bag_comparison_system)"
+    by (rule whole_agreement_transitive[OF row_values_bag_agreement rows])
+  have complete: "systems_agree_on complete_data_admission_system bag_difference_system
+      (system_definitions complete_data_admission_system\<inter>system_definitions bag_difference_system)"
+  proof (rule common_component_overlap_agreement[where B=bag_comparison_system])
+    show "systems_agree_on bag_comparison_system complete_data_admission_system
+        (system_definitions bag_comparison_system\<inter>system_definitions complete_data_admission_system)"
+      by (rule systems_agree_on_subdomain[OF bags]) blast
+    show "systems_agree_on bag_comparison_system bag_difference_system
+        (system_definitions bag_comparison_system\<inter>system_definitions bag_difference_system)"
+      by (rule systems_agree_on_subdomain[OF bag_difference_base_agreement]) blast
+    show "system_definitions complete_data_admission_system\<inter>system_definitions bag_difference_system
+        \<subseteq>system_definitions bag_comparison_system" by auto
+  qed
+  have located_bags: "systems_agree_on bag_comparison_system located_admission_system
+      (system_definitions bag_comparison_system)"
+    by (rule whole_agreement_transitive[OF artifact_identity_bag_agreement
+      whole_agreement_transitive[OF target_admission_artifact_agreement located_target_agreement]])
+  have located: "systems_agree_on located_admission_system bag_difference_system
+      (system_definitions located_admission_system\<inter>system_definitions bag_difference_system)"
+  proof (rule common_component_overlap_agreement[where B=bag_comparison_system])
+    show "systems_agree_on bag_comparison_system located_admission_system
+        (system_definitions bag_comparison_system\<inter>system_definitions located_admission_system)"
+      by (rule systems_agree_on_subdomain[OF located_bags]) blast
+    show "systems_agree_on bag_comparison_system bag_difference_system
+        (system_definitions bag_comparison_system\<inter>system_definitions bag_difference_system)"
+      by (rule systems_agree_on_subdomain[OF bag_difference_base_agreement]) blast
+    show "system_definitions located_admission_system\<inter>system_definitions bag_difference_system
+        \<subseteq>system_definitions bag_comparison_system" by auto
+  qed
+  have target: "systems_agree_on target_difference_system bag_difference_system
+      (system_definitions target_difference_system\<inter>system_definitions bag_difference_system)"
+    by (rule systems_agree_on_subdomain[OF systems_agree_on_sym[OF target_difference_bag_agreement]]) blast
+  have selected: "systems_agree_on generation_target_system bag_difference_system
+      (system_definitions generation_target_system\<inter>system_definitions bag_difference_system)"
+    unfolding generation_target_system_def by (rule rooted_overlap_agreement[OF target])
+  have value_agreement: "systems_agree_on generation_value_system bag_difference_system
+      (system_definitions generation_value_system\<inter>system_definitions bag_difference_system)"
+    unfolding generation_value_system_def
+    by (rule generation_group.extended_overlap_agreement[OF selected]) auto
+  have source_components: "systems_agree_on generation_source_components_system bag_difference_system
+      (system_definitions generation_source_components_system\<inter>system_definitions bag_difference_system)"
+    unfolding generation_source_components_system_def
+    by (rule overlap_agreement_union[OF located_admission_system_formed generation_value_system_formed located value_agreement])
+  have source_base: "systems_agree_on generation_source_base_system bag_difference_system
+      (system_definitions generation_source_base_system\<inter>system_definitions bag_difference_system)"
+    unfolding generation_source_base_system_def by (rule rooted_overlap_agreement[OF source_components])
+  have source: "systems_agree_on generation_source_system bag_difference_system
+      (system_definitions generation_source_system\<inter>system_definitions bag_difference_system)"
+    unfolding generation_source_system_def
+    by (rule generation_source_group.extended_overlap_agreement[OF source_base]) auto
+  have scope: "systems_agree_on scope_programs_system bag_difference_system
+      (system_definitions scope_programs_system\<inter>system_definitions bag_difference_system)"
+  proof (rule common_component_overlap_agreement[where B=complete_data_admission_system])
+    show "systems_agree_on complete_data_admission_system scope_programs_system
+        (system_definitions complete_data_admission_system\<inter>system_definitions scope_programs_system)"
+      using base_cause_scope_agreement by (simp only: Int_commute)
+    show "systems_agree_on complete_data_admission_system bag_difference_system
+        (system_definitions complete_data_admission_system\<inter>system_definitions bag_difference_system)"
+      by (rule complete)
+    have retained_context: "system_definitions context_base_system\<subseteq>system_definitions complete_data_admission_system"
+      by (rule subset_trans[OF context_base_subdomain]) auto
+    have lower: "system_definitions scope_programs_system\<subseteq>
+        system_definitions complete_data_admission_system\<union>{156..166}"
+      by (rule subset_trans[OF scope_programs_boundary]) (use retained_context in auto)
+    show "system_definitions scope_programs_system\<inter>system_definitions bag_difference_system
+        \<subseteq>system_definitions complete_data_admission_system"
+      by (rule subset_trans[OF Int_mono[OF lower subset_refl]]) auto
+  qed
+  have scope_components: "systems_agree_on generation_scope_components_system bag_difference_system
+      (system_definitions generation_scope_components_system\<inter>system_definitions bag_difference_system)"
+    unfolding generation_scope_components_system_def
+    by (rule overlap_agreement_union[OF generation_source_system_formed scope_programs_formed source scope])
+  have scope_base: "systems_agree_on generation_scope_base_system bag_difference_system
+      (system_definitions generation_scope_base_system\<inter>system_definitions bag_difference_system)"
+    unfolding generation_scope_base_system_def by (rule rooted_overlap_agreement[OF scope_components])
+  have generation_scope: "systems_agree_on generation_scope_system bag_difference_system
+      (system_definitions generation_scope_system\<inter>system_definitions bag_difference_system)"
+    unfolding generation_scope_system_def
+    by (rule generation_scope_group.extended_overlap_agreement[OF scope_base]) auto
+  have combined: "systems_agree_on base_cause_source_system bag_difference_system
+      (system_definitions base_cause_source_system\<inter>system_definitions bag_difference_system)"
+    unfolding base_cause_source_system_def
+    by (rule overlap_agreement_union[OF generation_scope_system_formed complete_data_admission_system_formed
+      generation_scope complete])
+  show ?thesis unfolding base_cause_components_system_def
+    by (rule base_cause_retention_group.extended_overlap_agreement[OF combined]) auto
+qed
+
 text \<open>
   Complete interfaces and clause families establish compatibility before any
   program union. A generic union law assembles their agreement on a covered

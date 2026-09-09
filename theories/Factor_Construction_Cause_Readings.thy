@@ -3,7 +3,7 @@ theory Factor_Construction_Cause_Readings
     Factor_Judgment_Retention_Contracts
 begin
 
-section \<open>The proposed join names only actual ordinary reader calls\<close>
+section \<open>The independent join names only actual ordinary reader calls\<close>
 
 definition construction_profile_reading where
   "construction_profile_reading c k p q \<longleftrightarrow> (\<exists>e pu pr au ar d t i s.
@@ -379,9 +379,11 @@ text \<open>
   The independent reference discharges the original global permission
   condition. The resulting relation is a sufficient profile of the original
   judgment, with complete source and output contracts. It neither replaces
-  a recorded program nor decides every program's invariance. Physical union
-  of the reader programs, including all shared difference definitions, and
-  native compilation of this whole join remain explicit further work.
+  a recorded program nor decides every program's invariance.
+  Factor_Construction_Cause_Components establishes the whole shared-definition
+  union, including the counted-difference boundaries. The ordinary clauses and
+  native contracts are provided in Factor_Construction_Cause_Clauses and
+  Factor_Construction_Cause_Contracts.
 \<close>
 
 end

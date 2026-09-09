@@ -1,5 +1,6 @@
 theory Factor_Target_Comparison
   imports Factor_Artifact_Difference Factor_Target_Presentations Factor_Separated_Lists
+    Factor_Component_Agreement
 begin
 
 section \<open>Admitted targets retain their actual artifact and occurrence\<close>
@@ -577,6 +578,36 @@ theorem target_comparison_operations_exact:
   using assms by (auto simp: target_comparison_operation_components target_collection_components
     data_absence_exact bag_difference_exact artifact_difference_exact target_identity_exact
     target_difference_exact target_separation_exact target_collection_exact)
+
+section \<open>The complete counted-difference component is retained\<close>
+
+lemma target_difference_bag_agreement:
+  "systems_agree_on bag_difference_system target_difference_system
+    (system_definitions bag_difference_system)"
+proof -
+  have reversed: "systems_agree_on bag_difference_system artifact_identity_system
+      (system_definitions bag_difference_system\<inter>system_definitions artifact_identity_system)"
+    using systems_agree_on_sym[OF artifact_bag_difference_agreement] by (simp only: Int_commute)
+  have base: "systems_agree_on bag_difference_system artifact_difference_base_system
+      (system_definitions bag_difference_system)"
+    using system_union_agree_left[OF artifact_identity_system_formed reversed]
+    by (simp only: artifact_difference_base_system_def system_union_commute)
+  have difference: "systems_agree_on bag_difference_system artifact_difference_system
+      (system_definitions bag_difference_system)"
+    using base by (simp add: artifact_difference_system_def systems_agree_on_added)
+  have reversed_target: "systems_agree_on artifact_difference_system target_admission_system
+      (system_definitions artifact_difference_system\<inter>system_definitions target_admission_system)"
+    using systems_agree_on_sym[OF target_artifact_difference_agreement] by (simp only: Int_commute)
+  have joined: "systems_agree_on artifact_difference_system target_comparison_base_system
+      (system_definitions artifact_difference_system)"
+    using system_union_agree_left[OF target_admission_system_formed reversed_target]
+    by (simp only: target_comparison_base_system_def system_union_commute)
+  have whole: "systems_agree_on bag_difference_system target_comparison_base_system
+      (system_definitions bag_difference_system)"
+    by (rule whole_agreement_transitive[OF difference joined])
+  show ?thesis using whole
+    by (simp add: target_difference_system_def target_identity_system_def systems_agree_on_added)
+qed
 
 text \<open>
   Target equality and inequality compare the actual complete artifact and its

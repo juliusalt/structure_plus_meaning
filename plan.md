@@ -1644,8 +1644,9 @@ slots remain separate occurrences.
 
 This concrete structural admission satisfies presentation invariance for
 complete construction claims. Native checking of global invariance for an
-arbitrary supplied permission program, recorded construction causes, native
-mathematical-proof presentation, and the final repository audit remain open.
+arbitrary supplied permission program, recorded causes beyond the complete
+sufficient profile below, native mathematical-proof presentation, and the
+final repository audit remain open.
 
 Construction permission retains its global formation-and-truth invariance
 condition over all compatible account presentations. A positive call alone
@@ -1752,7 +1753,7 @@ These cases justify the structural observations required for literal sharing.
 A common-component rule therefore requires coverage of every shared head, and
 a union rule retains each component's overlap. The existing construction,
 related-test admission, and recorded-cause composition proofs now use these
-rules. Installing the complete construction-cause reader remains the next join.
+rules. The complete construction-cause reader below uses these agreements in its native join.
 
 Construction permission now has an exact reduction to changes of one complete
 unordered field at a time. Every pair of valid complete claims is connected
@@ -1902,10 +1903,21 @@ and finite formed predecessor family.
 Two general boundary theorems supply these classes and replace eight earlier
 base and scope class proofs without changing their statements. The native
 profile's global permission guarantee and restriction contract belong to their
-owners. The combined reader join is presently a proved relation over existing
-native calls. Its installation in one native program, with agreement on all
-shared definitions, remains the next composition obligation. Arbitrary original
-program invariance and the higher foundation obligations remain open.
+owners. Factor_Construction_Cause_Components now joins the actual programs
+with complete agreement on every shared definition. The common row boundary
+and the counted-difference boundary require separate preservation paths through
+the actual dependency restrictions. Four ordinary clauses retain the least
+closure of their eight external callees. Their all-term equations admit exactly
+the four complete source and account-report classes.
+
+The owned native relation and function contracts preserve every compatible
+account presentation, outer source retention, exact payload, and least quoted
+judgment scope. One closed finite native program serves all future formed
+arguments at four distinct entries, retaining its canonical scope and all old
+artifacts and bindings. Actual recordings for every complete account are
+admitted by this same reader, while retaining the original program and call.
+Arbitrary original-program invariance and native checking of the mathematical
+contracts remain open.
 
 These results are justified by existing collection, table, quotation, scope,
 and program machinery. Their proof parameters are typed relations, not a

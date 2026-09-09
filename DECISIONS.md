@@ -6513,3 +6513,63 @@ Those reasons determine the observation domain and the reusable proof search.
 They do not supply a universal depth oracle. Physical installation of the
 complete construction-cause reader, native checking of the mathematical
 contracts, remaining strata, and the final every-line audit remain open.
+
+
+## The recorded-construction join becomes one actual native program
+
+The preceding composition investigation identifies the conditions that the
+physical join must preserve: complete interfaces and identified clause
+families at every shared definition. Applying those conditions reveals two
+different dependency paths. The ordinary lower overlap is covered by the
+whole row component. Counted bag difference is also used by the generation
+reader, but that reader retains only actual rooted dependencies. Treating it
+as retaining the whole comparison program would assert an unjustified boundary.
+
+The target comparison owner now proves preservation of its whole counted bag
+difference component. The base-cause owner carries the required overlap through
+the generation target restriction, value and source groups, scope restrictions,
+and retention group. The construction program's successive groups use the
+same generic overlap laws, with their actual freshness conditions. The fixed
+permission program shares a covered definition-call ancestor and its configured
+entry is fresh. Every ordinary union is formed only after these complete
+shared-definition agreements have been established. No copied namespace is
+needed and no semantic-equivalence claim substitutes for material agreement.
+
+The resulting source retains all eight actual external callees of the new
+clauses. Its implementation base is exactly their least complete-definition
+dependency closure. The existing finite-family formation theorem closes the
+new group, and the ordinary projection profile supplies both source entries.
+The two report clauses have these precise roles:
+
+| Report | Actual linked conditions |
+|---|---|
+| Construction profile | Positive judgment, application reading, whole permission profile at that application's entry, and correspondence between its operand and the complete reported account. |
+| Recorded construction | Actual generation fields and payload, the cause's quoted judgment, least judgment scope, the construction-profile report on that same judgment and account, and literal projection equating its output with the actual payload. |
+
+Both all-term equations are proved from every valuation of the actual complete
+singleton clause families. Every variable's formation is derived from a
+successful ordinary callee, including auxiliary generation fields and all
+five account fields. The equations realize the two independently specified
+reader joins before any class, relation, or compilation contract is exported.
+
+Four native presentation classes admit exactly the complete independently
+specified source and report domains. Owned relation and determined-output
+contracts admit every compatible account presentation and supply the existing
+adaptation and composition laws. Outer source invariance, least source
+retention, wrong-payload rejection, and nonminimal quoted-scope rejection are
+transferred to actual native calls without extra assumptions.
+
+One closed finite native program is fixed before every future formed argument
+at all four distinct entries. Its canonical program scope, existing artifacts,
+and outgoing bindings are retained. The previous original-program recording
+construction now yields reports admitted by this reader. The same witnesses
+cover every complete account and every formed locus and finite formed
+predecessor family. No recorded program or application is replaced.
+
+This closes the physical native join left open by the preceding milestones.
+It implements the complete sufficient permission profile of the original
+construction judgment. It does not decide global invariance of arbitrary
+original code. The new component, valuation, class, and exactness proofs
+remain subject to O-85's native mathematical-proof presentation and checking.
+Broader obligation states remain unchanged; further strata and the final
+owner-alignment and every-line audits still require work.

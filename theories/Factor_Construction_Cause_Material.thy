@@ -164,7 +164,8 @@ text \<open>
   It gives actual recordings for each such account, every formed locus, and
   every finite formed predecessor family. This establishes coverage without
   imposing history, authority, adoption, or a preferred table ordering. The
-  new reader join itself still needs one combined native implementation.
+  combined ordinary implementation and its native recording contracts are
+  supplied by Factor_Construction_Cause_Contracts.
 \<close>
 
 end

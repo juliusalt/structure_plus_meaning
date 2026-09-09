@@ -1737,6 +1737,23 @@ including rejection of unused malformed rules. It exports to SML. Native
 checking of these mathematical contracts, their broader application, and the
 final repository audit remain under O-84 and O-85.
 
+Applying depth investigation to the next native composition exposes a further
+case boundary. Every exact profile-inclusion comparison must be reflexive and
+transitive on its candidate scope. Agreement on each pair's changing overlap
+fails transitivity even for formed programs, so adding observations cannot make
+that compatibility condition an exact candidate order over the whole domain.
+
+A fixed definition boundary does have an exact basis: complete interface fibres
+and identified clause families, with every mismatch retained by the existing
+obligation reduction. Equal calls and complete consequence operators can miss
+an interface change that makes a union malformed. A changed clause occurrence
+can preserve meaning and permit a formed union while changing actual material.
+These cases justify the structural observations required for literal sharing.
+A common-component rule therefore requires coverage of every shared head, and
+a union rule retains each component's overlap. The existing construction,
+related-test admission, and recorded-cause composition proofs now use these
+rules. Installing the complete construction-cause reader remains the next join.
+
 Construction permission now has an exact reduction to changes of one complete
 unordered field at a time. Every pair of valid complete claims is connected
 by three such changes, with the same ordered inputs, exact sources, selections,

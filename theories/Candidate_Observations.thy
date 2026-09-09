@@ -99,6 +99,25 @@ lemma comparison_basis_at:
   shows "relation c d \<longleftrightarrow> candidate_profile F observe c\<subseteq>candidate_profile F observe d"
   using assms by (simp add: comparison_basis_def)
 
+theorem comparison_basis_requires_reflexivity:
+  assumes "comparison_basis C relation F observe" "c\<in>C"
+  shows "relation c c"
+  using comparison_basis_at[OF assms(1) assms(2,2)] by simp
+
+theorem comparison_basis_requires_transitivity:
+  assumes basis: "comparison_basis C relation F observe"
+    and members: "a\<in>C" "b\<in>C" "c\<in>C"
+    and first: "relation a b" and second: "relation b c"
+  shows "relation a c"
+proof -
+  have one: "candidate_profile F observe a\<subseteq>candidate_profile F observe b"
+    using first by (simp only: comparison_basis_at[OF basis members(1,2)])
+  have two: "candidate_profile F observe b\<subseteq>candidate_profile F observe c"
+    using second by (simp only: comparison_basis_at[OF basis members(2,3)])
+  show ?thesis by (simp only: comparison_basis_at[OF basis members(1,3)])
+    (rule subset_trans[OF one two])
+qed
+
 lemma comparison_sound_restriction:
   assumes "comparison_observations_sound C relation G observe" "F\<subseteq>G"
   shows "comparison_observations_sound C relation F observe"
@@ -237,6 +256,9 @@ text \<open>
   all intended developments. Essential-facet witnesses separately justify
   irredundancy. Preorders admit a general down-set basis, but its mathematical
   existence does not supply an executable observation of an arbitrary order.
+  Conversely, a relation with an exact profile-inclusion basis must be
+  reflexive and transitive on its candidate scope. An incompatible relation
+  must remain a separate condition or be justified by a different comparison.
 \<close>
 
 end

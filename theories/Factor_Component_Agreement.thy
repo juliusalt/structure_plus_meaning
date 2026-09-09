@@ -27,6 +27,38 @@ proof (rule systems_agree_on_sym)
       (use systems_agree_on_sym[OF first] systems_agree_on_sym[OF second] in auto)
 qed
 
+theorem common_component_overlap_agreement:
+  assumes first: "systems_agree_on B P (system_definitions B\<inter>system_definitions P)"
+    and second: "systems_agree_on B Q (system_definitions B\<inter>system_definitions Q)"
+    and covered: "system_definitions P\<inter>system_definitions Q\<subseteq>system_definitions B"
+  shows "systems_agree_on P Q (system_definitions P\<inter>system_definitions Q)"
+proof -
+  let ?U="system_definitions P\<inter>system_definitions Q"
+  have left: "?U\<subseteq>system_definitions B\<inter>system_definitions P"
+    and right: "?U\<subseteq>system_definitions B\<inter>system_definitions Q"
+    using covered by blast+
+  show ?thesis by (rule systems_agree_on_transitive[
+    OF systems_agree_on_sym[OF systems_agree_on_subdomain[OF first left]]
+      systems_agree_on_subdomain[OF second right]])
+qed
+
+theorem overlap_agreement_union:
+  assumes left: "schema_system_formed P" and right: "schema_system_formed Q"
+    and first: "systems_agree_on P T (system_definitions P\<inter>system_definitions T)"
+    and second: "systems_agree_on Q T (system_definitions Q\<inter>system_definitions T)"
+  shows "systems_agree_on (system_union P Q) T
+    (system_definitions (system_union P Q)\<inter>system_definitions T)"
+proof -
+  let ?U="system_definitions (system_union P Q)\<inter>system_definitions T"
+  have one: "systems_agree_on T P (?U\<inter>system_definitions P)"
+    by (rule systems_agree_on_subdomain[OF systems_agree_on_sym[OF first]]) auto
+  have two: "systems_agree_on T Q (?U\<inter>system_definitions Q)"
+    by (rule systems_agree_on_subdomain[OF systems_agree_on_sym[OF second]]) auto
+  have covered: "?U\<subseteq>system_definitions P\<union>system_definitions Q" by auto
+  show ?thesis by (rule systems_agree_on_sym[OF systems_agree_on_union_domain[
+    OF left right one two covered]])
+qed
+
 theorem rooted_agreement_transfer:
   assumes "systems_agree_on P Q (system_definitions P)"
   shows "systems_agree_on (rooted_system P roots) Q (system_definitions (rooted_system P roots))"
@@ -81,6 +113,13 @@ text \<open>
   rebased using that contract and freshness; its earlier rebasing theorem
   then preserves the complete original program. These rules do not identify
   different implementations merely because their meanings happen to agree.
+
+  A common component transfers agreement only when its actual definition
+  boundary covers every overlap of the two targets. It need not be retained
+  in its entirety by either target. Agreement with a union follows from
+  agreement with each formed component on its own overlap; formation of
+  the union itself remains a separate condition. Pairwise compatibility
+  cannot silently supply a common boundary or transitivity.
 \<close>
 
 end

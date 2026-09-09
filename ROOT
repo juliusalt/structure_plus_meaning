@@ -637,3 +637,4 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Conjunction_Investigation
     Presentation_Investigation
     Finite_Investigation
+    Factor_Composition_Investigation

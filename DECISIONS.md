@@ -6444,3 +6444,72 @@ account, including proposals about the comparison method itself. Native
 checking of these mathematical soundness, basis, and coverage proofs, wider
 application throughout the repository, physical construction-reader composition,
 and the final every-line alignment audit remain open.
+
+
+## Composition investigation derives the relevant structural comparison boundary
+
+The next recorded-construction milestone physically joins independently owned
+reader programs. The intended operation retains their actual complete
+definitions at shared heads. The depth investigation therefore examines
+whether the proposed observations justify that operation and which reusable
+relationships can discharge its conditions.
+
+The first result is a limitation of the evaluation representation itself.
+An exact profile-inclusion basis entails reflexivity and transitivity on the
+candidate domain. Together with the existing down-set construction, these
+laws identify the order boundary of that representation. They are necessary
+conditions on the independently intended relation, not extra assumptions
+silently attached to a desired answer.
+
+Agreement on each pair's overlap changes the comparison boundary with its
+arguments. A formed program with one variable interface agrees on its overlap
+with the empty program, and that empty program agrees with a program having
+a differently bound variable interface at the same head. The first and third
+programs disagree on their shared definition. Thus compatibility on changing
+overlaps is not transitive even when all programs are formed. No observation
+language can make it an exact profile-inclusion order on that whole domain.
+The result prevents an invalid use of the general candidate machinery.
+
+The relevant repair follows from the actual composition obligation. Fix the
+definition boundary being inspected, retain its complete interface fibres and
+identified clause families, and compare those observations. This supplies an
+exact basis for agreement on that boundary. Empty fibres are observable; a
+partial lookup with an unspecified value at a missing head would lose this
+property. The same qualified profile reduction reports the exact definition
+and material responsible for each directed loss.
+
+The choice is supported by two distinct failures of weaker evidence:
+
+| Available evidence | What still fails | Consequence for investigation |
+|---|---|---|
+| Equal complete call boundaries, consequence operators, and least positive meanings | Two different variable interfaces at one head can make their union nonfunctional. | Semantic observations alone cannot certify physical sharing of the interfaces. |
+| Equal call boundaries, consequence operators, and meanings, with a formed union | The same schema at different clause coordinates changes the complete recorded family. | Union formation and meaning preservation do not entail retention of the actual clause occurrences. |
+
+The second result also limits the claim in the other direction. Literal
+whole-definition agreement is a sufficient condition for the required
+preserving composition. It is not asserted to characterize every formed
+union or every union that preserves meaning. Semantic correspondence and
+private renaming retain their own existing contracts and uses.
+
+The missing boundary evidence determines the useful generalization. A common
+component can transfer agreement between two programs only when its definition
+domain covers every shared head. Neither target needs to retain the entire
+common component. This permits later rooted programs to reuse the same rule.
+Agreement with a union follows from agreement with each formed component on
+its own overlap. This agreement theorem does not itself assert that the union
+is formed; that requires the existing separate compatibility condition.
+
+These laws are used immediately. Construction's sequence and bag comparison
+components share their covered bag ancestor. Related-test admission shares
+the covered definition-call ancestor. Recorded base-cause composition consumes
+the two generation and scope overlap contracts through the new union rule.
+All three keep their original exported mathematical statements. The changes
+make the reusable reasoning operative before the larger native reader join.
+
+This is a justified next step in the owner's requested depth investigation:
+the case exposes an inadequate observation language, a relation outside the
+candidate-order representation, and the exact missing coverage conditions.
+Those reasons determine the observation domain and the reusable proof search.
+They do not supply a universal depth oracle. Physical installation of the
+complete construction-cause reader, native checking of the mathematical
+contracts, remaining strata, and the final every-line audit remain open.

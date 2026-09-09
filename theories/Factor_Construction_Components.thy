@@ -75,14 +75,15 @@ lemma construction_sequence_bag_agreement:
 lemma construction_bag_component_agreement:
   "systems_agree_on construction_sequence_components bag_difference_system
     (system_definitions construction_sequence_components\<inter>system_definitions bag_difference_system)"
-proof -
-  have common: "systems_agree_on construction_sequence_components bag_difference_system
-      (system_definitions bag_comparison_system)"
-    by (rule systems_agree_on_transitive[OF systems_agree_on_sym[OF construction_sequence_bag_agreement]
-      bag_difference_base_agreement])
-  have overlap: "system_definitions construction_sequence_components\<inter>system_definitions bag_difference_system=
-      system_definitions bag_comparison_system" by auto
-  show ?thesis by (simp only: overlap; rule common)
+proof (rule common_component_overlap_agreement[where B=bag_comparison_system])
+  show "systems_agree_on bag_comparison_system construction_sequence_components
+      (system_definitions bag_comparison_system\<inter>system_definitions construction_sequence_components)"
+    by (rule systems_agree_on_subdomain[OF construction_sequence_bag_agreement]) blast
+  show "systems_agree_on bag_comparison_system bag_difference_system
+      (system_definitions bag_comparison_system\<inter>system_definitions bag_difference_system)"
+    by (rule systems_agree_on_subdomain[OF bag_difference_base_agreement]) blast
+  show "system_definitions construction_sequence_components\<inter>system_definitions bag_difference_system
+      \<subseteq>system_definitions bag_comparison_system" by auto
 qed
 
 definition construction_component_base :: "(nat,nat,nat,nat) schema_system" where

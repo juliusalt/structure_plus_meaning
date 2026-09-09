@@ -18,14 +18,15 @@ lemma related_test_environment_package_agreement:
 lemma related_test_components_agreement:
   "systems_agree_on single_clause_reading_system environment_inclusion_system
     (system_definitions single_clause_reading_system\<inter>system_definitions environment_inclusion_system)"
-proof -
-  let ?U="system_definitions single_clause_reading_system\<inter>system_definitions environment_inclusion_system"
-  have boundary: "?U\<subseteq>system_definitions definition_call_admission_system" by auto
-  have first: "systems_agree_on definition_call_admission_system single_clause_reading_system ?U"
-    by (rule systems_agree_on_subdomain[OF single_clause_reading_base_agreement boundary])
-  have second: "systems_agree_on definition_call_admission_system environment_inclusion_system ?U"
-    by (rule systems_agree_on_subdomain[OF related_test_environment_base_agreement boundary])
-  show ?thesis by (rule systems_agree_on_transitive[OF systems_agree_on_sym[OF first] second])
+proof (rule common_component_overlap_agreement[where B=definition_call_admission_system])
+  show "systems_agree_on definition_call_admission_system single_clause_reading_system
+      (system_definitions definition_call_admission_system\<inter>system_definitions single_clause_reading_system)"
+    by (rule systems_agree_on_subdomain[OF single_clause_reading_base_agreement]) blast
+  show "systems_agree_on definition_call_admission_system environment_inclusion_system
+      (system_definitions definition_call_admission_system\<inter>system_definitions environment_inclusion_system)"
+    by (rule systems_agree_on_subdomain[OF related_test_environment_base_agreement]) blast
+  show "system_definitions single_clause_reading_system\<inter>system_definitions environment_inclusion_system
+      \<subseteq>system_definitions definition_call_admission_system" by auto
 qed
 
 definition related_test_components_system :: "(nat,nat,nat,nat) schema_system" where

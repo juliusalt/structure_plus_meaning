@@ -1,6 +1,6 @@
 theory Factor_Base_Cause_Base
   imports Factor_Generation_Scope_Contracts Factor_Judgment_Retention_Contracts
-    Factor_Base_Cause_Presentations
+    Factor_Base_Cause_Presentations Factor_Component_Agreement
 begin
 
 section \<open>Complete generation and quotation programs agree on their shared definitions\<close>
@@ -67,23 +67,17 @@ lemma base_cause_component_agreement:
   "systems_agree_on complete_data_admission_system generation_scope_components_system
     (system_definitions generation_scope_components_system\<inter>system_definitions complete_data_admission_system)"
 proof -
-  let ?U="system_definitions generation_scope_components_system\<inter>system_definitions complete_data_admission_system"
-  have left: "?U\<inter>system_definitions generation_source_system=
-      system_definitions generation_source_system\<inter>system_definitions complete_data_admission_system" by auto
-  have right: "?U\<inter>system_definitions scope_programs_system=
-      system_definitions scope_programs_system\<inter>system_definitions complete_data_admission_system" by auto
-  have first: "systems_agree_on complete_data_admission_system generation_source_system
-      (?U\<inter>system_definitions generation_source_system)"
-    by (simp only: left; rule base_cause_source_agreement)
-  have second: "systems_agree_on complete_data_admission_system scope_programs_system
-      (?U\<inter>system_definitions scope_programs_system)"
-    by (simp only: right; rule base_cause_scope_agreement)
-  have covered: "?U\<subseteq>system_definitions generation_source_system\<union>system_definitions scope_programs_system"
-    by auto
-  have joined: "systems_agree_on complete_data_admission_system
-      (system_union generation_source_system scope_programs_system) ?U"
-    by (rule systems_agree_on_union_domain[OF generation_source_system_formed scope_programs_formed first second covered])
-  show ?thesis using joined by (simp only: generation_scope_components_system_def)
+  have source: "systems_agree_on generation_source_system complete_data_admission_system
+      (system_definitions generation_source_system\<inter>system_definitions complete_data_admission_system)"
+    by (rule systems_agree_on_sym[OF base_cause_source_agreement])
+  have scope: "systems_agree_on scope_programs_system complete_data_admission_system
+      (system_definitions scope_programs_system\<inter>system_definitions complete_data_admission_system)"
+    by (rule systems_agree_on_sym[OF base_cause_scope_agreement])
+  have joined: "systems_agree_on generation_scope_components_system complete_data_admission_system
+      (system_definitions generation_scope_components_system\<inter>system_definitions complete_data_admission_system)"
+    unfolding generation_scope_components_system_def
+    by (rule overlap_agreement_union[OF generation_source_system_formed scope_programs_formed source scope])
+  show ?thesis by (rule systems_agree_on_sym[OF joined])
 qed
 
 lemma base_cause_program_agreement:

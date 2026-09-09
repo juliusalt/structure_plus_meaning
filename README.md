@@ -145,8 +145,8 @@ account and explicitly requires the selected definition to preserve both
 interface acceptance and truth across presentations. Sorting supplies only a
 representation witness. Native future calls agree under this proved condition
 and preserve the program environment. A concrete output-checking program
-satisfies it; an order-sensitive program fails admission. Checking admission
-evidence inside Factor remains open. Source residuals include unused inputs and
+satisfies it; an order-sensitive program fails admission. Native admission of the complete related-test profile is proved below;
+admission of arbitrary original permission programs remains open. Source residuals include unused inputs and
 incidences omitted across separate pieces even when all atoms are selected.
 Finite proof graphs now preserve every premise occurrence and explicit shared
 node. Their root call uniquely determines all node claims and the exact
@@ -1662,6 +1662,35 @@ comparison failure `(0, 1)`. The joint facet alone has no failure. The empty
 selection, requested with `--selected` and no numbers, fails again. These
 observations are computed from the existing completion definition.
 
+The five existing permission families now share an exact program contract:
+formation and truth must both be invariant across presentations of the same
+complete subject. Construction, adoption, continuation, amendment, and site
+permission retain their original definitions and distinct argument domains.
+Generic native admission supplies the former construction API and a new
+adoption instance through independently proved comparators. Adoption comparison
+uses the existing target and generation contracts. Its fixed native checker
+has an admitted policy with certified calls for every complete raw adoption
+presentation. Cause validity, publication, and currentness remain separate.
+
+The decision-comparison investigation is directly reproducible:
+
+```sh
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle permission --selected 0
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle permission --selected 1
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle permission --selected 0 1
+```
+
+The three candidates are a narrow-interface program with no clauses, a
+variable-interface program with no clauses, and a variable-interface recognizer.
+The two arguments are an empty payload and a pair of empty payloads. Proved
+code equations compute their actual formation and truth, retaining both
+Boolean outcomes. Formation alone misses candidates 1 and 2; truth alone
+misses 0 and 1. Both facets give an exact basis on this finite scope. The
+general theorem separately proves both facets essential for preserving
+decisions of all formed program entries. The command checks and exports the
+required permission theory before execution; its receipt includes the computed
+complete table and intended comparison.
+
 Source-context readiness uses an accepted build receipt and the complete local
 import closure:
 
@@ -1683,6 +1712,7 @@ and one of these finite inputs:
 |---|---|
 | `inference` | `known` is a list of condition identifiers; each `rules` object has `conclusion` and `premises` pairs `[occurrence, condition]`; `goals` has the same pair form. |
 | `basis` | `candidates`, `facets`, and `selected` are identifier lists; `observations` has triples `[facet, candidate, value]`; `relation` lists the intended directed candidate pairs. |
+| `completion` or `permission` | `selected` chooses facets of the corresponding proved investigation; the exported program computes its observations and comparison. |
 
 Identifiers are nonnegative integers. Optional `conditions` metadata supplies
 one object with an `id` for every used condition. Optional `evidence` objects

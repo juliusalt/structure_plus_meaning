@@ -79,11 +79,11 @@ def validate_case(case: dict) -> None:
         require(rows(case.get("relation"), 2), "relation must contain candidate pairs.")
         require(all(c in case["candidates"] and d in case["candidates"] for c, d in case["relation"]),
                 "Comparison pairs must lie in the supplied candidate domain.")
-    elif kind == "completion":
+    elif kind in {"completion", "permission"}:
         require(isinstance(case.get("selected"), list) and all(natural(x) for x in case["selected"]),
                 "selected must contain natural facet identifiers.")
     else:
-        raise ValueError("kind must be inference, basis, or completion.")
+        raise ValueError("kind must be inference, basis, completion, or permission.")
     evidence = case.get("evidence", [])
     require(isinstance(evidence, list), "evidence must be a list.")
     for item in evidence:
@@ -243,20 +243,21 @@ def current_sources(sources: dict) -> bool:
     return all(file_hash(Path(item["path"])) == item["sha256"] for item in sources.values())
 
 
-def prepare_engine(args, receipt: dict, output: Path, log) -> tuple[Path, Path, dict]:
+def prepare_engine(args, receipt: dict, output: Path, log, kind: str) -> tuple[Path, Path, dict]:
     version = run_command([args.isabelle, "version"], args, receipt, log, 30).strip()
-    sources, _ = source_graph(ROOT, [], [ENGINE_THEORY])
+    engine_theory = "Factor_Permission_Investigation" if kind == "permission" else ENGINE_THEORY
+    sources, _ = source_graph(ROOT, [], [engine_theory])
     tool_paths = [Path(__file__).resolve(), Path(build.__file__).resolve()]
     tool_hashes = {str(path): file_hash(path) for path in tool_paths}
     material = {"sources": {name: item["sha256"] for name, item in sources.items()},
-                "tools": tool_hashes, "isabelle_version": version}
+                "tools": tool_hashes, "isabelle_version": version, "engine_theory": engine_theory}
     key = digest(json.dumps(material, sort_keys=True).encode())
     session = "Finite_Investigation_" + key[:24]
     snapshot = args.engine_cache.resolve() / key
     root_text = (f"session {session} = HOL +\n  options [document = false]\n"
-                 f'  sessions "HOL-Library"\n  directories "theories"\n  theories {ENGINE_THEORY}\n')
+                 f'  sessions "HOL-Library"\n  directories "theories"\n  theories {engine_theory}\n')
     expected = {"ROOT": root_text, **{f"theories/{name}.thy": item["text"] for name, item in sources.items()}}
-    receipt.update(engine_key=key, isabelle_version=version, engine_session=session,
+    receipt.update(engine_key=key, isabelle_version=version, engine_session=session, engine_theory=engine_theory,
         engine_sources={name: {k: v for k, v in item.items() if k != "text"} for name, item in sources.items()},
         tools=tool_hashes, engine_snapshot=str(snapshot))
     with locked(args.engine_cache.resolve() / (key + ".lock")):
@@ -291,7 +292,7 @@ def prepare_engine(args, receipt: dict, output: Path, log) -> tuple[Path, Path, 
         receipt["proof_receipt_sha256"] = file_hash(output / "proof.json")
         export_dir = output / ("export-" + receipt["invocation"])
         run_command([args.isabelle, "export", "-n", "-d", str(snapshot), "-O", str(export_dir),
-                     "-x", "*:code/finite_investigation.ML", session], args, receipt, log, 60)
+                     "-x", f"*{engine_theory}:code/finite_investigation.ML", session], args, receipt, log, 60)
         blobs = list(export_dir.rglob("finite_investigation.ML"))
         require(len(blobs) == 1, "Expected exactly one generated investigation module.")
         engine = blobs[0]
@@ -356,12 +357,11 @@ val result = "{\"input_formed\":" ^ Bool.toString formed ^
 print ("INVESTIGATION_RESULT " ^ result ^ "\n");
 '''
 
-    if case["kind"] == "completion":
-        call = "Finite_Investigation.completion_investigation " + ml_list(case["selected"], ml_nat)
-        extra = r'''
-val supplied = ",\"observations\":" ^ jlist jtriple Finite_Investigation.completion_investigation_observations ^
-  ",\"relation\":" ^ jlist jpair Finite_Investigation.completion_investigation_relation;
-'''
+    if case["kind"] in {"completion", "permission"}:
+        function = "Finite_Investigation." + case["kind"] + "_investigation"
+        call = function + " " + ml_list(case["selected"], ml_nat)
+        extra = ('val supplied = ",\\\"observations\\\":" ^ jlist jtriple ' + function + '_observations ^\n'
+                 '  ",\\\"relation\\\":" ^ jlist jpair ' + function + '_relation;\n')
     else:
         call = "Finite_Investigation.investigation_basis " + " ".join([
             ml_list(case[name], ml_nat) for name in ("candidates", "facets", "selected")])
@@ -393,9 +393,9 @@ def validate_result(result: dict, kind: str) -> None:
                     for p in result["profiles"]), "Malformed candidate profile.")
         require(all(isinstance(p, dict) and natural(p.get("from")) and natural(p.get("to"))
                     and rows(p.get("losses"), 2) for p in result["losses"]), "Malformed candidate losses.")
-        if kind == "completion":
+        if kind in {"completion", "permission"}:
             require(rows(result.get("observations"), 3) and rows(result.get("relation"), 2),
-                    "Missing executed completion observations or relation.")
+                    "Missing executed observations or relation.")
 
 
 def run(args, invocation: str, output: Path) -> int:
@@ -414,6 +414,17 @@ def run(args, invocation: str, output: Path) -> int:
                 receipt["input"] = {"path": str(args.case.resolve()), "sha256": digest(raw)}
             elif args.mode == "sources":
                 case = source_case(args)
+            elif args.mode == "permission":
+                case = {"schema": SCHEMA, "kind": "permission", "selected": args.selected,
+                    "question": "Do the selected facets preserve complete formation and truth decisions?",
+                    "scope": {"candidates": {"0": "narrow interface, empty clause family",
+                            "1": "variable interface, empty clause family", "2": "variable-interface recognizer"},
+                        "arguments": {"0": "Payload_Term []", "1": "Pair_Term (Payload_Term []) (Payload_Term [])"},
+                        "facets": {"0": "call formation", "1": "positive truth"},
+                        "values": "Twice the argument index plus its Boolean outcome (False=0, True=1)",
+                        "comparison": "Equal formation and truth at both supplied arguments",
+                        "coverage": "These three actual program forms and these two argument values"},
+                    "semantic_boundary": "The exported theory computes the actual program observations using proved equations. Its table and comparison contracts cover precisely the stated finite scope. The general proof separately establishes the necessity of both facets for all formed program entries."}
             else:
                 case = {"schema": SCHEMA, "kind": "completion", "selected": args.selected,
                     "question": "Do the selected observations distinguish joint completion feasibility?",
@@ -426,7 +437,7 @@ def run(args, invocation: str, output: Path) -> int:
             build.atomic_json(output / "case.json", case)
             receipt.update(case_sha256=file_hash(output / "case.json"), question=case["question"], scope=case["scope"],
                 semantic_boundary=case.get("semantic_boundary", "Results are exact for the supplied finite data. Independent meanings, evidence validity, and wider coverage require their own justification."))
-            engine, poly, sources = prepare_engine(args, receipt, output, log)
+            engine, poly, sources = prepare_engine(args, receipt, output, log, case["kind"])
             program = output / "execute.ML"
             program.write_text(runtime_program(case, engine))
             receipt["runtime_program_sha256"] = file_hash(program)
@@ -494,6 +505,8 @@ def main() -> int:
     raw.add_argument("case", type=Path)
     completion = modes.add_parser("completion", help="Compute and compare the linked completion example")
     completion.add_argument("--selected", type=int, nargs="*", default=[0, 1])
+    permission = modes.add_parser("permission", help="Compute actual program formation and truth observations")
+    permission.add_argument("--selected", type=int, nargs="*", default=[0, 1])
     sources = modes.add_parser("sources", help="Investigate exact source-context readiness against an accepted build")
     sources.add_argument("roots", nargs="+")
     sources.add_argument("--project", type=Path, default=ROOT)

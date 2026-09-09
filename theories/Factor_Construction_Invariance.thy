@@ -1,5 +1,5 @@
 theory Factor_Construction_Invariance
-  imports Factor_Construction_Contracts Factor_Construction_Order_Audit Presentation_Generators
+  imports Factor_Construction_Contracts Factor_Construction_Order_Audit Presentation_Generators Factor_Permission_Invariance
 begin
 
 section \<open>One complete unordered field changes at each step\<close>
@@ -146,13 +146,8 @@ definition construction_permission_obligations where
 theorem construction_permission_obligations_exact:
   "rel_ran (construction_permission_obligations P d)\<subseteq>{c. observation_condition c} \<longleftrightarrow>
     construction_permission_invariant P d"
-proof -
-  have parents: "rel_ran {(False,schema_call_formed P d),(True,\<lambda>t. (d,t)\<in>positive_meaning P)}=
-      {schema_call_formed P d,\<lambda>t. (d,t)\<in>positive_meaning P}"
-    by (auto simp: rel_ran_def ex_bool_eq)
-  show ?thesis by (simp add: construction_permission_obligations_def obligation_substitution_values parents
-    observation_obligations_exact construction_permission_local_iff)
-qed
+  by (simp only: construction_permission_local_iff program_invariance_obligations_exact[symmetric]
+    program_invariance_obligations_def construction_permission_obligations_def)
 
 theorem construction_permission_reduction:
   "exact_obligation_reduction UNIV (\<lambda>z. construction_permission_invariant (fst z) (snd z))

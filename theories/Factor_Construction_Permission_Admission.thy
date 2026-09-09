@@ -1,5 +1,5 @@
 theory Factor_Construction_Permission_Admission
-  imports Factor_Related_Test_Admission Factor_Construction_Permission_Completion
+  imports Factor_Related_Test_Admission Factor_Construction_Permission_Completion Factor_Permission_Admission
 begin
 
 section \<open>The comparison reference is established before submitted permissions\<close>
@@ -24,6 +24,12 @@ qed
 sublocale checker: related_test_admission c "definition_site_value k"
   by (rule related_test_admission.intro[OF reference_fields])
 
+sublocale permission: presented_permission_admission construction_account_presents
+  construction_account_domain "\<lambda>t. \<exists>a. construction_account_presents a t" C k c cu cr R
+  by (rule presented_permission_admission.intro[OF construction_account_presentation_class _
+    reference reference_value entry comparison])
+    (use construction_account_formed in blast)
+
 theorem profile_permission:
   assumes package: "native_package_at E pu pr P"
     and profile: "native_related_test_package C k E pu pr d"
@@ -32,20 +38,15 @@ theorem profile_permission:
     "\<exists>test\<in>system_definitions P. (\<lambda>z. (d,z)\<in>positive_meaning P)=
       saturate_observation construction_account_presents (\<lambda>z. (test,z)\<in>positive_meaning P)"
 proof -
-  have boundary: "schema_call_formed P d z \<longleftrightarrow> term_formed z" for z
-    by (rule native_related_test_package_saturation(1)[OF reference entry comparison package profile])
-  have saturation: "\<exists>test\<in>system_definitions P. (\<lambda>z. (d,z)\<in>positive_meaning P)=
-      saturate_observation construction_account_presents (\<lambda>z. (test,z)\<in>positive_meaning P)"
-    by (rule native_related_test_package_saturation(2)[OF reference entry comparison package profile])
-  obtain test where equation: "(\<lambda>z. (d,z)\<in>positive_meaning P)=
-      saturate_observation construction_account_presents (\<lambda>z. (test,z)\<in>positive_meaning P)"
-    using saturation by blast
+  have invariant: "presented_program_invariant construction_account_presents P d"
+    by (rule permission.profile_permission(1)[OF package profile])
   show "construction_permission_invariant P d"
-    by (rule construction_permission_from_saturation[OF boundary equation])
-  show "schema_call_formed P d z \<longleftrightarrow> term_formed z" by (rule boundary)
+    using invariant by (simp only: construction_permission_observations presented_program_observations)
+  show "schema_call_formed P d z \<longleftrightarrow> term_formed z"
+    by (rule permission.profile_permission(2)[OF package profile])
   show "\<exists>test\<in>system_definitions P. (\<lambda>z. (d,z)\<in>positive_meaning P)=
       saturate_observation construction_account_presents (\<lambda>z. (test,z)\<in>positive_meaning P)"
-    by (rule saturation)
+    by (rule permission.profile_permission(3)[OF package profile])
 qed
 
 theorem admitted_permission:
@@ -57,14 +58,15 @@ theorem admitted_permission:
     "\<exists>test\<in>system_definitions P. (\<lambda>z. (d,z)\<in>positive_meaning P)=
       saturate_observation construction_account_presents (\<lambda>z. (test,z)\<in>positive_meaning P)"
 proof -
-  have presented: "program_entry_presents ((E,(pu,pr)),d) p" using source by simp
-  have profile: "native_related_test_package C k E pu pr d"
-    using checked by (simp only: checker.on_presentations[OF reference_value refl presented] fst_conv snd_conv)
+  have invariant: "presented_program_invariant construction_account_presents P d"
+    by (rule permission.admitted_permission(1)[OF package source checked])
   show "construction_permission_invariant P d"
-    "schema_call_formed P d z \<longleftrightarrow> term_formed z"
-    "\<exists>test\<in>system_definitions P. (\<lambda>z. (d,z)\<in>positive_meaning P)=
+    using invariant by (simp only: construction_permission_observations presented_program_observations)
+  show "schema_call_formed P d z \<longleftrightarrow> term_formed z"
+    by (rule permission.admitted_permission(2)[OF package source checked])
+  show "\<exists>test\<in>system_definitions P. (\<lambda>z. (d,z)\<in>positive_meaning P)=
       saturate_observation construction_account_presents (\<lambda>z. (test,z)\<in>positive_meaning P)"
-    by (rule profile_permission[OF package profile])+
+    by (rule permission.admitted_permission(3)[OF package source checked])
 qed
 
 theorem permission_conditions_discharged:
@@ -101,52 +103,15 @@ theorem candidate_total:
     (\<forall>e\<in>system_definitions P. \<forall>z.
       (schema_call_formed Q e z \<longleftrightarrow> schema_call_formed P e z) \<and>
       ((e,z)\<in>positive_meaning Q \<longleftrightarrow> (e,z)\<in>positive_meaning P))"
-proof -
-  have cf: "environment_formed C" using environment_value_presents_formed[OF reference_value] by blast
-  obtain F u Q d where built: "closed_native_package_at F u [] Q" "native_package_environment F u []=F"
-    "d\<notin>system_definitions P" "system_definitions Q=insert d (system_definitions P)"
-    "native_related_test_package C k F u [] d"
-    "\<forall>e\<in>system_definitions P. \<forall>z.
-      (schema_call_formed Q e z \<longleftrightarrow> schema_call_formed P e z) \<and>
-      ((e,z)\<in>positive_meaning Q \<longleftrightarrow> (e,z)\<in>positive_meaning P)"
-    using native_related_test_package_total[OF cf retained package callees] by blast
-  have candidate: "native_package_at F u [] Q" using built(1) by (simp add: closed_native_package_at_def)
-  have accepted: "(264,p)\<in>positive_meaning (related_test_admission_system c (definition_site_value k))"
-    if "program_entry_value_presents F u [] d p" for p
-    using built(5) checker.on_presentations[OF reference_value refl, of "((F,(u,[])),d)" p] that by simp
-  have boundary: "program_entry_context_formed ((F,(u,[])),d)"
-    by (rule related_test_package_boundary[where C=C and k=k]) (use built(5) in simp)
-  obtain p where presented: "program_entry_presents ((F,(u,[])),d) p"
-    using program_entries.total[OF boundary] by blast
-  have source: "program_entry_value_presents F u [] d p" using presented by simp
-  have invariant: "construction_permission_invariant Q d"
-    by (rule admitted_permission(1)[OF candidate source accepted[OF source]])
-  show ?thesis by (rule exI[of _ F], rule exI[of _ u], rule exI[of _ Q], rule exI[of _ d])
-    (use built(1-4,6) invariant accepted in blast)
-qed
+  using permission.candidate_total[OF package retained callees]
+  by (simp only: construction_permission_observations presented_program_observations)
 
 theorem inhabited_admission:
   "\<exists>F u Q d p. closed_native_package_at F u [] Q \<and> program_entry_value_presents F u [] d p \<and>
     construction_permission_invariant Q d \<and>
     (264,p)\<in>positive_meaning (related_test_admission_system c (definition_site_value k))"
-proof -
-  obtain F u Q d where built: "closed_native_package_at F u [] Q"
-    "system_definitions Q=insert d (system_definitions R)" "construction_permission_invariant Q d"
-    "\<forall>p. program_entry_value_presents F u [] d p \<longrightarrow>
-      (264,p)\<in>positive_meaning (related_test_admission_system c (definition_site_value k))"
-    using candidate_total[OF reference environment_included_refl entry entry] by blast
-  have package: "native_package_at F u [] Q" using built(1) by (simp add: closed_native_package_at_def)
-  have formed: "environment_formed F"
-    using native_package_projection(1)[OF package] by (simp add: native_package_formed_def)
-  have root: "(u,[])\<in>environment_positions F"
-    by (rule native_package_root_position[OF package])
-  have member: "d\<in>system_definitions Q" using built(2) by simp
-  have position: "d\<in>environment_positions F" by (rule native_package_entry_position[OF package member])
-  obtain p where presented: "program_entry_value_presents F u [] d p"
-    using program_entry_value_presents_total[OF formed root position] by blast
-  show ?thesis by (rule exI[of _ F], rule exI[of _ u], rule exI[of _ Q], rule exI[of _ d], rule exI[of _ p])
-    (use built(1,3,4) presented in blast)
-qed
+  using permission.inhabited_admission
+  by (simp only: construction_permission_observations presented_program_observations)
 
 end
 

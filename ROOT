@@ -644,3 +644,12 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Construction_Cause_Contracts
     Finite_Investigation_Interface
     Presentation_Completion_Investigation
+    Presentation_Observation_Contracts
+    Factor_Permission_Invariance
+    Factor_Permission_Presentations
+    Factor_Permission_Families
+    Factor_Permission_Admission
+    Factor_Permission_Completion
+    Factor_Permission_Investigation
+    Factor_Adoption_Comparison
+    Factor_Adoption_Permission_Admission

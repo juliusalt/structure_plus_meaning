@@ -10,13 +10,11 @@ theorem construction_permission_from_saturation:
     and meaning: "(\<lambda>p. (d,p)\<in>positive_meaning P)=saturate_observation construction_account_presents test"
   shows "construction_permission_invariant P d"
 proof -
-  have formation: "rel_fun (presentation_transport construction_account_presents construction_account_presents) (=)
-      (schema_call_formed P d) (schema_call_formed P d)"
-    using construction_account_formed by (auto simp: rel_fun_def presentation_transport_def boundary)
-  have truth: "rel_fun (presentation_transport construction_account_presents construction_account_presents) (=)
-      (\<lambda>p. (d,p)\<in>positive_meaning P) (\<lambda>p. (d,p)\<in>positive_meaning P)"
-    by (simp only: meaning; rule presentation_class.saturation_invariant[OF construction_account_presentation_class])
-  show ?thesis using formation truth by (simp only: construction_permission_observations; blast)
+  have invariant: "presented_program_invariant construction_account_presents P d"
+    by (rule presented_program_from_saturation[OF construction_account_presentation_class _ boundary meaning])
+      (use construction_account_formed in blast)
+  show ?thesis using invariant
+    by (simp only: construction_permission_observations presented_program_observations)
 qed
 
 theorem checked_construction_permission:

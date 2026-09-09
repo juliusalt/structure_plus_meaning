@@ -1769,6 +1769,44 @@ a union rule retains each component's overlap. The existing construction,
 related-test admission, and recorded-cause composition proofs now use these
 rules. The complete construction-cause reader below uses these agreements in its native join.
 
+The linked permission investigation covers five original families. Their
+formation-and-truth conditions instantiate one program observation contract on
+distinct complete subject classes. Product constructions recover adoption,
+current frames, amendments, and continuations through exact equations to their
+original arguments. Construction retains valid assembly and coordinate
+conditions; site permission retains its supplied environment. General
+value-polymorphic factorization supplies the paired permission and residual laws.
+
+Preserving decisions requires both outcomes of both observations. Equal empty
+positive meanings can hide different interfaces; equal interfaces can hide
+opposite truth. Actual formed programs witness both failures. The general
+comparison proves the two facets essential. The runner computes those programs'
+decisions at two supplied arguments through exact table and comparison
+contracts, returning every failed directed pair and its losses.
+
+Native admission now belongs to the shared presented-permission contract. Its
+actual comparison reference is fixed independently, and the existing complete
+related-test checker supplies a sufficient finite profile. Construction consumes
+this theorem under its unchanged API. Two ordinary adoption definitions compose
+target and generation identity contracts, giving a second independent native
+reference. The same checker then supplies original adoption invariance and
+leaves closed replay as the exact remaining certificate condition for the
+actual call. One constructed policy covers every complete raw adoption
+presentation, with cause validity, publication, and currentness separate.
+
+Generic completion requires both a native comparator and the fixed universal
+query in the same reference. The represented-coordinate native constructor
+uses its source directly. An abstract finite source is compiled once; the
+generic native wrapper also uses that path for arbitrary use types.
+Exact new-test truth and saturation,
+retained reference meanings, and admission of every completed presentation are
+separate guarantees. Truth agreement requires truth invariance; the new variable
+interface can still differ from the original. Construction has the required
+combined reference. Adoption currently has comparison and raw-domain admission;
+arbitrary-source adoption completion requires the separate query join.
+Arbitrary original-program invariance, native mathematical-proof checking,
+higher strata, and both final audits remain open.
+
 Construction permission now has an exact reduction to changes of one complete
 unordered field at a time. Every pair of valid complete claims is connected
 by three such changes, with the same ordered inputs, exact sources, selections,

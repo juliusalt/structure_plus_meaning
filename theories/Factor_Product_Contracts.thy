@@ -11,6 +11,18 @@ lemma factor_pair_relation_lifting:
       presented_relation R S L x z \<and> presented_relation T U M y w)"
   by (auto simp: factor_pair_presents_def presented_relation_def; metis fst_conv snd_conv)
 
+
+lemma factor_pair_identity_lifting:
+  "presented_relation (factor_pair_presents R S) (factor_pair_presents R S) (=) p q \<longleftrightarrow>
+    (\<exists>a b c d. p=Pair_Term a b \<and> q=Pair_Term c d \<and>
+      presented_relation R R (=) a c \<and> presented_relation S S (=) b d)"
+proof -
+  have identity: "(\<lambda>x y. fst x=fst y \<and> snd x=snd y)=(=)"
+    by (intro ext) (simp only: prod_eq_iff)
+  show ?thesis using factor_pair_relation_lifting[where R=R and S=R and T=S and U=S and L="(=)" and M="(=)"]
+    by (simp only: identity)
+qed
+
 theorem factor_pair_relation_contract:
   assumes first: "presented_relation_contract R D A S E B L run"
     and second: "presented_relation_contract T F C U G K M step"

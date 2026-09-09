@@ -6654,3 +6654,128 @@ while preserving the stronger unfinished work. The permission generalization
 continues to require its own proof acceptance. Global invariance of arbitrary
 original programs, native presentation and checking of mathematical contracts,
 higher strata, and the final alignment and every-line audits remain open.
+
+
+## Permission families share a contract while their complete subjects remain distinct
+
+Five existing invariance definitions repeat the same observations of the actual
+selected program: call formation and positive truth. Their complete arguments
+differ. Exact equations to those original definitions justify generalizing
+the observations without erasing the independent subject boundaries.
+
+| Permission role | Complete subject retained |
+|---|---|
+| Construction | Ordered inputs, complete bases, selections and origins of a valid account; its exact assembled output is derived. |
+| Adoption | Authority target, complete generation core, and purpose target. |
+| Continuation | Independent before snapshot, transaction, claimed after snapshot, and submitted environment and site. |
+| Amendment | The complete current frame, candidate generation, and supplied certificate target. |
+| Site | The supplied complete environment and exact use and address. |
+
+Products of existing classes supply the four newly grouped argument classes.
+Their field equations recover the original value relations. No derived program,
+permission, currentness, transaction result, or validity evidence is stored.
+Construction retains its assembly and coordinate boundary. The current frame
+keeps both actual scopes; a claimed after snapshot remains an independent input.
+
+The observation theorem works for any value type. Invariance on a presentation
+fibre is equivalent to existence of a factor through the subject. Class totality
+makes that factor unique on the independent domain. Mathematical choice in the
+proof selects no operative representation. The paired specialization keeps
+formation and truth. Existence of some factor does not establish agreement with
+a separately intended meaning.
+
+The same exact reduction supplies qualified conditions for both observations
+and every compared pair. Each original permission inherits those laws.
+Construction's three-field generator and exported residual theorem retain their
+statements. Another class's proposed generator still requires its own
+preservation and complete-path coverage proofs.
+
+## Executed comparison preserves refusals as well as successful calls
+
+The comparison asks whether a program's decisions are preserved on its supplied
+argument domain. A positive-use set alone loses an original refusal when a new
+successful call is added. Each observation therefore retains its Boolean
+outcome. Inclusion of these complete graphs is exactly decision agreement,
+giving an exact basis for the independently specified comparison.
+
+Actual formed programs justify both facets. An empty-payload interface with no
+clauses and a variable interface with no clauses have equal empty meanings but
+different call boundaries. The latter and a variable-interface recognizer have
+equal call boundaries but opposite truth. Each pair supplies the omitted facet
+and a concrete lost outcome. The general theorem rules out every proper subset
+of the two facets over all formed program entries.
+
+The finite execution uses these three programs and two arguments: an empty
+payload and a pair of empty payloads. Proved equations compute their actual
+interfaces and positive-meaning observations. The complete table and intended
+comparison have independent exactness contracts. The existing evaluator returns:
+
+| Selected facets | Failed directed pairs | Consequence for search |
+|---|---|---|
+| Formation | `(1, 2)` and `(2, 1)` | Equal interfaces leave opposite truth unobserved. |
+| Truth | `(0, 1)` and `(1, 0)` | Equal empty truth leaves different call boundaries unobserved. |
+| Both | None | The basis preserves every decision in this finite scope. |
+
+The first exploratory run used a proposed table and explicitly left its semantic
+link unproved. The reproducible permission command now computes the table from
+the actual program definitions using proved equations. It requires successful
+checking of its own complete dependency session before export. Results include
+the computed table, comparison, profiles, and losses. The finite case exercises
+the evaluator; the separate general proof establishes the wider facet claim.
+Neither result introduces a native negative premise or a general decision
+procedure for nonmembership in arbitrary positive meanings.
+
+## A shared native profile supplies construction and adoption permissions
+
+The complete related-test profile already depended on construction only through
+its comparison reference. The general contract now owns that dependency:
+a complete class, formation of its values, and an independently proved native
+comparator precede every candidate. The existing ordinary checker retains the
+actual candidate, complete definition, both callees, and a common formed
+environment containing the fixed reference. Mathematical conditions on that
+reference are not installed as native predicate callbacks.
+
+An admitted profile has a variable interface and exactly the invariant
+saturation of its actual test. Compatible callees have a constructed fresh
+policy, admission of every complete source presentation, and preservation of
+all original call boundaries and meanings. Construction's admission and
+completion interfaces consume these general proofs without changes to their
+statements or enclosing assumptions.
+
+Completion additionally requires the universal query in the actual reference.
+It quotes a source environment in the established presentation coordinates and
+its entry directly. The abstract constructor compiles its source once and
+delegates to that construction. The generic native wrapper retains arbitrary
+source-use types through the abstract path. The locale's subject type is
+explicitly independent of the source program's binder and occurrence types.
+New-test truth preserves source truth, and the new permission is its saturation.
+Both new interfaces are variable. Truth agreement requires truth invariance;
+formation agreement remains a separate condition. No recorded cause receives
+a replacement source program through this construction.
+
+Adoption supplies a second independent native instance. Two ordinary
+three-premise definitions admit and compare authority, generation, and purpose.
+Their least base follows the four actual target and generation callees.
+Generic pair identity lifting consumes existing component contracts, so the
+client does not repeat target enumeration or generation recursion. Every
+complete field presentation is admitted; correspondence is equality of the
+three independent values.
+
+One fixed native checker entails the original adoption invariance condition
+for each admitted actual program. The native adoption join retains its package,
+entry, application, and subject. Under that admission, closed replay is exactly
+the remaining certificate condition for the particular call. A constructed
+policy accepts the whole raw adoption domain and has certified calls for every
+complete presentation. It establishes neither generation-cause validity nor
+publication or currentness.
+
+Two independent native comparators now instantiate the admission contract,
+and all five original families instantiate its semantic contract. Construction
+also has the query required for arbitrary-source completion. Adoption currently
+has comparison and raw-domain admission; its query join remains separate work.
+An exact basis for decision agreement settles neither physical program
+retention, native availability, proof-establishment cost, nor wider search
+coverage. Those remain distinct questions for further investigation. Arbitrary
+original-program invariance, native mathematical-proof checking, higher strata,
+and the final alignment and every-line audits remain open. No broader obligation
+status is changed by this milestone.

@@ -17,6 +17,18 @@ fun finite_path_bound :: "nat \<Rightarrow> ('a \<times> 'a) fset \<Rightarrow> 
 | "finite_path_bound (Suc n) E =
     finite_path_bound n E |\<union>| finite_edge_compose (finite_path_bound n E) E"
 
+
+lemma finite_path_bound_shared_step:
+  "finite_path_bound (Suc n) E =
+    (let previous=finite_path_bound n E in previous |\<union>| finite_edge_compose previous E)"
+  by (simp only: Let_def finite_path_bound.simps)
+
+lemma finite_path_bound_code [code]:
+  "finite_path_bound n E =
+    (if n=0 then E else
+      (let previous=finite_path_bound (n-1) E in previous |\<union>| finite_edge_compose previous E))"
+  by (cases n) (simp_all add: Let_def)
+
 lemma finite_path_bound_correct:
   "fset (finite_path_bound n E) = ntrancl n (fset E)"
   by (induction n) (auto simp: finite_edge_compose_correct)
@@ -102,6 +114,69 @@ proof -
     qed
   qed
 qed
+
+
+section \<open>Several roots share the same complete transition closure\<close>
+
+definition finite_reachable_outputs_from ::
+  "('a \<Rightarrow> 'k) \<Rightarrow> ('k\<times>'a) fset \<Rightarrow> 'a fset \<Rightarrow> 'a fset" where
+  "finite_reachable_outputs_from key R roots=ffUnion (fimage (finite_reachable_outputs key R) roots)"
+
+lemma finite_reachable_outputs_from_member:
+  "a\<in>fset (finite_reachable_outputs_from key R roots) \<longleftrightarrow>
+    a\<in>fset roots \<or> (\<exists>r\<in>fset roots. \<exists>k. (k,a)\<in>fset R \<and>
+      (key r,k)\<in>(fset (finite_transition_keys key R))\<^sup>*)"
+  by (auto simp: finite_reachable_outputs_from_def ffUnion.rep_eq fimage.rep_eq
+    finite_reachable_outputs_member)
+
+lemma finite_reachable_outputs_from_empty [simp]:
+  "finite_reachable_outputs_from key R {||}={||}"
+  by (simp add: finite_reachable_outputs_from_def)
+
+lemma finite_reachable_outputs_from_singleton [simp]:
+  "finite_reachable_outputs_from key R {|root|}=finite_reachable_outputs key R root"
+  by (simp add: finite_reachable_outputs_from_def)
+
+theorem finite_reachable_outputs_from_union:
+  "finite_reachable_outputs_from key R (A |\<union>| B)=
+    finite_reachable_outputs_from key R A |\<union>| finite_reachable_outputs_from key R B"
+proof -
+  have "fset (finite_reachable_outputs_from key R (A |\<union>| B))=
+      fset (finite_reachable_outputs_from key R A |\<union>| finite_reachable_outputs_from key R B)"
+    by (auto simp: finite_reachable_outputs_from_member)
+  then show ?thesis by (simp only: fset_inject)
+qed
+
+lemma finite_reachable_outputs_from_code [code]:
+  "finite_reachable_outputs_from key R roots =
+    (let paths=finite_edge_closure (finite_transition_keys key R); keys=fimage key roots
+     in roots |\<union>| fimage snd (ffilter (\<lambda>(k,a).
+       k\<in>fset keys \<or> (\<exists>r\<in>fset keys. (r,k)\<in>fset paths)) R))"
+proof -
+  have equality: "fset (finite_reachable_outputs_from key R roots)=
+      fset (let paths=finite_edge_closure (finite_transition_keys key R); keys=fimage key roots
+        in roots |\<union>| fimage snd (ffilter (\<lambda>(k,a).
+          k\<in>fset keys \<or> (\<exists>r\<in>fset keys. (r,k)\<in>fset paths)) R))"
+    by (auto simp: finite_reachable_outputs_from_member Let_def fimage.rep_eq
+      finite_edge_closure_correct rtrancl_eq_or_trancl split: prod.splits; force)
+  show ?thesis using equality by (simp only: fset_inject)
+qed
+
+lemma finite_reachable_outputs_code [code]:
+  "finite_reachable_outputs key R root=finite_reachable_outputs_from key R {|root|}"
+  by simp
+
+text \<open>
+  Every finite root family has exactly the union of its original reachable
+  outputs. The shared evaluation retains all initial values and every labelled
+  output, including different values with the same transition key. Empty
+  families, cycles, and unrelated edges keep their original meanings.
+
+  The proved code equations compute each recursive prefix once and reuse one
+  complete transition closure across all roots. They change no mathematical
+  definition or path bound. Choosing a private iteration order does not add a
+  root, omit an edge, or identify output values through their keys.
+\<close>
 
 export_code finite_edge_closure finite_edge_reaches finite_edge_wellfounded finite_reachable_outputs checking SML
 

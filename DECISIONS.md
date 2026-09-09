@@ -6573,3 +6573,84 @@ original code. The new component, valuation, class, and exactness proofs
 remain subject to O-85's native mathematical-proof presentation and checking.
 Broader obligation states remain unchanged; further strata and the final
 owner-alignment and every-line audits still require work.
+
+
+## Actual execution exposes both computational and observational limits
+
+The earlier SML checks established that the finite functions could be generated
+and compiled. They did not establish practical execution on project questions.
+A repeatable command now supplies that missing use: its list interface has
+proved projections to the original finite relations, and the command executes
+the actual Isabelle-exported functions. Rules and observations are finite input
+data; their independently intended meanings remain explicit conditions.
+
+The first project case asked which exact proof contexts remained for four
+proposed permission deliverables. Its complete local closure contained 411
+theories. The accepted source receipt supplied 386 exact contexts; 25 still
+required local checking or changed parent contexts. Eleven of those 25 had
+unchanged local text. Comparing only a file's own digest would have incorrectly
+reused their old context evidence. The rules retain each local proof check and
+every actual parent as separate premises. They describe conditional readiness,
+not derivation of mathematical truth from an import edge. One accepted session
+can establish many of these local conditions together.
+
+That 93-edge case initially exceeded 60 seconds. Profiling located duplicated
+recursive calls in finite path closure, repeated closure across roots, and
+repeated demand inside report filters. The fix is stated and proved as code
+equations. Each recursive prefix is computed once; a finite root family shares
+one complete transition closure; reports and guided selection share demand.
+The original definitions, path bound, all old contracts, labelled outputs,
+cycles, and whole-table formation remain intact. The repeatable runner returned
+all 93 reasons in about 0.41 seconds of evaluator time in the development run.
+This observation demonstrates the improvement on that case; it is not a
+complexity bound or a performance guarantee for arbitrary finite input.
+
+The second case examines linked semantic subjects. Candidate 0 pairs identity
+with identity, and candidate 1 pairs identity with negation. Their common
+presentation class contains all Boolean presentations of one unit subject.
+The independent comparison asks whether joint completion feasibility is
+preserved. Every observation is computed through the existing existential
+completion definition, with a proved exact observation table and relation.
+
+| Selected evidence | Executed result | Consequence |
+|---|---|---|
+| Each component has some successful witness | Both candidates have the same profile, but comparison `(0, 1)` fails. | Separate completion loses compatibility of the witnesses. |
+| Both components have one common successful witness | The full directed comparison is preserved and reflected. | The joint facet is an adequate basis on this domain. |
+| No selected facet | Comparison `(0, 1)` fails again. | The remaining joint facet is essential. |
+
+The two weaker facets add no distinction for this particular comparison and
+need not be duplicated. Their separate values can still matter for a different
+question. The result supports joint investigation when the intended use shares
+a witness. It does not license replacing a completed conjunction by a
+conjunction of separate completions, nor does it enumerate all permissions or
+all possible development methods. The existing candidate, observation, and
+completion structures already express this case; no primitive joint kind is
+needed.
+
+Execution itself has an explicit evidence boundary. The command snapshots the
+complete engine import closure, identifies its source and tool bytes, and
+requires a successful Isabelle session before extracting any generated module.
+A blob left by a failed session is never a success criterion. The runtime
+program encodes only checked natural identifiers and quoted paths. Natural
+numbers remain unbounded private identifiers, and tuple conversion respects
+Isabelle's right-associated products. Input, engine, tool, runtime, and proof
+receipt bytes are checked again after execution. Each invocation writes a fresh
+atomic receipt and a complete log; timeout and interruption terminate spawned
+process groups. Diagnostic extraction retains errors even when the extractor
+itself returns a nonzero status.
+
+The runner's fixtures exercise startup, proof and export failure, changed
+sources, tools, cases and generated modules, malformed results and identifiers,
+whole-input rejection, timeouts, interruption, child termination, tuple
+conversion, and changed import contexts. Actual exported executions separately
+retain repeated premise uses and goal occurrences, leave an unsupported
+conjunctive cycle unresolved, reject an unused malformed rule, and preserve a
+large natural identifier with a nonzero observed value. These runtime checks
+complement the arbitrary-input projection theorems and the complete repository
+proof session.
+
+This milestone makes the existing investigation machinery usable immediately
+while preserving the stronger unfinished work. The permission generalization
+continues to require its own proof acceptance. Global invariance of arbitrary
+original programs, native presentation and checking of mathematical contracts,
+higher strata, and the final alignment and every-line audits remain open.

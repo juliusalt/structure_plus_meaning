@@ -1639,6 +1639,66 @@ transition material, reflection, genesis, and the system-wide presentation
 audit. Native presentations and checking of the remaining mathematical
 contracts and proofs stay open.
 
+
+The finite investigation machinery is also executed during development.
+`tools/investigate.py` checks its complete Isabelle dependency session, exports
+the proved functions, and runs them with Poly/ML. Each run records the actual
+case, proof acceptance, source and tool identities, generated module, runtime
+program, results, timings, and complete log. Export requires a successful proof
+session from that invocation. Failure, rejection, timeout, and interruption
+have distinct receipts. The default output is a fresh directory under `/tmp`.
+
+The linked completion investigation is directly reproducible:
+
+```sh
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle completion --selected 0 1
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle completion --selected 2
+```
+
+Candidates pair identity with identity or negation on the complete Boolean
+presentation fibre of one unit subject. Facets 0 and 1 ask for separate
+witnesses; facet 2 asks for one shared witness. The first selection returns
+comparison failure `(0, 1)`. The joint facet alone has no failure. The empty
+selection, requested with `--selected` and no numbers, fails again. These
+observations are computed from the existing completion definition.
+
+Source-context readiness uses an accepted build receipt and the complete local
+import closure:
+
+```sh
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle sources Finite_Investigation_Interface Presentation_Completion_Investigation
+```
+
+`--overlay DIRECTORY` on the `sources` command supplies proposed theory files.
+An unchanged theory with a changed parent context remains unresolved until
+there is matching proof evidence. Local proof checks are explicit premises;
+imports and file presence cannot discharge them. Several such conditions can
+be checked together by one session. The frontend reads the repository's simple
+theory headers; it does not parse arbitrary Isabelle declarations or proofs.
+
+`run CASE.json` accepts schema `finite-investigation-1`, a `question`, a `scope`,
+and one of these finite inputs:
+
+| Kind | Required fields and row meanings |
+|---|---|
+| `inference` | `known` is a list of condition identifiers; each `rules` object has `conclusion` and `premises` pairs `[occurrence, condition]`; `goals` has the same pair form. |
+| `basis` | `candidates`, `facets`, and `selected` are identifier lists; `observations` has triples `[facet, candidate, value]`; `relation` lists the intended directed candidate pairs. |
+
+Identifiers are nonnegative integers. Optional `conditions` metadata supplies
+one object with an `id` for every used condition. Optional `evidence` objects
+bind an absolute `path` to its `sha256`; those bytes are checked before and after
+execution. Lists present finite relations. Different premise occurrences may
+carry the same condition, and reports retain both. Input formation is checked
+by the proved evaluator, including malformed rules outside the demanded scope.
+
+An evaluated receipt establishes the result for its supplied data. Semantic
+rule soundness, established seed evidence, complete observations, and coverage
+of any wider subject remain separate obligations. Empty residuals alone cannot
+supply them. `python3 tools/test_investigation.py` exercises the runner's failure
+gates in isolated fixtures; the linked command executes the actual exported
+mathematics. The runner uses Python, POSIX process groups and locks, Isabelle,
+and Poly/ML; `--poly` can name the runtime explicitly.
+
 Run `python3 tools/check.py --threads 12 --timeout 900` for one combined build,
 complete error collection, theory-inventory check, and unfinished-proof scan.
 Reports are written to `validation/check.json` and `validation/check-errors.log`.

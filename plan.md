@@ -55,6 +55,13 @@ search is guided, and how candidates are compared. Observation choice and
 search-scope coverage must themselves enter the reusable evaluation account.
 A conclusion about one chosen measure does not settle a broader depth question.
 
+The owner's further clarification requires actual execution of the machinery
+where it contributes to the work. Apply it to proposed and existing subjects,
+including the mechanism itself, and jointly to linked subjects when useful.
+Usage should expose inadequacy, missing distinctions, and worthwhile design
+changes; justified improvements should become available promptly without
+reducing the quality of the remaining work.
+
 ### 0.2 Status of every decision in this document
 
 An earlier draft of this plan labelled eleven items "owner decisions" and gave
@@ -1734,8 +1741,15 @@ body benefits repeated uses, while establishing an unused body still has a size.
 These structural counts and proof rounds do not stand in for elapsed time.
 The finite specialization returns all comparison mismatches, demanded conditions,
 and their actual rule and premise reasons, and preserves the original evaluator
-including rejection of unused malformed rules. It exports to SML. Native
-checking of these mathematical contracts, their broader application, and the
+including rejection of unused malformed rules. The list interface has proved
+projection contracts and is actually executed by tools/investigate.py after
+successful proof checking and export. Source readiness retains complete import
+contexts and local proof premises. A linked completion case computes actual
+separate and joint witnesses; only the joint observation is an adequate basis
+for preserving joint feasibility. Runtime profiling also exposed repeated
+recursive closure work. Proved code equations now share prefixes, root closure,
+and demanded conditions without changing the mathematical definitions. Native
+checking of the mathematical contracts, wider semantic applications, and the
 final repository audit remain under O-84 and O-85.
 
 Applying depth investigation to the next native composition exposes a further

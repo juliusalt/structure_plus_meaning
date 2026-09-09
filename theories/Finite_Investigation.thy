@@ -186,6 +186,11 @@ definition finite_inference_demand where
   "finite_inference_demand F K A=ffUnion (fimage
     (\<lambda>a. finite_reachable_outputs id (finite_inference_demand_edges F K) a) A)"
 
+
+lemma finite_inference_demand_code [code]:
+  "finite_inference_demand F K A=finite_reachable_outputs_from id (finite_inference_demand_edges F K) A"
+  by (simp only: finite_inference_demand_def finite_reachable_outputs_from_def)
+
 theorem finite_inference_demand_exact:
   "fset (finite_inference_demand F K A)=inference_demand (finite_inference_rules F) (fset K) (fset A)"
   by (auto simp: finite_inference_demand_def ffUnion.rep_eq fimage.rep_eq
@@ -197,6 +202,15 @@ definition finite_inference_demand_reasons where
     if a\<in>fset (finite_inference_demand F K A) \<and> a\<notin>fset K \<and> finite_premise_functional H
     then fimage (\<lambda>(i,b). (a,H,i,b)) H else {||}) F)"
 
+
+lemma finite_inference_demand_reasons_code [code]:
+  "finite_inference_demand_reasons F K A =
+    (let demanded=finite_inference_demand F K A
+     in ffUnion (fimage (\<lambda>(a,H).
+       if a\<in>fset demanded \<and> a\<notin>fset K \<and> finite_premise_functional H
+       then fimage (\<lambda>(i,b). (a,H,i,b)) H else {||}) F))"
+  by (simp only: Let_def finite_inference_demand_reasons_def)
+
 theorem finite_inference_demand_reasons_exact:
   "(a,H,i,b)\<in>fset (finite_inference_demand_reasons F K A) \<longleftrightarrow>
     a\<in>inference_demand (finite_inference_rules F) (fset K) (fset A) \<and>
@@ -207,6 +221,12 @@ theorem finite_inference_demand_reasons_exact:
 definition finite_guided_inference_table where
   "finite_guided_inference_table F K A=
     ffilter (\<lambda>(a,H). a\<in>fset (finite_inference_demand F K A)) F"
+
+
+lemma finite_guided_inference_table_code [code]:
+  "finite_guided_inference_table F K A =
+    (let demanded=finite_inference_demand F K A in ffilter (\<lambda>(a,H). a\<in>fset demanded) F)"
+  by (simp only: Let_def finite_guided_inference_table_def)
 
 theorem finite_guided_inference_rules_exact:
   "finite_inference_rules (finite_guided_inference_table F K A)=
@@ -269,6 +289,11 @@ export_code finite_observation_table_formed finite_candidate_profile finite_cand
   finite_guided_inference_evaluation checking SML
 
 text \<open>
+  The proved code equations share one demand computation across all goals,
+  complete rule reports, and the selected table. The whole original rule
+  table still supplies the formation check; no unused malformed rule is
+  hidden by the optimization.
+
   The finite specialization returns candidate losses, every observation-basis
   mismatch, demanded conditions, and the complete rule and premise occurrence
   behind each reason. Its exactness contracts use the same profiles, basis

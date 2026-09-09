@@ -597,3 +597,11 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Construction_Accounts
     Factor_Construction_Admission
     Factor_Construction_Contracts
+    Obligation_Reductions
+    Inference_Closure
+    Inference_Development
+    Finite_Inference_Development
+    Conjunction_Development
+    Method_Development
+    Presentation_Development
+    Factor_Inference_Development

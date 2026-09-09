@@ -91,6 +91,13 @@ every presentation of the least environment. Formation and truth are
 preserved by retention; an actual false call also admits a closed scope.
 Cause validity and higher protocol readers remain.
 
+The owner's clarification of 2026-09-09 also applies the abstraction discipline
+to evaluation and development themselves. A supplied candidate must enter an
+explicit reusable account of specialization, residual obligations, improvement,
+and stopping. Candidate generation may remain external. The same account must
+accept a candidate that is itself a generalization method. Prose instructions
+alone do not satisfy this requirement.
+
 The work is incomplete. The current active session establishes the structural
 and data basis, relative footprints, exact artifacts, fragments, and assembly.
 Scoped citation environments, structural citation recognition, record and family representations,
@@ -1352,6 +1359,54 @@ This concrete structural admission satisfies presentation invariance for
 complete construction claims. Native checking of global invariance for an
 arbitrary supplied permission program, recorded construction causes, native
 mathematical-proof presentation, and the final repository audit remain open.
+
+The evaluation and development of supplied candidates now has an explicit
+mathematical account. Identified condition families retain every occurrence.
+Sound and exact reductions distinguish sufficient conditions from equivalent
+ones; specialization, substitution, and discharge derive their residuals.
+Finite functional inference rules determine a least closure from established
+seeds. An exact comparison criterion reduces preservation of every conditional
+use to the immediate source rules. Unsupported cycles supply no proof.
+
+A declared immediate-premise bound exposes a method's conditional capability.
+Selection preserves existing capability; maximality permits incomparable
+alternatives, while complete coverage accounts for every alternative.
+A finite frontier justifies stopping only through a proved dominating cover
+of the intended scope. Reachability includes paths through plateaus. Semantic
+completeness gives a separate stopping proof over an infinite class of methods.
+Neither stopping criterion implies completion of an unrelated requirement.
+
+The finite evaluator checks the entire supplied rule table and obligation
+family, computes their exact least closure, and reports the exact remaining
+occurrences. Its iteration terminates in the finite seed-and-conclusion
+boundary and exports to SML. Rule formation does not establish semantic
+soundness, and a finite supplied table does not silently cover an infinite
+method. General closure remains a mathematical derivability account.
+
+Arbitrary finite conjunctions demonstrate the full comparison: flat and binary
+methods have equal unbounded conditional capability, but only the binary
+method retains it with two immediate premises. Semantic completeness proves
+coverage of every uniformly sound conjunction method at that bound. Missing
+element conditions remain residuals. This stopping result concerns that
+declared meaning and capability; it does not settle execution cost or other
+notions. The bound counts immediate interfaces, not hidden condition complexity.
+
+The comparison mechanism itself enters the same reduction account. Composing
+comparisons exposes two conditions and then their qualified local rules.
+Derived-rule completion is evaluated as a method on methods and proved
+conservative by the same discharge mechanism. It creates no new unbounded
+conditional capability and cannot approve its own unchecked rules.
+Completion preserves the actual type of premise occurrences; a counterexample
+shows why collapsing that type can lose a rule with two distinct premises.
+
+Actual consequence transport carries closure and remaining occurrence domains
+through complete presentation classes. Literal copying has an exact uniqueness
+condition; the existing witness-completion contract discharges the alternative
+for every complete class. The original Factor positive meaning instantiates the
+general closure, and actual conditional graphs provide their exact assertion
+families. Logical completion does not change an assertion node into a proof
+edge. Native presentation of these mathematical accounts and proofs remains
+under O-85, alongside the broader O-84 application and alignment audit.
 
 The remaining work includes construction-cause validity and authority readers, complete
 transition material, reflection, genesis, and the system-wide presentation

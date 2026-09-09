@@ -1,0 +1,230 @@
+theory Method_Development
+  imports Inference_Development
+begin
+
+section \<open>The comparison mechanism enters the same reduction account\<close>
+
+definition comparison_obligations where
+  "comparison_obligations R S=
+    {((a,H),(S,a,H)) |a H. finite H \<and> single_valued H \<and> R a H}"
+
+definition comparison_condition where
+  "comparison_condition z \<longleftrightarrow>
+    fst (snd z)\<in>inference_closure (fst z) (rel_ran (snd (snd z)))"
+
+theorem method_comparison_reduction:
+  "exact_obligation_reduction UNIV (\<lambda>z. inference_refines (fst z) (snd z))
+    comparison_condition (\<lambda>z. comparison_obligations (fst z) (snd z))"
+  unfolding exact_obligation_reduction_def
+proof (intro ballI)
+  fix z
+  show "inference_refines (fst z) (snd z) \<longleftrightarrow>
+      rel_ran (comparison_obligations (fst z) (snd z))\<subseteq>{b. comparison_condition b}"
+  proof
+    assume refinement: "inference_refines (fst z) (snd z)"
+    show "rel_ran (comparison_obligations (fst z) (snd z))\<subseteq>{b. comparison_condition b}"
+    proof
+      fix b assume "b\<in>rel_ran (comparison_obligations (fst z) (snd z))"
+      then obtain a H where shape: "b=(snd z,a,H)" and fin: "finite H"
+        and formed: "single_valued H" and rule: "fst z a H"
+        by (auto simp: comparison_obligations_def rel_ran_def)
+      have "a\<in>inference_closure (snd z) (rel_ran H)"
+        using refinement fin formed rule by (auto simp: inference_refines_iff_rules)
+      then show "b\<in>{b. comparison_condition b}"
+        by (simp add: shape comparison_condition_def)
+    qed
+  next
+    assume support: "rel_ran (comparison_obligations (fst z) (snd z))\<subseteq>{b. comparison_condition b}"
+    show "inference_refines (fst z) (snd z)"
+      unfolding inference_refines_iff_rules
+    proof (intro allI impI)
+      fix a H
+      assume fin: "finite H" and formed: "single_valued H" and rule: "fst z a H"
+      have member: "(snd z,a,H)\<in>rel_ran (comparison_obligations (fst z) (snd z))"
+        using fin formed rule by (auto simp: comparison_obligations_def rel_ran_def)
+      show "a\<in>inference_closure (snd z) (rel_ran H)"
+        using subsetD[OF support member] by (simp add: comparison_condition_def)
+    qed
+  qed
+qed
+
+theorem method_comparison_discharge:
+  assumes "K\<subseteq>{b. comparison_condition b}"
+    "remaining_obligations K (comparison_obligations R S)={}"
+  shows "inference_refines R S"
+  using reduced_requirement_complete[OF exact_obligation_reduction_sound[OF method_comparison_reduction],
+      of "(R,S)" K] assms by simp
+
+definition composition_obligations where
+  "composition_obligations z={(False,(fst z,fst (snd z))),(True,(fst (snd z),snd (snd z)))}"
+
+theorem method_composition_reduction:
+  "obligation_reduction UNIV (\<lambda>z. inference_refines (fst z) (snd (snd z)))
+    (\<lambda>z. inference_refines (fst z) (snd z)) composition_obligations"
+  unfolding obligation_reduction_def
+proof (intro ballI impI)
+  fix z
+  assume "z\<in>UNIV"
+    and support: "rel_ran (composition_obligations z)\<subseteq>
+      {p. inference_refines (fst p) (snd p)}"
+  have first_member: "(fst z,fst (snd z))\<in>rel_ran (composition_obligations z)"
+    unfolding composition_obligations_def rel_ran_def
+    by (rule CollectI, rule exI[of _ False], rule insertI1)
+  have second_member: "(fst (snd z),snd (snd z))\<in>rel_ran (composition_obligations z)"
+    unfolding composition_obligations_def rel_ran_def
+    by (rule CollectI, rule exI[of _ True], rule insertI2, rule insertI1)
+  have first: "inference_refines (fst z) (fst (snd z))"
+    using subsetD[OF support first_member] by (simp only: mem_Collect_eq fst_conv snd_conv)
+  have second: "inference_refines (fst (snd z)) (snd (snd z))"
+    using subsetD[OF support second_member] by (simp only: mem_Collect_eq fst_conv snd_conv)
+  show "inference_refines (fst z) (snd (snd z))"
+    by (rule inference_refines_trans[OF first second])
+qed
+
+theorem method_composition_developed:
+  "obligation_reduction UNIV (\<lambda>z. inference_refines (fst z) (snd (snd z)))
+    comparison_condition
+    (\<lambda>z. obligation_substitution (composition_obligations z)
+      (\<lambda>p. comparison_obligations (fst p) (snd p)))"
+  by (rule obligation_reduction_compose[OF method_composition_reduction
+    exact_obligation_reduction_sound[OF method_comparison_reduction]]) simp
+
+theorem settled_comparison_leaves_only_the_other_use:
+  assumes "(R,S)\<noteq>(S,T)"
+  shows "remaining_obligations {(R,S)} (composition_obligations (R,S,T))={(True,(S,T))}"
+  using assms by (auto simp: remaining_obligations_def composition_obligations_def)
+
+theorem method_composition_residual:
+  assumes "inference_refines R S"
+  shows "obligation_reduction UNIV (\<lambda>z. inference_refines (fst z) (snd (snd z)))
+    (\<lambda>z. inference_refines (fst z) (snd z))
+    (\<lambda>z. remaining_obligations {(R,S)} (composition_obligations z))"
+  by (rule obligation_reduction_residual[OF method_composition_reduction]) (use assms in simp)
+
+section \<open>A proposed generalization method is evaluated as a candidate\<close>
+
+theorem collapsing_occurrence_type_can_lose_a_two_premise_rule:
+  defines "R \<equiv> (\<lambda>a::nat. \<lambda>H::(bool\<times>nat) set. a=2 \<and> H={(False,0),(True,1)})"
+  shows "2\<in>inference_closure R {0,1} \<and>
+    2\<notin>inference_closure
+      (\<lambda>a::nat. \<lambda>H::(unit\<times>nat) set. a\<in>inference_closure R (rel_ran H)) {0,1}"
+proof -
+  let ?S = "\<lambda>a::nat. \<lambda>H::(unit\<times>nat) set. a\<in>inference_closure R (rel_ran H)"
+  have source: "2\<in>inference_closure R {0,1}"
+  proof (rule inference_closure_step[where H="{(False,0),(True,1)}" and R=R])
+    show "finite {(False,0::nat),(True,1)}" by simp
+    show "single_valued {(False,0::nat),(True,1)}" by (auto simp: single_valued_def)
+    show "R 2 {(False,0),(True,1)}" by (simp add: R_def)
+    show "rel_ran {(False,0::nat),(True,1)}\<subseteq>inference_closure R {0,1}"
+      by (simp add: rel_ran_image inference_closure_seed)
+  qed
+  have target: "inference_closure ?S {0,1}\<subseteq>{0,1}"
+  proof (rule inference_closure_least[OF subset_refl], rule subsetI)
+    fix a assume "a\<in>inference_consequences ?S {0,1}"
+    then obtain H where formed: "single_valued H" and rule: "?S a H"
+      and support: "rel_ran H\<subseteq>{0,1}"
+      by (auto simp: inference_consequences_def)
+    have not_both: "\<not>(0\<in>rel_ran H \<and> 1\<in>rel_ran H)"
+    proof
+      assume "0\<in>rel_ran H \<and> 1\<in>rel_ran H"
+      then have zero: "((),0)\<in>H" and one: "((),1)\<in>H" by (auto simp: rel_ran_def)
+      have "(0::nat)=1" by (rule single_valued_outputs[OF formed zero one])
+      then show False by simp
+    qed
+    have closed: "inference_closure R (rel_ran H)\<subseteq>rel_ran H"
+      by (rule inference_closure_least[OF subset_refl])
+        (use not_both in \<open>auto simp: inference_consequences_def R_def rel_ran_image\<close>)
+    have known: "a\<in>inference_closure R (rel_ran H)" by (rule rule)
+    show "a\<in>{0,1}" by (rule subsetD[OF support subsetD[OF closed known]])
+  qed
+  show ?thesis using source target by auto
+qed
+
+definition derived_inferences ::
+  "('a \<Rightarrow> ('i\<times>'a) set \<Rightarrow> bool) \<Rightarrow>
+    'a \<Rightarrow> ('i\<times>'a) set \<Rightarrow> bool" where
+  "derived_inferences R a H \<longleftrightarrow> a\<in>inference_closure R (rel_ran H)"
+
+theorem derived_method_evaluation_reduction:
+  "exact_obligation_reduction UNIV (\<lambda>R. inference_refines (derived_inferences R) R)
+    comparison_condition (\<lambda>R. comparison_obligations (derived_inferences R) R)"
+proof -
+  have specialized: "exact_obligation_reduction UNIV
+      ((\<lambda>z. inference_refines (fst z) (snd z))\<circ>(\<lambda>R. (derived_inferences R,R)))
+      comparison_condition
+      ((\<lambda>z. comparison_obligations (fst z) (snd z))\<circ>(\<lambda>R. (derived_inferences R,R)))"
+    by (rule exact_obligation_reduction_specialization[OF method_comparison_reduction]) simp
+  show ?thesis using specialized by (simp add: comp_def)
+qed
+
+theorem derived_method_conditions_settled:
+  "remaining_obligations {b. comparison_condition b}
+    (comparison_obligations (derived_inferences R) R)={}"
+  by (auto simp: remaining_obligations_def comparison_obligations_def
+    comparison_condition_def derived_inferences_def)
+
+theorem derived_method_conservative:
+  "inference_refines (derived_inferences R) R"
+  by (rule method_comparison_discharge[OF subset_refl derived_method_conditions_settled])
+
+theorem original_method_available_in_derived:
+  "inference_refines R (derived_inferences R)"
+  unfolding inference_refines_iff_rules
+proof (intro allI impI)
+  fix a H
+  assume fin: "finite H" and formed: "single_valued H" and source: "R a H"
+  have derived: "derived_inferences R a H"
+    unfolding derived_inferences_def
+    by (rule inference_closure_step[where H=H and R=R])
+      (rule fin, rule formed, rule source, rule inference_closure_seed)
+  show "a\<in>inference_closure (derived_inferences R) (rel_ran H)"
+    by (rule inference_closure_step[where H=H and R="derived_inferences R"])
+      (rule fin, rule formed, rule derived, rule inference_closure_seed)
+qed
+
+theorem derived_method_same_conditional_capability:
+  "inference_closure (derived_inferences R) K=inference_closure R K"
+  using derived_method_conservative[of R] original_method_available_in_derived[of R]
+  by (auto simp: inference_refines_def)
+
+theorem derived_method_sound:
+  assumes "inference_sound T R"
+  shows "inference_sound T (derived_inferences R)"
+  unfolding inference_sound_def
+proof (intro allI impI)
+  fix a H
+  assume "finite H" "single_valued H" and rule: "derived_inferences R a H"
+    and support: "rel_ran H\<subseteq>{a. T a}"
+  have known: "a\<in>inference_closure R (rel_ran H)"
+    using rule by (simp add: derived_inferences_def)
+  have sound: "inference_closure R (rel_ran H)\<subseteq>{a. T a}"
+    by (rule inference_closure_sound[OF assms support])
+  show "T a" using subsetD[OF sound known] by simp
+qed
+
+text \<open>
+  Method comparison is an exact reduction to the actual source rules. Its
+  condition family contains the target method, each conclusion, and its
+  complete premise family. Composition first has two comparison conditions;
+  applying the same reduction develops them into qualified local conditions.
+  Settling one comparison removes only occurrences of that established fact.
+
+  Derived-rule completion is itself a proposed method on methods. The same
+  comparison reduction evaluates it for every source method. Its conditions
+  follow from the independently defined source closure, so conservativity is
+  obtained by ordinary residual discharge. The candidate does not approve its
+  own unchecked rules or create new unbounded conditional capability.
+
+  This completion preserves the source type of premise occurrences. Replacing
+  a two-element occurrence type by a singleton can lose a rule that needs two
+  distinct conditions, as the explicit counterexample shows. General method
+  comparison still permits different occurrence types; such a change requires
+  its own simulation evidence.
+
+  Installing a derived rule may shorten later uses, but its internal proof
+  must first be established. Counting that rule's immediate premises does not
+  measure the cost of establishing it. Any claimed bounded-capability or cost
+  improvement therefore needs its own comparison evidence.
+\<close>
+
+end

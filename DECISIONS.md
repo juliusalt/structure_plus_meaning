@@ -5331,8 +5331,10 @@ distinct semantic conditions can still grow, and no theorem asserts that every
 requirement admits such a decomposition. Finding an appropriate independent
 notion is also not claimed to be a complete automated procedure.
 
-The reusable investigation is therefore explicit. First identify the content
-and intrinsic relations that must remain distinguished. Compare candidate
+The investigation at this stage was still a prose workflow. The owner's
+2026-09-09 correction and the later candidate-development decision below
+supersede any suggestion that these instructions alone represented the cycle.
+First identify the content and intrinsic relations that must remain distinguished. Compare candidate
 general notions at that semantic boundary, using recognition, specialization,
 transport, and contract comparison to validate the proposed relationship.
 Apply a proved construction rule and record which conditions it discharges.
@@ -5759,3 +5761,128 @@ check its universal formation-and-truth invariance. Those global conditions,
 recorded construction causes, higher protocols, reflection, genesis, O-85,
 and the final repository audit remain open. No overall obligation state is
 promoted in this batch.
+
+
+## Candidate evaluation and development are themselves represented relationships
+
+The owner's 2026-09-09 comment identifies a real gap. The earlier recognition
+and construction theorems supplied reusable components, but the complete
+investigation cycle remained a prose instruction to the agent. The construction
+milestone was already in validation, so it was completed and delivered before
+this related batch. That ordering preserved a reviewable accepted boundary.
+
+The independent notions used here are conditional reduction, inference closure,
+method simulation, partial-order comparison, and coverage of a search scope.
+They make sense without a particular construction requirement. The choice to
+compose these existing mathematical ideas, rather than introduce a universal
+datatype of notions or a generated hierarchy, follows the owner's separation
+and non-nominality principles. The subject and condition types remain
+polymorphic. Their meanings are fixed before proposed reductions are checked.
+
+An obligation family retains an identified occurrence for each condition.
+Substitution qualifies child occurrences by their parent; equal conditions at
+different places do not merge. A sound reduction states sufficient conditions.
+An exact reduction additionally reflects the original requirement. Both have
+specialization, substitution, and residual-discharge laws. The domain coverage
+and established conditions needed by those laws remain explicit. General
+families may be infinite when a quantified schema covers infinitely many uses;
+finite executable accounts separately prove a complete finite boundary.
+
+A method supplies inference rules with complete finite functional premise
+families. Its least closure gives precisely finite derivability from supplied
+assumptions. The rule-soundness condition relates that structure to an
+independently stated meaning. No membership flag validates a rule, no absence
+of a found proof proves falsehood, and an unsupported cycle contributes
+nothing. Existing Factor instances satisfy the same consequence equation, so
+the new account connects to the actual language instead of replacing it.
+
+The comparison order is inclusion of conditional capabilities over every
+assumption set and conclusion. Its exact local criterion asks whether each
+source rule can be established by the target from the same premises. This
+criterion, its transitivity, and its residual consequence are reusable proof
+results. They distinguish a supplied proposal from evidence that its use
+preserves the earlier account. The finite evaluator uses the same closure
+and residual definitions for an actual complete table. Standard monotone
+iteration supplies termination and leastness; an SML export checks that this
+finite specialization has operative code. It is not a new native Factor entry.
+
+For investigating depth, the chosen observable is capability under a declared
+bound on immediate premise occurrences. This choice is not forced by intent:
+it measures one explicit aspect of locality, without choosing an arbitrary
+weighted score. It does not claim to measure all condition complexity, proof
+size, execution cost, or semantic usefulness. A complicated opaque premise
+does not become simple because it occupies one socket. Its own reduction can
+be investigated with the same machinery. Establishing and installing a
+derived rule also has a prior proof obligation; its later interface size
+does not erase that work.
+
+Selection is consequently a partial order. A maximal candidate has no
+dominating alternative, but incomparable alternatives may remain. Complete
+coverage is stronger: every alternative's conditional capability is included.
+A smaller inspected frontier supports either claim only after a dominating
+cover of the intended scope is proved. A scope generated by allowed development
+steps includes all finite paths, including plateaus. The finite-edge theorem
+does not establish that a supplied edge table contains all intended moves.
+These distinctions prevent stopping from being inferred from an iteration
+limit, an empty immediate improvement list, or a finite example catalogue.
+
+Finite conjunction supplies a substantive test of the account. Its meaning is
+fixed for arbitrary element predicates and lists of every finite length.
+Flat introduction has one premise per occurrence; binary introduction uses
+the head and tail, with the same projection relationship. Both methods have
+equal unbounded conditional power. With two immediate premises, the binary
+method retains all that power and the flat method does not. The small
+counterexample only distinguishes the methods; universal characterization
+theorems justify the result for the entire domain.
+
+The conjunction stopping claim ranges over every uniformly sound method for
+that independently fixed meaning, not just the two exhibited methods.
+Semantic completeness proves that none can add a conditional use beyond the
+binary method at the stated bound. This closes that particular comparison
+question. It does not establish that no other aligned improvement to the
+repository exists, nor that a missing element condition has been proved.
+Counterexamples separately retain unresolved goals at a complete candidate
+and show that an infinite candidate scope need not have a maximal element.
+
+The same account evaluates a candidate that is itself a generalization method.
+Method comparison becomes an exact obligation reduction to actual source
+rules. Composing comparisons first exposes two conditions, then substitutes
+their local evaluations with qualified occurrences. Derived-rule completion,
+a transformation on arbitrary methods, enters this same evaluator. Its
+remaining conditions are discharged from the original closure, yielding
+conservativity. Its unbounded capability is unchanged; any additional claim
+about locality or cost still needs evidence. This is ordinary compositional
+reasoning about the method, with no self-approval or special privileged level.
+
+Validation exposed an unjustified type generality in the first draft of
+derived-rule completion: its result could use a different occurrence type
+from its source. A Boolean occurrence type can distinguish two premise
+positions; a singleton type cannot hold two distinct conditions in one
+functional premise family. For the sole rule deriving 2 from 0 and 1,
+completion into singleton-indexed families therefore loses a capability.
+The explicit counterexample records this failure. The corrected completion
+preserves the source occurrence type and every original premise family.
+General method comparison continues to allow different occurrence types,
+but changing them requires simulation evidence. This is a recorded correction
+to the initial frozen definition, not a proof-only repair or a restriction of
+the already accepted language. The revised batch retains the original freeze
+and failed diagnostics and freezes the corrected definition before validation.
+
+Presentation transport uses the existing actual-consequence fixed-point law.
+Complete recovery then preserves each remaining occurrence domain. The copy
+proposal retains its exact representation-uniqueness condition; completion
+through the already established witness contract discharges the alternative
+without narrowing the class. Factor conditional graphs supply their actual
+assertion family to the same residual account. Establishing the root by
+additional reasoning does not retroactively replace an assertion by a proof
+edge in the old graph.
+
+The changes represent a mathematical evaluation and development cycle and a
+terminating finite-table specialization. They do not finish O-84 throughout
+the repository or O-85's native presentation of the resulting mathematical
+contracts and proofs. Candidate generation, intended semantic-model and scope
+choices, other locality observables, arbitrary permission invariance, recorded
+construction causes, higher protocols, reflection, genesis, and the final
+every-line audit retain their outstanding work. These choices must be
+evaluated through the same discipline as their evidence becomes available;
+no overall obligation status is promoted by this batch.

@@ -1,0 +1,161 @@
+theory Factor_Inference_Development
+  imports Inference_Closure Factor_Derivation_Graphs
+begin
+
+section \<open>The existing positive language instantiates general inference\<close>
+
+definition schema_inference_rules ::
+  "('a,'s,'d,'c) schema_system \<Rightarrow> ('d\<times>factor_term) \<Rightarrow>
+    ('s\<times>('d\<times>factor_term)) set \<Rightarrow> bool" where
+  "schema_inference_rules P q H \<longleftrightarrow>
+    (\<exists>c V. admitted_schema_instance P (fst q) c V (snd q) H)"
+
+theorem schema_inference_consequences:
+  "inference_consequences (schema_inference_rules P) X=schema_consequences P X"
+proof (rule set_eqI)
+  fix q
+  show "q\<in>inference_consequences (schema_inference_rules P) X \<longleftrightarrow>
+      q\<in>schema_consequences P X"
+  proof -
+    obtain d t where shape: "q=(d,t)" by (cases q) auto
+    show ?thesis
+    proof
+    assume "q\<in>inference_consequences (schema_inference_rules P) X"
+    then obtain H c V where inst: "admitted_schema_instance P d c V t H"
+      and support: "rel_ran H\<subseteq>X"
+      by (auto simp: inference_consequences_def schema_inference_rules_def shape)
+    have witness: "\<exists>c V Q. admitted_schema_instance P d c V t Q \<and>
+        (\<forall>s e x. (s,e,x)\<in>Q \<longrightarrow> (e,x)\<in>X)"
+      by (rule exI[of _ c], rule exI[of _ V], rule exI[of _ H], rule conjI)
+        (rule inst, use support in \<open>auto simp: rel_ran_def\<close>)
+    show "q\<in>schema_consequences P X"
+      using witness by (simp add: schema_consequences_def shape)
+  next
+    assume "q\<in>schema_consequences P X"
+    then obtain H c V where inst: "admitted_schema_instance P d c V t H"
+      and support: "\<forall>s e x. (s,e,x)\<in>H \<longrightarrow> (e,x)\<in>X"
+      by (auto simp: schema_consequences_def shape)
+    have formed: "finite H" "single_valued H"
+      using admitted_instance_formed[OF inst] by blast+
+    show "q\<in>inference_consequences (schema_inference_rules P) X"
+      unfolding inference_consequences_def
+      by (rule CollectI, rule exI[of _ H])
+        (use inst support formed in \<open>auto simp: schema_inference_rules_def rel_ran_def shape\<close>)
+    qed
+  qed
+qed
+
+theorem schema_inference_closure:
+  "inference_closure (schema_inference_rules P) {}=positive_meaning P"
+  by (simp add: inference_closure_def schema_inference_consequences positive_meaning_def)
+
+theorem schema_finite_inference_exact:
+  "finite_inference (schema_inference_rules P) {} (d,t) \<longleftrightarrow>
+    (d,t)\<in>positive_meaning P"
+  by (simp add: finite_inference_exact schema_inference_closure)
+
+theorem schema_inference_sound:
+  "inference_sound (\<lambda>q. q\<in>positive_meaning P) (schema_inference_rules P)"
+  unfolding inference_sound_def
+proof (intro allI impI)
+  fix q H
+  assume "finite H" "single_valued H" and rule: "schema_inference_rules P q H"
+    and support: "rel_ran H\<subseteq>{q. q\<in>positive_meaning P}"
+  from rule obtain c V where inst: "admitted_schema_instance P (fst q) c V (snd q) H"
+    by (auto simp: schema_inference_rules_def)
+  have "(fst q,snd q)\<in>positive_meaning P"
+    by (rule positive_meaning_step[OF inst]) (use support in \<open>auto simp: rel_ran_def\<close>)
+  then show "q\<in>positive_meaning P" by simp
+qed
+
+section \<open>Actual conditional proof graphs supply their own residual family\<close>
+
+theorem schema_graph_obligation_reduction:
+  "obligation_reduction
+    {z. schema_graph_derives P G root (fst (fst z)) (snd (fst z)) (snd z)}
+    (\<lambda>z. fst z\<in>positive_meaning P) (\<lambda>q. q\<in>positive_meaning P) snd"
+  unfolding obligation_reduction_def
+proof (intro ballI impI)
+  fix z
+  assume member: "z\<in>{z. schema_graph_derives P G root (fst (fst z)) (snd (fst z)) (snd z)}"
+    and support: "rel_ran (snd z)\<subseteq>{q. q\<in>positive_meaning P}"
+  have read: "schema_graph_derives P G root (fst (fst z)) (snd (fst z)) (snd z)"
+    using member by simp
+  have "(fst (fst z),snd (fst z))\<in>positive_meaning P"
+    by (rule schema_graph_conditional_sound[OF read]) (use support in \<open>auto simp: rel_ran_def\<close>)
+  then show "fst z\<in>positive_meaning P" by simp
+qed
+
+theorem schema_graph_developed_reduction:
+  assumes "K\<subseteq>positive_meaning P"
+  shows "obligation_reduction
+    {z. schema_graph_derives P G root (fst (fst z)) (snd (fst z)) (snd z)}
+    (\<lambda>z. fst z\<in>positive_meaning P) (\<lambda>q. q\<in>positive_meaning P)
+    (\<lambda>z. remaining_obligations (inference_closure (schema_inference_rules P) K) (snd z))"
+  by (rule inference_discharges_residual[OF schema_inference_sound _ schema_graph_obligation_reduction])
+    (use assms in simp)
+
+theorem schema_graph_development_complete:
+  assumes read: "schema_graph_derives P G root d t H"
+    and known: "K\<subseteq>positive_meaning P"
+    and remaining: "remaining_obligations (inference_closure (schema_inference_rules P) K) H={}"
+  shows "(d,t)\<in>positive_meaning P"
+proof -
+  have sound: "inference_closure (schema_inference_rules P) K\<subseteq>positive_meaning P"
+    using inference_closure_sound[where T="\<lambda>q. q\<in>positive_meaning P"
+      and R="schema_inference_rules P", OF schema_inference_sound] known by simp
+  have result: "fst ((d,t),H)\<in>positive_meaning P"
+    by (rule reduced_requirement_complete[OF schema_graph_obligation_reduction[where P=P and G=G and root=root],
+      where a="((d,t),H)" and K="inference_closure (schema_inference_rules P) K"])
+      (use read sound remaining in auto)
+  show ?thesis using result by simp
+qed
+
+theorem schema_graph_residual_keeps_assertion_origins:
+  assumes "schema_graph_derives P G root d t H"
+  shows "(n,q)\<in>remaining_obligations K H \<longleftrightarrow> (n,q)\<in>H \<and> q\<notin>K"
+    and "finite (remaining_obligations K H)"
+    and "single_valued (remaining_obligations K H)"
+proof -
+  obtain J where read: "schema_graph_reading P G root d t J"
+    and boundary: "H=schema_graph_assumptions G J"
+    using assms by (auto simp: schema_graph_derives_def)
+  show "(n,q)\<in>remaining_obligations K H \<longleftrightarrow> (n,q)\<in>H \<and> q\<notin>K" by simp
+  show "finite (remaining_obligations K H)"
+    by (rule remaining_obligations_finite)
+      (use schema_graph_assumption_boundary(2)[OF read] boundary in simp)
+  show "single_valued (remaining_obligations K H)"
+    by (rule remaining_obligations_functional)
+      (use schema_graph_assumption_boundary(3)[OF read] boundary in simp)
+qed
+
+theorem an_asserted_false_call_cannot_be_developed_from_true_seeds:
+  assumes "K\<subseteq>positive_meaning equality_system"
+  shows "remaining_obligations (inference_closure (schema_inference_rules equality_system) K)
+    {((),(),Payload_Term [])}={((),(),Payload_Term [])}"
+proof -
+  have sound: "inference_closure (schema_inference_rules equality_system) K\<subseteq>
+      positive_meaning equality_system"
+    using inference_closure_sound[OF schema_inference_sound] assms by simp
+  have false: "((),Payload_Term [])\<notin>positive_meaning equality_system"
+    by (simp add: generic_equality_exact)
+  show ?thesis using sound false by (auto simp: remaining_obligations_def)
+qed
+
+text \<open>
+  The original positive meaning and all admitted instances remain unchanged.
+  Their actual consequence equation identifies them with the general closure.
+  The existing complete graph reading supplies the root requirement and its
+  exact assertion family; general reduction and discharge laws consume that
+  family without reconstructing proof-node syntax or merging equal assertions.
+
+  A semantic completion result does not turn an existing assertion node into
+  a proof edge. The original graph remains conditional until its actual
+  structure is changed and checked. General closure is a mathematical
+  derivability account, not a terminating negative test for arbitrary programs.
+  The finite evaluator applies only to supplied complete finite rule tables.
+  Native presentations of these mathematical contracts and proofs remain
+  separate from the already implemented native checking of Factor proofs.
+\<close>
+
+end

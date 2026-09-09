@@ -41,6 +41,13 @@ representation-specific meaning proofs. Classes of the same independent
 subject domain have a canonical semantic correspondence; physical sharing
 of actual source material is a separate, explicitly owned relation.
 
+The owner's clarification of 2026-09-09 also applies the abstraction discipline
+to evaluation and development themselves. A supplied candidate must enter an
+explicit reusable account of specialization, residual obligations, improvement,
+and stopping. Candidate generation may remain external. The same account must
+accept a candidate that is itself a generalization method. Prose instructions
+alone do not satisfy this requirement.
+
 ### 0.2 Status of every decision in this document
 
 An earlier draft of this plan labelled eleven items "owner decisions" and gave
@@ -1638,6 +1645,54 @@ condition over all compatible account presentations. A positive call alone
 does not prove that universal contract. Its native realization and the
 higher protocol remain separate work; O-85 also remains open.
 
+The evaluation and development of supplied candidates now has an explicit
+mathematical account. Identified condition families retain every occurrence.
+Sound and exact reductions distinguish sufficient conditions from equivalent
+ones; specialization, substitution, and discharge derive their residuals.
+Finite functional inference rules determine a least closure from established
+seeds. An exact comparison criterion reduces preservation of every conditional
+use to the immediate source rules. Unsupported cycles supply no proof.
+
+A declared immediate-premise bound exposes a method's conditional capability.
+Selection preserves existing capability; maximality permits incomparable
+alternatives, while complete coverage accounts for every alternative.
+A finite frontier justifies stopping only through a proved dominating cover
+of the intended scope. Reachability includes paths through plateaus. Semantic
+completeness gives a separate stopping proof over an infinite class of methods.
+Neither stopping criterion implies completion of an unrelated requirement.
+
+The finite evaluator checks the entire supplied rule table and obligation
+family, computes their exact least closure, and reports the exact remaining
+occurrences. Its iteration terminates in the finite seed-and-conclusion
+boundary and exports to SML. Rule formation does not establish semantic
+soundness, and a finite supplied table does not silently cover an infinite
+method. General closure remains a mathematical derivability account.
+
+Arbitrary finite conjunctions demonstrate the full comparison: flat and binary
+methods have equal unbounded conditional capability, but only the binary
+method retains it with two immediate premises. Semantic completeness proves
+coverage of every uniformly sound conjunction method at that bound. Missing
+element conditions remain residuals. This stopping result concerns that
+declared meaning and capability; it does not settle execution cost or other
+notions. The bound counts immediate interfaces, not hidden condition complexity.
+
+The comparison mechanism itself enters the same reduction account. Composing
+comparisons exposes two conditions and then their qualified local rules.
+Derived-rule completion is evaluated as a method on methods and proved
+conservative by the same discharge mechanism. It creates no new unbounded
+conditional capability and cannot approve its own unchecked rules.
+Completion preserves the actual type of premise occurrences; a counterexample
+shows why collapsing that type can lose a rule with two distinct premises.
+
+Actual consequence transport carries closure and remaining occurrence domains
+through complete presentation classes. Literal copying has an exact uniqueness
+condition; the existing witness-completion contract discharges the alternative
+for every complete class. The original Factor positive meaning instantiates the
+general closure, and actual conditional graphs provide their exact assertion
+families. Logical completion does not change an assertion node into a proof
+edge. Native presentation of these mathematical accounts and proofs remains
+under O-85, alongside the broader O-84 application and alignment audit.
+
 These results are justified by existing collection, table, quotation, scope,
 and program machinery. Their proof parameters are typed relations, not a
 universal datatype of notions. An arbitrary mathematical relation is not
@@ -1684,7 +1739,7 @@ datatype of "notions" is added.
 **O-45** presented semantic definitions recover their actual rules, interfaces, premise occurrences, and dependencies, and preserve and reflect their applications and meaning through the linked presentations.
 **O-79** each claimed presentation domain has total finite representability, with constructed witnesses for every claimed inhabited domain. An empty constrained domain cannot establish adequacy for a larger inhabited domain. A generic intended domain is not reduced to finitely enumerated ground examples.
 **O-80** intrinsic relations between presented notions are preserved and reflected by the jointly admissible presentations. Explicit composition theorems account for shared material, exact targets, binding scopes, occurrence identity, and dependencies wherever relevant. Separate exactness does not discharge this obligation.
-**O-84** develop and apply a general presentation theory whose scope is justified by independently defined notions and their recurring relations. Local contracts contain each notion's guarantees; clients use generic adaptation, specialization, instantiation, and composition instead of repeating representation-specific meaning proofs. Each construction states and proves the conditions needed for exactness, joint coverage, and native interpretation where required. Existing and new presentations use these results wherever applicable; residual special cases state the boundary that requires separate treatment.
+**O-84** develop and apply a general presentation theory whose scope is justified by independently defined notions and their recurring relations. Local contracts contain each notion's guarantees; clients use generic adaptation, specialization, instantiation, and composition instead of repeating representation-specific meaning proofs. Each construction states and proves the conditions needed for exactness, joint coverage, and native interpretation where required. Existing and new presentations use these results wherever applicable; residual special cases state the boundary that requires separate treatment. Candidate evaluation, development, and stopping use explicit reusable accounts; their criteria and scopes are themselves eligible for the same evaluation.
 **O-85** the presentation theory's own relevant structures, definitions, contracts, and proofs receive exact presentations and explicit intrinsic-link results under the same discipline. Native self-application of an operative reader is one result within this obligation; it does not by itself establish native checking of all presentation contracts or exactness proofs.
 
 O-44 and O-80 govern every presentation stratum. The ledger must identify the

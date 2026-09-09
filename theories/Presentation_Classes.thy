@@ -354,6 +354,23 @@ proof -
   qed
 qed
 
+theorem presentation_class_determined_subdomain:
+  assumes source: "presentation_class R D A"
+    and unique: "\<And>a b c. link a b \<Longrightarrow> link a c \<Longrightarrow> b=c"
+    and boundary: "\<And>a b. link a b \<Longrightarrow> D a"
+  shows "presentation_class (\<lambda>z p. R (fst z) p \<and> link (fst z) (snd z))
+    (\<lambda>z. link (fst z) (snd z))
+    (\<lambda>p. \<exists>z. R (fst z) p \<and> link (fst z) (snd z))"
+proof -
+  have domain: "D a \<and> link a b \<longleftrightarrow> link a b" for a b
+    using boundary by blast
+  have admission: "(\<exists>a b. R a p \<and> link a b) \<longleftrightarrow>
+      (\<exists>z. R (fst z) p \<and> link (fst z) (snd z))" for p
+    by (auto; metis fst_conv snd_conv)
+  show ?thesis using presentation_class_determined[where link=link, OF source unique]
+    by (simp only: domain admission)
+qed
+
 section \<open>Compatible families cover the union of their subject domains\<close>
 
 theorem presentation_class_family:

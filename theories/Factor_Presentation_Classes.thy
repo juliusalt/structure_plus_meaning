@@ -56,6 +56,16 @@ corollary factor_pair_class:
   using factor_pair_presentation_class[OF assms]
   by (simp only: presentation_class_def factor_pair_presents_def)
 
+
+theorem factor_pair_subdomain_class:
+  assumes left: "presentation_class R D A" and right: "presentation_class S E B"
+    and boundary: "\<And>a b. link a b \<Longrightarrow> D a \<and> E b"
+  shows "presentation_class (\<lambda>z p. link (fst z) (snd z) \<and> factor_pair_presents R S z p)
+    (\<lambda>z. link (fst z) (snd z))
+    (\<lambda>p. \<exists>z. link (fst z) (snd z) \<and> factor_pair_presents R S z p)"
+  by (rule presentation_class_subdomain[OF factor_pair_class[OF left right]])
+    (use boundary in blast)
+
 theorem factor_relation_presentation_class:
   assumes left: "presentation_class R D A" and right: "presentation_class S E B"
     and exact: "\<And>p q. observe (Pair_Term p q) \<longleftrightarrow> presented_relation R S link p q"

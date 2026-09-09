@@ -1534,6 +1534,33 @@ replace any recorded program, or give a new policy authority. General recorded
 construction admission, native mathematical contracts and proofs, higher
 protocols, reflection, genesis, and the final repository audit remain open.
 
+Construction judgments and recorded causes now have complete source and
+account-report classes for the existing sufficient permission profile. The
+original judgment remains the subject; its actual program and call determine
+the account. A report can use every permitted presentation of that same account.
+
+An exact join of existing ordinary readers links positive truth, the actual
+application, permission admission, and complete account comparison. Recorded
+causes additionally link the generation's whole payload and least quoted
+judgment scope. Local relation and function contracts give all compatible
+outputs, outer invariance, retention, and rejection of wrong payloads and
+nonminimal scopes.
+
+Actual construction calls receive closed generation recordings with the same
+program, entry, argument, and material boundaries. Future calls first use a
+common environment containing the reference and candidate; arbitrary extensions
+are not assumed compatible. One constructed native policy accepts exactly the
+complete account class and supplies recordings for every account, formed locus,
+and finite formed predecessor family.
+
+Two general boundary theorems supply these classes and replace eight earlier
+base and scope class proofs without changing their statements. The native
+profile's global permission guarantee and restriction contract belong to their
+owners. The combined reader join is presently a proved relation over existing
+native calls. Its installation in one native program, with agreement on all
+shared definitions, remains the next composition obligation. Arbitrary original
+program invariance and the higher foundation obligations remain open.
+
 The remaining work includes construction-cause validity and authority readers, complete
 transition material, reflection, genesis, and the system-wide presentation
 audit. Native presentations and checking of the remaining mathematical

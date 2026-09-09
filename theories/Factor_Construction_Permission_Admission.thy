@@ -24,18 +24,14 @@ qed
 sublocale checker: related_test_admission c "definition_site_value k"
   by (rule related_test_admission.intro[OF reference_fields])
 
-theorem admitted_permission:
+theorem profile_permission:
   assumes package: "native_package_at E pu pr P"
-    and source: "program_entry_value_presents E pu pr d p"
-    and checked: "(264,p)\<in>positive_meaning (related_test_admission_system c (definition_site_value k))"
+    and profile: "native_related_test_package C k E pu pr d"
   shows "construction_permission_invariant P d"
     "schema_call_formed P d z \<longleftrightarrow> term_formed z"
     "\<exists>test\<in>system_definitions P. (\<lambda>z. (d,z)\<in>positive_meaning P)=
       saturate_observation construction_account_presents (\<lambda>z. (test,z)\<in>positive_meaning P)"
 proof -
-  have presented: "program_entry_presents ((E,(pu,pr)),d) p" using source by simp
-  have profile: "native_related_test_package C k E pu pr d"
-    using checked by (simp only: checker.on_presentations[OF reference_value refl presented] fst_conv snd_conv)
   have boundary: "schema_call_formed P d z \<longleftrightarrow> term_formed z" for z
     by (rule native_related_test_package_saturation(1)[OF reference entry comparison package profile])
   have saturation: "\<exists>test\<in>system_definitions P. (\<lambda>z. (d,z)\<in>positive_meaning P)=
@@ -50,6 +46,25 @@ proof -
   show "\<exists>test\<in>system_definitions P. (\<lambda>z. (d,z)\<in>positive_meaning P)=
       saturate_observation construction_account_presents (\<lambda>z. (test,z)\<in>positive_meaning P)"
     by (rule saturation)
+qed
+
+theorem admitted_permission:
+  assumes package: "native_package_at E pu pr P"
+    and source: "program_entry_value_presents E pu pr d p"
+    and checked: "(264,p)\<in>positive_meaning (related_test_admission_system c (definition_site_value k))"
+  shows "construction_permission_invariant P d"
+    "schema_call_formed P d z \<longleftrightarrow> term_formed z"
+    "\<exists>test\<in>system_definitions P. (\<lambda>z. (d,z)\<in>positive_meaning P)=
+      saturate_observation construction_account_presents (\<lambda>z. (test,z)\<in>positive_meaning P)"
+proof -
+  have presented: "program_entry_presents ((E,(pu,pr)),d) p" using source by simp
+  have profile: "native_related_test_package C k E pu pr d"
+    using checked by (simp only: checker.on_presentations[OF reference_value refl presented] fst_conv snd_conv)
+  show "construction_permission_invariant P d"
+    "schema_call_formed P d z \<longleftrightarrow> term_formed z"
+    "\<exists>test\<in>system_definitions P. (\<lambda>z. (d,z)\<in>positive_meaning P)=
+      saturate_observation construction_account_presents (\<lambda>z. (test,z)\<in>positive_meaning P)"
+    by (rule profile_permission[OF package profile])+
 qed
 
 theorem permission_conditions_discharged:

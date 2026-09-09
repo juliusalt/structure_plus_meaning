@@ -6238,3 +6238,89 @@ abstract-program theorem consume this stronger construction directly. No
 existing declaration or assumption is narrowed, and no double compilation
 is required. The explicit revision adds this one general theorem; the other
 diagnostic repairs change only binder, formation, and account witness proofs.
+
+
+## Recorded construction classes, exact reader joins, and actual material
+
+The next independent subject is the original construction judgment and its
+recorded cause. Completing an arbitrary source program does not validate or
+replace that original cause. A sufficient profile must concern the exact entry
+of the program recovered from the actual recorded application. Its account,
+payload, and least judgment scope remain separate conditions.
+
+The actual permission profile therefore constrains the existing judgments.
+The new source classes derive the account through the original functional
+reading; they store no second program, call, or account. Complete report classes
+pair that source with every allowed presentation of the same account. Their
+domain is stated independently before the reader-composition theorem. The
+original global permission requirement is retained.
+
+Two recurring class proofs exposed duplicated boundary reasoning. A general
+determined-component subdomain theorem combines functional recovery with an
+explicit source boundary. A general pair-subdomain theorem combines complete
+component classes with the actual relation boundary. These are consequences
+of the existing presentation rules, with no new semantic or structural
+primitive. Eight earlier base, recorded-scope, and payload-scope class proofs
+now consume them with their original complete statements and assumptions.
+The four new construction classes use the same rules.
+
+The proposed construction reader joins four actual ordinary calls: native
+positive judgment, the actual application reading, the complete permission
+profile, and full account comparison. The application fixes the entry checked
+by permission admission and the operand compared with the proposed report.
+Account comparison preserves every permitted nested table order and the exact
+input and output boundary. No preferred enumeration is selected.
+
+The recorded reader adds the actual generation report, its quoted judgment
+scope, least-scope admission, and the artifact projection of the report's
+output field. This ties the payload to the same account as the actual call.
+The account owner exposes that field shape. Local relation and function
+contracts then provide complete outputs, invariance, restriction of the outer
+source, and rejection of wrong payloads or nonminimal recorded scopes.
+
+The global permission proof belongs to the native profile itself. Its existing
+native presentation-admission theorem now consumes that stronger owner-level
+contract. The profile also survives restriction to an included environment
+recovering the identical program. Its reference evidence remains separate
+from the minimal recorded scope and does not become part of cause identity.
+
+Future application construction requires care about compatibility. A profile
+provides a common formed environment containing both the reference and the
+candidate. The construction first selects that witness, then extends it with
+the future application. An arbitrary extension of the candidate alone need
+not remain compatible with the reference. No such universal preservation
+claim is made. The resulting program is the same actual native program.
+
+Each admitted source call has an actual closed generation recording its exact
+least program-and-call scope. All complete outer source presentations and all
+account reports satisfy the joined relation. Separately, the existing universal
+completion constructor yields one native policy accepting exactly the whole
+construction-account class. It supplies recordings for every complete account,
+every formed locus, and every finite formed predecessor family. This is
+constructed coverage over the full stated domain, not a finite list of examples
+or an inference of inhabitance from an empty constrained class.
+
+The exact join is presently a mathematical relation over existing ordinary
+reader meanings. Physical composition of the readers is a remaining condition,
+including agreement on their common bag-difference definitions as well as
+ordinary row helpers. The batch establishes the independent domain, exact
+relation, compatible outputs, and material coverage needed to assess that
+composition. It does not claim that the combined reader is already installed
+in one native program. The next composition must consume these local contracts
+and account for all actual shared definitions before native compilation.
+
+All 615 other accepted theories and every validation tool remain byte-identical.
+Every previous public declaration and enclosing assumption is preserved. The
+three new theories, eight edited theories, documentation, frozen declarations,
+scope checks, existing failure fixtures, and full session are validated as one
+batch. Obligation statuses remain unchanged. Arbitrary original-program
+invariance, native mathematical-proof checking, higher protocols, reflection,
+genesis, and the final every-line audit remain open.
+
+
+The first combined proof run required quoting the reserved fact label
+`output` in one new theorem. Its name, premise, and conclusion are unchanged;
+the correction supplies Isabelle's required lexical form. The frozen batch
+was archived and renewed explicitly for that syntax correction. Other repairs
+instantiate the declared relation and provide its actual witnesses without
+changing any statement, definition, scope, or import.

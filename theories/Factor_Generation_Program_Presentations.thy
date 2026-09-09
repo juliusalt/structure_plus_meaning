@@ -35,21 +35,8 @@ theorem generation_payload_scope_presentation_class:
   "presentation_class generation_payload_scope_presents
     (\<lambda>z. generation_payload_scope (fst z) (snd z))
     (\<lambda>t. \<exists>z. generation_payload_scope_presents z t)"
-proof -
-  have determined: "presentation_class
-      (\<lambda>z t. generation_source_presents (fst z) t \<and> generation_payload_scope (fst z) (snd z))
-      (\<lambda>z. generation_at_context (fst (fst z)) (snd (fst z)) \<and> generation_payload_scope (fst z) (snd z))
-      (\<lambda>t. \<exists>z k. generation_source_presents z t \<and> generation_payload_scope z k)"
-    by (rule presentation_class_determined[OF generation_source_presentation_class generation_payload_scope_unique])
-  have domain: "(generation_at_context (fst z) (snd z) \<and> generation_payload_scope z k) \<longleftrightarrow>
-      generation_payload_scope z k" for z k
-    using generation_payload_scope_source by blast
-  have admission: "(\<exists>z k. generation_source_presents z t \<and> generation_payload_scope z k) \<longleftrightarrow>
-      (\<exists>z. generation_payload_scope_presents z t)" for t
-    by (auto simp: generation_payload_scope_presents_def; metis fst_conv snd_conv)
-  show ?thesis using determined
-    by (simp only: presentation_class_def generation_payload_scope_presents_def domain admission)
-qed
+unfolding generation_payload_scope_presents_def
+  by (rule presentation_class_determined_subdomain[OF generation_source_presentation_class generation_payload_scope_unique generation_payload_scope_source])
 
 interpretation generation_payload_sources: presentation_class generation_payload_scope_presents
   "\<lambda>z. generation_payload_scope (fst z) (snd z)" "\<lambda>t. \<exists>z. generation_payload_scope_presents z t"
@@ -74,21 +61,9 @@ theorem generation_payload_report_presentation_class:
   "presentation_class generation_payload_report_presents
     (\<lambda>z. generation_payload_scope (fst z) (snd z))
     (\<lambda>t. \<exists>z. generation_payload_report_presents z t)"
-proof -
-  let ?R="factor_pair_presents generation_source_presents program_scope_value_presents"
-  let ?D="\<lambda>z. generation_at_context (fst (fst z)) (snd (fst z)) \<and> program_scope_subject (snd z)"
-  let ?A="\<lambda>t. \<exists>p q. (\<exists>z. generation_source_presents z p) \<and>
-    (122,q)\<in>positive_meaning package_retention_admission_system \<and> t=Pair_Term p q"
-  have raw: "presentation_class ?R ?D ?A"
-    by (rule factor_pair_class[OF generation_source_presentation_class program_scope_value_presentation_class])
-  have restricted: "presentation_class
-      (\<lambda>z t. generation_payload_scope (fst z) (snd z) \<and> ?R z t)
-      (\<lambda>z. generation_payload_scope (fst z) (snd z))
-      (\<lambda>t. \<exists>z. generation_payload_scope (fst z) (snd z) \<and> ?R z t)"
-    by (rule presentation_class_subdomain[OF raw])
-      (use generation_payload_scope_source generation_payload_scope_subject in blast)
-  show ?thesis using restricted by (simp only: presentation_class_def generation_payload_report_presents_def)
-qed
+unfolding generation_payload_report_presents_def
+  by (rule factor_pair_subdomain_class[OF generation_source_presentation_class program_scope_value_presentation_class])
+    (use generation_payload_scope_source generation_payload_scope_subject in blast)
 
 theorem generation_payload_report_relation:
   "(\<exists>z. generation_payload_report_presents z (Pair_Term p q)) \<longleftrightarrow>

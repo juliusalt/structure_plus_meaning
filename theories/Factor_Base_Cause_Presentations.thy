@@ -99,19 +99,8 @@ definition base_admission_source_presents ::
 theorem base_admission_source_presentation_class:
   "presentation_class base_admission_source_presents (\<lambda>z. base_admission_context (fst z) (snd z))
     (\<lambda>p. \<exists>z. base_admission_source_presents z p)"
-proof -
-  have determined: "presentation_class
-      (\<lambda>z p. judgment_source_presents (fst z) p \<and> base_admission_context (fst z) (snd z))
-      (\<lambda>z. judgment_source_readable (fst z) \<and> base_admission_context (fst z) (snd z))
-      (\<lambda>p. \<exists>z R. judgment_source_presents z p \<and> base_admission_context z R)"
-    by (rule presentation_class_determined[OF judgment_source_presentation_class base_admission_context_unique])
-  have domain: "(judgment_source_readable z \<and> base_admission_context z R) \<longleftrightarrow> base_admission_context z R" for z R
-    using base_admission_context_source by blast
-  have admission: "(\<exists>z R. judgment_source_presents z p \<and> base_admission_context z R) \<longleftrightarrow>
-      (\<exists>z. base_admission_source_presents z p)" for p
-    by (auto simp: base_admission_source_presents_def; metis fst_conv snd_conv)
-  show ?thesis using determined by (simp only: presentation_class_def base_admission_source_presents_def domain admission)
-qed
+unfolding base_admission_source_presents_def
+  by (rule presentation_class_determined_subdomain[OF judgment_source_presentation_class base_admission_context_unique base_admission_context_source])
 
 lemma base_admission_source_formed:
   assumes "base_admission_source_presents z p"
@@ -137,22 +126,9 @@ definition base_admission_report_presents ::
 theorem base_admission_report_presentation_class:
   "presentation_class base_admission_report_presents (\<lambda>z. base_admission_context (fst z) (snd z))
     (\<lambda>p. \<exists>z. base_admission_report_presents z p)"
-proof -
-  let ?R="factor_pair_presents judgment_source_presents artifact_value_presents"
-  let ?D="\<lambda>z. judgment_source_readable (fst z) \<and> exact_formed (snd z)"
-  let ?A="\<lambda>t. \<exists>p q. (\<exists>z. judgment_source_presents z p) \<and>
-    (11,q)\<in>positive_meaning artifact_admission_system \<and> t=Pair_Term p q"
-  have raw: "presentation_class ?R ?D ?A"
-    by (rule factor_pair_class[OF judgment_source_presentation_class artifact_presentations.presentation_class_axioms])
-  have restricted: "presentation_class (\<lambda>z p. base_admission_context (fst z) (snd z) \<and> ?R z p)
-      (\<lambda>z. base_admission_context (fst z) (snd z))
-      (\<lambda>p. \<exists>z. base_admission_context (fst z) (snd z) \<and> ?R z p)"
-  proof (rule presentation_class_subdomain[OF raw])
-    fix z assume admitted: "base_admission_context (fst z) (snd z)"
-    show "?D z" using base_admission_context_source[OF admitted] base_admission_context_formed[OF admitted] by blast
-  qed
-  show ?thesis using restricted by (simp only: presentation_class_def base_admission_report_presents_def)
-qed
+unfolding base_admission_report_presents_def
+  by (rule factor_pair_subdomain_class[OF judgment_source_presentation_class artifact_presentations.presentation_class_axioms])
+    (use base_admission_context_source base_admission_context_formed in blast)
 
 lemma base_admission_report_formed:
   assumes "base_admission_report_presents z t"
@@ -185,19 +161,8 @@ definition recorded_base_source_presents ::
 theorem recorded_base_source_presentation_class:
   "presentation_class recorded_base_source_presents (\<lambda>z. recorded_base_context (fst z) (snd z))
     (\<lambda>p. \<exists>z. recorded_base_source_presents z p)"
-proof -
-  have determined: "presentation_class
-      (\<lambda>z p. generation_source_presents (fst z) p \<and> recorded_base_context (fst z) (snd z))
-      (\<lambda>z. (\<lambda>z. generation_at_context (fst z) (snd z)) (fst z) \<and> recorded_base_context (fst z) (snd z))
-      (\<lambda>p. \<exists>z R. generation_source_presents z p \<and> recorded_base_context z R)"
-    by (rule presentation_class_determined[OF generation_source_presentation_class recorded_base_context_unique])
-  have domain: "((\<lambda>z. generation_at_context (fst z) (snd z)) z \<and> recorded_base_context z R) \<longleftrightarrow> recorded_base_context z R" for z R
-    using recorded_base_context_source by blast
-  have admission: "(\<exists>z R. generation_source_presents z p \<and> recorded_base_context z R) \<longleftrightarrow>
-      (\<exists>z. recorded_base_source_presents z p)" for p
-    by (auto simp: recorded_base_source_presents_def; metis fst_conv snd_conv)
-  show ?thesis using determined by (simp only: presentation_class_def recorded_base_source_presents_def domain admission)
-qed
+unfolding recorded_base_source_presents_def
+  by (rule presentation_class_determined_subdomain[OF generation_source_presentation_class recorded_base_context_unique recorded_base_context_source])
 
 lemma recorded_base_source_formed:
   assumes "recorded_base_source_presents z p"
@@ -223,22 +188,9 @@ definition recorded_base_report_presents ::
 theorem recorded_base_report_presentation_class:
   "presentation_class recorded_base_report_presents (\<lambda>z. recorded_base_context (fst z) (snd z))
     (\<lambda>p. \<exists>z. recorded_base_report_presents z p)"
-proof -
-  let ?R="factor_pair_presents generation_source_presents artifact_value_presents"
-  let ?D="\<lambda>z. (\<lambda>z. generation_at_context (fst z) (snd z)) (fst z) \<and> exact_formed (snd z)"
-  let ?A="\<lambda>t. \<exists>p q. (\<exists>z. generation_source_presents z p) \<and>
-    (11,q)\<in>positive_meaning artifact_admission_system \<and> t=Pair_Term p q"
-  have raw: "presentation_class ?R ?D ?A"
-    by (rule factor_pair_class[OF generation_source_presentation_class artifact_presentations.presentation_class_axioms])
-  have restricted: "presentation_class (\<lambda>z p. recorded_base_context (fst z) (snd z) \<and> ?R z p)
-      (\<lambda>z. recorded_base_context (fst z) (snd z))
-      (\<lambda>p. \<exists>z. recorded_base_context (fst z) (snd z) \<and> ?R z p)"
-  proof (rule presentation_class_subdomain[OF raw])
-    fix z assume admitted: "recorded_base_context (fst z) (snd z)"
-    show "?D z" using recorded_base_context_source[OF admitted] recorded_base_context_formed[OF admitted] by blast
-  qed
-  show ?thesis using restricted by (simp only: presentation_class_def recorded_base_report_presents_def)
-qed
+unfolding recorded_base_report_presents_def
+  by (rule factor_pair_subdomain_class[OF generation_source_presentation_class artifact_presentations.presentation_class_axioms])
+    (use recorded_base_context_source recorded_base_context_formed in blast)
 
 lemma recorded_base_report_formed:
   assumes "recorded_base_report_presents z t"

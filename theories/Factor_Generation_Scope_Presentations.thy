@@ -39,20 +39,8 @@ theorem generation_recorded_scope_presentation_class:
   "presentation_class generation_recorded_scope_presents
     (\<lambda>z. generation_recorded_scope (fst z) (snd z))
     (\<lambda>t. \<exists>z. generation_recorded_scope_presents z t)"
-proof -
-  have determined: "presentation_class
-      (\<lambda>z t. generation_source_presents (fst z) t \<and> generation_recorded_scope (fst z) (snd z))
-      (\<lambda>z. generation_at_context (fst (fst z)) (snd (fst z)) \<and> generation_recorded_scope (fst z) (snd z))
-      (\<lambda>t. \<exists>z j. generation_source_presents z t \<and> generation_recorded_scope z j)"
-    by (rule presentation_class_determined[OF generation_source_presentation_class generation_recorded_scope_unique])
-  have domain: "(generation_at_context (fst z) (snd z) \<and> generation_recorded_scope z j) \<longleftrightarrow>
-      generation_recorded_scope z j" for z j
-    using generation_recorded_scope_source by blast
-  have admission: "(\<exists>z j. generation_source_presents z t \<and> generation_recorded_scope z j) \<longleftrightarrow>
-      (\<exists>z. generation_recorded_scope_presents z t)" for t
-    by (auto simp: generation_recorded_scope_presents_def; metis fst_conv snd_conv)
-  show ?thesis using determined by (simp only: presentation_class_def generation_recorded_scope_presents_def domain admission)
-qed
+unfolding generation_recorded_scope_presents_def
+  by (rule presentation_class_determined_subdomain[OF generation_source_presentation_class generation_recorded_scope_unique generation_recorded_scope_source])
 
 theorem generation_recorded_scope_quotation_class:
   "presentation_class
@@ -73,23 +61,9 @@ theorem generation_scope_report_presentation_class:
   "presentation_class generation_scope_report_presents
     (\<lambda>z. generation_recorded_scope (fst z) (snd z))
     (\<lambda>t. \<exists>z. generation_scope_report_presents z t)"
-proof -
-  let ?R="factor_pair_presents generation_source_presents judgment_context_presents"
-  let ?D="\<lambda>z. generation_at_context (fst (fst z)) (snd (fst z)) \<and> judgment_context_formed (snd z)"
-  let ?A="\<lambda>t. \<exists>p q. (\<exists>z. generation_source_presents z p) \<and>
-    (\<exists>j. judgment_context_presents j q) \<and> t=Pair_Term p q"
-  have raw: "presentation_class ?R ?D ?A"
-    by (rule factor_pair_class[OF generation_source_presentation_class judgment_context_presentation_class])
-  have restricted: "presentation_class
-      (\<lambda>z t. generation_recorded_scope (fst z) (snd z) \<and> ?R z t)
-      (\<lambda>z. generation_recorded_scope (fst z) (snd z))
-      (\<lambda>t. \<exists>z. generation_recorded_scope (fst z) (snd z) \<and> ?R z t)"
-  proof (rule presentation_class_subdomain[OF raw])
-    fix z assume scope: "generation_recorded_scope (fst z) (snd z)"
-    show "?D z" using generation_recorded_scope_source[OF scope] generation_recorded_scope_formed[OF scope] by blast
-  qed
-  show ?thesis using restricted by (simp only: presentation_class_def generation_scope_report_presents_def)
-qed
+unfolding generation_scope_report_presents_def
+  by (rule factor_pair_subdomain_class[OF generation_source_presentation_class judgment_context_presentation_class])
+    (use generation_recorded_scope_source generation_recorded_scope_formed in blast)
 
 theorem generation_scope_report_relation:
   "(\<exists>z. generation_scope_report_presents z (Pair_Term p q)) \<longleftrightarrow>

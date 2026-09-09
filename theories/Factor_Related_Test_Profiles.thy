@@ -104,6 +104,23 @@ proof -
   then show thesis using that parts(2-6) by blast
 qed
 
+
+theorem native_related_test_package_restriction:
+  assumes profile: "native_related_test_package C k E pu pr d"
+    and original: "native_package_at E pu pr P" and retained: "native_package_at F qu qr P"
+    and included: "environment_included F E"
+  shows "native_related_test_package C k F qu qr d"
+proof -
+  obtain H test where parts: "d\<in>system_definitions P" "environment_formed H"
+    "environment_included C H" "environment_included E H"
+    "native_related_test_at H (fst d) (snd d) k test"
+    using native_related_test_package_witnesses[OF profile original] by blast
+  have reference: "environment_formed C" using profile by (simp add: native_related_test_package_def)
+  have smaller: "environment_included F H" by (rule environment_included_trans[OF included parts(4)])
+  show ?thesis unfolding native_related_test_package_def
+    using reference retained parts smaller by blast
+qed
+
 theorem native_related_test_package_saturation:
   assumes reference: "native_package_at C cu cr R" and comparison_entry: "k\<in>system_definitions R"
     and comparison: "\<And>p q. (k,Pair_Term p q)\<in>positive_meaning R \<longleftrightarrow> presentation_transport A A p q"

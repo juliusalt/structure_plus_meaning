@@ -58,6 +58,13 @@ lemma construction_account_formed:
   shows "term_formed p"
   using assms by (auto simp: construction_account_presents_def intro: construction_claim_presents_formed)
 
+
+lemma construction_account_fields:
+  assumes "construction_account_presents a p"
+  shows "\<exists>b s orig. p=enumeration_term [artifact_list_term (fst (fst a)),b,s,orig,
+    Target_Term (Whole_Artifact (construction_account_output a))]"
+  using assms by (auto simp: construction_account_presents_def construction_claim_presents_def)
+
 lemma construction_account_at_claim:
   assumes present: "construction_claim_presents xs B W R p"
   shows "construction_account_presents ((xs,B),W) p \<longleftrightarrow>

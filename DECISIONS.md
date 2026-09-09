@@ -5678,3 +5678,84 @@ construction policy's permission or global invariance. Complete construction
 admission, recorded construction causes, higher protocols, reflection,
 genesis, native mathematical-proof presentation, and the final repository
 audit remain open. No overall obligation state is promoted.
+
+
+## Complete construction uses returned witnesses and complete downstream contracts
+
+The current requirement is native structural admission of the independently
+defined construction account. Its primitive basis is the complete source
+context, selections, and origins. Pieces and output are derived. The existing
+five-field claim also states the output it asks to admit; it is checked against
+that derived value. This batch preserves every existing theory and introduces
+no extra field or canonical enumeration. The original complete claim's
+coverage and recovery establish the account class directly.
+
+The source-to-fragment operation uses four existing owned contracts. Actual
+source lookup retains the whole input and base boundary. Retermination keeps
+the supplied selected-set order, complete set comparison allows every output
+set order, and fragment admission checks the selected atoms against the exact
+source. The general reader-composition profile then supplies every material
+presentation. Empty selection still requires an actual source.
+
+A table value traversal exposed a distinction in the general contracts.
+Pointwise traversal retains input row order, so it cannot by itself return
+every unordered-table presentation. Restricting the table class to that
+particular output order would make its boundary depend on this implementation.
+Adding a permutation operation is possible, but the downstream requirement
+already has a complete presentation-invariant test. The chosen general notion
+therefore specifies a sound total returned witness between two complete
+classes. It requires an actual result for every admitted input and the correct
+independent value for every returned result. It makes no false claim of raw
+output completeness. Literal copying provides an independent example and a
+counterexample to conflating this notion with a complete function contract.
+
+A complete following relation consumes any such witness and gives a complete
+composite relation. Function graphs and semantic identity give function
+composition and output completion. The predicate form requires an exact
+observation on the entire target class; an arbitrary raw boolean test fails
+that condition. Restrictions preserve their subject boundaries. A presentation
+change uses the intermediate class's recovery. Covered subject images transfer
+the operation when their maps commute. These are criteria for recognizing and
+constructing relationships between contracts, rather than new names for the
+details of construction selection.
+
+Independent pair contracts give the product map. Existing sequence lifting
+accounts for traversal. Restricting to distinct functional rows and projecting
+both sequences to their sets gives table mapping through the general image
+criterion. Keeping each actual key makes the map injective on a functional
+relation even when its values coincide. Thus value noninjectivity never merges
+piece occurrences. The native key checker and whole-context guard supply
+separate conditions. An empty table still admits all unused input and base
+material. Native retermination retains the original input format.
+
+The final assembly step applies the witness predicate rule. The existing
+assembly contract proves the complete observation condition and discharges
+row ordering for every construction client. The remaining local obligations
+are the original claim's field linkage, its actual origin table, and its
+claimed whole-artifact output. Exact all-term admission recovers the complete
+valid account, and every permitted presentation supplies accepted native calls.
+Tests distinguish equal-material slots, repeated keys, absent sources even
+with empty selection, invalid unused material, missing or extra origins, and
+wrong outputs. A valid empty construction remains admitted.
+
+Whole-component agreement also has reusable transitivity, union, restriction,
+and recursive-group rebasing criteria. Their application retains every actual
+source, fragment, and assembly interface and clause family. The new six-site
+group has seven ordinary clauses over the least closure of ten external
+callees. Three public sites have one native program fixed before future
+operands, preserving its exact scope, artifacts, and bindings.
+
+The higher-order direction is applied during this milestone because these
+independent contract relationships settle otherwise repeated local work.
+Their depth corresponds to different obligations: component relations,
+product and sequence construction, restriction and commuting images, and
+complete downstream consumption. This is evidence for those relationships,
+not a claim that every requirement admits a bounded hierarchy. The wider
+notion and presentation audit remains necessary.
+
+The concrete structural checker is invariant on every complete valid claim.
+That theorem does not admit an arbitrary supplied permission program or
+check its universal formation-and-truth invariance. Those global conditions,
+recorded construction causes, higher protocols, reflection, genesis, O-85,
+and the final repository audit remain open. No overall obligation state is
+promoted in this batch.

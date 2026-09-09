@@ -1601,10 +1601,37 @@ with whole-artifact projection to return every compatible artifact-data form.
 
 Eight definitions contain eleven ordinary clauses over the least closure of
 six actual external callees. Four public sites precede all future operands,
-preserving exact program scope, artifacts, and bindings. Source availability
-is established; complete construction admission, global permission invariance,
-recorded construction causes, native mathematical-proof presentation, and
-the final repository audit remain open.
+preserving exact program scope, artifacts, and bindings.
+
+Complete structural construction admission now composes actual source lookup,
+fragment selection and material, a keyed piece-table traversal, and assembly
+admission. The original complete claim retains its ordered input occurrences,
+entire base table, selections, origins, and claimed output. Its account class
+recovers the supplied basis; pieces and output remain derived. All permitted
+set and table orders are admitted, with no stored intermediate piece table.
+
+General witness operations require complete source and target classes, sound
+returned values, and an output for every admitted input. A complete downstream
+relation consumes any returned witness and gives a complete composed contract.
+Restrictions, actual presentation changes, and commuting covered images make
+this reasoning reusable. Product contracts and sequence lifting specialize it
+to table value mapping. The native traversal may retain its supplied row order;
+the classes still contain every permitted order. Keeping each key makes the
+row map injective on a functional table even when material values coincide.
+
+General component-agreement and rebasing criteria preserve the complete
+existing source, fragment, and assembly programs. Six new definitions contain
+seven ordinary clauses over the least closure of ten external callees. Three
+public operations precede every future formed operand and preserve exact
+scope, artifacts, and bindings. Missing sources, duplicate slots, malformed
+unused sources, incomplete origins, and wrong outputs remain rejected. Empty
+selection tables still admit the entire context; equal materials at different
+slots remain separate occurrences.
+
+This concrete structural admission satisfies presentation invariance for
+complete construction claims. Native checking of global invariance for an
+arbitrary supplied permission program, recorded construction causes, native
+mathematical-proof presentation, and the final repository audit remain open.
 
 Construction permission retains its global formation-and-truth invariance
 condition over all compatible account presentations. A positive call alone

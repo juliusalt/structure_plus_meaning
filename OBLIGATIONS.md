@@ -83,7 +83,7 @@ the resulting contracts and mathematical proofs remain under O-85.
 | O-43 | Revised; partial | Terms, scoped patterns, complete schemas, identified clauses, definitions, and root selectors have native construction and recovery. Factor_Program_Compilation covers formed finite positive systems and future applications. Complete artifact quotation and the stored-scope reader have exact native class admission. Factor_Schema_Observations derives complete reference reports through the general class constructions; Factor_Schema_Reading and Factor_Single_Clause_Reading check their actual source schemas and complete definition profiles. Factor_Judgment_Presentations, Factor_Derivation_Presentations, and Factor_Replay_Presentations now derive the complete native context and proof classes, and four ordinary replay entries admit sources and compatible complete quotations. Target, recursive generation, snapshot, publication, and transaction value classes now use the same general rules. Actual generation source, predecessor-report, retention, and recorded-scope classes also have explicit compatible quotation constructions. Remaining presentation classes and their full intrinsic boundaries require audit and systematic construction. The generation value class now has all-term native admission and comparison contracts, with exact raw helper boundaries and total fixed compilation. Actual generation sources and complete predecessor reports now have all-term native contracts and fixed compilation. Recorded-cause and payload-scope readers now have exact native classes and fixed compilation. Claimed retained environments now have exact native classes and fixed compilation; cause validity remains. Closed generation sources and retained-environment reports now have exact native classes, complete quotations, and one fixed native compilation. |
 | O-44 | Revised by owner; partial | Every admitted presentation must be exact for its independently specified notion. General class, relation, and closure rules separate coverage, recovery, compatibility, and interpretation. Jointly determining observations now derive schema reports from complete records, preserving every call occurrence, callee, and material operand. Native readers relate these reports to the actual source; existing material accounts supply artifact and quotation boundaries. Covered image and subdomain rules now derive collection and artifact/body classes. Derivation and replay instances preserve their actual native readings and assertion boundaries; quotation composition retains each exact stored body. Compatible families and directed unions now justify finite recursive classes with explicit full-domain coverage. Generation reports retain each actual predecessor site and the native cause artifact's own quoted body; transaction execution retains its complete determined outcome. The complete system-wide audit of class constraints, required content, intrinsic links, and unsupported additions remains. Canonical semantic correspondence now connects every exact class of one independent domain. Local reader contracts supply uniform adaptation and composition; the quotation example preserves actual stored bodies. The factorization criterion exposes observations that depend on a discarded presentation feature. Actual generation source and predecessor readers now admit exactly their previously defined classes, including every report order. Their source-to-value operation is the canonical correspondence of the same independent core domain. The judgment and program scope readers now consume one canonical transported-reading contract while retaining distinct independent domains and each stored body. Generation scope source and report admission is exactly the independent linked class; another recovered scope is rejected. Generation dependency readers consume local predecessor, syntax, citation, and inclusion contracts. Their exported relations and total retention function preserve the independently fixed domains and every output presentation. |
 | O-45 | Revised; partial | Native readers recover complete rules and dependencies; program relocation and native compilation preserve and reflect independently defined meaning. Stored scopes determine future call formation and truth. The generic single-clause reader now checks the complete variable interface, singleton family, and expected schema report. Factor_Constrained_Contracts derives its actual reader and constraint dependencies and exact meaning over all future terms. Fixed reference reports become ordinary native checking code. Factor_Reader_Contracts checks projection and fixed-result profiles through complete definition reports, transfers their all-support rule equations, and recovers admitted reports for the four actual compiled replay entries. Full coverage through reflection and transition admission remains. |
-| O-46 | Proved for the explicit source boundary | Factor_Construction derives every piece from an input position or a separately supplied base entry and an exact selection. Every complete claim presentation retains the full boundary and account; its native recovery is unique. Factor_Source_Contracts now supplies exact native source availability and lookup on the complete original input and base boundary, with missing-source and unused-row rejection. |
+| O-46 | Proved for the explicit source boundary | Factor_Construction derives every piece from an input position or a separately supplied base entry and an exact selection. Every complete claim presentation retains the full boundary and account; its native recovery is unique. Factor_Source_Contracts now supplies exact native source availability and lookup on the complete original input and base boundary, with missing-source and unused-row rejection. Factor_Construction_Contracts now gives exact native structural admission of every complete original construction claim, composed from actual source, fragment, keyed-table, and assembly contracts; all inputs, origins, and output conditions remain explicit. |
 | O-47 | Partial; presentation repair proved | source_construction_adequate establishes independently admissible K2 assemblies. Permission now explicitly requires formation and truth invariance over all complete presentations, equivalent to factoring through the unordered account. Native admission-evidence checking remains open. |
 | O-48 | Proved for construction accounts | Every selected fragment retains its source, crossing boundary, and remainder. Aggregate source projections include unused inputs and an exact incidence omission partition. A formed counterexample proves that full atom coverage can still omit a connecting incidence. |
 | O-49 | Proved for the positive class | Finite tree certificates and finite rooted acyclic proof graphs are sound independently of retention. Graph soundness is conditional on the truth of its exact explicit assertions; closed graph completeness, including formed local-address coordinates, is proved. Other admitted forms remain. |
@@ -506,10 +506,37 @@ with whole-artifact projection to return every compatible artifact-data form.
 
 Eight definitions contain eleven ordinary clauses over the least closure of
 six actual external callees. Four public sites precede all future operands,
-preserving exact program scope, artifacts, and bindings. Source availability
-is established; complete construction admission, global permission invariance,
-recorded construction causes, native mathematical-proof presentation, and
-the final repository audit remain open.
+preserving exact program scope, artifacts, and bindings.
+
+Complete structural construction admission now composes actual source lookup,
+fragment selection and material, a keyed piece-table traversal, and assembly
+admission. The original complete claim retains its ordered input occurrences,
+entire base table, selections, origins, and claimed output. Its account class
+recovers the supplied basis; pieces and output remain derived. All permitted
+set and table orders are admitted, with no stored intermediate piece table.
+
+General witness operations require complete source and target classes, sound
+returned values, and an output for every admitted input. A complete downstream
+relation consumes any returned witness and gives a complete composed contract.
+Restrictions, actual presentation changes, and commuting covered images make
+this reasoning reusable. Product contracts and sequence lifting specialize it
+to table value mapping. The native traversal may retain its supplied row order;
+the classes still contain every permitted order. Keeping each key makes the
+row map injective on a functional table even when material values coincide.
+
+General component-agreement and rebasing criteria preserve the complete
+existing source, fragment, and assembly programs. Six new definitions contain
+seven ordinary clauses over the least closure of ten external callees. Three
+public operations precede every future formed operand and preserve exact
+scope, artifacts, and bindings. Missing sources, duplicate slots, malformed
+unused sources, incomplete origins, and wrong outputs remain rejected. Empty
+selection tables still admit the entire context; equal materials at different
+slots remain separate occurrences.
+
+This concrete structural admission satisfies presentation invariance for
+complete construction claims. Native checking of global invariance for an
+arbitrary supplied permission program, recorded construction causes, native
+mathematical-proof presentation, and the final repository audit remain open.
 
 Construction-cause validity, authority, higher protocols, and their native
 mathematical proofs remain open.

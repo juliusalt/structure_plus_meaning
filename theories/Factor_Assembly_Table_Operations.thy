@@ -190,6 +190,27 @@ proof -
   qed
 qed
 
+corollary origin_table_partial_selection:
+  assumes source: "origin_table_presents payload_value_presents q p"
+  shows "selected_data_member (Pair_Term (address_pair_data k) t) p \<longleftrightarrow>
+    k\<in>rel_dom q \<and> t=Payload_Term (rel_value q k)"
+proof (cases "k\<in>rel_dom q")
+  case True
+  show ?thesis by (simp only: origin_table_value_selection[OF source True] True simp_thms)
+next
+  case False
+  show ?thesis using origin_table_selection_at_key[OF source, of k t] False by (auto simp: rel_dom_def)
+qed
+
+corollary origin_table_output_formed:
+  assumes source: "origin_table_presents payload_value_presents q p" and key: "k\<in>rel_dom q"
+  shows "octets_formed (rel_value q k)"
+proof -
+  have selected: "selected_data_member (Pair_Term (address_pair_data k) (Payload_Term (rel_value q k))) p"
+    by (simp only: origin_table_partial_selection[OF source] key simp_thms)
+  show ?thesis using selected_data_member_formed[OF selected] by simp
+qed
+
 text \<open>
   The piece theorem extracts the enumerations actually stored at each slot.
   The earlier copied-field and gluing laws can therefore be applied to those

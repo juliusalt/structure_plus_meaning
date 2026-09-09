@@ -131,6 +131,28 @@ theorem rooted_system_meaning:
     d\<in>system_definition_closure P roots \<and> (d,t)\<in>positive_meaning P"
   unfolding rooted_system_def by (rule system_restriction_meaning[OF assms system_definition_closure_closed])
 
+corollary rooted_system_variable_calls:
+  assumes formed: "schema_system_formed P"
+    and prior: "schema_call_formed P d t \<longleftrightarrow> d\<in>system_definitions P \<and> term_formed t"
+  shows "schema_call_formed (rooted_system P roots) d t \<longleftrightarrow>
+    d\<in>system_definitions (rooted_system P roots) \<and> term_formed t"
+proof -
+  have calls: "schema_call_formed (rooted_system P roots) d t \<longleftrightarrow>
+      d\<in>system_definition_closure P roots \<and> d\<in>system_definitions P \<and> term_formed t"
+    by (simp only: rooted_system_calls[OF formed] prior)
+  have domain: "system_definitions (rooted_system P roots)=
+      system_definitions P\<inter>system_definition_closure P roots"
+    by (simp only: rooted_system_def system_restriction_definitions)
+  show ?thesis by (simp only: calls domain Int_iff; blast)
+qed
+
+corollary rooted_system_meaning_at:
+  assumes formed: "schema_system_formed P"
+    and member: "d\<in>system_definitions (rooted_system P roots)"
+  shows "(d,t)\<in>positive_meaning (rooted_system P roots) \<longleftrightarrow> (d,t)\<in>positive_meaning P"
+  using member by (simp only: rooted_system_meaning[OF formed])
+    (auto simp: rooted_system_def)
+
 theorem rooted_system_least:
   assumes "schema_system_formed P" "roots\<subseteq>system_definitions P"
     "roots\<subseteq>U" "system_dependency_closed P U"

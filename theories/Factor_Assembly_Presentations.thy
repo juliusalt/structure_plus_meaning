@@ -262,8 +262,8 @@ text \<open>
 
   An admitted origin table alone need not cover a piece family or satisfy K2.
   The table readers and the full assembly relation have separate contracts.
-  Ordinary checking of the complete gluing relation is a further implementation
-  obligation; the mathematical classes here add no native truth rule.
+  These mathematical classes add no native truth rule. The ordinary checking
+  program in Factor_Assembly_Contracts implements their complete boundaries.
 \<close>
 
 end

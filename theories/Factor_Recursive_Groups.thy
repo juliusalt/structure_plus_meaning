@@ -23,6 +23,33 @@ lemma schema_system_formed_over_mono:
   shows "schema_system_formed_over E Q"
   using assms by (auto simp: schema_system_formed_over_def; blast)
 
+theorem schema_system_formed_over_families:
+  assumes interfaces: "system_interfaces Q={(d,p d) |d. d\<in>D}"
+    and clauses: "system_clauses Q={((d,c),S). d\<in>D \<and> (c,S)\<in>C d}"
+    and finite: "finite D"
+    and patterns: "\<And>d. d\<in>D \<Longrightarrow> pattern_formed (p d)"
+    and families: "\<And>d. d\<in>D \<Longrightarrow> finite (C d)"
+    and functional: "\<And>d. d\<in>D \<Longrightarrow> single_valued (C d)"
+    and schemas: "\<And>d c S. d\<in>D \<Longrightarrow> (c,S)\<in>C d \<Longrightarrow>
+      schema_formed S \<and> schema_dependencies S\<subseteq>E\<union>D"
+  shows "schema_system_formed_over E Q"
+proof -
+  have domain: "system_definitions Q=D"
+    by (auto simp: system_definitions_def rel_dom_def interfaces)
+  have interface_image: "system_interfaces Q=(\<lambda>d. (d,p d)) ` D"
+    by (auto simp: interfaces)
+  have clause_union: "system_clauses Q=(\<Union>d\<in>D. (\<lambda>(c,S). ((d,c),S)) ` C d)"
+    by (auto simp: clauses)
+  have finite_material: "finite (system_interfaces Q)" "finite (system_clauses Q)"
+    using finite families by (simp_all add: interface_image clause_union)
+  have interface_functional: "single_valued (system_interfaces Q)"
+    by (auto simp: interfaces single_valued_def)
+  have clause_functional: "single_valued (system_clauses Q)"
+    using functional by (auto simp: clauses single_valued_def; blast)
+  show ?thesis using finite_material interface_functional clause_functional patterns schemas
+    by (auto simp: schema_system_formed_over_def interfaces clauses domain; blast)
+qed
+
 definition system_external_dependencies :: "('a,'s,'d,'c) schema_system \<Rightarrow> 'd set" where
   "system_external_dependencies Q=rel_ran (system_dependency_edges Q)-system_definitions Q"
 
@@ -121,6 +148,11 @@ theorem old_agreement: "systems_agree_on P extended (system_definitions P)"
 
 theorem group_agreement: "systems_agree_on Q extended (system_definitions Q)"
   using no_old_interface no_old_clause by (auto simp: systems_agree_on_def)
+
+lemma group_clauses:
+  assumes "d\<in>system_definitions Q"
+  shows "((d,c),S)\<in>system_clauses extended \<longleftrightarrow> ((d,c),S)\<in>system_clauses Q"
+  using no_old_clause[OF assms] by simp
 
 theorem old_calls:
   assumes "d\<in>system_definitions P"

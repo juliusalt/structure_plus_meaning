@@ -170,8 +170,9 @@ text \<open>
 
   Every formed assembly has admitted component tables and every compatible
   complete report quotation. This supplies the table contracts needed for
-  native gluing. Full K2 admission, attachment pushforward, construction
-  permission, and its global invariance remain separate obligations.
+  native gluing in Factor_Assembly_Contracts, which supplies complete K2
+  admission and attachment transport. Construction permission and its global
+  invariance remain separate obligations.
 \<close>
 
 end

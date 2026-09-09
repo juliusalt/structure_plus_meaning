@@ -83,19 +83,9 @@ lemma data_flatten_base_least:
 lemma data_flatten_base_call:
   "schema_call_formed data_flatten_base_system d t \<longleftrightarrow>
     d\<in>system_definitions data_flatten_base_system \<and> term_formed t"
-proof -
-  have roots: "system_external_dependencies data_flatten_group_system\<subseteq>system_definitions data_append_system"
-    by (simp add: data_flatten_external_dependencies)
-  have domain: "system_definitions data_flatten_base_system=
-      system_definition_closure data_append_system (system_external_dependencies data_flatten_group_system)"
-    unfolding data_flatten_base_system_def by (rule rooted_system_definitions[OF data_append_system_formed roots])
-  have inside: "d\<in>system_definition_closure data_append_system (system_external_dependencies data_flatten_group_system)
-      \<Longrightarrow> d\<in>system_definitions data_append_system"
-    using data_flatten_base_subdomain by (simp only: domain; blast)
-  show ?thesis
-    by (simp only: data_flatten_base_system_def rooted_system_calls[OF data_append_system_formed]
-      data_append_call domain[unfolded data_flatten_base_system_def]) (use inside in blast)
-qed
+  unfolding data_flatten_base_system_def
+  by (rule rooted_system_variable_calls[OF data_append_system_formed data_append_call])
+
 
 interpretation data_flatten_group: positive_definition_group data_flatten_base_system data_flatten_group_system
 proof (rule positive_definition_group.intro)

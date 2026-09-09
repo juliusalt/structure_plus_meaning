@@ -32,6 +32,13 @@ lemma artifact_enumeration_no_repeated_set_entry:
   shows "distinct A \<and> distinct E \<and> distinct F"
   using assms by (simp add: artifact_enumeration_def)
 
+lemma artifact_enumeration_support:
+  assumes "artifact_enumeration R A E B F"
+  shows "\<forall>z\<in>set E. fst z\<in>set A \<and> fst (snd z)\<in>set A \<and> snd (snd z)\<in>set A"
+    "fst ` set B\<subseteq>set A" "fst ` set F\<subseteq>set A"
+  using artifact_enumeration_material[OF assms]
+  by (auto simp: exact_formed_def object_formed_def rra_formed_def basis_formed_def)
+
 lemma finite_counts_have_enumeration:
   assumes finite: "finite {x. 0 < n x}"
   shows "\<exists>xs. count_list xs = n"

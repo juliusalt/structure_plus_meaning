@@ -62,19 +62,9 @@ lemma data_set_comparison_base_least:
 lemma data_set_comparison_base_call:
   "schema_call_formed data_set_comparison_base_system d t \<longleftrightarrow>
     d\<in>system_definitions data_set_comparison_base_system \<and> term_formed t"
-proof -
-  have roots: "system_external_dependencies data_set_comparison_group_system\<subseteq>system_definitions data_subset_system"
-    by (simp add: data_set_comparison_external_dependencies)
-  have domain: "system_definitions data_set_comparison_base_system=
-      system_definition_closure data_subset_system (system_external_dependencies data_set_comparison_group_system)"
-    unfolding data_set_comparison_base_system_def by (rule rooted_system_definitions[OF data_subset_system_formed roots])
-  have inside: "d\<in>system_definition_closure data_subset_system (system_external_dependencies data_set_comparison_group_system)
-      \<Longrightarrow> d\<in>system_definitions data_subset_system"
-    using data_set_comparison_base_subdomain by (simp only: domain; blast)
-  show ?thesis
-    by (simp only: data_set_comparison_base_system_def rooted_system_calls[OF data_subset_system_formed]
-      data_subset_call domain[unfolded data_set_comparison_base_system_def]) (use inside in blast)
-qed
+  unfolding data_set_comparison_base_system_def
+  by (rule rooted_system_variable_calls[OF data_subset_system_formed data_subset_call])
+
 
 interpretation data_set_comparison_group:
   positive_definition_group data_set_comparison_base_system data_set_comparison_group_system

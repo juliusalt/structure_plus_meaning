@@ -950,9 +950,8 @@ keys are rejected. Empty tables are accepted, while empty origins cannot cover
 a nonempty copied carrier. Every formed assembly has admitted component tables
 and complete report quotations. One fixed native program supplies both table
 operations before future operands and retains its original scope, artifacts,
-and bindings. Complete native gluing and attachment pushforward, construction
-permission and its global invariance, mathematical proof presentations, and
-the final repository audit remain open.
+and bindings. The assembly program below composes these table contracts
+with complete transport and output comparisons.
 
 
 Higher-order contract constructions now separate recognition of a proposed
@@ -973,9 +972,8 @@ compatibility condition. Complete piece enumerations then recover copied
 carriers, incidence, counts, and bindings. An exact finite criterion characterizes
 assembly against any complete output enumeration. One output witness removes
 duplicates only from set fields and retains all counted occurrences. These
-results establish the mathematical correspondence for native gluing; the
-complete native assembly program and global construction-permission invariance
-remain open.
+results supply the mathematical correspondence used by the native assembly
+program below.
 
 Native concatenation now specializes a general relational right fold to the
 existing append operation and an empty seed. Its two definitions and three
@@ -985,9 +983,8 @@ occurrence. The existing mapping traversal composes with concatenation through
 one complete intermediate list. A general criterion identifies the remaining
 semantic boundary: literal copying gives a complete identity contract exactly
 when each subject has one presentation. One fixed native concatenation entry
-precedes future operands. Native assembly still needs complete coverage and
-composition of piece transport with output-field comparisons; mathematical
-proof checking and the broader obligations remain open.
+precedes future operands. The assembly program below specializes the same
+fold to all four contribution fields.
 
 Complete table operations now retain the supplied key order and each actual
 stored value form. General distinct-list indexing and functional-row recovery
@@ -1003,9 +1000,39 @@ directions. Its complete relation contract retains list subjects while comparing
 their sets, so repeated image entries may agree with a complete collection.
 A proved witness separates this from bag equality. The least base follows one
 actual external callee; one fixed operation precedes every future operand with
-scope, artifacts, and bindings retained. Complete native assembly, global
-construction-permission invariance, native mathematical proofs, and the final
-repository audit remain open.
+scope, artifacts, and bindings retained.
+
+Complete native assembly now composes those independently established
+contracts. Twelve definitions with seventeen ordinary clauses transport every
+actual piece contribution and fold its four fields through existing append.
+The complete piece table, origin table, and output are admitted explicitly,
+including when all lists are empty. Four shared-context traversals and one
+general fold settle recursive order and occurrence preservation. The partial
+mapping contract exposes precisely which origin keys each traversal uses.
+
+The report compares all copied carrier atoms with the complete origin key
+list, so unused atoms cannot escape coverage. Origin values give the complete
+output carrier. Incidence and functional bindings use set comparison, allowing
+merged images; counted attachments use bag comparison and retain every count.
+Output formation excludes functional conflicts. The exact finite criterion
+then identifies the report with the original assembly relation. Source
+projection admits exactly the existing K2 presentations, without another
+primitive witness field or an injectivity requirement on destinations.
+
+General whole-program agreement, rooted-call transport, finite-family
+formation, and partial-list mapping discharge repeated integration work.
+The least closure of the nine actual external callees supplies the program
+base. Its complete source and report classes own the semantic boundary; the
+output function contract supplies every compatible presentation and supports
+general adaptation and composition. Full source and report quotations remain
+available. Two native sites are fixed before every future operand, retaining
+the exact package scope, artifacts, and bindings.
+
+This establishes structural assembly admission and output reporting.
+Construction permission and its global invariance, native mathematical-proof
+presentation, the remaining higher protocols, and the final repository audit
+remain open. Overall obligation states are unchanged.
+
 
 ### 6.7 Evidence — `RRA_Evidence`
 
@@ -1532,9 +1559,9 @@ data components. Invalid selections and altered reports are rejected.
 The program has twenty-two definitions and forty-two ordinary clauses over
 the least closure of six actual external callees. Six public operation sites
 are fixed before all future operands and retain the original scope, artifacts,
-and bindings. Structural assembly and the global invariance of construction
-permission remain separate obligations. The mathematical proof-presentation
-obligation and the final repository audit remain open.
+and bindings. Construction permission and its global invariance remain
+separate obligations. Native mathematical-proof presentation and the final
+repository audit remain open.
 
 Construction permission retains its global formation-and-truth invariance
 condition over all compatible account presentations. A positive call alone

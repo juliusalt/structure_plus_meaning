@@ -69,27 +69,30 @@ corollary presented_mapping_output:
 
 section \<open>An encoded input can determine its output on its local domain\<close>
 
+theorem encoded_partial_input:
+  assumes formed: "term_formed a"
+    and element: "\<And>x y. x\<in>set xs \<Longrightarrow> related a (f x) y \<longleftrightarrow> D x \<and> y=g x"
+  shows "(list_site,context_relation_argument a (data_list_term (map f xs)) q)\<in>positive_meaning P
+    \<longleftrightarrow> (\<forall>x\<in>set xs. D x) \<and> q=data_list_term (map g xs)"
+proof -
+  have correspondence: "list_all2 (related a) (map f xs) ys \<longleftrightarrow>
+      list_all2 (\<lambda>x y. y=g x \<and> D x) xs ys" for ys
+    by (simp add: list_all2_map1 list_all2_conv_all_nth element conj_commute)
+  show ?thesis using formed
+    by (auto simp: exact data_list_term_injective correspondence list_all2_function_restricted)
+qed
+
 theorem encoded_input:
   assumes formed: "term_formed a"
     and element: "\<And>x y. x\<in>set xs \<Longrightarrow> related a (f x) y \<longleftrightarrow> y=g x"
   shows "(list_site,context_relation_argument a (data_list_term (map f xs)) q)\<in>positive_meaning P
     \<longleftrightarrow> q=data_list_term (map g xs)"
 proof -
-  have correspondence: "list_all2 (related a) (map f xs) ys \<longleftrightarrow> ys=map g xs" for ys
-    using element
-  proof (induction xs arbitrary: ys)
-    case Nil
-    then show ?case by simp
-  next
-    case (Cons x xs)
-    have first: "related a (f x) y \<longleftrightarrow> y=g x" for y
-      using Cons.prems by simp
-    have rest: "list_all2 (related a) (map f xs) zs \<longleftrightarrow> zs=map g xs" for zs
-      by (rule Cons.IH) (use Cons.prems in auto)
-    show ?case by (cases ys) (simp_all add: first rest)
-  qed
-  show ?thesis using formed
-    by (auto simp: exact data_list_term_injective correspondence)
+  have partial: "(list_site,context_relation_argument a (data_list_term (map f xs)) q)\<in>positive_meaning P
+      \<longleftrightarrow> (\<forall>x\<in>set xs. True) \<and> q=data_list_term (map g xs)"
+    by (rule encoded_partial_input[where D="\<lambda>_. True", OF formed])
+      (use element in simp)
+  show ?thesis using partial by simp
 qed
 
 end
@@ -104,6 +107,10 @@ text \<open>
   For a fixed encoded input, the local element equations can instead determine
   an exact output term. Both forms preserve order, length, and every repeated
   element. Neither proof revisits the native traversal's recursive semantics.
+
+  A partial element operation also determines its complete traversal domain:
+  every actual input occurrence must lie in the local domain. This condition
+  is empty for an empty input and does not imply admission of the context.
 
   The context is formed even for an empty list. This theorem adds no context
   admission premise to the existing clauses. A public operation that needs

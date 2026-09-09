@@ -565,3 +565,11 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Assembly_Table_Operations
     Factor_Data_Set_Comparison
     Factor_Data_Set_Comparison_Contracts
+    Factor_Row_Value_Agreement
+    Factor_Assembly_Components
+    Factor_Assembly_Clauses
+    Factor_Assembly_Equations
+    Factor_Assembly_Transport
+    Factor_Assembly_Folds
+    Factor_Assembly_Admission
+    Factor_Assembly_Contracts

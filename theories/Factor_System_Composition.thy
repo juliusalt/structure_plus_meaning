@@ -20,6 +20,17 @@ lemma systems_agree_on_added:
   shows "systems_agree_on P (add_view_definition Q d p C) U \<longleftrightarrow> systems_agree_on P Q U"
   using assms by (auto simp: systems_agree_on_def)
 
+corollary whole_system_agreement_meaning:
+  assumes source: "schema_system_formed P" and target: "schema_system_formed Q"
+    and agreement: "systems_agree_on P Q (system_definitions P)"
+    and member: "d\<in>system_definitions P"
+  shows "(d,t)\<in>positive_meaning Q \<longleftrightarrow> (d,t)\<in>positive_meaning P"
+proof -
+  have closed: "system_dependency_closed P (system_definitions P)"
+    using system_dependency_boundary(1)[OF source] by (auto simp: system_dependency_closed_def)
+  show ?thesis using positive_meaning_dependency_locality[OF source target agreement closed member] by blast
+qed
+
 section \<open>Complete shared definitions support local program composition\<close>
 
 theorem system_union_agree_formed:

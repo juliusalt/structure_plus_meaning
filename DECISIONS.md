@@ -5488,3 +5488,73 @@ native piece transport and their combined output report remain the next
 assembly work. Construction permission and its global invariance, higher
 protocols, reflection, genesis, native mathematical proof presentation, and
 the final every-line repository audit remain open.
+
+
+## Native assembly composes the existing transports and complete comparisons
+
+The independent subject remains the original piece family and one origin
+relation. The output is determined from them. The chosen implementation checks
+a complete source-and-output report, then derives source admission by the
+existing reader projection. This avoids another primitive output field in the
+witness while admitting every compatible output presentation. It is a design
+choice: an independently developed source-only compatibility checker could
+also establish K2, but would not discharge the report correspondence by itself.
+
+One piece visit computes its four contribution lists together. Occurrence keys
+tag every carrier atom and every coordinate used by incidence or attachments.
+All lookups consult the identical admitted origin table. The incidence step
+has three distinct premise sockets and private selection remainders; counted
+and functional attachments share one atom-transport step and copy the opaque
+value unchanged. Four applications of the existing complete correspondence
+traversal account for all list recursion. A partial-map specialization exposes
+the exact remaining lookup domains. The earlier total encoded-map theorem is
+its total-domain instance, with its statement unchanged.
+
+The four-field fold is a product of existing append calls. Its empty seed is
+the four empty fields. The general relational fold owns the native recursion;
+the specialization establishes only componentwise closure and the ordinary
+fold equation. Complete piece-table extraction fixes the actual input lists,
+so no proof replaces a supplied piece by an arbitrary new enumeration. The
+result retains every original counted occurrence, including equal artifacts
+at distinct occurrence keys. Temporary tuple and list abbreviations introduce
+no additional semantic subject or primitive material field.
+
+Traversal only checks the origin coordinates it uses. Full coverage is a
+separate report premise comparing all copied atoms with the origin key list,
+including atoms absent from every incidence and attachment. This permits a
+noncircular proof: a successful partial traversal determines its actual
+contributions; the independent carrier comparison establishes full coverage.
+Conversely, full coverage supplies every traversal domain condition through
+the artifact enumeration's owned support theorem. Both complete table guards
+and output admission remain present when the traversed lists are empty.
+
+The origin value list is compared with output atoms. Incidence and functional
+images compare as sets, allowing repeated images after gluing; the counted
+field compares as a bag. No destination injectivity is assumed. Formation of
+the complete output excludes functional conflicts. The existing finite
+assembly criterion accounts for these conditions together, and the original
+assembly-relation theorem identifies the determined K2 output. All-term
+equivalences therefore support complete native source and report classes.
+The exported output function contract supplies client totality, every output
+form, adaptation, and composition without reopening the native proof.
+
+Integration exposed repeated reasoning that belongs to more general owners.
+Whole-source definition agreement now gives meaning transport directly,
+rooted systems export variable calls and member meanings, and finite clause
+families give a common formation rule. Existing fragment, table, concatenation,
+and set-comparison formation or base proofs reuse these rules with their old
+statements intact. Complete ancestor agreements for the actual row program
+are established once and composed across the existing table and comparison
+groups. The final assembly base is the least closure of its nine actual
+external callees. The twelve new definitions contain seventeen ordinary
+clauses; two public sites are fixed before all future operands and preserve
+the compiled scope, artifacts, and bindings.
+
+These additions use higher-order relationships where they remove repeated
+work: clause-family formation, whole-program agreement, partial-list mapping,
+and fold specialization. The remaining local details are the intrinsic four
+artifact fields and their different observation relations. No layer merely
+renames the final assembly claim. Native mathematical presentations and checks
+of the new proofs remain under O-85. Construction permission and its global
+invariance, higher protocols, reflection, genesis, and the final every-line
+audit remain open; no overall obligation state is promoted by this batch.

@@ -100,8 +100,8 @@ text \<open>
 
   The native entry is fixed before every future operand. Compilation retains
   the exact package scope, artifacts, and bindings. The table operations and
-  this comparison are reusable components; complete native assembly and its
-  construction-permission invariance remain separate obligations.
+  this comparison are reusable components of Factor_Assembly_Contracts.
+  Construction permission and its global invariance remain separate obligations.
 \<close>
 
 end

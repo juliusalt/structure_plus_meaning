@@ -60,33 +60,12 @@ proof -
     using that by (auto simp: structural_table_clause_family_def structural_table_schema_defs
       schema_formed_def schema_dependencies_def
       single_valued_def rel_dom_def rel_ran_def octets_formed_def split: if_splits)
-  have interface_image: "system_interfaces structural_table_group_system=
-      (\<lambda>d. (d,Pattern_Variable 0)) ` system_definitions structural_table_group_system"
-    by (simp only: structural_table_group_definitions; auto simp: structural_table_group_system_def)
-  have clause_union: "system_clauses structural_table_group_system=
-      (\<Union>d\<in>system_definitions structural_table_group_system.
-        (\<lambda>(c,S). ((d,c),S)) ` structural_table_clause_family d)"
-    by (simp only: structural_table_group_definitions; auto simp: structural_table_group_system_def)
-  have finite: "finite (system_interfaces structural_table_group_system)"
-    "finite (system_clauses structural_table_group_system)"
-    by (simp_all add: interface_image clause_union family_finite)
-  have interfaces: "single_valued (system_interfaces structural_table_group_system)"
-    by (auto simp: single_valued_def)
-  have clauses: "single_valued (system_clauses structural_table_group_system)"
-    using family_functional by (auto simp: single_valued_def; blast)
-  have schemas: "\<forall>d c S. ((d,c),S)\<in>system_clauses structural_table_group_system \<longrightarrow>
-      d\<in>system_definitions structural_table_group_system \<and> schema_formed S \<and>
-      schema_dependencies S\<subseteq>{1,11,21}\<union>system_definitions structural_table_group_system"
-  proof (intro allI impI)
-    fix d c S assume clause: "((d,c),S)\<in>system_clauses structural_table_group_system"
-    have members: "d\<in>system_definitions structural_table_group_system \<and> (c,S)\<in>structural_table_clause_family d"
-      using clause by (simp only: structural_table_group_clauses)
-    show "d\<in>system_definitions structural_table_group_system \<and> schema_formed S \<and>
-        schema_dependencies S\<subseteq>{1,11,21}\<union>system_definitions structural_table_group_system"
-      using members family_formed[OF conjunct2[OF members]] by blast
-  qed
-  show ?thesis using finite interfaces clauses schemas
-    by (simp add: schema_system_formed_over_def)
+  show ?thesis
+    by (rule schema_system_formed_over_families[where
+        D="system_definitions structural_table_group_system" and p="\<lambda>_. Pattern_Variable 0"
+        and C=structural_table_clause_family])
+      (use family_finite family_functional family_formed in
+        \<open>simp_all only: structural_table_group_definitions; auto simp: structural_table_group_system_def\<close>)+
 qed
 
 lemma structural_table_external_dependencies:
@@ -133,26 +112,9 @@ lemma structural_table_base_roots:
 lemma structural_table_base_call:
   "schema_call_formed structural_table_base_system d t \<longleftrightarrow>
     d\<in>system_definitions structural_table_base_system \<and> term_formed t"
-proof -
-  have roots: "system_external_dependencies structural_table_group_system\<subseteq>
-      system_definitions keyed_list_system"
-    by (simp only: structural_table_external_dependencies; auto)
-  have definitions: "system_definitions structural_table_base_system=
-      system_definition_closure keyed_list_system
-        (system_external_dependencies structural_table_group_system)"
-    unfolding structural_table_base_system_def
-    by (rule rooted_system_definitions[OF keyed_list_system_formed roots])
-  have inside: "d\<in>system_definition_closure keyed_list_system
-      (system_external_dependencies structural_table_group_system) \<Longrightarrow>
-      d\<in>system_definitions keyed_list_system"
-    using structural_table_base_subdomain by (simp only: definitions; blast)
-  have calls: "schema_call_formed structural_table_base_system d t \<longleftrightarrow>
-      d\<in>system_definition_closure keyed_list_system
-        (system_external_dependencies structural_table_group_system) \<and>
-      schema_call_formed keyed_list_system d t"
-    by (simp only: structural_table_base_system_def rooted_system_calls[OF keyed_list_system_formed])
-  show ?thesis by (simp only: calls definitions keyed_list_call; use inside in blast)
-qed
+  unfolding structural_table_base_system_def
+  by (rule rooted_system_variable_calls[OF keyed_list_system_formed keyed_list_call])
+
 
 lemma structural_table_base_least:
   assumes "{1,11,21}\<subseteq>U" "system_dependency_closed keyed_list_system U"

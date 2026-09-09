@@ -181,33 +181,12 @@ proof -
       context_filter_clauses_def context_filter_nil_schema_def context_filter_keep_schema_def
       context_filter_drop_schema_def schema_formed_def schema_dependencies_def
       single_valued_def rel_dom_def rel_ran_def octets_formed_def split: if_splits)
-  have interface_image: "system_interfaces fragment_group_system=
-      (\<lambda>d. (d,Pattern_Variable 0)) ` system_definitions fragment_group_system"
-    by (simp only: fragment_group_definitions; auto simp: fragment_group_system_def)
-  have clause_union: "system_clauses fragment_group_system=
-      (\<Union>d\<in>system_definitions fragment_group_system.
-        (\<lambda>(c,S). ((d,c),S)) ` fragment_clause_family d)"
-    by (simp only: fragment_group_definitions; auto simp: fragment_group_system_def)
-  have finite: "finite (system_interfaces fragment_group_system)"
-    "finite (system_clauses fragment_group_system)"
-    by (simp_all add: interface_image clause_union family_finite)
-  have interfaces: "single_valued (system_interfaces fragment_group_system)"
-    by (auto simp: single_valued_def)
-  have clauses: "single_valued (system_clauses fragment_group_system)"
-    using family_functional by (auto simp: single_valued_def; blast)
-  have schemas: "\<forall>d c S. ((d,c),S)\<in>system_clauses fragment_group_system \<longrightarrow>
-      d\<in>system_definitions fragment_group_system \<and> schema_formed S \<and>
-      schema_dependencies S\<subseteq>{1,5,6,7,11,132}\<union>system_definitions fragment_group_system"
-  proof (intro allI impI)
-    fix d c S assume clause: "((d,c),S)\<in>system_clauses fragment_group_system"
-    have members: "d\<in>system_definitions fragment_group_system \<and> (c,S)\<in>fragment_clause_family d"
-      using clause by (simp only: fragment_group_clauses)
-    show "d\<in>system_definitions fragment_group_system \<and> schema_formed S \<and>
-        schema_dependencies S\<subseteq>{1,5,6,7,11,132}\<union>system_definitions fragment_group_system"
-      using members family_formed[OF conjunct2[OF members]] by blast
-  qed
-  show ?thesis using finite interfaces clauses schemas
-    by (simp add: schema_system_formed_over_def)
+  show ?thesis
+    by (rule schema_system_formed_over_families[where
+        D="system_definitions fragment_group_system" and p="\<lambda>_. Pattern_Variable 0"
+        and C=fragment_clause_family])
+      (use family_finite family_functional family_formed in
+        \<open>simp_all only: fragment_group_definitions; auto simp: fragment_group_system_def\<close>)+
 qed
 
 lemma fragment_external_dependencies:

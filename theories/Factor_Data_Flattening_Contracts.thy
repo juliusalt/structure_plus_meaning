@@ -130,9 +130,9 @@ text \<open>
 
   The compiled concatenation entry is available before all future operands,
   with the existing program's scope, artifacts, and bindings preserved.
-  Native assembly still needs origin lookup, complete coverage, and the
-  output-field comparisons. Native checking of these mathematical proofs
-  remains a separate obligation.
+  Factor_Assembly_Contracts composes the same general fold with origin
+  transport, complete coverage, and output-field comparisons. Native checking
+  of these mathematical proofs remains a separate obligation.
 \<close>
 
 end

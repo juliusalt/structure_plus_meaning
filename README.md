@@ -1234,9 +1234,27 @@ occurrence. The existing mapping traversal composes with concatenation through
 one complete intermediate list. A general criterion identifies the remaining
 semantic boundary: literal copying gives a complete identity contract exactly
 when each subject has one presentation. One fixed native concatenation entry
-precedes future operands. Native assembly still needs complete origin lookup,
-coverage, and output-field comparisons; mathematical proof checking and the
-broader obligations remain open.
+precedes future operands. Native assembly still needs complete coverage and
+composition of piece transport with output-field comparisons; mathematical
+proof checking and the broader obligations remain open.
+
+Complete table operations now retain the supplied key order and each actual
+stored value form. General distinct-list indexing and functional-row recovery
+settle that correspondence before specialization to encoded keys. Piece-table
+extraction supplies the actual artifact field lists to the existing finite
+gluing laws. Generic collection selection is complete for uniquely presented
+values; otherwise comparison transports the stored form to every compatible
+form, with whole-source admission explicit. Origins specialize the unique-form
+case, giving exact lookup under their complete table premise.
+
+One ordinary native clause compares actual data lists by inclusion in both
+directions. Its complete relation contract retains list subjects while comparing
+their sets, so repeated image entries may agree with a complete collection.
+A proved witness separates this from bag equality. The least base follows one
+actual external callee; one fixed operation precedes every future operand with
+scope, artifacts, and bindings retained. Complete native assembly, global
+construction-permission invariance, native mathematical proofs, and the final
+repository audit remain open.
 
 The remaining work includes construction-cause validity and authority readers, complete
 transition material, reflection, genesis, and the system-wide presentation

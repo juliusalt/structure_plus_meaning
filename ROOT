@@ -559,3 +559,9 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_List_Folds
     Factor_Data_Flattening
     Factor_Data_Flattening_Contracts
+    List_Relation_Indexing
+    Factor_Collection_Selection
+    Factor_Data_Table_Operations
+    Factor_Assembly_Table_Operations
+    Factor_Data_Set_Comparison
+    Factor_Data_Set_Comparison_Contracts

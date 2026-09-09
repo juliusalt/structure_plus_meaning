@@ -5420,3 +5420,71 @@ These discharge traversal, order, and multiplicity. Origin lookup, complete
 coverage, and comparison with all four output fields remain assembly work.
 The new mathematical results retain O-85; all broader obligation states and
 the final every-line audit remain open.
+
+
+## Table operations retain actual forms before semantic comparison
+
+Native gluing reads the piece and origin tables actually supplied. Existence
+of some presentation of a piece would not justify silently replacing its
+stored field order. The general correspondence is between a distinct source
+list and the values actually related to its entries. List_Relation_Indexing
+proves that correspondence once. Functional-row recovery then identifies the
+semantic value at each listed key. Factor_Data_Table_Operations composes these
+results with the existing complete table class and decomposes both stored
+components. Encoded keys are a specialization; relational values retain all
+their admitted forms. No new table subject, ordering convention, or identity
+field is introduced. Indexing functions outside the listed keys remain proof
+choices with no part in the represented table.
+
+The assembly-specific residual condition is that each stored value is an
+artifact presentation. The complete value reading supplies its four actual
+field lists. The resulting theorem gives exactly a piece-family enumeration
+whose encoded rows reconstruct the supplied term. The existing finite copied
+carrier, incidence, attachment-count, and functional-image laws now apply to
+those same lists. Different slots containing equal artifacts still contribute
+separately. No traversal or pushforward law is reproved for this extraction.
+
+Literal table lookup exposes a separate reusable boundary. The existing
+selection operation returns a form present in the supplied collection. If
+each subject has one form, this is already complete membership. Otherwise a
+comparison must connect that stored form to the requested form. The general
+transport theorem uses recovery of the selected element's subject to prove
+that composition exact. The complete membership contract also includes
+whole-source admission, since selecting one row cannot establish a complete
+collection boundary. A two-form witness proves that a compatible form need
+not itself be literally selectable. This specializes the previously proved
+copy criterion and records the remaining condition rather than concealing it
+inside an assumed lookup contract.
+
+Origin keys and destinations use exact payload encodings and therefore have
+one form. Origin selection and value lookup specialize the unique-form result.
+Their complete table premise supplies functionality and coordinate formation;
+lookup alone does not admit that table or establish its coverage of a piece
+family. The existing row-key and row-value projections preserve actual order
+and repetitions. Equal destinations at different source keys are retained.
+
+Gluing also requires a comparison that permits repeated image entries in set
+fields. Ordinary list-set comparison is meaningful independently of assembly:
+its subjects are actual data lists and its relation is equality of their sets.
+One ordinary clause composes the existing inclusion operation in both
+directions. The native proof reuses the owned inclusion contract. There are
+two premise sockets even when the calls happen to agree. Its sole actual
+external callee determines the least closed base, and the existing recursive
+group construction exports complete-definition agreement for later joins.
+
+The complete relation contract does not change list identity or count
+semantics. A two-occurrence list and a one-occurrence list can compare equal
+as sets while bag comparison rejects them. The encoded collection-output law
+therefore allows repeated image entries without permitting duplicate entries
+in a complete collection presentation. It will apply to merged incidence and
+functional images; counted attachments still require bag comparison. A fixed
+native set-comparison entry precedes future operands with its package scope,
+artifacts, and bindings retained.
+
+This batch settles actual row extraction, the lookup-form boundary, and the
+set comparison needed by the assembly composition. It does not add a native
+K2 clause or promote an overall obligation state. Complete origin coverage,
+native piece transport and their combined output report remain the next
+assembly work. Construction permission and its global invariance, higher
+protocols, reflection, genesis, native mathematical proof presentation, and
+the final every-line repository audit remain open.

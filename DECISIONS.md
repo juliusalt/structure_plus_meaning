@@ -6946,3 +6946,46 @@ checking of symbolic schemes, broader uniform methods, higher strata, and the
 alignment and every-line repository audits remain open. The new mathematical
 proofs also retain their native proof-presentation obligation. No broader
 obligation status is changed by this milestone.
+
+## Symbolic call admission uses the actual unique interface
+
+The next proof-scheme boundary is formation of every instance of a claim
+pattern. The existing derivation checker additionally requires material truth
+at each ground instance; applying it at private syntax markers would exclude
+valid conditional schemes. Call formation has its own interface and can be
+checked independently before the graph and its assumptions.
+
+The existing pattern determination theorem supplies the needed distinction.
+Payload markers retain each target variable's identity, while a target marker
+separates variables from payload literals. Given two instances of one actual
+interface, structural induction recovers a common replacement at every source
+variable. Repeated uses agree by joint determination. The resulting finite
+witness is exactly the existing symbolic call definition, and it is equivalent
+to formation of every future root-pattern instance. This establishes a
+necessary as well as sufficient criterion for this interface boundary.
+
+One ordinary clause composes the existing reference-binding entry, two scoped
+pattern instances, and two program-call admissions. Both readings use the same
+actual pattern source and package. Their complete source environments may
+differ. The compiled program joins the existing substitution and package
+readers only after proving equality of every shared definition; their original
+meanings remain available. Actual source-root, coordinate, and site classes
+supply the joint presentation contract. The source-root representation is the
+existing left-associated package input, while the scoped-pattern source uses
+its existing site representation. These remain connected through their exact
+local contracts.
+
+Every formed finite source program is compiled once before its future claim
+patterns. Arbitrary symbolic calls then have native scoped presentations with
+injective private coordinates, including variable scopes and arbitrary depth.
+The new checker is independently compiled once before future input values.
+The original finite substitution and proof-probe investigations exercise why
+the marker conditions matter and why this result concerns call formation.
+The finite literal program still fails on a pair after proving both markers,
+even though its variable claim has a uniform call boundary.
+
+The five new theories leave every earlier theory and tool unchanged. Complete
+native proof-scheme admission still requires graph formation, actual clause
+origins, complete symbolic bindings, prospective discharges, and both material
+and assertion boundaries. Native checking of the new mathematical proofs,
+higher strata, and both repository audits remain open.

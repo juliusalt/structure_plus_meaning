@@ -665,3 +665,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Proof_Schemes
     Factor_Proof_Probe_Investigation
     Factor_Proof_Scheme_Instances
+    Factor_Pattern_Specialization
+    Factor_Pattern_Call_Readings
+    Factor_Pattern_Call_Admission
+    Factor_Pattern_Call_Instances
+    Factor_Pattern_Call_Contracts

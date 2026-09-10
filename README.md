@@ -1733,9 +1733,31 @@ instance of its root pattern. The proof extends the root valuation over any
 remaining variables.
 The universal recognizer has one such scheme before future terms. The existing
 incidence rule instead retains six variables and its complete material
-condition; a formed payload valuation refutes erasing that condition. Native
-presentation and checking of this symbolic scheme relation, broader uniform
-proof methods, and the mathematical-proof obligations remain open.
+condition; a formed payload valuation refutes erasing that condition.
+Admission of complete symbolic proof graphs, broader uniform proof methods,
+and the mathematical-proof obligations remain open.
+
+The symbolic call boundary now has an exact all-instance characterization.
+A pattern is a finite specialization of one actual interface precisely when
+every instance of that pattern is a formed call. Two complete valuations
+recover that replacement: distinct variable payloads and one target value.
+The proof uses the actual interface's unique syntax, including repeated
+variables; it does not infer positive meaning from finitely many answers.
+
+One ordinary native entry composes the existing marker, scoped-pattern, and
+package-call readers. Both readings inspect the same complete pattern and
+package. The pattern may come from a different environment, whose actual
+scope and site remain explicit. Shared-definition agreement preserves the
+existing substitution and package operations. Source-root, coordinate, and
+site classes derive the exact joint input class through products and a
+subdomain. Every compatible presentation has the same admission result.
+
+The checker is fixed before all future inputs. Each formed finite source
+program is also compiled before every future symbolic call to that program;
+the exact correspondence with the original program remains explicit. Every
+such claim has an accepted scoped presentation, at arbitrary pattern depth and with nonempty variable scopes allowed. Qualified program coordinates
+preserve this boundary. Complete symbolic proof-graph admission, including
+clause origins and material and assertion conditions, remains further work.
 
 The substitution investigation is directly reproducible:
 

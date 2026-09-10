@@ -229,8 +229,15 @@ two complete traversals. Retained data keys and both finite-set levels preserve
 all admitted inner and outer presentations. Actual conflicts under literal
 outer comparison direct the general construction; the same case then executes
 its reported extensions again. Candidate and ordered-candidate-pair row classes
-reuse these contracts. Their computation from a declared observation scope and
-assembly into the whole native report remain further work.
+reuse these contracts. Native Cartesian construction and complete profile and
+loss table calculations now retain every declared key, including empty values
+and self pairs. Actual diagonal-coverage and sparse-table failures direct these
+constructions; both investigations execute their reported extensions again.
+General list reconstruction, retained-key calculation, whole-input result
+comparison, and scope-witness contracts discharge recurring reasoning. The
+original complete input and output classes remain unchanged. Assembly into
+the whole native report and native mathematical-proof checking remain further
+work.
 
 Schedule related information reads, edits, validation, and reports in batches.
 This scheduling discipline is separate from the semantic feedback loop;

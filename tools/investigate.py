@@ -27,6 +27,57 @@ SCHEMA = "finite-investigation-1"
 
 # Each registered case fixes its source theory, export, and independent scope.
 BUILTIN_CASES = {
+    "observation_tables": {
+        "theory": "Factor_Observation_Table_Investigation",
+        "function": "table_investigation",
+        "help": "Compare sparse and complete native profile and loss tables",
+        "question": "Do the selected native decisions distinguish complete profile and loss tables, including every empty row?",
+        "scope": {
+            "candidates": {
+                "0": "Sparse tables omitting every empty computed row",
+                "1": "Complete profile and loss tables",
+                "2": "Complete tables with inner and outer orders reversed",
+                "3": "Complete tables with varied repetitions of rows",
+                "4": "Missing the empty profile of candidate 2",
+                "5": "Missing the empty self-loss row for candidate 2",
+                "6": "An extra empty profile row for foreign candidate 3",
+                "7": "A wrong nonempty loss for the pair (0,2)"
+            },
+            "facets": {
+                "0": "Actual native keyed comparisons against sparse references from native profile and loss results",
+                "1": "Actual complete native profile and loss table calculations"
+            },
+            "values": "The actual Boolean decision: False=0, True=1",
+            "comparison": "Equality of complete admission: every declared candidate profile and ordered candidate-pair loss, including empty results and no foreign rows",
+            "coverage": "These eight table pairs for C={0,1,2}, U=F={0}, T={(0,0,0),(0,0,1),(0,1,0)}"
+        },
+        "semantic_boundary": "The source result values are proved outputs of actual native profile and loss calls. The sparse-reference observation uses actual native nested comparisons. The second observation calls both complete native table calculations on the same declared scope and displayed results. The independent criterion retains every declared row. These executions use proved code equations; native checking of mathematical proofs remains separate."
+    },
+    "pair_scope": {
+        "theory": "Factor_Pair_Scope_Investigation",
+        "function": "pair_scope_investigation",
+        "help": "Compare native pair operations against complete ordered pair coverage",
+        "question": "Do the selected native decisions distinguish complete ordered pair coverage?",
+        "scope": {
+            "candidates": {
+                "0": "Only diagonal pairs",
+                "1": "Every ordered pair",
+                "2": "Every ordered pair in reverse order",
+                "3": "Complete scope with a repeated self pair",
+                "4": "Missing the first self pair",
+                "5": "Complete scope with a foreign pair",
+                "6": "Complete scope with repeated cross pairs"
+            },
+            "facets": {
+                "0": "Acceptance by the existing native diagonal pair operation",
+                "1": "Acceptance by the complete native Cartesian operation"
+            },
+            "values": "The actual Boolean decision: False=0, True=1",
+            "comparison": "Equality of complete admission: exactly the Cartesian product of the declared candidates, independently of order and repetition",
+            "coverage": "These seven pair-list outputs for the declared candidate set {0,1}"
+        },
+        "semantic_boundary": "The first observation calls the actual native diagonal operation, whose own meaning remains self pairing. The second calls the complete native Cartesian operation. The independent criterion requires complete ordered pair coverage. These executions use proved code equations; native checking of mathematical proofs remains separate."
+    },
     "observation_collections": {
         "theory": "Factor_Observation_Collection_Investigation",
         "function": "collection_investigation",

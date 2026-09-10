@@ -2040,6 +2040,64 @@ observation values, presentation changes, shared keys, malformed octets, and
 formed references. Whole report
 construction and native checking of mathematical evidence remain further work.
 
+Complete profile and loss tables now have native calculations from the
+existing declared scope. Every candidate contributes a profile row, and every
+ordered candidate pair contributes a loss row, including empty results and
+self pairs. Two native maps and flattening construct the complete Cartesian
+key set; the original diagonal operation retains its self-pair meaning.
+Whole-scope admission remains required when the candidate set is empty.
+
+The calculations retain the original complete input and output classes.
+Their ordered internal witnesses are compared through the existing nested
+finite-set operation, so every admitted inner and outer order and repetition
+remains available. Missing empty rows, foreign rows, and extra distinct values
+at a shared key fail for the given computed graph. Functionality follows from
+the calculation; it is not a new primitive restriction on collection identity.
+One fixed native package supplies both table operations before future inputs.
+
+Two executed investigations drove this addition:
+
+```sh
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle pair-scope --selected 0
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle pair-scope --selected 1
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle observation-tables --selected 0
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle observation-tables --selected 1
+```
+
+The seven pair-list subjects compare diagonal acceptance with complete
+Cartesian coverage. Facet 0 produces four conflicts and 16 missing
+distinctions. Adding the new native Cartesian observation repairs those 16
+while retaining the four conflicts. The new observation alone is adequate.
+Empty selection misses 24 distinctions; its exported extension selects the
+new observation, and that actual rerun has no residuals.
+
+The eight table subjects include sparse results, complete results, changed
+presentations, two omitted empty rows, a foreign row, and a wrong nonempty
+loss. Sparse-reference comparison produces eight conflicts and 24 missing
+distinctions. Adding the complete native calculations repairs those 24 while
+retaining the eight conflicts. The new observation alone is adequate. Empty
+selection misses 30 distinctions; its exported extension selects the new
+observation, and that rerun also has no residuals. Every available selection
+and every reported field was independently checked in both cases. These
+Boolean observations characterize complete admission in their stated scopes;
+they do not identify all distinct incomplete results.
+
+The Cartesian equations passed 115,607 native decisions and seven separate
+formation checks. They cover all input words of length at most three over
+two values and every result subset of nine ordered pairs over three values,
+plus presentation changes and data-boundary controls. The table equations
+passed 1,896,079 native decisions and 12 formation predicates, each checking
+both table calls. They cover all 1,260 formed scopes over two candidates, two
+facets, and two values; all 289 partial profile graphs; and all 1,156 partial
+loss graphs whose self rows are empty or absent and whose cross rows contain
+any subset of the four possible observations. Additional controls test every
+nonempty self-loss value set in an otherwise correct graph, presentation
+changes, different values at the same key, malformed fields, formed
+references, and structured data keys. These are bounded execution results;
+the complete native contracts have separately checked universal proofs.
+Whole investigation-report construction, native checking of mathematical
+proofs, and the final repository audit remain open.
+
 `run CASE.json` accepts schema `finite-investigation-1`, a `question`, a `scope`,
 and one of these finite inputs:
 
@@ -2053,6 +2111,8 @@ and one of these finite inputs:
 | `observation` | `selected` chooses native profile decisions; comparison is equality of represented output sets. |
 | `observation_scope` | `selected` chooses native scope decisions; comparison is equality of independently specified complete input admission. |
 | `observation_collections` | `selected` chooses native collection comparisons; the independent comparison retains both the outer row set and each inner observation set. |
+| `pair_scope` | `selected` chooses native pair decisions; the independent comparison retains complete Cartesian coverage of the declared candidates. |
+| `observation_tables` | `selected` chooses native table decisions; the independent comparison requires every computed profile and ordered-pair loss, including empty rows. |
 | `schema_sockets` | `selected` chooses schema observations; comparison requires an actual substitution between the complete schemas, including premise sockets. |
 
 A repository-owned registry fixes each built-in case's theory, exported

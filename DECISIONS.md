@@ -7360,7 +7360,115 @@ references, empty collections, and distinct rows sharing a key. These graphs
 supply comparison inputs; their values are not thereby certified as results
 for a particular observation table.
 
-Constructing complete profile and loss tables from one declared scope,
+At that stage, computing the complete tables from one declared scope,
 assembling the whole native investigation report, and native checking of the
-mathematical evidence remain separate obligations. The wider application and
-final every-line repository audits remain open.
+mathematical evidence remained separate obligations. The following construction
+supplies the first of those links.
+
+
+## Complete key scopes direct native profile and loss table calculation
+
+The first investigation asks whether the existing native diagonal operation
+can observe complete ordered-pair coverage. Its own self-pair meaning is
+correct. Seven supplied outputs instead require every pair of two declared
+candidates, with every order and repetition admitted and foreign pairs
+excluded. The initial actual run has four conflicts and 16 missing
+distinctions. Its reported extension leaves all 20 failures; the remaining
+empty sound language misses 24 distinctions.
+
+Those results direct an ordinary independently admitted pair constructor,
+two existing related list maps, a context transposition, and flattening.
+Admission checks both complete input lists when either is empty. The ordered
+witness retains all occurrences; the public finite-set comparison admits
+every presentation of exactly the Cartesian set. Eight definitions contain
+ten ordinary clauses over the least closure of the actual data, list,
+flattening, and comparison callees. The diagonal operation is unchanged.
+
+The revised seven-subject case adds the actual complete Cartesian call.
+Sixteen witnessed repairs select it. Rerunning that exported extension leaves
+the four persistent conflicts from the diagonal observation. The new
+observation alone is the only adequate selection. Empty selection yields 24
+repairs; its exported extension has no residuals on the actual rerun.
+
+A second actual investigation examines complete profile and directed-loss
+tables together. Its query has three candidates, one selected available
+facet, and three observation rows. Two candidates have nonempty profiles;
+the third has an empty one. The independent criterion requires all three
+profile keys and all nine ordered-pair loss keys, with their exact finite
+values. Eight subjects include complete and sparse tables, changes of both
+presentation levels, a missing empty profile, a missing self-loss row, a
+foreign empty row, and a wrong nonempty loss.
+
+The initial observation compares supplied rows with sparse references using
+the actual native nested comparator. Separate proofs identify all retained
+reference values as results of the native profile and loss computations.
+The actual report has eight conflicts and 24 missing distinctions; its
+extension leaves all 32 failures. Empty sound selection still misses 30
+comparisons. Keeping only nonempty calculated rows cannot express complete
+scope, even when every retained value is correct.
+
+The new finite subjects are complete graphs over the declared candidates and
+their Cartesian product. Every key receives its existing profile or loss;
+functionality and empty self-loss rows follow. A general native clause retains
+a selected key beside its calculated value. Its complete row-presentation
+contract consumes the key and value classes for the whole enumeration.
+Both table calculations use that clause and the existing list map. The
+loss table first obtains its complete keys from the new Cartesian operation.
+
+Repeated reconstruction from arbitrary list arguments is now one all-term
+contract of the existing related map. Pair construction and both table
+calculations use owned traversal contracts. A shared scope-witness theorem
+consumes whole-input admission, the computation on every enumeration, and the
+returned value's class. A binary private-result schema then compares the
+whole computed witness with the supplied output through the existing nested
+comparison. These clauses and contracts make recurring reasoning reusable.
+
+The input remains the original complete scope record, with its available and
+selected facets and every observation row. No dummy argument or additional
+canonical-input condition is introduced. The output classes remain the
+existing complete collections of candidate and ordered-pair rows. Different
+values at one key remain distinct collection rows; they fail as outputs when
+they disagree with the uniquely calculated graph. Every admitted inner and
+outer order and repetition is retained. Literal data keys can be structured
+terms; the native contract is not limited to the numeric test interface.
+
+The program join first proves structural agreement of the actual shared
+collection and flattening definitions. Existing product, scope, and keyed
+groups are rebased through their whole original boundaries. Complete agreement
+and generic group contracts preserve every original definition; equality of
+selected meanings alone is not used to identify source definitions. The ten
+new table definitions have twelve ordinary clauses and use the least closure
+of their five actual external callees. All-term exactness, complete function
+contracts, input and output invariance for both outcomes, full data quotation,
+and one fixed package before every future argument are proved.
+
+The revised eight-subject case adds both actual native table calculations.
+Its exported extension repairs the 24 missing distinctions and retains the
+eight conflicts of the sparse-reference observation. The new observation
+alone is the only adequate selection. Empty selection supplies 30 repair
+witnesses; its exported extension is rerun and has no residuals. Every
+observation, profile, loss, residual, conflict, repair, obstruction, extension,
+and available facet subset is independently checked in both investigations.
+These Boolean probes settle complete admission in their finite scopes; they
+do not identify every different incomplete table or pair set.
+
+The Cartesian equations passed 115,607 native decisions and seven separate
+formation checks. The table equations passed 1,896,079 native decisions and
+12 formation predicates, each checking both calls. The latter matrix contains
+all 1,260 formed scopes over two candidates, two facets, and two values,
+crossed with all 289 partial profile graphs and all 1,156 partial loss graphs
+whose self rows are empty or absent and whose cross values are arbitrary
+subsets of four observations. A further 75,278 cases vary presentations,
+insert different values at shared keys, add foreign empty rows, and test
+every nonempty self-loss value set in an otherwise correct graph. Seventy-three
+additional octet-boundary cases, 12 reference inputs, and four structured-data
+decisions retain the distinction between empty data, structured keys,
+missing rows, and formed references. The checked code equations refer to the
+actual fixed native operations; the execution interface is not an interpreter
+for arbitrary native programs. Exact source, generated-code, case, driver,
+and runtime identities are recorded with these bounded results.
+
+Complete native investigation-report construction, native repair and
+extension computation, native checking of the mathematical proofs, the
+remaining application audit, and the final every-line repository audit
+remain open. These operations are a further component of that work.

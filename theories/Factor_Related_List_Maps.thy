@@ -95,6 +95,38 @@ proof -
   show ?thesis using partial by simp
 qed
 
+
+section \<open>A functional element contract determines every source-list boundary\<close>
+
+theorem partial_function_exact:
+  assumes formed: "term_formed a"
+    and element: "\<And>x y. related a x y \<longleftrightarrow> D x \<and> y=f x"
+  shows "(list_site,context_relation_argument a p q)\<in>positive_meaning P \<longleftrightarrow>
+    (\<exists>xs. (\<forall>x\<in>set xs. D x) \<and> p=data_list_term xs \<and> q=data_list_term (map f xs))"
+proof -
+  have graph: "related a=(\<lambda>x y. y=f x \<and> D x)"
+    by (rule ext, rule ext) (simp only: element; rule conj_commute)
+  have lifted: "list_all2 (related a) xs ys \<longleftrightarrow> ys=map f xs \<and> (\<forall>x\<in>set xs. D x)" for xs ys
+    by (simp only: graph list_all2_function_restricted)
+  show ?thesis
+  proof
+    assume run: "(list_site,context_relation_argument a p q)\<in>positive_meaning P"
+    obtain xs ys where parts: "p=data_list_term xs" "q=data_list_term ys" "list_all2 (related a) xs ys"
+      using run by (auto simp only: exact factor_term.inject)
+    have fields: "ys=map f xs \<and> (\<forall>x\<in>set xs. D x)" by (rule iffD1[OF lifted parts(3)])
+    show "\<exists>xs. (\<forall>x\<in>set xs. D x) \<and> p=data_list_term xs \<and> q=data_list_term (map f xs)"
+      by (rule exI[of _ xs], rule conjI[OF conjunct2[OF fields]], rule conjI[OF parts(1)])
+        (simp only: parts(2) conjunct1[OF fields])
+  next
+    assume "\<exists>xs. (\<forall>x\<in>set xs. D x) \<and> p=data_list_term xs \<and> q=data_list_term (map f xs)"
+    then obtain xs where parts: "\<forall>x\<in>set xs. D x" "p=data_list_term xs" "q=data_list_term (map f xs)" by blast
+    have related: "list_all2 (related a) xs (map f xs)"
+      by (rule iffD2[OF lifted], rule conjI[OF refl parts(1)])
+    show "(list_site,context_relation_argument a p q)\<in>positive_meaning P"
+      unfolding parts(2,3) by (rule complete[OF formed related])
+  qed
+qed
+
 end
 
 text \<open>
@@ -107,6 +139,10 @@ text \<open>
   For a fixed encoded input, the local element equations can instead determine
   an exact output term. Both forms preserve order, length, and every repeated
   element. Neither proof revisits the native traversal's recursive semantics.
+
+  The all-term function contract also recovers the entire source list from
+  an arbitrary argument. Its global element contract is separate from the
+  earlier contract restricted to the occurrences of one known input list.
 
   A partial element operation also determines its complete traversal domain:
   every actual input occurrence must lie in the local domain. This condition

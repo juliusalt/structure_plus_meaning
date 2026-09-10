@@ -716,3 +716,23 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Observation_Collection_Contracts
     Factor_Observation_Collection_Investigation
     Factor_Related_Sets
+    Factor_Binary_Result_Comparison
+    Factor_Context_Pairing
+    Factor_Data_Product_Clauses
+    Factor_Data_Product_Components
+    Factor_Data_Product_Contracts
+    Factor_Data_Product_Equations
+    Factor_Data_Product_Execution
+    Factor_Keyed_Calculation
+    Factor_Observation_Table_Clauses
+    Factor_Observation_Table_Components
+    Factor_Observation_Table_Contracts
+    Factor_Observation_Table_Controls
+    Factor_Observation_Table_Equations
+    Factor_Observation_Table_Execution
+    Factor_Observation_Table_Investigation
+    Factor_Observation_Table_Native
+    Factor_Observation_Table_Witnesses
+    Factor_Pair_Scope_Investigation
+    Factor_Scope_Computation_Contracts
+    Finite_Observation_Tables

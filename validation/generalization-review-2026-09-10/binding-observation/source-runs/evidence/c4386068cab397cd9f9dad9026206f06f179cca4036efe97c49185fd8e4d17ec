@@ -1,0 +1,151 @@
+theory Factor_Table_Assembly
+  imports Factor_Native_Tables RRA_Syntax_Families
+begin
+
+section \<open>Complete indexed row construction recovers an unordered keyed table\<close>
+
+locale indexed_native_table =
+  fixes E :: "'u artifact_environment" and u :: 'u and R :: exact_artifact and r :: local_address
+    and ps rs :: "local_address list" and qs :: "('k \<times> 'v) list"
+    and Is Ks :: "local_address set list"
+    and read :: "local_address \<Rightarrow> ('k \<times> 'v) \<Rightarrow> local_address set \<Rightarrow> local_address set \<Rightarrow> bool"
+  assumes ef: "environment_formed E" and art: "artifact_at E u R"
+    and family: "family_at R r (set (zip ps rs))"
+    and lengths: "length ps=length qs" "length rs=length qs" "length Is=length qs" "length Ks=length qs"
+    and ports_distinct: "distinct ps" and keys_distinct: "distinct (map fst qs)"
+    and row_reads: "\<forall>i<length qs. read (rs!i) (qs!i) (Is!i) (Ks!i)"
+    and unique: "\<And>a q I K z J A. read a q I K \<Longrightarrow> read a z J A \<Longrightarrow> q=z \<and> I=J \<and> K=A"
+    and interiors_separate: "\<forall>i<length qs. \<forall>j<length qs. i\<noteq>j \<longrightarrow> Is!i \<inter> Is!j = {}"
+    and header_separate: "insert r (set ps) \<inter> \<Union>(set Is) = {}"
+    and boundary: "insert r (set ps \<union> \<Union>(set Is)) \<inter> \<Union>(set Ks) = {}"
+begin
+
+abbreviation members where "members \<equiv> set (zip ps rs)"
+abbreviation rows where "rows \<equiv> native_table_rows members read"
+
+lemma row_at:
+  assumes index: "i < length qs"
+  shows "(ps!i,qs!i,Is!i,Ks!i) \<in> rows"
+proof -
+  have raw: "(ps!i,rs!i) \<in> members" using index lengths by (auto simp: in_set_zip)
+  have quoted: "read (rs!i) (qs!i) (Is!i) (Ks!i)" using row_reads index by blast
+  show ?thesis using raw quoted by (auto simp: native_table_rows_member)
+qed
+
+lemma row_origin:
+  assumes row: "(s,q,J,A) \<in> rows"
+  shows "\<exists>i<length qs. s=ps!i \<and> q=qs!i \<and> J=Is!i \<and> A=Ks!i"
+proof -
+  obtain a where raw: "(s,a) \<in> members" and quoted: "read a q J A"
+    using row by (auto simp: native_table_rows_member)
+  obtain i where index: "i < length qs" "s=ps!i" "a=rs!i"
+    using raw lengths by (auto simp: in_set_zip)
+  have other: "read a (qs!i) (Is!i) (Ks!i)" using row_reads index by simp
+  have same: "q=qs!i \<and> J=Is!i \<and> A=Ks!i" by (rule unique[OF quoted other])
+  show ?thesis using index same by blast
+qed
+
+lemma functional: "single_valued rows"
+  by (rule native_table_rows_functional[OF single_valued_zip[OF ports_distinct]])
+     (rule unique; assumption)
+
+lemma complete: "rel_dom rows=rel_dom members"
+proof (rule native_table_rows_domain)
+  fix s a assume raw: "(s,a) \<in> members"
+  obtain i where index: "i < length qs" "a=rs!i" using raw lengths by (auto simp: in_set_zip)
+  have quoted: "read a (qs!i) (Is!i) (Ks!i)" using row_reads index by simp
+  show "\<exists>q I K. read a q I K" using quoted by blast
+qed
+
+lemma distinct_keys: "inj_on (native_row_keys rows) (rel_dom rows)"
+proof (rule inj_onI)
+  fix s t assume sd: "s \<in> rel_dom rows" and td: "t \<in> rel_dom rows"
+    and same: "native_row_keys rows s=native_row_keys rows t"
+  obtain q J A where sr: "(s,q,J,A) \<in> rows" using sd by (auto simp: rel_dom_def)
+  obtain z L B where tr: "(t,z,L,B) \<in> rows" using td by (auto simp: rel_dom_def)
+  obtain i where si: "i < length qs" "s=ps!i" "q=qs!i" "J=Is!i" "A=Ks!i"
+    using row_origin[OF sr] by blast
+  obtain j where tj: "j < length qs" "t=ps!j" "z=qs!j" "L=Is!j" "B=Ks!j"
+    using row_origin[OF tr] by blast
+  have sk: "native_row_keys rows s=fst (qs!i)"
+    using rel_value_eq[OF functional sr] si(3) by (simp add: native_row_keys_def)
+  have tk: "native_row_keys rows t=fst (qs!j)"
+    using rel_value_eq[OF functional tr] tj(3) by (simp add: native_row_keys_def)
+  have eq: "map fst qs!i=map fst qs!j" using same sk tk si(1) tj(1) by simp
+  have ij: "i=j" using keys_distinct si(1) tj(1) eq by (auto simp: distinct_conv_nth)
+  show "s=t" using si(2) tj(2) ij by simp
+qed
+
+lemma row_separation:
+  assumes first: "(s,q,J,A) \<in> rows" and second: "(t,z,L,B) \<in> rows" and separate: "s\<noteq>t"
+  shows "J \<inter> L = {}"
+proof -
+  obtain i where si: "i < length qs" "s=ps!i" "J=Is!i" using row_origin[OF first] by blast
+  obtain j where tj: "j < length qs" "t=ps!j" "L=Is!j" using row_origin[OF second] by blast
+  have ij: "i\<noteq>j" using si(2) tj(2) separate by auto
+  show ?thesis using interiors_separate si tj ij by blast
+qed
+
+lemma row_values: "native_row_values rows=set qs"
+proof (rule set_eqI, rule iffI)
+  fix q assume member: "q \<in> native_row_values rows"
+  obtain s J A where row: "(s,q,J,A) \<in> rows" using member by (auto simp: native_row_value_member)
+  obtain i where index: "i < length qs" "q=qs!i" using row_origin[OF row] by blast
+  show "q \<in> set qs" using nth_mem[OF index(1)] index(2) by simp
+next
+  fix q assume member: "q \<in> set qs"
+  obtain i where index: "i < length qs" "q=qs!i" using member by (auto simp: in_set_conv_nth)
+  have row: "(ps!i,q,Is!i,Ks!i) \<in> rows" using row_at[OF index(1)] index(2) by simp
+  show "q \<in> native_row_values rows" using row by (auto simp: native_row_value_member)
+qed
+
+lemma interiors: "native_row_interiors rows=\<Union>(set Is)"
+proof (rule set_eqI, rule iffI)
+  fix a assume member: "a \<in> native_row_interiors rows"
+  obtain s q J A where row: "(s,q,J,A) \<in> rows" and inside: "a \<in> J"
+    using member by (auto simp: native_row_interior_member)
+  obtain i where index: "i < length qs" "J=Is!i" using row_origin[OF row] by blast
+  have "Is!i \<in> set Is" using index(1) lengths(3) by simp
+  then show "a \<in> \<Union>(set Is)" using index(2) inside by blast
+next
+  fix a assume member: "a \<in> \<Union>(set Is)"
+  obtain i where index: "i < length qs" "a \<in> Is!i" using member lengths(3) by (auto simp: in_set_conv_nth)
+  show "a \<in> native_row_interiors rows"
+    using native_row_interiors_contains[OF row_at[OF index(1)]] index(2) by blast
+qed
+
+lemma slots: "native_row_slots rows=\<Union>(set Ks)"
+proof (rule set_eqI, rule iffI)
+  fix a assume member: "a \<in> native_row_slots rows"
+  obtain s q J A where row: "(s,q,J,A) \<in> rows" and inside: "a \<in> A"
+    using member by (auto simp: native_row_slot_member)
+  obtain i where index: "i < length qs" "A=Ks!i" using row_origin[OF row] by blast
+  have "Ks!i \<in> set Ks" using index(1) lengths(4) by simp
+  then show "a \<in> \<Union>(set Ks)" using index(2) inside by blast
+next
+  fix a assume member: "a \<in> \<Union>(set Ks)"
+  obtain i where index: "i < length qs" "a \<in> Ks!i" using member lengths(4) by (auto simp: in_set_conv_nth)
+  show "a \<in> native_row_slots rows"
+    using native_row_slots_contains[OF row_at[OF index(1)]] index(2) by blast
+qed
+
+theorem recovers:
+  "native_table_at E u r read (set qs) (insert r (set ps \<union> \<Union>(set Is))) (\<Union>(set Ks))"
+proof -
+  have domain: "rel_dom members=set ps" by (rule zip_domain) (simp add: lengths)
+  show ?thesis unfolding native_table_at_def Let_def
+    by (rule conjI[OF ef], rule exI[of _ R], rule exI[of _ members])
+       (use art family functional complete distinct_keys row_separation header_separate boundary row_values interiors slots domain in auto)
+qed
+
+end
+
+text \<open>
+  The construction list supplies every physical row, including its interior
+  and slots. Unique recognition identifies this supplied enumeration with all
+  rows of the actual family. Distinct decoded keys make that correspondence
+  injective; values may repeat at different keys. The recovered table stores
+  no order from the construction list.
+\<close>
+
+end

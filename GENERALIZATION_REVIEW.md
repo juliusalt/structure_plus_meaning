@@ -293,3 +293,47 @@ matching its digest. The five before/after source runs and their supporting
 bytes are retained with the specialization-report evidence. These conclusions
 concern the accepted current sources; the earlier draft conditions remain in
 their original records.
+
+## Follow-up: native premise construction and the pattern-admission boundary
+
+The binding conversion instantiates the existing native list-relation
+construction twice, sharing one complete input. Its computed outputs establish
+the two traversal premises consumed by the learned report rule. The comparison
+with the rule absent retains those same premises, so successful settlement
+demonstrates use of the added construction rule. Independent reconstruction
+checks the source computations, every known native call, complete generated
+applications, residuals, demand, and premise reasons.
+
+The review distinguishes conversion from pattern admission. A formed pair
+outside the determining-observation image still has a valid row conversion.
+The additional control records that success together with its limitation.
+Changing the converter to impose a different subject would obscure the missing
+source-reader requirement. The complete argument checker must establish the
+represented patterns and their common binding context before applying the
+proved inverse.
+
+The generic clause-application theorem is used by both learned report libraries.
+It retains the actual program clause, admitted head, complete ordinary premises,
+and material conditions. The binding frontier supplies its known-premise
+requirement through proved native computations. Source and execution validation
+do not replace native mathematical-proof or complete symbolic-argument admission.
+
+The expanded execution family has 53 complete reasoning cases and 21 source
+computations. All match independent reconstruction. The earlier 52-case run
+and its checker bytes are retained separately; the added case was prompted by
+the pattern-admission review. Repeated controls and source computations are
+validation of the declared family, not additional content discoveries.
+
+The complete 772-theory main session passes with unchanged source and tool
+digests. The 327-theory export context also passes, including the complete
+positioning and report-totality roots. All 27 Python checks pass. The retained
+module and original checker replay all 53 reports and 21 source computations.
+The [execution archive](validation/generalization-review-2026-09-10/binding-observation/README.md)
+preserves both the earlier and expanded control families.
+
+After the accepted main build, the same three reasoning source roots have no
+remaining conditions. A second run covers all nine new theories and the three
+modified theory roots and also has no residual. Both complete results match
+independent reconstruction, and every recorded artifact matches its digest.
+The four earlier source investigations, both accepted-source follow-ups, and
+their exact supporting bytes are retained in the same archive.

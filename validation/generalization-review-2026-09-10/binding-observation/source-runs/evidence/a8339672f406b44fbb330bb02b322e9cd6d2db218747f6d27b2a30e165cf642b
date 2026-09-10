@@ -1,0 +1,122 @@
+theory Factor_Positioned_Specializations
+  imports Factor_Pattern_Binding_Keys Factor_Positioned_Instances Factor_Clause_Specialization_Instances
+begin
+
+section \<open>Symbolic specialization preserves the actual owning use\<close>
+
+lemma positioned_schema_pattern_boundary:
+  assumes "schema_system_formed P"
+  shows "schema_pattern_boundary (positioned_program P) d T \<longleftrightarrow> schema_pattern_boundary P d T"
+  by (rule schema_pattern_boundary_agreement) (rule positioned_program_calls[OF assms])
+
+lemma positioned_clause_specializationI:
+  assumes formed: "schema_system_formed P" and specialized: "schema_clause_specialization P d c V T"
+  shows "schema_clause_specialization (positioned_program P) d (fst d,c)
+    (rekey_pattern_bindings (Pair (fst d)) V) (rename_schema id (Pair (fst d)) id T)"
+proof -
+  obtain S where source: "((d,c),S)\<in>system_clauses P"
+    and bindings: "pattern_bindings_formed (schema_variables S) V"
+    and target: "T=schema_substitute (rel_value V) S"
+    and boundary: "schema_pattern_boundary P d T"
+    using specialized by (auto simp: schema_clause_specialization_def)
+  let ?f="Pair (fst d)"
+  let ?S="rename_schema ?f ?f id S"
+  let ?V="rekey_pattern_bindings ?f V"
+  let ?T="rename_schema id ?f id T"
+  have binj: "inj_on ?f (schema_variables S)" and sinj: "inj_on ?f (schema_sockets T)"
+    by (auto simp: inj_on_def)
+  have clause: "((d,(fst d,c)),?S)\<in>system_clauses (positioned_program P)"
+    using source by (auto simp: positioned_clause_entry)
+  have complete: "pattern_bindings_formed (schema_variables ?S) ?V"
+    using rekey_pattern_bindings_formed[OF bindings binj] by (simp only: renamed_schema_variables)
+  have substitution: "?T=schema_substitute (rel_value ?V) ?S"
+    using schema_substitute_rekeyed_bindings[OF bindings binj, where h=?f and g=id]
+    by (simp only: target)
+  have tf: "schema_formed T" using boundary by (simp add: schema_pattern_boundary_def)
+  have copied: "schema_pattern_boundary P d ?T"
+    using boundary by (simp only: schema_pattern_boundary_target_alpha[OF tf inj_on_id sinj])
+  have calls: "schema_pattern_boundary (positioned_program P) d ?T"
+    using copied by (simp only: positioned_schema_pattern_boundary[OF formed])
+  show ?thesis unfolding schema_clause_specialization_def
+    by (rule conjI[OF calls], rule exI[of _ ?S]) (use clause complete substitution in blast)
+qed
+
+lemma positioned_clause_specializationE:
+  assumes formed: "schema_system_formed P"
+    and specialized: "schema_clause_specialization (positioned_program P) d k W R"
+  obtains c V T where "k=(fst d,c)" "W=rekey_pattern_bindings (Pair (fst d)) V"
+    "R=rename_schema id (Pair (fst d)) id T" "schema_clause_specialization P d c V T"
+proof -
+  obtain A where clause: "((d,k),A)\<in>system_clauses (positioned_program P)"
+    and bindings: "pattern_bindings_formed (schema_variables A) W"
+    and target: "R=schema_substitute (rel_value W) A"
+    and boundary: "schema_pattern_boundary (positioned_program P) d R"
+    using specialized by (auto simp: schema_clause_specialization_def)
+  obtain c S where source: "((d,c),S)\<in>system_clauses P" and owner: "k=(fst d,c)"
+    and positioned: "A=rename_schema (Pair (fst d)) (Pair (fst d)) id S"
+    using clause by (auto simp: positioned_clause_entry)
+  have binj: "inj_on snd (schema_variables A)"
+    by (auto simp: positioned renamed_schema_variables inj_on_def)
+  have cancellation: "rename_schema snd snd id A=S"
+    unfolding positioned by (rule rename_schema_cancels) simp_all
+  let ?V="rekey_pattern_bindings snd W"
+  let ?T="rename_schema id snd id R"
+  have complete: "pattern_bindings_formed (schema_variables S) ?V"
+    using rekey_pattern_bindings_formed[OF bindings binj]
+    by (simp add: positioned renamed_schema_variables image_image)
+  have substitution: "?T=schema_substitute (rel_value ?V) S"
+    using schema_substitute_rekeyed_bindings[OF bindings binj, where h=snd and g=id]
+    by (simp only: cancellation target)
+  have wdomain: "rel_dom W=Pair (fst d) ` schema_variables S"
+    using bindings by (simp add: pattern_bindings_formed_def positioned renamed_schema_variables)
+  have wowner: "Pair (fst d) (snd a)=a" if "(a,p)\<in>W" for a p
+    using that wdomain by (auto simp: rel_dom_def)
+  have restored_bindings: "rekey_pattern_bindings (Pair (fst d)) ?V=W"
+    by (rule rekey_pattern_bindings_restores) (rule wowner; assumption)
+  have rdomain: "schema_sockets R=Pair (fst d) ` schema_sockets S"
+    by (simp add: target positioned renamed_schema_sockets)
+  have sinj: "inj_on snd (schema_sockets R)" by (auto simp: rdomain inj_on_def)
+  have rf: "schema_formed R" using boundary by (simp add: schema_pattern_boundary_def)
+  have local: "schema_pattern_boundary P d R"
+    using boundary by (simp only: positioned_schema_pattern_boundary[OF formed])
+  have calls: "schema_pattern_boundary P d ?T"
+    using local by (simp only: schema_pattern_boundary_target_alpha[OF rf inj_on_id sinj])
+  have restored_target: "rename_schema id (Pair (fst d)) id ?T=R"
+    by (rule rename_schema_cancels) (auto simp: rdomain)
+  have original: "schema_clause_specialization P d c ?V ?T"
+    unfolding schema_clause_specialization_def
+    by (rule conjI[OF calls], rule exI[of _ S]) (use source complete substitution in blast)
+  show thesis by (rule that[OF owner restored_bindings[symmetric] restored_target[symmetric] original])
+qed
+
+theorem positioned_clause_specialization_exact:
+  assumes "schema_system_formed P"
+  shows "schema_clause_specialization (positioned_program P) d k W R \<longleftrightarrow>
+    (\<exists>c V T. k=(fst d,c) \<and> W=rekey_pattern_bindings (Pair (fst d)) V \<and>
+      R=rename_schema id (Pair (fst d)) id T \<and> schema_clause_specialization P d c V T)"
+  using positioned_clause_specializationE[OF assms] positioned_clause_specializationI[OF assms] by blast
+
+corollary positioned_specialization_binding_owner:
+  assumes "schema_system_formed P" "schema_clause_specialization (positioned_program P) d k W R"
+    "((u,a),p)\<in>W"
+  shows "u=fst d"
+  using assms by (auto simp: positioned_clause_specialization_exact rekey_pattern_bindings_def)
+
+corollary positioned_specialization_socket_owner:
+  assumes "schema_system_formed P" "schema_clause_specialization (positioned_program P) d k W R"
+    "(u,s)\<in>schema_sockets R"
+  shows "u=fst d"
+  using assms by (auto simp: positioned_clause_specialization_exact renamed_schema_sockets)
+
+text \<open>
+  The clause, source binders, and ordinary and material sockets acquire the
+  owning definition's actual use. Callee sites and replacement patterns stay
+  fixed. Recovery follows from the entire binder and socket domains, so an
+  occurrence belonging to another use cannot pass this specialization.
+
+  This bridges local symbolic specialization and the positioned program view.
+  Ground graph values still require their separate connection to admitted
+  pattern observations before they can stand for these symbolic bindings.
+\<close>
+
+end

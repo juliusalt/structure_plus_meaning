@@ -140,3 +140,42 @@ of the complete graph, its claim table, assertion occurrences, and the final
 extracted rule remains necessary. The machinery must also be used with actual
 admitted source examples and the broader construction arguments identified
 above. The current report rule does not discharge those remaining tasks.
+
+## Constructed native premises for binding observations
+
+Positioned clause specialization now has an exact inverse for its complete
+bindings and ordinary and material sockets. It retains the owning use of every
+source key. The complete graph and claim table can also be recovered from their
+determining observations; this recovery applies to images of actual patterns.
+
+Two native row projections instantiate the existing related-list traversal.
+They construct both complete observations of one input sequence and retain its
+order and repetitions. Their executable functions have an exact contract with
+the native predicates. Their successful computations supply known premises,
+with semantic evidence, to the unchanged inference engine. The learned report
+clause joins them at their shared context and complete input. The general
+clause-application theorem supplies the common soundness step for this rule and
+the earlier specialization-report rule.
+
+With the rule absent, the same established traversal premises leave the report
+goal unresolved. Adding it constructs and settles the report. Wrong owners and
+missing paired values produce no traversal premise. An incorrect requested
+output remains unresolved despite a valid constructed alternative. Malformed
+unused source fields reject the whole report even when another source supplies
+a valid application. Equal first observations with different second observations
+remain distinguishable; repeated rows and separate goal occurrences remain explicit.
+
+The critical review also retains a successful conversion of a pair outside the
+pattern-observation image. An empty-artifact target followed by an empty payload
+cannot be the two observations of one pattern: the existing
+[determining-observation theorem](theories/Factor_Substitution_Bindings.thy)
+forces a literal payload pattern from the second value, contradicting the first.
+The conversion correctly preserves these supplied fields. Actual use, complete
+functional bindings, and pattern admission must come from the surrounding native
+readers before graph-value recovery can be used.
+
+The specialization-report operation also has a universal semantic totality
+proof: every actually admitted native specialization has a complete target
+report. Its inhabited instance reuses the existing actual ground-clause
+construction. This semantic result is separate from executing the earlier
+structural controls with unproved reader premises.

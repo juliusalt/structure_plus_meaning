@@ -1,0 +1,491 @@
+theory Factor_Table_Reading_Profiles
+  imports Factor_Boundary_Lists Factor_Table_Enumeration
+begin
+
+section \<open>Complete keyed rows permit arbitrary formed values\<close>
+
+abbreviation keyed_rows_term :: "('k\<Rightarrow>factor_term) \<Rightarrow> ('v\<Rightarrow>factor_term) \<Rightarrow> ('k\<times>'v) list \<Rightarrow> factor_term" where
+  "keyed_rows_term key val qs \<equiv> pair_list_term (map (\<lambda>(k,v). (key k,val v)) qs)"
+
+lemma keyed_rows_term_injective:
+  assumes "inj key" "inj val"
+  shows "keyed_rows_term key val qs=keyed_rows_term key val rs \<longleftrightarrow> qs=rs"
+proof -
+  have injective: "inj (\<lambda>(k,v). (key k,val v))" using assms by (auto simp: inj_def)
+  show ?thesis by (simp only: pair_list_term_injective injective_mapped_lists[OF injective])
+qed
+
+lemma keyed_rows_term_formed:
+  "term_formed (keyed_rows_term key val qs) \<longleftrightarrow>
+    (\<forall>(k,v)\<in>set qs. term_formed (key k) \<and> term_formed (val v))"
+  by (simp only: pair_list_term_formed_iff) (auto split: prod.splits)
+
+lemma keyed_rows_keys:
+  assumes formed: "term_formed (keyed_rows_term key val qs)" and injective: "inj key"
+    and data: "\<And>k. self_contained_term (key k)"
+  shows "(21,keyed_rows_term key val qs)\<in>positive_meaning keyed_list_system \<longleftrightarrow> distinct (map fst qs)"
+proof -
+  have pointwise: "\<forall>(k,v)\<in>set qs. term_formed (key k) \<and> term_formed (val v)"
+    using formed by (simp only: keyed_rows_term_formed)
+  have rows: "formed_key_rows (map (\<lambda>(k,v). (key k,val v)) qs)"
+    using pointwise data by auto
+  have mapped: "map fst (map (\<lambda>(k,v). (key k,val v)) qs)=map key (map fst qs)"
+    by (induction qs) (auto split: prod.splits)
+  have injective_here: "inj_on key (set (map fst qs))"
+    by (rule inj_on_subset[OF injective subset_UNIV])
+  have keys: "distinct (map key (map fst qs)) \<longleftrightarrow> distinct (map fst qs)"
+    using distinct_map[of key "map fst qs"] injective_here by blast
+  have exact: "(21,keyed_rows_term key val qs)\<in>positive_meaning keyed_list_system \<longleftrightarrow>
+    formed_key_rows (map (\<lambda>(k,v). (key k,val v)) qs) \<and>
+    distinct (map fst (map (\<lambda>(k,v). (key k,val v)) qs))"
+    by (simp only: keyed_list_exact pair_list_term_injective; blast)
+  have encoded_keys: "distinct (map fst (map (\<lambda>(k,v). (key k,val v)) qs)) \<longleftrightarrow>
+    distinct (map fst qs)"
+    by (simp only: mapped keys)
+  show ?thesis by (rule trans[OF exact]) (use rows encoded_keys in blast)
+qed
+
+abbreviation table_reading_result where
+  "table_reading_result read key val z \<equiv> \<exists>E e u r qs Is Ks.
+    z=term_quotation_argument e (use_data_term u) (Payload_Term r) (keyed_rows_term key val qs)
+      (data_list_term (map Payload_Term Is)) (data_list_term (map Payload_Term Ks)) \<and>
+    environment_value_presents E e \<and> distinct qs \<and> distinct Is \<and> distinct Ks \<and>
+    native_table_at E u r (read E u) (set qs) (set Is) (set Ks)"
+
+definition table_reading_schema :: "nat \<Rightarrow> (nat,nat,nat) factor_schema" where
+  "table_reading_schema rows=data_rule
+    (term_quotation_pattern data_x data_y data_z data_w (Pattern_Variable 4) (Pattern_Variable 5))
+    {(0,37,artifact_lookup_pattern data_x data_y (Pattern_Variable 6)),
+     (1,32,Pattern_Pair (Pattern_Pair (Pattern_Variable 6) data_z) (Pattern_Variable 7)),
+     (2,51,Pattern_Pair (Pattern_Variable 7) (Pattern_Variable 8)),
+     (3,59,Pattern_Pair (Pattern_Variable 7) (Pattern_Variable 9)),
+     (4,rows,term_quotation_pattern data_x data_y (Pattern_Variable 9) data_w (Pattern_Variable 10) (Pattern_Variable 5)),
+     (5,21,data_w),
+     (6,46,collection_join_pattern (Pattern_Pair data_z (Pattern_Variable 8)) (Pattern_Variable 10) (Pattern_Variable 11)),
+     (7,6,Pattern_Pair (Pattern_Variable 11) (Pattern_Variable 4)),
+     (8,49,Pattern_Pair (Pattern_Variable 4) (Pattern_Variable 5))}"
+
+locale table_reading_profile =
+  fixes P :: "(nat,nat,nat,nat) schema_system" and entry rows_site :: nat
+    and R :: "factor_term\<Rightarrow>bool"
+    and read :: "local_address option artifact_environment \<Rightarrow> local_address option \<Rightarrow>
+      local_address \<Rightarrow> ('k\<times>'v) \<Rightarrow> local_address set \<Rightarrow> local_address set \<Rightarrow> bool"
+    and key :: "'k\<Rightarrow>factor_term" and val :: "'v\<Rightarrow>factor_term"
+  assumes system_formed: "schema_system_formed P"
+    and family: "\<And>c S. ((entry,c),S)\<in>system_clauses P \<longleftrightarrow> (c,S)\<in>{(0,table_reading_schema rows_site)}"
+    and call: "\<And>t. schema_call_formed P entry t \<longleftrightarrow> term_formed t"
+    and rows: "\<And>t. (rows_site,t)\<in>positive_meaning P \<longleftrightarrow> boundary_rows_result R t"
+    and row_at_source: "\<And>E e u r q i k. environment_value_presents E e \<Longrightarrow>
+      R (term_quotation_argument e u r q i k) \<longleftrightarrow>
+      (\<exists>v a x Js As. u=use_data_term v \<and> r=Payload_Term a \<and> q=Pair_Term (key (fst x)) (val (snd x)) \<and>
+        i=data_list_term (map Payload_Term Js) \<and> k=data_list_term (map Payload_Term As) \<and>
+        distinct Js \<and> distinct As \<and> read E v a x (set Js) (set As))"
+    and read_unique: "\<And>E u a q J A z L B. read E u a q J A \<Longrightarrow> read E u a z L B \<Longrightarrow>
+      q=z \<and> J=L \<and> A=B"
+    and read_finite: "\<And>E u a q J A. read E u a q J A \<Longrightarrow> finite J \<and> finite A"
+    and key_injective: "inj key" and val_injective: "inj val"
+    and key_data: "\<And>k. self_contained_term (key k)"
+    and lookup: "\<And>t. (37,t)\<in>positive_meaning P \<longleftrightarrow> (37,t)\<in>positive_meaning artifact_lookup_system"
+    and family_reading: "\<And>t. (32,t)\<in>positive_meaning P \<longleftrightarrow> (32,t)\<in>positive_meaning family_admission_system"
+    and keys: "\<And>t. (51,t)\<in>positive_meaning P \<longleftrightarrow> (51,t)\<in>positive_meaning row_keys_system"
+    and value_rows: "\<And>t. (59,t)\<in>positive_meaning P \<longleftrightarrow> (59,t)\<in>positive_meaning row_values_system"
+    and unique_keys: "\<And>t. (21,t)\<in>positive_meaning P \<longleftrightarrow> (21,t)\<in>positive_meaning keyed_list_system"
+    and append: "\<And>t. (46,t)\<in>positive_meaning P \<longleftrightarrow> (46,t)\<in>positive_meaning data_append_system"
+    and counted: "\<And>t. (6,t)\<in>positive_meaning P \<longleftrightarrow> (6,t)\<in>positive_meaning bag_comparison_system"
+    and separate: "\<And>t. (49,t)\<in>positive_meaning P \<longleftrightarrow> (49,t)\<in>positive_meaning payload_disjoint_system"
+begin
+
+lemma enumeration:
+  assumes raw: "native_table_at E u r (read E u) (set qs) I K" and order: "distinct qs"
+  shows "\<exists>A ps rs Js As. artifact_at E u A \<and> family_at A r (set (zip ps rs)) \<and>
+    distinct ps \<and> distinct (map fst qs) \<and>
+    length ps=length qs \<and> length rs=length qs \<and> length Js=length qs \<and> length As=length qs \<and>
+    (\<forall>i<length qs. read E u (rs!i) (qs!i) (set (Js!i)) (set (As!i)) \<and> distinct (Js!i) \<and> distinct (As!i)) \<and>
+    distinct (concat Js) \<and> insert r (set ps)\<inter>set (concat Js)={} \<and>
+    I=insert r (set ps\<union>set (concat Js)) \<and> K=set (concat As) \<and> I\<inter>K={}"
+  by (rule native_table_enumeration[where read="read E u", OF raw order]) (rule read_finite, assumption)
+
+lemma vector_at_source:
+  assumes source: "environment_value_presents E e"
+  shows "(rows_site,term_quotation_argument e (use_data_term u) rs qs i k)\<in>positive_meaning P \<longleftrightarrow>
+    (\<exists>xs Is Ks. rs=data_list_term (map Payload_Term (reading_roots xs)) \<and>
+      qs=keyed_rows_term key val (reading_results xs) \<and>
+      i=data_list_term (map Payload_Term Is) \<and> k=data_list_term (map Payload_Term Ks) \<and>
+      (\<forall>(a,b,Js,As)\<in>set xs. distinct Js \<and> distinct As \<and> read E u a b (set Js) (set As)) \<and>
+      distinct Is \<and> distinct Ks \<and> mset Is=mset (reading_interiors xs) \<and>
+      set Ks=set (reading_slots xs) \<and> set Is\<inter>set Ks={})"
+proof -
+  have context_formed: "term_formed (Pair_Term e (use_data_term u))"
+    using environment_value_presents_formed[OF source] by auto
+  have row: "R (boundary_reading_argument (Pair_Term e (use_data_term u)) r q i k) \<longleftrightarrow>
+      (\<exists>a b Js As. r=Payload_Term a \<and> q=Pair_Term (key (fst b)) (val (snd b)) \<and>
+        i=data_list_term (map Payload_Term Js) \<and> k=data_list_term (map Payload_Term As) \<and>
+        distinct Js \<and> distinct As \<and> read E u a b (set Js) (set As))" for r q i k
+    by (simp only: row_at_source[OF source] inj_eq[OF use_data_term_injective]) blast
+  have encoded: "data_list_term (map (\<lambda>x. Pair_Term (key (fst x)) (val (snd x))) zs)=keyed_rows_term key val zs" for zs
+    by (induction zs) (auto split: prod.splits)
+  show ?thesis by (simp only: rows boundary_rows_result_decoded[OF context_formed row] encoded)
+qed
+
+lemma valuation:
+  "(entry,z)\<in>positive_meaning P \<longleftrightarrow>
+    (\<exists>h::nat\<Rightarrow>factor_term. (\<forall>i\<in>{0,1,2,3,4,5,6,7,8,9,10,11}. term_formed (h i)) \<and>
+      z=term_quotation_argument (h 0) (h 1) (h 2) (h 3) (h 4) (h 5) \<and>
+      (37,artifact_lookup_argument (h 0) (h 1) (h 6))\<in>positive_meaning P \<and>
+      (32,rooted_rows_argument (h 6) (h 2) (h 7))\<in>positive_meaning P \<and>
+      (51,Pair_Term (h 7) (h 8))\<in>positive_meaning P \<and>
+      (59,Pair_Term (h 7) (h 9))\<in>positive_meaning P \<and>
+      (rows_site,term_quotation_argument (h 0) (h 1) (h 9) (h 3) (h 10) (h 5))\<in>positive_meaning P \<and>
+      (21,h 3)\<in>positive_meaning P \<and>
+      (46,collection_join_argument (Pair_Term (h 2) (h 8)) (h 10) (h 11))\<in>positive_meaning P \<and>
+      (6,Pair_Term (h 11) (h 4))\<in>positive_meaning P \<and>
+      (49,Pair_Term (h 4) (h 5))\<in>positive_meaning P)"
+proof -
+  have clauses: "((entry,c),S)\<in>system_clauses P \<longleftrightarrow>
+    c=0 \<and> S=table_reading_schema rows_site" for c S by (simp add: family)
+  have ordinary: "schema_material_premises (table_reading_schema rows_site)={}"
+    by (simp add: table_reading_schema_def)
+  have admits: "schema_call_formed P entry (evaluate_pattern h (schema_conclusion (table_reading_schema rows_site)))"
+    if "\<forall>i\<in>schema_variables (table_reading_schema rows_site). term_formed (h i)" for h
+    using that by (auto simp: call table_reading_schema_def schema_variables_def)
+  show ?thesis
+    apply (subst ordinary_single_clause_valuation[OF clauses ordinary])
+     apply (fact admits)
+    apply (rule ex_cong1)
+    apply (simp add: table_reading_schema_def schema_variables_def conj_ac all_conj_distrib imp_conjL)
+    done
+qed
+
+lemma step:
+  assumes a: "(37,artifact_lookup_argument e u material)\<in>positive_meaning P"
+    and f: "(32,rooted_rows_argument material r rs)\<in>positive_meaning P"
+    and p: "(51,Pair_Term rs ps)\<in>positive_meaning P"
+    and v: "(59,Pair_Term rs roots)\<in>positive_meaning P"
+    and b: "(rows_site,term_quotation_argument e u roots q bi k)\<in>positive_meaning P"
+    and uq: "(21,q)\<in>positive_meaning P"
+    and j: "(46,collection_join_argument (Pair_Term r ps) bi joined)\<in>positive_meaning P"
+    and c: "(6,Pair_Term joined i)\<in>positive_meaning P"
+    and s: "(49,Pair_Term i k)\<in>positive_meaning P"
+  shows "(entry,term_quotation_argument e u r q i k)\<in>positive_meaning P"
+proof -
+  have formed: "term_formed e" "term_formed u" "term_formed r" "term_formed q" "term_formed i" "term_formed k"
+    "term_formed material" "term_formed rs" "term_formed ps" "term_formed roots" "term_formed bi" "term_formed joined"
+    using schema_call_formed_target[OF positive_meaning_formed[OF a]]
+      schema_call_formed_target[OF positive_meaning_formed[OF f]]
+      schema_call_formed_target[OF positive_meaning_formed[OF p]]
+      schema_call_formed_target[OF positive_meaning_formed[OF v]]
+      schema_call_formed_target[OF positive_meaning_formed[OF b]]
+      schema_call_formed_target[OF positive_meaning_formed[OF j]]
+      schema_call_formed_target[OF positive_meaning_formed[OF c]] by auto
+  let ?h="\<lambda>n::nat. if n=0 then e else if n=1 then u else if n=2 then r else if n=3 then q
+    else if n=4 then i else if n=5 then k else if n=6 then material else if n=7 then rs
+    else if n=8 then ps else if n=9 then roots else if n=10 then bi else joined"
+  show ?thesis by (simp only: valuation; rule exI[of _ ?h]) (use formed assms in auto)
+qed
+
+theorem sound:
+  assumes holds: "(entry,z)\<in>positive_meaning P"
+  shows "table_reading_result read key val z"
+proof -
+  obtain h :: "nat\<Rightarrow>factor_term" where shape: "z=term_quotation_argument (h 0) (h 1) (h 2) (h 3) (h 4) (h 5)"
+    and calls: "(37,artifact_lookup_argument (h 0) (h 1) (h 6))\<in>positive_meaning artifact_lookup_system"
+      "(32,rooted_rows_argument (h 6) (h 2) (h 7))\<in>positive_meaning family_admission_system"
+      "(51,Pair_Term (h 7) (h 8))\<in>positive_meaning row_keys_system"
+      "(59,Pair_Term (h 7) (h 9))\<in>positive_meaning row_values_system"
+      "(rows_site,term_quotation_argument (h 0) (h 1) (h 9) (h 3) (h 10) (h 5))\<in>positive_meaning P"
+      "(21,h 3)\<in>positive_meaning keyed_list_system"
+      "(46,collection_join_argument (Pair_Term (h 2) (h 8)) (h 10) (h 11))\<in>positive_meaning data_append_system"
+      "(6,Pair_Term (h 11) (h 4))\<in>positive_meaning bag_comparison_system"
+      "(49,Pair_Term (h 4) (h 5))\<in>positive_meaning payload_disjoint_system"
+    using holds by (simp only: valuation lookup family_reading keys value_rows unique_keys append counted separate) blast
+  obtain E u A where source: "environment_value_presents E (h 0)" "h 1=use_data_term u"
+    "artifact_at E u A" "artifact_value_presents A (h 6)"
+    using calls(1) by (auto simp: artifact_lookup_exact)
+  obtain r xs where actual: "h 2=Payload_Term r" "h 7=data_list_term (map address_pair_data xs)"
+    "distinct xs" "family_at A r (set xs)"
+    using calls(2) by (simp only: family_admission_at_source[OF source(4)]) blast
+  have ports: "h 8=data_list_term (map Payload_Term (map fst xs))"
+    using calls(3) by (simp only: actual(2) address_row_keys; blast)
+  have roots: "h 9=data_list_term (map Payload_Term (map snd xs))"
+    using calls(4) by (simp only: actual(2) address_row_values; blast)
+  obtain ys Js Ks where body: "reading_roots ys=map snd xs" "h 3=keyed_rows_term key val (reading_results ys)"
+    "h 10=data_list_term (map Payload_Term Js)" "h 5=data_list_term (map Payload_Term Ks)"
+    "\<forall>(a,b,L,B)\<in>set ys. distinct L \<and> distinct B \<and> read E u a b (set L) (set B)"
+    "distinct Js" "distinct Ks" "mset Js=mset (reading_interiors ys)"
+    "set Ks=set (reading_slots ys)" "set Js\<inter>set Ks={}"
+    using calls(5)
+  proof (simp only: source(2) roots vector_at_source[OF source(1)]
+      data_list_term_injective injective_mapped_lists[OF payload_term_inj]; elim exE)
+    fix zs Ls As
+    assume found: "map snd xs=reading_roots zs \<and> h 3=keyed_rows_term key val (reading_results zs) \<and>
+      h 10=data_list_term (map Payload_Term Ls) \<and> h 5=data_list_term (map Payload_Term As) \<and>
+      (\<forall>(a,b,J,A)\<in>set zs. distinct J \<and> distinct A \<and> read E u a b (set J) (set A)) \<and>
+      distinct Ls \<and> distinct As \<and> mset Ls=mset (reading_interiors zs) \<and>
+      set As=set (reading_slots zs) \<and> set Ls\<inter>set As={}"
+    show thesis by (rule that[of zs Ls As]) (use found in \<open>simp only: case_prod_unfold; blast\<close>)+
+  qed
+  obtain Is where boundary: "h 4=data_list_term (map Payload_Term Is)" "distinct Is" "set Is\<inter>set Ks={}"
+    using calls(9) by (auto simp: payload_disjoint_exact body(4)
+      data_list_term_injective injective_mapped_lists[OF payload_term_inj])
+  have joined_call: "(46,collection_join_argument (data_list_term (map Payload_Term (r#map fst xs)))
+      (data_list_term (map Payload_Term Js)) (h 11))\<in>positive_meaning data_append_system"
+    using calls(7) by (simp add: actual(1) ports body(3))
+  have joined: "h 11=data_list_term (map Payload_Term (r#map fst xs@Js))"
+    using joined_call by (simp only: data_append_at_lists) auto
+  have counts: "mset (r#map fst xs@Js)=mset Is"
+    using calls(8) by (simp only: joined boundary(1) bag_comparison_lists injective_mapped_multisets[OF payload_term_inj])
+  have port_order: "distinct (map fst xs)" "r\<notin>set (map fst xs)"
+    using actual(3,4) by (auto simp: distinct_keys_iff family_at_def rel_dom_image)
+  have geometry: "insert r (set (map fst xs))\<inter>set Js={}"
+    "set Is=insert r (set (map fst xs)\<union>set Js)"
+    using quotation_interior_lists[OF port_order body(6), of "[]" Is] counts boundary(2) by auto
+  have qf: "term_formed (keyed_rows_term key val (reading_results ys))"
+    using schema_call_formed_target[OF positive_meaning_formed[OF calls(5)]] body(2) by auto
+  have qkeys: "distinct (map fst (reading_results ys))"
+    using calls(6) by (simp only: body(2) keyed_rows_keys[OF qf key_injective key_data])
+  have qdistinct: "distinct (reading_results ys)"
+    by (rule distinct_map[THEN iffD1, THEN conjunct1, OF qkeys])
+  let ?roots="reading_roots ys"
+  let ?qs="reading_results ys"
+  let ?Js="map (\<lambda>(a,b,J,A). set J) ys"
+  let ?As="map (\<lambda>(a,b,J,A). set A) ys"
+  have len: "length ys=length xs" using arg_cong[OF body(1), of length] by simp
+  have unions: "\<Union>(set ?Js)=set Js" "\<Union>(set ?As)=set Ks"
+    using mset_eq_setD[OF body(8)] body(9) by (auto split: prod.splits)
+  have row_reads: "\<forall>i<length ?qs. read E u (?roots!i) (?qs!i) (?Js!i) (?As!i)"
+  proof (intro allI impI)
+    fix i assume index: "i<length ?qs"
+    obtain a b J B where at: "ys!i=(a,b,J,B)" by (cases "ys!i") auto
+    have member: "(a,b,J,B)\<in>set ys" using nth_mem[of i ys] index at by simp
+    have raw: "read E u a b (set J) (set B)" using body(5) member by auto
+    show "read E u (?roots!i) (?qs!i) (?Js!i) (?As!i)" using index at raw by simp
+  qed
+  have distinct_interiors: "distinct (reading_interiors ys)"
+    using mset_eq_imp_distinct_iff[OF body(8)] body(6) by blast
+  have pairs: "\<forall>i<length ?qs. \<forall>j<length ?qs. i\<noteq>j \<longrightarrow> ?Js!i\<inter>?Js!j={}"
+    using distinct_interiors by (auto simp: distinct_concat_indexed split_def)
+  have ef: "environment_formed E" using environment_value_presents_formed[OF source(1)] by blast
+  have fam: "family_at A r (set (zip (map fst xs) ?roots))"
+    using actual(4) body(1) by (simp add: zip_map_fst_snd)
+  interpret table: indexed_native_table E u A r "map fst xs" ?roots ?qs ?Js ?As "read E u"
+    by (rule indexed_native_table.intro)
+      (use ef source(3) fam len port_order(1) qkeys row_reads read_unique pairs geometry boundary(3) unions in auto)
+  have raw: "native_table_at E u r (read E u) (set ?qs) (set Is) (set Ks)"
+    using table.recovers geometry unions by simp
+  show ?thesis
+    by (rule exI[of _ E], rule exI[of _ "h 0"], rule exI[of _ u], rule exI[of _ r],
+      rule exI[of _ ?qs], rule exI[of _ Is], rule exI[of _ Ks])
+      (use shape source actual body boundary qdistinct raw in auto)
+qed
+
+theorem complete:
+  assumes source: "environment_value_presents E e"
+    and raw: "native_table_at E u r (read E u) (set qs) (set Is) (set Ks)"
+    and order: "distinct qs" "distinct Is" "distinct Ks"
+  shows "(entry,term_quotation_argument e (use_data_term u) (Payload_Term r) (keyed_rows_term key val qs)
+    (data_list_term (map Payload_Term Is)) (data_list_term (map Payload_Term Ks)))\<in>positive_meaning P"
+proof -
+  obtain A ps rs Js As where actual: "artifact_at E u A" "family_at A r (set (zip ps rs))"
+    "distinct ps" "distinct (map fst qs)"
+    "length ps=length qs" "length rs=length qs" "length Js=length qs" "length As=length qs"
+    "\<forall>i<length qs. read E u (rs!i) (qs!i) (set (Js!i)) (set (As!i)) \<and> distinct (Js!i) \<and> distinct (As!i)"
+    "distinct (concat Js)" "insert r (set ps)\<inter>set (concat Js)={}"
+    "set Is=insert r (set ps\<union>set (concat Js))" "set Ks=set (concat As)" "set Is\<inter>set Ks={}"
+    using enumeration[OF raw order(1)] by (elim exE conjE) (rule that; assumption)
+  have ef: "environment_formed E" using environment_value_presents_formed[OF source] by blast
+  have af: "exact_formed A" using ef actual(1) by (auto simp: environment_formed_def)
+  obtain material where presented: "artifact_value_presents A material" using artifact_value_presents_total[OF af] by blast
+  let ?xs="zip ps rs"
+  have projections: "map fst ?xs=ps" "map snd ?xs=rs" using actual(5,6) by simp_all
+  have rows_distinct: "distinct ?xs" using actual(3) projections(1) by (metis distinct_map)
+  have lookup_call: "(37,artifact_lookup_argument e (use_data_term u) material)\<in>positive_meaning P"
+    by (simp only: lookup artifact_lookup_exact)
+      (use source actual(1) presented in blast)
+  have family_call: "(32,rooted_rows_argument material (Payload_Term r) (data_list_term (map address_pair_data ?xs)))
+      \<in>positive_meaning P"
+    by (simp only: family_reading family_admission_rows[OF presented]) (use rows_distinct actual(2) in blast)
+  have rows_formed: "term_formed (data_list_term (map address_pair_data ?xs))"
+    using schema_call_formed_target[OF positive_meaning_formed[OF family_call]] by auto
+  have keys_call: "(51,Pair_Term (data_list_term (map address_pair_data ?xs)) (data_list_term (map Payload_Term ps)))
+      \<in>positive_meaning P"
+    by (simp only: keys address_row_keys projections) (use rows_formed in blast)
+  have roots_call: "(59,Pair_Term (data_list_term (map address_pair_data ?xs)) (data_list_term (map Payload_Term rs)))
+      \<in>positive_meaning P"
+    by (simp only: value_rows address_row_values projections) (use rows_formed in blast)
+  let ?ys="map (\<lambda>i. (rs!i,qs!i,Js!i,As!i)) [0..<length qs]"
+  have decoded: "reading_roots ?ys=rs" "reading_results ?ys=qs"
+    "reading_interiors ?ys=concat Js" "reading_slots ?ys=concat As"
+    using reading_indexed[OF actual(6-8)] by blast+
+  have body_call: "(rows_site,term_quotation_argument e (use_data_term u) (data_list_term (map Payload_Term rs))
+      (keyed_rows_term key val qs) (data_list_term (map Payload_Term (concat Js))) (data_list_term (map Payload_Term Ks)))
+      \<in>positive_meaning P"
+    by (simp only: vector_at_source[OF source]; rule exI[of _ ?ys], rule exI[of _ "concat Js"], rule exI[of _ Ks])
+      (use decoded actual(9-14) order(3) in auto)
+  have formed: "octets_formed r" "\<forall>a\<in>set ps\<union>set (concat Js)\<union>set Ks. octets_formed a"
+    "term_formed (keyed_rows_term key val qs)"
+    using schema_call_formed_target[OF positive_meaning_formed[OF family_call]]
+      schema_call_formed_target[OF positive_meaning_formed[OF keys_call]]
+      schema_call_formed_target[OF positive_meaning_formed[OF body_call]]
+    by (auto simp: data_list_term_formed)
+  have qkeys: "(21,keyed_rows_term key val qs)\<in>positive_meaning P"
+    by (simp only: unique_keys keyed_rows_keys[OF formed(3) key_injective key_data]) (rule actual(4))
+  have family_root: "r\<notin>rel_dom (set ?xs)" using actual(2) by (simp add: family_at_def)
+  have domain: "rel_dom (set ?xs)=set ps"
+    using arg_cong[OF projections(1), of set] by (simp only: rel_dom_image set_map)
+  have root: "r\<notin>set ps" using family_root domain by simp
+  have counts: "mset (r#ps@concat Js)=mset Is"
+    using quotation_interior_lists[OF actual(3) root actual(10), of "[]" Is]
+      order(2) actual(11,12) by auto
+  have bytes: "\<forall>a\<in>set Is\<union>set Ks. octets_formed a" using formed actual(12) by auto
+  let ?j="data_list_term (map Payload_Term (r#ps@concat Js))"
+  have joined_data: "(46,collection_join_argument (data_list_term (map Payload_Term (r#ps)))
+      (data_list_term (map Payload_Term (concat Js))) ?j)\<in>positive_meaning data_append_system"
+    by (simp only: data_append_at_lists) (use formed in auto)
+  have joined_call: "(46,collection_join_argument
+      (Pair_Term (Payload_Term r) (data_list_term (map Payload_Term ps)))
+      (data_list_term (map Payload_Term (concat Js))) ?j)\<in>positive_meaning P"
+    using joined_data by (simp add: append)
+  have interior_call: "(6,Pair_Term ?j (data_list_term (map Payload_Term Is)))\<in>positive_meaning P"
+    by (simp only: counted bag_comparison_lists injective_mapped_multisets[OF payload_term_inj])
+      (use formed bytes counts in auto)
+  have boundary_call: "(49,Pair_Term (data_list_term (map Payload_Term Is))
+      (data_list_term (map Payload_Term Ks)))\<in>positive_meaning P"
+    by (simp only: separate payload_disjoint_lists) (use order(2,3) bytes actual(14) in blast)
+  show ?thesis by (rule step[OF lookup_call family_call keys_call roots_call body_call qkeys joined_call interior_call boundary_call])
+qed
+
+theorem exact:
+  "(entry,z)\<in>positive_meaning P \<longleftrightarrow> table_reading_result read key val z"
+  using sound complete by blast
+
+corollary at_source:
+  assumes source: "environment_value_presents E e"
+  shows "(entry,term_quotation_argument e u r q i k)\<in>positive_meaning P \<longleftrightarrow>
+    (\<exists>v a qs Is Ks. u=use_data_term v \<and> r=Payload_Term a \<and> q=keyed_rows_term key val qs \<and>
+      i=data_list_term (map Payload_Term Is) \<and> k=data_list_term (map Payload_Term Ks) \<and>
+      distinct qs \<and> distinct Is \<and> distinct Ks \<and> native_table_at E v a (read E v) (set qs) (set Is) (set Ks))"
+proof
+  assume holds: "(entry,term_quotation_argument e u r q i k)\<in>positive_meaning P"
+  obtain F v a qs Is Ks where parts: "environment_value_presents F e"
+    "u=use_data_term v" "r=Payload_Term a" "q=keyed_rows_term key val qs"
+    "i=data_list_term (map Payload_Term Is)" "k=data_list_term (map Payload_Term Ks)"
+    "distinct qs" "distinct Is" "distinct Ks" "native_table_at F v a (read F v) (set qs) (set Is) (set Ks)"
+    using holds by (simp only: exact factor_term.inject) blast
+  have same: "F=E" by (rule environment_value_presents_unique[OF parts(1) source])
+  show "\<exists>v a qs Is Ks. u=use_data_term v \<and> r=Payload_Term a \<and> q=keyed_rows_term key val qs \<and>
+      i=data_list_term (map Payload_Term Is) \<and> k=data_list_term (map Payload_Term Ks) \<and>
+      distinct qs \<and> distinct Is \<and> distinct Ks \<and> native_table_at E v a (read E v) (set qs) (set Is) (set Ks)"
+    by (rule exI[of _ v], rule exI[of _ a], rule exI[of _ qs], rule exI[of _ Is], rule exI[of _ Ks])
+      (use parts same in auto)
+next
+  assume "\<exists>v a qs Is Ks. u=use_data_term v \<and> r=Payload_Term a \<and> q=keyed_rows_term key val qs \<and>
+      i=data_list_term (map Payload_Term Is) \<and> k=data_list_term (map Payload_Term Ks) \<and>
+      distinct qs \<and> distinct Is \<and> distinct Ks \<and> native_table_at E v a (read E v) (set qs) (set Is) (set Ks)"
+  then show "(entry,term_quotation_argument e u r q i k)\<in>positive_meaning P"
+    using complete[OF source] by blast
+qed
+
+corollary on_values:
+  assumes source: "environment_value_presents E e"
+  shows "(entry,term_quotation_argument e (use_data_term u) (Payload_Term r) (keyed_rows_term key val qs)
+      (data_list_term (map Payload_Term Is)) (data_list_term (map Payload_Term Ks)))\<in>positive_meaning P \<longleftrightarrow>
+    distinct qs \<and> distinct Is \<and> distinct Ks \<and> native_table_at E u r (read E u) (set qs) (set Is) (set Ks)"
+  by (subst at_source[OF source], simp only: keyed_rows_term_injective[OF key_injective val_injective]
+    inj_eq[OF use_data_term_injective] factor_term.inject)
+    (auto simp: data_list_term_injective injective_mapped_lists[OF payload_term_inj])
+
+corollary presentation_invariance:
+  assumes "environment_value_presents E e" "environment_value_presents E f"
+  shows "(entry,term_quotation_argument e u r q i k)\<in>positive_meaning P \<longleftrightarrow>
+    (entry,term_quotation_argument f u r q i k)\<in>positive_meaning P"
+  by (simp only: at_source[OF assms(1)] at_source[OF assms(2)])
+
+corollary orders:
+  assumes source: "environment_value_presents E e"
+    and same: "mset qs=mset zs" "mset Is=mset Js" "mset Ks=mset As"
+  shows "(entry,term_quotation_argument e (use_data_term u) (Payload_Term r) (keyed_rows_term key val qs)
+      (data_list_term (map Payload_Term Is)) (data_list_term (map Payload_Term Ks)))\<in>positive_meaning P \<longleftrightarrow>
+    (entry,term_quotation_argument e (use_data_term u) (Payload_Term r) (keyed_rows_term key val zs)
+      (data_list_term (map Payload_Term Js)) (data_list_term (map Payload_Term As)))\<in>positive_meaning P"
+  using mset_eq_imp_distinct_iff[OF same(1)] mset_eq_imp_distinct_iff[OF same(2)] mset_eq_imp_distinct_iff[OF same(3)]
+    mset_eq_setD[OF same(1)] mset_eq_setD[OF same(2)] mset_eq_setD[OF same(3)]
+  by (simp only: on_values[OF source])
+
+corollary result_unique:
+  assumes source: "environment_value_presents E e"
+    and first: "(entry,term_quotation_argument e (use_data_term u) (Payload_Term r) (keyed_rows_term key val qs)
+      (data_list_term (map Payload_Term Is)) (data_list_term (map Payload_Term Ks)))\<in>positive_meaning P"
+    and second: "(entry,term_quotation_argument e (use_data_term u) (Payload_Term r) (keyed_rows_term key val zs)
+      (data_list_term (map Payload_Term Js)) (data_list_term (map Payload_Term As)))\<in>positive_meaning P"
+  shows "mset qs=mset zs \<and> mset Is=mset Js \<and> mset Ks=mset As"
+proof -
+  have left: "distinct qs \<and> distinct Is \<and> distinct Ks \<and>
+      native_table_at E u r (read E u) (set qs) (set Is) (set Ks)"
+    using first by (simp only: on_values[OF source])
+  have right: "distinct zs \<and> distinct Js \<and> distinct As \<and>
+      native_table_at E u r (read E u) (set zs) (set Js) (set As)"
+    using second by (simp only: on_values[OF source])
+  have first_raw: "native_table_at E u r (read E u) (set qs) (set Is) (set Ks)" using left by blast
+  have second_raw: "native_table_at E u r (read E u) (set zs) (set Js) (set As)" using right by blast
+  have same: "set qs=set zs \<and> set Is=set Js \<and> set Ks=set As"
+    by (rule native_table_unique[OF first_raw second_raw])
+  show ?thesis using left right same distinct_source_mset[of qs zs]
+    distinct_source_mset[of Is Js] distinct_source_mset[of Ks As] by auto
+qed
+
+corollary empty:
+  assumes source: "environment_value_presents E e"
+  shows "(entry,term_quotation_argument e (use_data_term u) (Payload_Term r) (Payload_Term [])
+      (data_list_term [Payload_Term r]) (Payload_Term []))\<in>positive_meaning P \<longleftrightarrow>
+    (\<exists>A. artifact_at E u A \<and> family_at A r {})"
+proof
+  assume holds: "(entry,term_quotation_argument e (use_data_term u) (Payload_Term r) (Payload_Term [])
+      (data_list_term [Payload_Term r]) (Payload_Term []))\<in>positive_meaning P"
+  have raw: "native_table_at E u r (read E u) (set []) (set [r]) (set [])"
+    using on_values[OF source, of u r "[]" "[r]" "[]"] holds by simp
+  show "\<exists>A. artifact_at E u A \<and> family_at A r {}"
+    using enumeration[OF raw] by auto
+next
+  assume "\<exists>A. artifact_at E u A \<and> family_at A r {}"
+  then obtain A where actual: "artifact_at E u A" "family_at A r {}" by blast
+  have ef: "environment_formed E" using environment_value_presents_formed[OF source] by blast
+  have raw: "native_table_at E u r (read E u) (set []) (set [r]) (set [])"
+    unfolding native_table_at_def Let_def
+    by (rule conjI[OF ef], rule exI[of _ A], rule exI[of _ "{}"])
+      (use actual in \<open>simp add: native_table_rows_def native_row_values_def native_row_interiors_def
+        native_row_slots_def single_valued_def rel_dom_def rel_ran_def\<close>)
+  show "(entry,term_quotation_argument e (use_data_term u) (Payload_Term r) (Payload_Term [])
+      (data_list_term [Payload_Term r]) (Payload_Term []))\<in>positive_meaning P"
+    using complete[OF source raw] by simp
+qed
+
+corollary physical_key_unique:
+  assumes source: "environment_value_presents E e"
+    and holds: "(entry,term_quotation_argument e (use_data_term u) (Payload_Term r) (keyed_rows_term key val qs)
+      (data_list_term (map Payload_Term Is)) (data_list_term (map Payload_Term Ks)))\<in>positive_meaning P"
+    and art: "artifact_at E u A" and family: "family_at A r M"
+    and first: "(s,a)\<in>M" "read E u a (k,v) J B"
+    and second: "(t,b)\<in>M" "read E u b (k,w) L C"
+  shows "s=t"
+proof -
+  have raw: "native_table_at E u r (read E u) (set qs) (set Is) (set Ks)"
+    using holds by (simp only: on_values[OF source]; blast)
+  show ?thesis by (rule native_table_no_duplicate_key(1)[OF raw art family first second])
+qed
+
+end
+
+text \<open>
+  One ordinary clause joins the actual artifact, complete family, both row
+  projections, the complete reading list, decoded-key uniqueness, counted
+  header and row interiors, and the exact external-slot boundary.
+
+  Every complete output enumeration is accepted. Its actual socket order is
+  an internal witness obtained from the existing table relation. The clause
+  compares only payload metadata by the data comparison entry; arbitrary
+  formed row values are preserved directly. Empty tables retain the actual
+  source and family root. The locale proves this contract for fixed ordinary
+  component entries and adds no predicate to the positive operator.
+\<close>
+
+end

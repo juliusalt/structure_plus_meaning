@@ -589,3 +589,18 @@ native compilation and supplies a sound conditional generator library. All 38
 executed reports match independent reconstruction; the eight added controls
 keep both reader premises unproved. Native admission of an entire symbolic
 graph and actual admitted-source uses of the new report rule remain open.
+
+The subsequent 772-theory session passes. Symbolic specialization preserves and
+recovers every positioned binder and ordinary or material socket. Determining
+observations recover complete graph and claim values on their admitted images.
+Native row projections reuse the existing sequence traversal and construct
+semantically established premises for a further learned report rule. The
+53-case family, 21 source computations, and retained replay agree with
+independent reconstruction; all 27 Python checks pass.
+
+Every admitted native specialization also has a complete target report, with
+an inhabited instance from the existing actual ground-clause construction.
+Row conversion alone still does not establish pattern admission, as the new
+outside-image control demonstrates. The next native node reader must connect
+these rows to the actual source replacement record and complete target report.
+Whole graph admission, native mathematical proofs, and the final audit remain open.

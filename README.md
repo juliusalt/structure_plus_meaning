@@ -12,11 +12,13 @@ Related reads, changes, and checks are prepared in complete batches; content
 quality governs their scope. The [current review](GENERALIZATION_REVIEW.md) and
 [reasoning inventory](REASONING_REUSE.md) record evidence and remaining gaps.
 
-The current 763-theory session passes. Complete local clause specializations
-now connect to the symbolic proof judgment, and an ordinary native report rule
-feeds the existing generation and inference engine. Its 38-case execution
-family retains unresolved premise evidence explicitly. Whole native symbolic-
-argument admission and mathematical-proof admission remain open.
+The current 772-theory session passes. Complete local clause specializations,
+source-coordinate recovery, and determining observations connect to the
+symbolic proof judgment. Native binding conversions now construct established
+premises for a learned report rule in the existing inference engine. The
+53-case execution family preserves complete reports and the distinction
+between row conversion and pattern admission. Whole native symbolic-argument
+admission and mathematical-proof admission remain open.
 
 The owner's correction of 2026-09-08 replaces the earlier single-grammar and
 quotation-principality requirements. Every notion needing a presentation must

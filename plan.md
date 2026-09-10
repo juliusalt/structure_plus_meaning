@@ -224,6 +224,14 @@ check its report-derived selections again. Complete finite-set product classes
 preserve both admission outcomes across all displayed enumerations. Native
 admission of the whole report and its mathematical evidence remain further work.
 
+Native comparison of nested collections now consumes element contracts through
+two complete traversals. Retained data keys and both finite-set levels preserve
+all admitted inner and outer presentations. Actual conflicts under literal
+outer comparison direct the general construction; the same case then executes
+its reported extensions again. Candidate and ordered-candidate-pair row classes
+reuse these contracts. Their computation from a declared observation scope and
+assembly into the whole native report remain further work.
+
 Schedule related information reads, edits, validation, and reports in batches.
 This scheduling discipline is separate from the semantic feedback loop;
 the latter should guide the content of each batch.

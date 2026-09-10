@@ -7298,3 +7298,69 @@ separate boundaries. This scope predicate introduces no condition on a supplied
 comparison relation. Native report construction and mathematical-proof checking,
 the wider application audit, and the final every-line repository audit remain
 open.
+
+## Nested collection reports direct native comparison through member contracts
+
+A complete observation profile has several displayed orders and repetitions.
+A collection containing that profile therefore needs the inner reading as
+well as the outer one. The existing finite-set comparison checks literal data
+members. Matching counted occurrences would impose a different subject boundary.
+
+The first executed case keeps seven nested presentations, including a result
+with one observation missing. Both source profiles are results of the existing
+native computation. The independent comparison takes the outer finite set of
+candidate and inner-finite-set pairs. Literal outer comparison produced 18
+conflicts and six missing distinctions. Its reported extension kept all 24
+failures. Removing it left 12 missing distinctions and no adequate selection
+in the available language.
+
+Those outputs directed ordinary clauses for membership through a comparison
+and for two complete traversals. Every displayed member has a counterpart in
+the other list. Both traversals retain the element comparison's left operand;
+the general construction requires no symmetry assumption. Complete membership
+already supplies both data boundaries, including the empty-list cases, so the
+final clause needs no further admission premise.
+
+The element comparison retains an admitted exact key and calls the existing
+finite-set comparison on its values. Six definitions contain eight ordinary
+clauses over the least closure of the actual data, membership, and comparison
+dependencies. The original definitions retain their complete meanings. The
+independent subject is a finite set of pairs of data keys and finite data sets.
+Distinct values at one key remain distinct rows; no finite-map condition is
+introduced.
+
+The datum presentation now uses a shared general data-term class. The existing
+native set comparator receives a derived complete finite-set identity contract.
+Product and finite-set contracts supply the whole keyed-set class, retaining
+all inner and outer presentations, and a fixed native package before every
+future argument. Candidate and ordered-candidate-pair observation rows consume
+the same contracts. Injective encoding retains every key distinction. Literal
+key retention supplies no general claim about arbitrary alternative key
+presentations.
+
+The revised case adds the complete native comparison while preserving the
+subjects and independent criterion. Six repair witnesses select the new
+observation; rerunning the exported extension retains the 18 conflicts from
+the literal observation. The new observation alone is adequate. Empty selection
+has 12 witnessed missing distinctions; its exported extension selects the new
+observation, and that rerun has no residuals. Every available facet selection
+and every reported observation, profile, loss, conflict, repair, obstruction,
+and extension was checked independently. This Boolean reference probe has two
+semantic classes in its stated scope; one such observation does not identify
+all possible nested collections.
+
+The native equations passed 364,133 comparison decisions and 10 separate
+call-formation checks in 48.69 seconds. The finite cases include all 65,536
+pairs of scalar row collections over two keys and two values; all 83,521 pairs
+of partial function graphs from two candidate keys to subsets of four
+observation values; and all 83,521 pairs from two ordered candidate-pair keys
+to those subsets. Further
+executions vary both presentation levels and check malformed octets, formed
+references, empty collections, and distinct rows sharing a key. These graphs
+supply comparison inputs; their values are not thereby certified as results
+for a particular observation table.
+
+Constructing complete profile and loss tables from one declared scope,
+assembling the whole native investigation report, and native checking of the
+mathematical evidence remain separate obligations. The wider application and
+final every-line repository audits remain open.

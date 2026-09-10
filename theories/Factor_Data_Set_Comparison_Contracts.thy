@@ -1,6 +1,6 @@
 theory Factor_Data_Set_Comparison_Contracts
   imports Factor_Data_Set_Comparison Factor_Collection_Comparisons Presentation_Contracts
-    Factor_Compiled_Applications Factor_List_Set_Presentations
+    Factor_Compiled_Applications Factor_List_Set_Presentations Factor_Data_Term_Presentations
 begin
 
 section \<open>The complete contract compares sets while retaining list subjects\<close>
@@ -79,6 +79,55 @@ next
   show "(219,Pair_Term (data_list_term (map f xs)) q)\<in>positive_meaning data_set_comparison_system"
     using formed same by (simp only: displayed(3) data_set_comparison_mapped[OF injective])
 qed
+
+section \<open>The same native operation has a complete finite-set identity contract\<close>
+
+lemma data_finite_sets_from_lists:
+  "fset_of_list xs=fset_of_list ys \<longleftrightarrow> set xs=set ys"
+  by (simp only: fset_inject[symmetric] fset_of_list.rep_eq)
+
+theorem data_set_comparison_finite_set_contract:
+  "presented_relation_contract data_finite_set_presents data_finite_set_domain
+    (\<lambda>p. \<exists>xs. data_elements xs \<and> p=data_list_term xs)
+    data_finite_set_presents data_finite_set_domain
+    (\<lambda>p. \<exists>xs. data_elements xs \<and> p=data_list_term xs)
+    (=) (\<lambda>p q. (219,Pair_Term p q)\<in>positive_meaning data_set_comparison_system)"
+proof -
+  have meaning: "(219,Pair_Term p q)\<in>positive_meaning data_set_comparison_system \<longleftrightarrow>
+      presented_relation data_finite_set_presents data_finite_set_presents (=) p q" for p q
+  proof
+    assume holds: "(219,Pair_Term p q)\<in>positive_meaning data_set_comparison_system"
+    obtain xs ys where rows: "p=data_list_term xs" "q=data_list_term ys"
+      "data_elements xs" "data_elements ys" "set xs=set ys"
+      using holds by (auto simp only: data_set_comparison_exact factor_term.inject)
+    have same: "fset_of_list xs=fset_of_list ys" using rows(5) by (simp only: data_finite_sets_from_lists)
+    have first: "data_finite_set_presents (fset_of_list xs) p"
+      using rows(1,3) by (simp only: data_finite_set_at_list simp_thms)
+    have second: "data_finite_set_presents (fset_of_list xs) q"
+      using rows(2,4) same by (simp only: data_finite_set_at_list simp_thms)
+    show "presented_relation data_finite_set_presents data_finite_set_presents (=) p q"
+      using first second by (auto simp only: presented_relation_def)
+  next
+    assume "presented_relation data_finite_set_presents data_finite_set_presents (=) p q"
+    then obtain S where reads: "data_finite_set_presents S p" "data_finite_set_presents S q"
+      by (auto simp only: presented_relation_def)
+    obtain xs where first: "data_elements xs" "fset_of_list xs=S" "p=data_list_term xs"
+      using reads(1) by (simp only: data_finite_set_fields) blast
+    obtain ys where second: "data_elements ys" "fset_of_list ys=S" "q=data_list_term ys"
+      using reads(2) by (simp only: data_finite_set_fields) blast
+    have same: "set xs=set ys" using first(2) second(2) data_finite_sets_from_lists[of xs ys] by blast
+    show "(219,Pair_Term p q)\<in>positive_meaning data_set_comparison_system"
+      using first second same by (simp only: data_set_comparison_lists)
+  qed
+  show ?thesis using data_finite_set_class meaning
+    by (simp add: presented_relation_contract_def presented_relation_contract_axioms_def)
+qed
+
+corollary data_set_comparison_finite_set_output:
+  assumes "data_finite_set_presents S p"
+  shows "(219,Pair_Term p q)\<in>positive_meaning data_set_comparison_system \<longleftrightarrow>
+    data_finite_set_presents S q"
+  using presented_relation_contract.at_source[OF data_set_comparison_finite_set_contract assms, of q] by auto
 
 section \<open>Equal sets can have different attachment counts\<close>
 

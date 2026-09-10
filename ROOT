@@ -705,3 +705,14 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Observation_Scope_Investigation
     Factor_Observation_Scope_Presentations
     Factor_Observation_Scope_Rows
+    Factor_Compared_Members
+    Factor_Data_Term_Presentations
+    Factor_Finite_Set_Readings
+    Factor_Keyed_Comparison
+    Factor_Keyed_Set_Clauses
+    Factor_Keyed_Set_Contracts
+    Factor_Keyed_Set_Encodings
+    Factor_Keyed_Set_Execution
+    Factor_Observation_Collection_Contracts
+    Factor_Observation_Collection_Investigation
+    Factor_Related_Sets

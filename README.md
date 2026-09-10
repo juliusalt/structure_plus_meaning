@@ -2006,6 +2006,40 @@ imports and file presence cannot discharge them. Several such conditions can
 be checked together by one session. The frontend reads the repository's simple
 theory headers; it does not parse arbitrary Isabelle declarations or proofs.
 
+Whole collections now have a native comparison that retains each exact data
+key and compares the finite sets of values inside its rows. Complete product
+and finite-set classes preserve every inner and outer order and repetition,
+including different presentations of a repeated row. Different value sets
+at the same key remain different rows. Candidate and ordered-candidate-pair
+row collections use the same general comparison; their links to a particular
+observation table belong to the profile and loss computation contracts.
+
+The collection investigation compares seven nested presentations of two
+computed profiles, including a different result:
+
+```sh
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle observation-collections --selected 0
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle observation-collections --selected 0 1
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle observation-collections --selected 1
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle observation-collections --selected
+```
+
+Facet 0 compares literal outer rows. It has 18 conflicts and six missing
+distinctions in this scope. Adding facet 1 repairs the missing distinctions
+while retaining those conflicts. Facet 1 alone is the only adequate selection.
+Empty selection misses 12 distinctions; its exported extension selects facet 1,
+and that actual rerun has no residuals. The Boolean reference probe settles
+these seven subjects; the native comparison has a separate universal contract
+for arbitrary pairs of complete keyed-set presentations.
+
+The native equations also passed 364,143 independently checked executions,
+including 10 separate call-formation checks. They cover all pairs of scalar
+row collections over two keys and two values, all pairs of partial function
+graphs from two candidate or ordered-candidate-pair keys to subsets of four
+observation values, presentation changes, shared keys, malformed octets, and
+formed references. Whole report
+construction and native checking of mathematical evidence remain further work.
+
 `run CASE.json` accepts schema `finite-investigation-1`, a `question`, a `scope`,
 and one of these finite inputs:
 
@@ -2018,6 +2052,7 @@ and one of these finite inputs:
 | `proof_probes` | `selected` chooses call arguments in the two-program investigation; the intended comparison retains complete formation and truth decisions on all formed terms. |
 | `observation` | `selected` chooses native profile decisions; comparison is equality of represented output sets. |
 | `observation_scope` | `selected` chooses native scope decisions; comparison is equality of independently specified complete input admission. |
+| `observation_collections` | `selected` chooses native collection comparisons; the independent comparison retains both the outer row set and each inner observation set. |
 | `schema_sockets` | `selected` chooses schema observations; comparison requires an actual substitution between the complete schemas, including premise sockets. |
 
 A repository-owned registry fixes each built-in case's theory, exported

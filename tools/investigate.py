@@ -27,6 +27,31 @@ SCHEMA = "finite-investigation-1"
 
 # Each registered case fixes its source theory, export, and independent scope.
 BUILTIN_CASES = {
+    "observation_collections": {
+        "theory": "Factor_Observation_Collection_Investigation",
+        "function": "collection_investigation",
+        "help": "Compare complete collections with varying inner profile presentations",
+        "question": "Do the selected native comparisons preserve both finite-set levels of observation collections?",
+        "scope": {
+            "candidates": {
+                "0": "Two computed profiles in their initial order",
+                "1": "Reversed first inner profile",
+                "2": "Repeated member in the first inner profile",
+                "3": "Reversed outer row order",
+                "4": "Repeated identical outer row",
+                "5": "A different collection with one profile member missing",
+                "6": "One semantic row repeated with two different inner presentations"
+            },
+            "facets": {
+                "0": "Literal native finite-set comparison against the computed collection",
+                "1": "Native two-sided coverage through retained keys and complete inner set comparison"
+            },
+            "values": "The actual Boolean decision: False=0, True=1",
+            "comparison": "Equality of the finite sets of candidate and finite-profile pairs, independently of their displayed lists",
+            "coverage": "These seven nested profile collections for the explicit three-row observation table"
+        },
+        "semantic_boundary": "The source profiles are proved results of the actual native profile operation. Both observations call actual native comparators. The independent subject keeps both finite-set levels. The second comparator composes generic membership, traversals, retained-key and finite-set contracts. These executions use proved code equations; native checking of mathematical proofs remains separate."
+    },
     "observation_scope": {
         "theory": "Factor_Observation_Scope_Investigation",
         "function": "scope_investigation",

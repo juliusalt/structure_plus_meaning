@@ -1,14 +1,15 @@
 theory Factor_Observation_Presentations
   imports Factor_Observation_Admission Factor_Data_Set_Comparison_Contracts Presentation_Function_Witnesses
+    Factor_Data_Term_Presentations
 begin
 
 section \<open>Finite observation subjects use the existing complete class constructions\<close>
 
 abbreviation observation_datum :: "factor_term \<Rightarrow> bool" where
-  "observation_datum x \<equiv> term_formed x \<and> self_contained_term x"
+  "observation_datum x \<equiv> data_term_boundary x"
 
 abbreviation observation_datum_presents :: "factor_term \<Rightarrow> factor_term \<Rightarrow> bool" where
-  "observation_datum_presents x p \<equiv> observation_datum x \<and> p=x"
+  "observation_datum_presents x p \<equiv> data_term_presents x p"
 
 abbreviation observation_value_presents where
   "observation_value_presents \<equiv> factor_pair_presents observation_datum_presents observation_datum_presents"
@@ -48,7 +49,7 @@ abbreviation observation_query_domain where
 
 lemma observation_datum_class:
   "presentation_class observation_datum_presents observation_datum observation_datum"
-  by (unfold_locales) auto
+  by (rule data_term_class)
 
 lemma observation_value_class:
   "presentation_class observation_value_presents (\<lambda>(f,w). data_elements [f,w])

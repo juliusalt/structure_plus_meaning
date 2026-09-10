@@ -1,0 +1,166 @@
+theory Factor_Schema_Totality
+  imports Factor_Schema_Compilation
+begin
+
+section \<open>Enumerating arbitrary complete finite source schemas\<close>
+
+lemma schema_template_enumeration:
+  fixes S :: "('a,'s,local_address option definition_site) factor_schema"
+  assumes formed: "schema_formed S"
+  shows "\<exists>os ts. length os = length ts \<and> distinct os \<and>
+    set (zip os ts) = socket_sum (schema_premises S) (schema_material_premises S)"
+proof -
+  have fin: "finite (socket_sum (schema_premises S) (schema_material_premises S))"
+    using formed by (simp add: schema_formed_def)
+  have sv: "single_valued (socket_sum (schema_premises S) (schema_material_premises S))"
+    using formed by (simp add: socket_sum_single_valued schema_formed_def)
+  show ?thesis by (rule finite_functional_list[OF fin sv])
+qed
+
+lemma schema_enumerated_sockets:
+  assumes len: "length os = length ts"
+    and enumeration: "set (zip os ts) = socket_sum (schema_premises S) (schema_material_premises S)"
+  shows "schema_sockets S = set os"
+  using zip_domain[OF len] enumeration by (simp add: schema_sockets_def)
+
+lemma schema_enumerated_variables:
+  fixes S :: "('a,'s,local_address option definition_site) factor_schema"
+  assumes len: "length os = length ts"
+    and enumeration: "set (zip os ts) = socket_sum (schema_premises S) (schema_material_premises S)"
+  shows "schema_body_variables (schema_conclusion S) ts = schema_variables S"
+proof -
+  let ?M = "socket_sum (schema_premises S) (schema_material_premises S)"
+  have range: "rel_ran ?M = set ts" using zip_range[OF len] enumeration by simp
+  have variables: "schema_variables S = pattern_variables (schema_conclusion S) \<union>
+    (\<Union>t\<in>rel_ran ?M. template_variables t)"
+    by (simp only: schema_variables_from_sum relation_range_union template_variables_case[symmetric])
+  show ?thesis using variables range by (simp add: schema_body_variables_def template_list_variables_def)
+qed
+
+lemma schema_enumerated_templates_formed:
+  fixes S :: "('a,'s,local_address option definition_site) factor_schema"
+  assumes formed: "schema_formed S"
+    and addresses: "\<forall>d\<in>schema_dependencies S. octets_formed (snd d)"
+    and len: "length os = length ts"
+    and enumeration: "set (zip os ts) = socket_sum (schema_premises S) (schema_material_premises S)"
+  shows "\<forall>t\<in>set ts. template_formed t"
+proof -
+  let ?M = "socket_sum (schema_premises S) (schema_material_premises S)"
+  have range: "rel_ran ?M = set ts" using zip_range[OF len] enumeration by simp
+  have entries: "\<forall>s t. (s,t) \<in> ?M \<longrightarrow> template_formed t"
+  proof (intro allI impI)
+    fix s t assume entry: "(s,t) \<in> ?M"
+    show "template_formed t"
+    proof (cases t)
+      case (Inl dp)
+      obtain d p where shape: "dp=(d,p)" by (cases dp)
+      have actual: "(s,d,p) \<in> schema_premises S" using entry Inl shape by simp
+      have in_range: "(d,p) \<in> rel_ran (schema_premises S)"
+        using actual by (auto simp: rel_ran_def)
+      have projected: "fst (d,p) \<in> fst ` rel_ran (schema_premises S)"
+        by (rule imageI[OF in_range])
+      have dependency: "d \<in> schema_dependencies S"
+        using projected by (simp add: schema_dependencies_def)
+      have pf: "pattern_formed p" using formed actual by (cases d) (auto simp: schema_formed_def)
+      have df: "octets_formed (snd d)" using addresses dependency by blast
+      show ?thesis using pf df Inl shape by simp
+    next
+      case (Inr M)
+      have actual: "(s,M) \<in> schema_material_premises S" using entry Inr by simp
+      have mf: "material_pattern_formed M" using formed actual by (auto simp: schema_formed_def)
+      show ?thesis using mf Inr by simp
+    qed
+  qed
+  show ?thesis
+  proof (intro ballI)
+    fix t assume member: "t \<in> set ts"
+    have in_range: "t \<in> rel_ran ?M" using member range by simp
+    obtain s where actual: "(s,t) \<in> ?M" using in_range by (auto simp: rel_ran_def)
+    show "template_formed t" using entries actual by blast
+  qed
+qed
+
+lemma schema_enumerated_callees:
+  fixes S :: "('a,'s,local_address option definition_site) factor_schema"
+  assumes len: "length os = length ts"
+    and enumeration: "set (zip os ts) = socket_sum (schema_premises S) (schema_material_premises S)"
+  shows "rel_ran (schema_body_callees ts) = schema_dependencies S"
+proof -
+  have range: "set ts = rel_ran (socket_sum (schema_premises S) (schema_material_premises S))"
+    using zip_range[OF len] enumeration by simp
+  have "rel_ran (schema_body_callees ts) = (\<Union>t\<in>set ts. rel_ran (template_callees t))"
+    by (simp add: schema_body_callees_def map_slot_keys_range premise_forest_callee_range)
+  also have "\<dots> = fst ` rel_ran (schema_premises S)"
+    by (simp only: range socket_sum_range) (auto simp: template_callee_range_left)
+  also have "\<dots> = schema_dependencies S" by (simp add: schema_dependencies_def)
+  finally show ?thesis .
+qed
+
+section \<open>Total finite syntax with native recovery and independent semantic equivalence\<close>
+
+theorem schema_compilation_total:
+  fixes S :: "('a,'s,local_address option definition_site) factor_schema"
+  assumes formed: "schema_formed S"
+    and addresses: "\<forall>d\<in>schema_dependencies S. octets_formed (snd d)"
+  shows "\<exists>R r f h L C. exact_formed R \<and>
+    inj_on f (schema_variables S) \<and> inj_on h (schema_sockets S) \<and>
+    (\<forall>E u. environment_formed E \<longrightarrow> artifact_at E u R \<longrightarrow>
+      syntax_references E u L C \<longrightarrow> native_schema_at E u r (rename_schema f h id S)) \<and>
+    (\<forall>X t. schema_rule_instance (rename_schema f h id S) X t \<longleftrightarrow> schema_rule_instance S X t) \<and>
+    reference_table_formed L C \<and> rel_dom L \<union> rel_dom C \<subseteq> rra_carrier (object_structure R) \<and>
+    rel_ran C = schema_dependencies S \<and> bag_count (object_data R) = (\<lambda>_. 0) \<and>
+    r \<in> rra_carrier (object_structure R)"
+proof -
+  obtain os :: "'s list" and ts :: "('a,local_address option) premise_template list" where enumeration:
+    "length os = length ts" "distinct os"
+    "set (zip os ts) = socket_sum (schema_premises S) (schema_material_premises S)"
+    using schema_template_enumeration[OF formed] by metis
+  have variables: "schema_body_variables (schema_conclusion S) ts = schema_variables S"
+    by (rule schema_enumerated_variables[OF enumeration(1,3)])
+  have socket_set: "schema_sockets S = set os" by (rule schema_enumerated_sockets[OF enumeration(1,3)])
+  obtain f where faddr: "binder_addressing (schema_variables S) f"
+    using binder_addressing_exists[OF schema_variables_finite[OF formed]] by blast
+  have finj: "inj_on f (schema_variables S)" using faddr by (simp add: binder_addressing_def finite_addressing_def)
+  have pf: "pattern_formed (schema_conclusion S)" using formed by (simp add: schema_formed_def)
+  have tf: "\<forall>t\<in>set ts. template_formed t"
+    by (rule schema_enumerated_templates_formed[OF formed addresses enumeration(1,3)])
+  have addr: "binder_addressing (schema_body_variables (schema_conclusion S) ts) f"
+    using faddr variables by simp
+  have bodies: "schema_bodies f (schema_conclusion S) ts" by (rule schema_bodies.intro[OF pf tf addr])
+  let ?L = "schema_body_literals (schema_conclusion S) ts"
+  let ?C = "schema_body_callees ts"
+  obtain R :: exact_artifact and r :: local_address and ss :: "local_address list" where built:
+    "exact_formed R" "length ss = length ts" "distinct ss"
+    "\<forall>E u. environment_formed E \<longrightarrow> artifact_at E u R \<longrightarrow>
+      syntax_references E u ?L ?C \<longrightarrow> native_schema_at E u r (schema_list_projection f (schema_conclusion S) ss ts)"
+    "reference_table_formed ?L ?C"
+    "rel_dom ?L \<union> rel_dom ?C \<subseteq> rra_carrier (object_structure R)"
+    "bag_count (object_data R) = (\<lambda>_. 0)" "r \<in> rra_carrier (object_structure R)"
+    using schema_syntax_total[OF bodies] by metis
+  have same_length: "length os = length ss" using enumeration(1) built(2) by simp
+  obtain h where rekey: "inj_on h (set os)" "map h os = ss"
+    using distinct_list_rekey[OF same_length enumeration(2) built(3)] by metis
+  have hinj: "inj_on h (schema_sockets S)" using rekey(1) socket_set by simp
+  have projected: "schema_list_projection f (schema_conclusion S) ss ts = rename_schema f h id S"
+    using schema_list_recovers_source[OF enumeration(3), of f h] rekey(2) by simp
+  have native: "\<forall>E u. environment_formed E \<longrightarrow> artifact_at E u R \<longrightarrow>
+    syntax_references E u ?L ?C \<longrightarrow> native_schema_at E u r (rename_schema f h id S)"
+    using built(4) projected by simp
+  have semantics: "\<forall>X t. schema_rule_instance (rename_schema f h id S) X t \<longleftrightarrow> schema_rule_instance S X t"
+    by (intro allI; rule schema_rule_instance_alpha[OF finj hinj])
+  have dependencies: "rel_ran ?C = schema_dependencies S"
+    by (rule schema_enumerated_callees[OF enumeration(1,3)])
+  show ?thesis by (rule exI[of _ R], rule exI[of _ r], rule exI[of _ f], rule exI[of _ h],
+      rule exI[of _ ?L], rule exI[of _ ?C]) (use built(1,5-8) finj hinj native semantics dependencies in blast)
+qed
+
+text \<open>
+  This construction starts with an arbitrary formed finite schema. Socket and
+  binder enumerations are obtained from its actual fields. Only callee addresses
+  must already be valid local addresses; target uses remain explicit reference
+  requirements. The result is finite syntax whose native recovery agrees with
+  the source schema up to injective binder and socket changes, and whose rule
+  instances are preserved and reflected independently of any derivation witness.
+\<close>
+
+end

@@ -1,0 +1,87 @@
+theory RRA_Binding_Extension
+  imports RRA_Read_Transport
+begin
+
+section \<open>Adding finite bindings at previously unbound source slots\<close>
+
+definition add_source_bindings ::
+  "'u artifact_environment \<Rightarrow> 'u \<Rightarrow> (local_address \<times> 'u) set \<Rightarrow> 'u artifact_environment" where
+  "add_source_bindings E u D = E\<lparr>environment_bindings := environment_bindings E \<union>
+    (\<lambda>(k,v). ((u,k),v)) ` D\<rparr>"
+
+lemma add_source_artifacts [simp]:
+  "environment_artifacts (add_source_bindings E u D) = environment_artifacts E"
+  by (simp add: add_source_bindings_def)
+
+lemma add_source_artifact [simp]:
+  "artifact_at (add_source_bindings E u D) v R \<longleftrightarrow> artifact_at E v R"
+  by (simp add: add_source_bindings_def artifact_at_def)
+
+lemma add_source_uses [simp]: "environment_uses (add_source_bindings E u D) = environment_uses E"
+  by (simp add: add_source_bindings_def environment_uses_def)
+
+lemma add_source_binding [simp]:
+  "binds_slot (add_source_bindings E u D) v k w \<longleftrightarrow> binds_slot E v k w \<or> (v=u \<and> (k,w) \<in> D)"
+  by (auto simp: add_source_bindings_def binds_slot_def)
+
+lemma add_source_included: "environment_included E (add_source_bindings E u D)"
+  by (auto simp: environment_included_def add_source_bindings_def)
+
+lemma add_source_bindings_elsewhere:
+  assumes "v \<noteq> u \<or> k \<notin> rel_dom D"
+  shows "binds_slot (add_source_bindings E u D) v k w \<longleftrightarrow> binds_slot E v k w"
+  using assms by (auto simp: rel_dom_def)
+
+lemma add_source_binding_exact:
+  assumes inside: "k \<in> rel_dom D" and unbound: "\<And>j v. j \<in> rel_dom D \<Longrightarrow> \<not> binds_slot E u j v"
+  shows "binds_slot (add_source_bindings E u D) u k v \<longleftrightarrow> (k,v) \<in> D"
+  using unbound[OF inside] by simp
+
+theorem add_source_bindings_formed:
+  assumes ef: "environment_formed E" and source: "artifact_at E u R"
+    and fin: "finite D" and sv: "single_valued D"
+    and slots: "rel_dom D \<subseteq> rra_carrier (object_structure R)"
+    and targets: "rel_ran D \<subseteq> environment_uses E"
+    and unbound: "\<And>k v. k \<in> rel_dom D \<Longrightarrow> \<not> binds_slot E u k v"
+  shows "environment_formed (add_source_bindings E u D)"
+proof -
+  let ?N = "(\<lambda>(k,v). ((u,k),v)) ` D"
+  let ?F = "add_source_bindings E u D"
+  have old_sv: "single_valued (environment_bindings E)" using ef by (simp add: environment_formed_def)
+  have new_sv: "single_valued ?N" using sv by (auto simp: single_valued_def)
+  have separate: "\<forall>x y z. (x,y) \<in> environment_bindings E \<longrightarrow> (x,z) \<in> ?N \<longrightarrow> y=z"
+  proof (intro allI impI)
+    fix x y z assume old: "(x,y) \<in> environment_bindings E" and new: "(x,z) \<in> ?N"
+    obtain k where entry: "x=(u,k)" "(k,z) \<in> D" using new by auto
+    have key: "k \<in> rel_dom D" by (rule rel_domI[OF entry(2)])
+    have bound: "binds_slot E u k y" using old entry(1) by (simp add: binds_slot_def)
+    show "y=z" using unbound[OF key, of y] bound by blast
+  qed
+  have bindings_sv: "single_valued (environment_bindings ?F)"
+    using single_valued_union_iff[OF old_sv new_sv] separate by (simp add: add_source_bindings_def)
+  have bindings_finite: "finite (environment_bindings ?F)"
+    using ef fin by (simp add: add_source_bindings_def environment_formed_def)
+  have new_bounds: "\<forall>k v. (k,v) \<in> D \<longrightarrow> k \<in> rra_carrier (object_structure R) \<and> v \<in> environment_uses E"
+    using slots targets by (auto simp: rel_dom_def rel_ran_def)
+  have refs: "\<forall>v k w. binds_slot ?F v k w \<longrightarrow>
+    (\<exists>S. artifact_at ?F v S \<and> k \<in> rra_carrier (object_structure S)) \<and> w \<in> environment_uses ?F"
+    using ef source new_bounds by (auto simp: environment_formed_def)
+  show ?thesis using ef bindings_sv bindings_finite refs
+    by (auto simp: environment_formed_def)
+qed
+
+lemma add_source_literal_values_elsewhere:
+  assumes "v \<noteq> u \<or> k \<notin> rel_dom D"
+  shows "external_slot_values (add_source_bindings E u D) v k = external_slot_values E v k"
+  using assms by (auto simp: external_slot_values_def rel_dom_def)
+
+text \<open>
+  Existing artifact values are unchanged. A complete finite functional binding
+  table can be added at a source use when its keys are actual, previously
+  unbound source occurrences and every target use is present. All previous
+  bindings are retained, and bindings at every other source or slot are exact.
+  Source and target uses may coincide; no acyclicity requirement is imposed on
+  an artifact environment.
+\<close>
+
+end

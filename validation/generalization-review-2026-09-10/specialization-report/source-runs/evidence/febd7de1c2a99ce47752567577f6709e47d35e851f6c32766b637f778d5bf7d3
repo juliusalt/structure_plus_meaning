@@ -1,0 +1,276 @@
+theory Factor_Proof_Scheme_Instances
+  imports Factor_Proof_Schemes Factor_Proof_Probe_Investigation Factor_Material_Meaning
+begin
+
+section \<open>One inference uses the same constructor for every binding value type\<close>
+
+definition singleton_inference_graph ::
+  "'n \<Rightarrow> 'c \<Rightarrow> ('a\<times>'v) fset \<Rightarrow> ('a,'s,'c,'n,'v) inference_graph" where
+  "singleton_inference_graph n c V=\<lparr>graph_inferences=finsert (n,Schema_Inference c V) fempty,
+    graph_discharges=fempty\<rparr>"
+
+lemma singleton_inference_graph_formed [simp]: "schema_graph_formed (singleton_inference_graph n c V) n"
+  by (auto simp: schema_graph_formed_def singleton_inference_graph_def schema_graph_nodes_def
+    schema_graph_edges_def schema_assertion_uses_def single_valued_def rel_dom_def)
+
+lemma singleton_inference_graph_assumptions [simp]:
+  "schema_graph_assumptions (singleton_inference_graph n c V) J={}"
+  by (auto simp: schema_graph_assumptions_def singleton_inference_graph_def)
+
+lemma schema_scheme_single_inference:
+  assumes clause: "((d,c),S)\<in>system_clauses P"
+    and bindings: "pattern_bindings_formed (schema_variables S) (fset V)"
+    and ordinary: "schema_premises S={}"
+    and call: "schema_pattern_call P d (pattern_substitute (rel_value (fset V)) (schema_conclusion S))"
+  shows "schema_scheme_reading P (singleton_inference_graph n c V) n d
+    (pattern_substitute (rel_value (fset V)) (schema_conclusion S))
+    {(n,d,pattern_substitute (rel_value (fset V)) (schema_conclusion S))}"
+proof -
+  let ?p="pattern_substitute (rel_value (fset V)) (schema_conclusion S)"
+  let ?J="{(n,d,?p)}"
+  have jv: "rel_value ?J n=(d,?p)" by (simp add: rel_value_def)
+  have check: "checks_schema_scheme_node P (singleton_inference_graph n c V) ?J n (Schema_Inference c V)"
+    unfolding checks_schema_scheme_node.simps jv
+    by (rule exI[of _ S])
+      (use clause bindings ordinary in \<open>simp add: schema_graph_premises_def singleton_inference_graph_def\<close>)
+  have system: "schema_system_formed P" using call by (simp add: schema_pattern_call_def)
+  show ?thesis using system call check singleton_inference_graph_formed[of n c V]
+    by (auto simp: schema_scheme_reading_def singleton_inference_graph_def
+      schema_graph_nodes_def single_valued_def rel_dom_def)
+qed
+
+lemma singleton_scheme_material_boundary:
+  assumes system: "schema_system_formed P" and clause: "((d,c),S)\<in>system_clauses P"
+  shows "schema_scheme_materials P (singleton_inference_graph n c V) {(n,d,p)}=
+    (\<lambda>(s,M). ((n,s),material_pattern_substitute (rel_value (fset V)) M)) ` schema_material_premises S"
+proof -
+  have jv: "rel_value {(n,d,p)} n=(d,p)" by (simp add: rel_value_def)
+  have csv: "single_valued (system_clauses P)" using system by (simp add: schema_system_formed_def)
+  have cv: "rel_value (system_clauses P) (d,c)=S" by (rule rel_value_eq[OF csv clause])
+  show ?thesis by (simp add: schema_scheme_materials_def singleton_inference_graph_def jv cv)
+qed
+
+lemma singleton_scheme_variable_boundary:
+  "schema_scheme_variables (singleton_inference_graph n c V) {(n,d,p)}=
+    pattern_binding_variables (fset V) \<union> pattern_variables p"
+  by (simp add: schema_scheme_variables_def singleton_inference_graph_def)
+
+section \<open>Assertions retain their conditional boundary\<close>
+
+lemma schema_scheme_assertion_reading:
+  assumes call: "schema_pattern_call P d p"
+  shows "schema_scheme_reading P (assertion_graph n) n d p {(n,d,p)}"
+proof -
+  have system: "schema_system_formed P" using call by (simp add: schema_pattern_call_def)
+  show ?thesis using call system
+    by (auto simp: schema_scheme_reading_def assertion_graph_def schema_graph_formed_def
+      schema_graph_nodes_def schema_graph_edges_def schema_graph_premises_def
+      schema_assertion_uses_def single_valued_def rel_dom_def)
+qed
+
+lemma schema_scheme_assertion_boundaries:
+  "schema_graph_assumptions (assertion_graph n) {(n,d,p)}={(n,d,p)}"
+  "schema_scheme_materials P (assertion_graph n) {(n,d,p)}={}"
+  "schema_scheme_variables (assertion_graph n) {(n,d,p)}=pattern_variables p"
+  by (auto simp: schema_graph_assumptions_def schema_scheme_materials_def
+    schema_scheme_variables_def assertion_graph_def)
+
+section \<open>Closed schemes cover every instance of their root pattern\<close>
+
+theorem schema_scheme_closed_pattern_instance:
+  assumes read: "schema_scheme_reading P G root d p J"
+    and material: "schema_scheme_materials P G J={}"
+    and assertions: "schema_graph_assumptions G J={}"
+    and accepts: "pattern_accepts p t"
+  shows "(d,t)\<in>positive_meaning P"
+proof -
+  obtain V where bindings: "term_bindings_formed (pattern_variables p) V"
+    and inst: "pattern_instance V p t" using accepts by (auto simp: pattern_accepts_def)
+  have sv: "single_valued V" and domain: "rel_dom V=pattern_variables p"
+    using bindings by (auto simp: term_bindings_formed_def)
+  have at: "(a,rel_value V a)\<in>V \<and> term_formed (rel_value V a)"
+    if key: "a\<in>pattern_variables p" for a
+  proof -
+    obtain x where row: "(a,x)\<in>V" using key domain by (auto simp: rel_dom_def)
+    have rv: "rel_value V a=x" by (rule rel_value_eq[OF sv row])
+    show ?thesis using row bindings by (auto simp: rv term_bindings_formed_def)
+  qed
+  let ?h="\<lambda>a. if a\<in>pattern_variables p then rel_value V a else Payload_Term []"
+  have head: "t=evaluate_pattern ?h p"
+    by (rule pattern_instance_evaluation[OF sv inst]) (use at in auto)
+  have valuation: "\<forall>a\<in>schema_scheme_variables G J. term_formed (?h a)"
+    using at by (auto simp: octets_formed_def)
+  have truth: "(d,evaluate_pattern ?h p)\<in>positive_meaning P"
+    by (rule schema_scheme_closed_sound[OF read valuation material assertions])
+  show ?thesis using truth head by simp
+qed
+
+section \<open>The universal recognizer has one scheme before future arguments\<close>
+
+definition universal_recognizer_scheme ::
+  "'a \<Rightarrow> 'b \<Rightarrow> ('a,unit,factor_term,unit,'b) schema_proof_scheme" where
+  "universal_recognizer_scheme a b=singleton_inference_graph () (Payload_Term [])
+    (finsert (a,Pattern_Variable b) fempty)"
+
+theorem universal_recognizer_scheme_reading:
+  "schema_scheme_reading (universal_family_system a) (universal_recognizer_scheme a b) () ()
+    (Pattern_Variable b) {((),(),Pattern_Variable b)}"
+proof -
+  let ?V="finsert (a,Pattern_Variable b) fempty"
+  let ?S="recognizer_schema (Pattern_Variable a)"
+  have clause: "(((),Payload_Term []),?S)\<in>system_clauses (universal_family_system a)"
+    by (simp add: universal_family_system_def pattern_family_system_def)
+  have bindings: "pattern_bindings_formed (schema_variables ?S) (fset ?V)"
+    by (auto simp: pattern_bindings_formed_def single_valued_def rel_dom_def)
+  have rv: "rel_value (fset ?V) a=Pattern_Variable b" by (simp add: rel_value_def)
+  have call: "schema_pattern_call (universal_family_system a) () (Pattern_Variable b)"
+    by (rule schema_pattern_call_variable[OF universal_family_formed[of a], where a=a])
+      (simp_all add: universal_family_system_def pattern_family_system_def)
+  show ?thesis using schema_scheme_single_inference[OF clause bindings, of "()"] call
+    by (simp add: universal_recognizer_scheme_def recognizer_schema_def rv[simplified])
+qed
+
+lemma universal_recognizer_scheme_boundaries:
+  "schema_scheme_materials (universal_family_system a) (universal_recognizer_scheme a b)
+    {((),(),Pattern_Variable b)}={}"
+  "schema_scheme_variables (universal_recognizer_scheme a b) {((),(),Pattern_Variable b)}={b}"
+  "schema_graph_assumptions (universal_recognizer_scheme a b) {((),(),Pattern_Variable b)}={}"
+proof -
+  have clause: "(((),Payload_Term []),recognizer_schema (Pattern_Variable a))\<in>
+      system_clauses (universal_family_system a)"
+    by (simp add: universal_family_system_def pattern_family_system_def)
+  show "schema_scheme_materials (universal_family_system a) (universal_recognizer_scheme a b)
+      {((),(),Pattern_Variable b)}={}"
+    using singleton_scheme_material_boundary[OF universal_family_formed clause]
+    by (simp add: universal_recognizer_scheme_def recognizer_schema_def)
+  show "schema_scheme_variables (universal_recognizer_scheme a b) {((),(),Pattern_Variable b)}={b}"
+    by (simp add: universal_recognizer_scheme_def singleton_scheme_variable_boundary pattern_binding_variables_def rel_ran_def)
+  show "schema_graph_assumptions (universal_recognizer_scheme a b) {((),(),Pattern_Variable b)}={}"
+    by (simp add: universal_recognizer_scheme_def)
+qed
+
+theorem universal_recognizer_scheme_ground_checks:
+  assumes "term_formed t"
+  shows "schema_graph_reading (universal_family_system a)
+    (map_inference_values (evaluate_pattern (\<lambda>_. t)) (universal_recognizer_scheme a b)) () () t {((),(),t)}"
+  using schema_scheme_instantiates[OF universal_recognizer_scheme_reading[of a b], where h="\<lambda>_. t"] assms
+  by (simp add: universal_recognizer_scheme_boundaries map_relation_values_def)
+
+theorem probe_literal_proofs_choose_different_clauses:
+  assumes first: "checks_schema_proof (proof_probe_program 0) (Schema_Proof c V B) () (proof_probe_argument 0)"
+    and second: "checks_schema_proof (proof_probe_program 0) (Schema_Proof e W D) () (proof_probe_argument 1)"
+  shows "c\<noteq>e"
+proof -
+  let ?T="{(proof_probe_argument 0,proof_probe_argument 0),(proof_probe_argument 1,proof_probe_argument 1)}"
+  have left: "checks_schema_proof (finite_relation_system () ?T) (Schema_Proof c V B) () (proof_probe_argument 0)"
+    using first by (simp only: proof_probe_program_def if_True refl)
+  have right: "checks_schema_proof (finite_relation_system () ?T) (Schema_Proof e W D) () (proof_probe_argument 1)"
+    using second by (simp only: proof_probe_program_def if_True refl)
+  have origins: "(c,proof_probe_argument 0)\<in>?T" "(e,proof_probe_argument 1)\<in>?T"
+    using finite_relation_proof_origin[OF proof_probe_family_formed left]
+      finite_relation_proof_origin[OF proof_probe_family_formed right] by blast+
+  show ?thesis using origins by (auto simp: proof_probe_argument_def)
+qed
+
+theorem probe_program_has_no_unconditional_universal_scheme:
+  "\<not>(schema_scheme_reading (proof_probe_program 0) G root () (Pattern_Variable b) J \<and>
+    schema_scheme_materials (proof_probe_program 0) G J={} \<and> schema_graph_assumptions G J={})"
+proof
+  assume scheme: "schema_scheme_reading (proof_probe_program 0) G root () (Pattern_Variable b) J \<and>
+    schema_scheme_materials (proof_probe_program 0) G J={} \<and> schema_graph_assumptions G J={}"
+  have formed: "\<forall>a\<in>schema_scheme_variables G J. term_formed (proof_probe_argument 2)" by simp
+  have truth: "((),evaluate_pattern (\<lambda>_. proof_probe_argument 2) (Pattern_Variable b))\<in>
+      positive_meaning (proof_probe_program 0)"
+    by (rule schema_scheme_closed_sound[OF _ formed]) (use scheme in auto)
+  show False using truth by (simp add: proof_probe_truth proof_probe_argument_def)
+qed
+
+section \<open>The existing incidence rule retains its material condition\<close>
+
+definition incidence_scheme_bindings :: "(nat\<times>nat term_pattern) fset" where
+  "incidence_scheme_bindings=fset_of_list (map (\<lambda>i. (i,Pattern_Variable i)) [0,1,2,3,4,5])"
+
+definition incidence_proof_scheme :: "(nat,unit,unit,unit,nat) schema_proof_scheme" where
+  "incidence_proof_scheme=singleton_inference_graph () () incidence_scheme_bindings"
+
+lemma incidence_scheme_binding_values:
+  assumes "i\<in>{0,1,2,3,4,5}"
+  shows "rel_value (fset incidence_scheme_bindings) i=Pattern_Variable i"
+proof -
+  have sv: "single_valued (fset incidence_scheme_bindings)"
+    by (auto simp: incidence_scheme_bindings_def single_valued_def)
+  have row: "(i,Pattern_Variable i)\<in>fset incidence_scheme_bindings"
+    using assms by (auto simp: incidence_scheme_bindings_def)
+  show ?thesis by (rule rel_value_eq[OF sv row])
+qed
+
+theorem incidence_proof_scheme_reading:
+  "schema_scheme_reading incidence_system incidence_proof_scheme () () (Pattern_Variable 0)
+    {((),(),Pattern_Variable 0)}"
+proof -
+  have clause: "(((),()),incidence_schema)\<in>system_clauses incidence_system"
+    by (simp add: incidence_system_def)
+  have bindings: "pattern_bindings_formed (schema_variables incidence_schema) (fset incidence_scheme_bindings)"
+    by (auto simp: pattern_bindings_formed_def incidence_schema_variables incidence_scheme_bindings_def
+      single_valued_def rel_dom_def)
+  have call: "schema_pattern_call incidence_system () (Pattern_Variable 0)"
+    by (rule schema_pattern_call_variable[OF incidence_system_formed, where a=0]) (simp_all add: incidence_system_def)
+  show ?thesis using schema_scheme_single_inference[OF clause bindings, of "()"] call
+    by (simp add: incidence_proof_scheme_def incidence_schema_def incidence_scheme_binding_values)
+qed
+
+lemma incidence_proof_scheme_boundaries:
+  "schema_scheme_materials incidence_system incidence_proof_scheme {((),(),Pattern_Variable 0)}=
+    {(((),()),incidence_material_pattern)}"
+  "schema_scheme_variables incidence_proof_scheme {((),(),Pattern_Variable 0)}={0,1,2,3,4,5}"
+  "schema_graph_assumptions incidence_proof_scheme {((),(),Pattern_Variable 0)}={}"
+proof -
+  have clause: "(((),()),incidence_schema)\<in>system_clauses incidence_system"
+    by (simp add: incidence_system_def)
+  have substitution: "material_pattern_substitute (rel_value (fset incidence_scheme_bindings)) incidence_material_pattern=
+      incidence_material_pattern"
+    by (simp add: material_pattern_substitute_def incidence_material_pattern_def incidence_scheme_binding_values)
+  show "schema_scheme_materials incidence_system incidence_proof_scheme {((),(),Pattern_Variable 0)}=
+      {(((),()),incidence_material_pattern)}"
+    using singleton_scheme_material_boundary[OF incidence_system_formed clause,
+      where n="()" and V=incidence_scheme_bindings and p="Pattern_Variable 0"]
+    by (simp add: incidence_proof_scheme_def incidence_schema_def substitution)
+  show "schema_scheme_variables incidence_proof_scheme {((),(),Pattern_Variable 0)}={0,1,2,3,4,5}"
+    by (simp add: incidence_proof_scheme_def singleton_scheme_variable_boundary
+      pattern_binding_variables_def incidence_scheme_bindings_def rel_ran_image insert_commute)
+  show "schema_graph_assumptions incidence_proof_scheme {((),(),Pattern_Variable 0)}={}"
+    by (simp add: incidence_proof_scheme_def)
+qed
+
+theorem incidence_scheme_conditional_instance:
+  assumes "\<forall>i\<in>{0,1,2,3,4,5}. term_formed (h i)"
+    "material_observation (h 0) (h 1) (Pair_Term (h 2) (h 3)) (h 4) (h 5)"
+  shows "schema_graph_derives incidence_system (map_inference_values (evaluate_pattern h) incidence_proof_scheme)
+    () () (h 0) {}"
+  using schema_scheme_derives[OF incidence_proof_scheme_reading, where h=h] assms
+  by (simp add: incidence_proof_scheme_boundaries incidence_material_pattern_def map_relation_values_def)
+
+theorem incidence_scheme_material_condition_cannot_be_erased:
+  "\<not>schema_graph_derives incidence_system
+    (map_inference_values (evaluate_pattern (\<lambda>_. Payload_Term [])) incidence_proof_scheme)
+    () () (Payload_Term []) {}"
+  using schema_graph_closed_sound[of incidence_system _ "()" "()" "Payload_Term []"]
+  by (auto simp: generic_incidence_observation_exact)
+
+text \<open>
+  The universal recognizer uses one symbolic binding and one actual clause
+  origin before every later argument. Its scheme evaluates to a checked ground
+  graph for each formed term. The finite probe program instead selects distinct
+  literal clauses for its two successful markers and has no unconditional
+  universal scheme under the proved relation.
+
+  The incidence example reuses the existing material rule. Its complete scheme
+  scope contains all six variables, including the five absent from the root
+  claim. Its one identified material condition retains all five operands and
+  the required nonempty edge-list shape. Satisfying that condition gives the
+  checked ground graph. A formed payload valuation disproves erasure of the
+  condition. No existential witness for arbitrary root arguments is inferred
+  from this conditional scheme.
+\<close>
+
+end

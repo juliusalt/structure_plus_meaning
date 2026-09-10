@@ -1,0 +1,107 @@
+theory Factor_Observation_Admission
+  imports Factor_Observation_Profiles
+begin
+
+section \<open>The whole argument determines the complete represented inputs\<close>
+
+lemma observation_rows_present:
+  "(\<forall>t\<in>set ts. observation_row_admitted t) \<longleftrightarrow>
+    (\<exists>rows. ts=map observation_row_term rows \<and> observation_rows_data rows)"
+proof -
+  have row: "observation_row_admitted t \<longleftrightarrow>
+      (\<exists>z. t=observation_row_term z \<and> (case z of (f,c,w) \<Rightarrow> data_elements [f,c,w]))" for t
+    by (auto split: prod.splits)
+  show ?thesis by (simp only: row list_range_restricted_witnesses)
+qed
+
+abbreviation observation_profile_result :: "factor_term \<Rightarrow> bool" where
+  "observation_profile_result t \<equiv> \<exists>F rows c.
+    data_elements F \<and> term_formed c \<and> self_contained_term c \<and> observation_rows_data rows \<and>
+    t=context_relation_argument (Pair_Term (data_list_term F) c)
+      (data_list_term (map observation_row_term rows))
+      (data_list_term (map observation_value_term (observation_profile_list F rows c)))"
+
+lemma observation_profile_input:
+  assumes "(301,context_relation_argument p input q)\<in>positive_meaning observation_system"
+  shows "\<exists>F rows c. p=Pair_Term (data_list_term F) c \<and>
+    input=data_list_term (map observation_row_term rows) \<and>
+    data_elements F \<and> term_formed c \<and> self_contained_term c \<and> observation_rows_data rows"
+proof -
+  obtain mid where first: "(298,context_relation_argument p input mid)\<in>positive_meaning observation_system"
+    using assms by (auto simp only: observation_profile_calls factor_term.inject)
+  obtain ts where read: "input=data_list_term ts" "observation_context_admitted p"
+    "\<forall>t\<in>set ts. observation_row_admitted t"
+    using first by (auto simp only: observation_filter.exact factor_term.inject)
+  obtain F c where ctx: "p=Pair_Term (data_list_term F) c"
+    "data_elements F" "term_formed c" "self_contained_term c" using read(2) by blast
+  obtain rows where table: "ts=map observation_row_term rows" "observation_rows_data rows"
+    using read(3) by (simp only: observation_rows_present) blast
+  show ?thesis using ctx read(1) table by blast
+qed
+
+theorem observation_profile_exact:
+  "(301,t)\<in>positive_meaning observation_system \<longleftrightarrow> observation_profile_result t"
+proof
+  assume holds: "(301,t)\<in>positive_meaning observation_system"
+  obtain p input q where shape: "t=context_relation_argument p input q"
+    using holds by (auto simp only: observation_profile_calls)
+  obtain F rows c where source: "p=Pair_Term (data_list_term F) c"
+    "input=data_list_term (map observation_row_term rows)"
+    "data_elements F" "term_formed c" "self_contained_term c" "observation_rows_data rows"
+    using observation_profile_input[OF holds[unfolded shape]] by blast
+  have result: "q=data_list_term (map observation_value_term (observation_profile_list F rows c))"
+    using holds by (simp only: shape source observation_encoded_profile)
+  show "observation_profile_result t" using shape source result by blast
+next
+  assume "observation_profile_result t"
+  then obtain F rows c where source: "data_elements F" "term_formed c" "self_contained_term c"
+    "observation_rows_data rows"
+    "t=context_relation_argument (Pair_Term (data_list_term F) c)
+      (data_list_term (map observation_row_term rows))
+      (data_list_term (map observation_value_term (observation_profile_list F rows c)))" by blast
+  show "(301,t)\<in>positive_meaning observation_system"
+    using source by (simp only: observation_encoded_profile)
+qed
+
+abbreviation observation_losses_result :: "factor_term \<Rightarrow> bool" where
+  "observation_losses_result t \<equiv> \<exists>F rows c d.
+    data_elements F \<and> data_elements [c,d] \<and> observation_rows_data rows \<and>
+    t=context_relation_argument (Pair_Term (data_list_term F) (Pair_Term c d))
+      (data_list_term (map observation_row_term rows))
+      (data_list_term (map observation_value_term (observation_losses_list F rows c d)))"
+
+theorem observation_losses_exact:
+  "(306,t)\<in>positive_meaning observation_system \<longleftrightarrow> observation_losses_result t"
+proof
+  assume holds: "(306,t)\<in>positive_meaning observation_system"
+  obtain facets c d input q l where parts:
+    "t=context_relation_argument (Pair_Term facets (Pair_Term c d)) input q"
+    "(301,context_relation_argument (Pair_Term facets c) input l)\<in>positive_meaning observation_system"
+    using holds by (auto simp only: observation_losses_calls)
+  obtain F rows c' where source: "Pair_Term facets c=Pair_Term (data_list_term F) c'"
+    "input=data_list_term (map observation_row_term rows)"
+    "data_elements F" "term_formed c'" "self_contained_term c'" "observation_rows_data rows"
+    using observation_profile_input[OF parts(2)] by blast
+  have facets: "facets=data_list_term F" using source(1) by simp
+  have result: "data_elements F \<and> data_elements [c,d] \<and> observation_rows_data rows \<and>
+      q=data_list_term (map observation_value_term (observation_losses_list F rows c d))"
+    using holds by (simp only: parts(1) facets source(2) observation_encoded_losses) blast
+  show "observation_losses_result t" using result parts(1) facets source(2) by blast
+next
+  assume "observation_losses_result t"
+  then obtain F rows c d where source: "data_elements F" "data_elements [c,d]" "observation_rows_data rows"
+    "t=context_relation_argument (Pair_Term (data_list_term F) (Pair_Term c d))
+      (data_list_term (map observation_row_term rows))
+      (data_list_term (map observation_value_term (observation_losses_list F rows c d)))" by blast
+  show "(306,t)\<in>positive_meaning observation_system"
+    using source by (simp only: observation_encoded_losses)
+qed
+
+text \<open>
+  These equivalences cover every argument term. The native calls supply the
+  full input boundary before the encoded equations determine the result.
+  The reconstruction uses the existing general finite-list witness theorem;
+  it adds no decoding oracle or special case for an empty table.
+\<close>
+
+end

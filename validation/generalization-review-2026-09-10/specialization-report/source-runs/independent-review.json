@@ -1,0 +1,251 @@
+{
+  "scope": "Supplied saved finite computations and recorded artifacts; independent subject meanings and coverage require review",
+  "summary": {
+    "receipts": 3,
+    "computations": {
+      "matches independent reconstruction": 3
+    },
+    "statuses": {
+      "evaluated": 3
+    },
+    "distinct_evaluation_states": 3,
+    "formed_runs_with_required_withdrawals": 0,
+    "formed_runs_with_new_missing_after_withdrawal": 0
+  },
+  "runs": [
+    {
+      "path": "/tmp/generalization-quality-review/scheme-all-sources-before/receipt.json",
+      "receipt_sha256": "7ea235b5ba4a6bac2ebfaf19f07a8145a154763a1177b8aa4bc2bc9547c7f7cd",
+      "status": "evaluated",
+      "kind": "inference",
+      "question": "Which exact proof-context conditions remain for the requested sources?",
+      "scope": {
+        "roots": [
+          "Factor_Scheme_Observations",
+          "Factor_Reasoning_Execution"
+        ],
+        "complete_for": "These finite local import closures",
+        "external_context": {
+          "base": "HOL",
+          "isabelle_version": "Isabelle2025-2"
+        }
+      },
+      "semantic_boundary": "This is conditional proof-source readiness. Import edges and source presence do not prove declarations. Local checks may be discharged together by one accepted session.",
+      "computation": "matches independent reconstruction",
+      "mismatches": [],
+      "checked_fields": [
+        "input_formed",
+        "residual",
+        "demand",
+        "reasons"
+      ],
+      "facts": {
+        "input_formed": true,
+        "rule_count": 5,
+        "invalid_rule_count": 0,
+        "known_count": 297,
+        "goal_count": 2,
+        "closure_count": 297,
+        "residual_count": 2,
+        "demand_count": 16,
+        "reason_count": 15,
+        "evaluation_signature": "c393830d48b576150af138a846bbf48f0fc53f5ab7aab687977c9325100ab2eb"
+      },
+      "artifacts": {
+        "counts": {
+          "matches": 639,
+          "changed": 4
+        },
+        "issues": [
+          {
+            "role": "external case evidence",
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Scheme_Local_Readings.thy",
+            "sha256": "216a4e0b5aa4f61257b84fd08c38a156aea83119b8fb66e6145a7a4e4e57d1da",
+            "state": "changed",
+            "archive": "/tmp/generalization-quality-review/scheme-all-sources-before/evidence-19e39752-0e06-498c-a2e1-fa75fcc2b0b4/216a4e0b5aa4f61257b84fd08c38a156aea83119b8fb66e6145a7a4e4e57d1da",
+            "archive_matches": true
+          },
+          {
+            "role": "external case evidence",
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Scheme_Observations.thy",
+            "sha256": "c571a777806eedb1016c1e25576558e95d9d7ce0dc5628c5f73970eba60aa1c6",
+            "state": "changed",
+            "archive": "/tmp/generalization-quality-review/scheme-all-sources-before/evidence-19e39752-0e06-498c-a2e1-fa75fcc2b0b4/c571a777806eedb1016c1e25576558e95d9d7ce0dc5628c5f73970eba60aa1c6",
+            "archive_matches": true
+          },
+          {
+            "role": "external case evidence",
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Specialization_Report_Reasoning.thy",
+            "sha256": "0342acf9d9419051ece02a45737e45d9adbcac6d52378137d569712491e16113",
+            "state": "changed",
+            "archive": "/tmp/generalization-quality-review/scheme-all-sources-before/evidence-19e39752-0e06-498c-a2e1-fa75fcc2b0b4/0342acf9d9419051ece02a45737e45d9adbcac6d52378137d569712491e16113",
+            "archive_matches": true
+          },
+          {
+            "role": "external case evidence",
+            "path": "/home/julius/structure_and_semantics/validation/build.json",
+            "sha256": "03d8374f27b1388f12c4ced2f92ae1e7223a808d4832b60eb77e19c9757d8c50",
+            "state": "changed",
+            "archive": "/tmp/generalization-quality-review/scheme-all-sources-before/evidence-19e39752-0e06-498c-a2e1-fa75fcc2b0b4/03d8374f27b1388f12c4ced2f92ae1e7223a808d4832b60eb77e19c9757d8c50",
+            "archive_matches": true
+          }
+        ],
+        "checked_roles": {
+          "saved case": 1,
+          "generated engine": 1,
+          "runtime": 1,
+          "runtime program": 1,
+          "proof receipt": 1,
+          "run log": 1,
+          "original execution tool": 2,
+          "engine snapshot": 27,
+          "external case evidence": 303,
+          "archived case evidence": 303,
+          "archived execution tool": 2
+        }
+      }
+    },
+    {
+      "path": "/tmp/generalization-quality-review/scheme-sources-before/receipt.json",
+      "receipt_sha256": "d752096b4b05f94740630383c279009370cb680c101a0b17eba5e8be49366223",
+      "status": "evaluated",
+      "kind": "inference",
+      "question": "Which exact proof-context conditions remain for the requested sources?",
+      "scope": {
+        "roots": [
+          "Factor_Scheme_Local_Readings"
+        ],
+        "complete_for": "These finite local import closures",
+        "external_context": {
+          "base": "HOL",
+          "isabelle_version": "Isabelle2025-2"
+        }
+      },
+      "semantic_boundary": "This is conditional proof-source readiness. Import edges and source presence do not prove declarations. Local checks may be discharged together by one accepted session.",
+      "computation": "matches independent reconstruction",
+      "mismatches": [],
+      "checked_fields": [
+        "input_formed",
+        "residual",
+        "demand",
+        "reasons"
+      ],
+      "facts": {
+        "input_formed": true,
+        "rule_count": 1,
+        "invalid_rule_count": 0,
+        "known_count": 237,
+        "goal_count": 1,
+        "closure_count": 237,
+        "residual_count": 1,
+        "demand_count": 4,
+        "reason_count": 3,
+        "evaluation_signature": "0f73b32be0020d94323c59ed1b396d9c91dfdddc39b39faab12789596c1e4e14"
+      },
+      "artifacts": {
+        "counts": {
+          "matches": 513,
+          "changed": 2
+        },
+        "issues": [
+          {
+            "role": "external case evidence",
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Scheme_Local_Readings.thy",
+            "sha256": "1ca711d04eade169c8661a7c40968ab6218c13b1e9c168ca0f41f340de0d73b3",
+            "state": "changed",
+            "archive": "/tmp/generalization-quality-review/scheme-sources-before/evidence-6634d4ce-3436-49d2-8eed-e6391270a43e/1ca711d04eade169c8661a7c40968ab6218c13b1e9c168ca0f41f340de0d73b3",
+            "archive_matches": true
+          },
+          {
+            "role": "external case evidence",
+            "path": "/home/julius/structure_and_semantics/validation/build.json",
+            "sha256": "03d8374f27b1388f12c4ced2f92ae1e7223a808d4832b60eb77e19c9757d8c50",
+            "state": "changed",
+            "archive": "/tmp/generalization-quality-review/scheme-sources-before/evidence-6634d4ce-3436-49d2-8eed-e6391270a43e/03d8374f27b1388f12c4ced2f92ae1e7223a808d4832b60eb77e19c9757d8c50",
+            "archive_matches": true
+          }
+        ],
+        "checked_roles": {
+          "saved case": 1,
+          "generated engine": 1,
+          "runtime": 1,
+          "runtime program": 1,
+          "proof receipt": 1,
+          "run log": 1,
+          "original execution tool": 2,
+          "engine snapshot": 27,
+          "external case evidence": 239,
+          "archived case evidence": 239,
+          "archived execution tool": 2
+        }
+      }
+    },
+    {
+      "path": "/tmp/generalization-quality-review/specialization-report-sources-before/receipt.json",
+      "receipt_sha256": "41328989cc1d644ad4ce9fff864625332882de30b66ecb12bc795b53fd1cb88e",
+      "status": "evaluated",
+      "kind": "inference",
+      "question": "Which exact proof-context conditions remain for the requested sources?",
+      "scope": {
+        "roots": [
+          "Factor_Specialization_Reports"
+        ],
+        "complete_for": "These finite local import closures",
+        "external_context": {
+          "base": "HOL",
+          "isabelle_version": "Isabelle2025-2"
+        }
+      },
+      "semantic_boundary": "This is conditional proof-source readiness. Import edges and source presence do not prove declarations. Local checks may be discharged together by one accepted session.",
+      "computation": "matches independent reconstruction",
+      "mismatches": [],
+      "checked_fields": [
+        "input_formed",
+        "residual",
+        "demand",
+        "reasons"
+      ],
+      "facts": {
+        "input_formed": true,
+        "rule_count": 1,
+        "invalid_rule_count": 0,
+        "known_count": 236,
+        "goal_count": 1,
+        "closure_count": 236,
+        "residual_count": 1,
+        "demand_count": 3,
+        "reason_count": 2,
+        "evaluation_signature": "8315f60550ee5ba2c28d0f36edd307f5a4380e5e13f70106e9963a190f2dc26b"
+      },
+      "artifacts": {
+        "counts": {
+          "matches": 512,
+          "changed": 1
+        },
+        "issues": [
+          {
+            "role": "external case evidence",
+            "path": "/home/julius/structure_and_semantics/validation/build.json",
+            "sha256": "03d8374f27b1388f12c4ced2f92ae1e7223a808d4832b60eb77e19c9757d8c50",
+            "state": "changed",
+            "archive": "/tmp/generalization-quality-review/specialization-report-sources-before/evidence-9886bb0e-2946-4d27-bb72-e34e49e992b9/03d8374f27b1388f12c4ced2f92ae1e7223a808d4832b60eb77e19c9757d8c50",
+            "archive_matches": true
+          }
+        ],
+        "checked_roles": {
+          "saved case": 1,
+          "generated engine": 1,
+          "runtime": 1,
+          "runtime program": 1,
+          "proof receipt": 1,
+          "run log": 1,
+          "original execution tool": 2,
+          "engine snapshot": 27,
+          "external case evidence": 238,
+          "archived case evidence": 238,
+          "archived execution tool": 2
+        }
+      }
+    }
+  ]
+}

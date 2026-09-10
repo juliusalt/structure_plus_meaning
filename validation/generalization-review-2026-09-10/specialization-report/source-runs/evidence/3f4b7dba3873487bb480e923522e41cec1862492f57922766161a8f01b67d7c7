@@ -1,0 +1,515 @@
+theory RRA_Citation_Closure
+  imports RRA_Structural_Syntax
+begin
+
+section \<open>Dependencies projected from complete citation requests\<close>
+
+definition citation_requests_formed ::
+  "'u artifact_environment \<Rightarrow> ('u \<times> local_address) set \<Rightarrow> bool" where
+  "citation_requests_formed E Q \<longleftrightarrow>
+    environment_formed E \<and> finite Q \<and>
+    (\<forall>u r. (u,r) \<in> Q \<longrightarrow> (\<exists>t. anchored_at E u r t))"
+
+definition requested_slots ::
+  "'u artifact_environment \<Rightarrow> ('u \<times> local_address) set \<Rightarrow>
+   ('u \<times> local_address) set" where
+  "requested_slots E Q = {(u,k). \<exists>r R c I.
+    (u,r) \<in> Q \<and> artifact_at E u R \<and> citation_at R r c I \<and> k \<in> citation_slots c}"
+
+definition requested_uses ::
+  "'u artifact_environment \<Rightarrow> ('u \<times> local_address) set \<Rightarrow> 'u set" where
+  "requested_uses E Q = fst ` Q \<union>
+    {v. \<exists>u k. (u,k) \<in> requested_slots E Q \<and> binds_slot E u k v}"
+
+definition request_environment ::
+  "'u artifact_environment \<Rightarrow> ('u \<times> local_address) set \<Rightarrow> 'u artifact_environment" where
+  "request_environment E Q =
+    \<lparr>environment_artifacts = {entry\<in>environment_artifacts E. fst entry \<in> requested_uses E Q},
+      environment_bindings = {entry\<in>environment_bindings E. fst entry \<in> requested_slots E Q}\<rparr>"
+
+lemma citation_requests_union:
+  assumes "citation_requests_formed E Q" "citation_requests_formed E C"
+  shows "citation_requests_formed E (Q\<union>C)"
+  using assms by (auto simp: citation_requests_formed_def)
+
+lemma requested_slots_mono:
+  assumes "Q\<subseteq>C"
+  shows "requested_slots E Q\<subseteq>requested_slots E C"
+  using assms by (auto simp: requested_slots_def)
+
+lemma requested_slot_source:
+  assumes "(u,k) \<in> requested_slots E Q"
+  shows "u \<in> fst ` Q"
+  using assms by (auto simp: requested_slots_def intro: rev_image_eqI)
+
+lemma requested_slot_exists:
+  assumes formed: "citation_requests_formed E Q" and demand: "(u,k) \<in> requested_slots E Q"
+  shows "\<exists>v. binds_slot E u k v"
+proof -
+  obtain r R c I where a: "(u,r) \<in> Q" "artifact_at E u R" "citation_at R r c I" "k \<in> citation_slots c"
+    using demand by (auto simp: requested_slots_def)
+  have ef: "environment_formed E" using formed by (simp add: citation_requests_formed_def)
+  obtain t where "anchored_at E u r t" using formed a(1)
+    by (auto simp: citation_requests_formed_def)
+  then have interpreted: "interpret_citation E u c t"
+    using anchored_at_with_citation[OF ef a(2,3)] by simp
+  show ?thesis using interpreted a(4) by (cases c) auto
+qed
+
+lemma requested_slots_subset:
+  assumes "citation_requests_formed E Q"
+  shows "requested_slots E Q \<subseteq> rel_dom (environment_bindings E)"
+  using requested_slot_exists[OF assms]
+  by (auto simp: rel_dom_def binds_slot_def)
+
+lemma requested_slots_finite:
+  assumes formed: "citation_requests_formed E Q"
+  shows "finite (requested_slots E Q)"
+proof -
+  have fin: "finite (rel_dom (environment_bindings E))"
+    using formed by (auto simp: citation_requests_formed_def environment_formed_def intro: finite_rel_dom)
+  show ?thesis by (rule finite_subset[OF requested_slots_subset[OF formed] fin])
+qed
+
+lemma requested_uses_subset:
+  assumes formed: "citation_requests_formed E Q"
+  shows "requested_uses E Q \<subseteq> environment_uses E"
+proof -
+  have roots: "fst ` Q \<subseteq> environment_uses E"
+    using formed by (auto simp: citation_requests_formed_def anchored_at_def environment_uses_def
+        artifact_at_def rel_dom_def; blast)
+  have targets: "\<And>u k v. binds_slot E u k v \<Longrightarrow> v \<in> environment_uses E"
+    using formed by (auto simp: citation_requests_formed_def environment_formed_def)
+  show ?thesis using roots targets by (auto simp: requested_uses_def)
+qed
+
+lemma requested_uses_finite:
+  assumes formed: "citation_requests_formed E Q"
+  shows "finite (requested_uses E Q)"
+proof -
+  have ef: "environment_formed E" using formed by (simp add: citation_requests_formed_def)
+  show ?thesis by (rule finite_subset[OF requested_uses_subset[OF formed] environment_uses_finite[OF ef]])
+qed
+
+lemma artifact_at_request_environment [simp]:
+  "artifact_at (request_environment E Q) u R \<longleftrightarrow>
+    u \<in> requested_uses E Q \<and> artifact_at E u R"
+  by (auto simp: artifact_at_def request_environment_def)
+
+lemma binds_slot_request_environment [simp]:
+  "binds_slot (request_environment E Q) u k v \<longleftrightarrow>
+    (u,k) \<in> requested_slots E Q \<and> binds_slot E u k v"
+  by (auto simp: binds_slot_def request_environment_def)
+
+lemma request_environment_uses:
+  assumes "citation_requests_formed E Q"
+  shows "environment_uses (request_environment E Q) = requested_uses E Q"
+  using requested_uses_subset[OF assms]
+  by (auto simp: environment_uses_def request_environment_def rel_dom_def)
+
+lemma request_environment_domain:
+  assumes "citation_requests_formed E Q"
+  shows "rel_dom (environment_bindings (request_environment E Q)) = requested_slots E Q"
+  using requested_slots_subset[OF assms]
+  by (auto simp: request_environment_def rel_dom_def)
+
+lemma request_environment_formed:
+  assumes formed: "citation_requests_formed E Q"
+  shows "environment_formed (request_environment E Q)"
+proof -
+  have ef: "environment_formed E" using formed by (simp add: citation_requests_formed_def)
+  have finite_artifacts: "finite (environment_artifacts (request_environment E Q))"
+    and finite_bindings: "finite (environment_bindings (request_environment E Q))"
+    using ef by (auto simp: request_environment_def environment_formed_def)
+  have artifacts_unique: "single_valued (environment_artifacts (request_environment E Q))"
+    and bindings_unique: "single_valued (environment_bindings (request_environment E Q))"
+    using ef by (auto simp: request_environment_def environment_formed_def single_valued_def)
+  have artifacts_formed: "\<And>u R. artifact_at (request_environment E Q) u R \<Longrightarrow> exact_formed R"
+    using ef by (auto simp: environment_formed_def)
+  have bound:
+    "\<And>u k v. binds_slot (request_environment E Q) u k v \<Longrightarrow>
+      (\<exists>R. artifact_at (request_environment E Q) u R \<and> k \<in> rra_carrier (object_structure R)) \<and>
+      v \<in> environment_uses (request_environment E Q)"
+  proof -
+    fix u k v assume binding: "binds_slot (request_environment E Q) u k v"
+    have demand: "(u,k) \<in> requested_slots E Q" and old: "binds_slot E u k v" using binding by auto
+    have source: "u \<in> requested_uses E Q"
+      using requested_slot_source[OF demand] by (simp add: requested_uses_def)
+    have target: "v \<in> requested_uses E Q" using demand old by (auto simp: requested_uses_def)
+    obtain R where art: "artifact_at E u R" and key: "k \<in> rra_carrier (object_structure R)"
+      using ef old unfolding environment_formed_def by blast
+    show "(\<exists>R. artifact_at (request_environment E Q) u R \<and> k \<in> rra_carrier (object_structure R)) \<and>
+      v \<in> environment_uses (request_environment E Q)"
+      using source target art key by (auto simp: request_environment_uses[OF formed])
+  qed
+  show ?thesis using finite_artifacts finite_bindings artifacts_unique bindings_unique artifacts_formed bound
+    by (auto simp: environment_formed_def)
+qed
+
+lemma requested_citation_slots:
+  assumes "(u,r) \<in> Q" "artifact_at E u R" "citation_at R r c I"
+  shows "\<forall>k\<in>citation_slots c. (u,k) \<in> requested_slots E Q"
+  using assms by (auto simp: requested_slots_def)
+
+lemma requested_external_values:
+  assumes "(u,k) \<in> requested_slots E Q"
+  shows "external_slot_values (request_environment E Q) u k = external_slot_values E u k"
+  using assms by (auto simp: external_slot_values_def requested_uses_def)
+
+lemma requested_interpretation:
+  assumes request: "(u,r) \<in> Q" and art: "artifact_at E u R" and cite: "citation_at R r c I"
+  shows "interpret_citation (request_environment E Q) u c t \<longleftrightarrow> interpret_citation E u c t"
+proof (cases "citation_slots c = {}")
+  case True
+  have member: "u \<in> requested_uses E Q"
+    using request by (auto simp: requested_uses_def intro: rev_image_eqI)
+  show ?thesis using True member by (cases c) simp_all
+next
+  case False
+  have agree: "\<forall>k\<in>citation_slots c.
+    external_slot_values (request_environment E Q) u k = external_slot_values E u (id k)"
+    using requested_citation_slots[OF request art cite] requested_external_values[of u _ E Q] by auto
+  have identical: "map_citation_positions (\<lambda>k. k) c = c" by (cases c) simp_all
+  show ?thesis using external_citation_slot_transport[OF False agree, of t] identical by simp
+qed
+
+lemma requested_anchor_preserved:
+  assumes formed: "citation_requests_formed E Q" and request: "(u,r) \<in> Q"
+  shows "anchored_at (request_environment E Q) u r t \<longleftrightarrow> anchored_at E u r t"
+proof -
+  have ef: "environment_formed E" using formed by (simp add: citation_requests_formed_def)
+  have ff: "environment_formed (request_environment E Q)" by (rule request_environment_formed[OF formed])
+  obtain R c I where art: "artifact_at E u R" and cite: "citation_at R r c I"
+    using formed request unfolding citation_requests_formed_def anchored_at_def by blast
+  have member: "u \<in> requested_uses E Q"
+    using request by (auto simp: requested_uses_def intro: rev_image_eqI)
+  have copied: "artifact_at (request_environment E Q) u R" using member art by simp
+  show ?thesis using requested_interpretation[OF request art cite, of t]
+    by (simp only: anchored_at_with_citation[OF ef art cite]
+        anchored_at_with_citation[OF ff copied cite])
+qed
+
+lemma requested_location_preserved:
+  assumes request: "(u,r) \<in> Q" and art: "artifact_at E u R" and cite: "citation_at R r c I"
+  shows "citation_location (request_environment E Q) u c v a \<longleftrightarrow> citation_location E u c v a"
+proof -
+  have member: "u \<in> requested_uses E Q"
+    using request by (auto simp: requested_uses_def intro: rev_image_eqI)
+  have demands: "\<forall>k\<in>citation_slots c. (u,k) \<in> requested_slots E Q"
+    by (rule requested_citation_slots[OF request art cite])
+  show ?thesis using member demands
+    by (cases c) (auto simp: requested_uses_def)
+qed
+
+lemma request_environment_reachable:
+  assumes formed: "citation_requests_formed E Q"
+  shows "environment_reachable (request_environment E Q) (fst ` Q) = requested_uses E Q"
+proof -
+  have ff: "environment_formed (request_environment E Q)" by (rule request_environment_formed[OF formed])
+  have roots: "fst ` Q \<subseteq> environment_uses (request_environment E Q)"
+    by (auto simp: request_environment_uses[OF formed] requested_uses_def)
+  have upper: "environment_reachable (request_environment E Q) (fst ` Q) \<subseteq> requested_uses E Q"
+    using environment_reachable_in_uses[OF ff roots] by (simp add: request_environment_uses[OF formed])
+  have lower: "requested_uses E Q \<subseteq> environment_reachable (request_environment E Q) (fst ` Q)"
+  proof
+    fix v assume member: "v \<in> requested_uses E Q"
+    show "v \<in> environment_reachable (request_environment E Q) (fst ` Q)"
+    proof (cases "v \<in> fst ` Q")
+      case True
+      then show ?thesis using environment_roots_reachable[of "fst ` Q" "request_environment E Q"] by blast
+    next
+      case False
+      obtain u k where demand: "(u,k) \<in> requested_slots E Q" and binding: "binds_slot E u k v"
+        using member False by (auto simp: requested_uses_def)
+      have source: "u \<in> fst ` Q" by (rule requested_slot_source[OF demand])
+      have edge: "(u,v) \<in> environment_edges (request_environment E Q)"
+        using demand binding by (auto simp: environment_edges_def)
+      show ?thesis using source edge by (auto simp: environment_reachable_def)
+    qed
+  qed
+  show ?thesis using upper lower by blast
+qed
+
+theorem request_environment_closed:
+  assumes formed: "citation_requests_formed E Q"
+  shows "environment_closed (request_environment E Q) (fst ` Q) (requested_slots E Q)"
+  using request_environment_formed[OF formed] request_environment_reachable[OF formed]
+    request_environment_domain[OF formed] request_environment_uses[OF formed]
+  by (auto simp: environment_closed_def requested_uses_def)
+
+section \<open>The finite bound on structural read locations\<close>
+
+lemma request_environment_included:
+  "environment_included (request_environment E Q) E"
+  by (auto simp: environment_included_def request_environment_def)
+
+lemma requested_slots_after_restriction [simp]:
+  "requested_slots (request_environment E Q) Q = requested_slots E Q"
+proof
+  show "requested_slots (request_environment E Q) Q \<subseteq> requested_slots E Q"
+    by (auto simp: requested_slots_def)
+  show "requested_slots E Q \<subseteq> requested_slots (request_environment E Q) Q"
+  proof
+    fix demand assume "demand \<in> requested_slots E Q"
+    then obtain u k r R c I where eq: "demand = (u,k)" and request: "(u,r) \<in> Q"
+      and art: "artifact_at E u R" and cite: "citation_at R r c I" and slot: "k \<in> citation_slots c"
+      by (auto simp: requested_slots_def)
+    have member: "u \<in> requested_uses E Q"
+      using request by (auto simp: requested_uses_def intro: rev_image_eqI)
+    have copied: "artifact_at (request_environment E Q) u R" using member art by simp
+    show "demand \<in> requested_slots (request_environment E Q) Q"
+      using eq request copied cite slot unfolding requested_slots_def by blast
+  qed
+qed
+
+lemma requested_uses_after_restriction [simp]:
+  "requested_uses (request_environment E Q) Q = requested_uses E Q"
+  by (auto simp: requested_uses_def)
+
+lemma request_environment_idempotent:
+  "request_environment (request_environment E Q) Q=request_environment E Q"
+proof -
+  let ?F="request_environment E Q"
+  have shape: "request_environment ?F Q =
+    \<lparr>environment_artifacts={entry\<in>environment_artifacts ?F. fst entry\<in>requested_uses E Q},
+      environment_bindings={entry\<in>environment_bindings ?F. fst entry\<in>requested_slots E Q}\<rparr>"
+    by (simp only: request_environment_def[of ?F Q]
+      requested_uses_after_restriction requested_slots_after_restriction)
+  show ?thesis by (simp only: shape) (simp add: request_environment_def)
+qed
+
+lemma request_environment_fixed_coverage:
+  assumes uses: "environment_uses E\<subseteq>requested_uses E Q"
+    and slots: "rel_dom (environment_bindings E)\<subseteq>requested_slots E Q"
+  shows "request_environment E Q=E"
+proof -
+  have artifacts: "{entry\<in>environment_artifacts E. fst entry\<in>requested_uses E Q}=environment_artifacts E"
+    using uses by (auto simp: environment_uses_def rel_dom_def)
+  have bindings: "{entry\<in>environment_bindings E. fst entry\<in>requested_slots E Q}=environment_bindings E"
+    using slots by (auto simp: rel_dom_def)
+  show ?thesis using artifacts bindings by (cases E) (simp add: request_environment_def)
+qed
+
+lemma included_anchor:
+  assumes "environment_included E F" "anchored_at E u r t"
+  shows "anchored_at F u r t"
+  using assms unfolding anchored_at_def by (meson included_artifact included_interpretation)
+
+lemma included_located:
+  assumes "environment_included E F" "located_at E u r v a"
+  shows "located_at F u r v a"
+  using assms unfolding located_at_def by (meson included_artifact included_location)
+
+lemma located_at_use_edge:
+  assumes "located_at E u r v a"
+  shows "u = v \<or> (u,v) \<in> environment_edges E"
+proof -
+  obtain R c I where "citation_location E u c v a"
+    using assms unfolding located_at_def by blast
+  then show ?thesis by (cases c) (auto simp: environment_edges_def)
+qed
+
+lemma request_environment_closed_from:
+  assumes formed: "citation_requests_formed E Q"
+    and roots: "roots \<subseteq> fst ` Q"
+    and reaches: "fst ` Q \<subseteq> environment_reachable (request_environment E Q) roots"
+  shows "environment_closed (request_environment E Q) roots (requested_slots E Q)"
+proof -
+  let ?F = "request_environment E Q"
+  have ff: "environment_formed ?F" by (rule request_environment_formed[OF formed])
+  have root_uses: "roots \<subseteq> environment_uses ?F"
+    using roots by (auto simp: request_environment_uses[OF formed] requested_uses_def)
+  have upper: "environment_reachable ?F roots \<subseteq> environment_uses ?F"
+    by (rule environment_reachable_in_uses[OF ff root_uses])
+  have lower: "environment_uses ?F \<subseteq> environment_reachable ?F roots"
+    using environment_reachable_least[OF reaches environment_reachable_edge_closed]
+    by (simp add: request_environment_uses[OF formed] request_environment_reachable[OF formed])
+  show ?thesis
+    using ff root_uses upper lower request_environment_domain[OF formed]
+    by (auto simp: environment_closed_def)
+qed
+
+lemma located_at_with_citation:
+  assumes formed: "environment_formed E" and art: "artifact_at E u R" and cite: "citation_at R r c I"
+  shows "located_at E u r v a \<longleftrightarrow> citation_location E u c v a"
+proof
+  assume "located_at E u r v a"
+  then obtain S d J where other: "artifact_at E u S" "citation_at S r d J" "citation_location E u d v a"
+    by (auto simp: located_at_def)
+  have same: "R = S" by (rule environment_artifact_unique[OF formed art other(1)])
+  have code: "c = d" using citation_at_unique(1)[OF cite] other(2) same by blast
+  show "citation_location E u c v a" using code other(3) by simp
+next
+  assume "citation_location E u c v a"
+  then show "located_at E u r v a" using art cite unfolding located_at_def by blast
+qed
+
+lemma requested_located_preserved:
+  assumes formed: "citation_requests_formed E Q" and request: "(u,r) \<in> Q"
+  shows "located_at (request_environment E Q) u r v a \<longleftrightarrow> located_at E u r v a"
+proof -
+  have ef: "environment_formed E" using formed by (simp add: citation_requests_formed_def)
+  have ff: "environment_formed (request_environment E Q)" by (rule request_environment_formed[OF formed])
+  obtain R c I where art: "artifact_at E u R" and cite: "citation_at R r c I"
+    using formed request unfolding citation_requests_formed_def anchored_at_def by blast
+  have member: "u \<in> requested_uses E Q"
+    using request by (auto simp: requested_uses_def intro: rev_image_eqI)
+  have copied: "artifact_at (request_environment E Q) u R" using member art by simp
+  show ?thesis using requested_location_preserved[OF request art cite, of v a]
+    by (simp only: located_at_with_citation[OF ef art cite]
+        located_at_with_citation[OF ff copied cite])
+qed
+
+definition environment_positions :: "'u artifact_environment \<Rightarrow> ('u \<times> local_address) set" where
+  "environment_positions E = (\<Union>(u,R)\<in>environment_artifacts E. {u} \<times> rra_carrier (object_structure R))"
+
+lemma environment_positions_member [simp]:
+  "(u,a) \<in> environment_positions E \<longleftrightarrow>
+    (\<exists>R. artifact_at E u R \<and> a \<in> rra_carrier (object_structure R))"
+  by (auto simp: environment_positions_def artifact_at_def)
+
+lemma environment_positions_finite:
+  assumes formed: "environment_formed E"
+  shows "finite (environment_positions E)"
+proof -
+  have fin: "finite (environment_artifacts E)" using formed by (simp add: environment_formed_def)
+  show ?thesis
+    unfolding environment_positions_def
+  proof (rule finite_UN_I[OF fin])
+    fix entry assume member: "entry \<in> environment_artifacts E"
+    obtain u R where entry: "entry = (u,R)" by (cases entry)
+    have art: "artifact_at E u R" using member entry by (simp add: artifact_at_def)
+    have rf: "exact_formed R" using formed art unfolding environment_formed_def by blast
+    have carrier: "finite (rra_carrier (object_structure R))"
+      using rf by (simp add: exact_formed_def object_formed_def rra_formed_def)
+    show "finite (case entry of (u,R) \<Rightarrow> {u} \<times> rra_carrier (object_structure R))"
+      using carrier by (simp add: entry)
+  qed
+qed
+
+lemma environment_position_anchor:
+  assumes ef: "environment_formed E" and position: "d\<in>environment_positions E"
+  shows "\<exists>R. artifact_at E (fst d) R \<and> anchor_formed (R,snd d)"
+proof -
+  obtain u a where shape: "d=(u,a)" by (cases d) auto
+  obtain R where source: "artifact_at E u R" "a\<in>rra_carrier (object_structure R)"
+    using position shape by auto
+  have rf: "exact_formed R" using ef source(1) unfolding environment_formed_def by blast
+  show ?thesis using source rf shape by (auto simp: anchor_formed_def)
+qed
+
+lemma environment_position_address:
+  assumes "environment_formed E" "d\<in>environment_positions E"
+  shows "octets_formed (snd d)"
+  using environment_position_anchor[OF assms]
+  by (auto simp: anchor_formed_def exact_formed_def)
+
+lemma environment_positions_included:
+  assumes "environment_included E F"
+  shows "environment_positions E\<subseteq>environment_positions F"
+  using assms by (auto simp: environment_positions_def environment_included_def)
+
+lemma anchored_position_member:
+  assumes "anchored_at E u r t"
+  shows "(u,r) \<in> environment_positions E"
+  using assms by (auto simp: anchored_at_def citation_at_def)
+
+section \<open>Least retained environment material for the requested reads\<close>
+
+lemma request_source_artifact_required:
+  assumes ef: "environment_formed E" and ff: "citation_requests_formed F Q"
+    and included: "environment_included F E" and request: "(u,r) \<in> Q" and art: "artifact_at E u R"
+  shows "artifact_at F u R"
+proof -
+  obtain t where query: "anchored_at F u r t"
+    using ff request unfolding citation_requests_formed_def by blast
+  obtain S where source: "artifact_at F u S" using query unfolding anchored_at_def by blast
+  have old: "artifact_at E u S" by (rule included_artifact[OF included source])
+  have same: "R = S" by (rule environment_artifact_unique[OF ef art old])
+  show ?thesis using source same by simp
+qed
+
+lemma request_binding_required:
+  assumes ef: "environment_formed E" and ff: "citation_requests_formed F Q"
+    and included: "environment_included F E" and demand: "(u,k) \<in> requested_slots E Q"
+    and binding: "binds_slot E u k v"
+  shows "binds_slot F u k v"
+proof -
+  have fformed: "environment_formed F" using ff by (simp add: citation_requests_formed_def)
+  obtain r R c I where request: "(u,r) \<in> Q" and art: "artifact_at E u R"
+    and cite: "citation_at R r c I" and slot: "k \<in> citation_slots c"
+    using demand unfolding requested_slots_def by blast
+  have copied: "artifact_at F u R" by (rule request_source_artifact_required[OF ef ff included request art])
+  obtain t where query: "anchored_at F u r t" using ff request unfolding citation_requests_formed_def by blast
+  have interpreted: "interpret_citation F u c t"
+    using anchored_at_with_citation[OF fformed copied cite] query by simp
+  obtain w where other: "binds_slot F u k w" using interpreted slot by (cases c) auto
+  have old: "binds_slot E u k w" by (rule included_binding[OF included other])
+  have same: "v = w" by (rule environment_binding_unique[OF ef binding old])
+  show ?thesis using other same by simp
+qed
+
+theorem request_environment_least:
+  assumes formed: "citation_requests_formed E Q" and smaller: "citation_requests_formed F Q"
+    and included: "environment_included F E"
+  shows "environment_included (request_environment E Q) F"
+proof -
+  have ef: "environment_formed E" using formed by (simp add: citation_requests_formed_def)
+  have ff: "environment_formed F" using smaller by (simp add: citation_requests_formed_def)
+  have bindings: "environment_bindings (request_environment E Q) \<subseteq> environment_bindings F"
+  proof
+    fix entry assume member: "entry \<in> environment_bindings (request_environment E Q)"
+    obtain u k v where entry: "entry = ((u,k),v)" by (cases entry; cases "fst entry") auto
+    have demand: "(u,k) \<in> requested_slots E Q" and binding: "binds_slot E u k v"
+      using member entry by (auto simp: request_environment_def binds_slot_def)
+    have "binds_slot F u k v" by (rule request_binding_required[OF ef smaller included demand binding])
+    then show "entry \<in> environment_bindings F" by (simp add: entry binds_slot_def)
+  qed
+  have artifacts: "environment_artifacts (request_environment E Q) \<subseteq> environment_artifacts F"
+  proof
+    fix entry assume member: "entry \<in> environment_artifacts (request_environment E Q)"
+    obtain u R where entry: "entry = (u,R)" by (cases entry)
+    have use_member: "u \<in> requested_uses E Q" and art: "artifact_at E u R"
+      using member entry by (auto simp: request_environment_def artifact_at_def)
+    have needed: "artifact_at F u R"
+    proof (cases "u \<in> fst ` Q")
+      case True
+      then obtain r where request: "(u,r) \<in> Q" by auto
+      show ?thesis by (rule request_source_artifact_required[OF ef smaller included request art])
+    next
+      case False
+      obtain v k where demand: "(v,k) \<in> requested_slots E Q" and binding: "binds_slot E v k u"
+        using use_member False by (auto simp: requested_uses_def)
+      have retained: "binds_slot F v k u" by (rule request_binding_required[OF ef smaller included demand binding])
+      have target: "u \<in> environment_uses F" using ff retained unfolding environment_formed_def by blast
+      obtain S where source: "artifact_at F u S" using target
+        by (auto simp: environment_uses_def rel_dom_def artifact_at_def)
+      have old: "artifact_at E u S" by (rule included_artifact[OF included source])
+      have same: "R = S" by (rule environment_artifact_unique[OF ef art old])
+      show ?thesis using source same by simp
+    qed
+    show "entry \<in> environment_artifacts F" using needed by (simp add: entry artifact_at_def)
+  qed
+  show ?thesis using artifacts bindings by (simp add: environment_included_def)
+qed
+
+lemma requested_slots_extension:
+  assumes formed: "environment_formed E" and requests: "citation_requests_formed F Q"
+    and included: "environment_included F E"
+  shows "requested_slots E Q=requested_slots F Q"
+proof -
+  have sources: "\<And>u r R. (u,r)\<in>Q \<Longrightarrow> artifact_at E u R \<Longrightarrow> artifact_at F u R"
+    by (rule request_source_artifact_required[OF formed requests included])
+  show ?thesis using sources included
+    by (auto simp: requested_slots_def; blast intro: included_artifact[OF included])
+qed
+
+text \<open>
+  A request is a use occurrence and a citation root. Slots and observed artifact
+  uses are derived by recognizing those citations. The restriction retains
+  exactly those bindings, including distinct aliases of the same target.
+  Each enclosing grammar must supply its complete request set; it may not
+  substitute a certificate-selected subset.
+\<close>
+
+end

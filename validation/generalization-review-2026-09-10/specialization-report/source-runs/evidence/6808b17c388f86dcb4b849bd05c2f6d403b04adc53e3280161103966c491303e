@@ -1,0 +1,283 @@
+theory Factor_Coordinate_Admission
+  imports Factor_Environment_Comparison Factor_List_Profiles
+begin
+
+section \<open>Natural components follow their existing data structure\<close>
+
+definition natural_successor_schema :: "(nat,nat,nat) factor_schema" where
+  "natural_successor_schema=data_rule (Pattern_Pair (Pattern_Payload []) data_x) {(0,17,data_x)}"
+
+definition natural_admission_clauses :: "(nat \<times> (nat,nat,nat) factor_schema) set" where
+  "natural_admission_clauses={(0,data_list_nil_schema),(1,natural_successor_schema)}"
+
+definition natural_admission_system :: "(nat,nat,nat,nat) schema_system" where
+  "natural_admission_system=add_view_definition environment_comparison_system 17 data_x natural_admission_clauses"
+
+lemma natural_admission_system_formed [simp]: "schema_system_formed natural_admission_system"
+  unfolding natural_admission_system_def
+  by (rule add_recursive_definition_formed[OF environment_comparison_system_formed])
+    (auto simp: natural_admission_clauses_def data_list_nil_schema_def natural_successor_schema_def
+      schema_formed_def schema_dependencies_def single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma natural_admission_definitions [simp]:
+  "system_definitions natural_admission_system={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17}"
+  by (auto simp: natural_admission_system_def)
+
+lemma natural_admission_call:
+  "schema_call_formed natural_admission_system d t \<longleftrightarrow>
+    d\<in>system_definitions natural_admission_system \<and> term_formed t"
+  using added_variable_calls[OF environment_comparison_system_formed
+    natural_admission_system_formed[unfolded natural_admission_system_def] environment_comparison_call]
+  by (simp only: natural_admission_system_def[symmetric])
+
+lemma natural_admission_old_meaning:
+  assumes "d\<in>{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16}"
+  shows "(d,t)\<in>positive_meaning natural_admission_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning environment_comparison_system"
+  using added_definition_preserves_old(2)[OF environment_comparison_system_formed
+    natural_admission_system_formed[unfolded natural_admission_system_def], of d t] assms
+  by (auto simp: natural_admission_system_def)
+
+lemma natural_admission_clause [simp]:
+  "((17,c),S)\<in>system_clauses natural_admission_system \<longleftrightarrow> (c,S)\<in>natural_admission_clauses"
+proof -
+  have owned: "((d,c),S)\<in>system_clauses environment_comparison_system \<Longrightarrow>
+    d\<in>system_definitions environment_comparison_system" for d c S
+    using environment_comparison_system_formed unfolding schema_system_formed_def by blast
+  have absent: "((17,c),S)\<notin>system_clauses environment_comparison_system"
+    by (auto dest: owned)
+  show ?thesis using absent by (simp add: natural_admission_system_def)
+qed
+
+theorem natural_admission_sound:
+  assumes holds: "(17,t)\<in>positive_meaning natural_admission_system"
+  shows "\<exists>n. t=natural_data_term n"
+proof -
+  have invariant: "(17::nat)=17 \<longrightarrow> (\<exists>n. t=natural_data_term n)"
+  proof (rule positive_valuation_induct[OF holds, where property="\<lambda>d t. d=17 \<longrightarrow> (\<exists>n. t=natural_data_term n)"])
+    fix d c S f
+    assume clause: "((d,c),S)\<in>system_clauses natural_admission_system"
+      and assignment: "\<forall>a\<in>schema_variables S. term_formed (f a)"
+      and call: "schema_call_formed natural_admission_system d (evaluate_pattern f (schema_conclusion S))"
+      and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
+        (e,evaluate_pattern f p)\<in>positive_meaning natural_admission_system \<and>
+        (e=17 \<longrightarrow> (\<exists>n. evaluate_pattern f p=natural_data_term n))"
+    show "d=17 \<longrightarrow> (\<exists>n. evaluate_pattern f (schema_conclusion S)=natural_data_term n)"
+    proof
+      assume "d=17"
+      then have cases: "S=data_list_nil_schema \<or> S=natural_successor_schema"
+        using clause by (auto simp: natural_admission_clauses_def)
+      then show "\<exists>n. evaluate_pattern f (schema_conclusion S)=natural_data_term n"
+      proof
+        assume "S=data_list_nil_schema"
+        then show ?thesis by (intro exI[of _ 0]) (simp add: data_list_nil_schema_def)
+      next
+        assume schema: "S=natural_successor_schema"
+        obtain n where tail: "f 0=natural_data_term n"
+          using support[rule_format, of 0 17 data_x] schema by (auto simp: natural_successor_schema_def)
+        show ?thesis by (intro exI[of _ "Suc n"]) (use tail in \<open>simp add: schema natural_successor_schema_def\<close>)
+      qed
+    qed
+  qed
+  show ?thesis using invariant by simp
+qed
+
+theorem natural_admission_complete:
+  "(17,natural_data_term n)\<in>positive_meaning natural_admission_system"
+proof (induction n)
+  case 0
+  have result: "(17,evaluate_pattern (\<lambda>_. Payload_Term []) (schema_conclusion data_list_nil_schema))
+    \<in>positive_meaning natural_admission_system"
+    by (rule ordinary_positive_valuation_step[where c=0])
+      (auto simp: natural_admission_clauses_def data_list_nil_schema_def schema_variables_def
+        natural_admission_call octets_formed_def)
+  show ?case using result by (simp add: data_list_nil_schema_def)
+next
+  case (Suc n)
+  have result: "(17,evaluate_pattern (\<lambda>_. natural_data_term n) (schema_conclusion natural_successor_schema))
+    \<in>positive_meaning natural_admission_system"
+    by (rule ordinary_positive_valuation_step[where c=1])
+      (use Suc.IH in \<open>auto simp: natural_admission_clauses_def natural_successor_schema_def
+        schema_variables_def natural_admission_call octets_formed_def\<close>)
+  show ?case using result by (simp add: natural_successor_schema_def)
+qed
+
+theorem natural_admission_exact:
+  "(17,t)\<in>positive_meaning natural_admission_system \<longleftrightarrow> (\<exists>n. t=natural_data_term n)"
+  using natural_admission_sound natural_admission_complete by blast
+
+section \<open>Every finite word of natural components is admitted\<close>
+
+definition natural_list_system :: "(nat,nat,nat,nat) schema_system" where
+  "natural_list_system=add_view_definition natural_admission_system 18 data_x (list_profile_clauses 17 18)"
+
+lemma natural_list_system_formed [simp]: "schema_system_formed natural_list_system"
+  unfolding natural_list_system_def
+  by (rule add_recursive_definition_formed[OF natural_admission_system_formed])
+    (auto simp: list_profile_clauses_def data_list_nil_schema_def list_step_schema_def
+      schema_formed_def schema_dependencies_def single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma natural_list_definitions [simp]:
+  "system_definitions natural_list_system={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18}"
+  by (auto simp: natural_list_system_def)
+
+lemma natural_list_call:
+  "schema_call_formed natural_list_system d t \<longleftrightarrow>
+    d\<in>system_definitions natural_list_system \<and> term_formed t"
+  using added_variable_calls[OF natural_admission_system_formed
+    natural_list_system_formed[unfolded natural_list_system_def] natural_admission_call]
+  by (simp only: natural_list_system_def[symmetric])
+
+lemma natural_list_old_meaning:
+  assumes "d\<in>{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17}"
+  shows "(d,t)\<in>positive_meaning natural_list_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning natural_admission_system"
+  using added_definition_preserves_old(2)[OF natural_admission_system_formed
+    natural_list_system_formed[unfolded natural_list_system_def], of d t] assms
+  by (auto simp: natural_list_system_def)
+
+lemma natural_list_clause [simp]:
+  "((18,c),S)\<in>system_clauses natural_list_system \<longleftrightarrow> (c,S)\<in>list_profile_clauses 17 18"
+proof -
+  have owned: "((d,c),S)\<in>system_clauses natural_admission_system \<Longrightarrow>
+    d\<in>system_definitions natural_admission_system" for d c S
+    using natural_admission_system_formed unfolding schema_system_formed_def by blast
+  have absent: "((18,c),S)\<notin>system_clauses natural_admission_system" by (auto dest: owned)
+  show ?thesis using absent by (simp add: natural_list_system_def)
+qed
+
+interpretation natural_lists: list_profile natural_list_system 17 18
+  by (rule list_profile.intro) (auto simp: natural_list_call)
+
+lemma natural_list_elements:
+  "(17,t)\<in>positive_meaning natural_list_system \<longleftrightarrow> (\<exists>n. t=natural_data_term n)"
+  using natural_list_old_meaning[of 17 t] natural_admission_exact[of t] by auto
+
+theorem natural_list_exact:
+  "(18,t)\<in>positive_meaning natural_list_system \<longleftrightarrow>
+    (\<exists>xs. t=data_list_term (map natural_data_term xs))"
+proof -
+  have "(18,t)\<in>positive_meaning natural_list_system \<longleftrightarrow>
+    (\<exists>ts. t=data_list_term ts \<and> (\<exists>xs. ts=map natural_data_term xs))"
+    by (simp only: natural_lists.exact natural_list_elements list_range_witnesses)
+  then show ?thesis by blast
+qed
+
+section \<open>The optional-coordinate profile follows its complete existing shape\<close>
+
+definition coordinate_some_schema :: "(nat,nat,nat) factor_schema" where
+  "coordinate_some_schema=data_rule (Pattern_Pair data_x (Pattern_Payload [])) {(0,18,data_x)}"
+
+definition coordinate_admission_clauses :: "(nat \<times> (nat,nat,nat) factor_schema) set" where
+  "coordinate_admission_clauses={(0,data_list_nil_schema),(1,coordinate_some_schema)}"
+
+definition coordinate_admission_system :: "(nat,nat,nat,nat) schema_system" where
+  "coordinate_admission_system=add_view_definition natural_list_system 19 data_x coordinate_admission_clauses"
+
+interpretation coordinate_admission_view: positive_view natural_list_system 19 data_x coordinate_admission_clauses
+  by (rule positive_view.intro)
+    (auto simp: coordinate_admission_clauses_def data_list_nil_schema_def coordinate_some_schema_def
+      schema_formed_def schema_dependencies_def single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma coordinate_admission_system_formed [simp]: "schema_system_formed coordinate_admission_system"
+  using coordinate_admission_view.formed by (simp only: coordinate_admission_system_def)
+
+lemma coordinate_admission_definitions [simp]:
+  "system_definitions coordinate_admission_system={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19}"
+  by (auto simp: coordinate_admission_system_def)
+
+lemma coordinate_admission_call:
+  "schema_call_formed coordinate_admission_system d t \<longleftrightarrow>
+    d\<in>system_definitions coordinate_admission_system \<and> term_formed t"
+  using added_variable_calls[OF natural_list_system_formed
+    coordinate_admission_system_formed[unfolded coordinate_admission_system_def] natural_list_call]
+  by (simp only: coordinate_admission_system_def[symmetric])
+
+lemma coordinate_admission_previous_meaning:
+  assumes "d\<in>{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18}"
+  shows "(d,t)\<in>positive_meaning coordinate_admission_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning natural_list_system"
+  using coordinate_admission_view.old_meaning[of d t] assms by (simp add: coordinate_admission_system_def)
+
+theorem coordinate_admission_old_meaning:
+  assumes "d\<in>{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16}"
+  shows "(d,t)\<in>positive_meaning coordinate_admission_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning environment_comparison_system"
+  using coordinate_admission_previous_meaning[of d t] natural_list_old_meaning[of d t]
+    natural_admission_old_meaning[OF assms, of t] assms by auto
+
+lemma coordinate_admission_clause [simp]:
+  "((19,c),S)\<in>system_clauses coordinate_admission_system \<longleftrightarrow> (c,S)\<in>coordinate_admission_clauses"
+  using coordinate_admission_view.no_old_clause[of c S] by (auto simp: coordinate_admission_system_def)
+
+lemma coordinate_admission_lists:
+  "(18,t)\<in>positive_meaning coordinate_admission_system \<longleftrightarrow>
+    (\<exists>xs. t=data_list_term (map natural_data_term xs))"
+  using coordinate_admission_previous_meaning[of 18 t] natural_list_exact[of t] by auto
+
+theorem coordinate_admission_exact:
+  "(19,t)\<in>positive_meaning coordinate_admission_system \<longleftrightarrow> (\<exists>u. t=use_data_term u)"
+proof
+  assume holds: "(19,t)\<in>positive_meaning coordinate_admission_system"
+  have consequence: "(19,t)\<in>schema_consequences coordinate_admission_system (positive_meaning coordinate_admission_system)"
+    using holds positive_meaning_unfold[of coordinate_admission_system] by blast
+  obtain c S v where clause: "((19,c),S)\<in>system_clauses coordinate_admission_system"
+    and head: "t=evaluate_pattern v (schema_conclusion S)"
+    and support: "\<forall>s d p. (s,d,p)\<in>schema_premises S \<longrightarrow>
+      (d,evaluate_pattern v p)\<in>positive_meaning coordinate_admission_system"
+    using schema_consequences_valuationD[OF consequence] by blast
+  have cases: "S=data_list_nil_schema \<or> S=coordinate_some_schema"
+    using clause by (auto simp: coordinate_admission_clauses_def)
+  from cases show "\<exists>u. t=use_data_term u"
+  proof
+    assume schema: "S=data_list_nil_schema"
+    show ?thesis by (intro exI[of _ None]) (use head schema in \<open>simp add: data_list_nil_schema_def\<close>)
+  next
+    assume schema: "S=coordinate_some_schema"
+    have child: "(18,v 0)\<in>positive_meaning coordinate_admission_system"
+      using support schema by (auto simp: coordinate_some_schema_def)
+    obtain xs where field: "v 0=data_list_term (map natural_data_term xs)"
+      using child by (auto simp: coordinate_admission_lists)
+    show ?thesis by (intro exI[of _ "Some xs"])
+      (use head schema field in \<open>simp add: coordinate_some_schema_def\<close>)
+  qed
+next
+  assume "\<exists>u. t=use_data_term u"
+  then obtain u where shape: "t=use_data_term u" by blast
+  have "(19,use_data_term u)\<in>positive_meaning coordinate_admission_system"
+  proof (cases u)
+    case None
+    have result: "(19,evaluate_pattern (\<lambda>_. Payload_Term []) (schema_conclusion data_list_nil_schema))
+      \<in>positive_meaning coordinate_admission_system"
+      by (rule ordinary_positive_valuation_step[where c=0])
+        (auto simp: coordinate_admission_clauses_def data_list_nil_schema_def schema_variables_def
+          coordinate_admission_call octets_formed_def)
+    show ?thesis using result None by (simp add: data_list_nil_schema_def)
+  next
+    case (Some xs)
+    have child: "(18,data_list_term (map natural_data_term xs))\<in>positive_meaning coordinate_admission_system"
+      by (auto simp: coordinate_admission_lists)
+    have result: "(19,evaluate_pattern (\<lambda>_. data_list_term (map natural_data_term xs))
+      (schema_conclusion coordinate_some_schema))\<in>positive_meaning coordinate_admission_system"
+      by (rule ordinary_positive_valuation_step[where c=1])
+        (use child in \<open>auto simp: coordinate_admission_clauses_def coordinate_some_schema_def schema_variables_def
+          coordinate_admission_call data_list_term_formed octets_formed_def\<close>)
+    show ?thesis using result Some by (simp add: coordinate_some_schema_def)
+  qed
+  then show "(19,t)\<in>positive_meaning coordinate_admission_system" using shape by simp
+qed
+
+text \<open>
+  These three ordinary definitions recognize the existing natural-component,
+  finite-word, and optional-coordinate presentations exactly. No new coordinate
+  encoding or payload interpretation is introduced. Every natural component
+  is permitted, including those greater than the byte range. The selected
+  structural definition determines which profile a supplied value is checked
+  against; the value alone carries no nominal role tag.
+
+  The list definition uses the common complete-list clause family. All
+  earlier program interfaces and meanings are preserved. The complete
+  program has twenty definitions and thirty-eight clauses.
+\<close>
+
+end

@@ -1,0 +1,136 @@
+{
+  "scope": "Supplied saved finite computations and recorded artifacts; independent subject meanings and coverage require review",
+  "summary": {
+    "receipts": 2,
+    "computations": {
+      "matches independent reconstruction": 2
+    },
+    "statuses": {
+      "evaluated": 2
+    },
+    "distinct_evaluation_states": 2,
+    "formed_runs_with_required_withdrawals": 0,
+    "formed_runs_with_new_missing_after_withdrawal": 0
+  },
+  "runs": [
+    {
+      "path": "/tmp/generalization-quality-review/scheme-all-five-after-main/receipt.json",
+      "receipt_sha256": "32b494fd323f12ccf14d030b39a03bde73b356fa1721b1b31c64e9d733ee5426",
+      "status": "evaluated",
+      "kind": "inference",
+      "question": "Which exact proof-context conditions remain for the requested sources?",
+      "scope": {
+        "roots": [
+          "Factor_Scheme_Local_Readings",
+          "Factor_Specialization_Reports",
+          "Factor_Scheme_Observations",
+          "Factor_Specialization_Report_Reasoning",
+          "Factor_Specialization_Report_Programs"
+        ],
+        "complete_for": "These finite local import closures",
+        "external_context": {
+          "base": "HOL",
+          "isabelle_version": "Isabelle2025-2"
+        }
+      },
+      "semantic_boundary": "This is conditional proof-source readiness. Import edges and source presence do not prove declarations. Local checks may be discharged together by one accepted session.",
+      "computation": "matches independent reconstruction",
+      "mismatches": [],
+      "checked_fields": [
+        "input_formed",
+        "residual",
+        "demand",
+        "reasons"
+      ],
+      "facts": {
+        "input_formed": true,
+        "rule_count": 0,
+        "invalid_rule_count": 0,
+        "known_count": 253,
+        "goal_count": 5,
+        "closure_count": 253,
+        "residual_count": 0,
+        "demand_count": 5,
+        "reason_count": 0,
+        "evaluation_signature": "815aea37be94990549c77f9402dfa6608f99af786c4b2888a2d2fad70aabdec2"
+      },
+      "artifacts": {
+        "counts": {
+          "matches": 545
+        },
+        "issues": [],
+        "checked_roles": {
+          "saved case": 1,
+          "generated engine": 1,
+          "runtime": 1,
+          "runtime program": 1,
+          "proof receipt": 1,
+          "run log": 1,
+          "original execution tool": 2,
+          "engine snapshot": 27,
+          "external case evidence": 254,
+          "archived case evidence": 254,
+          "archived execution tool": 2
+        }
+      }
+    },
+    {
+      "path": "/tmp/generalization-quality-review/scheme-sources-after-main/receipt.json",
+      "receipt_sha256": "86487d7f10c4841f9a9b1cf683ccfce1649ab36f89b0b6ee12abc03e0cddb553",
+      "status": "evaluated",
+      "kind": "inference",
+      "question": "Which exact proof-context conditions remain for the requested sources?",
+      "scope": {
+        "roots": [
+          "Factor_Scheme_Observations",
+          "Factor_Reasoning_Execution"
+        ],
+        "complete_for": "These finite local import closures",
+        "external_context": {
+          "base": "HOL",
+          "isabelle_version": "Isabelle2025-2"
+        }
+      },
+      "semantic_boundary": "This is conditional proof-source readiness. Import edges and source presence do not prove declarations. Local checks may be discharged together by one accepted session.",
+      "computation": "matches independent reconstruction",
+      "mismatches": [],
+      "checked_fields": [
+        "input_formed",
+        "residual",
+        "demand",
+        "reasons"
+      ],
+      "facts": {
+        "input_formed": true,
+        "rule_count": 0,
+        "invalid_rule_count": 0,
+        "known_count": 302,
+        "goal_count": 2,
+        "closure_count": 302,
+        "residual_count": 0,
+        "demand_count": 2,
+        "reason_count": 0,
+        "evaluation_signature": "e037356a19678018a2fbf24dda171495afda22a85ec1e5d1d921dd6eaf81714a"
+      },
+      "artifacts": {
+        "counts": {
+          "matches": 643
+        },
+        "issues": [],
+        "checked_roles": {
+          "saved case": 1,
+          "generated engine": 1,
+          "runtime": 1,
+          "runtime program": 1,
+          "proof receipt": 1,
+          "run log": 1,
+          "original execution tool": 2,
+          "engine snapshot": 27,
+          "external case evidence": 303,
+          "archived case evidence": 303,
+          "archived execution tool": 2
+        }
+      }
+    }
+  ]
+}

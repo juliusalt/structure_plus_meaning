@@ -1,0 +1,342 @@
+theory Factor_Bag_Difference
+  imports Factor_Bag_Presentations Factor_System_Composition
+begin
+
+section \<open>A complete list records every required inequality\<close>
+
+definition data_absence_system :: "(nat,nat,nat,nat) schema_system" where
+  "data_absence_system=add_view_definition bag_comparison_system 132 data_x (context_list_clauses 3 132)"
+
+lemma data_absence_system_formed [simp]: "schema_system_formed data_absence_system"
+  unfolding data_absence_system_def
+  by (rule add_recursive_definition_formed[OF bag_comparison_system_formed])
+    (auto simp: context_list_clauses_def context_list_nil_schema_def context_list_step_schema_def
+      schema_formed_def schema_dependencies_def single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma data_absence_definitions [simp]:
+  "system_definitions data_absence_system=insert 132 (system_definitions bag_comparison_system)"
+  by (simp add: data_absence_system_def)
+
+lemma data_absence_call:
+  "schema_call_formed data_absence_system d t \<longleftrightarrow>
+    d\<in>system_definitions data_absence_system \<and> term_formed t"
+proof -
+  have prior: "schema_call_formed bag_comparison_system d t \<longleftrightarrow>
+      d\<in>system_definitions bag_comparison_system \<and> term_formed t" for d t
+    by (simp add: bag_comparison_call)
+  show ?thesis using added_variable_calls[OF bag_comparison_system_formed
+    data_absence_system_formed[unfolded data_absence_system_def] prior]
+    by (simp only: data_absence_system_def[symmetric])
+qed
+
+lemma data_absence_old_meaning:
+  assumes "d\<in>system_definitions bag_comparison_system"
+  shows "(d,t)\<in>positive_meaning data_absence_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning bag_comparison_system"
+  using added_definition_preserves_old(2)[OF bag_comparison_system_formed
+    data_absence_system_formed[unfolded data_absence_system_def], of d t] assms
+  by (auto simp: data_absence_system_def)
+
+lemma data_absence_clause [simp]:
+  "((132,c),S)\<in>system_clauses data_absence_system \<longleftrightarrow> (c,S)\<in>context_list_clauses 3 132"
+proof -
+  have owned: "((132,c),S)\<in>system_clauses bag_comparison_system \<Longrightarrow>
+    132\<in>system_definitions bag_comparison_system"
+    using bag_comparison_system_formed unfolding schema_system_formed_def by blast
+  have absent: "((132,c),S)\<notin>system_clauses bag_comparison_system" using owned by auto
+  show ?thesis using absent by (simp add: data_absence_system_def)
+qed
+
+interpretation data_absence: context_list_profile data_absence_system 3 132
+  by (rule context_list_profile.intro) (auto simp: data_absence_call)
+
+lemma data_absence_comparison:
+  "(3,t)\<in>positive_meaning data_absence_system \<longleftrightarrow> (3,t)\<in>positive_meaning data_comparison_system"
+  using data_absence_old_meaning[of 3 t] bag_comparison_old_meaning[of 3 t] by auto
+
+abbreviation data_absence_result :: "factor_term \<Rightarrow> bool" where
+  "data_absence_result t \<equiv> \<exists>x ys. t=Pair_Term x (data_list_term ys) \<and> term_formed x \<and>
+    (\<forall>y\<in>set ys. term_formed y \<and> self_contained_term x \<and> self_contained_term y \<and> x\<noteq>y)"
+
+theorem data_absence_exact:
+  "(132,t)\<in>positive_meaning data_absence_system \<longleftrightarrow> data_absence_result t"
+  by (auto simp: data_absence.exact data_absence_comparison data_comparison_exact)
+
+corollary data_absence_lists:
+  assumes "term_formed x" "self_contained_term x"
+  shows "(132,Pair_Term x (data_list_term ys))\<in>positive_meaning data_absence_system \<longleftrightarrow>
+    data_elements ys \<and> x\<notin>set ys"
+  using assms by (auto simp: data_absence_exact data_list_term_injective)
+
+section \<open>A difference survives removal of one equal occurrence\<close>
+
+definition bag_extra_schema :: "(nat,nat,nat) factor_schema" where
+  "bag_extra_schema=data_rule (Pattern_Pair (Pattern_Payload []) (Pattern_Pair data_x data_y))
+    {(0,2,data_x),(1,4,data_y)}"
+
+definition bag_missing_schema :: "(nat,nat,nat) factor_schema" where
+  "bag_missing_schema=data_rule (Pattern_Pair (Pattern_Pair data_x data_y) data_z)
+    {(0,2,data_x),(1,4,data_y),(2,132,Pattern_Pair data_x data_z)}"
+
+definition bag_difference_clauses :: "(nat\<times>(nat,nat,nat) factor_schema) set" where
+  "bag_difference_clauses=
+    {(0,bag_extra_schema),(1,bag_missing_schema),(2,bag_step_schema 5 133)}"
+
+definition bag_difference_system :: "(nat,nat,nat,nat) schema_system" where
+  "bag_difference_system=add_view_definition data_absence_system 133 data_x bag_difference_clauses"
+
+lemma bag_difference_system_formed [simp]: "schema_system_formed bag_difference_system"
+  unfolding bag_difference_system_def
+  by (rule add_recursive_definition_formed[OF data_absence_system_formed])
+    (auto simp: bag_difference_clauses_def bag_extra_schema_def bag_missing_schema_def bag_step_schema_def
+      schema_formed_def schema_dependencies_def single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma bag_difference_definitions [simp]:
+  "system_definitions bag_difference_system=insert 133 (system_definitions data_absence_system)"
+  by (simp add: bag_difference_system_def)
+
+lemma bag_difference_call:
+  "schema_call_formed bag_difference_system d t \<longleftrightarrow>
+    d\<in>system_definitions bag_difference_system \<and> term_formed t"
+  using added_variable_calls[OF data_absence_system_formed
+    bag_difference_system_formed[unfolded bag_difference_system_def] data_absence_call]
+  by (simp only: bag_difference_system_def[symmetric])
+
+lemma bag_difference_old_meaning:
+  assumes "d\<in>system_definitions data_absence_system"
+  shows "(d,t)\<in>positive_meaning bag_difference_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning data_absence_system"
+  using added_definition_preserves_old(2)[OF data_absence_system_formed
+    bag_difference_system_formed[unfolded bag_difference_system_def], of d t] assms
+  by (auto simp: bag_difference_system_def)
+
+lemma bag_difference_clause [simp]:
+  "((133,c),S)\<in>system_clauses bag_difference_system \<longleftrightarrow> (c,S)\<in>bag_difference_clauses"
+proof -
+  have owned: "((133,c),S)\<in>system_clauses data_absence_system \<Longrightarrow>
+    133\<in>system_definitions data_absence_system"
+    using data_absence_system_formed unfolding schema_system_formed_def by blast
+  have absent: "((133,c),S)\<notin>system_clauses data_absence_system" using owned by auto
+  show ?thesis using absent by (simp add: bag_difference_system_def)
+qed
+
+lemma bag_difference_bag_meaning:
+  assumes "d\<in>{0,1,2,3,4,5,6}"
+  shows "(d,t)\<in>positive_meaning bag_difference_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning bag_comparison_system"
+  using bag_difference_old_meaning[of d t] data_absence_old_meaning[of d t]
+    assms by auto
+
+lemma bag_difference_base_agreement:
+  "systems_agree_on bag_comparison_system bag_difference_system (system_definitions bag_comparison_system)"
+  by (simp add: bag_difference_system_def data_absence_system_def systems_agree_on_added)
+
+lemma bag_difference_components:
+  "(2,t)\<in>positive_meaning bag_difference_system \<longleftrightarrow> term_formed t \<and> self_contained_term t"
+  "(4,t)\<in>positive_meaning bag_difference_system \<longleftrightarrow> (\<exists>xs. t=data_list_term xs \<and> data_elements xs)"
+  "(5,t)\<in>positive_meaning bag_difference_system \<longleftrightarrow> (5,t)\<in>positive_meaning bag_comparison_system"
+  "(132,t)\<in>positive_meaning bag_difference_system \<longleftrightarrow> (132,t)\<in>positive_meaning data_absence_system"
+  using bag_difference_bag_meaning[of 2 t] bag_comparison_recognizes[of t]
+    bag_difference_bag_meaning[of 4 t] data_list_exact[of t]
+    bag_difference_bag_meaning[of 5 t] bag_difference_old_meaning[of 132 t] by auto
+
+lemma bag_difference_rule:
+  assumes clause: "(c,S)\<in>bag_difference_clauses"
+    and assignment: "\<forall>a\<in>schema_variables S. term_formed (f a)"
+    and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
+      (e,evaluate_pattern f p)\<in>positive_meaning bag_difference_system"
+  shows "(133,evaluate_pattern f (schema_conclusion S))\<in>positive_meaning bag_difference_system"
+proof -
+  have member: "((133,c),S)\<in>system_clauses bag_difference_system" using clause by simp
+  have sf: "schema_formed S" using member bag_difference_system_formed unfolding schema_system_formed_def by blast
+  have ordinary: "schema_material_premises S={}"
+    using clause by (auto simp: bag_difference_clauses_def bag_extra_schema_def bag_missing_schema_def bag_step_schema_def)
+  have formed: "term_formed (evaluate_pattern f (schema_conclusion S))"
+    by (rule evaluate_pattern_formed)
+      (use sf assignment in \<open>auto simp: schema_formed_def schema_variables_def\<close>)
+  have head: "schema_call_formed bag_difference_system 133 (evaluate_pattern f (schema_conclusion S))"
+    using formed by (simp add: bag_difference_call)
+  show ?thesis by (rule ordinary_positive_valuation_step[OF member ordinary assignment head support])
+qed
+
+theorem bag_difference_sound:
+  assumes holds: "(133,t)\<in>positive_meaning bag_difference_system"
+  shows "\<exists>xs ys. t=Pair_Term (data_list_term xs) (data_list_term ys) \<and>
+    data_elements xs \<and> data_elements ys \<and> mset xs\<noteq>mset ys"
+proof -
+  let ?Q="\<lambda>t. \<exists>xs ys. t=Pair_Term (data_list_term xs) (data_list_term ys) \<and>
+    data_elements xs \<and> data_elements ys \<and> mset xs\<noteq>mset ys"
+  have invariant: "(133::nat)=133 \<longrightarrow> ?Q t"
+  proof (rule positive_valuation_induct[OF holds, where property="\<lambda>d t. d=133 \<longrightarrow> ?Q t"])
+    fix d c S f
+    assume clause: "((d,c),S)\<in>system_clauses bag_difference_system"
+      and assignment: "\<forall>a\<in>schema_variables S. term_formed (f a)"
+      and head: "schema_call_formed bag_difference_system d (evaluate_pattern f (schema_conclusion S))"
+      and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
+        (e,evaluate_pattern f p)\<in>positive_meaning bag_difference_system \<and>
+        (e=133 \<longrightarrow> ?Q (evaluate_pattern f p))"
+    show "d=133 \<longrightarrow> ?Q (evaluate_pattern f (schema_conclusion S))"
+    proof
+      assume "d=133"
+      then consider (extra) "S=bag_extra_schema" | (missing) "S=bag_missing_schema"
+        | (step) "S=bag_step_schema 5 133"
+        using clause by (auto simp: bag_difference_clauses_def)
+      then show "?Q (evaluate_pattern f (schema_conclusion S))"
+      proof cases
+        case extra
+        have first: "term_formed (f 0)" "self_contained_term (f 0)"
+          using support extra by (auto simp: bag_extra_schema_def bag_difference_components)
+        obtain ys where tail: "f 1=data_list_term ys" "data_elements ys"
+          using support[rule_format, of 1 4 data_y] extra
+          by (auto simp: bag_extra_schema_def bag_difference_components)
+        show ?thesis by (intro exI[of _ "[]"] exI[of _ "f 0#ys"])
+          (use first tail in \<open>simp add: extra bag_extra_schema_def\<close>)
+      next
+        case missing
+        have first: "term_formed (f 0)" "self_contained_term (f 0)"
+          using support missing by (auto simp: bag_missing_schema_def bag_difference_components)
+        obtain xs where tail: "f 1=data_list_term xs" "data_elements xs"
+          using support[rule_format, of 1 4 data_y] missing
+          by (auto simp: bag_missing_schema_def bag_difference_components)
+        obtain ys where other: "f 2=data_list_term ys" "data_elements ys" "f 0\<notin>set ys"
+          using support[rule_format, of 2 132 "Pattern_Pair data_x data_z"] missing first
+          by (auto simp: bag_missing_schema_def bag_difference_components data_absence_exact)
+        have different: "mset (f 0#xs)\<noteq>mset ys"
+          using other(3) mset_eq_setD[of "f 0#xs" ys] by auto
+        show ?thesis by (intro exI[of _ "f 0#xs"] exI[of _ ys])
+          (use first tail other different in \<open>simp add: missing bag_missing_schema_def\<close>)
+      next
+        case step
+        have selection: "(5,Pair_Term (f 0) (Pair_Term (f 2) (f 3)))\<in>positive_meaning bag_comparison_system"
+          using support step by (auto simp: bag_step_schema_def bag_difference_components)
+        obtain pre post where selected: "f 2=data_list_term (pre@f 0#post)"
+          "f 3=data_list_term (pre@post)" "data_elements (pre@f 0#post)"
+          using data_selection_sound[OF selection] by auto
+        obtain xs zs where tail: "f 1=data_list_term xs" "f 3=data_list_term zs"
+          "data_elements xs" "data_elements zs" "mset xs\<noteq>mset zs"
+          using support[rule_format, of 1 133 "Pattern_Pair data_y data_w"] step
+          by (auto simp: bag_step_schema_def)
+        have residual: "zs=pre@post" using selected(2) tail(2) by (simp add: data_list_term_injective)
+        have different: "mset (f 0#xs)\<noteq>mset (pre@f 0#post)"
+          using tail(5) by (simp add: residual)
+        show ?thesis by (intro exI[of _ "f 0#xs"] exI[of _ "pre@f 0#post"])
+          (use selected tail different in \<open>auto simp: step bag_step_schema_def\<close>)
+      qed
+    qed
+  qed
+  show ?thesis using invariant by simp
+qed
+
+theorem bag_difference_complete:
+  assumes "data_elements xs" "data_elements ys" "mset xs\<noteq>mset ys"
+  shows "(133,Pair_Term (data_list_term xs) (data_list_term ys))\<in>positive_meaning bag_difference_system"
+  using assms
+proof (induction xs arbitrary: ys)
+  case Nil
+  obtain y zs where shape: "ys=y#zs" using Nil.prems(3) by (cases ys) auto
+  have first: "(2,y)\<in>positive_meaning bag_difference_system"
+    and tail: "(4,data_list_term zs)\<in>positive_meaning bag_difference_system"
+    using Nil.prems(2) shape by (auto simp: bag_difference_components data_list_term_injective)
+  let ?f="\<lambda>i::nat. if i=0 then y else data_list_term zs"
+  have result: "(133,evaluate_pattern ?f (schema_conclusion bag_extra_schema))\<in>positive_meaning bag_difference_system"
+    by (rule bag_difference_rule[where c=0])
+      (use Nil.prems(2) shape first tail in \<open>auto simp: bag_difference_clauses_def bag_extra_schema_def
+        schema_variables_def data_list_term_formed\<close>)
+  show ?case using result by (simp add: shape bag_extra_schema_def)
+next
+  case (Cons x xs)
+  show ?case
+  proof (cases "x\<in>set ys")
+    case True
+    obtain pre post where split: "ys=pre@x#post" using split_list[OF True] by blast
+    have data: "data_elements (pre@x#post)" using Cons.prems(2) split by simp
+    have selection: "(5,Pair_Term x (Pair_Term (data_list_term ys) (data_list_term (pre@post))))
+        \<in>positive_meaning bag_difference_system"
+      using data_selection_complete[OF data] split by (simp add: bag_difference_components)
+    have different: "mset xs\<noteq>mset (pre@post)" using Cons.prems(3) by (simp add: split)
+    have tail: "(133,Pair_Term (data_list_term xs) (data_list_term (pre@post)))\<in>positive_meaning bag_difference_system"
+      by (rule Cons.IH) (use Cons.prems(1) data different in auto)
+    let ?f="\<lambda>i::nat. if i=0 then x else if i=1 then data_list_term xs
+      else if i=2 then data_list_term ys else data_list_term (pre@post)"
+    have result: "(133,evaluate_pattern ?f (schema_conclusion (bag_step_schema 5 133)))\<in>positive_meaning bag_difference_system"
+      by (rule bag_difference_rule[where c=2])
+        (use Cons.prems(1,2) data selection tail in \<open>auto simp: bag_difference_clauses_def bag_step_schema_def
+          schema_variables_def data_list_term_formed\<close>)
+    show ?thesis using result by (simp add: bag_step_schema_def)
+  next
+    case False
+    have first: "(2,x)\<in>positive_meaning bag_difference_system"
+      and tail: "(4,data_list_term xs)\<in>positive_meaning bag_difference_system"
+      using Cons.prems(1) by (auto simp: bag_difference_components data_list_term_injective)
+    have absence: "(132,Pair_Term x (data_list_term ys))\<in>positive_meaning bag_difference_system"
+      using Cons.prems(1,2) False by (auto simp: bag_difference_components data_absence_exact)
+    let ?f="\<lambda>i::nat. if i=0 then x else if i=1 then data_list_term xs else data_list_term ys"
+    have result: "(133,evaluate_pattern ?f (schema_conclusion bag_missing_schema))\<in>positive_meaning bag_difference_system"
+      by (rule bag_difference_rule[where c=1])
+        (use Cons.prems(1,2) first tail absence in \<open>auto simp: bag_difference_clauses_def bag_missing_schema_def
+          schema_variables_def data_list_term_formed\<close>)
+    show ?thesis using result by (simp add: bag_missing_schema_def)
+  qed
+qed
+
+abbreviation bag_difference_result :: "factor_term \<Rightarrow> bool" where
+  "bag_difference_result t \<equiv> \<exists>xs ys. t=Pair_Term (data_list_term xs) (data_list_term ys) \<and>
+    data_elements xs \<and> data_elements ys \<and> mset xs\<noteq>mset ys"
+
+theorem bag_difference_exact:
+  "(133,t)\<in>positive_meaning bag_difference_system \<longleftrightarrow> bag_difference_result t"
+  using bag_difference_sound bag_difference_complete by blast
+
+theorem data_bag_difference_presented:
+  "(133,Pair_Term p q)\<in>positive_meaning bag_difference_system \<longleftrightarrow>
+    presented_relation data_bag_value_presents data_bag_value_presents (\<noteq>) p q"
+  by (auto simp: bag_difference_exact presented_relation_def data_bag_value_presents_def; blast)
+
+interpretation data_bag_difference_contract: presented_relation_contract
+  data_bag_value_presents "\<lambda>M. \<forall>a\<in>set_mset M. term_formed a \<and> self_contained_term a"
+    "\<lambda>t. (4,t)\<in>positive_meaning bag_comparison_system"
+  data_bag_value_presents "\<lambda>M. \<forall>a\<in>set_mset M. term_formed a \<and> self_contained_term a"
+    "\<lambda>t. (4,t)\<in>positive_meaning bag_comparison_system"
+  "(\<noteq>)" "\<lambda>p q. (133,Pair_Term p q)\<in>positive_meaning bag_difference_system"
+  by (unfold_locales)
+    (use data_bag_presentations.presentation_class_axioms data_bag_difference_presented in
+      \<open>auto simp: presentation_class_def\<close>)
+
+corollary bag_difference_lists:
+  "(133,Pair_Term (data_list_term xs) (data_list_term ys))\<in>positive_meaning bag_difference_system \<longleftrightarrow>
+    data_elements xs \<and> data_elements ys \<and> mset xs\<noteq>mset ys"
+  by (auto simp: bag_difference_exact data_list_term_injective)
+
+corollary bag_difference_preserves_multiplicity:
+  assumes "term_formed x" "self_contained_term x"
+  shows "(133,Pair_Term (data_list_term [x,x]) (data_list_term [x]))\<in>positive_meaning bag_difference_system"
+  by (rule bag_difference_complete) (use assms in auto)
+
+corollary bag_difference_permutation_invariance:
+  assumes "mset xs=mset xs'" "mset ys=mset ys'" "data_elements xs" "data_elements xs'"
+    "data_elements ys" "data_elements ys'"
+  shows "(133,Pair_Term (data_list_term xs) (data_list_term ys))\<in>positive_meaning bag_difference_system \<longleftrightarrow>
+    (133,Pair_Term (data_list_term xs') (data_list_term ys'))\<in>positive_meaning bag_difference_system"
+  using assms by (simp add: bag_difference_lists)
+
+text \<open>
+  The first definition instantiates the complete context-list traversal with
+  literal data inequality. Its empty case checks context formation; it makes
+  no data-shape claim about a context with no comparisons. The counted-list
+  checker separately admits every data element, including a missing head and
+  every unexamined tail.
+
+  Three ordinary clauses witness an extra occurrence, a head absent from the
+  entire other list, or a remaining difference after removal of one equal
+  occurrence. The recursive clause is the existing bag-step schema. Removal
+  preserves inequality of counts, and every unequal pair has such a finite
+  witness. Equality of membership sets alone would lose counted attachments.
+  No failed call or negation is added to positive meaning.
+
+  The program extends only the existing bag reader. Its meaning is established
+  at that local boundary, and its exact inequality contract is exported for
+  later uses. Program composition preserves the complete old definitions;
+  its native definitions depend only on the existing bag operations.
+\<close>
+
+end

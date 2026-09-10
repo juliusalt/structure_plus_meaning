@@ -109,3 +109,34 @@ nested comparisons, complete keyed calculations, and rules that propose and
 assess development steps. The completed uses establish a working construction
 and conditional-inference connection; they do not establish that every
 required decision is already absorbed by the machinery.
+
+## Complete specialization reports as reusable premises
+
+The local symbolic-inference judgment now factors through an entire checked
+clause specialization. Its equivalence to the existing scheme judgment keeps
+the complete claim domain and every original discharge socket. The specialized
+schema supplies all local variable and material fields. Paired determining
+observations compare symbolic claims injectively and join the two premise
+reports at their common socket and callee.
+
+The ordinary rule at 342 combines the existing complete-specialization reader
+at 294 with the complete schema report at 126. Both premises share the actual
+target reference. Its finite schema decodes to this same ordinary rule and is
+consumed by the existing generation and inference engine. The existing general
+compilation contract supplies one native program before every future report.
+
+The [complete execution evidence](validation/generalization-review-2026-09-10/specialization-report/receipt.json)
+adds eight structural controls to the earlier thirty cases. Adding the rule
+constructs an application with its two identified premises; a different target
+constructs none. Multiple targets, alternative reports, repeated frontier
+entries, separate goal occurrences, and malformed unused data retain their
+declared boundaries. All complete reports match independent reconstruction.
+The eight new controls establish neither reader premise: their known sets are
+empty, and their goals remain unresolved. They test conditional construction,
+not semantic admission of an actual submitted specialization.
+
+This supplies local components for symbolic-argument admission. Native checking
+of the complete graph, its claim table, assertion occurrences, and the final
+extracted rule remains necessary. The machinery must also be used with actual
+admitted source examples and the broader construction arguments identified
+above. The current report rule does not discharge those remaining tasks.

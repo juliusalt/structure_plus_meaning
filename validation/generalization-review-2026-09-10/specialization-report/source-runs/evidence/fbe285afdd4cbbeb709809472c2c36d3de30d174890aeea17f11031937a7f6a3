@@ -1,0 +1,304 @@
+theory Factor_Schema_Family_Admission
+  imports Factor_Schema_Admission
+begin
+
+section \<open>Every socket has its uniquely recovered schema\<close>
+
+lemma native_schema_family_admissible:
+  assumes formed: "environment_formed E" and source: "artifact_at E u R" and family: "family_at R r M"
+  shows "(\<exists>C. native_schema_family_at E u r C) \<longleftrightarrow>
+    (\<forall>s a. (s,a)\<in>M \<longrightarrow> (\<exists>S. native_schema_at E u a S))"
+proof
+  assume "\<exists>C. native_schema_family_at E u r C"
+  then obtain C A N where parts: "artifact_at E u A" "family_at A r N"
+    "\<forall>s a. (s,a)\<in>N \<longrightarrow> (\<exists>S. (s,S)\<in>C \<and> native_schema_at E u a S)"
+    by (auto simp: native_schema_family_at_def)
+  have same: "A=R" by (rule environment_artifact_unique[OF formed parts(1) source])
+  have other: "family_at R r N" using parts(2) same by simp
+  have graph: "N=M" by (rule family_at_unique[OF other family])
+  show "\<forall>s a. (s,a)\<in>M \<longrightarrow> (\<exists>S. native_schema_at E u a S)" using parts(3) graph by blast
+next
+  assume children: "\<forall>s a. (s,a)\<in>M \<longrightarrow> (\<exists>S. native_schema_at E u a S)"
+  let ?J="{(a,S). native_schema_at E u a S}"
+  let ?C="M O ?J"
+  have msv: "single_valued M" using family by (simp add: family_at_def)
+  have jsv: "single_valued ?J" by (auto simp: single_valued_def intro: native_schema_unique)
+  have csv: "single_valued ?C" by (rule relation_join_functional[OF msv jsv])
+  have covered: "rel_ran M\<subseteq>rel_dom ?J" using children by (auto simp: rel_ran_def rel_dom_def)
+  have domain: "rel_dom ?C=rel_dom M" by (rule relation_join_domain[OF covered])
+  have finite: "finite ?C"
+    by (rule finite_single_valued[OF _ csv])
+      (simp only: domain; rule finite_rel_dom[OF family_socket_graph_finite[OF family]])
+  have reading: "\<forall>s a. (s,a)\<in>M \<longrightarrow> (\<exists>S. (s,S)\<in>?C \<and> native_schema_at E u a S)"
+    using children by blast
+  show "\<exists>C. native_schema_family_at E u r C"
+    by (rule exI[of _ ?C])
+      (use formed source family finite csv domain reading in \<open>auto simp: native_schema_family_at_def\<close>)
+qed
+
+section \<open>A complete list carries its actual source into every schema call\<close>
+
+abbreviation schema_root_list_result :: "factor_term \<Rightarrow> bool" where
+  "schema_root_list_result z \<equiv> \<exists>a xs. z=Pair_Term a (data_list_term xs) \<and> term_formed a \<and>
+    (\<forall>x\<in>set xs. schema_admission_result (Pair_Term a x))"
+
+definition schema_root_list_system :: "(nat,nat,nat,nat) schema_system" where
+  "schema_root_list_system=add_view_definition schema_admission_system 70 data_x (context_list_clauses 69 70)"
+
+lemma schema_root_list_system_formed [simp]: "schema_system_formed schema_root_list_system"
+  unfolding schema_root_list_system_def
+  by (rule add_recursive_definition_formed[OF schema_admission_system_formed])
+    (auto simp: context_list_clauses_def context_list_nil_schema_def context_list_step_schema_def
+      schema_formed_def schema_dependencies_def single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma schema_root_list_definitions [simp]:
+  "system_definitions schema_root_list_system=insert 70 (system_definitions schema_admission_system)"
+  by (simp add: schema_root_list_system_def)
+
+lemma schema_root_list_call:
+  "schema_call_formed schema_root_list_system d t \<longleftrightarrow>
+    d\<in>system_definitions schema_root_list_system \<and> term_formed t"
+  using added_variable_calls[OF schema_admission_system_formed
+    schema_root_list_system_formed[unfolded schema_root_list_system_def] schema_admission_call]
+  by (simp only: schema_root_list_system_def[symmetric])
+
+lemma schema_root_list_old_meaning:
+  assumes "d\<in>system_definitions schema_admission_system"
+  shows "(d,t)\<in>positive_meaning schema_root_list_system \<longleftrightarrow> (d,t)\<in>positive_meaning schema_admission_system"
+  using added_definition_preserves_old(2)[OF schema_admission_system_formed
+    schema_root_list_system_formed[unfolded schema_root_list_system_def], of d t] assms
+  by (auto simp: schema_root_list_system_def)
+
+lemma schema_root_list_clause [simp]:
+  "((70,c),S)\<in>system_clauses schema_root_list_system \<longleftrightarrow> (c,S)\<in>(context_list_clauses 69 70)"
+proof -
+  have owned: "((d,c),S)\<in>system_clauses schema_admission_system \<Longrightarrow>
+    d\<in>system_definitions schema_admission_system" for d c S
+    using schema_admission_system_formed unfolding schema_system_formed_def by blast
+  have absent: "((70,c),S)\<notin>system_clauses schema_admission_system" by (auto dest: owned)
+  show ?thesis using absent by (simp add: schema_root_list_system_def)
+qed
+
+lemma schema_root_list_element:
+  "(69,t)\<in>positive_meaning schema_root_list_system \<longleftrightarrow> (69,t)\<in>positive_meaning schema_admission_system"
+  by (rule schema_root_list_old_meaning) simp
+
+interpretation schema_root_list_profile: context_list_profile schema_root_list_system 69 70
+  by (rule context_list_profile.intro) (auto simp: schema_root_list_call)
+
+theorem schema_root_list_exact:
+  "(70,z)\<in>positive_meaning schema_root_list_system \<longleftrightarrow> schema_root_list_result z"
+  by (simp only: schema_root_list_profile.exact schema_root_list_element schema_admission_exact)
+
+corollary schema_root_list_on_values:
+  assumes source: "environment_value_presents E e"
+  shows "(70,Pair_Term (Pair_Term e (use_data_term u)) (data_list_term (map Payload_Term rs)))
+      \<in>positive_meaning schema_root_list_system \<longleftrightarrow>
+    term_formed (Pair_Term e (use_data_term u)) \<and> (\<forall>r\<in>set rs. \<exists>S. native_schema_at E u r S)"
+  by (simp only: schema_root_list_profile.lists schema_root_list_element)
+    (auto simp: schema_admission_on_values[OF source])
+
+section \<open>The complete actual family determines all clause readings\<close>
+
+abbreviation schema_family_admission_result :: "factor_term \<Rightarrow> bool" where
+  "schema_family_admission_result z \<equiv> \<exists>E e u r C.
+    z=source_root_argument e (use_data_term u) (Payload_Term r) \<and>
+    environment_value_presents E e \<and> native_schema_family_at E u r C"
+
+definition schema_family_admission_schema :: "(nat,nat,nat) factor_schema" where
+  "schema_family_admission_schema=data_rule (source_root_pattern data_x data_y data_z)
+    {(0,37,artifact_lookup_pattern data_x data_y data_w),
+     (1,32,Pattern_Pair (Pattern_Pair data_w data_z) (Pattern_Variable 4)),
+     (2,59,Pattern_Pair (Pattern_Variable 4) (Pattern_Variable 5)),
+     (3,70,Pattern_Pair (Pattern_Pair data_x data_y) (Pattern_Variable 5))}"
+
+definition schema_family_admission_system :: "(nat,nat,nat,nat) schema_system" where
+  "schema_family_admission_system=add_view_definition schema_root_list_system 71 data_x {(0,schema_family_admission_schema)}"
+
+lemma schema_family_admission_system_formed [simp]: "schema_system_formed schema_family_admission_system"
+  unfolding schema_family_admission_system_def
+  by (rule add_recursive_definition_formed[OF schema_root_list_system_formed])
+    (auto simp: schema_family_admission_schema_def
+      schema_formed_def schema_dependencies_def single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma schema_family_admission_definitions [simp]:
+  "system_definitions schema_family_admission_system=insert 71 (system_definitions schema_root_list_system)"
+  by (simp add: schema_family_admission_system_def)
+
+lemma schema_family_admission_call:
+  "schema_call_formed schema_family_admission_system d t \<longleftrightarrow>
+    d\<in>system_definitions schema_family_admission_system \<and> term_formed t"
+  using added_variable_calls[OF schema_root_list_system_formed
+    schema_family_admission_system_formed[unfolded schema_family_admission_system_def] schema_root_list_call]
+  by (simp only: schema_family_admission_system_def[symmetric])
+
+lemma schema_family_admission_old_meaning:
+  assumes "d\<in>system_definitions schema_root_list_system"
+  shows "(d,t)\<in>positive_meaning schema_family_admission_system \<longleftrightarrow> (d,t)\<in>positive_meaning schema_root_list_system"
+  using added_definition_preserves_old(2)[OF schema_root_list_system_formed
+    schema_family_admission_system_formed[unfolded schema_family_admission_system_def], of d t] assms
+  by (auto simp: schema_family_admission_system_def)
+
+lemma schema_family_admission_clause [simp]:
+  "((71,c),S)\<in>system_clauses schema_family_admission_system \<longleftrightarrow> (c,S)\<in>{(0,schema_family_admission_schema)}"
+proof -
+  have owned: "((d,c),S)\<in>system_clauses schema_root_list_system \<Longrightarrow>
+    d\<in>system_definitions schema_root_list_system" for d c S
+    using schema_root_list_system_formed unfolding schema_system_formed_def by blast
+  have absent: "((71,c),S)\<notin>system_clauses schema_root_list_system" by (auto dest: owned)
+  show ?thesis using absent by (simp add: schema_family_admission_system_def)
+qed
+
+lemma schema_family_admission_previous_meaning:
+  assumes "d\<in>system_definitions schema_admission_system"
+  shows "(d,t)\<in>positive_meaning schema_family_admission_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning schema_admission_system"
+  using schema_family_admission_old_meaning[of d t] schema_root_list_old_meaning[OF assms, of t] assms by auto
+
+lemma schema_family_admission_components:
+  "(37,t)\<in>positive_meaning schema_family_admission_system \<longleftrightarrow> (37,t)\<in>positive_meaning artifact_lookup_system"
+  "(32,t)\<in>positive_meaning schema_family_admission_system \<longleftrightarrow> (32,t)\<in>positive_meaning family_admission_system"
+  "(59,t)\<in>positive_meaning schema_family_admission_system \<longleftrightarrow> (59,t)\<in>positive_meaning row_values_system"
+  "(70,t)\<in>positive_meaning schema_family_admission_system \<longleftrightarrow> (70,t)\<in>positive_meaning schema_root_list_system"
+  using schema_family_admission_previous_meaning[of 37 t] schema_admission_previous_meaning[of 37 t]
+    schema_instantiation_components(1)[of t]
+    schema_family_admission_previous_meaning[of 32 t] schema_admission_previous_meaning[of 32 t]
+    schema_instantiation_old_meaning[of 32 t] premise_family_instantiation_components(2)[of t]
+    schema_family_admission_previous_meaning[of 59 t] schema_admission_previous_meaning[of 59 t]
+    schema_instantiation_old_meaning[of 59 t] premise_family_instantiation_old_meaning[of 59 t]
+    premise_rows_vector_meaning[of 59 t] vector_instantiation_old_meaning[of 59 t]
+    schema_family_admission_old_meaning[of 70 t] by auto
+
+lemma schema_family_admission_step:
+  assumes lookup: "(37,artifact_lookup_argument e u a)\<in>positive_meaning artifact_lookup_system"
+    and family: "(32,rooted_rows_argument a r rows)\<in>positive_meaning family_admission_system"
+    and projection: "(59,Pair_Term rows roots)\<in>positive_meaning row_values_system"
+    and children: "(70,Pair_Term (Pair_Term e u) roots)\<in>positive_meaning schema_root_list_system"
+  shows "(71,source_root_argument e u r)\<in>positive_meaning schema_family_admission_system"
+proof -
+  have formed: "term_formed e" "term_formed u" "term_formed r" "term_formed a" "term_formed rows" "term_formed roots"
+    using schema_call_formed_target[OF positive_meaning_formed[OF lookup]]
+      schema_call_formed_target[OF positive_meaning_formed[OF family]]
+      schema_call_formed_target[OF positive_meaning_formed[OF projection]] by auto
+  let ?h="\<lambda>n::nat. if n=0 then e else if n=1 then u else if n=2 then r else if n=3 then a
+    else if n=4 then rows else roots"
+  have result: "(71,evaluate_pattern ?h (schema_conclusion schema_family_admission_schema))
+      \<in>positive_meaning schema_family_admission_system"
+    by (rule ordinary_positive_valuation_step[where c=0])
+      (use formed assms in \<open>auto simp: schema_family_admission_schema_def schema_variables_def
+        schema_family_admission_call schema_family_admission_components\<close>)
+  show ?thesis using result by (simp add: schema_family_admission_schema_def)
+qed
+
+theorem schema_family_admission_sound:
+  assumes holds: "(71,z)\<in>positive_meaning schema_family_admission_system"
+  shows "schema_family_admission_result z"
+proof -
+  have consequence: "(71,z)\<in>schema_consequences schema_family_admission_system (positive_meaning schema_family_admission_system)"
+    using holds positive_meaning_unfold[of schema_family_admission_system] by blast
+  obtain n S h where clause: "((71,n),S)\<in>system_clauses schema_family_admission_system"
+    and conclusion: "z=evaluate_pattern h (schema_conclusion S)"
+    and support: "\<forall>s d p. (s,d,p)\<in>schema_premises S \<longrightarrow>
+      (d,evaluate_pattern h p)\<in>positive_meaning schema_family_admission_system"
+    using schema_consequences_valuationD[OF consequence] by blast
+  have schema: "S=schema_family_admission_schema" using clause by simp
+  have calls: "(37,artifact_lookup_argument (h 0) (h 1) (h 3))\<in>positive_meaning artifact_lookup_system"
+    "(32,rooted_rows_argument (h 3) (h 2) (h 4))\<in>positive_meaning family_admission_system"
+    "(59,Pair_Term (h 4) (h 5))\<in>positive_meaning row_values_system"
+    "(70,Pair_Term (Pair_Term (h 0) (h 1)) (h 5))\<in>positive_meaning schema_root_list_system"
+    using support by (auto simp: schema schema_family_admission_schema_def schema_family_admission_components)
+  obtain E u R where source: "environment_value_presents E (h 0)" "h 1=use_data_term u"
+    "artifact_at E u R" "artifact_value_presents R (h 3)"
+    using calls(1) by (simp only: artifact_lookup_exact factor_term.inject) blast
+  obtain r xs where family: "h 2=Payload_Term r" "h 4=data_list_term (map address_pair_data xs)"
+    "distinct xs" "family_at R r (set xs)"
+    using calls(2) by (simp only: family_admission_at_source[OF source(4)]) blast
+  have roots: "h 5=data_list_term (map Payload_Term (map snd xs))"
+    using calls(3) by (simp only: family(2) address_row_values)
+  have children: "\<forall>s a. (s,a)\<in>set xs \<longrightarrow> (\<exists>S. native_schema_at E u a S)"
+    using calls(4) by (simp only: source(2) roots schema_root_list_on_values[OF source(1)]) force
+  have ef: "environment_formed E" using environment_value_presents_formed[OF source(1)] by blast
+  obtain C where raw: "native_schema_family_at E u r C"
+    using iffD2[OF native_schema_family_admissible[OF ef source(3) family(4)] children] by blast
+  show ?thesis
+    by (rule exI[of _ E], rule exI[of _ "h 0"], rule exI[of _ u], rule exI[of _ r], rule exI[of _ C])
+      (use source family raw conclusion in \<open>simp add: schema schema_family_admission_schema_def\<close>)
+qed
+
+theorem schema_family_admission_complete:
+  assumes source: "environment_value_presents E e" and raw: "native_schema_family_at E u r C"
+  shows "(71,source_root_argument e (use_data_term u) (Payload_Term r))\<in>positive_meaning schema_family_admission_system"
+proof -
+  obtain R M where parts: "artifact_at E u R" "family_at R r M"
+    "\<forall>s a. (s,a)\<in>M \<longrightarrow> (\<exists>S. (s,S)\<in>C \<and> native_schema_at E u a S)"
+    using raw by (auto simp: native_schema_family_at_def)
+  have ef: "environment_formed E" using environment_value_presents_formed[OF source] by blast
+  have rf: "exact_formed R" using ef parts(1) by (auto simp: environment_formed_def)
+  obtain a where presented: "artifact_value_presents R a" using artifact_value_presents_total[OF rf] by blast
+  obtain xs where rows: "set xs=M" "distinct xs" using finite_distinct_list[OF family_socket_graph_finite[OF parts(2)]] by blast
+  let ?rows="data_list_term (map address_pair_data xs)"
+  let ?roots="data_list_term (map Payload_Term (map snd xs))"
+  have lookup: "(37,artifact_lookup_argument e (use_data_term u) a)\<in>positive_meaning artifact_lookup_system"
+    using source parts(1) presented by (auto simp: artifact_lookup_exact)
+  have family: "(32,rooted_rows_argument a (Payload_Term r) ?rows)\<in>positive_meaning family_admission_system"
+    by (simp only: family_admission_rows[OF presented]) (use parts(2) rows in auto)
+  have formed: "term_formed ?rows" "term_formed (Pair_Term e (use_data_term u))"
+    using schema_call_formed_target[OF positive_meaning_formed[OF family]]
+      schema_call_formed_target[OF positive_meaning_formed[OF lookup]] by auto
+  have projection: "(59,Pair_Term ?rows ?roots)\<in>positive_meaning row_values_system"
+    by (simp only: address_row_values) (use formed in blast)
+  have children: "(70,Pair_Term (Pair_Term e (use_data_term u)) ?roots)\<in>positive_meaning schema_root_list_system"
+    by (simp only: schema_root_list_on_values[OF source]) (use formed parts(3) rows(1) in \<open>auto; blast\<close>)
+  show ?thesis by (rule schema_family_admission_step[OF lookup family projection children])
+qed
+
+theorem schema_family_admission_exact:
+  "(71,z)\<in>positive_meaning schema_family_admission_system \<longleftrightarrow> schema_family_admission_result z"
+  using schema_family_admission_sound schema_family_admission_complete by blast
+
+corollary schema_family_admission_at_source:
+  assumes source: "environment_value_presents E e"
+  shows "(71,source_root_argument e u r)\<in>positive_meaning schema_family_admission_system \<longleftrightarrow>
+    (\<exists>v a C. u=use_data_term v \<and> r=Payload_Term a \<and> native_schema_family_at E v a C)"
+proof -
+  have unique: "F=E" if "environment_value_presents F e" for F
+    by (rule environment_value_presents_unique[OF that source])
+  show ?thesis by (simp only: schema_family_admission_exact factor_term.inject) (use source unique in blast)
+qed
+
+corollary schema_family_admission_on_values:
+  assumes source: "environment_value_presents E e"
+  shows "(71,source_root_argument e (use_data_term u) (Payload_Term r))\<in>positive_meaning schema_family_admission_system
+    \<longleftrightarrow> (\<exists>C. native_schema_family_at E u r C)"
+  by (simp only: schema_family_admission_at_source[OF source] inj_eq[OF use_data_term_injective] factor_term.inject) blast
+
+corollary schema_family_admission_presentation_invariance:
+  assumes "environment_value_presents E e" "environment_value_presents E f"
+  shows "(71,source_root_argument e u r)\<in>positive_meaning schema_family_admission_system \<longleftrightarrow>
+    (71,source_root_argument f u r)\<in>positive_meaning schema_family_admission_system"
+  by (simp only: schema_family_admission_at_source[OF assms(1)] schema_family_admission_at_source[OF assms(2)])
+
+corollary schema_family_admission_rejects_unreadable_clause:
+  assumes source: "environment_value_presents E e" and artifact: "artifact_at E u R"
+    and family: "family_at R r M" and member: "(s,a)\<in>M" and missing: "\<not>(\<exists>S. native_schema_at E u a S)"
+  shows "(71,source_root_argument e (use_data_term u) (Payload_Term r))\<notin>positive_meaning schema_family_admission_system"
+proof -
+  have ef: "environment_formed E" using environment_value_presents_formed[OF source] by blast
+  show ?thesis by (simp only: schema_family_admission_on_values[OF source]
+    native_schema_family_admissible[OF ef artifact family]) (use member missing in blast)
+qed
+
+text \<open>
+  The list entry reuses the existing context-carrying recursion. It checks
+  every element and the final tail. Its empty case accepts any formed
+  context, and makes no claim to have inspected an environment.
+
+  The family entry separately looks up the actual source and checks the
+  complete family graph before traversing its endpoint list. Thus even an
+  empty family retains its actual root. Every socket has exactly one schema
+  reading. Distinct sockets may share an endpoint or an equal schema.
+  No selected subset, stored schema encoding, or material truth condition
+  replaces that complete reading.
+\<close>
+
+end

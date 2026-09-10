@@ -257,3 +257,39 @@ reconstruction. These results establish readiness of the accepted source
 versions, not truth of an earlier rejected draft or native mathematical-proof
 admission. The revised byte-snapshot wrapper also successfully follows the
 original method proposal again, preserving the same result.
+
+## Follow-up: complete local specialization and conditional report generation
+
+The next source investigations exposed the exact unresolved proof contexts for
+local scheme readings, complete specialization reports, and their combined
+execution roots. They preserve the earlier drafts and their conditions; an
+accepted later version cannot retroactively establish those drafts.
+
+The report rule now consumes the existing complete native specialization and
+schema-report predicates at their shared target reference. Its library entry
+changes the generated rule family without changing the inference driver. Eight
+new controls check that construction and its complete unresolved boundary,
+alongside the previous thirty cases and six input starts. Independent
+reconstruction agrees with all 38 complete reports. The new controls keep both
+reader premises unproved, so none is a semantic-admission success.
+
+The symbolic proof judgment also factors through complete local specializations.
+Its claim comparison uses paired determining observations, preserving shared
+variable identity and every premise socket. The existing compilation theorem
+is reused for the native report operation. These results address local argument
+checking; complete native graph admission and mathematical-proof admission
+remain open. The [retained evidence and replay](validation/generalization-review-2026-09-10/specialization-report/README.md)
+state that boundary explicitly.
+
+The complete 763-theory main session passes with unchanged source and tool
+digests. Both dependency proof branches also pass. Replaying the retained
+module and original checker reproduces all 38 complete reports. This is a
+replay of the same declared family, not an additional set of discoveries.
+
+After main-session acceptance, the same two source roots have no residual
+conditions. A separate run over all five new theory roots also has none. Both
+complete results match independent reconstruction, with every recorded artifact
+matching its digest. The five before/after source runs and their supporting
+bytes are retained with the specialization-report evidence. These conclusions
+concern the accepted current sources; the earlier draft conditions remain in
+their original records.

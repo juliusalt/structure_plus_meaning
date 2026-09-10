@@ -12,6 +12,12 @@ Related reads, changes, and checks are prepared in complete batches; content
 quality governs their scope. The [current review](GENERALIZATION_REVIEW.md) and
 [reasoning inventory](REASONING_REUSE.md) record evidence and remaining gaps.
 
+The current 763-theory session passes. Complete local clause specializations
+now connect to the symbolic proof judgment, and an ordinary native report rule
+feeds the existing generation and inference engine. Its 38-case execution
+family retains unresolved premise evidence explicitly. Whole native symbolic-
+argument admission and mathematical-proof admission remain open.
+
 The owner's correction of 2026-09-08 replaces the earlier single-grammar and
 quotation-principality requirements. Every notion needing a presentation must
 constrain its admissible class so each admitted presentation preserves all

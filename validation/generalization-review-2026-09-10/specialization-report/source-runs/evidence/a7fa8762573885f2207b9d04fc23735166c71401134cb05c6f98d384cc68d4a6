@@ -1,0 +1,310 @@
+theory Factor_Premise_Forests
+  imports Factor_Premise_Construction
+begin
+
+section \<open>Mixed finite bodies retain their own roots and reference slots\<close>
+
+definition template_list_variables :: "('a,'u) premise_template list \<Rightarrow> 'a set" where
+  "template_list_variables ts = (\<Union>t\<in>set ts. template_variables t)"
+
+lemma template_list_variables_simps [simp]:
+  "template_list_variables [] = {}"
+  "template_list_variables (t#ts) = template_variables t \<union> template_list_variables ts"
+  by (auto simp: template_list_variables_def)
+
+fun premise_forest_syntax :: "('a \<Rightarrow> local_address) \<Rightarrow> ('a,'u) premise_template list \<Rightarrow> exact_artifact" where
+  "premise_forest_syntax f [] = empty_artifact"
+| "premise_forest_syntax f (t#ts) = bound_union (template_syntax f t) (premise_forest_syntax f ts)"
+
+fun premise_forest_interior :: "('a,'u) premise_template list \<Rightarrow> local_address set" where
+  "premise_forest_interior [] = {}"
+| "premise_forest_interior (t#ts) = syntax_prefix 2 ` template_interior t \<union> syntax_prefix 3 ` premise_forest_interior ts"
+
+fun premise_forest_literals :: "('a,'u) premise_template list \<Rightarrow> (local_address \<times> exact_artifact) set" where
+  "premise_forest_literals [] = {}"
+| "premise_forest_literals (t#ts) = map_slot_keys (syntax_prefix 2) (template_literals t) \<union>
+    map_slot_keys (syntax_prefix 3) (premise_forest_literals ts)"
+
+fun premise_forest_callees :: "('a,'u) premise_template list \<Rightarrow> (local_address \<times> 'u definition_site) set" where
+  "premise_forest_callees [] = {}"
+| "premise_forest_callees (t#ts) = map_slot_keys (syntax_prefix 2) (template_callees t) \<union>
+    map_slot_keys (syntax_prefix 3) (premise_forest_callees ts)"
+
+fun premise_branch :: "nat \<Rightarrow> local_address \<Rightarrow> local_address" where
+  "premise_branch 0 a = syntax_prefix 2 a"
+| "premise_branch (Suc n) a = syntax_prefix 3 (premise_branch n a)"
+
+lemma premise_branch_zero: "premise_branch 0 = syntax_prefix 2"
+  by (rule ext) simp
+
+lemma premise_branch_successor: "premise_branch (Suc n) = syntax_prefix 3 \<circ> premise_branch n"
+  by (rule ext) simp
+
+lemma premise_forest_no_counts [simp]:
+  "bag_count (object_data (premise_forest_syntax f ts)) = (\<lambda>_. 0)"
+  by (cases ts) (simp_all add: empty_artifact_def empty_basis_def)
+
+lemma premise_forest_silent [simp]: "binder_silent (premise_forest_syntax f ts)"
+  by (induction ts) (auto intro: bound_union_silent simp: template_syntax_properties)
+
+lemma premise_forest_interior_outside:
+  "premise_forest_interior ts \<inter> binder_addresses = {}"
+proof (induction ts)
+  case Nil
+  show ?case by simp
+next
+  case (Cons t ts)
+  show ?case using Cons.IH template_interior_outside[of t]
+    by (auto simp: syntax_prefix_def split: if_splits)
+qed
+
+lemma premise_forest_reference_slots_outside:
+  "(rel_dom (premise_forest_literals ts) \<union> rel_dom (premise_forest_callees ts)) \<inter> binder_addresses = {}"
+proof (induction ts)
+  case Nil
+  show ?case by simp
+next
+  case (Cons t ts)
+  show ?case
+    by (simp only: premise_forest_literals.simps premise_forest_callees.simps rel_dom_union map_slot_keys_domain)
+       (use Cons.IH template_reference_slots_outside[of t] in \<open>auto simp: syntax_prefix_def split: if_splits\<close>)
+qed
+
+lemma premise_forest_formed:
+  assumes formed: "\<forall>t\<in>set ts. template_formed t"
+    and addressing: "binder_addressing (template_list_variables ts) f"
+  shows "exact_formed (premise_forest_syntax f ts)"
+  using formed addressing
+proof (induction ts)
+  case Nil
+  show ?case by simp
+next
+  case (Cons t ts)
+  have head_formed: "template_formed t" and tail_formed: "\<forall>t\<in>set ts. template_formed t"
+    using Cons.prems(1) by auto
+  have head_addr: "binder_addressing (template_variables t) f"
+    and tail_addr: "binder_addressing (template_list_variables ts) f"
+    by (rule binder_addressing_mono[OF Cons.prems(2)], simp)+
+  have head: "exact_formed (template_syntax f t)" by (rule template_syntax_formed[OF head_formed head_addr])
+  have tail: "exact_formed (premise_forest_syntax f ts)" by (rule Cons.IH[OF tail_formed tail_addr])
+  show ?case using bound_union_formed[OF head tail template_syntax_properties(3) premise_forest_silent] by simp
+qed
+
+lemma premise_forest_carrier:
+  assumes addressing: "binder_addressing (template_list_variables ts) f"
+  shows "rra_carrier (object_structure (premise_forest_syntax f ts)) =
+    premise_forest_interior ts \<union> rel_dom (premise_forest_literals ts) \<union>
+      rel_dom (premise_forest_callees ts) \<union> f ` template_list_variables ts"
+  using addressing
+proof (induction ts)
+  case Nil
+  show ?case by (simp add: empty_artifact_def)
+next
+  case (Cons t ts)
+  have head_addr: "binder_addressing (template_variables t) f"
+    and tail_addr: "binder_addressing (template_list_variables ts) f"
+    by (rule binder_addressing_mono[OF Cons.prems], simp)+
+  have head_vars: "f ` template_variables t \<subseteq> binder_addresses"
+    and tail_vars: "f ` template_list_variables ts \<subseteq> binder_addresses"
+    using head_addr tail_addr by (auto simp: binder_addressing_def)
+  have left: "syntax_prefix 2 ` rra_carrier (object_structure (template_syntax f t)) =
+    syntax_prefix 2 ` template_interior t \<union> syntax_prefix 2 ` rel_dom (template_literals t) \<union>
+      syntax_prefix 2 ` rel_dom (template_callees t) \<union> f ` template_variables t"
+    by (simp only: template_syntax_carrier[OF head_addr] image_Un syntax_prefix_image_binders[OF head_vars])
+  have right: "syntax_prefix 3 ` rra_carrier (object_structure (premise_forest_syntax f ts)) =
+    syntax_prefix 3 ` premise_forest_interior ts \<union> syntax_prefix 3 ` rel_dom (premise_forest_literals ts) \<union>
+      syntax_prefix 3 ` rel_dom (premise_forest_callees ts) \<union> f ` template_list_variables ts"
+    by (simp only: Cons.IH[OF tail_addr] image_Un syntax_prefix_image_binders[OF tail_vars])
+  show ?case
+    by (simp only: premise_forest_syntax.simps bound_union_def structured_object.select_convs rra_structure.select_convs
+        left right premise_forest_interior.simps premise_forest_literals.simps premise_forest_callees.simps
+        rel_dom_union map_slot_keys_domain template_list_variables_simps image_Un) blast
+qed
+
+lemma premise_forest_callee_origin:
+  assumes member: "t \<in> set ts" and entry: "(k,d) \<in> template_callees t"
+  shows "\<exists>j. (j,d) \<in> premise_forest_callees ts"
+  using member
+proof (induction ts)
+  case Nil
+  then show ?case by simp
+next
+  case (Cons q qs)
+  show ?case
+  proof (cases "t=q")
+    case True
+    have present: "(syntax_prefix 2 k,d) \<in> map_slot_keys (syntax_prefix 2) (template_callees q)"
+      using map_slot_keys_member[OF entry, of "syntax_prefix 2"] True by simp
+    show ?thesis using present by auto
+  next
+    case False
+    have tm: "t \<in> set qs" using Cons.prems False by simp
+    obtain j where tail: "(j,d) \<in> premise_forest_callees qs" using Cons.IH[OF tm] by blast
+    have present: "(syntax_prefix 3 j,d) \<in> map_slot_keys (syntax_prefix 3) (premise_forest_callees qs)"
+      by (rule map_slot_keys_member[OF tail])
+    show ?thesis using present by auto
+  qed
+qed
+
+lemma cloned_reference_site_outside:
+  assumes ef: "environment_formed E" and fresh: "z \<notin> environment_uses E"
+    and refs: "syntax_references (clone_source_environment E u R h z) z L C" and entry: "(k,d) \<in> C"
+  shows "fst d \<noteq> z"
+proof -
+  have binding: "binds_slot (clone_source_environment E u R h z) z k (fst d)"
+    using refs entry unfolding syntax_references_def by blast
+  have old: "fst d \<in> environment_uses E" by (rule clone_source_targets_are_old[OF ef fresh binding])
+  show ?thesis using old fresh by blast
+qed
+
+lemma template_projection_prefix:
+  assumes addressing: "binder_addressing (template_variables t) f"
+    and nonlocal: "\<forall>k d. (k,d) \<in> template_callees t \<longrightarrow> fst d \<noteq> z"
+  shows "map_native_premise (syntax_prefix n) (relocated_site z u (syntax_prefix n)) (template_projection f t) =
+    template_projection f t"
+proof (cases t)
+  case (Inl pair)
+  obtain d p where shape: "pair=(d,p)" by (cases pair)
+  have addr: "binder_addressing (pattern_variables p) f" using addressing Inl shape by simp
+  have separate: "fst d \<noteq> z" using nonlocal Inl shape by simp
+  have site: "relocated_site z u (syntax_prefix n) d = d" using separate by (cases d) simp
+  show ?thesis by (simp add: Inl shape site renamed_pattern_prefix[OF addr])
+next
+  case (Inr M)
+  have vars: "material_variables (rename_material_pattern f M) \<subseteq> binder_addresses"
+    using addressing Inr by (simp add: binder_addressing_def renamed_material_variables)
+  have same: "rename_material_pattern (syntax_prefix n) (rename_material_pattern f M) =
+    rename_material_pattern id (rename_material_pattern f M)"
+    by (rule rename_material_agreement) (use vars in \<open>auto simp: syntax_prefix_def\<close>)
+  show ?thesis using same by (simp add: Inr)
+qed
+
+theorem premise_forest_recovers:
+  fixes E :: "local_address option artifact_environment"
+  assumes formed: "\<forall>t\<in>set ts. template_formed t"
+    and addressing: "binder_addressing (template_list_variables ts) f"
+    and scope: "f ` template_list_variables ts \<subseteq> V" and boundary: "V \<subseteq> binder_addresses"
+    and ef: "environment_formed E" and source: "artifact_at E u (premise_forest_syntax f ts)"
+    and refs: "syntax_references E u (premise_forest_literals ts) (premise_forest_callees ts)"
+  shows "\<forall>i<length ts. native_premise_at E u V (premise_branch i []) (template_projection f (ts!i))
+    (premise_branch i ` template_interior (ts!i))
+    (premise_branch i ` (rel_dom (template_literals (ts!i)) \<union> rel_dom (template_callees (ts!i))))"
+  using formed addressing scope ef source refs
+proof (induction ts arbitrary: E u)
+  case Nil
+  show ?case by simp
+next
+  case (Cons t ts)
+  let ?R = "template_syntax f t"
+  let ?T = "premise_forest_syntax f ts"
+  let ?z = "clone_source_use E u"
+  let ?L = "clone_source_environment E u ?R (syntax_prefix 2) ?z"
+  let ?W = "clone_source_environment E u ?T (syntax_prefix 3) ?z"
+  have ef: "environment_formed E" and src: "artifact_at E u (premise_forest_syntax f (t#ts))"
+    and all_refs: "syntax_references E u (premise_forest_literals (t#ts)) (premise_forest_callees (t#ts))"
+    using Cons.prems(4-6) by simp_all
+  have fresh: "?z \<notin> environment_uses E" by (rule clone_source_use_fresh[OF ef])
+  have head_formed: "template_formed t" and tail_formed: "\<forall>t\<in>set ts. template_formed t"
+    using Cons.prems(1) by auto
+  have head_addr: "binder_addressing (template_variables t) f"
+    and tail_addr: "binder_addressing (template_list_variables ts) f"
+    by (rule binder_addressing_mono[OF Cons.prems(2)], simp)+
+  have head_scope: "f ` template_variables t \<subseteq> V" and tail_scope: "f ` template_list_variables ts \<subseteq> V"
+    using Cons.prems(3) by auto
+  have rf: "exact_formed ?R" by (rule template_syntax_formed[OF head_formed head_addr])
+  have tf: "exact_formed ?T" by (rule premise_forest_formed[OF tail_formed tail_addr])
+  have left_addr: "finite_addressing (rra_carrier (object_structure ?R)) (syntax_prefix 2)"
+    by (rule syntax_prefix_addressing[OF rf]) simp_all
+  have right_addr: "finite_addressing (rra_carrier (object_structure ?T)) (syntax_prefix 3)"
+    by (rule syntax_prefix_addressing[OF tf]) simp_all
+  have left_inj: "inj (syntax_prefix 2)" and right_inj: "inj (syntax_prefix 3)"
+    by (rule syntax_prefix_injective, simp)+
+  have left_reads: "object_reads_agree (push_object (syntax_prefix 2) ?R) (premise_forest_syntax f (t#ts))
+    (syntax_prefix 2 ` rra_carrier (object_structure ?R))"
+    by (simp only: premise_forest_syntax.simps;
+        rule bound_union_reads_left[OF template_syntax_properties(2) premise_forest_silent])
+  have right_reads: "object_reads_agree (push_object (syntax_prefix 3) ?T) (premise_forest_syntax f (t#ts))
+    (syntax_prefix 3 ` rra_carrier (object_structure ?T))"
+    by (simp only: premise_forest_syntax.simps;
+        rule bound_union_reads_right[OF premise_forest_no_counts template_syntax_properties(3)])
+  have left_bounds: "rel_dom (template_literals t) \<union> rel_dom (template_callees t) \<subseteq> rra_carrier (object_structure ?R)"
+    by (auto simp: template_syntax_carrier[OF head_addr])
+  have right_bounds: "rel_dom (premise_forest_literals ts) \<union> rel_dom (premise_forest_callees ts) \<subseteq>
+    rra_carrier (object_structure ?T)" by (auto simp: premise_forest_carrier[OF tail_addr])
+  have left_refs: "syntax_references E u (map_slot_keys (syntax_prefix 2) (template_literals t))
+    (map_slot_keys (syntax_prefix 2) (template_callees t))"
+    by (rule syntax_references_mono[OF all_refs]) auto
+  have right_refs: "syntax_references E u (map_slot_keys (syntax_prefix 3) (premise_forest_literals ts))
+    (map_slot_keys (syntax_prefix 3) (premise_forest_callees ts))"
+    by (rule syntax_references_mono[OF all_refs]) auto
+  have left_clone_refs: "syntax_references ?L ?z (template_literals t) (template_callees t)"
+    by (rule cloned_syntax_references[OF ef fresh left_bounds left_refs])
+  have right_clone_refs: "syntax_references ?W ?z (premise_forest_literals ts) (premise_forest_callees ts)"
+    by (rule cloned_syntax_references[OF ef fresh right_bounds right_refs])
+  have lef: "environment_formed ?L" by (rule clone_environment_formed[OF ef rf fresh])
+  have wef: "environment_formed ?W" by (rule clone_environment_formed[OF ef tf fresh])
+  have lsrc: "artifact_at ?L ?z ?R" and wsrc: "artifact_at ?W ?z ?T" by (simp_all add: clone_artifact_iff)
+  have original_head: "native_premise_at ?L ?z V [] (template_projection f t) (template_interior t)
+    (rel_dom (template_literals t) \<union> rel_dom (template_callees t))"
+    by (rule template_syntax_recovers[OF head_formed head_addr head_scope boundary lef lsrc left_clone_refs])
+  have original_tail: "\<forall>i<length ts. native_premise_at ?W ?z V (premise_branch i []) (template_projection f (ts!i))
+    (premise_branch i ` template_interior (ts!i))
+    (premise_branch i ` (rel_dom (template_literals (ts!i)) \<union> rel_dom (template_callees (ts!i))))"
+    by (rule Cons.IH[OF tail_formed tail_addr tail_scope wef wsrc right_clone_refs])
+  have left_copy: "native_syntax_copy ?L ?z ?R E u (premise_forest_syntax f (t#ts)) (syntax_prefix 2)
+    (relocated_site ?z u (syntax_prefix 2))"
+    by (rule clone_environment_is_native_copy[OF ef rf fresh src left_inj left_addr left_reads])
+  have right_copy: "native_syntax_copy ?W ?z ?T E u (premise_forest_syntax f (t#ts)) (syntax_prefix 3)
+    (relocated_site ?z u (syntax_prefix 3))"
+    by (rule clone_environment_is_native_copy[OF ef tf fresh src right_inj right_addr right_reads])
+  have head_nonlocal: "\<forall>k d. (k,d) \<in> template_callees t \<longrightarrow> fst d \<noteq> ?z"
+    by (intro allI impI) (rule cloned_reference_site_outside[OF ef fresh left_clone_refs]; assumption)
+  have head_projection: "map_native_premise (syntax_prefix 2) (relocated_site ?z u (syntax_prefix 2))
+    (template_projection f t) = template_projection f t"
+    by (rule template_projection_prefix[OF head_addr head_nonlocal])
+  show ?case
+  proof (intro allI impI)
+    fix i assume index: "i < length (t#ts)"
+    show "native_premise_at E u V (premise_branch i []) (template_projection f ((t#ts)!i))
+      (premise_branch i ` template_interior ((t#ts)!i))
+      (premise_branch i ` (rel_dom (template_literals ((t#ts)!i)) \<union> rel_dom (template_callees ((t#ts)!i))))"
+    proof (cases i)
+      case 0
+      show ?thesis using native_syntax_copy.copy_premise[OF left_copy original_head]
+        by (simp only: 0 nth_Cons_0 premise_branch_zero premise_branch.simps syntax_prefix_image_binders[OF boundary] head_projection)
+    next
+      case (Suc n)
+      have small: "n < length ts" using index Suc by simp
+      have member: "ts!n \<in> set ts" by (rule nth_mem[OF small])
+      have addr: "binder_addressing (template_variables (ts!n)) f"
+        by (rule binder_addressing_mono[OF tail_addr]) (use member in \<open>auto simp: template_list_variables_def\<close>)
+      have nonlocal: "\<forall>k d. (k,d) \<in> template_callees (ts!n) \<longrightarrow> fst d \<noteq> ?z"
+      proof (intro allI impI)
+        fix k d assume entry: "(k,d) \<in> template_callees (ts!n)"
+        obtain j where present: "(j,d) \<in> premise_forest_callees ts"
+          using premise_forest_callee_origin[OF member entry] by blast
+        show "fst d \<noteq> ?z" by (rule cloned_reference_site_outside[OF ef fresh right_clone_refs present])
+      qed
+      have projection: "map_native_premise (syntax_prefix 3) (relocated_site ?z u (syntax_prefix 3))
+        (template_projection f (ts!n)) = template_projection f (ts!n)"
+        by (rule template_projection_prefix[OF addr nonlocal])
+      have read: "native_premise_at ?W ?z V (premise_branch n []) (template_projection f (ts!n))
+        (premise_branch n ` template_interior (ts!n))
+        (premise_branch n ` (rel_dom (template_literals (ts!n)) \<union> rel_dom (template_callees (ts!n))))"
+        using original_tail small by blast
+      show ?thesis using native_syntax_copy.copy_premise[OF right_copy read]
+        by (simp only: Suc nth_Cons_Suc premise_branch_successor premise_branch.simps comp_def syntax_prefix_image_binders[OF boundary]
+            projection image_image)
+    qed
+  qed
+qed
+
+text \<open>
+  Every finite mixed list is assembled without extra constructor headers.
+  Each body retains its independently recovered premise, transported interior,
+  and complete slot boundary. Literal values and callee uses are checked in
+  the destination environment. All bodies use the same explicit binder scope,
+  while distinct bodies retain their separate structural occurrence positions.
+\<close>
+
+end

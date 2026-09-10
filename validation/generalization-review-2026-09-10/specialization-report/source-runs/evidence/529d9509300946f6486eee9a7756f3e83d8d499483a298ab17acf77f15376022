@@ -1,0 +1,81 @@
+theory Factor_Cloned_Transport
+  imports Factor_Native_Transport RRA_Source_Clone
+begin
+
+fun relocated_site ::
+  "'u \<Rightarrow> 'u \<Rightarrow> (local_address \<Rightarrow> local_address) \<Rightarrow> 'u definition_site \<Rightarrow> 'u definition_site" where
+  "relocated_site z u f (v,a) = (if v=z then (u,f a) else (v,a))"
+
+lemma cloned_citation_location:
+  assumes ef: "environment_formed E" and rf: "exact_formed R" and fresh: "z \<notin> environment_uses E"
+    and target: "artifact_at E u S"
+    and reads: "object_reads_agree (push_object f R) S (f ` rra_carrier (object_structure R))"
+    and cite: "citation_at R r c I"
+    and loc: "citation_location (clone_source_environment E u R f z) z c v a"
+  shows "citation_location E u (map_citation_positions f c)
+    (fst (relocated_site z u f (v,a))) (snd (relocated_site z u f (v,a)))"
+proof (cases c)
+  case (Local b)
+  have old: "v=z" "a=b" "b \<in> rra_carrier (object_structure R)"
+    using loc by (auto simp: Local clone_source_artifact[OF fresh] anchor_formed_def)
+  have sf: "exact_formed S" using ef target unfolding environment_formed_def by blast
+  have inside: "f b \<in> rra_carrier (object_structure S)"
+    using reads old(3) by (auto simp: object_reads_agree_def)
+  have anchor: "anchor_formed (S,f b)" using sf inside by (simp add: anchor_formed_def)
+  show ?thesis using target anchor old by (auto simp: Local)
+next
+  case (External k b)
+  have binding: "binds_slot (clone_source_environment E u R f z) z k v" and address: "a=b"
+    using loc External by auto
+  have old_binding: "binds_slot E u (f k) v" using binding clone_source_binding[OF ef fresh] by blast
+  have member: "v \<in> environment_uses E" by (rule clone_source_targets_are_old[OF ef fresh binding])
+  have separate: "v \<noteq> z" using member fresh by blast
+  obtain T where old: "artifact_at (clone_source_environment E u R f z) v T" "anchor_formed (T,b)"
+    using loc External by auto
+  have old_artifact: "artifact_at E v T" using old(1) clone_old_artifact[OF separate] by blast
+  show ?thesis using old_binding old_artifact old(2) separate address by (auto simp: External)
+next
+  case Local_Whole
+  show ?thesis using loc Local_Whole by simp
+next
+  case (External_Whole k)
+  show ?thesis using loc External_Whole by simp
+qed
+
+theorem clone_environment_is_native_copy:
+  assumes ef: "environment_formed E" and rf: "exact_formed R" and fresh: "z \<notin> environment_uses E"
+    and target: "artifact_at E u S" and injective: "inj f"
+    and addressing: "finite_addressing (rra_carrier (object_structure R)) f"
+    and reads: "object_reads_agree (push_object f R) S (f ` rra_carrier (object_structure R))"
+  shows "native_syntax_copy (clone_source_environment E u R f z) z R E u S f (relocated_site z u f)"
+proof -
+  have formed: "environment_formed (clone_source_environment E u R f z)"
+    by (rule clone_environment_formed[OF ef rf fresh])
+  have source: "artifact_at (clone_source_environment E u R f z) z R"
+    by (simp add: clone_artifact_iff)
+  have literals: "\<forall>k\<in>rra_carrier (object_structure R).
+    external_slot_values (clone_source_environment E u R f z) z k = external_slot_values E u (f k)"
+    by (intro ballI) (rule clone_source_literal_values[OF ef fresh]; assumption)
+  show ?thesis
+    by (rule native_syntax_copy.intro[OF formed source ef target injective addressing reads literals])
+       (rule cloned_citation_location[OF ef rf fresh target reads]; assumption)
+qed
+
+corollary fresh_clone_is_native_copy:
+  fixes E :: "local_address option artifact_environment"
+  assumes "environment_formed E" "exact_formed R" "artifact_at E u S" "inj f"
+    "finite_addressing (rra_carrier (object_structure R)) f"
+    "object_reads_agree (push_object f R) S (f ` rra_carrier (object_structure R))"
+  shows "native_syntax_copy (clone_source_environment E u R f (clone_source_use E u))
+    (clone_source_use E u) R E u S f (relocated_site (clone_source_use E u) u f)"
+  by (rule clone_environment_is_native_copy[OF assms(1,2) clone_source_use_fresh[OF assms(1)] assms(3-6)])
+
+text \<open>
+  All requirements of native syntax transport are established from the concrete
+  cloned environment. Existing target uses retain their identity, even if an
+  external call becomes a self call at the destination. Only citations local
+  to the fresh auxiliary source acquire the copied local address and use.
+  No assumption about a semantic reader or truth predicate is involved.
+\<close>
+
+end

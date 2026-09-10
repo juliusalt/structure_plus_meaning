@@ -1,0 +1,247 @@
+theory Factor_Judgment_Presentations
+  imports Factor_Presentation_Classes Factor_Replay_Values
+begin
+
+section \<open>Existing site and context values use explicit product constructions\<close>
+
+type_synonym site_context =
+  "local_address option artifact_environment \<times> local_address option definition_site"
+type_synonym judgment_context =
+  "local_address option artifact_environment \<times>
+    (local_address option definition_site \<times> local_address option definition_site)"
+type_synonym replay_context = "judgment_context \<times> local_address option definition_site"
+
+abbreviation site_context_formed :: "site_context \<Rightarrow> bool" where
+  "site_context_formed z \<equiv> environment_formed (fst z) \<and> snd z\<in>environment_positions (fst z)"
+
+abbreviation site_coordinate_presents :: "local_address option definition_site \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "site_coordinate_presents d t \<equiv> t=site_data_term (fst d) (snd d)"
+
+lemma use_coordinate_presentation:
+  "presentation_class (\<lambda>u t. t=use_data_term u) (\<lambda>_. True) (\<lambda>t. \<exists>u. t=use_data_term u)"
+  using injective_presentation_class[where f=use_data_term and D="\<lambda>_. True"]
+    use_data_term_injective by simp
+
+lemma address_coordinate_presentation:
+  "presentation_class (\<lambda>r t. t=Payload_Term r) (\<lambda>_. True) (\<lambda>t. \<exists>r. t=Payload_Term r)"
+proof -
+  have injective: "inj Payload_Term" by (rule injI) simp
+  show ?thesis using injective_presentation_class[where f=Payload_Term and D="\<lambda>_. True"]
+    injective by simp
+qed
+
+lemma site_coordinate_presentation:
+  "presentation_class site_coordinate_presents (\<lambda>_. True) (\<lambda>t. \<exists>d. site_coordinate_presents d t)"
+proof -
+  have injective: "inj (\<lambda>d::local_address option definition_site. site_data_term (fst d) (snd d))"
+    by (rule injI) (auto simp: prod_eq_iff)
+  show ?thesis
+    using injective_presentation_class[where f="\<lambda>d. site_data_term (fst d) (snd d)" and D="\<lambda>_. True"]
+      injective by simp
+qed
+
+definition source_root_presents :: "site_context \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "source_root_presents z t \<longleftrightarrow>
+    snd z\<in>environment_positions (fst z) \<and>
+    (\<exists>e. environment_value_presents (fst z) e \<and>
+      t=Pair_Term (Pair_Term e (use_data_term (fst (snd z)))) (Payload_Term (snd (snd z))))"
+
+abbreviation judgment_context_presents :: "judgment_context \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "judgment_context_presents z t \<equiv> judgment_value_presents (fst z)
+    (fst (fst (snd z))) (snd (fst (snd z))) (fst (snd (snd z))) (snd (snd (snd z))) t"
+
+definition judgment_context_formed :: "judgment_context \<Rightarrow> bool" where
+  "judgment_context_formed z \<longleftrightarrow> environment_formed (fst z) \<and>
+    fst (snd z)\<in>environment_positions (fst z) \<and> snd (snd z)\<in>environment_positions (fst z)"
+
+abbreviation replay_context_presents :: "replay_context \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "replay_context_presents z t \<equiv> replay_value_presents (fst (fst z))
+    (fst (fst (snd (fst z)))) (snd (fst (snd (fst z))))
+    (fst (snd (snd (fst z)))) (snd (snd (snd (fst z)))) (snd z) t"
+
+definition replay_context_formed :: "replay_context \<Rightarrow> bool" where
+  "replay_context_formed z \<longleftrightarrow> judgment_context_formed (fst z) \<and>
+    snd z\<in>environment_positions (fst (fst z))"
+
+theorem source_root_presentation_class:
+  "presentation_class source_root_presents site_context_formed (\<lambda>t. \<exists>z. source_root_presents z t)"
+proof -
+  let ?U="\<lambda>t. \<exists>u. t=use_data_term u"
+  let ?V="\<lambda>t. \<exists>r. t=Payload_Term r"
+  let ?first="\<lambda>t. \<exists>e u. (26,e)\<in>positive_meaning environment_admission_system \<and> ?U u \<and> t=Pair_Term e u"
+  let ?A="\<lambda>t. \<exists>p r. ?first p \<and> ?V r \<and> t=Pair_Term p r"
+  let ?R="factor_pair_presents
+    (factor_pair_presents environment_value_presents (\<lambda>u t. t=use_data_term u))
+    (\<lambda>r t. t=Payload_Term r)"
+  have raw: "presentation_class ?R (\<lambda>z. environment_formed (fst (fst z))) ?A"
+    using factor_pair_class[OF factor_pair_class[OF environment_presentations.presentation_class_axioms
+      use_coordinate_presentation] address_coordinate_presentation] by simp
+  let ?observe="\<lambda>z::site_context. ((fst z,fst (snd z)),snd (snd z))"
+  have mapped: "presentation_class (\<lambda>z t. site_context_formed z \<and> ?R (?observe z) t)
+      site_context_formed (\<lambda>t. \<exists>z. site_context_formed z \<and> ?R (?observe z) t)"
+  proof (rule presentation_class_observations[OF raw])
+    fix z assume "site_context_formed z"
+    then show "environment_formed (fst (fst (?observe z)))" by simp
+  next
+    fix z w assume "site_context_formed z" "site_context_formed w" "?observe z=?observe w"
+    then show "z=w" by (cases z; cases w) auto
+  qed
+  have reading: "source_root_presents = (\<lambda>z t. site_context_formed z \<and> ?R (?observe z) t)"
+    by (intro ext) (use environment_value_presents_formed in
+      \<open>auto simp: source_root_presents_def factor_pair_presents_def\<close>)
+  show ?thesis using mapped by (simp only: reading)
+qed
+
+interpretation source_roots: presentation_class source_root_presents site_context_formed
+  "\<lambda>t. \<exists>z. source_root_presents z t"
+  by (rule source_root_presentation_class)
+
+lemma source_root_presents_fields:
+  "source_root_presents (E,(u,r)) t \<longleftrightarrow>
+    (u,r)\<in>environment_positions E \<and>
+    (\<exists>e. environment_value_presents E e \<and> t=Pair_Term (Pair_Term e (use_data_term u)) (Payload_Term r))"
+  by (simp only: source_root_presents_def fst_conv snd_conv)
+
+lemma source_root_presents_formed:
+  assumes presented: "source_root_presents (E,(u,r)) t"
+  shows "term_formed t \<and> self_contained_term t"
+proof -
+  obtain e where source: "environment_value_presents E e" and site: "(u,r)\<in>environment_positions E"
+    and shape: "t=Pair_Term (Pair_Term e (use_data_term u)) (Payload_Term r)"
+    using presented by (auto simp: source_root_presents_fields)
+  have formed: "environment_formed E" "term_formed e" "self_contained_term e"
+    using environment_value_presents_formed[OF source] by blast+
+  have address: "octets_formed r" using environment_position_address[OF formed(1) site] by simp
+  show ?thesis using formed(2,3) address shape by simp
+qed
+
+theorem judgment_context_presentation_class:
+  "presentation_class judgment_context_presents judgment_context_formed
+    (\<lambda>t. \<exists>z. judgment_context_presents z t)"
+proof -
+  let ?C="\<lambda>t. \<exists>d. site_coordinate_presents d t"
+  let ?S="\<lambda>t. \<exists>p q. ?C p \<and> ?C q \<and> t=Pair_Term p q"
+  let ?A="\<lambda>t. \<exists>e s. (26,e)\<in>positive_meaning environment_admission_system \<and> ?S s \<and> t=Pair_Term e s"
+  let ?R="factor_pair_presents environment_value_presents
+    (factor_pair_presents site_coordinate_presents site_coordinate_presents)"
+  have raw: "presentation_class ?R (\<lambda>z. environment_formed (fst z)) ?A"
+    using factor_pair_class[OF environment_presentations.presentation_class_axioms
+      factor_pair_class[OF site_coordinate_presentation site_coordinate_presentation]] by simp
+  have constrained: "presentation_class (\<lambda>z t. judgment_context_formed z \<and> ?R z t)
+      judgment_context_formed (\<lambda>t. \<exists>z. judgment_context_formed z \<and> ?R z t)"
+    by (rule presentation_class_subdomain[OF raw]) (simp add: judgment_context_formed_def)
+  have reading: "judgment_context_presents = (\<lambda>z t. judgment_context_formed z \<and> ?R z t)"
+    by (intro ext) (use environment_value_presents_formed in
+      \<open>auto simp: judgment_context_formed_def judgment_value_presents_def factor_pair_presents_def\<close>)
+  have result: "presentation_class judgment_context_presents judgment_context_formed
+      (\<lambda>t. \<exists>z. judgment_context_formed z \<and> ?R z t)"
+    using constrained by (simp only: reading)
+  interpret context_values: presentation_class judgment_context_presents judgment_context_formed
+    "\<lambda>t. \<exists>z. judgment_context_formed z \<and> ?R z t" by (rule result)
+  have admission: "(\<lambda>t. \<exists>z. judgment_context_formed z \<and> ?R z t) =
+      (\<lambda>t. \<exists>z. judgment_context_presents z t)"
+    by (rule ext) (rule context_values.admissible_iff)
+  show ?thesis using result by (simp only: admission)
+qed
+
+interpretation judgments: presentation_class judgment_context_presents judgment_context_formed
+  "\<lambda>t. \<exists>z. judgment_context_presents z t"
+  by (rule judgment_context_presentation_class)
+
+theorem replay_context_presentation_class:
+  "presentation_class replay_context_presents replay_context_formed
+    (\<lambda>t. \<exists>z. replay_context_presents z t)"
+proof -
+  let ?J="\<lambda>t. \<exists>z. judgment_context_presents z t"
+  let ?C="\<lambda>t. \<exists>d. site_coordinate_presents d t"
+  let ?A="\<lambda>t. \<exists>j r. ?J j \<and> ?C r \<and> t=Pair_Term j r"
+  let ?R="factor_pair_presents judgment_context_presents site_coordinate_presents"
+  have raw: "presentation_class ?R (\<lambda>z. judgment_context_formed (fst z)) ?A"
+    using factor_pair_class[OF judgment_context_presentation_class site_coordinate_presentation] by simp
+  have constrained: "presentation_class (\<lambda>z t. replay_context_formed z \<and> ?R z t)
+      replay_context_formed (\<lambda>t. \<exists>z. replay_context_formed z \<and> ?R z t)"
+    by (rule presentation_class_subdomain[OF raw]) (simp add: replay_context_formed_def)
+  have reading: "replay_context_presents = (\<lambda>z t. replay_context_formed z \<and> ?R z t)"
+    by (intro ext) (use judgments.subject_boundary in
+      \<open>auto simp: replay_context_formed_def replay_value_presents_def factor_pair_presents_def\<close>)
+  have result: "presentation_class replay_context_presents replay_context_formed
+      (\<lambda>t. \<exists>z. replay_context_formed z \<and> ?R z t)"
+    using constrained by (simp only: reading)
+  interpret context_values: presentation_class replay_context_presents replay_context_formed
+    "\<lambda>t. \<exists>z. replay_context_formed z \<and> ?R z t" by (rule result)
+  have admission: "(\<lambda>t. \<exists>z. replay_context_formed z \<and> ?R z t) =
+      (\<lambda>t. \<exists>z. replay_context_presents z t)"
+    by (rule ext) (rule context_values.admissible_iff)
+  show ?thesis using result by (simp only: admission)
+qed
+
+interpretation replay_contexts: presentation_class replay_context_presents replay_context_formed
+  "\<lambda>t. \<exists>z. replay_context_presents z t"
+  by (rule replay_context_presentation_class)
+
+abbreviation judgment_quotation_presents :: "judgment_context \<Rightarrow> (exact_artifact\<times>local_address) \<Rightarrow> bool" where
+  "judgment_quotation_presents z p \<equiv> judgment_value_quoted_at (fst p) (snd p) (fst z)
+    (fst (fst (snd z))) (snd (fst (snd z))) (fst (snd (snd z))) (snd (snd (snd z)))"
+
+abbreviation replay_quotation_presents :: "replay_context \<Rightarrow> (exact_artifact\<times>local_address) \<Rightarrow> bool" where
+  "replay_quotation_presents z p \<equiv> replay_value_quoted_at (fst p) (snd p) (fst (fst z))
+    (fst (fst (snd (fst z)))) (snd (fst (snd (fst z))))
+    (fst (snd (snd (fst z)))) (snd (snd (snd (fst z)))) (snd z)"
+
+lemma judgment_context_formed_value:
+  assumes "judgment_context_presents z t"
+  shows "term_formed t \<and> self_contained_term t"
+  using judgment_value_presents_formed[OF assms] by blast
+
+lemma replay_context_formed_value:
+  assumes "replay_context_presents z t"
+  shows "term_formed t \<and> self_contained_term t"
+  using replay_value_presents_formed[OF assms] by blast
+
+theorem judgment_quotation_presentation_class:
+  "presentation_class judgment_quotation_presents judgment_context_formed
+    (\<lambda>p. \<exists>t. (\<exists>z. judgment_context_presents z t) \<and> complete_data_quoted_at (fst p) (snd p) t)"
+proof -
+  have composed: "presentation_class
+      (composed_presentation judgment_context_presents (\<lambda>t p. complete_data_quoted_at (fst p) (snd p) t))
+      judgment_context_formed
+      (\<lambda>p. \<exists>t. (\<exists>z. judgment_context_presents z t) \<and> complete_data_quoted_at (fst p) (snd p) t)"
+    by (rule complete_quotation_presentation_class[OF judgment_context_presentation_class])
+      (use judgment_context_formed_value in blast)
+  have reading: "composed_presentation judgment_context_presents
+      (\<lambda>t p. complete_data_quoted_at (fst p) (snd p) t)=judgment_quotation_presents"
+    by (intro ext) (auto simp: composed_presentation_def judgment_value_quoted_at_def)
+  show ?thesis using composed by (simp only: reading)
+qed
+
+theorem replay_quotation_presentation_class:
+  "presentation_class replay_quotation_presents replay_context_formed
+    (\<lambda>p. \<exists>t. (\<exists>z. replay_context_presents z t) \<and> complete_data_quoted_at (fst p) (snd p) t)"
+proof -
+  have composed: "presentation_class
+      (composed_presentation replay_context_presents (\<lambda>t p. complete_data_quoted_at (fst p) (snd p) t))
+      replay_context_formed
+      (\<lambda>p. \<exists>t. (\<exists>z. replay_context_presents z t) \<and> complete_data_quoted_at (fst p) (snd p) t)"
+    by (rule complete_quotation_presentation_class[OF replay_context_presentation_class])
+      (use replay_context_formed_value in blast)
+  have reading: "composed_presentation replay_context_presents
+      (\<lambda>t p. complete_data_quoted_at (fst p) (snd p) t)=replay_quotation_presents"
+    by (intro ext) (auto simp: composed_presentation_def replay_value_quoted_at_def)
+  show ?thesis using composed by (simp only: reading)
+qed
+
+text \<open>
+  Products construct the existing values, retaining one complete environment
+  and the positions of its selected sites. The source-reader argument and the
+  standalone site value use different pair arrangements with the same actual
+  site domain. Observations give the corresponding structural change of
+  coordinates; they impose no preferred arrangement.
+
+  Context constraints require every selected site to belong to the same
+  represented environment. Complete quotation then composes with the entire
+  value, retaining its actual body. Program grammar, application formation,
+  derivation validity, and replay are supplied by their independent native
+  relations in the subsequent classes.
+\<close>
+
+end

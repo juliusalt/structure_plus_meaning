@@ -580,3 +580,12 @@ settlement observation. Complete execution and critical-review evidence is in
 GENERALIZATION_REVIEW.md and REASONING_REUSE.md. This progress does not close
 O-85: native mathematical-proof admission, whole symbolic-argument admission,
 and the broader reasoning and repository audits remain explicit obligations.
+
+The subsequent 763-theory main session also passes. Complete local clause
+specializations are equivalent to the local checks of the existing symbolic
+scheme judgment. Paired determining observations preserve claim identity and
+complete premise sockets. An ordinary specialization-report rule has a fixed
+native compilation and supplies a sound conditional generator library. All 38
+executed reports match independent reconstruction; the eight added controls
+keep both reader premises unproved. Native admission of an entire symbolic
+graph and actual admitted-source uses of the new report rule remain open.

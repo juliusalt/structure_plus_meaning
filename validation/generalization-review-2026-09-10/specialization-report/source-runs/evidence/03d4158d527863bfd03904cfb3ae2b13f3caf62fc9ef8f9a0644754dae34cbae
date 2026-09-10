@@ -1,0 +1,67 @@
+theory Bag_Readings
+  imports Bootstrap_Relations "HOL-Library.Multiset"
+begin
+
+section \<open>Unique member readings preserve every multiplicity\<close>
+
+lemma functional_reading_inverse:
+  assumes read: "R a p"
+    and unique: "\<And>x y q. R x q \<Longrightarrow> R y q \<Longrightarrow> x=y"
+  shows "(THE x. R x p)=a"
+  by (rule the_equality[where P="\<lambda>x. R x p" and a=a])
+    (use read unique in blast)+
+
+lemma functional_list_readings:
+  assumes readings: "list_all2 R xs ps"
+    and unique: "\<And>x y p. R x p \<Longrightarrow> R y p \<Longrightarrow> x=y"
+  shows "map (\<lambda>p. THE x. R x p) ps=xs"
+    and "\<forall>p\<in>set ps. R (THE x. R x p) p"
+proof -
+  have result: "map (\<lambda>p. THE x. R x p) ps=xs \<and>
+      (\<forall>p\<in>set ps. R (THE x. R x p) p)"
+    using readings
+  proof (induction xs arbitrary: ps)
+    case Nil
+    then show ?case by simp
+  next
+    case (Cons x xs)
+    obtain p qs where parts: "ps=p#qs" "R x p" "list_all2 R xs qs"
+      using Cons.prems by (auto simp: list_all2_Cons1)
+    have head: "(THE z. R z p)=x"
+      by (rule functional_reading_inverse[where R=R]) (rule parts(2), rule unique)
+    show ?case using Cons.IH[OF parts(3)] parts(2) head by (simp add: parts(1))
+  qed
+  show "map (\<lambda>p. THE x. R x p) ps=xs"
+    and "\<forall>p\<in>set ps. R (THE x. R x p) p" using result by blast+
+qed
+
+theorem rel_mset_readings:
+  assumes first: "list_all2 R xs ps" and second: "list_all2 R ys qs"
+    and unique: "\<And>x y p. R x p \<Longrightarrow> R y p \<Longrightarrow> x=y"
+    and compare: "\<And>x y p q. R x p \<Longrightarrow> R y q \<Longrightarrow> C p q \<longleftrightarrow> x=y"
+  shows "rel_mset C (mset ps) (mset qs) \<longleftrightarrow> mset xs=mset ys"
+proof -
+  let ?f="\<lambda>p. THE x. R x p"
+  have decoded: "map ?f ps=xs" "map ?f qs=ys"
+    and readings: "\<forall>p\<in>set ps. R (?f p) p" "\<forall>q\<in>set qs. R (?f q) q"
+    using functional_list_readings[where R=R, OF first unique]
+      functional_list_readings[where R=R, OF second unique] by auto
+  have agreement: "rel_mset C (mset ps) (mset qs) =
+      rel_mset (\<lambda>p q. ?f p=?f q) (mset ps) (mset qs)"
+    by (rule multiset.rel_cong[OF refl refl]) (use readings compare in auto)
+  have mapped: "rel_mset (=) (image_mset ?f (mset ps)) (image_mset ?f (mset qs)) =
+      rel_mset (\<lambda>p q. ?f p=?f q) (mset ps) (mset qs)"
+    by (simp only: multiset.rel_map)
+  show ?thesis using agreement mapped
+    by (simp only: multiset.rel_eq mset_map[symmetric] decoded)
+qed
+
+text \<open>
+  Lists enumerate occurrences; equality of the recovered multisets retains
+  their multiplicities and imposes no enumeration order. Members may use
+  different presentations. The comparison equation is required on those
+  member readings, and unique recovery supplies the mathematical inverse.
+  That inverse selects no presentation and is absent from any native clause.
+\<close>
+
+end

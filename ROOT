@@ -761,3 +761,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Reasoning_Method_Investigation
     Factor_Reasoning_Premise_Admission
     Factor_Learned_Execution_Soundness
+    Factor_Scheme_Local_Readings
+    Factor_Specialization_Reports
+    Factor_Scheme_Observations
+    Factor_Specialization_Report_Reasoning
+    Factor_Specialization_Report_Programs

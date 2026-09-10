@@ -1,0 +1,100 @@
+theory Factor_List_Set_Presentations
+  imports Factor_Finite_Set_Presentations
+begin
+
+section \<open>Repeated displayed rows can present the same finite set\<close>
+
+definition data_list_fset_presents ::
+  "('a\<Rightarrow>factor_term\<Rightarrow>bool) \<Rightarrow> 'a fset \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "data_list_fset_presents R S t \<longleftrightarrow>
+    (\<exists>xs. data_sequence_presents R xs t \<and> fset_of_list xs=S)"
+
+theorem data_list_fset_presentation_class:
+  assumes source: "presentation_class R D A"
+  shows "presentation_class (data_list_fset_presents R)
+    (\<lambda>S. \<forall>a\<in>fset S. D a)
+    (\<lambda>t. \<exists>ps. (\<forall>p\<in>set ps. A p) \<and> t=data_list_term ps)"
+proof -
+  have sequences: "presentation_class (data_sequence_presents R)
+      (\<lambda>xs. \<forall>a\<in>set xs. D a)
+      (\<lambda>t. \<exists>ps. (\<forall>p\<in>set ps. A p) \<and> t=data_list_term ps)"
+    by (rule data_sequence_presentation_class[OF source])
+  have image: "presentation_class
+      (\<lambda>S t. \<exists>xs. data_sequence_presents R xs t \<and> fset_of_list xs=S)
+      (\<lambda>S. \<forall>a\<in>fset S. D a)
+      (\<lambda>t. \<exists>ps. (\<forall>p\<in>set ps. A p) \<and> t=data_list_term ps)"
+  proof (rule presentation_class_image[OF sequences])
+    fix xs assume "\<forall>a\<in>set xs. D a"
+    then show "\<forall>a\<in>fset (fset_of_list xs). D a" by (simp add: fset_of_list.rep_eq)
+  next
+    fix S assume domain: "\<forall>a\<in>fset S. D a"
+    obtain xs where enumeration: "set xs=fset S"
+      using finite_distinct_list[OF finite_fset[of S]] by blast
+    have represented: "fset_of_list xs=S"
+      by (rule fset_inject[THEN iffD1]) (simp add: fset_of_list.rep_eq enumeration)
+    show "\<exists>xs. (\<forall>a\<in>set xs. D a) \<and> fset_of_list xs=S"
+      by (rule exI[of _ xs]) (use represented enumeration domain in simp)
+  qed
+  show ?thesis using image by (simp only: data_list_fset_presents_def presentation_class_def)
+qed
+
+lemma data_list_fset_presents_function:
+  "data_list_fset_presents (\<lambda>a p. D a \<and> p=f a) S t \<longleftrightarrow>
+    (\<exists>xs. (\<forall>a\<in>set xs. D a) \<and> fset_of_list xs=S \<and> t=data_list_term (map f xs))"
+proof -
+  have element: "(\<lambda>a p. D a \<and> p=f a)=(\<lambda>a p. p=f a \<and> D a)"
+    by (intro ext) auto
+  show ?thesis
+    by (auto simp only: data_list_fset_presents_def data_sequence_presents_def element
+      list_all2_function_restricted)
+qed
+
+lemma data_list_fset_presents_identity:
+  "data_list_fset_presents (\<lambda>a p. D a \<and> p=a) S (data_list_term xs) \<longleftrightarrow>
+    (\<forall>a\<in>set xs. D a) \<and> fset_of_list xs=S"
+proof -
+  have rows: "list_all2 (\<lambda>a p. D a \<and> p=a) ys xs \<longleftrightarrow>
+      ys=xs \<and> (\<forall>a\<in>set xs. D a)" for ys xs
+    by (induction ys arbitrary: xs) (auto simp: list_all2_Cons1)
+  show ?thesis
+    by (auto simp: data_list_fset_presents_def data_sequence_presents_def data_list_term_injective rows)
+qed
+
+lemma data_list_fset_presents_finite_image:
+  assumes "data_sequence_presents R xs t"
+  shows "data_list_fset_presents R (fset_of_list xs) t"
+  using assms by (auto simp: data_list_fset_presents_def)
+
+context list_profile
+begin
+
+theorem finite_set_class:
+  assumes element: "presentation_class R D (\<lambda>t. (element_site,t)\<in>positive_meaning P)"
+  shows "presentation_class (data_list_fset_presents R) (\<lambda>S. \<forall>a\<in>fset S. D a)
+    (\<lambda>t. (list_site,t)\<in>positive_meaning P)"
+proof -
+  have source: "presentation_class (data_list_fset_presents R) (\<lambda>S. \<forall>a\<in>fset S. D a)
+      (\<lambda>t. \<exists>xs. (\<forall>x\<in>set xs. (element_site,x)\<in>positive_meaning P) \<and> t=data_list_term xs)"
+    by (rule data_list_fset_presentation_class[OF element])
+  have admission: "(\<lambda>t. \<exists>xs. (\<forall>x\<in>set xs. (element_site,x)\<in>positive_meaning P) \<and> t=data_list_term xs)=
+      (\<lambda>t. (list_site,t)\<in>positive_meaning P)"
+    by (rule ext) (simp only: exact; blast)
+  show ?thesis using source by (simp only: admission)
+qed
+
+end
+
+text \<open>
+  This class is the covered image of the complete sequence class under the
+  existing finite-set operation. The subject retains each member; the displayed
+  list retains its own order and repeated occurrences. Every allowed element
+  presentation and every displayed enumeration remains available. No count
+  or order of that displayed list becomes part of finite-set identity.
+
+  The earlier distinct-member collection class remains unchanged. This class
+  supplies the broader input convention already used by the finite evaluator,
+  whose list interface discards repeated identical rows only when interpreting
+  the represented finite relation. Counted subjects still use their bag class.
+\<close>
+
+end

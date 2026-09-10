@@ -684,3 +684,16 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Prescribed_Environments
     Factor_Clause_Specialization_Presentations
     Factor_Schema_Socket_Investigation
+    Factor_List_Set_Presentations
+    Factor_Observation_Admission
+    Factor_Observation_Clauses
+    Factor_Observation_Components
+    Factor_Observation_Contracts
+    Factor_Observation_Equations
+    Factor_Observation_Execution
+    Factor_Observation_Investigation
+    Factor_Observation_Presentations
+    Factor_Observation_Profiles
+    Factor_Observation_Result_Clauses
+    Factor_Observation_Results
+    Factor_Result_Comparison

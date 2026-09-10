@@ -1910,6 +1910,48 @@ and intended comparisons remain explicit inputs. Generating new observations,
 proving their actual meaning, and native Factor checking of the mathematical
 evidence remain separate work.
 
+Profiles and directed losses now have ordinary native operations. Their
+clauses reuse the existing context filters, list maps, membership, absence,
+and set comparison. Both filter branches admit the complete supplied row,
+including fields in discarded rows. Empty tables still admit the whole
+context. The same closed package supplies both operations before every future
+argument, with exact local function and quotation contracts.
+
+The finite-set classes admit every displayed order and repeated identical row.
+The ordered computations therefore supply private witnesses. One general
+native schema compares such a witness with the public result through the
+existing set comparator; both operations instantiate that schema. Conjoining
+an additional comparison with an order-restricted public result would retain
+the original restriction.
+
+The native observation investigation is directly reproducible:
+
+```sh
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle observation --selected 0
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle observation --selected 0 1
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle observation --selected 1
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle observation --selected
+```
+
+The subjects are the profile in table order, its reversal, a repeated-row
+presentation, and a different result missing one row. Facet 0 calls the
+ordered native computation; facet 1 calls the complete native result operation.
+The independent comparison takes the sets of their actual output rows. The
+first facet conflicts with four valid comparisons. Its reported extension
+retains those conflicts. The complete-result facet alone supplies an adequate
+basis for this scope. Empty selection misses all six comparisons between the
+correct set and the different result; its reported extension supplies the
+complete-result facet.
+
+The first executed scope contained only three presentations of the same set.
+It exposed the order conflict, but also admitted the empty basis. That output
+directed the addition of the different result, while the persistent conflicts
+directed the private-witness construction. These are changes to the subject
+scope and the actual native program. The investigation still executes proved
+finite equations; it does not yet check their mathematical evidence natively.
+The new native operations compute profiles and losses, while native admission
+of the entire investigation report remains further work.
+
 Source-context readiness uses an accepted build receipt and the complete local
 import closure:
 

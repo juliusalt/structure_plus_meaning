@@ -27,6 +27,33 @@ SCHEMA = "finite-investigation-1"
 
 # Each registered case fixes its source theory, export, and independent scope.
 BUILTIN_CASES = {
+    "observation": {
+        "theory": "Factor_Observation_Investigation",
+        "function": "observation_investigation",
+        "help": "Compare output presentations of an actual native observation profile",
+        "question": "Do the selected native decisions preserve the represented observation set?",
+        "scope": {
+            "candidates": {
+                "0": "The profile in table order",
+                "1": "The same profile in reverse order",
+                "2": "The same profile with its first row repeated",
+                "3": "A different result with the second profile row missing",
+            },
+            "facets": {
+                "0": "Acceptance by the actual ordered native profile operation",
+                "1": "Acceptance by the native profile result with a private computation and set comparison",
+            },
+            "values": "The actual Boolean decision: False=0, True=1",
+            "comparison": "Equality of the sets of actual output rows",
+            "coverage": "These four output lists for the two-row observation table defined in the source theory",
+        },
+        "semantic_boundary": (
+            "The source theory defines each observation by an actual native operation and proves its code "
+            "equation. The comparison independently takes the sets of the output lists. This run executes "
+            "those proved finite equations; it does not evaluate arbitrary native programs or check their "
+            "mathematical proofs natively."
+        ),
+    },
     "completion": {
         "theory": "Presentation_Completion_Investigation",
         "function": "completion_investigation",

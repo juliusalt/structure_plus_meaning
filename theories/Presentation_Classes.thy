@@ -21,6 +21,14 @@ lemma subject_iff: "subject a \<longleftrightarrow> (\<exists>p. presents a p)"
 lemma admissible_iff: "admissible p \<longleftrightarrow> (\<exists>a. presents a p)"
   using presentation_boundary admitted by blast
 
+lemma recovered_admission:
+  "presentation_class presents subject (\<lambda>p. \<exists>a. presents a p)"
+proof -
+  have same: "admissible=(\<lambda>p. \<exists>a. presents a p)"
+    by (rule ext) (rule admissible_iff)
+  show ?thesis using presentation_class_axioms by (simp only: same)
+qed
+
 theorem inhabited_iff:
   "(\<exists>p. admissible p) \<longleftrightarrow> (\<exists>a. subject a)"
   using admitted subject_boundary total presentation_boundary by blast

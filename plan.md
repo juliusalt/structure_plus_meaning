@@ -213,6 +213,13 @@ retains their witnesses and obstructions, and derives an adequate extension
 exactly when one exists within the stated language. Searching beyond that
 language and native mathematical-proof checking remain development obligations.
 
+Ordinary native operations now compute complete profiles and directed losses.
+Their complete classes retain all displayed finite-set presentations. An
+executed order conflict directs a general private-result comparison schema;
+both operations reuse it. A scope that admitted an empty observation basis
+is extended with a different result and evaluated again. Native admission of
+the whole report and its mathematical evidence remain further work.
+
 Schedule related information reads, edits, validation, and reports in batches.
 This scheduling discipline is separate from the semantic feedback loop;
 the latter should guide the content of each batch.

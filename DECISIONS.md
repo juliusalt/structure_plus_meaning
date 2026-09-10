@@ -7192,3 +7192,53 @@ For each input, independent enumeration of every available extension checks
 the claimed possibility criterion. These runtime checks supplement the
 universal proofs; they do not supply native mathematical-proof admission.
 The wider presentation, higher-stratum, and every-line audits remain open.
+
+
+## Native computation witnesses complete the observation result classes
+
+The list interface presents finite relations, so complete classes must include
+every displayed order and repeated identical row. The existing sequence-image
+construction supplies these classes without changing counted subjects or the
+earlier distinct-member presentation convention. Datum, pair, and product
+classes retain the whole facet list, table, query context, and output value.
+
+The ordinary profile computation preserves its input order. An initial
+execution on ordered, reversed, and repeated presentations of the same profile
+returned four conflicts for that computation's public decision. Adding every
+sound available facet retained the conflicts. Keeping only set comparison
+settled the scope, but the empty selection did too. The actual outputs therefore
+directed two changes: a private computation witness followed by complete set
+comparison, and an expanded subject scope containing a different output.
+
+The private-result schema is a general native construction with two actual
+premise calls. Both the profile and directed-loss operations instantiate it.
+The earlier computation supplies a sound total witness in the complete result
+class. The comparison has an exact local contract at each such value, so general
+witness completion yields every presentation of the result. Its larger global
+input domain does not need to be narrowed to the particular result-row type.
+
+Both complementary filter branches admit all supplied fields. Empty traversals
+still admit their context. The loss operation shares the same whole facet and
+table inputs in both profile calls. Structural agreement on the actual common
+collection definitions precedes the program join. Thirteen definitions contain
+nineteen ordinary clauses, and one fixed closed package covers every future
+argument with exact program scope, artifacts, and bindings.
+
+The expanded execution compares three complete presentations and a result
+missing one row. The ordered observation has four persistent conflicts and
+four witnessed missing comparisons. Its returned extension preserves the
+conflicts. The complete-result observation alone is adequate. Empty selection
+has six missing comparisons, and its returned extension is adequate. Every
+reported profile, loss, repair, obstruction, and possible facet selection is
+checked independently for the stated scope.
+
+Execution of the native profile and loss equations also covers every
+two-candidate, two-facet, one-value table and selection against all output
+lists of length at most three, followed by reordered and repeated inputs,
+multiple values, malformed octets, and formed references in unused input
+fields or empty contexts. Those equations refer to the actual native calls.
+All 17,764 executed decisions agree with independent expected results,
+including ten formed-reference probes. These checks supplement the universal
+contracts; they do not
+establish native checking of the mathematical proofs or admission of the whole
+investigation report. The wider development and every-line audits remain open.

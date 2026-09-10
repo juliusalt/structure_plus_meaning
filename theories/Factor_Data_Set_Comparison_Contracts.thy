@@ -1,6 +1,6 @@
 theory Factor_Data_Set_Comparison_Contracts
   imports Factor_Data_Set_Comparison Factor_Collection_Comparisons Presentation_Contracts
-    Factor_Compiled_Applications
+    Factor_Compiled_Applications Factor_List_Set_Presentations
 begin
 
 section \<open>The complete contract compares sets while retaining list subjects\<close>
@@ -44,6 +44,40 @@ proof -
   have formed: "data_elements (map f ys)" using data second(1) by auto
   show ?thesis using source formed
     by (simp only: second(2) data_set_comparison_mapped[OF injective] second(1); blast)
+qed
+
+section \<open>A computed member domain determines every compared displayed presentation\<close>
+
+theorem data_set_comparison_to_list_fset:
+  assumes injective: "inj f"
+    and source: "\<forall>a\<in>set xs. D a"
+    and data: "\<And>a. D a \<Longrightarrow> term_formed (f a) \<and> self_contained_term (f a)"
+  shows "(219,Pair_Term (data_list_term (map f xs)) q)\<in>positive_meaning data_set_comparison_system
+    \<longleftrightarrow> data_list_fset_presents (\<lambda>a p. D a \<and> p=f a) (fset_of_list xs) q"
+proof
+  assume holds: "(219,Pair_Term (data_list_term (map f xs)) q)\<in>positive_meaning data_set_comparison_system"
+  obtain ps where displayed: "q=data_list_term ps" "set ps=set (map f xs)"
+    using holds by (auto simp only: data_set_comparison_exact factor_term.inject data_list_term_injective)
+  have members: "\<forall>p\<in>set ps. \<exists>a. p=f a \<and> D a"
+    using displayed(2) source by auto
+  obtain ys where readings: "ps=map f ys" "\<forall>a\<in>set ys. D a"
+    using members by (simp only: list_range_restricted_witnesses) blast
+  have same: "set ys=set xs"
+    using displayed(2) readings(1) by (simp only: set_map inj_image_eq_iff[OF injective])
+  have finite_same: "fset_of_list ys=fset_of_list xs"
+    by (rule fset_inject[THEN iffD1]) (simp add: fset_of_list.rep_eq same)
+  show "data_list_fset_presents (\<lambda>a p. D a \<and> p=f a) (fset_of_list xs) q"
+    using readings displayed(1) finite_same by (auto simp only: data_list_fset_presents_function)
+next
+  assume "data_list_fset_presents (\<lambda>a p. D a \<and> p=f a) (fset_of_list xs) q"
+  then obtain ys where displayed: "\<forall>a\<in>set ys. D a" "fset_of_list ys=fset_of_list xs"
+    "q=data_list_term (map f ys)" by (simp only: data_list_fset_presents_function) blast
+  have same: "set xs=set ys" using arg_cong[OF displayed(2), of fset]
+    by (simp add: fset_of_list.rep_eq)
+  have formed: "data_elements (map f xs)" "data_elements (map f ys)"
+    using source displayed(1) data by auto
+  show "(219,Pair_Term (data_list_term (map f xs)) q)\<in>positive_meaning data_set_comparison_system"
+    using formed same by (simp only: displayed(3) data_set_comparison_mapped[OF injective])
 qed
 
 section \<open>Equal sets can have different attachment counts\<close>

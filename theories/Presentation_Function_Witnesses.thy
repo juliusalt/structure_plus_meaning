@@ -93,6 +93,26 @@ theorem completion:
   using postcompose[OF presentation_identity_function[OF right.presentation_class_axioms
       right.presentation_class_axioms]] by simp
 
+theorem completion_by_comparison:
+  assumes comparison: "\<And>b q r. S b q \<Longrightarrow> (check q r \<longleftrightarrow> S b r)"
+  shows "presented_function_contract R D A S E B f (\<lambda>p r. \<exists>q. operation p q \<and> check q r)"
+proof -
+  have transport: "presentation_transport S S q r \<longleftrightarrow> S b r" if "S b q" for b q r
+    using presented_function_contract.output[OF presentation_identity_function[
+      OF right.presentation_class_axioms right.presentation_class_axioms] that] by simp
+  have checked: "check q r \<longleftrightarrow> presentation_transport S S q r"
+    if run: "operation p q" for p q r
+  proof -
+    obtain a where source: "R a p" using left.admitted[OF input_boundary[OF run]] by blast
+    have computed: "S (f a) q" by (rule sound[OF source run])
+    show ?thesis by (simp only: comparison[OF computed] transport[OF computed])
+  qed
+  have same: "(\<lambda>p r. \<exists>q. operation p q \<and> check q r)=
+      (\<lambda>p r. \<exists>q. operation p q \<and> presentation_transport S S q r)"
+    by (intro ext) (use checked in blast)
+  show ?thesis using completion by (simp only: same)
+qed
+
 theorem predicate_transfer:
   assumes check: "\<And>b q. S b q \<Longrightarrow> (test q \<longleftrightarrow> L b)"
   shows "(\<exists>q. operation p q \<and> test q) \<longleftrightarrow>

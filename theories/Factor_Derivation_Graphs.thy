@@ -4,28 +4,33 @@ begin
 
 section \<open>Finite inference and assertion occurrences\<close>
 
-datatype ('a,'c) schema_graph_node =
-    Schema_Inference 'c "('a \<times> factor_term) fset"
+datatype ('a,'c,'v) inference_node =
+    Schema_Inference 'c "('a \<times> 'v) fset"
   | Schema_Assertion
 
-record ('a,'s,'c,'n) schema_derivation_graph =
-  graph_inferences :: "('n \<times> ('a,'c) schema_graph_node) fset"
+type_synonym ('a,'c) schema_graph_node = "('a,'c,factor_term) inference_node"
+
+record ('a,'s,'c,'n,'v) inference_graph =
+  graph_inferences :: "('n \<times> ('a,'c,'v) inference_node) fset"
   graph_discharges :: "(('n \<times> 's) \<times> 'n) fset"
 
+type_synonym ('a,'s,'c,'n) schema_derivation_graph =
+  "('a,'s,'c,'n,factor_term) inference_graph"
+
 definition schema_graph_nodes ::
-  "('a,'s,'c,'n) schema_derivation_graph \<Rightarrow> 'n set" where
+  "('a,'s,'c,'n,'v) inference_graph \<Rightarrow> 'n set" where
   "schema_graph_nodes G = rel_dom (fset (graph_inferences G))"
 
 definition schema_graph_edges ::
-  "('a,'s,'c,'n) schema_derivation_graph \<Rightarrow> ('n \<times> 'n) set" where
+  "('a,'s,'c,'n,'v) inference_graph \<Rightarrow> ('n \<times> 'n) set" where
   "schema_graph_edges G = {(m,n). \<exists>s. ((n,s),m) \<in> fset (graph_discharges G)}"
 
 definition schema_graph_premises ::
-  "('a,'s,'c,'n) schema_derivation_graph \<Rightarrow> 'n \<Rightarrow> ('s \<times> 'n) set" where
+  "('a,'s,'c,'n,'v) inference_graph \<Rightarrow> 'n \<Rightarrow> ('s \<times> 'n) set" where
   "schema_graph_premises G n = {(s,m). ((n,s),m) \<in> fset (graph_discharges G)}"
 
 definition schema_assertion_uses ::
-  "('a,'s,'c,'n) schema_derivation_graph \<Rightarrow> ('n \<times> ('n \<times> 's)) set" where
+  "('a,'s,'c,'n,'v) inference_graph \<Rightarrow> ('n \<times> ('n \<times> 's)) set" where
   "schema_assertion_uses G = {(n,(p,s)). (n,Schema_Assertion) \<in> fset (graph_inferences G) \<and>
     ((p,s),n) \<in> fset (graph_discharges G)}"
 
@@ -39,7 +44,7 @@ lemma schema_assertion_use_domain:
   by (auto simp: schema_assertion_uses_def schema_graph_nodes_def rel_dom_def)
 
 definition schema_graph_formed ::
-  "('a,'s,'c,'n) schema_derivation_graph \<Rightarrow> 'n \<Rightarrow> bool" where
+  "('a,'s,'c,'n,'v) inference_graph \<Rightarrow> 'n \<Rightarrow> bool" where
   "schema_graph_formed G root \<longleftrightarrow>
     single_valued (fset (graph_inferences G)) \<and>
     single_valued (fset (graph_discharges G)) \<and>
@@ -161,8 +166,8 @@ definition schema_graph_reading ::
     (\<forall>n A. (n,A) \<in> fset (graph_inferences G) \<longrightarrow> checks_schema_graph_node P G J n A)"
 
 definition schema_graph_assumptions ::
-  "('a,'s,'c,'n) schema_derivation_graph \<Rightarrow> ('n \<times> ('d \<times> factor_term)) set \<Rightarrow>
-    ('n \<times> ('d \<times> factor_term)) set" where
+  "('a,'s,'c,'n,'v) inference_graph \<Rightarrow> ('n \<times> 'q) set \<Rightarrow>
+    ('n \<times> 'q) set" where
   "schema_graph_assumptions G J = {(n,q). (n,Schema_Assertion) \<in> fset (graph_inferences G) \<and> (n,q) \<in> J}"
 
 definition schema_graph_derives ::
@@ -324,7 +329,7 @@ corollary schema_graph_closed_sound:
 
 section \<open>Assertions remain conditional\<close>
 
-definition assertion_graph :: "'n \<Rightarrow> ('a,'s,'c,'n) schema_derivation_graph" where
+definition assertion_graph :: "'n \<Rightarrow> ('a,'s,'c,'n,'v) inference_graph" where
   "assertion_graph n =
     \<lparr>graph_inferences = finsert (n,Schema_Assertion) fempty, graph_discharges = fempty\<rparr>"
 

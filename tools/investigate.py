@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 from contextlib import contextmanager
 import fcntl
 import hashlib
@@ -23,6 +24,133 @@ import build
 ROOT = Path(__file__).resolve().parents[1]
 ENGINE_THEORY = "Presentation_Completion_Investigation"
 SCHEMA = "finite-investigation-1"
+
+# Each registered case fixes its source theory, export, and independent scope.
+BUILTIN_CASES = {
+    "completion": {
+        "theory": "Presentation_Completion_Investigation",
+        "function": "completion_investigation",
+        "help": "Compute and compare the linked completion example",
+        "question": "Do the selected observations distinguish joint completion feasibility?",
+        "scope": {
+            "candidates": {
+                "0": "identity paired with identity",
+                "1": "identity paired with negation",
+            },
+            "facets": {
+                "0": "first test has a witness",
+                "1": "second test has a witness",
+                "2": "both tests share a witness",
+            },
+            "domain": "All Boolean presentations of one unit subject",
+            "comparison": "Preservation of joint feasibility",
+        },
+    },
+    "permission": {
+        "theory": "Factor_Permission_Investigation",
+        "function": "permission_investigation",
+        "help": "Compute actual program formation and truth observations",
+        "question": "Do the selected facets preserve complete formation and truth decisions?",
+        "scope": {
+            "candidates": {
+                "0": "narrow interface, empty clause family",
+                "1": "variable interface, empty clause family",
+                "2": "variable-interface recognizer",
+            },
+            "arguments": {
+                "0": "Payload_Term []",
+                "1": "Pair_Term (Payload_Term []) (Payload_Term [])",
+            },
+            "facets": {
+                "0": "call formation",
+                "1": "positive truth",
+            },
+            "values": "Twice the argument index plus its Boolean outcome (False=0, True=1)",
+            "comparison": "Equal formation and truth at both supplied arguments",
+            "coverage": "These three actual program forms and these two argument values",
+        },
+        "semantic_boundary": (
+            "The exported theory computes the actual program observations using proved equations. Its "
+            "table and comparison contracts cover precisely the stated finite scope. The general proof "
+            "separately establishes the necessity of both facets for all formed program entries."
+        ),
+    },
+    "pattern": {
+        "theory": "Factor_Substitution_Investigation",
+        "function": "pattern_investigation",
+        "help": "Compute actual substitutions and their two marker observations",
+        "question": "Do the selected probes determine the actual substituted patterns?",
+        "scope": {
+            "replacements": {
+                "0": "Pattern_Variable 0",
+                "1": "Pattern_Variable 1",
+                "2": "Pattern_Payload [0]",
+                "3": "Pattern_Payload [1]",
+                "4": "Pattern_Target (Whole_Artifact empty_artifact)",
+            },
+            "template": "Pair of two occurrences of one source variable",
+            "facets": {
+                "0": "payload marker evaluation",
+                "1": "constant target marker evaluation",
+            },
+            "marker_assignment": "Variable a has payload marker [a]",
+            "values": (
+                "Codes 0, 1, and 2 encode the resulting repeated pairs of Payload [0], Payload [1], "
+                "and the fixed target"
+            ),
+            "comparison": "Equality of the five actual substituted patterns",
+            "coverage": "These five replacements in the repeated-variable pair template",
+        },
+        "semantic_boundary": (
+            "The exported theory performs the substitutions and pattern evaluations. The observation "
+            "table, comparison, and output codec have exact contracts for this finite scope. The "
+            "separate general theorem determines arbitrary scoped pattern syntax; this execution does "
+            "not run an arbitrary native program or check its universal mathematical contracts."
+        ),
+    },
+    "proof_probes": {
+        "theory": "Factor_Proof_Probe_Investigation",
+        "function": "proof_probes_investigation",
+        "help": "Compare finite call probes with complete program decisions",
+        "question": "Do the selected call probes determine complete formation and truth agreement?",
+        "scope": {
+            "candidates": {
+                "0": "The existing finite-relation program containing exactly the two marker terms",
+                "1": "The existing pattern-family program with one variable recognizer",
+            },
+            "facets": {
+                "0": "Payload_Term [0]",
+                "1": "Target_Term (Whole_Artifact empty_artifact)",
+                "2": "Pair_Term (Payload_Term [0]) (Payload_Term [0])",
+            },
+            "values": "Twice the call-formation outcome plus the positive-truth outcome (False=0, True=1)",
+            "comparison": "Equal formation and positive truth on every formed term",
+            "coverage": (
+                "These two fixed actual programs; the three probes form a complete basis for this "
+                "family"
+            ),
+        },
+        "semantic_boundary": (
+            "The exported observations use proved code equations for the existing programs. The "
+            "intended comparison quantifies over every formed term and has a proved decision equation "
+            "for this two-program family. A separate theorem shows that any finite collection of "
+            "positive probes can miss a difference between finite programs. This execution does not "
+            "infer universal truth for an arbitrary program from sample calls."
+        ),
+    },
+}
+
+
+def builtin_case(kind: str, selected: list[int], collapsed: bool = False) -> dict:
+    descriptor = BUILTIN_CASES[kind]
+    case = {"schema": SCHEMA, "kind": kind, "selected": selected,
+            "question": descriptor["question"], "scope": copy.deepcopy(descriptor["scope"])}
+    if "semantic_boundary" in descriptor:
+        case["semantic_boundary"] = descriptor["semantic_boundary"]
+    if kind == "pattern":
+        case["collapsed"] = collapsed
+        case["scope"]["marker_assignment"] = "All payload markers are [0]" if collapsed else "Variable a has payload marker [a]"
+    return case
 
 
 def digest(data: bytes) -> str:
@@ -79,13 +207,13 @@ def validate_case(case: dict) -> None:
         require(rows(case.get("relation"), 2), "relation must contain candidate pairs.")
         require(all(c in case["candidates"] and d in case["candidates"] for c, d in case["relation"]),
                 "Comparison pairs must lie in the supplied candidate domain.")
-    elif kind in {"completion", "permission", "pattern"}:
+    elif kind in BUILTIN_CASES:
         require(isinstance(case.get("selected"), list) and all(natural(x) for x in case["selected"]),
                 "selected must contain natural facet identifiers.")
         if kind == "pattern":
             require(type(case.get("collapsed")) is bool, "collapsed must be Boolean.")
     else:
-        raise ValueError("kind must be inference, basis, completion, permission, or pattern.")
+        raise ValueError("kind must be inference, basis, or a registered case: " + ", ".join(BUILTIN_CASES))
     evidence = case.get("evidence", [])
     require(isinstance(evidence, list), "evidence must be a list.")
     for item in evidence:
@@ -247,8 +375,7 @@ def current_sources(sources: dict) -> bool:
 
 def prepare_engine(args, receipt: dict, output: Path, log, kind: str) -> tuple[Path, Path, dict]:
     version = run_command([args.isabelle, "version"], args, receipt, log, 30).strip()
-    engine_theory = {"permission": "Factor_Permission_Investigation",
-                     "pattern": "Factor_Substitution_Investigation"}.get(kind, ENGINE_THEORY)
+    engine_theory = BUILTIN_CASES[kind]["theory"] if kind in BUILTIN_CASES else ENGINE_THEORY
     sources, _ = source_graph(ROOT, [], [engine_theory])
     tool_paths = [Path(__file__).resolve(), Path(build.__file__).resolve()]
     tool_hashes = {str(path): file_hash(path) for path in tool_paths}
@@ -360,8 +487,8 @@ val result = "{\"input_formed\":" ^ Bool.toString formed ^
 print ("INVESTIGATION_RESULT " ^ result ^ "\n");
 '''
 
-    if case["kind"] in {"completion", "permission", "pattern"}:
-        function = "Finite_Investigation." + case["kind"] + "_investigation"
+    if case["kind"] in BUILTIN_CASES:
+        function = "Finite_Investigation." + BUILTIN_CASES[case["kind"]]["function"]
         parameter = ("true " if case["collapsed"] else "false ") if case["kind"] == "pattern" else ""
         call = function + " " + parameter + ml_list(case["selected"], ml_nat)
         observations = function + "_observations" + (" " + parameter.strip() if parameter else "")
@@ -398,7 +525,7 @@ def validate_result(result: dict, kind: str) -> None:
                     for p in result["profiles"]), "Malformed candidate profile.")
         require(all(isinstance(p, dict) and natural(p.get("from")) and natural(p.get("to"))
                     and rows(p.get("losses"), 2) for p in result["losses"]), "Malformed candidate losses.")
-        if kind in {"completion", "permission", "pattern"}:
+        if kind in BUILTIN_CASES:
             require(rows(result.get("observations"), 3) and rows(result.get("relation"), 2),
                     "Missing executed observations or relation.")
 
@@ -419,43 +546,18 @@ def run(args, invocation: str, output: Path) -> int:
                 receipt["input"] = {"path": str(args.case.resolve()), "sha256": digest(raw)}
             elif args.mode == "sources":
                 case = source_case(args)
-            elif args.mode == "pattern":
-                case = {"schema": SCHEMA, "kind": "pattern", "selected": args.selected,
-                    "collapsed": args.collapsed,
-                    "question": "Do the selected probes determine the actual substituted patterns?",
-                    "scope": {"replacements": {"0": "Pattern_Variable 0", "1": "Pattern_Variable 1",
-                            "2": "Pattern_Payload [0]", "3": "Pattern_Payload [1]",
-                            "4": "Pattern_Target (Whole_Artifact empty_artifact)"},
-                        "template": "Pair of two occurrences of one source variable",
-                        "facets": {"0": "payload marker evaluation", "1": "constant target marker evaluation"},
-                        "marker_assignment": "All payload markers are [0]" if args.collapsed else "Variable a has payload marker [a]",
-                        "values": "Codes 0, 1, and 2 encode the resulting repeated pairs of Payload [0], Payload [1], and the fixed target",
-                        "comparison": "Equality of the five actual substituted patterns",
-                        "coverage": "These five replacements in the repeated-variable pair template"},
-                    "semantic_boundary": "The exported theory performs the substitutions and pattern evaluations. The observation table, comparison, and output codec have exact contracts for this finite scope. The separate general theorem determines arbitrary scoped pattern syntax; this execution does not run an arbitrary native program or check its universal mathematical contracts."}
-            elif args.mode == "permission":
-                case = {"schema": SCHEMA, "kind": "permission", "selected": args.selected,
-                    "question": "Do the selected facets preserve complete formation and truth decisions?",
-                    "scope": {"candidates": {"0": "narrow interface, empty clause family",
-                            "1": "variable interface, empty clause family", "2": "variable-interface recognizer"},
-                        "arguments": {"0": "Payload_Term []", "1": "Pair_Term (Payload_Term []) (Payload_Term [])"},
-                        "facets": {"0": "call formation", "1": "positive truth"},
-                        "values": "Twice the argument index plus its Boolean outcome (False=0, True=1)",
-                        "comparison": "Equal formation and truth at both supplied arguments",
-                        "coverage": "These three actual program forms and these two argument values"},
-                    "semantic_boundary": "The exported theory computes the actual program observations using proved equations. Its table and comparison contracts cover precisely the stated finite scope. The general proof separately establishes the necessity of both facets for all formed program entries."}
             else:
-                case = {"schema": SCHEMA, "kind": "completion", "selected": args.selected,
-                    "question": "Do the selected observations distinguish joint completion feasibility?",
-                    "scope": {"candidates": {"0": "identity paired with identity", "1": "identity paired with negation"},
-                        "facets": {"0": "first test has a witness", "1": "second test has a witness", "2": "both tests share a witness"},
-                        "domain": "All Boolean presentations of one unit subject",
-                        "comparison": "Preservation of joint feasibility"}}
+                case = builtin_case(args.mode.replace("-", "_"), args.selected, getattr(args, "collapsed", False))
             validate_case(case)
             verify_evidence(case)
             build.atomic_json(output / "case.json", case)
-            receipt.update(case_sha256=file_hash(output / "case.json"), question=case["question"], scope=case["scope"],
-                semantic_boundary=case.get("semantic_boundary", "Results are exact for the supplied finite data. Independent meanings, evidence validity, and wider coverage require their own justification."))
+            contract = case
+            if case["kind"] in BUILTIN_CASES:
+                contract = builtin_case(case["kind"], case["selected"], case.get("collapsed", False))
+                descriptor = BUILTIN_CASES[case["kind"]]
+                receipt["registered_operation"] = {key: descriptor[key] for key in ("theory", "function")}
+            receipt.update(case_sha256=file_hash(output / "case.json"), question=case["question"], scope=contract["scope"],
+                semantic_boundary=contract.get("semantic_boundary", "Results are exact for the supplied finite data. Independent meanings, evidence validity, and wider coverage require their own justification."))
             engine, poly, sources = prepare_engine(args, receipt, output, log, case["kind"])
             program = output / "execute.ML"
             program.write_text(runtime_program(case, engine))
@@ -522,13 +624,11 @@ def main() -> int:
     modes = parser.add_subparsers(dest="mode", required=True)
     raw = modes.add_parser("run", help="Execute an inference or observation-basis JSON case")
     raw.add_argument("case", type=Path)
-    completion = modes.add_parser("completion", help="Compute and compare the linked completion example")
-    completion.add_argument("--selected", type=int, nargs="*", default=[0, 1])
-    permission = modes.add_parser("permission", help="Compute actual program formation and truth observations")
-    permission.add_argument("--selected", type=int, nargs="*", default=[0, 1])
-    pattern = modes.add_parser("pattern", help="Compute actual substitutions and their two marker observations")
-    pattern.add_argument("--selected", type=int, nargs="*", default=[0, 1])
-    pattern.add_argument("--collapsed", action="store_true", help="Give both target variables the same payload marker")
+    for kind, descriptor in BUILTIN_CASES.items():
+        command = modes.add_parser(kind.replace("_", "-"), help=descriptor["help"])
+        command.add_argument("--selected", type=int, nargs="*", default=[0, 1])
+        if kind == "pattern":
+            command.add_argument("--collapsed", action="store_true", help="Give both target variables the same payload marker")
     sources = modes.add_parser("sources", help="Investigate exact source-context readiness against an accepted build")
     sources.add_argument("roots", nargs="+")
     sources.add_argument("--project", type=Path, default=ROOT)

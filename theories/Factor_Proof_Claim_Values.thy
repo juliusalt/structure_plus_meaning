@@ -128,12 +128,12 @@ proof -
   proof (cases A)
     case Schema_Assertion
     show ?thesis
-      by (simp only: Schema_Assertion proof_claim_at_def same schema_graph_node.distinct schema_graph_node.inject
+      by (simp only: Schema_Assertion proof_claim_at_def same inference_node.distinct inference_node.inject
         checks_schema_graph_node.simps row_value fst_conv snd_conv; blast)
   next
     case (Schema_Inference c V)
     show ?thesis
-      by (simp only: Schema_Inference proof_claim_at_def same schema_graph_node.distinct schema_graph_node.inject
+      by (simp only: Schema_Inference proof_claim_at_def same inference_node.distinct inference_node.inject
         checks_schema_graph_node.simps row_value fst_conv snd_conv positioned_calls_fibre[OF keys] prod.collapse; blast)
   qed
 qed

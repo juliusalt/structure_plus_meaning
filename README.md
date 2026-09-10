@@ -1718,6 +1718,25 @@ decisions of all formed program entries. The command checks and exports the
 required permission theory before execution; its receipt includes the computed
 complete table and intended comparison.
 
+Finite symbolic proof schemes now use the same graph as ground derivations.
+Binding values are patterns; clause occurrences, prospective sockets, callees,
+discharges, and assertion uses remain exact. Every node has an explicit
+specialization witness for its actual interface under that interface's own
+binder. Replacement and claim patterns determine the scheme's variable scope.
+Material assumptions are derived from the cited clauses, retaining every
+node/socket pair and all five substituted operands.
+
+For every formed valuation satisfying those material conditions, evaluation
+produces an ordinary checked graph with exactly the evaluated assertion
+boundary. A scheme with no material or assertion assumptions proves every
+instance of its root pattern. The proof extends the root valuation over any
+remaining variables.
+The universal recognizer has one such scheme before future terms. The existing
+incidence rule instead retains six variables and its complete material
+condition; a formed payload valuation refutes erasing that condition. Native
+presentation and checking of this symbolic scheme relation, broader uniform
+proof methods, and the mathematical-proof obligations remain open.
+
 The substitution investigation is directly reproducible:
 
 ```sh
@@ -1738,6 +1757,30 @@ five. `--collapsed` gives both variables the same payload marker, leaving
 0 and 1 indistinguishable even with both probes. The input is still formed;
 its residual diagnoses an inadequate observation basis. The general grammar
 and native-reading theorems have their separate universal proofs.
+
+The program-probe investigation is directly reproducible:
+
+```sh
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle proof-probes --selected 0 1
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle proof-probes --selected 0 1 2
+```
+
+Candidate 0 is the existing finite-relation program containing exactly the
+payload `[0]` and empty-artifact target markers. Candidate 1 is the existing
+pattern-family program with one variable recognizer. Both admit every formed
+call and prove both markers. The two selected probes therefore leave both
+directed comparisons, `(0, 1)` and `(1, 0)`, unresolved. Facet 2 is a pair of
+the payload markers: only candidate 1 proves it, and the residual becomes
+empty. The intended comparison is formation and truth agreement on every
+formed term, proved decidable for this independently fixed two-program family.
+
+The exported code computes both Boolean outcomes using proved program
+equations. A general theorem separately shows that a finite literal program
+can agree with a universal recognizer at every supplied finite positive probe
+and differ elsewhere. The results direct uniform proof work toward complete
+clause origins, substitutions, interfaces, and conditional boundaries. Three
+arguments cover this particular family; their success supplies no coverage
+theorem for arbitrary programs.
 
 Source-context readiness uses an accepted build receipt and the complete local
 import closure:
@@ -1762,6 +1805,14 @@ and one of these finite inputs:
 | `basis` | `candidates`, `facets`, and `selected` are identifier lists; `observations` has triples `[facet, candidate, value]`; `relation` lists the intended directed candidate pairs. |
 | `completion` or `permission` | `selected` chooses facets of the corresponding proved investigation; the exported program computes its observations and comparison. |
 | `pattern` | `selected` chooses probes; Boolean `collapsed` controls the marker assignment. The exported code computes the actual substitutions, observations, and pattern comparison. |
+| `proof_probes` | `selected` chooses call arguments in the two-program investigation; the intended comparison retains complete formation and truth decisions on all formed terms. |
+
+A repository-owned registry fixes each built-in case's theory, exported
+function, question, and independent scope. The existing case commands use
+that same registry. For registered JSON cases, the receipt reports this actual
+scope and export even when the supplied description proposes something wider;
+the saved input retains the original request. Generic inference and basis
+inputs retain their separately supplied domains and evidence obligations.
 
 Identifiers are nonnegative integers. Optional `conditions` metadata supplies
 one object with an `id` for every used condition. Optional `evidence` objects

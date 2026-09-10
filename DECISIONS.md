@@ -6868,3 +6868,81 @@ independent subject and exactness account; this step does not assume one.
 Native checking of these mathematical proofs, wider schematic proof coverage,
 higher strata, and both final audits remain open. The finite executions and
 native compilation do not close those obligations.
+
+## Uniform proof structure follows from the limits of call observations
+
+Two determining syntax probes do not establish an arbitrary program's meaning.
+The comparison is fixed independently as formation and truth agreement on
+every formed term. The existing finite-relation program containing the payload
+and target markers and the existing variable-pattern family both admit every
+formed call and prove those markers. Their pair call has opposite truth.
+
+The exported evaluator actually computes these observations from proved
+program equations. Selecting both markers leaves both directed comparisons.
+Including the pair removes both; the pair alone also separates this two-program
+family. Invalid facets are rejected. The complete outcome code distinguishes
+formation and truth, including refusal. The finite result has an independent
+coverage argument for these two programs.
+
+The wider obstruction is proved using the existing finite-relation semantics
+and the previously established infinite formed-term domain. Any formed finite
+literal family agrees with the universal recognizer on every term it contains
+and differs at a further formed term. This identifies where additional depth
+is valuable: complete proof structure can justify future valuations, whereas
+another finite collection of positive answers supplies no general coverage
+argument. The existing pattern-family and finite-relation constructions remain
+the program subjects; their meanings are not supplied as truth callbacks.
+
+The scheme relation retains the actual clause at every inference, its complete
+replacement relation, every prospective socket and callee, and the complete
+claim reading. Each actual interface has its own finite substitution witness.
+The proof consumes the local instance obligation at every node, so retaining
+only the root's choice would leave the child obligations unaccounted for.
+The literal program's two marker proofs have different clause origins.
+
+Graph geometry is shared through one binding-value parameter. The old ground
+node and graph types remain aliases of their ground specialization. All old
+ground checking conditions remain; four clients only follow the generated
+datatype and record theorem names. Node renaming now works for every binding
+value type. Evaluation preserves nodes, clauses, discharges, and assertion
+uses even when binding values become equal. There is no second scheme-specific
+graph geometry and no relaxation of the assertion-use condition.
+
+Material conditions are derived from the selected source clauses and pattern
+replacements. Each retains its inference occurrence, material socket, and all
+five operands. They are conditions on later valuations, rather than assumed
+truth at the private syntax markers. Evaluation reconstructs the existing
+admitted instances and checked graph. Its exact assertion boundary supplies
+conditional soundness through the existing graph theorem.
+
+Two existing programs exercise the distinction. The universal recognizer has
+one closed scheme before every future term. The incidence rule retains all six
+variables and its full material condition, including variables absent from the
+root. A formed payload valuation refutes erasing that condition. For a scheme
+with no material or assertion assumptions, a separate theorem extends any
+root-pattern valuation by formed terms on the remaining variables. This proves
+coverage of every root instance without assuming an existential material
+witness for arbitrary root arguments. Assertion-only schemes retain their
+identified root claim as an assumption.
+
+Use also exposed a runner ownership boundary. Each built-in case now has one
+registry entry containing its source theory, export, and independent scope.
+Dispatch, input formation, output checks, and command registration use it.
+A raw JSON proposal cannot replace that case's reported scope or choose an
+unregistered export. Its original description remains in the saved input.
+Both a fixture and actual exported execution exercise this boundary, and the
+three earlier cases retain their observations and results.
+
+The executed source-readiness case follows the graph change through complete
+dependent contexts. Before proof acceptance, its three selected goals retain
+54 demanded conditions and 55 complete reasons, including 23 unresolved local
+checks in 209 input contexts. This supplies the affected proof boundary for the
+batch; source presence does not establish those checks. Whole-session proof
+acceptance and the subsequent complete repository check discharge their own
+exact contexts.
+
+This advances one sufficient uniform proof class. Native presentation and
+checking of symbolic schemes, broader uniform methods, higher strata, and the
+alignment and every-line repository audits remain open. The new mathematical
+proofs also retain their native proof-presentation obligation. No broader
+obligation status is changed by this milestone.

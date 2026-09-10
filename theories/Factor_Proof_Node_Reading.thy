@@ -36,7 +36,7 @@ proof -
     case (Schema_Inference c' V)
     show ?thesis
       by (simp only: Schema_Inference proof_node_value_presents.simps data_list_term.simps factor_term.inject
-        schema_graph_node.inject definition_site_value_eq positioned_binding_rows_term_injective
+        inference_node.inject definition_site_value_eq positioned_binding_rows_term_injective
         discharge_rows_term_injective finite_equality; blast)
   qed
 qed

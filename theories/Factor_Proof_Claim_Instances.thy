@@ -70,7 +70,7 @@ proof -
   have sv: "single_valued (fset (graph_inferences G))" using formed by (simp add: schema_graph_formed_def)
   have same: "(n,A)\<in>fset (graph_inferences G) \<longleftrightarrow> A=Schema_Inference c V" for A
     using node single_valued_outputs[OF sv node] by blast
-  show ?thesis by (simp only: proof_claim_at_def same schema_graph_node.distinct schema_graph_node.inject; blast)
+  show ?thesis by (simp only: proof_claim_at_def same inference_node.distinct inference_node.inject; blast)
 qed
 
 section \<open>The ordinary row join is exactly the complete premise boundary\<close>

@@ -1844,6 +1844,37 @@ valuation laws establish the wider result. Whole-program interfaces,
 callee interpretation, reverse semantic inclusion, higher strata, and the
 final alignment and every-line audits remain separate work.
 
+Finite symbolic proof schemes now use the same graph as ground derivations.
+Binding values are patterns; clause occurrences, prospective sockets, callees,
+discharges, and assertion uses remain exact. Every node has an explicit
+specialization witness for its actual interface under that interface's own
+binder. Replacement and claim patterns determine the scheme's variable scope.
+Material assumptions are derived from the cited clauses, retaining every
+node/socket pair and all five substituted operands.
+
+For every formed valuation satisfying those material conditions, evaluation
+produces an ordinary checked graph with exactly the evaluated assertion
+boundary. A scheme with no material or assertion assumptions proves every
+instance of its root pattern. The proof extends the root valuation over any
+remaining variables.
+The universal recognizer has one such scheme before future terms. The existing
+incidence rule instead retains six variables and its complete material
+condition; a formed payload valuation refutes erasing that condition. Native
+presentation and checking of this symbolic scheme relation, broader uniform
+proof methods, and the mathematical-proof obligations remain open.
+
+Actual execution compares two existing programs against complete decision
+agreement on the unbounded formed-term domain. The syntax markers leave both
+directed comparisons unresolved, while a pair argument separates this finite
+candidate family. The general finite-family theorem rules out inferring
+universal meaning from an arbitrary finite collection of positive call probes.
+The distinction directs the complete scheme structure and its conditional
+boundaries. A shared runner registry fixes each case's actual export and scope,
+including when a raw JSON proposal supplies a broader description. Source
+readiness also executes the unchanged finite evaluator over every affected
+proof context. Native scheme admission, higher strata, and both final audits
+remain further work.
+
 Construction permission now has an exact reduction to changes of one complete
 unordered field at a time. Every pair of valid complete claims is connected
 by three such changes, with the same ordered inputs, exact sources, selections,

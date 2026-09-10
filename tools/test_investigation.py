@@ -35,6 +35,9 @@ if Path(__file__).name == "fake_poly":
             p.write_text("changed generated engine")
     if mode == "malformed_result":
         print("INVESTIGATION_RESULT {}"); sys.exit(0)
+    if mode == "registered":
+        print("INVESTIGATION_RESULT " + json.dumps({"input_formed": True, "residual": [],
+            "profiles": [], "losses": [], "observations": [], "relation": []})); sys.exit(0)
     print("INVESTIGATION_RESULT " + json.dumps({"input_formed": mode != "rejected", "residual": [], "demand": [], "reasons": []}))
     sys.exit(0)
 if sys.argv[1] == "version":
@@ -164,6 +167,24 @@ class InvestigationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 2)
         self.assertEqual(receipt["status"], "rejected")
         self.assertFalse(receipt["result"]["input_formed"])
+
+    def test_registered_case_keeps_its_export_and_scope(self):
+        (self.root / "theories/Factor_Proof_Probe_Investigation.thy").write_text(
+            "theory Factor_Proof_Probe_Investigation imports Main begin end\n")
+        self.case = {"schema": "finite-investigation-1", "kind": "proof_probes", "selected": [0, 1],
+                     "question": "Does the proposal cover every program?", "scope": "All programs",
+                     "semantic_boundary": "Unrestricted universal coverage", "function": "Untrusted_Export",
+                     "theory": "Untrusted_Theory"}
+        self.save_case()
+        result, receipt, proof = self.execute("registered")
+        self.assertEqual(result.returncode, 0, result.stdout)
+        self.assertEqual(proof["status"], "accepted")
+        self.assertEqual(receipt["registered_operation"], {"theory": "Factor_Proof_Probe_Investigation",
+                                                         "function": "proof_probes_investigation"})
+        self.assertEqual(receipt["scope"]["coverage"],
+                         "These two fixed actual programs; the three probes form a complete basis for this family")
+        self.assertNotEqual(receipt["semantic_boundary"], self.case["semantic_boundary"])
+        self.assertEqual(json.loads((self.root / "output/case.json").read_text()), self.case)
 
     def test_source_readiness_uses_the_full_changed_import_context(self):
         sys.path.insert(0, str(self.root / "tools"))

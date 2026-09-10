@@ -5,8 +5,8 @@ begin
 section \<open>Private proof-node coordinates\<close>
 
 definition rename_schema_graph ::
-  "('n \<Rightarrow> 'm) \<Rightarrow> ('a,'s,'c,'n) schema_derivation_graph \<Rightarrow>
-    ('a,'s,'c,'m) schema_derivation_graph" where
+  "('n \<Rightarrow> 'm) \<Rightarrow> ('a,'s,'c,'n,'v) inference_graph \<Rightarrow>
+    ('a,'s,'c,'m,'v) inference_graph" where
   "rename_schema_graph f G =
     \<lparr>graph_inferences = fimage (map_prod f id) (graph_inferences G),
      graph_discharges = fimage (map_prod (map_prod f id) f) (graph_discharges G)\<rparr>"

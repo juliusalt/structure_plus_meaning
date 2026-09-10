@@ -56,12 +56,12 @@ proof -
   have nodes: "fset (graph_inferences (decode_finite_graph (finite_graph_of G)))=fset (graph_inferences G)"
     using inverse by (simp add: finite_graph_of_def map_relation_values_def map_prod_def fimage.rep_eq)
   show ?thesis
-  proof (rule schema_derivation_graph.equality)
+  proof (rule inference_graph.equality)
     show "graph_inferences (decode_finite_graph (finite_graph_of G))=graph_inferences G"
       using nodes by (simp only: fset_inject)
     show "graph_discharges (decode_finite_graph (finite_graph_of G))=graph_discharges G"
       by (simp add: finite_graph_of_def)
-    show "schema_derivation_graph.more (decode_finite_graph (finite_graph_of G))=schema_derivation_graph.more G"
+    show "inference_graph.more (decode_finite_graph (finite_graph_of G))=inference_graph.more G"
       by simp
   qed
 qed

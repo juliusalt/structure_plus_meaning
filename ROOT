@@ -697,3 +697,11 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Observation_Result_Clauses
     Factor_Observation_Results
     Factor_Result_Comparison
+    Factor_Admitted_Context
+    Factor_Observation_Scope_Admission
+    Factor_Observation_Scope_Clauses
+    Factor_Observation_Scope_Contracts
+    Factor_Observation_Scope_Execution
+    Factor_Observation_Scope_Investigation
+    Factor_Observation_Scope_Presentations
+    Factor_Observation_Scope_Rows

@@ -1,0 +1,75 @@
+theory Factor_Observation_Scope_Execution
+  imports Factor_Observation_Scope_Contracts Factor_Observation_Execution
+begin
+
+section \<open>Finite execution calls the actual native admission operation\<close>
+
+definition observation_octet_scope :: "nat list \<Rightarrow> nat list \<Rightarrow> nat list \<Rightarrow>
+    (nat\<times>nat\<times>nat) list \<Rightarrow> bool" where
+  "observation_octet_scope C U F rows \<longleftrightarrow>
+    (311,observation_scope_argument (data_list_term (map observation_octet C))
+      (data_list_term (map observation_octet U)) (data_list_term (map observation_octet F))
+      (data_list_term (map observation_row_term (map observation_octet_row rows))))
+      \<in>positive_meaning observation_scope_system"
+
+lemma observation_octet_scope_code [code]:
+  "observation_octet_scope C U F rows \<longleftrightarrow>
+    list_all (\<lambda>c. c<256) C \<and> list_all (\<lambda>f. f<256) U \<and> list_all (\<lambda>f. f<256) F \<and>
+    list_all (\<lambda>(f,c,w). f<256 \<and> c<256 \<and> w<256) rows \<and>
+    set F\<subseteq>set U \<and> list_all (\<lambda>(f,c,w). f\<in>set U \<and> c\<in>set C) rows"
+  unfolding observation_octet_scope_def
+  apply (subst observation_scope_encoded)
+  apply (subst observation_scope_subject_lists)
+  by (auto simp: list_all_iff subset_iff octets_formed_def split: prod.splits)
+
+section \<open>Formed references test the separate complete data boundary\<close>
+
+abbreviation observation_scope_reference_candidates where
+  "observation_scope_reference_candidates n \<equiv> [if n=0 then observation_reference else Payload_Term []]"
+
+abbreviation observation_scope_reference_facets where
+  "observation_scope_reference_facets n \<equiv> [if n=1 then observation_reference else Payload_Term []]"
+
+abbreviation observation_scope_reference_selected where
+  "observation_scope_reference_selected n \<equiv> if n=2 then [observation_reference] else []"
+
+abbreviation observation_scope_reference_rows where
+  "observation_scope_reference_rows n \<equiv> if 3\<le>n \<and> n<6 then
+    [(if n=3 then observation_reference else Payload_Term [],
+      if n=4 then observation_reference else Payload_Term [],
+      if n=5 then observation_reference else Payload_Term [])]
+    else if n=7 then [(Payload_Term [],Payload_Term [],Payload_Term [])] else []"
+
+abbreviation observation_scope_reference_argument where
+  "observation_scope_reference_argument n \<equiv>
+    observation_scope_argument (data_list_term (observation_scope_reference_candidates n))
+      (data_list_term (observation_scope_reference_facets n)) (data_list_term (observation_scope_reference_selected n))
+      (data_list_term (map observation_row_term (observation_scope_reference_rows n)))"
+
+lemma observation_scope_reference_formed:
+  "schema_call_formed observation_scope_system 311 (observation_scope_reference_argument n)"
+  by (simp add: observation_scope_call data_list_term_formed octets_formed_def split: if_splits)
+
+definition observation_scope_reference_call_formed :: "nat \<Rightarrow> bool" where
+  "observation_scope_reference_call_formed n \<longleftrightarrow>
+    schema_call_formed observation_scope_system 311 (observation_scope_reference_argument n)"
+
+lemma observation_scope_reference_call_formed_code [code]: "observation_scope_reference_call_formed n=True"
+  by (simp only: observation_scope_reference_call_formed_def observation_scope_reference_formed)
+
+definition observation_scope_reference_decision :: "nat \<Rightarrow> bool" where
+  "observation_scope_reference_decision n \<longleftrightarrow>
+    (311,observation_scope_reference_argument n)\<in>positive_meaning observation_scope_system"
+
+lemma observation_scope_reference_decision_code [code]:
+  "observation_scope_reference_decision n \<longleftrightarrow> 6\<le>n"
+  unfolding observation_scope_reference_decision_def
+  apply (subst observation_scope_encoded)
+  apply (subst observation_scope_subject_lists)
+  by (auto simp: octets_formed_def split: if_splits)
+
+export_code observation_octet_scope observation_scope_reference_decision observation_scope_reference_call_formed
+  nat_of_integer integer_of_nat
+  in SML module_name Native_Observation_Scope file_prefix native_observation_scope
+
+end

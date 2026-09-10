@@ -217,8 +217,12 @@ Ordinary native operations now compute complete profiles and directed losses.
 Their complete classes retain all displayed finite-set presentations. An
 executed order conflict directs a general private-result comparison schema;
 both operations reuse it. A scope that admitted an empty observation basis
-is extended with a different result and evaluated again. Native admission of
-the whole report and its mathematical evidence remain further work.
+is extended with a different result and evaluated again. Declared candidate and
+facet scopes now have separate complete native admission. Actual empty-table
+conflicts direct a general context-admission clause, and revised executions
+check its report-derived selections again. Complete finite-set product classes
+preserve both admission outcomes across all displayed enumerations. Native
+admission of the whole report and its mathematical evidence remain further work.
 
 Schedule related information reads, edits, validation, and reports in batches.
 This scheduling discipline is separate from the semantic feedback loop;

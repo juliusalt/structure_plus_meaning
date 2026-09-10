@@ -7242,3 +7242,59 @@ including ten formed-reference probes. These checks supplement the universal
 contracts; they do not
 establish native checking of the mathematical proofs or admission of the whole
 investigation report. The wider development and every-line audits remain open.
+
+## Empty table reports direct explicit native context admission
+
+The original finite evaluation admits only observation rows within the declared
+candidate and facet sets, with selected facets contained in the available set.
+The native profile and loss operations have a smaller, independently useful
+query boundary. Their input domains therefore remain unchanged. A separate
+native predicate supplies the complete declared scope for investigation uses.
+
+The candidate, available-facet, selected-facet, and table values use the existing
+complete finite-set and product classes. Restricting that record by its original
+scope conditions derives the complete admission class. Every displayed order
+and repeated member remains available, and both admission outcomes are invariant
+at all presentations of the same record. No new primitive or preferred
+enumeration is introduced.
+
+A contextual row traversal alone cannot validate unused context fields on an
+empty table. The initial actual execution compared seven complete inputs by
+their independently specified admission outcomes. It returned 12 conflicts,
+12 missing distinctions, and 20 comparisons beyond its entire sound available
+language. Its reported extension and the empty selection were executed again;
+neither supplied an adequate basis.
+
+Those outputs directed a general ordinary context-admission clause. Its two
+premise sockets call the actual context and contextual operation definitions
+in the same program. Its list specialization derives complete context admission
+even when there are no element calls. Here the context definition uses the
+existing data-list check for the candidates and the existing complete subset
+check for the selected and available facets. The existing row traversal then
+checks all table rows. Four new definitions contain five ordinary clauses, with
+the least dependency closure derived from their actual callees.
+
+The revised execution adds that complete native decision to the same seven
+subjects. The row-only observation still has 12 conflicts. The report retains
+12 repair witnesses; its exported extension adds the complete context
+observation while preserving those conflicts. The complete
+context observation alone is the only adequate selection in the stated
+two-facet language. Empty selection has 20 witnessed missing distinctions; its
+exported extension selects the complete observation, and its rerun is adequate.
+Every profile, loss, conflict, repair, obstruction, and possible selection was
+checked independently for this scope.
+
+The native scope predicate has an exact contract on every argument term, full
+data quotation, and a single fixed closed package before every future input.
+Its exported equations also passed 48,930 admission decisions and ten separate
+call-formation checks in 5.71 seconds. The finite execution covers all tables
+on two candidates, two facets, and two witness values, every candidate/facet
+scope and selection within those labels, reversals and repeated members,
+invalid unused fields, and formed references in each input role. The expected
+results were computed independently from data domains and finite membership.
+
+The comparison relation, complete report, and mathematical evidence remain
+separate boundaries. This scope predicate introduces no condition on a supplied
+comparison relation. Native report construction and mathematical-proof checking,
+the wider application audit, and the final every-line repository audit remain
+open.

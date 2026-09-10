@@ -27,6 +27,31 @@ SCHEMA = "finite-investigation-1"
 
 # Each registered case fixes its source theory, export, and independent scope.
 BUILTIN_CASES = {
+    "observation_scope": {
+        "theory": "Factor_Observation_Scope_Investigation",
+        "function": "scope_investigation",
+        "help": "Compare native table traversal with complete declared scope admission",
+        "question": "Do the selected native decisions distinguish complete observation input admission?",
+        "scope": {
+            "candidates": {
+                "0": "Valid empty table",
+                "1": "Empty table with a formed reference in the candidate list",
+                "2": "Empty table with a formed reference in the available facet list",
+                "3": "Empty table with a selected facet outside the available set",
+                "4": "Unused table row outside the available facets",
+                "5": "Unused table row outside the declared candidates",
+                "6": "Valid nonempty table with no selected observations"
+            },
+            "facets": {
+                "0": "Acceptance by the actual native context list of scoped rows",
+                "1": "Acceptance by the native context admission and complete scoped row traversal"
+            },
+            "values": "The actual Boolean decision: False=0, True=1",
+            "comparison": "Equality of complete input admission, independently specified by data domains, the original finite table formation, and selected facet inclusion",
+            "coverage": "These seven complete inputs, including empty tables and unused invalid scope fields"
+        },
+        "semantic_boundary": "Each observation is defined by its actual native call. The independent comparison uses data domains, the original finite observation table formation, and selected-facet inclusion. The complete operation reuses a generic context-admission clause. These executions use proved code equations; native checking of mathematical proofs remains separate."
+    },
     "observation": {
         "theory": "Factor_Observation_Investigation",
         "function": "observation_investigation",

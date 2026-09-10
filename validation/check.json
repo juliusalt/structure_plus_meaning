@@ -1,15 +1,15 @@
 {
-  "invocation": "75b5485b-01e4-4f0b-a97d-e411c56bf084",
+  "invocation": "3aa391d5-78cb-4933-84cf-0505f0c15db8",
   "status": "accepted",
-  "started_utc": "2026-09-10T10:26:17.193541+00:00",
+  "started_utc": "2026-09-10T11:44:10.749519+00:00",
   "exit_code": 0,
   "build_receipt": "validation/build.json",
   "diagnostics_file": "validation/check-errors.log",
   "build_status": "accepted",
   "build_evidence": {
-    "invocation": "75b5485b-01e4-4f0b-a97d-e411c56bf084",
+    "invocation": "3aa391d5-78cb-4933-84cf-0505f0c15db8",
     "status": "accepted",
-    "started_utc": "2026-09-10T10:26:17.195137+00:00",
+    "started_utc": "2026-09-10T11:44:10.751103+00:00",
     "command": [
       "/opt/isabelle/bin/isabelle",
       "build",
@@ -25,7 +25,7 @@
     "exit_code": 0,
     "session_diagnostics": "",
     "sources": {
-      "ROOT": "bfd2e26004cdb3ae6a170846c5840198c76997b2f0f874acd63e23bb287483b6",
+      "ROOT": "f46ace96ba649ba1ec0f8aa82c1c36ab89f223b294383ea9dd93add725e77f9c",
       "theories/Bag_Difference_Witnesses.thy": "d5b919d0e2fb895fcb241ca351faa839a108a639a4f374b724941439746efe33",
       "theories/Bag_Readings.thy": "03d4158d527863bfd03904cfb3ae2b13f3caf62fc9ef8f9a0644754dae34cbae",
       "theories/Bootstrap_Finite_Closure.thy": "df469431d4c9e4f95b2b3b3d192d7da9d677800b0383609dd25b212264581bc5",
@@ -34,6 +34,7 @@
       "theories/Candidate_Observations.thy": "d17f7f738b725bfcc7c27560ac2f8d482dd8b02ca6e83ce72f738451da324749",
       "theories/Conjunction_Development.thy": "64f97eec7cb45ce52f6109104507c958bf7fdd53b493810788d43062d60e0fde",
       "theories/Conjunction_Investigation.thy": "769c73a6a7e6125f0c575847a6560e83f20888c809ffa9a99e3bfe804cb16946",
+      "theories/Factor_Admitted_Context.thy": "f04484e6de2bf40165db210fd205cbef36459862a66eebb4df8767e19bbef0a0",
       "theories/Factor_Admitted_Instantiation.thy": "b237803caf4604948527e328aca1bda476f26c6ff7bc0569efe8530a2758fdf4",
       "theories/Factor_Adoption_Comparison.thy": "bb293a7a71c8e69875e0e7d8b5b7351a4ca51dc22af113c4a3517f4bc2482f84",
       "theories/Factor_Adoption_Permission_Admission.thy": "3ccf2306422845e7368d81079610a5d1cbe5c52937a514eb3d50ebde0785db6a",
@@ -358,6 +359,13 @@
       "theories/Factor_Observation_Profiles.thy": "f67d2cca94a1b8bd60fb5988aaac3e0025d71f31d15ccaa133be665380190565",
       "theories/Factor_Observation_Result_Clauses.thy": "837a6ec3982997caab9b4bec4229c73b32abd214d3f0b0f3d1e1833c9ded7a89",
       "theories/Factor_Observation_Results.thy": "1934981aa391d24d46b367a778b55a5e71f12933ff650ad900699c6a654dd09e",
+      "theories/Factor_Observation_Scope_Admission.thy": "8ccd6b746d251ef836dff74972c5e4e3febc75977ed5ce65399352a4273b15f8",
+      "theories/Factor_Observation_Scope_Clauses.thy": "14886a133f9190c3f5e49e239bdd98d2252764222efdbcbc5412a4774b57a49c",
+      "theories/Factor_Observation_Scope_Contracts.thy": "fe684d9475fac0bf65f54e6824ba44382eee732e8a4527a3ced5154dae68b7c4",
+      "theories/Factor_Observation_Scope_Execution.thy": "c9c73c39262e410170d809e98930bd30b3bb0171cd8d679ccc725b6ad0c67555",
+      "theories/Factor_Observation_Scope_Investigation.thy": "fc91a413ff9642bd292c1cb93b92583995d946c2554feffb8ad3d4ecbc2567ab",
+      "theories/Factor_Observation_Scope_Presentations.thy": "512a02cd31f2c844756fedfaf31e8ad8778490fd0c371039acdcb50b4ee03a9c",
+      "theories/Factor_Observation_Scope_Rows.thy": "1f4b3c4bc757b7847501bb080d2a0459d66a623f71f2e459f0da3a32e46e71a9",
       "theories/Factor_Package_Admission.thy": "be16f5ac029a331790e0fed3bce52866e37dfa0c81ccd0f1a08d08402dd5805f",
       "theories/Factor_Package_Closure_Admission.thy": "342cb1610b9f1982e39d5a99bd508747aae198eab71cf9cca9df21dfe95b11f1",
       "theories/Factor_Package_Coverage.thy": "cadef706fb27cdfb36832d2a1f9feeb71665346240e6f013bb0a0205e1bc77cf",
@@ -728,13 +736,13 @@
     "isabelle_version": "Isabelle2025-2",
     "sources_unchanged": true,
     "tools_unchanged": true,
-    "finished_utc": "2026-09-10T10:30:43.462532+00:00",
-    "log_sha256": "8d7d5fcd1a2c74c436229e610fdac4601853790598112a5422f276e596bc2874"
+    "finished_utc": "2026-09-10T11:48:59.098453+00:00",
+    "log_sha256": "01d3d52e6a2e97824d252f27199f27601beeb4d1fbe32dc01613beaf20efa889"
   },
-  "theory_count": 694,
+  "theory_count": 702,
   "missing_theory_files": [],
   "unlisted_theories": [],
   "proof_escape_matches": [],
   "sources_and_tools_unchanged": true,
-  "finished_utc": "2026-09-10T10:30:43.605976+00:00"
+  "finished_utc": "2026-09-10T11:48:59.242363+00:00"
 }

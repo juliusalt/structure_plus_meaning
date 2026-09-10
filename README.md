@@ -1952,6 +1952,46 @@ finite equations; it does not yet check their mathematical evidence natively.
 The new native operations compute profiles and losses, while native admission
 of the entire investigation report remains further work.
 
+The declared candidate and facet scopes have a separate native admission
+operation. It checks every declared data value, the selected-facet inclusion,
+and every observation row, including unused rows and empty tables. Its complete
+class retains all displayed set orders and repetitions. The standalone profile
+and loss operations keep their original query domains.
+
+The scope investigation compares the Boolean outcomes of that independently
+specified admission condition:
+
+```sh
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle observation-scope --selected 0
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle observation-scope --selected 0 1
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle observation-scope --selected 1
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle observation-scope --selected
+```
+
+The seven inputs include valid empty and nonempty tables, formed references in
+unused candidate or facet lists, an unavailable selected facet, and rows with
+undeclared facets or candidates. Facet 0 calls the native row traversal; facet 1
+also checks the whole context through a generic ordinary context-admission
+clause. The row traversal has 12 persistent conflicts and 12 missing
+distinctions.
+Its reported extension adds the context check and retains the conflicts. The
+context check alone is the only adequate selection in this stated language.
+An empty selection misses 20 required distinctions; its exported extension
+selects the context check, and the rerun has no residual failures.
+
+The initial execution offered only the row traversal. Its complete sound
+language left 20 required distinctions unresolved. That output directed
+the generic context clause and the explicit candidate-list and selected-facet
+checks. The ordinary row traversal retains its earlier meaning.
+
+The actual native scope equations passed 48,930 admission decisions and ten
+separate call-formation checks. These include all 16,384 two-candidate,
+two-facet, two-value tables and scope selections, their reversals and repeated
+members, invalid unused fields, and formed references. Each result
+was checked against independently computed data and finite-set conditions.
+Native admission of the complete investigation report and its mathematical
+evidence remains further work.
+
 Source-context readiness uses an accepted build receipt and the complete local
 import closure:
 
@@ -1976,6 +2016,9 @@ and one of these finite inputs:
 | `completion` or `permission` | `selected` chooses facets of the corresponding proved investigation; the exported program computes its observations and comparison. |
 | `pattern` | `selected` chooses probes; Boolean `collapsed` controls the marker assignment. The exported code computes the actual substitutions, observations, and pattern comparison. |
 | `proof_probes` | `selected` chooses call arguments in the two-program investigation; the intended comparison retains complete formation and truth decisions on all formed terms. |
+| `observation` | `selected` chooses native profile decisions; comparison is equality of represented output sets. |
+| `observation_scope` | `selected` chooses native scope decisions; comparison is equality of independently specified complete input admission. |
+| `schema_sockets` | `selected` chooses schema observations; comparison requires an actual substitution between the complete schemas, including premise sockets. |
 
 A repository-owned registry fixes each built-in case's theory, exported
 function, question, and independent scope. The existing case commands use

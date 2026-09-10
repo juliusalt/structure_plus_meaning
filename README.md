@@ -1759,6 +1759,41 @@ such claim has an accepted scoped presentation, at arbitrary pattern depth and w
 preserve this boundary. Complete symbolic proof-graph admission, including
 clause origins and material and assertion conditions, remains further work.
 
+The native boundary now checks a whole symbolic rule under one complete
+binder. Its head and every prospective premise use the supplied package;
+variables appearing only in premises or material operands remain in scope.
+The existing complete schema report supplies both determining valuations.
+One ordinary entry composes that report with the existing head-call, row-value,
+and call-list readers. It admits exactly the schemas whose complete call
+boundary holds at every formed valuation.
+
+A second entry links the actual package clause, complete replacement record,
+and entire substituted schema through three existing checks. The clause
+reader selects the actual source root under its owning definition and use.
+Substitution retains every socket, callee, and all five operands of every
+material condition. Later ordinary instance admission is equivalent to
+satisfaction of those retained material conditions. Positive truth at private
+marker assignments is not required.
+
+The existing symbolic schemes supply this same local specialization at every
+inference, with its variable scope contained in the complete scheme scope and
+its material occurrences retaining their node/socket keys. The existing
+pattern-call checker has seven variables used only in premises; its head
+binder alone cannot instantiate its clause. The native incidence rule has six
+variables despite its one-variable head, and its admitted symbolic boundary
+retains a material condition that a formed payload valuation fails.
+
+Both native entries have exact joint classes derived from existing products
+and intrinsic subdomains. One compiled checker precedes all future inputs.
+A fixed actual package also precedes native presentations of every later
+formed schema boundary, with explicit binder and socket renamings and all
+old artifacts and bindings preserved. General native presentation of clause
+specializations must additionally preserve the original clause sockets and
+replacement links; the current ground construction uses the actual empty
+binder, and an existing finite-relation program supplies an accepted input.
+Complete graph admission, shared target-variable presentations,
+assertion boundaries, and native mathematical-proof checking remain open.
+
 The substitution investigation is directly reproducible:
 
 ```sh

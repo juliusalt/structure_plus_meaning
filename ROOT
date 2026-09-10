@@ -670,3 +670,10 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Pattern_Call_Admission
     Factor_Pattern_Call_Instances
     Factor_Pattern_Call_Contracts
+    Factor_Schema_Pattern_Boundary
+    Factor_Schema_Pattern_Readings
+    Factor_Schema_Pattern_Admission
+    Factor_Clause_Specialization_Readings
+    Factor_Clause_Specialization_Admission
+    Factor_Clause_Specialization_Instances
+    Factor_Clause_Specialization_Contracts

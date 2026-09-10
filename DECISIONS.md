@@ -6989,3 +6989,66 @@ native proof-scheme admission still requires graph formation, actual clause
 origins, complete symbolic bindings, prospective discharges, and both material
 and assertion boundaries. Native checking of the new mathematical proofs,
 higher strata, and both repository audits remain open.
+
+## Whole rule boundaries retain material assumptions and actual clause origins
+
+The symbolic-call checker reads a standalone pattern whose binder is exactly
+that pattern's variables. A complete rule can contain additional variables
+only in its prospective premises or material operands. The schema's existing
+binder already supplies the complete scope. The next boundary therefore uses
+the entire schema and its existing determining report. It does not add another
+table geometry, pattern grammar, or two-valuation implementation.
+
+The complete schema report, symbolic-call program, and package call-list
+program share actual definitions. Two shared-definition unions preserve their
+old meanings. The new schema boundary entry checks both heads and every
+prospective call under the same actual package. All material output rows stay
+in the report. The mathematical criterion is exact at every formed valuation;
+material truth is not used to classify the call boundary.
+
+The clause specialization entry then composes three operations: actual clause
+root selection, complete substitution, and the target schema boundary. The
+source clause is selected by both its definition/use and clause socket. The
+replacement and target schema retain independent explicit environments.
+Callee coordinates in the submitted target schema are interpreted by the
+supplied package. They acquire no implicit meaning from the target syntax's
+source environment.
+
+One complete replacement relation retains every prospective socket, callee,
+and material operand. Evaluating it yields an admitted ordinary source-clause
+instance precisely when the target material conditions hold. The existing
+scheme node checks imply this local relation, and their material occurrences
+keep the exact node/socket keys. The original pattern-call checker's clause
+has seven premise-only variables; the existing native incidence clause has
+five additional variables in its material condition. These actual subjects
+rule out choosing scope from the head alone.
+
+The joint classes reuse the existing source-root, site, and coordinate
+presentations. Intrinsic subdomains impose the links, and exact admission
+covers every input term and every compatible presentation. One compiled
+native program precedes future inputs for both entries. At the schema
+boundary, a fixed actual package also precedes all future submitted rules;
+construction explicitly renames binders and sockets and preserves every old
+artifact and outgoing binding.
+
+The distinction between schema-boundary presentation and clause-specialization
+presentation remains explicit. The latter must preserve the source clause's
+socket identities and replacement links, so arbitrary schema compilation with
+fresh socket names does not establish that coverage. The current ground case
+uses the actual empty source binder. Compiling the existing finite-relation
+program gives an explicit accepted clause-specialization input. Full symbolic
+graph presentation still
+needs shared target-variable identity across actual sites, all discharges,
+and its assertion boundary.
+
+The finite readiness investigation was executed on the six-theory source
+snapshot before the final product-class theory. It retained 232 exact contexts,
+six unresolved local checks, 20 demanded conditions, and 19 complete reasons.
+Independent review of source hashes, closure, demand, and every reason directed
+one complete dependency-session check. This is evidence about proof-source
+readiness; it is not a proof of the draft semantic statements. Final acceptance
+requires the complete repository session and evidence for the final sources.
+
+The seven new theories preserve all 667 earlier theories and every tool.
+Native mathematical-proof checking, broader uniform proof methods, higher
+strata, and the final alignment and every-line repository audits remain open.

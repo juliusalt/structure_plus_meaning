@@ -7052,3 +7052,100 @@ requires the complete repository session and evidence for the final sources.
 The seven new theories preserve all 667 earlier theories and every tool.
 Native mathematical-proof checking, broader uniform proof methods, higher
 strata, and the final alignment and every-line repository audits remain open.
+
+## Prescribed coordinates retain exact clause specializations
+
+The existing schema compiler preserves complete rule meaning up to injective
+binder and socket changes. An actual clause specialization additionally
+retains the source socket coordinates. Its replacement record must use the
+same explicit target-variable correspondence as the whole target schema.
+
+Finite prescribed address maps supply the missing construction boundary.
+Their prescribed part is injective and formed; the remaining finite positions
+are placed outside a supplied finite set. Extending that finite assignment
+to a complete injection discharges the existing native copy requirements.
+The schema compiler now exposes the disjointness and carrier inclusion of
+the boundary it already constructs. Its previous guarantees remain intact.
+The new constructor accepts binder and socket maps as inputs and proves
+pointwise agreement on that boundary. Existing literal values and external
+callee targets are preserved by the existing copy and reference contracts.
+
+The identity socket map becomes available by choosing binder coordinates
+away from the source socket set. Every complete specialization of every
+actual clause in a fixed encoded package then has an accepted native input.
+Source-variable row keys remain literal source coordinates. The same
+injective target-variable map is used in every replacement and the entire
+target schema. The target environment preserves all old artifacts and
+outgoing bindings.
+
+These readings retain their separately supplied environments and uses.
+The displayed variable correspondence does not identify physical positions
+across unrelated uses. A complete symbolic graph still needs an actual
+shared binder, complete discharges, and its assertion boundary.
+
+The construction drafts were initially developed through source inspection.
+The subsequent executed comparison confirmed their missing-coordinate
+diagnosis; it did not originally discover those drafts. Its actual subjects
+are the existing native incidence schema and its material-socket variant.
+Their full rule-instance relations agree, and every valuation gives the
+same unkeyed material operand values. Exact substitution still distinguishes
+the socket coordinates.
+
+| Selected observations | Executed residual | Consequence for this scope |
+|---|---|---|
+| Complete head and all unkeyed material values | Both directed cross-comparisons | These observations miss the required socket identity. |
+| Those observations plus the material socket | Empty | The available socket distinction settles both comparisons. |
+| Material socket alone | Empty | The two invariant observations add no distinction here. |
+
+The last run directs the exact selection criterion: a valid selection is
+complete precisely when it retains the socket facet. This finite result
+does not remove any check from the general native schema reader. Its
+arbitrary-schema scope still requires the complete determining report.
+
+The owner's requested development loop is stronger than occasional checks.
+Reports must direct the next proposals and revisions, and repeated reasoning
+used in making those decisions should itself enter the reusable account.
+The present report exposes complete observations and failed comparisons,
+but selecting the next repair still requires external analysis. Executing
+the existing repair-witness reasoning is a concrete remaining improvement.
+The investigation evaluator is proved exported code; native checking of
+its mathematical evidence, higher strata, and both final audits remain open.
+
+## A readiness timeout directs exact reuse in the evaluator
+
+The actual source case contains 345 conditions, 129 established contexts,
+108 affected context rules, and two goals. Its exported evaluator exceeded
+60 seconds. The supplied demand relation has 288 edges; the old path-bound
+implementation therefore computes 287 expansions. Independent examination
+of that same relation finds its first unchanged expansion at step 58, with
+11,238 path pairs. The generated code also repeats forward evaluation within
+individual goal tests and reevaluates the report while checking its formation.
+
+The change exposes bounded iteration with an explicit unchanged-state stop.
+Its exactness theorem holds for every update function and supplied bound.
+The edge-closure code uses that theorem with its existing bound; every
+mathematical definition and complete reachability guarantee is retained.
+The goal residual shares a computed forward result and keeps its empty-goal
+case. A second exact equation checks the whole original rule table and the
+complete goal family directly, using the established equivalence with the
+original guided evaluator. It does not omit unused malformed rules.
+
+The identical input and source evidence were rerun with separately checked
+code. The run completed in 18.1 seconds. Independent review checked every
+source-context comparison, the complete forward closure and backward demand,
+all 260 demanded conditions, all 288 reasons with their whole premise
+families and qualified occurrences, and both remaining goals. This is an
+execution improvement on that fixed case, not acceptance of its unresolved
+theory snapshot or a universal performance bound.
+
+A second actual run adds one unused rule with a duplicated premise occurrence
+assigned two distinct conditions. It is rejected. Its demand list has a
+different enumeration because the supplied atom list has additional
+occurrences; the represented demand set, every complete reason, and the
+residual goals are unchanged. The report contract concerns that finite set,
+so list order must not be mistaken for an additional obligation.
+
+This failure and replay extend the content-level development loop to the
+machinery itself. Available repair selection and native mathematical-proof
+checking remain further work. The host still schedules related reads,
+changes, validation, and reports in batches.

@@ -138,6 +138,32 @@ BUILTIN_CASES = {
             "infer universal truth for an arbitrary program from sample calls."
         ),
     },
+    "schema_sockets": {
+        "theory": "Factor_Schema_Socket_Investigation",
+        "function": "schema_sockets_investigation",
+        "help": "Compare exact substitutions with socket-free schema observations",
+        "question": "Do the selected observations determine an actual substitution between these linked schemas?",
+        "scope": {
+            "candidates": {
+                "0": "The existing native incidence schema with material socket [18]",
+                "1": "The same schema with material socket [19]",
+            },
+            "facets": {
+                "0": "The complete conclusion pattern",
+                "1": "The unkeyed material operand values at every valuation",
+                "2": "The actual material socket coordinate",
+            },
+            "values": "The first two facets have value 0; the socket facet has value 18 or 19, with exact equations proved for this case",
+            "comparison": "Existence of a pattern substitution from the first actual schema to the second",
+            "coverage": "These two socket variants of the existing native incidence schema",
+        },
+        "semantic_boundary": (
+            "The candidates have the same complete rule-instance relation and the same unkeyed material "
+            "values at every valuation. Actual substitution retains the socket coordinate. Proved code "
+            "equations determine that relation for these two schemas; this finite comparison does not "
+            "search arbitrary schemas or infer universal observations from sample valuations."
+        ),
+    },
 }
 
 

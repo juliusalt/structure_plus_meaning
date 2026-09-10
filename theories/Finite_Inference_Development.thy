@@ -90,6 +90,13 @@ definition finite_inference_residual ::
     ('j\<times>'a) fset \<Rightarrow> ('j\<times>'a) fset" where
   "finite_inference_residual F K H=ffilter (\<lambda>(i,a). a\<notin>finite_inference_result F K) H"
 
+lemma finite_inference_residual_shared_code [code]:
+  "finite_inference_residual F K H=
+    (if H={||} then {||} else
+      (let settled=finite_inference_result F K in ffilter (\<lambda>(i,a). a\<notin>settled) H))"
+  by (cases "H={||}"; rule fset_inject[THEN iffD1])
+    (auto simp: finite_inference_residual_def Let_def)
+
 theorem finite_inference_residual_exact:
   "fset (finite_inference_residual F K H)=
     remaining_obligations (inference_closure (finite_inference_rules F) (fset K)) (fset H)"

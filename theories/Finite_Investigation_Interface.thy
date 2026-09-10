@@ -54,6 +54,17 @@ definition investigation_inference ::
        investigation_select (investigation_atoms rules known goals) D,
        investigation_reasons rules known D))"
 
+lemma investigation_inference_shared_code [code]:
+  "investigation_inference rules known goals=
+    (let F=investigation_rules rules; K=fset_of_list known; H=fset_of_list goals;
+         G=finite_inference_residual F K H; D=finite_inference_demand F K (fimage snd H)
+     in (finite_inference_formed F \<and> finite_premise_functional H,
+       investigation_select goals G,
+       investigation_select (investigation_atoms rules known goals) D,
+       investigation_reasons rules known D))"
+  by (simp only: investigation_inference_def Let_def finite_guided_inference_evaluation_exact
+    finite_inference_evaluation_def; simp)
+
 theorem investigation_inference_formation:
   "fst (investigation_inference rules known goals) \<longleftrightarrow>
     finite_inference_formed (investigation_rules rules) \<and>

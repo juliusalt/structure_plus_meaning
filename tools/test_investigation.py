@@ -186,6 +186,24 @@ class InvestigationTests(unittest.TestCase):
         self.assertNotEqual(receipt["semantic_boundary"], self.case["semantic_boundary"])
         self.assertEqual(json.loads((self.root / "output/case.json").read_text()), self.case)
 
+    def test_registered_socket_case_keeps_its_actual_subject_scope(self):
+        (self.root / "theories/Factor_Schema_Socket_Investigation.thy").write_text(
+            "theory Factor_Schema_Socket_Investigation imports Main begin end\n")
+        self.case = {"schema": "finite-investigation-1", "kind": "schema_sockets", "selected": [2],
+                     "question": "Does this compare arbitrary schemas?", "scope": "All schemas",
+                     "semantic_boundary": "Unrestricted schema generation", "function": "Untrusted_Export",
+                     "theory": "Untrusted_Theory"}
+        self.save_case()
+        result, receipt, proof = self.execute("registered")
+        self.assertEqual(result.returncode, 0, result.stdout)
+        self.assertEqual(proof["status"], "accepted")
+        self.assertEqual(receipt["registered_operation"], {"theory": "Factor_Schema_Socket_Investigation",
+                                                         "function": "schema_sockets_investigation"})
+        self.assertEqual(receipt["scope"]["coverage"],
+                         "These two socket variants of the existing native incidence schema")
+        self.assertNotEqual(receipt["semantic_boundary"], self.case["semantic_boundary"])
+        self.assertEqual(json.loads((self.root / "output/case.json").read_text()), self.case)
+
     def test_source_readiness_uses_the_full_changed_import_context(self):
         sys.path.insert(0, str(self.root / "tools"))
         try:

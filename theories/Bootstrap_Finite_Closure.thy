@@ -12,6 +12,32 @@ lemma finite_edge_compose_correct:
   "fset (finite_edge_compose R S) = fset R O fset S"
   by (auto simp: finite_edge_compose_def fimage.rep_eq ffUnion.rep_eq split: prod.splits; force)
 
+section \<open>Bounded iteration stops when its state no longer changes\<close>
+
+fun stabilizing_iteration :: "nat \<Rightarrow> ('a \<Rightarrow> 'a) \<Rightarrow> 'a \<Rightarrow> 'a" where
+  "stabilizing_iteration 0 f x=x"
+| "stabilizing_iteration (Suc n) f x=
+    (let next=f x in if next=x then x else stabilizing_iteration n f next)"
+
+lemma stabilizing_iteration_exact:
+  "stabilizing_iteration n f x=(f ^^ n) x"
+proof (induction n arbitrary: x)
+  case 0
+  show ?case by simp
+next
+  case (Suc n)
+  show ?case
+  proof (cases "f x=x")
+    case True
+    have fixed: "(f ^^ n) x=x" using True by (induction n) simp_all
+    show ?thesis using True fixed by (simp add: Let_def funpow_Suc_right)
+  next
+    case False
+    show ?thesis using Suc.IH[of "f x"] False
+      by (simp only: stabilizing_iteration.simps Let_def funpow_Suc_right comp_apply if_False)
+  qed
+qed
+
 fun finite_path_bound :: "nat \<Rightarrow> ('a \<times> 'a) fset \<Rightarrow> ('a \<times> 'a) fset" where
   "finite_path_bound 0 E = E"
 | "finite_path_bound (Suc n) E =
@@ -35,6 +61,15 @@ lemma finite_path_bound_correct:
 
 definition finite_edge_closure :: "('a \<times> 'a) fset \<Rightarrow> ('a \<times> 'a) fset" where
   "finite_edge_closure E = finite_path_bound (fcard E - 1) E"
+
+lemma finite_path_bound_iteration:
+  "finite_path_bound n E=((\<lambda>R. R |\<union>| finite_edge_compose R E) ^^ n) E"
+  by (induction n) simp_all
+
+lemma finite_edge_closure_stable_code [code]:
+  "finite_edge_closure E=stabilizing_iteration (fcard E-1)
+    (\<lambda>R. R |\<union>| finite_edge_compose R E) E"
+  by (simp only: finite_edge_closure_def stabilizing_iteration_exact finite_path_bound_iteration)
 
 lemma finite_edge_closure_correct:
   "fset (finite_edge_closure E) = (fset E)\<^sup>+"
@@ -181,6 +216,10 @@ text \<open>
 export_code finite_edge_closure finite_edge_reaches finite_edge_wellfounded finite_reachable_outputs checking SML
 
 text \<open>
+  Bounded iteration stops as soon as its state is unchanged. Its exactness
+  theorem holds for every update function and every supplied bound, so the
+  closure code retains the original path bound and complete relation.
+
   The iteration bound is derived from the number of supplied edges. The empty
   relation is included. Closure contains every finite path, and a finite
   relation is well-founded exactly when its closure contains no self-edge.

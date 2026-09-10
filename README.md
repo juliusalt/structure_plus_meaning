@@ -1787,12 +1787,48 @@ Both native entries have exact joint classes derived from existing products
 and intrinsic subdomains. One compiled checker precedes all future inputs.
 A fixed actual package also precedes native presentations of every later
 formed schema boundary, with explicit binder and socket renamings and all
-old artifacts and bindings preserved. General native presentation of clause
-specializations must additionally preserve the original clause sockets and
-replacement links; the current ground construction uses the actual empty
-binder, and an existing finite-relation program supplies an accepted input.
-Complete graph admission, shared target-variable presentations,
+old artifacts and bindings preserved. Native clause specializations also
+have complete presentation coverage for every actual clause and every later
+formed replacement relation. Prescribed coordinate construction retains the
+original ordinary and material sockets. One explicit variable map is shared
+by the complete replacement record and target schema, and the target
+environment preserves every old artifact and outgoing binding.
+
+The replacement record and target schema retain their separately supplied
+environments and uses. Their relative variable correspondence is explicit;
+one actual shared graph binder is further work. Complete graph admission,
 assertion boundaries, and native mathematical-proof checking remain open.
+
+An executed comparison uses the existing native incidence schema and its
+material-socket variant. Their complete rule-instance relations agree, as do
+their unkeyed material values at every valuation. Substitution still retains
+the original socket. Omitting that observation leaves both directed
+comparisons unresolved; adding it settles them. The socket facet alone also
+suffices. The exact selection theorem records its necessity and sufficiency
+within this finite scope.
+
+A larger source-readiness case exposed an execution bottleneck in the
+machinery itself. Its 345 conditions included 108 contexts affected by a
+changed compiler theorem. The previous evaluator exceeded its 60-second
+runtime limit. Exact code equations now stop bounded iteration when its
+state is unchanged, share a forward result across the requested goals, and
+retain the whole-table formation check without recomputing the constructed
+report. All previous mathematical definitions remain intact.
+
+Rerunning the identical case took 18.1 seconds. Independent review recovered
+all 260 demanded conditions, all 288 complete reasons, and both unresolved
+goals. An additional unused malformed rule was rejected while those
+conditions and reasons remained unchanged. These are measurements on the
+stated cases; native checking of the mathematical evidence remains open.
+
+
+The socket comparison is directly reproducible:
+
+```sh
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle schema-sockets --selected 0 1
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle schema-sockets --selected 0 1 2
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle schema-sockets --selected 2
+```
 
 The substitution investigation is directly reproducible:
 

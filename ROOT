@@ -677,3 +677,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Clause_Specialization_Admission
     Factor_Clause_Specialization_Instances
     Factor_Clause_Specialization_Contracts
+    RRA_Prescribed_Addresses
+    Factor_Prescribed_Schemas
+    Factor_Prescribed_Environments
+    Factor_Clause_Specialization_Presentations
+    Factor_Schema_Socket_Investigation

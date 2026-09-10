@@ -108,7 +108,9 @@ theorem schema_syntax_total:
       native_schema_at E u r (schema_list_projection f p ss ts)) \<and>
     reference_table_formed (schema_body_literals p ts) (schema_body_callees ts) \<and>
     rel_dom (schema_body_literals p ts) \<union> rel_dom (schema_body_callees ts) \<subseteq> rra_carrier (object_structure R) \<and>
-    bag_count (object_data R) = (\<lambda>_. 0) \<and> r \<in> rra_carrier (object_structure R)"
+    bag_count (object_data R) = (\<lambda>_. 0) \<and> r \<in> rra_carrier (object_structure R) \<and>
+    set ss \<inter> f ` schema_body_variables p ts = {} \<and>
+    set ss \<union> f ` schema_body_variables p ts \<subseteq> rra_carrier (object_structure R)"
 proof -
   interpret body: schema_bodies f p ts by (rule bodies)
   obtain b m r :: local_address and ps ss :: "local_address list" where fresh:
@@ -136,8 +138,15 @@ proof -
     by (simp only: schema_frame.data[OF fresh(3)]) (simp add: schema_body_syntax_def)
   have root: "r \<in> rra_carrier (object_structure ?R)"
     by (simp add: schema_frame.carrier[OF fresh(3)])
+  have separate: "set ss \<inter> f ` schema_body_variables p ts = {}"
+    using schema_frame.headers_fresh[OF fresh(3)] body.variables_inside len
+      zip_domain[of ss "schema_body_roots ts"] by auto
+  have inside: "set ss \<union> f ` schema_body_variables p ts \<subseteq>
+      rra_carrier (object_structure ?R)"
+    using body.variables_inside len zip_domain[of ss "schema_body_roots ts"]
+    by (auto simp: schema_frame.carrier[OF fresh(3)])
   show ?thesis by (rule exI[of _ ?R], rule exI[of _ r], rule exI[of _ ss])
-    (use formed len fresh(2) read body.reference_table reference_bounds counts root in blast)
+    (use formed len fresh(2) read body.reference_table reference_bounds counts root separate inside in blast)
 qed
 
 text \<open>

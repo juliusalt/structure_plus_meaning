@@ -147,7 +147,7 @@ proof -
   show ?thesis using empty transfer characterized by simp
 qed
 
-export_code investigation_inference investigation_basis schema_sockets_investigation
+export_code investigation_inference investigation_basis investigation_repairs investigation_extend schema_sockets_investigation
   schema_sockets_investigation_observations schema_sockets_investigation_relation
   nat_of_integer integer_of_nat
   in SML module_name Finite_Investigation file_prefix finite_investigation

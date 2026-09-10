@@ -316,7 +316,7 @@ theorem permission_investigation_both_facets:
     permission_investigation_relation_literal finite_basis_residual_def finite_candidate_profile_def
     finite_basis_evaluation_def finite_observation_table_formed_def)
 
-export_code investigation_inference investigation_basis permission_investigation
+export_code investigation_inference investigation_basis investigation_repairs investigation_extend permission_investigation
   permission_investigation_observations permission_investigation_relation
   nat_of_integer integer_of_nat
   in SML module_name Finite_Investigation file_prefix finite_investigation

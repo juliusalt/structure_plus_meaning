@@ -66,7 +66,7 @@ theorem no_selected_observation_misses_joint_failure:
     completion_investigation_relation_def completion_investigation_observe_exact
     finite_basis_residual_def finite_candidate_profile_def)
 
-export_code investigation_inference investigation_basis completion_investigation
+export_code investigation_inference investigation_basis investigation_repairs investigation_extend completion_investigation
   completion_investigation_observations completion_investigation_relation
   nat_of_integer integer_of_nat
   in SML module_name Finite_Investigation file_prefix finite_investigation

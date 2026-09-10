@@ -208,8 +208,10 @@ the evidence and scope behind their claimed improvements.
 The current exported evaluator works over explicitly supplied candidates,
 observations, and scope. Those choices remain eligible for the same
 investigation. Its successful executions do not supply native checking of
-their mathematical evidence. Available repair selection and native
-mathematical-proof checking remain development obligations.
+their mathematical evidence. It now computes all sound available repairs,
+retains their witnesses and obstructions, and derives an adequate extension
+exactly when one exists within the stated language. Searching beyond that
+language and native mathematical-proof checking remain development obligations.
 
 Schedule related information reads, edits, validation, and reports in batches.
 This scheduling discipline is separate from the semantic feedback loop;

@@ -37,7 +37,8 @@ if Path(__file__).name == "fake_poly":
         print("INVESTIGATION_RESULT {}"); sys.exit(0)
     if mode == "registered":
         print("INVESTIGATION_RESULT " + json.dumps({"input_formed": True, "residual": [],
-            "profiles": [], "losses": [], "observations": [], "relation": []})); sys.exit(0)
+            "profiles": [], "losses": [], "observations": [], "relation": [],
+            "safe_facets": [], "conflicts": [], "repairs": [], "unrepairable": [], "extension": []})); sys.exit(0)
     print("INVESTIGATION_RESULT " + json.dumps({"input_formed": mode != "rejected", "residual": [], "demand": [], "reasons": []}))
     sys.exit(0)
 if sys.argv[1] == "version":
@@ -201,6 +202,8 @@ class InvestigationTests(unittest.TestCase):
                                                          "function": "schema_sockets_investigation"})
         self.assertEqual(receipt["scope"]["coverage"],
                          "These two socket variants of the existing native incidence schema")
+        program = (self.root / "output/execute.ML").read_text()
+        self.assertIn("(map #1 profiles) [n 0,n 1,n 2] [n 2] observations relation", program)
         self.assertNotEqual(receipt["semantic_boundary"], self.case["semantic_boundary"])
         self.assertEqual(json.loads((self.root / "output/case.json").read_text()), self.case)
 
@@ -231,6 +234,23 @@ class InvestigationTests(unittest.TestCase):
         (sources / "Middle.thy").write_text("theory Middle imports Missing begin end\n")
         with self.assertRaisesRegex(ValueError, "Missing local theory"):
             module.source_case(args)
+
+    def test_repair_guidance_requires_complete_witness_rows(self):
+        sys.path.insert(0, str(TOOLS))
+        try:
+            import investigate
+        finally:
+            sys.path.pop(0)
+        valid = {"input_formed": True, "residual": [], "profiles": [], "losses": [],
+                 "safe_facets": [0], "conflicts": [], "repairs": [[0, 1, 0, 2]], "unrepairable": [], "extension": [0]}
+        investigate.validate_result(valid, "basis")
+        for field, value in [("repairs", [[0, 1, 0]]), ("conflicts", [[0, 1, False, 2]]),
+                             ("safe_facets", [True]), ("unrepairable", [[0]]), ("extension", [False])]:
+            with self.subTest(field=field):
+                with self.assertRaisesRegex(ValueError, "Malformed repair guidance"):
+                    investigate.validate_result({**valid, field: value}, "basis")
+        with self.assertRaisesRegex(ValueError, "Malformed repair guidance"):
+            investigate.validate_result({k: v for k, v in valid.items() if k != "repairs"}, "basis")
 
     def test_runtime_serialization_uses_right_associated_tuples(self):
         sys.path.insert(0, str(TOOLS))

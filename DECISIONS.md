@@ -7146,6 +7146,49 @@ residual goals are unchanged. The report contract concerns that finite set,
 so list order must not be mistaken for an additional obligation.
 
 This failure and replay extend the content-level development loop to the
-machinery itself. Available repair selection and native mathematical-proof
-checking remain further work. The host still schedules related reads,
+machinery itself. Native mathematical-proof checking remains further work;
+the available-repair operation is developed below. The host still schedules related reads,
 changes, validation, and reports in batches.
+
+## Repair reports guide the next selection and expose the language boundary
+
+The prior loop returned failed comparisons and left the choice of the next
+facet to external reasoning. That repeated step now has an explicit general
+account. An available facet is sound only if it preserves every valid
+comparison in the stated domain. For each missing pair, the repair relation
+retains every unselected sound facet and every actual lost observation.
+A distinction useful at one pair can be unsound elsewhere, so a local witness
+alone is insufficient permission to add its facet.
+
+Two different obstructions determine whether extension can succeed. A selected
+loss along a valid comparison persists under every addition. A missing pair
+under the whole sound available language prevents every basis in that
+language. Their simultaneous absence is equivalent to the existence of an
+adequate extension of the selected facets. No whole-language adequacy premise
+is assumed to conceal either obstruction.
+
+The exported evaluator computes both obstructions and the complete repair
+relation. Initial executions identify a unique added facet in the completion,
+socket, permission, pattern, and program-probe cases. The next executions use
+those actual returned facets and settle every residual. The collapsed-marker
+case instead returns an empty repair relation and two unavoidable comparisons.
+Using the existing distinct marker assignment settles them in a further run;
+this is a change of the observation language, beyond adding a selected facet.
+
+Those runs reveal another repeated step: turn the witnessed repair relation
+into a complete selection. Its derived extension retains the old selection
+and every reported facet. A general theorem proves that this particular
+extension is adequate exactly when any available extension is possible. Its
+list operation is now exported, so subsequent runs use the returned extension
+directly. This gives a complete candidate without ranking identifiers or
+asserting that all alternative facets are jointly necessary. Smaller adequate
+selections remain candidates under the existing observation-method comparison.
+
+The finite contracts retain whole-domain comparison, every witness, and the
+original input formation checks. Exhaustive execution review covers all
+1,024 two-candidate, two-facet, one-witness tables, relations, and selections;
+further cases check reordering, duplication, and injective identifier changes.
+For each input, independent enumeration of every available extension checks
+the claimed possibility criterion. These runtime checks supplement the
+universal proofs; they do not supply native mathematical-proof admission.
+The wider presentation, higher-stratum, and every-line audits remain open.

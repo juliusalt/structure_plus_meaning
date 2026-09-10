@@ -1875,6 +1875,41 @@ clause origins, substitutions, interfaces, and conditional boundaries. Three
 arguments cover this particular family; their success supplies no coverage
 theorem for arbitrary programs.
 
+The same commands now return repair guidance as well as the original report.
+The independently specified comparison determines which facets are sound on
+the whole candidate domain. A facet that separates one failed pair can still
+reject another valid comparison; it is then excluded from the repair choices.
+
+| Report field | Meaning |
+|---|---|
+| `safe_facets` | All available facets preserving every valid comparison. |
+| `conflicts` | Every selected loss along a valid comparison, as `(from, to, facet, witness)`. Adding observations cannot remove these losses. |
+| `repairs` | Every unselected sound facet and actual witness that distinguishes a missing pair, with that pair retained. |
+| `unrepairable` | Comparisons still missed by the entire sound available language. |
+| `extension` | The old selection together with every facet in the repair report. |
+
+For a formed input, the returned extension is an adequate basis exactly when
+both obstruction lists are empty. It retains all reported alternatives; no
+minimality or preferred identifier is asserted. Empty observations, unsound
+selections, inadequate languages, and relations without any inclusion basis
+use the same contracts. Lists present finite sets, so their order and repeated
+identical rows do not add semantic distinctions.
+
+Actual executions returned the joint-witness facet for completion, the socket
+facet for schema specialization, the truth facet for formation-only program
+comparison, and the missing probes for pattern and program comparison. Each
+reported addition was submitted again and removed the residual. With collapsed
+variable markers, both available facets were already selected: the report
+returned no repair and retained both variable comparisons as unrepairable.
+Restoring the existing distinct marker assignment removed them on a further run.
+That change goes beyond adding observations from the failed language.
+
+The report-to-extension step used in those runs now has its own general
+exactness theorem and executed list operation. Candidate domains, observations,
+and intended comparisons remain explicit inputs. Generating new observations,
+proving their actual meaning, and native Factor checking of the mathematical
+evidence remain separate work.
+
 Source-context readiness uses an accepted build receipt and the complete local
 import closure:
 

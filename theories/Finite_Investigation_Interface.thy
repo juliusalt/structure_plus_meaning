@@ -1,5 +1,5 @@
 theory Finite_Investigation_Interface
-  imports Finite_Investigation "HOL-Library.Code_Target_Nat"
+  imports Finite_Observation_Repairs "HOL-Library.Code_Target_Nat"
 begin
 
 section \<open>List arguments retain the finite relations they present\<close>
@@ -154,7 +154,105 @@ theorem investigation_basis_losses:
   by (auto simp: fset_of_list.rep_eq image_image image_iff case_prod_beta' investigation_basis_def Let_def investigation_pairs_exact
     investigation_select_def investigation_profile_exact finite_candidate_losses_def)
 
-export_code investigation_inference investigation_basis nat_of_integer integer_of_nat checking SML
+
+section \<open>Repair guidance retains all available witnesses and both obstructions\<close>
+
+definition investigation_loss_rows ::
+  "nat list \<Rightarrow> (nat\<times>nat\<times>nat) list \<Rightarrow> (nat\<times>nat\<times>nat\<times>nat) list" where
+  "investigation_loss_rows candidates observations=concat (map (\<lambda>(c,d).
+    map (\<lambda>(f,a,w). (c,d,f,w)) observations) (investigation_pairs candidates))"
+
+lemma investigation_loss_rows_exact:
+  "set (investigation_loss_rows candidates observations)=
+    {(c,d,f,w). c\<in>set candidates \<and> d\<in>set candidates \<and> (\<exists>a. (f,a,w)\<in>set observations)}"
+  by (auto simp: investigation_loss_rows_def investigation_pairs_exact image_iff
+    case_prod_beta' split: prod.splits; force)
+
+definition investigation_repairs ::
+  "nat list \<Rightarrow> nat list \<Rightarrow> nat list \<Rightarrow> (nat\<times>nat\<times>nat) list \<Rightarrow>
+    (nat\<times>nat) list \<Rightarrow>
+    (nat list\<times>(nat\<times>nat\<times>nat\<times>nat) list\<times>
+      (nat\<times>nat\<times>nat\<times>nat) list\<times>(nat\<times>nat) list)" where
+  "investigation_repairs candidates facets selected observations relation=
+    (let C=fset_of_list candidates; U=fset_of_list facets; F=fset_of_list selected;
+         table=fset_of_list observations; compare=(\<lambda>c d. (c,d)\<in>set relation);
+         loss_rows=investigation_loss_rows candidates observations
+     in (investigation_select facets (finite_sound_observation_facets C compare U table),
+       investigation_select loss_rows (finite_observation_conflicts C compare F table),
+       investigation_select loss_rows (finite_available_observation_repairs C compare U F table),
+       investigation_select (investigation_pairs candidates) (finite_unrepairable_comparisons C compare U table)))"
+
+theorem investigation_sound_facets:
+  "set (fst (investigation_repairs candidates facets selected observations relation))=
+    sound_observation_facets (set candidates) (\<lambda>c d. (c,d)\<in>set relation)
+      (set facets) (finite_table_observations (fset_of_list observations))"
+  by (auto simp: investigation_repairs_def Let_def investigation_select_def
+    finite_sound_observation_facets_exact fset_of_list.rep_eq; blast)
+
+theorem investigation_conflicts:
+  "set (fst (snd (investigation_repairs candidates facets selected observations relation)))=
+    observation_conflicts (set candidates) (\<lambda>c d. (c,d)\<in>set relation)
+      (set selected) (finite_table_observations (fset_of_list observations))"
+  by (auto simp: investigation_repairs_def Let_def investigation_select_def investigation_loss_rows_exact
+    finite_observation_conflicts_exact observation_conflicts_def finite_table_observations_def
+    fset_of_list.rep_eq)
+
+theorem investigation_available_repairs:
+  "set (fst (snd (snd (investigation_repairs candidates facets selected observations relation))))=
+    available_observation_repairs (set candidates) (\<lambda>c d. (c,d)\<in>set relation)
+      (set facets) (set selected) (finite_table_observations (fset_of_list observations))"
+  by (auto simp: investigation_repairs_def Let_def investigation_select_def investigation_loss_rows_exact
+    finite_available_observation_repairs_exact available_observation_repairs_def comparison_failures_def
+    finite_table_observations_def fset_of_list.rep_eq)
+
+theorem investigation_unrepairable_comparisons:
+  "set (snd (snd (snd (investigation_repairs candidates facets selected observations relation))))=
+    comparison_failures (set candidates) (\<lambda>c d. (c,d)\<in>set relation)
+      (sound_observation_facets (set candidates) (\<lambda>c d. (c,d)\<in>set relation)
+        (set facets) (finite_table_observations (fset_of_list observations)))
+      (finite_table_observations (fset_of_list observations))"
+  by (auto simp: investigation_repairs_def Let_def investigation_select_def investigation_pairs_exact
+    finite_unrepairable_comparisons_exact comparison_failures_def fset_of_list.rep_eq)
+
+definition investigation_extend ::
+  "nat list \<Rightarrow> (nat\<times>nat\<times>nat\<times>nat) list \<Rightarrow> nat list" where
+  "investigation_extend selected repairs=remdups (selected @ map (\<lambda>(c,d,f,w). f) repairs)"
+
+lemma investigation_extend_exact:
+  "set (investigation_extend selected repairs)=reported_observation_extension (set selected) (set repairs)"
+  by (auto simp: investigation_extend_def reported_observation_extension_def image_iff
+    case_prod_beta' split: prod.splits; force)
+
+theorem investigation_extension_adequate:
+  fixes candidates facets selected :: "nat list"
+    and observations :: "(nat\<times>nat\<times>nat) list"
+    and relation :: "(nat\<times>nat) list"
+  assumes selected: "set selected\<subseteq>set facets"
+  defines "report \<equiv> investigation_repairs candidates facets selected observations relation"
+  shows "comparison_basis (set candidates) (\<lambda>c d. (c,d)\<in>set relation)
+      (set (investigation_extend selected (fst (snd (snd report)))))
+      (finite_table_observations (fset_of_list observations)) \<longleftrightarrow>
+    fst (snd report)=[] \<and> snd (snd (snd report))=[]"
+proof -
+  have conflicts: "fst (snd report)=[] \<longleftrightarrow>
+      observation_conflicts (set candidates) (\<lambda>c d. (c,d)\<in>set relation)
+        (set selected) (finite_table_observations (fset_of_list observations))={}"
+    using investigation_conflicts[of candidates facets selected observations relation]
+    by (auto simp: report_def)
+  have blocked: "snd (snd (snd report))=[] \<longleftrightarrow>
+      comparison_failures (set candidates) (\<lambda>c d. (c,d)\<in>set relation)
+        (sound_observation_facets (set candidates) (\<lambda>c d. (c,d)\<in>set relation)
+          (set facets) (finite_table_observations (fset_of_list observations)))
+        (finite_table_observations (fset_of_list observations))={}"
+    using investigation_unrepairable_comparisons[of candidates facets selected observations relation]
+    by (auto simp: report_def)
+  show ?thesis
+    by (simp only: report_def investigation_extend_exact investigation_available_repairs
+      reported_extension_is_adequate_exactly_when_an_extension_exists[OF selected];
+      simp only: conflicts[unfolded report_def] blocked[unfolded report_def])
+qed
+
+export_code investigation_inference investigation_basis investigation_repairs investigation_extend nat_of_integer integer_of_nat checking SML
 
 text \<open>
   Natural numbers are private input identifiers, with equality as their only

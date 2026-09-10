@@ -495,6 +495,7 @@ fun jnat x = IntInf.toString (Finite_Investigation.integer_of_nat x);
 fun jlist f xs = "[" ^ String.concatWith "," (map f xs) ^ "]";
 fun jpair (a,b) = "[" ^ jnat a ^ "," ^ jnat b ^ "]";
 fun jtriple (a,(b,c)) = "[" ^ jnat a ^ "," ^ jnat b ^ "," ^ jnat c ^ "]";
+fun jquad (a,(b,(c,d))) = "[" ^ jnat a ^ "," ^ jnat b ^ "," ^ jnat c ^ "," ^ jnat d ^ "]";
 fun jreason (a,(h,(i,b))) =
   "{\"conclusion\":" ^ jnat a ^ ",\"premises\":" ^ jlist jpair h ^
   ",\"premise\":" ^ jnat i ^ ",\"condition\":" ^ jnat b ^ "}";
@@ -518,17 +519,28 @@ print ("INVESTIGATION_RESULT " ^ result ^ "\n");
         parameter = ("true " if case["collapsed"] else "false ") if case["kind"] == "pattern" else ""
         call = function + " " + parameter + ml_list(case["selected"], ml_nat)
         observations = function + "_observations" + (" " + parameter.strip() if parameter else "")
-        extra = ('val supplied = ",\\\"observations\\\":" ^ jlist jtriple ' + '(' + observations + ') ^\n'
-                 '  ",\\\"relation\\\":" ^ jlist jpair ' + function + '_relation;\n')
+        facets = [int(f) for f in BUILTIN_CASES[case["kind"]]["scope"]["facets"]]
+        repair_args = " ".join(["(map #1 profiles)", ml_list(facets, ml_nat),
+                                ml_list(case["selected"], ml_nat), "observations", "relation"])
+        extra = ("val observations = " + observations + ";\n"
+                 "val relation = " + function + "_relation;\n"
+                 'val supplied = ",\\\"observations\\\":" ^ jlist jtriple observations ^\n'
+                 '  ",\\\"relation\\\":" ^ jlist jpair relation;\n')
     else:
         call = "Finite_Investigation.investigation_basis " + " ".join([
             ml_list(case[name], ml_nat) for name in ("candidates", "facets", "selected")])
         call += " " + ml_list(case["observations"], ml_tuple) + " " + ml_list(case["relation"], ml_tuple)
+        repair_args = call.removeprefix("Finite_Investigation.investigation_basis ")
         extra = 'val supplied = "";\n'
+    extra += "val (safe_facets,(conflicts,(repairs,unrepairable))) = Finite_Investigation.investigation_repairs " + repair_args + ";\n"
+    extra += "val extension = Finite_Investigation.investigation_extend " + ml_list(case["selected"], ml_nat) + " repairs;\n"
     return prelude + "val (formed,(residual,(profiles,losses))) = " + call + ";\n" + extra + r'''
 val result = "{\"input_formed\":" ^ Bool.toString formed ^
   ",\"residual\":" ^ jlist jpair residual ^ ",\"profiles\":" ^ jlist jprofile profiles ^
-  ",\"losses\":" ^ jlist jloss losses ^ supplied ^ "}";
+  ",\"losses\":" ^ jlist jloss losses ^
+  ",\"safe_facets\":" ^ jlist jnat safe_facets ^ ",\"conflicts\":" ^ jlist jquad conflicts ^
+  ",\"repairs\":" ^ jlist jquad repairs ^ ",\"unrepairable\":" ^ jlist jpair unrepairable ^
+  ",\"extension\":" ^ jlist jnat extension ^ supplied ^ "}";
 print ("INVESTIGATION_RESULT " ^ result ^ "\n");
 '''
 
@@ -551,6 +563,12 @@ def validate_result(result: dict, kind: str) -> None:
                     for p in result["profiles"]), "Malformed candidate profile.")
         require(all(isinstance(p, dict) and natural(p.get("from")) and natural(p.get("to"))
                     and rows(p.get("losses"), 2) for p in result["losses"]), "Malformed candidate losses.")
+        require(isinstance(result.get("safe_facets"), list)
+            and all(natural(f) for f in result["safe_facets"])
+            and rows(result.get("conflicts"), 4) and rows(result.get("repairs"), 4)
+            and rows(result.get("unrepairable"), 2)
+            and isinstance(result.get("extension"), list) and all(natural(f) for f in result["extension"]),
+            "Malformed repair guidance.")
         if kind in BUILTIN_CASES:
             require(rows(result.get("observations"), 3) and rows(result.get("relation"), 2),
                     "Missing executed observations or relation.")
@@ -633,6 +651,10 @@ def run(args, invocation: str, output: Path) -> int:
         summary.update(input_formed=receipt["result"]["input_formed"], residual=receipt["result"]["residual"])
         if "demand" in receipt["result"]:
             summary.update(demanded_conditions=len(receipt["result"]["demand"]), reasons=len(receipt["result"]["reasons"]))
+        elif "repairs" in receipt["result"]:
+            report = receipt["result"]
+            summary.update(repair_witnesses=len(report["repairs"]), conflicts=len(report["conflicts"]),
+                unrepairable=len(report["unrepairable"]), extension=report["extension"])
     print(json.dumps(summary, indent=2))
     return receipt["exit_code"]
 

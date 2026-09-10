@@ -1,0 +1,332 @@
+{
+  "scope": "Supplied saved finite computations and recorded artifacts; independent subject meanings and coverage require review",
+  "summary": {
+    "receipts": 2,
+    "computations": {
+      "matches independent reconstruction": 2
+    },
+    "statuses": {
+      "evaluated": 2
+    },
+    "distinct_evaluation_states": 2,
+    "formed_runs_with_required_withdrawals": 1,
+    "formed_runs_with_new_missing_after_withdrawal": 1
+  },
+  "runs": [
+    {
+      "path": "/tmp/generalization-quality-review/native-input-main-followed/receipt.json",
+      "receipt_sha256": "446eece4f506d11c02dd4c802d58470c12fb06a4fbf7d17a53ba3c908e14db1b",
+      "status": "evaluated",
+      "kind": "investigation_input",
+      "question": "Do the selected native decisions distinguish exactly the complete investigation input, retaining comparison rows outside the candidate scope?",
+      "scope": {
+        "candidates": {
+          "0": "An admitted scope and diagonal comparison",
+          "1": "Reversed and repeated admitted comparison rows",
+          "2": "A comparison row with a foreign first endpoint",
+          "3": "A comparison row with a foreign second endpoint",
+          "4": "A comparison row with two foreign endpoints",
+          "5": "An empty comparison",
+          "6": "A formed reference in the first endpoint",
+          "7": "A formed reference in the second endpoint",
+          "8": "An unavailable selected facet and empty comparison",
+          "9": "An empty candidate set with a nonempty data comparison",
+          "10": "Malformed unused available facets with empty candidates and comparison"
+        },
+        "facets": {
+          "0": "Actual native scope admission combined with native checks restricting both comparison endpoints to the candidate set",
+          "1": "Actual native complete input admission with independent data comparison rows"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of independent complete input admission: the original declared observation scope and every data comparison row, including endpoints outside the candidate set",
+        "coverage": "These eleven complete finite query inputs"
+      },
+      "semantic_boundary": "The original finite evaluator's formation does not restrict its comparison to declared candidate pairs. The observation uses actual native scope calls on both endpoint orientations. The independent whole-input class preserves the complete comparison relation. The second observation calls its complete native admission. Executed code equations do not supply native checking of mathematical proofs.",
+      "computation": "matches independent reconstruction",
+      "mismatches": [],
+      "checked_fields": [
+        "input_formed",
+        "residual",
+        "safe_facets",
+        "conflicts",
+        "repairs",
+        "unrepairable",
+        "extension",
+        "complete profiles",
+        "complete ordered losses",
+        "complete revision and admission gate"
+      ],
+      "facts": {
+        "input_formed": true,
+        "candidate_count": 11,
+        "available_facets": [
+          0,
+          1
+        ],
+        "selected": [
+          1
+        ],
+        "safe": [
+          1
+        ],
+        "invalid_selected": [],
+        "residual_count": 0,
+        "conflict_count": 0,
+        "missing_count": 0,
+        "repair_count": 0,
+        "unrepairable_count": 0,
+        "positive_comparisons": 65,
+        "negative_comparisons": 56,
+        "relation_reflexive": true,
+        "relation_transitive": true,
+        "empty_selection_adequate": false,
+        "adequate_selections": [
+          [
+            1
+          ]
+        ],
+        "adequate_selection_enumeration": "complete",
+        "extension_adequate": true,
+        "sound_language_adequate": true,
+        "revision": {
+          "retained": [
+            1
+          ],
+          "required_withdrawals": [],
+          "new_missing_after_withdrawal": [],
+          "reuse_original_repairs_adequate": true,
+          "recomputed_selection": [
+            1
+          ],
+          "residual": []
+        },
+        "evaluation_signature": "ea2abf8a7fe11ed240ca2c6ec7fdd4a598b0566aca57ade0b07af88a0a8c33bc"
+      },
+      "artifacts": {
+        "counts": {
+          "matches": 210
+        },
+        "issues": [],
+        "checked_roles": {
+          "saved case": 1,
+          "generated engine": 1,
+          "runtime": 1,
+          "runtime program": 1,
+          "proof receipt": 1,
+          "run log": 1,
+          "original execution tool": 2,
+          "engine snapshot": 192,
+          "external case evidence": 3,
+          "archived original case": 1,
+          "archived case evidence": 3,
+          "archived execution tool": 2,
+          "original case": 1
+        }
+      }
+    },
+    {
+      "path": "/tmp/generalization-quality-review/native-input-main-initial/receipt.json",
+      "receipt_sha256": "c9d8595327a0bbc4a2cbc60d6ce0200fd843888063ba2ded5da7bea5343ba885",
+      "status": "evaluated",
+      "kind": "investigation_input",
+      "question": "Do the selected native decisions distinguish exactly the complete investigation input, retaining comparison rows outside the candidate scope?",
+      "scope": {
+        "candidates": {
+          "0": "An admitted scope and diagonal comparison",
+          "1": "Reversed and repeated admitted comparison rows",
+          "2": "A comparison row with a foreign first endpoint",
+          "3": "A comparison row with a foreign second endpoint",
+          "4": "A comparison row with two foreign endpoints",
+          "5": "An empty comparison",
+          "6": "A formed reference in the first endpoint",
+          "7": "A formed reference in the second endpoint",
+          "8": "An unavailable selected facet and empty comparison",
+          "9": "An empty candidate set with a nonempty data comparison",
+          "10": "Malformed unused available facets with empty candidates and comparison"
+        },
+        "facets": {
+          "0": "Actual native scope admission combined with native checks restricting both comparison endpoints to the candidate set",
+          "1": "Actual native complete input admission with independent data comparison rows"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of independent complete input admission: the original declared observation scope and every data comparison row, including endpoints outside the candidate set",
+        "coverage": "These eleven complete finite query inputs"
+      },
+      "semantic_boundary": "The original finite evaluator's formation does not restrict its comparison to declared candidate pairs. The observation uses actual native scope calls on both endpoint orientations. The independent whole-input class preserves the complete comparison relation. The second observation calls its complete native admission. Executed code equations do not supply native checking of mathematical proofs.",
+      "computation": "matches independent reconstruction",
+      "mismatches": [],
+      "checked_fields": [
+        "input_formed",
+        "residual",
+        "safe_facets",
+        "conflicts",
+        "repairs",
+        "unrepairable",
+        "extension",
+        "complete profiles",
+        "complete ordered losses",
+        "complete revision and admission gate"
+      ],
+      "facts": {
+        "input_formed": true,
+        "candidate_count": 11,
+        "available_facets": [
+          0,
+          1
+        ],
+        "selected": [
+          0
+        ],
+        "safe": [
+          1
+        ],
+        "invalid_selected": [],
+        "residual_count": 56,
+        "conflict_count": 24,
+        "missing_count": 32,
+        "repair_count": 32,
+        "unrepairable_count": 0,
+        "positive_comparisons": 65,
+        "negative_comparisons": 56,
+        "relation_reflexive": true,
+        "relation_transitive": true,
+        "empty_selection_adequate": false,
+        "adequate_selections": [
+          [
+            1
+          ]
+        ],
+        "adequate_selection_enumeration": "complete",
+        "extension_adequate": false,
+        "sound_language_adequate": true,
+        "revision": {
+          "retained": [],
+          "required_withdrawals": [
+            0
+          ],
+          "new_missing_after_withdrawal": [
+            [
+              0,
+              6
+            ],
+            [
+              0,
+              7
+            ],
+            [
+              0,
+              8
+            ],
+            [
+              0,
+              10
+            ],
+            [
+              1,
+              6
+            ],
+            [
+              1,
+              7
+            ],
+            [
+              1,
+              8
+            ],
+            [
+              1,
+              10
+            ],
+            [
+              5,
+              6
+            ],
+            [
+              5,
+              7
+            ],
+            [
+              5,
+              8
+            ],
+            [
+              5,
+              10
+            ],
+            [
+              6,
+              0
+            ],
+            [
+              6,
+              1
+            ],
+            [
+              6,
+              5
+            ],
+            [
+              7,
+              0
+            ],
+            [
+              7,
+              1
+            ],
+            [
+              7,
+              5
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              8,
+              1
+            ],
+            [
+              8,
+              5
+            ],
+            [
+              10,
+              0
+            ],
+            [
+              10,
+              1
+            ],
+            [
+              10,
+              5
+            ]
+          ],
+          "reuse_original_repairs_adequate": true,
+          "recomputed_selection": [
+            1
+          ],
+          "residual": []
+        },
+        "evaluation_signature": "b1a31c0aa9177da800b24ac3657de5d8e90027110abd2c3af21c4d717a0ee4a2"
+      },
+      "artifacts": {
+        "counts": {
+          "matches": 202
+        },
+        "issues": [],
+        "checked_roles": {
+          "saved case": 1,
+          "generated engine": 1,
+          "runtime": 1,
+          "runtime program": 1,
+          "proof receipt": 1,
+          "run log": 1,
+          "original execution tool": 2,
+          "engine snapshot": 192,
+          "archived execution tool": 2
+        }
+      }
+    }
+  ]
+}

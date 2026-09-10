@@ -1,0 +1,97 @@
+theory Factor_Admission_Plan_Readings
+  imports Factor_Admission_Plan_Clauses
+begin
+
+section \<open>Actual component meanings in the complete planning program\<close>
+
+lemma admission_plan_counter_clauses [simp]:
+  "((339,c),S)\<in>system_clauses admission_plan_system \<longleftrightarrow> c=0 \<and> S=data_list_nil_schema"
+  "((340,c),S)\<in>system_clauses admission_plan_system \<longleftrightarrow> (c,S)\<in>list_profile_clauses 339 340"
+proof -
+  have owned: "((d,c),S)\<in>system_clauses data_append_system \<Longrightarrow> d\<in>system_definitions data_append_system"
+    for d c S using data_append_system_formed unfolding schema_system_formed_def by blast
+  have absent: "((339,c),S)\<notin>system_clauses data_append_system" "((340,c),S)\<notin>system_clauses data_append_system"
+    by (auto dest: owned)
+  show "((339,c),S)\<in>system_clauses admission_plan_system \<longleftrightarrow> c=0 \<and> S=data_list_nil_schema"
+    "((340,c),S)\<in>system_clauses admission_plan_system \<longleftrightarrow> (c,S)\<in>list_profile_clauses 339 340"
+    using absent by (auto simp: admission_plan_system_def admission_counter_system_def admission_counter_element_system_def)
+qed
+
+lemma admission_plan_counter_element:
+  "(339,t)\<in>positive_meaning admission_plan_system \<longleftrightarrow> t=Payload_Term []"
+  by (subst ordinary_positive_entry_valuation)
+    (auto simp: data_list_nil_schema_def schema_variables_def admission_plan_call octets_formed_def)
+
+interpretation admission_counters: list_profile admission_plan_system 339 340
+  by unfold_locales (auto simp: admission_plan_call)
+
+lemma admission_plan_counter_exact:
+  "(340,t)\<in>positive_meaning admission_plan_system \<longleftrightarrow> (\<exists>n. t=admission_counter n)"
+proof -
+  have uniform: "xs=replicate (length xs) (Payload_Term [])" if "\<forall>x\<in>set xs. x=Payload_Term []" for xs
+    using that by (induction xs) auto
+  show ?thesis
+  proof
+    assume "(340,t)\<in>positive_meaning admission_plan_system"
+    then obtain xs where shape: "t=data_list_term xs" and elements: "\<forall>x\<in>set xs. x=Payload_Term []"
+      by (simp only: admission_counters.exact admission_plan_counter_element) blast
+    have "t=admission_counter (length xs)" using shape uniform[OF elements] by simp
+    then show "\<exists>n. t=admission_counter n" by blast
+  next
+    assume "\<exists>n. t=admission_counter n"
+    then obtain n where shape: "t=admission_counter n" by blast
+    show "(340,t)\<in>positive_meaning admission_plan_system"
+      by (simp only: admission_counters.exact admission_plan_counter_element;
+        rule exI[of _ "replicate n (Payload_Term [])"])
+        (use shape in auto)
+  qed
+qed
+
+lemma admission_plan_append_meaning:
+  "(46,t)\<in>positive_meaning admission_plan_system \<longleftrightarrow> (46,t)\<in>positive_meaning data_append_system"
+proof -
+  have first: "(46,t)\<in>positive_meaning admission_counter_element_system \<longleftrightarrow>
+      (46,t)\<in>positive_meaning data_append_system"
+    using added_definition_preserves_old(2)[OF data_append_system_formed
+      admission_counter_element_formed[unfolded admission_counter_element_system_def], of 46 t]
+    by (auto simp: admission_counter_element_system_def)
+  have second: "(46,t)\<in>positive_meaning admission_counter_system \<longleftrightarrow>
+      (46,t)\<in>positive_meaning admission_counter_element_system"
+    using added_definition_preserves_old(2)[OF admission_counter_element_formed
+      admission_counter_formed[unfolded admission_counter_system_def], of 46 t]
+    by (auto simp: admission_counter_system_def)
+  have third: "(46,t)\<in>positive_meaning admission_plan_system \<longleftrightarrow>
+      (46,t)\<in>positive_meaning admission_counter_system"
+    using added_definition_preserves_old(2)[OF admission_counter_formed
+      admission_plan_formed[unfolded admission_plan_system_def], of 46 t]
+    by (auto simp: admission_plan_system_def)
+  show ?thesis by (simp only: first second third)
+qed
+
+definition admission_plan_result :: "factor_term \<Rightarrow> bool" where
+  "admission_plan_result z \<longleftrightarrow>
+    (\<exists>g n d k xs. admission_plan g n=(d,k,xs) \<and>
+      z=admission_plan_argument (admission_goal_value g) (admission_counter n)
+        (admission_counter d) (admission_counter k) (data_list_term (map admission_instruction_value xs)))"
+
+lemma admission_plan_valuation_step:
+  assumes clause: "(c,S)\<in>admission_plan_clauses"
+    and assignment: "\<forall>a\<in>schema_variables S. term_formed (h a)"
+    and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
+      (e,evaluate_pattern h p)\<in>positive_meaning admission_plan_system"
+  shows "(341,evaluate_pattern h (schema_conclusion S))\<in>positive_meaning admission_plan_system"
+proof -
+  have source: "((341,c),S)\<in>system_clauses admission_plan_system" using clause by simp
+  have formed: "schema_formed S" using admission_plan_formed source
+    unfolding schema_system_formed_def by blast
+  have ordinary: "schema_material_premises S={}"
+    using clause by (auto simp: admission_plan_clauses_def admission_plan_schema_defs)
+  have target: "term_formed (evaluate_pattern h (schema_conclusion S))"
+    by (rule evaluate_pattern_formed)
+      (use assignment formed in \<open>auto simp: schema_formed_def schema_variables_def\<close>)
+  have head: "schema_call_formed admission_plan_system 341 (evaluate_pattern h (schema_conclusion S))"
+    using target by (simp add: admission_plan_call)
+  show ?thesis by (rule ordinary_positive_valuation_step[OF source ordinary assignment head support])
+qed
+
+end

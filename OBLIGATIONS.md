@@ -39,8 +39,9 @@ the resulting contracts and mathematical proofs remain under O-85.
 The owner's clarification of 2026-09-09 also applies the abstraction discipline
 to evaluation and development themselves. A supplied candidate must enter an
 explicit reusable account of specialization, residual obligations, improvement,
-and stopping. Candidate generation may remain external. The same account must
-accept a candidate that is itself a generalization method. Prose instructions
+and stopping. The later clarification requires reusable reasoning to guide
+candidate construction and the other decisions made during development. The
+same account must accept a candidate that is itself a generalization method. Prose instructions
 alone do not satisfy this requirement.
 
 The owner's subsequent clarification requires depth assessment to retain
@@ -49,6 +50,14 @@ observations are adequate, where useful generalizations may lie, how their
 search is guided, and how candidates are compared. Observation choice and
 search-scope coverage must themselves enter the reusable evaluation account.
 A conclusion about one chosen measure does not settle a broader depth question.
+
+The owner's 2026-09-10 reminder applies this workflow to every problem of
+interest, including problem choice, information needs, proposed changes, and
+assessment or improvement of the machinery. Generalizable reasoning must be
+factored for subsequent reuse. The host workflow batches related reads,
+changes, and validation while giving quality priority. See
+[DEVELOPMENT_WORKFLOW.md](DEVELOPMENT_WORKFLOW.md) and the continuing
+[reasoning integration](REASONING_REUSE.md).
 
 | Obligation | State | Evidence or remaining work |
 |---|---|---|
@@ -559,3 +568,15 @@ higher protocols, and their native mathematical proofs remain open.
 The final audit has not begun. It must include all active source and tools,
 all explanatory documents, and every supplied unique text, with duplicate
 and binary/archive contents accounted for explicitly.
+
+The 2026-09-10 reasoning integration has an accepted 758-theory main session.
+The complete native input retains its independently supplied relation; generic
+pair and collection admission goals compute actual constructor plans with
+universal source-qualified installation contracts. Learned schemas construct
+conditional applications with complete variable, premise, and material
+boundaries. Actual counter admission distinguishes known evidence from
+possible premises, and the machinery's method revision adds a needed useful-
+settlement observation. Complete execution and critical-review evidence is in
+GENERALIZATION_REVIEW.md and REASONING_REUSE.md. This progress does not close
+O-85: native mathematical-proof admission, whole symbolic-argument admission,
+and the broader reasoning and repository audits remain explicit obligations.

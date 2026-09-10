@@ -166,3 +166,26 @@ The dependency audit is also relative to the admitted language:
 These are bounded verdicts, not completion of O-40 or O-83 for an eventual
 extended foundation. Future additions must reopen any verdict whose premises
 they change.
+
+## Reasoning and input integration
+
+The complete-input operation consumes the original independent scope and
+finite-relation classes. Its comparison endpoints have their complete data
+boundary without a new membership condition in the candidate set. Its generic
+pair and list constructors remain ordinary clauses.
+
+Learned schemas retain actual premise and material boundaries. The generation
+and inference connection constructs qualified applications from these schemas,
+while semantic evidence for known calls remains explicit. Native admission
+planning has ordinary recursive clauses and an installed-program contract. A
+condensed pairing argument supplies a further conditional rule, and a native
+counter test supplies evidence for applicable counter premises. These changes
+introduce no primitive truth predicate for a claimed mathematical theorem.
+
+The dependency session, thirty complete reasoning executions, six input-plan
+executions, and the actual method revision and follow-up have passed their
+respective checks. The complete 758-theory main session is accepted with unchanged source and
+validation-tool bytes, complete inventory, and no unfinished-proof markers. Native
+admission of inductive mathematical justifications, and the broader integration
+of reasoning that chooses and assesses development steps, remain open under
+the existing locally owned contract requirements.

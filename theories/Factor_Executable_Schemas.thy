@@ -22,6 +22,10 @@ lemma decode_finite_call_inj:
   "inj (decode_finite_call_term :: ('d \<times> finite_factor_term) \<Rightarrow> _)"
   by (auto simp: inj_def decode_finite_call_pattern_def decode_finite_call_term_def split: prod.splits)
 
+lemma decode_finite_call_term_fields:
+  "decode_finite_call_term q=(fst q,decode_finite_term (snd q))"
+  by (cases q) (simp add: decode_finite_call_term_def)
+
 record ('a,'s,'d) finite_factor_schema =
   finite_schema_conclusion :: "'a finite_term_pattern"
   finite_schema_premises :: "('s \<times> ('d \<times> 'a finite_term_pattern)) fset"

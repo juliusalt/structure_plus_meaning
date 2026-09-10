@@ -5,6 +5,13 @@ material. The owner's principles govern the reconstruction: structurality,
 explicitness, non-conflation, irredundancy, and non-nominality. Individual claims
 in the supplied documents remain subject to proof and alignment review.
 
+The [development workflow](DEVELOPMENT_WORKFLOW.md) applies the generalization
+machinery to content and to decisions about the work itself. Reusable reasoning
+must become input to later decisions, with its actual prerequisites retained.
+Related reads, changes, and checks are prepared in complete batches; content
+quality governs their scope. The [current review](GENERALIZATION_REVIEW.md) and
+[reasoning inventory](REASONING_REUSE.md) record evidence and remaining gaps.
+
 The owner's correction of 2026-09-08 replaces the earlier single-grammar and
 quotation-principality requirements. Every notion needing a presentation must
 constrain its admissible class so each admitted presentation preserves all
@@ -94,8 +101,9 @@ Cause validity and higher protocol readers remain.
 The owner's clarification of 2026-09-09 also applies the abstraction discipline
 to evaluation and development themselves. A supplied candidate must enter an
 explicit reusable account of specialization, residual obligations, improvement,
-and stopping. Candidate generation may remain external. The same account must
-accept a candidate that is itself a generalization method. Prose instructions
+and stopping. The later clarification requires reusable reasoning to guide
+candidate construction and the other decisions made during development. The
+same account must accept a candidate that is itself a generalization method. Prose instructions
 alone do not satisfy this requirement.
 
 The owner's subsequent clarification requires depth assessment to retain
@@ -2136,6 +2144,18 @@ supply them. `python3 tools/test_investigation.py` exercises the runner's failur
 gates in isolated fixtures; the linked command executes the actual exported
 mathematics. The runner uses Python, POSIX process groups and locks, Isabelle,
 and Poly/ML; `--poly` can name the runtime explicitly.
+
+The growing reasoning interface constructs conclusions and complete conditional
+applications from reusable schemas. An ordinary native planner consumes pair
+and collection admission goals and has a universal installed-program contract.
+The complete-input use and the actual method-quality investigation are
+described in [REASONING_REUSE.md](REASONING_REUSE.md). The main command includes
+`reasoning-methods --selected 0`; `tools/follow_revision.py` executes its actual
+returned proposal. `tools/check_reasoning.py` independently checks the complete
+reasoning reports and can replay the retained generated module with `--engine`,
+its matching `--proof` receipt, an explicit `--poly`, and a new `--output`.
+The native mathematical-proof and broader reasoning-integration obligations
+remain explicit in the reasoning inventory.
 
 Run `python3 tools/check.py --threads 12 --timeout 900` for one combined build,
 complete error collection, theory-inventory check, and unfinished-proof scan.

@@ -1,0 +1,101 @@
+{
+  "scope": "Supplied saved finite computations and recorded artifacts; independent subject meanings and coverage require review",
+  "summary": {
+    "receipts": 1,
+    "computations": {
+      "matches independent reconstruction": 1
+    },
+    "statuses": {
+      "evaluated": 1
+    },
+    "distinct_evaluation_states": 1,
+    "formed_runs_with_required_withdrawals": 0,
+    "formed_runs_with_new_missing_after_withdrawal": 0
+  },
+  "runs": [
+    {
+      "path": "/tmp/generalization-quality-review/learning-sources-before/receipt.json",
+      "receipt_sha256": "9a4c4f717ec7aea7298e1e453e7eb89424029e23fcedb1739e73c588ec14de83",
+      "status": "evaluated",
+      "kind": "inference",
+      "question": "Which exact proof-context conditions remain for the requested sources?",
+      "scope": {
+        "roots": [
+          "Factor_Schema_Generation",
+          "Factor_Admission_Plan_Contracts"
+        ],
+        "complete_for": "These finite local import closures",
+        "external_context": {
+          "base": "HOL",
+          "isabelle_version": "Isabelle2025-2"
+        }
+      },
+      "semantic_boundary": "This is conditional proof-source readiness. Import edges and source presence do not prove declarations. Local checks may be discharged together by one accepted session.",
+      "computation": "matches independent reconstruction",
+      "mismatches": [],
+      "checked_fields": [
+        "input_formed",
+        "residual",
+        "demand",
+        "reasons"
+      ],
+      "facts": {
+        "input_formed": true,
+        "rule_count": 11,
+        "invalid_rule_count": 0,
+        "known_count": 147,
+        "goal_count": 2,
+        "closure_count": 147,
+        "residual_count": 2,
+        "demand_count": 28,
+        "reason_count": 28,
+        "evaluation_signature": "9bea9be95918015baf747fa0808602e7c8f0ecc02819bcd6ce0aff69f243d5ef"
+      },
+      "artifacts": {
+        "counts": {
+          "matches": 352,
+          "changed": 3
+        },
+        "issues": [
+          {
+            "role": "external case evidence",
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Admission_Plans.thy",
+            "sha256": "f87c8b0d06d18ce27359ec7b29d0430db6e5cd358a0b173644273d2415cdf7ef",
+            "state": "changed",
+            "archive": "/tmp/generalization-quality-review/learning-sources-before/evidence-bcd126fe-6410-4905-aa78-7edf9cae3b3e/f87c8b0d06d18ce27359ec7b29d0430db6e5cd358a0b173644273d2415cdf7ef",
+            "archive_matches": true
+          },
+          {
+            "role": "external case evidence",
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Admission_Plan_Exact.thy",
+            "sha256": "da7387648b3048744a6f3a47f38496be5c727b9cf83a3d8143c1876394deeacf",
+            "state": "changed",
+            "archive": "/tmp/generalization-quality-review/learning-sources-before/evidence-bcd126fe-6410-4905-aa78-7edf9cae3b3e/da7387648b3048744a6f3a47f38496be5c727b9cf83a3d8143c1876394deeacf",
+            "archive_matches": true
+          },
+          {
+            "role": "external case evidence",
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Admission_Plan_Contracts.thy",
+            "sha256": "3912f84276f158e7a59764bd30ad4696a8c0375b9daa4bf14519aba020c374ad",
+            "state": "changed",
+            "archive": "/tmp/generalization-quality-review/learning-sources-before/evidence-bcd126fe-6410-4905-aa78-7edf9cae3b3e/3912f84276f158e7a59764bd30ad4696a8c0375b9daa4bf14519aba020c374ad",
+            "archive_matches": true
+          }
+        ],
+        "checked_roles": {
+          "saved case": 1,
+          "generated engine": 1,
+          "runtime": 1,
+          "runtime program": 1,
+          "proof receipt": 1,
+          "run log": 1,
+          "original execution tool": 2,
+          "engine snapshot": 27,
+          "external case evidence": 159,
+          "archived case evidence": 159,
+          "archived execution tool": 2
+        }
+      }
+    }
+  ]
+}

@@ -65,6 +65,25 @@ lemma data_list_fset_presents_finite_image:
   shows "data_list_fset_presents R (fset_of_list xs) t"
   using assms by (auto simp: data_list_fset_presents_def)
 
+context list_profile
+begin
+
+theorem finite_set_class:
+  assumes element: "presentation_class R D (\<lambda>t. (element_site,t)\<in>positive_meaning P)"
+  shows "presentation_class (data_list_fset_presents R) (\<lambda>S. \<forall>a\<in>fset S. D a)
+    (\<lambda>t. (list_site,t)\<in>positive_meaning P)"
+proof -
+  have source: "presentation_class (data_list_fset_presents R) (\<lambda>S. \<forall>a\<in>fset S. D a)
+      (\<lambda>t. \<exists>xs. (\<forall>x\<in>set xs. (element_site,x)\<in>positive_meaning P) \<and> t=data_list_term xs)"
+    by (rule data_list_fset_presentation_class[OF element])
+  have admission: "(\<lambda>t. \<exists>xs. (\<forall>x\<in>set xs. (element_site,x)\<in>positive_meaning P) \<and> t=data_list_term xs)=
+      (\<lambda>t. (list_site,t)\<in>positive_meaning P)"
+    by (rule ext) (simp only: exact; blast)
+  show ?thesis using source by (simp only: admission)
+qed
+
+end
+
 text \<open>
   This class is the covered image of the complete sequence class under the
   existing finite-set operation. The subject retains each member; the displayed

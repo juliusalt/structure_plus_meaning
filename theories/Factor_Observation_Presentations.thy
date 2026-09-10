@@ -12,7 +12,7 @@ abbreviation observation_datum_presents :: "factor_term \<Rightarrow> factor_ter
   "observation_datum_presents x p \<equiv> data_term_presents x p"
 
 abbreviation observation_value_presents where
-  "observation_value_presents \<equiv> factor_pair_presents observation_datum_presents observation_datum_presents"
+  "observation_value_presents \<equiv> data_pair_presents"
 
 abbreviation observation_row_presents where
   "observation_row_presents \<equiv> factor_pair_presents observation_datum_presents
@@ -22,7 +22,7 @@ abbreviation observation_facets_presents where
   "observation_facets_presents \<equiv> data_list_fset_presents observation_datum_presents"
 
 abbreviation observation_values_presents where
-  "observation_values_presents \<equiv> data_list_fset_presents observation_value_presents"
+  "observation_values_presents \<equiv> data_pair_finite_set_presents"
 
 abbreviation observation_table_presents where
   "observation_table_presents \<equiv> data_list_fset_presents observation_row_presents"
@@ -54,8 +54,7 @@ lemma observation_datum_class:
 lemma observation_value_class:
   "presentation_class observation_value_presents (\<lambda>(f,w). data_elements [f,w])
     (\<lambda>p. \<exists>f w. observation_value_presents (f,w) p)"
-  using factor_pair_class[OF observation_datum_class observation_datum_class]
-  by (auto simp: presentation_class_def factor_pair_presents_def split: prod.splits)
+  using data_pair_class by (simp only: split_paired_Ex)
 
 lemma observation_row_class:
   "presentation_class observation_row_presents (\<lambda>(f,c,w). data_elements [f,c,w]) observation_row_admitted"
@@ -75,12 +74,7 @@ qed
 lemma observation_values_class:
   "presentation_class observation_values_presents observation_values_domain
     (\<lambda>p. \<exists>V. observation_values_presents V p)"
-proof -
-  have source: "presentation_class observation_values_presents observation_values_domain
-      (\<lambda>p. \<exists>xs. (\<forall>x\<in>set xs. \<exists>f w. observation_value_presents (f,w) x) \<and> p=data_list_term xs)"
-    by (rule data_list_fset_presentation_class[OF observation_value_class])
-  show ?thesis by (rule presentation_class.recovered_admission[OF source])
-qed
+  by (rule data_pair_finite_set_class)
 
 lemma observation_table_class:
   "presentation_class observation_table_presents observation_table_domain
@@ -121,7 +115,7 @@ section \<open>The classes retain every displayed enumeration of their subjects\
 
 lemma observation_value_graph:
   "observation_value_presents=(\<lambda>z p. (case z of (f,w) \<Rightarrow> data_elements [f,w]) \<and> p=observation_value_term z)"
-  by (intro ext) (auto simp: factor_pair_presents_def split: prod.splits)
+  by (rule data_pair_graph)
 
 lemma observation_row_graph:
   "observation_row_presents=(\<lambda>z p. (case z of (f,c,w) \<Rightarrow> data_elements [f,c,w]) \<and> p=observation_row_term z)"
@@ -131,13 +125,12 @@ lemma observation_values_fields:
   "observation_values_presents V p \<longleftrightarrow>
     (\<exists>xs. (\<forall>(f,w)\<in>set xs. data_elements [f,w]) \<and> fset_of_list xs=V \<and>
       p=data_list_term (map observation_value_term xs))"
-  by (simp only: observation_value_graph data_list_fset_presents_function)
+  by (rule data_pair_finite_set_fields)
 
 lemma observation_values_presented_data:
   assumes "observation_values_presents V q"
   shows "observation_datum q"
-  using assms by (simp only: observation_values_fields)
-    (auto simp: data_list_term_formed data_list_term_self_contained split: prod.splits)
+  by (rule data_pair_finite_set_presented_data[OF assms])
 
 lemma observation_facets_fields:
   "observation_facets_presents F p \<longleftrightarrow>

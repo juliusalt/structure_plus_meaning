@@ -1,5 +1,5 @@
 theory Finite_Investigation_Interface
-  imports Finite_Observation_Repairs "HOL-Library.Code_Target_Nat"
+  imports Finite_Observation_Repairs Observation_Revisions "HOL-Library.Code_Target_Nat"
 begin
 
 section \<open>List arguments retain the finite relations they present\<close>
@@ -252,7 +252,91 @@ proof -
       simp only: conflicts[unfolded report_def] blocked[unfolded report_def])
 qed
 
-export_code investigation_inference investigation_basis investigation_repairs investigation_extend nat_of_integer integer_of_nat checking SML
+section \<open>Revision reports preserve the selected sound part and recompute its needs\<close>
+
+definition investigation_retain ::
+  "nat list \<Rightarrow> nat list \<Rightarrow> nat list \<Rightarrow> (nat\<times>nat\<times>nat) list \<Rightarrow>
+    (nat\<times>nat) list \<Rightarrow> nat list" where
+  "investigation_retain candidates facets selected observations relation=
+    investigation_select selected (finite_sound_observation_facets (fset_of_list candidates)
+      (\<lambda>c d. (c,d)\<in>set relation) (fset_of_list facets) (fset_of_list observations))"
+
+lemma investigation_retain_exact:
+  "set (investigation_retain candidates facets selected observations relation)=
+    retained_observation_facets (set candidates) (\<lambda>c d. (c,d)\<in>set relation)
+      (set facets) (set selected) (finite_table_observations (fset_of_list observations))"
+  by (auto simp: investigation_retain_def investigation_select_def
+    finite_sound_observation_facets_exact fset_of_list.rep_eq retained_observation_facets_def; blast)
+
+definition investigation_revision ::
+  "nat list \<Rightarrow> nat list \<Rightarrow> nat list \<Rightarrow> (nat\<times>nat\<times>nat) list \<Rightarrow>
+    (nat\<times>nat) list \<Rightarrow>
+    (nat list\<times>nat list\<times>(nat\<times>nat\<times>nat\<times>nat) list\<times>nat list\<times>(nat\<times>nat) list)" where
+  "investigation_revision candidates facets selected observations relation=
+    (let retained=investigation_retain candidates facets selected observations relation;
+         withdrawn=filter (\<lambda>f. f\<notin>set retained) (remdups selected);
+         repairs=fst (snd (snd (investigation_repairs candidates facets retained observations relation)));
+         revised=investigation_extend retained repairs;
+         residual=fst (snd (investigation_basis candidates facets revised observations relation))
+     in (retained,withdrawn,repairs,revised,residual))"
+
+theorem investigation_revision_retained:
+  "set (fst (investigation_revision candidates facets selected observations relation))=
+    retained_observation_facets (set candidates) (\<lambda>c d. (c,d)\<in>set relation)
+      (set facets) (set selected) (finite_table_observations (fset_of_list observations))"
+  by (simp only: investigation_revision_def Let_def fst_conv investigation_retain_exact)
+
+theorem investigation_revision_withdrawn:
+  "set (fst (snd (investigation_revision candidates facets selected observations relation)))=
+    withdrawn_observation_facets (set candidates) (\<lambda>c d. (c,d)\<in>set relation)
+      (set facets) (set selected) (finite_table_observations (fset_of_list observations))"
+  by (auto simp: investigation_revision_def Let_def investigation_retain_exact
+    retained_observation_facets_def withdrawn_observation_facets_def; blast)
+
+theorem investigation_revision_repairs:
+  "set (fst (snd (snd (investigation_revision candidates facets selected observations relation))))=
+    available_observation_repairs (set candidates) (\<lambda>c d. (c,d)\<in>set relation) (set facets)
+      (retained_observation_facets (set candidates) (\<lambda>c d. (c,d)\<in>set relation)
+        (set facets) (set selected) (finite_table_observations (fset_of_list observations)))
+      (finite_table_observations (fset_of_list observations))"
+  by (simp only: investigation_revision_def Let_def fst_conv snd_conv
+    investigation_available_repairs investigation_retain_exact)
+
+theorem investigation_revision_selection:
+  "set (fst (snd (snd (snd (investigation_revision candidates facets selected observations relation)))))=
+    revised_observation_selection (set candidates) (\<lambda>c d. (c,d)\<in>set relation)
+      (set facets) (set selected) (finite_table_observations (fset_of_list observations))"
+  by (simp only: investigation_revision_def Let_def fst_conv snd_conv investigation_extend_exact
+    investigation_available_repairs investigation_retain_exact revised_observation_selection_def)
+
+theorem investigation_revision_residual:
+  "set (snd (snd (snd (snd (investigation_revision candidates facets selected observations relation)))))=
+    comparison_failures (set candidates) (\<lambda>c d. (c,d)\<in>set relation)
+      (sound_observation_facets (set candidates) (\<lambda>c d. (c,d)\<in>set relation)
+        (set facets) (finite_table_observations (fset_of_list observations)))
+      (finite_table_observations (fset_of_list observations))"
+proof -
+  let ?K="investigation_retain candidates facets selected observations relation"
+  let ?P="fst (snd (snd (investigation_repairs candidates facets ?K observations relation)))"
+  let ?G="investigation_extend ?K ?P"
+  let ?O="finite_table_observations (fset_of_list observations)"
+  let ?R="\<lambda>c d. (c,d)\<in>set relation"
+  have selected: "set ?G=revised_observation_selection (set candidates) ?R (set facets) (set selected) ?O"
+    by (simp only: investigation_extend_exact investigation_available_repairs
+      investigation_retain_exact revised_observation_selection_def)
+  have sound: "comparison_observations_sound (set candidates) ?R (set ?G) ?O"
+    by (simp only: selected revised_observation_selection_sound)
+  have residual: "fset (finite_basis_residual (fset_of_list candidates) (fset_of_list ?G)
+      (fset_of_list observations) ?R)=comparison_failures (set candidates) ?R (set ?G) ?O"
+    using sound by (auto simp: finite_basis_residual_member comparison_failures_def
+      comparison_observations_sound_def fset_of_list.rep_eq candidate_profile_comparison; blast)
+  show ?thesis
+    by (simp only: investigation_revision_def Let_def fst_conv snd_conv investigation_basis_residual
+      residual selected revision_has_exactly_the_full_sound_language_failures)
+qed
+
+export_code investigation_inference investigation_basis investigation_repairs investigation_extend
+  investigation_revision nat_of_integer integer_of_nat checking SML
 
 text \<open>
   Natural numbers are private input identifiers, with equality as their only

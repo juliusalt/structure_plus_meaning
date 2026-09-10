@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import importlib.util
+import hashlib
 import json
 from argparse import Namespace
 from pathlib import Path
@@ -33,12 +34,16 @@ if Path(__file__).name == "fake_poly":
     if mode == "engine_change":
         for p in (root / "output").rglob("finite_investigation.ML"):
             p.write_text("changed generated engine")
+    if mode == "archive_change":
+        for p in (root / "output").glob("evidence-*/*"):
+            p.write_text("changed archived evidence")
     if mode == "malformed_result":
         print("INVESTIGATION_RESULT {}"); sys.exit(0)
     if mode == "registered":
         print("INVESTIGATION_RESULT " + json.dumps({"input_formed": True, "residual": [],
             "profiles": [], "losses": [], "observations": [], "relation": [],
-            "safe_facets": [], "conflicts": [], "repairs": [], "unrepairable": [], "extension": []})); sys.exit(0)
+            "safe_facets": [], "conflicts": [], "repairs": [], "unrepairable": [], "extension": [],
+            "revision": {"retained": [], "withdrawn": [], "repairs": [], "selection": [], "residual": []}})); sys.exit(0)
     print("INVESTIGATION_RESULT " + json.dumps({"input_formed": mode != "rejected", "residual": [], "demand": [], "reasons": []}))
     sys.exit(0)
 if sys.argv[1] == "version":
@@ -74,6 +79,8 @@ class InvestigationTests(unittest.TestCase):
             shutil.copyfile(TOOLS / name, self.root / "tools" / name)
         (self.root / "theories/Presentation_Completion_Investigation.thy").write_text(
             "theory Presentation_Completion_Investigation imports Main begin end\n")
+        (self.root / "theories/Finite_Investigation_Interface.thy").write_text(
+            "theory Finite_Investigation_Interface imports Main begin end\n")
         for name in ("fake_isabelle", "fake_poly"):
             path = self.root / name
             path.write_text(FAKE)
@@ -86,6 +93,23 @@ class InvestigationTests(unittest.TestCase):
         for name in ("receipt.json", "proof.json"):
             (self.root / "output" / name).write_text(json.dumps(old))
         (self.root / "output/run.log").write_text("OLD LOG\n")
+
+    def test_basis_relation_retains_foreign_endpoints(self):
+        import investigate
+        case = {"schema": investigate.SCHEMA, "kind": "basis", "question": "Complete relation",
+                "scope": "Empty candidate scope with an independently supplied relation",
+                "candidates": [], "facets": [0], "selected": [], "observations": [], "relation": [[2, 2]]}
+        investigate.validate_case(case)
+        self.assertEqual(case["relation"], [[2, 2]])
+        case["candidates"] = [0]
+        for relation in ([[2, 0]], [[0, 2]], [[2, 2]], [[2, 2], [2, 2]]):
+            case["relation"] = relation
+            investigate.validate_case(case)
+            self.assertEqual(case["relation"], relation)
+        for relation in ([[True, 2]], [[2, -1]], [[2, 2, 2]]):
+            case["relation"] = relation
+            with self.assertRaises(ValueError):
+                investigate.validate_case(case)
 
     def save_case(self):
         (self.root / "case.json").write_text(json.dumps(self.case))
@@ -146,11 +170,27 @@ class InvestigationTests(unittest.TestCase):
         self.assertFalse((self.root / "runtime_called").exists())
 
     def test_changed_inputs_and_malformed_results_cannot_be_evaluated(self):
-        for mode in ("case_change", "engine_change", "malformed_result"):
+        for mode in ("case_change", "engine_change", "archive_change", "malformed_result"):
             with self.subTest(mode=mode):
                 result, receipt, _ = self.execute(mode)
                 self.assertNotEqual(result.returncode, 0)
                 self.assertEqual(receipt["status"], "failed")
+
+    def test_archives_preserve_original_external_evidence_and_tools(self):
+        evidence = self.root / "draft.thy"
+        original = b"exact historical draft\n"
+        evidence.write_bytes(original)
+        self.case["evidence"] = [{"path": str(evidence), "sha256": hashlib.sha256(original).hexdigest()}]
+        self.save_case()
+        result, receipt, _ = self.execute()
+        self.assertEqual(result.returncode, 0, result.stdout)
+        evidence.write_bytes(b"later draft\n")
+        entries = receipt["evidence_archive"]
+        self.assertEqual({item["role"] for item in entries}, {"original case", "case evidence", "execution tool"})
+        for item in entries:
+            self.assertEqual(hashlib.sha256(Path(item["archive"]).read_bytes()).hexdigest(), item["sha256"])
+        archived = next(item for item in entries if item["role"] == "case evidence")
+        self.assertEqual(Path(archived["archive"]).read_bytes(), original)
 
     def test_invalid_identifiers_are_rejected_before_build(self):
         for identifier in (-1, True, "0"):
@@ -186,6 +226,11 @@ class InvestigationTests(unittest.TestCase):
                          "These two fixed actual programs; the three probes form a complete basis for this family")
         self.assertNotEqual(receipt["semantic_boundary"], self.case["semantic_boundary"])
         self.assertEqual(json.loads((self.root / "output/case.json").read_text()), self.case)
+        exported = Path(receipt["engine_snapshot"]) / "theories" / (receipt["export_theory"] + ".thy")
+        source = exported.read_text()
+        self.assertIn("investigation_revision", source)
+        self.assertIn("proof_probes_investigation_observations", source)
+        self.assertNotIn("Untrusted", source)
 
     def test_registered_socket_case_keeps_its_actual_subject_scope(self):
         (self.root / "theories/Factor_Schema_Socket_Investigation.thy").write_text(
@@ -242,7 +287,8 @@ class InvestigationTests(unittest.TestCase):
         finally:
             sys.path.pop(0)
         valid = {"input_formed": True, "residual": [], "profiles": [], "losses": [],
-                 "safe_facets": [0], "conflicts": [], "repairs": [[0, 1, 0, 2]], "unrepairable": [], "extension": [0]}
+                 "safe_facets": [0], "conflicts": [], "repairs": [[0, 1, 0, 2]], "unrepairable": [], "extension": [0],
+                 "revision": {"retained": [], "withdrawn": [], "repairs": [[0, 1, 0, 2]], "selection": [0], "residual": []}}
         investigate.validate_result(valid, "basis")
         for field, value in [("repairs", [[0, 1, 0]]), ("conflicts", [[0, 1, False, 2]]),
                              ("safe_facets", [True]), ("unrepairable", [[0]]), ("extension", [False])]:
@@ -251,6 +297,13 @@ class InvestigationTests(unittest.TestCase):
                     investigate.validate_result({**valid, field: value}, "basis")
         with self.assertRaisesRegex(ValueError, "Malformed repair guidance"):
             investigate.validate_result({k: v for k, v in valid.items() if k != "repairs"}, "basis")
+        for key, value in [("repairs", [[0, 1, 0]]), ("withdrawn", [False]), ("selection", [-1]), ("residual", [[1]])]:
+            with self.subTest(revision_field=key):
+                with self.assertRaisesRegex(ValueError, "Malformed revision guidance"):
+                    investigate.validate_result({**valid, "revision": {**valid["revision"], key: value}}, "basis")
+        investigate.validate_result({**valid, "input_formed": False, "revision": None}, "basis")
+        with self.assertRaisesRegex(ValueError, "Rejected inputs"):
+            investigate.validate_result({**valid, "input_formed": False}, "basis")
 
     def test_runtime_serialization_uses_right_associated_tuples(self):
         sys.path.insert(0, str(TOOLS))

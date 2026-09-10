@@ -1,0 +1,6660 @@
+{
+  "source_seed_warrants": [
+    {
+      "run": 4,
+      "case": "/tmp/native-observation-collections-main-sources/case.json",
+      "status": "matches accepted source evidence",
+      "conditions_checked": 713,
+      "known": 713,
+      "build_source": {
+        "git_commit": "b787481cc9956bd704a79e5c74f8b83d641a16b5",
+        "path": "validation/build.json"
+      }
+    },
+    {
+      "run": 14,
+      "case": "/tmp/native-observation-main-sources/case.json",
+      "status": "matches accepted source evidence",
+      "conditions_checked": 694,
+      "known": 694,
+      "build_source": {
+        "git_commit": "671b74a877e54a76a60e99d6e63144011ee88a7e",
+        "path": "validation/build.json"
+      }
+    },
+    {
+      "run": 24,
+      "case": "/tmp/native-observation-scope-main-sources/case.json",
+      "status": "matches accepted source evidence",
+      "conditions_checked": 702,
+      "known": 702,
+      "build_source": {
+        "git_commit": "e2656edba131b04187858b1ac1170c9d8cd16a32",
+        "path": "validation/build.json"
+      }
+    },
+    {
+      "run": 34,
+      "case": "/tmp/native-observation-tables-readiness-final/case.json",
+      "status": "matches accepted source evidence",
+      "conditions_checked": 733,
+      "known": 733,
+      "build_source": {
+        "path": "/home/julius/structure_and_semantics/validation/build.json"
+      }
+    },
+    {
+      "run": 58,
+      "case": "/tmp/observation-repair-main-run/readiness/case.json",
+      "status": "matches accepted source evidence",
+      "conditions_checked": 237,
+      "known": 237,
+      "build_source": {
+        "git_commit": "c87b197cc403f7c262ab54249556f127893b402a",
+        "path": "validation/build.json"
+      }
+    },
+    {
+      "run": 88,
+      "case": "/tmp/operative-generalization-run/readiness/case.json",
+      "status": "matches accepted source evidence",
+      "conditions_checked": 22,
+      "known": 22,
+      "build_source": {
+        "path": "/tmp/operative-generalization-run/build.json"
+      }
+    },
+    {
+      "run": 89,
+      "case": "/tmp/operative-permission-readiness/case.json",
+      "status": "matches accepted source evidence",
+      "conditions_checked": 411,
+      "known": 386,
+      "build_source": {
+        "path": "/tmp/native-construction-join-runs/1788980880460068456/build.json"
+      }
+    },
+    {
+      "run": 100,
+      "case": "/tmp/pattern-call-final-run/readiness/case.json",
+      "status": "matches accepted source evidence",
+      "conditions_checked": 212,
+      "known": 212,
+      "build_source": {
+        "path": "/tmp/pattern-call-final-run/build.json"
+      }
+    },
+    {
+      "run": 101,
+      "case": "/tmp/pattern-call-readiness-before/case.json",
+      "status": "matches accepted source evidence",
+      "conditions_checked": 212,
+      "known": 207,
+      "build_source": {
+        "path": "/tmp/proof-scheme-development-run/build.json"
+      }
+    },
+    {
+      "run": 105,
+      "case": "/tmp/permission-generalization-current-readiness/case.json",
+      "status": "matches accepted source evidence",
+      "conditions_checked": 411,
+      "known": 386,
+      "build_source": {
+        "path": "/tmp/operative-generalization-run/build.json"
+      }
+    },
+    {
+      "run": 112,
+      "case": "/tmp/permission-generalization-run/readiness/case.json",
+      "status": "matches accepted source evidence",
+      "conditions_checked": 419,
+      "known": 419,
+      "build_source": {
+        "path": "/tmp/permission-generalization-run/build.json"
+      }
+    },
+    {
+      "run": 113,
+      "case": "/tmp/prescribed-schema-development-run/readiness/case.json",
+      "status": "matches accepted source evidence",
+      "conditions_checked": 237,
+      "known": 237,
+      "build_source": {
+        "git_commit": "f8922fdff693efe4e74e2a4f6b71c497cf710dcd",
+        "path": "validation/build.json"
+      }
+    },
+    {
+      "run": 119,
+      "case": "/tmp/prescribed-schema-readiness-current/case.json",
+      "status": "matches accepted source evidence",
+      "conditions_checked": 237,
+      "known": 117,
+      "build_source": {
+        "git_commit": "0d0df1a8231b1710e43b44c8705b7316c9464937",
+        "path": "validation/build.json"
+      }
+    },
+    {
+      "run": 120,
+      "case": "/tmp/prescribed-schema-readiness-malformed/case.json",
+      "status": "matches accepted source evidence",
+      "conditions_checked": 237,
+      "known": 129,
+      "build_source": {
+        "git_commit": "0d0df1a8231b1710e43b44c8705b7316c9464937",
+        "path": "validation/build.json"
+      }
+    },
+    {
+      "run": 121,
+      "case": "/tmp/prescribed-schema-readiness-replayed/case.json",
+      "status": "matches accepted source evidence",
+      "conditions_checked": 237,
+      "known": 129,
+      "build_source": {
+        "git_commit": "0d0df1a8231b1710e43b44c8705b7316c9464937",
+        "path": "validation/build.json"
+      }
+    },
+    {
+      "run": 135,
+      "case": "/tmp/proof-scheme-development-run/readiness/case.json",
+      "status": "matches accepted source evidence",
+      "conditions_checked": 236,
+      "known": 236,
+      "build_source": {
+        "path": "/tmp/proof-scheme-development-run/build.json"
+      }
+    },
+    {
+      "run": 144,
+      "case": "/tmp/proof-scheme-readiness-before/case.json",
+      "status": "matches accepted source evidence",
+      "conditions_checked": 209,
+      "known": 186,
+      "build_source": {
+        "path": "/tmp/substitution-development-run/build.json"
+      }
+    },
+    {
+      "run": 145,
+      "case": "/tmp/schema-pattern-development-run/readiness/case.json",
+      "status": "matches accepted source evidence",
+      "conditions_checked": 233,
+      "known": 233,
+      "build_source": {
+        "git_commit": "0d0df1a8231b1710e43b44c8705b7316c9464937",
+        "path": "validation/build.json"
+      }
+    },
+    {
+      "run": 146,
+      "case": "/tmp/schema-pattern-readiness-before/case.json",
+      "status": "matches accepted source evidence",
+      "conditions_checked": 232,
+      "known": 226,
+      "build_source": {
+        "path": "/tmp/pattern-call-final-run/build.json"
+      }
+    },
+    {
+      "run": 159,
+      "case": "/tmp/substitution-development-run/readiness/case.json",
+      "status": "matches accepted source evidence",
+      "conditions_checked": 189,
+      "known": 189,
+      "build_source": {
+        "path": "/tmp/substitution-development-run/build.json"
+      }
+    },
+    {
+      "run": 164,
+      "case": "/tmp/project-investigation-first/case.json",
+      "status": "matches accepted source evidence",
+      "conditions_checked": 411,
+      "known": 386,
+      "build_source": {
+        "path": "/tmp/native-construction-join-runs/1788980880460068456/build.json"
+      }
+    }
+  ],
+  "reconstructed_import_contexts": [
+    {
+      "run": 4,
+      "case": "/tmp/native-observation-collections-main-sources/case.json",
+      "status": "matches recovered theory imports and local obligations",
+      "theory_headers": 713,
+      "complete_contexts": 713,
+      "conditional_source_rules": 0,
+      "additional_control_rules": 0
+    },
+    {
+      "run": 14,
+      "case": "/tmp/native-observation-main-sources/case.json",
+      "status": "matches recovered theory imports and local obligations",
+      "theory_headers": 694,
+      "complete_contexts": 694,
+      "conditional_source_rules": 0,
+      "additional_control_rules": 0
+    },
+    {
+      "run": 24,
+      "case": "/tmp/native-observation-scope-main-sources/case.json",
+      "status": "matches recovered theory imports and local obligations",
+      "theory_headers": 702,
+      "complete_contexts": 702,
+      "conditional_source_rules": 0,
+      "additional_control_rules": 0
+    },
+    {
+      "run": 34,
+      "case": "/tmp/native-observation-tables-readiness-final/case.json",
+      "status": "matches recovered theory imports and local obligations",
+      "theory_headers": 733,
+      "complete_contexts": 733,
+      "conditional_source_rules": 0,
+      "additional_control_rules": 0
+    },
+    {
+      "run": 58,
+      "case": "/tmp/observation-repair-main-run/readiness/case.json",
+      "status": "matches recovered theory imports and local obligations",
+      "theory_headers": 237,
+      "complete_contexts": 237,
+      "conditional_source_rules": 0,
+      "additional_control_rules": 0
+    },
+    {
+      "run": 88,
+      "case": "/tmp/operative-generalization-run/readiness/case.json",
+      "status": "matches recovered theory imports and local obligations",
+      "theory_headers": 22,
+      "complete_contexts": 22,
+      "conditional_source_rules": 0,
+      "additional_control_rules": 0
+    },
+    {
+      "run": 89,
+      "case": "/tmp/operative-permission-readiness/case.json",
+      "status": "not fully verified",
+      "error": "ValueError('Accepted build receipt bytes not recovered: 754b81912d688db743814659f7e342e8a4d64615b65bd43cf03226ab9af63b6c')"
+    },
+    {
+      "run": 100,
+      "case": "/tmp/pattern-call-final-run/readiness/case.json",
+      "status": "matches recovered theory imports and local obligations",
+      "theory_headers": 212,
+      "complete_contexts": 212,
+      "conditional_source_rules": 0,
+      "additional_control_rules": 0
+    },
+    {
+      "run": 101,
+      "case": "/tmp/pattern-call-readiness-before/case.json",
+      "status": "matches recovered theory imports and local obligations",
+      "theory_headers": 212,
+      "complete_contexts": 212,
+      "conditional_source_rules": 5,
+      "additional_control_rules": 0
+    },
+    {
+      "run": 105,
+      "case": "/tmp/permission-generalization-current-readiness/case.json",
+      "status": "not fully verified",
+      "error": "ValueError('Accepted build receipt bytes not recovered: 754b81912d688db743814659f7e342e8a4d64615b65bd43cf03226ab9af63b6c')"
+    },
+    {
+      "run": 112,
+      "case": "/tmp/permission-generalization-run/readiness/case.json",
+      "status": "matches recovered theory imports and local obligations",
+      "theory_headers": 419,
+      "complete_contexts": 419,
+      "conditional_source_rules": 0,
+      "additional_control_rules": 0
+    },
+    {
+      "run": 113,
+      "case": "/tmp/prescribed-schema-development-run/readiness/case.json",
+      "status": "matches recovered theory imports and local obligations",
+      "theory_headers": 237,
+      "complete_contexts": 237,
+      "conditional_source_rules": 0,
+      "additional_control_rules": 0
+    },
+    {
+      "run": 119,
+      "case": "/tmp/prescribed-schema-readiness-current/case.json",
+      "status": "matches recovered theory imports and local obligations",
+      "theory_headers": 237,
+      "complete_contexts": 237,
+      "conditional_source_rules": 120,
+      "additional_control_rules": 0
+    },
+    {
+      "run": 120,
+      "case": "/tmp/prescribed-schema-readiness-malformed/case.json",
+      "status": "matches recovered theory imports and local obligations",
+      "theory_headers": 237,
+      "complete_contexts": 237,
+      "conditional_source_rules": 108,
+      "additional_control_rules": 1
+    },
+    {
+      "run": 121,
+      "case": "/tmp/prescribed-schema-readiness-replayed/case.json",
+      "status": "matches recovered theory imports and local obligations",
+      "theory_headers": 237,
+      "complete_contexts": 237,
+      "conditional_source_rules": 108,
+      "additional_control_rules": 0
+    },
+    {
+      "run": 135,
+      "case": "/tmp/proof-scheme-development-run/readiness/case.json",
+      "status": "matches recovered theory imports and local obligations",
+      "theory_headers": 236,
+      "complete_contexts": 236,
+      "conditional_source_rules": 0,
+      "additional_control_rules": 0
+    },
+    {
+      "run": 144,
+      "case": "/tmp/proof-scheme-readiness-before/case.json",
+      "status": "matches recovered theory imports and local obligations",
+      "theory_headers": 209,
+      "complete_contexts": 209,
+      "conditional_source_rules": 23,
+      "additional_control_rules": 0
+    },
+    {
+      "run": 145,
+      "case": "/tmp/schema-pattern-development-run/readiness/case.json",
+      "status": "matches recovered theory imports and local obligations",
+      "theory_headers": 233,
+      "complete_contexts": 233,
+      "conditional_source_rules": 0,
+      "additional_control_rules": 0
+    },
+    {
+      "run": 146,
+      "case": "/tmp/schema-pattern-readiness-before/case.json",
+      "status": "matches recovered theory imports and local obligations",
+      "theory_headers": 232,
+      "complete_contexts": 232,
+      "conditional_source_rules": 6,
+      "additional_control_rules": 0
+    },
+    {
+      "run": 159,
+      "case": "/tmp/substitution-development-run/readiness/case.json",
+      "status": "matches recovered theory imports and local obligations",
+      "theory_headers": 189,
+      "complete_contexts": 189,
+      "conditional_source_rules": 0,
+      "additional_control_rules": 0
+    },
+    {
+      "run": 164,
+      "case": "/tmp/project-investigation-first/case.json",
+      "status": "not fully verified",
+      "error": "ValueError('Accepted build receipt bytes not recovered: 754b81912d688db743814659f7e342e8a4d64615b65bd43cf03226ab9af63b6c')"
+    }
+  ],
+  "unrecovered_historical_versions": [
+    {
+      "role": "original tool path",
+      "path": "/tmp/operative-interface-diagnostic/tools/investigate.py",
+      "expected_sha256": "837d082c00f86abe90b90b36f4005e214d6b6ee97cee01046adac6bff0606d2a",
+      "state": "changed",
+      "matching_archives": []
+    },
+    {
+      "role": "external case evidence",
+      "path": "/tmp/permission-generalization-drafts/Factor_Permission_Investigation.thy",
+      "expected_sha256": "90e198928c24727aba0ab88f97ad8a165e734829441a1cf66501ba1576320be0",
+      "state": "changed",
+      "matching_archives": []
+    },
+    {
+      "role": "external case evidence",
+      "path": "/tmp/permission-generalization-drafts/Factor_Permission_Completion.thy",
+      "expected_sha256": "754b81912d688db743814659f7e342e8a4d64615b65bd43cf03226ab9af63b6c",
+      "state": "changed",
+      "matching_archives": []
+    }
+  ],
+  "recovery_counts": {
+    "distinct_changed_references": 52,
+    "recovered": 49,
+    "unrecovered": 3
+  },
+  "supplementary_inventory": [
+    {
+      "path": "/tmp/assembly-gluing-diagnostics/1788918190184372689/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/assembly-gluing-diagnostics/1788918450258378730/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/assembly-gluing-diagnostics/1788918642180935138/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/assembly-gluing-diagnostics/1788919348255736290/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/assembly-gluing-diagnostics/1788919628635062859/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/assembly-gluing-diagnostics/1788919893141369576/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/assembly-gluing-diagnostics/1788920063413801468/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/assembly-gluing-diagnostics/1788920185115763262/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/assembly-gluing-diagnostics/1788920378923481025/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/assembly-gluing-diagnostics/1788920485913904988/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/assembly-gluing-diagnostics/1788920598043955077/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/assembly-gluing-diagnostics/1788920691480040821/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/assembly-gluing-diagnostics/1788921209251740800/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/assembly-gluing-diagnostics/1788921343973477129/receipt.json",
+      "status": "passed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/assembly-tables-diagnostics/1788905360710853967/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/assembly-tables-diagnostics/1788905439540032293/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/assembly-tables-diagnostics/1788905628891745107/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/assembly-tables-diagnostics/1788905754008646651/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/assembly-tables-diagnostics/1788905864734379469/receipt.json",
+      "status": "passed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/composition-investigation-diagnostics/1788977586105627663/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/composition-investigation-diagnostics/1788977890952333935/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/composition-investigation-diagnostics/1788978079935261267/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/composition-investigation-diagnostics/1788978258175816977/receipt.json",
+      "status": "passed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/construction-admission-diagnostics/1788933724041743813/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/construction-admission-diagnostics/1788933936225000899/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/construction-admission-diagnostics/1788934548969234043/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/construction-admission-diagnostics/1788934741959185812/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/construction-admission-diagnostics/1788934936358519757/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/construction-admission-diagnostics/1788935238069501472/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/construction-admission-diagnostics/1788935480567932061/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/construction-admission-diagnostics/1788935804867749622/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/construction-admission-diagnostics/1788936008708017700/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/construction-admission-diagnostics/1788936310259992488/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/construction-admission-diagnostics/1788936825379472176/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/construction-admission-diagnostics/1788940897234476443/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/construction-admission-diagnostics/1788941057553732166/receipt.json",
+      "status": "passed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/correspondence-diagnostics/1788951859244958417/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/correspondence-diagnostics/1788952267612032780/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/correspondence-diagnostics/1788952546281235938/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/correspondence-diagnostics/1788952795082357148/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/correspondence-diagnostics/1788953258563794865/receipt.json",
+      "status": "passed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/coverage-diagnostics/1788962399477133492/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/coverage-diagnostics/1788962612566712675/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/coverage-diagnostics/1788963224915020976/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/coverage-diagnostics/1788963451423693533/receipt.json",
+      "status": "passed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/depth-investigation-diagnostics/1788973320181014520/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/depth-investigation-diagnostics/1788973667301703752/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/depth-investigation-diagnostics/1788974959634960012/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/depth-investigation-diagnostics/1788975265249294775/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/depth-investigation-diagnostics/1788975484424512741/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/depth-investigation-diagnostics/1788975757219749722/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/depth-investigation-diagnostics/1788975860357858316/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/depth-investigation-diagnostics/1788976029697803425/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/depth-investigation-diagnostics/1788976159145282877/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/depth-investigation-diagnostics/1788976430699127294/receipt.json",
+      "status": "passed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/development-diagnostics/1788943779587151315/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/development-diagnostics/1788944201535511173/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/development-diagnostics/1788944480377730982/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/development-diagnostics/1788945286251542243/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/development-diagnostics/1788945570745800816/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/development-diagnostics/1788945734044577333/receipt.json",
+      "status": "passed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/fragment-diagnostics/1788901614824143717/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "role",
+        "run_directory",
+        "command",
+        "plan_sha256",
+        "sources",
+        "driver_sha256",
+        "native_role_checks",
+        "theory_count",
+        "exit_code",
+        "diagnostic_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/fragment-diagnostics/1788902034834700995/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "role",
+        "run_directory",
+        "command",
+        "plan_sha256",
+        "sources",
+        "driver_sha256",
+        "native_role_checks",
+        "theory_count",
+        "exit_code",
+        "diagnostic_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/fragment-diagnostics/1788902398418662030/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "role",
+        "run_directory",
+        "command",
+        "plan_sha256",
+        "sources",
+        "driver_sha256",
+        "native_role_checks",
+        "theory_count",
+        "exit_code",
+        "diagnostic_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/fragment-diagnostics/1788903109205273751/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "role",
+        "run_directory",
+        "command",
+        "plan_sha256",
+        "sources",
+        "driver_sha256",
+        "native_role_checks",
+        "theory_count",
+        "exit_code",
+        "diagnostic_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/fragment-diagnostics/1788903317382147400/receipt.json",
+      "status": "passed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "role",
+        "run_directory",
+        "command",
+        "plan_sha256",
+        "sources",
+        "driver_sha256",
+        "native_role_checks",
+        "theory_count",
+        "exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/gluing-enumeration-diagnostics/1788908913307862798/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/gluing-enumeration-diagnostics/1788909132814831583/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/gluing-enumeration-diagnostics/1788909275821951949/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/gluing-enumeration-diagnostics/1788909427505196878/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/gluing-enumeration-diagnostics/1788909479180666651/receipt.json",
+      "status": "passed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/list-fold-diagnostics/1788910968423791464/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/list-fold-diagnostics/1788911103177958789/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/list-fold-diagnostics/1788911188622946070/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/list-fold-diagnostics/1788911252667230503/receipt.json",
+      "status": "passed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/native-construction-join-diagnostics/1788979663762396601/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/native-construction-join-diagnostics/1788979988829812802/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/native-construction-join-diagnostics/1788980180534517551/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/native-construction-join-diagnostics/1788980453557707238/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/native-construction-join-diagnostics/1788980710965660549/receipt.json",
+      "status": "passed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/native-investigation-report-runs-input-v1/audit.json",
+      "status": null,
+      "kind": null,
+      "keys": [
+        "runs",
+        "adequate_selections",
+        "inputs",
+        "scope",
+        "checks"
+      ]
+    },
+    {
+      "path": "/tmp/native-investigation-report-runs-input-v1/empty_facets/case.json",
+      "status": null,
+      "kind": "investigation_input",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-investigation-report-runs-input-v1/initial/case.json",
+      "status": null,
+      "kind": "investigation_input",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-investigation-report-runs-input-v1/reported_extension/case.json",
+      "status": null,
+      "kind": "investigation_input",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-investigation-report-runs-input-v1/safe_facets/case.json",
+      "status": null,
+      "kind": "investigation_input",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-collections-executed-v1/receipt.json",
+      "status": "accepted",
+      "kind": null,
+      "keys": [
+        "status",
+        "session",
+        "sources",
+        "engine_sha256",
+        "runtime_sha256",
+        "script_sha256",
+        "driver_sha256",
+        "cases_sha256",
+        "checks",
+        "native_decisions",
+        "formed_reference_cases",
+        "accepted_reference_cases",
+        "accepted_collection_queries",
+        "boundary_cases",
+        "groups",
+        "elapsed_seconds"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-collections-main-sources/case.json",
+      "status": null,
+      "kind": "inference",
+      "keys": [
+        "schema",
+        "kind",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "accepted_receipt",
+        "evidence",
+        "conditions",
+        "known",
+        "rules",
+        "goals"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-collections-runs-v1/audit.json",
+      "status": null,
+      "kind": null,
+      "keys": [
+        "runs",
+        "adequate_selections",
+        "inputs",
+        "scope",
+        "checks"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-collections-runs-v1/empty_facets/case.json",
+      "status": null,
+      "kind": "observation_collections",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-collections-runs-v1/initial/case.json",
+      "status": null,
+      "kind": "observation_collections",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-collections-runs-v1/reported_extension/case.json",
+      "status": null,
+      "kind": "observation_collections",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-collections-runs-v1/safe_facets/case.json",
+      "status": null,
+      "kind": "observation_collections",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-collections-runs-v2/audit.json",
+      "status": null,
+      "kind": null,
+      "keys": [
+        "runs",
+        "adequate_selections",
+        "inputs",
+        "scope",
+        "checks"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-collections-runs-v2/empty_facets/case.json",
+      "status": null,
+      "kind": "observation_collections",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-collections-runs-v2/empty_reported_extension/case.json",
+      "status": null,
+      "kind": "observation_collections",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-collections-runs-v2/initial/case.json",
+      "status": null,
+      "kind": "observation_collections",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-collections-runs-v2/reported_extension/case.json",
+      "status": null,
+      "kind": "observation_collections",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-collections-runs-v2/safe_facets/case.json",
+      "status": null,
+      "kind": "observation_collections",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-collections-tests/receipt.json",
+      "status": "accepted",
+      "kind": null,
+      "keys": [
+        "status",
+        "project_files_unchanged",
+        "manifest_sha256",
+        "tests"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-executed-v2/receipt.json",
+      "status": "accepted",
+      "kind": null,
+      "keys": [
+        "status",
+        "session",
+        "sources",
+        "engine_sha256",
+        "runtime_sha256",
+        "script_sha256",
+        "cases_sha256",
+        "cases",
+        "formed_reference_cases",
+        "accepted_cases",
+        "elapsed_seconds",
+        "boundary",
+        "groups"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-executed-v3/receipt.json",
+      "status": "accepted",
+      "kind": null,
+      "keys": [
+        "status",
+        "session",
+        "sources",
+        "engine_sha256",
+        "runtime_sha256",
+        "script_sha256",
+        "cases_sha256",
+        "cases",
+        "formed_reference_cases",
+        "accepted_cases",
+        "accepted_octet_cases",
+        "accepted_reference_cases",
+        "elapsed_seconds",
+        "boundary",
+        "groups"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-main-sources/case.json",
+      "status": null,
+      "kind": "inference",
+      "keys": [
+        "schema",
+        "kind",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "accepted_receipt",
+        "evidence",
+        "conditions",
+        "known",
+        "rules",
+        "goals"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-runs-v1/added_safe_facets/case.json",
+      "status": null,
+      "kind": "observation",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-runs-v1/empty_facets/case.json",
+      "status": null,
+      "kind": "observation",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-runs-v1/initial/case.json",
+      "status": null,
+      "kind": "observation",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-runs-v1/safe_facets/case.json",
+      "status": null,
+      "kind": "observation",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-runs-v2/audit.json",
+      "status": null,
+      "kind": null,
+      "keys": [
+        "runs",
+        "adequate_selections",
+        "scope",
+        "checks"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-runs-v2/empty_facets/case.json",
+      "status": null,
+      "kind": "observation",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-runs-v2/empty_reported_extension/case.json",
+      "status": null,
+      "kind": "observation",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-runs-v2/initial/case.json",
+      "status": null,
+      "kind": "observation",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-runs-v2/reported_extension/case.json",
+      "status": null,
+      "kind": "observation",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-runs-v2/safe_facets/case.json",
+      "status": null,
+      "kind": "observation",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-scope-executed-v1/receipt.json",
+      "status": "accepted",
+      "kind": null,
+      "keys": [
+        "status",
+        "session",
+        "sources",
+        "engine_sha256",
+        "runtime_sha256",
+        "script_sha256",
+        "driver_sha256",
+        "cases_sha256",
+        "checks",
+        "native_decisions",
+        "formed_reference_cases",
+        "accepted_octet_cases",
+        "accepted_reference_cases",
+        "elapsed_seconds",
+        "boundary",
+        "groups"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-scope-main-sources/case.json",
+      "status": null,
+      "kind": "inference",
+      "keys": [
+        "schema",
+        "kind",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "accepted_receipt",
+        "evidence",
+        "conditions",
+        "known",
+        "rules",
+        "goals"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-scope-runs-v1/audit.json",
+      "status": null,
+      "kind": null,
+      "keys": [
+        "runs",
+        "adequate_selections",
+        "inputs",
+        "scope",
+        "checks"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-scope-runs-v1/empty_facets/case.json",
+      "status": null,
+      "kind": "observation_scope",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-scope-runs-v1/initial/case.json",
+      "status": null,
+      "kind": "observation_scope",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-scope-runs-v1/reported_extension/case.json",
+      "status": null,
+      "kind": "observation_scope",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-scope-runs-v1/safe_facets/case.json",
+      "status": null,
+      "kind": "observation_scope",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-scope-runs-v2/audit.json",
+      "status": null,
+      "kind": null,
+      "keys": [
+        "runs",
+        "adequate_selections",
+        "inputs",
+        "scope",
+        "checks"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-scope-runs-v2/empty_facets/case.json",
+      "status": null,
+      "kind": "observation_scope",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-scope-runs-v2/empty_reported_extension/case.json",
+      "status": null,
+      "kind": "observation_scope",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-scope-runs-v2/initial/case.json",
+      "status": null,
+      "kind": "observation_scope",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-scope-runs-v2/reported_extension/case.json",
+      "status": null,
+      "kind": "observation_scope",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-scope-runs-v2/safe_facets/case.json",
+      "status": null,
+      "kind": "observation_scope",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-product-executed-final/receipt.json",
+      "status": "accepted",
+      "kind": null,
+      "keys": [
+        "status",
+        "session",
+        "sources",
+        "engine_sha256",
+        "runtime_sha256",
+        "script_sha256",
+        "driver_sha256",
+        "cases_sha256",
+        "checks",
+        "native_decisions",
+        "input_presentations",
+        "result_sets",
+        "complete_matrix",
+        "boundary_cases",
+        "formed_reference_cases",
+        "accepted_queries"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-product-executed-v1/receipt.json",
+      "status": "accepted",
+      "kind": null,
+      "keys": [
+        "status",
+        "session",
+        "sources",
+        "engine_sha256",
+        "runtime_sha256",
+        "script_sha256",
+        "driver_sha256",
+        "cases_sha256",
+        "checks",
+        "native_decisions",
+        "input_presentations",
+        "result_sets",
+        "complete_matrix",
+        "boundary_cases",
+        "formed_reference_cases",
+        "accepted_queries"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-readiness-final/case.json",
+      "status": null,
+      "kind": "inference",
+      "keys": [
+        "schema",
+        "kind",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "accepted_receipt",
+        "evidence",
+        "conditions",
+        "known",
+        "rules",
+        "goals"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-pair-final/audit.json",
+      "status": null,
+      "kind": null,
+      "keys": [
+        "runs",
+        "adequate_selections",
+        "inputs",
+        "scope",
+        "checks"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-pair-final/empty_facets/case.json",
+      "status": null,
+      "kind": "pair_scope",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-pair-final/empty_reported_extension/case.json",
+      "status": null,
+      "kind": "pair_scope",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-pair-final/initial/case.json",
+      "status": null,
+      "kind": "pair_scope",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-pair-final/reported_extension/case.json",
+      "status": null,
+      "kind": "pair_scope",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-pair-final/safe_facets/case.json",
+      "status": null,
+      "kind": "pair_scope",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-table-final/audit.json",
+      "status": null,
+      "kind": null,
+      "keys": [
+        "runs",
+        "adequate_selections",
+        "inputs",
+        "scope",
+        "checks"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-table-final/empty_facets/case.json",
+      "status": null,
+      "kind": "observation_tables",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-table-final/empty_reported_extension/case.json",
+      "status": null,
+      "kind": "observation_tables",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-table-final/initial/case.json",
+      "status": null,
+      "kind": "observation_tables",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-table-final/reported_extension/case.json",
+      "status": null,
+      "kind": "observation_tables",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-table-final/safe_facets/case.json",
+      "status": null,
+      "kind": "observation_tables",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-v1/audit.json",
+      "status": null,
+      "kind": null,
+      "keys": [
+        "runs",
+        "adequate_selections",
+        "inputs",
+        "scope",
+        "checks"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-v1/empty_facets/case.json",
+      "status": null,
+      "kind": "pair_scope",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-v1/initial/case.json",
+      "status": null,
+      "kind": "pair_scope",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-v1/reported_extension/case.json",
+      "status": null,
+      "kind": "pair_scope",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-v1/safe_facets/case.json",
+      "status": null,
+      "kind": "pair_scope",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-v2/initial/case.json",
+      "status": null,
+      "kind": "pair_scope",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-v2/initial/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "invocation",
+        "status",
+        "started_utc",
+        "exit_code",
+        "role",
+        "registered_operation",
+        "case_sha256",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "commands",
+        "engine_key",
+        "isabelle_version",
+        "engine_session",
+        "engine_theory",
+        "engine_sources"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-v2retry/audit.json",
+      "status": null,
+      "kind": null,
+      "keys": [
+        "runs",
+        "adequate_selections",
+        "inputs",
+        "scope",
+        "checks"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-v2retry/empty_facets/case.json",
+      "status": null,
+      "kind": "pair_scope",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-v2retry/empty_reported_extension/case.json",
+      "status": null,
+      "kind": "pair_scope",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-v2retry/initial/case.json",
+      "status": null,
+      "kind": "pair_scope",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-v2retry/reported_extension/case.json",
+      "status": null,
+      "kind": "pair_scope",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-v2retry/safe_facets/case.json",
+      "status": null,
+      "kind": "pair_scope",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-v3/audit.json",
+      "status": null,
+      "kind": null,
+      "keys": [
+        "runs",
+        "adequate_selections",
+        "inputs",
+        "scope",
+        "checks"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-v3/empty_facets/case.json",
+      "status": null,
+      "kind": "observation_tables",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-v3/initial/case.json",
+      "status": null,
+      "kind": "observation_tables",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-v3/reported_extension/case.json",
+      "status": null,
+      "kind": "observation_tables",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-runs-v3/safe_facets/case.json",
+      "status": null,
+      "kind": "observation_tables",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/native-observation-tables-tables-executed-final/receipt.json",
+      "status": "accepted",
+      "kind": null,
+      "keys": [
+        "status",
+        "session",
+        "sources",
+        "engine_sha256",
+        "runtime_sha256",
+        "script_sha256",
+        "driver_sha256",
+        "cases_sha256",
+        "checks",
+        "native_decisions",
+        "complete_formed_scopes",
+        "profile_catalog",
+        "loss_catalog",
+        "profile_matrix",
+        "loss_matrix",
+        "variants"
+      ]
+    },
+    {
+      "path": "/tmp/native_permission-diagnostics/1788956996310892839/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/native_permission-diagnostics/1788957567314298831/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/native_permission-diagnostics/1788958126365349396/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/native_permission-diagnostics/1788958775093355599/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/native_permission-diagnostics/1788959084560046101/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/native_permission-diagnostics/1788959240863970105/receipt.json",
+      "status": "passed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/observation-repair-main-run/readiness/case.json",
+      "status": null,
+      "kind": "inference",
+      "keys": [
+        "schema",
+        "kind",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "accepted_receipt",
+        "evidence",
+        "conditions",
+        "known",
+        "rules",
+        "goals"
+      ]
+    },
+    {
+      "path": "/tmp/observation-repair-runs-v2/collapsed-feedback/case.json",
+      "status": null,
+      "kind": "pattern",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "collapsed",
+        "evidence",
+        "development_proposal"
+      ]
+    },
+    {
+      "path": "/tmp/observation-repair-runs-v2/collapsed/case.json",
+      "status": null,
+      "kind": "pattern",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "collapsed"
+      ]
+    },
+    {
+      "path": "/tmp/observation-repair-runs-v2/completion-feedback/case.json",
+      "status": null,
+      "kind": "completion",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "evidence",
+        "development_proposal"
+      ]
+    },
+    {
+      "path": "/tmp/observation-repair-runs-v2/completion/case.json",
+      "status": null,
+      "kind": "completion",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope"
+      ]
+    },
+    {
+      "path": "/tmp/observation-repair-runs-v2/pattern-feedback/case.json",
+      "status": null,
+      "kind": "pattern",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "collapsed",
+        "evidence",
+        "development_proposal"
+      ]
+    },
+    {
+      "path": "/tmp/observation-repair-runs-v2/pattern/case.json",
+      "status": null,
+      "kind": "pattern",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "collapsed"
+      ]
+    },
+    {
+      "path": "/tmp/observation-repair-runs-v2/permission-feedback/case.json",
+      "status": null,
+      "kind": "permission",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "evidence",
+        "development_proposal"
+      ]
+    },
+    {
+      "path": "/tmp/observation-repair-runs-v2/permission/case.json",
+      "status": null,
+      "kind": "permission",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/observation-repair-runs-v2/proof_probes-feedback/case.json",
+      "status": null,
+      "kind": "proof_probes",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "evidence",
+        "development_proposal"
+      ]
+    },
+    {
+      "path": "/tmp/observation-repair-runs-v2/proof_probes/case.json",
+      "status": null,
+      "kind": "proof_probes",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/observation-repair-runs-v2/schema_sockets-feedback/case.json",
+      "status": null,
+      "kind": "schema_sockets",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "evidence",
+        "development_proposal"
+      ]
+    },
+    {
+      "path": "/tmp/observation-repair-runs-v2/schema_sockets/case.json",
+      "status": null,
+      "kind": "schema_sockets",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/observation-repair-runs/collapsed-feedback/case.json",
+      "status": null,
+      "kind": "pattern",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "collapsed",
+        "evidence",
+        "development_proposal"
+      ]
+    },
+    {
+      "path": "/tmp/observation-repair-runs/collapsed/case.json",
+      "status": null,
+      "kind": "pattern",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "collapsed"
+      ]
+    },
+    {
+      "path": "/tmp/observation-repair-runs/completion-feedback/case.json",
+      "status": null,
+      "kind": "completion",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "evidence",
+        "development_proposal"
+      ]
+    },
+    {
+      "path": "/tmp/observation-repair-runs/completion/case.json",
+      "status": null,
+      "kind": "completion",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope"
+      ]
+    },
+    {
+      "path": "/tmp/observation-repair-runs/pattern-feedback/case.json",
+      "status": null,
+      "kind": "pattern",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "collapsed",
+        "evidence",
+        "development_proposal"
+      ]
+    },
+    {
+      "path": "/tmp/observation-repair-runs/pattern/case.json",
+      "status": null,
+      "kind": "pattern",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "collapsed"
+      ]
+    },
+    {
+      "path": "/tmp/observation-repair-runs/permission-feedback/case.json",
+      "status": null,
+      "kind": "permission",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "evidence",
+        "development_proposal"
+      ]
+    },
+    {
+      "path": "/tmp/observation-repair-runs/permission/case.json",
+      "status": null,
+      "kind": "permission",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/observation-repair-runs/proof_probes-feedback/case.json",
+      "status": null,
+      "kind": "proof_probes",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "evidence",
+        "development_proposal"
+      ]
+    },
+    {
+      "path": "/tmp/observation-repair-runs/proof_probes/case.json",
+      "status": null,
+      "kind": "proof_probes",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/observation-repair-runs/schema_sockets-feedback/case.json",
+      "status": null,
+      "kind": "schema_sockets",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "evidence",
+        "development_proposal"
+      ]
+    },
+    {
+      "path": "/tmp/observation-repair-runs/schema_sockets/case.json",
+      "status": null,
+      "kind": "schema_sockets",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/operative-completion-components/case.json",
+      "status": null,
+      "kind": "completion",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope"
+      ]
+    },
+    {
+      "path": "/tmp/operative-completion-empty/case.json",
+      "status": null,
+      "kind": "completion",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope"
+      ]
+    },
+    {
+      "path": "/tmp/operative-completion-joint/case.json",
+      "status": null,
+      "kind": "completion",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope"
+      ]
+    },
+    {
+      "path": "/tmp/operative-generalization-diagnostics/1788989892066149944/receipt.json",
+      "status": "passed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "plan_sha256",
+        "sources",
+        "directory",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/operative-generalization-run/components/case.json",
+      "status": null,
+      "kind": "completion",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope"
+      ]
+    },
+    {
+      "path": "/tmp/operative-generalization-run/joint/case.json",
+      "status": null,
+      "kind": "completion",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope"
+      ]
+    },
+    {
+      "path": "/tmp/operative-generalization-run/readiness/case.json",
+      "status": null,
+      "kind": "inference",
+      "keys": [
+        "schema",
+        "kind",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "accepted_receipt",
+        "evidence",
+        "conditions",
+        "known",
+        "rules",
+        "goals"
+      ]
+    },
+    {
+      "path": "/tmp/operative-permission-readiness/case.json",
+      "status": null,
+      "kind": "inference",
+      "keys": [
+        "schema",
+        "kind",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "accepted_receipt",
+        "evidence",
+        "conditions",
+        "known",
+        "rules",
+        "goals"
+      ]
+    },
+    {
+      "path": "/tmp/operative-runtime-basis_values/case.json",
+      "status": null,
+      "kind": "basis",
+      "keys": [
+        "schema",
+        "question",
+        "scope",
+        "kind",
+        "candidates",
+        "facets",
+        "selected",
+        "observations",
+        "relation"
+      ]
+    },
+    {
+      "path": "/tmp/operative-runtime-cycle/case.json",
+      "status": null,
+      "kind": "inference",
+      "keys": [
+        "schema",
+        "question",
+        "scope",
+        "kind",
+        "rules",
+        "known",
+        "goals"
+      ]
+    },
+    {
+      "path": "/tmp/operative-runtime-occurrences/case.json",
+      "status": null,
+      "kind": "inference",
+      "keys": [
+        "schema",
+        "question",
+        "scope",
+        "kind",
+        "rules",
+        "known",
+        "goals"
+      ]
+    },
+    {
+      "path": "/tmp/operative-runtime-unused_malformed/case.json",
+      "status": null,
+      "kind": "inference",
+      "keys": [
+        "schema",
+        "question",
+        "scope",
+        "kind",
+        "rules",
+        "known",
+        "goals"
+      ]
+    },
+    {
+      "path": "/tmp/pattern-call-diagnostics/1789009196476452508/receipt.json",
+      "status": "interrupted",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "reason",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/pattern-call-diagnostics/1789009369209441979/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/pattern-call-diagnostics/1789009652630131687/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/pattern-call-diagnostics/1789009804848498168/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/pattern-call-diagnostics/1789009965352062966/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/pattern-call-diagnostics/1789010054204769883/receipt.json",
+      "status": "passed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/pattern-call-final-run/pattern_both/case.json",
+      "status": null,
+      "kind": "pattern",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "collapsed"
+      ]
+    },
+    {
+      "path": "/tmp/pattern-call-final-run/pattern_collapsed/case.json",
+      "status": null,
+      "kind": "pattern",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "collapsed"
+      ]
+    },
+    {
+      "path": "/tmp/pattern-call-final-run/pattern_payload/case.json",
+      "status": null,
+      "kind": "pattern",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "collapsed"
+      ]
+    },
+    {
+      "path": "/tmp/pattern-call-final-run/pattern_target/case.json",
+      "status": null,
+      "kind": "pattern",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "collapsed"
+      ]
+    },
+    {
+      "path": "/tmp/pattern-call-final-run/probes_all/case.json",
+      "status": null,
+      "kind": "proof_probes",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/pattern-call-final-run/probes_markers/case.json",
+      "status": null,
+      "kind": "proof_probes",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/pattern-call-final-run/readiness/case.json",
+      "status": null,
+      "kind": "inference",
+      "keys": [
+        "schema",
+        "kind",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "accepted_receipt",
+        "evidence",
+        "conditions",
+        "known",
+        "rules",
+        "goals"
+      ]
+    },
+    {
+      "path": "/tmp/pattern-call-readiness-before/case.json",
+      "status": null,
+      "kind": "inference",
+      "keys": [
+        "schema",
+        "kind",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "accepted_receipt",
+        "evidence",
+        "conditions",
+        "known",
+        "rules",
+        "goals"
+      ]
+    },
+    {
+      "path": "/tmp/permission-decision-both/case.json",
+      "status": null,
+      "kind": "basis",
+      "keys": [
+        "schema",
+        "kind",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "evidence",
+        "candidates",
+        "facets",
+        "observations",
+        "relation",
+        "selected"
+      ]
+    },
+    {
+      "path": "/tmp/permission-decision-formation/case.json",
+      "status": null,
+      "kind": "basis",
+      "keys": [
+        "schema",
+        "kind",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "evidence",
+        "candidates",
+        "facets",
+        "observations",
+        "relation",
+        "selected"
+      ]
+    },
+    {
+      "path": "/tmp/permission-decision-truth/case.json",
+      "status": null,
+      "kind": "basis",
+      "keys": [
+        "schema",
+        "kind",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "evidence",
+        "candidates",
+        "facets",
+        "observations",
+        "relation",
+        "selected"
+      ]
+    },
+    {
+      "path": "/tmp/permission-diagnostics/1788947712726945820/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/permission-diagnostics/1788948227870276093/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/permission-diagnostics/1788948478029456759/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/permission-diagnostics/1788948878877249650/receipt.json",
+      "status": "passed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/permission-generalization-current-readiness/case.json",
+      "status": null,
+      "kind": "inference",
+      "keys": [
+        "schema",
+        "kind",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "accepted_receipt",
+        "evidence",
+        "conditions",
+        "known",
+        "rules",
+        "goals"
+      ]
+    },
+    {
+      "path": "/tmp/permission-generalization-diagnostics/1788991164503759576/receipt.json",
+      "status": "interrupted",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "reason",
+        "log_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/permission-generalization-diagnostics/1788991653563582585/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/permission-generalization-diagnostics/1788991860627068815/receipt.json",
+      "status": "interrupted",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "reason",
+        "log_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/permission-generalization-diagnostics/1788992200412708305/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/permission-generalization-diagnostics/1788992847820495243/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/permission-generalization-diagnostics/1788993216751790198/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/permission-generalization-diagnostics/1788993369925033727/receipt.json",
+      "status": "passed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/permission-generalization-run/completion_components/case.json",
+      "status": null,
+      "kind": "completion",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope"
+      ]
+    },
+    {
+      "path": "/tmp/permission-generalization-run/completion_joint/case.json",
+      "status": null,
+      "kind": "completion",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope"
+      ]
+    },
+    {
+      "path": "/tmp/permission-generalization-run/permission_both/case.json",
+      "status": null,
+      "kind": "permission",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/permission-generalization-run/permission_formation/case.json",
+      "status": null,
+      "kind": "permission",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/permission-generalization-run/permission_invalid_facet/case.json",
+      "status": null,
+      "kind": "permission",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/permission-generalization-run/permission_truth/case.json",
+      "status": null,
+      "kind": "permission",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/permission-generalization-run/readiness/case.json",
+      "status": null,
+      "kind": "inference",
+      "keys": [
+        "schema",
+        "kind",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "accepted_receipt",
+        "evidence",
+        "conditions",
+        "known",
+        "rules",
+        "goals"
+      ]
+    },
+    {
+      "path": "/tmp/prescribed-schema-development-run/readiness/case.json",
+      "status": null,
+      "kind": "inference",
+      "keys": [
+        "schema",
+        "kind",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "accepted_receipt",
+        "evidence",
+        "conditions",
+        "known",
+        "rules",
+        "goals"
+      ]
+    },
+    {
+      "path": "/tmp/prescribed-schema-development-run/sockets_essential/case.json",
+      "status": null,
+      "kind": "schema_sockets",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/prescribed-schema-development-run/sockets_keyed/case.json",
+      "status": null,
+      "kind": "schema_sockets",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/prescribed-schema-development-run/sockets_unkeyed/case.json",
+      "status": null,
+      "kind": "schema_sockets",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/prescribed-schema-diagnostics/1789019755176574535/receipt.json",
+      "status": "passed",
+      "kind": null,
+      "keys": [
+        "status",
+        "mode",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/prescribed-schema-diagnostics/1789020088161909349/receipt.json",
+      "status": "interrupted",
+      "kind": null,
+      "keys": [
+        "status",
+        "mode",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "log_sha256",
+        "sources_unchanged",
+        "reason"
+      ]
+    },
+    {
+      "path": "/tmp/prescribed-schema-diagnostics/1789020530344228320/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "mode",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/prescribed-schema-diagnostics/1789020914755163834/receipt.json",
+      "status": "interrupted",
+      "kind": null,
+      "keys": [
+        "status",
+        "mode",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "log_sha256",
+        "sources_unchanged",
+        "reason"
+      ]
+    },
+    {
+      "path": "/tmp/prescribed-schema-diagnostics/1789021267063886223/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "mode",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/prescribed-schema-diagnostics/1789021645013625501/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "mode",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/prescribed-schema-diagnostics/1789022451466291578/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "mode",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "sources_unchanged",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/prescribed-schema-diagnostics/1789022685407485102/receipt.json",
+      "status": "passed",
+      "kind": null,
+      "keys": [
+        "status",
+        "mode",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "sources_unchanged",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/prescribed-schema-diagnostics/1789022724208298896/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "mode",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "sources_unchanged",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/prescribed-schema-diagnostics/1789023084990644974/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "mode",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "sources_unchanged",
+        "log_sha256",
+        "errors_sha256",
+        "failure_stage",
+        "current_failure",
+        "stored_session_errors_are_stale"
+      ]
+    },
+    {
+      "path": "/tmp/prescribed-schema-diagnostics/1789023236376661292/receipt.json",
+      "status": "passed",
+      "kind": null,
+      "keys": [
+        "status",
+        "mode",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "sources_unchanged",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/prescribed-schema-essential/case.json",
+      "status": null,
+      "kind": "schema_sockets",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/prescribed-schema-keyed/case.json",
+      "status": null,
+      "kind": "schema_sockets",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/prescribed-schema-readiness-before/case.json",
+      "status": null,
+      "kind": "inference",
+      "keys": [
+        "schema",
+        "kind",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "accepted_receipt",
+        "evidence",
+        "conditions",
+        "known",
+        "rules",
+        "goals"
+      ]
+    },
+    {
+      "path": "/tmp/prescribed-schema-readiness-before/receipt.json",
+      "status": "timed_out",
+      "kind": null,
+      "keys": [
+        "invocation",
+        "status",
+        "started_utc",
+        "exit_code",
+        "role",
+        "case_sha256",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "commands",
+        "engine_key",
+        "isabelle_version",
+        "engine_session",
+        "engine_theory",
+        "engine_sources",
+        "tools"
+      ]
+    },
+    {
+      "path": "/tmp/prescribed-schema-readiness-current/case.json",
+      "status": null,
+      "kind": "inference",
+      "keys": [
+        "schema",
+        "kind",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "accepted_receipt",
+        "evidence",
+        "conditions",
+        "known",
+        "rules",
+        "goals"
+      ]
+    },
+    {
+      "path": "/tmp/prescribed-schema-readiness-malformed/case.json",
+      "status": null,
+      "kind": "inference",
+      "keys": [
+        "schema",
+        "kind",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "accepted_receipt",
+        "evidence",
+        "conditions",
+        "known",
+        "rules",
+        "goals"
+      ]
+    },
+    {
+      "path": "/tmp/prescribed-schema-readiness-replayed/case.json",
+      "status": null,
+      "kind": "inference",
+      "keys": [
+        "schema",
+        "kind",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "accepted_receipt",
+        "evidence",
+        "conditions",
+        "known",
+        "rules",
+        "goals"
+      ]
+    },
+    {
+      "path": "/tmp/prescribed-schema-unkeyed/case.json",
+      "status": null,
+      "kind": "schema_sockets",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-development-run/completion_joint/case.json",
+      "status": null,
+      "kind": "completion",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-development-run/pattern_both/case.json",
+      "status": null,
+      "kind": "pattern",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "collapsed"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-development-run/pattern_collapsed/case.json",
+      "status": null,
+      "kind": "pattern",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "collapsed"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-development-run/pattern_invalid_bool/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "invocation",
+        "status",
+        "started_utc",
+        "exit_code",
+        "role",
+        "input",
+        "error",
+        "finished_utc",
+        "elapsed_seconds",
+        "log_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-development-run/pattern_invalid_facet/case.json",
+      "status": null,
+      "kind": "pattern",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "collapsed"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-development-run/pattern_payload/case.json",
+      "status": null,
+      "kind": "pattern",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "collapsed"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-development-run/pattern_target/case.json",
+      "status": null,
+      "kind": "pattern",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "collapsed"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-development-run/permission_both/case.json",
+      "status": null,
+      "kind": "permission",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-development-run/probes_all/case.json",
+      "status": null,
+      "kind": "proof_probes",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-development-run/probes_invalid/case.json",
+      "status": null,
+      "kind": "proof_probes",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-development-run/probes_markers/case.json",
+      "status": null,
+      "kind": "proof_probes",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-development-run/probes_scope/case.json",
+      "status": null,
+      "kind": "proof_probes",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "function",
+        "theory"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-development-run/probes_third/case.json",
+      "status": null,
+      "kind": "proof_probes",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-development-run/readiness/case.json",
+      "status": null,
+      "kind": "inference",
+      "keys": [
+        "schema",
+        "kind",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "accepted_receipt",
+        "evidence",
+        "conditions",
+        "known",
+        "rules",
+        "goals"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-diagnostics/1789002901013673724/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-diagnostics/1789003074983811631/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-diagnostics/1789003421132296336/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-diagnostics/1789003602468996382/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-extension-diagnostics/1789003922026673636/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-extension-diagnostics/1789004252929508383/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-extension-diagnostics/1789004565936104440/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-extension-diagnostics/1789004814337238826/receipt.json",
+      "status": "interrupted",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "reason",
+        "log_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-extension-diagnostics/1789005015025591345/receipt.json",
+      "status": "interrupted",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "reason",
+        "log_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-extension-diagnostics/1789005278318047645/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-extension-diagnostics/1789005523093989128/receipt.json",
+      "status": "passed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-preflight-runs/completion_joint/case.json",
+      "status": null,
+      "kind": "completion",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-preflight-runs/pattern_both/case.json",
+      "status": null,
+      "kind": "pattern",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "collapsed"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-preflight-runs/permission_both/case.json",
+      "status": null,
+      "kind": "permission",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-preflight-runs/probes_all/case.json",
+      "status": null,
+      "kind": "proof_probes",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-preflight-runs/probes_invalid/case.json",
+      "status": null,
+      "kind": "proof_probes",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-preflight-runs/probes_markers/case.json",
+      "status": null,
+      "kind": "proof_probes",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-preflight-runs/probes_scope/case.json",
+      "status": null,
+      "kind": "proof_probes",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "theory",
+        "function"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-preflight-runs/probes_third/case.json",
+      "status": null,
+      "kind": "proof_probes",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-preflight-runs/receipt.json",
+      "status": "evaluated",
+      "kind": null,
+      "keys": [
+        "status",
+        "source_count",
+        "snapshot",
+        "sources_and_tools",
+        "runs"
+      ]
+    },
+    {
+      "path": "/tmp/proof-scheme-readiness-before/case.json",
+      "status": null,
+      "kind": "inference",
+      "keys": [
+        "schema",
+        "kind",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "accepted_receipt",
+        "evidence",
+        "conditions",
+        "known",
+        "rules",
+        "goals"
+      ]
+    },
+    {
+      "path": "/tmp/recorded-construction-diagnostics/1788966496135527634/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/recorded-construction-diagnostics/1788966800339709809/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/recorded-construction-diagnostics/1788967046895374078/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/recorded-construction-diagnostics/1788967700180306699/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/recorded-construction-diagnostics/1788968054514460838/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/recorded-construction-diagnostics/1788968326338933076/receipt.json",
+      "status": "passed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/schema-pattern-development-run/readiness/case.json",
+      "status": null,
+      "kind": "inference",
+      "keys": [
+        "schema",
+        "kind",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "accepted_receipt",
+        "evidence",
+        "conditions",
+        "known",
+        "rules",
+        "goals"
+      ]
+    },
+    {
+      "path": "/tmp/schema-pattern-diagnostics/1789014188282462651/receipt.json",
+      "status": "interrupted",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "log_sha256",
+        "reason"
+      ]
+    },
+    {
+      "path": "/tmp/schema-pattern-diagnostics/1789014290149132417/receipt.json",
+      "status": "interrupted",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256",
+        "reason"
+      ]
+    },
+    {
+      "path": "/tmp/schema-pattern-diagnostics/1789014538603646305/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/schema-pattern-diagnostics/1789014926179900986/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/schema-pattern-diagnostics/1789015077683218725/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/schema-pattern-diagnostics/1789015281639702144/receipt.json",
+      "status": "interrupted",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "log_sha256",
+        "reason"
+      ]
+    },
+    {
+      "path": "/tmp/schema-pattern-diagnostics/1789015488690521877/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/schema-pattern-diagnostics/1789015645930660726/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/schema-pattern-diagnostics/1789015864305456653/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/schema-pattern-diagnostics/1789015997138720913/receipt.json",
+      "status": "passed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/schema-pattern-readiness-before/case.json",
+      "status": null,
+      "kind": "inference",
+      "keys": [
+        "schema",
+        "kind",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "accepted_receipt",
+        "evidence",
+        "conditions",
+        "known",
+        "rules",
+        "goals"
+      ]
+    },
+    {
+      "path": "/tmp/source-diagnostics/1788927809243780480/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/source-diagnostics/1788928011919339340/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/source-diagnostics/1788928498895014592/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/source-diagnostics/1788928941848639450/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/source-diagnostics/1788929263321662825/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/source-diagnostics/1788929479978151998/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/source-diagnostics/1788929608743116333/receipt.json",
+      "status": "passed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/substitution-development-core-diagnostics/1788996051443037551/receipt.json",
+      "status": "interrupted",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "interruption_reason"
+      ]
+    },
+    {
+      "path": "/tmp/substitution-development-core-diagnostics/1788996377576909277/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/substitution-development-core-diagnostics/1788996960287306664/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/substitution-development-core-diagnostics/1788997129470969013/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/substitution-development-core-diagnostics/1788997263672732447/receipt.json",
+      "status": "passed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/substitution-development-diagnostics/1788997839217079306/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/substitution-development-diagnostics/1788998138919477159/receipt.json",
+      "status": "passed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/substitution-development-diagnostics/1788999021799642661/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/substitution-development-diagnostics/1788999298610054822/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/substitution-development-diagnostics/1788999617053705787/receipt.json",
+      "status": "passed",
+      "kind": null,
+      "keys": [
+        "status",
+        "started_utc",
+        "directory",
+        "sources",
+        "contracts_sha256",
+        "role",
+        "exit_code",
+        "finished_utc",
+        "command",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/substitution-development-preflight-both/case.json",
+      "status": null,
+      "kind": "pattern",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "collapsed",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/substitution-development-preflight-collapsed/case.json",
+      "status": null,
+      "kind": "pattern",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "collapsed",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/substitution-development-preflight-invalid_facet/case.json",
+      "status": null,
+      "kind": "pattern",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "collapsed",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/substitution-development-preflight-payload/case.json",
+      "status": null,
+      "kind": "pattern",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "collapsed",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/substitution-development-preflight-target/case.json",
+      "status": null,
+      "kind": "pattern",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "collapsed",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/substitution-development-run/completion_joint/case.json",
+      "status": null,
+      "kind": "completion",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope"
+      ]
+    },
+    {
+      "path": "/tmp/substitution-development-run/pattern_both/case.json",
+      "status": null,
+      "kind": "pattern",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "collapsed",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/substitution-development-run/pattern_collapsed/case.json",
+      "status": null,
+      "kind": "pattern",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "collapsed",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/substitution-development-run/pattern_invalid_bool/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "invocation",
+        "status",
+        "started_utc",
+        "exit_code",
+        "role",
+        "input",
+        "error",
+        "finished_utc",
+        "elapsed_seconds",
+        "log_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/substitution-development-run/pattern_invalid_facet/case.json",
+      "status": null,
+      "kind": "pattern",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "collapsed",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/substitution-development-run/pattern_payload/case.json",
+      "status": null,
+      "kind": "pattern",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "collapsed",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/substitution-development-run/pattern_target/case.json",
+      "status": null,
+      "kind": "pattern",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "collapsed",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/substitution-development-run/permission_both/case.json",
+      "status": null,
+      "kind": "permission",
+      "keys": [
+        "schema",
+        "kind",
+        "selected",
+        "question",
+        "scope",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/substitution-development-run/readiness/case.json",
+      "status": null,
+      "kind": "inference",
+      "keys": [
+        "schema",
+        "kind",
+        "question",
+        "scope",
+        "semantic_boundary",
+        "accepted_receipt",
+        "evidence",
+        "conditions",
+        "known",
+        "rules",
+        "goals"
+      ]
+    },
+    {
+      "path": "/tmp/table-operations-diagnostics/1788913080683430895/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/table-operations-diagnostics/1788913284628045588/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/table-operations-diagnostics/1788913600558520489/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/table-operations-diagnostics/1788913785513643449/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/table-operations-diagnostics/1788913983675500405/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/table-operations-diagnostics/1788914116551807815/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/table-operations-diagnostics/1788914363684150867/receipt.json",
+      "status": "passed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/term-sequence-diagnostics/1788924170625044681/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/term-sequence-diagnostics/1788924393978224486/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/term-sequence-diagnostics/1788924662718880132/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/term-sequence-diagnostics/1788924861439412328/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/term-sequence-diagnostics/1788925040550257259/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/term-sequence-diagnostics/1788925141254986989/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/term-sequence-diagnostics/1788925254982098616/receipt.json",
+      "status": "failed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "error_extraction_exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/term-sequence-diagnostics/1788925385067068946/receipt.json",
+      "status": "passed",
+      "kind": null,
+      "keys": [
+        "status",
+        "role",
+        "run_directory",
+        "started_utc",
+        "command",
+        "sources",
+        "draft_hashes",
+        "plan_sha256",
+        "exit_code",
+        "sources_unchanged",
+        "finished_utc",
+        "log_sha256",
+        "errors_sha256"
+      ]
+    },
+    {
+      "path": "/tmp/uniform-substitution-probe-both/case.json",
+      "status": null,
+      "kind": "basis",
+      "keys": [
+        "schema",
+        "kind",
+        "question",
+        "scope",
+        "candidates",
+        "facets",
+        "selected",
+        "observations",
+        "relation",
+        "evidence",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/uniform-substitution-probe-collapsed/case.json",
+      "status": null,
+      "kind": "basis",
+      "keys": [
+        "schema",
+        "kind",
+        "question",
+        "scope",
+        "candidates",
+        "facets",
+        "selected",
+        "observations",
+        "relation",
+        "evidence",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/uniform-substitution-probe-payload/case.json",
+      "status": null,
+      "kind": "basis",
+      "keys": [
+        "schema",
+        "kind",
+        "question",
+        "scope",
+        "candidates",
+        "facets",
+        "selected",
+        "observations",
+        "relation",
+        "evidence",
+        "semantic_boundary"
+      ]
+    },
+    {
+      "path": "/tmp/uniform-substitution-probe-target/case.json",
+      "status": null,
+      "kind": "basis",
+      "keys": [
+        "schema",
+        "kind",
+        "question",
+        "scope",
+        "candidates",
+        "facets",
+        "selected",
+        "observations",
+        "relation",
+        "evidence",
+        "semantic_boundary"
+      ]
+    }
+  ],
+  "review_boundary": "The computation reconstruction covers every inventory result; source and content claims retain the qualifications in GENERALIZATION_REVIEW.md."
+}

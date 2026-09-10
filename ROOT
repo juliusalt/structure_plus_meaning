@@ -736,3 +736,28 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Pair_Scope_Investigation
     Factor_Scope_Computation_Contracts
     Finite_Observation_Tables
+    Factor_Admission_Installation
+    Factor_Admission_Pair_Reasoning
+    Factor_Admission_Plan_Clauses
+    Factor_Admission_Plan_Contracts
+    Factor_Admission_Plan_Exact
+    Factor_Admission_Plan_Readings
+    Factor_Admission_Plan_Realization
+    Factor_Admission_Plans
+    Factor_Admitted_Pair
+    Factor_Investigation_Input_Clauses
+    Factor_Investigation_Input_Contracts
+    Factor_Investigation_Input_Development
+    Factor_Investigation_Input_Development_Execution
+    Factor_Investigation_Input_Execution
+    Factor_Investigation_Input_Investigation
+    Factor_Investigation_Input_Presentations
+    Factor_Learned_Investigation
+    Factor_Learned_Schemas
+    Factor_Reasoning_Execution
+    Factor_Schema_Generation
+    Observation_Revision_Investigation
+    Observation_Revisions
+    Factor_Reasoning_Method_Investigation
+    Factor_Reasoning_Premise_Admission
+    Factor_Learned_Execution_Soundness

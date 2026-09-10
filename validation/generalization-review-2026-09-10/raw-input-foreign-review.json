@@ -1,0 +1,108 @@
+{
+  "scope": "Supplied saved finite computations and recorded artifacts; independent subject meanings and coverage require review",
+  "summary": {
+    "receipts": 1,
+    "computations": {
+      "matches independent reconstruction": 1
+    },
+    "statuses": {
+      "evaluated": 1
+    },
+    "distinct_evaluation_states": 1,
+    "formed_runs_with_required_withdrawals": 0,
+    "formed_runs_with_new_missing_after_withdrawal": 0
+  },
+  "runs": [
+    {
+      "path": "/tmp/generalization-quality-review/raw-input-foreign-after/receipt.json",
+      "receipt_sha256": "dc62e8bd0f6e1a772354ae5eedad23f75a8a2c96a78d7a080f850a048aa434ed",
+      "status": "evaluated",
+      "kind": "basis",
+      "question": "Does whole-input admission retain a data comparison whose endpoints are outside an empty candidate set?",
+      "scope": {
+        "candidates": [],
+        "facets": [
+          0
+        ],
+        "values": [
+          2
+        ],
+        "comparison": "The complete supplied relation; evaluation consults it only at declared candidate pairs"
+      },
+      "semantic_boundary": "This is the natural-identifier instance of the already investigated empty-candidate input with a nonempty comparison. The original finite formation condition does not constrain comparison endpoints.",
+      "computation": "matches independent reconstruction",
+      "mismatches": [],
+      "checked_fields": [
+        "input_formed",
+        "residual",
+        "safe_facets",
+        "conflicts",
+        "repairs",
+        "unrepairable",
+        "extension",
+        "complete profiles",
+        "complete ordered losses",
+        "complete revision and admission gate"
+      ],
+      "facts": {
+        "input_formed": true,
+        "candidate_count": 0,
+        "available_facets": [
+          0
+        ],
+        "selected": [],
+        "safe": [
+          0
+        ],
+        "invalid_selected": [],
+        "residual_count": 0,
+        "conflict_count": 0,
+        "missing_count": 0,
+        "repair_count": 0,
+        "unrepairable_count": 0,
+        "positive_comparisons": 0,
+        "negative_comparisons": 0,
+        "relation_reflexive": true,
+        "relation_transitive": true,
+        "empty_selection_adequate": true,
+        "adequate_selections": [
+          [],
+          [
+            0
+          ]
+        ],
+        "adequate_selection_enumeration": "complete",
+        "extension_adequate": true,
+        "sound_language_adequate": true,
+        "revision": {
+          "retained": [],
+          "required_withdrawals": [],
+          "new_missing_after_withdrawal": [],
+          "reuse_original_repairs_adequate": true,
+          "recomputed_selection": [],
+          "residual": []
+        },
+        "evaluation_signature": "6d876cb93e09b5fda2823f56e519c397b9a6c471582423b2d78fa29d073ded74"
+      },
+      "artifacts": {
+        "counts": {
+          "matches": 39
+        },
+        "issues": [],
+        "checked_roles": {
+          "saved case": 1,
+          "generated engine": 1,
+          "runtime": 1,
+          "runtime program": 1,
+          "proof receipt": 1,
+          "run log": 1,
+          "original execution tool": 2,
+          "engine snapshot": 27,
+          "archived original case": 1,
+          "archived execution tool": 2,
+          "original case": 1
+        }
+      }
+    }
+  ]
+}

@@ -79,11 +79,13 @@ def validate_case(case: dict) -> None:
         require(rows(case.get("relation"), 2), "relation must contain candidate pairs.")
         require(all(c in case["candidates"] and d in case["candidates"] for c, d in case["relation"]),
                 "Comparison pairs must lie in the supplied candidate domain.")
-    elif kind in {"completion", "permission"}:
+    elif kind in {"completion", "permission", "pattern"}:
         require(isinstance(case.get("selected"), list) and all(natural(x) for x in case["selected"]),
                 "selected must contain natural facet identifiers.")
+        if kind == "pattern":
+            require(type(case.get("collapsed")) is bool, "collapsed must be Boolean.")
     else:
-        raise ValueError("kind must be inference, basis, completion, or permission.")
+        raise ValueError("kind must be inference, basis, completion, permission, or pattern.")
     evidence = case.get("evidence", [])
     require(isinstance(evidence, list), "evidence must be a list.")
     for item in evidence:
@@ -245,7 +247,8 @@ def current_sources(sources: dict) -> bool:
 
 def prepare_engine(args, receipt: dict, output: Path, log, kind: str) -> tuple[Path, Path, dict]:
     version = run_command([args.isabelle, "version"], args, receipt, log, 30).strip()
-    engine_theory = "Factor_Permission_Investigation" if kind == "permission" else ENGINE_THEORY
+    engine_theory = {"permission": "Factor_Permission_Investigation",
+                     "pattern": "Factor_Substitution_Investigation"}.get(kind, ENGINE_THEORY)
     sources, _ = source_graph(ROOT, [], [engine_theory])
     tool_paths = [Path(__file__).resolve(), Path(build.__file__).resolve()]
     tool_hashes = {str(path): file_hash(path) for path in tool_paths}
@@ -357,10 +360,12 @@ val result = "{\"input_formed\":" ^ Bool.toString formed ^
 print ("INVESTIGATION_RESULT " ^ result ^ "\n");
 '''
 
-    if case["kind"] in {"completion", "permission"}:
+    if case["kind"] in {"completion", "permission", "pattern"}:
         function = "Finite_Investigation." + case["kind"] + "_investigation"
-        call = function + " " + ml_list(case["selected"], ml_nat)
-        extra = ('val supplied = ",\\\"observations\\\":" ^ jlist jtriple ' + function + '_observations ^\n'
+        parameter = ("true " if case["collapsed"] else "false ") if case["kind"] == "pattern" else ""
+        call = function + " " + parameter + ml_list(case["selected"], ml_nat)
+        observations = function + "_observations" + (" " + parameter.strip() if parameter else "")
+        extra = ('val supplied = ",\\\"observations\\\":" ^ jlist jtriple ' + '(' + observations + ') ^\n'
                  '  ",\\\"relation\\\":" ^ jlist jpair ' + function + '_relation;\n')
     else:
         call = "Finite_Investigation.investigation_basis " + " ".join([
@@ -393,7 +398,7 @@ def validate_result(result: dict, kind: str) -> None:
                     for p in result["profiles"]), "Malformed candidate profile.")
         require(all(isinstance(p, dict) and natural(p.get("from")) and natural(p.get("to"))
                     and rows(p.get("losses"), 2) for p in result["losses"]), "Malformed candidate losses.")
-        if kind in {"completion", "permission"}:
+        if kind in {"completion", "permission", "pattern"}:
             require(rows(result.get("observations"), 3) and rows(result.get("relation"), 2),
                     "Missing executed observations or relation.")
 
@@ -414,6 +419,20 @@ def run(args, invocation: str, output: Path) -> int:
                 receipt["input"] = {"path": str(args.case.resolve()), "sha256": digest(raw)}
             elif args.mode == "sources":
                 case = source_case(args)
+            elif args.mode == "pattern":
+                case = {"schema": SCHEMA, "kind": "pattern", "selected": args.selected,
+                    "collapsed": args.collapsed,
+                    "question": "Do the selected probes determine the actual substituted patterns?",
+                    "scope": {"replacements": {"0": "Pattern_Variable 0", "1": "Pattern_Variable 1",
+                            "2": "Pattern_Payload [0]", "3": "Pattern_Payload [1]",
+                            "4": "Pattern_Target (Whole_Artifact empty_artifact)"},
+                        "template": "Pair of two occurrences of one source variable",
+                        "facets": {"0": "payload marker evaluation", "1": "constant target marker evaluation"},
+                        "marker_assignment": "All payload markers are [0]" if args.collapsed else "Variable a has payload marker [a]",
+                        "values": "Codes 0, 1, and 2 encode the resulting repeated pairs of Payload [0], Payload [1], and the fixed target",
+                        "comparison": "Equality of the five actual substituted patterns",
+                        "coverage": "These five replacements in the repeated-variable pair template"},
+                    "semantic_boundary": "The exported theory performs the substitutions and pattern evaluations. The observation table, comparison, and output codec have exact contracts for this finite scope. The separate general theorem determines arbitrary scoped pattern syntax; this execution does not run an arbitrary native program or check its universal mathematical contracts."}
             elif args.mode == "permission":
                 case = {"schema": SCHEMA, "kind": "permission", "selected": args.selected,
                     "question": "Do the selected facets preserve complete formation and truth decisions?",
@@ -507,6 +526,9 @@ def main() -> int:
     completion.add_argument("--selected", type=int, nargs="*", default=[0, 1])
     permission = modes.add_parser("permission", help="Compute actual program formation and truth observations")
     permission.add_argument("--selected", type=int, nargs="*", default=[0, 1])
+    pattern = modes.add_parser("pattern", help="Compute actual substitutions and their two marker observations")
+    pattern.add_argument("--selected", type=int, nargs="*", default=[0, 1])
+    pattern.add_argument("--collapsed", action="store_true", help="Give both target variables the same payload marker")
     sources = modes.add_parser("sources", help="Investigate exact source-context readiness against an accepted build")
     sources.add_argument("roots", nargs="+")
     sources.add_argument("--project", type=Path, default=ROOT)

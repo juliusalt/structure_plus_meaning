@@ -900,6 +900,33 @@ has both finite admitted readings. This adds no operator or entry and provides
 a syntax component for finite correctness evidence. Whole-program interpreter
 admission and the remaining presentation-class and intrinsic-relation audit remain separate.
 
+Substitution now acts on complete schemas through the existing pattern
+operation. It retains every prospective socket and callee and all five
+operands at every material socket. Scope is exactly the union of variables
+in the replacements. Substitution commutes with every later valuation, so
+every instance of the substituted rule is an instance of the original.
+Complete valuation coverage is sufficient for equivalence. A literal
+replacement can lose instances, and program interfaces and callee
+interpretations remain separate obligations.
+
+One ordinary native clause checks the actual original schema, replacement
+record, and target schema through seven existing calls. The record's fields
+pair each literal source-variable key with its replacement pattern. Two
+record readings produce complete binding tables; four schema readings compare
+the complete outputs. The target binder supplies the record's exact variable
+scope. Marker payloads preserve distinct variable identities; the replacement
+function itself may merge or remove variables. Material operands are retained
+without requiring their truth under these private marker assignments.
+
+The three actual sites have a joint class derived from the existing site
+classes, products, and a subdomain. Every compatible source presentation has
+the same result. All input terms are covered, and every actual substitution
+has the seven admitted readings. A ground schema's actual empty binder supplies
+an identity-substitution record without changing its material. Native
+compilation constructs an admitted input and one fixed checker for all future
+triples. These finite syntax checks do not natively establish their own
+mathematical exactness or valuation-coverage proofs; O-85 remains open.
+
 A concrete finite native equality program is recovered from one closed
 artifact environment. It accepts native calls over arbitrary future formed
 terms, with truth exactly when the two terms agree. Its argument domain and
@@ -1691,6 +1718,27 @@ decisions of all formed program entries. The command checks and exports the
 required permission theory before execution; its receipt includes the computed
 complete table and intended comparison.
 
+The substitution investigation is directly reproducible:
+
+```sh
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle pattern --selected 0
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle pattern --selected 1
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle pattern --selected 0 1
+python3 tools/investigate.py --isabelle /opt/isabelle/bin/isabelle pattern --selected 0 1 --collapsed
+```
+
+Five replacements are applied to both occurrences of one variable in a pair:
+variables 0 and 1, payload literals `[0]` and `[1]`, and one fixed target.
+The exported code performs the substitution and evaluates the resulting
+patterns. The output codec is exact on the proved three-output scope; the
+intended comparison is equality of the five actual substituted patterns.
+Payload observation alone misses the pairs 0/2 and 1/3; target observation
+alone misses all distinctions among 0, 1, and 4. Both probes distinguish all
+five. `--collapsed` gives both variables the same payload marker, leaving
+0 and 1 indistinguishable even with both probes. The input is still formed;
+its residual diagnoses an inadequate observation basis. The general grammar
+and native-reading theorems have their separate universal proofs.
+
 Source-context readiness uses an accepted build receipt and the complete local
 import closure:
 
@@ -1713,6 +1761,7 @@ and one of these finite inputs:
 | `inference` | `known` is a list of condition identifiers; each `rules` object has `conclusion` and `premises` pairs `[occurrence, condition]`; `goals` has the same pair form. |
 | `basis` | `candidates`, `facets`, and `selected` are identifier lists; `observations` has triples `[facet, candidate, value]`; `relation` lists the intended directed candidate pairs. |
 | `completion` or `permission` | `selected` chooses facets of the corresponding proved investigation; the exported program computes its observations and comparison. |
+| `pattern` | `selected` chooses probes; Boolean `collapsed` controls the marker assignment. The exported code computes the actual substitutions, observations, and pattern comparison. |
 
 Identifiers are nonnegative integers. Optional `conditions` metadata supplies
 one object with an `id` for every used condition. Optional `evidence` objects

@@ -653,3 +653,10 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Permission_Investigation
     Factor_Adoption_Comparison
     Factor_Adoption_Permission_Admission
+    Factor_Substitution
+    Factor_Substitution_Observations
+    Factor_Substitution_Bindings
+    Factor_Substitution_Readings
+    Factor_Substitution_Admission
+    Factor_Substitution_Contracts
+    Factor_Substitution_Investigation

@@ -1807,6 +1807,43 @@ arbitrary-source adoption completion requires the separate query join.
 Arbitrary original-program invariance, native mathematical-proof checking,
 higher strata, and both final audits remain open.
 
+Substitution now acts on complete schemas through the existing pattern
+operation. It retains every prospective socket and callee and all five
+operands at every material socket. Scope is exactly the union of variables
+in the replacements. Substitution commutes with every later valuation, so
+every instance of the substituted rule is an instance of the original.
+Complete valuation coverage is sufficient for equivalence. A literal
+replacement can lose instances, and program interfaces and callee
+interpretations remain separate obligations.
+
+One ordinary native clause checks the actual original schema, replacement
+record, and target schema through seven existing calls. The record's fields
+pair each literal source-variable key with its replacement pattern. Two
+record readings produce complete binding tables; four schema readings compare
+the complete outputs. The target binder supplies the record's exact variable
+scope. Marker payloads preserve distinct variable identities; the replacement
+function itself may merge or remove variables. Material operands are retained
+without requiring their truth under these private marker assignments.
+
+The three actual sites have a joint class derived from the existing site
+classes, products, and a subdomain. Every compatible source presentation has
+the same result. All input terms are covered, and every actual substitution
+has the seven admitted readings. A ground schema's actual empty binder supplies
+an identity-substitution record without changing its material. Native
+compilation constructs an admitted input and one fixed checker for all future
+triples. These finite syntax checks do not natively establish their own
+mathematical exactness or valuation-coverage proofs; O-85 remains open.
+
+The same finite evaluator executes the replacement comparison. The five
+actual repeated-pair patterns have independently specified syntactic equality.
+Either probe alone loses distinctions; both succeed, while collapsing the
+payload markers leaves the two variable replacements indistinguishable.
+These reasons direct the native check's complete scope and marker conditions.
+The finite execution supplies case evidence; the grammar induction and
+valuation laws establish the wider result. Whole-program interfaces,
+callee interpretation, reverse semantic inclusion, higher strata, and the
+final alignment and every-line audits remain separate work.
+
 Construction permission now has an exact reduction to changes of one complete
 unordered field at a time. Every pair of valid complete claims is connected
 by three such changes, with the same ordered inputs, exact sources, selections,

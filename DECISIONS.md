@@ -6779,3 +6779,92 @@ coverage. Those remain distinct questions for further investigation. Arbitrary
 original-program invariance, native mathematical-proof checking, higher strata,
 and the final alignment and every-line audits remain open. No broader obligation
 status is changed by this milestone.
+
+## Complete substitution supplies a finite native step with a universal rule consequence
+
+The next correctness task needs a way to relate complete schematic clauses.
+The existing native derivation reader checks individual instantiated calls.
+Its success does not by itself establish a clause relationship for every
+future valuation. The earlier two-observation theorem already determines the
+entire finite pattern grammar, including every material operand. That evidence
+supports extending its existing readers to substitution between schemas.
+
+The intended transformation is fixed first. A substituted clause must retain
+every identified prospective socket, its callee, every material socket, and
+all five material patterns. The head alone is insufficient. The earlier
+counterexample proves that even all ordinary instances can conceal an omitted
+material condition. Private marker assignments therefore recover material
+operands without demanding that their material equations hold at those markers.
+
+The substitution operation is shared by the head, all prospective arguments,
+and all material fields. Its variable set is exactly the union of variables
+in the used replacements. Identity, composition, formation, and valuation
+commutation follow from the existing pattern operation. Existing injective
+coordinate renaming is its variable-only specialization. No occurrence,
+material field, or callee is discarded when replacement values coincide.
+
+Commutation gives one semantic inclusion for every support relation and later
+valuation: every substituted rule instance is an original rule instance.
+Replacing a variable by one literal can lose other original instances.
+Complete valuation coverage is a sufficient reverse condition; injective
+variable renaming supplies it. It is not asserted to be necessary for every
+particular rule. This distinction is required by the executed permission
+example: increasing positive truth alone can lose an original refusal.
+Whole-program equivalence also retains each interface and the interpretations
+of actual callees in their respective contexts.
+
+The observation experiment specifies equality of the five actual substituted
+patterns before choosing observations. Its replacements are variables 0 and 1,
+payloads `[0]` and `[1]`, and one fixed target. Each replaces both occurrences
+of a unit variable in a pair. The exported code performs the substitution and
+evaluation. The numeric output map is proved injective on the complete output
+scope of this case, and the comparison is linked to actual pattern equality.
+
+| Evidence selected | Failed directed comparisons | What the failure requires |
+|---|---|---|
+| Distinct payload markers | 0/2 and 1/3, in both directions | A second constructor family distinguishes variables from matching payload literals. |
+| One constant target marker | Every distinct pair among 0, 1, and 4 | Distinct payload markers retain variable identity and distinguish a target literal. |
+| Both probes | None | The full basis determines all five substituted patterns in this scope. |
+| Both probes with collapsed payload markers | 0/1 in both directions | Merely retaining two probes is insufficient; the marker assignment must preserve distinct binders. |
+
+These are actual exported evaluations, with per-invocation proof acceptance,
+complete source and tool snapshots, computed observations and comparison,
+profiles, and every directed loss. An invalid facet is rejected by whole-table
+formation. The earlier proposed table was exploratory evidence; these executions
+link the results to actual substitutions. Their finite domain does not replace
+the general pattern induction or establish arbitrary program equivalence.
+
+The failures determine the native composition. An existing pattern record
+holds pairs of a literal source-variable address and its replacement pattern.
+Two readings of that same record produce complete binding tables for the
+original schema. The constant-target reading forces each actual field to have
+the literal-key shape; complete functional bindings force every source binder
+to appear once. The replacement function outside that finite binder has no role.
+
+The target schema supplies the complete remaining variable scope. Its two
+canonical tables are also used to read the replacement record. Two original
+schema readings and two target schema readings share the entire conclusion,
+prospective, and material outputs. Together with the marker-table traversal,
+these are seven calls to existing native operations. One ordinary clause
+composes them, with exactness for all input terms and a fixed closed native
+checker before future inputs. Actual environments, uses, roots, field order,
+private positions, and external slots remain accounted for by the owned readers.
+
+The source, replacement, and target sites form an intrinsic joint relation.
+Their complete class derives from the existing site classes, two products,
+and a subdomain. The checker preserves and reflects that independent relation
+on every compatible presentation. The replacement record is interpreted in
+the target binder; a function from the record alone to a target is not claimed.
+Every actual substitution has the seven readings. A ground schema's existing
+empty binder also has the existing empty-record shape and supplies identity
+substitution without changing any source artifact. Native schema compilation
+then constructs an admitted input, so the new check has an established use.
+
+This bounded extension is useful now because it connects existing finite
+syntax admission to a law about every future valuation. It jointly develops
+the pattern, material, schema, and native source boundaries using their existing
+operations. A new general mathematical-proof grammar would require its own
+independent subject and exactness account; this step does not assume one.
+Native checking of these mathematical proofs, wider schematic proof coverage,
+higher strata, and both final audits remain open. The finite executions and
+native compilation do not close those obligations.

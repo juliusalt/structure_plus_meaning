@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+"""Feed an independently checked investigation's exact revision into its case."""
+from __future__ import annotations
+
+import argparse
+import copy
+import json
+from pathlib import Path
+
+import investigate
+import review_investigations as review
+
+
+def revised_case(receipt_path):
+    directory = receipt_path.resolve().parent
+    receipt = json.loads(receipt_path.read_text())
+    assert receipt["status"] == "evaluated" and receipt["exit_code"] == 0
+    assert receipt["sources_and_tools_unchanged"]
+    case_path, log_path = directory / "case.json", directory / "run.log"
+    assert investigate.file_hash(case_path) == receipt["case_sha256"]
+    assert investigate.file_hash(log_path) == receipt["log_sha256"]
+    case = json.loads(case_path.read_text())
+    investigate.validate_case(case)
+    assert case["kind"] != "inference", "An inference report has no observation-selection revision."
+    result = receipt["result"]
+    lines = [line.removeprefix("INVESTIGATION_RESULT ") for line in log_path.read_text().splitlines()
+             if line.startswith("INVESTIGATION_RESULT ")]
+    assert len(lines) == 1 and json.loads(lines[0]) == result
+    mismatches, _, _ = review.basis_analysis(case, result, receipt["scope"])
+    assert not mismatches and result["input_formed"], mismatches
+    revised = copy.deepcopy(case)
+    revised["selected"] = result["revision"]["selection"]
+    revised.setdefault("evidence", []).extend(
+        {"path": str(path.resolve()), "sha256": investigate.file_hash(path)}
+        for path in [receipt_path, case_path, log_path, Path(__file__), Path(review.__file__)])
+    investigate.validate_case(revised)
+    return revised
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--receipt", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args()
+    if not __debug__:
+        raise ValueError("Case revision requires Python assertions to be enabled.")
+    assert not args.output.exists(), "Retain the earlier case and use a new output file."
+    case = revised_case(args.receipt)
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(case, indent=2) + "\n")
+    print(json.dumps({"selected": case["selected"], "case": str(args.output),
+                      "case_sha256": investigate.file_hash(args.output)}, indent=2))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -1,0 +1,18 @@
+import json
+from pathlib import Path
+base=Path('/tmp/generalization-quality-review')
+proofs=['guidedexecution1','readersourcereq1','readersourceexecution1']
+spec={'proofs':{n:{'path':'/tmp/native-investigation-report-diagnostic-'+n} for n in proofs},'runs':{},'attachments':{},'investigations':{},'documents':{'README.md':'/tmp/reader-source-README.md'}}
+for stage,name in [('before','reader-guided-before-source'),('after','reader-guided-source-requirements'),('binding-regression','reader-source-binding-regression')]:
+ spec['runs'][stage]={'path':str(base/name),'proof':'guidedexecution1' if stage=='before' else 'readersourceexecution1'}
+for stage,name in [('source-initial','reader-source-initial'),('source-followed','reader-source-followed-retained')]:
+ spec['investigations'][stage]={'path':str(base/name)}
+for prefix,directory in [('comparison',base/'reader-source-comparison'),('rejected-follow',base/'reader-source-followed'),('original-tools',Path('/tmp/reader-source-originals'))]:
+ for path in sorted(directory.rglob('*')):
+  if path.is_file():spec['attachments'][prefix+'/'+str(path.relative_to(directory))]=str(path)
+for path in [base/'reader-source-review.json',Path('/tmp/reader-source-followed-command.log'),Path('/tmp/reader-source-followed-retained-command.log'),Path('/tmp/reader-source-final-tool-tests.log'),Path(__file__)]:
+ assert path.exists(),path
+ spec['attachments'][path.name]=str(path)
+for name in ['check_reader_requirements.py','compare_reader_sources.py','revise_investigation_case.py','check_guided_reasoning.py','check_reasoning.py','compare_reasoning_methods.py','retain_reasoning_review.py','replay_reasoning_review.py','review_investigations.py']:
+ spec['attachments']['final-tools/'+name]=str(Path('tools',name).resolve())
+Path('/tmp/reader-source-spec.json').write_text(json.dumps(spec,indent=2)+'\n')

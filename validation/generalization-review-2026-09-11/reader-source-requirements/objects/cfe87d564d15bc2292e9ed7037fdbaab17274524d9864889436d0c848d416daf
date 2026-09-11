@@ -1,0 +1,8 @@
+{
+  "stage": "after",
+  "status": "accepted",
+  "receipt_sha256": "320597e1c2932dbf7017bb93e2677b3652b62cf7e83a2813e089ae83b34f422f",
+  "archive_index_sha256": "3025d8973102f129ede5604b823e31a222174b0faa75e953455d48654004afc1",
+  "replayer_sha256": "4e324e77e73a6ea2166ad7feacc6c6692014b8f4d3cfdcb2de1af5af4fec50a3",
+  "boundary": "The retained inputs and original code are replayed. This reproduces complete checked reports; it does not rerun case selection or establish new native source readings."
+}

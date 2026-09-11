@@ -337,3 +337,73 @@ modified theory roots and also has no residual. Both complete results match
 independent reconstruction, and every recorded artifact matches its digest.
 The four earlier source investigations, both accepted-source follow-ups, and
 their exact supporting bytes are retained in the same archive.
+
+## Review prompted by the content-workflow correction
+
+The user's review on 2026-09-11 correctly identified a departure from the
+required workflow. Native reasoning components were being developed, but the
+choices of problem, decomposition, information, and change were largely made
+outside the machinery. Source-context investigations following those choices
+did not establish machinery-driven development. Native admission was treated
+as a priority, although the existing conditional machinery did not require its
+completion before use.
+
+The corrective investigation uses a concrete composition requirement from
+that development: a generated result must become an input to subsequent
+reasoning. The baseline applies the existing native list-step schema to its
+scalar and empty-list premises. The independent native converter establishes
+the same requested two-row goal. One construction succeeds, but the unextended
+driver leaves the composed goal unresolved and supplies no reasons for it.
+Adding the intermediate call to the possible frontier lets the existing
+inference closure settle the goal from the original known premises.
+
+The baseline's nine full reports, source computation, original checker, case
+generator, generated module, and proof receipt are retained. Every proof-source
+digest matches commit 6b7e27b. A replay using those source bytes reproduces the
+unmet composition requirement. This is evidence of a specific inadequacy for
+the declared workload; it is neither a defect in the original stated
+single-generation contract nor a complete assessment of future development
+reasoning.
+
+The repair adds bounded construction rounds to an equivalent finite-set
+frontier interface. Its proofs reuse the original generation and conditional
+closure contracts. Known facts are unchanged across rounds. Original
+formation checks are preserved, and zero extra rounds returns the original
+complete investigation report.
+
+All 64 expanded reports match independent reconstruction, together with 84
+intermediate frontiers, nine actual native seed computations, and the native
+list comparison. The original 53-case family also passes against the new
+export. These are two separately scoped families, not 117 distinct discoveries.
+The first expanded execution stopped at a trace-harness type mismatch when it
+treated a polymorphic exported library as a monomorphic value. The repaired
+harness supplies the explicit finite specification to its separate frontier
+probe; the operative native wrapper uses its own library. Every returned
+schema, binding, premise, and complete report is checked against that
+specification. The failed run is not counted as a semantic result.
+
+The new local native readers also have exact source contracts. They link the
+node's actual binding table and cited clause to the actual symbolic replacement
+record and its complete target report, with the same environment for the node
+and program. Record support is recovered from the same source in both probes.
+The binding enumeration remains private to the joined readings, retaining
+coverage of independent presentation orders. Discharge tables are preserved;
+their child claims and complete graph and assertion boundaries remain open.
+
+This work demonstrates one machinery-driven adequacy investigation and a
+repair against its original problem. It does not retroactively make the
+earlier choices machinery-driven, nor establish that every required
+development decision is now covered.
+
+The complete 787-theory session passes with unchanged source and tool digests.
+The export checks the complete 339-theory context of the reasoning engine and
+local native reader. The Python tooling's 27 checks also pass. These results
+establish the recorded versions and scopes, including their explicit limits.
+
+Both retained case families replay successfully: the nine-case baseline
+continues to exhibit the gap, and the 64-case repair retains its checked
+outcomes. All ten source investigations match independent reconstruction.
+After the main build, the original two requested roots and the complete set
+of nineteen new or modified theory roots have no residual proof conditions.
+The archive preserves the earlier source versions, both follow-ups, and their
+supporting bytes. This source readiness is recorded as verification evidence.

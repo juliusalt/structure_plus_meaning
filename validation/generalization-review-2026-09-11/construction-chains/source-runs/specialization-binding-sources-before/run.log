@@ -1,0 +1,53 @@
+Invocation: ebb64b36-bb97-49fc-b489-07ca4887a02c
+Isabelle2025-2
+Started at Fri Sep 11 02:52:31 GMT+3 2026 (polyml-5.9.2_x86_64_32-linux on julius-arch)
+ISABELLE_TOOL_JAVA_OPTIONS="-Djava.awt.headless=true -Xms512m -Xmx4g -Xss16m"
+ISABELLE_BUILD_OPTIONS=""
+
+ML_PLATFORM="x86_64_32-linux"
+ML_HOME="/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux"
+ML_SYSTEM="polyml-5.9.2"
+ML_OPTIONS="--minheap 500"
+
+Session Pure/Pure
+Session Misc/Tools
+Session HOL/HOL (main)
+Session HOL/HOL-Library (main timing)
+Session Unsorted/Finite_Investigation_303d0af612a696b1bba0db7f
+
+Finished at Fri Sep 11 02:52:33 GMT+3 2026
+0:00:01 elapsed time
+export "/tmp/generalization-quality-review/specialization-binding-sources-before/export-ebb64b36-bb97-49fc-b489-07ca4887a02c/Finite_Investigation_303d0af612a696b1bba0db7f.Finite_Investigation_Export/code/finite_investigation.ML"
+/opt/isabelle/contrib/polyml-5.9.2-2
+Poly/ML 5.9.2 Release
+/tmp/generalization-quality-review/specialization-binding-sources-before/export-ebb64b36-bb97-49fc-b489-07ca4887a02c/Finite_Investigation_303d0af612a696b1bba0db7f.Finite_Investigation_Export/code/finite_investigation.ML:70: warning: Matches are not exhaustive.
+Found near
+  fun
+     less_eq_set A_ (... ...) ... = list_all (fn ...) xs |
+        less_eq_set A_ ... = ... ... ys |
+        less_eq_set ... = false
+/tmp/generalization-quality-review/specialization-binding-sources-before/export-ebb64b36-bb97-49fc-b489-07ca4887a02c/Finite_Investigation_303d0af612a696b1bba0db7f.Finite_Investigation_Export/code/finite_investigation.ML:114: warning: Matches are not exhaustive. Found near fun bex (Set xs) p = list_ex p xs
+/tmp/generalization-quality-review/specialization-binding-sources-before/export-ebb64b36-bb97-49fc-b489-07ca4887a02c/Finite_Investigation_303d0af612a696b1bba0db7f.Finite_Investigation_Export/code/finite_investigation.ML:116: warning: Matches are not exhaustive. Found near fun ball (Set xs) p = list_all p xs
+/tmp/generalization-quality-review/specialization-binding-sources-before/export-ebb64b36-bb97-49fc-b489-07ca4887a02c/Finite_Investigation_303d0af612a696b1bba0db7f.Finite_Investigation_Export/code/finite_investigation.ML:127: warning: Matches are not exhaustive.
+Found near fun image f (... ...) = Set (... ... xs)
+/tmp/generalization-quality-review/specialization-binding-sources-before/export-ebb64b36-bb97-49fc-b489-07ca4887a02c/Finite_Investigation_303d0af612a696b1bba0db7f.Finite_Investigation_Export/code/finite_investigation.ML:140: warning: Matches are not exhaustive.
+Found near fun card A_ (... ...) = size_list (... ... xs)
+/tmp/generalization-quality-review/specialization-binding-sources-before/export-ebb64b36-bb97-49fc-b489-07ca4887a02c/Finite_Investigation_303d0af612a696b1bba0db7f.Finite_Investigation_Export/code/finite_investigation.ML:147: warning: Matches are not exhaustive.
+Found near fun filter p (... ...) = Set (... ... xs)
+/tmp/generalization-quality-review/specialization-binding-sources-before/export-ebb64b36-bb97-49fc-b489-07ca4887a02c/Finite_Investigation_303d0af612a696b1bba0db7f.Finite_Investigation_Export/code/finite_investigation.ML:165: warning: Matches are not exhaustive.
+Found near fun sup_seta A_ (... ...) = ... ... xs bot_set
+/tmp/generalization-quality-review/specialization-binding-sources-before/export-ebb64b36-bb97-49fc-b489-07ca4887a02c/Finite_Investigation_303d0af612a696b1bba0db7f.Finite_Investigation_Export/code/finite_investigation.ML:195: warning: Pattern 3 is redundant.
+Found near
+  fun
+     equal_bool false p = not p |
+        equal_bool true ... = p |
+        equal_bool ... = ... ... |
+        equal_bool ... = ...
+/tmp/generalization-quality-review/specialization-binding-sources-before/export-ebb64b36-bb97-49fc-b489-07ca4887a02c/Finite_Investigation_303d0af612a696b1bba0db7f.Finite_Investigation_Export/code/finite_investigation.ML:196: warning: Pattern 4 is redundant.
+Found near
+  fun
+     equal_bool false p = not p |
+        equal_bool true ... = p |
+        equal_bool ... = ... ... |
+        equal_bool ... = ...
+INVESTIGATION_RESULT {"input_formed":true,"residual":[[0,193]],"demand":[193,286,20,100,287,21,197,148,365,458,22,194],"reasons":[{"conclusion":21,"premises":[[0,286],[1,20],[2,100]],"premise":0,"condition":286},{"conclusion":21,"premises":[[0,286],[1,20],[2,100]],"premise":1,"condition":20},{"conclusion":21,"premises":[[0,286],[1,20],[2,100]],"premise":2,"condition":100},{"conclusion":22,"premises":[[0,287],[1,21],[2,197],[3,148]],"premise":0,"condition":287},{"conclusion":22,"premises":[[0,287],[1,21],[2,197],[3,148]],"premise":1,"condition":21},{"conclusion":22,"premises":[[0,287],[1,21],[2,197],[3,148]],"premise":2,"condition":197},{"conclusion":22,"premises":[[0,287],[1,21],[2,197],[3,148]],"premise":3,"condition":148},{"conclusion":100,"premises":[[0,365]],"premise":0,"condition":365},{"conclusion":193,"premises":[[0,458],[1,22],[2,194]],"premise":0,"condition":458},{"conclusion":193,"premises":[[0,458],[1,22],[2,194]],"premise":1,"condition":22},{"conclusion":193,"premises":[[0,458],[1,22],[2,194]],"premise":2,"condition":194}]}

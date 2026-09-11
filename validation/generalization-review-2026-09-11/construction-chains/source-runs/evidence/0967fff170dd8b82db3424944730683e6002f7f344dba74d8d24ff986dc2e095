@@ -1,0 +1,105 @@
+theory Factor_Recursive_Construction_Investigation
+  imports Factor_Chained_Investigation Factor_Binding_Observation_Execution Factor_Clause_Rule_Application
+begin
+
+section \<open>The existing native list step is a reusable construction rule\<close>
+
+definition finite_binding_list_step_schema :: "(nat,nat,nat) finite_factor_schema" where
+  "finite_binding_list_step_schema=\<lparr>
+    finite_schema_conclusion=Finite_Pattern_Pair (Finite_Variable 0)
+      (Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 2))
+        (Finite_Pattern_Pair (Finite_Variable 3) (Finite_Variable 4))),
+    finite_schema_premises=fset_of_list
+      [(0,343,Finite_Pattern_Pair (Finite_Variable 0) (Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 3))),
+       (1,345,Finite_Pattern_Pair (Finite_Variable 0) (Finite_Pattern_Pair (Finite_Variable 2) (Finite_Variable 4)))],
+    finite_schema_materials={||}\<rparr>"
+
+lemma finite_binding_list_step_exact:
+  "decode_finite_schema finite_binding_list_step_schema=related_list_step_schema 343 345"
+  by (simp add: finite_binding_list_step_schema_def related_list_step_schema_def
+    decode_finite_schema_def decode_finite_call_pattern_def map_relation_values_def; auto)
+
+definition binding_list_construction_library where
+  "binding_list_construction_library=[(345::nat,finite_binding_list_step_schema,
+    [(0,343,Finite_Pattern_Pair (Finite_Variable 0) (Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 3))),
+     (1,345,Finite_Pattern_Pair (Finite_Variable 0) (Finite_Pattern_Pair (Finite_Variable 2) (Finite_Variable 4)))])]"
+
+lemma binding_list_construction_member_sound:
+  assumes member: "(d,S,ps)\<in>set binding_list_construction_library"
+    and rule_instance: "schema_rule_instance (decode_finite_schema S) (positive_meaning binding_observation_program) t"
+  shows "(d,t)\<in>positive_meaning binding_observation_program"
+proof -
+  have fields: "d=345" "S=finite_binding_list_step_schema"
+    using member by (auto simp: binding_list_construction_library_def)
+  have rule: "schema_rule_instance (related_list_step_schema 343 345) (positive_meaning binding_observation_program) t"
+    using rule_instance by (simp only: fields finite_binding_list_step_exact)
+  have result: "(345,t)\<in>positive_meaning binding_observation_program"
+    by (rule positive_variable_clause_rule[OF binding_observation_program_formed _ _ rule])
+      (auto simp: binding_observation_clauses_def related_list_clauses_def)
+  show ?thesis using result by (simp only: fields)
+qed
+
+definition finite_binding_list_seed :: "finite_factor_term\<Rightarrow>finite_factor_term\<Rightarrow>(nat\<times>finite_factor_term) list" where
+  "finite_binding_list_seed u r=(case finite_binding_observation_row True u r of None \<Rightarrow> []
+    | Some x \<Rightarrow> [(343,Finite_Pair u (Finite_Pair r x)),
+      (345,Finite_Pair u (Finite_Pair (Finite_Payload []) (Finite_Payload [])))])"
+
+theorem finite_binding_list_seed_sound:
+  "image decode_finite_call_term (set (finite_binding_list_seed u r))\<subseteq>positive_meaning binding_observation_program"
+proof -
+  have sound: "(343,context_relation_argument (decode_finite_term u) (decode_finite_term r) (decode_finite_term x))
+      \<in>positive_meaning binding_observation_program"
+    "(345,context_relation_argument (decode_finite_term u) (Payload_Term []) (Payload_Term []))
+      \<in>positive_meaning binding_observation_program"
+    if actual: "finite_binding_observation_row True u r=Some x" for x
+  proof -
+    have row: "binding_observation_row True (decode_finite_term u) (decode_finite_term r) (decode_finite_term x)"
+      using actual by (simp only: finite_binding_observation_row_correct)
+    show "(343,context_relation_argument (decode_finite_term u) (decode_finite_term r) (decode_finite_term x))
+      \<in>positive_meaning binding_observation_program"
+      using row by (simp only: binding_observation_first.at_arguments)
+    have owner_formed: "term_formed (decode_finite_term u)" using row by (auto simp: binding_observation_row_def)
+    show "(345,context_relation_argument (decode_finite_term u) (Payload_Term []) (Payload_Term []))
+      \<in>positive_meaning binding_observation_program"
+      using binding_observation_first_list.lists[of "decode_finite_term u" "[]" "[]"] owner_formed by simp
+  qed
+  show ?thesis using sound
+    by (auto simp: finite_binding_list_seed_def decode_finite_call_term_def split: option.splits)
+qed
+
+definition binding_list_construction_investigation where
+  "binding_list_construction_investigation n enabled admit_row u r goals=
+    (let C=finite_binding_list_seed u r;
+         K=fset_of_list (if admit_row then C else filter (\<lambda>q. fst q\<noteq>343) C);
+         result=natural_chained_investigation n (if enabled then binding_list_construction_library else []) C K goals
+     in (fst result \<and> finite_term_formed u \<and> finite_term_formed r,snd result))"
+
+theorem binding_list_construction_closure_sound:
+  assumes library: "L=(if enabled then binding_list_construction_library else [])"
+    and seeds: "C=finite_binding_list_seed u r"
+    and known: "K=fset_of_list (if admit_row then C else filter (\<lambda>q. fst q\<noteq>343) C)"
+  shows "image decode_finite_call_term (finite_inference_result
+      (finite_generated_rules_on_set L (finite_construction_frontier n L (fset_of_list C))) K)
+    \<subseteq>positive_meaning binding_observation_program"
+proof (rule finite_chained_closure_sound)
+  fix d S ps t
+  assume member: "(d,S,ps)\<in>set L"
+    and rule_instance: "schema_rule_instance (decode_finite_schema S) (positive_meaning binding_observation_program) t"
+  have selected: "(d,S,ps)\<in>set binding_list_construction_library"
+    using member library by (cases enabled) auto
+  show "(d,t)\<in>positive_meaning binding_observation_program"
+    by (rule binding_list_construction_member_sound[OF selected rule_instance])
+next
+  show "image decode_finite_call_term (fset K)\<subseteq>positive_meaning binding_observation_program"
+    using finite_binding_list_seed_sound[of u r] by (auto simp: known seeds split: if_splits)
+qed
+
+text \<open>
+  The input row constructs its actual native scalar premise and empty-list
+  premise. The existing list clause then constructs successive complete
+  lists. Withholding the scalar premise from the known set preserves the
+  resulting conditions at every construction depth. Source formation checks
+  the original row even when it supplies no admitted premise.
+\<close>
+
+end

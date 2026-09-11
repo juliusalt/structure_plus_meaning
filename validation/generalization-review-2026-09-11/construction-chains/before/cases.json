@@ -1,0 +1,4362 @@
+[
+  {
+    "name": "chain-rule-absent",
+    "library": [],
+    "frontier": [
+      [
+        343,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            50
+                          ]
+                        },
+                        {
+                          "payload": [
+                            60
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            8
+                          ]
+                        },
+                        {
+                          "empty_artifact": true
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "payload": [
+                        60
+                      ]
+                    },
+                    {
+                      "payload": [
+                        8
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      [
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "payload": []
+                },
+                {
+                  "payload": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    ],
+    "known": [
+      [
+        343,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            50
+                          ]
+                        },
+                        {
+                          "payload": [
+                            60
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            8
+                          ]
+                        },
+                        {
+                          "empty_artifact": true
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "payload": [
+                        60
+                      ]
+                    },
+                    {
+                      "payload": [
+                        8
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      [
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "payload": []
+                },
+                {
+                  "payload": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    ],
+    "goals": [
+      [
+        0,
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                50
+                              ]
+                            },
+                            {
+                              "payload": [
+                                60
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                8
+                              ]
+                            },
+                            {
+                              "empty_artifact": true
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "pair": [
+                                {
+                                  "payload": [
+                                    50
+                                  ]
+                                },
+                                {
+                                  "payload": [
+                                    60
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "pair": [
+                                {
+                                  "payload": [
+                                    8
+                                  ]
+                                },
+                                {
+                                  "empty_artifact": true
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "payload": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            60
+                          ]
+                        },
+                        {
+                          "payload": [
+                            8
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                60
+                              ]
+                            },
+                            {
+                              "payload": [
+                                8
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "payload": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    ],
+    "operation": null,
+    "native_goal_truth": [
+      true
+    ],
+    "semantic_boundary": "The rule is the existing native related_list_step_schema 343 345. Known scalar and empty-list calls satisfy the existing exact contracts. This probes reuse of a constructed result; it asserts no complete search over other libraries."
+  },
+  {
+    "name": "chain-one-construction",
+    "library": [
+      {
+        "entry": 345,
+        "schema": {
+          "head": {
+            "pair": [
+              {
+                "var": 0
+              },
+              {
+                "pair": [
+                  {
+                    "pair": [
+                      {
+                        "var": 1
+                      },
+                      {
+                        "var": 2
+                      }
+                    ]
+                  },
+                  {
+                    "pair": [
+                      {
+                        "var": 3
+                      },
+                      {
+                        "var": 4
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "premises": [
+            [
+              0,
+              343,
+              {
+                "pair": [
+                  {
+                    "var": 0
+                  },
+                  {
+                    "pair": [
+                      {
+                        "var": 1
+                      },
+                      {
+                        "var": 3
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            [
+              1,
+              345,
+              {
+                "pair": [
+                  {
+                    "var": 0
+                  },
+                  {
+                    "pair": [
+                      {
+                        "var": 2
+                      },
+                      {
+                        "var": 4
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          ],
+          "materials": []
+        },
+        "enumeration": [
+          [
+            0,
+            343,
+            {
+              "pair": [
+                {
+                  "var": 0
+                },
+                {
+                  "pair": [
+                    {
+                      "var": 1
+                    },
+                    {
+                      "var": 3
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          [
+            1,
+            345,
+            {
+              "pair": [
+                {
+                  "var": 0
+                },
+                {
+                  "pair": [
+                    {
+                      "var": 2
+                    },
+                    {
+                      "var": 4
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        ]
+      }
+    ],
+    "frontier": [
+      [
+        343,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            50
+                          ]
+                        },
+                        {
+                          "payload": [
+                            60
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            8
+                          ]
+                        },
+                        {
+                          "empty_artifact": true
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "payload": [
+                        60
+                      ]
+                    },
+                    {
+                      "payload": [
+                        8
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      [
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "payload": []
+                },
+                {
+                  "payload": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    ],
+    "known": [
+      [
+        343,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            50
+                          ]
+                        },
+                        {
+                          "payload": [
+                            60
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            8
+                          ]
+                        },
+                        {
+                          "empty_artifact": true
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "payload": [
+                        60
+                      ]
+                    },
+                    {
+                      "payload": [
+                        8
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      [
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "payload": []
+                },
+                {
+                  "payload": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    ],
+    "goals": [
+      [
+        0,
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                50
+                              ]
+                            },
+                            {
+                              "payload": [
+                                60
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                8
+                              ]
+                            },
+                            {
+                              "empty_artifact": true
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "payload": []
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            60
+                          ]
+                        },
+                        {
+                          "payload": [
+                            8
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "payload": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    ],
+    "operation": null,
+    "native_goal_truth": [
+      true
+    ],
+    "semantic_boundary": "The rule is the existing native related_list_step_schema 343 345. Known scalar and empty-list calls satisfy the existing exact contracts. This probes reuse of a constructed result; it asserts no complete search over other libraries."
+  },
+  {
+    "name": "chain-two-constructions",
+    "library": [
+      {
+        "entry": 345,
+        "schema": {
+          "head": {
+            "pair": [
+              {
+                "var": 0
+              },
+              {
+                "pair": [
+                  {
+                    "pair": [
+                      {
+                        "var": 1
+                      },
+                      {
+                        "var": 2
+                      }
+                    ]
+                  },
+                  {
+                    "pair": [
+                      {
+                        "var": 3
+                      },
+                      {
+                        "var": 4
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "premises": [
+            [
+              0,
+              343,
+              {
+                "pair": [
+                  {
+                    "var": 0
+                  },
+                  {
+                    "pair": [
+                      {
+                        "var": 1
+                      },
+                      {
+                        "var": 3
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            [
+              1,
+              345,
+              {
+                "pair": [
+                  {
+                    "var": 0
+                  },
+                  {
+                    "pair": [
+                      {
+                        "var": 2
+                      },
+                      {
+                        "var": 4
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          ],
+          "materials": []
+        },
+        "enumeration": [
+          [
+            0,
+            343,
+            {
+              "pair": [
+                {
+                  "var": 0
+                },
+                {
+                  "pair": [
+                    {
+                      "var": 1
+                    },
+                    {
+                      "var": 3
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          [
+            1,
+            345,
+            {
+              "pair": [
+                {
+                  "var": 0
+                },
+                {
+                  "pair": [
+                    {
+                      "var": 2
+                    },
+                    {
+                      "var": 4
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        ]
+      }
+    ],
+    "frontier": [
+      [
+        343,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            50
+                          ]
+                        },
+                        {
+                          "payload": [
+                            60
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            8
+                          ]
+                        },
+                        {
+                          "empty_artifact": true
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "payload": [
+                        60
+                      ]
+                    },
+                    {
+                      "payload": [
+                        8
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      [
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "payload": []
+                },
+                {
+                  "payload": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    ],
+    "known": [
+      [
+        343,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            50
+                          ]
+                        },
+                        {
+                          "payload": [
+                            60
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            8
+                          ]
+                        },
+                        {
+                          "empty_artifact": true
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "payload": [
+                        60
+                      ]
+                    },
+                    {
+                      "payload": [
+                        8
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      [
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "payload": []
+                },
+                {
+                  "payload": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    ],
+    "goals": [
+      [
+        0,
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                50
+                              ]
+                            },
+                            {
+                              "payload": [
+                                60
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                8
+                              ]
+                            },
+                            {
+                              "empty_artifact": true
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "pair": [
+                                {
+                                  "payload": [
+                                    50
+                                  ]
+                                },
+                                {
+                                  "payload": [
+                                    60
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "pair": [
+                                {
+                                  "payload": [
+                                    8
+                                  ]
+                                },
+                                {
+                                  "empty_artifact": true
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "payload": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            60
+                          ]
+                        },
+                        {
+                          "payload": [
+                            8
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                60
+                              ]
+                            },
+                            {
+                              "payload": [
+                                8
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "payload": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    ],
+    "operation": null,
+    "native_goal_truth": [
+      true
+    ],
+    "semantic_boundary": "The rule is the existing native related_list_step_schema 343 345. Known scalar and empty-list calls satisfy the existing exact contracts. This probes reuse of a constructed result; it asserts no complete search over other libraries."
+  },
+  {
+    "name": "chain-three-constructions",
+    "library": [
+      {
+        "entry": 345,
+        "schema": {
+          "head": {
+            "pair": [
+              {
+                "var": 0
+              },
+              {
+                "pair": [
+                  {
+                    "pair": [
+                      {
+                        "var": 1
+                      },
+                      {
+                        "var": 2
+                      }
+                    ]
+                  },
+                  {
+                    "pair": [
+                      {
+                        "var": 3
+                      },
+                      {
+                        "var": 4
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "premises": [
+            [
+              0,
+              343,
+              {
+                "pair": [
+                  {
+                    "var": 0
+                  },
+                  {
+                    "pair": [
+                      {
+                        "var": 1
+                      },
+                      {
+                        "var": 3
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            [
+              1,
+              345,
+              {
+                "pair": [
+                  {
+                    "var": 0
+                  },
+                  {
+                    "pair": [
+                      {
+                        "var": 2
+                      },
+                      {
+                        "var": 4
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          ],
+          "materials": []
+        },
+        "enumeration": [
+          [
+            0,
+            343,
+            {
+              "pair": [
+                {
+                  "var": 0
+                },
+                {
+                  "pair": [
+                    {
+                      "var": 1
+                    },
+                    {
+                      "var": 3
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          [
+            1,
+            345,
+            {
+              "pair": [
+                {
+                  "var": 0
+                },
+                {
+                  "pair": [
+                    {
+                      "var": 2
+                    },
+                    {
+                      "var": 4
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        ]
+      }
+    ],
+    "frontier": [
+      [
+        343,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            50
+                          ]
+                        },
+                        {
+                          "payload": [
+                            60
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            8
+                          ]
+                        },
+                        {
+                          "empty_artifact": true
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "payload": [
+                        60
+                      ]
+                    },
+                    {
+                      "payload": [
+                        8
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      [
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "payload": []
+                },
+                {
+                  "payload": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    ],
+    "known": [
+      [
+        343,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            50
+                          ]
+                        },
+                        {
+                          "payload": [
+                            60
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            8
+                          ]
+                        },
+                        {
+                          "empty_artifact": true
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "payload": [
+                        60
+                      ]
+                    },
+                    {
+                      "payload": [
+                        8
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      [
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "payload": []
+                },
+                {
+                  "payload": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    ],
+    "goals": [
+      [
+        0,
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                50
+                              ]
+                            },
+                            {
+                              "payload": [
+                                60
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                8
+                              ]
+                            },
+                            {
+                              "empty_artifact": true
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "pair": [
+                                {
+                                  "payload": [
+                                    50
+                                  ]
+                                },
+                                {
+                                  "payload": [
+                                    60
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "pair": [
+                                {
+                                  "payload": [
+                                    8
+                                  ]
+                                },
+                                {
+                                  "empty_artifact": true
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "pair": [
+                            {
+                              "pair": [
+                                {
+                                  "pair": [
+                                    {
+                                      "payload": [
+                                        50
+                                      ]
+                                    },
+                                    {
+                                      "payload": [
+                                        60
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "pair": [
+                                    {
+                                      "payload": [
+                                        8
+                                      ]
+                                    },
+                                    {
+                                      "empty_artifact": true
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "payload": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            60
+                          ]
+                        },
+                        {
+                          "payload": [
+                            8
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                60
+                              ]
+                            },
+                            {
+                              "payload": [
+                                8
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "pair": [
+                            {
+                              "pair": [
+                                {
+                                  "payload": [
+                                    60
+                                  ]
+                                },
+                                {
+                                  "payload": [
+                                    8
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "payload": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    ],
+    "operation": null,
+    "native_goal_truth": [
+      true
+    ],
+    "semantic_boundary": "The rule is the existing native related_list_step_schema 343 345. Known scalar and empty-list calls satisfy the existing exact contracts. This probes reuse of a constructed result; it asserts no complete search over other libraries."
+  },
+  {
+    "name": "chain-intermediate-supplied",
+    "library": [
+      {
+        "entry": 345,
+        "schema": {
+          "head": {
+            "pair": [
+              {
+                "var": 0
+              },
+              {
+                "pair": [
+                  {
+                    "pair": [
+                      {
+                        "var": 1
+                      },
+                      {
+                        "var": 2
+                      }
+                    ]
+                  },
+                  {
+                    "pair": [
+                      {
+                        "var": 3
+                      },
+                      {
+                        "var": 4
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "premises": [
+            [
+              0,
+              343,
+              {
+                "pair": [
+                  {
+                    "var": 0
+                  },
+                  {
+                    "pair": [
+                      {
+                        "var": 1
+                      },
+                      {
+                        "var": 3
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            [
+              1,
+              345,
+              {
+                "pair": [
+                  {
+                    "var": 0
+                  },
+                  {
+                    "pair": [
+                      {
+                        "var": 2
+                      },
+                      {
+                        "var": 4
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          ],
+          "materials": []
+        },
+        "enumeration": [
+          [
+            0,
+            343,
+            {
+              "pair": [
+                {
+                  "var": 0
+                },
+                {
+                  "pair": [
+                    {
+                      "var": 1
+                    },
+                    {
+                      "var": 3
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          [
+            1,
+            345,
+            {
+              "pair": [
+                {
+                  "var": 0
+                },
+                {
+                  "pair": [
+                    {
+                      "var": 2
+                    },
+                    {
+                      "var": 4
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        ]
+      }
+    ],
+    "frontier": [
+      [
+        343,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            50
+                          ]
+                        },
+                        {
+                          "payload": [
+                            60
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            8
+                          ]
+                        },
+                        {
+                          "empty_artifact": true
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "payload": [
+                        60
+                      ]
+                    },
+                    {
+                      "payload": [
+                        8
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      [
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "payload": []
+                },
+                {
+                  "payload": []
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      [
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                50
+                              ]
+                            },
+                            {
+                              "payload": [
+                                60
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                8
+                              ]
+                            },
+                            {
+                              "empty_artifact": true
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "payload": []
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            60
+                          ]
+                        },
+                        {
+                          "payload": [
+                            8
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "payload": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    ],
+    "known": [
+      [
+        343,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            50
+                          ]
+                        },
+                        {
+                          "payload": [
+                            60
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            8
+                          ]
+                        },
+                        {
+                          "empty_artifact": true
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "payload": [
+                        60
+                      ]
+                    },
+                    {
+                      "payload": [
+                        8
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      [
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "payload": []
+                },
+                {
+                  "payload": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    ],
+    "goals": [
+      [
+        0,
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                50
+                              ]
+                            },
+                            {
+                              "payload": [
+                                60
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                8
+                              ]
+                            },
+                            {
+                              "empty_artifact": true
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "pair": [
+                                {
+                                  "payload": [
+                                    50
+                                  ]
+                                },
+                                {
+                                  "payload": [
+                                    60
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "pair": [
+                                {
+                                  "payload": [
+                                    8
+                                  ]
+                                },
+                                {
+                                  "empty_artifact": true
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "payload": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            60
+                          ]
+                        },
+                        {
+                          "payload": [
+                            8
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                60
+                              ]
+                            },
+                            {
+                              "payload": [
+                                8
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "payload": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    ],
+    "operation": null,
+    "native_goal_truth": [
+      true
+    ],
+    "semantic_boundary": "The rule is the existing native related_list_step_schema 343 345. Known scalar and empty-list calls satisfy the existing exact contracts. This probes reuse of a constructed result; it asserts no complete search over other libraries."
+  },
+  {
+    "name": "chain-intermediate-with-missing-evidence",
+    "library": [
+      {
+        "entry": 345,
+        "schema": {
+          "head": {
+            "pair": [
+              {
+                "var": 0
+              },
+              {
+                "pair": [
+                  {
+                    "pair": [
+                      {
+                        "var": 1
+                      },
+                      {
+                        "var": 2
+                      }
+                    ]
+                  },
+                  {
+                    "pair": [
+                      {
+                        "var": 3
+                      },
+                      {
+                        "var": 4
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "premises": [
+            [
+              0,
+              343,
+              {
+                "pair": [
+                  {
+                    "var": 0
+                  },
+                  {
+                    "pair": [
+                      {
+                        "var": 1
+                      },
+                      {
+                        "var": 3
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            [
+              1,
+              345,
+              {
+                "pair": [
+                  {
+                    "var": 0
+                  },
+                  {
+                    "pair": [
+                      {
+                        "var": 2
+                      },
+                      {
+                        "var": 4
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          ],
+          "materials": []
+        },
+        "enumeration": [
+          [
+            0,
+            343,
+            {
+              "pair": [
+                {
+                  "var": 0
+                },
+                {
+                  "pair": [
+                    {
+                      "var": 1
+                    },
+                    {
+                      "var": 3
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          [
+            1,
+            345,
+            {
+              "pair": [
+                {
+                  "var": 0
+                },
+                {
+                  "pair": [
+                    {
+                      "var": 2
+                    },
+                    {
+                      "var": 4
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        ]
+      }
+    ],
+    "frontier": [
+      [
+        343,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            50
+                          ]
+                        },
+                        {
+                          "payload": [
+                            60
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            8
+                          ]
+                        },
+                        {
+                          "empty_artifact": true
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "payload": [
+                        60
+                      ]
+                    },
+                    {
+                      "payload": [
+                        8
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      [
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "payload": []
+                },
+                {
+                  "payload": []
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      [
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                50
+                              ]
+                            },
+                            {
+                              "payload": [
+                                60
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                8
+                              ]
+                            },
+                            {
+                              "empty_artifact": true
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "payload": []
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            60
+                          ]
+                        },
+                        {
+                          "payload": [
+                            8
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "payload": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    ],
+    "known": [
+      [
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "payload": []
+                },
+                {
+                  "payload": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    ],
+    "goals": [
+      [
+        0,
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                50
+                              ]
+                            },
+                            {
+                              "payload": [
+                                60
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                8
+                              ]
+                            },
+                            {
+                              "empty_artifact": true
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "pair": [
+                                {
+                                  "payload": [
+                                    50
+                                  ]
+                                },
+                                {
+                                  "payload": [
+                                    60
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "pair": [
+                                {
+                                  "payload": [
+                                    8
+                                  ]
+                                },
+                                {
+                                  "empty_artifact": true
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "payload": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            60
+                          ]
+                        },
+                        {
+                          "payload": [
+                            8
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                60
+                              ]
+                            },
+                            {
+                              "payload": [
+                                8
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "payload": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    ],
+    "operation": null,
+    "native_goal_truth": [
+      true
+    ],
+    "semantic_boundary": "The rule is the existing native related_list_step_schema 343 345. Known scalar and empty-list calls satisfy the existing exact contracts. This probes reuse of a constructed result; it asserts no complete search over other libraries."
+  },
+  {
+    "name": "chain-repeated-reordered-frontier",
+    "library": [
+      {
+        "entry": 345,
+        "schema": {
+          "head": {
+            "pair": [
+              {
+                "var": 0
+              },
+              {
+                "pair": [
+                  {
+                    "pair": [
+                      {
+                        "var": 1
+                      },
+                      {
+                        "var": 2
+                      }
+                    ]
+                  },
+                  {
+                    "pair": [
+                      {
+                        "var": 3
+                      },
+                      {
+                        "var": 4
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "premises": [
+            [
+              0,
+              343,
+              {
+                "pair": [
+                  {
+                    "var": 0
+                  },
+                  {
+                    "pair": [
+                      {
+                        "var": 1
+                      },
+                      {
+                        "var": 3
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            [
+              1,
+              345,
+              {
+                "pair": [
+                  {
+                    "var": 0
+                  },
+                  {
+                    "pair": [
+                      {
+                        "var": 2
+                      },
+                      {
+                        "var": 4
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          ],
+          "materials": []
+        },
+        "enumeration": [
+          [
+            0,
+            343,
+            {
+              "pair": [
+                {
+                  "var": 0
+                },
+                {
+                  "pair": [
+                    {
+                      "var": 1
+                    },
+                    {
+                      "var": 3
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          [
+            1,
+            345,
+            {
+              "pair": [
+                {
+                  "var": 0
+                },
+                {
+                  "pair": [
+                    {
+                      "var": 2
+                    },
+                    {
+                      "var": 4
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        ]
+      }
+    ],
+    "frontier": [
+      [
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                50
+                              ]
+                            },
+                            {
+                              "payload": [
+                                60
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                8
+                              ]
+                            },
+                            {
+                              "empty_artifact": true
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "payload": []
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            60
+                          ]
+                        },
+                        {
+                          "payload": [
+                            8
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "payload": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      [
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "payload": []
+                },
+                {
+                  "payload": []
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      [
+        343,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            50
+                          ]
+                        },
+                        {
+                          "payload": [
+                            60
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            8
+                          ]
+                        },
+                        {
+                          "empty_artifact": true
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "payload": [
+                        60
+                      ]
+                    },
+                    {
+                      "payload": [
+                        8
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      [
+        343,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            50
+                          ]
+                        },
+                        {
+                          "payload": [
+                            60
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            8
+                          ]
+                        },
+                        {
+                          "empty_artifact": true
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "payload": [
+                        60
+                      ]
+                    },
+                    {
+                      "payload": [
+                        8
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      [
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "payload": []
+                },
+                {
+                  "payload": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    ],
+    "known": [
+      [
+        343,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            50
+                          ]
+                        },
+                        {
+                          "payload": [
+                            60
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            8
+                          ]
+                        },
+                        {
+                          "empty_artifact": true
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "payload": [
+                        60
+                      ]
+                    },
+                    {
+                      "payload": [
+                        8
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      [
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "payload": []
+                },
+                {
+                  "payload": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    ],
+    "goals": [
+      [
+        0,
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                50
+                              ]
+                            },
+                            {
+                              "payload": [
+                                60
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                8
+                              ]
+                            },
+                            {
+                              "empty_artifact": true
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "pair": [
+                                {
+                                  "payload": [
+                                    50
+                                  ]
+                                },
+                                {
+                                  "payload": [
+                                    60
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "pair": [
+                                {
+                                  "payload": [
+                                    8
+                                  ]
+                                },
+                                {
+                                  "empty_artifact": true
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "payload": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            60
+                          ]
+                        },
+                        {
+                          "payload": [
+                            8
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                60
+                              ]
+                            },
+                            {
+                              "payload": [
+                                8
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "payload": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    ],
+    "operation": null,
+    "native_goal_truth": [
+      true
+    ],
+    "semantic_boundary": "The rule is the existing native related_list_step_schema 343 345. Known scalar and empty-list calls satisfy the existing exact contracts. This probes reuse of a constructed result; it asserts no complete search over other libraries."
+  },
+  {
+    "name": "chain-different-intermediate-context",
+    "library": [
+      {
+        "entry": 345,
+        "schema": {
+          "head": {
+            "pair": [
+              {
+                "var": 0
+              },
+              {
+                "pair": [
+                  {
+                    "pair": [
+                      {
+                        "var": 1
+                      },
+                      {
+                        "var": 2
+                      }
+                    ]
+                  },
+                  {
+                    "pair": [
+                      {
+                        "var": 3
+                      },
+                      {
+                        "var": 4
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "premises": [
+            [
+              0,
+              343,
+              {
+                "pair": [
+                  {
+                    "var": 0
+                  },
+                  {
+                    "pair": [
+                      {
+                        "var": 1
+                      },
+                      {
+                        "var": 3
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            [
+              1,
+              345,
+              {
+                "pair": [
+                  {
+                    "var": 0
+                  },
+                  {
+                    "pair": [
+                      {
+                        "var": 2
+                      },
+                      {
+                        "var": 4
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          ],
+          "materials": []
+        },
+        "enumeration": [
+          [
+            0,
+            343,
+            {
+              "pair": [
+                {
+                  "var": 0
+                },
+                {
+                  "pair": [
+                    {
+                      "var": 1
+                    },
+                    {
+                      "var": 3
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          [
+            1,
+            345,
+            {
+              "pair": [
+                {
+                  "var": 0
+                },
+                {
+                  "pair": [
+                    {
+                      "var": 2
+                    },
+                    {
+                      "var": 4
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        ]
+      }
+    ],
+    "frontier": [
+      [
+        343,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            50
+                          ]
+                        },
+                        {
+                          "payload": [
+                            60
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            8
+                          ]
+                        },
+                        {
+                          "empty_artifact": true
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "payload": [
+                        60
+                      ]
+                    },
+                    {
+                      "payload": [
+                        8
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      [
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "payload": []
+                },
+                {
+                  "payload": []
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      [
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                51
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                50
+                              ]
+                            },
+                            {
+                              "payload": [
+                                60
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                8
+                              ]
+                            },
+                            {
+                              "empty_artifact": true
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "payload": []
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            60
+                          ]
+                        },
+                        {
+                          "payload": [
+                            8
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "payload": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    ],
+    "known": [
+      [
+        343,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            50
+                          ]
+                        },
+                        {
+                          "payload": [
+                            60
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            8
+                          ]
+                        },
+                        {
+                          "empty_artifact": true
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "payload": [
+                        60
+                      ]
+                    },
+                    {
+                      "payload": [
+                        8
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      [
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "payload": []
+                },
+                {
+                  "payload": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    ],
+    "goals": [
+      [
+        0,
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                50
+                              ]
+                            },
+                            {
+                              "payload": [
+                                60
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                8
+                              ]
+                            },
+                            {
+                              "empty_artifact": true
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "pair": [
+                                {
+                                  "payload": [
+                                    50
+                                  ]
+                                },
+                                {
+                                  "payload": [
+                                    60
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "pair": [
+                                {
+                                  "payload": [
+                                    8
+                                  ]
+                                },
+                                {
+                                  "empty_artifact": true
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "payload": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            60
+                          ]
+                        },
+                        {
+                          "payload": [
+                            8
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                60
+                              ]
+                            },
+                            {
+                              "payload": [
+                                8
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "payload": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    ],
+    "operation": null,
+    "native_goal_truth": [
+      true
+    ],
+    "semantic_boundary": "The rule is the existing native related_list_step_schema 343 345. Known scalar and empty-list calls satisfy the existing exact contracts. This probes reuse of a constructed result; it asserts no complete search over other libraries."
+  },
+  {
+    "name": "chain-native-comparison",
+    "library": [],
+    "frontier": [
+      [
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                50
+                              ]
+                            },
+                            {
+                              "payload": [
+                                60
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                8
+                              ]
+                            },
+                            {
+                              "empty_artifact": true
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "pair": [
+                                {
+                                  "payload": [
+                                    50
+                                  ]
+                                },
+                                {
+                                  "payload": [
+                                    60
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "pair": [
+                                {
+                                  "payload": [
+                                    8
+                                  ]
+                                },
+                                {
+                                  "empty_artifact": true
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "payload": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            60
+                          ]
+                        },
+                        {
+                          "payload": [
+                            8
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                60
+                              ]
+                            },
+                            {
+                              "payload": [
+                                8
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "payload": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      [
+        346,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                50
+                              ]
+                            },
+                            {
+                              "payload": [
+                                60
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                8
+                              ]
+                            },
+                            {
+                              "empty_artifact": true
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "pair": [
+                                {
+                                  "payload": [
+                                    50
+                                  ]
+                                },
+                                {
+                                  "payload": [
+                                    60
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "pair": [
+                                {
+                                  "payload": [
+                                    8
+                                  ]
+                                },
+                                {
+                                  "empty_artifact": true
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "payload": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            60
+                          ]
+                        },
+                        {
+                          "empty_artifact": true
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                60
+                              ]
+                            },
+                            {
+                              "empty_artifact": true
+                            }
+                          ]
+                        },
+                        {
+                          "payload": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    ],
+    "known": [
+      [
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                50
+                              ]
+                            },
+                            {
+                              "payload": [
+                                60
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                8
+                              ]
+                            },
+                            {
+                              "empty_artifact": true
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "pair": [
+                                {
+                                  "payload": [
+                                    50
+                                  ]
+                                },
+                                {
+                                  "payload": [
+                                    60
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "pair": [
+                                {
+                                  "payload": [
+                                    8
+                                  ]
+                                },
+                                {
+                                  "empty_artifact": true
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "payload": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            60
+                          ]
+                        },
+                        {
+                          "payload": [
+                            8
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                60
+                              ]
+                            },
+                            {
+                              "payload": [
+                                8
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "payload": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      [
+        346,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                50
+                              ]
+                            },
+                            {
+                              "payload": [
+                                60
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                8
+                              ]
+                            },
+                            {
+                              "empty_artifact": true
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "pair": [
+                                {
+                                  "payload": [
+                                    50
+                                  ]
+                                },
+                                {
+                                  "payload": [
+                                    60
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "pair": [
+                                {
+                                  "payload": [
+                                    8
+                                  ]
+                                },
+                                {
+                                  "empty_artifact": true
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "payload": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            60
+                          ]
+                        },
+                        {
+                          "empty_artifact": true
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                60
+                              ]
+                            },
+                            {
+                              "empty_artifact": true
+                            }
+                          ]
+                        },
+                        {
+                          "payload": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    ],
+    "goals": [
+      [
+        0,
+        345,
+        {
+          "pair": [
+            {
+              "payload": [
+                50
+              ]
+            },
+            {
+              "pair": [
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                50
+                              ]
+                            },
+                            {
+                              "payload": [
+                                60
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                8
+                              ]
+                            },
+                            {
+                              "empty_artifact": true
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "pair": [
+                                {
+                                  "payload": [
+                                    50
+                                  ]
+                                },
+                                {
+                                  "payload": [
+                                    60
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "pair": [
+                                {
+                                  "payload": [
+                                    8
+                                  ]
+                                },
+                                {
+                                  "empty_artifact": true
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "payload": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "pair": [
+                    {
+                      "pair": [
+                        {
+                          "payload": [
+                            60
+                          ]
+                        },
+                        {
+                          "payload": [
+                            8
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "pair": [
+                        {
+                          "pair": [
+                            {
+                              "payload": [
+                                60
+                              ]
+                            },
+                            {
+                              "payload": [
+                                8
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "payload": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    ],
+    "operation": [
+      "binding",
+      false
+    ],
+    "binding_sources": [
+      [
+        {
+          "payload": [
+            50
+          ]
+        },
+        [
+          {
+            "pair": [
+              {
+                "pair": [
+                  {
+                    "payload": [
+                      50
+                    ]
+                  },
+                  {
+                    "payload": [
+                      60
+                    ]
+                  }
+                ]
+              },
+              {
+                "pair": [
+                  {
+                    "payload": [
+                      8
+                    ]
+                  },
+                  {
+                    "empty_artifact": true
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "pair": [
+              {
+                "pair": [
+                  {
+                    "payload": [
+                      50
+                    ]
+                  },
+                  {
+                    "payload": [
+                      60
+                    ]
+                  }
+                ]
+              },
+              {
+                "pair": [
+                  {
+                    "payload": [
+                      8
+                    ]
+                  },
+                  {
+                    "empty_artifact": true
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      ]
+    ],
+    "native_goal_truth": [
+      true
+    ],
+    "semantic_boundary": "The existing native converter computes the complete two-row goal directly. This comparison does not supply the goal or the intermediate call to the construction cases."
+  }
+]

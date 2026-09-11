@@ -1,0 +1,129 @@
+theory Factor_Specialization_Binding_Contracts
+  imports Factor_Specialization_Binding_Clauses Factor_Binding_Record_Contracts
+    Factor_Binding_Record_Metadata Factor_Schema_Reference_Binders
+begin
+
+section \<open>The complete record and target are one admitted specialization\<close>
+
+definition specialization_binding_at where
+  "specialization_binding_at E pu pr d c F v r G w t report bs Is Ks \<longleftrightarrow>
+    distinct Is \<and> distinct Ks \<and> term_formed (use_data_term (fst d)) \<and>
+    (\<exists>P S s As. native_package_at E pu pr P \<and> ((d,c),S)\<in>system_clauses P \<and>
+      distinct As \<and> set As=schema_variables S \<and>
+      pattern_record_at F v (schema_variables (schema_substitute s S)) r
+        (substitution_row_patterns As s) (set Is) (set Ks) \<and>
+      native_schema_at G w t (schema_substitute s S) \<and>
+      schema_pattern_boundary P d (schema_substitute s S) \<and>
+      schema_reference_presents (schema_substitute s S) report \<and>
+      bs=positioned_binding_rows_term (map (\<lambda>a. ((fst d,a),pattern_claim_observation (s a))) As))"
+
+lemma specialization_binding_source_calls:
+  assumes sources: "environment_value_presents E e" "environment_value_presents F f" "environment_value_presents G g"
+  shows "(349,specialization_binding_argument (source_root_argument e (use_data_term pu) (Payload_Term pr))
+      (use_data_term du) (Payload_Term dr) (Payload_Term c) f (use_data_term v) (Payload_Term r)
+      (source_root_argument g (use_data_term w) (Payload_Term t)) b report bs i k)
+      \<in>positive_meaning specialization_binding_system \<longleftrightarrow>
+    schema_clause_specialization_at E pu pr (du,dr) c F v r G w t \<and>
+    (\<exists>T. native_schema_at G w t T \<and> schema_reference_presents T (Pair_Term b report)) \<and>
+    (348,binding_record_argument f (use_data_term v) (Payload_Term r) b (use_data_term du) bs i k)
+      \<in>positive_meaning binding_record_system"
+  using specialization_report_on_sources[OF sources, where u=pu and r=pr and d="(du,dr)" and c=c
+    and v=v and q=r and w=w and t=t and z="Pair_Term b report"]
+  by (simp add: specialization_binding_at_arguments site_data_term_def)
+
+theorem specialization_binding_on_sources:
+  assumes sources: "environment_value_presents E e" "environment_value_presents F f" "environment_value_presents G g"
+  shows "(349,specialization_binding_argument (source_root_argument e (use_data_term pu) (Payload_Term pr))
+      (use_data_term du) (Payload_Term dr) (Payload_Term c) f (use_data_term v) (Payload_Term r)
+      (source_root_argument g (use_data_term w) (Payload_Term t)) b report bs
+      (data_list_term (map Payload_Term Is)) (data_list_term (map Payload_Term Ks)))
+      \<in>positive_meaning specialization_binding_system \<longleftrightarrow>
+    specialization_binding_at E pu pr (du,dr) c F v r G w t (Pair_Term b report) bs Is Ks"
+proof -
+  let ?I="data_list_term (map Payload_Term Is)"
+  let ?K="data_list_term (map Payload_Term Ks)"
+  let ?arg="specialization_binding_argument (source_root_argument e (use_data_term pu) (Payload_Term pr))
+    (use_data_term du) (Payload_Term dr) (Payload_Term c) f (use_data_term v) (Payload_Term r)
+    (source_root_argument g (use_data_term w) (Payload_Term t)) b report bs ?I ?K"
+  show ?thesis
+  proof
+    assume admitted: "(349,?arg)\<in>positive_meaning specialization_binding_system"
+    obtain T where readings: "schema_clause_specialization_at E pu pr (du,dr) c F v r G w t"
+      "native_schema_at G w t T" "schema_reference_presents T (Pair_Term b report)"
+      "(348,binding_record_argument f (use_data_term v) (Payload_Term r) b (use_data_term du) bs ?I ?K)
+        \<in>positive_meaning binding_record_system"
+      using admitted by (simp only: specialization_binding_source_calls[OF sources]) blast
+    obtain P S s As I K where raw: "native_package_at E pu pr P" "(((du,dr),c),S)\<in>system_clauses P"
+      "distinct As" "set As=schema_variables S"
+      "pattern_record_at F v (schema_variables (schema_substitute s S)) r (substitution_row_patterns As s) I K"
+      "native_schema_at G w t (schema_substitute s S)" "schema_pattern_boundary P (du,dr) (schema_substitute s S)"
+      using readings(1) by (auto simp: schema_clause_specialization_at_def)
+    have target: "T=schema_substitute s S" by (rule native_schema_unique[OF readings(2) raw(6)])
+    obtain Bs where binders: "b=data_list_term (map Payload_Term Bs)" "distinct Bs"
+      "set Bs=schema_variables (schema_substitute s S)" "\<forall>a\<in>set Bs. octets_formed a"
+      using schema_reference_binder_boundary[OF readings(3)] by (simp only: target) blast
+    have raw_scope: "pattern_record_at F v (set Bs) r (substitution_row_patterns As s) I K"
+      using raw(5) by (simp only: binders(3))
+    have support: "distinct Is" "distinct Ks" "set Is=I" "set Ks=K"
+      using binding_record_support[OF sources(2) raw_scope readings(4)[unfolded binders(1)]]
+      by (auto simp only: data_list_term_injective injective_mapped_lists[OF payload_term_inj])
+    have raw_lists: "pattern_record_at F v (set Bs) r (substitution_row_patterns As s) (set Is) (set Ks)"
+      using raw_scope by (simp only: support(3,4))
+    have complete: "set Bs=(\<Union>a\<in>set As. pattern_variables (s a))"
+      by (simp only: binders(3) raw(4) schema_substitute_variables)
+    have observed: "term_formed (use_data_term du) \<and>
+      bs=positioned_binding_rows_term (map (\<lambda>a. ((du,a),pattern_claim_observation (s a))) As)"
+      using readings(4) by (simp only: binders(1)
+        binding_record_on_record[OF sources(2) raw_lists binders(4) complete binders(2) support(1,2)])
+    show "specialization_binding_at E pu pr (du,dr) c F v r G w t (Pair_Term b report) bs Is Ks"
+      unfolding specialization_binding_at_def
+      apply (intro conjI)
+      apply (rule support(1))
+      apply (rule support(2))
+      apply (use observed in simp)
+      apply (rule exI[of _ P], rule exI[of _ S], rule exI[of _ s], rule exI[of _ As])
+      using raw readings(3) target observed support by auto
+  next
+    assume actual: "specialization_binding_at E pu pr (du,dr) c F v r G w t (Pair_Term b report) bs Is Ks"
+    obtain P S s As where raw: "distinct Is" "distinct Ks" "term_formed (use_data_term du)"
+      "native_package_at E pu pr P" "(((du,dr),c),S)\<in>system_clauses P"
+      "distinct As" "set As=schema_variables S"
+      "pattern_record_at F v (schema_variables (schema_substitute s S)) r
+        (substitution_row_patterns As s) (set Is) (set Ks)"
+      "native_schema_at G w t (schema_substitute s S)"
+      "schema_pattern_boundary P (du,dr) (schema_substitute s S)"
+      "schema_reference_presents (schema_substitute s S) (Pair_Term b report)"
+      "bs=positioned_binding_rows_term (map (\<lambda>a. ((du,a),pattern_claim_observation (s a))) As)"
+      using actual by (auto simp: specialization_binding_at_def)
+    obtain Bs where binders: "b=data_list_term (map Payload_Term Bs)" "distinct Bs"
+      "set Bs=schema_variables (schema_substitute s S)" "\<forall>a\<in>set Bs. octets_formed a"
+      using schema_reference_binder_boundary[OF raw(11)] by blast
+    have raw_scope: "pattern_record_at F v (set Bs) r (substitution_row_patterns As s) (set Is) (set Ks)"
+      using raw(8) by (simp only: binders(3))
+    have complete: "set Bs=(\<Union>a\<in>set As. pattern_variables (s a))"
+      by (simp only: binders(3) raw(7) schema_substitute_variables)
+    have bindings: "(348,binding_record_argument f (use_data_term v) (Payload_Term r)
+      b (use_data_term du) bs ?I ?K)\<in>positive_meaning binding_record_system"
+      by (simp only: binders(1)
+        binding_record_on_record[OF sources(2) raw_scope binders(4) complete binders(2) raw(1,2)])
+        (use raw(3,12) in blast)
+    have specialization: "schema_clause_specialization_at E pu pr (du,dr) c F v r G w t"
+      unfolding schema_clause_specialization_at_def
+      by (rule exI[of _ P], rule exI[of _ S], rule exI[of _ s], rule exI[of _ As],
+        rule exI[of _ "set Is"], rule exI[of _ "set Ks"])
+        (use raw in blast)
+    show "(349,?arg)\<in>positive_meaning specialization_binding_system"
+      by (simp only: specialization_binding_source_calls[OF sources])
+        (use specialization raw(9,11) bindings in blast)
+  qed
+qed
+
+text \<open>
+  This relation refers to the actual package clause, actual replacement
+  record, and actual complete target schema. It retains every source binder,
+  every ordinary and material target field, both support sets, and the full
+  ordered observations of the replacement record. The native program admits
+  exactly this relation on the supplied source presentations.
+\<close>
+
+end

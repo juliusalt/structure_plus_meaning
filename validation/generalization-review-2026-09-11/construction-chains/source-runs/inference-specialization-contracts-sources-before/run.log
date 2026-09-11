@@ -1,0 +1,53 @@
+Invocation: f115a1c6-d5b0-491a-a490-f21b06083ea0
+Isabelle2025-2
+Started at Fri Sep 11 03:04:35 GMT+3 2026 (polyml-5.9.2_x86_64_32-linux on julius-arch)
+ISABELLE_TOOL_JAVA_OPTIONS="-Djava.awt.headless=true -Xms512m -Xmx4g -Xss16m"
+ISABELLE_BUILD_OPTIONS=""
+
+ML_PLATFORM="x86_64_32-linux"
+ML_HOME="/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux"
+ML_SYSTEM="polyml-5.9.2"
+ML_OPTIONS="--minheap 500"
+
+Session Pure/Pure
+Session Misc/Tools
+Session HOL/HOL (main)
+Session HOL/HOL-Library (main timing)
+Session Unsorted/Finite_Investigation_303d0af612a696b1bba0db7f
+
+Finished at Fri Sep 11 03:04:37 GMT+3 2026
+0:00:01 elapsed time
+export "/tmp/generalization-quality-review/inference-specialization-contracts-sources-before/export-f115a1c6-d5b0-491a-a490-f21b06083ea0/Finite_Investigation_303d0af612a696b1bba0db7f.Finite_Investigation_Export/code/finite_investigation.ML"
+/opt/isabelle/contrib/polyml-5.9.2-2
+Poly/ML 5.9.2 Release
+/tmp/generalization-quality-review/inference-specialization-contracts-sources-before/export-f115a1c6-d5b0-491a-a490-f21b06083ea0/Finite_Investigation_303d0af612a696b1bba0db7f.Finite_Investigation_Export/code/finite_investigation.ML:70: warning: Matches are not exhaustive.
+Found near
+  fun
+     less_eq_set A_ (... ...) ... = list_all (fn ...) xs |
+        less_eq_set A_ ... = ... ... ys |
+        less_eq_set ... = false
+/tmp/generalization-quality-review/inference-specialization-contracts-sources-before/export-f115a1c6-d5b0-491a-a490-f21b06083ea0/Finite_Investigation_303d0af612a696b1bba0db7f.Finite_Investigation_Export/code/finite_investigation.ML:114: warning: Matches are not exhaustive. Found near fun bex (Set xs) p = list_ex p xs
+/tmp/generalization-quality-review/inference-specialization-contracts-sources-before/export-f115a1c6-d5b0-491a-a490-f21b06083ea0/Finite_Investigation_303d0af612a696b1bba0db7f.Finite_Investigation_Export/code/finite_investigation.ML:116: warning: Matches are not exhaustive. Found near fun ball (Set xs) p = list_all p xs
+/tmp/generalization-quality-review/inference-specialization-contracts-sources-before/export-f115a1c6-d5b0-491a-a490-f21b06083ea0/Finite_Investigation_303d0af612a696b1bba0db7f.Finite_Investigation_Export/code/finite_investigation.ML:127: warning: Matches are not exhaustive.
+Found near fun image f (... ...) = Set (... ... xs)
+/tmp/generalization-quality-review/inference-specialization-contracts-sources-before/export-f115a1c6-d5b0-491a-a490-f21b06083ea0/Finite_Investigation_303d0af612a696b1bba0db7f.Finite_Investigation_Export/code/finite_investigation.ML:140: warning: Matches are not exhaustive.
+Found near fun card A_ (... ...) = size_list (... ... xs)
+/tmp/generalization-quality-review/inference-specialization-contracts-sources-before/export-f115a1c6-d5b0-491a-a490-f21b06083ea0/Finite_Investigation_303d0af612a696b1bba0db7f.Finite_Investigation_Export/code/finite_investigation.ML:147: warning: Matches are not exhaustive.
+Found near fun filter p (... ...) = Set (... ... xs)
+/tmp/generalization-quality-review/inference-specialization-contracts-sources-before/export-f115a1c6-d5b0-491a-a490-f21b06083ea0/Finite_Investigation_303d0af612a696b1bba0db7f.Finite_Investigation_Export/code/finite_investigation.ML:165: warning: Matches are not exhaustive.
+Found near fun sup_seta A_ (... ...) = ... ... xs bot_set
+/tmp/generalization-quality-review/inference-specialization-contracts-sources-before/export-f115a1c6-d5b0-491a-a490-f21b06083ea0/Finite_Investigation_303d0af612a696b1bba0db7f.Finite_Investigation_Export/code/finite_investigation.ML:195: warning: Pattern 3 is redundant.
+Found near
+  fun
+     equal_bool false p = not p |
+        equal_bool true ... = p |
+        equal_bool ... = ... ... |
+        equal_bool ... = ...
+/tmp/generalization-quality-review/inference-specialization-contracts-sources-before/export-f115a1c6-d5b0-491a-a490-f21b06083ea0/Finite_Investigation_303d0af612a696b1bba0db7f.Finite_Investigation_Export/code/finite_investigation.ML:196: warning: Pattern 4 is redundant.
+Found near
+  fun
+     equal_bool false p = not p |
+        equal_bool true ... = p |
+        equal_bool ... = ... ... |
+        equal_bool ... = ...
+INVESTIGATION_RESULT {"input_formed":true,"residual":[[0,75]],"demand":[75,294,20,105,295,21,205,154,296,153,297,346,142,347,73,348,74,201,378,426,152,460,182,473,22,202,474,200,23,24,187],"reasons":[{"conclusion":21,"premises":[[0,294],[1,20],[2,105]],"premise":0,"condition":294},{"conclusion":21,"premises":[[0,294],[1,20],[2,105]],"premise":1,"condition":20},{"conclusion":21,"premises":[[0,294],[1,20],[2,105]],"premise":2,"condition":105},{"conclusion":22,"premises":[[0,295],[1,21],[2,205],[3,154]],"premise":0,"condition":295},{"conclusion":22,"premises":[[0,295],[1,21],[2,205],[3,154]],"premise":1,"condition":21},{"conclusion":22,"premises":[[0,295],[1,21],[2,205],[3,154]],"premise":2,"condition":205},{"conclusion":22,"premises":[[0,295],[1,21],[2,205],[3,154]],"premise":3,"condition":154},{"conclusion":23,"premises":[[0,296],[1,22],[2,153]],"premise":0,"condition":296},{"conclusion":23,"premises":[[0,296],[1,22],[2,153]],"premise":1,"condition":22},{"conclusion":23,"premises":[[0,296],[1,22],[2,153]],"premise":2,"condition":153},{"conclusion":24,"premises":[[0,297],[1,22]],"premise":0,"condition":297},{"conclusion":24,"premises":[[0,297],[1,22]],"premise":1,"condition":22},{"conclusion":73,"premises":[[0,346],[1,200],[2,142]],"premise":0,"condition":346},{"conclusion":73,"premises":[[0,346],[1,200],[2,142]],"premise":1,"condition":200},{"conclusion":73,"premises":[[0,346],[1,200],[2,142]],"premise":2,"condition":142},{"conclusion":74,"premises":[[0,347],[1,73]],"premise":0,"condition":347},{"conclusion":74,"premises":[[0,347],[1,73]],"premise":1,"condition":73},{"conclusion":75,"premises":[[0,348],[1,74],[2,201]],"premise":0,"condition":348},{"conclusion":75,"premises":[[0,348],[1,74],[2,201]],"premise":1,"condition":74},{"conclusion":75,"premises":[[0,348],[1,74],[2,201]],"premise":2,"condition":201},{"conclusion":105,"premises":[[0,378]],"premise":0,"condition":378},{"conclusion":153,"premises":[[0,426],[1,152]],"premise":0,"condition":426},{"conclusion":153,"premises":[[0,426],[1,152]],"premise":1,"condition":152},{"conclusion":187,"premises":[[0,460],[1,182]],"premise":0,"condition":460},{"conclusion":187,"premises":[[0,460],[1,182]],"premise":1,"condition":182},{"conclusion":200,"premises":[[0,473],[1,22],[2,202]],"premise":0,"condition":473},{"conclusion":200,"premises":[[0,473],[1,22],[2,202]],"premise":1,"condition":22},{"conclusion":200,"premises":[[0,473],[1,22],[2,202]],"premise":2,"condition":202},{"conclusion":201,"premises":[[0,474],[1,200],[2,23],[3,24],[4,187]],"premise":0,"condition":474},{"conclusion":201,"premises":[[0,474],[1,200],[2,23],[3,24],[4,187]],"premise":1,"condition":200},{"conclusion":201,"premises":[[0,474],[1,200],[2,23],[3,24],[4,187]],"premise":2,"condition":23},{"conclusion":201,"premises":[[0,474],[1,200],[2,23],[3,24],[4,187]],"premise":3,"condition":24},{"conclusion":201,"premises":[[0,474],[1,200],[2,23],[3,24],[4,187]],"premise":4,"condition":187}]}

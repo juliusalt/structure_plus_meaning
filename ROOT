@@ -775,3 +775,18 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Clause_Rule_Application
     Factor_Binding_Observation_Reasoning
     Factor_Binding_Observation_Programs
+    Factor_Paired_List_Relations
+    Factor_Binding_Observation_Recovery
+    Factor_Record_Instantiation_Outputs
+    Factor_Binding_Record_Clauses
+    Factor_Binding_Record_Contracts
+    Factor_Binding_Record_Metadata
+    Factor_Schema_Reference_Binders
+    Factor_Specialization_Binding_Clauses
+    Factor_Specialization_Binding_Contracts
+    Factor_Inference_Specialization_Base
+    Factor_Inference_Specialization_Clauses
+    Factor_Inference_Specialization_Contracts
+    Factor_Set_Frontier_Generation
+    Factor_Chained_Investigation
+    Factor_Recursive_Construction_Investigation

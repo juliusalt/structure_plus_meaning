@@ -21,6 +21,13 @@ is missing, its absence is itself an explicit development problem. A manually
 chosen answer or a descriptive table must not be reported as machinery-driven
 construction.
 
+Incomplete native admission does not suspend this workflow. The existing
+conditional machinery can be used with its current contracts and explicit
+unresolved premises. A missing representation or reasoning operation becomes
+a development problem in that machinery. Source-readiness investigations
+answer questions about proof dependencies; they do not by themselves choose
+or justify a problem, approach, decomposition, or proposed change.
+
 For host scheduling, prepare the largest useful group of related work that
 preserves quality. Determine its information needs first, then request all
 independent reads together. Use that information to prepare the complete group

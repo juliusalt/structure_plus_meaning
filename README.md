@@ -12,13 +12,14 @@ Related reads, changes, and checks are prepared in complete batches; content
 quality governs their scope. The [current review](GENERALIZATION_REVIEW.md) and
 [reasoning inventory](REASONING_REUSE.md) record evidence and remaining gaps.
 
-The current 772-theory session passes. Complete local clause specializations,
-source-coordinate recovery, and determining observations connect to the
-symbolic proof judgment. Native binding conversions now construct established
-premises for a learned report rule in the existing inference engine. The
-53-case execution family preserves complete reports and the distinction
-between row conversion and pattern admission. Whole native symbolic-argument
-admission and mathematical-proof admission remain open.
+The current 787-theory session passes. Native local readers connect an actual
+inference node's bindings to its symbolic replacement record and complete
+target report. A workflow adequacy investigation exposed a construction-reuse
+gap; bounded generation now feeds its own results into further construction
+while preserving their evidence requirements. The expanded 64-case family and
+the original 53-case family pass with complete report reconstruction. Coverage
+of every development decision, whole native symbolic-argument admission, and
+mathematical-proof admission remain open.
 
 The owner's correction of 2026-09-08 replaces the earlier single-grammar and
 quotation-principality requirements. Every notion needing a presentation must

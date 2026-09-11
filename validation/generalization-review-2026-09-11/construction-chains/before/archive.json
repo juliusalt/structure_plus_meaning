@@ -1,0 +1,25 @@
+{
+  "source_commit": "6b7e27bacddca99904386bf6dda350ce3e36cfaa",
+  "all_proof_sources_match_commit": true,
+  "files": {
+    "adequacy.json": "37a211d4acd1cdcd1529cdc0774cb2044e43245e3e4f788e15c7d620c923f3c4",
+    "receipt.json": "157ee8519caab323723ef7f05e116ed8f7b905c7c75c2a2d707e1da36ede0953",
+    "results.log": "be65bb4e12c7f88bf2ea74bc68dbd89054619dab35c9ca1b4ca6170fd1865631",
+    "execution-inputs.json": "dfa5e620ac472a2f4488f70925fd4c2a27ea6dc770c74317132d8e5d212d25bf",
+    "execute.ML": "2a0a14391fba3653b157a7f68b54070f3a82105250d2ec06ac8a66449414aa5a",
+    "cases.json": "d6aadafd1055f6122f26dcbc165abb569bb647f8fdb96a69c2f49893529d0a0b",
+    "check_reasoning.py": "8d99a66291303c15b529a50d01808369954b7c13d5ddacafbe029089699cdf5b",
+    "check_construction_chains.py": "c0d8c8b576876ea7d6dfd3c02241181b4fb41eb279ebc3d102b3c702cf5470f2",
+    "investigate.py": "7643dbebe13aed0e9d9bc4cff062575c665fec4ed0f7c0527857cd5d07263628",
+    "build.py": "8915b7a480b2a17b5cea5b819f3be43323f69cb79dc1513a76c07eb83f6b491e",
+    "proof.json": "68e876177f145318afa28dfc2687c18cea431039961716056cf5526cc814c3c8",
+    "native_reasoning.ML": "79f5fd2bd584adccf1015606f4b65bfcf4c264fb656a01e7e462aaccdd0b207b",
+    "replay/adequacy.json": "b2db0551a3736781d6501714a7c4d1b47ced1db2eae0537b981e603a743377a7",
+    "replay/receipt.json": "2bf78428521d967159bf88c1db59977a18d76f0d673c5219fc437ee6f839243a",
+    "replay/results.log": "807b7b92b835f678bb5bd4936a8f2d9cbbd5bf6877a3cc6b7218924390fed40d",
+    "replay/execution-inputs.json": "88c09424465f98b75575cb2110bcd76994bceeffe9c2296a6c824510e21ac76d",
+    "replay/execute.ML": "836f54fcb91f04dcdf36a6d6b0fccfdfe66ddadd9a2c12c7d93dcc704c8c9f9b",
+    "replay/cases.json": "d6aadafd1055f6122f26dcbc165abb569bb647f8fdb96a69c2f49893529d0a0b"
+  },
+  "scope": "Original nine-case adequacy investigation, before any chaining repair. The complete proof source manifest belongs to the recorded commit; current tool and case-family bytes are retained separately."
+}

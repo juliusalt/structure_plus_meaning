@@ -179,3 +179,64 @@ proof: every actually admitted native specialization has a complete target
 report. Its inhabited instance reuses the existing actual ground-clause
 construction. This semantic result is separate from executing the earlier
 structural controls with unproved reader premises.
+
+## Workflow audit and construction reuse
+
+The review of 2026-09-11 found that the content workflow was not being followed
+at its required breadth. The next problems, decompositions, relevant contracts,
+and proposed native readers had been selected outside the machinery. The
+source-readiness investigations tracked proof dependencies of those choices.
+They did not generate or assess the choices. Prioritizing further native
+admission did not make that departure necessary.
+
+The resulting adequacy investigation asks whether the current driver can
+consume a result it constructs in a subsequent construction. Its subject is
+the existing native list-step clause at 345, with a scalar row premise at 343
+and an empty-list premise. These are actual component predicates with existing
+exact contracts. The independent native converter establishes the requested
+two-row result.
+
+In the [retained baseline](validation/generalization-review-2026-09-11/construction-chains/before/adequacy.json),
+one construction succeeds, while the two- and three-step goals remain
+unresolved. Supplying an intermediate call only as a possible premise allows
+the existing inference closure to finish. Withholding its scalar evidence
+leaves the conditions open. The nine complete reports agree with independent
+reconstruction and replay from the retained code and recorded source revision.
+
+This identifies a concrete requirement for further construction rounds that
+preserve conditional evidence. It does not establish coverage of problem
+selection, approach selection, information selection, or every other
+development decision. Those uses remain part of the required workflow.
+
+The bounded repair reuses the original generator through an equivalent
+finite-set input interface. Additional rounds add generated calls to the
+possible frontier, keeping the known facts unchanged. The original closure
+soundness contract applies at every finite bound. Zero additional rounds has
+exactly the original report, and the formation gate retains every original
+input. The common variable-interface clause application step is now reused by
+all three native construction libraries.
+
+The [expanded investigation](validation/generalization-review-2026-09-11/construction-chains/after/adequacy.json)
+contains 64 complete reports, 84 intermediate-frontier checks, nine computed
+native seeds, and an independent native list comparison. Two- and three-step
+goals settle from their original seeds. Missing evidence and insufficient
+depth remain unresolved; malformed original inputs reject the report, and
+false requested outputs remain unresolved. A two-row alphabet constructs all
+14 nonempty lists through length three. The 38 earlier generic controls also
+exercise the equivalent input interface at zero extra rounds.
+
+## Native inference-specialization sources
+
+Ordinary rules at 348, 349, and 350 connect paired bindings to an actual
+replacement record, its complete target report, and the actual node's stored
+table and clause citation. The programs agree on every shared definition.
+Both record observations use the same source and support, and the target
+report supplies the complete variable scope. The node and program share the
+actual environment; the private binding-row enumeration permits independent
+presentation orders.
+
+The exact source contracts retain the actual clause, complete replacements,
+all target fields, discharge occurrences, and support sets. These local
+readings still need child-claim comparison and whole-graph admission before
+they can admit a complete symbolic argument. Native mathematical-proof
+admission and the broader development-decision workflow remain open.

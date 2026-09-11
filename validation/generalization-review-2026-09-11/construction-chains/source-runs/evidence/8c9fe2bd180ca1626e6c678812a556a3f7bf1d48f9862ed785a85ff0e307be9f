@@ -1,0 +1,206 @@
+theory Factor_Specialization_Binding_Clauses
+  imports Factor_Binding_Record_Clauses Factor_Specialization_Reports
+begin
+
+section \<open>The two readers share their actual reference definitions\<close>
+
+lemma specialization_report_reference_agreement:
+  "systems_agree_on reference_bindings_system specialization_report_system
+    (system_definitions reference_bindings_system)"
+proof -
+  have reference: "systems_agree_on reference_bindings_system schema_reading_system
+      (system_definitions reference_bindings_system)"
+    by (simp add: schema_reading_system_def systems_agree_on_added)
+  have reverse: "systems_agree_on schema_reading_system schema_pattern_call_base_system
+      (system_definitions schema_reading_system\<inter>system_definitions schema_pattern_call_base_system)"
+    using systems_agree_on_sym[OF schema_pattern_report_agreement] by (simp only: Int_commute)
+  have report: "systems_agree_on schema_reading_system schema_pattern_base_system
+      (system_definitions schema_reading_system)"
+    using system_union_agree_left[OF schema_pattern_call_base_formed reverse]
+    by (simp only: schema_pattern_base_system_def system_union_commute)
+  have restricted: "systems_agree_on schema_reading_system schema_pattern_base_system
+      (system_definitions reference_bindings_system)"
+    by (rule systems_agree_on_subdomain[OF report]) auto
+  have base: "systems_agree_on reference_bindings_system schema_pattern_base_system
+      (system_definitions reference_bindings_system)"
+    by (rule systems_agree_on_transitive[OF reference restricted])
+  show ?thesis using base
+    by (simp add: specialization_report_system_def clause_specialization_reading_system_def
+      schema_pattern_reading_system_def systems_agree_on_added)
+qed
+
+lemma binding_record_reference_agreement:
+  "systems_agree_on reference_bindings_system binding_record_system
+    (system_definitions reference_bindings_system)"
+  using binding_record_components.old_agreement
+  by (simp add: binding_record_system_def binding_record_base_system_def systems_agree_on_added)
+
+lemma specialization_binding_agreement:
+  "systems_agree_on specialization_report_system binding_record_system
+    (system_definitions specialization_report_system\<inter>system_definitions binding_record_system)"
+proof -
+  have shared: "systems_agree_on specialization_report_system binding_record_system
+      (system_definitions reference_bindings_system)"
+    by (rule systems_agree_on_transitive[OF systems_agree_on_sym[OF specialization_report_reference_agreement]
+      binding_record_reference_agreement])
+  have overlap: "system_definitions specialization_report_system\<inter>system_definitions binding_record_system=
+      system_definitions reference_bindings_system" by auto
+  show ?thesis using shared by (simp only: overlap)
+qed
+
+definition specialization_binding_base_system :: "(nat,nat,nat,nat) schema_system" where
+  "specialization_binding_base_system=system_union specialization_report_system binding_record_system"
+
+lemma specialization_binding_base_formed [simp]: "schema_system_formed specialization_binding_base_system"
+  unfolding specialization_binding_base_system_def
+  by (rule system_union_agree_formed[OF specialization_report_formed binding_record_formed
+    specialization_binding_agreement])
+
+lemma specialization_binding_base_definitions [simp]:
+  "system_definitions specialization_binding_base_system=
+    system_definitions specialization_report_system\<union>system_definitions binding_record_system"
+  by (simp add: specialization_binding_base_system_def)
+
+lemma specialization_binding_base_call:
+  "schema_call_formed specialization_binding_base_system d t \<longleftrightarrow>
+    d\<in>system_definitions specialization_binding_base_system \<and> term_formed t"
+  using system_union_agree_call[OF specialization_report_formed binding_record_formed
+    specialization_binding_agreement, of d t]
+  by (simp only: specialization_binding_base_system_def system_union_definitions
+    specialization_report_call binding_record_call; blast)
+
+lemma specialization_binding_base_report:
+  assumes "d\<in>system_definitions specialization_report_system"
+  shows "(d,t)\<in>positive_meaning specialization_binding_base_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning specialization_report_system"
+  using system_union_agree_left_locality(2)[OF specialization_report_formed binding_record_formed
+    specialization_binding_agreement assms, of t]
+  by (simp only: specialization_binding_base_system_def)
+
+lemma specialization_binding_base_record:
+  assumes "d\<in>system_definitions binding_record_system"
+  shows "(d,t)\<in>positive_meaning specialization_binding_base_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning binding_record_system"
+  using system_union_agree_right_locality(2)[OF specialization_report_formed binding_record_formed
+    specialization_binding_agreement assms, of t]
+  by (simp only: specialization_binding_base_system_def)
+
+section \<open>The complete target report supplies the record's entire binder scope\<close>
+
+abbreviation specialization_binding_argument where
+  "specialization_binding_argument a owner dr c f v r q b report bs i k \<equiv>
+    Pair_Term (specialization_report_value a (Pair_Term owner dr) c
+      (Pair_Term f (Pair_Term v r)) q (Pair_Term b report)) (Pair_Term bs (Pair_Term i k))"
+
+abbreviation specialization_binding_pattern where
+  "specialization_binding_pattern a owner dr c f v r q b report bs i k \<equiv>
+    Pattern_Pair (specialization_report_pattern a (Pattern_Pair owner dr) c
+      (Pattern_Pair f (Pattern_Pair v r)) q (Pattern_Pair b report)) (Pattern_Pair bs (Pattern_Pair i k))"
+
+definition specialization_binding_schema :: "(nat,nat,nat) factor_schema" where
+  "specialization_binding_schema=data_rule
+    (specialization_binding_pattern data_x data_y data_z data_w
+      (Pattern_Variable 4) (Pattern_Variable 5) (Pattern_Variable 6) (Pattern_Variable 7)
+      (Pattern_Variable 8) (Pattern_Variable 9) (Pattern_Variable 10) (Pattern_Variable 11) (Pattern_Variable 12))
+    {(0,342,specialization_report_pattern data_x (Pattern_Pair data_y data_z) data_w
+       (Pattern_Pair (Pattern_Variable 4) (Pattern_Pair (Pattern_Variable 5) (Pattern_Variable 6)))
+       (Pattern_Variable 7) (Pattern_Pair (Pattern_Variable 8) (Pattern_Variable 9))),
+     (1,348,binding_record_pattern (Pattern_Variable 4) (Pattern_Variable 5) (Pattern_Variable 6)
+       (Pattern_Variable 8) data_y (Pattern_Variable 10) (Pattern_Variable 11) (Pattern_Variable 12))}"
+
+definition specialization_binding_system :: "(nat,nat,nat,nat) schema_system" where
+  "specialization_binding_system=add_view_definition specialization_binding_base_system 349 data_x
+    {(0,specialization_binding_schema)}"
+
+interpretation specialization_binding_view:
+  positive_view specialization_binding_base_system 349 data_x "{(0,specialization_binding_schema)}"
+  by (rule positive_view.intro)
+    (auto simp: specialization_binding_schema_def schema_formed_def schema_dependencies_def
+      single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma specialization_binding_formed [simp]: "schema_system_formed specialization_binding_system"
+  using specialization_binding_view.formed by (simp only: specialization_binding_system_def)
+
+lemma specialization_binding_definitions [simp]:
+  "system_definitions specialization_binding_system=insert 349 (system_definitions specialization_binding_base_system)"
+  by (simp add: specialization_binding_system_def)
+
+lemma specialization_binding_call:
+  "schema_call_formed specialization_binding_system d t \<longleftrightarrow>
+    d\<in>system_definitions specialization_binding_system \<and> term_formed t"
+  using added_variable_calls[OF specialization_binding_base_formed
+    specialization_binding_formed[unfolded specialization_binding_system_def] specialization_binding_base_call]
+  by (simp only: specialization_binding_system_def[symmetric])
+
+lemma specialization_binding_old_meaning:
+  assumes "d\<in>system_definitions specialization_binding_base_system"
+  shows "(d,t)\<in>positive_meaning specialization_binding_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning specialization_binding_base_system"
+  using specialization_binding_view.old_meaning[OF assms]
+  by (simp only: specialization_binding_system_def)
+
+lemma specialization_binding_clause [simp]:
+  "((349,c),S)\<in>system_clauses specialization_binding_system \<longleftrightarrow>
+    c=0 \<and> S=specialization_binding_schema"
+  using specialization_binding_view.no_old_clause by (auto simp: specialization_binding_system_def)
+
+lemma specialization_binding_readers:
+  "(342,t)\<in>positive_meaning specialization_binding_system \<longleftrightarrow>
+    (342,t)\<in>positive_meaning specialization_report_system"
+  "(348,t)\<in>positive_meaning specialization_binding_system \<longleftrightarrow>
+    (348,t)\<in>positive_meaning binding_record_system"
+  using specialization_binding_old_meaning[of 342 t] specialization_binding_base_report[of 342 t]
+    specialization_binding_old_meaning[of 348 t] specialization_binding_base_record[of 348 t] by auto
+
+lemma specialization_binding_valuation:
+  "(349,z)\<in>positive_meaning specialization_binding_system \<longleftrightarrow>
+    (\<exists>h::nat\<Rightarrow>factor_term. (\<forall>j\<in>{0,1,2,3,4,5,6,7,8,9,10,11,12}. term_formed (h j)) \<and>
+      z=specialization_binding_argument (h 0) (h 1) (h 2) (h 3) (h 4) (h 5) (h 6)
+        (h 7) (h 8) (h 9) (h 10) (h 11) (h 12) \<and>
+      (342,specialization_report_value (h 0) (Pair_Term (h 1) (h 2)) (h 3)
+        (Pair_Term (h 4) (Pair_Term (h 5) (h 6))) (h 7) (Pair_Term (h 8) (h 9)))
+        \<in>positive_meaning specialization_report_system \<and>
+      (348,binding_record_argument (h 4) (h 5) (h 6) (h 8) (h 1) (h 10) (h 11) (h 12))
+        \<in>positive_meaning binding_record_system)"
+  by (subst ordinary_positive_entry_valuation)
+    (auto simp: specialization_binding_schema_def schema_variables_def
+      specialization_binding_call specialization_binding_readers)
+
+theorem specialization_binding_at_arguments:
+  "(349,specialization_binding_argument a owner dr c f v r q b report bs i k)
+      \<in>positive_meaning specialization_binding_system \<longleftrightarrow>
+    (342,specialization_report_value a (Pair_Term owner dr) c (Pair_Term f (Pair_Term v r)) q (Pair_Term b report))
+      \<in>positive_meaning specialization_report_system \<and>
+    (348,binding_record_argument f v r b owner bs i k)\<in>positive_meaning binding_record_system"
+proof
+  assume "(349,specialization_binding_argument a owner dr c f v r q b report bs i k)
+    \<in>positive_meaning specialization_binding_system"
+  then show "(342,specialization_report_value a (Pair_Term owner dr) c
+      (Pair_Term f (Pair_Term v r)) q (Pair_Term b report))\<in>positive_meaning specialization_report_system \<and>
+    (348,binding_record_argument f v r b owner bs i k)\<in>positive_meaning binding_record_system"
+    by (simp only: specialization_binding_valuation factor_term.inject) blast
+next
+  assume reads: "(342,specialization_report_value a (Pair_Term owner dr) c
+      (Pair_Term f (Pair_Term v r)) q (Pair_Term b report))\<in>positive_meaning specialization_report_system \<and>
+    (348,binding_record_argument f v r b owner bs i k)\<in>positive_meaning binding_record_system"
+  let ?h="\<lambda>j::nat. if j=0 then a else if j=1 then owner else if j=2 then dr else if j=3 then c
+    else if j=4 then f else if j=5 then v else if j=6 then r else if j=7 then q
+    else if j=8 then b else if j=9 then report else if j=10 then bs else if j=11 then i else k"
+  have formed: "term_formed (specialization_report_value a (Pair_Term owner dr) c
+      (Pair_Term f (Pair_Term v r)) q (Pair_Term b report))"
+    "term_formed (binding_record_argument f v r b owner bs i k)"
+    using reads positive_meaning_formed schema_call_formed_target by blast+
+  show "(349,specialization_binding_argument a owner dr c f v r q b report bs i k)
+    \<in>positive_meaning specialization_binding_system"
+    by (simp only: specialization_binding_valuation; rule exI[of _ ?h]) (use reads formed in auto)
+qed
+
+text \<open>
+  The owning use comes from the actual cited definition. The replacement
+  source and complete binder list are shared with the full specialization
+  report. All ordinary and material report fields remain in that report.
+  The node reader must still connect these admitted bindings to its stored
+  table, clause citation, and discharge occurrences.
+\<close>
+
+end

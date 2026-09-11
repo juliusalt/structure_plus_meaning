@@ -604,3 +604,21 @@ Row conversion alone still does not establish pattern admission, as the new
 outside-image control demonstrates. The next native node reader must connect
 these rows to the actual source replacement record and complete target report.
 Whole graph admission, native mathematical proofs, and the final audit remain open.
+
+The subsequent 787-theory session passes. Native entries 348 through 350 now
+connect the actual replacement record, its complete target report, and the
+actual inference node's binding table and clause citation. Complete supports
+and discharge occurrences are retained, and the node and program share the
+same environment. Child-claim comparison and whole symbolic-graph admission
+remain open.
+
+The content-workflow review found that these development choices had largely
+been made outside the generalization machinery. Native admission was not a
+necessary prerequisite for following the required workflow. A subsequent
+machinery investigation exposed a concrete inability to feed a generated call
+into a later construction. Its bounded repair preserves the original known
+facts, formation checks, and conditional soundness. The 64-case family checks
+84 intermediate frontiers, nine actual native seeds, and an independent native
+comparison; the original 53-case family also passes. This repairs the
+demonstrated composition requirement. It does not establish coverage of all
+development decisions or close O-84, O-85, or the final audit.

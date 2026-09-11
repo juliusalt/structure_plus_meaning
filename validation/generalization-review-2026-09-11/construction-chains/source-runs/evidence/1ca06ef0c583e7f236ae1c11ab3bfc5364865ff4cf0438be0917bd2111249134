@@ -1,0 +1,103 @@
+theory Factor_Inference_Specialization_Contracts
+  imports Factor_Inference_Specialization_Clauses Factor_Specialization_Binding_Contracts
+begin
+
+section \<open>The actual inference table contains the admitted replacement observations\<close>
+
+definition inference_specialization_at where
+  "inference_specialization_at E pu pr nu nr d c F v r G w t report ds NIs NKs RIs RKs \<longleftrightarrow>
+    distinct ds \<and> distinct NIs \<and> distinct NKs \<and>
+    (\<exists>bs. distinct bs \<and>
+      native_proof_node_at E nu nr (Schema_Inference (fst d,c) (fset_of_list bs))
+        (set ds) (set NIs) (set NKs) \<and>
+      specialization_binding_at E pu pr d c F v r G w t report
+        (positioned_binding_rows_term bs) RIs RKs)"
+
+theorem inference_specialization_on_sources:
+  assumes sources: "environment_value_presents E e" "environment_value_presents F f" "environment_value_presents G g"
+  shows "(350,inference_specialization_argument e (use_data_term pu) (Payload_Term pr)
+      (use_data_term nu) (Payload_Term nr) (use_data_term du) (Payload_Term dr) (Payload_Term c)
+      f (use_data_term v) (Payload_Term r) (Pair_Term g (Pair_Term (use_data_term w) (Payload_Term t)))
+      b report (discharge_rows_term ds) (data_list_term (map Payload_Term NIs))
+      (data_list_term (map Payload_Term NKs)) (data_list_term (map Payload_Term RIs))
+      (data_list_term (map Payload_Term RKs)))\<in>positive_meaning inference_specialization_system \<longleftrightarrow>
+    inference_specialization_at E pu pr nu nr (du,dr) c F v r G w t (Pair_Term b report) ds NIs NKs RIs RKs"
+proof -
+  let ?NI="data_list_term (map Payload_Term NIs)"
+  let ?NK="data_list_term (map Payload_Term NKs)"
+  let ?RI="data_list_term (map Payload_Term RIs)"
+  let ?RK="data_list_term (map Payload_Term RKs)"
+  let ?q="Pair_Term g (Pair_Term (use_data_term w) (Payload_Term t))"
+  let ?arg="inference_specialization_argument e (use_data_term pu) (Payload_Term pr)
+    (use_data_term nu) (Payload_Term nr) (use_data_term du) (Payload_Term dr) (Payload_Term c)
+    f (use_data_term v) (Payload_Term r) ?q b report (discharge_rows_term ds) ?NI ?NK ?RI ?RK"
+  have node_reading:
+    "(94,term_quotation_argument e (use_data_term nu) (Payload_Term nr)
+      (data_list_term [Pair_Term (use_data_term du) (Payload_Term c),
+        positioned_binding_rows_term bs,discharge_rows_term ds]) ?NI ?NK)
+      \<in>positive_meaning proof_node_reading_system \<longleftrightarrow>
+    distinct bs \<and> distinct ds \<and> distinct NIs \<and> distinct NKs \<and>
+      native_proof_node_at E nu nr (Schema_Inference (du,c) (fset_of_list bs)) (set ds) (set NIs) (set NKs)"
+    for bs
+    using proof_node_reading_inference[OF sources(1), where u=nu and r=nr and c="(du,c)"
+      and bs=bs and ds=ds and Is=NIs and Ks=NKs]
+    by (simp only: site_data_term_def fst_conv snd_conv)
+  show ?thesis
+  proof
+    assume admitted: "(350,?arg)\<in>positive_meaning inference_specialization_system"
+    obtain rows where reads:
+      "(94,term_quotation_argument e (use_data_term nu) (Payload_Term nr)
+        (data_list_term [Pair_Term (use_data_term du) (Payload_Term c),rows,discharge_rows_term ds]) ?NI ?NK)
+        \<in>positive_meaning proof_node_reading_system"
+      "(349,specialization_binding_argument (source_root_argument e (use_data_term pu) (Payload_Term pr))
+        (use_data_term du) (Payload_Term dr) (Payload_Term c) f (use_data_term v) (Payload_Term r)
+        ?q b report rows ?RI ?RK)\<in>positive_meaning specialization_binding_system"
+      using admitted by (simp only: inference_specialization_at_arguments inference_specialization_calls_def) blast
+    have binding: "specialization_binding_at E pu pr (du,dr) c F v r G w t (Pair_Term b report) rows RIs RKs"
+      using reads(2) by (simp only: specialization_binding_on_sources[OF sources])
+    obtain bs where row_shape: "rows=positioned_binding_rows_term bs"
+      using binding by (auto simp: specialization_binding_at_def)
+    have node_fields: "distinct bs" "distinct ds" "distinct NIs" "distinct NKs"
+      "native_proof_node_at E nu nr (Schema_Inference (du,c) (fset_of_list bs)) (set ds) (set NIs) (set NKs)"
+      using reads(1) by (auto simp only: row_shape node_reading)
+    show "inference_specialization_at E pu pr nu nr (du,dr) c F v r G w t
+      (Pair_Term b report) ds NIs NKs RIs RKs"
+      unfolding inference_specialization_at_def
+      using node_fields binding row_shape by auto
+  next
+    assume actual: "inference_specialization_at E pu pr nu nr (du,dr) c F v r G w t
+      (Pair_Term b report) ds NIs NKs RIs RKs"
+    obtain bs where fields: "distinct ds" "distinct NIs" "distinct NKs" "distinct bs"
+      "native_proof_node_at E nu nr (Schema_Inference (du,c) (fset_of_list bs)) (set ds) (set NIs) (set NKs)"
+      "specialization_binding_at E pu pr (du,dr) c F v r G w t (Pair_Term b report)
+        (positioned_binding_rows_term bs) RIs RKs"
+      using actual by (auto simp: inference_specialization_at_def)
+    have node_call: "(94,term_quotation_argument e (use_data_term nu) (Payload_Term nr)
+      (data_list_term [Pair_Term (use_data_term du) (Payload_Term c),
+        positioned_binding_rows_term bs,discharge_rows_term ds]) ?NI ?NK)
+      \<in>positive_meaning proof_node_reading_system"
+      using fields by (simp only: node_reading)
+    have binding_call:
+      "(349,specialization_binding_argument (source_root_argument e (use_data_term pu) (Payload_Term pr))
+        (use_data_term du) (Payload_Term dr) (Payload_Term c) f (use_data_term v) (Payload_Term r)
+        ?q b report (positioned_binding_rows_term bs) ?RI ?RK)\<in>positive_meaning specialization_binding_system"
+      using fields(6) by (simp only: specialization_binding_on_sources[OF sources])
+    show "(350,?arg)\<in>positive_meaning inference_specialization_system"
+      by (simp only: inference_specialization_at_arguments inference_specialization_calls_def;
+        rule exI[of _ "positioned_binding_rows_term bs"])
+        (use node_call binding_call in blast)
+  qed
+qed
+
+text \<open>
+  The admitted node contains the same complete binding relation as an actual
+  symbolic replacement record for its cited package clause. Its owning use,
+  clause socket, discharge table, and support are retained. The replacement
+  record and full target share the target's complete variable scope.
+
+  This is a local inference-specialization reading. It preserves discharge
+  occurrences but does not yet compare their child claims with the target's
+  premises or establish the formation and assertion boundary of a whole graph.
+\<close>
+
+end

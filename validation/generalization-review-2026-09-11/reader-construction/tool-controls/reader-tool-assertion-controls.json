@@ -1,0 +1,27 @@
+{
+  "status": "accepted",
+  "checks": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-O",
+        "tools/retain_reasoning_review.py",
+        "--help"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/home/julius/structure_and_semantics/tools/retain_reasoning_review.py\", line 163, in <module>\n    raise SystemExit(main())\n                     ~~~~^^\n  File \"/home/julius/structure_and_semantics/tools/retain_reasoning_review.py\", line 74, in main\n    raise ValueError(\"Evidence retention requires Python assertions to be enabled.\")\nValueError: Evidence retention requires Python assertions to be enabled.\n"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-O",
+        "tools/replay_reasoning_review.py",
+        "--help"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/home/julius/structure_and_semantics/tools/replay_reasoning_review.py\", line 90, in <module>\n    raise SystemExit(main())\n                     ~~~~^^\n  File \"/home/julius/structure_and_semantics/tools/replay_reasoning_review.py\", line 19, in main\n    raise ValueError(\"Evidence replay requires Python assertions to be enabled.\")\nValueError: Evidence replay requires Python assertions to be enabled.\n"
+    }
+  ]
+}

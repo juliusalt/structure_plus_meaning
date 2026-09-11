@@ -1,0 +1,115 @@
+theory Factor_Inference_Reader_Investigation
+  imports "Factor_Inference_Reader_Compilation" "Factor_Reader_Library_Coverage"
+begin
+
+section \<open>The construction libraries use the same actual native program\<close>
+
+definition inference_reader_investigation_library where
+  "inference_reader_investigation_library=
+    reader_construction_library @ inference_reader_construction_library"
+
+lemma inference_reader_baseline_clause:
+  assumes member: "(d,S,ps)\<in>set reader_construction_library"
+  shows "\<exists>c. ((d,c),decode_finite_schema S)\<in>system_clauses inference_specialization_system \<and>
+    (d,Pattern_Variable 0)\<in>system_interfaces inference_specialization_system"
+  using member
+  by (auto simp: reader_construction_library_def specialization_report_reasoning_library_def
+    binding_observation_reasoning_library_def binding_list_construction_library_def
+    finite_specialization_report_schema_exact finite_binding_observation_schema_exact
+    finite_binding_list_step_exact inference_specialization_system_def
+    inference_specialization_base_system_def specialization_binding_system_def
+    specialization_binding_base_system_def binding_record_system_def binding_record_base_system_def
+    specialization_report_system_def binding_observation_program_def)
+
+lemma inference_reader_investigation_clause:
+  assumes member: "(d,S,ps)\<in>set inference_reader_investigation_library"
+  shows "\<exists>c. ((d,c),decode_finite_schema S)\<in>system_clauses inference_specialization_system \<and>
+    (d,Pattern_Variable 0)\<in>system_interfaces inference_specialization_system"
+  using member inference_reader_baseline_clause[of d S ps] inference_reader_compiled_clause[of d S ps]
+  by (auto simp: inference_reader_investigation_library_def)
+
+theorem inference_reader_investigation_member_sound:
+  assumes member: "(d,S,ps)\<in>set inference_reader_investigation_library"
+    and rule_instance: "schema_rule_instance (decode_finite_schema S) (positive_meaning inference_specialization_system) t"
+  shows "(d,t)\<in>positive_meaning inference_specialization_system"
+proof -
+  obtain c where clause: "((d,c),decode_finite_schema S)\<in>system_clauses inference_specialization_system"
+    and interface: "(d,Pattern_Variable 0)\<in>system_interfaces inference_specialization_system"
+    using inference_reader_investigation_clause[OF member] by blast
+  show ?thesis by (rule positive_variable_clause_rule[OF inference_specialization_formed clause interface rule_instance])
+qed
+
+theorem inference_reader_selected_closure_sound:
+  assumes selected: "set L\<subseteq>set inference_reader_investigation_library"
+    and known: "image decode_finite_call_term (fset K)\<subseteq>positive_meaning inference_specialization_system"
+  shows "image decode_finite_call_term (finite_inference_result
+      (finite_generated_rules_on_set L (finite_construction_frontier n L (fset_of_list C))) K)
+    \<subseteq>positive_meaning inference_specialization_system"
+proof (rule finite_chained_closure_sound[OF _ known])
+  fix d S ps t
+  assume member: "(d,S,ps)\<in>set L"
+    and rule_instance: "schema_rule_instance (decode_finite_schema S) (positive_meaning inference_specialization_system) t"
+  have actual: "(d,S,ps)\<in>set inference_reader_investigation_library"
+    using selected member by blast
+  show "(d,t)\<in>positive_meaning inference_specialization_system"
+    by (rule inference_reader_investigation_member_sound[OF actual rule_instance])
+qed
+
+lemma inference_reader_observation_meaning:
+  assumes entry: "d\<in>{343,344,345,346,347}"
+  shows "(d,t)\<in>positive_meaning inference_specialization_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning binding_observation_program"
+proof -
+  have record_base: "d\<in>system_definitions binding_record_base_system"
+    using entry by (simp only: binding_record_base_definitions; blast)
+  have record_entry: "d\<in>system_definitions binding_record_system"
+    using record_base by (simp only: binding_record_definitions; blast)
+  have binding_base: "d\<in>system_definitions specialization_binding_base_system"
+    using record_entry by (simp only: specialization_binding_base_definitions; blast)
+  have binding_entry: "d\<in>system_definitions specialization_binding_system"
+    using binding_base by (simp only: specialization_binding_definitions; blast)
+  have inference_base: "d\<in>system_definitions inference_specialization_base_system"
+    using binding_entry by (simp only: inference_specialization_base_definitions; blast)
+  show ?thesis
+    by (simp only: inference_specialization_old_meaning[OF inference_base]
+      inference_specialization_base_binding[OF binding_entry]
+      specialization_binding_old_meaning[OF binding_base]
+      specialization_binding_base_record[OF record_entry]
+      binding_record_old_meaning[OF record_base]
+      binding_record_base_observation[OF entry])
+qed
+
+theorem inference_reader_binding_calls_sound:
+  "image decode_finite_call_term (set (binding_observation_calls sources))
+    \<subseteq>positive_meaning inference_specialization_system"
+proof
+  fix q
+  assume member: "q\<in>image decode_finite_call_term (set (binding_observation_calls sources))"
+  obtain d t where shape: "q=(d,t)" by (cases q)
+  have holds: "(d,t)\<in>positive_meaning binding_observation_program"
+    using binding_observation_calls_sound[of sources] member by (simp only: shape; blast)
+  have entry: "d\<in>{343,344,345,346,347}"
+    using positive_meaning_formed[OF holds] by (simp only: binding_observation_call; blast)
+  show "q\<in>positive_meaning inference_specialization_system"
+    using holds by (simp only: shape inference_reader_observation_meaning[OF entry])
+qed
+
+definition inference_reader_investigation where
+  "inference_reader_investigation n C K goals=
+    natural_chained_investigation n inference_reader_investigation_library C K goals"
+
+text \<open>
+  Every selected constructor is an actual clause in the same formed program.
+  The selection contract permits omissions, repetitions, and reorderings.
+  Its closure theorem applies at every finite construction depth and keeps
+  the known source calls as a separate semantic hypothesis. The native
+  binding computations establish their own calls in that program.
+
+  The driver preserves complete node, source, binding, report, and support
+  terms. It does not establish the unproved environment and source readings
+  supplied as possible premises, or the remaining whole-argument conditions.
+\<close>
+
+export_code inference_reader_investigation_library inference_reader_investigation checking SML
+
+end

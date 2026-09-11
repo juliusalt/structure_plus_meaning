@@ -1,0 +1,90 @@
+{
+  "proofs": {
+    "compilation15": {
+      "path": "/tmp/native-investigation-report-diagnostic-compilation15"
+    },
+    "readerconstruction1": {
+      "path": "/tmp/native-investigation-report-diagnostic-readerconstruction1"
+    },
+    "readerconstruction2": {
+      "path": "/tmp/native-investigation-report-diagnostic-readerconstruction2"
+    },
+    "readerconstruction3": {
+      "path": "/tmp/native-investigation-report-diagnostic-readerconstruction3"
+    }
+  },
+  "runs": {
+    "catalog-polymorphic-failure": {
+      "path": "/tmp/generalization-quality-review/reader-construction-catalog-before",
+      "proof": "compilation15",
+      "expected_failure": "Argument: N.binding_list_construction_library",
+      "library_exports": [
+        "inference_reader_construction_library",
+        "specialization_report_reasoning_library",
+        "binding_observation_reasoning_library",
+        "binding_list_construction_library"
+      ]
+    },
+    "catalog-three": {
+      "path": "/tmp/generalization-quality-review/reader-construction-catalog-three",
+      "proof": "compilation15"
+    },
+    "before": {
+      "path": "/tmp/generalization-quality-review/reader-construction-before",
+      "proof": "compilation15"
+    },
+    "catalog-after": {
+      "path": "/tmp/generalization-quality-review/reader-construction-catalog-after",
+      "proof": "readerconstruction3"
+    },
+    "after": {
+      "path": "/tmp/generalization-quality-review/reader-construction-after",
+      "proof": "readerconstruction3"
+    },
+    "original-regression": {
+      "path": "/tmp/generalization-quality-review/reader-construction-original-regression",
+      "proof": "readerconstruction3"
+    },
+    "compiler-regression": {
+      "path": "/tmp/generalization-quality-review/reader-construction-compiler-regression",
+      "proof": "readerconstruction3"
+    },
+    "coverage-regression": {
+      "path": "/tmp/generalization-quality-review/reader-construction-coverage-regression",
+      "proof": "readerconstruction3"
+    },
+    "before-replay-log-path-assessment": {
+      "path": "/tmp/generalization-quality-review/reader-construction-before-replay/run",
+      "proof": "compilation15"
+    },
+    "before-replayed": {
+      "path": "/tmp/generalization-quality-review/reader-construction-before-replay2/run",
+      "proof": "compilation15"
+    },
+    "catalog-failure-replayed": {
+      "path": "/tmp/generalization-quality-review/reader-construction-catalog-failure-replay/run",
+      "proof": "compilation15",
+      "expected_failure": "Argument: N.binding_list_construction_library",
+      "library_exports": [
+        "inference_reader_construction_library",
+        "specialization_report_reasoning_library",
+        "binding_observation_reasoning_library",
+        "binding_list_construction_library"
+      ]
+    }
+  },
+  "attachments": {
+    "proof-command-timing-diagnostic": "/tmp/readerconstruction1-command-timings-decoded.txt",
+    "full-session-build": "/home/julius/structure_and_semantics/validation/build.json",
+    "full-session-check": "/home/julius/structure_and_semantics/validation/check.json",
+    "full-session-log": "/home/julius/structure_and_semantics/validation/build.log",
+    "full-session-check-errors": "/home/julius/structure_and_semantics/validation/check-errors.log",
+    "replay-incident": "/tmp/reader-construction-replay-incident.json",
+    "before-replay": "/tmp/generalization-quality-review/reader-construction-before-replay2/replay.json",
+    "catalog-failure-replay": "/tmp/generalization-quality-review/reader-construction-catalog-failure-replay/replay.json",
+    "replayer": "/home/julius/structure_and_semantics/tools/replay_reasoning_review.py"
+  },
+  "documents": {
+    "README.md": "/tmp/reader-construction-archive-README.md"
+  }
+}

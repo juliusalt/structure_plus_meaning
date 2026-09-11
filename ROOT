@@ -796,4 +796,5 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Singleton_Selection
     Factor_Library_Compilation
     Factor_Inference_Reader_Compilation
+    Factor_Inference_Reader_Investigation
     Factor_Recursive_Construction_Investigation

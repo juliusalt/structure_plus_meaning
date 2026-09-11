@@ -457,3 +457,54 @@ The complete 794-theory session and 27 Python tests pass. The compiled
 constructors still need to be applied to the actual reader-construction
 requirement. This batch advances the prescribed workflow without claiming
 complete native argument admission or coverage of every development decision.
+
+## Applying the compiled reader clauses
+
+The preceding report's independently stated requirement was to construct the
+actual reader heads conditionally from their component calls. The new cases
+read their complete schemas from the exported native library. A host fixture
+expander matches each selected head and preserves its complete valuation and
+premises. This generates test inputs; it is not reported as native reasoning
+or as evidence for the source readings.
+
+The existing investigation constructs all five required clause instances from
+the eight original component calls. Two binding observations are established
+by the native computation. The remaining six calls stay explicit conditions.
+Three extra construction rounds expose the complete top reader; fewer rounds
+do not supply its application. The complete 51-case family rejects every
+tested public-field change and broken join. Assuming all components closes
+the goals only in the explicitly marked logical-assumption control.
+
+The composed library has a shared semantic contract in the actual
+inference-specialization program. All six library members are actual clauses
+there, including the earlier recursive list constructor. The closure theorem
+covers every finite depth and every selection from that library. The actual
+binding computations are also proved sound in that program. The final family
+checks all returned schemas, bindings, premises, residuals, demands, reasons,
+and 195 intermediate frontiers. Its 43 full-library cases call the native
+wrapper itself. The original 53-case, 50-case compiler, and 65-case coverage
+families also pass against the new export.
+
+The first two proof attempts timed out. The retained command timings locate
+the broad search in the library-membership lemma. Explicit component
+inclusion through the existing program unions completes the proof. A catalog
+attempt also exposed the already polymorphic list-library export; exporting
+the existing typed aggregate supplies its complete fields. These failures
+remain failures in the evidence.
+
+Replay initially compared entire log digests, including the compiler's
+absolute module paths. The original 51 machine reports reproduced and passed
+their independent checks, but that final log assertion failed after relocation.
+The reusable replayer now compares every complete machine report and keeps
+both raw logs. The revised baseline replay passes.
+
+This meets the stated conditional construction requirement. It does not
+establish actual source readings for the fixture's environment markers, an
+inhabited complete reader instance, native argument admission, or coverage of
+all development decisions. Those remain distinct adequacy questions.
+
+The complete 795-theory session passes with unchanged source and validation
+tool digests. The existing 27 Python tooling tests also pass. The
+[retained archive](validation/generalization-review-2026-09-11/reader-construction/README.md)
+records the exact proof contexts, complete executions, failures, and replay
+inputs; its reusable retention tool verifies every original input digest.

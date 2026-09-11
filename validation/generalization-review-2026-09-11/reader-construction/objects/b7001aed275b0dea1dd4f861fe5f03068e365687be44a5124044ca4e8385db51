@@ -1,0 +1,10 @@
+{
+  "status": "failed replay assessment; underlying 51 complete reports accepted",
+  "exit_code": 1,
+  "failed_assertion": "receipt[results_sha256] == before[results_sha256]",
+  "cause": "Relocated compiler warnings include the new absolute module path. Complete machine report lines are unchanged.",
+  "original_run": "/tmp/generalization-quality-review/reader-construction-before",
+  "replayed_run": "/tmp/generalization-quality-review/reader-construction-before-replay/run",
+  "old_replayer_sha256": "93140a99090d040d1aa09daf307591390479c42f535c00080533542582437169",
+  "note": "This is a reconstructed incident summary. Both exact raw logs and the original checker inputs are retained."
+}

@@ -285,3 +285,35 @@ Using the compiled clauses to construct the new reader heads from their
 actual component calls is the next content requirement. Whole argument
 admission, mathematical-proof admission, and coverage of every development
 decision remain open.
+
+## Conditional construction of the complete reader chain
+
+The compiled clauses now satisfy the preceding coverage report's construction
+requirement. Complete heads, private bindings, and every premise are taken
+from exported native schemas. A reusable host fixture expander produces the
+test's terminal inputs; only those inputs and its requested goals are given
+to the investigation. The fixture expander supplies no inference rule and
+establishes no source reading.
+
+The 51-case family checks depth, constructor selection, each withheld original
+condition, all 19 public fields of the top reader, four shared-field joins,
+repeated inputs, distinct goal occurrences, and two independent contexts.
+It checks 195 intermediate frontiers and 50 complete selected libraries and
+coverage reports. The final family calls the native wrapper in 43 cases;
+seven cases remove constructors, and one compares the established native
+binding computations. Every report agrees with independent reconstruction.
+
+All six constructors belong to the actual inference-specialization program.
+The selected-library closure theorem applies at every finite depth and permits
+omissions, repetitions, and reorderings. Known native binding observations
+retain their established meanings in that program.
+
+The generated chain still demands six unproved component calls: the complete
+target report, clause specialization, two record observations, reference
+bindings, and node reading. The two record calls retain different sockets.
+The fixture's environment markers are structural controls, not inhabited
+native source examples. Establishing actual source evidence remains a
+separate requirement. The [archive](validation/generalization-review-2026-09-11/reader-construction/README.md)
+retains the complete cases, original tools and code, failed proof attempts,
+and replay evidence. Whole argument admission and the broader development
+workflow remain open.

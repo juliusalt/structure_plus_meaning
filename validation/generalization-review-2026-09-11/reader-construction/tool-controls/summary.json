@@ -1,0 +1,9 @@
+{
+  "status": "accepted",
+  "scope": "Normal catalog retention with the guarded tool, plus explicit rejection of disabled Python assertions in both tools.",
+  "retention_index_sha256": "c1d9639d398df6ca874461a0717d639764a48fd8f4d2c3b6f6a81703d1c7570c",
+  "retention_manifest_sha256": "890e7e7a6cc0f3d13736288266281a7c15a7236669ee4771cd8b0c837a4f512f",
+  "retained_or_referenced_files": 529,
+  "retainer_sha256": "856d904d66c287c608f8e942ce847ee883f367771bd38b5a06de8c6fbb1ca136",
+  "note": "This is a validation summary, not a raw process log."
+}

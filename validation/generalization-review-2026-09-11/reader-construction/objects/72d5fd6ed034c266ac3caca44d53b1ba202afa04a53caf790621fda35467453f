@@ -1,0 +1,6 @@
+Running Native_Investigation_Report_Diagnostic_readerconstruction2 ...
+*** Timeout
+Native_Investigation_Report_Diagnostic_readerconstruction2 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_readerconstruction2")
+
+Unfinished session(s): Native_Investigation_Report_Diagnostic_readerconstruction2
+0:04:04 elapsed time

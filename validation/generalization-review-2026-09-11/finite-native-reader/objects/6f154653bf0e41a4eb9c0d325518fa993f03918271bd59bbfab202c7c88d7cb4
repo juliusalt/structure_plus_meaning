@@ -1,0 +1,810 @@
+structure Finite_Literal_Inference_Premises : sig
+  type nat
+  val integer_of_nat : nat -> IntInf.int
+  type ('a, 'b, 'c) finite_structured_object_ext
+  type factor_term
+  datatype finite_exact_target =
+    Finite_Whole of ((nat list), (nat list), unit) finite_structured_object_ext
+    | Finite_Anchor of
+        ((nat list), (nat list), unit) finite_structured_object_ext * nat list
+  datatype finite_factor_term = Finite_Target of finite_exact_target |
+    Finite_Payload of nat list |
+    Finite_Pair of finite_factor_term * finite_factor_term
+  val nat_of_integer : IntInf.int -> nat
+  val finite_literal_inference_value : nat list -> finite_factor_term
+  val finite_literal_inference_known :
+    nat list -> (nat * finite_factor_term) list
+end = struct
+
+datatype nat = Nat of IntInf.int;
+
+fun integer_of_nat (Nat x) = x;
+
+fun equal_nata m n = (((integer_of_nat m) : IntInf.int) = (integer_of_nat n));
+
+type 'a equal = {equal : 'a -> 'a -> bool};
+val equal = #equal : 'a equal -> 'a -> 'a -> bool;
+
+val equal_nat = {equal = equal_nata} : nat equal;
+
+fun less_eq_nat m n = IntInf.<= (integer_of_nat m, integer_of_nat n);
+
+type 'a ord = {less_eq : 'a -> 'a -> bool, less : 'a -> 'a -> bool};
+val less_eq = #less_eq : 'a ord -> 'a -> 'a -> bool;
+val less = #less : 'a ord -> 'a -> 'a -> bool;
+
+fun less_nat m n = IntInf.< (integer_of_nat m, integer_of_nat n);
+
+val ord_nat = {less_eq = less_eq_nat, less = less_nat} : nat ord;
+
+type 'a preorder = {ord_preorder : 'a ord};
+val ord_preorder = #ord_preorder : 'a preorder -> 'a ord;
+
+type 'a order = {preorder_order : 'a preorder};
+val preorder_order = #preorder_order : 'a order -> 'a preorder;
+
+val preorder_nat = {ord_preorder = ord_nat} : nat preorder;
+
+val order_nat = {preorder_order = preorder_nat} : nat order;
+
+type 'a linorder = {order_linorder : 'a order};
+val order_linorder = #order_linorder : 'a linorder -> 'a order;
+
+val linorder_nat = {order_linorder = order_nat} : nat linorder;
+
+fun equal_boola false p = not p
+  | equal_boola true p = p
+  | equal_boola p false = not p
+  | equal_boola p true = p;
+
+val equal_bool = {equal = equal_boola} : bool equal;
+
+fun list_all p [] = true
+  | list_all p (x :: xs) = p x andalso list_all p xs;
+
+datatype 'a set = Set of 'a list | Coset of 'a list;
+
+fun eq A_ a b = equal A_ a b;
+
+fun membera A_ [] y = false
+  | membera A_ (x :: xs) y = eq A_ x y orelse membera A_ xs y;
+
+fun member A_ x (Set xs) = membera A_ xs x
+  | member A_ x (Coset xs) = not (membera A_ xs x);
+
+fun less_eq_set A_ (Set xs) b = list_all (fn x => member A_ x b) xs
+  | less_eq_set A_ a (Coset ys) = list_all (fn y => not (member A_ y a)) ys
+  | less_eq_set A_ (Coset []) (Set []) = false;
+
+datatype 'a fset = Abs_fset of 'a set;
+
+fun fset (Abs_fset x) = x;
+
+fun less_eq_fset A_ xa xc = less_eq_set A_ (fset xa) (fset xc);
+
+fun equal_fseta A_ a b = less_eq_fset A_ a b andalso less_eq_fset A_ b a;
+
+fun equal_fset A_ = {equal = equal_fseta A_} : 'a fset equal;
+
+fun equal_lista A_ [] (x21 :: x22) = false
+  | equal_lista A_ (x21 :: x22) [] = false
+  | equal_lista A_ (x21 :: x22) (y21 :: y22) =
+    eq A_ x21 y21 andalso equal_lista A_ x22 y22
+  | equal_lista A_ [] [] = true;
+
+fun equal_list A_ = {equal = equal_lista A_} : ('a list) equal;
+
+fun less_eq_list (A1_, A2_) (x :: xs) [] = false
+  | less_eq_list (A1_, A2_) [] xs = true
+  | less_eq_list (A1_, A2_) (x :: xs) (y :: ys) =
+    less ((ord_preorder o preorder_order) A2_) x y orelse
+      eq A1_ x y andalso less_eq_list (A1_, A2_) xs ys;
+
+fun less_list (A1_, A2_) xs [] = false
+  | less_list (A1_, A2_) [] (x :: xs) = true
+  | less_list (A1_, A2_) (x :: xs) (y :: ys) =
+    less ((ord_preorder o preorder_order) A2_) x y orelse
+      eq A1_ x y andalso less_list (A1_, A2_) xs ys;
+
+fun ord_list (A1_, A2_) =
+  {less_eq = less_eq_list (A1_, A2_), less = less_list (A1_, A2_)} :
+  ('a list) ord;
+
+fun preorder_list (A1_, A2_) = {ord_preorder = ord_list (A1_, A2_)} :
+  ('a list) preorder;
+
+fun order_list (A1_, A2_) = {preorder_order = preorder_list (A1_, A2_)} :
+  ('a list) order;
+
+fun linorder_list (A1_, A2_) =
+  {order_linorder = order_list (A1_, order_linorder A2_)} : ('a list) linorder;
+
+fun equal_optiona A_ NONE (SOME x2) = false
+  | equal_optiona A_ (SOME x2) NONE = false
+  | equal_optiona A_ (SOME x2) (SOME y2) = eq A_ x2 y2
+  | equal_optiona A_ NONE NONE = true;
+
+fun equal_option A_ = {equal = equal_optiona A_} : ('a option) equal;
+
+fun less_eq_option A_ NONE x = true
+  | less_eq_option A_ (SOME x) NONE = false
+  | less_eq_option A_ (SOME x) (SOME y) = less_eq (ord_preorder A_) x y;
+
+fun less_option A_ x NONE = false
+  | less_option A_ NONE (SOME x) = true
+  | less_option A_ (SOME x) (SOME y) = less (ord_preorder A_) x y;
+
+fun ord_option A_ = {less_eq = less_eq_option A_, less = less_option A_} :
+  ('a option) ord;
+
+fun preorder_option A_ = {ord_preorder = ord_option A_} : ('a option) preorder;
+
+fun order_option A_ = {preorder_order = preorder_option (preorder_order A_)} :
+  ('a option) order;
+
+fun linorder_option A_ = {order_linorder = order_option (order_linorder A_)} :
+  ('a option) linorder;
+
+fun equal_proda A_ B_ (x1, x2) (y1, y2) = eq A_ x1 y1 andalso eq B_ x2 y2;
+
+fun equal_prod A_ B_ = {equal = equal_proda A_ B_} : ('a * 'b) equal;
+
+fun less_eq_prod A_ B_ (x1, y1) (x2, y2) =
+  less A_ x1 x2 orelse less_eq A_ x1 x2 andalso less_eq B_ y1 y2;
+
+fun less_prod A_ B_ (x1, y1) (x2, y2) =
+  less A_ x1 x2 orelse less_eq A_ x1 x2 andalso less B_ y1 y2;
+
+fun ord_prod A_ B_ = {less_eq = less_eq_prod A_ B_, less = less_prod A_ B_} :
+  ('a * 'b) ord;
+
+fun preorder_prod A_ B_ =
+  {ord_preorder = ord_prod (ord_preorder A_) (ord_preorder B_)} :
+  ('a * 'b) preorder;
+
+fun order_prod A_ B_ =
+  {preorder_order = preorder_prod (preorder_order A_) (preorder_order B_)} :
+  ('a * 'b) order;
+
+fun linorder_prod A_ B_ =
+  {order_linorder = order_prod (order_linorder A_) (order_linorder B_)} :
+  ('a * 'b) linorder;
+
+fun equal_unita u v = true;
+
+val equal_unit = {equal = equal_unita} : unit equal;
+
+val ord_integer =
+  {less_eq = (fn a => fn b => IntInf.<= (a, b)),
+    less = (fn a => fn b => IntInf.< (a, b))}
+  : IntInf.int ord;
+
+datatype ('a, 'b) finite_rra_structure_ext =
+  Finite_rra_structure_ext of 'a fset * ('a * ('a * 'a)) fset * 'b;
+
+fun equal_finite_rra_structure_ext A_ B_
+  (Finite_rra_structure_ext (finite_carriera, finite_incidencea, morea))
+  (Finite_rra_structure_ext (finite_carrier, finite_incidence, more)) =
+  eq (equal_fset A_) finite_carriera finite_carrier andalso
+    (equal_fseta (equal_prod A_ (equal_prod A_ A_)) finite_incidencea
+       finite_incidence andalso
+      eq B_ morea more);
+
+datatype 'a multiset = Mset of 'a list;
+
+datatype ('a, 'b, 'c) finite_opaque_basis_ext =
+  Finite_opaque_basis_ext of ('a * 'b) multiset * ('a * 'b) fset * 'c;
+
+fun extract p [] = NONE
+  | extract p (x :: xs) =
+    (if p x then SOME ([], (x, xs))
+      else (case extract p xs of NONE => NONE
+             | SOME (ys, (y, zs)) => SOME (x :: ys, (y, zs))));
+
+fun null [] = true
+  | null (x :: xs) = false;
+
+fun subset_eq_mset_impl A_ [] ys = SOME (not (null ys))
+  | subset_eq_mset_impl A_ (x :: xs) ys =
+    (case extract (eq A_ x) ys of NONE => NONE
+      | SOME (ys1, (_, ys2)) => subset_eq_mset_impl A_ xs (ys1 @ ys2));
+
+fun equal_multiset A_ (Mset xs) (Mset ys) =
+  equal_optiona equal_bool (subset_eq_mset_impl A_ xs ys) (SOME false);
+
+fun equal_finite_opaque_basis_ext A_ B_ C_
+  (Finite_opaque_basis_ext (finite_baga, finite_bindingsa, morea))
+  (Finite_opaque_basis_ext (finite_bag, finite_bindings, more)) =
+  equal_multiset (equal_prod A_ B_) finite_baga finite_bag andalso
+    (equal_fseta (equal_prod A_ B_) finite_bindingsa finite_bindings andalso
+      eq C_ morea more);
+
+datatype ('a, 'b, 'c) finite_structured_object_ext =
+  Finite_structured_object_ext of
+    ('a, unit) finite_rra_structure_ext *
+      ('a, 'b, unit) finite_opaque_basis_ext * 'c;
+
+fun equal_finite_structured_object_exta A_ B_ C_
+  (Finite_structured_object_ext (finite_structurea, finite_dataa, morea))
+  (Finite_structured_object_ext (finite_structure, finite_data, more)) =
+  equal_finite_rra_structure_ext A_ equal_unit finite_structurea
+    finite_structure andalso
+    (equal_finite_opaque_basis_ext A_ B_ equal_unit finite_dataa
+       finite_data andalso
+      eq C_ morea more);
+
+fun equal_finite_structured_object_ext A_ B_ C_ =
+  {equal = equal_finite_structured_object_exta A_ B_ C_} :
+  ('a, 'b, 'c) finite_structured_object_ext equal;
+
+datatype num = One | Bit0 of num | Bit1 of num;
+
+datatype ('a, 'b) rra_structure_ext =
+  Rra_structure_ext of 'a set * ('a * ('a * 'a)) set * 'b;
+
+datatype ('a, 'b, 'c) opaque_basis_ext =
+  Opaque_basis_ext of ('a * 'b -> nat) * ('a * 'b) set * 'c;
+
+datatype ('a, 'b, 'c) structured_object_ext =
+  Structured_object_ext of
+    ('a, unit) rra_structure_ext * ('a, 'b, unit) opaque_basis_ext * 'c;
+
+datatype exact_target =
+  Whole_Artifact of ((nat list), (nat list), unit) structured_object_ext |
+  Occurrence_Anchor of
+    (((nat list), (nat list), unit) structured_object_ext * nat list);
+
+datatype factor_term = Target_Term of exact_target | Payload_Term of nat list |
+  Pair_Term of factor_term * factor_term;
+
+datatype finite_exact_target =
+  Finite_Whole of ((nat list), (nat list), unit) finite_structured_object_ext |
+  Finite_Anchor of
+    ((nat list), (nat list), unit) finite_structured_object_ext * nat list;
+
+datatype finite_factor_term = Finite_Target of finite_exact_target |
+  Finite_Payload of nat list |
+  Finite_Pair of finite_factor_term * finite_factor_term;
+
+datatype ('a, 'b) finite_artifact_environment_ext =
+  Finite_artifact_environment_ext of
+    ('a * ((nat list), (nat list), unit) finite_structured_object_ext) fset *
+      (('a * nat list) * 'a) fset * 'b;
+
+fun plus_nat m n = Nat (IntInf.+ (integer_of_nat m, integer_of_nat n));
+
+val one_nat : nat = Nat (1 : IntInf.int);
+
+fun suc n = plus_nat n one_nat;
+
+fun max A_ a b = (if less_eq A_ a b then b else a);
+
+fun minus_nat m n =
+  Nat (max ord_integer (0 : IntInf.int)
+        (IntInf.- (integer_of_nat m, integer_of_nat n)));
+
+val zero_nat : nat = Nat (0 : IntInf.int);
+
+fun nth (x :: xs) n =
+  (if equal_nata n zero_nat then x else nth xs (minus_nat n one_nat));
+
+fun map f [] = []
+  | map f (x21 :: x22) = f x21 :: map f x22;
+
+fun image f (Set xs) = Set (map f xs);
+
+fun removeAll A_ x [] = []
+  | removeAll A_ x (y :: xs) =
+    (if eq A_ x y then removeAll A_ x xs else y :: removeAll A_ x xs);
+
+fun inserta A_ x xs = (if membera A_ xs x then xs else x :: xs);
+
+fun insert A_ x (Set xs) = Set (inserta A_ x xs)
+  | insert A_ x (Coset xs) = Coset (removeAll A_ x xs);
+
+fun fimage xb xc = Abs_fset (image xb (fset xc));
+
+fun finsert A_ xb xc = Abs_fset (insert A_ xb (fset xc));
+
+fun remdups A_ [] = []
+  | remdups A_ (x :: xs) =
+    (if membera A_ xs x then remdups A_ xs else x :: remdups A_ xs);
+
+fun fset_of_list xa = Abs_fset (Set xa);
+
+fun the (SOME x2) = x2;
+
+fun apsnd f (x, y) = (x, f y);
+
+fun length_tailrec [] n = n
+  | length_tailrec (x :: xs) n = length_tailrec xs (suc n);
+
+fun fst (x1, x2) = x1;
+
+fun snd (x1, x2) = x2;
+
+fun divmod_integer k l =
+  (if ((k : IntInf.int) = (0 : IntInf.int))
+    then ((0 : IntInf.int), (0 : IntInf.int))
+    else (if IntInf.< ((0 : IntInf.int), l)
+           then (if IntInf.< ((0 : IntInf.int), k)
+                  then IntInf.divMod (IntInf.abs k, IntInf.abs l)
+                  else let
+                         val (r, s) =
+                           IntInf.divMod (IntInf.abs k, IntInf.abs l);
+                       in
+                         (if ((s : IntInf.int) = (0 : IntInf.int))
+                           then (IntInf.~ r, (0 : IntInf.int))
+                           else (IntInf.- (IntInf.~ r, (1 : IntInf.int)),
+                                  IntInf.- (l, s)))
+                       end)
+           else (if ((l : IntInf.int) = (0 : IntInf.int))
+                  then ((0 : IntInf.int), k)
+                  else apsnd IntInf.~
+                         (if IntInf.< (k, (0 : IntInf.int))
+                           then IntInf.divMod (IntInf.abs k, IntInf.abs l)
+                           else let
+                                  val (r, s) =
+                                    IntInf.divMod (IntInf.abs k, IntInf.abs l);
+                                in
+                                  (if ((s : IntInf.int) = (0 : IntInf.int))
+                                    then (IntInf.~ r, (0 : IntInf.int))
+                                    else (IntInf.- (IntInf.~
+              r, (1 : IntInf.int)),
+   IntInf.- (IntInf.~ l, s)))
+                                end))));
+
+fun divide_integer k l = fst (divmod_integer k l);
+
+fun divide_nat m n = Nat (divide_integer (integer_of_nat m) (integer_of_nat n));
+
+fun size_list xs = length_tailrec xs zero_nat;
+
+fun part B_ f pivot [] = ([], ([], []))
+  | part B_ f pivot (x :: xs) =
+    let
+      val (lts, (eqs, gts)) = part B_ f pivot xs;
+      val xa = f x;
+    in
+      (if less ((ord_preorder o preorder_order o order_linorder) B_) xa pivot
+        then (x :: lts, (eqs, gts))
+        else (if less ((ord_preorder o preorder_order o order_linorder) B_)
+                   pivot xa
+               then (lts, (eqs, x :: gts)) else (lts, (x :: eqs, gts))))
+    end;
+
+fun nat_of_integer k = Nat (max ord_integer (0 : IntInf.int) k);
+
+fun sort_key B_ f xs =
+  (case xs of [] => [] | [_] => xs
+    | [x, y] =>
+      (if less_eq ((ord_preorder o preorder_order o order_linorder) B_) (f x)
+            (f y)
+        then xs else [y, x])
+    | _ :: _ :: _ :: _ =>
+      let
+        val (lts, (eqs, gts)) =
+          part B_ f
+            (f (nth xs
+                 (divide_nat (size_list xs) (nat_of_integer (2 : IntInf.int)))))
+            xs;
+      in
+        sort_key B_ f lts @ eqs @ sort_key B_ f gts
+      end);
+
+fun sorted_list_of_set (A1_, A2_) (Set xs) =
+  sort_key A2_ (fn x => x) (remdups A1_ xs);
+
+fun sorted_list_of_fset (A1_, A2_) xa = sorted_list_of_set (A1_, A2_) (fset xa);
+
+fun map_option f NONE = NONE
+  | map_option f (SOME x2) = SOME (f x2);
+
+fun address_pair_data z =
+  Pair_Term (Payload_Term (fst z), Payload_Term (snd z));
+
+fun incidence_data z =
+  Pair_Term (Payload_Term (fst z), address_pair_data (snd z));
+
+fun data_list_term [] = Payload_Term []
+  | data_list_term (t :: ts) = Pair_Term (t, data_list_term ts);
+
+fun natural_data_term n =
+  (if equal_nata n zero_nat then Payload_Term []
+    else Pair_Term (Payload_Term [], natural_data_term (minus_nat n one_nat)));
+
+fun use_data_term NONE = Payload_Term []
+  | use_data_term (SOME a) =
+    Pair_Term (data_list_term (map natural_data_term a), Payload_Term []);
+
+fun binding_data z =
+  Pair_Term
+    (Pair_Term (use_data_term (fst (fst z)), Payload_Term (snd (fst z))),
+      use_data_term (snd z));
+
+fun site_data_term u r = Pair_Term (use_data_term u, Payload_Term r);
+
+fun artifact_data_term a e b f =
+  Pair_Term
+    (data_list_term (map Payload_Term a),
+      Pair_Term
+        (data_list_term (map incidence_data e),
+          Pair_Term
+            (data_list_term (map address_pair_data b),
+              data_list_term (map address_pair_data f))));
+
+fun sorted_list_of_multiset A_ (Mset xs) = sort_key A_ (fn x => x) xs;
+
+fun ground_schema_report t =
+  Pair_Term
+    (Payload_Term [],
+      Pair_Term
+        (Pair_Term (t, Pair_Term (Payload_Term [], Payload_Term [])),
+          Pair_Term (t, Pair_Term (Payload_Term [], Payload_Term []))));
+
+fun finite_enumerated_artifact a e b f =
+  Finite_structured_object_ext
+    (Finite_rra_structure_ext (fset_of_list a, fset_of_list e, ()),
+      Finite_opaque_basis_ext (Mset b, fset_of_list f, ()), ());
+
+val finite_literal_node :
+  ((nat list), (nat list), unit) finite_structured_object_ext
+  = finite_enumerated_artifact
+      ([] ::
+        map (fn n => [n])
+          [zero_nat, one_nat, nat_of_integer (2 : IntInf.int),
+            nat_of_integer (3 : IntInf.int), nat_of_integer (4 : IntInf.int),
+            nat_of_integer (5 : IntInf.int), nat_of_integer (6 : IntInf.int),
+            nat_of_integer (7 : IntInf.int)])
+      [([], ([nat_of_integer (3 : IntInf.int)], [zero_nat])),
+        ([], ([nat_of_integer (4 : IntInf.int)], [one_nat])),
+        ([], ([nat_of_integer (5 : IntInf.int)],
+               [nat_of_integer (2 : IntInf.int)])),
+        ([nat_of_integer (3 : IntInf.int)],
+          ([nat_of_integer (3 : IntInf.int)],
+            [nat_of_integer (4 : IntInf.int)])),
+        ([nat_of_integer (4 : IntInf.int)],
+          ([nat_of_integer (4 : IntInf.int)],
+            [nat_of_integer (5 : IntInf.int)])),
+        ([zero_nat], ([zero_nat], [nat_of_integer (6 : IntInf.int)])),
+        ([zero_nat],
+          ([nat_of_integer (6 : IntInf.int)],
+            [nat_of_integer (7 : IntInf.int)]))]
+      [] [([nat_of_integer (7 : IntInf.int)],
+            [nat_of_integer (7 : IntInf.int)])];
+
+fun finite_bag (Finite_opaque_basis_ext (finite_bag, finite_bindings, more)) =
+  finite_bag;
+
+fun artifact_rows_term q = let
+                             val (a, (e, (b, c))) = q;
+                           in
+                             artifact_data_term a e b c
+                           end;
+
+fun finite_enumerated_environment a b =
+  Finite_artifact_environment_ext (fset_of_list a, fset_of_list b, ());
+
+fun finite_structure
+  (Finite_structured_object_ext (finite_structure, finite_data, more)) =
+  finite_structure;
+
+fun finite_incidence
+  (Finite_rra_structure_ext (finite_carrier, finite_incidence, more)) =
+  finite_incidence;
+
+fun finite_data
+  (Finite_structured_object_ext (finite_structure, finite_data, more)) =
+  finite_data;
+
+fun finite_carrier
+  (Finite_rra_structure_ext (finite_carrier, finite_incidence, more)) =
+  finite_carrier;
+
+fun finite_bindings
+  (Finite_opaque_basis_ext (finite_bag, finite_bindings, more)) =
+  finite_bindings;
+
+fun finite_artifact_rows c =
+  (sorted_list_of_fset
+     (equal_list equal_nat, linorder_list (equal_nat, linorder_nat))
+     (finite_carrier (finite_structure c)),
+    (sorted_list_of_fset
+       (equal_prod (equal_list equal_nat)
+          (equal_prod (equal_list equal_nat) (equal_list equal_nat)),
+         linorder_prod (linorder_list (equal_nat, linorder_nat))
+           (linorder_prod (linorder_list (equal_nat, linorder_nat))
+             (linorder_list (equal_nat, linorder_nat))))
+       (finite_incidence (finite_structure c)),
+      (sorted_list_of_multiset
+         (linorder_prod (linorder_list (equal_nat, linorder_nat))
+           (linorder_list (equal_nat, linorder_nat)))
+         (finite_bag (finite_data c)),
+        sorted_list_of_fset
+          (equal_prod (equal_list equal_nat) (equal_list equal_nat),
+            linorder_prod (linorder_list (equal_nat, linorder_nat))
+              (linorder_list (equal_nat, linorder_nat)))
+          (finite_bindings (finite_data c)))));
+
+val finite_literal_background :
+  ((nat list), (nat list), unit) finite_structured_object_ext
+  = finite_enumerated_artifact [[]] []
+      [([], [nat_of_integer (9 : IntInf.int)]),
+        ([], [nat_of_integer (9 : IntInf.int)])]
+      [([], [nat_of_integer (8 : IntInf.int)])];
+
+fun finite_literal_artifact p =
+  finite_enumerated_artifact
+    (map (fn n => [n])
+      [zero_nat, one_nat, nat_of_integer (2 : IntInf.int),
+        nat_of_integer (3 : IntInf.int), nat_of_integer (5 : IntInf.int),
+        nat_of_integer (6 : IntInf.int), nat_of_integer (7 : IntInf.int),
+        nat_of_integer (8 : IntInf.int), nat_of_integer (14 : IntInf.int),
+        nat_of_integer (15 : IntInf.int), nat_of_integer (16 : IntInf.int),
+        nat_of_integer (17 : IntInf.int), nat_of_integer (18 : IntInf.int),
+        nat_of_integer (19 : IntInf.int), nat_of_integer (20 : IntInf.int),
+        nat_of_integer (21 : IntInf.int), nat_of_integer (22 : IntInf.int),
+        nat_of_integer (23 : IntInf.int)])
+    (map (fn (r, (s, x)) => ([r], ([s], [x])))
+      [(zero_nat,
+         (nat_of_integer (16 : IntInf.int), nat_of_integer (15 : IntInf.int))),
+        (nat_of_integer (15 : IntInf.int),
+          (nat_of_integer (15 : IntInf.int), one_nat)),
+        (one_nat,
+          (nat_of_integer (17 : IntInf.int), nat_of_integer (2 : IntInf.int))),
+        (one_nat,
+          (nat_of_integer (18 : IntInf.int), nat_of_integer (6 : IntInf.int))),
+        (nat_of_integer (17 : IntInf.int),
+          (nat_of_integer (17 : IntInf.int), nat_of_integer (18 : IntInf.int))),
+        (nat_of_integer (2 : IntInf.int),
+          (nat_of_integer (19 : IntInf.int), nat_of_integer (3 : IntInf.int))),
+        (nat_of_integer (2 : IntInf.int),
+          (nat_of_integer (20 : IntInf.int), nat_of_integer (5 : IntInf.int))),
+        (nat_of_integer (19 : IntInf.int),
+          (nat_of_integer (19 : IntInf.int), nat_of_integer (20 : IntInf.int))),
+        (nat_of_integer (6 : IntInf.int),
+          (nat_of_integer (7 : IntInf.int), nat_of_integer (8 : IntInf.int))),
+        (nat_of_integer (8 : IntInf.int),
+          (nat_of_integer (21 : IntInf.int), nat_of_integer (3 : IntInf.int))),
+        (nat_of_integer (8 : IntInf.int),
+          (nat_of_integer (22 : IntInf.int), nat_of_integer (5 : IntInf.int))),
+        (nat_of_integer (8 : IntInf.int),
+          (nat_of_integer (23 : IntInf.int), nat_of_integer (14 : IntInf.int))),
+        (nat_of_integer (21 : IntInf.int),
+          (nat_of_integer (21 : IntInf.int), nat_of_integer (22 : IntInf.int))),
+        (nat_of_integer (22 : IntInf.int),
+          (nat_of_integer (22 : IntInf.int),
+            nat_of_integer (23 : IntInf.int)))])
+    [] [([nat_of_integer (5 : IntInf.int)], p)];
+
+fun finite_literal_sources p =
+  finite_enumerated_environment
+    [(NONE, finite_literal_artifact p),
+      (SOME [nat_of_integer (256 : IntInf.int)], finite_literal_background)]
+    [((NONE, [nat_of_integer (23 : IntInf.int)]),
+       SOME [nat_of_integer (256 : IntInf.int)])];
+
+fun finite_self_contained_term (Target_Term t) = NONE
+  | finite_self_contained_term (Payload_Term p) = SOME (Finite_Payload p)
+  | finite_self_contained_term (Pair_Term (x, y)) =
+    (case finite_self_contained_term x of NONE => NONE
+      | SOME a =>
+        map_option (fn b => Finite_Pair (a, b)) (finite_self_contained_term y));
+
+fun finite_environment_artifacts_update finite_environment_artifactsa
+  (Finite_artifact_environment_ext
+    (finite_environment_artifacts, finite_environment_bindings, more))
+  = Finite_artifact_environment_ext
+      (finite_environment_artifactsa finite_environment_artifacts,
+        finite_environment_bindings, more);
+
+fun finite_environment_bindings_update finite_environment_bindingsa
+  (Finite_artifact_environment_ext
+    (finite_environment_artifacts, finite_environment_bindings, more))
+  = Finite_artifact_environment_ext
+      (finite_environment_artifacts,
+        finite_environment_bindingsa finite_environment_bindings, more);
+
+fun finite_environment_artifacts
+  (Finite_artifact_environment_ext
+    (finite_environment_artifacts, finite_environment_bindings, more))
+  = finite_environment_artifacts;
+
+fun finite_environment_bindings
+  (Finite_artifact_environment_ext
+    (finite_environment_artifacts, finite_environment_bindings, more))
+  = finite_environment_bindings;
+
+fun finite_literal_extension p =
+  let
+    val e = finite_literal_sources p;
+  in
+    finite_environment_bindings_update
+      (fn _ =>
+        finsert
+          (equal_prod
+            (equal_prod (equal_option (equal_list equal_nat))
+              (equal_list equal_nat))
+            (equal_option (equal_list equal_nat)))
+          ((SOME [], [nat_of_integer (6 : IntInf.int)]), NONE)
+          (finite_environment_bindings e))
+      (finite_environment_artifacts_update
+        (fn _ =>
+          finsert
+            (equal_prod (equal_option (equal_list equal_nat))
+              (equal_finite_structured_object_ext (equal_list equal_nat)
+                (equal_list equal_nat) equal_unit))
+            (SOME [], finite_literal_node) (finite_environment_artifacts e))
+        e)
+  end;
+
+fun finite_environment_artifact_rows c =
+  sorted_list_of_fset
+    (equal_prod (equal_option (equal_list equal_nat))
+       (equal_prod (equal_list (equal_list equal_nat))
+         (equal_prod
+           (equal_list
+             (equal_prod (equal_list equal_nat)
+               (equal_prod (equal_list equal_nat) (equal_list equal_nat))))
+           (equal_prod
+             (equal_list
+               (equal_prod (equal_list equal_nat) (equal_list equal_nat)))
+             (equal_list
+               (equal_prod (equal_list equal_nat) (equal_list equal_nat)))))),
+      linorder_prod (linorder_option (linorder_list (equal_nat, linorder_nat)))
+        (linorder_prod
+          (linorder_list
+            (equal_list equal_nat, linorder_list (equal_nat, linorder_nat)))
+          (linorder_prod
+            (linorder_list
+              (equal_prod (equal_list equal_nat)
+                 (equal_prod (equal_list equal_nat) (equal_list equal_nat)),
+                linorder_prod (linorder_list (equal_nat, linorder_nat))
+                  (linorder_prod (linorder_list (equal_nat, linorder_nat))
+                    (linorder_list (equal_nat, linorder_nat)))))
+            (linorder_prod
+              (linorder_list
+                (equal_prod (equal_list equal_nat) (equal_list equal_nat),
+                  linorder_prod (linorder_list (equal_nat, linorder_nat))
+                    (linorder_list (equal_nat, linorder_nat))))
+              (linorder_list
+                (equal_prod (equal_list equal_nat) (equal_list equal_nat),
+                  linorder_prod (linorder_list (equal_nat, linorder_nat))
+                    (linorder_list (equal_nat, linorder_nat))))))))
+    (fimage (fn (u, r) => (u, finite_artifact_rows r))
+      (finite_environment_artifacts c));
+
+fun environment_artifact_rows_term q =
+  Pair_Term (use_data_term (fst q), artifact_rows_term (snd q));
+
+fun finite_environment_term c =
+  Pair_Term
+    (data_list_term
+       (map environment_artifact_rows_term
+         (finite_environment_artifact_rows c)),
+      data_list_term
+        (map binding_data
+          (sorted_list_of_fset
+            (equal_prod
+               (equal_prod (equal_option (equal_list equal_nat))
+                 (equal_list equal_nat))
+               (equal_option (equal_list equal_nat)),
+              linorder_prod
+                (linorder_prod
+                  (linorder_option (linorder_list (equal_nat, linorder_nat)))
+                  (linorder_list (equal_nat, linorder_nat)))
+                (linorder_option (linorder_list (equal_nat, linorder_nat))))
+            (finite_environment_bindings c))));
+
+val finite_literal_node_interior : (nat list) list =
+  [] :: map (fn n => [n])
+          [zero_nat, one_nat, nat_of_integer (2 : IntInf.int),
+            nat_of_integer (3 : IntInf.int), nat_of_integer (4 : IntInf.int),
+            nat_of_integer (5 : IntInf.int), nat_of_integer (7 : IntInf.int)];
+
+fun finite_literal_source_calls p =
+  let
+    val e = finite_environment_term (finite_literal_extension p);
+    val f = finite_environment_term (finite_literal_sources p);
+    val a =
+      Pair_Term (Pair_Term (e, use_data_term NONE), Payload_Term [zero_nat]);
+    val d = Pair_Term (use_data_term NONE, Payload_Term [one_nat]);
+    val c = Payload_Term [nat_of_integer (7 : IntInf.int)];
+    val r =
+      Pair_Term
+        (f, Pair_Term
+              (use_data_term NONE,
+                Payload_Term [nat_of_integer (3 : IntInf.int)]));
+    val q =
+      Pair_Term
+        (f, Pair_Term
+              (use_data_term NONE,
+                Payload_Term [nat_of_integer (8 : IntInf.int)]));
+    val empty = Payload_Term [];
+    val ri =
+      data_list_term (map Payload_Term [[nat_of_integer (3 : IntInf.int)]]);
+    val inst =
+      Pair_Term
+        (Pair_Term (f, use_data_term NONE),
+          Pair_Term
+            (Payload_Term [nat_of_integer (3 : IntInf.int)],
+              Pair_Term
+                (Pair_Term (empty, empty),
+                  Pair_Term
+                    (empty, Pair_Term (empty, Pair_Term (ri, empty))))));
+  in
+    [(nat_of_integer (94 : IntInf.int),
+       Pair_Term
+         (Pair_Term (e, use_data_term (SOME [])),
+           Pair_Term
+             (Payload_Term [],
+               Pair_Term
+                 (data_list_term
+                    [Pair_Term (use_data_term NONE, c), empty, empty],
+                   Pair_Term
+                     (data_list_term
+                        (map Payload_Term finite_literal_node_interior),
+                       data_list_term
+                         (map Payload_Term
+                           [[nat_of_integer (6 : IntInf.int)]])))))),
+      (nat_of_integer (294 : IntInf.int),
+        Pair_Term (Pair_Term (a, Pair_Term (d, c)), Pair_Term (r, q))),
+      (nat_of_integer (126 : IntInf.int),
+        Pair_Term (q, ground_schema_report (Payload_Term p))),
+      (nat_of_integer (125 : IntInf.int),
+        Pair_Term (empty, Pair_Term (empty, empty))),
+      (nat_of_integer (61 : IntInf.int), inst),
+      (nat_of_integer (61 : IntInf.int), inst),
+      (nat_of_integer (345 : IntInf.int),
+        Pair_Term (use_data_term NONE, Pair_Term (empty, empty))),
+      (nat_of_integer (346 : IntInf.int),
+        Pair_Term (use_data_term NONE, Pair_Term (empty, empty)))]
+  end;
+
+fun finite_literal_inference_term p =
+  (case ground_schema_report (Payload_Term p)
+    of Target_Term _ => Payload_Term [] | Payload_Term _ => Payload_Term []
+    | Pair_Term (b, report) =>
+      data_list_term
+        [Pair_Term
+           (Pair_Term
+              (finite_environment_term (finite_literal_extension p),
+                use_data_term NONE),
+             Payload_Term [zero_nat]),
+          Pair_Term
+            (Pair_Term
+               (finite_environment_term (finite_literal_extension p),
+                 use_data_term (SOME [])),
+              Payload_Term []),
+          Pair_Term (use_data_term NONE, Payload_Term [one_nat]),
+          Payload_Term [nat_of_integer (7 : IntInf.int)],
+          Pair_Term
+            (Pair_Term
+               (finite_environment_term (finite_literal_sources p),
+                 use_data_term NONE),
+              Payload_Term [nat_of_integer (3 : IntInf.int)]),
+          Pair_Term
+            (finite_environment_term (finite_literal_sources p),
+              Pair_Term
+                (use_data_term NONE,
+                  Payload_Term [nat_of_integer (8 : IntInf.int)])),
+          Pair_Term (b, report),
+          data_list_term
+            (map (fn (a, ba) => Pair_Term (a, ba))
+              (map (fn (k, v) =>
+                     (site_data_term (fst k) (snd k),
+                       site_data_term (fst v) (snd v)))
+                [])),
+          data_list_term (map Payload_Term finite_literal_node_interior),
+          data_list_term (map Payload_Term [[nat_of_integer (6 : IntInf.int)]]),
+          data_list_term (map Payload_Term [[nat_of_integer (3 : IntInf.int)]]),
+          data_list_term (map Payload_Term [])]);
+
+fun finite_literal_inference_value p =
+  the (finite_self_contained_term (finite_literal_inference_term p));
+
+fun finite_literal_inference_known p =
+  map (fn (d, t) => (d, the (finite_self_contained_term t)))
+    (finite_literal_source_calls p);
+
+end; (*struct Finite_Literal_Inference_Premises*)

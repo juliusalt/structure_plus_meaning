@@ -1,0 +1,359 @@
+{
+  "question": "Finish the shared graph proof and repair its validation coverage",
+  "boundary": "The outgoing-edge rule and reachability equality passed. Broad simplification expanded rel_dom inside native_definition_sites before the established sites equality could match. The repair instantiates that equality explicitly, then performs representation-level reasoning. The source manifest also shows the preceding roots reached incidence but not equality; that validation gap is corrected prospectively. No existing example statement or required native claim is removed.",
+  "specification_sha256": "4ad8bff362434648485f860618b5d57a09b82dc97716310c1a373f9b38e7ec1d",
+  "results": [
+    {
+      "problem": "closed-graph-rewrite",
+      "initial_result": {
+        "input_formed": true,
+        "residual": [],
+        "profiles": [
+          {
+            "candidate": 0,
+            "profile": []
+          },
+          {
+            "candidate": 1,
+            "profile": [
+              [
+                0,
+                0
+              ]
+            ]
+          }
+        ],
+        "losses": [
+          {
+            "from": 0,
+            "to": 0,
+            "losses": []
+          },
+          {
+            "from": 0,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 1,
+            "to": 0,
+            "losses": [
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          {
+            "from": 1,
+            "to": 1,
+            "losses": []
+          }
+        ],
+        "safe_facets": [
+          0,
+          1,
+          2
+        ],
+        "conflicts": [],
+        "repairs": [],
+        "unrepairable": [],
+        "extension": [
+          0
+        ],
+        "revision": {
+          "retained": [
+            0
+          ],
+          "withdrawn": [],
+          "repairs": [],
+          "selection": [
+            0
+          ],
+          "residual": []
+        }
+      },
+      "followed_result": {
+        "input_formed": true,
+        "residual": [],
+        "profiles": [
+          {
+            "candidate": 0,
+            "profile": []
+          },
+          {
+            "candidate": 1,
+            "profile": [
+              [
+                0,
+                0
+              ]
+            ]
+          }
+        ],
+        "losses": [
+          {
+            "from": 0,
+            "to": 0,
+            "losses": []
+          },
+          {
+            "from": 0,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 1,
+            "to": 0,
+            "losses": [
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          {
+            "from": 1,
+            "to": 1,
+            "losses": []
+          }
+        ],
+        "safe_facets": [
+          0,
+          1,
+          2
+        ],
+        "conflicts": [],
+        "repairs": [],
+        "unrepairable": [],
+        "extension": [
+          0
+        ],
+        "revision": {
+          "retained": [
+            0
+          ],
+          "withdrawn": [],
+          "repairs": [],
+          "selection": [
+            0
+          ],
+          "residual": []
+        }
+      },
+      "assessment": {
+        "required_observations": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "missing_requirements": {
+          "0": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          "1": []
+        },
+        "eligible": [
+          1
+        ],
+        "dominant": [
+          1
+        ],
+        "strict_improvements": [],
+        "boundary": "Assessment of the supplied finite candidates under explicit mandatory observations. Eligibility uses all original observations, including facets unnecessary for distinguishing these candidates. The returned adequate profiles determine comparison; broader coverage and candidate construction remain separate.",
+        "receipt_sha256": "2f9f9cccc9eb6596d82f11cdb1c55796e484eef50e23f5b675ff2a5d2324e818"
+      }
+    },
+    {
+      "problem": "affected-example-coverage",
+      "initial_result": {
+        "input_formed": true,
+        "residual": [],
+        "profiles": [
+          {
+            "candidate": 0,
+            "profile": []
+          },
+          {
+            "candidate": 1,
+            "profile": [
+              [
+                0,
+                0
+              ]
+            ]
+          }
+        ],
+        "losses": [
+          {
+            "from": 0,
+            "to": 0,
+            "losses": []
+          },
+          {
+            "from": 0,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 1,
+            "to": 0,
+            "losses": [
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          {
+            "from": 1,
+            "to": 1,
+            "losses": []
+          }
+        ],
+        "safe_facets": [
+          0,
+          1
+        ],
+        "conflicts": [],
+        "repairs": [],
+        "unrepairable": [],
+        "extension": [
+          0
+        ],
+        "revision": {
+          "retained": [
+            0
+          ],
+          "withdrawn": [],
+          "repairs": [],
+          "selection": [
+            0
+          ],
+          "residual": []
+        }
+      },
+      "followed_result": {
+        "input_formed": true,
+        "residual": [],
+        "profiles": [
+          {
+            "candidate": 0,
+            "profile": []
+          },
+          {
+            "candidate": 1,
+            "profile": [
+              [
+                0,
+                0
+              ]
+            ]
+          }
+        ],
+        "losses": [
+          {
+            "from": 0,
+            "to": 0,
+            "losses": []
+          },
+          {
+            "from": 0,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 1,
+            "to": 0,
+            "losses": [
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          {
+            "from": 1,
+            "to": 1,
+            "losses": []
+          }
+        ],
+        "safe_facets": [
+          0,
+          1
+        ],
+        "conflicts": [],
+        "repairs": [],
+        "unrepairable": [],
+        "extension": [
+          0
+        ],
+        "revision": {
+          "retained": [
+            0
+          ],
+          "withdrawn": [],
+          "repairs": [],
+          "selection": [
+            0
+          ],
+          "residual": []
+        }
+      },
+      "assessment": {
+        "required_observations": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "missing_requirements": {
+          "0": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ]
+          ],
+          "1": []
+        },
+        "eligible": [
+          1
+        ],
+        "dominant": [
+          1
+        ],
+        "strict_improvements": [],
+        "boundary": "Assessment of the supplied finite candidates under explicit mandatory observations. Eligibility uses all original observations, including facets unnecessary for distinguishing these candidates. The returned adequate profiles determine comparison; broader coverage and candidate construction remain separate.",
+        "receipt_sha256": "7364d82d11a75f443289bb06fe86bb707f20051324ac114aeba9465c8dfbfe3d"
+      }
+    }
+  ]
+}

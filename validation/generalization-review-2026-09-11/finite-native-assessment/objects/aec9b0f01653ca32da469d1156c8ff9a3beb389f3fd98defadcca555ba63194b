@@ -1,0 +1,21 @@
+{
+  "stage": "native-input-21",
+  "status": "accepted",
+  "replay_kind": "finite_inference_inputs",
+  "original_receipt_sha256": "07a963ad8ba1d5d66df065c8b0d24a06bf75e3a54ed514d0090a34a6a31dfa91",
+  "archive_index_sha256": "390d2b2ec1b4ae6e3e7bbfe95a360473e1514c014e2d8a881871aaf1529b3860",
+  "replayer_sha256": "e2f5e731e569c3df848bd3e537e7b49c46964e13c1586852356d3a77868953fc",
+  "runtime_program_sha256": "69eb3ec95edfd283e582fe9b957d1e5d404c395213eeb1142c2c2ebef07ea14c",
+  "evidence_io_sha256": "72b87df5f4f3ef4c7fc9a425ce4551f0df1c015916857d52eb2eb58040343fff",
+  "results_sha256": "8478c3f7387316e8203ad4da69b1983b2607cfab8cf528576ea418efbc4609f1",
+  "assessment": {
+    "source_uses": 2,
+    "extended_uses": 3,
+    "old_bindings": 1,
+    "extended_bindings": 2,
+    "retained_bag_occurrences": 2,
+    "argument_fields": 12,
+    "complete_sources_recovered": true
+  },
+  "boundary": "Exact archived code reproduces every complete data output and its original independent assessment. This does not repeat native proof checking."
+}

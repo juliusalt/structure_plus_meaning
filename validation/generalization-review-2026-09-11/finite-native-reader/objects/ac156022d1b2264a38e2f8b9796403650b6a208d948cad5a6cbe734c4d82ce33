@@ -1,0 +1,188 @@
+{
+  "question": "Apply the proved graph equality before normalizing the finite program projection",
+  "boundary": "Attempt16 completed the local schema and definition proofs, root and node checks, and the closed graph facts. Program projection leaves native_definition_graph in every subgoal after broad simplification normalizes the selected address. Reuse the existing known-equality-before-representation-expansion method: unfold native_program and the actual graph equality first, then simplify the finite program fields. The exact source-call extraction and all native meaning-preservation consumers completed independently. The next batch includes the already prepared complete native known-call list and executable reader export.",
+  "specification_sha256": "e9cc7c76edffcbd7795cd6491eb077f99d19752304ecd0321d273833d78ffc2b",
+  "results": [
+    {
+      "problem": "closed-graph-rewrite",
+      "initial_result": {
+        "input_formed": true,
+        "residual": [],
+        "profiles": [
+          {
+            "candidate": 0,
+            "profile": []
+          },
+          {
+            "candidate": 1,
+            "profile": [
+              [
+                0,
+                0
+              ]
+            ]
+          }
+        ],
+        "losses": [
+          {
+            "from": 0,
+            "to": 0,
+            "losses": []
+          },
+          {
+            "from": 0,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 1,
+            "to": 0,
+            "losses": [
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          {
+            "from": 1,
+            "to": 1,
+            "losses": []
+          }
+        ],
+        "safe_facets": [
+          0,
+          1,
+          2
+        ],
+        "conflicts": [],
+        "repairs": [],
+        "unrepairable": [],
+        "extension": [
+          0
+        ],
+        "revision": {
+          "retained": [
+            0
+          ],
+          "withdrawn": [],
+          "repairs": [],
+          "selection": [
+            0
+          ],
+          "residual": []
+        }
+      },
+      "followed_result": {
+        "input_formed": true,
+        "residual": [],
+        "profiles": [
+          {
+            "candidate": 0,
+            "profile": []
+          },
+          {
+            "candidate": 1,
+            "profile": [
+              [
+                0,
+                0
+              ]
+            ]
+          }
+        ],
+        "losses": [
+          {
+            "from": 0,
+            "to": 0,
+            "losses": []
+          },
+          {
+            "from": 0,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 1,
+            "to": 0,
+            "losses": [
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          {
+            "from": 1,
+            "to": 1,
+            "losses": []
+          }
+        ],
+        "safe_facets": [
+          0,
+          1,
+          2
+        ],
+        "conflicts": [],
+        "repairs": [],
+        "unrepairable": [],
+        "extension": [
+          0
+        ],
+        "revision": {
+          "retained": [
+            0
+          ],
+          "withdrawn": [],
+          "repairs": [],
+          "selection": [
+            0
+          ],
+          "residual": []
+        }
+      },
+      "assessment": {
+        "required_observations": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "missing_requirements": {
+          "0": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          "1": []
+        },
+        "eligible": [
+          1
+        ],
+        "dominant": [
+          1
+        ],
+        "strict_improvements": [],
+        "boundary": "Assessment of the supplied finite candidates under explicit mandatory observations. Eligibility uses all original observations, including facets unnecessary for distinguishing these candidates. The returned adequate profiles determine comparison; broader coverage and candidate construction remain separate.",
+        "receipt_sha256": "5233354e78d6778d5883ae4c749d7b7a41df7bf4d412915bc918be0f7e0a8cb9"
+      }
+    }
+  ]
+}

@@ -1,0 +1,2400 @@
+structure Finite_Literal_Sources : sig
+  type nat
+  type 'a set
+  type 'a fset
+  type num
+  type ('a, 'b, 'c) finite_structured_object_ext
+  type finite_factor_term
+  type ('a, 'b) finite_schema_graph_node
+  type ('a, 'b, 'c, 'd) finite_factor_schema_ext
+  type ('a, 'b, 'c, 'd, 'e) finite_schema_system_ext
+  type ('a, 'b) finite_artifact_environment_ext
+  val integer_of_nat : nat -> IntInf.int
+  val nat_of_integer : IntInf.int -> nat
+  val finite_literal_native_checks : nat list -> bool list
+end = struct
+
+datatype nat = Zero_nat | Suc of nat;
+
+fun equal_nata Zero_nat (Suc x2) = false
+  | equal_nata (Suc x2) Zero_nat = false
+  | equal_nata (Suc x2) (Suc y2) = equal_nata x2 y2
+  | equal_nata Zero_nat Zero_nat = true;
+
+type 'a equal = {equal : 'a -> 'a -> bool};
+val equal = #equal : 'a equal -> 'a -> 'a -> bool;
+
+val equal_nat = {equal = equal_nata} : nat equal;
+
+fun equal_boola false p = not p
+  | equal_boola true p = p
+  | equal_boola p false = not p
+  | equal_boola p true = p;
+
+val equal_bool = {equal = equal_boola} : bool equal;
+
+fun list_all p [] = true
+  | list_all p (x :: xs) = p x andalso list_all p xs;
+
+datatype 'a set = Set of 'a list | Coset of 'a list;
+
+fun eq A_ a b = equal A_ a b;
+
+fun membera A_ [] y = false
+  | membera A_ (x :: xs) y = eq A_ x y orelse membera A_ xs y;
+
+fun member A_ x (Set xs) = membera A_ xs x
+  | member A_ x (Coset xs) = not (membera A_ xs x);
+
+fun less_eq_set A_ (Set xs) b = list_all (fn x => member A_ x b) xs
+  | less_eq_set A_ a (Coset ys) = list_all (fn y => not (member A_ y a)) ys
+  | less_eq_set A_ (Coset []) (Set []) = false;
+
+datatype 'a fset = Abs_fset of 'a set;
+
+fun fset (Abs_fset x) = x;
+
+fun less_eq_fset A_ xa xc = less_eq_set A_ (fset xa) (fset xc);
+
+fun equal_fseta A_ a b = less_eq_fset A_ a b andalso less_eq_fset A_ b a;
+
+fun equal_fset A_ = {equal = equal_fseta A_} : 'a fset equal;
+
+fun equal_lista A_ [] (x21 :: x22) = false
+  | equal_lista A_ (x21 :: x22) [] = false
+  | equal_lista A_ (x21 :: x22) (y21 :: y22) =
+    eq A_ x21 y21 andalso equal_lista A_ x22 y22
+  | equal_lista A_ [] [] = true;
+
+fun equal_list A_ = {equal = equal_lista A_} : ('a list) equal;
+
+datatype ('a, 'b) sum = Inl of 'a | Inr of 'b;
+
+fun equal_suma A_ B_ (Inl x1) (Inr x2) = false
+  | equal_suma A_ B_ (Inr x2) (Inl x1) = false
+  | equal_suma A_ B_ (Inr x2) (Inr y2) = eq B_ x2 y2
+  | equal_suma A_ B_ (Inl x1) (Inl y1) = eq A_ x1 y1;
+
+fun equal_sum A_ B_ = {equal = equal_suma A_ B_} : ('a, 'b) sum equal;
+
+fun equal_optiona A_ NONE (SOME x2) = false
+  | equal_optiona A_ (SOME x2) NONE = false
+  | equal_optiona A_ (SOME x2) (SOME y2) = eq A_ x2 y2
+  | equal_optiona A_ NONE NONE = true;
+
+fun equal_option A_ = {equal = equal_optiona A_} : ('a option) equal;
+
+fun equal_proda A_ B_ (x1, x2) (y1, y2) = eq A_ x1 y1 andalso eq B_ x2 y2;
+
+fun equal_prod A_ B_ = {equal = equal_proda A_ B_} : ('a * 'b) equal;
+
+fun equal_unita u v = true;
+
+val equal_unit = {equal = equal_unita} : unit equal;
+
+datatype num = One | Bit0 of num | Bit1 of num;
+
+val one_integera : IntInf.int = (1 : IntInf.int);
+
+type 'a one = {one : 'a};
+val one = #one : 'a one -> 'a;
+
+val one_integer = {one = one_integera} : IntInf.int one;
+
+type 'a plus = {plus : 'a -> 'a -> 'a};
+val plus = #plus : 'a plus -> 'a -> 'a -> 'a;
+
+val plus_integer = {plus = (fn a => fn b => IntInf.+ (a, b))} : IntInf.int plus;
+
+type 'a zero = {zero : 'a};
+val zero = #zero : 'a zero -> 'a;
+
+val zero_integer = {zero = (0 : IntInf.int)} : IntInf.int zero;
+
+type 'a semigroup_add = {plus_semigroup_add : 'a plus};
+val plus_semigroup_add = #plus_semigroup_add : 'a semigroup_add -> 'a plus;
+
+type 'a numeral =
+  {one_numeral : 'a one, semigroup_add_numeral : 'a semigroup_add};
+val one_numeral = #one_numeral : 'a numeral -> 'a one;
+val semigroup_add_numeral = #semigroup_add_numeral :
+  'a numeral -> 'a semigroup_add;
+
+val semigroup_add_integer = {plus_semigroup_add = plus_integer} :
+  IntInf.int semigroup_add;
+
+val numeral_integer =
+  {one_numeral = one_integer, semigroup_add_numeral = semigroup_add_integer} :
+  IntInf.int numeral;
+
+type 'a times = {times : 'a -> 'a -> 'a};
+val times = #times : 'a times -> 'a -> 'a -> 'a;
+
+type 'a power = {one_power : 'a one, times_power : 'a times};
+val one_power = #one_power : 'a power -> 'a one;
+val times_power = #times_power : 'a power -> 'a times;
+
+val times_integer = {times = (fn a => fn b => IntInf.* (a, b))} :
+  IntInf.int times;
+
+val power_integer = {one_power = one_integer, times_power = times_integer} :
+  IntInf.int power;
+
+type 'a ab_semigroup_add = {semigroup_add_ab_semigroup_add : 'a semigroup_add};
+val semigroup_add_ab_semigroup_add = #semigroup_add_ab_semigroup_add :
+  'a ab_semigroup_add -> 'a semigroup_add;
+
+type 'a semigroup_mult = {times_semigroup_mult : 'a times};
+val times_semigroup_mult = #times_semigroup_mult :
+  'a semigroup_mult -> 'a times;
+
+type 'a semiring =
+  {ab_semigroup_add_semiring : 'a ab_semigroup_add,
+    semigroup_mult_semiring : 'a semigroup_mult};
+val ab_semigroup_add_semiring = #ab_semigroup_add_semiring :
+  'a semiring -> 'a ab_semigroup_add;
+val semigroup_mult_semiring = #semigroup_mult_semiring :
+  'a semiring -> 'a semigroup_mult;
+
+val ab_semigroup_add_integer =
+  {semigroup_add_ab_semigroup_add = semigroup_add_integer} :
+  IntInf.int ab_semigroup_add;
+
+val semigroup_mult_integer = {times_semigroup_mult = times_integer} :
+  IntInf.int semigroup_mult;
+
+val semiring_integer =
+  {ab_semigroup_add_semiring = ab_semigroup_add_integer,
+    semigroup_mult_semiring = semigroup_mult_integer}
+  : IntInf.int semiring;
+
+type 'a mult_zero = {times_mult_zero : 'a times, zero_mult_zero : 'a zero};
+val times_mult_zero = #times_mult_zero : 'a mult_zero -> 'a times;
+val zero_mult_zero = #zero_mult_zero : 'a mult_zero -> 'a zero;
+
+val mult_zero_integer =
+  {times_mult_zero = times_integer, zero_mult_zero = zero_integer} :
+  IntInf.int mult_zero;
+
+type 'a monoid_add =
+  {semigroup_add_monoid_add : 'a semigroup_add, zero_monoid_add : 'a zero};
+val semigroup_add_monoid_add = #semigroup_add_monoid_add :
+  'a monoid_add -> 'a semigroup_add;
+val zero_monoid_add = #zero_monoid_add : 'a monoid_add -> 'a zero;
+
+type 'a comm_monoid_add =
+  {ab_semigroup_add_comm_monoid_add : 'a ab_semigroup_add,
+    monoid_add_comm_monoid_add : 'a monoid_add};
+val ab_semigroup_add_comm_monoid_add = #ab_semigroup_add_comm_monoid_add :
+  'a comm_monoid_add -> 'a ab_semigroup_add;
+val monoid_add_comm_monoid_add = #monoid_add_comm_monoid_add :
+  'a comm_monoid_add -> 'a monoid_add;
+
+type 'a semiring_0 =
+  {comm_monoid_add_semiring_0 : 'a comm_monoid_add,
+    mult_zero_semiring_0 : 'a mult_zero, semiring_semiring_0 : 'a semiring};
+val comm_monoid_add_semiring_0 = #comm_monoid_add_semiring_0 :
+  'a semiring_0 -> 'a comm_monoid_add;
+val mult_zero_semiring_0 = #mult_zero_semiring_0 :
+  'a semiring_0 -> 'a mult_zero;
+val semiring_semiring_0 = #semiring_semiring_0 : 'a semiring_0 -> 'a semiring;
+
+val monoid_add_integer =
+  {semigroup_add_monoid_add = semigroup_add_integer,
+    zero_monoid_add = zero_integer}
+  : IntInf.int monoid_add;
+
+val comm_monoid_add_integer =
+  {ab_semigroup_add_comm_monoid_add = ab_semigroup_add_integer,
+    monoid_add_comm_monoid_add = monoid_add_integer}
+  : IntInf.int comm_monoid_add;
+
+val semiring_0_integer =
+  {comm_monoid_add_semiring_0 = comm_monoid_add_integer,
+    mult_zero_semiring_0 = mult_zero_integer,
+    semiring_semiring_0 = semiring_integer}
+  : IntInf.int semiring_0;
+
+type 'a monoid_mult =
+  {semigroup_mult_monoid_mult : 'a semigroup_mult,
+    power_monoid_mult : 'a power};
+val semigroup_mult_monoid_mult = #semigroup_mult_monoid_mult :
+  'a monoid_mult -> 'a semigroup_mult;
+val power_monoid_mult = #power_monoid_mult : 'a monoid_mult -> 'a power;
+
+type 'a semiring_numeral =
+  {monoid_mult_semiring_numeral : 'a monoid_mult,
+    numeral_semiring_numeral : 'a numeral,
+    semiring_semiring_numeral : 'a semiring};
+val monoid_mult_semiring_numeral = #monoid_mult_semiring_numeral :
+  'a semiring_numeral -> 'a monoid_mult;
+val numeral_semiring_numeral = #numeral_semiring_numeral :
+  'a semiring_numeral -> 'a numeral;
+val semiring_semiring_numeral = #semiring_semiring_numeral :
+  'a semiring_numeral -> 'a semiring;
+
+type 'a zero_neq_one = {one_zero_neq_one : 'a one, zero_zero_neq_one : 'a zero};
+val one_zero_neq_one = #one_zero_neq_one : 'a zero_neq_one -> 'a one;
+val zero_zero_neq_one = #zero_zero_neq_one : 'a zero_neq_one -> 'a zero;
+
+type 'a semiring_1 =
+  {semiring_numeral_semiring_1 : 'a semiring_numeral,
+    semiring_0_semiring_1 : 'a semiring_0,
+    zero_neq_one_semiring_1 : 'a zero_neq_one};
+val semiring_numeral_semiring_1 = #semiring_numeral_semiring_1 :
+  'a semiring_1 -> 'a semiring_numeral;
+val semiring_0_semiring_1 = #semiring_0_semiring_1 :
+  'a semiring_1 -> 'a semiring_0;
+val zero_neq_one_semiring_1 = #zero_neq_one_semiring_1 :
+  'a semiring_1 -> 'a zero_neq_one;
+
+val monoid_mult_integer =
+  {semigroup_mult_monoid_mult = semigroup_mult_integer,
+    power_monoid_mult = power_integer}
+  : IntInf.int monoid_mult;
+
+val semiring_numeral_integer =
+  {monoid_mult_semiring_numeral = monoid_mult_integer,
+    numeral_semiring_numeral = numeral_integer,
+    semiring_semiring_numeral = semiring_integer}
+  : IntInf.int semiring_numeral;
+
+val zero_neq_one_integer =
+  {one_zero_neq_one = one_integer, zero_zero_neq_one = zero_integer} :
+  IntInf.int zero_neq_one;
+
+val semiring_1_integer =
+  {semiring_numeral_semiring_1 = semiring_numeral_integer,
+    semiring_0_semiring_1 = semiring_0_integer,
+    zero_neq_one_semiring_1 = zero_neq_one_integer}
+  : IntInf.int semiring_1;
+
+datatype citation = Local of nat list | External of nat list * nat list |
+  Local_Whole | External_Whole of nat list;
+
+fun equal_citationa Local_Whole (External_Whole x4) = false
+  | equal_citationa (External_Whole x4) Local_Whole = false
+  | equal_citationa (External (x21, x22)) (External_Whole x4) = false
+  | equal_citationa (External_Whole x4) (External (x21, x22)) = false
+  | equal_citationa (External (x21, x22)) Local_Whole = false
+  | equal_citationa Local_Whole (External (x21, x22)) = false
+  | equal_citationa (Local x1) (External_Whole x4) = false
+  | equal_citationa (External_Whole x4) (Local x1) = false
+  | equal_citationa (Local x1) Local_Whole = false
+  | equal_citationa Local_Whole (Local x1) = false
+  | equal_citationa (Local x1) (External (x21, x22)) = false
+  | equal_citationa (External (x21, x22)) (Local x1) = false
+  | equal_citationa (External_Whole x4) (External_Whole y4) =
+    equal_lista equal_nat x4 y4
+  | equal_citationa (External (x21, x22)) (External (y21, y22)) =
+    equal_lista equal_nat x21 y21 andalso equal_lista equal_nat x22 y22
+  | equal_citationa (Local x1) (Local y1) = equal_lista equal_nat x1 y1
+  | equal_citationa Local_Whole Local_Whole = true;
+
+val equal_citation = {equal = equal_citationa} : citation equal;
+
+datatype ('a, 'b) finite_rra_structure_ext =
+  Finite_rra_structure_ext of 'a fset * ('a * ('a * 'a)) fset * 'b;
+
+fun equal_finite_rra_structure_ext A_ B_
+  (Finite_rra_structure_ext (finite_carriera, finite_incidencea, morea))
+  (Finite_rra_structure_ext (finite_carrier, finite_incidence, more)) =
+  eq (equal_fset A_) finite_carriera finite_carrier andalso
+    (equal_fseta (equal_prod A_ (equal_prod A_ A_)) finite_incidencea
+       finite_incidence andalso
+      eq B_ morea more);
+
+datatype 'a multiset = Mset of 'a list;
+
+datatype ('a, 'b, 'c) finite_opaque_basis_ext =
+  Finite_opaque_basis_ext of ('a * 'b) multiset * ('a * 'b) fset * 'c;
+
+fun extract p [] = NONE
+  | extract p (x :: xs) =
+    (if p x then SOME ([], (x, xs))
+      else (case extract p xs of NONE => NONE
+             | SOME (ys, (y, zs)) => SOME (x :: ys, (y, zs))));
+
+fun null [] = true
+  | null (x :: xs) = false;
+
+fun subset_eq_mset_impl A_ [] ys = SOME (not (null ys))
+  | subset_eq_mset_impl A_ (x :: xs) ys =
+    (case extract (eq A_ x) ys of NONE => NONE
+      | SOME (ys1, (_, ys2)) => subset_eq_mset_impl A_ xs (ys1 @ ys2));
+
+fun equal_multiset A_ (Mset xs) (Mset ys) =
+  equal_optiona equal_bool (subset_eq_mset_impl A_ xs ys) (SOME false);
+
+fun equal_finite_opaque_basis_ext A_ B_ C_
+  (Finite_opaque_basis_ext (finite_baga, finite_bindingsa, morea))
+  (Finite_opaque_basis_ext (finite_bag, finite_bindings, more)) =
+  equal_multiset (equal_prod A_ B_) finite_baga finite_bag andalso
+    (equal_fseta (equal_prod A_ B_) finite_bindingsa finite_bindings andalso
+      eq C_ morea more);
+
+datatype ('a, 'b, 'c) finite_structured_object_ext =
+  Finite_structured_object_ext of
+    ('a, unit) finite_rra_structure_ext *
+      ('a, 'b, unit) finite_opaque_basis_ext * 'c;
+
+fun equal_finite_structured_object_exta A_ B_ C_
+  (Finite_structured_object_ext (finite_structurea, finite_dataa, morea))
+  (Finite_structured_object_ext (finite_structure, finite_data, more)) =
+  equal_finite_rra_structure_ext A_ equal_unit finite_structurea
+    finite_structure andalso
+    (equal_finite_opaque_basis_ext A_ B_ equal_unit finite_dataa
+       finite_data andalso
+      eq C_ morea more);
+
+datatype finite_exact_target =
+  Finite_Whole of ((nat list), (nat list), unit) finite_structured_object_ext |
+  Finite_Anchor of
+    ((nat list), (nat list), unit) finite_structured_object_ext * nat list;
+
+fun equal_finite_exact_target (Finite_Whole x1) (Finite_Anchor (x21, x22)) =
+  false
+  | equal_finite_exact_target (Finite_Anchor (x21, x22)) (Finite_Whole x1) =
+    false
+  | equal_finite_exact_target (Finite_Anchor (x21, x22))
+    (Finite_Anchor (y21, y22)) =
+    equal_finite_structured_object_exta (equal_list equal_nat)
+      (equal_list equal_nat) equal_unit x21 y21 andalso
+      equal_lista equal_nat x22 y22
+  | equal_finite_exact_target (Finite_Whole x1) (Finite_Whole y1) =
+    equal_finite_structured_object_exta (equal_list equal_nat)
+      (equal_list equal_nat) equal_unit x1 y1;
+
+datatype finite_factor_term = Finite_Target of finite_exact_target |
+  Finite_Payload of nat list |
+  Finite_Pair of finite_factor_term * finite_factor_term;
+
+fun equal_finite_factor_terma (Finite_Payload x2) (Finite_Pair (x31, x32)) =
+  false
+  | equal_finite_factor_terma (Finite_Pair (x31, x32)) (Finite_Payload x2) =
+    false
+  | equal_finite_factor_terma (Finite_Target x1) (Finite_Pair (x31, x32)) =
+    false
+  | equal_finite_factor_terma (Finite_Pair (x31, x32)) (Finite_Target x1) =
+    false
+  | equal_finite_factor_terma (Finite_Target x1) (Finite_Payload x2) = false
+  | equal_finite_factor_terma (Finite_Payload x2) (Finite_Target x1) = false
+  | equal_finite_factor_terma (Finite_Pair (x31, x32)) (Finite_Pair (y31, y32))
+    = equal_finite_factor_terma x31 y31 andalso
+        equal_finite_factor_terma x32 y32
+  | equal_finite_factor_terma (Finite_Payload x2) (Finite_Payload y2) =
+    equal_lista equal_nat x2 y2
+  | equal_finite_factor_terma (Finite_Target x1) (Finite_Target y1) =
+    equal_finite_exact_target x1 y1;
+
+val equal_finite_factor_term = {equal = equal_finite_factor_terma} :
+  finite_factor_term equal;
+
+datatype 'a finite_term_pattern = Finite_Variable of 'a |
+  Finite_Pattern_Target of finite_exact_target |
+  Finite_Pattern_Payload of nat list |
+  Finite_Pattern_Pair of 'a finite_term_pattern * 'a finite_term_pattern;
+
+fun equal_finite_term_patterna A_ (Finite_Pattern_Payload x3)
+  (Finite_Pattern_Pair (x41, x42)) = false
+  | equal_finite_term_patterna A_ (Finite_Pattern_Pair (x41, x42))
+    (Finite_Pattern_Payload x3) = false
+  | equal_finite_term_patterna A_ (Finite_Pattern_Target x2)
+    (Finite_Pattern_Pair (x41, x42)) = false
+  | equal_finite_term_patterna A_ (Finite_Pattern_Pair (x41, x42))
+    (Finite_Pattern_Target x2) = false
+  | equal_finite_term_patterna A_ (Finite_Pattern_Target x2)
+    (Finite_Pattern_Payload x3) = false
+  | equal_finite_term_patterna A_ (Finite_Pattern_Payload x3)
+    (Finite_Pattern_Target x2) = false
+  | equal_finite_term_patterna A_ (Finite_Variable x1)
+    (Finite_Pattern_Pair (x41, x42)) = false
+  | equal_finite_term_patterna A_ (Finite_Pattern_Pair (x41, x42))
+    (Finite_Variable x1) = false
+  | equal_finite_term_patterna A_ (Finite_Variable x1)
+    (Finite_Pattern_Payload x3) = false
+  | equal_finite_term_patterna A_ (Finite_Pattern_Payload x3)
+    (Finite_Variable x1) = false
+  | equal_finite_term_patterna A_ (Finite_Variable x1)
+    (Finite_Pattern_Target x2) = false
+  | equal_finite_term_patterna A_ (Finite_Pattern_Target x2)
+    (Finite_Variable x1) = false
+  | equal_finite_term_patterna A_ (Finite_Pattern_Pair (x41, x42))
+    (Finite_Pattern_Pair (y41, y42)) =
+    equal_finite_term_patterna A_ x41 y41 andalso
+      equal_finite_term_patterna A_ x42 y42
+  | equal_finite_term_patterna A_ (Finite_Pattern_Payload x3)
+    (Finite_Pattern_Payload y3) = equal_lista equal_nat x3 y3
+  | equal_finite_term_patterna A_ (Finite_Pattern_Target x2)
+    (Finite_Pattern_Target y2) = equal_finite_exact_target x2 y2
+  | equal_finite_term_patterna A_ (Finite_Variable x1) (Finite_Variable y1) =
+    eq A_ x1 y1;
+
+fun equal_finite_term_pattern A_ = {equal = equal_finite_term_patterna A_} :
+  'a finite_term_pattern equal;
+
+datatype ('a, 'b) finite_schema_graph_node =
+  Finite_Inference of 'b * ('a * finite_factor_term) fset | Finite_Assertion;
+
+fun equal_finite_schema_graph_nodea A_ B_ (Finite_Inference (x11, x12))
+  Finite_Assertion = false
+  | equal_finite_schema_graph_nodea A_ B_ Finite_Assertion
+    (Finite_Inference (x11, x12)) = false
+  | equal_finite_schema_graph_nodea A_ B_ (Finite_Inference (x11, x12))
+    (Finite_Inference (y11, y12)) =
+    eq B_ x11 y11 andalso
+      equal_fseta (equal_prod A_ equal_finite_factor_term) x12 y12
+  | equal_finite_schema_graph_nodea A_ B_ Finite_Assertion Finite_Assertion =
+    true;
+
+fun equal_finite_schema_graph_node A_ B_ =
+  {equal = equal_finite_schema_graph_nodea A_ B_} :
+  ('a, 'b) finite_schema_graph_node equal;
+
+datatype ('a, 'b) finite_material_pattern_ext =
+  Finite_material_pattern_ext of
+    'a finite_term_pattern * 'a finite_term_pattern * 'a finite_term_pattern *
+      'a finite_term_pattern * 'a finite_term_pattern * 'b;
+
+datatype ('a, 'b, 'c, 'd) finite_factor_schema_ext =
+  Finite_factor_schema_ext of
+    'a finite_term_pattern * ('b * ('c * 'a finite_term_pattern)) fset *
+      ('b * ('a, unit) finite_material_pattern_ext) fset * 'd;
+
+fun equal_finite_material_pattern_exta A_ B_
+  (Finite_material_pattern_ext
+    (finite_material_sourcea, finite_material_atomsa, finite_material_edgesa,
+      finite_material_countsa, finite_material_functionsa, morea))
+  (Finite_material_pattern_ext
+    (finite_material_source, finite_material_atoms, finite_material_edges,
+      finite_material_counts, finite_material_functions, more))
+  = equal_finite_term_patterna A_ finite_material_sourcea
+      finite_material_source andalso
+      (equal_finite_term_patterna A_ finite_material_atomsa
+         finite_material_atoms andalso
+        (equal_finite_term_patterna A_ finite_material_edgesa
+           finite_material_edges andalso
+          (equal_finite_term_patterna A_ finite_material_countsa
+             finite_material_counts andalso
+            (equal_finite_term_patterna A_ finite_material_functionsa
+               finite_material_functions andalso
+              eq B_ morea more))));
+
+fun equal_finite_material_pattern_ext A_ B_ =
+  {equal = equal_finite_material_pattern_exta A_ B_} :
+  ('a, 'b) finite_material_pattern_ext equal;
+
+fun equal_finite_factor_schema_exta A_ B_ C_ D_
+  (Finite_factor_schema_ext
+    (finite_schema_conclusiona, finite_schema_premisesa,
+      finite_schema_materialsa, morea))
+  (Finite_factor_schema_ext
+    (finite_schema_conclusion, finite_schema_premises, finite_schema_materials,
+      more))
+  = equal_finite_term_patterna A_ finite_schema_conclusiona
+      finite_schema_conclusion andalso
+      (equal_fseta
+         (equal_prod B_ (equal_prod C_ (equal_finite_term_pattern A_)))
+         finite_schema_premisesa finite_schema_premises andalso
+        (equal_fseta
+           (equal_prod B_ (equal_finite_material_pattern_ext A_ equal_unit))
+           finite_schema_materialsa finite_schema_materials andalso
+          eq D_ morea more));
+
+fun equal_finite_factor_schema_ext A_ B_ C_ D_ =
+  {equal = equal_finite_factor_schema_exta A_ B_ C_ D_} :
+  ('a, 'b, 'c, 'd) finite_factor_schema_ext equal;
+
+datatype ('a, 'b, 'c, 'd, 'e) finite_schema_system_ext =
+  Finite_schema_system_ext of
+    ('c * 'a finite_term_pattern) fset *
+      (('c * 'd) * ('a, 'b, 'c, unit) finite_factor_schema_ext) fset * 'e;
+
+fun equal_finite_schema_system_exta A_ B_ C_ D_ E_
+  (Finite_schema_system_ext
+    (finite_system_interfacesa, finite_system_clausesa, morea))
+  (Finite_schema_system_ext
+    (finite_system_interfaces, finite_system_clauses, more))
+  = equal_fseta (equal_prod C_ (equal_finite_term_pattern A_))
+      finite_system_interfacesa finite_system_interfaces andalso
+      (equal_fseta
+         (equal_prod (equal_prod C_ D_)
+           (equal_finite_factor_schema_ext A_ B_ C_ equal_unit))
+         finite_system_clausesa finite_system_clauses andalso
+        eq E_ morea more);
+
+fun equal_finite_schema_system_ext A_ B_ C_ D_ E_ =
+  {equal = equal_finite_schema_system_exta A_ B_ C_ D_ E_} :
+  ('a, 'b, 'c, 'd, 'e) finite_schema_system_ext equal;
+
+fun equal_finite_structured_object_ext A_ B_ C_ =
+  {equal = equal_finite_structured_object_exta A_ B_ C_} :
+  ('a, 'b, 'c) finite_structured_object_ext equal;
+
+datatype ('a, 'b) finite_artifact_environment_ext =
+  Finite_artifact_environment_ext of
+    ('a * ((nat list), (nat list), unit) finite_structured_object_ext) fset *
+      (('a * nat list) * 'a) fset * 'b;
+
+fun list_ex p [] = false
+  | list_ex p (x :: xs) = p x orelse list_ex p xs;
+
+fun bex (Set xs) p = list_ex p xs;
+
+fun zip [] ys = []
+  | zip xs [] = []
+  | zip (x :: xs) (y :: ys) = (x, y) :: zip xs ys;
+
+fun ball (Set xs) p = list_all p xs;
+
+fun fold f [] s = s
+  | fold f (x :: xs) s = fold f xs (f x s);
+
+fun map f [] = []
+  | map f (x21 :: x22) = f x21 :: map f x22;
+
+fun image f (Set xs) = Set (map f xs);
+
+fun length_tailrec [] n = n
+  | length_tailrec (x :: xs) n = length_tailrec xs (Suc n);
+
+fun size_list xs = length_tailrec xs Zero_nat;
+
+fun remdups A_ [] = []
+  | remdups A_ (x :: xs) =
+    (if membera A_ xs x then remdups A_ xs else x :: remdups A_ xs);
+
+fun card A_ (Set xs) = size_list (remdups A_ xs);
+
+fun fcard A_ xa = card A_ (fset xa);
+
+fun filtera p [] = []
+  | filtera p (x :: xs) = (if p x then x :: filtera p xs else filtera p xs);
+
+fun filter p (Set xs) = Set (filtera p xs);
+
+fun removeAll A_ x [] = []
+  | removeAll A_ x (y :: xs) =
+    (if eq A_ x y then removeAll A_ x xs else y :: removeAll A_ x xs);
+
+fun inserta A_ x xs = (if membera A_ xs x then xs else x :: xs);
+
+fun insert A_ x (Set xs) = Set (inserta A_ x xs)
+  | insert A_ x (Coset xs) = Coset (removeAll A_ x xs);
+
+fun remove A_ x (Set xs) = Set (removeAll A_ x xs)
+  | remove A_ x (Coset xs) = Coset (inserta A_ x xs);
+
+fun fimage xb xc = Abs_fset (image xb (fset xc));
+
+fun sup_set A_ (Set xs) a = fold (insert A_) xs a
+  | sup_set A_ (Coset xs) a = Coset (filtera (fn x => not (member A_ x a)) xs);
+
+val bot_set : 'a set = Set [];
+
+fun sup_seta A_ (Set xs) = fold (sup_set A_) xs bot_set;
+
+fun ffUnion A_ xa = Abs_fset (sup_seta A_ (image fset (fset xa)));
+
+fun ffilter xb xc = Abs_fset (filter xb (fset xc));
+
+fun finsert A_ xb xc = Abs_fset (insert A_ xb (fset xc));
+
+fun hd (x21 :: x22) = x21;
+
+fun distinct A_ [] = true
+  | distinct A_ (x :: xs) = not (membera A_ xs x) andalso distinct A_ xs;
+
+fun plus_nat Zero_nat n = n
+  | plus_nat (Suc m) n = plus_nat m (Suc n);
+
+val one_nat : nat = Suc Zero_nat;
+
+fun nat_of_num One = one_nat
+  | nat_of_num (Bit0 n) = let
+                            val m = nat_of_num n;
+                          in
+                            plus_nat m m
+                          end
+  | nat_of_num (Bit1 n) = let
+                            val m = nat_of_num n;
+                          in
+                            Suc (plus_nat m m)
+                          end;
+
+fun fset_of_list xa = Abs_fset (Set xa);
+
+fun set_mset (Mset xs) = Set xs;
+
+fun apsnd f (x, y) = (x, f y);
+
+fun filter_mset f (Mset xs) = Mset (filtera f xs);
+
+fun fst (x1, x2) = x1;
+
+fun snd (x1, x2) = x2;
+
+fun less_nat n Zero_nat = false
+  | less_nat m (Suc n) = less_eq_nat m n
+and less_eq_nat Zero_nat n = true
+  | less_eq_nat (Suc m) n = less_nat m n;
+
+fun octets_formed xs =
+  list_all
+    (fn x =>
+      less_nat x
+        (nat_of_num
+          (Bit0 (Bit0 (Bit0 (Bit0 (Bit0 (Bit0 (Bit0 (Bit0 One))))))))))
+    xs;
+
+fun inf_set A_ a (Set xs) = Set (filtera (fn x => member A_ x a) xs)
+  | inf_set A_ a (Coset xs) = fold (remove A_) xs a;
+
+fun divmod_integer k l =
+  (if ((k : IntInf.int) = (0 : IntInf.int))
+    then ((0 : IntInf.int), (0 : IntInf.int))
+    else (if IntInf.< ((0 : IntInf.int), l)
+           then (if IntInf.< ((0 : IntInf.int), k)
+                  then IntInf.divMod (IntInf.abs k, IntInf.abs l)
+                  else let
+                         val (r, s) =
+                           IntInf.divMod (IntInf.abs k, IntInf.abs l);
+                       in
+                         (if ((s : IntInf.int) = (0 : IntInf.int))
+                           then (IntInf.~ r, (0 : IntInf.int))
+                           else (IntInf.- (IntInf.~ r, (1 : IntInf.int)),
+                                  IntInf.- (l, s)))
+                       end)
+           else (if ((l : IntInf.int) = (0 : IntInf.int))
+                  then ((0 : IntInf.int), k)
+                  else apsnd IntInf.~
+                         (if IntInf.< (k, (0 : IntInf.int))
+                           then IntInf.divMod (IntInf.abs k, IntInf.abs l)
+                           else let
+                                  val (r, s) =
+                                    IntInf.divMod (IntInf.abs k, IntInf.abs l);
+                                in
+                                  (if ((s : IntInf.int) = (0 : IntInf.int))
+                                    then (IntInf.~ r, (0 : IntInf.int))
+                                    else (IntInf.- (IntInf.~
+              r, (1 : IntInf.int)),
+   IntInf.- (IntInf.~ l, s)))
+                                end))));
+
+fun of_nat_aux A_ inc Zero_nat i = i
+  | of_nat_aux A_ inc (Suc n) i = of_nat_aux A_ inc n (inc i);
+
+fun of_nat A_ n =
+  of_nat_aux A_
+    (fn i =>
+      plus ((plus_semigroup_add o semigroup_add_numeral o
+              numeral_semiring_numeral o semiring_numeral_semiring_1)
+             A_)
+        i (one ((one_numeral o numeral_semiring_numeral o
+                  semiring_numeral_semiring_1)
+                 A_)))
+    n (zero ((zero_mult_zero o mult_zero_semiring_0 o semiring_0_semiring_1)
+              A_));
+
+fun integer_of_nat x = of_nat semiring_1_integer x;
+
+fun nat_of_integer k =
+  (if IntInf.<= (k, (0 : IntInf.int)) then Zero_nat
+    else let
+           val (l, j) = divmod_integer k (2 : IntInf.int);
+           val la = nat_of_integer l;
+           val lb = plus_nat la la;
+         in
+           (if ((j : IntInf.int) = (0 : IntInf.int)) then lb
+             else plus_nat lb one_nat)
+         end);
+
+val bot_fset : 'a fset = Abs_fset bot_set;
+
+fun inf_fset A_ xb xc = Abs_fset (inf_set A_ (fset xb) (fset xc));
+
+fun sup_fset A_ xb xc = Abs_fset (sup_set A_ (fset xb) (fset xc));
+
+fun minus_nat m Zero_nat = m
+  | minus_nat Zero_nat n = Zero_nat
+  | minus_nat (Suc m) (Suc n) = minus_nat m n;
+
+fun finite_structure
+  (Finite_structured_object_ext (finite_structure, finite_data, more)) =
+  finite_structure;
+
+fun finite_carrier
+  (Finite_rra_structure_ext (finite_carrier, finite_incidence, more)) =
+  finite_carrier;
+
+fun finite_relation_functional A_ B_ f =
+  ball (fset f)
+    (fn x =>
+      ball (fset f)
+        (fn y =>
+          (if eq A_ (fst x) (fst y) then eq B_ (snd x) (snd y) else true)));
+
+fun finite_incidence
+  (Finite_rra_structure_ext (finite_carrier, finite_incidence, more)) =
+  finite_incidence;
+
+fun finite_headed_incidence A_ s r =
+  fimage (fn (_, (a, b)) => (a, b))
+    (ffilter (fn (h, (_, _)) => eq A_ h r) (finite_incidence s));
+
+fun finite_data
+  (Finite_structured_object_ext (finite_structure, finite_data, more)) =
+  finite_data;
+
+val zero_multiset : 'a multiset = Mset [];
+
+val finite_empty_basis : ('a, 'b, unit) finite_opaque_basis_ext =
+  Finite_opaque_basis_ext (zero_multiset, bot_fset, ());
+
+fun finite_bindings
+  (Finite_opaque_basis_ext (finite_bag, finite_bindings, more)) =
+  finite_bindings;
+
+fun finite_bag (Finite_opaque_basis_ext (finite_bag, finite_bindings, more)) =
+  finite_bag;
+
+fun finite_basis_slice A_ d i =
+  Finite_opaque_basis_ext
+    (filter_mset (fn (a, _) => member A_ a (fset i)) (finite_bag d),
+      ffilter (fn (a, _) => member A_ a (fset i)) (finite_bindings d), ());
+
+fun finite_data_empty_on A_ B_ c i =
+  equal_finite_opaque_basis_ext A_ B_ equal_unit
+    (finite_basis_slice A_ (finite_data c) i) finite_empty_basis;
+
+fun finite_structure_formed A_ s =
+  ball (fset (finite_incidence s))
+    (fn (r, (p, x)) =>
+      member A_ r (fset (finite_carrier s)) andalso
+        (member A_ p (fset (finite_carrier s)) andalso
+          member A_ x (fset (finite_carrier s))));
+
+fun finite_basis_formed A_ B_ u d =
+  finite_relation_functional A_ B_ (finite_bindings d) andalso
+    (ball (set_mset (finite_bag d)) (fn x => member A_ (fst x) (fset u)) andalso
+      ball (fset (finite_bindings d)) (fn x => member A_ (fst x) (fset u)));
+
+fun finite_object_formed A_ B_ c =
+  finite_structure_formed A_ (finite_structure c) andalso
+    finite_basis_formed A_ B_ (finite_carrier (finite_structure c))
+      (finite_data c);
+
+fun finite_family_at A_ B_ c r m =
+  finite_object_formed A_ B_ c andalso
+    (member A_ r (fset (finite_carrier (finite_structure c))) andalso
+      (equal_fseta (equal_prod A_ A_)
+         (finite_headed_incidence A_ (finite_structure c) r) m andalso
+        (finite_relation_functional A_ A_ m andalso
+          (not (member A_ r (image fst (fset m))) andalso
+            (ball (image fst (fset m))
+               (fn p =>
+                 equal_fseta (equal_prod A_ A_)
+                   (finite_headed_incidence A_ (finite_structure c) p)
+                   bot_fset) andalso
+              finite_data_empty_on A_ B_ c (finsert A_ r (fimage fst m)))))));
+
+fun finite_field_endpoint A_ s r p x =
+  eq (equal_fset A_)
+    (fimage snd
+      (ffilter (fn (q, _) => eq A_ q p) (finite_headed_incidence A_ s r)))
+    (finsert A_ x bot_fset);
+
+fun finite_record_path A_ s r [] xs = false
+  | finite_record_path A_ s r (p :: ps) [] = false
+  | finite_record_path A_ s r (p :: ps) (x :: xs) =
+    not (eq A_ p r) andalso
+      (finite_field_endpoint A_ s r p x andalso
+        (if null ps
+          then null xs andalso
+                 equal_fseta (equal_prod A_ A_) (finite_headed_incidence A_ s p)
+                   bot_fset
+          else equal_fseta (equal_prod A_ A_) (finite_headed_incidence A_ s p)
+                 (finsert (equal_prod A_ A_) (p, hd ps) bot_fset) andalso
+                 finite_record_path A_ s r ps xs));
+
+fun finite_record_at A_ B_ c r ps xs =
+  finite_object_formed A_ B_ c andalso
+    (member A_ r (fset (finite_carrier (finite_structure c))) andalso
+      ((null ps andalso
+          (null xs andalso
+            equal_fseta (equal_prod A_ A_)
+              (finite_headed_incidence A_ (finite_structure c) r)
+              bot_fset) orelse
+         finite_record_path A_ (finite_structure c) r ps xs andalso
+           equal_fseta (equal_prod A_ A_)
+             (finite_headed_incidence A_ (finite_structure c) r)
+             (fset_of_list (zip ps xs))) andalso
+        finite_data_empty_on A_ B_ c (finsert A_ r (fset_of_list ps))));
+
+fun finite_payload_basis A_ B_ a v =
+  Finite_opaque_basis_ext
+    (zero_multiset, finsert (equal_prod A_ B_) (a, v) bot_fset, ());
+
+fun finite_payload_at A_ B_ c a v =
+  equal_finite_opaque_basis_ext A_ B_ equal_unit
+    (finite_basis_slice A_ (finite_data c) (finsert A_ a bot_fset))
+    (finite_payload_basis A_ B_ a v);
+
+fun finite_exact_formed c =
+  finite_object_formed (equal_list equal_nat) (equal_list equal_nat) c andalso
+    (ball (fset (finite_carrier (finite_structure c))) octets_formed andalso
+      (ball (set_mset (finite_bag (finite_data c)))
+         (fn x => octets_formed (snd x)) andalso
+        ball (fset (finite_bindings (finite_data c)))
+          (fn x => octets_formed (snd x))));
+
+fun finite_row_slots h =
+  ffUnion (equal_list equal_nat) (fimage (snd o snd o snd) h);
+
+fun finite_row_values h = fimage (fst o snd) h;
+
+fun finite_raw_citation_at c r (Local a) i =
+  equal_fseta (equal_prod (equal_list equal_nat) (equal_list equal_nat))
+    (finite_headed_incidence (equal_list equal_nat) (finite_structure c) r)
+    (finsert (equal_prod (equal_list equal_nat) (equal_list equal_nat)) (r, a)
+      bot_fset) andalso
+    equal_fseta (equal_list equal_nat) i
+      (finsert (equal_list equal_nat) r bot_fset)
+  | finite_raw_citation_at c r Local_Whole i =
+    equal_fseta (equal_prod (equal_list equal_nat) (equal_list equal_nat))
+      (finite_headed_incidence (equal_list equal_nat) (finite_structure c) r)
+      bot_fset andalso
+      equal_fseta (equal_list equal_nat) i
+        (finsert (equal_list equal_nat) r bot_fset)
+  | finite_raw_citation_at c r (External_Whole k) i =
+    not (equal_lista equal_nat r k) andalso
+      (equal_fseta (equal_prod (equal_list equal_nat) (equal_list equal_nat))
+         (finite_headed_incidence (equal_list equal_nat) (finite_structure c) r)
+         (finsert (equal_prod (equal_list equal_nat) (equal_list equal_nat))
+           (k, k) bot_fset) andalso
+        equal_fseta (equal_list equal_nat) i
+          (finsert (equal_list equal_nat) r bot_fset))
+  | finite_raw_citation_at c r (External (k, a)) i =
+    bex (fset (finite_headed_incidence (equal_list equal_nat)
+                (finite_structure c) r))
+      (fn (p, d) =>
+        equal_lista equal_nat p k andalso
+          (distinct (equal_list equal_nat) [r, k, d] andalso
+            (equal_fseta
+               (equal_prod (equal_list equal_nat) (equal_list equal_nat))
+               (finite_headed_incidence (equal_list equal_nat)
+                 (finite_structure c) r)
+               (finsert
+                 (equal_prod (equal_list equal_nat) (equal_list equal_nat))
+                 (r, k)
+                 (finsert
+                   (equal_prod (equal_list equal_nat) (equal_list equal_nat))
+                   (k, d) bot_fset)) andalso
+              (equal_fseta
+                 (equal_prod (equal_list equal_nat) (equal_list equal_nat))
+                 (finite_headed_incidence (equal_list equal_nat)
+                   (finite_structure c) d)
+                 bot_fset andalso
+                (finite_payload_at (equal_list equal_nat) (equal_list equal_nat)
+                   c d a andalso
+                  equal_fseta (equal_list equal_nat) i
+                    (finsert (equal_list equal_nat) r
+                      (finsert (equal_list equal_nat) d bot_fset)))))));
+
+fun finite_citation_at ca r c i =
+  finite_exact_formed ca andalso
+    (member (equal_list equal_nat) r
+       (fset (finite_carrier (finite_structure ca))) andalso
+      (finite_data_empty_on (equal_list equal_nat) (equal_list equal_nat) ca
+         (finsert (equal_list equal_nat) r bot_fset) andalso
+        finite_raw_citation_at ca r c i));
+
+fun stabilizing_iteration A_ Zero_nat f x = x
+  | stabilizing_iteration A_ (Suc n) f x =
+    let
+      val next = f x;
+    in
+      (if eq A_ next x then x else stabilizing_iteration A_ n f next)
+    end;
+
+fun finite_edge_compose A_ B_ C_ r s =
+  ffUnion (equal_prod A_ C_)
+    (fimage
+      (fn (x, y) =>
+        fimage (fn (_, a) => (x, a)) (ffilter (fn (u, _) => eq B_ u y) s))
+      r);
+
+fun finite_edge_closure A_ e =
+  stabilizing_iteration (equal_fset (equal_prod A_ A_))
+    (minus_nat (fcard (equal_prod A_ A_) e) one_nat)
+    (fn r => sup_fset (equal_prod A_ A_) r (finite_edge_compose A_ A_ A_ r e))
+    e;
+
+fun finite_lists_of_length A_ Zero_nat a = finsert (equal_list A_) [] bot_fset
+  | finite_lists_of_length A_ (Suc n) a =
+    ffUnion (equal_list A_)
+      (fimage
+        (fn x => fimage (fn aa => x :: aa) (finite_lists_of_length A_ n a)) a);
+
+fun finite_record_candidates A_ B_ c r n =
+  let
+    val h = finite_headed_incidence A_ (finite_structure c) r;
+  in
+    (if equal_nata (fcard (equal_prod A_ A_) h) n
+      then ffilter (fn (a, b) => finite_record_at A_ B_ c r a b)
+             (fimage (fn rows => (map fst rows, map snd rows))
+               (finite_lists_of_length (equal_prod A_ A_) n h))
+      else bot_fset)
+  end;
+
+fun finite_two_field_record A_ c r f =
+  ffUnion A_
+    (fimage
+      (fn a =>
+        (case a of (_, []) => bot_fset | (_, [_]) => bot_fset
+          | (ps, [l, q]) => f ps l q | (_, _ :: _ :: _ :: _) => bot_fset))
+      (finite_record_candidates (equal_list equal_nat) (equal_list equal_nat) c
+        r (nat_of_num (Bit0 One))));
+
+fun finite_environment_artifacts
+  (Finite_artifact_environment_ext
+    (finite_environment_artifacts, finite_environment_bindings, more))
+  = finite_environment_artifacts;
+
+fun finite_environment_bindings
+  (Finite_artifact_environment_ext
+    (finite_environment_artifacts, finite_environment_bindings, more))
+  = finite_environment_bindings;
+
+fun finite_environment_formed A_ c =
+  finite_relation_functional A_
+    (equal_finite_structured_object_ext (equal_list equal_nat)
+      (equal_list equal_nat) equal_unit)
+    (finite_environment_artifacts c) andalso
+    (ball (fset (finite_environment_artifacts c))
+       (fn (_, a) => finite_exact_formed a) andalso
+      (finite_relation_functional (equal_prod A_ (equal_list equal_nat)) A_
+         (finite_environment_bindings c) andalso
+        ball (fset (finite_environment_bindings c))
+          (fn (a, b) =>
+            let
+              val (u, k) = a;
+            in
+              (fn v =>
+                bex (fset (finite_environment_artifacts c))
+                  (fn (w, r) =>
+                    eq A_ w u andalso
+                      member (equal_list equal_nat) k
+                        (fset (finite_carrier (finite_structure r)))) andalso
+                  member A_ v
+                    (image fst (fset (finite_environment_artifacts c))))
+            end
+              b)));
+
+fun finite_join_readings C_ f v r ps x y =
+  ffUnion
+    (equal_prod C_
+      (equal_prod (equal_fset (equal_list equal_nat))
+        (equal_fset (equal_list equal_nat))))
+    (fimage
+      (fn (xa, (l, a)) =>
+        ffUnion
+          (equal_prod C_
+            (equal_prod (equal_fset (equal_list equal_nat))
+              (equal_fset (equal_list equal_nat))))
+          (fimage
+            (fn (ya, (q, b)) =>
+              let
+                val fa = finsert (equal_list equal_nat) r (fset_of_list ps);
+                val i =
+                  sup_fset (equal_list equal_nat)
+                    (sup_fset (equal_list equal_nat) fa l) q;
+                val k = sup_fset (equal_list equal_nat) a b;
+              in
+                (if equal_fseta (equal_list equal_nat)
+                      (inf_fset (equal_list equal_nat) fa
+                        (sup_fset (equal_list equal_nat) l q))
+                      bot_fset andalso
+                      (equal_fseta (equal_list equal_nat)
+                         (inf_fset (equal_list equal_nat) l q) bot_fset andalso
+                        equal_fseta (equal_list equal_nat)
+                          (inf_fset (equal_list equal_nat) i
+                            (sup_fset (equal_list equal_nat) k v))
+                          bot_fset)
+                  then finsert
+                         (equal_prod C_
+                           (equal_prod (equal_fset (equal_list equal_nat))
+                             (equal_fset (equal_list equal_nat))))
+                         (f xa ya, (i, k)) bot_fset
+                  else bot_fset)
+              end)
+            y))
+      x);
+
+fun finite_payload_values A_ c a =
+  fimage snd
+    (ffilter (fn (b, _) => eq A_ b a) (finite_bindings (finite_data c)));
+
+fun finite_citation_choices c r =
+  sup_fset (equal_prod equal_citation (equal_fset (equal_list equal_nat)))
+    (sup_fset (equal_prod equal_citation (equal_fset (equal_list equal_nat)))
+      (sup_fset (equal_prod equal_citation (equal_fset (equal_list equal_nat)))
+        (finsert (equal_prod equal_citation (equal_fset (equal_list equal_nat)))
+          (Local_Whole, finsert (equal_list equal_nat) r bot_fset) bot_fset)
+        (fimage
+          (fn (_, a) => (Local a, finsert (equal_list equal_nat) r bot_fset))
+          (finite_headed_incidence (equal_list equal_nat) (finite_structure c)
+            r)))
+      (fimage
+        (fn (k, _) =>
+          (External_Whole k, finsert (equal_list equal_nat) r bot_fset))
+        (finite_headed_incidence (equal_list equal_nat) (finite_structure c)
+          r)))
+    (ffUnion (equal_prod equal_citation (equal_fset (equal_list equal_nat)))
+      (fimage
+        (fn (k, d) =>
+          fimage
+            (fn a =>
+              (External (k, a),
+                finsert (equal_list equal_nat) r
+                  (finsert (equal_list equal_nat) d bot_fset)))
+            (finite_payload_values (equal_list equal_nat) c d))
+        (finite_headed_incidence (equal_list equal_nat) (finite_structure c)
+          r)));
+
+fun finite_citation_candidates c r =
+  ffilter (fn (a, b) => finite_citation_at c r a b)
+    (finite_citation_choices c r);
+
+fun finite_target_formed (Finite_Whole c) = finite_exact_formed c
+  | finite_target_formed (Finite_Anchor (c, a)) =
+    finite_exact_formed c andalso
+      member (equal_list equal_nat) a
+        (fset (finite_carrier (finite_structure c)));
+
+fun finite_artifacts_at A_ e u =
+  fimage snd
+    (ffilter (fn (v, _) => eq A_ v u) (finite_environment_artifacts e));
+
+fun finite_citation_locations A_ e u (Local a) =
+  (if bex (fset (finite_artifacts_at A_ e u))
+        (fn c => finite_target_formed (Finite_Anchor (c, a)))
+    then finsert (equal_prod A_ (equal_list equal_nat)) (u, a) bot_fset
+    else bot_fset)
+  | finite_citation_locations A_ e u (External (k, a)) =
+    fimage (fn (b, c) => let
+                           val (_, _) = b;
+                         in
+                           (fn w => (w, a))
+                         end
+                           c)
+      (ffilter
+        (fn (b, c) =>
+          let
+            val (v, l) = b;
+          in
+            (fn w =>
+              eq A_ v u andalso
+                (equal_lista equal_nat l k andalso
+                  bex (fset (finite_artifacts_at A_ e w))
+                    (fn ca => finite_target_formed (Finite_Anchor (ca, a)))))
+          end
+            c)
+        (finite_environment_bindings e))
+  | finite_citation_locations A_ e u Local_Whole = bot_fset
+  | finite_citation_locations A_ e u (External_Whole k) = bot_fset;
+
+fun finite_citation_slots (Local a) = bot_fset
+  | finite_citation_slots Local_Whole = bot_fset
+  | finite_citation_slots (External (k, a)) =
+    finsert (equal_list equal_nat) k bot_fset
+  | finite_citation_slots (External_Whole k) =
+    finsert (equal_list equal_nat) k bot_fset;
+
+fun finite_location_readings A_ e u c r =
+  ffUnion
+    (equal_prod (equal_prod A_ (equal_list equal_nat))
+      (equal_prod (equal_fset (equal_list equal_nat))
+        (equal_fset (equal_list equal_nat))))
+    (fimage
+      (fn (ca, i) =>
+        fimage (fn d => (d, (i, finite_citation_slots ca)))
+          (finite_citation_locations A_ e u ca))
+      (finite_citation_candidates c r));
+
+fun finite_call_readings A_ B_ e u v r reads =
+  (if finite_environment_formed A_ e
+    then ffUnion
+           (equal_prod (equal_prod (equal_prod A_ (equal_list equal_nat)) B_)
+             (equal_prod (equal_fset (equal_list equal_nat))
+               (equal_fset (equal_list equal_nat))))
+           (fimage
+             (fn c =>
+               finite_two_field_record
+                 (equal_prod
+                   (equal_prod (equal_prod A_ (equal_list equal_nat)) B_)
+                   (equal_prod (equal_fset (equal_list equal_nat))
+                     (equal_fset (equal_list equal_nat))))
+                 c r (fn ps => fn ca => fn a =>
+                       finite_join_readings
+                         (equal_prod (equal_prod A_ (equal_list equal_nat)) B_)
+                         (fn aa => fn b => (aa, b)) v r ps
+                         (finite_location_readings A_ e u c ca) (reads a)))
+             (finite_artifacts_at A_ e u))
+    else bot_fset);
+
+fun finite_payload_leaf_at A_ B_ c a v =
+  finite_object_formed A_ B_ c andalso
+    (equal_fseta (equal_prod A_ A_)
+       (finite_headed_incidence A_ (finite_structure c) a) bot_fset andalso
+      finite_payload_at A_ B_ c a v);
+
+fun finite_socket_rows A_ C_ m reads =
+  ffUnion (equal_prod A_ C_)
+    (fimage (fn (s, a) => fimage (fn aa => (s, aa)) (reads a)) m);
+
+fun finite_binder_scope_at c b v =
+  finite_family_at (equal_list equal_nat) (equal_list equal_nat) c b
+    (fimage (fn a => (a, a)) v);
+
+fun finite_binder_scope_candidates c b =
+  let
+    val v =
+      fimage fst
+        (finite_headed_incidence (equal_list equal_nat) (finite_structure c) b);
+  in
+    (if finite_binder_scope_at c b v
+      then finsert (equal_fset (equal_list equal_nat)) v bot_fset else bot_fset)
+  end;
+
+fun finite_variable_leaf v (Local a, i) =
+  (if member (equal_list equal_nat) a (fset v) andalso
+        equal_fseta (equal_list equal_nat) (inf_fset (equal_list equal_nat) i v)
+          bot_fset
+    then finsert
+           (equal_prod (equal_finite_term_pattern (equal_list equal_nat))
+             (equal_prod (equal_fset (equal_list equal_nat))
+               (equal_fset (equal_list equal_nat))))
+           (Finite_Variable a, (i, bot_fset)) bot_fset
+    else bot_fset)
+  | finite_variable_leaf v (Local_Whole, i) = bot_fset
+  | finite_variable_leaf v (External (k, a), i) = bot_fset
+  | finite_variable_leaf v (External_Whole k, i) = bot_fset;
+
+fun finite_variable_readings c v r =
+  ffUnion
+    (equal_prod (equal_finite_term_pattern (equal_list equal_nat))
+      (equal_prod (equal_fset (equal_list equal_nat))
+        (equal_fset (equal_list equal_nat))))
+    (fimage (finite_variable_leaf v) (finite_citation_candidates c r));
+
+fun finite_payload_readings c r =
+  fimage
+    (fn v =>
+      (Finite_Payload v, (finsert (equal_list equal_nat) r bot_fset, bot_fset)))
+    (ffilter
+      (finite_payload_leaf_at (equal_list equal_nat) (equal_list equal_nat) c r)
+      (finite_payload_values (equal_list equal_nat) c r));
+
+fun finite_bound_artifacts A_ e u k =
+  ffUnion
+    (equal_finite_structured_object_ext (equal_list equal_nat)
+      (equal_list equal_nat) equal_unit)
+    (fimage
+      (fn (a, b) =>
+        let
+          val (v, l) = a;
+        in
+          (fn w =>
+            (if eq A_ v u andalso equal_lista equal_nat l k
+              then finite_artifacts_at A_ e w else bot_fset))
+        end
+          b)
+      (finite_environment_bindings e));
+
+fun finite_citation_targets A_ e u (Local a) =
+  fimage (fn c => Finite_Anchor (c, a))
+    (ffilter (fn c => finite_target_formed (Finite_Anchor (c, a)))
+      (finite_artifacts_at A_ e u))
+  | finite_citation_targets A_ e u (External (k, a)) =
+    fimage (fn c => Finite_Anchor (c, a))
+      (ffilter (fn c => finite_target_formed (Finite_Anchor (c, a)))
+        (finite_bound_artifacts A_ e u k))
+  | finite_citation_targets A_ e u Local_Whole =
+    fimage Finite_Whole
+      (ffilter finite_exact_formed (finite_artifacts_at A_ e u))
+  | finite_citation_targets A_ e u (External_Whole k) =
+    fimage Finite_Whole
+      (ffilter finite_exact_formed (finite_bound_artifacts A_ e u k));
+
+fun finite_target_readings A_ e u c r =
+  ffUnion
+    (equal_prod equal_finite_factor_term
+      (equal_prod (equal_fset (equal_list equal_nat))
+        (equal_fset (equal_list equal_nat))))
+    (fimage
+      (fn (ca, i) =>
+        (if equal_fseta (equal_list equal_nat) (finite_citation_slots ca)
+              bot_fset
+          then bot_fset
+          else fimage (fn t => (Finite_Target t, (i, finite_citation_slots ca)))
+                 (finite_citation_targets A_ e u ca)))
+      (finite_citation_candidates c r));
+
+fun finite_record_readings A_ c r f v reads =
+  finite_two_field_record
+    (equal_prod A_
+      (equal_prod (equal_fset (equal_list equal_nat))
+        (equal_fset (equal_list equal_nat))))
+    c r (fn ps => fn l => fn q =>
+          finite_join_readings A_ f v r ps (reads l) (reads q));
+
+fun finite_term_readings_bounded A_ Zero_nat e u r = bot_fset
+  | finite_term_readings_bounded A_ (Suc n) e u r =
+    (if finite_environment_formed A_ e
+      then ffUnion
+             (equal_prod equal_finite_factor_term
+               (equal_prod (equal_fset (equal_list equal_nat))
+                 (equal_fset (equal_list equal_nat))))
+             (fimage
+               (fn c =>
+                 sup_fset
+                   (equal_prod equal_finite_factor_term
+                     (equal_prod (equal_fset (equal_list equal_nat))
+                       (equal_fset (equal_list equal_nat))))
+                   (sup_fset
+                     (equal_prod equal_finite_factor_term
+                       (equal_prod (equal_fset (equal_list equal_nat))
+                         (equal_fset (equal_list equal_nat))))
+                     (finite_target_readings A_ e u c r)
+                     (finite_payload_readings c r))
+                   (finite_record_readings equal_finite_factor_term c r
+                     (fn a => fn b => Finite_Pair (a, b)) bot_fset
+                     (finite_term_readings_bounded A_ n e u)))
+               (finite_artifacts_at A_ e u))
+      else bot_fset);
+
+fun finite_pattern_leaf v (Finite_Target t, (i, k)) =
+  (if equal_fseta (equal_list equal_nat) (inf_fset (equal_list equal_nat) i v)
+        bot_fset
+    then finsert
+           (equal_prod (equal_finite_term_pattern (equal_list equal_nat))
+             (equal_prod (equal_fset (equal_list equal_nat))
+               (equal_fset (equal_list equal_nat))))
+           (Finite_Pattern_Target t, (i, k)) bot_fset
+    else bot_fset)
+  | finite_pattern_leaf va (Finite_Payload v, (i, k)) =
+    (if equal_fseta (equal_list equal_nat)
+          (inf_fset (equal_list equal_nat) i va) bot_fset
+      then finsert
+             (equal_prod (equal_finite_term_pattern (equal_list equal_nat))
+               (equal_prod (equal_fset (equal_list equal_nat))
+                 (equal_fset (equal_list equal_nat))))
+             (Finite_Pattern_Payload v, (i, k)) bot_fset
+      else bot_fset)
+  | finite_pattern_leaf v (Finite_Pair (x, y), (i, k)) = bot_fset;
+
+fun finite_pattern_constants A_ e u v r =
+  ffUnion
+    (equal_prod (equal_finite_term_pattern (equal_list equal_nat))
+      (equal_prod (equal_fset (equal_list equal_nat))
+        (equal_fset (equal_list equal_nat))))
+    (fimage (finite_pattern_leaf v)
+      (finite_term_readings_bounded A_ one_nat e u r));
+
+fun finite_pattern_readings_bounded A_ Zero_nat e u v r = bot_fset
+  | finite_pattern_readings_bounded A_ (Suc n) e u v r =
+    (if finite_environment_formed A_ e
+      then sup_fset
+             (equal_prod (equal_finite_term_pattern (equal_list equal_nat))
+               (equal_prod (equal_fset (equal_list equal_nat))
+                 (equal_fset (equal_list equal_nat))))
+             (finite_pattern_constants A_ e u v r)
+             (ffUnion
+               (equal_prod (equal_finite_term_pattern (equal_list equal_nat))
+                 (equal_prod (equal_fset (equal_list equal_nat))
+                   (equal_fset (equal_list equal_nat))))
+               (fimage
+                 (fn c =>
+                   sup_fset
+                     (equal_prod
+                       (equal_finite_term_pattern (equal_list equal_nat))
+                       (equal_prod (equal_fset (equal_list equal_nat))
+                         (equal_fset (equal_list equal_nat))))
+                     (finite_variable_readings c v r)
+                     (finite_record_readings
+                       (equal_finite_term_pattern (equal_list equal_nat)) c r
+                       (fn a => fn b => Finite_Pattern_Pair (a, b)) v
+                       (finite_pattern_readings_bounded A_ n e u v)))
+                 (finite_artifacts_at A_ e u)))
+      else bot_fset);
+
+fun finite_pattern_readings A_ e u v r =
+  ffUnion
+    (equal_prod (equal_finite_term_pattern (equal_list equal_nat))
+      (equal_prod (equal_fset (equal_list equal_nat))
+        (equal_fset (equal_list equal_nat))))
+    (fimage
+      (fn c =>
+        finite_pattern_readings_bounded A_
+          (fcard (equal_list equal_nat) (finite_carrier (finite_structure c))) e
+          u v r)
+      (finite_artifacts_at A_ e u));
+
+fun finite_pattern_variables A_ (Finite_Variable a) = finsert A_ a bot_fset
+  | finite_pattern_variables A_ (Finite_Pattern_Target t) = bot_fset
+  | finite_pattern_variables A_ (Finite_Pattern_Payload v) = bot_fset
+  | finite_pattern_variables A_ (Finite_Pattern_Pair (p, q)) =
+    sup_fset A_ (finite_pattern_variables A_ p) (finite_pattern_variables A_ q);
+
+fun finite_scoped_record A_ e u c r ps b q =
+  ffUnion
+    (equal_prod (equal_finite_term_pattern (equal_list equal_nat))
+      (equal_prod (equal_fset (equal_list equal_nat))
+        (equal_fset (equal_list equal_nat))))
+    (fimage
+      (fn v =>
+        ffilter
+          (fn (p, (_, _)) =>
+            equal_fseta (equal_list equal_nat)
+              (finite_pattern_variables (equal_list equal_nat) p) v)
+          (finite_join_readings
+            (equal_finite_term_pattern (equal_list equal_nat))
+            (fn _ => fn p => p) bot_fset r ps
+            (finsert
+              (equal_prod equal_unit
+                (equal_prod (equal_fset (equal_list equal_nat))
+                  (equal_fset (equal_list equal_nat))))
+              ((), (finsert (equal_list equal_nat) b v, bot_fset)) bot_fset)
+            (finite_pattern_readings A_ e u v q)))
+      (finite_binder_scope_candidates c b));
+
+fun finite_row_interiors h =
+  ffUnion (equal_list equal_nat) (fimage (fst o snd o snd) h);
+
+fun finite_left_sockets A_ B_ f =
+  ffUnion (equal_prod A_ B_)
+    (fimage
+      (fn a =>
+        (case a of (s, Inl x) => finsert (equal_prod A_ B_) (s, x) bot_fset
+          | (_, Inr _) => bot_fset))
+      f);
+
+fun finite_right_sockets A_ C_ f =
+  ffUnion (equal_prod A_ C_)
+    (fimage
+      (fn a =>
+        (case a of (_, Inl _) => bot_fset
+          | (s, Inr y) => finsert (equal_prod A_ C_) (s, y) bot_fset))
+      f);
+
+fun finite_family_candidates A_ B_ c r =
+  let
+    val h = finite_headed_incidence A_ (finite_structure c) r;
+  in
+    (if finite_family_at A_ B_ c r h
+      then finsert (equal_fset (equal_prod A_ A_)) h bot_fset else bot_fset)
+  end;
+
+fun finite_reading_values x = fimage fst x;
+
+fun finite_located_values A_ e u r =
+  ffUnion (equal_prod A_ (equal_list equal_nat))
+    (fimage
+      (fn c => finite_reading_values (finite_location_readings A_ e u c r))
+      (finite_artifacts_at A_ e u));
+
+fun finite_pattern_vector_readings A_ e u v [] =
+  (if finite_environment_formed A_ e
+    then finsert
+           (equal_prod
+             (equal_list (equal_finite_term_pattern (equal_list equal_nat)))
+             (equal_prod (equal_fset (equal_list equal_nat))
+               (equal_fset (equal_list equal_nat))))
+           ([], (bot_fset, bot_fset)) bot_fset
+    else bot_fset)
+  | finite_pattern_vector_readings A_ e u v (r :: rs) =
+    ffUnion
+      (equal_prod
+        (equal_list (equal_finite_term_pattern (equal_list equal_nat)))
+        (equal_prod (equal_fset (equal_list equal_nat))
+          (equal_fset (equal_list equal_nat))))
+      (fimage
+        (fn (p, (a, b)) =>
+          ffUnion
+            (equal_prod
+              (equal_list (equal_finite_term_pattern (equal_list equal_nat)))
+              (equal_prod (equal_fset (equal_list equal_nat))
+                (equal_fset (equal_list equal_nat))))
+            (fimage
+              (fn (ps, (j, w)) =>
+                (if equal_fseta (equal_list equal_nat)
+                      (inf_fset (equal_list equal_nat) a j) bot_fset andalso
+                      equal_fseta (equal_list equal_nat)
+                        (inf_fset (equal_list equal_nat)
+                          (sup_fset (equal_list equal_nat) a j)
+                          (sup_fset (equal_list equal_nat) b w))
+                        bot_fset
+                  then finsert
+                         (equal_prod
+                           (equal_list
+                             (equal_finite_term_pattern (equal_list equal_nat)))
+                           (equal_prod (equal_fset (equal_list equal_nat))
+                             (equal_fset (equal_list equal_nat))))
+                         (p :: ps,
+                           (sup_fset (equal_list equal_nat) a j,
+                             sup_fset (equal_list equal_nat) b w))
+                         bot_fset
+                  else bot_fset))
+              (finite_pattern_vector_readings A_ e u v rs)))
+        (finite_pattern_readings A_ e u v r));
+
+fun finite_frame_readings A_ v r ps x =
+  ffUnion
+    (equal_prod A_
+      (equal_prod (equal_fset (equal_list equal_nat))
+        (equal_fset (equal_list equal_nat))))
+    (fimage
+      (fn (p, (j, k)) =>
+        let
+          val f = finsert (equal_list equal_nat) r (fset_of_list ps);
+          val i = sup_fset (equal_list equal_nat) f j;
+        in
+          (if equal_fseta (equal_list equal_nat)
+                (inf_fset (equal_list equal_nat) f j) bot_fset andalso
+                equal_fseta (equal_list equal_nat)
+                  (inf_fset (equal_list equal_nat) i
+                    (sup_fset (equal_list equal_nat) k v))
+                  bot_fset
+            then finsert
+                   (equal_prod A_
+                     (equal_prod (equal_fset (equal_list equal_nat))
+                       (equal_fset (equal_list equal_nat))))
+                   (p, (i, k)) bot_fset
+            else bot_fset)
+        end)
+      x);
+
+fun finite_pattern_record_readings A_ e u v r n =
+  (if finite_environment_formed A_ e
+    then ffUnion
+           (equal_prod
+             (equal_list (equal_finite_term_pattern (equal_list equal_nat)))
+             (equal_prod (equal_fset (equal_list equal_nat))
+               (equal_fset (equal_list equal_nat))))
+           (fimage
+             (fn c =>
+               ffUnion
+                 (equal_prod
+                   (equal_list
+                     (equal_finite_term_pattern (equal_list equal_nat)))
+                   (equal_prod (equal_fset (equal_list equal_nat))
+                     (equal_fset (equal_list equal_nat))))
+                 (fimage
+                   (fn (ports, roots) =>
+                     finite_frame_readings
+                       (equal_list
+                         (equal_finite_term_pattern (equal_list equal_nat)))
+                       v r ports
+                       (finite_pattern_vector_readings A_ e u v roots))
+                   (finite_record_candidates (equal_list equal_nat)
+                     (equal_list equal_nat) c r n)))
+             (finite_artifacts_at A_ e u))
+    else bot_fset);
+
+fun finite_material_from_fields A_ [s, a, e, b, f] =
+  finsert (equal_finite_material_pattern_ext A_ equal_unit)
+    (Finite_material_pattern_ext (s, a, e, b, f, ())) bot_fset
+  | finite_material_from_fields A_ [] = bot_fset
+  | finite_material_from_fields A_ [v] = bot_fset
+  | finite_material_from_fields A_ [v, vb] = bot_fset
+  | finite_material_from_fields A_ [v, vb, vd] = bot_fset
+  | finite_material_from_fields A_ [v, vb, vd, vf] = bot_fset
+  | finite_material_from_fields A_ (v :: vb :: vd :: vf :: vh :: vj :: vk) =
+    bot_fset;
+
+fun finite_native_material_readings A_ e u v r =
+  ffUnion
+    (equal_prod
+      (equal_finite_material_pattern_ext (equal_list equal_nat) equal_unit)
+      (equal_prod (equal_fset (equal_list equal_nat))
+        (equal_fset (equal_list equal_nat))))
+    (fimage
+      (fn (ps, (i, k)) =>
+        fimage (fn m => (m, (i, k)))
+          (finite_material_from_fields (equal_list equal_nat) ps))
+      (finite_pattern_record_readings A_ e u v r
+        (nat_of_num (Bit1 (Bit0 One)))));
+
+fun finite_prospective_call_readings A_ e u v r =
+  finite_call_readings A_ (equal_finite_term_pattern (equal_list equal_nat)) e u
+    v r (finite_pattern_readings A_ e u v);
+
+fun finite_native_premise_readings A_ e u v r =
+  sup_fset
+    (equal_prod
+      (equal_sum
+        (equal_prod (equal_prod A_ (equal_list equal_nat))
+          (equal_finite_term_pattern (equal_list equal_nat)))
+        (equal_finite_material_pattern_ext (equal_list equal_nat) equal_unit))
+      (equal_prod (equal_fset (equal_list equal_nat))
+        (equal_fset (equal_list equal_nat))))
+    (fimage (fn (c, (i, k)) => (Inl c, (i, k)))
+      (finite_prospective_call_readings A_ e u v r))
+    (fimage (fn (m, (i, k)) => (Inr m, (i, k)))
+      (finite_native_material_readings A_ e u v r));
+
+fun finite_socket_readings A_ C_ m reads =
+  let
+    val q = finite_socket_rows A_ C_ m reads;
+  in
+    (if ball (fset m)
+          (fn (_, a) => not (eq (equal_fset C_) (reads a) bot_fset)) andalso
+          finite_relation_functional A_ C_ q
+      then finsert (equal_fset (equal_prod A_ C_)) q bot_fset else bot_fset)
+  end;
+
+fun finite_family_readings A_ B_ e u r reads =
+  (if finite_environment_formed A_ e
+    then ffUnion (equal_fset (equal_prod (equal_list equal_nat) B_))
+           (fimage
+             (fn c =>
+               ffUnion (equal_fset (equal_prod (equal_list equal_nat) B_))
+                 (fimage
+                   (fn m =>
+                     finite_socket_readings (equal_list equal_nat) B_ m reads)
+                   (finite_family_candidates (equal_list equal_nat)
+                     (equal_list equal_nat) c r)))
+             (finite_artifacts_at A_ e u))
+    else bot_fset);
+
+fun finite_native_premise_family_readings A_ e u v r =
+  fimage
+    (fn f =>
+      (finite_left_sockets (equal_list equal_nat)
+         (equal_prod (equal_prod A_ (equal_list equal_nat))
+           (equal_finite_term_pattern (equal_list equal_nat)))
+         f,
+        finite_right_sockets (equal_list equal_nat)
+          (equal_finite_material_pattern_ext (equal_list equal_nat) equal_unit)
+          f))
+    (finite_family_readings A_
+      (equal_sum
+        (equal_prod (equal_prod A_ (equal_list equal_nat))
+          (equal_finite_term_pattern (equal_list equal_nat)))
+        (equal_finite_material_pattern_ext (equal_list equal_nat) equal_unit))
+      e u r
+      (fn a =>
+        finite_reading_values (finite_native_premise_readings A_ e u v a)));
+
+fun finite_schema_conclusion
+  (Finite_factor_schema_ext
+    (finite_schema_conclusion, finite_schema_premises, finite_schema_materials,
+      more))
+  = finite_schema_conclusion;
+
+fun finite_schema_materials
+  (Finite_factor_schema_ext
+    (finite_schema_conclusion, finite_schema_premises, finite_schema_materials,
+      more))
+  = finite_schema_materials;
+
+fun finite_schema_premises
+  (Finite_factor_schema_ext
+    (finite_schema_conclusion, finite_schema_premises, finite_schema_materials,
+      more))
+  = finite_schema_premises;
+
+fun finite_material_functions
+  (Finite_material_pattern_ext
+    (finite_material_source, finite_material_atoms, finite_material_edges,
+      finite_material_counts, finite_material_functions, more))
+  = finite_material_functions;
+
+fun finite_material_source
+  (Finite_material_pattern_ext
+    (finite_material_source, finite_material_atoms, finite_material_edges,
+      finite_material_counts, finite_material_functions, more))
+  = finite_material_source;
+
+fun finite_material_counts
+  (Finite_material_pattern_ext
+    (finite_material_source, finite_material_atoms, finite_material_edges,
+      finite_material_counts, finite_material_functions, more))
+  = finite_material_counts;
+
+fun finite_material_edges
+  (Finite_material_pattern_ext
+    (finite_material_source, finite_material_atoms, finite_material_edges,
+      finite_material_counts, finite_material_functions, more))
+  = finite_material_edges;
+
+fun finite_material_atoms
+  (Finite_material_pattern_ext
+    (finite_material_source, finite_material_atoms, finite_material_edges,
+      finite_material_counts, finite_material_functions, more))
+  = finite_material_atoms;
+
+fun finite_material_variables A_ m =
+  sup_fset A_
+    (sup_fset A_
+      (sup_fset A_
+        (sup_fset A_ (finite_pattern_variables A_ (finite_material_source m))
+          (finite_pattern_variables A_ (finite_material_atoms m)))
+        (finite_pattern_variables A_ (finite_material_edges m)))
+      (finite_pattern_variables A_ (finite_material_counts m)))
+    (finite_pattern_variables A_ (finite_material_functions m));
+
+fun finite_schema_variables A_ s =
+  sup_fset A_
+    (sup_fset A_ (finite_pattern_variables A_ (finite_schema_conclusion s))
+      (ffUnion A_
+        (fimage (fn (_, (_, a)) => finite_pattern_variables A_ a)
+          (finite_schema_premises s))))
+    (ffUnion A_
+      (fimage (fn (_, a) => finite_material_variables A_ a)
+        (finite_schema_materials s)));
+
+fun finite_schema_body_readings A_ e u ca r ps b c m =
+  ffUnion
+    (equal_finite_factor_schema_ext (equal_list equal_nat)
+      (equal_list equal_nat) (equal_prod A_ (equal_list equal_nat)) equal_unit)
+    (fimage
+      (fn v =>
+        ffUnion
+          (equal_finite_factor_schema_ext (equal_list equal_nat)
+            (equal_list equal_nat) (equal_prod A_ (equal_list equal_nat))
+            equal_unit)
+          (fimage
+            (fn (p, (i, _)) =>
+              ffUnion
+                (equal_finite_factor_schema_ext (equal_list equal_nat)
+                  (equal_list equal_nat) (equal_prod A_ (equal_list equal_nat))
+                  equal_unit)
+                (fimage
+                  (fn (q, a) =>
+                    let
+                      val s = Finite_factor_schema_ext (p, q, a, ());
+                    in
+                      (if equal_fseta (equal_list equal_nat) v
+                            (finite_schema_variables (equal_list equal_nat)
+                              s) andalso
+                            (equal_fseta (equal_list equal_nat)
+                               (inf_fset (equal_list equal_nat)
+                                 (finsert (equal_list equal_nat) r
+                                   (fset_of_list ps))
+                                 (sup_fset (equal_list equal_nat)
+                                   (sup_fset (equal_list equal_nat)
+                                     (finsert (equal_list equal_nat) b v) i)
+                                   (finsert (equal_list equal_nat) m bot_fset)))
+                               bot_fset andalso
+                              (equal_fseta (equal_list equal_nat)
+                                 (inf_fset (equal_list equal_nat)
+                                   (finsert (equal_list equal_nat) b v) i)
+                                 bot_fset andalso
+                                (not (equal_lista equal_nat b m) andalso
+                                  not (member (equal_list equal_nat) m
+(fset i)))))
+                        then finsert
+                               (equal_finite_factor_schema_ext
+                                 (equal_list equal_nat) (equal_list equal_nat)
+                                 (equal_prod A_ (equal_list equal_nat))
+                                 equal_unit)
+                               s bot_fset
+                        else bot_fset)
+                    end)
+                  (finite_native_premise_family_readings A_ e u v m)))
+            (finite_pattern_readings A_ e u v c)))
+      (finite_binder_scope_candidates ca b));
+
+fun finite_three_fields [a, b, c] f = f a b c
+  | finite_three_fields [] f = bot_fset
+  | finite_three_fields [v] f = bot_fset
+  | finite_three_fields [v, vb] f = bot_fset
+  | finite_three_fields (v :: vb :: vd :: vf :: vg) f = bot_fset;
+
+fun finite_three_field_record A_ c r f =
+  ffUnion A_
+    (fimage (fn (ps, xs) => finite_three_fields xs (f ps))
+      (finite_record_candidates (equal_list equal_nat) (equal_list equal_nat) c
+        r (nat_of_num (Bit1 One))));
+
+fun finite_native_schema_readings A_ e u r =
+  (if finite_environment_formed A_ e
+    then ffUnion
+           (equal_finite_factor_schema_ext (equal_list equal_nat)
+             (equal_list equal_nat) (equal_prod A_ (equal_list equal_nat))
+             equal_unit)
+           (fimage
+             (fn c =>
+               finite_three_field_record
+                 (equal_finite_factor_schema_ext (equal_list equal_nat)
+                   (equal_list equal_nat) (equal_prod A_ (equal_list equal_nat))
+                   equal_unit)
+                 c r (finite_schema_body_readings A_ e u c r))
+             (finite_artifacts_at A_ e u))
+    else bot_fset);
+
+fun finite_native_schema_family_readings A_ e u r =
+  finite_family_readings A_
+    (equal_finite_factor_schema_ext (equal_list equal_nat)
+      (equal_list equal_nat) (equal_prod A_ (equal_list equal_nat)) equal_unit)
+    e u r (finite_native_schema_readings A_ e u);
+
+fun finite_scoped_pattern_readings A_ e u r =
+  (if finite_environment_formed A_ e
+    then ffUnion
+           (equal_prod (equal_finite_term_pattern (equal_list equal_nat))
+             (equal_prod (equal_fset (equal_list equal_nat))
+               (equal_fset (equal_list equal_nat))))
+           (fimage
+             (fn c =>
+               finite_two_field_record
+                 (equal_prod (equal_finite_term_pattern (equal_list equal_nat))
+                   (equal_prod (equal_fset (equal_list equal_nat))
+                     (equal_fset (equal_list equal_nat))))
+                 c r (finite_scoped_record A_ e u c r))
+             (finite_artifacts_at A_ e u))
+    else bot_fset);
+
+fun finite_definition_body_readings A_ e u r ps i m =
+  ffUnion
+    (equal_prod (equal_finite_term_pattern (equal_list equal_nat))
+      (equal_fset
+        (equal_prod (equal_list equal_nat)
+          (equal_finite_factor_schema_ext (equal_list equal_nat)
+            (equal_list equal_nat) (equal_prod A_ (equal_list equal_nat))
+            equal_unit))))
+    (fimage
+      (fn (p, (ia, _)) =>
+        (if equal_fseta (equal_list equal_nat)
+              (inf_fset (equal_list equal_nat)
+                (finsert (equal_list equal_nat) r (fset_of_list ps))
+                (sup_fset (equal_list equal_nat) ia
+                  (finsert (equal_list equal_nat) m bot_fset)))
+              bot_fset andalso
+              not (member (equal_list equal_nat) m (fset ia))
+          then fimage (fn a => (p, a))
+                 (finite_native_schema_family_readings A_ e u m)
+          else bot_fset))
+      (finite_scoped_pattern_readings A_ e u i));
+
+fun finite_native_definition_readings A_ e u r =
+  (if finite_environment_formed A_ e
+    then ffUnion
+           (equal_prod (equal_finite_term_pattern (equal_list equal_nat))
+             (equal_fset
+               (equal_prod (equal_list equal_nat)
+                 (equal_finite_factor_schema_ext (equal_list equal_nat)
+                   (equal_list equal_nat) (equal_prod A_ (equal_list equal_nat))
+                   equal_unit))))
+           (fimage
+             (fn c =>
+               finite_two_field_record
+                 (equal_prod (equal_finite_term_pattern (equal_list equal_nat))
+                   (equal_fset
+                     (equal_prod (equal_list equal_nat)
+                       (equal_finite_factor_schema_ext (equal_list equal_nat)
+                         (equal_list equal_nat)
+                         (equal_prod A_ (equal_list equal_nat)) equal_unit))))
+                 c r (finite_definition_body_readings A_ e u r))
+             (finite_artifacts_at A_ e u))
+    else bot_fset);
+
+fun finite_environment_positions A_ e =
+  ffUnion (equal_prod A_ (equal_list equal_nat))
+    (fimage
+      (fn (u, c) =>
+        fimage (fn a => (u, a)) (finite_carrier (finite_structure c)))
+      (finite_environment_artifacts e));
+
+fun finite_native_definition_rows A_ e =
+  ffUnion
+    (equal_prod (equal_prod A_ (equal_list equal_nat))
+      (equal_prod (equal_finite_term_pattern (equal_list equal_nat))
+        (equal_fset
+          (equal_prod (equal_list equal_nat)
+            (equal_finite_factor_schema_ext (equal_list equal_nat)
+              (equal_list equal_nat) (equal_prod A_ (equal_list equal_nat))
+              equal_unit)))))
+    (fimage
+      (fn d =>
+        fimage (fn a => (d, a))
+          (finite_native_definition_readings A_ e (fst d) (snd d)))
+      (finite_environment_positions A_ e));
+
+fun finite_schema_dependencies s =
+  fimage (fn (_, (d, _)) => d) (finite_schema_premises s);
+
+fun finite_native_definition_edges A_ e =
+  ffUnion
+    (equal_prod (equal_prod A_ (equal_list equal_nat))
+      (equal_prod A_ (equal_list equal_nat)))
+    (fimage
+      (fn (d, (_, f)) =>
+        ffUnion
+          (equal_prod (equal_prod A_ (equal_list equal_nat))
+            (equal_prod A_ (equal_list equal_nat)))
+          (fimage
+            (fn (_, s) =>
+              fimage (fn a => (d, a)) (finite_schema_dependencies s))
+            f))
+      (finite_native_definition_rows A_ e));
+
+fun finite_native_definition_sites A_ e roots =
+  sup_fset (equal_prod A_ (equal_list equal_nat)) roots
+    (fimage snd
+      (ffilter
+        (fn (d, _) =>
+          member (equal_prod A_ (equal_list equal_nat)) d (fset roots))
+        (finite_edge_closure (equal_prod A_ (equal_list equal_nat))
+          (finite_native_definition_edges A_ e))));
+
+fun finite_native_definition_graph A_ e roots =
+  ffilter
+    (fn (d, (_, _)) =>
+      member (equal_prod A_ (equal_list equal_nat)) d
+        (fset (finite_native_definition_sites A_ e roots)))
+    (finite_native_definition_rows A_ e);
+
+fun finite_native_program A_ e roots =
+  let
+    val g = finite_native_definition_graph A_ e roots;
+  in
+    Finite_schema_system_ext
+      (fimage (fn (d, (p, _)) => (d, p)) g,
+        ffUnion
+          (equal_prod
+            (equal_prod (equal_prod A_ (equal_list equal_nat))
+              (equal_list equal_nat))
+            (equal_finite_factor_schema_ext (equal_list equal_nat)
+              (equal_list equal_nat) (equal_prod A_ (equal_list equal_nat))
+              equal_unit))
+          (fimage (fn (d, (_, a)) => fimage (fn (c, aa) => ((d, c), aa)) a) g),
+        ())
+  end;
+
+fun finite_term_readings A_ e u r =
+  ffUnion
+    (equal_prod equal_finite_factor_term
+      (equal_prod (equal_fset (equal_list equal_nat))
+        (equal_fset (equal_list equal_nat))))
+    (fimage
+      (fn c =>
+        finite_term_readings_bounded A_
+          (fcard (equal_list equal_nat) (finite_carrier (finite_structure c))) e
+          u r)
+      (finite_artifacts_at A_ e u));
+
+fun finite_row_interiors_disjoint A_ h =
+  ball (fset h)
+    (fn (s, (_, (i, _))) =>
+      ball (fset h)
+        (fn (t, (_, (j, _))) =>
+          (if not (eq A_ s t)
+            then equal_fseta (equal_list equal_nat)
+                   (inf_fset (equal_list equal_nat) i j) bot_fset
+            else true)));
+
+fun finite_row_keys_injective A_ B_ h =
+  ball (fset h)
+    (fn (s, (q, (_, _))) =>
+      ball (fset h)
+        (fn (t, (z, (_, _))) =>
+          (if eq B_ (fst q) (fst z) then eq A_ s t else true)));
+
+fun finite_native_table_body A_ B_ r m h =
+  let
+    val i =
+      finsert (equal_list equal_nat) r
+        (sup_fset (equal_list equal_nat) (fimage fst m)
+          (finite_row_interiors h));
+    val k = finite_row_slots h;
+  in
+    (if finite_relation_functional (equal_list equal_nat)
+          (equal_prod (equal_prod A_ B_)
+            (equal_prod (equal_fset (equal_list equal_nat))
+              (equal_fset (equal_list equal_nat))))
+          h andalso
+          (equal_fseta (equal_list equal_nat) (fimage fst h)
+             (fimage fst m) andalso
+            (finite_row_keys_injective (equal_list equal_nat) A_ h andalso
+              (finite_row_interiors_disjoint (equal_list equal_nat) h andalso
+                (equal_fseta (equal_list equal_nat)
+                   (inf_fset (equal_list equal_nat)
+                     (finsert (equal_list equal_nat) r (fimage fst m))
+                     (finite_row_interiors h))
+                   bot_fset andalso
+                  equal_fseta (equal_list equal_nat)
+                    (inf_fset (equal_list equal_nat) i k) bot_fset))))
+      then finsert
+             (equal_prod (equal_fset (equal_prod A_ B_))
+               (equal_prod (equal_fset (equal_list equal_nat))
+                 (equal_fset (equal_list equal_nat))))
+             (finite_row_values h, (i, k)) bot_fset
+      else bot_fset)
+  end;
+
+fun finite_application_readings A_ e u r =
+  finite_call_readings A_ equal_finite_factor_term e u bot_fset r
+    (finite_term_readings A_ e u);
+
+fun finite_enumerated_artifact a e b f =
+  Finite_structured_object_ext
+    (Finite_rra_structure_ext (fset_of_list a, fset_of_list e, ()),
+      Finite_opaque_basis_ext (Mset b, fset_of_list f, ()), ());
+
+val finite_literal_node :
+  ((nat list), (nat list), unit) finite_structured_object_ext
+  = finite_enumerated_artifact
+      ([] ::
+        map (fn n => [n])
+          [Zero_nat, one_nat, nat_of_num (Bit0 One), nat_of_num (Bit1 One),
+            nat_of_num (Bit0 (Bit0 One)), nat_of_num (Bit1 (Bit0 One)),
+            nat_of_num (Bit0 (Bit1 One)), nat_of_num (Bit1 (Bit1 One))])
+      [([], ([nat_of_num (Bit1 One)], [Zero_nat])),
+        ([], ([nat_of_num (Bit0 (Bit0 One))], [one_nat])),
+        ([], ([nat_of_num (Bit1 (Bit0 One))], [nat_of_num (Bit0 One)])),
+        ([nat_of_num (Bit1 One)],
+          ([nat_of_num (Bit1 One)], [nat_of_num (Bit0 (Bit0 One))])),
+        ([nat_of_num (Bit0 (Bit0 One))],
+          ([nat_of_num (Bit0 (Bit0 One))], [nat_of_num (Bit1 (Bit0 One))])),
+        ([Zero_nat], ([Zero_nat], [nat_of_num (Bit0 (Bit1 One))])),
+        ([Zero_nat],
+          ([nat_of_num (Bit0 (Bit1 One))], [nat_of_num (Bit1 (Bit1 One))]))]
+      [] [([nat_of_num (Bit1 (Bit1 One))], [nat_of_num (Bit1 (Bit1 One))])];
+
+fun finite_site_citation_readings A_ e u r =
+  (if finite_environment_formed A_ e
+    then ffUnion
+           (equal_prod (equal_prod A_ (equal_list equal_nat))
+             (equal_prod (equal_fset (equal_list equal_nat))
+               (equal_fset (equal_list equal_nat))))
+           (fimage (fn c => finite_location_readings A_ e u c r)
+             (finite_artifacts_at A_ e u))
+    else bot_fset);
+
+fun finite_site_link_readings A_ e u r =
+  finite_call_readings A_ (equal_prod A_ (equal_list equal_nat)) e u bot_fset r
+    (finite_site_citation_readings A_ e u);
+
+fun finite_native_table_readings A_ B_ C_ e u r reads =
+  (if finite_environment_formed A_ e
+    then ffUnion
+           (equal_prod (equal_fset (equal_prod B_ C_))
+             (equal_prod (equal_fset (equal_list equal_nat))
+               (equal_fset (equal_list equal_nat))))
+           (fimage
+             (fn c =>
+               ffUnion
+                 (equal_prod (equal_fset (equal_prod B_ C_))
+                   (equal_prod (equal_fset (equal_list equal_nat))
+                     (equal_fset (equal_list equal_nat))))
+                 (fimage
+                   (fn m =>
+                     finite_native_table_body B_ C_ r m
+                       (finite_socket_rows (equal_list equal_nat)
+                         (equal_prod (equal_prod B_ C_)
+                           (equal_prod (equal_fset (equal_list equal_nat))
+                             (equal_fset (equal_list equal_nat))))
+                         m reads))
+                   (finite_family_candidates (equal_list equal_nat)
+                     (equal_list equal_nat) c r)))
+             (finite_artifacts_at A_ e u))
+    else bot_fset);
+
+fun finite_discharge_table_readings A_ e u r =
+  finite_native_table_readings A_ (equal_prod A_ (equal_list equal_nat))
+    (equal_prod A_ (equal_list equal_nat)) e u r
+    (finite_site_link_readings A_ e u);
+
+fun finite_binding_table_readings A_ e u r =
+  finite_native_table_readings A_ (equal_prod A_ (equal_list equal_nat))
+    equal_finite_factor_term e u r (finite_application_readings A_ e u);
+
+fun finite_proof_inference_readings A_ e u r ps c b p =
+  ffUnion
+    (equal_prod
+      (equal_prod
+        (equal_finite_schema_graph_node (equal_prod A_ (equal_list equal_nat))
+          (equal_prod A_ (equal_list equal_nat)))
+        (equal_fset
+          (equal_prod (equal_prod A_ (equal_list equal_nat))
+            (equal_prod A_ (equal_list equal_nat)))))
+      (equal_prod (equal_fset (equal_list equal_nat))
+        (equal_fset (equal_list equal_nat))))
+    (fimage
+      (fn (d, (ca, a)) =>
+        ffUnion
+          (equal_prod
+            (equal_prod
+              (equal_finite_schema_graph_node
+                (equal_prod A_ (equal_list equal_nat))
+                (equal_prod A_ (equal_list equal_nat)))
+              (equal_fset
+                (equal_prod (equal_prod A_ (equal_list equal_nat))
+                  (equal_prod A_ (equal_list equal_nat)))))
+            (equal_prod (equal_fset (equal_list equal_nat))
+              (equal_fset (equal_list equal_nat))))
+          (fimage
+            (fn (v, (ba, l)) =>
+              ffUnion
+                (equal_prod
+                  (equal_prod
+                    (equal_finite_schema_graph_node
+                      (equal_prod A_ (equal_list equal_nat))
+                      (equal_prod A_ (equal_list equal_nat)))
+                    (equal_fset
+                      (equal_prod (equal_prod A_ (equal_list equal_nat))
+                        (equal_prod A_ (equal_list equal_nat)))))
+                  (equal_prod (equal_fset (equal_list equal_nat))
+                    (equal_fset (equal_list equal_nat))))
+                (fimage
+                  (fn (da, (j, w)) =>
+                    let
+                      val i =
+                        finsert (equal_list equal_nat) r
+                          (sup_fset (equal_list equal_nat)
+                            (sup_fset (equal_list equal_nat)
+                              (sup_fset (equal_list equal_nat) (fset_of_list ps)
+                                ca)
+                              ba)
+                            j);
+                      val k =
+                        sup_fset (equal_list equal_nat)
+                          (sup_fset (equal_list equal_nat) a l) w;
+                    in
+                      (if equal_fseta (equal_list equal_nat)
+                            (inf_fset (equal_list equal_nat)
+                              (finsert (equal_list equal_nat) r
+                                (fset_of_list ps))
+                              (sup_fset (equal_list equal_nat)
+                                (sup_fset (equal_list equal_nat) ca ba) j))
+                            bot_fset andalso
+                            (equal_fseta (equal_list equal_nat)
+                               (inf_fset (equal_list equal_nat) ca ba)
+                               bot_fset andalso
+                              (equal_fseta (equal_list equal_nat)
+                                 (inf_fset (equal_list equal_nat) ca j)
+                                 bot_fset andalso
+                                (equal_fseta (equal_list equal_nat)
+                                   (inf_fset (equal_list equal_nat) ba j)
+                                   bot_fset andalso
+                                  equal_fseta (equal_list equal_nat)
+                                    (inf_fset (equal_list equal_nat) i k)
+                                    bot_fset)))
+                        then finsert
+                               (equal_prod
+                                 (equal_prod
+                                   (equal_finite_schema_graph_node
+                                     (equal_prod A_ (equal_list equal_nat))
+                                     (equal_prod A_ (equal_list equal_nat)))
+                                   (equal_fset
+                                     (equal_prod
+                                       (equal_prod A_ (equal_list equal_nat))
+                                       (equal_prod A_ (equal_list equal_nat)))))
+                                 (equal_prod (equal_fset (equal_list equal_nat))
+                                   (equal_fset (equal_list equal_nat))))
+                               ((Finite_Inference (d, v), da), (i, k)) bot_fset
+                        else bot_fset)
+                    end)
+                  (finite_discharge_table_readings A_ e u p)))
+            (finite_binding_table_readings A_ e u b)))
+      (finite_site_citation_readings A_ e u c));
+
+fun finite_proof_node_readings A_ e u r =
+  (if finite_environment_formed A_ e
+    then ffUnion
+           (equal_prod
+             (equal_prod
+               (equal_finite_schema_graph_node
+                 (equal_prod A_ (equal_list equal_nat))
+                 (equal_prod A_ (equal_list equal_nat)))
+               (equal_fset
+                 (equal_prod (equal_prod A_ (equal_list equal_nat))
+                   (equal_prod A_ (equal_list equal_nat)))))
+             (equal_prod (equal_fset (equal_list equal_nat))
+               (equal_fset (equal_list equal_nat))))
+           (fimage
+             (fn c =>
+               sup_fset
+                 (equal_prod
+                   (equal_prod
+                     (equal_finite_schema_graph_node
+                       (equal_prod A_ (equal_list equal_nat))
+                       (equal_prod A_ (equal_list equal_nat)))
+                     (equal_fset
+                       (equal_prod (equal_prod A_ (equal_list equal_nat))
+                         (equal_prod A_ (equal_list equal_nat)))))
+                   (equal_prod (equal_fset (equal_list equal_nat))
+                     (equal_fset (equal_list equal_nat))))
+                 (if member
+                       (equal_prod (equal_list (equal_list equal_nat))
+                         (equal_list (equal_list equal_nat)))
+                       ([], [])
+                       (fset (finite_record_candidates (equal_list equal_nat)
+                               (equal_list equal_nat) c r Zero_nat))
+                   then finsert
+                          (equal_prod
+                            (equal_prod
+                              (equal_finite_schema_graph_node
+                                (equal_prod A_ (equal_list equal_nat))
+                                (equal_prod A_ (equal_list equal_nat)))
+                              (equal_fset
+                                (equal_prod
+                                  (equal_prod A_ (equal_list equal_nat))
+                                  (equal_prod A_ (equal_list equal_nat)))))
+                            (equal_prod (equal_fset (equal_list equal_nat))
+                              (equal_fset (equal_list equal_nat))))
+                          ((Finite_Assertion, bot_fset),
+                            (finsert (equal_list equal_nat) r bot_fset,
+                              bot_fset))
+                          bot_fset
+                   else bot_fset)
+                 (finite_three_field_record
+                   (equal_prod
+                     (equal_prod
+                       (equal_finite_schema_graph_node
+                         (equal_prod A_ (equal_list equal_nat))
+                         (equal_prod A_ (equal_list equal_nat)))
+                       (equal_fset
+                         (equal_prod (equal_prod A_ (equal_list equal_nat))
+                           (equal_prod A_ (equal_list equal_nat)))))
+                     (equal_prod (equal_fset (equal_list equal_nat))
+                       (equal_fset (equal_list equal_nat))))
+                   c r (finite_proof_inference_readings A_ e u r)))
+             (finite_artifacts_at A_ e u))
+    else bot_fset);
+
+fun finite_literal_schema p =
+  Finite_factor_schema_ext (Finite_Pattern_Payload p, bot_fset, bot_fset, ());
+
+fun finite_enumerated_environment a b =
+  Finite_artifact_environment_ext (fset_of_list a, fset_of_list b, ());
+
+fun finite_literal_program p =
+  Finite_schema_system_ext
+    (finsert
+       (equal_prod
+         (equal_prod (equal_option (equal_list equal_nat))
+           (equal_list equal_nat))
+         (equal_finite_term_pattern (equal_list equal_nat)))
+       ((NONE, [one_nat]), Finite_Pattern_Payload p) bot_fset,
+      finsert
+        (equal_prod
+          (equal_prod
+            (equal_prod (equal_option (equal_list equal_nat))
+              (equal_list equal_nat))
+            (equal_list equal_nat))
+          (equal_finite_factor_schema_ext (equal_list equal_nat)
+            (equal_list equal_nat)
+            (equal_prod (equal_option (equal_list equal_nat))
+              (equal_list equal_nat))
+            equal_unit))
+        (((NONE, [one_nat]), [nat_of_num (Bit1 (Bit1 One))]),
+          finite_literal_schema p)
+        bot_fset,
+      ());
+
+val finite_literal_background :
+  ((nat list), (nat list), unit) finite_structured_object_ext
+  = finite_enumerated_artifact [[]] []
+      [([], [nat_of_num (Bit1 (Bit0 (Bit0 One)))]),
+        ([], [nat_of_num (Bit1 (Bit0 (Bit0 One)))])]
+      [([], [nat_of_num (Bit0 (Bit0 (Bit0 One)))])];
+
+fun finite_literal_artifact p =
+  finite_enumerated_artifact
+    (map (fn n => [n])
+      [Zero_nat, one_nat, nat_of_num (Bit0 One), nat_of_num (Bit1 One),
+        nat_of_num (Bit1 (Bit0 One)), nat_of_num (Bit0 (Bit1 One)),
+        nat_of_num (Bit1 (Bit1 One)), nat_of_num (Bit0 (Bit0 (Bit0 One))),
+        nat_of_num (Bit0 (Bit1 (Bit1 One))),
+        nat_of_num (Bit1 (Bit1 (Bit1 One))),
+        nat_of_num (Bit0 (Bit0 (Bit0 (Bit0 One)))),
+        nat_of_num (Bit1 (Bit0 (Bit0 (Bit0 One)))),
+        nat_of_num (Bit0 (Bit1 (Bit0 (Bit0 One)))),
+        nat_of_num (Bit1 (Bit1 (Bit0 (Bit0 One)))),
+        nat_of_num (Bit0 (Bit0 (Bit1 (Bit0 One)))),
+        nat_of_num (Bit1 (Bit0 (Bit1 (Bit0 One)))),
+        nat_of_num (Bit0 (Bit1 (Bit1 (Bit0 One)))),
+        nat_of_num (Bit1 (Bit1 (Bit1 (Bit0 One))))])
+    (map (fn (r, (s, x)) => ([r], ([s], [x])))
+      [(Zero_nat,
+         (nat_of_num (Bit0 (Bit0 (Bit0 (Bit0 One)))),
+           nat_of_num (Bit1 (Bit1 (Bit1 One))))),
+        (nat_of_num (Bit1 (Bit1 (Bit1 One))),
+          (nat_of_num (Bit1 (Bit1 (Bit1 One))), one_nat)),
+        (one_nat,
+          (nat_of_num (Bit1 (Bit0 (Bit0 (Bit0 One)))), nat_of_num (Bit0 One))),
+        (one_nat,
+          (nat_of_num (Bit0 (Bit1 (Bit0 (Bit0 One)))),
+            nat_of_num (Bit0 (Bit1 One)))),
+        (nat_of_num (Bit1 (Bit0 (Bit0 (Bit0 One)))),
+          (nat_of_num (Bit1 (Bit0 (Bit0 (Bit0 One)))),
+            nat_of_num (Bit0 (Bit1 (Bit0 (Bit0 One)))))),
+        (nat_of_num (Bit0 One),
+          (nat_of_num (Bit1 (Bit1 (Bit0 (Bit0 One)))), nat_of_num (Bit1 One))),
+        (nat_of_num (Bit0 One),
+          (nat_of_num (Bit0 (Bit0 (Bit1 (Bit0 One)))),
+            nat_of_num (Bit1 (Bit0 One)))),
+        (nat_of_num (Bit1 (Bit1 (Bit0 (Bit0 One)))),
+          (nat_of_num (Bit1 (Bit1 (Bit0 (Bit0 One)))),
+            nat_of_num (Bit0 (Bit0 (Bit1 (Bit0 One)))))),
+        (nat_of_num (Bit0 (Bit1 One)),
+          (nat_of_num (Bit1 (Bit1 One)), nat_of_num (Bit0 (Bit0 (Bit0 One))))),
+        (nat_of_num (Bit0 (Bit0 (Bit0 One))),
+          (nat_of_num (Bit1 (Bit0 (Bit1 (Bit0 One)))), nat_of_num (Bit1 One))),
+        (nat_of_num (Bit0 (Bit0 (Bit0 One))),
+          (nat_of_num (Bit0 (Bit1 (Bit1 (Bit0 One)))),
+            nat_of_num (Bit1 (Bit0 One)))),
+        (nat_of_num (Bit0 (Bit0 (Bit0 One))),
+          (nat_of_num (Bit1 (Bit1 (Bit1 (Bit0 One)))),
+            nat_of_num (Bit0 (Bit1 (Bit1 One))))),
+        (nat_of_num (Bit1 (Bit0 (Bit1 (Bit0 One)))),
+          (nat_of_num (Bit1 (Bit0 (Bit1 (Bit0 One)))),
+            nat_of_num (Bit0 (Bit1 (Bit1 (Bit0 One)))))),
+        (nat_of_num (Bit0 (Bit1 (Bit1 (Bit0 One)))),
+          (nat_of_num (Bit0 (Bit1 (Bit1 (Bit0 One)))),
+            nat_of_num (Bit1 (Bit1 (Bit1 (Bit0 One))))))])
+    [] [([nat_of_num (Bit1 (Bit0 One))], p)];
+
+fun finite_literal_sources p =
+  finite_enumerated_environment
+    [(NONE, finite_literal_artifact p),
+      (SOME [nat_of_num
+               (Bit0 (Bit0 (Bit0 (Bit0 (Bit0 (Bit0 (Bit0 (Bit0 One))))))))],
+        finite_literal_background)]
+    [((NONE, [nat_of_num (Bit1 (Bit1 (Bit1 (Bit0 One))))]),
+       SOME [nat_of_num
+               (Bit0 (Bit0 (Bit0 (Bit0 (Bit0 (Bit0 (Bit0 (Bit0 One))))))))])];
+
+fun finite_native_package_formed A_ e roots =
+  finite_environment_formed A_ e andalso
+    ball (fset (finite_native_definition_sites A_ e roots))
+      (fn d =>
+        not (equal_fseta
+              (equal_prod (equal_finite_term_pattern (equal_list equal_nat))
+                (equal_fset
+                  (equal_prod (equal_list equal_nat)
+                    (equal_finite_factor_schema_ext (equal_list equal_nat)
+                      (equal_list equal_nat)
+                      (equal_prod A_ (equal_list equal_nat)) equal_unit))))
+              (finite_native_definition_readings A_ e (fst d) (snd d))
+              bot_fset));
+
+fun finite_environment_artifacts_update finite_environment_artifactsa
+  (Finite_artifact_environment_ext
+    (finite_environment_artifacts, finite_environment_bindings, more))
+  = Finite_artifact_environment_ext
+      (finite_environment_artifactsa finite_environment_artifacts,
+        finite_environment_bindings, more);
+
+fun finite_environment_bindings_update finite_environment_bindingsa
+  (Finite_artifact_environment_ext
+    (finite_environment_artifacts, finite_environment_bindings, more))
+  = Finite_artifact_environment_ext
+      (finite_environment_artifacts,
+        finite_environment_bindingsa finite_environment_bindings, more);
+
+fun finite_literal_extension p =
+  let
+    val e = finite_literal_sources p;
+  in
+    finite_environment_bindings_update
+      (fn _ =>
+        finsert
+          (equal_prod
+            (equal_prod (equal_option (equal_list equal_nat))
+              (equal_list equal_nat))
+            (equal_option (equal_list equal_nat)))
+          ((SOME [], [nat_of_num (Bit0 (Bit1 One))]), NONE)
+          (finite_environment_bindings e))
+      (finite_environment_artifacts_update
+        (fn _ =>
+          finsert
+            (equal_prod (equal_option (equal_list equal_nat))
+              (equal_finite_structured_object_ext (equal_list equal_nat)
+                (equal_list equal_nat) equal_unit))
+            (SOME [], finite_literal_node) (finite_environment_artifacts e))
+        e)
+  end;
+
+fun finite_native_root_family_readings A_ e u r =
+  finite_family_readings A_ (equal_prod A_ (equal_list equal_nat)) e u r
+    (finite_located_values A_ e u);
+
+fun finite_native_package_readings A_ e u r =
+  ffUnion
+    (equal_finite_schema_system_ext (equal_list equal_nat)
+      (equal_list equal_nat) (equal_prod A_ (equal_list equal_nat))
+      (equal_list equal_nat) equal_unit)
+    (fimage
+      (fn q =>
+        (if finite_native_package_formed A_ e (fimage snd q)
+          then finsert
+                 (equal_finite_schema_system_ext (equal_list equal_nat)
+                   (equal_list equal_nat) (equal_prod A_ (equal_list equal_nat))
+                   (equal_list equal_nat) equal_unit)
+                 (finite_native_program A_ e (fimage snd q)) bot_fset
+          else bot_fset))
+      (finite_native_root_family_readings A_ e u r));
+
+val finite_literal_node_interior : (nat list) list =
+  [] :: map (fn n => [n])
+          [Zero_nat, one_nat, nat_of_num (Bit0 One), nat_of_num (Bit1 One),
+            nat_of_num (Bit0 (Bit0 One)), nat_of_num (Bit1 (Bit0 One)),
+            nat_of_num (Bit1 (Bit1 One))];
+
+fun finite_literal_native_checks p =
+  [finite_environment_formed (equal_option (equal_list equal_nat))
+     (finite_literal_sources p),
+    finite_environment_formed (equal_option (equal_list equal_nat))
+      (finite_literal_extension p),
+    finite_binder_scope_at (finite_literal_artifact p) [nat_of_num (Bit1 One)]
+      bot_fset,
+    member
+      (equal_finite_factor_schema_ext (equal_list equal_nat)
+        (equal_list equal_nat)
+        (equal_prod (equal_option (equal_list equal_nat))
+          (equal_list equal_nat))
+        equal_unit)
+      (finite_literal_schema p)
+      (fset (finite_native_schema_readings (equal_option (equal_list equal_nat))
+              (finite_literal_sources p) NONE
+              [nat_of_num (Bit0 (Bit0 (Bit0 One)))])),
+    member
+      (equal_finite_schema_system_ext (equal_list equal_nat)
+        (equal_list equal_nat)
+        (equal_prod (equal_option (equal_list equal_nat))
+          (equal_list equal_nat))
+        (equal_list equal_nat) equal_unit)
+      (finite_literal_program p)
+      (fset (finite_native_package_readings
+              (equal_option (equal_list equal_nat)) (finite_literal_sources p)
+              NONE [Zero_nat])),
+    member
+      (equal_prod
+        (equal_prod
+          (equal_finite_schema_graph_node
+            (equal_prod (equal_option (equal_list equal_nat))
+              (equal_list equal_nat))
+            (equal_prod (equal_option (equal_list equal_nat))
+              (equal_list equal_nat)))
+          (equal_fset
+            (equal_prod
+              (equal_prod (equal_option (equal_list equal_nat))
+                (equal_list equal_nat))
+              (equal_prod (equal_option (equal_list equal_nat))
+                (equal_list equal_nat)))))
+        (equal_prod (equal_fset (equal_list equal_nat))
+          (equal_fset (equal_list equal_nat))))
+      ((Finite_Inference ((NONE, [nat_of_num (Bit1 (Bit1 One))]), bot_fset),
+         bot_fset),
+        (fset_of_list finite_literal_node_interior,
+          finsert (equal_list equal_nat) [nat_of_num (Bit0 (Bit1 One))]
+            bot_fset))
+      (fset (finite_proof_node_readings (equal_option (equal_list equal_nat))
+              (finite_literal_extension p) (SOME []) []))];
+
+end; (*struct Finite_Literal_Sources*)

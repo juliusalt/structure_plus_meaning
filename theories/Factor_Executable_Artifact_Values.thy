@@ -1,0 +1,114 @@
+theory Factor_Executable_Artifact_Values
+  imports Factor_Executable_Data_Values Factor_Artifact_Values Factor_Finite_Artifact_Enumeration
+    "HOL-Library.List_Lexorder" "HOL-Library.Product_Lexorder"
+begin
+
+section \<open>Complete finite fields supply their own enumerations\<close>
+
+type_synonym artifact_value_rows =
+  "local_address list \<times> (local_address\<times>local_address\<times>local_address) list \<times>
+    (local_address\<times>octets) list \<times> (local_address\<times>octets) list"
+
+definition artifact_rows_object :: "artifact_value_rows \<Rightarrow> exact_artifact" where
+  "artifact_rows_object q=(case q of (A,E,B,F) \<Rightarrow> enumerated_artifact A E B F)"
+
+definition artifact_rows_term :: "artifact_value_rows \<Rightarrow> factor_term" where
+  "artifact_rows_term q=(case q of (A,E,B,F) \<Rightarrow> artifact_data_term A E B F)"
+
+definition finite_artifact_rows :: "finite_exact_artifact \<Rightarrow> artifact_value_rows" where
+  "finite_artifact_rows C=(
+    sorted_list_of_fset (finite_carrier (finite_structure C)),
+    sorted_list_of_fset (finite_incidence (finite_structure C)),
+    sorted_list_of_multiset (finite_bag (finite_data C)),
+    sorted_list_of_fset (finite_bindings (finite_data C)))"
+
+lemma finite_sorted_list_distinct [simp]:
+  "distinct (sorted_list_of_fset A)"
+  by (simp add: sorted_list_of_fset.rep_eq)
+
+lemma finite_sorted_multiset_counts [simp]:
+  "count_list (sorted_list_of_multiset M)=count M"
+  by (rule ext) (metis count_mset mset_sorted_list_of_multiset)
+
+lemma artifact_rows_object_finite [simp]:
+  "artifact_rows_object (finite_artifact_rows C)=decode_finite_object C"
+  by (simp add: artifact_rows_object_def finite_artifact_rows_def enumerated_artifact_def
+    decode_finite_object_def decode_finite_structure_def decode_finite_basis_def)
+
+lemma artifact_rows_term_exact [simp]:
+  "artifact_rows_term p=artifact_rows_term q \<longleftrightarrow> p=q"
+  by (auto simp: artifact_rows_term_def artifact_data_term_exact split: prod.splits)
+
+lemma artifact_rows_term_self_contained [simp]:
+  "self_contained_term (artifact_rows_term q)"
+  by (auto simp: artifact_rows_term_def artifact_data_term_self_contained split: prod.splits)
+
+lemma artifact_rows_term_recovers:
+  assumes "artifact_value_presents R (artifact_rows_term q)"
+  shows "R=artifact_rows_object q"
+  using assms by (auto simp: artifact_rows_term_def artifact_rows_object_def
+    artifact_value_presents_data artifact_enumeration_def split: prod.splits)
+
+lemma finite_artifact_rows_injective:
+  "finite_artifact_rows C=finite_artifact_rows D \<longleftrightarrow> C=D"
+proof
+  assume same: "finite_artifact_rows C=finite_artifact_rows D"
+  have "artifact_rows_object (finite_artifact_rows C)=artifact_rows_object (finite_artifact_rows D)"
+    using same by simp
+  then show "C=D" by simp
+qed simp
+
+section \<open>The finite value presents exactly its complete decoded artifact\<close>
+
+definition finite_artifact_value :: "finite_exact_artifact \<Rightarrow> finite_factor_term" where
+  "finite_artifact_value C=the (finite_self_contained_term (artifact_rows_term (finite_artifact_rows C)))"
+
+lemma decode_finite_artifact_value [simp]:
+  "decode_finite_term (finite_artifact_value C)=artifact_rows_term (finite_artifact_rows C)"
+  unfolding finite_artifact_value_def
+  by (rule decode_finite_self_contained_term) simp
+
+theorem finite_artifact_rows_value_exact:
+  "artifact_value_presents R (artifact_rows_term (finite_artifact_rows C)) \<longleftrightarrow>
+    finite_exact_formed C \<and> R=decode_finite_object C"
+proof -
+  let ?A="sorted_list_of_fset (finite_carrier (finite_structure C))"
+  let ?E="sorted_list_of_fset (finite_incidence (finite_structure C))"
+  let ?B="sorted_list_of_multiset (finite_bag (finite_data C))"
+  let ?F="sorted_list_of_fset (finite_bindings (finite_data C))"
+  have object: "enumerated_artifact ?A ?E ?B ?F=decode_finite_object C"
+    using artifact_rows_object_finite[of C]
+    by (simp add: artifact_rows_object_def finite_artifact_rows_def)
+  show ?thesis
+    by (auto simp: finite_artifact_rows_def artifact_rows_term_def
+      artifact_value_presents_data artifact_enumeration_def object finite_exact_formed_correct)
+qed
+
+theorem finite_artifact_value_exact:
+  "artifact_value_presents R (decode_finite_term (finite_artifact_value C)) \<longleftrightarrow>
+    finite_exact_formed C \<and> R=decode_finite_object C"
+  by (simp only: decode_finite_artifact_value finite_artifact_rows_value_exact)
+
+lemma finite_artifact_value_injective:
+  "finite_artifact_value C=finite_artifact_value D \<longleftrightarrow> C=D"
+  by (metis decode_finite_artifact_value artifact_rows_term_exact finite_artifact_rows_injective)
+
+lemma finite_artifact_value_formed:
+  assumes "finite_exact_formed C"
+  shows "finite_term_formed (finite_artifact_value C)"
+  using artifact_value_presents_formed finite_artifact_value_exact assms
+  by (auto simp: finite_term_formed_correct)
+
+export_code finite_artifact_rows finite_artifact_value checking SML
+
+text \<open>
+  The carrier, incidence relation, counted attachment list and functional
+  attachment table are all retained. The counted list preserves every
+  occurrence, including repetitions. Sorting selects one complete presentation;
+  it does not change the meaning of other complete enumeration orders.
+
+  The exact theorem includes formation. Merely forming a payload-and-pair term
+  does not establish that the represented artifact is formed.
+\<close>
+
+end

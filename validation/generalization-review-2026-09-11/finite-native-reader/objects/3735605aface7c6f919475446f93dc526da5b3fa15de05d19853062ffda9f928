@@ -1,0 +1,150 @@
+theory Factor_Executable_Graphs
+  imports Factor_Executable_Systems Bootstrap_Finite_Closure Factor_Derivation_Recovery
+begin
+
+section \<open>Finite proof metadata retains every binding and node occurrence\<close>
+
+definition decode_finite_binding_set ::
+  "('a \<times> finite_factor_term) fset \<Rightarrow> ('a \<times> factor_term) fset" where
+  "decode_finite_binding_set V = fimage (map_prod id decode_finite_term) V"
+
+lemma decode_finite_binding_set_values [simp]:
+  "fset (decode_finite_binding_set V) = decode_finite_term_bindings V"
+  by (auto simp: decode_finite_binding_set_def decode_finite_term_bindings_def
+      map_relation_values_def map_prod_def fimage.rep_eq split: prod.splits)
+
+lemma decode_finite_binding_set_injective [simp]:
+  "decode_finite_binding_set V = decode_finite_binding_set W \<longleftrightarrow> V=W"
+proof -
+  have inj: "inj decode_finite_term" by (auto simp: inj_def)
+  have eq: "decode_finite_binding_set V = decode_finite_binding_set W \<longleftrightarrow>
+      decode_finite_term_bindings V = decode_finite_term_bindings W"
+    by (simp only: fset_inject[symmetric] decode_finite_binding_set_values)
+  show ?thesis by (simp only: eq decode_finite_term_bindings_def
+      map_relation_values_injective[OF inj] fset_inject)
+qed
+
+datatype ('a,'c) finite_schema_graph_node =
+    Finite_Inference 'c "('a \<times> finite_factor_term) fset"
+  | Finite_Assertion
+
+fun decode_finite_graph_node :: "('a,'c) finite_schema_graph_node \<Rightarrow> ('a,'c) schema_graph_node" where
+  "decode_finite_graph_node (Finite_Inference c V) = Schema_Inference c (decode_finite_binding_set V)"
+| "decode_finite_graph_node Finite_Assertion = Schema_Assertion"
+
+lemma decode_finite_graph_node_injective [simp]:
+  "decode_finite_graph_node A = decode_finite_graph_node B \<longleftrightarrow> A=B"
+  by (cases A; cases B) auto
+
+lemma decode_finite_assertion [simp]:
+  "decode_finite_graph_node A = Schema_Assertion \<longleftrightarrow> A=Finite_Assertion"
+  "Schema_Assertion = decode_finite_graph_node A \<longleftrightarrow> A=Finite_Assertion"
+  by (cases A; auto)+
+
+lemma decode_finite_inference [simp]:
+  "decode_finite_graph_node A = Schema_Inference c W \<longleftrightarrow>
+    (\<exists>V. A=Finite_Inference c V \<and> W=decode_finite_binding_set V)"
+  "Schema_Inference c W = decode_finite_graph_node A \<longleftrightarrow>
+    (\<exists>V. A=Finite_Inference c V \<and> W=decode_finite_binding_set V)"
+  by (cases A; auto)+
+
+record ('a,'s,'c,'n) finite_derivation_graph =
+  finite_graph_inferences :: "('n \<times> ('a,'c) finite_schema_graph_node) fset"
+  finite_graph_discharges :: "(('n \<times> 's) \<times> 'n) fset"
+
+definition decode_finite_graph ::
+  "('a,'s,'c,'n) finite_derivation_graph \<Rightarrow> ('a,'s,'c,'n) schema_derivation_graph" where
+  "decode_finite_graph G =
+    \<lparr>graph_inferences=fimage (map_prod id decode_finite_graph_node) (finite_graph_inferences G),
+     graph_discharges=finite_graph_discharges G\<rparr>"
+
+lemma decode_finite_graph_fields [simp]:
+  "fset (graph_inferences (decode_finite_graph G)) =
+    map_relation_values decode_finite_graph_node (fset (finite_graph_inferences G))"
+  "graph_discharges (decode_finite_graph G) = finite_graph_discharges G"
+  by (auto simp: decode_finite_graph_def map_relation_values_def map_prod_def fimage.rep_eq split: prod.splits)
+
+lemma decode_finite_graph_injective [simp]:
+  fixes G :: "('a,'s,'c,'n) finite_derivation_graph"
+  shows "decode_finite_graph G = decode_finite_graph H \<longleftrightarrow> G=H"
+proof -
+  have inj: "inj (decode_finite_graph_node :: ('a,'c) finite_schema_graph_node \<Rightarrow> _)"
+    by (auto simp: inj_def)
+  have mapped: "graph_inferences (decode_finite_graph G) = graph_inferences (decode_finite_graph H) \<longleftrightarrow>
+      map_relation_values decode_finite_graph_node (fset (finite_graph_inferences G)) =
+      map_relation_values decode_finite_graph_node (fset (finite_graph_inferences H))"
+    by (simp only: fset_inject[symmetric] decode_finite_graph_fields)
+  have nodes: "graph_inferences (decode_finite_graph G) = graph_inferences (decode_finite_graph H) \<longleftrightarrow>
+      finite_graph_inferences G = finite_graph_inferences H"
+    by (simp only: mapped map_relation_values_injective[OF inj] fset_inject)
+  show ?thesis using nodes by (cases G; cases H) (auto simp: decode_finite_graph_def)
+qed
+
+section \<open>Every structural edge and assertion use is checked\<close>
+
+definition finite_graph_nodes :: "('a,'s,'c,'n) finite_derivation_graph \<Rightarrow> 'n fset" where
+  "finite_graph_nodes G = fimage fst (finite_graph_inferences G)"
+
+definition finite_graph_edges :: "('a,'s,'c,'n) finite_derivation_graph \<Rightarrow> ('n \<times> 'n) fset" where
+  "finite_graph_edges G = fimage (\<lambda>((n,s),m). (m,n)) (finite_graph_discharges G)"
+
+definition finite_graph_premises ::
+  "('a,'s,'c,'n) finite_derivation_graph \<Rightarrow> 'n \<Rightarrow> ('s \<times> 'n) fset" where
+  "finite_graph_premises G n = fimage (\<lambda>((p,s),m). (s,m))
+    (ffilter (\<lambda>((p,s),m). p=n) (finite_graph_discharges G))"
+
+definition finite_assertion_uses ::
+  "('a,'s,'c,'n) finite_derivation_graph \<Rightarrow> ('n \<times> ('n \<times> 's)) fset" where
+  "finite_assertion_uses G = fimage (\<lambda>((p,s),m). (m,p,s))
+    (ffilter (\<lambda>((p,s),m). (m,Finite_Assertion) |\<in>| finite_graph_inferences G)
+      (finite_graph_discharges G))"
+
+lemma finite_graph_nodes_correct:
+  "fset (finite_graph_nodes G) = schema_graph_nodes (decode_finite_graph G)"
+  by (simp add: finite_graph_nodes_def schema_graph_nodes_def rel_dom_image fimage.rep_eq)
+
+lemma finite_graph_edges_correct:
+  "fset (finite_graph_edges G) = schema_graph_edges (decode_finite_graph G)"
+  by (auto simp: finite_graph_edges_def schema_graph_edges_def fimage.rep_eq split: prod.splits; force)
+
+lemma finite_graph_premises_correct:
+  "fset (finite_graph_premises G n) = schema_graph_premises (decode_finite_graph G) n"
+  by (auto simp: finite_graph_premises_def schema_graph_premises_def fimage.rep_eq split: prod.splits; force)
+
+lemma finite_assertion_uses_correct:
+  "fset (finite_assertion_uses G) = schema_assertion_uses (decode_finite_graph G)"
+  by (auto simp: finite_assertion_uses_def schema_assertion_uses_def fimage.rep_eq split: prod.splits intro: rev_image_eqI; force)
+
+definition finite_graph_formed :: "('a,'s,'c,'n) finite_derivation_graph \<Rightarrow> 'n \<Rightarrow> bool" where
+  "finite_graph_formed G root \<longleftrightarrow>
+    finite_relation_functional (finite_graph_inferences G) \<and>
+    finite_relation_functional (finite_graph_discharges G) \<and>
+    finite_relation_functional (finite_assertion_uses G) \<and>
+    root |\<in>| finite_graph_nodes G \<and>
+    fBall (finite_graph_edges G) (\<lambda>(m,n). m |\<in>| finite_graph_nodes G \<and> n |\<in>| finite_graph_nodes G) \<and>
+    fBall (finite_graph_nodes G) (\<lambda>n. finite_edge_reaches (finite_graph_edges G) n root) \<and>
+    finite_edge_wellfounded (finite_graph_edges G)"
+
+theorem finite_graph_formed_correct:
+  fixes G :: "('a,'s,'c,'n) finite_derivation_graph"
+  shows "finite_graph_formed G root \<longleftrightarrow> schema_graph_formed (decode_finite_graph G) root"
+proof -
+  have inj: "inj (decode_finite_graph_node :: ('a,'c) finite_schema_graph_node \<Rightarrow> _)"
+    by (auto simp: inj_def)
+  show ?thesis
+    by (auto simp: finite_graph_formed_def schema_graph_formed_def finite_relation_functional_correct
+        map_relation_values_functional[OF inj] finite_assertion_uses_correct
+        finite_graph_nodes_correct finite_graph_edges_correct finite_edge_reaches_correct
+        finite_edge_wellfounded_correct Ball_def split_paired_All)
+qed
+
+export_code finite_graph_formed checking SML
+
+text \<open>
+  The check covers every supplied node and discharge. All nodes must reach the
+  selected root, the edge relation must be well-founded, and each unproved
+  assertion may have only one premise origin. Inference sharing is retained.
+  This is graph formation; checking each node's claim remains a separate step.
+\<close>
+
+end

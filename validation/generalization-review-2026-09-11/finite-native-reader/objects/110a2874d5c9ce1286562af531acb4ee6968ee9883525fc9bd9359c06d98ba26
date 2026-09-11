@@ -1,0 +1,45 @@
+Running Native_Investigation_Report_Diagnostic_finitepresenters16 ...
+Native_Investigation_Report_Diagnostic_finitepresenters16 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_finitepresenters16")
+...
+***        ba = Pattern_Payload []
+***  4. ∃C. ((None, [Suc 0]), Pattern_Payload [], C)
+***         ∈ native_definition_graph
+***            (decode_finite_environment (finite_literal_sources []))
+***            {(None, [Suc 0])}
+***  5. ⋀a b ba bb p C.
+***        ⟦((a, b), p, C)
+***         ∈ native_definition_graph
+***            (decode_finite_environment (finite_literal_sources []))
+***            {(None, [Suc 0])};
+***         (ba, bb) ∈ C⟧
+***        ⟹ a = None
+***  6. ⋀a b ba bb p C.
+***        ⟦((a, b), p, C)
+***         ∈ native_definition_graph
+***            (decode_finite_environment (finite_literal_sources []))
+***            {(None, [Suc 0])};
+***         (ba, bb) ∈ C⟧
+***        ⟹ b = [Suc 0]
+***  7. ⋀a b ba bb p C.
+***        ⟦((a, b), p, C)
+***         ∈ native_definition_graph
+***            (decode_finite_environment (finite_literal_sources []))
+***            {(None, [Suc 0])};
+***         (ba, bb) ∈ C⟧
+***        ⟹ ba = [7]
+***  8. ⋀a b ba bb p C.
+***        ⟦((a, b), p, C)
+***         ∈ native_definition_graph
+***            (decode_finite_environment (finite_literal_sources []))
+***            {(None, [Suc 0])};
+***         (ba, bb) ∈ C⟧
+***        ⟹ bb = decode_finite_schema (finite_literal_schema [])
+***  9. ∃p C. ((None, [Suc 0]), p, C)
+***           ∈ native_definition_graph
+***              (decode_finite_environment (finite_literal_sources []))
+***              {(None, [Suc 0])} ∧
+***           ([7], decode_finite_schema (finite_literal_schema []))
+***           ∈ C
+*** At command "by" (line 151 of "/tmp/native-investigation-report-diagnostic-finitepresenters16/theories/Factor_Finite_Inference_Source_Checks.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_finitepresenters16
+0:03:31 elapsed time, 0:09:31 cpu time, factor 2.69

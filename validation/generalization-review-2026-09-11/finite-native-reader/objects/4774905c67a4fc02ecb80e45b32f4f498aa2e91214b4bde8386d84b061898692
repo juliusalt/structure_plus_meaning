@@ -1,0 +1,171 @@
+{
+  "schema": "finite-investigation-1",
+  "kind": "basis",
+  "question": "How should current proved code exports and exact finite inputs be retained and reused for native reader execution?",
+  "scope": {
+    "candidates": {
+      "0": "Copy both the proof-loading checks and term serializers into a third standalone checker",
+      "1": "Factor the existing proof/export prerequisite checks for every consumer; reuse serializers and complete source recovery; export selected modules together from an immutable accepted snapshot and retain exact derived receipts",
+      "2": "Run code from a failed proof session and label the runtime as accepted proof"
+    },
+    "facets": {
+      "0": "Requires an accepted proof and exact code and current source hashes",
+      "1": "Shares existing prerequisites and serializers at their next use",
+      "2": "Retains original receipts and immutable snapshot and export evidence",
+      "3": "Checks actual complete input fields and exact compiled-clause leaf occurrences",
+      "4": "Requires source-proven native evidence for the supplied empty-payload case"
+    },
+    "boundary": "The two existing executable reviewers duplicate the accepted-proof, single-export identity and current-source checks. The new native input execution needs the same guard. Existing SML JSON serialization and independent complete environment recovery are reusable. Factor these existing prerequisites once, keep their behavior in both current consumers, use a generic snapshot exporter that retains the original proof receipt and creates one explicit receipt per selected code module, and compare the actual exported native arguments and leaf occurrences with the compiled library. This host receipt chain records proof and execution provenance, not native proof checking of host interpretation."
+  },
+  "candidates": [
+    0,
+    1,
+    2
+  ],
+  "facets": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "selected": [
+    0,
+    1
+  ],
+  "observations": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      2,
+      0,
+      0
+    ],
+    [
+      3,
+      0,
+      0
+    ],
+    [
+      4,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      2,
+      1,
+      0
+    ],
+    [
+      3,
+      1,
+      0
+    ],
+    [
+      4,
+      1,
+      0
+    ]
+  ],
+  "relation": [
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      1
+    ],
+    [
+      2,
+      0
+    ],
+    [
+      2,
+      1
+    ],
+    [
+      2,
+      2
+    ]
+  ],
+  "evidence": [
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-runtime-adapter/proved-runtime-inputs/initial/evidence-f6dc0f02-7a5b-4251-bead-8df7d81abd05/b517d9baf7351810712e82a524f40871c3a8357e87693802d2c9699983f28b74",
+      "sha256": "b517d9baf7351810712e82a524f40871c3a8357e87693802d2c9699983f28b74",
+      "original_path": "/home/julius/structure_and_semantics/tools/check_reasoning.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-runtime-adapter/proved-runtime-inputs/initial/evidence-f6dc0f02-7a5b-4251-bead-8df7d81abd05/12156036a6c926ff612e6f1785cd6a6053b5439a69236a10047b126a7fcb6d8f",
+      "sha256": "12156036a6c926ff612e6f1785cd6a6053b5439a69236a10047b126a7fcb6d8f",
+      "original_path": "/home/julius/structure_and_semantics/tools/check_finite_presentations.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-runtime-adapter/proved-runtime-inputs/initial/evidence-f6dc0f02-7a5b-4251-bead-8df7d81abd05/e99fff608629c3b65eb4131f9457b9a8374e6dad74ca5cf78da353d4a6e5bfe7",
+      "sha256": "e99fff608629c3b65eb4131f9457b9a8374e6dad74ca5cf78da353d4a6e5bfe7",
+      "original_path": "/home/julius/structure_and_semantics/tools/finite_presentation_cases.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-runtime-adapter/proved-runtime-inputs/initial/evidence-f6dc0f02-7a5b-4251-bead-8df7d81abd05/c42bf109d1bb19c1ce04c70823bdfe0e19b65914a4452e08cc3d87a5b31574ad",
+      "sha256": "c42bf109d1bb19c1ce04c70823bdfe0e19b65914a4452e08cc3d87a5b31574ad",
+      "original_path": "/home/julius/structure_and_semantics/tools/export_reasoning_libraries.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-runtime-adapter/proved-runtime-inputs/initial/evidence-f6dc0f02-7a5b-4251-bead-8df7d81abd05/7643dbebe13aed0e9d9bc4cff062575c665fec4ed0f7c0527857cd5d07263628",
+      "sha256": "7643dbebe13aed0e9d9bc4cff062575c665fec4ed0f7c0527857cd5d07263628",
+      "original_path": "/home/julius/structure_and_semantics/tools/investigate.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-runtime-adapter/proved-runtime-inputs/initial/evidence-f6dc0f02-7a5b-4251-bead-8df7d81abd05/0d8addd2c06e2c60ff29c433b5740e9c790adff85ef1c659df8d8ef51f0e56ed",
+      "sha256": "0d8addd2c06e2c60ff29c433b5740e9c790adff85ef1c659df8d8ef51f0e56ed",
+      "original_path": "/home/julius/structure_and_semantics/theories/Factor_Finite_Inference_Premises.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-runtime-adapter/proved-runtime-inputs/initial/evidence-f6dc0f02-7a5b-4251-bead-8df7d81abd05/699c5e5b3fb265ff128e2dd0f45b9372a3d204a0639ccb0dfb9279844b5131d5",
+      "sha256": "699c5e5b3fb265ff128e2dd0f45b9372a3d204a0639ccb0dfb9279844b5131d5",
+      "original_path": "/tmp/generalization-quality-review/finite-reader-example/native-runtime-adapter-specification.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-runtime-adapter/proved-runtime-inputs/initial/evidence-f6dc0f02-7a5b-4251-bead-8df7d81abd05/7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "sha256": "7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "original_path": "/home/julius/structure_and_semantics/tools/check_decision_cases.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-runtime-adapter/proved-runtime-inputs/initial/receipt.json",
+      "sha256": "239084a873ac5417ab76243c089cab3df5f788255d72a5c7e8a4b684619b6cf5"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-runtime-adapter/proved-runtime-inputs/initial/case.json",
+      "sha256": "aa82d84fcb6a4c13f54162c8e9a5eb3f8aed235b57fc03fbaaa3f5cf7c53d3d1"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-runtime-adapter/proved-runtime-inputs/initial/run.log",
+      "sha256": "103e72cbabd81326cf2481fbc7e183f340805de0dca420814ccdfebb94bc4230"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/revise_investigation_case.py",
+      "sha256": "70466b6a380397ef2c390d33c150d1b536feac4aafcedae6bb20d3e1a5106d66"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/review_investigations.py",
+      "sha256": "368a254b9dc8f4323522d0edf4a6c7c1cac118afd70a97e0e000bf7bf86a6bb0"
+    }
+  ]
+}

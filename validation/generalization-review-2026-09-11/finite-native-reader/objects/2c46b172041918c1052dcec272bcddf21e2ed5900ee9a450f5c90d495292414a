@@ -1,0 +1,13 @@
+Running Native_Investigation_Report_Diagnostic_finitepresenters18 ...
+Native_Investigation_Report_Diagnostic_finitepresenters18 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_finitepresenters18")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_finitepresenters18.Factor_Finite_Inference_Premises" (unresolved "Native_Investigation_Report_Diagnostic_finitepresenters18.Factor_Finite_Inference_Example")
+*** Failed to finish proof (line 54 of "/tmp/native-investigation-report-diagnostic-finitepresenters18/theories/Factor_Finite_Inference_Example.thy"):
+*** goal (1 subgoal):
+***  1. schema_reference_presents (recognizer_schema (Pattern_Payload []))
+***      (ground_schema_report (Payload_Term [])) =
+***     octets_formed [] ⟹
+***     octets_formed
+***      []
+*** At command "by" (line 54 of "/tmp/native-investigation-report-diagnostic-finitepresenters18/theories/Factor_Finite_Inference_Example.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_finitepresenters18
+0:03:37 elapsed time, 0:09:42 cpu time, factor 2.68

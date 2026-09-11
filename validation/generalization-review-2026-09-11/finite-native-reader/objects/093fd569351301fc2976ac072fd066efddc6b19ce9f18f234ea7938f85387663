@@ -1,0 +1,10 @@
+{
+  "boundary": "Line-level diagnostic against the installed Pure header; not a complete Isabelle lexer or validator.",
+  "findings": [
+    {
+      "file": "theories/Factor_Finite_Inference_Source_Checks.thy",
+      "line": 53,
+      "keyword": "term"
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+theory Factor_Finite_Inference_Sources
+  imports Factor_Executable_Packages Factor_Executable_Metadata Factor_Finite_Artifact_Enumeration
+begin
+
+section \<open>One finite source constructor for literal clauses\<close>
+
+definition finite_literal_artifact :: "octets \<Rightarrow> finite_exact_artifact" where
+  "finite_literal_artifact p = finite_enumerated_artifact
+    (map (\<lambda>n. [n]) [0,1,2,3,5,6,7,8,14,15,16,17,18,19,20,21,22,23])
+    (map (\<lambda>(r,s,x). ([r],[s],[x]))
+      [(0,16,15),(15,15,1),(1,17,2),(1,18,6),(17,17,18),
+       (2,19,3),(2,20,5),(19,19,20),(6,7,8),(8,21,3),
+       (8,22,5),(8,23,14),(21,21,22),(22,22,23)])
+    [] [([5],p)]"
+
+definition finite_literal_background :: finite_exact_artifact where
+  "finite_literal_background = finite_enumerated_artifact [[]] []
+    [([],[9]),([],[9])] [([],[8])]"
+
+definition finite_literal_sources ::
+  "octets \<Rightarrow> local_address option finite_artifact_environment" where
+  "finite_literal_sources p = finite_enumerated_environment
+    [(None,finite_literal_artifact p),(Some [256],finite_literal_background)]
+    [((None,[23]),Some [256])]"
+
+definition finite_literal_schema ::
+  "octets \<Rightarrow> local_address option finite_native_schema" where
+  "finite_literal_schema p =
+    \<lparr>finite_schema_conclusion=Finite_Pattern_Payload p,
+      finite_schema_premises={||},finite_schema_materials={||}\<rparr>"
+
+definition finite_literal_program ::
+  "octets \<Rightarrow> local_address option finite_native_system" where
+  "finite_literal_program p =
+    \<lparr>finite_system_interfaces={|((None,[1]),Finite_Pattern_Payload p)|},
+      finite_system_clauses={|(((None,[1]),[7]),finite_literal_schema p)|}\<rparr>"
+
+section \<open>A fresh node retains the existing complete sources\<close>
+
+definition finite_literal_node :: finite_exact_artifact where
+  "finite_literal_node = finite_enumerated_artifact
+    ([] # map (\<lambda>n. [n]) [0,1,2,3,4,5,6,7])
+    [([],[3],[0]),([],[4],[1]),([],[5],[2]),([3],[3],[4]),([4],[4],[5]),
+      ([0],[0],[6]),([0],[6],[7])]
+    [] [([7],[7])]"
+
+definition finite_literal_extension ::
+  "octets \<Rightarrow> local_address option finite_artifact_environment" where
+  "finite_literal_extension p = (let E=finite_literal_sources p in
+    E\<lparr>finite_environment_artifacts :=
+        finsert (Some [],finite_literal_node) (finite_environment_artifacts E),
+      finite_environment_bindings :=
+        finsert ((Some [],[6]),None) (finite_environment_bindings E)\<rparr>)"
+
+definition finite_literal_node_interior :: "local_address list" where
+  "finite_literal_node_interior = [] # map (\<lambda>n. [n]) [0,1,2,3,4,5,7]"
+
+definition finite_literal_native_checks :: "octets \<Rightarrow> bool list" where
+  "finite_literal_native_checks p =
+    [finite_environment_formed (finite_literal_sources p),
+     finite_environment_formed (finite_literal_extension p),
+     finite_binder_scope_at (finite_literal_artifact p) [3] {||},
+     finite_literal_schema p |\<in>| finite_native_schema_readings (finite_literal_sources p) None [8],
+     finite_literal_program p |\<in>| finite_native_package_readings (finite_literal_sources p) None [0],
+     ((Finite_Inference (None,[7]) {||},{||}),
+        fset_of_list finite_literal_node_interior,{|[6]|}) |\<in>|
+       finite_proof_node_readings (finite_literal_extension p) (Some []) []]"
+
+lemma finite_literal_native_checks_closed:
+  "finite_literal_native_checks [] = [True,True,True,True,True,True]"
+  by code_simp
+
+lemma finite_literal_environments_formed:
+  "environment_formed (decode_finite_environment (finite_literal_sources []))"
+  "environment_formed (decode_finite_environment (finite_literal_extension []))"
+  using finite_literal_native_checks_closed
+  by (auto simp: finite_literal_native_checks_def finite_environment_formed_correct)
+
+lemma finite_literal_binder:
+  "binder_scope_at (decode_finite_object (finite_literal_artifact [])) [3] {}"
+  using finite_literal_native_checks_closed
+  by (simp add: finite_literal_native_checks_def finite_binder_scope_at_correct)
+
+lemma finite_literal_native_schema:
+  "native_schema_at (decode_finite_environment (finite_literal_sources [])) None [8]
+    (decode_finite_schema (finite_literal_schema []))"
+  using finite_literal_native_checks_closed
+  by (simp add: finite_literal_native_checks_def finite_native_schema_readings_correct)
+
+lemma finite_literal_native_package:
+  "native_package_at (decode_finite_environment (finite_literal_sources [])) None [0]
+    (decode_finite_system (finite_literal_program []))"
+  using finite_literal_native_checks_closed
+  by (simp add: finite_literal_native_checks_def finite_native_package_readings_correct)
+
+lemma finite_literal_native_node:
+  "native_proof_node_at (decode_finite_environment (finite_literal_extension [])) (Some []) []
+    (Schema_Inference (None,[7]) {||}) {} (set finite_literal_node_interior) {[6]}"
+  using finite_literal_native_checks_closed
+  by (simp add: finite_literal_native_checks_def finite_proof_node_readings_correct
+    decode_finite_binding_set_def fset_of_list.rep_eq)
+
+export_code finite_literal_native_checks nat_of_integer integer_of_nat
+  in SML module_name Finite_Literal_Sources file_prefix finite_literal_sources
+
+text \<open>
+  The payload parameter supplies one source-construction family. The closed
+  checks above establish the displayed native package, schema, empty binder
+  and separate inference node for the empty payload. The correctness theorems
+  of the existing finite readers supply their actual native meanings.
+
+  The original source includes a counted attachment with two occurrences and
+  an old environment binding. The extension inserts its node at a separate
+  use and retains both old tables. Complete environment presentation, the
+  specialization report, and execution of the full reader remain separate
+  requirements; these component checks alone do not assert them.
+\<close>
+
+end

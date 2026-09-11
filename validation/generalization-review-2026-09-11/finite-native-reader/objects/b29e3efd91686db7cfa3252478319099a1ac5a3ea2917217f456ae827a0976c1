@@ -1,0 +1,32 @@
+{
+  "status": "evaluated",
+  "exit_code": 0,
+  "elapsed_seconds": 3.136684781056829,
+  "runtime_seconds": 0.06940525688696653,
+  "receipt": "/tmp/generalization-quality-review/finite-reader-example/native-local-field-proofs/primitive-source-certificates/followed/receipt.json",
+  "input_formed": true,
+  "residual": [],
+  "repair_witnesses": 0,
+  "conflicts": 0,
+  "unrepairable": 0,
+  "extension": [
+    0,
+    1,
+    2
+  ],
+  "revision": {
+    "retained": [
+      0,
+      1,
+      2
+    ],
+    "withdrawn": [],
+    "repairs": [],
+    "selection": [
+      0,
+      1,
+      2
+    ],
+    "residual": []
+  }
+}

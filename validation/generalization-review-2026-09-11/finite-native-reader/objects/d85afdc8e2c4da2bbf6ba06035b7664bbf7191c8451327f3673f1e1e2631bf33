@@ -1,0 +1,11 @@
+Running Native_Investigation_Report_Diagnostic_finitepresenters5 ...
+Native_Investigation_Report_Diagnostic_finitepresenters5 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_finitepresenters5")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_finitepresenters5.Factor_Executable_Environment_Values" (unresolved "Native_Investigation_Report_Diagnostic_finitepresenters5.Factor_Executable_Artifact_Values")
+*** Failed to apply terminal proof method (line 27 of "/tmp/native-investigation-report-diagnostic-finitepresenters5/theories/Factor_Executable_Artifact_Values.thy"):
+*** goal (1 subgoal):
+***  1. ⋀A. distinct
+***          (sorted_list_of_fset
+***            A)
+*** At command "by" (line 27 of "/tmp/native-investigation-report-diagnostic-finitepresenters5/theories/Factor_Executable_Artifact_Values.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_finitepresenters5
+0:02:38 elapsed time, 0:06:17 cpu time, factor 2.38

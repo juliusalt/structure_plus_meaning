@@ -1,0 +1,380 @@
+{
+  "question": "How should exact retained evidence handle the measured large nested JSON files without discarding or rewriting recorded bytes?",
+  "boundary": "The actual accepted reader run has a1.067GB cases.json and a366MB conditions.json because indentation repeats at each level of the complete unary source-use encoding. The machine log is60MB. Rewriting those recorded files would invalidate their execution hashes. The archive must preserve exact original bytes and remain practical to retain and replay. Add shared lossless gzip blob storage with separate stored-byte and decoded-byte identities, stream hashes, and materialize only the selected replay stage references. Preserve old unencoded archives. This is a representation change in evidence storage, not a semantic or proof change; exercise roundtrip, corruption and prior-reference behavior and replay the real stages.",
+  "specification_sha256": "2a6d6dc94455154f8079e41a33b49aad4e25af3335c04be63df8b465479f0d47",
+  "results": [
+    {
+      "problem": "lossless-large-evidence",
+      "initial_result": {
+        "input_formed": true,
+        "residual": [
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "profiles": [
+          {
+            "candidate": 0,
+            "profile": [
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          {
+            "candidate": 1,
+            "profile": [
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          {
+            "candidate": 2,
+            "profile": []
+          }
+        ],
+        "losses": [
+          {
+            "from": 0,
+            "to": 0,
+            "losses": []
+          },
+          {
+            "from": 0,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 0,
+            "to": 2,
+            "losses": [
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          {
+            "from": 1,
+            "to": 0,
+            "losses": []
+          },
+          {
+            "from": 1,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 1,
+            "to": 2,
+            "losses": [
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          {
+            "from": 2,
+            "to": 0,
+            "losses": []
+          },
+          {
+            "from": 2,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 2,
+            "to": 2,
+            "losses": []
+          }
+        ],
+        "safe_facets": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "conflicts": [],
+        "repairs": [
+          [
+            1,
+            0,
+            3,
+            0
+          ],
+          [
+            1,
+            0,
+            1,
+            0
+          ],
+          [
+            2,
+            0,
+            1,
+            0
+          ]
+        ],
+        "unrepairable": [],
+        "extension": [
+          0,
+          3,
+          1
+        ],
+        "revision": {
+          "retained": [
+            0
+          ],
+          "withdrawn": [],
+          "repairs": [
+            [
+              1,
+              0,
+              3,
+              0
+            ],
+            [
+              1,
+              0,
+              1,
+              0
+            ],
+            [
+              2,
+              0,
+              1,
+              0
+            ]
+          ],
+          "selection": [
+            0,
+            3,
+            1
+          ],
+          "residual": []
+        }
+      },
+      "followed_result": {
+        "input_formed": true,
+        "residual": [],
+        "profiles": [
+          {
+            "candidate": 0,
+            "profile": [
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          {
+            "candidate": 1,
+            "profile": [
+              [
+                0,
+                0
+              ],
+              [
+                3,
+                0
+              ],
+              [
+                1,
+                0
+              ]
+            ]
+          },
+          {
+            "candidate": 2,
+            "profile": [
+              [
+                1,
+                0
+              ]
+            ]
+          }
+        ],
+        "losses": [
+          {
+            "from": 0,
+            "to": 0,
+            "losses": []
+          },
+          {
+            "from": 0,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 0,
+            "to": 2,
+            "losses": [
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          {
+            "from": 1,
+            "to": 0,
+            "losses": [
+              [
+                3,
+                0
+              ],
+              [
+                1,
+                0
+              ]
+            ]
+          },
+          {
+            "from": 1,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 1,
+            "to": 2,
+            "losses": [
+              [
+                0,
+                0
+              ],
+              [
+                3,
+                0
+              ]
+            ]
+          },
+          {
+            "from": 2,
+            "to": 0,
+            "losses": [
+              [
+                1,
+                0
+              ]
+            ]
+          },
+          {
+            "from": 2,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 2,
+            "to": 2,
+            "losses": []
+          }
+        ],
+        "safe_facets": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "conflicts": [],
+        "repairs": [],
+        "unrepairable": [],
+        "extension": [
+          0,
+          3,
+          1
+        ],
+        "revision": {
+          "retained": [
+            0,
+            3,
+            1
+          ],
+          "withdrawn": [],
+          "repairs": [],
+          "selection": [
+            0,
+            3,
+            1
+          ],
+          "residual": []
+        }
+      },
+      "assessment": {
+        "required_observations": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            3,
+            0
+          ],
+          [
+            4,
+            0
+          ]
+        ],
+        "missing_requirements": {
+          "0": [
+            [
+              1,
+              0
+            ],
+            [
+              3,
+              0
+            ]
+          ],
+          "1": [],
+          "2": [
+            [
+              0,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              4,
+              0
+            ]
+          ]
+        },
+        "eligible": [
+          1
+        ],
+        "dominant": [
+          1
+        ],
+        "strict_improvements": [],
+        "boundary": "Assessment of the supplied finite candidates under explicit mandatory observations. Eligibility uses all original observations, including facets unnecessary for distinguishing these candidates. The returned adequate profiles determine comparison; broader coverage and candidate construction remain separate.",
+        "receipt_sha256": "d0090c7f5a8d55f2a6572956b7b7b47b6e6958ef5f6b526bcd79b1ef906dbcc1"
+      }
+    }
+  ]
+}

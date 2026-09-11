@@ -1,0 +1,463 @@
+{
+  "case_count": 76,
+  "raw_mismatches": [
+    {
+      "name": "reader-depth-0",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-depth-1",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-depth-2",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-depth-3",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-depth-4",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-selected-none",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-selected-348",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-selected-349",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-selected-350",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-selected-348-349",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-selected-348-350",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-selected-349-350",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-no-known-evidence",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-assumed-all-conditions",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-withheld-condition-0",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-withheld-condition-1",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-withheld-condition-2",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-withheld-condition-3",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-withheld-condition-4",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-withheld-condition-5",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-withheld-condition-6",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-withheld-condition-7",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-reordered-repeated-frontier",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-unused-malformed-source",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-distinct-goal-occurrences",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-goal-only-possible",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-changed-public-field-0",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-changed-public-field-1",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-changed-public-field-2",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-changed-public-field-3",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-changed-public-field-4",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-changed-public-field-5",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-changed-public-field-6",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-changed-public-field-7",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-changed-public-field-8",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-changed-public-field-9",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-changed-public-field-10",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-changed-public-field-11",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-changed-public-field-12",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-changed-public-field-13",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-changed-public-field-14",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-changed-public-field-15",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-changed-public-field-16",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-changed-public-field-17",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-changed-public-field-18",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-broken-join-350-0-19",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-broken-join-348-1-3",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-broken-join-348-2-0",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-broken-join-342-1-4",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-two-independent-contexts",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "reader-native-binding-seed-comparison",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "finite-native-depth-0",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "finite-native-depth-1",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "finite-native-depth-2",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "finite-native-depth-3",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "finite-native-depth-4",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "finite-native-depth-5",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "finite-native-withheld-0",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "finite-native-withheld-1",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "finite-native-withheld-2",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "finite-native-withheld-3",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "finite-native-withheld-4",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "finite-native-withheld-5",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "finite-native-withheld-6",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "finite-native-reordered-repeated",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "finite-native-changed-field-0",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "finite-native-changed-field-1",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "finite-native-changed-field-4",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "finite-native-changed-field-5",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "finite-native-changed-field-6",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "finite-native-changed-field-8",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "finite-native-changed-field-9",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "finite-native-changed-field-10",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "finite-native-changed-field-11",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "finite-native-malformed-unused-input",
+      "fields": [
+        "operation"
+      ]
+    },
+    {
+      "name": "finite-native-no-known-calls",
+      "fields": [
+        "operation"
+      ]
+    }
+  ],
+  "all_fields_equal_after_json_normalization": true,
+  "boundary": "The native source-reference guard reached complete-case comparison. Only Python operation tuples versus their serialized JSON arrays differ; every complete data field is equal under the public JSON syntax."
+}

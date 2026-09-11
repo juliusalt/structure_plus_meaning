@@ -12,15 +12,22 @@ Related reads, changes, and checks are prepared in complete batches; content
 quality governs their scope. The [current review](GENERALIZATION_REVIEW.md) and
 [reasoning inventory](REASONING_REUSE.md) record evidence and remaining gaps.
 
-An actual-source construction now proves that the complete native
-inference-specialization reading is inhabited. Its universal extension keeps
-the original package fields, replacement and target presentations, and every
-old artifact and binding within the extended package environment. The method
-comparison places source-reading requirements at that reading boundary; local
-construction remains reusable without them. An explicit finite executed
-example and whole-derivation admission remain open.
+An explicit finite example now executes the complete local
+inference-specialization reader from eight proved initial call occurrences.
+Complete source presentations retain two original artifact uses, an existing
+binding and a repeated counted attachment inside an extension with a separate
+node. The actual target report and every support field are preserved. The
+final inference call is derived without being supplied as initial evidence.
+The [retained example](validation/generalization-review-2026-09-11/finite-native-reader/README.md)
+includes 30 complete presenter cases, 76 reader cases and their exact replays.
 
-The current 807-theory session passes. Native local readers connect an actual
+The universal actual-source construction also retains the original package
+fields, replacement and target presentations, and every old artifact and
+binding. Source-reading requirements remain at that native-reading boundary;
+local construction is reusable without them. Whole-derivation admission
+remains open.
+
+The current 817-theory session passes. Native local readers connect an actual
 inference node's bindings to its symbolic replacement record and complete
 target report. A workflow adequacy investigation exposed a construction-reuse
 gap; bounded generation now feeds its own results into further construction
@@ -28,8 +35,9 @@ while preserving their evidence requirements. A proved entry abstraction now
 identifies construction goals that no amount of extra depth can settle with a
 given library. Its execution identifies the missing reader constructors, whose
 finite schemas and complete premise lists now come from the actual native
-definitions. The combined native library now constructs the complete reader
-chain while retaining its six unproved source conditions. An adequacy check
+definitions. The combined native library constructs the complete reader
+chain; the original marker fixture retains six unsupported source conditions.
+An adequacy check
 then found that complete clause coverage still leaves variables unavailable
 to premise matching. A proved diagnostic identifies that obstruction.
 Requested heads now supply complete bindings when they determine every schema
@@ -39,7 +47,7 @@ settles the tested native binding judgments without assumed traversal seeds.
 A method comparison uses the existing revision machinery to improve its own
 assessment observations. A further source review proves that the original
 reader fixture's payload environments make its native requests impossible.
-The required next example must carry actual source presentations and complete
+The executed finite example supplies actual source presentations and complete
 reader evidence. A matching outer shape alone remains insufficient. The
 complete construction, guidance, source-requirement, coverage, and compilation
 families pass. Coverage

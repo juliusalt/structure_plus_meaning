@@ -1,0 +1,204 @@
+{
+  "question": "Repair lexical syntax and expose complete existing input operations",
+  "boundary": "The value token is an Isabelle command keyword in the failed source. A local proof label is not a semantic coordinate. The input helpers are existing operations; adding them to the export does not add a new encoding convention. Actual combined proof, generated signature inspection and execution remain required. The new environment source has a use label, which is an existing proof-method token and is scanned as a separate possible collision rather than assumed to be the same error.",
+  "problems": [
+    {
+      "name": "proof-label-syntax",
+      "case": {
+        "schema": "finite-investigation-1",
+        "kind": "basis",
+        "question": "How should the keyword collision in the witness proof be repaired?",
+        "scope": {
+          "candidates": {
+            "0": "Delete the witness lemma",
+            "1": "Rename the local value label to converted, retaining the same proposition and proof; scan all three new modules for further command-keyword collisions"
+          },
+          "facets": {
+            "0": "Retains the theorem and its dependencies",
+            "1": "Removes the diagnosed reserved keyword collision",
+            "2": "Includes the related source scan before the next combined check"
+          },
+          "boundary": "The value token is an Isabelle command keyword in the failed source. A local proof label is not a semantic coordinate. The input helpers are existing operations; adding them to the export does not add a new encoding convention. Actual combined proof, generated signature inspection and execution remain required. The new environment source has a use label, which is an existing proof-method token and is scanned as a separate possible collision rather than assumed to be the same error."
+        },
+        "candidates": [
+          0,
+          1
+        ],
+        "facets": [
+          0,
+          1,
+          2
+        ],
+        "selected": [
+          0
+        ],
+        "observations": [
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            2,
+            1,
+            0
+          ]
+        ],
+        "relation": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "evidence": [
+          {
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Executable_Data_Values.thy",
+            "sha256": "c11d2d476a48127e99896a1ddd711bfd0a41229a22e724e2532f9e6ebe0b252c"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Executable_Artifact_Values.thy",
+            "sha256": "28ce4d2cb74d3bfbcd710f3da1b9985f6006d67b3477464e743f93ef1236a86b"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Executable_Environment_Values.thy",
+            "sha256": "a876f1ccb41eb0bd6d5b096c75ef713fed529c02ec2a8322f866e5c2f33a4e00"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/tools/check_reasoning.py",
+            "sha256": "7f6d18af76f6f983714b21a5c158d3d31bd3dc2514960a23a16eb0f6e86c7cfc"
+          },
+          {
+            "path": "/tmp/native-investigation-report-diagnostic-finitepresenters2/build.log",
+            "sha256": "fcd23653e10f89ba241faa9356027eea7d7155020a9a682c5f5fa58bcd66ef02"
+          }
+        ]
+      },
+      "required_observations": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ]
+      ]
+    },
+    {
+      "name": "executable-input-interface",
+      "case": {
+        "schema": "finite-investigation-1",
+        "kind": "basis",
+        "question": "Which existing finite input operations should the data module expose for the retained SML checks?",
+        "scope": {
+          "candidates": {
+            "0": "Depend on incidental internal exports whose names and availability have not been checked",
+            "1": "Explicitly export nat_of_integer, integer_of_nat, fset_of_list, mset and finite_empty_artifact with the presenters so the checker can construct complete input values using existing operations"
+          },
+          "facets": {
+            "0": "Provides arbitrary natural input and exact scalar output",
+            "1": "Provides finite sets and multiplicity-preserving multiset inputs",
+            "2": "Provides a complete supported target control without a mathematical choice operator"
+          },
+          "boundary": "The value token is an Isabelle command keyword in the failed source. A local proof label is not a semantic coordinate. The input helpers are existing operations; adding them to the export does not add a new encoding convention. Actual combined proof, generated signature inspection and execution remain required. The new environment source has a use label, which is an existing proof-method token and is scanned as a separate possible collision rather than assumed to be the same error."
+        },
+        "candidates": [
+          0,
+          1
+        ],
+        "facets": [
+          0,
+          1,
+          2
+        ],
+        "selected": [
+          0
+        ],
+        "observations": [
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            2,
+            1,
+            0
+          ]
+        ],
+        "relation": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "evidence": [
+          {
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Executable_Data_Values.thy",
+            "sha256": "c11d2d476a48127e99896a1ddd711bfd0a41229a22e724e2532f9e6ebe0b252c"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Executable_Artifact_Values.thy",
+            "sha256": "28ce4d2cb74d3bfbcd710f3da1b9985f6006d67b3477464e743f93ef1236a86b"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Executable_Environment_Values.thy",
+            "sha256": "a876f1ccb41eb0bd6d5b096c75ef713fed529c02ec2a8322f866e5c2f33a4e00"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/tools/check_reasoning.py",
+            "sha256": "7f6d18af76f6f983714b21a5c158d3d31bd3dc2514960a23a16eb0f6e86c7cfc"
+          },
+          {
+            "path": "/tmp/native-investigation-report-diagnostic-finitepresenters2/build.log",
+            "sha256": "fcd23653e10f89ba241faa9356027eea7d7155020a9a682c5f5fa58bcd66ef02"
+          }
+        ]
+      },
+      "required_observations": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ]
+      ]
+    }
+  ]
+}

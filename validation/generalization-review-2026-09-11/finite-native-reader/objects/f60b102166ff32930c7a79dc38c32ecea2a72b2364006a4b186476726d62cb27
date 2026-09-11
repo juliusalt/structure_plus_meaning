@@ -1,0 +1,362 @@
+{
+  "status": "accepted",
+  "proof": "/tmp/native-investigation-report-diagnostic-finitepresenters19/result.json",
+  "native_input": "native-input-execution21",
+  "reader_run": "native-reader-execution21",
+  "all_cases": 76,
+  "source_cases": 25,
+  "old_control_cases": 51,
+  "complete_frontiers": 311,
+  "native_library_executions": 75,
+  "native_source_reference": {
+    "source_execution_sha256": "07a963ad8ba1d5d66df065c8b0d24a06bf75e3a54ed514d0090a34a6a31dfa91",
+    "source_proof_sha256": "c6ecd4ebfb990c6f7045504e0b55a23b41968219122cede3fd28cb2cdc1bcb59",
+    "native_input_sha256": "0f7ecf837156819925f7e3fcfdc41a9b84f7689d18a06d0d765a84bff6faa5a1",
+    "source_reference_cases": 25
+  },
+  "native_cases": [
+    {
+      "name": "finite-native-depth-0",
+      "input_formed": true,
+      "residual_entries": [
+        350,
+        349,
+        348
+      ],
+      "applications": 2,
+      "expected_report": null
+    },
+    {
+      "name": "finite-native-depth-1",
+      "input_formed": true,
+      "residual_entries": [
+        350,
+        349
+      ],
+      "applications": 3,
+      "expected_report": null
+    },
+    {
+      "name": "finite-native-depth-2",
+      "input_formed": true,
+      "residual_entries": [
+        350
+      ],
+      "applications": 4,
+      "expected_report": null
+    },
+    {
+      "name": "finite-native-depth-3",
+      "input_formed": true,
+      "residual_entries": [],
+      "applications": 5,
+      "expected_report": null
+    },
+    {
+      "name": "finite-native-depth-4",
+      "input_formed": true,
+      "residual_entries": [],
+      "applications": 5,
+      "expected_report": {
+        "input_formed": true,
+        "settled_goals": [
+          0,
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "name": "finite-native-depth-5",
+      "input_formed": true,
+      "residual_entries": [],
+      "applications": 5,
+      "expected_report": {
+        "input_formed": true,
+        "settled_goals": [
+          0,
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "name": "finite-native-withheld-0",
+      "input_formed": true,
+      "residual_entries": [
+        350
+      ],
+      "applications": 5,
+      "expected_report": {
+        "input_formed": true,
+        "residual_goals": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "finite-native-withheld-1",
+      "input_formed": true,
+      "residual_entries": [
+        350,
+        349
+      ],
+      "applications": 5,
+      "expected_report": {
+        "input_formed": true,
+        "residual_goals": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "finite-native-withheld-2",
+      "input_formed": true,
+      "residual_entries": [
+        350,
+        349
+      ],
+      "applications": 5,
+      "expected_report": {
+        "input_formed": true,
+        "residual_goals": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "finite-native-withheld-3",
+      "input_formed": true,
+      "residual_entries": [
+        350,
+        349,
+        348
+      ],
+      "applications": 5,
+      "expected_report": {
+        "input_formed": true,
+        "residual_goals": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "finite-native-withheld-4",
+      "input_formed": true,
+      "residual_entries": [
+        350,
+        349,
+        348
+      ],
+      "applications": 5,
+      "expected_report": {
+        "input_formed": true,
+        "residual_goals": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "finite-native-withheld-5",
+      "input_formed": true,
+      "residual_entries": [
+        350,
+        349,
+        348
+      ],
+      "applications": 5,
+      "expected_report": {
+        "input_formed": true,
+        "residual_goals": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "finite-native-withheld-6",
+      "input_formed": true,
+      "residual_entries": [
+        350,
+        349,
+        348
+      ],
+      "applications": 5,
+      "expected_report": {
+        "input_formed": true,
+        "residual_goals": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "finite-native-reordered-repeated",
+      "input_formed": true,
+      "residual_entries": [],
+      "applications": 5,
+      "expected_report": {
+        "input_formed": true,
+        "settled_goals": [
+          0,
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "name": "finite-native-changed-field-0",
+      "input_formed": true,
+      "residual_entries": [
+        350
+      ],
+      "applications": 5,
+      "expected_report": {
+        "input_formed": true,
+        "residual_goals": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "finite-native-changed-field-1",
+      "input_formed": true,
+      "residual_entries": [
+        350
+      ],
+      "applications": 5,
+      "expected_report": {
+        "input_formed": true,
+        "residual_goals": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "finite-native-changed-field-4",
+      "input_formed": true,
+      "residual_entries": [
+        350
+      ],
+      "applications": 5,
+      "expected_report": {
+        "input_formed": true,
+        "residual_goals": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "finite-native-changed-field-5",
+      "input_formed": true,
+      "residual_entries": [
+        350
+      ],
+      "applications": 5,
+      "expected_report": {
+        "input_formed": true,
+        "residual_goals": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "finite-native-changed-field-6",
+      "input_formed": true,
+      "residual_entries": [
+        350
+      ],
+      "applications": 5,
+      "expected_report": {
+        "input_formed": true,
+        "residual_goals": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "finite-native-changed-field-8",
+      "input_formed": true,
+      "residual_entries": [
+        350
+      ],
+      "applications": 5,
+      "expected_report": {
+        "input_formed": true,
+        "residual_goals": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "finite-native-changed-field-9",
+      "input_formed": true,
+      "residual_entries": [
+        350
+      ],
+      "applications": 5,
+      "expected_report": {
+        "input_formed": true,
+        "residual_goals": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "finite-native-changed-field-10",
+      "input_formed": true,
+      "residual_entries": [
+        350
+      ],
+      "applications": 5,
+      "expected_report": {
+        "input_formed": true,
+        "residual_goals": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "finite-native-changed-field-11",
+      "input_formed": true,
+      "residual_entries": [
+        350
+      ],
+      "applications": 5,
+      "expected_report": {
+        "input_formed": true,
+        "residual_goals": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "finite-native-malformed-unused-input",
+      "input_formed": false,
+      "residual_entries": [],
+      "applications": 5,
+      "expected_report": {
+        "input_formed": false
+      }
+    },
+    {
+      "name": "finite-native-no-known-calls",
+      "input_formed": true,
+      "residual_entries": [
+        350,
+        349,
+        348
+      ],
+      "applications": 5,
+      "expected_report": {
+        "input_formed": true,
+        "residual_goals": [
+          0,
+          1,
+          2
+        ]
+      }
+    }
+  ],
+  "reader_receipt_sha256": "3a6d5e4719af1c95dc468073fc4e5a0afc22bf17384e1961fc5ce49da93df6e9",
+  "reader_results_sha256": "18d50352fc15f09fe144dc86f5b88dca51c1b968b4b08c6b071055c8b1012d89",
+  "tests_sha256": "c4735e3d64cac63aa20e2b888ffc78cd21aa02a1ef2e33334cedbc7f4d5014f4"
+}

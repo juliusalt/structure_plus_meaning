@@ -1,0 +1,45 @@
+Running Native_Investigation_Report_Diagnostic_finitepresenters1 ...
+Native_Investigation_Report_Diagnostic_finitepresenters1 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_finitepresenters1")
+...
+***         self_contained_term t2;
+***         decode_finite_term va = Pair_Term (decode_finite_term x2) t2⟧
+***        ⟹ ∃z. decode_finite_term z = t2 ∧ Finite_Pair x2 z = va
+***  6. ⋀t1 t2 va x2.
+***        ⟦⋀v. decode_finite_term v ≠ t1;
+***         ⋀v. (finite_self_contained_term t2 = Some v) =
+***             (decode_finite_term v = t2);
+***         v = Finite_Payload x2; finite_self_contained_term t1 = None;
+***         self_contained_term t2; self_contained_term t1;
+***         decode_finite_term va = Pair_Term t1 t2⟧
+***        ⟹ False
+***  7. ⋀t2 va x2 x2a.
+***        ⟦⋀v. (finite_self_contained_term (decode_finite_term x2a) = Some v) =
+***             (v = x2a);
+***         ⋀v. (finite_self_contained_term t2 = Some v) =
+***             (decode_finite_term v = t2);
+***         v = Finite_Payload x2; self_contained_term (decode_finite_term x2a);
+***         self_contained_term t2;
+***         decode_finite_term va = Pair_Term (decode_finite_term x2a) t2⟧
+***        ⟹ ∃z. decode_finite_term z = t2 ∧ Finite_Pair x2a z = va
+***  8. ⋀t1 t2 va x31 x32.
+***        ⟦⋀v. decode_finite_term v ≠ t1;
+***         ⋀v. (finite_self_contained_term t2 = Some v) =
+***             (decode_finite_term v = t2);
+***         v = Finite_Pair x31 x32; finite_self_contained_term t1 = None;
+***         self_contained_term t2; self_contained_term t1;
+***         decode_finite_term va = Pair_Term t1 t2⟧
+***        ⟹ False
+***  9. ⋀t2 va x31 x32 x2.
+***        ⟦⋀v. (finite_self_contained_term (decode_finite_term x2) = Some v) =
+***             (v = x2);
+***         ⋀v. (finite_self_contained_term t2 = Some v) =
+***             (decode_finite_term v = t2);
+***         v = Finite_Pair x31 x32;
+***         self_contained_term (decode_finite_term x2); self_contained_term t2;
+***         decode_finite_term va = Pair_Term (decode_finite_term x2) t2⟧
+***        ⟹ ∃z. decode_finite_term z = t2 ∧
+***               Finite_Pair x2 z =
+***               va
+*** At command "by" (line 30 of "/tmp/native-investigation-report-diagnostic-finitepresenters1/theories/Factor_Executable_Data_Values.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_finitepresenters1
+0:02:39 elapsed time, 0:06:22 cpu time, factor 2.39

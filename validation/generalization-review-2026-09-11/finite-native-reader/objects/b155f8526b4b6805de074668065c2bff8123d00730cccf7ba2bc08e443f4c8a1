@@ -1,0 +1,954 @@
+{
+  "question": "Prepare and validate the explicit finite native source witness",
+  "boundary": "These externally constructed candidates are not yet native facts. The grammar permits the shared empty binder and literal leaf across interface and clause, while retaining each record header separation. finite_record_candidates restricts a record of arity n to n headed rows and n-length row lists, so a three-field record has at most 27 raw row lists, not carrier-to-the-sixth candidates. The full reader also checks all other stated conditions. The old binding at source port 23 is retained as complete environment data and its compatibility with actual native readings must be verified. Only the closed finite checks are initially claimed; no oracle or unchecked validity assertion supplies native evidence.",
+  "specification_sha256": "5957a0e5c3c1b99a67bd83de3e1a9f257916de4b3ab9f1398a21466121354740",
+  "results": [
+    {
+      "problem": "explicit-source-witness",
+      "initial_result": {
+        "input_formed": true,
+        "residual": [],
+        "profiles": [
+          {
+            "candidate": 0,
+            "profile": []
+          },
+          {
+            "candidate": 1,
+            "profile": [
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          {
+            "candidate": 2,
+            "profile": []
+          }
+        ],
+        "losses": [
+          {
+            "from": 0,
+            "to": 0,
+            "losses": []
+          },
+          {
+            "from": 0,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 0,
+            "to": 2,
+            "losses": []
+          },
+          {
+            "from": 1,
+            "to": 0,
+            "losses": [
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          {
+            "from": 1,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 1,
+            "to": 2,
+            "losses": [
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          {
+            "from": 2,
+            "to": 0,
+            "losses": []
+          },
+          {
+            "from": 2,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 2,
+            "to": 2,
+            "losses": []
+          }
+        ],
+        "safe_facets": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "conflicts": [],
+        "repairs": [],
+        "unrepairable": [],
+        "extension": [
+          0
+        ],
+        "revision": {
+          "retained": [
+            0
+          ],
+          "withdrawn": [],
+          "repairs": [],
+          "selection": [
+            0
+          ],
+          "residual": []
+        }
+      },
+      "followed_result": {
+        "input_formed": true,
+        "residual": [],
+        "profiles": [
+          {
+            "candidate": 0,
+            "profile": []
+          },
+          {
+            "candidate": 1,
+            "profile": [
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          {
+            "candidate": 2,
+            "profile": []
+          }
+        ],
+        "losses": [
+          {
+            "from": 0,
+            "to": 0,
+            "losses": []
+          },
+          {
+            "from": 0,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 0,
+            "to": 2,
+            "losses": []
+          },
+          {
+            "from": 1,
+            "to": 0,
+            "losses": [
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          {
+            "from": 1,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 1,
+            "to": 2,
+            "losses": [
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          {
+            "from": 2,
+            "to": 0,
+            "losses": []
+          },
+          {
+            "from": 2,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 2,
+            "to": 2,
+            "losses": []
+          }
+        ],
+        "safe_facets": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "conflicts": [],
+        "repairs": [],
+        "unrepairable": [],
+        "extension": [
+          0
+        ],
+        "revision": {
+          "retained": [
+            0
+          ],
+          "withdrawn": [],
+          "repairs": [],
+          "selection": [
+            0
+          ],
+          "residual": []
+        }
+      },
+      "assessment": {
+        "required_observations": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            3,
+            0
+          ]
+        ],
+        "missing_requirements": {
+          "0": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ]
+          ],
+          "1": [],
+          "2": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ]
+          ]
+        },
+        "eligible": [
+          1
+        ],
+        "dominant": [
+          1
+        ],
+        "strict_improvements": [],
+        "boundary": "Assessment of the supplied finite candidates under explicit mandatory observations. Eligibility uses all original observations, including facets unnecessary for distinguishing these candidates. The returned adequate profiles determine comparison; broader coverage and candidate construction remain separate.",
+        "receipt_sha256": "4df9c4fceb3fdc63512d638e81491b52fbb7100d2e5106347f9378d14c0fbdb4"
+      }
+    },
+    {
+      "problem": "native-reading-validation",
+      "initial_result": {
+        "input_formed": true,
+        "residual": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "profiles": [
+          {
+            "candidate": 0,
+            "profile": []
+          },
+          {
+            "candidate": 1,
+            "profile": [
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          {
+            "candidate": 2,
+            "profile": [
+              [
+                0,
+                0
+              ]
+            ]
+          }
+        ],
+        "losses": [
+          {
+            "from": 0,
+            "to": 0,
+            "losses": []
+          },
+          {
+            "from": 0,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 0,
+            "to": 2,
+            "losses": []
+          },
+          {
+            "from": 1,
+            "to": 0,
+            "losses": [
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          {
+            "from": 1,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 1,
+            "to": 2,
+            "losses": []
+          },
+          {
+            "from": 2,
+            "to": 0,
+            "losses": [
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          {
+            "from": 2,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 2,
+            "to": 2,
+            "losses": []
+          }
+        ],
+        "safe_facets": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "conflicts": [],
+        "repairs": [
+          [
+            0,
+            2,
+            1,
+            0
+          ],
+          [
+            1,
+            2,
+            1,
+            0
+          ]
+        ],
+        "unrepairable": [],
+        "extension": [
+          0,
+          1
+        ],
+        "revision": {
+          "retained": [
+            0
+          ],
+          "withdrawn": [],
+          "repairs": [
+            [
+              0,
+              2,
+              1,
+              0
+            ],
+            [
+              1,
+              2,
+              1,
+              0
+            ]
+          ],
+          "selection": [
+            0,
+            1
+          ],
+          "residual": []
+        }
+      },
+      "followed_result": {
+        "input_formed": true,
+        "residual": [],
+        "profiles": [
+          {
+            "candidate": 0,
+            "profile": [
+              [
+                1,
+                0
+              ]
+            ]
+          },
+          {
+            "candidate": 1,
+            "profile": [
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          {
+            "candidate": 2,
+            "profile": [
+              [
+                0,
+                0
+              ]
+            ]
+          }
+        ],
+        "losses": [
+          {
+            "from": 0,
+            "to": 0,
+            "losses": []
+          },
+          {
+            "from": 0,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 0,
+            "to": 2,
+            "losses": [
+              [
+                1,
+                0
+              ]
+            ]
+          },
+          {
+            "from": 1,
+            "to": 0,
+            "losses": [
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          {
+            "from": 1,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 1,
+            "to": 2,
+            "losses": [
+              [
+                1,
+                0
+              ]
+            ]
+          },
+          {
+            "from": 2,
+            "to": 0,
+            "losses": [
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          {
+            "from": 2,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 2,
+            "to": 2,
+            "losses": []
+          }
+        ],
+        "safe_facets": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "conflicts": [],
+        "repairs": [],
+        "unrepairable": [],
+        "extension": [
+          0,
+          1
+        ],
+        "revision": {
+          "retained": [
+            0,
+            1
+          ],
+          "withdrawn": [],
+          "repairs": [],
+          "selection": [
+            0,
+            1
+          ],
+          "residual": []
+        }
+      },
+      "assessment": {
+        "required_observations": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            3,
+            0
+          ]
+        ],
+        "missing_requirements": {
+          "0": [
+            [
+              0,
+              0
+            ],
+            [
+              3,
+              0
+            ]
+          ],
+          "1": [],
+          "2": [
+            [
+              1,
+              0
+            ]
+          ]
+        },
+        "eligible": [
+          1
+        ],
+        "dominant": [
+          1
+        ],
+        "strict_improvements": [],
+        "boundary": "Assessment of the supplied finite candidates under explicit mandatory observations. Eligibility uses all original observations, including facets unnecessary for distinguishing these candidates. The returned adequate profiles determine comparison; broader coverage and candidate construction remain separate.",
+        "receipt_sha256": "1c66f41580781282da0d3912b01b6f01cd38e7cd3eed72c2e66a0e5758fad254"
+      }
+    },
+    {
+      "problem": "literal-family-reuse",
+      "initial_result": {
+        "input_formed": true,
+        "residual": [
+          [
+            0,
+            2
+          ]
+        ],
+        "profiles": [
+          {
+            "candidate": 0,
+            "profile": []
+          },
+          {
+            "candidate": 1,
+            "profile": [
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          {
+            "candidate": 2,
+            "profile": []
+          }
+        ],
+        "losses": [
+          {
+            "from": 0,
+            "to": 0,
+            "losses": []
+          },
+          {
+            "from": 0,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 0,
+            "to": 2,
+            "losses": []
+          },
+          {
+            "from": 1,
+            "to": 0,
+            "losses": [
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          {
+            "from": 1,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 1,
+            "to": 2,
+            "losses": [
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          {
+            "from": 2,
+            "to": 0,
+            "losses": []
+          },
+          {
+            "from": 2,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 2,
+            "to": 2,
+            "losses": []
+          }
+        ],
+        "safe_facets": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "conflicts": [],
+        "repairs": [
+          [
+            0,
+            2,
+            1,
+            0
+          ],
+          [
+            0,
+            2,
+            2,
+            0
+          ]
+        ],
+        "unrepairable": [],
+        "extension": [
+          0,
+          1,
+          2
+        ],
+        "revision": {
+          "retained": [
+            0
+          ],
+          "withdrawn": [],
+          "repairs": [
+            [
+              0,
+              2,
+              1,
+              0
+            ],
+            [
+              0,
+              2,
+              2,
+              0
+            ]
+          ],
+          "selection": [
+            0,
+            1,
+            2
+          ],
+          "residual": []
+        }
+      },
+      "followed_result": {
+        "input_formed": true,
+        "residual": [],
+        "profiles": [
+          {
+            "candidate": 0,
+            "profile": [
+              [
+                1,
+                0
+              ],
+              [
+                2,
+                0
+              ]
+            ]
+          },
+          {
+            "candidate": 1,
+            "profile": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                2,
+                0
+              ]
+            ]
+          },
+          {
+            "candidate": 2,
+            "profile": []
+          }
+        ],
+        "losses": [
+          {
+            "from": 0,
+            "to": 0,
+            "losses": []
+          },
+          {
+            "from": 0,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 0,
+            "to": 2,
+            "losses": [
+              [
+                1,
+                0
+              ],
+              [
+                2,
+                0
+              ]
+            ]
+          },
+          {
+            "from": 1,
+            "to": 0,
+            "losses": [
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          {
+            "from": 1,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 1,
+            "to": 2,
+            "losses": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                2,
+                0
+              ]
+            ]
+          },
+          {
+            "from": 2,
+            "to": 0,
+            "losses": []
+          },
+          {
+            "from": 2,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 2,
+            "to": 2,
+            "losses": []
+          }
+        ],
+        "safe_facets": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "conflicts": [],
+        "repairs": [],
+        "unrepairable": [],
+        "extension": [
+          0,
+          1,
+          2
+        ],
+        "revision": {
+          "retained": [
+            0,
+            1,
+            2
+          ],
+          "withdrawn": [],
+          "repairs": [],
+          "selection": [
+            0,
+            1,
+            2
+          ],
+          "residual": []
+        }
+      },
+      "assessment": {
+        "required_observations": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            3,
+            0
+          ]
+        ],
+        "missing_requirements": {
+          "0": [
+            [
+              0,
+              0
+            ],
+            [
+              3,
+              0
+            ]
+          ],
+          "1": [],
+          "2": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ]
+          ]
+        },
+        "eligible": [
+          1
+        ],
+        "dominant": [
+          1
+        ],
+        "strict_improvements": [],
+        "boundary": "Assessment of the supplied finite candidates under explicit mandatory observations. Eligibility uses all original observations, including facets unnecessary for distinguishing these candidates. The returned adequate profiles determine comparison; broader coverage and candidate construction remain separate.",
+        "receipt_sha256": "b567d4e05d4ce079210c7b3e44981034d333d817b314db8893a65663930947d5"
+      }
+    }
+  ]
+}

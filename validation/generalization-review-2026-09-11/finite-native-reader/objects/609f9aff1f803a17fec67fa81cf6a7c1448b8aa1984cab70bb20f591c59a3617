@@ -1,0 +1,39 @@
+theory Factor_Finite_Inference_Source_Checks
+  imports Factor_Finite_Inference_Sources
+begin
+
+lemma finite_literal_native_checks_closed:
+  "finite_literal_native_checks [] = [True,True,True,True,True,True]"
+  by code_simp
+
+lemma finite_literal_environments_formed:
+  "environment_formed (decode_finite_environment (finite_literal_sources []))"
+  "environment_formed (decode_finite_environment (finite_literal_extension []))"
+  using finite_literal_native_checks_closed
+  by (auto simp: finite_literal_native_checks_def finite_environment_formed_correct)
+
+lemma finite_literal_binder:
+  "binder_scope_at (decode_finite_object (finite_literal_artifact [])) [3] {}"
+  using finite_literal_native_checks_closed
+  by (simp add: finite_literal_native_checks_def finite_binder_scope_at_correct)
+
+lemma finite_literal_native_schema:
+  "native_schema_at (decode_finite_environment (finite_literal_sources [])) None [8]
+    (decode_finite_schema (finite_literal_schema []))"
+  using finite_literal_native_checks_closed
+  by (simp add: finite_literal_native_checks_def finite_native_schema_readings_correct)
+
+lemma finite_literal_native_package:
+  "native_package_at (decode_finite_environment (finite_literal_sources [])) None [0]
+    (decode_finite_system (finite_literal_program []))"
+  using finite_literal_native_checks_closed
+  by (simp add: finite_literal_native_checks_def finite_native_package_readings_correct)
+
+lemma finite_literal_native_node:
+  "native_proof_node_at (decode_finite_environment (finite_literal_extension [])) (Some []) []
+    (Schema_Inference (None,[7]) {||}) {} (set finite_literal_node_interior) {[6]}"
+  using finite_literal_native_checks_closed
+  by (simp add: finite_literal_native_checks_def finite_proof_node_readings_correct
+    decode_finite_binding_set_def fset_of_list.rep_eq)
+
+end

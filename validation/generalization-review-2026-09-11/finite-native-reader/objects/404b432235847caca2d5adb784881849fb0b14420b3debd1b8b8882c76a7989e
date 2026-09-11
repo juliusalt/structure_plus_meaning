@@ -1,0 +1,477 @@
+{
+  "invocation": "43743a2c-61f7-491d-9fa2-694afb877261",
+  "status": "evaluated",
+  "started_utc": "2026-09-11T10:42:52.742385+00:00",
+  "exit_code": 0,
+  "role": "Execution evidence with separately qualified semantic meaning",
+  "input": {
+    "path": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair3/local-domain-and-exact-rows/followed-case.json",
+    "sha256": "734686071790ca8051c3b3deaaf78bb721d794cfa7dd22f6ab87d08f9fe7be5a"
+  },
+  "evidence_archive": [
+    {
+      "role": "original case",
+      "path": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair3/local-domain-and-exact-rows/followed-case.json",
+      "sha256": "734686071790ca8051c3b3deaaf78bb721d794cfa7dd22f6ab87d08f9fe7be5a",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair3/local-domain-and-exact-rows/followed/evidence-43743a2c-61f7-491d-9fa2-694afb877261/734686071790ca8051c3b3deaaf78bb721d794cfa7dd22f6ab87d08f9fe7be5a"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair3/local-domain-and-exact-rows/initial/evidence-85eda59f-a1ab-4bc7-a2ef-548f6f2a36fc/2cafcfceef33d9b9572267850c6a544450a4435655c38a736cc8914648c6826f",
+      "sha256": "2cafcfceef33d9b9572267850c6a544450a4435655c38a736cc8914648c6826f",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair3/local-domain-and-exact-rows/followed/evidence-43743a2c-61f7-491d-9fa2-694afb877261/2cafcfceef33d9b9572267850c6a544450a4435655c38a736cc8914648c6826f"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair3/local-domain-and-exact-rows/initial/evidence-85eda59f-a1ab-4bc7-a2ef-548f6f2a36fc/e41259546877610ad2ed1bb3e1d86f843473decaa24ee41da4f78fdda7f071d0",
+      "sha256": "e41259546877610ad2ed1bb3e1d86f843473decaa24ee41da4f78fdda7f071d0",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair3/local-domain-and-exact-rows/followed/evidence-43743a2c-61f7-491d-9fa2-694afb877261/e41259546877610ad2ed1bb3e1d86f843473decaa24ee41da4f78fdda7f071d0"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair3/local-domain-and-exact-rows/initial/evidence-85eda59f-a1ab-4bc7-a2ef-548f6f2a36fc/bde86a990e882a439ff27234a86f9e1b1d96edc416712c372927c07be2ca9e24",
+      "sha256": "bde86a990e882a439ff27234a86f9e1b1d96edc416712c372927c07be2ca9e24",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair3/local-domain-and-exact-rows/followed/evidence-43743a2c-61f7-491d-9fa2-694afb877261/bde86a990e882a439ff27234a86f9e1b1d96edc416712c372927c07be2ca9e24"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair3/local-domain-and-exact-rows/initial/evidence-85eda59f-a1ab-4bc7-a2ef-548f6f2a36fc/ceea0f58bd0c2f7a3d022332ec8b0d09623bf9ea648224871096c1e4f98601d3",
+      "sha256": "ceea0f58bd0c2f7a3d022332ec8b0d09623bf9ea648224871096c1e4f98601d3",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair3/local-domain-and-exact-rows/followed/evidence-43743a2c-61f7-491d-9fa2-694afb877261/ceea0f58bd0c2f7a3d022332ec8b0d09623bf9ea648224871096c1e4f98601d3"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair3/local-domain-and-exact-rows/initial/evidence-85eda59f-a1ab-4bc7-a2ef-548f6f2a36fc/cb6ae97a79aa7ae3563c3b3067b47c9b4b7d7ccf240ca116f9c6eb457e2caafc",
+      "sha256": "cb6ae97a79aa7ae3563c3b3067b47c9b4b7d7ccf240ca116f9c6eb457e2caafc",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair3/local-domain-and-exact-rows/followed/evidence-43743a2c-61f7-491d-9fa2-694afb877261/cb6ae97a79aa7ae3563c3b3067b47c9b4b7d7ccf240ca116f9c6eb457e2caafc"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair3/local-domain-and-exact-rows/initial/evidence-85eda59f-a1ab-4bc7-a2ef-548f6f2a36fc/7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "sha256": "7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair3/local-domain-and-exact-rows/followed/evidence-43743a2c-61f7-491d-9fa2-694afb877261/7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair3/local-domain-and-exact-rows/initial/receipt.json",
+      "sha256": "1d540429f12ed7bdb106efef348b52eea263b133cff712ba1ee16034f557d8a1",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair3/local-domain-and-exact-rows/followed/evidence-43743a2c-61f7-491d-9fa2-694afb877261/1d540429f12ed7bdb106efef348b52eea263b133cff712ba1ee16034f557d8a1"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair3/local-domain-and-exact-rows/initial/case.json",
+      "sha256": "cbda56c387ad862c9bffbe624b2dfbb97a841acf079b5e7814c4ceee82b25e99",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair3/local-domain-and-exact-rows/followed/evidence-43743a2c-61f7-491d-9fa2-694afb877261/cbda56c387ad862c9bffbe624b2dfbb97a841acf079b5e7814c4ceee82b25e99"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair3/local-domain-and-exact-rows/initial/run.log",
+      "sha256": "52432e7b3000924eb852eaad981b983d82bb1b016150c800b35b5cd5582c0a9d",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair3/local-domain-and-exact-rows/followed/evidence-43743a2c-61f7-491d-9fa2-694afb877261/52432e7b3000924eb852eaad981b983d82bb1b016150c800b35b5cd5582c0a9d"
+    },
+    {
+      "role": "case evidence",
+      "path": "/home/julius/structure_and_semantics/tools/revise_investigation_case.py",
+      "sha256": "70466b6a380397ef2c390d33c150d1b536feac4aafcedae6bb20d3e1a5106d66",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair3/local-domain-and-exact-rows/followed/evidence-43743a2c-61f7-491d-9fa2-694afb877261/70466b6a380397ef2c390d33c150d1b536feac4aafcedae6bb20d3e1a5106d66"
+    },
+    {
+      "role": "case evidence",
+      "path": "/home/julius/structure_and_semantics/tools/review_investigations.py",
+      "sha256": "368a254b9dc8f4323522d0edf4a6c7c1cac118afd70a97e0e000bf7bf86a6bb0",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair3/local-domain-and-exact-rows/followed/evidence-43743a2c-61f7-491d-9fa2-694afb877261/368a254b9dc8f4323522d0edf4a6c7c1cac118afd70a97e0e000bf7bf86a6bb0"
+    },
+    {
+      "role": "execution tool",
+      "path": "/home/julius/structure_and_semantics/tools/investigate.py",
+      "sha256": "7643dbebe13aed0e9d9bc4cff062575c665fec4ed0f7c0527857cd5d07263628",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair3/local-domain-and-exact-rows/followed/evidence-43743a2c-61f7-491d-9fa2-694afb877261/7643dbebe13aed0e9d9bc4cff062575c665fec4ed0f7c0527857cd5d07263628"
+    },
+    {
+      "role": "execution tool",
+      "path": "/home/julius/structure_and_semantics/tools/build.py",
+      "sha256": "8915b7a480b2a17b5cea5b819f3be43323f69cb79dc1513a76c07eb83f6b491e",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair3/local-domain-and-exact-rows/followed/evidence-43743a2c-61f7-491d-9fa2-694afb877261/8915b7a480b2a17b5cea5b819f3be43323f69cb79dc1513a76c07eb83f6b491e"
+    }
+  ],
+  "case_sha256": "734686071790ca8051c3b3deaaf78bb721d794cfa7dd22f6ab87d08f9fe7be5a",
+  "question": "How should the exact closed graph proof preserve and use its local domain assumption?",
+  "scope": {
+    "candidates": {
+      "0": "Only name the missing local domain premise and retain automation for both equivalence and graph equality",
+      "1": "Name the local premise and prove both equivalence and graph inclusions with actual graph rows and existing native definition uniqueness",
+      "2": "Assume the final graph equality"
+    },
+    "facets": {
+      "0": "Preserves all original theorem premises and conclusions",
+      "1": "Uses the specific local domain premise to obtain an actual row",
+      "2": "Makes the remaining bidirectional row reasoning explicit without adding a new axiom",
+      "3": "Checks all current consumers together and retains complete error and command timing diagnostics"
+    },
+    "boundary": "Attempt 13 proves outgoing closure, selected sites and package formation. The next obtain has lost the unnamed conditional premise. This is a proof-method defect, not evidence against the statement. Candidate construction and this diagnosis are external. Naming the premise and introducing the concrete graph witnesses must still pass Isabelle. The graph comparison and its consumers are the largest currently actionable dependent batch; native source fields and future admission interfaces can be read independently while it runs. No assertion or premise is weakened."
+  },
+  "semantic_boundary": "Results are exact for the supplied finite data. Independent meanings, evidence validity, and wider coverage require their own justification.",
+  "commands": [
+    {
+      "command": [
+        "isabelle",
+        "version"
+      ],
+      "started_utc": "2026-09-11T10:42:52.743208+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T10:42:52.822806+00:00",
+      "elapsed_seconds": 0.079603933962062
+    },
+    {
+      "command": [
+        "isabelle",
+        "build",
+        "-v",
+        "-o",
+        "threads=12",
+        "-o",
+        "timeout=300",
+        "-D",
+        "/tmp/structural-investigation-engines/911ca434d8239cc2494f7c89e909289ccdc00cf43fa435e0454259968d0f009a"
+      ],
+      "started_utc": "2026-09-11T10:42:52.827343+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T10:42:55.085838+00:00",
+      "elapsed_seconds": 2.258502562996
+    },
+    {
+      "command": [
+        "isabelle",
+        "export",
+        "-n",
+        "-d",
+        "/tmp/structural-investigation-engines/911ca434d8239cc2494f7c89e909289ccdc00cf43fa435e0454259968d0f009a",
+        "-O",
+        "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair3/local-domain-and-exact-rows/followed/export-43743a2c-61f7-491d-9fa2-694afb877261",
+        "-x",
+        "*Finite_Investigation_Export:code/finite_investigation.ML",
+        "Finite_Investigation_911ca434d8239cc2494f7c89"
+      ],
+      "started_utc": "2026-09-11T10:42:55.086853+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T10:42:55.717833+00:00",
+      "elapsed_seconds": 0.6309865670045838
+    },
+    {
+      "command": [
+        "isabelle",
+        "getenv",
+        "-b",
+        "POLYML_HOME"
+      ],
+      "started_utc": "2026-09-11T10:42:55.718534+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T10:42:55.786899+00:00",
+      "elapsed_seconds": 0.06837124202866107
+    },
+    {
+      "command": [
+        "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+        "--version"
+      ],
+      "started_utc": "2026-09-11T10:42:55.795670+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T10:42:55.799267+00:00",
+      "elapsed_seconds": 0.003585765021853149
+    },
+    {
+      "command": [
+        "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+        "--script",
+        "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair3/local-domain-and-exact-rows/followed/execute.ML"
+      ],
+      "started_utc": "2026-09-11T10:42:55.799433+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T10:42:55.864712+00:00",
+      "elapsed_seconds": 0.06528803694527596
+    }
+  ],
+  "engine_key": "911ca434d8239cc2494f7c89e909289ccdc00cf43fa435e0454259968d0f009a",
+  "isabelle_version": "Isabelle2025-2",
+  "engine_session": "Finite_Investigation_911ca434d8239cc2494f7c89",
+  "engine_theory": "Presentation_Completion_Investigation",
+  "engine_sources": {
+    "Bootstrap_Relations": {
+      "path": "/home/julius/structure_and_semantics/theories/Bootstrap_Relations.thy",
+      "sha256": "50d4bf926dab217fdad8eb114fe1b0d369aa9a06741df1e568a5cc5fea7ceafe"
+    },
+    "Obligation_Reductions": {
+      "path": "/home/julius/structure_and_semantics/theories/Obligation_Reductions.thy",
+      "sha256": "a7cf5c82c7478cbde8ae94545ccaaf327af50b7b1ece2ff5458e29bc8ea1adcf"
+    },
+    "Inference_Closure": {
+      "path": "/home/julius/structure_and_semantics/theories/Inference_Closure.thy",
+      "sha256": "caf963ccb1ded2c117eded468e575900f7fd275728f9535efe5b40f87517f5ce"
+    },
+    "Bootstrap_Finite_Closure": {
+      "path": "/home/julius/structure_and_semantics/theories/Bootstrap_Finite_Closure.thy",
+      "sha256": "df469431d4c9e4f95b2b3b3d192d7da9d677800b0383609dd25b212264581bc5"
+    },
+    "Inference_Development": {
+      "path": "/home/julius/structure_and_semantics/theories/Inference_Development.thy",
+      "sha256": "f3b6057fd02d5ab49785f8941e21ddc20ede01d3d9c2278894254b872ff6846f"
+    },
+    "Candidate_Observations": {
+      "path": "/home/julius/structure_and_semantics/theories/Candidate_Observations.thy",
+      "sha256": "d17f7f738b725bfcc7c27560ac2f8d482dd8b02ca6e83ce72f738451da324749"
+    },
+    "Inference_Demands": {
+      "path": "/home/julius/structure_and_semantics/theories/Inference_Demands.thy",
+      "sha256": "f620b3cdaf10ba80a4795c5d273aa92e35d6dc04245119eb73fa0196e25aa03a"
+    },
+    "Candidate_Investigation": {
+      "path": "/home/julius/structure_and_semantics/theories/Candidate_Investigation.thy",
+      "sha256": "bb083972595406e027373ea6eb2ad1d8d45dc31e9935db8c5d591e6b1a133c92"
+    },
+    "Inference_Rounds": {
+      "path": "/home/julius/structure_and_semantics/theories/Inference_Rounds.thy",
+      "sha256": "bfc244e1aa9e68a4587fc5724cf2c6c8fe786a832798b280194cb8edbacaea24"
+    },
+    "Method_Development": {
+      "path": "/home/julius/structure_and_semantics/theories/Method_Development.thy",
+      "sha256": "82f4630526ae2bbfaba29d226b47bad77ed086cfc93e9765a3b04ca3bcfc3915"
+    },
+    "Method_Investigation": {
+      "path": "/home/julius/structure_and_semantics/theories/Method_Investigation.thy",
+      "sha256": "aefaf2532a1096f9945c6592b52241e9ac9e4ec0558fafabdcf6a30b3ddba7c1"
+    },
+    "Observation_Repairs": {
+      "path": "/home/julius/structure_and_semantics/theories/Observation_Repairs.thy",
+      "sha256": "97eb2c271b36e7aaa99e134aae0d4069b63fb03d0e89db26d28092af18b5bd97"
+    },
+    "Finite_Inference_Development": {
+      "path": "/home/julius/structure_and_semantics/theories/Finite_Inference_Development.thy",
+      "sha256": "dcd3ac4b8761e1197a54d58739524354c036864df2f3e33f493f71ef4ae26b6b"
+    },
+    "Finite_Investigation": {
+      "path": "/home/julius/structure_and_semantics/theories/Finite_Investigation.thy",
+      "sha256": "e8f24aeef856960db014b8ef47ab7c44be19dda573ee1bdad5073db96f5d1684"
+    },
+    "Finite_Observation_Repairs": {
+      "path": "/home/julius/structure_and_semantics/theories/Finite_Observation_Repairs.thy",
+      "sha256": "2834ce8cf69fc2c69be1ce9c02015d0da9c1723b701ebf7c2aa82633c26d8f24"
+    },
+    "Observation_Revisions": {
+      "path": "/home/julius/structure_and_semantics/theories/Observation_Revisions.thy",
+      "sha256": "9b3ad288b096531dcce382a678d5e261a26d04cb97aec311b2da59790b2d4942"
+    },
+    "Finite_Investigation_Interface": {
+      "path": "/home/julius/structure_and_semantics/theories/Finite_Investigation_Interface.thy",
+      "sha256": "816eb2ca216d95e70bc640c2775f9fdb5c79e3d43d71ca156636175a1b59c264"
+    },
+    "Presentation_Classes": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Classes.thy",
+      "sha256": "ec041e1bfca7b1bf648dc4ade30c5c9973d45907ef3a434e87a193755e5c8069"
+    },
+    "Presentation_Relations": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Relations.thy",
+      "sha256": "7381cbf8ed52753ee6bac33821b72312b9671488ee523ce964f805a2bdabb195"
+    },
+    "Presentation_Closure": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Closure.thy",
+      "sha256": "f78081a222b02cca01865fdda01de48ceb54739beb03a80c29b0fd86b6843b71"
+    },
+    "Presentation_Transport": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Transport.thy",
+      "sha256": "49abc2968f7b85c37bf33f84f09d6549b9bfedbb83c4c48b3080ed864026ddef"
+    },
+    "Presentation_Contracts": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Contracts.thy",
+      "sha256": "6977a5111cf2b30c46ec074d040c9ff81757eae56f482cbd0ee7784d9945f4e9"
+    },
+    "Observation_Invariance": {
+      "path": "/home/julius/structure_and_semantics/theories/Observation_Invariance.thy",
+      "sha256": "c6a2ef01120313d9e50aa21891a6a08a144252f853c8ca49345345623fdf53e4"
+    },
+    "Presentation_Completion": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Completion.thy",
+      "sha256": "973f448f5578d806596c25198143e2bccb645c3b68e6b191edd0642c62f92a8b"
+    },
+    "Presentation_Completion_Investigation": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Completion_Investigation.thy",
+      "sha256": "2fdd64d2c0b44f8f2d20acd357cdc11c02053d49a411db83095bcd9dab9a82f7"
+    }
+  },
+  "tools": {
+    "/home/julius/structure_and_semantics/tools/investigate.py": "7643dbebe13aed0e9d9bc4cff062575c665fec4ed0f7c0527857cd5d07263628",
+    "/home/julius/structure_and_semantics/tools/build.py": "8915b7a480b2a17b5cea5b819f3be43323f69cb79dc1513a76c07eb83f6b491e"
+  },
+  "engine_snapshot": "/tmp/structural-investigation-engines/911ca434d8239cc2494f7c89e909289ccdc00cf43fa435e0454259968d0f009a",
+  "export_theory": "Finite_Investigation_Export",
+  "proof_receipt_sha256": "384aef3042d06674bd088d7212107948bbd4abdf3b1a7d96a196690c9c5100b7",
+  "generated_engine": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair3/local-domain-and-exact-rows/followed/export-43743a2c-61f7-491d-9fa2-694afb877261/Finite_Investigation_911ca434d8239cc2494f7c89.Finite_Investigation_Export/code/finite_investigation.ML",
+  "generated_engine_sha256": "268dd5589c44fd3efa8b3a90cc12dea283fa2a4fc1d6975f23732e7172da7a5b",
+  "proof_snapshot_hashes": {
+    "ROOT": "001c70d91ddf5de2bd98e0121c3939c47468bce0b2b190daebe89aa24b4f2913",
+    "theories/Finite_Investigation_Export.thy": "9110413a6a0c66e81c562859749ab476e8e98e29b9e886e92a46c8dc88052e13",
+    "theories/Bootstrap_Relations.thy": "50d4bf926dab217fdad8eb114fe1b0d369aa9a06741df1e568a5cc5fea7ceafe",
+    "theories/Obligation_Reductions.thy": "a7cf5c82c7478cbde8ae94545ccaaf327af50b7b1ece2ff5458e29bc8ea1adcf",
+    "theories/Inference_Closure.thy": "caf963ccb1ded2c117eded468e575900f7fd275728f9535efe5b40f87517f5ce",
+    "theories/Bootstrap_Finite_Closure.thy": "df469431d4c9e4f95b2b3b3d192d7da9d677800b0383609dd25b212264581bc5",
+    "theories/Inference_Development.thy": "f3b6057fd02d5ab49785f8941e21ddc20ede01d3d9c2278894254b872ff6846f",
+    "theories/Candidate_Observations.thy": "d17f7f738b725bfcc7c27560ac2f8d482dd8b02ca6e83ce72f738451da324749",
+    "theories/Inference_Demands.thy": "f620b3cdaf10ba80a4795c5d273aa92e35d6dc04245119eb73fa0196e25aa03a",
+    "theories/Candidate_Investigation.thy": "bb083972595406e027373ea6eb2ad1d8d45dc31e9935db8c5d591e6b1a133c92",
+    "theories/Inference_Rounds.thy": "bfc244e1aa9e68a4587fc5724cf2c6c8fe786a832798b280194cb8edbacaea24",
+    "theories/Method_Development.thy": "82f4630526ae2bbfaba29d226b47bad77ed086cfc93e9765a3b04ca3bcfc3915",
+    "theories/Method_Investigation.thy": "aefaf2532a1096f9945c6592b52241e9ac9e4ec0558fafabdcf6a30b3ddba7c1",
+    "theories/Observation_Repairs.thy": "97eb2c271b36e7aaa99e134aae0d4069b63fb03d0e89db26d28092af18b5bd97",
+    "theories/Finite_Inference_Development.thy": "dcd3ac4b8761e1197a54d58739524354c036864df2f3e33f493f71ef4ae26b6b",
+    "theories/Finite_Investigation.thy": "e8f24aeef856960db014b8ef47ab7c44be19dda573ee1bdad5073db96f5d1684",
+    "theories/Finite_Observation_Repairs.thy": "2834ce8cf69fc2c69be1ce9c02015d0da9c1723b701ebf7c2aa82633c26d8f24",
+    "theories/Observation_Revisions.thy": "9b3ad288b096531dcce382a678d5e261a26d04cb97aec311b2da59790b2d4942",
+    "theories/Finite_Investigation_Interface.thy": "816eb2ca216d95e70bc640c2775f9fdb5c79e3d43d71ca156636175a1b59c264",
+    "theories/Presentation_Classes.thy": "ec041e1bfca7b1bf648dc4ade30c5c9973d45907ef3a434e87a193755e5c8069",
+    "theories/Presentation_Relations.thy": "7381cbf8ed52753ee6bac33821b72312b9671488ee523ce964f805a2bdabb195",
+    "theories/Presentation_Closure.thy": "f78081a222b02cca01865fdda01de48ceb54739beb03a80c29b0fd86b6843b71",
+    "theories/Presentation_Transport.thy": "49abc2968f7b85c37bf33f84f09d6549b9bfedbb83c4c48b3080ed864026ddef",
+    "theories/Presentation_Contracts.thy": "6977a5111cf2b30c46ec074d040c9ff81757eae56f482cbd0ee7784d9945f4e9",
+    "theories/Observation_Invariance.thy": "c6a2ef01120313d9e50aa21891a6a08a144252f853c8ca49345345623fdf53e4",
+    "theories/Presentation_Completion.thy": "973f448f5578d806596c25198143e2bccb645c3b68e6b191edd0642c62f92a8b",
+    "theories/Presentation_Completion_Investigation.thy": "2fdd64d2c0b44f8f2d20acd357cdc11c02053d49a411db83095bcd9dab9a82f7"
+  },
+  "poly": "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+  "poly_sha256": "47efc18d0b38bc908c8b29798575501e8b7b027f593022c80ff1acc55b9495b4",
+  "poly_version": "Poly/ML 5.9.2 Release",
+  "runtime_program_sha256": "088bb6dafc68d670050c1f65b82342d88480a9b084836007ef01a433b295d65c",
+  "runtime_seconds": 0.0652954870602116,
+  "result": {
+    "input_formed": true,
+    "residual": [],
+    "profiles": [
+      {
+        "candidate": 0,
+        "profile": [
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "candidate": 1,
+        "profile": [
+          [
+            0,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ]
+      },
+      {
+        "candidate": 2,
+        "profile": []
+      }
+    ],
+    "losses": [
+      {
+        "from": 0,
+        "to": 0,
+        "losses": []
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "losses": []
+      },
+      {
+        "from": 0,
+        "to": 2,
+        "losses": [
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "from": 1,
+        "to": 0,
+        "losses": [
+          [
+            2,
+            0
+          ]
+        ]
+      },
+      {
+        "from": 1,
+        "to": 1,
+        "losses": []
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "losses": [
+          [
+            0,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ]
+      },
+      {
+        "from": 2,
+        "to": 0,
+        "losses": []
+      },
+      {
+        "from": 2,
+        "to": 1,
+        "losses": []
+      },
+      {
+        "from": 2,
+        "to": 2,
+        "losses": []
+      }
+    ],
+    "safe_facets": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "conflicts": [],
+    "repairs": [],
+    "unrepairable": [],
+    "extension": [
+      0,
+      2
+    ],
+    "revision": {
+      "retained": [
+        0,
+        2
+      ],
+      "withdrawn": [],
+      "repairs": [],
+      "selection": [
+        0,
+        2
+      ],
+      "residual": []
+    }
+  },
+  "sources_and_tools_unchanged": true,
+  "finished_utc": "2026-09-11T10:42:55.874085+00:00",
+  "elapsed_seconds": 3.131576220970601,
+  "log_sha256": "154f4ae47e14d6bbe83409beca97a0497c223b97553f59c801949b1a6442f96a"
+}

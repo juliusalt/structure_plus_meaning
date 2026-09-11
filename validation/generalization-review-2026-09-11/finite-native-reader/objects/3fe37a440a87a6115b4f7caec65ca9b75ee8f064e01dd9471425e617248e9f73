@@ -1,0 +1,122 @@
+{
+  "schema": "finite-investigation-1",
+  "kind": "basis",
+  "question": "Which related interfaces are needed for that compositional proof?",
+  "scope": {
+    "candidates": {
+      "0": "Only the outer syntax of the six claims",
+      "1": "Read the existing record, binder, payload, family and site-citation correctness contracts, native package closure and projection helpers, and the preceding equality package proof to locate reusable package reasoning"
+    },
+    "facets": {
+      "0": "Covers every actual component required by schema, definition, package and node claims",
+      "1": "Finds existing reusable reasoning before introducing any helper",
+      "2": "Keeps unused source material and the complete environment binding table in scope"
+    },
+    "boundary": "Actual runtime results are true in all six positions for empty and nonempty valid literal payloads. For payload [256], source and extension formation, schema, package and node checks are false while the raw empty-binder check remains true, as its formation boundary permits. Runtime evaluation took less than one second. These results support investigating proof reduction cost, but do not discharge the separately registered closed assertions. The new proof must preserve their exact statements and use the actual complete source data."
+  },
+  "candidates": [
+    0,
+    1
+  ],
+  "facets": [
+    0,
+    1,
+    2
+  ],
+  "selected": [
+    0
+  ],
+  "observations": [
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      2,
+      1,
+      0
+    ]
+  ],
+  "relation": [
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      1
+    ]
+  ],
+  "evidence": [
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-proof-method/native-proof-information/initial/evidence-97ce5cf1-e69d-4de7-9052-2d8997726e8b/609f9aff1f803a17fec67fa81cf6a7c1448b8aa1984cab70bb20f591c59a3617",
+      "sha256": "609f9aff1f803a17fec67fa81cf6a7c1448b8aa1984cab70bb20f591c59a3617",
+      "original_path": "/home/julius/structure_and_semantics/theories/Factor_Finite_Inference_Source_Checks.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-proof-method/native-proof-information/initial/evidence-97ce5cf1-e69d-4de7-9052-2d8997726e8b/158b1c79862dbd88a64f8de3ff0a931fda0d7ae18ccadcdac1e84b05dec07838",
+      "sha256": "158b1c79862dbd88a64f8de3ff0a931fda0d7ae18ccadcdac1e84b05dec07838",
+      "original_path": "/home/julius/structure_and_semantics/theories/Factor_Finite_Inference_Sources.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-proof-method/native-proof-information/initial/evidence-97ce5cf1-e69d-4de7-9052-2d8997726e8b/720a8bab9fd353dca3109ee4e763323b9f1f17a8e9f4a659380c5361a2f0fc73",
+      "sha256": "720a8bab9fd353dca3109ee4e763323b9f1f17a8e9f4a659380c5361a2f0fc73",
+      "original_path": "/tmp/generalization-quality-review/finite-reader-example/native-source-execution1/receipt.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-proof-method/native-proof-information/initial/evidence-97ce5cf1-e69d-4de7-9052-2d8997726e8b/135ff6d882a66f3c2ceca628740a529f89af13b7e34c5a095c0514481b4f1fb1",
+      "sha256": "135ff6d882a66f3c2ceca628740a529f89af13b7e34c5a095c0514481b4f1fb1",
+      "original_path": "/tmp/generalization-quality-review/finite-reader-example/native-source-execution1/results.log"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-proof-method/native-proof-information/initial/evidence-97ce5cf1-e69d-4de7-9052-2d8997726e8b/3dee75d771c1786b8a732186b4be007dd82ebc4d8d605fe0474e6802eb40fe94",
+      "sha256": "3dee75d771c1786b8a732186b4be007dd82ebc4d8d605fe0474e6802eb40fe94",
+      "original_path": "/tmp/generalization-quality-review/finite-reader-example/presenter-execution1/receipt.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-proof-method/native-proof-information/initial/evidence-97ce5cf1-e69d-4de7-9052-2d8997726e8b/33f2f4ddbced47adf1c3b60eb40c2b4af2d0fd729356f6709ed4aa42f8f6abea",
+      "sha256": "33f2f4ddbced47adf1c3b60eb40c2b4af2d0fd729356f6709ed4aa42f8f6abea",
+      "original_path": "/tmp/native-investigation-report-diagnostic-finitepresenters9/timing-assessment.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-proof-method/native-proof-information/initial/evidence-97ce5cf1-e69d-4de7-9052-2d8997726e8b/11daca6164dc851ecd7e90790baa04c789b717285320d8081d03efcbe3f5853c",
+      "sha256": "11daca6164dc851ecd7e90790baa04c789b717285320d8081d03efcbe3f5853c",
+      "original_path": "/tmp/generalization-quality-review/finite-reader-example/native-proof-method-specification.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-proof-method/native-proof-information/initial/evidence-97ce5cf1-e69d-4de7-9052-2d8997726e8b/7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "sha256": "7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "original_path": "/home/julius/structure_and_semantics/tools/check_decision_cases.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-proof-method/native-proof-information/initial/receipt.json",
+      "sha256": "e3c3e40e1b1a19aa7ccc2933fe63171c810bed37d19d616be0d36c222fdf7abf"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-proof-method/native-proof-information/initial/case.json",
+      "sha256": "58db7d5742081a9f9a081c9d61954e29b0e5c82a6360d8c60eb707432b195aac"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-proof-method/native-proof-information/initial/run.log",
+      "sha256": "0e072274e0a1a9810f2a98238ccf9c0fc4c313176757d8c60110a36900b2dc25"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/revise_investigation_case.py",
+      "sha256": "70466b6a380397ef2c390d33c150d1b536feac4aafcedae6bb20d3e1a5106d66"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/review_investigations.py",
+      "sha256": "368a254b9dc8f4323522d0edf4a6c7c1cac118afd70a97e0e000bf7bf86a6bb0"
+    }
+  ]
+}

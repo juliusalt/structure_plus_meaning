@@ -1,0 +1,152 @@
+{
+  "question": "How should the new execution check emit complete finite data terms without copying the existing term serializer?",
+  "boundary": "This is a factored host serializer, not a native term-admission proof. Before acceptance, compare the reconstructed old prelude bytes with the original and run existing tool tests. New data outputs must contain only payloads and pairs; any unexpected target is a check failure. Input term construction can reuse check_reasoning.ml_term on its supported controls.",
+  "problems": [
+    {
+      "name": "serializer-reuse",
+      "case": {
+        "schema": "finite-investigation-1",
+        "kind": "basis",
+        "question": "How should the new execution check emit complete finite data terms without copying the existing term serializer?",
+        "scope": {
+          "candidates": {
+            "0": "Copy the existing Standard ML scalar and term JSON functions into the new checker",
+            "1": "Expose the existing scalar and recursive term JSON blocks as reusable constants, preserving the old complete prelude byte for byte; instantiate them with a target rejection function for the data-only output domain",
+            "2": "Reuse the entire reasoning prelude, requiring unrelated schema and reasoning exports in the presenter module"
+          },
+          "facets": {
+            "0": "Reuses the existing recursive serialization argument at its first reuse",
+            "1": "Preserves the complete old reasoning prelude and emitted protocol",
+            "2": "Requires only the actual data-presenter output interface",
+            "3": "Retains explicit rejection of unsupported targets and verifies byte equivalence before accepting the refactor"
+          },
+          "boundary": "This is a factored host serializer, not a native term-admission proof. Before acceptance, compare the reconstructed old prelude bytes with the original and run existing tool tests. New data outputs must contain only payloads and pairs; any unexpected target is a check failure. Input term construction can reuse check_reasoning.ml_term on its supported controls."
+        },
+        "candidates": [
+          0,
+          1,
+          2
+        ],
+        "facets": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "selected": [
+          0
+        ],
+        "observations": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            2,
+            0,
+            0
+          ],
+          [
+            3,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            3,
+            1,
+            0
+          ],
+          [
+            0,
+            2,
+            0
+          ],
+          [
+            1,
+            2,
+            0
+          ],
+          [
+            3,
+            2,
+            0
+          ]
+        ],
+        "relation": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            2,
+            2
+          ]
+        ],
+        "evidence": [
+          {
+            "path": "/home/julius/structure_and_semantics/tools/check_reasoning.py",
+            "sha256": "7f6d18af76f6f983714b21a5c158d3d31bd3dc2514960a23a16eb0f6e86c7cfc"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/tools/investigate.py",
+            "sha256": "7643dbebe13aed0e9d9bc4cff062575c665fec4ed0f7c0527857cd5d07263628"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/finite-reader-example/presenter-controls/complete-results.json",
+            "sha256": "f6d9209dac73a5635ec7add835afca6c5ae725bff93f0534742ce0cbcd79576b"
+          },
+          {
+            "path": "/tmp/prepare-presenter-serializer-reuse.py",
+            "sha256": "30fac9c99548f4d92587eb2885d82f17a1a984b9d23f02ac145a5586f85ece78"
+          }
+        ]
+      },
+      "required_observations": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ]
+      ]
+    }
+  ]
+}

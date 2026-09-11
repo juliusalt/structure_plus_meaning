@@ -1,0 +1,23 @@
+import json, os, subprocess, sys
+from pathlib import Path
+sys.dont_write_bytecode=True
+root=Path('/home/julius/structure_and_semantics');sys.path.insert(0,str(root/'tools'))
+from compare_reasoning_methods import comparison_case
+from investigate import file_hash
+base=Path('/tmp/generalization-quality-review/finite-reader-example')
+q='How should the new execution check emit complete finite data terms without copying the existing term serializer?'
+candidates=['Copy the existing Standard ML scalar and term JSON functions into the new checker',
+ 'Expose the existing scalar and recursive term JSON blocks as reusable constants, preserving the old complete prelude byte for byte; instantiate them with a target rejection function for the data-only output domain',
+ 'Reuse the entire reasoning prelude, requiring unrelated schema and reasoning exports in the presenter module']
+facets=['Reuses the existing recursive serialization argument at its first reuse',
+ 'Preserves the complete old reasoning prelude and emitted protocol',
+ 'Requires only the actual data-presenter output interface',
+ 'Retains explicit rejection of unsupported targets and verifies byte equivalence before accepting the refactor']
+profiles=[[1,2,3],[0,1,2,3],[0,1,3]]
+boundary='This is a factored host serializer, not a native term-admission proof. Before acceptance, compare the reconstructed old prelude bytes with the original and run existing tool tests. New data outputs must contain only payloads and pairs; any unexpected target is a check failure. Input term construction can reuse check_reasoning.ml_term on its supported controls.'
+paths=[root/'tools/check_reasoning.py',root/'tools/investigate.py',base/'presenter-controls/complete-results.json',Path(__file__)]
+case=comparison_case(list(range(3)),list(range(4)),[[f,c,0] for c,fs in enumerate(profiles) for f in fs],[0],question=q,scope={'candidates':dict(enumerate(candidates)),'facets':dict(enumerate(facets)),'boundary':boundary},evidence=[{'path':str(p),'sha256':file_hash(p)} for p in paths])
+spec=base/'serializer-reuse-specification.json'
+spec.write_text(json.dumps({'question':q,'boundary':boundary,'problems':[{'name':'serializer-reuse','case':case,'required_observations':[[f,0] for f in range(4)]}]},indent=2)+'\n')
+subprocess.run([sys.executable,str(root/'tools/check_decision_cases.py'),'--specification',str(spec),'--output',str(base/'serializer-reuse')],env={**os.environ,'PYTHONDONTWRITEBYTECODE':'1'},check=True)
+print(json.dumps(json.loads((base/'serializer-reuse/complete-results.json').read_text()),separators=(',',':')))

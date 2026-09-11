@@ -1,0 +1,110 @@
+{
+  "schema": "finite-investigation-1",
+  "kind": "basis",
+  "question": "How should validation cover both existing examples changed by the shared graph refactor?",
+  "scope": {
+    "candidates": {
+      "0": "Rely on the incidental imports of the previous roots",
+      "1": "Add Factor_Native_Equality explicitly to the next combined root set and verify the resulting source manifest contains both equality and incidence"
+    },
+    "facets": {
+      "0": "Includes every changed example in the actual checked source graph",
+      "1": "Retains presenter, binding, material and closed native source checks in the same batch"
+    },
+    "boundary": "The outgoing-edge rule and reachability equality passed. Broad simplification expanded rel_dom inside native_definition_sites before the established sites equality could match. The repair instantiates that equality explicitly, then performs representation-level reasoning. The source manifest also shows the preceding roots reached incidence but not equality; that validation gap is corrected prospectively. No existing example statement or required native claim is removed."
+  },
+  "candidates": [
+    0,
+    1
+  ],
+  "facets": [
+    0,
+    1
+  ],
+  "selected": [
+    0
+  ],
+  "observations": [
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      0
+    ]
+  ],
+  "relation": [
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      1
+    ]
+  ],
+  "evidence": [
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair1/affected-example-coverage/initial/evidence-242f2d2e-32e5-4f5f-b1e3-fd0289fa2bce/ba39eea88395fc288c8cb23dd93d7a931c7ce3194d629965af71ec14be2a6e29",
+      "sha256": "ba39eea88395fc288c8cb23dd93d7a931c7ce3194d629965af71ec14be2a6e29",
+      "original_path": "/home/julius/structure_and_semantics/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair1/affected-example-coverage/initial/evidence-242f2d2e-32e5-4f5f-b1e3-fd0289fa2bce/3f21d4266af46265c5b40421ed8d7291bab3e82c68fcb03be0eaff23e00bafef",
+      "sha256": "3f21d4266af46265c5b40421ed8d7291bab3e82c68fcb03be0eaff23e00bafef",
+      "original_path": "/tmp/native-investigation-report-diagnostic-finitepresenters11/result.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair1/affected-example-coverage/initial/evidence-242f2d2e-32e5-4f5f-b1e3-fd0289fa2bce/32d013b656e2089ec25c56ab07d009f24502a2790cf08ebf5ebc08b091574437",
+      "sha256": "32d013b656e2089ec25c56ab07d009f24502a2790cf08ebf5ebc08b091574437",
+      "original_path": "/tmp/native-investigation-report-diagnostic-finitepresenters11/build.log"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair1/affected-example-coverage/initial/evidence-242f2d2e-32e5-4f5f-b1e3-fd0289fa2bce/41384852c3008a43fba11241eddb16e3c85985f20dde07dd79a4c7aa0483c62a",
+      "sha256": "41384852c3008a43fba11241eddb16e3c85985f20dde07dd79a4c7aa0483c62a",
+      "original_path": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-validation-coverage.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair1/affected-example-coverage/initial/evidence-242f2d2e-32e5-4f5f-b1e3-fd0289fa2bce/aeb269c6992659cf059d3c6aac87c3afe8fe9c07e795aea6513fd80d890015e8",
+      "sha256": "aeb269c6992659cf059d3c6aac87c3afe8fe9c07e795aea6513fd80d890015e8",
+      "original_path": "/tmp/generalization-quality-review/finite-reader-example/presenter-repair8/complete-results.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair1/affected-example-coverage/initial/evidence-242f2d2e-32e5-4f5f-b1e3-fd0289fa2bce/4ad8bff362434648485f860618b5d57a09b82dc97716310c1a373f9b38e7ec1d",
+      "sha256": "4ad8bff362434648485f860618b5d57a09b82dc97716310c1a373f9b38e7ec1d",
+      "original_path": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair1-specification.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair1/affected-example-coverage/initial/evidence-242f2d2e-32e5-4f5f-b1e3-fd0289fa2bce/7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "sha256": "7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "original_path": "/home/julius/structure_and_semantics/tools/check_decision_cases.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair1/affected-example-coverage/initial/receipt.json",
+      "sha256": "8c0d7a179f6bf6c8f22438a6fd634948dbe4b6082652f89fbfe149620cdaed2f"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair1/affected-example-coverage/initial/case.json",
+      "sha256": "d637806c849076daf3b2ed6ad8dbff8d8694f96c0d00d33ac8cc06eb62216978"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/closed-graph-repair1/affected-example-coverage/initial/run.log",
+      "sha256": "13bfda98b759b6f317decd06c0be6d252d4584fb77b3310b2e8b311642270a21"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/revise_investigation_case.py",
+      "sha256": "70466b6a380397ef2c390d33c150d1b536feac4aafcedae6bb20d3e1a5106d66"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/review_investigations.py",
+      "sha256": "368a254b9dc8f4323522d0edf4a6c7c1cac118afd70a97e0e000bf7bf86a6bb0"
+    }
+  ]
+}

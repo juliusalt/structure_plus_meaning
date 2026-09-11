@@ -1,0 +1,31 @@
+{
+  "stage": "presenter-current",
+  "status": "accepted",
+  "replay_kind": "finite_presentations",
+  "original_receipt_sha256": "69b3d073fd169b143f7d38ed8f7753e1e16910f2c01c052474dc94e2afbf3b01",
+  "archive_index_sha256": "390d2b2ec1b4ae6e3e7bbfe95a360473e1514c014e2d8a881871aaf1529b3860",
+  "replayer_sha256": "e2f5e731e569c3df848bd3e537e7b49c46964e13c1586852356d3a77868953fc",
+  "runtime_program_sha256": "c17768715afe719a06ef154daf12419129534c1f4a44ac768d0abd81461364bb",
+  "evidence_io_sha256": "72b87df5f4f3ef4c7fc9a425ce4551f0df1c015916857d52eb2eb58040343fff",
+  "results_sha256": "3f70bcde5d5bc984f376eb674ae92a8f9dd0d0cd00d161b11470dfb7a8db79a7",
+  "assessment": {
+    "all_complete_inputs_recovered": true,
+    "all_formation_results_agree": true,
+    "permutations_preserved": true,
+    "bag_multiplicity_and_attachment_modes_distinguished": true,
+    "distinct_uses_and_wide_naturals_preserved": true,
+    "shape_only_sources_rejected_by_formation": [
+      "artifact-incidence-outside-carrier",
+      "artifact-bag-outside-carrier",
+      "artifact-conflicting-functional-values",
+      "environment-missing-target-use",
+      "environment-missing-source-use",
+      "environment-missing-source-slot",
+      "environment-conflicting-artifact-use",
+      "environment-conflicting-binding-target",
+      "environment-unformed-artifact"
+    ],
+    "boundary": "These checks cover finite data conversion and complete source presentation. They do not establish native package or inference readings."
+  },
+  "boundary": "Exact archived code reproduces every complete data output and its original independent assessment. This does not repeat native proof checking."
+}

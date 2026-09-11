@@ -1,0 +1,383 @@
+{
+  "invocation": "5564e707-5322-401d-a75c-fa2c3a0f688f",
+  "status": "evaluated",
+  "started_utc": "2026-09-11T11:04:30.115167+00:00",
+  "exit_code": 0,
+  "role": "Execution evidence with separately qualified semantic meaning",
+  "input": {
+    "path": "/tmp/generalization-quality-review/finite-reader-example/native-program-projection/closed-graph-rewrite/initial-case.json",
+    "sha256": "96a8dcd891efcdfa4c2b3e06f427dc9708b1c3cd810e33e658ba530164269c29"
+  },
+  "evidence_archive": [
+    {
+      "role": "original case",
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-program-projection/closed-graph-rewrite/initial-case.json",
+      "sha256": "96a8dcd891efcdfa4c2b3e06f427dc9708b1c3cd810e33e658ba530164269c29",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/native-program-projection/closed-graph-rewrite/initial/evidence-5564e707-5322-401d-a75c-fa2c3a0f688f/96a8dcd891efcdfa4c2b3e06f427dc9708b1c3cd810e33e658ba530164269c29"
+    },
+    {
+      "role": "case evidence",
+      "path": "/home/julius/structure_and_semantics/theories/Factor_Finite_Inference_Source_Checks.thy",
+      "sha256": "1722102bf8768307b443bf5d1a2bb89bdec3d142d259d2da7af1199d596187af",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/native-program-projection/closed-graph-rewrite/initial/evidence-5564e707-5322-401d-a75c-fa2c3a0f688f/1722102bf8768307b443bf5d1a2bb89bdec3d142d259d2da7af1199d596187af"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/native-investigation-report-diagnostic-finitepresenters16/build.log",
+      "sha256": "110a2874d5c9ce1286562af531acb4ee6968ee9883525fc9bd9359c06d98ba26",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/native-program-projection/closed-graph-rewrite/initial/evidence-5564e707-5322-401d-a75c-fa2c3a0f688f/110a2874d5c9ce1286562af531acb4ee6968ee9883525fc9bd9359c06d98ba26"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/native-investigation-report-diagnostic-finitepresenters16/selected-command-timings.json",
+      "sha256": "5e7be4d3753fe518a636abfd028dc28e8098f496d3abefcc8fc5129d0b34ba58",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/native-program-projection/closed-graph-rewrite/initial/evidence-5564e707-5322-401d-a75c-fa2c3a0f688f/5e7be4d3753fe518a636abfd028dc28e8098f496d3abefcc8fc5129d0b34ba58"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-program-projection-specification.json",
+      "sha256": "e9cc7c76edffcbd7795cd6491eb077f99d19752304ecd0321d273833d78ffc2b",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/native-program-projection/closed-graph-rewrite/initial/evidence-5564e707-5322-401d-a75c-fa2c3a0f688f/e9cc7c76edffcbd7795cd6491eb077f99d19752304ecd0321d273833d78ffc2b"
+    },
+    {
+      "role": "case evidence",
+      "path": "/home/julius/structure_and_semantics/tools/check_decision_cases.py",
+      "sha256": "7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/native-program-projection/closed-graph-rewrite/initial/evidence-5564e707-5322-401d-a75c-fa2c3a0f688f/7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd"
+    },
+    {
+      "role": "execution tool",
+      "path": "/home/julius/structure_and_semantics/tools/investigate.py",
+      "sha256": "7643dbebe13aed0e9d9bc4cff062575c665fec4ed0f7c0527857cd5d07263628",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/native-program-projection/closed-graph-rewrite/initial/evidence-5564e707-5322-401d-a75c-fa2c3a0f688f/7643dbebe13aed0e9d9bc4cff062575c665fec4ed0f7c0527857cd5d07263628"
+    },
+    {
+      "role": "execution tool",
+      "path": "/home/julius/structure_and_semantics/tools/build.py",
+      "sha256": "8915b7a480b2a17b5cea5b819f3be43323f69cb79dc1513a76c07eb83f6b491e",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/native-program-projection/closed-graph-rewrite/initial/evidence-5564e707-5322-401d-a75c-fa2c3a0f688f/8915b7a480b2a17b5cea5b819f3be43323f69cb79dc1513a76c07eb83f6b491e"
+    }
+  ],
+  "case_sha256": "96a8dcd891efcdfa4c2b3e06f427dc9708b1c3cd810e33e658ba530164269c29",
+  "question": "Apply the proved graph equality before normalizing the finite program projection",
+  "scope": {
+    "candidates": {
+      "0": "Assume the desired program equality as an additional premise",
+      "1": "Use unfolding with native_program_def and the established exact graph before finite program representation simplification; preserve the complete program and all native checks"
+    },
+    "facets": {
+      "0": "Preserves the original exact native program projection",
+      "1": "Reuses the established graph equality before representation expansion",
+      "2": "Applies the same known-equality ordering already used in the collection presentation repair"
+    },
+    "boundary": "Attempt16 completed the local schema and definition proofs, root and node checks, and the closed graph facts. Program projection leaves native_definition_graph in every subgoal after broad simplification normalizes the selected address. Reuse the existing known-equality-before-representation-expansion method: unfold native_program and the actual graph equality first, then simplify the finite program fields. The exact source-call extraction and all native meaning-preservation consumers completed independently. The next batch includes the already prepared complete native known-call list and executable reader export."
+  },
+  "semantic_boundary": "Results are exact for the supplied finite data. Independent meanings, evidence validity, and wider coverage require their own justification.",
+  "commands": [
+    {
+      "command": [
+        "isabelle",
+        "version"
+      ],
+      "started_utc": "2026-09-11T11:04:30.115737+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T11:04:30.195603+00:00",
+      "elapsed_seconds": 0.0798695789417252
+    },
+    {
+      "command": [
+        "isabelle",
+        "build",
+        "-v",
+        "-o",
+        "threads=12",
+        "-o",
+        "timeout=300",
+        "-D",
+        "/tmp/structural-investigation-engines/911ca434d8239cc2494f7c89e909289ccdc00cf43fa435e0454259968d0f009a"
+      ],
+      "started_utc": "2026-09-11T11:04:30.200065+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T11:04:32.492246+00:00",
+      "elapsed_seconds": 2.2921872480073944
+    },
+    {
+      "command": [
+        "isabelle",
+        "export",
+        "-n",
+        "-d",
+        "/tmp/structural-investigation-engines/911ca434d8239cc2494f7c89e909289ccdc00cf43fa435e0454259968d0f009a",
+        "-O",
+        "/tmp/generalization-quality-review/finite-reader-example/native-program-projection/closed-graph-rewrite/initial/export-5564e707-5322-401d-a75c-fa2c3a0f688f",
+        "-x",
+        "*Finite_Investigation_Export:code/finite_investigation.ML",
+        "Finite_Investigation_911ca434d8239cc2494f7c89"
+      ],
+      "started_utc": "2026-09-11T11:04:32.493036+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T11:04:33.128424+00:00",
+      "elapsed_seconds": 0.6353988200426102
+    },
+    {
+      "command": [
+        "isabelle",
+        "getenv",
+        "-b",
+        "POLYML_HOME"
+      ],
+      "started_utc": "2026-09-11T11:04:33.129425+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T11:04:33.210522+00:00",
+      "elapsed_seconds": 0.08110474504064769
+    },
+    {
+      "command": [
+        "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+        "--version"
+      ],
+      "started_utc": "2026-09-11T11:04:33.218896+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T11:04:33.222343+00:00",
+      "elapsed_seconds": 0.003438980085775256
+    },
+    {
+      "command": [
+        "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+        "--script",
+        "/tmp/generalization-quality-review/finite-reader-example/native-program-projection/closed-graph-rewrite/initial/execute.ML"
+      ],
+      "started_utc": "2026-09-11T11:04:33.222485+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T11:04:33.292939+00:00",
+      "elapsed_seconds": 0.07046514109242707
+    }
+  ],
+  "engine_key": "911ca434d8239cc2494f7c89e909289ccdc00cf43fa435e0454259968d0f009a",
+  "isabelle_version": "Isabelle2025-2",
+  "engine_session": "Finite_Investigation_911ca434d8239cc2494f7c89",
+  "engine_theory": "Presentation_Completion_Investigation",
+  "engine_sources": {
+    "Bootstrap_Relations": {
+      "path": "/home/julius/structure_and_semantics/theories/Bootstrap_Relations.thy",
+      "sha256": "50d4bf926dab217fdad8eb114fe1b0d369aa9a06741df1e568a5cc5fea7ceafe"
+    },
+    "Obligation_Reductions": {
+      "path": "/home/julius/structure_and_semantics/theories/Obligation_Reductions.thy",
+      "sha256": "a7cf5c82c7478cbde8ae94545ccaaf327af50b7b1ece2ff5458e29bc8ea1adcf"
+    },
+    "Inference_Closure": {
+      "path": "/home/julius/structure_and_semantics/theories/Inference_Closure.thy",
+      "sha256": "caf963ccb1ded2c117eded468e575900f7fd275728f9535efe5b40f87517f5ce"
+    },
+    "Bootstrap_Finite_Closure": {
+      "path": "/home/julius/structure_and_semantics/theories/Bootstrap_Finite_Closure.thy",
+      "sha256": "df469431d4c9e4f95b2b3b3d192d7da9d677800b0383609dd25b212264581bc5"
+    },
+    "Inference_Development": {
+      "path": "/home/julius/structure_and_semantics/theories/Inference_Development.thy",
+      "sha256": "f3b6057fd02d5ab49785f8941e21ddc20ede01d3d9c2278894254b872ff6846f"
+    },
+    "Candidate_Observations": {
+      "path": "/home/julius/structure_and_semantics/theories/Candidate_Observations.thy",
+      "sha256": "d17f7f738b725bfcc7c27560ac2f8d482dd8b02ca6e83ce72f738451da324749"
+    },
+    "Inference_Demands": {
+      "path": "/home/julius/structure_and_semantics/theories/Inference_Demands.thy",
+      "sha256": "f620b3cdaf10ba80a4795c5d273aa92e35d6dc04245119eb73fa0196e25aa03a"
+    },
+    "Candidate_Investigation": {
+      "path": "/home/julius/structure_and_semantics/theories/Candidate_Investigation.thy",
+      "sha256": "bb083972595406e027373ea6eb2ad1d8d45dc31e9935db8c5d591e6b1a133c92"
+    },
+    "Inference_Rounds": {
+      "path": "/home/julius/structure_and_semantics/theories/Inference_Rounds.thy",
+      "sha256": "bfc244e1aa9e68a4587fc5724cf2c6c8fe786a832798b280194cb8edbacaea24"
+    },
+    "Method_Development": {
+      "path": "/home/julius/structure_and_semantics/theories/Method_Development.thy",
+      "sha256": "82f4630526ae2bbfaba29d226b47bad77ed086cfc93e9765a3b04ca3bcfc3915"
+    },
+    "Method_Investigation": {
+      "path": "/home/julius/structure_and_semantics/theories/Method_Investigation.thy",
+      "sha256": "aefaf2532a1096f9945c6592b52241e9ac9e4ec0558fafabdcf6a30b3ddba7c1"
+    },
+    "Observation_Repairs": {
+      "path": "/home/julius/structure_and_semantics/theories/Observation_Repairs.thy",
+      "sha256": "97eb2c271b36e7aaa99e134aae0d4069b63fb03d0e89db26d28092af18b5bd97"
+    },
+    "Finite_Inference_Development": {
+      "path": "/home/julius/structure_and_semantics/theories/Finite_Inference_Development.thy",
+      "sha256": "dcd3ac4b8761e1197a54d58739524354c036864df2f3e33f493f71ef4ae26b6b"
+    },
+    "Finite_Investigation": {
+      "path": "/home/julius/structure_and_semantics/theories/Finite_Investigation.thy",
+      "sha256": "e8f24aeef856960db014b8ef47ab7c44be19dda573ee1bdad5073db96f5d1684"
+    },
+    "Finite_Observation_Repairs": {
+      "path": "/home/julius/structure_and_semantics/theories/Finite_Observation_Repairs.thy",
+      "sha256": "2834ce8cf69fc2c69be1ce9c02015d0da9c1723b701ebf7c2aa82633c26d8f24"
+    },
+    "Observation_Revisions": {
+      "path": "/home/julius/structure_and_semantics/theories/Observation_Revisions.thy",
+      "sha256": "9b3ad288b096531dcce382a678d5e261a26d04cb97aec311b2da59790b2d4942"
+    },
+    "Finite_Investigation_Interface": {
+      "path": "/home/julius/structure_and_semantics/theories/Finite_Investigation_Interface.thy",
+      "sha256": "816eb2ca216d95e70bc640c2775f9fdb5c79e3d43d71ca156636175a1b59c264"
+    },
+    "Presentation_Classes": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Classes.thy",
+      "sha256": "ec041e1bfca7b1bf648dc4ade30c5c9973d45907ef3a434e87a193755e5c8069"
+    },
+    "Presentation_Relations": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Relations.thy",
+      "sha256": "7381cbf8ed52753ee6bac33821b72312b9671488ee523ce964f805a2bdabb195"
+    },
+    "Presentation_Closure": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Closure.thy",
+      "sha256": "f78081a222b02cca01865fdda01de48ceb54739beb03a80c29b0fd86b6843b71"
+    },
+    "Presentation_Transport": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Transport.thy",
+      "sha256": "49abc2968f7b85c37bf33f84f09d6549b9bfedbb83c4c48b3080ed864026ddef"
+    },
+    "Presentation_Contracts": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Contracts.thy",
+      "sha256": "6977a5111cf2b30c46ec074d040c9ff81757eae56f482cbd0ee7784d9945f4e9"
+    },
+    "Observation_Invariance": {
+      "path": "/home/julius/structure_and_semantics/theories/Observation_Invariance.thy",
+      "sha256": "c6a2ef01120313d9e50aa21891a6a08a144252f853c8ca49345345623fdf53e4"
+    },
+    "Presentation_Completion": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Completion.thy",
+      "sha256": "973f448f5578d806596c25198143e2bccb645c3b68e6b191edd0642c62f92a8b"
+    },
+    "Presentation_Completion_Investigation": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Completion_Investigation.thy",
+      "sha256": "2fdd64d2c0b44f8f2d20acd357cdc11c02053d49a411db83095bcd9dab9a82f7"
+    }
+  },
+  "tools": {
+    "/home/julius/structure_and_semantics/tools/investigate.py": "7643dbebe13aed0e9d9bc4cff062575c665fec4ed0f7c0527857cd5d07263628",
+    "/home/julius/structure_and_semantics/tools/build.py": "8915b7a480b2a17b5cea5b819f3be43323f69cb79dc1513a76c07eb83f6b491e"
+  },
+  "engine_snapshot": "/tmp/structural-investigation-engines/911ca434d8239cc2494f7c89e909289ccdc00cf43fa435e0454259968d0f009a",
+  "export_theory": "Finite_Investigation_Export",
+  "proof_receipt_sha256": "0e66ee6228a6e2be4ff31b515d70c615a7361531fe611c836e3bb63f3eddac9f",
+  "generated_engine": "/tmp/generalization-quality-review/finite-reader-example/native-program-projection/closed-graph-rewrite/initial/export-5564e707-5322-401d-a75c-fa2c3a0f688f/Finite_Investigation_911ca434d8239cc2494f7c89.Finite_Investigation_Export/code/finite_investigation.ML",
+  "generated_engine_sha256": "268dd5589c44fd3efa8b3a90cc12dea283fa2a4fc1d6975f23732e7172da7a5b",
+  "proof_snapshot_hashes": {
+    "ROOT": "001c70d91ddf5de2bd98e0121c3939c47468bce0b2b190daebe89aa24b4f2913",
+    "theories/Finite_Investigation_Export.thy": "9110413a6a0c66e81c562859749ab476e8e98e29b9e886e92a46c8dc88052e13",
+    "theories/Bootstrap_Relations.thy": "50d4bf926dab217fdad8eb114fe1b0d369aa9a06741df1e568a5cc5fea7ceafe",
+    "theories/Obligation_Reductions.thy": "a7cf5c82c7478cbde8ae94545ccaaf327af50b7b1ece2ff5458e29bc8ea1adcf",
+    "theories/Inference_Closure.thy": "caf963ccb1ded2c117eded468e575900f7fd275728f9535efe5b40f87517f5ce",
+    "theories/Bootstrap_Finite_Closure.thy": "df469431d4c9e4f95b2b3b3d192d7da9d677800b0383609dd25b212264581bc5",
+    "theories/Inference_Development.thy": "f3b6057fd02d5ab49785f8941e21ddc20ede01d3d9c2278894254b872ff6846f",
+    "theories/Candidate_Observations.thy": "d17f7f738b725bfcc7c27560ac2f8d482dd8b02ca6e83ce72f738451da324749",
+    "theories/Inference_Demands.thy": "f620b3cdaf10ba80a4795c5d273aa92e35d6dc04245119eb73fa0196e25aa03a",
+    "theories/Candidate_Investigation.thy": "bb083972595406e027373ea6eb2ad1d8d45dc31e9935db8c5d591e6b1a133c92",
+    "theories/Inference_Rounds.thy": "bfc244e1aa9e68a4587fc5724cf2c6c8fe786a832798b280194cb8edbacaea24",
+    "theories/Method_Development.thy": "82f4630526ae2bbfaba29d226b47bad77ed086cfc93e9765a3b04ca3bcfc3915",
+    "theories/Method_Investigation.thy": "aefaf2532a1096f9945c6592b52241e9ac9e4ec0558fafabdcf6a30b3ddba7c1",
+    "theories/Observation_Repairs.thy": "97eb2c271b36e7aaa99e134aae0d4069b63fb03d0e89db26d28092af18b5bd97",
+    "theories/Finite_Inference_Development.thy": "dcd3ac4b8761e1197a54d58739524354c036864df2f3e33f493f71ef4ae26b6b",
+    "theories/Finite_Investigation.thy": "e8f24aeef856960db014b8ef47ab7c44be19dda573ee1bdad5073db96f5d1684",
+    "theories/Finite_Observation_Repairs.thy": "2834ce8cf69fc2c69be1ce9c02015d0da9c1723b701ebf7c2aa82633c26d8f24",
+    "theories/Observation_Revisions.thy": "9b3ad288b096531dcce382a678d5e261a26d04cb97aec311b2da59790b2d4942",
+    "theories/Finite_Investigation_Interface.thy": "816eb2ca216d95e70bc640c2775f9fdb5c79e3d43d71ca156636175a1b59c264",
+    "theories/Presentation_Classes.thy": "ec041e1bfca7b1bf648dc4ade30c5c9973d45907ef3a434e87a193755e5c8069",
+    "theories/Presentation_Relations.thy": "7381cbf8ed52753ee6bac33821b72312b9671488ee523ce964f805a2bdabb195",
+    "theories/Presentation_Closure.thy": "f78081a222b02cca01865fdda01de48ceb54739beb03a80c29b0fd86b6843b71",
+    "theories/Presentation_Transport.thy": "49abc2968f7b85c37bf33f84f09d6549b9bfedbb83c4c48b3080ed864026ddef",
+    "theories/Presentation_Contracts.thy": "6977a5111cf2b30c46ec074d040c9ff81757eae56f482cbd0ee7784d9945f4e9",
+    "theories/Observation_Invariance.thy": "c6a2ef01120313d9e50aa21891a6a08a144252f853c8ca49345345623fdf53e4",
+    "theories/Presentation_Completion.thy": "973f448f5578d806596c25198143e2bccb645c3b68e6b191edd0642c62f92a8b",
+    "theories/Presentation_Completion_Investigation.thy": "2fdd64d2c0b44f8f2d20acd357cdc11c02053d49a411db83095bcd9dab9a82f7"
+  },
+  "poly": "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+  "poly_sha256": "47efc18d0b38bc908c8b29798575501e8b7b027f593022c80ff1acc55b9495b4",
+  "poly_version": "Poly/ML 5.9.2 Release",
+  "runtime_program_sha256": "d5e004445154ff3e57e2c550eb07343c1ead80f3e9ad4d7cfee255d821c02dcc",
+  "runtime_seconds": 0.07047232997138053,
+  "result": {
+    "input_formed": true,
+    "residual": [],
+    "profiles": [
+      {
+        "candidate": 0,
+        "profile": []
+      },
+      {
+        "candidate": 1,
+        "profile": [
+          [
+            0,
+            0
+          ]
+        ]
+      }
+    ],
+    "losses": [
+      {
+        "from": 0,
+        "to": 0,
+        "losses": []
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "losses": []
+      },
+      {
+        "from": 1,
+        "to": 0,
+        "losses": [
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "from": 1,
+        "to": 1,
+        "losses": []
+      }
+    ],
+    "safe_facets": [
+      0,
+      1,
+      2
+    ],
+    "conflicts": [],
+    "repairs": [],
+    "unrepairable": [],
+    "extension": [
+      0
+    ],
+    "revision": {
+      "retained": [
+        0
+      ],
+      "withdrawn": [],
+      "repairs": [],
+      "selection": [
+        0
+      ],
+      "residual": []
+    }
+  },
+  "sources_and_tools_unchanged": true,
+  "finished_utc": "2026-09-11T11:04:33.302684+00:00",
+  "elapsed_seconds": 3.187392639112659,
+  "log_sha256": "cfe60ceef14b21affc09fc16c7425cf0b981303370813e351b25d63018b585eb"
+}

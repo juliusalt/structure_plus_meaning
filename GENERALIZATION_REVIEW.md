@@ -738,3 +738,73 @@ mandatory byte-preservation criterion therefore selects retaining them; code
 and documentation pass their whitespace check. Both retained comparison
 reports replay successfully. The full whitespace scan remains qualified by
 this explicit archive-only exception.
+
+## Complete finite native sources and actual reader execution
+
+The next batch supplies complete finite data presentations and a literal
+native package with an actual replacement record, target schema and separate
+inference node. Its original source contains a nonempty binding and two
+counted attachment occurrences. The extension preserves those complete
+tables and adds one node use and one binding. Independent decoding recovers
+all twelve submitted argument fields.
+
+The accepted 403-theory batch proves the full local inference-specialization
+judgment and all eight initial call occurrences in that same native program.
+The two empty reference instances coincide, leaving seven distinct initial
+calls. The final inference entry is never an initial fact. Generic source
+graph, exact-term report, ground specialization and record-source arguments
+are factored into reusable theorems and instantiated by their consumers.
+
+Thirty presenter cases and all 76 reader cases pass complete reconstruction.
+The latter include 51 retained structural controls and 25 complete-source
+cases, with 311 checked construction frontiers and 75 native-library
+executions. The original native goals settle at depth 3 and remain settled at
+depths 4 and 5. Every withheld required call leaves the final goal unresolved;
+altered source, report and support fields remain unresolved. A malformed
+unused term fails the whole input gate.
+
+The first complete reader execution exposed a host contract that checked
+every native known call through a binding-only predicate. The source adapter
+now checks its own exact proved reference set and original goals, while the
+binding predicate keeps its original domain. Full JSON comparison preserves
+control operations as well as semantic fields. Explicit expected outcomes
+check actual settlements and residual goal occurrences after conditional
+report reconstruction. These host checks do not replace the native source
+proofs.
+
+The [archive](validation/generalization-review-2026-09-11/finite-native-reader/README.md)
+retains 19 proof attempts, four derived module receipts, seven accepted
+execution or input-preparation stages and 104 development investigations.
+All 111 stages and investigations replay successfully with their original
+code and complete assessments. Large nested records retain their exact bytes
+through lossless storage, with distinct stored and decoded digests. The
+archive occupies about 84 MB and preserves about 2.6 GB of original large-file
+data. Failed proof attempts and rejected host-reference diagnostics remain
+available.
+
+The complete 817-theory session passes in invocation
+fdf1222a-254d-4441-9410-02755f0d91aa with unchanged source and validation
+inputs. All 38 tooling tests pass, including source-reference rejection,
+input-gate settlement checks and lossless evidence replay prerequisites.
+This closes the finite executed local-reader requirement. Whole-derivation
+admission, native mathematical-proof admission and the continuing final
+repository audit remain open.
+
+The [finite-result assessment](validation/generalization-review-2026-09-11/finite-native-assessment/README.md)
+applies the original mandatory requirements to the abstract theorem, the
+conditional marker fixture and the concrete executed result. Only the last
+supplies every required finite field, native premise proof and executed
+settlement together. The four documentation and quality investigation reports
+also replay successfully; this finite comparison does not establish coverage
+of every possible construction method.
+
+The [delivery comparison](validation/generalization-review-2026-09-11/finite-native-delivery/README.md)
+instantiates the established byte-preservation rule for eleven whitespace
+warnings in three verbatim evidence objects. Normalization changes all three
+recorded identities, so the mandatory criterion selects preservation. Code
+and documentation pass their whitespace check; the full scan retains this
+explicit archive-only qualification.
+The retained scan log repeats those eleven whitespace-bearing lines, so the
+final staged scan reports 22 occurrences across four evidence objects. The
+same byte-preservation requirement applies to that recorded output. Both
+delivery comparison reports replay successfully.

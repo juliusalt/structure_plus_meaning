@@ -1,0 +1,17 @@
+Running Native_Investigation_Report_Diagnostic_finitepresenters4 ...
+Native_Investigation_Report_Diagnostic_finitepresenters4 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_finitepresenters4")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_finitepresenters4.Factor_Executable_Terms" (unresolved "Native_Investigation_Report_Diagnostic_finitepresenters4.RRA_Finite_Environments")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_finitepresenters4.Factor_Executable_Material" (unresolved "Native_Investigation_Report_Diagnostic_finitepresenters4.Factor_Executable_Terms")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_finitepresenters4.Factor_Executable_Data_Values" (unresolved "Native_Investigation_Report_Diagnostic_finitepresenters4.Factor_Executable_Terms")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_finitepresenters4.Factor_Executable_Artifact_Values" (unresolved "Native_Investigation_Report_Diagnostic_finitepresenters4.Factor_Executable_Data_Values")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_finitepresenters4.Factor_Executable_Environment_Values" (unresolved "Native_Investigation_Report_Diagnostic_finitepresenters4.Factor_Executable_Artifact_Values")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_finitepresenters4.Factor_Binding_Observation_Execution" (unresolved "Native_Investigation_Report_Diagnostic_finitepresenters4.Factor_Executable_Data_Values")
+*** Failed to finish proof (line 67 of "/tmp/native-investigation-report-diagnostic-finitepresenters4/theories/RRA_Finite_Environments.thy"):
+*** goal (1 subgoal):
+***  1. map_relation_values decode_finite_object (fset (fset_of_list A)) =
+***     map_relation_values decode_finite_object (set A) ∧
+***     fset (fset_of_list B) =
+***     set B
+*** At command "by" (line 67 of "/tmp/native-investigation-report-diagnostic-finitepresenters4/theories/RRA_Finite_Environments.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_finitepresenters4
+0:02:37 elapsed time, 0:06:15 cpu time, factor 2.38

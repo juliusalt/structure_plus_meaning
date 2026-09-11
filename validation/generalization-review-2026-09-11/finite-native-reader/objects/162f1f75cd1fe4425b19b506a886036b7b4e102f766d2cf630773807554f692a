@@ -1,0 +1,26 @@
+{
+  "status": "evaluated",
+  "exit_code": 0,
+  "elapsed_seconds": 3.1145730121061206,
+  "runtime_seconds": 0.06261042400728911,
+  "receipt": "/tmp/generalization-quality-review/finite-reader-example/presenter-interface-and-timeout/public-presenter-interface/followed/receipt.json",
+  "input_formed": true,
+  "residual": [],
+  "repair_witnesses": 0,
+  "conflicts": 0,
+  "unrepairable": 0,
+  "extension": [
+    0
+  ],
+  "revision": {
+    "retained": [
+      0
+    ],
+    "withdrawn": [],
+    "repairs": [],
+    "selection": [
+      0
+    ],
+    "residual": []
+  }
+}

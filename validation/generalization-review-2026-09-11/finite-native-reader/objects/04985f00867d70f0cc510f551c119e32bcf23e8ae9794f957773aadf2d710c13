@@ -1,0 +1,18 @@
+Running Native_Investigation_Report_Diagnostic_finitepresenters7 ...
+Native_Investigation_Report_Diagnostic_finitepresenters7 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_finitepresenters7")
+*** Failed to finish proof (line 80 of "/tmp/native-investigation-report-diagnostic-finitepresenters7/theories/Factor_Executable_Environment_Values.thy"):
+*** goal (1 subgoal):
+***  1. ⟦⋀a aa ab ac b.
+***         ⟦(a, aa, ab, ac, b) ∈ set (finite_environment_artifact_rows C);
+***          z = environment_artifact_rows_object (a, aa, ab, ac, b)⟧
+***         ⟹ thesis;
+***      z ∈ map_relation_values decode_finite_object
+***           (fset (finite_environment_artifacts C));
+***      environment_artifact_rows_object `
+***      set (finite_environment_artifact_rows C) =
+***      map_relation_values decode_finite_object
+***       (fset (finite_environment_artifacts C))⟧
+***     ⟹ thesis
+*** At command "by" (line 80 of "/tmp/native-investigation-report-diagnostic-finitepresenters7/theories/Factor_Executable_Environment_Values.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_finitepresenters7
+0:02:43 elapsed time, 0:06:32 cpu time, factor 2.41

@@ -1,0 +1,196 @@
+#!/usr/bin/env python3
+"""Recover the complete proved native input and prepare its reader execution."""
+from __future__ import annotations
+
+import argparse
+from collections import Counter
+import json
+from pathlib import Path
+import subprocess
+import uuid
+
+import check_reasoning as review
+import finite_presentation_cases as values
+import investigate
+import proved_code
+import reader_construction_cases as construction
+
+
+PRELUDE = "structure N = Finite_Literal_Inference_Premises;\n" + review.SCALAR_JSON_PRELUDE + r'''
+fun jtarget _ = raise Fail "Unexpected target in the complete finite data input";
+''' + review.TERM_JSON_PRELUDE + r'''
+fun jcall (d,t) = "[" ^ jnat d ^ "," ^ jterm t ^ "]";
+val () = print ("NATIVE_INPUT " ^ "{\"argument\":" ^
+  jterm (N.finite_literal_inference_value []) ^ ",\"known\":" ^
+  jlist jcall (N.finite_literal_inference_known []) ^ "}\n");
+'''
+
+
+def source_root(term):
+    source_use, root = values.pair_values(term)
+    source, use = values.pair_values(source_use)
+    return values.environment_value(source), values.use_value(use), values.payload_value(root)
+
+
+def recover_argument(argument, expected):
+    fields = review.sequence_items(argument)
+    assert len(fields) == 12
+    package, node, definition, clause, replacement, target, report, ds, ni, nk, ri, rk = fields
+    extended, pu, pr = source_root(package)
+    node_source, nu, nr = source_root(node)
+    original, v, r = source_root(replacement)
+    target_source, target_site = values.pair_values(target)
+    w, t = values.pair_values(target_site)
+    target_environment = values.environment_value(target_source)
+    du, dr = values.pair_values(definition)
+    assert values.environment_identity(extended) == values.environment_identity(expected["extended"])
+    assert values.environment_identity(node_source) == values.environment_identity(extended)
+    assert values.environment_identity(original) == values.environment_identity(expected["source"])
+    assert values.environment_identity(target_environment) == values.environment_identity(original)
+    assert [pu, pr] == [expected["package_use"], expected["package_root"]]
+    assert [nu, nr] == [expected["node_use"], expected["node_root"]]
+    assert [v, r] == [expected["replacement_use"], expected["replacement_root"]]
+    assert [values.use_value(w), values.payload_value(t)] == [expected["schema_use"], expected["schema_root"]]
+    assert [values.use_value(du), values.payload_value(dr)] == expected["definition"]
+    assert values.payload_value(clause) == expected["clause"]
+    binders, outputs = values.pair_values(report)
+    assert review.sequence_items(binders) == []
+    first, second = values.pair_values(outputs)
+    for output in [first, second]:
+        head, rows = values.pair_values(output)
+        ordinary, material = values.pair_values(rows)
+        assert values.payload_value(head) == expected["literal_payload"]
+        assert review.sequence_items(ordinary) == review.sequence_items(material) == []
+    assert review.sequence_items(ds) == expected["discharges"] == []
+    for term, key in [(ni, "node_interior"), (nk, "node_slots"),
+                      (ri, "replacement_interior"), (rk, "replacement_slots")]:
+        assert [values.payload_value(x) for x in review.sequence_items(term)] == expected[key]
+    before, after = values.environment_identity(original), values.environment_identity(extended)
+    assert before[0] <= after[0] and before[1] <= after[1]
+    assert values.environment_formed(original) and values.environment_formed(extended)
+    assert values.data_only(argument) and review.formed(argument)
+    return {"source_uses": len(original["artifacts"]), "extended_uses": len(extended["artifacts"]),
+            "old_bindings": len(original["bindings"]), "extended_bindings": len(extended["bindings"]),
+            "retained_bag_occurrences": sum(len(a["bag"]) for _, a in original["artifacts"]),
+            "argument_fields": len(fields), "complete_sources_recovered": True}
+
+
+def native_cases(catalogs, argument, known):
+    library = catalogs[construction.COMBINED]
+    empty = review.payload()
+    private = {350: {19: empty}, 348: {8: empty, 9: empty, 10: empty, 11: empty}}
+    frontier, trace = construction.expand_fixture(library, [350, argument], private)
+    assert Counter(map(review.freeze, frontier)) == Counter(map(review.freeze, known))
+    assert [q[0] for q in known] == [94, 294, 126, 125, 61, 61, 345, 346]
+    assert all(q[0] != 350 for q in known)
+    goals = [[i, app["entry"], app["conclusion"]] for i, app in enumerate(trace)
+             if app["entry"] in {348, 349, 350}]
+    assert {g[1] for g in goals} == {348, 349, 350}
+
+    def case(name, *, rounds=4, evidence=known, requests=goals, supplied=frontier):
+        result = review.case(name, library, review.clone_json(supplied), review.clone_json(evidence),
+                             review.clone_json(requests), ("chain", rounds))
+        result.update(construction_rounds=rounds, native_libraries=[{"name": construction.COMBINED}],
+                      native_reader_investigation=True, diagnose_coverage=True,
+                      semantic_boundary="The original complete argument and initial calls have native source proofs. "
+                      "Withholding calls changes available evidence. Altered requests are computational controls "
+                      "unless their native truth is separately declared.")
+        return result
+
+    cases = []
+    for n in range(6):
+        item = case("finite-native-depth-" + str(n), rounds=n)
+        item["native_goal_truth"] = [True] * len(goals)
+        cases.append(item)
+    unique = list(dict.fromkeys(map(review.freeze, known)))
+    for i, omitted in enumerate(unique):
+        item = case("finite-native-withheld-" + str(i),
+                    evidence=[q for q in known if review.freeze(q) != omitted])
+        item["native_goal_truth"] = [True] * len(goals)
+        cases.append(item)
+    item = case("finite-native-reordered-repeated", evidence=known[::-1] + known,
+                supplied=frontier[::-1] + frontier)
+    item["native_goal_truth"] = [True] * len(goals)
+    cases.append(item)
+    fields = review.sequence_items(argument)
+    for index in [0, 1, 4, 5, 6, 8, 9, 10, 11]:
+        changed = review.clone_json(fields)
+        changed[index] = review.payload(201, index)
+        item = case("finite-native-changed-field-" + str(index),
+                    requests=[[0, 350, review.sequence(changed)]])
+        item["expected_no_goal_application"] = True
+        cases.append(item)
+    cases.append(case("finite-native-malformed-unused-input",
+                      supplied=frontier + [[777, review.payload(256)]]))
+    cases.append(case("finite-native-no-known-calls", evidence=[]))
+    return cases, trace
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    for name in ["proof", "poly", "source-spec", "catalogs", "output"]:
+        parser.add_argument("--" + name, type=Path, required=True)
+    args = parser.parse_args()
+    proof_path, output = args.proof.resolve(), args.output.resolve()
+    proof, engine, sources = proved_code.proved_export(
+        proof_path, required_theories=["Factor_Finite_Inference_Premises"])
+    expected = json.loads(args.source_spec.read_text())
+    assert expected["literal_payload"] == [], "The native certificate is for this explicit payload."
+    catalogs = construction.load_catalogs(args.catalogs.resolve())
+    assert construction.COMBINED in catalogs
+    assert not output.exists(), "Retain preceding executions and use a new directory."
+    output.mkdir(parents=True)
+    report = {"status": "failed", "invocation": str(uuid.uuid4()), "question": __doc__}
+    try:
+        runtime = output / "execute.ML"
+        runtime.write_text("use " + investigate.ml_string(str(engine)) + ";\n" + PRELUDE)
+        inputs = [proof_path, engine, args.poly.resolve(), args.source_spec.resolve(), runtime,
+                  args.catalogs.resolve() / "receipt.json", *review.loaded_tool_sources()]
+        inputs += [args.catalogs.resolve() / ("library-" + name + ".json") for name in catalogs]
+        tracked = {str(p): review.digest(p) for p in inputs} | sources
+        (output / "execution-inputs.json").write_text(json.dumps(tracked, indent=2) + "\n")
+        for path in inputs:
+            if path != args.poly.resolve():
+                investigate.archive_evidence(output, report, "finite native execution input", path, tracked[str(path)])
+        log_path = output / "results.log"
+        with log_path.open("w") as log:
+            completed = subprocess.run([str(args.poly.resolve()), "--script", str(runtime)],
+                                       stdout=log, stderr=subprocess.STDOUT, timeout=60)
+        assert completed.returncode == 0, "See the retained results.log."
+        results = [json.loads(line.removeprefix("NATIVE_INPUT ")) for line in log_path.read_text().splitlines()
+                   if line.startswith("NATIVE_INPUT ")]
+        assert len(results) == 1
+        actual = results[0]
+        recovery = recover_argument(actual["argument"], expected)
+        cases, trace = native_cases(catalogs, actual["argument"], actual["known"])
+        cases = construction.reader_cases(catalogs, combined=True) + cases
+        values_path = output / "native-input.json"
+        values_path.write_text(json.dumps(actual, separators=(",", ":")) + "\n")
+        (output / "native-expansion.json").write_text(json.dumps(trace, separators=(",", ":")) + "\n")
+        assert all(review.digest(path) == sha for path, sha in tracked.items())
+        assert all(review.digest(row["archive"]) == row["sha256"] for row in report["evidence_archive"])
+        evidence = [{"path": path, "sha256": sha} for path, sha in tracked.items()]
+        evidence += [{"path": str(values_path), "sha256": review.digest(values_path)}]
+        specification = {"question": "Execute the full finite native inference from its proved initial calls",
+                         "boundary": "The exact original native argument and all initial calls have source proofs. "
+                         "The compiled reader must derive the final call. Existing marker and altered-input cases "
+                         "retain their stated conditional interpretation.", "evidence": evidence, "cases": cases}
+        specification_path = output / "specification.json"
+        specification_path.write_text(json.dumps(specification, separators=(",", ":")) + "\n")
+        report.update(status="accepted", exit_code=0, sources_and_tools_unchanged=True,
+                      recovery=recovery, initial_call_occurrences=len(actual["known"]),
+                      distinct_initial_calls=len(set(map(review.freeze, actual["known"]))),
+                      compiled_trace_entries=[x["entry"] for x in trace], prepared_cases=len(cases),
+                      specification=str(specification_path), specification_sha256=review.digest(specification_path),
+                      results_sha256=review.digest(log_path), execution_inputs=tracked,
+                      proof_receipt_sha256=review.digest(proof_path),
+                      boundary="Actual code and complete field recovery accepted; prepared reader cases still require execution.")
+    except Exception as error:
+        report["error"] = str(error)
+    (output / "receipt.json").write_text(json.dumps(report, indent=2) + "\n")
+    print(json.dumps({k: v for k, v in report.items() if k not in ["execution_inputs", "evidence_archive"]}, indent=2))
+    return int(report["status"] != "accepted")
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

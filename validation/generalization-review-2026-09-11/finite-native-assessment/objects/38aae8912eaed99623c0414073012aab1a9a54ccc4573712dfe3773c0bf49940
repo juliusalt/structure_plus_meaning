@@ -1,0 +1,9 @@
+{
+  "stage": "library-catalogs",
+  "status": "accepted",
+  "receipt_sha256": "a197cce08e12f96ec685eb26324f0b13141d367c9f006bca02802798c2383b0e",
+  "archive_index_sha256": "390d2b2ec1b4ae6e3e7bbfe95a360473e1514c014e2d8a881871aaf1529b3860",
+  "replayer_sha256": "e2f5e731e569c3df848bd3e537e7b49c46964e13c1586852356d3a77868953fc",
+  "evidence_io_sha256": "72b87df5f4f3ef4c7fc9a425ce4551f0df1c015916857d52eb2eb58040343fff",
+  "boundary": "The retained inputs and original code are replayed. This reproduces complete checked reports; it does not rerun case selection or establish new native source readings."
+}

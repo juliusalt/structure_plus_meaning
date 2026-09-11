@@ -1,0 +1,10 @@
+{
+  "decision_sha256": "a2b26cef4a0e05a879fe0857042c19a7667685d6b0199ca833f139be71d0b69f",
+  "critical_assessment": "The returned candidate preserves the unconditional statement and exposes the actual missing primitive formation premise. The exact report theorem is already instantiated. Actual native_schema_formed supplies the boundary formation, and the same known empty-payload definition is supplied to the independently visible empty observation calls. No fields or statements are weakened.",
+  "proof": "/tmp/native-investigation-report-diagnostic-finitepresenters19/result.json",
+  "independent_tests": {
+    "path": "/tmp/finite-native-tool-tests.log",
+    "sha256": "e252723dbdf21c5b2dfb0bd6bec10a7849bc05f7c24db42d63c753d27bc5c4a8",
+    "result": "32 tests passed in 2.903 seconds"
+  }
+}

@@ -1,0 +1,187 @@
+{
+  "observed_host_assertion": "check_reasoning.py native_goal_truth requires binding_call_true for every known call",
+  "first_incompatible_case": {
+    "index": 51,
+    "name": "finite-native-depth-0",
+    "outside_binding_truth_contract": [
+      94,
+      294,
+      126,
+      125,
+      61,
+      61
+    ]
+  },
+  "incompatible_cases": [
+    {
+      "index": 51,
+      "name": "finite-native-depth-0",
+      "outside_binding_truth_contract": [
+        94,
+        294,
+        126,
+        125,
+        61,
+        61
+      ]
+    },
+    {
+      "index": 52,
+      "name": "finite-native-depth-1",
+      "outside_binding_truth_contract": [
+        94,
+        294,
+        126,
+        125,
+        61,
+        61
+      ]
+    },
+    {
+      "index": 53,
+      "name": "finite-native-depth-2",
+      "outside_binding_truth_contract": [
+        94,
+        294,
+        126,
+        125,
+        61,
+        61
+      ]
+    },
+    {
+      "index": 54,
+      "name": "finite-native-depth-3",
+      "outside_binding_truth_contract": [
+        94,
+        294,
+        126,
+        125,
+        61,
+        61
+      ]
+    },
+    {
+      "index": 55,
+      "name": "finite-native-depth-4",
+      "outside_binding_truth_contract": [
+        94,
+        294,
+        126,
+        125,
+        61,
+        61
+      ]
+    },
+    {
+      "index": 56,
+      "name": "finite-native-depth-5",
+      "outside_binding_truth_contract": [
+        94,
+        294,
+        126,
+        125,
+        61,
+        61
+      ]
+    },
+    {
+      "index": 57,
+      "name": "finite-native-withheld-0",
+      "outside_binding_truth_contract": [
+        294,
+        126,
+        125,
+        61,
+        61
+      ]
+    },
+    {
+      "index": 58,
+      "name": "finite-native-withheld-1",
+      "outside_binding_truth_contract": [
+        94,
+        126,
+        125,
+        61,
+        61
+      ]
+    },
+    {
+      "index": 59,
+      "name": "finite-native-withheld-2",
+      "outside_binding_truth_contract": [
+        94,
+        294,
+        125,
+        61,
+        61
+      ]
+    },
+    {
+      "index": 60,
+      "name": "finite-native-withheld-3",
+      "outside_binding_truth_contract": [
+        94,
+        294,
+        126,
+        61,
+        61
+      ]
+    },
+    {
+      "index": 61,
+      "name": "finite-native-withheld-4",
+      "outside_binding_truth_contract": [
+        94,
+        294,
+        126,
+        125
+      ]
+    },
+    {
+      "index": 62,
+      "name": "finite-native-withheld-5",
+      "outside_binding_truth_contract": [
+        94,
+        294,
+        126,
+        125,
+        61,
+        61
+      ]
+    },
+    {
+      "index": 63,
+      "name": "finite-native-withheld-6",
+      "outside_binding_truth_contract": [
+        94,
+        294,
+        126,
+        125,
+        61,
+        61
+      ]
+    },
+    {
+      "index": 64,
+      "name": "finite-native-reordered-repeated",
+      "outside_binding_truth_contract": [
+        61,
+        61,
+        125,
+        126,
+        294,
+        94,
+        94,
+        294,
+        126,
+        125,
+        61,
+        61
+      ]
+    }
+  ],
+  "native_source_contract": "Factor_Finite_Inference_Premises.finite_literal_inference_known_sound in accepted proof19",
+  "runtime": "All76 complete reports emitted; native depth3+ and reordered controls settle350,349,348; every withheld distinct source condition leaves350 residual; no execution input changed."
+}

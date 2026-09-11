@@ -1,0 +1,35 @@
+{
+  "status": "evaluated",
+  "exit_code": 0,
+  "elapsed_seconds": 3.5169269000180066,
+  "runtime_seconds": 0.09230074600782245,
+  "receipt": "/tmp/generalization-quality-review/finite-reader-example/native-deep-data-copy/complete-json-copy/followed/receipt.json",
+  "input_formed": true,
+  "residual": [],
+  "repair_witnesses": 0,
+  "conflicts": 0,
+  "unrepairable": 0,
+  "extension": [
+    0,
+    1,
+    2,
+    4
+  ],
+  "revision": {
+    "retained": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "withdrawn": [],
+    "repairs": [],
+    "selection": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "residual": []
+  }
+}

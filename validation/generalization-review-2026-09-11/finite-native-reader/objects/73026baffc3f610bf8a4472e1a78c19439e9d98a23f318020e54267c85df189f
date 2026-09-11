@@ -1,0 +1,526 @@
+/home/julius/structure_and_semantics/theories/Factor_Artifact_Values.thy
+theory Factor_Artifact_Values
+  imports Factor_Self_Contained_Terms
+begin
+
+section \<open>Complete exact artifact values as self-contained terms\<close>
+
+definition address_pair_data ::
+  "(local_address\<times>octets) \<Rightarrow> factor_term" where
+  "address_pair_data z = Pair_Term (Payload_Term (fst z)) (Payload_Term (snd z))"
+
+definition incidence_data ::
+  "(local_address\<times>local_address\<times>local_address) \<Rightarrow> factor_term" where
+  "incidence_data z =
+    Pair_Term (Payload_Term (fst z)) (address_pair_data (snd z))"
+
+lemma address_pair_data_injective: "inj address_pair_data"
+  by (rule injI) (auto simp: address_pair_data_def)
+
+lemma incidence_data_injective: "inj incidence_data"
+  by (rule injI) (auto simp: incidence_data_def address_pair_data_def)
+
+definition artifact_data_term ::
+  "local_address list \<Rightarrow> (local_address\<times>local_address\<times>local_address) list \<Rightarrow>
+    (local_address\<times>octets) list \<Rightarrow> (local_address\<times>octets) list \<Rightarrow> factor_term" where
+  "artifact_data_term A E B F =
+    Pair_Term (data_list_term (map Payload_Term A))
+      (Pair_Term (data_list_term (map incidence_data E))
+        (Pair_Term (data_list_term (map address_pair_data B))
+          (data_list_term (map address_pair_data F))))"
+
+lemma artifact_data_term_exact:
+  "artifact_data_term A E B F=artifact_data_term A' E' B' F' \<longleftrightarrow>
+    A=A' \<and> E=E' \<and> B=B' \<and> F=F'"
+proof -
+  have injective: "inj Payload_Term" by (rule injI) simp
+  show ?thesis
+    by (simp add: artifact_data_term_def data_list_term_injective
+      injective_mapped_lists[OF injective]
+      injective_mapped_lists[OF incidence_data_injective]
+      injective_mapped_lists[OF address_pair_data_injective])
+qed
+
+lemma artifact_data_term_self_contained:
+  "self_contained_term (artifact_data_term A E B F)"
+  by (simp add: artifact_data_term_def data_list_term_self_contained
+    incidence_data_def address_pair_data_def)
+
+lemma artifact_data_term_formed:
+  assumes enumeration: "artifact_enumeration R A E B F"
+  shows "term_formed (artifact_data_term A E B F)"
+proof -
+  let ?U = "rra_carrier (object_structure R)"
+  let ?D = "object_data R"
+  have rf: "exact_formed R" and atoms: "set A=?U"
+    and edges: "set E=rra_incidence (object_structure R)"
+    and bags: "set B=bag_support ?D"
+    and fun_entries: "set F=functional_bindings ?D"
+    using artifact_enumeration_material[OF enumeration] by auto
+  have addresses: "\<forall>a\<in>?U. octets_formed a"
+    and values_formed: "\<forall>v\<in>basis_values ?D. octets_formed v"
+    and shape: "rra_formed (object_structure R)" and data: "basis_formed ?U ?D"
+    using rf by (auto simp: exact_formed_def object_formed_def)
+  have edge_fields: "\<And>e a b. (e,a,b)\<in>set E \<Longrightarrow>
+    octets_formed e \<and> octets_formed a \<and> octets_formed b"
+    using addresses shape edges by (auto simp: rra_formed_def)
+  have attachment_fields: "\<And>a v. (a,v)\<in>set B \<union> set F \<Longrightarrow>
+    octets_formed a \<and> octets_formed v"
+  proof -
+    fix a v assume member: "(a,v)\<in>set B \<union> set F"
+    have inside: "(a,v)\<in>bag_support ?D \<union> functional_bindings ?D"
+      using member bags fun_entries by simp
+    have address: "a\<in>?U" using inside data by (auto simp: basis_formed_def)
+    have datum: "v\<in>basis_values ?D"
+      using imageI[OF inside, of snd] by (simp add: basis_values_def)
+    show "octets_formed a \<and> octets_formed v"
+      using addresses values_formed address datum by blast
+  qed
+  show ?thesis using addresses atoms edge_fields attachment_fields
+    by (auto simp: artifact_data_term_def data_list_term_formed
+      incidence_data_def address_pair_data_def split: prod.splits; blast)
+qed
+
+definition artifact_value_presents ::
+  "exact_artifact \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "artifact_value_presents R t \<longleftrightarrow>
+    (\<exists>A E B F. artifact_enumeration R A E B F \<and> t=artifact_data_term A E B F)"
+
+lemma artifact_value_presents_formed:
+  assumes "artifact_value_presents R t"
+  shows "exact_formed R \<and> term_formed t \<and> self_contained_term t"
+proof -
+  obtain A E B F where enumeration: "artifact_enumeration R A E B F"
+    and encoded: "t=artifact_data_term A E B F"
+    using assms unfolding artifact_value_presents_def by blast
+  show ?thesis using artifact_enumeration_material(1)[OF enumeration]
+    artifact_data_term_formed[OF enumeration] artifact_data_term_self_contained encoded by simp
+qed
+
+theorem artifact_value_presents_total:
+  assumes "exact_formed R"
+  shows "\<exists>t. artifact_value_presents R t"
+  using artifact_enumeration_exists[OF assms]
+  unfolding artifact_value_presents_def by blast
+
+theorem artifact_value_presents_unique:
+  assumes first: "artifact_value_presents R t" and second: "artifact_value_presents S t"
+  shows "R=S"
+proof -
+  obtain A E B F where left: "artifact_enumeration R A E B F" "t=artifact_data_term A E B F"
+    using first unfolding artifact_value_presents_def by blast
+  obtain A' E' B' F' where right: "artifact_enumeration S A' E' B' F'"
+    "t=artifact_data_term A' E' B' F'"
+    using second unfolding artifact_value_presents_def by blast
+  have same: "A=A' \<and> E=E' \<and> B=B' \<and> F=F'"
+    using left(2) right(2) artifact_data_term_exact by blast
+  show ?thesis using left(1) right(1) same by (simp add: artifact_enumeration_def)
+qed
+
+section \<open>Recovery depends on the containing artifact alone\<close>
+
+definition artifact_value_quoted_at ::
+  "exact_artifact \<Rightarrow> local_address \<Rightarrow> exact_artifact \<Rightarrow>
+    local_address set \<Rightarrow> bool" where
+  "artifact_value_quoted_at C r R I \<longleftrightarrow>
+    (\<exists>t. artifact_value_presents R t \<and> self_contained_quoted_at C r t I)"
+
+theorem artifact_value_quoted_unique:
+  assumes first: "artifact_value_quoted_at C r R I"
+    and second: "artifact_value_quoted_at C r S J"
+  shows "R=S \<and> I=J"
+proof -
+  obtain t where left: "artifact_value_presents R t" "self_contained_quoted_at C r t I"
+    using first unfolding artifact_value_quoted_at_def by blast
+  obtain v where right: "artifact_value_presents S v" "self_contained_quoted_at C r v J"
+    using second unfolding artifact_value_quoted_at_def by blast
+  have same: "t=v \<and> I=J" by (rule self_contained_quoted_unique[OF left(2) right(2)])
+  have presented: "artifact_value_presents S t" using right(1) same by simp
+  show ?thesis using artifact_value_presents_unique[OF left(1) presented] same by blast
+qed
+
+theorem artifact_value_quoted_total:
+  assumes formed: "exact_formed R"
+  shows "\<exists>C I. exact_formed C \<and> artifact_value_quoted_at C [] R I \<and>
+    rra_carrier (object_structure C)=I"
+proof -
+  obtain t where present: "artifact_value_presents R t"
+    using artifact_value_presents_total[OF formed] by blast
+  have tf: "term_formed t" and closed: "self_contained_term t"
+    using artifact_value_presents_formed[OF present] by auto
+  have quote: "self_contained_quoted_at (term_syntax t) [] t (term_syntax_interior t)"
+    and source: "exact_formed (term_syntax t)"
+    and complete: "rra_carrier (object_structure (term_syntax t))=term_syntax_interior t"
+    using self_contained_quotation_total[OF tf closed] by auto
+  have read: "artifact_value_quoted_at (term_syntax t) [] R (term_syntax_interior t)"
+    using present quote unfolding artifact_value_quoted_at_def by blast
+  show ?thesis
+    by (rule exI[of _ "term_syntax t"], rule exI[of _ "term_syntax_interior t"])
+       (use source read complete in blast)
+qed
+
+lemma artifact_value_quoted_in_environment:
+  assumes read: "artifact_value_quoted_at C r R I"
+    and ef: "environment_formed E" and source: "artifact_at E u C"
+  shows "\<exists>t. artifact_value_presents R t \<and> term_quoted_at E u r t I {}"
+proof -
+  obtain t where present: "artifact_value_presents R t"
+    and quote: "self_contained_quoted_at C r t I"
+    using read unfolding artifact_value_quoted_at_def by blast
+  have native: "term_quoted_at E u r t I {}"
+    by (rule self_contained_quoted_in_environment[OF quote ef source])
+  show ?thesis using present native by blast
+qed
+
+text \<open>
+  This profile presents an exact artifact as data: every original address,
+  every ordered incidence triple, every counted attachment occurrence, and
+  every functional attachment. Repetition in the counted list preserves
+  multiplicity. The three set-like fields have no repeated entry and admit
+  every complete order. Original addresses and opaque values remain exact.
+
+  The value can be recovered from a complete native quotation without any
+  external binding. Different outer environments therefore cannot change the
+  recovered artifact. This is a representation theorem, not a new truth rule
+  or a quotient of exact artifacts under structural isomorphism.
+\<close>
+
+end
+
+/home/julius/structure_and_semantics/theories/Factor_Definition_Encoding.thy
+theory Factor_Definition_Encoding
+  imports Factor_Definition_Frames
+begin
+
+section \<open>Total native syntax for a complete interface and clause list\<close>
+
+theorem definition_list_syntax_total:
+  fixes Ss :: "('a,'s,local_address option definition_site) factor_schema list"
+  assumes pf: "pattern_formed p" and formed: "\<forall>S\<in>set Ss. schema_formed S"
+    and addresses: "\<forall>S\<in>set Ss. \<forall>d\<in>schema_dependencies S. octets_formed (snd d)"
+  shows "\<exists>T f ss As L C. exact_formed T \<and> bag_count (object_data T) = (\<lambda>_. 0) \<and>
+    [] \<in> rra_carrier (object_structure T) \<and> inj_on f (pattern_variables p) \<and>
+    length ss = length Ss \<and> distinct ss \<and> length As = length Ss \<and>
+    (\<forall>i<length Ss. schema_alpha_variant (Ss!i) (As!i)) \<and>
+    reference_table_formed L C \<and> rel_dom L \<union> rel_dom C \<subseteq> rra_carrier (object_structure T) \<and>
+    rel_ran C = (\<Union>S\<in>set Ss. schema_dependencies S) \<and>
+    (\<forall>E u. environment_formed E \<longrightarrow> artifact_at E u T \<longrightarrow> syntax_references E u L C \<longrightarrow>
+      native_definition_at E u [] (rename_pattern f p) (set (zip ss As)))"
+proof -
+  obtain R :: exact_artifact and r :: local_address and f and L :: "(local_address \<times> exact_artifact) set" where interface:
+    "exact_formed R" "inj_on f (pattern_variables p)" "reference_table_formed L ({} :: (local_address \<times> local_address option definition_site) set)"
+    "rel_dom L \<subseteq> rra_carrier (object_structure R)" "bag_count (object_data R) = (\<lambda>_. 0)"
+    "r \<in> rra_carrier (object_structure R)"
+    "\<forall>E :: local_address option artifact_environment. \<forall>u.
+      environment_formed E \<longrightarrow> artifact_at E u R \<longrightarrow> syntax_references E u L {} \<longrightarrow>
+      (\<exists>I K. scoped_pattern_at E u r (rename_pattern f p) I K \<and> rra_carrier (object_structure R) = I \<union> K)"
+    using interface_syntax_total[OF pf] by metis
+  obtain S :: exact_artifact and rs :: "local_address list" and As :: "local_address option native_schema list"
+    and A :: "(local_address \<times> exact_artifact) set"
+    and B :: "(local_address \<times> local_address option definition_site) set" where clauses:
+    "exact_formed S" "bag_count (object_data S) = (\<lambda>_. 0)"
+    "length rs = length Ss" "length As = length Ss" "reference_table_formed A B"
+    "rel_dom A \<union> rel_dom B \<subseteq> rra_carrier (object_structure S)"
+    "rel_ran B = (\<Union>Q\<in>set Ss. schema_dependencies Q)" "set rs \<subseteq> rra_carrier (object_structure S)"
+    "\<forall>i<length Ss. schema_alpha_variant (Ss!i) (As!i)"
+    "\<forall>E u. environment_formed E \<longrightarrow> artifact_at E u S \<longrightarrow>
+      syntax_references E u A B \<longrightarrow> (\<forall>i<length Ss. native_schema_at E u (rs!i) (As!i))"
+    using schema_forest_total[OF formed addresses] by metis
+  interpret frame: definition_frame R S r rs
+    by (rule definition_frame.intro[OF interface(1) clauses(1) interface(5) clauses(2) interface(6) clauses(8)])
+  let ?T = "definition_wrapper R r S rs"
+  let ?f = "Cons 2 \<circ> f"
+  let ?ss = "family_ports (length rs)"
+  let ?As = "map (rename_schema (Cons 3) (Cons 3) id) As"
+  let ?L = "map_slot_keys (Cons 2) L \<union> map_slot_keys (Cons 3) A"
+  let ?C = "map_slot_keys (Cons 3) B"
+  have left_inj: "inj (Cons 2 :: local_address \<Rightarrow> local_address)"
+    and right_inj: "inj (Cons 3 :: local_address \<Rightarrow> local_address)" by (simp add: inj_def)+
+  have finj: "inj_on ?f (pattern_variables p)" using interface(2) by (auto simp: inj_on_def)
+  have left_addr: "finite_addressing (rra_carrier (object_structure R)) (Cons 2)"
+    using interface(1) by (auto simp: finite_addressing_def inj_on_def exact_formed_def octets_formed_def)
+  have right_addr: "finite_addressing (rra_carrier (object_structure S)) (Cons 3)"
+    using clauses(1) by (auto simp: finite_addressing_def inj_on_def exact_formed_def octets_formed_def)
+  have profile: "reference_table_formed ?L ?C"
+    using reference_table_disjoint_copies[OF interface(3) clauses(5)] by (simp add: map_slot_keys_def)
+  have lbound: "Cons 2 ` rel_dom L \<subseteq> Cons 2 ` rra_carrier (object_structure R)"
+    by (rule image_mono[OF interface(4)])
+  have rbound: "Cons 3 ` (rel_dom A \<union> rel_dom B) \<subseteq> Cons 3 ` rra_carrier (object_structure S)"
+    by (rule image_mono[OF clauses(6)])
+  have bounds: "rel_dom ?L \<union> rel_dom ?C \<subseteq> rra_carrier (object_structure ?T)"
+    using lbound rbound by (auto simp: rel_dom_union map_slot_keys_domain frame.carrier)
+  have range: "rel_ran ?C = (\<Union>Q\<in>set Ss. schema_dependencies Q)"
+    by (simp only: map_slot_keys_range clauses(7))
+  have alpha: "\<forall>i<length Ss. schema_alpha_variant (Ss!i) (?As!i)"
+  proof (intro allI impI)
+    fix i assume index: "i < length Ss"
+    have source: "schema_alpha_variant (Ss!i) (As!i)" using clauses(9) index by blast
+    have copied: "schema_alpha_variant (Ss!i) (rename_schema (Cons 3) (Cons 3) id (As!i))"
+      by (rule schema_alpha_copy[OF source right_inj])
+    show "schema_alpha_variant (Ss!i) (?As!i)" using copied index clauses(4) by simp
+  qed
+  have recover: "\<forall>E u. environment_formed E \<longrightarrow> artifact_at E u ?T \<longrightarrow>
+    syntax_references E u ?L ?C \<longrightarrow>
+    native_definition_at E u [] (rename_pattern ?f p) (set (zip ?ss ?As))"
+  proof (intro allI impI)
+    fix E u assume ef: "environment_formed E" and source: "artifact_at E u ?T"
+      and refs: "syntax_references E u ?L ?C"
+    have left_refs: "syntax_references E u (map_slot_keys (Cons 2) L) {}"
+      by (rule syntax_references_mono[OF refs]) auto
+    have right_refs: "syntax_references E u (map_slot_keys (Cons 3) A) (map_slot_keys (Cons 3) B)"
+      by (rule syntax_references_mono[OF refs]) auto
+    obtain I K where scoped:
+      "scoped_pattern_at E u (2#r) (rename_pattern (Cons 2) (rename_pattern f p)) I K"
+      "Cons 2 ` rra_carrier (object_structure R) = I \<union> K"
+      using compiled_interface_copy[OF interface(1,4,7) ef source left_inj left_addr frame.interface_reads left_refs] by blast
+    have schema_reads: "\<forall>i<length ?As. native_schema_at E u (map (Cons 3) rs ! i) (?As!i)"
+    proof (intro allI impI)
+      fix i assume index: "i < length ?As"
+      have small: "i < length Ss" and ri: "i < length rs" using index clauses(3,4) by simp_all
+      have original: "\<forall>F v. environment_formed F \<longrightarrow> artifact_at F v S \<longrightarrow>
+        syntax_references F v A B \<longrightarrow> native_schema_at F v (rs!i) (As!i)"
+        using clauses(10) small by blast
+      have source_alpha: "schema_alpha_variant (Ss!i) (As!i)" using clauses(9) small by blast
+      have dep_equal: "schema_dependencies (As!i) = schema_dependencies (Ss!i)"
+        by (rule schema_alpha_dependencies[OF source_alpha])
+      have member: "Ss!i \<in> set Ss" by (rule nth_mem[OF small])
+      have dependencies: "schema_dependencies (As!i) \<subseteq> rel_ran B"
+        using clauses(7) dep_equal member by blast
+      have read: "native_schema_at E u (3#(rs!i)) (rename_schema (Cons 3) (Cons 3) id (As!i))"
+        by (rule compiled_schema_copy[OF clauses(1,6) original dependencies ef source right_inj right_addr
+            frame.clause_reads right_refs])
+      show "native_schema_at E u (map (Cons 3) rs ! i) (?As!i)" using read index ri by simp
+    qed
+    have lengths: "length ?ss = length (map (Cons 3) rs)" "length ?ss = length ?As"
+      using clauses(3,4) by simp_all
+    have family: "native_schema_family_at E u [1,0] (set (zip ?ss ?As))"
+      by (rule native_schema_family_from_list[OF ef source frame.clauses_read lengths
+          family_ports_distinct schema_reads])
+    have inside: "I \<subseteq> Cons 2 ` rra_carrier (object_structure R)" using scoped(2) by blast
+    have top_separate: "insert [] (set [[0,0],[0,1]]) \<inter> (I \<union> {[1,0]}) = {}"
+      using inside by auto
+    have body_separate: "[1,0] \<notin> I" using inside by auto
+    have interface_read: "scoped_pattern_at E u (2#r) (rename_pattern ?f p) I K"
+      using scoped(1) by (simp only: rename_pattern_composition)
+    show "native_definition_at E u [] (rename_pattern ?f p) (set (zip ?ss ?As))"
+      unfolding native_definition_at_def
+      by (rule conjI[OF ef], rule exI[of _ ?T], rule exI[of _ "[[0,0],[0,1]]"],
+          rule exI[of _ "2#r"], rule exI[of _ "[1,0]"], rule exI[of _ I], rule exI[of _ K])
+         (use source frame.record_read interface_read family top_separate body_separate in auto)
+  qed
+  show ?thesis by (rule exI[of _ ?T], rule exI[of _ ?f], rule exI[of _ ?ss], rule exI[of _ ?As],
+      rule exI[of _ ?L], rule exI[of _ ?C])
+    (use frame.formed frame.no_counts frame.root_inside finj clauses(3,4) alpha profile bounds range recover in auto)
+qed
+
+text \<open>
+  Every formed interface and complete finite clause list has native definition
+  syntax at the fixed empty local address. Its interface and each clause are
+  injective renamings of the source fields. Every callee requirement is derived
+  from the complete source list. Recovery is by the existing native definition
+  reader in the actual destination environment, including for zero clauses.
+\<close>
+
+end
+
+/home/julius/structure_and_semantics/theories/Factor_Schema_Code.thy
+theory Factor_Schema_Code
+  imports Factor_Syntax_Copy Factor_Reference_Forests
+begin
+
+section \<open>Construction facts for complete schema code blocks\<close>
+
+definition schema_code ::
+  "exact_artifact \<Rightarrow> local_address \<Rightarrow> 'u native_schema \<Rightarrow>
+    (local_address \<times> exact_artifact) set \<Rightarrow> (local_address \<times> 'u definition_site) set \<Rightarrow> bool" where
+  "schema_code R r A L C \<longleftrightarrow> exact_formed R \<and>
+    bag_count (object_data R) = (\<lambda>_. 0) \<and> r \<in> rra_carrier (object_structure R) \<and>
+    reference_table_formed L C \<and> rel_dom L \<union> rel_dom C \<subseteq> rra_carrier (object_structure R) \<and>
+    rel_ran C = schema_dependencies A \<and>
+    (\<forall>E u. environment_formed E \<longrightarrow> artifact_at E u R \<longrightarrow>
+      syntax_references E u L C \<longrightarrow> native_schema_at E u r A)"
+
+lemma schema_code_properties:
+  assumes "schema_code R r A L C"
+  shows "exact_formed R" "bag_count (object_data R) = (\<lambda>_. 0)"
+    "r \<in> rra_carrier (object_structure R)" "reference_table_formed L C"
+    "rel_dom L \<union> rel_dom C \<subseteq> rra_carrier (object_structure R)"
+    "rel_ran C = schema_dependencies A"
+    "\<forall>E u. environment_formed E \<longrightarrow> artifact_at E u R \<longrightarrow>
+      syntax_references E u L C \<longrightarrow> native_schema_at E u r A"
+  using assms by (auto simp: schema_code_def)
+
+theorem schema_code_total:
+  fixes S :: "('a,'s,local_address option definition_site) factor_schema"
+  assumes formed: "schema_formed S"
+    and addresses: "\<forall>d\<in>schema_dependencies S. octets_formed (snd d)"
+  shows "\<exists>R r A L C. schema_alpha_variant S A \<and> schema_code R r A L C"
+proof -
+  obtain R :: exact_artifact and r :: local_address and f :: "'a \<Rightarrow> local_address"
+    and h :: "'s \<Rightarrow> local_address" and L :: "(local_address \<times> exact_artifact) set"
+    and C :: "(local_address \<times> local_address option definition_site) set" where built:
+    "exact_formed R" "inj_on f (schema_variables S)" "inj_on h (schema_sockets S)"
+    "\<forall>E u. environment_formed E \<longrightarrow> artifact_at E u R \<longrightarrow>
+      syntax_references E u L C \<longrightarrow> native_schema_at E u r (rename_schema f h id S)"
+    "reference_table_formed L C" "rel_dom L \<union> rel_dom C \<subseteq> rra_carrier (object_structure R)"
+    "rel_ran C = schema_dependencies S" "bag_count (object_data R) = (\<lambda>_. 0)"
+    "r \<in> rra_carrier (object_structure R)"
+    using schema_compilation_total[OF formed addresses] by metis
+  have alpha: "schema_alpha_variant S (rename_schema f h id S)"
+    unfolding schema_alpha_variant_def
+    by (rule exI[of _ f], rule exI[of _ h]) (use built(2,3) in simp)
+  have code: "schema_code R r (rename_schema f h id S) L C"
+    using built by (simp add: schema_code_def renamed_schema_dependencies)
+  show ?thesis using alpha code by blast
+qed
+
+theorem schema_code_list_total:
+  fixes Ss :: "('a,'s,local_address option definition_site) factor_schema list"
+  assumes formed: "\<forall>S\<in>set Ss. schema_formed S"
+    and addresses: "\<forall>S\<in>set Ss. \<forall>d\<in>schema_dependencies S. octets_formed (snd d)"
+  shows "\<exists>Rs rs As Ls Cs. length Rs = length Ss \<and> length rs = length Ss \<and>
+    length As = length Ss \<and> length Ls = length Ss \<and> length Cs = length Ss \<and>
+    (\<forall>i<length Ss. schema_alpha_variant (Ss!i) (As!i) \<and> schema_code (Rs!i) (rs!i) (As!i) (Ls!i) (Cs!i))"
+  using formed addresses
+proof (induction Ss)
+  case Nil
+  show ?case by (rule exI[of _ "[]"])+ simp
+next
+  case (Cons S Ss)
+  have sf: "schema_formed S" and sa: "\<forall>d\<in>schema_dependencies S. octets_formed (snd d)"
+    and tf: "\<forall>T\<in>set Ss. schema_formed T"
+    and ta: "\<forall>T\<in>set Ss. \<forall>d\<in>schema_dependencies T. octets_formed (snd d)"
+    using Cons.prems by simp_all
+  obtain R r A L C where head: "schema_alpha_variant S A" "schema_code R r A L C"
+    using schema_code_total[OF sf sa] by metis
+  obtain Rs :: "exact_artifact list" and rs :: "local_address list"
+    and As :: "local_address option native_schema list"
+    and Ls :: "(local_address \<times> exact_artifact) set list"
+    and Cs :: "(local_address \<times> local_address option definition_site) set list" where tail:
+    "length Rs = length Ss" "length rs = length Ss" "length As = length Ss"
+    "length Ls = length Ss" "length Cs = length Ss"
+    "\<forall>i<length Ss. schema_alpha_variant (Ss!i) (As!i) \<and> schema_code (Rs!i) (rs!i) (As!i) (Ls!i) (Cs!i)"
+    using Cons.IH[OF tf ta] by metis
+  have each: "\<forall>i<length (S#Ss). schema_alpha_variant ((S#Ss)!i) ((A#As)!i) \<and>
+    schema_code ((R#Rs)!i) ((r#rs)!i) ((A#As)!i) ((L#Ls)!i) ((C#Cs)!i)"
+  proof (intro allI impI)
+    fix i assume index: "i < length (S#Ss)"
+    show "schema_alpha_variant ((S#Ss)!i) ((A#As)!i) \<and>
+      schema_code ((R#Rs)!i) ((r#rs)!i) ((A#As)!i) ((L#Ls)!i) ((C#Cs)!i)"
+      using index head tail(6) by (cases i) auto
+  qed
+  show ?case by (rule exI[of _ "R#Rs"], rule exI[of _ "r#rs"], rule exI[of _ "A#As"],
+      rule exI[of _ "L#Ls"], rule exI[of _ "C#Cs"])
+    (use tail(1-5) each in auto)
+qed
+
+text \<open>
+  The code predicate collects facts proved by the finite compiler: formation,
+  source boundaries, complete references, and recovery by the existing native
+  reader. It is a theorem interface for construction. Arbitrary finite source
+  lists receive blocks with independent binder and socket assignments; each
+  resulting projection is an injective renaming of its corresponding source.
+\<close>
+
+end
+
+/home/julius/structure_and_semantics/theories/Factor_Proof_Node_Code.thy
+theory Factor_Proof_Node_Code
+  imports Factor_Proof_Node_Construction Factor_Graph_Metadata
+begin
+
+section \<open>A derived compilation contract for both proof-node forms\<close>
+
+fun proof_node_reference_sites ::
+  "('u definition_site,'u definition_site) schema_graph_node \<Rightarrow>
+    ('u definition_site \<times> 'u definition_site) set \<Rightarrow> 'u definition_site set" where
+  "proof_node_reference_sites Schema_Assertion D={}"
+| "proof_node_reference_sites (Schema_Inference c V) D=insert c (rel_dom (fset V)\<union>rel_dom D\<union>rel_ran D)"
+
+definition proof_node_code_for ::
+  "('u definition_site,'u definition_site) schema_graph_node \<Rightarrow>
+    ('u definition_site \<times> 'u definition_site) set \<Rightarrow> exact_artifact \<Rightarrow>
+    (local_address\<times>exact_artifact) set \<Rightarrow> (local_address\<times>'u definition_site) set \<Rightarrow>
+    local_address set \<Rightarrow> local_address set \<Rightarrow> bool" where
+  "proof_node_code_for N D R L C I K \<longleftrightarrow>
+    exact_formed R \<and> bag_count (object_data R)=(\<lambda>_. 0) \<and>
+    []\<in>rra_carrier (object_structure R) \<and> reference_table_formed L C \<and>
+    rra_carrier (object_structure R)=I\<union>K \<and> I\<inter>K={} \<and>
+    K=rel_dom L\<union>rel_dom C \<and> rel_ran C=proof_node_reference_sites N D \<and>
+    (\<forall>E u. environment_formed E \<longrightarrow> artifact_at E u R \<longrightarrow> syntax_references E u L C \<longrightarrow>
+      native_proof_node_at E u [] N D I K)"
+
+theorem proof_node_code_total:
+  fixes E :: "local_address option artifact_environment"
+  assumes ef: "environment_formed E" and inputs: "graph_node_inputs_at E D N"
+    and finite: "finite D" and functional: "single_valued D"
+    and targets: "\<forall>s n. (s,n)\<in>D \<longrightarrow> octets_formed (snd n)"
+  shows "\<exists>R L C I K. proof_node_code_for N D R L C I K"
+proof (cases N)
+  case Schema_Assertion
+  have empty: "D={}" using inputs Schema_Assertion by simp
+  obtain R where code: "exact_formed R" "bag_count (object_data R)=(\<lambda>_. 0)"
+    "rra_carrier (object_structure R)={[]}"
+    "\<forall>F :: local_address option artifact_environment. \<forall>u.
+      environment_formed F \<longrightarrow> artifact_at F u R \<longrightarrow>
+      native_proof_node_at F u [] Schema_Assertion {} {[]} {}"
+    using assertion_node_syntax_total by blast
+  show ?thesis
+    by (rule exI[of _ R], rule exI[of _ "{}"], rule exI[of _ "{}"],
+        rule exI[of _ "{[]}"], rule exI[of _ "{}"])
+       (use code empty in \<open>simp add: proof_node_code_for_def Schema_Assertion\<close>)
+next
+  case (Schema_Inference c V)
+  have cite: "c\<in>environment_positions E" and bindings: "single_valued (fset V)"
+    and arguments: "\<forall>a t. (a,t)\<in>fset V \<longrightarrow> a\<in>environment_positions E \<and> term_formed t"
+    and sockets: "rel_dom D\<subseteq>environment_positions E" using inputs Schema_Inference by simp_all
+  have address: "octets_formed (snd c)" by (rule environment_position_address[OF ef cite])
+  have terms: "\<forall>a t. (a,t)\<in>fset V \<longrightarrow> octets_formed (snd a) \<and> term_formed t"
+  proof (intro allI impI)
+    fix a t assume member: "(a,t)\<in>fset V"
+    have at: "a\<in>environment_positions E" and tf: "term_formed t" using arguments member by blast+
+    show "octets_formed (snd a) \<and> term_formed t" using environment_position_address[OF ef at] tf by blast
+  qed
+  have endpoints: "\<forall>s n. (s,n)\<in>D \<longrightarrow> octets_formed (snd s) \<and> octets_formed (snd n)"
+  proof (intro allI impI)
+    fix s n assume member: "(s,n)\<in>D"
+    have key: "s\<in>rel_dom D" by (rule rel_domI[OF member])
+    have at: "s\<in>environment_positions E" by (rule subsetD[OF sockets key])
+    show "octets_formed (snd s) \<and> octets_formed (snd n)"
+      using environment_position_address[OF ef at] targets member by blast
+  qed
+  show ?thesis using inference_node_syntax_total[OF address bindings terms finite functional endpoints]
+    by (simp add: proof_node_code_for_def Schema_Inference)
+qed
+
+lemma proof_node_code_recovers:
+  assumes code: "proof_node_code_for N D R L C I K"
+    and ef: "environment_formed E" and art: "artifact_at E u R" and refs: "syntax_references E u L C"
+  shows "native_proof_node_at E u [] N D I K"
+  using code ef art refs unfolding proof_node_code_for_def by blast
+
+lemma proof_node_reference_boundary:
+  assumes inputs: "graph_node_inputs_at E D N" and targets: "rel_ran D\<subseteq>U"
+  shows "proof_node_reference_sites N D\<subseteq>environment_positions E\<union>U"
+proof (cases N)
+  case Schema_Assertion
+  then show ?thesis by simp
+next
+  case (Schema_Inference c V)
+  have clause: "c\<in>environment_positions E"
+    and arguments: "\<forall>a t. (a,t)\<in>fset V \<longrightarrow> a\<in>environment_positions E"
+    and sockets: "rel_dom D\<subseteq>environment_positions E"
+    using inputs Schema_Inference by auto
+  have keys: "rel_dom (fset V)\<subseteq>environment_positions E"
+    using arguments by (auto simp only: rel_dom_def; blast)
+  show ?thesis using clause keys sockets targets by (simp only: Schema_Inference proof_node_reference_sites.simps) blast
+qed
+
+text \<open>
+  This contract packages already proved syntax and recovery properties. It is
+  not stored in a proof artifact and does not validate a derivation. Program
+  inputs stay at their actual sites; only the proof targets need subsequent
+  placement. Compatible installed references then recover the exact node.
+\<close>
+
+end

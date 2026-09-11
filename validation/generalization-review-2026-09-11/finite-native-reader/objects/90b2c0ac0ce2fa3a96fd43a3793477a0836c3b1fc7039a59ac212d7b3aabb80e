@@ -1,0 +1,405 @@
+{
+  "invocation": "d3bfb09f-b7a8-4bf4-a60f-291760a8190b",
+  "status": "evaluated",
+  "started_utc": "2026-09-11T10:33:29.825668+00:00",
+  "exit_code": 0,
+  "role": "Execution evidence with separately qualified semantic meaning",
+  "input": {
+    "path": "/tmp/generalization-quality-review/finite-reader-example/native-proof-label/native-proof-label/followed-case.json",
+    "sha256": "3679d0f45e06ee5a07e4dc97fcbe9da58dc59ab4000d7efc703d4ada0c331720"
+  },
+  "evidence_archive": [
+    {
+      "role": "original case",
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-proof-label/native-proof-label/followed-case.json",
+      "sha256": "3679d0f45e06ee5a07e4dc97fcbe9da58dc59ab4000d7efc703d4ada0c331720",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/native-proof-label/native-proof-label/followed/evidence-d3bfb09f-b7a8-4bf4-a60f-291760a8190b/3679d0f45e06ee5a07e4dc97fcbe9da58dc59ab4000d7efc703d4ada0c331720"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-proof-label/native-proof-label/initial/evidence-d43f26e0-badf-4914-9c6c-e0485f69ccf4/02a4ee9579c13bd12925c856868d1cb427e458dbb7a500e72fc956786ac789dc",
+      "sha256": "02a4ee9579c13bd12925c856868d1cb427e458dbb7a500e72fc956786ac789dc",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/native-proof-label/native-proof-label/followed/evidence-d3bfb09f-b7a8-4bf4-a60f-291760a8190b/02a4ee9579c13bd12925c856868d1cb427e458dbb7a500e72fc956786ac789dc"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-proof-label/native-proof-label/initial/evidence-d43f26e0-badf-4914-9c6c-e0485f69ccf4/39feab5e4c17631e14f5c8e76e4441d4ef319b5b7c46aead2a7a6364d22ebab9",
+      "sha256": "39feab5e4c17631e14f5c8e76e4441d4ef319b5b7c46aead2a7a6364d22ebab9",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/native-proof-label/native-proof-label/followed/evidence-d3bfb09f-b7a8-4bf4-a60f-291760a8190b/39feab5e4c17631e14f5c8e76e4441d4ef319b5b7c46aead2a7a6364d22ebab9"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-proof-label/native-proof-label/initial/evidence-d43f26e0-badf-4914-9c6c-e0485f69ccf4/b59d525c78885ca4b204c28babfdda5388aa6fedf38dc19b65024ef860287029",
+      "sha256": "b59d525c78885ca4b204c28babfdda5388aa6fedf38dc19b65024ef860287029",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/native-proof-label/native-proof-label/followed/evidence-d3bfb09f-b7a8-4bf4-a60f-291760a8190b/b59d525c78885ca4b204c28babfdda5388aa6fedf38dc19b65024ef860287029"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-proof-label/native-proof-label/initial/evidence-d43f26e0-badf-4914-9c6c-e0485f69ccf4/7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "sha256": "7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/native-proof-label/native-proof-label/followed/evidence-d3bfb09f-b7a8-4bf4-a60f-291760a8190b/7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-proof-label/native-proof-label/initial/receipt.json",
+      "sha256": "6fbe362944a3a92362fe70c092b0eedce812ae386bfe3c579ec557128c3b6446",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/native-proof-label/native-proof-label/followed/evidence-d3bfb09f-b7a8-4bf4-a60f-291760a8190b/6fbe362944a3a92362fe70c092b0eedce812ae386bfe3c579ec557128c3b6446"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-proof-label/native-proof-label/initial/case.json",
+      "sha256": "a276b1327bdf501eecd44a43d217b0595daf0ed9951dddd5e33b97f7a1b2256d",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/native-proof-label/native-proof-label/followed/evidence-d3bfb09f-b7a8-4bf4-a60f-291760a8190b/a276b1327bdf501eecd44a43d217b0595daf0ed9951dddd5e33b97f7a1b2256d"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-proof-label/native-proof-label/initial/run.log",
+      "sha256": "4ece835399efc809cd44326a6700f432fcb18fbe82f6368a9b6527478714c937",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/native-proof-label/native-proof-label/followed/evidence-d3bfb09f-b7a8-4bf4-a60f-291760a8190b/4ece835399efc809cd44326a6700f432fcb18fbe82f6368a9b6527478714c937"
+    },
+    {
+      "role": "case evidence",
+      "path": "/home/julius/structure_and_semantics/tools/revise_investigation_case.py",
+      "sha256": "70466b6a380397ef2c390d33c150d1b536feac4aafcedae6bb20d3e1a5106d66",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/native-proof-label/native-proof-label/followed/evidence-d3bfb09f-b7a8-4bf4-a60f-291760a8190b/70466b6a380397ef2c390d33c150d1b536feac4aafcedae6bb20d3e1a5106d66"
+    },
+    {
+      "role": "case evidence",
+      "path": "/home/julius/structure_and_semantics/tools/review_investigations.py",
+      "sha256": "368a254b9dc8f4323522d0edf4a6c7c1cac118afd70a97e0e000bf7bf86a6bb0",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/native-proof-label/native-proof-label/followed/evidence-d3bfb09f-b7a8-4bf4-a60f-291760a8190b/368a254b9dc8f4323522d0edf4a6c7c1cac118afd70a97e0e000bf7bf86a6bb0"
+    },
+    {
+      "role": "execution tool",
+      "path": "/home/julius/structure_and_semantics/tools/investigate.py",
+      "sha256": "7643dbebe13aed0e9d9bc4cff062575c665fec4ed0f7c0527857cd5d07263628",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/native-proof-label/native-proof-label/followed/evidence-d3bfb09f-b7a8-4bf4-a60f-291760a8190b/7643dbebe13aed0e9d9bc4cff062575c665fec4ed0f7c0527857cd5d07263628"
+    },
+    {
+      "role": "execution tool",
+      "path": "/home/julius/structure_and_semantics/tools/build.py",
+      "sha256": "8915b7a480b2a17b5cea5b819f3be43323f69cb79dc1513a76c07eb83f6b491e",
+      "archive": "/tmp/generalization-quality-review/finite-reader-example/native-proof-label/native-proof-label/followed/evidence-d3bfb09f-b7a8-4bf4-a60f-291760a8190b/8915b7a480b2a17b5cea5b819f3be43323f69cb79dc1513a76c07eb83f6b491e"
+    }
+  ],
+  "case_sha256": "3679d0f45e06ee5a07e4dc97fcbe9da58dc59ab4000d7efc703d4ada0c331720",
+  "question": "How should the existing proof-label syntax rule apply to the newly added native package proof?",
+  "scope": {
+    "candidates": {
+      "0": "Keep the reserved fact label",
+      "1": "Rename definition to native_read and preserve the exact proof statement and references"
+    },
+    "facets": {
+      "0": "Avoids the command-keyword collision",
+      "1": "Preserves the complete mathematical argument"
+    },
+    "boundary": "The static scan found a local fact labelled definition, an Isabelle outer command keyword. This instantiates the same lexical correction used earlier for value. The source statements, witnesses and argument are unchanged; only the local label and its reference change."
+  },
+  "semantic_boundary": "Results are exact for the supplied finite data. Independent meanings, evidence validity, and wider coverage require their own justification.",
+  "commands": [
+    {
+      "command": [
+        "isabelle",
+        "version"
+      ],
+      "started_utc": "2026-09-11T10:33:29.826374+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T10:33:29.905650+00:00",
+      "elapsed_seconds": 0.07928237901069224
+    },
+    {
+      "command": [
+        "isabelle",
+        "build",
+        "-v",
+        "-o",
+        "threads=12",
+        "-o",
+        "timeout=300",
+        "-D",
+        "/tmp/structural-investigation-engines/911ca434d8239cc2494f7c89e909289ccdc00cf43fa435e0454259968d0f009a"
+      ],
+      "started_utc": "2026-09-11T10:33:29.910411+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T10:33:32.240963+00:00",
+      "elapsed_seconds": 2.3305566860362887
+    },
+    {
+      "command": [
+        "isabelle",
+        "export",
+        "-n",
+        "-d",
+        "/tmp/structural-investigation-engines/911ca434d8239cc2494f7c89e909289ccdc00cf43fa435e0454259968d0f009a",
+        "-O",
+        "/tmp/generalization-quality-review/finite-reader-example/native-proof-label/native-proof-label/followed/export-d3bfb09f-b7a8-4bf4-a60f-291760a8190b",
+        "-x",
+        "*Finite_Investigation_Export:code/finite_investigation.ML",
+        "Finite_Investigation_911ca434d8239cc2494f7c89"
+      ],
+      "started_utc": "2026-09-11T10:33:32.241760+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T10:33:32.870050+00:00",
+      "elapsed_seconds": 0.6282972790068015
+    },
+    {
+      "command": [
+        "isabelle",
+        "getenv",
+        "-b",
+        "POLYML_HOME"
+      ],
+      "started_utc": "2026-09-11T10:33:32.870750+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T10:33:32.948812+00:00",
+      "elapsed_seconds": 0.0780682530021295
+    },
+    {
+      "command": [
+        "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+        "--version"
+      ],
+      "started_utc": "2026-09-11T10:33:32.957353+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T10:33:32.960925+00:00",
+      "elapsed_seconds": 0.0035637719556689262
+    },
+    {
+      "command": [
+        "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+        "--script",
+        "/tmp/generalization-quality-review/finite-reader-example/native-proof-label/native-proof-label/followed/execute.ML"
+      ],
+      "started_utc": "2026-09-11T10:33:32.961090+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T10:33:33.028722+00:00",
+      "elapsed_seconds": 0.06764053192455322
+    }
+  ],
+  "engine_key": "911ca434d8239cc2494f7c89e909289ccdc00cf43fa435e0454259968d0f009a",
+  "isabelle_version": "Isabelle2025-2",
+  "engine_session": "Finite_Investigation_911ca434d8239cc2494f7c89",
+  "engine_theory": "Presentation_Completion_Investigation",
+  "engine_sources": {
+    "Bootstrap_Relations": {
+      "path": "/home/julius/structure_and_semantics/theories/Bootstrap_Relations.thy",
+      "sha256": "50d4bf926dab217fdad8eb114fe1b0d369aa9a06741df1e568a5cc5fea7ceafe"
+    },
+    "Obligation_Reductions": {
+      "path": "/home/julius/structure_and_semantics/theories/Obligation_Reductions.thy",
+      "sha256": "a7cf5c82c7478cbde8ae94545ccaaf327af50b7b1ece2ff5458e29bc8ea1adcf"
+    },
+    "Inference_Closure": {
+      "path": "/home/julius/structure_and_semantics/theories/Inference_Closure.thy",
+      "sha256": "caf963ccb1ded2c117eded468e575900f7fd275728f9535efe5b40f87517f5ce"
+    },
+    "Bootstrap_Finite_Closure": {
+      "path": "/home/julius/structure_and_semantics/theories/Bootstrap_Finite_Closure.thy",
+      "sha256": "df469431d4c9e4f95b2b3b3d192d7da9d677800b0383609dd25b212264581bc5"
+    },
+    "Inference_Development": {
+      "path": "/home/julius/structure_and_semantics/theories/Inference_Development.thy",
+      "sha256": "f3b6057fd02d5ab49785f8941e21ddc20ede01d3d9c2278894254b872ff6846f"
+    },
+    "Candidate_Observations": {
+      "path": "/home/julius/structure_and_semantics/theories/Candidate_Observations.thy",
+      "sha256": "d17f7f738b725bfcc7c27560ac2f8d482dd8b02ca6e83ce72f738451da324749"
+    },
+    "Inference_Demands": {
+      "path": "/home/julius/structure_and_semantics/theories/Inference_Demands.thy",
+      "sha256": "f620b3cdaf10ba80a4795c5d273aa92e35d6dc04245119eb73fa0196e25aa03a"
+    },
+    "Candidate_Investigation": {
+      "path": "/home/julius/structure_and_semantics/theories/Candidate_Investigation.thy",
+      "sha256": "bb083972595406e027373ea6eb2ad1d8d45dc31e9935db8c5d591e6b1a133c92"
+    },
+    "Inference_Rounds": {
+      "path": "/home/julius/structure_and_semantics/theories/Inference_Rounds.thy",
+      "sha256": "bfc244e1aa9e68a4587fc5724cf2c6c8fe786a832798b280194cb8edbacaea24"
+    },
+    "Method_Development": {
+      "path": "/home/julius/structure_and_semantics/theories/Method_Development.thy",
+      "sha256": "82f4630526ae2bbfaba29d226b47bad77ed086cfc93e9765a3b04ca3bcfc3915"
+    },
+    "Method_Investigation": {
+      "path": "/home/julius/structure_and_semantics/theories/Method_Investigation.thy",
+      "sha256": "aefaf2532a1096f9945c6592b52241e9ac9e4ec0558fafabdcf6a30b3ddba7c1"
+    },
+    "Observation_Repairs": {
+      "path": "/home/julius/structure_and_semantics/theories/Observation_Repairs.thy",
+      "sha256": "97eb2c271b36e7aaa99e134aae0d4069b63fb03d0e89db26d28092af18b5bd97"
+    },
+    "Finite_Inference_Development": {
+      "path": "/home/julius/structure_and_semantics/theories/Finite_Inference_Development.thy",
+      "sha256": "dcd3ac4b8761e1197a54d58739524354c036864df2f3e33f493f71ef4ae26b6b"
+    },
+    "Finite_Investigation": {
+      "path": "/home/julius/structure_and_semantics/theories/Finite_Investigation.thy",
+      "sha256": "e8f24aeef856960db014b8ef47ab7c44be19dda573ee1bdad5073db96f5d1684"
+    },
+    "Finite_Observation_Repairs": {
+      "path": "/home/julius/structure_and_semantics/theories/Finite_Observation_Repairs.thy",
+      "sha256": "2834ce8cf69fc2c69be1ce9c02015d0da9c1723b701ebf7c2aa82633c26d8f24"
+    },
+    "Observation_Revisions": {
+      "path": "/home/julius/structure_and_semantics/theories/Observation_Revisions.thy",
+      "sha256": "9b3ad288b096531dcce382a678d5e261a26d04cb97aec311b2da59790b2d4942"
+    },
+    "Finite_Investigation_Interface": {
+      "path": "/home/julius/structure_and_semantics/theories/Finite_Investigation_Interface.thy",
+      "sha256": "816eb2ca216d95e70bc640c2775f9fdb5c79e3d43d71ca156636175a1b59c264"
+    },
+    "Presentation_Classes": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Classes.thy",
+      "sha256": "ec041e1bfca7b1bf648dc4ade30c5c9973d45907ef3a434e87a193755e5c8069"
+    },
+    "Presentation_Relations": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Relations.thy",
+      "sha256": "7381cbf8ed52753ee6bac33821b72312b9671488ee523ce964f805a2bdabb195"
+    },
+    "Presentation_Closure": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Closure.thy",
+      "sha256": "f78081a222b02cca01865fdda01de48ceb54739beb03a80c29b0fd86b6843b71"
+    },
+    "Presentation_Transport": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Transport.thy",
+      "sha256": "49abc2968f7b85c37bf33f84f09d6549b9bfedbb83c4c48b3080ed864026ddef"
+    },
+    "Presentation_Contracts": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Contracts.thy",
+      "sha256": "6977a5111cf2b30c46ec074d040c9ff81757eae56f482cbd0ee7784d9945f4e9"
+    },
+    "Observation_Invariance": {
+      "path": "/home/julius/structure_and_semantics/theories/Observation_Invariance.thy",
+      "sha256": "c6a2ef01120313d9e50aa21891a6a08a144252f853c8ca49345345623fdf53e4"
+    },
+    "Presentation_Completion": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Completion.thy",
+      "sha256": "973f448f5578d806596c25198143e2bccb645c3b68e6b191edd0642c62f92a8b"
+    },
+    "Presentation_Completion_Investigation": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Completion_Investigation.thy",
+      "sha256": "2fdd64d2c0b44f8f2d20acd357cdc11c02053d49a411db83095bcd9dab9a82f7"
+    }
+  },
+  "tools": {
+    "/home/julius/structure_and_semantics/tools/investigate.py": "7643dbebe13aed0e9d9bc4cff062575c665fec4ed0f7c0527857cd5d07263628",
+    "/home/julius/structure_and_semantics/tools/build.py": "8915b7a480b2a17b5cea5b819f3be43323f69cb79dc1513a76c07eb83f6b491e"
+  },
+  "engine_snapshot": "/tmp/structural-investigation-engines/911ca434d8239cc2494f7c89e909289ccdc00cf43fa435e0454259968d0f009a",
+  "export_theory": "Finite_Investigation_Export",
+  "proof_receipt_sha256": "baa059fbcb7c1fd5473b75eb6afae4137ee5258c6aa333fe25a87cf4d5aefa6b",
+  "generated_engine": "/tmp/generalization-quality-review/finite-reader-example/native-proof-label/native-proof-label/followed/export-d3bfb09f-b7a8-4bf4-a60f-291760a8190b/Finite_Investigation_911ca434d8239cc2494f7c89.Finite_Investigation_Export/code/finite_investigation.ML",
+  "generated_engine_sha256": "268dd5589c44fd3efa8b3a90cc12dea283fa2a4fc1d6975f23732e7172da7a5b",
+  "proof_snapshot_hashes": {
+    "ROOT": "001c70d91ddf5de2bd98e0121c3939c47468bce0b2b190daebe89aa24b4f2913",
+    "theories/Finite_Investigation_Export.thy": "9110413a6a0c66e81c562859749ab476e8e98e29b9e886e92a46c8dc88052e13",
+    "theories/Bootstrap_Relations.thy": "50d4bf926dab217fdad8eb114fe1b0d369aa9a06741df1e568a5cc5fea7ceafe",
+    "theories/Obligation_Reductions.thy": "a7cf5c82c7478cbde8ae94545ccaaf327af50b7b1ece2ff5458e29bc8ea1adcf",
+    "theories/Inference_Closure.thy": "caf963ccb1ded2c117eded468e575900f7fd275728f9535efe5b40f87517f5ce",
+    "theories/Bootstrap_Finite_Closure.thy": "df469431d4c9e4f95b2b3b3d192d7da9d677800b0383609dd25b212264581bc5",
+    "theories/Inference_Development.thy": "f3b6057fd02d5ab49785f8941e21ddc20ede01d3d9c2278894254b872ff6846f",
+    "theories/Candidate_Observations.thy": "d17f7f738b725bfcc7c27560ac2f8d482dd8b02ca6e83ce72f738451da324749",
+    "theories/Inference_Demands.thy": "f620b3cdaf10ba80a4795c5d273aa92e35d6dc04245119eb73fa0196e25aa03a",
+    "theories/Candidate_Investigation.thy": "bb083972595406e027373ea6eb2ad1d8d45dc31e9935db8c5d591e6b1a133c92",
+    "theories/Inference_Rounds.thy": "bfc244e1aa9e68a4587fc5724cf2c6c8fe786a832798b280194cb8edbacaea24",
+    "theories/Method_Development.thy": "82f4630526ae2bbfaba29d226b47bad77ed086cfc93e9765a3b04ca3bcfc3915",
+    "theories/Method_Investigation.thy": "aefaf2532a1096f9945c6592b52241e9ac9e4ec0558fafabdcf6a30b3ddba7c1",
+    "theories/Observation_Repairs.thy": "97eb2c271b36e7aaa99e134aae0d4069b63fb03d0e89db26d28092af18b5bd97",
+    "theories/Finite_Inference_Development.thy": "dcd3ac4b8761e1197a54d58739524354c036864df2f3e33f493f71ef4ae26b6b",
+    "theories/Finite_Investigation.thy": "e8f24aeef856960db014b8ef47ab7c44be19dda573ee1bdad5073db96f5d1684",
+    "theories/Finite_Observation_Repairs.thy": "2834ce8cf69fc2c69be1ce9c02015d0da9c1723b701ebf7c2aa82633c26d8f24",
+    "theories/Observation_Revisions.thy": "9b3ad288b096531dcce382a678d5e261a26d04cb97aec311b2da59790b2d4942",
+    "theories/Finite_Investigation_Interface.thy": "816eb2ca216d95e70bc640c2775f9fdb5c79e3d43d71ca156636175a1b59c264",
+    "theories/Presentation_Classes.thy": "ec041e1bfca7b1bf648dc4ade30c5c9973d45907ef3a434e87a193755e5c8069",
+    "theories/Presentation_Relations.thy": "7381cbf8ed52753ee6bac33821b72312b9671488ee523ce964f805a2bdabb195",
+    "theories/Presentation_Closure.thy": "f78081a222b02cca01865fdda01de48ceb54739beb03a80c29b0fd86b6843b71",
+    "theories/Presentation_Transport.thy": "49abc2968f7b85c37bf33f84f09d6549b9bfedbb83c4c48b3080ed864026ddef",
+    "theories/Presentation_Contracts.thy": "6977a5111cf2b30c46ec074d040c9ff81757eae56f482cbd0ee7784d9945f4e9",
+    "theories/Observation_Invariance.thy": "c6a2ef01120313d9e50aa21891a6a08a144252f853c8ca49345345623fdf53e4",
+    "theories/Presentation_Completion.thy": "973f448f5578d806596c25198143e2bccb645c3b68e6b191edd0642c62f92a8b",
+    "theories/Presentation_Completion_Investigation.thy": "2fdd64d2c0b44f8f2d20acd357cdc11c02053d49a411db83095bcd9dab9a82f7"
+  },
+  "poly": "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+  "poly_sha256": "47efc18d0b38bc908c8b29798575501e8b7b027f593022c80ff1acc55b9495b4",
+  "poly_version": "Poly/ML 5.9.2 Release",
+  "runtime_program_sha256": "ec458420ff67b8cbd6ed65e801a6200a973fbb77b9df351c5bf5319d96f7e8c6",
+  "runtime_seconds": 0.0676487119635567,
+  "result": {
+    "input_formed": true,
+    "residual": [],
+    "profiles": [
+      {
+        "candidate": 0,
+        "profile": []
+      },
+      {
+        "candidate": 1,
+        "profile": [
+          [
+            0,
+            0
+          ]
+        ]
+      }
+    ],
+    "losses": [
+      {
+        "from": 0,
+        "to": 0,
+        "losses": []
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "losses": []
+      },
+      {
+        "from": 1,
+        "to": 0,
+        "losses": [
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "from": 1,
+        "to": 1,
+        "losses": []
+      }
+    ],
+    "safe_facets": [
+      0,
+      1
+    ],
+    "conflicts": [],
+    "repairs": [],
+    "unrepairable": [],
+    "extension": [
+      0
+    ],
+    "revision": {
+      "retained": [
+        0
+      ],
+      "withdrawn": [],
+      "repairs": [],
+      "selection": [
+        0
+      ],
+      "residual": []
+    }
+  },
+  "sources_and_tools_unchanged": true,
+  "finished_utc": "2026-09-11T10:33:33.038016+00:00",
+  "elapsed_seconds": 3.212229873985052,
+  "log_sha256": "5c6e802fcde0fb59260a4c3fb643ff6af4fb2f3cf5fff83eebb19e3102e858a4"
+}

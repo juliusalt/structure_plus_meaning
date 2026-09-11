@@ -1,0 +1,6 @@
+{
+  "decision_sha256": "1cfbb57ba9e44384708c60708657e199141c1f31a63c0542ff25fa838b67a6dd",
+  "critical_assessment": "The mandatory requirements include the complete current repository, exact native source/reference boundaries, actual reader settlements and all controls, retained original proof/runtime bytes, and replay. The403-theory native batch alone is insufficient for repository acceptance. The817-theory main check is now running with900-second allowance justified by the preceding807-theory375-second check. No selected theory source is being edited.",
+  "main_check_log": "/tmp/finite-native-main-check.log",
+  "native_reader_run": "/tmp/generalization-quality-review/finite-reader-example/native-reader-execution20"
+}

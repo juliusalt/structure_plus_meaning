@@ -1,0 +1,19 @@
+[
+  {
+    "name": "empty-literal",
+    "payload": []
+  },
+  {
+    "name": "nonempty-literal",
+    "payload": [
+      0,
+      255
+    ]
+  },
+  {
+    "name": "nonbyte-literal",
+    "payload": [
+      256
+    ]
+  }
+]

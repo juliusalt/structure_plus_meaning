@@ -1,0 +1,50 @@
+{
+  "status": "evaluated",
+  "exit_code": 0,
+  "elapsed_seconds": 3.1650914129568264,
+  "runtime_seconds": 0.06849959003739059,
+  "receipt": "/tmp/generalization-quality-review/finite-reader-example/presenter-design/sequence-reuse/initial/receipt.json",
+  "input_formed": true,
+  "residual": [
+    [
+      0,
+      2
+    ],
+    [
+      1,
+      2
+    ]
+  ],
+  "repair_witnesses": 2,
+  "conflicts": 0,
+  "unrepairable": 0,
+  "extension": [
+    0,
+    1
+  ],
+  "revision": {
+    "retained": [
+      0
+    ],
+    "withdrawn": [],
+    "repairs": [
+      [
+        0,
+        2,
+        1,
+        0
+      ],
+      [
+        1,
+        2,
+        1,
+        0
+      ]
+    ],
+    "selection": [
+      0,
+      1
+    ],
+    "residual": []
+  }
+}

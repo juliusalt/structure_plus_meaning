@@ -1,0 +1,473 @@
+{
+  "question": "Prepare and validate the explicit finite native source witness",
+  "boundary": "These externally constructed candidates are not yet native facts. The grammar permits the shared empty binder and literal leaf across interface and clause, while retaining each record header separation. finite_record_candidates restricts a record of arity n to n headed rows and n-length row lists, so a three-field record has at most 27 raw row lists, not carrier-to-the-sixth candidates. The full reader also checks all other stated conditions. The old binding at source port 23 is retained as complete environment data and its compatibility with actual native readings must be verified. Only the closed finite checks are initially claimed; no oracle or unchecked validity assertion supplies native evidence.",
+  "problems": [
+    {
+      "name": "explicit-source-witness",
+      "case": {
+        "schema": "finite-investigation-1",
+        "kind": "basis",
+        "question": "Which concrete source should establish the remaining finite native inference example?",
+        "scope": {
+          "candidates": {
+            "0": "Export a witness selected by the abstract totality theorem",
+            "1": "Use the retained literal-clause source, a separate fresh inference node, and the complete old background artifact and binding; recover every actual native reading before declaring its judgments known",
+            "2": "Reuse only the old outer-shape markers"
+          },
+          "facets": {
+            "0": "Supplies complete finite source and binding tables",
+            "1": "Includes a native package clause, complete replacement record, target schema and inference node",
+            "2": "Tests preservation with a nonempty old binding and counted background material",
+            "3": "Retains real complete premise evidence and an executed final inference goal as requirements"
+          },
+          "boundary": "These externally constructed candidates are not yet native facts. The grammar permits the shared empty binder and literal leaf across interface and clause, while retaining each record header separation. finite_record_candidates restricts a record of arity n to n headed rows and n-length row lists, so a three-field record has at most 27 raw row lists, not carrier-to-the-sixth candidates. The full reader also checks all other stated conditions. The old binding at source port 23 is retained as complete environment data and its compatibility with actual native readings must be verified. Only the closed finite checks are initially claimed; no oracle or unchecked validity assertion supplies native evidence."
+        },
+        "candidates": [
+          0,
+          1,
+          2
+        ],
+        "facets": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "selected": [
+          0
+        ],
+        "observations": [
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            3,
+            1,
+            0
+          ]
+        ],
+        "relation": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            2,
+            2
+          ]
+        ],
+        "evidence": [
+          {
+            "path": "/tmp/generalization-quality-review/finite-reader-example/native-ground-source-proposal.json",
+            "sha256": "1a036daa6dfbec3d45fab84906afc4b022690e987286fc08a5bb538bbb7b3f72"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/theories/RRA_Executable_Records.thy",
+            "sha256": "1bfd3ebe8467ae0201473dc80d533910e727fad83f46a9cc4b4c6afdbb25e54a"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Executable_Packages.thy",
+            "sha256": "d5058b0e797fac5a6b45a3a85adffd0d785708a3a848d8d504374f5ed583cab0"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Executable_Metadata.thy",
+            "sha256": "edda60ef22d34cc914aebd761b758cb5098326b10f1e140303d59477456d8407"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Presentation.thy",
+            "sha256": "bcce2c6c8385a65a8a0fe22dbd7eb23adfc4e82ef26a0781eaf3b72ef805e038"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Schema_Observations.thy",
+            "sha256": "c6acb26351b7d8b3c661859d84f425f800c7103dfde887e0d950fe74c6639f09"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Substitution_Contracts.thy",
+            "sha256": "c80347ed36e95f72254c7b6aec10b320ec6267a90a7ec4d149bbc523743f64e2"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Specialization_Binding_Contracts.thy",
+            "sha256": "472f0d3894b939249152810c0d67c4d4b874e9dab0f96988de4c25112defabd8"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Inference_Specialization_Contracts.thy",
+            "sha256": "4653e4c1fff07dd09b889f6a3a0c3d79638ee53fef10f67c13336b371ee23e02"
+          },
+          {
+            "path": "/tmp/prepare-native-ground-example.py",
+            "sha256": "27150d1048f4a923b540bcc3a5b818790efdd8dc34bdd477f31b2f3fcd7ca4e9"
+          }
+        ]
+      },
+      "required_observations": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ]
+      ]
+    },
+    {
+      "name": "native-reading-validation",
+      "case": {
+        "schema": "finite-investigation-1",
+        "kind": "basis",
+        "question": "How should the explicit finite source readings be established?",
+        "scope": {
+          "candidates": {
+            "0": "Rebuild the native grammar derivations separately for this fixture",
+            "1": "Compute the existing finite reader predicates and use their exact native correspondence theorems; use kernel proof-producing code_simp for closed witness checks and retain separate runtime evidence",
+            "2": "Treat a successful external SML run as an Isabelle theorem"
+          },
+          "facets": {
+            "0": "Uses the existing native reader correctness arguments",
+            "1": "Requires actual accepted mathematical proofs of the native facts",
+            "2": "Retains independent runtime input and output checks",
+            "3": "Uses the actual arity-limited reader search rather than an assumed carrier-sized search"
+          },
+          "boundary": "These externally constructed candidates are not yet native facts. The grammar permits the shared empty binder and literal leaf across interface and clause, while retaining each record header separation. finite_record_candidates restricts a record of arity n to n headed rows and n-length row lists, so a three-field record has at most 27 raw row lists, not carrier-to-the-sixth candidates. The full reader also checks all other stated conditions. The old binding at source port 23 is retained as complete environment data and its compatibility with actual native readings must be verified. Only the closed finite checks are initially claimed; no oracle or unchecked validity assertion supplies native evidence."
+        },
+        "candidates": [
+          0,
+          1,
+          2
+        ],
+        "facets": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "selected": [
+          0
+        ],
+        "observations": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            2,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            3,
+            1,
+            0
+          ],
+          [
+            0,
+            2,
+            0
+          ],
+          [
+            2,
+            2,
+            0
+          ],
+          [
+            3,
+            2,
+            0
+          ]
+        ],
+        "relation": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            2,
+            2
+          ]
+        ],
+        "evidence": [
+          {
+            "path": "/tmp/generalization-quality-review/finite-reader-example/native-ground-source-proposal.json",
+            "sha256": "1a036daa6dfbec3d45fab84906afc4b022690e987286fc08a5bb538bbb7b3f72"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/theories/RRA_Executable_Records.thy",
+            "sha256": "1bfd3ebe8467ae0201473dc80d533910e727fad83f46a9cc4b4c6afdbb25e54a"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Executable_Packages.thy",
+            "sha256": "d5058b0e797fac5a6b45a3a85adffd0d785708a3a848d8d504374f5ed583cab0"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Executable_Metadata.thy",
+            "sha256": "edda60ef22d34cc914aebd761b758cb5098326b10f1e140303d59477456d8407"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Presentation.thy",
+            "sha256": "bcce2c6c8385a65a8a0fe22dbd7eb23adfc4e82ef26a0781eaf3b72ef805e038"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Schema_Observations.thy",
+            "sha256": "c6acb26351b7d8b3c661859d84f425f800c7103dfde887e0d950fe74c6639f09"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Substitution_Contracts.thy",
+            "sha256": "c80347ed36e95f72254c7b6aec10b320ec6267a90a7ec4d149bbc523743f64e2"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Specialization_Binding_Contracts.thy",
+            "sha256": "472f0d3894b939249152810c0d67c4d4b874e9dab0f96988de4c25112defabd8"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Inference_Specialization_Contracts.thy",
+            "sha256": "4653e4c1fff07dd09b889f6a3a0c3d79638ee53fef10f67c13336b371ee23e02"
+          },
+          {
+            "path": "/tmp/prepare-native-ground-example.py",
+            "sha256": "27150d1048f4a923b540bcc3a5b818790efdd8dc34bdd477f31b2f3fcd7ca4e9"
+          }
+        ]
+      },
+      "required_observations": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ]
+      ]
+    },
+    {
+      "name": "literal-family-reuse",
+      "case": {
+        "schema": "finite-investigation-1",
+        "kind": "basis",
+        "question": "What should be generalized in the concrete source fixture?",
+        "scope": {
+          "candidates": {
+            "0": "Copy a separate fixed source layout for each literal payload",
+            "1": "Define one literal-source constructor parameterized by payload using the existing complete finite artifact and environment constructors; instantiate the closed checks without claiming an unchecked universal reading",
+            "2": "Make a native validity axiom for all payloads"
+          },
+          "facets": {
+            "0": "Reuses the source construction over different literal values",
+            "1": "Keeps the exact finite material and scope boundary visible",
+            "2": "Distinguishes a supplied payload parameter from proved native validity",
+            "3": "Uses existing primitive constructors and correspondence theorems"
+          },
+          "boundary": "These externally constructed candidates are not yet native facts. The grammar permits the shared empty binder and literal leaf across interface and clause, while retaining each record header separation. finite_record_candidates restricts a record of arity n to n headed rows and n-length row lists, so a three-field record has at most 27 raw row lists, not carrier-to-the-sixth candidates. The full reader also checks all other stated conditions. The old binding at source port 23 is retained as complete environment data and its compatibility with actual native readings must be verified. Only the closed finite checks are initially claimed; no oracle or unchecked validity assertion supplies native evidence."
+        },
+        "candidates": [
+          0,
+          1,
+          2
+        ],
+        "facets": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "selected": [
+          0
+        ],
+        "observations": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            2,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            3,
+            1,
+            0
+          ]
+        ],
+        "relation": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            2,
+            2
+          ]
+        ],
+        "evidence": [
+          {
+            "path": "/tmp/generalization-quality-review/finite-reader-example/native-ground-source-proposal.json",
+            "sha256": "1a036daa6dfbec3d45fab84906afc4b022690e987286fc08a5bb538bbb7b3f72"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/theories/RRA_Executable_Records.thy",
+            "sha256": "1bfd3ebe8467ae0201473dc80d533910e727fad83f46a9cc4b4c6afdbb25e54a"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Executable_Packages.thy",
+            "sha256": "d5058b0e797fac5a6b45a3a85adffd0d785708a3a848d8d504374f5ed583cab0"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Executable_Metadata.thy",
+            "sha256": "edda60ef22d34cc914aebd761b758cb5098326b10f1e140303d59477456d8407"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Presentation.thy",
+            "sha256": "bcce2c6c8385a65a8a0fe22dbd7eb23adfc4e82ef26a0781eaf3b72ef805e038"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Schema_Observations.thy",
+            "sha256": "c6acb26351b7d8b3c661859d84f425f800c7103dfde887e0d950fe74c6639f09"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Substitution_Contracts.thy",
+            "sha256": "c80347ed36e95f72254c7b6aec10b320ec6267a90a7ec4d149bbc523743f64e2"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Specialization_Binding_Contracts.thy",
+            "sha256": "472f0d3894b939249152810c0d67c4d4b874e9dab0f96988de4c25112defabd8"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/theories/Factor_Inference_Specialization_Contracts.thy",
+            "sha256": "4653e4c1fff07dd09b889f6a3a0c3d79638ee53fef10f67c13336b371ee23e02"
+          },
+          {
+            "path": "/tmp/prepare-native-ground-example.py",
+            "sha256": "27150d1048f4a923b540bcc3a5b818790efdd8dc34bdd477f31b2f3fcd7ca4e9"
+          }
+        ]
+      },
+      "required_observations": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ]
+      ]
+    }
+  ]
+}

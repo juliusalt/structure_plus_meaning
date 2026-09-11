@@ -1,0 +1,150 @@
+{
+  "schema": "finite-investigation-1",
+  "kind": "basis",
+  "question": "How should exact source premise evidence be exposed and carried into the compiled inference program?",
+  "scope": {
+    "candidates": {
+      "0": "Reconstruct the record instances locally and assume their meanings transfer to the inference system",
+      "1": "Extract the existing exact source-call proof prefix into a reusable theorem, reuse it in its old consumer, and expose generic component-meaning preservation through the existing composition laws",
+      "2": "Seed the final 350 goal as known"
+    },
+    "facets": {
+      "0": "Uses actual source records and exact ordered reference tables",
+      "1": "Factors the existing witness construction without changing its prerequisites",
+      "2": "Proves known source calls in the same inference system as the compiled library",
+      "3": "Keeps the final inference request unseeded and requires real execution"
+    },
+    "boundary": "The existing binding_record_on_record proof already constructs the two complete reference tables and both admitted record instances from actual source rows. Its final conclusion hides these useful premise facts. Expose that exact proof prefix once and reuse it in the existing theorem and finite premise validation. Existing program-composition theorems preserve component meanings; factor the repeated lifting path into generic source-reader preservation lemmas. This is a prospective external decomposition proposal; it does not assert any newly compiled input has executed. The final inference goal must remain a derived request."
+  },
+  "candidates": [
+    0,
+    1,
+    2
+  ],
+  "facets": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "selected": [
+    0,
+    1,
+    2
+  ],
+  "observations": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      3,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      2,
+      1,
+      0
+    ],
+    [
+      3,
+      1,
+      0
+    ]
+  ],
+  "relation": [
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      1
+    ],
+    [
+      2,
+      0
+    ],
+    [
+      2,
+      1
+    ],
+    [
+      2,
+      2
+    ]
+  ],
+  "evidence": [
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-source-premises/source-premise-reuse/initial/evidence-3e18f262-6c99-4cad-8495-819b1aa99c70/289762595550e1b04682de5717c7363831b335e6728d3b129dc7a0451b938c2a",
+      "sha256": "289762595550e1b04682de5717c7363831b335e6728d3b129dc7a0451b938c2a",
+      "original_path": "/home/julius/structure_and_semantics/theories/Factor_Binding_Record_Contracts.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-source-premises/source-premise-reuse/initial/evidence-3e18f262-6c99-4cad-8495-819b1aa99c70/7f4e72223af0b0bba635b3150123f1248cdd8431615fef97fc9291186bf8c405",
+      "sha256": "7f4e72223af0b0bba635b3150123f1248cdd8431615fef97fc9291186bf8c405",
+      "original_path": "/home/julius/structure_and_semantics/theories/Factor_Inference_Reader_Investigation.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-source-premises/source-premise-reuse/initial/evidence-3e18f262-6c99-4cad-8495-819b1aa99c70/f1c3046bd7a22397cada6bb300a034a5b4577fe56c64a3e17e85b421bf107656",
+      "sha256": "f1c3046bd7a22397cada6bb300a034a5b4577fe56c64a3e17e85b421bf107656",
+      "original_path": "/home/julius/structure_and_semantics/theories/Factor_Inference_Specialization_Base.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-source-premises/source-premise-reuse/initial/evidence-3e18f262-6c99-4cad-8495-819b1aa99c70/a43dcefe2a527270fe62c6b488ed7b925ffd9709550bf4ae1106a23f027cb7b8",
+      "sha256": "a43dcefe2a527270fe62c6b488ed7b925ffd9709550bf4ae1106a23f027cb7b8",
+      "original_path": "/home/julius/structure_and_semantics/theories/Factor_Specialization_Binding_Clauses.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-source-premises/source-premise-reuse/initial/evidence-3e18f262-6c99-4cad-8495-819b1aa99c70/c50a58166f7d5c565b7f10dbe81c4a351830e9997c41925b475b754592770edb",
+      "sha256": "c50a58166f7d5c565b7f10dbe81c4a351830e9997c41925b475b754592770edb",
+      "original_path": "/home/julius/structure_and_semantics/tools/reader_construction_cases.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-source-premises/source-premise-reuse/initial/evidence-3e18f262-6c99-4cad-8495-819b1aa99c70/2c562803764a270742882d065b1b97e48099dd391886d6523f002a2aaff8b118",
+      "sha256": "2c562803764a270742882d065b1b97e48099dd391886d6523f002a2aaff8b118",
+      "original_path": "/tmp/generalization-quality-review/finite-reader-example/native-source-premises-specification.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-source-premises/source-premise-reuse/initial/evidence-3e18f262-6c99-4cad-8495-819b1aa99c70/7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "sha256": "7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "original_path": "/home/julius/structure_and_semantics/tools/check_decision_cases.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-source-premises/source-premise-reuse/initial/receipt.json",
+      "sha256": "1f95f43608bd02cf4aaf2f834e6a178eec8ec7cadbb2ea01f96658913dadf096"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-source-premises/source-premise-reuse/initial/case.json",
+      "sha256": "940e1142ae343329e33ca763c3aaaa218a5ce527cf1e498bc76b8598d8b8aa8a"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-source-premises/source-premise-reuse/initial/run.log",
+      "sha256": "6ac312163799cb863c75c047807b625c07e14341b48c05c30a4bc8107f0b345a"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/revise_investigation_case.py",
+      "sha256": "70466b6a380397ef2c390d33c150d1b536feac4aafcedae6bb20d3e1a5106d66"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/review_investigations.py",
+      "sha256": "368a254b9dc8f4323522d0edf4a6c7c1cac118afd70a97e0e000bf7bf86a6bb0"
+    }
+  ]
+}

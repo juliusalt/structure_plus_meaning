@@ -1,0 +1,97 @@
+theory Factor_Finite_Inference_Source_Checks
+  imports Factor_Finite_Inference_Sources Factor_Closed_Native_Definitions
+begin
+
+section \<open>Retain separate component certificates before package composition\<close>
+
+lemma finite_literal_environment_checks:
+  "finite_environment_formed (finite_literal_sources [])"
+  "finite_environment_formed (finite_literal_extension [])"
+  by code_simp+
+
+lemma finite_literal_binder_check:
+  "finite_binder_scope_at (finite_literal_artifact []) [3] {||}"
+  by code_simp
+
+lemma finite_literal_schema_check:
+  "finite_literal_schema [] |\<in>| finite_native_schema_readings (finite_literal_sources []) None [8]"
+  by code_simp
+
+lemma finite_literal_definition_check:
+  "(Finite_Pattern_Payload [],{|([7],finite_literal_schema [])|}) |\<in>|
+    finite_native_definition_readings (finite_literal_sources []) None [1]"
+  by code_simp
+
+lemma finite_literal_root_check:
+  "{|([16],None,[1])|} |\<in>| finite_native_root_family_readings (finite_literal_sources []) None [0]"
+  by code_simp
+
+lemma finite_literal_node_check:
+  "((Finite_Inference (None,[7]) {||},{||}),fset_of_list finite_literal_node_interior,{|[6]|}) |\<in>|
+    finite_proof_node_readings (finite_literal_extension []) (Some []) []"
+  by code_simp
+
+lemma finite_literal_package_composed:
+  "native_package_at (decode_finite_environment (finite_literal_sources [])) None [0]
+    (decode_finite_system (finite_literal_program []))"
+proof -
+  let ?E="decode_finite_environment (finite_literal_sources [])"
+  let ?S="decode_finite_schema (finite_literal_schema [])"
+  let ?G="{((None,[1]),Pattern_Payload [],{([7],?S)})}"
+  have ef: "environment_formed ?E"
+    using finite_literal_environment_checks(1) by (simp only: finite_environment_formed_correct)
+  have definition: "native_definition_at ?E None [1] (Pattern_Payload []) {([7],?S)}"
+    using finite_literal_definition_check
+    by (simp add: finite_native_definition_readings_correct map_relation_values_def)
+  have formed: "native_package_formed ?E {(None,[1])}"
+    and graph: "native_definition_graph ?E {(None,[1])}=?G"
+    using native_closed_definition_graph[OF ef, where G="?G"] definition
+    by (auto simp: rel_dom_def schema_dependencies_def finite_literal_schema_def
+      decode_finite_schema_def map_relation_values_def rel_ran_def)
+  have program: "native_program ?E {(None,[1])}=decode_finite_system (finite_literal_program [])"
+    by (auto simp: native_program_def graph finite_literal_program_def
+      decode_finite_system_def map_relation_values_def)
+  have roots: "native_root_family_at ?E None [0] {([16],None,[1])}"
+    using finite_literal_root_check by (simp add: finite_native_root_family_readings_correct)
+  show ?thesis unfolding native_package_at_def
+    by (rule exI[of _ "{([16],None,[1])}"])
+      (use roots formed program in \<open>auto simp: rel_ran_def\<close>)
+qed
+
+lemma finite_literal_native_checks_closed:
+  "finite_literal_native_checks [] = [True,True,True,True,True,True]"
+  using finite_literal_environment_checks finite_literal_binder_check finite_literal_schema_check
+    finite_literal_node_check finite_literal_package_composed
+  by (simp add: finite_literal_native_checks_def finite_native_package_readings_correct)
+
+lemma finite_literal_environments_formed:
+  "environment_formed (decode_finite_environment (finite_literal_sources []))"
+  "environment_formed (decode_finite_environment (finite_literal_extension []))"
+  using finite_literal_native_checks_closed
+  by (auto simp: finite_literal_native_checks_def finite_environment_formed_correct)
+
+lemma finite_literal_binder:
+  "binder_scope_at (decode_finite_object (finite_literal_artifact [])) [3] {}"
+  using finite_literal_native_checks_closed
+  by (simp add: finite_literal_native_checks_def finite_binder_scope_at_correct)
+
+lemma finite_literal_native_schema:
+  "native_schema_at (decode_finite_environment (finite_literal_sources [])) None [8]
+    (decode_finite_schema (finite_literal_schema []))"
+  using finite_literal_native_checks_closed
+  by (simp add: finite_literal_native_checks_def finite_native_schema_readings_correct)
+
+lemma finite_literal_native_package:
+  "native_package_at (decode_finite_environment (finite_literal_sources [])) None [0]
+    (decode_finite_system (finite_literal_program []))"
+  using finite_literal_native_checks_closed
+  by (simp add: finite_literal_native_checks_def finite_native_package_readings_correct)
+
+lemma finite_literal_native_node:
+  "native_proof_node_at (decode_finite_environment (finite_literal_extension [])) (Some []) []
+    (Schema_Inference (None,[7]) {||}) {} (set finite_literal_node_interior) {[6]}"
+  using finite_literal_native_checks_closed
+  by (simp add: finite_literal_native_checks_def finite_proof_node_readings_correct
+    decode_finite_binding_set_def fset_of_list.rep_eq)
+
+end

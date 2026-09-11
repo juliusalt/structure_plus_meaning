@@ -1,0 +1,163 @@
+{
+  "schema": "finite-investigation-1",
+  "kind": "basis",
+  "question": "How should the existing evidence archive retain and independently replay the new finite data executions?",
+  "scope": {
+    "candidates": {
+      "0": "Archive the files but leave the finite data stages unreplayable",
+      "1": "Extend the existing retainer with optional receipt filenames and replay kinds; replay the exact generated module and archived input through the original presenter or native input recovery functions, preserving existing reasoning replay",
+      "2": "Re-execute only the current working-tree checker and call it archive replay"
+    },
+    "facets": {
+      "0": "Retains each original proof receipt and exact module identity",
+      "1": "Uses the original complete archived runtime and input bytes",
+      "2": "Reapplies complete field and clause-expansion assessments",
+      "3": "Preserves existing reasoning and investigation replay defaults",
+      "4": "Distinguishes execution replay from new proof checking"
+    },
+    "boundary": "Review of the actual retainer and replayer found two concrete interface gaps. The retainer assumes every proof receipt is directory/result.json, while the generic exporter produces named singleton proof receipts without changing the original proof. The replayer only accepts reasoning cases, whereas the presenter and native input executions use separate complete field checkers. Extend those existing adapters with explicit receipt filenames and replay kinds, retain the old default, and verify exact original runtime reconstruction before replaying each finite module and applying its original independent assessment. No re-execution is called a new source proof."
+  },
+  "candidates": [
+    0,
+    1,
+    2
+  ],
+  "facets": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "selected": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "observations": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      4,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      2,
+      1,
+      0
+    ],
+    [
+      3,
+      1,
+      0
+    ],
+    [
+      4,
+      1,
+      0
+    ],
+    [
+      4,
+      2,
+      0
+    ]
+  ],
+  "relation": [
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      1
+    ],
+    [
+      2,
+      0
+    ],
+    [
+      2,
+      1
+    ],
+    [
+      2,
+      2
+    ]
+  ],
+  "evidence": [
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-data-replay/complete-data-replay/initial/evidence-e7016a9e-ae5b-45ef-936a-1405fb7377f5/76376fad70cc59073712f0aaf8260571cf5838da67ff3fa58124b0aa582f10ff",
+      "sha256": "76376fad70cc59073712f0aaf8260571cf5838da67ff3fa58124b0aa582f10ff",
+      "original_path": "/home/julius/structure_and_semantics/tools/retain_reasoning_review.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-data-replay/complete-data-replay/initial/evidence-e7016a9e-ae5b-45ef-936a-1405fb7377f5/4e324e77e73a6ea2166ad7feacc6c6692014b8f4d3cfdcb2de1af5af4fec50a3",
+      "sha256": "4e324e77e73a6ea2166ad7feacc6c6692014b8f4d3cfdcb2de1af5af4fec50a3",
+      "original_path": "/home/julius/structure_and_semantics/tools/replay_reasoning_review.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-data-replay/complete-data-replay/initial/evidence-e7016a9e-ae5b-45ef-936a-1405fb7377f5/a3285274c0316ac1a61163e0976c419d337788ca4e908ad5087a385a7732af15",
+      "sha256": "a3285274c0316ac1a61163e0976c419d337788ca4e908ad5087a385a7732af15",
+      "original_path": "/home/julius/structure_and_semantics/tools/check_finite_presentations.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-data-replay/complete-data-replay/initial/evidence-e7016a9e-ae5b-45ef-936a-1405fb7377f5/08fbf143d9a20a1d12b738b0919523ce9341dda72f17d904e919ff6f2e45cde0",
+      "sha256": "08fbf143d9a20a1d12b738b0919523ce9341dda72f17d904e919ff6f2e45cde0",
+      "original_path": "/home/julius/structure_and_semantics/tools/check_finite_inference.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-data-replay/complete-data-replay/initial/evidence-e7016a9e-ae5b-45ef-936a-1405fb7377f5/f1e46ecde83f5fadd377df0e1237d9c2662a590084face60b5a4444adf2ebd90",
+      "sha256": "f1e46ecde83f5fadd377df0e1237d9c2662a590084face60b5a4444adf2ebd90",
+      "original_path": "/home/julius/structure_and_semantics/tools/export_proved_code.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-data-replay/complete-data-replay/initial/evidence-e7016a9e-ae5b-45ef-936a-1405fb7377f5/3531137dd1ee73fc3e39015727ee0f5ef482735c8dcb854b5d317a4fc5faa58b",
+      "sha256": "3531137dd1ee73fc3e39015727ee0f5ef482735c8dcb854b5d317a4fc5faa58b",
+      "original_path": "/tmp/generalization-quality-review/finite-reader-example/native-data-replay-specification.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-data-replay/complete-data-replay/initial/evidence-e7016a9e-ae5b-45ef-936a-1405fb7377f5/7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "sha256": "7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "original_path": "/home/julius/structure_and_semantics/tools/check_decision_cases.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-data-replay/complete-data-replay/initial/receipt.json",
+      "sha256": "170bb5d8cecdd2ae7725c6d3ae63fb65266854c43b4d45114bdd6c3b4042258a"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-data-replay/complete-data-replay/initial/case.json",
+      "sha256": "126203f84d5983544475d7941af10caf632376291af952e9b29c998d4198ee1f"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-data-replay/complete-data-replay/initial/run.log",
+      "sha256": "4e36de03fd8636c2481f017a37aa4c6cc653a35f7188be00d675d185cb86f98a"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/revise_investigation_case.py",
+      "sha256": "70466b6a380397ef2c390d33c150d1b536feac4aafcedae6bb20d3e1a5106d66"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/review_investigations.py",
+      "sha256": "368a254b9dc8f4323522d0edf4a6c7c1cac118afd70a97e0e000bf7bf86a6bb0"
+    }
+  ]
+}

@@ -49,7 +49,8 @@ record, not the completed graph proposed in `plan.md`.
 | Factor_Quotation | Factor_Terms, RRA_Citation_Closure, RRA_Read_Transport | Native term reader: external citations, direct opaque payloads, and ordered pairs; unique term, interior, and slot recovery; transport under injective syntax maps and exact literal agreement. |
 | Factor_Term_Encoding | Factor_Quotation, RRA_Syntax_Construction | Every formed term has a native quotation and a finite environment closed over exactly its recovered slots; complete source carrier accounting. |
 | Factor_Material_Observation | Factor_Term_Encoding, HOL-Library.Multiset | Complete carrier, incidence, count, and functional enumerations determine exact sources; totality, coordinate support, omission rejection, and argument quotation retain every material field. |
-| Factor_Executable_Material | Factor_Executable_Terms, Factor_Material_Observation | Total enumeration readers and an executable complete material equation, preserving incidence and multiplicity and compiling to SML. |
+| Factor_Finite_Artifact_Enumeration | RRA_Finite_Artifacts, Factor_Material_Observation | Shared complete finite artifact construction and enumeration correctness, preserving the original material reader interface. |
+| Factor_Executable_Material | Factor_Executable_Terms, Factor_Finite_Artifact_Enumeration | Total enumeration readers and an executable complete material equation, preserving incidence and multiplicity and compiling to SML. |
 | Factor_Patterns | Factor_Term_Encoding | Complete binder families and native variable/constant/pair patterns; unique recovery, injective transport, and embedding under exact literal agreement. |
 | Factor_Material_Patterns | Factor_Patterns, Factor_Material_Observation | Five operand patterns for the material equation, complete scope, unique instantiation, native pattern-vector and record readers, unique recovery, environment transport, injective syntax transport, and invariant material satisfaction under binder renaming. |
 | Factor_Schemas | Factor_Material_Patterns | Generic finite schemas with disjoint call and material sockets, complete variable scope, total instantiation, and a formed operand tuple for every material socket. |
@@ -813,3 +814,18 @@ record, not the completed graph proposed in `plan.md`.
 | Factor_Proof_Node_Extension | Factor_Proof_Node_Code, Factor_Reference_Packages | Installs any local proof node whose complete discharge targets already occur in the environment, preserving every old artifact and binding through the existing code and reference contracts. |
 | Factor_Specialization_Binding_Total | Factor_Specialization_Binding_Contracts, Factor_Graph_Metadata, Factor_Package_Locality | Every actual specialization supplies distinct observed binding rows, complete record supports, the target report, and physical node inputs; source inclusion preserves the same replacement and target. |
 | Factor_Inference_Specialization_Total | Factor_Inference_Specialization_Contracts, Factor_Specialization_Binding_Total, Factor_Proof_Node_Extension | Composes the complete specialization with a fresh native local node while retaining the old environment, and derives reader inhabitance from an already constructed specialization. |
+
+## Executable complete source presentations
+
+- Factor_Executable_Data_Values: Shared finite sequence decoding and exact conversion of payload-and-pair terms.
+- Factor_Executable_Artifact_Values: Complete finite artifact rows and native data values, including attachment multiplicity.
+- Factor_Executable_Environment_Values: Complete artifact and binding tables, preserving formation and exact recovered environments.
+- Factor_Finite_Inference_Sources: Complete literal-program sources and a separate fresh inference node, checked through the existing finite native readers.
+
+- Factor_Finite_Inference_Source_Checks: Closed native assertions for the explicit source family; required separately from executable definitions.
+
+- Factor_Closed_Native_Definitions: Actual definition readings determine outgoing calls and, when closed on their domain, the exact native package graph. Reused by the equality and incidence examples.
+
+- Factor_Ground_Schema_Reports: Complete reports for arbitrary formed exact-term recognizers, reusing the general formatter and evaluation theorem.
+- Factor_Finite_Inference_Example: Complete finite environments, source preservation, explicit ground report and supports, and the local inference-specialization input.
+- Factor_Finite_Inference_Premises: Exact finite initial call occurrences with native source evidence in the same inference program; the final inference request remains to be derived.

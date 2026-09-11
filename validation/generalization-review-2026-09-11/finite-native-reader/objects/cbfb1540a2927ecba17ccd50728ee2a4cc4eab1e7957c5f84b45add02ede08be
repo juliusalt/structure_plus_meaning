@@ -1,0 +1,12 @@
+{
+  "/tmp/native-investigation-report-diagnostic-finitepresenters10/result.json": "79e16b1e19de9efb71e0a2518985b19472e1bd0a701638bcf1036a570823db7a",
+  "/tmp/native-investigation-report-diagnostic-finitepresenters10/export/Native_Investigation_Report_Diagnostic_finitepresenters10.Factor_Executable_Environment_Values/code/finite_presented_data.ML": "25137f074aaa5a5e48e0fb09de1575ac4bdfb5d939f8a960626e8289908ce844",
+  "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly": "47efc18d0b38bc908c8b29798575501e8b7b027f593022c80ff1acc55b9495b4",
+  "/tmp/generalization-quality-review/finite-reader-example/presenter-execution1/execute.ML": "e23e3928cb6c3f7c98ecd5030b0f797cf606687f26195c69cc9aa0d3062fc1db",
+  "/tmp/generalization-quality-review/finite-reader-example/presenter-execution1/cases.json": "1f56f109276829095d0f7c71a81b61d85d83ad1702438c1e8c7072062e1cf79b",
+  "/home/julius/structure_and_semantics/tools/build.py": "8915b7a480b2a17b5cea5b819f3be43323f69cb79dc1513a76c07eb83f6b491e",
+  "/home/julius/structure_and_semantics/tools/check_finite_presentations.py": "12156036a6c926ff612e6f1785cd6a6053b5439a69236a10047b126a7fcb6d8f",
+  "/home/julius/structure_and_semantics/tools/check_reasoning.py": "b517d9baf7351810712e82a524f40871c3a8357e87693802d2c9699983f28b74",
+  "/home/julius/structure_and_semantics/tools/finite_presentation_cases.py": "e99fff608629c3b65eb4131f9457b9a8374e6dad74ca5cf78da353d4a6e5bfe7",
+  "/home/julius/structure_and_semantics/tools/investigate.py": "7643dbebe13aed0e9d9bc4cff062575c665fec4ed0f7c0527857cd5d07263628"
+}

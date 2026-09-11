@@ -443,3 +443,51 @@ and all seven assessments of the initial development-decision family.
 Neither adapter constructs the externally supplied candidate proposals or
 certifies their interpretation. Newly exposed gaps remain development problems;
 this finite inventory does not establish complete workflow coverage.
+
+## Complete finite data and an executed native reader
+
+The finite data converter factors a general partial-inverse argument from
+exact domain, successful decoding and an injective decoder. The artifact and
+environment presenters then retain complete carrier, incidence, counted and
+functional data, and both environment tables. Their exact correspondence
+theorems keep source formation separate from the outer data shape. A shared
+finite artifact enumerator also replaces the duplicate constructor in the
+material executor. Thirty executions independently recover every input field,
+including multiplicity, attachment modes and distinct use coordinates.
+
+Actual complete definition readings determine their outgoing dependency
+edges. A supplied graph closed under those dependencies is exactly the native
+selected graph and establishes package formation. The equality and incidence
+examples instantiate this common theorem. Fixed primitive source records,
+families and payloads can therefore be checked once and composed through the
+existing native reader contracts.
+
+The exact-term report theorem reuses the general schema formatter and both
+evaluation laws. The ground specialization theorem retains a caller-supplied
+report and the actual empty binder's support. The shared record-source theorem
+exposes both complete reference tables and record instances for its original
+consumer and the new finite example. Component-meaning preservation carries
+those initial calls into the same program as the compiled reader.
+
+The [finite example](validation/generalization-review-2026-09-11/finite-native-reader/README.md)
+supplies all twelve argument fields and eight proved initial call occurrences,
+seven of them distinct. The final inference entry is absent from the initial
+set. Seventy-six reader cases check 311 complete construction frontiers and
+75 native-library executions. The original source goals settle at depth 3;
+withholding each required distinct call leaves the final goal unresolved.
+Changed-field controls stay unresolved, and malformed input fails the complete
+input gate.
+
+The source adapter validates known subsets and original goal references
+against the actual exported proved data. This contract is distinct from the
+existing binding-only truth check. Generic expected outcomes refer to exact
+goal occurrences and require a formed input before counting a settlement.
+The common proof-export guard, serializers, complete data recovery and JSON
+copy operation are reused by the execution adapters. Large retained blobs use
+lossless storage with separate stored and decoded identities; replay restores
+only its selected dependencies and reapplies the original full assessments.
+
+All 817 registered theories pass, as do 38 tooling tests and 111 archive
+replays. The finite executed-example requirement is met. Whole-derivation
+admission, native mathematical-proof admission, complete development-workflow
+coverage and the final repository audit remain separate requirements.

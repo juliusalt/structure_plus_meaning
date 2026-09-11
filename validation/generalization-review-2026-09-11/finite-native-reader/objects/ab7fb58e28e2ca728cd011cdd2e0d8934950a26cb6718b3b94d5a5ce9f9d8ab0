@@ -1,0 +1,129 @@
+{
+  "schema": "finite-investigation-1",
+  "kind": "basis",
+  "question": "How should the actual exported presenter signature support complete input construction and output inspection?",
+  "scope": {
+    "candidates": {
+      "0": "Assume the abstract term types and equality dictionary are available to the checker",
+      "1": "Export the existing finite term and target constructors and a monomorphic environment-formation adapter for the same option-word input domain as finite_environment_value; instantiate that adapter in the checker"
+    },
+    "facets": {
+      "0": "Exposes the actual finite term constructors needed by the retained input and output protocol",
+      "1": "Uses the compiler-selected equality for the declared environment-use type",
+      "2": "Preserves the original generic formation predicate and proves the adapter is exactly it",
+      "3": "Keeps complete source formation separate from output term formation"
+    },
+    "boundary": "The session timed out, so it supplies no accepted whole-session receipt. Command timing and export records establish that the environment theory reached end; the native source theory did not complete its first closed computation. The diagnostic export is inspected only as signature evidence, not accepted as execution proof. The pending assertions remain in ROOT and are required for full validation. The option-word adapter changes only the public executable type boundary, not formation semantics."
+  },
+  "candidates": [
+    0,
+    1
+  ],
+  "facets": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "selected": [
+    0
+  ],
+  "observations": [
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      2,
+      1,
+      0
+    ],
+    [
+      3,
+      1,
+      0
+    ]
+  ],
+  "relation": [
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      1
+    ]
+  ],
+  "evidence": [
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/presenter-interface-and-timeout/public-presenter-interface/initial/evidence-d6882ce7-d6a2-4d72-b408-e6d6a0387348/fd3b5c6e82134fa955dc90d87d06962d2427bc034892d3646da77e13228b5afc",
+      "sha256": "fd3b5c6e82134fa955dc90d87d06962d2427bc034892d3646da77e13228b5afc",
+      "original_path": "/tmp/native-investigation-report-diagnostic-finitepresenters9/result.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/presenter-interface-and-timeout/public-presenter-interface/initial/evidence-d6882ce7-d6a2-4d72-b408-e6d6a0387348/33f2f4ddbced47adf1c3b60eb40c2b4af2d0fd729356f6709ed4aa42f8f6abea",
+      "sha256": "33f2f4ddbced47adf1c3b60eb40c2b4af2d0fd729356f6709ed4aa42f8f6abea",
+      "original_path": "/tmp/native-investigation-report-diagnostic-finitepresenters9/timing-assessment.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/presenter-interface-and-timeout/public-presenter-interface/initial/evidence-d6882ce7-d6a2-4d72-b408-e6d6a0387348/e8ddb27bca2f25770d0d5d7b324fa1ed07098d3fa75fe831b7341d8ac43fb27e",
+      "sha256": "e8ddb27bca2f25770d0d5d7b324fa1ed07098d3fa75fe831b7341d8ac43fb27e",
+      "original_path": "/tmp/native-investigation-report-diagnostic-finitepresenters9/diagnostic-finite-presented-data.ML"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/presenter-interface-and-timeout/public-presenter-interface/initial/evidence-d6882ce7-d6a2-4d72-b408-e6d6a0387348/ed3276d0842327ce860ac7bc9e9332babae422c96530cfaf32ea060f2a1f9ea4",
+      "sha256": "ed3276d0842327ce860ac7bc9e9332babae422c96530cfaf32ea060f2a1f9ea4",
+      "original_path": "/home/julius/structure_and_semantics/theories/Factor_Executable_Environment_Values.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/presenter-interface-and-timeout/public-presenter-interface/initial/evidence-d6882ce7-d6a2-4d72-b408-e6d6a0387348/31e13e09bf9376223a51d49e6ba16f0727df31f67f14837064033c8ab8cab5da",
+      "sha256": "31e13e09bf9376223a51d49e6ba16f0727df31f67f14837064033c8ab8cab5da",
+      "original_path": "/home/julius/structure_and_semantics/theories/Factor_Finite_Inference_Sources.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/presenter-interface-and-timeout/public-presenter-interface/initial/evidence-d6882ce7-d6a2-4d72-b408-e6d6a0387348/077fb906565d34cf122370fdd29089f089195f76413979382e9862d192b626d5",
+      "sha256": "077fb906565d34cf122370fdd29089f089195f76413979382e9862d192b626d5",
+      "original_path": "/home/julius/structure_and_semantics/tools/check_finite_presentations.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/presenter-interface-and-timeout/public-presenter-interface/initial/evidence-d6882ce7-d6a2-4d72-b408-e6d6a0387348/cb1f9b37bdfe6573938fae27a7741c3983ef90b2b6c7077a7b135bac887f6c5b",
+      "sha256": "cb1f9b37bdfe6573938fae27a7741c3983ef90b2b6c7077a7b135bac887f6c5b",
+      "original_path": "/tmp/generalization-quality-review/finite-reader-example/presenter-interface-and-timeout-specification.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/presenter-interface-and-timeout/public-presenter-interface/initial/evidence-d6882ce7-d6a2-4d72-b408-e6d6a0387348/7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "sha256": "7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "original_path": "/home/julius/structure_and_semantics/tools/check_decision_cases.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/presenter-interface-and-timeout/public-presenter-interface/initial/receipt.json",
+      "sha256": "460cea30892071bbf4a5309a339b4489c8e663884fdf062eafbf3eba236ef0de"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/presenter-interface-and-timeout/public-presenter-interface/initial/case.json",
+      "sha256": "786016b21ca3e51414670ea4b3200912af460968c6373ad2c18553efa5bbdcd9"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/presenter-interface-and-timeout/public-presenter-interface/initial/run.log",
+      "sha256": "046c4452722666b777579e55afe1441484dd377d642d9a7e4852644fbccfcebe"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/revise_investigation_case.py",
+      "sha256": "70466b6a380397ef2c390d33c150d1b536feac4aafcedae6bb20d3e1a5106d66"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/review_investigations.py",
+      "sha256": "368a254b9dc8f4323522d0edf4a6c7c1cac118afd70a97e0e000bf7bf86a6bb0"
+    }
+  ]
+}

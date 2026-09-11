@@ -1,0 +1,4 @@
+{
+  "finding": "The copy-and-reprove candidate leaves the existing binding interfaces unchanged, so the original reading wrongly omitted that preservation observation. The standing validation requirement applies to each implementation candidate, so its consumer-check observation is also retained. It still fails the first-use reuse requirement. Correct these judgments before implementing the shared module.",
+  "boundary": "The earlier evaluator correctly computed the supplied profiles. This corrects external proposal judgments, without treating unchanged candidate selection as an excuse to leave them inaccurate."
+}

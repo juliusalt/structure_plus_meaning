@@ -1,0 +1,125 @@
+{
+  "schema": "finite-investigation-1",
+  "kind": "basis",
+  "question": "How should validation avoid the measured schema-reader reduction bottleneck while retaining every closed source assertion?",
+  "scope": {
+    "candidates": {
+      "0": "Increase the timeout for the entire recursive schema enumeration",
+      "1": "Compute fixed primitive fields and compose the existing reader contracts, preserving all closed assertions and checking them with the complete new report and argument batch",
+      "2": "Treat the successful SML output as the missing theorem"
+    },
+    "facets": {
+      "0": "Retains native schema, package, node and all original finite assertions",
+      "1": "Responds to the measured expensive schema reduction by using exact local evidence",
+      "2": "Reuses completed schema evidence in its definition consumer",
+      "3": "Requires Isabelle acceptance and separate finite runtime execution"
+    },
+    "boundary": "Attempt14 completed the new graph theorem and all commands in both old equality and incidence consumers, plus the two environment formation checks and the binder check. The next schema-reading code_simp never completed within the session timeout. Code execution previously returned true, which is useful diagnostic evidence but not proof. Keep every closed statement; prove fixed local finite records, families and payloads by code_simp, compose existing native/finite reader contracts, and reuse the resulting actual schema for the definition. The new example also uses an already occupied short abbreviation and a nonexistent _def for an abbreviation; repair those names before validation. These are external diagnoses and proposals."
+  },
+  "candidates": [
+    0,
+    1,
+    2
+  ],
+  "facets": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "selected": [
+    0
+  ],
+  "observations": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      3,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      2,
+      1,
+      0
+    ],
+    [
+      3,
+      1,
+      0
+    ]
+  ],
+  "relation": [
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      1
+    ],
+    [
+      2,
+      0
+    ],
+    [
+      2,
+      1
+    ],
+    [
+      2,
+      2
+    ]
+  ],
+  "evidence": [
+    {
+      "path": "/home/julius/structure_and_semantics/theories/Factor_Finite_Inference_Source_Checks.thy",
+      "sha256": "ed57c9a844a4c38b74cd8e1d439aa88af873e16eb383df46033b9e15711f0255"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/theories/Factor_Finite_Inference_Example.thy",
+      "sha256": "e02222c04db1d73237abe930c52748bbfdd56d3d442a54040b454c87d321bcbf"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/theories/Factor_Schema_Admission.thy",
+      "sha256": "48bbfa4a7d850a204e66c38107a22ca1b73022658d57c5dc547acf71f241dc4b"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/theories/RRA_Environment.thy",
+      "sha256": "25f8205e1e3b1f395269b7ffc85f4a841d6ef762a72f78e2dd9e6d72cdbaa2af"
+    },
+    {
+      "path": "/tmp/native-investigation-report-diagnostic-finitepresenters14/selected-command-timings.json",
+      "sha256": "b053f969a0d3e017bda86216d125575e9d117b566e9de12645bc1042b5c4762a"
+    },
+    {
+      "path": "/tmp/native-investigation-report-diagnostic-finitepresenters14/build.log",
+      "sha256": "13c6f1f1a30667863e7935df8a0a06dbae9bf20822c57e48d4315837538fc700"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-local-field-proofs-specification.json",
+      "sha256": "d05f15e55658132a3e6d974e5e600bb097a3c7ce361f06d422549dd967e3e8b2"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/check_decision_cases.py",
+      "sha256": "7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd"
+    }
+  ]
+}

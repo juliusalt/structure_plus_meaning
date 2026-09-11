@@ -1,0 +1,19 @@
+{
+  "decisions": [
+    {
+      "decision": "native-report-instantiation",
+      "sha256": "9a441d4b16e072ebf44fbc698ba29d037087a7b9dea67bfbeef6435e6cf9a676"
+    },
+    {
+      "decision": "native-runtime-adapter",
+      "sha256": "fd33004f4f06dc669bb456fc0dfbc2d7fc0d2c98475addf5f4ae204627171ee3"
+    },
+    {
+      "decision": "native-deep-data-copy",
+      "sha256": "85466fb43029d66e43f98cd1b9bc3c80c344b82e8830b128ebd69002ead57b57"
+    }
+  ],
+  "critical_assessment": "The exact general report instance is applied directly. Shared accepted-proof and code-identity checks replace duplicated prerequisites in both existing reviewers and the new native input reviewer. Every formatter and complete environment decoder is reused. A direct test reproduced deep-copy stack exhaustion on the actual Some [256] coordinate and confirmed JSON cloning; the new helper preserves all bytes and isolates case mutations. Thirty-one existing and new proof-input tests had passed before the additional deep-copy regression; the complete suite is now rerun with that new case. Native input execution and reader settlement remain pending accepted source proofs.",
+  "proof": "/tmp/native-investigation-report-diagnostic-finitepresenters18/result.json",
+  "tests": "/tmp/finite-native-tool-tests.log"
+}

@@ -1,0 +1,144 @@
+{
+  "schema": "finite-investigation-1",
+  "kind": "basis",
+  "question": "How should large proof receipts and diagnostic reads be returned without losing necessary information?",
+  "scope": {
+    "candidates": {
+      "0": "Print full source-hash maps and logs together under an unchecked output cap",
+      "1": "Retain the complete receipt bytes, return only status and dependency counts, and budget the full diagnostic log and relevant source bodies separately inside one grouped request"
+    },
+    "facets": {
+      "0": "Retains full evidence bytes",
+      "1": "Makes the complete diagnostic text available without source-hash-map noise",
+      "2": "Checks aggregate output size and deliberately follows up any truncation"
+    },
+    "boundary": "External proposals and source interpretation are compared under all stated mandatory observations. The failed proof exposes an incorrectly scoped case split, not a counterexample. Selection does not establish proof success, executable correctness or an actual native example. The domain-plus-soundness-plus-injective-decoder implication is general; the concrete recursion proof is its instance. The preceding oversized read was truncated and was followed by a complete separate read of the stored build log. No unchanged consumer needs a separate one-file retry: the shared proof must pass before its dependents can be diagnosed."
+  },
+  "candidates": [
+    0,
+    1
+  ],
+  "facets": [
+    0,
+    1,
+    2
+  ],
+  "selected": [
+    0,
+    1,
+    2
+  ],
+  "observations": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      2,
+      1,
+      0
+    ]
+  ],
+  "relation": [
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      1
+    ]
+  ],
+  "evidence": [
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/presenter-repair1/diagnostic-reading/initial/evidence-4d19308d-ecc0-410c-8f16-b58089f0ce7a/bde86a990e882a439ff27234a86f9e1b1d96edc416712c372927c07be2ca9e24",
+      "sha256": "bde86a990e882a439ff27234a86f9e1b1d96edc416712c372927c07be2ca9e24",
+      "original_path": "/home/julius/structure_and_semantics/DEVELOPMENT_WORKFLOW.md"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/presenter-repair1/diagnostic-reading/initial/evidence-4d19308d-ecc0-410c-8f16-b58089f0ce7a/82069762267d503d339290507262bc7f905543966f56a0601e30bd1c7b04184f",
+      "sha256": "82069762267d503d339290507262bc7f905543966f56a0601e30bd1c7b04184f",
+      "original_path": "/home/julius/structure_and_semantics/theories/Bootstrap_Relations.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/presenter-repair1/diagnostic-reading/initial/evidence-4d19308d-ecc0-410c-8f16-b58089f0ce7a/ea7901657ce7973acd43f3b44f6cd835e4058e0725e61382b812d59801e3707e",
+      "sha256": "ea7901657ce7973acd43f3b44f6cd835e4058e0725e61382b812d59801e3707e",
+      "original_path": "/home/julius/structure_and_semantics/theories/Factor_Executable_Terms.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/presenter-repair1/diagnostic-reading/initial/evidence-4d19308d-ecc0-410c-8f16-b58089f0ce7a/6bd8567e989badcf70559a4247e1e68f3865c5c693b183b622e7cebb40b4e5d5",
+      "sha256": "6bd8567e989badcf70559a4247e1e68f3865c5c693b183b622e7cebb40b4e5d5",
+      "original_path": "/home/julius/structure_and_semantics/theories/Factor_Executable_Data_Values.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/presenter-repair1/diagnostic-reading/initial/evidence-4d19308d-ecc0-410c-8f16-b58089f0ce7a/28ce4d2cb74d3bfbcd710f3da1b9985f6006d67b3477464e743f93ef1236a86b",
+      "sha256": "28ce4d2cb74d3bfbcd710f3da1b9985f6006d67b3477464e743f93ef1236a86b",
+      "original_path": "/home/julius/structure_and_semantics/theories/Factor_Executable_Artifact_Values.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/presenter-repair1/diagnostic-reading/initial/evidence-4d19308d-ecc0-410c-8f16-b58089f0ce7a/a876f1ccb41eb0bd6d5b096c75ef713fed529c02ec2a8322f866e5c2f33a4e00",
+      "sha256": "a876f1ccb41eb0bd6d5b096c75ef713fed529c02ec2a8322f866e5c2f33a4e00",
+      "original_path": "/home/julius/structure_and_semantics/theories/Factor_Executable_Environment_Values.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/presenter-repair1/diagnostic-reading/initial/evidence-4d19308d-ecc0-410c-8f16-b58089f0ce7a/f53ab0f58c1fdb3ee83ea22bc35f330dc2d077c00d1d6de239cc3e97d82f54bb",
+      "sha256": "f53ab0f58c1fdb3ee83ea22bc35f330dc2d077c00d1d6de239cc3e97d82f54bb",
+      "original_path": "/tmp/native-investigation-report-diagnostic-finitepresenters1/result.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/presenter-repair1/diagnostic-reading/initial/evidence-4d19308d-ecc0-410c-8f16-b58089f0ce7a/e5869546d7b0ad977f21749d2b6ae273222ea4890463ea8e9240f430baf0c231",
+      "sha256": "e5869546d7b0ad977f21749d2b6ae273222ea4890463ea8e9240f430baf0c231",
+      "original_path": "/tmp/native-investigation-report-diagnostic-finitepresenters1/build.log"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/presenter-repair1/diagnostic-reading/initial/evidence-4d19308d-ecc0-410c-8f16-b58089f0ce7a/b3fbc4b96a9bcbdedeac314b9250b8e3675d5450dcdb2627b8a89a0cdb09884e",
+      "sha256": "b3fbc4b96a9bcbdedeac314b9250b8e3675d5450dcdb2627b8a89a0cdb09884e",
+      "original_path": "/tmp/prepare-finite-presenter-repair.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/presenter-repair1/diagnostic-reading/initial/evidence-4d19308d-ecc0-410c-8f16-b58089f0ce7a/b17eb692fe79380693cd364c338f3c6e4403b406fa612940519529fc700fd42f",
+      "sha256": "b17eb692fe79380693cd364c338f3c6e4403b406fa612940519529fc700fd42f",
+      "original_path": "/tmp/generalization-quality-review/finite-reader-example/presenter-repair1-specification.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/presenter-repair1/diagnostic-reading/initial/evidence-4d19308d-ecc0-410c-8f16-b58089f0ce7a/7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "sha256": "7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "original_path": "/home/julius/structure_and_semantics/tools/check_decision_cases.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/presenter-repair1/diagnostic-reading/initial/receipt.json",
+      "sha256": "26a4fa607298d37d3ee5a675b240596f6325271772976980b8a92b978570ace8"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/presenter-repair1/diagnostic-reading/initial/case.json",
+      "sha256": "f0ea395aae014684280346bef94066b47150713bad9e397c92da4d2a639f5dac"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/presenter-repair1/diagnostic-reading/initial/run.log",
+      "sha256": "8a995afb54e8cce6b8cd7d036212cf41a03ffc1646d228cff9486982b3855f52"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/revise_investigation_case.py",
+      "sha256": "70466b6a380397ef2c390d33c150d1b536feac4aafcedae6bb20d3e1a5106d66"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/review_investigations.py",
+      "sha256": "368a254b9dc8f4323522d0edf4a6c7c1cac118afd70a97e0e000bf7bf86a6bb0"
+    }
+  ]
+}

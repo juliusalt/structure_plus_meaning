@@ -1,0 +1,10 @@
+Running Native_Investigation_Report_Diagnostic_finitepresenters2 ...
+Native_Investigation_Report_Diagnostic_finitepresenters2 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_finitepresenters2")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_finitepresenters2.Factor_Executable_Artifact_Values" (unresolved "Native_Investigation_Report_Diagnostic_finitepresenters2.Factor_Executable_Data_Values")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_finitepresenters2.Factor_Executable_Environment_Values" (unresolved "Native_Investigation_Report_Diagnostic_finitepresenters2.Factor_Executable_Artifact_Values")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_finitepresenters2.Factor_Binding_Observation_Execution" (unresolved "Native_Investigation_Report_Diagnostic_finitepresenters2.Factor_Executable_Data_Values")
+*** Outer syntax error (line 42 of "/tmp/native-investigation-report-diagnostic-finitepresenters2/theories/Factor_Executable_Data_Values.thy"): proposition expected,
+*** but end-of-input (line 42 of "/tmp/native-investigation-report-diagnostic-finitepresenters2/theories/Factor_Executable_Data_Values.thy") was found
+*** At command "<malformed>" (line 42 of "/tmp/native-investigation-report-diagnostic-finitepresenters2/theories/Factor_Executable_Data_Values.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_finitepresenters2
+0:02:40 elapsed time, 0:06:21 cpu time, factor 2.38

@@ -1,0 +1,106 @@
+{
+  "Factor_Finite_Inference_Source_Checks": [
+    {
+      "elapsed": "0.001",
+      "name": "using",
+      "offset": "7582",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters16/theories/Factor_Finite_Inference_Source_Checks.thy"
+    },
+    {
+      "elapsed": "0.038",
+      "name": "by",
+      "offset": "7656",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters16/theories/Factor_Finite_Inference_Source_Checks.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "7803",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters16/theories/Factor_Finite_Inference_Source_Checks.thy"
+    },
+    {
+      "elapsed": "0.051",
+      "name": "by",
+      "offset": "7903",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters16/theories/Factor_Finite_Inference_Source_Checks.thy"
+    }
+  ],
+  "Factor_Binding_Record_Contracts": [
+    {
+      "elapsed": "0.004",
+      "name": "by",
+      "offset": "8455",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters16/theories/Factor_Binding_Record_Contracts.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "qed",
+      "offset": "8716",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters16/theories/Factor_Binding_Record_Contracts.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "qed",
+      "offset": "8720",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters16/theories/Factor_Binding_Record_Contracts.thy"
+    },
+    {
+      "elapsed": "0.011",
+      "name": "end",
+      "offset": "9121",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters16/theories/Factor_Binding_Record_Contracts.thy"
+    }
+  ],
+  "Factor_Inference_Reader_Investigation": [
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "7623",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters16/theories/Factor_Inference_Reader_Investigation.thy"
+    },
+    {
+      "elapsed": "0.004",
+      "name": "definition",
+      "offset": "7903",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters16/theories/Factor_Inference_Reader_Investigation.thy"
+    },
+    {
+      "elapsed": "0.692",
+      "name": "export_code",
+      "offset": "8687",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters16/theories/Factor_Inference_Reader_Investigation.thy"
+    },
+    {
+      "elapsed": "0.010",
+      "name": "end",
+      "offset": "8783",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters16/theories/Factor_Inference_Reader_Investigation.thy"
+    }
+  ],
+  "Factor_Reasoning_Execution": [
+    {
+      "elapsed": "0.351",
+      "name": "theory",
+      "offset": "1",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters16/theories/Factor_Reasoning_Execution.thy"
+    },
+    {
+      "elapsed": "0.004",
+      "name": "definition",
+      "offset": "328",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters16/theories/Factor_Reasoning_Execution.thy"
+    },
+    {
+      "elapsed": "0.659",
+      "name": "export_code",
+      "offset": "468",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters16/theories/Factor_Reasoning_Execution.thy"
+    },
+    {
+      "elapsed": "0.011",
+      "name": "end",
+      "offset": "2265",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters16/theories/Factor_Reasoning_Execution.thy"
+    }
+  ]
+}

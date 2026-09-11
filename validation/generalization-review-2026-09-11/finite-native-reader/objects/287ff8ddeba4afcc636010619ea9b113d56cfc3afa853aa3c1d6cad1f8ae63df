@@ -1,0 +1,125 @@
+{
+  "schema": "finite-investigation-1",
+  "kind": "basis",
+  "question": "How should the explicit native components become a complete, reusable finite inference input?",
+  "scope": {
+    "candidates": {
+      "0": "Stop after the component booleans",
+      "1": "Construct complete environment values, explicit report and all support lists; prove source preservation, replacement record, specialization, node composition and the actual 350 judgment through existing contracts",
+      "2": "Choose unspecified witnesses from the abstract inhabitance theorem"
+    },
+    "facets": {
+      "0": "Gives explicit finite source and argument data",
+      "1": "Retains old counted material and old bindings",
+      "2": "Uses actual native records, clause and target with identity substitution",
+      "3": "Requires complete independent execution with proved known premises"
+    },
+    "boundary": "Component proofs and the generic graph proof remain separate pending validation. The actual source constructors and public presentation, specialization and inference contracts have been read. Reuse the accepted exact-term evaluation and empty-binder record rules. New definitions and proofs remain proposals until Isabelle accepts their complete import context. The generic report law applies to arbitrary formed ground exact terms, while the displayed native source supplies the literal empty-payload instance. Execution still requires true known leaf premises in the same inference system and must not seed the final goal."
+  },
+  "candidates": [
+    0,
+    1,
+    2
+  ],
+  "facets": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "selected": [
+    0
+  ],
+  "observations": [
+    [
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      2,
+      1,
+      0
+    ],
+    [
+      3,
+      1,
+      0
+    ],
+    [
+      2,
+      2,
+      0
+    ]
+  ],
+  "relation": [
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      1
+    ],
+    [
+      2,
+      1
+    ],
+    [
+      2,
+      2
+    ]
+  ],
+  "evidence": [
+    {
+      "path": "/home/julius/structure_and_semantics/theories/Factor_Finite_Inference_Sources.thy",
+      "sha256": "158b1c79862dbd88a64f8de3ff0a931fda0d7ae18ccadcdac1e84b05dec07838"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/theories/Factor_Executable_Environment_Values.thy",
+      "sha256": "7d283d00e0c35421f0ea86fba6b52b572789195395baca1a4bb3f3afc1a10413"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/theories/Factor_Schema_Observations.thy",
+      "sha256": "c6acb26351b7d8b3c661859d84f425f800c7103dfde887e0d950fe74c6639f09"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/theories/Factor_Pattern_Determination.thy",
+      "sha256": "0219b40b0769574acf600890e3cbad10f8e10e2eb3ba61b9e6081eb7314667a2"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/theories/Factor_Substitution_Contracts.thy",
+      "sha256": "c80347ed36e95f72254c7b6aec10b320ec6267a90a7ec4d149bbc523743f64e2"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/theories/Factor_Specialization_Binding_Contracts.thy",
+      "sha256": "472f0d3894b939249152810c0d67c4d4b874e9dab0f96988de4c25112defabd8"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/theories/Factor_Inference_Specialization_Contracts.thy",
+      "sha256": "4653e4c1fff07dd09b889f6a3a0c3d79638ee53fef10f67c13336b371ee23e02"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/finite-reader-example/native-complete-argument-specification.json",
+      "sha256": "6f7baa0acc1e16ec9b7bc13c4cee07e1a0cb91c9750475b796ea272e44bc3414"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/check_decision_cases.py",
+      "sha256": "7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd"
+    }
+  ]
+}

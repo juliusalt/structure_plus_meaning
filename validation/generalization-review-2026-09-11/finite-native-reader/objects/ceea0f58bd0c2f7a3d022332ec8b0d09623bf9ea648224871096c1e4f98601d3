@@ -1,0 +1,19 @@
+Running Native_Investigation_Report_Diagnostic_finitepresenters13 ...
+Native_Investigation_Report_Diagnostic_finitepresenters13 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_finitepresenters13")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_finitepresenters13.Factor_Native_Equality" (unresolved "Native_Investigation_Report_Diagnostic_finitepresenters13.Factor_Closed_Native_Definitions")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_finitepresenters13.Factor_Native_Incidence" (unresolved "Native_Investigation_Report_Diagnostic_finitepresenters13.Factor_Closed_Native_Definitions")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_finitepresenters13.Factor_Finite_Inference_Source_Checks" (unresolved "Native_Investigation_Report_Diagnostic_finitepresenters13.Factor_Closed_Native_Definitions")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_finitepresenters13.Factor_Clause_Specialization_Instances" (unresolved "Native_Investigation_Report_Diagnostic_finitepresenters13.Factor_Native_Incidence")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_finitepresenters13.Factor_Clause_Specialization_Contracts" (unresolved "Native_Investigation_Report_Diagnostic_finitepresenters13.Factor_Clause_Specialization_Instances")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_finitepresenters13.Factor_Scheme_Local_Readings" (unresolved "Native_Investigation_Report_Diagnostic_finitepresenters13.Factor_Clause_Specialization_Instances")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_finitepresenters13.Factor_Specialization_Reports" (unresolved "Native_Investigation_Report_Diagnostic_finitepresenters13.Factor_Clause_Specialization_Contracts")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_finitepresenters13.Factor_Scheme_Observations" (unresolved "Native_Investigation_Report_Diagnostic_finitepresenters13.Factor_Scheme_Local_Readings", "Native_Investigation_Report_Diagnostic_finitepresenters13.Factor_Specialization_Reports")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_finitepresenters13.Factor_Binding_Observation_Contracts" (unresolved "Native_Investigation_Report_Diagnostic_finitepresenters13.Factor_Scheme_Observations")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_finitepresenters13.Factor_Binding_Observation_Execution" (unresolved "Native_Investigation_Report_Diagnostic_finitepresenters13.Factor_Binding_Observation_Contracts")
+*** Failed to finish proof (line 62 of "/tmp/native-investigation-report-diagnostic-finitepresenters13/theories/Factor_Closed_Native_Definitions.thy"):
+*** goal (1 subgoal):
+***  1. (⋀q D. (d, q, D) ∈ G ⟹ thesis) ⟹
+***     thesis
+*** At command "by" (line 62 of "/tmp/native-investigation-report-diagnostic-finitepresenters13/theories/Factor_Closed_Native_Definitions.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_finitepresenters13
+0:02:35 elapsed time, 0:06:31 cpu time, factor 2.52

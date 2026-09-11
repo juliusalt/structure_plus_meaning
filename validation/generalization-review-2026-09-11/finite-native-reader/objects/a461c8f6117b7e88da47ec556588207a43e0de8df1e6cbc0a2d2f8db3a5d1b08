@@ -1,0 +1,35 @@
+{
+  "status": "evaluated",
+  "exit_code": 0,
+  "elapsed_seconds": 3.1447024770313874,
+  "runtime_seconds": 0.0677953289123252,
+  "receipt": "/tmp/generalization-quality-review/finite-reader-example/presenter-repair3/complete-input-construction/followed/receipt.json",
+  "input_formed": true,
+  "residual": [],
+  "repair_witnesses": 0,
+  "conflicts": 0,
+  "unrepairable": 0,
+  "extension": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "revision": {
+    "retained": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "withdrawn": [],
+    "repairs": [],
+    "selection": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "residual": []
+  }
+}

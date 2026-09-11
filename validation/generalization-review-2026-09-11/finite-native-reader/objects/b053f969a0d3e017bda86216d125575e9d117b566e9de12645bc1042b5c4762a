@@ -1,0 +1,2794 @@
+{
+  "Factor_Closed_Native_Definitions": [
+    {
+      "elapsed": "0.011",
+      "name": "theory",
+      "offset": "1",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "lemma",
+      "offset": "145",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "assume",
+      "offset": "330",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "obtain",
+      "offset": "383",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.003",
+      "name": "by",
+      "offset": "500",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "546",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "show",
+      "offset": "625",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "694",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "assume",
+      "offset": "710",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "show",
+      "offset": "766",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "824",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "qed",
+      "offset": "868",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.005",
+      "name": "theorem",
+      "offset": "944",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "1359",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "obtain",
+      "offset": "1479",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "1522",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "1554",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "obtain",
+      "offset": "1638",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "1758",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "1848",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "1981",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "show",
+      "offset": "2112",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "2185",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "obtain",
+      "offset": "2326",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "2360",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "show",
+      "offset": "2392",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "2454",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "2590",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "have",
+      "offset": "2640",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "obtain",
+      "offset": "2758",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "2801",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "2833",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "assume",
+      "offset": "2946",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "show",
+      "offset": "3091",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "3118",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "assume",
+      "offset": "3141",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "show",
+      "offset": "3171",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "show",
+      "offset": "3253",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "show",
+      "offset": "3334",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "assume",
+      "offset": "3418",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "obtain",
+      "offset": "3481",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.003",
+      "name": "by",
+      "offset": "3515",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "3539",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "3646",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "3739",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "show",
+      "offset": "3768",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "obtain",
+      "offset": "3879",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.003",
+      "name": "by",
+      "offset": "3913",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "3937",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "4028",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "4062",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "show",
+      "offset": "4148",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "4217",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.005",
+      "name": "qed",
+      "offset": "4282",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    },
+    {
+      "elapsed": "0.007",
+      "name": "end",
+      "offset": "4596",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Closed_Native_Definitions.thy"
+    }
+  ],
+  "Factor_Native_Equality": [
+    {
+      "elapsed": "0.118",
+      "name": "theory",
+      "offset": "1",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.021",
+      "name": "definition",
+      "offset": "200",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "948",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.005",
+      "name": "by",
+      "offset": "1058",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "1097",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.003",
+      "name": "by",
+      "offset": "1184",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.129",
+      "name": "by",
+      "offset": "1290",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.016",
+      "name": "by",
+      "offset": "1483",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.003",
+      "name": "definition",
+      "offset": "1557",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "1836",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "1951",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "2065",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "2106",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "2206",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.024",
+      "name": "lemma",
+      "offset": "2283",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.071",
+      "name": "by",
+      "offset": "4315",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.005",
+      "name": "lemma",
+      "offset": "4375",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "4631",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.016",
+      "name": "by",
+      "offset": "4724",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "4767",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.260",
+      "name": "by",
+      "offset": "4900",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "qed",
+      "offset": "5200",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.004",
+      "name": "lemma",
+      "offset": "5205",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.068",
+      "name": "by",
+      "offset": "5432",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "lemma",
+      "offset": "5493",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "5662",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.015",
+      "name": "by",
+      "offset": "5757",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "5767",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.006",
+      "name": "by",
+      "offset": "5926",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "qed",
+      "offset": "5958",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.004",
+      "name": "definition",
+      "offset": "5964",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.004",
+      "name": "definition",
+      "offset": "6220",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "lemma",
+      "offset": "6470",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "6721",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.004",
+      "name": "by",
+      "offset": "6869",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "6976",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "7125",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "7195",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "7229",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "7288",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "7394",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "7431",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "7535",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "show",
+      "offset": "7579",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.010",
+      "name": "by",
+      "offset": "7628",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "lemma",
+      "offset": "7890",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "8084",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.009",
+      "name": "by",
+      "offset": "8153",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "8187",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "8294",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "8338",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "8446",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "have",
+      "offset": "8568",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "8773",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "8889",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "8924",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "9034",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.003",
+      "name": "by",
+      "offset": "9111",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "9145",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "9206",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "9241",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "9313",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "9400",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "9435",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "9555",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "9725",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "9901",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.022",
+      "name": "by",
+      "offset": "9993",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "lemma",
+      "offset": "10438",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "10591",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.003",
+      "name": "by",
+      "offset": "10661",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "10695",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "10754",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "10789",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.008",
+      "name": "by",
+      "offset": "10936",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.014",
+      "name": "by",
+      "offset": "11187",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "11491",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "11607",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "11668",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "11703",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "11774",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "11816",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "11941",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "12055",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.005",
+      "name": "by",
+      "offset": "12239",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "12428",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.004",
+      "name": "by",
+      "offset": "12611",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.004",
+      "name": "lemma",
+      "offset": "12690",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.004",
+      "name": "using",
+      "offset": "13024",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.037",
+      "name": "by",
+      "offset": "13208",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "13441",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.007",
+      "name": "by",
+      "offset": "13561",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.009",
+      "name": "theorem",
+      "offset": "13661",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.006",
+      "name": "by",
+      "offset": "13806",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "theorem",
+      "offset": "13963",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "14088",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "14334",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "14427",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "14482",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "14643",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "14755",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "14968",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.009",
+      "name": "by",
+      "offset": "15128",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "theorem",
+      "offset": "15320",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "15471",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "15604",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "15672",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.004",
+      "name": "by",
+      "offset": "15844",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "15997",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "16048",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "16213",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.004",
+      "name": "by",
+      "offset": "16444",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "obtain",
+      "offset": "16549",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "16634",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.003",
+      "name": "by",
+      "offset": "16721",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "16869",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "qed",
+      "offset": "16878",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "theorem",
+      "offset": "16883",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "assume",
+      "offset": "17034",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "obtain",
+      "offset": "17114",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.003",
+      "name": "by",
+      "offset": "17229",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "17309",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.004",
+      "name": "by",
+      "offset": "17384",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "show",
+      "offset": "17459",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "17555",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "assume",
+      "offset": "17571",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "17695",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "show",
+      "offset": "17706",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "17820",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "qed",
+      "offset": "17828",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "theorem",
+      "offset": "17833",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "assume",
+      "offset": "17967",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "18091",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "18231",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "18241",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "18386",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.003",
+      "name": "definition",
+      "offset": "18632",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "18820",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "18933",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "18967",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "19211",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "19438",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "19735",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "20020",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "theorem",
+      "offset": "20030",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "20214",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "obtain",
+      "offset": "20362",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "20521",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "20532",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "20652",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "theorem",
+      "offset": "20810",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "21023",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "obtain",
+      "offset": "21171",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "21330",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "21354",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "corollary",
+      "offset": "21446",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "21778",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "21791",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "obtain",
+      "offset": "21986",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "22142",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "obtain",
+      "offset": "22153",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "22310",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "22321",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "22443",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "theorem",
+      "offset": "22528",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "22821",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "22937",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "23124",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "23181",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "23352",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "23563",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "theorem",
+      "offset": "23764",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "assume",
+      "offset": "23886",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "24037",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    },
+    {
+      "elapsed": "0.018",
+      "name": "end",
+      "offset": "24564",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Equality.thy"
+    }
+  ],
+  "Factor_Native_Incidence": [
+    {
+      "elapsed": "0.224",
+      "name": "theory",
+      "offset": "1",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.038",
+      "name": "definition",
+      "offset": "219",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "1484",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.007",
+      "name": "by",
+      "offset": "1596",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "1636",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.007",
+      "name": "by",
+      "offset": "1723",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.316",
+      "name": "by",
+      "offset": "1830",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.024",
+      "name": "by",
+      "offset": "2025",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.003",
+      "name": "definition",
+      "offset": "2100",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "2383",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "2499",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "2616",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "2760",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.032",
+      "name": "lemma",
+      "offset": "2838",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.145",
+      "name": "by",
+      "offset": "6299",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.006",
+      "name": "lemma",
+      "offset": "6360",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "6684",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.032",
+      "name": "by",
+      "offset": "6777",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "6820",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.855",
+      "name": "by",
+      "offset": "6954",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "qed",
+      "offset": "7256",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.005",
+      "name": "lemma",
+      "offset": "7261",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "1.026",
+      "name": "by",
+      "offset": "7566",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.003",
+      "name": "lemma",
+      "offset": "7627",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "7863",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.036",
+      "name": "by",
+      "offset": "7959",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "7969",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.011",
+      "name": "by",
+      "offset": "8130",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "qed",
+      "offset": "8162",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.005",
+      "name": "definition",
+      "offset": "8167",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.004",
+      "name": "definition",
+      "offset": "8529",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.004",
+      "name": "definition",
+      "offset": "8773",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "9021",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.010",
+      "name": "by",
+      "offset": "9136",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.004",
+      "name": "lemma",
+      "offset": "9281",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "9587",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.004",
+      "name": "by",
+      "offset": "9651",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "9802",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.007",
+      "name": "qed",
+      "offset": "9915",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "lemma",
+      "offset": "9920",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "10071",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.004",
+      "name": "by",
+      "offset": "10138",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "10173",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.003",
+      "name": "by",
+      "offset": "10233",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "10269",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "10341",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "10378",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "10483",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.009",
+      "name": "by",
+      "offset": "10577",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "lemma",
+      "offset": "10841",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "let",
+      "offset": "11064",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "11109",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.004",
+      "name": "by",
+      "offset": "11179",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "11214",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "11318",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "11363",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "11468",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "have",
+      "offset": "11593",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.006",
+      "name": "by",
+      "offset": "11795",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "show",
+      "offset": "11887",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "11912",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "qed",
+      "offset": "11942",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.004",
+      "name": "lemma",
+      "offset": "11947",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "let",
+      "offset": "12183",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.004",
+      "name": "have",
+      "offset": "12228",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.013",
+      "name": "by",
+      "offset": "12647",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "12694",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "12841",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "12992",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "have",
+      "offset": "13025",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.003",
+      "name": "by",
+      "offset": "13211",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.003",
+      "name": "have",
+      "offset": "13244",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.007",
+      "name": "by",
+      "offset": "13542",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.004",
+      "name": "have",
+      "offset": "13575",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.008",
+      "name": "by",
+      "offset": "13889",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.003",
+      "name": "have",
+      "offset": "13922",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.009",
+      "name": "by",
+      "offset": "14163",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "have",
+      "offset": "14246",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.004",
+      "name": "by",
+      "offset": "14350",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "show",
+      "offset": "14385",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "unfolding",
+      "offset": "14398",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.037",
+      "name": "by",
+      "offset": "14457",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "qed",
+      "offset": "14744",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "14749",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "let",
+      "offset": "14862",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "14907",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.004",
+      "name": "by",
+      "offset": "14985",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "have",
+      "offset": "15020",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.006",
+      "name": "by",
+      "offset": "15146",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "15182",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.005",
+      "name": "by",
+      "offset": "15251",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "15288",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.003",
+      "name": "by",
+      "offset": "15348",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.003",
+      "name": "have",
+      "offset": "15384",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "15574",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "15639",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.018",
+      "name": "by",
+      "offset": "15797",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "16068",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "16178",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "16223",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "16364",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.026",
+      "name": "by",
+      "offset": "16457",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "16903",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "17059",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.011",
+      "name": "by",
+      "offset": "17130",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "17165",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.003",
+      "name": "by",
+      "offset": "17225",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "17261",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.006",
+      "name": "by",
+      "offset": "17410",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.011",
+      "name": "by",
+      "offset": "17664",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "17971",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "18089",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.003",
+      "name": "by",
+      "offset": "18151",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "18187",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "18259",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "18302",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "18429",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "18545",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.005",
+      "name": "by",
+      "offset": "18730",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "18921",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.004",
+      "name": "by",
+      "offset": "19107",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.003",
+      "name": "lemma",
+      "offset": "19187",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.003",
+      "name": "using",
+      "offset": "19526",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.032",
+      "name": "by",
+      "offset": "19713",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "19951",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.006",
+      "name": "by",
+      "offset": "20074",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "theorem",
+      "offset": "20176",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.004",
+      "name": "by",
+      "offset": "20324",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "theorem",
+      "offset": "20484",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "20612",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "20956",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "21175",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "21289",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "21507",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "let",
+      "offset": "21697",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "21766",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "21926",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "21936",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.036",
+      "name": "by",
+      "offset": "22037",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.006",
+      "name": "by",
+      "offset": "22227",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "22298",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.004",
+      "name": "by",
+      "offset": "22381",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "22513",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.006",
+      "name": "by",
+      "offset": "22618",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "22695",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.008",
+      "name": "by",
+      "offset": "22802",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "22916",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "23041",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "23110",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.005",
+      "name": "by",
+      "offset": "23233",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "23322",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "theorem",
+      "offset": "23377",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "obtain",
+      "offset": "23612",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "23755",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "23879",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "23890",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "24008",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "lemma",
+      "offset": "24092",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "24399",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "24468",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "obtain",
+      "offset": "24559",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.005",
+      "name": "by",
+      "offset": "24724",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "24831",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.003",
+      "name": "by",
+      "offset": "24908",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "obtain",
+      "offset": "25056",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.008",
+      "name": "by",
+      "offset": "25200",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "25330",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "25447",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "25566",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "25624",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "qed",
+      "offset": "25633",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "theorem",
+      "offset": "25638",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "assume",
+      "offset": "25855",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "obtain",
+      "offset": "25936",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.009",
+      "name": "by",
+      "offset": "26052",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "26132",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.004",
+      "name": "by",
+      "offset": "26280",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "show",
+      "offset": "26356",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "26467",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "assume",
+      "offset": "26546",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "show",
+      "offset": "26662",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "26765",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "qed",
+      "offset": "26774",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "theorem",
+      "offset": "26781",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "assume",
+      "offset": "26917",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "let",
+      "offset": "27011",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "27091",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "27326",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "27421",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "show",
+      "offset": "27458",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "27623",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "27671",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "27780",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.003",
+      "name": "definition",
+      "offset": "28032",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "28223",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "28339",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "28373",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "28853",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "29156",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "29445",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "theorem",
+      "offset": "29455",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "29641",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "obtain",
+      "offset": "29792",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "29953",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "29964",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "30086",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "theorem",
+      "offset": "30245",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "30520",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "obtain",
+      "offset": "30671",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "30832",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "30856",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "qed",
+      "offset": "30944",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "corollary",
+      "offset": "30949",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "31347",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "31360",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "obtain",
+      "offset": "31558",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "31716",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "obtain",
+      "offset": "31727",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "31886",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "31897",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "32020",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "theorem",
+      "offset": "32105",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "32767",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "33153",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "theorem",
+      "offset": "33355",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "assume",
+      "offset": "33479",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "33632",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    },
+    {
+      "elapsed": "0.017",
+      "name": "end",
+      "offset": "34492",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Native_Incidence.thy"
+    }
+  ],
+  "Factor_Finite_Inference_Source_Checks": [
+    {
+      "elapsed": "0.117",
+      "name": "theory",
+      "offset": "1",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Finite_Inference_Source_Checks.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "205",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Finite_Inference_Source_Checks.thy"
+    },
+    {
+      "elapsed": "0.572",
+      "name": "by",
+      "offset": "366",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Finite_Inference_Source_Checks.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "381",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Finite_Inference_Source_Checks.thy"
+    },
+    {
+      "elapsed": "0.242",
+      "name": "by",
+      "offset": "483",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Finite_Inference_Source_Checks.thy"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "497",
+      "file": "/tmp/native-investigation-report-diagnostic-finitepresenters14/theories/Factor_Finite_Inference_Source_Checks.thy"
+    }
+  ]
+}

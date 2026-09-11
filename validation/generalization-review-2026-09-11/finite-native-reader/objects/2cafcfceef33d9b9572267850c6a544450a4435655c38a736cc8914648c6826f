@@ -1,0 +1,78 @@
+theory Factor_Closed_Native_Definitions
+  imports Factor_Packages
+begin
+
+section \<open>An actual reading determines every outgoing definition edge\<close>
+
+lemma native_definition_edges_at:
+  assumes read: "native_definition_at E u r p C"
+  shows "((u,r),e)\<in>native_definition_edges E \<longleftrightarrow>
+    (\<exists>c S. (c,S)\<in>C \<and> e\<in>schema_dependencies S)"
+proof
+  assume edge: "((u,r),e)\<in>native_definition_edges E"
+  obtain q D c S where actual: "native_definition_at E u r q D"
+    "(c,S)\<in>D" "e\<in>schema_dependencies S"
+    using edge by (auto simp: native_definition_edges_def)
+  have same: "q=p \<and> D=C" by (rule native_definition_unique[OF actual(1) read])
+  show "\<exists>c S. (c,S)\<in>C \<and> e\<in>schema_dependencies S"
+    using actual same by blast
+next
+  assume "\<exists>c S. (c,S)\<in>C \<and> e\<in>schema_dependencies S"
+  then show "((u,r),e)\<in>native_definition_edges E"
+    using read by (auto simp: native_definition_edges_def)
+qed
+
+section \<open>A complete closed reading graph is the exact selected graph\<close>
+
+theorem native_closed_definition_graph:
+  assumes formed: "environment_formed E"
+    and reads: "\<And>d p C. (d,p,C)\<in>G \<Longrightarrow> native_definition_at E (fst d) (snd d) p C"
+    and closed: "\<And>d p C c S. (d,p,C)\<in>G \<Longrightarrow> (c,S)\<in>C \<Longrightarrow>
+      schema_dependencies S\<subseteq>rel_dom G"
+  shows "native_definition_sites E (rel_dom G)=rel_dom G"
+    and "native_package_formed E (rel_dom G)"
+    and "native_definition_graph E (rel_dom G)=G"
+proof -
+  have outgoing: "e\<in>rel_dom G"
+    if at: "d\<in>rel_dom G" and edge: "(d,e)\<in>native_definition_edges E" for d e
+  proof -
+    obtain p C where row: "(d,p,C)\<in>G" using at by (auto simp: rel_dom_def)
+    have read: "native_definition_at E (fst d) (snd d) p C" by (rule reads[OF row])
+    obtain c S where callee: "(c,S)\<in>C" "e\<in>schema_dependencies S"
+      using native_definition_edges_at[OF read, of e] edge by auto
+    show ?thesis by (rule subsetD[OF closed[OF row callee(1)] callee(2)])
+  qed
+  have upper: "native_definition_sites E (rel_dom G)\<subseteq>rel_dom G"
+    by (rule native_definition_sites_least[OF subset_refl outgoing])
+  have sites: "native_definition_sites E (rel_dom G)=rel_dom G"
+    using upper native_definition_roots[of "rel_dom G" E] by blast
+  show "native_definition_sites E (rel_dom G)=rel_dom G" by (rule sites)
+  have defined: "\<forall>d\<in>rel_dom G. \<exists>p C. native_definition_at E (fst d) (snd d) p C"
+  proof (intro ballI)
+    fix d assume "d\<in>rel_dom G"
+    then obtain p C where row: "(d,p,C)\<in>G" by (auto simp: rel_dom_def)
+    show "\<exists>p C. native_definition_at E (fst d) (snd d) p C"
+      by (rule exI[of _ p], rule exI[of _ C], rule reads[OF row])
+  qed
+  show "native_package_formed E (rel_dom G)"
+    using formed defined by (simp only: native_package_formed_def sites)
+  have exact: "native_definition_at E (fst d) (snd d) p C \<longleftrightarrow> (d,p,C)\<in>G"
+    if "d\<in>rel_dom G" for d p C
+  proof -
+    obtain q D where row: "(d,q,D)\<in>G" using that by (auto simp: rel_dom_def)
+    have read: "native_definition_at E (fst d) (snd d) q D" by (rule reads[OF row])
+    show ?thesis using native_definition_unique[OF _ read] reads row by blast
+  qed
+  show "native_definition_graph E (rel_dom G)=G"
+    using exact unfolding native_definition_graph_def sites
+    by (auto simp: rel_dom_def)
+qed
+
+text \<open>
+  The supplied graph contains actual complete definition readings. Closure
+  concerns their prospective definition calls and permits mutually referring
+  definitions. It does not erase other artifacts, bindings or literal
+  references in the environment, and it makes no claim about proof validity.
+\<close>
+
+end

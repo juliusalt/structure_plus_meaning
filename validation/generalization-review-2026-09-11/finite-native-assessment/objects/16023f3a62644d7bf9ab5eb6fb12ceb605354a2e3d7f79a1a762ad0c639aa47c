@@ -1,0 +1,784 @@
+{
+  "status": "accepted",
+  "stages": 7,
+  "investigations": 104,
+  "results": [
+    {
+      "kind": "stage",
+      "name": "presenter-current",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/stage--presenter-current",
+      "log": "/tmp/finite-native-replays/stage--presenter-current.log"
+    },
+    {
+      "kind": "stage",
+      "name": "presenter-original",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/stage--presenter-original",
+      "log": "/tmp/finite-native-replays/stage--presenter-original.log"
+    },
+    {
+      "kind": "stage",
+      "name": "library-catalogs",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/stage--library-catalogs",
+      "log": "/tmp/finite-native-replays/stage--library-catalogs.log"
+    },
+    {
+      "kind": "stage",
+      "name": "native-input-19",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/stage--native-input-19",
+      "log": "/tmp/finite-native-replays/stage--native-input-19.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "closed-graph-repair1--affected-example-coverage--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--closed-graph-repair1--affected-example-coverage--followed",
+      "log": "/tmp/finite-native-replays/investigation--closed-graph-repair1--affected-example-coverage--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "closed-graph-repair1--affected-example-coverage--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--closed-graph-repair1--affected-example-coverage--initial",
+      "log": "/tmp/finite-native-replays/investigation--closed-graph-repair1--affected-example-coverage--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "closed-graph-repair1--closed-graph-rewrite--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--closed-graph-repair1--closed-graph-rewrite--followed",
+      "log": "/tmp/finite-native-replays/investigation--closed-graph-repair1--closed-graph-rewrite--followed.log"
+    },
+    {
+      "kind": "stage",
+      "name": "native-input-21",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/stage--native-input-21",
+      "log": "/tmp/finite-native-replays/stage--native-input-21.log"
+    },
+    {
+      "kind": "stage",
+      "name": "native-input-20",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/stage--native-input-20",
+      "log": "/tmp/finite-native-replays/stage--native-input-20.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "closed-graph-repair1--closed-graph-rewrite--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--closed-graph-repair1--closed-graph-rewrite--initial",
+      "log": "/tmp/finite-native-replays/investigation--closed-graph-repair1--closed-graph-rewrite--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "closed-graph-repair2--native-definition-witnesses--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--closed-graph-repair2--native-definition-witnesses--followed",
+      "log": "/tmp/finite-native-replays/investigation--closed-graph-repair2--native-definition-witnesses--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "closed-graph-repair2--native-definition-witnesses--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--closed-graph-repair2--native-definition-witnesses--initial",
+      "log": "/tmp/finite-native-replays/investigation--closed-graph-repair2--native-definition-witnesses--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "closed-graph-repair3--local-domain-and-exact-rows--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--closed-graph-repair3--local-domain-and-exact-rows--followed",
+      "log": "/tmp/finite-native-replays/investigation--closed-graph-repair3--local-domain-and-exact-rows--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "closed-graph-repair3--local-domain-and-exact-rows--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--closed-graph-repair3--local-domain-and-exact-rows--initial",
+      "log": "/tmp/finite-native-replays/investigation--closed-graph-repair3--local-domain-and-exact-rows--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "closed-native-graph--closed-native-graph--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--closed-native-graph--closed-native-graph--followed",
+      "log": "/tmp/finite-native-replays/investigation--closed-native-graph--closed-native-graph--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "closed-native-graph--closed-native-graph--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--closed-native-graph--closed-native-graph--initial",
+      "log": "/tmp/finite-native-replays/investigation--closed-native-graph--closed-native-graph--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "ground-binding-generalization--exact-ground-binding--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--ground-binding-generalization--exact-ground-binding--followed",
+      "log": "/tmp/finite-native-replays/investigation--ground-binding-generalization--exact-ground-binding--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "ground-binding-generalization--exact-ground-binding--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--ground-binding-generalization--exact-ground-binding--initial",
+      "log": "/tmp/finite-native-replays/investigation--ground-binding-generalization--exact-ground-binding--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-argument-proof-dependencies--explicit-argument-dependencies--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-argument-proof-dependencies--explicit-argument-dependencies--followed",
+      "log": "/tmp/finite-native-replays/investigation--native-argument-proof-dependencies--explicit-argument-dependencies--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-argument-proof-dependencies--explicit-argument-dependencies--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-argument-proof-dependencies--explicit-argument-dependencies--initial",
+      "log": "/tmp/finite-native-replays/investigation--native-argument-proof-dependencies--explicit-argument-dependencies--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-complete-argument--complete-native-argument--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-complete-argument--complete-native-argument--followed",
+      "log": "/tmp/finite-native-replays/investigation--native-complete-argument--complete-native-argument--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-complete-argument--complete-native-argument--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-complete-argument--complete-native-argument--initial",
+      "log": "/tmp/finite-native-replays/investigation--native-complete-argument--complete-native-argument--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-complete-argument--report-reuse--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-complete-argument--report-reuse--followed",
+      "log": "/tmp/finite-native-replays/investigation--native-complete-argument--report-reuse--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-complete-argument--report-reuse--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-complete-argument--report-reuse--initial",
+      "log": "/tmp/finite-native-replays/investigation--native-complete-argument--report-reuse--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-data-replay--complete-data-replay--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-data-replay--complete-data-replay--followed",
+      "log": "/tmp/finite-native-replays/investigation--native-data-replay--complete-data-replay--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-data-replay--complete-data-replay--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-data-replay--complete-data-replay--initial",
+      "log": "/tmp/finite-native-replays/investigation--native-data-replay--complete-data-replay--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-deep-data-copy--complete-json-copy--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-deep-data-copy--complete-json-copy--followed",
+      "log": "/tmp/finite-native-replays/investigation--native-deep-data-copy--complete-json-copy--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-deep-data-copy--complete-json-copy--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-deep-data-copy--complete-json-copy--initial",
+      "log": "/tmp/finite-native-replays/investigation--native-deep-data-copy--complete-json-copy--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-empty-formation--actual-formation-premises--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-empty-formation--actual-formation-premises--followed",
+      "log": "/tmp/finite-native-replays/investigation--native-empty-formation--actual-formation-premises--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-empty-formation--actual-formation-premises--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-empty-formation--actual-formation-premises--initial",
+      "log": "/tmp/finite-native-replays/investigation--native-empty-formation--actual-formation-premises--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-example-information--native-example-information--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-example-information--native-example-information--followed",
+      "log": "/tmp/finite-native-replays/investigation--native-example-information--native-example-information--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-example-information--native-example-information--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-example-information--native-example-information--initial",
+      "log": "/tmp/finite-native-replays/investigation--native-example-information--native-example-information--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-final-validation--complete-validation-and-retention--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-final-validation--complete-validation-and-retention--followed",
+      "log": "/tmp/finite-native-replays/investigation--native-final-validation--complete-validation-and-retention--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-final-validation--complete-validation-and-retention--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-final-validation--complete-validation-and-retention--initial",
+      "log": "/tmp/finite-native-replays/investigation--native-final-validation--complete-validation-and-retention--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-ground-design--explicit-source-witness--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-ground-design--explicit-source-witness--initial",
+      "log": "/tmp/finite-native-replays/investigation--native-ground-design--explicit-source-witness--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-ground-design--explicit-source-witness--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-ground-design--explicit-source-witness--followed",
+      "log": "/tmp/finite-native-replays/investigation--native-ground-design--explicit-source-witness--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-ground-design--literal-family-reuse--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-ground-design--literal-family-reuse--followed",
+      "log": "/tmp/finite-native-replays/investigation--native-ground-design--literal-family-reuse--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-ground-design--native-reading-validation--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-ground-design--native-reading-validation--followed",
+      "log": "/tmp/finite-native-replays/investigation--native-ground-design--native-reading-validation--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-ground-design--literal-family-reuse--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-ground-design--literal-family-reuse--initial",
+      "log": "/tmp/finite-native-replays/investigation--native-ground-design--literal-family-reuse--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-ground-design--native-reading-validation--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-ground-design--native-reading-validation--initial",
+      "log": "/tmp/finite-native-replays/investigation--native-ground-design--native-reading-validation--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-known-frontier--actual-known-frontier--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-known-frontier--actual-known-frontier--followed",
+      "log": "/tmp/finite-native-replays/investigation--native-known-frontier--actual-known-frontier--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-known-frontier--actual-known-frontier--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-known-frontier--actual-known-frontier--initial",
+      "log": "/tmp/finite-native-replays/investigation--native-known-frontier--actual-known-frontier--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-local-field-proofs--primitive-source-certificates--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-local-field-proofs--primitive-source-certificates--followed",
+      "log": "/tmp/finite-native-replays/investigation--native-local-field-proofs--primitive-source-certificates--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-local-field-proofs--primitive-source-certificates--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-local-field-proofs--primitive-source-certificates--initial",
+      "log": "/tmp/finite-native-replays/investigation--native-local-field-proofs--primitive-source-certificates--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-lossless-evidence--lossless-large-evidence--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-lossless-evidence--lossless-large-evidence--followed",
+      "log": "/tmp/finite-native-replays/investigation--native-lossless-evidence--lossless-large-evidence--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-lossless-evidence--lossless-large-evidence--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-lossless-evidence--lossless-large-evidence--initial",
+      "log": "/tmp/finite-native-replays/investigation--native-lossless-evidence--lossless-large-evidence--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-payload-label--native-proof-label--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-payload-label--native-proof-label--followed",
+      "log": "/tmp/finite-native-replays/investigation--native-payload-label--native-proof-label--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-payload-label--native-proof-label--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-payload-label--native-proof-label--initial",
+      "log": "/tmp/finite-native-replays/investigation--native-payload-label--native-proof-label--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-program-projection--closed-graph-rewrite--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-program-projection--closed-graph-rewrite--followed",
+      "log": "/tmp/finite-native-replays/investigation--native-program-projection--closed-graph-rewrite--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-program-projection--closed-graph-rewrite--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-program-projection--closed-graph-rewrite--initial",
+      "log": "/tmp/finite-native-replays/investigation--native-program-projection--closed-graph-rewrite--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-proof-label--native-proof-label--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-proof-label--native-proof-label--followed",
+      "log": "/tmp/finite-native-replays/investigation--native-proof-label--native-proof-label--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-proof-label--native-proof-label--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-proof-label--native-proof-label--initial",
+      "log": "/tmp/finite-native-replays/investigation--native-proof-label--native-proof-label--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-proof-method--native-proof-information--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-proof-method--native-proof-information--followed",
+      "log": "/tmp/finite-native-replays/investigation--native-proof-method--native-proof-information--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-proof-method--native-proof-information--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-proof-method--native-proof-information--initial",
+      "log": "/tmp/finite-native-replays/investigation--native-proof-method--native-proof-information--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-proof-method--native-proof-method--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-proof-method--native-proof-method--followed",
+      "log": "/tmp/finite-native-replays/investigation--native-proof-method--native-proof-method--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-proof-method--native-proof-method--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-proof-method--native-proof-method--initial",
+      "log": "/tmp/finite-native-replays/investigation--native-proof-method--native-proof-method--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-reference-json--complete-json-reference--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-reference-json--complete-json-reference--followed",
+      "log": "/tmp/finite-native-replays/investigation--native-reference-json--complete-json-reference--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-reference-json--complete-json-reference--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-reference-json--complete-json-reference--initial",
+      "log": "/tmp/finite-native-replays/investigation--native-reference-json--complete-json-reference--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-report-instantiation--literal-report-instance--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-report-instantiation--literal-report-instance--followed",
+      "log": "/tmp/finite-native-replays/investigation--native-report-instantiation--literal-report-instance--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-report-instantiation--literal-report-instance--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-report-instantiation--literal-report-instance--initial",
+      "log": "/tmp/finite-native-replays/investigation--native-report-instantiation--literal-report-instance--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-runtime-adapter--proved-runtime-inputs--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-runtime-adapter--proved-runtime-inputs--followed",
+      "log": "/tmp/finite-native-replays/investigation--native-runtime-adapter--proved-runtime-inputs--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-runtime-adapter--proved-runtime-inputs--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-runtime-adapter--proved-runtime-inputs--initial",
+      "log": "/tmp/finite-native-replays/investigation--native-runtime-adapter--proved-runtime-inputs--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-source-premises--source-premise-reuse--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-source-premises--source-premise-reuse--followed",
+      "log": "/tmp/finite-native-replays/investigation--native-source-premises--source-premise-reuse--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-source-premises--source-premise-reuse--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-source-premises--source-premise-reuse--initial",
+      "log": "/tmp/finite-native-replays/investigation--native-source-premises--source-premise-reuse--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-source-reference-contract--actual-source-reference--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-source-reference-contract--actual-source-reference--followed",
+      "log": "/tmp/finite-native-replays/investigation--native-source-reference-contract--actual-source-reference--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "native-source-reference-contract--actual-source-reference--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--native-source-reference-contract--actual-source-reference--initial",
+      "log": "/tmp/finite-native-replays/investigation--native-source-reference-contract--actual-source-reference--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "plan--approach--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--plan--approach--followed",
+      "log": "/tmp/finite-native-replays/investigation--plan--approach--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "plan--approach--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--plan--approach--initial",
+      "log": "/tmp/finite-native-replays/investigation--plan--approach--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "plan--information--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--plan--information--followed",
+      "log": "/tmp/finite-native-replays/investigation--plan--information--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "plan--information--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--plan--information--initial",
+      "log": "/tmp/finite-native-replays/investigation--plan--information--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-controls--execution-coverage--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-controls--execution-coverage--followed",
+      "log": "/tmp/finite-native-replays/investigation--presenter-controls--execution-coverage--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-controls--execution-coverage--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-controls--execution-coverage--initial",
+      "log": "/tmp/finite-native-replays/investigation--presenter-controls--execution-coverage--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-design--presentation-design--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-design--presentation-design--followed",
+      "log": "/tmp/finite-native-replays/investigation--presenter-design--presentation-design--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-design--presentation-design--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-design--presentation-design--initial",
+      "log": "/tmp/finite-native-replays/investigation--presenter-design--presentation-design--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-design--sequence-reuse--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-design--sequence-reuse--followed",
+      "log": "/tmp/finite-native-replays/investigation--presenter-design--sequence-reuse--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-design--sequence-reuse--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-design--sequence-reuse--initial",
+      "log": "/tmp/finite-native-replays/investigation--presenter-design--sequence-reuse--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-interface-and-timeout--native-proof-scheduling--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-interface-and-timeout--native-proof-scheduling--followed",
+      "log": "/tmp/finite-native-replays/investigation--presenter-interface-and-timeout--native-proof-scheduling--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-interface-and-timeout--native-proof-scheduling--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-interface-and-timeout--native-proof-scheduling--initial",
+      "log": "/tmp/finite-native-replays/investigation--presenter-interface-and-timeout--native-proof-scheduling--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-interface-and-timeout--public-presenter-interface--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-interface-and-timeout--public-presenter-interface--followed",
+      "log": "/tmp/finite-native-replays/investigation--presenter-interface-and-timeout--public-presenter-interface--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-interface-and-timeout--public-presenter-interface--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-interface-and-timeout--public-presenter-interface--initial",
+      "log": "/tmp/finite-native-replays/investigation--presenter-interface-and-timeout--public-presenter-interface--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-repair1--dependent-validation--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-repair1--dependent-validation--followed",
+      "log": "/tmp/finite-native-replays/investigation--presenter-repair1--dependent-validation--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-repair1--dependent-validation--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-repair1--dependent-validation--initial",
+      "log": "/tmp/finite-native-replays/investigation--presenter-repair1--dependent-validation--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-repair1--diagnostic-reading--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-repair1--diagnostic-reading--followed",
+      "log": "/tmp/finite-native-replays/investigation--presenter-repair1--diagnostic-reading--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-repair1--diagnostic-reading--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-repair1--diagnostic-reading--initial",
+      "log": "/tmp/finite-native-replays/investigation--presenter-repair1--diagnostic-reading--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-repair1--partial-inverse-repair--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-repair1--partial-inverse-repair--followed",
+      "log": "/tmp/finite-native-replays/investigation--presenter-repair1--partial-inverse-repair--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-repair1--partial-inverse-repair--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-repair1--partial-inverse-repair--initial",
+      "log": "/tmp/finite-native-replays/investigation--presenter-repair1--partial-inverse-repair--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-repair2--executable-input-interface--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-repair2--executable-input-interface--followed",
+      "log": "/tmp/finite-native-replays/investigation--presenter-repair2--executable-input-interface--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-repair2--executable-input-interface--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-repair2--executable-input-interface--initial",
+      "log": "/tmp/finite-native-replays/investigation--presenter-repair2--executable-input-interface--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-repair2--proof-label-syntax--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-repair2--proof-label-syntax--followed",
+      "log": "/tmp/finite-native-replays/investigation--presenter-repair2--proof-label-syntax--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-repair2--proof-label-syntax--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-repair2--proof-label-syntax--initial",
+      "log": "/tmp/finite-native-replays/investigation--presenter-repair2--proof-label-syntax--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-repair3--complete-input-construction--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-repair3--complete-input-construction--followed",
+      "log": "/tmp/finite-native-replays/investigation--presenter-repair3--complete-input-construction--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-repair3--enumeration-orders--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-repair3--enumeration-orders--followed",
+      "log": "/tmp/finite-native-replays/investigation--presenter-repair3--enumeration-orders--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-repair3--complete-input-construction--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-repair3--complete-input-construction--initial",
+      "log": "/tmp/finite-native-replays/investigation--presenter-repair3--complete-input-construction--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-repair3--enumeration-orders--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-repair3--enumeration-orders--initial",
+      "log": "/tmp/finite-native-replays/investigation--presenter-repair3--enumeration-orders--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-repair4--checker-retention-contract--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-repair4--checker-retention-contract--followed",
+      "log": "/tmp/finite-native-replays/investigation--presenter-repair4--checker-retention-contract--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-repair4--checker-retention-contract--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-repair4--checker-retention-contract--initial",
+      "log": "/tmp/finite-native-replays/investigation--presenter-repair4--checker-retention-contract--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-repair4--finite-set-decoding--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-repair4--finite-set-decoding--followed",
+      "log": "/tmp/finite-native-replays/investigation--presenter-repair4--finite-set-decoding--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-repair4--finite-set-decoding--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-repair4--finite-set-decoding--initial",
+      "log": "/tmp/finite-native-replays/investigation--presenter-repair4--finite-set-decoding--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-repair5--finite-sorted-distinctness--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-repair5--finite-sorted-distinctness--followed",
+      "log": "/tmp/finite-native-replays/investigation--presenter-repair5--finite-sorted-distinctness--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-repair5--finite-sorted-distinctness--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-repair5--finite-sorted-distinctness--initial",
+      "log": "/tmp/finite-native-replays/investigation--presenter-repair5--finite-sorted-distinctness--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-repair6--environment-row-composition--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-repair6--environment-row-composition--initial",
+      "log": "/tmp/finite-native-replays/investigation--presenter-repair6--environment-row-composition--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-repair6--environment-row-composition--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-repair6--environment-row-composition--followed",
+      "log": "/tmp/finite-native-replays/investigation--presenter-repair6--environment-row-composition--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-repair7--collection-row-preimage--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-repair7--collection-row-preimage--followed",
+      "log": "/tmp/finite-native-replays/investigation--presenter-repair7--collection-row-preimage--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-repair7--collection-row-preimage--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-repair7--collection-row-preimage--initial",
+      "log": "/tmp/finite-native-replays/investigation--presenter-repair7--collection-row-preimage--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-repair8--collection-presentation-rewrite--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-repair8--collection-presentation-rewrite--followed",
+      "log": "/tmp/finite-native-replays/investigation--presenter-repair8--collection-presentation-rewrite--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "presenter-repair8--collection-presentation-rewrite--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--presenter-repair8--collection-presentation-rewrite--initial",
+      "log": "/tmp/finite-native-replays/investigation--presenter-repair8--collection-presentation-rewrite--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "sequence-corrected--sequence-reuse--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--sequence-corrected--sequence-reuse--followed",
+      "log": "/tmp/finite-native-replays/investigation--sequence-corrected--sequence-reuse--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "sequence-corrected--sequence-reuse--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--sequence-corrected--sequence-reuse--initial",
+      "log": "/tmp/finite-native-replays/investigation--sequence-corrected--sequence-reuse--initial.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "serializer-reuse--serializer-reuse--followed",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--serializer-reuse--serializer-reuse--followed",
+      "log": "/tmp/finite-native-replays/investigation--serializer-reuse--serializer-reuse--followed.log"
+    },
+    {
+      "kind": "investigation",
+      "name": "serializer-reuse--serializer-reuse--initial",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/investigation--serializer-reuse--serializer-reuse--initial",
+      "log": "/tmp/finite-native-replays/investigation--serializer-reuse--serializer-reuse--initial.log"
+    },
+    {
+      "kind": "stage",
+      "name": "native-reader",
+      "exit_code": 0,
+      "output": "/tmp/finite-native-replays/stage--native-reader",
+      "log": "/tmp/finite-native-replays/stage--native-reader.log"
+    }
+  ]
+}

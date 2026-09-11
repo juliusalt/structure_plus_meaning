@@ -1,0 +1,5 @@
+session Native_Investigation_Report_Diagnostic_finitepresenters6 = HOL +
+  options [document = false, timeout = 300]
+  sessions "HOL-Library"
+  directories "theories"
+  theories Factor_Executable_Environment_Values Factor_Binding_Observation_Execution Factor_Executable_Material

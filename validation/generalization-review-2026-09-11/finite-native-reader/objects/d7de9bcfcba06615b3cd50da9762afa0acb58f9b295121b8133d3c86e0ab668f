@@ -1,0 +1,7 @@
+{
+  "decision_sha256": "8120084758028057cb86871b65365080a41be4d2a954ceb1d98a7226992ea90f",
+  "selected_candidate": 1,
+  "critical_assessment": "The complete original and followed results expose the missing explicit-row criterion, while all mandatory requirements remain enforced. This comparison assesses externally supplied proof proposals, not proof truth. The named assumption removes ambiguous fact lookup and existing uniqueness supplies both directions. Isabelle must establish every original conclusion and consumer.",
+  "scheduling": "Submit the complete generic proof with all currently affected consumers; no useful dependent error is available before its result. Read the independent source/report interfaces during validation.",
+  "changed_source_sha256": "176c8c25852d21a0ffe9ad8ce1ae6769e2811d9b7f27f1f263e22e56f741c70c"
+}

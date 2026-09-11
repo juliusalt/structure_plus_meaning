@@ -1,0 +1,46 @@
+{
+  "largest_files": [
+    [
+      1067592473,
+      "native-reader-execution21/cases.json"
+    ],
+    [
+      1067589225,
+      "native-reader-execution19/cases.json"
+    ],
+    [
+      366663802,
+      "native-reader-execution21/conditions.json"
+    ],
+    [
+      60133829,
+      "native-reader-execution21/results.log"
+    ],
+    [
+      60133829,
+      "native-reader-execution19/results.log"
+    ],
+    [
+      39553366,
+      "native-reader-execution21/execute.ML"
+    ],
+    [
+      39553366,
+      "native-reader-execution19/execute.ML"
+    ],
+    [
+      9061884,
+      "native-input-execution21/specification.json"
+    ],
+    [
+      9061884,
+      "native-input-execution20/specification.json"
+    ],
+    [
+      9059737,
+      "native-input-execution19/specification.json"
+    ]
+  ],
+  "total_bytes": 2772371049,
+  "requirement": "Retain exact original bytes without rewriting checked execution inputs."
+}

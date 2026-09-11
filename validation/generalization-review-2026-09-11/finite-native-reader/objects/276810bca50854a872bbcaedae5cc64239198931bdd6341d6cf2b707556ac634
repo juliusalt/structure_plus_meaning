@@ -1,0 +1,40 @@
+{
+  "status": "evaluated",
+  "exit_code": 0,
+  "elapsed_seconds": 11.968698094016872,
+  "runtime_seconds": 0.06653081497643143,
+  "receipt": "/tmp/generalization-quality-review/finite-reader-example/presenter-controls/execution-coverage/initial/receipt.json",
+  "input_formed": true,
+  "residual": [
+    [
+      0,
+      2
+    ]
+  ],
+  "repair_witnesses": 1,
+  "conflicts": 0,
+  "unrepairable": 0,
+  "extension": [
+    0,
+    6
+  ],
+  "revision": {
+    "retained": [
+      0
+    ],
+    "withdrawn": [],
+    "repairs": [
+      [
+        0,
+        2,
+        6,
+        0
+      ]
+    ],
+    "selection": [
+      0,
+      6
+    ],
+    "residual": []
+  }
+}

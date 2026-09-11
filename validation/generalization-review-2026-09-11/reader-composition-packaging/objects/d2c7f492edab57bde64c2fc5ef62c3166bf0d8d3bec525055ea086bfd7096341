@@ -1,0 +1,220 @@
+{
+  "schema": "finite-investigation-1",
+  "kind": "basis",
+  "question": "How should the exact retained evidence and the seven archive-only whitespace flags be handled before publishing this batch?",
+  "scope": {
+    "candidates": {
+      "0": "Normalize trailing blank lines in the seven retained byte objects",
+      "1": "Retain original evidence bytes and document the archive-only style exception"
+    },
+    "facets": {
+      "0": "Expected original evidence identity is preserved for this fragment",
+      "1": "Code and documentation pass their whitespace check",
+      "2": "This archive fragment has no trailing blank-line warning"
+    },
+    "boundary": "All seven original identities and counterfactual normalized identities are measured. Mandatory exact evidence preservation is the established replay requirement; cosmetic archive whitespace is a distinct observation."
+  },
+  "candidates": [
+    0,
+    1
+  ],
+  "facets": [
+    0,
+    1,
+    2
+  ],
+  "selected": [
+    1,
+    2,
+    0
+  ],
+  "observations": [
+    [
+      1,
+      0,
+      0
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      2,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      1
+    ],
+    [
+      2,
+      0,
+      1
+    ],
+    [
+      0,
+      1,
+      2
+    ],
+    [
+      2,
+      0,
+      2
+    ],
+    [
+      0,
+      1,
+      3
+    ],
+    [
+      2,
+      0,
+      3
+    ],
+    [
+      0,
+      1,
+      4
+    ],
+    [
+      2,
+      0,
+      4
+    ],
+    [
+      0,
+      1,
+      5
+    ],
+    [
+      2,
+      0,
+      5
+    ],
+    [
+      0,
+      1,
+      6
+    ],
+    [
+      2,
+      0,
+      6
+    ]
+  ],
+  "relation": [
+    [
+      0,
+      0
+    ],
+    [
+      1,
+      1
+    ]
+  ],
+  "evidence": [
+    {
+      "path": "/tmp/generalization-quality-review/reader-composition-packaging/execution/verbatim-evidence/initial/evidence-af80428d-c549-419c-a0b6-5e66970a0b47/1a0e02991307d3fb8d92a4d10c0501df8312a7bc79d8e7ddab1bcd33e309b04c",
+      "sha256": "1a0e02991307d3fb8d92a4d10c0501df8312a7bc79d8e7ddab1bcd33e309b04c",
+      "original_path": "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/reader-native-composition/objects/1a0e02991307d3fb8d92a4d10c0501df8312a7bc79d8e7ddab1bcd33e309b04c"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-composition-packaging/execution/verbatim-evidence/initial/evidence-af80428d-c549-419c-a0b6-5e66970a0b47/69fbdf35d4b09d15c0a00955a4bbaa6c8f32758a13b04777814bb6756f2a1188",
+      "sha256": "69fbdf35d4b09d15c0a00955a4bbaa6c8f32758a13b04777814bb6756f2a1188",
+      "original_path": "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/reader-native-composition/objects/69fbdf35d4b09d15c0a00955a4bbaa6c8f32758a13b04777814bb6756f2a1188"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-composition-packaging/execution/verbatim-evidence/initial/evidence-af80428d-c549-419c-a0b6-5e66970a0b47/93c15f72efbc9c232e362fc899ad1ba2a2dcd3b7dd084cf3ecdc2e0efab9f8a7",
+      "sha256": "93c15f72efbc9c232e362fc899ad1ba2a2dcd3b7dd084cf3ecdc2e0efab9f8a7",
+      "original_path": "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/reader-native-composition/objects/93c15f72efbc9c232e362fc899ad1ba2a2dcd3b7dd084cf3ecdc2e0efab9f8a7"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-composition-packaging/execution/verbatim-evidence/initial/evidence-af80428d-c549-419c-a0b6-5e66970a0b47/96efbbfaae48d6f667db92a70fb83a40b9d375987b506c65a6ef709ccf319ce5",
+      "sha256": "96efbbfaae48d6f667db92a70fb83a40b9d375987b506c65a6ef709ccf319ce5",
+      "original_path": "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/reader-native-composition/objects/96efbbfaae48d6f667db92a70fb83a40b9d375987b506c65a6ef709ccf319ce5"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-composition-packaging/execution/verbatim-evidence/initial/evidence-af80428d-c549-419c-a0b6-5e66970a0b47/994f320200232b85cf0717272b12500a983322c2ba56e5e4d1a5432541d35ffc",
+      "sha256": "994f320200232b85cf0717272b12500a983322c2ba56e5e4d1a5432541d35ffc",
+      "original_path": "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/reader-native-composition/objects/994f320200232b85cf0717272b12500a983322c2ba56e5e4d1a5432541d35ffc"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-composition-packaging/execution/verbatim-evidence/initial/evidence-af80428d-c549-419c-a0b6-5e66970a0b47/9a0da88c281f466424ffe1a949af15272e4a5f29209218c7c9cffce8ff24fb66",
+      "sha256": "9a0da88c281f466424ffe1a949af15272e4a5f29209218c7c9cffce8ff24fb66",
+      "original_path": "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/reader-native-composition/objects/9a0da88c281f466424ffe1a949af15272e4a5f29209218c7c9cffce8ff24fb66"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-composition-packaging/execution/verbatim-evidence/initial/evidence-af80428d-c549-419c-a0b6-5e66970a0b47/b04d58be65ced2848680c62862db8eecc82fef2434a6eea50e3ce64ccc68fd6a",
+      "sha256": "b04d58be65ced2848680c62862db8eecc82fef2434a6eea50e3ce64ccc68fd6a",
+      "original_path": "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/reader-native-composition/objects/b04d58be65ced2848680c62862db8eecc82fef2434a6eea50e3ce64ccc68fd6a"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-composition-packaging/execution/verbatim-evidence/initial/evidence-af80428d-c549-419c-a0b6-5e66970a0b47/60bd4c869c84c8a9f32c90daa35e38d38c3a1c37d485781fc55eea9d2fc295bc",
+      "sha256": "60bd4c869c84c8a9f32c90daa35e38d38c3a1c37d485781fc55eea9d2fc295bc",
+      "original_path": "/tmp/reader-composition-packaging.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-composition-packaging/execution/verbatim-evidence/initial/evidence-af80428d-c549-419c-a0b6-5e66970a0b47/f191b91c1eb3366f4ab8b484d23d7ec7d0623e68a6d8369f1f2db148ad5064c6",
+      "sha256": "f191b91c1eb3366f4ab8b484d23d7ec7d0623e68a6d8369f1f2db148ad5064c6",
+      "original_path": "/tmp/generalization-quality-review/reader-composition-packaging/measurements.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-composition-packaging/execution/verbatim-evidence/initial/evidence-af80428d-c549-419c-a0b6-5e66970a0b47/d3c079b1a5b158702f0cdb182e00d5d696e48e1539ad957b5d5996deb67c7be6",
+      "sha256": "d3c079b1a5b158702f0cdb182e00d5d696e48e1539ad957b5d5996deb67c7be6",
+      "original_path": "/tmp/generalization-quality-review/reader-composition-packaging/complete-whitespace-check.log"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-composition-packaging/execution/verbatim-evidence/initial/evidence-af80428d-c549-419c-a0b6-5e66970a0b47/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/tmp/generalization-quality-review/reader-composition-packaging/software-whitespace-check.log"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-composition-packaging/execution/verbatim-evidence/initial/evidence-af80428d-c549-419c-a0b6-5e66970a0b47/8a34bbf4ec7a6c3e4bd485769394cf9496949a39357e92a99a3eee983015b1d6",
+      "sha256": "8a34bbf4ec7a6c3e4bd485769394cf9496949a39357e92a99a3eee983015b1d6",
+      "original_path": "/home/julius/structure_and_semantics/validation/build.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-composition-packaging/execution/verbatim-evidence/initial/evidence-af80428d-c549-419c-a0b6-5e66970a0b47/e508417c424376cf8f341b131ae033e9a0438576f83c93c197c213bf97662938",
+      "sha256": "e508417c424376cf8f341b131ae033e9a0438576f83c93c197c213bf97662938",
+      "original_path": "/home/julius/structure_and_semantics/validation/check.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-composition-packaging/execution/verbatim-evidence/initial/evidence-af80428d-c549-419c-a0b6-5e66970a0b47/79ecaefb474fc46b7c90e3adc088dc9f8866ad75a1caa781acf9b6743ad767e8",
+      "sha256": "79ecaefb474fc46b7c90e3adc088dc9f8866ad75a1caa781acf9b6743ad767e8",
+      "original_path": "/tmp/generalization-quality-review/reader-composition-packaging/specification.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-composition-packaging/execution/verbatim-evidence/initial/evidence-af80428d-c549-419c-a0b6-5e66970a0b47/7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "sha256": "7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "original_path": "/home/julius/structure_and_semantics/tools/check_decision_cases.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-composition-packaging/execution/verbatim-evidence/initial/receipt.json",
+      "sha256": "8976a9aa92f058ea930c1cb701bace5675d4377959eb82f70a04dd1076ba40e9"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-composition-packaging/execution/verbatim-evidence/initial/case.json",
+      "sha256": "6370fe251821f8a8d58cad0c7b1fe94e3b227a0e5549b01a7ad90ff9be0a2cfa"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-composition-packaging/execution/verbatim-evidence/initial/run.log",
+      "sha256": "13e5ad2d18afe55eb33817b1243aa0fabba8a9ed6d3b7fc7c65e8259d58ee292"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/revise_investigation_case.py",
+      "sha256": "70466b6a380397ef2c390d33c150d1b536feac4aafcedae6bb20d3e1a5106d66"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/review_investigations.py",
+      "sha256": "368a254b9dc8f4323522d0edf4a6c7c1cac118afd70a97e0e000bf7bf86a6bb0"
+    }
+  ]
+}

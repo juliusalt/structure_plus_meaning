@@ -1,0 +1,273 @@
+{
+  "investigation": "followed",
+  "status": "accepted",
+  "original_receipt_sha256": "14ae71b0d3dc14f31d71a14c8689795639432c5e5a50700d59183c925e005fdd",
+  "archive_index_sha256": "7ec5f64778968bb03d83b5a26020b236e7060f97e4c0cfc3258102ed0f05c381",
+  "replayer_sha256": "4e324e77e73a6ea2166ad7feacc6c6692014b8f4d3cfdcb2de1af5af4fec50a3",
+  "runtime_program_sha256": "cc151a33b81d084d5a2bf416f517f82acc97a5e165d86407a2f84d97c4c66d86",
+  "results_log_sha256": "1c2251c78aef3689204c9560e8d8cec7452ad8158749b4da9674b4de4cdaec2d",
+  "generated_engine_sha256": "268dd5589c44fd3efa8b3a90cc12dea283fa2a4fc1d6975f23732e7172da7a5b",
+  "poly_sha256": "47efc18d0b38bc908c8b29798575501e8b7b027f593022c80ff1acc55b9495b4",
+  "checked_fields": [
+    "input_formed",
+    "residual",
+    "safe_facets",
+    "conflicts",
+    "repairs",
+    "unrepairable",
+    "extension",
+    "complete profiles",
+    "complete ordered losses",
+    "complete revision and admission gate"
+  ],
+  "facts": {
+    "input_formed": true,
+    "candidate_count": 2,
+    "available_facets": [
+      0,
+      1,
+      2
+    ],
+    "selected": [
+      0,
+      1,
+      2
+    ],
+    "safe": [
+      0,
+      1,
+      2
+    ],
+    "invalid_selected": [],
+    "residual_count": 0,
+    "conflict_count": 0,
+    "missing_count": 0,
+    "repair_count": 0,
+    "unrepairable_count": 0,
+    "positive_comparisons": 2,
+    "negative_comparisons": 2,
+    "relation_reflexive": true,
+    "relation_transitive": true,
+    "empty_selection_adequate": false,
+    "adequate_selections": [
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        1,
+        2
+      ]
+    ],
+    "adequate_selection_enumeration": "complete",
+    "extension_adequate": true,
+    "sound_language_adequate": true,
+    "revision": {
+      "retained": [
+        0,
+        1,
+        2
+      ],
+      "required_withdrawals": [],
+      "new_missing_after_withdrawal": [],
+      "reuse_original_repairs_adequate": true,
+      "recomputed_selection": [
+        0,
+        1,
+        2
+      ],
+      "residual": []
+    },
+    "evaluation_signature": "8b8ff48a9e4958836eb90113ade0d94ca277197f5388f8afba831a8bb101c8c5"
+  },
+  "result": {
+    "input_formed": true,
+    "residual": [],
+    "profiles": [
+      {
+        "candidate": 0,
+        "profile": [
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            2,
+            6
+          ]
+        ]
+      },
+      {
+        "candidate": 1,
+        "profile": [
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            5
+          ],
+          [
+            0,
+            6
+          ]
+        ]
+      }
+    ],
+    "losses": [
+      {
+        "from": 0,
+        "to": 0,
+        "losses": []
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "losses": [
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            2,
+            6
+          ]
+        ]
+      },
+      {
+        "from": 1,
+        "to": 0,
+        "losses": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            5
+          ],
+          [
+            0,
+            6
+          ]
+        ]
+      },
+      {
+        "from": 1,
+        "to": 1,
+        "losses": []
+      }
+    ],
+    "safe_facets": [
+      0,
+      1,
+      2
+    ],
+    "conflicts": [],
+    "repairs": [],
+    "unrepairable": [],
+    "extension": [
+      1,
+      2,
+      0
+    ],
+    "revision": {
+      "retained": [
+        1,
+        2,
+        0
+      ],
+      "withdrawn": [],
+      "repairs": [],
+      "selection": [
+        1,
+        2,
+        0
+      ],
+      "residual": []
+    }
+  },
+  "boundary": "Exact retained code and inputs reproduce every complete result and pass independent reconstruction. This does not repeat proof checking, candidate construction, or subject-meaning justification."
+}

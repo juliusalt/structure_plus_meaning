@@ -1,0 +1,32 @@
+import hashlib,json,os,re,subprocess,sys
+from pathlib import Path
+sys.dont_write_bytecode=True
+root=Path('/home/julius/structure_and_semantics');sys.path.insert(0,str(root/'tools'))
+from compare_reasoning_methods import comparison_case
+from investigate import file_hash
+base=Path('/tmp/generalization-quality-review/reader-composition-packaging');base.mkdir(exist_ok=False)
+raw=subprocess.run(['git','diff','--check','HEAD^','HEAD'],cwd=root,text=True,capture_output=True)
+(base/'complete-whitespace-check.log').write_text(raw.stdout+raw.stderr)
+software=subprocess.run(['git','diff','--check','HEAD^','HEAD','--','.',':(exclude)validation/**/objects/*'],cwd=root,text=True,capture_output=True)
+(base/'software-whitespace-check.log').write_text(software.stdout+software.stderr)
+assert software.returncode==0
+warnings=re.findall(r'^([^:\n]+):(\d+): new blank line at EOF\.$',raw.stdout,re.M)
+assert len(warnings)==7 and len(raw.stdout.splitlines())==7 and not raw.stderr
+observations=[[1,0,0],[1,1,0]];rows=[];paths=[]
+for i,(name,line) in enumerate(warnings):
+ p=root/name;assert name.startswith('validation/generalization-review-2026-09-11/reader-native-composition/objects/')
+ data=p.read_bytes();assert hashlib.sha256(data).hexdigest()==p.name and data.endswith(b'\n\n')
+ normalized=data.rstrip()+b'\n';assert hashlib.sha256(normalized).hexdigest()!=p.name
+ observations.extend([[0,1,i],[2,0,i]])
+ rows.append({'occurrence':i,'path':str(p),'line':int(line),'expected_sha256':p.name,'retained_sha256':hashlib.sha256(data).hexdigest(),'normalized_sha256':hashlib.sha256(normalized).hexdigest()});paths.append(p)
+measurement={'complete_check_exit_code':raw.returncode,'software_check_exit_code':software.returncode,'verbatim_fragments':rows,'critical_assessment':'The archive identities refer to original evidence bytes. Whitespace normalization changes all seven identities. Retain those bytes and report this limited style exception; do not describe the full whitespace check as passing. The non-archive code and documentation pass their check.'}
+(base/'measurements.json').write_text(json.dumps(measurement,indent=2)+'\n')
+evidence=[{'path':str(p.resolve()),'sha256':file_hash(p)} for p in paths+[Path(__file__),base/'measurements.json',base/'complete-whitespace-check.log',base/'software-whitespace-check.log',root/'validation/build.json',root/'validation/check.json']]
+case=comparison_case([0,1],[0,1,2],observations,[1],question='How should the exact retained evidence and the seven archive-only whitespace flags be handled before publishing this batch?',scope={'candidates':{'0':'Normalize trailing blank lines in the seven retained byte objects','1':'Retain original evidence bytes and document the archive-only style exception'},'facets':{'0':'Expected original evidence identity is preserved for this fragment','1':'Code and documentation pass their whitespace check','2':'This archive fragment has no trailing blank-line warning'},'boundary':'All seven original identities and counterfactual normalized identities are measured. Mandatory exact evidence preservation is the established replay requirement; cosmetic archive whitespace is a distinct observation.'},evidence=evidence)
+spec={'question':case['question'],'boundary':case['scope']['boundary'],'problems':[{'name':'verbatim-evidence','case':case,'required_observations':[[0,i] for i in range(7)]+[[1,0]]}]}
+(base/'specification.json').write_text(json.dumps(spec,indent=2)+'\n')
+r=subprocess.run([sys.executable,str(root/'tools/check_decision_cases.py'),'--specification',str(base/'specification.json'),'--output',str(base/'execution')],env={**os.environ,'PYTHONDONTWRITEBYTECODE':'1'})
+assert r.returncode==0
+result=json.loads((base/'execution/complete-results.json').read_text())['results'][0]
+assert result['assessment']['dominant']==[1]
+print('The returned comparison preserves exact evidence under all mandatory criteria; the seven raw-byte whitespace exceptions remain explicit.',flush=True)

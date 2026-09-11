@@ -1,0 +1,63 @@
+{
+  "complete_check_exit_code": 2,
+  "software_check_exit_code": 0,
+  "verbatim_fragments": [
+    {
+      "occurrence": 0,
+      "path": "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/reader-native-composition/objects/1a0e02991307d3fb8d92a4d10c0501df8312a7bc79d8e7ddab1bcd33e309b04c",
+      "line": 76,
+      "expected_sha256": "1a0e02991307d3fb8d92a4d10c0501df8312a7bc79d8e7ddab1bcd33e309b04c",
+      "retained_sha256": "1a0e02991307d3fb8d92a4d10c0501df8312a7bc79d8e7ddab1bcd33e309b04c",
+      "normalized_sha256": "cef472e00409271680734212a07bc9bb2b99f7d88bf4e8f6aea16f58397a1181"
+    },
+    {
+      "occurrence": 1,
+      "path": "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/reader-native-composition/objects/69fbdf35d4b09d15c0a00955a4bbaa6c8f32758a13b04777814bb6756f2a1188",
+      "line": 121,
+      "expected_sha256": "69fbdf35d4b09d15c0a00955a4bbaa6c8f32758a13b04777814bb6756f2a1188",
+      "retained_sha256": "69fbdf35d4b09d15c0a00955a4bbaa6c8f32758a13b04777814bb6756f2a1188",
+      "normalized_sha256": "f9e83a867164965259642dec17ff803dea646cd74e546c631d5ea71367813baf"
+    },
+    {
+      "occurrence": 2,
+      "path": "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/reader-native-composition/objects/93c15f72efbc9c232e362fc899ad1ba2a2dcd3b7dd084cf3ecdc2e0efab9f8a7",
+      "line": 33,
+      "expected_sha256": "93c15f72efbc9c232e362fc899ad1ba2a2dcd3b7dd084cf3ecdc2e0efab9f8a7",
+      "retained_sha256": "93c15f72efbc9c232e362fc899ad1ba2a2dcd3b7dd084cf3ecdc2e0efab9f8a7",
+      "normalized_sha256": "51bfdd69b0a83c84d335366ce45ef40dfc70bf692796ef2753dea83bd3beefb8"
+    },
+    {
+      "occurrence": 3,
+      "path": "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/reader-native-composition/objects/96efbbfaae48d6f667db92a70fb83a40b9d375987b506c65a6ef709ccf319ce5",
+      "line": 15,
+      "expected_sha256": "96efbbfaae48d6f667db92a70fb83a40b9d375987b506c65a6ef709ccf319ce5",
+      "retained_sha256": "96efbbfaae48d6f667db92a70fb83a40b9d375987b506c65a6ef709ccf319ce5",
+      "normalized_sha256": "17c13643e0b451a5bac46efdfff73957deca8e948e9fceaea090ea6744436efa"
+    },
+    {
+      "occurrence": 4,
+      "path": "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/reader-native-composition/objects/994f320200232b85cf0717272b12500a983322c2ba56e5e4d1a5432541d35ffc",
+      "line": 69,
+      "expected_sha256": "994f320200232b85cf0717272b12500a983322c2ba56e5e4d1a5432541d35ffc",
+      "retained_sha256": "994f320200232b85cf0717272b12500a983322c2ba56e5e4d1a5432541d35ffc",
+      "normalized_sha256": "a30f49096f984ca6a4412b2ae466b6db3078b4c6ac8d948e7afe7d55839e0309"
+    },
+    {
+      "occurrence": 5,
+      "path": "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/reader-native-composition/objects/9a0da88c281f466424ffe1a949af15272e4a5f29209218c7c9cffce8ff24fb66",
+      "line": 92,
+      "expected_sha256": "9a0da88c281f466424ffe1a949af15272e4a5f29209218c7c9cffce8ff24fb66",
+      "retained_sha256": "9a0da88c281f466424ffe1a949af15272e4a5f29209218c7c9cffce8ff24fb66",
+      "normalized_sha256": "796b9ef08eb1d3656d60bec2b76282cf201247a4495aa8f64b509532fdb868e4"
+    },
+    {
+      "occurrence": 6,
+      "path": "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/reader-native-composition/objects/b04d58be65ced2848680c62862db8eecc82fef2434a6eea50e3ce64ccc68fd6a",
+      "line": 38,
+      "expected_sha256": "b04d58be65ced2848680c62862db8eecc82fef2434a6eea50e3ce64ccc68fd6a",
+      "retained_sha256": "b04d58be65ced2848680c62862db8eecc82fef2434a6eea50e3ce64ccc68fd6a",
+      "normalized_sha256": "3e9aefc0a042203f1256a92cdeac9eee77161cf1c68cf1fe18eff8e341a496ab"
+    }
+  ],
+  "critical_assessment": "The archive identities refer to original evidence bytes. Whitespace normalization changes all seven identities. Retain those bytes and report this limited style exception; do not describe the full whitespace check as passing. The non-archive code and documentation pass their check."
+}

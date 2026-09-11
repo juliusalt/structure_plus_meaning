@@ -1,0 +1,34 @@
+{
+  "proofs": {},
+  "runs": {},
+  "investigations": {
+    "initial": {
+      "path": "/tmp/generalization-quality-review/workflow-wording-initial"
+    },
+    "corrected": {
+      "path": "/tmp/generalization-quality-review/workflow-wording-corrected"
+    },
+    "followed": {
+      "path": "/tmp/generalization-quality-review/workflow-wording-followed"
+    }
+  },
+  "attachments": {
+    "applied.json": "/tmp/generalization-quality-review/workflow-execution-requirement/applied.json",
+    "assessment.json": "/tmp/generalization-quality-review/workflow-execution-requirement/assessment.json",
+    "followed-case.json": "/tmp/generalization-quality-review/workflow-execution-requirement/followed-case.json",
+    "corrected-case.json": "/tmp/generalization-quality-review/workflow-execution-requirement/corrected-case.json",
+    "reading-correction.json": "/tmp/generalization-quality-review/workflow-execution-requirement/reading-correction.json",
+    "case.json": "/tmp/generalization-quality-review/workflow-execution-requirement/case.json",
+    "external-reading.json": "/tmp/generalization-quality-review/workflow-execution-requirement/external-reading.json",
+    "minimal.md": "/tmp/generalization-quality-review/workflow-execution-requirement/minimal.md",
+    "original.md": "/tmp/generalization-quality-review/workflow-execution-requirement/original.md",
+    "proposed.md": "/tmp/generalization-quality-review/workflow-execution-requirement/proposed.md",
+    "commands/workflow-wording-initial-command.log": "/tmp/workflow-wording-initial-command.log",
+    "commands/workflow-wording-corrected-command.log": "/tmp/workflow-wording-corrected-command.log",
+    "commands/workflow-wording-followed-command.log": "/tmp/workflow-wording-followed-command.log",
+    "applied-workflow": "/home/julius/structure_and_semantics/DEVELOPMENT_WORKFLOW.md"
+  },
+  "documents": {
+    "README.md": "/tmp/workflow-execution-README.md"
+  }
+}

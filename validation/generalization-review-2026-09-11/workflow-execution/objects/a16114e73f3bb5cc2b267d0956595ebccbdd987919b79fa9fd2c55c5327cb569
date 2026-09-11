@@ -1,0 +1,139 @@
+{
+  "schema": "finite-investigation-1",
+  "kind": "basis",
+  "question": "Which workflow wording explicitly requires actual execution for every problem and use of its results before acting while retaining critical quality control?",
+  "scope": {
+    "candidates": {
+      "0": "current exact text",
+      "1": "explicit execution and feedback text",
+      "2": "minimal execution-only amendment"
+    },
+    "facets": {
+      "0": "Scope explicitly includes every problem of interest and decisions about the workflow and machinery",
+      "1": "Explicitly requires execution and use of returned results before the dependent decision or change",
+      "2": "Explicitly excludes a plan or after-the-fact execution as satisfying that requirement",
+      "3": "Preserves independent criticism and requires exposed gaps to enter the same process",
+      "4": "Preserves conditional use, first-use generalization, batch scheduling, and the quality requirement"
+    },
+    "boundary": "These judgments concern explicitness against the owner instruction. They do not excuse the earlier failure to follow that instruction or establish that a document edit ensures compliance. Natural-language interpretation is externally supplied and retained; the machinery computes its complete observation distinctions and revision."
+  },
+  "candidates": [
+    0,
+    1,
+    2
+  ],
+  "facets": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "selected": [
+    0
+  ],
+  "observations": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      4,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      2,
+      1,
+      0
+    ],
+    [
+      3,
+      1,
+      0
+    ],
+    [
+      4,
+      1,
+      0
+    ],
+    [
+      0,
+      2,
+      0
+    ],
+    [
+      1,
+      2,
+      0
+    ],
+    [
+      4,
+      2,
+      0
+    ]
+  ],
+  "relation": [
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      0,
+      2
+    ],
+    [
+      1,
+      1
+    ],
+    [
+      2,
+      1
+    ],
+    [
+      2,
+      2
+    ]
+  ],
+  "evidence": [
+    {
+      "path": "/tmp/generalization-quality-review/workflow-execution-requirement/original.md",
+      "sha256": "13d3cd13f212755aeea7d89e29ef869625afe1cef6cfab011ec80433725ee489"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/workflow-execution-requirement/proposed.md",
+      "sha256": "bde86a990e882a439ff27234a86f9e1b1d96edc416712c372927c07be2ca9e24"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/workflow-execution-requirement/minimal.md",
+      "sha256": "a89fe85d18ee1cce25007fd45f3ab0a5b9ee2f8e975ed9e487711fe01b37622d"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/workflow-execution-requirement/external-reading.json",
+      "sha256": "258f1597b08463f9ae4450646e9357e1a544f1173259436edb6dfe26e8bb3911"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/DEVELOPMENT_WORKFLOW.md",
+      "sha256": "13d3cd13f212755aeea7d89e29ef869625afe1cef6cfab011ec80433725ee489"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/compare_reasoning_methods.py",
+      "sha256": "e74c13cd228f7ef36cfc8e07c78b3ee0626d3de26925d08361ce97bdcf12af32"
+    }
+  ]
+}

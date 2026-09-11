@@ -1,0 +1,80 @@
+[
+  {
+    "kind": "reasoning_methods",
+    "theory": "Factor_Reasoning_Method_Investigation",
+    "function": "reasoning_method_investigation",
+    "contract_prefix": "reasoning"
+  },
+  {
+    "kind": "investigation_input",
+    "theory": "Factor_Investigation_Input_Investigation",
+    "function": "input_investigation",
+    "contract_prefix": "input"
+  },
+  {
+    "kind": "revision_methods",
+    "theory": "Observation_Revision_Investigation",
+    "function": "revision_investigation",
+    "contract_prefix": "revision"
+  },
+  {
+    "kind": "observation_tables",
+    "theory": "Factor_Observation_Table_Investigation",
+    "function": "table_investigation",
+    "contract_prefix": "table"
+  },
+  {
+    "kind": "pair_scope",
+    "theory": "Factor_Pair_Scope_Investigation",
+    "function": "pair_scope_investigation",
+    "contract_prefix": "pair_scope"
+  },
+  {
+    "kind": "observation_collections",
+    "theory": "Factor_Observation_Collection_Investigation",
+    "function": "collection_investigation",
+    "contract_prefix": "collection"
+  },
+  {
+    "kind": "observation_scope",
+    "theory": "Factor_Observation_Scope_Investigation",
+    "function": "scope_investigation",
+    "contract_prefix": "scope"
+  },
+  {
+    "kind": "observation",
+    "theory": "Factor_Observation_Investigation",
+    "function": "observation_investigation",
+    "contract_prefix": "observation"
+  },
+  {
+    "kind": "completion",
+    "theory": "Presentation_Completion_Investigation",
+    "function": "completion_investigation",
+    "contract_prefix": "completion"
+  },
+  {
+    "kind": "permission",
+    "theory": "Factor_Permission_Investigation",
+    "function": "permission_investigation",
+    "contract_prefix": "permission"
+  },
+  {
+    "kind": "pattern",
+    "theory": "Factor_Substitution_Investigation",
+    "function": "pattern_investigation",
+    "contract_prefix": "pattern"
+  },
+  {
+    "kind": "proof_probes",
+    "theory": "Factor_Proof_Probe_Investigation",
+    "function": "proof_probes_investigation",
+    "contract_prefix": "proof_probe"
+  },
+  {
+    "kind": "schema_sockets",
+    "theory": "Factor_Schema_Socket_Investigation",
+    "function": "schema_sockets_investigation",
+    "contract_prefix": "socket"
+  }
+]

@@ -1,0 +1,86 @@
+"""Retain the final full-session evidence and every archived replay."""
+from pathlib import Path
+import hashlib
+import json
+import sys
+b=Path(__file__).parent
+root=Path('/home/julius/structure_and_semantics')
+sys.path.insert(0,str(root/'tools'))
+import build
+import check
+import investigate
+receipt=json.loads((root/'validation/build.json').read_text())
+checked=json.loads((root/'validation/check.json').read_text())
+assert receipt['status']==checked['status']=='accepted'
+assert receipt['exit_code']==checked['exit_code']==0
+assert receipt['sources_unchanged'] and receipt['tools_unchanged'] and checked['sources_and_tools_unchanged']
+assert checked['build_evidence']==receipt and checked['invocation']==receipt['invocation']
+assert receipt['sources']==build.source_hashes() and receipt['tools']==build.tool_hashes()
+assert investigate.file_hash(root/'validation/build.log')==receipt['log_sha256']
+source=check.source_checks()
+assert source['theory_count']==827
+assert not any(source[k] for k in ['missing_theory_files','unlisted_theories','proof_escape_matches'])
+replays=json.loads((b/'replays1/summary.json').read_text())
+assert len(replays)==10 and all(row['exit_code']==0 for row in replays)
+for row in replays:
+    actual=json.loads((b/'replays1'/row['name']/'replay.json').read_text())
+    assert actual['status']=='accepted'
+evidence={'full_build':receipt,'full_check':checked,'current_source_checks':source,
+          'replays':replays,'tool_tests':(b/'tool-tests-final.log').read_text(),
+          'proof_context_tests':(b/'prove-context-tests-final.log').read_text(),
+          'downstream_repair':json.loads((b/'downstream-repair-decision.json').read_text()),
+          'integration_decision_sha256':investigate.file_hash(b/'integration-decision.json'),
+          'boundary':'The full current repository session passes. These ten replays reproduce the original complete archived executions and assessments; they do not rerun candidate generation or native mathematical-proof checking.'}
+(b/'delivery-checks.json').write_text(json.dumps(evidence,indent=2)+'\n')
+text='''# Structural subject contract delivery
+
+The full 827-theory repository session passes in invocation
+`'''+receipt['invocation']+'''`. Its source inventory, build and check tools,
+receipt identity and log are verified against the current checkout. There
+are no missing theories, unlisted theories or proof-escape matches.
+
+All four 98-case execution stages and all six ordinary or host investigations
+in the [original review](../indexed-subject-contracts/README.md) replay
+successfully with their original checkers and complete results. The current
+runtime reads the actual checked subject contract and obtains its candidate
+and facet domains from the source calculation. The original archive remains
+unchanged; this delivery retains the complete replay and final build evidence.
+All 60 tooling tests pass.
+
+The first full-session check exposed one consumer proof that still unfolded
+the former scalar definition. Its theorem statement and executable definitions
+are unchanged. The proposed proof instantiates the shared complete-input
+subject and passes in its complete 197-theory dependency context, rebuilding
+all local dependencies from HOL. The prospective comparison uses the actual
+complete sources, checker operations and results; its returned repair leaves
+only the revised proof eligible. This archive retains both investigations,
+the original full-session failure and the successful dependency proof. All
+eight proof-context guard tests also pass after adding the mode that rebuilds
+the full dependency context without reusing a local parent.
+
+The evidence supports these fixed subject contracts and their preserved finite
+behaviour. Arbitrary supplied observation tables remain conditional on their
+own subjects and satisfaction boundary. Native mathematical-proof checking,
+whole symbolic-derivation admission, broader workflow coverage and the final
+repository audit remain open.
+'''
+(b/'delivery-README.md').write_text(text)
+attachments={p.name:str(p) for p in b.iterdir() if p.is_file() and p.name not in ['README.md','archive-specification.json','delivery-specification.json']}
+for p in (b/'replays1').rglob('*'):
+    if p.is_file():attachments['replays/'+str(p.relative_to(b/'replays1'))]=str(p)
+for p in (b/'main-check1').rglob('*'):
+    if p.is_file():attachments['first-full-check/'+str(p.relative_to(b/'main-check1'))]=str(p)
+for name in ['prove_context.py','test_prove_context.py','replay_reasoning_review.py']:
+    attachments['current-tool/'+name]=str(root/'tools'/name)
+for name in ['build.json','check.json','build.log','check-errors.log']:
+    attachments['final-validation/'+name]=str(root/'validation'/name)
+for name in ['archive.json','index.json']:
+    attachments['original-review/'+name]=str(root/'validation/generalization-review-2026-09-11/indexed-subject-contracts'/name)
+for name in ['README.md','REASONING_REUSE.md','GENERALIZATION_REVIEW.md','OBLIGATIONS.md','DECISIONS.md','THEORY_MAP.md']:
+    attachments['current-document/'+name]=str(root/name)
+spec={'proofs':{'downstream-context':{'path':'/tmp/native-investigation-report-diagnostic-indexeddownstream1'}},
+      'runs':{},'attachments':attachments,'documents':{'README.md':str(b/'delivery-README.md')},
+      'investigations':{'downstream-'+stage:{'path':str(b/'downstream-repair1/generated-input-subject-contract'/stage)}
+                        for stage in ['initial','followed']}}
+(b/'delivery-specification.json').write_text(json.dumps(spec,indent=2)+'\n')
+print({'current_theories':827,'replays':10,'attachments':len(attachments),'invocation':receipt['invocation']})

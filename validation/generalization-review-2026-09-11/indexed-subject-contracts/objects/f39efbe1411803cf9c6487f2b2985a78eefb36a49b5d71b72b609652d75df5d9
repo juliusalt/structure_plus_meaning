@@ -1,0 +1,1564 @@
+{
+  "invocation": "6e7980b6-2367-4f52-94e7-481ca8b389ca",
+  "status": "evaluated",
+  "started_utc": "2026-09-11T18:17:30.785774+00:00",
+  "exit_code": 0,
+  "role": "Execution evidence with separately qualified semantic meaning",
+  "input": {
+    "path": "/tmp/generalization-quality-review/indexed-subject-contracts/registry-source1/registry-independent-runtime-scope/initial-case.json",
+    "sha256": "bc527c293e24ee21ed2af85c50cee60b0fba07522ce61d43c22ef879bd7f22b3"
+  },
+  "evidence_archive": [
+    {
+      "role": "original case",
+      "path": "/tmp/generalization-quality-review/indexed-subject-contracts/registry-source1/registry-independent-runtime-scope/initial-case.json",
+      "sha256": "bc527c293e24ee21ed2af85c50cee60b0fba07522ce61d43c22ef879bd7f22b3",
+      "archive": "/tmp/generalization-quality-review/indexed-subject-contracts/registry-source1/registry-independent-runtime-scope/initial/evidence-6e7980b6-2367-4f52-94e7-481ca8b389ca/bc527c293e24ee21ed2af85c50cee60b0fba07522ce61d43c22ef879bd7f22b3"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/indexed-subject-contracts/registry-source-subjects.json",
+      "sha256": "76992b4f5d77063b0ac173645880e239bbc02187c3abbd11245078d263f9ef5e",
+      "archive": "/tmp/generalization-quality-review/indexed-subject-contracts/registry-source1/registry-independent-runtime-scope/initial/evidence-6e7980b6-2367-4f52-94e7-481ca8b389ca/76992b4f5d77063b0ac173645880e239bbc02187c3abbd11245078d263f9ef5e"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/indexed-subject-contracts/registry-source-controls.py",
+      "sha256": "78c4dbcfcdb983f723f87e57652362745d95d2de5f054c8ea112f6dc140cda23",
+      "archive": "/tmp/generalization-quality-review/indexed-subject-contracts/registry-source1/registry-independent-runtime-scope/initial/evidence-6e7980b6-2367-4f52-94e7-481ca8b389ca/78c4dbcfcdb983f723f87e57652362745d95d2de5f054c8ea112f6dc140cda23"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/indexed-subject-contracts/cases.json",
+      "sha256": "99223a03bf8821763e4e8d6c8c23009a4da9dad0c2f03413b1ffd8a0a78b4098",
+      "archive": "/tmp/generalization-quality-review/indexed-subject-contracts/registry-source1/registry-independent-runtime-scope/initial/evidence-6e7980b6-2367-4f52-94e7-481ca8b389ca/99223a03bf8821763e4e8d6c8c23009a4da9dad0c2f03413b1ffd8a0a78b4098"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/indexed-subject-contracts/candidate9/receipt.json",
+      "sha256": "f3bd48478d84a8bd0a1b1526826fe390e1fb2c67840b0ba0af8aac898fd24406",
+      "archive": "/tmp/generalization-quality-review/indexed-subject-contracts/registry-source1/registry-independent-runtime-scope/initial/evidence-6e7980b6-2367-4f52-94e7-481ca8b389ca/f3bd48478d84a8bd0a1b1526826fe390e1fb2c67840b0ba0af8aac898fd24406"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/indexed-subject-contracts/worktree/tools/investigate.py",
+      "sha256": "e7e353ce55e89dcfaab53f8f5dc39ac11a94c02af448c80d858bf0896d790c10",
+      "archive": "/tmp/generalization-quality-review/indexed-subject-contracts/registry-source1/registry-independent-runtime-scope/initial/evidence-6e7980b6-2367-4f52-94e7-481ca8b389ca/e7e353ce55e89dcfaab53f8f5dc39ac11a94c02af448c80d858bf0896d790c10"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/indexed-subject-contracts/registry-source-specification.json",
+      "sha256": "51bdf4b90975a52d75723aa9502b3613efc3a3f46b510f7112e9fef2843a5cf1",
+      "archive": "/tmp/generalization-quality-review/indexed-subject-contracts/registry-source1/registry-independent-runtime-scope/initial/evidence-6e7980b6-2367-4f52-94e7-481ca8b389ca/51bdf4b90975a52d75723aa9502b3613efc3a3f46b510f7112e9fef2843a5cf1"
+    },
+    {
+      "role": "case evidence",
+      "path": "/home/julius/structure_and_semantics/tools/check_decision_cases.py",
+      "sha256": "7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "archive": "/tmp/generalization-quality-review/indexed-subject-contracts/registry-source1/registry-independent-runtime-scope/initial/evidence-6e7980b6-2367-4f52-94e7-481ca8b389ca/7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd"
+    },
+    {
+      "role": "execution tool",
+      "path": "/home/julius/structure_and_semantics/tools/investigate.py",
+      "sha256": "7643dbebe13aed0e9d9bc4cff062575c665fec4ed0f7c0527857cd5d07263628",
+      "archive": "/tmp/generalization-quality-review/indexed-subject-contracts/registry-source1/registry-independent-runtime-scope/initial/evidence-6e7980b6-2367-4f52-94e7-481ca8b389ca/7643dbebe13aed0e9d9bc4cff062575c665fec4ed0f7c0527857cd5d07263628"
+    },
+    {
+      "role": "execution tool",
+      "path": "/home/julius/structure_and_semantics/tools/build.py",
+      "sha256": "8915b7a480b2a17b5cea5b819f3be43323f69cb79dc1513a76c07eb83f6b491e",
+      "archive": "/tmp/generalization-quality-review/indexed-subject-contracts/registry-source1/registry-independent-runtime-scope/initial/evidence-6e7980b6-2367-4f52-94e7-481ca8b389ca/8915b7a480b2a17b5cea5b819f3be43323f69cb79dc1513a76c07eb83f6b491e"
+    }
+  ],
+  "case_sha256": "bc527c293e24ee21ed2af85c50cee60b0fba07522ce61d43c22ef879bd7f22b3",
+  "question": "Keep the runtime problem selected by the checked definition invariant under changes to the accompanying scope descriptions and facet dictionary.",
+  "scope": {
+    "candidates": {
+      "0": "Original runtime generator on its complete inputs",
+      "1": "Generator supplied with the checked structural contract"
+    },
+    "facets": {
+      "0": "Complete program equality after replacing facet descriptions",
+      "1": "Complete program equality after replacing the facet index dictionary"
+    },
+    "subjects": "/tmp/generalization-quality-review/indexed-subject-contracts/registry-source-subjects.json"
+  },
+  "semantic_boundary": "These host observations compare the actual complete generated ML texts on every original finite case. They establish this exercised independence property. The subject equations and actual domains have their separate accepted Isabelle contract; no meaning is attributed to the supplied prose.",
+  "commands": [
+    {
+      "command": [
+        "isabelle",
+        "version"
+      ],
+      "started_utc": "2026-09-11T18:17:30.792018+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T18:17:30.874809+00:00",
+      "elapsed_seconds": 0.08278960001189262
+    },
+    {
+      "command": [
+        "isabelle",
+        "build",
+        "-v",
+        "-o",
+        "threads=12",
+        "-o",
+        "timeout=300",
+        "-D",
+        "/tmp/structural-investigation-engines/911ca434d8239cc2494f7c89e909289ccdc00cf43fa435e0454259968d0f009a"
+      ],
+      "started_utc": "2026-09-11T18:17:30.879548+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T18:17:33.288407+00:00",
+      "elapsed_seconds": 2.4088642230490223
+    },
+    {
+      "command": [
+        "isabelle",
+        "export",
+        "-n",
+        "-d",
+        "/tmp/structural-investigation-engines/911ca434d8239cc2494f7c89e909289ccdc00cf43fa435e0454259968d0f009a",
+        "-O",
+        "/tmp/generalization-quality-review/indexed-subject-contracts/registry-source1/registry-independent-runtime-scope/initial/export-6e7980b6-2367-4f52-94e7-481ca8b389ca",
+        "-x",
+        "*Finite_Investigation_Export:code/finite_investigation.ML",
+        "Finite_Investigation_911ca434d8239cc2494f7c89"
+      ],
+      "started_utc": "2026-09-11T18:17:33.289177+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T18:17:33.910286+00:00",
+      "elapsed_seconds": 0.6211157209472731
+    },
+    {
+      "command": [
+        "isabelle",
+        "getenv",
+        "-b",
+        "POLYML_HOME"
+      ],
+      "started_utc": "2026-09-11T18:17:33.910974+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T18:17:33.994899+00:00",
+      "elapsed_seconds": 0.08392627304419875
+    },
+    {
+      "command": [
+        "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+        "--version"
+      ],
+      "started_utc": "2026-09-11T18:17:34.003488+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T18:17:34.006895+00:00",
+      "elapsed_seconds": 0.00340939499437809
+    },
+    {
+      "command": [
+        "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+        "--script",
+        "/tmp/generalization-quality-review/indexed-subject-contracts/registry-source1/registry-independent-runtime-scope/initial/execute.ML"
+      ],
+      "started_utc": "2026-09-11T18:17:34.007205+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T18:17:34.089233+00:00",
+      "elapsed_seconds": 0.08203739603050053
+    }
+  ],
+  "engine_key": "911ca434d8239cc2494f7c89e909289ccdc00cf43fa435e0454259968d0f009a",
+  "isabelle_version": "Isabelle2025-2",
+  "engine_session": "Finite_Investigation_911ca434d8239cc2494f7c89",
+  "engine_theory": "Presentation_Completion_Investigation",
+  "engine_sources": {
+    "Bootstrap_Relations": {
+      "path": "/home/julius/structure_and_semantics/theories/Bootstrap_Relations.thy",
+      "sha256": "50d4bf926dab217fdad8eb114fe1b0d369aa9a06741df1e568a5cc5fea7ceafe"
+    },
+    "Obligation_Reductions": {
+      "path": "/home/julius/structure_and_semantics/theories/Obligation_Reductions.thy",
+      "sha256": "a7cf5c82c7478cbde8ae94545ccaaf327af50b7b1ece2ff5458e29bc8ea1adcf"
+    },
+    "Inference_Closure": {
+      "path": "/home/julius/structure_and_semantics/theories/Inference_Closure.thy",
+      "sha256": "caf963ccb1ded2c117eded468e575900f7fd275728f9535efe5b40f87517f5ce"
+    },
+    "Bootstrap_Finite_Closure": {
+      "path": "/home/julius/structure_and_semantics/theories/Bootstrap_Finite_Closure.thy",
+      "sha256": "df469431d4c9e4f95b2b3b3d192d7da9d677800b0383609dd25b212264581bc5"
+    },
+    "Inference_Development": {
+      "path": "/home/julius/structure_and_semantics/theories/Inference_Development.thy",
+      "sha256": "f3b6057fd02d5ab49785f8941e21ddc20ede01d3d9c2278894254b872ff6846f"
+    },
+    "Candidate_Observations": {
+      "path": "/home/julius/structure_and_semantics/theories/Candidate_Observations.thy",
+      "sha256": "d17f7f738b725bfcc7c27560ac2f8d482dd8b02ca6e83ce72f738451da324749"
+    },
+    "Inference_Demands": {
+      "path": "/home/julius/structure_and_semantics/theories/Inference_Demands.thy",
+      "sha256": "f620b3cdaf10ba80a4795c5d273aa92e35d6dc04245119eb73fa0196e25aa03a"
+    },
+    "Candidate_Investigation": {
+      "path": "/home/julius/structure_and_semantics/theories/Candidate_Investigation.thy",
+      "sha256": "bb083972595406e027373ea6eb2ad1d8d45dc31e9935db8c5d591e6b1a133c92"
+    },
+    "Inference_Rounds": {
+      "path": "/home/julius/structure_and_semantics/theories/Inference_Rounds.thy",
+      "sha256": "bfc244e1aa9e68a4587fc5724cf2c6c8fe786a832798b280194cb8edbacaea24"
+    },
+    "Method_Development": {
+      "path": "/home/julius/structure_and_semantics/theories/Method_Development.thy",
+      "sha256": "82f4630526ae2bbfaba29d226b47bad77ed086cfc93e9765a3b04ca3bcfc3915"
+    },
+    "Method_Investigation": {
+      "path": "/home/julius/structure_and_semantics/theories/Method_Investigation.thy",
+      "sha256": "aefaf2532a1096f9945c6592b52241e9ac9e4ec0558fafabdcf6a30b3ddba7c1"
+    },
+    "Observation_Repairs": {
+      "path": "/home/julius/structure_and_semantics/theories/Observation_Repairs.thy",
+      "sha256": "97eb2c271b36e7aaa99e134aae0d4069b63fb03d0e89db26d28092af18b5bd97"
+    },
+    "Finite_Inference_Development": {
+      "path": "/home/julius/structure_and_semantics/theories/Finite_Inference_Development.thy",
+      "sha256": "dcd3ac4b8761e1197a54d58739524354c036864df2f3e33f493f71ef4ae26b6b"
+    },
+    "Finite_Investigation": {
+      "path": "/home/julius/structure_and_semantics/theories/Finite_Investigation.thy",
+      "sha256": "e8f24aeef856960db014b8ef47ab7c44be19dda573ee1bdad5073db96f5d1684"
+    },
+    "Finite_Observation_Repairs": {
+      "path": "/home/julius/structure_and_semantics/theories/Finite_Observation_Repairs.thy",
+      "sha256": "2834ce8cf69fc2c69be1ce9c02015d0da9c1723b701ebf7c2aa82633c26d8f24"
+    },
+    "Observation_Revisions": {
+      "path": "/home/julius/structure_and_semantics/theories/Observation_Revisions.thy",
+      "sha256": "9b3ad288b096531dcce382a678d5e261a26d04cb97aec311b2da59790b2d4942"
+    },
+    "Finite_Investigation_Interface": {
+      "path": "/home/julius/structure_and_semantics/theories/Finite_Investigation_Interface.thy",
+      "sha256": "816eb2ca216d95e70bc640c2775f9fdb5c79e3d43d71ca156636175a1b59c264"
+    },
+    "Presentation_Classes": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Classes.thy",
+      "sha256": "ec041e1bfca7b1bf648dc4ade30c5c9973d45907ef3a434e87a193755e5c8069"
+    },
+    "Presentation_Relations": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Relations.thy",
+      "sha256": "7381cbf8ed52753ee6bac33821b72312b9671488ee523ce964f805a2bdabb195"
+    },
+    "Presentation_Closure": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Closure.thy",
+      "sha256": "f78081a222b02cca01865fdda01de48ceb54739beb03a80c29b0fd86b6843b71"
+    },
+    "Presentation_Transport": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Transport.thy",
+      "sha256": "49abc2968f7b85c37bf33f84f09d6549b9bfedbb83c4c48b3080ed864026ddef"
+    },
+    "Presentation_Contracts": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Contracts.thy",
+      "sha256": "6977a5111cf2b30c46ec074d040c9ff81757eae56f482cbd0ee7784d9945f4e9"
+    },
+    "Observation_Invariance": {
+      "path": "/home/julius/structure_and_semantics/theories/Observation_Invariance.thy",
+      "sha256": "c6a2ef01120313d9e50aa21891a6a08a144252f853c8ca49345345623fdf53e4"
+    },
+    "Presentation_Completion": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Completion.thy",
+      "sha256": "973f448f5578d806596c25198143e2bccb645c3b68e6b191edd0642c62f92a8b"
+    },
+    "Presentation_Completion_Investigation": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Completion_Investigation.thy",
+      "sha256": "2fdd64d2c0b44f8f2d20acd357cdc11c02053d49a411db83095bcd9dab9a82f7"
+    }
+  },
+  "tools": {
+    "/home/julius/structure_and_semantics/tools/investigate.py": "7643dbebe13aed0e9d9bc4cff062575c665fec4ed0f7c0527857cd5d07263628",
+    "/home/julius/structure_and_semantics/tools/build.py": "8915b7a480b2a17b5cea5b819f3be43323f69cb79dc1513a76c07eb83f6b491e"
+  },
+  "engine_snapshot": "/tmp/structural-investigation-engines/911ca434d8239cc2494f7c89e909289ccdc00cf43fa435e0454259968d0f009a",
+  "export_theory": "Finite_Investigation_Export",
+  "proof_receipt_sha256": "df3ad5ed7ca739b3efe99bb999adbf00de1749694f8230081f2a4e15bf5f8f04",
+  "generated_engine": "/tmp/generalization-quality-review/indexed-subject-contracts/registry-source1/registry-independent-runtime-scope/initial/export-6e7980b6-2367-4f52-94e7-481ca8b389ca/Finite_Investigation_911ca434d8239cc2494f7c89.Finite_Investigation_Export/code/finite_investigation.ML",
+  "generated_engine_sha256": "268dd5589c44fd3efa8b3a90cc12dea283fa2a4fc1d6975f23732e7172da7a5b",
+  "proof_snapshot_hashes": {
+    "ROOT": "001c70d91ddf5de2bd98e0121c3939c47468bce0b2b190daebe89aa24b4f2913",
+    "theories/Finite_Investigation_Export.thy": "9110413a6a0c66e81c562859749ab476e8e98e29b9e886e92a46c8dc88052e13",
+    "theories/Bootstrap_Relations.thy": "50d4bf926dab217fdad8eb114fe1b0d369aa9a06741df1e568a5cc5fea7ceafe",
+    "theories/Obligation_Reductions.thy": "a7cf5c82c7478cbde8ae94545ccaaf327af50b7b1ece2ff5458e29bc8ea1adcf",
+    "theories/Inference_Closure.thy": "caf963ccb1ded2c117eded468e575900f7fd275728f9535efe5b40f87517f5ce",
+    "theories/Bootstrap_Finite_Closure.thy": "df469431d4c9e4f95b2b3b3d192d7da9d677800b0383609dd25b212264581bc5",
+    "theories/Inference_Development.thy": "f3b6057fd02d5ab49785f8941e21ddc20ede01d3d9c2278894254b872ff6846f",
+    "theories/Candidate_Observations.thy": "d17f7f738b725bfcc7c27560ac2f8d482dd8b02ca6e83ce72f738451da324749",
+    "theories/Inference_Demands.thy": "f620b3cdaf10ba80a4795c5d273aa92e35d6dc04245119eb73fa0196e25aa03a",
+    "theories/Candidate_Investigation.thy": "bb083972595406e027373ea6eb2ad1d8d45dc31e9935db8c5d591e6b1a133c92",
+    "theories/Inference_Rounds.thy": "bfc244e1aa9e68a4587fc5724cf2c6c8fe786a832798b280194cb8edbacaea24",
+    "theories/Method_Development.thy": "82f4630526ae2bbfaba29d226b47bad77ed086cfc93e9765a3b04ca3bcfc3915",
+    "theories/Method_Investigation.thy": "aefaf2532a1096f9945c6592b52241e9ac9e4ec0558fafabdcf6a30b3ddba7c1",
+    "theories/Observation_Repairs.thy": "97eb2c271b36e7aaa99e134aae0d4069b63fb03d0e89db26d28092af18b5bd97",
+    "theories/Finite_Inference_Development.thy": "dcd3ac4b8761e1197a54d58739524354c036864df2f3e33f493f71ef4ae26b6b",
+    "theories/Finite_Investigation.thy": "e8f24aeef856960db014b8ef47ab7c44be19dda573ee1bdad5073db96f5d1684",
+    "theories/Finite_Observation_Repairs.thy": "2834ce8cf69fc2c69be1ce9c02015d0da9c1723b701ebf7c2aa82633c26d8f24",
+    "theories/Observation_Revisions.thy": "9b3ad288b096531dcce382a678d5e261a26d04cb97aec311b2da59790b2d4942",
+    "theories/Finite_Investigation_Interface.thy": "816eb2ca216d95e70bc640c2775f9fdb5c79e3d43d71ca156636175a1b59c264",
+    "theories/Presentation_Classes.thy": "ec041e1bfca7b1bf648dc4ade30c5c9973d45907ef3a434e87a193755e5c8069",
+    "theories/Presentation_Relations.thy": "7381cbf8ed52753ee6bac33821b72312b9671488ee523ce964f805a2bdabb195",
+    "theories/Presentation_Closure.thy": "f78081a222b02cca01865fdda01de48ceb54739beb03a80c29b0fd86b6843b71",
+    "theories/Presentation_Transport.thy": "49abc2968f7b85c37bf33f84f09d6549b9bfedbb83c4c48b3080ed864026ddef",
+    "theories/Presentation_Contracts.thy": "6977a5111cf2b30c46ec074d040c9ff81757eae56f482cbd0ee7784d9945f4e9",
+    "theories/Observation_Invariance.thy": "c6a2ef01120313d9e50aa21891a6a08a144252f853c8ca49345345623fdf53e4",
+    "theories/Presentation_Completion.thy": "973f448f5578d806596c25198143e2bccb645c3b68e6b191edd0642c62f92a8b",
+    "theories/Presentation_Completion_Investigation.thy": "2fdd64d2c0b44f8f2d20acd357cdc11c02053d49a411db83095bcd9dab9a82f7"
+  },
+  "poly": "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+  "poly_sha256": "47efc18d0b38bc908c8b29798575501e8b7b027f593022c80ff1acc55b9495b4",
+  "poly_version": "Poly/ML 5.9.2 Release",
+  "runtime_program_sha256": "7ed9cfdf8395cd26f3f6a8da2748d877bc4e27f058d0224b81caccf226db6354",
+  "runtime_seconds": 0.08204634697176516,
+  "result": {
+    "input_formed": true,
+    "residual": [
+      [
+        1,
+        0
+      ]
+    ],
+    "profiles": [
+      {
+        "candidate": 0,
+        "profile": []
+      },
+      {
+        "candidate": 1,
+        "profile": []
+      }
+    ],
+    "losses": [
+      {
+        "from": 0,
+        "to": 0,
+        "losses": []
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "losses": []
+      },
+      {
+        "from": 1,
+        "to": 0,
+        "losses": []
+      },
+      {
+        "from": 1,
+        "to": 1,
+        "losses": []
+      }
+    ],
+    "safe_facets": [
+      0,
+      1
+    ],
+    "conflicts": [],
+    "repairs": [
+      [
+        1,
+        0,
+        1,
+        0
+      ],
+      [
+        1,
+        0,
+        1,
+        1
+      ],
+      [
+        1,
+        0,
+        1,
+        2
+      ],
+      [
+        1,
+        0,
+        1,
+        3
+      ],
+      [
+        1,
+        0,
+        1,
+        4
+      ],
+      [
+        1,
+        0,
+        1,
+        5
+      ],
+      [
+        1,
+        0,
+        1,
+        6
+      ],
+      [
+        1,
+        0,
+        1,
+        7
+      ],
+      [
+        1,
+        0,
+        1,
+        8
+      ],
+      [
+        1,
+        0,
+        1,
+        9
+      ],
+      [
+        1,
+        0,
+        1,
+        10
+      ],
+      [
+        1,
+        0,
+        1,
+        11
+      ],
+      [
+        1,
+        0,
+        1,
+        12
+      ],
+      [
+        1,
+        0,
+        1,
+        13
+      ],
+      [
+        1,
+        0,
+        1,
+        14
+      ],
+      [
+        1,
+        0,
+        1,
+        15
+      ],
+      [
+        1,
+        0,
+        1,
+        16
+      ],
+      [
+        1,
+        0,
+        1,
+        17
+      ],
+      [
+        1,
+        0,
+        1,
+        18
+      ],
+      [
+        1,
+        0,
+        1,
+        19
+      ],
+      [
+        1,
+        0,
+        1,
+        20
+      ],
+      [
+        1,
+        0,
+        1,
+        21
+      ],
+      [
+        1,
+        0,
+        1,
+        22
+      ],
+      [
+        1,
+        0,
+        1,
+        23
+      ],
+      [
+        1,
+        0,
+        1,
+        24
+      ],
+      [
+        1,
+        0,
+        1,
+        25
+      ],
+      [
+        1,
+        0,
+        1,
+        26
+      ],
+      [
+        1,
+        0,
+        1,
+        27
+      ],
+      [
+        1,
+        0,
+        1,
+        28
+      ],
+      [
+        1,
+        0,
+        1,
+        29
+      ],
+      [
+        1,
+        0,
+        1,
+        30
+      ],
+      [
+        1,
+        0,
+        1,
+        31
+      ],
+      [
+        1,
+        0,
+        1,
+        32
+      ],
+      [
+        1,
+        0,
+        1,
+        33
+      ],
+      [
+        1,
+        0,
+        1,
+        34
+      ],
+      [
+        1,
+        0,
+        1,
+        35
+      ],
+      [
+        1,
+        0,
+        1,
+        36
+      ],
+      [
+        1,
+        0,
+        1,
+        37
+      ],
+      [
+        1,
+        0,
+        1,
+        38
+      ],
+      [
+        1,
+        0,
+        1,
+        39
+      ],
+      [
+        1,
+        0,
+        1,
+        40
+      ],
+      [
+        1,
+        0,
+        1,
+        41
+      ],
+      [
+        1,
+        0,
+        1,
+        42
+      ],
+      [
+        1,
+        0,
+        1,
+        43
+      ],
+      [
+        1,
+        0,
+        1,
+        44
+      ],
+      [
+        1,
+        0,
+        1,
+        45
+      ],
+      [
+        1,
+        0,
+        1,
+        46
+      ],
+      [
+        1,
+        0,
+        1,
+        47
+      ],
+      [
+        1,
+        0,
+        1,
+        48
+      ],
+      [
+        1,
+        0,
+        1,
+        49
+      ],
+      [
+        1,
+        0,
+        1,
+        50
+      ],
+      [
+        1,
+        0,
+        1,
+        51
+      ],
+      [
+        1,
+        0,
+        1,
+        52
+      ],
+      [
+        1,
+        0,
+        1,
+        53
+      ],
+      [
+        1,
+        0,
+        1,
+        54
+      ],
+      [
+        1,
+        0,
+        1,
+        55
+      ],
+      [
+        1,
+        0,
+        1,
+        56
+      ],
+      [
+        1,
+        0,
+        1,
+        57
+      ],
+      [
+        1,
+        0,
+        1,
+        58
+      ],
+      [
+        1,
+        0,
+        1,
+        59
+      ],
+      [
+        1,
+        0,
+        1,
+        60
+      ],
+      [
+        1,
+        0,
+        1,
+        61
+      ],
+      [
+        1,
+        0,
+        1,
+        62
+      ],
+      [
+        1,
+        0,
+        1,
+        63
+      ],
+      [
+        1,
+        0,
+        1,
+        64
+      ],
+      [
+        1,
+        0,
+        1,
+        65
+      ],
+      [
+        1,
+        0,
+        1,
+        66
+      ],
+      [
+        1,
+        0,
+        1,
+        67
+      ],
+      [
+        1,
+        0,
+        1,
+        68
+      ],
+      [
+        1,
+        0,
+        1,
+        69
+      ],
+      [
+        1,
+        0,
+        1,
+        70
+      ],
+      [
+        1,
+        0,
+        1,
+        71
+      ],
+      [
+        1,
+        0,
+        1,
+        72
+      ],
+      [
+        1,
+        0,
+        1,
+        73
+      ],
+      [
+        1,
+        0,
+        1,
+        74
+      ],
+      [
+        1,
+        0,
+        1,
+        75
+      ],
+      [
+        1,
+        0,
+        1,
+        76
+      ],
+      [
+        1,
+        0,
+        1,
+        77
+      ],
+      [
+        1,
+        0,
+        1,
+        78
+      ],
+      [
+        1,
+        0,
+        1,
+        79
+      ],
+      [
+        1,
+        0,
+        1,
+        80
+      ],
+      [
+        1,
+        0,
+        1,
+        81
+      ],
+      [
+        1,
+        0,
+        1,
+        82
+      ],
+      [
+        1,
+        0,
+        1,
+        83
+      ],
+      [
+        1,
+        0,
+        1,
+        84
+      ],
+      [
+        1,
+        0,
+        1,
+        85
+      ],
+      [
+        1,
+        0,
+        1,
+        86
+      ],
+      [
+        1,
+        0,
+        1,
+        87
+      ],
+      [
+        1,
+        0,
+        1,
+        88
+      ],
+      [
+        1,
+        0,
+        1,
+        89
+      ],
+      [
+        1,
+        0,
+        1,
+        90
+      ],
+      [
+        1,
+        0,
+        1,
+        91
+      ],
+      [
+        1,
+        0,
+        1,
+        92
+      ],
+      [
+        1,
+        0,
+        1,
+        93
+      ],
+      [
+        1,
+        0,
+        1,
+        94
+      ],
+      [
+        1,
+        0,
+        1,
+        95
+      ],
+      [
+        1,
+        0,
+        1,
+        96
+      ],
+      [
+        1,
+        0,
+        1,
+        97
+      ]
+    ],
+    "unrepairable": [],
+    "extension": [
+      1
+    ],
+    "revision": {
+      "retained": [],
+      "withdrawn": [],
+      "repairs": [
+        [
+          1,
+          0,
+          1,
+          0
+        ],
+        [
+          1,
+          0,
+          1,
+          1
+        ],
+        [
+          1,
+          0,
+          1,
+          2
+        ],
+        [
+          1,
+          0,
+          1,
+          3
+        ],
+        [
+          1,
+          0,
+          1,
+          4
+        ],
+        [
+          1,
+          0,
+          1,
+          5
+        ],
+        [
+          1,
+          0,
+          1,
+          6
+        ],
+        [
+          1,
+          0,
+          1,
+          7
+        ],
+        [
+          1,
+          0,
+          1,
+          8
+        ],
+        [
+          1,
+          0,
+          1,
+          9
+        ],
+        [
+          1,
+          0,
+          1,
+          10
+        ],
+        [
+          1,
+          0,
+          1,
+          11
+        ],
+        [
+          1,
+          0,
+          1,
+          12
+        ],
+        [
+          1,
+          0,
+          1,
+          13
+        ],
+        [
+          1,
+          0,
+          1,
+          14
+        ],
+        [
+          1,
+          0,
+          1,
+          15
+        ],
+        [
+          1,
+          0,
+          1,
+          16
+        ],
+        [
+          1,
+          0,
+          1,
+          17
+        ],
+        [
+          1,
+          0,
+          1,
+          18
+        ],
+        [
+          1,
+          0,
+          1,
+          19
+        ],
+        [
+          1,
+          0,
+          1,
+          20
+        ],
+        [
+          1,
+          0,
+          1,
+          21
+        ],
+        [
+          1,
+          0,
+          1,
+          22
+        ],
+        [
+          1,
+          0,
+          1,
+          23
+        ],
+        [
+          1,
+          0,
+          1,
+          24
+        ],
+        [
+          1,
+          0,
+          1,
+          25
+        ],
+        [
+          1,
+          0,
+          1,
+          26
+        ],
+        [
+          1,
+          0,
+          1,
+          27
+        ],
+        [
+          1,
+          0,
+          1,
+          28
+        ],
+        [
+          1,
+          0,
+          1,
+          29
+        ],
+        [
+          1,
+          0,
+          1,
+          30
+        ],
+        [
+          1,
+          0,
+          1,
+          31
+        ],
+        [
+          1,
+          0,
+          1,
+          32
+        ],
+        [
+          1,
+          0,
+          1,
+          33
+        ],
+        [
+          1,
+          0,
+          1,
+          34
+        ],
+        [
+          1,
+          0,
+          1,
+          35
+        ],
+        [
+          1,
+          0,
+          1,
+          36
+        ],
+        [
+          1,
+          0,
+          1,
+          37
+        ],
+        [
+          1,
+          0,
+          1,
+          38
+        ],
+        [
+          1,
+          0,
+          1,
+          39
+        ],
+        [
+          1,
+          0,
+          1,
+          40
+        ],
+        [
+          1,
+          0,
+          1,
+          41
+        ],
+        [
+          1,
+          0,
+          1,
+          42
+        ],
+        [
+          1,
+          0,
+          1,
+          43
+        ],
+        [
+          1,
+          0,
+          1,
+          44
+        ],
+        [
+          1,
+          0,
+          1,
+          45
+        ],
+        [
+          1,
+          0,
+          1,
+          46
+        ],
+        [
+          1,
+          0,
+          1,
+          47
+        ],
+        [
+          1,
+          0,
+          1,
+          48
+        ],
+        [
+          1,
+          0,
+          1,
+          49
+        ],
+        [
+          1,
+          0,
+          1,
+          50
+        ],
+        [
+          1,
+          0,
+          1,
+          51
+        ],
+        [
+          1,
+          0,
+          1,
+          52
+        ],
+        [
+          1,
+          0,
+          1,
+          53
+        ],
+        [
+          1,
+          0,
+          1,
+          54
+        ],
+        [
+          1,
+          0,
+          1,
+          55
+        ],
+        [
+          1,
+          0,
+          1,
+          56
+        ],
+        [
+          1,
+          0,
+          1,
+          57
+        ],
+        [
+          1,
+          0,
+          1,
+          58
+        ],
+        [
+          1,
+          0,
+          1,
+          59
+        ],
+        [
+          1,
+          0,
+          1,
+          60
+        ],
+        [
+          1,
+          0,
+          1,
+          61
+        ],
+        [
+          1,
+          0,
+          1,
+          62
+        ],
+        [
+          1,
+          0,
+          1,
+          63
+        ],
+        [
+          1,
+          0,
+          1,
+          64
+        ],
+        [
+          1,
+          0,
+          1,
+          65
+        ],
+        [
+          1,
+          0,
+          1,
+          66
+        ],
+        [
+          1,
+          0,
+          1,
+          67
+        ],
+        [
+          1,
+          0,
+          1,
+          68
+        ],
+        [
+          1,
+          0,
+          1,
+          69
+        ],
+        [
+          1,
+          0,
+          1,
+          70
+        ],
+        [
+          1,
+          0,
+          1,
+          71
+        ],
+        [
+          1,
+          0,
+          1,
+          72
+        ],
+        [
+          1,
+          0,
+          1,
+          73
+        ],
+        [
+          1,
+          0,
+          1,
+          74
+        ],
+        [
+          1,
+          0,
+          1,
+          75
+        ],
+        [
+          1,
+          0,
+          1,
+          76
+        ],
+        [
+          1,
+          0,
+          1,
+          77
+        ],
+        [
+          1,
+          0,
+          1,
+          78
+        ],
+        [
+          1,
+          0,
+          1,
+          79
+        ],
+        [
+          1,
+          0,
+          1,
+          80
+        ],
+        [
+          1,
+          0,
+          1,
+          81
+        ],
+        [
+          1,
+          0,
+          1,
+          82
+        ],
+        [
+          1,
+          0,
+          1,
+          83
+        ],
+        [
+          1,
+          0,
+          1,
+          84
+        ],
+        [
+          1,
+          0,
+          1,
+          85
+        ],
+        [
+          1,
+          0,
+          1,
+          86
+        ],
+        [
+          1,
+          0,
+          1,
+          87
+        ],
+        [
+          1,
+          0,
+          1,
+          88
+        ],
+        [
+          1,
+          0,
+          1,
+          89
+        ],
+        [
+          1,
+          0,
+          1,
+          90
+        ],
+        [
+          1,
+          0,
+          1,
+          91
+        ],
+        [
+          1,
+          0,
+          1,
+          92
+        ],
+        [
+          1,
+          0,
+          1,
+          93
+        ],
+        [
+          1,
+          0,
+          1,
+          94
+        ],
+        [
+          1,
+          0,
+          1,
+          95
+        ],
+        [
+          1,
+          0,
+          1,
+          96
+        ],
+        [
+          1,
+          0,
+          1,
+          97
+        ]
+      ],
+      "selection": [
+        1
+      ],
+      "residual": []
+    }
+  },
+  "sources_and_tools_unchanged": true,
+  "finished_utc": "2026-09-11T18:17:34.102568+00:00",
+  "elapsed_seconds": 3.3166543610859662,
+  "log_sha256": "6d5682b6d9ada0c7b078fbe32d1ef855d83d4aa405da5c1c94756d6c6d91f345"
+}

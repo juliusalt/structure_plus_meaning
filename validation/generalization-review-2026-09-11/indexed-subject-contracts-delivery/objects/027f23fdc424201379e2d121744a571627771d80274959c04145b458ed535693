@@ -1,0 +1,850 @@
+theory Factor_Environment_Admission
+  imports "Factor_Keyed_Lists"
+begin
+
+section \<open>Every artifact-use row contains an admitted complete artifact\<close>
+
+definition artifact_entry_admission_schema :: "(nat,nat,nat) factor_schema" where
+  "artifact_entry_admission_schema=data_rule (Pattern_Pair data_x data_y) {(0,19,data_x),(1,11,data_y)}"
+
+definition artifact_entry_admission_system :: "(nat,nat,nat,nat) schema_system" where
+  "artifact_entry_admission_system=add_view_definition keyed_list_system 22 data_x ({(0,artifact_entry_admission_schema)})"
+
+lemma artifact_entry_admission_system_formed [simp]: "schema_system_formed artifact_entry_admission_system"
+  unfolding artifact_entry_admission_system_def
+  by (rule add_recursive_definition_formed[OF keyed_list_system_formed])
+    (auto simp: artifact_entry_admission_schema_def
+      schema_formed_def schema_dependencies_def single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma artifact_entry_admission_definitions [simp]:
+  "system_definitions artifact_entry_admission_system={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22}"
+  by (auto simp: artifact_entry_admission_system_def)
+
+lemma artifact_entry_admission_call:
+  "schema_call_formed artifact_entry_admission_system d t \<longleftrightarrow>
+    d\<in>system_definitions artifact_entry_admission_system \<and> term_formed t"
+  using added_variable_calls[OF keyed_list_system_formed
+    artifact_entry_admission_system_formed[unfolded artifact_entry_admission_system_def] keyed_list_call]
+  by (simp only: artifact_entry_admission_system_def[symmetric])
+
+lemma artifact_entry_admission_previous_meaning:
+  assumes "d\<in>{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21}"
+  shows "(d,t)\<in>positive_meaning artifact_entry_admission_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning keyed_list_system"
+  using added_definition_preserves_old(2)[OF keyed_list_system_formed
+    artifact_entry_admission_system_formed[unfolded artifact_entry_admission_system_def], of d t] assms
+  by (auto simp: artifact_entry_admission_system_def)
+
+lemma artifact_entry_admission_clause [simp]:
+  "((22,c),S)\<in>system_clauses artifact_entry_admission_system \<longleftrightarrow> (c,S)\<in>({(0,artifact_entry_admission_schema)})"
+proof -
+  have owned: "((d,c),S)\<in>system_clauses keyed_list_system \<Longrightarrow>
+    d\<in>system_definitions keyed_list_system" for d c S
+    using keyed_list_system_formed unfolding schema_system_formed_def by blast
+  have absent: "((22,c),S)\<notin>system_clauses keyed_list_system" by (auto dest: owned)
+  show ?thesis using absent by (simp add: artifact_entry_admission_system_def)
+qed
+
+lemma artifact_entry_admission_old_meaning:
+  assumes "d\<in>{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19}"
+  shows "(d,t)\<in>positive_meaning artifact_entry_admission_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning coordinate_admission_system"
+  using artifact_entry_admission_previous_meaning[of d t] keyed_list_old_meaning[OF assms, of t] assms by auto
+
+lemma artifact_entry_admission_coordinate:
+  "(19,t)\<in>positive_meaning artifact_entry_admission_system \<longleftrightarrow> (\<exists>u. t=use_data_term u)"
+  using artifact_entry_admission_old_meaning[of 19 t] coordinate_admission_exact[of t] by auto
+
+lemma artifact_entry_admission_artifact:
+  "(11,t)\<in>positive_meaning artifact_entry_admission_system \<longleftrightarrow> (\<exists>R. artifact_value_presents R t)"
+  using artifact_entry_admission_old_meaning[of 11 t] coordinate_admission_old_meaning[of 11 t]
+    environment_comparison_artifact_meaning[of 11 t] artifact_identity_admission[of t] by auto
+
+theorem artifact_entry_admission_exact:
+  "(22,t)\<in>positive_meaning artifact_entry_admission_system \<longleftrightarrow>
+    (\<exists>z. environment_artifact_entry_presents z t)"
+proof
+  assume holds: "(22,t)\<in>positive_meaning artifact_entry_admission_system"
+  have consequence: "(22,t)\<in>schema_consequences artifact_entry_admission_system
+    (positive_meaning artifact_entry_admission_system)"
+    using holds positive_meaning_unfold[of artifact_entry_admission_system] by blast
+  obtain c S f where clause: "((22,c),S)\<in>system_clauses artifact_entry_admission_system"
+    and head: "t=evaluate_pattern f (schema_conclusion S)"
+    and support: "\<forall>s d p. (s,d,p)\<in>schema_premises S \<longrightarrow>
+      (d,evaluate_pattern f p)\<in>positive_meaning artifact_entry_admission_system"
+    using schema_consequences_valuationD[OF consequence] by blast
+  have schema: "S=artifact_entry_admission_schema" using clause by simp
+  have children: "(19,f 0)\<in>positive_meaning artifact_entry_admission_system"
+    "(11,f 1)\<in>positive_meaning artifact_entry_admission_system"
+    using support[rule_format, of 0 19 data_x] support[rule_format, of 1 11 data_y] schema
+    by (simp_all add: artifact_entry_admission_schema_def)
+  obtain u R where fields: "f 0=use_data_term u" "artifact_value_presents R (f 1)"
+    using children by (auto simp: artifact_entry_admission_coordinate artifact_entry_admission_artifact)
+  show "\<exists>z. environment_artifact_entry_presents z t"
+    by (intro exI[of _ "(u,R)"])
+      (use head fields in \<open>auto simp: schema artifact_entry_admission_schema_def environment_artifact_entry_presents_def\<close>)
+next
+  assume "\<exists>z. environment_artifact_entry_presents z t"
+  then obtain z v where material: "artifact_value_presents (snd z) v"
+    and shape: "t=Pair_Term (use_data_term (fst z)) v"
+    unfolding environment_artifact_entry_presents_def by blast
+  have formed: "term_formed v" using artifact_value_presents_formed[OF material] by blast
+  have children: "(19,use_data_term (fst z))\<in>positive_meaning artifact_entry_admission_system"
+    "(11,v)\<in>positive_meaning artifact_entry_admission_system"
+    using material by (auto simp: artifact_entry_admission_coordinate artifact_entry_admission_artifact)
+  let ?f="\<lambda>i::nat. if i=0 then use_data_term (fst z) else v"
+  have result: "(22,evaluate_pattern ?f (schema_conclusion artifact_entry_admission_schema))
+    \<in>positive_meaning artifact_entry_admission_system"
+    by (rule ordinary_positive_valuation_step[where c=0])
+      (use formed children in \<open>auto simp: artifact_entry_admission_schema_def schema_variables_def artifact_entry_admission_call\<close>)
+  show "(22,t)\<in>positive_meaning artifact_entry_admission_system"
+    using result by (simp add: shape artifact_entry_admission_schema_def)
+qed
+
+definition artifact_entries_system :: "(nat,nat,nat,nat) schema_system" where
+  "artifact_entries_system=add_view_definition artifact_entry_admission_system 23 data_x (list_profile_clauses 22 23)"
+
+lemma artifact_entries_system_formed [simp]: "schema_system_formed artifact_entries_system"
+  unfolding artifact_entries_system_def
+  by (rule add_recursive_definition_formed[OF artifact_entry_admission_system_formed])
+    (auto simp: list_profile_clauses_def data_list_nil_schema_def list_step_schema_def
+      schema_formed_def schema_dependencies_def single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma artifact_entries_definitions [simp]:
+  "system_definitions artifact_entries_system={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23}"
+  by (auto simp: artifact_entries_system_def)
+
+lemma artifact_entries_call:
+  "schema_call_formed artifact_entries_system d t \<longleftrightarrow>
+    d\<in>system_definitions artifact_entries_system \<and> term_formed t"
+  using added_variable_calls[OF artifact_entry_admission_system_formed
+    artifact_entries_system_formed[unfolded artifact_entries_system_def] artifact_entry_admission_call]
+  by (simp only: artifact_entries_system_def[symmetric])
+
+lemma artifact_entries_previous_meaning:
+  assumes "d\<in>{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22}"
+  shows "(d,t)\<in>positive_meaning artifact_entries_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning artifact_entry_admission_system"
+  using added_definition_preserves_old(2)[OF artifact_entry_admission_system_formed
+    artifact_entries_system_formed[unfolded artifact_entries_system_def], of d t] assms
+  by (auto simp: artifact_entries_system_def)
+
+lemma artifact_entries_clause [simp]:
+  "((23,c),S)\<in>system_clauses artifact_entries_system \<longleftrightarrow> (c,S)\<in>(list_profile_clauses 22 23)"
+proof -
+  have owned: "((d,c),S)\<in>system_clauses artifact_entry_admission_system \<Longrightarrow>
+    d\<in>system_definitions artifact_entry_admission_system" for d c S
+    using artifact_entry_admission_system_formed unfolding schema_system_formed_def by blast
+  have absent: "((23,c),S)\<notin>system_clauses artifact_entry_admission_system" by (auto dest: owned)
+  show ?thesis using absent by (simp add: artifact_entries_system_def)
+qed
+
+interpretation artifact_lists: list_profile artifact_entries_system 22 23
+  by (rule list_profile.intro) (auto simp: artifact_entries_call)
+
+lemma artifact_entries_elements:
+  "(22,t)\<in>positive_meaning artifact_entries_system \<longleftrightarrow> (\<exists>z. environment_artifact_entry_presents z t)"
+  using artifact_entries_previous_meaning[of 22 t] artifact_entry_admission_exact[of t] by auto
+
+theorem artifact_entries_exact:
+  "(23,t)\<in>positive_meaning artifact_entries_system \<longleftrightarrow>
+    (\<exists>xs ts. t=data_list_term ts \<and> list_all2 environment_artifact_entry_presents xs ts)"
+  by (simp only: artifact_lists.exact artifact_entries_elements list_all2_exists_left) blast
+
+lemma artifact_entries_read:
+  assumes "data_collection_presents environment_artifact_entry_presents A a"
+  shows "(23,a)\<in>positive_meaning artifact_entries_system"
+  using assms by (auto simp: artifact_entries_exact data_collection_presents_def)
+
+lemma environment_artifact_list_data:
+  assumes read: "list_all2 environment_artifact_entry_presents xs ts"
+  shows "data_elements ts"
+  using list_all2_members[OF read] environment_artifact_entry_formed by blast
+
+section \<open>A binding selects its source, target, and source slot\<close>
+
+definition binding_entry_schema :: "(nat,nat,nat) factor_schema" where
+  "binding_entry_schema=data_rule
+    (Pattern_Pair data_x (Pattern_Pair (Pattern_Pair data_y data_z) data_w))
+    {(0,5,Pattern_Pair (Pattern_Pair data_y (Pattern_Pair (Pattern_Variable 4) (Pattern_Variable 5)))
+        (Pattern_Pair data_x (Pattern_Variable 6))),
+     (1,5,Pattern_Pair (Pattern_Pair data_w (Pattern_Variable 7)) (Pattern_Pair data_x (Pattern_Variable 8))),
+     (2,5,Pattern_Pair data_z (Pattern_Pair (Pattern_Variable 4) (Pattern_Variable 9)))}"
+
+definition binding_entry_system :: "(nat,nat,nat,nat) schema_system" where
+  "binding_entry_system=add_view_definition artifact_entries_system 24 data_x ({(0,binding_entry_schema)})"
+
+lemma binding_entry_system_formed [simp]: "schema_system_formed binding_entry_system"
+  unfolding binding_entry_system_def
+  by (rule add_recursive_definition_formed[OF artifact_entries_system_formed])
+    (auto simp: binding_entry_schema_def
+      schema_formed_def schema_dependencies_def single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma binding_entry_definitions [simp]:
+  "system_definitions binding_entry_system={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24}"
+  by (auto simp: binding_entry_system_def)
+
+lemma binding_entry_call:
+  "schema_call_formed binding_entry_system d t \<longleftrightarrow>
+    d\<in>system_definitions binding_entry_system \<and> term_formed t"
+  using added_variable_calls[OF artifact_entries_system_formed
+    binding_entry_system_formed[unfolded binding_entry_system_def] artifact_entries_call]
+  by (simp only: binding_entry_system_def[symmetric])
+
+lemma binding_entry_previous_meaning:
+  assumes "d\<in>{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23}"
+  shows "(d,t)\<in>positive_meaning binding_entry_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning artifact_entries_system"
+  using added_definition_preserves_old(2)[OF artifact_entries_system_formed
+    binding_entry_system_formed[unfolded binding_entry_system_def], of d t] assms
+  by (auto simp: binding_entry_system_def)
+
+lemma binding_entry_clause [simp]:
+  "((24,c),S)\<in>system_clauses binding_entry_system \<longleftrightarrow> (c,S)\<in>({(0,binding_entry_schema)})"
+proof -
+  have owned: "((d,c),S)\<in>system_clauses artifact_entries_system \<Longrightarrow>
+    d\<in>system_definitions artifact_entries_system" for d c S
+    using artifact_entries_system_formed unfolding schema_system_formed_def by blast
+  have absent: "((24,c),S)\<notin>system_clauses artifact_entries_system" by (auto dest: owned)
+  show ?thesis using absent by (simp add: binding_entry_system_def)
+qed
+
+lemma binding_entry_keyed_meaning:
+  assumes "d\<in>{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21}"
+  shows "(d,t)\<in>positive_meaning binding_entry_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning keyed_list_system"
+  using binding_entry_previous_meaning[of d t] artifact_entries_previous_meaning[of d t]
+    artifact_entry_admission_previous_meaning[OF assms, of t] assms by auto
+
+lemma binding_entry_selection:
+  "(5,t)\<in>positive_meaning binding_entry_system \<longleftrightarrow>
+    (5,t)\<in>positive_meaning bag_comparison_system"
+  using binding_entry_keyed_meaning[of 5 t] keyed_list_previous_meaning[of 5 t]
+    key_absence_base_meaning[of 5 t] by auto
+
+theorem binding_entry_raw:
+  "(24,t)\<in>positive_meaning binding_entry_system \<longleftrightarrow>
+    (\<exists>a u slot v carrier rest target.
+      t=Pair_Term a (Pair_Term (Pair_Term u slot) v) \<and>
+      selected_data_member (Pair_Term u (Pair_Term carrier rest)) a \<and>
+      selected_data_member (Pair_Term v target) a \<and> selected_data_member slot carrier)"
+proof
+  assume holds: "(24,t)\<in>positive_meaning binding_entry_system"
+  have consequence: "(24,t)\<in>schema_consequences binding_entry_system (positive_meaning binding_entry_system)"
+    using holds positive_meaning_unfold[of binding_entry_system] by blast
+  obtain c S f where clause: "((24,c),S)\<in>system_clauses binding_entry_system"
+    and head: "t=evaluate_pattern f (schema_conclusion S)"
+    and support: "\<forall>s d p. (s,d,p)\<in>schema_premises S \<longrightarrow>
+      (d,evaluate_pattern f p)\<in>positive_meaning binding_entry_system"
+    using schema_consequences_valuationD[OF consequence] by blast
+  have schema: "S=binding_entry_schema" using clause by simp
+  have source: "selected_data_member (Pair_Term (f 1) (Pair_Term (f 4) (f 5))) (f 0)"
+    and target: "selected_data_member (Pair_Term (f 3) (f 7)) (f 0)"
+    and slot: "selected_data_member (f 2) (f 4)"
+    using support by (auto simp: schema binding_entry_schema_def binding_entry_selection)
+  show "\<exists>a u slot v carrier rest target.
+    t=Pair_Term a (Pair_Term (Pair_Term u slot) v) \<and>
+    selected_data_member (Pair_Term u (Pair_Term carrier rest)) a \<and>
+    selected_data_member (Pair_Term v target) a \<and> selected_data_member slot carrier"
+    using head source target slot by (auto simp: schema binding_entry_schema_def)
+next
+  assume "\<exists>a u slot v carrier rest target.
+    t=Pair_Term a (Pair_Term (Pair_Term u slot) v) \<and>
+    selected_data_member (Pair_Term u (Pair_Term carrier rest)) a \<and>
+    selected_data_member (Pair_Term v target) a \<and> selected_data_member slot carrier"
+  then obtain a u slot v carrier rest target r s q where
+    shape: "t=Pair_Term a (Pair_Term (Pair_Term u slot) v)"
+    and children:
+      "(5,Pair_Term (Pair_Term u (Pair_Term carrier rest)) (Pair_Term a r))\<in>positive_meaning bag_comparison_system"
+      "(5,Pair_Term (Pair_Term v target) (Pair_Term a s))\<in>positive_meaning bag_comparison_system"
+      "(5,Pair_Term slot (Pair_Term carrier q))\<in>positive_meaning bag_comparison_system" by blast
+  have formed: "term_formed a" "term_formed u" "term_formed slot" "term_formed v" "term_formed carrier"
+    "term_formed rest" "term_formed r" "term_formed target" "term_formed s" "term_formed q"
+    using schema_call_formed_target[OF positive_meaning_formed[OF children(1)]]
+      schema_call_formed_target[OF positive_meaning_formed[OF children(2)]]
+      schema_call_formed_target[OF positive_meaning_formed[OF children(3)]] by auto
+  let ?f="\<lambda>i::nat. if i=0 then a else if i=1 then u else if i=2 then slot else if i=3 then v
+    else if i=4 then carrier else if i=5 then rest else if i=6 then r else if i=7 then target else if i=8 then s else q"
+  have result: "(24,evaluate_pattern ?f (schema_conclusion binding_entry_schema))\<in>positive_meaning binding_entry_system"
+    by (rule ordinary_positive_valuation_step[where c=0])
+      (use formed children in \<open>auto simp: binding_entry_schema_def schema_variables_def binding_entry_call binding_entry_selection\<close>)
+  show "(24,t)\<in>positive_meaning binding_entry_system" using result by (simp add: shape binding_entry_schema_def)
+qed
+
+lemma artifact_carrier_selection:
+  assumes read: "artifact_value_presents R (Pair_Term a rest)"
+  shows "selected_data_member slot a \<longleftrightarrow>
+    (\<exists>k. slot=Payload_Term k \<and> k\<in>rra_carrier (object_structure R))"
+proof -
+  obtain A E B F where enumeration: "artifact_enumeration R A E B F"
+    and shape: "Pair_Term a rest=artifact_data_term A E B F"
+    using read unfolding artifact_value_presents_def by blast
+  have carrier: "set A=rra_carrier (object_structure R)"
+    using artifact_enumeration_material[OF enumeration] by blast
+  have field: "a=data_list_term (map Payload_Term A)" using shape by (simp add: artifact_data_term_def)
+  have formed: "term_formed a" using artifact_value_presents_formed[OF read] by simp
+  have data: "data_elements (map Payload_Term A)"
+    using formed by (auto simp: field data_list_term_formed)
+  show ?thesis using data carrier
+    by (auto simp: selected_data_member_exact field data_list_term_injective)
+qed
+
+abbreviation binding_supported ::
+  "(local_address option\<times>exact_artifact) set \<Rightarrow>
+    ((local_address option\<times>local_address)\<times>local_address option) \<Rightarrow> bool" where
+  "binding_supported A z \<equiv>
+    (\<exists>R. (fst (fst z),R)\<in>A \<and> snd (fst z)\<in>rra_carrier (object_structure R)) \<and> snd z\<in>rel_dom A"
+
+theorem binding_entry_exact:
+  assumes read: "data_collection_presents environment_artifact_entry_presents A a"
+  shows "(24,Pair_Term a b)\<in>positive_meaning binding_entry_system \<longleftrightarrow>
+    (\<exists>z. b=binding_data z \<and> binding_supported A z)"
+proof -
+  have rows: "(\<forall>z\<in>A. \<exists>t. selected_data_member t a \<and> environment_artifact_entry_presents z t) \<and>
+    (\<forall>t. selected_data_member t a \<longrightarrow> (\<exists>z\<in>A. environment_artifact_entry_presents z t))"
+    by (rule data_collection_selection[OF read]) (meson environment_artifact_entry_formed)
+  show ?thesis
+  proof
+    assume holds: "(24,Pair_Term a b)\<in>positive_meaning binding_entry_system"
+    obtain u slot v carrier rest target where shape: "b=Pair_Term (Pair_Term u slot) v"
+      and selected: "selected_data_member (Pair_Term u (Pair_Term carrier rest)) a"
+        "selected_data_member (Pair_Term v target) a" "selected_data_member slot carrier"
+      using holds by (auto simp: binding_entry_raw; blast)
+    obtain z w where entries: "z\<in>A" "environment_artifact_entry_presents z (Pair_Term u (Pair_Term carrier rest))"
+      "w\<in>A" "environment_artifact_entry_presents w (Pair_Term v target)"
+      using rows selected(1,2) by blast
+    have source: "u=use_data_term (fst z)" "artifact_value_presents (snd z) (Pair_Term carrier rest)"
+      and target_use: "v=use_data_term (fst w)"
+      using entries(2,4) by (auto simp: environment_artifact_entry_presents_def)
+    obtain k where slot: "slot=Payload_Term k" "k\<in>rra_carrier (object_structure (snd z))"
+      using selected(3) artifact_carrier_selection[OF source(2), of slot] by blast
+    have source_supported: "\<exists>R. (fst z,R)\<in>A \<and> k\<in>rra_carrier (object_structure R)"
+      by (rule exI[of _ "snd z"]) (use entries(1) slot(2) in auto)
+    have target_supported: "fst w\<in>rel_dom A"
+      by (rule rel_domI[where y="snd w"]) (use entries(3) in simp)
+    show "\<exists>z. b=binding_data z \<and> binding_supported A z"
+      by (intro exI[of _ "((fst z,k),fst w)"])
+        (use shape source(1) target_use slot(1) source_supported target_supported in \<open>auto simp: binding_data_def\<close>)
+  next
+    assume "\<exists>z. b=binding_data z \<and> binding_supported A z"
+    then obtain z where binding: "b=binding_data z" "binding_supported A z" by blast
+    obtain u k v where row: "z=((u,k),v)" by (cases z) auto
+    obtain R T where source: "(u,R)\<in>A" "k\<in>rra_carrier (object_structure R)"
+      and target: "(v,T)\<in>A" using binding(2) by (auto simp: row rel_dom_def)
+    obtain x y where first: "selected_data_member x a" "environment_artifact_entry_presents (u,R) x"
+      and second: "selected_data_member y a" "environment_artifact_entry_presents (v,T) y"
+      using rows source(1) target by blast
+    obtain actual where artifact_read: "artifact_value_presents R actual"
+      and entry_shape: "x=Pair_Term (use_data_term u) actual"
+      using first(2) by (auto simp: environment_artifact_entry_presents_def)
+    obtain carrier rest where fields: "actual=Pair_Term carrier rest"
+      using artifact_read unfolding artifact_value_presents_def artifact_data_term_def by blast
+    have material: "artifact_value_presents R (Pair_Term carrier rest)"
+      using artifact_read fields by simp
+    have source_shape: "x=Pair_Term (use_data_term u) (Pair_Term carrier rest)"
+      using entry_shape fields by simp
+    obtain target_value where target_shape: "y=Pair_Term (use_data_term v) target_value"
+      using second(2) by (auto simp: environment_artifact_entry_presents_def)
+    have slot: "selected_data_member (Payload_Term k) carrier"
+      using source(2) by (simp add: artifact_carrier_selection[OF material])
+    show "(24,Pair_Term a b)\<in>positive_meaning binding_entry_system"
+      using first(1) second(1) slot
+      by (auto simp: binding_entry_raw binding(1) row binding_data_def source_shape target_shape)
+  qed
+qed
+
+section \<open>Every binding is checked against the same complete artifact table\<close>
+
+definition binding_entries_system :: "(nat,nat,nat,nat) schema_system" where
+  "binding_entries_system=add_view_definition binding_entry_system 25 data_x (context_list_clauses 24 25)"
+
+lemma binding_entries_system_formed [simp]: "schema_system_formed binding_entries_system"
+  unfolding binding_entries_system_def
+  by (rule add_recursive_definition_formed[OF binding_entry_system_formed])
+    (auto simp: context_list_clauses_def context_list_nil_schema_def context_list_step_schema_def
+      schema_formed_def schema_dependencies_def single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma binding_entries_definitions [simp]:
+  "system_definitions binding_entries_system={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25}"
+  by (auto simp: binding_entries_system_def)
+
+lemma binding_entries_call:
+  "schema_call_formed binding_entries_system d t \<longleftrightarrow>
+    d\<in>system_definitions binding_entries_system \<and> term_formed t"
+  using added_variable_calls[OF binding_entry_system_formed
+    binding_entries_system_formed[unfolded binding_entries_system_def] binding_entry_call]
+  by (simp only: binding_entries_system_def[symmetric])
+
+lemma binding_entries_previous_meaning:
+  assumes "d\<in>{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24}"
+  shows "(d,t)\<in>positive_meaning binding_entries_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning binding_entry_system"
+  using added_definition_preserves_old(2)[OF binding_entry_system_formed
+    binding_entries_system_formed[unfolded binding_entries_system_def], of d t] assms
+  by (auto simp: binding_entries_system_def)
+
+lemma binding_entries_clause [simp]:
+  "((25,c),S)\<in>system_clauses binding_entries_system \<longleftrightarrow> (c,S)\<in>(context_list_clauses 24 25)"
+proof -
+  have owned: "((d,c),S)\<in>system_clauses binding_entry_system \<Longrightarrow>
+    d\<in>system_definitions binding_entry_system" for d c S
+    using binding_entry_system_formed unfolding schema_system_formed_def by blast
+  have absent: "((25,c),S)\<notin>system_clauses binding_entry_system" by (auto dest: owned)
+  show ?thesis using absent by (simp add: binding_entries_system_def)
+qed
+
+interpretation binding_lists: context_list_profile binding_entries_system 24 25
+  by (rule context_list_profile.intro) (auto simp: binding_entries_call)
+
+lemma binding_entries_element:
+  assumes read: "data_collection_presents environment_artifact_entry_presents A a"
+  shows "(24,Pair_Term a b)\<in>positive_meaning binding_entries_system \<longleftrightarrow>
+    (\<exists>z. b=binding_data z \<and> binding_supported A z)"
+  using binding_entries_previous_meaning[of 24 "Pair_Term a b"] binding_entry_exact[OF read, of b] by auto
+
+theorem binding_entries_exact:
+  assumes read: "data_collection_presents environment_artifact_entry_presents A a"
+  shows "(25,Pair_Term a b)\<in>positive_meaning binding_entries_system \<longleftrightarrow>
+    (\<exists>zs. b=data_list_term (map binding_data zs) \<and> (\<forall>z\<in>set zs. binding_supported A z))"
+proof -
+  have formed: "term_formed a"
+    by (rule data_collection_presents_formed[OF read]) (meson environment_artifact_entry_formed)
+  have elements: "(24,Pair_Term a t)\<in>positive_meaning binding_entries_system \<longleftrightarrow>
+    (\<exists>z. t=binding_data z \<and> binding_supported A z)" for t
+    by (rule binding_entries_element[OF read])
+  have lists: "(25,Pair_Term a b)\<in>positive_meaning binding_entries_system \<longleftrightarrow>
+    (\<exists>ts. b=data_list_term ts \<and> (\<forall>t\<in>set ts. \<exists>z. t=binding_data z \<and> binding_supported A z))"
+    using formed by (auto simp: binding_lists.exact elements)
+  show ?thesis using lists by (simp only: list_range_restricted_witnesses) blast
+qed
+
+lemma binding_entries_data:
+  assumes "(25,Pair_Term a (data_list_term (map binding_data zs)))\<in>positive_meaning binding_entries_system"
+  shows "data_elements (map binding_data zs)"
+  using schema_call_formed_target[OF positive_meaning_formed[OF assms]]
+  by (auto simp: data_list_term_formed)
+
+lemma admitted_artifact_table:
+  "(23,a)\<in>positive_meaning artifact_entries_system \<and> (21,a)\<in>positive_meaning keyed_list_system \<longleftrightarrow>
+    (\<exists>A. data_collection_presents environment_artifact_entry_presents A a \<and> single_valued A)"
+proof -
+  have keys: "(21,data_list_term ts)\<in>positive_meaning keyed_list_system \<longleftrightarrow>
+    distinct xs \<and> single_valued (set xs)"
+    if read: "list_all2 environment_artifact_entry_presents xs ts" for xs ts
+  proof (rule keyed_list_encoded_keys[OF read environment_artifact_list_data[OF read] use_data_term_injective])
+    fix z t assume "environment_artifact_entry_presents z t"
+    then show "\<exists>v. t=Pair_Term (use_data_term (fst z)) v"
+      by (auto simp: environment_artifact_entry_presents_def)
+  qed
+  show ?thesis
+  proof
+    assume holds: "(23,a)\<in>positive_meaning artifact_entries_system \<and> (21,a)\<in>positive_meaning keyed_list_system"
+    obtain xs ts where rows: "a=data_list_term ts" "list_all2 environment_artifact_entry_presents xs ts"
+      using holds by (auto simp: artifact_entries_exact)
+    have unique: "distinct xs \<and> single_valued (set xs)" using holds rows(1) keys[OF rows(2)] by simp
+    show "\<exists>A. data_collection_presents environment_artifact_entry_presents A a \<and> single_valued A"
+      by (intro exI[of _ "set xs"]) (use rows unique in \<open>auto simp: data_collection_presents_def\<close>)
+  next
+    assume "\<exists>A. data_collection_presents environment_artifact_entry_presents A a \<and> single_valued A"
+    then obtain A xs ts where rows: "distinct xs" "set xs=A" "list_all2 environment_artifact_entry_presents xs ts"
+      "a=data_list_term ts" "single_valued A" unfolding data_collection_presents_def by blast
+    show "(23,a)\<in>positive_meaning artifact_entries_system \<and> (21,a)\<in>positive_meaning keyed_list_system"
+      using rows keys[OF rows(3)] by (auto simp: artifact_entries_exact)
+  qed
+qed
+
+lemma admitted_binding_table:
+  assumes read: "data_collection_presents environment_artifact_entry_presents A a"
+  shows "(25,Pair_Term a b)\<in>positive_meaning binding_entries_system \<and> (21,b)\<in>positive_meaning keyed_list_system
+    \<longleftrightarrow> (\<exists>B. data_collection_presents (\<lambda>z t. t=binding_data z) B b \<and>
+      single_valued B \<and> (\<forall>z\<in>B. binding_supported A z))"
+proof -
+  have injective: "inj (case_prod site_data_term)"
+    by (rule injI; rename_tac z w; case_tac z; case_tac w) simp
+  have keys: "(21,data_list_term (map binding_data zs))\<in>positive_meaning keyed_list_system \<longleftrightarrow>
+    distinct zs \<and> single_valued (set zs)"
+    if data: "data_elements (map binding_data zs)" for zs
+  proof (rule keyed_list_encoded_keys[OF _ data injective])
+    show "list_all2 (\<lambda>z t. t=binding_data z) zs (map binding_data zs)"
+      by (simp add: list_all2_function)
+  next
+    fix z t assume "t=binding_data z"
+    then show "\<exists>v. t=Pair_Term (case_prod site_data_term (fst z)) v"
+      by (auto simp: binding_data_def site_data_term_def split: prod.splits)
+  qed
+  show ?thesis
+  proof
+    assume holds: "(25,Pair_Term a b)\<in>positive_meaning binding_entries_system \<and> (21,b)\<in>positive_meaning keyed_list_system"
+    obtain zs where rows: "b=data_list_term (map binding_data zs)" "\<forall>z\<in>set zs. binding_supported A z"
+      using holds by (auto simp: binding_entries_exact[OF read])
+    have data: "data_elements (map binding_data zs)"
+      by (rule binding_entries_data[of a]) (use holds rows(1) in simp)
+    have unique: "distinct zs \<and> single_valued (set zs)" using keys[OF data] holds rows(1) by simp
+    show "\<exists>B. data_collection_presents (\<lambda>z t. t=binding_data z) B b \<and>
+      single_valued B \<and> (\<forall>z\<in>B. binding_supported A z)"
+      by (intro exI[of _ "set zs"])
+        (use rows unique in \<open>auto simp: data_collection_presents_function\<close>)
+  next
+    assume "\<exists>B. data_collection_presents (\<lambda>z t. t=binding_data z) B b \<and>
+      single_valued B \<and> (\<forall>z\<in>B. binding_supported A z)"
+    then obtain B zs where rows: "distinct zs" "set zs=B" "b=data_list_term (map binding_data zs)"
+      "single_valued B" "\<forall>z\<in>B. binding_supported A z"
+      by (auto simp: data_collection_presents_function)
+    have holds: "(25,Pair_Term a b)\<in>positive_meaning binding_entries_system"
+      using rows by (auto simp: binding_entries_exact[OF read])
+    have data: "data_elements (map binding_data zs)"
+      by (rule binding_entries_data[of a]) (use holds rows(3) in simp)
+    show "(25,Pair_Term a b)\<in>positive_meaning binding_entries_system \<and> (21,b)\<in>positive_meaning keyed_list_system"
+      using holds keys[OF data] rows by simp
+  qed
+qed
+
+section \<open>Admission checks both complete tables and all environment formation laws\<close>
+
+definition environment_admission_schema :: "(nat,nat,nat) factor_schema" where
+  "environment_admission_schema=data_rule (Pattern_Pair data_x data_y)
+    {(0,23,data_x),(1,21,data_x),(2,25,Pattern_Pair data_x data_y),(3,21,data_y)}"
+
+definition environment_admission_system :: "(nat,nat,nat,nat) schema_system" where
+  "environment_admission_system=add_view_definition binding_entries_system 26 data_x ({(0,environment_admission_schema)})"
+
+lemma environment_admission_system_formed [simp]: "schema_system_formed environment_admission_system"
+  unfolding environment_admission_system_def
+  by (rule add_recursive_definition_formed[OF binding_entries_system_formed])
+    (auto simp: environment_admission_schema_def
+      schema_formed_def schema_dependencies_def single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma environment_admission_definitions [simp]:
+  "system_definitions environment_admission_system={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26}"
+  by (auto simp: environment_admission_system_def)
+
+lemma environment_admission_call:
+  "schema_call_formed environment_admission_system d t \<longleftrightarrow>
+    d\<in>system_definitions environment_admission_system \<and> term_formed t"
+  using added_variable_calls[OF binding_entries_system_formed
+    environment_admission_system_formed[unfolded environment_admission_system_def] binding_entries_call]
+  by (simp only: environment_admission_system_def[symmetric])
+
+lemma environment_admission_previous_meaning:
+  assumes "d\<in>{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25}"
+  shows "(d,t)\<in>positive_meaning environment_admission_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning binding_entries_system"
+  using added_definition_preserves_old(2)[OF binding_entries_system_formed
+    environment_admission_system_formed[unfolded environment_admission_system_def], of d t] assms
+  by (auto simp: environment_admission_system_def)
+
+lemma environment_admission_clause [simp]:
+  "((26,c),S)\<in>system_clauses environment_admission_system \<longleftrightarrow> (c,S)\<in>({(0,environment_admission_schema)})"
+proof -
+  have owned: "((d,c),S)\<in>system_clauses binding_entries_system \<Longrightarrow>
+    d\<in>system_definitions binding_entries_system" for d c S
+    using binding_entries_system_formed unfolding schema_system_formed_def by blast
+  have absent: "((26,c),S)\<notin>system_clauses binding_entries_system" by (auto dest: owned)
+  show ?thesis using absent by (simp add: environment_admission_system_def)
+qed
+
+lemma environment_admission_components:
+  "(23,t)\<in>positive_meaning environment_admission_system \<longleftrightarrow>
+    (23,t)\<in>positive_meaning artifact_entries_system"
+  "(21,t)\<in>positive_meaning environment_admission_system \<longleftrightarrow>
+    (21,t)\<in>positive_meaning keyed_list_system"
+  "(25,t)\<in>positive_meaning environment_admission_system \<longleftrightarrow>
+    (25,t)\<in>positive_meaning binding_entries_system"
+  using environment_admission_previous_meaning[of 23 t] binding_entries_previous_meaning[of 23 t]
+    binding_entry_previous_meaning[of 23 t] environment_admission_previous_meaning[of 21 t]
+    binding_entries_previous_meaning[of 21 t] binding_entry_keyed_meaning[of 21 t]
+    environment_admission_previous_meaning[of 25 t] by auto
+
+theorem environment_admission_raw:
+  "(26,t)\<in>positive_meaning environment_admission_system \<longleftrightarrow>
+    (\<exists>a b. t=Pair_Term a b \<and> (23,a)\<in>positive_meaning artifact_entries_system \<and>
+      (21,a)\<in>positive_meaning keyed_list_system \<and>
+      (25,Pair_Term a b)\<in>positive_meaning binding_entries_system \<and>
+      (21,b)\<in>positive_meaning keyed_list_system)"
+proof
+  assume holds: "(26,t)\<in>positive_meaning environment_admission_system"
+  have consequence: "(26,t)\<in>schema_consequences environment_admission_system (positive_meaning environment_admission_system)"
+    using holds positive_meaning_unfold[of environment_admission_system] by blast
+  obtain c S f where clause: "((26,c),S)\<in>system_clauses environment_admission_system"
+    and head: "t=evaluate_pattern f (schema_conclusion S)"
+    and support: "\<forall>s d p. (s,d,p)\<in>schema_premises S \<longrightarrow>
+      (d,evaluate_pattern f p)\<in>positive_meaning environment_admission_system"
+    using schema_consequences_valuationD[OF consequence] by blast
+  have schema: "S=environment_admission_schema" using clause by simp
+  show "\<exists>a b. t=Pair_Term a b \<and> (23,a)\<in>positive_meaning artifact_entries_system \<and>
+    (21,a)\<in>positive_meaning keyed_list_system \<and>
+    (25,Pair_Term a b)\<in>positive_meaning binding_entries_system \<and>
+    (21,b)\<in>positive_meaning keyed_list_system"
+    using head support by (auto simp: schema environment_admission_schema_def environment_admission_components)
+next
+  assume "\<exists>a b. t=Pair_Term a b \<and> (23,a)\<in>positive_meaning artifact_entries_system \<and>
+    (21,a)\<in>positive_meaning keyed_list_system \<and>
+    (25,Pair_Term a b)\<in>positive_meaning binding_entries_system \<and>
+    (21,b)\<in>positive_meaning keyed_list_system"
+  then obtain a b where shape: "t=Pair_Term a b" and children:
+    "(23,a)\<in>positive_meaning artifact_entries_system" "(21,a)\<in>positive_meaning keyed_list_system"
+    "(25,Pair_Term a b)\<in>positive_meaning binding_entries_system" "(21,b)\<in>positive_meaning keyed_list_system" by blast
+  have formed: "term_formed a" "term_formed b"
+    using schema_call_formed_target[OF positive_meaning_formed[OF children(2)]]
+      schema_call_formed_target[OF positive_meaning_formed[OF children(4)]] by auto
+  let ?f="\<lambda>i::nat. if i=0 then a else b"
+  have result: "(26,evaluate_pattern ?f (schema_conclusion environment_admission_schema))
+    \<in>positive_meaning environment_admission_system"
+    by (rule ordinary_positive_valuation_step[where c=0])
+      (use formed children in \<open>auto simp: environment_admission_schema_def schema_variables_def
+        environment_admission_call environment_admission_components\<close>)
+  show "(26,t)\<in>positive_meaning environment_admission_system" using result by (simp add: shape environment_admission_schema_def)
+qed
+
+theorem environment_admission_exact:
+  "(26,t)\<in>positive_meaning environment_admission_system \<longleftrightarrow> (\<exists>E. environment_value_presents E t)"
+proof
+  assume holds: "(26,t)\<in>positive_meaning environment_admission_system"
+  obtain a b where shape: "t=Pair_Term a b"
+    and artifacts: "(23,a)\<in>positive_meaning artifact_entries_system" "(21,a)\<in>positive_meaning keyed_list_system"
+    and bindings: "(25,Pair_Term a b)\<in>positive_meaning binding_entries_system" "(21,b)\<in>positive_meaning keyed_list_system"
+    using holds by (auto simp: environment_admission_raw)
+  obtain A where first: "data_collection_presents environment_artifact_entry_presents A a" "single_valued A"
+    using artifacts admitted_artifact_table[of a] by blast
+  obtain B where second: "data_collection_presents (\<lambda>z v. v=binding_data z) B b"
+    "single_valued B" "\<forall>z\<in>B. binding_supported A z"
+    using bindings admitted_binding_table[OF first(1), of b] by blast
+  have finite: "finite A" "finite B" using data_collection_presents_finite[OF first(1)]
+    data_collection_presents_finite[OF second(1)] by auto
+  have material: "exact_formed R" if member: "(u,R)\<in>A" for u R
+  proof -
+    obtain v where entry: "environment_artifact_entry_presents (u,R) v"
+      using data_collection_presents_sources[OF first(1), rule_format, OF member] by blast
+    obtain w where read: "artifact_value_presents R w"
+      using entry by (auto simp: environment_artifact_entry_presents_def)
+    show ?thesis using artifact_value_presents_formed[OF read] by blast
+  qed
+  have supported: "(\<exists>R. (u,R)\<in>A \<and> k\<in>rra_carrier (object_structure R)) \<and> v\<in>rel_dom A"
+    if member: "((u,k),v)\<in>B" for u k v
+    using second(3)[rule_format, OF member] by simp
+  let ?E="\<lparr>environment_artifacts=A,environment_bindings=B\<rparr>"
+  have formed: "environment_formed ?E"
+    using finite first(2) second(2) material supported
+    by (auto simp: environment_formed_def artifact_at_def binds_slot_def environment_uses_def)
+  have present: "environment_value_presents ?E t" using formed first(1) second(1) shape
+    by (auto simp: environment_value_presents_def)
+  show "\<exists>E. environment_value_presents E t" using present by blast
+next
+  assume "\<exists>E. environment_value_presents E t"
+  then obtain E a b where formed: "environment_formed E" and shape: "t=Pair_Term a b"
+    and first: "data_collection_presents environment_artifact_entry_presents (environment_artifacts E) a"
+    and second: "data_collection_presents (\<lambda>z v. v=binding_data z) (environment_bindings E) b"
+    unfolding environment_value_presents_def by blast
+  have unique: "single_valued (environment_artifacts E)" "single_valued (environment_bindings E)"
+    using formed by (auto simp: environment_formed_def)
+  have supported: "\<forall>z\<in>environment_bindings E. binding_supported (environment_artifacts E) z"
+  proof (intro ballI)
+    fix z assume member: "z\<in>environment_bindings E"
+    obtain u k v where row: "z=((u,k),v)" by (cases z) auto
+    have binding: "binds_slot E u k v" using member by (simp add: row binds_slot_def)
+    have support: "(\<exists>R. artifact_at E u R \<and> k\<in>rra_carrier (object_structure R)) \<and>
+      v\<in>environment_uses E"
+      using formed binding unfolding environment_formed_def by blast
+    show "binding_supported (environment_artifacts E) z"
+      using support by (simp add: row artifact_at_def environment_uses_def)
+  qed
+  have artifacts: "(23,a)\<in>positive_meaning artifact_entries_system \<and> (21,a)\<in>positive_meaning keyed_list_system"
+    using first unique(1) by (auto simp: admitted_artifact_table)
+  have bindings: "(25,Pair_Term a b)\<in>positive_meaning binding_entries_system \<and> (21,b)\<in>positive_meaning keyed_list_system"
+    using second unique(2) supported admitted_binding_table[OF first, of b] by blast
+  show "(26,t)\<in>positive_meaning environment_admission_system"
+    using artifacts bindings by (auto simp: shape environment_admission_raw)
+qed
+
+theorem environment_admission_old_meaning:
+  assumes "d\<in>{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16}"
+  shows "(d,t)\<in>positive_meaning environment_admission_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning environment_comparison_system"
+  using environment_admission_previous_meaning[of d t] binding_entries_previous_meaning[of d t]
+    binding_entry_keyed_meaning[of d t] keyed_list_old_meaning[of d t]
+    coordinate_admission_old_meaning[OF assms, of t] assms by auto
+
+section \<open>Admitted identity compares two complete formed environments\<close>
+
+definition environment_identity_schema :: "(nat,nat,nat) factor_schema" where
+  "environment_identity_schema=data_rule (Pattern_Pair data_x data_y)
+    {(0,26,data_x),(1,26,data_y),(2,16,Pattern_Pair data_x data_y)}"
+
+definition environment_identity_system :: "(nat,nat,nat,nat) schema_system" where
+  "environment_identity_system=add_view_definition environment_admission_system 27 data_x ({(0,environment_identity_schema)})"
+
+lemma environment_identity_system_formed [simp]: "schema_system_formed environment_identity_system"
+  unfolding environment_identity_system_def
+  by (rule add_recursive_definition_formed[OF environment_admission_system_formed])
+    (auto simp: environment_identity_schema_def
+      schema_formed_def schema_dependencies_def single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma environment_identity_definitions [simp]:
+  "system_definitions environment_identity_system={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27}"
+  by (auto simp: environment_identity_system_def)
+
+lemma environment_identity_call:
+  "schema_call_formed environment_identity_system d t \<longleftrightarrow>
+    d\<in>system_definitions environment_identity_system \<and> term_formed t"
+  using added_variable_calls[OF environment_admission_system_formed
+    environment_identity_system_formed[unfolded environment_identity_system_def] environment_admission_call]
+  by (simp only: environment_identity_system_def[symmetric])
+
+lemma environment_identity_previous_meaning:
+  assumes "d\<in>{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26}"
+  shows "(d,t)\<in>positive_meaning environment_identity_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning environment_admission_system"
+  using added_definition_preserves_old(2)[OF environment_admission_system_formed
+    environment_identity_system_formed[unfolded environment_identity_system_def], of d t] assms
+  by (auto simp: environment_identity_system_def)
+
+lemma environment_identity_clause [simp]:
+  "((27,c),S)\<in>system_clauses environment_identity_system \<longleftrightarrow> (c,S)\<in>({(0,environment_identity_schema)})"
+proof -
+  have owned: "((d,c),S)\<in>system_clauses environment_admission_system \<Longrightarrow>
+    d\<in>system_definitions environment_admission_system" for d c S
+    using environment_admission_system_formed unfolding schema_system_formed_def by blast
+  have absent: "((27,c),S)\<notin>system_clauses environment_admission_system" by (auto dest: owned)
+  show ?thesis using absent by (simp add: environment_identity_system_def)
+qed
+
+lemma environment_identity_admission:
+  "(26,t)\<in>positive_meaning environment_identity_system \<longleftrightarrow> (\<exists>E. environment_value_presents E t)"
+  using environment_identity_previous_meaning[of 26 t] environment_admission_exact[of t] by auto
+
+theorem environment_identity_old_meaning:
+  assumes "d\<in>{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16}"
+  shows "(d,t)\<in>positive_meaning environment_identity_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning environment_comparison_system"
+  using environment_identity_previous_meaning[of d t] environment_admission_old_meaning[OF assms, of t] assms by auto
+
+theorem environment_identity_exact:
+  "(27,t)\<in>positive_meaning environment_identity_system \<longleftrightarrow>
+    (\<exists>E x y. t=Pair_Term x y \<and> environment_value_presents E x \<and> environment_value_presents E y)"
+proof
+  assume holds: "(27,t)\<in>positive_meaning environment_identity_system"
+  have consequence: "(27,t)\<in>schema_consequences environment_identity_system (positive_meaning environment_identity_system)"
+    using holds positive_meaning_unfold[of environment_identity_system] by blast
+  obtain c S f where clause: "((27,c),S)\<in>system_clauses environment_identity_system"
+    and head: "t=evaluate_pattern f (schema_conclusion S)"
+    and support: "\<forall>s d p. (s,d,p)\<in>schema_premises S \<longrightarrow>
+      (d,evaluate_pattern f p)\<in>positive_meaning environment_identity_system"
+    using schema_consequences_valuationD[OF consequence] by blast
+  have schema: "S=environment_identity_schema" using clause by simp
+  have admissions: "(26,f 0)\<in>positive_meaning environment_identity_system"
+    "(26,f 1)\<in>positive_meaning environment_identity_system"
+    using support[rule_format, of 0 26 data_x] support[rule_format, of 1 26 data_y] schema
+    by (simp_all add: environment_identity_schema_def)
+  obtain E F where first: "environment_value_presents E (f 0)" and second: "environment_value_presents F (f 1)"
+    using admissions by (auto simp: environment_identity_admission)
+  have comparison: "(16,Pair_Term (f 0) (f 1))\<in>positive_meaning environment_comparison_system"
+    using support[rule_format, of 2 16 "Pattern_Pair data_x data_y"]
+      environment_identity_old_meaning[of 16 "Pair_Term (f 0) (f 1)"]
+    by (auto simp: schema environment_identity_schema_def)
+  have same: "E=F" by (rule iffD1[OF environment_comparison_exact[OF first second] comparison])
+  show "\<exists>E x y. t=Pair_Term x y \<and> environment_value_presents E x \<and> environment_value_presents E y"
+    using head first second same by (auto simp: schema environment_identity_schema_def)
+next
+  assume "\<exists>E x y. t=Pair_Term x y \<and> environment_value_presents E x \<and> environment_value_presents E y"
+  then obtain E x y where shape: "t=Pair_Term x y" and first: "environment_value_presents E x"
+    and second: "environment_value_presents E y" by blast
+  have formed: "term_formed x" "term_formed y"
+    using environment_value_presents_formed[OF first] environment_value_presents_formed[OF second] by auto
+  have children: "(26,x)\<in>positive_meaning environment_identity_system"
+    "(26,y)\<in>positive_meaning environment_identity_system"
+    "(16,Pair_Term x y)\<in>positive_meaning environment_identity_system"
+    using first second environment_comparison_exact[OF first second]
+      environment_identity_old_meaning[of 16 "Pair_Term x y"] by (auto simp: environment_identity_admission)
+  let ?f="\<lambda>i::nat. if i=0 then x else y"
+  have result: "(27,evaluate_pattern ?f (schema_conclusion environment_identity_schema))\<in>positive_meaning environment_identity_system"
+    by (rule ordinary_positive_valuation_step[where c=0])
+      (use formed children in \<open>auto simp: environment_identity_schema_def schema_variables_def environment_identity_call\<close>)
+  show "(27,t)\<in>positive_meaning environment_identity_system" using result by (simp add: shape environment_identity_schema_def)
+qed
+
+corollary admitted_environment_comparison:
+  assumes "environment_value_presents E x" "environment_value_presents F y"
+  shows "(27,Pair_Term x y)\<in>positive_meaning environment_identity_system \<longleftrightarrow> E=F"
+  using assms environment_value_presents_unique by (auto simp: environment_identity_exact; blast)
+
+lemma environment_checking_exact:
+  assumes "d\<in>{26,27}"
+  shows "(d,t)\<in>positive_meaning environment_identity_system \<longleftrightarrow>
+    (d=26 \<and> (\<exists>E. environment_value_presents E t)) \<or>
+    (d=27 \<and> (\<exists>E x y. t=Pair_Term x y \<and> environment_value_presents E x \<and> environment_value_presents E y))"
+  using assms by (auto simp: environment_identity_admission environment_identity_exact)
+
+section \<open>One closed native program for all future admission and equality calls\<close>
+
+theorem native_environment_checking:
+  "\<exists>E :: local_address option artifact_environment. \<exists>pu Q g.
+    closed_native_package_at E pu [] Q \<and> inj_on g {26::nat,27} \<and>
+    (\<forall>d\<in>{26,27}. \<forall>t. term_formed t \<longrightarrow>
+      (\<exists>F au I K. environment_formed F \<and> environment_included E F \<and> au\<notin>environment_uses E \<and>
+        native_package_at F pu [] Q \<and> native_application_at F au [] (g d) t I K \<and>
+        native_package_environment F pu []=E \<and> native_application_formed F pu [] au [] \<and>
+        (native_positive_holds F pu [] au [] \<longleftrightarrow>
+          (d=26 \<and> (\<exists>R. environment_value_presents R t)) \<or>
+          (d=27 \<and> (\<exists>R x y. t=Pair_Term x y \<and> environment_value_presents R x \<and> environment_value_presents R y)))))"
+proof -
+  obtain g :: "nat \<Rightarrow> local_address option definition_site"
+    and E :: "local_address option artifact_environment" and pu Q
+    where injective: "inj_on g (system_definitions environment_identity_system)"
+    and closed: "closed_native_package_at E pu [] Q"
+    and future: "\<forall>d\<in>system_definitions environment_identity_system. \<forall>t. term_formed t \<longrightarrow>
+      (\<exists>F au I K. environment_formed F \<and> environment_included E F \<and> au\<notin>environment_uses E \<and>
+        native_package_at F pu [] Q \<and> native_application_at F au [] (g d) t I K \<and>
+        native_package_environment F pu []=E \<and>
+        (native_application_formed F pu [] au [] \<longleftrightarrow> schema_call_formed environment_identity_system d t) \<and>
+        (native_positive_holds F pu [] au [] \<longleftrightarrow> (d,t)\<in>positive_meaning environment_identity_system) \<and>
+        (\<forall>v\<in>environment_uses E. \<forall>R. artifact_at F v R \<longleftrightarrow> artifact_at E v R) \<and>
+        (\<forall>v\<in>environment_uses E. \<forall>k w. binds_slot F v k w \<longleftrightarrow> binds_slot E v k w))"
+    using compiled_program_future_applications[OF environment_identity_system_formed] by blast
+  have sites: "inj_on g {26,27}" using injective by (auto simp: inj_on_def)
+  show ?thesis
+  proof (rule exI[of _ E], rule exI[of _ pu], rule exI[of _ Q], rule exI[of _ g], intro conjI ballI allI impI)
+    show "closed_native_package_at E pu [] Q" by (rule closed)
+    show "inj_on g {26,27}" by (rule sites)
+  next
+    fix d :: nat and t :: factor_term
+    assume selected: "d\<in>{26,27}" and tf: "term_formed t"
+    have member: "d\<in>system_definitions environment_identity_system" using selected by auto
+    obtain F au I K where parts: "environment_formed F" "environment_included E F" "au\<notin>environment_uses E"
+      "native_package_at F pu [] Q" "native_application_at F au [] (g d) t I K"
+      "native_package_environment F pu []=E"
+      "native_application_formed F pu [] au [] \<longleftrightarrow> schema_call_formed environment_identity_system d t"
+      "native_positive_holds F pu [] au [] \<longleftrightarrow> (d,t)\<in>positive_meaning environment_identity_system"
+      using future[rule_format, OF member tf] by blast
+    show "\<exists>F au I K. environment_formed F \<and> environment_included E F \<and> au\<notin>environment_uses E \<and>
+      native_package_at F pu [] Q \<and> native_application_at F au [] (g d) t I K \<and>
+      native_package_environment F pu []=E \<and> native_application_formed F pu [] au [] \<and>
+      (native_positive_holds F pu [] au [] \<longleftrightarrow>
+        (d=26 \<and> (\<exists>R. environment_value_presents R t)) \<or>
+        (d=27 \<and> (\<exists>R x y. t=Pair_Term x y \<and> environment_value_presents R x \<and> environment_value_presents R y)))"
+      by (rule exI[of _ F], rule exI[of _ au], rule exI[of _ I], rule exI[of _ K])
+        (use parts tf member environment_checking_exact[OF selected] in \<open>auto simp: environment_identity_call\<close>)
+  qed
+qed
+
+text \<open>
+  Admission is an ordinary program over the existing complete environment
+  data presentation. It checks every artifact value, every optional use
+  coordinate, unique use keys, unique source-slot keys, and all source,
+  target, and source-carrier conditions. Empty tables and finite binding
+  cycles follow the same environment formation laws.
+
+  The source-row, target-row, and slot selections have distinct sockets.
+  All ten variables of that clause, including the three selected-list
+  remainders, belong to its ordinary finite assignment. Completeness uses
+  rows actually selected from the supplied artifact presentation; a different
+  presentation of an equal artifact is never silently substituted into it.
+
+  The complete program has twenty-eight definitions and fifty clauses.
+  Earlier meanings and interfaces are preserved. Admission and admitted
+  identity occupy distinct definitions in one fixed closed native program,
+  selected before any future formed input is supplied. This checks complete
+  environment data; grammar-derived closure, application checking, policy
+  authority, and amendment adoption remain separate obligations.
+\<close>
+
+end

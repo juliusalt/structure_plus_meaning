@@ -1,0 +1,14 @@
+{
+  "problem": "The ordinary runtime receipt must identify the actual checked observation function and full formal subject equation.",
+  "accepted_source_equations": "/tmp/native-investigation-report-diagnostic-indexedsubjects6/result.json",
+  "accepted_complete_runtime_comparison": "/tmp/generalization-quality-review/indexed-subject-contracts/candidate6-json/receipt.json",
+  "proposal": "Each owner registers its actual checked calculation, source equation, functionality, observation and comparison theorems. A shared exporter validates the same constants and map arguments and exports their full typed terms and reachable kernel definitions.",
+  "requirements": [
+    "The owner calculation uses the actual observer named by the source equation.",
+    "The functionality proposition concerns the same C/U/W maps.",
+    "The observation and comparison corollaries concern the same result functions.",
+    "The typed function exported to the receipt is the function selected for the generated native code.",
+    "Definitions are recovered from the accepted kernel context; no prose or manually assigned facet rating establishes their meaning."
+  ],
+  "boundary": "This proposed export presents existing Isabelle theorems and their actual subject definitions. Constants without a defining equation remain explicit dependencies of the accepted context. It is not a native mathematical proof checker or a proof about arbitrary registry prose."
+}

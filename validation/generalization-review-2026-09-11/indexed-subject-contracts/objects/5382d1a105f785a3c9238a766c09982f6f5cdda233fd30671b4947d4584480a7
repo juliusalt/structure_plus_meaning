@@ -1,0 +1,8 @@
+{
+  "problem": "Decode the actual numeral syntax in the checked natural-number scope lists.",
+  "complete_failure": "\nBuild errors:\n*** exception TERM raised (line 518 of \"~~/src/HOL/Tools/hologic.ML\"):\n***   dest_nat\n***   1\n*** \n*** At command \"setup\" (line 5 of \"/tmp/native-investigation-report-diagnostic-indexedsubjects8/theories/Indexed_Subject_Exports.thy\")\n\nReturn code: 1 (ERROR)\n",
+  "source_cause": "HOLogic.dest_nat recognizes zero and Suc; these closed source lists use zero, one and binary numerals.",
+  "proposed_reuse": "Use the existing HOLogic.dest_number decoder, whose output includes the numeral value. The basis definition already fixes the list element type as nat.",
+  "additional_controls": "Four unrelated-source contracts must be refused by the shared exporter while the actual reasoning contract is accepted.",
+  "boundary": "All thirteen registrations passed the preceding batch. The exported bundle and numeric scope extraction still need a successful complete check and runtime assessment."
+}

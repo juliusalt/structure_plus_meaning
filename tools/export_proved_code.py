@@ -45,6 +45,7 @@ def main():
     command = ["isabelle", "export", "-n", "-d", str(snapshot), "-O", str(output / "code")]
     for theory, filename in modules:
         command += ["-x", f"*{theory}:code/{filename}"]
+        command += ["-x", f"*{theory}:subjects/*.yxml"]
     command.append(session)
     report["command"] = command
     log_path = output / "export.log"
@@ -62,8 +63,11 @@ def main():
             assert len(paths) == 1, (theory, filename, paths)
             path = paths[0]
             entry = {"path": str(path), "sha256": investigate.file_hash(path)}
+            contracts = [{"path": str(p), "sha256": investigate.file_hash(p)}
+                         for p in sorted((path.parent.parent / "subjects").glob("*.yxml"))]
             derived = copy.deepcopy(proof)
-            derived.update(exports=[entry], export_theory=theory, export_command=command,
+            derived.update(exports=[entry], subject_contracts=contracts,
+                           export_theory=theory, export_command=command,
                            pre_export_receipt_sha256=investigate.digest(original),
                            export_exit_code=0, export_log=str(log_path),
                            export_log_sha256=investigate.file_hash(log_path))

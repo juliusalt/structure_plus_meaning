@@ -1,0 +1,176 @@
+theory Factor_System_Restriction
+  imports "Factor_Definition_Closure"
+begin
+
+section \<open>Retaining complete definitions on a closed boundary\<close>
+
+definition system_restriction :: "('a,'s,'d,'c) schema_system \<Rightarrow> 'd set \<Rightarrow> ('a,'s,'d,'c) schema_system" where
+  "system_restriction P U=\<lparr>
+    system_interfaces={(d,p)\<in>system_interfaces P. d\<in>U},
+    system_clauses={((d,c),S)\<in>system_clauses P. d\<in>U}\<rparr>"
+
+lemma system_restriction_interfaces [simp]:
+  "(d,p)\<in>system_interfaces (system_restriction P U) \<longleftrightarrow> d\<in>U \<and> (d,p)\<in>system_interfaces P"
+  by (auto simp: system_restriction_def)
+
+lemma system_restriction_clauses [simp]:
+  "((d,c),S)\<in>system_clauses (system_restriction P U) \<longleftrightarrow> d\<in>U \<and> ((d,c),S)\<in>system_clauses P"
+  by (auto simp: system_restriction_def)
+
+lemma system_restriction_definitions [simp]:
+  "system_definitions (system_restriction P U)=system_definitions P\<inter>U"
+  by (auto simp: system_definitions_def rel_dom_def)
+
+lemma system_restriction_agreement:
+  "systems_agree_on P (system_restriction P U) U"
+  by (simp add: systems_agree_on_def)
+
+lemma system_restriction_intersection:
+  "system_restriction (system_restriction P U) V=system_restriction P (U\<inter>V)"
+  by (auto simp: system_restriction_def)
+
+theorem system_restriction_formed:
+  assumes formed: "schema_system_formed P" and closed: "system_dependency_closed P U"
+  shows "schema_system_formed (system_restriction P U)"
+proof -
+  have old_finite: "finite (system_interfaces P)" "finite (system_clauses P)"
+    using formed unfolding schema_system_formed_def by blast+
+  have subsets: "system_interfaces (system_restriction P U)\<subseteq>system_interfaces P"
+    "system_clauses (system_restriction P U)\<subseteq>system_clauses P"
+    by (auto simp: system_restriction_def)
+  have finite: "finite (system_interfaces (system_restriction P U))"
+    "finite (system_clauses (system_restriction P U))"
+    using finite_subset[OF subsets(1) old_finite(1)] finite_subset[OF subsets(2) old_finite(2)] by blast+
+  have old_interfaces: "single_valued (system_interfaces P)"
+    and old_clauses: "single_valued (system_clauses P)"
+    using formed unfolding schema_system_formed_def by blast+
+  have interfaces: "single_valued (system_interfaces (system_restriction P U))"
+    and clauses: "single_valued (system_clauses (system_restriction P U))"
+    using old_interfaces old_clauses by (auto simp: single_valued_def)
+  have patterns: "\<forall>d p. (d,p)\<in>system_interfaces (system_restriction P U) \<longrightarrow> pattern_formed p"
+    using formed by (auto simp: schema_system_formed_def)
+  have schemas: "\<forall>d c S. ((d,c),S)\<in>system_clauses (system_restriction P U) \<longrightarrow>
+      d\<in>system_definitions (system_restriction P U) \<and> schema_formed S \<and>
+      schema_dependencies S\<subseteq>system_definitions (system_restriction P U)"
+  proof (intro allI impI)
+    fix d c S assume row: "((d,c),S)\<in>system_clauses (system_restriction P U)"
+    have original: "((d,c),S)\<in>system_clauses P" and member: "d\<in>U" using row by auto
+    have facts: "d\<in>system_definitions P" "schema_formed S" "schema_dependencies S\<subseteq>system_definitions P"
+      using formed original unfolding schema_system_formed_def by blast+
+    have retained: "schema_dependencies S\<subseteq>U"
+      using closed original member by (auto simp: system_dependency_closed_def system_dependency_edges_def)
+    show "d\<in>system_definitions (system_restriction P U) \<and> schema_formed S \<and>
+        schema_dependencies S\<subseteq>system_definitions (system_restriction P U)"
+      using facts member retained by auto
+  qed
+  show ?thesis using finite interfaces clauses patterns schemas by (simp only: schema_system_formed_def)
+qed
+
+theorem system_restriction_calls:
+  assumes "schema_system_formed P" "system_dependency_closed P U"
+  shows "schema_call_formed (system_restriction P U) d t \<longleftrightarrow> d\<in>U \<and> schema_call_formed P d t"
+  using assms system_restriction_formed[OF assms] by (auto simp: schema_call_formed_def)
+
+theorem system_restriction_meaning:
+  assumes formed: "schema_system_formed P" and closed: "system_dependency_closed P U"
+  shows "(d,t)\<in>positive_meaning (system_restriction P U) \<longleftrightarrow> d\<in>U \<and> (d,t)\<in>positive_meaning P"
+proof (cases "d\<in>U")
+  case True
+  show ?thesis using positive_meaning_dependency_locality[OF formed system_restriction_formed[OF formed closed]
+    system_restriction_agreement closed True, of t] True by blast
+next
+  case False
+  have absent: "(d,t)\<notin>positive_meaning (system_restriction P U)"
+  proof
+    assume member: "(d,t)\<in>positive_meaning (system_restriction P U)"
+    have call: "schema_call_formed (system_restriction P U) d t"
+      by (rule positive_meaning_formed[OF member])
+    show False using call system_restriction_calls[OF formed closed, of d t] False by blast
+  qed
+  show ?thesis using absent False by simp
+qed
+
+section \<open>The requested roots determine the least retained program\<close>
+
+definition rooted_system :: "('a,'s,'d,'c) schema_system \<Rightarrow> 'd set \<Rightarrow> ('a,'s,'d,'c) schema_system" where
+  "rooted_system P roots=system_restriction P (system_definition_closure P roots)"
+
+lemma rooted_system_formed:
+  assumes "schema_system_formed P"
+  shows "schema_system_formed (rooted_system P roots)"
+  unfolding rooted_system_def by (rule system_restriction_formed[OF assms system_definition_closure_closed])
+
+lemma rooted_system_definitions:
+  assumes "schema_system_formed P" "roots\<subseteq>system_definitions P"
+  shows "system_definitions (rooted_system P roots)=system_definition_closure P roots"
+  using system_definition_closure_boundary(1)[OF assms]
+  by (auto simp: rooted_system_def)
+
+lemma rooted_system_subdomain:
+  "system_definitions (rooted_system P roots)\<subseteq>system_definitions P"
+  by (auto simp: rooted_system_def)
+
+lemma rooted_system_agreement:
+  "systems_agree_on P (rooted_system P roots) (system_definitions (rooted_system P roots))"
+  by (auto simp: rooted_system_def systems_agree_on_def)
+
+lemma rooted_system_roots:
+  assumes "schema_system_formed P" "roots\<subseteq>system_definitions P"
+  shows "roots\<subseteq>system_definitions (rooted_system P roots)"
+  by (simp only: rooted_system_definitions[OF assms]) (rule system_definition_closure_roots)
+
+theorem rooted_system_calls:
+  assumes "schema_system_formed P"
+  shows "schema_call_formed (rooted_system P roots) d t \<longleftrightarrow>
+    d\<in>system_definition_closure P roots \<and> schema_call_formed P d t"
+  unfolding rooted_system_def by (rule system_restriction_calls[OF assms system_definition_closure_closed])
+
+theorem rooted_system_meaning:
+  assumes "schema_system_formed P"
+  shows "(d,t)\<in>positive_meaning (rooted_system P roots) \<longleftrightarrow>
+    d\<in>system_definition_closure P roots \<and> (d,t)\<in>positive_meaning P"
+  unfolding rooted_system_def by (rule system_restriction_meaning[OF assms system_definition_closure_closed])
+
+corollary rooted_system_variable_calls:
+  assumes formed: "schema_system_formed P"
+    and prior: "schema_call_formed P d t \<longleftrightarrow> d\<in>system_definitions P \<and> term_formed t"
+  shows "schema_call_formed (rooted_system P roots) d t \<longleftrightarrow>
+    d\<in>system_definitions (rooted_system P roots) \<and> term_formed t"
+proof -
+  have calls: "schema_call_formed (rooted_system P roots) d t \<longleftrightarrow>
+      d\<in>system_definition_closure P roots \<and> d\<in>system_definitions P \<and> term_formed t"
+    by (simp only: rooted_system_calls[OF formed] prior)
+  have domain: "system_definitions (rooted_system P roots)=
+      system_definitions P\<inter>system_definition_closure P roots"
+    by (simp only: rooted_system_def system_restriction_definitions)
+  show ?thesis by (simp only: calls domain Int_iff; blast)
+qed
+
+corollary rooted_system_meaning_at:
+  assumes formed: "schema_system_formed P"
+    and member: "d\<in>system_definitions (rooted_system P roots)"
+  shows "(d,t)\<in>positive_meaning (rooted_system P roots) \<longleftrightarrow> (d,t)\<in>positive_meaning P"
+  using member by (simp only: rooted_system_meaning[OF formed])
+    (auto simp: rooted_system_def)
+
+theorem rooted_system_least:
+  assumes "schema_system_formed P" "roots\<subseteq>system_definitions P"
+    "roots\<subseteq>U" "system_dependency_closed P U"
+  shows "system_definitions (rooted_system P roots)\<subseteq>U"
+  by (simp only: rooted_system_definitions[OF assms(1,2)])
+    (rule system_definition_closure_least[OF assms(3,4)])
+
+text \<open>
+  Restriction retains the complete interface and every clause of each retained
+  definition. A dependency-closed boundary preserves formation and all positive
+  calls at its members. The least such boundary is already determined by the
+  supplied roots and actual prospective callees.
+
+  The result is a program constructed from the source. Its smaller definition
+  domain need not equal the source program's identity or quoted scope. The
+  theorem preserves exactly the stated calls and does not change an already
+  adopted scope. A new reader can use this construction to retain only its
+  actual dependencies before its own native program is compiled.
+\<close>
+
+end

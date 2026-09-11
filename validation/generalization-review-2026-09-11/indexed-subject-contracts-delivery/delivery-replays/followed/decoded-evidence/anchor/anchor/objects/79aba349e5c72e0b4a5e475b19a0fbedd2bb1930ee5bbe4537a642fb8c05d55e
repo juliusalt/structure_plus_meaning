@@ -1,0 +1,5 @@
+session Finite_Investigation_9188a917829df6c6d57ee513 = HOL +
+  options [document = false]
+  sessions "HOL-Library"
+  directories "theories"
+  theories Finite_Investigation_Export

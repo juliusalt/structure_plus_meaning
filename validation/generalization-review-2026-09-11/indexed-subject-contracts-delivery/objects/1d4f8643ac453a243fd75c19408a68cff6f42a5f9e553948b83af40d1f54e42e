@@ -1,0 +1,32 @@
+theory Factor_Investigation_Input_Execution
+  imports "Factor_Investigation_Input_Contracts" "Factor_Observation_Scope_Execution"
+begin
+
+section \<open>Finite execution calls the actual complete input operation\<close>
+
+definition investigation_input_octets :: "nat list \<Rightarrow> nat list \<Rightarrow> nat list \<Rightarrow>
+    (nat\<times>nat\<times>nat) list \<Rightarrow> (nat\<times>nat) list \<Rightarrow> bool" where
+  "investigation_input_octets C U F rows relation \<longleftrightarrow>
+    (338,Pair_Term (observation_scope_argument (data_list_term (map observation_octet C))
+      (data_list_term (map observation_octet U)) (data_list_term (map observation_octet F))
+      (data_list_term (map observation_row_term (map observation_octet_row rows))))
+      (data_list_term (map data_pair_term (map observation_octet_value relation))))\<in>positive_meaning investigation_input_system"
+
+lemma investigation_input_octets_code [code]:
+  "investigation_input_octets C U F rows relation \<longleftrightarrow>
+    observation_octet_scope C U F rows \<and> list_all (\<lambda>(c,d). c<256 \<and> d<256) relation"
+  by (simp only: investigation_input_octets_def investigation_input_encoded investigation_input_subject_lists
+      observation_octet_scope_def observation_scope_encoded)
+    (auto simp: list_all_iff octets_formed_def split: prod.splits)
+
+export_code investigation_input_octets nat_of_integer integer_of_nat
+  in SML module_name Native_Investigation_Input file_prefix native_investigation_input
+
+text \<open>
+  The exported Boolean is defined by the actual native whole-input call.
+  Its proved equation checks the complete original scope and every comparison
+  endpoint. A comparison row may lie outside the candidate set. Octets are a
+  finite testing interface; the native contracts cover all admitted data terms.
+\<close>
+
+end

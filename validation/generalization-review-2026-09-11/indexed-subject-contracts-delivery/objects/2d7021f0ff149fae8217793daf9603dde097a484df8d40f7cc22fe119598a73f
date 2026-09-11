@@ -1,0 +1,119 @@
+theory Factor_Site_Values
+  imports "Factor_Environment_Values" "Factor_Complete_Data_Quotation"
+begin
+
+section \<open>One exact scope and one actual site\<close>
+
+definition site_value_presents ::
+  "local_address option artifact_environment \<Rightarrow> local_address option \<Rightarrow> local_address \<Rightarrow>
+    factor_term \<Rightarrow> bool" where
+  "site_value_presents E u r t \<longleftrightarrow> (u,r)\<in>environment_positions E \<and>
+    (\<exists>e. environment_value_presents E e \<and> t=Pair_Term e (site_data_term u r))"
+
+theorem site_value_presents_unique:
+  assumes first: "site_value_presents E u r t" and second: "site_value_presents F v s t"
+  shows "E=F \<and> u=v \<and> r=s"
+proof -
+  obtain e where left: "environment_value_presents E e" "t=Pair_Term e (site_data_term u r)"
+    using first unfolding site_value_presents_def by blast
+  obtain f where right: "environment_value_presents F f" "t=Pair_Term f (site_data_term v s)"
+    using second unfolding site_value_presents_def by blast
+  have same: "e=f" and sites: "u=v \<and> r=s" using left(2) right(2) by simp_all
+  have other: "environment_value_presents F e" using right(1) same by simp
+  show ?thesis using environment_value_presents_unique[OF left(1) other] sites by blast
+qed
+
+lemma site_value_presents_formed:
+  assumes present: "site_value_presents E u r t"
+  shows "environment_formed E \<and> term_formed t \<and> self_contained_term t"
+proof -
+  obtain e where site: "(u,r)\<in>environment_positions E"
+    and body: "environment_value_presents E e" and encoded: "t=Pair_Term e (site_data_term u r)"
+    using present unfolding site_value_presents_def by blast
+  have ef: "environment_formed E" and formed: "term_formed e" and closed: "self_contained_term e"
+    using environment_value_presents_formed[OF body] by auto
+  have address: "octets_formed r" using environment_position_address[OF ef site] by simp
+  show ?thesis using ef formed closed address encoded by simp
+qed
+
+theorem site_value_presents_total:
+  assumes formed: "environment_formed E" and site: "(u,r)\<in>environment_positions E"
+  shows "\<exists>t. site_value_presents E u r t"
+proof -
+  obtain e where body: "environment_value_presents E e" using environment_value_presents_total[OF formed] by blast
+  show ?thesis by (rule exI[of _ "Pair_Term e (site_data_term u r)"])
+    (use site body in \<open>auto simp: site_value_presents_def\<close>)
+qed
+
+definition site_value_quoted_at ::
+  "exact_artifact \<Rightarrow> local_address \<Rightarrow> local_address option artifact_environment \<Rightarrow>
+    local_address option \<Rightarrow> local_address \<Rightarrow> bool" where
+  "site_value_quoted_at C q E u r \<longleftrightarrow>
+    (\<exists>t. site_value_presents E u r t \<and> complete_data_quoted_at C q t)"
+
+theorem site_value_quoted_unique:
+  assumes first: "site_value_quoted_at C q E u r" and second: "site_value_quoted_at C q F v s"
+  shows "E=F \<and> u=v \<and> r=s"
+proof -
+  obtain t where left: "site_value_presents E u r t" "complete_data_quoted_at C q t"
+    using first unfolding site_value_quoted_at_def by blast
+  obtain a where right: "site_value_presents F v s a" "complete_data_quoted_at C q a"
+    using second unfolding site_value_quoted_at_def by blast
+  have same: "t=a" by (rule complete_data_quotation_unique[OF left(2) right(2)])
+  have other: "site_value_presents F v s t" using right(1) same by simp
+  show ?thesis by (rule site_value_presents_unique[OF left(1) other])
+qed
+
+lemma site_value_quoted_formed:
+  assumes quote: "site_value_quoted_at C q E u r"
+  shows "exact_formed C \<and> environment_formed E \<and> (u,r)\<in>environment_positions E"
+proof -
+  obtain t where present: "site_value_presents E u r t" and full: "complete_data_quoted_at C q t"
+    using quote unfolding site_value_quoted_at_def by blast
+  show ?thesis using complete_data_quotation_formed[OF full] site_value_presents_formed[OF present]
+    present by (auto simp: site_value_presents_def)
+qed
+
+lemma site_value_quoted_anchor:
+  assumes quote: "site_value_quoted_at C q E u r"
+  shows "anchor_formed (C,q)"
+proof -
+  obtain t where full: "complete_data_quoted_at C q t" using quote unfolding site_value_quoted_at_def by blast
+  show ?thesis by (rule complete_data_quotation_anchor[OF full])
+qed
+
+theorem site_value_quoted_total:
+  assumes formed: "environment_formed E" and site: "(u,r)\<in>environment_positions E"
+  shows "\<exists>C. exact_formed C \<and> site_value_quoted_at C [] E u r"
+proof -
+  obtain t where present: "site_value_presents E u r t" using site_value_presents_total[OF formed site] by blast
+  have tf: "term_formed t" and closed: "self_contained_term t" using site_value_presents_formed[OF present] by auto
+  have full: "complete_data_quoted_at (term_syntax t) [] t"
+    by (rule complete_data_quotation_total[OF tf closed])
+  have cf: "exact_formed (term_syntax t)" using complete_data_quotation_formed[OF full] by blast
+  show ?thesis by (rule exI[of _ "term_syntax t"])
+    (use present full cf in \<open>auto simp: site_value_quoted_at_def\<close>)
+qed
+
+theorem site_value_quoted_in_environment:
+  assumes quote: "site_value_quoted_at C q E u r" and formed: "environment_formed F" and source: "artifact_at F v C"
+  shows "\<exists>t. site_value_presents E u r t \<and>
+    term_quoted_at F v q t (rra_carrier (object_structure C)) {}"
+proof -
+  obtain t where present: "site_value_presents E u r t" and full: "complete_data_quoted_at C q t"
+    using quote unfolding site_value_quoted_at_def by blast
+  have native: "term_quoted_at F v q t (rra_carrier (object_structure C)) {}"
+    by (rule self_contained_quoted_in_environment[OF complete_data_quotation_native[OF full] formed source])
+  show ?thesis using present native by blast
+qed
+
+text \<open>
+  The complete environment and its selected site are exact data. The quotation
+  recovers both without consulting an outer binding. The actual-site condition
+  does not assign a grammar or a semantic role to that site. Each higher reader
+  checks its own syntax and determines the scope that it needs to retain.
+  Collections admit every complete presentation; no chosen enumeration is
+  thereby admitted as a semantic distinction.
+\<close>
+
+end

@@ -1,0 +1,17 @@
+Running Native_Indexed_Subjects4 ...
+Native_Indexed_Subjects4 FAILED (see also "isabelle build_log -H Error Native_Indexed_Subjects4")
+*** Failed to load theory "Native_Indexed_Subjects4.Indexed_Subject_Baseline" (unresolved "Native_Indexed_Subjects4.Factor_Investigation_Input_Investigation", "Native_Indexed_Subjects4.Factor_Observation_Scope_Investigation", "Native_Indexed_Subjects4.Factor_Observation_Table_Investigation", "Native_Indexed_Subjects4.Factor_Pair_Scope_Investigation", "Native_Indexed_Subjects4.Factor_Substitution_Investigation", "Native_Indexed_Subjects4.Observation_Revision_Investigation")
+*** Undefined fact: "fempty.rep_eq" (line 158 of "/tmp/native-investigation-report-diagnostic-indexedsubjects4/theories/Observation_Revision_Investigation.thy")
+*** At command "by" (line 156 of "/tmp/native-investigation-report-diagnostic-indexedsubjects4/theories/Observation_Revision_Investigation.thy")
+*** Undefined fact: "fempty.rep_eq" (line 185 of "/tmp/native-investigation-report-diagnostic-indexedsubjects4/theories/Factor_Substitution_Investigation.thy")
+*** At command "by" (line 184 of "/tmp/native-investigation-report-diagnostic-indexedsubjects4/theories/Factor_Substitution_Investigation.thy")
+*** Undefined fact: "fempty.rep_eq" (line 161 of "/tmp/native-investigation-report-diagnostic-indexedsubjects4/theories/Factor_Observation_Table_Investigation.thy")
+*** At command "by" (line 160 of "/tmp/native-investigation-report-diagnostic-indexedsubjects4/theories/Factor_Observation_Table_Investigation.thy")
+*** Undefined fact: "fempty.rep_eq" (line 171 of "/tmp/native-investigation-report-diagnostic-indexedsubjects4/theories/Factor_Investigation_Input_Investigation.thy")
+*** At command "by" (line 170 of "/tmp/native-investigation-report-diagnostic-indexedsubjects4/theories/Factor_Investigation_Input_Investigation.thy")
+*** Undefined fact: "fempty.rep_eq" (line 151 of "/tmp/native-investigation-report-diagnostic-indexedsubjects4/theories/Factor_Observation_Scope_Investigation.thy")
+*** At command "by" (line 150 of "/tmp/native-investigation-report-diagnostic-indexedsubjects4/theories/Factor_Observation_Scope_Investigation.thy")
+*** Undefined fact: "fempty.rep_eq" (line 119 of "/tmp/native-investigation-report-diagnostic-indexedsubjects4/theories/Factor_Pair_Scope_Investigation.thy")
+*** At command "by" (line 118 of "/tmp/native-investigation-report-diagnostic-indexedsubjects4/theories/Factor_Pair_Scope_Investigation.thy")
+Unfinished session(s): Native_Indexed_Subjects4
+0:02:13 elapsed time, 0:03:12 cpu time, factor 1.44

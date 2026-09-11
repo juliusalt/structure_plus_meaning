@@ -1,0 +1,254 @@
+theory RRA_Footprint
+  imports "RRA_Data"
+begin
+
+section \<open>Relative structural observations\<close>
+
+definition incidence_atoms :: "('a \<times> 'a \<times> 'a) set \<Rightarrow> 'a set" where
+  "incidence_atoms E = {a. \<exists>r p x. (r,p,x) \<in> E \<and> a \<in> {r,p,x}}"
+
+lemma incidence_atoms_finite:
+  assumes "finite E"
+  shows "finite (incidence_atoms E)"
+proof -
+  have "incidence_atoms E = (\<Union>(r,p,x)\<in>E. {r,p,x})"
+    by (auto simp: incidence_atoms_def)
+  with assms show ?thesis by auto
+qed
+
+record ('a,'v) relative_footprint =
+  footprint_interior :: "'a set"
+  footprint_star :: "('a \<times> 'a \<times> 'a) set"
+  footprint_data :: "('a,'v) opaque_basis"
+
+definition footprint_of ::
+  "('a,'v) structured_object \<Rightarrow> 'a set \<Rightarrow> ('a,'v) relative_footprint" where
+  "footprint_of obj A =
+    (let I = rra_carrier (object_structure obj) \<inter> A in
+      \<lparr>footprint_interior = I,
+       footprint_star = touching_incidence (object_structure obj) I,
+       footprint_data = restrict_basis I (object_data obj)\<rparr>)"
+
+definition footprint_formed :: "('a,'v) relative_footprint \<Rightarrow> bool" where
+  "footprint_formed F \<longleftrightarrow>
+    finite (footprint_interior F) \<and> finite (footprint_star F) \<and>
+    (\<forall>r p x. (r,p,x) \<in> footprint_star F \<longrightarrow>
+      r \<in> footprint_interior F \<or> p \<in> footprint_interior F \<or> x \<in> footprint_interior F) \<and>
+    basis_formed (footprint_interior F) (footprint_data F)"
+
+definition footprint_internal ::
+  "('a,'v) relative_footprint \<Rightarrow> ('a \<times> 'a \<times> 'a) set" where
+  "footprint_internal F =
+    {(r,p,x) \<in> footprint_star F.
+      r \<in> footprint_interior F \<and> p \<in> footprint_interior F \<and> x \<in> footprint_interior F}"
+
+definition footprint_boundary ::
+  "('a,'v) relative_footprint \<Rightarrow> ('a \<times> 'a \<times> 'a) set" where
+  "footprint_boundary F = footprint_star F - footprint_internal F"
+
+definition footprint_external_atoms :: "('a,'v) relative_footprint \<Rightarrow> 'a set" where
+  "footprint_external_atoms F = incidence_atoms (footprint_star F) - footprint_interior F"
+
+definition footprint_closure :: "('a,'v) relative_footprint \<Rightarrow> 'a set" where
+  "footprint_closure F = footprint_interior F \<union> incidence_atoms (footprint_star F)"
+
+definition footprint_exterior ::
+  "('a,'v) structured_object \<Rightarrow> 'a set \<Rightarrow> 'a set" where
+  "footprint_exterior obj A =
+    rra_carrier (object_structure obj) - footprint_closure (footprint_of obj A)"
+
+text \<open>
+  Only the interior, its complete incident star, and its attached data are
+  recorded. Boundary incidences and external endpoints are projections.
+  Exterior membership additionally depends on the containing carrier.
+  No condition disconnects the interior from its boundary.
+\<close>
+
+lemma footprint_of_formed:
+  assumes "object_formed obj"
+  shows "footprint_formed (footprint_of obj A)"
+proof -
+  have sub: "touching_incidence (object_structure obj)
+      (rra_carrier (object_structure obj) \<inter> A) \<subseteq> rra_incidence (object_structure obj)"
+    by (auto simp: touching_incidence_def)
+  have fin: "finite (touching_incidence (object_structure obj)
+      (rra_carrier (object_structure obj) \<inter> A))"
+    using finite_subset[OF sub] assms by (auto simp: object_formed_def rra_formed_def)
+  have df: "basis_formed (rra_carrier (object_structure obj) \<inter> A)
+    (restrict_basis (rra_carrier (object_structure obj) \<inter> A) (object_data obj))"
+    using restrict_basis_formed[of "rra_carrier (object_structure obj)" "object_data obj"
+      "rra_carrier (object_structure obj) \<inter> A"] assms
+    by (simp add: object_formed_def Int_assoc)
+  show ?thesis using assms fin df
+    by (auto simp: footprint_formed_def footprint_of_def Let_def
+      object_formed_def rra_formed_def touching_incidence_def)
+qed
+
+lemma footprint_no_extra_incidence:
+  "(r,p,x) \<in> footprint_star (footprint_of obj A) \<longleftrightarrow>
+    (r,p,x) \<in> rra_incidence (object_structure obj) \<and>
+    (r \<in> footprint_interior (footprint_of obj A) \<or>
+     p \<in> footprint_interior (footprint_of obj A) \<or>
+     x \<in> footprint_interior (footprint_of obj A))"
+  by (simp add: footprint_of_def Let_def touching_incidence_def)
+
+lemma footprint_no_extra_data:
+  "bag_count (footprint_data (footprint_of obj A)) (a,v) =
+    (if a \<in> footprint_interior (footprint_of obj A)
+     then bag_count (object_data obj) (a,v) else 0)"
+  "(a,v) \<in> functional_bindings (footprint_data (footprint_of obj A)) \<longleftrightarrow>
+    a \<in> footprint_interior (footprint_of obj A) \<and>
+    (a,v) \<in> functional_bindings (object_data obj)"
+  by (auto simp: footprint_of_def Let_def restrict_basis_def)
+
+lemma footprint_star_partition:
+  "footprint_star F = footprint_internal F \<union> footprint_boundary F"
+  "footprint_internal F \<inter> footprint_boundary F = {}"
+  by (auto simp: footprint_internal_def footprint_boundary_def)
+
+lemma footprint_closure_finite:
+  assumes "footprint_formed F"
+  shows "finite (footprint_closure F)"
+  using assms incidence_atoms_finite[of "footprint_star F"]
+  by (simp add: footprint_formed_def footprint_closure_def)
+
+lemma footprint_closure_in_carrier:
+  assumes "object_formed obj"
+  shows "footprint_closure (footprint_of obj A) \<subseteq> rra_carrier (object_structure obj)"
+  using assms
+  by (auto simp: footprint_closure_def footprint_of_def Let_def
+    incidence_atoms_def touching_incidence_def object_formed_def rra_formed_def)
+
+lemma footprint_carrier_partition:
+  assumes "object_formed obj"
+  shows "rra_carrier (object_structure obj) =
+    footprint_interior (footprint_of obj A) \<union>
+    footprint_external_atoms (footprint_of obj A) \<union> footprint_exterior obj A"
+  using footprint_closure_in_carrier[OF assms, of A]
+  by (auto simp: footprint_external_atoms_def footprint_exterior_def footprint_closure_def)
+
+definition footprint_object ::
+  "('a,'v) relative_footprint \<Rightarrow> ('a,'v) structured_object" where
+  "footprint_object F =
+    \<lparr>object_structure =
+      \<lparr>rra_carrier = footprint_closure F, rra_incidence = footprint_star F\<rparr>,
+     object_data = footprint_data F\<rparr>"
+
+lemma footprint_object_formed:
+  assumes "footprint_formed F"
+  shows "object_formed (footprint_object F)"
+proof -
+  have df: "basis_formed (footprint_closure F) (footprint_data F)"
+    using assms
+    by (auto simp: footprint_formed_def footprint_closure_def intro: basis_formed_mono)
+  show ?thesis
+    using assms df footprint_closure_finite[OF assms]
+    by (auto simp: footprint_object_def object_formed_def rra_formed_def
+      footprint_formed_def footprint_closure_def incidence_atoms_def; blast)
+qed
+
+lemma footprint_object_recovers:
+  fixes F :: "('a,'v) relative_footprint"
+  assumes "footprint_formed F"
+  shows "footprint_of (footprint_object F) (footprint_interior F) = F"
+proof -
+  have di: "restrict_basis (footprint_interior F) (footprint_data F) = footprint_data F"
+    using assms
+    by (auto simp: footprint_formed_def basis_formed_def restrict_basis_def
+      basis_identity bag_support_def fun_eq_iff)
+  show ?thesis
+    using assms di
+    by (cases F) (auto simp: footprint_of_def footprint_object_def Let_def
+      footprint_closure_def touching_incidence_def footprint_formed_def)
+qed
+
+lemma footprint_formed_iff_realizable:
+  "footprint_formed F \<longleftrightarrow>
+    (\<exists>obj A. object_formed obj \<and> footprint_of obj A = F)"
+  using footprint_object_formed footprint_object_recovers footprint_of_formed by metis
+
+section \<open>Locality of primitive observations\<close>
+
+lemma equal_footprint_observations:
+  assumes eq: "footprint_of obj A = footprint_of other A"
+    and inside: "a \<in> footprint_interior (footprint_of obj A)"
+  shows "a \<in> rra_carrier (object_structure other)"
+    and "((a,p,x) \<in> rra_incidence (object_structure obj)) =
+         ((a,p,x) \<in> rra_incidence (object_structure other))"
+    and "((r,a,x) \<in> rra_incidence (object_structure obj)) =
+         ((r,a,x) \<in> rra_incidence (object_structure other))"
+    and "((r,p,a) \<in> rra_incidence (object_structure obj)) =
+         ((r,p,a) \<in> rra_incidence (object_structure other))"
+    and "bag_count (object_data obj) (a,v) = bag_count (object_data other) (a,v)"
+    and "((a,v) \<in> functional_bindings (object_data obj)) =
+         ((a,v) \<in> functional_bindings (object_data other))"
+proof -
+  have ieq: "footprint_interior (footprint_of obj A) = footprint_interior (footprint_of other A)"
+    and seq: "footprint_star (footprint_of obj A) = footprint_star (footprint_of other A)"
+    and deq: "footprint_data (footprint_of obj A) = footprint_data (footprint_of other A)"
+    using eq by auto
+  show "a \<in> rra_carrier (object_structure other)"
+    using inside ieq by (auto simp: footprint_of_def Let_def)
+  show "((a,p,x) \<in> rra_incidence (object_structure obj)) =
+        ((a,p,x) \<in> rra_incidence (object_structure other))"
+    and "((r,a,x) \<in> rra_incidence (object_structure obj)) =
+         ((r,a,x) \<in> rra_incidence (object_structure other))"
+    and "((r,p,a) \<in> rra_incidence (object_structure obj)) =
+         ((r,p,a) \<in> rra_incidence (object_structure other))"
+    using inside ieq seq footprint_no_extra_incidence[of _ _ _ obj A]
+      footprint_no_extra_incidence[of _ _ _ other A] by blast+
+  have deq_count: "bag_count (footprint_data (footprint_of obj A)) (a,v) =
+    bag_count (footprint_data (footprint_of other A)) (a,v)"
+    and deq_fun: "((a,v) \<in> functional_bindings (footprint_data (footprint_of obj A))) =
+    ((a,v) \<in> functional_bindings (footprint_data (footprint_of other A)))"
+    using deq by auto
+  show "bag_count (object_data obj) (a,v) = bag_count (object_data other) (a,v)"
+    and "((a,v) \<in> functional_bindings (object_data obj)) =
+         ((a,v) \<in> functional_bindings (object_data other))"
+    using deq_count deq_fun inside ieq
+    by (auto simp: footprint_no_extra_data)
+qed
+
+lemma equal_footprint_restrictions:
+  assumes "footprint_of obj A = footprint_of other A"
+  shows "restrict_object obj A = restrict_object other A"
+proof -
+  have ieq: "rra_carrier (object_structure obj) \<inter> A =
+    rra_carrier (object_structure other) \<inter> A"
+    and seq: "touching_incidence (object_structure obj) (rra_carrier (object_structure obj) \<inter> A) =
+      touching_incidence (object_structure other) (rra_carrier (object_structure other) \<inter> A)"
+    and deq: "restrict_basis (rra_carrier (object_structure obj) \<inter> A) (object_data obj) =
+      restrict_basis (rra_carrier (object_structure other) \<inter> A) (object_data other)"
+    using assms by (auto simp: footprint_of_def Let_def)
+  have internal: "internal_incidence (object_structure obj) (rra_carrier (object_structure obj) \<inter> A) =
+    internal_incidence (object_structure other) (rra_carrier (object_structure other) \<inter> A)"
+    using ieq seq by (auto simp: internal_incidence_def touching_incidence_def set_eq_iff)
+  show ?thesis using ieq internal deq
+    by (simp add: restrict_object_def restrict_structure_def)
+qed
+
+lemma equal_footprint_data_restrictions:
+  assumes eq: "footprint_of obj A = footprint_of other A"
+    and inside: "B \<subseteq> footprint_interior (footprint_of obj A)"
+  shows "restrict_basis B (object_data obj) = restrict_basis B (object_data other)"
+proof -
+  have ieq: "footprint_interior (footprint_of obj A) = footprint_interior (footprint_of other A)"
+    and deq: "footprint_data (footprint_of obj A) = footprint_data (footprint_of other A)"
+    using eq by auto
+  have left: "B \<inter> (rra_carrier (object_structure obj) \<inter> A) = B"
+    and right: "B \<inter> (rra_carrier (object_structure other) \<inter> A) = B"
+    using inside ieq by (auto simp: footprint_of_def Let_def)
+  have "restrict_basis B (footprint_data (footprint_of obj A)) =
+    restrict_basis B (footprint_data (footprint_of other A))"
+    using deq by simp
+  then show ?thesis
+    by (simp add: footprint_of_def Let_def restriction_composes left right)
+qed
+
+text \<open>
+  These are observations of the interior and its complete star. An application
+  that also compares complete artifact values must retain those values among
+  its dependencies. Star equality alone does not preserve such comparisons.
+\<close>
+
+end

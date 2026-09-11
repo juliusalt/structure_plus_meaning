@@ -1,0 +1,264 @@
+theory Candidate_Observations
+  imports "Inference_Development"
+begin
+
+section \<open>Every observation keeps the facet and the actual witnessed use\<close>
+
+definition candidate_profile ::
+  "'f set \<Rightarrow> ('f \<Rightarrow> 'c \<Rightarrow> 'w set) \<Rightarrow> 'c \<Rightarrow> ('f\<times>'w) set" where
+  "candidate_profile F observe c={(f,w). f\<in>F \<and> w\<in>observe f c}"
+
+lemma candidate_profile_member [simp]:
+  "(f,w)\<in>candidate_profile F observe c \<longleftrightarrow> f\<in>F \<and> w\<in>observe f c"
+  by (simp add: candidate_profile_def)
+
+lemma candidate_profile_comparison:
+  "candidate_profile F observe c\<subseteq>candidate_profile F observe d \<longleftrightarrow>
+    (\<forall>f\<in>F. observe f c\<subseteq>observe f d)"
+  by (auto simp: candidate_profile_def)
+
+lemma candidate_profile_union:
+  "candidate_profile (F\<union>G) observe c=candidate_profile F observe c\<union>candidate_profile G observe c"
+  by auto
+
+lemma candidate_profile_restriction:
+  assumes "F\<subseteq>G"
+  shows "candidate_profile G observe c\<subseteq>candidate_profile G observe d \<Longrightarrow>
+    candidate_profile F observe c\<subseteq>candidate_profile F observe d"
+  using assms by (auto simp: candidate_profile_comparison)
+
+definition candidate_losses where
+  "candidate_losses F observe c d=candidate_profile F observe c-candidate_profile F observe d"
+
+lemma candidate_losses_member [simp]:
+  "(f,w)\<in>candidate_losses F observe c d \<longleftrightarrow>
+    f\<in>F \<and> w\<in>observe f c \<and> w\<notin>observe f d"
+  by (auto simp: candidate_losses_def)
+
+lemma candidate_losses_empty:
+  "candidate_losses F observe c d={} \<longleftrightarrow>
+    candidate_profile F observe c\<subseteq>candidate_profile F observe d"
+  by (auto simp: candidate_losses_def)
+
+theorem strict_candidate_improvement:
+  "candidate_profile F observe c\<subset>candidate_profile F observe d \<longleftrightarrow>
+    candidate_losses F observe c d={} \<and> candidate_losses F observe d c\<noteq>{}"
+  by (auto simp: candidate_losses_def)
+
+theorem incomparable_candidates_retain_both_reasons:
+  "\<not>candidate_profile F observe c\<subseteq>candidate_profile F observe d \<and>
+    \<not>candidate_profile F observe d\<subseteq>candidate_profile F observe c \<longleftrightarrow>
+    candidate_losses F observe c d\<noteq>{} \<and> candidate_losses F observe d c\<noteq>{}"
+  by (simp only: candidate_losses_empty)
+
+definition profile_obligations where
+  "profile_obligations F observe c d=
+    graph_map (candidate_profile F observe c) (\<lambda>(f,w). (d,f,w))"
+
+definition profile_condition where
+  "profile_condition observe z \<longleftrightarrow> snd (snd z)\<in>observe (fst (snd z)) (fst z)"
+
+theorem profile_comparison_reduction:
+  "exact_obligation_reduction UNIV
+    (\<lambda>z. candidate_profile F observe (fst z)\<subseteq>candidate_profile F observe (snd z))
+    (profile_condition observe)
+    (\<lambda>z. profile_obligations F observe (fst z) (snd z))"
+  by (auto simp: exact_obligation_reduction_def profile_obligations_def graph_map_ran
+    image_subset_iff candidate_profile_def profile_condition_def)
+
+theorem profile_comparison_residual:
+  "remaining_obligations {z. profile_condition observe z} (profile_obligations F observe c d)=
+    graph_map (candidate_losses F observe c d) (\<lambda>(f,w). (d,f,w))"
+  by (auto simp: remaining_obligations_def profile_obligations_def graph_map_def
+    candidate_profile_def candidate_losses_def profile_condition_def)
+
+section \<open>The intended comparison precedes the choice of observations\<close>
+
+definition comparison_observations_sound where
+  "comparison_observations_sound C relation F observe \<longleftrightarrow>
+    (\<forall>c\<in>C. \<forall>d\<in>C. relation c d \<longrightarrow>
+      candidate_profile F observe c\<subseteq>candidate_profile F observe d)"
+
+definition comparison_basis where
+  "comparison_basis C relation F observe \<longleftrightarrow>
+    (\<forall>c\<in>C. \<forall>d\<in>C. relation c d \<longleftrightarrow>
+      candidate_profile F observe c\<subseteq>candidate_profile F observe d)"
+
+definition comparison_failures where
+  "comparison_failures C relation F observe=
+    {(c,d). c\<in>C \<and> d\<in>C \<and>
+      candidate_profile F observe c\<subseteq>candidate_profile F observe d \<and> \<not>relation c d}"
+
+theorem comparison_basis_exact:
+  "comparison_basis C relation F observe \<longleftrightarrow>
+    comparison_observations_sound C relation F observe \<and> comparison_failures C relation F observe={}"
+  by (auto simp: comparison_basis_def comparison_observations_sound_def comparison_failures_def)
+
+lemma comparison_basis_at:
+  assumes "comparison_basis C relation F observe" "c\<in>C" "d\<in>C"
+  shows "relation c d \<longleftrightarrow> candidate_profile F observe c\<subseteq>candidate_profile F observe d"
+  using assms by (simp add: comparison_basis_def)
+
+theorem comparison_basis_requires_reflexivity:
+  assumes "comparison_basis C relation F observe" "c\<in>C"
+  shows "relation c c"
+  using comparison_basis_at[OF assms(1) assms(2,2)] by simp
+
+theorem comparison_basis_requires_transitivity:
+  assumes basis: "comparison_basis C relation F observe"
+    and members: "a\<in>C" "b\<in>C" "c\<in>C"
+    and first: "relation a b" and second: "relation b c"
+  shows "relation a c"
+proof -
+  have one: "candidate_profile F observe a\<subseteq>candidate_profile F observe b"
+    using first by (simp only: comparison_basis_at[OF basis members(1,2)])
+  have two: "candidate_profile F observe b\<subseteq>candidate_profile F observe c"
+    using second by (simp only: comparison_basis_at[OF basis members(2,3)])
+  show ?thesis by (simp only: comparison_basis_at[OF basis members(1,3)])
+    (rule subset_trans[OF one two])
+qed
+
+lemma comparison_sound_restriction:
+  assumes "comparison_observations_sound C relation G observe" "F\<subseteq>G"
+  shows "comparison_observations_sound C relation F observe"
+  using assms by (auto simp: comparison_observations_sound_def candidate_profile_comparison; blast)
+
+lemma comparison_failures_antimono:
+  assumes "F\<subseteq>G"
+  shows "comparison_failures C relation G observe\<subseteq>comparison_failures C relation F observe"
+  using assms by (auto simp: comparison_failures_def candidate_profile_comparison; blast)
+
+theorem omitted_facet_has_a_witness:
+  assumes whole: "comparison_basis C relation U observe" and included: "F\<subseteq>U"
+    and failure: "(c,d)\<in>comparison_failures C relation F observe"
+  shows "\<exists>f\<in>U-F. \<exists>w. w\<in>observe f c \<and> w\<notin>observe f d"
+  using assms by (auto simp: comparison_basis_def comparison_failures_def candidate_profile_comparison; blast)
+
+theorem a_witness_refines_the_comparison:
+  assumes failure: "(c,d)\<in>comparison_failures C relation F observe"
+    and witnessed: "w\<in>observe f c" "w\<notin>observe f d"
+  shows "comparison_failures C relation (insert f F) observe\<subset>
+    comparison_failures C relation F observe"
+proof -
+  have included: "comparison_failures C relation (insert f F) observe\<subseteq>
+      comparison_failures C relation F observe"
+    by (rule comparison_failures_antimono[OF subset_insertI])
+  have removed: "(c,d)\<notin>comparison_failures C relation (insert f F) observe"
+    using witnessed by (auto simp: comparison_failures_def candidate_profile_comparison)
+  show ?thesis using included failure removed by blast
+qed
+
+theorem an_inadequate_observation_language_remains_visible:
+  assumes "c\<in>C" "d\<in>C" "\<not>relation c d"
+    "\<forall>f\<in>U. observe f c\<subseteq>observe f d" "F\<subseteq>U"
+  shows "(c,d)\<in>comparison_failures C relation F observe \<and>
+    \<not>comparison_basis C relation F observe"
+  using assms by (auto simp: comparison_failures_def comparison_basis_def candidate_profile_comparison)
+
+theorem finite_comparison_scope_has_a_finite_basis:
+  assumes finite: "finite C" and whole: "comparison_basis C relation U observe"
+  shows "\<exists>F. finite F \<and> F\<subseteq>U \<and> comparison_basis C relation F observe"
+proof -
+  let ?B="{(c,d)\<in>C\<times>C. \<not>relation c d}"
+  let ?choose="\<lambda>z. SOME f. f\<in>U \<and> (\<exists>w. w\<in>observe f (fst z) \<and> w\<notin>observe f (snd z))"
+  have witness: "\<exists>f. f\<in>U \<and> (\<exists>w. w\<in>observe f (fst z) \<and> w\<notin>observe f (snd z))"
+    if "z\<in>?B" for z
+    using whole that by (auto simp: comparison_basis_def candidate_profile_comparison; blast)
+  have chosen: "?choose z\<in>U \<and> (\<exists>w. w\<in>observe (?choose z) (fst z) \<and>
+      w\<notin>observe (?choose z) (snd z))" if "z\<in>?B" for z
+    by (rule someI_ex[OF witness[OF that]])
+  let ?F="?choose ` ?B"
+  have finite_pairs: "finite (C\<times>C)" by (rule finite_cartesian_product[OF finite finite])
+  have finite_bad: "finite ?B" by (rule finite_subset[OF _ finite_pairs]) auto
+  have fin: "finite ?F" by (rule finite_imageI[OF finite_bad])
+  have sub: "?F\<subseteq>U" using chosen by blast
+  have sound: "comparison_observations_sound C relation ?F observe"
+    by (rule comparison_sound_restriction[OF _ sub])
+      (use whole in \<open>simp only: comparison_basis_exact; blast\<close>)
+  have reflected: "relation c d"
+    if left: "c\<in>C" and right: "d\<in>C"
+      and measured: "candidate_profile ?F observe c\<subseteq>candidate_profile ?F observe d" for c d
+  proof (rule ccontr)
+    assume denied: "\<not>relation c d"
+    have bad: "(c,d)\<in>?B" using left right denied by simp
+    have retained: "?choose (c,d)\<in>?F" by (rule imageI[OF bad])
+    obtain w where first: "w\<in>observe (?choose (c,d)) c"
+      and second: "w\<notin>observe (?choose (c,d)) d" using chosen[OF bad] by auto
+    have included: "observe (?choose (c,d)) c\<subseteq>observe (?choose (c,d)) d"
+      using measured retained by (simp only: candidate_profile_comparison; blast)
+    show False using subsetD[OF included first] second by contradiction
+  qed
+  have basis: "comparison_basis C relation ?F observe"
+    using sound reflected by (auto simp: comparison_basis_def comparison_observations_sound_def)
+  show ?thesis by (rule exI[of _ ?F]) (use fin sub basis in blast)
+qed
+
+theorem essential_facets_prevent_a_smaller_basis:
+  assumes smaller: "G\<subset>F"
+    and essential: "\<And>f. f\<in>F \<Longrightarrow>
+      \<exists>c d. (c,d)\<in>comparison_failures C relation (F-{f}) observe"
+  shows "\<not>comparison_basis C relation G observe"
+proof -
+  obtain f where member: "f\<in>F" and absent: "f\<notin>G" using smaller by blast
+  have included: "G\<subseteq>F-{f}" using smaller absent by blast
+  obtain c d where bad: "(c,d)\<in>comparison_failures C relation (F-{f}) observe"
+    using essential[OF member] by blast
+  have "(c,d)\<in>comparison_failures C relation G observe"
+    by (rule subsetD[OF comparison_failures_antimono[OF included] bad])
+  then show ?thesis by (auto simp: comparison_basis_exact)
+qed
+
+theorem a_preorder_has_an_exact_observation_basis:
+  assumes reflexive: "\<And>c. c\<in>C \<Longrightarrow> relation c c"
+    and transitive: "\<And>a b c. a\<in>C \<Longrightarrow> b\<in>C \<Longrightarrow> c\<in>C \<Longrightarrow>
+      relation a b \<Longrightarrow> relation b c \<Longrightarrow> relation a c"
+  shows "comparison_basis C relation {()} (\<lambda>_ c. {a\<in>C. relation a c})"
+  unfolding comparison_basis_def
+proof (intro ballI)
+  fix c d assume first: "c\<in>C" and second: "d\<in>C"
+  have equation: "relation c d \<longleftrightarrow> {a\<in>C. relation a c}\<subseteq>{a\<in>C. relation a d}"
+  proof
+    assume related: "relation c d"
+    show "{a\<in>C. relation a c}\<subseteq>{a\<in>C. relation a d}"
+    proof
+      fix a assume "a\<in>{a\<in>C. relation a c}"
+      then have member: "a\<in>C" and earlier: "relation a c" by auto
+      have "relation a d" by (rule transitive[OF member first second earlier related])
+      then show "a\<in>{a\<in>C. relation a d}" using member by simp
+    qed
+  next
+    assume included: "{a\<in>C. relation a c}\<subseteq>{a\<in>C. relation a d}"
+    have member: "c\<in>{a\<in>C. relation a c}" using first reflexive[OF first] by simp
+    have "c\<in>{a\<in>C. relation a d}" by (rule subsetD[OF included member])
+    then show "relation c d" by simp
+  qed
+  show "relation c d \<longleftrightarrow>
+    candidate_profile {()} (\<lambda>_ c. {a\<in>C. relation a c}) c\<subseteq>
+      candidate_profile {()} (\<lambda>_ c. {a\<in>C. relation a c}) d"
+    using equation by (simp add: candidate_profile_comparison)
+qed
+
+text \<open>
+  A profile contains independently meaningful witnessed uses, qualified by
+  their facet. Its two directed differences retain both improvements and
+  losses. The existing partial-order and obligation machinery consumes these
+  profiles; a facet count or a weighted score is not substituted for them.
+
+  The comparison relation is fixed independently. A basis must both preserve
+  its valid comparisons and reflect them. A failure retains the actual two
+  candidates. An adequate larger family then supplies a missing facet and a
+  distinguishing witness, which directs a strictly informative refinement.
+  If the whole proposed observation language misses that distinction, the
+  failure remains visible. Enlarging a selected subfamily cannot hide it.
+
+  A finite candidate scope admits a finite basis when the supplied whole
+  family is adequate. This does not establish that the candidate scope covers
+  all intended developments. Essential-facet witnesses separately justify
+  irredundancy. Preorders admit a general down-set basis, but its mathematical
+  existence does not supply an executable observation of an arbitrary order.
+  Conversely, a relation with an exact profile-inclusion basis must be
+  reflexive and transitive on its candidate scope. An incompatible relation
+  must remain a separate condition or be justified by a different comparison.
+\<close>
+
+end

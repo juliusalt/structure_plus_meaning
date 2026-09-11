@@ -1,0 +1,47 @@
+{
+  "status": "evaluated",
+  "exit_code": 0,
+  "elapsed_seconds": 32.49434965301771,
+  "runtime_seconds": 0.0856346080545336,
+  "receipt": "/tmp/generalization-quality-review/indexed-subject-contracts/ordinary-pattern1/receipt.json",
+  "input_formed": true,
+  "residual": [
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      0
+    ]
+  ],
+  "repair_witnesses": 0,
+  "conflicts": 0,
+  "unrepairable": 2,
+  "extension": [
+    0,
+    1
+  ],
+  "revision": {
+    "retained": [
+      0,
+      1
+    ],
+    "withdrawn": [],
+    "repairs": [],
+    "selection": [
+      0,
+      1
+    ],
+    "residual": [
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        0
+      ]
+    ]
+  }
+}

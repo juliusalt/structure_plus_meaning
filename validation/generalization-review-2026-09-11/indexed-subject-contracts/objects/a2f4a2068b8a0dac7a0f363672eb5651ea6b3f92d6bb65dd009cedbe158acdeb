@@ -1,0 +1,46 @@
+Running Native_Indexed_Subjects2 ...
+Warning - Unable to increase stack - interrupting thread
+Native_Indexed_Subjects2 FAILED (see also "isabelle build_log -H Error Native_Indexed_Subjects2")
+...
+***  1. ((f, c, w) ∈ set scope_investigation_observations) =
+***     (value =
+***      operation
+***       subject)
+*** At command "by" (line 139 of "/tmp/native-investigation-report-diagnostic-indexedsubjects2/theories/Factor_Observation_Scope_Investigation.thy")
+*** Failed to apply initial proof method (line 152 of "/tmp/native-investigation-report-diagnostic-indexedsubjects2/theories/Factor_Observation_Collection_Investigation.thy"):
+*** using this:
+***   ((f, c, w) |∈|
+***    finite_derived_observations collection_candidate_subjects
+***     collection_operation_subjects collection_value_subjects ?P) =
+***   ?P operation subject value
+*** goal (1 subgoal):
+***  1. ((f, c, w) ∈ set collection_investigation_observations) =
+***     (value =
+***      operation
+***       subject)
+*** At command "by" (line 152 of "/tmp/native-investigation-report-diagnostic-indexedsubjects2/theories/Factor_Observation_Collection_Investigation.thy")
+*** Failed to apply initial proof method (line 111 of "/tmp/native-investigation-report-diagnostic-indexedsubjects2/theories/Factor_Pair_Scope_Investigation.thy"):
+*** using this:
+***   ((f, c, w) |∈|
+***    finite_derived_observations pair_scope_candidate_subjects
+***     pair_scope_operation_subjects pair_scope_value_subjects ?P) =
+***   ?P operation subject value
+*** goal (1 subgoal):
+***  1. ((f, c, w) ∈ set pair_scope_investigation_observations) =
+***     (value =
+***      operation
+***       subject)
+*** At command "by" (line 111 of "/tmp/native-investigation-report-diagnostic-indexedsubjects2/theories/Factor_Pair_Scope_Investigation.thy")
+*** Failed to apply initial proof method (line 109 of "/tmp/native-investigation-report-diagnostic-indexedsubjects2/theories/Factor_Reasoning_Method_Investigation.thy"):
+*** using this:
+***   ((f, m, w) |∈|
+***    finite_derived_observations reasoning_candidate_subjects
+***     reasoning_condition_subjects reasoning_workload_subjects ?P) =
+***   ?P condition method problem
+*** goal (1 subgoal):
+***  1. ((f, m, w) ∈ set reasoning_method_investigation_observations) =
+***     condition method
+***      problem
+*** At command "by" (line 109 of "/tmp/native-investigation-report-diagnostic-indexedsubjects2/theories/Factor_Reasoning_Method_Investigation.thy")
+Unfinished session(s): Native_Indexed_Subjects2
+0:02:18 elapsed time, 0:03:08 cpu time, factor 1.36

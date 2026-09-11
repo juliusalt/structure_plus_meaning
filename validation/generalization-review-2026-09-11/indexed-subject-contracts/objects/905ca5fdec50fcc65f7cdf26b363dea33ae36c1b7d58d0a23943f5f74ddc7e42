@@ -1,0 +1,12 @@
+{
+  "problem": "Identify the first completion function as the intended Boolean identity, and derive the runtime candidate/facet domains from the actual checked basis call.",
+  "complete_failure": "\nBuild errors:\n*** Failed to load theory \"Native_Indexed_Subjects7.Indexed_Subject_Exports\" (unresolved \"Native_Indexed_Subjects7.Presentation_Completion_Investigation\")\n*** The functionality theorem must concern these same subject maps\n*** \n*** At command \"setup\" (line 116 of \"/tmp/native-investigation-report-diagnostic-indexedsubjects7/theories/Presentation_Completion_Investigation.thy\")\n\nReturn code: 1 (ERROR)\n",
+  "source_cause": "The unannotated first identity in completion_candidate_subjects was polymorphic. Its standalone functionality theorem used that general type; the observation equation used its Boolean instance. The intended subject has two Boolean tests.",
+  "proposed_changes": [
+    "State the complete Boolean pair type on the completion subject map.",
+    "Retain strict same-term map checking in the shared exporter.",
+    "Export the actual candidate and facet lists extracted from the checked basis definition.",
+    "Use that formal facet domain for runtime repairs and revision instead of the accompanying registry dictionary."
+  ],
+  "criticism": "A description alone could not establish these domains. The new runtime values come from the calculation theorem itself. The observer, comparison, and derived-map checks still must all pass in the complete export batch."
+}

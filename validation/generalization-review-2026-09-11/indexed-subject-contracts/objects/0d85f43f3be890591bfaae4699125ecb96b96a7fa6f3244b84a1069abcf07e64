@@ -1,0 +1,6 @@
+{
+  "problem": "Select mapped method values and reduce the filtered revision relation symbolically before reasoning about the finite indices.",
+  "complete_failure": "\nBuild errors:\n*** Failed to load theory \"Native_Indexed_Subjects5.Indexed_Subject_Baseline\" (unresolved \"Native_Indexed_Subjects5.Observation_Revision_Investigation\")\n*** Failed to apply initial proof method (line 160 of \"/tmp/native-investigation-report-diagnostic-indexedsubjects5/theories/Observation_Revision_Investigation.thy\"):\n*** using this:\n***     (c, method) |\\<in>| revision_candidate_subjects\n***     (d, other) |\\<in>| revision_candidate_subjects\n*** goal (1 subgoal):\n***  1. ((c, d) \\<in> set revision_investigation_relation) =\n***     revision_subject_comparison method\n***      other\n*** At command \"by\" (line 160 of \"/tmp/native-investigation-report-diagnostic-indexedsubjects5/theories/Observation_Revision_Investigation.thy\")\n\nReturn code: 1 (ERROR)\n",
+  "reuse": "New indexed_relation_rows_member factors the existing investigation_pairs and filter membership; every actual revision condition remains unchanged.",
+  "boundary": "Proposed proof repair and separate generic theorem-export helper are isolated until their complete checks and runtime review succeed."
+}

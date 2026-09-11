@@ -1,0 +1,35 @@
+"""Prepare owner registrations and one export probe from their actual theorem names."""
+from pathlib import Path
+import json
+import sys
+b=Path(__file__).parent
+sys.path.insert(0,str(b/'worktree/tools'))
+import investigate
+prefixes=['reasoning','input','revision','table','pair_scope','collection','scope','observation','completion','permission','pattern','proof_probe','socket']
+assert len(prefixes)==len(investigate.BUILTIN_CASES)
+records=[]
+for prefix,(kind,descriptor) in zip(prefixes,investigate.BUILTIN_CASES.items()):
+    name,function=descriptor['theory'],descriptor['function']
+    source=(b/'worktree/theories'/(name+'.thy')).read_text()
+    for suffix in ['_observations_derived','_subject_maps_formed','_observation_at_subject','_comparison_at_subject']:
+        assert prefix+suffix in source,(kind,prefix)
+    registration=('setup \\<open>Finite_Observation_Contracts.register\n'
+        '  {definition = @{thm '+function+'_def},\n'
+        '   equation = @{thm '+prefix+'_observations_derived},\n'
+        '   formation = @{thm '+prefix+'_subject_maps_formed},\n'
+        '   observation = @{thm '+prefix+'_observation_at_subject},\n'
+        '   comparison = @{thm '+prefix+'_comparison_at_subject}}\\<close>\n\n')
+    assert 'Finite_Derived_Observations' in source.split('begin',1)[0]
+    source=source.replace('Finite_Derived_Observations','Finite_Observation_Contracts',1)
+    index=source.index('export_code ')
+    source=source[:index]+registration+source[index:]
+    (b/'drafts'/(name+'.thy')).write_text(source)
+    records.append({'kind':kind,'theory':name,'function':function,'contract_prefix':prefix})
+source=(b/'worktree/theories/Indexed_Subject_Baseline.thy').read_text()
+source=source.replace('Indexed_Subject_Baseline','Indexed_Subject_Exports',1)
+index=source.index('export_code ')
+source=source[:index]+''.join('setup \\<open>Finite_Observation_Contracts.export @{term '+r['function']+'}\\<close>\n' for r in records)+'\n'+source[index:]
+source=source.replace('file_prefix indexed_subject_baseline','file_prefix indexed_subject_exports')
+(b/'drafts/Indexed_Subject_Exports.thy').write_text(source)
+(b/'contract-owners.json').write_text(json.dumps(records,indent=2)+'\n')
+print(records)

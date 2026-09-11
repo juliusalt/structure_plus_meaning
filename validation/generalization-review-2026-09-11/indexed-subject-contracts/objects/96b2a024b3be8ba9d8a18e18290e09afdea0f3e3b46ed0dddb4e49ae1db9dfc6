@@ -1,0 +1,8 @@
+
+Build errors:
+*** Failed to load theory "Native_Indexed_Subjects7.Indexed_Subject_Exports" (unresolved "Native_Indexed_Subjects7.Presentation_Completion_Investigation")
+*** The functionality theorem must concern these same subject maps
+*** 
+*** At command "setup" (line 116 of "/tmp/native-investigation-report-diagnostic-indexedsubjects7/theories/Presentation_Completion_Investigation.thy")
+
+Return code: 1 (ERROR)

@@ -749,6 +749,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Scope_Computation_Contracts
     Finite_Observation_Tables
     Finite_Derived_Observations
+    Finite_Observation_Contracts
     Factor_Admission_Installation
     Factor_Admission_Pair_Reasoning
     Factor_Admission_Plan_Clauses

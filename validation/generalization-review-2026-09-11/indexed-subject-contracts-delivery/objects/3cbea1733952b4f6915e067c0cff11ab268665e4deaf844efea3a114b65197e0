@@ -1,0 +1,19 @@
+Isabelle2025-2
+Running RRA_Factor_Structural_Bootstrap ...
+Finished RRA_Factor_Structural_Bootstrap (0:06:09 elapsed time, 0:27:58 cpu time, factor 4.55)
+Finished at Fri Sep 11 22:01:27 GMT+3 2026
+{
+  "invocation": "a6bccb5e-cc43-4f58-867b-429b4db0e290",
+  "status": "accepted",
+  "started_utc": "2026-09-11T18:55:08.545490+00:00",
+  "exit_code": 0,
+  "build_receipt": "validation/build.json",
+  "diagnostics_file": "validation/check-errors.log",
+  "build_status": "accepted",
+  "theory_count": 827,
+  "missing_theory_files": [],
+  "unlisted_theories": [],
+  "proof_escape_matches": [],
+  "sources_and_tools_unchanged": true,
+  "finished_utc": "2026-09-11T19:01:27.964349+00:00"
+}

@@ -1,0 +1,35 @@
+# Structural subject contract delivery
+
+The full 827-theory repository session passes in invocation
+`a6bccb5e-cc43-4f58-867b-429b4db0e290`. Its source inventory, build and check tools,
+receipt identity and log are verified against the current checkout. There
+are no missing theories, unlisted theories or proof-escape matches.
+
+All four 98-case execution stages and all six ordinary or host investigations
+in the [original review](../indexed-subject-contracts/README.md) replay
+successfully with their original checkers and complete results. The current
+runtime reads the actual checked subject contract and obtains its candidate
+and facet domains from the source calculation. The original archive remains
+unchanged; this delivery retains the complete replay and final build evidence.
+All 60 tooling tests pass.
+
+The first full-session check exposed one consumer proof that still unfolded
+the former scalar definition. Its theorem statement and executable definitions
+are unchanged. The proposed proof instantiates the shared complete-input
+subject and passes in its complete 197-theory dependency context, rebuilding
+all local dependencies from HOL. The prospective comparison uses the actual
+complete sources, checker operations and results; its returned repair leaves
+only the revised proof eligible. This archive retains both investigations,
+the original full-session failure and the successful dependency proof. All
+eight proof-context guard tests also pass after adding the mode that rebuilds
+the full dependency context without reusing a local parent.
+
+The evidence supports these fixed subject contracts and their preserved finite
+behaviour. Arbitrary supplied observation tables remain conditional on their
+own subjects and satisfaction boundary. Native mathematical-proof checking,
+whole symbolic-derivation admission, broader workflow coverage and the final
+repository audit remain open.
+
+Both retained proof-repair investigations also replay successfully. Their complete
+results and original independent assessments reproduce exactly; the replay
+receipts bind the unchanged archive index. See [replay checks](replay-checks.json).

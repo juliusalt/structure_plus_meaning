@@ -1,0 +1,144 @@
+theory Factor_Bag_Presentations
+  imports "Factor_Presentation_Transport"
+begin
+
+section \<open>A bag retains every subject and its multiplicity\<close>
+
+definition data_bag_presents ::
+  "('a \<Rightarrow> factor_term \<Rightarrow> bool) \<Rightarrow> 'a multiset \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "data_bag_presents read M t \<longleftrightarrow>
+    (\<exists>xs. data_sequence_presents read xs t \<and> mset xs=M)"
+
+theorem data_bag_presentation_class:
+  assumes source: "presentation_class read D A"
+  shows "presentation_class (data_bag_presents read) (\<lambda>M. \<forall>a\<in>set_mset M. D a)
+    (\<lambda>t. \<exists>ps. (\<forall>p\<in>set ps. A p) \<and> t=data_list_term ps)"
+proof -
+  have sequences: "presentation_class (data_sequence_presents read) (\<lambda>xs. \<forall>a\<in>set xs. D a)
+      (\<lambda>t. \<exists>ps. (\<forall>p\<in>set ps. A p) \<and> t=data_list_term ps)"
+    by (rule data_sequence_presentation_class[OF source])
+  have image: "presentation_class (\<lambda>M t. \<exists>xs. data_sequence_presents read xs t \<and> mset xs=M)
+      (\<lambda>M. \<forall>a\<in>set_mset M. D a)
+      (\<lambda>t. \<exists>ps. (\<forall>p\<in>set ps. A p) \<and> t=data_list_term ps)"
+  proof (rule presentation_class_image[OF sequences])
+    fix xs assume "\<forall>a\<in>set xs. D a"
+    then show "\<forall>a\<in>set_mset (mset xs). D a" by simp
+  next
+    fix M assume domain: "\<forall>a\<in>set_mset M. D a"
+    obtain xs where enumeration: "mset xs=M" using ex_mset by blast
+    show "\<exists>xs. (\<forall>a\<in>set xs. D a) \<and> mset xs=M"
+      by (rule exI[of _ xs]) (use enumeration domain in auto)
+  qed
+  show ?thesis using image by (simp only: presentation_class_def data_bag_presents_def)
+qed
+
+theorem data_bag_presentation_change:
+  assumes "presentation_class R D A" "presentation_class S D B"
+  shows "presentation_change (data_bag_presents R) (\<lambda>M. \<forall>a\<in>set_mset M. D a)
+    (\<lambda>t. \<exists>ps. (\<forall>p\<in>set ps. A p) \<and> t=data_list_term ps)
+    (data_bag_presents S) (\<lambda>t. \<exists>ps. (\<forall>p\<in>set ps. B p) \<and> t=data_list_term ps)"
+  by (rule presentation_change.intro)
+    (rule data_bag_presentation_class[OF assms(1)], rule data_bag_presentation_class[OF assms(2)])
+
+section \<open>Existing ordinary list admission covers exactly bags of complete data\<close>
+
+definition data_bag_value_presents :: "factor_term multiset \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "data_bag_value_presents M t \<longleftrightarrow>
+    (\<exists>xs. data_elements xs \<and> mset xs=M \<and> t=data_list_term xs)"
+
+theorem data_bag_value_presentation_class:
+  "presentation_class data_bag_value_presents
+    (\<lambda>M. \<forall>a\<in>set_mset M. term_formed a \<and> self_contained_term a)
+    (\<lambda>t. (4,t)\<in>positive_meaning bag_comparison_system)"
+proof -
+  let ?D="\<lambda>a. term_formed a \<and> self_contained_term a"
+  let ?read="\<lambda>a p. ?D a \<and> p=a"
+  have elements: "presentation_class ?read ?D ?D"
+    by (unfold_locales) auto
+  have lists: "list_all2 ?read xs ps \<longleftrightarrow> xs=ps \<and> data_elements xs" for xs ps
+    by (induction xs arbitrary: ps) (auto simp: list_all2_Cons1)
+  have bag: "presentation_class (data_bag_presents ?read) (\<lambda>M. \<forall>a\<in>set_mset M. ?D a)
+      (\<lambda>t. \<exists>ps. (\<forall>p\<in>set ps. ?D p) \<and> t=data_list_term ps)"
+    by (rule data_bag_presentation_class[OF elements])
+  have reads: "data_bag_presents ?read=data_bag_value_presents"
+  proof (intro ext)
+    fix M t
+    show "data_bag_presents ?read M t \<longleftrightarrow> data_bag_value_presents M t"
+    proof
+      assume "data_bag_presents ?read M t"
+      then obtain xs ps where parts: "list_all2 ?read xs ps" "t=data_list_term ps" "mset xs=M"
+        unfolding data_bag_presents_def data_sequence_presents_def by blast
+      have recovered: "xs=ps" "data_elements xs" using lists[of xs ps] parts(1) by blast+
+      show "data_bag_value_presents M t"
+        using parts recovered unfolding data_bag_value_presents_def by blast
+    next
+      assume "data_bag_value_presents M t"
+      then obtain xs where parts: "data_elements xs" "mset xs=M" "t=data_list_term xs"
+        unfolding data_bag_value_presents_def by blast
+      have reading: "list_all2 ?read xs xs" using lists[of xs xs] parts(1) by blast
+      show "data_bag_presents ?read M t"
+        using parts reading unfolding data_bag_presents_def data_sequence_presents_def by blast
+    qed
+  qed
+  have admission: "(\<lambda>t. \<exists>ps. (\<forall>p\<in>set ps. ?D p) \<and> t=data_list_term ps)=
+      (\<lambda>t. (4,t)\<in>positive_meaning bag_comparison_system)"
+    by (rule ext) (auto simp: data_list_exact)
+  show ?thesis using bag by (simp only: reads admission)
+qed
+
+interpretation data_bag_presentations: presentation_class data_bag_value_presents
+  "\<lambda>M. \<forall>a\<in>set_mset M. term_formed a \<and> self_contained_term a"
+  "\<lambda>t. (4,t)\<in>positive_meaning bag_comparison_system"
+  by (rule data_bag_value_presentation_class)
+
+theorem data_bag_identity_presented:
+  "(6,Pair_Term p q)\<in>positive_meaning bag_comparison_system \<longleftrightarrow>
+    presented_relation data_bag_value_presents data_bag_value_presents (=) p q"
+proof
+  assume holds: "(6,Pair_Term p q)\<in>positive_meaning bag_comparison_system"
+  obtain xs ys where parts: "p=data_list_term xs" "q=data_list_term ys"
+    "data_elements xs" "data_elements ys" "mset xs=mset ys"
+    using holds by (auto simp only: bag_comparison_exact factor_term.inject)
+  have first: "data_bag_value_presents (mset xs) p" and second: "data_bag_value_presents (mset ys) q"
+    using parts unfolding data_bag_value_presents_def by blast+
+  show "presented_relation data_bag_value_presents data_bag_value_presents (=) p q"
+    using first second parts(5) unfolding presented_relation_def by blast
+next
+  assume "presented_relation data_bag_value_presents data_bag_value_presents (=) p q"
+  then obtain M where readings: "data_bag_value_presents M p" "data_bag_value_presents M q"
+    unfolding presented_relation_def by blast
+  obtain xs where first: "data_elements xs" "mset xs=M" "p=data_list_term xs"
+    using readings(1) unfolding data_bag_value_presents_def by blast
+  obtain ys where second: "data_elements ys" "mset ys=M" "q=data_list_term ys"
+    using readings(2) unfolding data_bag_value_presents_def by blast
+  have same: "mset xs=mset ys" using first(2) second(2) by simp
+  show "(6,Pair_Term p q)\<in>positive_meaning bag_comparison_system"
+    using bag_comparison_complete[OF first(1) second(1) same]
+    by (simp only: first(3) second(3))
+qed
+
+interpretation data_bag_identity_contract: presented_relation_contract
+  data_bag_value_presents "\<lambda>M. \<forall>a\<in>set_mset M. term_formed a \<and> self_contained_term a"
+    "\<lambda>t. (4,t)\<in>positive_meaning bag_comparison_system"
+  data_bag_value_presents "\<lambda>M. \<forall>a\<in>set_mset M. term_formed a \<and> self_contained_term a"
+    "\<lambda>t. (4,t)\<in>positive_meaning bag_comparison_system"
+  "(=)" "\<lambda>p q. (6,Pair_Term p q)\<in>positive_meaning bag_comparison_system"
+  by (unfold_locales)
+    (use data_bag_presentations.presentation_class_axioms data_bag_identity_presented in
+      \<open>auto simp: presentation_class_def\<close>)
+
+text \<open>
+  A finite multiset is the independent subject. Complete sequences present
+  all its members with their multiplicities, and the covered image rule
+  forgets only enumeration order. No distinctness constraint or conversion
+  to a membership set enters this class. Every permitted member presentation
+  and every enumeration remains available.
+
+  Complete data bags instantiate the generic class. The existing ordinary
+  list reader supplies their exact admission, and the existing counted
+  comparison supplies the local identity contract. Later artifact and
+  collection operations can use these exported facts without defining bag
+  meaning from their particular application.
+\<close>
+
+end

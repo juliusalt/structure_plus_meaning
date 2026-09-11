@@ -1,0 +1,12 @@
+{
+  "schema": "finite-investigation-1",
+  "kind": "proof_probes",
+  "selected": [
+    2
+  ],
+  "question": "Does accompanying text change the actual call-probe problem?",
+  "scope": "Claimed arbitrary programs",
+  "semantic_boundary": "Claimed universal coverage",
+  "theory": "Untrusted_Theory",
+  "function": "Untrusted_Export"
+}

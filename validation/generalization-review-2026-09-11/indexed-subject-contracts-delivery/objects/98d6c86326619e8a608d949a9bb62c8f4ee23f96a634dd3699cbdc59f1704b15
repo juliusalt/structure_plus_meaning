@@ -1,0 +1,215 @@
+theory Factor_Citation_Reading
+  imports "Factor_Citation_Interpretation"
+begin
+
+section \<open>Structural citation reading in the supplied environment\<close>
+
+abbreviation citation_reading_argument ::
+  "factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term" where
+  "citation_reading_argument e u r c i \<equiv> citation_observation_argument e u r (Pair_Term c i)"
+
+abbreviation citation_reading_pattern ::
+  "'a term_pattern \<Rightarrow> 'a term_pattern \<Rightarrow> 'a term_pattern \<Rightarrow>
+    'a term_pattern \<Rightarrow> 'a term_pattern \<Rightarrow> 'a term_pattern" where
+  "citation_reading_pattern e u r c i \<equiv> citation_observation_pattern e u r (Pattern_Pair c i)"
+
+definition citation_reading_schema :: "(nat,nat,nat) factor_schema" where
+  "citation_reading_schema=data_rule
+    (citation_reading_pattern data_x data_y data_z data_w (Pattern_Variable 4))
+    {(0,37,artifact_lookup_pattern data_x data_y (Pattern_Variable 5)),
+     (1,36,citation_admission_pattern (Pattern_Variable 5) data_z data_w (Pattern_Variable 4))}"
+
+definition citation_reading_system :: "(nat,nat,nat,nat) schema_system" where
+  "citation_reading_system=add_view_definition citation_location_system 42 data_x {(0,citation_reading_schema)}"
+
+interpretation citation_reading_view: positive_view citation_location_system 42 data_x "{(0,citation_reading_schema)}"
+  by (rule positive_view.intro)
+    (auto simp: citation_reading_schema_def schema_formed_def schema_dependencies_def
+      single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma citation_reading_system_formed [simp]: "schema_system_formed citation_reading_system"
+  using citation_reading_view.formed by (simp only: citation_reading_system_def)
+
+lemma citation_reading_definitions [simp]:
+  "system_definitions citation_reading_system=insert 42 (system_definitions citation_location_system)"
+  by (simp add: citation_reading_system_def)
+
+lemma citation_reading_call:
+  "schema_call_formed citation_reading_system d t \<longleftrightarrow>
+    d\<in>system_definitions citation_reading_system \<and> term_formed t"
+  using added_variable_calls[OF citation_location_system_formed
+    citation_reading_system_formed[unfolded citation_reading_system_def] citation_location_call]
+  by (simp only: citation_reading_system_def[symmetric])
+
+lemma citation_reading_old_meaning:
+  assumes "d\<in>system_definitions citation_location_system"
+  shows "(d,t)\<in>positive_meaning citation_reading_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning citation_location_system"
+  using citation_reading_view.old_meaning[OF assms, of t] by (simp only: citation_reading_system_def)
+
+lemma citation_reading_clause [simp]:
+  "((42,c),S)\<in>system_clauses citation_reading_system \<longleftrightarrow> (c,S)\<in>{(0,citation_reading_schema)}"
+  using citation_reading_view.no_old_clause[of c S] by (auto simp: citation_reading_system_def)
+
+lemma citation_reading_components:
+  "(36,t)\<in>positive_meaning citation_reading_system \<longleftrightarrow> (36,t)\<in>positive_meaning citation_admission_system"
+  "(37,t)\<in>positive_meaning citation_reading_system \<longleftrightarrow> (37,t)\<in>positive_meaning artifact_lookup_system"
+  "(40,t)\<in>positive_meaning citation_reading_system \<longleftrightarrow> (40,t)\<in>positive_meaning citation_interpretation_system"
+  "(41,t)\<in>positive_meaning citation_reading_system \<longleftrightarrow> (41,t)\<in>positive_meaning citation_location_system"
+  using citation_reading_old_meaning[of 36 t] citation_location_old_meaning[of 36 t]
+    citation_interpretation_old_meaning[of 36 t] citation_resolution_old_meaning[of 36 t]
+    binding_lookup_old_meaning[of 36 t] artifact_lookup_old_meaning[of 36 t]
+    citation_reading_old_meaning[of 37 t] citation_location_previous_entries(1)[of t]
+    citation_reading_old_meaning[of 40 t] citation_location_previous_entries(3)[of t]
+    citation_reading_old_meaning[of 41 t] by auto
+
+lemma citation_reading_valuation:
+  "(42,t)\<in>positive_meaning citation_reading_system \<longleftrightarrow>
+    (\<exists>h::nat\<Rightarrow>factor_term. (\<forall>i\<in>{0,1,2,3,4,5}. term_formed (h i)) \<and>
+      t=citation_reading_argument (h 0) (h 1) (h 2) (h 3) (h 4) \<and>
+      (37,artifact_lookup_argument (h 0) (h 1) (h 5))\<in>positive_meaning artifact_lookup_system \<and>
+      (36,citation_admission_argument (h 5) (h 2) (h 3) (h 4))\<in>positive_meaning citation_admission_system)"
+  by (subst ordinary_positive_entry_valuation)
+    (auto simp: citation_reading_schema_def schema_variables_def citation_reading_call citation_reading_components)
+
+lemma citation_reading_fields:
+  "(42,t)\<in>positive_meaning citation_reading_system \<longleftrightarrow>
+    (\<exists>e u r c i a. t=citation_reading_argument e u r c i \<and>
+      (37,artifact_lookup_argument e u a)\<in>positive_meaning artifact_lookup_system \<and>
+      (36,citation_admission_argument a r c i)\<in>positive_meaning citation_admission_system)"
+proof
+  assume "(42,t)\<in>positive_meaning citation_reading_system"
+  then show "\<exists>e u r c i a. t=citation_reading_argument e u r c i \<and>
+      (37,artifact_lookup_argument e u a)\<in>positive_meaning artifact_lookup_system \<and>
+      (36,citation_admission_argument a r c i)\<in>positive_meaning citation_admission_system"
+    by (auto simp: citation_reading_valuation)
+next
+  assume "\<exists>e u r c i a. t=citation_reading_argument e u r c i \<and>
+      (37,artifact_lookup_argument e u a)\<in>positive_meaning artifact_lookup_system \<and>
+      (36,citation_admission_argument a r c i)\<in>positive_meaning citation_admission_system"
+  then obtain e u r c i a where parts: "t=citation_reading_argument e u r c i"
+    "(37,artifact_lookup_argument e u a)\<in>positive_meaning artifact_lookup_system"
+    "(36,citation_admission_argument a r c i)\<in>positive_meaning citation_admission_system" by blast
+  have formed: "term_formed e" "term_formed u" "term_formed r" "term_formed c" "term_formed i" "term_formed a"
+    using schema_call_formed_target[OF positive_meaning_formed[OF parts(2)]]
+      schema_call_formed_target[OF positive_meaning_formed[OF parts(3)]] by auto
+  show "(42,t)\<in>positive_meaning citation_reading_system"
+    by (simp only: citation_reading_valuation,
+      rule exI[of _ "\<lambda>j::nat. if j=0 then e else if j=1 then u else if j=2 then r else if j=3 then c else if j=4 then i else a"])
+      (use parts formed in auto)
+qed
+
+theorem citation_reading_sound:
+  assumes "(42,t)\<in>positive_meaning citation_reading_system"
+  shows "\<exists>E e u r c xs R. t=citation_reading_argument e (use_data_term u) (Payload_Term r)
+    (citation_data_term c) (data_list_term (map Payload_Term xs)) \<and>
+    environment_value_presents E e \<and> distinct xs \<and> artifact_at E u R \<and> citation_at R r c (set xs)"
+proof -
+  obtain e u k c i a where fields: "t=citation_reading_argument e u k c i"
+    "(37,artifact_lookup_argument e u a)\<in>positive_meaning artifact_lookup_system"
+    "(36,citation_admission_argument a k c i)\<in>positive_meaning citation_admission_system"
+    using assms by (auto simp: citation_reading_fields)
+  obtain E q R where lookup: "environment_value_presents E e" "u=use_data_term q"
+    "artifact_at E q R" "artifact_value_presents R a"
+    using fields(2) by (auto simp: artifact_lookup_exact)
+  obtain r d xs where reading: "k=Payload_Term r" "c=citation_data_term d"
+    "i=data_list_term (map Payload_Term xs)" "distinct xs" "citation_at R r d (set xs)"
+    using fields(3) by (auto simp: citation_admission_at_source[OF lookup(4)])
+  show ?thesis using fields(1) lookup reading by blast
+qed
+
+theorem citation_reading_complete:
+  assumes source: "environment_value_presents E e" and actual: "artifact_at E u R"
+    and order: "distinct xs" and reading: "citation_at R r c (set xs)"
+  shows "(42,citation_reading_argument e (use_data_term u) (Payload_Term r)
+    (citation_data_term c) (data_list_term (map Payload_Term xs)))\<in>positive_meaning citation_reading_system"
+proof -
+  have rf: "exact_formed R" using reading by (simp add: citation_at_def)
+  obtain a where material: "artifact_value_presents R a" using artifact_value_presents_total[OF rf] by blast
+  have lookup: "(37,artifact_lookup_argument e (use_data_term u) a)\<in>positive_meaning artifact_lookup_system"
+    using source actual material by (auto simp: artifact_lookup_exact)
+  have citation: "(36,citation_admission_argument a (Payload_Term r) (citation_data_term c)
+    (data_list_term (map Payload_Term xs)))\<in>positive_meaning citation_admission_system"
+    by (rule citation_admission_complete[OF material order reading])
+  show ?thesis using lookup citation by (auto simp: citation_reading_fields)
+qed
+
+theorem citation_reading_exact:
+  "(42,t)\<in>positive_meaning citation_reading_system \<longleftrightarrow>
+    (\<exists>E e u r c xs R. t=citation_reading_argument e (use_data_term u) (Payload_Term r)
+      (citation_data_term c) (data_list_term (map Payload_Term xs)) \<and>
+      environment_value_presents E e \<and> distinct xs \<and> artifact_at E u R \<and> citation_at R r c (set xs))"
+  using citation_reading_sound citation_reading_complete by blast
+
+corollary citation_reading_at_source:
+  assumes source: "environment_value_presents E e"
+  shows "(42,citation_reading_argument e u k c i)\<in>positive_meaning citation_reading_system \<longleftrightarrow>
+    (\<exists>q r d xs R. u=use_data_term q \<and> k=Payload_Term r \<and> c=citation_data_term d \<and>
+      i=data_list_term (map Payload_Term xs) \<and> distinct xs \<and> artifact_at E q R \<and> citation_at R r d (set xs))"
+proof
+  assume holds: "(42,citation_reading_argument e u k c i)\<in>positive_meaning citation_reading_system"
+  obtain F q r d xs R where parts: "environment_value_presents F e" "u=use_data_term q"
+    "k=Payload_Term r" "c=citation_data_term d" "i=data_list_term (map Payload_Term xs)"
+    "distinct xs" "artifact_at F q R" "citation_at R r d (set xs)"
+    using holds by (auto simp: citation_reading_exact)
+  have same: "F=E" by (rule environment_value_presents_unique[OF parts(1) source])
+  show "\<exists>q r d xs R. u=use_data_term q \<and> k=Payload_Term r \<and> c=citation_data_term d \<and>
+      i=data_list_term (map Payload_Term xs) \<and> distinct xs \<and> artifact_at E q R \<and> citation_at R r d (set xs)"
+    using parts same by blast
+next
+  assume "\<exists>q r d xs R. u=use_data_term q \<and> k=Payload_Term r \<and> c=citation_data_term d \<and>
+      i=data_list_term (map Payload_Term xs) \<and> distinct xs \<and> artifact_at E q R \<and> citation_at R r d (set xs)"
+  then show "(42,citation_reading_argument e u k c i)\<in>positive_meaning citation_reading_system"
+    using source citation_reading_complete by blast
+qed
+
+corollary citation_reading_on_values:
+  assumes source: "environment_value_presents E e"
+  shows "(42,citation_reading_argument e (use_data_term u) (Payload_Term r)
+    (citation_data_term c) (data_list_term (map Payload_Term xs)))\<in>positive_meaning citation_reading_system \<longleftrightarrow>
+    distinct xs \<and> (\<exists>R. artifact_at E u R \<and> citation_at R r c (set xs))"
+  by (auto simp: citation_reading_at_source[OF source] data_list_term_injective
+    injective_mapped_lists[OF payload_term_inj]
+    dest: injD[OF use_data_term_injective] injD[OF citation_data_term_injective])
+
+corollary citation_reading_presentation_invariance:
+  assumes "environment_value_presents E e" "environment_value_presents E f"
+  shows "(42,citation_reading_argument e u r c i)\<in>positive_meaning citation_reading_system \<longleftrightarrow>
+    (42,citation_reading_argument f u r c i)\<in>positive_meaning citation_reading_system"
+  by (simp only: citation_reading_at_source[OF assms(1)] citation_reading_at_source[OF assms(2)])
+
+corollary citation_reading_result_unique:
+  assumes source: "environment_value_presents E e"
+    and first: "(42,citation_reading_argument e u k c i)\<in>positive_meaning citation_reading_system"
+    and second: "(42,citation_reading_argument e u k d j)\<in>positive_meaning citation_reading_system"
+  shows "c=d \<and> (6,Pair_Term i j)\<in>positive_meaning bag_comparison_system"
+proof -
+  obtain q r b xs R where left: "u=use_data_term q" "k=Payload_Term r" "c=citation_data_term b"
+    "i=data_list_term (map Payload_Term xs)" "distinct xs" "artifact_at E q R" "citation_at R r b (set xs)"
+    using first by (auto simp: citation_reading_at_source[OF source])
+  obtain z ys S where right: "d=citation_data_term z" "j=data_list_term (map Payload_Term ys)"
+    "distinct ys" "artifact_at E q S" "citation_at S r z (set ys)"
+    using second left(1,2) by (auto simp: citation_reading_at_source[OF source] dest: injD[OF use_data_term_injective])
+  have ef: "environment_formed E" using environment_value_presents_formed[OF source] by blast
+  have same_artifact: "S=R" by (rule environment_artifact_unique[OF ef right(4) left(6)])
+  have same: "b=z" "set xs=set ys"
+    using citation_at_unique[OF left(7)] right(5) same_artifact by blast+
+  have multisets: "mset xs=mset ys"
+    using left(5) right(3) same(2) set_eq_iff_mset_eq_distinct[of xs ys] by auto
+  have formed: "term_formed i" "term_formed j"
+    using schema_call_formed_target[OF positive_meaning_formed[OF first]]
+      schema_call_formed_target[OF positive_meaning_formed[OF second]] by auto
+  show ?thesis using left(3,4) right(1,2) same(1) formed multisets
+    by (simp add: bag_comparison_lists data_list_term_formed injective_mapped_multisets[OF payload_term_inj])
+qed
+
+text \<open>
+  The source artifact is recovered at the actual supplied use, and its complete
+  data presentation is an internal witness shared by lookup and citation
+  admission. The result retains the structural citation and its exact interior.
+  It does not require the citation to resolve: structural recognition remains
+  available independently of interpretation. Different complete interior
+  orders are permitted, while a repeated interior occurrence is rejected.
+\<close>
+
+end

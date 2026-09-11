@@ -1,0 +1,81 @@
+theory Factor_Admitted_Context
+  imports "Factor_List_Profiles"
+begin
+
+section \<open>A contextual operation retains an explicit context check\<close>
+
+definition admitted_context_schema :: "nat \<Rightarrow> nat \<Rightarrow> (nat,nat,nat) factor_schema" where
+  "admitted_context_schema context_site operation_site=data_rule (Pattern_Pair data_x data_y)
+    {(0,context_site,data_x),(1,operation_site,Pattern_Pair data_x data_y)}"
+
+lemma admitted_context_formed [simp]: "schema_formed (admitted_context_schema context_site operation_site)"
+  by (auto simp: admitted_context_schema_def schema_formed_def single_valued_def)
+
+lemma admitted_context_dependencies [simp]:
+  "schema_dependencies (admitted_context_schema context_site operation_site)={context_site,operation_site}"
+  by (auto simp: admitted_context_schema_def schema_dependencies_def rel_ran_image)
+
+locale admitted_context_profile =
+  fixes P :: "(nat,nat,nat,nat) schema_system" and entry context_site operation_site :: nat
+  assumes system_formed: "schema_system_formed P"
+    and family: "\<And>c S. ((entry,c),S)\<in>system_clauses P \<longleftrightarrow>
+      c=0 \<and> S=admitted_context_schema context_site operation_site"
+    and call: "\<And>t. schema_call_formed P entry t \<longleftrightarrow> term_formed t"
+begin
+
+lemma valuation:
+  "(entry,t)\<in>positive_meaning P \<longleftrightarrow>
+    (\<exists>h::nat\<Rightarrow>factor_term. term_formed (h 0) \<and> term_formed (h 1) \<and>
+      t=Pair_Term (h 0) (h 1) \<and> (context_site,h 0)\<in>positive_meaning P \<and>
+      (operation_site,Pair_Term (h 0) (h 1))\<in>positive_meaning P)"
+  by (subst ordinary_positive_entry_valuation)
+    (auto simp: family admitted_context_schema_def schema_variables_def call)
+
+theorem exact:
+  "(entry,t)\<in>positive_meaning P \<longleftrightarrow>
+    (\<exists>p q. t=Pair_Term p q \<and> (context_site,p)\<in>positive_meaning P \<and>
+      (operation_site,Pair_Term p q)\<in>positive_meaning P)"
+proof
+  assume "(entry,t)\<in>positive_meaning P"
+  then show "\<exists>p q. t=Pair_Term p q \<and> (context_site,p)\<in>positive_meaning P \<and>
+      (operation_site,Pair_Term p q)\<in>positive_meaning P"
+    by (simp only: valuation) blast
+next
+  assume "\<exists>p q. t=Pair_Term p q \<and> (context_site,p)\<in>positive_meaning P \<and>
+      (operation_site,Pair_Term p q)\<in>positive_meaning P"
+  then obtain p q where parts: "t=Pair_Term p q" "(context_site,p)\<in>positive_meaning P"
+    "(operation_site,Pair_Term p q)\<in>positive_meaning P" by blast
+  have formed: "term_formed p" "term_formed q"
+    using schema_call_formed_target[OF positive_meaning_formed[OF parts(3)]] by auto
+  show "(entry,t)\<in>positive_meaning P"
+    by (simp only: valuation; rule exI[of _ "\<lambda>i::nat. if i=0 then p else q"])
+      (use parts formed in auto)
+qed
+
+corollary at_input:
+  "(entry,Pair_Term p q)\<in>positive_meaning P \<longleftrightarrow>
+    (context_site,p)\<in>positive_meaning P \<and> (operation_site,Pair_Term p q)\<in>positive_meaning P"
+  by (auto simp only: exact factor_term.inject)
+
+theorem lists:
+  assumes list: "context_list_profile P element operation_site"
+  shows "(entry,Pair_Term p (data_list_term xs))\<in>positive_meaning P \<longleftrightarrow>
+    (context_site,p)\<in>positive_meaning P \<and>
+    (\<forall>x\<in>set xs. (element,Pair_Term p x)\<in>positive_meaning P)"
+proof -
+  have formed: "term_formed p" if "(context_site,p)\<in>positive_meaning P"
+    using schema_call_formed_target[OF positive_meaning_formed[OF that]] by blast
+  show ?thesis by (simp only: at_input context_list_profile.lists[OF list])
+    (use formed in blast)
+qed
+
+end
+
+text \<open>
+  The two premise sockets call the actual context and operation definitions
+  in the same program. For a complete contextual list, the derived contract
+  retains context admission even when there are no element calls. The list's
+  existing meaning and the context's independently owned domain remain intact.
+\<close>
+
+end

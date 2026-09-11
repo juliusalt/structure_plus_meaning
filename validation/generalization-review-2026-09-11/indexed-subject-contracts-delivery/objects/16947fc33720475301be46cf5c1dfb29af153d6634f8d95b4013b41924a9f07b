@@ -1,0 +1,192 @@
+[
+  {
+    "kind": "stage",
+    "name": "original-98-cases",
+    "exit_code": 0,
+    "command": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generalization-quality-review/indexed-subject-contracts/worktree/tools/replay_reasoning_review.py",
+      "--archive",
+      "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/indexed-subject-contracts",
+      "--stage",
+      "original-98-cases",
+      "--poly",
+      "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+      "--output",
+      "/tmp/generalization-quality-review/indexed-subject-contracts/replays1/original-98-cases"
+    ],
+    "log": "/tmp/generalization-quality-review/indexed-subject-contracts/replays1/original-98-cases.log"
+  },
+  {
+    "kind": "stage",
+    "name": "mapped-98-cases",
+    "exit_code": 0,
+    "command": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generalization-quality-review/indexed-subject-contracts/worktree/tools/replay_reasoning_review.py",
+      "--archive",
+      "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/indexed-subject-contracts",
+      "--stage",
+      "mapped-98-cases",
+      "--poly",
+      "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+      "--output",
+      "/tmp/generalization-quality-review/indexed-subject-contracts/replays1/mapped-98-cases"
+    ],
+    "log": "/tmp/generalization-quality-review/indexed-subject-contracts/replays1/mapped-98-cases.log"
+  },
+  {
+    "kind": "stage",
+    "name": "contract-98-cases",
+    "exit_code": 0,
+    "command": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generalization-quality-review/indexed-subject-contracts/worktree/tools/replay_reasoning_review.py",
+      "--archive",
+      "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/indexed-subject-contracts",
+      "--stage",
+      "contract-98-cases",
+      "--poly",
+      "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+      "--output",
+      "/tmp/generalization-quality-review/indexed-subject-contracts/replays1/contract-98-cases"
+    ],
+    "log": "/tmp/generalization-quality-review/indexed-subject-contracts/replays1/contract-98-cases.log"
+  },
+  {
+    "kind": "stage",
+    "name": "final-98-cases",
+    "exit_code": 0,
+    "command": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generalization-quality-review/indexed-subject-contracts/worktree/tools/replay_reasoning_review.py",
+      "--archive",
+      "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/indexed-subject-contracts",
+      "--stage",
+      "final-98-cases",
+      "--poly",
+      "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+      "--output",
+      "/tmp/generalization-quality-review/indexed-subject-contracts/replays1/final-98-cases"
+    ],
+    "log": "/tmp/generalization-quality-review/indexed-subject-contracts/replays1/final-98-cases.log"
+  },
+  {
+    "kind": "investigation",
+    "name": "ordinary-collapsed-pattern",
+    "exit_code": 0,
+    "command": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generalization-quality-review/indexed-subject-contracts/worktree/tools/replay_reasoning_review.py",
+      "--archive",
+      "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/indexed-subject-contracts",
+      "--investigation",
+      "ordinary-collapsed-pattern",
+      "--poly",
+      "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+      "--output",
+      "/tmp/generalization-quality-review/indexed-subject-contracts/replays1/ordinary-collapsed-pattern"
+    ],
+    "log": "/tmp/generalization-quality-review/indexed-subject-contracts/replays1/ordinary-collapsed-pattern.log"
+  },
+  {
+    "kind": "investigation",
+    "name": "ordinary-described-probes",
+    "exit_code": 0,
+    "command": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generalization-quality-review/indexed-subject-contracts/worktree/tools/replay_reasoning_review.py",
+      "--archive",
+      "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/indexed-subject-contracts",
+      "--investigation",
+      "ordinary-described-probes",
+      "--poly",
+      "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+      "--output",
+      "/tmp/generalization-quality-review/indexed-subject-contracts/replays1/ordinary-described-probes"
+    ],
+    "log": "/tmp/generalization-quality-review/indexed-subject-contracts/replays1/ordinary-described-probes.log"
+  },
+  {
+    "kind": "investigation",
+    "name": "assessment-repair1-initial",
+    "exit_code": 0,
+    "command": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generalization-quality-review/indexed-subject-contracts/worktree/tools/replay_reasoning_review.py",
+      "--archive",
+      "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/indexed-subject-contracts",
+      "--investigation",
+      "assessment-repair1-initial",
+      "--poly",
+      "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+      "--output",
+      "/tmp/generalization-quality-review/indexed-subject-contracts/replays1/assessment-repair1-initial"
+    ],
+    "log": "/tmp/generalization-quality-review/indexed-subject-contracts/replays1/assessment-repair1-initial.log"
+  },
+  {
+    "kind": "investigation",
+    "name": "assessment-repair1-followed",
+    "exit_code": 0,
+    "command": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generalization-quality-review/indexed-subject-contracts/worktree/tools/replay_reasoning_review.py",
+      "--archive",
+      "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/indexed-subject-contracts",
+      "--investigation",
+      "assessment-repair1-followed",
+      "--poly",
+      "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+      "--output",
+      "/tmp/generalization-quality-review/indexed-subject-contracts/replays1/assessment-repair1-followed"
+    ],
+    "log": "/tmp/generalization-quality-review/indexed-subject-contracts/replays1/assessment-repair1-followed.log"
+  },
+  {
+    "kind": "investigation",
+    "name": "registry-source1-initial",
+    "exit_code": 0,
+    "command": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generalization-quality-review/indexed-subject-contracts/worktree/tools/replay_reasoning_review.py",
+      "--archive",
+      "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/indexed-subject-contracts",
+      "--investigation",
+      "registry-source1-initial",
+      "--poly",
+      "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+      "--output",
+      "/tmp/generalization-quality-review/indexed-subject-contracts/replays1/registry-source1-initial"
+    ],
+    "log": "/tmp/generalization-quality-review/indexed-subject-contracts/replays1/registry-source1-initial.log"
+  },
+  {
+    "kind": "investigation",
+    "name": "registry-source1-followed",
+    "exit_code": 0,
+    "command": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generalization-quality-review/indexed-subject-contracts/worktree/tools/replay_reasoning_review.py",
+      "--archive",
+      "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/indexed-subject-contracts",
+      "--investigation",
+      "registry-source1-followed",
+      "--poly",
+      "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+      "--output",
+      "/tmp/generalization-quality-review/indexed-subject-contracts/replays1/registry-source1-followed"
+    ],
+    "log": "/tmp/generalization-quality-review/indexed-subject-contracts/replays1/registry-source1-followed.log"
+  }
+]

@@ -1,0 +1,5 @@
+session Native_Indexed_Subjects5 = RRA_Factor_Structural_Bootstrap +
+  options [document = false, timeout = 300]
+  sessions "HOL-Library"
+  directories "theories"
+  theories Indexed_Subject_Baseline

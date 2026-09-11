@@ -1,0 +1,121 @@
+#!/usr/bin/env python3
+"""Check an isolated source context against an unchanged proved main session."""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+from pathlib import Path
+import re
+import subprocess
+
+import build
+import investigate
+import proved_code
+
+
+def accepted_parent(project):
+    receipt_path = project / 'validation/build.json'
+    check_path = project / 'validation/check.json'
+    receipt = json.loads(receipt_path.read_text())
+    checked = json.loads(check_path.read_text())
+    assert receipt['status'] == checked['status'] == 'accepted'
+    assert receipt['exit_code'] == checked['exit_code'] == 0
+    assert receipt['sources_unchanged'] and receipt['tools_unchanged']
+    assert checked['sources_and_tools_unchanged'] and checked['build_evidence'] == receipt
+    assert receipt['invocation'] == checked['invocation']
+    assert all(not checked[k] for k in ['missing_theory_files', 'unlisted_theories', 'proof_escape_matches'])
+    command = receipt['command']
+    assert '-D' in command and Path(command[command.index('-D') + 1]).resolve() == project
+    names = set(re.findall(r'^    ([A-Za-z_][A-Za-z_0-9]*)\s*$', (project/'ROOT').read_text(), re.M))
+    expected = {'ROOT'} | {'theories/' + name + '.thy' for name in names}
+    assert set(receipt['sources']) == expected
+    assert checked['theory_count'] == len(names)
+    inputs = {str(project/path): sha for path, sha in receipt['sources'].items()}
+    inputs.update({str(project/path): sha for path, sha in receipt['tools'].items()})
+    inputs.update({str(receipt_path): investigate.file_hash(receipt_path),
+                   str(check_path): investigate.file_hash(check_path),
+                   str(project/'validation/build.log'): receipt['log_sha256']})
+    assert all(investigate.file_hash(Path(path)) == sha for path, sha in inputs.items())
+    session = re.search(r'^session (\S+) =', (project/'ROOT').read_text()).group(1)
+    return session, {Path(path).stem: sha for path, sha in receipt['sources'].items() if path != 'ROOT'}, inputs
+
+
+def main():
+    if not __debug__:
+        raise ValueError('Proof-context checks require Python assertions.')
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--parent-project', type=Path, required=True)
+    parser.add_argument('--project', type=Path, default=Path(__file__).resolve().parents[1])
+    parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--session', required=True)
+    parser.add_argument('--threads', type=int, default=12)
+    parser.add_argument('--timeout', type=int, default=300)
+    parser.add_argument('roots', nargs='+')
+    args = parser.parse_args()
+    assert re.fullmatch(r'[A-Za-z_][A-Za-z_0-9]*', args.session)
+    assert args.threads > 0 and args.timeout > 0
+    parent_project, project, output = (p.resolve() for p in [args.parent_project, args.project, args.output])
+    assert not output.exists(), 'Retain previous proof contexts and use a fresh directory.'
+    parent_session, parent_sources, parent_inputs = accepted_parent(parent_project)
+    sources, parents = investigate.source_graph(project, [], args.roots)
+    reused, rebuilt = proved_code.proved_context_partition(sources, parents, parent_sources)
+    assert set(args.roots) & rebuilt
+    (output/'theories').mkdir(parents=True)
+    (output/'original-sources').mkdir()
+    (output/'helper-sources').mkdir()
+    helper_inputs = {str(Path(module.__file__).resolve()): investigate.file_hash(Path(module.__file__))
+                     for module in [build, investigate, proved_code]}
+    helper_inputs[str(Path(__file__).resolve())] = investigate.file_hash(Path(__file__))
+    for path in helper_inputs:
+        (output/'helper-sources'/Path(path).name).write_bytes(Path(path).read_bytes())
+    effective = {}
+    for name, source in sources.items():
+        (output/'original-sources'/(name+'.thy')).write_text(source['text'])
+        if name not in rebuilt:
+            continue
+        header = re.match(r'(\s*theory\s+\S+\s+imports\s+)([\s\S]*?)(\s+begin\b)', source['text'])
+        assert header
+        imports = investigate.theory_imports(source['text'], name)
+        imports = ['"' + (parent_session+'.' if i in reused else '') + i + '"' for i in imports]
+        text = header[1] + ' '.join(imports) + header[3] + source['text'][header.end():]
+        target = output/'theories'/(name+'.thy')
+        target.write_text(text)
+        effective[name] = investigate.file_hash(target)
+    (output/'ROOT').write_text('session ' + args.session + ' = ' + parent_session + ' +\n'
+        '  options [document = false, timeout = ' + str(args.timeout) + ']\n'
+        '  sessions "HOL-Library"\n  directories "theories"\n  theories '
+        + ' '.join(name for name in args.roots if name in rebuilt) + '\n')
+    root_digest = investigate.file_hash(output/'ROOT')
+    manifest = {name: source['sha256'] for name, source in sources.items()}
+    (output/'manifest.json').write_text(json.dumps(manifest, indent=2)+'\n')
+    (output/'parent.json').write_text(json.dumps({'session':parent_session, 'project':str(parent_project),
+        'receipt':str(parent_project/'validation/build.json'),
+        'receipt_sha256':parent_inputs[str(parent_project/'validation/build.json')],
+        'inputs':parent_inputs, 'reused_complete_contexts':sorted(reused),
+        'rebuilt_contexts':sorted(rebuilt), 'helper_inputs':helper_inputs}, indent=2)+'\n')
+    command = ['isabelle','build','-o','threads='+str(args.threads),'-o','parallel_proofs=0',
+               '-o','build_timing_threshold=0','-d',str(parent_project),'-D',str(output)]
+    started = build.utc_now()
+    with (output/'build.log').open('w') as log:
+        process = subprocess.run(command, env={**os.environ,'USER_HOME':'/tmp/structural-isabelle'},
+                                 stdout=log, stderr=subprocess.STDOUT)
+    stable = all(investigate.file_hash(Path(path)) == sha for path, sha in (parent_inputs|helper_inputs).items())
+    stable = stable and investigate.current_sources(sources) and investigate.file_hash(output/'ROOT') == root_digest
+    stable = stable and all(investigate.file_hash(output/'theories'/(n+'.thy')) == sha for n,sha in effective.items())
+    stable = stable and all(investigate.file_hash(output/'original-sources'/(n+'.thy')) == sha for n,sha in manifest.items())
+    stable = stable and all(investigate.file_hash(output/'helper-sources'/Path(path).name) == sha for path,sha in helper_inputs.items())
+    result = {'status':'accepted' if process.returncode == 0 and stable else 'failed',
+        'exit_code':process.returncode, 'sources_unchanged':stable,'sources':manifest,
+        'effective_source_hashes':effective, 'checked_theories':len(rebuilt),
+        'parent_theories_reused':len(reused), 'roots':args.roots, 'command':command,
+        'started_utc':started, 'finished_utc':build.utc_now(), 'log':str(output/'build.log')}
+    (output/'result.json').write_text(json.dumps(result,indent=2)+'\n')
+    print(json.dumps({k:v for k,v in result.items() if k not in ['sources','effective_source_hashes']},indent=2))
+    if result['status'] != 'accepted':
+        print((output/'build.log').read_text()[-16000:])
+    return int(result['status'] != 'accepted')
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

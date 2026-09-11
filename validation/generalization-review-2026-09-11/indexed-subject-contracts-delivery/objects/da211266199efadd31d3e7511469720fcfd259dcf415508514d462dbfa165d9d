@@ -1,0 +1,391 @@
+theory Factor_Citation_Resolution
+  imports "Factor_Environment_Lookup"
+begin
+
+section \<open>The resolved use remains separate from the exact target\<close>
+
+abbreviation citation_route ::
+  "'u artifact_environment \<Rightarrow> 'u \<Rightarrow> citation \<Rightarrow> 'u \<Rightarrow> bool" where
+  "citation_route E u c v \<equiv>
+    (citation_slots c={} \<longrightarrow> v=u) \<and> (\<forall>k\<in>citation_slots c. binds_slot E u k v)"
+
+lemma citation_route_unique:
+  assumes "environment_formed E" "citation_route E u c v" "citation_route E u c w"
+  shows "v=w"
+  using assms by (cases c) (auto dest: environment_binding_unique)
+
+lemma citation_route_artifact:
+  assumes "environment_formed E" "citation_route E u c v" "interpret_citation E u c x"
+  shows "artifact_at E v (target_artifact x)"
+proof (cases c)
+  case (Local r)
+  then show ?thesis using assms by auto
+next
+  case (External k r)
+  have chosen: "binds_slot E u k v" using assms(2) External by simp
+  obtain w R where parts: "binds_slot E u k w" "artifact_at E w R" "x=Occurrence_Anchor (R,r)"
+    using assms(3) External by auto
+  have same: "v=w" by (rule environment_binding_unique[OF assms(1) chosen parts(1)])
+  show ?thesis using parts(2,3) same by simp
+next
+  case Local_Whole
+  then show ?thesis using assms by auto
+next
+  case (External_Whole k)
+  have chosen: "binds_slot E u k v" using assms(2) External_Whole by simp
+  obtain w R where parts: "binds_slot E u k w" "artifact_at E w R" "x=Whole_Artifact R"
+    using assms(3) External_Whole by auto
+  have same: "v=w" by (rule environment_binding_unique[OF assms(1) chosen parts(1)])
+  show ?thesis using parts(2,3) same by simp
+qed
+
+lemma citation_route_exists:
+  assumes "interpret_citation E u c x"
+  shows "\<exists>v. citation_route E u c v"
+  using assms by (cases c) auto
+
+lemma citation_route_location:
+  assumes formed: "environment_formed E"
+  shows "citation_route E u c v \<and> interpret_citation E u c (Occurrence_Anchor (R,r)) \<longleftrightarrow>
+    citation_location E u c v r \<and> artifact_at E v R"
+  using formed by (cases c) (auto dest: environment_binding_unique environment_artifact_unique)
+
+lemma citation_route_data:
+  assumes "citation_route E u c v" "interpret_citation E u c x"
+  shows "(citation_data_term c=Pair_Term (Payload_Term []) (optional_payload_term (target_occurrence x)) \<and> v=u) \<or>
+    (\<exists>k. citation_data_term c=Pair_Term (Pair_Term (Payload_Term k) (Payload_Term []))
+      (optional_payload_term (target_occurrence x)) \<and> binds_slot E u k v)"
+  using assms by (cases c) auto
+
+abbreviation citation_observation_argument ::
+  "factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term" where
+  "citation_observation_argument e u c x \<equiv> Pair_Term (Pair_Term e u) (Pair_Term c x)"
+
+abbreviation citation_observation_pattern ::
+  "'a term_pattern \<Rightarrow> 'a term_pattern \<Rightarrow> 'a term_pattern \<Rightarrow> 'a term_pattern \<Rightarrow> 'a term_pattern" where
+  "citation_observation_pattern e u c x \<equiv> Pattern_Pair (Pattern_Pair e u) (Pattern_Pair c x)"
+
+abbreviation citation_resolution_argument ::
+  "factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term" where
+  "citation_resolution_argument e u c v x \<equiv> citation_observation_argument e u c (Pair_Term v x)"
+
+abbreviation citation_resolution_pattern ::
+  "'a term_pattern \<Rightarrow> 'a term_pattern \<Rightarrow> 'a term_pattern \<Rightarrow> 'a term_pattern \<Rightarrow> 'a term_pattern \<Rightarrow> 'a term_pattern" where
+  "citation_resolution_pattern e u c v x \<equiv> citation_observation_pattern e u c (Pattern_Pair v x)"
+
+section \<open>Two ordinary clauses share the optional target operand\<close>
+
+definition citation_resolve_local_schema :: "(nat,nat,nat) factor_schema" where
+  "citation_resolve_local_schema=data_rule
+    (citation_resolution_pattern data_x data_y (Pattern_Pair (Pattern_Payload []) data_w)
+      data_y (Pattern_Pair data_z data_w))
+    {(0,37,artifact_lookup_pattern data_x data_y data_z),(1,35,Pattern_Pair data_z data_w)}"
+
+definition citation_resolve_external_schema :: "(nat,nat,nat) factor_schema" where
+  "citation_resolve_external_schema=data_rule
+    (citation_resolution_pattern data_x data_y (Pattern_Pair (Pattern_Pair data_z (Pattern_Payload [])) (Pattern_Variable 5))
+      data_w (Pattern_Pair (Pattern_Variable 4) (Pattern_Variable 5)))
+    {(0,38,binding_lookup_pattern data_x data_y data_z data_w),
+     (1,37,artifact_lookup_pattern data_x data_w (Pattern_Variable 4)),
+     (2,35,Pattern_Pair (Pattern_Variable 4) (Pattern_Variable 5))}"
+
+definition citation_resolution_clauses :: "(nat \<times> (nat,nat,nat) factor_schema) set" where
+  "citation_resolution_clauses={(0,citation_resolve_local_schema),(1,citation_resolve_external_schema)}"
+
+definition citation_resolution_system :: "(nat,nat,nat,nat) schema_system" where
+  "citation_resolution_system=add_view_definition binding_lookup_system 39 data_x citation_resolution_clauses"
+
+interpretation citation_resolution_view: positive_view binding_lookup_system 39 data_x "citation_resolution_clauses"
+  by (rule positive_view.intro)
+    (auto simp: citation_resolution_clauses_def citation_resolve_local_schema_def citation_resolve_external_schema_def schema_formed_def schema_dependencies_def
+      single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma citation_resolution_system_formed [simp]: "schema_system_formed citation_resolution_system"
+  using citation_resolution_view.formed by (simp only: citation_resolution_system_def)
+
+lemma citation_resolution_definitions [simp]:
+  "system_definitions citation_resolution_system=insert 39 (system_definitions binding_lookup_system)"
+  by (simp add: citation_resolution_system_def)
+
+lemma citation_resolution_call:
+  "schema_call_formed citation_resolution_system d t \<longleftrightarrow>
+    d\<in>system_definitions citation_resolution_system \<and> term_formed t"
+  using added_variable_calls[OF binding_lookup_system_formed
+    citation_resolution_system_formed[unfolded citation_resolution_system_def] binding_lookup_call]
+  by (simp only: citation_resolution_system_def[symmetric])
+
+lemma citation_resolution_old_meaning:
+  assumes "d\<in>system_definitions binding_lookup_system"
+  shows "(d,t)\<in>positive_meaning citation_resolution_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning binding_lookup_system"
+  using citation_resolution_view.old_meaning[OF assms, of t] by (simp only: citation_resolution_system_def)
+
+lemma citation_resolution_clause [simp]:
+  "((39,c),S)\<in>system_clauses citation_resolution_system \<longleftrightarrow> (c,S)\<in>citation_resolution_clauses"
+  using citation_resolution_view.no_old_clause[of c S] by (auto simp: citation_resolution_system_def)
+
+lemma citation_resolution_components:
+  "(35,t)\<in>positive_meaning citation_resolution_system \<longleftrightarrow> (\<exists>x. target_value_presents x t)"
+  "(37,t)\<in>positive_meaning citation_resolution_system \<longleftrightarrow> (37,t)\<in>positive_meaning artifact_lookup_system"
+  "(38,t)\<in>positive_meaning citation_resolution_system \<longleftrightarrow> (38,t)\<in>positive_meaning binding_lookup_system"
+  using citation_resolution_old_meaning[of 35 t] binding_lookup_old_meaning[of 35 t]
+    artifact_lookup_old_meaning[of 35 t] citation_admission_components(4)[of t]
+    citation_resolution_old_meaning[of 37 t] binding_lookup_components(3)[of t]
+    citation_resolution_old_meaning[of 38 t] by auto
+
+lemma citation_resolution_valuation:
+  "(39,t)\<in>positive_meaning citation_resolution_system \<longleftrightarrow>
+    (\<exists>h::nat\<Rightarrow>factor_term. (\<forall>i\<in>{0,1,2,3}. term_formed (h i)) \<and>
+      t=citation_resolution_argument (h 0) (h 1) (Pair_Term (Payload_Term []) (h 3)) (h 1) (Pair_Term (h 2) (h 3)) \<and>
+      (37,artifact_lookup_argument (h 0) (h 1) (h 2))\<in>positive_meaning artifact_lookup_system \<and>
+      (\<exists>x. target_value_presents x (Pair_Term (h 2) (h 3)))) \<or>
+    (\<exists>h::nat\<Rightarrow>factor_term. (\<forall>i\<in>{0,1,2,3,4,5}. term_formed (h i)) \<and>
+      t=citation_resolution_argument (h 0) (h 1) (Pair_Term (Pair_Term (h 2) (Payload_Term [])) (h 5)) (h 3) (Pair_Term (h 4) (h 5)) \<and>
+      (38,binding_lookup_argument (h 0) (h 1) (h 2) (h 3))\<in>positive_meaning binding_lookup_system \<and>
+      (37,artifact_lookup_argument (h 0) (h 3) (h 4))\<in>positive_meaning artifact_lookup_system \<and>
+      (\<exists>x. target_value_presents x (Pair_Term (h 4) (h 5))))"
+proof -
+  have ordinary: "\<And>c S. ((39,c),S)\<in>system_clauses citation_resolution_system \<Longrightarrow> schema_material_premises S={}"
+    by (auto simp: citation_resolution_clauses_def citation_resolve_local_schema_def citation_resolve_external_schema_def)
+  have member: "39\<in>system_definitions citation_resolution_system" by simp
+  let ?A="\<lambda>(S::(nat,nat,nat) factor_schema) (h::nat\<Rightarrow>factor_term).
+    (\<forall>i\<in>schema_variables S. term_formed (h i)) \<and>
+    t=evaluate_pattern h (schema_conclusion S) \<and> term_formed t \<and>
+    (\<forall>s d p. (s,d,p)\<in>schema_premises S \<longrightarrow>
+      (d,evaluate_pattern h p)\<in>positive_meaning citation_resolution_system)"
+  have valuation: "(39,t)\<in>positive_meaning citation_resolution_system \<longleftrightarrow>
+    (\<exists>c S. (c,S)\<in>citation_resolution_clauses \<and> (\<exists>h. ?A S h))"
+    using ordinary_positive_entry_valuation[where P=citation_resolution_system and d=39 and t=t, OF ordinary]
+    by (simp only: citation_resolution_clause citation_resolution_call member simp_thms ex_simps)
+  have clauses: "(\<exists>c S. (c,S)\<in>citation_resolution_clauses \<and> P S) \<longleftrightarrow>
+    P citation_resolve_local_schema \<or> P citation_resolve_external_schema" for P
+    by (auto simp: citation_resolution_clauses_def)
+  have local: "?A citation_resolve_local_schema h \<longleftrightarrow>
+    (\<forall>i\<in>{0,1,2,3}. term_formed (h i)) \<and>
+    t=citation_resolution_argument (h 0) (h 1) (Pair_Term (Payload_Term []) (h 3)) (h 1) (Pair_Term (h 2) (h 3)) \<and>
+    (37,artifact_lookup_argument (h 0) (h 1) (h 2))\<in>positive_meaning artifact_lookup_system \<and>
+    (\<exists>x. target_value_presents x (Pair_Term (h 2) (h 3)))" for h
+    by (auto simp: citation_resolve_local_schema_def schema_variables_def citation_resolution_components octets_formed_def)
+  have external: "?A citation_resolve_external_schema h \<longleftrightarrow>
+    (\<forall>i\<in>{0,1,2,3,4,5}. term_formed (h i)) \<and>
+    t=citation_resolution_argument (h 0) (h 1) (Pair_Term (Pair_Term (h 2) (Payload_Term [])) (h 5)) (h 3) (Pair_Term (h 4) (h 5)) \<and>
+    (38,binding_lookup_argument (h 0) (h 1) (h 2) (h 3))\<in>positive_meaning binding_lookup_system \<and>
+    (37,artifact_lookup_argument (h 0) (h 3) (h 4))\<in>positive_meaning artifact_lookup_system \<and>
+    (\<exists>x. target_value_presents x (Pair_Term (h 4) (h 5)))" for h
+    by (auto simp: citation_resolve_external_schema_def schema_variables_def citation_resolution_components octets_formed_def)
+  show ?thesis by (subst valuation) (simp only: clauses local external)
+qed
+
+lemma citation_resolution_fields:
+  "(39,t)\<in>positive_meaning citation_resolution_system \<longleftrightarrow>
+    (\<exists>e u a opt. t=citation_resolution_argument e u (Pair_Term (Payload_Term []) opt) u (Pair_Term a opt) \<and>
+      (37,artifact_lookup_argument e u a)\<in>positive_meaning artifact_lookup_system \<and>
+      (\<exists>x. target_value_presents x (Pair_Term a opt))) \<or>
+    (\<exists>e u k v a opt. t=citation_resolution_argument e u (Pair_Term (Pair_Term k (Payload_Term [])) opt) v (Pair_Term a opt) \<and>
+      (38,binding_lookup_argument e u k v)\<in>positive_meaning binding_lookup_system \<and>
+      (37,artifact_lookup_argument e v a)\<in>positive_meaning artifact_lookup_system \<and>
+      (\<exists>x. target_value_presents x (Pair_Term a opt)))"
+proof
+  assume "(39,t)\<in>positive_meaning citation_resolution_system"
+  then show "(\<exists>e u a opt. t=citation_resolution_argument e u (Pair_Term (Payload_Term []) opt) u (Pair_Term a opt) \<and>
+      (37,artifact_lookup_argument e u a)\<in>positive_meaning artifact_lookup_system \<and>
+      (\<exists>x. target_value_presents x (Pair_Term a opt))) \<or>
+    (\<exists>e u k v a opt. t=citation_resolution_argument e u (Pair_Term (Pair_Term k (Payload_Term [])) opt) v (Pair_Term a opt) \<and>
+      (38,binding_lookup_argument e u k v)\<in>positive_meaning binding_lookup_system \<and>
+      (37,artifact_lookup_argument e v a)\<in>positive_meaning artifact_lookup_system \<and>
+      (\<exists>x. target_value_presents x (Pair_Term a opt)))"
+    by (auto simp: citation_resolution_valuation)
+next
+  assume "(\<exists>e u a opt. t=citation_resolution_argument e u (Pair_Term (Payload_Term []) opt) u (Pair_Term a opt) \<and>
+      (37,artifact_lookup_argument e u a)\<in>positive_meaning artifact_lookup_system \<and>
+      (\<exists>x. target_value_presents x (Pair_Term a opt))) \<or>
+    (\<exists>e u k v a opt. t=citation_resolution_argument e u (Pair_Term (Pair_Term k (Payload_Term [])) opt) v (Pair_Term a opt) \<and>
+      (38,binding_lookup_argument e u k v)\<in>positive_meaning binding_lookup_system \<and>
+      (37,artifact_lookup_argument e v a)\<in>positive_meaning artifact_lookup_system \<and>
+      (\<exists>x. target_value_presents x (Pair_Term a opt)))"
+  then consider (local) e u a opt x where
+      "t=citation_resolution_argument e u (Pair_Term (Payload_Term []) opt) u (Pair_Term a opt)"
+      "(37,artifact_lookup_argument e u a)\<in>positive_meaning artifact_lookup_system" "target_value_presents x (Pair_Term a opt)"
+    | (external) e u k v a opt x where
+      "t=citation_resolution_argument e u (Pair_Term (Pair_Term k (Payload_Term [])) opt) v (Pair_Term a opt)"
+      "(38,binding_lookup_argument e u k v)\<in>positive_meaning binding_lookup_system"
+      "(37,artifact_lookup_argument e v a)\<in>positive_meaning artifact_lookup_system" "target_value_presents x (Pair_Term a opt)" by blast
+  then show "(39,t)\<in>positive_meaning citation_resolution_system"
+  proof cases
+    case (local e u a opt x)
+    have formed: "term_formed e" "term_formed u" "term_formed a" "term_formed opt"
+      using schema_call_formed_target[OF positive_meaning_formed[OF local(2)]]
+        target_value_presents_formed[OF local(3)] by auto
+    show ?thesis
+      by (simp only: citation_resolution_valuation, rule disjI1,
+        rule exI[of _ "\<lambda>i::nat. if i=0 then e else if i=1 then u else if i=2 then a else opt"])
+        (use local formed in auto)
+  next
+    case (external e u k v a opt x)
+    have formed: "term_formed e" "term_formed u" "term_formed k" "term_formed v" "term_formed a" "term_formed opt"
+      using schema_call_formed_target[OF positive_meaning_formed[OF external(2)]]
+        target_value_presents_formed[OF external(4)] by auto
+    show ?thesis
+      by (simp only: citation_resolution_valuation, rule disjI2,
+        rule exI[of _ "\<lambda>i::nat. if i=0 then e else if i=1 then u else if i=2 then k else if i=3 then v else if i=4 then a else opt"])
+        (use external formed in auto)
+  qed
+qed
+
+theorem citation_resolution_sound:
+  assumes "(39,t)\<in>positive_meaning citation_resolution_system"
+  shows "\<exists>E e u c v x y. t=citation_resolution_argument e (use_data_term u) (citation_data_term c) (use_data_term v) y \<and>
+    environment_value_presents E e \<and> target_value_presents x y \<and> citation_route E u c v \<and> interpret_citation E u c x"
+proof -
+  consider (local) e u a opt x where
+      "t=citation_resolution_argument e u (Pair_Term (Payload_Term []) opt) u (Pair_Term a opt)"
+      "(37,artifact_lookup_argument e u a)\<in>positive_meaning artifact_lookup_system" "target_value_presents x (Pair_Term a opt)"
+    | (external) e u k v a opt x where
+      "t=citation_resolution_argument e u (Pair_Term (Pair_Term k (Payload_Term [])) opt) v (Pair_Term a opt)"
+      "(38,binding_lookup_argument e u k v)\<in>positive_meaning binding_lookup_system"
+      "(37,artifact_lookup_argument e v a)\<in>positive_meaning artifact_lookup_system" "target_value_presents x (Pair_Term a opt)"
+    using assms by (simp only: citation_resolution_fields) blast
+  then show ?thesis
+  proof cases
+    case (local e u a opt x)
+    obtain E q R where parts: "environment_value_presents E e" "u=use_data_term q"
+      "artifact_at E q R" "artifact_value_presents R a"
+      using local(2) by (auto simp: artifact_lookup_exact)
+    have target: "target_formed x" "target_artifact x=R" "opt=optional_payload_term (target_occurrence x)"
+      using local(3) by (auto simp: target_value_at_source[OF parts(4)])
+    obtain c where cite: "citation_data_term c=Pair_Term (Payload_Term []) opt"
+      "citation_route E q c q" "interpret_citation E q c x"
+    proof (cases x)
+      case (Whole_Artifact T)
+      show thesis by (rule that[of Local_Whole])
+        (use target parts(3) in \<open>auto simp: Whole_Artifact\<close>)
+    next
+      case (Occurrence_Anchor ar)
+      obtain T r where shape: "ar=(T,r)" by (cases ar)
+      show thesis by (rule that[of "Local r"])
+        (use target parts(3) in \<open>auto simp: Occurrence_Anchor shape anchor_formed_def\<close>)
+    qed
+    show ?thesis
+      by (intro exI[of _ E] exI[of _ e] exI[of _ q] exI[of _ c] exI[of _ q] exI[of _ x] exI[of _ "Pair_Term a opt"])
+        (use local parts cite in auto)
+  next
+    case (external e u k v a opt x)
+    obtain E q r w where parts: "environment_value_presents E e" "u=use_data_term q"
+      "k=Payload_Term r" "v=use_data_term w" "binds_slot E q r w"
+      using external(2) by (auto simp: binding_lookup_exact)
+    obtain R where art: "artifact_at E w R" "artifact_value_presents R a"
+      using external(3) parts(4) by (auto simp: artifact_lookup_at_source[OF parts(1)] dest: injD[OF use_data_term_injective])
+    have target: "target_formed x" "target_artifact x=R" "opt=optional_payload_term (target_occurrence x)"
+      using external(4) by (auto simp: target_value_at_source[OF art(2)])
+    obtain c where cite: "citation_data_term c=Pair_Term (Pair_Term (Payload_Term r) (Payload_Term [])) opt"
+      "citation_route E q c w" "interpret_citation E q c x"
+    proof (cases x)
+      case (Whole_Artifact T)
+      show thesis by (rule that[of "External_Whole r"])
+        (use target parts(5) art(1) in \<open>auto simp: Whole_Artifact\<close>)
+    next
+      case (Occurrence_Anchor ar)
+      obtain T b where shape: "ar=(T,b)" by (cases ar)
+      show thesis by (rule that[of "External r b"])
+        (use target parts(5) art(1) in \<open>auto simp: Occurrence_Anchor shape anchor_formed_def\<close>)
+    qed
+    show ?thesis
+      by (intro exI[of _ E] exI[of _ e] exI[of _ q] exI[of _ c] exI[of _ w] exI[of _ x] exI[of _ "Pair_Term a opt"])
+        (use external parts cite in auto)
+  qed
+qed
+
+theorem citation_resolution_complete:
+  assumes source: "environment_value_presents E e" and target: "target_value_presents x y"
+    and route: "citation_route E u c v" and interpreted: "interpret_citation E u c x"
+  shows "(39,citation_resolution_argument e (use_data_term u) (citation_data_term c) (use_data_term v) y)
+    \<in>positive_meaning citation_resolution_system"
+proof -
+  have ef: "environment_formed E" using environment_value_presents_formed[OF source] by blast
+  obtain a where literal: "artifact_value_presents (target_artifact x) a"
+    "y=Pair_Term a (optional_payload_term (target_occurrence x))"
+    using target by (auto simp: target_value_presents_def)
+  have artifact: "artifact_at E v (target_artifact x)" by (rule citation_route_artifact[OF ef route interpreted])
+  have lookup: "(37,artifact_lookup_argument e (use_data_term v) a)\<in>positive_meaning artifact_lookup_system"
+    using source artifact literal(1) by (auto simp: artifact_lookup_exact)
+  have choices: "(citation_data_term c=Pair_Term (Payload_Term []) (optional_payload_term (target_occurrence x)) \<and> v=u) \<or>
+    (\<exists>k. citation_data_term c=Pair_Term (Pair_Term (Payload_Term k) (Payload_Term []))
+      (optional_payload_term (target_occurrence x)) \<and> binds_slot E u k v)"
+    by (rule citation_route_data[OF route interpreted])
+  have binding: "(38,binding_lookup_argument e (use_data_term u) (Payload_Term k) (use_data_term v))
+      \<in>positive_meaning binding_lookup_system" if "binds_slot E u k v" for k
+    using source that by (auto simp: binding_lookup_exact)
+  show ?thesis using choices lookup target literal(2) binding
+    by (auto simp only: citation_resolution_fields) blast+
+qed
+
+theorem citation_resolution_exact:
+  "(39,t)\<in>positive_meaning citation_resolution_system \<longleftrightarrow>
+    (\<exists>E e u c v x y. t=citation_resolution_argument e (use_data_term u) (citation_data_term c) (use_data_term v) y \<and>
+      environment_value_presents E e \<and> target_value_presents x y \<and> citation_route E u c v \<and> interpret_citation E u c x)"
+  using citation_resolution_sound citation_resolution_complete by blast
+
+corollary citation_resolution_at_source:
+  assumes source: "environment_value_presents E e"
+  shows "(39,citation_resolution_argument e u c v y)\<in>positive_meaning citation_resolution_system \<longleftrightarrow>
+    (\<exists>q d w x. u=use_data_term q \<and> c=citation_data_term d \<and> v=use_data_term w \<and>
+      target_value_presents x y \<and> citation_route E q d w \<and> interpret_citation E q d x)"
+proof
+  assume holds: "(39,citation_resolution_argument e u c v y)\<in>positive_meaning citation_resolution_system"
+  obtain F q d w x where parts: "environment_value_presents F e" "u=use_data_term q" "c=citation_data_term d"
+    "v=use_data_term w" "target_value_presents x y" "citation_route F q d w" "interpret_citation F q d x"
+    using holds by (simp only: citation_resolution_exact factor_term.inject) blast
+  have same: "F=E" by (rule environment_value_presents_unique[OF parts(1) source])
+  show "\<exists>q d w x. u=use_data_term q \<and> c=citation_data_term d \<and> v=use_data_term w \<and>
+      target_value_presents x y \<and> citation_route E q d w \<and> interpret_citation E q d x"
+    using parts same by blast
+next
+  assume "\<exists>q d w x. u=use_data_term q \<and> c=citation_data_term d \<and> v=use_data_term w \<and>
+      target_value_presents x y \<and> citation_route E q d w \<and> interpret_citation E q d x"
+  then show "(39,citation_resolution_argument e u c v y)\<in>positive_meaning citation_resolution_system"
+    using source citation_resolution_complete by blast
+qed
+
+corollary citation_resolution_on_values:
+  assumes source: "environment_value_presents E e" and target: "target_value_presents x y"
+  shows "(39,citation_resolution_argument e (use_data_term u) (citation_data_term c) (use_data_term v) y)
+      \<in>positive_meaning citation_resolution_system \<longleftrightarrow>
+    citation_route E u c v \<and> interpret_citation E u c x"
+proof
+  assume holds: "(39,citation_resolution_argument e (use_data_term u) (citation_data_term c) (use_data_term v) y)
+      \<in>positive_meaning citation_resolution_system"
+  obtain z where parts: "target_value_presents z y" "citation_route E u c v" "interpret_citation E u c z"
+    using holds by (simp only: citation_resolution_at_source[OF source]
+      inj_eq[OF use_data_term_injective] inj_eq[OF citation_data_term_injective]) blast
+  have same: "z=x" by (rule target_value_presents_unique[OF parts(1) target])
+  show "citation_route E u c v \<and> interpret_citation E u c x" using parts same by blast
+next
+  assume "citation_route E u c v \<and> interpret_citation E u c x"
+  then show "(39,citation_resolution_argument e (use_data_term u) (citation_data_term c) (use_data_term v) y)
+      \<in>positive_meaning citation_resolution_system"
+    using citation_resolution_complete[OF source target] by blast
+qed
+
+corollary citation_resolution_presentation_invariance:
+  assumes "environment_value_presents E e" "environment_value_presents E f"
+    "target_value_presents x y" "target_value_presents x z"
+  shows "(39,citation_resolution_argument e (use_data_term u) (citation_data_term c) (use_data_term v) y)
+      \<in>positive_meaning citation_resolution_system \<longleftrightarrow>
+    (39,citation_resolution_argument f (use_data_term u) (citation_data_term c) (use_data_term v) z)
+      \<in>positive_meaning citation_resolution_system"
+  by (simp only: citation_resolution_on_values[OF assms(1,3)] citation_resolution_on_values[OF assms(2,4)])
+
+text \<open>
+  The checked output contains the resolved use and a complete exact target.
+  Its route is recovered from the source use and the citation's optional slot.
+  The target address passes unchanged into the target's optional occurrence
+  field; the target admission callee enforces actual membership.
+
+  Local and external routing each use one clause, shared by whole and occurrence
+  targets. Every environment and target presentation is permitted. The supplied
+  environment is ordinary data, independent of the native program that checks it.
+  Exact artifact identity does not recover which equal-valued use a binding selected.
+  Interpretation and occurrence location are separate projections of this result.
+\<close>
+
+end

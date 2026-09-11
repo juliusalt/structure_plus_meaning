@@ -34,12 +34,15 @@ if Path(__file__).name == "fake_poly":
     if mode == "engine_change":
         for p in (root / "output").rglob("finite_investigation.ML"):
             p.write_text("changed generated engine")
+    if mode == "contract_change":
+        for p in (root / "output").rglob("*.yxml"):
+            p.write_text("changed subject contract")
     if mode == "archive_change":
         for p in (root / "output").glob("evidence-*/*"):
             p.write_text("changed archived evidence")
     if mode == "malformed_result":
         print("INVESTIGATION_RESULT {}"); sys.exit(0)
-    if mode == "registered":
+    if mode in {"registered", "contract_change"}:
         print("INVESTIGATION_RESULT " + json.dumps({"input_formed": True, "residual": [],
             "profiles": [], "losses": [], "observations": [], "relation": [],
             "safe_facets": [], "conflicts": [], "repairs": [], "unrepairable": [], "extension": [],
@@ -63,6 +66,29 @@ if sys.argv[1] == "export":
     if mode == "export_failure": sys.exit(8)
     output = Path(sys.argv[sys.argv.index("-O") + 1]); output.mkdir(parents=True)
     (output / "finite_investigation.ML").write_text("fixture module; runtime is also a fixture")
+    case = json.loads((root / "case.json").read_text())
+    if case["kind"] in {"proof_probes", "schema_sockets"} and mode != "missing_contract":
+        # Protocol fixture only: the separate Isabelle executions validate
+        # actual theorems, complete subject terms and their defining equations.
+        owner, function = {"proof_probes": ("Factor_Proof_Probe_Investigation", "proof_probes_investigation"),
+                           "schema_sockets": ("Factor_Schema_Socket_Investigation", "schema_sockets_investigation")}[case["kind"]]
+        x, y = chr(5), chr(6)
+        def node(tag, body="", attributes=()):
+            return x+y+tag+"".join(y+k+"="+v for k,v in attributes)+x+body+x+y+x
+        def term(name):
+            return node("0", node("0", attributes=[("0", "Fixture.type")]), [("0", name)])
+        actual_owner = "Wrong_Owner" if mode == "wrong_contract" else owner
+        names = {"function": function, "observer": function+"_observations", "relation": function+"_relation"}
+        body = "".join(node(field, term(actual_owner+"."+name)) for field,name in names.items())
+        body += node("subjects", "".join(node("term", term("Fixture.subject")) for _ in range(4)))
+        body += "".join(node(field, term("Fixture.theorem")) for field in [
+            "calculation", "observation_equation", "functional_maps", "at_subject", "comparison_at_subject"])
+        body += node("definitions", node("definition", term("Fixture.definition"), [("name", "Fixture.def")]))
+        body += node("context_constants")
+        body += node("candidate_indices", node(":", "0")+node(":", "1"))
+        body += node("facet_indices", node(":", "0")+node(":", "1")+node(":", "2"))
+        (output / (function+".yxml")).write_text(node("finite_observation_contract", body,
+            [("function", actual_owner+"."+function)]))
     sys.exit(0)
 sys.exit(3)
 '''
@@ -75,7 +101,7 @@ class InvestigationTests(unittest.TestCase):
         self.root = Path(temporary.name)
         for name in ("tools", "theories", "output"):
             (self.root / name).mkdir()
-        for name in ("build.py", "investigate.py"):
+        for name in ("build.py", "investigate.py", "observation_contracts.py"):
             shutil.copyfile(TOOLS / name, self.root / "tools" / name)
         (self.root / "theories/Presentation_Completion_Investigation.thy").write_text(
             "theory Presentation_Completion_Investigation imports Main begin end\n")
@@ -251,6 +277,30 @@ class InvestigationTests(unittest.TestCase):
         self.assertIn("(map #1 profiles) [n 0,n 1,n 2] [n 2] observations relation", program)
         self.assertNotEqual(receipt["semantic_boundary"], self.case["semantic_boundary"])
         self.assertEqual(json.loads((self.root / "output/case.json").read_text()), self.case)
+
+    def test_missing_or_unrelated_contract_never_executes(self):
+        (self.root / "theories/Factor_Proof_Probe_Investigation.thy").write_text(
+            "theory Factor_Proof_Probe_Investigation imports Main begin end\n")
+        self.case = {"schema": "finite-investigation-1", "kind": "proof_probes", "selected": [2],
+                     "question": "Protocol guard fixture", "scope": "Fixture only"}
+        self.save_case()
+        for mode in ["missing_contract", "wrong_contract"]:
+            with self.subTest(mode=mode):
+                result, receipt, proof = self.execute(mode)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertEqual(receipt["status"], "failed")
+                self.assertFalse((self.root / "runtime_called").exists())
+
+    def test_subject_contract_mutation_during_execution_is_rejected(self):
+        (self.root / "theories/Factor_Proof_Probe_Investigation.thy").write_text(
+            "theory Factor_Proof_Probe_Investigation imports Main begin end\n")
+        self.case = {"schema": "finite-investigation-1", "kind": "proof_probes", "selected": [2],
+                     "question": "Protocol guard fixture", "scope": "Fixture only"}
+        self.save_case()
+        result, receipt, proof = self.execute("contract_change")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(receipt["status"], "failed")
+        self.assertIn("subject contract changed", receipt["error"])
 
     def test_source_readiness_uses_the_full_changed_import_context(self):
         sys.path.insert(0, str(self.root / "tools"))

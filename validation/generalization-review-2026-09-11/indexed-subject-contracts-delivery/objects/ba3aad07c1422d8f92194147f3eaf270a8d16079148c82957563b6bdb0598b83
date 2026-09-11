@@ -1,0 +1,179 @@
+theory Factor_Observation_Scope_Admission
+  imports "Factor_Observation_Scope_Presentations"
+begin
+
+section \<open>Complete context admission uses the existing data list and subset operations\<close>
+
+lemma observation_collection_subset_meaning:
+  "(47,t)\<in>positive_meaning observation_collection_system \<longleftrightarrow>
+    (47,t)\<in>positive_meaning data_subset_system"
+proof -
+  have member: "47\<in>system_definitions data_set_comparison_system"
+    using data_set_comparison_base_roots by auto
+  have retained: "(47,t)\<in>positive_meaning observation_collection_system \<longleftrightarrow>
+      (47,t)\<in>positive_meaning data_set_comparison_system"
+    unfolding observation_collection_system_def
+    by (rule system_union_agree_right_locality(2)[OF observation_system_formed data_set_comparison_system_formed
+      observation_set_agreement member])
+  show ?thesis by (simp only: retained data_set_comparison_subset_meaning)
+qed
+
+lemma observation_scope_list_components:
+  "(4,t)\<in>positive_meaning observation_scope_system \<longleftrightarrow>
+    (\<exists>xs. t=data_list_term xs \<and> data_elements xs)"
+  "(47,t)\<in>positive_meaning observation_scope_system \<longleftrightarrow>
+    (47,t)\<in>positive_meaning data_subset_system"
+  using observation_scope_base_meaning[of 4 t] observation_scope_base_meaning[of 47 t]
+    observation_collection_meaning[of 4 t] observation_components(3)[of t]
+    observation_collection_subset_meaning[of t] observation_base_roots
+  by auto
+
+lemma observation_scopes_valuation:
+  "(310,t)\<in>positive_meaning observation_scope_system \<longleftrightarrow>
+    (\<exists>h::nat\<Rightarrow>factor_term. term_formed (h 0) \<and> term_formed (h 1) \<and> term_formed (h 2) \<and>
+      t=observation_scope_context (h 0) (h 1) (h 2) \<and>
+      (4,h 0)\<in>positive_meaning observation_scope_system \<and>
+      (47,Pair_Term (h 2) (h 1))\<in>positive_meaning observation_scope_system)"
+proof -
+  have family: "((310,c),S)\<in>system_clauses observation_scope_system \<longleftrightarrow>
+      (c,S)\<in>observation_scope_clause_family 310" for c S
+    by (rule observation_scope_clause) simp
+  show ?thesis by (subst ordinary_positive_entry_valuation)
+    (auto simp: family observation_scope_clause_family_def observation_scopes_schema_def
+      schema_variables_def observation_scope_call)
+qed
+
+lemma observation_scopes_exact:
+  "(310,t)\<in>positive_meaning observation_scope_system \<longleftrightarrow>
+    (\<exists>C U F. data_elements C \<and> data_elements U \<and> data_elements F \<and> set F\<subseteq>set U \<and>
+      t=observation_scope_context (data_list_term C) (data_list_term U) (data_list_term F))"
+proof
+  assume "(310,t)\<in>positive_meaning observation_scope_system"
+  then show "\<exists>C U F. data_elements C \<and> data_elements U \<and> data_elements F \<and> set F\<subseteq>set U \<and>
+      t=observation_scope_context (data_list_term C) (data_list_term U) (data_list_term F)"
+    by (auto simp: observation_scopes_valuation observation_scope_list_components data_subset_exact; blast)
+next
+  assume "\<exists>C U F. data_elements C \<and> data_elements U \<and> data_elements F \<and> set F\<subseteq>set U \<and>
+      t=observation_scope_context (data_list_term C) (data_list_term U) (data_list_term F)"
+  then obtain C U F where parts: "data_elements C" "data_elements U" "data_elements F" "set F\<subseteq>set U"
+    "t=observation_scope_context (data_list_term C) (data_list_term U) (data_list_term F)" by blast
+  show "(310,t)\<in>positive_meaning observation_scope_system"
+    by (simp only: observation_scopes_valuation;
+      rule exI[of _ "\<lambda>i::nat. if i=0 then data_list_term C else if i=1 then data_list_term U else data_list_term F"])
+      (use parts in \<open>auto simp: observation_scope_list_components data_subset_lists data_list_term_formed\<close>)
+qed
+
+interpretation observation_scope_admission: admitted_context_profile observation_scope_system 311 310 309
+  by (rule admitted_context_profile.intro[OF observation_scope_system_formed])
+    (auto simp: observation_scope_clause observation_scope_clause_family_def observation_scope_call)
+
+theorem observation_scope_encoded:
+  "(311,observation_scope_argument (data_list_term C) (data_list_term U) (data_list_term F)
+    (data_list_term (map observation_row_term rows)))\<in>positive_meaning observation_scope_system \<longleftrightarrow>
+    observation_scope_subject_formed (fset_of_list C) (fset_of_list U) (fset_of_list F) (fset_of_list rows)"
+  by (simp only: observation_scope_admission.lists[OF observation_scope_rows.context_list_profile_axioms])
+    (auto simp: observation_scopes_exact observation_scope_row_exact observation_scope_subject_lists
+      data_list_term_injective data_list_term_formed split: prod.splits)
+
+section \<open>Every accepted argument recovers the whole scope and table\<close>
+
+lemma observation_scope_input:
+  assumes "(311,t)\<in>positive_meaning observation_scope_system"
+  obtains C U F rows where "data_elements C" "data_elements U" "data_elements F" "observation_rows_data rows"
+    "t=observation_scope_argument (data_list_term C) (data_list_term U) (data_list_term F)
+      (data_list_term (map observation_row_term rows))"
+proof -
+  obtain p table where parts: "t=Pair_Term p table" "(310,p)\<in>positive_meaning observation_scope_system"
+    "(309,Pair_Term p table)\<in>positive_meaning observation_scope_system"
+    using assms by (simp only: observation_scope_admission.exact) blast
+  obtain C U F where ctx_fields: "data_elements C" "data_elements U" "data_elements F"
+    "p=observation_scope_context (data_list_term C) (data_list_term U) (data_list_term F)"
+    using parts(2) by (simp only: observation_scopes_exact) blast
+  obtain ts where table: "table=data_list_term ts"
+    "\<forall>x\<in>set ts. (308,Pair_Term p x)\<in>positive_meaning observation_scope_system"
+    using parts(3) by (auto simp only: observation_scope_rows.exact factor_term.inject)
+  have rows_admitted: "\<forall>x\<in>set ts. observation_row_admitted x"
+    using table(2) by (auto simp: observation_scope_row_exact; blast)
+  obtain rows where rows: "ts=map observation_row_term rows" "observation_rows_data rows"
+    using rows_admitted by (simp only: observation_rows_present) blast
+  show ?thesis by (rule that[OF ctx_fields(1-3) rows(2)])
+    (simp only: parts(1) ctx_fields(4) table(1) rows(1))
+qed
+
+abbreviation observation_scope_result where
+  "observation_scope_result t \<equiv> \<exists>C U F rows.
+    observation_scope_subject_formed (fset_of_list C) (fset_of_list U) (fset_of_list F) (fset_of_list rows) \<and>
+    t=observation_scope_argument (data_list_term C) (data_list_term U) (data_list_term F)
+      (data_list_term (map observation_row_term rows))"
+
+theorem observation_scope_exact:
+  "(311,t)\<in>positive_meaning observation_scope_system \<longleftrightarrow> observation_scope_result t"
+proof
+  assume holds: "(311,t)\<in>positive_meaning observation_scope_system"
+  obtain C U F rows where source: "t=observation_scope_argument (data_list_term C) (data_list_term U)
+      (data_list_term F) (data_list_term (map observation_row_term rows))"
+    by (rule observation_scope_input[OF holds]) blast
+  have formed: "observation_scope_subject_formed (fset_of_list C) (fset_of_list U) (fset_of_list F) (fset_of_list rows)"
+    using holds by (simp only: source observation_scope_encoded)
+  show "observation_scope_result t" using formed source by blast
+next
+  assume "observation_scope_result t"
+  then obtain C U F rows where parts:
+    "observation_scope_subject_formed (fset_of_list C) (fset_of_list U) (fset_of_list F) (fset_of_list rows)"
+    "t=observation_scope_argument (data_list_term C) (data_list_term U) (data_list_term F)
+      (data_list_term (map observation_row_term rows))" by blast
+  show "(311,t)\<in>positive_meaning observation_scope_system"
+    by (simp only: parts(2) observation_scope_encoded parts(1))
+qed
+
+theorem observation_scope_presented:
+  "(311,t)\<in>positive_meaning observation_scope_system \<longleftrightarrow>
+    presented_predicate observation_scope_record_presents observation_scope_domain t"
+proof
+  assume holds: "(311,t)\<in>positive_meaning observation_scope_system"
+  obtain C U F rows where parts:
+    "observation_scope_subject_formed (fset_of_list C) (fset_of_list U) (fset_of_list F) (fset_of_list rows)"
+    "t=observation_scope_argument (data_list_term C) (data_list_term U) (data_list_term F)
+      (data_list_term (map observation_row_term rows))"
+    using holds by (simp only: observation_scope_exact) blast
+  have data: "data_elements C" "data_elements U" "data_elements F" "observation_rows_data rows"
+    using parts(1) by (auto simp only: observation_scope_subject_lists)
+  have read: "observation_scope_record_presents
+      ((fset_of_list C,(fset_of_list U,fset_of_list F)),fset_of_list rows) t"
+    using observation_scope_record_enumeration[OF data] by (simp only: parts(2))
+  show "presented_predicate observation_scope_record_presents observation_scope_domain t"
+    by (simp only: presented_predicate_def; rule exI[of _
+      "((fset_of_list C,(fset_of_list U,fset_of_list F)),fset_of_list rows)"])
+      (use read parts(1) in simp)
+next
+  assume "presented_predicate observation_scope_record_presents observation_scope_domain t"
+  then obtain z where presented: "observation_scope_record_presents z t" "observation_scope_domain z"
+    by (simp only: presented_predicate_def) blast
+  obtain ctx T where z: "z=(ctx,T)" by (cases z) auto
+  obtain C rest where ctx: "ctx=(C,rest)" by (cases ctx) auto
+  obtain U F where rest: "rest=(U,F)" by (cases rest) auto
+  have read: "observation_scope_record_presents ((C,(U,F)),T) t"
+    and formed: "observation_scope_subject_formed C U F T"
+    using presented by (simp_all only: z ctx rest fst_conv snd_conv)
+  obtain cs us fs rows where fields: "fset_of_list cs=C" "fset_of_list us=U"
+    "fset_of_list fs=F" "fset_of_list rows=T"
+    "t=observation_scope_argument (data_list_term cs) (data_list_term us) (data_list_term fs)
+      (data_list_term (map observation_row_term rows))"
+    by (rule observation_scope_record_fields[OF read]) blast
+  show "(311,t)\<in>positive_meaning observation_scope_system"
+    by (simp only: fields(5) observation_scope_encoded fields(1-4) formed)
+qed
+
+corollary observation_scope_at:
+  assumes "observation_scope_record_presents z p"
+  shows "(311,p)\<in>positive_meaning observation_scope_system \<longleftrightarrow> observation_scope_domain z"
+  unfolding observation_scope_presented
+  by (rule observation_scope_records.predicate_at[OF assms])
+
+corollary observation_scope_invariance:
+  assumes "observation_scope_record_presents z p" "observation_scope_record_presents z q"
+  shows "(311,p)\<in>positive_meaning observation_scope_system \<longleftrightarrow>
+    (311,q)\<in>positive_meaning observation_scope_system"
+  by (rule observation_scope_records.predicate_invariance[OF assms observation_scope_presented])
+
+end

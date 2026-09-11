@@ -1,0 +1,9 @@
+
+Build errors:
+*** exception TERM raised (line 518 of "~~/src/HOL/Tools/hologic.ML"):
+***   dest_nat
+***   1
+*** 
+*** At command "setup" (line 5 of "/tmp/native-investigation-report-diagnostic-indexedsubjects8/theories/Indexed_Subject_Exports.thy")
+
+Return code: 1 (ERROR)

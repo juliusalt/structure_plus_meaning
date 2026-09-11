@@ -891,3 +891,82 @@ proof of arbitrary Python or JSON semantics.
 Both bounded assessment investigations also replay successfully. The final
 source check still matches all 826 proved theories and build tools, and the
 complete staged whitespace scan is empty.
+
+
+## Structural contracts for the thirteen fixed observation interfaces
+
+The next review applies the owner's subject requirement to every fixed
+investigation interface. The original native code equations remain valid;
+what was missing was a common explicit connection from each presentation index
+to the complete candidate, observation operation, and result or workload.
+The isolated proposal supplies those maps and proves each table equal to the
+shared derived-observation operation. The comparison predicates concern the
+same actual objects. Scalar wrappers instantiate the subject operation.
+
+The cases include complete query tuples with foreign comparison endpoints,
+unused malformed scope fields, nested profile lists, empty table rows, ordered
+pair coverage, Boolean test functions, actual native programs and call terms,
+repeated pattern substitutions, complete material socket sets, and actual
+revision methods and workloads. Fixed query data also remains inside the
+observation operation where it is shared by every candidate. None of these
+subjects is established by the accompanying prose.
+
+The exporter reads the actual checked calculation and theorems. It verifies
+the full observation application and the same typed maps, not just a constant
+name. A correctly proved equation specialized to `True` is refused as the
+contract of a general pattern call. Four further controls reject unrelated
+equations, functionality maps, observation and comparison corollaries. The
+exported terms retain their types, defining equations and explicit dependencies
+on the accepted Isabelle context. The runtime derives its candidate and facet
+domains from the checked calculation and uses that facet domain for repairs
+and revision.
+
+Every original facet selection, both marker assignments, and one invalid
+selection per family are executed: 98 complete cases. The final proposal
+preserves every original result and independent assessment. Its ordinary
+command path reproduces the collapsed-pattern report and a probe case carrying
+misleading descriptions. The latter still identifies the checked two-program
+problem in its formal contract. All 60 tooling tests pass.
+
+The first prospective host comparison uses the actual complete returned
+assessment objects and their stored public JSON values. It exposes nonempty
+tuple-valued reconstruction fields in ten cases and selects the existing JSON
+conversion without omitting any field. The second compares actual complete
+runtime programs before and after registry changes. Both generators retain
+all 98 programs under label changes. Reindexing the scope dictionary changes
+all 98 original programs; the structural generator preserves them all. Its
+returned distinguishing facet is 1, and it is the only eligible supplied
+candidate under all 196 mandatory observations. These observations have
+explicit complete host inputs and equality conditions. Their finite-table
+evaluation remains conditional on that host computation.
+
+The [retained review](validation/generalization-review-2026-09-11/indexed-subject-contracts/README.md)
+contains sixteen raw or derived proof receipts, four complete execution
+stages, six investigations, the failed proposals and serialization rejection,
+and every original parent input. All four stages and six investigations replay
+with their original checkers and complete results. Native mathematical-proof
+admission, whole symbolic-derivation admission, broader workflow coverage, and
+the final repository audit remain open.
+
+The full 827-theory session passes in invocation
+`a6bccb5e-cc43-4f58-867b-429b4db0e290`. Its current source inventory, build and
+check tools, embedded receipt and log agree. The first full-session attempt
+exposed one consumer proof still unfolding the former scalar predicate. Its
+repair instantiates the shared complete-input subject, preserving the theorem
+statement and executable definitions. The complete 197-theory dependency
+context passes with no reused local parent. A prospective comparison of the
+actual complete source contexts and checker results selects that repair before
+integration; the following full session establishes repository-wide admission.
+The [delivery evidence](validation/generalization-review-2026-09-11/indexed-subject-contracts-delivery/README.md)
+retains the original failure, dependency proof, two repair investigations,
+all ten earlier replays, and final full-session validation. Eight proof-context
+guard tests pass after adding the independent dependency-build mode.
+Both retained repair investigations also replay successfully with every
+complete output and original independent assessment preserved.
+
+The staged whitespace scan passes on active source and documentation. Six
+diagnostics concern exact retained inputs: five original failure logs and one
+generated proof-context source. A [prospective byte comparison](validation/generalization-review-2026-09-11/indexed-subject-contracts-retained-inputs/README.md)
+retains every complete input and actual output, selects identity under all six
+requirements, and reproduces both investigations on replay. Those historical
+bytes and the complete diagnostic are retained unchanged.

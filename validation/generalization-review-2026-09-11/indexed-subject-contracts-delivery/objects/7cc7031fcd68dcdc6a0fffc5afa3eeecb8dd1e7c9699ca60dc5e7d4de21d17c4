@@ -1,0 +1,224 @@
+theory Factor_Environment_Values
+  imports "Factor_Artifact_Values" "Factor_Coordinate_Values"
+begin
+
+section \<open>Every artifact use and every scoped binding\<close>
+
+definition environment_artifact_entry_presents ::
+  "(local_address option\<times>exact_artifact) \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "environment_artifact_entry_presents z t \<longleftrightarrow>
+    (\<exists>v. artifact_value_presents (snd z) v \<and> t=Pair_Term (use_data_term (fst z)) v)"
+
+lemma environment_artifact_entry_formed:
+  assumes read: "environment_artifact_entry_presents z t"
+  shows "term_formed t \<and> self_contained_term t"
+proof -
+  obtain v where material: "artifact_value_presents (snd z) v"
+    and encoded: "t=Pair_Term (use_data_term (fst z)) v"
+    using read unfolding environment_artifact_entry_presents_def by blast
+  show ?thesis using artifact_value_presents_formed[OF material] encoded by simp
+qed
+
+lemma environment_artifact_entry_unique:
+  assumes first: "environment_artifact_entry_presents z t"
+    and second: "environment_artifact_entry_presents w t"
+  shows "z=w"
+proof -
+  obtain a where left: "artifact_value_presents (snd z) a"
+    "t=Pair_Term (use_data_term (fst z)) a"
+    using first unfolding environment_artifact_entry_presents_def by blast
+  obtain b where right: "artifact_value_presents (snd w) b"
+    "t=Pair_Term (use_data_term (fst w)) b"
+    using second unfolding environment_artifact_entry_presents_def by blast
+  have same: "a=b" and coordinates: "use_data_term (fst z)=use_data_term (fst w)"
+    using left(2) right(2) by simp_all
+  have use: "fst z=fst w" by (rule injD[OF use_data_term_injective coordinates])
+  have other: "artifact_value_presents (snd w) a" using right(1) same by simp
+  have materials: "snd z=snd w" by (rule artifact_value_presents_unique[OF left(1) other])
+  show ?thesis by (rule prod_eqI[OF use materials])
+qed
+
+definition binding_data ::
+  "((local_address option\<times>local_address)\<times>local_address option) \<Rightarrow> factor_term" where
+  "binding_data z =
+    Pair_Term (Pair_Term (use_data_term (fst (fst z))) (Payload_Term (snd (fst z))))
+      (use_data_term (snd z))"
+
+lemma binding_data_injective: "inj binding_data"
+proof (rule injI)
+  fix z w
+  assume same: "binding_data z=binding_data w"
+  have source: "use_data_term (fst (fst z))=use_data_term (fst (fst w))"
+    and slot: "snd (fst z)=snd (fst w)"
+    and target: "use_data_term (snd z)=use_data_term (snd w)"
+    using same by (simp_all add: binding_data_def)
+  have sources: "fst (fst z)=fst (fst w)" by (rule injD[OF use_data_term_injective source])
+  have targets: "snd z=snd w" by (rule injD[OF use_data_term_injective target])
+  show "z=w" using sources slot targets by (cases z; cases w) auto
+qed
+
+lemma binding_data_self_contained [simp]: "self_contained_term (binding_data z)"
+  by (simp add: binding_data_def)
+
+lemma binding_data_formed:
+  assumes ef: "environment_formed E" and row: "z\<in>environment_bindings E"
+  shows "term_formed (binding_data z)"
+proof -
+  obtain u k v where shape: "z=((u,k),v)" by (cases z) auto
+  have binding: "binds_slot E u k v" using row shape by (simp add: binds_slot_def)
+  obtain R where source: "artifact_at E u R" "k\<in>rra_carrier (object_structure R)"
+    using ef binding unfolding environment_formed_def by blast
+  have rf: "exact_formed R" using ef source(1) by (simp add: environment_formed_def)
+  have slot: "octets_formed k" using rf source(2) by (auto simp: exact_formed_def)
+  show ?thesis using slot shape by (simp add: binding_data_def)
+qed
+
+definition environment_value_presents ::
+  "local_address option artifact_environment \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "environment_value_presents E t \<longleftrightarrow>
+    environment_formed E \<and>
+    (\<exists>a b. data_collection_presents environment_artifact_entry_presents (environment_artifacts E) a \<and>
+      data_collection_presents (\<lambda>z v. v=binding_data z) (environment_bindings E) b \<and>
+      t=Pair_Term a b)"
+
+theorem environment_value_presents_unique:
+  assumes first: "environment_value_presents E t" and second: "environment_value_presents F t"
+  shows "E=F"
+proof -
+  obtain a b where left:
+    "data_collection_presents environment_artifact_entry_presents (environment_artifacts E) a"
+    "data_collection_presents (\<lambda>z v. v=binding_data z) (environment_bindings E) b"
+    "t=Pair_Term a b" using first unfolding environment_value_presents_def by blast
+  obtain c d where right:
+    "data_collection_presents environment_artifact_entry_presents (environment_artifacts F) c"
+    "data_collection_presents (\<lambda>z v. v=binding_data z) (environment_bindings F) d"
+    "t=Pair_Term c d" using second unfolding environment_value_presents_def by blast
+  have fields: "c=a \<and> d=b" using left(3) right(3) by simp
+  have other_artifacts:
+    "data_collection_presents environment_artifact_entry_presents (environment_artifacts F) a"
+    and other_bindings:
+    "data_collection_presents (\<lambda>z v. v=binding_data z) (environment_bindings F) b"
+    using right(1,2) fields by simp_all
+  have artifacts: "environment_artifacts E=environment_artifacts F"
+    by (rule data_collection_presents_unique[OF left(1) other_artifacts])
+       (rule environment_artifact_entry_unique; assumption)
+  have bindings: "environment_bindings E=environment_bindings F"
+    by (rule data_collection_presents_unique[OF left(2) other_bindings])
+       (auto dest: injD[OF binding_data_injective])
+  show ?thesis using artifacts bindings by (cases E; cases F) simp
+qed
+
+theorem environment_value_presents_total:
+  assumes ef: "environment_formed E"
+  shows "\<exists>t. environment_value_presents E t"
+proof -
+  have af: "finite (environment_artifacts E)" and bf: "finite (environment_bindings E)"
+    using ef by (auto simp: environment_formed_def)
+  have each: "\<forall>z\<in>environment_artifacts E. \<exists>t. environment_artifact_entry_presents z t"
+  proof (intro ballI)
+    fix z assume row: "z\<in>environment_artifacts E"
+    obtain u R where shape: "z=(u,R)" by (cases z) auto
+    have source: "artifact_at E u R" using row shape by (simp add: artifact_at_def)
+    have rf: "exact_formed R" using ef source by (simp add: environment_formed_def)
+    obtain v where material: "artifact_value_presents R v"
+      using artifact_value_presents_total[OF rf] by blast
+    show "\<exists>t. environment_artifact_entry_presents z t"
+      by (rule exI[of _ "Pair_Term (use_data_term u) v"])
+         (use material shape in \<open>auto simp: environment_artifact_entry_presents_def\<close>)
+  qed
+  obtain a where artifacts:
+    "data_collection_presents environment_artifact_entry_presents (environment_artifacts E) a"
+    using data_collection_presents_total[OF af each] by blast
+  have every_binding: "\<forall>z\<in>environment_bindings E. \<exists>v. v=binding_data z" by simp
+  obtain b where bindings:
+    "data_collection_presents (\<lambda>z v. v=binding_data z) (environment_bindings E) b"
+    using data_collection_presents_total[OF bf every_binding] by blast
+  show ?thesis by (rule exI[of _ "Pair_Term a b"])
+    (use ef artifacts bindings in \<open>auto simp: environment_value_presents_def\<close>)
+qed
+
+lemma environment_value_presents_formed:
+  assumes present: "environment_value_presents E t"
+  shows "environment_formed E \<and> term_formed t \<and> self_contained_term t"
+proof -
+  obtain a b where ef: "environment_formed E" and parts:
+    "data_collection_presents environment_artifact_entry_presents (environment_artifacts E) a"
+    "data_collection_presents (\<lambda>z v. v=binding_data z) (environment_bindings E) b"
+    "t=Pair_Term a b"
+    using present unfolding environment_value_presents_def by blast
+  have af: "term_formed a"
+    by (rule data_collection_presents_formed[OF parts(1)])
+       (meson environment_artifact_entry_formed)
+  have ac: "self_contained_term a"
+    by (rule data_collection_presents_self_contained[OF parts(1)])
+       (meson environment_artifact_entry_formed)
+  have bf: "term_formed b"
+  proof (rule data_collection_presents_formed[OF parts(2)])
+    fix z v assume row: "z\<in>environment_bindings E" and same: "v=binding_data z"
+    show "term_formed v" using binding_data_formed[OF ef row] same by simp
+  qed
+  have bc: "self_contained_term b"
+    by (rule data_collection_presents_self_contained[OF parts(2)]) simp
+  show ?thesis using ef af ac bf bc parts(3) by simp
+qed
+
+section \<open>The environment is recovered from the quotation's exact artifact\<close>
+
+definition environment_value_quoted_at ::
+  "exact_artifact \<Rightarrow> local_address \<Rightarrow> local_address option artifact_environment \<Rightarrow>
+    local_address set \<Rightarrow> bool" where
+  "environment_value_quoted_at C r E I \<longleftrightarrow>
+    (\<exists>t. environment_value_presents E t \<and> self_contained_quoted_at C r t I)"
+
+theorem environment_value_quoted_unique:
+  assumes first: "environment_value_quoted_at C r E I"
+    and second: "environment_value_quoted_at C r F J"
+  shows "E=F \<and> I=J"
+proof -
+  obtain t where left: "environment_value_presents E t" "self_contained_quoted_at C r t I"
+    using first unfolding environment_value_quoted_at_def by blast
+  obtain v where right: "environment_value_presents F v" "self_contained_quoted_at C r v J"
+    using second unfolding environment_value_quoted_at_def by blast
+  have same: "t=v \<and> I=J" by (rule self_contained_quoted_unique[OF left(2) right(2)])
+  have other: "environment_value_presents F t" using right(1) same by simp
+  show ?thesis using environment_value_presents_unique[OF left(1) other] same by blast
+qed
+
+theorem environment_value_quoted_total:
+  assumes formed: "environment_formed E"
+  shows "\<exists>C I. exact_formed C \<and> environment_value_quoted_at C [] E I \<and>
+    rra_carrier (object_structure C)=I"
+proof -
+  obtain t where present: "environment_value_presents E t"
+    using environment_value_presents_total[OF formed] by blast
+  have tf: "term_formed t" and closed: "self_contained_term t"
+    using environment_value_presents_formed[OF present] by auto
+  have quote: "self_contained_quoted_at (term_syntax t) [] t (term_syntax_interior t)"
+    and source: "exact_formed (term_syntax t)"
+    and complete: "rra_carrier (object_structure (term_syntax t))=term_syntax_interior t"
+    using self_contained_quotation_total[OF tf closed] by auto
+  have read: "environment_value_quoted_at (term_syntax t) [] E (term_syntax_interior t)"
+    using present quote unfolding environment_value_quoted_at_def by blast
+  show ?thesis
+    by (rule exI[of _ "term_syntax t"], rule exI[of _ "term_syntax_interior t"])
+       (use source read complete in blast)
+qed
+
+text \<open>
+  The represented environment is exact finite data, including the complete
+  artifact at each use and every source-slot-target binding. Equal artifact
+  values at distinct uses remain distinct rows. Binding cycles are finite
+  relations and require no recursive expansion of the use graph.
+
+  Use coordinates are option-valued finite words. Their natural components
+  have an injective payload-and-pair presentation, so no byte restriction is
+  imposed on mathematical use coordinates. Every formed environment of this
+  native construction class has a complete self-contained quotation. Recovering
+  its value reads no outer-environment binding.
+
+  Environment formation is checked here. Grammar-derived closure and the
+  admissibility of an application in this represented environment remain
+  separate judgments over its recovered data.
+\<close>
+
+end

@@ -1,0 +1,2743 @@
+{
+  "question": "Reproduce all original observation and comparison data for every active fixed investigation and every selected facet subset.",
+  "boundary": "This complete finite baseline checks the thirteen original actual operations, with both pattern-marker variants and an invalid-selection control for each family. It does not infer broader subject meaning from the descriptions.",
+  "cases": [
+    {
+      "schema": "finite-investigation-1",
+      "kind": "reasoning_methods",
+      "selected": [],
+      "question": "Do the selected quality observations distinguish sound use of available native premises and useful settlement of the original goals?",
+      "scope": {
+        "candidates": {
+          "0": "Admit possible premises through the actual native counter predicate",
+          "1": "Trust every possible premise as already established",
+          "2": "Establish no possible premises"
+        },
+        "facets": {
+          "0": "Every established premise passes its actual native admission",
+          "1": "Every settled goal is true in the original native planner",
+          "2": "Settlement agrees with the native goal outcome"
+        },
+        "workloads": {
+          "0": "All three possible counter premises are valid",
+          "1": "One possible premise is formed but refused by the native counter predicate"
+        },
+        "values": "A workload identifier whose quality condition is actually satisfied",
+        "comparison": "Inclusion of satisfied workload and quality-condition pairs",
+        "coverage": "These three actual premise-use methods, the same generated pairing rule, and these two explicit workloads"
+      },
+      "semantic_boundary": "Every method calls the same learned-schema generator and inference driver. Counter admission is defined by the actual native predicate with a proved code equation. Goal outcomes are independently proved in the original native planner. The quality observations include both soundness and useful settlement. The supplied finite family does not cover all reasoning methods or generalize their mathematical proofs natively."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "reasoning_methods",
+      "selected": [
+        0
+      ],
+      "question": "Do the selected quality observations distinguish sound use of available native premises and useful settlement of the original goals?",
+      "scope": {
+        "candidates": {
+          "0": "Admit possible premises through the actual native counter predicate",
+          "1": "Trust every possible premise as already established",
+          "2": "Establish no possible premises"
+        },
+        "facets": {
+          "0": "Every established premise passes its actual native admission",
+          "1": "Every settled goal is true in the original native planner",
+          "2": "Settlement agrees with the native goal outcome"
+        },
+        "workloads": {
+          "0": "All three possible counter premises are valid",
+          "1": "One possible premise is formed but refused by the native counter predicate"
+        },
+        "values": "A workload identifier whose quality condition is actually satisfied",
+        "comparison": "Inclusion of satisfied workload and quality-condition pairs",
+        "coverage": "These three actual premise-use methods, the same generated pairing rule, and these two explicit workloads"
+      },
+      "semantic_boundary": "Every method calls the same learned-schema generator and inference driver. Counter admission is defined by the actual native predicate with a proved code equation. Goal outcomes are independently proved in the original native planner. The quality observations include both soundness and useful settlement. The supplied finite family does not cover all reasoning methods or generalize their mathematical proofs natively."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "reasoning_methods",
+      "selected": [
+        1
+      ],
+      "question": "Do the selected quality observations distinguish sound use of available native premises and useful settlement of the original goals?",
+      "scope": {
+        "candidates": {
+          "0": "Admit possible premises through the actual native counter predicate",
+          "1": "Trust every possible premise as already established",
+          "2": "Establish no possible premises"
+        },
+        "facets": {
+          "0": "Every established premise passes its actual native admission",
+          "1": "Every settled goal is true in the original native planner",
+          "2": "Settlement agrees with the native goal outcome"
+        },
+        "workloads": {
+          "0": "All three possible counter premises are valid",
+          "1": "One possible premise is formed but refused by the native counter predicate"
+        },
+        "values": "A workload identifier whose quality condition is actually satisfied",
+        "comparison": "Inclusion of satisfied workload and quality-condition pairs",
+        "coverage": "These three actual premise-use methods, the same generated pairing rule, and these two explicit workloads"
+      },
+      "semantic_boundary": "Every method calls the same learned-schema generator and inference driver. Counter admission is defined by the actual native predicate with a proved code equation. Goal outcomes are independently proved in the original native planner. The quality observations include both soundness and useful settlement. The supplied finite family does not cover all reasoning methods or generalize their mathematical proofs natively."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "reasoning_methods",
+      "selected": [
+        2
+      ],
+      "question": "Do the selected quality observations distinguish sound use of available native premises and useful settlement of the original goals?",
+      "scope": {
+        "candidates": {
+          "0": "Admit possible premises through the actual native counter predicate",
+          "1": "Trust every possible premise as already established",
+          "2": "Establish no possible premises"
+        },
+        "facets": {
+          "0": "Every established premise passes its actual native admission",
+          "1": "Every settled goal is true in the original native planner",
+          "2": "Settlement agrees with the native goal outcome"
+        },
+        "workloads": {
+          "0": "All three possible counter premises are valid",
+          "1": "One possible premise is formed but refused by the native counter predicate"
+        },
+        "values": "A workload identifier whose quality condition is actually satisfied",
+        "comparison": "Inclusion of satisfied workload and quality-condition pairs",
+        "coverage": "These three actual premise-use methods, the same generated pairing rule, and these two explicit workloads"
+      },
+      "semantic_boundary": "Every method calls the same learned-schema generator and inference driver. Counter admission is defined by the actual native predicate with a proved code equation. Goal outcomes are independently proved in the original native planner. The quality observations include both soundness and useful settlement. The supplied finite family does not cover all reasoning methods or generalize their mathematical proofs natively."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "reasoning_methods",
+      "selected": [
+        0,
+        1
+      ],
+      "question": "Do the selected quality observations distinguish sound use of available native premises and useful settlement of the original goals?",
+      "scope": {
+        "candidates": {
+          "0": "Admit possible premises through the actual native counter predicate",
+          "1": "Trust every possible premise as already established",
+          "2": "Establish no possible premises"
+        },
+        "facets": {
+          "0": "Every established premise passes its actual native admission",
+          "1": "Every settled goal is true in the original native planner",
+          "2": "Settlement agrees with the native goal outcome"
+        },
+        "workloads": {
+          "0": "All three possible counter premises are valid",
+          "1": "One possible premise is formed but refused by the native counter predicate"
+        },
+        "values": "A workload identifier whose quality condition is actually satisfied",
+        "comparison": "Inclusion of satisfied workload and quality-condition pairs",
+        "coverage": "These three actual premise-use methods, the same generated pairing rule, and these two explicit workloads"
+      },
+      "semantic_boundary": "Every method calls the same learned-schema generator and inference driver. Counter admission is defined by the actual native predicate with a proved code equation. Goal outcomes are independently proved in the original native planner. The quality observations include both soundness and useful settlement. The supplied finite family does not cover all reasoning methods or generalize their mathematical proofs natively."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "reasoning_methods",
+      "selected": [
+        0,
+        2
+      ],
+      "question": "Do the selected quality observations distinguish sound use of available native premises and useful settlement of the original goals?",
+      "scope": {
+        "candidates": {
+          "0": "Admit possible premises through the actual native counter predicate",
+          "1": "Trust every possible premise as already established",
+          "2": "Establish no possible premises"
+        },
+        "facets": {
+          "0": "Every established premise passes its actual native admission",
+          "1": "Every settled goal is true in the original native planner",
+          "2": "Settlement agrees with the native goal outcome"
+        },
+        "workloads": {
+          "0": "All three possible counter premises are valid",
+          "1": "One possible premise is formed but refused by the native counter predicate"
+        },
+        "values": "A workload identifier whose quality condition is actually satisfied",
+        "comparison": "Inclusion of satisfied workload and quality-condition pairs",
+        "coverage": "These three actual premise-use methods, the same generated pairing rule, and these two explicit workloads"
+      },
+      "semantic_boundary": "Every method calls the same learned-schema generator and inference driver. Counter admission is defined by the actual native predicate with a proved code equation. Goal outcomes are independently proved in the original native planner. The quality observations include both soundness and useful settlement. The supplied finite family does not cover all reasoning methods or generalize their mathematical proofs natively."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "reasoning_methods",
+      "selected": [
+        1,
+        2
+      ],
+      "question": "Do the selected quality observations distinguish sound use of available native premises and useful settlement of the original goals?",
+      "scope": {
+        "candidates": {
+          "0": "Admit possible premises through the actual native counter predicate",
+          "1": "Trust every possible premise as already established",
+          "2": "Establish no possible premises"
+        },
+        "facets": {
+          "0": "Every established premise passes its actual native admission",
+          "1": "Every settled goal is true in the original native planner",
+          "2": "Settlement agrees with the native goal outcome"
+        },
+        "workloads": {
+          "0": "All three possible counter premises are valid",
+          "1": "One possible premise is formed but refused by the native counter predicate"
+        },
+        "values": "A workload identifier whose quality condition is actually satisfied",
+        "comparison": "Inclusion of satisfied workload and quality-condition pairs",
+        "coverage": "These three actual premise-use methods, the same generated pairing rule, and these two explicit workloads"
+      },
+      "semantic_boundary": "Every method calls the same learned-schema generator and inference driver. Counter admission is defined by the actual native predicate with a proved code equation. Goal outcomes are independently proved in the original native planner. The quality observations include both soundness and useful settlement. The supplied finite family does not cover all reasoning methods or generalize their mathematical proofs natively."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "reasoning_methods",
+      "selected": [
+        0,
+        1,
+        2
+      ],
+      "question": "Do the selected quality observations distinguish sound use of available native premises and useful settlement of the original goals?",
+      "scope": {
+        "candidates": {
+          "0": "Admit possible premises through the actual native counter predicate",
+          "1": "Trust every possible premise as already established",
+          "2": "Establish no possible premises"
+        },
+        "facets": {
+          "0": "Every established premise passes its actual native admission",
+          "1": "Every settled goal is true in the original native planner",
+          "2": "Settlement agrees with the native goal outcome"
+        },
+        "workloads": {
+          "0": "All three possible counter premises are valid",
+          "1": "One possible premise is formed but refused by the native counter predicate"
+        },
+        "values": "A workload identifier whose quality condition is actually satisfied",
+        "comparison": "Inclusion of satisfied workload and quality-condition pairs",
+        "coverage": "These three actual premise-use methods, the same generated pairing rule, and these two explicit workloads"
+      },
+      "semantic_boundary": "Every method calls the same learned-schema generator and inference driver. Counter admission is defined by the actual native predicate with a proved code equation. Goal outcomes are independently proved in the original native planner. The quality observations include both soundness and useful settlement. The supplied finite family does not cover all reasoning methods or generalize their mathematical proofs natively."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "reasoning_methods",
+      "selected": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "question": "Do the selected quality observations distinguish sound use of available native premises and useful settlement of the original goals?",
+      "scope": {
+        "candidates": {
+          "0": "Admit possible premises through the actual native counter predicate",
+          "1": "Trust every possible premise as already established",
+          "2": "Establish no possible premises"
+        },
+        "facets": {
+          "0": "Every established premise passes its actual native admission",
+          "1": "Every settled goal is true in the original native planner",
+          "2": "Settlement agrees with the native goal outcome"
+        },
+        "workloads": {
+          "0": "All three possible counter premises are valid",
+          "1": "One possible premise is formed but refused by the native counter predicate"
+        },
+        "values": "A workload identifier whose quality condition is actually satisfied",
+        "comparison": "Inclusion of satisfied workload and quality-condition pairs",
+        "coverage": "These three actual premise-use methods, the same generated pairing rule, and these two explicit workloads"
+      },
+      "semantic_boundary": "Every method calls the same learned-schema generator and inference driver. Counter admission is defined by the actual native predicate with a proved code equation. Goal outcomes are independently proved in the original native planner. The quality observations include both soundness and useful settlement. The supplied finite family does not cover all reasoning methods or generalize their mathematical proofs natively."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "investigation_input",
+      "selected": [],
+      "question": "Do the selected native decisions distinguish exactly the complete investigation input, retaining comparison rows outside the candidate scope?",
+      "scope": {
+        "candidates": {
+          "0": "An admitted scope and diagonal comparison",
+          "1": "Reversed and repeated admitted comparison rows",
+          "2": "A comparison row with a foreign first endpoint",
+          "3": "A comparison row with a foreign second endpoint",
+          "4": "A comparison row with two foreign endpoints",
+          "5": "An empty comparison",
+          "6": "A formed reference in the first endpoint",
+          "7": "A formed reference in the second endpoint",
+          "8": "An unavailable selected facet and empty comparison",
+          "9": "An empty candidate set with a nonempty data comparison",
+          "10": "Malformed unused available facets with empty candidates and comparison"
+        },
+        "facets": {
+          "0": "Actual native scope admission combined with native checks restricting both comparison endpoints to the candidate set",
+          "1": "Actual native complete input admission with independent data comparison rows"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of independent complete input admission: the original declared observation scope and every data comparison row, including endpoints outside the candidate set",
+        "coverage": "These eleven complete finite query inputs"
+      },
+      "semantic_boundary": "The original finite evaluator's formation does not restrict its comparison to declared candidate pairs. The observation uses actual native scope calls on both endpoint orientations. The independent whole-input class preserves the complete comparison relation. The second observation calls its complete native admission. Executed code equations do not supply native checking of mathematical proofs."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "investigation_input",
+      "selected": [
+        0
+      ],
+      "question": "Do the selected native decisions distinguish exactly the complete investigation input, retaining comparison rows outside the candidate scope?",
+      "scope": {
+        "candidates": {
+          "0": "An admitted scope and diagonal comparison",
+          "1": "Reversed and repeated admitted comparison rows",
+          "2": "A comparison row with a foreign first endpoint",
+          "3": "A comparison row with a foreign second endpoint",
+          "4": "A comparison row with two foreign endpoints",
+          "5": "An empty comparison",
+          "6": "A formed reference in the first endpoint",
+          "7": "A formed reference in the second endpoint",
+          "8": "An unavailable selected facet and empty comparison",
+          "9": "An empty candidate set with a nonempty data comparison",
+          "10": "Malformed unused available facets with empty candidates and comparison"
+        },
+        "facets": {
+          "0": "Actual native scope admission combined with native checks restricting both comparison endpoints to the candidate set",
+          "1": "Actual native complete input admission with independent data comparison rows"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of independent complete input admission: the original declared observation scope and every data comparison row, including endpoints outside the candidate set",
+        "coverage": "These eleven complete finite query inputs"
+      },
+      "semantic_boundary": "The original finite evaluator's formation does not restrict its comparison to declared candidate pairs. The observation uses actual native scope calls on both endpoint orientations. The independent whole-input class preserves the complete comparison relation. The second observation calls its complete native admission. Executed code equations do not supply native checking of mathematical proofs."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "investigation_input",
+      "selected": [
+        1
+      ],
+      "question": "Do the selected native decisions distinguish exactly the complete investigation input, retaining comparison rows outside the candidate scope?",
+      "scope": {
+        "candidates": {
+          "0": "An admitted scope and diagonal comparison",
+          "1": "Reversed and repeated admitted comparison rows",
+          "2": "A comparison row with a foreign first endpoint",
+          "3": "A comparison row with a foreign second endpoint",
+          "4": "A comparison row with two foreign endpoints",
+          "5": "An empty comparison",
+          "6": "A formed reference in the first endpoint",
+          "7": "A formed reference in the second endpoint",
+          "8": "An unavailable selected facet and empty comparison",
+          "9": "An empty candidate set with a nonempty data comparison",
+          "10": "Malformed unused available facets with empty candidates and comparison"
+        },
+        "facets": {
+          "0": "Actual native scope admission combined with native checks restricting both comparison endpoints to the candidate set",
+          "1": "Actual native complete input admission with independent data comparison rows"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of independent complete input admission: the original declared observation scope and every data comparison row, including endpoints outside the candidate set",
+        "coverage": "These eleven complete finite query inputs"
+      },
+      "semantic_boundary": "The original finite evaluator's formation does not restrict its comparison to declared candidate pairs. The observation uses actual native scope calls on both endpoint orientations. The independent whole-input class preserves the complete comparison relation. The second observation calls its complete native admission. Executed code equations do not supply native checking of mathematical proofs."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "investigation_input",
+      "selected": [
+        0,
+        1
+      ],
+      "question": "Do the selected native decisions distinguish exactly the complete investigation input, retaining comparison rows outside the candidate scope?",
+      "scope": {
+        "candidates": {
+          "0": "An admitted scope and diagonal comparison",
+          "1": "Reversed and repeated admitted comparison rows",
+          "2": "A comparison row with a foreign first endpoint",
+          "3": "A comparison row with a foreign second endpoint",
+          "4": "A comparison row with two foreign endpoints",
+          "5": "An empty comparison",
+          "6": "A formed reference in the first endpoint",
+          "7": "A formed reference in the second endpoint",
+          "8": "An unavailable selected facet and empty comparison",
+          "9": "An empty candidate set with a nonempty data comparison",
+          "10": "Malformed unused available facets with empty candidates and comparison"
+        },
+        "facets": {
+          "0": "Actual native scope admission combined with native checks restricting both comparison endpoints to the candidate set",
+          "1": "Actual native complete input admission with independent data comparison rows"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of independent complete input admission: the original declared observation scope and every data comparison row, including endpoints outside the candidate set",
+        "coverage": "These eleven complete finite query inputs"
+      },
+      "semantic_boundary": "The original finite evaluator's formation does not restrict its comparison to declared candidate pairs. The observation uses actual native scope calls on both endpoint orientations. The independent whole-input class preserves the complete comparison relation. The second observation calls its complete native admission. Executed code equations do not supply native checking of mathematical proofs."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "investigation_input",
+      "selected": [
+        0,
+        1,
+        2
+      ],
+      "question": "Do the selected native decisions distinguish exactly the complete investigation input, retaining comparison rows outside the candidate scope?",
+      "scope": {
+        "candidates": {
+          "0": "An admitted scope and diagonal comparison",
+          "1": "Reversed and repeated admitted comparison rows",
+          "2": "A comparison row with a foreign first endpoint",
+          "3": "A comparison row with a foreign second endpoint",
+          "4": "A comparison row with two foreign endpoints",
+          "5": "An empty comparison",
+          "6": "A formed reference in the first endpoint",
+          "7": "A formed reference in the second endpoint",
+          "8": "An unavailable selected facet and empty comparison",
+          "9": "An empty candidate set with a nonempty data comparison",
+          "10": "Malformed unused available facets with empty candidates and comparison"
+        },
+        "facets": {
+          "0": "Actual native scope admission combined with native checks restricting both comparison endpoints to the candidate set",
+          "1": "Actual native complete input admission with independent data comparison rows"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of independent complete input admission: the original declared observation scope and every data comparison row, including endpoints outside the candidate set",
+        "coverage": "These eleven complete finite query inputs"
+      },
+      "semantic_boundary": "The original finite evaluator's formation does not restrict its comparison to declared candidate pairs. The observation uses actual native scope calls on both endpoint orientations. The independent whole-input class preserves the complete comparison relation. The second observation calls its complete native admission. Executed code equations do not supply native checking of mathematical proofs."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "revision_methods",
+      "selected": [],
+      "question": "Do the selected quality observations preserve the actual revision methods' satisfied workload conditions?",
+      "scope": {
+        "candidates": {
+          "0": "Preserve the original selection and add its reported repairs",
+          "1": "Withdraw unsound facets and reuse the original repair report",
+          "2": "Recompute repairs after withdrawing unsound facets",
+          "3": "Select the entire sound available language",
+          "4": "Only withdraw unsound facets",
+          "5": "Restart from an empty selection and add its reported repairs"
+        },
+        "facets": {
+          "0": "Preserve every intended comparison",
+          "1": "Retain every originally selected sound facet",
+          "2": "Leave exactly the missing comparisons of the sound available language",
+          "3": "Justify every addition by a repair witness after withdrawal"
+        },
+        "workloads": {
+          "0": "An unsound selected facet masks a missing distinction",
+          "1": "The original selection is already adequate",
+          "2": "No adequate basis exists in the available language",
+          "3": "The original selection is sound and incomplete",
+          "4": "The original selection is empty"
+        },
+        "values": "A workload identifier whose stated quality condition is actually satisfied",
+        "comparison": "Inclusion of all satisfied workload and quality-condition pairs",
+        "coverage": "These six actual method compositions on these five explicit finite workloads"
+      },
+      "semantic_boundary": "Every observation is computed by an actual composition of the exported investigation operations and has an exact contract against independently stated soundness, conservation, language capability, or witness conditions. Successful-condition inclusion is the comparison being investigated. A separate universal theorem proves the recomputed revision meets all four conditions. This finite method comparison does not enumerate every possible development method."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "revision_methods",
+      "selected": [
+        0
+      ],
+      "question": "Do the selected quality observations preserve the actual revision methods' satisfied workload conditions?",
+      "scope": {
+        "candidates": {
+          "0": "Preserve the original selection and add its reported repairs",
+          "1": "Withdraw unsound facets and reuse the original repair report",
+          "2": "Recompute repairs after withdrawing unsound facets",
+          "3": "Select the entire sound available language",
+          "4": "Only withdraw unsound facets",
+          "5": "Restart from an empty selection and add its reported repairs"
+        },
+        "facets": {
+          "0": "Preserve every intended comparison",
+          "1": "Retain every originally selected sound facet",
+          "2": "Leave exactly the missing comparisons of the sound available language",
+          "3": "Justify every addition by a repair witness after withdrawal"
+        },
+        "workloads": {
+          "0": "An unsound selected facet masks a missing distinction",
+          "1": "The original selection is already adequate",
+          "2": "No adequate basis exists in the available language",
+          "3": "The original selection is sound and incomplete",
+          "4": "The original selection is empty"
+        },
+        "values": "A workload identifier whose stated quality condition is actually satisfied",
+        "comparison": "Inclusion of all satisfied workload and quality-condition pairs",
+        "coverage": "These six actual method compositions on these five explicit finite workloads"
+      },
+      "semantic_boundary": "Every observation is computed by an actual composition of the exported investigation operations and has an exact contract against independently stated soundness, conservation, language capability, or witness conditions. Successful-condition inclusion is the comparison being investigated. A separate universal theorem proves the recomputed revision meets all four conditions. This finite method comparison does not enumerate every possible development method."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "revision_methods",
+      "selected": [
+        1
+      ],
+      "question": "Do the selected quality observations preserve the actual revision methods' satisfied workload conditions?",
+      "scope": {
+        "candidates": {
+          "0": "Preserve the original selection and add its reported repairs",
+          "1": "Withdraw unsound facets and reuse the original repair report",
+          "2": "Recompute repairs after withdrawing unsound facets",
+          "3": "Select the entire sound available language",
+          "4": "Only withdraw unsound facets",
+          "5": "Restart from an empty selection and add its reported repairs"
+        },
+        "facets": {
+          "0": "Preserve every intended comparison",
+          "1": "Retain every originally selected sound facet",
+          "2": "Leave exactly the missing comparisons of the sound available language",
+          "3": "Justify every addition by a repair witness after withdrawal"
+        },
+        "workloads": {
+          "0": "An unsound selected facet masks a missing distinction",
+          "1": "The original selection is already adequate",
+          "2": "No adequate basis exists in the available language",
+          "3": "The original selection is sound and incomplete",
+          "4": "The original selection is empty"
+        },
+        "values": "A workload identifier whose stated quality condition is actually satisfied",
+        "comparison": "Inclusion of all satisfied workload and quality-condition pairs",
+        "coverage": "These six actual method compositions on these five explicit finite workloads"
+      },
+      "semantic_boundary": "Every observation is computed by an actual composition of the exported investigation operations and has an exact contract against independently stated soundness, conservation, language capability, or witness conditions. Successful-condition inclusion is the comparison being investigated. A separate universal theorem proves the recomputed revision meets all four conditions. This finite method comparison does not enumerate every possible development method."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "revision_methods",
+      "selected": [
+        2
+      ],
+      "question": "Do the selected quality observations preserve the actual revision methods' satisfied workload conditions?",
+      "scope": {
+        "candidates": {
+          "0": "Preserve the original selection and add its reported repairs",
+          "1": "Withdraw unsound facets and reuse the original repair report",
+          "2": "Recompute repairs after withdrawing unsound facets",
+          "3": "Select the entire sound available language",
+          "4": "Only withdraw unsound facets",
+          "5": "Restart from an empty selection and add its reported repairs"
+        },
+        "facets": {
+          "0": "Preserve every intended comparison",
+          "1": "Retain every originally selected sound facet",
+          "2": "Leave exactly the missing comparisons of the sound available language",
+          "3": "Justify every addition by a repair witness after withdrawal"
+        },
+        "workloads": {
+          "0": "An unsound selected facet masks a missing distinction",
+          "1": "The original selection is already adequate",
+          "2": "No adequate basis exists in the available language",
+          "3": "The original selection is sound and incomplete",
+          "4": "The original selection is empty"
+        },
+        "values": "A workload identifier whose stated quality condition is actually satisfied",
+        "comparison": "Inclusion of all satisfied workload and quality-condition pairs",
+        "coverage": "These six actual method compositions on these five explicit finite workloads"
+      },
+      "semantic_boundary": "Every observation is computed by an actual composition of the exported investigation operations and has an exact contract against independently stated soundness, conservation, language capability, or witness conditions. Successful-condition inclusion is the comparison being investigated. A separate universal theorem proves the recomputed revision meets all four conditions. This finite method comparison does not enumerate every possible development method."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "revision_methods",
+      "selected": [
+        3
+      ],
+      "question": "Do the selected quality observations preserve the actual revision methods' satisfied workload conditions?",
+      "scope": {
+        "candidates": {
+          "0": "Preserve the original selection and add its reported repairs",
+          "1": "Withdraw unsound facets and reuse the original repair report",
+          "2": "Recompute repairs after withdrawing unsound facets",
+          "3": "Select the entire sound available language",
+          "4": "Only withdraw unsound facets",
+          "5": "Restart from an empty selection and add its reported repairs"
+        },
+        "facets": {
+          "0": "Preserve every intended comparison",
+          "1": "Retain every originally selected sound facet",
+          "2": "Leave exactly the missing comparisons of the sound available language",
+          "3": "Justify every addition by a repair witness after withdrawal"
+        },
+        "workloads": {
+          "0": "An unsound selected facet masks a missing distinction",
+          "1": "The original selection is already adequate",
+          "2": "No adequate basis exists in the available language",
+          "3": "The original selection is sound and incomplete",
+          "4": "The original selection is empty"
+        },
+        "values": "A workload identifier whose stated quality condition is actually satisfied",
+        "comparison": "Inclusion of all satisfied workload and quality-condition pairs",
+        "coverage": "These six actual method compositions on these five explicit finite workloads"
+      },
+      "semantic_boundary": "Every observation is computed by an actual composition of the exported investigation operations and has an exact contract against independently stated soundness, conservation, language capability, or witness conditions. Successful-condition inclusion is the comparison being investigated. A separate universal theorem proves the recomputed revision meets all four conditions. This finite method comparison does not enumerate every possible development method."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "revision_methods",
+      "selected": [
+        0,
+        1
+      ],
+      "question": "Do the selected quality observations preserve the actual revision methods' satisfied workload conditions?",
+      "scope": {
+        "candidates": {
+          "0": "Preserve the original selection and add its reported repairs",
+          "1": "Withdraw unsound facets and reuse the original repair report",
+          "2": "Recompute repairs after withdrawing unsound facets",
+          "3": "Select the entire sound available language",
+          "4": "Only withdraw unsound facets",
+          "5": "Restart from an empty selection and add its reported repairs"
+        },
+        "facets": {
+          "0": "Preserve every intended comparison",
+          "1": "Retain every originally selected sound facet",
+          "2": "Leave exactly the missing comparisons of the sound available language",
+          "3": "Justify every addition by a repair witness after withdrawal"
+        },
+        "workloads": {
+          "0": "An unsound selected facet masks a missing distinction",
+          "1": "The original selection is already adequate",
+          "2": "No adequate basis exists in the available language",
+          "3": "The original selection is sound and incomplete",
+          "4": "The original selection is empty"
+        },
+        "values": "A workload identifier whose stated quality condition is actually satisfied",
+        "comparison": "Inclusion of all satisfied workload and quality-condition pairs",
+        "coverage": "These six actual method compositions on these five explicit finite workloads"
+      },
+      "semantic_boundary": "Every observation is computed by an actual composition of the exported investigation operations and has an exact contract against independently stated soundness, conservation, language capability, or witness conditions. Successful-condition inclusion is the comparison being investigated. A separate universal theorem proves the recomputed revision meets all four conditions. This finite method comparison does not enumerate every possible development method."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "revision_methods",
+      "selected": [
+        0,
+        2
+      ],
+      "question": "Do the selected quality observations preserve the actual revision methods' satisfied workload conditions?",
+      "scope": {
+        "candidates": {
+          "0": "Preserve the original selection and add its reported repairs",
+          "1": "Withdraw unsound facets and reuse the original repair report",
+          "2": "Recompute repairs after withdrawing unsound facets",
+          "3": "Select the entire sound available language",
+          "4": "Only withdraw unsound facets",
+          "5": "Restart from an empty selection and add its reported repairs"
+        },
+        "facets": {
+          "0": "Preserve every intended comparison",
+          "1": "Retain every originally selected sound facet",
+          "2": "Leave exactly the missing comparisons of the sound available language",
+          "3": "Justify every addition by a repair witness after withdrawal"
+        },
+        "workloads": {
+          "0": "An unsound selected facet masks a missing distinction",
+          "1": "The original selection is already adequate",
+          "2": "No adequate basis exists in the available language",
+          "3": "The original selection is sound and incomplete",
+          "4": "The original selection is empty"
+        },
+        "values": "A workload identifier whose stated quality condition is actually satisfied",
+        "comparison": "Inclusion of all satisfied workload and quality-condition pairs",
+        "coverage": "These six actual method compositions on these five explicit finite workloads"
+      },
+      "semantic_boundary": "Every observation is computed by an actual composition of the exported investigation operations and has an exact contract against independently stated soundness, conservation, language capability, or witness conditions. Successful-condition inclusion is the comparison being investigated. A separate universal theorem proves the recomputed revision meets all four conditions. This finite method comparison does not enumerate every possible development method."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "revision_methods",
+      "selected": [
+        0,
+        3
+      ],
+      "question": "Do the selected quality observations preserve the actual revision methods' satisfied workload conditions?",
+      "scope": {
+        "candidates": {
+          "0": "Preserve the original selection and add its reported repairs",
+          "1": "Withdraw unsound facets and reuse the original repair report",
+          "2": "Recompute repairs after withdrawing unsound facets",
+          "3": "Select the entire sound available language",
+          "4": "Only withdraw unsound facets",
+          "5": "Restart from an empty selection and add its reported repairs"
+        },
+        "facets": {
+          "0": "Preserve every intended comparison",
+          "1": "Retain every originally selected sound facet",
+          "2": "Leave exactly the missing comparisons of the sound available language",
+          "3": "Justify every addition by a repair witness after withdrawal"
+        },
+        "workloads": {
+          "0": "An unsound selected facet masks a missing distinction",
+          "1": "The original selection is already adequate",
+          "2": "No adequate basis exists in the available language",
+          "3": "The original selection is sound and incomplete",
+          "4": "The original selection is empty"
+        },
+        "values": "A workload identifier whose stated quality condition is actually satisfied",
+        "comparison": "Inclusion of all satisfied workload and quality-condition pairs",
+        "coverage": "These six actual method compositions on these five explicit finite workloads"
+      },
+      "semantic_boundary": "Every observation is computed by an actual composition of the exported investigation operations and has an exact contract against independently stated soundness, conservation, language capability, or witness conditions. Successful-condition inclusion is the comparison being investigated. A separate universal theorem proves the recomputed revision meets all four conditions. This finite method comparison does not enumerate every possible development method."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "revision_methods",
+      "selected": [
+        1,
+        2
+      ],
+      "question": "Do the selected quality observations preserve the actual revision methods' satisfied workload conditions?",
+      "scope": {
+        "candidates": {
+          "0": "Preserve the original selection and add its reported repairs",
+          "1": "Withdraw unsound facets and reuse the original repair report",
+          "2": "Recompute repairs after withdrawing unsound facets",
+          "3": "Select the entire sound available language",
+          "4": "Only withdraw unsound facets",
+          "5": "Restart from an empty selection and add its reported repairs"
+        },
+        "facets": {
+          "0": "Preserve every intended comparison",
+          "1": "Retain every originally selected sound facet",
+          "2": "Leave exactly the missing comparisons of the sound available language",
+          "3": "Justify every addition by a repair witness after withdrawal"
+        },
+        "workloads": {
+          "0": "An unsound selected facet masks a missing distinction",
+          "1": "The original selection is already adequate",
+          "2": "No adequate basis exists in the available language",
+          "3": "The original selection is sound and incomplete",
+          "4": "The original selection is empty"
+        },
+        "values": "A workload identifier whose stated quality condition is actually satisfied",
+        "comparison": "Inclusion of all satisfied workload and quality-condition pairs",
+        "coverage": "These six actual method compositions on these five explicit finite workloads"
+      },
+      "semantic_boundary": "Every observation is computed by an actual composition of the exported investigation operations and has an exact contract against independently stated soundness, conservation, language capability, or witness conditions. Successful-condition inclusion is the comparison being investigated. A separate universal theorem proves the recomputed revision meets all four conditions. This finite method comparison does not enumerate every possible development method."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "revision_methods",
+      "selected": [
+        1,
+        3
+      ],
+      "question": "Do the selected quality observations preserve the actual revision methods' satisfied workload conditions?",
+      "scope": {
+        "candidates": {
+          "0": "Preserve the original selection and add its reported repairs",
+          "1": "Withdraw unsound facets and reuse the original repair report",
+          "2": "Recompute repairs after withdrawing unsound facets",
+          "3": "Select the entire sound available language",
+          "4": "Only withdraw unsound facets",
+          "5": "Restart from an empty selection and add its reported repairs"
+        },
+        "facets": {
+          "0": "Preserve every intended comparison",
+          "1": "Retain every originally selected sound facet",
+          "2": "Leave exactly the missing comparisons of the sound available language",
+          "3": "Justify every addition by a repair witness after withdrawal"
+        },
+        "workloads": {
+          "0": "An unsound selected facet masks a missing distinction",
+          "1": "The original selection is already adequate",
+          "2": "No adequate basis exists in the available language",
+          "3": "The original selection is sound and incomplete",
+          "4": "The original selection is empty"
+        },
+        "values": "A workload identifier whose stated quality condition is actually satisfied",
+        "comparison": "Inclusion of all satisfied workload and quality-condition pairs",
+        "coverage": "These six actual method compositions on these five explicit finite workloads"
+      },
+      "semantic_boundary": "Every observation is computed by an actual composition of the exported investigation operations and has an exact contract against independently stated soundness, conservation, language capability, or witness conditions. Successful-condition inclusion is the comparison being investigated. A separate universal theorem proves the recomputed revision meets all four conditions. This finite method comparison does not enumerate every possible development method."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "revision_methods",
+      "selected": [
+        2,
+        3
+      ],
+      "question": "Do the selected quality observations preserve the actual revision methods' satisfied workload conditions?",
+      "scope": {
+        "candidates": {
+          "0": "Preserve the original selection and add its reported repairs",
+          "1": "Withdraw unsound facets and reuse the original repair report",
+          "2": "Recompute repairs after withdrawing unsound facets",
+          "3": "Select the entire sound available language",
+          "4": "Only withdraw unsound facets",
+          "5": "Restart from an empty selection and add its reported repairs"
+        },
+        "facets": {
+          "0": "Preserve every intended comparison",
+          "1": "Retain every originally selected sound facet",
+          "2": "Leave exactly the missing comparisons of the sound available language",
+          "3": "Justify every addition by a repair witness after withdrawal"
+        },
+        "workloads": {
+          "0": "An unsound selected facet masks a missing distinction",
+          "1": "The original selection is already adequate",
+          "2": "No adequate basis exists in the available language",
+          "3": "The original selection is sound and incomplete",
+          "4": "The original selection is empty"
+        },
+        "values": "A workload identifier whose stated quality condition is actually satisfied",
+        "comparison": "Inclusion of all satisfied workload and quality-condition pairs",
+        "coverage": "These six actual method compositions on these five explicit finite workloads"
+      },
+      "semantic_boundary": "Every observation is computed by an actual composition of the exported investigation operations and has an exact contract against independently stated soundness, conservation, language capability, or witness conditions. Successful-condition inclusion is the comparison being investigated. A separate universal theorem proves the recomputed revision meets all four conditions. This finite method comparison does not enumerate every possible development method."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "revision_methods",
+      "selected": [
+        0,
+        1,
+        2
+      ],
+      "question": "Do the selected quality observations preserve the actual revision methods' satisfied workload conditions?",
+      "scope": {
+        "candidates": {
+          "0": "Preserve the original selection and add its reported repairs",
+          "1": "Withdraw unsound facets and reuse the original repair report",
+          "2": "Recompute repairs after withdrawing unsound facets",
+          "3": "Select the entire sound available language",
+          "4": "Only withdraw unsound facets",
+          "5": "Restart from an empty selection and add its reported repairs"
+        },
+        "facets": {
+          "0": "Preserve every intended comparison",
+          "1": "Retain every originally selected sound facet",
+          "2": "Leave exactly the missing comparisons of the sound available language",
+          "3": "Justify every addition by a repair witness after withdrawal"
+        },
+        "workloads": {
+          "0": "An unsound selected facet masks a missing distinction",
+          "1": "The original selection is already adequate",
+          "2": "No adequate basis exists in the available language",
+          "3": "The original selection is sound and incomplete",
+          "4": "The original selection is empty"
+        },
+        "values": "A workload identifier whose stated quality condition is actually satisfied",
+        "comparison": "Inclusion of all satisfied workload and quality-condition pairs",
+        "coverage": "These six actual method compositions on these five explicit finite workloads"
+      },
+      "semantic_boundary": "Every observation is computed by an actual composition of the exported investigation operations and has an exact contract against independently stated soundness, conservation, language capability, or witness conditions. Successful-condition inclusion is the comparison being investigated. A separate universal theorem proves the recomputed revision meets all four conditions. This finite method comparison does not enumerate every possible development method."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "revision_methods",
+      "selected": [
+        0,
+        1,
+        3
+      ],
+      "question": "Do the selected quality observations preserve the actual revision methods' satisfied workload conditions?",
+      "scope": {
+        "candidates": {
+          "0": "Preserve the original selection and add its reported repairs",
+          "1": "Withdraw unsound facets and reuse the original repair report",
+          "2": "Recompute repairs after withdrawing unsound facets",
+          "3": "Select the entire sound available language",
+          "4": "Only withdraw unsound facets",
+          "5": "Restart from an empty selection and add its reported repairs"
+        },
+        "facets": {
+          "0": "Preserve every intended comparison",
+          "1": "Retain every originally selected sound facet",
+          "2": "Leave exactly the missing comparisons of the sound available language",
+          "3": "Justify every addition by a repair witness after withdrawal"
+        },
+        "workloads": {
+          "0": "An unsound selected facet masks a missing distinction",
+          "1": "The original selection is already adequate",
+          "2": "No adequate basis exists in the available language",
+          "3": "The original selection is sound and incomplete",
+          "4": "The original selection is empty"
+        },
+        "values": "A workload identifier whose stated quality condition is actually satisfied",
+        "comparison": "Inclusion of all satisfied workload and quality-condition pairs",
+        "coverage": "These six actual method compositions on these five explicit finite workloads"
+      },
+      "semantic_boundary": "Every observation is computed by an actual composition of the exported investigation operations and has an exact contract against independently stated soundness, conservation, language capability, or witness conditions. Successful-condition inclusion is the comparison being investigated. A separate universal theorem proves the recomputed revision meets all four conditions. This finite method comparison does not enumerate every possible development method."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "revision_methods",
+      "selected": [
+        0,
+        2,
+        3
+      ],
+      "question": "Do the selected quality observations preserve the actual revision methods' satisfied workload conditions?",
+      "scope": {
+        "candidates": {
+          "0": "Preserve the original selection and add its reported repairs",
+          "1": "Withdraw unsound facets and reuse the original repair report",
+          "2": "Recompute repairs after withdrawing unsound facets",
+          "3": "Select the entire sound available language",
+          "4": "Only withdraw unsound facets",
+          "5": "Restart from an empty selection and add its reported repairs"
+        },
+        "facets": {
+          "0": "Preserve every intended comparison",
+          "1": "Retain every originally selected sound facet",
+          "2": "Leave exactly the missing comparisons of the sound available language",
+          "3": "Justify every addition by a repair witness after withdrawal"
+        },
+        "workloads": {
+          "0": "An unsound selected facet masks a missing distinction",
+          "1": "The original selection is already adequate",
+          "2": "No adequate basis exists in the available language",
+          "3": "The original selection is sound and incomplete",
+          "4": "The original selection is empty"
+        },
+        "values": "A workload identifier whose stated quality condition is actually satisfied",
+        "comparison": "Inclusion of all satisfied workload and quality-condition pairs",
+        "coverage": "These six actual method compositions on these five explicit finite workloads"
+      },
+      "semantic_boundary": "Every observation is computed by an actual composition of the exported investigation operations and has an exact contract against independently stated soundness, conservation, language capability, or witness conditions. Successful-condition inclusion is the comparison being investigated. A separate universal theorem proves the recomputed revision meets all four conditions. This finite method comparison does not enumerate every possible development method."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "revision_methods",
+      "selected": [
+        1,
+        2,
+        3
+      ],
+      "question": "Do the selected quality observations preserve the actual revision methods' satisfied workload conditions?",
+      "scope": {
+        "candidates": {
+          "0": "Preserve the original selection and add its reported repairs",
+          "1": "Withdraw unsound facets and reuse the original repair report",
+          "2": "Recompute repairs after withdrawing unsound facets",
+          "3": "Select the entire sound available language",
+          "4": "Only withdraw unsound facets",
+          "5": "Restart from an empty selection and add its reported repairs"
+        },
+        "facets": {
+          "0": "Preserve every intended comparison",
+          "1": "Retain every originally selected sound facet",
+          "2": "Leave exactly the missing comparisons of the sound available language",
+          "3": "Justify every addition by a repair witness after withdrawal"
+        },
+        "workloads": {
+          "0": "An unsound selected facet masks a missing distinction",
+          "1": "The original selection is already adequate",
+          "2": "No adequate basis exists in the available language",
+          "3": "The original selection is sound and incomplete",
+          "4": "The original selection is empty"
+        },
+        "values": "A workload identifier whose stated quality condition is actually satisfied",
+        "comparison": "Inclusion of all satisfied workload and quality-condition pairs",
+        "coverage": "These six actual method compositions on these five explicit finite workloads"
+      },
+      "semantic_boundary": "Every observation is computed by an actual composition of the exported investigation operations and has an exact contract against independently stated soundness, conservation, language capability, or witness conditions. Successful-condition inclusion is the comparison being investigated. A separate universal theorem proves the recomputed revision meets all four conditions. This finite method comparison does not enumerate every possible development method."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "revision_methods",
+      "selected": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "question": "Do the selected quality observations preserve the actual revision methods' satisfied workload conditions?",
+      "scope": {
+        "candidates": {
+          "0": "Preserve the original selection and add its reported repairs",
+          "1": "Withdraw unsound facets and reuse the original repair report",
+          "2": "Recompute repairs after withdrawing unsound facets",
+          "3": "Select the entire sound available language",
+          "4": "Only withdraw unsound facets",
+          "5": "Restart from an empty selection and add its reported repairs"
+        },
+        "facets": {
+          "0": "Preserve every intended comparison",
+          "1": "Retain every originally selected sound facet",
+          "2": "Leave exactly the missing comparisons of the sound available language",
+          "3": "Justify every addition by a repair witness after withdrawal"
+        },
+        "workloads": {
+          "0": "An unsound selected facet masks a missing distinction",
+          "1": "The original selection is already adequate",
+          "2": "No adequate basis exists in the available language",
+          "3": "The original selection is sound and incomplete",
+          "4": "The original selection is empty"
+        },
+        "values": "A workload identifier whose stated quality condition is actually satisfied",
+        "comparison": "Inclusion of all satisfied workload and quality-condition pairs",
+        "coverage": "These six actual method compositions on these five explicit finite workloads"
+      },
+      "semantic_boundary": "Every observation is computed by an actual composition of the exported investigation operations and has an exact contract against independently stated soundness, conservation, language capability, or witness conditions. Successful-condition inclusion is the comparison being investigated. A separate universal theorem proves the recomputed revision meets all four conditions. This finite method comparison does not enumerate every possible development method."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "revision_methods",
+      "selected": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "question": "Do the selected quality observations preserve the actual revision methods' satisfied workload conditions?",
+      "scope": {
+        "candidates": {
+          "0": "Preserve the original selection and add its reported repairs",
+          "1": "Withdraw unsound facets and reuse the original repair report",
+          "2": "Recompute repairs after withdrawing unsound facets",
+          "3": "Select the entire sound available language",
+          "4": "Only withdraw unsound facets",
+          "5": "Restart from an empty selection and add its reported repairs"
+        },
+        "facets": {
+          "0": "Preserve every intended comparison",
+          "1": "Retain every originally selected sound facet",
+          "2": "Leave exactly the missing comparisons of the sound available language",
+          "3": "Justify every addition by a repair witness after withdrawal"
+        },
+        "workloads": {
+          "0": "An unsound selected facet masks a missing distinction",
+          "1": "The original selection is already adequate",
+          "2": "No adequate basis exists in the available language",
+          "3": "The original selection is sound and incomplete",
+          "4": "The original selection is empty"
+        },
+        "values": "A workload identifier whose stated quality condition is actually satisfied",
+        "comparison": "Inclusion of all satisfied workload and quality-condition pairs",
+        "coverage": "These six actual method compositions on these five explicit finite workloads"
+      },
+      "semantic_boundary": "Every observation is computed by an actual composition of the exported investigation operations and has an exact contract against independently stated soundness, conservation, language capability, or witness conditions. Successful-condition inclusion is the comparison being investigated. A separate universal theorem proves the recomputed revision meets all four conditions. This finite method comparison does not enumerate every possible development method."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "observation_tables",
+      "selected": [],
+      "question": "Do the selected native decisions distinguish complete profile and loss tables, including every empty row?",
+      "scope": {
+        "candidates": {
+          "0": "Sparse tables omitting every empty computed row",
+          "1": "Complete profile and loss tables",
+          "2": "Complete tables with inner and outer orders reversed",
+          "3": "Complete tables with varied repetitions of rows",
+          "4": "Missing the empty profile of candidate 2",
+          "5": "Missing the empty self-loss row for candidate 2",
+          "6": "An extra empty profile row for foreign candidate 3",
+          "7": "A wrong nonempty loss for the pair (0,2)"
+        },
+        "facets": {
+          "0": "Actual native keyed comparisons against sparse references from native profile and loss results",
+          "1": "Actual complete native profile and loss table calculations"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of complete admission: every declared candidate profile and ordered candidate-pair loss, including empty results and no foreign rows",
+        "coverage": "These eight table pairs for C={0,1,2}, U=F={0}, T={(0,0,0),(0,0,1),(0,1,0)}"
+      },
+      "semantic_boundary": "The source result values are proved outputs of actual native profile and loss calls. The sparse-reference observation uses actual native nested comparisons. The second observation calls both complete native table calculations on the same declared scope and displayed results. The independent criterion retains every declared row. These executions use proved code equations; native checking of mathematical proofs remains separate."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "observation_tables",
+      "selected": [
+        0
+      ],
+      "question": "Do the selected native decisions distinguish complete profile and loss tables, including every empty row?",
+      "scope": {
+        "candidates": {
+          "0": "Sparse tables omitting every empty computed row",
+          "1": "Complete profile and loss tables",
+          "2": "Complete tables with inner and outer orders reversed",
+          "3": "Complete tables with varied repetitions of rows",
+          "4": "Missing the empty profile of candidate 2",
+          "5": "Missing the empty self-loss row for candidate 2",
+          "6": "An extra empty profile row for foreign candidate 3",
+          "7": "A wrong nonempty loss for the pair (0,2)"
+        },
+        "facets": {
+          "0": "Actual native keyed comparisons against sparse references from native profile and loss results",
+          "1": "Actual complete native profile and loss table calculations"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of complete admission: every declared candidate profile and ordered candidate-pair loss, including empty results and no foreign rows",
+        "coverage": "These eight table pairs for C={0,1,2}, U=F={0}, T={(0,0,0),(0,0,1),(0,1,0)}"
+      },
+      "semantic_boundary": "The source result values are proved outputs of actual native profile and loss calls. The sparse-reference observation uses actual native nested comparisons. The second observation calls both complete native table calculations on the same declared scope and displayed results. The independent criterion retains every declared row. These executions use proved code equations; native checking of mathematical proofs remains separate."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "observation_tables",
+      "selected": [
+        1
+      ],
+      "question": "Do the selected native decisions distinguish complete profile and loss tables, including every empty row?",
+      "scope": {
+        "candidates": {
+          "0": "Sparse tables omitting every empty computed row",
+          "1": "Complete profile and loss tables",
+          "2": "Complete tables with inner and outer orders reversed",
+          "3": "Complete tables with varied repetitions of rows",
+          "4": "Missing the empty profile of candidate 2",
+          "5": "Missing the empty self-loss row for candidate 2",
+          "6": "An extra empty profile row for foreign candidate 3",
+          "7": "A wrong nonempty loss for the pair (0,2)"
+        },
+        "facets": {
+          "0": "Actual native keyed comparisons against sparse references from native profile and loss results",
+          "1": "Actual complete native profile and loss table calculations"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of complete admission: every declared candidate profile and ordered candidate-pair loss, including empty results and no foreign rows",
+        "coverage": "These eight table pairs for C={0,1,2}, U=F={0}, T={(0,0,0),(0,0,1),(0,1,0)}"
+      },
+      "semantic_boundary": "The source result values are proved outputs of actual native profile and loss calls. The sparse-reference observation uses actual native nested comparisons. The second observation calls both complete native table calculations on the same declared scope and displayed results. The independent criterion retains every declared row. These executions use proved code equations; native checking of mathematical proofs remains separate."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "observation_tables",
+      "selected": [
+        0,
+        1
+      ],
+      "question": "Do the selected native decisions distinguish complete profile and loss tables, including every empty row?",
+      "scope": {
+        "candidates": {
+          "0": "Sparse tables omitting every empty computed row",
+          "1": "Complete profile and loss tables",
+          "2": "Complete tables with inner and outer orders reversed",
+          "3": "Complete tables with varied repetitions of rows",
+          "4": "Missing the empty profile of candidate 2",
+          "5": "Missing the empty self-loss row for candidate 2",
+          "6": "An extra empty profile row for foreign candidate 3",
+          "7": "A wrong nonempty loss for the pair (0,2)"
+        },
+        "facets": {
+          "0": "Actual native keyed comparisons against sparse references from native profile and loss results",
+          "1": "Actual complete native profile and loss table calculations"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of complete admission: every declared candidate profile and ordered candidate-pair loss, including empty results and no foreign rows",
+        "coverage": "These eight table pairs for C={0,1,2}, U=F={0}, T={(0,0,0),(0,0,1),(0,1,0)}"
+      },
+      "semantic_boundary": "The source result values are proved outputs of actual native profile and loss calls. The sparse-reference observation uses actual native nested comparisons. The second observation calls both complete native table calculations on the same declared scope and displayed results. The independent criterion retains every declared row. These executions use proved code equations; native checking of mathematical proofs remains separate."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "observation_tables",
+      "selected": [
+        0,
+        1,
+        2
+      ],
+      "question": "Do the selected native decisions distinguish complete profile and loss tables, including every empty row?",
+      "scope": {
+        "candidates": {
+          "0": "Sparse tables omitting every empty computed row",
+          "1": "Complete profile and loss tables",
+          "2": "Complete tables with inner and outer orders reversed",
+          "3": "Complete tables with varied repetitions of rows",
+          "4": "Missing the empty profile of candidate 2",
+          "5": "Missing the empty self-loss row for candidate 2",
+          "6": "An extra empty profile row for foreign candidate 3",
+          "7": "A wrong nonempty loss for the pair (0,2)"
+        },
+        "facets": {
+          "0": "Actual native keyed comparisons against sparse references from native profile and loss results",
+          "1": "Actual complete native profile and loss table calculations"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of complete admission: every declared candidate profile and ordered candidate-pair loss, including empty results and no foreign rows",
+        "coverage": "These eight table pairs for C={0,1,2}, U=F={0}, T={(0,0,0),(0,0,1),(0,1,0)}"
+      },
+      "semantic_boundary": "The source result values are proved outputs of actual native profile and loss calls. The sparse-reference observation uses actual native nested comparisons. The second observation calls both complete native table calculations on the same declared scope and displayed results. The independent criterion retains every declared row. These executions use proved code equations; native checking of mathematical proofs remains separate."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "pair_scope",
+      "selected": [],
+      "question": "Do the selected native decisions distinguish complete ordered pair coverage?",
+      "scope": {
+        "candidates": {
+          "0": "Only diagonal pairs",
+          "1": "Every ordered pair",
+          "2": "Every ordered pair in reverse order",
+          "3": "Complete scope with a repeated self pair",
+          "4": "Missing the first self pair",
+          "5": "Complete scope with a foreign pair",
+          "6": "Complete scope with repeated cross pairs"
+        },
+        "facets": {
+          "0": "Acceptance by the existing native diagonal pair operation",
+          "1": "Acceptance by the complete native Cartesian operation"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of complete admission: exactly the Cartesian product of the declared candidates, independently of order and repetition",
+        "coverage": "These seven pair-list outputs for the declared candidate set {0,1}"
+      },
+      "semantic_boundary": "The first observation calls the actual native diagonal operation, whose own meaning remains self pairing. The second calls the complete native Cartesian operation. The independent criterion requires complete ordered pair coverage. These executions use proved code equations; native checking of mathematical proofs remains separate."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "pair_scope",
+      "selected": [
+        0
+      ],
+      "question": "Do the selected native decisions distinguish complete ordered pair coverage?",
+      "scope": {
+        "candidates": {
+          "0": "Only diagonal pairs",
+          "1": "Every ordered pair",
+          "2": "Every ordered pair in reverse order",
+          "3": "Complete scope with a repeated self pair",
+          "4": "Missing the first self pair",
+          "5": "Complete scope with a foreign pair",
+          "6": "Complete scope with repeated cross pairs"
+        },
+        "facets": {
+          "0": "Acceptance by the existing native diagonal pair operation",
+          "1": "Acceptance by the complete native Cartesian operation"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of complete admission: exactly the Cartesian product of the declared candidates, independently of order and repetition",
+        "coverage": "These seven pair-list outputs for the declared candidate set {0,1}"
+      },
+      "semantic_boundary": "The first observation calls the actual native diagonal operation, whose own meaning remains self pairing. The second calls the complete native Cartesian operation. The independent criterion requires complete ordered pair coverage. These executions use proved code equations; native checking of mathematical proofs remains separate."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "pair_scope",
+      "selected": [
+        1
+      ],
+      "question": "Do the selected native decisions distinguish complete ordered pair coverage?",
+      "scope": {
+        "candidates": {
+          "0": "Only diagonal pairs",
+          "1": "Every ordered pair",
+          "2": "Every ordered pair in reverse order",
+          "3": "Complete scope with a repeated self pair",
+          "4": "Missing the first self pair",
+          "5": "Complete scope with a foreign pair",
+          "6": "Complete scope with repeated cross pairs"
+        },
+        "facets": {
+          "0": "Acceptance by the existing native diagonal pair operation",
+          "1": "Acceptance by the complete native Cartesian operation"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of complete admission: exactly the Cartesian product of the declared candidates, independently of order and repetition",
+        "coverage": "These seven pair-list outputs for the declared candidate set {0,1}"
+      },
+      "semantic_boundary": "The first observation calls the actual native diagonal operation, whose own meaning remains self pairing. The second calls the complete native Cartesian operation. The independent criterion requires complete ordered pair coverage. These executions use proved code equations; native checking of mathematical proofs remains separate."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "pair_scope",
+      "selected": [
+        0,
+        1
+      ],
+      "question": "Do the selected native decisions distinguish complete ordered pair coverage?",
+      "scope": {
+        "candidates": {
+          "0": "Only diagonal pairs",
+          "1": "Every ordered pair",
+          "2": "Every ordered pair in reverse order",
+          "3": "Complete scope with a repeated self pair",
+          "4": "Missing the first self pair",
+          "5": "Complete scope with a foreign pair",
+          "6": "Complete scope with repeated cross pairs"
+        },
+        "facets": {
+          "0": "Acceptance by the existing native diagonal pair operation",
+          "1": "Acceptance by the complete native Cartesian operation"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of complete admission: exactly the Cartesian product of the declared candidates, independently of order and repetition",
+        "coverage": "These seven pair-list outputs for the declared candidate set {0,1}"
+      },
+      "semantic_boundary": "The first observation calls the actual native diagonal operation, whose own meaning remains self pairing. The second calls the complete native Cartesian operation. The independent criterion requires complete ordered pair coverage. These executions use proved code equations; native checking of mathematical proofs remains separate."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "pair_scope",
+      "selected": [
+        0,
+        1,
+        2
+      ],
+      "question": "Do the selected native decisions distinguish complete ordered pair coverage?",
+      "scope": {
+        "candidates": {
+          "0": "Only diagonal pairs",
+          "1": "Every ordered pair",
+          "2": "Every ordered pair in reverse order",
+          "3": "Complete scope with a repeated self pair",
+          "4": "Missing the first self pair",
+          "5": "Complete scope with a foreign pair",
+          "6": "Complete scope with repeated cross pairs"
+        },
+        "facets": {
+          "0": "Acceptance by the existing native diagonal pair operation",
+          "1": "Acceptance by the complete native Cartesian operation"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of complete admission: exactly the Cartesian product of the declared candidates, independently of order and repetition",
+        "coverage": "These seven pair-list outputs for the declared candidate set {0,1}"
+      },
+      "semantic_boundary": "The first observation calls the actual native diagonal operation, whose own meaning remains self pairing. The second calls the complete native Cartesian operation. The independent criterion requires complete ordered pair coverage. These executions use proved code equations; native checking of mathematical proofs remains separate."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "observation_collections",
+      "selected": [],
+      "question": "Do the selected native comparisons preserve both finite-set levels of observation collections?",
+      "scope": {
+        "candidates": {
+          "0": "Two computed profiles in their initial order",
+          "1": "Reversed first inner profile",
+          "2": "Repeated member in the first inner profile",
+          "3": "Reversed outer row order",
+          "4": "Repeated identical outer row",
+          "5": "A different collection with one profile member missing",
+          "6": "One semantic row repeated with two different inner presentations"
+        },
+        "facets": {
+          "0": "Literal native finite-set comparison against the computed collection",
+          "1": "Native two-sided coverage through retained keys and complete inner set comparison"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of the finite sets of candidate and finite-profile pairs, independently of their displayed lists",
+        "coverage": "These seven nested profile collections for the explicit three-row observation table"
+      },
+      "semantic_boundary": "The source profiles are proved results of the actual native profile operation. Both observations call actual native comparators. The independent subject keeps both finite-set levels. The second comparator composes generic membership, traversals, retained-key and finite-set contracts. These executions use proved code equations; native checking of mathematical proofs remains separate."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "observation_collections",
+      "selected": [
+        0
+      ],
+      "question": "Do the selected native comparisons preserve both finite-set levels of observation collections?",
+      "scope": {
+        "candidates": {
+          "0": "Two computed profiles in their initial order",
+          "1": "Reversed first inner profile",
+          "2": "Repeated member in the first inner profile",
+          "3": "Reversed outer row order",
+          "4": "Repeated identical outer row",
+          "5": "A different collection with one profile member missing",
+          "6": "One semantic row repeated with two different inner presentations"
+        },
+        "facets": {
+          "0": "Literal native finite-set comparison against the computed collection",
+          "1": "Native two-sided coverage through retained keys and complete inner set comparison"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of the finite sets of candidate and finite-profile pairs, independently of their displayed lists",
+        "coverage": "These seven nested profile collections for the explicit three-row observation table"
+      },
+      "semantic_boundary": "The source profiles are proved results of the actual native profile operation. Both observations call actual native comparators. The independent subject keeps both finite-set levels. The second comparator composes generic membership, traversals, retained-key and finite-set contracts. These executions use proved code equations; native checking of mathematical proofs remains separate."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "observation_collections",
+      "selected": [
+        1
+      ],
+      "question": "Do the selected native comparisons preserve both finite-set levels of observation collections?",
+      "scope": {
+        "candidates": {
+          "0": "Two computed profiles in their initial order",
+          "1": "Reversed first inner profile",
+          "2": "Repeated member in the first inner profile",
+          "3": "Reversed outer row order",
+          "4": "Repeated identical outer row",
+          "5": "A different collection with one profile member missing",
+          "6": "One semantic row repeated with two different inner presentations"
+        },
+        "facets": {
+          "0": "Literal native finite-set comparison against the computed collection",
+          "1": "Native two-sided coverage through retained keys and complete inner set comparison"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of the finite sets of candidate and finite-profile pairs, independently of their displayed lists",
+        "coverage": "These seven nested profile collections for the explicit three-row observation table"
+      },
+      "semantic_boundary": "The source profiles are proved results of the actual native profile operation. Both observations call actual native comparators. The independent subject keeps both finite-set levels. The second comparator composes generic membership, traversals, retained-key and finite-set contracts. These executions use proved code equations; native checking of mathematical proofs remains separate."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "observation_collections",
+      "selected": [
+        0,
+        1
+      ],
+      "question": "Do the selected native comparisons preserve both finite-set levels of observation collections?",
+      "scope": {
+        "candidates": {
+          "0": "Two computed profiles in their initial order",
+          "1": "Reversed first inner profile",
+          "2": "Repeated member in the first inner profile",
+          "3": "Reversed outer row order",
+          "4": "Repeated identical outer row",
+          "5": "A different collection with one profile member missing",
+          "6": "One semantic row repeated with two different inner presentations"
+        },
+        "facets": {
+          "0": "Literal native finite-set comparison against the computed collection",
+          "1": "Native two-sided coverage through retained keys and complete inner set comparison"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of the finite sets of candidate and finite-profile pairs, independently of their displayed lists",
+        "coverage": "These seven nested profile collections for the explicit three-row observation table"
+      },
+      "semantic_boundary": "The source profiles are proved results of the actual native profile operation. Both observations call actual native comparators. The independent subject keeps both finite-set levels. The second comparator composes generic membership, traversals, retained-key and finite-set contracts. These executions use proved code equations; native checking of mathematical proofs remains separate."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "observation_collections",
+      "selected": [
+        0,
+        1,
+        2
+      ],
+      "question": "Do the selected native comparisons preserve both finite-set levels of observation collections?",
+      "scope": {
+        "candidates": {
+          "0": "Two computed profiles in their initial order",
+          "1": "Reversed first inner profile",
+          "2": "Repeated member in the first inner profile",
+          "3": "Reversed outer row order",
+          "4": "Repeated identical outer row",
+          "5": "A different collection with one profile member missing",
+          "6": "One semantic row repeated with two different inner presentations"
+        },
+        "facets": {
+          "0": "Literal native finite-set comparison against the computed collection",
+          "1": "Native two-sided coverage through retained keys and complete inner set comparison"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of the finite sets of candidate and finite-profile pairs, independently of their displayed lists",
+        "coverage": "These seven nested profile collections for the explicit three-row observation table"
+      },
+      "semantic_boundary": "The source profiles are proved results of the actual native profile operation. Both observations call actual native comparators. The independent subject keeps both finite-set levels. The second comparator composes generic membership, traversals, retained-key and finite-set contracts. These executions use proved code equations; native checking of mathematical proofs remains separate."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "observation_scope",
+      "selected": [],
+      "question": "Do the selected native decisions distinguish complete observation input admission?",
+      "scope": {
+        "candidates": {
+          "0": "Valid empty table",
+          "1": "Empty table with a formed reference in the candidate list",
+          "2": "Empty table with a formed reference in the available facet list",
+          "3": "Empty table with a selected facet outside the available set",
+          "4": "Unused table row outside the available facets",
+          "5": "Unused table row outside the declared candidates",
+          "6": "Valid nonempty table with no selected observations"
+        },
+        "facets": {
+          "0": "Acceptance by the actual native context list of scoped rows",
+          "1": "Acceptance by the native context admission and complete scoped row traversal"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of complete input admission, independently specified by data domains, the original finite table formation, and selected facet inclusion",
+        "coverage": "These seven complete inputs, including empty tables and unused invalid scope fields"
+      },
+      "semantic_boundary": "Each observation is defined by its actual native call. The independent comparison uses data domains, the original finite observation table formation, and selected-facet inclusion. The complete operation reuses a generic context-admission clause. These executions use proved code equations; native checking of mathematical proofs remains separate."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "observation_scope",
+      "selected": [
+        0
+      ],
+      "question": "Do the selected native decisions distinguish complete observation input admission?",
+      "scope": {
+        "candidates": {
+          "0": "Valid empty table",
+          "1": "Empty table with a formed reference in the candidate list",
+          "2": "Empty table with a formed reference in the available facet list",
+          "3": "Empty table with a selected facet outside the available set",
+          "4": "Unused table row outside the available facets",
+          "5": "Unused table row outside the declared candidates",
+          "6": "Valid nonempty table with no selected observations"
+        },
+        "facets": {
+          "0": "Acceptance by the actual native context list of scoped rows",
+          "1": "Acceptance by the native context admission and complete scoped row traversal"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of complete input admission, independently specified by data domains, the original finite table formation, and selected facet inclusion",
+        "coverage": "These seven complete inputs, including empty tables and unused invalid scope fields"
+      },
+      "semantic_boundary": "Each observation is defined by its actual native call. The independent comparison uses data domains, the original finite observation table formation, and selected-facet inclusion. The complete operation reuses a generic context-admission clause. These executions use proved code equations; native checking of mathematical proofs remains separate."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "observation_scope",
+      "selected": [
+        1
+      ],
+      "question": "Do the selected native decisions distinguish complete observation input admission?",
+      "scope": {
+        "candidates": {
+          "0": "Valid empty table",
+          "1": "Empty table with a formed reference in the candidate list",
+          "2": "Empty table with a formed reference in the available facet list",
+          "3": "Empty table with a selected facet outside the available set",
+          "4": "Unused table row outside the available facets",
+          "5": "Unused table row outside the declared candidates",
+          "6": "Valid nonempty table with no selected observations"
+        },
+        "facets": {
+          "0": "Acceptance by the actual native context list of scoped rows",
+          "1": "Acceptance by the native context admission and complete scoped row traversal"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of complete input admission, independently specified by data domains, the original finite table formation, and selected facet inclusion",
+        "coverage": "These seven complete inputs, including empty tables and unused invalid scope fields"
+      },
+      "semantic_boundary": "Each observation is defined by its actual native call. The independent comparison uses data domains, the original finite observation table formation, and selected-facet inclusion. The complete operation reuses a generic context-admission clause. These executions use proved code equations; native checking of mathematical proofs remains separate."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "observation_scope",
+      "selected": [
+        0,
+        1
+      ],
+      "question": "Do the selected native decisions distinguish complete observation input admission?",
+      "scope": {
+        "candidates": {
+          "0": "Valid empty table",
+          "1": "Empty table with a formed reference in the candidate list",
+          "2": "Empty table with a formed reference in the available facet list",
+          "3": "Empty table with a selected facet outside the available set",
+          "4": "Unused table row outside the available facets",
+          "5": "Unused table row outside the declared candidates",
+          "6": "Valid nonempty table with no selected observations"
+        },
+        "facets": {
+          "0": "Acceptance by the actual native context list of scoped rows",
+          "1": "Acceptance by the native context admission and complete scoped row traversal"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of complete input admission, independently specified by data domains, the original finite table formation, and selected facet inclusion",
+        "coverage": "These seven complete inputs, including empty tables and unused invalid scope fields"
+      },
+      "semantic_boundary": "Each observation is defined by its actual native call. The independent comparison uses data domains, the original finite observation table formation, and selected-facet inclusion. The complete operation reuses a generic context-admission clause. These executions use proved code equations; native checking of mathematical proofs remains separate."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "observation_scope",
+      "selected": [
+        0,
+        1,
+        2
+      ],
+      "question": "Do the selected native decisions distinguish complete observation input admission?",
+      "scope": {
+        "candidates": {
+          "0": "Valid empty table",
+          "1": "Empty table with a formed reference in the candidate list",
+          "2": "Empty table with a formed reference in the available facet list",
+          "3": "Empty table with a selected facet outside the available set",
+          "4": "Unused table row outside the available facets",
+          "5": "Unused table row outside the declared candidates",
+          "6": "Valid nonempty table with no selected observations"
+        },
+        "facets": {
+          "0": "Acceptance by the actual native context list of scoped rows",
+          "1": "Acceptance by the native context admission and complete scoped row traversal"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of complete input admission, independently specified by data domains, the original finite table formation, and selected facet inclusion",
+        "coverage": "These seven complete inputs, including empty tables and unused invalid scope fields"
+      },
+      "semantic_boundary": "Each observation is defined by its actual native call. The independent comparison uses data domains, the original finite observation table formation, and selected-facet inclusion. The complete operation reuses a generic context-admission clause. These executions use proved code equations; native checking of mathematical proofs remains separate."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "observation",
+      "selected": [],
+      "question": "Do the selected native decisions preserve the represented observation set?",
+      "scope": {
+        "candidates": {
+          "0": "The profile in table order",
+          "1": "The same profile in reverse order",
+          "2": "The same profile with its first row repeated",
+          "3": "A different result with the second profile row missing"
+        },
+        "facets": {
+          "0": "Acceptance by the actual ordered native profile operation",
+          "1": "Acceptance by the native profile result with a private computation and set comparison"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of the sets of actual output rows",
+        "coverage": "These four output lists for the two-row observation table defined in the source theory"
+      },
+      "semantic_boundary": "The source theory defines each observation by an actual native operation and proves its code equation. The comparison independently takes the sets of the output lists. This run executes those proved finite equations; it does not evaluate arbitrary native programs or check their mathematical proofs natively."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "observation",
+      "selected": [
+        0
+      ],
+      "question": "Do the selected native decisions preserve the represented observation set?",
+      "scope": {
+        "candidates": {
+          "0": "The profile in table order",
+          "1": "The same profile in reverse order",
+          "2": "The same profile with its first row repeated",
+          "3": "A different result with the second profile row missing"
+        },
+        "facets": {
+          "0": "Acceptance by the actual ordered native profile operation",
+          "1": "Acceptance by the native profile result with a private computation and set comparison"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of the sets of actual output rows",
+        "coverage": "These four output lists for the two-row observation table defined in the source theory"
+      },
+      "semantic_boundary": "The source theory defines each observation by an actual native operation and proves its code equation. The comparison independently takes the sets of the output lists. This run executes those proved finite equations; it does not evaluate arbitrary native programs or check their mathematical proofs natively."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "observation",
+      "selected": [
+        1
+      ],
+      "question": "Do the selected native decisions preserve the represented observation set?",
+      "scope": {
+        "candidates": {
+          "0": "The profile in table order",
+          "1": "The same profile in reverse order",
+          "2": "The same profile with its first row repeated",
+          "3": "A different result with the second profile row missing"
+        },
+        "facets": {
+          "0": "Acceptance by the actual ordered native profile operation",
+          "1": "Acceptance by the native profile result with a private computation and set comparison"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of the sets of actual output rows",
+        "coverage": "These four output lists for the two-row observation table defined in the source theory"
+      },
+      "semantic_boundary": "The source theory defines each observation by an actual native operation and proves its code equation. The comparison independently takes the sets of the output lists. This run executes those proved finite equations; it does not evaluate arbitrary native programs or check their mathematical proofs natively."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "observation",
+      "selected": [
+        0,
+        1
+      ],
+      "question": "Do the selected native decisions preserve the represented observation set?",
+      "scope": {
+        "candidates": {
+          "0": "The profile in table order",
+          "1": "The same profile in reverse order",
+          "2": "The same profile with its first row repeated",
+          "3": "A different result with the second profile row missing"
+        },
+        "facets": {
+          "0": "Acceptance by the actual ordered native profile operation",
+          "1": "Acceptance by the native profile result with a private computation and set comparison"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of the sets of actual output rows",
+        "coverage": "These four output lists for the two-row observation table defined in the source theory"
+      },
+      "semantic_boundary": "The source theory defines each observation by an actual native operation and proves its code equation. The comparison independently takes the sets of the output lists. This run executes those proved finite equations; it does not evaluate arbitrary native programs or check their mathematical proofs natively."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "observation",
+      "selected": [
+        0,
+        1,
+        2
+      ],
+      "question": "Do the selected native decisions preserve the represented observation set?",
+      "scope": {
+        "candidates": {
+          "0": "The profile in table order",
+          "1": "The same profile in reverse order",
+          "2": "The same profile with its first row repeated",
+          "3": "A different result with the second profile row missing"
+        },
+        "facets": {
+          "0": "Acceptance by the actual ordered native profile operation",
+          "1": "Acceptance by the native profile result with a private computation and set comparison"
+        },
+        "values": "The actual Boolean decision: False=0, True=1",
+        "comparison": "Equality of the sets of actual output rows",
+        "coverage": "These four output lists for the two-row observation table defined in the source theory"
+      },
+      "semantic_boundary": "The source theory defines each observation by an actual native operation and proves its code equation. The comparison independently takes the sets of the output lists. This run executes those proved finite equations; it does not evaluate arbitrary native programs or check their mathematical proofs natively."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "completion",
+      "selected": [],
+      "question": "Do the selected observations distinguish joint completion feasibility?",
+      "scope": {
+        "candidates": {
+          "0": "identity paired with identity",
+          "1": "identity paired with negation"
+        },
+        "facets": {
+          "0": "first test has a witness",
+          "1": "second test has a witness",
+          "2": "both tests share a witness"
+        },
+        "domain": "All Boolean presentations of one unit subject",
+        "comparison": "Preservation of joint feasibility"
+      }
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "completion",
+      "selected": [
+        0
+      ],
+      "question": "Do the selected observations distinguish joint completion feasibility?",
+      "scope": {
+        "candidates": {
+          "0": "identity paired with identity",
+          "1": "identity paired with negation"
+        },
+        "facets": {
+          "0": "first test has a witness",
+          "1": "second test has a witness",
+          "2": "both tests share a witness"
+        },
+        "domain": "All Boolean presentations of one unit subject",
+        "comparison": "Preservation of joint feasibility"
+      }
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "completion",
+      "selected": [
+        1
+      ],
+      "question": "Do the selected observations distinguish joint completion feasibility?",
+      "scope": {
+        "candidates": {
+          "0": "identity paired with identity",
+          "1": "identity paired with negation"
+        },
+        "facets": {
+          "0": "first test has a witness",
+          "1": "second test has a witness",
+          "2": "both tests share a witness"
+        },
+        "domain": "All Boolean presentations of one unit subject",
+        "comparison": "Preservation of joint feasibility"
+      }
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "completion",
+      "selected": [
+        2
+      ],
+      "question": "Do the selected observations distinguish joint completion feasibility?",
+      "scope": {
+        "candidates": {
+          "0": "identity paired with identity",
+          "1": "identity paired with negation"
+        },
+        "facets": {
+          "0": "first test has a witness",
+          "1": "second test has a witness",
+          "2": "both tests share a witness"
+        },
+        "domain": "All Boolean presentations of one unit subject",
+        "comparison": "Preservation of joint feasibility"
+      }
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "completion",
+      "selected": [
+        0,
+        1
+      ],
+      "question": "Do the selected observations distinguish joint completion feasibility?",
+      "scope": {
+        "candidates": {
+          "0": "identity paired with identity",
+          "1": "identity paired with negation"
+        },
+        "facets": {
+          "0": "first test has a witness",
+          "1": "second test has a witness",
+          "2": "both tests share a witness"
+        },
+        "domain": "All Boolean presentations of one unit subject",
+        "comparison": "Preservation of joint feasibility"
+      }
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "completion",
+      "selected": [
+        0,
+        2
+      ],
+      "question": "Do the selected observations distinguish joint completion feasibility?",
+      "scope": {
+        "candidates": {
+          "0": "identity paired with identity",
+          "1": "identity paired with negation"
+        },
+        "facets": {
+          "0": "first test has a witness",
+          "1": "second test has a witness",
+          "2": "both tests share a witness"
+        },
+        "domain": "All Boolean presentations of one unit subject",
+        "comparison": "Preservation of joint feasibility"
+      }
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "completion",
+      "selected": [
+        1,
+        2
+      ],
+      "question": "Do the selected observations distinguish joint completion feasibility?",
+      "scope": {
+        "candidates": {
+          "0": "identity paired with identity",
+          "1": "identity paired with negation"
+        },
+        "facets": {
+          "0": "first test has a witness",
+          "1": "second test has a witness",
+          "2": "both tests share a witness"
+        },
+        "domain": "All Boolean presentations of one unit subject",
+        "comparison": "Preservation of joint feasibility"
+      }
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "completion",
+      "selected": [
+        0,
+        1,
+        2
+      ],
+      "question": "Do the selected observations distinguish joint completion feasibility?",
+      "scope": {
+        "candidates": {
+          "0": "identity paired with identity",
+          "1": "identity paired with negation"
+        },
+        "facets": {
+          "0": "first test has a witness",
+          "1": "second test has a witness",
+          "2": "both tests share a witness"
+        },
+        "domain": "All Boolean presentations of one unit subject",
+        "comparison": "Preservation of joint feasibility"
+      }
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "completion",
+      "selected": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "question": "Do the selected observations distinguish joint completion feasibility?",
+      "scope": {
+        "candidates": {
+          "0": "identity paired with identity",
+          "1": "identity paired with negation"
+        },
+        "facets": {
+          "0": "first test has a witness",
+          "1": "second test has a witness",
+          "2": "both tests share a witness"
+        },
+        "domain": "All Boolean presentations of one unit subject",
+        "comparison": "Preservation of joint feasibility"
+      }
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "permission",
+      "selected": [],
+      "question": "Do the selected facets preserve complete formation and truth decisions?",
+      "scope": {
+        "candidates": {
+          "0": "narrow interface, empty clause family",
+          "1": "variable interface, empty clause family",
+          "2": "variable-interface recognizer"
+        },
+        "arguments": {
+          "0": "Payload_Term []",
+          "1": "Pair_Term (Payload_Term []) (Payload_Term [])"
+        },
+        "facets": {
+          "0": "call formation",
+          "1": "positive truth"
+        },
+        "values": "Twice the argument index plus its Boolean outcome (False=0, True=1)",
+        "comparison": "Equal formation and truth at both supplied arguments",
+        "coverage": "These three actual program forms and these two argument values"
+      },
+      "semantic_boundary": "The exported theory computes the actual program observations using proved equations. Its table and comparison contracts cover precisely the stated finite scope. The general proof separately establishes the necessity of both facets for all formed program entries."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "permission",
+      "selected": [
+        0
+      ],
+      "question": "Do the selected facets preserve complete formation and truth decisions?",
+      "scope": {
+        "candidates": {
+          "0": "narrow interface, empty clause family",
+          "1": "variable interface, empty clause family",
+          "2": "variable-interface recognizer"
+        },
+        "arguments": {
+          "0": "Payload_Term []",
+          "1": "Pair_Term (Payload_Term []) (Payload_Term [])"
+        },
+        "facets": {
+          "0": "call formation",
+          "1": "positive truth"
+        },
+        "values": "Twice the argument index plus its Boolean outcome (False=0, True=1)",
+        "comparison": "Equal formation and truth at both supplied arguments",
+        "coverage": "These three actual program forms and these two argument values"
+      },
+      "semantic_boundary": "The exported theory computes the actual program observations using proved equations. Its table and comparison contracts cover precisely the stated finite scope. The general proof separately establishes the necessity of both facets for all formed program entries."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "permission",
+      "selected": [
+        1
+      ],
+      "question": "Do the selected facets preserve complete formation and truth decisions?",
+      "scope": {
+        "candidates": {
+          "0": "narrow interface, empty clause family",
+          "1": "variable interface, empty clause family",
+          "2": "variable-interface recognizer"
+        },
+        "arguments": {
+          "0": "Payload_Term []",
+          "1": "Pair_Term (Payload_Term []) (Payload_Term [])"
+        },
+        "facets": {
+          "0": "call formation",
+          "1": "positive truth"
+        },
+        "values": "Twice the argument index plus its Boolean outcome (False=0, True=1)",
+        "comparison": "Equal formation and truth at both supplied arguments",
+        "coverage": "These three actual program forms and these two argument values"
+      },
+      "semantic_boundary": "The exported theory computes the actual program observations using proved equations. Its table and comparison contracts cover precisely the stated finite scope. The general proof separately establishes the necessity of both facets for all formed program entries."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "permission",
+      "selected": [
+        0,
+        1
+      ],
+      "question": "Do the selected facets preserve complete formation and truth decisions?",
+      "scope": {
+        "candidates": {
+          "0": "narrow interface, empty clause family",
+          "1": "variable interface, empty clause family",
+          "2": "variable-interface recognizer"
+        },
+        "arguments": {
+          "0": "Payload_Term []",
+          "1": "Pair_Term (Payload_Term []) (Payload_Term [])"
+        },
+        "facets": {
+          "0": "call formation",
+          "1": "positive truth"
+        },
+        "values": "Twice the argument index plus its Boolean outcome (False=0, True=1)",
+        "comparison": "Equal formation and truth at both supplied arguments",
+        "coverage": "These three actual program forms and these two argument values"
+      },
+      "semantic_boundary": "The exported theory computes the actual program observations using proved equations. Its table and comparison contracts cover precisely the stated finite scope. The general proof separately establishes the necessity of both facets for all formed program entries."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "permission",
+      "selected": [
+        0,
+        1,
+        2
+      ],
+      "question": "Do the selected facets preserve complete formation and truth decisions?",
+      "scope": {
+        "candidates": {
+          "0": "narrow interface, empty clause family",
+          "1": "variable interface, empty clause family",
+          "2": "variable-interface recognizer"
+        },
+        "arguments": {
+          "0": "Payload_Term []",
+          "1": "Pair_Term (Payload_Term []) (Payload_Term [])"
+        },
+        "facets": {
+          "0": "call formation",
+          "1": "positive truth"
+        },
+        "values": "Twice the argument index plus its Boolean outcome (False=0, True=1)",
+        "comparison": "Equal formation and truth at both supplied arguments",
+        "coverage": "These three actual program forms and these two argument values"
+      },
+      "semantic_boundary": "The exported theory computes the actual program observations using proved equations. Its table and comparison contracts cover precisely the stated finite scope. The general proof separately establishes the necessity of both facets for all formed program entries."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "pattern",
+      "selected": [],
+      "question": "Do the selected probes determine the actual substituted patterns?",
+      "scope": {
+        "replacements": {
+          "0": "Pattern_Variable 0",
+          "1": "Pattern_Variable 1",
+          "2": "Pattern_Payload [0]",
+          "3": "Pattern_Payload [1]",
+          "4": "Pattern_Target (Whole_Artifact empty_artifact)"
+        },
+        "template": "Pair of two occurrences of one source variable",
+        "facets": {
+          "0": "payload marker evaluation",
+          "1": "constant target marker evaluation"
+        },
+        "marker_assignment": "Variable a has payload marker [a]",
+        "values": "Codes 0, 1, and 2 encode the resulting repeated pairs of Payload [0], Payload [1], and the fixed target",
+        "comparison": "Equality of the five actual substituted patterns",
+        "coverage": "These five replacements in the repeated-variable pair template"
+      },
+      "semantic_boundary": "The exported theory performs the substitutions and pattern evaluations. The observation table, comparison, and output codec have exact contracts for this finite scope. The separate general theorem determines arbitrary scoped pattern syntax; this execution does not run an arbitrary native program or check its universal mathematical contracts.",
+      "collapsed": false
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "pattern",
+      "selected": [
+        0
+      ],
+      "question": "Do the selected probes determine the actual substituted patterns?",
+      "scope": {
+        "replacements": {
+          "0": "Pattern_Variable 0",
+          "1": "Pattern_Variable 1",
+          "2": "Pattern_Payload [0]",
+          "3": "Pattern_Payload [1]",
+          "4": "Pattern_Target (Whole_Artifact empty_artifact)"
+        },
+        "template": "Pair of two occurrences of one source variable",
+        "facets": {
+          "0": "payload marker evaluation",
+          "1": "constant target marker evaluation"
+        },
+        "marker_assignment": "Variable a has payload marker [a]",
+        "values": "Codes 0, 1, and 2 encode the resulting repeated pairs of Payload [0], Payload [1], and the fixed target",
+        "comparison": "Equality of the five actual substituted patterns",
+        "coverage": "These five replacements in the repeated-variable pair template"
+      },
+      "semantic_boundary": "The exported theory performs the substitutions and pattern evaluations. The observation table, comparison, and output codec have exact contracts for this finite scope. The separate general theorem determines arbitrary scoped pattern syntax; this execution does not run an arbitrary native program or check its universal mathematical contracts.",
+      "collapsed": false
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "pattern",
+      "selected": [
+        1
+      ],
+      "question": "Do the selected probes determine the actual substituted patterns?",
+      "scope": {
+        "replacements": {
+          "0": "Pattern_Variable 0",
+          "1": "Pattern_Variable 1",
+          "2": "Pattern_Payload [0]",
+          "3": "Pattern_Payload [1]",
+          "4": "Pattern_Target (Whole_Artifact empty_artifact)"
+        },
+        "template": "Pair of two occurrences of one source variable",
+        "facets": {
+          "0": "payload marker evaluation",
+          "1": "constant target marker evaluation"
+        },
+        "marker_assignment": "Variable a has payload marker [a]",
+        "values": "Codes 0, 1, and 2 encode the resulting repeated pairs of Payload [0], Payload [1], and the fixed target",
+        "comparison": "Equality of the five actual substituted patterns",
+        "coverage": "These five replacements in the repeated-variable pair template"
+      },
+      "semantic_boundary": "The exported theory performs the substitutions and pattern evaluations. The observation table, comparison, and output codec have exact contracts for this finite scope. The separate general theorem determines arbitrary scoped pattern syntax; this execution does not run an arbitrary native program or check its universal mathematical contracts.",
+      "collapsed": false
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "pattern",
+      "selected": [
+        0,
+        1
+      ],
+      "question": "Do the selected probes determine the actual substituted patterns?",
+      "scope": {
+        "replacements": {
+          "0": "Pattern_Variable 0",
+          "1": "Pattern_Variable 1",
+          "2": "Pattern_Payload [0]",
+          "3": "Pattern_Payload [1]",
+          "4": "Pattern_Target (Whole_Artifact empty_artifact)"
+        },
+        "template": "Pair of two occurrences of one source variable",
+        "facets": {
+          "0": "payload marker evaluation",
+          "1": "constant target marker evaluation"
+        },
+        "marker_assignment": "Variable a has payload marker [a]",
+        "values": "Codes 0, 1, and 2 encode the resulting repeated pairs of Payload [0], Payload [1], and the fixed target",
+        "comparison": "Equality of the five actual substituted patterns",
+        "coverage": "These five replacements in the repeated-variable pair template"
+      },
+      "semantic_boundary": "The exported theory performs the substitutions and pattern evaluations. The observation table, comparison, and output codec have exact contracts for this finite scope. The separate general theorem determines arbitrary scoped pattern syntax; this execution does not run an arbitrary native program or check its universal mathematical contracts.",
+      "collapsed": false
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "pattern",
+      "selected": [
+        0,
+        1,
+        2
+      ],
+      "question": "Do the selected probes determine the actual substituted patterns?",
+      "scope": {
+        "replacements": {
+          "0": "Pattern_Variable 0",
+          "1": "Pattern_Variable 1",
+          "2": "Pattern_Payload [0]",
+          "3": "Pattern_Payload [1]",
+          "4": "Pattern_Target (Whole_Artifact empty_artifact)"
+        },
+        "template": "Pair of two occurrences of one source variable",
+        "facets": {
+          "0": "payload marker evaluation",
+          "1": "constant target marker evaluation"
+        },
+        "marker_assignment": "Variable a has payload marker [a]",
+        "values": "Codes 0, 1, and 2 encode the resulting repeated pairs of Payload [0], Payload [1], and the fixed target",
+        "comparison": "Equality of the five actual substituted patterns",
+        "coverage": "These five replacements in the repeated-variable pair template"
+      },
+      "semantic_boundary": "The exported theory performs the substitutions and pattern evaluations. The observation table, comparison, and output codec have exact contracts for this finite scope. The separate general theorem determines arbitrary scoped pattern syntax; this execution does not run an arbitrary native program or check its universal mathematical contracts.",
+      "collapsed": false
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "pattern",
+      "selected": [],
+      "question": "Do the selected probes determine the actual substituted patterns?",
+      "scope": {
+        "replacements": {
+          "0": "Pattern_Variable 0",
+          "1": "Pattern_Variable 1",
+          "2": "Pattern_Payload [0]",
+          "3": "Pattern_Payload [1]",
+          "4": "Pattern_Target (Whole_Artifact empty_artifact)"
+        },
+        "template": "Pair of two occurrences of one source variable",
+        "facets": {
+          "0": "payload marker evaluation",
+          "1": "constant target marker evaluation"
+        },
+        "marker_assignment": "All payload markers are [0]",
+        "values": "Codes 0, 1, and 2 encode the resulting repeated pairs of Payload [0], Payload [1], and the fixed target",
+        "comparison": "Equality of the five actual substituted patterns",
+        "coverage": "These five replacements in the repeated-variable pair template"
+      },
+      "semantic_boundary": "The exported theory performs the substitutions and pattern evaluations. The observation table, comparison, and output codec have exact contracts for this finite scope. The separate general theorem determines arbitrary scoped pattern syntax; this execution does not run an arbitrary native program or check its universal mathematical contracts.",
+      "collapsed": true
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "pattern",
+      "selected": [
+        0
+      ],
+      "question": "Do the selected probes determine the actual substituted patterns?",
+      "scope": {
+        "replacements": {
+          "0": "Pattern_Variable 0",
+          "1": "Pattern_Variable 1",
+          "2": "Pattern_Payload [0]",
+          "3": "Pattern_Payload [1]",
+          "4": "Pattern_Target (Whole_Artifact empty_artifact)"
+        },
+        "template": "Pair of two occurrences of one source variable",
+        "facets": {
+          "0": "payload marker evaluation",
+          "1": "constant target marker evaluation"
+        },
+        "marker_assignment": "All payload markers are [0]",
+        "values": "Codes 0, 1, and 2 encode the resulting repeated pairs of Payload [0], Payload [1], and the fixed target",
+        "comparison": "Equality of the five actual substituted patterns",
+        "coverage": "These five replacements in the repeated-variable pair template"
+      },
+      "semantic_boundary": "The exported theory performs the substitutions and pattern evaluations. The observation table, comparison, and output codec have exact contracts for this finite scope. The separate general theorem determines arbitrary scoped pattern syntax; this execution does not run an arbitrary native program or check its universal mathematical contracts.",
+      "collapsed": true
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "pattern",
+      "selected": [
+        1
+      ],
+      "question": "Do the selected probes determine the actual substituted patterns?",
+      "scope": {
+        "replacements": {
+          "0": "Pattern_Variable 0",
+          "1": "Pattern_Variable 1",
+          "2": "Pattern_Payload [0]",
+          "3": "Pattern_Payload [1]",
+          "4": "Pattern_Target (Whole_Artifact empty_artifact)"
+        },
+        "template": "Pair of two occurrences of one source variable",
+        "facets": {
+          "0": "payload marker evaluation",
+          "1": "constant target marker evaluation"
+        },
+        "marker_assignment": "All payload markers are [0]",
+        "values": "Codes 0, 1, and 2 encode the resulting repeated pairs of Payload [0], Payload [1], and the fixed target",
+        "comparison": "Equality of the five actual substituted patterns",
+        "coverage": "These five replacements in the repeated-variable pair template"
+      },
+      "semantic_boundary": "The exported theory performs the substitutions and pattern evaluations. The observation table, comparison, and output codec have exact contracts for this finite scope. The separate general theorem determines arbitrary scoped pattern syntax; this execution does not run an arbitrary native program or check its universal mathematical contracts.",
+      "collapsed": true
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "pattern",
+      "selected": [
+        0,
+        1
+      ],
+      "question": "Do the selected probes determine the actual substituted patterns?",
+      "scope": {
+        "replacements": {
+          "0": "Pattern_Variable 0",
+          "1": "Pattern_Variable 1",
+          "2": "Pattern_Payload [0]",
+          "3": "Pattern_Payload [1]",
+          "4": "Pattern_Target (Whole_Artifact empty_artifact)"
+        },
+        "template": "Pair of two occurrences of one source variable",
+        "facets": {
+          "0": "payload marker evaluation",
+          "1": "constant target marker evaluation"
+        },
+        "marker_assignment": "All payload markers are [0]",
+        "values": "Codes 0, 1, and 2 encode the resulting repeated pairs of Payload [0], Payload [1], and the fixed target",
+        "comparison": "Equality of the five actual substituted patterns",
+        "coverage": "These five replacements in the repeated-variable pair template"
+      },
+      "semantic_boundary": "The exported theory performs the substitutions and pattern evaluations. The observation table, comparison, and output codec have exact contracts for this finite scope. The separate general theorem determines arbitrary scoped pattern syntax; this execution does not run an arbitrary native program or check its universal mathematical contracts.",
+      "collapsed": true
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "pattern",
+      "selected": [
+        0,
+        1,
+        2
+      ],
+      "question": "Do the selected probes determine the actual substituted patterns?",
+      "scope": {
+        "replacements": {
+          "0": "Pattern_Variable 0",
+          "1": "Pattern_Variable 1",
+          "2": "Pattern_Payload [0]",
+          "3": "Pattern_Payload [1]",
+          "4": "Pattern_Target (Whole_Artifact empty_artifact)"
+        },
+        "template": "Pair of two occurrences of one source variable",
+        "facets": {
+          "0": "payload marker evaluation",
+          "1": "constant target marker evaluation"
+        },
+        "marker_assignment": "All payload markers are [0]",
+        "values": "Codes 0, 1, and 2 encode the resulting repeated pairs of Payload [0], Payload [1], and the fixed target",
+        "comparison": "Equality of the five actual substituted patterns",
+        "coverage": "These five replacements in the repeated-variable pair template"
+      },
+      "semantic_boundary": "The exported theory performs the substitutions and pattern evaluations. The observation table, comparison, and output codec have exact contracts for this finite scope. The separate general theorem determines arbitrary scoped pattern syntax; this execution does not run an arbitrary native program or check its universal mathematical contracts.",
+      "collapsed": true
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "proof_probes",
+      "selected": [],
+      "question": "Do the selected call probes determine complete formation and truth agreement?",
+      "scope": {
+        "candidates": {
+          "0": "The existing finite-relation program containing exactly the two marker terms",
+          "1": "The existing pattern-family program with one variable recognizer"
+        },
+        "facets": {
+          "0": "Payload_Term [0]",
+          "1": "Target_Term (Whole_Artifact empty_artifact)",
+          "2": "Pair_Term (Payload_Term [0]) (Payload_Term [0])"
+        },
+        "values": "Twice the call-formation outcome plus the positive-truth outcome (False=0, True=1)",
+        "comparison": "Equal formation and positive truth on every formed term",
+        "coverage": "These two fixed actual programs; the three probes form a complete basis for this family"
+      },
+      "semantic_boundary": "The exported observations use proved code equations for the existing programs. The intended comparison quantifies over every formed term and has a proved decision equation for this two-program family. A separate theorem shows that any finite collection of positive probes can miss a difference between finite programs. This execution does not infer universal truth for an arbitrary program from sample calls."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "proof_probes",
+      "selected": [
+        0
+      ],
+      "question": "Do the selected call probes determine complete formation and truth agreement?",
+      "scope": {
+        "candidates": {
+          "0": "The existing finite-relation program containing exactly the two marker terms",
+          "1": "The existing pattern-family program with one variable recognizer"
+        },
+        "facets": {
+          "0": "Payload_Term [0]",
+          "1": "Target_Term (Whole_Artifact empty_artifact)",
+          "2": "Pair_Term (Payload_Term [0]) (Payload_Term [0])"
+        },
+        "values": "Twice the call-formation outcome plus the positive-truth outcome (False=0, True=1)",
+        "comparison": "Equal formation and positive truth on every formed term",
+        "coverage": "These two fixed actual programs; the three probes form a complete basis for this family"
+      },
+      "semantic_boundary": "The exported observations use proved code equations for the existing programs. The intended comparison quantifies over every formed term and has a proved decision equation for this two-program family. A separate theorem shows that any finite collection of positive probes can miss a difference between finite programs. This execution does not infer universal truth for an arbitrary program from sample calls."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "proof_probes",
+      "selected": [
+        1
+      ],
+      "question": "Do the selected call probes determine complete formation and truth agreement?",
+      "scope": {
+        "candidates": {
+          "0": "The existing finite-relation program containing exactly the two marker terms",
+          "1": "The existing pattern-family program with one variable recognizer"
+        },
+        "facets": {
+          "0": "Payload_Term [0]",
+          "1": "Target_Term (Whole_Artifact empty_artifact)",
+          "2": "Pair_Term (Payload_Term [0]) (Payload_Term [0])"
+        },
+        "values": "Twice the call-formation outcome plus the positive-truth outcome (False=0, True=1)",
+        "comparison": "Equal formation and positive truth on every formed term",
+        "coverage": "These two fixed actual programs; the three probes form a complete basis for this family"
+      },
+      "semantic_boundary": "The exported observations use proved code equations for the existing programs. The intended comparison quantifies over every formed term and has a proved decision equation for this two-program family. A separate theorem shows that any finite collection of positive probes can miss a difference between finite programs. This execution does not infer universal truth for an arbitrary program from sample calls."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "proof_probes",
+      "selected": [
+        2
+      ],
+      "question": "Do the selected call probes determine complete formation and truth agreement?",
+      "scope": {
+        "candidates": {
+          "0": "The existing finite-relation program containing exactly the two marker terms",
+          "1": "The existing pattern-family program with one variable recognizer"
+        },
+        "facets": {
+          "0": "Payload_Term [0]",
+          "1": "Target_Term (Whole_Artifact empty_artifact)",
+          "2": "Pair_Term (Payload_Term [0]) (Payload_Term [0])"
+        },
+        "values": "Twice the call-formation outcome plus the positive-truth outcome (False=0, True=1)",
+        "comparison": "Equal formation and positive truth on every formed term",
+        "coverage": "These two fixed actual programs; the three probes form a complete basis for this family"
+      },
+      "semantic_boundary": "The exported observations use proved code equations for the existing programs. The intended comparison quantifies over every formed term and has a proved decision equation for this two-program family. A separate theorem shows that any finite collection of positive probes can miss a difference between finite programs. This execution does not infer universal truth for an arbitrary program from sample calls."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "proof_probes",
+      "selected": [
+        0,
+        1
+      ],
+      "question": "Do the selected call probes determine complete formation and truth agreement?",
+      "scope": {
+        "candidates": {
+          "0": "The existing finite-relation program containing exactly the two marker terms",
+          "1": "The existing pattern-family program with one variable recognizer"
+        },
+        "facets": {
+          "0": "Payload_Term [0]",
+          "1": "Target_Term (Whole_Artifact empty_artifact)",
+          "2": "Pair_Term (Payload_Term [0]) (Payload_Term [0])"
+        },
+        "values": "Twice the call-formation outcome plus the positive-truth outcome (False=0, True=1)",
+        "comparison": "Equal formation and positive truth on every formed term",
+        "coverage": "These two fixed actual programs; the three probes form a complete basis for this family"
+      },
+      "semantic_boundary": "The exported observations use proved code equations for the existing programs. The intended comparison quantifies over every formed term and has a proved decision equation for this two-program family. A separate theorem shows that any finite collection of positive probes can miss a difference between finite programs. This execution does not infer universal truth for an arbitrary program from sample calls."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "proof_probes",
+      "selected": [
+        0,
+        2
+      ],
+      "question": "Do the selected call probes determine complete formation and truth agreement?",
+      "scope": {
+        "candidates": {
+          "0": "The existing finite-relation program containing exactly the two marker terms",
+          "1": "The existing pattern-family program with one variable recognizer"
+        },
+        "facets": {
+          "0": "Payload_Term [0]",
+          "1": "Target_Term (Whole_Artifact empty_artifact)",
+          "2": "Pair_Term (Payload_Term [0]) (Payload_Term [0])"
+        },
+        "values": "Twice the call-formation outcome plus the positive-truth outcome (False=0, True=1)",
+        "comparison": "Equal formation and positive truth on every formed term",
+        "coverage": "These two fixed actual programs; the three probes form a complete basis for this family"
+      },
+      "semantic_boundary": "The exported observations use proved code equations for the existing programs. The intended comparison quantifies over every formed term and has a proved decision equation for this two-program family. A separate theorem shows that any finite collection of positive probes can miss a difference between finite programs. This execution does not infer universal truth for an arbitrary program from sample calls."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "proof_probes",
+      "selected": [
+        1,
+        2
+      ],
+      "question": "Do the selected call probes determine complete formation and truth agreement?",
+      "scope": {
+        "candidates": {
+          "0": "The existing finite-relation program containing exactly the two marker terms",
+          "1": "The existing pattern-family program with one variable recognizer"
+        },
+        "facets": {
+          "0": "Payload_Term [0]",
+          "1": "Target_Term (Whole_Artifact empty_artifact)",
+          "2": "Pair_Term (Payload_Term [0]) (Payload_Term [0])"
+        },
+        "values": "Twice the call-formation outcome plus the positive-truth outcome (False=0, True=1)",
+        "comparison": "Equal formation and positive truth on every formed term",
+        "coverage": "These two fixed actual programs; the three probes form a complete basis for this family"
+      },
+      "semantic_boundary": "The exported observations use proved code equations for the existing programs. The intended comparison quantifies over every formed term and has a proved decision equation for this two-program family. A separate theorem shows that any finite collection of positive probes can miss a difference between finite programs. This execution does not infer universal truth for an arbitrary program from sample calls."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "proof_probes",
+      "selected": [
+        0,
+        1,
+        2
+      ],
+      "question": "Do the selected call probes determine complete formation and truth agreement?",
+      "scope": {
+        "candidates": {
+          "0": "The existing finite-relation program containing exactly the two marker terms",
+          "1": "The existing pattern-family program with one variable recognizer"
+        },
+        "facets": {
+          "0": "Payload_Term [0]",
+          "1": "Target_Term (Whole_Artifact empty_artifact)",
+          "2": "Pair_Term (Payload_Term [0]) (Payload_Term [0])"
+        },
+        "values": "Twice the call-formation outcome plus the positive-truth outcome (False=0, True=1)",
+        "comparison": "Equal formation and positive truth on every formed term",
+        "coverage": "These two fixed actual programs; the three probes form a complete basis for this family"
+      },
+      "semantic_boundary": "The exported observations use proved code equations for the existing programs. The intended comparison quantifies over every formed term and has a proved decision equation for this two-program family. A separate theorem shows that any finite collection of positive probes can miss a difference between finite programs. This execution does not infer universal truth for an arbitrary program from sample calls."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "proof_probes",
+      "selected": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "question": "Do the selected call probes determine complete formation and truth agreement?",
+      "scope": {
+        "candidates": {
+          "0": "The existing finite-relation program containing exactly the two marker terms",
+          "1": "The existing pattern-family program with one variable recognizer"
+        },
+        "facets": {
+          "0": "Payload_Term [0]",
+          "1": "Target_Term (Whole_Artifact empty_artifact)",
+          "2": "Pair_Term (Payload_Term [0]) (Payload_Term [0])"
+        },
+        "values": "Twice the call-formation outcome plus the positive-truth outcome (False=0, True=1)",
+        "comparison": "Equal formation and positive truth on every formed term",
+        "coverage": "These two fixed actual programs; the three probes form a complete basis for this family"
+      },
+      "semantic_boundary": "The exported observations use proved code equations for the existing programs. The intended comparison quantifies over every formed term and has a proved decision equation for this two-program family. A separate theorem shows that any finite collection of positive probes can miss a difference between finite programs. This execution does not infer universal truth for an arbitrary program from sample calls."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "schema_sockets",
+      "selected": [],
+      "question": "Do the selected observations determine an actual substitution between these linked schemas?",
+      "scope": {
+        "candidates": {
+          "0": "The existing native incidence schema with material socket [18]",
+          "1": "The same schema with material socket [19]"
+        },
+        "facets": {
+          "0": "The complete conclusion pattern",
+          "1": "The unkeyed material operand values at every valuation",
+          "2": "The actual material socket coordinate"
+        },
+        "values": "The first two facets have value 0; the socket facet has value 18 or 19, with exact equations proved for this case",
+        "comparison": "Existence of a pattern substitution from the first actual schema to the second",
+        "coverage": "These two socket variants of the existing native incidence schema"
+      },
+      "semantic_boundary": "The candidates have the same complete rule-instance relation and the same unkeyed material values at every valuation. Actual substitution retains the socket coordinate. Proved code equations determine that relation for these two schemas; this finite comparison does not search arbitrary schemas or infer universal observations from sample valuations."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "schema_sockets",
+      "selected": [
+        0
+      ],
+      "question": "Do the selected observations determine an actual substitution between these linked schemas?",
+      "scope": {
+        "candidates": {
+          "0": "The existing native incidence schema with material socket [18]",
+          "1": "The same schema with material socket [19]"
+        },
+        "facets": {
+          "0": "The complete conclusion pattern",
+          "1": "The unkeyed material operand values at every valuation",
+          "2": "The actual material socket coordinate"
+        },
+        "values": "The first two facets have value 0; the socket facet has value 18 or 19, with exact equations proved for this case",
+        "comparison": "Existence of a pattern substitution from the first actual schema to the second",
+        "coverage": "These two socket variants of the existing native incidence schema"
+      },
+      "semantic_boundary": "The candidates have the same complete rule-instance relation and the same unkeyed material values at every valuation. Actual substitution retains the socket coordinate. Proved code equations determine that relation for these two schemas; this finite comparison does not search arbitrary schemas or infer universal observations from sample valuations."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "schema_sockets",
+      "selected": [
+        1
+      ],
+      "question": "Do the selected observations determine an actual substitution between these linked schemas?",
+      "scope": {
+        "candidates": {
+          "0": "The existing native incidence schema with material socket [18]",
+          "1": "The same schema with material socket [19]"
+        },
+        "facets": {
+          "0": "The complete conclusion pattern",
+          "1": "The unkeyed material operand values at every valuation",
+          "2": "The actual material socket coordinate"
+        },
+        "values": "The first two facets have value 0; the socket facet has value 18 or 19, with exact equations proved for this case",
+        "comparison": "Existence of a pattern substitution from the first actual schema to the second",
+        "coverage": "These two socket variants of the existing native incidence schema"
+      },
+      "semantic_boundary": "The candidates have the same complete rule-instance relation and the same unkeyed material values at every valuation. Actual substitution retains the socket coordinate. Proved code equations determine that relation for these two schemas; this finite comparison does not search arbitrary schemas or infer universal observations from sample valuations."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "schema_sockets",
+      "selected": [
+        2
+      ],
+      "question": "Do the selected observations determine an actual substitution between these linked schemas?",
+      "scope": {
+        "candidates": {
+          "0": "The existing native incidence schema with material socket [18]",
+          "1": "The same schema with material socket [19]"
+        },
+        "facets": {
+          "0": "The complete conclusion pattern",
+          "1": "The unkeyed material operand values at every valuation",
+          "2": "The actual material socket coordinate"
+        },
+        "values": "The first two facets have value 0; the socket facet has value 18 or 19, with exact equations proved for this case",
+        "comparison": "Existence of a pattern substitution from the first actual schema to the second",
+        "coverage": "These two socket variants of the existing native incidence schema"
+      },
+      "semantic_boundary": "The candidates have the same complete rule-instance relation and the same unkeyed material values at every valuation. Actual substitution retains the socket coordinate. Proved code equations determine that relation for these two schemas; this finite comparison does not search arbitrary schemas or infer universal observations from sample valuations."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "schema_sockets",
+      "selected": [
+        0,
+        1
+      ],
+      "question": "Do the selected observations determine an actual substitution between these linked schemas?",
+      "scope": {
+        "candidates": {
+          "0": "The existing native incidence schema with material socket [18]",
+          "1": "The same schema with material socket [19]"
+        },
+        "facets": {
+          "0": "The complete conclusion pattern",
+          "1": "The unkeyed material operand values at every valuation",
+          "2": "The actual material socket coordinate"
+        },
+        "values": "The first two facets have value 0; the socket facet has value 18 or 19, with exact equations proved for this case",
+        "comparison": "Existence of a pattern substitution from the first actual schema to the second",
+        "coverage": "These two socket variants of the existing native incidence schema"
+      },
+      "semantic_boundary": "The candidates have the same complete rule-instance relation and the same unkeyed material values at every valuation. Actual substitution retains the socket coordinate. Proved code equations determine that relation for these two schemas; this finite comparison does not search arbitrary schemas or infer universal observations from sample valuations."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "schema_sockets",
+      "selected": [
+        0,
+        2
+      ],
+      "question": "Do the selected observations determine an actual substitution between these linked schemas?",
+      "scope": {
+        "candidates": {
+          "0": "The existing native incidence schema with material socket [18]",
+          "1": "The same schema with material socket [19]"
+        },
+        "facets": {
+          "0": "The complete conclusion pattern",
+          "1": "The unkeyed material operand values at every valuation",
+          "2": "The actual material socket coordinate"
+        },
+        "values": "The first two facets have value 0; the socket facet has value 18 or 19, with exact equations proved for this case",
+        "comparison": "Existence of a pattern substitution from the first actual schema to the second",
+        "coverage": "These two socket variants of the existing native incidence schema"
+      },
+      "semantic_boundary": "The candidates have the same complete rule-instance relation and the same unkeyed material values at every valuation. Actual substitution retains the socket coordinate. Proved code equations determine that relation for these two schemas; this finite comparison does not search arbitrary schemas or infer universal observations from sample valuations."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "schema_sockets",
+      "selected": [
+        1,
+        2
+      ],
+      "question": "Do the selected observations determine an actual substitution between these linked schemas?",
+      "scope": {
+        "candidates": {
+          "0": "The existing native incidence schema with material socket [18]",
+          "1": "The same schema with material socket [19]"
+        },
+        "facets": {
+          "0": "The complete conclusion pattern",
+          "1": "The unkeyed material operand values at every valuation",
+          "2": "The actual material socket coordinate"
+        },
+        "values": "The first two facets have value 0; the socket facet has value 18 or 19, with exact equations proved for this case",
+        "comparison": "Existence of a pattern substitution from the first actual schema to the second",
+        "coverage": "These two socket variants of the existing native incidence schema"
+      },
+      "semantic_boundary": "The candidates have the same complete rule-instance relation and the same unkeyed material values at every valuation. Actual substitution retains the socket coordinate. Proved code equations determine that relation for these two schemas; this finite comparison does not search arbitrary schemas or infer universal observations from sample valuations."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "schema_sockets",
+      "selected": [
+        0,
+        1,
+        2
+      ],
+      "question": "Do the selected observations determine an actual substitution between these linked schemas?",
+      "scope": {
+        "candidates": {
+          "0": "The existing native incidence schema with material socket [18]",
+          "1": "The same schema with material socket [19]"
+        },
+        "facets": {
+          "0": "The complete conclusion pattern",
+          "1": "The unkeyed material operand values at every valuation",
+          "2": "The actual material socket coordinate"
+        },
+        "values": "The first two facets have value 0; the socket facet has value 18 or 19, with exact equations proved for this case",
+        "comparison": "Existence of a pattern substitution from the first actual schema to the second",
+        "coverage": "These two socket variants of the existing native incidence schema"
+      },
+      "semantic_boundary": "The candidates have the same complete rule-instance relation and the same unkeyed material values at every valuation. Actual substitution retains the socket coordinate. Proved code equations determine that relation for these two schemas; this finite comparison does not search arbitrary schemas or infer universal observations from sample valuations."
+    },
+    {
+      "schema": "finite-investigation-1",
+      "kind": "schema_sockets",
+      "selected": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "question": "Do the selected observations determine an actual substitution between these linked schemas?",
+      "scope": {
+        "candidates": {
+          "0": "The existing native incidence schema with material socket [18]",
+          "1": "The same schema with material socket [19]"
+        },
+        "facets": {
+          "0": "The complete conclusion pattern",
+          "1": "The unkeyed material operand values at every valuation",
+          "2": "The actual material socket coordinate"
+        },
+        "values": "The first two facets have value 0; the socket facet has value 18 or 19, with exact equations proved for this case",
+        "comparison": "Existence of a pattern substitution from the first actual schema to the second",
+        "coverage": "These two socket variants of the existing native incidence schema"
+      },
+      "semantic_boundary": "The candidates have the same complete rule-instance relation and the same unkeyed material values at every valuation. Actual substitution retains the socket coordinate. Proved code equations determine that relation for these two schemas; this finite comparison does not search arbitrary schemas or infer universal observations from sample valuations."
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "/home/julius/structure_and_semantics/tools/check_decision_cases.py", line 81, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/home/julius/structure_and_semantics/tools/check_decision_cases.py", line 36, in main
+    investigate.validate_case(problem['case'])
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/julius/structure_and_semantics/tools/investigate.py", line 422, in validate_case
+    require(isinstance(case, dict) and case.get("schema") == SCHEMA, "Unsupported case schema.")
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/julius/structure_and_semantics/tools/investigate.py", line 409, in require
+    raise ValueError(message)
+ValueError: Unsupported case schema.

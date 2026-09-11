@@ -1,0 +1,177 @@
+theory Factor_Observation_Table_Investigation
+  imports Factor_Observation_Collection_Contracts Factor_Observation_Table_Execution Finite_Derived_Observations
+begin
+
+section \<open>A complete table retains rows whose computed result is empty\<close>
+
+abbreviation table_example_candidates where
+  "table_example_candidates \<equiv> [0::nat,1,2]"
+
+abbreviation table_example_rows where
+  "table_example_rows \<equiv> [(0::nat,0::nat,0::nat),(0,0,1),(0,1,0)]"
+
+definition table_example_profile where
+  "table_example_profile c=map (\<lambda>(f,d,w). (f,w)) (filter (\<lambda>(f,d,w). d=c) table_example_rows)"
+
+definition table_example_loss where
+  "table_example_loss c d=filter (\<lambda>x. x\<notin>set (table_example_profile d)) (table_example_profile c)"
+
+abbreviation table_example_full_profiles where
+  "table_example_full_profiles \<equiv> map (\<lambda>c. (c,table_example_profile c)) table_example_candidates"
+
+abbreviation table_example_full_losses where
+  "table_example_full_losses \<equiv> map (\<lambda>(c,d). ((c,d),table_example_loss c d))
+    (investigation_pairs table_example_candidates)"
+
+abbreviation table_example_sparse_profiles where
+  "table_example_sparse_profiles \<equiv> filter (\<lambda>(c,vs). vs\<noteq>[]) table_example_full_profiles"
+
+abbreviation table_example_sparse_losses where
+  "table_example_sparse_losses \<equiv> filter (\<lambda>(k,vs). vs\<noteq>[]) table_example_full_losses"
+
+definition table_example_profiles :: "nat \<Rightarrow> (nat\<times>(nat\<times>nat) list) list" where
+  "table_example_profiles n=(if n=0 then table_example_sparse_profiles
+    else if n=2 then rev (map (\<lambda>(c,vs). (c,rev vs)) table_example_full_profiles)
+    else if n=3 then table_example_full_profiles@[(0,rev (table_example_profile 0))]
+    else if n=4 then filter (\<lambda>(c,vs). c\<noteq>2) table_example_full_profiles
+    else if n=6 then table_example_full_profiles@[(3,[])]
+    else table_example_full_profiles)"
+
+definition table_example_losses :: "nat \<Rightarrow> ((nat\<times>nat)\<times>(nat\<times>nat) list) list" where
+  "table_example_losses n=(if n=0 then table_example_sparse_losses
+    else if n=2 then rev (map (\<lambda>(k,vs). (k,rev vs)) table_example_full_losses)
+    else if n=3 then table_example_full_losses@[((0,2),rev (table_example_loss 0 2))]
+    else if n=5 then filter (\<lambda>(k,vs). k\<noteq>(2,2)) table_example_full_losses
+    else if n=7 then map (\<lambda>(k,vs). (k,if k=(0,2) then [(0,0)] else vs)) table_example_full_losses
+    else table_example_full_losses)"
+
+abbreviation table_example_native_rows where
+  "table_example_native_rows \<equiv> map (\<lambda>(f,c,w). (keyed_octet f,keyed_octet c,keyed_octet w)) table_example_rows"
+
+lemma table_example_computed_profiles:
+  assumes "c\<in>{0,1,2}"
+  shows "(301,context_relation_argument (Pair_Term (data_list_term [keyed_octet 0]) (keyed_octet c))
+      (data_list_term (map observation_row_term table_example_native_rows))
+      (data_list_term (map keyed_octet_pair (table_example_profile c))))\<in>positive_meaning observation_system"
+  using assms by (simp only: observation_encoded_profile)
+    (auto simp: table_example_profile_def observation_profile_list_def octets_formed_def)
+
+lemma table_example_computed_losses:
+  assumes "c\<in>{0,1,2}" "d\<in>{0,1,2}"
+  shows "(306,context_relation_argument
+      (Pair_Term (data_list_term [keyed_octet 0]) (keyed_octet_pair (c,d)))
+      (data_list_term (map observation_row_term table_example_native_rows))
+      (data_list_term (map keyed_octet_pair (table_example_loss c d))))\<in>positive_meaning observation_system"
+  using assms by (simp only: observation_encoded_losses)
+    (auto simp: table_example_loss_def table_example_profile_def observation_losses_list_def observation_profile_list_def octets_formed_def)
+
+definition table_investigation_decision :: "nat \<Rightarrow> nat \<Rightarrow> bool" where
+  "table_investigation_decision f n \<longleftrightarrow> (if f=0 then
+    keyed_octet_profiles table_example_sparse_profiles (table_example_profiles n) \<and>
+    keyed_octet_losses table_example_sparse_losses (table_example_losses n)
+    else observation_octet_profile_table table_example_candidates [0] [0] table_example_rows (table_example_profiles n) \<and>
+      observation_octet_loss_table table_example_candidates [0] [0] table_example_rows (table_example_losses n))"
+
+definition table_example_complete :: "nat \<Rightarrow> bool" where
+  "table_example_complete n \<longleftrightarrow>
+    fset_of_list (map (map_prod id fset_of_list) (table_example_profiles n))=
+      fset_of_list (map (\<lambda>c. (c,fset_of_list (table_example_profile c))) table_example_candidates) \<and>
+    fset_of_list (map (map_prod id fset_of_list) (table_example_losses n))=
+      fset_of_list (map (\<lambda>(c,d). ((c,d),fset_of_list (table_example_loss c d)))
+        (investigation_pairs table_example_candidates))"
+
+definition table_investigation_observations :: "(nat\<times>nat\<times>nat) list" where
+  "table_investigation_observations=concat (map (\<lambda>c.
+    map (\<lambda>f. (f,c,if table_investigation_decision f c then 1 else 0)) [0,1]) [0,1,2,3,4,5,6,7])"
+
+definition table_investigation_relation :: "(nat\<times>nat) list" where
+  "table_investigation_relation=filter (\<lambda>(c,d). table_example_complete c=table_example_complete d)
+    (investigation_pairs [0,1,2,3,4,5,6,7])"
+
+lemma table_investigation_relation_exact:
+  "(c,d)\<in>set table_investigation_relation \<longleftrightarrow>
+    c\<in>{0,1,2,3,4,5,6,7} \<and> d\<in>{0,1,2,3,4,5,6,7} \<and> table_example_complete c=table_example_complete d"
+  by (simp only: table_investigation_relation_def set_filter investigation_pairs_exact
+    mem_Collect_eq case_prod_conv list.set; blast)
+
+definition table_investigation where
+  "table_investigation selected=investigation_basis [0,1,2,3,4,5,6,7] [0,1] selected
+    table_investigation_observations table_investigation_relation"
+
+definition table_subject_operation where
+  "table_subject_operation (f::nat) subject=(case subject of (profiles,losses) \<Rightarrow>
+    (if f=0 then keyed_octet_profiles table_example_sparse_profiles profiles \<and>
+      keyed_octet_losses table_example_sparse_losses losses
+     else observation_octet_profile_table table_example_candidates [0] [0] table_example_rows profiles \<and>
+      observation_octet_loss_table table_example_candidates [0] [0] table_example_rows losses))"
+
+lemma table_subject_decision_at:
+  "table_subject_operation f ((table_example_profiles c,table_example_losses c))=table_investigation_decision f c"
+  by (simp add: table_subject_operation_def table_investigation_decision_def)
+
+definition table_candidate_subjects where
+  "table_candidate_subjects=fimage (\<lambda>c. (c,(table_example_profiles c,table_example_losses c))) {|0::nat,1,2,3,4,5,6,7|}"
+
+definition table_operation_subjects where
+  "table_operation_subjects=fimage (\<lambda>f. (f,table_subject_operation f)) {|0::nat,1|}"
+
+definition table_value_subjects where
+  "table_value_subjects=fimage (\<lambda>w. (w,w=1)) {|0::nat,1|}"
+
+lemma table_subject_maps_formed:
+  "finite_observation_subjects_formed table_candidate_subjects table_operation_subjects table_value_subjects"
+  unfolding table_candidate_subjects_def table_operation_subjects_def table_value_subjects_def
+  by (rule finite_observation_function_graphs_formed)
+
+lemma table_observations_derived:
+  "fset_of_list table_investigation_observations=
+    finite_derived_observations table_candidate_subjects table_operation_subjects
+      table_value_subjects (\<lambda>operation subject value. value=operation subject)"
+  unfolding table_candidate_subjects_def table_operation_subjects_def table_value_subjects_def
+  apply (rule finite_table_derived_from_function_graphs)
+  by (simp only: fset_of_list.rep_eq table_investigation_observations_def indexed_value_rows_member table_subject_decision_at;
+    auto split: if_splits)
+
+theorem table_observation_at_subject:
+  assumes "(c,subject) |\<in>| table_candidate_subjects"
+    "(f,operation) |\<in>| table_operation_subjects"
+    "(w,value) |\<in>| table_value_subjects"
+  shows "(f,c,w)\<in>set table_investigation_observations \<longleftrightarrow> value=operation subject"
+  using finite_derived_observation_at_subject[OF table_subject_maps_formed assms, where P="\<lambda>operation subject value. value=operation subject"]
+  by (simp only: table_observations_derived[symmetric] fset_of_list.rep_eq)
+
+definition table_subject_complete where
+  "table_subject_complete subject=(case subject of (profiles,losses) \<Rightarrow>
+    fset_of_list (map (map_prod id fset_of_list) profiles)=
+      fset_of_list (map (\<lambda>c. (c,fset_of_list (table_example_profile c))) table_example_candidates) \<and>
+    fset_of_list (map (map_prod id fset_of_list) losses)=
+      fset_of_list (map (\<lambda>(c,d). ((c,d),fset_of_list (table_example_loss c d)))
+        (investigation_pairs table_example_candidates)))"
+
+lemma table_subject_complete_at:
+  "table_subject_complete (table_example_profiles c,table_example_losses c)=table_example_complete c"
+  by (simp add: table_subject_complete_def table_example_complete_def)
+
+theorem table_comparison_at_subject:
+  assumes "(c,subject) |\<in>| table_candidate_subjects"
+    "(d,other) |\<in>| table_candidate_subjects"
+  shows "(c,d)\<in>set table_investigation_relation \<longleftrightarrow> table_subject_complete subject=table_subject_complete other"
+  using assms by (auto simp: table_candidate_subjects_def fimage.rep_eq table_investigation_relation_exact table_subject_complete_at)
+
+export_code investigation_inference investigation_basis investigation_repairs investigation_extend table_investigation
+  table_investigation_observations table_investigation_relation nat_of_integer integer_of_nat
+  in SML module_name Finite_Investigation file_prefix finite_investigation
+
+text \<open>
+  Both sparse reference collections retain only nonempty results of the
+  actual native profile and loss computations. The existing complete nested
+  comparator tests each supplied table against these sparse references.
+  A second observation calls the complete native profile and loss table
+  operations on the same query and displayed results. The independent
+  criterion requires every declared candidate and
+  every ordered candidate pair, with its exact computed finite result.
+  Its eight subjects include complete tables, changed presentations,
+  omitted empty rows, a foreign row, and a wrong nonempty loss.
+\<close>
+
+end

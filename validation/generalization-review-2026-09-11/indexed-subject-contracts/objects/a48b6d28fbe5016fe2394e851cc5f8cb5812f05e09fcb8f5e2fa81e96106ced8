@@ -1,0 +1,8 @@
+definition reasoning_method_quality :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> bool" where
+  "reasoning_method_quality m w f=
+    (let known=reasoning_method_known m (reasoning_workload_frontier w);
+         settled=(fst (snd (snd (reasoning_method_report m w)))={||});
+         actual=reasoning_workload_native_goal w
+     in if f=0 then list_all (\<lambda>(d,t). d=340 \<and> finite_admission_counter_check t) known
+        else if f=1 then (settled \<longrightarrow> actual)
+        else f=2 \<and> (settled=actual))"

@@ -1,0 +1,2541 @@
+structure Finite_Investigation : sig
+  type nat
+  val integer_of_nat : nat -> IntInf.int
+  type num
+  type 'a fset
+  val nat_of_integer : IntInf.int -> nat
+  val investigation_basis :
+    nat list ->
+      nat list ->
+        nat list ->
+          (nat * (nat * nat)) list ->
+            (nat * nat) list ->
+              bool *
+                ((nat * nat) list *
+                  ((nat * (nat * nat) list) list *
+                    (nat * (nat * (nat * nat) list)) list))
+  val investigation_extend :
+    nat list -> (nat * (nat * (nat * nat))) list -> nat list
+  val investigation_repairs :
+    nat list ->
+      nat list ->
+        nat list ->
+          (nat * (nat * nat)) list ->
+            (nat * nat) list ->
+              nat list *
+                ((nat * (nat * (nat * nat))) list *
+                  ((nat * (nat * (nat * nat))) list * (nat * nat) list))
+  val investigation_revision :
+    nat list ->
+      nat list ->
+        nat list ->
+          (nat * (nat * nat)) list ->
+            (nat * nat) list ->
+              nat list *
+                (nat list *
+                  ((nat * (nat * (nat * nat))) list *
+                    (nat list * (nat * nat) list)))
+  val investigation_inference :
+    (nat * (nat * nat) list) list ->
+      nat list ->
+        (nat * nat) list ->
+          bool *
+            ((nat * nat) list *
+              (nat list * (nat * ((nat * nat) list * (nat * nat))) list))
+  val pattern_investigation_observations : bool -> (nat * (nat * nat)) list
+  val pattern_investigation_relation : (nat * nat) list
+  val pattern_investigation :
+    bool ->
+      nat list ->
+        bool *
+          ((nat * nat) list *
+            ((nat * (nat * nat) list) list *
+              (nat * (nat * (nat * nat) list)) list))
+  val pair_scope_investigation_observations : (nat * (nat * nat)) list
+  val pair_scope_investigation_relation : (nat * nat) list
+  val pair_scope_investigation :
+    nat list ->
+      bool *
+        ((nat * nat) list *
+          ((nat * (nat * nat) list) list *
+            (nat * (nat * (nat * nat) list)) list))
+  val permission_investigation_observations : (nat * (nat * nat)) list
+  val permission_investigation_relation : (nat * nat) list
+  val permission_investigation :
+    nat list ->
+      bool *
+        ((nat * nat) list *
+          ((nat * (nat * nat) list) list *
+            (nat * (nat * (nat * nat) list)) list))
+  val revision_investigation_observations : (nat * (nat * nat)) list
+  val revision_investigation_relation : (nat * nat) list
+  val revision_investigation :
+    nat list ->
+      bool *
+        ((nat * nat) list *
+          ((nat * (nat * nat) list) list *
+            (nat * (nat * (nat * nat) list)) list))
+  val observation_investigation_observations : (nat * (nat * nat)) list
+  val observation_investigation_relation : (nat * nat) list
+  val observation_investigation :
+    nat list ->
+      bool *
+        ((nat * nat) list *
+          ((nat * (nat * nat) list) list *
+            (nat * (nat * (nat * nat) list)) list))
+  val scope_investigation_observations : (nat * (nat * nat)) list
+  val scope_investigation_relation : (nat * nat) list
+  val scope_investigation :
+    nat list ->
+      bool *
+        ((nat * nat) list *
+          ((nat * (nat * nat) list) list *
+            (nat * (nat * (nat * nat) list)) list))
+  val table_investigation_observations : (nat * (nat * nat)) list
+  val table_investigation_relation : (nat * nat) list
+  val table_investigation :
+    nat list ->
+      bool *
+        ((nat * nat) list *
+          ((nat * (nat * nat) list) list *
+            (nat * (nat * (nat * nat) list)) list))
+  val proof_probes_investigation_observations : (nat * (nat * nat)) list
+  val proof_probes_investigation_relation : (nat * nat) list
+  val proof_probes_investigation :
+    nat list ->
+      bool *
+        ((nat * nat) list *
+          ((nat * (nat * nat) list) list *
+            (nat * (nat * (nat * nat) list)) list))
+  val input_investigation_observations : (nat * (nat * nat)) list
+  val input_investigation_relation : (nat * nat) list
+  val input_investigation :
+    nat list ->
+      bool *
+        ((nat * nat) list *
+          ((nat * (nat * nat) list) list *
+            (nat * (nat * (nat * nat) list)) list))
+  val completion_investigation_observations : (nat * (nat * nat)) list
+  val completion_investigation_relation : (nat * nat) list
+  val completion_investigation :
+    nat list ->
+      bool *
+        ((nat * nat) list *
+          ((nat * (nat * nat) list) list *
+            (nat * (nat * (nat * nat) list)) list))
+  val schema_sockets_investigation_observations : (nat * (nat * nat)) list
+  val schema_sockets_investigation_relation : (nat * nat) list
+  val schema_sockets_investigation :
+    nat list ->
+      bool *
+        ((nat * nat) list *
+          ((nat * (nat * nat) list) list *
+            (nat * (nat * (nat * nat) list)) list))
+  val collection_investigation_observations : (nat * (nat * nat)) list
+  val collection_investigation_relation : (nat * nat) list
+  val collection_investigation :
+    nat list ->
+      bool *
+        ((nat * nat) list *
+          ((nat * (nat * nat) list) list *
+            (nat * (nat * (nat * nat) list)) list))
+  val reasoning_method_investigation_observations : (nat * (nat * nat)) list
+  val reasoning_method_investigation_relation : (nat * nat) list
+  val reasoning_method_investigation :
+    nat list ->
+      bool *
+        ((nat * nat) list *
+          ((nat * (nat * nat) list) list *
+            (nat * (nat * (nat * nat) list)) list))
+end = struct
+
+datatype nat = Nat of IntInf.int;
+
+fun integer_of_nat (Nat x) = x;
+
+fun equal_nata m n = (((integer_of_nat m) : IntInf.int) = (integer_of_nat n));
+
+type 'a equal = {equal : 'a -> 'a -> bool};
+val equal = #equal : 'a equal -> 'a -> 'a -> bool;
+
+val equal_nat = {equal = equal_nata} : nat equal;
+
+datatype num = One | Bit0 of num | Bit1 of num;
+
+val one_nata : nat = Nat (1 : IntInf.int);
+
+type 'a one = {one : 'a};
+val one = #one : 'a one -> 'a;
+
+val one_nat = {one = one_nata} : nat one;
+
+fun plus_nata m n = Nat (IntInf.+ (integer_of_nat m, integer_of_nat n));
+
+type 'a plus = {plus : 'a -> 'a -> 'a};
+val plus = #plus : 'a plus -> 'a -> 'a -> 'a;
+
+val plus_nat = {plus = plus_nata} : nat plus;
+
+val zero_nata : nat = Nat (0 : IntInf.int);
+
+type 'a zero = {zero : 'a};
+val zero = #zero : 'a zero -> 'a;
+
+val zero_nat = {zero = zero_nata} : nat zero;
+
+type 'a semigroup_add = {plus_semigroup_add : 'a plus};
+val plus_semigroup_add = #plus_semigroup_add : 'a semigroup_add -> 'a plus;
+
+type 'a numeral =
+  {one_numeral : 'a one, semigroup_add_numeral : 'a semigroup_add};
+val one_numeral = #one_numeral : 'a numeral -> 'a one;
+val semigroup_add_numeral = #semigroup_add_numeral :
+  'a numeral -> 'a semigroup_add;
+
+val semigroup_add_nat = {plus_semigroup_add = plus_nat} : nat semigroup_add;
+
+val numeral_nat =
+  {one_numeral = one_nat, semigroup_add_numeral = semigroup_add_nat} :
+  nat numeral;
+
+fun list_all p [] = true
+  | list_all p (x :: xs) = p x andalso list_all p xs;
+
+datatype 'a set = Set of 'a list | Coset of 'a list;
+
+fun eq A_ a b = equal A_ a b;
+
+fun membera A_ [] y = false
+  | membera A_ (x :: xs) y = eq A_ x y orelse membera A_ xs y;
+
+fun member A_ x (Set xs) = membera A_ xs x
+  | member A_ x (Coset xs) = not (membera A_ xs x);
+
+fun less_eq_set A_ (Set xs) b = list_all (fn x => member A_ x b) xs
+  | less_eq_set A_ a (Coset ys) = list_all (fn y => not (member A_ y a)) ys
+  | less_eq_set A_ (Coset []) (Set []) = false;
+
+fun equal_seta A_ a b = less_eq_set A_ a b andalso less_eq_set A_ b a;
+
+fun equal_set A_ = {equal = equal_seta A_} : 'a set equal;
+
+fun enum_all_bool p = p false andalso p true;
+
+fun enum_ex_bool p = p false orelse p true;
+
+val enum_boola : bool list = [false, true];
+
+type 'a countable = {};
+
+type 'a finite = {countable_finite : 'a countable};
+val countable_finite = #countable_finite : 'a finite -> 'a countable;
+
+type 'a enum =
+  {finite_enum : 'a finite, enum : 'a list, enum_all : ('a -> bool) -> bool,
+    enum_ex : ('a -> bool) -> bool};
+val finite_enum = #finite_enum : 'a enum -> 'a finite;
+val enum = #enum : 'a enum -> 'a list;
+val enum_all = #enum_all : 'a enum -> ('a -> bool) -> bool;
+val enum_ex = #enum_ex : 'a enum -> ('a -> bool) -> bool;
+
+val countable_bool = {} : bool countable;
+
+val finite_bool = {countable_finite = countable_bool} : bool finite;
+
+val enum_bool =
+  {finite_enum = finite_bool, enum = enum_boola, enum_all = enum_all_bool,
+    enum_ex = enum_ex_bool}
+  : bool enum;
+
+fun equal_boola false p = not p
+  | equal_boola true p = p
+  | equal_boola p false = not p
+  | equal_boola p true = p;
+
+val equal_bool = {equal = equal_boola} : bool equal;
+
+datatype 'a fset = Abs_fset of 'a set;
+
+fun fset (Abs_fset x) = x;
+
+fun less_eq_fset A_ xa xc = less_eq_set A_ (fset xa) (fset xc);
+
+fun equal_fseta A_ a b = less_eq_fset A_ a b andalso less_eq_fset A_ b a;
+
+fun equal_fset A_ = {equal = equal_fseta A_} : 'a fset equal;
+
+fun equal_lista A_ [] (x21 :: x22) = false
+  | equal_lista A_ (x21 :: x22) [] = false
+  | equal_lista A_ (x21 :: x22) (y21 :: y22) =
+    eq A_ x21 y21 andalso equal_lista A_ x22 y22
+  | equal_lista A_ [] [] = true;
+
+fun equal_list A_ = {equal = equal_lista A_} : ('a list) equal;
+
+fun equal_proda A_ B_ (x1, x2) (y1, y2) = eq A_ x1 y1 andalso eq B_ x2 y2;
+
+fun equal_prod A_ B_ = {equal = equal_proda A_ B_} : ('a * 'b) equal;
+
+fun enum_all_unit p = p ();
+
+fun enum_ex_unit p = p ();
+
+val enum_unita : unit list = [()];
+
+val countable_unit = {} : unit countable;
+
+val finite_unit = {countable_finite = countable_unit} : unit finite;
+
+val enum_unit =
+  {finite_enum = finite_unit, enum = enum_unita, enum_all = enum_all_unit,
+    enum_ex = enum_ex_unit}
+  : unit enum;
+
+fun equal_unita u v = true;
+
+val equal_unit = {equal = equal_unita} : unit equal;
+
+type 'a ord = {less_eq : 'a -> 'a -> bool, less : 'a -> 'a -> bool};
+val less_eq = #less_eq : 'a ord -> 'a -> 'a -> bool;
+val less = #less : 'a ord -> 'a -> 'a -> bool;
+
+val ord_integer =
+  {less_eq = (fn a => fn b => IntInf.<= (a, b)),
+    less = (fn a => fn b => IntInf.< (a, b))}
+  : IntInf.int ord;
+
+datatype ('a, 'b) finite_rra_structure_ext =
+  Finite_rra_structure_ext of 'a fset * ('a * ('a * 'a)) fset * 'b;
+
+fun equal_finite_rra_structure_ext A_ B_
+  (Finite_rra_structure_ext (finite_carriera, finite_incidencea, morea))
+  (Finite_rra_structure_ext (finite_carrier, finite_incidence, more)) =
+  eq (equal_fset A_) finite_carriera finite_carrier andalso
+    (equal_fseta (equal_prod A_ (equal_prod A_ A_)) finite_incidencea
+       finite_incidence andalso
+      eq B_ morea more);
+
+datatype 'a multiset = Mset of 'a list;
+
+datatype ('a, 'b, 'c) finite_opaque_basis_ext =
+  Finite_opaque_basis_ext of ('a * 'b) multiset * ('a * 'b) fset * 'c;
+
+fun equal_option A_ NONE (SOME x2) = false
+  | equal_option A_ (SOME x2) NONE = false
+  | equal_option A_ (SOME x2) (SOME y2) = eq A_ x2 y2
+  | equal_option A_ NONE NONE = true;
+
+fun extract p [] = NONE
+  | extract p (x :: xs) =
+    (if p x then SOME ([], (x, xs))
+      else (case extract p xs of NONE => NONE
+             | SOME (ys, (y, zs)) => SOME (x :: ys, (y, zs))));
+
+fun null [] = true
+  | null (x :: xs) = false;
+
+fun subset_eq_mset_impl A_ [] ys = SOME (not (null ys))
+  | subset_eq_mset_impl A_ (x :: xs) ys =
+    (case extract (eq A_ x) ys of NONE => NONE
+      | SOME (ys1, (_, ys2)) => subset_eq_mset_impl A_ xs (ys1 @ ys2));
+
+fun equal_multiset A_ (Mset xs) (Mset ys) =
+  equal_option equal_bool (subset_eq_mset_impl A_ xs ys) (SOME false);
+
+fun equal_finite_opaque_basis_ext A_ B_ C_
+  (Finite_opaque_basis_ext (finite_baga, finite_bindingsa, morea))
+  (Finite_opaque_basis_ext (finite_bag, finite_bindings, more)) =
+  equal_multiset (equal_prod A_ B_) finite_baga finite_bag andalso
+    (equal_fseta (equal_prod A_ B_) finite_bindingsa finite_bindings andalso
+      eq C_ morea more);
+
+datatype ('a, 'b, 'c) finite_structured_object_ext =
+  Finite_structured_object_ext of
+    ('a, unit) finite_rra_structure_ext *
+      ('a, 'b, unit) finite_opaque_basis_ext * 'c;
+
+fun equal_finite_structured_object_ext A_ B_ C_
+  (Finite_structured_object_ext (finite_structurea, finite_dataa, morea))
+  (Finite_structured_object_ext (finite_structure, finite_data, more)) =
+  equal_finite_rra_structure_ext A_ equal_unit finite_structurea
+    finite_structure andalso
+    (equal_finite_opaque_basis_ext A_ B_ equal_unit finite_dataa
+       finite_data andalso
+      eq C_ morea more);
+
+datatype finite_exact_target =
+  Finite_Whole of ((nat list), (nat list), unit) finite_structured_object_ext |
+  Finite_Anchor of
+    ((nat list), (nat list), unit) finite_structured_object_ext * nat list;
+
+fun equal_finite_exact_target (Finite_Whole x1) (Finite_Anchor (x21, x22)) =
+  false
+  | equal_finite_exact_target (Finite_Anchor (x21, x22)) (Finite_Whole x1) =
+    false
+  | equal_finite_exact_target (Finite_Anchor (x21, x22))
+    (Finite_Anchor (y21, y22)) =
+    equal_finite_structured_object_ext (equal_list equal_nat)
+      (equal_list equal_nat) equal_unit x21 y21 andalso
+      equal_lista equal_nat x22 y22
+  | equal_finite_exact_target (Finite_Whole x1) (Finite_Whole y1) =
+    equal_finite_structured_object_ext (equal_list equal_nat)
+      (equal_list equal_nat) equal_unit x1 y1;
+
+datatype finite_factor_term = Finite_Target of finite_exact_target |
+  Finite_Payload of nat list |
+  Finite_Pair of finite_factor_term * finite_factor_term;
+
+fun equal_finite_factor_terma (Finite_Payload x2) (Finite_Pair (x31, x32)) =
+  false
+  | equal_finite_factor_terma (Finite_Pair (x31, x32)) (Finite_Payload x2) =
+    false
+  | equal_finite_factor_terma (Finite_Target x1) (Finite_Pair (x31, x32)) =
+    false
+  | equal_finite_factor_terma (Finite_Pair (x31, x32)) (Finite_Target x1) =
+    false
+  | equal_finite_factor_terma (Finite_Target x1) (Finite_Payload x2) = false
+  | equal_finite_factor_terma (Finite_Payload x2) (Finite_Target x1) = false
+  | equal_finite_factor_terma (Finite_Pair (x31, x32)) (Finite_Pair (y31, y32))
+    = equal_finite_factor_terma x31 y31 andalso
+        equal_finite_factor_terma x32 y32
+  | equal_finite_factor_terma (Finite_Payload x2) (Finite_Payload y2) =
+    equal_lista equal_nat x2 y2
+  | equal_finite_factor_terma (Finite_Target x1) (Finite_Target y1) =
+    equal_finite_exact_target x1 y1;
+
+val equal_finite_factor_term = {equal = equal_finite_factor_terma} :
+  finite_factor_term equal;
+
+datatype 'a finite_term_pattern = Finite_Variable of 'a |
+  Finite_Pattern_Target of finite_exact_target |
+  Finite_Pattern_Payload of nat list |
+  Finite_Pattern_Pair of 'a finite_term_pattern * 'a finite_term_pattern;
+
+fun equal_finite_term_patterna A_ (Finite_Pattern_Payload x3)
+  (Finite_Pattern_Pair (x41, x42)) = false
+  | equal_finite_term_patterna A_ (Finite_Pattern_Pair (x41, x42))
+    (Finite_Pattern_Payload x3) = false
+  | equal_finite_term_patterna A_ (Finite_Pattern_Target x2)
+    (Finite_Pattern_Pair (x41, x42)) = false
+  | equal_finite_term_patterna A_ (Finite_Pattern_Pair (x41, x42))
+    (Finite_Pattern_Target x2) = false
+  | equal_finite_term_patterna A_ (Finite_Pattern_Target x2)
+    (Finite_Pattern_Payload x3) = false
+  | equal_finite_term_patterna A_ (Finite_Pattern_Payload x3)
+    (Finite_Pattern_Target x2) = false
+  | equal_finite_term_patterna A_ (Finite_Variable x1)
+    (Finite_Pattern_Pair (x41, x42)) = false
+  | equal_finite_term_patterna A_ (Finite_Pattern_Pair (x41, x42))
+    (Finite_Variable x1) = false
+  | equal_finite_term_patterna A_ (Finite_Variable x1)
+    (Finite_Pattern_Payload x3) = false
+  | equal_finite_term_patterna A_ (Finite_Pattern_Payload x3)
+    (Finite_Variable x1) = false
+  | equal_finite_term_patterna A_ (Finite_Variable x1)
+    (Finite_Pattern_Target x2) = false
+  | equal_finite_term_patterna A_ (Finite_Pattern_Target x2)
+    (Finite_Variable x1) = false
+  | equal_finite_term_patterna A_ (Finite_Pattern_Pair (x41, x42))
+    (Finite_Pattern_Pair (y41, y42)) =
+    equal_finite_term_patterna A_ x41 y41 andalso
+      equal_finite_term_patterna A_ x42 y42
+  | equal_finite_term_patterna A_ (Finite_Pattern_Payload x3)
+    (Finite_Pattern_Payload y3) = equal_lista equal_nat x3 y3
+  | equal_finite_term_patterna A_ (Finite_Pattern_Target x2)
+    (Finite_Pattern_Target y2) = equal_finite_exact_target x2 y2
+  | equal_finite_term_patterna A_ (Finite_Variable x1) (Finite_Variable y1) =
+    eq A_ x1 y1;
+
+fun equal_finite_term_pattern A_ = {equal = equal_finite_term_patterna A_} :
+  'a finite_term_pattern equal;
+
+datatype ('a, 'b) finite_material_pattern_ext =
+  Finite_material_pattern_ext of
+    'a finite_term_pattern * 'a finite_term_pattern * 'a finite_term_pattern *
+      'a finite_term_pattern * 'a finite_term_pattern * 'b;
+
+datatype ('a, 'b, 'c, 'd) finite_factor_schema_ext =
+  Finite_factor_schema_ext of
+    'a finite_term_pattern * ('b * ('c * 'a finite_term_pattern)) fset *
+      ('b * ('a, unit) finite_material_pattern_ext) fset * 'd;
+
+fun equal_finite_material_pattern_exta A_ B_
+  (Finite_material_pattern_ext
+    (finite_material_sourcea, finite_material_atomsa, finite_material_edgesa,
+      finite_material_countsa, finite_material_functionsa, morea))
+  (Finite_material_pattern_ext
+    (finite_material_source, finite_material_atoms, finite_material_edges,
+      finite_material_counts, finite_material_functions, more))
+  = equal_finite_term_patterna A_ finite_material_sourcea
+      finite_material_source andalso
+      (equal_finite_term_patterna A_ finite_material_atomsa
+         finite_material_atoms andalso
+        (equal_finite_term_patterna A_ finite_material_edgesa
+           finite_material_edges andalso
+          (equal_finite_term_patterna A_ finite_material_countsa
+             finite_material_counts andalso
+            (equal_finite_term_patterna A_ finite_material_functionsa
+               finite_material_functions andalso
+              eq B_ morea more))));
+
+fun equal_finite_material_pattern_ext A_ B_ =
+  {equal = equal_finite_material_pattern_exta A_ B_} :
+  ('a, 'b) finite_material_pattern_ext equal;
+
+fun equal_finite_factor_schema_exta A_ B_ C_ D_
+  (Finite_factor_schema_ext
+    (finite_schema_conclusiona, finite_schema_premisesa,
+      finite_schema_materialsa, morea))
+  (Finite_factor_schema_ext
+    (finite_schema_conclusion, finite_schema_premises, finite_schema_materials,
+      more))
+  = equal_finite_term_patterna A_ finite_schema_conclusiona
+      finite_schema_conclusion andalso
+      (equal_fseta
+         (equal_prod B_ (equal_prod C_ (equal_finite_term_pattern A_)))
+         finite_schema_premisesa finite_schema_premises andalso
+        (equal_fseta
+           (equal_prod B_ (equal_finite_material_pattern_ext A_ equal_unit))
+           finite_schema_materialsa finite_schema_materials andalso
+          eq D_ morea more));
+
+fun equal_finite_factor_schema_ext A_ B_ C_ D_ =
+  {equal = equal_finite_factor_schema_exta A_ B_ C_ D_} :
+  ('a, 'b, 'c, 'd) finite_factor_schema_ext equal;
+
+datatype ('a, 'b) rra_structure_ext =
+  Rra_structure_ext of 'a set * ('a * ('a * 'a)) set * 'b;
+
+datatype ('a, 'b, 'c) opaque_basis_ext =
+  Opaque_basis_ext of ('a * 'b -> nat) * ('a * 'b) set * 'c;
+
+datatype ('a, 'b, 'c) structured_object_ext =
+  Structured_object_ext of
+    ('a, unit) rra_structure_ext * ('a, 'b, unit) opaque_basis_ext * 'c;
+
+datatype exact_target =
+  Whole_Artifact of ((nat list), (nat list), unit) structured_object_ext |
+  Occurrence_Anchor of
+    (((nat list), (nat list), unit) structured_object_ext * nat list);
+
+datatype factor_term = Target_Term of exact_target | Payload_Term of nat list |
+  Pair_Term of factor_term * factor_term;
+
+datatype 'a term_pattern = Pattern_Variable of 'a |
+  Pattern_Target of exact_target | Pattern_Payload of nat list |
+  Pattern_Pair of 'a term_pattern * 'a term_pattern;
+
+fun id x = (fn xa => xa) x;
+
+fun ex A_ p = enum_ex A_ p;
+
+fun suc n = plus_nata n one_nata;
+
+fun list_ex p [] = false
+  | list_ex p (x :: xs) = p x orelse list_ex p xs;
+
+fun bex (Set xs) p = list_ex p xs;
+
+fun fold f [] s = s
+  | fold f (x :: xs) s = fold f xs (f x s);
+
+fun rev xs = fold (fn a => fn b => a :: b) xs [];
+
+fun ball (Set xs) p = list_all p xs;
+
+fun maps f [] = []
+  | maps f (x :: xs) = f x @ maps f xs;
+
+fun map f [] = []
+  | map f (x21 :: x22) = f x21 :: map f x22;
+
+fun image f (Set xs) = Set (map f xs);
+
+fun length_tailrec [] n = n
+  | length_tailrec (x :: xs) n = length_tailrec xs (suc n);
+
+fun size_list xs = length_tailrec xs zero_nata;
+
+fun remdups A_ [] = []
+  | remdups A_ (x :: xs) =
+    (if membera A_ xs x then remdups A_ xs else x :: remdups A_ xs);
+
+fun card A_ (Set xs) = size_list (remdups A_ xs);
+
+fun fcard A_ xa = card A_ (fset xa);
+
+fun filtera p [] = []
+  | filtera p (x :: xs) = (if p x then x :: filtera p xs else filtera p xs);
+
+fun filter p (Set xs) = Set (filtera p xs);
+
+fun removeAll A_ x [] = []
+  | removeAll A_ x (y :: xs) =
+    (if eq A_ x y then removeAll A_ x xs else y :: removeAll A_ x xs);
+
+fun inserta A_ x xs = (if membera A_ xs x then xs else x :: xs);
+
+fun insert A_ x (Set xs) = Set (inserta A_ x xs)
+  | insert A_ x (Coset xs) = Coset (removeAll A_ x xs);
+
+fun remove A_ x (Set xs) = Set (removeAll A_ x xs)
+  | remove A_ x (Coset xs) = Coset (inserta A_ x xs);
+
+fun fimage xb xc = Abs_fset (image xb (fset xc));
+
+fun sup_set A_ (Set xs) a = fold (insert A_) xs a
+  | sup_set A_ (Coset xs) a = Coset (filtera (fn x => not (member A_ x a)) xs);
+
+val bot_set : 'a set = Set [];
+
+fun sup_seta A_ (Set xs) = fold (sup_set A_) xs bot_set;
+
+fun ffUnion A_ xa = Abs_fset (sup_seta A_ (image fset (fset xa)));
+
+fun ffilter xb xc = Abs_fset (filter xb (fset xc));
+
+fun finsert A_ xb xc = Abs_fset (insert A_ xb (fset xc));
+
+fun product [] uu = []
+  | product (x :: xs) ys = map (fn a => (x, a)) ys @ product xs ys;
+
+fun distinct A_ [] = true
+  | distinct A_ (x :: xs) = not (membera A_ xs x) andalso distinct A_ xs;
+
+fun superset A_ xs = list_all (membera A_ xs);
+
+fun is_none NONE = true
+  | is_none (SOME x) = false;
+
+fun map_filter f [] = []
+  | map_filter f (x :: xs) =
+    (case f x of NONE => map_filter f xs | SOME y => y :: map_filter f xs);
+
+fun fset_of_list xa = Abs_fset (Set xa);
+
+fun set_mset (Mset xs) = Set xs;
+
+fun producta (Set xs) (Set ys) =
+  Set (maps (fn x => map (fn a => (x, a)) ys) xs);
+
+val empty_basis : ('a, 'b, unit) opaque_basis_ext =
+  Opaque_basis_ext ((fn _ => zero_nata), bot_set, ());
+
+fun map_prod f g (a, b) = (f a, g b);
+
+fun fst (x1, x2) = x1;
+
+fun snd (x1, x2) = x2;
+
+fun max A_ a b = (if less_eq A_ a b then b else a);
+
+fun nat_of_integer k = Nat (max ord_integer (0 : IntInf.int) k);
+
+fun less_nat m n = IntInf.< (integer_of_nat m, integer_of_nat n);
+
+fun octets_formed xs =
+  list_all (fn x => less_nat x (nat_of_integer (256 : IntInf.int))) xs;
+
+fun whilea b c s = (if b s then whilea b c (c s) else s);
+
+fun map_option f NONE = NONE
+  | map_option f (SOME x2) = SOME (f x2);
+
+val empty_artifact : ((nat list), (nat list), unit) structured_object_ext =
+  Structured_object_ext
+    (Rra_structure_ext (bot_set, bot_set, ()), empty_basis, ());
+
+fun inf_set A_ a (Set xs) = Set (filtera (fn x => member A_ x a) xs)
+  | inf_set A_ a (Coset xs) = fold (remove A_) xs a;
+
+fun numeral A_ One = one (one_numeral A_)
+  | numeral A_ (Bit0 n) =
+    let
+      val m = numeral A_ n;
+    in
+      plus ((plus_semigroup_add o semigroup_add_numeral) A_) m m
+    end
+  | numeral A_ (Bit1 n) =
+    let
+      val m = numeral A_ n;
+    in
+      plus ((plus_semigroup_add o semigroup_add_numeral) A_)
+        (plus ((plus_semigroup_add o semigroup_add_numeral) A_) m m)
+        (one (one_numeral A_))
+    end;
+
+val bot_fset : 'a fset = Abs_fset bot_set;
+
+fun inf_fset A_ xb xc = Abs_fset (inf_set A_ (fset xb) (fset xc));
+
+fun sup_fset A_ xb xc = Abs_fset (sup_set A_ (fset xb) (fset xc));
+
+fun minus_nat m n =
+  Nat (max ord_integer (0 : IntInf.int)
+        (IntInf.- (integer_of_nat m, integer_of_nat n)));
+
+fun less_eq_nat m n = IntInf.<= (integer_of_nat m, integer_of_nat n);
+
+fun times_nat m n = Nat (IntInf.* (integer_of_nat m, integer_of_nat n));
+
+fun minus_set A_ a (Set xs) = fold (remove A_) xs a
+  | minus_set A_ a (Coset xs) = Set (filtera (fn x => member A_ x a) xs);
+
+fun pattern_substitute s (Pattern_Variable a) = s a
+  | pattern_substitute s (Pattern_Target t) = Pattern_Target t
+  | pattern_substitute s (Pattern_Payload v) = Pattern_Payload v
+  | pattern_substitute s (Pattern_Pair (p, q)) =
+    Pattern_Pair (pattern_substitute s p, pattern_substitute s q);
+
+fun evaluate_pattern f (Pattern_Variable a) = f a
+  | evaluate_pattern f (Pattern_Target t) = Target_Term t
+  | evaluate_pattern f (Pattern_Payload b) = Payload_Term b
+  | evaluate_pattern f (Pattern_Pair (p, q)) =
+    Pair_Term (evaluate_pattern f p, evaluate_pattern f q);
+
+fun finite_bindings
+  (Finite_opaque_basis_ext (finite_bag, finite_bindings, more)) =
+  finite_bindings;
+
+fun finite_bag (Finite_opaque_basis_ext (finite_bag, finite_bindings, more)) =
+  finite_bag;
+
+fun finite_relation_functional A_ B_ f =
+  ball (fset f)
+    (fn x =>
+      ball (fset f)
+        (fn y =>
+          (if eq A_ (fst x) (fst y) then eq B_ (snd x) (snd y) else true)));
+
+fun finite_basis_formed A_ B_ u d =
+  finite_relation_functional A_ B_ (finite_bindings d) andalso
+    (ball (set_mset (finite_bag d)) (fn x => member A_ (fst x) (fset u)) andalso
+      ball (fset (finite_bindings d)) (fn x => member A_ (fst x) (fset u)));
+
+fun finite_structure
+  (Finite_structured_object_ext (finite_structure, finite_data, more)) =
+  finite_structure;
+
+fun finite_data
+  (Finite_structured_object_ext (finite_structure, finite_data, more)) =
+  finite_data;
+
+fun finite_carrier
+  (Finite_rra_structure_ext (finite_carrier, finite_incidence, more)) =
+  finite_carrier;
+
+fun finite_incidence
+  (Finite_rra_structure_ext (finite_carrier, finite_incidence, more)) =
+  finite_incidence;
+
+fun finite_structure_formed A_ s =
+  ball (fset (finite_incidence s))
+    (fn (r, (p, x)) =>
+      member A_ r (fset (finite_carrier s)) andalso
+        (member A_ p (fset (finite_carrier s)) andalso
+          member A_ x (fset (finite_carrier s))));
+
+fun finite_object_formed A_ B_ c =
+  finite_structure_formed A_ (finite_structure c) andalso
+    finite_basis_formed A_ B_ (finite_carrier (finite_structure c))
+      (finite_data c);
+
+fun finite_exact_formed c =
+  finite_object_formed (equal_list equal_nat) (equal_list equal_nat) c andalso
+    (ball (fset (finite_carrier (finite_structure c))) octets_formed andalso
+      (ball (set_mset (finite_bag (finite_data c)))
+         (fn x => octets_formed (snd x)) andalso
+        ball (fset (finite_bindings (finite_data c)))
+          (fn x => octets_formed (snd x))));
+
+val zero_multiset : 'a multiset = Mset [];
+
+fun finite_target_formed (Finite_Whole c) = finite_exact_formed c
+  | finite_target_formed (Finite_Anchor (c, a)) =
+    finite_exact_formed c andalso
+      member (equal_list equal_nat) a
+        (fset (finite_carrier (finite_structure c)));
+
+fun finite_term_formed (Finite_Target t) = finite_target_formed t
+  | finite_term_formed (Finite_Payload v) = octets_formed v
+  | finite_term_formed (Finite_Pair (x, y)) =
+    finite_term_formed x andalso finite_term_formed y;
+
+fun finite_candidate_profile A_ B_ f table c =
+  fimage (fn (fa, (_, a)) => (fa, a))
+    (ffilter (fn (fa, (d, _)) => member A_ fa (fset f) andalso eq B_ d c)
+      table);
+
+fun finite_basis_residual A_ B_ C_ c f table relation =
+  ffUnion (equal_prod A_ A_)
+    (fimage
+      (fn ca =>
+        fimage (fn a => (ca, a))
+          (ffilter
+            (fn d =>
+              not (equal_boola (relation ca d)
+                    (less_eq_set (equal_prod B_ C_)
+                      (fset (finite_candidate_profile B_ A_ f table ca))
+                      (fset (finite_candidate_profile B_ A_ f table d)))))
+            c))
+      c);
+
+val finite_empty_artifact :
+  ((nat list), (nat list), unit) finite_structured_object_ext
+  = Finite_structured_object_ext
+      (Finite_rra_structure_ext (bot_fset, bot_fset, ()),
+        Finite_opaque_basis_ext (zero_multiset, bot_fset, ()), ());
+
+fun finite_occurrence_read c (Finite_Target t) =
+  (case t of Finite_Whole _ => NONE
+    | Finite_Anchor (d, a) =>
+      (if equal_finite_structured_object_ext (equal_list equal_nat)
+            (equal_list equal_nat) equal_unit c d
+        then SOME a else NONE))
+  | finite_occurrence_read c (Finite_Payload v) = NONE
+  | finite_occurrence_read c (Finite_Pair (x, y)) = NONE;
+
+fun finite_atom_read c (Finite_Pair (Finite_Payload a, x)) =
+  (if equal_option (equal_list equal_nat) (finite_occurrence_read c x) (SOME a)
+    then SOME a else NONE)
+  | finite_atom_read c (Finite_Target v) = NONE
+  | finite_atom_read c (Finite_Payload v) = NONE
+  | finite_atom_read c (Finite_Pair (Finite_Target vb, va)) = NONE
+  | finite_atom_read c (Finite_Pair (Finite_Pair (vb, vc), va)) = NONE;
+
+fun stabilizing_iteration A_ n f x =
+  (if equal_nata n zero_nata then x
+    else let
+           val next = f x;
+         in
+           (if eq A_ next x then x
+             else stabilizing_iteration A_ (minus_nat n one_nata) f next)
+         end);
+
+fun finite_edge_compose A_ B_ C_ r s =
+  ffUnion (equal_prod A_ C_)
+    (fimage
+      (fn (x, y) =>
+        fimage (fn (_, a) => (x, a)) (ffilter (fn (u, _) => eq B_ u y) s))
+      r);
+
+fun finite_edge_closure A_ e =
+  stabilizing_iteration (equal_fset (equal_prod A_ A_))
+    (minus_nat (fcard (equal_prod A_ A_) e) one_nata)
+    (fn r => sup_fset (equal_prod A_ A_) r (finite_edge_compose A_ A_ A_ r e))
+    e;
+
+fun finite_observation_table_formed A_ B_ c u table =
+  ball (fset table)
+    (fn (f, (ca, _)) => member B_ f (fset u) andalso member A_ ca (fset c));
+
+fun finite_basis_evaluation A_ B_ C_ c u f table relation residual =
+  finite_observation_table_formed A_ B_ c u table andalso
+    (less_eq_set B_ (fset f) (fset u) andalso
+      equal_fseta (equal_prod A_ A_) residual
+        (finite_basis_residual A_ B_ C_ c f table relation));
+
+fun finite_candidate_losses A_ B_ C_ f table c d =
+  ffilter
+    (fn q =>
+      not (member (equal_prod A_ C_) q
+            (fset (finite_candidate_profile A_ B_ f table d))))
+    (finite_candidate_profile A_ B_ f table c);
+
+fun finite_transition_keys key r = fimage (fn (k, a) => (k, key a)) r;
+
+fun finite_reachable_outputs_from A_ B_ key r roots =
+  let
+    val paths = finite_edge_closure B_ (finite_transition_keys key r);
+    val keys = fimage key roots;
+  in
+    sup_fset A_ roots
+      (fimage snd
+        (ffilter
+          (fn (k, _) =>
+            member B_ k (fset keys) orelse
+              bex (fset keys)
+                (fn ra => member (equal_prod B_ B_) (ra, k) (fset paths)))
+          r))
+  end;
+
+fun finite_premise_functional A_ B_ h =
+  ball (fset h)
+    (fn (i, a) =>
+      ball (fset h) (fn (j, b) => (if eq A_ i j then eq B_ a b else true)));
+
+fun finite_inference_demand_edges A_ B_ C_ f k =
+  ffUnion (equal_prod A_ C_)
+    (fimage
+      (fn (a, h) =>
+        (if member A_ a (fset k) orelse not (finite_premise_functional B_ C_ h)
+          then bot_fset else fimage (fn (_, b) => (a, b)) h))
+      f);
+
+fun finite_inference_demand A_ B_ f k a =
+  finite_reachable_outputs_from A_ A_ id
+    (finite_inference_demand_edges A_ B_ A_ f k) a;
+
+fun presentation_transport A_ r s p q = ex A_ (fn a => r a p andalso s a q);
+
+fun saturate_observation A_ B_ r test p =
+  ex B_ (fn q => presentation_transport A_ r r p q andalso test q);
+
+fun finite_pattern_formed (Finite_Variable a) = true
+  | finite_pattern_formed (Finite_Pattern_Target t) = finite_target_formed t
+  | finite_pattern_formed (Finite_Pattern_Payload v) = octets_formed v
+  | finite_pattern_formed (Finite_Pattern_Pair (p, q)) =
+    finite_pattern_formed p andalso finite_pattern_formed q;
+
+fun keyed_octet_losses xs ys =
+  list_all
+    (fn (a, b) =>
+      let
+        val (c, d) = a;
+      in
+        (fn vs =>
+          less_nat c (nat_of_integer (256 : IntInf.int)) andalso
+            (less_nat d (nat_of_integer (256 : IntInf.int)) andalso
+              list_all
+                (fn (f, w) =>
+                  less_nat f (nat_of_integer (256 : IntInf.int)) andalso
+                    less_nat w (nat_of_integer (256 : IntInf.int)))
+                vs))
+      end
+        b)
+    xs andalso
+    (list_all
+       (fn (a, b) =>
+         let
+           val (c, d) = a;
+         in
+           (fn vs =>
+             less_nat c (nat_of_integer (256 : IntInf.int)) andalso
+               (less_nat d (nat_of_integer (256 : IntInf.int)) andalso
+                 list_all
+                   (fn (f, w) =>
+                     less_nat f (nat_of_integer (256 : IntInf.int)) andalso
+                       less_nat w (nat_of_integer (256 : IntInf.int)))
+                   vs))
+         end
+           b)
+       ys andalso
+      equal_fseta
+        (equal_prod (equal_prod equal_nat equal_nat)
+          (equal_fset (equal_prod equal_nat equal_nat)))
+        (fset_of_list (map (map_prod id fset_of_list) xs))
+        (fset_of_list (map (map_prod id fset_of_list) ys)));
+
+fun finite_matching_bindings A_ (Finite_Variable a) t =
+  finsert (equal_prod A_ equal_finite_factor_term) (a, t) bot_fset
+  | finite_matching_bindings A_ (Finite_Pattern_Target x) t = bot_fset
+  | finite_matching_bindings A_ (Finite_Pattern_Payload v) t = bot_fset
+  | finite_matching_bindings A_ (Finite_Pattern_Pair (p, q)) t =
+    (case t of Finite_Target _ => bot_fset | Finite_Payload _ => bot_fset
+      | Finite_Pair (x, y) =>
+        sup_fset (equal_prod A_ equal_finite_factor_term)
+          (finite_matching_bindings A_ p x) (finite_matching_bindings A_ q y));
+
+fun finite_term_bindings_formed A_ b v =
+  finite_relation_functional A_ equal_finite_factor_term v andalso
+    (eq (equal_fset A_) (fimage fst v) b andalso
+      ball (fset v) (fn (_, a) => finite_term_formed a));
+
+fun finite_pattern_variables A_ (Finite_Variable a) = finsert A_ a bot_fset
+  | finite_pattern_variables A_ (Finite_Pattern_Target t) = bot_fset
+  | finite_pattern_variables A_ (Finite_Pattern_Payload v) = bot_fset
+  | finite_pattern_variables A_ (Finite_Pattern_Pair (p, q)) =
+    sup_fset A_ (finite_pattern_variables A_ p) (finite_pattern_variables A_ q);
+
+fun finite_pattern_instance A_ v (Finite_Variable a) t =
+  member (equal_prod A_ equal_finite_factor_term) (a, t) (fset v)
+  | finite_pattern_instance A_ v (Finite_Pattern_Target x) t =
+    finite_target_formed x andalso equal_finite_factor_terma t (Finite_Target x)
+  | finite_pattern_instance A_ va (Finite_Pattern_Payload v) t =
+    octets_formed v andalso equal_finite_factor_terma t (Finite_Payload v)
+  | finite_pattern_instance A_ v (Finite_Pattern_Pair (p, q)) t =
+    (case t of Finite_Target _ => false | Finite_Payload _ => false
+      | Finite_Pair (x, y) =>
+        finite_pattern_instance A_ v p x andalso
+          finite_pattern_instance A_ v q y);
+
+fun finite_pattern_accepts A_ p t =
+  finite_term_formed t andalso
+    (finite_term_bindings_formed A_ (finite_pattern_variables A_ p)
+       (finite_matching_bindings A_ p t) andalso
+      finite_pattern_instance A_ (finite_matching_bindings A_ p t) p t);
+
+fun finite_premise_joins A_ B_ C_ [] k = [(bot_fset, bot_fset)]
+  | finite_premise_joins A_ B_ C_ ((s, (d, p)) :: ps) k =
+    maps (fn (v, h) =>
+           map_filter
+             (fn x =>
+               (if let
+                     val (e, t) = x;
+                   in
+                     eq B_ e d andalso
+                       (finite_pattern_accepts C_ p t andalso
+                         finite_relation_functional C_ equal_finite_factor_term
+                           (sup_fset (equal_prod C_ equal_finite_factor_term) v
+                             (finite_matching_bindings C_ p t)))
+                   end
+                 then SOME let
+                             val (e, t) = x;
+                           in
+                             (sup_fset (equal_prod C_ equal_finite_factor_term)
+                                v (finite_matching_bindings C_ p t),
+                               finsert
+                                 (equal_prod A_
+                                   (equal_prod B_ equal_finite_factor_term))
+                                 (s, (e, t)) h)
+                           end
+                 else NONE))
+             k)
+      (finite_premise_joins A_ B_ C_ ps k);
+
+fun finite_schema_conclusion
+  (Finite_factor_schema_ext
+    (finite_schema_conclusion, finite_schema_premises, finite_schema_materials,
+      more))
+  = finite_schema_conclusion;
+
+fun finite_schema_materials
+  (Finite_factor_schema_ext
+    (finite_schema_conclusion, finite_schema_premises, finite_schema_materials,
+      more))
+  = finite_schema_materials;
+
+fun finite_schema_premises
+  (Finite_factor_schema_ext
+    (finite_schema_conclusion, finite_schema_premises, finite_schema_materials,
+      more))
+  = finite_schema_premises;
+
+fun finite_material_functions
+  (Finite_material_pattern_ext
+    (finite_material_source, finite_material_atoms, finite_material_edges,
+      finite_material_counts, finite_material_functions, more))
+  = finite_material_functions;
+
+fun finite_material_source
+  (Finite_material_pattern_ext
+    (finite_material_source, finite_material_atoms, finite_material_edges,
+      finite_material_counts, finite_material_functions, more))
+  = finite_material_source;
+
+fun finite_material_counts
+  (Finite_material_pattern_ext
+    (finite_material_source, finite_material_atoms, finite_material_edges,
+      finite_material_counts, finite_material_functions, more))
+  = finite_material_counts;
+
+fun finite_material_edges
+  (Finite_material_pattern_ext
+    (finite_material_source, finite_material_atoms, finite_material_edges,
+      finite_material_counts, finite_material_functions, more))
+  = finite_material_edges;
+
+fun finite_material_atoms
+  (Finite_material_pattern_ext
+    (finite_material_source, finite_material_atoms, finite_material_edges,
+      finite_material_counts, finite_material_functions, more))
+  = finite_material_atoms;
+
+fun finite_material_formed m =
+  finite_pattern_formed (finite_material_source m) andalso
+    (finite_pattern_formed (finite_material_atoms m) andalso
+      (finite_pattern_formed (finite_material_edges m) andalso
+        (finite_pattern_formed (finite_material_counts m) andalso
+          finite_pattern_formed (finite_material_functions m))));
+
+fun finite_schema_formed A_ B_ C_ s =
+  finite_pattern_formed (finite_schema_conclusion s) andalso
+    (finite_relation_functional B_
+       (equal_prod C_ (equal_finite_term_pattern A_))
+       (finite_schema_premises s) andalso
+      (ball (fset (finite_schema_premises s))
+         (fn (_, (_, a)) => finite_pattern_formed a) andalso
+        (finite_relation_functional B_
+           (equal_finite_material_pattern_ext A_ equal_unit)
+           (finite_schema_materials s) andalso
+          (eq (equal_fset B_)
+             (inf_fset B_ (fimage fst (finite_schema_premises s))
+               (fimage fst (finite_schema_materials s)))
+             bot_fset andalso
+            ball (fset (finite_schema_materials s))
+              (fn (_, a) => finite_material_formed a)))));
+
+fun keyed_octet_profiles xs ys =
+  list_all
+    (fn (k, vs) =>
+      less_nat k (nat_of_integer (256 : IntInf.int)) andalso
+        list_all
+          (fn (f, w) =>
+            less_nat f (nat_of_integer (256 : IntInf.int)) andalso
+              less_nat w (nat_of_integer (256 : IntInf.int)))
+          vs)
+    xs andalso
+    (list_all
+       (fn (k, vs) =>
+         less_nat k (nat_of_integer (256 : IntInf.int)) andalso
+           list_all
+             (fn (f, w) =>
+               less_nat f (nat_of_integer (256 : IntInf.int)) andalso
+                 less_nat w (nat_of_integer (256 : IntInf.int)))
+             vs)
+       ys andalso
+      equal_fseta
+        (equal_prod equal_nat (equal_fset (equal_prod equal_nat equal_nat)))
+        (fset_of_list (map (map_prod id fset_of_list) xs))
+        (fset_of_list (map (map_prod id fset_of_list) ys)));
+
+fun finite_incidence_read c (Finite_Pair (x, Finite_Pair (y, z))) =
+  (case (finite_occurrence_read c x,
+          (finite_occurrence_read c y, finite_occurrence_read c z))
+    of (NONE, _) => NONE | (SOME _, (NONE, _)) => NONE
+    | (SOME _, (SOME _, NONE)) => NONE
+    | (SOME a, (SOME b, SOME ca)) => SOME (a, (b, ca)))
+  | finite_incidence_read c (Finite_Target v) = NONE
+  | finite_incidence_read c (Finite_Payload v) = NONE
+  | finite_incidence_read c (Finite_Pair (v, Finite_Target vb)) = NONE
+  | finite_incidence_read c (Finite_Pair (v, Finite_Payload vb)) = NONE;
+
+fun finite_schema_premise_instance A_ B_ C_ s v q =
+  finite_relation_functional B_ (equal_prod C_ equal_finite_factor_term)
+    q andalso
+    (eq (equal_fset B_) (fimage fst q)
+       (fimage fst (finite_schema_premises s)) andalso
+      ball (fset (finite_schema_premises s))
+        (fn (sa, (d, p)) =>
+          bex (fset q)
+            (fn (r, (e, t)) =>
+              eq B_ r sa andalso
+                (eq C_ e d andalso finite_pattern_instance A_ v p t))));
+
+fun finite_material_variables A_ m =
+  sup_fset A_
+    (sup_fset A_
+      (sup_fset A_
+        (sup_fset A_ (finite_pattern_variables A_ (finite_material_source m))
+          (finite_pattern_variables A_ (finite_material_atoms m)))
+        (finite_pattern_variables A_ (finite_material_edges m)))
+      (finite_pattern_variables A_ (finite_material_counts m)))
+    (finite_pattern_variables A_ (finite_material_functions m));
+
+fun finite_schema_variables A_ s =
+  sup_fset A_
+    (sup_fset A_ (finite_pattern_variables A_ (finite_schema_conclusion s))
+      (ffUnion A_
+        (fimage (fn (_, (_, a)) => finite_pattern_variables A_ a)
+          (finite_schema_premises s))))
+    (ffUnion A_
+      (fimage (fn (_, a) => finite_material_variables A_ a)
+        (finite_schema_materials s)));
+
+fun finite_schema_instance A_ B_ C_ s v t q =
+  finite_schema_formed A_ B_ C_ s andalso
+    (finite_term_bindings_formed A_ (finite_schema_variables A_ s) v andalso
+      (finite_pattern_instance A_ v (finite_schema_conclusion s) t andalso
+        finite_schema_premise_instance A_ B_ C_ s v q));
+
+fun data_product_octets xs ys zs =
+  list_all (fn x => less_nat x (nat_of_integer (256 : IntInf.int))) xs andalso
+    (list_all (fn y => less_nat y (nat_of_integer (256 : IntInf.int)))
+       ys andalso
+      (list_all
+         (fn (x, y) =>
+           less_nat x (nat_of_integer (256 : IntInf.int)) andalso
+             less_nat y (nat_of_integer (256 : IntInf.int)))
+         zs andalso
+        equal_seta (equal_prod equal_nat equal_nat) (Set zs)
+          (producta (Set xs) (Set ys))));
+
+fun finite_attachment_read c (Finite_Pair (x, Finite_Payload v)) =
+  map_option (fn a => (a, v)) (finite_occurrence_read c x)
+  | finite_attachment_read c (Finite_Target v) = NONE
+  | finite_attachment_read c (Finite_Payload v) = NONE
+  | finite_attachment_read c (Finite_Pair (v, Finite_Target vb)) = NONE
+  | finite_attachment_read c (Finite_Pair (v, Finite_Pair (vb, vc))) = NONE;
+
+fun finite_enumerated_artifact a e b f =
+  Finite_structured_object_ext
+    (Finite_rra_structure_ext (fset_of_list a, fset_of_list e, ()),
+      Finite_opaque_basis_ext (Mset b, fset_of_list f, ()), ());
+
+fun finite_artifact_enumeration c a e b f =
+  finite_exact_formed c andalso
+    (distinct (equal_list equal_nat) a andalso
+      (distinct
+         (equal_prod (equal_list equal_nat)
+           (equal_prod (equal_list equal_nat) (equal_list equal_nat)))
+         e andalso
+        (distinct (equal_prod (equal_list equal_nat) (equal_list equal_nat))
+           f andalso
+          equal_finite_structured_object_ext (equal_list equal_nat)
+            (equal_list equal_nat) equal_unit c
+            (finite_enumerated_artifact a e b f))));
+
+fun finite_enumeration_read read (Finite_Target t) =
+  (case t
+    of Finite_Whole c =>
+      (if equal_finite_structured_object_ext (equal_list equal_nat)
+            (equal_list equal_nat) equal_unit c finite_empty_artifact
+        then SOME [] else NONE)
+    | Finite_Anchor (_, _) => NONE)
+  | finite_enumeration_read read (Finite_Payload v) = NONE
+  | finite_enumeration_read read (Finite_Pair (x, xs)) =
+    (case read x of NONE => NONE
+      | SOME a =>
+        map_option (fn b => a :: b) (finite_enumeration_read read xs));
+
+fun finite_material_observation (Finite_Target (Finite_Whole c)) atoms edges
+  counts functions =
+  (case (finite_enumeration_read (finite_atom_read c) atoms,
+          (finite_enumeration_read (finite_incidence_read c) edges,
+            (finite_enumeration_read (finite_attachment_read c) counts,
+              finite_enumeration_read (finite_attachment_read c) functions)))
+    of (NONE, _) => false | (SOME _, (NONE, _)) => false
+    | (SOME _, (SOME _, (NONE, _))) => false
+    | (SOME _, (SOME _, (SOME _, NONE))) => false
+    | (SOME a, (SOME e, (SOME ba, SOME b))) =>
+      finite_artifact_enumeration c a e ba b)
+  | finite_material_observation (Finite_Target (Finite_Anchor (va, vb))) atoms
+    edges counts functions = false
+  | finite_material_observation (Finite_Payload v) atoms edges counts functions
+    = false
+  | finite_material_observation (Finite_Pair (v, va)) atoms edges counts
+    functions = false;
+
+fun finite_pattern_instances A_ v (Finite_Variable a) =
+  fimage snd (ffilter (fn x => eq A_ (fst x) a) v)
+  | finite_pattern_instances A_ v (Finite_Pattern_Target t) =
+    (if finite_target_formed t
+      then finsert equal_finite_factor_term (Finite_Target t) bot_fset
+      else bot_fset)
+  | finite_pattern_instances A_ va (Finite_Pattern_Payload v) =
+    (if octets_formed v
+      then finsert equal_finite_factor_term (Finite_Payload v) bot_fset
+      else bot_fset)
+  | finite_pattern_instances A_ v (Finite_Pattern_Pair (p, q)) =
+    ffUnion equal_finite_factor_term
+      (fimage
+        (fn x =>
+          fimage (fn a => Finite_Pair (x, a)) (finite_pattern_instances A_ v q))
+        (finite_pattern_instances A_ v p));
+
+fun finite_material_satisfied A_ v m =
+  bex (fset (finite_pattern_instances A_ v (finite_material_source m)))
+    (fn s =>
+      bex (fset (finite_pattern_instances A_ v (finite_material_atoms m)))
+        (fn a =>
+          bex (fset (finite_pattern_instances A_ v (finite_material_edges m)))
+            (fn e =>
+              bex (fset (finite_pattern_instances A_ v
+                          (finite_material_counts m)))
+                (fn b =>
+                  bex (fset (finite_pattern_instances A_ v
+                              (finite_material_functions m)))
+                    (finite_material_observation s a e b)))));
+
+fun finite_schema_material_satisfied A_ s v =
+  ball (fset (finite_schema_materials s))
+    (fn (_, a) => finite_material_satisfied A_ v a);
+
+fun finite_schema_generation A_ B_ C_ s ps k =
+  (if finite_schema_formed A_ B_ C_ s andalso
+        equal_seta
+          (equal_prod B_ (equal_prod C_ (equal_finite_term_pattern A_)))
+          (Set ps) (fset (finite_schema_premises s))
+    then ffUnion
+           (equal_prod equal_finite_factor_term
+             (equal_prod (equal_fset (equal_prod A_ equal_finite_factor_term))
+               (equal_fset
+                 (equal_prod B_ (equal_prod C_ equal_finite_factor_term)))))
+           (fimage
+             (fn (v, h) =>
+               fimage (fn t => (t, (v, h)))
+                 (ffilter
+                   (fn t =>
+                     finite_schema_instance A_ B_ C_ s v t h andalso
+                       finite_schema_material_satisfied A_ s v)
+                   (finite_pattern_instances A_ v
+                     (finite_schema_conclusion s))))
+             (fset_of_list (finite_premise_joins B_ C_ A_ ps k)))
+    else bot_fset);
+
+fun pair_scope_example n =
+  (if equal_nata n one_nata
+    then [(zero_nata, zero_nata), (zero_nata, one_nata), (one_nata, zero_nata),
+           (one_nata, one_nata)]
+    else (if equal_nata n (nat_of_integer (2 : IntInf.int))
+           then rev [(zero_nata, zero_nata), (zero_nata, one_nata),
+                      (one_nata, zero_nata), (one_nata, one_nata)]
+           else (if equal_nata n (nat_of_integer (3 : IntInf.int))
+                  then [(zero_nata, zero_nata), (zero_nata, one_nata),
+                         (one_nata, zero_nata), (one_nata, one_nata)] @
+                         [(zero_nata, zero_nata)]
+                  else (if equal_nata n (nat_of_integer (4 : IntInf.int))
+                         then [(zero_nata, one_nata), (one_nata, zero_nata),
+                                (one_nata, one_nata)]
+                         else (if equal_nata n (nat_of_integer (5 : IntInf.int))
+                                then [(zero_nata, zero_nata),
+                                       (zero_nata, one_nata),
+                                       (one_nata, zero_nata),
+                                       (one_nata, one_nata)] @
+                                       [(nat_of_integer (2 : IntInf.int),
+  nat_of_integer (2 : IntInf.int))]
+                                else (if equal_nata n
+   (nat_of_integer (6 : IntInf.int))
+                                       then [(zero_nata, zero_nata),
+      (zero_nata, one_nata), (one_nata, zero_nata), (one_nata, one_nata)] @
+      [(zero_nata, one_nata), (one_nata, zero_nata)]
+                                       else [(zero_nata, zero_nata),
+      (one_nata, one_nata)]))))));
+
+fun investigation_atoms rules known goals =
+  map snd goals @ known @ map fst rules @ maps (fn (_, a) => map snd a) rules;
+
+fun investigation_select A_ xs a =
+  filtera (fn x => member A_ x (fset a)) (remdups A_ xs);
+
+fun investigation_profile selected observations c =
+  investigation_select (equal_prod equal_nat equal_nat)
+    (map (fn (f, (_, a)) => (f, a)) observations)
+    (finite_candidate_profile equal_nat equal_nat (fset_of_list selected)
+      (fset_of_list observations) c);
+
+fun investigation_pairs candidates =
+  maps (fn c => map (fn a => (c, a)) candidates) candidates;
+
+fun investigation_basis candidates facets selected observations relation =
+  let
+    val c = fset_of_list candidates;
+    val u = fset_of_list facets;
+    val f = fset_of_list selected;
+    val table = fset_of_list observations;
+    val compare =
+      (fn ca => fn d =>
+        membera (equal_prod equal_nat equal_nat) relation (ca, d));
+    val residual =
+      finite_basis_residual equal_nat equal_nat equal_nat c f table compare;
+  in
+    (finite_basis_evaluation equal_nat equal_nat equal_nat c u f table compare
+       residual,
+      (investigation_select (equal_prod equal_nat equal_nat)
+         (investigation_pairs candidates) residual,
+        (map (fn ca => (ca, investigation_profile selected observations ca))
+           candidates,
+          map (fn (ca, d) =>
+                (ca, (d, investigation_select (equal_prod equal_nat equal_nat)
+                           (investigation_profile selected observations ca)
+                           (finite_candidate_losses equal_nat equal_nat
+                             equal_nat f table ca d))))
+            (investigation_pairs candidates))))
+  end;
+
+fun investigation_rules rules =
+  fset_of_list (map (fn (a, h) => (a, fset_of_list h)) rules);
+
+fun observation_profile_list A_ B_ f rows c =
+  map_filter
+    (fn x =>
+      (if let
+            val (fa, (d, _)) = x;
+          in
+            membera A_ f fa andalso eq B_ d c
+          end
+        then SOME let
+                    val (fa, (_, a)) = x;
+                  in
+                    (fa, a)
+                  end
+        else NONE))
+    rows;
+
+fun observation_losses_list A_ B_ C_ f rows c d =
+  filtera
+    (fn x =>
+      not (membera (equal_prod A_ C_) (observation_profile_list A_ B_ f rows d)
+            x))
+    (observation_profile_list A_ B_ f rows c);
+
+fun pair_scope_complete n =
+  equal_seta (equal_prod equal_nat equal_nat) (Set (pair_scope_example n))
+    (producta (insert equal_nat zero_nata (insert equal_nat one_nata bot_set))
+      (insert equal_nat zero_nata (insert equal_nat one_nata bot_set)));
+
+fun finite_inference_round A_ B_ f k x =
+  sup_set A_ (fset k)
+    (image fst
+      (filter
+        (fn (_, h) =>
+          finite_premise_functional B_ A_ h andalso
+            less_eq_set A_ (image snd (fset h)) x)
+        (fset f)));
+
+fun investigation_extend selected repairs =
+  remdups equal_nat (selected @ map (fn (_, (_, (f, _))) => f) repairs);
+
+fun finite_sound_observation_facets A_ B_ C_ c relation u table =
+  ffilter
+    (fn f =>
+      ball (fset c)
+        (fn ca =>
+          ball (fset c)
+            (fn d =>
+              (if relation ca d
+                then less_eq_set (equal_prod B_ C_)
+                       (fset (finite_candidate_profile B_ A_
+                               (finsert B_ f bot_fset) table ca))
+                       (fset (finite_candidate_profile B_ A_
+                               (finsert B_ f bot_fset) table d))
+                else true))))
+    u;
+
+fun investigation_retain candidates facets selected observations relation =
+  investigation_select equal_nat selected
+    (finite_sound_observation_facets equal_nat equal_nat equal_nat
+      (fset_of_list candidates)
+      (fn c => fn d => membera (equal_prod equal_nat equal_nat) relation (c, d))
+      (fset_of_list facets) (fset_of_list observations));
+
+fun proof_probe_compare c d =
+  equal_boola (equal_nata c zero_nata) (equal_nata d zero_nata);
+
+fun finite_inference_formed A_ B_ f =
+  ball (fset f) (fn (_, a) => finite_premise_functional B_ A_ a);
+
+fun finite_inference_result A_ B_ f k =
+  whilea
+    (fn x => not (eq (equal_set A_) (finite_inference_round A_ B_ f k x) x))
+    (finite_inference_round A_ B_ f k) bot_set;
+
+fun finite_inference_demand_reasons A_ B_ f k a =
+  let
+    val demanded = finite_inference_demand A_ B_ f k a;
+  in
+    ffUnion
+      (equal_prod A_
+        (equal_prod (equal_fset (equal_prod B_ A_)) (equal_prod B_ A_)))
+      (fimage
+        (fn (aa, h) =>
+          (if member A_ aa (fset demanded) andalso
+                (not (member A_ aa (fset k)) andalso
+                  finite_premise_functional B_ A_ h)
+            then fimage (fn (i, b) => (aa, (h, (i, b)))) h else bot_fset))
+        f)
+  end;
+
+fun investigation_reasons rules known demanded =
+  maps (fn (a, h) =>
+         (if member equal_nat a (fset demanded) andalso
+               (not (membera equal_nat known a) andalso
+                 finite_premise_functional equal_nat equal_nat (fset_of_list h))
+           then map (fn (i, b) => (a, (h, (i, b)))) h else []))
+    rules;
+
+fun finite_available_observation_repairs A_ B_ C_ c relation u f table =
+  let
+    val a =
+      ffilter (fn fa => not (member B_ fa (fset f)))
+        (finite_sound_observation_facets A_ B_ C_ c relation u table);
+  in
+    ffUnion (equal_prod A_ (equal_prod A_ (equal_prod B_ C_)))
+      (fimage
+        (fn (ca, d) =>
+          (if relation ca d then bot_fset
+            else fimage (fn (fa, w) => (ca, (d, (fa, w))))
+                   (finite_candidate_losses B_ A_ C_ a table ca d)))
+        (finite_basis_residual A_ B_ C_ c f table relation))
+  end;
+
+fun finite_unrepairable_comparisons A_ B_ C_ c relation u table =
+  finite_basis_residual A_ B_ C_ c
+    (finite_sound_observation_facets A_ B_ C_ c relation u table) table
+    relation;
+
+fun finite_observation_conflicts A_ B_ C_ c relation f table =
+  ffUnion (equal_prod A_ (equal_prod A_ (equal_prod B_ C_)))
+    (fimage
+      (fn ca =>
+        ffUnion (equal_prod A_ (equal_prod A_ (equal_prod B_ C_)))
+          (fimage
+            (fn d =>
+              (if relation ca d
+                then fimage (fn (fa, w) => (ca, (d, (fa, w))))
+                       (finite_candidate_losses B_ A_ C_ f table ca d)
+                else bot_fset))
+            c))
+      c);
+
+fun investigation_loss_rows candidates observations =
+  maps (fn (c, d) => map (fn (f, (_, w)) => (c, (d, (f, w)))) observations)
+    (investigation_pairs candidates);
+
+fun investigation_repairs candidates facets selected observations relation =
+  let
+    val c = fset_of_list candidates;
+    val u = fset_of_list facets;
+    val f = fset_of_list selected;
+    val table = fset_of_list observations;
+    val compare =
+      (fn ca => fn d =>
+        membera (equal_prod equal_nat equal_nat) relation (ca, d));
+    val loss_rows = investigation_loss_rows candidates observations;
+  in
+    (investigation_select equal_nat facets
+       (finite_sound_observation_facets equal_nat equal_nat equal_nat c compare
+         u table),
+      (investigation_select
+         (equal_prod equal_nat
+           (equal_prod equal_nat (equal_prod equal_nat equal_nat)))
+         loss_rows
+         (finite_observation_conflicts equal_nat equal_nat equal_nat c compare f
+           table),
+        (investigation_select
+           (equal_prod equal_nat
+             (equal_prod equal_nat (equal_prod equal_nat equal_nat)))
+           loss_rows
+           (finite_available_observation_repairs equal_nat equal_nat equal_nat c
+             compare u f table),
+          investigation_select (equal_prod equal_nat equal_nat)
+            (investigation_pairs candidates)
+            (finite_unrepairable_comparisons equal_nat equal_nat equal_nat c
+              compare u table))))
+  end;
+
+fun revision_workload i =
+  ([zero_nata, one_nata],
+    ((if equal_nata i (nat_of_integer (2 : IntInf.int))
+       then [zero_nata, nat_of_integer (2 : IntInf.int),
+              nat_of_integer (3 : IntInf.int)]
+       else [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+              nat_of_integer (3 : IntInf.int)]),
+      ((if equal_nata i one_nata
+         then [one_nata, nat_of_integer (2 : IntInf.int)]
+         else (if equal_nata i (nat_of_integer (3 : IntInf.int))
+                then [nat_of_integer (2 : IntInf.int)]
+                else (if equal_nata i (nat_of_integer (4 : IntInf.int)) then []
+                       else [zero_nata, nat_of_integer (2 : IntInf.int)]))),
+        ([(zero_nata, (zero_nata, zero_nata)),
+           (zero_nata, (one_nata, one_nata))] @
+           (if equal_nata i (nat_of_integer (2 : IntInf.int)) then []
+             else [(one_nata, (one_nata, zero_nata))]) @
+             [(nat_of_integer (2 : IntInf.int), (zero_nata, zero_nata)),
+               (nat_of_integer (2 : IntInf.int), (one_nata, zero_nata)),
+               (nat_of_integer (3 : IntInf.int), (zero_nata, zero_nata)),
+               (nat_of_integer (3 : IntInf.int), (one_nata, zero_nata))],
+          [(zero_nata, zero_nata), (zero_nata, one_nata),
+            (one_nata, one_nata)]))));
+
+fun investigation_revision candidates facets selected observations relation =
+  let
+    val retained =
+      investigation_retain candidates facets selected observations relation;
+    val withdrawn =
+      filtera (fn f => not (membera equal_nat retained f))
+        (remdups equal_nat selected);
+    val repairs =
+      fst (snd (snd (investigation_repairs candidates facets retained
+                      observations relation)));
+    val revised = investigation_extend retained repairs;
+    val residual =
+      fst (snd (investigation_basis candidates facets revised observations
+                 relation));
+  in
+    (retained, (withdrawn, (repairs, (revised, residual))))
+  end;
+
+fun finite_inference_residual A_ B_ C_ f k h =
+  (if equal_fseta (equal_prod C_ A_) h bot_fset then bot_fset
+    else let
+           val settled = finite_inference_result A_ B_ f k;
+         in
+           ffilter (fn (_, a) => not (member A_ a settled)) h
+         end);
+
+fun investigation_inference rules known goals =
+  let
+    val f = investigation_rules rules;
+    val k = fset_of_list known;
+    val h = fset_of_list goals;
+    val g = finite_inference_residual equal_nat equal_nat equal_nat f k h;
+    val d = finite_inference_demand equal_nat equal_nat f k (fimage snd h);
+  in
+    (finite_inference_formed equal_nat equal_nat f andalso
+       finite_premise_functional equal_nat equal_nat h,
+      (investigation_select (equal_prod equal_nat equal_nat) goals g,
+        (investigation_select equal_nat (investigation_atoms rules known goals)
+           d,
+          investigation_reasons rules known d)))
+  end;
+
+fun admission_direct_pair_head (B1_, B2_) pair payload a b n =
+  let
+    val nila = payload [];
+    val goal =
+      pair (payload [one B1_])
+        (pair (pair (payload [zero B2_]) a) (pair (payload [zero B2_]) b));
+    val instruction = pair n (pair a (pair b nila));
+  in
+    pair (pair goal n) (pair n (pair (pair nila n) (pair instruction nila)))
+  end;
+
+fun finite_admission_counter n =
+  (if equal_nata n zero_nata then Finite_Payload []
+    else Finite_Pair
+           (Finite_Payload [],
+             finite_admission_counter (minus_nat n one_nata)));
+
+val reasoning_false_goal : finite_factor_term =
+  admission_direct_pair_head (one_nat, zero_nat)
+    (fn a => fn b => Finite_Pair (a, b)) Finite_Payload
+    (finite_admission_counter zero_nata) (finite_admission_counter one_nata)
+    (Finite_Payload [zero_nata]);
+
+fun pattern_investigation_replacement c =
+  (if equal_nata c zero_nata then Pattern_Variable zero_nata
+    else (if equal_nata c one_nata then Pattern_Variable one_nata
+           else (if equal_nata c (nat_of_integer (2 : IntInf.int))
+                  then Pattern_Payload [zero_nata]
+                  else (if equal_nata c (nat_of_integer (3 : IntInf.int))
+                         then Pattern_Payload [one_nata]
+                         else Pattern_Target
+                                (Whole_Artifact empty_artifact)))));
+
+fun pattern_investigation_pattern c =
+  pattern_substitute (fn _ => pattern_investigation_replacement c)
+    (Pattern_Pair (Pattern_Variable (), Pattern_Variable ()));
+
+fun pattern_investigation_marker collapsed f a =
+  (if equal_nata f zero_nata
+    then Payload_Term (if collapsed then [zero_nata] else [a])
+    else Target_Term (Whole_Artifact empty_artifact));
+
+fun pattern_investigation_value (Pair_Term (Payload_Term a, y)) =
+  (if equal_lista equal_nat a [zero_nata] then zero_nata
+    else (if equal_lista equal_nat a [one_nata] then one_nata
+           else nat_of_integer (3 : IntInf.int)))
+  | pattern_investigation_value (Pair_Term (Target_Term k, y)) =
+    nat_of_integer (2 : IntInf.int)
+  | pattern_investigation_value (Target_Term v) =
+    nat_of_integer (3 : IntInf.int)
+  | pattern_investigation_value (Payload_Term v) =
+    nat_of_integer (3 : IntInf.int)
+  | pattern_investigation_value (Pair_Term (Pair_Term (vb, vc), va)) =
+    nat_of_integer (3 : IntInf.int);
+
+fun pattern_investigation_observation collapsed f c =
+  pattern_investigation_value
+    (evaluate_pattern (pattern_investigation_marker collapsed f)
+      (pattern_investigation_pattern c));
+
+fun pattern_investigation_observations collapsed =
+  maps (fn c =>
+         map (fn f => (f, (c, pattern_investigation_observation collapsed f c)))
+           [zero_nata, one_nata])
+    [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+      nat_of_integer (3 : IntInf.int), nat_of_integer (4 : IntInf.int)];
+
+fun pattern_investigation_compare c d =
+  equal_nata
+    (if equal_nata c zero_nata then zero_nata
+      else (if equal_nata c one_nata then one_nata
+             else (if equal_nata c (nat_of_integer (2 : IntInf.int))
+                    then nat_of_integer (2 : IntInf.int)
+                    else (if equal_nata c (nat_of_integer (3 : IntInf.int))
+                           then nat_of_integer (3 : IntInf.int)
+                           else nat_of_integer (4 : IntInf.int)))))
+    (if equal_nata d zero_nata then zero_nata
+      else (if equal_nata d one_nata then one_nata
+             else (if equal_nata d (nat_of_integer (2 : IntInf.int))
+                    then nat_of_integer (2 : IntInf.int)
+                    else (if equal_nata d (nat_of_integer (3 : IntInf.int))
+                           then nat_of_integer (3 : IntInf.int)
+                           else nat_of_integer (4 : IntInf.int)))));
+
+val pattern_investigation_relation : (nat * nat) list =
+  filtera (fn (a, b) => pattern_investigation_compare a b)
+    (investigation_pairs
+      [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+        nat_of_integer (3 : IntInf.int), nat_of_integer (4 : IntInf.int)]);
+
+fun pattern_investigation collapsed selected =
+  investigation_basis
+    [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+      nat_of_integer (3 : IntInf.int), nat_of_integer (4 : IntInf.int)]
+    [zero_nata, one_nata] selected
+    (pattern_investigation_observations collapsed)
+    pattern_investigation_relation;
+
+fun pair_scope_investigation_decision f n =
+  (if equal_nata f zero_nata
+    then equal_lista (equal_prod equal_nat equal_nat) (pair_scope_example n)
+           [(zero_nata, zero_nata), (one_nata, one_nata)]
+    else data_product_octets [zero_nata, one_nata] [zero_nata, one_nata]
+           (pair_scope_example n));
+
+val pair_scope_investigation_observations : (nat * (nat * nat)) list =
+  maps (fn c =>
+         map (fn f =>
+               (f, (c, (if pair_scope_investigation_decision f c then one_nata
+                         else zero_nata))))
+           [zero_nata, one_nata])
+    [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+      nat_of_integer (3 : IntInf.int), nat_of_integer (4 : IntInf.int),
+      nat_of_integer (5 : IntInf.int), nat_of_integer (6 : IntInf.int)];
+
+fun pair_scope_investigation_compare c d =
+  equal_boola (pair_scope_complete c) (pair_scope_complete d);
+
+val pair_scope_investigation_relation : (nat * nat) list =
+  filtera (fn (a, b) => pair_scope_investigation_compare a b)
+    (investigation_pairs
+      [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+        nat_of_integer (3 : IntInf.int), nat_of_integer (4 : IntInf.int),
+        nat_of_integer (5 : IntInf.int), nat_of_integer (6 : IntInf.int)]);
+
+fun pair_scope_investigation selected =
+  investigation_basis
+    [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+      nat_of_integer (3 : IntInf.int), nat_of_integer (4 : IntInf.int),
+      nat_of_integer (5 : IntInf.int), nat_of_integer (6 : IntInf.int)]
+    [zero_nata, one_nata] selected pair_scope_investigation_observations
+    pair_scope_investigation_relation;
+
+fun permission_investigation_decision f c i =
+  (if equal_nata f zero_nata
+    then not (equal_nata c zero_nata) orelse equal_nata i zero_nata
+    else not (equal_nata c zero_nata) andalso not (equal_nata c one_nata));
+
+val permission_investigation_observations : (nat * (nat * nat)) list =
+  maps (fn c =>
+         maps (fn f =>
+                map (fn i =>
+                      (f, (c, plus_nata
+                                (times_nat (nat_of_integer (2 : IntInf.int)) i)
+                                (if permission_investigation_decision f c i
+                                  then one_nata else zero_nata))))
+                  [zero_nata, one_nata])
+           [zero_nata, one_nata])
+    [zero_nata, one_nata, nat_of_integer (2 : IntInf.int)];
+
+fun permission_investigation_compare c d =
+  list_all
+    (fn f =>
+      list_all
+        (fn i =>
+          equal_boola (permission_investigation_decision f c i)
+            (permission_investigation_decision f d i))
+        [zero_nata, one_nata])
+    [zero_nata, one_nata];
+
+val permission_investigation_relation : (nat * nat) list =
+  filtera (fn (a, b) => permission_investigation_compare a b)
+    (investigation_pairs
+      [zero_nata, one_nata, nat_of_integer (2 : IntInf.int)]);
+
+fun permission_investigation selected =
+  investigation_basis [zero_nata, one_nata, nat_of_integer (2 : IntInf.int)]
+    [zero_nata, one_nata] selected permission_investigation_observations
+    permission_investigation_relation;
+
+fun proof_probe_observation f c =
+  (if equal_nata f zero_nata orelse
+        (equal_nata f one_nata orelse not (equal_nata c zero_nata))
+    then nat_of_integer (3 : IntInf.int) else nat_of_integer (2 : IntInf.int));
+
+fun finite_generated_schema_applications A_ B_ C_ D_ l c =
+  ffUnion
+    (equal_prod A_
+      (equal_prod (equal_finite_factor_schema_ext B_ C_ D_ equal_unit)
+        (equal_prod equal_finite_factor_term
+          (equal_prod (equal_fset (equal_prod B_ equal_finite_factor_term))
+            (equal_fset
+              (equal_prod C_ (equal_prod D_ equal_finite_factor_term)))))))
+    (fimage
+      (fn (d, (s, ps)) =>
+        fimage (fn (t, (v, h)) => (d, (s, (t, (v, h)))))
+          (finite_schema_generation B_ C_ D_ s ps c))
+      (fset_of_list l));
+
+fun finite_generated_schema_rules A_ B_ C_ D_ l c =
+  fimage (fn (d, (_, (t, (_, a)))) => ((d, t), a))
+    (finite_generated_schema_applications A_ B_ C_ D_ l c);
+
+fun finite_schema_library_formed B_ C_ D_ l =
+  list_all
+    (fn (_, (s, ps)) =>
+      finite_schema_formed B_ C_ D_ s andalso
+        equal_seta
+          (equal_prod C_ (equal_prod D_ (equal_finite_term_pattern B_)))
+          (Set ps) (fset (finite_schema_premises s)))
+    l;
+
+fun finite_learned_investigation A_ B_ C_ D_ l c k goals =
+  let
+    val applications = finite_generated_schema_applications A_ B_ C_ A_ l c;
+    val rules = finite_generated_schema_rules A_ B_ C_ A_ l c;
+    val formed =
+      finite_schema_library_formed B_ C_ A_ l andalso
+        (list_all (fn q => finite_term_formed (snd q)) c andalso
+          (ball (fset k) (fn q => finite_term_formed (snd q)) andalso
+            (ball (fset goals) (fn (_, q) => finite_term_formed (snd q)) andalso
+              finite_premise_functional D_
+                (equal_prod A_ equal_finite_factor_term) goals)));
+  in
+    (formed,
+      (applications,
+        (finite_inference_residual (equal_prod A_ equal_finite_factor_term) C_
+           D_ rules k goals,
+          (finite_inference_demand (equal_prod A_ equal_finite_factor_term) C_
+             rules k (fimage snd goals),
+            finite_inference_demand_reasons
+              (equal_prod A_ equal_finite_factor_term) C_ rules k
+              (fimage snd goals)))))
+  end;
+
+fun table_example_profile c =
+  map_filter
+    (fn x =>
+      (if let
+            val (_, (d, _)) = x;
+          in
+            equal_nata d c
+          end
+        then SOME let
+                    val (f, (_, a)) = x;
+                  in
+                    (f, a)
+                  end
+        else NONE))
+    [(zero_nata, (zero_nata, zero_nata)), (zero_nata, (zero_nata, one_nata)),
+      (zero_nata, (one_nata, zero_nata))];
+
+fun table_example_loss c d =
+  filtera
+    (fn x =>
+      not (membera (equal_prod equal_nat equal_nat) (table_example_profile d)
+            x))
+    (table_example_profile c);
+
+fun revision_method_selection method input =
+  let
+    val (c, (u, (f, (t, r)))) = input;
+    val report = investigation_repairs c u f t r;
+    val retained = investigation_retain c u f t r;
+    val old_repairs = fst (snd (snd report));
+  in
+    (if equal_nata method zero_nata then investigation_extend f old_repairs
+      else (if equal_nata method one_nata
+             then investigation_extend retained old_repairs
+             else (if equal_nata method (nat_of_integer (2 : IntInf.int))
+                    then fst (snd (snd (snd
+ (investigation_revision c u f t r))))
+                    else (if equal_nata method (nat_of_integer (3 : IntInf.int))
+                           then fst report
+                           else (if equal_nata method
+                                      (nat_of_integer (4 : IntInf.int))
+                                  then retained
+                                  else investigation_extend []
+ (fst (snd (snd (investigation_repairs c u [] t r)))))))))
+  end;
+
+fun revision_method_quality method workload q =
+  let
+    val (c, (u, (f, (t, r)))) = revision_workload workload;
+    val g = revision_method_selection method (c, (u, (f, (t, r))));
+    val report = investigation_repairs c u g t r;
+    val retained = investigation_retain c u f t r;
+    val repairs = fst (snd (snd (investigation_repairs c u retained t r)));
+  in
+    (if equal_nata q zero_nata then null (fst (snd report))
+      else (if equal_nata q one_nata then superset equal_nat g retained
+             else (if equal_nata q (nat_of_integer (2 : IntInf.int))
+                    then equal_seta (equal_prod equal_nat equal_nat)
+                           (Set (filtera
+                                  (fn (ca, d) =>
+                                    not (membera
+  (equal_prod equal_nat equal_nat) r (ca, d)))
+                                  (fst (snd (investigation_basis c u g t r)))))
+                           (Set (snd (snd (snd report))))
+                    else equal_nata q (nat_of_integer (3 : IntInf.int)) andalso
+                           less_eq_set equal_nat
+                             (minus_set equal_nat (Set g) (Set f))
+                             (Set (map (fn (_, (_, (fa, _))) => fa) repairs)))))
+  end;
+
+val revision_investigation_observations : (nat * (nat * nat)) list =
+  maps (fn q =>
+         maps (fn method =>
+                map_filter
+                  (fn x =>
+                    (if revision_method_quality method x q
+                      then SOME (q, (method, x)) else NONE))
+                  [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+                    nat_of_integer (3 : IntInf.int),
+                    nat_of_integer (4 : IntInf.int)])
+           [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+             nat_of_integer (3 : IntInf.int), nat_of_integer (4 : IntInf.int),
+             nat_of_integer (5 : IntInf.int)])
+    [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+      nat_of_integer (3 : IntInf.int)];
+
+val revision_investigation_relation : (nat * nat) list =
+  filtera
+    (fn (method, other) =>
+      list_all
+        (fn workload =>
+          list_all
+            (fn q =>
+              (if revision_method_quality method workload q
+                then revision_method_quality other workload q else true))
+            [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+              nat_of_integer (3 : IntInf.int)])
+        [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+          nat_of_integer (3 : IntInf.int), nat_of_integer (4 : IntInf.int)])
+    (investigation_pairs
+      [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+        nat_of_integer (3 : IntInf.int), nat_of_integer (4 : IntInf.int),
+        nat_of_integer (5 : IntInf.int)]);
+
+fun revision_investigation selected =
+  investigation_basis
+    [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+      nat_of_integer (3 : IntInf.int), nat_of_integer (4 : IntInf.int),
+      nat_of_integer (5 : IntInf.int)]
+    [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+      nat_of_integer (3 : IntInf.int)]
+    selected revision_investigation_observations
+    revision_investigation_relation;
+
+fun observation_investigation_decision f c =
+  (if equal_nata f zero_nata then equal_nata c zero_nata
+    else less_nat c (nat_of_integer (3 : IntInf.int)));
+
+val observation_investigation_observations : (nat * (nat * nat)) list =
+  maps (fn c =>
+         map (fn f =>
+               (f, (c, (if observation_investigation_decision f c then one_nata
+                         else zero_nata))))
+           [zero_nata, one_nata])
+    [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+      nat_of_integer (3 : IntInf.int)];
+
+fun observation_investigation_compare c d =
+  less_nat c (nat_of_integer (3 : IntInf.int)) andalso
+    less_nat d (nat_of_integer (3 : IntInf.int)) orelse
+    less_eq_nat (nat_of_integer (3 : IntInf.int)) c andalso
+      less_eq_nat (nat_of_integer (3 : IntInf.int)) d;
+
+val observation_investigation_relation : (nat * nat) list =
+  filtera (fn (a, b) => observation_investigation_compare a b)
+    (investigation_pairs
+      [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+        nat_of_integer (3 : IntInf.int)]);
+
+fun observation_investigation selected =
+  investigation_basis
+    [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+      nat_of_integer (3 : IntInf.int)]
+    [zero_nata, one_nata] selected observation_investigation_observations
+    observation_investigation_relation;
+
+fun observation_octet_scope c u f rows =
+  list_all (fn ca => less_nat ca (nat_of_integer (256 : IntInf.int))) c andalso
+    (list_all (fn fa => less_nat fa (nat_of_integer (256 : IntInf.int)))
+       u andalso
+      (list_all (fn fa => less_nat fa (nat_of_integer (256 : IntInf.int)))
+         f andalso
+        (list_all
+           (fn (fa, (ca, w)) =>
+             less_nat fa (nat_of_integer (256 : IntInf.int)) andalso
+               (less_nat ca (nat_of_integer (256 : IntInf.int)) andalso
+                 less_nat w (nat_of_integer (256 : IntInf.int))))
+           rows andalso
+          (superset equal_nat u f andalso
+            list_all
+              (fn (fa, (ca, _)) =>
+                membera equal_nat u fa andalso membera equal_nat c ca)
+              rows))));
+
+fun scope_investigation_decision f n =
+  (if equal_nata f zero_nata
+    then not (equal_nata n (nat_of_integer (4 : IntInf.int))) andalso
+           not (equal_nata n (nat_of_integer (5 : IntInf.int)))
+    else equal_nata n zero_nata orelse
+           less_eq_nat (nat_of_integer (6 : IntInf.int)) n);
+
+val scope_investigation_observations : (nat * (nat * nat)) list =
+  maps (fn c =>
+         map (fn f =>
+               (f, (c, (if scope_investigation_decision f c then one_nata
+                         else zero_nata))))
+           [zero_nata, one_nata])
+    [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+      nat_of_integer (3 : IntInf.int), nat_of_integer (4 : IntInf.int),
+      nat_of_integer (5 : IntInf.int), nat_of_integer (6 : IntInf.int)];
+
+fun observation_scope_example_admitted n =
+  equal_nata n zero_nata orelse less_eq_nat (nat_of_integer (6 : IntInf.int)) n;
+
+fun scope_investigation_compare c d =
+  equal_boola (observation_scope_example_admitted c)
+    (observation_scope_example_admitted d);
+
+val scope_investigation_relation : (nat * nat) list =
+  filtera (fn (a, b) => scope_investigation_compare a b)
+    (investigation_pairs
+      [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+        nat_of_integer (3 : IntInf.int), nat_of_integer (4 : IntInf.int),
+        nat_of_integer (5 : IntInf.int), nat_of_integer (6 : IntInf.int)]);
+
+fun scope_investigation selected =
+  investigation_basis
+    [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+      nat_of_integer (3 : IntInf.int), nat_of_integer (4 : IntInf.int),
+      nat_of_integer (5 : IntInf.int), nat_of_integer (6 : IntInf.int)]
+    [zero_nata, one_nata] selected scope_investigation_observations
+    scope_investigation_relation;
+
+fun observation_octet_profile_table c u f rows displayed =
+  observation_octet_scope c u f rows andalso
+    keyed_octet_profiles
+      (map (fn ca =>
+             (ca, observation_profile_list equal_nat equal_nat f rows ca))
+        c)
+      displayed;
+
+fun observation_octet_loss_table c u f rows displayed =
+  observation_octet_scope c u f rows andalso
+    keyed_octet_losses
+      (map (fn (ca, d) =>
+             ((ca, d),
+               observation_losses_list equal_nat equal_nat equal_nat f rows ca
+                 d))
+        (product c c))
+      displayed;
+
+fun table_subject_operation f subject =
+  let
+    val (profiles, losses) = subject;
+  in
+    (if equal_nata f zero_nata
+      then keyed_octet_profiles
+             (filtera (fn (_, vs) => not (null vs))
+               (map (fn c => (c, table_example_profile c))
+                 [zero_nata, one_nata, nat_of_integer (2 : IntInf.int)]))
+             profiles andalso
+             keyed_octet_losses
+               (filtera (fn (_, vs) => not (null vs))
+                 (map (fn (c, d) => ((c, d), table_example_loss c d))
+                   (investigation_pairs
+                     [zero_nata, one_nata, nat_of_integer (2 : IntInf.int)])))
+               losses
+      else observation_octet_profile_table
+             [zero_nata, one_nata, nat_of_integer (2 : IntInf.int)] [zero_nata]
+             [zero_nata]
+             [(zero_nata, (zero_nata, zero_nata)),
+               (zero_nata, (zero_nata, one_nata)),
+               (zero_nata, (one_nata, zero_nata))]
+             profiles andalso
+             observation_octet_loss_table
+               [zero_nata, one_nata, nat_of_integer (2 : IntInf.int)]
+               [zero_nata] [zero_nata]
+               [(zero_nata, (zero_nata, zero_nata)),
+                 (zero_nata, (zero_nata, one_nata)),
+                 (zero_nata, (one_nata, zero_nata))]
+               losses)
+  end;
+
+fun table_example_profiles n =
+  (if equal_nata n zero_nata
+    then filtera (fn (_, vs) => not (null vs))
+           (map (fn c => (c, table_example_profile c))
+             [zero_nata, one_nata, nat_of_integer (2 : IntInf.int)])
+    else (if equal_nata n (nat_of_integer (2 : IntInf.int))
+           then rev (map (fn (c, vs) => (c, rev vs))
+                      (map (fn c => (c, table_example_profile c))
+                        [zero_nata, one_nata, nat_of_integer (2 : IntInf.int)]))
+           else (if equal_nata n (nat_of_integer (3 : IntInf.int))
+                  then map (fn c => (c, table_example_profile c))
+                         [zero_nata, one_nata,
+                           nat_of_integer (2 : IntInf.int)] @
+                         [(zero_nata, rev (table_example_profile zero_nata))]
+                  else (if equal_nata n (nat_of_integer (4 : IntInf.int))
+                         then filtera
+                                (fn (c, _) =>
+                                  not (equal_nata c
+(nat_of_integer (2 : IntInf.int))))
+                                (map (fn c => (c, table_example_profile c))
+                                  [zero_nata, one_nata,
+                                    nat_of_integer (2 : IntInf.int)])
+                         else (if equal_nata n (nat_of_integer (6 : IntInf.int))
+                                then map (fn c => (c, table_example_profile c))
+                                       [zero_nata, one_nata,
+ nat_of_integer (2 : IntInf.int)] @
+                                       [(nat_of_integer (3 : IntInf.int), [])]
+                                else map (fn c => (c, table_example_profile c))
+                                       [zero_nata, one_nata,
+ nat_of_integer (2 : IntInf.int)])))));
+
+fun table_example_losses n =
+  (if equal_nata n zero_nata
+    then filtera (fn (_, vs) => not (null vs))
+           (map (fn (c, d) => ((c, d), table_example_loss c d))
+             (investigation_pairs
+               [zero_nata, one_nata, nat_of_integer (2 : IntInf.int)]))
+    else (if equal_nata n (nat_of_integer (2 : IntInf.int))
+           then rev (map (fn (k, vs) => (k, rev vs))
+                      (map (fn (c, d) => ((c, d), table_example_loss c d))
+                        (investigation_pairs
+                          [zero_nata, one_nata,
+                            nat_of_integer (2 : IntInf.int)])))
+           else (if equal_nata n (nat_of_integer (3 : IntInf.int))
+                  then map (fn (c, d) => ((c, d), table_example_loss c d))
+                         (investigation_pairs
+                           [zero_nata, one_nata,
+                             nat_of_integer (2 : IntInf.int)]) @
+                         [((zero_nata, nat_of_integer (2 : IntInf.int)),
+                            rev (table_example_loss zero_nata
+                                  (nat_of_integer (2 : IntInf.int))))]
+                  else (if equal_nata n (nat_of_integer (5 : IntInf.int))
+                         then filtera
+                                (fn (k, _) =>
+                                  not (equal_proda equal_nat equal_nat k
+(nat_of_integer (2 : IntInf.int), nat_of_integer (2 : IntInf.int))))
+                                (map (fn (c, d) =>
+                                       ((c, d), table_example_loss c d))
+                                  (investigation_pairs
+                                    [zero_nata, one_nata,
+                                      nat_of_integer (2 : IntInf.int)]))
+                         else (if equal_nata n (nat_of_integer (7 : IntInf.int))
+                                then map (fn (k, vs) =>
+   (k, (if equal_proda equal_nat equal_nat k
+             (zero_nata, nat_of_integer (2 : IntInf.int))
+         then [(zero_nata, zero_nata)] else vs)))
+                                       (map
+ (fn (c, d) => ((c, d), table_example_loss c d))
+ (investigation_pairs [zero_nata, one_nata, nat_of_integer (2 : IntInf.int)]))
+                                else map (fn (c, d) =>
+   ((c, d), table_example_loss c d))
+                                       (investigation_pairs
+ [zero_nata, one_nata, nat_of_integer (2 : IntInf.int)]))))));
+
+fun table_investigation_decision f n =
+  table_subject_operation f (table_example_profiles n, table_example_losses n);
+
+val table_investigation_observations : (nat * (nat * nat)) list =
+  maps (fn c =>
+         map (fn f =>
+               (f, (c, (if table_investigation_decision f c then one_nata
+                         else zero_nata))))
+           [zero_nata, one_nata])
+    [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+      nat_of_integer (3 : IntInf.int), nat_of_integer (4 : IntInf.int),
+      nat_of_integer (5 : IntInf.int), nat_of_integer (6 : IntInf.int),
+      nat_of_integer (7 : IntInf.int)];
+
+fun table_subject_complete subject =
+  let
+    val (profiles, losses) = subject;
+  in
+    equal_fseta
+      (equal_prod equal_nat (equal_fset (equal_prod equal_nat equal_nat)))
+      (fset_of_list (map (map_prod id fset_of_list) profiles))
+      (fset_of_list
+        (map (fn c => (c, fset_of_list (table_example_profile c)))
+          [zero_nata, one_nata, nat_of_integer (2 : IntInf.int)])) andalso
+      equal_fseta
+        (equal_prod (equal_prod equal_nat equal_nat)
+          (equal_fset (equal_prod equal_nat equal_nat)))
+        (fset_of_list (map (map_prod id fset_of_list) losses))
+        (fset_of_list
+          (map (fn (c, d) => ((c, d), fset_of_list (table_example_loss c d)))
+            (investigation_pairs
+              [zero_nata, one_nata, nat_of_integer (2 : IntInf.int)])))
+  end;
+
+fun table_example_complete n =
+  table_subject_complete (table_example_profiles n, table_example_losses n);
+
+val table_investigation_relation : (nat * nat) list =
+  filtera
+    (fn (c, d) =>
+      equal_boola (table_example_complete c) (table_example_complete d))
+    (investigation_pairs
+      [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+        nat_of_integer (3 : IntInf.int), nat_of_integer (4 : IntInf.int),
+        nat_of_integer (5 : IntInf.int), nat_of_integer (6 : IntInf.int),
+        nat_of_integer (7 : IntInf.int)]);
+
+fun table_investigation selected =
+  investigation_basis
+    [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+      nat_of_integer (3 : IntInf.int), nat_of_integer (4 : IntInf.int),
+      nat_of_integer (5 : IntInf.int), nat_of_integer (6 : IntInf.int),
+      nat_of_integer (7 : IntInf.int)]
+    [zero_nata, one_nata] selected table_investigation_observations
+    table_investigation_relation;
+
+val proof_probes_investigation_observations : (nat * (nat * nat)) list =
+  maps (fn c =>
+         map (fn f => (f, (c, proof_probe_observation f c)))
+           [zero_nata, one_nata, nat_of_integer (2 : IntInf.int)])
+    [zero_nata, one_nata];
+
+val proof_probes_investigation_relation : (nat * nat) list =
+  filtera (fn (a, b) => proof_probe_compare a b)
+    (investigation_pairs [zero_nata, one_nata]);
+
+fun proof_probes_investigation selected =
+  investigation_basis [zero_nata, one_nata]
+    [zero_nata, one_nata, nat_of_integer (2 : IntInf.int)] selected
+    proof_probes_investigation_observations proof_probes_investigation_relation;
+
+val reasoning_false_frontier : (nat * finite_factor_term) list =
+  [(nat_of_integer (340 : IntInf.int), finite_admission_counter zero_nata),
+    (nat_of_integer (340 : IntInf.int), finite_admission_counter one_nata),
+    (nat_of_integer (340 : IntInf.int), Finite_Payload [zero_nata])];
+
+fun input_example_admitted n =
+  not (member equal_nat n
+        (insert equal_nat (nat_of_integer (6 : IntInf.int))
+          (insert equal_nat (nat_of_integer (7 : IntInf.int))
+            (insert equal_nat (nat_of_integer (8 : IntInf.int))
+              (insert equal_nat (nat_of_integer (10 : IntInf.int)) bot_set)))));
+
+fun input_investigation_decision f n =
+  (if equal_nata f zero_nata
+    then not (member equal_nat n
+               (insert equal_nat (nat_of_integer (2 : IntInf.int))
+                 (insert equal_nat (nat_of_integer (3 : IntInf.int))
+                   (insert equal_nat (nat_of_integer (4 : IntInf.int))
+                     (insert equal_nat (nat_of_integer (6 : IntInf.int))
+                       (insert equal_nat (nat_of_integer (7 : IntInf.int))
+                         (insert equal_nat (nat_of_integer (8 : IntInf.int))
+                           (insert equal_nat (nat_of_integer (9 : IntInf.int))
+                             (insert equal_nat
+                               (nat_of_integer (10 : IntInf.int))
+                               bot_set)))))))))
+    else input_example_admitted n);
+
+val input_investigation_observations : (nat * (nat * nat)) list =
+  maps (fn c =>
+         map (fn f =>
+               (f, (c, (if input_investigation_decision f c then one_nata
+                         else zero_nata))))
+           [zero_nata, one_nata])
+    [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+      nat_of_integer (3 : IntInf.int), nat_of_integer (4 : IntInf.int),
+      nat_of_integer (5 : IntInf.int), nat_of_integer (6 : IntInf.int),
+      nat_of_integer (7 : IntInf.int), nat_of_integer (8 : IntInf.int),
+      nat_of_integer (9 : IntInf.int), nat_of_integer (10 : IntInf.int)];
+
+val input_investigation_relation : (nat * nat) list =
+  filtera
+    (fn (c, d) =>
+      equal_boola (input_example_admitted c) (input_example_admitted d))
+    (investigation_pairs
+      [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+        nat_of_integer (3 : IntInf.int), nat_of_integer (4 : IntInf.int),
+        nat_of_integer (5 : IntInf.int), nat_of_integer (6 : IntInf.int),
+        nat_of_integer (7 : IntInf.int), nat_of_integer (8 : IntInf.int),
+        nat_of_integer (9 : IntInf.int), nat_of_integer (10 : IntInf.int)]);
+
+fun input_investigation selected =
+  investigation_basis
+    [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+      nat_of_integer (3 : IntInf.int), nat_of_integer (4 : IntInf.int),
+      nat_of_integer (5 : IntInf.int), nat_of_integer (6 : IntInf.int),
+      nat_of_integer (7 : IntInf.int), nat_of_integer (8 : IntInf.int),
+      nat_of_integer (9 : IntInf.int), nat_of_integer (10 : IntInf.int)]
+    [zero_nata, one_nata] selected input_investigation_observations
+    input_investigation_relation;
+
+fun finite_admission_counter_number (Finite_Target t) = NONE
+  | finite_admission_counter_number (Finite_Payload b) =
+    (if null b then SOME zero_nata else NONE)
+  | finite_admission_counter_number (Finite_Pair (a, b)) =
+    (if equal_finite_factor_terma a (Finite_Payload [])
+      then map_option suc (finite_admission_counter_number b) else NONE);
+
+fun finite_admission_counter_check t =
+  not (is_none (finite_admission_counter_number t));
+
+fun admitted_reasoning_frontier c =
+  filtera
+    (fn (d, t) =>
+      equal_nata d (nat_of_integer (340 : IntInf.int)) andalso
+        finite_admission_counter_check t)
+    c;
+
+fun reasoning_method_known m c =
+  (if equal_nata m zero_nata then admitted_reasoning_frontier c
+    else (if equal_nata m one_nata then c else []));
+
+val admission_pair_reasoning_goal : finite_factor_term =
+  admission_direct_pair_head (one_nat, zero_nat)
+    (fn a => fn b => Finite_Pair (a, b)) Finite_Payload
+    (finite_admission_counter zero_nata) (finite_admission_counter one_nata)
+    (finite_admission_counter (nat_of_integer (2 : IntInf.int)));
+
+val admission_pair_reasoning_frontier : (nat * finite_factor_term) list =
+  map (fn n => (nat_of_integer (340 : IntInf.int), finite_admission_counter n))
+    [zero_nata, one_nata, nat_of_integer (2 : IntInf.int)];
+
+fun reasoning_workload_frontier w =
+  (if equal_nata w zero_nata then admission_pair_reasoning_frontier
+    else reasoning_false_frontier);
+
+val finite_admission_direct_pair_schema :
+  (nat, nat, nat, unit) finite_factor_schema_ext
+  = Finite_factor_schema_ext
+      (admission_direct_pair_head (one_nat, zero_nat)
+         (fn a => fn b => Finite_Pattern_Pair (a, b)) Finite_Pattern_Payload
+         (Finite_Variable zero_nata) (Finite_Variable one_nata)
+         (Finite_Variable (nat_of_integer (2 : IntInf.int))),
+        fset_of_list
+          [(zero_nata,
+             (nat_of_integer (340 : IntInf.int), Finite_Variable zero_nata)),
+            (one_nata,
+              (nat_of_integer (340 : IntInf.int), Finite_Variable one_nata)),
+            (nat_of_integer (2 : IntInf.int),
+              (nat_of_integer (340 : IntInf.int),
+                Finite_Variable (nat_of_integer (2 : IntInf.int))))],
+        bot_fset, ());
+
+fun admission_pair_reasoning_library A_ (B1_, B2_) C_ (D1_, D2_) =
+  [(numeral A_ (Bit1 (Bit0 (Bit1 (Bit0 (Bit1 (Bit0 (Bit1 (Bit0 One)))))))),
+     (finite_admission_direct_pair_schema,
+       [(zero B1_,
+          (numeral C_
+             (Bit0 (Bit0 (Bit1 (Bit0 (Bit1 (Bit0 (Bit1 (Bit0 One)))))))),
+            Finite_Variable (zero D1_))),
+         (one (one_numeral B2_),
+           (numeral C_
+              (Bit0 (Bit0 (Bit1 (Bit0 (Bit1 (Bit0 (Bit1 (Bit0 One)))))))),
+             Finite_Variable (one (one_numeral D2_)))),
+         (numeral B2_ (Bit0 One),
+           (numeral C_
+              (Bit0 (Bit0 (Bit1 (Bit0 (Bit1 (Bit0 (Bit1 (Bit0 One)))))))),
+             Finite_Variable (numeral D2_ (Bit0 One))))]))];
+
+fun reasoning_workload_goal w =
+  (if equal_nata w zero_nata then admission_pair_reasoning_goal
+    else reasoning_false_goal);
+
+fun reasoning_method_report m w =
+  finite_learned_investigation equal_nat equal_nat equal_nat equal_nat
+    (admission_pair_reasoning_library numeral_nat (zero_nat, numeral_nat)
+      numeral_nat (zero_nat, numeral_nat))
+    (reasoning_workload_frontier w)
+    (fset_of_list (reasoning_method_known m (reasoning_workload_frontier w)))
+    (finsert
+      (equal_prod equal_nat (equal_prod equal_nat equal_finite_factor_term))
+      (zero_nata,
+        (nat_of_integer (341 : IntInf.int), reasoning_workload_goal w))
+      bot_fset);
+
+fun reasoning_workload_native_goal w = equal_nata w zero_nata;
+
+fun reasoning_method_quality m w f =
+  let
+    val known = reasoning_method_known m (reasoning_workload_frontier w);
+    val settled =
+      equal_fseta
+        (equal_prod equal_nat (equal_prod equal_nat equal_finite_factor_term))
+        (fst (snd (snd (reasoning_method_report m w)))) bot_fset;
+    val actual = reasoning_workload_native_goal w;
+  in
+    (if equal_nata f zero_nata
+      then list_all
+             (fn (d, t) =>
+               equal_nata d (nat_of_integer (340 : IntInf.int)) andalso
+                 finite_admission_counter_check t)
+             known
+      else (if equal_nata f one_nata then (if settled then actual else true)
+             else equal_nata f (nat_of_integer (2 : IntInf.int)) andalso
+                    equal_boola settled actual))
+  end;
+
+fun completion_investigation_test c =
+  (if equal_nata c zero_nata then id else not);
+
+fun completion_subject_operation f subject =
+  let
+    val (left, right) = subject;
+  in
+    (if equal_nata f zero_nata
+      then saturate_observation enum_unit enum_bool (fn _ => fn _ => true) left
+             false
+      else (if equal_nata f one_nata
+             then saturate_observation enum_unit enum_bool
+                    (fn _ => fn _ => true) right false
+             else saturate_observation enum_unit enum_bool
+                    (fn _ => fn _ => true) (fn p => left p andalso right p)
+                    false))
+  end;
+
+fun completion_investigation_observe f c =
+  completion_subject_operation f (id, completion_investigation_test c);
+
+val completion_investigation_observations : (nat * (nat * nat)) list =
+  maps (fn f =>
+         map_filter
+           (fn x =>
+             (if completion_investigation_observe f x
+               then SOME (f, (x, zero_nata)) else NONE))
+           [zero_nata, one_nata])
+    [zero_nata, one_nata, nat_of_integer (2 : IntInf.int)];
+
+val completion_investigation_relation : (nat * nat) list =
+  filtera
+    (fn (c, d) =>
+      (if completion_investigation_observe (nat_of_integer (2 : IntInf.int)) c
+        then completion_investigation_observe (nat_of_integer (2 : IntInf.int))
+               d
+        else true))
+    (investigation_pairs [zero_nata, one_nata]);
+
+fun completion_investigation selected =
+  investigation_basis [zero_nata, one_nata]
+    [zero_nata, one_nata, nat_of_integer (2 : IntInf.int)] selected
+    completion_investigation_observations completion_investigation_relation;
+
+fun socket_investigation_observation f c =
+  (if equal_nata f zero_nata orelse equal_nata f one_nata then zero_nata
+    else (if equal_nata c zero_nata then nat_of_integer (18 : IntInf.int)
+           else nat_of_integer (19 : IntInf.int)));
+
+val schema_sockets_investigation_observations : (nat * (nat * nat)) list =
+  maps (fn c =>
+         map (fn f => (f, (c, socket_investigation_observation f c)))
+           [zero_nata, one_nata, nat_of_integer (2 : IntInf.int)])
+    [zero_nata, one_nata];
+
+fun socket_investigation_compare c d =
+  equal_boola (equal_nata c zero_nata) (equal_nata d zero_nata);
+
+val schema_sockets_investigation_relation : (nat * nat) list =
+  filtera (fn (a, b) => socket_investigation_compare a b)
+    (investigation_pairs [zero_nata, one_nata]);
+
+fun schema_sockets_investigation selected =
+  investigation_basis [zero_nata, one_nata]
+    [zero_nata, one_nata, nat_of_integer (2 : IntInf.int)] selected
+    schema_sockets_investigation_observations
+    schema_sockets_investigation_relation;
+
+fun collection_example_rows n =
+  (if equal_nata n one_nata
+    then [(zero_nata, rev [(zero_nata, zero_nata), (zero_nata, one_nata)]),
+           (one_nata, [(zero_nata, nat_of_integer (2 : IntInf.int))])]
+    else (if equal_nata n (nat_of_integer (2 : IntInf.int))
+           then [(zero_nata,
+                   [(zero_nata, zero_nata), (zero_nata, one_nata)] @
+                     [(zero_nata, zero_nata)]),
+                  (one_nata, [(zero_nata, nat_of_integer (2 : IntInf.int))])]
+           else (if equal_nata n (nat_of_integer (3 : IntInf.int))
+                  then [(one_nata,
+                          [(zero_nata, nat_of_integer (2 : IntInf.int))]),
+                         (zero_nata,
+                           [(zero_nata, zero_nata), (zero_nata, one_nata)])]
+                  else (if equal_nata n (nat_of_integer (4 : IntInf.int))
+                         then [(zero_nata,
+                                 [(zero_nata, zero_nata),
+                                   (zero_nata, one_nata)]),
+                                (one_nata,
+                                  [(zero_nata,
+                                     nat_of_integer (2 : IntInf.int))]),
+                                (zero_nata,
+                                  [(zero_nata, zero_nata),
+                                    (zero_nata, one_nata)])]
+                         else (if equal_nata n (nat_of_integer (5 : IntInf.int))
+                                then [(zero_nata, [(zero_nata, zero_nata)]),
+                                       (one_nata,
+ [(zero_nata, nat_of_integer (2 : IntInf.int))])]
+                                else (if equal_nata n
+   (nat_of_integer (6 : IntInf.int))
+                                       then [(zero_nata,
+       [(zero_nata, zero_nata), (zero_nata, one_nata)]),
+      (zero_nata, rev [(zero_nata, zero_nata), (zero_nata, one_nata)]),
+      (one_nata, [(zero_nata, nat_of_integer (2 : IntInf.int))])]
+                                       else [(zero_nata,
+       [(zero_nata, zero_nata), (zero_nata, one_nata)]),
+      (one_nata, [(zero_nata, nat_of_integer (2 : IntInf.int))])]))))));
+
+fun collection_investigation_decision f n =
+  (if equal_nata f zero_nata
+    then equal_seta
+           (equal_prod equal_nat (equal_list (equal_prod equal_nat equal_nat)))
+           (Set (collection_example_rows zero_nata))
+           (Set (collection_example_rows n))
+    else keyed_octet_profiles (collection_example_rows zero_nata)
+           (collection_example_rows n));
+
+val collection_investigation_observations : (nat * (nat * nat)) list =
+  maps (fn c =>
+         map (fn f =>
+               (f, (c, (if collection_investigation_decision f c then one_nata
+                         else zero_nata))))
+           [zero_nata, one_nata])
+    [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+      nat_of_integer (3 : IntInf.int), nat_of_integer (4 : IntInf.int),
+      nat_of_integer (5 : IntInf.int), nat_of_integer (6 : IntInf.int)];
+
+fun collection_example_subject n =
+  fset_of_list (map (map_prod id fset_of_list) (collection_example_rows n));
+
+fun collection_investigation_compare c d =
+  equal_fseta
+    (equal_prod equal_nat (equal_fset (equal_prod equal_nat equal_nat)))
+    (collection_example_subject c) (collection_example_subject d);
+
+val collection_investigation_relation : (nat * nat) list =
+  filtera (fn (a, b) => collection_investigation_compare a b)
+    (investigation_pairs
+      [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+        nat_of_integer (3 : IntInf.int), nat_of_integer (4 : IntInf.int),
+        nat_of_integer (5 : IntInf.int), nat_of_integer (6 : IntInf.int)]);
+
+fun collection_investigation selected =
+  investigation_basis
+    [zero_nata, one_nata, nat_of_integer (2 : IntInf.int),
+      nat_of_integer (3 : IntInf.int), nat_of_integer (4 : IntInf.int),
+      nat_of_integer (5 : IntInf.int), nat_of_integer (6 : IntInf.int)]
+    [zero_nata, one_nata] selected collection_investigation_observations
+    collection_investigation_relation;
+
+val reasoning_method_investigation_observations : (nat * (nat * nat)) list =
+  maps (fn q =>
+         maps (fn m =>
+                map_filter
+                  (fn x =>
+                    (if reasoning_method_quality m x q then SOME (q, (m, x))
+                      else NONE))
+                  [zero_nata, one_nata])
+           [zero_nata, one_nata, nat_of_integer (2 : IntInf.int)])
+    [zero_nata, one_nata, nat_of_integer (2 : IntInf.int)];
+
+val reasoning_method_investigation_relation : (nat * nat) list =
+  filtera
+    (fn (m, k) =>
+      list_all
+        (fn w =>
+          list_all
+            (fn q =>
+              (if reasoning_method_quality m w q
+                then reasoning_method_quality k w q else true))
+            [zero_nata, one_nata, nat_of_integer (2 : IntInf.int)])
+        [zero_nata, one_nata])
+    (investigation_pairs
+      [zero_nata, one_nata, nat_of_integer (2 : IntInf.int)]);
+
+fun reasoning_method_investigation selected =
+  investigation_basis [zero_nata, one_nata, nat_of_integer (2 : IntInf.int)]
+    [zero_nata, one_nata, nat_of_integer (2 : IntInf.int)] selected
+    reasoning_method_investigation_observations
+    reasoning_method_investigation_relation;
+
+end; (*struct Finite_Investigation*)

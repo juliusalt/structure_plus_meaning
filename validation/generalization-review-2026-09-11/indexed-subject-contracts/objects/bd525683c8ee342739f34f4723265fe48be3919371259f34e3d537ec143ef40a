@@ -1,0 +1,14 @@
+Running Native_Indexed_Subjects5 ...
+Native_Indexed_Subjects5 FAILED (see also "isabelle build_log -H Error Native_Indexed_Subjects5")
+*** Failed to load theory "Native_Indexed_Subjects5.Indexed_Subject_Baseline" (unresolved "Native_Indexed_Subjects5.Observation_Revision_Investigation")
+*** Failed to apply initial proof method (line 160 of "/tmp/native-investigation-report-diagnostic-indexedsubjects5/theories/Observation_Revision_Investigation.thy"):
+*** using this:
+***     (c, method) |∈| revision_candidate_subjects
+***     (d, other) |∈| revision_candidate_subjects
+*** goal (1 subgoal):
+***  1. ((c, d) ∈ set revision_investigation_relation) =
+***     revision_subject_comparison method
+***      other
+*** At command "by" (line 160 of "/tmp/native-investigation-report-diagnostic-indexedsubjects5/theories/Observation_Revision_Investigation.thy")
+Unfinished session(s): Native_Indexed_Subjects5
+0:02:13 elapsed time, 0:03:13 cpu time, factor 1.45

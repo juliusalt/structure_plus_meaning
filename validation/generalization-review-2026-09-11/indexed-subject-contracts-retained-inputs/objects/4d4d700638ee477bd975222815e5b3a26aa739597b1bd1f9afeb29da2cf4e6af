@@ -1,0 +1,24 @@
+{
+  "proofs": {},
+  "runs": {},
+  "investigations": {
+    "bytes-initial": {
+      "path": "/tmp/generalization-quality-review/indexed-subject-contracts/whitespace1/exact-retained-inputs/initial"
+    },
+    "bytes-followed": {
+      "path": "/tmp/generalization-quality-review/indexed-subject-contracts/whitespace1/exact-retained-inputs/followed"
+    }
+  },
+  "attachments": {
+    "staged-whitespace.log": "/tmp/generalization-quality-review/indexed-subject-contracts/staged-whitespace.log",
+    "whitespace-subjects.json": "/tmp/generalization-quality-review/indexed-subject-contracts/whitespace-subjects.json",
+    "whitespace-specification.json": "/tmp/generalization-quality-review/indexed-subject-contracts/whitespace-specification.json",
+    "whitespace-specification-incomplete.json": "/tmp/generalization-quality-review/indexed-subject-contracts/whitespace-specification-incomplete.json",
+    "whitespace-invocation-error.log": "/tmp/generalization-quality-review/indexed-subject-contracts/whitespace-invocation-error.log",
+    "whitespace-command.log": "/tmp/generalization-quality-review/indexed-subject-contracts/whitespace-command.log",
+    "whitespace-decision.json": "/tmp/generalization-quality-review/indexed-subject-contracts/whitespace-decision.json"
+  },
+  "documents": {
+    "README.md": "/tmp/generalization-quality-review/indexed-subject-contracts/whitespace-README.md"
+  }
+}

@@ -1,0 +1,236 @@
+theory Inference_Rounds
+  imports "Inference_Development"
+begin
+
+section \<open>Finite dependency rounds expose work hidden by an immediate interface\<close>
+
+fun inference_rounds ::
+  "('a \<Rightarrow> ('i\<times>'a) set \<Rightarrow> bool) \<Rightarrow> 'a set \<Rightarrow> nat \<Rightarrow> 'a set" where
+  "inference_rounds R K 0=K"
+| "inference_rounds R K (Suc n)=K\<union>inference_consequences R (inference_rounds R K n)"
+
+lemma inference_rounds_seed:
+  "K\<subseteq>inference_rounds R K n"
+  by (cases n) auto
+
+lemma inference_rounds_step:
+  assumes "finite H" "single_valued H" "R a H" "rel_ran H\<subseteq>inference_rounds R K n"
+  shows "a\<in>inference_rounds R K (Suc n)"
+  using assms by (auto simp: inference_consequences_def)
+
+lemma inference_rounds_ascending:
+  "inference_rounds R K n\<subseteq>inference_rounds R K (Suc n)"
+  by (induction n) (auto simp: inference_consequences_def; blast)+
+
+lemma inference_rounds_mono:
+  assumes "n\<le>m"
+  shows "inference_rounds R K n\<subseteq>inference_rounds R K m"
+proof -
+  have grow: "inference_rounds R K n\<subseteq>inference_rounds R K (n+j)" for j
+    by (induction j) (use inference_rounds_ascending[of R K] in auto)
+  have "inference_rounds R K n\<subseteq>inference_rounds R K (n+(m-n))" by (rule grow)
+  then show ?thesis using assms by simp
+qed
+
+lemma inference_rounds_seed_mono:
+  "K\<subseteq>L \<Longrightarrow> inference_rounds R K n\<subseteq>inference_rounds R L n"
+  by (induction n) (auto simp: inference_consequences_def; blast)+
+
+lemma inference_rounds_rule_mono:
+  assumes "\<And>a H. R a H \<Longrightarrow> S a H"
+  shows "inference_rounds R K n\<subseteq>inference_rounds S K n"
+  by (induction n) (use assms in \<open>auto simp: inference_consequences_def; blast\<close>)+
+
+lemma inference_rounds_inside_closure:
+  "inference_rounds R K n\<subseteq>inference_closure R K"
+proof (induction n)
+  case 0
+  show ?case by (simp only: inference_rounds.simps; rule inference_closure_seed)
+next
+  case (Suc n)
+  have monotone: "inference_consequences R (inference_rounds R K n)\<subseteq>
+      inference_consequences R (inference_closure R K)"
+    by (rule monoD[OF inference_consequences_mono Suc.IH])
+  have step: "inference_consequences R (inference_rounds R K n)\<subseteq>inference_closure R K"
+    by (rule subset_trans[OF monotone inference_closure_closed])
+  show ?case by (simp only: inference_rounds.simps; rule Un_least[OF inference_closure_seed step])
+qed
+
+lemma inference_rounds_finite_bound:
+  assumes "finite X" "X\<subseteq>(\<Union>n. inference_rounds R K n)"
+  shows "\<exists>n. X\<subseteq>inference_rounds R K n"
+  using assms
+proof (induction X rule: finite_induct)
+  case empty
+  show ?case by auto
+next
+  case (insert a X)
+  obtain i where head: "a\<in>inference_rounds R K i" using insert.prems by blast
+  obtain j where tail: "X\<subseteq>inference_rounds R K j"
+    using insert.IH insert.prems by blast
+  have left: "i\<le>max i j" and right: "j\<le>max i j" by (auto simp: max_def)
+  have first: "a\<in>inference_rounds R K (max i j)"
+    by (rule subsetD[OF inference_rounds_mono[OF left] head])
+  have second: "X\<subseteq>inference_rounds R K (max i j)"
+    by (rule subset_trans[OF tail inference_rounds_mono[OF right]])
+  show ?case by (rule exI[of _ "max i j"]) (use first second in blast)
+qed
+
+theorem inference_closure_rounds:
+  "inference_closure R K=(\<Union>n. inference_rounds R K n)"
+proof (rule equalityI)
+  let ?X="\<Union>n. inference_rounds R K n"
+  have seed: "K\<subseteq>?X"
+  proof
+    fix a assume "a\<in>K"
+    then have "a\<in>inference_rounds R K 0" by simp
+    then show "a\<in>?X" by blast
+  qed
+  have closed: "inference_consequences R ?X\<subseteq>?X"
+  proof
+    fix a assume "a\<in>inference_consequences R ?X"
+    then obtain H where formed: "finite H" "single_valued H" and rule: "R a H"
+      and support: "rel_ran H\<subseteq>?X" by (auto simp: inference_consequences_def)
+    have finite: "finite (rel_ran H)" using formed(1) by (simp add: rel_ran_image)
+    obtain n where bound: "rel_ran H\<subseteq>inference_rounds R K n"
+      using inference_rounds_finite_bound[OF finite support] by blast
+    have "a\<in>inference_rounds R K (Suc n)" by (rule inference_rounds_step[OF formed rule bound])
+    then show "a\<in>?X" by blast
+  qed
+  show "inference_closure R K\<subseteq>?X" by (rule inference_closure_least[OF seed closed])
+next
+  show "(\<Union>n. inference_rounds R K n)\<subseteq>inference_closure R K"
+    by (rule UN_least) (rule inference_rounds_inside_closure)
+qed
+
+theorem inference_rounds_cut:
+  assumes "X\<subseteq>inference_rounds R K m"
+  shows "inference_rounds R X n\<subseteq>inference_rounds R K (m+n)"
+proof (induction n)
+  case 0
+  show ?case using assms by simp
+next
+  case (Suc n)
+  have seeds: "X\<subseteq>inference_rounds R K (m+Suc n)"
+    by (rule subset_trans[OF assms inference_rounds_mono]) simp
+  have step: "inference_consequences R (inference_rounds R X n)\<subseteq>
+      inference_consequences R (inference_rounds R K (m+n))"
+    by (rule monoD[OF inference_consequences_mono Suc.IH])
+  show ?case using seeds step by auto
+qed
+
+section \<open>Every local simulation retains its dependency budget\<close>
+
+definition inference_round_refines where
+  "inference_round_refines R S \<longleftrightarrow>
+    (\<forall>K n. inference_rounds R K n\<subseteq>inference_rounds S K n)"
+
+theorem inference_round_refines_iff_rules:
+  "inference_round_refines R S \<longleftrightarrow>
+    (\<forall>a H. finite H \<longrightarrow> single_valued H \<longrightarrow> R a H \<longrightarrow>
+      a\<in>inference_rounds S (rel_ran H) 1)"
+proof
+  assume comparison: "inference_round_refines R S"
+  show "\<forall>a H. finite H \<longrightarrow> single_valued H \<longrightarrow> R a H \<longrightarrow>
+      a\<in>inference_rounds S (rel_ran H) 1"
+  proof (intro allI impI)
+    fix a H assume formed: "finite H" "single_valued H" and rule: "R a H"
+    have first: "a\<in>inference_rounds R (rel_ran H) 1"
+      using inference_rounds_step[where R=R and H=H and a=a and K="rel_ran H" and n=0, OF formed rule]
+      by simp
+    have included: "inference_rounds R (rel_ran H) 1\<subseteq>inference_rounds S (rel_ran H) 1"
+      using comparison by (simp only: inference_round_refines_def; blast)
+    show "a\<in>inference_rounds S (rel_ran H) 1"
+      by (rule subsetD[OF included first])
+  qed
+next
+  assume local: "\<forall>a H. finite H \<longrightarrow> single_valued H \<longrightarrow> R a H \<longrightarrow>
+    a\<in>inference_rounds S (rel_ran H) 1"
+  have comparison: "inference_rounds R K n\<subseteq>inference_rounds S K n" for K n
+  proof (induction n)
+    case 0
+    show ?case by simp
+  next
+    case (Suc n)
+    show ?case
+    proof
+      fix a assume member: "a\<in>inference_rounds R K (Suc n)"
+      show "a\<in>inference_rounds S K (Suc n)"
+      proof (cases "a\<in>K")
+        case True
+        show ?thesis by (rule subsetD[OF inference_rounds_seed True])
+      next
+        case False
+        obtain H where formed: "finite H" "single_valued H" and rule: "R a H"
+          and support: "rel_ran H\<subseteq>inference_rounds R K n"
+          using member False by (auto simp: inference_consequences_def)
+        have seed: "rel_ran H\<subseteq>inference_rounds S K n"
+          by (rule subset_trans[OF support Suc.IH])
+        have result: "a\<in>inference_rounds S (rel_ran H) 1"
+          using local formed rule by blast
+        have "a\<in>inference_rounds S K (n+1)"
+          by (rule subsetD[OF inference_rounds_cut[OF seed] result])
+        then show ?thesis by simp
+      qed
+    qed
+  qed
+  show "inference_round_refines R S" using comparison by (simp add: inference_round_refines_def)
+qed
+
+theorem inference_round_refines_closure:
+  "inference_round_refines R S \<Longrightarrow> inference_refines R S"
+  by (auto simp: inference_round_refines_def inference_refines_def inference_closure_rounds; blast)
+
+theorem bounded_inferences_rounds_complete:
+  assumes "\<And>a H. finite H \<Longrightarrow> single_valued H \<Longrightarrow> R a H \<Longrightarrow> card H\<le>k"
+  shows "inference_rounds (bounded_inferences k R) K n=inference_rounds R K n"
+  by (induction n) (use assms in \<open>auto simp: inference_consequences_def bounded_inferences_def; blast\<close>)+
+
+definition inference_round_capability where
+  "inference_round_capability k R={(n,K,a). a\<in>inference_rounds (bounded_inferences k R) K n}"
+
+theorem inference_round_capability_comparison:
+  "inference_round_capability k R\<subseteq>inference_round_capability l S \<longleftrightarrow>
+    inference_round_refines (bounded_inferences k R) (bounded_inferences l S)"
+  by (auto simp: inference_round_capability_def inference_round_refines_def)
+
+theorem conditional_capability_is_the_round_projection:
+  "inference_capability k R=snd ` inference_round_capability k R"
+  by (auto simp: inference_capability_def inference_round_capability_def inference_closure_rounds image_iff)
+
+theorem round_capability_preserves_conditional_capability:
+  assumes "inference_round_capability k R\<subseteq>inference_round_capability l S"
+  shows "inference_capability k R\<subseteq>inference_capability l S"
+  using assms by (auto simp: conditional_capability_is_the_round_projection)
+
+definition inference_depth_observations where
+  "inference_depth_observations k f R=
+    (if f then Inr ` inference_round_capability k R else Inl ` inference_capability k R)"
+
+lemma inference_depth_observation_comparison:
+  "(\<forall>f\<in>{True}. inference_depth_observations k f R\<subseteq>inference_depth_observations k f S)
+    \<longleftrightarrow> inference_round_refines (bounded_inferences k R) (bounded_inferences k S)"
+  by (auto simp: inference_depth_observations_def inference_round_capability_comparison[symmetric] image_iff)
+
+lemma rounds_already_retain_conditional_capability:
+  "(\<forall>f\<in>{False,True}. inference_depth_observations k f R\<subseteq>inference_depth_observations k f S)
+    \<longleftrightarrow> inference_round_refines (bounded_inferences k R) (bounded_inferences k S)"
+  using round_capability_preserves_conditional_capability[where k=k and l=k and R=R and S=S]
+  by (auto simp: inference_depth_observations_def inference_round_capability_comparison[symmetric] image_iff)
+
+text \<open>
+  A round exposes one layer of actual inference dependencies. Its complete
+  finite premise family must be available from the previous round. The union
+  of all rounds is exactly the original finite-derivation closure, so this
+  observation preserves the earlier unbounded account while retaining more
+  information. Conditional simulation at every round has an exact local rule
+  criterion and therefore enters the same method-evaluation machinery.
+
+  A round is not elapsed time, total proof size, or the cost of establishing a
+  proposed derived rule. These questions remain separate observations. The
+  new criterion is used to demonstrate a relevant distinction omitted by the
+  earlier premise-bound comparison, not to appoint another universal scalar
+  measure of depth.
+\<close>
+
+end

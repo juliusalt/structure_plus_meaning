@@ -1,0 +1,537 @@
+{
+  "invocation": "09d9486d-ba67-4051-9a57-1677228e7324",
+  "status": "evaluated",
+  "started_utc": "2026-09-11T07:15:48.402348+00:00",
+  "exit_code": 0,
+  "role": "Execution evidence with separately qualified semantic meaning",
+  "input": {
+    "path": "/tmp/generalization-quality-review/reader-native-composition/comparison.json",
+    "sha256": "4e636f7c519e2f202c6e8e2e305cfa5ea3814fab7a5e8bf38b88241c321f024b"
+  },
+  "evidence_archive": [
+    {
+      "role": "original case",
+      "path": "/tmp/generalization-quality-review/reader-native-composition/comparison.json",
+      "sha256": "4e636f7c519e2f202c6e8e2e305cfa5ea3814fab7a5e8bf38b88241c321f024b",
+      "archive": "/tmp/generalization-quality-review/reader-native-method-initial/evidence-09d9486d-ba67-4051-9a57-1677228e7324/4e636f7c519e2f202c6e8e2e305cfa5ea3814fab7a5e8bf38b88241c321f024b"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/reader-native-composition-original/receipt.json",
+      "sha256": "a228cbc600729d8165b1c906cd5edb67e69fc9c8a67df73f8fa7308d80697206",
+      "archive": "/tmp/generalization-quality-review/reader-native-method-initial/evidence-09d9486d-ba67-4051-9a57-1677228e7324/a228cbc600729d8165b1c906cd5edb67e69fc9c8a67df73f8fa7308d80697206"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/reader-native-composition-original/cases.json",
+      "sha256": "136381b8f06bf46e796db528aa18bb4d6c5cde43f8e1fca7b70c3fdfd02ae225",
+      "archive": "/tmp/generalization-quality-review/reader-native-method-initial/evidence-09d9486d-ba67-4051-9a57-1677228e7324/136381b8f06bf46e796db528aa18bb4d6c5cde43f8e1fca7b70c3fdfd02ae225"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/reader-native-composition-original/results.log",
+      "sha256": "a6d1c5f9bcd867d0373686fbae1e320470d7e7728e80a6de2f9a08c080098105",
+      "archive": "/tmp/generalization-quality-review/reader-native-method-initial/evidence-09d9486d-ba67-4051-9a57-1677228e7324/a6d1c5f9bcd867d0373686fbae1e320470d7e7728e80a6de2f9a08c080098105"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/reader-native-composition-original/conditions.json",
+      "sha256": "9b62037523a0f35a16a5dd1fccad8a3f58b8e31c5ea79336836d58f0f5fad34e",
+      "archive": "/tmp/generalization-quality-review/reader-native-method-initial/evidence-09d9486d-ba67-4051-9a57-1677228e7324/9b62037523a0f35a16a5dd1fccad8a3f58b8e31c5ea79336836d58f0f5fad34e"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/reader-native-composition-factored/receipt.json",
+      "sha256": "fce7d692f67c323085547cbcb5b3095ebd5254914f3fa0c5ecfdd3055f08ae31",
+      "archive": "/tmp/generalization-quality-review/reader-native-method-initial/evidence-09d9486d-ba67-4051-9a57-1677228e7324/fce7d692f67c323085547cbcb5b3095ebd5254914f3fa0c5ecfdd3055f08ae31"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/reader-native-composition-factored/cases.json",
+      "sha256": "83b63a20f668f768977d24f84e49f6e423288158241b3a1423795b53d9d7ddbf",
+      "archive": "/tmp/generalization-quality-review/reader-native-method-initial/evidence-09d9486d-ba67-4051-9a57-1677228e7324/83b63a20f668f768977d24f84e49f6e423288158241b3a1423795b53d9d7ddbf"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/reader-native-composition-factored/results.log",
+      "sha256": "bb616a0296e4789dcd94a297c8af41f6113f02c06008bd67e8701d0f231183f2",
+      "archive": "/tmp/generalization-quality-review/reader-native-method-initial/evidence-09d9486d-ba67-4051-9a57-1677228e7324/bb616a0296e4789dcd94a297c8af41f6113f02c06008bd67e8701d0f231183f2"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/reader-native-composition-factored/conditions.json",
+      "sha256": "02104634dff29b717300f55386a32898545d52dfe3f1e556d691acfb97a62c40",
+      "archive": "/tmp/generalization-quality-review/reader-native-method-initial/evidence-09d9486d-ba67-4051-9a57-1677228e7324/02104634dff29b717300f55386a32898545d52dfe3f1e556d691acfb97a62c40"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/compare-reader-native-composition.py",
+      "sha256": "a53135c00e376c2d3fbc83f44f6a2d09d25bcba951a981d007797ae21aba6cdc",
+      "archive": "/tmp/generalization-quality-review/reader-native-method-initial/evidence-09d9486d-ba67-4051-9a57-1677228e7324/a53135c00e376c2d3fbc83f44f6a2d09d25bcba951a981d007797ae21aba6cdc"
+    },
+    {
+      "role": "case evidence",
+      "path": "/home/julius/structure_and_semantics/tools/compare_reasoning_methods.py",
+      "sha256": "e74c13cd228f7ef36cfc8e07c78b3ee0626d3de26925d08361ce97bdcf12af32",
+      "archive": "/tmp/generalization-quality-review/reader-native-method-initial/evidence-09d9486d-ba67-4051-9a57-1677228e7324/e74c13cd228f7ef36cfc8e07c78b3ee0626d3de26925d08361ce97bdcf12af32"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/reader-native-composition/proved-original-specification.json",
+      "sha256": "d8395926a3e0a07516841d57fe893f82c0b71f1fff7293b4bcdd9c2f848a2e8a",
+      "archive": "/tmp/generalization-quality-review/reader-native-method-initial/evidence-09d9486d-ba67-4051-9a57-1677228e7324/d8395926a3e0a07516841d57fe893f82c0b71f1fff7293b4bcdd9c2f848a2e8a"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/reader-native-composition/proved-factored-specification.json",
+      "sha256": "76591c5c38e3a769f9efe3c4850df6b721ea4c3ddca510adce1fa4cc24c275cb",
+      "archive": "/tmp/generalization-quality-review/reader-native-method-initial/evidence-09d9486d-ba67-4051-9a57-1677228e7324/76591c5c38e3a769f9efe3c4850df6b721ea4c3ddca510adce1fa4cc24c275cb"
+    },
+    {
+      "role": "execution tool",
+      "path": "/home/julius/structure_and_semantics/tools/investigate.py",
+      "sha256": "7643dbebe13aed0e9d9bc4cff062575c665fec4ed0f7c0527857cd5d07263628",
+      "archive": "/tmp/generalization-quality-review/reader-native-method-initial/evidence-09d9486d-ba67-4051-9a57-1677228e7324/7643dbebe13aed0e9d9bc4cff062575c665fec4ed0f7c0527857cd5d07263628"
+    },
+    {
+      "role": "execution tool",
+      "path": "/home/julius/structure_and_semantics/tools/build.py",
+      "sha256": "8915b7a480b2a17b5cea5b819f3be43323f69cb79dc1513a76c07eb83f6b491e",
+      "archive": "/tmp/generalization-quality-review/reader-native-method-initial/evidence-09d9486d-ba67-4051-9a57-1677228e7324/8915b7a480b2a17b5cea5b819f3be43323f69cb79dc1513a76c07eb83f6b491e"
+    }
+  ],
+  "case_sha256": "4e636f7c519e2f202c6e8e2e305cfa5ea3814fab7a5e8bf38b88241c321f024b",
+  "question": "Does the original contract decomposition impose native source-reading requirements on a reusable local node construction, and do either method's results supply an executed example?",
+  "scope": {
+    "candidates": {
+      "0": "original dependency proposal",
+      "1": "contracts factored at their proved boundaries"
+    },
+    "workloads": {
+      "0": "proved-contracts",
+      "1": "shape-check-only",
+      "2": "conditional-three-bridges",
+      "3": "conditional-withheld-10",
+      "4": "conditional-withheld-11",
+      "5": "conditional-withheld-12",
+      "6": "different-source-context",
+      "7": "native-source-contract-withheld-13",
+      "8": "native-source-contract-withheld-14"
+    },
+    "facets": {
+      "0": "Complete input formed",
+      "1": "Universal local construction goal settled",
+      "2": "Native reader inhabitance goal settled",
+      "3": "Every settled goal is supported by matching proved contracts",
+      "4": "Executed explicit finite example goal settled"
+    },
+    "boundary": "Both methods run the same nine complete workloads. The external proof criterion checks matching known contracts whenever a requested goal settles; the mismatched-source control must retain every goal. The finite engine does not admit the cited mathematical evidence. The declared methods and workloads do not establish exhaustive workflow coverage."
+  },
+  "semantic_boundary": "Results are exact for the supplied finite data. Independent meanings, evidence validity, and wider coverage require their own justification.",
+  "commands": [
+    {
+      "command": [
+        "isabelle",
+        "version"
+      ],
+      "started_utc": "2026-09-11T07:15:48.406990+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T07:15:48.477093+00:00",
+      "elapsed_seconds": 0.07010974106378853
+    },
+    {
+      "command": [
+        "isabelle",
+        "build",
+        "-v",
+        "-o",
+        "threads=12",
+        "-o",
+        "timeout=300",
+        "-D",
+        "/tmp/structural-investigation-engines/303d0af612a696b1bba0db7faa871593d8eb9079340290f8ae1b6a3a6cf29de3"
+      ],
+      "started_utc": "2026-09-11T07:15:48.481885+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T07:15:50.732826+00:00",
+      "elapsed_seconds": 2.250946172978729
+    },
+    {
+      "command": [
+        "isabelle",
+        "export",
+        "-n",
+        "-d",
+        "/tmp/structural-investigation-engines/303d0af612a696b1bba0db7faa871593d8eb9079340290f8ae1b6a3a6cf29de3",
+        "-O",
+        "/tmp/generalization-quality-review/reader-native-method-initial/export-09d9486d-ba67-4051-9a57-1677228e7324",
+        "-x",
+        "*Finite_Investigation_Export:code/finite_investigation.ML",
+        "Finite_Investigation_303d0af612a696b1bba0db7f"
+      ],
+      "started_utc": "2026-09-11T07:15:50.733604+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T07:15:51.362393+00:00",
+      "elapsed_seconds": 0.6287960010813549
+    },
+    {
+      "command": [
+        "isabelle",
+        "getenv",
+        "-b",
+        "POLYML_HOME"
+      ],
+      "started_utc": "2026-09-11T07:15:51.363095+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T07:15:51.431737+00:00",
+      "elapsed_seconds": 0.06865022506099194
+    },
+    {
+      "command": [
+        "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+        "--version"
+      ],
+      "started_utc": "2026-09-11T07:15:51.440437+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T07:15:51.443719+00:00",
+      "elapsed_seconds": 0.003271067049354315
+    },
+    {
+      "command": [
+        "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+        "--script",
+        "/tmp/generalization-quality-review/reader-native-method-initial/execute.ML"
+      ],
+      "started_utc": "2026-09-11T07:15:51.443899+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T07:15:51.513489+00:00",
+      "elapsed_seconds": 0.06959972891490906
+    }
+  ],
+  "engine_key": "303d0af612a696b1bba0db7faa871593d8eb9079340290f8ae1b6a3a6cf29de3",
+  "isabelle_version": "Isabelle2025-2",
+  "engine_session": "Finite_Investigation_303d0af612a696b1bba0db7f",
+  "engine_theory": "Presentation_Completion_Investigation",
+  "engine_sources": {
+    "Bootstrap_Relations": {
+      "path": "/home/julius/structure_and_semantics/theories/Bootstrap_Relations.thy",
+      "sha256": "82069762267d503d339290507262bc7f905543966f56a0601e30bd1c7b04184f"
+    },
+    "Obligation_Reductions": {
+      "path": "/home/julius/structure_and_semantics/theories/Obligation_Reductions.thy",
+      "sha256": "a7cf5c82c7478cbde8ae94545ccaaf327af50b7b1ece2ff5458e29bc8ea1adcf"
+    },
+    "Inference_Closure": {
+      "path": "/home/julius/structure_and_semantics/theories/Inference_Closure.thy",
+      "sha256": "caf963ccb1ded2c117eded468e575900f7fd275728f9535efe5b40f87517f5ce"
+    },
+    "Bootstrap_Finite_Closure": {
+      "path": "/home/julius/structure_and_semantics/theories/Bootstrap_Finite_Closure.thy",
+      "sha256": "df469431d4c9e4f95b2b3b3d192d7da9d677800b0383609dd25b212264581bc5"
+    },
+    "Inference_Development": {
+      "path": "/home/julius/structure_and_semantics/theories/Inference_Development.thy",
+      "sha256": "f3b6057fd02d5ab49785f8941e21ddc20ede01d3d9c2278894254b872ff6846f"
+    },
+    "Candidate_Observations": {
+      "path": "/home/julius/structure_and_semantics/theories/Candidate_Observations.thy",
+      "sha256": "d17f7f738b725bfcc7c27560ac2f8d482dd8b02ca6e83ce72f738451da324749"
+    },
+    "Inference_Demands": {
+      "path": "/home/julius/structure_and_semantics/theories/Inference_Demands.thy",
+      "sha256": "f620b3cdaf10ba80a4795c5d273aa92e35d6dc04245119eb73fa0196e25aa03a"
+    },
+    "Candidate_Investigation": {
+      "path": "/home/julius/structure_and_semantics/theories/Candidate_Investigation.thy",
+      "sha256": "bb083972595406e027373ea6eb2ad1d8d45dc31e9935db8c5d591e6b1a133c92"
+    },
+    "Inference_Rounds": {
+      "path": "/home/julius/structure_and_semantics/theories/Inference_Rounds.thy",
+      "sha256": "bfc244e1aa9e68a4587fc5724cf2c6c8fe786a832798b280194cb8edbacaea24"
+    },
+    "Method_Development": {
+      "path": "/home/julius/structure_and_semantics/theories/Method_Development.thy",
+      "sha256": "82f4630526ae2bbfaba29d226b47bad77ed086cfc93e9765a3b04ca3bcfc3915"
+    },
+    "Method_Investigation": {
+      "path": "/home/julius/structure_and_semantics/theories/Method_Investigation.thy",
+      "sha256": "aefaf2532a1096f9945c6592b52241e9ac9e4ec0558fafabdcf6a30b3ddba7c1"
+    },
+    "Observation_Repairs": {
+      "path": "/home/julius/structure_and_semantics/theories/Observation_Repairs.thy",
+      "sha256": "97eb2c271b36e7aaa99e134aae0d4069b63fb03d0e89db26d28092af18b5bd97"
+    },
+    "Finite_Inference_Development": {
+      "path": "/home/julius/structure_and_semantics/theories/Finite_Inference_Development.thy",
+      "sha256": "dcd3ac4b8761e1197a54d58739524354c036864df2f3e33f493f71ef4ae26b6b"
+    },
+    "Finite_Investigation": {
+      "path": "/home/julius/structure_and_semantics/theories/Finite_Investigation.thy",
+      "sha256": "e8f24aeef856960db014b8ef47ab7c44be19dda573ee1bdad5073db96f5d1684"
+    },
+    "Finite_Observation_Repairs": {
+      "path": "/home/julius/structure_and_semantics/theories/Finite_Observation_Repairs.thy",
+      "sha256": "2834ce8cf69fc2c69be1ce9c02015d0da9c1723b701ebf7c2aa82633c26d8f24"
+    },
+    "Observation_Revisions": {
+      "path": "/home/julius/structure_and_semantics/theories/Observation_Revisions.thy",
+      "sha256": "9b3ad288b096531dcce382a678d5e261a26d04cb97aec311b2da59790b2d4942"
+    },
+    "Finite_Investigation_Interface": {
+      "path": "/home/julius/structure_and_semantics/theories/Finite_Investigation_Interface.thy",
+      "sha256": "816eb2ca216d95e70bc640c2775f9fdb5c79e3d43d71ca156636175a1b59c264"
+    },
+    "Presentation_Classes": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Classes.thy",
+      "sha256": "ec041e1bfca7b1bf648dc4ade30c5c9973d45907ef3a434e87a193755e5c8069"
+    },
+    "Presentation_Relations": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Relations.thy",
+      "sha256": "7381cbf8ed52753ee6bac33821b72312b9671488ee523ce964f805a2bdabb195"
+    },
+    "Presentation_Closure": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Closure.thy",
+      "sha256": "f78081a222b02cca01865fdda01de48ceb54739beb03a80c29b0fd86b6843b71"
+    },
+    "Presentation_Transport": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Transport.thy",
+      "sha256": "49abc2968f7b85c37bf33f84f09d6549b9bfedbb83c4c48b3080ed864026ddef"
+    },
+    "Presentation_Contracts": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Contracts.thy",
+      "sha256": "6977a5111cf2b30c46ec074d040c9ff81757eae56f482cbd0ee7784d9945f4e9"
+    },
+    "Observation_Invariance": {
+      "path": "/home/julius/structure_and_semantics/theories/Observation_Invariance.thy",
+      "sha256": "c6a2ef01120313d9e50aa21891a6a08a144252f853c8ca49345345623fdf53e4"
+    },
+    "Presentation_Completion": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Completion.thy",
+      "sha256": "973f448f5578d806596c25198143e2bccb645c3b68e6b191edd0642c62f92a8b"
+    },
+    "Presentation_Completion_Investigation": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Completion_Investigation.thy",
+      "sha256": "2fdd64d2c0b44f8f2d20acd357cdc11c02053d49a411db83095bcd9dab9a82f7"
+    }
+  },
+  "tools": {
+    "/home/julius/structure_and_semantics/tools/investigate.py": "7643dbebe13aed0e9d9bc4cff062575c665fec4ed0f7c0527857cd5d07263628",
+    "/home/julius/structure_and_semantics/tools/build.py": "8915b7a480b2a17b5cea5b819f3be43323f69cb79dc1513a76c07eb83f6b491e"
+  },
+  "engine_snapshot": "/tmp/structural-investigation-engines/303d0af612a696b1bba0db7faa871593d8eb9079340290f8ae1b6a3a6cf29de3",
+  "export_theory": "Finite_Investigation_Export",
+  "proof_receipt_sha256": "8853c88587cbc6dbf520729a9eaa257c4328894e1398692f0a68cfd89f8d9f94",
+  "generated_engine": "/tmp/generalization-quality-review/reader-native-method-initial/export-09d9486d-ba67-4051-9a57-1677228e7324/Finite_Investigation_303d0af612a696b1bba0db7f.Finite_Investigation_Export/code/finite_investigation.ML",
+  "generated_engine_sha256": "268dd5589c44fd3efa8b3a90cc12dea283fa2a4fc1d6975f23732e7172da7a5b",
+  "proof_snapshot_hashes": {
+    "ROOT": "9af32aaf045eb9cdd67470f2ab99a7c2589dc237168fbea11fdf4c16881d339b",
+    "theories/Finite_Investigation_Export.thy": "9110413a6a0c66e81c562859749ab476e8e98e29b9e886e92a46c8dc88052e13",
+    "theories/Bootstrap_Relations.thy": "82069762267d503d339290507262bc7f905543966f56a0601e30bd1c7b04184f",
+    "theories/Obligation_Reductions.thy": "a7cf5c82c7478cbde8ae94545ccaaf327af50b7b1ece2ff5458e29bc8ea1adcf",
+    "theories/Inference_Closure.thy": "caf963ccb1ded2c117eded468e575900f7fd275728f9535efe5b40f87517f5ce",
+    "theories/Bootstrap_Finite_Closure.thy": "df469431d4c9e4f95b2b3b3d192d7da9d677800b0383609dd25b212264581bc5",
+    "theories/Inference_Development.thy": "f3b6057fd02d5ab49785f8941e21ddc20ede01d3d9c2278894254b872ff6846f",
+    "theories/Candidate_Observations.thy": "d17f7f738b725bfcc7c27560ac2f8d482dd8b02ca6e83ce72f738451da324749",
+    "theories/Inference_Demands.thy": "f620b3cdaf10ba80a4795c5d273aa92e35d6dc04245119eb73fa0196e25aa03a",
+    "theories/Candidate_Investigation.thy": "bb083972595406e027373ea6eb2ad1d8d45dc31e9935db8c5d591e6b1a133c92",
+    "theories/Inference_Rounds.thy": "bfc244e1aa9e68a4587fc5724cf2c6c8fe786a832798b280194cb8edbacaea24",
+    "theories/Method_Development.thy": "82f4630526ae2bbfaba29d226b47bad77ed086cfc93e9765a3b04ca3bcfc3915",
+    "theories/Method_Investigation.thy": "aefaf2532a1096f9945c6592b52241e9ac9e4ec0558fafabdcf6a30b3ddba7c1",
+    "theories/Observation_Repairs.thy": "97eb2c271b36e7aaa99e134aae0d4069b63fb03d0e89db26d28092af18b5bd97",
+    "theories/Finite_Inference_Development.thy": "dcd3ac4b8761e1197a54d58739524354c036864df2f3e33f493f71ef4ae26b6b",
+    "theories/Finite_Investigation.thy": "e8f24aeef856960db014b8ef47ab7c44be19dda573ee1bdad5073db96f5d1684",
+    "theories/Finite_Observation_Repairs.thy": "2834ce8cf69fc2c69be1ce9c02015d0da9c1723b701ebf7c2aa82633c26d8f24",
+    "theories/Observation_Revisions.thy": "9b3ad288b096531dcce382a678d5e261a26d04cb97aec311b2da59790b2d4942",
+    "theories/Finite_Investigation_Interface.thy": "816eb2ca216d95e70bc640c2775f9fdb5c79e3d43d71ca156636175a1b59c264",
+    "theories/Presentation_Classes.thy": "ec041e1bfca7b1bf648dc4ade30c5c9973d45907ef3a434e87a193755e5c8069",
+    "theories/Presentation_Relations.thy": "7381cbf8ed52753ee6bac33821b72312b9671488ee523ce964f805a2bdabb195",
+    "theories/Presentation_Closure.thy": "f78081a222b02cca01865fdda01de48ceb54739beb03a80c29b0fd86b6843b71",
+    "theories/Presentation_Transport.thy": "49abc2968f7b85c37bf33f84f09d6549b9bfedbb83c4c48b3080ed864026ddef",
+    "theories/Presentation_Contracts.thy": "6977a5111cf2b30c46ec074d040c9ff81757eae56f482cbd0ee7784d9945f4e9",
+    "theories/Observation_Invariance.thy": "c6a2ef01120313d9e50aa21891a6a08a144252f853c8ca49345345623fdf53e4",
+    "theories/Presentation_Completion.thy": "973f448f5578d806596c25198143e2bccb645c3b68e6b191edd0642c62f92a8b",
+    "theories/Presentation_Completion_Investigation.thy": "2fdd64d2c0b44f8f2d20acd357cdc11c02053d49a411db83095bcd9dab9a82f7"
+  },
+  "poly": "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+  "poly_sha256": "47efc18d0b38bc908c8b29798575501e8b7b027f593022c80ff1acc55b9495b4",
+  "poly_version": "Poly/ML 5.9.2 Release",
+  "runtime_program_sha256": "63ddd8eb0b88d4c08cc6e4027983c664e5233a280c537c70895086559cb7275c",
+  "runtime_seconds": 0.06960742897354066,
+  "result": {
+    "input_formed": true,
+    "residual": [
+      [
+        1,
+        0
+      ]
+    ],
+    "profiles": [
+      {
+        "candidate": 0,
+        "profile": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            5
+          ],
+          [
+            0,
+            6
+          ],
+          [
+            0,
+            7
+          ],
+          [
+            0,
+            8
+          ]
+        ]
+      },
+      {
+        "candidate": 1,
+        "profile": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            5
+          ],
+          [
+            0,
+            6
+          ],
+          [
+            0,
+            7
+          ],
+          [
+            0,
+            8
+          ]
+        ]
+      }
+    ],
+    "losses": [
+      {
+        "from": 0,
+        "to": 0,
+        "losses": []
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "losses": []
+      },
+      {
+        "from": 1,
+        "to": 0,
+        "losses": []
+      },
+      {
+        "from": 1,
+        "to": 1,
+        "losses": []
+      }
+    ],
+    "safe_facets": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "conflicts": [],
+    "repairs": [
+      [
+        1,
+        0,
+        1,
+        7
+      ],
+      [
+        1,
+        0,
+        1,
+        8
+      ]
+    ],
+    "unrepairable": [],
+    "extension": [
+      0,
+      1
+    ],
+    "revision": {
+      "retained": [
+        0
+      ],
+      "withdrawn": [],
+      "repairs": [
+        [
+          1,
+          0,
+          1,
+          7
+        ],
+        [
+          1,
+          0,
+          1,
+          8
+        ]
+      ],
+      "selection": [
+        0,
+        1
+      ],
+      "residual": []
+    }
+  },
+  "sources_and_tools_unchanged": true,
+  "finished_utc": "2026-09-11T07:15:51.526151+00:00",
+  "elapsed_seconds": 3.1236840969650075,
+  "log_sha256": "6257850c0ed478498686887c4f0bd830defd5c05aaa9e4e67d2a09f7dc7cc046"
+}

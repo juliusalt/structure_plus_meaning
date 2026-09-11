@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/julius/structure_and_semantics/tools/check_decision_cases.py", line 81, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/home/julius/structure_and_semantics/tools/check_decision_cases.py", line 34, in main
+    assert all(re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*', n) for n in names)
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

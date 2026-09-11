@@ -1,0 +1,45 @@
+Running Native_Investigation_Report_Diagnostic_readernativecomposition3 ...
+Native_Investigation_Report_Diagnostic_readernativecomposition3 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_readernativecomposition3")
+...
+***     ⟹ thesis
+***  3. ⟦⋀F. ⟦environment_formed F; environment_included E F;
+***           artifact_at F (Some (fresh_use_prefix (environment_uses E) None))
+***            R;
+***           syntax_references F
+***            (Some (fresh_use_prefix (environment_uses E) None)) L C;
+***           ∀v∈environment_uses E. ∀A. artifact_at F v A = artifact_at E v A;
+***           ∀v∈environment_uses E.
+***              ∀k w. binds_slot F v k w = binds_slot E v k w⟧
+***          ⟹ thesis;
+***      ⟦rel_dom L ⊆ I ∪ (rel_dom L ∪ rel_dom C) ∧
+***       rel_dom C ⊆ I ∪ (rel_dom L ∪ rel_dom C);
+***       ∀d∈proof_node_reference_sites N D.
+***          d ∈ environment_positions E ∨
+***          fst d = Some (fresh_use_prefix (environment_uses E) None) ∧
+***          (snd d ∈ I ∨ snd d ∈ rel_dom L ∨ snd d ∈ rel_dom C)⟧
+***      ⟹ ∃F. environment_formed F ∧
+***             environment_included E F ∧
+***             artifact_at F
+***              (Some (fresh_use_prefix (environment_uses E) None)) R ∧
+***             syntax_references F
+***              (Some (fresh_use_prefix (environment_uses E) None)) L C ∧
+***             (∀u∈environment_uses E.
+***                 ∀T. artifact_at F u T = artifact_at E u T) ∧
+***             (∀u∈environment_uses E.
+***                 ∀k v. binds_slot F u k v = binds_slot E u k v);
+***      proof_node_reference_sites N D ⊆ environment_positions E;
+***      Some (fresh_use_prefix (environment_uses E) None) ∉ environment_uses E;
+***      exact_formed R; bag_count (object_data R) = (λ_. 0);
+***      reference_table_formed L C;
+***      rra_carrier (object_structure R) = I ∪ (rel_dom L ∪ rel_dom C);
+***      I ∩ (rel_dom L ∪ rel_dom C) = {}; K = rel_dom L ∪ rel_dom C;
+***      rel_ran C = proof_node_reference_sites N D;
+***      ∀E. environment_formed E ⟶
+***          (∀u. artifact_at E u R ⟶
+***               syntax_references E u L C ⟶
+***               native_proof_node_at E u [] N D I (rel_dom L ∪ rel_dom C));
+***      [] ∈ rel_dom C⟧
+***     ⟹ thesis
+*** At command "by" (line 38 of "/tmp/native-investigation-report-diagnostic-readernativecomposition3/theories/Factor_Proof_Node_Extension.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_readernativecomposition3
+0:02:03 elapsed time, 0:04:24 cpu time, factor 2.14

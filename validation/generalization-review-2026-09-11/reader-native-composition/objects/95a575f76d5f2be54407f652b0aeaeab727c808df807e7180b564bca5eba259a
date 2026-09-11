@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/home/julius/structure_and_semantics/tools/check_reasoning_cases.py", line 63, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/home/julius/structure_and_semantics/tools/check_reasoning_cases.py", line 24, in main
+    raise ValueError("Conditional investigation requires Python assertions.")
+ValueError: Conditional investigation requires Python assertions.

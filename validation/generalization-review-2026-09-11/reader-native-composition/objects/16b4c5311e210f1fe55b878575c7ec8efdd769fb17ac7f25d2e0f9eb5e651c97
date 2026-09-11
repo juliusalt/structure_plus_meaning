@@ -1,0 +1,49 @@
+import json,sys
+from pathlib import Path
+sys.dont_write_bytecode=True
+root=Path('/home/julius/structure_and_semantics');sys.path.insert(0,str(root/'tools'))
+import investigate
+base=Path('/tmp/generalization-quality-review');work=base/'reader-native-composition';decisions=base/'reader-development-decisions'
+label=sys.argv[1]
+proof=Path('/tmp/native-investigation-report-diagnostic-'+label)
+r=json.loads((proof/'result.json').read_text())
+assert r['status']=='accepted' and r['exit_code']==0 and r['sources_unchanged']
+assessment=json.loads((work/'assessment.json').read_text())
+assert assessment['dominant']==[1] and assessment['finite_example_requirement']['eligible']==[]
+spec={'proofs':{'readersourceexecution1':{'path':'/tmp/native-investigation-report-diagnostic-readersourceexecution1'}},'runs':{},'investigations':{},'attachments':{},'documents':{'README.md':'/tmp/reader-composition-README.md'}}
+for directory in sorted(Path('/tmp').glob('native-investigation-report-diagnostic-readernativecomposition*')):
+    assert (directory/'result.json').exists(),directory
+    spec['proofs'][directory.name.removeprefix('native-investigation-report-diagnostic-')]={'path':str(directory)}
+for stage in ['initial','original','factored']:
+    spec['runs'][stage]={'path':str(base/('reader-native-composition-'+stage)),'proof':'readersourceexecution1'}
+for stage in ['initial','followed']:
+    spec['investigations']['method-'+stage]={'path':str(base/('reader-native-method-'+stage))}
+for problem in json.loads((decisions/'declared-problems.json').read_text())['problems']:
+    directory=decisions/problem['name']
+    for stage in ['initial','followed']:
+        spec['investigations'][problem['name']+'-'+stage]={'path':str(directory/stage)}
+    for path in directory.iterdir():
+        if path.is_file():spec['attachments']['development-decisions/'+problem['name']+'/'+path.name]=str(path)
+for group in ['reader-type-and-adapter-decisions','reader-decision-adapter-equivalence','reader-startup-decision']:
+    directory=base/group
+    data=json.loads((directory/'complete-results.json').read_text())
+    for row in data['results']:
+        problem=directory/row['problem']
+        for stage in ['initial','followed']:
+            spec['investigations'][group+'-'+row['problem']+'-'+stage]={'path':str(problem/stage)}
+        for path in problem.iterdir():
+            if path.is_file():spec['attachments'][group+'/'+row['problem']+'/'+path.name]=str(path)
+    spec['attachments'][group+'/complete-results.json']=str(directory/'complete-results.json')
+spec['attachments']['final-tools/check_decision_cases.py']=str(root/'tools/check_decision_cases.py')
+spec['attachments']['proposed-check-decision-cases.py']='/tmp/check_decision_cases.py'
+for prefix,directory in [('construction',work),('development-decisions',decisions)]:
+    for path in directory.iterdir():
+        if path.is_file():spec['attachments'][prefix+'/'+path.name]=str(path)
+for filename in ['prepare-reader-native-composition.py','prepare-reader-native-proved.py','compare-reader-native-composition.py','reader-development-decisions.py','run-reader-native-validation.py','reader-native-composition-tool-tests.log']:
+    path=Path('/tmp',filename);assert path.exists(),path
+    spec['attachments'][filename]=str(path)
+for filename in ['check_reasoning_cases.py','compare_reasoning_methods.py','revise_investigation_case.py','check_reasoning.py','check_guided_reasoning.py','retain_reasoning_review.py','replay_reasoning_review.py','review_investigations.py']:
+    spec['attachments']['final-tools/'+filename]=str(root/'tools'/filename)
+spec['attachments']['retention-builder.py']=str(Path(__file__).resolve())
+Path('/tmp/reader-composition-retention.json').write_text(json.dumps(spec,indent=2)+'\n')
+print('Prepared',len(spec['proofs']),'proof contexts,',len(spec['runs']),'complete construction runs,',len(spec['investigations']),'decision/method investigations')

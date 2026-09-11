@@ -1,0 +1,27 @@
+Running Native_Investigation_Report_Diagnostic_readernativecomposition2 ...
+Native_Investigation_Report_Diagnostic_readernativecomposition2 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_readernativecomposition2")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_readernativecomposition2.Factor_Inference_Specialization_Total" (unresolved "Native_Investigation_Report_Diagnostic_readernativecomposition2.Factor_Proof_Node_Extension", "Native_Investigation_Report_Diagnostic_readernativecomposition2.Factor_Specialization_Binding_Total")
+*** Failed to finish proof (line 40 of "/tmp/native-investigation-report-diagnostic-readernativecomposition2/theories/Factor_Specialization_Binding_Total.thy"):
+*** goal (1 subgoal):
+***  1. ⋀a. ⟦a ∈ set As; environment_formed F;
+***          ∀p∈set (substitution_row_patterns As s).
+***             pattern_formed p ∧
+***             pattern_variables p ⊆ schema_variables (schema_substitute s S);
+***          r ∈ I; finite I; finite K;
+***          I ∩ (K ∪ schema_variables (schema_substitute s S)) = {}⟧
+***         ⟹ pattern_formed
+***             (s a)
+*** At command "by" (line 40 of "/tmp/native-investigation-report-diagnostic-readernativecomposition2/theories/Factor_Specialization_Binding_Total.thy")
+*** Failed to finish proof (line 18 of "/tmp/native-investigation-report-diagnostic-readernativecomposition2/theories/Factor_Proof_Node_Extension.thy"):
+*** goal (1 subgoal):
+***  1. ⋀a b aa ba.
+***        ⟦{y. ∃a b. ((a, b), y) ∈ D} ⊆ environment_positions E;
+***         ⋀a b. ∃R. artifact_at E a R ∧
+***                   b ∈ rra_carrier (object_structure R) ⟹
+***               octets_formed b;
+***         ((a, b), aa, ba) ∈ D⟧
+***        ⟹ octets_formed
+***            ba
+*** At command "by" (line 18 of "/tmp/native-investigation-report-diagnostic-readernativecomposition2/theories/Factor_Proof_Node_Extension.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_readernativecomposition2
+0:02:02 elapsed time, 0:04:24 cpu time, factor 2.15

@@ -1,0 +1,184 @@
+{
+  "schema": "finite-investigation-1",
+  "kind": "basis",
+  "question": "Which proposed repair addresses the diagnosed existential-witness goal while retaining the full required relation?",
+  "scope": {
+    "candidates": {
+      "0": "Repeat the same uninstantiated auto proof",
+      "1": "Extract the existing P, S, s and As, transport that P using native_package_included, and reintroduce exactly those witnesses with every retained conjunct",
+      "2": "Change the conclusion to the existence of some binding record with arbitrary replacement and target fields"
+    },
+    "facets": {
+      "0": "Preserves the entire stated relation and all F/G/source fields",
+      "1": "Reuses the existing source-inclusion contract",
+      "2": "Supplies the same witnesses required by the actual failed goal",
+      "3": "Adds no assumptions or admitted facts"
+    },
+    "boundary": "External proposal and source-reading judgments determine these finite observations. The engine computes distinctions and revisions; it does not generate these proposals, verify English interpretations, prove untested Isabelle scripts, or establish exhaustive candidate/problem coverage."
+  },
+  "candidates": [
+    0,
+    1,
+    2
+  ],
+  "facets": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "selected": [
+    0,
+    2
+  ],
+  "observations": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      0
+    ],
+    [
+      3,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      2,
+      1,
+      0
+    ],
+    [
+      3,
+      1,
+      0
+    ],
+    [
+      1,
+      2,
+      0
+    ],
+    [
+      3,
+      2,
+      0
+    ]
+  ],
+  "relation": [
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      1
+    ],
+    [
+      2,
+      0
+    ],
+    [
+      2,
+      1
+    ],
+    [
+      2,
+      2
+    ]
+  ],
+  "evidence": [
+    {
+      "path": "/tmp/generalization-quality-review/reader-development-decisions/source-inclusion-repair/initial/evidence-e0dcceff-16be-46af-b7b8-03a707372da4/882ba7f9c7c58c0b398adecd74f7298ea6a078d6d2f1decf18a1829876ac3aba",
+      "sha256": "882ba7f9c7c58c0b398adecd74f7298ea6a078d6d2f1decf18a1829876ac3aba",
+      "original_path": "/tmp/generalization-quality-review/reader-development-decisions/declared-problems.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-development-decisions/source-inclusion-repair/initial/evidence-e0dcceff-16be-46af-b7b8-03a707372da4/9f9814b8bffdf4652d3331fcff5ff6a7fc6bc319d28e7572f1bf2f71e2cdae53",
+      "sha256": "9f9814b8bffdf4652d3331fcff5ff6a7fc6bc319d28e7572f1bf2f71e2cdae53",
+      "original_path": "/tmp/reader-development-decisions.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-development-decisions/source-inclusion-repair/initial/evidence-e0dcceff-16be-46af-b7b8-03a707372da4/bde86a990e882a439ff27234a86f9e1b1d96edc416712c372927c07be2ca9e24",
+      "sha256": "bde86a990e882a439ff27234a86f9e1b1d96edc416712c372927c07be2ca9e24",
+      "original_path": "/home/julius/structure_and_semantics/DEVELOPMENT_WORKFLOW.md"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-development-decisions/source-inclusion-repair/initial/evidence-e0dcceff-16be-46af-b7b8-03a707372da4/17b87dd7dd6cabe2d33012a61a57aa7e45c4b198cedd17dc31cad4425c1ced82",
+      "sha256": "17b87dd7dd6cabe2d33012a61a57aa7e45c4b198cedd17dc31cad4425c1ced82",
+      "original_path": "/home/julius/structure_and_semantics/theories/Factor_Specialization_Binding_Total.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-development-decisions/source-inclusion-repair/initial/evidence-e0dcceff-16be-46af-b7b8-03a707372da4/5614ccd7c54895247d7bcbcef33cf0f4b94e3007f56c176d3e59d7e08668fb38",
+      "sha256": "5614ccd7c54895247d7bcbcef33cf0f4b94e3007f56c176d3e59d7e08668fb38",
+      "original_path": "/home/julius/structure_and_semantics/theories/Factor_Inference_Specialization_Total.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-development-decisions/source-inclusion-repair/initial/evidence-e0dcceff-16be-46af-b7b8-03a707372da4/2ac00ffd07741887f920cc4f32c6f2d8876ed76abfafde4e14b9be27ea96bdf7",
+      "sha256": "2ac00ffd07741887f920cc4f32c6f2d8876ed76abfafde4e14b9be27ea96bdf7",
+      "original_path": "/home/julius/structure_and_semantics/theories/Factor_Proof_Node_Extension.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-development-decisions/source-inclusion-repair/initial/evidence-e0dcceff-16be-46af-b7b8-03a707372da4/472f0d3894b939249152810c0d67c4d4b874e9dab0f96988de4c25112defabd8",
+      "sha256": "472f0d3894b939249152810c0d67c4d4b874e9dab0f96988de4c25112defabd8",
+      "original_path": "/home/julius/structure_and_semantics/theories/Factor_Specialization_Binding_Contracts.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-development-decisions/source-inclusion-repair/initial/evidence-e0dcceff-16be-46af-b7b8-03a707372da4/2b5d5c4397dea6b4140e43894ce9295a14dafb9335d7daf4717c50d555751de9",
+      "sha256": "2b5d5c4397dea6b4140e43894ce9295a14dafb9335d7daf4717c50d555751de9",
+      "original_path": "/home/julius/structure_and_semantics/theories/Factor_Package_Locality.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-development-decisions/source-inclusion-repair/initial/evidence-e0dcceff-16be-46af-b7b8-03a707372da4/ab57e1a44002df49e379a61f99d499e0e04d500f5534877dba6c77f16b9915c1",
+      "sha256": "ab57e1a44002df49e379a61f99d499e0e04d500f5534877dba6c77f16b9915c1",
+      "original_path": "/tmp/native-investigation-report-diagnostic-readernativecomposition5/build.log"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-development-decisions/source-inclusion-repair/initial/evidence-e0dcceff-16be-46af-b7b8-03a707372da4/e74c13cd228f7ef36cfc8e07c78b3ee0626d3de26925d08361ce97bdcf12af32",
+      "sha256": "e74c13cd228f7ef36cfc8e07c78b3ee0626d3de26925d08361ce97bdcf12af32",
+      "original_path": "/home/julius/structure_and_semantics/tools/compare_reasoning_methods.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-development-decisions/source-inclusion-repair/initial/evidence-e0dcceff-16be-46af-b7b8-03a707372da4/70466b6a380397ef2c390d33c150d1b536feac4aafcedae6bb20d3e1a5106d66",
+      "sha256": "70466b6a380397ef2c390d33c150d1b536feac4aafcedae6bb20d3e1a5106d66",
+      "original_path": "/home/julius/structure_and_semantics/tools/revise_investigation_case.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-development-decisions/source-inclusion-repair/initial/receipt.json",
+      "sha256": "02d89e92369e83729a0b0a4a5fb4b677e79f300aec24dcef6d7be3061c38f82e"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-development-decisions/source-inclusion-repair/initial/case.json",
+      "sha256": "947c4a742ab0295dd85a81be4461907899931f7fdaec82cd768dccd26a412776"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-development-decisions/source-inclusion-repair/initial/run.log",
+      "sha256": "480c5b7d7b17e3a96fcbfb8816d3dce8a484c4fb839150c68d9a0ec1c9548196"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/revise_investigation_case.py",
+      "sha256": "70466b6a380397ef2c390d33c150d1b536feac4aafcedae6bb20d3e1a5106d66"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/review_investigations.py",
+      "sha256": "368a254b9dc8f4323522d0edf4a6c7c1cac118afd70a97e0e000bf7bf86a6bb0"
+    }
+  ]
+}

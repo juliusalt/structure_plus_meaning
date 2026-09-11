@@ -1,0 +1,108 @@
+theories/Factor_Clause_Specialization_Instances.thy:218
+theorem clause_specialization_reading_inhabited:
+  "\<exists>z. (294,z)\<in>positive_meaning clause_specialization_reading_system"
+proof -
+  let ?L="finite_relation_system () {((),Payload_Term [])}"
+  let ?S="recognizer_schema (Pattern_Payload []) :: (unit,unit,local_address option definition_site) factor_schema"
+  have family: "extensional_family_formed {((),Payload_Term [])}"
+    by (auto simp: extensional_family_formed_def single_valued_def octets_formed_def)
+  have formed: "schema_system_formed ?L" by (rule finite_relation_formed[OF family])
+  obtain g :: "unit\<Rightarrow>local_address option definition_site" and E u P where compiled:
+    "inj_on g (system_definitions ?L)" "closed_native_package_at E u [] P"
+    "system_alpha_variant (rename_system g ?L) P"
+    using program_compilation_total[OF formed] by blast
+  have package: "native_package_at E u [] P" using compiled(2) by (simp add: closed_native_package_at_def)
+  have entry: "()\<in>system_definitions ?L" by simp
+  have renamed_entry: "g ()\<in>system_definitions (rename_system g ?L)"
+    by (simp add: renamed_system_definitions)
+  obtain k where clauses: "schema_family_variant k
+    (system_clause_family (rename_system g ?L) (g ())) (system_clause_family P (g ()))"
+    using compiled(3) renamed_entry by (auto simp: system_alpha_variant_def)
+  have original: "((),?S)\<in>system_clause_family (rename_system g ?L) (g ())"
+    by (auto simp: renamed_system_clause finite_relation_clause rename_schema_def recognizer_schema_def map_socket_graph_def)
+  obtain T where actual: "(k (),T)\<in>system_clause_family P (g ())" "schema_alpha_variant ?S T"
+    using schema_family_variant_entry[OF clauses original] by blast
+  have literal: "T=recognizer_schema (Pattern_Payload [])"
+    using actual(2) by (auto simp: schema_alpha_variant_def rename_schema_def recognizer_schema_def map_socket_graph_def)
+  have calls: "schema_call_formed P (g ()) t \<longleftrightarrow> term_formed t" for t
+    using compiled_system_call_boundary[OF formed compiled(1,3) entry, of t]
+      finite_relation_call[OF family, where a="()" and t=t] by blast
+  have head: "schema_pattern_call P (g ()) (Pattern_Payload [])"
+    by (simp only: schema_pattern_call_all_instances calls)
+      (auto simp: octets_formed_def pattern_accepts_def)
+  have target_formed: "schema_formed T"
+    by (rule schema_alpha_formed[OF actual(2)]) (simp add: octets_formed_def)
+  have boundary: "schema_pattern_boundary P (g ()) T"
+    unfolding schema_pattern_boundary_def
+    by (rule conjI[OF target_formed]) (use head in \<open>simp add: literal recognizer_schema_def\<close>)
+  have ground: "schema_variables T={}" by (simp add: literal)
+  have clause: "((g (),k ()),T)\<in>system_clauses P" using actual(1) by simp
+  obtain a b where specialization: "schema_clause_specialization_at E u [] (g ()) (k ())
+    E (fst (g ())) b E (fst (g ())) a"
+    using native_ground_clause_specialization[OF package clause ground boundary] by blast
+  have ef: "environment_formed E" using native_package_projection(1)[OF package]
+    by (simp add: native_package_formed_def)
+  obtain e where encoded: "environment_value_presents E e" using environment_value_presents_total[OF ef] by blast
+  let ?z="clause_specialization_reading_argument e (use_data_term u) (Payload_Term []) (definition_site_value (g ()))
+    (Payload_Term (k ())) e (use_data_term (fst (g ()))) (Payload_Term b)
+      e (use_data_term (fst (g ()))) (Payload_Term a)"
+  show ?thesis by (rule exI[of _ ?z])
+    (simp only: clause_specialization_reading_on_sources[OF encoded encoded encoded]; rule specialization)
+qed
+
+
+theories/Factor_Environment_Values.thy:7
+definition environment_artifact_entry_presents ::
+  "(local_address option\<times>exact_artifact) \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "environment_artifact_entry_presents z t \<longleftrightarrow>
+    (\<exists>v. artifact_value_presents (snd z) v \<and> t=Pair_Term (use_data_term (fst z)) v)"
+
+
+theories/Factor_Environment_Values.thy:41
+definition binding_data ::
+  "((local_address option\<times>local_address)\<times>local_address option) \<Rightarrow> factor_term" where
+  "binding_data z =
+    Pair_Term (Pair_Term (use_data_term (fst (fst z))) (Payload_Term (snd (fst z))))
+      (use_data_term (snd z))"
+
+
+theories/Factor_Environment_Values.thy:76
+definition environment_value_presents ::
+  "local_address option artifact_environment \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "environment_value_presents E t \<longleftrightarrow>
+    environment_formed E \<and>
+    (\<exists>a b. data_collection_presents environment_artifact_entry_presents (environment_artifacts E) a \<and>
+      data_collection_presents (\<lambda>z v. v=binding_data z) (environment_bindings E) b \<and>
+      t=Pair_Term a b)"
+
+
+theories/Factor_Environment_Values.thy:167
+definition environment_value_quoted_at ::
+  "exact_artifact \<Rightarrow> local_address \<Rightarrow> local_address option artifact_environment \<Rightarrow>
+    local_address set \<Rightarrow> bool" where
+  "environment_value_quoted_at C r E I \<longleftrightarrow>
+    (\<exists>t. environment_value_presents E t \<and> self_contained_quoted_at C r t I)"
+
+
+theories/Factor_Proof_Node_Code.thy:13
+definition proof_node_code_for ::
+  "('u definition_site,'u definition_site) schema_graph_node \<Rightarrow>
+    ('u definition_site \<times> 'u definition_site) set \<Rightarrow> exact_artifact \<Rightarrow>
+    (local_address\<times>exact_artifact) set \<Rightarrow> (local_address\<times>'u definition_site) set \<Rightarrow>
+    local_address set \<Rightarrow> local_address set \<Rightarrow> bool" where
+  "proof_node_code_for N D R L C I K \<longleftrightarrow>
+    exact_formed R \<and> bag_count (object_data R)=(\<lambda>_. 0) \<and>
+    []\<in>rra_carrier (object_structure R) \<and> reference_table_formed L C \<and>
+    rra_carrier (object_structure R)=I\<union>K \<and> I\<inter>K={} \<and>
+    K=rel_dom L\<union>rel_dom C \<and> rel_ran C=proof_node_reference_sites N D \<and>
+    (\<forall>E u. environment_formed E \<longrightarrow> artifact_at E u R \<longrightarrow> syntax_references E u L C \<longrightarrow>
+      native_proof_node_at E u [] N D I K)"
+
+
+theories/Factor_Proof_Node_Code.thy:26
+theorem proof_node_code_total:
+  fixes E :: "local_address option artifact_environment"
+  assumes ef: "environment_formed E" and inputs: "graph_node_inputs_at E D N"
+    and finite: "finite D" and functional: "single_valued D"
+    and targets: "\<forall>s n. (s,n)\<in>D \<longrightarrow> octets_formed (snd n)"
+  shows "\<exists>R L C I K. proof_node_code_for N D R L C I K"

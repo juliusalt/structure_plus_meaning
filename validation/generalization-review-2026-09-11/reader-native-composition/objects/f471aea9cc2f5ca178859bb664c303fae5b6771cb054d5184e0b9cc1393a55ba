@@ -1,0 +1,38 @@
+{
+  "status": "accepted",
+  "scope": "Complete finite reports for the supplied case family, with native comparisons where declared",
+  "reasoning_cases": 9,
+  "input_starts": [
+    0,
+    335,
+    336,
+    337,
+    1000,
+    10000000000000000000000000
+  ],
+  "binding_source_executions": 0,
+  "construction_frontier_executions": 0,
+  "construction_seed_executions": 0,
+  "coverage_executions": 9,
+  "compilation_executions": 0,
+  "native_library_executions": 0,
+  "binding_gap_executions": 9,
+  "environment_requirement_executions": 0,
+  "guided_state_executions": 54,
+  "native_guided_executions": 0,
+  "unproved_goal_assumption_cases": 0,
+  "exported_libraries": {},
+  "cases_source": "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/reader-native-composition/objects/136381b8f06bf46e796db528aa18bb4d6c5cde43f8e1fca7b70c3fdfd02ae225",
+  "results_sha256": "f33ac9b47f9cd1acd17e6cd5a9b29fe9819ee2a9bcf086514837cda6a2267b5a",
+  "proof_receipt": "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/reader-source-requirements/objects/b4e8d26fb4504c167cef26ac7abf1d769103e66cd927216b16223649a73debca",
+  "proof_receipt_sha256": "b4e8d26fb4504c167cef26ac7abf1d769103e66cd927216b16223649a73debca",
+  "boundary": "Structural controls verify exact generation and conditional reports. Native semantic guarantees come from the separately accepted theory contracts; this host review is not native mathematical-proof admission."
+}
+{
+  "stage": "original",
+  "status": "accepted",
+  "receipt_sha256": "fb4804c0757351073f5f99374b075dfb3b873e1998332f6ff6554737de74155d",
+  "archive_index_sha256": "b648d59438f5f5d778fdb9f910e997fda9649b352f890d498ab03c76923f5fe7",
+  "replayer_sha256": "4e324e77e73a6ea2166ad7feacc6c6692014b8f4d3cfdcb2de1af5af4fec50a3",
+  "boundary": "The retained inputs and original code are replayed. This reproduces complete checked reports; it does not rerun case selection or establish new native source readings."
+}

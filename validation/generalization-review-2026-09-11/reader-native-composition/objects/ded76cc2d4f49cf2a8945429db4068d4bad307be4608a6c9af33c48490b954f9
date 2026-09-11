@@ -1,0 +1,5 @@
+{
+  "observation": "The native session exited before proof checking with ClassNotFoundException while the independent comparison adapter was invoking Isabelle. The source graph stayed unchanged. This does not identify a proven root cause.",
+  "proposed_response": "Wait for the existing adapter batch to finish, run the scheduling comparison, and retry the identical native source snapshot with no simultaneous Isabelle startup. If startup still fails, preserve the new failure and inspect launcher diagnostics before changing theory content.",
+  "scheduling_exception": "Isabelle invocations are serialized for this bounded retry because overlapping startup coincided with a failure. Independent preparation and non-Isabelle checks remain batched; no theorem source is changed for a launcher failure."
+}

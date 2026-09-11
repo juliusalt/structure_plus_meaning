@@ -1,0 +1,7 @@
+{
+  "problem_count": 7,
+  "complete_initial_reports_equal": true,
+  "complete_followed_reports_equal": true,
+  "all_mandatory_assessments_equal": true,
+  "boundary": "This validates reuse of the existing execution/revision/assessment loop on all seven original logical cases. It does not prove arbitrary-case semantic truth or exhaustive workflow coverage."
+}

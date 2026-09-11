@@ -1,0 +1,68 @@
+{
+  "status": "evaluated",
+  "exit_code": 0,
+  "elapsed_seconds": 3.2097478640498593,
+  "runtime_seconds": 0.07223662396427244,
+  "receipt": "/tmp/generalization-quality-review/reader-development-decisions/work-and-scheduling/initial/receipt.json",
+  "input_formed": true,
+  "residual": [
+    [
+      1,
+      0
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      0
+    ]
+  ],
+  "repair_witnesses": 4,
+  "conflicts": 0,
+  "unrepairable": 0,
+  "extension": [
+    0,
+    2,
+    1
+  ],
+  "revision": {
+    "retained": [
+      0
+    ],
+    "withdrawn": [],
+    "repairs": [
+      [
+        1,
+        0,
+        2,
+        0
+      ],
+      [
+        1,
+        0,
+        1,
+        0
+      ],
+      [
+        1,
+        2,
+        2,
+        0
+      ],
+      [
+        2,
+        0,
+        1,
+        0
+      ]
+    ],
+    "selection": [
+      0,
+      2,
+      1
+    ],
+    "residual": []
+  }
+}

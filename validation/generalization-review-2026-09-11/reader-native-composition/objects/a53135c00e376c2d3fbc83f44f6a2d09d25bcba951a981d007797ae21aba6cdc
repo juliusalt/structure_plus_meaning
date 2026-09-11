@@ -1,0 +1,40 @@
+import json, sys
+from pathlib import Path
+sys.dont_write_bytecode=True
+root=Path('/home/julius/structure_and_semantics');sys.path.insert(0,str(root/'tools'))
+import check_guided_reasoning as guided
+import check_reasoning as r
+import compare_reasoning_methods as compare
+base=Path('/tmp/generalization-quality-review');out=base/'reader-native-composition'
+observations=[];measurements=[];evidence=[];original=None
+for method,stage in enumerate(['original','factored']):
+    directory=base/('reader-native-composition-'+stage)
+    cases,reports=guided.load_baseline(directory)
+    if original is None:original=cases
+    assert len(cases)==len(original)==9
+    context=cases[0]['goals'][0][2]
+    for i,c in enumerate(cases):
+        assert all(c[k]==original[i][k] for k in ['name','frontier','known','goals','operation'])
+        report=reports[i];remaining={g[1] for g in report['residual']}
+        evidenced=all(d in {10,11,12,13,14,15} and t==context for d,t in c['known'])
+        supported=evidenced or {40,41,42}<=remaining
+        values=[report['input_formed'],40 not in remaining,41 not in remaining,supported,42 not in remaining]
+        observations += [[f,method,i] for f,value in enumerate(values) if value]
+        measurements.append({'method':method,'stage':stage,'workload':i,'case':c['name'],
+          'values':values,'complete_goals':c['goals'],'complete_residual':report['residual'],
+          'complete_known':c['known'],'all_known_have_matching_proved_contracts':evidenced})
+    for name in ['receipt.json','cases.json','results.log','conditions.json']:
+        p=directory/name;evidence.append({'path':str(p),'sha256':r.digest(p)})
+for p in [Path(__file__),root/'tools/compare_reasoning_methods.py',out/'proved-original-specification.json',out/'proved-factored-specification.json']:
+    evidence.append({'path':str(p),'sha256':r.digest(p)})
+case=compare.comparison_case([0,1],list(range(5)),observations,[0],
+  question='Does the original contract decomposition impose native source-reading requirements on a reusable local node construction, and do either method\'s results supply an executed example?',
+  scope={'candidates':{'0':'original dependency proposal','1':'contracts factored at their proved boundaries'},
+    'workloads':{str(i):c['name'] for i,c in enumerate(original)},
+    'facets':{'0':'Complete input formed','1':'Universal local construction goal settled',
+      '2':'Native reader inhabitance goal settled','3':'Every settled goal is supported by matching proved contracts',
+      '4':'Executed explicit finite example goal settled'},
+    'boundary':'Both methods run the same nine complete workloads. The external proof criterion checks matching known contracts whenever a requested goal settles; the mismatched-source control must retain every goal. The finite engine does not admit the cited mathematical evidence. The declared methods and workloads do not establish exhaustive workflow coverage.'},evidence=evidence)
+(out/'comparison.json').write_text(json.dumps(case,indent=2)+'\n')
+(out/'measurements.json').write_text(json.dumps(measurements,indent=2)+'\n')
+print('Methods: 2; workloads: 9; observations:',len(observations))

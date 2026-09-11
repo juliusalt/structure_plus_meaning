@@ -1,0 +1,16 @@
+{
+  "applied_utc": "2026-09-11T07:13:43.644959+00:00",
+  "type_decision_results": {
+    "path": "/tmp/generalization-quality-review/reader-type-and-adapter-decisions/complete-results.json",
+    "sha256": "a8354549ad7d990a8642a071319ef85a4b7ba2fb8edefe34cdb4bacb54c2b9aa"
+  },
+  "decision_results": {
+    "path": "/tmp/generalization-quality-review/reader-development-decisions/complete-results.json",
+    "sha256": "e25c68fa2e24d4ca16a60781c7722d39372bd818530bbf403f4c911adc8fddb5"
+  },
+  "type_change": "Constrain the empty discharge relation at the local node-construction join to its actual target-site type; preserve every theorem statement.",
+  "change": "Reintroduce the original package, schema, substitution and enumeration witnesses after the proved package inclusion; preserve the complete theorem statement.",
+  "source_sha256": "8d9c562c07d1c6ee8a2b04cab9201390a605b278a609be4eea10053908e4761e",
+  "critical_assessment": "The finite comparison preserves all mandatory requirements and exposes the original unresolved witness distinction. It does not establish proof correctness. The native build below is required. This applies the new decision results prospectively; earlier repairs remain outside that workflow.",
+  "batch_boundary": "The complete three-theory composition is checked together. Further source edits depend on terminal proof diagnostics. Reusable driver checks were already executed on unchanged bytes; they are retained instead of repeated without cause."
+}

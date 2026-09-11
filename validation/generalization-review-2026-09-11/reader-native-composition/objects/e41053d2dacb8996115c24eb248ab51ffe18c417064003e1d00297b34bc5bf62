@@ -1,0 +1,555 @@
+{
+  "invocation": "7849cb47-a556-45a8-b947-bd5a19d88bc1",
+  "status": "evaluated",
+  "started_utc": "2026-09-11T07:02:18.667987+00:00",
+  "exit_code": 0,
+  "role": "Execution evidence with separately qualified semantic meaning",
+  "input": {
+    "path": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/followed-case.json",
+    "sha256": "98e17827de33b9f3e3a0a05df7f0304313ec9f770ac23f92b1b2198c24e44063"
+  },
+  "evidence_archive": [
+    {
+      "role": "original case",
+      "path": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/followed-case.json",
+      "sha256": "98e17827de33b9f3e3a0a05df7f0304313ec9f770ac23f92b1b2198c24e44063",
+      "archive": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/followed/evidence-7849cb47-a556-45a8-b947-bd5a19d88bc1/98e17827de33b9f3e3a0a05df7f0304313ec9f770ac23f92b1b2198c24e44063"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/initial/evidence-5c3b46cf-49c1-425d-845e-e9492ad0f06f/882ba7f9c7c58c0b398adecd74f7298ea6a078d6d2f1decf18a1829876ac3aba",
+      "sha256": "882ba7f9c7c58c0b398adecd74f7298ea6a078d6d2f1decf18a1829876ac3aba",
+      "archive": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/followed/evidence-7849cb47-a556-45a8-b947-bd5a19d88bc1/882ba7f9c7c58c0b398adecd74f7298ea6a078d6d2f1decf18a1829876ac3aba"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/initial/evidence-5c3b46cf-49c1-425d-845e-e9492ad0f06f/9f9814b8bffdf4652d3331fcff5ff6a7fc6bc319d28e7572f1bf2f71e2cdae53",
+      "sha256": "9f9814b8bffdf4652d3331fcff5ff6a7fc6bc319d28e7572f1bf2f71e2cdae53",
+      "archive": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/followed/evidence-7849cb47-a556-45a8-b947-bd5a19d88bc1/9f9814b8bffdf4652d3331fcff5ff6a7fc6bc319d28e7572f1bf2f71e2cdae53"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/initial/evidence-5c3b46cf-49c1-425d-845e-e9492ad0f06f/bde86a990e882a439ff27234a86f9e1b1d96edc416712c372927c07be2ca9e24",
+      "sha256": "bde86a990e882a439ff27234a86f9e1b1d96edc416712c372927c07be2ca9e24",
+      "archive": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/followed/evidence-7849cb47-a556-45a8-b947-bd5a19d88bc1/bde86a990e882a439ff27234a86f9e1b1d96edc416712c372927c07be2ca9e24"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/initial/evidence-5c3b46cf-49c1-425d-845e-e9492ad0f06f/17b87dd7dd6cabe2d33012a61a57aa7e45c4b198cedd17dc31cad4425c1ced82",
+      "sha256": "17b87dd7dd6cabe2d33012a61a57aa7e45c4b198cedd17dc31cad4425c1ced82",
+      "archive": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/followed/evidence-7849cb47-a556-45a8-b947-bd5a19d88bc1/17b87dd7dd6cabe2d33012a61a57aa7e45c4b198cedd17dc31cad4425c1ced82"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/initial/evidence-5c3b46cf-49c1-425d-845e-e9492ad0f06f/5614ccd7c54895247d7bcbcef33cf0f4b94e3007f56c176d3e59d7e08668fb38",
+      "sha256": "5614ccd7c54895247d7bcbcef33cf0f4b94e3007f56c176d3e59d7e08668fb38",
+      "archive": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/followed/evidence-7849cb47-a556-45a8-b947-bd5a19d88bc1/5614ccd7c54895247d7bcbcef33cf0f4b94e3007f56c176d3e59d7e08668fb38"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/initial/evidence-5c3b46cf-49c1-425d-845e-e9492ad0f06f/2ac00ffd07741887f920cc4f32c6f2d8876ed76abfafde4e14b9be27ea96bdf7",
+      "sha256": "2ac00ffd07741887f920cc4f32c6f2d8876ed76abfafde4e14b9be27ea96bdf7",
+      "archive": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/followed/evidence-7849cb47-a556-45a8-b947-bd5a19d88bc1/2ac00ffd07741887f920cc4f32c6f2d8876ed76abfafde4e14b9be27ea96bdf7"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/initial/evidence-5c3b46cf-49c1-425d-845e-e9492ad0f06f/472f0d3894b939249152810c0d67c4d4b874e9dab0f96988de4c25112defabd8",
+      "sha256": "472f0d3894b939249152810c0d67c4d4b874e9dab0f96988de4c25112defabd8",
+      "archive": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/followed/evidence-7849cb47-a556-45a8-b947-bd5a19d88bc1/472f0d3894b939249152810c0d67c4d4b874e9dab0f96988de4c25112defabd8"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/initial/evidence-5c3b46cf-49c1-425d-845e-e9492ad0f06f/2b5d5c4397dea6b4140e43894ce9295a14dafb9335d7daf4717c50d555751de9",
+      "sha256": "2b5d5c4397dea6b4140e43894ce9295a14dafb9335d7daf4717c50d555751de9",
+      "archive": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/followed/evidence-7849cb47-a556-45a8-b947-bd5a19d88bc1/2b5d5c4397dea6b4140e43894ce9295a14dafb9335d7daf4717c50d555751de9"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/initial/evidence-5c3b46cf-49c1-425d-845e-e9492ad0f06f/ab57e1a44002df49e379a61f99d499e0e04d500f5534877dba6c77f16b9915c1",
+      "sha256": "ab57e1a44002df49e379a61f99d499e0e04d500f5534877dba6c77f16b9915c1",
+      "archive": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/followed/evidence-7849cb47-a556-45a8-b947-bd5a19d88bc1/ab57e1a44002df49e379a61f99d499e0e04d500f5534877dba6c77f16b9915c1"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/initial/evidence-5c3b46cf-49c1-425d-845e-e9492ad0f06f/e74c13cd228f7ef36cfc8e07c78b3ee0626d3de26925d08361ce97bdcf12af32",
+      "sha256": "e74c13cd228f7ef36cfc8e07c78b3ee0626d3de26925d08361ce97bdcf12af32",
+      "archive": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/followed/evidence-7849cb47-a556-45a8-b947-bd5a19d88bc1/e74c13cd228f7ef36cfc8e07c78b3ee0626d3de26925d08361ce97bdcf12af32"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/initial/evidence-5c3b46cf-49c1-425d-845e-e9492ad0f06f/70466b6a380397ef2c390d33c150d1b536feac4aafcedae6bb20d3e1a5106d66",
+      "sha256": "70466b6a380397ef2c390d33c150d1b536feac4aafcedae6bb20d3e1a5106d66",
+      "archive": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/followed/evidence-7849cb47-a556-45a8-b947-bd5a19d88bc1/70466b6a380397ef2c390d33c150d1b536feac4aafcedae6bb20d3e1a5106d66"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/initial/receipt.json",
+      "sha256": "b3de8a69963dacd5bac2f496eef165014f84d2ce480e1d4f496f02f9f3507df1",
+      "archive": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/followed/evidence-7849cb47-a556-45a8-b947-bd5a19d88bc1/b3de8a69963dacd5bac2f496eef165014f84d2ce480e1d4f496f02f9f3507df1"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/initial/case.json",
+      "sha256": "4714e2d20866bc1affa1e55a1165cb8200693bbbe531f318f19000f879ce34e1",
+      "archive": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/followed/evidence-7849cb47-a556-45a8-b947-bd5a19d88bc1/4714e2d20866bc1affa1e55a1165cb8200693bbbe531f318f19000f879ce34e1"
+    },
+    {
+      "role": "case evidence",
+      "path": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/initial/run.log",
+      "sha256": "d9551025999809aa68f9b30401e6db0af0d4ebcf7ef751a2f4e883edeb2d76fb",
+      "archive": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/followed/evidence-7849cb47-a556-45a8-b947-bd5a19d88bc1/d9551025999809aa68f9b30401e6db0af0d4ebcf7ef751a2f4e883edeb2d76fb"
+    },
+    {
+      "role": "case evidence",
+      "path": "/home/julius/structure_and_semantics/tools/revise_investigation_case.py",
+      "sha256": "70466b6a380397ef2c390d33c150d1b536feac4aafcedae6bb20d3e1a5106d66",
+      "archive": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/followed/evidence-7849cb47-a556-45a8-b947-bd5a19d88bc1/70466b6a380397ef2c390d33c150d1b536feac4aafcedae6bb20d3e1a5106d66"
+    },
+    {
+      "role": "case evidence",
+      "path": "/home/julius/structure_and_semantics/tools/review_investigations.py",
+      "sha256": "368a254b9dc8f4323522d0edf4a6c7c1cac118afd70a97e0e000bf7bf86a6bb0",
+      "archive": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/followed/evidence-7849cb47-a556-45a8-b947-bd5a19d88bc1/368a254b9dc8f4323522d0edf4a6c7c1cac118afd70a97e0e000bf7bf86a6bb0"
+    },
+    {
+      "role": "execution tool",
+      "path": "/home/julius/structure_and_semantics/tools/investigate.py",
+      "sha256": "7643dbebe13aed0e9d9bc4cff062575c665fec4ed0f7c0527857cd5d07263628",
+      "archive": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/followed/evidence-7849cb47-a556-45a8-b947-bd5a19d88bc1/7643dbebe13aed0e9d9bc4cff062575c665fec4ed0f7c0527857cd5d07263628"
+    },
+    {
+      "role": "execution tool",
+      "path": "/home/julius/structure_and_semantics/tools/build.py",
+      "sha256": "8915b7a480b2a17b5cea5b819f3be43323f69cb79dc1513a76c07eb83f6b491e",
+      "archive": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/followed/evidence-7849cb47-a556-45a8-b947-bd5a19d88bc1/8915b7a480b2a17b5cea5b819f3be43323f69cb79dc1513a76c07eb83f6b491e"
+    }
+  ],
+  "case_sha256": "98e17827de33b9f3e3a0a05df7f0304313ec9f770ac23f92b1b2198c24e44063",
+  "question": "Which acceptance package can justify merging this full content batch and its reusable case driver?",
+  "scope": {
+    "candidates": {
+      "0": "A successful isolated theory build",
+      "1": "Stable native proof context, complete same-workload construction and method reports, original driver rejection controls and relevant tooling checks, full registered session, and retained replay",
+      "2": "Only the complete registered session"
+    },
+    "facets": {
+      "0": "Proof checks the complete changed source graph",
+      "1": "Executed results are independently reconstructed from complete inputs",
+      "2": "Negative provenance and input controls are checked",
+      "3": "Full repository integration is checked",
+      "4": "Evidence and exact revisions replay from retained bytes"
+    },
+    "boundary": "External proposal and source-reading judgments determine these finite observations. The engine computes distinctions and revisions; it does not generate these proposals, verify English interpretations, prove untested Isabelle scripts, or establish exhaustive candidate/problem coverage."
+  },
+  "semantic_boundary": "Results are exact for the supplied finite data. Independent meanings, evidence validity, and wider coverage require their own justification.",
+  "commands": [
+    {
+      "command": [
+        "isabelle",
+        "version"
+      ],
+      "started_utc": "2026-09-11T07:02:18.668964+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T07:02:18.747977+00:00",
+      "elapsed_seconds": 0.07901350897736847
+    },
+    {
+      "command": [
+        "isabelle",
+        "build",
+        "-v",
+        "-o",
+        "threads=12",
+        "-o",
+        "timeout=300",
+        "-D",
+        "/tmp/structural-investigation-engines/303d0af612a696b1bba0db7faa871593d8eb9079340290f8ae1b6a3a6cf29de3"
+      ],
+      "started_utc": "2026-09-11T07:02:18.752269+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T07:02:21.024422+00:00",
+      "elapsed_seconds": 2.272157519008033
+    },
+    {
+      "command": [
+        "isabelle",
+        "export",
+        "-n",
+        "-d",
+        "/tmp/structural-investigation-engines/303d0af612a696b1bba0db7faa871593d8eb9079340290f8ae1b6a3a6cf29de3",
+        "-O",
+        "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/followed/export-7849cb47-a556-45a8-b947-bd5a19d88bc1",
+        "-x",
+        "*Finite_Investigation_Export:code/finite_investigation.ML",
+        "Finite_Investigation_303d0af612a696b1bba0db7f"
+      ],
+      "started_utc": "2026-09-11T07:02:21.025198+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T07:02:21.638916+00:00",
+      "elapsed_seconds": 0.613724192022346
+    },
+    {
+      "command": [
+        "isabelle",
+        "getenv",
+        "-b",
+        "POLYML_HOME"
+      ],
+      "started_utc": "2026-09-11T07:02:21.639676+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T07:02:21.719390+00:00",
+      "elapsed_seconds": 0.07971745205577463
+    },
+    {
+      "command": [
+        "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+        "--version"
+      ],
+      "started_utc": "2026-09-11T07:02:21.727696+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T07:02:21.731150+00:00",
+      "elapsed_seconds": 0.003447677008807659
+    },
+    {
+      "command": [
+        "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+        "--script",
+        "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/followed/execute.ML"
+      ],
+      "started_utc": "2026-09-11T07:02:21.731295+00:00",
+      "status": "finished",
+      "exit_code": 0,
+      "finished_utc": "2026-09-11T07:02:21.799640+00:00",
+      "elapsed_seconds": 0.06835399300325662
+    }
+  ],
+  "engine_key": "303d0af612a696b1bba0db7faa871593d8eb9079340290f8ae1b6a3a6cf29de3",
+  "isabelle_version": "Isabelle2025-2",
+  "engine_session": "Finite_Investigation_303d0af612a696b1bba0db7f",
+  "engine_theory": "Presentation_Completion_Investigation",
+  "engine_sources": {
+    "Bootstrap_Relations": {
+      "path": "/home/julius/structure_and_semantics/theories/Bootstrap_Relations.thy",
+      "sha256": "82069762267d503d339290507262bc7f905543966f56a0601e30bd1c7b04184f"
+    },
+    "Obligation_Reductions": {
+      "path": "/home/julius/structure_and_semantics/theories/Obligation_Reductions.thy",
+      "sha256": "a7cf5c82c7478cbde8ae94545ccaaf327af50b7b1ece2ff5458e29bc8ea1adcf"
+    },
+    "Inference_Closure": {
+      "path": "/home/julius/structure_and_semantics/theories/Inference_Closure.thy",
+      "sha256": "caf963ccb1ded2c117eded468e575900f7fd275728f9535efe5b40f87517f5ce"
+    },
+    "Bootstrap_Finite_Closure": {
+      "path": "/home/julius/structure_and_semantics/theories/Bootstrap_Finite_Closure.thy",
+      "sha256": "df469431d4c9e4f95b2b3b3d192d7da9d677800b0383609dd25b212264581bc5"
+    },
+    "Inference_Development": {
+      "path": "/home/julius/structure_and_semantics/theories/Inference_Development.thy",
+      "sha256": "f3b6057fd02d5ab49785f8941e21ddc20ede01d3d9c2278894254b872ff6846f"
+    },
+    "Candidate_Observations": {
+      "path": "/home/julius/structure_and_semantics/theories/Candidate_Observations.thy",
+      "sha256": "d17f7f738b725bfcc7c27560ac2f8d482dd8b02ca6e83ce72f738451da324749"
+    },
+    "Inference_Demands": {
+      "path": "/home/julius/structure_and_semantics/theories/Inference_Demands.thy",
+      "sha256": "f620b3cdaf10ba80a4795c5d273aa92e35d6dc04245119eb73fa0196e25aa03a"
+    },
+    "Candidate_Investigation": {
+      "path": "/home/julius/structure_and_semantics/theories/Candidate_Investigation.thy",
+      "sha256": "bb083972595406e027373ea6eb2ad1d8d45dc31e9935db8c5d591e6b1a133c92"
+    },
+    "Inference_Rounds": {
+      "path": "/home/julius/structure_and_semantics/theories/Inference_Rounds.thy",
+      "sha256": "bfc244e1aa9e68a4587fc5724cf2c6c8fe786a832798b280194cb8edbacaea24"
+    },
+    "Method_Development": {
+      "path": "/home/julius/structure_and_semantics/theories/Method_Development.thy",
+      "sha256": "82f4630526ae2bbfaba29d226b47bad77ed086cfc93e9765a3b04ca3bcfc3915"
+    },
+    "Method_Investigation": {
+      "path": "/home/julius/structure_and_semantics/theories/Method_Investigation.thy",
+      "sha256": "aefaf2532a1096f9945c6592b52241e9ac9e4ec0558fafabdcf6a30b3ddba7c1"
+    },
+    "Observation_Repairs": {
+      "path": "/home/julius/structure_and_semantics/theories/Observation_Repairs.thy",
+      "sha256": "97eb2c271b36e7aaa99e134aae0d4069b63fb03d0e89db26d28092af18b5bd97"
+    },
+    "Finite_Inference_Development": {
+      "path": "/home/julius/structure_and_semantics/theories/Finite_Inference_Development.thy",
+      "sha256": "dcd3ac4b8761e1197a54d58739524354c036864df2f3e33f493f71ef4ae26b6b"
+    },
+    "Finite_Investigation": {
+      "path": "/home/julius/structure_and_semantics/theories/Finite_Investigation.thy",
+      "sha256": "e8f24aeef856960db014b8ef47ab7c44be19dda573ee1bdad5073db96f5d1684"
+    },
+    "Finite_Observation_Repairs": {
+      "path": "/home/julius/structure_and_semantics/theories/Finite_Observation_Repairs.thy",
+      "sha256": "2834ce8cf69fc2c69be1ce9c02015d0da9c1723b701ebf7c2aa82633c26d8f24"
+    },
+    "Observation_Revisions": {
+      "path": "/home/julius/structure_and_semantics/theories/Observation_Revisions.thy",
+      "sha256": "9b3ad288b096531dcce382a678d5e261a26d04cb97aec311b2da59790b2d4942"
+    },
+    "Finite_Investigation_Interface": {
+      "path": "/home/julius/structure_and_semantics/theories/Finite_Investigation_Interface.thy",
+      "sha256": "816eb2ca216d95e70bc640c2775f9fdb5c79e3d43d71ca156636175a1b59c264"
+    },
+    "Presentation_Classes": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Classes.thy",
+      "sha256": "ec041e1bfca7b1bf648dc4ade30c5c9973d45907ef3a434e87a193755e5c8069"
+    },
+    "Presentation_Relations": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Relations.thy",
+      "sha256": "7381cbf8ed52753ee6bac33821b72312b9671488ee523ce964f805a2bdabb195"
+    },
+    "Presentation_Closure": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Closure.thy",
+      "sha256": "f78081a222b02cca01865fdda01de48ceb54739beb03a80c29b0fd86b6843b71"
+    },
+    "Presentation_Transport": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Transport.thy",
+      "sha256": "49abc2968f7b85c37bf33f84f09d6549b9bfedbb83c4c48b3080ed864026ddef"
+    },
+    "Presentation_Contracts": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Contracts.thy",
+      "sha256": "6977a5111cf2b30c46ec074d040c9ff81757eae56f482cbd0ee7784d9945f4e9"
+    },
+    "Observation_Invariance": {
+      "path": "/home/julius/structure_and_semantics/theories/Observation_Invariance.thy",
+      "sha256": "c6a2ef01120313d9e50aa21891a6a08a144252f853c8ca49345345623fdf53e4"
+    },
+    "Presentation_Completion": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Completion.thy",
+      "sha256": "973f448f5578d806596c25198143e2bccb645c3b68e6b191edd0642c62f92a8b"
+    },
+    "Presentation_Completion_Investigation": {
+      "path": "/home/julius/structure_and_semantics/theories/Presentation_Completion_Investigation.thy",
+      "sha256": "2fdd64d2c0b44f8f2d20acd357cdc11c02053d49a411db83095bcd9dab9a82f7"
+    }
+  },
+  "tools": {
+    "/home/julius/structure_and_semantics/tools/investigate.py": "7643dbebe13aed0e9d9bc4cff062575c665fec4ed0f7c0527857cd5d07263628",
+    "/home/julius/structure_and_semantics/tools/build.py": "8915b7a480b2a17b5cea5b819f3be43323f69cb79dc1513a76c07eb83f6b491e"
+  },
+  "engine_snapshot": "/tmp/structural-investigation-engines/303d0af612a696b1bba0db7faa871593d8eb9079340290f8ae1b6a3a6cf29de3",
+  "export_theory": "Finite_Investigation_Export",
+  "proof_receipt_sha256": "62512f1ecbac0be6686ce7114e850014f981feda4b45ec9081436f1cf57f728c",
+  "generated_engine": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/followed/export-7849cb47-a556-45a8-b947-bd5a19d88bc1/Finite_Investigation_303d0af612a696b1bba0db7f.Finite_Investigation_Export/code/finite_investigation.ML",
+  "generated_engine_sha256": "268dd5589c44fd3efa8b3a90cc12dea283fa2a4fc1d6975f23732e7172da7a5b",
+  "proof_snapshot_hashes": {
+    "ROOT": "9af32aaf045eb9cdd67470f2ab99a7c2589dc237168fbea11fdf4c16881d339b",
+    "theories/Finite_Investigation_Export.thy": "9110413a6a0c66e81c562859749ab476e8e98e29b9e886e92a46c8dc88052e13",
+    "theories/Bootstrap_Relations.thy": "82069762267d503d339290507262bc7f905543966f56a0601e30bd1c7b04184f",
+    "theories/Obligation_Reductions.thy": "a7cf5c82c7478cbde8ae94545ccaaf327af50b7b1ece2ff5458e29bc8ea1adcf",
+    "theories/Inference_Closure.thy": "caf963ccb1ded2c117eded468e575900f7fd275728f9535efe5b40f87517f5ce",
+    "theories/Bootstrap_Finite_Closure.thy": "df469431d4c9e4f95b2b3b3d192d7da9d677800b0383609dd25b212264581bc5",
+    "theories/Inference_Development.thy": "f3b6057fd02d5ab49785f8941e21ddc20ede01d3d9c2278894254b872ff6846f",
+    "theories/Candidate_Observations.thy": "d17f7f738b725bfcc7c27560ac2f8d482dd8b02ca6e83ce72f738451da324749",
+    "theories/Inference_Demands.thy": "f620b3cdaf10ba80a4795c5d273aa92e35d6dc04245119eb73fa0196e25aa03a",
+    "theories/Candidate_Investigation.thy": "bb083972595406e027373ea6eb2ad1d8d45dc31e9935db8c5d591e6b1a133c92",
+    "theories/Inference_Rounds.thy": "bfc244e1aa9e68a4587fc5724cf2c6c8fe786a832798b280194cb8edbacaea24",
+    "theories/Method_Development.thy": "82f4630526ae2bbfaba29d226b47bad77ed086cfc93e9765a3b04ca3bcfc3915",
+    "theories/Method_Investigation.thy": "aefaf2532a1096f9945c6592b52241e9ac9e4ec0558fafabdcf6a30b3ddba7c1",
+    "theories/Observation_Repairs.thy": "97eb2c271b36e7aaa99e134aae0d4069b63fb03d0e89db26d28092af18b5bd97",
+    "theories/Finite_Inference_Development.thy": "dcd3ac4b8761e1197a54d58739524354c036864df2f3e33f493f71ef4ae26b6b",
+    "theories/Finite_Investigation.thy": "e8f24aeef856960db014b8ef47ab7c44be19dda573ee1bdad5073db96f5d1684",
+    "theories/Finite_Observation_Repairs.thy": "2834ce8cf69fc2c69be1ce9c02015d0da9c1723b701ebf7c2aa82633c26d8f24",
+    "theories/Observation_Revisions.thy": "9b3ad288b096531dcce382a678d5e261a26d04cb97aec311b2da59790b2d4942",
+    "theories/Finite_Investigation_Interface.thy": "816eb2ca216d95e70bc640c2775f9fdb5c79e3d43d71ca156636175a1b59c264",
+    "theories/Presentation_Classes.thy": "ec041e1bfca7b1bf648dc4ade30c5c9973d45907ef3a434e87a193755e5c8069",
+    "theories/Presentation_Relations.thy": "7381cbf8ed52753ee6bac33821b72312b9671488ee523ce964f805a2bdabb195",
+    "theories/Presentation_Closure.thy": "f78081a222b02cca01865fdda01de48ceb54739beb03a80c29b0fd86b6843b71",
+    "theories/Presentation_Transport.thy": "49abc2968f7b85c37bf33f84f09d6549b9bfedbb83c4c48b3080ed864026ddef",
+    "theories/Presentation_Contracts.thy": "6977a5111cf2b30c46ec074d040c9ff81757eae56f482cbd0ee7784d9945f4e9",
+    "theories/Observation_Invariance.thy": "c6a2ef01120313d9e50aa21891a6a08a144252f853c8ca49345345623fdf53e4",
+    "theories/Presentation_Completion.thy": "973f448f5578d806596c25198143e2bccb645c3b68e6b191edd0642c62f92a8b",
+    "theories/Presentation_Completion_Investigation.thy": "2fdd64d2c0b44f8f2d20acd357cdc11c02053d49a411db83095bcd9dab9a82f7"
+  },
+  "poly": "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+  "poly_sha256": "47efc18d0b38bc908c8b29798575501e8b7b027f593022c80ff1acc55b9495b4",
+  "poly_version": "Poly/ML 5.9.2 Release",
+  "runtime_program_sha256": "eea7215af2fa000e6beafe1053345a4d51f67a3fba20be9e1694529d09b031d2",
+  "runtime_seconds": 0.06836116302292794,
+  "result": {
+    "input_formed": true,
+    "residual": [],
+    "profiles": [
+      {
+        "candidate": 0,
+        "profile": [
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "candidate": 1,
+        "profile": [
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            0,
+            0
+          ],
+          [
+            3,
+            0
+          ]
+        ]
+      },
+      {
+        "candidate": 2,
+        "profile": [
+          [
+            0,
+            0
+          ],
+          [
+            3,
+            0
+          ]
+        ]
+      }
+    ],
+    "losses": [
+      {
+        "from": 0,
+        "to": 0,
+        "losses": []
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "losses": []
+      },
+      {
+        "from": 0,
+        "to": 2,
+        "losses": []
+      },
+      {
+        "from": 1,
+        "to": 0,
+        "losses": [
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            3,
+            0
+          ]
+        ]
+      },
+      {
+        "from": 1,
+        "to": 1,
+        "losses": []
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "losses": [
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            4,
+            0
+          ]
+        ]
+      },
+      {
+        "from": 2,
+        "to": 0,
+        "losses": [
+          [
+            3,
+            0
+          ]
+        ]
+      },
+      {
+        "from": 2,
+        "to": 1,
+        "losses": []
+      },
+      {
+        "from": 2,
+        "to": 2,
+        "losses": []
+      }
+    ],
+    "safe_facets": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "conflicts": [],
+    "repairs": [],
+    "unrepairable": [],
+    "extension": [
+      0,
+      1,
+      2,
+      4,
+      3
+    ],
+    "revision": {
+      "retained": [
+        0,
+        1,
+        2,
+        4,
+        3
+      ],
+      "withdrawn": [],
+      "repairs": [],
+      "selection": [
+        0,
+        1,
+        2,
+        4,
+        3
+      ],
+      "residual": []
+    }
+  },
+  "sources_and_tools_unchanged": true,
+  "finished_utc": "2026-09-11T07:02:21.809040+00:00",
+  "elapsed_seconds": 3.1409279139479622,
+  "log_sha256": "bd77eb2789fe36ed062d7bf52ff95472c6abd876cecceb9f5d3eef1528598298"
+}

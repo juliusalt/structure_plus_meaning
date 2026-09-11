@@ -1,0 +1,9 @@
+{
+  "problem": "The initial executed conditional investigation leaves condition 16: an explicit finite executed native reader example.",
+  "information_needed": [
+    "Complete existing native specialization inhabitance construction",
+    "Complete environment presentation definitions",
+    "Public proof-node code construction interfaces"
+  ],
+  "purpose": "Generate actual finite-source candidates for the next decision batch; this read does not choose an implementation."
+}

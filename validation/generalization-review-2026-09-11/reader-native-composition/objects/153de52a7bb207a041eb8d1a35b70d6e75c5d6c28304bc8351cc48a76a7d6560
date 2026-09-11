@@ -1,0 +1,96 @@
+{
+  "status": "evaluated",
+  "exit_code": 0,
+  "elapsed_seconds": 3.1324457339942455,
+  "runtime_seconds": 0.06809056003112346,
+  "receipt": "/tmp/generalization-quality-review/reader-development-decisions/validation-and-retention/initial/receipt.json",
+  "input_formed": true,
+  "residual": [
+    [
+      1,
+      0
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      0
+    ]
+  ],
+  "repair_witnesses": 8,
+  "conflicts": 0,
+  "unrepairable": 0,
+  "extension": [
+    0,
+    1,
+    2,
+    4,
+    3
+  ],
+  "revision": {
+    "retained": [
+      0
+    ],
+    "withdrawn": [],
+    "repairs": [
+      [
+        1,
+        0,
+        1,
+        0
+      ],
+      [
+        1,
+        0,
+        2,
+        0
+      ],
+      [
+        1,
+        0,
+        4,
+        0
+      ],
+      [
+        1,
+        0,
+        3,
+        0
+      ],
+      [
+        1,
+        2,
+        1,
+        0
+      ],
+      [
+        1,
+        2,
+        2,
+        0
+      ],
+      [
+        1,
+        2,
+        4,
+        0
+      ],
+      [
+        2,
+        0,
+        3,
+        0
+      ]
+    ],
+    "selection": [
+      0,
+      1,
+      2,
+      4,
+      3
+    ],
+    "residual": []
+  }
+}

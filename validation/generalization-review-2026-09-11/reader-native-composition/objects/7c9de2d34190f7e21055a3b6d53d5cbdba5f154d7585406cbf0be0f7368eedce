@@ -1,0 +1,29 @@
+{
+  "status": "evaluated",
+  "exit_code": 0,
+  "elapsed_seconds": 3.146834774990566,
+  "runtime_seconds": 0.06501247605774552,
+  "receipt": "/tmp/generalization-quality-review/reader-development-decisions/reuse-and-method-change/followed/receipt.json",
+  "input_formed": true,
+  "residual": [],
+  "repair_witnesses": 0,
+  "conflicts": 0,
+  "unrepairable": 0,
+  "extension": [
+    0,
+    2
+  ],
+  "revision": {
+    "retained": [
+      0,
+      2
+    ],
+    "withdrawn": [],
+    "repairs": [],
+    "selection": [
+      0,
+      2
+    ],
+    "residual": []
+  }
+}

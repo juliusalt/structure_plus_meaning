@@ -1,0 +1,162 @@
+{
+  "schema": "finite-investigation-1",
+  "kind": "basis",
+  "question": "Which execution adapter factors the repeated declared-case loop without changing its reasoning semantics?",
+  "scope": {
+    "candidates": {
+      "0": "Copy and edit the preceding hardcoded case-and-execution script for each batch",
+      "1": "Use the proposed parameterized adapter with existing executor, exact reviser and mandatory-criteria assessor",
+      "2": "Build a second independent decision evaluator"
+    },
+    "facets": {
+      "0": "Executes complete basis reports and returned revisions",
+      "1": "Reuses the existing verified comparison/revision operations",
+      "2": "Accepts independently supplied cases and requirements without editing execution logic",
+      "3": "Preserves external interpretation and validation boundaries"
+    },
+    "boundary": "These proposed changes and source readings are externally supplied. The engine computes full distinctions and revisions; native proof and adapter equivalence checks remain required."
+  },
+  "candidates": [
+    0,
+    1,
+    2
+  ],
+  "facets": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "selected": [
+    0,
+    1,
+    3,
+    2
+  ],
+  "observations": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      0
+    ],
+    [
+      3,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      2,
+      1,
+      0
+    ],
+    [
+      3,
+      1,
+      0
+    ],
+    [
+      0,
+      2,
+      0
+    ],
+    [
+      2,
+      2,
+      0
+    ]
+  ],
+  "relation": [
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      1
+    ],
+    [
+      2,
+      1
+    ],
+    [
+      2,
+      2
+    ]
+  ],
+  "evidence": [
+    {
+      "path": "/tmp/generalization-quality-review/reader-type-and-adapter-decisions/reusable-decision-execution/initial/evidence-32fb1b6c-76c0-4afd-a23c-aafe9fd7c72e/9a0da88c281f466424ffe1a949af15272e4a5f29209218c7c9cffce8ff24fb66",
+      "sha256": "9a0da88c281f466424ffe1a949af15272e4a5f29209218c7c9cffce8ff24fb66",
+      "original_path": "/tmp/generalization-quality-review/reader-native-composition/type-boundaries.txt"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-type-and-adapter-decisions/reusable-decision-execution/initial/evidence-32fb1b6c-76c0-4afd-a23c-aafe9fd7c72e/6a2d0c45086483f8bbe38a3f41c88b6f16a2d7f4e8e7afe28ee3571c5cea99e4",
+      "sha256": "6a2d0c45086483f8bbe38a3f41c88b6f16a2d7f4e8e7afe28ee3571c5cea99e4",
+      "original_path": "/tmp/generalization-quality-review/reader-native-composition/type-and-adapter-critical-reading.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-type-and-adapter-decisions/reusable-decision-execution/initial/evidence-32fb1b6c-76c0-4afd-a23c-aafe9fd7c72e/0e35b9224c6b3fc3a8d036ff0d51c46eaed2a564249188aacd849f21b9ba3798",
+      "sha256": "0e35b9224c6b3fc3a8d036ff0d51c46eaed2a564249188aacd849f21b9ba3798",
+      "original_path": "/tmp/native-investigation-report-diagnostic-readernativecomposition6/build.log"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-type-and-adapter-decisions/reusable-decision-execution/initial/evidence-32fb1b6c-76c0-4afd-a23c-aafe9fd7c72e/7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "sha256": "7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "original_path": "/tmp/check_decision_cases.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-type-and-adapter-decisions/reusable-decision-execution/initial/evidence-32fb1b6c-76c0-4afd-a23c-aafe9fd7c72e/bde86a990e882a439ff27234a86f9e1b1d96edc416712c372927c07be2ca9e24",
+      "sha256": "bde86a990e882a439ff27234a86f9e1b1d96edc416712c372927c07be2ca9e24",
+      "original_path": "/home/julius/structure_and_semantics/DEVELOPMENT_WORKFLOW.md"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-type-and-adapter-decisions/reusable-decision-execution/initial/evidence-32fb1b6c-76c0-4afd-a23c-aafe9fd7c72e/ca2ca2bc0af7fa74bcce7c08ef42486c6bc9e94143a5a48ece691e7f4b17a62a",
+      "sha256": "ca2ca2bc0af7fa74bcce7c08ef42486c6bc9e94143a5a48ece691e7f4b17a62a",
+      "original_path": "/tmp/generalization-quality-review/reader-native-composition/type-and-adapter-specification.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-type-and-adapter-decisions/reusable-decision-execution/initial/evidence-32fb1b6c-76c0-4afd-a23c-aafe9fd7c72e/7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "sha256": "7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "original_path": "/tmp/check_decision_cases.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-type-and-adapter-decisions/reusable-decision-execution/initial/receipt.json",
+      "sha256": "55494f1aca9bd2fc7abeb353ff39c4ae3a3ee7a04045af0438452354efed26e8"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-type-and-adapter-decisions/reusable-decision-execution/initial/case.json",
+      "sha256": "528568e766350c9cfd418d6065b897881073ce5d68eb1ce9a2728fd49a3a1881"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/reader-type-and-adapter-decisions/reusable-decision-execution/initial/run.log",
+      "sha256": "87e486e045bcacccb154b7bdb7e7134a214acc67cfdbd23112c5de1b826c0840"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/revise_investigation_case.py",
+      "sha256": "70466b6a380397ef2c390d33c150d1b536feac4aafcedae6bb20d3e1a5106d66"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/review_investigations.py",
+      "sha256": "368a254b9dc8f4323522d0edf4a6c7c1cac118afd70a97e0e000bf7bf86a6bb0"
+    }
+  ]
+}

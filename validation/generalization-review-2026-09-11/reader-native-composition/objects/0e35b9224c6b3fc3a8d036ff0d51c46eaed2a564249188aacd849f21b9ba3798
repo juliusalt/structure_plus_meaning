@@ -1,0 +1,24 @@
+Running Native_Investigation_Report_Diagnostic_readernativecomposition6 ...
+Native_Investigation_Report_Diagnostic_readernativecomposition6 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_readernativecomposition6")
+*** exception THM 0 raised (line 307 of "drule.ML"):
+***   OF: no unifiers
+***   ⟦environment_formed ?E; graph_node_inputs_at ?E ?D ?N; finite ?D;
+***    Bootstrap_Relations.single_valued ?D;
+***    rel_ran ?D ⊆ environment_positions ?E⟧
+***   ⟹ ∃F u I K.
+***         environment_formed F ∧
+***         environment_included ?E F ∧
+***         u ∉ environment_uses ?E ∧
+***         native_proof_node_at F u [] ?N ?D I K ∧
+***         (∀v∈environment_uses ?E.
+***             ∀A. artifact_at F v A = artifact_at ?E v A) ∧
+***         (∀v∈environment_uses ?E.
+***             ∀k w. binds_slot F v k w = binds_slot ?E v k w)
+***   environment_formed E
+***   graph_node_inputs_at E {}
+***    (Schema_Inference (fst d, c)
+***      (fset_of_list
+***        bs))
+*** At command "using" (line 27 of "/tmp/native-investigation-report-diagnostic-readernativecomposition6/theories/Factor_Inference_Specialization_Total.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_readernativecomposition6
+0:02:02 elapsed time, 0:04:22 cpu time, factor 2.13

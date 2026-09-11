@@ -1,0 +1,46 @@
+{
+  "status": "evaluated",
+  "exit_code": 0,
+  "elapsed_seconds": 3.1236840969650075,
+  "runtime_seconds": 0.06960742897354066,
+  "receipt": "/tmp/generalization-quality-review/reader-native-method-initial/receipt.json",
+  "input_formed": true,
+  "residual": [
+    [
+      1,
+      0
+    ]
+  ],
+  "repair_witnesses": 2,
+  "conflicts": 0,
+  "unrepairable": 0,
+  "extension": [
+    0,
+    1
+  ],
+  "revision": {
+    "retained": [
+      0
+    ],
+    "withdrawn": [],
+    "repairs": [
+      [
+        1,
+        0,
+        1,
+        7
+      ],
+      [
+        1,
+        0,
+        1,
+        8
+      ]
+    ],
+    "selection": [
+      0,
+      1
+    ],
+    "residual": []
+  }
+}

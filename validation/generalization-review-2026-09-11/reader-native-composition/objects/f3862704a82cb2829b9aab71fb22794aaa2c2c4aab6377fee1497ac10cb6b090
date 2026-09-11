@@ -1,0 +1,71 @@
+theory RRA_Syntax_Records
+  imports RRA_Syntax_Families
+begin
+
+section \<open>An ordered record over the same private child copies\<close>
+
+context syntax_family_construction
+begin
+
+abbreviation record_framed where "record_framed \<equiv> record_wrapper body [] ports nodes"
+
+lemma record_headers_fresh:
+  "insert [] (set ports)\<inter>rra_carrier (object_structure body)={}"
+  using headers_fresh by (simp only: member_domain)
+
+lemma record_formed: "exact_formed record_framed"
+proof -
+  have addresses: "\<forall>a\<in>insert [] (set ports). octets_formed a"
+    using family_ports_formed by (auto simp: octets_formed_def)
+  show ?thesis by (rule record_wrapper_formed[OF body_formed nodes_inside addresses])
+qed
+
+lemma record_read: "record_at record_framed [] ports nodes"
+proof -
+  have root_separate: "[]\<notin>set ports" using headers_separate by (simp add: member_domain)
+  have separate: "distinct ([]#ports)"
+    by (simp only: distinct.simps) (use root_separate family_ports_distinct[of "length Rs"] in blast)
+  show ?thesis
+    by (rule record_wrapper_recovers[OF body_formed record_formed _ separate record_headers_fresh]) simp
+qed
+
+lemma record_reads:
+  "object_reads_agree body record_framed (rra_carrier (object_structure body))"
+  by (rule record_wrapper_reads[OF record_headers_fresh])
+
+lemma record_child_reads:
+  assumes index: "i<length Rs"
+  shows "object_reads_agree (push_object (syntax_branch i) (Rs!i)) record_framed
+    (image (syntax_branch i) (rra_carrier (object_structure (Rs!i))))"
+  by (rule object_reads_agree_extend[
+    OF syntax_forest_child_reads[OF children_formed children_counts index] record_reads])
+
+lemma record_child_citation:
+  assumes index: "i < length Rs" and cite: "citation_at (Rs!i) r c I"
+  shows "citation_at record_framed (syntax_branch i r) (map_citation_positions (syntax_branch i) c)
+    (syntax_branch i ` I)"
+  by (rule citation_at_copy_into[OF cite record_formed
+      syntax_branch_addressing record_child_reads[OF index]])
+     (use children_formed nth_mem[OF index] in blast)
+
+lemma record_carrier:
+  "rra_carrier (object_structure record_framed)=
+    insert [] (set ports\<union>rra_carrier (object_structure body))"
+  using nodes_inside by (auto simp: record_wrapper_def attach_structure_def record_structure_def)
+
+lemma record_counts: "bag_count (object_data record_framed)=(\<lambda>_. 0)"
+  by (simp add: record_wrapper_def attach_structure_def)
+
+lemma record_root: "[]\<in>rra_carrier (object_structure record_framed)"
+  by (simp add: record_carrier)
+
+end
+
+text \<open>
+  The family and record constructions reuse the same child placement and
+  header freshness proof. The record explicitly adds successor incidence
+  between its sockets. The child construction list alone gives no record
+  order; that order is read from the resulting incidence.
+\<close>
+
+end

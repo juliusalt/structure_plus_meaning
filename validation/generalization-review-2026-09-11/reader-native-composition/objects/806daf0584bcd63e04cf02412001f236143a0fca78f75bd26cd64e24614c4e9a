@@ -1,0 +1,6 @@
+{
+  "decision": "Adopt the boundary-factored dependency method for these proved contracts and retain the finite executed example as unresolved.",
+  "assessment_sha256": "ec41064484ae1529d4fb95a75a7ca51123cd94379b4642168fb434aa9362599c",
+  "native_proof_sha256": "99c4fc4539531b602c2c0d3e576716d3b98989adbe8c57d89fece1c6d4941f83",
+  "critical_assessment": "Local installation uses the three bridge contracts, independently of coded reader presentations. Native reader inhabitance additionally uses the source reader and presentation contracts. The complete old fields and same-context evidence are retained. Abstract contract requests are not themselves finite native environment values; neither this comparison nor semantic inhabitance supplies an executed example."
+}

@@ -1,0 +1,82 @@
+theory Factor_Proof_Row_Copy
+  imports Factor_Proof_Rows
+begin
+
+section \<open>Constructed rows recover inside larger artifacts\<close>
+
+lemma binding_row_embedded:
+  fixes E :: "local_address option artifact_environment"
+  assumes address: "octets_formed (snd d)" and tf: "term_formed t"
+    and ef: "environment_formed E" and target: "artifact_at E u S" and injective: "inj f"
+    and addressing: "finite_addressing (rra_carrier (object_structure (binding_row_syntax (snd d) t))) f"
+    and reads: "object_reads_agree (push_object f (binding_row_syntax (snd d) t)) S
+      (f ` rra_carrier (object_structure (binding_row_syntax (snd d) t)))"
+    and refs: "syntax_references E u (map_slot_keys f (binding_row_literals t)) (map_slot_keys f {([2,4],d)})"
+  shows "native_application_at E u (f []) d t (f ` binding_row_interior t) (f ` binding_row_slots t)"
+proof -
+  let ?R = "binding_row_syntax (snd d) t"
+  let ?z = "clone_source_use E u"
+  let ?F = "clone_source_environment E u ?R f ?z"
+  have rf: "exact_formed ?R" by (rule binding_row_formed[OF address tf])
+  have fresh: "?z \<notin> environment_uses E" by (rule clone_source_use_fresh[OF ef])
+  have ff: "environment_formed ?F" by (rule clone_environment_formed[OF ef rf fresh])
+  have source: "artifact_at ?F ?z ?R" by (simp add: clone_artifact_iff)
+  have bounds: "rel_dom (binding_row_literals t) \<union> rel_dom {([2,4],d)} \<subseteq> rra_carrier (object_structure ?R)"
+    by (simp only: binding_row_reference_domain binding_row_carrier) blast
+  have clone_refs: "syntax_references ?F ?z (binding_row_literals t) {([2,4],d)}"
+    by (rule cloned_syntax_references[OF ef fresh bounds refs])
+  have original: "native_application_at ?F ?z [] d t (binding_row_interior t) (binding_row_slots t)"
+    by (rule binding_row_recovers[OF address tf ff source clone_refs])
+  have copy: "native_syntax_copy ?F ?z ?R E u S f (relocated_site ?z u f)"
+    by (rule clone_environment_is_native_copy[OF ef rf fresh target injective addressing reads])
+  have outside: "fst d \<noteq> ?z"
+    by (rule cloned_reference_site_outside[OF ef fresh clone_refs]) simp
+  have same: "relocated_site ?z u f d=d" using outside by (cases d) simp
+  show ?thesis using native_syntax_copy.copy_application[OF copy original] same by simp
+qed
+
+lemma discharge_row_embedded:
+  fixes E :: "local_address option artifact_environment"
+  assumes da: "octets_formed (snd d)" and ea: "octets_formed (snd e)"
+    and ef: "environment_formed E" and target: "artifact_at E u S" and injective: "inj f"
+    and addressing: "finite_addressing (rra_carrier (object_structure (discharge_row_syntax (snd d) (snd e)))) f"
+    and reads: "object_reads_agree (push_object f (discharge_row_syntax (snd d) (snd e))) S
+      (f ` rra_carrier (object_structure (discharge_row_syntax (snd d) (snd e))))"
+    and refs: "syntax_references E u {} (map_slot_keys f {([2,4],d),([3,4],e)})"
+  shows "native_site_link_at E u (f []) d e (f ` discharge_row_interior) (f ` discharge_row_slots)"
+proof -
+  let ?R = "discharge_row_syntax (snd d) (snd e)"
+  let ?z = "clone_source_use E u"
+  let ?F = "clone_source_environment E u ?R f ?z"
+  have rf: "exact_formed ?R" by (rule discharge_row_formed[OF da ea])
+  have fresh: "?z \<notin> environment_uses E" by (rule clone_source_use_fresh[OF ef])
+  have ff: "environment_formed ?F" by (rule clone_environment_formed[OF ef rf fresh])
+  have source: "artifact_at ?F ?z ?R" by (simp add: clone_artifact_iff)
+  have bounds: "rel_dom ({} :: (local_address \<times> exact_artifact) set) \<union>
+    rel_dom {([2,4],d),([3,4],e)} \<subseteq> rra_carrier (object_structure ?R)"
+    by (simp only: discharge_row_reference_domain discharge_row_carrier rel_dom_empty) blast
+  have actual: "syntax_references E u (map_slot_keys f {}) (map_slot_keys f {([2,4],d),([3,4],e)})"
+    using refs by (simp add: map_slot_keys_def)
+  have clone_refs: "syntax_references ?F ?z {} {([2,4],d),([3,4],e)}"
+    by (rule cloned_syntax_references[OF ef fresh bounds actual])
+  have original: "native_site_link_at ?F ?z [] d e discharge_row_interior discharge_row_slots"
+    by (rule discharge_row_recovers[OF da ea ff source clone_refs])
+  have copy: "native_syntax_copy ?F ?z ?R E u S f (relocated_site ?z u f)"
+    by (rule clone_environment_is_native_copy[OF ef rf fresh target injective addressing reads])
+  have dout: "fst d \<noteq> ?z"
+    by (rule cloned_reference_site_outside[OF ef fresh clone_refs, where k="[2,4]"]) simp
+  have eout: "fst e \<noteq> ?z"
+    by (rule cloned_reference_site_outside[OF ef fresh clone_refs, where k="[3,4]"]) simp
+  have dsame: "relocated_site ?z u f d=d" using dout by (cases d) simp
+  have esame: "relocated_site ?z u f e=e" using eout by (cases e) simp
+  show ?thesis using native_syntax_copy.copy_site_link[OF copy original] dsame esame by simp
+qed
+
+text \<open>
+  The auxiliary source pulls back the destination's actual reference bindings.
+  Every cited endpoint belongs to the destination environment, so copying the
+  private row syntax fixes those endpoints. The resulting quotation contains
+  no auxiliary use and recovers the same term or pair of sites.
+\<close>
+
+end

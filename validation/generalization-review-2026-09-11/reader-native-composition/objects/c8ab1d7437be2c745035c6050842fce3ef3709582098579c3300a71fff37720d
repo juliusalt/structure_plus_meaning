@@ -1,0 +1,12 @@
+[
+  {
+    "name": "bad-evidence",
+    "exit_code": 1,
+    "created_output": false
+  },
+  {
+    "name": "assertions-disabled",
+    "exit_code": 1,
+    "created_output": false
+  }
+]

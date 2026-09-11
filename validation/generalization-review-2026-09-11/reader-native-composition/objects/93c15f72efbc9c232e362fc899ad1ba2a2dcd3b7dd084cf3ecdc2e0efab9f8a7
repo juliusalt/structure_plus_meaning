@@ -1,0 +1,33 @@
+lemma native_proof_node_properties:
+  assumes node: "native_proof_node_at E u r N D I K"
+  shows "environment_formed E" "(u,r) \<in> environment_positions E"
+    "finite D" "single_valued D" "r \<in> I" "finite I" "finite K" "I \<inter> K = {}"
+    "\<forall>s n. (s,n) \<in> D \<longrightarrow> s \<in> environment_positions E \<and> n \<in> environment_positions E"
+proof -
+  have properties: "environment_formed E \<and> (u,r) \<in> environment_positions E \<and>
+    finite D \<and> single_valued D \<and> r \<in> I \<and> finite I \<and> finite K \<and> I \<inter> K = {} \<and>
+    (\<forall>s n. (s,n) \<in> D \<longrightarrow> s \<in> environment_positions E \<and> n \<in> environment_positions E)"
+  proof (cases rule: native_proof_node_at.cases[OF node, case_names assertion inference])
+    case (assertion R)
+    then show ?thesis by (auto simp: record_at_def single_valued_def)
+  next
+    case (inference R ps c b p d C A V B L D' J W)
+    have reference: "site_citation_at E u c d C A"
+      and bindings: "native_binding_table_at E u b (fset V) B L"
+      and discharges: "native_discharge_table_at E u p D' J W"
+      using inference by auto
+    have cf: "finite C" "finite A" using site_citation_properties(2,3)[OF reference] by blast+
+    have bf: "finite B" "finite L" using native_binding_table_properties(4,5)[OF bindings] by blast+
+    have df: "finite D'" "single_valued D'" "finite J" "finite W"
+      using native_discharge_table_properties(1,2,4,5)[OF discharges] by blast+
+    have targets: "\<forall>s n. (s,n) \<in> D' \<longrightarrow> s \<in> environment_positions E \<and> n \<in> environment_positions E"
+      by (rule native_discharge_table_properties(7)[OF discharges])
+    have position: "(u,r) \<in> environment_positions E" using inference by (auto simp: record_at_def)
+    show ?thesis using inference cf bf df targets position by auto
+  qed
+  show "environment_formed E" "(u,r) \<in> environment_positions E"
+    "finite D" "single_valued D" "r \<in> I" "finite I" "finite K" "I \<inter> K = {}"
+    "\<forall>s n. (s,n) \<in> D \<longrightarrow> s \<in> environment_positions E \<and> n \<in> environment_positions E"
+    using properties by blast+
+qed
+

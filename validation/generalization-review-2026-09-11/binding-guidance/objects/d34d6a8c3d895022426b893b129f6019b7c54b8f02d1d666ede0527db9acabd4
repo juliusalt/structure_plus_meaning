@@ -1,0 +1,45 @@
+Running Native_Investigation_Report_Diagnostic_requestedapplications6 ...
+Native_Investigation_Report_Diagnostic_requestedapplications6 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_requestedapplications6")
+...
+*** Failed to finish proof (line 19 of "/tmp/native-investigation-report-diagnostic-requestedapplications6/theories/Factor_Guided_Investigation.thy"):
+*** goal (2 subgoals):
+***  1. ⋀a aa b.
+***        ⟦(a, aa, b) ∈ set L;
+***         ∀x1 ab ba.
+***            (set ba = fset (finite_schema_premises ab) ⟶
+***             a = x1 ∧ aa = ab ∧ b = ba ⟶
+***             (∃x∈{q. fst q = x1} ∩ fset Q.
+***                 ∀x1a x2.
+***                    x = (x1a, x2) ⟶
+***                    d = x1 ∧
+***                    S = ab ∧
+***                    (t, V, H) |∈|
+***                    finite_requested_schema_applications ab x2)) ∧
+***            (set ba ≠ fset (finite_schema_premises ab) ⟶
+***             aa = ab ⟶ a = x1 ⟶ b ≠ ba)⟧
+***        ⟹ ∃ps. (d, S, ps) ∈ set L ∧
+***                set ps = fset (finite_schema_premises S) ∧
+***                (∃q. (d, q) |∈| Q ∧
+***                     (t, V, H) |∈| finite_requested_schema_applications S q)
+***  2. ⋀ps q.
+***        ⟦(d, S, ps) ∈ set L; set ps = fset (finite_schema_premises S);
+***         (d, q) |∈| Q;
+***         (t, V, H) |∈| finite_requested_schema_applications S q⟧
+***        ⟹ ∃x∈set L.
+***              ∀x1 a b.
+***                 (set b = fset (finite_schema_premises a) ⟶
+***                  x = (x1, a, b) ⟶
+***                  (∃x∈{q. fst q = x1} ∩ fset Q.
+***                      ∀x1a x2.
+***                         x = (x1a, x2) ⟶
+***                         d = x1 ∧
+***                         S = a ∧
+***                         (t, V, H) |∈|
+***                         finite_requested_schema_applications a x2)) ∧
+***                 (set b ≠ fset (finite_schema_premises a) ⟶
+***                  x ≠
+***                  (x1, a,
+***                   b))
+*** At command "by" (line 18 of "/tmp/native-investigation-report-diagnostic-requestedapplications6/theories/Factor_Guided_Investigation.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_requestedapplications6
+0:02:17 elapsed time, 0:02:27 cpu time, factor 1.07

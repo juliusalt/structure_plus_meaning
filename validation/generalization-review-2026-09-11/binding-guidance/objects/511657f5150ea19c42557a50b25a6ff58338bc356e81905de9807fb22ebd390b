@@ -1,0 +1,12 @@
+Running Native_Investigation_Report_Diagnostic_requestedapplications14 ...
+Native_Investigation_Report_Diagnostic_requestedapplications14 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_requestedapplications14")
+*** Failed to finish proof (line 63 of "/tmp/native-investigation-report-diagnostic-requestedapplications14/theories/Factor_Generation_Monotonicity.thy"):
+*** goal (1 subgoal):
+***  1. (fst ∘ (λp. ((fst p, fst (snd (snd p))), snd (snd (snd (snd p)))))) |`|
+***     finite_generated_applications_on_set L C =
+***     (λp. (fst p, fst (snd (snd p)))) |`|
+***     finite_generated_applications_on_set L
+***      C
+*** At command "by" (line 63 of "/tmp/native-investigation-report-diagnostic-requestedapplications14/theories/Factor_Generation_Monotonicity.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_requestedapplications14
+0:00:22 elapsed time, 0:00:29 cpu time, factor 1.31

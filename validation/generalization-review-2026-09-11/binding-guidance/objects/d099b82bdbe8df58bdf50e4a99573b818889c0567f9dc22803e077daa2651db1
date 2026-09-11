@@ -1,0 +1,552 @@
+{
+  "scope": "Supplied saved finite computations and recorded artifacts; independent subject meanings and coverage require review",
+  "summary": {
+    "receipts": 1,
+    "computations": {
+      "matches independent reconstruction": 1
+    },
+    "statuses": {
+      "evaluated": 1
+    },
+    "distinct_evaluation_states": 1,
+    "formed_runs_with_required_withdrawals": 0,
+    "formed_runs_with_new_missing_after_withdrawal": 0
+  },
+  "runs": [
+    {
+      "path": "/tmp/generalization-quality-review/binding-method-initial/receipt.json",
+      "receipt_sha256": "150acc4503a811312f1748884ecaeaab82d14756bc20a3484030231934f1d1fe",
+      "status": "evaluated",
+      "kind": "basis",
+      "question": "Which observations distinguish the measured methods' preservation of native truth, useful settlement, and the original complete input gate?",
+      "scope": {
+        "methods": {
+          "0": "original",
+          "1": "guided",
+          "2": "assumed_requests"
+        },
+        "workload_prefix": "binding-clauses-",
+        "workloads": {
+          "0": "binding-clauses-length-0-depth-0",
+          "1": "binding-clauses-length-0-depth-2",
+          "2": "binding-clauses-length-0-depth-5",
+          "3": "binding-clauses-length-1-depth-0",
+          "4": "binding-clauses-length-1-depth-2",
+          "5": "binding-clauses-length-1-depth-5",
+          "6": "binding-clauses-length-2-depth-0",
+          "7": "binding-clauses-length-2-depth-2",
+          "8": "binding-clauses-length-2-depth-5",
+          "9": "binding-clauses-length-3-depth-0",
+          "10": "binding-clauses-length-3-depth-2",
+          "11": "binding-clauses-length-3-depth-5",
+          "12": "binding-clauses-no-library",
+          "13": "binding-clauses-goals-only-possible",
+          "14": "binding-clauses-native-traversal-evidence",
+          "15": "binding-clauses-empty-traversal-evidence",
+          "16": "binding-clauses-wrong-owner",
+          "17": "binding-clauses-wrong-output",
+          "18": "binding-clauses-malformed-output",
+          "19": "binding-clauses-two-contexts"
+        },
+        "facets": {
+          "0": "No false native goal is accepted as settled",
+          "1": "Each accepted settlement of a true original goal occurrence",
+          "2": "The original complete input-formation result is preserved"
+        },
+        "values": {
+          "useful_goal_occurrences": [
+            {
+              "value": 0,
+              "case": 0,
+              "goal": 0
+            },
+            {
+              "value": 1,
+              "case": 0,
+              "goal": 1
+            },
+            {
+              "value": 2,
+              "case": 0,
+              "goal": 2
+            },
+            {
+              "value": 3,
+              "case": 1,
+              "goal": 0
+            },
+            {
+              "value": 4,
+              "case": 1,
+              "goal": 1
+            },
+            {
+              "value": 5,
+              "case": 1,
+              "goal": 2
+            },
+            {
+              "value": 6,
+              "case": 2,
+              "goal": 0
+            },
+            {
+              "value": 7,
+              "case": 2,
+              "goal": 1
+            },
+            {
+              "value": 8,
+              "case": 2,
+              "goal": 2
+            },
+            {
+              "value": 9,
+              "case": 3,
+              "goal": 0
+            },
+            {
+              "value": 10,
+              "case": 3,
+              "goal": 1
+            },
+            {
+              "value": 11,
+              "case": 3,
+              "goal": 2
+            },
+            {
+              "value": 12,
+              "case": 3,
+              "goal": 3
+            },
+            {
+              "value": 13,
+              "case": 3,
+              "goal": 4
+            },
+            {
+              "value": 14,
+              "case": 4,
+              "goal": 0
+            },
+            {
+              "value": 15,
+              "case": 4,
+              "goal": 1
+            },
+            {
+              "value": 16,
+              "case": 4,
+              "goal": 2
+            },
+            {
+              "value": 17,
+              "case": 4,
+              "goal": 3
+            },
+            {
+              "value": 18,
+              "case": 4,
+              "goal": 4
+            },
+            {
+              "value": 19,
+              "case": 5,
+              "goal": 0
+            },
+            {
+              "value": 20,
+              "case": 5,
+              "goal": 1
+            },
+            {
+              "value": 21,
+              "case": 5,
+              "goal": 2
+            },
+            {
+              "value": 22,
+              "case": 5,
+              "goal": 3
+            },
+            {
+              "value": 23,
+              "case": 5,
+              "goal": 4
+            },
+            {
+              "value": 24,
+              "case": 6,
+              "goal": 0
+            },
+            {
+              "value": 25,
+              "case": 6,
+              "goal": 1
+            },
+            {
+              "value": 26,
+              "case": 6,
+              "goal": 2
+            },
+            {
+              "value": 27,
+              "case": 6,
+              "goal": 3
+            },
+            {
+              "value": 28,
+              "case": 6,
+              "goal": 4
+            },
+            {
+              "value": 29,
+              "case": 7,
+              "goal": 0
+            },
+            {
+              "value": 30,
+              "case": 7,
+              "goal": 1
+            },
+            {
+              "value": 31,
+              "case": 7,
+              "goal": 2
+            },
+            {
+              "value": 32,
+              "case": 7,
+              "goal": 3
+            },
+            {
+              "value": 33,
+              "case": 7,
+              "goal": 4
+            },
+            {
+              "value": 34,
+              "case": 8,
+              "goal": 0
+            },
+            {
+              "value": 35,
+              "case": 8,
+              "goal": 1
+            },
+            {
+              "value": 36,
+              "case": 8,
+              "goal": 2
+            },
+            {
+              "value": 37,
+              "case": 8,
+              "goal": 3
+            },
+            {
+              "value": 38,
+              "case": 8,
+              "goal": 4
+            },
+            {
+              "value": 39,
+              "case": 9,
+              "goal": 0
+            },
+            {
+              "value": 40,
+              "case": 9,
+              "goal": 1
+            },
+            {
+              "value": 41,
+              "case": 9,
+              "goal": 2
+            },
+            {
+              "value": 42,
+              "case": 9,
+              "goal": 3
+            },
+            {
+              "value": 43,
+              "case": 9,
+              "goal": 4
+            },
+            {
+              "value": 44,
+              "case": 10,
+              "goal": 0
+            },
+            {
+              "value": 45,
+              "case": 10,
+              "goal": 1
+            },
+            {
+              "value": 46,
+              "case": 10,
+              "goal": 2
+            },
+            {
+              "value": 47,
+              "case": 10,
+              "goal": 3
+            },
+            {
+              "value": 48,
+              "case": 10,
+              "goal": 4
+            },
+            {
+              "value": 49,
+              "case": 11,
+              "goal": 0
+            },
+            {
+              "value": 50,
+              "case": 11,
+              "goal": 1
+            },
+            {
+              "value": 51,
+              "case": 11,
+              "goal": 2
+            },
+            {
+              "value": 52,
+              "case": 11,
+              "goal": 3
+            },
+            {
+              "value": 53,
+              "case": 11,
+              "goal": 4
+            },
+            {
+              "value": 54,
+              "case": 12,
+              "goal": 0
+            },
+            {
+              "value": 55,
+              "case": 12,
+              "goal": 1
+            },
+            {
+              "value": 56,
+              "case": 12,
+              "goal": 2
+            },
+            {
+              "value": 57,
+              "case": 12,
+              "goal": 3
+            },
+            {
+              "value": 58,
+              "case": 12,
+              "goal": 4
+            },
+            {
+              "value": 59,
+              "case": 13,
+              "goal": 0
+            },
+            {
+              "value": 60,
+              "case": 13,
+              "goal": 1
+            },
+            {
+              "value": 61,
+              "case": 13,
+              "goal": 2
+            },
+            {
+              "value": 62,
+              "case": 13,
+              "goal": 3
+            },
+            {
+              "value": 63,
+              "case": 13,
+              "goal": 4
+            },
+            {
+              "value": 64,
+              "case": 14,
+              "goal": 0
+            },
+            {
+              "value": 65,
+              "case": 15,
+              "goal": 0
+            },
+            {
+              "value": 66,
+              "case": 16,
+              "goal": 0
+            },
+            {
+              "value": 67,
+              "case": 17,
+              "goal": 0
+            },
+            {
+              "value": 68,
+              "case": 18,
+              "goal": 0
+            },
+            {
+              "value": 69,
+              "case": 19,
+              "goal": 0
+            },
+            {
+              "value": 70,
+              "case": 19,
+              "goal": 1
+            },
+            {
+              "value": 71,
+              "case": 19,
+              "goal": 2
+            },
+            {
+              "value": 72,
+              "case": 19,
+              "goal": 3
+            },
+            {
+              "value": 73,
+              "case": 19,
+              "goal": 4
+            },
+            {
+              "value": 74,
+              "case": 19,
+              "goal": 5
+            },
+            {
+              "value": 75,
+              "case": 19,
+              "goal": 6
+            },
+            {
+              "value": 76,
+              "case": 19,
+              "goal": 7
+            },
+            {
+              "value": 77,
+              "case": 19,
+              "goal": 8
+            },
+            {
+              "value": 78,
+              "case": 19,
+              "goal": 9
+            }
+          ]
+        },
+        "comparison": "Preservation of every supplied quality observation across the complete declared workload family.",
+        "boundary": "Reference native truth comes from the retained benchmark contracts and comparisons. The supplied finite method family does not establish coverage of all future methods or workloads."
+      },
+      "semantic_boundary": "Results are exact for the supplied finite data. Independent meanings, evidence validity, and wider coverage require their own justification.",
+      "computation": "matches independent reconstruction",
+      "mismatches": [],
+      "checked_fields": [
+        "input_formed",
+        "residual",
+        "safe_facets",
+        "conflicts",
+        "repairs",
+        "unrepairable",
+        "extension",
+        "complete profiles",
+        "complete ordered losses",
+        "complete revision and admission gate"
+      ],
+      "facts": {
+        "input_formed": true,
+        "candidate_count": 3,
+        "available_facets": [
+          0,
+          1,
+          2
+        ],
+        "selected": [
+          0
+        ],
+        "safe": [
+          0,
+          1,
+          2
+        ],
+        "invalid_selected": [],
+        "residual_count": 3,
+        "conflict_count": 0,
+        "missing_count": 3,
+        "repair_count": 148,
+        "unrepairable_count": 0,
+        "positive_comparisons": 4,
+        "negative_comparisons": 5,
+        "relation_reflexive": true,
+        "relation_transitive": true,
+        "empty_selection_adequate": false,
+        "adequate_selections": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1,
+            2
+          ]
+        ],
+        "adequate_selection_enumeration": "complete",
+        "extension_adequate": true,
+        "sound_language_adequate": true,
+        "revision": {
+          "retained": [
+            0
+          ],
+          "required_withdrawals": [],
+          "new_missing_after_withdrawal": [],
+          "reuse_original_repairs_adequate": true,
+          "recomputed_selection": [
+            0,
+            1
+          ],
+          "residual": []
+        },
+        "evaluation_signature": "e125a0845f2cb7f5751f85f649748860469ebae9f556d0fa1fd5366a837f0b68"
+      },
+      "artifacts": {
+        "counts": {
+          "matches": 63
+        },
+        "issues": [],
+        "checked_roles": {
+          "saved case": 1,
+          "generated engine": 1,
+          "runtime": 1,
+          "runtime program": 1,
+          "proof receipt": 1,
+          "run log": 1,
+          "original execution tool": 2,
+          "engine snapshot": 27,
+          "external case evidence": 12,
+          "archived original case": 1,
+          "archived case evidence": 12,
+          "archived execution tool": 2,
+          "original case": 1
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+Running Native_Investigation_Report_Diagnostic_requestedapplications9 ...
+Native_Investigation_Report_Diagnostic_requestedapplications9 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_requestedapplications9")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_requestedapplications9.Factor_Binding_Guided_Investigation" (unresolved "Native_Investigation_Report_Diagnostic_requestedapplications9.Factor_Guided_Investigation")
+*** Failed to apply initial proof method (line 82 of "/tmp/native-investigation-report-diagnostic-requestedapplications9/theories/Factor_Guided_Investigation.thy"):
+*** using this:
+***     (d, S, t, V, H) |∈| A ∨
+***     (d, S, t, V, H) |∈| finite_guided_applications L D J
+***     (d, S, t, V, H) |∈| snd (snd (finite_guided_state n L C Q)) ⟹
+***     ∃ps. (d, S, ps) ∈ set L ∧
+***          finite_schema_instance S V t H ∧
+***          finite_schema_material_satisfied S V
+***     (?d, ?S, ?t, ?V, ?H) |∈| finite_guided_applications ?L ?C ?Q ⟹
+***     ∃ps. (?d, ?S, ps) ∈ set ?L ∧
+***          finite_schema_instance ?S ?V ?t ?H ∧
+***          finite_schema_material_satisfied ?S ?V
+*** goal (1 subgoal):
+***  1. ∃ps. (d, S, ps) ∈ set L ∧
+***          finite_schema_instance S V t H ∧
+***          finite_schema_material_satisfied S
+***           V
+*** At command "by" (line 82 of "/tmp/native-investigation-report-diagnostic-requestedapplications9/theories/Factor_Guided_Investigation.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_requestedapplications9
+0:00:21 elapsed time, 0:00:28 cpu time, factor 1.33

@@ -1,0 +1,17 @@
+Running Native_Investigation_Report_Diagnostic_requestedapplications3 ...
+Native_Investigation_Report_Diagnostic_requestedapplications3 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_requestedapplications3")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_requestedapplications3.Factor_Guided_Investigation" (unresolved "Native_Investigation_Report_Diagnostic_requestedapplications3.Factor_Requested_Applications")
+*** Failed to finish proof (line 52 of "/tmp/native-investigation-report-diagnostic-requestedapplications3/theories/Factor_Requested_Applications.thy"):
+*** goal (1 subgoal):
+***  1. ⋀p. ⟦(s, d, p) |∈| finite_schema_premises S;
+***          finite_pattern_instance V p t⟧
+***         ⟹ ∃x|∈|finite_schema_premises S.
+***               (s, d, t) |∈|
+***               (case x of
+***                (s, d, p) ⇒
+***                  (λt. (s, d, t)) |`|
+***                  finite_pattern_values V
+***                   p)
+*** At command "by" (line 51 of "/tmp/native-investigation-report-diagnostic-requestedapplications3/theories/Factor_Requested_Applications.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_requestedapplications3
+0:00:12 elapsed time, 0:00:17 cpu time, factor 1.38

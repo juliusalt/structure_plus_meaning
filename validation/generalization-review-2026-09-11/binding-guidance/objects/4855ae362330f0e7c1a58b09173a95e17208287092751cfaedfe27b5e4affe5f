@@ -1,0 +1,431 @@
+{
+  "policy": "Assume every requested native goal is known",
+  "assessment": "Fails native semantic adequacy",
+  "failures": [
+    {
+      "case": "assume-guided-binding-clauses-wrong-owner",
+      "falsely_settled_goals": [
+        [
+          0,
+          347,
+          {
+            "pair": [
+              {
+                "payload": [
+                  51
+                ]
+              },
+              {
+                "pair": [
+                  {
+                    "pair": [
+                      {
+                        "pair": [
+                          {
+                            "pair": [
+                              {
+                                "payload": [
+                                  50
+                                ]
+                              },
+                              {
+                                "payload": [
+                                  60
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "pair": [
+                              {
+                                "payload": [
+                                  80
+                                ]
+                              },
+                              {
+                                "empty_artifact": true
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "pair": [
+                          {
+                            "pair": [
+                              {
+                                "pair": [
+                                  {
+                                    "payload": [
+                                      50
+                                    ]
+                                  },
+                                  {
+                                    "payload": [
+                                      61
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "pair": [
+                                  {
+                                    "payload": [
+                                      81
+                                    ]
+                                  },
+                                  {
+                                    "empty_artifact": true
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "pair": [
+                              {
+                                "pair": [
+                                  {
+                                    "pair": [
+                                      {
+                                        "payload": [
+                                          50
+                                        ]
+                                      },
+                                      {
+                                        "payload": [
+                                          62
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "pair": [
+                                      {
+                                        "payload": [
+                                          82
+                                        ]
+                                      },
+                                      {
+                                        "empty_artifact": true
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "payload": []
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "pair": [
+                      {
+                        "pair": [
+                          {
+                            "pair": [
+                              {
+                                "payload": [
+                                  60
+                                ]
+                              },
+                              {
+                                "payload": [
+                                  80
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "pair": [
+                              {
+                                "pair": [
+                                  {
+                                    "payload": [
+                                      61
+                                    ]
+                                  },
+                                  {
+                                    "payload": [
+                                      81
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "pair": [
+                                  {
+                                    "pair": [
+                                      {
+                                        "payload": [
+                                          62
+                                        ]
+                                      },
+                                      {
+                                        "payload": [
+                                          82
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "payload": []
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "pair": [
+                          {
+                            "pair": [
+                              {
+                                "payload": [
+                                  60
+                                ]
+                              },
+                              {
+                                "empty_artifact": true
+                              }
+                            ]
+                          },
+                          {
+                            "pair": [
+                              {
+                                "pair": [
+                                  {
+                                    "payload": [
+                                      61
+                                    ]
+                                  },
+                                  {
+                                    "empty_artifact": true
+                                  }
+                                ]
+                              },
+                              {
+                                "pair": [
+                                  {
+                                    "pair": [
+                                      {
+                                        "payload": [
+                                          62
+                                        ]
+                                      },
+                                      {
+                                        "empty_artifact": true
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "payload": []
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "case": "assume-guided-binding-clauses-wrong-output",
+      "falsely_settled_goals": [
+        [
+          0,
+          347,
+          {
+            "pair": [
+              {
+                "payload": [
+                  50
+                ]
+              },
+              {
+                "pair": [
+                  {
+                    "pair": [
+                      {
+                        "pair": [
+                          {
+                            "pair": [
+                              {
+                                "payload": [
+                                  50
+                                ]
+                              },
+                              {
+                                "payload": [
+                                  60
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "pair": [
+                              {
+                                "payload": [
+                                  80
+                                ]
+                              },
+                              {
+                                "empty_artifact": true
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "pair": [
+                          {
+                            "pair": [
+                              {
+                                "pair": [
+                                  {
+                                    "payload": [
+                                      50
+                                    ]
+                                  },
+                                  {
+                                    "payload": [
+                                      61
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "pair": [
+                                  {
+                                    "payload": [
+                                      81
+                                    ]
+                                  },
+                                  {
+                                    "empty_artifact": true
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "pair": [
+                              {
+                                "pair": [
+                                  {
+                                    "pair": [
+                                      {
+                                        "payload": [
+                                          50
+                                        ]
+                                      },
+                                      {
+                                        "payload": [
+                                          62
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "pair": [
+                                      {
+                                        "payload": [
+                                          82
+                                        ]
+                                      },
+                                      {
+                                        "empty_artifact": true
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "payload": []
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "pair": [
+                      {
+                        "payload": []
+                      },
+                      {
+                        "pair": [
+                          {
+                            "pair": [
+                              {
+                                "payload": [
+                                  60
+                                ]
+                              },
+                              {
+                                "empty_artifact": true
+                              }
+                            ]
+                          },
+                          {
+                            "pair": [
+                              {
+                                "pair": [
+                                  {
+                                    "payload": [
+                                      61
+                                    ]
+                                  },
+                                  {
+                                    "empty_artifact": true
+                                  }
+                                ]
+                              },
+                              {
+                                "pair": [
+                                  {
+                                    "pair": [
+                                      {
+                                        "payload": [
+                                          62
+                                        ]
+                                      },
+                                      {
+                                        "empty_artifact": true
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "payload": []
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      ]
+    }
+  ],
+  "boundary": "The finite conditional reports pass reconstruction. The native closure theorem's known-call hypothesis is not established for this policy."
+}

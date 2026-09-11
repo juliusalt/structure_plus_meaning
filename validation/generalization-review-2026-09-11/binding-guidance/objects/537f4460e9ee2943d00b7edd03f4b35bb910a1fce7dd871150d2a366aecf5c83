@@ -1,0 +1,11 @@
+Running Native_Investigation_Report_Diagnostic_requestedapplications2 ...
+Native_Investigation_Report_Diagnostic_requestedapplications2 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_requestedapplications2")
+*** Failed to apply initial proof method (line 51 of "/tmp/native-investigation-report-diagnostic-requestedapplications2/theories/Factor_Requested_Applications.thy"):
+*** goal (1 subgoal):
+***  1. ((s, d, t) |∈| finite_instantiated_premises S V) =
+***     (∃p. (s, d, p) |∈| finite_schema_premises S ∧
+***          finite_pattern_instance V p
+***           t)
+*** At command "by" (line 51 of "/tmp/native-investigation-report-diagnostic-requestedapplications2/theories/Factor_Requested_Applications.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_requestedapplications2
+0:00:11 elapsed time, 0:00:16 cpu time, factor 1.41

@@ -1,0 +1,47 @@
+/tmp/native-investigation-report-diagnostic-guidedexecution1/export/Native_Investigation_Report_Diagnostic_guidedexecution1.Factor_Reasoning_Execution/code/native_reasoning.ML:468: warning: Matches are not exhaustive.
+Found near
+  fun
+     less_eq_set A_ (... ...) ... = list_all (fn ...) xs |
+        less_eq_set A_ ... = ... ... ys |
+        less_eq_set ... = false
+/tmp/native-investigation-report-diagnostic-guidedexecution1/export/Native_Investigation_Report_Diagnostic_guidedexecution1.Factor_Reasoning_Execution/code/native_reasoning.ML:478: warning: Pattern 3 is redundant.
+Found near
+  fun
+     equal_boola false p = not p |
+        equal_boola true ... = p |
+        equal_boola ... = ... ... |
+        equal_boola ... = ...
+/tmp/native-investigation-report-diagnostic-guidedexecution1/export/Native_Investigation_Report_Diagnostic_guidedexecution1.Factor_Reasoning_Execution/code/native_reasoning.ML:479: warning: Pattern 4 is redundant.
+Found near
+  fun
+     equal_boola false p = not p |
+        equal_boola true ... = p |
+        equal_boola ... = ... ... |
+        equal_boola ... = ...
+/tmp/native-investigation-report-diagnostic-guidedexecution1/export/Native_Investigation_Report_Diagnostic_guidedexecution1.Factor_Reasoning_Execution/code/native_reasoning.ML:753: warning: Matches are not exhaustive. Found near fun bex (Set xs) p = list_ex p xs
+/tmp/native-investigation-report-diagnostic-guidedexecution1/export/Native_Investigation_Report_Diagnostic_guidedexecution1.Factor_Reasoning_Execution/code/native_reasoning.ML:761: warning: Matches are not exhaustive.
+Found near
+  fun nth (x :: xs) n = (if ... ... zero_nata then x else ... ... (... ...))
+/tmp/native-investigation-report-diagnostic-guidedexecution1/export/Native_Investigation_Report_Diagnostic_guidedexecution1.Factor_Reasoning_Execution/code/native_reasoning.ML:764: warning: Matches are not exhaustive. Found near fun ball (Set xs) p = list_all p xs
+/tmp/native-investigation-report-diagnostic-guidedexecution1/export/Native_Investigation_Report_Diagnostic_guidedexecution1.Factor_Reasoning_Execution/code/native_reasoning.ML:780: warning: Matches are not exhaustive.
+Found near fun image f (... ...) = Set (... ... xs)
+/tmp/native-investigation-report-diagnostic-guidedexecution1/export/Native_Investigation_Report_Diagnostic_guidedexecution1.Factor_Reasoning_Execution/code/native_reasoning.ML:791: warning: Matches are not exhaustive.
+Found near fun card A_ (... ...) = size_list (... ... xs)
+/tmp/native-investigation-report-diagnostic-guidedexecution1/export/Native_Investigation_Report_Diagnostic_guidedexecution1.Factor_Reasoning_Execution/code/native_reasoning.ML:801: warning: Matches are not exhaustive.
+Found near fun filter p (... ...) = Set (... ... xs)
+/tmp/native-investigation-report-diagnostic-guidedexecution1/export/Native_Investigation_Report_Diagnostic_guidedexecution1.Factor_Reasoning_Execution/code/native_reasoning.ML:822: warning: Matches are not exhaustive.
+Found near fun sup_seta A_ (... ...) = ... ... xs bot_set
+/tmp/native-investigation-report-diagnostic-guidedexecution1/export/Native_Investigation_Report_Diagnostic_guidedexecution1.Factor_Reasoning_Execution/code/native_reasoning.ML:844: warning: Matches are not exhaustive. Found near fun the (SOME x2) = x2
+/tmp/native-investigation-report-diagnostic-guidedexecution1/export/Native_Investigation_Report_Diagnostic_guidedexecution1.Factor_Reasoning_Execution/code/native_reasoning.ML:924: warning: Matches are not exhaustive.
+Found near
+  fun sorted_list_of_set (A1_, ...) (... ...) = ... ... (fn ...) (... ... xs)
+/tmp/native-investigation-report-diagnostic-guidedexecution1/export/Native_Investigation_Report_Diagnostic_guidedexecution1.Factor_Reasoning_Execution/code/native_reasoning.ML:1659: warning: Matches are not exhaustive.
+Found near
+  fun set_singleton_option A_ (... ...) = list_singleton_option A_ xs
+LIBRARY_CATALOG binding_observation_construction_library [{"entry":343,"schema":{"head":{"pair":[{"var":0},{"pair":[{"pair":[{"pair":[{"var":0},{"var":1}]},{"pair":[{"var":2},{"var":3}]}]},{"pair":[{"var":1},{"var":2}]}]}]},"premises":[],"materials":[]},"enumeration":[]},{"entry":344,"schema":{"head":{"pair":[{"var":0},{"pair":[{"pair":[{"pair":[{"var":0},{"var":1}]},{"pair":[{"var":2},{"var":3}]}]},{"pair":[{"var":1},{"var":3}]}]}]},"premises":[],"materials":[]},"enumeration":[]},{"entry":345,"schema":{"head":{"pair":[{"var":0},{"pair":[{"payload":[]},{"payload":[]}]}]},"premises":[],"materials":[]},"enumeration":[]},{"entry":345,"schema":{"head":{"pair":[{"var":0},{"pair":[{"pair":[{"var":1},{"var":2}]},{"pair":[{"var":3},{"var":4}]}]}]},"premises":[[0,343,{"pair":[{"var":0},{"pair":[{"var":1},{"var":3}]}]}],[1,345,{"pair":[{"var":0},{"pair":[{"var":2},{"var":4}]}]}]],"materials":[]},"enumeration":[[0,343,{"pair":[{"var":0},{"pair":[{"var":1},{"var":3}]}]}],[1,345,{"pair":[{"var":0},{"pair":[{"var":2},{"var":4}]}]}]]},{"entry":346,"schema":{"head":{"pair":[{"var":0},{"pair":[{"payload":[]},{"payload":[]}]}]},"premises":[],"materials":[]},"enumeration":[]},{"entry":346,"schema":{"head":{"pair":[{"var":0},{"pair":[{"pair":[{"var":1},{"var":2}]},{"pair":[{"var":3},{"var":4}]}]}]},"premises":[[0,344,{"pair":[{"var":0},{"pair":[{"var":1},{"var":3}]}]}],[1,346,{"pair":[{"var":0},{"pair":[{"var":2},{"var":4}]}]}]],"materials":[]},"enumeration":[[0,344,{"pair":[{"var":0},{"pair":[{"var":1},{"var":3}]}]}],[1,346,{"pair":[{"var":0},{"pair":[{"var":2},{"var":4}]}]}]]},{"entry":347,"schema":{"head":{"pair":[{"var":0},{"pair":[{"var":1},{"pair":[{"var":2},{"var":3}]}]}]},"premises":[[0,345,{"pair":[{"var":0},{"pair":[{"var":1},{"var":2}]}]}],[1,346,{"pair":[{"var":0},{"pair":[{"var":1},{"var":3}]}]}]],"materials":[]},"enumeration":[[0,345,{"pair":[{"var":0},{"pair":[{"var":1},{"var":2}]}]}],[1,346,{"pair":[{"var":0},{"pair":[{"var":1},{"var":3}]}]}]]}]
+INPUT_RESULT 0 {"domain_admitted":false,"root":2,"next":3,"instructions":[["pair",0,2,2],["list",1,0],["pair",2,311,1]],"decisions":[]}
+INPUT_RESULT 335 {"domain_admitted":false,"root":337,"next":338,"instructions":[["pair",335,2,2],["list",336,335],["pair",337,311,336]],"decisions":[]}
+INPUT_RESULT 336 {"domain_admitted":true,"root":338,"next":339,"instructions":[["pair",336,2,2],["list",337,336],["pair",338,311,337]],"decisions":[true,true,true,true,true,true,false,false,false,true,false]}
+INPUT_RESULT 337 {"domain_admitted":true,"root":339,"next":340,"instructions":[["pair",337,2,2],["list",338,337],["pair",339,311,338]],"decisions":[true,true,true,true,true,true,false,false,false,true,false]}
+INPUT_RESULT 1000 {"domain_admitted":true,"root":1002,"next":1003,"instructions":[["pair",1000,2,2],["list",1001,1000],["pair",1002,311,1001]],"decisions":[true,true,true,true,true,true,false,false,false,true,false]}
+INPUT_RESULT 10000000000000000000000000 {"domain_admitted":true,"root":10000000000000000000000002,"next":10000000000000000000000003,"instructions":[["pair",10000000000000000000000000,2,2],["list",10000000000000000000000001,10000000000000000000000000],["pair",10000000000000000000000002,311,10000000000000000000000001]],"decisions":[true,true,true,true,true,true,false,false,false,true,false]}

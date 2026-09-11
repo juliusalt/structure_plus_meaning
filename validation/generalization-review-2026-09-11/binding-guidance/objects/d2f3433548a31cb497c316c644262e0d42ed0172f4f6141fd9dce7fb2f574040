@@ -1,0 +1,16 @@
+Running Native_Investigation_Report_Diagnostic_bindingprogram2 ...
+Native_Investigation_Report_Diagnostic_bindingprogram2 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_bindingprogram2")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_bindingprogram2.Factor_Binding_Program_Compilation" (unresolved "Native_Investigation_Report_Diagnostic_bindingprogram2.Factor_Program_Library")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_bindingprogram2.Factor_Reasoning_Execution" (unresolved "Native_Investigation_Report_Diagnostic_bindingprogram2.Factor_Binding_Program_Compilation")
+*** Failed to finish proof (line 29 of "/tmp/native-investigation-report-diagnostic-bindingprogram2/theories/Factor_Program_Library.thy"):
+*** goal (1 subgoal):
+***  1. ⋀c. ⟦ps = finite_functional_rows (finite_schema_premises S);
+***          ((d, c), S) |∈| finite_system_clauses P⟧
+***         ⟹ (d, S)
+***            ∈ (λx. case x of (x, xa) ⇒ (case x of (d, c) ⇒ Pair d) xa) `
+***              fset
+***               (finite_system_clauses
+***                 P)
+*** At command "by" (line 28 of "/tmp/native-investigation-report-diagnostic-bindingprogram2/theories/Factor_Program_Library.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_bindingprogram2
+0:02:04 elapsed time, 0:04:39 cpu time, factor 2.25

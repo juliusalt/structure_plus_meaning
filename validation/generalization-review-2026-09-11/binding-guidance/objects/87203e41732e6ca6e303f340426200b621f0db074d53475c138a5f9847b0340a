@@ -1,0 +1,45 @@
+theory Factor_Generation_Monotonicity
+  imports Factor_Set_Frontier_Generation
+begin
+
+lemma finite_premise_set_joins_mono:
+  assumes included: "C |\<subseteq>| D"
+  shows "finite_premise_set_joins ps C |\<subseteq>| finite_premise_set_joins ps D"
+proof (induction ps)
+  case Nil
+  then show ?case by simp
+next
+  case (Cons z ps)
+  obtain s d p where shape: "z=(s,d,p)" by (cases z) auto
+  show ?case using Cons.IH included
+    by (auto simp: shape ffUnion_membership fimage_iff Bex_def split_paired_Ex)
+qed
+
+theorem finite_schema_generation_on_set_mono:
+  assumes included: "C |\<subseteq>| D"
+  shows "finite_schema_generation_on_set S ps C |\<subseteq>| finite_schema_generation_on_set S ps D"
+  using finite_premise_set_joins_mono[OF included, where ps=ps]
+  by (auto simp: finite_schema_generation_on_set_def ffUnion_membership
+    fimage_iff Bex_def split_paired_Ex)
+
+theorem finite_generated_applications_on_set_mono:
+  assumes included: "C |\<subseteq>| D"
+  shows "finite_generated_applications_on_set L C |\<subseteq>| finite_generated_applications_on_set L D"
+  using finite_schema_generation_on_set_mono[OF included]
+  by (auto simp: finite_generated_applications_on_set_def fset_of_list.rep_eq
+    ffUnion_membership fimage_iff Bex_def split_paired_Ex)
+
+lemma finite_generated_conclusion_image:
+  "fimage fst (finite_generated_rules_on_set L C)=
+    fimage (\<lambda>(d,S,t,V,H). (d,t)) (finite_generated_applications_on_set L C)"
+  by (simp add: finite_generated_rules_on_set_def fimage_fimage split_def)
+
+text \<open>
+  Enlarging the possible frontier retains every complete generated application.
+  Matching agreement, complete premise enumerations, all material checks, and
+  complete bindings remain the same tests on an existing application. This
+  monotonicity concerns possible constructions; it establishes no new known
+  call and assumes no semantic truth for the enlarged frontier.
+\<close>
+
+end

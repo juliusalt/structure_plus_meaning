@@ -1,0 +1,37 @@
+Running Native_Investigation_Report_Diagnostic_requestedapplications12 ...
+Native_Investigation_Report_Diagnostic_requestedapplications12 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_requestedapplications12")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_requestedapplications12.Factor_Binding_Guided_Investigation" (unresolved "Native_Investigation_Report_Diagnostic_requestedapplications12.Factor_Guided_Investigation")
+*** Failed to apply initial proof method (line 128 of "/tmp/native-investigation-report-diagnostic-requestedapplications12/theories/Factor_Guided_Investigation.thy"):
+*** using this:
+***     (?d, ?S, ?t, ?V, ?H) |∈| snd (snd (finite_guided_state ?n ?L ?C ?Q)) ⟹
+***     ∃ps. (?d, ?S, ps) ∈ set ?L ∧
+***          finite_schema_instance ?S ?V ?t ?H ∧
+***          finite_schema_material_satisfied ?S ?V
+***     row |∈| snd (snd (finite_guided_state (Suc n) L C Q))
+*** goal (1 subgoal):
+***  1. (⋀ps. ⟦(d, S, ps) ∈ set L; finite_schema_instance S V t J;
+***            finite_schema_material_satisfied S V⟧
+***           ⟹ thesis) ⟹
+***     thesis
+*** At command "by" (line 128 of "/tmp/native-investigation-report-diagnostic-requestedapplications12/theories/Factor_Guided_Investigation.thy")
+*** Failed to finish proof (line 19 of "/tmp/native-investigation-report-diagnostic-requestedapplications12/theories/Factor_Generation_Monotonicity.thy"):
+*** goal (1 subgoal):
+***  1. ⟦(aa, ba) |∈| finite_premise_set_joins ps C; (d, bb) |∈| C;
+***      finite_pattern_accepts p bb;
+***      finite_relation_functional (aa |∪| finite_matching_bindings p bb);
+***      finite_premise_set_joins ps C |⊆| finite_premise_set_joins ps D;
+***      C |⊆| D⟧
+***     ⟹ ∃x∈{d} ×
+***           {t. finite_pattern_accepts p t ∧
+***               finite_relation_functional
+***                (aa |∪| finite_matching_bindings p t)} ∩
+***           fset D.
+***           (aa |∪| finite_matching_bindings p bb, finsert (s, d, bb) ba) =
+***           (case x of
+***            (e, t) ⇒
+***              (aa |∪| finite_matching_bindings p t,
+***               finsert (s, e, t)
+***                ba))
+*** At command "by" (line 19 of "/tmp/native-investigation-report-diagnostic-requestedapplications12/theories/Factor_Generation_Monotonicity.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_requestedapplications12
+0:00:14 elapsed time, 0:00:21 cpu time, factor 1.51

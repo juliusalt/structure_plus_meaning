@@ -1,0 +1,44 @@
+import hashlib
+import json
+from pathlib import Path
+import sys
+sys.path.insert(0, str(Path('tools').resolve()))
+import compare_reasoning_methods as compare
+
+base=Path('/tmp/generalization-quality-review')
+digest=lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
+r=json.loads((base/'binding-method-followed/receipt.json').read_text())
+c=json.loads((base/'binding-method-followed/case.json').read_text())
+assert digest(base/'binding-method-followed/case.json')==r['case_sha256']
+required=[(f,int(w)) for f in [0,2] for w in c['scope']['workloads']]
+a=compare.assess_methods(c,r['result'],required)
+a.update(receipt_sha256=digest(base/'binding-method-followed/receipt.json'),
+         assessor_sha256=digest(Path(compare.__file__)))
+assert a['eligible']==[0,1] and a['dominant']==[1] and a['strict_improvements']==[[0,1]]
+(base/'binding-method-comparison/assessment.json').write_text(json.dumps(a,indent=2)+'\n')
+print('Method assessment:',{k:a[k] for k in ['eligible','dominant','strict_improvements','missing_requirements']})
+proofs=['bindingprogram1','bindingprogram2','bindingprogram3','bindingprogramunit4','bindinggaps1','bindinggaps2','bindingprogram4']
+proofs+=['requestedapplications'+str(i) for i in range(1,17)]+['generationmono1','guidedexecution1']
+spec={'proofs':{n:{'path':'/tmp/native-investigation-report-diagnostic-'+n} for n in proofs},'runs':{},'attachments':{},'investigations':{}}
+for stage,d in [('catalog-before','catalog-before'),('before','before'),('catalog-after','catalog-after'),('guided','guided'),('assumed','assumed'),('baseline-regression','baseline-regression'),('compiler-regression','compiler-regression'),('coverage-regression','coverage-regression'),('reader-regression','reader-regression')]:
+ spec['runs'][stage]={'path':str(base/('binding-generation-'+d)),'proof':'bindingprogram4' if stage in ['catalog-before','before'] else 'guidedexecution1'}
+for name in ['binding-method-initial','binding-method-followed']:
+ spec['investigations'][name]={'path':str(base/name)}
+for directory,prefix in [(base/'binding-method-comparison','method-comparison'),(base/'binding-generation-before-replay','before-replay')]:
+ for path in sorted(directory.rglob('*')):
+  if path.is_file(): spec['attachments'][prefix+'/'+str(path.relative_to(directory))]=str(path)
+for name in ['binding-method-review.json','binding-method-initial-review.json']:
+ path=base/name
+ if path.is_file():spec['attachments'][name]=str(path)
+for path in [Path('/tmp/requestedapplications7-command-timings.txt'),Path('/tmp/prepare-binding-guidance-retention.py'),Path('/tmp/native-reasoning-batch.py'),Path('/tmp/native-scheme-batch.py')]:
+ assert path.is_file(),path
+ spec['attachments'][path.name]=str(path)
+for path in [Path('validation')/n for n in ['build.json','build.log','build-errors.log','check.json']]:
+ if path.exists():spec['attachments']['main802/'+path.name]=str(path.resolve())
+for path in [Path('tools')/n for n in ['compare_reasoning_methods.py','replay_reasoning_review.py','retain_reasoning_review.py','review_investigations.py','check_binding_generation.py','check_guided_reasoning.py']]:
+ spec['attachments']['final-tools/'+path.name]=str(path.resolve())
+for path in [Path(n) for n in ['README.md','REASONING_REUSE.md','GENERALIZATION_REVIEW.md','DEVELOPMENT_WORKFLOW.md','THEORY_MAP.md','ROOT']]:
+ spec['attachments']['documents/'+path.name]=str(path.resolve())
+spec['documents']={'README.md':'/tmp/binding-guidance-README.md'}
+Path('/tmp/binding-guidance-spec.json').write_text(json.dumps(spec,indent=2)+'\n')
+print('Prepared',len(proofs),'proof contexts and',len(spec['runs']),'reasoning stages.')

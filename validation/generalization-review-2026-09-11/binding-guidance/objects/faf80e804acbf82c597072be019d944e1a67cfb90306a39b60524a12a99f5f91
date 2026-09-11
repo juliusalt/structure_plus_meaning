@@ -1,0 +1,193 @@
+theory Factor_Guided_Investigation
+  imports "Factor_Requested_Applications" "Factor_Library_Coverage"
+begin
+
+section \<open>Requested heads and available premises construct compatible applications\<close>
+
+definition finite_requested_applications where
+  "finite_requested_applications L Q=ffUnion (fimage (\<lambda>(d,S,ps).
+    if set ps=fset (finite_schema_premises S) then
+      ffUnion (fimage (\<lambda>(e,t). fimage (\<lambda>(q,V,H). (d,S,q,V,H))
+        (finite_requested_schema_applications S t)) (ffilter (\<lambda>q. fst q=d) Q))
+    else {||}) (fset_of_list L))"
+
+lemma finite_requested_application:
+  "(d,S,t,V,H) |\<in>| finite_requested_applications L Q \<longleftrightarrow>
+    (\<exists>ps q. (d,S,ps)\<in>set L \<and> set ps=fset (finite_schema_premises S) \<and>
+      (d,q) |\<in>| Q \<and> (t,V,H) |\<in>| finite_requested_schema_applications S q)"
+  by (auto simp: finite_requested_applications_def fset_of_list.rep_eq
+    ffUnion_membership fimage_iff Bex_def split_paired_Ex)
+
+definition finite_guided_applications where
+  "finite_guided_applications L C Q=
+    finite_generated_applications_on_set L C |\<union>| finite_requested_applications L Q"
+
+lemma finite_guided_application_source:
+  assumes member: "(d,S,t,V,H) |\<in>| finite_guided_applications L C Q"
+  shows "\<exists>ps. (d,S,ps)\<in>set L \<and>
+    finite_schema_instance S V t H \<and> finite_schema_material_satisfied S V"
+proof -
+  obtain cs where enumeration: "fset_of_list cs=C" using exists_fset_of_list by blast
+  have alternatives: "(d,S,t,V,H) |\<in>| finite_generated_schema_applications L cs \<or>
+    (d,S,t,V,H) |\<in>| finite_requested_applications L Q"
+    using member by (simp only: finite_guided_applications_def enumeration[symmetric]
+      finite_generated_applications_on_lists) simp
+  show ?thesis
+    using alternatives finite_schema_generation_sound(1,2)
+      finite_requested_schema_application_sound(2,3)
+    by (auto simp: finite_generated_schema_application finite_requested_application; blast)
+qed
+
+fun finite_guided_state where
+  "finite_guided_state 0 L C Q=(C,Q,{||})"
+| "finite_guided_state (Suc n) L C Q=
+    (let (D,J,A)=finite_guided_state n L C Q;
+         B=finite_guided_applications L D J
+     in (D |\<union>| fimage (\<lambda>(d,S,t,V,H). (d,t)) B,
+         J |\<union>| ffUnion (fimage (\<lambda>(d,S,t,V,H). fimage snd H) B),
+         A |\<union>| B))"
+
+lemma finite_guided_state_source:
+  assumes member: "(d,S,t,V,H) |\<in>| snd (snd (finite_guided_state n L C Q))"
+  shows "\<exists>ps. (d,S,ps)\<in>set L \<and>
+    finite_schema_instance S V t H \<and> finite_schema_material_satisfied S V"
+  using member
+proof (induction n)
+  case 0
+  then show ?case by simp
+next
+  case (Suc n)
+  obtain D J A where previous: "finite_guided_state n L C Q=(D,J,A)"
+    by (cases "finite_guided_state n L C Q") auto
+  have alternatives: "(d,S,t,V,H) |\<in>| A \<or>
+    (d,S,t,V,H) |\<in>| finite_guided_applications L D J"
+    using Suc.prems by (simp add: previous Let_def)
+  show ?case using alternatives Suc.IH finite_guided_application_source
+    by (simp only: previous snd_conv; blast)
+qed
+
+lemma finite_guided_state_preserves_applications:
+  "snd (snd (finite_guided_state n L C Q)) |\<subseteq>|
+    snd (snd (finite_guided_state (Suc n) L C Q))"
+  by (cases "finite_guided_state n L C Q") (auto simp: Let_def split: prod.splits)
+
+lemma finite_guided_initial_applications:
+  "finite_generated_applications_on_set L C |\<subseteq>|
+    snd (snd (finite_guided_state (Suc n) L C Q))"
+proof (induction n)
+  case 0
+  then show ?case by (simp add: finite_guided_applications_def)
+next
+  case (Suc n)
+  show ?case by (rule order_trans[OF Suc.IH finite_guided_state_preserves_applications])
+qed
+
+definition finite_guided_rules where
+  "finite_guided_rules n L C Q=fimage (\<lambda>(d,S,t,V,H). ((d,t),H))
+    (snd (snd (finite_guided_state (Suc n) L C Q)))"
+
+lemma finite_guided_rule_source:
+  assumes member: "(q,H) |\<in>| finite_guided_rules n L C Q"
+  shows "\<exists>S V ps. (fst q,S,ps)\<in>set L \<and>
+    finite_schema_instance S V (snd q) H \<and> finite_schema_material_satisfied S V"
+proof -
+  obtain row where actual: "row |\<in>| snd (snd (finite_guided_state (Suc n) L C Q))"
+    and image: "(q,H)=(case row of (d,S,t,V,J) \<Rightarrow> ((d,t),J))"
+    using member by (auto simp: finite_guided_rules_def)
+  obtain d S t V J where shape: "row=(d,S,t,V,J)" by (cases row) auto
+  have result: "q=(d,t)" "H=J" using image by (simp_all add: shape)
+  obtain ps where library: "(d,S,ps)\<in>set L"
+    and inst: "finite_schema_instance S V t J"
+    and material: "finite_schema_material_satisfied S V"
+    using finite_guided_state_source actual by (simp only: shape; blast)
+  show ?thesis using library inst material by (simp only: result fst_conv snd_conv; blast)
+qed
+
+lemma finite_guided_rule_interpreted:
+  assumes member: "(q,H) |\<in>| finite_guided_rules n L C Q"
+  shows "learned_schema_inferences
+    {(d,decode_finite_schema S) |d S ps. (d,S,ps)\<in>set L}
+    (decode_finite_call_term q) (decode_finite_premises H)"
+  using finite_guided_rule_source[OF member]
+  by (auto simp: learned_schema_inferences_def finite_schema_instance_correct
+    finite_schema_material_satisfied_correct decode_finite_call_term_fields; force)
+
+theorem finite_guided_closure_sound:
+  assumes library: "\<And>d S ps t. (d,S,ps)\<in>set L \<Longrightarrow>
+      schema_rule_instance (decode_finite_schema S) (positive_meaning P) t \<Longrightarrow> (d,t)\<in>positive_meaning P"
+    and known: "image decode_finite_call_term (fset K)\<subseteq>positive_meaning P"
+  shows "image decode_finite_call_term (finite_inference_result (finite_guided_rules n L C Q) K)
+    \<subseteq>positive_meaning P"
+  by (rule finite_learned_rules_result_sound[where
+      L="{(d,decode_finite_schema S) |d S ps. (d,S,ps)\<in>set L}"])
+    (use library known finite_guided_rule_interpreted in blast)+
+
+lemma finite_guided_entry_projection:
+  assumes step: "finite_inference_rules (finite_guided_rules n L C Q) q H"
+  shows "finite_inference_rules (finite_library_entry_rules L) (fst q) (map_relation_values fst H)"
+proof -
+  obtain J where row: "(q,J) |\<in>| finite_guided_rules n L C Q" and shape: "H=fset J"
+    using step by (auto simp: finite_inference_rules_def)
+  obtain S V ps where member: "(fst q,S,ps)\<in>set L"
+    and inst: "finite_schema_instance S V (snd q) J"
+    using finite_guided_rule_source[OF row] by blast
+  have projected: "(fst q,finite_premise_entries J) |\<in>| finite_library_entry_rules L"
+    using member finite_schema_instance_entries[OF inst]
+    by (simp only: finite_library_entry_rule; blast)
+  show ?thesis using projected
+    by (auto simp: finite_inference_rules_def shape finite_premise_entries_relation[symmetric])
+qed
+
+theorem finite_guided_entry_closure:
+  "image fst (finite_inference_result (finite_guided_rules n L C Q) K) \<subseteq>
+    finite_inference_result (finite_library_entry_rules L) (fimage fst K)"
+  by (simp only: finite_inference_result_exact fimage.rep_eq)
+    (rule inference_closure_projection; rule finite_guided_entry_projection; assumption)
+
+theorem finite_guided_blocked_goals:
+  "finite_library_blocked_goals L K goals |\<subseteq>|
+    finite_inference_residual (finite_guided_rules n L C Q) K goals"
+  using finite_guided_entry_closure[of n L C Q K]
+  by (auto simp: finite_library_blocked_goals_def finite_inference_residual_def; force)
+
+definition finite_guided_investigation where
+  "finite_guided_investigation n L C K goals=
+    (let formed=finite_schema_library_formed L \<and>
+           (\<forall>q\<in>set C. finite_term_formed (snd q)) \<and>
+           fBall K (\<lambda>q. finite_term_formed (snd q)) \<and>
+           fBall goals (\<lambda>(i,q). finite_term_formed (snd q)) \<and> finite_premise_functional goals;
+         applications=snd (snd (finite_guided_state (Suc n) L (fset_of_list C) (fimage snd goals)));
+         rules=finite_guided_rules n L (fset_of_list C) (fimage snd goals)
+     in (formed,applications,finite_inference_residual rules K goals,
+       finite_inference_demand rules K (fimage snd goals),
+       finite_inference_demand_reasons rules K (fimage snd goals)))"
+
+theorem finite_guided_original_formation:
+  "fst (finite_guided_investigation n L C K goals)=fst (finite_learned_investigation L C K goals)"
+  by (simp only: finite_guided_investigation_def finite_learned_investigation_def Let_def fst_conv)
+
+definition natural_guided_state where
+  "natural_guided_state n
+    (L::(nat\<times>(nat,nat,nat) finite_factor_schema\<times>(nat\<times>nat\<times>nat finite_term_pattern) list) list)
+    C (Q::(nat\<times>finite_factor_term) fset)=finite_guided_state n L C Q"
+
+definition natural_guided_investigation where
+  "natural_guided_investigation n
+    (L::(nat\<times>(nat,nat,nat) finite_factor_schema\<times>(nat\<times>nat\<times>nat finite_term_pattern) list) list)
+    C K (goals::(nat\<times>nat\<times>finite_factor_term) fset)=finite_guided_investigation n L C K goals"
+
+text \<open>
+  Each round combines the existing premise generator with requested-head
+  instantiation. Constructed conclusions become possible premises; complete
+  premise calls become further requests. All applications are retained. Neither
+  collection is added to the known set. The same conditional closure contract
+  applies to every round and to both sources of applications.
+
+  The original whole-input gate remains exact, including unused malformed
+  terms and library entries. The supplied bound controls construction work;
+  it is not an unrestricted search-completeness or stopping claim.
+\<close>
+
+export_code natural_guided_state natural_guided_investigation checking SML
+
+end

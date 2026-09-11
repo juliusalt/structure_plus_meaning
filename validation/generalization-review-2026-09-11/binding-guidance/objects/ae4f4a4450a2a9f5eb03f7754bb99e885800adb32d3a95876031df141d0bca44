@@ -1,0 +1,15 @@
+Running Native_Investigation_Report_Diagnostic_bindingprogram3 ...
+Native_Investigation_Report_Diagnostic_bindingprogram3 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_bindingprogram3")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_bindingprogram3.Factor_Binding_Program_Compilation" (unresolved "Native_Investigation_Report_Diagnostic_bindingprogram3.Factor_Program_Library")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_bindingprogram3.Factor_Reasoning_Execution" (unresolved "Native_Investigation_Report_Diagnostic_bindingprogram3.Factor_Binding_Program_Compilation")
+*** Failed to finish proof (line 51 of "/tmp/native-investigation-report-diagnostic-bindingprogram3/theories/Factor_Program_Library.thy"):
+*** goal (1 subgoal):
+***  1. (d, Finite_Variable a) |∈| finite_system_interfaces P ⟹
+***     (d, Pattern_Variable a)
+***     ∈ (λx. case x of (k, v) ⇒ (k, decode_finite_pattern v)) `
+***       fset
+***        (finite_system_interfaces
+***          P)
+*** At command "by" (line 51 of "/tmp/native-investigation-report-diagnostic-bindingprogram3/theories/Factor_Program_Library.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_bindingprogram3
+0:02:04 elapsed time, 0:04:40 cpu time, factor 2.25

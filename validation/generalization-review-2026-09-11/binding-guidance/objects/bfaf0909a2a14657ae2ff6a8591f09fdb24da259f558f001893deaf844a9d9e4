@@ -1,0 +1,32 @@
+import json
+from pathlib import Path
+import sys
+sys.path.insert(0,str(Path('tools').resolve()))
+from retain_reasoning_review import Archive,digest
+base=Path('validation/generalization-review-2026-09-11/binding-guidance').resolve()
+manifest=json.loads((base/'archive.json').read_text())
+archive=Archive(base,[base],[],allow_existing=True)
+supplement={'initial_manifest':archive.add(base/'archive.json'),'replays':{},'checks':{},'retention_script':archive.add(Path(__file__))}
+for name in ['guided','assumed','method-initial','method-followed']:
+ directory=Path('/tmp/binding-guidance-replay-'+name)
+ r=json.loads((directory/'replay.json').read_text())
+ assert r['status']=='accepted'
+ assert r['archive_index_sha256']==digest(base/'index.json')
+ supplement['replays'][name]=archive.directory(directory)
+tests=Path('/tmp/binding-guidance-tool-tests.log')
+assert 'Ran 27 tests' in tests.read_text() and tests.read_text().rstrip().endswith('OK')
+supplement['checks']['python_tests']=archive.add(tests)
+supplement['checks']['retainer_with_explicit_append']=archive.add(Path('tools/retain_reasoning_review.py'))
+supplement['checks']['append_incident']={'role':'Retrospective account of the initial supplemental retention failure','error':'FileExistsError: the archive already existed; the constructor rejected it before writes.','repair':'Explicit allow_existing option for verified archive extension; command-line creation still requires a new directory.'}
+readme=base/'README.md'
+readme.write_text(readme.read_text()+'\nAll four final replays pass: 46 guided cases, twenty conditional assumption\ncases, and both complete method investigations. The assumption policy still\nfails native semantic adequacy as recorded in the original policy assessment.\nThe 27 tooling tests also pass; their raw output is retained with the replays.\n')
+(base/'replays.json').write_text(json.dumps(supplement,indent=2)+'\n')
+manifest['files'].update({reference:sha for sha,reference in archive.retained.items()})
+for name in ['README.md','replays.json']:manifest['files'][name]=digest(base/name)
+(base/'archive.json').write_text(json.dumps(manifest,indent=2)+'\n')
+for name,sha in manifest['files'].items():
+ path=base/name
+ assert digest(path)==sha,name
+ assert path.resolve().is_relative_to(Path.cwd()),name
+print('Verified',len(manifest['files']),'archive references, including all four complete replays.')
+print('Final manifest',digest(base/'archive.json'))

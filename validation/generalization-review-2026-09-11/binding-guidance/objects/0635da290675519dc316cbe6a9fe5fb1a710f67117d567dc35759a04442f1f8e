@@ -1,0 +1,15 @@
+Running Native_Investigation_Report_Diagnostic_requestedapplications5 ...
+Native_Investigation_Report_Diagnostic_requestedapplications5 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_requestedapplications5")
+*** Failed to apply initial proof method (line 18 of "/tmp/native-investigation-report-diagnostic-requestedapplications5/theories/Factor_Guided_Investigation.thy"):
+*** goal (1 subgoal):
+***  1. ((d, S, t, V, H) |∈| finite_requested_applications L Q) =
+***     (∃ps q.
+***         (d, S, ps) ∈ set L ∧
+***         set ps = fset (finite_schema_premises S) ∧
+***         (d, q) |∈| Q ∧
+***         (t, V, H) |∈|
+***         finite_requested_schema_applications S
+***          q)
+*** At command "by" (line 18 of "/tmp/native-investigation-report-diagnostic-requestedapplications5/theories/Factor_Guided_Investigation.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_requestedapplications5
+0:02:21 elapsed time, 0:02:28 cpu time, factor 1.05

@@ -1,0 +1,533 @@
+theory Factor_Premise_Row_Instantiation
+  imports "Factor_Material_Instantiation" "Factor_Premise_Instances"
+begin
+
+section \<open>One complete substitution shared by every identified premise\<close>
+
+abbreviation premise_instantiation_argument ::
+  "factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow>
+    factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term" where
+  "premise_instantiation_argument e u v b r q c w \<equiv>
+    Pair_Term (Pair_Term e (Pair_Term u (Pair_Term v b))) (Pair_Term r (Pair_Term q (Pair_Term c w)))"
+
+abbreviation premise_instantiation_pattern ::
+  "'a term_pattern \<Rightarrow> 'a term_pattern \<Rightarrow> 'a term_pattern \<Rightarrow> 'a term_pattern \<Rightarrow>
+    'a term_pattern \<Rightarrow> 'a term_pattern \<Rightarrow> 'a term_pattern \<Rightarrow> 'a term_pattern \<Rightarrow> 'a term_pattern" where
+  "premise_instantiation_pattern e u v b r q c w \<equiv>
+    Pattern_Pair (Pattern_Pair e (Pattern_Pair u (Pattern_Pair v b))) (Pattern_Pair r (Pattern_Pair q (Pattern_Pair c w)))"
+
+abbreviation premise_rows_result :: "factor_term \<Rightarrow> bool" where
+  "premise_rows_result z \<equiv> \<exists>E e u Vs xs rs qs cs Us.
+    z=premise_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Vs)) (binding_rows_term xs)
+      (data_list_term (map address_pair_data rs)) (call_instance_rows_term qs) (binding_rows_term cs)
+      (data_list_term (map Payload_Term Us)) \<and>
+    environment_value_presents E e \<and> distinct Vs \<and> distinct xs \<and> (\<forall>a\<in>set Vs. octets_formed a) \<and>
+    term_bindings_formed (set Vs) (set xs) \<and> distinct Us \<and> (\<forall>s\<in>rel_dom (set rs). octets_formed s) \<and>
+    instantiated_premise_rows E u (set Vs) (set xs) rs qs cs (set Us)"
+
+lemma premise_rows_result_at_source:
+  assumes source: "environment_value_presents E e"
+  shows "premise_rows_result (premise_instantiation_argument e u v b r q c w) \<longleftrightarrow>
+    (\<exists>a Vs xs rs qs cs Us. u=use_data_term a \<and> v=data_list_term (map Payload_Term Vs) \<and> b=binding_rows_term xs \<and>
+      r=data_list_term (map address_pair_data rs) \<and> q=call_instance_rows_term qs \<and> c=binding_rows_term cs \<and>
+      w=data_list_term (map Payload_Term Us) \<and> distinct Vs \<and> distinct xs \<and> (\<forall>a\<in>set Vs. octets_formed a) \<and>
+      term_bindings_formed (set Vs) (set xs) \<and> distinct Us \<and> (\<forall>s\<in>rel_dom (set rs). octets_formed s) \<and>
+      instantiated_premise_rows E a (set Vs) (set xs) rs qs cs (set Us))"
+proof
+  assume admitted: "premise_rows_result (premise_instantiation_argument e u v b r q c w)"
+  obtain F a Vs xs rs qs cs Us where parts: "environment_value_presents F e"
+    "u=use_data_term a" "v=data_list_term (map Payload_Term Vs)" "b=binding_rows_term xs"
+    "r=data_list_term (map address_pair_data rs)" "q=call_instance_rows_term qs" "c=binding_rows_term cs"
+    "w=data_list_term (map Payload_Term Us)" "distinct Vs" "distinct xs" "\<forall>a\<in>set Vs. octets_formed a"
+    "term_bindings_formed (set Vs) (set xs)" "distinct Us" "\<forall>s\<in>rel_dom (set rs). octets_formed s"
+    "instantiated_premise_rows F a (set Vs) (set xs) rs qs cs (set Us)"
+    using admitted by (simp only: factor_term.inject) blast
+  have same: "F=E" by (rule environment_value_presents_unique[OF parts(1) source])
+  show "\<exists>a Vs xs rs qs cs Us. u=use_data_term a \<and> v=data_list_term (map Payload_Term Vs) \<and> b=binding_rows_term xs \<and>
+      r=data_list_term (map address_pair_data rs) \<and> q=call_instance_rows_term qs \<and> c=binding_rows_term cs \<and>
+      w=data_list_term (map Payload_Term Us) \<and> distinct Vs \<and> distinct xs \<and> (\<forall>a\<in>set Vs. octets_formed a) \<and>
+      term_bindings_formed (set Vs) (set xs) \<and> distinct Us \<and> (\<forall>s\<in>rel_dom (set rs). octets_formed s) \<and>
+      instantiated_premise_rows E a (set Vs) (set xs) rs qs cs (set Us)"
+    by (rule exI[of _ a], rule exI[of _ Vs], rule exI[of _ xs], rule exI[of _ rs], rule exI[of _ qs], rule exI[of _ cs], rule exI[of _ Us])
+      (use parts same in auto)
+next
+  assume "\<exists>a Vs xs rs qs cs Us. u=use_data_term a \<and> v=data_list_term (map Payload_Term Vs) \<and> b=binding_rows_term xs \<and>
+      r=data_list_term (map address_pair_data rs) \<and> q=call_instance_rows_term qs \<and> c=binding_rows_term cs \<and>
+      w=data_list_term (map Payload_Term Us) \<and> distinct Vs \<and> distinct xs \<and> (\<forall>a\<in>set Vs. octets_formed a) \<and>
+      term_bindings_formed (set Vs) (set xs) \<and> distinct Us \<and> (\<forall>s\<in>rel_dom (set rs). octets_formed s) \<and>
+      instantiated_premise_rows E a (set Vs) (set xs) rs qs cs (set Us)"
+  then obtain a Vs xs rs qs cs Us where parts:
+    "u=use_data_term a" "v=data_list_term (map Payload_Term Vs)" "b=binding_rows_term xs"
+    "r=data_list_term (map address_pair_data rs)" "q=call_instance_rows_term qs" "c=binding_rows_term cs"
+    "w=data_list_term (map Payload_Term Us)" "distinct Vs" "distinct xs" "\<forall>a\<in>set Vs. octets_formed a"
+    "term_bindings_formed (set Vs) (set xs)" "distinct Us" "\<forall>s\<in>rel_dom (set rs). octets_formed s"
+    "instantiated_premise_rows E a (set Vs) (set xs) rs qs cs (set Us)" by blast
+  show "premise_rows_result (premise_instantiation_argument e u v b r q c w)"
+    by (rule exI[of _ E], rule exI[of _ e], rule exI[of _ a], rule exI[of _ Vs], rule exI[of _ xs], rule exI[of _ rs], rule exI[of _ qs], rule exI[of _ cs], rule exI[of _ Us]) (use parts source in auto)
+qed
+
+lemma premise_rows_result_on_context:
+  assumes source: "environment_value_presents E e"
+  shows "premise_rows_result (premise_instantiation_argument e (use_data_term u)
+      (data_list_term (map Payload_Term Vs)) (binding_rows_term xs) r q c w) \<longleftrightarrow>
+    distinct Vs \<and> distinct xs \<and> (\<forall>a\<in>set Vs. octets_formed a) \<and> term_bindings_formed (set Vs) (set xs) \<and>
+    (\<exists>rs qs cs Us. r=data_list_term (map address_pair_data rs) \<and> q=call_instance_rows_term qs \<and>
+      c=binding_rows_term cs \<and> w=data_list_term (map Payload_Term Us) \<and> distinct Us \<and>
+      (\<forall>s\<in>rel_dom (set rs). octets_formed s) \<and> instantiated_premise_rows E u (set Vs) (set xs) rs qs cs (set Us))"
+  by (subst premise_rows_result_at_source[OF source],
+    simp only: binding_rows_term_injective inj_eq[OF use_data_term_injective] factor_term.inject)
+    (auto simp: data_list_term_injective injective_mapped_lists[OF payload_term_inj])
+
+section \<open>Three ordinary clauses preserve the two operand roles\<close>
+
+definition premise_rows_nil_schema :: "(nat,nat,nat) factor_schema" where
+  "premise_rows_nil_schema=data_rule
+    (premise_instantiation_pattern data_x data_y data_z data_w
+      (Pattern_Payload []) (Pattern_Payload []) (Pattern_Payload []) (Pattern_Payload []))
+    {(0,26,data_x),(1,19,data_y),(2,52,Pattern_Pair data_z data_w)}"
+
+definition premise_rows_call_schema :: "(nat,nat,nat) factor_schema" where
+  "premise_rows_call_schema=data_rule
+    (premise_instantiation_pattern data_x data_y data_z data_w
+      (Pattern_Pair (Pattern_Pair (Pattern_Variable 4) (Pattern_Variable 5)) (Pattern_Variable 6))
+      (Pattern_Pair (Pattern_Pair (Pattern_Variable 4) (Pattern_Pair (Pattern_Variable 7) (Pattern_Variable 8)))
+        (Pattern_Variable 9)) (Pattern_Variable 10) (Pattern_Variable 11))
+    {(0,57,prospective_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 5)
+       (Pattern_Variable 7) (Pattern_Variable 8) (Pattern_Variable 12) (Pattern_Variable 14) (Pattern_Variable 15)),
+     (1,63,premise_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 6)
+       (Pattern_Variable 9) (Pattern_Variable 10) (Pattern_Variable 13)),
+     (2,48,collection_join_pattern (Pattern_Variable 12) (Pattern_Variable 13) (Pattern_Variable 11)),
+     (3,1,Pattern_Variable 11),(4,1,data_list_pattern [Pattern_Variable 4])}"
+
+definition premise_rows_material_schema :: "(nat,nat,nat) factor_schema" where
+  "premise_rows_material_schema=data_rule
+    (premise_instantiation_pattern data_x data_y data_z data_w
+      (Pattern_Pair (Pattern_Pair (Pattern_Variable 4) (Pattern_Variable 5)) (Pattern_Variable 6))
+      (Pattern_Variable 7)
+      (Pattern_Pair (Pattern_Pair (Pattern_Variable 4)
+        (Pattern_Pair (Pattern_Variable 10) (Pattern_Pair (Pattern_Variable 11)
+          (Pattern_Pair (Pattern_Variable 12) (Pattern_Pair (Pattern_Variable 13) (Pattern_Variable 14))))))
+        (Pattern_Variable 8)) (Pattern_Variable 9))
+    {(0,62,material_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 5)
+       (Pattern_Variable 10) (Pattern_Variable 11) (Pattern_Variable 12) (Pattern_Variable 13) (Pattern_Variable 14)
+       (Pattern_Variable 15) (Pattern_Variable 17) (Pattern_Variable 18)),
+     (1,63,premise_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 6)
+       (Pattern_Variable 7) (Pattern_Variable 8) (Pattern_Variable 16)),
+     (2,48,collection_join_pattern (Pattern_Variable 15) (Pattern_Variable 16) (Pattern_Variable 9)),
+     (3,1,Pattern_Variable 9),(4,1,data_list_pattern [Pattern_Variable 4])}"
+
+definition premise_rows_clauses :: "(nat \<times> (nat,nat,nat) factor_schema) set" where
+  "premise_rows_clauses={(0,premise_rows_nil_schema),(1,premise_rows_call_schema),(2,premise_rows_material_schema)}"
+
+definition premise_rows_system :: "(nat,nat,nat,nat) schema_system" where
+  "premise_rows_system=add_view_definition material_instantiation_system 63 data_x premise_rows_clauses"
+
+lemma premise_rows_system_formed [simp]: "schema_system_formed premise_rows_system"
+  unfolding premise_rows_system_def
+  by (rule add_recursive_definition_formed[OF material_instantiation_system_formed])
+    (auto simp: premise_rows_clauses_def premise_rows_nil_schema_def premise_rows_call_schema_def premise_rows_material_schema_def
+      schema_formed_def schema_dependencies_def single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma premise_rows_definitions [simp]:
+  "system_definitions premise_rows_system=insert 63 (system_definitions material_instantiation_system)"
+  by (simp add: premise_rows_system_def)
+
+lemma premise_rows_call:
+  "schema_call_formed premise_rows_system d t \<longleftrightarrow> d\<in>system_definitions premise_rows_system \<and> term_formed t"
+  using added_variable_calls[OF material_instantiation_system_formed
+    premise_rows_system_formed[unfolded premise_rows_system_def] material_instantiation_call]
+  by (simp only: premise_rows_system_def[symmetric])
+
+lemma premise_rows_old_meaning:
+  assumes "d\<in>system_definitions material_instantiation_system"
+  shows "(d,t)\<in>positive_meaning premise_rows_system \<longleftrightarrow> (d,t)\<in>positive_meaning material_instantiation_system"
+  using added_definition_preserves_old(2)[OF material_instantiation_system_formed
+    premise_rows_system_formed[unfolded premise_rows_system_def], of d t] assms
+  by (auto simp: premise_rows_system_def)
+
+lemma premise_rows_clause [simp]:
+  "((63,c),S)\<in>system_clauses premise_rows_system \<longleftrightarrow> (c,S)\<in>premise_rows_clauses"
+proof -
+  have owned: "((d,c),S)\<in>system_clauses material_instantiation_system \<Longrightarrow>
+    d\<in>system_definitions material_instantiation_system" for d c S
+    using material_instantiation_system_formed unfolding schema_system_formed_def by blast
+  have absent: "((63,c),S)\<notin>system_clauses material_instantiation_system" by (auto dest: owned)
+  show ?thesis using absent by (simp add: premise_rows_system_def)
+qed
+
+lemma premise_rows_vector_meaning:
+  assumes "d\<in>system_definitions vector_instantiation_system"
+  shows "(d,t)\<in>positive_meaning premise_rows_system \<longleftrightarrow> (d,t)\<in>positive_meaning vector_instantiation_system"
+  using premise_rows_old_meaning[of d t] material_instantiation_old_meaning[of d t]
+    record_instantiation_old_meaning[OF assms, of t] assms by auto
+
+lemma premise_rows_components:
+  "(57,t)\<in>positive_meaning premise_rows_system \<longleftrightarrow> (57,t)\<in>positive_meaning prospective_instantiation_system"
+  "(62,t)\<in>positive_meaning premise_rows_system \<longleftrightarrow> (62,t)\<in>positive_meaning material_instantiation_system"
+  "(52,t)\<in>positive_meaning premise_rows_system \<longleftrightarrow> (52,t)\<in>positive_meaning binding_admission_system"
+  "(48,t)\<in>positive_meaning premise_rows_system \<longleftrightarrow> (48,t)\<in>positive_meaning data_union_system"
+  "(1,t)\<in>positive_meaning premise_rows_system \<longleftrightarrow> (1,t)\<in>positive_meaning distinct_payloads_system"
+  "(26,t)\<in>positive_meaning premise_rows_system \<longleftrightarrow> (26,t)\<in>positive_meaning environment_admission_system"
+  "(19,t)\<in>positive_meaning premise_rows_system \<longleftrightarrow> (19,t)\<in>positive_meaning coordinate_admission_system"
+  using premise_rows_vector_meaning[of 57 t] vector_instantiation_old_meaning[of 57 t]
+    row_values_old_meaning[of 57 t] application_reading_old_meaning[of 57 t]
+    premise_rows_old_meaning[of 62 t] premise_rows_vector_meaning[of 52 t] vector_instantiation_components(2)[of t]
+    premise_rows_vector_meaning[of 48 t] vector_instantiation_components(5)[of t]
+    premise_rows_vector_meaning[of 1 t] vector_instantiation_components(7)[of t]
+    premise_rows_vector_meaning[of 26 t] vector_instantiation_components(8)[of t]
+    premise_rows_vector_meaning[of 19 t] vector_instantiation_components(9)[of t] by auto
+
+lemma premise_rows_nil_step:
+  assumes source: "(26,e)\<in>positive_meaning environment_admission_system"
+    and coordinate: "(19,u)\<in>positive_meaning coordinate_admission_system"
+    and table: "(52,Pair_Term v b)\<in>positive_meaning binding_admission_system"
+  shows "(63,premise_instantiation_argument e u v b (Payload_Term []) (Payload_Term []) (Payload_Term []) (Payload_Term []))\<in>positive_meaning premise_rows_system"
+proof -
+  have formed: "term_formed e" "term_formed u" "term_formed v" "term_formed b"
+    using schema_call_formed_target[OF positive_meaning_formed[OF source]]
+      schema_call_formed_target[OF positive_meaning_formed[OF coordinate]]
+      schema_call_formed_target[OF positive_meaning_formed[OF table]]
+    by (auto simp: material_tuple_def)
+  let ?h="\<lambda>n::nat. if n=0 then e else if n=1 then u else if n=2 then v else b"
+  have result: "(63,evaluate_pattern ?h (schema_conclusion premise_rows_nil_schema))\<in>positive_meaning premise_rows_system"
+    by (rule ordinary_positive_valuation_step[where c=0])
+      (use formed assms in \<open>auto simp: premise_rows_clauses_def premise_rows_nil_schema_def
+        schema_variables_def premise_rows_call premise_rows_components premise_rows_components[unfolded One_nat_def]
+        octets_formed_def\<close>)
+  show ?thesis using result by (simp add: premise_rows_nil_schema_def material_tuple_def)
+qed
+
+lemma premise_rows_call_step:
+  assumes first: "(57,prospective_instantiation_argument e u v b r d t hu i k)\<in>positive_meaning prospective_instantiation_system"
+    and rest: "(63,premise_instantiation_argument e u v b rs qs cs tu)\<in>positive_meaning premise_rows_system"
+    and used: "(48,collection_join_argument hu tu w)\<in>positive_meaning data_union_system"
+    and distinct: "(1,w)\<in>positive_meaning distinct_payloads_system"
+    and socket: "(1,data_list_term [s])\<in>positive_meaning distinct_payloads_system"
+  shows "(63,premise_instantiation_argument e u v b (Pair_Term (Pair_Term s r) rs)
+      (Pair_Term (Pair_Term s (Pair_Term d t)) qs) cs w)\<in>positive_meaning premise_rows_system"
+proof -
+  have formed: "term_formed e" "term_formed u" "term_formed v" "term_formed b"
+    "term_formed s" "term_formed r" "term_formed rs" "term_formed d"
+    "term_formed t" "term_formed qs" "term_formed cs" "term_formed w"
+    "term_formed hu" "term_formed tu" "term_formed i" "term_formed k"
+    using schema_call_formed_target[OF positive_meaning_formed[OF first]]
+      schema_call_formed_target[OF positive_meaning_formed[OF rest]]
+      schema_call_formed_target[OF positive_meaning_formed[OF used]]
+      schema_call_formed_target[OF positive_meaning_formed[OF distinct]]
+      schema_call_formed_target[OF positive_meaning_formed[OF socket]]
+    by (auto simp: material_tuple_def)
+  let ?h="\<lambda>n::nat. if n=0 then e else if n=1 then u else if n=2 then v else if n=3 then b
+    else if n=4 then s else if n=5 then r else if n=6 then rs else if n=7 then d
+    else if n=8 then t else if n=9 then qs else if n=10 then cs else if n=11 then w
+    else if n=12 then hu else if n=13 then tu else if n=14 then i else k"
+  have result: "(63,evaluate_pattern ?h (schema_conclusion premise_rows_call_schema))\<in>positive_meaning premise_rows_system"
+    by (rule ordinary_positive_valuation_step[where c=1])
+      (use formed assms in \<open>auto simp: premise_rows_clauses_def premise_rows_call_schema_def
+        schema_variables_def premise_rows_call premise_rows_components premise_rows_components[unfolded One_nat_def]
+        octets_formed_def\<close>)
+  show ?thesis using result by (simp add: premise_rows_call_schema_def material_tuple_def)
+qed
+
+lemma premise_rows_material_step:
+  assumes first: "(62,material_instantiation_argument e u v b r x a ed co fn hu i k)\<in>positive_meaning material_instantiation_system"
+    and rest: "(63,premise_instantiation_argument e u v b rs qs cs tu)\<in>positive_meaning premise_rows_system"
+    and used: "(48,collection_join_argument hu tu w)\<in>positive_meaning data_union_system"
+    and distinct: "(1,w)\<in>positive_meaning distinct_payloads_system"
+    and socket: "(1,data_list_term [s])\<in>positive_meaning distinct_payloads_system"
+  shows "(63,premise_instantiation_argument e u v b (Pair_Term (Pair_Term s r) rs)
+      qs (Pair_Term (Pair_Term s (material_tuple x a ed co fn)) cs) w)\<in>positive_meaning premise_rows_system"
+proof -
+  have formed: "term_formed e" "term_formed u" "term_formed v" "term_formed b"
+    "term_formed s" "term_formed r" "term_formed rs" "term_formed qs"
+    "term_formed cs" "term_formed w" "term_formed x" "term_formed a"
+    "term_formed ed" "term_formed co" "term_formed fn" "term_formed hu"
+    "term_formed tu" "term_formed i" "term_formed k"
+    using schema_call_formed_target[OF positive_meaning_formed[OF first]]
+      schema_call_formed_target[OF positive_meaning_formed[OF rest]]
+      schema_call_formed_target[OF positive_meaning_formed[OF used]]
+      schema_call_formed_target[OF positive_meaning_formed[OF distinct]]
+      schema_call_formed_target[OF positive_meaning_formed[OF socket]]
+    by (auto simp: material_tuple_def)
+  let ?h="\<lambda>n::nat. if n=0 then e else if n=1 then u else if n=2 then v else if n=3 then b
+    else if n=4 then s else if n=5 then r else if n=6 then rs else if n=7 then qs
+    else if n=8 then cs else if n=9 then w else if n=10 then x else if n=11 then a
+    else if n=12 then ed else if n=13 then co else if n=14 then fn else if n=15 then hu
+    else if n=16 then tu else if n=17 then i else k"
+  have result: "(63,evaluate_pattern ?h (schema_conclusion premise_rows_material_schema))\<in>positive_meaning premise_rows_system"
+    by (rule ordinary_positive_valuation_step[where c=2])
+      (use formed assms in \<open>auto simp: premise_rows_clauses_def premise_rows_material_schema_def
+        material_tuple_def schema_variables_def premise_rows_call premise_rows_components premise_rows_components[unfolded One_nat_def]
+        octets_formed_def\<close>)
+  show ?thesis using result by (simp add: premise_rows_material_schema_def material_tuple_def)
+qed
+
+section \<open>Exact agreement with ordered raw premise instances\<close>
+
+theorem premise_rows_sound:
+  assumes holds: "(63,z)\<in>positive_meaning premise_rows_system"
+  shows "premise_rows_result z"
+proof -
+  have result: "d=63 \<longrightarrow> premise_rows_result t" if member: "(d,t)\<in>positive_meaning premise_rows_system" for d t
+  proof (rule positive_valuation_induct[OF member])
+    fix d c S h
+    assume clause: "((d,c),S)\<in>system_clauses premise_rows_system"
+      and assignment: "\<forall>a\<in>schema_variables S. term_formed (h a)"
+      and call: "schema_call_formed premise_rows_system d (evaluate_pattern h (schema_conclusion S))"
+      and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
+        (e,evaluate_pattern h p)\<in>positive_meaning premise_rows_system \<and>
+        (e=63 \<longrightarrow> premise_rows_result (evaluate_pattern h p))"
+    have available: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
+      (e,evaluate_pattern h p)\<in>positive_meaning premise_rows_system" using support by blast
+    show "d=63 \<longrightarrow> premise_rows_result (evaluate_pattern h (schema_conclusion S))"
+    proof
+      assume "d=63"
+      then consider (nil) "S=premise_rows_nil_schema" | (call) "S=premise_rows_call_schema"
+        | (material) "S=premise_rows_material_schema"
+        using clause by (auto simp: premise_rows_clauses_def)
+      then show "premise_rows_result (evaluate_pattern h (schema_conclusion S))"
+      proof cases
+        case nil
+        have calls: "(26,h 0)\<in>positive_meaning environment_admission_system"
+          "(19,h 1)\<in>positive_meaning coordinate_admission_system"
+          "(52,Pair_Term (h 2) (h 3))\<in>positive_meaning binding_admission_system"
+          using available by (auto simp: nil premise_rows_nil_schema_def premise_rows_components)
+        obtain E where source: "environment_value_presents E (h 0)" using calls(1)
+          by (simp only: environment_admission_exact) blast
+        obtain u where coordinate: "h 1=use_data_term u" using calls(2)
+          by (simp only: coordinate_admission_exact) blast
+        obtain Vs xs where table: "h 2=data_list_term (map Payload_Term Vs)" "h 3=binding_rows_term xs"
+          "distinct Vs" "distinct xs" "\<forall>a\<in>set Vs. octets_formed a" "term_bindings_formed (set Vs) (set xs)"
+          using calls(3) by (simp only: binding_admission_exact factor_term.inject) blast
+        show ?thesis
+          by (rule exI[of _ E], rule exI[of _ "h 0"], rule exI[of _ u], rule exI[of _ Vs], rule exI[of _ xs], rule exI[of _ "[]"], rule exI[of _ "[]"], rule exI[of _ "[]"], rule exI[of _ "[]"])
+            (use source coordinate table in \<open>simp add: nil premise_rows_nil_schema_def instantiated_premise_rows.empty\<close>)
+      next
+        case call
+        have calls:
+          "(57,prospective_instantiation_argument (h 0) (h 1) (h 2) (h 3) (h 5) (h 7) (h 8) (h 12) (h 14) (h 15))
+            \<in>positive_meaning prospective_instantiation_system"
+          "(48,collection_join_argument (h 12) (h 13) (h 11))\<in>positive_meaning data_union_system"
+          "(1,h 11)\<in>positive_meaning distinct_payloads_system"
+          "(1,data_list_term [h 4])\<in>positive_meaning distinct_payloads_system"
+          using available by (auto simp: call premise_rows_call_schema_def premise_rows_components
+            premise_rows_components[unfolded One_nat_def])
+        have tail_result: "premise_rows_result (premise_instantiation_argument (h 0) (h 1) (h 2) (h 3)
+          (h 6) (h 9) (h 10) (h 13))"
+          using support by (auto simp: call premise_rows_call_schema_def)
+        obtain E u Vs xs rs qs cs Tu where source: "environment_value_presents E (h 0)"
+          and shared: "h 1=use_data_term u" "h 2=data_list_term (map Payload_Term Vs)" "h 3=binding_rows_term xs"
+          and table: "distinct Vs" "distinct xs" "\<forall>a\<in>set Vs. octets_formed a" "term_bindings_formed (set Vs) (set xs)"
+          and tail: "h 6=data_list_term (map address_pair_data rs)" "h 9=call_instance_rows_term qs"
+            "h 10=binding_rows_term cs" "h 13=data_list_term (map Payload_Term Tu)" "distinct Tu"
+            "\<forall>s\<in>rel_dom (set rs). octets_formed s" "instantiated_premise_rows E u (set Vs) (set xs) rs qs cs (set Tu)"
+          using tail_result by (simp only: factor_term.inject) blast
+        obtain r du da p Hu Is Ks where head: "h 5=Payload_Term r" "h 7=site_data_term du da"
+          "h 12=data_list_term (map Payload_Term Hu)" "h 14=data_list_term (map Payload_Term Is)"
+          "h 15=data_list_term (map Payload_Term Ks)"
+          "prospective_call_at E u (set Vs) r (du,da) p (set Is) (set Ks)"
+          "pattern_variables p=set Hu" "pattern_instance (set xs) p (h 8)"
+          using calls(1)
+          by (simp only: prospective_instantiation_at_source[OF source] shared binding_rows_term_injective
+              inj_eq[OF use_data_term_injective] factor_term.inject)
+            (auto simp: data_list_term_injective injective_mapped_lists[OF payload_term_inj])
+        obtain Us where used: "h 11=data_list_term (map Payload_Term Us)" "distinct Us"
+          using calls(3) distinct_payloads_positive_sound by blast
+        obtain s where socket: "octets_formed s" "h 4=Payload_Term s"
+          using calls(4) by (simp only: payload_recognition_exact) blast
+        have union: "set Us=set Hu\<union>set Tu"
+          using calls(2) by (simp add: head(3) tail(4) used(1) data_union_payload_lists)
+        have read: "instantiated_premise_rows E u (set Vs) (set xs) ((s,r)#rs) ((s,(du,da),h 8)#qs) cs (set Us)"
+          using instantiated_premise_rows.call[OF head(6,8) tail(7), of s] head(7) union by simp
+        show ?thesis
+          by (rule exI[of _ E], rule exI[of _ "h 0"], rule exI[of _ u], rule exI[of _ Vs], rule exI[of _ xs], rule exI[of _ "(s,r)#rs"], rule exI[of _ "(s,(du,da),h 8)#qs"], rule exI[of _ cs], rule exI[of _ Us])
+            (use source shared table tail head used socket read in \<open>auto simp: call premise_rows_call_schema_def
+              address_pair_data_def call_instance_value_def rel_dom_def\<close>)
+      next
+        case material
+        have calls:
+          "(62,material_instantiation_argument (h 0) (h 1) (h 2) (h 3) (h 5)
+            (h 10) (h 11) (h 12) (h 13) (h 14) (h 15) (h 17) (h 18))\<in>positive_meaning material_instantiation_system"
+          "(48,collection_join_argument (h 15) (h 16) (h 9))\<in>positive_meaning data_union_system"
+          "(1,h 9)\<in>positive_meaning distinct_payloads_system"
+          "(1,data_list_term [h 4])\<in>positive_meaning distinct_payloads_system"
+          using available by (auto simp: material premise_rows_material_schema_def premise_rows_components
+            premise_rows_components[unfolded One_nat_def] material_tuple_def)
+        have tail_result: "premise_rows_result (premise_instantiation_argument (h 0) (h 1) (h 2) (h 3)
+          (h 6) (h 7) (h 8) (h 16))"
+          using support by (auto simp: material premise_rows_material_schema_def)
+        obtain E u Vs xs rs qs cs Tu where source: "environment_value_presents E (h 0)"
+          and shared: "h 1=use_data_term u" "h 2=data_list_term (map Payload_Term Vs)" "h 3=binding_rows_term xs"
+          and table: "distinct Vs" "distinct xs" "\<forall>a\<in>set Vs. octets_formed a" "term_bindings_formed (set Vs) (set xs)"
+          and tail: "h 6=data_list_term (map address_pair_data rs)" "h 7=call_instance_rows_term qs"
+            "h 8=binding_rows_term cs" "h 16=data_list_term (map Payload_Term Tu)" "distinct Tu"
+            "\<forall>s\<in>rel_dom (set rs). octets_formed s" "instantiated_premise_rows E u (set Vs) (set xs) rs qs cs (set Tu)"
+          using tail_result by (simp only: factor_term.inject) blast
+        obtain r M Hu Is Ks where head: "h 5=Payload_Term r"
+          "h 15=data_list_term (map Payload_Term Hu)" "h 17=data_list_term (map Payload_Term Is)"
+          "h 18=data_list_term (map Payload_Term Ks)"
+          "native_material_at E u (set Vs) r M (set Is) (set Ks)" "material_variables M=set Hu"
+          "material_pattern_instance (set xs) M (h 10) (h 11) (h 12) (h 13) (h 14)"
+          using calls(1)
+          by (simp only: material_instantiation_at_source[OF source] shared binding_rows_term_injective
+              inj_eq[OF use_data_term_injective] factor_term.inject)
+            (auto simp: data_list_term_injective injective_mapped_lists[OF payload_term_inj])
+        obtain Us where used: "h 9=data_list_term (map Payload_Term Us)" "distinct Us"
+          using calls(3) distinct_payloads_positive_sound by blast
+        obtain s where socket: "octets_formed s" "h 4=Payload_Term s"
+          using calls(4) by (simp only: payload_recognition_exact) blast
+        have union: "set Us=set Hu\<union>set Tu"
+          using calls(2) by (simp add: head(2) tail(4) used(1) data_union_payload_lists)
+        have read: "instantiated_premise_rows E u (set Vs) (set xs) ((s,r)#rs)
+          qs ((s,material_tuple (h 10) (h 11) (h 12) (h 13) (h 14))#cs) (set Us)"
+          using instantiated_premise_rows.material[OF head(5,7) tail(7), of s] head(6) union by simp
+        show ?thesis
+          by (rule exI[of _ E], rule exI[of _ "h 0"], rule exI[of _ u], rule exI[of _ Vs], rule exI[of _ xs], rule exI[of _ "(s,r)#rs"], rule exI[of _ qs], rule exI[of _ "(s,material_tuple (h 10) (h 11) (h 12) (h 13) (h 14))#cs"], rule exI[of _ Us])
+            (use source shared table tail head used socket read in \<open>auto simp: material premise_rows_material_schema_def
+              address_pair_data_def material_tuple_def rel_dom_def\<close>)
+      qed
+    qed
+  qed
+  show ?thesis using result[OF holds] by simp
+qed
+
+theorem premise_rows_complete:
+  assumes source: "environment_value_presents E e"
+    and table: "(52,Pair_Term (data_list_term (map Payload_Term Vs)) (binding_rows_term xs))\<in>positive_meaning binding_admission_system"
+    and read: "instantiated_premise_rows E u (set Vs) (set xs) rs qs cs U"
+    and keys: "\<forall>s\<in>rel_dom (set rs). octets_formed s" and order: "distinct Us" and used: "set Us=U"
+  shows "(63,premise_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Vs)) (binding_rows_term xs)
+      (data_list_term (map address_pair_data rs)) (call_instance_rows_term qs) (binding_rows_term cs)
+      (data_list_term (map Payload_Term Us)))\<in>positive_meaning premise_rows_system"
+proof -
+  have scope: "\<forall>a\<in>set Vs. octets_formed a"
+    using table by (simp only: binding_admission_on_values; blast)
+  show ?thesis using read keys order used
+  proof (induction arbitrary: Us rule: instantiated_premise_rows.induct)
+    case empty
+    have source_call: "(26,e)\<in>positive_meaning environment_admission_system"
+      using source by (simp only: environment_admission_exact) blast
+    have use_call: "(19,use_data_term u)\<in>positive_meaning coordinate_admission_system"
+      by (simp only: coordinate_admission_exact) blast
+    have list: "Us=[]" using empty.prems by auto
+    show ?case using premise_rows_nil_step[OF source_call use_call table] by (simp add: list)
+  next
+    case (call r d p I K t rs qs cs U s)
+    have key: "octets_formed s" and tail_keys: "\<forall>s\<in>rel_dom (set rs). octets_formed s"
+      using call.prems(1) by (auto simp: rel_dom_def)
+    have head_scope: "pattern_variables p\<subseteq>set Vs" and finite: "finite I" "finite K"
+      using prospective_call_formed[OF call.hyps(1)] by auto
+    have tail_scope: "finite U" "U\<subseteq>set Vs"
+      using instantiated_premise_row_variables[OF call.hyps(3)] by auto
+    obtain Hu where hu: "distinct Hu" "set Hu=pattern_variables p" using finite_distinct_list[OF pattern_variables_finite[of p]] by blast
+    obtain Tu where tu: "distinct Tu" "set Tu=U" using finite_distinct_list[OF tail_scope(1)] by blast
+    obtain Is where interiors: "distinct Is" "set Is=I" using finite_distinct_list[OF finite(1)] by blast
+    obtain Ks where ks: "distinct Ks" "set Ks=K" using finite_distinct_list[OF finite(2)] by blast
+    have first: "(57,prospective_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Vs))
+        (binding_rows_term xs) (Payload_Term r) (site_data_term (fst d) (snd d)) t
+        (data_list_term (map Payload_Term Hu)) (data_list_term (map Payload_Term Is)) (data_list_term (map Payload_Term Ks)))
+        \<in>positive_meaning prospective_instantiation_system"
+      by (rule prospective_instantiation_complete[OF call.hyps(1) source table refl hu(1) interiors(1) ks(1) hu(2) interiors(2) ks(2) call.hyps(2)])
+    have rest: "(63,premise_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Vs))
+        (binding_rows_term xs) (data_list_term (map address_pair_data rs)) (call_instance_rows_term qs) (binding_rows_term cs)
+        (data_list_term (map Payload_Term Tu)))\<in>positive_meaning premise_rows_system"
+      by (rule call.IH[OF tail_keys tu])
+    have union: "(48,collection_join_argument (data_list_term (map Payload_Term Hu))
+        (data_list_term (map Payload_Term Tu)) (data_list_term (map Payload_Term Us)))\<in>positive_meaning data_union_system"
+      by (simp only: data_union_payload_lists) (use scope head_scope tail_scope hu tu call.prems(3) in auto)
+    have unique: "(1,data_list_term (map Payload_Term Us))\<in>positive_meaning distinct_payloads_system"
+      by (simp only: distinct_payload_list_exact) (use scope head_scope tail_scope call.prems(2,3) in auto)
+    have socket: "(1,data_list_term [Payload_Term s])\<in>positive_meaning distinct_payloads_system"
+      using key by (simp only: payload_recognition_exact; blast)
+    show ?case using premise_rows_call_step[OF first rest union unique socket]
+      by (simp add: address_pair_data_def[abs_def] call_instance_value_def)
+  next
+    case (material r M I K x a ed co fn rs qs cs U s)
+    have key: "octets_formed s" and tail_keys: "\<forall>s\<in>rel_dom (set rs). octets_formed s"
+      using material.prems(1) by (auto simp: rel_dom_def)
+    have head_scope: "material_variables M\<subseteq>set Vs" and finite: "finite I" "finite K"
+      using native_material_formed[OF material.hyps(1)] by auto
+    have tail_scope: "finite U" "U\<subseteq>set Vs"
+      using instantiated_premise_row_variables[OF material.hyps(3)] by auto
+    obtain Hu where hu: "distinct Hu" "set Hu=material_variables M"
+      using finite_distinct_list[OF material_variables_finite[of M]] by blast
+    obtain Tu where tu: "distinct Tu" "set Tu=U" using finite_distinct_list[OF tail_scope(1)] by blast
+    obtain Is where interiors: "distinct Is" "set Is=I" using finite_distinct_list[OF finite(1)] by blast
+    obtain Ks where ks: "distinct Ks" "set Ks=K" using finite_distinct_list[OF finite(2)] by blast
+    have raw: "native_material_at E u (set Vs) r M (set Is) (set Ks)"
+      using material.hyps(1) interiors(2) ks(2) by simp
+    have first: "(62,material_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Vs))
+        (binding_rows_term xs) (Payload_Term r) x a ed co fn
+        (data_list_term (map Payload_Term Hu)) (data_list_term (map Payload_Term Is)) (data_list_term (map Payload_Term Ks)))
+        \<in>positive_meaning material_instantiation_system"
+      by (rule material_instantiation_complete[OF source table raw hu(1) interiors(1) ks(1) hu(2) material.hyps(2)])
+    have rest: "(63,premise_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Vs))
+        (binding_rows_term xs) (data_list_term (map address_pair_data rs)) (call_instance_rows_term qs) (binding_rows_term cs)
+        (data_list_term (map Payload_Term Tu)))\<in>positive_meaning premise_rows_system"
+      by (rule material.IH[OF tail_keys tu])
+    have union: "(48,collection_join_argument (data_list_term (map Payload_Term Hu))
+        (data_list_term (map Payload_Term Tu)) (data_list_term (map Payload_Term Us)))\<in>positive_meaning data_union_system"
+      by (simp only: data_union_payload_lists) (use scope head_scope tail_scope hu tu material.prems(3) in auto)
+    have unique: "(1,data_list_term (map Payload_Term Us))\<in>positive_meaning distinct_payloads_system"
+      by (simp only: distinct_payload_list_exact) (use scope head_scope tail_scope material.prems(2,3) in auto)
+    have socket: "(1,data_list_term [Payload_Term s])\<in>positive_meaning distinct_payloads_system"
+      using key by (simp only: payload_recognition_exact; blast)
+    show ?case using premise_rows_material_step[OF first rest union unique socket]
+      by (simp add: address_pair_data_def[abs_def])
+  qed
+qed
+
+theorem premise_rows_exact:
+  "(63,z)\<in>positive_meaning premise_rows_system \<longleftrightarrow> premise_rows_result z"
+proof
+  show "(63,z)\<in>positive_meaning premise_rows_system \<Longrightarrow> premise_rows_result z" by (rule premise_rows_sound)
+next
+  assume "premise_rows_result z"
+  then obtain E e u Vs xs rs qs cs Us where parts:
+    "z=premise_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Vs)) (binding_rows_term xs)
+      (data_list_term (map address_pair_data rs)) (call_instance_rows_term qs) (binding_rows_term cs)
+      (data_list_term (map Payload_Term Us))"
+    "environment_value_presents E e" "distinct Vs" "distinct xs" "\<forall>a\<in>set Vs. octets_formed a"
+    "term_bindings_formed (set Vs) (set xs)" "distinct Us" "\<forall>s\<in>rel_dom (set rs). octets_formed s"
+    "instantiated_premise_rows E u (set Vs) (set xs) rs qs cs (set Us)" by blast
+  have table: "(52,Pair_Term (data_list_term (map Payload_Term Vs)) (binding_rows_term xs))\<in>positive_meaning binding_admission_system"
+    by (simp only: binding_admission_on_values) (use parts(3-6) in blast)
+  show "(63,z)\<in>positive_meaning premise_rows_system"
+    using premise_rows_complete[OF parts(2) table parts(9,8,7) refl] parts(1) by simp
+qed
+
+corollary premise_rows_on_values:
+  assumes source: "environment_value_presents E e"
+  shows "(63,premise_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Vs)) (binding_rows_term xs)
+      (data_list_term (map address_pair_data rs)) (call_instance_rows_term qs) (binding_rows_term cs)
+      (data_list_term (map Payload_Term Us)))\<in>positive_meaning premise_rows_system \<longleftrightarrow>
+    distinct Vs \<and> distinct xs \<and> (\<forall>a\<in>set Vs. octets_formed a) \<and> term_bindings_formed (set Vs) (set xs) \<and>
+    distinct Us \<and> (\<forall>s\<in>rel_dom (set rs). octets_formed s) \<and>
+    instantiated_premise_rows E u (set Vs) (set xs) rs qs cs (set Us)"
+  by (simp only: premise_rows_exact premise_rows_result_on_context[OF source];
+      simp only: call_instance_rows_term_injective binding_rows_term_injective call_instance_rows_map_injective;
+      auto simp: data_list_term_injective injective_mapped_lists[OF address_pair_data_injective]
+        injective_mapped_lists[OF payload_term_inj])
+
+corollary premise_rows_presentation_invariance:
+  assumes "environment_value_presents E e" "environment_value_presents E f"
+  shows "(63,premise_instantiation_argument e u v b r q c w)\<in>positive_meaning premise_rows_system \<longleftrightarrow>
+    (63,premise_instantiation_argument f u v b r q c w)\<in>positive_meaning premise_rows_system"
+  by (simp only: premise_rows_exact premise_rows_result_at_source[OF assms(1)] premise_rows_result_at_source[OF assms(2)])
+
+text \<open>
+  The three ordinary clauses traverse the entire input list and its final
+  boundary. Every source socket is a formed payload and is copied into exactly
+  one output part. Calls retain the actual callee use, address, and substituted
+  argument; material rows retain the existing five-operand tuple. The used
+  variables form one complete distinct membership union.
+
+  The row operation preserves repeated source rows and imposes no global
+  interior separation. Complete family formation is supplied by the next
+  definition. Empty rows require the complete environment, use coordinate, and
+  substitution table, without requiring an artifact at that use. Both kinds
+  of nonempty row obtain their source reading from the existing child entry.
+  Every input term has the stated exact contract, and all previous meanings
+  remain unchanged.
+\<close>
+
+end

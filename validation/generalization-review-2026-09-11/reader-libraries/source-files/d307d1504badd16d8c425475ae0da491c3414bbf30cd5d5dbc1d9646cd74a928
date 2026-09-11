@@ -1,0 +1,382 @@
+theory Factor_Data_Collection_Operations
+  imports "Finite_Investigation_a24c220cc9c60a2a4f495caf.Factor_Data_List_Operations"
+begin
+
+section \<open>Union compares membership in both directions\<close>
+
+definition data_union_schema :: "(nat,nat,nat) factor_schema" where
+  "data_union_schema=data_rule (collection_join_pattern data_x data_y data_z)
+    {(0,46,collection_join_pattern data_x data_y data_w),
+     (1,47,Pattern_Pair data_w data_z),(2,47,Pattern_Pair data_z data_w)}"
+
+definition data_union_system :: "(nat,nat,nat,nat) schema_system" where
+  "data_union_system=add_view_definition data_subset_system 48 data_x {(0,data_union_schema)}"
+
+interpretation data_union_view: positive_view data_subset_system 48 data_x "{(0,data_union_schema)}"
+  by (rule positive_view.intro)
+    (auto simp: data_union_schema_def schema_formed_def schema_dependencies_def
+      single_valued_def rel_dom_def rel_ran_def)
+
+lemma data_union_system_formed [simp]: "schema_system_formed data_union_system"
+  using data_union_view.formed by (simp only: data_union_system_def)
+
+lemma data_union_definitions [simp]:
+  "system_definitions data_union_system=insert 48 (system_definitions data_subset_system)"
+  by (simp add: data_union_system_def)
+
+lemma data_union_call:
+  "schema_call_formed data_union_system d t \<longleftrightarrow>
+    d\<in>system_definitions data_union_system \<and> term_formed t"
+  using added_variable_calls[OF data_subset_system_formed
+    data_union_system_formed[unfolded data_union_system_def] data_subset_call]
+  by (simp only: data_union_system_def[symmetric])
+
+lemma data_union_old_meaning:
+  assumes "d\<in>system_definitions data_subset_system"
+  shows "(d,t)\<in>positive_meaning data_union_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning data_subset_system"
+  using data_union_view.old_meaning[OF assms, of t] by (simp only: data_union_system_def)
+
+lemma data_union_clause [simp]:
+  "((48,c),S)\<in>system_clauses data_union_system \<longleftrightarrow> (c,S)\<in>{(0,data_union_schema)}"
+  using data_union_view.no_old_clause[of c S] by (auto simp: data_union_system_def)
+
+lemma data_union_components:
+  "(46,t)\<in>positive_meaning data_union_system \<longleftrightarrow> (46,t)\<in>positive_meaning data_append_system"
+  "(47,t)\<in>positive_meaning data_union_system \<longleftrightarrow> (47,t)\<in>positive_meaning data_subset_system"
+  using data_union_old_meaning[of 46 t] data_subset_components(3)[of t]
+    data_union_old_meaning[of 47 t] by auto
+
+lemma data_union_valuation:
+  "(48,t)\<in>positive_meaning data_union_system \<longleftrightarrow>
+    (\<exists>h::nat\<Rightarrow>factor_term. (\<forall>i\<in>{0,1,2,3}. term_formed (h i)) \<and>
+      t=collection_join_argument (h 0) (h 1) (h 2) \<and>
+      (46,collection_join_argument (h 0) (h 1) (h 3))\<in>positive_meaning data_append_system \<and>
+      (47,Pair_Term (h 3) (h 2))\<in>positive_meaning data_subset_system \<and>
+      (47,Pair_Term (h 2) (h 3))\<in>positive_meaning data_subset_system)"
+  by (subst ordinary_positive_entry_valuation)
+    (auto simp: data_union_schema_def schema_variables_def data_union_call data_union_components)
+
+lemma data_union_fields:
+  "(48,t)\<in>positive_meaning data_union_system \<longleftrightarrow>
+    (\<exists>x y z w. t=collection_join_argument x y z \<and>
+      (46,collection_join_argument x y w)\<in>positive_meaning data_append_system \<and>
+      (47,Pair_Term w z)\<in>positive_meaning data_subset_system \<and>
+      (47,Pair_Term z w)\<in>positive_meaning data_subset_system)"
+proof
+  assume "(48,t)\<in>positive_meaning data_union_system"
+  then show "\<exists>x y z w. t=collection_join_argument x y z \<and>
+      (46,collection_join_argument x y w)\<in>positive_meaning data_append_system \<and>
+      (47,Pair_Term w z)\<in>positive_meaning data_subset_system \<and>
+      (47,Pair_Term z w)\<in>positive_meaning data_subset_system"
+    by (simp only: data_union_valuation) blast
+next
+  assume "\<exists>x y z w. t=collection_join_argument x y z \<and>
+      (46,collection_join_argument x y w)\<in>positive_meaning data_append_system \<and>
+      (47,Pair_Term w z)\<in>positive_meaning data_subset_system \<and>
+      (47,Pair_Term z w)\<in>positive_meaning data_subset_system"
+  then obtain x y z w where parts: "t=collection_join_argument x y z"
+    "(46,collection_join_argument x y w)\<in>positive_meaning data_append_system"
+    "(47,Pair_Term w z)\<in>positive_meaning data_subset_system"
+    "(47,Pair_Term z w)\<in>positive_meaning data_subset_system" by blast
+  have formed: "term_formed x" "term_formed y" "term_formed z" "term_formed w"
+    using schema_call_formed_target[OF positive_meaning_formed[OF parts(2)]]
+      schema_call_formed_target[OF positive_meaning_formed[OF parts(3)]] by auto
+  show "(48,t)\<in>positive_meaning data_union_system"
+    by (simp only: data_union_valuation,
+      rule exI[of _ "\<lambda>i::nat. if i=0 then x else if i=1 then y else if i=2 then z else w"])
+      (use parts formed in auto)
+qed
+
+theorem data_union_exact:
+  "(48,t)\<in>positive_meaning data_union_system \<longleftrightarrow>
+    (\<exists>xs ys zs. t=collection_join_argument (data_list_term xs) (data_list_term ys) (data_list_term zs) \<and>
+      data_elements xs \<and> data_elements ys \<and> data_elements zs \<and> set zs=set xs\<union>set ys)"
+proof
+  assume holds: "(48,t)\<in>positive_meaning data_union_system"
+  obtain x y z w where fields: "t=collection_join_argument x y z"
+    "(46,collection_join_argument x y w)\<in>positive_meaning data_append_system"
+    "(47,Pair_Term w z)\<in>positive_meaning data_subset_system"
+    "(47,Pair_Term z w)\<in>positive_meaning data_subset_system"
+    using holds by (auto simp: data_union_fields)
+  obtain xs ys where joined: "x=data_list_term xs" "y=data_list_term ys"
+    "w=data_list_term (xs@ys)" "data_elements xs" "data_elements ys"
+    using fields(2) by (auto simp: data_append_exact)
+  obtain zs where result: "z=data_list_term zs" "data_elements zs" "set (xs@ys)\<subseteq>set zs"
+    using fields(3) by (auto simp: joined data_subset_exact data_list_term_injective)
+  have reverse: "set zs\<subseteq>set (xs@ys)"
+    using fields(4) by (simp add: result joined data_subset_lists)
+  show "\<exists>xs ys zs. t=collection_join_argument (data_list_term xs) (data_list_term ys) (data_list_term zs) \<and>
+      data_elements xs \<and> data_elements ys \<and> data_elements zs \<and> set zs=set xs\<union>set ys"
+    by (intro exI[of _ xs] exI[of _ ys] exI[of _ zs])
+      (use fields(1) joined result reverse in auto)
+next
+  assume "\<exists>xs ys zs. t=collection_join_argument (data_list_term xs) (data_list_term ys) (data_list_term zs) \<and>
+      data_elements xs \<and> data_elements ys \<and> data_elements zs \<and> set zs=set xs\<union>set ys"
+  then obtain xs ys zs where parts:
+    "t=collection_join_argument (data_list_term xs) (data_list_term ys) (data_list_term zs)"
+    "data_elements xs" "data_elements ys" "data_elements zs" "set zs=set xs\<union>set ys" by blast
+  have children: "(46,collection_join_argument (data_list_term xs) (data_list_term ys) (data_list_term (xs@ys)))
+      \<in>positive_meaning data_append_system"
+    "(47,Pair_Term (data_list_term (xs@ys)) (data_list_term zs))\<in>positive_meaning data_subset_system"
+    "(47,Pair_Term (data_list_term zs) (data_list_term (xs@ys)))\<in>positive_meaning data_subset_system"
+    using parts by (auto simp: data_append_lists data_subset_lists)
+  show "(48,t)\<in>positive_meaning data_union_system"
+    using parts(1) children by (auto simp: data_union_fields)
+qed
+
+corollary data_union_lists:
+  "(48,collection_join_argument (data_list_term xs) (data_list_term ys) (data_list_term zs))
+    \<in>positive_meaning data_union_system \<longleftrightarrow>
+    data_elements xs \<and> data_elements ys \<and> data_elements zs \<and> set zs=set xs\<union>set ys"
+  by (auto simp: data_union_exact data_list_term_injective)
+
+corollary data_union_shared_member:
+  assumes "term_formed x" "self_contained_term x"
+  shows "(48,collection_join_argument (data_list_term [x]) (data_list_term [x]) (data_list_term [x]))
+    \<in>positive_meaning data_union_system"
+  by (simp only: data_union_lists) (use assms in auto)
+
+corollary data_union_payload_lists:
+  "(48,collection_join_argument (data_list_term (map Payload_Term A))
+    (data_list_term (map Payload_Term B)) (data_list_term (map Payload_Term C)))
+    \<in>positive_meaning data_union_system \<longleftrightarrow>
+    (\<forall>a\<in>set A\<union>set B\<union>set C. octets_formed a) \<and> set C=set A\<union>set B"
+  by (simp only: data_union_lists) auto
+
+section \<open>Disjointness of complete distinct payload collections\<close>
+
+definition payload_disjoint_schema :: "(nat,nat,nat) factor_schema" where
+  "payload_disjoint_schema=data_rule (Pattern_Pair data_x data_y)
+    {(0,46,collection_join_pattern data_x data_y data_z),(1,1,data_z)}"
+
+definition payload_disjoint_system :: "(nat,nat,nat,nat) schema_system" where
+  "payload_disjoint_system=add_view_definition data_union_system 49 data_x {(0,payload_disjoint_schema)}"
+
+interpretation payload_disjoint_view: positive_view data_union_system 49 data_x "{(0,payload_disjoint_schema)}"
+  by (rule positive_view.intro)
+    (auto simp: payload_disjoint_schema_def schema_formed_def schema_dependencies_def
+      single_valued_def rel_dom_def rel_ran_def)
+
+lemma payload_disjoint_system_formed [simp]: "schema_system_formed payload_disjoint_system"
+  using payload_disjoint_view.formed by (simp only: payload_disjoint_system_def)
+
+lemma payload_disjoint_definitions [simp]:
+  "system_definitions payload_disjoint_system=insert 49 (system_definitions data_union_system)"
+  by (simp add: payload_disjoint_system_def)
+
+lemma payload_disjoint_call:
+  "schema_call_formed payload_disjoint_system d t \<longleftrightarrow>
+    d\<in>system_definitions payload_disjoint_system \<and> term_formed t"
+  using added_variable_calls[OF data_union_system_formed
+    payload_disjoint_system_formed[unfolded payload_disjoint_system_def] data_union_call]
+  by (simp only: payload_disjoint_system_def[symmetric])
+
+lemma payload_disjoint_old_meaning:
+  assumes "d\<in>system_definitions data_union_system"
+  shows "(d,t)\<in>positive_meaning payload_disjoint_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning data_union_system"
+  using payload_disjoint_view.old_meaning[OF assms, of t] by (simp only: payload_disjoint_system_def)
+
+lemma payload_disjoint_clause [simp]:
+  "((49,c),S)\<in>system_clauses payload_disjoint_system \<longleftrightarrow> (c,S)\<in>{(0,payload_disjoint_schema)}"
+  using payload_disjoint_view.no_old_clause[of c S] by (auto simp: payload_disjoint_system_def)
+
+lemma payload_disjoint_components:
+  "(46,t)\<in>positive_meaning payload_disjoint_system \<longleftrightarrow> (46,t)\<in>positive_meaning data_append_system"
+  "(1,t)\<in>positive_meaning payload_disjoint_system \<longleftrightarrow> (1,t)\<in>positive_meaning distinct_payloads_system"
+  using payload_disjoint_old_meaning[of 46 t] data_union_components(1)[of t]
+    payload_disjoint_old_meaning[of 1 t] data_union_old_meaning[of 1 t]
+    data_subset_bag_meaning[of 1 t] bag_comparison_old_meaning[of 1 t]
+    data_comparison_payloads[of t] by auto
+
+lemma payload_disjoint_valuation:
+  "(49,t)\<in>positive_meaning payload_disjoint_system \<longleftrightarrow>
+    (\<exists>h::nat\<Rightarrow>factor_term. (\<forall>i\<in>{0,1,2}. term_formed (h i)) \<and>
+      t=Pair_Term (h 0) (h 1) \<and>
+      (46,collection_join_argument (h 0) (h 1) (h 2))\<in>positive_meaning data_append_system \<and>
+      (1,h 2)\<in>positive_meaning distinct_payloads_system)"
+  by (subst ordinary_positive_entry_valuation)
+    (auto simp: payload_disjoint_schema_def schema_variables_def payload_disjoint_call
+      payload_disjoint_components payload_disjoint_components[unfolded One_nat_def])
+
+lemma payload_disjoint_fields:
+  "(49,t)\<in>positive_meaning payload_disjoint_system \<longleftrightarrow>
+    (\<exists>x y w. t=Pair_Term x y \<and>
+      (46,collection_join_argument x y w)\<in>positive_meaning data_append_system \<and>
+      (1,w)\<in>positive_meaning distinct_payloads_system)"
+proof
+  assume "(49,t)\<in>positive_meaning payload_disjoint_system"
+  then show "\<exists>x y w. t=Pair_Term x y \<and>
+      (46,collection_join_argument x y w)\<in>positive_meaning data_append_system \<and>
+      (1,w)\<in>positive_meaning distinct_payloads_system"
+    by (simp only: payload_disjoint_valuation) blast
+next
+  assume "\<exists>x y w. t=Pair_Term x y \<and>
+      (46,collection_join_argument x y w)\<in>positive_meaning data_append_system \<and>
+      (1,w)\<in>positive_meaning distinct_payloads_system"
+  then obtain x y w where parts: "t=Pair_Term x y"
+    "(46,collection_join_argument x y w)\<in>positive_meaning data_append_system"
+    "(1,w)\<in>positive_meaning distinct_payloads_system" by blast
+  have formed: "term_formed x" "term_formed y" "term_formed w"
+    using schema_call_formed_target[OF positive_meaning_formed[OF parts(2)]] by auto
+  show "(49,t)\<in>positive_meaning payload_disjoint_system"
+    by (simp only: payload_disjoint_valuation,
+      rule exI[of _ "\<lambda>i::nat. if i=0 then x else if i=1 then y else w"])
+      (use parts formed in auto)
+qed
+
+theorem payload_disjoint_exact:
+  "(49,t)\<in>positive_meaning payload_disjoint_system \<longleftrightarrow>
+    (\<exists>A B. t=Pair_Term (data_list_term (map Payload_Term A)) (data_list_term (map Payload_Term B)) \<and>
+      distinct A \<and> distinct B \<and> set A\<inter>set B={} \<and> (\<forall>a\<in>set A\<union>set B. octets_formed a))"
+proof
+  assume holds: "(49,t)\<in>positive_meaning payload_disjoint_system"
+  obtain x y w where fields: "t=Pair_Term x y"
+    "(46,collection_join_argument x y w)\<in>positive_meaning data_append_system"
+    "(1,w)\<in>positive_meaning distinct_payloads_system"
+    using holds by (auto simp: payload_disjoint_fields)
+  obtain xs ys where joined: "x=data_list_term xs" "y=data_list_term ys" "w=data_list_term (xs@ys)"
+    using fields(2) by (auto simp: data_append_exact)
+  obtain C where payloads: "distinct C" "\<forall>a\<in>set C. octets_formed a" "w=data_list_term (map Payload_Term C)"
+    using distinct_payloads_positive_sound[OF fields(3)] by blast
+  have sequence: "map Payload_Term C=xs@ys"
+    using joined(3) payloads(3) by (simp add: data_list_term_injective)
+  obtain A B where split: "C=A@B" "xs=map Payload_Term A" "ys=map Payload_Term B"
+    using sequence by (auto simp: map_eq_append_conv)
+  show "\<exists>A B. t=Pair_Term (data_list_term (map Payload_Term A)) (data_list_term (map Payload_Term B)) \<and>
+      distinct A \<and> distinct B \<and> set A\<inter>set B={} \<and> (\<forall>a\<in>set A\<union>set B. octets_formed a)"
+    using fields(1) joined payloads split by auto
+next
+  assume "\<exists>A B. t=Pair_Term (data_list_term (map Payload_Term A)) (data_list_term (map Payload_Term B)) \<and>
+      distinct A \<and> distinct B \<and> set A\<inter>set B={} \<and> (\<forall>a\<in>set A\<union>set B. octets_formed a)"
+  then obtain A B where parts:
+    "t=Pair_Term (data_list_term (map Payload_Term A)) (data_list_term (map Payload_Term B))"
+    "distinct A" "distinct B" "set A\<inter>set B={}" "\<forall>a\<in>set A\<union>set B. octets_formed a" by blast
+  have joined: "(46,collection_join_argument (data_list_term (map Payload_Term A))
+    (data_list_term (map Payload_Term B)) (data_list_term (map Payload_Term (A@B))))
+    \<in>positive_meaning data_append_system"
+    using parts by (auto simp: data_append_lists)
+  have distinct: "(1,data_list_term (map Payload_Term (A@B)))\<in>positive_meaning distinct_payloads_system"
+    by (rule distinct_payloads_positive_complete) (use parts in auto)
+  show "(49,t)\<in>positive_meaning payload_disjoint_system"
+    using parts(1) joined distinct by (auto simp: payload_disjoint_fields)
+qed
+
+corollary payload_disjoint_lists:
+  "(49,Pair_Term (data_list_term (map Payload_Term A)) (data_list_term (map Payload_Term B)))
+    \<in>positive_meaning payload_disjoint_system \<longleftrightarrow>
+    distinct A \<and> distinct B \<and> set A\<inter>set B={} \<and> (\<forall>a\<in>set A\<union>set B. octets_formed a)"
+  by (auto simp: payload_disjoint_exact data_list_term_injective injective_mapped_lists[OF payload_term_inj])
+
+section \<open>One native package precedes every future operand\<close>
+
+lemma payload_disjoint_prior_entries:
+  "(45,t)\<in>positive_meaning payload_disjoint_system \<longleftrightarrow> (45,t)\<in>positive_meaning target_projection_system"
+  "(46,t)\<in>positive_meaning payload_disjoint_system \<longleftrightarrow> (46,t)\<in>positive_meaning data_append_system"
+  "(47,t)\<in>positive_meaning payload_disjoint_system \<longleftrightarrow> (47,t)\<in>positive_meaning data_subset_system"
+  "(48,t)\<in>positive_meaning payload_disjoint_system \<longleftrightarrow> (48,t)\<in>positive_meaning data_union_system"
+  using payload_disjoint_old_meaning[of 45 t] data_union_old_meaning[of 45 t]
+    data_subset_old_meaning[of 45 t] data_append_old_meaning[of 45 t]
+    payload_disjoint_components(1)[of t] payload_disjoint_old_meaning[of 47 t]
+    data_union_components(2)[of t] payload_disjoint_old_meaning[of 48 t] by auto
+
+abbreviation quotation_operation_result :: "nat \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "quotation_operation_result d t \<equiv>
+    (d=45 \<and> (\<exists>x a. t=Pair_Term (Target_Term x) a \<and> target_value_presents x a)) \<or>
+    (d=46 \<and> (\<exists>xs ys. t=collection_join_argument (data_list_term xs) (data_list_term ys)
+      (data_list_term (xs@ys)) \<and> data_elements xs \<and> data_elements ys)) \<or>
+    (d=47 \<and> (\<exists>xs ys. t=Pair_Term (data_list_term xs) (data_list_term ys) \<and>
+      data_elements xs \<and> data_elements ys \<and> set xs\<subseteq>set ys)) \<or>
+    (d=48 \<and> (\<exists>xs ys zs. t=collection_join_argument (data_list_term xs) (data_list_term ys) (data_list_term zs) \<and>
+      data_elements xs \<and> data_elements ys \<and> data_elements zs \<and> set zs=set xs\<union>set ys)) \<or>
+    (d=49 \<and> (\<exists>A B. t=Pair_Term (data_list_term (map Payload_Term A)) (data_list_term (map Payload_Term B)) \<and>
+      distinct A \<and> distinct B \<and> set A\<inter>set B={} \<and> (\<forall>a\<in>set A\<union>set B. octets_formed a)))"
+
+lemma quotation_operations_exact:
+  assumes "d\<in>{45,46,47,48,49}"
+  shows "(d,t)\<in>positive_meaning payload_disjoint_system \<longleftrightarrow> quotation_operation_result d t"
+proof -
+  consider (c45) "d=45" | (c46) "d=46" | (c47) "d=47" | (c48) "d=48" | (c49) "d=49"
+    using assms by auto
+  then show ?thesis
+  proof cases
+    case c45
+    then show ?thesis by (simp add: payload_disjoint_prior_entries target_projection_exact)
+  next
+    case c46
+    then show ?thesis by (simp add: payload_disjoint_prior_entries data_append_exact)
+  next
+    case c47
+    then show ?thesis by (simp add: payload_disjoint_prior_entries data_subset_exact)
+  next
+    case c48
+    then show ?thesis by (simp add: payload_disjoint_prior_entries data_union_exact)
+  next
+    case c49
+    then show ?thesis by (simp add: payload_disjoint_exact)
+  qed
+qed
+
+theorem native_quotation_operations:
+  "\<exists>E :: local_address option artifact_environment. \<exists>pu Q g.
+    closed_native_package_at E pu [] Q \<and> inj_on g {45::nat,46,47,48,49} \<and>
+    (\<forall>d\<in>{45,46,47,48,49}. \<forall>t. term_formed t \<longrightarrow>
+      (\<exists>F au I K. environment_formed F \<and> environment_included E F \<and> au\<notin>environment_uses E \<and>
+        native_package_at F pu [] Q \<and> native_application_at F au [] (g d) t I K \<and>
+        native_package_environment F pu []=E \<and> native_application_formed F pu [] au [] \<and>
+        (native_positive_holds F pu [] au [] \<longleftrightarrow> quotation_operation_result d t)))"
+proof -
+  obtain g :: "nat \<Rightarrow> local_address option definition_site"
+    and E :: "local_address option artifact_environment" and pu Q
+    where injective: "inj_on g (system_definitions payload_disjoint_system)"
+    and closed: "closed_native_package_at E pu [] Q"
+    and future: "\<forall>d\<in>system_definitions payload_disjoint_system. \<forall>t. term_formed t \<longrightarrow>
+      (\<exists>F au I K. environment_formed F \<and> environment_included E F \<and> au\<notin>environment_uses E \<and>
+        native_package_at F pu [] Q \<and> native_application_at F au [] (g d) t I K \<and>
+        native_package_environment F pu []=E \<and>
+        (native_application_formed F pu [] au [] \<longleftrightarrow> schema_call_formed payload_disjoint_system d t) \<and>
+        (native_positive_holds F pu [] au [] \<longleftrightarrow> (d,t)\<in>positive_meaning payload_disjoint_system) \<and>
+        (\<forall>v\<in>environment_uses E. \<forall>R. artifact_at F v R \<longleftrightarrow> artifact_at E v R) \<and>
+        (\<forall>v\<in>environment_uses E. \<forall>k w. binds_slot F v k w \<longleftrightarrow> binds_slot E v k w))"
+    using compiled_program_future_applications[OF payload_disjoint_system_formed] by blast
+  have sites: "inj_on g {45,46,47,48,49}" by (rule inj_on_subset[OF injective]) auto
+  show ?thesis
+  proof (rule exI[of _ E], rule exI[of _ pu], rule exI[of _ Q], rule exI[of _ g], intro conjI ballI allI impI)
+    show "closed_native_package_at E pu [] Q" by (rule closed)
+    show "inj_on g {45,46,47,48,49}" by (rule sites)
+  next
+    fix d :: nat and t :: factor_term
+    assume selected: "d\<in>{45,46,47,48,49}" and tf: "term_formed t"
+    have member: "d\<in>system_definitions payload_disjoint_system" using selected by auto
+    obtain F au I K where parts: "environment_formed F" "environment_included E F" "au\<notin>environment_uses E"
+      "native_package_at F pu [] Q" "native_application_at F au [] (g d) t I K"
+      "native_package_environment F pu []=E"
+      "native_application_formed F pu [] au [] \<longleftrightarrow> schema_call_formed payload_disjoint_system d t"
+      "native_positive_holds F pu [] au [] \<longleftrightarrow> (d,t)\<in>positive_meaning payload_disjoint_system"
+      using future[rule_format, OF member tf] by blast
+    show "\<exists>F au I K. environment_formed F \<and> environment_included E F \<and> au\<notin>environment_uses E \<and>
+      native_package_at F pu [] Q \<and> native_application_at F au [] (g d) t I K \<and>
+      native_package_environment F pu []=E \<and> native_application_formed F pu [] au [] \<and>
+      (native_positive_holds F pu [] au [] \<longleftrightarrow> quotation_operation_result d t)"
+      by (rule exI[of _ F], rule exI[of _ au], rule exI[of _ I], rule exI[of _ K])
+        (use parts tf member quotation_operations_exact[OF selected] in \<open>auto simp: payload_disjoint_call\<close>)
+  qed
+qed
+
+text \<open>
+  Union relates complete data lists by membership. It permits shared elements
+  and every output order, including repeated output entries. A caller needing
+  a distinct enumeration must separately admit it through the existing
+  distinct-payload definition. The disjointness entry admits two such
+  enumerations and requires their concatenation to remain distinct. It
+  therefore checks separation without imposing separation on a union's inputs.
+
+  These operations prepare quotation composition: child interiors must be
+  separate, while external slots may be shared. Their five distinct native
+  sites are fixed before arbitrary future formed operands, and each call
+  preserves the canonical program environment. Recursive quotation itself
+  remains a separate derived reader.
+\<close>
+
+end

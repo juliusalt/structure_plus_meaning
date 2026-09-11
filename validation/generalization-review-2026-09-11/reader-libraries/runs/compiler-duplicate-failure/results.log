@@ -1,0 +1,38 @@
+/tmp/native-investigation-report-diagnostic-compilation12/export/Native_Investigation_Report_Diagnostic_compilation12.Factor_Reasoning_Execution/code/native_reasoning.ML:380: warning: Matches are not exhaustive.
+Found near
+  fun
+     less_eq_set A_ (... ...) ... = list_all (fn ...) xs |
+        less_eq_set A_ ... = ... ... ys |
+        less_eq_set ... = false
+/tmp/native-investigation-report-diagnostic-compilation12/export/Native_Investigation_Report_Diagnostic_compilation12.Factor_Reasoning_Execution/code/native_reasoning.ML:390: warning: Pattern 3 is redundant.
+Found near
+  fun
+     equal_boola false p = not p |
+        equal_boola true ... = p |
+        equal_boola ... = ... ... |
+        equal_boola ... = ...
+/tmp/native-investigation-report-diagnostic-compilation12/export/Native_Investigation_Report_Diagnostic_compilation12.Factor_Reasoning_Execution/code/native_reasoning.ML:391: warning: Pattern 4 is redundant.
+Found near
+  fun
+     equal_boola false p = not p |
+        equal_boola true ... = p |
+        equal_boola ... = ... ... |
+        equal_boola ... = ...
+/tmp/native-investigation-report-diagnostic-compilation12/export/Native_Investigation_Report_Diagnostic_compilation12.Factor_Reasoning_Execution/code/native_reasoning.ML:639: warning: Matches are not exhaustive. Found near fun bex (Set xs) p = list_ex p xs
+/tmp/native-investigation-report-diagnostic-compilation12/export/Native_Investigation_Report_Diagnostic_compilation12.Factor_Reasoning_Execution/code/native_reasoning.ML:647: warning: Matches are not exhaustive.
+Found near
+  fun nth (x :: xs) n = (if ... ... zero_nata then x else ... ... (... ...))
+/tmp/native-investigation-report-diagnostic-compilation12/export/Native_Investigation_Report_Diagnostic_compilation12.Factor_Reasoning_Execution/code/native_reasoning.ML:650: warning: Matches are not exhaustive. Found near fun ball (Set xs) p = list_all p xs
+/tmp/native-investigation-report-diagnostic-compilation12/export/Native_Investigation_Report_Diagnostic_compilation12.Factor_Reasoning_Execution/code/native_reasoning.ML:666: warning: Matches are not exhaustive.
+Found near fun image f (... ...) = Set (... ... xs)
+/tmp/native-investigation-report-diagnostic-compilation12/export/Native_Investigation_Report_Diagnostic_compilation12.Factor_Reasoning_Execution/code/native_reasoning.ML:677: warning: Matches are not exhaustive.
+Found near fun card A_ (... ...) = size_list (... ... xs)
+/tmp/native-investigation-report-diagnostic-compilation12/export/Native_Investigation_Report_Diagnostic_compilation12.Factor_Reasoning_Execution/code/native_reasoning.ML:687: warning: Matches are not exhaustive.
+Found near fun filter p (... ...) = Set (... ... xs)
+/tmp/native-investigation-report-diagnostic-compilation12/export/Native_Investigation_Report_Diagnostic_compilation12.Factor_Reasoning_Execution/code/native_reasoning.ML:708: warning: Matches are not exhaustive.
+Found near fun sup_seta A_ (... ...) = ... ... xs bot_set
+/tmp/native-investigation-report-diagnostic-compilation12/export/Native_Investigation_Report_Diagnostic_compilation12.Factor_Reasoning_Execution/code/native_reasoning.ML:716: warning: Matches are not exhaustive. Found near fun the_elem (Set [...]) = x
+/tmp/native-investigation-report-diagnostic-compilation12/export/Native_Investigation_Report_Diagnostic_compilation12.Factor_Reasoning_Execution/code/native_reasoning.ML:812: warning: Matches are not exhaustive.
+Found near
+  fun sorted_list_of_set (A1_, ...) (... ...) = ... ... (fn ...) (... ... xs)
+Exception- Match raised

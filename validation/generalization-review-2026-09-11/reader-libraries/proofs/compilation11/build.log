@@ -1,0 +1,15 @@
+Running Native_Investigation_Report_Diagnostic_compilation11 ...
+Native_Investigation_Report_Diagnostic_compilation11 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_compilation11")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_compilation11.Factor_Reasoning_Execution" (unresolved "Native_Investigation_Report_Diagnostic_compilation11.Factor_Inference_Reader_Compilation")
+*** Wellsortedness error
+*** (in code equation finite_object_of ?r ≡
+***                   THE C.
+***                      equal_structured_object_ext_inst.equal_structured_object_ext
+***                       (decode_finite_object C) ?r,
+*** with dependency "inference_reader_construction_library" -> "compiled_binding_record_schema" -> "finite_pattern_of" -> "finite_target_of" -> "finite_object_of"):
+*** Type ('a, 'b) finite_structured_object not of sort enum
+*** No type arity finite_structured_object_ext ::
+***                 enum
+*** At command "export_code" (line 67 of "/tmp/native-investigation-report-diagnostic-compilation11/theories/Factor_Inference_Reader_Compilation.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_compilation11
+0:02:05 elapsed time, 0:04:45 cpu time, factor 2.27

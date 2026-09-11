@@ -12,12 +12,16 @@ Related reads, changes, and checks are prepared in complete batches; content
 quality governs their scope. The [current review](GENERALIZATION_REVIEW.md) and
 [reasoning inventory](REASONING_REUSE.md) record evidence and remaining gaps.
 
-The current 787-theory session passes. Native local readers connect an actual
+The current 794-theory session passes. Native local readers connect an actual
 inference node's bindings to its symbolic replacement record and complete
 target report. A workflow adequacy investigation exposed a construction-reuse
 gap; bounded generation now feeds its own results into further construction
-while preserving their evidence requirements. The expanded 64-case family and
-the original 53-case family pass with complete report reconstruction. Coverage
+while preserving their evidence requirements. A proved entry abstraction now
+identifies construction goals that no amount of extra depth can settle with a
+given library. Its execution identifies the missing reader constructors, whose
+finite schemas and complete premise lists now come from the actual native
+definitions. The 65-case coverage and 50-case compilation families pass,
+including the repair of a runtime failure on repeated encodings. Coverage
 of every development decision, whole native symbolic-argument admission, and
 mathematical-proof admission remain open.
 

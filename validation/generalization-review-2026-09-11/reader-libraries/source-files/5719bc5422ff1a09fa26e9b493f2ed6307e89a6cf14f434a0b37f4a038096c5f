@@ -1,0 +1,236 @@
+theory RRA_Finite_Artifacts
+  imports "Finite_Investigation_a24c220cc9c60a2a4f495caf.RRA_Exact" "HOL-Library.Multiset" "HOL-Library.FSet"
+begin
+
+section \<open>Complete finite input values\<close>
+
+record ('a,'v) finite_opaque_basis =
+  finite_bag :: "('a \<times> 'v) multiset"
+  finite_bindings :: "('a \<times> 'v) fset"
+
+definition decode_finite_basis ::
+  "('a,'v) finite_opaque_basis \<Rightarrow> ('a,'v) opaque_basis" where
+  "decode_finite_basis D =
+    \<lparr>bag_count = count (finite_bag D),
+     functional_bindings = fset (finite_bindings D)\<rparr>"
+
+definition finite_relation_functional :: "('a \<times> 'b) fset \<Rightarrow> bool" where
+  "finite_relation_functional F \<longleftrightarrow>
+    fBall F (\<lambda>x. fBall F (\<lambda>y. fst x = fst y \<longrightarrow> snd x = snd y))"
+
+lemma finite_relation_functional_correct:
+  "finite_relation_functional F \<longleftrightarrow> single_valued (fset F)"
+  by (auto simp: finite_relation_functional_def single_valued_def)
+
+definition finite_basis_formed ::
+  "'a fset \<Rightarrow> ('a,'v) finite_opaque_basis \<Rightarrow> bool" where
+  "finite_basis_formed U D \<longleftrightarrow>
+    finite_relation_functional (finite_bindings D) \<and>
+    (\<forall>x\<in>set_mset (finite_bag D). fst x |\<in>| U) \<and>
+    fBall (finite_bindings D) (\<lambda>x. fst x |\<in>| U)"
+
+lemma finite_basis_support [simp]:
+  "bag_support (decode_finite_basis D) = set_mset (finite_bag D)"
+  by (auto simp: bag_support_def decode_finite_basis_def count_eq_zero_iff)
+
+lemma decode_finite_basis_values [simp]:
+  "basis_values (decode_finite_basis D) =
+    snd ` (set_mset (finite_bag D) \<union> fset (finite_bindings D))"
+  by (simp add: basis_values_def decode_finite_basis_def
+      bag_support_def count_eq_zero_iff)
+
+lemma finite_basis_formed_correct:
+  "finite_basis_formed U D \<longleftrightarrow>
+    basis_formed (fset U) (decode_finite_basis D)"
+  by (auto simp: finite_basis_formed_def basis_formed_def
+      finite_relation_functional_correct decode_finite_basis_def
+      bag_support_def count_eq_zero_iff)
+
+lemma decode_finite_basis_injective [simp]:
+  "decode_finite_basis D = decode_finite_basis E \<longleftrightarrow> D = E"
+  by (cases D; cases E)
+     (simp add: basis_identity decode_finite_basis_def count_inject fset_inject)
+
+theorem finite_basis_representation:
+  assumes "basis_formed U D"
+  shows "\<exists>C. decode_finite_basis C = D"
+proof -
+  have bag: "finite {x. 0 < bag_count D x}"
+    using assms by (simp add: basis_formed_def bag_support_def)
+  have bindings: "finite (functional_bindings D)"
+    using assms by (simp add: basis_formed_def)
+  let ?C = "\<lparr>finite_bag = Abs_multiset (bag_count D),
+    finite_bindings = Abs_fset (functional_bindings D)\<rparr>"
+  have "decode_finite_basis ?C = D"
+    using count_Abs_multiset[OF bag] Abs_fset_inverse[of "functional_bindings D"] bindings
+    by (simp add: decode_finite_basis_def basis_identity)
+  then show ?thesis by blast
+qed
+
+record 'a finite_rra_structure =
+  finite_carrier :: "'a fset"
+  finite_incidence :: "('a \<times> 'a \<times> 'a) fset"
+
+definition decode_finite_structure ::
+  "'a finite_rra_structure \<Rightarrow> 'a rra_structure" where
+  "decode_finite_structure S =
+    \<lparr>rra_carrier = fset (finite_carrier S),
+     rra_incidence = fset (finite_incidence S)\<rparr>"
+
+definition finite_structure_formed :: "'a finite_rra_structure \<Rightarrow> bool" where
+  "finite_structure_formed S \<longleftrightarrow>
+    fBall (finite_incidence S) (\<lambda>(r,p,x).
+      r |\<in>| finite_carrier S \<and> p |\<in>| finite_carrier S \<and>
+      x |\<in>| finite_carrier S)"
+
+lemma finite_structure_formed_correct:
+  "finite_structure_formed S \<longleftrightarrow> rra_formed (decode_finite_structure S)"
+  by (auto simp: finite_structure_formed_def rra_formed_def
+      decode_finite_structure_def)
+
+lemma decode_finite_structure_injective [simp]:
+  "decode_finite_structure S = decode_finite_structure T \<longleftrightarrow> S = T"
+  by (cases S; cases T)
+     (simp add: rra_identity decode_finite_structure_def fset_inject)
+
+theorem finite_structure_representation:
+  assumes "rra_formed S"
+  shows "\<exists>C. decode_finite_structure C = S"
+proof -
+  have carrier: "finite (rra_carrier S)" and incidence: "finite (rra_incidence S)"
+    using assms by (auto simp: rra_formed_def)
+  let ?C = "\<lparr>finite_carrier = Abs_fset (rra_carrier S),
+    finite_incidence = Abs_fset (rra_incidence S)\<rparr>"
+  have "decode_finite_structure ?C = S"
+    using Abs_fset_inverse[of "rra_carrier S"]
+      Abs_fset_inverse[of "rra_incidence S"] carrier incidence
+    by (simp add: decode_finite_structure_def rra_identity)
+  then show ?thesis by blast
+qed
+
+record ('a,'v) finite_structured_object =
+  finite_structure :: "'a finite_rra_structure"
+  finite_data :: "('a,'v) finite_opaque_basis"
+
+definition decode_finite_object ::
+  "('a,'v) finite_structured_object \<Rightarrow> ('a,'v) structured_object" where
+  "decode_finite_object C =
+    \<lparr>object_structure = decode_finite_structure (finite_structure C),
+     object_data = decode_finite_basis (finite_data C)\<rparr>"
+
+definition finite_object_formed :: "('a,'v) finite_structured_object \<Rightarrow> bool" where
+  "finite_object_formed C \<longleftrightarrow>
+    finite_structure_formed (finite_structure C) \<and>
+    finite_basis_formed (finite_carrier (finite_structure C)) (finite_data C)"
+
+lemma decode_finite_object_carrier [simp]:
+  "rra_carrier (object_structure (decode_finite_object C)) = fset (finite_carrier (finite_structure C))"
+  by (simp add: decode_finite_object_def decode_finite_structure_def)
+
+lemma finite_object_formed_correct:
+  "finite_object_formed C \<longleftrightarrow> object_formed (decode_finite_object C)"
+  by (simp add: finite_object_formed_def object_formed_def decode_finite_object_def
+      finite_structure_formed_correct finite_basis_formed_correct decode_finite_structure_def)
+
+lemma decode_finite_object_injective [simp]:
+  "decode_finite_object C = decode_finite_object D \<longleftrightarrow> C = D"
+  by (cases C; cases D) (simp add: object_identity decode_finite_object_def)
+
+theorem finite_object_representation:
+  assumes "object_formed R"
+  shows "\<exists>C. decode_finite_object C = R"
+proof -
+  obtain S where s: "decode_finite_structure S = object_structure R"
+    using finite_structure_representation assms by (auto simp: object_formed_def)
+  obtain D where d: "decode_finite_basis D = object_data R"
+    using finite_basis_representation assms by (auto simp: object_formed_def)
+  have "decode_finite_object \<lparr>finite_structure = S, finite_data = D\<rparr> = R"
+    using s d by (simp add: decode_finite_object_def object_identity)
+  then show ?thesis by blast
+qed
+
+section \<open>Executable exact formation and identity\<close>
+
+type_synonym finite_exact_artifact = "(local_address,octets) finite_structured_object"
+
+definition finite_empty_artifact :: finite_exact_artifact where
+  "finite_empty_artifact =
+    \<lparr>finite_structure = \<lparr>finite_carrier = {||}, finite_incidence = {||}\<rparr>,
+     finite_data = \<lparr>finite_bag = {#}, finite_bindings = {||}\<rparr>\<rparr>"
+
+lemma decode_finite_empty_artifact [simp]:
+  "decode_finite_object finite_empty_artifact = empty_artifact"
+  by (simp add: finite_empty_artifact_def decode_finite_object_def decode_finite_structure_def
+      decode_finite_basis_def empty_artifact_def empty_basis_def fun_eq_iff)
+
+lemma decode_finite_empty_iff [simp]:
+  "decode_finite_object C = empty_artifact \<longleftrightarrow> C = finite_empty_artifact"
+  using decode_finite_object_injective[of C finite_empty_artifact] by simp
+
+definition finite_exact_formed :: "finite_exact_artifact \<Rightarrow> bool" where
+  "finite_exact_formed C \<longleftrightarrow>
+    finite_object_formed C \<and>
+    fBall (finite_carrier (finite_structure C)) octets_formed \<and>
+    (\<forall>x\<in>set_mset (finite_bag (finite_data C)). octets_formed (snd x)) \<and>
+    fBall (finite_bindings (finite_data C)) (\<lambda>x. octets_formed (snd x))"
+
+lemma finite_exact_formed_correct:
+  "finite_exact_formed C \<longleftrightarrow> exact_formed (decode_finite_object C)"
+  by (auto simp: finite_exact_formed_def exact_formed_def finite_object_formed_correct
+      decode_finite_object_def decode_finite_structure_def)
+
+definition finite_exact_equal :: "finite_exact_artifact \<Rightarrow> finite_exact_artifact \<Rightarrow> bool" where
+  "finite_exact_equal C D \<longleftrightarrow> C = D"
+
+lemma finite_exact_equal_correct:
+  "finite_exact_equal C D \<longleftrightarrow> decode_finite_object C = decode_finite_object D"
+  by (simp add: finite_exact_equal_def)
+
+theorem finite_exact_representation:
+  assumes "exact_formed R"
+  shows "\<exists>!C. finite_exact_formed C \<and> decode_finite_object C = R"
+proof -
+  obtain C where c: "decode_finite_object C = R"
+    using finite_object_representation[of R] assms by (auto simp: exact_formed_def)
+  have formed: "finite_exact_formed C"
+    using assms c finite_exact_formed_correct by blast
+  show ?thesis
+    by (rule ex1I[of _ C]) (use formed c in auto)
+qed
+
+definition finite_object_of ::
+  "('a,'v) structured_object \<Rightarrow> ('a,'v) finite_structured_object" where
+  "finite_object_of R = (THE C. decode_finite_object C = R)"
+
+lemma finite_object_of_decode [simp]:
+  "finite_object_of (decode_finite_object C) = C"
+  unfolding finite_object_of_def by (rule the_equality) auto
+
+lemma decode_finite_object_of:
+  assumes "object_formed R"
+  shows "decode_finite_object (finite_object_of R) = R"
+proof -
+  obtain C where c: "decode_finite_object C = R"
+    using finite_object_representation[OF assms] by blast
+  show ?thesis using c finite_object_of_decode[of C] by metis
+qed
+
+text \<open>
+  The unique mathematical inverse is used only to prove coverage of abstract
+  inputs. It is not an algorithm for discovering a finite support from an
+  arbitrary function, and is not included in the executable interface.
+\<close>
+
+export_code finite_exact_formed finite_exact_equal checking SML
+
+text \<open>
+  These values are complete finite inputs to an implementation. Their equality
+  recovers exact artifact equality, including all carrier occurrences, incidence,
+  attachment counts, and functional bindings. Multiset enumeration order and
+  finite-set enumeration order do not enter that equality. The check is total on
+  malformed finite values too; it does not attempt to decide equality of an
+  arbitrary HOL function supplied as input. Representation existence is a
+  separate theorem about every formed artifact in the abstract domain.
+\<close>
+
+end

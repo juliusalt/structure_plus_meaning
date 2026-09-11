@@ -1,0 +1,414 @@
+theory Factor_Substitution_Readings
+  imports "Factor_Substitution_Bindings" "Factor_Reference_Bindings"
+begin
+
+section \<open>The source schema, replacement record, and target schema remain distinct inputs\<close>
+
+definition schema_substitution_at where
+  "schema_substitution_at E u r F v q G w t \<longleftrightarrow>
+    (\<exists>S s As I K. native_schema_at E u r S \<and> distinct As \<and> set As=schema_variables S \<and>
+      pattern_record_at F v (schema_variables (schema_substitute s S)) q (substitution_row_patterns As s) I K \<and>
+      native_schema_at G w t (schema_substitute s S))"
+
+definition substitution_reading_calls where
+  "substitution_reading_calls e u r f v q g w t \<longleftrightarrow>
+    (\<exists>b xb yb xa ya i k x qs cs y ws ds.
+      (125,reference_bindings_value b xb yb)\<in>positive_meaning reference_bindings_system \<and>
+      (61,pattern_instantiation_argument f v b xb q xa b i k)\<in>positive_meaning record_instantiation_system \<and>
+      (61,pattern_instantiation_argument f v b yb q ya b i k)\<in>positive_meaning record_instantiation_system \<and>
+      (65,schema_instantiation_argument e u r xa x qs cs)\<in>positive_meaning schema_instantiation_system \<and>
+      (65,schema_instantiation_argument e u r ya y ws ds)\<in>positive_meaning schema_instantiation_system \<and>
+      (65,schema_instantiation_argument g w t xb x qs cs)\<in>positive_meaning schema_instantiation_system \<and>
+      (65,schema_instantiation_argument g w t yb y ws ds)\<in>positive_meaning schema_instantiation_system)"
+
+lemma schema_graph_observations:
+  assumes inst: "schema_instance S ((\<lambda>a. (a,h a)) ` schema_variables S) t Q"
+    and materials: "C=material_instance_relation ((\<lambda>a. (a,h a)) ` schema_variables S) (schema_material_premises S)"
+  shows "(t,(Q,C))=schema_reference_outputs h S"
+  using inst materials evaluate_schema_materials_relation[of S h]
+  by (simp add: schema_graph_instance_iff schema_reference_outputs_def)
+
+lemma record_reading_replacement_rows:
+  assumes source: "environment_value_presents F f"
+    and markers: "set xb=(\<lambda>b. (b,Payload_Term b)) ` set Bs"
+      "set yb=(\<lambda>b. (b,Target_Term (Whole_Artifact empty_artifact))) ` set Bs"
+    and first: "(61,pattern_instantiation_argument f (use_data_term v) (data_list_term (map Payload_Term Bs))
+      (binding_rows_term xb) (Payload_Term q) (binding_rows_term xs)
+      (data_list_term (map Payload_Term Bs)) i k)\<in>positive_meaning record_instantiation_system"
+    and second: "(61,pattern_instantiation_argument f (use_data_term v) (data_list_term (map Payload_Term Bs))
+      (binding_rows_term yb) (Payload_Term q) (binding_rows_term ys)
+      (data_list_term (map Payload_Term Bs)) i k)\<in>positive_meaning record_instantiation_system"
+    and rows: "distinct ys" "single_valued (set ys)"
+  shows "\<exists>As s Is Ks. distinct As \<and> set As=rel_dom (set ys) \<and> distinct Bs \<and>
+    (\<forall>a\<in>set As. octets_formed a \<and> pattern_formed (s a)) \<and>
+    (\<forall>b\<in>set Bs. octets_formed b) \<and>
+    set Bs=(\<Union>a\<in>set As. pattern_variables (s a)) \<and>
+    i=data_list_term (map Payload_Term Is) \<and> k=data_list_term (map Payload_Term Ks) \<and>
+    distinct Is \<and> distinct Ks \<and>
+    pattern_record_at F v (set Bs) q (substitution_row_patterns As s) (set Is) (set Ks) \<and>
+    xs=map (\<lambda>a. (a,evaluate_pattern Payload_Term (s a))) As \<and>
+    ys=map (\<lambda>a. (a,evaluate_pattern (\<lambda>_. Target_Term (Whole_Artifact empty_artifact)) (s a))) As"
+proof -
+  obtain ps Is Ks where left: "distinct Bs" "\<forall>b\<in>set Bs. octets_formed b"
+    "i=data_list_term (map Payload_Term Is)" "k=data_list_term (map Payload_Term Ks)"
+    "distinct Is" "distinct Ks" "pattern_record_at F v (set Bs) q ps (set Is) (set Ks)"
+    "pattern_forest_variables ps=set Bs"
+    "list_all2 (pattern_instance (set xb)) ps (map (\<lambda>(a,t). Pair_Term (Payload_Term a) t) xs)"
+    using first by (simp only: binding_rows_as_terms[of xs] record_instantiation_exact
+      record_instantiation_result_on_context[OF source] data_list_term_injective
+      injective_mapped_lists[OF payload_term_inj]) blast
+  obtain qs where right: "pattern_record_at F v (set Bs) q qs (set Is) (set Ks)"
+    "list_all2 (pattern_instance (set yb)) qs (map (\<lambda>(a,t). Pair_Term (Payload_Term a) t) ys)"
+    using second by (simp only: left(3,4) binding_rows_as_terms[of ys] record_instantiation_on_values[OF source]) blast
+  have same: "qs=ps" using pattern_record_unique[OF right(1) left(7)] by blast
+  have evaluations:
+    "map (evaluate_pattern Payload_Term) ps=map (\<lambda>(a,t). Pair_Term (Payload_Term a) t) xs"
+    "map (evaluate_pattern (\<lambda>_. Target_Term (Whole_Artifact empty_artifact))) ps=
+      map (\<lambda>(a,t). Pair_Term (Payload_Term a) t) ys"
+    using left(9) right(2) by (simp_all add: markers same graph_pattern_list_instances)
+  obtain As s where recovered: "distinct As" "set As=rel_dom (set ys)" "ps=substitution_row_patterns As s"
+    using binding_pattern_list_recovery[OF evaluations(2) rows] by blast
+  have replacements: "\<forall>a\<in>set As. octets_formed a \<and> pattern_formed (s a)"
+  proof -
+    have row_formation: "\<forall>p\<in>set (substitution_row_patterns As s). pattern_formed p"
+      using pattern_record_formed[OF left(7)] recovered(3) by auto
+    show ?thesis using row_formation by (simp only: substitution_row_formed)
+  qed
+  have scope: "set Bs=(\<Union>a\<in>set As. pattern_variables (s a))"
+    using left(8) recovered(3) by (simp add: substitution_row_variables)
+  have outputs:
+    "xs=map (\<lambda>a. (a,evaluate_pattern Payload_Term (s a))) As"
+    "ys=map (\<lambda>a. (a,evaluate_pattern (\<lambda>_. Target_Term (Whole_Artifact empty_artifact)) (s a))) As"
+    using arg_cong[OF evaluations(1), where f=data_list_term]
+      arg_cong[OF evaluations(2), where f=data_list_term]
+    by (simp_all only: recovered(3) evaluated_substitution_rows binding_rows_as_terms[symmetric]
+      binding_rows_term_injective)
+  show ?thesis by (rule exI[of _ As], rule exI[of _ s], rule exI[of _ Is], rule exI[of _ Ks])
+    (use recovered left replacements scope outputs in auto)
+qed
+
+theorem schema_substitution_readings_sound:
+  assumes source: "environment_value_presents E e" and replacement: "environment_value_presents F f"
+    and target: "environment_value_presents G g"
+    and reads: "substitution_reading_calls e (use_data_term u) (Payload_Term r)
+      f (use_data_term v) (Payload_Term q) g (use_data_term w) (Payload_Term t)"
+  shows "schema_substitution_at E u r F v q G w t"
+proof -
+  obtain b xb yb xa ya i k x qs cs y ws ds where calls:
+    "(125,reference_bindings_value b xb yb)\<in>positive_meaning reference_bindings_system"
+    "(61,pattern_instantiation_argument f (use_data_term v) b xb (Payload_Term q) xa b i k)
+      \<in>positive_meaning record_instantiation_system"
+    "(61,pattern_instantiation_argument f (use_data_term v) b yb (Payload_Term q) ya b i k)
+      \<in>positive_meaning record_instantiation_system"
+    "(65,schema_instantiation_argument e (use_data_term u) (Payload_Term r) xa x qs cs)
+      \<in>positive_meaning schema_instantiation_system"
+    "(65,schema_instantiation_argument e (use_data_term u) (Payload_Term r) ya y ws ds)
+      \<in>positive_meaning schema_instantiation_system"
+    "(65,schema_instantiation_argument g (use_data_term w) (Payload_Term t) xb x qs cs)
+      \<in>positive_meaning schema_instantiation_system"
+    "(65,schema_instantiation_argument g (use_data_term w) (Payload_Term t) yb y ws ds)
+      \<in>positive_meaning schema_instantiation_system"
+    using reads by (auto simp: substitution_reading_calls_def)
+  obtain Bs where markers:
+    "b=data_list_term (map Payload_Term Bs)"
+    "xb=binding_rows_term (map (\<lambda>a. (a,Payload_Term a)) Bs)"
+    "yb=binding_rows_term (map (\<lambda>a. (a,Target_Term (Whole_Artifact empty_artifact))) Bs)"
+    using calls(1) by (simp only: reference_bindings_exact factor_term.inject) blast
+  obtain xs S qs' cs' where first:
+    "xa=binding_rows_term xs" "qs=call_instance_rows_term qs'" "cs=binding_rows_term cs'"
+    "distinct xs" "native_schema_at E u r S" "schema_instance S (set xs) x (set qs')"
+    "set cs'=material_instance_relation (set xs) (schema_material_premises S)"
+    using calls(4) by (simp only: schema_instantiation_at_source[OF source] factor_term.inject
+      inj_eq[OF use_data_term_injective]) blast
+  obtain ys R ws' ds' where second:
+    "ya=binding_rows_term ys" "ws=call_instance_rows_term ws'" "ds=binding_rows_term ds'"
+    "distinct ys" "native_schema_at E u r R" "schema_instance R (set ys) y (set ws')"
+    "set ds'=material_instance_relation (set ys) (schema_material_premises R)"
+    using calls(5) by (simp only: schema_instantiation_at_source[OF source] factor_term.inject
+      inj_eq[OF use_data_term_injective]) blast
+  have same_source: "R=S" by (rule native_schema_unique[OF second(5) first(5)])
+  have domain: "rel_dom (set ys)=schema_variables S" and functional: "single_valued (set ys)"
+    using second(6) same_source by (auto simp: schema_instance_def term_bindings_formed_def)
+  let ?xb="map (\<lambda>a. (a,Payload_Term a)) Bs"
+  let ?yb="map (\<lambda>a. (a,Target_Term (Whole_Artifact empty_artifact))) Bs"
+  have marker_sets: "set ?xb=(\<lambda>a. (a,Payload_Term a)) ` set Bs"
+    "set ?yb=(\<lambda>a. (a,Target_Term (Whole_Artifact empty_artifact))) ` set Bs" by simp_all
+  have actual_records:
+    "(61,pattern_instantiation_argument f (use_data_term v) (data_list_term (map Payload_Term Bs))
+      (binding_rows_term ?xb) (Payload_Term q) (binding_rows_term xs)
+      (data_list_term (map Payload_Term Bs)) i k)\<in>positive_meaning record_instantiation_system"
+    "(61,pattern_instantiation_argument f (use_data_term v) (data_list_term (map Payload_Term Bs))
+      (binding_rows_term ?yb) (Payload_Term q) (binding_rows_term ys)
+      (data_list_term (map Payload_Term Bs)) i k)\<in>positive_meaning record_instantiation_system"
+    using calls(2,3) by (simp_all only: markers first(1) second(1))
+  obtain As s Is Ks where rows: "distinct As" "set As=schema_variables S" "distinct Bs"
+    "\<forall>a\<in>set As. octets_formed a \<and> pattern_formed (s a)"
+    "\<forall>b\<in>set Bs. octets_formed b"
+    "set Bs=(\<Union>a\<in>set As. pattern_variables (s a))"
+    "pattern_record_at F v (set Bs) q (substitution_row_patterns As s) (set Is) (set Ks)"
+    "xs=map (\<lambda>a. (a,evaluate_pattern Payload_Term (s a))) As"
+    "ys=map (\<lambda>a. (a,evaluate_pattern (\<lambda>_. Target_Term (Whole_Artifact empty_artifact)) (s a))) As"
+    using record_reading_replacement_rows[OF replacement marker_sets actual_records second(4) functional]
+    by (simp only: domain; elim exE conjE) (rule that; assumption)
+  obtain T where result: "native_schema_at G w t T" "schema_instance T (set ?xb) x (set qs')"
+    "set cs'=material_instance_relation (set ?xb) (schema_material_premises T)"
+    using calls(6) by (simp only: markers first(2,3) schema_instantiation_on_values[OF target]) blast
+  have other: "schema_instance T (set ?yb) y (set ws')"
+    "set ds'=material_instance_relation (set ?yb) (schema_material_premises T)"
+    using calls(7) by (simp_all only: markers second(2,3) schema_instantiation_at_schema[OF target result(1)])
+  have target_scope: "schema_variables T=set Bs"
+    using result(2) by (auto simp: schema_instance_def term_bindings_formed_def rel_dom_def)
+  have source_data: "schema_data_formed S" and target_data: "schema_data_formed T"
+    using native_schema_data_formed[OF first(5)] native_schema_data_formed[OF result(1)] by auto
+  have first_output:
+    "(x,(set qs',set cs'))=schema_reference_outputs (\<lambda>a. evaluate_pattern Payload_Term (s a)) S"
+    using schema_graph_observations[of S "\<lambda>a. evaluate_pattern Payload_Term (s a)" x "set qs'" "set cs'"]
+      first(6,7) rows(2,8) by simp
+  have second_output:
+    "(y,(set ws',set ds'))=schema_reference_outputs
+      (\<lambda>a. evaluate_pattern (\<lambda>_. Target_Term (Whole_Artifact empty_artifact)) (s a)) S"
+    using schema_graph_observations[of S
+      "\<lambda>a. evaluate_pattern (\<lambda>_. Target_Term (Whole_Artifact empty_artifact)) (s a)" y "set ws'" "set ds'"]
+      second(6,7) same_source rows(2,9) by simp
+  have target_outputs:
+    "(x,(set qs',set cs'))=schema_reference_outputs Payload_Term T"
+    "(y,(set ws',set ds'))=schema_reference_outputs (\<lambda>_. Target_Term (Whole_Artifact empty_artifact)) T"
+    using schema_graph_observations[of T Payload_Term x "set qs'" "set cs'"]
+      schema_graph_observations[of T "\<lambda>_. Target_Term (Whole_Artifact empty_artifact)" y "set ws'" "set ds'"]
+      result(2,3) other target_scope by simp_all
+  have exact: "T=schema_substitute s S"
+    using schema_substitution_two_observations[OF source_data target_data, of s]
+      rows(2,4,6) target_scope first_output second_output target_outputs by auto
+  show ?thesis unfolding schema_substitution_at_def
+    by (rule exI[of _ S], rule exI[of _ s], rule exI[of _ As], rule exI[of _ "set Is"], rule exI[of _ "set Ks"])
+      (use first(5) rows(1,2,7) result(1) exact target_scope in auto)
+qed
+
+section \<open>Every actual substitution supplies the seven complete readings\<close>
+
+lemma schema_substitution_graph_instances:
+  assumes formed: "schema_formed S" and replacements: "\<forall>a\<in>schema_variables S. pattern_formed (s a)"
+    and instance_read: "schema_instance (schema_substitute s S)
+      ((\<lambda>b. (b,h b)) ` schema_variables (schema_substitute s S)) t Q"
+  shows "schema_instance S ((\<lambda>a. (a,evaluate_pattern h (s a))) ` schema_variables S) t Q"
+    "material_instance_relation ((\<lambda>a. (a,evaluate_pattern h (s a))) ` schema_variables S)
+        (schema_material_premises S)=
+      material_instance_relation ((\<lambda>b. (b,h b)) ` schema_variables (schema_substitute s S))
+        (schema_material_premises (schema_substitute s S))"
+proof -
+  have target_formed: "schema_formed (schema_substitute s S)"
+    by (rule schema_substitute_formed[OF formed replacements])
+  have assignment_values: "\<forall>b\<in>schema_variables (schema_substitute s S). term_formed (h b)"
+    using instance_read by (simp only: schema_graph_instance_iff) blast
+  have lifted: "\<forall>a\<in>schema_variables S. term_formed (evaluate_pattern h (s a))"
+    by (rule substituted_valuation_formed[OF replacements assignment_values])
+  show "schema_instance S ((\<lambda>a. (a,evaluate_pattern h (s a))) ` schema_variables S) t Q"
+    using instance_read formed lifted by (simp add: schema_graph_instance_iff)
+  show "material_instance_relation ((\<lambda>a. (a,evaluate_pattern h (s a))) ` schema_variables S)
+        (schema_material_premises S)=
+      material_instance_relation ((\<lambda>b. (b,h b)) ` schema_variables (schema_substitute s S))
+        (schema_material_premises (schema_substitute s S))"
+    by (simp only: evaluate_schema_materials_relation[OF formed, symmetric]
+      evaluate_schema_materials_relation[OF target_formed, symmetric] evaluate_schema_materials_substitute)
+qed
+
+theorem schema_substitution_readings_complete:
+  assumes source: "environment_value_presents E e" and replacement: "environment_value_presents F f"
+    and target: "environment_value_presents G g" and actual: "schema_substitution_at E u r F v q G w t"
+  shows "substitution_reading_calls e (use_data_term u) (Payload_Term r)
+    f (use_data_term v) (Payload_Term q) g (use_data_term w) (Payload_Term t)"
+proof -
+  obtain S s As I K where raw: "native_schema_at E u r S" "distinct As" "set As=schema_variables S"
+    "pattern_record_at F v (schema_variables (schema_substitute s S)) q (substitution_row_patterns As s) I K"
+    "native_schema_at G w t (schema_substitute s S)"
+    using actual by (auto simp: schema_substitution_at_def)
+  let ?T="schema_substitute s S"
+  have formed: "schema_formed S" by (rule native_schema_formed[OF raw(1)])
+  have replacements: "\<forall>a\<in>set As. octets_formed a \<and> pattern_formed (s a)"
+  proof -
+    have row_formation: "\<forall>p\<in>set (substitution_row_patterns As s). pattern_formed p"
+      using pattern_record_formed[OF raw(4)] by blast
+    show ?thesis using row_formation by (simp only: substitution_row_formed)
+  qed
+  have finite: "finite I" "finite K" using pattern_record_formed[OF raw(4)] by auto
+  obtain Is Ks where metadata: "distinct Is" "set Is=I" "distinct Ks" "set Ks=K"
+    using finite_distinct_list[OF finite(1)] finite_distinct_list[OF finite(2)] by blast
+  obtain Bs x qs cs y ws ds where readings: "distinct Bs" "set Bs=schema_variables ?T"
+    "(65,schema_instantiation_argument g (use_data_term w) (Payload_Term t)
+      (binding_rows_term (map (\<lambda>b. (b,Payload_Term b)) Bs)) x
+      (call_instance_rows_term qs) (binding_rows_term cs))\<in>positive_meaning schema_instantiation_system"
+    "(65,schema_instantiation_argument g (use_data_term w) (Payload_Term t)
+      (binding_rows_term (map (\<lambda>b. (b,Target_Term (Whole_Artifact empty_artifact))) Bs)) y
+      (call_instance_rows_term ws) (binding_rows_term ds))\<in>positive_meaning schema_instantiation_system"
+    using native_schema_two_readings_total[OF target raw(5)] by blast
+  let ?xb="map (\<lambda>b. (b,Payload_Term b)) Bs"
+  let ?yb="map (\<lambda>b. (b,Target_Term (Whole_Artifact empty_artifact))) Bs"
+  let ?h="\<lambda>_. Target_Term (Whole_Artifact empty_artifact)"
+  let ?xa="map (\<lambda>a. (a,evaluate_pattern Payload_Term (s a))) As"
+  let ?ya="map (\<lambda>a. (a,evaluate_pattern ?h (s a))) As"
+  have first: "distinct ?xb" "distinct qs" "distinct cs"
+    "schema_instance ?T (set ?xb) x (set qs)"
+    "set cs=material_instance_relation (set ?xb) (schema_material_premises ?T)"
+    using readings(3) by (simp_all only: schema_instantiation_at_schema[OF target raw(5)])
+  have second: "distinct ?yb" "distinct ws" "distinct ds"
+    "schema_instance ?T (set ?yb) y (set ws)"
+    "set ds=material_instance_relation (set ?yb) (schema_material_premises ?T)"
+    using readings(4) by (simp_all only: schema_instantiation_at_schema[OF target raw(5)])
+  have scopes: "set Bs=(\<Union>a\<in>set As. pattern_variables (s a))"
+    using readings(2) raw(3) by (simp add: schema_substitute_variables)
+  have variables: "\<forall>b\<in>set Bs. octets_formed b"
+    using native_schema_variables_formed[OF raw(5)] readings(2) by simp
+  have tables: "(125,reference_bindings_value (data_list_term (map Payload_Term Bs))
+    (binding_rows_term ?xb) (binding_rows_term ?yb))\<in>positive_meaning reference_bindings_system"
+    by (rule reference_bindings_complete[OF variables])
+  have record_reads:
+    "(61,pattern_instantiation_argument f (use_data_term v) (data_list_term (map Payload_Term Bs))
+      (binding_rows_term ?xb) (Payload_Term q) (binding_rows_term ?xa)
+      (data_list_term (map Payload_Term Bs)) (data_list_term (map Payload_Term Is))
+      (data_list_term (map Payload_Term Ks)))\<in>positive_meaning record_instantiation_system"
+    "(61,pattern_instantiation_argument f (use_data_term v) (data_list_term (map Payload_Term Bs))
+      (binding_rows_term ?yb) (Payload_Term q) (binding_rows_term ?ya)
+      (data_list_term (map Payload_Term Bs)) (data_list_term (map Payload_Term Is))
+      (data_list_term (map Payload_Term Ks)))\<in>positive_meaning record_instantiation_system"
+    using substitution_record_two_instances[OF replacement replacements variables scopes
+      readings(1) first(1) second(1) metadata(1,3), where u=v and r=q]
+      raw(4) readings(2) metadata(2,4) by auto
+  have order: "distinct ?xa" "distinct ?ya"
+    using raw(2) by (auto simp: distinct_map inj_on_def)
+  have source_first: "schema_instance S (set ?xa) x (set qs)"
+    "set cs=material_instance_relation (set ?xa) (schema_material_premises S)"
+    using schema_substitution_graph_instances[OF formed, where s=s and h=Payload_Term and t=x and Q="set qs"]
+      replacements raw(3) readings(2) first(4,5) by simp_all
+  have source_second: "schema_instance S (set ?ya) y (set ws)"
+    "set ds=material_instance_relation (set ?ya) (schema_material_premises S)"
+    using schema_substitution_graph_instances[OF formed, where s=s and h="?h" and t=y and Q="set ws"]
+      replacements raw(3) readings(2) second(4,5) by simp_all
+  have original:
+    "(65,schema_instantiation_argument e (use_data_term u) (Payload_Term r) (binding_rows_term ?xa) x
+      (call_instance_rows_term qs) (binding_rows_term cs))\<in>positive_meaning schema_instantiation_system"
+    "(65,schema_instantiation_argument e (use_data_term u) (Payload_Term r) (binding_rows_term ?ya) y
+      (call_instance_rows_term ws) (binding_rows_term ds))\<in>positive_meaning schema_instantiation_system"
+    by (rule schema_instantiation_complete[OF raw(1) source source_first(1) order(1) first(2,3) source_first(2)],
+        rule schema_instantiation_complete[OF raw(1) source source_second(1) order(2) second(2,3) source_second(2)])
+  show ?thesis unfolding substitution_reading_calls_def
+    by (rule exI[of _ "data_list_term (map Payload_Term Bs)"], rule exI[of _ "binding_rows_term ?xb"],
+      rule exI[of _ "binding_rows_term ?yb"], rule exI[of _ "binding_rows_term ?xa"],
+      rule exI[of _ "binding_rows_term ?ya"], rule exI[of _ "data_list_term (map Payload_Term Is)"],
+      rule exI[of _ "data_list_term (map Payload_Term Ks)"], rule exI[of _ x],
+      rule exI[of _ "call_instance_rows_term qs"], rule exI[of _ "binding_rows_term cs"], rule exI[of _ y],
+      rule exI[of _ "call_instance_rows_term ws"], rule exI[of _ "binding_rows_term ds"])
+      (use tables record_reads original readings(3,4) in blast)
+qed
+
+theorem schema_substitution_readings_exact:
+  assumes "environment_value_presents E e" "environment_value_presents F f" "environment_value_presents G g"
+  shows "substitution_reading_calls e (use_data_term u) (Payload_Term r)
+      f (use_data_term v) (Payload_Term q) g (use_data_term w) (Payload_Term t) \<longleftrightarrow>
+    schema_substitution_at E u r F v q G w t"
+  using schema_substitution_readings_sound[OF assms] schema_substitution_readings_complete[OF assms] by blast
+
+theorem native_schema_substitution_specializes:
+  assumes actual: "schema_substitution_at E u r F v q G w t"
+    and source: "native_schema_at E u r S" and target: "native_schema_at G w t T"
+    and rule: "schema_rule_instance T X a"
+  shows "schema_rule_instance S X a"
+proof -
+  obtain R s As I K where raw: "native_schema_at E u r R" "set As=schema_variables R"
+    "pattern_record_at F v (schema_variables (schema_substitute s R)) q (substitution_row_patterns As s) I K"
+    "native_schema_at G w t (schema_substitute s R)"
+    using actual by (auto simp: schema_substitution_at_def)
+  have origin: "R=S" by (rule native_schema_unique[OF raw(1) source])
+  have result: "T=schema_substitute s S" using native_schema_unique[OF target raw(4)] origin by simp
+  have replacements: "\<forall>b\<in>schema_variables S. pattern_formed (s b)"
+  proof -
+    have row_formation: "\<forall>p\<in>set (substitution_row_patterns As s). pattern_formed p"
+      using pattern_record_formed[OF raw(3)] by blast
+    show ?thesis using row_formation raw(2) origin by (auto simp only: substitution_row_formed)
+  qed
+  show ?thesis by (rule schema_substitute_specializes[OF native_schema_formed[OF source] replacements])
+    (use rule result in simp)
+qed
+
+section \<open>The complete encoded input has no assumed source shape\<close>
+
+abbreviation substitution_reading_argument where
+  "substitution_reading_argument e u r f v q g w t \<equiv>
+    Pair_Term (Pair_Term e (Pair_Term u r))
+      (Pair_Term (Pair_Term f (Pair_Term v q)) (Pair_Term g (Pair_Term w t)))"
+
+definition substitution_reading_result :: "factor_term \<Rightarrow> bool" where
+  "substitution_reading_result z \<longleftrightarrow>
+    (\<exists>E e u r F f v q G g w t. environment_value_presents E e \<and>
+      environment_value_presents F f \<and> environment_value_presents G g \<and>
+      z=substitution_reading_argument e (use_data_term u) (Payload_Term r)
+        f (use_data_term v) (Payload_Term q) g (use_data_term w) (Payload_Term t) \<and>
+      schema_substitution_at E u r F v q G w t)"
+
+lemma substitution_reading_sources:
+  assumes reads: "substitution_reading_calls e u r f v q g w t"
+  shows "\<exists>E a r' F b q' G c t'. environment_value_presents E e \<and> u=use_data_term a \<and> r=Payload_Term r' \<and>
+    environment_value_presents F f \<and> v=use_data_term b \<and> q=Payload_Term q' \<and>
+    environment_value_presents G g \<and> w=use_data_term c \<and> t=Payload_Term t'"
+proof -
+  obtain b xb xa i k x qs cs where calls:
+    "(61,pattern_instantiation_argument f v b xb q xa b i k)\<in>positive_meaning record_instantiation_system"
+    "(65,schema_instantiation_argument e u r xa x qs cs)\<in>positive_meaning schema_instantiation_system"
+    "(65,schema_instantiation_argument g w t xb x qs cs)\<in>positive_meaning schema_instantiation_system"
+    using reads by (auto simp: substitution_reading_calls_def)
+  obtain E a r' where original: "environment_value_presents E e" "u=use_data_term a" "r=Payload_Term r'"
+    using calls(2) by (simp only: schema_instantiation_exact factor_term.inject) blast
+  obtain F b' q' where replacement: "environment_value_presents F f" "v=use_data_term b'" "q=Payload_Term q'"
+    using calls(1) by (simp only: record_instantiation_exact factor_term.inject) blast
+  obtain G c t' where target: "environment_value_presents G g" "w=use_data_term c" "t=Payload_Term t'"
+    using calls(3) by (simp only: schema_instantiation_exact factor_term.inject) blast
+  show ?thesis using original replacement target by blast
+qed
+
+theorem substitution_reading_calls_result:
+  "substitution_reading_calls e u r f v q g w t \<longleftrightarrow>
+    substitution_reading_result (substitution_reading_argument e u r f v q g w t)"
+proof
+  assume reads: "substitution_reading_calls e u r f v q g w t"
+  obtain E a r' F b q' G c t' where inputs:
+    "environment_value_presents E e" "u=use_data_term a" "r=Payload_Term r'"
+    "environment_value_presents F f" "v=use_data_term b" "q=Payload_Term q'"
+    "environment_value_presents G g" "w=use_data_term c" "t=Payload_Term t'"
+    using substitution_reading_sources[OF reads] by blast
+  have actual: "schema_substitution_at E a r' F b q' G c t'"
+    by (rule schema_substitution_readings_sound[OF inputs(1,4,7)])
+      (use reads inputs(2,3,5,6,8,9) in simp)
+  show "substitution_reading_result (substitution_reading_argument e u r f v q g w t)"
+    unfolding substitution_reading_result_def
+    by (rule exI[of _ E], rule exI[of _ e], rule exI[of _ a], rule exI[of _ r'],
+      rule exI[of _ F], rule exI[of _ f], rule exI[of _ b], rule exI[of _ q'],
+      rule exI[of _ G], rule exI[of _ g], rule exI[of _ c], rule exI[of _ t'])
+      (use inputs actual in simp)
+next
+  assume result: "substitution_reading_result (substitution_reading_argument e u r f v q g w t)"
+  obtain E a r' F b q' G c t' where inputs:
+    "environment_value_presents E e" "u=use_data_term a" "r=Payload_Term r'"
+    "environment_value_presents F f" "v=use_data_term b" "q=Payload_Term q'"
+    "environment_value_presents G g" "w=use_data_term c" "t=Payload_Term t'"
+    "schema_substitution_at E a r' F b q' G c t'"
+    using result by (simp only: substitution_reading_result_def factor_term.inject) blast
+  show "substitution_reading_calls e u r f v q g w t"
+    using schema_substitution_readings_complete[OF inputs(1,4,7,10)] inputs(2,3,5,6,8,9) by simp
+qed
+
+text \<open>
+  Seven existing native readings characterize the actual relation between
+  the three submitted sources. The replacement record has exactly one row
+  for each original binder; its used-variable set is exactly the target binder.
+  Both original-schema readings and both target-schema readings share their
+  complete conclusion, prospective, and material outputs. The converse uses
+  the existing total native readings, so every actual substitution has these
+  finite witnesses, including empty binders and replacement records.
+
+  This is a local syntax and rule-specialization check. The environments and
+  actual uses of all three sources remain explicit. Equality of callee
+  coordinates does not establish agreement of their interpretations in two
+  different programs. Program transport still needs that agreement, every
+  call interface, and any reverse semantic inclusion required by its contract.
+\<close>
+
+end

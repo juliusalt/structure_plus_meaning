@@ -1,0 +1,5 @@
+session Native_Investigation_Report_Diagnostic_compilation11 = Finite_Investigation_a24c220cc9c60a2a4f495caf +
+  options [document = false, timeout = 240]
+  sessions "HOL-Library"
+  directories "theories"
+  theories Factor_Reasoning_Execution Factor_Inference_Specialization_Contracts

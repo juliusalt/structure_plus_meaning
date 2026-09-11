@@ -240,3 +240,48 @@ all target fields, discharge occurrences, and support sets. These local
 readings still need child-claim comparison and whole-graph admission before
 they can admit a complete symbolic argument. Native mathematical-proof
 admission and the broader development-decision workflow remain open.
+
+## Library coverage and compilation
+
+The next adequacy investigation asks whether the baseline construction library
+can cover the new reader entries. Its eight complete reports leave entries
+348, 349, and 350 unresolved through every tested depth, while existing binding
+constructions succeed. Entry 342 has an application with unproved source
+premises; the three missing entries have no producer in that library.
+
+The reusable obstruction projects the actual complete schema premises to
+their entry identities and retains their sockets. The existing conjunctive
+inference engine computes closure, demand, and reasons. A general projection
+theorem proves that every reported blocked goal remains a concrete residual
+at every construction depth and for every possible frontier. Passing the
+entry check supplies no converse: different terms at the same entry, shared
+variables, material conditions, and unrecovered variables still matter.
+
+The 65-case investigation checks every returned field independently. Its
+report derives the next missing-constructor problems from the blocked goals
+and actual library heads. The initial probes are formed terms used to test
+entry coverage; they are not evidence of actual native source readings.
+The universal obstruction theorem covers every term at those entries.
+
+The resulting compiler uses the actual native clause definitions at 348–350.
+Their finite representations are checked reductions of those definitions,
+and their complete premise enumerations are generated from the schema fields.
+All three have a conditional semantic contract in the same native program.
+Malformed schema fields remain present for rejection by the whole-library gate.
+
+Execution exposed a representation defect in singleton selection: repeating
+one identical premise row caused a runtime exception, although both lists
+present the same finite relation. The repair leaves the mathematical
+enumeration unchanged and proves a new executable equation using an optional
+singleton selector that checks every list value. Distinct sockets remain
+distinct. All 50 compilation cases pass, including repeated encodings,
+unordered sockets, empty families, malformed fields, and chained construction.
+The exported native clause catalog is unchanged by the repair.
+
+The [retained investigation](validation/generalization-review-2026-09-11/reader-libraries/README.md)
+includes the original failure, its minimal control, proof inputs, complete
+reports, and successful replays. The complete 794-theory session passes.
+Using the compiled clauses to construct the new reader heads from their
+actual component calls is the next content requirement. Whole argument
+admission, mathematical-proof admission, and coverage of every development
+decision remain open.

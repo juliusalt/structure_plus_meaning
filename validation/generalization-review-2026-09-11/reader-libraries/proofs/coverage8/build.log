@@ -1,0 +1,19 @@
+Running Native_Investigation_Report_Diagnostic_coverage8 ...
+Native_Investigation_Report_Diagnostic_coverage8 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_coverage8")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_coverage8.Factor_Reader_Library_Coverage" (unresolved "Native_Investigation_Report_Diagnostic_coverage8.Factor_Library_Coverage")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_coverage8.Factor_Reasoning_Execution" (unresolved "Native_Investigation_Report_Diagnostic_coverage8.Factor_Reader_Library_Coverage")
+*** Failed to finish proof (line 108 of "/tmp/native-investigation-report-diagnostic-coverage8/theories/Factor_Library_Coverage.thy"):
+*** goal (1 subgoal):
+***  1. ⋀a aa b.
+***        ⟦fst ` finite_inference_result (finite_generated_rules_on_set L C) K
+***         ⊆ finite_inference_result (finite_library_entry_rules L)
+***            (fst |`| K);
+***         aa ∉ finite_inference_result (finite_library_entry_rules L)
+***               (fst |`| K);
+***         (a, aa, b) |∈| goals;
+***         (aa, b)
+***         ∈ finite_inference_result (finite_generated_rules_on_set L C) K⟧
+***        ⟹ False
+*** At command "by" (line 108 of "/tmp/native-investigation-report-diagnostic-coverage8/theories/Factor_Library_Coverage.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_coverage8
+0:02:12 elapsed time, 0:05:23 cpu time, factor 2.44

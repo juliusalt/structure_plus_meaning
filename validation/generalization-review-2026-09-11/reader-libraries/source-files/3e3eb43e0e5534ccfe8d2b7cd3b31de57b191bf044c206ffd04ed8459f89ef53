@@ -1,0 +1,217 @@
+theory Factor_Schema_Pattern_Readings
+  imports "Factor_Schema_Pattern_Boundary" "Factor_Pattern_Call_Admission" "Factor_Schema_Reading" "Factor_Program_Call_List"
+begin
+
+section \<open>The existing complete schema report supplies both valuations\<close>
+
+lemma schema_reference_call_boundary:
+  assumes report: "schema_reference_presents S
+    (schema_reference_value b x (call_instance_rows_term qs) c y (call_instance_rows_term ws) m)"
+  shows "schema_pattern_boundary P d S \<longleftrightarrow>
+    schema_call_formed P d x \<and> schema_call_formed P d y \<and>
+    (\<forall>s e t. (s,e,t)\<in>set qs \<longrightarrow> schema_call_formed P e t) \<and>
+    (\<forall>s e t. (s,e,t)\<in>set ws \<longrightarrow> schema_call_formed P e t)"
+proof -
+  have formed: "schema_formed S" and variables: "\<forall>a\<in>schema_variables S. octets_formed a"
+    using report by (auto simp: schema_reference_presents_def schema_data_formed_def)
+  have outputs: "x=evaluate_pattern Payload_Term (schema_conclusion S)"
+    "y=evaluate_pattern (\<lambda>_. Target_Term (Whole_Artifact empty_artifact)) (schema_conclusion S)"
+    "set qs=evaluate_schema_premises Payload_Term S"
+    "set ws=evaluate_schema_premises (\<lambda>_. Target_Term (Whole_Artifact empty_artifact)) S"
+    using report by (simp only: schema_reference_presents_def schema_reference_data_def
+      schema_reference_outputs_def schema_reference_record_fields factor_term.inject
+      call_instance_rows_term_injective; blast)+
+  show ?thesis using formed variables
+    schema_pattern_boundary_two_evaluations[where f=id and B="schema_variables S"
+      and k="Whole_Artifact empty_artifact" and P=P and d=d and S=S]
+    by (simp add: outputs)
+qed
+
+definition schema_pattern_boundary_at where
+  "schema_pattern_boundary_at E pu pr d F v q \<longleftrightarrow>
+    (\<exists>P S. native_package_at E pu pr P \<and> native_schema_at F v q S \<and> schema_pattern_boundary P d S)"
+
+definition schema_pattern_reading_calls where
+  "schema_pattern_reading_calls e u r d f v q \<longleftrightarrow>
+    (\<exists>b x qs cs y ws ds xv yv.
+      (126,schema_reference_argument f v q (schema_reference_value b x qs cs y ws ds))
+        \<in>positive_meaning schema_reading_system \<and>
+      (84,package_subject_argument e u r (Pair_Term d x))\<in>positive_meaning program_call_admission_system \<and>
+      (84,package_subject_argument e u r (Pair_Term d y))\<in>positive_meaning program_call_admission_system \<and>
+      (59,Pair_Term qs xv)\<in>positive_meaning row_values_system \<and>
+      (59,Pair_Term ws yv)\<in>positive_meaning row_values_system \<and>
+      (86,package_subject_argument e u r xv)\<in>positive_meaning program_call_list_system \<and>
+      (86,package_subject_argument e u r yv)\<in>positive_meaning program_call_list_system)"
+
+theorem schema_pattern_readings_sound:
+  assumes package_source: "environment_value_presents E e" and schema_source: "environment_value_presents F f"
+    and reads: "schema_pattern_reading_calls e (use_data_term pu) (Payload_Term pr) (definition_site_value d)
+      f (use_data_term v) (Payload_Term q)"
+  shows "schema_pattern_boundary_at E pu pr d F v q"
+proof -
+  obtain b x qs cs y ws ds xv yv where calls:
+    "(126,schema_reference_argument f (use_data_term v) (Payload_Term q) (schema_reference_value b x qs cs y ws ds))
+      \<in>positive_meaning schema_reading_system"
+    "(84,package_subject_argument e (use_data_term pu) (Payload_Term pr) (Pair_Term (definition_site_value d) x))
+      \<in>positive_meaning program_call_admission_system"
+    "(84,package_subject_argument e (use_data_term pu) (Payload_Term pr) (Pair_Term (definition_site_value d) y))
+      \<in>positive_meaning program_call_admission_system"
+    "(59,Pair_Term qs xv)\<in>positive_meaning row_values_system"
+    "(59,Pair_Term ws yv)\<in>positive_meaning row_values_system"
+    "(86,package_subject_argument e (use_data_term pu) (Payload_Term pr) xv)\<in>positive_meaning program_call_list_system"
+    "(86,package_subject_argument e (use_data_term pu) (Payload_Term pr) yv)\<in>positive_meaning program_call_list_system"
+    using reads by (auto simp: schema_pattern_reading_calls_def)
+  obtain S where raw: "native_schema_at F v q S"
+    and report: "schema_reference_presents S (schema_reference_value b x qs cs y ws ds)"
+    using calls(1) by (simp only: schema_reading_on_values[OF schema_source]) blast
+  obtain Qs Ws where rows: "qs=call_instance_rows_term Qs" "ws=call_instance_rows_term Ws"
+    using report by (simp only: schema_reference_presents_fields factor_term.inject) blast
+  have projection_x: "xv=pair_list_term (map (\<lambda>(s,d,t). (definition_site_value d,t)) Qs)"
+    using calls(4) by (simp only: rows(1) call_instance_row_values; blast)
+  have projection_y: "yv=pair_list_term (map (\<lambda>(s,d,t). (definition_site_value d,t)) Ws)"
+    using calls(5) by (simp only: rows(2) call_instance_row_values; blast)
+  obtain P where package: "native_package_at E pu pr P" and first: "schema_call_formed P d x"
+    using calls(2) by (simp only: program_call_admission_on_values[OF package_source]) blast
+  have second: "schema_call_formed P d y"
+    using calls(3) by (simp only: program_call_admission_at_package[OF package_source package])
+  have children: "\<forall>s a t. (s,a,t)\<in>set Qs \<longrightarrow> schema_call_formed P a t"
+    "\<forall>s a t. (s,a,t)\<in>set Ws \<longrightarrow> schema_call_formed P a t"
+    using calls(6,7) by (simp_all only: projection_x projection_y program_call_list_at_calls[OF package_source package])
+  have actual_report: "schema_reference_presents S
+      (schema_reference_value b x (call_instance_rows_term Qs) cs y (call_instance_rows_term Ws) ds)"
+    using report by (simp only: rows)
+  have boundary: "schema_pattern_boundary P d S"
+    using first second children by (simp only: schema_reference_call_boundary[OF actual_report])
+  show ?thesis unfolding schema_pattern_boundary_at_def
+    by (rule exI[of _ P], rule exI[of _ S]) (use package raw boundary in blast)
+qed
+
+theorem schema_pattern_readings_complete:
+  assumes package_source: "environment_value_presents E e" and schema_source: "environment_value_presents F f"
+    and actual: "schema_pattern_boundary_at E pu pr d F v q"
+  shows "schema_pattern_reading_calls e (use_data_term pu) (Payload_Term pr) (definition_site_value d)
+    f (use_data_term v) (Payload_Term q)"
+proof -
+  obtain P S where package: "native_package_at E pu pr P" and raw: "native_schema_at F v q S"
+    and boundary: "schema_pattern_boundary P d S"
+    using actual by (auto simp: schema_pattern_boundary_at_def)
+  obtain z where reference: "schema_reference_presents S z" using native_schema_reference_total[OF raw] by blast
+  obtain Bs x Qs Cs y Ws Ds where shape:
+    "z=schema_reference_value (data_list_term (map Payload_Term Bs)) x (call_instance_rows_term Qs)
+      (binding_rows_term Cs) y (call_instance_rows_term Ws) (binding_rows_term Ds)"
+    using reference by (simp only: schema_reference_presents_fields) blast
+  let ?b="data_list_term (map Payload_Term Bs)"
+  let ?qs="call_instance_rows_term Qs"
+  let ?cs="binding_rows_term Cs"
+  let ?ws="call_instance_rows_term Ws"
+  let ?ds="binding_rows_term Ds"
+  let ?xv="pair_list_term (map (\<lambda>(s,d,t). (definition_site_value d,t)) Qs)"
+  let ?yv="pair_list_term (map (\<lambda>(s,d,t). (definition_site_value d,t)) Ws)"
+  have report: "schema_reference_presents S (schema_reference_value ?b x ?qs ?cs y ?ws ?ds)"
+    using reference by (simp only: shape)
+  have components: "schema_call_formed P d x" "schema_call_formed P d y"
+    "\<forall>s a t. (s,a,t)\<in>set Qs \<longrightarrow> schema_call_formed P a t"
+    "\<forall>s a t. (s,a,t)\<in>set Ws \<longrightarrow> schema_call_formed P a t"
+    using iffD1[OF schema_reference_call_boundary[OF report] boundary] by blast+
+  have read: "(126,schema_reference_argument f (use_data_term v) (Payload_Term q)
+      (schema_reference_value ?b x ?qs ?cs y ?ws ?ds))\<in>positive_meaning schema_reading_system"
+    by (rule schema_reading_complete[OF schema_source raw report])
+  have rows: "term_formed ?qs" "term_formed ?ws"
+    using schema_call_formed_target[OF positive_meaning_formed[OF read]] by auto
+  have heads:
+    "(84,package_subject_argument e (use_data_term pu) (Payload_Term pr) (Pair_Term (definition_site_value d) x))
+      \<in>positive_meaning program_call_admission_system"
+    "(84,package_subject_argument e (use_data_term pu) (Payload_Term pr) (Pair_Term (definition_site_value d) y))
+      \<in>positive_meaning program_call_admission_system"
+    using components(1,2) by (simp_all only: program_call_admission_at_package[OF package_source package])
+  have projections: "(59,Pair_Term ?qs ?xv)\<in>positive_meaning row_values_system"
+    "(59,Pair_Term ?ws ?yv)\<in>positive_meaning row_values_system"
+    using rows by (simp_all only: call_instance_row_values)
+  have children:
+    "(86,package_subject_argument e (use_data_term pu) (Payload_Term pr) ?xv)\<in>positive_meaning program_call_list_system"
+    "(86,package_subject_argument e (use_data_term pu) (Payload_Term pr) ?yv)\<in>positive_meaning program_call_list_system"
+    using components(3,4) by (simp_all only: program_call_list_at_calls[OF package_source package])
+  show ?thesis unfolding schema_pattern_reading_calls_def
+    by (rule exI[of _ ?b], rule exI[of _ x], rule exI[of _ ?qs], rule exI[of _ ?cs],
+      rule exI[of _ y], rule exI[of _ ?ws], rule exI[of _ ?ds], rule exI[of _ ?xv], rule exI[of _ ?yv])
+      (use read heads projections children in blast)
+qed
+
+theorem schema_pattern_readings_exact:
+  assumes "environment_value_presents E e" "environment_value_presents F f"
+  shows "schema_pattern_reading_calls e (use_data_term pu) (Payload_Term pr) (definition_site_value d)
+    f (use_data_term v) (Payload_Term q) \<longleftrightarrow> schema_pattern_boundary_at E pu pr d F v q"
+  using schema_pattern_readings_sound[OF assms] schema_pattern_readings_complete[OF assms] by blast
+
+lemma schema_pattern_boundary_at_reads:
+  assumes package: "native_package_at E pu pr P" and raw: "native_schema_at F v q S"
+  shows "schema_pattern_boundary_at E pu pr d F v q \<longleftrightarrow> schema_pattern_boundary P d S"
+proof -
+  have packages: "Q=P" if "native_package_at E pu pr Q" for Q
+    by (rule native_package_unique[OF that package])
+  have schemas: "T=S" if "native_schema_at F v q T" for T
+    by (rule native_schema_unique[OF that raw])
+  show ?thesis unfolding schema_pattern_boundary_at_def using package raw packages schemas by blast
+qed
+
+definition schema_pattern_reading_result :: "factor_term \<Rightarrow> bool" where
+  "schema_pattern_reading_result z \<longleftrightarrow>
+    (\<exists>E e u r d F f v q. environment_value_presents E e \<and> environment_value_presents F f \<and>
+      z=pattern_call_reading_argument e (use_data_term u) (Payload_Term r) (definition_site_value d)
+        f (use_data_term v) (Payload_Term q) \<and> schema_pattern_boundary_at E u r d F v q)"
+
+lemma schema_pattern_reading_sources:
+  assumes reads: "schema_pattern_reading_calls e u r d f v q"
+  shows "\<exists>E pu pr a F w s. environment_value_presents E e \<and> u=use_data_term pu \<and> r=Payload_Term pr \<and>
+    d=definition_site_value a \<and> environment_value_presents F f \<and> v=use_data_term w \<and> q=Payload_Term s"
+proof -
+  obtain z x where calls: "(126,schema_reference_argument f v q z)\<in>positive_meaning schema_reading_system"
+    "(84,package_subject_argument e u r (Pair_Term d x))\<in>positive_meaning program_call_admission_system"
+    using reads by (auto simp: schema_pattern_reading_calls_def)
+  obtain E pu pr a where package: "environment_value_presents E e" "u=use_data_term pu"
+    "r=Payload_Term pr" "d=definition_site_value a"
+    using calls(2) by (simp only: program_call_admission_exact factor_term.inject) blast
+  obtain F w s where schema: "environment_value_presents F f" "v=use_data_term w" "q=Payload_Term s"
+    using calls(1) by (simp only: schema_reading_exact site_value_presents_def site_data_term_def factor_term.inject) blast
+  show ?thesis using package schema by blast
+qed
+
+theorem schema_pattern_reading_calls_result:
+  "schema_pattern_reading_calls e u r d f v q \<longleftrightarrow>
+    schema_pattern_reading_result (pattern_call_reading_argument e u r d f v q)"
+proof
+  assume reads: "schema_pattern_reading_calls e u r d f v q"
+  obtain E pu pr a F w s where inputs: "environment_value_presents E e" "u=use_data_term pu"
+    "r=Payload_Term pr" "d=definition_site_value a" "environment_value_presents F f"
+    "v=use_data_term w" "q=Payload_Term s"
+    using schema_pattern_reading_sources[OF reads] by blast
+  have actual: "schema_pattern_boundary_at E pu pr a F w s"
+    by (rule schema_pattern_readings_sound[OF inputs(1,5)]) (use reads inputs in simp)
+  show "schema_pattern_reading_result (pattern_call_reading_argument e u r d f v q)"
+    unfolding schema_pattern_reading_result_def
+    by (rule exI[of _ E], rule exI[of _ e], rule exI[of _ pu], rule exI[of _ pr], rule exI[of _ a],
+      rule exI[of _ F], rule exI[of _ f], rule exI[of _ w], rule exI[of _ s]) (use inputs actual in simp)
+next
+  assume result: "schema_pattern_reading_result (pattern_call_reading_argument e u r d f v q)"
+  obtain E pu pr a F w s where inputs: "environment_value_presents E e" "u=use_data_term pu"
+    "r=Payload_Term pr" "d=definition_site_value a" "environment_value_presents F f"
+    "v=use_data_term w" "q=Payload_Term s" "schema_pattern_boundary_at E pu pr a F w s"
+    using result by (simp only: schema_pattern_reading_result_def factor_term.inject) blast
+  show "schema_pattern_reading_calls e u r d f v q"
+    using schema_pattern_readings_complete[OF inputs(1,5,8)] inputs(2,3,4,6,7) by simp
+qed
+
+text \<open>
+  The complete reference reader already determines one actual schema through
+  its two full valuations. This composition consumes that reader directly.
+  Both heads and all prospective premise values are checked against the same
+  package. Socket identities and every material value remain in the reference
+  report before the ordinary call-value projection.
+
+  The package and schema may have different source environments. Their encoded
+  sites are explicit. Callee coordinates in the submitted schema are interpreted
+  by the supplied package; the schema's source does not implicitly supply their
+  meaning. Material truth is not part of this formation boundary.
+\<close>
+
+end

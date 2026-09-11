@@ -1,0 +1,249 @@
+theory Factor_Substitution_Admission
+  imports "Factor_Substitution_Readings" "Finite_Investigation_a24c220cc9c60a2a4f495caf.Factor_Compiled_Applications"
+begin
+
+section \<open>One ordinary clause composes the seven complete readings\<close>
+
+abbreviation substitution_reading_pattern where
+  "substitution_reading_pattern e u r f v q g w t \<equiv>
+    Pattern_Pair (Pattern_Pair e (Pattern_Pair u r))
+      (Pattern_Pair (Pattern_Pair f (Pattern_Pair v q)) (Pattern_Pair g (Pattern_Pair w t)))"
+
+definition substitution_reading_schema :: "(nat,nat,nat) factor_schema" where
+  "substitution_reading_schema=data_rule
+    (substitution_reading_pattern data_x data_y data_z data_w (Pattern_Variable 4) (Pattern_Variable 5)
+      (Pattern_Variable 6) (Pattern_Variable 7) (Pattern_Variable 8))
+    {(0,125,reference_bindings_pattern (Pattern_Variable 9) (Pattern_Variable 10) (Pattern_Variable 11)),
+     (1,61,pattern_instantiation_pattern data_w (Pattern_Variable 4) (Pattern_Variable 9)
+       (Pattern_Variable 10) (Pattern_Variable 5) (Pattern_Variable 12) (Pattern_Variable 9)
+       (Pattern_Variable 14) (Pattern_Variable 15)),
+     (2,61,pattern_instantiation_pattern data_w (Pattern_Variable 4) (Pattern_Variable 9)
+       (Pattern_Variable 11) (Pattern_Variable 5) (Pattern_Variable 13) (Pattern_Variable 9)
+       (Pattern_Variable 14) (Pattern_Variable 15)),
+     (3,65,schema_instantiation_pattern data_x data_y data_z (Pattern_Variable 12)
+       (Pattern_Variable 16) (Pattern_Variable 17) (Pattern_Variable 18)),
+     (4,65,schema_instantiation_pattern data_x data_y data_z (Pattern_Variable 13)
+       (Pattern_Variable 19) (Pattern_Variable 20) (Pattern_Variable 21)),
+     (5,65,schema_instantiation_pattern (Pattern_Variable 6) (Pattern_Variable 7) (Pattern_Variable 8)
+       (Pattern_Variable 10) (Pattern_Variable 16) (Pattern_Variable 17) (Pattern_Variable 18)),
+     (6,65,schema_instantiation_pattern (Pattern_Variable 6) (Pattern_Variable 7) (Pattern_Variable 8)
+       (Pattern_Variable 11) (Pattern_Variable 19) (Pattern_Variable 20) (Pattern_Variable 21))}"
+
+definition substitution_reading_system :: "(nat,nat,nat,nat) schema_system" where
+  "substitution_reading_system=add_view_definition reference_bindings_system 291 data_x {(0,substitution_reading_schema)}"
+
+interpretation substitution_reading_view: positive_view reference_bindings_system 291 data_x "{(0,substitution_reading_schema)}"
+  by (rule positive_view.intro)
+    (auto simp: substitution_reading_schema_def schema_formed_def schema_dependencies_def
+      single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma substitution_reading_system_formed [simp]: "schema_system_formed substitution_reading_system"
+  using substitution_reading_view.formed by (simp only: substitution_reading_system_def)
+
+lemma substitution_reading_definitions [simp]:
+  "system_definitions substitution_reading_system=insert 291 (system_definitions reference_bindings_system)"
+  by (simp add: substitution_reading_system_def)
+
+lemma substitution_reading_call:
+  "schema_call_formed substitution_reading_system d t \<longleftrightarrow>
+    d\<in>system_definitions substitution_reading_system \<and> term_formed t"
+  using added_variable_calls[OF reference_bindings_system_formed
+    substitution_reading_system_formed[unfolded substitution_reading_system_def] reference_bindings_call]
+  by (simp only: substitution_reading_system_def[symmetric])
+
+lemma substitution_reading_old_meaning:
+  assumes "d\<in>system_definitions reference_bindings_system"
+  shows "(d,t)\<in>positive_meaning substitution_reading_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning reference_bindings_system"
+  using substitution_reading_view.old_meaning[OF assms]
+  by (simp only: substitution_reading_system_def)
+
+lemma substitution_reading_clause [simp]:
+  "((291,c),S)\<in>system_clauses substitution_reading_system \<longleftrightarrow>
+    c=0 \<and> S=substitution_reading_schema"
+  using substitution_reading_view.no_old_clause
+  by (auto simp: substitution_reading_system_def)
+
+lemma substitution_reading_components:
+  "(125,t)\<in>positive_meaning substitution_reading_system \<longleftrightarrow>
+    (125,t)\<in>positive_meaning reference_bindings_system"
+  "(61,t)\<in>positive_meaning substitution_reading_system \<longleftrightarrow>
+    (61,t)\<in>positive_meaning record_instantiation_system"
+  "(65,t)\<in>positive_meaning substitution_reading_system \<longleftrightarrow>
+    (65,t)\<in>positive_meaning schema_instantiation_system"
+  using substitution_reading_old_meaning[of 125 t]
+    substitution_reading_old_meaning[of 61 t] reference_bindings_old_meaning[of 61 t]
+    definition_call_admission_instantiation_meaning[of 61 t] schema_instantiation_old_meaning[of 61 t]
+    premise_family_instantiation_old_meaning[of 61 t] premise_rows_old_meaning[of 61 t]
+    material_instantiation_old_meaning[of 61 t]
+    substitution_reading_old_meaning[of 65 t] reference_bindings_old_meaning[of 65 t]
+    definition_call_admission_instantiation_meaning[of 65 t] by auto
+
+lemma substitution_reading_valuation:
+  "(291,z)\<in>positive_meaning substitution_reading_system \<longleftrightarrow>
+    (\<exists>h::nat\<Rightarrow>factor_term. (\<forall>j\<in>{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21}. term_formed (h j)) \<and>
+      z=substitution_reading_argument (h 0) (h 1) (h 2) (h 3) (h 4) (h 5) (h 6) (h 7) (h 8) \<and>
+      (125,reference_bindings_value (h 9) (h 10) (h 11))\<in>positive_meaning reference_bindings_system \<and>
+      (61,pattern_instantiation_argument (h 3) (h 4) (h 9) (h 10) (h 5) (h 12) (h 9) (h 14) (h 15))
+        \<in>positive_meaning record_instantiation_system \<and>
+      (61,pattern_instantiation_argument (h 3) (h 4) (h 9) (h 11) (h 5) (h 13) (h 9) (h 14) (h 15))
+        \<in>positive_meaning record_instantiation_system \<and>
+      (65,schema_instantiation_argument (h 0) (h 1) (h 2) (h 12) (h 16) (h 17) (h 18))
+        \<in>positive_meaning schema_instantiation_system \<and>
+      (65,schema_instantiation_argument (h 0) (h 1) (h 2) (h 13) (h 19) (h 20) (h 21))
+        \<in>positive_meaning schema_instantiation_system \<and>
+      (65,schema_instantiation_argument (h 6) (h 7) (h 8) (h 10) (h 16) (h 17) (h 18))
+        \<in>positive_meaning schema_instantiation_system \<and>
+      (65,schema_instantiation_argument (h 6) (h 7) (h 8) (h 11) (h 19) (h 20) (h 21))
+        \<in>positive_meaning schema_instantiation_system)"
+proof -
+  have ordinary: "schema_material_premises substitution_reading_schema={}"
+    by (simp add: substitution_reading_schema_def)
+  have accepts: "schema_call_formed substitution_reading_system 291
+      (evaluate_pattern h (schema_conclusion substitution_reading_schema))"
+    if "\<forall>a\<in>schema_variables substitution_reading_schema. term_formed (h a)" for h
+    using that by (auto simp: substitution_reading_call substitution_reading_schema_def schema_variables_def)
+  show ?thesis
+    apply (subst ordinary_single_clause_valuation[OF substitution_reading_clause ordinary])
+    apply (rule accepts)
+    apply assumption
+    apply (rule ex_cong1)
+    apply (simp add: substitution_reading_schema_def schema_variables_def substitution_reading_components
+      conj_ac all_conj_distrib imp_conjL)
+    done
+qed
+
+theorem substitution_reading_at_arguments:
+  "(291,substitution_reading_argument e u r f v q g w t)\<in>positive_meaning substitution_reading_system \<longleftrightarrow>
+    substitution_reading_calls e u r f v q g w t"
+proof
+  assume admitted: "(291,substitution_reading_argument e u r f v q g w t)\<in>positive_meaning substitution_reading_system"
+  obtain h :: "nat\<Rightarrow>factor_term" where boundary:
+    "e=h 0" "u=h 1" "r=h 2" "f=h 3" "v=h 4" "q=h 5" "g=h 6" "w=h 7" "t=h 8"
+    and calls:
+      "(125,reference_bindings_value (h 9) (h 10) (h 11))\<in>positive_meaning reference_bindings_system"
+      "(61,pattern_instantiation_argument (h 3) (h 4) (h 9) (h 10) (h 5) (h 12) (h 9) (h 14) (h 15))
+        \<in>positive_meaning record_instantiation_system"
+      "(61,pattern_instantiation_argument (h 3) (h 4) (h 9) (h 11) (h 5) (h 13) (h 9) (h 14) (h 15))
+        \<in>positive_meaning record_instantiation_system"
+      "(65,schema_instantiation_argument (h 0) (h 1) (h 2) (h 12) (h 16) (h 17) (h 18))
+        \<in>positive_meaning schema_instantiation_system"
+      "(65,schema_instantiation_argument (h 0) (h 1) (h 2) (h 13) (h 19) (h 20) (h 21))
+        \<in>positive_meaning schema_instantiation_system"
+      "(65,schema_instantiation_argument (h 6) (h 7) (h 8) (h 10) (h 16) (h 17) (h 18))
+        \<in>positive_meaning schema_instantiation_system"
+      "(65,schema_instantiation_argument (h 6) (h 7) (h 8) (h 11) (h 19) (h 20) (h 21))
+        \<in>positive_meaning schema_instantiation_system"
+    using admitted by (simp only: substitution_reading_valuation factor_term.inject) blast
+  show "substitution_reading_calls e u r f v q g w t" unfolding substitution_reading_calls_def
+    by (rule exI[of _ "h 9"], rule exI[of _ "h 10"], rule exI[of _ "h 11"],
+      rule exI[of _ "h 12"], rule exI[of _ "h 13"], rule exI[of _ "h 14"], rule exI[of _ "h 15"],
+      rule exI[of _ "h 16"], rule exI[of _ "h 17"], rule exI[of _ "h 18"], rule exI[of _ "h 19"],
+      rule exI[of _ "h 20"], rule exI[of _ "h 21"])
+      (use calls boundary in simp)
+next
+  assume reads: "substitution_reading_calls e u r f v q g w t"
+  obtain b xb yb xa ya i k x qs cs y ws ds where calls:
+    "(125,reference_bindings_value b xb yb)\<in>positive_meaning reference_bindings_system"
+    "(61,pattern_instantiation_argument f v b xb q xa b i k)\<in>positive_meaning record_instantiation_system"
+    "(61,pattern_instantiation_argument f v b yb q ya b i k)\<in>positive_meaning record_instantiation_system"
+    "(65,schema_instantiation_argument e u r xa x qs cs)\<in>positive_meaning schema_instantiation_system"
+    "(65,schema_instantiation_argument e u r ya y ws ds)\<in>positive_meaning schema_instantiation_system"
+    "(65,schema_instantiation_argument g w t xb x qs cs)\<in>positive_meaning schema_instantiation_system"
+    "(65,schema_instantiation_argument g w t yb y ws ds)\<in>positive_meaning schema_instantiation_system"
+    using reads by (auto simp: substitution_reading_calls_def)
+  let ?h="\<lambda>j::nat. if j=0 then e else if j=1 then u else if j=2 then r else if j=3 then f
+    else if j=4 then v else if j=5 then q else if j=6 then g else if j=7 then w else if j=8 then t
+    else if j=9 then b else if j=10 then xb else if j=11 then yb else if j=12 then xa else if j=13 then ya
+    else if j=14 then i else if j=15 then k else if j=16 then x else if j=17 then qs else if j=18 then cs
+    else if j=19 then y else if j=20 then ws else ds"
+  show "(291,substitution_reading_argument e u r f v q g w t)\<in>positive_meaning substitution_reading_system"
+    by (simp only: substitution_reading_valuation; rule exI[of _ ?h])
+      (use calls
+        schema_call_formed_target[OF positive_meaning_formed[OF calls(1)]]
+        schema_call_formed_target[OF positive_meaning_formed[OF calls(2)]]
+        schema_call_formed_target[OF positive_meaning_formed[OF calls(3)]]
+        schema_call_formed_target[OF positive_meaning_formed[OF calls(4)]]
+        schema_call_formed_target[OF positive_meaning_formed[OF calls(5)]]
+        schema_call_formed_target[OF positive_meaning_formed[OF calls(6)]]
+        schema_call_formed_target[OF positive_meaning_formed[OF calls(7)]] in auto)
+qed
+
+theorem substitution_reading_exact:
+  "(291,z)\<in>positive_meaning substitution_reading_system \<longleftrightarrow> substitution_reading_result z"
+proof
+  assume admitted: "(291,z)\<in>positive_meaning substitution_reading_system"
+  obtain e u r f v q g w t where shape: "z=substitution_reading_argument e u r f v q g w t"
+    using admitted by (simp only: substitution_reading_valuation) blast
+  show "substitution_reading_result z" using admitted
+    by (simp only: shape substitution_reading_at_arguments substitution_reading_calls_result)
+next
+  assume result: "substitution_reading_result z"
+  obtain e u r f v q g w t where shape: "z=substitution_reading_argument e u r f v q g w t"
+    using result unfolding substitution_reading_result_def by blast
+  show "(291,z)\<in>positive_meaning substitution_reading_system" using result
+    by (simp only: shape substitution_reading_at_arguments substitution_reading_calls_result)
+qed
+
+corollary substitution_reading_on_sources:
+  assumes "environment_value_presents E e" "environment_value_presents F f" "environment_value_presents G g"
+  shows "(291,substitution_reading_argument e (use_data_term u) (Payload_Term r)
+      f (use_data_term v) (Payload_Term q) g (use_data_term w) (Payload_Term t))\<in>positive_meaning substitution_reading_system
+    \<longleftrightarrow> schema_substitution_at E u r F v q G w t"
+  by (simp only: substitution_reading_at_arguments schema_substitution_readings_exact[OF assms])
+
+section \<open>The native checker is fixed before every future submitted triple\<close>
+
+theorem fixed_native_substitution_checker:
+  "\<exists>B :: local_address option artifact_environment. \<exists>bu P entry.
+    closed_native_package_at B bu [] P \<and>
+    (\<forall>z. term_formed z \<longrightarrow>
+      (\<exists>G au I K. environment_formed G \<and> environment_included B G \<and> au\<notin>environment_uses B \<and>
+        native_package_at G bu [] P \<and> native_application_at G au [] entry z I K \<and>
+        native_package_environment G bu []=B \<and> native_application_formed G bu [] au [] \<and>
+        (native_positive_holds G bu [] au [] \<longleftrightarrow> substitution_reading_result z) \<and>
+        (\<forall>v\<in>environment_uses B. \<forall>A. artifact_at G v A \<longleftrightarrow> artifact_at B v A) \<and>
+        (\<forall>v\<in>environment_uses B. \<forall>s x. binds_slot G v s x \<longleftrightarrow> binds_slot B v s x)))"
+proof -
+  obtain h :: "nat\<Rightarrow>local_address option definition_site"
+    and B :: "local_address option artifact_environment" and bu P
+    where closed: "closed_native_package_at B bu [] P"
+    and future: "\<forall>d\<in>system_definitions substitution_reading_system. \<forall>z. term_formed z \<longrightarrow>
+      (\<exists>G au I K. environment_formed G \<and> environment_included B G \<and> au\<notin>environment_uses B \<and>
+        native_package_at G bu [] P \<and> native_application_at G au [] (h d) z I K \<and>
+        native_package_environment G bu []=B \<and>
+        (native_application_formed G bu [] au [] \<longleftrightarrow> schema_call_formed substitution_reading_system d z) \<and>
+        (native_positive_holds G bu [] au [] \<longleftrightarrow> (d,z)\<in>positive_meaning substitution_reading_system) \<and>
+        (\<forall>v\<in>environment_uses B. \<forall>A. artifact_at G v A \<longleftrightarrow> artifact_at B v A) \<and>
+        (\<forall>v\<in>environment_uses B. \<forall>s x. binds_slot G v s x \<longleftrightarrow> binds_slot B v s x))"
+    using compiled_program_future_applications[OF substitution_reading_system_formed]
+    by (elim exE conjE) (rule that; assumption)
+  have entry: "291\<in>system_definitions substitution_reading_system" by simp
+  have instances: "\<exists>G au I K. environment_formed G \<and> environment_included B G \<and> au\<notin>environment_uses B \<and>
+      native_package_at G bu [] P \<and> native_application_at G au [] (h 291) z I K \<and>
+      native_package_environment G bu []=B \<and> native_application_formed G bu [] au [] \<and>
+      (native_positive_holds G bu [] au [] \<longleftrightarrow> substitution_reading_result z) \<and>
+      (\<forall>v\<in>environment_uses B. \<forall>A. artifact_at G v A \<longleftrightarrow> artifact_at B v A) \<and>
+      (\<forall>v\<in>environment_uses B. \<forall>s x. binds_slot G v s x \<longleftrightarrow> binds_slot B v s x)"
+    if "term_formed z" for z
+    using future[rule_format, OF entry that] entry that
+    by (simp only: substitution_reading_call substitution_reading_exact) auto
+  show ?thesis by (rule exI[of _ B], rule exI[of _ bu], rule exI[of _ P], rule exI[of _ "h 291"])
+    (use closed instances in blast)
+qed
+
+text \<open>
+  One ordinary clause composes the existing marker, record, and schema readers.
+  Its exact contract covers every input term. A malformed submitted site or
+  environment cannot be hidden by an assumed decoding. Every compatible
+  presentation of each actual source has the same result, and complete
+  replacement records have the accepted witnesses established by the converse.
+
+  One closed native program supplies the checker before future inputs. Fresh
+  applications preserve its entire original environment, artifacts, and outgoing
+  bindings. This adds an operative finite substitution check. Native checking
+  of the general commutation, exactness, valuation-coverage, and compilation
+  proofs remains a separate mathematical proof-presentation obligation.
+\<close>
+
+end

@@ -789,4 +789,11 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Inference_Specialization_Contracts
     Factor_Set_Frontier_Generation
     Factor_Chained_Investigation
+    Inference_Abstraction
+    Factor_Library_Coverage
+    Factor_Reader_Library_Coverage
+    Finite_Functional_Enumeration
+    Finite_Singleton_Selection
+    Factor_Library_Compilation
+    Factor_Inference_Reader_Compilation
     Factor_Recursive_Construction_Investigation

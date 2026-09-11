@@ -1,0 +1,299 @@
+theory Factor_Derivation_Recovery
+  imports Factor_Derivation_Graphs
+begin
+
+section \<open>Required premises are the exact join of links and child claims\<close>
+
+lemma checks_schema_inference_by_join:
+  assumes formed: "schema_graph_formed G root" and jsv: "single_valued J"
+    and domain: "rel_dom J = schema_graph_nodes G" and row: "(n,d,t) \<in> J"
+  shows "checks_schema_graph_node P G J n (Schema_Inference c V) \<longleftrightarrow>
+    admitted_schema_instance P d c (fset V) t (schema_graph_premises G n O J)"
+proof -
+  let ?R = "schema_graph_premises G n"
+  have rv: "rel_value J n=(d,t)" by (rule rel_value_eq[OF jsv row])
+  have rsv: "single_valued ?R" by (rule schema_graph_premises_functional[OF formed])
+  have covered: "rel_ran ?R \<subseteq> rel_dom J"
+    using schema_graph_premises_targets[OF formed, of n] domain by simp
+  have joined_domain: "rel_dom (?R O J) = rel_dom ?R"
+    by (rule relation_join_domain[OF covered])
+  have children: "\<And>s m. (s,m) \<in> ?R \<Longrightarrow> (m,rel_value (?R O J) s) \<in> J"
+    by (rule relation_join_value[OF rsv jsv covered])
+  show ?thesis
+  proof
+    assume checked: "checks_schema_graph_node P G J n (Schema_Inference c V)"
+    obtain Q where inst: "admitted_schema_instance P d c (fset V) t Q"
+      and qdomain: "rel_dom Q=rel_dom ?R"
+      and links: "\<forall>s m. (s,m) \<in> ?R \<longrightarrow> (m,rel_value Q s) \<in> J"
+      using checked rv by auto
+    have qsv: "single_valued Q" using admitted_instance_formed[OF inst] by blast
+    have same: "Q=?R O J"
+      by (rule relation_join_recovers[OF qsv jsv qdomain]) (use links in blast)
+    show "admitted_schema_instance P d c (fset V) t (?R O J)" using inst same by simp
+  next
+    assume inst: "admitted_schema_instance P d c (fset V) t (?R O J)"
+    show "checks_schema_graph_node P G J n (Schema_Inference c V)"
+      using inst joined_domain children rv by auto
+  qed
+qed
+
+lemma schema_graph_node_schema_instance:
+  assumes read: "schema_graph_reading P G root d t J"
+    and node: "(n,Schema_Inference c V) \<in> fset (graph_inferences G)"
+    and claim: "(n,e,x) \<in> J" and clause: "((e,c),S) \<in> system_clauses P"
+  shows "schema_instance S (fset V) x (schema_graph_premises G n O J)"
+proof -
+  have gf: "schema_graph_formed G root" and jsv: "single_valued J"
+    and domain: "rel_dom J=schema_graph_nodes G"
+    using read by (auto simp: schema_graph_reading_def)
+  have checked: "checks_schema_graph_node P G J n (Schema_Inference c V)"
+    using read node unfolding schema_graph_reading_def by blast
+  have admitted: "admitted_schema_instance P e c (fset V) x (schema_graph_premises G n O J)"
+    using checks_schema_inference_by_join[OF gf jsv domain claim] checked by blast
+  obtain T where row: "((e,c),T) \<in> system_clauses P"
+    and inst: "schema_instance T (fset V) x (schema_graph_premises G n O J)"
+    using admitted by (auto simp: admitted_schema_instance_def)
+  have psv: "single_valued (system_clauses P)"
+    using admitted by (simp add: admitted_schema_instance_def schema_call_formed_def schema_system_formed_def)
+  have same: "S=T" by (rule single_valued_outputs[OF psv clause row])
+  show ?thesis using inst same by simp
+qed
+
+section \<open>Each edge carries its exact prospective premise\<close>
+
+lemma schema_graph_reading_call_formed:
+  assumes read: "schema_graph_reading P G root d t J" and row: "(n,e,x) \<in> J"
+  shows "schema_call_formed P e x"
+proof -
+  have inside: "n \<in> schema_graph_nodes G" and sv: "single_valued J"
+    using read rel_domI[OF row] by (auto simp: schema_graph_reading_def)
+  obtain A where node: "(n,A) \<in> fset (graph_inferences G)"
+    using inside by (auto simp: schema_graph_nodes_def rel_dom_def)
+  have checked: "checks_schema_graph_node P G J n A"
+    using read node unfolding schema_graph_reading_def by blast
+  have rv: "rel_value J n=(e,x)" by (rule rel_value_eq[OF sv row])
+  show ?thesis using checked by (cases A) (auto simp: rv admitted_schema_instance_def)
+qed
+
+lemma schema_graph_reading_binding_formed:
+  assumes read: "schema_graph_reading P G root d t J"
+    and node: "(n,Schema_Inference c V) \<in> fset (graph_inferences G)" and row: "(a,x) |\<in>| V"
+  shows "term_formed x"
+proof -
+  have checked: "checks_schema_graph_node P G J n (Schema_Inference c V)"
+    using read node unfolding schema_graph_reading_def by blast
+  obtain S Q where clause: "((fst (rel_value J n),c),S) \<in> system_clauses P"
+    and inst: "schema_instance S (fset V) (snd (rel_value J n)) Q"
+    using checked by (auto simp: admitted_schema_instance_def; blast)
+  show ?thesis using inst row by (auto simp: schema_instance_def term_bindings_formed_def)
+qed
+
+lemma schema_graph_edge_premise:
+  assumes read: "schema_graph_reading P G root d t J"
+    and edge: "(m,n) \<in> schema_graph_edges G"
+  shows "\<exists>s c V Q. ((n,s),m) \<in> fset (graph_discharges G) \<and>
+    (n,Schema_Inference c V) \<in> fset (graph_inferences G) \<and>
+    admitted_schema_instance P (fst (rel_value J n)) c (fset V) (snd (rel_value J n)) Q \<and>
+    (s,rel_value J m) \<in> Q"
+proof -
+  have formed: "schema_graph_formed G root" and jsv: "single_valued J"
+    using read by (auto simp: schema_graph_reading_def)
+  have inside: "n \<in> schema_graph_nodes G" by (rule schema_graph_edge_nodes(2)[OF formed edge])
+  obtain A where row: "(n,A) \<in> fset (graph_inferences G)"
+    using inside by (auto simp: schema_graph_nodes_def rel_dom_def)
+  have checked: "checks_schema_graph_node P G J n A"
+    using read row unfolding schema_graph_reading_def by blast
+  obtain s where link: "((n,s),m) \<in> fset (graph_discharges G)"
+    using edge by (auto simp: schema_graph_edges_def)
+  have discharge: "(s,m) \<in> schema_graph_premises G n"
+    using link by (simp add: schema_graph_premises_def)
+  show ?thesis
+  proof (cases A)
+    case Schema_Assertion
+    then show ?thesis using checked discharge by simp
+  next
+    case (Schema_Inference c V)
+    obtain Q where inst: "admitted_schema_instance P (fst (rel_value J n)) c (fset V) (snd (rel_value J n)) Q"
+      and domain: "rel_dom (schema_graph_premises G n) = rel_dom Q"
+      and children: "\<forall>s m. (s,m) \<in> schema_graph_premises G n \<longrightarrow> (m,rel_value Q s) \<in> J"
+      using checked Schema_Inference by auto
+    have key: "s \<in> rel_dom Q" using rel_domI[OF discharge] domain by simp
+    obtain q where premise: "(s,q) \<in> Q" using key by (auto simp: rel_dom_def)
+    have qsv: "single_valued Q" using admitted_instance_formed[OF inst] by blast
+    have qv: "rel_value Q s=q" by (rule rel_value_eq[OF qsv premise])
+    have supplied: "(m,rel_value Q s) \<in> J" using children discharge by blast
+    have jv: "rel_value J m=rel_value Q s" by (rule rel_value_eq[OF jsv supplied])
+    have expected: "(s,rel_value J m) \<in> Q" using premise qv jv by simp
+    show ?thesis
+      by (rule exI[of _ s], rule exI[of _ c], rule exI[of _ V], rule exI[of _ Q])
+         (use link row Schema_Inference inst expected in simp)
+  qed
+qed
+
+lemma schema_graph_readings_follow_edge:
+  assumes first: "schema_graph_reading P G root d t J"
+    and second: "schema_graph_reading P G root d t L"
+    and edge: "(m,n) \<in> schema_graph_edges G"
+    and parent: "rel_value J n = rel_value L n"
+  shows "rel_value J m = rel_value L m"
+proof -
+  obtain s c V Q where left: "((n,s),m) \<in> fset (graph_discharges G)"
+    "(n,Schema_Inference c V) \<in> fset (graph_inferences G)"
+    "admitted_schema_instance P (fst (rel_value J n)) c (fset V) (snd (rel_value J n)) Q"
+    "(s,rel_value J m) \<in> Q"
+    using schema_graph_edge_premise[OF first edge] by blast
+  have checked: "checks_schema_graph_node P G L n (Schema_Inference c V)"
+    using second left(2) unfolding schema_graph_reading_def by blast
+  obtain R where right: "admitted_schema_instance P (fst (rel_value L n)) c (fset V) (snd (rel_value L n)) R"
+    "rel_dom (schema_graph_premises G n) = rel_dom R"
+    "\<forall>s m. (s,m) \<in> schema_graph_premises G n \<longrightarrow> (m,rel_value R s) \<in> L"
+    using checked by auto
+  have inst: "admitted_schema_instance P (fst (rel_value J n)) c (fset V) (snd (rel_value J n)) R"
+    using right(1) parent by simp
+  have same: "Q=R" using admitted_instance_unique[OF left(3) inst] by blast
+  have premise: "(s,m) \<in> schema_graph_premises G n"
+    using left(1) by (simp add: schema_graph_premises_def)
+  have supplied: "(m,rel_value Q s) \<in> L" using right(3) premise same by blast
+  have lsv: "single_valued L" using second by (simp add: schema_graph_reading_def)
+  have lv: "rel_value L m=rel_value Q s" by (rule rel_value_eq[OF lsv supplied])
+  have qsv: "single_valued Q" using admitted_instance_formed[OF left(3)] by blast
+  have qv: "rel_value Q s=rel_value J m" by (rule rel_value_eq[OF qsv left(4)])
+  show ?thesis using lv qv by simp
+qed
+
+section \<open>A root call determines the whole reading\<close>
+
+theorem schema_graph_reading_unique:
+  assumes first: "schema_graph_reading P G root d t J"
+    and second: "schema_graph_reading P G root d t L"
+  shows "J=L"
+proof -
+  have jsv: "single_valued J" and lsv: "single_valued L"
+    and jd: "rel_dom J = schema_graph_nodes G" and ld: "rel_dom L = schema_graph_nodes G"
+    and jroot: "(root,d,t) \<in> J" and lroot: "(root,d,t) \<in> L"
+    and reachable: "\<forall>n\<in>schema_graph_nodes G. (n,root) \<in> (schema_graph_edges G)\<^sup>*"
+    using first second by (auto simp: schema_graph_reading_def schema_graph_formed_def)
+  have root_eq: "rel_value J root=rel_value L root"
+    using rel_value_eq[OF jsv jroot] rel_value_eq[OF lsv lroot] by simp
+  have path: "\<And>a b. (a,b) \<in> (schema_graph_edges G)\<^sup>* \<Longrightarrow>
+    rel_value J b=rel_value L b \<longrightarrow> rel_value J a=rel_value L a"
+  proof -
+    fix a b assume reach: "(a,b) \<in> (schema_graph_edges G)\<^sup>*"
+    show "rel_value J b=rel_value L b \<longrightarrow> rel_value J a=rel_value L a"
+      using reach
+    proof (induction rule: rtrancl_induct)
+      case base
+      then show ?case by simp
+    next
+      case (step y z)
+      have descent: "rel_value J z=rel_value L z \<Longrightarrow> rel_value J y=rel_value L y"
+        by (rule schema_graph_readings_follow_edge[OF first second step.hyps(2)])
+      show ?case using step.IH descent by blast
+    qed
+  qed
+  have pointwise: "\<And>n. n \<in> schema_graph_nodes G \<Longrightarrow> rel_value J n=rel_value L n"
+    using reachable root_eq path by blast
+  have entries: "\<And>n q. (n,q) \<in> J \<longleftrightarrow> (n,q) \<in> L"
+  proof -
+    fix n q
+    show "(n,q) \<in> J \<longleftrightarrow> (n,q) \<in> L"
+    proof
+      assume member: "(n,q) \<in> J"
+      have inside: "n \<in> schema_graph_nodes G" using rel_domI[OF member] jd by simp
+      have jv: "rel_value J n=q" by (rule rel_value_eq[OF jsv member])
+      show "(n,q) \<in> L"
+        using schema_graph_reading_value[OF second inside] pointwise[OF inside] jv by simp
+    next
+      assume member: "(n,q) \<in> L"
+      have inside: "n \<in> schema_graph_nodes G" using rel_domI[OF member] ld by simp
+      have lv: "rel_value L n=q" by (rule rel_value_eq[OF lsv member])
+      show "(n,q) \<in> J"
+        using schema_graph_reading_value[OF first inside] pointwise[OF inside] lv by simp
+    qed
+  qed
+  show ?thesis using entries by auto
+qed
+
+theorem schema_graph_assumptions_unique:
+  assumes first: "schema_graph_derives P G root d t H"
+    and second: "schema_graph_derives P G root d t K"
+  shows "H=K"
+proof -
+  obtain J where jr: "schema_graph_reading P G root d t J" and h: "H=schema_graph_assumptions G J"
+    using first unfolding schema_graph_derives_def by blast
+  obtain L where lr: "schema_graph_reading P G root d t L" and k: "K=schema_graph_assumptions G L"
+    using second unfolding schema_graph_derives_def by blast
+  show ?thesis using schema_graph_reading_unique[OF jr lr] h k by simp
+qed
+
+theorem schema_graph_exact_assertions:
+  assumes derived: "schema_graph_derives P G root d t H"
+  shows "rel_dom H = {n. (n,Schema_Assertion) \<in> fset (graph_inferences G)}"
+    and "finite H" and "single_valued H"
+    and "\<forall>n e x. (n,e,x) \<in> H \<longrightarrow> schema_call_formed P e x"
+proof -
+  obtain J where read: "schema_graph_reading P G root d t J"
+    and projection: "H=schema_graph_assumptions G J"
+    using derived unfolding schema_graph_derives_def by blast
+  show "rel_dom H = {n. (n,Schema_Assertion) \<in> fset (graph_inferences G)}"
+    and "finite H" and "single_valued H"
+    using schema_graph_assumption_boundary[OF read] projection by auto
+  show "\<forall>n e x. (n,e,x) \<in> H \<longrightarrow> schema_call_formed P e x"
+  proof (intro allI impI)
+    fix n e x assume member: "(n,e,x) \<in> H"
+    have entry: "(n,e,x) \<in> schema_graph_assumptions G J" using member projection by simp
+    show "schema_call_formed P e x" by (rule schema_graph_asserted_call[OF read entry])
+  qed
+qed
+
+corollary schema_graph_closed_has_no_assertion:
+  assumes "schema_graph_derives P G root d t {}"
+  shows "(n,Schema_Assertion) \<notin> fset (graph_inferences G)"
+  using schema_graph_exact_assertions(1)[OF assms] by auto
+
+corollary schema_graph_cannot_omit_assumption:
+  assumes "schema_graph_derives P G root d t H" "(n,Schema_Assertion) \<in> fset (graph_inferences G)"
+    "n \<notin> rel_dom K"
+  shows "\<not> schema_graph_derives P G root d t K"
+proof
+  assume derived: "schema_graph_derives P G root d t K"
+  have domain: "rel_dom K = {n. (n,Schema_Assertion) \<in> fset (graph_inferences G)}"
+    by (rule schema_graph_exact_assertions(1)[OF derived])
+  have "n \<in> rel_dom K" using domain assms(2) by simp
+  then show False using assms(3) by contradiction
+qed
+
+text \<open>
+  Claim assignment is a recovered projection, not a field stored at every node.
+  Reachability from the supplied root and the functional prospective-premise
+  equations determine it uniquely. No traversal choice, supplied claim cache,
+  or assumption list can substitute a different reading. An assertion remains
+  in the exact assumption domain until its explicit graph occurrence changes.
+\<close>
+
+corollary shared_assertion_is_not_a_derivation:
+  assumes assertion: "(n,Schema_Assertion) \<in> fset (graph_inferences G)"
+    and first: "((p,s),n) \<in> fset (graph_discharges G)"
+    and second: "((q,t),n) \<in> fset (graph_discharges G)" and different: "(p,s)\<noteq>(q,t)"
+  shows "\<not> schema_graph_derives P G root d x H"
+proof
+  assume derives: "schema_graph_derives P G root d x H"
+  have formed: "schema_graph_formed G root" using derives
+    by (auto simp: schema_graph_derives_def schema_graph_reading_def)
+  have same: "p=q \<and> s=t" by (rule schema_graph_assertion_use_unique[OF formed assertion first second])
+  show False using different same by simp
+qed
+
+lemma schema_graph_assumption_premise_origin:
+  assumes derives: "schema_graph_derives P G root d t H" and member: "(n,q) \<in> H" and nonroot: "n\<noteq>root"
+  shows "\<exists>!p. (n,p) \<in> schema_assertion_uses G"
+proof -
+  have formed: "schema_graph_formed G root" using derives
+    by (auto simp: schema_graph_derives_def schema_graph_reading_def)
+  have inside: "n \<in> rel_dom H" by (rule rel_domI[OF member])
+  have assertion: "(n,Schema_Assertion) \<in> fset (graph_inferences G)"
+    using inside schema_graph_exact_assertions(1)[OF derives] by simp
+  show ?thesis by (rule schema_graph_assertion_origin[OF formed assertion nonroot])
+qed
+
+end

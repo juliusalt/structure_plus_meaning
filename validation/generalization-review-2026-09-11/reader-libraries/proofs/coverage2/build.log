@@ -1,0 +1,24 @@
+Running Native_Investigation_Report_Diagnostic_coverage2 ...
+Native_Investigation_Report_Diagnostic_coverage2 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_coverage2")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_coverage2.Factor_Reader_Library_Coverage" (unresolved "Native_Investigation_Report_Diagnostic_coverage2.Factor_Library_Coverage")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_coverage2.Factor_Reasoning_Execution" (unresolved "Native_Investigation_Report_Diagnostic_coverage2.Factor_Reader_Library_Coverage")
+*** Failed to finish proof (line 23 of "/tmp/native-investigation-report-diagnostic-coverage2/theories/Factor_Library_Coverage.thy"):
+*** goal (1 subgoal):
+***  1. ⋀s d p.
+***        ⟦∀x|∈|finite_schema_premises S.
+***            ∀x1 a b.
+***               x = (x1, a, b) ⟶
+***               (∃x|∈|H.
+***                   ∀x1a aa ba.
+***                      x = (x1a, aa, ba) ⟶
+***                      x1a = x1 ∧ aa = a ∧ finite_pattern_instance V b ba);
+***         (s, d, p) |∈| finite_schema_premises S; finite_schema_formed S;
+***         finite_term_bindings_formed (finite_schema_variables S) V;
+***         finite_pattern_instance V (finite_schema_conclusion S) t;
+***         Bootstrap_Relations.single_valued (fset H);
+***         fst |`| H = fst |`| finite_schema_premises S⟧
+***        ⟹ ∃x. (s, d, x) |∈|
+***               H
+*** At command "by" (line 22 of "/tmp/native-investigation-report-diagnostic-coverage2/theories/Factor_Library_Coverage.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_coverage2
+0:02:03 elapsed time, 0:04:41 cpu time, factor 2.28

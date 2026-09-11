@@ -1,0 +1,358 @@
+theory Factor_Native_Tables
+  imports "Factor_Native_References"
+begin
+
+section \<open>Complete structural families of rows\<close>
+
+definition native_table_rows ::
+  "(local_address \<times> local_address) set \<Rightarrow>
+    (local_address \<Rightarrow> 'q \<Rightarrow> local_address set \<Rightarrow> local_address set \<Rightarrow> bool) \<Rightarrow>
+    (local_address \<times> ('q \<times> (local_address set \<times> local_address set))) set" where
+  "native_table_rows M read = {(s,q,I,K) |s a q I K. (s,a) \<in> M \<and> read a q I K}"
+
+definition native_row_values where
+  "native_row_values H = fst ` rel_ran H"
+
+definition native_row_interiors where
+  "native_row_interiors H = \<Union>((fst \<circ> snd) ` rel_ran H)"
+
+definition native_row_slots where
+  "native_row_slots H = \<Union>((snd \<circ> snd) ` rel_ran H)"
+
+definition native_row_keys where
+  "native_row_keys H s = fst (fst (rel_value H s))"
+
+lemma native_table_rows_member:
+  "(s,q,I,K) \<in> native_table_rows M read \<longleftrightarrow> (\<exists>a. (s,a) \<in> M \<and> read a q I K)"
+  by (auto simp: native_table_rows_def)
+
+lemma native_row_value_member:
+  "q \<in> native_row_values H \<longleftrightarrow> (\<exists>s I K. (s,q,I,K) \<in> H)"
+proof
+  assume member: "q \<in> native_row_values H"
+  obtain x where value_at: "x \<in> rel_ran H" "q=fst x"
+    using member by (auto simp: native_row_values_def)
+  obtain s where row: "(s,x) \<in> H" using value_at(1) by (auto simp: rel_ran_def)
+  obtain I K where shape: "x=(q,I,K)" using value_at(2) by (cases x) auto
+  show "\<exists>s I K. (s,q,I,K) \<in> H" using row shape by blast
+next
+  assume "\<exists>s I K. (s,q,I,K) \<in> H"
+  then obtain s I K where row: "(s,q,I,K) \<in> H" by blast
+  have value_at: "(q,I,K) \<in> rel_ran H" by (rule rel_ranI[OF row])
+  show "q \<in> native_row_values H" unfolding native_row_values_def
+    by (rule rev_image_eqI[OF value_at]) simp
+qed
+
+lemma native_row_interior_member:
+  "a \<in> native_row_interiors H \<longleftrightarrow> (\<exists>s q I K. (s,q,I,K) \<in> H \<and> a \<in> I)"
+  by (auto simp: native_row_interiors_def rel_ran_def)
+
+lemma native_row_slot_member:
+  "a \<in> native_row_slots H \<longleftrightarrow> (\<exists>s q I K. (s,q,I,K) \<in> H \<and> a \<in> K)"
+  by (auto simp: native_row_slots_def rel_ran_def)
+
+lemma native_row_slots_contains:
+  assumes "(s,q,J,A) \<in> H"
+  shows "A \<subseteq> native_row_slots H"
+  using assms by (auto simp: native_row_slot_member; blast)
+
+lemma native_row_interiors_contains:
+  assumes "(s,q,J,A) \<in> H"
+  shows "J \<subseteq> native_row_interiors H"
+  using assms by (auto simp: native_row_interior_member; blast)
+
+lemma native_table_rows_functional:
+  assumes family: "single_valued M"
+    and unique: "\<And>a q I K z J A. read a q I K \<Longrightarrow> read a z J A \<Longrightarrow> q=z \<and> I=J \<and> K=A"
+  shows "single_valued (native_table_rows M read)"
+  using family unique by (auto simp: single_valued_def native_table_rows_member; blast)
+
+lemma native_table_rows_domain:
+  assumes complete: "\<And>s a. (s,a) \<in> M \<Longrightarrow> \<exists>q I K. read a q I K"
+  shows "rel_dom (native_table_rows M read)=rel_dom M"
+  using complete by (auto simp: rel_dom_def native_table_rows_member; blast)
+
+lemma native_row_key_at:
+  assumes "single_valued H" "(s,(k,v),I,K) \<in> H"
+  shows "native_row_keys H s=k"
+  using rel_value_eq[OF assms] by (simp add: native_row_keys_def)
+
+lemma native_row_key_unique:
+  assumes sv: "single_valued H" and inj: "inj_on (native_row_keys H) (rel_dom H)"
+    and first: "(s,(k,v),I,K) \<in> H" and second: "(t,(k,w),J,A) \<in> H"
+  shows "s=t" "v=w" "I=J" "K=A"
+proof -
+  have sk: "native_row_keys H s=k" and tk: "native_row_keys H t=k"
+    using native_row_key_at[OF sv first] native_row_key_at[OF sv second] by blast+
+  have sd: "s \<in> rel_dom H" and td: "t \<in> rel_dom H" using first second by (auto simp: rel_dom_def)
+  show same: "s=t" by (rule inj_onD[OF inj _ sd td]) (simp add: sk tk)
+  have eq: "((k,v),I,K)=((k,w),J,A)"
+    using single_valued_outputs[OF sv first] second same by blast
+  show "v=w" "I=J" "K=A" using eq by simp_all
+qed
+
+lemma native_row_values_functional:
+  fixes H :: "('s \<times> (('k \<times> 'v) \<times> ('i \<times> 'a))) set"
+  assumes "single_valued H" "inj_on (native_row_keys H) (rel_dom H)"
+  shows "single_valued (native_row_values H)"
+  unfolding single_valued_def native_row_value_member
+  using native_row_key_unique(2)[OF assms] by blast
+
+lemma native_row_values_finite:
+  assumes "finite H"
+  shows "finite (native_row_values H)"
+  using finite_rel_ran[OF assms] by (simp add: native_row_values_def)
+
+lemma native_row_values_exact_occurrence:
+  assumes sv: "single_valued H" and inj: "inj_on (native_row_keys H) (rel_dom H)"
+    and member: "(k,v) \<in> native_row_values H"
+  shows "\<exists>!s. \<exists>I K. (s,(k,v),I,K) \<in> H"
+  using member native_row_key_unique(1)[OF sv inj]
+  by (auto simp: native_row_value_member; blast)
+
+definition native_table_at ::
+  "'u artifact_environment \<Rightarrow> 'u \<Rightarrow> local_address \<Rightarrow>
+    (local_address \<Rightarrow> ('k \<times> 'v) \<Rightarrow> local_address set \<Rightarrow> local_address set \<Rightarrow> bool) \<Rightarrow>
+    ('k \<times> 'v) set \<Rightarrow> local_address set \<Rightarrow> local_address set \<Rightarrow> bool" where
+  "native_table_at E u r read Q I K \<longleftrightarrow> environment_formed E \<and>
+    (\<exists>R M. artifact_at E u R \<and> family_at R r M \<and>
+      (let H=native_table_rows M read in
+       single_valued H \<and> rel_dom H=rel_dom M \<and>
+       inj_on (native_row_keys H) (rel_dom H) \<and>
+       (\<forall>s q J A t z L B. (s,q,J,A) \<in> H \<longrightarrow> (t,z,L,B) \<in> H \<longrightarrow> s\<noteq>t \<longrightarrow> J \<inter> L = {}) \<and>
+       insert r (rel_dom M) \<inter> native_row_interiors H = {} \<and>
+       Q=native_row_values H \<and> I=insert r (rel_dom M \<union> native_row_interiors H) \<and>
+       K=native_row_slots H \<and> I \<inter> K = {}))"
+
+lemma native_table_unique:
+  assumes first: "native_table_at E u r read Q I K"
+    and second: "native_table_at E u r read W J A"
+  shows "Q=W \<and> I=J \<and> K=A"
+proof -
+  obtain R M where left: "environment_formed E" "artifact_at E u R" "family_at R r M"
+    "Q=native_row_values (native_table_rows M read)"
+    "I=insert r (rel_dom M \<union> native_row_interiors (native_table_rows M read))"
+    "K=native_row_slots (native_table_rows M read)"
+    using first by (auto simp: native_table_at_def Let_def)
+  obtain S N where right: "artifact_at E u S" "family_at S r N"
+    "W=native_row_values (native_table_rows N read)"
+    "J=insert r (rel_dom N \<union> native_row_interiors (native_table_rows N read))"
+    "A=native_row_slots (native_table_rows N read)"
+    using second by (auto simp: native_table_at_def Let_def)
+  have art: "S=R" by (rule environment_artifact_unique[OF left(1) right(1) left(2)])
+  have fam: "family_at R r N" using right(2) art by simp
+  have same: "N=M" by (rule family_at_unique[OF fam left(3)])
+  show ?thesis using left(4-6) right(3-5) same by simp
+qed
+
+lemma native_table_properties:
+  assumes table: "native_table_at E u r read Q I K"
+    and rows: "\<And>a q J A. read a q J A \<Longrightarrow> finite J \<and> finite A"
+  shows "finite Q" "single_valued Q" "r \<in> I" "finite I" "finite K" "I \<inter> K = {}"
+proof -
+  obtain R :: exact_artifact and M where parts: "family_at R r M"
+    "single_valued (native_table_rows M read)" "rel_dom (native_table_rows M read)=rel_dom M"
+    "inj_on (native_row_keys (native_table_rows M read)) (rel_dom (native_table_rows M read))"
+    "Q=native_row_values (native_table_rows M read)"
+    "I=insert r (rel_dom M \<union> native_row_interiors (native_table_rows M read))"
+    "K=native_row_slots (native_table_rows M read)" "I \<inter> K = {}"
+    using table by (auto simp: native_table_at_def Let_def)
+  let ?H = "native_table_rows M read"
+  have mf: "finite M" by (rule family_socket_graph_finite[OF parts(1)])
+  have hd: "finite (rel_dom ?H)" using finite_rel_dom[OF mf] parts(3) by simp
+  have hf: "finite ?H" by (rule finite_single_valued[OF hd parts(2)])
+  have rf: "finite (rel_ran ?H)" by (rule finite_rel_ran[OF hf])
+  have each: "\<And>q J A. (q,J,A) \<in> rel_ran ?H \<Longrightarrow> finite J \<and> finite A"
+    using rows by (auto simp: rel_ran_def native_table_rows_member; blast)
+  have jf: "finite (native_row_interiors ?H)" and af: "finite (native_row_slots ?H)"
+    using rf each by (auto simp: native_row_interiors_def native_row_slots_def)
+  show "finite Q" using native_row_values_finite[OF hf] parts(5) by simp
+  show "single_valued Q" using native_row_values_functional[OF parts(2,4)] parts(5) by simp
+  show "r \<in> I" "finite I" "finite K" "I \<inter> K = {}"
+    using jf af finite_rel_dom[OF mf] parts(6-8) by auto
+qed
+
+lemma native_table_complete_rows:
+  assumes table: "native_table_at E u r read Q I K"
+    and art: "artifact_at E u R" and family: "family_at R r M"
+  shows "rel_dom (native_table_rows M read)=rel_dom M"
+    "Q=native_row_values (native_table_rows M read)"
+    "single_valued (native_table_rows M read)"
+    "inj_on (native_row_keys (native_table_rows M read)) (rel_dom (native_table_rows M read))"
+proof -
+  obtain S N where parts: "environment_formed E" "artifact_at E u S" "family_at S r N"
+    "rel_dom (native_table_rows N read)=rel_dom N"
+    "Q=native_row_values (native_table_rows N read)"
+    "single_valued (native_table_rows N read)"
+    "inj_on (native_row_keys (native_table_rows N read)) (rel_dom (native_table_rows N read))"
+    using table by (auto simp: native_table_at_def Let_def)
+  have same: "S=R" by (rule environment_artifact_unique[OF parts(1,2) art])
+  have fam: "family_at R r N" using parts(3) same by simp
+  have graph: "N=M" by (rule family_at_unique[OF fam family])
+  show "rel_dom (native_table_rows M read)=rel_dom M"
+    "Q=native_row_values (native_table_rows M read)"
+    "single_valued (native_table_rows M read)"
+    "inj_on (native_row_keys (native_table_rows M read)) (rel_dom (native_table_rows M read))"
+    using parts(4-7) graph by simp_all
+qed
+
+lemma native_table_row_origin:
+  assumes table: "native_table_at E u r read Q I K" and member: "q \<in> Q"
+  shows "\<exists>R M s a J A. artifact_at E u R \<and> family_at R r M \<and>
+    (s,a) \<in> M \<and> read a q J A"
+proof -
+  obtain R M where parts: "artifact_at E u R" "family_at R r M"
+    "Q=native_row_values (native_table_rows M read)"
+    using table by (auto simp: native_table_at_def Let_def)
+  have row: "q \<in> native_row_values (native_table_rows M read)" using member parts(3) by simp
+  obtain s a J A where actual: "(s,a) \<in> M" "read a q J A"
+    using row by (auto simp: native_row_value_member native_table_rows_member)
+  show ?thesis using parts(1,2) actual by blast
+qed
+
+lemma native_table_no_duplicate_key:
+  assumes table: "native_table_at E u r read Q I K" and art: "artifact_at E u R" and family: "family_at R r M"
+    and first: "(s,a) \<in> M" "read a (k,v) J A"
+    and second: "(t,b) \<in> M" "read b (k,w) L B"
+  shows "s=t" "v=w" "J=L" "A=B"
+proof -
+  have rows: "single_valued (native_table_rows M read)"
+    "inj_on (native_row_keys (native_table_rows M read)) (rel_dom (native_table_rows M read))"
+    using native_table_complete_rows(3,4)[OF table art family] by blast+
+  have left: "(s,(k,v),J,A) \<in> native_table_rows M read"
+    and right: "(t,(k,w),L,B) \<in> native_table_rows M read"
+    using first second by (auto simp: native_table_rows_member)
+  show "s=t" "v=w" "J=L" "A=B" using native_row_key_unique[OF rows left right] by blast+
+qed
+
+lemma native_table_row_value:
+  assumes table: "native_table_at E u r read Q I K" and art: "artifact_at E u R"
+    and family: "family_at R r M" and member: "(s,a) \<in> M" and row: "read a q J A"
+  shows "q \<in> Q"
+proof -
+  have rows: "Q=native_row_values (native_table_rows M read)"
+    by (rule native_table_complete_rows(2)[OF table art family])
+  have actual: "(s,q,J,A) \<in> native_table_rows M read"
+    using member row by (auto simp: native_table_rows_member)
+  show ?thesis using actual by (auto simp: rows native_row_value_member)
+qed
+
+lemma native_table_carrier:
+  assumes table: "native_table_at E u r read Q I K" and art: "artifact_at E u R"
+    and rows: "\<And>a q J A. read a q J A \<Longrightarrow> J \<union> A \<subseteq> rra_carrier (object_structure R)"
+  shows "I \<union> K \<subseteq> rra_carrier (object_structure R)"
+proof -
+  obtain S M where parts: "environment_formed E" "artifact_at E u S" "family_at S r M"
+    "I=insert r (rel_dom M \<union> native_row_interiors (native_table_rows M read))"
+    "K=native_row_slots (native_table_rows M read)"
+    using table by (auto simp: native_table_at_def Let_def)
+  have same: "S=R" by (rule environment_artifact_unique[OF parts(1,2) art])
+  have header: "insert r (rel_dom M) \<subseteq> rra_carrier (object_structure R)"
+    using family_interior_in_carrier[OF parts(3)] same by simp
+  have body: "native_row_interiors (native_table_rows M read) \<union>
+      native_row_slots (native_table_rows M read) \<subseteq> rra_carrier (object_structure R)"
+    using rows by (auto simp: native_row_interior_member native_row_slot_member native_table_rows_member; blast)
+  show ?thesis using header body parts(4,5) by blast
+qed
+
+lemma native_table_raw_row:
+  assumes table: "native_table_at E u r read Q I K" and art: "artifact_at E u R"
+    and family: "family_at R r M" and member: "(s,a) \<in> M"
+  shows "\<exists>q J A. read a q J A"
+proof -
+  have domain: "rel_dom (native_table_rows M read)=rel_dom M"
+    by (rule native_table_complete_rows(1)[OF table art family])
+  have key: "s \<in> rel_dom (native_table_rows M read)" using rel_domI[OF member] domain by simp
+  obtain q J A b where row: "(s,b) \<in> M" "read b q J A"
+    using key by (auto simp: rel_dom_def native_table_rows_member)
+  have sv: "single_valued M" using family by (simp add: family_at_def)
+  have same: "b=a" by (rule single_valued_outputs[OF sv row(1) member])
+  show ?thesis using row(2) same by blast
+qed
+
+lemma native_table_row_slots:
+  assumes table: "native_table_at E u r read Q I K" and art: "artifact_at E u R"
+    and family: "family_at R r M" and member: "(s,a) \<in> M" and row: "read a q J A"
+  shows "A \<subseteq> K"
+proof -
+  obtain S N where parts: "environment_formed E" "artifact_at E u S" "family_at S r N"
+    "K=native_row_slots (native_table_rows N read)"
+    using table by (auto simp: native_table_at_def Let_def)
+  have same: "S=R" by (rule environment_artifact_unique[OF parts(1,2) art])
+  have fam: "family_at R r N" using parts(3) same by simp
+  have graph: "N=M" by (rule family_at_unique[OF fam family])
+  have actual: "(s,q,J,A) \<in> native_table_rows M read" using member row by (auto simp: native_table_rows_member)
+  show ?thesis using native_row_slots_contains[OF actual] parts(4) graph by simp
+qed
+
+theorem native_table_change_reader:
+  fixes read :: "local_address \<Rightarrow> ('k \<times> 'v) \<Rightarrow> local_address set \<Rightarrow> local_address set \<Rightarrow> bool"
+  assumes table: "native_table_at E u r read Q I K" and target: "environment_formed F"
+    and source: "\<And>R. artifact_at E u R \<Longrightarrow> artifact_at F u R"
+    and forward: "\<And>a q J A. read a q J A \<Longrightarrow> A \<subseteq> K \<Longrightarrow> other a q J A"
+    and unique: "\<And>a q J A z L B. other a q J A \<Longrightarrow> other a z L B \<Longrightarrow> q=z \<and> J=L \<and> A=B"
+  shows "native_table_at F u r other Q I K"
+proof -
+  obtain R M where art: "artifact_at E u R" and family: "family_at R r M"
+    and fields: "single_valued (native_table_rows M read)"
+    "rel_dom (native_table_rows M read)=rel_dom M"
+    "inj_on (native_row_keys (native_table_rows M read)) (rel_dom (native_table_rows M read))"
+    "\<forall>s q J A t z L B. (s,q,J,A) \<in> native_table_rows M read \<longrightarrow>
+      (t,z,L,B) \<in> native_table_rows M read \<longrightarrow> s\<noteq>t \<longrightarrow> J \<inter> L = {}"
+    "insert r (rel_dom M) \<inter> native_row_interiors (native_table_rows M read) = {}"
+    "Q=native_row_values (native_table_rows M read)"
+    "I=insert r (rel_dom M \<union> native_row_interiors (native_table_rows M read))"
+    "K=native_row_slots (native_table_rows M read)" "I \<inter> K = {}"
+    using table by (auto simp: native_table_at_def Let_def)
+  have copies: "\<And>s a q J A. (s,a) \<in> M \<Longrightarrow> read a q J A \<Longrightarrow> other a q J A"
+  proof -
+    fix s a q J A assume member: "(s,a) \<in> M" and row: "read a q J A"
+    have slots: "A \<subseteq> K" by (rule native_table_row_slots[OF table art family member row])
+    show "other a q J A" by (rule forward[OF row slots])
+  qed
+  have rows: "native_table_rows M other=native_table_rows M read"
+  proof (rule set_eqI)
+    fix x :: "local_address \<times> (('k \<times> 'v) \<times> (local_address set \<times> local_address set))"
+    obtain s q J A where shape: "x=(s,q,J,A)" by (cases x) auto
+    show "x \<in> native_table_rows M other \<longleftrightarrow> x \<in> native_table_rows M read"
+      unfolding shape native_table_rows_member
+    proof
+      assume "\<exists>a. (s,a) \<in> M \<and> other a q J A"
+      then obtain a where member: "(s,a) \<in> M" and row: "other a q J A" by blast
+      obtain z L B where old: "read a z L B" using native_table_raw_row[OF table art family member] by blast
+      have copied: "other a z L B" by (rule copies[OF member old])
+      have same: "q=z \<and> J=L \<and> A=B" by (rule unique[OF row copied])
+      show "\<exists>a. (s,a) \<in> M \<and> read a q J A" using member old same by blast
+    next
+      assume "\<exists>a. (s,a) \<in> M \<and> read a q J A"
+      then show "\<exists>a. (s,a) \<in> M \<and> other a q J A" using copies by blast
+    qed
+  qed
+  have new_art: "artifact_at F u R" by (rule source[OF art])
+  show ?thesis unfolding native_table_at_def Let_def
+    by (rule conjI[OF target], rule exI[of _ R], rule exI[of _ M])
+       (use new_art family fields rows in auto)
+qed
+
+lemma native_table_slots_bound:
+  assumes table: "native_table_at E u r read Q I K" and slot: "k \<in> K"
+    and bound: "\<And>a q J A x. read a q J A \<Longrightarrow> x \<in> A \<Longrightarrow> (u,x) \<in> rel_dom (environment_bindings E)"
+  shows "(u,k) \<in> rel_dom (environment_bindings E)"
+proof -
+  obtain M where slots: "K=native_row_slots (native_table_rows M read)"
+    using table by (auto simp: native_table_at_def Let_def)
+  obtain s a q J A where row: "read a q J A" and member: "k \<in> A"
+    using slot by (auto simp: slots native_row_slot_member native_table_rows_member)
+  show ?thesis by (rule bound[OF row member])
+qed
+
+text \<open>
+  The row relation is supplied by the caller's structural grammar. The table
+  derives every row from the complete socket graph and requires every socket
+  to decode. Its semantic keys identify actual rows injectively, so two rows
+  with the same decoded key are rejected even if their values agree. The row
+  interiors, table header, and exposed reference slots determine its boundary.
+  These projections are derived values, not additional native fields.
+\<close>
+
+end

@@ -1,0 +1,67 @@
+theory Finite_Functional_Enumeration
+  imports "RRA_Finite_Artifacts"
+begin
+
+section \<open>Ordered keys enumerate a complete finite functional relation\<close>
+
+definition finite_functional_rows :: "('i::linorder\<times>'a) fset \<Rightarrow> ('i\<times>'a) list" where
+  "finite_functional_rows R=
+    (if finite_relation_functional R then
+      map (\<lambda>i. (i,fthe_elem (fimage snd (ffilter (\<lambda>r. fst r=i) R))))
+        (sorted_list_of_fset (fimage fst R))
+     else [])"
+
+lemma finite_functional_selected_value:
+  assumes functional: "finite_relation_functional R" and member: "(i,a) |\<in>| R"
+  shows "fthe_elem (fimage snd (ffilter (\<lambda>r. fst r=i) R))=a"
+proof -
+  have agrees: "b=a" if "(i,b) |\<in>| R" for b
+    using single_valued_outputs[of "fset R" i b a] functional member that
+    by (simp add: finite_relation_functional_correct)
+  have unique: "fimage snd (ffilter (\<lambda>r. fst r=i) R)={|a|}"
+    apply (rule fset_inject[THEN iffD1])
+    using member agrees
+    apply (auto simp: fimage.rep_eq ffilter.rep_eq image_iff split: prod.splits)
+    done
+  show ?thesis by (simp only: unique fthe_felem_eq)
+qed
+
+theorem finite_functional_rows_exact:
+  assumes functional: "finite_relation_functional R"
+  shows "set (finite_functional_rows R)=fset R"
+proof
+  show "set (finite_functional_rows R)\<subseteq>fset R"
+  proof
+    fix row assume member: "row\<in>set (finite_functional_rows R)"
+    obtain i where key: "i |\<in>| fimage fst R"
+      and shape: "row=(i,fthe_elem (fimage snd (ffilter (\<lambda>r. fst r=i) R)))"
+      using member by (auto simp: finite_functional_rows_def functional)
+    obtain a where actual: "(i,a) |\<in>| R" using key by auto
+    show "row\<in>fset R" using actual finite_functional_selected_value[OF functional actual]
+      by (simp only: shape)
+  qed
+  show "fset R\<subseteq>set (finite_functional_rows R)"
+  proof
+    fix row assume member: "row\<in>fset R"
+    obtain i a where shape: "row=(i,a)" by (cases row) auto
+    have actual: "(i,a) |\<in>| R" using member by (simp only: shape)
+    have key: "i\<in>set (sorted_list_of_fset (fimage fst R))" using actual by force
+    have chosen_value: "fthe_elem (fimage snd (ffilter (\<lambda>r. fst r=i) R))=a"
+      by (rule finite_functional_selected_value[OF functional actual])
+    show "row\<in>set (finite_functional_rows R)"
+      using key by (auto simp: finite_functional_rows_def functional shape chosen_value)
+  qed
+qed
+
+lemma finite_functional_rows_invalid:
+  "\<not>finite_relation_functional R \<Longrightarrow> finite_functional_rows R=[]"
+  by (simp add: finite_functional_rows_def)
+
+text \<open>
+  Only the keys require an order. Values can be complete terms, patterns,
+  or other structures with no chosen ordering. Every selected key has
+  exactly one value under the formation guard, including when the relation
+  is empty. The enumeration retains every original key and value.
+\<close>
+
+end

@@ -1,0 +1,446 @@
+theory Factor_Boundary_Lists
+  imports Factor_Admitted_Instantiation
+begin
+
+section \<open>Complete reading lists preserve values and counted interiors\<close>
+
+abbreviation boundary_reading_argument ::
+  "factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term" where
+  "boundary_reading_argument ctx r q i k \<equiv>
+    Pair_Term ctx (Pair_Term r (Pair_Term q (Pair_Term i k)))"
+
+abbreviation boundary_reading_pattern ::
+  "'a term_pattern \<Rightarrow> 'a term_pattern \<Rightarrow> 'a term_pattern \<Rightarrow>
+    'a term_pattern \<Rightarrow> 'a term_pattern \<Rightarrow> 'a term_pattern" where
+  "boundary_reading_pattern ctx r q i k \<equiv>
+    Pattern_Pair ctx (Pattern_Pair r (Pattern_Pair q (Pattern_Pair i k)))"
+
+abbreviation reading_roots :: "('r \<times> 'q \<times> 'i list \<times> 'k list) list \<Rightarrow> 'r list" where
+  "reading_roots xs \<equiv> map (\<lambda>(r,q,J,A). r) xs"
+
+abbreviation reading_results :: "('r \<times> 'q \<times> 'i list \<times> 'k list) list \<Rightarrow> 'q list" where
+  "reading_results xs \<equiv> map (\<lambda>(r,q,J,A). q) xs"
+
+abbreviation reading_interiors :: "('r \<times> 'q \<times> 'i list \<times> 'k list) list \<Rightarrow> 'i list" where
+  "reading_interiors xs \<equiv> concat (map (\<lambda>(r,q,J,A). J) xs)"
+
+abbreviation reading_slots :: "('r \<times> 'q \<times> 'i list \<times> 'k list) list \<Rightarrow> 'k list" where
+  "reading_slots xs \<equiv> concat (map (\<lambda>(r,q,J,A). A) xs)"
+
+abbreviation boundary_rows_result :: "(factor_term \<Rightarrow> bool) \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "boundary_rows_result R z \<equiv> \<exists>ctx xs Is Ks.
+    z=boundary_reading_argument ctx (data_list_term (reading_roots xs)) (data_list_term (reading_results xs))
+      (data_list_term (map Payload_Term Is)) (data_list_term (map Payload_Term Ks)) \<and>
+    term_formed ctx \<and>
+    (\<forall>(r,q,Js,As)\<in>set xs. R (boundary_reading_argument ctx r q
+      (data_list_term (map Payload_Term Js)) (data_list_term (map Payload_Term As)))) \<and>
+    distinct Is \<and> distinct Ks \<and> mset Is=mset (reading_interiors xs) \<and>
+    set Ks=set (reading_slots xs) \<and> set Is\<inter>set Ks={}"
+
+lemma boundary_rows_result_on_context:
+  "boundary_rows_result R (boundary_reading_argument ctx rs qs i k) \<longleftrightarrow>
+    (\<exists>xs Is Ks. rs=data_list_term (reading_roots xs) \<and> qs=data_list_term (reading_results xs) \<and>
+      i=data_list_term (map Payload_Term Is) \<and> k=data_list_term (map Payload_Term Ks) \<and>
+      term_formed ctx \<and>
+      (\<forall>(r,q,Js,As)\<in>set xs. R (boundary_reading_argument ctx r q
+        (data_list_term (map Payload_Term Js)) (data_list_term (map Payload_Term As)))) \<and>
+      distinct Is \<and> distinct Ks \<and> mset Is=mset (reading_interiors xs) \<and>
+      set Ks=set (reading_slots xs) \<and> set Is\<inter>set Ks={})"
+  by (simp only: factor_term.inject) blast
+
+lemma boundary_rows_result_context_cong:
+  assumes context_formed: "term_formed ctx \<longleftrightarrow> term_formed other"
+    and row: "\<And>r q i k. R (boundary_reading_argument ctx r q i k) \<longleftrightarrow>
+      S (boundary_reading_argument other r q i k)"
+  shows "boundary_rows_result R (boundary_reading_argument ctx rs qs i k) \<longleftrightarrow>
+    boundary_rows_result S (boundary_reading_argument other rs qs i k)"
+  by (simp only: boundary_rows_result_on_context context_formed row)
+
+lemma reading_maps:
+  "reading_roots (map (\<lambda>(r,q,J,A). (f r,g q,J,A)) xs)=map f (reading_roots xs)"
+  "reading_results (map (\<lambda>(r,q,J,A). (f r,g q,J,A)) xs)=map g (reading_results xs)"
+  "reading_interiors (map (\<lambda>(r,q,J,A). (f r,g q,J,A)) xs)=reading_interiors xs"
+  "reading_slots (map (\<lambda>(r,q,J,A). (f r,g q,J,A)) xs)=reading_slots xs"
+  by (induction xs) (auto split: prod.splits)
+
+lemma reading_indexed:
+  assumes "length rs=length qs" "length Js=length qs" "length As=length qs"
+  shows "reading_roots (map (\<lambda>i. (rs!i,qs!i,Js!i,As!i)) [0..<length qs])=rs"
+    "reading_results (map (\<lambda>i. (rs!i,qs!i,Js!i,As!i)) [0..<length qs])=qs"
+    "reading_interiors (map (\<lambda>i. (rs!i,qs!i,Js!i,As!i)) [0..<length qs])=concat Js"
+    "reading_slots (map (\<lambda>i. (rs!i,qs!i,Js!i,As!i)) [0..<length qs])=concat As"
+  using map_nth[of rs] map_nth[of qs] map_nth[of Js] map_nth[of As] assms
+  by (simp_all add: comp_def)
+
+definition boundary_list_nil_schema :: "(nat,nat,nat) factor_schema" where
+  "boundary_list_nil_schema=data_rule
+    (boundary_reading_pattern data_x (Pattern_Payload []) (Pattern_Payload []) (Pattern_Payload []) (Pattern_Payload [])) {}"
+
+definition boundary_list_cons_schema :: "nat \<Rightarrow> nat \<Rightarrow> (nat,nat,nat) factor_schema" where
+  "boundary_list_cons_schema row list=data_rule
+    (boundary_reading_pattern data_x (Pattern_Pair data_y data_z) (Pattern_Pair data_w (Pattern_Variable 4))
+      (Pattern_Variable 5) (Pattern_Variable 6))
+    {(0,row,boundary_reading_pattern data_x data_y data_w (Pattern_Variable 7) (Pattern_Variable 8)),
+     (1,list,boundary_reading_pattern data_x data_z (Pattern_Variable 4) (Pattern_Variable 9) (Pattern_Variable 10)),
+     (2,46,collection_join_pattern (Pattern_Variable 7) (Pattern_Variable 9) (Pattern_Variable 11)),
+     (3,6,Pattern_Pair (Pattern_Variable 11) (Pattern_Variable 5)),
+     (4,48,collection_join_pattern (Pattern_Variable 8) (Pattern_Variable 10) (Pattern_Variable 6)),
+     (5,49,Pattern_Pair (Pattern_Variable 5) (Pattern_Variable 6))}"
+
+definition boundary_list_clauses :: "nat \<Rightarrow> nat \<Rightarrow> (nat \<times> (nat,nat,nat) factor_schema) set" where
+  "boundary_list_clauses row list={(0,boundary_list_nil_schema),(1,boundary_list_cons_schema row list)}"
+
+locale boundary_list_profile =
+  fixes P :: "(nat,nat,nat,nat) schema_system" and row_site list_site :: nat
+  assumes system_formed: "schema_system_formed P"
+    and family: "\<And>c S. ((list_site,c),S)\<in>system_clauses P \<longleftrightarrow> (c,S)\<in>boundary_list_clauses row_site list_site"
+    and call: "\<And>t. schema_call_formed P list_site t \<longleftrightarrow> term_formed t"
+    and row_metadata: "\<And>ctx r q i k. (row_site,boundary_reading_argument ctx r q i k)\<in>positive_meaning P \<Longrightarrow>
+      \<exists>Js As. i=data_list_term (map Payload_Term Js) \<and> k=data_list_term (map Payload_Term As) \<and>
+        distinct Js \<and> distinct As"
+    and append: "\<And>t. (46,t)\<in>positive_meaning P \<longleftrightarrow> (46,t)\<in>positive_meaning data_append_system"
+    and counted: "\<And>t. (6,t)\<in>positive_meaning P \<longleftrightarrow> (6,t)\<in>positive_meaning bag_comparison_system"
+    and union: "\<And>t. (48,t)\<in>positive_meaning P \<longleftrightarrow> (48,t)\<in>positive_meaning data_union_system"
+    and separate: "\<And>t. (49,t)\<in>positive_meaning P \<longleftrightarrow> (49,t)\<in>positive_meaning payload_disjoint_system"
+begin
+
+lemma rule:
+  assumes clause: "(c,S)\<in>boundary_list_clauses row_site list_site"
+    and assignment: "\<forall>a\<in>schema_variables S. term_formed (h a)"
+    and support: "\<forall>s d p. (s,d,p)\<in>schema_premises S \<longrightarrow>
+      (d,evaluate_pattern h p)\<in>positive_meaning P"
+  shows "(list_site,evaluate_pattern h (schema_conclusion S))\<in>positive_meaning P"
+proof -
+  have member: "((list_site,c),S)\<in>system_clauses P" using clause by (simp add: family)
+  have sf: "schema_formed S" using member system_formed by (auto simp: schema_system_formed_def)
+  have ordinary: "schema_material_premises S={}"
+    using clause by (auto simp: boundary_list_clauses_def boundary_list_nil_schema_def boundary_list_cons_schema_def)
+  have formed: "term_formed (evaluate_pattern h (schema_conclusion S))"
+    by (rule evaluate_pattern_formed) (use sf assignment in \<open>auto simp: schema_formed_def schema_variables_def\<close>)
+  show ?thesis by (rule ordinary_positive_valuation_step[OF member ordinary assignment _ support])
+    (use formed in \<open>simp add: call\<close>)
+qed
+
+theorem sound:
+  assumes holds: "(list_site,z)\<in>positive_meaning P"
+  shows "boundary_rows_result (\<lambda>t. (row_site,t)\<in>positive_meaning P) z"
+proof -
+  let ?R="boundary_rows_result (\<lambda>t. (row_site,t)\<in>positive_meaning P)"
+  have invariant: "list_site=list_site \<longrightarrow> ?R z"
+  proof (rule positive_valuation_induct[OF holds, where property="\<lambda>d z. d=list_site \<longrightarrow> ?R z"])
+    fix d c S h
+    assume clause: "((d,c),S)\<in>system_clauses P"
+      and assignment: "\<forall>a\<in>schema_variables S. term_formed (h a)"
+      and head: "schema_call_formed P d (evaluate_pattern h (schema_conclusion S))"
+      and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
+        (e,evaluate_pattern h p)\<in>positive_meaning P \<and> (e=list_site \<longrightarrow> ?R (evaluate_pattern h p))"
+    show "d=list_site \<longrightarrow> ?R (evaluate_pattern h (schema_conclusion S))"
+    proof
+      assume "d=list_site"
+      then consider (nil) "S=boundary_list_nil_schema" | (cons) "S=boundary_list_cons_schema row_site list_site"
+        using clause by (auto simp: family boundary_list_clauses_def)
+      then show "?R (evaluate_pattern h (schema_conclusion S))"
+      proof cases
+        case nil
+        have formed: "term_formed (h 0)" using assignment
+          by (simp add: nil boundary_list_nil_schema_def schema_variables_def)
+        show ?thesis
+          by (rule exI[of _ "h 0"], rule exI[of _ "[]"], rule exI[of _ "[]"], rule exI[of _ "[]"])
+            (use formed in \<open>simp add: nil boundary_list_nil_schema_def\<close>)
+      next
+        case cons
+        have first: "(row_site,boundary_reading_argument (h 0) (h 1) (h 3) (h 7) (h 8))\<in>positive_meaning P"
+          using support[rule_format, of 0 row_site
+            "boundary_reading_pattern data_x data_y data_w (Pattern_Variable 7) (Pattern_Variable 8)"]
+          by (simp add: cons boundary_list_cons_schema_def)
+        obtain Js As where first_metadata: "h 7=data_list_term (map Payload_Term Js)"
+          "h 8=data_list_term (map Payload_Term As)" "distinct Js" "distinct As"
+          using row_metadata[OF first] by blast
+        obtain xs Ls Bs where rest: "h 2=data_list_term (reading_roots xs)"
+          "h 4=data_list_term (reading_results xs)" "h 9=data_list_term (map Payload_Term Ls)"
+          "h 10=data_list_term (map Payload_Term Bs)" "term_formed (h 0)"
+          "\<forall>(r,q,J,A)\<in>set xs. (row_site,boundary_reading_argument (h 0) r q
+            (data_list_term (map Payload_Term J)) (data_list_term (map Payload_Term A)))\<in>positive_meaning P"
+          "distinct Ls" "distinct Bs" "mset Ls=mset (reading_interiors xs)"
+          "set Bs=set (reading_slots xs)" "set Ls\<inter>set Bs={}"
+          using support[rule_format, of 1 list_site
+            "boundary_reading_pattern data_x data_z (Pattern_Variable 4) (Pattern_Variable 9) (Pattern_Variable 10)"]
+          by (auto simp: cons boundary_list_cons_schema_def)
+        have calls: "(46,collection_join_argument (h 7) (h 9) (h 11))\<in>positive_meaning data_append_system"
+          "(6,Pair_Term (h 11) (h 5))\<in>positive_meaning bag_comparison_system"
+          "(48,collection_join_argument (h 8) (h 10) (h 6))\<in>positive_meaning data_union_system"
+          "(49,Pair_Term (h 5) (h 6))\<in>positive_meaning payload_disjoint_system"
+          using support by (auto simp: cons boundary_list_cons_schema_def append counted union separate)
+        obtain Is Ks where metadata: "h 5=data_list_term (map Payload_Term Is)"
+          "h 6=data_list_term (map Payload_Term Ks)" "distinct Is" "distinct Ks" "set Is\<inter>set Ks={}"
+          using calls(4) by (auto simp: payload_disjoint_exact)
+        have joined: "h 11=data_list_term (map Payload_Term (Js@Ls))"
+          using calls(1) by (simp only: first_metadata(1) rest(3) data_append_at_lists) auto
+        have counts: "mset (Js@Ls)=mset Is"
+          using calls(2) by (simp only: joined metadata(1) bag_comparison_lists
+            injective_mapped_multisets[OF payload_term_inj])
+        have slots: "set Ks=set As\<union>set Bs"
+          using calls(3) by (simp only: first_metadata(2) rest(4) metadata(2) data_union_payload_lists; blast)
+        show ?thesis
+          by (rule exI[of _ "h 0"], rule exI[of _ "(h 1,h 3,Js,As)#xs"], rule exI[of _ Is], rule exI[of _ Ks])
+            (use first first_metadata rest metadata counts slots in \<open>auto simp: cons boundary_list_cons_schema_def\<close>)
+      qed
+    qed
+  qed
+  show ?thesis using invariant by simp
+qed
+
+theorem complete:
+  assumes context_formed: "term_formed ctx"
+    and rows: "\<forall>(r,q,J,A)\<in>set xs. (row_site,boundary_reading_argument ctx r q
+      (data_list_term (map Payload_Term J)) (data_list_term (map Payload_Term A)))\<in>positive_meaning P"
+    and order: "distinct Is" "distinct Ks"
+    and collections: "mset Is=mset (reading_interiors xs)" "set Ks=set (reading_slots xs)"
+    and boundary: "set Is\<inter>set Ks={}"
+  shows "(list_site,boundary_reading_argument ctx (data_list_term (reading_roots xs)) (data_list_term (reading_results xs))
+    (data_list_term (map Payload_Term Is)) (data_list_term (map Payload_Term Ks)))\<in>positive_meaning P"
+  using assms
+proof (induction xs arbitrary: Is Ks)
+  case Nil
+  have empty: "Is=[]" "Ks=[]" using Nil.prems(5,6) by simp_all
+  have result: "(list_site,evaluate_pattern (\<lambda>_. ctx) (schema_conclusion boundary_list_nil_schema))\<in>positive_meaning P"
+    by (rule rule[where c=0]) (use Nil.prems in
+      \<open>auto simp: boundary_list_clauses_def boundary_list_nil_schema_def schema_variables_def\<close>)
+  show ?case using result by (simp add: empty boundary_list_nil_schema_def)
+next
+  case (Cons x xs)
+  obtain r q Js As where shape: "x=(r,q,Js,As)" by (cases x) auto
+  have first: "(row_site,boundary_reading_argument ctx r q
+      (data_list_term (map Payload_Term Js)) (data_list_term (map Payload_Term As)))\<in>positive_meaning P"
+    and rest: "\<forall>(r,q,J,A)\<in>set xs. (row_site,boundary_reading_argument ctx r q
+      (data_list_term (map Payload_Term J)) (data_list_term (map Payload_Term A)))\<in>positive_meaning P"
+    using Cons.prems(2) by (auto simp: shape)
+  let ?Ls="reading_interiors xs"
+  let ?Bs="remdups (reading_slots xs)"
+  have counts: "mset Is=mset (Js@?Ls)" and slots: "set Ks=set As\<union>set ?Bs"
+    using Cons.prems(5,6) by (simp_all add: shape)
+  have distinct_all: "distinct (Js@?Ls)"
+    using mset_eq_imp_distinct_iff[OF counts] Cons.prems(3) by blast
+  have lower: "set ?Ls\<subseteq>set Is" "set ?Bs\<subseteq>set Ks"
+    using mset_eq_setD[OF counts] slots by auto
+  have tail_order: "distinct ?Ls" "distinct ?Bs" using distinct_all by auto
+  have tail_boundary: "set ?Ls\<inter>set ?Bs={}" using lower Cons.prems(7) by blast
+  have tail: "(list_site,boundary_reading_argument ctx (data_list_term (reading_roots xs)) (data_list_term (reading_results xs))
+      (data_list_term (map Payload_Term ?Ls)) (data_list_term (map Payload_Term ?Bs)))\<in>positive_meaning P"
+    by (rule Cons.IH[OF Cons.prems(1) rest tail_order refl _ tail_boundary]) simp
+  have formed: "term_formed r" "term_formed q" "term_formed (data_list_term (reading_roots xs))"
+    "term_formed (data_list_term (reading_results xs))"
+    "\<forall>a\<in>set Js\<union>set As\<union>set ?Ls\<union>set ?Bs. octets_formed a"
+    using schema_call_formed_target[OF positive_meaning_formed[OF first]]
+      schema_call_formed_target[OF positive_meaning_formed[OF tail]]
+    by (auto simp: data_list_term_formed)
+  have interior_set: "set Is=set Js\<union>set ?Ls"
+    using mset_eq_setD[OF counts] by (simp only: set_append)
+  have bytes: "\<forall>a\<in>set Is\<union>set Ks. octets_formed a"
+    using formed(5) interior_set slots by blast
+  have payload_data: "data_elements (map Payload_Term zs) \<longleftrightarrow>
+    (\<forall>a\<in>set zs. octets_formed a)" for zs
+    by auto
+  have joined_bytes: "\<forall>a\<in>set (Js@?Ls). octets_formed a"
+    using formed(5) by (simp only: set_append; blast)
+  have joined_data: "data_elements (map Payload_Term (Js@?Ls))"
+    by (simp only: payload_data) (rule joined_bytes)
+  have interior_data: "data_elements (map Payload_Term Is)"
+    by (simp only: payload_data) (use bytes in blast)
+  let ?j="data_list_term (map Payload_Term (Js@?Ls))"
+  have joined: "(46,collection_join_argument (data_list_term (map Payload_Term Js))
+      (data_list_term (map Payload_Term ?Ls)) ?j)\<in>positive_meaning P"
+    by (simp only: append data_append_at_lists payload_data map_append[symmetric];
+      use formed(5) in blast)
+  have interior: "(6,Pair_Term ?j (data_list_term (map Payload_Term Is)))\<in>positive_meaning P"
+    by (simp only: counted bag_comparison_lists injective_mapped_multisets[OF payload_term_inj])
+      (rule conjI[OF joined_data], rule conjI[OF interior_data], rule counts[symmetric])
+  have external: "(48,collection_join_argument (data_list_term (map Payload_Term As))
+      (data_list_term (map Payload_Term ?Bs)) (data_list_term (map Payload_Term Ks)))\<in>positive_meaning P"
+    by (simp only: union data_union_payload_lists) (use formed bytes slots in auto)
+  have separated: "(49,Pair_Term (data_list_term (map Payload_Term Is))
+      (data_list_term (map Payload_Term Ks)))\<in>positive_meaning P"
+    by (simp only: separate payload_disjoint_lists) (use Cons.prems(3,4,7) bytes in blast)
+  let ?h="\<lambda>n::nat. if n=0 then ctx else if n=1 then r else if n=2 then data_list_term (reading_roots xs)
+    else if n=3 then q else if n=4 then data_list_term (reading_results xs)
+    else if n=5 then data_list_term (map Payload_Term Is) else if n=6 then data_list_term (map Payload_Term Ks)
+    else if n=7 then data_list_term (map Payload_Term Js) else if n=8 then data_list_term (map Payload_Term As)
+    else if n=9 then data_list_term (map Payload_Term ?Ls) else if n=10 then data_list_term (map Payload_Term ?Bs) else ?j"
+  have metadata_formed: "term_formed (data_list_term (map Payload_Term Js)) \<and>
+    term_formed (data_list_term (map Payload_Term As)) \<and> term_formed (data_list_term (map Payload_Term ?Ls)) \<and>
+    term_formed (data_list_term (map Payload_Term ?Bs)) \<and> term_formed ?j \<and>
+    term_formed (data_list_term (map Payload_Term Is)) \<and> term_formed (data_list_term (map Payload_Term Ks))"
+    using schema_call_formed_target[OF positive_meaning_formed[OF first]]
+      schema_call_formed_target[OF positive_meaning_formed[OF tail]]
+      schema_call_formed_target[OF positive_meaning_formed[OF joined]]
+      schema_call_formed_target[OF positive_meaning_formed[OF separated]] by auto
+  have result: "(list_site,evaluate_pattern ?h (schema_conclusion (boundary_list_cons_schema row_site list_site)))\<in>positive_meaning P"
+    by (rule rule[where c=1]) (use Cons.prems(1) formed(1-4) metadata_formed first tail joined interior external separated in
+      \<open>auto simp: boundary_list_clauses_def boundary_list_cons_schema_def schema_variables_def\<close>)
+  show ?case using result by (simp add: shape boundary_list_cons_schema_def case_prod_unfold)
+qed
+
+theorem exact:
+  "(list_site,z)\<in>positive_meaning P \<longleftrightarrow> boundary_rows_result (\<lambda>t. (row_site,t)\<in>positive_meaning P) z"
+  using sound complete by blast
+
+corollary empty:
+  "(list_site,boundary_reading_argument ctx (Payload_Term []) (Payload_Term []) (Payload_Term []) (Payload_Term []))
+    \<in>positive_meaning P \<longleftrightarrow> term_formed ctx"
+proof
+  assume holds: "(list_site,boundary_reading_argument ctx (Payload_Term []) (Payload_Term []) (Payload_Term []) (Payload_Term []))
+    \<in>positive_meaning P"
+  show "term_formed ctx" using schema_call_formed_target[OF positive_meaning_formed[OF holds]] by auto
+next
+  assume formed: "term_formed ctx"
+  show "(list_site,boundary_reading_argument ctx (Payload_Term []) (Payload_Term []) (Payload_Term []) (Payload_Term []))
+    \<in>positive_meaning P" using complete[OF formed, of "[]" "[]" "[]"] by simp
+qed
+
+end
+
+section \<open>Typed row recovery transports the complete list contract\<close>
+
+lemma boundary_rows_result_decoded:
+  fixes encode_root :: "'r \<Rightarrow> factor_term" and encode_result :: "'q \<Rightarrow> factor_term"
+  assumes context_formed: "term_formed ctx"
+    and row: "\<And>r q i k. R (boundary_reading_argument ctx r q i k) \<longleftrightarrow>
+      (\<exists>a b Js As. r=encode_root a \<and> q=encode_result b \<and>
+        i=data_list_term (map Payload_Term Js) \<and> k=data_list_term (map Payload_Term As) \<and>
+        distinct Js \<and> distinct As \<and> read a b (set Js) (set As))"
+  shows "boundary_rows_result R (boundary_reading_argument ctx rs qs i k) \<longleftrightarrow>
+    (\<exists>xs Is Ks. rs=data_list_term (map encode_root (reading_roots xs)) \<and>
+      qs=data_list_term (map encode_result (reading_results xs)) \<and>
+      i=data_list_term (map Payload_Term Is) \<and> k=data_list_term (map Payload_Term Ks) \<and>
+      (\<forall>(a,b,Js,As)\<in>set xs. distinct Js \<and> distinct As \<and> read a b (set Js) (set As)) \<and>
+      distinct Is \<and> distinct Ks \<and> mset Is=mset (reading_interiors xs) \<and>
+      set Ks=set (reading_slots xs) \<and> set Is\<inter>set Ks={})"
+proof
+  assume holds: "boundary_rows_result R (boundary_reading_argument ctx rs qs i k)"
+  obtain zs Is Ks where parts: "rs=data_list_term (reading_roots zs)" "qs=data_list_term (reading_results zs)"
+    "i=data_list_term (map Payload_Term Is)" "k=data_list_term (map Payload_Term Ks)"
+    "\<forall>(r,q,J,A)\<in>set zs. R (boundary_reading_argument ctx r q
+      (data_list_term (map Payload_Term J)) (data_list_term (map Payload_Term A)))"
+    "distinct Is" "distinct Ks" "mset Is=mset (reading_interiors zs)"
+    "set Ks=set (reading_slots zs)" "set Is\<inter>set Ks={}"
+    using holds by (simp only: factor_term.inject) blast
+  let ?f="\<lambda>(a,b,J,A). (encode_root a,encode_result b,J,A)"
+  let ?p="\<lambda>(a,b,J,A). distinct J \<and> distinct A \<and> read a b (set J) (set A)"
+  have typed: "\<forall>z\<in>set zs. \<exists>x. z=?f x \<and> ?p x"
+  proof (intro ballI)
+    fix z assume member: "z\<in>set zs"
+    obtain r q J A where shape: "z=(r,q,J,A)" by (cases z) auto
+    have actual: "R (boundary_reading_argument ctx r q
+      (data_list_term (map Payload_Term J)) (data_list_term (map Payload_Term A)))"
+      using parts(5) member shape by auto
+    obtain a b where fields: "r=encode_root a" "q=encode_result b"
+      "distinct J" "distinct A" "read a b (set J) (set A)"
+      using actual by (simp only: row data_list_term_injective injective_mapped_lists[OF payload_term_inj]) blast
+    show "\<exists>x. z=?f x \<and> ?p x" by (rule exI[of _ "(a,b,J,A)"]) (use shape fields in simp)
+  qed
+  obtain xs where decoded: "zs=map ?f xs" "\<forall>x\<in>set xs. ?p x"
+    using iffD1[OF list_range_restricted_witnesses typed] by blast
+  show "\<exists>xs Is Ks. rs=data_list_term (map encode_root (reading_roots xs)) \<and>
+      qs=data_list_term (map encode_result (reading_results xs)) \<and>
+      i=data_list_term (map Payload_Term Is) \<and> k=data_list_term (map Payload_Term Ks) \<and>
+      (\<forall>(a,b,Js,As)\<in>set xs. distinct Js \<and> distinct As \<and> read a b (set Js) (set As)) \<and>
+      distinct Is \<and> distinct Ks \<and> mset Is=mset (reading_interiors xs) \<and>
+      set Ks=set (reading_slots xs) \<and> set Is\<inter>set Ks={}"
+    by (rule exI[of _ xs], rule exI[of _ Is], rule exI[of _ Ks])
+      (use parts decoded in \<open>simp only: decoded(1) reading_maps; blast\<close>)
+next
+  assume "\<exists>xs Is Ks. rs=data_list_term (map encode_root (reading_roots xs)) \<and>
+      qs=data_list_term (map encode_result (reading_results xs)) \<and>
+      i=data_list_term (map Payload_Term Is) \<and> k=data_list_term (map Payload_Term Ks) \<and>
+      (\<forall>(a,b,Js,As)\<in>set xs. distinct Js \<and> distinct As \<and> read a b (set Js) (set As)) \<and>
+      distinct Is \<and> distinct Ks \<and> mset Is=mset (reading_interiors xs) \<and>
+      set Ks=set (reading_slots xs) \<and> set Is\<inter>set Ks={}"
+  then obtain xs Is Ks where parts: "rs=data_list_term (map encode_root (reading_roots xs))"
+    "qs=data_list_term (map encode_result (reading_results xs))"
+    "i=data_list_term (map Payload_Term Is)" "k=data_list_term (map Payload_Term Ks)"
+    "\<forall>(a,b,Js,As)\<in>set xs. distinct Js \<and> distinct As \<and> read a b (set Js) (set As)"
+    "distinct Is" "distinct Ks" "mset Is=mset (reading_interiors xs)"
+    "set Ks=set (reading_slots xs)" "set Is\<inter>set Ks={}" by blast
+  let ?zs="map (\<lambda>(a,b,J,A). (encode_root a,encode_result b,J,A)) xs"
+  have each: "R (boundary_reading_argument ctx (encode_root a) (encode_result b)
+      (data_list_term (map Payload_Term J)) (data_list_term (map Payload_Term A)))"
+    if member: "(a,b,J,A)\<in>set xs" for a b J A
+  proof -
+    have raw: "distinct J \<and> distinct A \<and> read a b (set J) (set A)"
+      using parts(5)[rule_format, of "(a,b,J,A)"] member by simp
+    show ?thesis by (simp only: row, rule exI[of _ a], rule exI[of _ b],
+      rule exI[of _ J], rule exI[of _ A]) (use raw in simp)
+  qed
+  have rows: "\<forall>(r,q,J,A)\<in>set ?zs. R (boundary_reading_argument ctx r q
+      (data_list_term (map Payload_Term J)) (data_list_term (map Payload_Term A)))"
+    using each by (auto split: prod.splits)
+  show "boundary_rows_result R (boundary_reading_argument ctx rs qs i k)"
+    by (rule exI[of _ ctx], rule exI[of _ ?zs], rule exI[of _ Is], rule exI[of _ Ks])
+      (use context_formed parts rows in \<open>simp only: factor_term.inject reading_maps; blast\<close>)
+qed
+
+section \<open>All existing reading components retain their meanings\<close>
+
+lemma metadata_reading_record_meaning:
+  assumes "d\<in>system_definitions record_instantiation_system"
+  shows "(d,t)\<in>positive_meaning admitted_instantiation_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning record_instantiation_system"
+  using admitted_instantiation_previous_meaning[of d t] package_admission_previous_meaning[of d t]
+    package_closure_previous_meaning[of d t] definition_call_admission_instantiation_meaning[of d t]
+    schema_instantiation_old_meaning[of d t] premise_family_instantiation_old_meaning[of d t]
+    premise_rows_old_meaning[of d t] material_instantiation_old_meaning[OF assms, of t] assms by auto
+
+lemma metadata_reading_quotation_meaning:
+  assumes "d\<in>system_definitions quotation_admission_system"
+  shows "(d,t)\<in>positive_meaning admitted_instantiation_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning quotation_admission_system"
+  using metadata_reading_record_meaning[of d t] record_instantiation_old_meaning[of d t]
+    vector_instantiation_pattern_meaning[of d t] pattern_instantiation_quotation_meaning[OF assms, of t] assms by auto
+
+lemma metadata_reading_components:
+  "(37,t)\<in>positive_meaning admitted_instantiation_system \<longleftrightarrow> (37,t)\<in>positive_meaning artifact_lookup_system"
+  "(32,t)\<in>positive_meaning admitted_instantiation_system \<longleftrightarrow> (32,t)\<in>positive_meaning family_admission_system"
+  "(34,t)\<in>positive_meaning admitted_instantiation_system \<longleftrightarrow> (34,t)\<in>positive_meaning record_admission_system"
+  "(42,t)\<in>positive_meaning admitted_instantiation_system \<longleftrightarrow> (42,t)\<in>positive_meaning citation_reading_system"
+  "(41,t)\<in>positive_meaning admitted_instantiation_system \<longleftrightarrow> (41,t)\<in>positive_meaning citation_location_system"
+  "(58,t)\<in>positive_meaning admitted_instantiation_system \<longleftrightarrow> (58,t)\<in>positive_meaning application_reading_system"
+  "(46,t)\<in>positive_meaning admitted_instantiation_system \<longleftrightarrow> (46,t)\<in>positive_meaning data_append_system"
+  "(6,t)\<in>positive_meaning admitted_instantiation_system \<longleftrightarrow> (6,t)\<in>positive_meaning bag_comparison_system"
+  "(48,t)\<in>positive_meaning admitted_instantiation_system \<longleftrightarrow> (48,t)\<in>positive_meaning data_union_system"
+  "(49,t)\<in>positive_meaning admitted_instantiation_system \<longleftrightarrow> (49,t)\<in>positive_meaning payload_disjoint_system"
+  "(21,t)\<in>positive_meaning admitted_instantiation_system \<longleftrightarrow> (21,t)\<in>positive_meaning keyed_list_system"
+  "(51,t)\<in>positive_meaning admitted_instantiation_system \<longleftrightarrow> (51,t)\<in>positive_meaning row_keys_system"
+  "(59,t)\<in>positive_meaning admitted_instantiation_system \<longleftrightarrow> (59,t)\<in>positive_meaning row_values_system"
+  using metadata_reading_record_meaning[of 37 t] record_instantiation_components(1)[of t]
+    metadata_reading_quotation_meaning[of 32 t] quotation_admission_record_meaning[of 32 t]
+    record_admission_old_meaning[of 32 t] socket_chain_old_meaning[of 32 t]
+    metadata_reading_record_meaning[of 34 t] record_instantiation_components(2)[of t]
+    metadata_reading_quotation_meaning[of 42 t] quotation_admission_components(3)[of t]
+    metadata_reading_quotation_meaning[of 41 t] quotation_admission_reading_meaning[of 41 t] citation_reading_old_meaning[of 41 t]
+    metadata_reading_record_meaning[of 58 t] record_instantiation_old_meaning[of 58 t]
+    vector_instantiation_old_meaning[of 58 t] row_values_old_meaning[of 58 t]
+    metadata_reading_record_meaning[of 46 t] record_instantiation_components(6)[of t]
+    metadata_reading_record_meaning[of 6 t] record_instantiation_components(7)[of t]
+    metadata_reading_quotation_meaning[of 48 t] quotation_admission_components(9)[of t]
+    metadata_reading_record_meaning[of 49 t] record_instantiation_components(8)[of t]
+    metadata_reading_quotation_meaning[of 21 t] quotation_admission_record_meaning[of 21 t]
+    record_admission_old_meaning[of 21 t] socket_chain_old_meaning[of 21 t]
+    family_admission_headed_meaning[of 21 t] headed_material_keyed[of t]
+    metadata_reading_record_meaning[of 51 t] record_instantiation_components(3)[of t]
+    metadata_reading_record_meaning[of 59 t] record_instantiation_components(4)[of t] by auto
+
+text \<open>
+  The two clause templates traverse every supplied row root and preserve its
+  corresponding result in order. Counted interior combination forbids reused
+  syntax; membership union permits shared external slots. The final interior
+  and slot collections are distinct and disjoint. Results may be any formed
+  terms, including literal targets.
+
+  The abstract row predicate occurs only in the stated result. Each actual
+  program clause calls one fixed ordinary row definition. The empty traversal
+  accepts any formed context and claims no source reading. An enclosing table
+  independently reads its actual artifact and complete family, including when
+  it has no rows.
+\<close>
+
+end

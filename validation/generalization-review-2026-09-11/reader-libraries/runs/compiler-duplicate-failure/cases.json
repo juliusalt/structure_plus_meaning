@@ -1,0 +1,105 @@
+[
+  {
+    "name": "compiled-duplicate-identical-schema-premise",
+    "library": [
+      {
+        "entry": 21,
+        "schema": {
+          "head": {
+            "var": 0
+          },
+          "premises": [
+            [
+              0,
+              20,
+              {
+                "var": 0
+              }
+            ],
+            [
+              0,
+              20,
+              {
+                "var": 0
+              }
+            ]
+          ],
+          "materials": []
+        },
+        "enumeration": [
+          [
+            0,
+            20,
+            {
+              "var": 0
+            }
+          ]
+        ]
+      }
+    ],
+    "frontier": [
+      [
+        20,
+        {
+          "payload": [
+            7
+          ]
+        }
+      ]
+    ],
+    "known": [
+      [
+        20,
+        {
+          "payload": [
+            7
+          ]
+        }
+      ]
+    ],
+    "goals": [
+      [
+        0,
+        21,
+        {
+          "payload": [
+            7
+          ]
+        }
+      ]
+    ],
+    "operation": [
+      "chain",
+      0
+    ],
+    "compilation_sources": [
+      {
+        "entry": 21,
+        "schema": {
+          "head": {
+            "var": 0
+          },
+          "premises": [
+            [
+              0,
+              20,
+              {
+                "var": 0
+              }
+            ],
+            [
+              0,
+              20,
+              {
+                "var": 0
+              }
+            ]
+          ],
+          "materials": []
+        }
+      }
+    ],
+    "construction_rounds": 0,
+    "diagnose_coverage": true
+  }
+]

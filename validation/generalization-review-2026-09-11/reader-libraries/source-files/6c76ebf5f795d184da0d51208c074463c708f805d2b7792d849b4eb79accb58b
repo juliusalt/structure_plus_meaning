@@ -1,0 +1,429 @@
+theory Factor_Anchored_Admission
+  imports Factor_Citation_Reading
+begin
+
+section \<open>The target of a structurally read citation\<close>
+
+definition anchored_admission_schema :: "(nat,nat,nat) factor_schema" where
+  "anchored_admission_schema=data_rule (citation_observation_pattern data_x data_y data_z data_w)
+    {(0,42,citation_reading_pattern data_x data_y data_z (Pattern_Variable 4) (Pattern_Variable 5)),
+     (1,40,citation_observation_pattern data_x data_y (Pattern_Variable 4) data_w)}"
+
+definition anchored_admission_system :: "(nat,nat,nat,nat) schema_system" where
+  "anchored_admission_system=add_view_definition citation_reading_system 43 data_x {(0,anchored_admission_schema)}"
+
+interpretation anchored_admission_view: positive_view citation_reading_system 43 data_x "{(0,anchored_admission_schema)}"
+  by (rule positive_view.intro)
+    (auto simp: anchored_admission_schema_def schema_formed_def schema_dependencies_def
+      single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma anchored_admission_system_formed [simp]: "schema_system_formed anchored_admission_system"
+  using anchored_admission_view.formed by (simp only: anchored_admission_system_def)
+
+lemma anchored_admission_definitions [simp]:
+  "system_definitions anchored_admission_system=insert 43 (system_definitions citation_reading_system)"
+  by (simp add: anchored_admission_system_def)
+
+lemma anchored_admission_call:
+  "schema_call_formed anchored_admission_system d t \<longleftrightarrow>
+    d\<in>system_definitions anchored_admission_system \<and> term_formed t"
+  using added_variable_calls[OF citation_reading_system_formed
+    anchored_admission_system_formed[unfolded anchored_admission_system_def] citation_reading_call]
+  by (simp only: anchored_admission_system_def[symmetric])
+
+lemma anchored_admission_old_meaning:
+  assumes "d\<in>system_definitions citation_reading_system"
+  shows "(d,t)\<in>positive_meaning anchored_admission_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning citation_reading_system"
+  using anchored_admission_view.old_meaning[OF assms, of t] by (simp only: anchored_admission_system_def)
+
+lemma anchored_admission_clause [simp]:
+  "((43,c),S)\<in>system_clauses anchored_admission_system \<longleftrightarrow> (c,S)\<in>{(0,anchored_admission_schema)}"
+  using anchored_admission_view.no_old_clause[of c S] by (auto simp: anchored_admission_system_def)
+
+lemma anchored_admission_components:
+  "(42,t)\<in>positive_meaning anchored_admission_system \<longleftrightarrow> (42,t)\<in>positive_meaning citation_reading_system"
+  "(40,t)\<in>positive_meaning anchored_admission_system \<longleftrightarrow> (40,t)\<in>positive_meaning citation_interpretation_system"
+  using anchored_admission_old_meaning[of 42 t] anchored_admission_old_meaning[of 40 t]
+    citation_reading_components(3)[of t] by auto
+
+lemma anchored_admission_valuation:
+  "(43,t)\<in>positive_meaning anchored_admission_system \<longleftrightarrow>
+    (\<exists>h::nat\<Rightarrow>factor_term. (\<forall>i\<in>{0,1,2,3,4,5}. term_formed (h i)) \<and>
+      t=citation_observation_argument (h 0) (h 1) (h 2) (h 3) \<and>
+      (42,citation_reading_argument (h 0) (h 1) (h 2) (h 4) (h 5))\<in>positive_meaning citation_reading_system \<and>
+      (40,citation_observation_argument (h 0) (h 1) (h 4) (h 3))\<in>positive_meaning citation_interpretation_system)"
+  by (subst ordinary_positive_entry_valuation)
+    (auto simp: anchored_admission_schema_def schema_variables_def anchored_admission_call anchored_admission_components)
+
+lemma anchored_admission_fields:
+  "(43,t)\<in>positive_meaning anchored_admission_system \<longleftrightarrow>
+    (\<exists>e u r y c i. t=citation_observation_argument e u r y \<and>
+      (42,citation_reading_argument e u r c i)\<in>positive_meaning citation_reading_system \<and>
+      (40,citation_observation_argument e u c y)\<in>positive_meaning citation_interpretation_system)"
+proof
+  assume "(43,t)\<in>positive_meaning anchored_admission_system"
+  then show "\<exists>e u r y c i. t=citation_observation_argument e u r y \<and>
+      (42,citation_reading_argument e u r c i)\<in>positive_meaning citation_reading_system \<and>
+      (40,citation_observation_argument e u c y)\<in>positive_meaning citation_interpretation_system"
+    by (simp only: anchored_admission_valuation) blast
+next
+  assume "\<exists>e u r y c i. t=citation_observation_argument e u r y \<and>
+      (42,citation_reading_argument e u r c i)\<in>positive_meaning citation_reading_system \<and>
+      (40,citation_observation_argument e u c y)\<in>positive_meaning citation_interpretation_system"
+  then obtain e u r y c i where parts: "t=citation_observation_argument e u r y"
+    "(42,citation_reading_argument e u r c i)\<in>positive_meaning citation_reading_system"
+    "(40,citation_observation_argument e u c y)\<in>positive_meaning citation_interpretation_system" by blast
+  have formed: "term_formed e" "term_formed u" "term_formed r" "term_formed y" "term_formed c" "term_formed i"
+    using schema_call_formed_target[OF positive_meaning_formed[OF parts(2)]]
+      schema_call_formed_target[OF positive_meaning_formed[OF parts(3)]] by auto
+  show "(43,t)\<in>positive_meaning anchored_admission_system"
+    by (simp only: anchored_admission_valuation,
+      rule exI[of _ "\<lambda>j::nat. if j=0 then e else if j=1 then u else if j=2 then r else if j=3 then y else if j=4 then c else i"])
+      (use parts formed in auto)
+qed
+
+theorem anchored_admission_sound:
+  assumes "(43,t)\<in>positive_meaning anchored_admission_system"
+  shows "\<exists>E e u r x y. t=citation_observation_argument e (use_data_term u) (Payload_Term r) y \<and>
+    environment_value_presents E e \<and> target_value_presents x y \<and> anchored_at E u r x"
+proof -
+  obtain e u k y c i where fields: "t=citation_observation_argument e u k y"
+    "(42,citation_reading_argument e u k c i)\<in>positive_meaning citation_reading_system"
+    "(40,citation_observation_argument e u c y)\<in>positive_meaning citation_interpretation_system"
+    using assms by (auto simp: anchored_admission_fields)
+  obtain E q r d xs R where reading: "environment_value_presents E e"
+    "u=use_data_term q" "k=Payload_Term r" "c=citation_data_term d"
+    "artifact_at E q R" "citation_at R r d (set xs)"
+    using fields(2) by (auto simp: citation_reading_exact)
+  obtain x where target: "target_value_presents x y" "interpret_citation E q d x"
+    using fields(3) reading(2,4) by (auto simp: citation_interpretation_at_source[OF reading(1)]
+      dest: injD[OF use_data_term_injective] injD[OF citation_data_term_injective])
+  have anchor: "anchored_at E q r x" by (rule anchored_atI[OF reading(5,6) target(2)])
+  show ?thesis using fields(1) reading target anchor by blast
+qed
+
+theorem anchored_admission_complete:
+  assumes source: "environment_value_presents E e" and target: "target_value_presents x y"
+    and anchor: "anchored_at E u r x"
+  shows "(43,citation_observation_argument e (use_data_term u) (Payload_Term r) y)
+    \<in>positive_meaning anchored_admission_system"
+proof -
+  obtain R c I where parts: "artifact_at E u R" "citation_at R r c I" "interpret_citation E u c x"
+    using anchor by (auto simp: anchored_at_def)
+  have finite: "finite I" using parts(2) raw_citation_interior(1) by (auto simp: citation_at_def)
+  obtain xs where rows: "set xs=I" "distinct xs" using finite_distinct_list[OF finite] by blast
+  have citation: "citation_at R r c (set xs)" using parts(2) rows(1) by simp
+  have reading: "(42,citation_reading_argument e (use_data_term u) (Payload_Term r)
+    (citation_data_term c) (data_list_term (map Payload_Term xs)))\<in>positive_meaning citation_reading_system"
+    by (rule citation_reading_complete[OF source parts(1) rows(2) citation])
+  have interpreted: "(40,citation_observation_argument e (use_data_term u) (citation_data_term c) y)
+    \<in>positive_meaning citation_interpretation_system"
+    using parts(3) by (simp only: citation_interpretation_on_values[OF source target])
+  show ?thesis using reading interpreted by (auto simp: anchored_admission_fields)
+qed
+
+theorem anchored_admission_exact:
+  "(43,t)\<in>positive_meaning anchored_admission_system \<longleftrightarrow>
+    (\<exists>E e u r x y. t=citation_observation_argument e (use_data_term u) (Payload_Term r) y \<and>
+      environment_value_presents E e \<and> target_value_presents x y \<and> anchored_at E u r x)"
+  using anchored_admission_sound anchored_admission_complete by blast
+
+corollary anchored_admission_at_source:
+  assumes source: "environment_value_presents E e"
+  shows "(43,citation_observation_argument e u k y)\<in>positive_meaning anchored_admission_system \<longleftrightarrow>
+    (\<exists>q r x. u=use_data_term q \<and> k=Payload_Term r \<and> target_value_presents x y \<and> anchored_at E q r x)"
+proof
+  assume holds: "(43,citation_observation_argument e u k y)\<in>positive_meaning anchored_admission_system"
+  obtain F q r x where parts: "environment_value_presents F e" "u=use_data_term q"
+    "k=Payload_Term r" "target_value_presents x y" "anchored_at F q r x"
+    using holds by (auto simp: anchored_admission_exact)
+  have same: "F=E" by (rule environment_value_presents_unique[OF parts(1) source])
+  show "\<exists>q r x. u=use_data_term q \<and> k=Payload_Term r \<and> target_value_presents x y \<and> anchored_at E q r x"
+    using parts same by blast
+next
+  assume "\<exists>q r x. u=use_data_term q \<and> k=Payload_Term r \<and> target_value_presents x y \<and> anchored_at E q r x"
+  then show "(43,citation_observation_argument e u k y)\<in>positive_meaning anchored_admission_system"
+    using source anchored_admission_complete by blast
+qed
+
+corollary anchored_admission_on_values:
+  assumes source: "environment_value_presents E e" and target: "target_value_presents x y"
+  shows "(43,citation_observation_argument e (use_data_term u) (Payload_Term r) y)
+    \<in>positive_meaning anchored_admission_system \<longleftrightarrow> anchored_at E u r x"
+proof
+  assume holds: "(43,citation_observation_argument e (use_data_term u) (Payload_Term r) y)
+    \<in>positive_meaning anchored_admission_system"
+  obtain z where parts: "target_value_presents z y" "anchored_at E u r z"
+    using holds by (auto simp: anchored_admission_at_source[OF source] dest: injD[OF use_data_term_injective])
+  have same: "z=x" by (rule target_value_presents_unique[OF parts(1) target])
+  show "anchored_at E u r x" using parts same by blast
+next
+  assume "anchored_at E u r x"
+  then show "(43,citation_observation_argument e (use_data_term u) (Payload_Term r) y)
+    \<in>positive_meaning anchored_admission_system"
+    by (rule anchored_admission_complete[OF source target])
+qed
+
+corollary anchored_admission_presentation_invariance:
+  assumes "environment_value_presents E e" "environment_value_presents E f"
+    "target_value_presents x y" "target_value_presents x z"
+  shows "(43,citation_observation_argument e (use_data_term u) (Payload_Term r) y)
+      \<in>positive_meaning anchored_admission_system \<longleftrightarrow>
+    (43,citation_observation_argument f (use_data_term u) (Payload_Term r) z)
+      \<in>positive_meaning anchored_admission_system"
+  by (simp only: anchored_admission_on_values[OF assms(1,3)] anchored_admission_on_values[OF assms(2,4)])
+
+section \<open>The actual location retains its use\<close>
+
+definition located_admission_schema :: "(nat,nat,nat) factor_schema" where
+  "located_admission_schema=data_rule (citation_observation_pattern data_x data_y data_z data_w)
+    {(0,42,citation_reading_pattern data_x data_y data_z (Pattern_Variable 4) (Pattern_Variable 5)),
+     (1,41,citation_observation_pattern data_x data_y (Pattern_Variable 4) data_w)}"
+
+definition located_admission_system :: "(nat,nat,nat,nat) schema_system" where
+  "located_admission_system=add_view_definition anchored_admission_system 44 data_x {(0,located_admission_schema)}"
+
+interpretation located_admission_view: positive_view anchored_admission_system 44 data_x "{(0,located_admission_schema)}"
+  by (rule positive_view.intro)
+    (auto simp: located_admission_schema_def schema_formed_def schema_dependencies_def
+      single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma located_admission_system_formed [simp]: "schema_system_formed located_admission_system"
+  using located_admission_view.formed by (simp only: located_admission_system_def)
+
+lemma located_admission_definitions [simp]:
+  "system_definitions located_admission_system=insert 44 (system_definitions anchored_admission_system)"
+  by (simp add: located_admission_system_def)
+
+lemma located_admission_call:
+  "schema_call_formed located_admission_system d t \<longleftrightarrow>
+    d\<in>system_definitions located_admission_system \<and> term_formed t"
+  using added_variable_calls[OF anchored_admission_system_formed
+    located_admission_system_formed[unfolded located_admission_system_def] anchored_admission_call]
+  by (simp only: located_admission_system_def[symmetric])
+
+lemma located_admission_old_meaning:
+  assumes "d\<in>system_definitions anchored_admission_system"
+  shows "(d,t)\<in>positive_meaning located_admission_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning anchored_admission_system"
+  using located_admission_view.old_meaning[OF assms, of t] by (simp only: located_admission_system_def)
+
+lemma located_admission_clause [simp]:
+  "((44,c),S)\<in>system_clauses located_admission_system \<longleftrightarrow> (c,S)\<in>{(0,located_admission_schema)}"
+  using located_admission_view.no_old_clause[of c S] by (auto simp: located_admission_system_def)
+
+lemma located_admission_components:
+  "(42,t)\<in>positive_meaning located_admission_system \<longleftrightarrow> (42,t)\<in>positive_meaning citation_reading_system"
+  "(41,t)\<in>positive_meaning located_admission_system \<longleftrightarrow> (41,t)\<in>positive_meaning citation_location_system"
+  using located_admission_old_meaning[of 42 t] located_admission_old_meaning[of 41 t]
+    anchored_admission_components(1)[of t] anchored_admission_old_meaning[of 41 t]
+    citation_reading_components(4)[of t] by auto
+
+lemma located_admission_valuation:
+  "(44,t)\<in>positive_meaning located_admission_system \<longleftrightarrow>
+    (\<exists>h::nat\<Rightarrow>factor_term. (\<forall>i\<in>{0,1,2,3,4,5}. term_formed (h i)) \<and>
+      t=citation_observation_argument (h 0) (h 1) (h 2) (h 3) \<and>
+      (42,citation_reading_argument (h 0) (h 1) (h 2) (h 4) (h 5))\<in>positive_meaning citation_reading_system \<and>
+      (41,citation_observation_argument (h 0) (h 1) (h 4) (h 3))\<in>positive_meaning citation_location_system)"
+  by (subst ordinary_positive_entry_valuation)
+    (auto simp: located_admission_schema_def schema_variables_def located_admission_call located_admission_components)
+
+lemma located_admission_fields:
+  "(44,t)\<in>positive_meaning located_admission_system \<longleftrightarrow>
+    (\<exists>e u r y c i. t=citation_observation_argument e u r y \<and>
+      (42,citation_reading_argument e u r c i)\<in>positive_meaning citation_reading_system \<and>
+      (41,citation_observation_argument e u c y)\<in>positive_meaning citation_location_system)"
+proof
+  assume "(44,t)\<in>positive_meaning located_admission_system"
+  then show "\<exists>e u r y c i. t=citation_observation_argument e u r y \<and>
+      (42,citation_reading_argument e u r c i)\<in>positive_meaning citation_reading_system \<and>
+      (41,citation_observation_argument e u c y)\<in>positive_meaning citation_location_system"
+    by (simp only: located_admission_valuation) blast
+next
+  assume "\<exists>e u r y c i. t=citation_observation_argument e u r y \<and>
+      (42,citation_reading_argument e u r c i)\<in>positive_meaning citation_reading_system \<and>
+      (41,citation_observation_argument e u c y)\<in>positive_meaning citation_location_system"
+  then obtain e u r y c i where parts: "t=citation_observation_argument e u r y"
+    "(42,citation_reading_argument e u r c i)\<in>positive_meaning citation_reading_system"
+    "(41,citation_observation_argument e u c y)\<in>positive_meaning citation_location_system" by blast
+  have formed: "term_formed e" "term_formed u" "term_formed r" "term_formed y" "term_formed c" "term_formed i"
+    using schema_call_formed_target[OF positive_meaning_formed[OF parts(2)]]
+      schema_call_formed_target[OF positive_meaning_formed[OF parts(3)]] by auto
+  show "(44,t)\<in>positive_meaning located_admission_system"
+    by (simp only: located_admission_valuation,
+      rule exI[of _ "\<lambda>j::nat. if j=0 then e else if j=1 then u else if j=2 then r else if j=3 then y else if j=4 then c else i"])
+      (use parts formed in auto)
+qed
+
+theorem located_admission_sound:
+  assumes "(44,t)\<in>positive_meaning located_admission_system"
+  shows "\<exists>E e u r v a. t=citation_observation_argument e (use_data_term u) (Payload_Term r) (site_data_term v a) \<and>
+    environment_value_presents E e \<and> located_at E u r v a"
+proof -
+  obtain e u k y c i where fields: "t=citation_observation_argument e u k y"
+    "(42,citation_reading_argument e u k c i)\<in>positive_meaning citation_reading_system"
+    "(41,citation_observation_argument e u c y)\<in>positive_meaning citation_location_system"
+    using assms by (auto simp: located_admission_fields)
+  obtain E q r d xs R where reading: "environment_value_presents E e"
+    "u=use_data_term q" "k=Payload_Term r" "c=citation_data_term d"
+    "artifact_at E q R" "citation_at R r d (set xs)"
+    using fields(2) by (auto simp: citation_reading_exact)
+  obtain v a where location: "y=site_data_term v a" "citation_location E q d v a"
+    using fields(3) reading(2,4) by (auto simp: citation_location_at_source[OF reading(1)]
+      dest: injD[OF use_data_term_injective] injD[OF citation_data_term_injective])
+  have located: "located_at E q r v a" using reading(5,6) location(2) by (auto simp: located_at_def)
+  show ?thesis using fields(1) reading location located by blast
+qed
+
+theorem located_admission_complete:
+  assumes source: "environment_value_presents E e" and location: "located_at E u r v a"
+  shows "(44,citation_observation_argument e (use_data_term u) (Payload_Term r) (site_data_term v a))
+    \<in>positive_meaning located_admission_system"
+proof -
+  obtain R c I where parts: "artifact_at E u R" "citation_at R r c I" "citation_location E u c v a"
+    using location by (auto simp: located_at_def)
+  have finite: "finite I" using parts(2) raw_citation_interior(1) by (auto simp: citation_at_def)
+  obtain xs where rows: "set xs=I" "distinct xs" using finite_distinct_list[OF finite] by blast
+  have citation: "citation_at R r c (set xs)" using parts(2) rows(1) by simp
+  have reading: "(42,citation_reading_argument e (use_data_term u) (Payload_Term r)
+    (citation_data_term c) (data_list_term (map Payload_Term xs)))\<in>positive_meaning citation_reading_system"
+    by (rule citation_reading_complete[OF source parts(1) rows(2) citation])
+  have interpreted: "(41,citation_observation_argument e (use_data_term u) (citation_data_term c) (site_data_term v a))
+    \<in>positive_meaning citation_location_system"
+    by (rule citation_location_complete[OF source parts(3)])
+  show ?thesis using reading interpreted by (auto simp: located_admission_fields)
+qed
+
+theorem located_admission_exact:
+  "(44,t)\<in>positive_meaning located_admission_system \<longleftrightarrow>
+    (\<exists>E e u r v a. t=citation_observation_argument e (use_data_term u) (Payload_Term r) (site_data_term v a) \<and>
+      environment_value_presents E e \<and> located_at E u r v a)"
+  using located_admission_sound located_admission_complete by blast
+
+corollary located_admission_at_source:
+  assumes source: "environment_value_presents E e"
+  shows "(44,citation_observation_argument e u k s)\<in>positive_meaning located_admission_system \<longleftrightarrow>
+    (\<exists>q r v a. u=use_data_term q \<and> k=Payload_Term r \<and> s=site_data_term v a \<and> located_at E q r v a)"
+proof
+  assume holds: "(44,citation_observation_argument e u k s)\<in>positive_meaning located_admission_system"
+  obtain F q r v a where parts: "environment_value_presents F e" "u=use_data_term q"
+    "k=Payload_Term r" "s=site_data_term v a" "located_at F q r v a"
+    using holds by (auto simp: located_admission_exact)
+  have same: "F=E" by (rule environment_value_presents_unique[OF parts(1) source])
+  show "\<exists>q r v a. u=use_data_term q \<and> k=Payload_Term r \<and> s=site_data_term v a \<and> located_at E q r v a"
+    using parts same by blast
+next
+  assume "\<exists>q r v a. u=use_data_term q \<and> k=Payload_Term r \<and> s=site_data_term v a \<and> located_at E q r v a"
+  then show "(44,citation_observation_argument e u k s)\<in>positive_meaning located_admission_system"
+    using source located_admission_complete by blast
+qed
+
+corollary located_admission_on_values:
+  assumes source: "environment_value_presents E e"
+  shows "(44,citation_observation_argument e (use_data_term u) (Payload_Term r) (site_data_term v a))
+    \<in>positive_meaning located_admission_system \<longleftrightarrow> located_at E u r v a"
+  by (auto simp: located_admission_at_source[OF source] dest: injD[OF use_data_term_injective])
+
+corollary located_admission_presentation_invariance:
+  assumes "environment_value_presents E e" "environment_value_presents E f"
+  shows "(44,citation_observation_argument e u r s)\<in>positive_meaning located_admission_system \<longleftrightarrow>
+    (44,citation_observation_argument f u r s)\<in>positive_meaning located_admission_system"
+  by (simp only: located_admission_at_source[OF assms(1)] located_admission_at_source[OF assms(2)])
+
+section \<open>One native package for the three readers\<close>
+
+lemma located_admission_anchor:
+  "(43,t)\<in>positive_meaning located_admission_system \<longleftrightarrow>
+    (43,t)\<in>positive_meaning anchored_admission_system"
+  using located_admission_old_meaning[of 43 t] by auto
+
+abbreviation anchored_checking_result :: "nat \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "anchored_checking_result d t \<equiv>
+    (d=42 \<and> (\<exists>E e u r c xs R. t=citation_reading_argument e (use_data_term u) (Payload_Term r)
+      (citation_data_term c) (data_list_term (map Payload_Term xs)) \<and>
+      environment_value_presents E e \<and> distinct xs \<and> artifact_at E u R \<and> citation_at R r c (set xs))) \<or>
+    (d=43 \<and> (\<exists>E e u r x y. t=citation_observation_argument e (use_data_term u) (Payload_Term r) y \<and>
+      environment_value_presents E e \<and> target_value_presents x y \<and> anchored_at E u r x)) \<or>
+    (d=44 \<and> (\<exists>E e u r v a. t=citation_observation_argument e (use_data_term u) (Payload_Term r) (site_data_term v a) \<and>
+      environment_value_presents E e \<and> located_at E u r v a))"
+
+lemma anchored_checking_exact:
+  assumes "d\<in>{42,43,44}"
+  shows "(d,t)\<in>positive_meaning located_admission_system \<longleftrightarrow> anchored_checking_result d t"
+proof -
+  consider (c42) "d=42" | (c43) "d=43" | (c44) "d=44" using assms by auto
+  then show ?thesis
+  proof cases
+    case c42
+    then show ?thesis by (simp add: located_admission_components citation_reading_exact)
+  next
+    case c43
+    then show ?thesis by (simp add: located_admission_anchor anchored_admission_exact)
+  next
+    case c44
+    then show ?thesis by (simp add: located_admission_exact)
+  qed
+qed
+
+theorem native_anchored_checking:
+  "\<exists>E :: local_address option artifact_environment. \<exists>pu Q g.
+    closed_native_package_at E pu [] Q \<and> inj_on g {42::nat,43,44} \<and>
+    (\<forall>d\<in>{42,43,44}. \<forall>t. term_formed t \<longrightarrow>
+      (\<exists>F au I K. environment_formed F \<and> environment_included E F \<and> au\<notin>environment_uses E \<and>
+        native_package_at F pu [] Q \<and> native_application_at F au [] (g d) t I K \<and>
+        native_package_environment F pu []=E \<and> native_application_formed F pu [] au [] \<and>
+        (native_positive_holds F pu [] au [] \<longleftrightarrow> anchored_checking_result d t)))"
+proof -
+  obtain g :: "nat \<Rightarrow> local_address option definition_site"
+    and E :: "local_address option artifact_environment" and pu Q
+    where injective: "inj_on g (system_definitions located_admission_system)"
+    and closed: "closed_native_package_at E pu [] Q"
+    and future: "\<forall>d\<in>system_definitions located_admission_system. \<forall>t. term_formed t \<longrightarrow>
+      (\<exists>F au I K. environment_formed F \<and> environment_included E F \<and> au\<notin>environment_uses E \<and>
+        native_package_at F pu [] Q \<and> native_application_at F au [] (g d) t I K \<and>
+        native_package_environment F pu []=E \<and>
+        (native_application_formed F pu [] au [] \<longleftrightarrow> schema_call_formed located_admission_system d t) \<and>
+        (native_positive_holds F pu [] au [] \<longleftrightarrow> (d,t)\<in>positive_meaning located_admission_system) \<and>
+        (\<forall>v\<in>environment_uses E. \<forall>R. artifact_at F v R \<longleftrightarrow> artifact_at E v R) \<and>
+        (\<forall>v\<in>environment_uses E. \<forall>k w. binds_slot F v k w \<longleftrightarrow> binds_slot E v k w))"
+    using compiled_program_future_applications[OF located_admission_system_formed] by blast
+  have sites: "inj_on g {42,43,44}" by (rule inj_on_subset[OF injective]) auto
+  show ?thesis
+  proof (rule exI[of _ E], rule exI[of _ pu], rule exI[of _ Q], rule exI[of _ g], intro conjI ballI allI impI)
+    show "closed_native_package_at E pu [] Q" by (rule closed)
+    show "inj_on g {42,43,44}" by (rule sites)
+  next
+    fix d :: nat and t :: factor_term
+    assume selected: "d\<in>{42,43,44}" and tf: "term_formed t"
+    have member: "d\<in>system_definitions located_admission_system" using selected by auto
+    obtain F au I K where parts: "environment_formed F" "environment_included E F" "au\<notin>environment_uses E"
+      "native_package_at F pu [] Q" "native_application_at F au [] (g d) t I K"
+      "native_package_environment F pu []=E"
+      "native_application_formed F pu [] au [] \<longleftrightarrow> schema_call_formed located_admission_system d t"
+      "native_positive_holds F pu [] au [] \<longleftrightarrow> (d,t)\<in>positive_meaning located_admission_system"
+      using future[rule_format, OF member tf] by blast
+    show "\<exists>F au I K. environment_formed F \<and> environment_included E F \<and> au\<notin>environment_uses E \<and>
+      native_package_at F pu [] Q \<and> native_application_at F au [] (g d) t I K \<and>
+      native_package_environment F pu []=E \<and> native_application_formed F pu [] au [] \<and>
+      (native_positive_holds F pu [] au [] \<longleftrightarrow> anchored_checking_result d t)"
+      by (rule exI[of _ F], rule exI[of _ au], rule exI[of _ I], rule exI[of _ K])
+        (use parts tf member anchored_checking_exact[OF selected] in \<open>auto simp: located_admission_call\<close>)
+  qed
+qed
+
+text \<open>
+  Target admission joins the structural reader to exact interpretation.
+  Location admission joins the same reader to occurrence location, retaining
+  the actual destination use even when another use has the same artifact.
+  Whole citations can produce targets but cannot produce occurrence locations.
+
+  All three clauses are ordinary calls to definitions already in this package.
+  Their exactness statements cover every input term. The finite citation
+  interior supplies a complete witness when the two derived views project it
+  away. Every environment and target presentation remains permitted, and one
+  closed native package supplies three distinct sites before all future formed
+  inputs. Recursive quotation and the higher grammar remain separate work.
+\<close>
+
+end

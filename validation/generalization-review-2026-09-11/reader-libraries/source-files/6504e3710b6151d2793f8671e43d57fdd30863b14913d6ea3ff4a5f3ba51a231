@@ -1,0 +1,853 @@
+theory Factor_Structure
+  imports RRA_Structural_Syntax
+begin
+
+section \<open>A four-relation view of one RRA structure\<close>
+
+record 'a four_relations =
+  four_carrier :: "'a set"
+  four_own :: "('a \<times> 'a) set"
+  four_end :: "('a \<times> 'a) set"
+  four_next :: "('a \<times> 'a) set"
+  four_bind :: "('a \<times> 'a) set"
+
+definition four_relations_formed :: "'a four_relations \<Rightarrow> bool" where
+  "four_relations_formed F \<longleftrightarrow>
+    finite (four_carrier F) \<and>
+    four_own F \<subseteq> four_carrier F \<times> four_carrier F \<and>
+    four_end F \<subseteq> four_carrier F \<times> four_carrier F \<and>
+    four_next F \<subseteq> four_carrier F \<times> four_carrier F \<and>
+    four_bind F \<subseteq> four_carrier F \<times> four_carrier F"
+
+lemma four_relations_identity:
+  fixes F G :: "'a four_relations"
+  shows "F = G \<longleftrightarrow> four_carrier F = four_carrier G \<and>
+    four_own F = four_own G \<and> four_end F = four_end G \<and>
+    four_next F = four_next G \<and> four_bind F = four_bind G"
+  by (cases F; cases G) auto
+
+definition headed_relation :: "'a \<Rightarrow> ('a \<times> 'a) set \<Rightarrow> ('a \<times> 'a \<times> 'a) set" where
+  "headed_relation h M = (\<lambda>(a,b). (h,a,b)) ` M"
+
+lemma headed_relation_member [simp]:
+  "(h,a,b) \<in> headed_relation k M \<longleftrightarrow> h = k \<and> (a,b) \<in> M"
+  by (auto simp: headed_relation_def)
+
+definition four_view_incidence ::
+  "'a \<Rightarrow> 'a list \<Rightarrow> 'a \<Rightarrow> ('a \<times> 'a) set \<Rightarrow>
+   'a \<Rightarrow> 'a \<Rightarrow> 'a \<Rightarrow> 'a \<Rightarrow> 'a four_relations \<Rightarrow>
+   ('a \<times> 'a \<times> 'a) set" where
+  "four_view_incidence r ps cr C oh eh nh bh F =
+    rra_incidence (record_structure r ps [cr,oh,eh,nh,bh]) \<union>
+    headed_relation cr C \<union> headed_relation oh (four_own F) \<union>
+    headed_relation eh (four_end F) \<union> headed_relation nh (four_next F) \<union>
+    headed_relation bh (four_bind F)"
+
+definition four_structure_at ::
+  "('a,'v) structured_object \<Rightarrow> 'a \<Rightarrow> 'a four_relations \<Rightarrow> bool" where
+  "four_structure_at obj r F \<longleftrightarrow>
+    (\<exists>ps cr oh eh nh bh C. record_at obj r ps [cr,oh,eh,nh,bh] \<and>
+      family_at obj cr C \<and> inj_on snd C \<and>
+      four_carrier F = rel_ran C \<and>
+      four_own F = headed_incidence (object_structure obj) oh \<and>
+      four_end F = headed_incidence (object_structure obj) eh \<and>
+      four_next F = headed_incidence (object_structure obj) nh \<and>
+      four_bind F = headed_incidence (object_structure obj) bh \<and>
+      four_relations_formed F \<and> object_data obj = empty_basis \<and>
+      rra_carrier (object_structure obj) =
+        insert r (set ps \<union> {cr,oh,eh,nh,bh} \<union> rel_dom C \<union> four_carrier F) \<and>
+      rra_incidence (object_structure obj) = four_view_incidence r ps cr C oh eh nh bh F)"
+
+lemma four_structure_unique:
+  assumes first: "four_structure_at obj r F" and second: "four_structure_at obj r G"
+  shows "F = G"
+proof -
+  obtain ps cr oh eh nh bh C where a:
+    "record_at obj r ps [cr,oh,eh,nh,bh]" "family_at obj cr C"
+    "four_carrier F = rel_ran C"
+    "four_own F = headed_incidence (object_structure obj) oh"
+    "four_end F = headed_incidence (object_structure obj) eh"
+    "four_next F = headed_incidence (object_structure obj) nh"
+    "four_bind F = headed_incidence (object_structure obj) bh"
+    using first unfolding four_structure_at_def by blast
+  obtain qs cr' oh' eh' nh' bh' D where b:
+    "record_at obj r qs [cr',oh',eh',nh',bh']" "family_at obj cr' D"
+    "four_carrier G = rel_ran D"
+    "four_own G = headed_incidence (object_structure obj) oh'"
+    "four_end G = headed_incidence (object_structure obj) eh'"
+    "four_next G = headed_incidence (object_structure obj) nh'"
+    "four_bind G = headed_incidence (object_structure obj) bh'"
+    using second unfolding four_structure_at_def by blast
+  have fields: "cr = cr' \<and> oh = oh' \<and> eh = eh' \<and> nh = nh' \<and> bh = bh'"
+    using record_at_unique[OF a(1) b(1)] by simp
+  have carrier: "C = D" using family_at_unique[OF a(2)] b(2) fields by blast
+  show ?thesis using a(3-7) b(3-7) fields carrier by (simp add: four_relations_identity)
+qed
+
+lemma four_structure_formed:
+  assumes "four_structure_at obj r F"
+  shows "object_formed obj \<and> four_relations_formed F"
+  using assms by (auto simp: four_structure_at_def record_at_def)
+
+lemma disagreeing_four_projections_rejected:
+  assumes "four_structure_at obj r F" "F \<noteq> G"
+  shows "\<not> four_structure_at obj r G"
+  using four_structure_unique[OF assms(1)] assms(2) by blast
+
+section \<open>The retained finite v6.1 class\<close>
+
+definition legacy_factor_formed :: "'a four_relations \<Rightarrow> bool" where
+  "legacy_factor_formed F \<longleftrightarrow>
+    four_relations_formed F \<and> single_valued (converse (four_own F)) \<and>
+    acyclic_edges (four_own F) \<and> single_valued (four_end F) \<and>
+    single_valued (four_next F) \<and> single_valued (converse (four_next F)) \<and>
+    (\<forall>p q. (p,q) \<in> four_next F \<longrightarrow>
+      (\<exists>r. (r,p) \<in> four_own F \<and> (r,q) \<in> four_own F)) \<and>
+    single_valued (four_bind F)"
+
+definition push_four :: "('a \<Rightarrow> 'b) \<Rightarrow> 'a four_relations \<Rightarrow> 'b four_relations" where
+  "push_four f F =
+    \<lparr>four_carrier=f ` four_carrier F,
+      four_own=(\<lambda>(a,b). (f a,f b)) ` four_own F,
+      four_end=(\<lambda>(a,b). (f a,f b)) ` four_end F,
+      four_next=(\<lambda>(a,b). (f a,f b)) ` four_next F,
+      four_bind=(\<lambda>(a,b). (f a,f b)) ` four_bind F\<rparr>"
+
+lemma push_four_formed:
+  assumes "four_relations_formed F"
+  shows "four_relations_formed (push_four f F)"
+  using assms by (auto simp: four_relations_formed_def push_four_def)
+
+lemma push_four_identity [simp]: "push_four id F = F"
+  by (cases F) (auto simp: push_four_def)
+
+lemma push_four_composes:
+  "push_four g (push_four f F) = push_four (g \<circ> f) F"
+  by (auto simp: four_relations_identity push_four_def image_image intro: rev_image_eqI)
+
+lemma headed_relation_push:
+  "(\<lambda>(r,p,x). (f r,f p,f x)) ` headed_relation h M =
+    headed_relation (f h) ((\<lambda>(p,x). (f p,f x)) ` M)"
+  by (auto simp: headed_relation_def image_image intro: rev_image_eqI)
+
+lemma four_view_incidence_push:
+  "(\<lambda>(r,p,x). (f r,f p,f x)) ` four_view_incidence r ps cr C oh eh nh bh F =
+    four_view_incidence (f r) (map f ps) (f cr) ((\<lambda>(p,x). (f p,f x)) ` C)
+      (f oh) (f eh) (f nh) (f bh) (push_four f F)"
+proof -
+  have rec: "(\<lambda>(r,p,x). (f r,f p,f x)) ` rra_incidence (record_structure r ps [cr,oh,eh,nh,bh]) =
+    rra_incidence (record_structure (f r) (map f ps) [f cr,f oh,f eh,f nh,f bh])"
+    using arg_cong[OF record_structure_push[of f r ps "[cr,oh,eh,nh,bh]"], of rra_incidence]
+    by (simp add: push_structure_def)
+  show ?thesis by (simp add: four_view_incidence_def image_Un rec headed_relation_push push_four_def)
+qed
+
+lemma four_structure_push:
+  assumes source: "four_structure_at obj r F"
+    and injective: "inj_on f (rra_carrier (object_structure obj))"
+  shows "four_structure_at (push_object f obj) (f r) (push_four f F)"
+proof -
+  let ?U = "rra_carrier (object_structure obj)"
+  obtain ps cr oh eh nh bh C where a:
+    "record_at obj r ps [cr,oh,eh,nh,bh]" "family_at obj cr C" "inj_on snd C"
+    "four_carrier F = rel_ran C"
+    "four_own F = headed_incidence (object_structure obj) oh"
+    "four_end F = headed_incidence (object_structure obj) eh"
+    "four_next F = headed_incidence (object_structure obj) nh"
+    "four_bind F = headed_incidence (object_structure obj) bh"
+    "four_relations_formed F" "object_data obj = empty_basis"
+    "?U = insert r (set ps \<union> {cr,oh,eh,nh,bh} \<union> rel_dom C \<union> four_carrier F)"
+    "rra_incidence (object_structure obj) = four_view_incidence r ps cr C oh eh nh bh F"
+    using source unfolding four_structure_at_def by blast
+  let ?D = "(\<lambda>(p,x). (f p,f x)) ` C"
+  have oformed: "object_formed obj" using a(1) by (simp add: record_at_def)
+  have sformed: "rra_formed (object_structure obj)" using oformed by (simp add: object_formed_def)
+  have members: "oh \<in> ?U" "eh \<in> ?U" "nh \<in> ?U" "bh \<in> ?U"
+    using a(11) by auto
+  have range: "rel_ran C \<subseteq> ?U" using a(4,11) by auto
+  have range_inj: "inj_on f (rel_ran C)" by (rule inj_on_subset[OF injective range])
+  have unique: "inj_on snd ?D" by (rule pair_image_snd_injective[OF a(3) range_inj])
+  have rec: "record_at (push_object f obj) (f r) (map f ps) [f cr,f oh,f eh,f nh,f bh]"
+    using record_at_push[OF a(1) injective] by simp
+  have fam: "family_at (push_object f obj) (f cr) ?D" by (rule family_at_push[OF a(2) injective])
+  have own: "four_own (push_four f F) = headed_incidence (object_structure (push_object f obj)) (f oh)"
+    using headed_incidence_push[OF sformed injective members(1)] a(5)
+    by (simp add: push_four_def push_object_def)
+  have endpoints: "four_end (push_four f F) = headed_incidence (object_structure (push_object f obj)) (f eh)"
+    using headed_incidence_push[OF sformed injective members(2)] a(6)
+    by (simp add: push_four_def push_object_def)
+  have successors: "four_next (push_four f F) = headed_incidence (object_structure (push_object f obj)) (f nh)"
+    using headed_incidence_push[OF sformed injective members(3)] a(7)
+    by (simp add: push_four_def push_object_def)
+  have bindings: "four_bind (push_four f F) = headed_incidence (object_structure (push_object f obj)) (f bh)"
+    using headed_incidence_push[OF sformed injective members(4)] a(8)
+    by (simp add: push_four_def push_object_def)
+  have formed: "four_relations_formed (push_four f F)" by (rule push_four_formed[OF a(9)])
+  have carrier: "rra_carrier (object_structure (push_object f obj)) =
+    insert (f r) (set (map f ps) \<union> {f cr,f oh,f eh,f nh,f bh} \<union>
+      rel_dom ?D \<union> four_carrier (push_four f F))"
+    using a(11) by (auto simp: push_object_def push_four_def pair_image_domain)
+  have incidence: "rra_incidence (object_structure (push_object f obj)) =
+    four_view_incidence (f r) (map f ps) (f cr) ?D (f oh) (f eh) (f nh) (f bh) (push_four f F)"
+    using a(12) by (simp add: push_object_def push_structure_def four_view_incidence_push)
+  have data: "object_data (push_object f obj) = empty_basis"
+    using a(10) by (simp add: push_object_def)
+  have recovered_carrier: "four_carrier (push_four f F) = rel_ran ?D"
+    using a(4) by (simp add: push_four_def pair_image_range)
+  show ?thesis unfolding four_structure_at_def
+    by (rule exI[of _ "map f ps"], rule exI[of _ "f cr"], rule exI[of _ "f oh"],
+        rule exI[of _ "f eh"], rule exI[of _ "f nh"], rule exI[of _ "f bh"],
+        rule exI[of _ ?D])
+       (use rec fam unique own endpoints successors bindings formed carrier incidence data recovered_carrier in blast)
+qed
+
+lemma push_four_left_inverse:
+  assumes formed: "four_relations_formed F"
+    and inverse: "\<And>a. a \<in> four_carrier F \<Longrightarrow> g (f a) = a"
+  shows "push_four g (push_four f F) = F"
+proof -
+  have agree: "\<And>a. a \<in> four_carrier F \<Longrightarrow> (g \<circ> f) a = id a"
+    using inverse by simp
+  have carrier: "(g \<circ> f) ` four_carrier F = id ` four_carrier F" using agree by auto
+  have own: "(\<lambda>(a,b). ((g \<circ> f) a,(g \<circ> f) b)) ` four_own F =
+    (\<lambda>(a,b). (id a,id b)) ` four_own F"
+    by (rule pair_image_cong[OF _ agree]) (use formed in \<open>auto simp: four_relations_formed_def\<close>)
+  have endpoints: "(\<lambda>(a,b). ((g \<circ> f) a,(g \<circ> f) b)) ` four_end F =
+    (\<lambda>(a,b). (id a,id b)) ` four_end F"
+    by (rule pair_image_cong[OF _ agree]) (use formed in \<open>auto simp: four_relations_formed_def\<close>)
+  have successors: "(\<lambda>(a,b). ((g \<circ> f) a,(g \<circ> f) b)) ` four_next F =
+    (\<lambda>(a,b). (id a,id b)) ` four_next F"
+    by (rule pair_image_cong[OF _ agree]) (use formed in \<open>auto simp: four_relations_formed_def\<close>)
+  have bindings: "(\<lambda>(a,b). ((g \<circ> f) a,(g \<circ> f) b)) ` four_bind F =
+    (\<lambda>(a,b). (id a,id b)) ` four_bind F"
+    by (rule pair_image_cong[OF _ agree]) (use formed in \<open>auto simp: four_relations_formed_def\<close>)
+  have same: "push_four (g \<circ> f) F = push_four id F"
+    using carrier own endpoints successors bindings by (simp add: four_relations_identity push_four_def)
+  show ?thesis using same by (simp add: push_four_composes)
+qed
+
+lemma four_relation_finite:
+  assumes "four_relations_formed F"
+  shows "finite (four_own F)" "finite (four_end F)" "finite (four_next F)" "finite (four_bind F)"
+  using assms finite_subset[of _ "four_carrier F \<times> four_carrier F"]
+  by (auto simp: four_relations_formed_def)
+
+section \<open>An encoding with independently checked recovery\<close>
+
+type_synonym 'a four_code_atom = "'a + (nat + 'a)"
+
+abbreviation four_node :: "nat \<Rightarrow> 'a four_code_atom" where
+  "four_node n \<equiv> Inr (Inl n)"
+
+abbreviation four_socket :: "'a \<Rightarrow> 'a four_code_atom" where
+  "four_socket a \<equiv> Inr (Inr a)"
+
+definition four_carrier_graph :: "'a four_relations \<Rightarrow> ('a four_code_atom \<times> 'a four_code_atom) set" where
+  "four_carrier_graph F = (\<lambda>a. (four_socket a,Inl a)) ` four_carrier F"
+
+lemma four_carrier_graph_domain [simp]:
+  "rel_dom (four_carrier_graph F) = four_socket ` four_carrier F"
+  by (auto simp: four_carrier_graph_def rel_dom_def)
+
+lemma four_carrier_graph_range [simp]:
+  "rel_ran (four_carrier_graph F) = Inl ` four_carrier F"
+  by (auto simp: four_carrier_graph_def rel_ran_def)
+
+lemma four_carrier_graph_functional:
+  "single_valued (four_carrier_graph F)"
+  by (auto simp: four_carrier_graph_def single_valued_def)
+
+lemma four_carrier_graph_distinct:
+  "inj_on snd (four_carrier_graph F)"
+  by (auto simp: four_carrier_graph_def inj_on_def)
+
+definition four_encode :: "'a four_relations \<Rightarrow> ('a four_code_atom,'v) structured_object" where
+  "four_encode F =
+    \<lparr>object_structure =
+      \<lparr>rra_carrier = four_node ` {0,1,2,3,4,5,6,7,8,9,10} \<union>
+          four_socket ` four_carrier F \<union> Inl ` four_carrier F,
+        rra_incidence = four_view_incidence (four_node 0)
+          [four_node 1,four_node 2,four_node 3,four_node 4,four_node 5]
+          (four_node 6) (four_carrier_graph F) (four_node 7) (four_node 8)
+          (four_node 9) (four_node 10) (push_four Inl F)\<rparr>,
+      object_data = empty_basis\<rparr>"
+
+lemma four_encode_formed:
+  assumes formed: "four_relations_formed F"
+  shows "object_formed (four_encode F)"
+  using formed four_relation_finite[OF formed]
+  by (auto simp: four_encode_def object_formed_def rra_formed_def four_view_incidence_def
+      record_structure_def headed_relation_def four_carrier_graph_def push_four_def four_relations_formed_def)
+
+lemma four_encode_record_heads:
+  assumes "a \<in> {four_node 0,four_node 1,four_node 2,four_node 3,four_node 4,four_node 5}"
+  shows "headed_incidence (object_structure (four_encode F)) a =
+    headed_incidence (record_structure (four_node 0)
+      [four_node 1,four_node 2,four_node 3,four_node 4,four_node 5]
+      [four_node 6,four_node 7,four_node 8,four_node 9,four_node 10]) a"
+  using assms
+  by (auto simp: four_encode_def four_view_incidence_def headed_incidence_def)
+
+lemma four_encode_relation_heads:
+  "headed_incidence (object_structure (four_encode F)) (four_node 6) = four_carrier_graph F"
+  "headed_incidence (object_structure (four_encode F)) (four_node 7) = four_own (push_four Inl F)"
+  "headed_incidence (object_structure (four_encode F)) (four_node 8) = four_end (push_four Inl F)"
+  "headed_incidence (object_structure (four_encode F)) (four_node 9) = four_next (push_four Inl F)"
+  "headed_incidence (object_structure (four_encode F)) (four_node 10) = four_bind (push_four Inl F)"
+  by (auto simp: four_encode_def four_view_incidence_def headed_incidence_def record_structure_def)
+
+lemma four_encode_socket_head:
+  "headed_incidence (object_structure (four_encode F)) (four_socket a) = {}"
+  by (auto simp: four_encode_def four_view_incidence_def headed_incidence_def record_structure_def)
+
+lemma four_encode_record:
+  fixes F :: "'a four_relations"
+  assumes formed: "four_relations_formed F"
+  shows "record_at (four_encode F :: ('a four_code_atom,'v) structured_object) (four_node 0)
+    [four_node 1,four_node 2,four_node 3,four_node 4,four_node 5]
+    [four_node 6,four_node 7,four_node 8,four_node 9,four_node 10]"
+proof -
+  let ?code = "(four_encode F :: ('a four_code_atom,'v) structured_object)"
+  let ?ps = "[four_node 1,four_node 2,four_node 3,four_node 4,four_node 5]"
+  let ?xs = "[four_node 6,four_node 7,four_node 8,four_node 9,four_node 10]"
+  let ?obj = "record_object (four_node 0) ?ps ?xs"
+  have base: "record_at ?obj (four_node 0) ?ps ?xs"
+    by (rule record_object_recovers) auto
+  have target: "object_formed ?code" by (rule four_encode_formed[OF formed])
+  have member: "four_node 0 \<in> rra_carrier (object_structure ?code)"
+    by (simp add: four_encode_def)
+  have heads: "\<And>a. a \<in> insert (four_node 0) (set ?ps) \<Longrightarrow>
+    headed_incidence (object_structure ?obj) a = headed_incidence (object_structure ?code) a"
+    using four_encode_record_heads[of _ F] by (auto simp: record_object_def)
+  have data: "restrict_basis (insert (four_node 0) (set ?ps)) (object_data ?code) = empty_basis"
+    by (simp add: four_encode_def)
+  show ?thesis by (rule record_at_same_heads[OF base target member heads data])
+qed
+
+lemma four_encode_family:
+  fixes F :: "'a four_relations"
+  assumes formed: "four_relations_formed F"
+  shows "family_at (four_encode F :: ('a four_code_atom,'v) structured_object) (four_node 6) (four_carrier_graph F)"
+proof -
+  let ?code = "(four_encode F :: ('a four_code_atom,'v) structured_object)"
+  have obj: "object_formed ?code" by (rule four_encode_formed[OF formed])
+  have member: "four_node 6 \<in> rra_carrier (object_structure ?code)"
+    by (simp add: four_encode_def)
+  have apart: "four_node 6 \<notin> rel_dom (four_carrier_graph F)" by auto
+  have ports: "\<forall>a\<in>rel_dom (four_carrier_graph F).
+    headed_incidence (object_structure ?code) a = {}"
+    by (auto simp: four_encode_socket_head)
+  have data: "restrict_basis (insert (four_node 6) (rel_dom (four_carrier_graph F)))
+    (object_data ?code) = empty_basis" by (simp add: four_encode_def)
+  have head: "headed_incidence (object_structure ?code) (four_node 6) = four_carrier_graph F"
+    by (rule four_encode_relation_heads(1))
+  show ?thesis using obj member apart ports data head
+    four_carrier_graph_functional[of F] by (auto simp: family_at_def)
+qed
+
+lemma four_encode_recovers:
+  fixes F :: "'a four_relations"
+  assumes formed: "four_relations_formed F"
+  shows "four_structure_at (four_encode F :: ('a four_code_atom,'v) structured_object) (four_node 0) (push_four Inl F)"
+proof -
+  let ?code = "(four_encode F :: ('a four_code_atom,'v) structured_object)"
+  let ?ps = "[four_node 1,four_node 2,four_node 3,four_node 4,four_node 5]"
+  have rec: "record_at ?code (four_node 0) ?ps
+    [four_node 6,four_node 7,four_node 8,four_node 9,four_node 10]"
+    by (rule four_encode_record[OF formed])
+  have family: "family_at ?code (four_node 6) (four_carrier_graph F)"
+    by (rule four_encode_family[OF formed])
+  have target: "four_relations_formed (push_four Inl F)" by (rule push_four_formed[OF formed])
+  have carrier: "rra_carrier (object_structure ?code) =
+    insert (four_node 0) (set ?ps \<union> {four_node 6,four_node 7,four_node 8,four_node 9,four_node 10} \<union>
+      rel_dom (four_carrier_graph F) \<union> four_carrier (push_four Inl F))"
+    by (auto simp: four_encode_def push_four_def)
+  show ?thesis
+    unfolding four_structure_at_def
+    by (rule exI[of _ ?ps], rule exI[of _ "four_node 6"], rule exI[of _ "four_node 7"],
+        rule exI[of _ "four_node 8"], rule exI[of _ "four_node 9"], rule exI[of _ "four_node 10"],
+        rule exI[of _ "four_carrier_graph F"])
+       (use rec family target carrier four_carrier_graph_distinct[of F] four_encode_relation_heads[of F]
+         in \<open>simp add: four_encode_def push_four_def\<close>)
+qed
+
+lemma legacy_factor_representable:
+  assumes "legacy_factor_formed F"
+  shows "four_structure_at (four_encode F) (four_node 0) (push_four Inl F)"
+  using assms by (intro four_encode_recovers) (simp add: legacy_factor_formed_def)
+
+lemma four_encode_injective:
+  fixes F G :: "'a four_relations"
+  assumes ff: "four_relations_formed F" and gf: "four_relations_formed G"
+    and same: "(four_encode F :: ('a four_code_atom,unit) structured_object) = four_encode G"
+  shows "F = G"
+proof -
+  have left: "four_structure_at (four_encode F :: ('a four_code_atom,unit) structured_object)
+    (four_node 0) (push_four Inl F)" by (rule four_encode_recovers[OF ff])
+  have right: "four_structure_at (four_encode F :: ('a four_code_atom,unit) structured_object)
+    (four_node 0) (push_four Inl G)" using four_encode_recovers[OF gf] same by simp
+  have equal: "(push_four Inl F :: 'a four_code_atom four_relations) = push_four Inl G"
+    by (rule four_structure_unique[OF left right])
+  let ?recover = "case_sum id (\<lambda>_ :: nat + 'a. undefined)"
+  have recover_f: "push_four ?recover (push_four Inl F) = F"
+    by (rule push_four_left_inverse[OF ff]) simp
+  have recover_g: "push_four ?recover (push_four Inl G) = G"
+    by (rule push_four_left_inverse[OF gf]) simp
+  have "F = push_four ?recover (push_four Inl F)" by (rule recover_f[symmetric])
+  also have "\<dots> = push_four ?recover (push_four Inl G)" by (rule arg_cong[OF equal])
+  also have "\<dots> = G" by (rule recover_g)
+  finally show ?thesis .
+qed
+
+lemma four_exact_representation_exists:
+  fixes F :: "'a four_relations"
+  assumes formed: "four_relations_formed F"
+  shows "\<exists>f R :: exact_artifact.
+    exact_realization f (four_encode F) R \<and>
+    four_structure_at R (f (four_node 0)) (push_four (f \<circ> Inl) F)"
+proof -
+  let ?code = "four_encode F :: ('a four_code_atom,octets) structured_object"
+  have cf: "object_formed ?code" by (rule four_encode_formed[OF formed])
+  have vals: "\<forall>v\<in>basis_values (object_data ?code). octets_formed v"
+    by (simp add: four_encode_def)
+  obtain f R where realization: "exact_realization f ?code R"
+    using exact_realization_exists[OF cf vals] by blast
+  have injective: "inj_on f (rra_carrier (object_structure ?code))"
+    using realization by (simp add: exact_realization_def finite_addressing_def)
+  have eq: "R = push_object f ?code"
+    using realization by (simp add: exact_realization_def push_object_def object_identity)
+  have view: "four_structure_at ?code (four_node 0) (push_four Inl F)"
+    by (rule four_encode_recovers[OF formed])
+  have represented: "four_structure_at R (f (four_node 0)) (push_four (f \<circ> Inl) F)"
+    using four_structure_push[OF view injective] eq by (simp add: push_four_composes)
+  show ?thesis using realization represented by blast
+qed
+
+lemma supported_four_domain_is_broader_than_legacy:
+  "\<exists>F :: unit four_relations.
+    four_relations_formed F \<and> \<not> legacy_factor_formed F \<and>
+    four_structure_at (four_encode F :: (unit four_code_atom,unit) structured_object)
+      (four_node 0) (push_four Inl F)"
+proof -
+  let ?F = "\<lparr>four_carrier={()}, four_own={((),())},
+    four_end={}, four_next={}, four_bind={}\<rparr> :: unit four_relations"
+  have formed: "four_relations_formed ?F" by (simp add: four_relations_formed_def)
+  have view: "four_structure_at (four_encode ?F :: (unit four_code_atom,unit) structured_object)
+    (four_node 0) (push_four Inl ?F)" by (rule four_encode_recovers[OF formed])
+  have outside: "\<not> legacy_factor_formed ?F"
+    by (auto simp: legacy_factor_formed_def acyclic_edges_def)
+  show ?thesis by (rule exI[of _ ?F]) (use formed view outside in blast)
+qed
+
+section \<open>Renaming the construction correspondence\<close>
+
+fun map_four_code :: "('a \<Rightarrow> 'b) \<Rightarrow> 'a four_code_atom \<Rightarrow> 'b four_code_atom" where
+  "map_four_code f (Inl a) = Inl (f a)"
+| "map_four_code f (Inr (Inl n)) = Inr (Inl n)"
+| "map_four_code f (Inr (Inr a)) = Inr (Inr (f a))"
+
+lemma four_carrier_graph_natural:
+  "(\<lambda>(p,x). (map_four_code f p,map_four_code f x)) ` four_carrier_graph F =
+    four_carrier_graph (push_four f F)"
+  by (auto simp: four_carrier_graph_def push_four_def image_image intro: rev_image_eqI)
+
+lemma four_model_lift_natural:
+  "push_four (map_four_code f) (push_four Inl F) = push_four Inl (push_four f F)"
+proof -
+  have maps: "map_four_code f \<circ> Inl = Inl \<circ> f" by (rule ext) simp
+  show ?thesis by (simp add: push_four_composes maps)
+qed
+
+lemma four_encode_natural:
+  "push_object (map_four_code f) (four_encode F) = four_encode (push_four f F)"
+proof -
+  have carrier: "rra_carrier (object_structure (push_object (map_four_code f) (four_encode F))) =
+    rra_carrier (object_structure (four_encode (push_four f F)))"
+    by (auto simp: push_object_def four_encode_def push_four_def image_image intro: rev_image_eqI)
+  have incidence: "rra_incidence (object_structure (push_object (map_four_code f) (four_encode F))) =
+    rra_incidence (object_structure (four_encode (push_four f F)))"
+    by (simp add: push_object_def four_encode_def push_structure_def
+      four_view_incidence_push four_carrier_graph_natural four_model_lift_natural)
+  have data: "object_data (push_object (map_four_code f) (four_encode F)) =
+    object_data (four_encode (push_four f F))"
+    by (simp add: push_object_def four_encode_def)
+  show ?thesis using carrier incidence data by (simp add: object_identity rra_identity)
+qed
+
+lemma map_four_code_injective:
+  assumes "inj_on f (four_carrier F)"
+  shows "inj_on (map_four_code f) (rra_carrier (object_structure (four_encode F)))"
+  using assms
+  by (auto simp: inj_on_def four_encode_def; metis Inl_inject Inr_inject)
+
+definition binary_star :: "('a \<times> 'a) set \<Rightarrow> 'a set \<Rightarrow> ('a \<times> 'a) set" where
+  "binary_star R I = {(a,b)\<in>R. a \<in> I \<or> b \<in> I}"
+
+definition four_star_match ::
+  "'a four_relations \<Rightarrow> 'a set \<Rightarrow> ('a \<Rightarrow> 'a) \<Rightarrow> 'a four_relations \<Rightarrow> bool" where
+  "four_star_match P I f G \<longleftrightarrow>
+    four_relations_formed P \<and> four_relations_formed G \<and> I \<subseteq> four_carrier P \<and>
+    inj_on f (four_carrier P) \<and> f ` four_carrier P \<subseteq> four_carrier G \<and>
+    (\<forall>a\<in>four_carrier P - I. f a = a) \<and>
+    binary_star (four_own G) (f ` I) = (\<lambda>(a,b). (f a,f b)) ` binary_star (four_own P) I \<and>
+    binary_star (four_end G) (f ` I) = (\<lambda>(a,b). (f a,f b)) ` binary_star (four_end P) I \<and>
+    binary_star (four_next G) (f ` I) = (\<lambda>(a,b). (f a,f b)) ` binary_star (four_next P) I \<and>
+    binary_star (four_bind G) (f ` I) = (\<lambda>(a,b). (f a,f b)) ` binary_star (four_bind P) I"
+
+definition object_star_match ::
+  "('a,'v) structured_object \<Rightarrow> 'a set \<Rightarrow> ('a \<Rightarrow> 'a) \<Rightarrow>
+   ('a,'v) structured_object \<Rightarrow> bool" where
+  "object_star_match obj I f target \<longleftrightarrow>
+    object_formed obj \<and> object_formed target \<and> I \<subseteq> rra_carrier (object_structure obj) \<and>
+    inj_on f (rra_carrier (object_structure obj)) \<and>
+    f ` rra_carrier (object_structure obj) \<subseteq> rra_carrier (object_structure target) \<and>
+    (\<forall>a\<in>rra_carrier (object_structure obj) - I. f a = a) \<and>
+    footprint_of (push_object f obj) (f ` I) = footprint_of target (f ` I)"
+
+definition four_code_interior :: "'a set \<Rightarrow> 'a four_code_atom set" where
+  "four_code_interior I = Inl ` I \<union> four_socket ` I"
+
+lemma four_code_interior_image:
+  "map_four_code f ` four_code_interior I = four_code_interior (f ` I)"
+  by (auto simp: four_code_interior_def image_image intro: rev_image_eqI)
+
+lemma four_code_interior_subset:
+  "four_code_interior I \<subseteq> rra_carrier (object_structure (four_encode F)) \<longleftrightarrow>
+    I \<subseteq> four_carrier F"
+  by (auto simp: four_code_interior_def four_encode_def)
+
+lemma four_encode_original_member [simp]:
+  "Inl a \<in> rra_carrier (object_structure (four_encode F)) \<longleftrightarrow> a \<in> four_carrier F"
+  by (auto simp: four_encode_def)
+
+lemma four_encode_socket_member [simp]:
+  "four_socket a \<in> rra_carrier (object_structure (four_encode F)) \<longleftrightarrow> a \<in> four_carrier F"
+  by (auto simp: four_encode_def)
+
+lemma four_code_carrier_image_subset:
+  "map_four_code f ` rra_carrier (object_structure (four_encode F)) \<subseteq>
+      rra_carrier (object_structure (four_encode G)) \<longleftrightarrow>
+    f ` four_carrier F \<subseteq> four_carrier G"
+proof
+  assume subset: "map_four_code f ` rra_carrier (object_structure (four_encode F)) \<subseteq>
+    rra_carrier (object_structure (four_encode G))"
+  show "f ` four_carrier F \<subseteq> four_carrier G"
+  proof
+    fix b assume "b \<in> f ` four_carrier F"
+    then obtain a where am: "a \<in> four_carrier F" and eq: "b = f a" by blast
+    have source: "Inl a \<in> rra_carrier (object_structure (four_encode F))" using am by simp
+    have "map_four_code f (Inl a) \<in> rra_carrier (object_structure (four_encode G))"
+      using subset source by (auto simp: four_encode_def image_Un image_image)
+    then show "b \<in> four_carrier G" using eq by simp
+  qed
+next
+  assume subset: "f ` four_carrier F \<subseteq> four_carrier G"
+  have members: "\<And>a. a \<in> four_carrier F \<Longrightarrow> f a \<in> four_carrier G"
+    using subset by blast
+  show "map_four_code f ` rra_carrier (object_structure (four_encode F)) \<subseteq>
+    rra_carrier (object_structure (four_encode G))"
+    using members by (auto simp: four_encode_def)
+qed
+
+lemma four_code_boundary_fix:
+  fixes F :: "'a four_relations" and f :: "'a \<Rightarrow> 'a"
+  shows "(\<forall>x\<in>rra_carrier (object_structure (four_encode F)) - four_code_interior I.
+      map_four_code f x = x) \<longleftrightarrow>
+    (\<forall>a\<in>four_carrier F - I. f a = a)"
+proof
+  assume fixed: "\<forall>x\<in>rra_carrier (object_structure (four_encode F)) - four_code_interior I.
+    map_four_code f x = x"
+  show "\<forall>a\<in>four_carrier F - I. f a = a"
+  proof (intro ballI)
+    fix a assume member: "a \<in> four_carrier F - I"
+    have "map_four_code f (Inl a :: 'a four_code_atom) = Inl a"
+      by (rule bspec[OF fixed]) (use member in \<open>auto simp: four_code_interior_def four_encode_def\<close>)
+    then show "f a = a" by simp
+  qed
+next
+  assume fixed: "\<forall>a\<in>four_carrier F - I. f a = a"
+  show "\<forall>x\<in>rra_carrier (object_structure (four_encode F)) - four_code_interior I.
+    map_four_code f x = x"
+    using fixed by (auto simp: four_encode_def four_code_interior_def)
+qed
+
+lemma map_four_code_injective_iff:
+  fixes F :: "'a four_relations" and f :: "'a \<Rightarrow> 'b"
+  shows "inj_on (map_four_code f) (rra_carrier (object_structure (four_encode F))) \<longleftrightarrow>
+    inj_on f (four_carrier F)"
+proof
+  assume injective: "inj_on (map_four_code f) (rra_carrier (object_structure (four_encode F)))"
+  show "inj_on f (four_carrier F)"
+  proof (rule inj_onI)
+    fix a b assume am: "a \<in> four_carrier F" and bm: "b \<in> four_carrier F" and eq: "f a = f b"
+    have source_a: "Inl a \<in> rra_carrier (object_structure (four_encode F))"
+      using am by (simp add: four_encode_def)
+    have source_b: "Inl b \<in> rra_carrier (object_structure (four_encode F))"
+      using bm by (simp add: four_encode_def)
+    have images: "map_four_code f (Inl a) = map_four_code f (Inl b)" using eq by simp
+    have "(Inl a :: 'a four_code_atom) = Inl b" by (rule inj_onD[OF injective images source_a source_b])
+    then show "a = b" by simp
+  qed
+next
+  assume "inj_on f (four_carrier F)"
+  then show "inj_on (map_four_code f) (rra_carrier (object_structure (four_encode F)))"
+    by (rule map_four_code_injective)
+qed
+
+lemma binary_star_push:
+  fixes R :: "('a \<times> 'a) set" and f :: "'a \<Rightarrow> 'b"
+  assumes injective: "inj_on f U" and subset: "I \<subseteq> U" and local: "R \<subseteq> U \<times> U"
+  shows "binary_star ((\<lambda>(a,b). (f a,f b)) ` R) (f ` I) =
+    (\<lambda>(a,b). (f a,f b)) ` binary_star R I"
+proof -
+  have membership: "\<And>a. a \<in> U \<Longrightarrow> (f a \<in> f ` I \<longleftrightarrow> a \<in> I)"
+  proof -
+    fix a assume member: "a \<in> U"
+    show "f a \<in> f ` I \<longleftrightarrow> a \<in> I"
+    proof
+      assume "f a \<in> f ` I"
+      then obtain b where bm: "b \<in> I" and eq: "f a = f b" by blast
+      have bu: "b \<in> U" using bm subset by blast
+      have "a = b" by (rule inj_onD[OF injective eq member bu])
+      then show "a \<in> I" using bm by simp
+    next
+      assume "a \<in> I"
+      then show "f a \<in> f ` I" by simp
+    qed
+  qed
+  show ?thesis
+  proof
+    show "binary_star ((\<lambda>(a,b). (f a,f b)) ` R) (f ` I) \<subseteq>
+      (\<lambda>(a,b). (f a,f b)) ` binary_star R I"
+    proof
+      fix z :: "'b \<times> 'b"
+      assume member: "z \<in> binary_star ((\<lambda>(a,b). (f a,f b)) ` R) (f ` I)"
+      obtain a b where pair: "(a,b) \<in> R" and eq: "z = (f a,f b)"
+        and incident: "f a \<in> f ` I \<or> f b \<in> f ` I"
+        using member by (auto simp: binary_star_def)
+      have au: "a \<in> U" and bu: "b \<in> U" using local pair by auto
+      have inside: "a \<in> I \<or> b \<in> I" using incident membership[OF au] membership[OF bu] by simp
+      have source: "(a,b) \<in> binary_star R I" using pair inside by (simp add: binary_star_def)
+      show "z \<in> (\<lambda>(a,b). (f a,f b)) ` binary_star R I"
+        using source eq by (auto intro: rev_image_eqI)
+    qed
+    show "(\<lambda>(a,b). (f a,f b)) ` binary_star R I \<subseteq>
+      binary_star ((\<lambda>(a,b). (f a,f b)) ` R) (f ` I)"
+      by (auto simp: binary_star_def)
+  qed
+qed
+
+lemma four_interior_members [simp]:
+  "Inl a \<in> four_code_interior I \<longleftrightarrow> a \<in> I"
+  "four_socket a \<in> four_code_interior I \<longleftrightarrow> a \<in> I"
+  "four_node n \<notin> four_code_interior I"
+  by (auto simp: four_code_interior_def)
+
+definition four_encoded_star ::
+  "'a set \<Rightarrow> 'a four_relations \<Rightarrow> ('a four_code_atom \<times> 'a four_code_atom \<times> 'a four_code_atom) set" where
+  "four_encoded_star I F =
+    (\<lambda>a. (four_node 6,four_socket a,Inl a)) ` I \<union>
+    headed_relation (four_node 7) ((\<lambda>(a,b). (Inl a,Inl b)) ` binary_star (four_own F) I) \<union>
+    headed_relation (four_node 8) ((\<lambda>(a,b). (Inl a,Inl b)) ` binary_star (four_end F) I) \<union>
+    headed_relation (four_node 9) ((\<lambda>(a,b). (Inl a,Inl b)) ` binary_star (four_next F) I) \<union>
+    headed_relation (four_node 10) ((\<lambda>(a,b). (Inl a,Inl b)) ` binary_star (four_bind F) I)"
+
+lemma four_relation_star_filter:
+  "{(r,p,x)\<in>headed_relation (four_node n) ((\<lambda>(a,b). (Inl a,Inl b)) ` R).
+    r \<in> four_code_interior I \<or> p \<in> four_code_interior I \<or> x \<in> four_code_interior I} =
+    headed_relation (four_node n) ((\<lambda>(a,b). (Inl a,Inl b)) ` binary_star R I)"
+  by (auto simp: set_eq_iff image_iff binary_star_def;
+      force intro: bexI[of _ "(ab,ba)"])
+
+lemma four_carrier_star_filter:
+  assumes "I \<subseteq> four_carrier F"
+  shows "{(r,p,x)\<in>headed_relation (four_node 6) (four_carrier_graph F).
+    r \<in> four_code_interior I \<or> p \<in> four_code_interior I \<or> x \<in> four_code_interior I} =
+    (\<lambda>a. (four_node 6,four_socket a,Inl a)) ` I"
+  using assms by (auto simp: headed_relation_def four_carrier_graph_def intro: rev_image_eqI)
+
+lemma four_encode_touching:
+  assumes subset: "I \<subseteq> four_carrier F"
+  shows "touching_incidence (object_structure (four_encode F)) (four_code_interior I) =
+    four_encoded_star I F"
+proof -
+  have unions: "\<And>A B. {(r,p,x)\<in>A \<union> B.
+      r \<in> four_code_interior I \<or> p \<in> four_code_interior I \<or> x \<in> four_code_interior I} =
+    {(r,p,x)\<in>A. r \<in> four_code_interior I \<or> p \<in> four_code_interior I \<or> x \<in> four_code_interior I} \<union>
+    {(r,p,x)\<in>B. r \<in> four_code_interior I \<or> p \<in> four_code_interior I \<or> x \<in> four_code_interior I}"
+    by auto
+  have spine: "{(r,p,x)\<in>rra_incidence (record_structure (four_node 0)
+        [four_node 1,four_node 2,four_node 3,four_node 4,four_node 5]
+        [four_node 6,four_node 7,four_node 8,four_node 9,four_node 10]).
+      r \<in> four_code_interior I \<or> p \<in> four_code_interior I \<or> x \<in> four_code_interior I} = {}"
+    by (auto simp: record_structure_def)
+  show ?thesis
+    by (simp only: touching_incidence_def four_encode_def structured_object.select_convs
+        rra_structure.select_convs four_view_incidence_def push_four_def four_relations.select_convs
+        unions spine four_relation_star_filter four_carrier_star_filter[OF subset]
+        four_encoded_star_def Un_empty_left)
+qed
+
+lemma four_encoded_star_source_pairs [simp]:
+  "(four_node 7,Inl a,Inl b) \<in> four_encoded_star I F \<longleftrightarrow>
+    (a,b) \<in> binary_star (four_own F) I"
+  "(four_node 8,Inl a,Inl b) \<in> four_encoded_star I F \<longleftrightarrow>
+    (a,b) \<in> binary_star (four_end F) I"
+  "(four_node 9,Inl a,Inl b) \<in> four_encoded_star I F \<longleftrightarrow>
+    (a,b) \<in> binary_star (four_next F) I"
+  "(four_node 10,Inl a,Inl b) \<in> four_encoded_star I F \<longleftrightarrow>
+    (a,b) \<in> binary_star (four_bind F) I"
+  by (auto simp: four_encoded_star_def)
+
+lemma four_encoded_star_equal_iff:
+  fixes F G :: "'a four_relations"
+  shows "four_encoded_star I F = four_encoded_star I G \<longleftrightarrow>
+    binary_star (four_own F) I = binary_star (four_own G) I \<and>
+    binary_star (four_end F) I = binary_star (four_end G) I \<and>
+    binary_star (four_next F) I = binary_star (four_next G) I \<and>
+    binary_star (four_bind F) I = binary_star (four_bind G) I"
+proof
+  assume eq: "four_encoded_star I F = four_encoded_star I G"
+  have pairs: "\<And>n a b. (four_node n,Inl a,Inl b) \<in> four_encoded_star I F \<longleftrightarrow>
+    (four_node n,Inl a,Inl b) \<in> four_encoded_star I G" using eq by simp
+  show "binary_star (four_own F) I = binary_star (four_own G) I \<and>
+    binary_star (four_end F) I = binary_star (four_end G) I \<and>
+    binary_star (four_next F) I = binary_star (four_next G) I \<and>
+    binary_star (four_bind F) I = binary_star (four_bind G) I"
+    using pairs[of 7] pairs[of 8] pairs[of 9] pairs[of 10]
+    by (auto simp: set_eq_iff)
+next
+  assume "binary_star (four_own F) I = binary_star (four_own G) I \<and>
+    binary_star (four_end F) I = binary_star (four_end G) I \<and>
+    binary_star (four_next F) I = binary_star (four_next G) I \<and>
+    binary_star (four_bind F) I = binary_star (four_bind G) I"
+  then show "four_encoded_star I F = four_encoded_star I G"
+    by (simp add: four_encoded_star_def)
+qed
+
+lemma four_encode_footprint:
+  fixes F :: "'a four_relations"
+  assumes subset: "I \<subseteq> four_carrier F"
+  shows "footprint_of (four_encode F :: ('a four_code_atom,'v) structured_object) (four_code_interior I) =
+    \<lparr>footprint_interior = four_code_interior I,
+      footprint_star = four_encoded_star I F, footprint_data = empty_basis\<rparr>"
+proof -
+  let ?code = "four_encode F :: ('a four_code_atom,'v) structured_object"
+  have inside: "rra_carrier (object_structure ?code) \<inter> four_code_interior I = four_code_interior I"
+    using subset by (auto simp: four_encode_def four_code_interior_def)
+  show ?thesis
+    by (simp only: footprint_of_def Let_def inside four_encode_touching[OF subset];
+        simp add: four_encode_def)
+qed
+
+lemma four_encode_footprint_equal_iff:
+  fixes F G :: "'a four_relations"
+  assumes "I \<subseteq> four_carrier F" "I \<subseteq> four_carrier G"
+  shows "footprint_of (four_encode F :: ('a four_code_atom,'v) structured_object) (four_code_interior I) =
+      footprint_of (four_encode G) (four_code_interior I) \<longleftrightarrow>
+    binary_star (four_own F) I = binary_star (four_own G) I \<and>
+    binary_star (four_end F) I = binary_star (four_end G) I \<and>
+    binary_star (four_next F) I = binary_star (four_next G) I \<and>
+    binary_star (four_bind F) I = binary_star (four_bind G) I"
+  by (simp add: four_encode_footprint[OF assms(1)] four_encode_footprint[OF assms(2)]
+      four_encoded_star_equal_iff)
+
+lemma four_encode_match_footprint:
+  fixes P G :: "'a four_relations" and f :: "'a \<Rightarrow> 'a"
+  assumes formed: "four_relations_formed P"
+    and subset: "I \<subseteq> four_carrier P"
+    and injective: "inj_on f (four_carrier P)"
+    and inclusion: "f ` four_carrier P \<subseteq> four_carrier G"
+  shows "footprint_of
+      (push_object (map_four_code f) (four_encode P :: ('a four_code_atom,'v) structured_object))
+      (map_four_code f ` four_code_interior I) =
+    footprint_of (four_encode G) (map_four_code f ` four_code_interior I) \<longleftrightarrow>
+    binary_star (four_own G) (f ` I) = (\<lambda>(a,b). (f a,f b)) ` binary_star (four_own P) I \<and>
+    binary_star (four_end G) (f ` I) = (\<lambda>(a,b). (f a,f b)) ` binary_star (four_end P) I \<and>
+    binary_star (four_next G) (f ` I) = (\<lambda>(a,b). (f a,f b)) ` binary_star (four_next P) I \<and>
+    binary_star (four_bind G) (f ` I) = (\<lambda>(a,b). (f a,f b)) ` binary_star (four_bind P) I"
+proof -
+  have left_subset: "f ` I \<subseteq> four_carrier (push_four f P)"
+    using subset by (auto simp: push_four_def)
+  have right_subset: "f ` I \<subseteq> four_carrier G" using subset inclusion by blast
+  have local:
+    "four_own P \<subseteq> four_carrier P \<times> four_carrier P"
+    "four_end P \<subseteq> four_carrier P \<times> four_carrier P"
+    "four_next P \<subseteq> four_carrier P \<times> four_carrier P"
+    "four_bind P \<subseteq> four_carrier P \<times> four_carrier P"
+    using formed by (auto simp: four_relations_formed_def)
+  have stars:
+    "binary_star (four_own (push_four f P)) (f ` I) =
+      (\<lambda>(a,b). (f a,f b)) ` binary_star (four_own P) I"
+    "binary_star (four_end (push_four f P)) (f ` I) =
+      (\<lambda>(a,b). (f a,f b)) ` binary_star (four_end P) I"
+    "binary_star (four_next (push_four f P)) (f ` I) =
+      (\<lambda>(a,b). (f a,f b)) ` binary_star (four_next P) I"
+    "binary_star (four_bind (push_four f P)) (f ` I) =
+      (\<lambda>(a,b). (f a,f b)) ` binary_star (four_bind P) I"
+    using binary_star_push[OF injective subset local(1)]
+      binary_star_push[OF injective subset local(2)]
+      binary_star_push[OF injective subset local(3)]
+      binary_star_push[OF injective subset local(4)]
+    by (simp_all add: push_four_def)
+  show ?thesis
+    by (simp only: four_encode_natural four_code_interior_image
+        four_encode_footprint_equal_iff[OF left_subset right_subset] stars;
+        simp add: eq_commute)
+qed
+
+theorem four_star_match_transport:
+  fixes P G :: "'a four_relations" and f :: "'a \<Rightarrow> 'a"
+  assumes source: "four_relations_formed P" and target: "four_relations_formed G"
+  shows "four_star_match P I f G \<longleftrightarrow>
+    object_star_match (four_encode P :: ('a four_code_atom,'v) structured_object)
+      (four_code_interior I) (map_four_code f) (four_encode G)"
+proof -
+  have source_code: "object_formed (four_encode P :: ('a four_code_atom,'v) structured_object)"
+    by (rule four_encode_formed[OF source])
+  have target_code: "object_formed (four_encode G :: ('a four_code_atom,'v) structured_object)"
+    by (rule four_encode_formed[OF target])
+  show ?thesis
+    unfolding four_star_match_def object_star_match_def
+    using source target source_code target_code
+      four_encode_match_footprint[OF source, of I f G, where 'v='v]
+    by (auto simp: four_code_interior_subset map_four_code_injective_iff
+        four_code_carrier_image_subset four_code_boundary_fix)
+qed
+
+corollary legacy_complete_match_transport:
+  assumes "legacy_factor_formed P" "legacy_factor_formed G"
+  shows "four_star_match P I f G \<longleftrightarrow>
+    object_star_match (four_encode P) (four_code_interior I) (map_four_code f) (four_encode G)"
+  using assms by (intro four_star_match_transport) (auto simp: legacy_factor_formed_def)
+
+lemma incoming_incidence_outside_the_image_is_rejected:
+  defines "P \<equiv> \<lparr>four_carrier={False}, four_own={}, four_end={}, four_next={}, four_bind={}\<rparr>"
+    and "G \<equiv> \<lparr>four_carrier={False,True}, four_own={(True,False)}, four_end={}, four_next={}, four_bind={}\<rparr>"
+  shows "\<not> four_star_match P {False} id G"
+    and "\<not> object_star_match (four_encode P :: (bool four_code_atom,unit) structured_object)
+      (four_code_interior {False}) (map_four_code id) (four_encode G)"
+proof -
+  have pf: "four_relations_formed P" and gf: "four_relations_formed G"
+    by (auto simp: P_def G_def four_relations_formed_def)
+  show rejected: "\<not> four_star_match P {False} id G"
+    by (auto simp: four_star_match_def P_def G_def binary_star_def)
+  show "\<not> object_star_match (four_encode P :: (bool four_code_atom,unit) structured_object)
+      (four_code_interior {False}) (map_four_code id) (four_encode G)"
+    using four_star_match_transport[OF pf gf, of "{False}" id] rejected by blast
+qed
+
+text \<open>
+  The record above is a recovered mathematical view. Its four tables are not
+  supplied independently of the recognized RRA structure. Every carrier atom,
+  relation pair, record socket, and carrier socket is accounted for by the
+  complete representation. Relation roles are selected by the ordered record;
+  their names are not attached labels.
+
+  The legacy condition retains the source model's ownership and successor
+  restrictions for its conformance class. Native RRA formation does not acquire
+  those restrictions, and later Factor grammars may use the full RRA data and
+  incidence basis.
+\<close>
+
+end

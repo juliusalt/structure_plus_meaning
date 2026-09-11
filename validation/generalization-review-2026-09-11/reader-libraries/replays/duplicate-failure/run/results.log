@@ -1,0 +1,38 @@
+/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/reader-libraries/engines/b1204cd34dfd248bca924742f120ab579dd68e6699d9c89ef4a9a2dfc77f946a.ML:380: warning: Matches are not exhaustive.
+Found near
+  fun
+     less_eq_set A_ (... ...) ... = list_all (fn ...) xs |
+        less_eq_set A_ ... = ... ... ys |
+        less_eq_set ... = false
+/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/reader-libraries/engines/b1204cd34dfd248bca924742f120ab579dd68e6699d9c89ef4a9a2dfc77f946a.ML:390: warning: Pattern 3 is redundant.
+Found near
+  fun
+     equal_boola false p = not p |
+        equal_boola true ... = p |
+        equal_boola ... = ... ... |
+        equal_boola ... = ...
+/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/reader-libraries/engines/b1204cd34dfd248bca924742f120ab579dd68e6699d9c89ef4a9a2dfc77f946a.ML:391: warning: Pattern 4 is redundant.
+Found near
+  fun
+     equal_boola false p = not p |
+        equal_boola true ... = p |
+        equal_boola ... = ... ... |
+        equal_boola ... = ...
+/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/reader-libraries/engines/b1204cd34dfd248bca924742f120ab579dd68e6699d9c89ef4a9a2dfc77f946a.ML:639: warning: Matches are not exhaustive. Found near fun bex (Set xs) p = list_ex p xs
+/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/reader-libraries/engines/b1204cd34dfd248bca924742f120ab579dd68e6699d9c89ef4a9a2dfc77f946a.ML:647: warning: Matches are not exhaustive.
+Found near
+  fun nth (x :: xs) n = (if ... ... zero_nata then x else ... ... (... ...))
+/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/reader-libraries/engines/b1204cd34dfd248bca924742f120ab579dd68e6699d9c89ef4a9a2dfc77f946a.ML:650: warning: Matches are not exhaustive. Found near fun ball (Set xs) p = list_all p xs
+/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/reader-libraries/engines/b1204cd34dfd248bca924742f120ab579dd68e6699d9c89ef4a9a2dfc77f946a.ML:666: warning: Matches are not exhaustive.
+Found near fun image f (... ...) = Set (... ... xs)
+/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/reader-libraries/engines/b1204cd34dfd248bca924742f120ab579dd68e6699d9c89ef4a9a2dfc77f946a.ML:677: warning: Matches are not exhaustive.
+Found near fun card A_ (... ...) = size_list (... ... xs)
+/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/reader-libraries/engines/b1204cd34dfd248bca924742f120ab579dd68e6699d9c89ef4a9a2dfc77f946a.ML:687: warning: Matches are not exhaustive.
+Found near fun filter p (... ...) = Set (... ... xs)
+/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/reader-libraries/engines/b1204cd34dfd248bca924742f120ab579dd68e6699d9c89ef4a9a2dfc77f946a.ML:708: warning: Matches are not exhaustive.
+Found near fun sup_seta A_ (... ...) = ... ... xs bot_set
+/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/reader-libraries/engines/b1204cd34dfd248bca924742f120ab579dd68e6699d9c89ef4a9a2dfc77f946a.ML:716: warning: Matches are not exhaustive. Found near fun the_elem (Set [...]) = x
+/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/reader-libraries/engines/b1204cd34dfd248bca924742f120ab579dd68e6699d9c89ef4a9a2dfc77f946a.ML:812: warning: Matches are not exhaustive.
+Found near
+  fun sorted_list_of_set (A1_, ...) (... ...) = ... ... (fn ...) (... ... xs)
+Exception- Match raised

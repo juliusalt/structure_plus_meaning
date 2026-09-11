@@ -1,0 +1,285 @@
+theory Factor_Clause_Specialization_Instances
+  imports Factor_Clause_Specialization_Admission Factor_Proof_Scheme_Instances
+    Factor_Pattern_Call_Contracts Factor_Substitution_Contracts Factor_Native_Incidence
+begin
+
+section \<open>Every checked symbolic inference supplies this same local relation\<close>
+
+theorem schema_scheme_node_specialization:
+  assumes read: "schema_scheme_reading P G root d p J"
+    and node: "(n,Schema_Inference c V)\<in>fset (graph_inferences G)"
+  shows "\<exists>S. ((fst (rel_value J n),c),S)\<in>system_clauses P \<and>
+    schema_clause_specialization P (fst (rel_value J n)) c (fset V) (schema_substitute (rel_value (fset V)) S) \<and>
+    schema_conclusion (schema_substitute (rel_value (fset V)) S)=snd (rel_value J n) \<and>
+    schema_variables (schema_substitute (rel_value (fset V)) S)\<subseteq>schema_scheme_variables G J \<and>
+    scheme_node_materials P J n (Schema_Inference c V)=
+      image (\<lambda>(s,M). ((n,s),M)) (schema_material_premises (schema_substitute (rel_value (fset V)) S))"
+proof -
+  have check: "checks_schema_scheme_node P G J n (Schema_Inference c V)"
+    using read node by (simp only: schema_scheme_reading_def; blast)
+  obtain S where clause: "((fst (rel_value J n),c),S)\<in>system_clauses P"
+    and bindings: "pattern_bindings_formed (schema_variables S) (fset V)"
+    and head: "snd (rel_value J n)=pattern_substitute (rel_value (fset V)) (schema_conclusion S)"
+    and domain: "rel_dom (schema_graph_premises G n)=rel_dom (schema_premises S)"
+    and children: "\<forall>s m. (s,m)\<in>schema_graph_premises G n \<longrightarrow>
+      (m,fst (rel_value (schema_premises S) s),
+        pattern_substitute (rel_value (fset V)) (snd (rel_value (schema_premises S) s)))\<in>J"
+    using check by (simp only: checks_schema_scheme_node.simps) blast
+  have formed: "schema_formed S" and csv: "single_valued (system_clauses P)"
+    using read clause by (auto simp: schema_scheme_reading_def schema_system_formed_def)
+  have replacements: "\<forall>a\<in>schema_variables S. pattern_formed (rel_value (fset V) a)"
+    using pattern_binding_at(2)[OF bindings] by blast
+  let ?T="schema_substitute (rel_value (fset V)) S"
+  have tf: "schema_formed ?T" by (rule schema_substitute_formed[OF formed replacements])
+  have nmember: "n\<in>schema_graph_nodes G" using node by (auto simp: schema_graph_nodes_def rel_dom_def)
+  have claim: "(n,rel_value J n)\<in>J" by (rule schema_scheme_reading_value[OF read nmember])
+  have call: "schema_pattern_call P (fst (rel_value J n)) (schema_conclusion ?T)"
+    using read claim head by (auto simp: schema_scheme_reading_def; metis prod.collapse)
+  have ordinary: "schema_pattern_call P e q" if member: "(s,e,q)\<in>schema_premises ?T" for s e q
+  proof -
+    obtain a where source: "(s,e,a)\<in>schema_premises S" "q=pattern_substitute (rel_value (fset V)) a"
+      using member by (simp only: schema_substitute_premise; blast)
+    have sd: "s\<in>rel_dom (schema_graph_premises G n)" using source(1) domain by (auto simp: rel_dom_def)
+    obtain m where discharge: "(s,m)\<in>schema_graph_premises G n" using sd by (auto simp: rel_dom_def)
+    have sv: "single_valued (schema_premises S)" using formed by (simp add: schema_formed_def)
+    have lookup: "rel_value (schema_premises S) s=(e,a)" by (rule rel_value_eq[OF sv source(1)])
+    have child_read: "(m,fst (rel_value (schema_premises S) s),
+      pattern_substitute (rel_value (fset V)) (snd (rel_value (schema_premises S) s)))\<in>J"
+      by (rule children[rule_format, OF discharge])
+    have child: "(m,e,q)\<in>J" using child_read by (simp only: lookup fst_conv snd_conv source(2))
+    show ?thesis using read child by (auto simp: schema_scheme_reading_def)
+  qed
+  have relation: "schema_clause_specialization P (fst (rel_value J n)) c (fset V) ?T"
+    unfolding schema_clause_specialization_def
+    by (rule conjI, use tf call ordinary in \<open>auto simp: schema_pattern_boundary_def\<close>,
+      rule exI[of _ S]) (use clause bindings in blast)
+  have scope: "schema_variables ?T\<subseteq>schema_scheme_variables G J"
+    using schema_clause_specialization_scope[OF relation] schema_scheme_binding_scope[OF node] by simp
+  have lookup: "rel_value (system_clauses P) (fst (rel_value J n),c)=S"
+    by (rule rel_value_eq[OF csv clause])
+  have materials: "scheme_node_materials P J n (Schema_Inference c V)=
+      image (\<lambda>(s,M). ((n,s),M)) (schema_material_premises ?T)"
+    by (simp add: lookup schema_substitute_def image_image split_def)
+  show ?thesis by (rule exI[of _ S]) (use clause relation head scope materials in simp)
+qed
+
+section \<open>A fixed actual package admits all later schema boundaries\<close>
+
+lemma schema_pattern_boundary_target_alpha:
+  assumes formed: "schema_formed S" and binders: "inj_on f (schema_variables S)" and sockets: "inj_on h (schema_sockets S)"
+  shows "schema_pattern_boundary P d (rename_schema f h id S) \<longleftrightarrow> schema_pattern_boundary P d S"
+proof -
+  have head: "inj_on f (pattern_variables (schema_conclusion S))"
+    by (rule inj_on_subset[OF binders]) (auto simp: schema_variables_def)
+  have call: "schema_pattern_call P e (rename_pattern f p) \<longleftrightarrow> schema_pattern_call P e p"
+    if "(s,e,p)\<in>schema_premises S" for s e p
+    by (rule schema_pattern_call_target_alpha, rule inj_on_subset[OF binders])
+      (use that in \<open>auto simp: schema_variables_def\<close>)
+  show ?thesis using formed renamed_schema_formed[OF formed sockets] call
+    by (auto simp: schema_pattern_boundary_def rename_schema_def map_socket_graph_member
+      schema_pattern_call_target_alpha[OF head]; blast)
+qed
+
+theorem native_schema_boundary_representations:
+  assumes package: "native_package_at E u r P" and encoded: "environment_value_presents E e"
+  shows "\<forall>d. \<forall>S::('a,'s,local_address option definition_site) factor_schema.
+    schema_pattern_boundary P d S \<longrightarrow>
+      (\<exists>F v q f h z. environment_formed F \<and> environment_included E F \<and> v\<notin>environment_uses E \<and>
+        native_schema_at F v q (rename_schema f h id S) \<and>
+        inj_on f (schema_variables S) \<and> inj_on h (schema_sockets S) \<and>
+        environment_value_presents F z \<and>
+        (293,pattern_call_reading_argument e (use_data_term u) (Payload_Term r) (definition_site_value d)
+          z (use_data_term v) (Payload_Term q))\<in>positive_meaning schema_pattern_reading_system \<and>
+        (\<forall>w\<in>environment_uses E. \<forall>A. artifact_at F w A \<longleftrightarrow> artifact_at E w A) \<and>
+        (\<forall>w\<in>environment_uses E. \<forall>k x. binds_slot F w k x \<longleftrightarrow> binds_slot E w k x))"
+proof (intro allI impI)
+  fix d and S :: "('a,'s,local_address option definition_site) factor_schema"
+  assume boundary: "schema_pattern_boundary P d S"
+  have formed: "schema_formed S" using boundary by (simp add: schema_pattern_boundary_def)
+  have ef: "environment_formed E" using environment_value_presents_formed[OF encoded] by blast
+  have dependencies: "schema_dependencies S\<subseteq>system_definitions P"
+    using boundary schema_pattern_call_formed(2)[of P]
+    by (auto simp: schema_pattern_boundary_def schema_dependencies_def rel_ran_def; blast)
+  have positions: "system_definitions P\<subseteq>environment_positions E"
+    using native_package_sites(1)[OF native_package_projection(1)[OF package]]
+      native_package_projection(3)[OF package] by (simp add: native_package_sites_def)
+  have anchors: "\<forall>a\<in>schema_dependencies S. \<exists>A. artifact_at E (fst a) A \<and> anchor_formed (A,snd a)"
+    using dependencies positions environment_position_anchor[OF ef] by blast
+  obtain F v A q f h where compiled: "environment_formed F" "environment_included E F" "v\<notin>environment_uses E"
+    "native_schema_at F v q (rename_schema f h id S)" "inj_on f (schema_variables S)" "inj_on h (schema_sockets S)"
+    "\<forall>w\<in>environment_uses E. \<forall>A. artifact_at F w A \<longleftrightarrow> artifact_at E w A"
+    "\<forall>w\<in>environment_uses E. \<forall>k x. binds_slot F w k x \<longleftrightarrow> binds_slot E w k x"
+    using schema_environment_compilation[OF formed ef anchors] by blast
+  obtain z where source: "environment_value_presents F z" using environment_value_presents_total[OF compiled(1)] by blast
+  have renamed: "schema_pattern_boundary P d (rename_schema f h id S)"
+    using boundary by (simp only: schema_pattern_boundary_target_alpha[OF formed compiled(5,6)])
+  have admission: "(293,pattern_call_reading_argument e (use_data_term u) (Payload_Term r) (definition_site_value d)
+      z (use_data_term v) (Payload_Term q))\<in>positive_meaning schema_pattern_reading_system"
+    using renamed by (simp only: schema_pattern_reading_on_sources[OF encoded source]
+      schema_pattern_boundary_at_reads[OF package compiled(4)])
+  show "\<exists>F v q f h z. environment_formed F \<and> environment_included E F \<and> v\<notin>environment_uses E \<and>
+        native_schema_at F v q (rename_schema f h id S) \<and>
+        inj_on f (schema_variables S) \<and> inj_on h (schema_sockets S) \<and> environment_value_presents F z \<and>
+        (293,pattern_call_reading_argument e (use_data_term u) (Payload_Term r) (definition_site_value d)
+          z (use_data_term v) (Payload_Term q))\<in>positive_meaning schema_pattern_reading_system \<and>
+        (\<forall>w\<in>environment_uses E. \<forall>A. artifact_at F w A \<longleftrightarrow> artifact_at E w A) \<and>
+        (\<forall>w\<in>environment_uses E. \<forall>k x. binds_slot F w k x \<longleftrightarrow> binds_slot E w k x)"
+    by (rule exI[of _ F], rule exI[of _ v], rule exI[of _ q], rule exI[of _ f], rule exI[of _ h], rule exI[of _ z])
+      (use compiled source admission in blast)
+qed
+
+section \<open>The existing native material rule retains its full six-variable scope\<close>
+
+theorem pattern_call_checker_premise_scope:
+  "pattern_variables (schema_conclusion pattern_call_reading_schema)={0,1,2,3,4,5,6}"
+  "schema_variables pattern_call_reading_schema={0,1,2,3,4,5,6,7,8,9,10,11,12,13}"
+  "\<not>schema_instance pattern_call_reading_schema
+    (image (\<lambda>a. (a,Payload_Term [])) {0,1,2,3,4,5,6}) t Q"
+proof -
+  show "pattern_variables (schema_conclusion pattern_call_reading_schema)={0,1,2,3,4,5,6}"
+    by (auto simp: pattern_call_reading_schema_def)
+  show scope: "schema_variables pattern_call_reading_schema={0,1,2,3,4,5,6,7,8,9,10,11,12,13}"
+    by (auto simp: pattern_call_reading_schema_def schema_variables_def)
+  show "\<not>schema_instance pattern_call_reading_schema
+    (image (\<lambda>a. (a,Payload_Term [])) {0,1,2,3,4,5,6}) t Q"
+  proof
+    assume inst: "schema_instance pattern_call_reading_schema
+      (image (\<lambda>a. (a,Payload_Term [])) {0,1,2,3,4,5,6}) t Q"
+    have domain: "rel_dom (image (\<lambda>a. (a,Payload_Term [])) {0,1,2,3,4,5,6})=
+      schema_variables pattern_call_reading_schema"
+      using inst by (simp only: schema_instance_def term_bindings_formed_def; blast)
+    have missing: "7\<in>schema_variables pattern_call_reading_schema" by (simp add: scope)
+    have outside: "7\<notin>rel_dom (image (\<lambda>a::nat. (a,Payload_Term [])) {0,1,2,3,4,5,6})"
+      by (auto simp: rel_dom_def)
+    show False using domain missing outside by blast
+  qed
+qed
+
+lemma native_incidence_pattern_boundary:
+  "schema_pattern_boundary native_incidence_program (None,[Suc 0]) native_incidence_schema"
+proof -
+  have formed: "schema_system_formed native_incidence_program"
+    by (rule native_package_system_formed[OF native_incidence_package])
+  have call: "schema_pattern_call native_incidence_program (None,[Suc 0]) (Pattern_Variable [10])"
+    by (rule schema_pattern_call_variable[OF formed, where a="[4]"]) (simp_all add: native_incidence_program_def)
+  show ?thesis using call native_schema_formed[OF incidence_schema_at]
+    by (simp add: schema_pattern_boundary_def native_incidence_schema_def)
+qed
+
+theorem native_incidence_boundary_admitted:
+  assumes encoded: "environment_value_presents incidence_environment e"
+  shows "(293,pattern_call_reading_argument e (use_data_term None) (Payload_Term [0])
+    (definition_site_value (None,[Suc 0])) e (use_data_term None) (Payload_Term [8]))
+      \<in>positive_meaning schema_pattern_reading_system"
+  using native_incidence_pattern_boundary
+  by (simp only: schema_pattern_reading_on_sources[OF encoded encoded]
+    schema_pattern_boundary_at_reads[OF native_incidence_package incidence_schema_at])
+
+theorem native_incidence_boundary_keeps_material_scope:
+  "pattern_variables (schema_conclusion native_incidence_schema)={[10]}"
+  "schema_variables native_incidence_schema={[10],[12],[13],[14],[15],[16]}"
+  "schema_material_premises native_incidence_schema={([18],native_incidence_material)}"
+  "\<not>evaluate_material_satisfaction (\<lambda>_. Payload_Term []) native_incidence_material"
+proof -
+  show "pattern_variables (schema_conclusion native_incidence_schema)={[10]}"
+    "schema_material_premises native_incidence_schema={([18],native_incidence_material)}"
+    by (simp_all add: native_incidence_schema_def)
+  show "schema_variables native_incidence_schema={[10],[12],[13],[14],[15],[16]}"
+    by (rule native_incidence_variables)
+  show "\<not>evaluate_material_satisfaction (\<lambda>_. Payload_Term []) native_incidence_material"
+    by (simp add: native_incidence_material_def material_observation_def)
+qed
+
+section \<open>An actual ground clause supplies its own empty replacement record\<close>
+
+theorem native_ground_clause_specialization:
+  assumes package: "native_package_at E u r P" and source: "((d,c),S)\<in>system_clauses P"
+    and ground: "schema_variables S={}" and boundary: "schema_pattern_boundary P d S"
+  shows "\<exists>a b. native_schema_at E (fst d) a S \<and>
+    schema_clause_specialization_at E u r d c E (fst d) b E (fst d) a"
+proof -
+  obtain a where raw: "native_schema_at E (fst d) a S" using native_package_schema_origin[OF package source] by blast
+  obtain b where substitute: "schema_substitution_at E (fst d) a E (fst d) b E (fst d) a"
+    using ground_schema_substitution[OF raw ground] by blast
+  obtain R s As I K where reads: "native_schema_at E (fst d) a R" "distinct As" "set As=schema_variables R"
+    "pattern_record_at E (fst d) (schema_variables (schema_substitute s R)) b (substitution_row_patterns As s) I K"
+    "native_schema_at E (fst d) a (schema_substitute s R)"
+    using substitute by (auto simp: schema_substitution_at_def)
+  have same: "R=S" "schema_substitute s R=S"
+    using native_schema_unique[OF reads(1) raw] native_schema_unique[OF reads(5) raw] by blast+
+  have target: "schema_substitute s S=S" using same by simp
+  have actual: "schema_clause_specialization_at E u r d c E (fst d) b E (fst d) a"
+    unfolding schema_clause_specialization_at_def
+    by (rule exI[of _ P], rule exI[of _ S], rule exI[of _ s], rule exI[of _ As],
+      rule exI[of _ I], rule exI[of _ K]) (use package source reads boundary same target in simp)
+  show ?thesis using raw actual by blast
+qed
+
+theorem clause_specialization_reading_inhabited:
+  "\<exists>z. (294,z)\<in>positive_meaning clause_specialization_reading_system"
+proof -
+  let ?L="finite_relation_system () {((),Payload_Term [])}"
+  let ?S="recognizer_schema (Pattern_Payload []) :: (unit,unit,local_address option definition_site) factor_schema"
+  have family: "extensional_family_formed {((),Payload_Term [])}"
+    by (auto simp: extensional_family_formed_def single_valued_def octets_formed_def)
+  have formed: "schema_system_formed ?L" by (rule finite_relation_formed[OF family])
+  obtain g :: "unit\<Rightarrow>local_address option definition_site" and E u P where compiled:
+    "inj_on g (system_definitions ?L)" "closed_native_package_at E u [] P"
+    "system_alpha_variant (rename_system g ?L) P"
+    using program_compilation_total[OF formed] by blast
+  have package: "native_package_at E u [] P" using compiled(2) by (simp add: closed_native_package_at_def)
+  have entry: "()\<in>system_definitions ?L" by simp
+  have renamed_entry: "g ()\<in>system_definitions (rename_system g ?L)"
+    by (simp add: renamed_system_definitions)
+  obtain k where clauses: "schema_family_variant k
+    (system_clause_family (rename_system g ?L) (g ())) (system_clause_family P (g ()))"
+    using compiled(3) renamed_entry by (auto simp: system_alpha_variant_def)
+  have original: "((),?S)\<in>system_clause_family (rename_system g ?L) (g ())"
+    by (auto simp: renamed_system_clause finite_relation_clause rename_schema_def recognizer_schema_def map_socket_graph_def)
+  obtain T where actual: "(k (),T)\<in>system_clause_family P (g ())" "schema_alpha_variant ?S T"
+    using schema_family_variant_entry[OF clauses original] by blast
+  have literal: "T=recognizer_schema (Pattern_Payload [])"
+    using actual(2) by (auto simp: schema_alpha_variant_def rename_schema_def recognizer_schema_def map_socket_graph_def)
+  have calls: "schema_call_formed P (g ()) t \<longleftrightarrow> term_formed t" for t
+    using compiled_system_call_boundary[OF formed compiled(1,3) entry, of t]
+      finite_relation_call[OF family, where a="()" and t=t] by blast
+  have head: "schema_pattern_call P (g ()) (Pattern_Payload [])"
+    by (simp only: schema_pattern_call_all_instances calls)
+      (auto simp: octets_formed_def pattern_accepts_def)
+  have target_formed: "schema_formed T"
+    by (rule schema_alpha_formed[OF actual(2)]) (simp add: octets_formed_def)
+  have boundary: "schema_pattern_boundary P (g ()) T"
+    unfolding schema_pattern_boundary_def
+    by (rule conjI[OF target_formed]) (use head in \<open>simp add: literal recognizer_schema_def\<close>)
+  have ground: "schema_variables T={}" by (simp add: literal)
+  have clause: "((g (),k ()),T)\<in>system_clauses P" using actual(1) by simp
+  obtain a b where specialization: "schema_clause_specialization_at E u [] (g ()) (k ())
+    E (fst (g ())) b E (fst (g ())) a"
+    using native_ground_clause_specialization[OF package clause ground boundary] by blast
+  have ef: "environment_formed E" using native_package_projection(1)[OF package]
+    by (simp add: native_package_formed_def)
+  obtain e where encoded: "environment_value_presents E e" using environment_value_presents_total[OF ef] by blast
+  let ?z="clause_specialization_reading_argument e (use_data_term u) (Payload_Term []) (definition_site_value (g ()))
+    (Payload_Term (k ())) e (use_data_term (fst (g ()))) (Payload_Term b)
+      e (use_data_term (fst (g ()))) (Payload_Term a)"
+  show ?thesis by (rule exI[of _ ?z])
+    (simp only: clause_specialization_reading_on_sources[OF encoded encoded encoded]; rule specialization)
+qed
+
+text \<open>
+  The scheme theorem derives the local specialization from the existing
+  complete claim and discharge checks. Its scope lies within the scheme's
+  actual shared scope, and its materials retain their exact node/socket keys.
+  The existing incidence artifact supplies an admitted nonempty native
+  boundary whose material condition fails under a formed payload valuation.
+
+  An actual package is fixed before all later schema-boundary presentations.
+  The construction retains every old artifact and binding while allocating
+  fresh target syntax and explicit binder and socket coordinates. This covers
+  arbitrary formed rule patterns and complete material premises at that
+  boundary. General presentation of a clause specialization additionally has
+  to preserve the original clause's socket identities and replacement links;
+  the ground case above uses its actual empty binder.
+\<close>
+
+end

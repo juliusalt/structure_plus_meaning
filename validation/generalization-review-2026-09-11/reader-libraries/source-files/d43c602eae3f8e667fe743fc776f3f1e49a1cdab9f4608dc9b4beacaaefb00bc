@@ -1,0 +1,118 @@
+theory Factor_Investigation_Input_Clauses
+  imports Factor_Investigation_Input_Presentations Factor_Observation_Scope_Contracts Factor_Admitted_Pair
+begin
+
+section \<open>Comparison rows have complete data fields and independent scope\<close>
+
+definition investigation_input_clause_family :: "nat \<Rightarrow> (nat\<times>(nat,nat,nat) factor_schema) set" where
+  "investigation_input_clause_family d=(if d=336 then {(0,data_pair_schema)}
+    else if d=337 then list_profile_clauses 336 337
+    else if d=338 then {(0,admitted_pair_schema 311 337)} else {})"
+
+definition investigation_input_group_system :: "(nat,nat,nat,nat) schema_system" where
+  "investigation_input_group_system=\<lparr>system_interfaces={(336,data_x),(337,data_x),(338,data_x)},
+    system_clauses={((336,0),data_pair_schema),((337,0),data_list_nil_schema),
+      ((337,1),list_step_schema 336 337),((338,0),admitted_pair_schema 311 337)}\<rparr>"
+
+lemma investigation_input_group_definitions [simp]:
+  "system_definitions investigation_input_group_system={336,337,338}"
+  by (auto simp: investigation_input_group_system_def system_definitions_def rel_dom_def)
+
+lemma investigation_input_group_interfaces [simp]:
+  "(d,p)\<in>system_interfaces investigation_input_group_system \<longleftrightarrow> d\<in>{336,337,338} \<and> p=data_x"
+  by (auto simp: investigation_input_group_system_def)
+
+lemma investigation_input_group_clauses [simp]:
+  "((d,c),S)\<in>system_clauses investigation_input_group_system \<longleftrightarrow>
+    d\<in>{336,337,338} \<and> (c,S)\<in>investigation_input_clause_family d"
+  by (auto simp: investigation_input_group_system_def investigation_input_clause_family_def list_profile_clauses_def)
+
+lemmas investigation_input_schema_defs=data_pair_schema_def data_list_nil_schema_def list_step_schema_def admitted_pair_schema_def
+
+lemma investigation_input_group_formed_over:
+  "schema_system_formed_over {2,311} investigation_input_group_system"
+  by (simp only: schema_system_formed_over_def investigation_input_group_definitions)
+    (auto simp: investigation_input_group_system_def investigation_input_schema_defs schema_formed_def
+      schema_dependencies_def single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma investigation_input_external_dependencies:
+  "system_external_dependencies investigation_input_group_system={2,311}"
+  by (simp only: system_external_dependencies_clauses investigation_input_group_definitions)
+    (auto simp: investigation_input_group_system_def investigation_input_schema_defs schema_dependencies_def rel_ran_image)
+
+definition investigation_input_base_system :: "(nat,nat,nat,nat) schema_system" where
+  "investigation_input_base_system=rooted_system observation_scope_system
+    (system_external_dependencies investigation_input_group_system)"
+
+lemma investigation_input_base_formed [simp]: "schema_system_formed investigation_input_base_system"
+  unfolding investigation_input_base_system_def by (rule rooted_system_formed[OF observation_scope_system_formed])
+
+lemma investigation_input_base_subdomain:
+  "system_definitions investigation_input_base_system\<subseteq>system_definitions observation_scope_system"
+  unfolding investigation_input_base_system_def by (rule rooted_system_subdomain)
+
+lemma investigation_input_base_roots:
+  "{2,311}\<subseteq>system_definitions investigation_input_base_system"
+  unfolding investigation_input_base_system_def investigation_input_external_dependencies
+  by (rule rooted_system_roots[OF observation_scope_system_formed]) (use observation_scope_base_roots in auto)
+
+lemma investigation_input_base_least:
+  assumes "{2,311}\<subseteq>U" "system_dependency_closed observation_scope_system U"
+  shows "system_definitions investigation_input_base_system\<subseteq>U"
+  unfolding investigation_input_base_system_def investigation_input_external_dependencies
+  by (rule rooted_system_least[OF observation_scope_system_formed _ assms]) (use observation_scope_base_roots in auto)
+
+lemma investigation_input_base_call:
+  "schema_call_formed investigation_input_base_system d t \<longleftrightarrow>
+    d\<in>system_definitions investigation_input_base_system \<and> term_formed t"
+  unfolding investigation_input_base_system_def
+  by (rule rooted_system_variable_calls[OF observation_scope_system_formed observation_scope_call])
+
+interpretation investigation_input_group: positive_definition_group investigation_input_base_system investigation_input_group_system
+proof (rule positive_definition_group.intro)
+  show "schema_system_formed investigation_input_base_system" by simp
+  show "schema_system_formed_over (system_definitions investigation_input_base_system) investigation_input_group_system"
+    by (rule schema_system_formed_over_mono[OF investigation_input_group_formed_over investigation_input_base_roots])
+  have collection: "system_definitions observation_collection_system\<inter>{336,337,338}={}"
+    using observation_base_subdomain data_set_comparison_base_subdomain by auto
+  have base: "system_definitions observation_scope_base_system\<inter>{336,337,338}={}"
+    using observation_scope_base_subdomain collection by blast
+  have fresh: "system_definitions observation_scope_system\<inter>{336,337,338}={}"
+    using base by auto
+  show "system_definitions investigation_input_base_system\<inter>system_definitions investigation_input_group_system={}"
+    using fresh investigation_input_base_subdomain by auto
+qed
+
+definition investigation_input_system :: "(nat,nat,nat,nat) schema_system" where
+  "investigation_input_system=system_union investigation_input_base_system investigation_input_group_system"
+
+lemma investigation_input_system_formed [simp]: "schema_system_formed investigation_input_system"
+  using investigation_input_group.formed by (simp only: investigation_input_system_def)
+
+lemma investigation_input_definitions [simp]:
+  "system_definitions investigation_input_system=system_definitions investigation_input_base_system\<union>{336,337,338}"
+  by (simp add: investigation_input_system_def)
+
+lemma investigation_input_call:
+  "schema_call_formed investigation_input_system d t \<longleftrightarrow>
+    d\<in>system_definitions investigation_input_system \<and> term_formed t"
+  unfolding investigation_input_system_def
+  by (rule investigation_input_group.variable_calls[where D="{336,337,338}" and a=0, OF investigation_input_base_call]) auto
+
+lemma investigation_input_clause:
+  assumes "d\<in>{336,337,338}"
+  shows "((d,c),S)\<in>system_clauses investigation_input_system \<longleftrightarrow> (c,S)\<in>investigation_input_clause_family d"
+  using investigation_input_group.group_clauses[of d c S] assms
+  by (simp only: investigation_input_system_def investigation_input_group_clauses investigation_input_group_definitions; blast)
+
+lemma investigation_input_base_meaning:
+  assumes "d\<in>{2,311}"
+  shows "(d,t)\<in>positive_meaning investigation_input_system \<longleftrightarrow> (d,t)\<in>positive_meaning observation_scope_system"
+proof -
+  have member: "d\<in>system_definitions investigation_input_base_system" using investigation_input_base_roots assms by blast
+  show ?thesis using investigation_input_group.old_meaning[OF member, of t]
+    rooted_system_meaning_at[OF observation_scope_system_formed member[unfolded investigation_input_base_system_def], of t]
+    by (simp only: investigation_input_system_def investigation_input_base_system_def)
+qed
+
+end

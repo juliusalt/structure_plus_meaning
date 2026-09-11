@@ -1,0 +1,195 @@
+theory Observation_Repairs
+  imports Method_Investigation
+begin
+
+section \<open>Available observations must preserve every intended comparison\<close>
+
+definition sound_observation_facets where
+  "sound_observation_facets C relation U observe=
+    {f\<in>U. comparison_observations_sound C relation {f} observe}"
+
+definition observation_conflicts where
+  "observation_conflicts C relation F observe=
+    {(c,d,f,w). c\<in>C \<and> d\<in>C \<and> relation c d \<and>
+      (f,w)\<in>candidate_losses F observe c d}"
+
+lemma sound_observation_facets_member [simp]:
+  "f\<in>sound_observation_facets C relation U observe \<longleftrightarrow>
+    f\<in>U \<and> (\<forall>c\<in>C. \<forall>d\<in>C. relation c d \<longrightarrow> observe f c\<subseteq>observe f d)"
+  by (simp add: sound_observation_facets_def comparison_observations_sound_def candidate_profile_comparison)
+
+lemma sound_observation_facets_sound:
+  "comparison_observations_sound C relation (sound_observation_facets C relation U observe) observe"
+  by (auto simp: comparison_observations_sound_def candidate_profile_comparison; blast)
+
+theorem sound_selection_uses_only_sound_facets:
+  assumes "F\<subseteq>U"
+  shows "comparison_observations_sound C relation F observe \<longleftrightarrow>
+    F\<subseteq>sound_observation_facets C relation U observe"
+proof
+  assume sound: "comparison_observations_sound C relation F observe"
+  show "F\<subseteq>sound_observation_facets C relation U observe"
+  proof
+    fix f assume member: "f\<in>F"
+    have one: "comparison_observations_sound C relation {f} observe"
+      by (rule comparison_sound_restriction[OF sound]) (use member in auto)
+    show "f\<in>sound_observation_facets C relation U observe"
+      using one member assms by (auto simp only: sound_observation_facets_def mem_Collect_eq)
+  qed
+next
+  assume "F\<subseteq>sound_observation_facets C relation U observe"
+  then show "comparison_observations_sound C relation F observe"
+    by (rule comparison_sound_restriction[OF sound_observation_facets_sound])
+qed
+
+theorem observation_conflicts_empty:
+  "observation_conflicts C relation F observe={} \<longleftrightarrow>
+    comparison_observations_sound C relation F observe"
+  by (auto simp: observation_conflicts_def comparison_observations_sound_def candidate_profile_comparison; blast)
+
+theorem adding_observations_cannot_remove_a_conflict:
+  assumes "F\<subseteq>G"
+  shows "observation_conflicts C relation F observe\<subseteq>observation_conflicts C relation G observe"
+  using assms by (auto simp: observation_conflicts_def)
+
+section \<open>Every available repair retains its failed pair, facet, and witness\<close>
+
+definition available_observation_repairs where
+  "available_observation_repairs C relation U F observe=
+    {(c,d,f,w). (c,d)\<in>comparison_failures C relation F observe \<and>
+      (f,w)\<in>candidate_losses (sound_observation_facets C relation U observe-F) observe c d}"
+
+theorem an_available_repair_preserves_soundness_and_improves:
+  assumes sound: "comparison_observations_sound C relation F observe"
+    and repair: "(c,d,f,w)\<in>available_observation_repairs C relation U F observe"
+  shows "comparison_observations_sound C relation (insert f F) observe"
+    and "comparison_failures C relation (insert f F) observe\<subset>
+      comparison_failures C relation F observe"
+    and "f\<in>U-F"
+proof -
+  have failure: "(c,d)\<in>comparison_failures C relation F observe"
+    and safe: "f\<in>sound_observation_facets C relation U observe"
+    and absent: "f\<notin>F" and first: "w\<in>observe f c" and second: "w\<notin>observe f d"
+    using repair by (auto simp: available_observation_repairs_def)
+  show "comparison_observations_sound C relation (insert f F) observe"
+    using sound safe by (auto simp: comparison_observations_sound_def candidate_profile_comparison; blast)
+  show "comparison_failures C relation (insert f F) observe\<subset>
+      comparison_failures C relation F observe"
+    by (rule a_witness_refines_the_comparison[OF failure first second])
+  show "f\<in>U-F" using safe absent by auto
+qed
+
+theorem a_missing_pair_has_no_available_repair_exactly_when_the_language_misses_it:
+  assumes "(c,d)\<in>comparison_failures C relation F observe"
+  shows "(\<nexists>f w. (c,d,f,w)\<in>available_observation_repairs C relation U F observe) \<longleftrightarrow>
+    (c,d)\<in>comparison_failures C relation (sound_observation_facets C relation U observe) observe"
+  using assms by (auto simp: available_observation_repairs_def comparison_failures_def candidate_profile_comparison; blast)
+
+theorem available_basis_extension_exact:
+  assumes selected: "F\<subseteq>U"
+  shows "(\<exists>G. F\<subseteq>G \<and> G\<subseteq>U \<and> comparison_basis C relation G observe) \<longleftrightarrow>
+    observation_conflicts C relation F observe={} \<and>
+    comparison_failures C relation (sound_observation_facets C relation U observe) observe={}"
+proof
+  assume "\<exists>G. F\<subseteq>G \<and> G\<subseteq>U \<and> comparison_basis C relation G observe"
+  then obtain G where sub: "F\<subseteq>G" "G\<subseteq>U"
+    and basis: "comparison_basis C relation G observe" by blast
+  have sound: "comparison_observations_sound C relation G observe"
+    and complete: "comparison_failures C relation G observe={}"
+    using basis by (simp_all add: comparison_basis_exact)
+  have within: "G\<subseteq>sound_observation_facets C relation U observe"
+    using sound by (simp only: sound_selection_uses_only_sound_facets[OF sub(2)])
+  have none: "comparison_failures C relation (sound_observation_facets C relation U observe) observe={}"
+    using comparison_failures_antimono[OF within] complete by blast
+  have retained: "comparison_observations_sound C relation F observe"
+    by (rule comparison_sound_restriction[OF sound sub(1)])
+  show "observation_conflicts C relation F observe={} \<and>
+      comparison_failures C relation (sound_observation_facets C relation U observe) observe={}"
+    using retained none by (simp only: observation_conflicts_empty)
+next
+  assume repairable: "observation_conflicts C relation F observe={} \<and>
+    comparison_failures C relation (sound_observation_facets C relation U observe) observe={}"
+  have within: "F\<subseteq>sound_observation_facets C relation U observe"
+    using repairable by (simp only: observation_conflicts_empty
+      sound_selection_uses_only_sound_facets[OF selected]; blast)
+  have basis: "comparison_basis C relation (sound_observation_facets C relation U observe) observe"
+    using sound_observation_facets_sound repairable by (simp only: comparison_basis_exact; blast)
+  show "\<exists>G. F\<subseteq>G \<and> G\<subseteq>U \<and> comparison_basis C relation G observe"
+    by (rule exI[of _ "sound_observation_facets C relation U observe"])
+      (use within basis in auto)
+qed
+
+section \<open>The report itself determines a preserving extension\<close>
+
+definition reported_observation_extension where
+  "reported_observation_extension F repairs=F\<union>{f. \<exists>c d w. (c,d,f,w)\<in>repairs}"
+
+theorem reported_extension_is_adequate_exactly_when_an_extension_exists:
+  assumes selected: "F\<subseteq>U"
+  shows "comparison_basis C relation
+      (reported_observation_extension F (available_observation_repairs C relation U F observe)) observe \<longleftrightarrow>
+    observation_conflicts C relation F observe={} \<and>
+    comparison_failures C relation (sound_observation_facets C relation U observe) observe={}"
+proof -
+  let ?R="available_observation_repairs C relation U F observe"
+  let ?G="reported_observation_extension F ?R"
+  let ?A="sound_observation_facets C relation U observe"
+  have retained: "F\<subseteq>?G" by (auto simp: reported_observation_extension_def)
+  have available: "?G\<subseteq>U"
+    using selected by (auto simp: reported_observation_extension_def available_observation_repairs_def)
+  show ?thesis
+  proof
+    assume basis: "comparison_basis C relation ?G observe"
+    have "\<exists>G. F\<subseteq>G \<and> G\<subseteq>U \<and> comparison_basis C relation G observe"
+      using retained available basis by blast
+    then show "observation_conflicts C relation F observe={} \<and>
+        comparison_failures C relation ?A observe={}"
+      by (simp only: available_basis_extension_exact[OF selected])
+  next
+    assume possible: "observation_conflicts C relation F observe={} \<and>
+      comparison_failures C relation ?A observe={}"
+    have sound: "comparison_observations_sound C relation F observe"
+      using possible by (simp only: observation_conflicts_empty; blast)
+    have old: "F\<subseteq>?A" using sound
+      by (simp only: sound_selection_uses_only_sound_facets[OF selected])
+    have all: "?G\<subseteq>?A"
+      using old by (auto simp only: reported_observation_extension_def available_observation_repairs_def
+        candidate_losses_member mem_Collect_eq split_conv; blast)
+    have sound_new: "comparison_observations_sound C relation ?G observe"
+      by (rule comparison_sound_restriction[OF sound_observation_facets_sound all])
+    have none: "comparison_failures C relation ?G observe={}"
+    proof (rule ccontr)
+      assume "comparison_failures C relation ?G observe\<noteq>{}"
+      then obtain c d where failure: "(c,d)\<in>comparison_failures C relation ?G observe" by auto
+      have earlier: "(c,d)\<in>comparison_failures C relation F observe"
+        by (rule subsetD[OF comparison_failures_antimono[OF retained] failure])
+      obtain f w where repair: "(c,d,f,w)\<in>?R"
+        using a_missing_pair_has_no_available_repair_exactly_when_the_language_misses_it[OF earlier]
+          possible by blast
+      have inside: "f\<in>?G" using repair by (auto simp: reported_observation_extension_def)
+      have first: "w\<in>observe f c" and second: "w\<notin>observe f d"
+        using repair by (auto simp: available_observation_repairs_def)
+      show False using failure inside first second
+        by (auto simp: comparison_failures_def candidate_profile_comparison)
+    qed
+    show "comparison_basis C relation ?G observe"
+      using sound_new none by (simp only: comparison_basis_exact)
+  qed
+qed
+
+text \<open>
+  The independently supplied comparison determines which observations are
+  sound on the complete stated candidate domain. A witness separating one
+  missing pair does not alone justify adding its facet. The repair relation
+  retains every sound alternative and every witnessing observation; no
+  ordering or preferred identifier chooses among them.
+
+  A conflict records an actual lost observation along a valid comparison.
+  Such a conflict persists under extension. A failure of the full sound
+  language prevents every basis inside the available language. Together
+  these two residuals characterize exactly whether the selected method has
+  an adequate extension within that language. They do not assert coverage
+  of a larger candidate domain or construct observations outside the language.
+\<close>
+
+end

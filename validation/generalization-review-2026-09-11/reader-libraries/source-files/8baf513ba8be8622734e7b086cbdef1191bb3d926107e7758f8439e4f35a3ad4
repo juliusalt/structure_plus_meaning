@@ -1,0 +1,630 @@
+theory Factor_Vector_Instantiation
+  imports Factor_Row_Values
+begin
+
+section \<open>Ordered pattern fields retain their complete common scope\<close>
+
+lemma pattern_vector_addresses_formed:
+  assumes "pattern_vector_at E u V rs ps I K"
+  shows "\<forall>a\<in>I\<union>K\<union>pattern_forest_variables ps. octets_formed a"
+  using assms by (induction rule: pattern_vector_at.induct)
+    (auto dest: pattern_quoted_addresses_formed)
+
+lemma instantiated_pattern_list_unique:
+  assumes "single_valued B" "list_all2 (pattern_instance B) ps ts" "list_all2 (pattern_instance B) ps us"
+  shows "ts=us"
+  using assms(2,3)
+proof (induction arbitrary: us rule: list_all2_induct)
+  case Nil
+  then show ?case by simp
+next
+  case (Cons p ps t ts)
+  obtain u vs where other: "us=u#vs" "pattern_instance B p u" "list_all2 (pattern_instance B) ps vs"
+    using Cons.prems by (auto simp: list_all2_Cons1)
+  have first: "t=u" by (rule pattern_instance_unique[OF assms(1) Cons.hyps(1) other(2)])
+  have rest: "ts=vs" by (rule Cons.IH[OF other(3)])
+  show ?case using other(1) first rest by simp
+qed
+
+lemma instantiated_pattern_list_exists:
+  assumes "\<forall>p\<in>set ps. pattern_formed p" "pattern_forest_variables ps\<subseteq>rel_dom B"
+  shows "\<exists>ts. list_all2 (pattern_instance B) ps ts"
+  using assms
+proof (induction ps)
+  case Nil
+  then show ?case by simp
+next
+  case (Cons p ps)
+  have formed: "pattern_formed p" and scope: "pattern_variables p\<subseteq>rel_dom B"
+    and tail_formed: "\<forall>q\<in>set ps. pattern_formed q" and tail_scope: "pattern_forest_variables ps\<subseteq>rel_dom B"
+    using Cons.prems by auto
+  obtain t where first: "pattern_instance B p t"
+    using pattern_instance_exists[OF formed scope] by blast
+  obtain ts where rest: "list_all2 (pattern_instance B) ps ts"
+    using Cons.IH[OF tail_formed tail_scope] by blast
+  show ?case by (rule exI[of _ "t#ts"]) (use first rest in simp)
+qed
+
+lemma vector_interior_lists:
+  assumes "distinct ls" "distinct qs" "distinct is"
+  shows "mset (ls@qs)=mset is \<longleftrightarrow> set ls\<inter>set qs={} \<and> set is=set ls\<union>set qs"
+proof -
+  have comparison: "mset (ls@qs)=mset is \<longleftrightarrow> distinct (ls@qs) \<and> set (ls@qs)=set is"
+    using distinct_source_mset[OF assms(3), of "ls@qs"] by auto
+  show ?thesis by (subst comparison) (use assms in \<open>auto simp: distinct_append\<close>)
+qed
+
+abbreviation vector_instantiation_result :: "factor_term \<Rightarrow> bool" where
+  "vector_instantiation_result z \<equiv> \<exists>E e u Vs xs rs ps ts Us Is Ks.
+    z=pattern_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Vs))
+      (binding_rows_term xs) (data_list_term (map Payload_Term rs)) (data_list_term ts) (data_list_term (map Payload_Term Us))
+      (data_list_term (map Payload_Term Is)) (data_list_term (map Payload_Term Ks)) \<and>
+    environment_value_presents E e \<and> distinct Vs \<and> distinct xs \<and> (\<forall>a\<in>set Vs. octets_formed a) \<and>
+    term_bindings_formed (set Vs) (set xs) \<and> distinct Us \<and> distinct Is \<and> distinct Ks \<and>
+    pattern_vector_at E u (set Vs) rs ps (set Is) (set Ks) \<and>
+    pattern_forest_variables ps=set Us \<and> list_all2 (pattern_instance (set xs)) ps ts"
+
+lemma vector_instantiation_result_at_source:
+  assumes source: "environment_value_presents E e"
+  shows "vector_instantiation_result (pattern_instantiation_argument e u v b rs t w i k) \<longleftrightarrow>
+    (\<exists>q Vs xs rs' ps ts Us Is Ks. u=use_data_term q \<and> v=data_list_term (map Payload_Term Vs) \<and>
+      b=binding_rows_term xs \<and> rs=data_list_term (map Payload_Term rs') \<and> t=data_list_term ts \<and> w=data_list_term (map Payload_Term Us) \<and>
+      i=data_list_term (map Payload_Term Is) \<and> k=data_list_term (map Payload_Term Ks) \<and>
+      distinct Vs \<and> distinct xs \<and> (\<forall>a\<in>set Vs. octets_formed a) \<and> term_bindings_formed (set Vs) (set xs) \<and>
+      distinct Us \<and> distinct Is \<and> distinct Ks \<and> pattern_vector_at E q (set Vs) rs' ps (set Is) (set Ks) \<and>
+      pattern_forest_variables ps=set Us \<and> list_all2 (pattern_instance (set xs)) ps ts)"
+proof
+  assume admitted: "vector_instantiation_result (pattern_instantiation_argument e u v b rs t w i k)"
+  obtain F q Vs xs rs' ps ts Us Is Ks where parts: "environment_value_presents F e"
+    "u=use_data_term q" "v=data_list_term (map Payload_Term Vs)" "b=binding_rows_term xs" "rs=data_list_term (map Payload_Term rs')" "t=data_list_term ts"
+    "w=data_list_term (map Payload_Term Us)" "i=data_list_term (map Payload_Term Is)" "k=data_list_term (map Payload_Term Ks)"
+    "distinct Vs" "distinct xs" "\<forall>a\<in>set Vs. octets_formed a" "term_bindings_formed (set Vs) (set xs)"
+    "distinct Us" "distinct Is" "distinct Ks" "pattern_vector_at F q (set Vs) rs' ps (set Is) (set Ks)"
+    "pattern_forest_variables ps=set Us" "list_all2 (pattern_instance (set xs)) ps ts"
+    using admitted by (simp only: factor_term.inject) blast
+  have same: "F=E" by (rule environment_value_presents_unique[OF parts(1) source])
+  show "\<exists>q Vs xs rs' ps ts Us Is Ks. u=use_data_term q \<and> v=data_list_term (map Payload_Term Vs) \<and>
+      b=binding_rows_term xs \<and> rs=data_list_term (map Payload_Term rs') \<and> t=data_list_term ts \<and> w=data_list_term (map Payload_Term Us) \<and>
+      i=data_list_term (map Payload_Term Is) \<and> k=data_list_term (map Payload_Term Ks) \<and>
+      distinct Vs \<and> distinct xs \<and> (\<forall>a\<in>set Vs. octets_formed a) \<and> term_bindings_formed (set Vs) (set xs) \<and>
+      distinct Us \<and> distinct Is \<and> distinct Ks \<and> pattern_vector_at E q (set Vs) rs' ps (set Is) (set Ks) \<and>
+      pattern_forest_variables ps=set Us \<and> list_all2 (pattern_instance (set xs)) ps ts"
+    by (rule exI[of _ q], rule exI[of _ Vs], rule exI[of _ xs], rule exI[of _ rs'], rule exI[of _ ps], rule exI[of _ ts],
+      rule exI[of _ Us], rule exI[of _ Is], rule exI[of _ Ks]) (use parts same in auto)
+next
+  assume "\<exists>q Vs xs rs' ps ts Us Is Ks. u=use_data_term q \<and> v=data_list_term (map Payload_Term Vs) \<and>
+      b=binding_rows_term xs \<and> rs=data_list_term (map Payload_Term rs') \<and> t=data_list_term ts \<and> w=data_list_term (map Payload_Term Us) \<and>
+      i=data_list_term (map Payload_Term Is) \<and> k=data_list_term (map Payload_Term Ks) \<and>
+      distinct Vs \<and> distinct xs \<and> (\<forall>a\<in>set Vs. octets_formed a) \<and> term_bindings_formed (set Vs) (set xs) \<and>
+      distinct Us \<and> distinct Is \<and> distinct Ks \<and> pattern_vector_at E q (set Vs) rs' ps (set Is) (set Ks) \<and>
+      pattern_forest_variables ps=set Us \<and> list_all2 (pattern_instance (set xs)) ps ts"
+  then obtain q Vs xs rs' ps ts Us Is Ks where parts:
+    "u=use_data_term q" "v=data_list_term (map Payload_Term Vs)" "b=binding_rows_term xs" "rs=data_list_term (map Payload_Term rs')" "t=data_list_term ts"
+    "w=data_list_term (map Payload_Term Us)" "i=data_list_term (map Payload_Term Is)" "k=data_list_term (map Payload_Term Ks)"
+    "distinct Vs" "distinct xs" "\<forall>a\<in>set Vs. octets_formed a" "term_bindings_formed (set Vs) (set xs)"
+    "distinct Us" "distinct Is" "distinct Ks" "pattern_vector_at E q (set Vs) rs' ps (set Is) (set Ks)"
+    "pattern_forest_variables ps=set Us" "list_all2 (pattern_instance (set xs)) ps ts" by blast
+  show "vector_instantiation_result (pattern_instantiation_argument e u v b rs t w i k)"
+    by (rule exI[of _ E], rule exI[of _ e], rule exI[of _ q], rule exI[of _ Vs], rule exI[of _ xs],
+      rule exI[of _ rs'], rule exI[of _ ps], rule exI[of _ ts], rule exI[of _ Us], rule exI[of _ Is], rule exI[of _ Ks])
+      (use parts source in auto)
+qed
+
+lemma vector_instantiation_result_on_context:
+  assumes source: "environment_value_presents E e"
+  shows "vector_instantiation_result (pattern_instantiation_argument e (use_data_term u)
+      (data_list_term (map Payload_Term Vs)) (binding_rows_term xs) (data_list_term (map Payload_Term rs)) (data_list_term ts) w i k) \<longleftrightarrow>
+    distinct Vs \<and> distinct xs \<and> (\<forall>a\<in>set Vs. octets_formed a) \<and> term_bindings_formed (set Vs) (set xs) \<and>
+    (\<exists>ps Us Is Ks. w=data_list_term (map Payload_Term Us) \<and>
+      i=data_list_term (map Payload_Term Is) \<and> k=data_list_term (map Payload_Term Ks) \<and>
+      distinct Us \<and> distinct Is \<and> distinct Ks \<and> pattern_vector_at E u (set Vs) rs ps (set Is) (set Ks) \<and>
+      pattern_forest_variables ps=set Us \<and> list_all2 (pattern_instance (set xs)) ps ts)"
+  by (subst vector_instantiation_result_at_source[OF source],
+    simp only: binding_rows_term_injective inj_eq[OF use_data_term_injective] factor_term.inject)
+    (auto simp: data_list_term_injective injective_mapped_lists[OF payload_term_inj])
+
+section \<open>Empty vectors and complete cons cells\<close>
+
+definition vector_instantiation_nil_schema :: "(nat,nat,nat) factor_schema" where
+  "vector_instantiation_nil_schema=data_rule
+    (pattern_instantiation_pattern data_x data_y data_z data_w
+      (Pattern_Payload []) (Pattern_Payload []) (Pattern_Payload []) (Pattern_Payload []) (Pattern_Payload []))
+    {(0,26,data_x),(1,19,data_y),(2,52,Pattern_Pair data_z data_w)}"
+
+definition vector_instantiation_cons_schema :: "(nat,nat,nat) factor_schema" where
+  "vector_instantiation_cons_schema=data_rule
+    (pattern_instantiation_pattern data_x data_y data_z data_w
+      (Pattern_Pair (Pattern_Variable 4) (Pattern_Variable 5))
+      (Pattern_Pair (Pattern_Variable 6) (Pattern_Variable 7))
+      (Pattern_Variable 8) (Pattern_Variable 9) (Pattern_Variable 10))
+    {(0,55,pattern_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 4) (Pattern_Variable 6)
+       (Pattern_Variable 11) (Pattern_Variable 13) (Pattern_Variable 15)),
+     (1,60,pattern_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 5) (Pattern_Variable 7)
+       (Pattern_Variable 12) (Pattern_Variable 14) (Pattern_Variable 16)),
+     (2,46,collection_join_pattern (Pattern_Variable 13) (Pattern_Variable 14) (Pattern_Variable 17)),
+     (3,6,Pattern_Pair (Pattern_Variable 17) (Pattern_Variable 9)),
+     (4,48,collection_join_pattern (Pattern_Variable 15) (Pattern_Variable 16) (Pattern_Variable 10)),
+     (5,48,collection_join_pattern (Pattern_Variable 11) (Pattern_Variable 12) (Pattern_Variable 8)),
+     (6,49,Pattern_Pair (Pattern_Variable 9) (Pattern_Variable 10)),
+     (7,1,Pattern_Variable 8)}"
+
+definition vector_instantiation_clauses :: "(nat \<times> (nat,nat,nat) factor_schema) set" where
+  "vector_instantiation_clauses={(0,vector_instantiation_nil_schema),(1,vector_instantiation_cons_schema)}"
+
+definition vector_instantiation_system :: "(nat,nat,nat,nat) schema_system" where
+  "vector_instantiation_system=add_view_definition row_values_system 60 data_x vector_instantiation_clauses"
+
+lemma vector_instantiation_system_formed [simp]: "schema_system_formed vector_instantiation_system"
+  unfolding vector_instantiation_system_def
+  by (rule add_recursive_definition_formed[OF row_values_system_formed])
+    (auto simp: vector_instantiation_clauses_def vector_instantiation_nil_schema_def vector_instantiation_cons_schema_def
+      schema_formed_def schema_dependencies_def single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma vector_instantiation_definitions [simp]:
+  "system_definitions vector_instantiation_system=insert 60 (system_definitions row_values_system)"
+  by (simp add: vector_instantiation_system_def)
+
+lemma vector_instantiation_call:
+  "schema_call_formed vector_instantiation_system d t \<longleftrightarrow>
+    d\<in>system_definitions vector_instantiation_system \<and> term_formed t"
+  using added_variable_calls[OF row_values_system_formed
+    vector_instantiation_system_formed[unfolded vector_instantiation_system_def] row_values_call]
+  by (simp only: vector_instantiation_system_def[symmetric])
+
+lemma vector_instantiation_old_meaning:
+  assumes "d\<in>system_definitions row_values_system"
+  shows "(d,t)\<in>positive_meaning vector_instantiation_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning row_values_system"
+  using added_definition_preserves_old(2)[OF row_values_system_formed
+    vector_instantiation_system_formed[unfolded vector_instantiation_system_def], of d t] assms
+  by (auto simp: vector_instantiation_system_def)
+
+lemma vector_instantiation_clause [simp]:
+  "((60,c),S)\<in>system_clauses vector_instantiation_system \<longleftrightarrow> (c,S)\<in>vector_instantiation_clauses"
+proof -
+  have owned: "((d,c),S)\<in>system_clauses row_values_system \<Longrightarrow>
+    d\<in>system_definitions row_values_system" for d c S
+    using row_values_system_formed unfolding schema_system_formed_def by blast
+  have absent: "((60,c),S)\<notin>system_clauses row_values_system" by (auto dest: owned)
+  show ?thesis using absent by (simp add: vector_instantiation_system_def)
+qed
+
+lemma vector_instantiation_pattern_meaning:
+  assumes "d\<in>system_definitions pattern_instantiation_system"
+  shows "(d,t)\<in>positive_meaning vector_instantiation_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning pattern_instantiation_system"
+  using vector_instantiation_old_meaning[of d t] row_values_old_meaning[of d t]
+    application_reading_old_meaning[of d t] prospective_instantiation_old_meaning[of d t]
+    scoped_instantiation_old_meaning[OF assms, of t] assms by auto
+
+lemma vector_instantiation_environment_meaning:
+  assumes "d\<in>system_definitions environment_identity_system"
+  shows "(d,t)\<in>positive_meaning vector_instantiation_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning environment_identity_system"
+  using vector_instantiation_pattern_meaning[of d t] pattern_instantiation_quotation_meaning[of d t]
+    quotation_admission_record_meaning[of d t] record_admission_old_meaning[of d t]
+    socket_chain_old_meaning[of d t] family_admission_headed_meaning[of d t]
+    headed_material_old_meaning[of d t] key_fibre_old_meaning[OF assms, of t] assms by auto
+
+lemma vector_instantiation_components:
+  "(55,t)\<in>positive_meaning vector_instantiation_system \<longleftrightarrow> (55,t)\<in>positive_meaning pattern_instantiation_system"
+  "(52,t)\<in>positive_meaning vector_instantiation_system \<longleftrightarrow> (52,t)\<in>positive_meaning binding_admission_system"
+  "(46,t)\<in>positive_meaning vector_instantiation_system \<longleftrightarrow> (46,t)\<in>positive_meaning data_append_system"
+  "(6,t)\<in>positive_meaning vector_instantiation_system \<longleftrightarrow> (6,t)\<in>positive_meaning bag_comparison_system"
+  "(48,t)\<in>positive_meaning vector_instantiation_system \<longleftrightarrow> (48,t)\<in>positive_meaning data_union_system"
+  "(49,t)\<in>positive_meaning vector_instantiation_system \<longleftrightarrow> (49,t)\<in>positive_meaning payload_disjoint_system"
+  "(1,t)\<in>positive_meaning vector_instantiation_system \<longleftrightarrow> (1,t)\<in>positive_meaning distinct_payloads_system"
+  "(26,t)\<in>positive_meaning vector_instantiation_system \<longleftrightarrow> (26,t)\<in>positive_meaning environment_admission_system"
+  "(19,t)\<in>positive_meaning vector_instantiation_system \<longleftrightarrow> (19,t)\<in>positive_meaning coordinate_admission_system"
+  using vector_instantiation_pattern_meaning[of 55 t]
+    vector_instantiation_pattern_meaning[of 52 t] pattern_instantiation_components(1)[of t]
+    vector_instantiation_pattern_meaning[of 46 t] pattern_instantiation_components(8)[of t]
+    vector_instantiation_pattern_meaning[of 6 t] pattern_instantiation_components(9)[of t]
+    vector_instantiation_pattern_meaning[of 48 t] pattern_instantiation_components(10)[of t]
+    vector_instantiation_pattern_meaning[of 49 t] pattern_instantiation_components(4)[of t]
+    vector_instantiation_pattern_meaning[of 1 t] pattern_instantiation_components(11)[of t]
+    vector_instantiation_environment_meaning[of 26 t] environment_identity_previous_meaning[of 26 t]
+    vector_instantiation_environment_meaning[of 19 t] environment_identity_previous_meaning[of 19 t]
+    environment_admission_previous_meaning[of 19 t] binding_entries_previous_meaning[of 19 t]
+    binding_entry_keyed_meaning[of 19 t] keyed_list_old_meaning[of 19 t] by auto
+
+lemma vector_instantiation_nil_step:
+  assumes source: "(26,e)\<in>positive_meaning environment_admission_system"
+    and coordinate: "(19,u)\<in>positive_meaning coordinate_admission_system"
+    and table: "(52,Pair_Term v b)\<in>positive_meaning binding_admission_system"
+  shows "(60,pattern_instantiation_argument e u v b (Payload_Term []) (Payload_Term [])
+      (Payload_Term []) (Payload_Term []) (Payload_Term []))\<in>positive_meaning vector_instantiation_system"
+proof -
+  have formed: "term_formed e" "term_formed u" "term_formed v" "term_formed b"
+    using schema_call_formed_target[OF positive_meaning_formed[OF source]]
+      schema_call_formed_target[OF positive_meaning_formed[OF coordinate]]
+      schema_call_formed_target[OF positive_meaning_formed[OF table]] by auto
+  let ?h="\<lambda>n::nat. if n=0 then e else if n=1 then u else if n=2 then v else b"
+  have result: "(60,evaluate_pattern ?h (schema_conclusion vector_instantiation_nil_schema))
+      \<in>positive_meaning vector_instantiation_system"
+    by (rule ordinary_positive_valuation_step[where c=0])
+      (use formed assms in \<open>auto simp: vector_instantiation_clauses_def vector_instantiation_nil_schema_def
+        schema_variables_def vector_instantiation_call vector_instantiation_components
+        vector_instantiation_components[unfolded One_nat_def] octets_formed_def\<close>)
+  show ?thesis using result by (simp add: vector_instantiation_nil_schema_def)
+qed
+
+lemma vector_instantiation_cons_step:
+  assumes first: "(55,pattern_instantiation_argument e u v b r t hu hi hk)\<in>positive_meaning pattern_instantiation_system"
+    and rest: "(60,pattern_instantiation_argument e u v b rs ts tu ti tk)\<in>positive_meaning vector_instantiation_system"
+    and joined: "(46,collection_join_argument hi ti j)\<in>positive_meaning data_append_system"
+    and interior: "(6,Pair_Term j i)\<in>positive_meaning bag_comparison_system"
+    and slots: "(48,collection_join_argument hk tk k)\<in>positive_meaning data_union_system"
+    and used: "(48,collection_join_argument hu tu w)\<in>positive_meaning data_union_system"
+    and boundary: "(49,Pair_Term i k)\<in>positive_meaning payload_disjoint_system"
+    and distinct: "(1,w)\<in>positive_meaning distinct_payloads_system"
+  shows "(60,pattern_instantiation_argument e u v b (Pair_Term r rs) (Pair_Term t ts) w i k)
+    \<in>positive_meaning vector_instantiation_system"
+proof -
+  have formed: "term_formed e" "term_formed u" "term_formed v" "term_formed b"
+    "term_formed r" "term_formed rs" "term_formed t" "term_formed ts" "term_formed w"
+    "term_formed i" "term_formed k" "term_formed hu" "term_formed tu"
+    "term_formed hi" "term_formed ti" "term_formed hk" "term_formed tk" "term_formed j"
+    using schema_call_formed_target[OF positive_meaning_formed[OF first]]
+      schema_call_formed_target[OF positive_meaning_formed[OF rest]]
+      schema_call_formed_target[OF positive_meaning_formed[OF joined]]
+      schema_call_formed_target[OF positive_meaning_formed[OF interior]]
+      schema_call_formed_target[OF positive_meaning_formed[OF slots]]
+      schema_call_formed_target[OF positive_meaning_formed[OF used]]
+      schema_call_formed_target[OF positive_meaning_formed[OF boundary]]
+      schema_call_formed_target[OF positive_meaning_formed[OF distinct]] by auto
+  let ?h="\<lambda>n::nat. if n=0 then e else if n=1 then u else if n=2 then v else if n=3 then b
+    else if n=4 then r else if n=5 then rs else if n=6 then t else if n=7 then ts
+    else if n=8 then w else if n=9 then i else if n=10 then k else if n=11 then hu
+    else if n=12 then tu else if n=13 then hi else if n=14 then ti else if n=15 then hk
+    else if n=16 then tk else j"
+  have result: "(60,evaluate_pattern ?h (schema_conclusion vector_instantiation_cons_schema))
+      \<in>positive_meaning vector_instantiation_system"
+    by (rule ordinary_positive_valuation_step[where c=1])
+      (use formed assms in \<open>auto simp: vector_instantiation_clauses_def vector_instantiation_cons_schema_def
+        schema_variables_def vector_instantiation_call vector_instantiation_components
+        vector_instantiation_components[unfolded One_nat_def]\<close>)
+  show ?thesis using result by (simp add: vector_instantiation_cons_schema_def)
+qed
+
+section \<open>Exact recovery of the independent vector judgment\<close>
+
+theorem vector_instantiation_sound:
+  assumes holds: "(60,z)\<in>positive_meaning vector_instantiation_system"
+  shows "vector_instantiation_result z"
+proof -
+  have invariant: "(60::nat)=60 \<longrightarrow> vector_instantiation_result z"
+  proof (rule positive_valuation_induct[OF holds, where property="\<lambda>d z. d=60 \<longrightarrow> vector_instantiation_result z"])
+    fix d c S h
+    assume clause: "((d,c),S)\<in>system_clauses vector_instantiation_system"
+      and assignment: "\<forall>a\<in>schema_variables S. term_formed (h a)"
+      and call: "schema_call_formed vector_instantiation_system d (evaluate_pattern h (schema_conclusion S))"
+      and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
+        (e,evaluate_pattern h p)\<in>positive_meaning vector_instantiation_system \<and>
+        (e=60 \<longrightarrow> vector_instantiation_result (evaluate_pattern h p))"
+    have available: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
+      (e,evaluate_pattern h p)\<in>positive_meaning vector_instantiation_system"
+      using support by blast
+    show "d=60 \<longrightarrow> vector_instantiation_result (evaluate_pattern h (schema_conclusion S))"
+    proof
+      assume "d=60"
+      then consider (nil) "S=vector_instantiation_nil_schema" | (cons) "S=vector_instantiation_cons_schema"
+        using clause by (auto simp: vector_instantiation_clauses_def)
+      then show "vector_instantiation_result (evaluate_pattern h (schema_conclusion S))"
+      proof cases
+        case nil
+        have calls: "(26,h 0)\<in>positive_meaning environment_admission_system"
+          "(19,h 1)\<in>positive_meaning coordinate_admission_system"
+          "(52,Pair_Term (h 2) (h 3))\<in>positive_meaning binding_admission_system"
+          using available by (auto simp: nil vector_instantiation_nil_schema_def vector_instantiation_components)
+        obtain E where source: "environment_value_presents E (h 0)" using calls(1)
+          by (simp only: environment_admission_exact) blast
+        obtain u where coordinate: "h 1=use_data_term u" using calls(2)
+          by (simp only: coordinate_admission_exact) blast
+        obtain Vs xs where table: "h 2=data_list_term (map Payload_Term Vs)" "h 3=binding_rows_term xs"
+          "distinct Vs" "distinct xs" "\<forall>a\<in>set Vs. octets_formed a" "term_bindings_formed (set Vs) (set xs)"
+          using calls(3) by (simp only: binding_admission_exact factor_term.inject) blast
+        have formed: "environment_formed E" using environment_value_presents_formed[OF source] by blast
+        show ?thesis
+          by (rule exI[of _ E], rule exI[of _ "h 0"], rule exI[of _ u], rule exI[of _ Vs], rule exI[of _ xs],
+            rule exI[of _ "[]"], rule exI[of _ "[]"], rule exI[of _ "[]"],
+            rule exI[of _ "[]"], rule exI[of _ "[]"], rule exI[of _ "[]"])
+            (use source coordinate table formed in \<open>simp add: nil vector_instantiation_nil_schema_def pattern_vector_nil\<close>)
+      next
+        case cons
+        have calls:
+          "(55,pattern_instantiation_argument (h 0) (h 1) (h 2) (h 3) (h 4) (h 6) (h 11) (h 13) (h 15))
+            \<in>positive_meaning pattern_instantiation_system"
+          "(46,collection_join_argument (h 13) (h 14) (h 17))\<in>positive_meaning data_append_system"
+          "(6,Pair_Term (h 17) (h 9))\<in>positive_meaning bag_comparison_system"
+          "(48,collection_join_argument (h 15) (h 16) (h 10))\<in>positive_meaning data_union_system"
+          "(48,collection_join_argument (h 11) (h 12) (h 8))\<in>positive_meaning data_union_system"
+          "(49,Pair_Term (h 9) (h 10))\<in>positive_meaning payload_disjoint_system"
+          "(1,h 8)\<in>positive_meaning distinct_payloads_system"
+          using available by (auto simp: cons vector_instantiation_cons_schema_def vector_instantiation_components
+            vector_instantiation_components[unfolded One_nat_def])
+        have tail_result: "vector_instantiation_result (pattern_instantiation_argument
+            (h 0) (h 1) (h 2) (h 3) (h 5) (h 7) (h 12) (h 14) (h 16))"
+          using support[rule_format, of 1 60 "pattern_instantiation_pattern data_x data_y data_z data_w
+            (Pattern_Variable 5) (Pattern_Variable 7) (Pattern_Variable 12) (Pattern_Variable 14) (Pattern_Variable 16)"]
+          by (auto simp: cons vector_instantiation_cons_schema_def)
+        obtain E u Vs xs r p Us L A where source: "environment_value_presents E (h 0)" "h 1=use_data_term u"
+          and shared: "h 2=data_list_term (map Payload_Term Vs)" "h 3=binding_rows_term xs"
+          "distinct Vs" "distinct xs" "\<forall>a\<in>set Vs. octets_formed a" "term_bindings_formed (set Vs) (set xs)"
+          and head: "h 4=Payload_Term r" "h 11=data_list_term (map Payload_Term Us)"
+          "h 13=data_list_term (map Payload_Term L)" "h 15=data_list_term (map Payload_Term A)"
+          "distinct Us" "distinct L" "distinct A" "pattern_quoted_at E u (set Vs) r p (set L) (set A)"
+          "pattern_variables p=set Us" "pattern_instance (set xs) p (h 6)"
+          using calls(1) by (simp only: pattern_instantiation_exact factor_term.inject) blast
+        obtain rs ps ts Ws Q B where tail: "h 5=data_list_term (map Payload_Term rs)" "h 7=data_list_term ts"
+          "h 12=data_list_term (map Payload_Term Ws)" "h 14=data_list_term (map Payload_Term Q)"
+          "h 16=data_list_term (map Payload_Term B)" "distinct Ws" "distinct Q" "distinct B"
+          "pattern_vector_at E u (set Vs) rs ps (set Q) (set B)" "pattern_forest_variables ps=set Ws"
+          "list_all2 (pattern_instance (set xs)) ps ts"
+          using tail_result[unfolded vector_instantiation_result_at_source[OF source(1)]]
+          by (simp only: source(2) shared(1,2)
+              binding_rows_term_injective inj_eq[OF use_data_term_injective] factor_term.inject)
+            (auto simp: data_list_term_injective injective_mapped_lists[OF payload_term_inj])
+        obtain Is Ks where boundary: "h 9=data_list_term (map Payload_Term Is)" "h 10=data_list_term (map Payload_Term Ks)"
+          "distinct Is" "distinct Ks" "set Is\<inter>set Ks={}"
+          using calls(6) by (auto simp: payload_disjoint_exact)
+        obtain Zs where used: "h 8=data_list_term (map Payload_Term Zs)" "distinct Zs"
+          using distinct_payloads_positive_sound[OF calls(7)] by blast
+        have joined: "h 17=data_list_term (map Payload_Term (L@Q))"
+          using calls(2) by (simp only: head(3) tail(4) data_append_at_lists) auto
+        have comparison: "mset (L@Q)=mset Is"
+          using calls(3) by (simp only: joined boundary(1) bag_comparison_lists injective_mapped_multisets[OF payload_term_inj])
+        have separation: "set L\<inter>set Q={}" "set Is=set L\<union>set Q"
+          using vector_interior_lists[OF head(6) tail(7) boundary(3)] comparison by auto
+        have slots: "set Ks=set A\<union>set B"
+          using calls(4) by (simp only: head(4) tail(5) boundary(2) data_union_payload_lists)
+        have variables: "set Zs=set Us\<union>set Ws"
+          using calls(5) by (simp only: head(2) tail(3) used(1) data_union_payload_lists)
+        have outside: "(set L\<union>set Q)\<inter>(set A\<union>set B)={}"
+          using boundary(5) by (simp only: separation(2)[symmetric] slots[symmetric])
+        have vector: "pattern_vector_at E u (set Vs) (r#rs) (p#ps) (set Is) (set Ks)"
+          using pattern_vector_at.cons[OF head(8) tail(9) separation(1) outside]
+          by (simp only: separation(2)[symmetric] slots[symmetric])
+        show ?thesis
+          by (rule exI[of _ E], rule exI[of _ "h 0"], rule exI[of _ u], rule exI[of _ Vs], rule exI[of _ xs],
+            rule exI[of _ "r#rs"], rule exI[of _ "p#ps"], rule exI[of _ "h 6#ts"],
+            rule exI[of _ Zs], rule exI[of _ Is], rule exI[of _ Ks])
+            (use source shared head tail used boundary variables vector
+              in \<open>auto simp: cons vector_instantiation_cons_schema_def\<close>)
+      qed
+    qed
+  qed
+  show ?thesis using invariant by simp
+qed
+
+theorem vector_instantiation_complete:
+  assumes vector: "pattern_vector_at E u V rs ps I K"
+    and source: "environment_value_presents E e"
+    and table: "(52,Pair_Term (data_list_term (map Payload_Term Vs)) (binding_rows_term xs))
+      \<in>positive_meaning binding_admission_system"
+    and scope: "set Vs=V" and order: "distinct Us" "distinct Is" "distinct Ks"
+    and collections: "set Us=pattern_forest_variables ps" "set Is=I" "set Ks=K"
+    and inst: "list_all2 (pattern_instance (set xs)) ps ts"
+  shows "(60,pattern_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Vs))
+      (binding_rows_term xs) (data_list_term (map Payload_Term rs)) (data_list_term ts)
+      (data_list_term (map Payload_Term Us)) (data_list_term (map Payload_Term Is)) (data_list_term (map Payload_Term Ks)))
+      \<in>positive_meaning vector_instantiation_system"
+  using vector source table scope order collections inst
+proof (induction arbitrary: e Vs xs ts Us Is Ks rule: pattern_vector_at.induct)
+  case empty
+  have shapes: "ts=[]" "Us=[]" "Is=[]" "Ks=[]" using empty.prems by auto
+  have source: "(26,e)\<in>positive_meaning environment_admission_system"
+    using empty.prems(1) by (auto simp: environment_admission_exact)
+  have coordinate: "(19,use_data_term u)\<in>positive_meaning coordinate_admission_system"
+    by (auto simp: coordinate_admission_exact)
+  show ?case using vector_instantiation_nil_step[OF source coordinate empty.prems(2)] by (simp add: shapes)
+next
+  case (cons r p A B rs ps I K)
+  obtain t us where inst: "ts=t#us" "pattern_instance (set xs) p t" "list_all2 (pattern_instance (set xs)) ps us"
+    using cons.prems(10) by (auto simp: list_all2_Cons1)
+  have finite: "finite A" "finite B" "finite I" "finite K"
+    using pattern_quoted_boundary[OF cons.hyps(1)] pattern_vector_boundary[OF cons.hyps(2)] by auto
+  obtain Ls where ls: "set Ls=A" "distinct Ls" using finite_distinct_list[OF finite(1)] by blast
+  obtain As where as_rows: "set As=B" "distinct As" using finite_distinct_list[OF finite(2)] by blast
+  obtain Qs where qs: "set Qs=I" "distinct Qs" using finite_distinct_list[OF finite(3)] by blast
+  obtain Bs where bs_rows: "set Bs=K" "distinct Bs" using finite_distinct_list[OF finite(4)] by blast
+  obtain Ps where ps_rows: "set Ps=pattern_variables p" "distinct Ps"
+    using finite_distinct_list[OF pattern_variables_finite[of p]] by blast
+  obtain Ss where ss_rows: "set Ss=pattern_forest_variables ps" "distinct Ss"
+    using finite_distinct_list[OF pattern_forest_variables_finite[of ps]] by blast
+  have first: "(55,pattern_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Vs))
+      (binding_rows_term xs) (Payload_Term r) t (data_list_term (map Payload_Term Ps))
+      (data_list_term (map Payload_Term Ls)) (data_list_term (map Payload_Term As)))\<in>positive_meaning pattern_instantiation_system"
+    by (rule pattern_instantiation_complete[OF cons.hyps(1) cons.prems(1-3)
+      ps_rows(2) ls(2) as_rows(2) ps_rows(1) ls(1) as_rows(1) inst(2)])
+  have rest: "(60,pattern_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Vs))
+      (binding_rows_term xs) (data_list_term (map Payload_Term rs)) (data_list_term us)
+      (data_list_term (map Payload_Term Ss)) (data_list_term (map Payload_Term Qs)) (data_list_term (map Payload_Term Bs)))
+      \<in>positive_meaning vector_instantiation_system"
+    by (rule cons.IH[OF cons.prems(1-3) ss_rows(2) qs(2) bs_rows(2) ss_rows(1) qs(1) bs_rows(1) inst(3)])
+  have vector: "pattern_vector_at E u V (r#rs) (p#ps) (A\<union>I) (B\<union>K)"
+    by (rule pattern_vector_at.cons[OF cons.hyps])
+  have addresses: "\<forall>a\<in>(A\<union>I)\<union>(B\<union>K)\<union>pattern_forest_variables (p#ps). octets_formed a"
+    by (rule pattern_vector_addresses_formed[OF vector])
+  have data: "data_elements (map Payload_Term Ls)" "data_elements (map Payload_Term Qs)"
+    "data_elements (map Payload_Term Is)" "data_elements (map Payload_Term Ks)"
+    "data_elements (map Payload_Term As)" "data_elements (map Payload_Term Bs)"
+    "data_elements (map Payload_Term Ps)" "data_elements (map Payload_Term Ss)" "data_elements (map Payload_Term Us)"
+    using addresses by (auto simp: ls(1) qs(1) as_rows(1) bs_rows(1) ps_rows(1) ss_rows(1) cons.prems(7-9))
+  have comparison: "mset (Ls@Qs)=mset Is"
+    using vector_interior_lists[OF ls(2) qs(2) cons.prems(5)] cons.hyps(3) cons.prems(8)
+    by (auto simp: ls(1) qs(1))
+  let ?j="data_list_term (map Payload_Term (Ls@Qs))"
+  have joined: "(46,collection_join_argument (data_list_term (map Payload_Term Ls))
+      (data_list_term (map Payload_Term Qs)) ?j)\<in>positive_meaning data_append_system"
+    by (simp only: data_append_at_lists) (use data in auto)
+  have interior: "(6,Pair_Term ?j (data_list_term (map Payload_Term Is)))\<in>positive_meaning bag_comparison_system"
+    by (simp only: bag_comparison_lists injective_mapped_multisets[OF payload_term_inj]) (use data comparison in auto)
+  have slots: "(48,collection_join_argument (data_list_term (map Payload_Term As))
+      (data_list_term (map Payload_Term Bs)) (data_list_term (map Payload_Term Ks)))\<in>positive_meaning data_union_system"
+    by (simp only: data_union_payload_lists) (use data cons.prems(9) as_rows(1) bs_rows(1) in auto)
+  have used: "(48,collection_join_argument (data_list_term (map Payload_Term Ps))
+      (data_list_term (map Payload_Term Ss)) (data_list_term (map Payload_Term Us)))\<in>positive_meaning data_union_system"
+    by (simp only: data_union_payload_lists) (use data cons.prems(7) ps_rows(1) ss_rows(1) in auto)
+  have boundary: "(49,Pair_Term (data_list_term (map Payload_Term Is)) (data_list_term (map Payload_Term Ks)))
+      \<in>positive_meaning payload_disjoint_system"
+    by (simp only: payload_disjoint_lists) (use cons.prems(5,6,8,9) cons.hyps(4) addresses in auto)
+  have distinct_used: "(1,data_list_term (map Payload_Term Us))\<in>positive_meaning distinct_payloads_system"
+    by (rule distinct_payloads_positive_complete[OF cons.prems(4)]) (use data in auto)
+  show ?case using vector_instantiation_cons_step[OF first rest joined interior slots used boundary distinct_used]
+    by (simp add: inst(1))
+qed
+
+theorem vector_instantiation_exact:
+  "(60,z)\<in>positive_meaning vector_instantiation_system \<longleftrightarrow> vector_instantiation_result z"
+proof
+  show "(60,z)\<in>positive_meaning vector_instantiation_system \<Longrightarrow> vector_instantiation_result z"
+    by (rule vector_instantiation_sound)
+next
+  assume admitted: "vector_instantiation_result z"
+  obtain E e u Vs xs rs ps ts Us Is Ks where parts:
+    "z=pattern_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Vs))
+      (binding_rows_term xs) (data_list_term (map Payload_Term rs)) (data_list_term ts)
+      (data_list_term (map Payload_Term Us)) (data_list_term (map Payload_Term Is)) (data_list_term (map Payload_Term Ks))"
+    "environment_value_presents E e" "distinct Vs" "distinct xs" "\<forall>a\<in>set Vs. octets_formed a"
+    "term_bindings_formed (set Vs) (set xs)" "distinct Us" "distinct Is" "distinct Ks"
+    "pattern_vector_at E u (set Vs) rs ps (set Is) (set Ks)" "pattern_forest_variables ps=set Us"
+    "list_all2 (pattern_instance (set xs)) ps ts" using admitted by blast
+  have table: "(52,Pair_Term (data_list_term (map Payload_Term Vs)) (binding_rows_term xs))
+      \<in>positive_meaning binding_admission_system"
+    by (simp only: binding_admission_on_values) (use parts(3-6) in blast)
+  show "(60,z)\<in>positive_meaning vector_instantiation_system"
+    using vector_instantiation_complete[OF parts(10,2) table refl parts(7-9) parts(11)[symmetric] refl refl parts(12)]
+    by (simp only: parts(1))
+qed
+
+corollary vector_instantiation_at_source:
+  assumes source: "environment_value_presents E e"
+  shows "(60,pattern_instantiation_argument e u v b r t w i k)\<in>positive_meaning vector_instantiation_system \<longleftrightarrow>
+    (\<exists>q Vs xs rs ps ts Us Is Ks. u=use_data_term q \<and> v=data_list_term (map Payload_Term Vs) \<and>
+      b=binding_rows_term xs \<and> r=data_list_term (map Payload_Term rs) \<and> t=data_list_term ts \<and>
+      w=data_list_term (map Payload_Term Us) \<and> i=data_list_term (map Payload_Term Is) \<and> k=data_list_term (map Payload_Term Ks) \<and>
+      distinct Vs \<and> distinct xs \<and> (\<forall>a\<in>set Vs. octets_formed a) \<and> term_bindings_formed (set Vs) (set xs) \<and>
+      distinct Us \<and> distinct Is \<and> distinct Ks \<and> pattern_vector_at E q (set Vs) rs ps (set Is) (set Ks) \<and>
+      pattern_forest_variables ps=set Us \<and> list_all2 (pattern_instance (set xs)) ps ts)"
+  by (simp only: vector_instantiation_exact vector_instantiation_result_at_source[OF source])
+
+corollary vector_instantiation_on_values:
+  assumes source: "environment_value_presents E e"
+  shows "(60,pattern_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Vs))
+      (binding_rows_term xs) (data_list_term (map Payload_Term rs)) (data_list_term ts)
+      (data_list_term (map Payload_Term Us)) (data_list_term (map Payload_Term Is)) (data_list_term (map Payload_Term Ks)))
+      \<in>positive_meaning vector_instantiation_system \<longleftrightarrow>
+    distinct Vs \<and> distinct xs \<and> (\<forall>a\<in>set Vs. octets_formed a) \<and> term_bindings_formed (set Vs) (set xs) \<and>
+    distinct Us \<and> distinct Is \<and> distinct Ks \<and>
+    (\<exists>ps. pattern_vector_at E u (set Vs) rs ps (set Is) (set Ks) \<and>
+      pattern_forest_variables ps=set Us \<and> list_all2 (pattern_instance (set xs)) ps ts)"
+  by (subst vector_instantiation_exact, subst vector_instantiation_result_on_context[OF source])
+    (auto simp: data_list_term_injective injective_mapped_lists[OF payload_term_inj])
+
+corollary vector_instantiation_presentation_invariance:
+  assumes "environment_value_presents E e" "environment_value_presents E f"
+  shows "(60,pattern_instantiation_argument e u v b r t w i k)\<in>positive_meaning vector_instantiation_system \<longleftrightarrow>
+    (60,pattern_instantiation_argument f u v b r t w i k)\<in>positive_meaning vector_instantiation_system"
+  by (simp only: vector_instantiation_at_source[OF assms(1)] vector_instantiation_at_source[OF assms(2)])
+
+corollary vector_instantiation_orders:
+  assumes source: "environment_value_presents E e"
+    and same: "mset Vs=mset Ws" "mset xs=mset ys" "mset Us=mset Zs" "mset Is=mset Js" "mset Ks=mset Ls"
+  shows "(60,pattern_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Vs))
+      (binding_rows_term xs) (data_list_term (map Payload_Term rs)) (data_list_term ts)
+      (data_list_term (map Payload_Term Us)) (data_list_term (map Payload_Term Is)) (data_list_term (map Payload_Term Ks)))
+      \<in>positive_meaning vector_instantiation_system \<longleftrightarrow>
+    (60,pattern_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Ws))
+      (binding_rows_term ys) (data_list_term (map Payload_Term rs)) (data_list_term ts)
+      (data_list_term (map Payload_Term Zs)) (data_list_term (map Payload_Term Js)) (data_list_term (map Payload_Term Ls)))
+      \<in>positive_meaning vector_instantiation_system"
+  using mset_eq_imp_distinct_iff[OF same(1)] mset_eq_imp_distinct_iff[OF same(2)]
+    mset_eq_imp_distinct_iff[OF same(3)] mset_eq_imp_distinct_iff[OF same(4)] mset_eq_imp_distinct_iff[OF same(5)]
+    mset_eq_setD[OF same(1)] mset_eq_setD[OF same(2)] mset_eq_setD[OF same(3)] mset_eq_setD[OF same(4)] mset_eq_setD[OF same(5)]
+  by (simp only: vector_instantiation_on_values[OF source])
+
+corollary vector_instantiation_result_unique:
+  assumes source: "environment_value_presents E e"
+    and first: "(60,pattern_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Vs))
+      (binding_rows_term xs) (data_list_term (map Payload_Term rs)) (data_list_term ts)
+      (data_list_term (map Payload_Term Us)) (data_list_term (map Payload_Term Is)) (data_list_term (map Payload_Term Ks)))
+      \<in>positive_meaning vector_instantiation_system"
+    and second: "(60,pattern_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Vs))
+      (binding_rows_term xs) (data_list_term (map Payload_Term rs)) (data_list_term us)
+      (data_list_term (map Payload_Term Ws)) (data_list_term (map Payload_Term Js)) (data_list_term (map Payload_Term Ls)))
+      \<in>positive_meaning vector_instantiation_system"
+  shows "ts=us \<and> mset Us=mset Ws \<and> mset Is=mset Js \<and> mset Ks=mset Ls"
+proof -
+  obtain ps where left: "term_bindings_formed (set Vs) (set xs)" "distinct Us" "distinct Is" "distinct Ks"
+    "pattern_vector_at E u (set Vs) rs ps (set Is) (set Ks)" "pattern_forest_variables ps=set Us"
+    "list_all2 (pattern_instance (set xs)) ps ts"
+    using first by (simp only: vector_instantiation_on_values[OF source]) blast
+  obtain qs where right: "distinct Ws" "distinct Js" "distinct Ls"
+    "pattern_vector_at E u (set Vs) rs qs (set Js) (set Ls)" "pattern_forest_variables qs=set Ws"
+    "list_all2 (pattern_instance (set xs)) qs us"
+    using second by (simp only: vector_instantiation_on_values[OF source]) blast
+  have same: "ps=qs" "set Is=set Js" "set Ks=set Ls" using pattern_vector_unique[OF left(5) right(4)] by auto
+  have variables: "set Us=set Ws" using same(1) left(6) right(5) by simp
+  have single: "single_valued (set xs)" using left(1) by (simp add: term_bindings_formed_def)
+  have other: "list_all2 (pattern_instance (set xs)) ps us" using same(1) right(6) by simp
+  have terms: "ts=us" by (rule instantiated_pattern_list_unique[OF single left(7) other])
+  show ?thesis using terms variables same(2,3) left(2-4) right(1-3)
+    distinct_source_mset[OF left(2), of Ws] distinct_source_mset[OF left(3), of Js] distinct_source_mset[OF left(4), of Ls] by auto
+qed
+
+theorem vector_instantiation_total:
+  assumes source: "environment_value_presents E e"
+    and table: "(52,Pair_Term (data_list_term (map Payload_Term Vs)) (binding_rows_term xs))\<in>positive_meaning binding_admission_system"
+    and vector: "pattern_vector_at E u (set Vs) rs ps (set Is) (set Ks)"
+    and order: "distinct Us" "distinct Is" "distinct Ks" and used: "set Us=pattern_forest_variables ps"
+  shows "\<exists>!ts. (60,pattern_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Vs))
+      (binding_rows_term xs) (data_list_term (map Payload_Term rs)) (data_list_term ts)
+      (data_list_term (map Payload_Term Us)) (data_list_term (map Payload_Term Is)) (data_list_term (map Payload_Term Ks)))
+      \<in>positive_meaning vector_instantiation_system"
+proof -
+  have formed: "\<forall>p\<in>set ps. pattern_formed p" and scope: "pattern_forest_variables ps\<subseteq>set Vs"
+    using pattern_vector_formed[OF vector] by (auto simp: pattern_forest_variables_def)
+  have domain: "rel_dom (set xs)=set Vs"
+    using table by (simp only: binding_admission_on_values) (auto simp: term_bindings_formed_def)
+  obtain ts where inst: "list_all2 (pattern_instance (set xs)) ps ts"
+    using instantiated_pattern_list_exists[OF formed, where B="set xs"] scope domain by blast
+  have positive: "(60,pattern_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Vs))
+      (binding_rows_term xs) (data_list_term (map Payload_Term rs)) (data_list_term ts)
+      (data_list_term (map Payload_Term Us)) (data_list_term (map Payload_Term Is)) (data_list_term (map Payload_Term Ks)))
+      \<in>positive_meaning vector_instantiation_system"
+    by (rule vector_instantiation_complete[OF vector source table refl order used refl refl inst])
+  show ?thesis
+  proof (rule ex1I[of _ ts])
+    show "(60,pattern_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Vs))
+      (binding_rows_term xs) (data_list_term (map Payload_Term rs)) (data_list_term ts)
+      (data_list_term (map Payload_Term Us)) (data_list_term (map Payload_Term Is)) (data_list_term (map Payload_Term Ks)))
+      \<in>positive_meaning vector_instantiation_system" by (rule positive)
+  next
+    fix us
+    assume other: "(60,pattern_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Vs))
+      (binding_rows_term xs) (data_list_term (map Payload_Term rs)) (data_list_term us)
+      (data_list_term (map Payload_Term Us)) (data_list_term (map Payload_Term Is)) (data_list_term (map Payload_Term Ks)))
+      \<in>positive_meaning vector_instantiation_system"
+    show "us=ts" using vector_instantiation_result_unique[OF source positive other] by simp
+  qed
+qed
+
+text \<open>
+  The roots and resulting terms are ordered lists. Each field is instantiated
+  under the same complete scope and bindings, and no pattern representation is
+  supplied beside the source. The empty vector checks the environment, use
+  coordinate, and table; the independent empty-vector judgment does not require
+  an artifact at that use. Every nonempty vector reads its actual pattern roots.
+
+  Counted interior composition rejects reused syntax. Membership union permits
+  shared variables and external slots. Those reference sets may overlap where
+  the relative grammar permits it. Result terms may contain arbitrary formed
+  targets, so no data-only recognizer is applied to them.
+
+  Every input term has an exact contract. Complete environment presentations
+  and independent scope, table, and metadata orders are preserved. Field order
+  is retained. Valid vectors with complete formed bindings have unique results.
+\<close>
+
+end

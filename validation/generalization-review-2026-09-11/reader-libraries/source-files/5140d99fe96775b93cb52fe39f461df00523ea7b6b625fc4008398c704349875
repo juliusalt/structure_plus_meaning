@@ -1,0 +1,160 @@
+theory Factor_Schema_Encoding
+  imports Factor_Reference_Tables Factor_Schema_Lists
+begin
+
+section \<open>Recovery of the complete native schema\<close>
+
+lemma native_premise_family_from_list:
+  assumes ef: "environment_formed E" and source: "artifact_at E u R"
+    and raw: "family_at R m (set (zip ss xs))"
+    and lengths: "length ss = length xs" "length ss = length ts"
+    and distinct: "distinct ss"
+    and bodies: "\<forall>i<length ts. \<exists>I K. native_premise_at E u V (xs!i) (template_projection f (ts!i)) I K"
+  shows "native_premise_family_at E u V m
+    (schema_premises (schema_list_projection f p ss ts))
+    (schema_material_premises (schema_list_projection f p ss ts))"
+proof -
+  let ?Q = "set (zip ss (map (template_projection f) ts))"
+  have finite: "finite ?Q" by simp
+  have functional: "single_valued ?Q" by (rule single_valued_zip[OF distinct])
+  have domain: "rel_dom ?Q = rel_dom (set (zip ss xs))"
+    using zip_domain[OF lengths(1)] zip_domain[of ss "map (template_projection f) ts"] lengths(2) by simp
+  have readings: "\<forall>s a. (s,a) \<in> set (zip ss xs) \<longrightarrow>
+    (\<exists>q I K. (s,q) \<in> ?Q \<and> native_premise_at E u V a q I K)"
+  proof (intro allI impI)
+    fix s a assume entry: "(s,a) \<in> set (zip ss xs)"
+    obtain i where index: "i < length ss" "i < length xs" "s = ss!i" "a = xs!i"
+      using entry by (auto simp: in_set_zip)
+    have small: "i < length ts" using index(1) lengths(2) by simp
+    have projected: "(s,template_projection f (ts!i)) \<in> ?Q"
+      using index small by (auto simp: in_set_zip)
+    obtain I K where read: "native_premise_at E u V a (template_projection f (ts!i)) I K"
+      using bodies small index(4) by blast
+    show "\<exists>q I K. (s,q) \<in> ?Q \<and> native_premise_at E u V a q I K"
+      using projected read by blast
+  qed
+  show ?thesis unfolding native_premise_family_at_def
+    by (simp only: schema_list_socket_sum)
+       (use ef source raw finite functional domain readings in blast)
+qed
+
+theorem schema_syntax_recovers:
+  fixes ts :: "('a,local_address option) premise_template list"
+  assumes bodies: "schema_bodies f p ts"
+    and frame: "schema_frame (schema_body_syntax f p ts) (f ` schema_body_variables p ts)
+      [2] b m r ps (set (zip ss (schema_body_roots ts)))"
+    and len: "length ss = length ts" and sockets: "distinct ss"
+    and ef: "environment_formed E"
+    and source: "artifact_at E u (schema_wrapper (schema_body_syntax f p ts)
+      (f ` schema_body_variables p ts) [2] b m r ps (set (zip ss (schema_body_roots ts))))"
+    and refs: "syntax_references E u (schema_body_literals p ts) (schema_body_callees ts)"
+  shows "native_schema_at E u r (schema_list_projection f p ss ts)"
+proof -
+  interpret body: schema_bodies f p ts by (rule bodies)
+  interpret frame: schema_frame "schema_body_syntax f p ts" "f ` schema_body_variables p ts"
+    "[2]" b m r ps "set (zip ss (schema_body_roots ts))" by (rule frame)
+  let ?R = "schema_body_syntax f p ts"
+  let ?V = "f ` schema_body_variables p ts"
+  let ?S = "schema_wrapper ?R ?V [2] b m r ps (set (zip ss (schema_body_roots ts)))"
+  let ?P = "schema_list_projection f p ss ts"
+  let ?I = "syntax_prefix 2 ` pattern_syntax_interior p"
+  let ?K = "syntax_prefix 2 ` rel_dom (pattern_literal_bindings p)"
+  have concl: "pattern_quoted_at E u ?V [2] (schema_conclusion ?P) ?I ?K"
+    using body.conclusion_recovers[OF ef source frame.reads refs]
+    by (simp add: schema_list_projection_def)
+  have premise_reads: "\<forall>i<length ts. \<exists>I K. native_premise_at E u ?V
+    (schema_body_roots ts ! i) (template_projection f (ts!i)) I K"
+    by (rule body.premises_recovers[OF ef source frame.reads refs])
+  have family: "native_premise_family_at E u ?V m (schema_premises ?P) (schema_material_premises ?P)"
+    by (rule native_premise_family_from_list[OF ef source frame.family_read _ len sockets premise_reads])
+       (use len in simp)
+  have variables: "?V = schema_variables ?P"
+    using schema_list_variables[OF len, of f p] by (simp add: schema_body_variables_def)
+  have original_interior: "pattern_syntax_interior p \<subseteq>
+    rra_carrier (object_structure (pattern_syntax f p))"
+    by (auto simp: pattern_syntax_carrier[OF body.conclusion_addressing])
+  have mapped_interior: "?I \<subseteq> syntax_prefix 2 ` rra_carrier (object_structure (pattern_syntax f p))"
+    by (rule image_mono[OF original_interior])
+  have interior: "?I \<subseteq> rra_carrier (object_structure ?R)"
+    using mapped_interior by (auto simp only: body.carrier)
+  have outside: "?I \<inter> binder_addresses = {}"
+    using pattern_syntax_interior_outside[of p]
+    by (auto simp: syntax_prefix_def split: if_splits)
+  have record_boundary: "insert r (set ps) \<inter> (insert b ?V \<union> ?I \<union> {m}) = {}"
+    using frame.headers_fresh frame.headers_distinct body.variables_inside interior by auto
+  have scope_boundary: "insert b ?V \<inter> ?I = {}"
+    using frame.headers_fresh interior body.boundary outside by auto
+  have distinct_roots: "b \<noteq> m" using frame.headers_distinct by simp
+  have body_boundary: "m \<notin> ?I" using frame.headers_fresh interior by auto
+  have witness: "\<exists>R ps b c m V I K. artifact_at E u R \<and> record_at R r ps [b,c,m] \<and>
+    binder_scope_at R b V \<and> pattern_quoted_at E u V c (schema_conclusion ?P) I K \<and>
+    native_premise_family_at E u V m (schema_premises ?P) (schema_material_premises ?P) \<and>
+    V = schema_variables ?P \<and>
+    insert r (set ps) \<inter> (insert b V \<union> I \<union> {m}) = {} \<and>
+    insert b V \<inter> I = {} \<and> b \<noteq> m \<and> m \<notin> I"
+    by (rule exI[of _ ?S], rule exI[of _ ps], rule exI[of _ b], rule exI[of _ "[2]"],
+        rule exI[of _ m], rule exI[of _ ?V], rule exI[of _ ?I], rule exI[of _ ?K])
+       (use source frame.record_read frame.binder_read concl family variables
+          record_boundary scope_boundary distinct_roots body_boundary in auto)
+  show ?thesis using ef witness by (simp only: native_schema_at_def)
+qed
+
+theorem schema_syntax_total:
+  fixes ts :: "('a,local_address option) premise_template list"
+  assumes bodies: "schema_bodies f p ts"
+  shows "\<exists>R r ss. exact_formed R \<and> length ss = length ts \<and> distinct ss \<and>
+    (\<forall>E u. environment_formed E \<longrightarrow> artifact_at E u R \<longrightarrow>
+      syntax_references E u (schema_body_literals p ts) (schema_body_callees ts) \<longrightarrow>
+      native_schema_at E u r (schema_list_projection f p ss ts)) \<and>
+    reference_table_formed (schema_body_literals p ts) (schema_body_callees ts) \<and>
+    rel_dom (schema_body_literals p ts) \<union> rel_dom (schema_body_callees ts) \<subseteq> rra_carrier (object_structure R) \<and>
+    bag_count (object_data R) = (\<lambda>_. 0) \<and> r \<in> rra_carrier (object_structure R) \<and>
+    set ss \<inter> f ` schema_body_variables p ts = {} \<and>
+    set ss \<union> f ` schema_body_variables p ts \<subseteq> rra_carrier (object_structure R)"
+proof -
+  interpret body: schema_bodies f p ts by (rule bodies)
+  obtain b m r :: local_address and ps ss :: "local_address list" where fresh:
+    "length ss = length (schema_body_roots ts)" "distinct ss"
+    "schema_frame (schema_body_syntax f p ts) (f ` schema_body_variables p ts)
+      [2] b m r ps (set (zip ss (schema_body_roots ts)))"
+    using schema_frame_total[OF body.formed body.silent body.variables_inside body.boundary
+        body.conclusion_inside body.premise_roots_inside]
+    by metis
+  let ?R = "schema_wrapper (schema_body_syntax f p ts) (f ` schema_body_variables p ts)
+    [2] b m r ps (set (zip ss (schema_body_roots ts)))"
+  have len: "length ss = length ts" using fresh(1) by simp
+  have formed: "exact_formed ?R" by (rule schema_frame.formed[OF fresh(3)])
+  have read: "\<forall>E u. environment_formed E \<longrightarrow> artifact_at E u ?R \<longrightarrow>
+    syntax_references E u (schema_body_literals p ts) (schema_body_callees ts) \<longrightarrow>
+    native_schema_at E u r (schema_list_projection f p ss ts)"
+    by (intro allI impI) (rule schema_syntax_recovers[OF bodies fresh(3) len fresh(2)]; assumption)
+  have carrier_included: "rra_carrier (object_structure (schema_body_syntax f p ts)) \<subseteq>
+    rra_carrier (object_structure ?R)"
+    using schema_frame.reads[OF fresh(3)] by (simp add: object_reads_agree_def)
+  have reference_bounds: "rel_dom (schema_body_literals p ts) \<union> rel_dom (schema_body_callees ts) \<subseteq>
+    rra_carrier (object_structure ?R)"
+    by (rule subset_trans[OF body.reference_slots_inside carrier_included])
+  have counts: "bag_count (object_data ?R) = (\<lambda>_. 0)"
+    by (simp only: schema_frame.data[OF fresh(3)]) (simp add: schema_body_syntax_def)
+  have root: "r \<in> rra_carrier (object_structure ?R)"
+    by (simp add: schema_frame.carrier[OF fresh(3)])
+  have separate: "set ss \<inter> f ` schema_body_variables p ts = {}"
+    using schema_frame.headers_fresh[OF fresh(3)] body.variables_inside len
+      zip_domain[of ss "schema_body_roots ts"] by auto
+  have inside: "set ss \<union> f ` schema_body_variables p ts \<subseteq>
+      rra_carrier (object_structure ?R)"
+    using body.variables_inside len zip_domain[of ss "schema_body_roots ts"]
+    by (auto simp: schema_frame.carrier[OF fresh(3)])
+  show ?thesis by (rule exI[of _ ?R], rule exI[of _ r], rule exI[of _ ss])
+    (use formed len fresh(2) read body.reference_table reference_bounds counts root separate inside in blast)
+qed
+
+text \<open>
+  Every finite mixed schema body has a finite enclosing syntax artifact.
+  Recovery uses the existing native schema reader, with the exact shared
+  binder scope, conclusion, and complete identified premise family. External
+  literals and callees must resolve in the actual destination environment;
+  this theorem does not replace that requirement by a semantic assumption.
+\<close>
+
+end

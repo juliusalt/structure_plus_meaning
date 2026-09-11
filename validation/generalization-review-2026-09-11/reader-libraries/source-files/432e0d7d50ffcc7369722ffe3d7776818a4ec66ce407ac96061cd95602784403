@@ -1,0 +1,170 @@
+theory Factor_Native_References
+  imports "Finite_Investigation_a24c220cc9c60a2a4f495caf.Factor_Applications"
+begin
+
+section \<open>Occurrence citations retain their use and local footprint\<close>
+
+definition site_citation_at ::
+  "'u artifact_environment \<Rightarrow> 'u \<Rightarrow> local_address \<Rightarrow>
+    'u definition_site \<Rightarrow> local_address set \<Rightarrow> local_address set \<Rightarrow> bool" where
+  "site_citation_at E u r d I K \<longleftrightarrow> environment_formed E \<and>
+    (\<exists>R c. artifact_at E u R \<and> citation_at R r c I \<and>
+      citation_location E u c (fst d) (snd d) \<and> K=citation_slots c)"
+
+lemma site_citation_unique:
+  assumes first: "site_citation_at E u r d I K"
+    and second: "site_citation_at E u r e J A"
+  shows "d=e \<and> I=J \<and> K=A"
+proof -
+  obtain R c where left: "environment_formed E" "artifact_at E u R"
+    "citation_at R r c I" "citation_location E u c (fst d) (snd d)" "K=citation_slots c"
+    using first unfolding site_citation_at_def by blast
+  obtain S b where right: "artifact_at E u S" "citation_at S r b J"
+    "citation_location E u b (fst e) (snd e)" "A=citation_slots b"
+    using second unfolding site_citation_at_def by blast
+  have art: "S=R" by (rule environment_artifact_unique[OF left(1) right(1) left(2)])
+  have other: "citation_at R r b J" using right(2) art by simp
+  have same: "b=c" "J=I" using citation_at_unique[OF other left(3)] by blast+
+  have loc: "citation_location E u c (fst e) (snd e)" using right(3) same by simp
+  have target: "d=e" using citation_location_unique[OF left(1,4) loc] by (cases d; cases e) simp
+  show ?thesis using target same left(5) right(4) by simp
+qed
+
+lemma site_citation_located:
+  assumes "site_citation_at E u r d I K"
+  shows "located_at E u r (fst d) (snd d)"
+  using assms unfolding site_citation_at_def located_at_def by blast
+
+lemma site_citation_properties:
+  assumes read: "site_citation_at E u r d I K"
+  shows "r \<in> I" "finite I" "finite K" "I \<inter> K = {}"
+    "d \<in> environment_positions E"
+proof -
+  obtain R c where parts: "citation_at R r c I" "citation_location E u c (fst d) (snd d)"
+    "K=citation_slots c" using read unfolding site_citation_at_def by blast
+  have raw: "raw_citation_at R r c I" using parts(1) by (simp add: citation_at_def)
+  show "r \<in> I" "finite I" using raw_citation_interior[OF raw] by blast+
+  show "finite K" using parts(3) by (cases c) simp_all
+  show "I \<inter> K = {}" using citation_slots_outside_interior[OF parts(1)] parts(3) by simp
+  obtain T where target: "artifact_at E (fst d) T" "anchor_formed (T,snd d)"
+    using citation_location_has_artifact[OF parts(2)] by blast
+  show "d \<in> environment_positions E" using target by (cases d) (auto simp: anchor_formed_def)
+qed
+
+lemma site_citation_carrier:
+  assumes read: "site_citation_at E u r d I K" and art: "artifact_at E u R"
+  shows "I \<union> K \<subseteq> rra_carrier (object_structure R)"
+proof -
+  obtain S c where parts: "environment_formed E" "artifact_at E u S" "citation_at S r c I"
+    "K=citation_slots c" using read unfolding site_citation_at_def by blast
+  have same: "S=R" by (rule environment_artifact_unique[OF parts(1,2) art])
+  show ?thesis using citation_interior_in_carrier[OF parts(3)] citation_slots_in_carrier[OF parts(3)]
+    parts(4) same by blast
+qed
+
+section \<open>Two located endpoints in one structural row\<close>
+
+definition native_site_link_at ::
+  "'u artifact_environment \<Rightarrow> 'u \<Rightarrow> local_address \<Rightarrow>
+    'u definition_site \<Rightarrow> 'u definition_site \<Rightarrow>
+    local_address set \<Rightarrow> local_address set \<Rightarrow> bool" where
+  "native_site_link_at E u r d e I K \<longleftrightarrow> environment_formed E \<and>
+    (\<exists>R ps a b J A L B. artifact_at E u R \<and> record_at R r ps [a,b] \<and>
+      site_citation_at E u a d J A \<and> site_citation_at E u b e L B \<and>
+      insert r (set ps) \<inter> (J \<union> L) = {} \<and> J \<inter> L = {} \<and>
+      I=insert r (set ps \<union> J \<union> L) \<and> K=A \<union> B \<and> I \<inter> K = {})"
+
+lemma native_site_link_unique:
+  assumes first: "native_site_link_at E u r d e I K"
+    and second: "native_site_link_at E u r f g J A"
+  shows "d=f \<and> e=g \<and> I=J \<and> K=A"
+proof -
+  obtain R ps a b L B N C where left: "environment_formed E" "artifact_at E u R"
+    "record_at R r ps [a,b]" "site_citation_at E u a d L B" "site_citation_at E u b e N C"
+    "I=insert r (set ps \<union> L \<union> N)" "K=B \<union> C"
+    using first by (auto simp: native_site_link_at_def)
+  obtain S qs c z W D X F where right: "artifact_at E u S" "record_at S r qs [c,z]"
+    "site_citation_at E u c f W D" "site_citation_at E u z g X F"
+    "J=insert r (set qs \<union> W \<union> X)" "A=D \<union> F"
+    using second by (auto simp: native_site_link_at_def)
+  have art: "S=R" by (rule environment_artifact_unique[OF left(1) right(1) left(2)])
+  have rec: "record_at R r qs [c,z]" using right(2) art by simp
+  have fields: "qs=ps \<and> c=a \<and> z=b" using record_at_unique[OF rec left(3)] by auto
+  have a: "site_citation_at E u a f W D" and b: "site_citation_at E u b g X F"
+    using right(3,4) fields by simp_all
+  show ?thesis using site_citation_unique[OF left(4) a] site_citation_unique[OF left(5) b]
+    left(6,7) right(5,6) fields by simp
+qed
+
+lemma native_site_link_properties:
+  assumes read: "native_site_link_at E u r d e I K"
+  shows "r \<in> I" "finite I" "finite K" "I \<inter> K = {}"
+    "d \<in> environment_positions E" "e \<in> environment_positions E"
+proof -
+  obtain ps a b J A L B where parts: "site_citation_at E u a d J A"
+    "site_citation_at E u b e L B" "I=insert r (set ps \<union> J \<union> L)"
+    "K=A \<union> B" "I \<inter> K = {}"
+    using read by (auto simp: native_site_link_at_def)
+  show "r \<in> I" "finite I" "finite K" "I \<inter> K = {}"
+    using site_citation_properties[OF parts(1)] site_citation_properties[OF parts(2)] parts(3-5) by auto
+  show "d \<in> environment_positions E" "e \<in> environment_positions E"
+    using site_citation_properties[OF parts(1)] site_citation_properties[OF parts(2)] by blast+
+qed
+
+lemma native_site_link_carrier:
+  assumes read: "native_site_link_at E u r d e I K" and art: "artifact_at E u R"
+  shows "I \<union> K \<subseteq> rra_carrier (object_structure R)"
+proof -
+  obtain S ps a b J A L B where parts: "environment_formed E" "artifact_at E u S"
+    "record_at S r ps [a,b]" "site_citation_at E u a d J A" "site_citation_at E u b e L B"
+    "I=insert r (set ps \<union> J \<union> L)" "K=A \<union> B"
+    using read by (auto simp: native_site_link_at_def)
+  have same: "S=R" by (rule environment_artifact_unique[OF parts(1,2) art])
+  show ?thesis using record_interior_in_carrier[OF parts(3)]
+    site_citation_carrier[OF parts(4) art] site_citation_carrier[OF parts(5) art] parts(6,7) same by blast
+qed
+
+lemma native_application_carrier:
+  assumes read: "native_application_at E u r d t I K" and art: "artifact_at E u R"
+  shows "I \<union> K \<subseteq> rra_carrier (object_structure R)"
+proof -
+  obtain S ps c a cite C J A where parts: "environment_formed E" "artifact_at E u S"
+    "record_at S r ps [c,a]" "citation_at S c cite C" "term_quoted_at E u a t J A"
+    "I=insert r (set ps \<union> C \<union> J)" "K=citation_slots cite \<union> A"
+    using read by (auto simp: native_application_at_def)
+  have same: "S=R" by (rule environment_artifact_unique[OF parts(1,2) art])
+  show ?thesis using record_interior_in_carrier[OF parts(3)] citation_interior_in_carrier[OF parts(4)]
+    citation_slots_in_carrier[OF parts(4)] term_quoted_carrier[OF parts(5) art] parts(6,7) same by blast
+qed
+
+lemma native_application_from_site_term:
+  assumes ef: "environment_formed E" and art: "artifact_at E u R"
+    and rec: "record_at R r ps [c,a]" and cite: "site_citation_at E u c d C B"
+    and quoted: "term_quoted_at E u a t J A"
+    and top: "insert r (set ps) \<inter> (C \<union> J) = {}"
+    and children: "C \<inter> J = {}"
+    and boundary: "insert r (set ps \<union> C \<union> J) \<inter> (B \<union> A) = {}"
+  shows "native_application_at E u r d t (insert r (set ps \<union> C \<union> J)) (B \<union> A)"
+proof -
+  obtain S code where parts: "artifact_at E u S" "citation_at S c code C"
+    "citation_location E u code (fst d) (snd d)" "B=citation_slots code"
+    using cite by (auto simp: site_citation_at_def)
+  have same: "S=R" by (rule environment_artifact_unique[OF ef parts(1) art])
+  have raw: "citation_at R c code C" using parts(2) same by simp
+  show ?thesis unfolding native_application_at_def
+    by (rule conjI[OF ef], rule exI[of _ R], rule exI[of _ ps],
+        rule exI[of _ c], rule exI[of _ a], rule exI[of _ code],
+        rule exI[of _ C], rule exI[of _ J], rule exI[of _ A])
+       (use art rec raw parts(3,4) quoted top children boundary in simp)
+qed
+
+
+text \<open>
+  Site links preserve the target use even when two uses contain the same exact
+  artifact. Their two endpoints may resolve to one site; the two citation
+  interiors still remain separate occurrences. Binding rows use the existing
+  native_application_at reader: its syntax already pairs a site with a term,
+  and its recognition has no call-formation or truth premise.
+\<close>
+
+end

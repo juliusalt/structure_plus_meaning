@@ -1,0 +1,11 @@
+{
+  "stage": "coverage-final",
+  "outcome": "complete replay accepted",
+  "case_source_sha256": "e3061e4e1eac4e8120ec2fce32f070270029b3ddf3fbafd5f3465ee641c8f3c2",
+  "checker_sha256": "8a26e0e8de1e4c02f89d06bc25679ea9d2f26e5d81772611f126563a9f1d957a",
+  "build_helper_sha256": "8915b7a480b2a17b5cea5b819f3be43323f69cb79dc1513a76c07eb83f6b491e",
+  "replay_script_sha256": "afbe76a1d0497a279de741565a5958ab1acd6b5694c6269c14d01feedf85667a",
+  "receipt": "/tmp/generalization-quality-review/reader-retained-coverage-replay/run/receipt.json",
+  "receipt_sha256": "3658cd97df59011461cab622020a7e6ca571982923aba55a622dc53fd175e426",
+  "boundary": "Inputs are replayed directly from the retained case file. This is validation of the recorded family, not a new content discovery or a new native mathematical proof."
+}

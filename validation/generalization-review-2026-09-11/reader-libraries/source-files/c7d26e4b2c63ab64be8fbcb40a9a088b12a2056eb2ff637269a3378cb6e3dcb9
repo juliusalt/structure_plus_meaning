@@ -1,0 +1,325 @@
+theory Factor_Material_Checking
+  imports Factor_Schema_Instantiation
+begin
+
+section \<open>The existing five-operand observation as a Factor entry\<close>
+
+abbreviation material_checking_result :: "factor_term \<Rightarrow> bool" where
+  "material_checking_result z \<equiv> \<exists>s a e b f. z=material_tuple s a e b f \<and> material_observation s a e b f"
+
+lemma material_checking_on_tuple:
+  "material_checking_result (material_tuple s a e b f) \<longleftrightarrow> material_observation s a e b f"
+  by (simp add: material_tuple_def)
+
+lemma material_checking_result_formed:
+  assumes "material_checking_result t"
+  shows "term_formed t"
+  using assms material_observation_formed by (auto simp: material_tuple_def)
+
+definition material_checking_schema :: "(nat,nat,nat) factor_schema" where
+  "material_checking_schema=
+    \<lparr>schema_conclusion=Pattern_Pair data_x (Pattern_Pair data_y (Pattern_Pair data_z (Pattern_Pair data_w (Pattern_Variable 4)))),
+      schema_premises={},schema_material_premises={(0,artifact_projection_material)}\<rparr>"
+
+definition material_checking_system :: "(nat,nat,nat,nat) schema_system" where
+  "material_checking_system=add_view_definition schema_instantiation_system 66 data_x {(0,material_checking_schema)}"
+
+lemma material_checking_system_formed [simp]: "schema_system_formed material_checking_system"
+  unfolding material_checking_system_def
+  by (rule add_recursive_definition_formed[OF schema_instantiation_system_formed])
+    (auto simp: material_checking_schema_def artifact_projection_material_def material_pattern_formed_def
+      material_fields_def schema_formed_def schema_dependencies_def single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma material_checking_definitions [simp]:
+  "system_definitions material_checking_system=insert 66 (system_definitions schema_instantiation_system)"
+  by (simp add: material_checking_system_def)
+
+lemma material_checking_call:
+  "schema_call_formed material_checking_system d t \<longleftrightarrow>
+    d\<in>system_definitions material_checking_system \<and> term_formed t"
+  using added_variable_calls[OF schema_instantiation_system_formed
+    material_checking_system_formed[unfolded material_checking_system_def] schema_instantiation_call]
+  by (simp only: material_checking_system_def[symmetric])
+
+lemma material_checking_old_meaning:
+  assumes "d\<in>system_definitions schema_instantiation_system"
+  shows "(d,t)\<in>positive_meaning material_checking_system \<longleftrightarrow> (d,t)\<in>positive_meaning schema_instantiation_system"
+  using added_definition_preserves_old(2)[OF schema_instantiation_system_formed
+    material_checking_system_formed[unfolded material_checking_system_def], of d t] assms
+  by (auto simp: material_checking_system_def)
+
+lemma material_checking_clause [simp]:
+  "((66,c),S)\<in>system_clauses material_checking_system \<longleftrightarrow> (c,S)\<in>{(0,material_checking_schema)}"
+proof -
+  have owned: "((d,c),S)\<in>system_clauses schema_instantiation_system \<Longrightarrow>
+    d\<in>system_definitions schema_instantiation_system" for d c S
+    using schema_instantiation_system_formed unfolding schema_system_formed_def by blast
+  have absent: "((66,c),S)\<notin>system_clauses schema_instantiation_system" by (auto dest: owned)
+  show ?thesis using absent by (simp add: material_checking_system_def)
+qed
+
+theorem material_checking_sound:
+  assumes holds: "(66,z)\<in>positive_meaning material_checking_system"
+  shows "material_checking_result z"
+proof -
+  have consequence: "(66,z)\<in>schema_consequences material_checking_system (positive_meaning material_checking_system)"
+    using holds positive_meaning_unfold[of material_checking_system] by blast
+  obtain c S h where clause: "((66,c),S)\<in>system_clauses material_checking_system"
+    and head: "z=evaluate_pattern h (schema_conclusion S)"
+    and material: "\<forall>s M. (s,M)\<in>schema_material_premises S \<longrightarrow> evaluate_material_satisfaction h M"
+    using consequence by (simp only: schema_consequences_material_valuation) blast
+  have schema: "S=material_checking_schema" using clause by simp
+  have observed: "material_observation (h 0) (h 1) (h 2) (h 3) (h 4)"
+    using material by (simp add: schema material_checking_schema_def artifact_projection_material_def)
+  show ?thesis
+    by (rule exI[of _ "h 0"], rule exI[of _ "h 1"], rule exI[of _ "h 2"], rule exI[of _ "h 3"], rule exI[of _ "h 4"])
+      (use head observed in \<open>simp add: schema material_checking_schema_def material_tuple_def\<close>)
+qed
+
+theorem material_checking_complete:
+  assumes observed: "material_observation s a e b f"
+  shows "(66,material_tuple s a e b f)\<in>positive_meaning material_checking_system"
+proof -
+  have formed: "term_formed s" "term_formed a" "term_formed e" "term_formed b" "term_formed f"
+    using material_observation_formed[OF observed] by auto
+  let ?h="\<lambda>i::nat. if i=0 then s else if i=1 then a else if i=2 then e else if i=3 then b else f"
+  have result: "(66,evaluate_pattern ?h (schema_conclusion material_checking_schema))\<in>positive_meaning material_checking_system"
+    by (rule material_positive_valuation_step[where c=0])
+      (use formed observed in \<open>auto simp: material_checking_schema_def schema_variables_def material_variables_def
+        material_fields_def artifact_projection_material_def material_checking_call\<close>)
+  show ?thesis using result by (simp add: material_checking_schema_def material_tuple_def)
+qed
+
+theorem material_checking_exact:
+  "(66,z)\<in>positive_meaning material_checking_system \<longleftrightarrow> material_checking_result z"
+  using material_checking_sound material_checking_complete by blast
+
+corollary material_checking_tuple:
+  "(66,material_tuple s a e b f)\<in>positive_meaning material_checking_system \<longleftrightarrow> material_observation s a e b f"
+  by (simp only: material_checking_exact material_checking_on_tuple)
+
+section \<open>Every supplied material row is checked\<close>
+
+abbreviation material_rows_checking_result :: "factor_term \<Rightarrow> bool" where
+  "material_rows_checking_result z \<equiv> \<exists>cs. z=binding_rows_term cs \<and>
+    (\<forall>(s,t)\<in>set cs. octets_formed s \<and> material_checking_result t)"
+
+definition material_rows_checking_cons_schema :: "(nat,nat,nat) factor_schema" where
+  "material_rows_checking_cons_schema=data_rule (Pattern_Pair (Pattern_Pair data_x data_y) data_z)
+    {(0,1,data_list_pattern [data_x]),(1,66,data_y),(2,67,data_z)}"
+
+definition material_rows_checking_clauses :: "(nat \<times> (nat,nat,nat) factor_schema) set" where
+  "material_rows_checking_clauses={(0,data_list_nil_schema),(1,material_rows_checking_cons_schema)}"
+
+definition material_rows_checking_system :: "(nat,nat,nat,nat) schema_system" where
+  "material_rows_checking_system=add_view_definition material_checking_system 67 data_x material_rows_checking_clauses"
+
+lemma material_rows_checking_system_formed [simp]: "schema_system_formed material_rows_checking_system"
+  unfolding material_rows_checking_system_def
+  by (rule add_recursive_definition_formed[OF material_checking_system_formed])
+    (auto simp: material_rows_checking_clauses_def data_list_nil_schema_def material_rows_checking_cons_schema_def
+      schema_formed_def schema_dependencies_def single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma material_rows_checking_definitions [simp]:
+  "system_definitions material_rows_checking_system=insert 67 (system_definitions material_checking_system)"
+  by (simp add: material_rows_checking_system_def)
+
+lemma material_rows_checking_call:
+  "schema_call_formed material_rows_checking_system d t \<longleftrightarrow>
+    d\<in>system_definitions material_rows_checking_system \<and> term_formed t"
+  using added_variable_calls[OF material_checking_system_formed
+    material_rows_checking_system_formed[unfolded material_rows_checking_system_def] material_checking_call]
+  by (simp only: material_rows_checking_system_def[symmetric])
+
+lemma material_rows_checking_old_meaning:
+  assumes "d\<in>system_definitions material_checking_system"
+  shows "(d,t)\<in>positive_meaning material_rows_checking_system \<longleftrightarrow> (d,t)\<in>positive_meaning material_checking_system"
+  using added_definition_preserves_old(2)[OF material_checking_system_formed
+    material_rows_checking_system_formed[unfolded material_rows_checking_system_def], of d t] assms
+  by (auto simp: material_rows_checking_system_def)
+
+lemma material_rows_checking_clause [simp]:
+  "((67,c),S)\<in>system_clauses material_rows_checking_system \<longleftrightarrow> (c,S)\<in>material_rows_checking_clauses"
+proof -
+  have owned: "((d,c),S)\<in>system_clauses material_checking_system \<Longrightarrow>
+    d\<in>system_definitions material_checking_system" for d c S
+    using material_checking_system_formed unfolding schema_system_formed_def by blast
+  have absent: "((67,c),S)\<notin>system_clauses material_checking_system" by (auto dest: owned)
+  show ?thesis using absent by (simp add: material_rows_checking_system_def)
+qed
+
+lemma material_rows_checking_components:
+  "(1,t)\<in>positive_meaning material_rows_checking_system \<longleftrightarrow> (1,t)\<in>positive_meaning distinct_payloads_system"
+  "(66,t)\<in>positive_meaning material_rows_checking_system \<longleftrightarrow> (66,t)\<in>positive_meaning material_checking_system"
+  using material_rows_checking_old_meaning[of 1 t] material_checking_old_meaning[of 1 t]
+    schema_instantiation_old_meaning[of 1 t] premise_family_instantiation_old_meaning[of 1 t]
+    premise_rows_components(5)[of t] material_rows_checking_old_meaning[of 66 t] by auto
+
+lemma material_rows_checking_nil:
+  "(67,binding_rows_term [])\<in>positive_meaning material_rows_checking_system"
+proof -
+  have "(67,evaluate_pattern (\<lambda>_. Payload_Term []) (schema_conclusion data_list_nil_schema))\<in>positive_meaning material_rows_checking_system"
+    by (rule ordinary_positive_valuation_step[where c=0])
+      (auto simp: material_rows_checking_clauses_def data_list_nil_schema_def schema_variables_def material_rows_checking_call octets_formed_def)
+  then show ?thesis by (simp add: data_list_nil_schema_def)
+qed
+
+lemma material_rows_checking_cons:
+  assumes key: "octets_formed s" and observed: "material_checking_result t"
+    and tail: "(67,binding_rows_term cs)\<in>positive_meaning material_rows_checking_system"
+  shows "(67,binding_rows_term ((s,t)#cs))\<in>positive_meaning material_rows_checking_system"
+proof -
+  have first: "(66,t)\<in>positive_meaning material_checking_system" using observed by (simp only: material_checking_exact)
+  have socket: "(1,data_list_term [Payload_Term s])\<in>positive_meaning distinct_payloads_system"
+    using key by (simp only: payload_recognition_exact; blast)
+  have current_socket: "(1,data_list_term [Payload_Term s])\<in>positive_meaning material_rows_checking_system"
+    using socket by (simp only: material_rows_checking_components)
+  have current_first: "(66,t)\<in>positive_meaning material_rows_checking_system"
+    using first by (simp only: material_rows_checking_components)
+  have formed: "term_formed (Payload_Term s)" "term_formed t" "term_formed (binding_rows_term cs)"
+    using key material_checking_result_formed[OF observed] schema_call_formed_target[OF positive_meaning_formed[OF tail]] by auto
+  let ?h="\<lambda>i::nat. if i=0 then Payload_Term s else if i=1 then t else binding_rows_term cs"
+  have result: "(67,evaluate_pattern ?h (schema_conclusion material_rows_checking_cons_schema))\<in>positive_meaning material_rows_checking_system"
+    by (rule ordinary_positive_valuation_step[where c=1])
+      (use formed current_first current_socket tail in \<open>auto simp: material_rows_checking_clauses_def
+        material_rows_checking_cons_schema_def schema_variables_def material_rows_checking_call\<close>)
+  show ?thesis using result by (simp add: material_rows_checking_cons_schema_def)
+qed
+
+theorem material_rows_checking_sound:
+  assumes holds: "(67,z)\<in>positive_meaning material_rows_checking_system"
+  shows "material_rows_checking_result z"
+proof -
+  have invariant: "(67::nat)=67 \<longrightarrow> material_rows_checking_result z"
+  proof (rule positive_valuation_induct[OF holds, where property="\<lambda>d t. d=67 \<longrightarrow> material_rows_checking_result t"])
+    fix d c S h
+    assume clause: "((d,c),S)\<in>system_clauses material_rows_checking_system"
+      and assignment: "\<forall>a\<in>schema_variables S. term_formed (h a)"
+      and call: "schema_call_formed material_rows_checking_system d (evaluate_pattern h (schema_conclusion S))"
+      and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
+        (e,evaluate_pattern h p)\<in>positive_meaning material_rows_checking_system \<and>
+        (e=67 \<longrightarrow> material_rows_checking_result (evaluate_pattern h p))"
+    show "d=67 \<longrightarrow> material_rows_checking_result (evaluate_pattern h (schema_conclusion S))"
+    proof
+      assume "d=67"
+      then have cases: "S=data_list_nil_schema \<or> S=material_rows_checking_cons_schema"
+        using clause by (auto simp: material_rows_checking_clauses_def)
+      then show "material_rows_checking_result (evaluate_pattern h (schema_conclusion S))"
+      proof
+        assume schema: "S=data_list_nil_schema"
+        show ?thesis by (rule exI[of _ "[]"]) (simp add: schema data_list_nil_schema_def)
+      next
+        assume schema: "S=material_rows_checking_cons_schema"
+        obtain cs where tail: "h 2=binding_rows_term cs"
+          "\<forall>(s,t)\<in>set cs. octets_formed s \<and> material_checking_result t"
+          using support[rule_format, of 2 67 data_z] by (auto simp: schema material_rows_checking_cons_schema_def)
+        have current_socket: "(1,data_list_term [h 0])\<in>positive_meaning material_rows_checking_system"
+          and first: "(66,h 1)\<in>positive_meaning material_rows_checking_system"
+          using support by (auto simp: schema material_rows_checking_cons_schema_def)
+        have socket: "(1,data_list_term [h 0])\<in>positive_meaning distinct_payloads_system"
+          using current_socket by (simp only: material_rows_checking_components)
+        obtain s where key: "h 0=Payload_Term s" "octets_formed s"
+          using socket by (simp only: payload_recognition_exact) blast
+        have observed: "material_checking_result (h 1)"
+          using first by (simp only: material_rows_checking_components material_checking_exact)
+        show ?thesis by (rule exI[of _ "(s,h 1)#cs"])
+          (use key tail observed in \<open>auto simp: schema material_rows_checking_cons_schema_def\<close>)
+      qed
+    qed
+  qed
+  show ?thesis using invariant by simp
+qed
+
+theorem material_rows_checking_complete:
+  assumes "\<forall>(s,t)\<in>set cs. octets_formed s \<and> material_checking_result t"
+  shows "(67,binding_rows_term cs)\<in>positive_meaning material_rows_checking_system"
+  using assms
+proof (induction cs)
+  case Nil
+  show ?case by (rule material_rows_checking_nil)
+next
+  case (Cons row cs)
+  obtain s t where shape: "row=(s,t)" by (cases row) auto
+  have key: "octets_formed s" and observed: "material_checking_result t" using Cons.prems by (auto simp: shape)
+  have tail: "(67,binding_rows_term cs)\<in>positive_meaning material_rows_checking_system" using Cons by auto
+  show ?case using material_rows_checking_cons[OF key observed tail] by (simp add: shape)
+qed
+
+theorem material_rows_checking_exact:
+  "(67,z)\<in>positive_meaning material_rows_checking_system \<longleftrightarrow> material_rows_checking_result z"
+  using material_rows_checking_sound material_rows_checking_complete by blast
+
+corollary material_rows_checking_on_values:
+  "(67,binding_rows_term cs)\<in>positive_meaning material_rows_checking_system \<longleftrightarrow>
+    (\<forall>(s,t)\<in>set cs. octets_formed s \<and> material_checking_result t)"
+  by (simp only: material_rows_checking_exact binding_rows_term_injective) blast
+
+section \<open>Complete instance rows recover exactly schema material satisfaction\<close>
+
+theorem schema_material_observation_instances:
+  assumes inst: "schema_instance S B t Q"
+  shows "schema_material_satisfied S B \<longleftrightarrow>
+    (\<forall>q v. (q,v)\<in>material_instance_relation B (schema_material_premises S) \<longrightarrow> material_checking_result v)"
+proof -
+  have single: "single_valued B" using inst by (simp add: schema_instance_def term_bindings_formed_def)
+  show ?thesis
+  proof
+    assume satisfied: "schema_material_satisfied S B"
+    show "\<forall>q v. (q,v)\<in>material_instance_relation B (schema_material_premises S) \<longrightarrow> material_checking_result v"
+    proof (intro allI impI)
+      fix q v assume member: "(q,v)\<in>material_instance_relation B (schema_material_premises S)"
+      obtain M s a e b f where parts: "(q,M)\<in>schema_material_premises S" "v=material_tuple s a e b f"
+        "material_pattern_instance B M s a e b f" using member by (auto simp: material_instance_relation_def)
+      have material: "material_pattern_satisfied B M"
+        using satisfied parts(1) by (auto simp: schema_material_satisfied_def)
+      have observed: "material_observation s a e b f"
+        using material by (simp only: material_pattern_satisfied_at_instance[OF single parts(3)])
+      show "material_checking_result v" by (simp only: parts(2) material_checking_on_tuple) (rule observed)
+    qed
+  next
+    assume checked: "\<forall>q v. (q,v)\<in>material_instance_relation B (schema_material_premises S) \<longrightarrow> material_checking_result v"
+    show "schema_material_satisfied S B"
+    proof (unfold schema_material_satisfied_def, intro allI impI)
+      fix q M assume member: "(q,M)\<in>schema_material_premises S"
+      obtain s a e b f where parts: "material_pattern_instance B M s a e b f"
+        using schema_material_instance_boundary[OF inst member] by blast
+      have row: "(q,material_tuple s a e b f)\<in>material_instance_relation B (schema_material_premises S)"
+        using member parts by (auto simp: material_instance_relation_def; blast)
+      have observed: "material_observation s a e b f"
+        using checked[rule_format, OF row] by (simp only: material_checking_on_tuple)
+      show "material_pattern_satisfied B M"
+        using observed by (simp only: material_pattern_satisfied_at_instance[OF single parts])
+    qed
+  qed
+qed
+
+theorem schema_material_rows_checking:
+  assumes raw: "native_schema_at E u r S" and inst: "schema_instance S B t Q"
+    and rows: "set cs=material_instance_relation B (schema_material_premises S)"
+  shows "(67,binding_rows_term cs)\<in>positive_meaning material_rows_checking_system \<longleftrightarrow> schema_material_satisfied S B"
+proof -
+  have bindings: "term_bindings_formed (schema_variables S) B" using inst by (simp add: schema_instance_def)
+  have domain: "rel_dom (set cs)=rel_dom (schema_material_premises S)"
+    using native_schema_material_instance_boundary(3)[OF raw bindings] rows by simp
+  have keys: "\<forall>(s,t)\<in>set cs. octets_formed s"
+    using domain native_schema_material_instance_boundary(4)[OF raw bindings] by (auto simp: rel_dom_def)
+  show ?thesis
+    by (simp only: material_rows_checking_on_values)
+      (use schema_material_observation_instances[OF inst] keys rows in auto)
+qed
+
+text \<open>
+  The first entry uses the existing material premise and its existing five
+  variable fields. Its meaning is exactly the complete material observation
+  on the ordinary tuple. It adds no observation primitive or external reader.
+
+  The second entry checks each supplied socket key and every material tuple
+  through ordinary recursion, including the final empty list. It preserves
+  the supplied row sequence and permits repeated rows. Completeness of the
+  schema's socket collection is established by the separate schema reader.
+  Under that complete projection, checking the rows is equivalent to the
+  existing schema material-satisfaction judgment. The equivalence is over
+  actual pattern instances under the same complete substitution.
+\<close>
+
+end

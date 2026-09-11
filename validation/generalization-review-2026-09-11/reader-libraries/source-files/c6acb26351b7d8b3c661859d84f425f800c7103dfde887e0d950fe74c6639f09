@@ -1,0 +1,531 @@
+theory Factor_Schema_Observations
+  imports Factor_Native_Syntax_Determination Factor_Presentation_Classes
+begin
+
+section \<open>Complete finite outputs are calculated without testing premise truth\<close>
+
+abbreviation evaluate_material_tuple ::
+  "('a \<Rightarrow> factor_term) \<Rightarrow> 'a material_pattern \<Rightarrow> factor_term" where
+  "evaluate_material_tuple f M \<equiv>
+    material_tuple (evaluate_pattern f (material_source M))
+      (evaluate_pattern f (material_atoms M)) (evaluate_pattern f (material_edges M))
+      (evaluate_pattern f (material_counts M)) (evaluate_pattern f (material_functions M))"
+
+definition evaluate_schema_materials ::
+  "('a \<Rightarrow> factor_term) \<Rightarrow> ('a,'s,'d) factor_schema \<Rightarrow> ('s\<times>factor_term) set" where
+  "evaluate_schema_materials f S =
+    image (\<lambda>(s,M). (s,evaluate_material_tuple f M)) (schema_material_premises S)"
+
+lemma evaluate_schema_materials_relation:
+  assumes formed: "schema_formed S"
+  shows "evaluate_schema_materials f S =
+    material_instance_relation (image (\<lambda>a. (a,f a)) (schema_variables S)) (schema_material_premises S)"
+proof -
+  have instance_iff: "material_pattern_instance (image (\<lambda>a. (a,f a)) (schema_variables S))
+      M x a e b g \<longleftrightarrow>
+      x=evaluate_pattern f (material_source M) \<and> a=evaluate_pattern f (material_atoms M) \<and>
+      e=evaluate_pattern f (material_edges M) \<and> b=evaluate_pattern f (material_counts M) \<and>
+      g=evaluate_pattern f (material_functions M)"
+    if member: "(s,M)\<in>schema_material_premises S" for s M x a e b g
+    using formed member
+    by (auto simp: material_pattern_instance_def graph_pattern_instance schema_formed_def
+      schema_variables_def material_pattern_formed_def material_variables_def material_fields_def)
+  show ?thesis
+    using instance_iff
+    by (auto simp: evaluate_schema_materials_def material_instance_relation_def; blast)
+qed
+
+lemma evaluate_schema_materials_finite:
+  assumes "schema_formed S"
+  shows "finite (evaluate_schema_materials f S)"
+  using assms by (simp add: evaluate_schema_materials_def schema_formed_def)
+
+type_synonym schema_output =
+  "factor_term \<times>
+    ((local_address \<times> (local_address option definition_site \<times> factor_term)) set \<times>
+      (local_address \<times> factor_term) set)"
+
+type_synonym schema_observation_data = "local_address set \<times> (schema_output \<times> schema_output)"
+
+definition schema_reference_outputs ::
+  "(local_address \<Rightarrow> factor_term) \<Rightarrow> local_address option native_schema \<Rightarrow> schema_output" where
+  "schema_reference_outputs f S =
+    (evaluate_pattern f (schema_conclusion S), (evaluate_schema_premises f S, evaluate_schema_materials f S))"
+
+definition schema_reference_data ::
+  "local_address option native_schema \<Rightarrow> schema_observation_data" where
+  "schema_reference_data S =
+    (schema_variables S, (schema_reference_outputs Payload_Term S,
+      schema_reference_outputs (\<lambda>_. Target_Term (Whole_Artifact empty_artifact)) S))"
+
+definition schema_data_formed :: "local_address option native_schema \<Rightarrow> bool" where
+  "schema_data_formed S \<longleftrightarrow> schema_formed S \<and>
+    (\<forall>a\<in>schema_variables S. octets_formed a) \<and>
+    (\<forall>s\<in>schema_sockets S. octets_formed s) \<and>
+    (\<forall>d\<in>schema_dependencies S. octets_formed (snd d))"
+
+theorem schema_reference_data_determines:
+  assumes first: "schema_data_formed S" and second: "schema_data_formed T"
+    and same: "schema_reference_data S=schema_reference_data T"
+  shows "S=T"
+proof -
+  let ?B="schema_variables S"
+  let ?x="\<lambda>a. (a,Payload_Term a)"
+  let ?h="\<lambda>_. Target_Term (Whole_Artifact empty_artifact)"
+  let ?y="\<lambda>a. (a,?h a)"
+  have formed: "schema_formed S" "schema_formed T"
+    and variables: "\<forall>a\<in>schema_variables S. octets_formed a"
+      "\<forall>a\<in>schema_variables T. octets_formed a"
+    using first second by (auto simp: schema_data_formed_def)
+  have fields: "schema_variables T=?B"
+    "evaluate_pattern Payload_Term (schema_conclusion S)=evaluate_pattern Payload_Term (schema_conclusion T)"
+    "evaluate_schema_premises Payload_Term S=evaluate_schema_premises Payload_Term T"
+    "evaluate_schema_materials Payload_Term S=evaluate_schema_materials Payload_Term T"
+    "evaluate_pattern ?h (schema_conclusion S)=evaluate_pattern ?h (schema_conclusion T)"
+    "evaluate_schema_premises ?h S=evaluate_schema_premises ?h T"
+    "evaluate_schema_materials ?h S=evaluate_schema_materials ?h T"
+    using same by (auto simp: schema_reference_data_def schema_reference_outputs_def)
+  have left: "schema_instance S (image ?x ?B)
+      (evaluate_pattern Payload_Term (schema_conclusion S)) (evaluate_schema_premises Payload_Term S)"
+    by (rule schema_evaluation_instance[OF formed(1)]) (use variables(1) in simp)
+  have right: "schema_instance T (image ?x ?B)
+      (evaluate_pattern Payload_Term (schema_conclusion S)) (evaluate_schema_premises Payload_Term S)"
+    using schema_evaluation_instance[OF formed(2), where f=Payload_Term] variables(2) fields(1-3) by simp
+  have left': "schema_instance S (image ?y ?B)
+      (evaluate_pattern ?h (schema_conclusion S)) (evaluate_schema_premises ?h S)"
+    by (rule schema_evaluation_instance[OF formed(1)]) simp
+  have right': "schema_instance T (image ?y ?B)
+      (evaluate_pattern ?h (schema_conclusion S)) (evaluate_schema_premises ?h S)"
+    using schema_evaluation_instance[OF formed(2), where f="?h"] fields(1,5,6) by simp
+  have materials:
+    "material_instance_relation (image ?x ?B) (schema_material_premises S) =
+      material_instance_relation (image ?x ?B) (schema_material_premises T)"
+    "material_instance_relation (image ?y ?B) (schema_material_premises S) =
+      material_instance_relation (image ?y ?B) (schema_material_premises T)"
+    using fields(4,7)
+    by (simp_all only: evaluate_schema_materials_relation[OF formed(1)]
+      evaluate_schema_materials_relation[OF formed(2)] fields(1))
+  show ?thesis
+    by (rule schema_instances_determine[where f=id and B="?B"
+        and k="Whole_Artifact empty_artifact"])
+      (use left right left' right' materials in simp_all)
+qed
+
+section \<open>Products and complete collections present the observation record\<close>
+
+abbreviation binding_row_value :: "(local_address\<times>factor_term) \<Rightarrow> factor_term" where
+  "binding_row_value q \<equiv> Pair_Term (Payload_Term (fst q)) (snd q)"
+
+abbreviation call_row_value ::
+  "(local_address \<times> (local_address option definition_site \<times> factor_term)) \<Rightarrow> factor_term" where
+  "call_row_value q \<equiv> Pair_Term (Payload_Term (fst q))
+    (call_instance_value (fst (snd q)) (snd (snd q)))"
+
+lemma binding_row_value_injective: "inj binding_row_value"
+  by (rule injI) auto
+
+lemma call_row_value_injective: "inj call_row_value"
+  by (rule injI) (auto simp: call_instance_value_injective)
+
+lemma binding_row_values:
+  "data_list_term (map binding_row_value xs)=binding_rows_term xs"
+  by (simp add: map_map split_def comp_def)
+
+lemma call_row_values:
+  "data_list_term (map call_row_value xs)=call_instance_rows_term xs"
+  by (simp add: map_map split_def comp_def)
+
+definition schema_output_presents :: "schema_output \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "schema_output_presents =
+    factor_pair_presents (=)
+      (factor_pair_presents (data_collection_presents (\<lambda>q t. t=call_row_value q))
+        (data_collection_presents (\<lambda>q t. t=binding_row_value q)))"
+
+definition schema_reference_record_presents ::
+  "schema_observation_data \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "schema_reference_record_presents =
+    factor_pair_presents (data_collection_presents (\<lambda>a t. t=Payload_Term a))
+      (factor_pair_presents schema_output_presents schema_output_presents)"
+
+definition schema_observation_data_finite :: "schema_observation_data \<Rightarrow> bool" where
+  "schema_observation_data_finite z \<longleftrightarrow>
+    finite (fst z) \<and>
+    finite (fst (snd (fst (snd z)))) \<and> finite (snd (snd (fst (snd z)))) \<and>
+    finite (fst (snd (snd (snd z)))) \<and> finite (snd (snd (snd (snd z))))"
+
+lemma schema_reference_record_class:
+  "presentation_class schema_reference_record_presents schema_observation_data_finite
+    (\<lambda>t. \<exists>z. schema_reference_record_presents z t)"
+proof -
+  let ?C="data_collection_presents (\<lambda>q t. t=call_row_value q)"
+  let ?M="data_collection_presents (\<lambda>q t. t=binding_row_value q)"
+  let ?V="data_collection_presents (\<lambda>a t. t=Payload_Term a)"
+  let ?CA="\<lambda>t. \<exists>xs. distinct xs \<and> t=data_list_term (map call_row_value xs)"
+  let ?MA="\<lambda>t. \<exists>xs. distinct xs \<and> t=data_list_term (map binding_row_value xs)"
+  let ?VA="\<lambda>t. \<exists>xs. distinct xs \<and> t=data_list_term (map Payload_Term xs)"
+  let ?pairA="\<lambda>t. \<exists>p q. ?CA p \<and> ?MA q \<and> t=Pair_Term p q"
+  let ?outputA="\<lambda>t. \<exists>p q. True \<and> ?pairA q \<and> t=Pair_Term p q"
+  let ?bothA="\<lambda>t. \<exists>p q. ?outputA p \<and> ?outputA q \<and> t=Pair_Term p q"
+  let ?recordA="\<lambda>t. \<exists>p q. ?VA p \<and> ?bothA q \<and> t=Pair_Term p q"
+  have calls: "presentation_class ?C finite ?CA"
+    by (rule injective_data_collection_class[OF call_row_value_injective])
+  have materials: "presentation_class ?M finite ?MA"
+    by (rule injective_data_collection_class[OF binding_row_value_injective])
+  have variables: "presentation_class ?V finite ?VA"
+    by (rule injective_data_collection_class[OF payload_term_inj])
+  have terms: "presentation_class (=) (\<lambda>_::factor_term. True) (\<lambda>_. True)"
+    by (unfold_locales) auto
+  have output_class: "presentation_class schema_output_presents
+    (\<lambda>z. finite (fst (snd z)) \<and> finite (snd (snd z))) ?outputA"
+    using factor_pair_class[OF terms factor_pair_class[OF calls materials]]
+    by (simp add: schema_output_presents_def)
+  have domain: "schema_observation_data_finite =
+      (\<lambda>z. finite (fst z) \<and>
+        finite (fst (snd (fst (snd z)))) \<and> finite (snd (snd (fst (snd z)))) \<and>
+        finite (fst (snd (snd (snd z)))) \<and> finite (snd (snd (snd (snd z)))))"
+    by (rule ext) (simp only: schema_observation_data_finite_def)
+  have result: "presentation_class schema_reference_record_presents schema_observation_data_finite ?recordA"
+    using factor_pair_class[OF variables factor_pair_class[OF output_class output_class]]
+    by (simp only: schema_reference_record_presents_def domain conj_assoc)
+  interpret records: presentation_class schema_reference_record_presents schema_observation_data_finite ?recordA
+    by (rule result)
+  have admission: "?recordA=(\<lambda>t. \<exists>z. schema_reference_record_presents z t)"
+    by (rule ext) (rule records.admissible_iff)
+  show ?thesis using result by (simp only: admission)
+qed
+
+definition schema_reference_presents ::
+  "local_address option native_schema \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "schema_reference_presents S t \<longleftrightarrow>
+    schema_data_formed S \<and> schema_reference_record_presents (schema_reference_data S) t"
+
+lemma schema_reference_finite:
+  assumes "schema_data_formed S"
+  shows "schema_observation_data_finite (schema_reference_data S)"
+proof -
+  have formed: "schema_formed S" using assms by (simp add: schema_data_formed_def)
+  have variables: "finite (schema_variables S)" by (rule schema_variables_finite[OF formed])
+  have materials: "finite (evaluate_schema_materials f S)" for f
+    by (rule evaluate_schema_materials_finite[OF formed])
+  show ?thesis using variables materials formed
+    by (simp add: schema_observation_data_finite_def schema_reference_data_def
+      schema_reference_outputs_def evaluate_schema_premises_def schema_formed_def)
+qed
+
+interpretation schema_reference_presentations: presentation_class
+  schema_reference_presents schema_data_formed "(\<lambda>t. \<exists>S. schema_reference_presents S t)"
+proof -
+  have result: "presentation_class
+      (\<lambda>S t. schema_data_formed S \<and> schema_reference_record_presents (schema_reference_data S) t)
+      schema_data_formed
+      (\<lambda>t. \<exists>S. schema_data_formed S \<and> schema_reference_record_presents (schema_reference_data S) t)"
+    by (rule presentation_class_observations[OF schema_reference_record_class schema_reference_finite
+      schema_reference_data_determines])
+  have reading: "schema_reference_presents =
+      (\<lambda>S t. schema_data_formed S \<and> schema_reference_record_presents (schema_reference_data S) t)"
+    by (intro ext) (simp only: schema_reference_presents_def)
+  show "presentation_class schema_reference_presents schema_data_formed
+      (\<lambda>t. \<exists>S. schema_reference_presents S t)"
+    using result by (simp only: reading)
+qed
+
+abbreviation schema_reference_value ::
+  "factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow>
+    factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term" where
+  "schema_reference_value b t q c v w d \<equiv>
+    Pair_Term b (Pair_Term (Pair_Term t (Pair_Term q c)) (Pair_Term v (Pair_Term w d)))"
+
+abbreviation schema_reference_pattern ::
+  "'a term_pattern \<Rightarrow> 'a term_pattern \<Rightarrow> 'a term_pattern \<Rightarrow> 'a term_pattern \<Rightarrow>
+    'a term_pattern \<Rightarrow> 'a term_pattern \<Rightarrow> 'a term_pattern \<Rightarrow> 'a term_pattern" where
+  "schema_reference_pattern b t q c v w d \<equiv>
+    Pattern_Pair b (Pattern_Pair (Pattern_Pair t (Pattern_Pair q c)) (Pattern_Pair v (Pattern_Pair w d)))"
+
+lemma schema_reference_record_fields:
+  "schema_reference_record_presents (B,((t,(Q,C)),(v,(W,D)))) z \<longleftrightarrow>
+    (\<exists>Vs qs cs ws ds. distinct Vs \<and> set Vs=B \<and>
+      distinct qs \<and> set qs=Q \<and> distinct cs \<and> set cs=C \<and>
+      distinct ws \<and> set ws=W \<and> distinct ds \<and> set ds=D \<and>
+      z=schema_reference_value (data_list_term (map Payload_Term Vs)) t
+        (call_instance_rows_term qs) (binding_rows_term cs) v
+        (call_instance_rows_term ws) (binding_rows_term ds))"
+  by (simp only: schema_reference_record_presents_def schema_output_presents_def
+    factor_pair_presents_def fst_conv snd_conv data_collection_presents_function
+    binding_row_values call_row_values; blast)
+
+lemma schema_reference_presents_fields:
+  "schema_reference_presents S z \<longleftrightarrow> schema_data_formed S \<and>
+    (\<exists>Vs t qs cs v ws ds. distinct Vs \<and> set Vs=schema_variables S \<and>
+      distinct qs \<and> distinct cs \<and> distinct ws \<and> distinct ds \<and>
+      schema_instance S (image (\<lambda>a. (a,Payload_Term a)) (set Vs)) t (set qs) \<and>
+      set cs=material_instance_relation (image (\<lambda>a. (a,Payload_Term a)) (set Vs)) (schema_material_premises S) \<and>
+      schema_instance S (image (\<lambda>a. (a,Target_Term (Whole_Artifact empty_artifact))) (set Vs)) v (set ws) \<and>
+      set ds=material_instance_relation
+        (image (\<lambda>a. (a,Target_Term (Whole_Artifact empty_artifact))) (set Vs)) (schema_material_premises S) \<and>
+      z=schema_reference_value (data_list_term (map Payload_Term Vs)) t
+        (call_instance_rows_term qs) (binding_rows_term cs) v
+        (call_instance_rows_term ws) (binding_rows_term ds))"
+proof -
+  have evaluated: "schema_instance S (image (\<lambda>a. (a,f a)) (schema_variables S)) t Q \<longleftrightarrow>
+      t=evaluate_pattern f (schema_conclusion S) \<and> Q=evaluate_schema_premises f S"
+    if formed: "schema_data_formed S" and assignment: "\<forall>a\<in>schema_variables S. term_formed (f a)"
+    for f t Q
+  proof -
+    have schema: "schema_formed S" using formed by (simp add: schema_data_formed_def)
+    have canonical: "schema_instance S (image (\<lambda>a. (a,f a)) (schema_variables S))
+        (evaluate_pattern f (schema_conclusion S)) (evaluate_schema_premises f S)"
+      by (rule schema_evaluation_instance[OF schema assignment])
+    show ?thesis
+    proof
+      assume actual: "schema_instance S (image (\<lambda>a. (a,f a)) (schema_variables S)) t Q"
+      show "t=evaluate_pattern f (schema_conclusion S) \<and> Q=evaluate_schema_premises f S"
+        by (rule schema_instance_unique[OF actual canonical])
+    next
+      assume "t=evaluate_pattern f (schema_conclusion S) \<and> Q=evaluate_schema_premises f S"
+      then show "schema_instance S (image (\<lambda>a. (a,f a)) (schema_variables S)) t Q"
+        using canonical by simp
+    qed
+  qed
+  have left: "\<forall>a\<in>schema_variables S. term_formed (Payload_Term a)"
+    if "schema_data_formed S" using that by (simp add: schema_data_formed_def)
+  have right: "\<forall>a\<in>schema_variables S. term_formed (Target_Term (Whole_Artifact empty_artifact))" by simp
+  have materials: "evaluate_schema_materials f S =
+    material_instance_relation (image (\<lambda>a. (a,f a)) (schema_variables S)) (schema_material_premises S)"
+    if "schema_data_formed S" for f
+    by (rule evaluate_schema_materials_relation) (use that in \<open>simp add: schema_data_formed_def\<close>)
+  let ?f="\<lambda>_::local_address. Target_Term (Whole_Artifact empty_artifact)"
+  let ?t="evaluate_pattern Payload_Term (schema_conclusion S)"
+  let ?v="evaluate_pattern ?f (schema_conclusion S)"
+  show ?thesis
+  proof
+    assume report: "schema_reference_presents S z"
+    have formed: "schema_data_formed S" using report by (simp add: schema_reference_presents_def)
+    obtain Vs qs cs ws ds where records:
+      "distinct Vs" "set Vs=schema_variables S"
+      "distinct qs" "set qs=evaluate_schema_premises Payload_Term S"
+      "distinct cs" "set cs=evaluate_schema_materials Payload_Term S"
+      "distinct ws" "set ws=evaluate_schema_premises ?f S"
+      "distinct ds" "set ds=evaluate_schema_materials ?f S"
+      "z=schema_reference_value (data_list_term (map Payload_Term Vs)) ?t
+        (call_instance_rows_term qs) (binding_rows_term cs) ?v
+        (call_instance_rows_term ws) (binding_rows_term ds)"
+      using report
+      by (simp only: schema_reference_presents_def schema_reference_data_def
+        schema_reference_outputs_def schema_reference_record_fields) blast
+    have first: "schema_instance S (image (\<lambda>a. (a,Payload_Term a)) (set Vs)) ?t (set qs)"
+      using records(4) by (simp add: records(2) evaluated[OF formed left[OF formed]])
+    have second: "schema_instance S (image (\<lambda>a. (a,?f a)) (set Vs)) ?v (set ws)"
+      using records(8) by (simp add: records(2) evaluated[OF formed right])
+    have cs: "set cs=material_instance_relation
+        (image (\<lambda>a. (a,Payload_Term a)) (set Vs)) (schema_material_premises S)"
+      using records(6) by (simp only: records(2) materials[OF formed])
+    have ds: "set ds=material_instance_relation (image (\<lambda>a. (a,?f a)) (set Vs)) (schema_material_premises S)"
+      using records(10) by (simp only: records(2) materials[OF formed])
+    show "schema_data_formed S \<and>
+    (\<exists>Vs t qs cs v ws ds. distinct Vs \<and> set Vs=schema_variables S \<and>
+      distinct qs \<and> distinct cs \<and> distinct ws \<and> distinct ds \<and>
+      schema_instance S (image (\<lambda>a. (a,Payload_Term a)) (set Vs)) t (set qs) \<and>
+      set cs=material_instance_relation (image (\<lambda>a. (a,Payload_Term a)) (set Vs)) (schema_material_premises S) \<and>
+      schema_instance S (image (\<lambda>a. (a,Target_Term (Whole_Artifact empty_artifact))) (set Vs)) v (set ws) \<and>
+      set ds=material_instance_relation
+        (image (\<lambda>a. (a,Target_Term (Whole_Artifact empty_artifact))) (set Vs)) (schema_material_premises S) \<and>
+      z=schema_reference_value (data_list_term (map Payload_Term Vs)) t
+        (call_instance_rows_term qs) (binding_rows_term cs) v
+        (call_instance_rows_term ws) (binding_rows_term ds))"
+      by (rule conjI[OF formed], rule exI[of _ Vs], rule exI[of _ ?t], rule exI[of _ qs],
+        rule exI[of _ cs], rule exI[of _ ?v], rule exI[of _ ws], rule exI[of _ ds])
+        (use records first second cs ds in simp)
+  next
+    assume "schema_data_formed S \<and>
+    (\<exists>Vs t qs cs v ws ds. distinct Vs \<and> set Vs=schema_variables S \<and>
+      distinct qs \<and> distinct cs \<and> distinct ws \<and> distinct ds \<and>
+      schema_instance S (image (\<lambda>a. (a,Payload_Term a)) (set Vs)) t (set qs) \<and>
+      set cs=material_instance_relation (image (\<lambda>a. (a,Payload_Term a)) (set Vs)) (schema_material_premises S) \<and>
+      schema_instance S (image (\<lambda>a. (a,Target_Term (Whole_Artifact empty_artifact))) (set Vs)) v (set ws) \<and>
+      set ds=material_instance_relation
+        (image (\<lambda>a. (a,Target_Term (Whole_Artifact empty_artifact))) (set Vs)) (schema_material_premises S) \<and>
+      z=schema_reference_value (data_list_term (map Payload_Term Vs)) t
+        (call_instance_rows_term qs) (binding_rows_term cs) v
+        (call_instance_rows_term ws) (binding_rows_term ds))"
+    then obtain Vs t qs cs v ws ds where data:
+      "schema_data_formed S" "distinct Vs" "set Vs=schema_variables S"
+      "distinct qs" "distinct cs" "distinct ws" "distinct ds"
+      "schema_instance S (image (\<lambda>a. (a,Payload_Term a)) (set Vs)) t (set qs)"
+      "set cs=material_instance_relation (image (\<lambda>a. (a,Payload_Term a)) (set Vs)) (schema_material_premises S)"
+      "schema_instance S (image (\<lambda>a. (a,?f a)) (set Vs)) v (set ws)"
+      "set ds=material_instance_relation (image (\<lambda>a. (a,?f a)) (set Vs)) (schema_material_premises S)"
+      "z=schema_reference_value (data_list_term (map Payload_Term Vs)) t
+        (call_instance_rows_term qs) (binding_rows_term cs) v (call_instance_rows_term ws) (binding_rows_term ds)"
+      by blast
+    have first: "t=?t \<and> set qs=evaluate_schema_premises Payload_Term S"
+      using data(8) by (simp only: data(3) evaluated[OF data(1) left[OF data(1)]])
+    have second: "v=?v \<and> set ws=evaluate_schema_premises ?f S"
+      using data(10) by (simp only: data(3) evaluated[OF data(1) right])
+    have cs: "set cs=evaluate_schema_materials Payload_Term S"
+      using data(9) by (simp only: data(3) materials[OF data(1)])
+    have ds: "set ds=evaluate_schema_materials ?f S"
+      using data(11) by (simp only: data(3) materials[OF data(1)])
+    have report: "schema_reference_record_presents (schema_reference_data S) z"
+      apply (simp only: schema_reference_data_def schema_reference_outputs_def schema_reference_record_fields)
+      apply (rule exI[of _ Vs], rule exI[of _ qs], rule exI[of _ cs], rule exI[of _ ws], rule exI[of _ ds])
+      using data(2-7,12) first second cs ds apply simp
+      done
+    show "schema_reference_presents S z" using data(1) report by (simp only: schema_reference_presents_def)
+  qed
+qed
+
+lemma schema_instantiation_outputs_at:
+  assumes source: "environment_value_presents E e" and raw: "native_schema_at E u r S"
+  shows "(65,schema_instantiation_argument e (use_data_term u) (Payload_Term r)
+      (binding_rows_term xs) t q c)\<in>positive_meaning schema_instantiation_system \<longleftrightarrow>
+    distinct xs \<and> (\<exists>qs cs. q=call_instance_rows_term qs \<and> c=binding_rows_term cs \<and>
+      distinct qs \<and> distinct cs \<and> schema_instance S (set xs) t (set qs) \<and>
+      set cs=material_instance_relation (set xs) (schema_material_premises S))"
+proof -
+  have unique: "T=S" if "native_schema_at E u r T" for T
+    by (rule native_schema_unique[OF that raw])
+  show ?thesis
+    by (simp only: schema_instantiation_at_source[OF source] factor_term.inject
+      binding_rows_term_injective inj_eq[OF use_data_term_injective])
+      (use raw unique in blast)
+qed
+
+section \<open>Formation follows from the complete field boundary\<close>
+
+lemma schema_reference_output_formed:
+  assumes formed: "schema_data_formed S" and inst: "schema_instance S V t (set qs)"
+    and materials: "set cs=material_instance_relation V (schema_material_premises S)"
+  shows "term_formed t" "term_formed (call_instance_rows_term qs)" "term_formed (binding_rows_term cs)"
+proof -
+  have bindings: "term_bindings_formed (schema_variables S) V"
+    using inst by (simp add: schema_instance_def)
+  have calls: "octets_formed s \<and> octets_formed (snd d) \<and> term_formed x"
+    if row: "(s,d,x)\<in>set qs" for s d x
+  proof -
+    have domain: "rel_dom (set qs)=rel_dom (schema_premises S)"
+      using schema_instance_socket_boundary[OF inst] by blast
+    have entry: "s\<in>rel_dom (set qs)" by (rule rel_domI[OF row])
+    have ordinary: "s\<in>rel_dom (schema_premises S)" using entry by (simp only: domain)
+    have socket: "s\<in>schema_sockets S"
+      using ordinary by (simp add: schema_sockets_def)
+    have dependency: "d\<in>schema_dependencies S"
+      by (rule schema_instance_dependency[OF inst row])
+    have value_formed: "term_formed x" using schema_instance_formed[OF inst] row by blast
+    show ?thesis using formed socket dependency value_formed
+      by (auto simp: schema_data_formed_def)
+  qed
+  have material_rows: "octets_formed s \<and> term_formed x"
+    if row: "(s,x)\<in>set cs" for s x
+  proof -
+    obtain M a b c d e where instance_read:
+      "(s,M)\<in>schema_material_premises S" "x=material_tuple a b c d e"
+      "material_pattern_instance V M a b c d e"
+      using row materials by (auto simp: material_instance_relation_def)
+    have socket: "s\<in>schema_sockets S"
+      using instance_read(1) by (auto simp: schema_sockets_def rel_dom_def)
+    show ?thesis using formed socket material_pattern_instance_formed[OF bindings instance_read(3)]
+      instance_read(2) by (auto simp: schema_data_formed_def material_tuple_def)
+  qed
+  show "term_formed t" using schema_instance_formed[OF inst] by blast
+  have rows_formed: "\<forall>q\<in>set qs. term_formed (call_row_value q)"
+  proof (intro ballI)
+    fix q assume member: "q\<in>set qs"
+    have row: "(fst q,fst (snd q),snd (snd q))\<in>set qs" using member by simp
+    have fields: "octets_formed (fst q) \<and> octets_formed (snd (fst (snd q))) \<and> term_formed (snd (snd q))"
+      by (rule calls[OF row])
+    show "term_formed (call_row_value q)" using fields by (simp add: call_instance_value_def)
+  qed
+  have list_formed: "term_formed (data_list_term (map call_row_value qs))"
+    using rows_formed by (simp add: data_list_term_formed)
+  show "term_formed (call_instance_rows_term qs)"
+    using list_formed by (simp only: call_row_values)
+  show "term_formed (binding_rows_term cs)"
+    using material_rows by (simp only: binding_rows_term_formed; auto)
+qed
+
+lemma schema_reference_presents_formed:
+  assumes "schema_reference_presents S z"
+  shows "term_formed z"
+proof -
+  obtain Vs t qs cs v ws ds where parts:
+    "schema_data_formed S" "set Vs=schema_variables S"
+    "schema_instance S (image (\<lambda>a. (a,Payload_Term a)) (set Vs)) t (set qs)"
+    "set cs=material_instance_relation (image (\<lambda>a. (a,Payload_Term a)) (set Vs)) (schema_material_premises S)"
+    "schema_instance S (image (\<lambda>a. (a,Target_Term (Whole_Artifact empty_artifact))) (set Vs)) v (set ws)"
+    "set ds=material_instance_relation
+      (image (\<lambda>a. (a,Target_Term (Whole_Artifact empty_artifact))) (set Vs)) (schema_material_premises S)"
+    "z=schema_reference_value (data_list_term (map Payload_Term Vs)) t
+      (call_instance_rows_term qs) (binding_rows_term cs) v (call_instance_rows_term ws) (binding_rows_term ds)"
+    using schema_reference_presents_fields[THEN iffD1, OF assms]
+    by (elim conjE exE) (rule that; assumption)
+  have variables: "term_formed (data_list_term (map Payload_Term Vs))"
+    using parts(1,2) by (auto simp: schema_data_formed_def data_list_term_formed)
+  show ?thesis using schema_reference_output_formed[OF parts(1,3,4)]
+    schema_reference_output_formed[OF parts(1,5,6)] variables parts(7) by simp
+qed
+
+lemma native_schema_data_formed:
+  assumes raw: "native_schema_at E u r S"
+  shows "schema_data_formed S"
+proof -
+  have formed: "schema_formed S" by (rule native_schema_formed[OF raw])
+  have variables: "\<forall>a\<in>schema_variables S. octets_formed a"
+    by (rule native_schema_variables_formed[OF raw])
+  obtain m where family: "native_premise_family_at E u (schema_variables S) m
+      (schema_premises S) (schema_material_premises S)"
+    using raw by (auto simp: native_schema_at_def)
+  obtain R M where rows: "environment_formed E" "artifact_at E u R" "family_at R m M"
+    "rel_dom (socket_sum (schema_premises S) (schema_material_premises S))=rel_dom M"
+    using family by (auto simp: native_premise_family_at_def)
+  have artifact: "exact_formed R" using rows(1,2) by (auto simp: environment_formed_def)
+  have sockets: "\<forall>s\<in>schema_sockets S. octets_formed s"
+    using family_interior_in_carrier[OF rows(3)] rows(4) artifact
+    by (auto simp: schema_sockets_def socket_sum_domain exact_formed_def)
+  have dependencies: "\<forall>d\<in>schema_dependencies S. octets_formed (snd d)"
+  proof
+    fix d assume member: "d\<in>schema_dependencies S"
+    have position: "d\<in>environment_positions E" by (rule native_schema_dependency_target[OF raw member])
+    show "octets_formed (snd d)" using environment_position_address[OF rows(1) position] .
+  qed
+  show ?thesis using formed variables sockets dependencies by (simp add: schema_data_formed_def)
+qed
+
+theorem native_schema_reference_total:
+  assumes "native_schema_at E u r S"
+  shows "\<exists>z. schema_reference_presents S z \<and> term_formed z"
+  using schema_reference_presentations.total[OF native_schema_data_formed[OF assms]]
+    schema_reference_presents_formed by blast
+
+theorem schema_reference_contract_transfer:
+  assumes expected: "schema_reference_presents S p" and actual: "schema_reference_presents T p"
+  shows "S=T"
+    and "\<forall>V t Q. schema_instance T V t Q \<longleftrightarrow> schema_instance S V t Q"
+    and "\<forall>V. schema_material_satisfied T V \<longleftrightarrow> schema_material_satisfied S V"
+    and "\<forall>X t. schema_rule_instance T X t \<longleftrightarrow> schema_rule_instance S X t"
+  using schema_reference_presentations.recovery[OF expected actual] by simp_all
+
+text \<open>
+  The independent subject boundary requires a formed complete schema and
+  formed binder, socket, and callee-root coordinates. It does not require
+  successful premises, an inhabited rule, or a finite set of future arguments.
+
+  Two complete outputs determine the actual schema through the previously
+  proved grammar theorem. The first maps each binder address to its own
+  payload; the second maps every binder address to one formed target. Each
+  output retains its conclusion, every identified prospective call with its
+  actual callee, and every complete five-operand material tuple. The binder
+  is retained once. Premise truth is absent from these observations.
+
+  Product and collection classes construct the report. Each finite field
+  admits every enumeration, with independent orders in the two output
+  parts. The observation class is then derived by the general rule for
+  jointly determining observations. Equality of reports recovers complete syntax and hence
+  preserves every later instance and rule application. The observations do
+  not replace the actual source artifact or its structural reading boundary.
+
+  An exact reference report alone asserts no rule contract and supplies no
+  program interface or complete clause family. Native comparison with a
+  source and any claimed semantic consequence are separate obligations.
+\<close>
+
+end

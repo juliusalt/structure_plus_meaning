@@ -1,0 +1,9 @@
+{
+  "boundary": "Supplementary source capture after baseline execution. The original receipt tracks the main case generator, checker, and investigation module; it did not separately track the imported construction-chain case helper during execution. A replay will add that provenance explicitly.",
+  "sha256": {
+    "investigate.py": "7643dbebe13aed0e9d9bc4cff062575c665fec4ed0f7c0527857cd5d07263628",
+    "check_construction_chains.py": "621ab792deb4dafbde6b7cf98a75277a2653f7b1ca056cae369cf43e8a8e777d",
+    "check_library_coverage.py": "757c87436018c8fc319975b2093b8d2aba955f896803ddb4d6794e4ed3c07c57",
+    "check_reasoning.py": "74a78a69407ea82d659925cba34628b19a0579a633c7de6bd3b8f3ff0e61b6a8"
+  }
+}

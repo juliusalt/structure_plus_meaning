@@ -1,0 +1,383 @@
+theory Factor_Environment_Lookup
+  imports Factor_Citation_Admission
+begin
+
+section \<open>Selection in a complete represented environment\<close>
+
+lemma environment_artifact_selection:
+  assumes source: "environment_value_presents E (Pair_Term a b)"
+  shows "(\<forall>u R. artifact_at E u R \<longrightarrow>
+      (\<exists>v. selected_data_member (Pair_Term (use_data_term u) v) a \<and> artifact_value_presents R v)) \<and>
+    (\<forall>u v. selected_data_member (Pair_Term u v) a \<longrightarrow>
+      (\<exists>q R. u=use_data_term q \<and> artifact_at E q R \<and> artifact_value_presents R v))"
+proof -
+  have table: "data_collection_presents environment_artifact_entry_presents (environment_artifacts E) a"
+    using source by (auto simp: environment_value_presents_def)
+  have rows: "(\<forall>z\<in>environment_artifacts E. \<exists>v. selected_data_member v a \<and> environment_artifact_entry_presents z v) \<and>
+    (\<forall>v. selected_data_member v a \<longrightarrow> (\<exists>z\<in>environment_artifacts E. environment_artifact_entry_presents z v))"
+    by (rule data_collection_selection[OF table]) (meson environment_artifact_entry_formed)
+  have forward: "\<exists>v. selected_data_member (Pair_Term (use_data_term u) v) a \<and> artifact_value_presents R v"
+    if actual: "artifact_at E u R" for u R
+  proof -
+    have member: "(u,R)\<in>environment_artifacts E" using actual by (simp add: artifact_at_def)
+    obtain v where entry: "selected_data_member v a" "environment_artifact_entry_presents (u,R) v"
+      using rows member by blast
+    obtain w where fields: "v=Pair_Term (use_data_term u) w" "artifact_value_presents R w"
+      using entry(2) by (auto simp: environment_artifact_entry_presents_def)
+    show ?thesis using entry(1) fields by blast
+  qed
+  have backward: "\<exists>q R. u=use_data_term q \<and> artifact_at E q R \<and> artifact_value_presents R v"
+    if selected: "selected_data_member (Pair_Term u v) a" for u v
+  proof -
+    obtain z where entry: "z\<in>environment_artifacts E" "environment_artifact_entry_presents z (Pair_Term u v)"
+      using rows selected by blast
+    obtain q R where shape: "z=(q,R)" by (cases z)
+    have fields: "u=use_data_term q" "artifact_value_presents R v"
+      using entry(2) by (auto simp: shape environment_artifact_entry_presents_def)
+    have actual: "artifact_at E q R" using entry(1) by (simp add: shape artifact_at_def)
+    show ?thesis using fields actual by blast
+  qed
+  show ?thesis using forward backward by blast
+qed
+
+lemma environment_binding_selection:
+  assumes source: "environment_value_presents E (Pair_Term a b)"
+  shows "selected_data_member t b \<longleftrightarrow>
+    (\<exists>u k v. binds_slot E u k v \<and> t=binding_data ((u,k),v))"
+proof -
+  have formed: "environment_formed E"
+    and table: "data_collection_presents (\<lambda>z t. t=binding_data z) (environment_bindings E) b"
+    using source by (auto simp: environment_value_presents_def)
+  have rows: "(\<forall>z\<in>environment_bindings E. \<exists>v. selected_data_member v b \<and> v=binding_data z) \<and>
+    (\<forall>v. selected_data_member v b \<longrightarrow> (\<exists>z\<in>environment_bindings E. v=binding_data z))"
+    by (rule data_collection_selection[OF table])
+      (use binding_data_formed[OF formed] in auto)
+  show ?thesis
+  proof
+    assume selected: "selected_data_member t b"
+    obtain z where entry: "z\<in>environment_bindings E" "t=binding_data z" using rows selected by blast
+    obtain u k v where shape: "z=((u,k),v)" by (cases z) auto
+    show "\<exists>u k v. binds_slot E u k v \<and> t=binding_data ((u,k),v)"
+      using entry by (auto simp: shape binds_slot_def)
+  next
+    assume "\<exists>u k v. binds_slot E u k v \<and> t=binding_data ((u,k),v)"
+    then obtain u k v where entry: "((u,k),v)\<in>environment_bindings E" "t=binding_data ((u,k),v)"
+      by (auto simp: binds_slot_def)
+    show "selected_data_member t b" using rows entry by blast
+  qed
+qed
+
+abbreviation artifact_lookup_argument :: "factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term" where
+  "artifact_lookup_argument e u a \<equiv> Pair_Term e (Pair_Term u a)"
+
+abbreviation artifact_lookup_pattern ::
+  "'a term_pattern \<Rightarrow> 'a term_pattern \<Rightarrow> 'a term_pattern \<Rightarrow> 'a term_pattern" where
+  "artifact_lookup_pattern e u a \<equiv> Pattern_Pair e (Pattern_Pair u a)"
+
+abbreviation binding_lookup_argument ::
+  "factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term" where
+  "binding_lookup_argument e u k v \<equiv> Pair_Term e (Pair_Term (Pair_Term u k) v)"
+
+abbreviation binding_lookup_pattern ::
+  "'a term_pattern \<Rightarrow> 'a term_pattern \<Rightarrow> 'a term_pattern \<Rightarrow> 'a term_pattern \<Rightarrow> 'a term_pattern" where
+  "binding_lookup_pattern e u k v \<equiv> Pattern_Pair e (Pattern_Pair (Pattern_Pair u k) v)"
+
+section \<open>An artifact output may have any complete presentation\<close>
+
+definition artifact_lookup_schema :: "(nat,nat,nat) factor_schema" where
+  "artifact_lookup_schema=data_rule
+    (artifact_lookup_pattern (Pattern_Pair data_x data_y) data_z data_w)
+    {(0,26,Pattern_Pair data_x data_y),
+     (1,5,Pattern_Pair (Pattern_Pair data_z (Pattern_Variable 4)) (Pattern_Pair data_x (Pattern_Variable 5))),
+     (2,12,Pattern_Pair (Pattern_Variable 4) data_w)}"
+
+definition artifact_lookup_system :: "(nat,nat,nat,nat) schema_system" where
+  "artifact_lookup_system=add_view_definition citation_admission_system 37 data_x {(0,artifact_lookup_schema)}"
+
+interpretation artifact_lookup_view: positive_view citation_admission_system 37 data_x "{(0,artifact_lookup_schema)}"
+  by (rule positive_view.intro)
+    (auto simp: artifact_lookup_schema_def schema_formed_def schema_dependencies_def
+      single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma artifact_lookup_system_formed [simp]: "schema_system_formed artifact_lookup_system"
+  using artifact_lookup_view.formed by (simp only: artifact_lookup_system_def)
+
+lemma artifact_lookup_definitions [simp]:
+  "system_definitions artifact_lookup_system=insert 37 (system_definitions citation_admission_system)"
+  by (simp add: artifact_lookup_system_def)
+
+lemma artifact_lookup_call:
+  "schema_call_formed artifact_lookup_system d t \<longleftrightarrow>
+    d\<in>system_definitions artifact_lookup_system \<and> term_formed t"
+  using added_variable_calls[OF citation_admission_system_formed
+    artifact_lookup_system_formed[unfolded artifact_lookup_system_def] citation_admission_call]
+  by (simp only: artifact_lookup_system_def[symmetric])
+
+lemma artifact_lookup_old_meaning:
+  assumes "d\<in>system_definitions citation_admission_system"
+  shows "(d,t)\<in>positive_meaning artifact_lookup_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning citation_admission_system"
+  using artifact_lookup_view.old_meaning[OF assms, of t] by (simp only: artifact_lookup_system_def)
+
+lemma artifact_lookup_clause [simp]:
+  "((37,c),S)\<in>system_clauses artifact_lookup_system \<longleftrightarrow> (c,S)\<in>{(0,artifact_lookup_schema)}"
+  using artifact_lookup_view.no_old_clause[of c S] by (auto simp: artifact_lookup_system_def)
+
+lemma artifact_lookup_environment_meaning:
+  assumes "d\<in>system_definitions environment_identity_system"
+  shows "(d,t)\<in>positive_meaning artifact_lookup_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning environment_identity_system"
+  using artifact_lookup_old_meaning[of d t] citation_admission_old_meaning[of d t]
+    target_admission_headed_meaning[of d t] headed_material_old_meaning[of d t]
+    key_fibre_old_meaning[OF assms, of t] assms by auto
+
+lemma artifact_lookup_components:
+  "(26,t)\<in>positive_meaning artifact_lookup_system \<longleftrightarrow> (\<exists>E. environment_value_presents E t)"
+  "(5,t)\<in>positive_meaning artifact_lookup_system \<longleftrightarrow> (5,t)\<in>positive_meaning bag_comparison_system"
+  "(12,t)\<in>positive_meaning artifact_lookup_system \<longleftrightarrow>
+    (\<exists>R a b. t=Pair_Term a b \<and> artifact_value_presents R a \<and> artifact_value_presents R b)"
+  using artifact_lookup_environment_meaning[of 26 t] environment_identity_admission[of t]
+    artifact_lookup_environment_meaning[of 5 t] environment_identity_old_meaning[of 5 t]
+    environment_comparison_old_meaning[of 5 t] environment_bag_base_meaning[of 5 t]
+    artifact_lookup_environment_meaning[of 12 t] environment_identity_old_meaning[of 12 t]
+    environment_comparison_artifact_meaning[of 12 t] artifact_identity_exact[of t] by auto
+
+lemma artifact_lookup_valuation:
+  "(37,t)\<in>positive_meaning artifact_lookup_system \<longleftrightarrow>
+    (\<exists>h::nat\<Rightarrow>factor_term. (\<forall>i\<in>{0,1,2,3,4,5}. term_formed (h i)) \<and>
+      t=artifact_lookup_argument (Pair_Term (h 0) (h 1)) (h 2) (h 3) \<and>
+      (\<exists>E. environment_value_presents E (Pair_Term (h 0) (h 1))) \<and>
+      (5,Pair_Term (Pair_Term (h 2) (h 4)) (Pair_Term (h 0) (h 5)))\<in>positive_meaning bag_comparison_system \<and>
+      (\<exists>R. artifact_value_presents R (h 4) \<and> artifact_value_presents R (h 3)))"
+  by (subst ordinary_positive_entry_valuation)
+    (auto simp: artifact_lookup_schema_def schema_variables_def artifact_lookup_call artifact_lookup_components)
+
+lemma artifact_lookup_fields:
+  "(37,t)\<in>positive_meaning artifact_lookup_system \<longleftrightarrow>
+    (\<exists>E a b u v w. t=artifact_lookup_argument (Pair_Term a b) u v \<and>
+      environment_value_presents E (Pair_Term a b) \<and>
+      selected_data_member (Pair_Term u w) a \<and>
+      (\<exists>R. artifact_value_presents R w \<and> artifact_value_presents R v))"
+proof
+  assume "(37,t)\<in>positive_meaning artifact_lookup_system"
+  then show "\<exists>E a b u v w. t=artifact_lookup_argument (Pair_Term a b) u v \<and>
+      environment_value_presents E (Pair_Term a b) \<and>
+      selected_data_member (Pair_Term u w) a \<and>
+      (\<exists>R. artifact_value_presents R w \<and> artifact_value_presents R v)"
+    by (simp only: artifact_lookup_valuation) blast
+next
+  assume "\<exists>E a b u v w. t=artifact_lookup_argument (Pair_Term a b) u v \<and>
+      environment_value_presents E (Pair_Term a b) \<and>
+      selected_data_member (Pair_Term u w) a \<and>
+      (\<exists>R. artifact_value_presents R w \<and> artifact_value_presents R v)"
+  then obtain E a b u v w r R where parts:
+    "t=artifact_lookup_argument (Pair_Term a b) u v" "environment_value_presents E (Pair_Term a b)"
+    "(5,Pair_Term (Pair_Term u w) (Pair_Term a r))\<in>positive_meaning bag_comparison_system"
+    "artifact_value_presents R w" "artifact_value_presents R v" by blast
+  have formed: "term_formed a" "term_formed b" "term_formed u" "term_formed v" "term_formed w" "term_formed r"
+    using environment_value_presents_formed[OF parts(2)]
+      schema_call_formed_target[OF positive_meaning_formed[OF parts(3)]]
+      artifact_value_presents_formed[OF parts(5)] by auto
+  show "(37,t)\<in>positive_meaning artifact_lookup_system"
+    by (simp only: artifact_lookup_valuation,
+      rule exI[of _ "\<lambda>i::nat. if i=0 then a else if i=1 then b else if i=2 then u else if i=3 then v else if i=4 then w else r"])
+      (use parts formed in auto)
+qed
+
+theorem artifact_lookup_exact:
+  "(37,t)\<in>positive_meaning artifact_lookup_system \<longleftrightarrow>
+    (\<exists>E e u R a. t=artifact_lookup_argument e (use_data_term u) a \<and>
+      environment_value_presents E e \<and> artifact_at E u R \<and> artifact_value_presents R a)"
+proof
+  assume "(37,t)\<in>positive_meaning artifact_lookup_system"
+  then obtain E a b u v w R where parts:
+    "t=artifact_lookup_argument (Pair_Term a b) u v" "environment_value_presents E (Pair_Term a b)"
+    "selected_data_member (Pair_Term u w) a" "artifact_value_presents R w" "artifact_value_presents R v"
+    by (simp only: artifact_lookup_fields) blast
+  obtain q T where row: "u=use_data_term q" "artifact_at E q T" "artifact_value_presents T w"
+    using parts(3) environment_artifact_selection[OF parts(2)] by blast
+  have same: "T=R" by (rule artifact_value_presents_unique[OF row(3) parts(4)])
+  show "\<exists>E e u R a. t=artifact_lookup_argument e (use_data_term u) a \<and>
+      environment_value_presents E e \<and> artifact_at E u R \<and> artifact_value_presents R a"
+    using parts row same by blast
+next
+  assume "\<exists>E e u R a. t=artifact_lookup_argument e (use_data_term u) a \<and>
+      environment_value_presents E e \<and> artifact_at E u R \<and> artifact_value_presents R a"
+  then obtain E e u R v where parts: "t=artifact_lookup_argument e (use_data_term u) v"
+    "environment_value_presents E e" "artifact_at E u R" "artifact_value_presents R v" by blast
+  obtain a b where shape: "e=Pair_Term a b" using parts(2) by (auto simp: environment_value_presents_def)
+  have source: "environment_value_presents E (Pair_Term a b)" using parts(2) shape by simp
+  obtain w where row: "selected_data_member (Pair_Term (use_data_term u) w) a" "artifact_value_presents R w"
+    using environment_artifact_selection[OF source] parts(3) by blast
+  show "(37,t)\<in>positive_meaning artifact_lookup_system"
+    using parts source row by (auto simp: artifact_lookup_fields shape)
+qed
+
+corollary artifact_lookup_at_source:
+  assumes source: "environment_value_presents E e"
+  shows "(37,artifact_lookup_argument e u a)\<in>positive_meaning artifact_lookup_system \<longleftrightarrow>
+    (\<exists>v R. u=use_data_term v \<and> artifact_at E v R \<and> artifact_value_presents R a)"
+proof
+  assume holds: "(37,artifact_lookup_argument e u a)\<in>positive_meaning artifact_lookup_system"
+  obtain F v R where parts: "environment_value_presents F e" "u=use_data_term v"
+    "artifact_at F v R" "artifact_value_presents R a" using holds by (auto simp: artifact_lookup_exact)
+  have same: "F=E" by (rule environment_value_presents_unique[OF parts(1) source])
+  show "\<exists>v R. u=use_data_term v \<and> artifact_at E v R \<and> artifact_value_presents R a"
+    using parts same by blast
+next
+  assume "\<exists>v R. u=use_data_term v \<and> artifact_at E v R \<and> artifact_value_presents R a"
+  then show "(37,artifact_lookup_argument e u a)\<in>positive_meaning artifact_lookup_system"
+    using source by (auto simp: artifact_lookup_exact)
+qed
+
+corollary artifact_lookup_presentation_invariance:
+  assumes "environment_value_presents E e" "environment_value_presents E f"
+  shows "(37,artifact_lookup_argument e u a)\<in>positive_meaning artifact_lookup_system \<longleftrightarrow>
+    (37,artifact_lookup_argument f u a)\<in>positive_meaning artifact_lookup_system"
+  by (simp only: artifact_lookup_at_source[OF assms(1)] artifact_lookup_at_source[OF assms(2)])
+
+section \<open>A binding output is its exact destination use\<close>
+
+definition binding_lookup_schema :: "(nat,nat,nat) factor_schema" where
+  "binding_lookup_schema=data_rule
+    (binding_lookup_pattern (Pattern_Pair data_x data_y) data_z data_w (Pattern_Variable 4))
+    {(0,26,Pattern_Pair data_x data_y),
+     (1,5,Pattern_Pair (Pattern_Pair (Pattern_Pair data_z data_w) (Pattern_Variable 4))
+       (Pattern_Pair data_y (Pattern_Variable 5)))}"
+
+definition binding_lookup_system :: "(nat,nat,nat,nat) schema_system" where
+  "binding_lookup_system=add_view_definition artifact_lookup_system 38 data_x {(0,binding_lookup_schema)}"
+
+interpretation binding_lookup_view: positive_view artifact_lookup_system 38 data_x "{(0,binding_lookup_schema)}"
+  by (rule positive_view.intro)
+    (auto simp: binding_lookup_schema_def schema_formed_def schema_dependencies_def
+      single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma binding_lookup_system_formed [simp]: "schema_system_formed binding_lookup_system"
+  using binding_lookup_view.formed by (simp only: binding_lookup_system_def)
+
+lemma binding_lookup_definitions [simp]:
+  "system_definitions binding_lookup_system=insert 38 (system_definitions artifact_lookup_system)"
+  by (simp add: binding_lookup_system_def)
+
+lemma binding_lookup_call:
+  "schema_call_formed binding_lookup_system d t \<longleftrightarrow>
+    d\<in>system_definitions binding_lookup_system \<and> term_formed t"
+  using added_variable_calls[OF artifact_lookup_system_formed
+    binding_lookup_system_formed[unfolded binding_lookup_system_def] artifact_lookup_call]
+  by (simp only: binding_lookup_system_def[symmetric])
+
+lemma binding_lookup_old_meaning:
+  assumes "d\<in>system_definitions artifact_lookup_system"
+  shows "(d,t)\<in>positive_meaning binding_lookup_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning artifact_lookup_system"
+  using binding_lookup_view.old_meaning[OF assms, of t] by (simp only: binding_lookup_system_def)
+
+lemma binding_lookup_clause [simp]:
+  "((38,c),S)\<in>system_clauses binding_lookup_system \<longleftrightarrow> (c,S)\<in>{(0,binding_lookup_schema)}"
+  using binding_lookup_view.no_old_clause[of c S] by (auto simp: binding_lookup_system_def)
+
+lemma binding_lookup_components:
+  "(26,t)\<in>positive_meaning binding_lookup_system \<longleftrightarrow> (\<exists>E. environment_value_presents E t)"
+  "(5,t)\<in>positive_meaning binding_lookup_system \<longleftrightarrow> (5,t)\<in>positive_meaning bag_comparison_system"
+  "(37,t)\<in>positive_meaning binding_lookup_system \<longleftrightarrow> (37,t)\<in>positive_meaning artifact_lookup_system"
+  using binding_lookup_old_meaning[of 26 t] binding_lookup_old_meaning[of 5 t]
+    binding_lookup_old_meaning[of 37 t] artifact_lookup_components(1,2)[of t] by auto
+
+lemma binding_lookup_valuation:
+  "(38,t)\<in>positive_meaning binding_lookup_system \<longleftrightarrow>
+    (\<exists>h::nat\<Rightarrow>factor_term. (\<forall>i\<in>{0,1,2,3,4,5}. term_formed (h i)) \<and>
+      t=binding_lookup_argument (Pair_Term (h 0) (h 1)) (h 2) (h 3) (h 4) \<and>
+      (\<exists>E. environment_value_presents E (Pair_Term (h 0) (h 1))) \<and>
+      (5,Pair_Term (Pair_Term (Pair_Term (h 2) (h 3)) (h 4)) (Pair_Term (h 1) (h 5)))
+        \<in>positive_meaning bag_comparison_system)"
+  by (subst ordinary_positive_entry_valuation)
+    (auto simp: binding_lookup_schema_def schema_variables_def binding_lookup_call binding_lookup_components)
+
+lemma binding_lookup_fields:
+  "(38,t)\<in>positive_meaning binding_lookup_system \<longleftrightarrow>
+    (\<exists>E a b u k v. t=binding_lookup_argument (Pair_Term a b) u k v \<and>
+      environment_value_presents E (Pair_Term a b) \<and> selected_data_member (Pair_Term (Pair_Term u k) v) b)"
+proof
+  assume "(38,t)\<in>positive_meaning binding_lookup_system"
+  then show "\<exists>E a b u k v. t=binding_lookup_argument (Pair_Term a b) u k v \<and>
+      environment_value_presents E (Pair_Term a b) \<and> selected_data_member (Pair_Term (Pair_Term u k) v) b"
+    by (auto simp: binding_lookup_valuation)
+next
+  assume "\<exists>E a b u k v. t=binding_lookup_argument (Pair_Term a b) u k v \<and>
+      environment_value_presents E (Pair_Term a b) \<and> selected_data_member (Pair_Term (Pair_Term u k) v) b"
+  then obtain E a b u k v r where parts:
+    "t=binding_lookup_argument (Pair_Term a b) u k v" "environment_value_presents E (Pair_Term a b)"
+    "(5,Pair_Term (Pair_Term (Pair_Term u k) v) (Pair_Term b r))\<in>positive_meaning bag_comparison_system" by blast
+  have formed: "term_formed a" "term_formed b" "term_formed u" "term_formed k" "term_formed v" "term_formed r"
+    using environment_value_presents_formed[OF parts(2)]
+      schema_call_formed_target[OF positive_meaning_formed[OF parts(3)]] by auto
+  show "(38,t)\<in>positive_meaning binding_lookup_system"
+    by (simp only: binding_lookup_valuation,
+      rule exI[of _ "\<lambda>i::nat. if i=0 then a else if i=1 then b else if i=2 then u else if i=3 then k else if i=4 then v else r"])
+      (use parts formed in auto)
+qed
+
+theorem binding_lookup_exact:
+  "(38,t)\<in>positive_meaning binding_lookup_system \<longleftrightarrow>
+    (\<exists>E e u k v. t=binding_lookup_argument e (use_data_term u) (Payload_Term k) (use_data_term v) \<and>
+      environment_value_presents E e \<and> binds_slot E u k v)"
+proof
+  assume "(38,t)\<in>positive_meaning binding_lookup_system"
+  then obtain E a b u k v where parts: "t=binding_lookup_argument (Pair_Term a b) u k v"
+    "environment_value_presents E (Pair_Term a b)" "selected_data_member (Pair_Term (Pair_Term u k) v) b"
+    by (simp only: binding_lookup_fields) blast
+  obtain q r w where row: "binds_slot E q r w" "u=use_data_term q" "k=Payload_Term r" "v=use_data_term w"
+    using parts(3) by (auto simp: environment_binding_selection[OF parts(2)] binding_data_def)
+  show "\<exists>E e u k v. t=binding_lookup_argument e (use_data_term u) (Payload_Term k) (use_data_term v) \<and>
+      environment_value_presents E e \<and> binds_slot E u k v"
+    using parts row by blast
+next
+  assume "\<exists>E e u k v. t=binding_lookup_argument e (use_data_term u) (Payload_Term k) (use_data_term v) \<and>
+      environment_value_presents E e \<and> binds_slot E u k v"
+  then obtain E e u k v where parts:
+    "t=binding_lookup_argument e (use_data_term u) (Payload_Term k) (use_data_term v)"
+    "environment_value_presents E e" "binds_slot E u k v" by blast
+  obtain a b where shape: "e=Pair_Term a b" using parts(2) by (auto simp: environment_value_presents_def)
+  have source: "environment_value_presents E (Pair_Term a b)" using parts(2) shape by simp
+  have row: "selected_data_member (Pair_Term (Pair_Term (use_data_term u) (Payload_Term k)) (use_data_term v)) b"
+    using parts(3) by (auto simp: environment_binding_selection[OF source] binding_data_def)
+  show "(38,t)\<in>positive_meaning binding_lookup_system"
+    using parts source row by (auto simp: binding_lookup_fields shape)
+qed
+
+corollary binding_lookup_at_source:
+  assumes source: "environment_value_presents E e"
+  shows "(38,binding_lookup_argument e u k v)\<in>positive_meaning binding_lookup_system \<longleftrightarrow>
+    (\<exists>q r w. u=use_data_term q \<and> k=Payload_Term r \<and> v=use_data_term w \<and> binds_slot E q r w)"
+proof
+  assume holds: "(38,binding_lookup_argument e u k v)\<in>positive_meaning binding_lookup_system"
+  obtain F q r w where parts: "environment_value_presents F e" "u=use_data_term q"
+    "k=Payload_Term r" "v=use_data_term w" "binds_slot F q r w"
+    using holds by (auto simp: binding_lookup_exact)
+  have same: "F=E" by (rule environment_value_presents_unique[OF parts(1) source])
+  show "\<exists>q r w. u=use_data_term q \<and> k=Payload_Term r \<and> v=use_data_term w \<and> binds_slot E q r w"
+    using parts same by blast
+next
+  assume "\<exists>q r w. u=use_data_term q \<and> k=Payload_Term r \<and> v=use_data_term w \<and> binds_slot E q r w"
+  then show "(38,binding_lookup_argument e u k v)\<in>positive_meaning binding_lookup_system"
+    using source by (auto simp: binding_lookup_exact)
+qed
+
+corollary binding_lookup_presentation_invariance:
+  assumes "environment_value_presents E e" "environment_value_presents E f"
+  shows "(38,binding_lookup_argument e u k v)\<in>positive_meaning binding_lookup_system \<longleftrightarrow>
+    (38,binding_lookup_argument f u k v)\<in>positive_meaning binding_lookup_system"
+  by (simp only: binding_lookup_at_source[OF assms(1)] binding_lookup_at_source[OF assms(2)])
+
+text \<open>
+  Both lookups admit the complete environment and select an actual row from its
+  represented table. Artifact lookup compares the selected artifact with the
+  supplied output through the existing admitted identity definition, so every
+  complete output presentation is permitted independently of the stored one.
+  Binding lookup preserves the exact source use, opaque slot, and destination
+  use. Equal artifact values at different uses do not identify those uses.
+  All earlier definitions retain their meanings.
+\<close>
+
+end

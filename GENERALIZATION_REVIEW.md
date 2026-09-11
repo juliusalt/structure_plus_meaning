@@ -407,3 +407,53 @@ After the main build, the original two requested roots and the complete set
 of nineteen new or modified theory roots have no residual proof conditions.
 The archive preserves the earlier source versions, both follow-ups, and their
 supporting bytes. This source readiness is recorded as verification evidence.
+
+## Coverage of the available construction language
+
+The subsequent investigation tests whether the baseline library covers the
+new native reader entries. Existing binding constructions succeed, but
+entries 348–350 have no producer. More construction rounds leave them
+unresolved. A supplied possible goal also remains unresolved, while supplying
+it as known settles it only under that unproved assumption.
+
+The repair derives entry rules from the actual schema premises and reuses the
+conjunctive inference engine. A general rule-projection theorem bounds every
+concrete derivation, so reported obstructions hold at every construction depth
+and for every possible frontier. The 65-case family verifies all signature
+rules, blocked occurrences, demand, reasons, and formation results against
+independent reconstruction. A known call with the same entry and a different
+term exposes the abstraction's lack of a converse.
+
+The report's missing-constructor list directs the next change: make the
+already defined native clauses available to construction. Their finite
+schemas now come from checked reductions of their actual definitions.
+Ordered keys generate the complete premise enumerations without requiring
+an order on values. The three new constructors share the actual
+inference-specialization program and reuse its ordinary clause-application
+contract. This does not establish the truth of their source-reader premises.
+
+The initial compiler execution fails on a repeated encoding of an identical
+schema premise. The minimal control keeps the goal and known calls unchanged:
+one row succeeds, while two identical rows throw in the exported singleton
+selector. The repaired selector has an exact equation for every list
+presentation. Its code checks the whole value family, accepting repetitions
+of one value and rejecting empty or conflicting families. The mathematical
+enumeration is unchanged, and distinct premise sockets remain present.
+
+All 50 compiler reports, compiled libraries, 62 intermediate frontiers, and
+50 entry-coverage reports match independent reconstruction. The native
+catalog has exactly the same fields before and after the selector repair.
+The 65 coverage cases and earlier 64 chaining cases also pass. These
+overlapping validation families are not counted as separate discoveries.
+
+The [archive](validation/generalization-review-2026-09-11/reader-libraries/README.md)
+retains the failed executions and proof attempts as failures, together with
+the accepted evidence. Historical import-provenance gaps are stated;
+current reviews also track imported local tool modules. Retained replays
+reproduce the eight-case baseline, the duplicate-row failure, the 50-case
+compiler repair, and the 65-case coverage result.
+
+The complete 794-theory session and 27 Python tests pass. The compiled
+constructors still need to be applied to the actual reader-construction
+requirement. This batch advances the prescribed workflow without claiming
+complete native argument admission or coverage of every development decision.

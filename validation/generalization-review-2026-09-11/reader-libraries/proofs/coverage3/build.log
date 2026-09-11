@@ -1,0 +1,14 @@
+Running Native_Investigation_Report_Diagnostic_coverage3 ...
+Native_Investigation_Report_Diagnostic_coverage3 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_coverage3")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_coverage3.Factor_Reader_Library_Coverage" (unresolved "Native_Investigation_Report_Diagnostic_coverage3.Factor_Library_Coverage")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_coverage3.Factor_Reasoning_Execution" (unresolved "Native_Investigation_Report_Diagnostic_coverage3.Factor_Reader_Library_Coverage")
+*** Failed to finish proof (line 23 of "/tmp/native-investigation-report-diagnostic-coverage3/theories/Factor_Library_Coverage.thy"):
+*** goal (2 subgoals):
+***  1. fst |`| H = fst |`| finite_schema_premises S
+***  2. ⋀s d p.
+***        (s, d, p) |∈| finite_schema_premises S ⟹
+***        ∃x. (s, d, x) |∈|
+***            H
+*** At command "by" (line 22 of "/tmp/native-investigation-report-diagnostic-coverage3/theories/Factor_Library_Coverage.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_coverage3
+0:02:02 elapsed time, 0:04:35 cpu time, factor 2.26

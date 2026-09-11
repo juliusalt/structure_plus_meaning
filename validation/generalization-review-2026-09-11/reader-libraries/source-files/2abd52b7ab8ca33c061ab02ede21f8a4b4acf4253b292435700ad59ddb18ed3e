@@ -1,0 +1,287 @@
+theory Factor_Schema_Pattern_Boundary
+  imports "Factor_Pattern_Specialization"
+begin
+
+section \<open>One rule retains every call and its complete variable scope\<close>
+
+definition schema_pattern_boundary ::
+  "('a,'s,'d,'c) schema_system \<Rightarrow> 'd \<Rightarrow> ('b,'t,'d) factor_schema \<Rightarrow> bool" where
+  "schema_pattern_boundary P d S \<longleftrightarrow> schema_formed S \<and>
+    schema_pattern_call P d (schema_conclusion S) \<and>
+    (\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow> schema_pattern_call P e p)"
+
+lemma schema_pattern_boundary_evaluation:
+  assumes boundary: "schema_pattern_boundary P d S"
+    and assignment: "\<forall>a\<in>schema_variables S. term_formed (h a)"
+  shows "schema_call_formed P d (evaluate_pattern h (schema_conclusion S))"
+    "\<forall>s e t. (s,e,t)\<in>evaluate_schema_premises h S \<longrightarrow> schema_call_formed P e t"
+proof -
+  have head: "schema_pattern_call P d (schema_conclusion S)"
+    using boundary by (simp add: schema_pattern_boundary_def)
+  show "schema_call_formed P d (evaluate_pattern h (schema_conclusion S))"
+    by (rule schema_pattern_call_evaluation[OF head]) (use assignment in \<open>auto simp: schema_variables_def\<close>)
+  show "\<forall>s e t. (s,e,t)\<in>evaluate_schema_premises h S \<longrightarrow> schema_call_formed P e t"
+  proof (intro allI impI)
+    fix s e t assume member: "(s,e,t)\<in>evaluate_schema_premises h S"
+    obtain p where original: "(s,e,p)\<in>schema_premises S" "t=evaluate_pattern h p" using member by auto
+    have call: "schema_pattern_call P e p" using boundary original(1)
+      by (auto simp: schema_pattern_boundary_def)
+    show "schema_call_formed P e t" unfolding original(2)
+      by (rule schema_pattern_call_evaluation[OF call]) (use assignment original(1) in \<open>auto simp: schema_variables_def\<close>)
+  qed
+qed
+
+theorem schema_pattern_boundary_two_evaluations:
+  assumes markers: "inj_on f B" "\<forall>a\<in>B. octets_formed (f a)" "term_formed (Target_Term k)"
+    and scope: "schema_variables S\<subseteq>B"
+  shows "schema_pattern_boundary P d S \<longleftrightarrow> schema_formed S \<and>
+    schema_call_formed P d (evaluate_pattern (\<lambda>a. Payload_Term (f a)) (schema_conclusion S)) \<and>
+    schema_call_formed P d (evaluate_pattern (\<lambda>_. Target_Term k) (schema_conclusion S)) \<and>
+    (\<forall>s e t. (s,e,t)\<in>evaluate_schema_premises (\<lambda>a. Payload_Term (f a)) S \<longrightarrow>
+      schema_call_formed P e t) \<and>
+    (\<forall>s e t. (s,e,t)\<in>evaluate_schema_premises (\<lambda>_. Target_Term k) S \<longrightarrow>
+      schema_call_formed P e t)"
+proof -
+  have head_scope: "pattern_variables (schema_conclusion S)\<subseteq>B"
+    using scope by (auto simp: schema_variables_def)
+  have premise_scope: "pattern_variables p\<subseteq>B"
+    if "(s,e,p)\<in>schema_premises S" for s e p
+    using scope that by (auto simp: schema_variables_def)
+  have head:
+    "schema_pattern_call P d (schema_conclusion S) \<longleftrightarrow>
+      pattern_formed (schema_conclusion S) \<and>
+      schema_call_formed P d (evaluate_pattern (\<lambda>a. Payload_Term (f a)) (schema_conclusion S)) \<and>
+      schema_call_formed P d (evaluate_pattern (\<lambda>_. Target_Term k) (schema_conclusion S))"
+    by (rule schema_pattern_call_two_evaluations[OF markers head_scope])
+  have premise:
+    "schema_pattern_call P e p \<longleftrightarrow> pattern_formed p \<and>
+      schema_call_formed P e (evaluate_pattern (\<lambda>a. Payload_Term (f a)) p) \<and>
+      schema_call_formed P e (evaluate_pattern (\<lambda>_. Target_Term k) p)"
+    if "(s,e,p)\<in>schema_premises S" for s e p
+    by (rule schema_pattern_call_two_evaluations[OF markers premise_scope[OF that]])
+  show ?thesis unfolding schema_pattern_boundary_def
+    using head premise by (auto simp: schema_formed_def; blast)
+qed
+
+theorem schema_pattern_boundary_all_evaluations:
+  "schema_pattern_boundary P d S \<longleftrightarrow> schema_formed S \<and>
+    (\<forall>h. (\<forall>a\<in>schema_variables S. term_formed (h a)) \<longrightarrow>
+      schema_call_formed P d (evaluate_pattern h (schema_conclusion S)) \<and>
+      (\<forall>s e t. (s,e,t)\<in>evaluate_schema_premises h S \<longrightarrow> schema_call_formed P e t))"
+proof
+  assume boundary: "schema_pattern_boundary P d S"
+  show "schema_formed S \<and>
+    (\<forall>h. (\<forall>a\<in>schema_variables S. term_formed (h a)) \<longrightarrow>
+      schema_call_formed P d (evaluate_pattern h (schema_conclusion S)) \<and>
+      (\<forall>s e t. (s,e,t)\<in>evaluate_schema_premises h S \<longrightarrow> schema_call_formed P e t))"
+    using boundary schema_pattern_boundary_evaluation[OF boundary]
+    by (auto simp: schema_pattern_boundary_def)
+next
+  assume all: "schema_formed S \<and>
+    (\<forall>h. (\<forall>a\<in>schema_variables S. term_formed (h a)) \<longrightarrow>
+      schema_call_formed P d (evaluate_pattern h (schema_conclusion S)) \<and>
+      (\<forall>s e t. (s,e,t)\<in>evaluate_schema_premises h S \<longrightarrow> schema_call_formed P e t))"
+  have finite: "finite (schema_variables S)" using all by (auto intro: schema_variables_finite)
+  obtain f where addressing: "finite_addressing (schema_variables S) f"
+    using finite_addressing_exists[OF finite] by blast
+  have markers: "inj_on f (schema_variables S)" "\<forall>a\<in>schema_variables S. octets_formed (f a)"
+    using addressing by (auto simp: finite_addressing_def)
+  have target: "term_formed (Target_Term (Whole_Artifact empty_artifact))" by simp
+  have payloads: "\<forall>a\<in>schema_variables S. term_formed (Payload_Term (f a))" using markers(2) by simp
+  have targets: "\<forall>a\<in>schema_variables S. term_formed (Target_Term (Whole_Artifact empty_artifact))" by simp
+  have checked: "\<forall>h. (\<forall>a\<in>schema_variables S. term_formed (h a)) \<longrightarrow>
+      schema_call_formed P d (evaluate_pattern h (schema_conclusion S)) \<and>
+      (\<forall>s e t. (s,e,t)\<in>evaluate_schema_premises h S \<longrightarrow> schema_call_formed P e t)"
+    using all by blast
+  have first: "schema_call_formed P d (evaluate_pattern (\<lambda>a. Payload_Term (f a)) (schema_conclusion S)) \<and>
+    (\<forall>s e t. (s,e,t)\<in>evaluate_schema_premises (\<lambda>a. Payload_Term (f a)) S \<longrightarrow> schema_call_formed P e t)"
+    by (rule checked[rule_format]) (use payloads in blast)
+  have second: "schema_call_formed P d (evaluate_pattern (\<lambda>_. Target_Term (Whole_Artifact empty_artifact)) (schema_conclusion S)) \<and>
+    (\<forall>s e t. (s,e,t)\<in>evaluate_schema_premises (\<lambda>_. Target_Term (Whole_Artifact empty_artifact)) S \<longrightarrow>
+      schema_call_formed P e t)"
+    by (rule checked[rule_format]) (use targets in blast)
+  show "schema_pattern_boundary P d S"
+    using all first second by (simp only: schema_pattern_boundary_two_evaluations[OF markers target subset_refl]) blast
+qed
+
+lemma schema_pattern_boundary_agreement:
+  assumes "\<And>d t. schema_call_formed P d t \<longleftrightarrow> schema_call_formed Q d t"
+  shows "schema_pattern_boundary P d S \<longleftrightarrow> schema_pattern_boundary Q d S"
+  by (simp only: schema_pattern_boundary_all_evaluations assms)
+
+section \<open>A specialization retains its actual clause and all material operands\<close>
+
+lemma graph_pattern_bindings_formed:
+  assumes "finite B" "\<forall>a\<in>B. pattern_formed (s a)"
+  shows "pattern_bindings_formed B (image (\<lambda>a. (a,s a)) B)"
+  using assms by (auto simp: pattern_bindings_formed_def single_valued_def rel_dom_def)
+
+lemma material_pattern_substitute_cong:
+  assumes "\<And>a. a\<in>material_variables M \<Longrightarrow> s a=t a"
+  shows "material_pattern_substitute s M=material_pattern_substitute t M"
+proof -
+  have fields: "pattern_substitute s p=pattern_substitute t p"
+    if "p\<in>set (material_fields M)" for p
+    by (rule pattern_substitute_cong) (use assms that in \<open>auto simp: material_variables_def\<close>)
+  show ?thesis using fields by (simp add: material_pattern_substitute_def material_fields_def)
+qed
+
+lemma schema_substitute_cong:
+  assumes "\<And>a. a\<in>schema_variables S \<Longrightarrow> s a=t a"
+  shows "schema_substitute s S=schema_substitute t S"
+proof -
+  have head: "pattern_substitute s (schema_conclusion S)=pattern_substitute t (schema_conclusion S)"
+    by (rule pattern_substitute_cong) (use assms in \<open>auto simp: schema_variables_def\<close>)
+  have calls: "pattern_substitute s p=pattern_substitute t p"
+    if "(q,d,p)\<in>schema_premises S" for q d p
+    by (rule pattern_substitute_cong) (use assms that in \<open>auto simp: schema_variables_def\<close>)
+  have materials: "material_pattern_substitute s M=material_pattern_substitute t M"
+    if "(q,M)\<in>schema_material_premises S" for q M
+    by (rule material_pattern_substitute_cong) (use assms that in \<open>auto simp: schema_variables_def\<close>)
+  have ordinary: "schema_premises (schema_substitute s S)=schema_premises (schema_substitute t S)"
+  proof (rule set_eqI)
+    fix x
+    show "x\<in>schema_premises (schema_substitute s S) \<longleftrightarrow> x\<in>schema_premises (schema_substitute t S)"
+      using calls by (cases x; cases "snd x") (auto simp: schema_substitute_premise; blast)
+  qed
+  have material: "schema_material_premises (schema_substitute s S)=schema_material_premises (schema_substitute t S)"
+  proof (rule set_eqI)
+    fix x
+    show "x\<in>schema_material_premises (schema_substitute s S) \<longleftrightarrow>
+      x\<in>schema_material_premises (schema_substitute t S)"
+      using materials by (cases x) (auto simp: schema_substitute_material; blast)
+  qed
+  show ?thesis by (rule factor_schema.equality) (use head ordinary material in simp_all)
+qed
+
+definition schema_clause_specialization ::
+  "('a,'s,'d,'c) schema_system \<Rightarrow> 'd \<Rightarrow> 'c \<Rightarrow>
+    ('a\<times>'b term_pattern) set \<Rightarrow> ('b,'s,'d) factor_schema \<Rightarrow> bool" where
+  "schema_clause_specialization P d c V T \<longleftrightarrow> schema_pattern_boundary P d T \<and>
+    (\<exists>S. ((d,c),S)\<in>system_clauses P \<and> pattern_bindings_formed (schema_variables S) V \<and>
+      T=schema_substitute (rel_value V) S)"
+
+lemma schema_clause_specialization_source:
+  assumes actual: "schema_clause_specialization P d c V T" and clause: "((d,c),S)\<in>system_clauses P"
+  shows "pattern_bindings_formed (schema_variables S) V" "T=schema_substitute (rel_value V) S"
+proof -
+  obtain R where source: "((d,c),R)\<in>system_clauses P" "pattern_bindings_formed (schema_variables R) V"
+    "T=schema_substitute (rel_value V) R"
+    using actual by (auto simp: schema_clause_specialization_def)
+  have sv: "single_valued (system_clauses P)"
+    using actual by (auto simp: schema_clause_specialization_def schema_pattern_boundary_def
+      schema_pattern_call_def schema_system_formed_def)
+  have same: "R=S" by (rule single_valued_outputs[OF sv source(1) clause])
+  show "pattern_bindings_formed (schema_variables S) V" "T=schema_substitute (rel_value V) S"
+    using source(2,3) same by simp_all
+qed
+
+lemma schema_clause_specialization_scope:
+  assumes actual: "schema_clause_specialization P d c V T"
+  shows "schema_variables T=pattern_binding_variables V"
+proof -
+  obtain S where source: "pattern_bindings_formed (schema_variables S) V" "T=schema_substitute (rel_value V) S"
+    using actual by (auto simp: schema_clause_specialization_def)
+  have range: "rel_ran V=image (rel_value V) (schema_variables S)"
+    by (subst pattern_bindings_graph[OF source(1)]) (auto simp: rel_ran_def)
+  show ?thesis by (simp add: source(2) schema_substitute_variables pattern_binding_variables_def range)
+qed
+
+lemma schema_clause_specialization_materials:
+  assumes actual: "schema_clause_specialization P d c V T" and clause: "((d,c),S)\<in>system_clauses P"
+  shows "schema_material_premises T=
+    image (\<lambda>(s,M). (s,material_pattern_substitute (rel_value V) M)) (schema_material_premises S)"
+    "schema_sockets T=schema_sockets S" "schema_dependencies T=schema_dependencies S"
+  using schema_clause_specialization_source(2)[OF actual clause]
+  by (simp_all add: schema_substitute_def map_socket_graph_domain pair_image_domain
+    schema_sockets_def schema_dependencies_def map_socket_graph_def pair_image_range image_image)
+
+theorem schema_clause_specialization_evaluation:
+  assumes actual: "schema_clause_specialization P d c V T"
+    and assignment: "\<forall>b\<in>schema_variables T. term_formed (h b)"
+    and materials: "\<forall>s M. (s,M)\<in>schema_material_premises T \<longrightarrow> evaluate_material_satisfaction h M"
+  shows "admitted_schema_instance P d c (map_relation_values (evaluate_pattern h) V)
+    (evaluate_pattern h (schema_conclusion T)) (evaluate_schema_premises h T)"
+proof -
+  obtain S where boundary: "schema_pattern_boundary P d T" and clause: "((d,c),S)\<in>system_clauses P"
+    and bindings: "pattern_bindings_formed (schema_variables S) V" and target: "T=schema_substitute (rel_value V) S"
+    using actual by (auto simp: schema_clause_specialization_def)
+  have formed: "schema_formed S"
+    using boundary clause by (auto simp: schema_pattern_boundary_def schema_pattern_call_def schema_system_formed_def)
+  have replacements: "\<forall>a\<in>schema_variables S. pattern_formed (rel_value V a)"
+    using pattern_binding_at(2)[OF bindings] by blast
+  have lifted: "\<forall>a\<in>schema_variables S. term_formed (evaluate_pattern h (rel_value V a))"
+    by (rule substituted_valuation_formed[OF replacements]) (use assignment target in simp)
+  let ?W="map_relation_values (evaluate_pattern h) V"
+  let ?g="\<lambda>a. evaluate_pattern h (rel_value V a)"
+  have graph: "?W=image (\<lambda>a. (a,?g a)) (schema_variables S)"
+    by (rule pattern_bindings_evaluation_graph[OF bindings])
+  have inst: "schema_instance S ?W (evaluate_pattern h (schema_conclusion T)) (evaluate_schema_premises h T)"
+    using schema_evaluation_instance[OF formed lifted] by (simp only: graph target
+      schema_substitute_conclusion evaluate_pattern_substitute evaluate_schema_premises_substitute)
+  have assigned: "\<forall>a\<in>schema_variables S. (a,?g a)\<in>?W" by (simp add: graph)
+  have holds: "\<forall>s M. (s,M)\<in>schema_material_premises S \<longrightarrow> evaluate_material_satisfaction ?g M"
+  proof (intro allI impI)
+    fix s M assume member: "(s,M)\<in>schema_material_premises S"
+    have selected: "(s,material_pattern_substitute (rel_value V) M)\<in>schema_material_premises T"
+      by (simp only: target schema_substitute_material; rule exI[of _ M]) (use member in blast)
+    have satisfied: "evaluate_material_satisfaction h (material_pattern_substitute (rel_value V) M)"
+      using materials selected by blast
+    show "evaluate_material_satisfaction ?g M" using satisfied by simp
+  qed
+  have material: "schema_material_satisfied S ?W"
+    using holds by (simp only: schema_material_evaluation[OF inst assigned])
+  show ?thesis using schema_pattern_boundary_evaluation[OF boundary assignment] clause inst material
+    by (auto simp: admitted_schema_instance_def)
+qed
+
+theorem schema_clause_specialization_evaluation_iff:
+  assumes actual: "schema_clause_specialization P d c V T"
+    and assignment: "\<forall>b\<in>schema_variables T. term_formed (h b)"
+  shows "admitted_schema_instance P d c (map_relation_values (evaluate_pattern h) V)
+      (evaluate_pattern h (schema_conclusion T)) (evaluate_schema_premises h T) \<longleftrightarrow>
+    (\<forall>s M. (s,M)\<in>schema_material_premises T \<longrightarrow> evaluate_material_satisfaction h M)"
+proof
+  let ?W="map_relation_values (evaluate_pattern h) V"
+  assume admitted: "admitted_schema_instance P d c ?W
+    (evaluate_pattern h (schema_conclusion T)) (evaluate_schema_premises h T)"
+  obtain S where clause: "((d,c),S)\<in>system_clauses P"
+    and inst: "schema_instance S ?W (evaluate_pattern h (schema_conclusion T)) (evaluate_schema_premises h T)"
+    and material: "schema_material_satisfied S ?W"
+    using admitted by (auto simp: admitted_schema_instance_def)
+  have source: "pattern_bindings_formed (schema_variables S) V" "T=schema_substitute (rel_value V) S"
+    using schema_clause_specialization_source[OF actual clause] by blast+
+  have assigned: "\<forall>a\<in>schema_variables S. (a,evaluate_pattern h (rel_value V a))\<in>?W"
+    by (simp add: pattern_bindings_evaluation_graph[OF source(1)])
+  have holds: "\<forall>s M. (s,M)\<in>schema_material_premises S \<longrightarrow>
+      evaluate_material_satisfaction (\<lambda>a. evaluate_pattern h (rel_value V a)) M"
+    using material by (simp only: schema_material_evaluation[OF inst assigned])
+  show "\<forall>s M. (s,M)\<in>schema_material_premises T \<longrightarrow> evaluate_material_satisfaction h M"
+  proof (intro allI impI)
+    fix s M assume member: "(s,M)\<in>schema_material_premises T"
+    obtain N where original: "(s,N)\<in>schema_material_premises S" "M=material_pattern_substitute (rel_value V) N"
+      using member by (auto simp: source(2))
+    have satisfied: "evaluate_material_satisfaction (\<lambda>a. evaluate_pattern h (rel_value V a)) N"
+      using holds original(1) by blast
+    show "evaluate_material_satisfaction h M" using satisfied by (simp only: original(2) material_substitute_satisfaction)
+  qed
+next
+  assume materials: "\<forall>s M. (s,M)\<in>schema_material_premises T \<longrightarrow> evaluate_material_satisfaction h M"
+  show "admitted_schema_instance P d c (map_relation_values (evaluate_pattern h) V)
+      (evaluate_pattern h (schema_conclusion T)) (evaluate_schema_premises h T)"
+    by (rule schema_clause_specialization_evaluation[OF actual assignment materials])
+qed
+
+text \<open>
+  A schema's complete binder includes variables used only by prospective
+  premises or material operands. The two valuations use that whole scope
+  while each interface keeps its own independent binder. Every prospective
+  call is checked against the same actual program.
+
+  A clause specialization additionally retains its actual definition and
+  clause key, one complete replacement relation, and the entire substituted
+  schema. Its material operands remain assumptions. Only a later valuation
+  satisfying those assumptions yields an admitted ordinary instance.
+\<close>
+
+end

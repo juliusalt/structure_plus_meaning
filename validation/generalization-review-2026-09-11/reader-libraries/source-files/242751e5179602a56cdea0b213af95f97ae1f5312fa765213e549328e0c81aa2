@@ -1,0 +1,227 @@
+theory Factor_Substitution_Bindings
+  imports Factor_Substitution_Observations Factor_Record_Instantiation
+begin
+
+section \<open>Complete ordered patterns are determined together\<close>
+
+lemma pattern_list_evaluations_determine:
+  assumes markers: "inj_on f B"
+    and scope: "pattern_forest_variables ps\<subseteq>B" "pattern_forest_variables qs\<subseteq>B"
+    and first: "map (evaluate_pattern (\<lambda>a. Payload_Term (f a))) ps=
+      map (evaluate_pattern (\<lambda>a. Payload_Term (f a))) qs"
+    and second: "map (evaluate_pattern (\<lambda>_. Target_Term k)) ps=
+      map (evaluate_pattern (\<lambda>_. Target_Term k)) qs"
+  shows "ps=qs"
+  using scope first second
+proof (induction ps arbitrary: qs)
+  case Nil
+  then show ?case by simp
+next
+  case (Cons p ps)
+  then obtain q rs where shape: "qs=q#rs" by (cases qs) auto
+  have heads: "p=q"
+    by (rule pattern_evaluations_determine[OF markers])
+      (use Cons.prems shape in auto)
+  have tails: "ps=rs" by (rule Cons.IH) (use Cons.prems shape in auto)
+  show ?case using heads tails shape by simp
+qed
+
+lemma graph_pattern_list_instances:
+  "list_all2 (pattern_instance ((\<lambda>a. (a,h a)) ` B)) ps ts \<longleftrightarrow>
+    (\<forall>p\<in>set ps. pattern_formed p) \<and> pattern_forest_variables ps\<subseteq>B \<and>
+      ts=map (evaluate_pattern h) ps"
+  by (induction ps arbitrary: ts) (auto simp: list_all2_Cons1 graph_pattern_instance)
+
+theorem pattern_record_two_instances:
+  assumes source: "environment_value_presents E e"
+    and formed: "\<forall>p\<in>set ps. pattern_formed p" "\<forall>a\<in>set Bs. octets_formed a"
+    and scope: "pattern_forest_variables ps\<subseteq>set Bs" "pattern_forest_variables ps=set Us"
+    and orders: "distinct Bs" "distinct xs" "distinct ys" "distinct Us" "distinct Is" "distinct Ks"
+    and tables: "set xs=(\<lambda>a. (a,Payload_Term a)) ` set Bs"
+      "set ys=(\<lambda>a. (a,Target_Term (Whole_Artifact empty_artifact))) ` set Bs"
+  shows "pattern_record_at E u (set Bs) r ps (set Is) (set Ks) \<longleftrightarrow>
+    (61,pattern_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Bs))
+      (binding_rows_term xs) (Payload_Term r) (data_list_term (map (evaluate_pattern Payload_Term) ps))
+      (data_list_term (map Payload_Term Us)) (data_list_term (map Payload_Term Is))
+      (data_list_term (map Payload_Term Ks)))\<in>positive_meaning record_instantiation_system \<and>
+    (61,pattern_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Bs))
+      (binding_rows_term ys) (Payload_Term r)
+      (data_list_term (map (evaluate_pattern (\<lambda>_. Target_Term (Whole_Artifact empty_artifact))) ps))
+      (data_list_term (map Payload_Term Us)) (data_list_term (map Payload_Term Is))
+      (data_list_term (map Payload_Term Ks)))\<in>positive_meaning record_instantiation_system"
+proof -
+  have bindings: "term_bindings_formed (set Bs) (set xs)" "term_bindings_formed (set Bs) (set ys)"
+    unfolding tables by (rule graph_term_bindings_formed; use formed in auto)+
+  have instances:
+    "list_all2 (pattern_instance (set xs)) ps (map (evaluate_pattern Payload_Term) ps)"
+    "list_all2 (pattern_instance (set ys)) ps
+      (map (evaluate_pattern (\<lambda>_. Target_Term (Whole_Artifact empty_artifact))) ps)"
+    using formed scope by (simp_all add: tables graph_pattern_list_instances)
+  have recover: "qs=ps"
+    if first: "pattern_record_at E u (set Bs) r qs (set Is) (set Ks)"
+      "list_all2 (pattern_instance (set xs)) qs (map (evaluate_pattern Payload_Term) ps)"
+    and second: "pattern_record_at E u (set Bs) r rs (set Is) (set Ks)"
+      "list_all2 (pattern_instance (set ys)) rs
+        (map (evaluate_pattern (\<lambda>_. Target_Term (Whole_Artifact empty_artifact))) ps)"
+    for qs rs
+  proof -
+    have same: "rs=qs" using pattern_record_unique[OF second(1) first(1)] by blast
+    show ?thesis
+      by (rule pattern_list_evaluations_determine[where f=id and B="set Bs"
+        and k="Whole_Artifact empty_artifact"])
+        (use first(2) second(2) scope same in \<open>auto simp: tables graph_pattern_list_instances\<close>)
+  qed
+  show ?thesis by (simp only: record_instantiation_on_values[OF source])
+    (use formed scope orders bindings instances recover in blast)
+qed
+
+section \<open>Substitution rows use the existing pair and record grammars\<close>
+
+definition substitution_row_patterns ::
+  "local_address list \<Rightarrow> (local_address \<Rightarrow> 'a term_pattern) \<Rightarrow> 'a term_pattern list" where
+  "substitution_row_patterns As s=map (\<lambda>a. Pattern_Pair (Pattern_Payload a) (s a)) As"
+
+lemma substitution_row_variables:
+  "pattern_forest_variables (substitution_row_patterns As s)=
+    (\<Union>a\<in>set As. pattern_variables (s a))"
+  by (auto simp: substitution_row_patterns_def pattern_forest_variables_def)
+
+lemma substitution_row_formed:
+  "(\<forall>p\<in>set (substitution_row_patterns As s). pattern_formed p) \<longleftrightarrow>
+    (\<forall>a\<in>set As. octets_formed a \<and> pattern_formed (s a))"
+  by (auto simp: substitution_row_patterns_def)
+
+lemma evaluated_substitution_rows:
+  "data_list_term (map (evaluate_pattern h) (substitution_row_patterns As s))=
+    binding_rows_term (map (\<lambda>a. (a,evaluate_pattern h (s a))) As)"
+  by (induction As) (simp_all add: substitution_row_patterns_def)
+
+lemma substitution_rows_bindings:
+  assumes order: "distinct As"
+    and replacements: "\<forall>a\<in>set As. pattern_formed (s a)"
+    and assignment: "\<forall>b\<in>(\<Union>a\<in>set As. pattern_variables (s a)). term_formed (h b)"
+  shows "distinct (map (\<lambda>a. (a,evaluate_pattern h (s a))) As)"
+    "term_bindings_formed (set As) (set (map (\<lambda>a. (a,evaluate_pattern h (s a))) As))"
+proof -
+  show "distinct (map (\<lambda>a. (a,evaluate_pattern h (s a))) As)"
+    using order by (auto simp: distinct_map inj_on_def)
+  have assignment_outputs: "\<forall>a\<in>set As. term_formed (evaluate_pattern h (s a))"
+    using replacements assignment by (auto intro: evaluate_pattern_formed)
+  show "term_bindings_formed (set As) (set (map (\<lambda>a. (a,evaluate_pattern h (s a))) As))"
+    using graph_term_bindings_formed[OF finite_set assignment_outputs] by simp
+qed
+
+theorem substitution_record_two_instances:
+  assumes source: "environment_value_presents E e"
+    and replacements: "\<forall>a\<in>set As. octets_formed a \<and> pattern_formed (s a)"
+    and variables: "\<forall>b\<in>set Bs. octets_formed b"
+    and scope: "set Bs=(\<Union>a\<in>set As. pattern_variables (s a))"
+    and orders: "distinct Bs" "distinct xs" "distinct ys" "distinct Is" "distinct Ks"
+    and tables: "set xs=(\<lambda>b. (b,Payload_Term b)) ` set Bs"
+      "set ys=(\<lambda>b. (b,Target_Term (Whole_Artifact empty_artifact))) ` set Bs"
+  shows "pattern_record_at E u (set Bs) r (substitution_row_patterns As s) (set Is) (set Ks) \<longleftrightarrow>
+    (61,pattern_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Bs))
+      (binding_rows_term xs) (Payload_Term r)
+      (binding_rows_term (map (\<lambda>a. (a,evaluate_pattern Payload_Term (s a))) As))
+      (data_list_term (map Payload_Term Bs)) (data_list_term (map Payload_Term Is))
+      (data_list_term (map Payload_Term Ks)))\<in>positive_meaning record_instantiation_system \<and>
+    (61,pattern_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Bs))
+      (binding_rows_term ys) (Payload_Term r)
+      (binding_rows_term (map (\<lambda>a. (a,evaluate_pattern
+        (\<lambda>_. Target_Term (Whole_Artifact empty_artifact)) (s a))) As))
+      (data_list_term (map Payload_Term Bs)) (data_list_term (map Payload_Term Is))
+      (data_list_term (map Payload_Term Ks)))\<in>positive_meaning record_instantiation_system"
+  using pattern_record_two_instances[OF source, where ps="substitution_row_patterns As s" and Bs=Bs
+    and Us=Bs and xs=xs and ys=ys and Is=Is and Ks=Ks and u=u and r=r]
+    replacements variables scope orders tables
+  by (simp add: substitution_row_formed substitution_row_variables evaluated_substitution_rows)
+
+section \<open>The native readings recover replacement rows without assuming their shape\<close>
+
+lemma binding_rows_as_terms:
+  "binding_rows_term ys=data_list_term (map (\<lambda>(a,t). Pair_Term (Payload_Term a) t) ys)"
+  by (induction ys) (auto split: prod.splits)
+
+lemma target_valuation_payload:
+  "evaluate_pattern (\<lambda>_. Target_Term k) p=Payload_Term a \<Longrightarrow> p=Pattern_Payload a"
+  by (cases p) auto
+
+lemma target_valuation_binding_patterns:
+  assumes assignment_outputs: "map (evaluate_pattern (\<lambda>_. Target_Term k)) ps=
+    map (\<lambda>(a,t). Pair_Term (Payload_Term a) t) ys"
+  shows "\<exists>qs. ps=map (\<lambda>(a,p). Pattern_Pair (Pattern_Payload a) p) qs \<and>
+    ys=map (\<lambda>(a,p). (a,evaluate_pattern (\<lambda>_. Target_Term k) p)) qs"
+  using assignment_outputs
+proof (induction ps arbitrary: ys)
+  case Nil
+  then show ?case by (rule_tac x="[]" in exI) auto
+next
+  case (Cons p ps)
+  then obtain a t zs where rows: "ys=(a,t)#zs" by (cases ys) auto
+  have head: "evaluate_pattern (\<lambda>_. Target_Term k) p=Pair_Term (Payload_Term a) t"
+    and tail: "map (evaluate_pattern (\<lambda>_. Target_Term k)) ps=
+      map (\<lambda>(a,t). Pair_Term (Payload_Term a) t) zs"
+    using Cons.prems rows by simp_all
+  obtain q where pattern: "p=Pattern_Pair (Pattern_Payload a) q"
+    and evaluated: "t=evaluate_pattern (\<lambda>_. Target_Term k) q"
+    using head by (cases p) (auto dest: target_valuation_payload)
+  obtain qs where rest: "ps=map (\<lambda>(a,p). Pattern_Pair (Pattern_Payload a) p) qs"
+    "zs=map (\<lambda>(a,p). (a,evaluate_pattern (\<lambda>_. Target_Term k) p)) qs"
+    using Cons.IH[OF tail] by blast
+  show ?case by (rule exI[of _ "(a,q)#qs"]) (use rows pattern evaluated rest in simp)
+qed
+
+lemma complete_binding_keys_distinct:
+  assumes "distinct ys" "single_valued (set ys)"
+  shows "distinct (map fst ys)"
+proof -
+  have keys: "inj_on fst (set ys)"
+    using assms(2) by (auto simp: inj_on_def single_valued_def; metis surjective_pairing)
+  show ?thesis using assms(1) keys by (simp add: distinct_map)
+qed
+
+theorem binding_pattern_list_recovery:
+  assumes assignment_outputs: "map (evaluate_pattern (\<lambda>_. Target_Term k)) ps=
+      map (\<lambda>(a,t). Pair_Term (Payload_Term a) t) ys"
+    and rows: "distinct ys" "single_valued (set ys)"
+  shows "\<exists>As s. distinct As \<and> set As=rel_dom (set ys) \<and> ps=substitution_row_patterns As s"
+proof -
+  obtain qs where patterns: "ps=map (\<lambda>(a,p). Pattern_Pair (Pattern_Payload a) p) qs"
+    and observed_rows: "ys=map (\<lambda>(a,p). (a,evaluate_pattern (\<lambda>_. Target_Term k) p)) qs"
+    using target_valuation_binding_patterns[OF assignment_outputs] by blast
+  have keys: "map fst ys=map fst qs" using observed_rows by (simp add: comp_def split_def)
+  have distinct: "distinct (map fst qs)" using complete_binding_keys_distinct[OF rows] keys by simp
+  let ?s="\<lambda>a. the (map_of qs a)"
+  have lookup: "?s a=p" if "(a,p)\<in>set qs" for a p
+    using map_of_eq_Some_iff[OF distinct, of a p] that by simp
+  have same: "ps=substitution_row_patterns (map fst qs) ?s"
+    unfolding patterns substitution_row_patterns_def map_map
+    by (rule map_cong) (use lookup in \<open>auto split: prod.splits\<close>)
+  have domain_base: "set (map fst ys)=rel_dom (set ys)"
+    by (auto simp: rel_dom_def intro: rev_image_eqI)
+  have domain: "set (map fst qs)=rel_dom (set ys)" using domain_base keys by simp
+  show ?thesis by (rule exI[of _ "map fst qs"], rule exI[of _ ?s])
+    (use distinct domain same in blast)
+qed
+
+text \<open>
+  An existing pattern record can represent the finite replacement rows.
+  Each field is the ordinary pair of a literal source-variable address and
+  its replacement pattern. Both readings keep the same actual source, record
+  root, complete field order, private positions, and external slots. Their
+  outputs are complete binding-table values in the existing encoding.
+
+  The scope is the union of variables used by the replacements. A consumer
+  additionally checks that row keys enumerate its entire source binder once.
+  That condition is separate from record formation: repeated source keys are
+  not silently identified here. Empty records retain the existing actual
+  source and root check. No additional pattern constructor is introduced.
+
+  Conversely, a target-marker reading whose output is a complete functional
+  binding table forces every actual record field to have this row shape.
+  The literal key cannot be supplied by a variable under that marker. The
+  finite lookup supplies the replacement function on exactly those keys;
+  its value outside the source binder is irrelevant to substitution.
+\<close>
+
+end

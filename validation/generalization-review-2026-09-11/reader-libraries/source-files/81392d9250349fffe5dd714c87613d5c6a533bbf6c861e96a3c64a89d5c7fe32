@@ -1,0 +1,212 @@
+theory Factor_Program_Call_Admission
+  imports "Factor_Package_Membership"
+begin
+
+section \<open>The actual package fixes the reached definition's interface\<close>
+
+lemma definition_call_admission_at_package:
+  assumes source: "environment_value_presents E e" and package: "native_package_at E pu pr P"
+    and member: "(u,r)\<in>system_definitions P"
+  shows "(72,citation_observation_argument e (use_data_term u) (Payload_Term r) t)
+    \<in>positive_meaning definition_call_admission_system \<longleftrightarrow> schema_call_formed P (u,r) t"
+proof -
+  have formed: "native_package_formed E (native_package_roots E pu pr)" by (rule native_package_projection(1)[OF package])
+  have reached: "(u,r)\<in>native_definition_sites E (native_package_roots E pu pr)"
+    using member native_package_projection(3)[OF package] by (simp add: native_package_sites_def)
+  show ?thesis using definition_call_admission_in_program[OF source formed reached]
+    native_package_projection(2)[OF package] by simp
+qed
+
+abbreviation program_call_admission_result :: "factor_term \<Rightarrow> bool" where
+  "program_call_admission_result z \<equiv> \<exists>E e u r d t P.
+    z=package_subject_argument e (use_data_term u) (Payload_Term r) (Pair_Term (definition_site_value d) t) \<and>
+    environment_value_presents E e \<and> native_package_at E u r P \<and> schema_call_formed P d t"
+
+definition program_call_admission_schema :: "(nat,nat,nat) factor_schema" where
+  "program_call_admission_schema=data_rule
+    (package_subject_pattern data_x data_y data_z (Pattern_Pair (Pattern_Pair data_w (Pattern_Variable 4)) (Pattern_Variable 5)))
+    {(0,83,package_subject_pattern data_x data_y data_z (Pattern_Pair data_w (Pattern_Variable 4))),
+     (1,72,citation_observation_pattern data_x data_w (Pattern_Variable 4) (Pattern_Variable 5))}"
+
+definition program_call_admission_system :: "(nat,nat,nat,nat) schema_system" where
+  "program_call_admission_system=add_view_definition package_membership_system 84 data_x {(0,program_call_admission_schema)}"
+
+lemma program_call_admission_system_formed [simp]: "schema_system_formed program_call_admission_system"
+  unfolding program_call_admission_system_def
+  by (rule add_recursive_definition_formed[OF package_membership_system_formed])
+    (auto simp: program_call_admission_schema_def
+      schema_formed_def schema_dependencies_def single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma program_call_admission_definitions [simp]:
+  "system_definitions program_call_admission_system=insert 84 (system_definitions package_membership_system)"
+  by (simp add: program_call_admission_system_def)
+
+lemma program_call_admission_call:
+  "schema_call_formed program_call_admission_system d t \<longleftrightarrow>
+    d\<in>system_definitions program_call_admission_system \<and> term_formed t"
+  using added_variable_calls[OF package_membership_system_formed
+    program_call_admission_system_formed[unfolded program_call_admission_system_def] package_membership_call]
+  by (simp only: program_call_admission_system_def[symmetric])
+
+lemma program_call_admission_old_meaning:
+  assumes "d\<in>system_definitions package_membership_system"
+  shows "(d,t)\<in>positive_meaning program_call_admission_system \<longleftrightarrow> (d,t)\<in>positive_meaning package_membership_system"
+  using added_definition_preserves_old(2)[OF package_membership_system_formed
+    program_call_admission_system_formed[unfolded program_call_admission_system_def], of d t] assms
+  by (auto simp: program_call_admission_system_def)
+
+lemma program_call_admission_clause [simp]:
+  "((84,c),S)\<in>system_clauses program_call_admission_system \<longleftrightarrow> (c,S)\<in>{(0,program_call_admission_schema)}"
+proof -
+  have owned: "((d,c),S)\<in>system_clauses package_membership_system \<Longrightarrow>
+    d\<in>system_definitions package_membership_system" for d c S
+    using package_membership_system_formed unfolding schema_system_formed_def by blast
+  have absent: "((84,c),S)\<notin>system_clauses package_membership_system" by (auto dest: owned)
+  show ?thesis using absent by (simp add: program_call_admission_system_def)
+qed
+
+lemma program_call_admission_previous_meaning:
+  assumes "d\<in>system_definitions package_admission_system"
+  shows "(d,t)\<in>positive_meaning program_call_admission_system \<longleftrightarrow> (d,t)\<in>positive_meaning package_admission_system"
+  using program_call_admission_old_meaning[of d t] package_membership_previous_meaning[OF assms, of t] assms by auto
+
+lemma program_call_admission_components:
+  "(83,t)\<in>positive_meaning program_call_admission_system \<longleftrightarrow> (83,t)\<in>positive_meaning package_membership_system"
+  "(72,t)\<in>positive_meaning program_call_admission_system \<longleftrightarrow> (72,t)\<in>positive_meaning definition_call_admission_system"
+  using program_call_admission_old_meaning[of 83 t] program_call_admission_previous_meaning[of 72 t]
+    package_admission_previous_meaning[of 72 t] package_closure_previous_meaning[of 72 t] by auto
+
+lemma program_call_admission_step:
+  assumes member: "(83,package_subject_argument e pu pr (Pair_Term u r))\<in>positive_meaning package_membership_system"
+    and interface: "(72,citation_observation_argument e u r t)\<in>positive_meaning definition_call_admission_system"
+  shows "(84,package_subject_argument e pu pr (Pair_Term (Pair_Term u r) t))\<in>positive_meaning program_call_admission_system"
+proof -
+  have formed: "term_formed e" "term_formed pu" "term_formed pr" "term_formed u" "term_formed r" "term_formed t"
+    using schema_call_formed_target[OF positive_meaning_formed[OF member]]
+      schema_call_formed_target[OF positive_meaning_formed[OF interface]] by auto
+  let ?h="\<lambda>n::nat. if n=0 then e else if n=1 then pu else if n=2 then pr else if n=3 then u else if n=4 then r else t"
+  have result: "(84,evaluate_pattern ?h (schema_conclusion program_call_admission_schema))\<in>positive_meaning program_call_admission_system"
+    by (rule ordinary_positive_valuation_step[where c=0])
+      (use formed assms in \<open>auto simp: program_call_admission_schema_def schema_variables_def
+        program_call_admission_call program_call_admission_components\<close>)
+  show ?thesis using result by (simp add: program_call_admission_schema_def)
+qed
+
+theorem program_call_admission_sound:
+  assumes holds: "(84,z)\<in>positive_meaning program_call_admission_system"
+  shows "program_call_admission_result z"
+proof -
+  have consequence: "(84,z)\<in>schema_consequences program_call_admission_system (positive_meaning program_call_admission_system)"
+    using holds positive_meaning_unfold[of program_call_admission_system] by blast
+  obtain n S h where clause: "((84,n),S)\<in>system_clauses program_call_admission_system"
+    and conclusion: "z=evaluate_pattern h (schema_conclusion S)"
+    and support: "\<forall>s d p. (s,d,p)\<in>schema_premises S \<longrightarrow>
+      (d,evaluate_pattern h p)\<in>positive_meaning program_call_admission_system"
+    using schema_consequences_valuationD[OF consequence] by blast
+  have schema: "S=program_call_admission_schema" using clause by simp
+  have calls: "(83,package_subject_argument (h 0) (h 1) (h 2) (Pair_Term (h 3) (h 4)))\<in>positive_meaning package_membership_system"
+    "(72,citation_observation_argument (h 0) (h 3) (h 4) (h 5))\<in>positive_meaning definition_call_admission_system"
+    using support by (auto simp: schema program_call_admission_schema_def program_call_admission_components)
+  obtain E u r where source: "environment_value_presents E (h 0)" "h 3=use_data_term u" "h 4=Payload_Term r"
+    using calls(2) by (simp only: definition_call_admission_exact factor_term.inject) blast
+  have membership: "(83,package_subject_argument (h 0) (h 1) (h 2) (definition_site_value (u,r)))
+      \<in>positive_meaning package_membership_system"
+    using calls(1) by (simp add: source(2,3) site_data_term_def)
+  obtain pu pr P where package: "h 1=use_data_term pu" "h 2=Payload_Term pr" "native_package_at E pu pr P" "(u,r)\<in>system_definitions P"
+    using membership by (simp only: package_membership_at_source[OF source(1)] definition_site_value_eq) blast
+  have interface: "(72,citation_observation_argument (h 0) (use_data_term u) (Payload_Term r) (h 5))
+      \<in>positive_meaning definition_call_admission_system" using calls(2) by (simp only: source)
+  have formed: "schema_call_formed P (u,r) (h 5)"
+    using interface by (simp only: definition_call_admission_at_package[OF source(1) package(3,4)])
+  show ?thesis by (rule exI[of _ E], rule exI[of _ "h 0"], rule exI[of _ pu], rule exI[of _ pr],
+    rule exI[of _ "(u,r)"], rule exI[of _ "h 5"], rule exI[of _ P])
+    (use source package formed conclusion in \<open>simp add: schema program_call_admission_schema_def site_data_term_def\<close>)
+qed
+
+theorem program_call_admission_complete:
+  assumes source: "environment_value_presents E e" and package: "native_package_at E pu pr P" and call: "schema_call_formed P d t"
+  shows "(84,package_subject_argument e (use_data_term pu) (Payload_Term pr) (Pair_Term (definition_site_value d) t))
+    \<in>positive_meaning program_call_admission_system"
+proof -
+  obtain u r where site: "d=(u,r)" by (cases d)
+  have member: "(u,r)\<in>system_definitions P" using schema_call_formed_target[OF call] site by simp
+  have membership: "(83,package_subject_argument e (use_data_term pu) (Payload_Term pr) (Pair_Term (use_data_term u) (Payload_Term r)))
+      \<in>positive_meaning package_membership_system"
+    using package_membership_complete[OF source package member] by (simp add: site_data_term_def)
+  have interface: "(72,citation_observation_argument e (use_data_term u) (Payload_Term r) t)\<in>positive_meaning definition_call_admission_system"
+    by (simp only: definition_call_admission_at_package[OF source package member]) (use call site in simp)
+  show ?thesis using program_call_admission_step[OF membership interface] by (simp add: site site_data_term_def)
+qed
+
+theorem program_call_admission_exact:
+  "(84,z)\<in>positive_meaning program_call_admission_system \<longleftrightarrow> program_call_admission_result z"
+  using program_call_admission_sound program_call_admission_complete by blast
+
+corollary program_call_admission_at_source:
+  assumes source: "environment_value_presents E e"
+  shows "(84,package_subject_argument e u r (Pair_Term d t))\<in>positive_meaning program_call_admission_system \<longleftrightarrow>
+    (\<exists>v a f P. u=use_data_term v \<and> r=Payload_Term a \<and> d=definition_site_value f \<and>
+      native_package_at E v a P \<and> schema_call_formed P f t)"
+proof -
+  have unique: "F=E" if "environment_value_presents F e" for F
+    by (rule environment_value_presents_unique[OF that source])
+  show ?thesis by (simp only: program_call_admission_exact factor_term.inject) (use source unique in blast)
+qed
+
+corollary program_call_admission_on_values:
+  assumes source: "environment_value_presents E e"
+  shows "(84,package_subject_argument e (use_data_term u) (Payload_Term r) (Pair_Term (definition_site_value d) t))
+      \<in>positive_meaning program_call_admission_system \<longleftrightarrow> (\<exists>P. native_package_at E u r P \<and> schema_call_formed P d t)"
+  by (simp only: program_call_admission_at_source[OF source] inj_eq[OF use_data_term_injective]
+    factor_term.inject definition_site_value_eq) blast
+
+corollary program_call_admission_at_package:
+  assumes source: "environment_value_presents E e" and package: "native_package_at E u r P"
+  shows "(84,package_subject_argument e (use_data_term u) (Payload_Term r) (Pair_Term (definition_site_value d) t))
+      \<in>positive_meaning program_call_admission_system \<longleftrightarrow> schema_call_formed P d t"
+proof -
+  have unique: "Q=P" if "native_package_at E u r Q" for Q
+    by (rule native_package_unique[OF that package])
+  show ?thesis by (simp only: program_call_admission_on_values[OF source]) (use package unique in blast)
+qed
+
+corollary program_call_admission_presentation_invariance:
+  assumes "environment_value_presents E e" "environment_value_presents E f"
+  shows "(84,package_subject_argument e u r (Pair_Term d t))\<in>positive_meaning program_call_admission_system \<longleftrightarrow>
+    (84,package_subject_argument f u r (Pair_Term d t))\<in>positive_meaning program_call_admission_system"
+  by (simp only: program_call_admission_at_source[OF assms(1)] program_call_admission_at_source[OF assms(2)])
+
+theorem program_call_admission_inhabited:
+  assumes source: "environment_value_presents E e"
+  shows "(\<exists>t. (84,package_subject_argument e (use_data_term u) (Payload_Term r) (Pair_Term (definition_site_value d) t))
+      \<in>positive_meaning program_call_admission_system) \<longleftrightarrow>
+    (83,package_subject_argument e (use_data_term u) (Payload_Term r) (definition_site_value d))\<in>positive_meaning package_membership_system"
+proof
+  assume "\<exists>t. (84,package_subject_argument e (use_data_term u) (Payload_Term r) (Pair_Term (definition_site_value d) t))
+    \<in>positive_meaning program_call_admission_system"
+  then obtain t P where package: "native_package_at E u r P" and call: "schema_call_formed P d t"
+    by (simp only: program_call_admission_on_values[OF source]) blast
+  have member: "d\<in>system_definitions P" using schema_call_formed_target[OF call] by blast
+  show "(83,package_subject_argument e (use_data_term u) (Payload_Term r) (definition_site_value d))\<in>positive_meaning package_membership_system"
+    by (rule package_membership_complete[OF source package member])
+next
+  assume "(83,package_subject_argument e (use_data_term u) (Payload_Term r) (definition_site_value d))\<in>positive_meaning package_membership_system"
+  then obtain P where package: "native_package_at E u r P" and member: "d\<in>system_definitions P"
+    by (simp only: package_membership_on_values[OF source]) blast
+  obtain t where call: "schema_call_formed P d t" using schema_call_inhabited[OF native_package_system_formed[OF package] member] by blast
+  show "\<exists>t. (84,package_subject_argument e (use_data_term u) (Payload_Term r) (Pair_Term (definition_site_value d) t))
+    \<in>positive_meaning program_call_admission_system" using program_call_admission_complete[OF source package call] by blast
+qed
+
+text \<open>
+  The package is admitted, the actual definition is reached from its roots,
+  and that definition's interface accepts the supplied operand. These are
+  exactly the existing call-formation conditions. Every reached definition
+  admits some operand, while each particular operand retains its interface
+  boundary. Formed literal targets remain available as operands.
+
+  This shared entry is used by actual application admission and complete
+  premise-list checking. It imposes no prospective-call truth condition.
+\<close>
+
+end

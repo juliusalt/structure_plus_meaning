@@ -1,0 +1,25 @@
+Running Native_Investigation_Report_Diagnostic_coverage7 ...
+Native_Investigation_Report_Diagnostic_coverage7 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_coverage7")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_coverage7.Factor_Library_Compilation" (unresolved "Native_Investigation_Report_Diagnostic_coverage7.Finite_Functional_Enumeration")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_coverage7.Factor_Reader_Library_Coverage" (unresolved "Native_Investigation_Report_Diagnostic_coverage7.Factor_Library_Coverage")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_coverage7.Factor_Reasoning_Execution" (unresolved "Native_Investigation_Report_Diagnostic_coverage7.Factor_Reader_Library_Coverage")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_coverage7.Factor_Inference_Reader_Compilation" (unresolved "Native_Investigation_Report_Diagnostic_coverage7.Factor_Library_Compilation")
+*** Type unification failed
+*** 
+*** Type error in application: incompatible operand type
+*** 
+*** Operator:  (∈) x :: ('d × 'e) set ⇒ bool
+*** Operand:   fset (finite_premise_entries H) :: ('b × 'c) set
+*** 
+*** At command "show" (line 49 of "/tmp/native-investigation-report-diagnostic-coverage7/theories/Factor_Library_Coverage.thy")
+*** Failed to finish proof (line 65 of "/tmp/native-investigation-report-diagnostic-coverage7/theories/Finite_Functional_Enumeration.thy"):
+*** goal (1 subgoal):
+***  1. ⋀b. (i, b) |∈| R ⟹
+***         (i, a)
+***         ∈ (λx. (x, fthe_elem (snd |`| ffilter (λr. fst r = x) R))) `
+***           fst `
+***           fset
+***            R
+*** At command "by" (line 65 of "/tmp/native-investigation-report-diagnostic-coverage7/theories/Finite_Functional_Enumeration.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_coverage7
+0:02:02 elapsed time, 0:04:37 cpu time, factor 2.26

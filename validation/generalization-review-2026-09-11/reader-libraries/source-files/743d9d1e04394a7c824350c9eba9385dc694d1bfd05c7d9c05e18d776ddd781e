@@ -1,0 +1,172 @@
+theory Factor_Pattern_Specialization
+  imports "Factor_Pattern_Bindings" "Factor_Pattern_Determination"
+begin
+
+section \<open>Two instances recover one complete pattern substitution\<close>
+
+lemma pattern_substitute_cong:
+  assumes "\<And>a. a\<in>pattern_variables p \<Longrightarrow> s a=t a"
+  shows "pattern_substitute s p=pattern_substitute t p"
+  using assms by (induction p) auto
+
+theorem pattern_two_instance_substitution:
+  assumes markers: "inj_on f B"
+    and formed: "pattern_formed p"
+    and scope: "pattern_variables p\<subseteq>B"
+    and first: "evaluate_pattern g q=evaluate_pattern (\<lambda>a. Payload_Term (f a)) p"
+    and second: "evaluate_pattern h q=evaluate_pattern (\<lambda>_. Target_Term k) p"
+  shows "\<exists>s. p=pattern_substitute s q \<and> (\<forall>a\<in>pattern_variables q. pattern_formed (s a))"
+proof -
+  let ?s="\<lambda>a. SOME r. pattern_formed r \<and> pattern_variables r\<subseteq>B \<and>
+    evaluate_pattern (\<lambda>b. Payload_Term (f b)) r=g a \<and>
+    evaluate_pattern (\<lambda>_. Target_Term k) r=h a"
+  have recover: "?s a=r"
+    if candidate: "pattern_formed r" "pattern_variables r\<subseteq>B"
+      "evaluate_pattern (\<lambda>b. Payload_Term (f b)) r=g a"
+      "evaluate_pattern (\<lambda>_. Target_Term k) r=h a" for a r
+  proof (rule some_equality)
+    show "pattern_formed r \<and> pattern_variables r\<subseteq>B \<and>
+      evaluate_pattern (\<lambda>b. Payload_Term (f b)) r=g a \<and>
+      evaluate_pattern (\<lambda>_. Target_Term k) r=h a" using candidate by blast
+  next
+    fix t assume other: "pattern_formed t \<and> pattern_variables t\<subseteq>B \<and>
+      evaluate_pattern (\<lambda>b. Payload_Term (f b)) t=g a \<and>
+      evaluate_pattern (\<lambda>_. Target_Term k) t=h a"
+    show "t=r" by (rule pattern_evaluations_determine[OF markers, where k=k]) (use candidate other in auto)
+  qed
+  have recovered: "p=pattern_substitute ?s q \<and> (\<forall>a\<in>pattern_variables q. pattern_formed (?s a))"
+    using formed scope first second
+  proof (induction q arbitrary: p)
+    case (Pattern_Variable a)
+    have same: "?s a=p" by (rule recover) (use Pattern_Variable.prems in auto)
+    show ?case using Pattern_Variable.prems same by simp
+  next
+    case (Pattern_Target t)
+    then show ?case by (cases p) auto
+  next
+    case (Pattern_Payload x)
+    then show ?case by (cases p) auto
+  next
+    case (Pattern_Pair q r)
+    obtain u v where shape: "p=Pattern_Pair u v" using Pattern_Pair.prems(3) by (cases p) auto
+    have left: "u=pattern_substitute ?s q \<and> (\<forall>a\<in>pattern_variables q. pattern_formed (?s a))"
+      by (rule Pattern_Pair.IH(1)) (use Pattern_Pair.prems shape in auto)
+    have right: "v=pattern_substitute ?s r \<and> (\<forall>a\<in>pattern_variables r. pattern_formed (?s a))"
+      by (rule Pattern_Pair.IH(2)) (use Pattern_Pair.prems shape in auto)
+    show ?case using left right shape by auto
+  qed
+  show ?thesis using recovered by blast
+qed
+
+lemma accepted_pattern_evaluation:
+  assumes "pattern_accepts p t"
+  shows "\<exists>h. t=evaluate_pattern h p \<and> (\<forall>a\<in>pattern_variables p. term_formed (h a))"
+proof -
+  obtain V where bindings: "term_bindings_formed (pattern_variables p) V"
+    and inst: "pattern_instance V p t" using assms by (auto simp: pattern_accepts_def)
+  have sv: "single_valued V" and domain: "rel_dom V=pattern_variables p"
+    using bindings by (auto simp: term_bindings_formed_def)
+  have at: "(a,rel_value V a)\<in>V \<and> term_formed (rel_value V a)"
+    if key: "a\<in>pattern_variables p" for a
+  proof -
+    obtain x where row: "(a,x)\<in>V" using key domain by (auto simp: rel_dom_def)
+    have lookup: "rel_value V a=x" by (rule rel_value_eq[OF sv row])
+    show ?thesis using row bindings by (auto simp: lookup term_bindings_formed_def)
+  qed
+  have evaluated: "t=evaluate_pattern (rel_value V) p"
+    by (rule pattern_instance_evaluation[OF sv inst]) (use at in auto)
+  show ?thesis by (rule exI[of _ "rel_value V"]) (use evaluated at in blast)
+qed
+
+theorem schema_pattern_call_two_evaluations:
+  assumes markers: "inj_on f B" "\<forall>a\<in>B. octets_formed (f a)" "term_formed (Target_Term k)"
+    and scope: "pattern_variables p\<subseteq>B"
+  shows "schema_pattern_call P d p \<longleftrightarrow> pattern_formed p \<and>
+    schema_call_formed P d (evaluate_pattern (\<lambda>a. Payload_Term (f a)) p) \<and>
+    schema_call_formed P d (evaluate_pattern (\<lambda>_. Target_Term k) p)"
+proof
+  assume call: "schema_pattern_call P d p"
+  show "pattern_formed p \<and>
+    schema_call_formed P d (evaluate_pattern (\<lambda>a. Payload_Term (f a)) p) \<and>
+    schema_call_formed P d (evaluate_pattern (\<lambda>_. Target_Term k) p)"
+    using schema_pattern_call_formed(1)[OF call] markers scope
+      schema_pattern_call_evaluation[OF call, where h="\<lambda>a. Payload_Term (f a)"]
+      schema_pattern_call_evaluation[OF call, where h="\<lambda>_. Target_Term k"] by auto
+next
+  assume observations: "pattern_formed p \<and>
+    schema_call_formed P d (evaluate_pattern (\<lambda>a. Payload_Term (f a)) p) \<and>
+    schema_call_formed P d (evaluate_pattern (\<lambda>_. Target_Term k) p)"
+  obtain q r where system: "schema_system_formed P"
+    and interfaces: "(d,q)\<in>system_interfaces P" "(d,r)\<in>system_interfaces P"
+    and instances: "pattern_accepts q (evaluate_pattern (\<lambda>a. Payload_Term (f a)) p)"
+      "pattern_accepts r (evaluate_pattern (\<lambda>_. Target_Term k) p)"
+    using observations by (auto simp: schema_call_formed_def)
+  have functional: "single_valued (system_interfaces P)" using system by (simp add: schema_system_formed_def)
+  have same: "r=q" by (rule single_valued_outputs[OF functional interfaces(2,1)])
+  obtain g h where evaluated:
+    "evaluate_pattern g q=evaluate_pattern (\<lambda>a. Payload_Term (f a)) p"
+    "evaluate_pattern h q=evaluate_pattern (\<lambda>_. Target_Term k) p"
+    using accepted_pattern_evaluation[OF instances(1)] accepted_pattern_evaluation[OF instances(2)] same by metis
+  obtain s where substitution: "p=pattern_substitute s q" "\<forall>a\<in>pattern_variables q. pattern_formed (s a)"
+    using pattern_two_instance_substitution[OF markers(1) _ scope evaluated] observations by blast
+  let ?V="(\<lambda>a. (a,s a)) ` pattern_variables q"
+  have bindings: "pattern_bindings_formed (pattern_variables q) ?V"
+    using substitution(2) by (auto simp: pattern_bindings_formed_def single_valued_def rel_dom_def)
+  have lookup: "rel_value ?V a=s a" if "a\<in>pattern_variables q" for a
+    by (rule rel_value_eq) (use that in \<open>auto simp: single_valued_def\<close>)
+  have head: "p=pattern_substitute (rel_value ?V) q"
+  proof -
+    have same: "pattern_substitute (rel_value ?V) q=pattern_substitute s q"
+      by (rule pattern_substitute_cong) (rule lookup)
+    show ?thesis using substitution(1) same by simp
+  qed
+  show "schema_pattern_call P d p" unfolding schema_pattern_call_def
+    by (intro conjI[OF system], rule exI[of _ q], rule exI[of _ ?V])
+      (use interfaces(1) bindings head in blast)
+qed
+
+section \<open>The exact call boundary covers every future root instance\<close>
+
+theorem schema_pattern_call_all_instances:
+  "schema_pattern_call P d p \<longleftrightarrow>
+    pattern_formed p \<and> (\<forall>t. pattern_accepts p t \<longrightarrow> schema_call_formed P d t)"
+proof
+  assume call: "schema_pattern_call P d p"
+  have every: "schema_call_formed P d t" if "pattern_accepts p t" for t
+    using accepted_pattern_evaluation[OF that] schema_pattern_call_evaluation[OF call] by blast
+  show "pattern_formed p \<and> (\<forall>t. pattern_accepts p t \<longrightarrow> schema_call_formed P d t)"
+    using schema_pattern_call_formed(1)[OF call] every by blast
+next
+  assume every: "pattern_formed p \<and> (\<forall>t. pattern_accepts p t \<longrightarrow> schema_call_formed P d t)"
+  obtain f where addressing: "finite_addressing (pattern_variables p) f"
+    using finite_addressing_exists[of "pattern_variables p"] by auto
+  have markers: "inj_on f (pattern_variables p)" "\<forall>a\<in>pattern_variables p. octets_formed (f a)"
+    using addressing by (auto simp: finite_addressing_def)
+  have target: "term_formed (Target_Term (Whole_Artifact empty_artifact))" by simp
+  have first: "pattern_accepts p (evaluate_pattern (\<lambda>a. Payload_Term (f a)) p)"
+    by (rule pattern_evaluation_accepted) (use every markers in auto)
+  have second: "pattern_accepts p (evaluate_pattern (\<lambda>_. Target_Term (Whole_Artifact empty_artifact)) p)"
+    by (rule pattern_evaluation_accepted) (use every in auto)
+  show "schema_pattern_call P d p"
+    using every first second schema_pattern_call_two_evaluations[OF markers target subset_refl, of P d] by blast
+qed
+
+theorem schema_pattern_call_agreement:
+  assumes "\<And>t. schema_call_formed P d t \<longleftrightarrow> schema_call_formed Q e t"
+  shows "schema_pattern_call P d p \<longleftrightarrow> schema_pattern_call Q e p"
+  using assms by (simp only: schema_pattern_call_all_instances)
+
+text \<open>
+  Both instances use one actual interface. Its repeated variable occurrences
+  must therefore agree at both readings. Constructor separation recovers the
+  target subpattern at every source variable, and injective payload markers
+  make that recovery unique. The recovered finite substitution is exactly
+  the witness already required by symbolic call formation.
+
+  The universal conclusion ranges over every formed instance of the target
+  pattern. It concerns call formation against one interface, whose complete
+  syntax and uniqueness are used in the proof. It supplies no inference from
+  finitely many successful proof searches to a program's positive meaning.
+\<close>
+
+end

@@ -1,0 +1,19 @@
+Running Native_Investigation_Report_Diagnostic_coverage6 ...
+Warning - Unable to increase stack - interrupting thread
+Native_Investigation_Report_Diagnostic_coverage6 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_coverage6")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_coverage6.Factor_Library_Compilation" (unresolved "Native_Investigation_Report_Diagnostic_coverage6.Finite_Functional_Enumeration")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_coverage6.Factor_Reader_Library_Coverage" (unresolved "Native_Investigation_Report_Diagnostic_coverage6.Factor_Library_Coverage")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_coverage6.Factor_Reasoning_Execution" (unresolved "Native_Investigation_Report_Diagnostic_coverage6.Factor_Reader_Library_Coverage")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_coverage6.Factor_Inference_Reader_Compilation" (unresolved "Native_Investigation_Report_Diagnostic_coverage6.Factor_Library_Compilation")
+*** exception Interrupt_Breakdown raised
+*** At command "apply" (line 24 of "/tmp/native-investigation-report-diagnostic-coverage6/theories/Finite_Functional_Enumeration.thy")
+*** Failed to apply terminal proof method (line 43 of "/tmp/native-investigation-report-diagnostic-coverage6/theories/Factor_Library_Coverage.thy"):
+*** goal (1 subgoal):
+***  1. fset (finite_premise_entries H) =
+***     fset
+***      (finite_premise_entries
+***        (finite_schema_premises
+***          S))
+*** At command "by" (line 42 of "/tmp/native-investigation-report-diagnostic-coverage6/theories/Factor_Library_Coverage.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_coverage6
+0:02:17 elapsed time, 0:06:25 cpu time, factor 2.81

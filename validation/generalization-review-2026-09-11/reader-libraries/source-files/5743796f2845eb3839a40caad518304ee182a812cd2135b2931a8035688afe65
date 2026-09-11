@@ -1,0 +1,193 @@
+theory Factor_Application_Admission
+  imports "Factor_Program_Call_Admission"
+begin
+
+section \<open>An actual application uses the actual package's call boundary\<close>
+
+abbreviation application_admission_result :: "factor_term \<Rightarrow> bool" where
+  "application_admission_result z \<equiv> \<exists>E e pu pr au ar.
+    z=package_subject_argument e (use_data_term pu) (Payload_Term pr) (site_data_term au ar) \<and>
+    environment_value_presents E e \<and> native_application_formed E pu pr au ar"
+
+definition application_admission_schema :: "(nat,nat,nat) factor_schema" where
+  "application_admission_schema=data_rule
+    (package_subject_pattern data_x data_y data_z (Pattern_Pair data_w (Pattern_Variable 4)))
+    {(0,58,application_reading_pattern data_x data_w (Pattern_Variable 4)
+       (Pattern_Pair (Pattern_Variable 5) (Pattern_Variable 6)) (Pattern_Variable 7) (Pattern_Variable 8) (Pattern_Variable 9)),
+     (1,84,package_subject_pattern data_x data_y data_z
+       (Pattern_Pair (Pattern_Pair (Pattern_Variable 5) (Pattern_Variable 6)) (Pattern_Variable 7)))}"
+
+definition application_admission_system :: "(nat,nat,nat,nat) schema_system" where
+  "application_admission_system=add_view_definition program_call_admission_system 85 data_x {(0,application_admission_schema)}"
+
+lemma application_admission_system_formed [simp]: "schema_system_formed application_admission_system"
+  unfolding application_admission_system_def
+  by (rule add_recursive_definition_formed[OF program_call_admission_system_formed])
+    (auto simp: application_admission_schema_def
+      schema_formed_def schema_dependencies_def single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma application_admission_definitions [simp]:
+  "system_definitions application_admission_system=insert 85 (system_definitions program_call_admission_system)"
+  by (simp add: application_admission_system_def)
+
+lemma application_admission_call:
+  "schema_call_formed application_admission_system d t \<longleftrightarrow>
+    d\<in>system_definitions application_admission_system \<and> term_formed t"
+  using added_variable_calls[OF program_call_admission_system_formed
+    application_admission_system_formed[unfolded application_admission_system_def] program_call_admission_call]
+  by (simp only: application_admission_system_def[symmetric])
+
+lemma application_admission_old_meaning:
+  assumes "d\<in>system_definitions program_call_admission_system"
+  shows "(d,t)\<in>positive_meaning application_admission_system \<longleftrightarrow> (d,t)\<in>positive_meaning program_call_admission_system"
+  using added_definition_preserves_old(2)[OF program_call_admission_system_formed
+    application_admission_system_formed[unfolded application_admission_system_def], of d t] assms
+  by (auto simp: application_admission_system_def)
+
+lemma application_admission_clause [simp]:
+  "((85,c),S)\<in>system_clauses application_admission_system \<longleftrightarrow> (c,S)\<in>{(0,application_admission_schema)}"
+proof -
+  have owned: "((d,c),S)\<in>system_clauses program_call_admission_system \<Longrightarrow>
+    d\<in>system_definitions program_call_admission_system" for d c S
+    using program_call_admission_system_formed unfolding schema_system_formed_def by blast
+  have absent: "((85,c),S)\<notin>system_clauses program_call_admission_system" by (auto dest: owned)
+  show ?thesis using absent by (simp add: application_admission_system_def)
+qed
+
+lemma application_admission_previous_meaning:
+  assumes "d\<in>system_definitions package_admission_system"
+  shows "(d,t)\<in>positive_meaning application_admission_system \<longleftrightarrow> (d,t)\<in>positive_meaning package_admission_system"
+  using application_admission_old_meaning[of d t] program_call_admission_previous_meaning[OF assms, of t] assms by auto
+
+lemma application_admission_components:
+  "(58,t)\<in>positive_meaning application_admission_system \<longleftrightarrow> (58,t)\<in>positive_meaning application_reading_system"
+  "(84,t)\<in>positive_meaning application_admission_system \<longleftrightarrow> (84,t)\<in>positive_meaning program_call_admission_system"
+  using application_admission_previous_meaning[of 58 t] package_admission_previous_meaning[of 58 t]
+    package_closure_previous_meaning[of 58 t] definition_call_admission_instantiation_meaning[of 58 t]
+    schema_instantiation_old_meaning[of 58 t] premise_family_instantiation_old_meaning[of 58 t]
+    premise_rows_vector_meaning[of 58 t] vector_instantiation_old_meaning[of 58 t] row_values_old_meaning[of 58 t]
+    application_admission_old_meaning[of 84 t] by auto
+
+lemma application_admission_step:
+  assumes reading: "(58,application_reading_argument e au ar (Pair_Term du dr) t i k)\<in>positive_meaning application_reading_system"
+    and call: "(84,package_subject_argument e pu pr (Pair_Term (Pair_Term du dr) t))\<in>positive_meaning program_call_admission_system"
+  shows "(85,package_subject_argument e pu pr (Pair_Term au ar))\<in>positive_meaning application_admission_system"
+proof -
+  have formed: "term_formed e" "term_formed pu" "term_formed pr" "term_formed au" "term_formed ar"
+    "term_formed du" "term_formed dr" "term_formed t" "term_formed i" "term_formed k"
+    using schema_call_formed_target[OF positive_meaning_formed[OF reading]]
+      schema_call_formed_target[OF positive_meaning_formed[OF call]] by auto
+  let ?h="\<lambda>n::nat. if n=0 then e else if n=1 then pu else if n=2 then pr else if n=3 then au
+    else if n=4 then ar else if n=5 then du else if n=6 then dr else if n=7 then t else if n=8 then i else k"
+  have result: "(85,evaluate_pattern ?h (schema_conclusion application_admission_schema))\<in>positive_meaning application_admission_system"
+    by (rule ordinary_positive_valuation_step[where c=0])
+      (use formed assms in \<open>auto simp: application_admission_schema_def schema_variables_def
+        application_admission_call application_admission_components\<close>)
+  show ?thesis using result by (simp add: application_admission_schema_def)
+qed
+
+theorem application_admission_sound:
+  assumes holds: "(85,z)\<in>positive_meaning application_admission_system"
+  shows "application_admission_result z"
+proof -
+  have consequence: "(85,z)\<in>schema_consequences application_admission_system (positive_meaning application_admission_system)"
+    using holds positive_meaning_unfold[of application_admission_system] by blast
+  obtain n S h where clause: "((85,n),S)\<in>system_clauses application_admission_system"
+    and conclusion: "z=evaluate_pattern h (schema_conclusion S)"
+    and support: "\<forall>s d p. (s,d,p)\<in>schema_premises S \<longrightarrow>
+      (d,evaluate_pattern h p)\<in>positive_meaning application_admission_system"
+    using schema_consequences_valuationD[OF consequence] by blast
+  have schema: "S=application_admission_schema" using clause by simp
+  have calls: "(58,application_reading_argument (h 0) (h 3) (h 4) (Pair_Term (h 5) (h 6)) (h 7) (h 8) (h 9))
+      \<in>positive_meaning application_reading_system"
+    "(84,package_subject_argument (h 0) (h 1) (h 2) (Pair_Term (Pair_Term (h 5) (h 6)) (h 7)))
+      \<in>positive_meaning program_call_admission_system"
+    using support by (auto simp: schema application_admission_schema_def application_admission_components)
+  obtain E au ar du dr Is Ks where source: "environment_value_presents E (h 0)" "h 3=use_data_term au"
+    "h 4=Payload_Term ar" "h 5=use_data_term du" "h 6=Payload_Term dr"
+    "native_application_at E au ar (du,dr) (h 7) (set Is) (set Ks)"
+    using calls(1) by (simp only: application_reading_exact site_data_term_def factor_term.inject) blast
+  have head: "(84,package_subject_argument (h 0) (h 1) (h 2) (Pair_Term (definition_site_value (du,dr)) (h 7)))
+      \<in>positive_meaning program_call_admission_system"
+    using calls(2) by (simp add: source(4,5) site_data_term_def)
+  obtain pu pr P where package: "h 1=use_data_term pu" "h 2=Payload_Term pr" "native_package_at E pu pr P"
+    "schema_call_formed P (du,dr) (h 7)"
+    using head by (simp only: program_call_admission_at_source[OF source(1)] definition_site_value_eq) blast
+  have formed: "native_application_formed E pu pr au ar"
+    unfolding native_application_formed_def
+    by (rule exI[of _ P], rule exI[of _ "(du,dr)"], rule exI[of _ "h 7"],
+      rule exI[of _ "set Is"], rule exI[of _ "set Ks"])
+      (use package(3,4) source(6) in blast)
+  show ?thesis by (rule exI[of _ E], rule exI[of _ "h 0"], rule exI[of _ pu], rule exI[of _ pr],
+    rule exI[of _ au], rule exI[of _ ar])
+    (use source package formed conclusion in \<open>simp add: schema application_admission_schema_def site_data_term_def\<close>)
+qed
+
+theorem application_admission_complete:
+  assumes source: "environment_value_presents E e" and formed: "native_application_formed E pu pr au ar"
+  shows "(85,package_subject_argument e (use_data_term pu) (Payload_Term pr) (site_data_term au ar))
+    \<in>positive_meaning application_admission_system"
+proof -
+  obtain P d t I K where package: "native_package_at E pu pr P" and app: "native_application_at E au ar d t I K"
+    and call: "schema_call_formed P d t" using formed by (auto simp: native_application_formed_def)
+  obtain du dr where site: "d=(du,dr)" by (cases d)
+  have finite: "finite I" "finite K" using native_application_properties[OF app] by auto
+  obtain Is Ks where lists: "set Is=I" "distinct Is" "set Ks=K" "distinct Ks"
+    using finite_distinct_list[OF finite(1)] finite_distinct_list[OF finite(2)] by blast
+  have actual: "native_application_at E au ar (du,dr) t (set Is) (set Ks)" using app lists site by simp
+  have reading: "(58,application_reading_argument e (use_data_term au) (Payload_Term ar)
+      (Pair_Term (use_data_term du) (Payload_Term dr)) t (data_list_term (map Payload_Term Is)) (data_list_term (map Payload_Term Ks)))
+      \<in>positive_meaning application_reading_system"
+    using application_reading_complete[OF source lists(2,4) actual] by (simp add: site_data_term_def)
+  have head: "(84,package_subject_argument e (use_data_term pu) (Payload_Term pr)
+      (Pair_Term (Pair_Term (use_data_term du) (Payload_Term dr)) t))\<in>positive_meaning program_call_admission_system"
+    using program_call_admission_complete[OF source package call] by (simp add: site site_data_term_def)
+  show ?thesis using application_admission_step[OF reading head] by (simp add: site_data_term_def)
+qed
+
+theorem application_admission_exact:
+  "(85,z)\<in>positive_meaning application_admission_system \<longleftrightarrow> application_admission_result z"
+  using application_admission_sound application_admission_complete by blast
+
+corollary application_admission_at_source:
+  assumes source: "environment_value_presents E e"
+  shows "(85,package_subject_argument e u r x)\<in>positive_meaning application_admission_system \<longleftrightarrow>
+    (\<exists>pu pr au ar. u=use_data_term pu \<and> r=Payload_Term pr \<and> x=site_data_term au ar \<and>
+      native_application_formed E pu pr au ar)"
+proof -
+  have unique: "F=E" if "environment_value_presents F e" for F
+    by (rule environment_value_presents_unique[OF that source])
+  show ?thesis by (simp only: application_admission_exact factor_term.inject) (use source unique in blast)
+qed
+
+corollary application_admission_on_values:
+  assumes source: "environment_value_presents E e"
+  shows "(85,package_subject_argument e (use_data_term pu) (Payload_Term pr) (site_data_term au ar))
+      \<in>positive_meaning application_admission_system \<longleftrightarrow> native_application_formed E pu pr au ar"
+  by (simp only: application_admission_at_source[OF source] inj_eq[OF use_data_term_injective] factor_term.inject site_data_term_eq) blast
+
+corollary application_admission_with_reads:
+  assumes source: "environment_value_presents E e" and package: "native_package_at E pu pr P"
+    and app: "native_application_at E au ar d t I K"
+  shows "(85,package_subject_argument e (use_data_term pu) (Payload_Term pr) (site_data_term au ar))
+      \<in>positive_meaning application_admission_system \<longleftrightarrow> schema_call_formed P d t"
+  by (simp only: application_admission_on_values[OF source] native_application_formed_with_reads[OF package app])
+
+corollary application_admission_presentation_invariance:
+  assumes "environment_value_presents E e" "environment_value_presents E f"
+  shows "(85,package_subject_argument e u r x)\<in>positive_meaning application_admission_system \<longleftrightarrow>
+    (85,package_subject_argument f u r x)\<in>positive_meaning application_admission_system"
+  by (simp only: application_admission_at_source[OF assms(1)] application_admission_at_source[OF assms(2)])
+
+text \<open>
+  The actual application reader supplies its callee, operand, and complete
+  syntax metadata. The shared call entry checks that callee and operand in
+  the actual package. The metadata is hidden only after its complete reading.
+
+  Acceptance is exactly native application formation. It is independent of
+  application truth and finite correctness evidence. Every source presentation
+  is permitted, and arbitrary formed operands retain their actual interface
+  conditions.
+\<close>
+
+end

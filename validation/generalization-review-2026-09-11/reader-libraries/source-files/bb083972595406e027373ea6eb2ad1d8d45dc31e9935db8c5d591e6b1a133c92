@@ -1,0 +1,242 @@
+theory Candidate_Investigation
+  imports Candidate_Observations Inference_Demands
+begin
+
+section \<open>An opportunity names the candidate, facet, and missing use\<close>
+
+definition candidate_opportunities where
+  "candidate_opportunities C F observe c=
+    {(d,q). d\<in>C \<and> q\<in>candidate_losses F observe d c}"
+
+theorem candidate_opportunities_exact:
+  "complete_candidate C (candidate_profile F observe) c \<longleftrightarrow>
+    c\<in>C \<and> candidate_opportunities C F observe c={}"
+  by (auto simp: complete_candidate_def candidate_opportunities_def candidate_losses_def candidate_profile_comparison)
+
+theorem an_opportunity_prevents_complete_coverage:
+  assumes "(d,q)\<in>candidate_opportunities C F observe c"
+  shows "\<not>complete_candidate C (candidate_profile F observe) c"
+  using assms by (auto simp: candidate_opportunities_exact)
+
+definition attainment_candidates where
+  "attainment_candidates C ability required={c\<in>C. required\<subseteq>ability c}"
+
+lemma attainment_preserves_the_existing_profile:
+  "d\<in>attainment_candidates C (candidate_profile F observe)
+      (insert q (candidate_profile F observe c)) \<longleftrightarrow>
+    d\<in>C \<and> candidate_losses F observe c d={} \<and> q\<in>candidate_profile F observe d"
+  by (auto simp: attainment_candidates_def candidate_losses_empty)
+
+theorem a_missing_use_directs_a_preserving_improvement:
+  assumes missing: "q\<notin>candidate_profile F observe c"
+    and found: "d\<in>attainment_candidates C (candidate_profile F observe)
+      (insert q (candidate_profile F observe c))"
+  shows "candidate_profile F observe c\<subset>candidate_profile F observe d \<and>
+    (d,q)\<in>candidate_opportunities C F observe c"
+  using assms by (auto simp: attainment_candidates_def candidate_opportunities_def candidate_losses_def)
+
+section \<open>Guidance retains complete paths to the requested improvement\<close>
+
+definition targeted_development_steps where
+  "targeted_development_steps E T={(a,b)\<in>E. \<exists>t\<in>T. (b,t)\<in>E\<^sup>*}"
+
+lemma targeted_development_subset:
+  "targeted_development_steps E T\<subseteq>E"
+  by (auto simp: targeted_development_steps_def)
+
+theorem targeted_development_exact:
+  assumes "t\<in>T"
+  shows "(c,t)\<in>(targeted_development_steps E T)\<^sup>* \<longleftrightarrow> (c,t)\<in>E\<^sup>*"
+proof
+  assume "(c,t)\<in>(targeted_development_steps E T)\<^sup>*"
+  then show "(c,t)\<in>E\<^sup>*"
+    by (rule subsetD[OF rtrancl_mono[OF targeted_development_subset]])
+next
+  assume path: "(c,t)\<in>E\<^sup>*"
+  have transfer: "(a,b)\<in>E\<^sup>* \<Longrightarrow> (\<exists>t\<in>T. (b,t)\<in>E\<^sup>*) \<Longrightarrow>
+      (a,b)\<in>(targeted_development_steps E T)\<^sup>*" for a b
+  proof (induction rule: rtrancl_induct)
+    case base
+    show ?case by simp
+  next
+    case (step b d)
+    obtain t where target: "t\<in>T" and future: "(d,t)\<in>E\<^sup>*"
+      using step.prems by blast
+    have continuation: "(b,t)\<in>E\<^sup>*"
+      by (rule rtrancl_trans[OF r_into_rtrancl[OF step.hyps(2)] future])
+    have prefix: "(a,b)\<in>(targeted_development_steps E T)\<^sup>*"
+      by (rule step.IH) (use target continuation in blast)
+    have edge: "(b,d)\<in>targeted_development_steps E T"
+      using step.hyps(2) target future by (auto simp: targeted_development_steps_def)
+    show ?case by (rule rtrancl.rtrancl_into_rtrancl[OF prefix edge])
+  qed
+  show "(c,t)\<in>(targeted_development_steps E T)\<^sup>*"
+    by (rule transfer[OF path]) (use assms in auto)
+qed
+
+theorem targeted_opportunity_scope:
+  "development_scope (targeted_development_steps E T) c\<inter>T=
+    development_scope E c\<inter>T"
+  using targeted_development_exact[where E=E and T=T and c=c]
+  by (auto simp: development_scope_def; blast)
+
+theorem a_target_keeps_a_plateau_on_its_path:
+  defines "E \<equiv> {(0::nat,1),(1,2)}"
+    and "ability \<equiv> (\<lambda>n::nat. if n=2 then {()} else {})"
+  shows "(0,1)\<in>targeted_development_steps E (attainment_candidates UNIV ability {()}) \<and>
+    ability 0=ability 1 \<and>
+    2\<in>development_scope (targeted_development_steps E (attainment_candidates UNIV ability {()})) 0"
+proof -
+  have edge: "(1,2)\<in>E" by (simp add: E_def)
+  have path: "(0,2)\<in>E\<^sup>*"
+    using edge by (auto simp: E_def intro: rtrancl.rtrancl_into_rtrancl)
+  have target: "2\<in>attainment_candidates UNIV ability {()}"
+    by (simp add: attainment_candidates_def ability_def)
+  show ?thesis using r_into_rtrancl[OF edge] target path
+    targeted_development_exact[OF target, of 0 E]
+    by (auto simp: targeted_development_steps_def attainment_candidates_def ability_def E_def development_scope_def)
+qed
+
+section \<open>Stopping consumes an adequate comparison and a covered search scope\<close>
+
+definition frontier_obligations where
+  "frontier_obligations F observe frontier c=
+    obligation_substitution (graph_map frontier (\<lambda>d. (d,c)))
+      (\<lambda>z. profile_obligations F observe (fst z) (snd z))"
+
+theorem frontier_comparison_reduction:
+  assumes basis: "comparison_basis C relation F observe"
+    and cover: "candidate_cover C (candidate_profile F observe) frontier"
+  shows "exact_obligation_reduction C (\<lambda>c. \<forall>d\<in>C. relation d c)
+    (\<lambda>z. candidate_profile F observe (fst z)\<subseteq>candidate_profile F observe (snd z))
+    (\<lambda>c. graph_map frontier (\<lambda>d. (d,c)))"
+proof -
+  have reflected: "(\<forall>d\<in>C. relation d c) \<longleftrightarrow>
+      (\<forall>d\<in>frontier. candidate_profile F observe d\<subseteq>candidate_profile F observe c)"
+    if "c\<in>C" for c
+  proof -
+    have scalar: "relation d c \<longleftrightarrow>
+        candidate_profile F observe d\<subseteq>candidate_profile F observe c"
+      if "d\<in>C" for d
+      by (rule comparison_basis_at[OF basis that \<open>c\<in>C\<close>])
+    have all: "(\<forall>d\<in>C. relation d c) \<longleftrightarrow>
+        (\<forall>d\<in>C. candidate_profile F observe d\<subseteq>candidate_profile F observe c)"
+      using scalar by blast
+    show ?thesis using complete_candidate_from_cover[OF cover, of c] \<open>c\<in>C\<close>
+      by (simp only: complete_candidate_def all; simp)
+  qed
+  show ?thesis using reflected
+    by (auto simp: exact_obligation_reduction_def graph_map_ran image_subset_iff)
+qed
+
+theorem frontier_depth_reduction:
+  assumes "comparison_basis C relation F observe"
+    "candidate_cover C (candidate_profile F observe) frontier"
+  shows "exact_obligation_reduction C (\<lambda>c. \<forall>d\<in>C. relation d c)
+    (profile_condition observe) (frontier_obligations F observe frontier)"
+  unfolding frontier_obligations_def
+  by (rule exact_obligation_reduction_compose[OF frontier_comparison_reduction[OF assms]
+    profile_comparison_reduction]) simp
+
+theorem guided_frontier_assessment:
+  assumes basis: "comparison_basis C relation F observe"
+    and cover: "candidate_cover C (candidate_profile F observe) frontier"
+    and sound: "inference_sound (profile_condition observe) R"
+    and known: "K\<subseteq>{z. profile_condition observe z}"
+    and current: "c\<in>C"
+    and settled: "remaining_obligations
+      (inference_closure (guided_inferences R K (rel_ran (frontier_obligations F observe frontier c))) K)
+      (frontier_obligations F observe frontier c)={}"
+  shows "\<forall>d\<in>C. relation d c"
+proof -
+  have residual: "remaining_obligations (inference_closure R K)
+      (frontier_obligations F observe frontier c)={}"
+    using settled by (simp only: guided_goal_residual_exact[OF subset_refl])
+  show ?thesis
+    by (rule reduced_requirement_complete[OF exact_obligation_reduction_sound[OF frontier_depth_reduction[OF basis cover]]
+      current inference_closure_sound[OF sound known] residual])
+qed
+
+definition attainment_obligations where
+  "attainment_obligations required c=graph_map required (\<lambda>(f,w). (c,f,w))"
+
+theorem attainment_reduction:
+  assumes boundary: "required\<subseteq>F\<times>UNIV"
+  shows "exact_obligation_reduction C
+    (\<lambda>c. c\<in>attainment_candidates C (candidate_profile F observe) required)
+    (profile_condition observe) (attainment_obligations required)"
+  using boundary by (auto simp: exact_obligation_reduction_def attainment_candidates_def
+    attainment_obligations_def graph_map_ran candidate_profile_def profile_condition_def)
+
+theorem guided_attainment_assessment:
+  assumes boundary: "required\<subseteq>F\<times>UNIV"
+    and current: "c\<in>C"
+    and sound: "inference_sound (profile_condition observe) R"
+    and known: "K\<subseteq>{z. profile_condition observe z}"
+    and settled: "remaining_obligations
+      (inference_closure (guided_inferences R K (rel_ran (attainment_obligations required c))) K)
+      (attainment_obligations required c)={}"
+  shows "c\<in>attainment_candidates C (candidate_profile F observe) required"
+proof -
+  have residual: "remaining_obligations (inference_closure R K) (attainment_obligations required c)={}"
+    using settled by (simp only: guided_goal_residual_exact[OF subset_refl])
+  show ?thesis
+    by (rule reduced_requirement_complete[OF exact_obligation_reduction_sound[OF attainment_reduction[OF boundary]]
+      current inference_closure_sound[OF sound known] residual])
+qed
+
+section \<open>Reuse scope and establishment size are explicit observations\<close>
+
+definition workload_observations where
+  "workload_observations W work c={(I,b). I\<in>W \<and> work c I\<le>(b::nat)}"
+
+theorem workload_observation_comparison:
+  "workload_observations W work c\<subseteq>workload_observations W work d \<longleftrightarrow>
+    (\<forall>I\<in>W. work d I\<le>work c I)"
+  by (auto simp: workload_observations_def; fastforce)
+
+definition copied_establishment_size where
+  "copied_establishment_size B I=card I+card (I\<times>B)"
+
+definition shared_establishment_size where
+  "shared_establishment_size B I=card I+card B"
+
+theorem shared_establishment_improves_if_reused:
+  assumes uses: "finite I" "1<card I" and body: "finite B" "B\<noteq>{}"
+  shows "shared_establishment_size B I<copied_establishment_size B I"
+proof -
+  have positive: "0<card B" using body by (simp add: card_gt_0_iff)
+  have smaller: "1*card B<card I*card B"
+    by (rule mult_strict_right_mono[OF uses(2) positive])
+  show ?thesis using smaller
+    by (simp add: shared_establishment_size_def copied_establishment_size_def card_cartesian_product)
+qed
+
+theorem establishment_still_counts_without_a_use:
+  assumes "finite B" "B\<noteq>{}"
+  shows "copied_establishment_size B {}<shared_establishment_size B {}"
+  using assms by (simp add: shared_establishment_size_def copied_establishment_size_def card_gt_0_iff)
+
+text \<open>
+  A proposed direction names a missing use. Its attainment conditions retain
+  the current complete profile, so an improvement cannot silently discard
+  another selected facet. Opportunities that also lose a use remain explicit
+  tradeoffs. Targeted development retains every path to the requested result,
+  including plateaus and intermediate states that do not themselves improve.
+
+  The stopping reduction requires both an independently justified comparison
+  basis and a dominating cover of the intended candidate scope. It produces
+  complete comparison obligations with their candidate and facet origins.
+  The same inference-demand construction guides their investigation and the
+  conditions for attaining a proposed improvement. Semantic rule validity and
+  established evidence remain necessary for discharge.
+
+  Workload observations compare a supplied, meaningful size account at every
+  declared workload and budget. The example counts a finite established body,
+  its copied occurrences, and every client interface. Sharing benefits repeated
+  uses, while establishing an unused body still has a size. These are structural
+  counts, not a claim about elapsed execution time or the truth of that body.
+  Other relevant meanings require their own adequate observations.
+\<close>
+
+end

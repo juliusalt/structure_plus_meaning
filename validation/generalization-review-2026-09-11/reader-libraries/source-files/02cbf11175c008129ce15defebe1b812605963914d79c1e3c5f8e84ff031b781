@@ -1,0 +1,300 @@
+theory Factor_Terms
+  imports Factor_Structure
+begin
+
+section \<open>Finite structured terms and generic patterns\<close>
+
+datatype factor_term =
+    Target_Term exact_target
+  | Payload_Term octets
+  | Pair_Term factor_term factor_term
+
+fun term_formed :: "factor_term \<Rightarrow> bool" where
+  "term_formed (Target_Term t) = target_formed t"
+| "term_formed (Payload_Term v) = octets_formed v"
+| "term_formed (Pair_Term x y) = (term_formed x \<and> term_formed y)"
+
+datatype 'a term_pattern =
+    Pattern_Variable 'a
+  | Pattern_Target exact_target
+  | Pattern_Payload octets
+  | Pattern_Pair "'a term_pattern" "'a term_pattern"
+
+fun pattern_variables :: "'a term_pattern \<Rightarrow> 'a set" where
+  "pattern_variables (Pattern_Variable a) = {a}"
+| "pattern_variables (Pattern_Target t) = {}"
+| "pattern_variables (Pattern_Payload v) = {}"
+| "pattern_variables (Pattern_Pair p q) = pattern_variables p \<union> pattern_variables q"
+
+fun pattern_formed :: "'a term_pattern \<Rightarrow> bool" where
+  "pattern_formed (Pattern_Variable a) = True"
+| "pattern_formed (Pattern_Target t) = target_formed t"
+| "pattern_formed (Pattern_Payload v) = octets_formed v"
+| "pattern_formed (Pattern_Pair p q) = (pattern_formed p \<and> pattern_formed q)"
+
+lemma pattern_variables_finite [simp]: "finite (pattern_variables p)"
+  by (induction p) auto
+
+definition term_bindings_formed :: "'a set \<Rightarrow> ('a \<times> factor_term) set \<Rightarrow> bool" where
+  "term_bindings_formed B V \<longleftrightarrow>
+    finite V \<and> single_valued V \<and> rel_dom V = B \<and> (\<forall>a t. (a,t) \<in> V \<longrightarrow> term_formed t)"
+
+inductive pattern_instance :: "('a \<times> factor_term) set \<Rightarrow> 'a term_pattern \<Rightarrow> factor_term \<Rightarrow> bool"
+  for V where
+  variable: "(a,t) \<in> V \<Longrightarrow> pattern_instance V (Pattern_Variable a) t"
+| target: "target_formed t \<Longrightarrow> pattern_instance V (Pattern_Target t) (Target_Term t)"
+| payload: "octets_formed v \<Longrightarrow> pattern_instance V (Pattern_Payload v) (Payload_Term v)"
+| pair: "pattern_instance V p x \<Longrightarrow> pattern_instance V q y \<Longrightarrow>
+    pattern_instance V (Pattern_Pair p q) (Pair_Term x y)"
+
+lemma pattern_instance_cases [simp]:
+  "pattern_instance V (Pattern_Variable a) t \<longleftrightarrow> (a,t) \<in> V"
+  "pattern_instance V (Pattern_Target literal) t \<longleftrightarrow> target_formed literal \<and> t = Target_Term literal"
+  "pattern_instance V (Pattern_Pair p q) t \<longleftrightarrow>
+    (\<exists>x y. t = Pair_Term x y \<and> pattern_instance V p x \<and> pattern_instance V q y)"
+  "pattern_instance V (Pattern_Payload v) t \<longleftrightarrow> octets_formed v \<and> t = Payload_Term v"
+  by (auto elim: pattern_instance.cases intro: pattern_instance.intros)
+
+lemma pattern_instance_variables:
+  assumes "pattern_instance V p t"
+  shows "pattern_variables p \<subseteq> rel_dom V"
+  using assms by (induction rule: pattern_instance.induct) (auto simp: rel_dom_def)
+
+lemma pattern_instance_formed_pattern:
+  assumes "pattern_instance V p t"
+  shows "pattern_formed p"
+  using assms by (induction rule: pattern_instance.induct) auto
+
+lemma pattern_instance_unique:
+  assumes sv: "single_valued V" and first: "pattern_instance V p x" and second: "pattern_instance V p y"
+  shows "x = y"
+  using first second sv
+  by (induction p arbitrary: x y) (auto simp: pattern_instance_cases single_valued_def)
+
+lemma pattern_instance_formed_term:
+  assumes bindings: "term_bindings_formed B V" and inst: "pattern_instance V p t"
+  shows "term_formed t"
+  using inst by (induction rule: pattern_instance.induct)
+    (use bindings in \<open>auto simp: term_bindings_formed_def\<close>)
+
+lemma pattern_instance_exists:
+  assumes formed: "pattern_formed p" and scope: "pattern_variables p \<subseteq> rel_dom V"
+  shows "\<exists>t. pattern_instance V p t"
+  using formed scope
+proof (induction p)
+  case (Pattern_Variable a)
+  then obtain t where "(a,t) \<in> V" by (auto simp: rel_dom_def)
+  then show ?case by (meson pattern_instance.variable)
+next
+  case (Pattern_Target t)
+  then show ?case by (auto intro: pattern_instance.target)
+next
+  case (Pattern_Payload v)
+  then show ?case by (auto intro: pattern_instance.payload)
+next
+  case (Pattern_Pair p q)
+  have pf: "pattern_formed p" and qf: "pattern_formed q"
+    and ps: "pattern_variables p \<subseteq> rel_dom V" and qs: "pattern_variables q \<subseteq> rel_dom V"
+    using Pattern_Pair.prems by auto
+  obtain x where left: "pattern_instance V p x" using Pattern_Pair.IH(1)[OF pf ps] by blast
+  obtain y where right: "pattern_instance V q y" using Pattern_Pair.IH(2)[OF qf qs] by blast
+  show ?case using pattern_instance.pair[OF left right] by blast
+qed
+
+theorem scoped_pattern_has_one_instance:
+  assumes "term_bindings_formed B V" "pattern_formed p" "pattern_variables p \<subseteq> B"
+  shows "\<exists>!t. pattern_instance V p t"
+proof -
+  have sv: "single_valued V" and scope: "pattern_variables p \<subseteq> rel_dom V"
+    using assms by (auto simp: term_bindings_formed_def)
+  obtain t where found: "pattern_instance V p t" using pattern_instance_exists[OF assms(2) scope] by blast
+  show ?thesis
+  proof (rule ex1I[of _ t])
+    show "pattern_instance V p t" by (rule found)
+    fix s assume other: "pattern_instance V p s"
+    show "s = t" by (rule pattern_instance_unique[OF sv other found])
+  qed
+qed
+
+section \<open>Substitution and scope renaming\<close>
+
+fun pattern_substitute :: "('a \<Rightarrow> 'b term_pattern) \<Rightarrow> 'a term_pattern \<Rightarrow> 'b term_pattern" where
+  "pattern_substitute s (Pattern_Variable a) = s a"
+| "pattern_substitute s (Pattern_Target t) = Pattern_Target t"
+| "pattern_substitute s (Pattern_Payload v) = Pattern_Payload v"
+| "pattern_substitute s (Pattern_Pair p q) = Pattern_Pair (pattern_substitute s p) (pattern_substitute s q)"
+
+lemma pattern_substitute_identity [simp]:
+  "pattern_substitute Pattern_Variable p = p"
+  by (induction p) auto
+
+lemma pattern_substitute_composes:
+  "pattern_substitute t (pattern_substitute s p) = pattern_substitute (\<lambda>a. pattern_substitute t (s a)) p"
+  by (induction p) auto
+
+lemma pattern_substitute_variables:
+  "pattern_variables (pattern_substitute s p) = (\<Union>a\<in>pattern_variables p. pattern_variables (s a))"
+  by (induction p) auto
+
+lemma pattern_substitute_formed:
+  assumes "pattern_formed p" "\<forall>a\<in>pattern_variables p. pattern_formed (s a)"
+  shows "pattern_formed (pattern_substitute s p)"
+  using assms by (induction p) auto
+
+definition rename_pattern :: "('a \<Rightarrow> 'b) \<Rightarrow> 'a term_pattern \<Rightarrow> 'b term_pattern" where
+  "rename_pattern f p = pattern_substitute (Pattern_Variable \<circ> f) p"
+
+definition rename_term_bindings ::
+  "('a \<Rightarrow> 'b) \<Rightarrow> ('a \<times> factor_term) set \<Rightarrow> ('b \<times> factor_term) set" where
+  "rename_term_bindings f V = (\<lambda>(a,t). (f a,t)) ` V"
+
+lemma rename_pattern_variables:
+  "pattern_variables (rename_pattern f p) = f ` pattern_variables p"
+  by (auto simp: rename_pattern_def pattern_substitute_variables)
+
+lemma rename_pattern_formed [simp]:
+  "pattern_formed (rename_pattern f p) = pattern_formed p"
+  by (induction p) (auto simp: rename_pattern_def)
+
+lemma rename_binding_at:
+  assumes injective: "inj_on f (rel_dom V)" and member: "a \<in> rel_dom V"
+  shows "(f a,t) \<in> rename_term_bindings f V \<longleftrightarrow> (a,t) \<in> V"
+proof
+  assume "(f a,t) \<in> rename_term_bindings f V"
+  then obtain b where binding: "(b,t) \<in> V" and eq: "f a = f b"
+    by (auto simp: rename_term_bindings_def)
+  have bm: "b \<in> rel_dom V" using binding by (auto simp: rel_dom_def)
+  have "a = b" by (rule inj_onD[OF injective eq member bm])
+  then show "(a,t) \<in> V" using binding by simp
+next
+  assume "(a,t) \<in> V"
+  then show "(f a,t) \<in> rename_term_bindings f V"
+    by (auto simp: rename_term_bindings_def intro: rev_image_eqI)
+qed
+
+lemma rename_pattern_simps [simp]:
+  "rename_pattern f (Pattern_Variable a) = Pattern_Variable (f a)"
+  "rename_pattern f (Pattern_Target t) = Pattern_Target t"
+  "rename_pattern f (Pattern_Payload v) = Pattern_Payload v"
+  "rename_pattern f (Pattern_Pair p q) = Pattern_Pair (rename_pattern f p) (rename_pattern f q)"
+  by (simp_all add: rename_pattern_def)
+
+lemma rename_pattern_identity [simp]: "rename_pattern id p = p"
+  by (induction p) simp_all
+
+lemma rename_pattern_composition:
+  "rename_pattern g (rename_pattern f p) = rename_pattern (g \<circ> f) p"
+  by (induction p) simp_all
+
+lemma rename_pattern_agreement:
+  assumes "\<forall>a\<in>pattern_variables p. f a = g a"
+  shows "rename_pattern f p = rename_pattern g p"
+  using assms by (induction p) auto
+
+theorem pattern_instance_renaming:
+  assumes injective: "inj_on f (rel_dom V)" and scope: "pattern_variables p \<subseteq> rel_dom V"
+  shows "pattern_instance (rename_term_bindings f V) (rename_pattern f p) t \<longleftrightarrow>
+    pattern_instance V p t"
+  using scope
+proof (induction p arbitrary: t)
+  case (Pattern_Variable a)
+  have member: "a \<in> rel_dom V" using Pattern_Variable.prems by simp
+  show ?case
+    by (simp only: rename_pattern_simps pattern_instance_cases(1);
+        rule rename_binding_at[OF injective member])
+next
+  case (Pattern_Target a)
+  show ?case by simp
+next
+  case (Pattern_Payload v)
+  show ?case by simp
+next
+  case (Pattern_Pair p q)
+  then show ?case by auto
+qed
+
+theorem pattern_instance_substitution:
+  assumes inst: "pattern_instance V p t"
+    and substitutions: "\<And>a x. (a,x) \<in> V \<Longrightarrow> pattern_instance W (s a) x"
+  shows "pattern_instance W (pattern_substitute s p) t"
+  using inst by (induction rule: pattern_instance.induct)
+    (auto intro: substitutions pattern_instance.intros)
+
+lemma renamed_term_bindings_formed:
+  assumes formed: "term_bindings_formed B V" and injective: "inj_on f B"
+  shows "term_bindings_formed (f ` B) (rename_term_bindings f V)"
+proof -
+  have fin: "finite V" and sv: "single_valued V" and domain: "rel_dom V = B"
+    using formed by (auto simp: term_bindings_formed_def)
+  have unique: "single_valued (rename_term_bindings f V)"
+    using single_valued_pair_image[OF sv, of f id] injective domain
+    by (simp add: rename_term_bindings_def)
+  have dom: "rel_dom (rename_term_bindings f V) = f ` B"
+    using pair_image_domain[of f id V] domain by (simp add: rename_term_bindings_def)
+  show ?thesis using fin unique dom formed
+    by (auto simp: term_bindings_formed_def rename_term_bindings_def)
+qed
+
+section \<open>One schema accepts arbitrarily large future terms\<close>
+
+lemma generic_variable_instance:
+  assumes "term_formed t"
+  shows "term_bindings_formed {()} {((),t)} \<and> pattern_instance {((),t)} (Pattern_Variable ()) t"
+  using assms by (auto simp: term_bindings_formed_def single_valued_def rel_dom_def
+      intro: pattern_instance.variable)
+
+fun term_height :: "factor_term \<Rightarrow> nat" where
+  "term_height (Target_Term t) = 0"
+| "term_height (Payload_Term v) = 0"
+| "term_height (Pair_Term x y) = Suc (max (term_height x) (term_height y))"
+
+lemma term_pair_not_left [simp]: "Pair_Term x y \<noteq> x"
+proof
+  assume eq: "Pair_Term x y = x"
+  have smaller: "term_height x < term_height (Pair_Term x y)" by simp
+  show False using smaller eq by simp
+qed
+
+lemma term_pair_not_right [simp]: "Pair_Term x y \<noteq> y"
+proof
+  assume eq: "Pair_Term x y = y"
+  have smaller: "term_height y < term_height (Pair_Term x y)" by simp
+  show False using smaller eq by simp
+qed
+
+fun term_tower :: "nat \<Rightarrow> factor_term" where
+  "term_tower 0 = Target_Term (Whole_Artifact empty_artifact)"
+| "term_tower (Suc n) = Pair_Term (Target_Term (Whole_Artifact empty_artifact)) (term_tower n)"
+
+lemma term_tower_formed [simp]: "term_formed (term_tower n)"
+  by (induction n) simp_all
+
+lemma term_tower_height [simp]: "term_height (term_tower n) = n"
+  by (induction n) simp_all
+
+lemma term_tower_injective: "inj term_tower"
+proof (rule injI)
+  fix m n assume eq: "term_tower m = term_tower n"
+  have "term_height (term_tower m) = term_height (term_tower n)" by (rule arg_cong[OF eq])
+  then show "m = n" by simp
+qed
+
+theorem future_term_domain_is_infinite:
+  "infinite {t. term_formed t}"
+proof
+  assume finite: "finite {t. term_formed t}"
+  have subset: "range term_tower \<subseteq> {t. term_formed t}" by auto
+  have image_finite: "finite (range term_tower)" by (rule finite_subset[OF subset finite])
+  have "finite (UNIV :: nat set)" by (rule finite_imageD[OF image_finite term_tower_injective])
+  then show False by simp
+qed
+
+text \<open>
+  These datatypes are mathematical syntax projections. The native quotation
+  grammar must recover them from structure before a presentation can use them.
+  No semantic definition, proof rule, SK operation, or truth callback is part of
+  this layer. Variable identity is relative to the explicitly supplied scope;
+  exact targets remain fixed when variables are renamed.
+\<close>
+
+end

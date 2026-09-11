@@ -1,0 +1,6 @@
+Running Native_Investigation_Report_Diagnostic_compilation10 ...
+Native_Investigation_Report_Diagnostic_compilation10 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_compilation10")
+*** Malformed command syntax
+*** At command "<malformed>" (line 41 of "/tmp/native-investigation-report-diagnostic-compilation10/theories/Factor_Inference_Reader_Compilation.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_compilation10
+0:02:02 elapsed time, 0:04:23 cpu time, factor 2.14

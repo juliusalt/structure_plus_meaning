@@ -1,0 +1,11 @@
+{
+  "stage": "compiler-duplicate-failure",
+  "outcome": "expected runtime failure reproduced",
+  "case_source_sha256": "99db9e75de4f928bfa983e79b59cda0b4a1de0f3c6acfe2e46ff602cfe525707",
+  "checker_sha256": "8a26e0e8de1e4c02f89d06bc25679ea9d2f26e5d81772611f126563a9f1d957a",
+  "build_helper_sha256": "8915b7a480b2a17b5cea5b819f3be43323f69cb79dc1513a76c07eb83f6b491e",
+  "replay_script_sha256": "afbe76a1d0497a279de741565a5958ab1acd6b5694c6269c14d01feedf85667a",
+  "receipt": "/tmp/generalization-quality-review/reader-retained-failure-replay/run/receipt.json",
+  "receipt_sha256": "5688ab6df3ae1edc870974ce8c5970c941353523ee43ff58476d4ed76d640c90",
+  "boundary": "Inputs are replayed directly from the retained case file. This is validation of the recorded family, not a new content discovery or a new native mathematical proof."
+}

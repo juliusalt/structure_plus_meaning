@@ -1,0 +1,162 @@
+theory Factor_Scheme_Observations
+  imports "Factor_Scheme_Local_Readings" "Factor_Specialization_Reports" "Factor_Pattern_Binding_Keys"
+begin
+
+section \<open>Native term equality compares complete symbolic claims\<close>
+
+definition pattern_claim_observation :: "local_address term_pattern\<Rightarrow>factor_term" where
+  "pattern_claim_observation p=Pair_Term (evaluate_pattern Payload_Term p)
+    (evaluate_pattern (\<lambda>_. Target_Term (Whole_Artifact empty_artifact)) p)"
+
+lemma pattern_claim_observation_injective [simp]:
+  "pattern_claim_observation p=pattern_claim_observation q \<longleftrightarrow> p=q"
+proof
+  assume same: "pattern_claim_observation p=pattern_claim_observation q"
+  show "p=q"
+    by (rule pattern_evaluations_determine[where f=id and B=UNIV and k="Whole_Artifact empty_artifact"])
+      (use same in \<open>auto simp: pattern_claim_observation_def\<close>)
+next
+  assume "p=q"
+  then show "pattern_claim_observation p=pattern_claim_observation q" by simp
+qed
+
+lemma pattern_claim_observation_formed:
+  assumes "pattern_formed p" "\<forall>a\<in>pattern_variables p. octets_formed a"
+  shows "term_formed (pattern_claim_observation p)"
+  using evaluate_pattern_formed[OF assms(1), where f=Payload_Term]
+    evaluate_pattern_formed[OF assms(1), where f="\<lambda>_. Target_Term (Whole_Artifact empty_artifact)"] assms(2)
+  by (simp add: pattern_claim_observation_def)
+
+lemma single_valued_paired_observations:
+  assumes "single_valued R"
+  shows "(k,(x,y))\<in>map_relation_values (\<lambda>v. (f v,g v)) R \<longleftrightarrow>
+    (k,x)\<in>map_relation_values f R \<and> (k,y)\<in>map_relation_values g R"
+  using assms by (auto simp: single_valued_def; blast)
+
+definition observed_schema_premises ::
+  "(local_address,'s,'d) factor_schema\<Rightarrow>('s\<times>('d\<times>factor_term)) set" where
+  "observed_schema_premises S=map_socket_graph id id pattern_claim_observation (schema_premises S)"
+
+lemma observed_schema_premise [simp]:
+  "(s,d,pattern_claim_observation p)\<in>observed_schema_premises S \<longleftrightarrow>
+    (s,d,p)\<in>schema_premises S"
+  by (auto simp: observed_schema_premises_def map_socket_graph_member)
+
+lemma observed_schema_premise_pair:
+  assumes formed: "schema_formed S"
+  shows "(s,d,Pair_Term x y)\<in>observed_schema_premises S \<longleftrightarrow>
+    (s,d,x)\<in>evaluate_schema_premises Payload_Term S \<and>
+    (s,d,y)\<in>evaluate_schema_premises (\<lambda>_. Target_Term (Whole_Artifact empty_artifact)) S"
+proof -
+  have sv: "single_valued (schema_premises S)" using formed by (simp add: schema_formed_def)
+  have paired: "(s,((d,x),(d,y)))\<in>map_relation_values
+      (\<lambda>(e,p). ((e,evaluate_pattern Payload_Term p),
+        (e,evaluate_pattern (\<lambda>_. Target_Term (Whole_Artifact empty_artifact)) p))) (schema_premises S)
+      \<longleftrightarrow>
+      (s,d,x)\<in>map_relation_values (\<lambda>(e,p). (e,evaluate_pattern Payload_Term p)) (schema_premises S) \<and>
+      (s,d,y)\<in>map_relation_values (\<lambda>(e,p).
+        (e,evaluate_pattern (\<lambda>_. Target_Term (Whole_Artifact empty_artifact)) p)) (schema_premises S)"
+    using single_valued_paired_observations[OF sv, where k=s and x="(d,x)" and y="(d,y)"
+      and f="\<lambda>(e,p). (e,evaluate_pattern Payload_Term p)"
+      and g="\<lambda>(e,p). (e,evaluate_pattern (\<lambda>_. Target_Term (Whole_Artifact empty_artifact)) p)"]
+    by (simp add: split_def)
+  show ?thesis using paired
+    by (auto simp: observed_schema_premises_def pattern_claim_observation_def
+      evaluate_schema_premises_def map_socket_graph_def map_prod_def map_relation_values_def split_def; blast)
+qed
+
+theorem schema_reference_claim_observations:
+  assumes report: "schema_reference_presents S
+    (schema_reference_value b x (call_instance_rows_term qs) c y (call_instance_rows_term ws) m)"
+  shows "pattern_claim_observation (schema_conclusion S)=Pair_Term x y"
+    "(s,d,v)\<in>observed_schema_premises S \<longleftrightarrow>
+      (\<exists>a z. v=Pair_Term a z \<and> (s,d,a)\<in>set qs \<and> (s,d,z)\<in>set ws)"
+proof -
+  have formed: "schema_formed S" using report by (auto simp: schema_reference_presents_def schema_data_formed_def)
+  have fields: "x=evaluate_pattern Payload_Term (schema_conclusion S)"
+    "y=evaluate_pattern (\<lambda>_. Target_Term (Whole_Artifact empty_artifact)) (schema_conclusion S)"
+    "set qs=evaluate_schema_premises Payload_Term S"
+    "set ws=evaluate_schema_premises (\<lambda>_. Target_Term (Whole_Artifact empty_artifact)) S"
+    using report by (simp only: schema_reference_presents_def schema_reference_data_def
+      schema_reference_outputs_def schema_reference_record_fields factor_term.inject
+      call_instance_rows_term_injective; blast)+
+  show "pattern_claim_observation (schema_conclusion S)=Pair_Term x y"
+    by (simp add: pattern_claim_observation_def fields)
+  have shape: "(s,d,v)\<in>observed_schema_premises S \<Longrightarrow> \<exists>a z. v=Pair_Term a z"
+    by (auto simp: observed_schema_premises_def map_socket_graph_member pattern_claim_observation_def)
+  show "(s,d,v)\<in>observed_schema_premises S \<longleftrightarrow>
+      (\<exists>a z. v=Pair_Term a z \<and> (s,d,a)\<in>set qs \<and> (s,d,z)\<in>set ws)"
+    using shape observed_schema_premise_pair[OF formed, of s d] by (auto simp only: fields; blast)
+qed
+
+theorem schema_scheme_local_reading_by_observations:
+  "schema_scheme_local_reading P G J n (Schema_Inference c V) \<longleftrightarrow>
+    (\<exists>T. schema_clause_specialization P (fst (rel_value J n)) c (fset V) T \<and>
+      pattern_claim_observation (schema_conclusion T)=pattern_claim_observation (snd (rel_value J n)) \<and>
+      rel_dom (schema_graph_premises G n)=rel_dom (schema_premises T) \<and>
+      (\<forall>s m. (s,m)\<in>schema_graph_premises G n \<longrightarrow>
+        (s,fst (rel_value J m),pattern_claim_observation (snd (rel_value J m)))\<in>observed_schema_premises T))"
+  by (simp only: schema_scheme_local_reading.simps pattern_claim_observation_injective
+    observed_schema_premise prod.collapse)
+
+section \<open>The complete graph and claim values retain their symbolic source\<close>
+
+lemma pattern_claim_observation_inverse [simp]:
+  "inv pattern_claim_observation (pattern_claim_observation p)=p"
+  by (rule inv_f_f) (auto simp: inj_def)
+
+lemma scheme_observations_recover_graph:
+  "map_inference_values (inv pattern_claim_observation)
+    (map_inference_values pattern_claim_observation G)=G"
+proof -
+  have inverse: "inv pattern_claim_observation\<circ>pattern_claim_observation=id"
+    by (rule ext) simp
+  show ?thesis by (simp only: map_inference_values_composes inverse map_inference_values_identity)
+qed
+
+lemma scheme_observations_recover_claims:
+  "map_relation_values (map_prod id (inv pattern_claim_observation))
+    (map_relation_values (map_prod id pattern_claim_observation) J)=J"
+  by (rule map_relation_values_inverse) (auto simp: map_prod_def)
+
+theorem scheme_observations_determine_graph:
+  "map_inference_values pattern_claim_observation G=map_inference_values pattern_claim_observation H
+    \<longleftrightarrow> G=H"
+  using arg_cong[where f="map_inference_values (inv pattern_claim_observation)"]
+  by (metis scheme_observations_recover_graph)
+
+theorem scheme_observations_determine_claims:
+  "map_relation_values (map_prod id pattern_claim_observation) J=
+    map_relation_values (map_prod id pattern_claim_observation) K \<longleftrightarrow> J=K"
+  using arg_cong[where f="map_relation_values (map_prod id (inv pattern_claim_observation))"]
+  by (metis scheme_observations_recover_claims)
+
+theorem scheme_observations_preserve_geometry:
+  "schema_graph_formed (map_inference_values pattern_claim_observation G) root \<longleftrightarrow>
+    schema_graph_formed G root"
+  using map_inference_values_formed[where G="map_inference_values pattern_claim_observation G"
+    and f="inv pattern_claim_observation" and root=root]
+    map_inference_values_formed[where G=G and f=pattern_claim_observation and root=root]
+  by (simp only: scheme_observations_recover_graph; blast)
+
+lemma scheme_observations_keep_binding_owners:
+  "map_relation_values pattern_claim_observation (rekey_pattern_bindings f V)=
+    rename_term_bindings f (map_relation_values pattern_claim_observation V)"
+  by (rule rekey_pattern_bindings_values)
+
+text \<open>
+  The two observations are the existing determining substitutions for finite
+  pattern syntax. Their pair is injective across all local-address patterns.
+  Complete premise reports are joined at their original socket and callee;
+  functionality ensures that both observations concern the same source pattern.
+  Literal equality of these native terms can therefore check a discharge's
+  symbolic claim without identifying variables with literal payloads.
+
+  Observing every binding and claim also determines the original complete
+  graph and claim table. Geometry, sharing, and assertion occurrences retain
+  their existing identities. Observing values commutes with changing their
+  source keys. The inverse above establishes recovery on these images; it
+  does not admit arbitrary ground pairs as symbolic patterns.
+\<close>
+
+end

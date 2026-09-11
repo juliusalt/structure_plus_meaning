@@ -1,0 +1,27 @@
+theory Finite_Set_Composition
+  imports "HOL-Library.FSet"
+begin
+
+section \<open>Exact members of finite compositions\<close>
+
+lemma ffUnion_membership [simp]:
+  "x |\<in>| ffUnion A \<longleftrightarrow> (\<exists>B. B |\<in>| A \<and> x |\<in>| B)"
+  by (auto simp: ffUnion.rep_eq)
+
+lemma finite_union_image_member:
+  "x |\<in>| ffUnion (fimage f A) \<longleftrightarrow> (\<exists>a. a |\<in>| A \<and> x |\<in>| f a)"
+  by (auto simp: ffUnion.rep_eq fimage.rep_eq)
+
+lemma finite_singleton_when_member:
+  "x |\<in>| (if P then {|y|} else {||}) \<longleftrightarrow> P \<and> x=y"
+  by (cases P) auto
+
+lemma finite_image_member:
+  "y |\<in>| fimage f A \<longleftrightarrow> (\<exists>x. x |\<in>| A \<and> y=f x)"
+  by (auto simp: fimage.rep_eq)
+
+lemma finite_unless_member:
+  "x |\<in>| (if P then {||} else A) \<longleftrightarrow> \<not>P \<and> x |\<in>| A"
+  by (cases P) auto
+
+end

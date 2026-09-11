@@ -622,3 +622,20 @@ facts, formation checks, and conditional soundness. The 64-case family checks
 comparison; the original 53-case family also passes. This repairs the
 demonstrated composition requirement. It does not establish coverage of all
 development decisions or close O-84, O-85, or the final audit.
+
+The subsequent 826-theory session passes. Complete schema problems now have
+an exact observation equation linking actual operations and conditions to
+their presentation indices. The guided operation joins compatible recovered
+parts of one application before requiring full scope. Its complete source
+witnesses reconstruct the binding, and universal inclusion preserves both
+earlier construction paths and their conditional soundness contract. The
+duplicate pattern operation and premise enumeration have shared replacements.
+
+The structural comparison, 22 direct groups, 16 guided controls, 55 original
+guided cases, and 76 native reader cases pass independent reconstruction.
+Ambiguous subject indices reject; empty and repeated presentations retain
+their correct boundaries. Remaining concrete work includes replacing the
+older prose-index observation adapters with established structural subjects.
+This remains part of O-84's application audit. Whole native derivation
+admission and native checking of the mathematical proofs remain under O-85;
+the final repository audit has not begun.

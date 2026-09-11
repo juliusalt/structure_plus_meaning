@@ -808,3 +808,86 @@ The retained scan log repeats those eleven whitespace-bearing lines, so the
 final staged scan reports 22 occurrences across four evidence objects. The
 same byte-preservation requirement applies to that recorded output. Both
 delivery comparison reports replay successfully.
+
+## Structural observation subjects and partial binding composition
+
+The owner's next criticism identifies three concrete defects: prose and hashes
+do not establish what an indexed observation computes; two pattern-instance
+enumerators implement the same relation; and the guided operation joins only
+complete applications. The retained original five examples expose the last
+gap with actual schemas, requested heads, and available premise terms.
+
+`Finite_Derived_Observations` now supplies functional maps from presentation
+indices to actual candidates, conditions, and workload objects. Its exact
+observation equation requires the same mapped objects on both sides. The
+application client supplies complete schema problems, two actual operations,
+and independently stated validity, preservation, and required-application
+conditions. Its observation theorem establishes that structural boundary.
+An arbitrary supplied table still has only its conditional table semantics.
+
+The four-problem comparison runs before integration. The original selected
+conditions observe validity and preservation but miss the requested new
+construction. Its returned residual `(1,0)` has two repair witnesses for
+condition 2. Following the revision includes that condition and distinguishes
+the joined operation, which alone satisfies every mandatory condition. It
+returns four compatible applications for the three-variable example and one
+for the partially observed family. The unobserved premise of the latter
+remains an explicit condition. The integrated operation reproduces the same
+complete comparison and assessment.
+
+The reusable binding operation combines complete recovered match fragments.
+It cannot take one value from a conflicting multi-variable fragment while
+discarding another. Mandatory groups retain every observation; pools enumerate
+compatible alternatives. Each generated binding is exactly the union of its
+complete supporting observation family. Schema projection keys retain the
+original head, ordinary sockets and callees, and all five material operands.
+The full original schema instance and material conditions remain the final
+application boundary. Observed possible calls do not become known evidence.
+
+Universal preservation proves inclusion of both earlier application sources
+and carries the original bounded guided soundness result through the change.
+The duplicate pattern operation is removed after unrestricted equivalence is
+proved. Propagation and requested construction now consume one complete
+premise enumerator. Generic matching, finite composition, execution guards,
+and transitive proof-context reuse are factored into shared content.
+
+Twenty-two direct groups and sixteen guided cases check incomplete scope,
+whole-fragment conflicts, every material operand, incorrect source roles,
+malformed values, repeated observations, and exact witness recovery. The
+original 55 guided cases preserve every residual goal and formation result.
+They gain conditional applications or their calls and requirements in 215
+reports and intermediate states, with no removed field values. All 76 native
+reader cases reproduce their previous mathematical reports. Fresh native
+source preparation retains the original eight proved occurrences and passes
+the complete source-reference checks.
+
+Repeated and reordered subject presentations preserve the comparison. Empty
+scope leaves both operations eligible. Two distinct complete problems under
+one index fail the proved subject gate even though the conditional table is
+formed. This rejection directly exercises the owner's distinction between
+retaining a description and establishing an observation subject.
+
+The [archive](validation/generalization-review-2026-09-11/structural-observations/README.md)
+retains 29 proof attempts, six derived code receipts, twelve execution stages,
+one dependency investigation, every complete comparison, and the complete
+regression differences. Integration 29 accepts 414 source contexts; the main
+826-theory session passes in invocation
+`981593bc-0c6d-4bd1-8529-c3fae0b86d1d`. All 50 tooling tests pass. The older
+observation adapters still require their own structural subject equations;
+this client does not retrospectively justify their registry descriptions.
+Whole native derivation admission, native mathematical-proof admission,
+complete workflow coverage, and the final repository audit remain open.
+
+All thirteen stages and investigations in this archive replay successfully,
+including both expected rejections. The [delivery evidence](validation/generalization-review-2026-09-11/structural-observations-delivery/README.md)
+retains three initial host-assessment failures and their prospective bounded
+comparison. The generated reports already reproduced exactly; Python tuples
+in mandatory pairs needed the existing whole-object JSON conversion before
+comparison with the stored receipt. The corrected branch reproduces all five
+affected accepted stages without dropping any assessment field. This host
+comparison has actual complete inputs and derived equality observations; the
+generic evaluator consumes its table conditionally, without claiming a native
+proof of arbitrary Python or JSON semantics.
+Both bounded assessment investigations also replay successfully. The final
+source check still matches all 826 proved theories and build tools, and the
+complete staged whitespace scan is empty.

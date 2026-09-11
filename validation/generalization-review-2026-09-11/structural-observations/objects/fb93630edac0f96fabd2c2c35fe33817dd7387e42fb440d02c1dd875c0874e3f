@@ -1,0 +1,19 @@
+theory Factor_Generation_Redundancy_Probe
+  imports "Native_Investigation_Report_Diagnostic_finitepresenters19.Factor_Requested_Applications" "Factor_Executable_Propagation"
+begin
+
+theorem pattern_enumerators_identical:
+  "finite_pattern_values V p=finite_pattern_instances V p"
+proof -
+  have "fset (finite_pattern_values V p)=fset (finite_pattern_instances V p)"
+    by (auto simp only: finite_pattern_values_exact finite_pattern_instances_member)
+  then show ?thesis by (simp only: fset_inject)
+qed
+
+theorem premise_enumerators_identical:
+  "Factor_Requested_Applications.finite_instantiated_premises S V=
+    Factor_Executable_Propagation.finite_instantiated_premises S V"
+  by (simp only: Factor_Requested_Applications.finite_instantiated_premises_def
+    Factor_Executable_Propagation.finite_instantiated_premises_def pattern_enumerators_identical)
+
+end

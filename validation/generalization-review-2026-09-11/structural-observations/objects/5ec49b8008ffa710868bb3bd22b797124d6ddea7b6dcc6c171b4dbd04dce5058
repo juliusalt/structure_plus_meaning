@@ -1,0 +1,84 @@
+"""Lossless shared-subobject presentation of every mathematical report difference."""
+import json
+from pathlib import Path
+import sys
+sys.path.insert(0, '/home/julius/structure_and_semantics/tools')
+import check_reasoning as review
+import evidence_io
+
+BASE = Path(__file__).parent
+source = json.loads((BASE / 'regression-comparison.json').read_text())
+
+
+def key(field, value):
+    if field == 'applications':
+        return review.application_key(value)
+    if field == 'reasons':
+        return (review.freeze(value['conclusion']),
+                frozenset(map(review.freeze, value['premises'])), value['premise'],
+                review.freeze(value['condition']))
+    return review.freeze(value)
+
+
+delta = []
+for result in source['results']:
+    for difference in result['differences']:
+        row = {'run': result['current'], 'report': difference['report'], 'fields': {}}
+        for field, before in difference['before'].items():
+            after = difference['after'][field]
+            if field == 'input_formed':
+                assert before == after
+                continue
+            a = {key(field, v): v for v in before}
+            b = {key(field, v): v for v in after}
+            if a.keys() != b.keys():
+                row['fields'][field] = {'removed': [v for k, v in a.items() if k not in b],
+                                        'added': [v for k, v in b.items() if k not in a]}
+        assert row['fields']
+        delta.append(row)
+
+# Intern full original structures. Every edge remains typed as a list position
+# or dictionary field; reconstructing every delta checks exact losslessness.
+objects, identifiers = [], {}
+
+
+def encode(value):
+    if not isinstance(value, (dict, list)):
+        return value
+    frozen = (type(value).__name__, review.freeze(value))
+    if frozen in identifiers:
+        return {'ref': identifiers[frozen]}
+    body = (['list', [encode(v) for v in value]] if isinstance(value, list)
+            else ['dict', {k: encode(v) for k, v in value.items()}])
+    identifier = len(objects)
+    objects.append(body)
+    identifiers[frozen] = identifier
+    return {'ref': identifier}
+
+
+def decode(value):
+    if not isinstance(value, dict):
+        return value
+    tag, body = objects[value['ref']]
+    return ([decode(v) for v in body] if tag == 'list'
+            else {k: decode(v) for k, v in body.items()})
+
+
+roots = [encode(row) for row in delta]
+assert [decode(root) for root in roots] == delta
+view = {'source_sha256': evidence_io.digest(BASE / 'regression-comparison.json'),
+        'tool_sha256': evidence_io.digest(Path(__file__)),
+        'boundary': 'Exact shared JSON structures of every added and removed field value. Reference numbers present these stored structures only; they are not semantic subjects.',
+        'objects': objects, 'roots': roots}
+(BASE / 'regression-delta-view.json').write_text(json.dumps(view, separators=(',', ':')) + '\n')
+summary = []
+for row in delta:
+    summary.append({'report': row['report'],
+        'fields': {k: {p: len(v) for p, v in d.items()} for k, d in row['fields'].items()}})
+print('unique subobjects', len(objects), 'root differences', len(roots))
+print('removed values', sum(len(d['removed']) for row in delta for d in row['fields'].values()))
+print(json.dumps(summary, separators=(',', ':')))
+with (BASE / 'regression-delta-view.log').open('w') as output:
+    for i, obj in enumerate(objects):
+        output.write(str(i) + ': ' + json.dumps(obj, separators=(',', ':')) + '\n')
+    output.write('roots: ' + json.dumps(roots, separators=(',', ':')) + '\n')

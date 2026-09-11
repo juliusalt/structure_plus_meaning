@@ -1,0 +1,66 @@
+from pathlib import Path
+import hashlib,json,os,re,subprocess,sys
+sys.dont_write_bytecode=True
+root=Path('/home/julius/structure_and_semantics');sys.path.insert(0,str(root/'tools'))
+import investigate
+label=sys.argv[1];roots=sys.argv[2:]
+out=Path('/tmp/native-investigation-report-diagnostic-'+label);out.mkdir();(out/'theories').mkdir()
+sources,_=investigate.source_graph(root,[Path('/tmp/generalization-quality-review/structural-binding-observations/proposals')],roots)
+(out/'original-sources').mkdir()
+for name,item in sources.items():
+ (out/'original-sources'/(name+'.thy')).write_text(item['text'])
+runner=Path(__file__).read_bytes();(out/'runner.py').write_bytes(runner)
+receipt_path=Path('/tmp/generalization-quality-review/native-input-main-initial/receipt.json')
+parent=json.loads(receipt_path.read_text());parent_dir=Path(parent['engine_snapshot']);parent_sources=parent['engine_sources']
+assert parent['status']=='evaluated' and parent['exit_code']==0 and parent['sources_and_tools_unchanged']
+def unchanged_parent():
+ return all(investigate.file_hash(parent_dir/p)==h for p,h in parent['proof_snapshot_hashes'].items())
+assert unchanged_parent()
+assert investigate.file_hash(receipt_path.parent/"proof.json")==parent["proof_receipt_sha256"]
+shared=set(sources)&set(parent_sources)
+changes=sorted(n for n in shared if sources[n]['sha256']!=parent_sources[n]['sha256'])
+reuse=not changes
+session='Native_Investigation_Report_Diagnostic_'+label
+base=parent['engine_session'] if reuse else 'HOL'
+needed={n:item for n,item in sources.items() if not reuse or n not in parent_sources}
+effective={}
+for n,item in needed.items():
+ text=item['text']
+ if reuse:
+  header=re.match(r'(\s*theory\s+[A-Za-z_][A-Za-z_0-9]*\s+imports\s+)([\s\S]*?)(\s+begin\b)',text)
+  assert header
+  imports=investigate.theory_imports(text,n)
+  imports=['"'+base+'.'+name+'"' if name in parent_sources else '"'+name+'"' for name in imports]
+  text=header[1]+' '.join(imports)+header[3]+text[header.end():]
+ (out/'theories'/(n+'.thy')).write_text(text)
+ effective[n]=investigate.digest(text.encode())
+(out/'effective-source-hashes.json').write_text(json.dumps(effective,indent=2)+'\n')
+selected=[n for n in roots if n in needed]
+assert selected
+(out/'ROOT').write_text('session '+session+' = '+base+' +\n  options [document = false, timeout = 300]\n  sessions "HOL-Library"\n  directories "theories"\n  theories '+' '.join(selected)+'\n')
+manifest={n:item['sha256'] for n,item in sources.items()}
+(out/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
+(out/'parent.json').write_text(json.dumps({'used':reuse,'receipt':str(receipt_path),'receipt_sha256':investigate.file_hash(receipt_path),'changed_shared_sources':changes,'snapshot':str(parent_dir),'session':base,'shared_sources':sorted(shared)},indent=2)+'\n')
+env=os.environ.copy();env['USER_HOME']='/tmp/structural-isabelle'
+command=['isabelle','build','-o','threads=12','-o','parallel_proofs=0','-o','build_timing_threshold=0']
+if reuse: command+=['-d',str(parent_dir)]
+command+=['-D',str(out)]
+with (out/'build.log').open('w') as log: checked=subprocess.run(command,env=env,stdout=log,stderr=subprocess.STDOUT,check=False)
+stable=investigate.current_sources(sources) and unchanged_parent() and all(investigate.file_hash(out/'theories'/(n+'.thy'))==h for n,h in effective.items())
+stable=stable and Path(__file__).read_bytes()==runner and all(investigate.file_hash(out/'original-sources'/(n+'.thy'))==item['sha256'] for n,item in sources.items())
+result={'status':'accepted' if checked.returncode==0 and stable else 'failed','exit_code':checked.returncode,'sources_unchanged':stable,'sources':manifest,'effective_source_hashes':effective,'checked_theories':len(needed),'parent_theories_reused':len(shared) if reuse else 0,'roots':roots,'log':str(out/'build.log')}
+(out/'result.json').write_text(json.dumps(result,indent=2)+'\n')
+print(json.dumps({k:v for k,v in result.items() if k not in ('sources','effective_source_hashes')},indent=2))
+if checked.returncode:
+ log_text=(out/'build.log').read_text()
+ print('Proof diagnostic locations:')
+ for line in log_text.splitlines():
+  if line.startswith('***') and any(tag in line for tag in ('Failed to','Undefined','syntax error','At command')):print(line)
+ print(log_text[-16000:])
+if result.get('exports'):
+ text=Path(result['exports'][0]['path']).read_text();lines=text.splitlines();seen=set()
+ for i,line in enumerate(lines):
+  if re.search(r'(datatype .*\b(admission_goal|admission_instruction|finite_factor_term|fset|finite_factor_schema)\b|val (admission_plan|admission_pair_reasoning_experiment|generated_input_execution|finite_learned_investigation|finite_generated_schema))',line):
+   for j in range(i,min(i+6,len(lines))):
+    if j not in seen:print(lines[j]);seen.add(j)
+sys.exit(0 if result['status']=='accepted' else 1)

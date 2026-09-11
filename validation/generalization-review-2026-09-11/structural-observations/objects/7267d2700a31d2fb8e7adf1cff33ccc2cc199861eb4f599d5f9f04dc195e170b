@@ -1,0 +1,147 @@
+theory Factor_Finite_Inference_Example
+  imports "Factor_Finite_Inference_Source_Checks" "Native_Investigation_Report_Diagnostic_finitepresenters19.Factor_Executable_Environment_Values" "Native_Investigation_Report_Diagnostic_finitepresenters19.Factor_Ground_Schema_Reports" "Native_Investigation_Report_Diagnostic_finitepresenters19.Factor_Inference_Specialization_Total"
+begin
+
+section \<open>Complete finite environments and retained source material\<close>
+
+abbreviation example_literal_environment where
+  "example_literal_environment p \<equiv> decode_finite_environment (finite_literal_sources p)"
+
+abbreviation example_literal_extension where
+  "example_literal_extension p \<equiv> decode_finite_environment (finite_literal_extension p)"
+
+abbreviation example_literal_schema where
+  "example_literal_schema p \<equiv> decode_finite_schema (finite_literal_schema p)"
+
+abbreviation example_literal_program where
+  "example_literal_program p \<equiv> decode_finite_system (finite_literal_program p)"
+
+lemma finite_literal_source_included:
+  "environment_included (example_literal_environment p) (example_literal_extension p)"
+  by (auto simp: environment_included_def finite_literal_extension_def Let_def
+    map_relation_values_def)
+
+lemma finite_literal_background_retained:
+  "artifact_at (example_literal_extension p) (Some [256]) (decode_finite_object finite_literal_background)"
+  "binds_slot (example_literal_extension p) None [23] (Some [256])"
+proof -
+  have old: "artifact_at (example_literal_environment p) (Some [256]) (decode_finite_object finite_literal_background)"
+    "binds_slot (example_literal_environment p) None [23] (Some [256])"
+    by (simp_all add: finite_literal_sources_def finite_enumerated_environment_def
+      fset_of_list.rep_eq binds_slot_def)
+  show "artifact_at (example_literal_extension p) (Some [256]) (decode_finite_object finite_literal_background)"
+    by (rule included_artifact[OF finite_literal_source_included old(1)])
+  show "binds_slot (example_literal_extension p) None [23] (Some [256])"
+    by (rule included_binding[OF finite_literal_source_included old(2)])
+qed
+
+lemma finite_literal_presentations:
+  "environment_value_presents (example_literal_environment []) (finite_environment_term (finite_literal_sources []))"
+  "environment_value_presents (example_literal_extension []) (finite_environment_term (finite_literal_extension []))"
+  using finite_environment_value_exact[where E="example_literal_environment []" and C="finite_literal_sources []"]
+    finite_environment_value_exact[where E="example_literal_extension []" and C="finite_literal_extension []"]
+    finite_literal_environment_checks by auto
+
+lemma finite_literal_schema_recognizer:
+  "example_literal_schema p=recognizer_schema (exact_term_pattern (Payload_Term p))"
+  by (simp add: finite_literal_schema_def decode_finite_schema_def
+    map_relation_values_def recognizer_schema_def)
+
+lemma finite_literal_report:
+  "schema_reference_presents (example_literal_schema []) (ground_schema_report (Payload_Term []))"
+  using ground_recognizer_report[of "Payload_Term []"]
+  by (simp add: finite_literal_schema_recognizer octets_formed_def)
+
+lemma finite_literal_pattern_boundary:
+  "schema_pattern_boundary (example_literal_program []) (None,[1]) (example_literal_schema [])"
+proof -
+  have formed: "schema_system_formed (example_literal_program [])"
+    by (rule native_package_system_formed[OF finite_literal_native_package])
+  have head: "schema_pattern_call (example_literal_program []) (None,[1]) (Pattern_Payload [])"
+    unfolding schema_pattern_call_def
+    by (rule conjI[OF formed], rule exI[of _ "Pattern_Payload []"], rule exI[of _ "{}"])
+      (simp add: finite_literal_program_def decode_finite_system_def map_relation_values_def
+        pattern_bindings_formed_def single_valued_def rel_dom_def)
+  show ?thesis using head native_schema_formed[OF finite_literal_native_schema]
+    by (simp add: schema_pattern_boundary_def finite_literal_schema_recognizer recognizer_schema_def)
+qed
+
+lemma finite_literal_binding:
+  "specialization_binding_at (example_literal_extension []) None [0] (None,[1]) [7]
+    (example_literal_environment []) None [3] (example_literal_environment []) None [8]
+    (ground_schema_report (Payload_Term [])) (positioned_binding_rows_term []) [[3]] []"
+proof -
+  have package: "native_package_at (example_literal_extension []) None [0] (example_literal_program [])"
+    by (rule native_package_included[OF finite_literal_native_package
+      finite_literal_source_included finite_literal_environments_formed(2)])
+  have clause: "(((None,[1]),[7]),example_literal_schema [])\<in>system_clauses (example_literal_program [])"
+    by (simp add: finite_literal_program_def decode_finite_system_def map_relation_values_def)
+  have ground: "schema_variables (example_literal_schema [])={}"
+    by (simp add: finite_literal_schema_recognizer)
+  show ?thesis
+    by (rule ground_specialization_binding[OF package clause ground
+      finite_literal_environments_formed(1) finite_literal_artifact_at finite_literal_binder
+      finite_literal_native_schema finite_literal_pattern_boundary finite_literal_report])
+qed
+
+lemma finite_literal_inference:
+  "inference_specialization_at (example_literal_extension []) None [0] (Some []) [] (None,[1]) [7]
+    (example_literal_environment []) None [3] (example_literal_environment []) None [8]
+    (ground_schema_report (Payload_Term [])) [] finite_literal_node_interior [[6]] [[3]] []"
+  unfolding inference_specialization_at_def
+  by (intro conjI, simp, simp add: finite_literal_node_interior_def, simp,
+    rule exI[of _ "[]"])
+    (use finite_literal_native_node finite_literal_binding in simp)
+
+section \<open>One explicit full reader argument\<close>
+
+definition finite_literal_inference_term :: "octets \<Rightarrow> factor_term" where
+  "finite_literal_inference_term p =
+    (case ground_schema_report (Payload_Term p) of Pair_Term b report \<Rightarrow>
+      inference_specialization_argument
+        (finite_environment_term (finite_literal_extension p)) (use_data_term None) (Payload_Term [0])
+        (use_data_term (Some [])) (Payload_Term []) (use_data_term None) (Payload_Term [1]) (Payload_Term [7])
+        (finite_environment_term (finite_literal_sources p)) (use_data_term None) (Payload_Term [3])
+        (Pair_Term (finite_environment_term (finite_literal_sources p))
+          (Pair_Term (use_data_term None) (Payload_Term [8]))) b report (discharge_rows_term [])
+        (data_list_term (map Payload_Term finite_literal_node_interior))
+        (data_list_term (map Payload_Term [[6]])) (data_list_term (map Payload_Term [[3]]))
+        (data_list_term (map Payload_Term []))
+      | _ \<Rightarrow> Payload_Term [])"
+
+lemma finite_literal_inference_term_self_contained:
+  "self_contained_term (finite_literal_inference_term p)"
+  by (simp add: finite_literal_inference_term_def ground_schema_report_def
+    finite_environment_term_self_contained data_list_term_self_contained)
+
+definition finite_literal_inference_value :: "octets \<Rightarrow> finite_factor_term" where
+  "finite_literal_inference_value p=the (finite_self_contained_term (finite_literal_inference_term p))"
+
+lemma decode_finite_literal_inference_value [simp]:
+  "decode_finite_term (finite_literal_inference_value p)=finite_literal_inference_term p"
+  unfolding finite_literal_inference_value_def
+  by (rule decode_finite_self_contained_term[OF finite_literal_inference_term_self_contained])
+
+theorem finite_literal_inference_admitted:
+  "(350,decode_finite_term (finite_literal_inference_value []))
+    \<in>positive_meaning inference_specialization_system"
+  using inference_specialization_on_sources[OF finite_literal_presentations(2)
+    finite_literal_presentations(1) finite_literal_presentations(1),
+    where pu=None and pr="[0]" and nu="Some []" and nr="[]" and du=None and dr="[1]" and c="[7]"
+      and v=None and r="[3]" and w=None and t="[8]" and ds="[]"
+      and NIs=finite_literal_node_interior and NKs="[[6]]" and RIs="[[3]]" and RKs="[]"]
+    finite_literal_inference
+  by (simp add: finite_literal_inference_term_def ground_schema_report_def)
+
+export_code finite_literal_inference_value Finite_Payload Finite_Pair Finite_Target Finite_Whole
+  nat_of_integer integer_of_nat in SML module_name Finite_Literal_Inference file_prefix finite_literal_inference
+
+text \<open>
+  This input contains the complete extended package environment, the complete
+  original replacement and target environments, and every report and support
+  field. The native judgment is the actual local inference-specialization
+  relation. Proving its known leaf calls and executing the compiled reader on
+  these exact finite values are additional validation obligations.
+\<close>
+
+end

@@ -1,0 +1,12 @@
+Running Native_Investigation_Report_Diagnostic_bindingintegration23 ...
+Native_Investigation_Report_Diagnostic_bindingintegration23 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_bindingintegration23")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_bindingintegration23.Factor_Observed_Preservation" (unresolved "Native_Investigation_Report_Diagnostic_bindingintegration23.Factor_Observed_Applications")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_bindingintegration23.Factor_Guided_Investigation" (unresolved "Native_Investigation_Report_Diagnostic_bindingintegration23.Factor_Observed_Preservation")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_bindingintegration23.Factor_Application_Comparison" (unresolved "Native_Investigation_Report_Diagnostic_bindingintegration23.Factor_Guided_Investigation", "Native_Investigation_Report_Diagnostic_bindingintegration23.Factor_Observed_Applications")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_bindingintegration23.Factor_Binding_Guided_Investigation" (unresolved "Native_Investigation_Report_Diagnostic_bindingintegration23.Factor_Guided_Investigation")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_bindingintegration23.Factor_Reasoning_Execution" (unresolved "Native_Investigation_Report_Diagnostic_bindingintegration23.Factor_Binding_Guided_Investigation")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_bindingintegration23.Factor_Application_Execution" (unresolved "Native_Investigation_Report_Diagnostic_bindingintegration23.Factor_Application_Comparison", "Native_Investigation_Report_Diagnostic_bindingintegration23.Factor_Reasoning_Execution")
+*** No subgoals!
+*** At command "subgoal" (line 139 of "/tmp/native-investigation-report-diagnostic-bindingintegration23/theories/Factor_Observed_Applications.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_bindingintegration23
+0:00:27 elapsed time, 0:00:54 cpu time, factor 1.99

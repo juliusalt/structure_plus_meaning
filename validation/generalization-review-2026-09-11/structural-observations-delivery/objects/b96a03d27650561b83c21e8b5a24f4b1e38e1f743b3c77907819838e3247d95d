@@ -1,0 +1,9 @@
+{
+  "stage": "guided-original-family",
+  "status": "accepted",
+  "receipt_sha256": "cad4b7ae09625cd3dfe45a12fb1635a5af81ce95e6cb58c5407c9653cc3283a7",
+  "archive_index_sha256": "5da7c98d3a96bb09dfce5f861e44dd7af35ae53e3f9145f5fe6aa6936568f075",
+  "replayer_sha256": "4f1ca963c85c0c89463b31ee09f50a064c08023142e77d31485535940abaf23b",
+  "evidence_io_sha256": "72b87df5f4f3ef4c7fc9a425ce4551f0df1c015916857d52eb2eb58040343fff",
+  "boundary": "The retained inputs and original code are replayed. This reproduces complete checked reports; it does not rerun case selection or establish new native source readings."
+}

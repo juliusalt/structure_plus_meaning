@@ -1,0 +1,397 @@
+theory Factor_Executable_Definitions
+  imports "Factor_Executable_Premises"
+begin
+
+type_synonym 'u finite_native_schema =
+  "(local_address,local_address,'u definition_site) finite_factor_schema"
+
+section \<open>Three actual ordered fields\<close>
+
+fun finite_three_fields :: "'a list \<Rightarrow> ('a \<Rightarrow> 'a \<Rightarrow> 'a \<Rightarrow> 'b fset) \<Rightarrow> 'b fset" where
+  "finite_three_fields [a,b,c] F = F a b c"
+| "finite_three_fields _ F = {||}"
+
+lemma finite_three_fields_member:
+  "x |\<in>| finite_three_fields xs F \<longleftrightarrow>
+    (\<exists>a b c. xs=[a,b,c] \<and> x |\<in>| F a b c)"
+proof (cases xs)
+  case Nil
+  then show ?thesis by simp
+next
+  case (Cons a tail)
+  show ?thesis
+  proof (cases tail)
+    case Nil
+    then show ?thesis using Cons by simp
+  next
+    case (Cons b rest)
+    have prefix: "xs=a#b#rest" using \<open>xs=a#tail\<close> Cons by simp
+    show ?thesis
+    proof (cases rest)
+      case Nil
+      then show ?thesis using prefix by simp
+    next
+      case (Cons c suffix)
+      have prefix: "xs=a#b#c#suffix" using prefix Cons by simp
+      show ?thesis by (cases suffix) (simp_all add: prefix)
+    qed
+  qed
+qed
+
+definition finite_three_field_record ::
+  "finite_exact_artifact \<Rightarrow> local_address \<Rightarrow>
+    (local_address list \<Rightarrow> local_address \<Rightarrow> local_address \<Rightarrow> local_address \<Rightarrow> 'a fset) \<Rightarrow> 'a fset" where
+  "finite_three_field_record C r F = ffUnion (fimage
+    (\<lambda>(ps,xs). finite_three_fields xs (F ps)) (finite_record_candidates C r 3))"
+
+lemma finite_three_field_record_member:
+  "x |\<in>| finite_three_field_record C r F \<longleftrightarrow>
+    (\<exists>ps a b c. record_at (decode_finite_object C) r ps [a,b,c] \<and> x |\<in>| F ps a b c)"
+proof
+  assume member: "x |\<in>| finite_three_field_record C r F"
+  obtain ps xs where listed: "(ps,xs) |\<in>| finite_record_candidates C r 3"
+    and branch: "x |\<in>| finite_three_fields xs (F ps)"
+    using member by (simp only: finite_three_field_record_def finite_union_image_member
+        split_paired_Ex prod.case; blast)
+  obtain a b c where fields: "xs=[a,b,c]" and recovered: "x |\<in>| F ps a b c"
+    using branch by (simp only: finite_three_fields_member; blast)
+  have rec: "record_at (decode_finite_object C) r ps [a,b,c]"
+    using listed fields by (simp add: finite_record_candidates_correct)
+  show "\<exists>ps a b c. record_at (decode_finite_object C) r ps [a,b,c] \<and> x |\<in>| F ps a b c"
+    using rec recovered by blast
+next
+  assume read: "\<exists>ps a b c. record_at (decode_finite_object C) r ps [a,b,c] \<and> x |\<in>| F ps a b c"
+  obtain ps a b c where rec: "record_at (decode_finite_object C) r ps [a,b,c]"
+    and recovered: "x |\<in>| F ps a b c" using read by blast
+  have listed: "(ps,[a,b,c]) |\<in>| finite_record_candidates C r 3"
+    using rec by (simp add: finite_record_candidates_correct)
+  show "x |\<in>| finite_three_field_record C r F"
+    unfolding finite_three_field_record_def finite_union_image_member
+    by (rule exI[of _ "(ps,[a,b,c])"]) (simp add: listed recovered)
+qed
+
+section \<open>Reading the complete scope, conclusion, and mixed premise family\<close>
+
+definition finite_schema_body_readings ::
+  "'u finite_artifact_environment \<Rightarrow> 'u \<Rightarrow> finite_exact_artifact \<Rightarrow>
+    local_address \<Rightarrow> local_address list \<Rightarrow> local_address \<Rightarrow> local_address \<Rightarrow>
+    local_address \<Rightarrow> 'u finite_native_schema fset" where
+  "finite_schema_body_readings E u C r ps b c m =
+    ffUnion (fimage (\<lambda>V. ffUnion (fimage (\<lambda>(p,I,K).
+      ffUnion (fimage (\<lambda>(Q,A).
+        let S=\<lparr>finite_schema_conclusion=p,finite_schema_premises=Q,finite_schema_materials=A\<rparr> in
+        if V=finite_schema_variables S \<and>
+          finsert r (fset_of_list ps) |\<inter>| (finsert b V |\<union>| I |\<union>| {|m|})={||} \<and>
+          finsert b V |\<inter>| I={||} \<and> b\<noteq>m \<and> m |\<notin>| I
+        then {|S|} else {||}) (finite_native_premise_family_readings E u V m)))
+      (finite_pattern_readings E u V c))) (finite_binder_scope_candidates C b))"
+
+lemma finite_schema_body_readings_member:
+  "S |\<in>| finite_schema_body_readings E u C r ps b c m \<longleftrightarrow>
+    (\<exists>V I K. V |\<in>| finite_binder_scope_candidates C b \<and>
+      (finite_schema_conclusion S,I,K) |\<in>| finite_pattern_readings E u V c \<and>
+      (finite_schema_premises S,finite_schema_materials S) |\<in>| finite_native_premise_family_readings E u V m \<and>
+      V=finite_schema_variables S \<and>
+      finsert r (fset_of_list ps) |\<inter>| (finsert b V |\<union>| I |\<union>| {|m|})={||} \<and>
+      finsert b V |\<inter>| I={||} \<and> b\<noteq>m \<and> m |\<notin>| I)"
+  by (cases S; auto simp: finite_schema_body_readings_def finite_union_image_member
+      finite_singleton_when_member Let_def)
+
+definition finite_native_schema_readings ::
+  "'u finite_artifact_environment \<Rightarrow> 'u \<Rightarrow> local_address \<Rightarrow> 'u finite_native_schema fset" where
+  "finite_native_schema_readings E u r = (if finite_environment_formed E then
+    ffUnion (fimage (\<lambda>C. finite_three_field_record C r (finite_schema_body_readings E u C r))
+      (finite_artifacts_at E u)) else {||})"
+
+lemma finite_native_schema_readings_step:
+  "S |\<in>| finite_native_schema_readings E u r \<longleftrightarrow> finite_environment_formed E \<and>
+    (\<exists>C ps b c m. C |\<in>| finite_artifacts_at E u \<and>
+      record_at (decode_finite_object C) r ps [b,c,m] \<and>
+      S |\<in>| finite_schema_body_readings E u C r ps b c m)"
+  by (auto simp: finite_native_schema_readings_def finite_union_image_member
+      finite_three_field_record_member split: if_splits)
+
+theorem finite_native_schema_readings_correct:
+  "S |\<in>| finite_native_schema_readings E u r \<longleftrightarrow>
+    native_schema_at (decode_finite_environment E) u r (decode_finite_schema S)"
+proof
+  assume member: "S |\<in>| finite_native_schema_readings E u r"
+  obtain C ps b c m V I K where ef: "finite_environment_formed E"
+    and source: "C |\<in>| finite_artifacts_at E u"
+    and rec: "record_at (decode_finite_object C) r ps [b,c,m]"
+    and scope: "V |\<in>| finite_binder_scope_candidates C b"
+    and conclusion: "(finite_schema_conclusion S,I,K) |\<in>| finite_pattern_readings E u V c"
+    and body_read: "(finite_schema_premises S,finite_schema_materials S) |\<in>|
+      finite_native_premise_family_readings E u V m"
+    and declared: "V=finite_schema_variables S"
+    and boundary: "finsert r (fset_of_list ps) |\<inter>| (finsert b V |\<union>| I |\<union>| {|m|})={||}"
+      "finsert b V |\<inter>| I={||}" "b\<noteq>m" "m |\<notin>| I"
+    using member by (simp only: finite_native_schema_readings_step finite_schema_body_readings_member; auto)
+  have formed: "environment_formed (decode_finite_environment E)"
+    using ef by (simp add: finite_environment_formed_correct)
+  have art: "artifact_at (decode_finite_environment E) u (decode_finite_object C)"
+    using source by (simp add: finite_artifacts_at_member)
+  show "native_schema_at (decode_finite_environment E) u r (decode_finite_schema S)"
+    unfolding native_schema_at_def
+    apply (rule conjI[OF formed])
+    apply (rule exI[of _ "decode_finite_object C"], rule exI[of _ ps])
+    apply (rule exI[of _ b], rule exI[of _ c], rule exI[of _ m])
+    apply (rule exI[of _ "fset V"], rule exI[of _ "fset I"], rule exI[of _ "fset K"])
+    using art rec scope conclusion body_read declared boundary
+    by (auto simp: finite_binder_scope_candidates_correct finite_pattern_readings_correct
+        finite_native_premise_family_readings_correct finite_schema_variables_correct[symmetric]
+        fset_inject[symmetric] fset_of_list.rep_eq)
+next
+  assume read: "native_schema_at (decode_finite_environment E) u r (decode_finite_schema S)"
+  obtain C ps b c m V I K where ef: "environment_formed (decode_finite_environment E)"
+    and source: "C |\<in>| finite_artifacts_at E u"
+    and rec: "record_at (decode_finite_object C) r ps [b,c,m]"
+    and scope: "binder_scope_at (decode_finite_object C) b V"
+    and conclusion: "pattern_quoted_at (decode_finite_environment E) u V c
+      (schema_conclusion (decode_finite_schema S)) I K"
+    and body_read: "native_premise_family_at (decode_finite_environment E) u V m
+      (schema_premises (decode_finite_schema S)) (schema_material_premises (decode_finite_schema S))"
+    and declared: "V=schema_variables (decode_finite_schema S)"
+    and boundary: "insert r (set ps) \<inter> (insert b V \<union> I \<union> {m})={}"
+      "insert b V \<inter> I={}" "b\<noteq>m" "m\<notin>I"
+    using read by (auto simp: native_schema_at_def finite_artifacts_at_member)
+  obtain VF where binders: "VF |\<in>| finite_binder_scope_candidates C b" and represented: "fset VF=V"
+    using finite_binder_scope_candidates_complete[OF scope] by blast
+  have finite: "finite I" "finite K" using pattern_quoted_boundary[OF conclusion] by auto
+  have interior: "fset (Abs_fset I)=I" by (rule Abs_fset_inverse) (simp add: finite)
+  have slots: "fset (Abs_fset K)=K" by (rule Abs_fset_inverse) (simp add: finite)
+  have head: "(finite_schema_conclusion S,Abs_fset I,Abs_fset K) |\<in>|
+      finite_pattern_readings E u VF c"
+    using conclusion represented interior slots by (simp add: finite_pattern_readings_correct)
+  have body: "(finite_schema_premises S,finite_schema_materials S) |\<in>|
+      finite_native_premise_family_readings E u VF m"
+    using body_read represented by (simp add: finite_native_premise_family_readings_correct)
+  have all: "VF=finite_schema_variables S"
+    using represented declared by (simp add: fset_inject[symmetric] finite_schema_variables_correct)
+  have physical: "finsert r (fset_of_list ps) |\<inter>| (finsert b VF |\<union>| Abs_fset I |\<union>| {|m|})={||}"
+    "finsert b VF |\<inter>| Abs_fset I={||}" "m |\<notin>| Abs_fset I"
+    using boundary represented interior by (simp_all add: fset_inject[symmetric] fset_of_list.rep_eq)
+  have branch: "S |\<in>| finite_schema_body_readings E u C r ps b c m"
+    unfolding finite_schema_body_readings_member
+    by (rule exI[of _ VF], rule exI[of _ "Abs_fset I"], rule exI[of _ "Abs_fset K"])
+       (use binders head body all physical boundary(3) in blast)
+  show "S |\<in>| finite_native_schema_readings E u r"
+    unfolding finite_native_schema_readings_step
+    apply (rule conjI)
+     apply (use ef in \<open>simp add: finite_environment_formed_correct\<close>)
+    apply (rule exI[of _ C], rule exI[of _ ps], rule exI[of _ b], rule exI[of _ c], rule exI[of _ m])
+    using source rec branch by blast
+qed
+
+theorem finite_native_schema_readings_complete:
+  assumes read: "native_schema_at (decode_finite_environment E) u r S"
+  shows "\<exists>T. T |\<in>| finite_native_schema_readings E u r \<and> decode_finite_schema T=S"
+proof -
+  have formed: "schema_formed S" by (rule native_schema_formed[OF read])
+  have represented: "decode_finite_schema (finite_schema_of S)=S"
+    by (rule decode_finite_schema_of[OF formed])
+  show ?thesis by (rule exI[of _ "finite_schema_of S"])
+    (use read represented in \<open>simp add: finite_native_schema_readings_correct\<close>)
+qed
+
+corollary finite_native_schema_readings_unique:
+  assumes "S |\<in>| finite_native_schema_readings E u r" "T |\<in>| finite_native_schema_readings E u r"
+  shows "S=T"
+  using native_schema_unique assms
+  by (metis finite_native_schema_readings_correct decode_finite_schema_injective)
+
+section \<open>Every identified clause in the actual family\<close>
+
+definition finite_native_schema_family_readings ::
+  "'u finite_artifact_environment \<Rightarrow> 'u \<Rightarrow> local_address \<Rightarrow>
+    (local_address \<times> 'u finite_native_schema) fset fset" where
+  "finite_native_schema_family_readings E u r =
+    finite_family_readings E u r (finite_native_schema_readings E u)"
+
+theorem finite_native_schema_family_readings_correct:
+  "C |\<in>| finite_native_schema_family_readings E u r \<longleftrightarrow>
+    native_schema_family_at (decode_finite_environment E) u r
+      (map_relation_values decode_finite_schema (fset C))"
+proof -
+  have injective: "inj (decode_finite_schema :: 'u finite_native_schema \<Rightarrow> _)"
+    by (auto simp: inj_def)
+  show ?thesis
+    by (simp only: finite_native_schema_family_readings_def
+        finite_family_readings_correct[OF injective finite_native_schema_readings_correct native_schema_unique]
+        native_schema_family_at_def)
+qed
+
+theorem finite_native_schema_family_readings_complete:
+  assumes read: "native_schema_family_at (decode_finite_environment E) u r C"
+  shows "\<exists>F. F |\<in>| finite_native_schema_family_readings E u r \<and>
+    map_relation_values decode_finite_schema (fset F)=C"
+proof -
+  have finite: "finite C" using native_schema_family_formed[OF read] by blast
+  have inverse: "\<And>s S. (s,S) \<in> C \<Longrightarrow> decode_finite_schema (finite_schema_of S)=S"
+    using native_schema_family_formed[OF read] by (auto intro: decode_finite_schema_of)
+  have "\<exists>F. map_relation_values decode_finite_schema (fset F)=C"
+    by (rule finite_relation_value_representation[OF finite], rule inverse)
+  then obtain F where represented: "map_relation_values decode_finite_schema (fset F)=C" by blast
+  show ?thesis by (rule exI[of _ F])
+    (use read represented in \<open>simp add: finite_native_schema_family_readings_correct\<close>)
+qed
+
+corollary finite_native_schema_family_readings_unique:
+  assumes "C |\<in>| finite_native_schema_family_readings E u r"
+    "D |\<in>| finite_native_schema_family_readings E u r"
+  shows "C=D"
+proof -
+  have first: "native_schema_family_at (decode_finite_environment E) u r
+      (map_relation_values decode_finite_schema (fset C))"
+    and second: "native_schema_family_at (decode_finite_environment E) u r
+      (map_relation_values decode_finite_schema (fset D))"
+    using assms by (simp_all add: finite_native_schema_family_readings_correct)
+  have injective: "inj (decode_finite_schema :: 'u finite_native_schema \<Rightarrow> _)"
+    by (auto simp: inj_def)
+  show ?thesis using native_schema_family_unique[OF first second]
+    by (simp add: map_relation_values_injective[OF injective] fset_inject)
+qed
+
+section \<open>A definition retains its interface and complete clause family\<close>
+
+type_synonym 'u finite_native_definition =
+  "local_address finite_term_pattern \<times> (local_address \<times> 'u finite_native_schema) fset"
+
+definition finite_definition_body_readings ::
+  "'u finite_artifact_environment \<Rightarrow> 'u \<Rightarrow> local_address \<Rightarrow>
+    local_address list \<Rightarrow> local_address \<Rightarrow> local_address \<Rightarrow>
+    'u finite_native_definition fset" where
+  "finite_definition_body_readings E u r ps i m =
+    ffUnion (fimage (\<lambda>(p,I,K).
+      if finsert r (fset_of_list ps) |\<inter>| (I |\<union>| {|m|})={||} \<and> m |\<notin>| I
+      then fimage (Pair p) (finite_native_schema_family_readings E u m) else {||})
+        (finite_scoped_pattern_readings E u i))"
+
+lemma finite_definition_body_readings_member:
+  "(p,C) |\<in>| finite_definition_body_readings E u r ps i m \<longleftrightarrow>
+    (\<exists>I K. (p,I,K) |\<in>| finite_scoped_pattern_readings E u i \<and>
+      C |\<in>| finite_native_schema_family_readings E u m \<and>
+      finsert r (fset_of_list ps) |\<inter>| (I |\<union>| {|m|})={||} \<and> m |\<notin>| I)"
+  by (simp only: finite_definition_body_readings_def finite_union_image_member
+      split_paired_Ex prod.case finite_when_member finite_image_member prod.inject; auto; blast)
+
+definition finite_native_definition_readings ::
+  "'u finite_artifact_environment \<Rightarrow> 'u \<Rightarrow> local_address \<Rightarrow>
+    'u finite_native_definition fset" where
+  "finite_native_definition_readings E u r = (if finite_environment_formed E then
+    ffUnion (fimage (\<lambda>C. finite_two_field_record C r (finite_definition_body_readings E u r))
+      (finite_artifacts_at E u)) else {||})"
+
+lemma finite_native_definition_readings_step:
+  "(p,F) |\<in>| finite_native_definition_readings E u r \<longleftrightarrow> finite_environment_formed E \<and>
+    (\<exists>C ps i m. C |\<in>| finite_artifacts_at E u \<and>
+      record_at (decode_finite_object C) r ps [i,m] \<and>
+      (p,F) |\<in>| finite_definition_body_readings E u r ps i m)"
+  by (auto simp: finite_native_definition_readings_def finite_union_image_member
+      finite_two_field_record_member split: if_splits)
+
+theorem finite_native_definition_readings_correct:
+  "(p,F) |\<in>| finite_native_definition_readings E u r \<longleftrightarrow>
+    native_definition_at (decode_finite_environment E) u r (decode_finite_pattern p)
+      (map_relation_values decode_finite_schema (fset F))"
+proof
+  assume member: "(p,F) |\<in>| finite_native_definition_readings E u r"
+  obtain C ps i m I K where ef: "finite_environment_formed E"
+    and source: "C |\<in>| finite_artifacts_at E u"
+    and rec: "record_at (decode_finite_object C) r ps [i,m]"
+    and interface: "(p,I,K) |\<in>| finite_scoped_pattern_readings E u i"
+    and clauses: "F |\<in>| finite_native_schema_family_readings E u m"
+    and boundary: "finsert r (fset_of_list ps) |\<inter>| (I |\<union>| {|m|})={||}" "m |\<notin>| I"
+    using member by (simp only: finite_native_definition_readings_step finite_definition_body_readings_member; auto)
+  have formed: "environment_formed (decode_finite_environment E)"
+    using ef by (simp add: finite_environment_formed_correct)
+  have art: "artifact_at (decode_finite_environment E) u (decode_finite_object C)"
+    using source by (simp add: finite_artifacts_at_member)
+  show "native_definition_at (decode_finite_environment E) u r (decode_finite_pattern p)
+      (map_relation_values decode_finite_schema (fset F))"
+    unfolding native_definition_at_def
+    apply (rule conjI[OF formed])
+    apply (rule exI[of _ "decode_finite_object C"], rule exI[of _ ps])
+    apply (rule exI[of _ i], rule exI[of _ m], rule exI[of _ "fset I"], rule exI[of _ "fset K"])
+    using art rec interface clauses boundary
+    by (auto simp: finite_scoped_pattern_readings_correct finite_native_schema_family_readings_correct
+        fset_inject[symmetric] fset_of_list.rep_eq)
+next
+  assume read: "native_definition_at (decode_finite_environment E) u r (decode_finite_pattern p)
+      (map_relation_values decode_finite_schema (fset F))"
+  obtain C ps i m I K where ef: "environment_formed (decode_finite_environment E)"
+    and source: "C |\<in>| finite_artifacts_at E u"
+    and rec: "record_at (decode_finite_object C) r ps [i,m]"
+    and interface: "scoped_pattern_at (decode_finite_environment E) u i (decode_finite_pattern p) I K"
+    and clauses: "native_schema_family_at (decode_finite_environment E) u m
+      (map_relation_values decode_finite_schema (fset F))"
+    and boundary: "insert r (set ps) \<inter> (I \<union> {m})={}" "m\<notin>I"
+    using read by (auto simp: native_definition_at_def finite_artifacts_at_member)
+  have finite: "finite I" "finite K" using scoped_pattern_formed[OF interface] by auto
+  have interior: "fset (Abs_fset I)=I" by (rule Abs_fset_inverse) (simp add: finite)
+  have slots: "fset (Abs_fset K)=K" by (rule Abs_fset_inverse) (simp add: finite)
+  have pattern: "(p,Abs_fset I,Abs_fset K) |\<in>| finite_scoped_pattern_readings E u i"
+    using interface interior slots by (simp add: finite_scoped_pattern_readings_correct)
+  have family: "F |\<in>| finite_native_schema_family_readings E u m"
+    using clauses by (simp add: finite_native_schema_family_readings_correct)
+  have physical: "finsert r (fset_of_list ps) |\<inter>| (Abs_fset I |\<union>| {|m|})={||}"
+    "m |\<notin>| Abs_fset I"
+    using boundary interior by (simp_all add: fset_inject[symmetric] fset_of_list.rep_eq)
+  have branch: "(p,F) |\<in>| finite_definition_body_readings E u r ps i m"
+    unfolding finite_definition_body_readings_member
+    by (rule exI[of _ "Abs_fset I"], rule exI[of _ "Abs_fset K"])
+       (use pattern family physical in blast)
+  show "(p,F) |\<in>| finite_native_definition_readings E u r"
+    unfolding finite_native_definition_readings_step
+    apply (rule conjI)
+     apply (use ef in \<open>simp add: finite_environment_formed_correct\<close>)
+    apply (rule exI[of _ C], rule exI[of _ ps], rule exI[of _ i], rule exI[of _ m])
+    using source rec branch by blast
+qed
+
+theorem finite_native_definition_readings_complete:
+  assumes read: "native_definition_at (decode_finite_environment E) u r p C"
+  shows "\<exists>q F. (q,F) |\<in>| finite_native_definition_readings E u r \<and>
+    decode_finite_pattern q=p \<and> map_relation_values decode_finite_schema (fset F)=C"
+proof -
+  have formed: "pattern_formed p" and finite: "finite C" using native_definition_formed[OF read] by auto
+  have pattern: "decode_finite_pattern (finite_pattern_of p)=p" by (rule decode_finite_pattern_of[OF formed])
+  have inverse: "\<And>s S. (s,S) \<in> C \<Longrightarrow> decode_finite_schema (finite_schema_of S)=S"
+    using native_definition_formed[OF read] by (auto intro: decode_finite_schema_of)
+  have "\<exists>F. map_relation_values decode_finite_schema (fset F)=C"
+    by (rule finite_relation_value_representation[OF finite], rule inverse)
+  then obtain F where clauses: "map_relation_values decode_finite_schema (fset F)=C" by blast
+  show ?thesis
+    by (rule exI[of _ "finite_pattern_of p"], rule exI[of _ F])
+       (use read pattern clauses in \<open>simp add: finite_native_definition_readings_correct\<close>)
+qed
+
+corollary finite_native_definition_readings_unique:
+  assumes "(p,C) |\<in>| finite_native_definition_readings E u r"
+    "(q,D) |\<in>| finite_native_definition_readings E u r"
+  shows "p=q \<and> C=D"
+proof -
+  have first: "native_definition_at (decode_finite_environment E) u r (decode_finite_pattern p)
+      (map_relation_values decode_finite_schema (fset C))"
+    and second: "native_definition_at (decode_finite_environment E) u r (decode_finite_pattern q)
+      (map_relation_values decode_finite_schema (fset D))"
+    using assms by (simp_all add: finite_native_definition_readings_correct)
+  have injective: "inj (decode_finite_schema :: 'u finite_native_schema \<Rightarrow> _)"
+    by (auto simp: inj_def)
+  show ?thesis using native_definition_unique[OF first second]
+    by (simp add: map_relation_values_injective[OF injective] fset_inject)
+qed
+
+export_code finite_native_schema_readings finite_native_schema_family_readings
+  finite_native_definition_readings checking SML
+
+text \<open>
+  A schema's actual three-field record determines its declared scope, conclusion,
+  and complete mixed premise family. The scope must equal all variables used
+  by those fields. Clause families retain their actual identifying sockets.
+  A definition reads the complete scoped interface and that clause family.
+  These readers have exactly the native formation and recovery conditions;
+  package dependency closure and inference validity remain separate checks.
+\<close>
+
+end

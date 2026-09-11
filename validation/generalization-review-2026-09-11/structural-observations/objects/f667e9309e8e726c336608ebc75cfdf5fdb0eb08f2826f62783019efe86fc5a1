@@ -1,0 +1,79 @@
+"""Shared prerequisites for running code from an accepted source proof."""
+from __future__ import annotations
+
+import json
+from pathlib import Path
+import subprocess
+import sys
+import uuid
+
+import investigate
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def accepted_proof(path, *, project=ROOT, required_theories=()):
+    if not __debug__:
+        raise ValueError("Proof export checks require Python assertions.")
+    proof = json.loads(Path(path).read_text())
+    assert proof["status"] == "accepted" and proof["exit_code"] == 0 and proof["sources_unchanged"]
+    sources = {str(project / "theories" / (name + ".thy")): sha
+               for name, sha in proof["sources"].items()}
+    assert set(required_theories) <= proof["sources"].keys()
+    assert all(investigate.file_hash(Path(p)) == sha for p, sha in sources.items())
+    return proof, sources
+
+
+def proved_export(path, engine=None, *, project=ROOT, required_theories=()):
+    proof, sources = accepted_proof(path, project=project, required_theories=required_theories)
+    assert len(proof["exports"]) == 1
+    selected = Path(engine).resolve() if engine is not None else Path(proof["exports"][0]["path"])
+    assert investigate.file_hash(selected) == proof["exports"][0]["sha256"]
+    return proof, selected, sources
+
+
+def checked_execution(proof_path, poly, output, *, required_theories, inputs,
+                      input_paths, program, assess, question, boundary, timeout=60, project=ROOT):
+    """Run one proved module with retained inputs and a caller's result review."""
+    proof_path, poly, output = map(lambda p: Path(p).resolve(), (proof_path, poly, output))
+    _, engine, sources = proved_export(proof_path, required_theories=required_theories, project=project)
+    assert not output.exists(), "Retain preceding executions and use a new directory."
+    output.mkdir(parents=True)
+    receipt = {"status": "failed", "invocation": str(uuid.uuid4()),
+               "question": question, "boundary": boundary}
+    try:
+        input_file = output / "cases.json"
+        input_file.write_text(json.dumps(inputs, indent=2) + "\n")
+        runtime = output / "execute.ML"
+        runtime.write_text(program(engine, inputs))
+        directory = Path(__file__).resolve().parent
+        modules = {Path(m.__file__).resolve() for m in tuple(sys.modules.values())
+                   if getattr(m, "__file__", None) and Path(m.__file__).resolve().is_relative_to(directory)
+                   and Path(m.__file__).is_file()}
+        paths = {proof_path, engine, poly, runtime, input_file, *modules,
+                 *(Path(p).resolve() for p in input_paths), *(Path(p) for p in sources)}
+        tracked = {str(p): investigate.file_hash(p) for p in paths}
+        (output / "execution-inputs.json").write_text(json.dumps(tracked, indent=2) + "\n")
+        for path, sha in tracked.items():
+            if Path(path) != poly:
+                investigate.archive_evidence(output, receipt, "checked module input", Path(path), sha)
+        log_path = output / "results.log"
+        with log_path.open("w") as log:
+            result = subprocess.run([str(poly), "--script", str(runtime)], stdout=log,
+                                    stderr=subprocess.STDOUT, timeout=timeout)
+        receipt["exit_code"] = result.returncode
+        assert result.returncode == 0, "See the retained results.log."
+        assessment = assess(inputs, log_path.read_text())
+        stable = (all(investigate.file_hash(Path(p)) == sha for p, sha in tracked.items())
+                  and all(investigate.file_hash(Path(row["archive"])) == row["sha256"]
+                          for row in receipt["evidence_archive"]))
+        assert stable, "Execution source, input or retained evidence changed."
+        receipt.update(status="accepted", sources_and_tools_unchanged=stable, assessment=assessment,
+                       proof_receipt_sha256=investigate.file_hash(proof_path),
+                       export_sha256=investigate.file_hash(engine),
+                       results_sha256=investigate.file_hash(log_path), execution_inputs=tracked)
+        (output / "complete-results.json").write_text(json.dumps(assessment, indent=2) + "\n")
+    except (AssertionError, ValueError, OSError, subprocess.SubprocessError) as error:
+        receipt["error"] = str(error)
+    (output / "receipt.json").write_text(json.dumps(receipt, indent=2) + "\n")
+    return receipt

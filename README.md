@@ -27,7 +27,7 @@ binding. Source-reading requirements remain at that native-reading boundary;
 local construction is reusable without them. Whole-derivation admission
 remains open.
 
-The current 817-theory session passes. Native local readers connect an actual
+The current 826-theory session passes. Native local readers connect an actual
 inference node's bindings to its symbolic replacement record and complete
 target report. A workflow adequacy investigation exposed a construction-reuse
 gap; bounded generation now feeds its own results into further construction
@@ -40,9 +40,12 @@ chain; the original marker fixture retains six unsupported source conditions.
 An adequacy check
 then found that complete clause coverage still leaves variables unavailable
 to premise matching. A proved diagnostic identifies that obstruction.
-Requested heads now supply complete bindings when they determine every schema
-variable; generated premises become further requests, with their truth still
-required. The guided method preserves every earlier bounded construction and
+Observed heads and premises now supply compatible parts of one binding before
+the complete schema scope is checked. Every fragment comes from matching an
+actual projection of that same schema; its supporting observations jointly
+recover the complete binding. Generated premises become further requests,
+with their truth still required. The guided method preserves both earlier
+complete application sources and every earlier bounded construction and
 settles the tested native binding judgments without assumed traversal seeds.
 A method comparison uses the existing revision machinery to improve its own
 assessment observations. A further source review proves that the original
@@ -50,7 +53,10 @@ reader fixture's payload environments make its native requests impossible.
 The executed finite example supplies actual source presentations and complete
 reader evidence. A matching outer shape alone remains insufficient. The
 complete construction, guidance, source-requirement, coverage, and compilation
-families pass. Coverage
+families pass. A new [structural comparison](validation/generalization-review-2026-09-11/structural-observations/README.md)
+computes conditions on complete schema problems through actual operations;
+its proved observation equation connects the presentation indices to those
+subjects. The older observation adapters still require this boundary. Coverage
 of every development decision, whole native symbolic-argument admission, and
 mathematical-proof admission remain open.
 

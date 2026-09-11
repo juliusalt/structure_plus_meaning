@@ -1,0 +1,49 @@
+/tmp/generalization-quality-review/structural-binding-observations/replays1/ambiguous-subject-rejection/decoded-evidence/anchor/anchor/objects/624ed5bbf2adb5e595af9060fdca5a50aef0db631cb35a19faaca5e9d7725156:259: warning: Pattern 3 is redundant.
+Found near
+  fun
+     equal_boola false p = not p |
+        equal_boola true ... = p |
+        equal_boola ... = ... ... |
+        equal_boola ... = ...
+/tmp/generalization-quality-review/structural-binding-observations/replays1/ambiguous-subject-rejection/decoded-evidence/anchor/anchor/objects/624ed5bbf2adb5e595af9060fdca5a50aef0db631cb35a19faaca5e9d7725156:260: warning: Pattern 4 is redundant.
+Found near
+  fun
+     equal_boola false p = not p |
+        equal_boola true ... = p |
+        equal_boola ... = ... ... |
+        equal_boola ... = ...
+/tmp/generalization-quality-review/structural-binding-observations/replays1/ambiguous-subject-rejection/decoded-evidence/anchor/anchor/objects/624ed5bbf2adb5e595af9060fdca5a50aef0db631cb35a19faaca5e9d7725156:277: warning: Matches are not exhaustive.
+Found near
+  fun
+     less_eq_set A_ (... ...) ... = list_all (fn ...) xs |
+        less_eq_set A_ ... = ... ... ys |
+        less_eq_set ... = false
+/tmp/generalization-quality-review/structural-binding-observations/replays1/ambiguous-subject-rejection/decoded-evidence/anchor/anchor/objects/624ed5bbf2adb5e595af9060fdca5a50aef0db631cb35a19faaca5e9d7725156:737: warning: Matches are not exhaustive. Found near fun bex (Set xs) p = list_ex p xs
+/tmp/generalization-quality-review/structural-binding-observations/replays1/ambiguous-subject-rejection/decoded-evidence/anchor/anchor/objects/624ed5bbf2adb5e595af9060fdca5a50aef0db631cb35a19faaca5e9d7725156:747: warning: Matches are not exhaustive.
+Found near
+  fun nth (x :: xs) n = (if ... ... zero_nat then x else ... ... (... ...))
+/tmp/generalization-quality-review/structural-binding-observations/replays1/ambiguous-subject-rejection/decoded-evidence/anchor/anchor/objects/624ed5bbf2adb5e595af9060fdca5a50aef0db631cb35a19faaca5e9d7725156:750: warning: Matches are not exhaustive. Found near fun ball (Set xs) p = list_all p xs
+/tmp/generalization-quality-review/structural-binding-observations/replays1/ambiguous-subject-rejection/decoded-evidence/anchor/anchor/objects/624ed5bbf2adb5e595af9060fdca5a50aef0db631cb35a19faaca5e9d7725156:761: warning: Matches are not exhaustive.
+Found near fun image f (... ...) = Set (... ... xs)
+/tmp/generalization-quality-review/structural-binding-observations/replays1/ambiguous-subject-rejection/decoded-evidence/anchor/anchor/objects/624ed5bbf2adb5e595af9060fdca5a50aef0db631cb35a19faaca5e9d7725156:766: warning: Matches are not exhaustive.
+Found near fun filter p (... ...) = Set (... ... xs)
+/tmp/generalization-quality-review/structural-binding-observations/replays1/ambiguous-subject-rejection/decoded-evidence/anchor/anchor/objects/624ed5bbf2adb5e595af9060fdca5a50aef0db631cb35a19faaca5e9d7725156:787: warning: Matches are not exhaustive.
+Found near fun sup_seta A_ (... ...) = ... ... xs bot_set
+/tmp/generalization-quality-review/structural-binding-observations/replays1/ambiguous-subject-rejection/decoded-evidence/anchor/anchor/objects/624ed5bbf2adb5e595af9060fdca5a50aef0db631cb35a19faaca5e9d7725156:887: warning: Matches are not exhaustive.
+Found near
+  fun sorted_list_of_set (A1_, ...) (... ...) = ... ... (fn ...) (... ... xs)
+/tmp/generalization-quality-review/structural-binding-observations/replays1/ambiguous-subject-rejection/decoded-evidence/anchor/anchor/objects/624ed5bbf2adb5e595af9060fdca5a50aef0db631cb35a19faaca5e9d7725156:1236: warning: Matches are not exhaustive.
+Found near fun set_compatible_unions A_ B_ ... = ... ... B_ bs
+APPLICATION_SUBJECTS {"formed":false,"candidates":[[0,"Separate_Application_Sources"],[1,"Joined_Application_Observations"]],"conditions":[[0,"Complete_Instance_Condition"],[1,"Existing_Application_Condition"],[2,"Required_Application_Condition"]],"problems":[{"id":0,"entry":9,"schema":{"head":{"var":0},"premises":[[10,8,{"var":1}],[11,8,{"var":2}]],"materials":[]},"enumeration":[[10,8,{"var":1}],[11,8,{"var":2}]],"frontier":[[8,{"payload":[8]}],[8,{"payload":[9]}]],"requests":[[9,{"payload":[7]}]],"required":[{"conclusion":{"payload":[7]},"bindings":[[0,{"payload":[7]}],[1,{"payload":[8]}],[2,{"payload":[9]}]],"premises":[[10,8,{"payload":[8]}],[11,8,{"payload":[9]}]]}]},{"id":1,"entry":9,"schema":{"head":{"var":0},"premises":[[10,8,{"pair":[{"var":0},{"var":1}]}],[11,7,{"var":1}]],"materials":[]},"enumeration":[[10,8,{"pair":[{"var":0},{"var":1}]}],[11,7,{"var":1}]],"frontier":[[7,{"payload":[8]}]],"requests":[[9,{"payload":[7]}]],"required":[{"conclusion":{"payload":[7]},"bindings":[[0,{"payload":[7]}],[1,{"payload":[8]}]],"premises":[[10,8,{"pair":[{"payload":[7]},{"payload":[8]}]}],[11,7,{"payload":[8]}]]}]},{"id":2,"entry":9,"schema":{"head":{"var":0},"premises":[[10,8,{"var":0}]],"materials":[]},"enumeration":[[10,8,{"var":0}]],"frontier":[[8,{"payload":[7]}]],"requests":[[9,{"payload":[7]}]],"required":[{"conclusion":{"payload":[7]},"bindings":[[0,{"payload":[7]}]],"premises":[[10,8,{"payload":[7]}]]}]},{"id":3,"entry":9,"schema":{"head":{"payload":[11]},"premises":[],"materials":[]},"enumeration":[],"frontier":[],"requests":[],"required":[{"conclusion":{"payload":[11]},"bindings":[],"premises":[]}]},{"id":0,"entry":9,"schema":{"head":{"var":0},"premises":[[10,8,{"var":1}],[11,8,{"var":2}]],"materials":[]},"enumeration":[[10,8,{"var":1}],[11,8,{"var":2}]],"frontier":[[8,{"payload":[8]}],[8,{"payload":[9]}]],"requests":[],"required":[{"conclusion":{"payload":[7]},"bindings":[[0,{"payload":[7]}],[1,{"payload":[8]}],[2,{"payload":[9]}]],"premises":[[10,8,{"payload":[8]}],[11,8,{"payload":[9]}]]}]}]}
+APPLICATION_RESULTS 0 0 []
+APPLICATION_RESULTS 0 1 [{"conclusion":{"payload":[7]},"bindings":[[1,{"payload":[9]}],[2,{"payload":[8]}],[0,{"payload":[7]}]],"premises":[[11,8,{"payload":[8]}],[10,8,{"payload":[9]}]]},{"conclusion":{"payload":[7]},"bindings":[[1,{"payload":[9]}],[2,{"payload":[9]}],[0,{"payload":[7]}]],"premises":[[11,8,{"payload":[9]}],[10,8,{"payload":[9]}]]},{"conclusion":{"payload":[7]},"bindings":[[1,{"payload":[8]}],[2,{"payload":[8]}],[0,{"payload":[7]}]],"premises":[[11,8,{"payload":[8]}],[10,8,{"payload":[8]}]]},{"conclusion":{"payload":[7]},"bindings":[[1,{"payload":[8]}],[2,{"payload":[9]}],[0,{"payload":[7]}]],"premises":[[11,8,{"payload":[9]}],[10,8,{"payload":[8]}]]}]
+APPLICATION_RESULTS 1 0 []
+APPLICATION_RESULTS 1 1 [{"conclusion":{"payload":[7]},"bindings":[[1,{"payload":[8]}],[0,{"payload":[7]}]],"premises":[[11,7,{"payload":[8]}],[10,8,{"pair":[{"payload":[7]},{"payload":[8]}]}]]}]
+APPLICATION_RESULTS 2 0 [{"conclusion":{"payload":[7]},"bindings":[[0,{"payload":[7]}]],"premises":[[10,8,{"payload":[7]}]]}]
+APPLICATION_RESULTS 2 1 [{"conclusion":{"payload":[7]},"bindings":[[0,{"payload":[7]}]],"premises":[[10,8,{"payload":[7]}]]}]
+APPLICATION_RESULTS 3 0 [{"conclusion":{"payload":[11]},"bindings":[],"premises":[]}]
+APPLICATION_RESULTS 3 1 [{"conclusion":{"payload":[11]},"bindings":[],"premises":[]}]
+APPLICATION_RESULTS 0 0 []
+APPLICATION_RESULTS 0 1 []
+APPLICATION_INITIAL {"input_formed":true,"residual":[[1,0]],"profiles":[{"candidate":0,"profile":[[0,0],[0,1],[0,2],[0,3],[1,0],[1,1],[1,2],[1,3]]},{"candidate":1,"profile":[[0,0],[0,1],[0,2],[0,3],[1,0],[1,1],[1,2],[1,3]]}],"losses":[{"from":0,"to":0,"losses":[]},{"from":0,"to":1,"losses":[]},{"from":1,"to":0,"losses":[]},{"from":1,"to":1,"losses":[]}],"observations":[[0,0,0],[0,0,1],[0,0,2],[0,0,3],[0,1,0],[0,1,1],[0,1,2],[0,1,3],[1,0,0],[1,0,1],[1,0,2],[1,0,3],[1,1,0],[1,1,1],[1,1,2],[1,1,3],[2,0,2],[2,0,3],[2,1,0],[2,1,1],[2,1,2],[2,1,3]],"relation":[[0,0],[0,1],[1,1]],"safe_facets":[0,1,2],"conflicts":[],"repairs":[[1,0,2,0],[1,0,2,1]],"unrepairable":[],"extension":[0,1,2],"revision":{"retained":[0,1],"withdrawn":[],"repairs":[[1,0,2,0],[1,0,2,1]],"selection":[0,1,2],"residual":[]}}
+APPLICATION_FOLLOWED {"input_formed":true,"residual":[],"profiles":[{"candidate":0,"profile":[[0,0],[0,1],[0,2],[0,3],[1,0],[1,1],[1,2],[1,3],[2,2],[2,3]]},{"candidate":1,"profile":[[0,0],[0,1],[0,2],[0,3],[1,0],[1,1],[1,2],[1,3],[2,0],[2,1],[2,2],[2,3]]}],"losses":[{"from":0,"to":0,"losses":[]},{"from":0,"to":1,"losses":[]},{"from":1,"to":0,"losses":[[2,0],[2,1]]},{"from":1,"to":1,"losses":[]}],"observations":[[0,0,0],[0,0,1],[0,0,2],[0,0,3],[0,1,0],[0,1,1],[0,1,2],[0,1,3],[1,0,0],[1,0,1],[1,0,2],[1,0,3],[1,1,0],[1,1,1],[1,1,2],[1,1,3],[2,0,2],[2,0,3],[2,1,0],[2,1,1],[2,1,2],[2,1,3]],"relation":[[0,0],[0,1],[1,1]],"safe_facets":[0,1,2],"conflicts":[],"repairs":[],"unrepairable":[],"extension":[0,1,2],"revision":{"retained":[0,1,2],"withdrawn":[],"repairs":[],"selection":[0,1,2],"residual":[]}}

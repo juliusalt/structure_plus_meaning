@@ -1,0 +1,145 @@
+theory Factor_Library_Coverage
+  imports "Factor_Chained_Investigation" "Native_Investigation_Report_Diagnostic_finitepresenters19.Inference_Abstraction"
+begin
+
+section \<open>The actual schema library supplies a finite entry abstraction\<close>
+
+definition finite_premise_entries where
+  "finite_premise_entries H=fimage (\<lambda>(s,d,x). (s,d)) H"
+
+lemma finite_premise_entries_relation:
+  "fset (finite_premise_entries H)=map_relation_values fst (fset H)"
+  by (auto simp: finite_premise_entries_def map_relation_values_def; force)
+
+lemma finite_premise_entries_member:
+  "(s,d) |\<in>| finite_premise_entries H \<longleftrightarrow> (\<exists>x. (s,d,x) |\<in>| H)"
+  by (auto simp: finite_premise_entries_def; force)
+
+lemma finite_schema_instance_entries:
+  assumes inst: "finite_schema_instance (S::('a,'s,'d) finite_factor_schema) V t H"
+  shows "finite_premise_entries H=finite_premise_entries (finite_schema_premises S)"
+proof -
+  have instantiated: "finite_schema_premise_instance S V H"
+    using inst by (simp add: finite_schema_instance_def)
+  have functional: "single_valued (fset H)"
+    using instantiated by (auto simp: finite_schema_premise_instance_def finite_relation_functional_correct)
+  have domain: "fimage fst H=fimage fst (finite_schema_premises S)"
+    using instantiated by (auto simp: finite_schema_premise_instance_def)
+  have all: "\<And>s d p. (s,d,p) |\<in>| finite_schema_premises S \<Longrightarrow>
+      \<exists>x. (s,d,x) |\<in>| H"
+    using instantiated by (fastforce simp: finite_schema_premise_instance_def split: prod.splits)
+  have same: "(\<exists>x. (s,d,x) |\<in>| H) \<longleftrightarrow>
+    (\<exists>p. (s,d,p) |\<in>| finite_schema_premises S)" for s d
+  proof
+    assume "\<exists>x. (s,d,x) |\<in>| H"
+    then obtain x where row: "(s,d,x) |\<in>| H" by blast
+    have key: "s |\<in>| fimage fst (finite_schema_premises S)" using domain row by force
+    then obtain e p where original: "(s,e,p) |\<in>| finite_schema_premises S" by auto
+    obtain y where chosen_row: "(s,e,y) |\<in>| H" using all[OF original] by blast
+    have "e=d" using functional row chosen_row by (auto simp: single_valued_def)
+    then show "\<exists>p. (s,d,p) |\<in>| finite_schema_premises S" using original by blast
+  next
+    assume "\<exists>p. (s,d,p) |\<in>| finite_schema_premises S"
+    then show "\<exists>x. (s,d,x) |\<in>| H" using all by blast
+  qed
+  show ?thesis
+  proof (rule fset_inject[THEN iffD1], rule set_eqI)
+    fix x :: "'s\<times>'d"
+    obtain s d where shape: "x=(s,d)" by (cases x) auto
+    show "x\<in>fset (finite_premise_entries H) \<longleftrightarrow>
+      x\<in>fset (finite_premise_entries (finite_schema_premises S))"
+      by (simp only: shape finite_premise_entries_member same)
+  qed
+qed
+
+definition finite_library_entry_rules where
+  "finite_library_entry_rules L=fimage (\<lambda>(d,S,ps). (d,finite_premise_entries (finite_schema_premises S)))
+    (fset_of_list L)"
+
+lemma finite_library_entry_rule:
+  "(d,H) |\<in>| finite_library_entry_rules L \<longleftrightarrow>
+    (\<exists>S ps. (d,S,ps)\<in>set L \<and> H=finite_premise_entries (finite_schema_premises S))"
+  by (auto simp: finite_library_entry_rules_def fset_of_list.rep_eq; force)
+
+lemma finite_generated_set_rule:
+  "(q,H) |\<in>| finite_generated_rules_on_set L C \<longleftrightarrow>
+    (\<exists>S ps V. (fst q,S,ps)\<in>set L \<and> (snd q,V,H) |\<in>| finite_schema_generation_on_set S ps C)"
+proof -
+  obtain cs where enumeration: "fset_of_list cs=C" using exists_fset_of_list by blast
+  show ?thesis
+    by (simp only: enumeration[symmetric] finite_generated_rules_on_lists
+      finite_schema_generation_on_lists finite_generated_schema_rule)
+qed
+
+lemma finite_generated_set_entry_projection:
+  assumes step: "finite_inference_rules (finite_generated_rules_on_set L C) q H"
+  shows "finite_inference_rules (finite_library_entry_rules L) (fst q) (map_relation_values fst H)"
+proof -
+  obtain J where row: "(q,J) |\<in>| finite_generated_rules_on_set L C" and shape: "H=fset J"
+    using step by (auto simp: finite_inference_rules_def)
+  obtain S ps V where member: "(fst q,S,ps)\<in>set L"
+    and generated: "(snd q,V,J) |\<in>| finite_schema_generation_on_set S ps C"
+    using row by (simp only: finite_generated_set_rule) blast
+  obtain cs where enumeration: "fset_of_list cs=C" using exists_fset_of_list by blast
+  have inst: "finite_schema_instance S V (snd q) J"
+    using finite_schema_generation_sound(1)[of "snd q" V J S ps cs] generated
+    by (simp only: enumeration[symmetric] finite_schema_generation_on_lists)
+  have projected: "(fst q,finite_premise_entries J) |\<in>| finite_library_entry_rules L"
+    using member finite_schema_instance_entries[OF inst]
+    by (simp only: finite_library_entry_rule) blast
+  show ?thesis using projected
+    by (auto simp: finite_inference_rules_def shape finite_premise_entries_relation[symmetric])
+qed
+
+theorem finite_generated_entry_closure:
+  "image fst (finite_inference_result (finite_generated_rules_on_set L C) K) \<subseteq>
+    finite_inference_result (finite_library_entry_rules L) (fimage fst K)"
+  by (simp only: finite_inference_result_exact fimage.rep_eq)
+    (rule inference_closure_projection; rule finite_generated_set_entry_projection; assumption)
+
+definition finite_library_blocked_goals where
+  "finite_library_blocked_goals L K goals=ffilter
+    (\<lambda>(i,d,t). d\<notin>finite_inference_result (finite_library_entry_rules L) (fimage fst K)) goals"
+
+theorem finite_library_blocked_goals_sound:
+  "finite_library_blocked_goals L K goals |\<subseteq>|
+    finite_inference_residual (finite_generated_rules_on_set L C) K goals"
+  using finite_generated_entry_closure[of L C K]
+  by (auto simp: finite_library_blocked_goals_def finite_inference_residual_def; force)
+
+theorem finite_library_blocked_at_every_depth:
+  "finite_library_blocked_goals L K goals |\<subseteq>|
+    fst (snd (snd (finite_chained_investigation n L C K goals)))"
+  using finite_library_blocked_goals_sound[of L K goals "finite_construction_frontier n L (fset_of_list C)"]
+  by (simp only: finite_chained_investigation_def finite_learned_investigation_on_set_def Let_def fst_conv snd_conv)
+
+definition finite_library_coverage where
+  "finite_library_coverage L K goals=
+    (let rules=finite_library_entry_rules L; known=fimage fst K;
+         targets=fimage (\<lambda>(i,d,t). d) goals;
+         formed=finite_schema_library_formed L \<and> fBall K (\<lambda>(d,t). finite_term_formed t) \<and>
+           fBall goals (\<lambda>(i,d,t). finite_term_formed t) \<and> finite_premise_functional goals
+     in (formed,rules,finite_library_blocked_goals L K goals,
+       finite_inference_demand rules known targets,finite_inference_demand_reasons rules known targets))"
+
+definition natural_library_coverage where
+  "natural_library_coverage
+    (L::(nat\<times>(nat,nat,nat) finite_factor_schema\<times>(nat\<times>nat\<times>nat finite_term_pattern) list) list)
+    K (goals::(nat\<times>nat\<times>finite_factor_term) fset)=finite_library_coverage L K goals"
+
+text \<open>
+  Premise entries and occurrence identities come from the complete supplied
+  schemas. The existing conjunctive inference engine computes their closure,
+  demand, and reasons. No hand-authored dependency table supplies this report.
+
+  A reported blocked goal remains unresolved at every construction depth and
+  for every possible frontier. The abstraction ignores term matching, shared
+  variables, material truth, and whether an unbound variable can be constructed.
+  Passing this necessary condition supplies neither a concrete application
+  nor semantic evidence. The original possible frontier's formation remains
+  the responsibility of its concrete investigation.
+\<close>
+
+export_code natural_library_coverage checking SML
+
+end

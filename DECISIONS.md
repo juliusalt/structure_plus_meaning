@@ -7472,3 +7472,55 @@ Complete native investigation-report construction, native repair and
 extension computation, native checking of the mathematical proofs, the
 remaining application audit, and the final every-line repository audit
 remain open. These operations are a further component of that work.
+
+## Observe actual problems and compose their compatible binding evidence
+
+The owner identifies the missing structural boundary of the earlier indexed
+observation adapters. A digest proves which description accompanied a run;
+it does not prove that the observation function computes that description.
+New observations therefore map indices to actual complete subject objects and
+have an exact equation for the condition computed on those same objects.
+Functional maps permit repeated identical presentations and reject an index
+with different subjects. Externally supplied tables retain their conditional
+meaning until a separate subject contract is established.
+
+The application comparison uses complete schemas, ordered premise
+enumerations, available calls, requested heads, and explicitly required
+applications. Its candidates are the actual former and proposed operations.
+The three conditions compute complete-instance and material validity,
+inclusion of the former application relation, and inclusion of the required
+relation. The required relation is supplied independently of the candidate
+result. Its finite selection justifies proceeding on those problems; universal
+preservation remains a separate proof requirement.
+
+The complete comparison is executed before changing guided construction.
+The missing required-application condition appears in both repair witnesses;
+following that revision leaves no residual and makes the joined operation the
+only eligible candidate. The same comparison is executed after integration.
+The proposed grouping is admitted because whole recovered fragments are
+compatible; partial agreement within a conflicting fragment cannot supply an
+application. A pool may contain conflicting alternatives, while a mandatory
+group must retain every submitted observation. Neither makes possible premise
+calls true.
+
+Complete scope is checked after joining. The schema consumer derives its
+source roles from the actual original fields, reconstructs every ordinary
+premise, and retains all five material predicates. Complete supporting
+observations recover every value of the produced binding together. The
+universal preservation theorems include both complete application sources and
+the existing guided closure, with their original formation and known-evidence
+requirements.
+
+The two pattern enumerators and the two complete-premise enumerators have
+unrestricted equality proofs. Their clients now share the existing operations
+and exact contracts. Generic finite unions, matching formation, and complete
+scope arguments are owned below those consumers. Independent host assessment
+enumerates valuations and requires coverage by whole compatible fragments,
+providing a check distinct from the exported compatible-union recursion.
+
+The full 826-theory session, 50 tooling tests, and complete new and regression
+execution families pass. The [retained review](validation/generalization-review-2026-09-11/structural-observations/README.md)
+keeps the failed proposals, complete decision results, raw proof contexts,
+original source objects, and execution differences. It does not establish
+the missing structural boundaries of older adapters or close the whole
+derivation, native mathematical-proof, and final repository audits.

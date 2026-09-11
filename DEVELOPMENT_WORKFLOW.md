@@ -39,6 +39,16 @@ is missing, its absence is itself an explicit development problem. A manually
 chosen answer or a descriptive table must not be reported as machinery-driven
 construction.
 
+Problems, candidates, conditions, and observations must have concrete structural
+subjects. A computed observation needs an exact contract connecting its actual
+operation and complete input to the independently stated condition. If indices
+present those subjects, their maps and the observation equation must establish
+that connection. A retained description or digest establishes which bytes
+accompanied an execution; it does not establish what the computation means.
+An externally supplied observation table remains conditional input unless its
+subject and satisfaction boundary are separately established. Its evaluation
+must not be reported as derivation of those observations.
+
 Incomplete native admission does not suspend this workflow. The existing
 conditional machinery can be used with its current contracts and explicit
 unresolved premises. A missing representation or reasoning operation becomes

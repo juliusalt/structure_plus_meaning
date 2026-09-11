@@ -1,0 +1,91 @@
+from copy import deepcopy
+import json
+from pathlib import Path
+import sys
+
+root = Path('/home/julius/structure_and_semantics')
+sys.path.insert(0, str(root / 'tools'))
+import check_reasoning as r
+
+base = Path(__file__).resolve().parent
+v = lambda n: {'var': n}
+p = r.payload
+rule = r.schema(v(0), [[10, 8, v(1)], [11, 7, v(2)]])
+observations = [[['head'], p(7)], [['premise', 10, 8], p(8)], [['premise', 11, 7], p(9)]]
+groups = []
+
+def group(name, schema, obs):
+    groups.append(deepcopy({'name': name, 'schema': schema, 'observations': obs}))
+
+group('three-independent-contributions', rule, observations)
+group('missing-one-contribution', rule, observations[:-1])
+repeated = deepcopy(rule)
+repeated['premises'] *= 2
+group('repeated-sources-and-observations', repeated, observations * 3)
+reordered = deepcopy(rule)
+reordered['premises'].reverse()
+group('reordered-source-and-observation-families', reordered, observations[::-1])
+group('conflicting-required-head-observations', rule, observations + [[['head'], p(8)]])
+literal = deepcopy(rule)
+literal['head'] = p(7)
+group('wrong-literal-is-not-a-matching-observation', literal, [[['head'], p(8)]] + observations[1:])
+group('malformed-observed-value', rule, observations[:-1] + [[['premise', 11, 7], p(256)]])
+group('unrelated-source-key', rule, observations + [[['premise', 222, 7], p(9)]])
+group('ground-schema-with-no-observations', r.schema(p(11)), [])
+correlated = r.schema(r.pair(v(0), v(1)), [[10, 8, v(1)]])
+group('a-whole-match-cannot-be-split', correlated,
+      [[['head'], r.pair(p(7), p(8))], [['premise', 10, 8], p(9)]])
+material_rule = r.schema(v(0), [], [[20, [v(i) for i in range(1, 6)]]])
+material_observations = [[['head'], p(7)]] + [
+    [['material', field, 20], r.EMPTY] for field in r.MATERIAL_OBSERVATION_FIELDS]
+group('all-five-material-observations', material_rule, material_observations)
+group('missing-material-only-variable', material_rule, material_observations[:-1])
+for i, field in enumerate(r.MATERIAL_OBSERVATION_FIELDS, 1):
+    bad = deepcopy(material_observations)
+    bad[i][1] = p(1)
+    group('false-material-' + field, material_rule, bad)
+conflicting_source = r.schema(v(0), [[10, 8, v(1)], [10, 8, v(2)]])
+group('nonfunctional-source-family', conflicting_source, observations)
+group('inconsistent-repeated-variable', r.schema(r.pair(v(0), v(0))),
+      [[['head'], r.pair(p(7), p(8))]])
+group('wrong-callee-at-original-socket', rule,
+      observations[:-1] + [[['premise', 11, 99], p(9)]])
+group('empty-group-with-incomplete-scope', rule, [])
+group('malformed-source-literal', r.schema(p(256)), [[['head'], p(256)]])
+(base / 'contribution-controls.json').write_text(json.dumps(groups, indent=2) + '\n')
+
+guided = []
+def guide(name, schemas, frontier, known, goals):
+    guided.append(deepcopy({'name': name, 'library': [
+        {'entry': d, 'schema': s, 'enumeration': s['premises']} for d, s in schemas],
+        'frontier': frontier, 'known': known, 'goals': goals,
+        'operation': ['guided', 2], 'guided_rounds': 2, 'diagnose_bindings': True}))
+
+frontier = [[8, p(8)], [7, p(9)]]
+goal = [[0, 9, p(7)]]
+guide('three-parts-with-known-premises', [(9, rule)], frontier, frontier, goal)
+guide('three-parts-with-withheld-premises', [(9, rule)], frontier, [], goal)
+guide('missing-one-premise-observation', [(9, rule)], frontier[:1], frontier[:1], goal)
+guide('repeated-frontier-and-goal-occurrences', [(9, repeated)], frontier * 3, frontier,
+      goal + [[1, 9, p(7)]])
+guide('reordered-premise-family', [(9, reordered)], frontier[::-1], frontier[::-1], goal)
+guide('unused-malformed-frontier', [(9, rule)], frontier + [[777, p(256)]], frontier, goal)
+guide('whole-match-retains-its-correlations', [(9, correlated)], [[8, p(9)]], [[8, p(9)]],
+      [[0, 9, r.pair(p(7), p(8))]])
+partial = r.schema(v(0), [[10, 8, r.pair(v(0), v(1))], [11, 7, v(1)]])
+guide('unobserved-premise-remains-conditional', [(9, partial)], [[7, p(8)]], [[7, p(8)]], goal)
+guide('material-only-scope-cannot-be-invented', [(9, material_rule)], [], [], goal)
+for i, field in enumerate(r.MATERIAL_OBSERVATION_FIELDS):
+    fields = [deepcopy(r.EMPTY) for _ in range(5)]
+    fields[i] = p(1)
+    guide('guided-false-material-' + field, [(9, r.schema(v(0), [], [[20, fields]]))], [], [], goal)
+first = r.schema(v(0), [[10, 8, v(1)]])
+second = r.schema(p(11), [[10, 7, v(1)]])
+guide('different-schemas-do-not-share-binding-fragments', [(9, first), (10, second)],
+      [[7, p(8)]], [[7, p(8)]], goal)
+guide('ground-application-without-observations', [(9, r.schema(p(11)))], [], [], [[0, 9, p(11)]])
+spec = {'question': 'Construct complete applications from compatible partial observations while retaining their actual source and evidence boundaries.',
+        'boundary': 'Schemas are conditional inputs. Actual joined applications, full bindings, original premise sockets, and every guided state are independently reconstructed. Possible calls and requests are not known facts.',
+        'evidence': [], 'cases': guided}
+(base / 'guided-contribution-controls.json').write_text(json.dumps(spec, indent=2) + '\n')
+print(json.dumps({'direct_observation_cases': len(groups), 'guided_cases': len(guided)}))

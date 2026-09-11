@@ -1,0 +1,5 @@
+session Native_Investigation_Report_Diagnostic_bindingobservations1 = HOL +
+  options [document = false, timeout = 300]
+  sessions "HOL-Library"
+  directories "theories"
+  theories Finite_Derived_Observations Factor_Observed_Applications Factor_Generation_Redundancy_Probe Factor_Reasoning_Execution

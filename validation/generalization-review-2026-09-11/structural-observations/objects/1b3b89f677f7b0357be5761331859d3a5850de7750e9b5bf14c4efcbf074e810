@@ -1,0 +1,17 @@
+Running Native_Investigation_Report_Diagnostic_bindingintegration28 ...
+Native_Investigation_Report_Diagnostic_bindingintegration28 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_bindingintegration28")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_bindingintegration28.Factor_Application_Comparison" (unresolved "Native_Investigation_Report_Diagnostic_bindingintegration28.Factor_Guided_Investigation")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_bindingintegration28.Factor_Binding_Guided_Investigation" (unresolved "Native_Investigation_Report_Diagnostic_bindingintegration28.Factor_Guided_Investigation")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_bindingintegration28.Factor_Reasoning_Execution" (unresolved "Native_Investigation_Report_Diagnostic_bindingintegration28.Factor_Binding_Guided_Investigation")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_bindingintegration28.Factor_Application_Execution" (unresolved "Native_Investigation_Report_Diagnostic_bindingintegration28.Factor_Application_Comparison", "Native_Investigation_Report_Diagnostic_bindingintegration28.Factor_Reasoning_Execution")
+*** Failed to finish proof (line 137 of "/tmp/native-investigation-report-diagnostic-bindingintegration28/theories/Factor_Guided_Investigation.thy"):
+*** goal (1 subgoal):
+***  1. finite_generated_applications_on_set L D |⊆|
+***     finite_guided_applications L D J ⟹
+***     finite_generated_applications_on_set L D |⊆|
+***     A |∪|
+***     finite_guided_applications L D
+***      J
+*** At command "by" (line 137 of "/tmp/native-investigation-report-diagnostic-bindingintegration28/theories/Factor_Guided_Investigation.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_bindingintegration28
+0:00:28 elapsed time, 0:00:56 cpu time, factor 2.02

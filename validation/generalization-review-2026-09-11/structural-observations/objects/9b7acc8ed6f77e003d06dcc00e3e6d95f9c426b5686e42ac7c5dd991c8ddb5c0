@@ -1,0 +1,198 @@
+{
+  "subjects": {
+    "formed": true,
+    "candidates": [
+      [
+        0,
+        "Separate_Application_Sources"
+      ],
+      [
+        1,
+        "Joined_Application_Observations"
+      ]
+    ],
+    "conditions": [
+      [
+        0,
+        "Complete_Instance_Condition"
+      ],
+      [
+        1,
+        "Existing_Application_Condition"
+      ],
+      [
+        2,
+        "Required_Application_Condition"
+      ]
+    ],
+    "problems": []
+  },
+  "initial": {
+    "input_formed": true,
+    "residual": [],
+    "profiles": [
+      {
+        "candidate": 0,
+        "profile": []
+      },
+      {
+        "candidate": 1,
+        "profile": []
+      }
+    ],
+    "losses": [
+      {
+        "from": 0,
+        "to": 0,
+        "losses": []
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "losses": []
+      },
+      {
+        "from": 1,
+        "to": 0,
+        "losses": []
+      },
+      {
+        "from": 1,
+        "to": 1,
+        "losses": []
+      }
+    ],
+    "observations": [],
+    "relation": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    "safe_facets": [
+      0,
+      1,
+      2
+    ],
+    "conflicts": [],
+    "repairs": [],
+    "unrepairable": [],
+    "extension": [
+      0,
+      1
+    ],
+    "revision": {
+      "retained": [
+        0,
+        1
+      ],
+      "withdrawn": [],
+      "repairs": [],
+      "selection": [
+        0,
+        1
+      ],
+      "residual": []
+    }
+  },
+  "followed": {
+    "input_formed": true,
+    "residual": [],
+    "profiles": [
+      {
+        "candidate": 0,
+        "profile": []
+      },
+      {
+        "candidate": 1,
+        "profile": []
+      }
+    ],
+    "losses": [
+      {
+        "from": 0,
+        "to": 0,
+        "losses": []
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "losses": []
+      },
+      {
+        "from": 1,
+        "to": 0,
+        "losses": []
+      },
+      {
+        "from": 1,
+        "to": 1,
+        "losses": []
+      }
+    ],
+    "observations": [],
+    "relation": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    "safe_facets": [
+      0,
+      1,
+      2
+    ],
+    "conflicts": [],
+    "repairs": [],
+    "unrepairable": [],
+    "extension": [
+      0,
+      1
+    ],
+    "revision": {
+      "retained": [
+        0,
+        1
+      ],
+      "withdrawn": [],
+      "repairs": [],
+      "selection": [
+        0,
+        1
+      ],
+      "residual": []
+    }
+  },
+  "applications": [],
+  "mandatory": [],
+  "eligible": [
+    0,
+    1
+  ],
+  "contract": "application_observation_subject",
+  "boundary": "Conditions are computed on the retained structural subjects by the proved operation. Scope is the supplied complete problem family; premise truth and wider method coverage remain separate."
+}

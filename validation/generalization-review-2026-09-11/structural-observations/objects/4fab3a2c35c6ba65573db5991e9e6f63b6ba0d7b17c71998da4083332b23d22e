@@ -1,0 +1,6 @@
+Running Native_Investigation_Report_Diagnostic_bindingintegration20 ...
+*** Timeout
+Native_Investigation_Report_Diagnostic_bindingintegration20 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_bindingintegration20")
+
+Unfinished session(s): Native_Investigation_Report_Diagnostic_bindingintegration20
+0:05:03 elapsed time

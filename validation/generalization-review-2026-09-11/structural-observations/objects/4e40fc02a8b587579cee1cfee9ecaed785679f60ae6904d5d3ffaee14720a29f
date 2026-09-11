@@ -1,0 +1,160 @@
+{
+  "scope": "Unregistered candidate construction and criticism, before a subject-bound comparison can select integration.",
+  "diagnostics": [
+    {
+      "snapshot": "/tmp/native-investigation-report-diagnostic-bindingobservations8",
+      "status": "failed",
+      "sources_unchanged": true,
+      "errors": [
+        "*** Failed to load theory \"Native_Investigation_Report_Diagnostic_bindingobservations8.Factor_Observed_Applications\" (unresolved \"Native_Investigation_Report_Diagnostic_bindingobservations8.Factor_Binding_Contributions\")",
+        "*** Failed to load theory \"Native_Investigation_Report_Diagnostic_bindingobservations8.Factor_Application_Comparison\" (unresolved \"Native_Investigation_Report_Diagnostic_bindingobservations8.Factor_Observed_Applications\")",
+        "*** Failed to load theory \"Native_Investigation_Report_Diagnostic_bindingobservations8.Factor_Application_Execution\" (unresolved \"Native_Investigation_Report_Diagnostic_bindingobservations8.Factor_Application_Comparison\")",
+        "*** Failed to finish proof (line 137 of \"/tmp/native-investigation-report-diagnostic-bindingobservations8/theories/Factor_Binding_Contributions.thy\"):",
+        "*** goal (1 subgoal):",
+        "***  1. (finite_matching_bindings p t |\u2286| V \u2227",
+        "***      (i, p) |\u2208| P \u2227 (i, t) |\u2208| obs \u2227 finite_pattern_accepts p t) =",
+        "***     ((i, p) |\u2208| P \u2227",
+        "***      (i, t) |\u2208| obs \u2227",
+        "***      finite_pattern_accepts p t \u2227",
+        "***      finite_matching_bindings p t |\u2286|",
+        "***      V)",
+        "*** At command \"by\" (line 137 of \"/tmp/native-investigation-report-diagnostic-bindingobservations8/theories/Factor_Binding_Contributions.thy\")"
+      ]
+    },
+    {
+      "snapshot": "/tmp/native-investigation-report-diagnostic-bindingobservations9",
+      "status": "failed",
+      "sources_unchanged": true,
+      "errors": [
+        "*** Failed to load theory \"Native_Investigation_Report_Diagnostic_bindingobservations9.Factor_Observed_Applications\" (unresolved \"Native_Investigation_Report_Diagnostic_bindingobservations9.Factor_Binding_Contributions\")",
+        "*** Failed to load theory \"Native_Investigation_Report_Diagnostic_bindingobservations9.Factor_Application_Comparison\" (unresolved \"Native_Investigation_Report_Diagnostic_bindingobservations9.Factor_Observed_Applications\")",
+        "*** Failed to load theory \"Native_Investigation_Report_Diagnostic_bindingobservations9.Factor_Application_Execution\" (unresolved \"Native_Investigation_Report_Diagnostic_bindingobservations9.Factor_Application_Comparison\")",
+        "*** Failed to apply initial proof method (line 178 of \"/tmp/native-investigation-report-diagnostic-bindingobservations9/theories/Factor_Binding_Contributions.thy\"):",
+        "*** using this:",
+        "***     finite_join_observations P E = Some V",
+        "***     (i, t) |\u2208| E",
+        "*** goal (1 subgoal):",
+        "***  1. \u2203p. (i, p) |\u2208| P \u2227",
+        "***         finite_pattern_accepts p t \u2227",
+        "***         finite_matching_bindings p t |\u2286|",
+        "***         V",
+        "*** At command \"by\" (line 178 of \"/tmp/native-investigation-report-diagnostic-bindingobservations9/theories/Factor_Binding_Contributions.thy\")"
+      ]
+    },
+    {
+      "snapshot": "/tmp/native-investigation-report-diagnostic-bindingobservations10",
+      "status": "failed",
+      "sources_unchanged": true,
+      "errors": [
+        "*** Failed to load theory \"Native_Investigation_Report_Diagnostic_bindingobservations10.Factor_Observed_Applications\" (unresolved \"Native_Investigation_Report_Diagnostic_bindingobservations10.Factor_Binding_Contributions\")",
+        "*** Failed to load theory \"Native_Investigation_Report_Diagnostic_bindingobservations10.Factor_Application_Comparison\" (unresolved \"Native_Investigation_Report_Diagnostic_bindingobservations10.Factor_Observed_Applications\")",
+        "*** Failed to load theory \"Native_Investigation_Report_Diagnostic_bindingobservations10.Factor_Application_Execution\" (unresolved \"Native_Investigation_Report_Diagnostic_bindingobservations10.Factor_Application_Comparison\")",
+        "*** Failed to apply initial proof method (line 202 of \"/tmp/native-investigation-report-diagnostic-bindingobservations10/theories/Factor_Binding_Contributions.thy\"):",
+        "*** using this:",
+        "***     V |\u2208| finite_compatible_unions ?B \u27f9 \u2203W. W |\u2208| ?B \u2227 (a, t) |\u2208| W",
+        "***     V |\u2208| finite_observed_bindings P obs",
+        "*** goal (1 subgoal):",
+        "***  1. \u2203i p u.",
+        "***        (i, p) |\u2208| P \u2227",
+        "***        (i, u) |\u2208| obs \u2227",
+        "***        finite_pattern_accepts p u \u2227",
+        "***        (a, t) |\u2208|",
+        "***        finite_matching_bindings p",
+        "***         u",
+        "*** At command \"by\" (line 202 of \"/tmp/native-investigation-report-diagnostic-bindingobservations10/theories/Factor_Binding_Contributions.thy\")"
+      ]
+    },
+    {
+      "snapshot": "/tmp/native-investigation-report-diagnostic-bindingobservations11",
+      "status": "failed",
+      "sources_unchanged": true,
+      "errors": [
+        "*** Failed to load theory \"Native_Investigation_Report_Diagnostic_bindingobservations11.Factor_Application_Comparison\" (unresolved \"Native_Investigation_Report_Diagnostic_bindingobservations11.Factor_Observed_Applications\")",
+        "*** Failed to load theory \"Native_Investigation_Report_Diagnostic_bindingobservations11.Factor_Application_Execution\" (unresolved \"Native_Investigation_Report_Diagnostic_bindingobservations11.Factor_Application_Comparison\")",
+        "*** Failed to finish proof (line 118 of \"/tmp/native-investigation-report-diagnostic-bindingobservations11/theories/Factor_Observed_Applications.thy\"):",
+        "*** goal (2 subgoals):",
+        "***  1. finite_schema_instance S V t H",
+        "***  2. finite_schema_material_satisfied S",
+        "***      V",
+        "*** At command \"by\" (line 117 of \"/tmp/native-investigation-report-diagnostic-bindingobservations11/theories/Factor_Observed_Applications.thy\")"
+      ]
+    },
+    {
+      "snapshot": "/tmp/native-investigation-report-diagnostic-bindingobservations12",
+      "status": "failed",
+      "sources_unchanged": true,
+      "errors": [
+        "*** Failed to load theory \"Native_Investigation_Report_Diagnostic_bindingobservations12.Factor_Application_Comparison\" (unresolved \"Native_Investigation_Report_Diagnostic_bindingobservations12.Factor_Observed_Applications\")",
+        "*** Failed to load theory \"Native_Investigation_Report_Diagnostic_bindingobservations12.Factor_Application_Execution\" (unresolved \"Native_Investigation_Report_Diagnostic_bindingobservations12.Factor_Application_Comparison\")",
+        "*** Failed to finish proof (line 148 of \"/tmp/native-investigation-report-diagnostic-bindingobservations12/theories/Factor_Observed_Applications.thy\"):",
+        "*** goal (1 subgoal):",
+        "***  1. \u27e6t |\u2208| finite_pattern_instances V (finite_schema_conclusion S);",
+        "***      V |\u2208|",
+        "***      finite_observed_bindings (finite_schema_observation_sources S) obs;",
+        "***      finite_schema_instance S V t H; finite_schema_material_satisfied S V\u27e7",
+        "***     \u27f9 (\u03bbt. (t, V, H)) |`|",
+        "***        ffilter (\u03bbt. finite_schema_instance S V t H)",
+        "***         (finite_pattern_instances V (finite_schema_conclusion S))",
+        "***        \u2208 (\u03bbV. (\u03bbt. (t, V, finite_instantiated_premises S V)) |`|",
+        "***               ffilter",
+        "***                (\u03bbt. finite_schema_instance S V t",
+        "***                      (finite_instantiated_premises S V) \u2227",
+        "***                     finite_schema_material_satisfied S V)",
+        "***                (finite_pattern_instances V (finite_schema_conclusion S))) `",
+        "***          fset",
+        "***           (finite_observed_bindings (finite_schema_observation_sources S)",
+        "***             obs)",
+        "*** At command \"by\" (line 148 of \"/tmp/native-investigation-report-diagnostic-bindingobservations12/theories/Factor_Observed_Applications.thy\")"
+      ]
+    },
+    {
+      "snapshot": "/tmp/native-investigation-report-diagnostic-bindingobservations13",
+      "status": "failed",
+      "sources_unchanged": true,
+      "errors": [
+        "*** Failed to load theory \"Native_Investigation_Report_Diagnostic_bindingobservations13.Factor_Observed_Applications\" (unresolved \"Native_Investigation_Report_Diagnostic_bindingobservations13.Factor_Binding_Contributions\")",
+        "*** Failed to load theory \"Native_Investigation_Report_Diagnostic_bindingobservations13.Factor_Application_Comparison\" (unresolved \"Native_Investigation_Report_Diagnostic_bindingobservations13.Factor_Observed_Applications\")",
+        "*** Failed to load theory \"Native_Investigation_Report_Diagnostic_bindingobservations13.Factor_Application_Execution\" (unresolved \"Native_Investigation_Report_Diagnostic_bindingobservations13.Factor_Application_Comparison\")",
+        "*** Failed to finish proof (line 120 of \"/tmp/native-investigation-report-diagnostic-bindingobservations13/theories/Factor_Binding_Contributions.thy\"):",
+        "*** goal (1 subgoal):",
+        "***  1. finite_compatible_unions B =",
+        "***     finite_compatible_unions",
+        "***      (Abs_fset",
+        "***        (fset",
+        "***          B))",
+        "*** At command \"by\" (line 120 of \"/tmp/native-investigation-report-diagnostic-bindingobservations13/theories/Factor_Binding_Contributions.thy\")"
+      ]
+    },
+    {
+      "snapshot": "/tmp/native-investigation-report-diagnostic-bindingobservations14",
+      "status": "failed",
+      "sources_unchanged": true,
+      "errors": [
+        "*** Failed to load theory \"Native_Investigation_Report_Diagnostic_bindingobservations14.Factor_Observed_Applications\" (unresolved \"Native_Investigation_Report_Diagnostic_bindingobservations14.Factor_Binding_Contributions\")",
+        "*** Failed to load theory \"Native_Investigation_Report_Diagnostic_bindingobservations14.Factor_Application_Comparison\" (unresolved \"Native_Investigation_Report_Diagnostic_bindingobservations14.Factor_Observed_Applications\")",
+        "*** Failed to load theory \"Native_Investigation_Report_Diagnostic_bindingobservations14.Factor_Application_Execution\" (unresolved \"Native_Investigation_Report_Diagnostic_bindingobservations14.Factor_Application_Comparison\")",
+        "*** Failed to finish proof (line 120 of \"/tmp/native-investigation-report-diagnostic-bindingobservations14/theories/Factor_Binding_Contributions.thy\"):",
+        "*** goal (1 subgoal):",
+        "***  1. finite_compatible_unions B =",
+        "***     finite_compatible_unions",
+        "***      (Abs_fset",
+        "***        (fset",
+        "***          B))",
+        "*** At command \"by\" (line 120 of \"/tmp/native-investigation-report-diagnostic-bindingobservations14/theories/Factor_Binding_Contributions.thy\")"
+      ]
+    },
+    {
+      "snapshot": "/tmp/native-investigation-report-diagnostic-bindingobservations15",
+      "status": "failed",
+      "sources_unchanged": true,
+      "errors": [
+        "*** Failed to load theory \"Native_Investigation_Report_Diagnostic_bindingobservations15.Factor_Application_Execution\" (unresolved \"Native_Investigation_Report_Diagnostic_bindingobservations15.Factor_Application_Comparison\")",
+        "*** Inner syntax error (line 89 of \"/tmp/native-investigation-report-diagnostic-bindingobservations15/theories/Factor_Application_Comparison.thy\")",
+        "*** at \"\u00d7 | application_candidate_subjects ) )\"",
+        "*** Failed to parse prop",
+        "*** At command \"definition\" (line 85 of \"/tmp/native-investigation-report-diagnostic-bindingobservations15/theories/Factor_Application_Comparison.thy\")"
+      ]
+    }
+  ],
+  "independent_issue": "A literal powerset enumerates many combinations with the same union. The proved list equation deduplicates compatible accumulated unions at each step and keeps the same general membership relation."
+}

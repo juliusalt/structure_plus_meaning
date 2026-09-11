@@ -1,0 +1,551 @@
+{
+  "question": "Can the current guided operation join the actual head and premise matches of this complete schema before requiring every variable?",
+  "boundary": "The schema, calls, requests and known set are complete finite inputs. The current executable matcher and generator derive both binding gaps and all applications. No supplied quality observation or prose facet is used. The requested behavior is complete schema-instance construction from compatible structural match fragments, while retaining conditional premise obligations and the original whole-input gate.",
+  "cases": [
+    {
+      "name": "three-parts",
+      "library": [
+        {
+          "entry": 9,
+          "schema": {
+            "head": {
+              "var": 0
+            },
+            "premises": [
+              [
+                10,
+                8,
+                {
+                  "var": 1
+                }
+              ],
+              [
+                11,
+                8,
+                {
+                  "var": 2
+                }
+              ]
+            ],
+            "materials": []
+          },
+          "enumeration": [
+            [
+              10,
+              8,
+              {
+                "var": 1
+              }
+            ],
+            [
+              11,
+              8,
+              {
+                "var": 2
+              }
+            ]
+          ]
+        }
+      ],
+      "frontier": [
+        [
+          8,
+          {
+            "payload": [
+              8
+            ]
+          }
+        ],
+        [
+          8,
+          {
+            "payload": [
+              9
+            ]
+          }
+        ]
+      ],
+      "known": [
+        [
+          8,
+          {
+            "payload": [
+              8
+            ]
+          }
+        ],
+        [
+          8,
+          {
+            "payload": [
+              9
+            ]
+          }
+        ]
+      ],
+      "goals": [
+        [
+          0,
+          9,
+          {
+            "payload": [
+              7
+            ]
+          }
+        ]
+      ],
+      "operation": [
+        "guided",
+        2
+      ],
+      "guided_rounds": 2,
+      "diagnose_bindings": true,
+      "expected_report": {
+        "input_formed": true,
+        "residual_goals": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "without-known",
+      "library": [
+        {
+          "entry": 9,
+          "schema": {
+            "head": {
+              "var": 0
+            },
+            "premises": [
+              [
+                10,
+                8,
+                {
+                  "var": 1
+                }
+              ],
+              [
+                11,
+                8,
+                {
+                  "var": 2
+                }
+              ]
+            ],
+            "materials": []
+          },
+          "enumeration": [
+            [
+              10,
+              8,
+              {
+                "var": 1
+              }
+            ],
+            [
+              11,
+              8,
+              {
+                "var": 2
+              }
+            ]
+          ]
+        }
+      ],
+      "frontier": [
+        [
+          8,
+          {
+            "payload": [
+              8
+            ]
+          }
+        ],
+        [
+          8,
+          {
+            "payload": [
+              9
+            ]
+          }
+        ]
+      ],
+      "known": [],
+      "goals": [
+        [
+          0,
+          9,
+          {
+            "payload": [
+              7
+            ]
+          }
+        ]
+      ],
+      "operation": [
+        "guided",
+        2
+      ],
+      "guided_rounds": 2,
+      "diagnose_bindings": true,
+      "expected_report": {
+        "input_formed": true,
+        "residual_goals": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "missing-observations",
+      "library": [
+        {
+          "entry": 9,
+          "schema": {
+            "head": {
+              "var": 0
+            },
+            "premises": [
+              [
+                10,
+                8,
+                {
+                  "var": 1
+                }
+              ],
+              [
+                11,
+                8,
+                {
+                  "var": 2
+                }
+              ]
+            ],
+            "materials": []
+          },
+          "enumeration": [
+            [
+              10,
+              8,
+              {
+                "var": 1
+              }
+            ],
+            [
+              11,
+              8,
+              {
+                "var": 2
+              }
+            ]
+          ]
+        }
+      ],
+      "frontier": [],
+      "known": [
+        [
+          8,
+          {
+            "payload": [
+              8
+            ]
+          }
+        ],
+        [
+          8,
+          {
+            "payload": [
+              9
+            ]
+          }
+        ]
+      ],
+      "goals": [
+        [
+          0,
+          9,
+          {
+            "payload": [
+              7
+            ]
+          }
+        ]
+      ],
+      "operation": [
+        "guided",
+        2
+      ],
+      "guided_rounds": 2,
+      "diagnose_bindings": true,
+      "expected_report": {
+        "input_formed": true,
+        "residual_goals": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "repeated-observations",
+      "library": [
+        {
+          "entry": 9,
+          "schema": {
+            "head": {
+              "var": 0
+            },
+            "premises": [
+              [
+                10,
+                8,
+                {
+                  "var": 1
+                }
+              ],
+              [
+                11,
+                8,
+                {
+                  "var": 2
+                }
+              ]
+            ],
+            "materials": []
+          },
+          "enumeration": [
+            [
+              10,
+              8,
+              {
+                "var": 1
+              }
+            ],
+            [
+              11,
+              8,
+              {
+                "var": 2
+              }
+            ]
+          ]
+        }
+      ],
+      "frontier": [
+        [
+          8,
+          {
+            "payload": [
+              8
+            ]
+          }
+        ],
+        [
+          8,
+          {
+            "payload": [
+              9
+            ]
+          }
+        ],
+        [
+          8,
+          {
+            "payload": [
+              8
+            ]
+          }
+        ],
+        [
+          8,
+          {
+            "payload": [
+              9
+            ]
+          }
+        ]
+      ],
+      "known": [
+        [
+          8,
+          {
+            "payload": [
+              8
+            ]
+          }
+        ],
+        [
+          8,
+          {
+            "payload": [
+              9
+            ]
+          }
+        ]
+      ],
+      "goals": [
+        [
+          0,
+          9,
+          {
+            "payload": [
+              7
+            ]
+          }
+        ],
+        [
+          1,
+          9,
+          {
+            "payload": [
+              7
+            ]
+          }
+        ]
+      ],
+      "operation": [
+        "guided",
+        2
+      ],
+      "guided_rounds": 2,
+      "diagnose_bindings": true,
+      "expected_report": {
+        "input_formed": true,
+        "residual_goals": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "name": "unused-malformed",
+      "library": [
+        {
+          "entry": 9,
+          "schema": {
+            "head": {
+              "var": 0
+            },
+            "premises": [
+              [
+                10,
+                8,
+                {
+                  "var": 1
+                }
+              ],
+              [
+                11,
+                8,
+                {
+                  "var": 2
+                }
+              ]
+            ],
+            "materials": []
+          },
+          "enumeration": [
+            [
+              10,
+              8,
+              {
+                "var": 1
+              }
+            ],
+            [
+              11,
+              8,
+              {
+                "var": 2
+              }
+            ]
+          ]
+        }
+      ],
+      "frontier": [
+        [
+          8,
+          {
+            "payload": [
+              8
+            ]
+          }
+        ],
+        [
+          8,
+          {
+            "payload": [
+              9
+            ]
+          }
+        ],
+        [
+          777,
+          {
+            "payload": [
+              256
+            ]
+          }
+        ]
+      ],
+      "known": [
+        [
+          8,
+          {
+            "payload": [
+              8
+            ]
+          }
+        ],
+        [
+          8,
+          {
+            "payload": [
+              9
+            ]
+          }
+        ]
+      ],
+      "goals": [
+        [
+          0,
+          9,
+          {
+            "payload": [
+              7
+            ]
+          }
+        ]
+      ],
+      "operation": [
+        "guided",
+        2
+      ],
+      "guided_rounds": 2,
+      "diagnose_bindings": true,
+      "expected_report": {
+        "input_formed": false,
+        "residual_goals": []
+      }
+    }
+  ],
+  "evidence": [
+    {
+      "path": "/home/julius/structure_and_semantics/theories/Factor_Guided_Investigation.thy",
+      "sha256": "9fff4ada788dbfacd5978fdcaa4d919d5fce54ddb093dcbcd41a642597fd2265"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/theories/Factor_Requested_Applications.thy",
+      "sha256": "d09060bdd3ac829c0184867fc55a7de29fbabf25c44e15f39c459b1affbf0ead"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/theories/Factor_Generation_Bindings.thy",
+      "sha256": "8094297d6d6ecfdcf220e71e9f3ff5fda6a61cf8fb86c39e75196c2f1a7d5974"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/theories/Factor_Schema_Generation.thy",
+      "sha256": "9ab2e6484d2e45c678d13be2dea36b8bf776d09ba8310a4c85033cd2c4cdab1e"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/theories/Factor_Executable_Instances.thy",
+      "sha256": "12d0114c4b9585bf02194a61f4aa721ab20438e3f03e4c183dc1664f58155321"
+    }
+  ]
+}

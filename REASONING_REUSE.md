@@ -491,3 +491,56 @@ All 817 registered theories pass, as do 38 tooling tests and 111 archive
 replays. The finite executed-example requirement is met. Whole-derivation
 admission, native mathematical-proof admission, complete development-workflow
 coverage and the final repository audit remain separate requirements.
+
+## Structural subjects and compatible observation contributions
+
+`Finite_Derived_Observations` maps actual candidates, operations, and workloads
+to their presentation indices. Functional source maps give the exact equation
+between an observation row and its condition on those same objects. A concrete
+client still has to establish what its operation computes. A prose label or
+retained digest cannot supply that theorem.
+
+The application comparison supplies complete finite schema problems and two
+actual construction operations. Its conditions compute complete-instance and
+material validity, preservation of the former application relation, and
+inclusion of explicitly required application tuples. The initial comparison
+of four problems identifies the missing construction condition; following its
+revision distinguishes the joined operation. Every candidate, condition, and
+problem object is retained in the emitted result. The finite family does not
+establish coverage of every development method.
+
+`Factor_Binding_Contributions` factors compatible union of any finite collection
+of binding relations. Each fragment is recovered by matching an observed term
+against an actual source pattern. Whole fragments must agree; a conflicting
+observation cannot keep one value from a fragment and discard another. The
+exact list equation shares and deduplicates compatible accumulated unions.
+The complete supporting observation family reconstructs the entire binding
+relation, so retained source witnesses cover every value together.
+A required group retains every supplied observation, whereas a pool offers
+alternative compatible groups. Complete scope is a subsequent condition.
+
+The schema consumer derives source roles from its original conclusion,
+ordinary premise sockets and callees, and all five material operands. It
+reconstructs every ordinary premise and retains the original complete schema
+and material predicates. A possible premise may supply substitution
+information without establishing its truth. Requested calls and constructed
+possible calls remain separate from the known set.
+
+The existing pattern-instance enumerator now serves both construction paths.
+One shared premise enumerator serves requested applications and graph
+propagation. Their unrestricted equivalence was established before removing
+the duplicate implementations. General matching, finite composition, complete
+application assembly, observation recovery, and execution-evidence guards are
+shared by their respective consumers. Universal inclusion preserves every
+earlier forward and requested application and the existing bounded guided
+soundness theorem. The full 826-theory session and 50 tooling tests pass.
+
+The [retained executions](validation/generalization-review-2026-09-11/structural-observations/README.md)
+include 22 direct observation groups and 16 guided controls. They check missing
+and conflicting fragments, every material operand, complete witness recovery,
+and the original malformed-input boundary. The 55 original guided cases retain
+their residual goals and formation results while gaining conditional
+applications; all 76 native reader cases reproduce their previous mathematical
+reports. Empty and repeated subject families remain valid; ambiguous indices
+fail the structural subject gate. These results do not retrospectively justify
+older observation functions whose subjects are given only by registry prose.

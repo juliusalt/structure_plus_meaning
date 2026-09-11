@@ -1,0 +1,39 @@
+/tmp/generalization-quality-review/structural-binding-observations/replays1/empty-subject-family/decoded-evidence/anchor/anchor/objects/624ed5bbf2adb5e595af9060fdca5a50aef0db631cb35a19faaca5e9d7725156:259: warning: Pattern 3 is redundant.
+Found near
+  fun
+     equal_boola false p = not p |
+        equal_boola true ... = p |
+        equal_boola ... = ... ... |
+        equal_boola ... = ...
+/tmp/generalization-quality-review/structural-binding-observations/replays1/empty-subject-family/decoded-evidence/anchor/anchor/objects/624ed5bbf2adb5e595af9060fdca5a50aef0db631cb35a19faaca5e9d7725156:260: warning: Pattern 4 is redundant.
+Found near
+  fun
+     equal_boola false p = not p |
+        equal_boola true ... = p |
+        equal_boola ... = ... ... |
+        equal_boola ... = ...
+/tmp/generalization-quality-review/structural-binding-observations/replays1/empty-subject-family/decoded-evidence/anchor/anchor/objects/624ed5bbf2adb5e595af9060fdca5a50aef0db631cb35a19faaca5e9d7725156:277: warning: Matches are not exhaustive.
+Found near
+  fun
+     less_eq_set A_ (... ...) ... = list_all (fn ...) xs |
+        less_eq_set A_ ... = ... ... ys |
+        less_eq_set ... = false
+/tmp/generalization-quality-review/structural-binding-observations/replays1/empty-subject-family/decoded-evidence/anchor/anchor/objects/624ed5bbf2adb5e595af9060fdca5a50aef0db631cb35a19faaca5e9d7725156:737: warning: Matches are not exhaustive. Found near fun bex (Set xs) p = list_ex p xs
+/tmp/generalization-quality-review/structural-binding-observations/replays1/empty-subject-family/decoded-evidence/anchor/anchor/objects/624ed5bbf2adb5e595af9060fdca5a50aef0db631cb35a19faaca5e9d7725156:747: warning: Matches are not exhaustive.
+Found near
+  fun nth (x :: xs) n = (if ... ... zero_nat then x else ... ... (... ...))
+/tmp/generalization-quality-review/structural-binding-observations/replays1/empty-subject-family/decoded-evidence/anchor/anchor/objects/624ed5bbf2adb5e595af9060fdca5a50aef0db631cb35a19faaca5e9d7725156:750: warning: Matches are not exhaustive. Found near fun ball (Set xs) p = list_all p xs
+/tmp/generalization-quality-review/structural-binding-observations/replays1/empty-subject-family/decoded-evidence/anchor/anchor/objects/624ed5bbf2adb5e595af9060fdca5a50aef0db631cb35a19faaca5e9d7725156:761: warning: Matches are not exhaustive.
+Found near fun image f (... ...) = Set (... ... xs)
+/tmp/generalization-quality-review/structural-binding-observations/replays1/empty-subject-family/decoded-evidence/anchor/anchor/objects/624ed5bbf2adb5e595af9060fdca5a50aef0db631cb35a19faaca5e9d7725156:766: warning: Matches are not exhaustive.
+Found near fun filter p (... ...) = Set (... ... xs)
+/tmp/generalization-quality-review/structural-binding-observations/replays1/empty-subject-family/decoded-evidence/anchor/anchor/objects/624ed5bbf2adb5e595af9060fdca5a50aef0db631cb35a19faaca5e9d7725156:787: warning: Matches are not exhaustive.
+Found near fun sup_seta A_ (... ...) = ... ... xs bot_set
+/tmp/generalization-quality-review/structural-binding-observations/replays1/empty-subject-family/decoded-evidence/anchor/anchor/objects/624ed5bbf2adb5e595af9060fdca5a50aef0db631cb35a19faaca5e9d7725156:887: warning: Matches are not exhaustive.
+Found near
+  fun sorted_list_of_set (A1_, ...) (... ...) = ... ... (fn ...) (... ... xs)
+/tmp/generalization-quality-review/structural-binding-observations/replays1/empty-subject-family/decoded-evidence/anchor/anchor/objects/624ed5bbf2adb5e595af9060fdca5a50aef0db631cb35a19faaca5e9d7725156:1236: warning: Matches are not exhaustive.
+Found near fun set_compatible_unions A_ B_ ... = ... ... B_ bs
+APPLICATION_SUBJECTS {"formed":true,"candidates":[[0,"Separate_Application_Sources"],[1,"Joined_Application_Observations"]],"conditions":[[0,"Complete_Instance_Condition"],[1,"Existing_Application_Condition"],[2,"Required_Application_Condition"]],"problems":[]}
+APPLICATION_INITIAL {"input_formed":true,"residual":[],"profiles":[{"candidate":0,"profile":[]},{"candidate":1,"profile":[]}],"losses":[{"from":0,"to":0,"losses":[]},{"from":0,"to":1,"losses":[]},{"from":1,"to":0,"losses":[]},{"from":1,"to":1,"losses":[]}],"observations":[],"relation":[[0,0],[0,1],[1,0],[1,1]],"safe_facets":[0,1,2],"conflicts":[],"repairs":[],"unrepairable":[],"extension":[0,1],"revision":{"retained":[0,1],"withdrawn":[],"repairs":[],"selection":[0,1],"residual":[]}}
+APPLICATION_FOLLOWED {"input_formed":true,"residual":[],"profiles":[{"candidate":0,"profile":[]},{"candidate":1,"profile":[]}],"losses":[{"from":0,"to":0,"losses":[]},{"from":0,"to":1,"losses":[]},{"from":1,"to":0,"losses":[]},{"from":1,"to":1,"losses":[]}],"observations":[],"relation":[[0,0],[0,1],[1,0],[1,1]],"safe_facets":[0,1,2],"conflicts":[],"repairs":[],"unrepairable":[],"extension":[0,1],"revision":{"retained":[0,1],"withdrawn":[],"repairs":[],"selection":[0,1],"residual":[]}}

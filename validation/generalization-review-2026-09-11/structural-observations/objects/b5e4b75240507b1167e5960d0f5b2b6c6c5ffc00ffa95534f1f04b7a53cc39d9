@@ -1,0 +1,1516 @@
+[
+  {
+    "name": "three-independent-contributions",
+    "schema": {
+      "head": {
+        "var": 0
+      },
+      "premises": [
+        [
+          10,
+          8,
+          {
+            "var": 1
+          }
+        ],
+        [
+          11,
+          7,
+          {
+            "var": 2
+          }
+        ]
+      ],
+      "materials": []
+    },
+    "observations": [
+      [
+        [
+          "head"
+        ],
+        {
+          "payload": [
+            7
+          ]
+        }
+      ],
+      [
+        [
+          "premise",
+          10,
+          8
+        ],
+        {
+          "payload": [
+            8
+          ]
+        }
+      ],
+      [
+        [
+          "premise",
+          11,
+          7
+        ],
+        {
+          "payload": [
+            9
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "name": "missing-one-contribution",
+    "schema": {
+      "head": {
+        "var": 0
+      },
+      "premises": [
+        [
+          10,
+          8,
+          {
+            "var": 1
+          }
+        ],
+        [
+          11,
+          7,
+          {
+            "var": 2
+          }
+        ]
+      ],
+      "materials": []
+    },
+    "observations": [
+      [
+        [
+          "head"
+        ],
+        {
+          "payload": [
+            7
+          ]
+        }
+      ],
+      [
+        [
+          "premise",
+          10,
+          8
+        ],
+        {
+          "payload": [
+            8
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "name": "repeated-sources-and-observations",
+    "schema": {
+      "head": {
+        "var": 0
+      },
+      "premises": [
+        [
+          10,
+          8,
+          {
+            "var": 1
+          }
+        ],
+        [
+          11,
+          7,
+          {
+            "var": 2
+          }
+        ],
+        [
+          10,
+          8,
+          {
+            "var": 1
+          }
+        ],
+        [
+          11,
+          7,
+          {
+            "var": 2
+          }
+        ]
+      ],
+      "materials": []
+    },
+    "observations": [
+      [
+        [
+          "head"
+        ],
+        {
+          "payload": [
+            7
+          ]
+        }
+      ],
+      [
+        [
+          "premise",
+          10,
+          8
+        ],
+        {
+          "payload": [
+            8
+          ]
+        }
+      ],
+      [
+        [
+          "premise",
+          11,
+          7
+        ],
+        {
+          "payload": [
+            9
+          ]
+        }
+      ],
+      [
+        [
+          "head"
+        ],
+        {
+          "payload": [
+            7
+          ]
+        }
+      ],
+      [
+        [
+          "premise",
+          10,
+          8
+        ],
+        {
+          "payload": [
+            8
+          ]
+        }
+      ],
+      [
+        [
+          "premise",
+          11,
+          7
+        ],
+        {
+          "payload": [
+            9
+          ]
+        }
+      ],
+      [
+        [
+          "head"
+        ],
+        {
+          "payload": [
+            7
+          ]
+        }
+      ],
+      [
+        [
+          "premise",
+          10,
+          8
+        ],
+        {
+          "payload": [
+            8
+          ]
+        }
+      ],
+      [
+        [
+          "premise",
+          11,
+          7
+        ],
+        {
+          "payload": [
+            9
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "name": "reordered-source-and-observation-families",
+    "schema": {
+      "head": {
+        "var": 0
+      },
+      "premises": [
+        [
+          11,
+          7,
+          {
+            "var": 2
+          }
+        ],
+        [
+          10,
+          8,
+          {
+            "var": 1
+          }
+        ]
+      ],
+      "materials": []
+    },
+    "observations": [
+      [
+        [
+          "premise",
+          11,
+          7
+        ],
+        {
+          "payload": [
+            9
+          ]
+        }
+      ],
+      [
+        [
+          "premise",
+          10,
+          8
+        ],
+        {
+          "payload": [
+            8
+          ]
+        }
+      ],
+      [
+        [
+          "head"
+        ],
+        {
+          "payload": [
+            7
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "name": "conflicting-required-head-observations",
+    "schema": {
+      "head": {
+        "var": 0
+      },
+      "premises": [
+        [
+          10,
+          8,
+          {
+            "var": 1
+          }
+        ],
+        [
+          11,
+          7,
+          {
+            "var": 2
+          }
+        ]
+      ],
+      "materials": []
+    },
+    "observations": [
+      [
+        [
+          "head"
+        ],
+        {
+          "payload": [
+            7
+          ]
+        }
+      ],
+      [
+        [
+          "premise",
+          10,
+          8
+        ],
+        {
+          "payload": [
+            8
+          ]
+        }
+      ],
+      [
+        [
+          "premise",
+          11,
+          7
+        ],
+        {
+          "payload": [
+            9
+          ]
+        }
+      ],
+      [
+        [
+          "head"
+        ],
+        {
+          "payload": [
+            8
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "name": "wrong-literal-is-not-a-matching-observation",
+    "schema": {
+      "head": {
+        "payload": [
+          7
+        ]
+      },
+      "premises": [
+        [
+          10,
+          8,
+          {
+            "var": 1
+          }
+        ],
+        [
+          11,
+          7,
+          {
+            "var": 2
+          }
+        ]
+      ],
+      "materials": []
+    },
+    "observations": [
+      [
+        [
+          "head"
+        ],
+        {
+          "payload": [
+            8
+          ]
+        }
+      ],
+      [
+        [
+          "premise",
+          10,
+          8
+        ],
+        {
+          "payload": [
+            8
+          ]
+        }
+      ],
+      [
+        [
+          "premise",
+          11,
+          7
+        ],
+        {
+          "payload": [
+            9
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "name": "malformed-observed-value",
+    "schema": {
+      "head": {
+        "var": 0
+      },
+      "premises": [
+        [
+          10,
+          8,
+          {
+            "var": 1
+          }
+        ],
+        [
+          11,
+          7,
+          {
+            "var": 2
+          }
+        ]
+      ],
+      "materials": []
+    },
+    "observations": [
+      [
+        [
+          "head"
+        ],
+        {
+          "payload": [
+            7
+          ]
+        }
+      ],
+      [
+        [
+          "premise",
+          10,
+          8
+        ],
+        {
+          "payload": [
+            8
+          ]
+        }
+      ],
+      [
+        [
+          "premise",
+          11,
+          7
+        ],
+        {
+          "payload": [
+            256
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "name": "unrelated-source-key",
+    "schema": {
+      "head": {
+        "var": 0
+      },
+      "premises": [
+        [
+          10,
+          8,
+          {
+            "var": 1
+          }
+        ],
+        [
+          11,
+          7,
+          {
+            "var": 2
+          }
+        ]
+      ],
+      "materials": []
+    },
+    "observations": [
+      [
+        [
+          "head"
+        ],
+        {
+          "payload": [
+            7
+          ]
+        }
+      ],
+      [
+        [
+          "premise",
+          10,
+          8
+        ],
+        {
+          "payload": [
+            8
+          ]
+        }
+      ],
+      [
+        [
+          "premise",
+          11,
+          7
+        ],
+        {
+          "payload": [
+            9
+          ]
+        }
+      ],
+      [
+        [
+          "premise",
+          222,
+          7
+        ],
+        {
+          "payload": [
+            9
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "name": "ground-schema-with-no-observations",
+    "schema": {
+      "head": {
+        "payload": [
+          11
+        ]
+      },
+      "premises": [],
+      "materials": []
+    },
+    "observations": []
+  },
+  {
+    "name": "a-whole-match-cannot-be-split",
+    "schema": {
+      "head": {
+        "pair": [
+          {
+            "var": 0
+          },
+          {
+            "var": 1
+          }
+        ]
+      },
+      "premises": [
+        [
+          10,
+          8,
+          {
+            "var": 1
+          }
+        ]
+      ],
+      "materials": []
+    },
+    "observations": [
+      [
+        [
+          "head"
+        ],
+        {
+          "pair": [
+            {
+              "payload": [
+                7
+              ]
+            },
+            {
+              "payload": [
+                8
+              ]
+            }
+          ]
+        }
+      ],
+      [
+        [
+          "premise",
+          10,
+          8
+        ],
+        {
+          "payload": [
+            9
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "name": "all-five-material-observations",
+    "schema": {
+      "head": {
+        "var": 0
+      },
+      "premises": [],
+      "materials": [
+        [
+          20,
+          [
+            {
+              "var": 1
+            },
+            {
+              "var": 2
+            },
+            {
+              "var": 3
+            },
+            {
+              "var": 4
+            },
+            {
+              "var": 5
+            }
+          ]
+        ]
+      ]
+    },
+    "observations": [
+      [
+        [
+          "head"
+        ],
+        {
+          "payload": [
+            7
+          ]
+        }
+      ],
+      [
+        [
+          "material",
+          "source",
+          20
+        ],
+        {
+          "empty_artifact": true
+        }
+      ],
+      [
+        [
+          "material",
+          "atoms",
+          20
+        ],
+        {
+          "empty_artifact": true
+        }
+      ],
+      [
+        [
+          "material",
+          "edges",
+          20
+        ],
+        {
+          "empty_artifact": true
+        }
+      ],
+      [
+        [
+          "material",
+          "counts",
+          20
+        ],
+        {
+          "empty_artifact": true
+        }
+      ],
+      [
+        [
+          "material",
+          "functions",
+          20
+        ],
+        {
+          "empty_artifact": true
+        }
+      ]
+    ]
+  },
+  {
+    "name": "missing-material-only-variable",
+    "schema": {
+      "head": {
+        "var": 0
+      },
+      "premises": [],
+      "materials": [
+        [
+          20,
+          [
+            {
+              "var": 1
+            },
+            {
+              "var": 2
+            },
+            {
+              "var": 3
+            },
+            {
+              "var": 4
+            },
+            {
+              "var": 5
+            }
+          ]
+        ]
+      ]
+    },
+    "observations": [
+      [
+        [
+          "head"
+        ],
+        {
+          "payload": [
+            7
+          ]
+        }
+      ],
+      [
+        [
+          "material",
+          "source",
+          20
+        ],
+        {
+          "empty_artifact": true
+        }
+      ],
+      [
+        [
+          "material",
+          "atoms",
+          20
+        ],
+        {
+          "empty_artifact": true
+        }
+      ],
+      [
+        [
+          "material",
+          "edges",
+          20
+        ],
+        {
+          "empty_artifact": true
+        }
+      ],
+      [
+        [
+          "material",
+          "counts",
+          20
+        ],
+        {
+          "empty_artifact": true
+        }
+      ]
+    ]
+  },
+  {
+    "name": "false-material-source",
+    "schema": {
+      "head": {
+        "var": 0
+      },
+      "premises": [],
+      "materials": [
+        [
+          20,
+          [
+            {
+              "var": 1
+            },
+            {
+              "var": 2
+            },
+            {
+              "var": 3
+            },
+            {
+              "var": 4
+            },
+            {
+              "var": 5
+            }
+          ]
+        ]
+      ]
+    },
+    "observations": [
+      [
+        [
+          "head"
+        ],
+        {
+          "payload": [
+            7
+          ]
+        }
+      ],
+      [
+        [
+          "material",
+          "source",
+          20
+        ],
+        {
+          "payload": [
+            1
+          ]
+        }
+      ],
+      [
+        [
+          "material",
+          "atoms",
+          20
+        ],
+        {
+          "empty_artifact": true
+        }
+      ],
+      [
+        [
+          "material",
+          "edges",
+          20
+        ],
+        {
+          "empty_artifact": true
+        }
+      ],
+      [
+        [
+          "material",
+          "counts",
+          20
+        ],
+        {
+          "empty_artifact": true
+        }
+      ],
+      [
+        [
+          "material",
+          "functions",
+          20
+        ],
+        {
+          "empty_artifact": true
+        }
+      ]
+    ]
+  },
+  {
+    "name": "false-material-atoms",
+    "schema": {
+      "head": {
+        "var": 0
+      },
+      "premises": [],
+      "materials": [
+        [
+          20,
+          [
+            {
+              "var": 1
+            },
+            {
+              "var": 2
+            },
+            {
+              "var": 3
+            },
+            {
+              "var": 4
+            },
+            {
+              "var": 5
+            }
+          ]
+        ]
+      ]
+    },
+    "observations": [
+      [
+        [
+          "head"
+        ],
+        {
+          "payload": [
+            7
+          ]
+        }
+      ],
+      [
+        [
+          "material",
+          "source",
+          20
+        ],
+        {
+          "empty_artifact": true
+        }
+      ],
+      [
+        [
+          "material",
+          "atoms",
+          20
+        ],
+        {
+          "payload": [
+            1
+          ]
+        }
+      ],
+      [
+        [
+          "material",
+          "edges",
+          20
+        ],
+        {
+          "empty_artifact": true
+        }
+      ],
+      [
+        [
+          "material",
+          "counts",
+          20
+        ],
+        {
+          "empty_artifact": true
+        }
+      ],
+      [
+        [
+          "material",
+          "functions",
+          20
+        ],
+        {
+          "empty_artifact": true
+        }
+      ]
+    ]
+  },
+  {
+    "name": "false-material-edges",
+    "schema": {
+      "head": {
+        "var": 0
+      },
+      "premises": [],
+      "materials": [
+        [
+          20,
+          [
+            {
+              "var": 1
+            },
+            {
+              "var": 2
+            },
+            {
+              "var": 3
+            },
+            {
+              "var": 4
+            },
+            {
+              "var": 5
+            }
+          ]
+        ]
+      ]
+    },
+    "observations": [
+      [
+        [
+          "head"
+        ],
+        {
+          "payload": [
+            7
+          ]
+        }
+      ],
+      [
+        [
+          "material",
+          "source",
+          20
+        ],
+        {
+          "empty_artifact": true
+        }
+      ],
+      [
+        [
+          "material",
+          "atoms",
+          20
+        ],
+        {
+          "empty_artifact": true
+        }
+      ],
+      [
+        [
+          "material",
+          "edges",
+          20
+        ],
+        {
+          "payload": [
+            1
+          ]
+        }
+      ],
+      [
+        [
+          "material",
+          "counts",
+          20
+        ],
+        {
+          "empty_artifact": true
+        }
+      ],
+      [
+        [
+          "material",
+          "functions",
+          20
+        ],
+        {
+          "empty_artifact": true
+        }
+      ]
+    ]
+  },
+  {
+    "name": "false-material-counts",
+    "schema": {
+      "head": {
+        "var": 0
+      },
+      "premises": [],
+      "materials": [
+        [
+          20,
+          [
+            {
+              "var": 1
+            },
+            {
+              "var": 2
+            },
+            {
+              "var": 3
+            },
+            {
+              "var": 4
+            },
+            {
+              "var": 5
+            }
+          ]
+        ]
+      ]
+    },
+    "observations": [
+      [
+        [
+          "head"
+        ],
+        {
+          "payload": [
+            7
+          ]
+        }
+      ],
+      [
+        [
+          "material",
+          "source",
+          20
+        ],
+        {
+          "empty_artifact": true
+        }
+      ],
+      [
+        [
+          "material",
+          "atoms",
+          20
+        ],
+        {
+          "empty_artifact": true
+        }
+      ],
+      [
+        [
+          "material",
+          "edges",
+          20
+        ],
+        {
+          "empty_artifact": true
+        }
+      ],
+      [
+        [
+          "material",
+          "counts",
+          20
+        ],
+        {
+          "payload": [
+            1
+          ]
+        }
+      ],
+      [
+        [
+          "material",
+          "functions",
+          20
+        ],
+        {
+          "empty_artifact": true
+        }
+      ]
+    ]
+  },
+  {
+    "name": "false-material-functions",
+    "schema": {
+      "head": {
+        "var": 0
+      },
+      "premises": [],
+      "materials": [
+        [
+          20,
+          [
+            {
+              "var": 1
+            },
+            {
+              "var": 2
+            },
+            {
+              "var": 3
+            },
+            {
+              "var": 4
+            },
+            {
+              "var": 5
+            }
+          ]
+        ]
+      ]
+    },
+    "observations": [
+      [
+        [
+          "head"
+        ],
+        {
+          "payload": [
+            7
+          ]
+        }
+      ],
+      [
+        [
+          "material",
+          "source",
+          20
+        ],
+        {
+          "empty_artifact": true
+        }
+      ],
+      [
+        [
+          "material",
+          "atoms",
+          20
+        ],
+        {
+          "empty_artifact": true
+        }
+      ],
+      [
+        [
+          "material",
+          "edges",
+          20
+        ],
+        {
+          "empty_artifact": true
+        }
+      ],
+      [
+        [
+          "material",
+          "counts",
+          20
+        ],
+        {
+          "empty_artifact": true
+        }
+      ],
+      [
+        [
+          "material",
+          "functions",
+          20
+        ],
+        {
+          "payload": [
+            1
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "name": "nonfunctional-source-family",
+    "schema": {
+      "head": {
+        "var": 0
+      },
+      "premises": [
+        [
+          10,
+          8,
+          {
+            "var": 1
+          }
+        ],
+        [
+          10,
+          8,
+          {
+            "var": 2
+          }
+        ]
+      ],
+      "materials": []
+    },
+    "observations": [
+      [
+        [
+          "head"
+        ],
+        {
+          "payload": [
+            7
+          ]
+        }
+      ],
+      [
+        [
+          "premise",
+          10,
+          8
+        ],
+        {
+          "payload": [
+            8
+          ]
+        }
+      ],
+      [
+        [
+          "premise",
+          11,
+          7
+        ],
+        {
+          "payload": [
+            9
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "name": "inconsistent-repeated-variable",
+    "schema": {
+      "head": {
+        "pair": [
+          {
+            "var": 0
+          },
+          {
+            "var": 0
+          }
+        ]
+      },
+      "premises": [],
+      "materials": []
+    },
+    "observations": [
+      [
+        [
+          "head"
+        ],
+        {
+          "pair": [
+            {
+              "payload": [
+                7
+              ]
+            },
+            {
+              "payload": [
+                8
+              ]
+            }
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "name": "wrong-callee-at-original-socket",
+    "schema": {
+      "head": {
+        "var": 0
+      },
+      "premises": [
+        [
+          10,
+          8,
+          {
+            "var": 1
+          }
+        ],
+        [
+          11,
+          7,
+          {
+            "var": 2
+          }
+        ]
+      ],
+      "materials": []
+    },
+    "observations": [
+      [
+        [
+          "head"
+        ],
+        {
+          "payload": [
+            7
+          ]
+        }
+      ],
+      [
+        [
+          "premise",
+          10,
+          8
+        ],
+        {
+          "payload": [
+            8
+          ]
+        }
+      ],
+      [
+        [
+          "premise",
+          11,
+          99
+        ],
+        {
+          "payload": [
+            9
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "name": "empty-group-with-incomplete-scope",
+    "schema": {
+      "head": {
+        "var": 0
+      },
+      "premises": [
+        [
+          10,
+          8,
+          {
+            "var": 1
+          }
+        ],
+        [
+          11,
+          7,
+          {
+            "var": 2
+          }
+        ]
+      ],
+      "materials": []
+    },
+    "observations": []
+  },
+  {
+    "name": "malformed-source-literal",
+    "schema": {
+      "head": {
+        "payload": [
+          256
+        ]
+      },
+      "premises": [],
+      "materials": []
+    },
+    "observations": [
+      [
+        [
+          "head"
+        ],
+        {
+          "payload": [
+            256
+          ]
+        }
+      ]
+    ]
+  }
+]

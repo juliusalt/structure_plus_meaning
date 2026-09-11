@@ -1,0 +1,6 @@
+{
+  "stage": "comparison-before-integration",
+  "status": "accepted",
+  "replay_kind": "application_comparison",
+  "replay_sha256": "e58ef57ec9b27de34aaaab7433f70289eab16c472f33aebf139e7738af647d06"
+}

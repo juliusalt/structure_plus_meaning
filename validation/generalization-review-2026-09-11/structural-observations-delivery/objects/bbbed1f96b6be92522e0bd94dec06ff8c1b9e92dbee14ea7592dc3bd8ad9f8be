@@ -1,0 +1,13 @@
+{
+  "status": "accepted",
+  "invocation": "981593bc-0c6d-4bd1-8529-c3fae0b86d1d",
+  "build_receipt_sha256": "ff937748fe6ff05ad59f6a3cb3942b008167f2209e4182202a1212b7b72b39cc",
+  "check_receipt_sha256": "b6d406490ac4d01afed1ddf876b891fd0da6786265abe423c420b34d4ecaeaa4",
+  "all_current_source_and_build_tool_bytes_match": true,
+  "source_checks": {
+    "theory_count": 826,
+    "missing_theory_files": [],
+    "unlisted_theories": [],
+    "proof_escape_matches": []
+  }
+}

@@ -8,6 +8,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Presentation_Closure
     Bootstrap_Relations
     Bootstrap_Finite_Closure
+    Finite_Set_Composition
     RRA_Core
     RRA_Data
     RRA_Data_Views
@@ -63,6 +64,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Executable_Material
     Factor_Executable_Instances
     Factor_Executable_Schemas
+    Factor_Instantiated_Premises
     Factor_Executable_Systems
     Factor_Executable_Graphs
     Factor_Executable_Readings
@@ -75,6 +77,9 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Schemas
     Factor_Interfaces
     Factor_Executable_Matching
+    Factor_Matching_Instances
+    Factor_Binding_Contributions
+    Factor_Observed_Applications
     Factor_Schema_Renaming
     Factor_Alpha_Semantics
     Factor_System_Clauses
@@ -743,6 +748,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Pair_Scope_Investigation
     Factor_Scope_Computation_Contracts
     Finite_Observation_Tables
+    Finite_Derived_Observations
     Factor_Admission_Installation
     Factor_Admission_Pair_Reasoning
     Factor_Admission_Plan_Clauses
@@ -808,7 +814,10 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Binding_Program_Compilation
     Factor_Generation_Bindings
     Factor_Requested_Applications
+    Factor_Observed_Preservation
     Factor_Guided_Investigation
+    Factor_Application_Comparison
+    Factor_Application_Execution
     Factor_Binding_Guided_Investigation
     Factor_Source_Shape_Requirements
     Factor_Reader_Source_Requirements

@@ -1,0 +1,233 @@
+[
+  {
+    "theory": "Finite_Derived_Observations",
+    "command": "theory",
+    "line": 1,
+    "seconds": "0.012",
+    "source_line": "theory Finite_Derived_Observations"
+  },
+  {
+    "theory": "Finite_Derived_Observations",
+    "command": "definition",
+    "line": 7,
+    "seconds": "0.005",
+    "source_line": "definition finite_derived_observations where"
+  },
+  {
+    "theory": "Finite_Derived_Observations",
+    "command": "lemma",
+    "line": 12,
+    "seconds": "0.002",
+    "source_line": "lemma finite_derived_observation_member:"
+  },
+  {
+    "theory": "Finite_Derived_Observations",
+    "command": "by",
+    "line": 16,
+    "seconds": "0.069",
+    "source_line": "  by (auto simp: finite_derived_observations_def ffUnion.rep_eq fimage.rep_eq"
+  },
+  {
+    "theory": "Finite_Derived_Observations",
+    "command": "definition",
+    "line": 19,
+    "seconds": "0.003",
+    "source_line": "definition finite_observation_subjects_formed where"
+  },
+  {
+    "theory": "Finite_Derived_Observations",
+    "command": "theorem",
+    "line": 23,
+    "seconds": "0.002",
+    "source_line": "theorem finite_derived_observation_at_subject:"
+  },
+  {
+    "theory": "Finite_Derived_Observations",
+    "command": "by",
+    "line": 28,
+    "seconds": "0.027",
+    "source_line": "  using assms by (auto simp: finite_derived_observation_member"
+  },
+  {
+    "theory": "Finite_Derived_Observations",
+    "command": "lemma",
+    "line": 31,
+    "seconds": "0.001",
+    "source_line": "lemma finite_derived_observations_formed:"
+  },
+  {
+    "theory": "Finite_Derived_Observations",
+    "command": "by",
+    "line": 34,
+    "seconds": "0.018",
+    "source_line": "  by (auto simp: finite_observation_table_formed_def finite_derived_observation_member; force)"
+  },
+  {
+    "theory": "Finite_Derived_Observations",
+    "command": "theorem",
+    "line": 36,
+    "seconds": "0.003",
+    "source_line": "theorem finite_derived_profile_at_subject:"
+  },
+  {
+    "theory": "Factor_Binding_Contributions",
+    "command": "theory",
+    "line": 1,
+    "seconds": "0.014",
+    "source_line": "theory Factor_Binding_Contributions"
+  },
+  {
+    "theory": "Factor_Binding_Contributions",
+    "command": "lemma",
+    "line": 7,
+    "seconds": "0.001",
+    "source_line": "lemma finite_relation_functional_subset:"
+  },
+  {
+    "theory": "Factor_Binding_Contributions",
+    "command": "by",
+    "line": 10,
+    "seconds": "0.003",
+    "source_line": "  using assms by (auto simp: finite_relation_functional_correct single_valued_def)"
+  },
+  {
+    "theory": "Factor_Binding_Contributions",
+    "command": "definition",
+    "line": 12,
+    "seconds": "0.004",
+    "source_line": "definition finite_compatible_unions where"
+  },
+  {
+    "theory": "Factor_Binding_Contributions",
+    "command": "lemma",
+    "line": 15,
+    "seconds": "0.002",
+    "source_line": "lemma finite_compatible_union_member:"
+  },
+  {
+    "theory": "Factor_Binding_Contributions",
+    "command": "by",
+    "line": 18,
+    "seconds": "0.002",
+    "source_line": "  by (auto simp: finite_compatible_unions_def)"
+  },
+  {
+    "theory": "Factor_Binding_Contributions",
+    "command": "lemma",
+    "line": 20,
+    "seconds": "0.002",
+    "source_line": "lemma finite_compatible_union_origin:"
+  },
+  {
+    "theory": "Factor_Binding_Contributions",
+    "command": "by",
+    "line": 23,
+    "seconds": "0.012",
+    "source_line": "  using assms by (auto simp: finite_compatible_union_member ffUnion.rep_eq; blast)"
+  },
+  {
+    "theory": "Factor_Binding_Contributions",
+    "command": "lemma",
+    "line": 25,
+    "seconds": "0.001",
+    "source_line": "lemma finite_compatible_unions_mono:"
+  },
+  {
+    "theory": "Factor_Binding_Contributions",
+    "command": "by",
+    "line": 28,
+    "seconds": "0.062",
+    "source_line": "  using assms by (auto simp: finite_compatible_union_member; blast)"
+  },
+  {
+    "theory": "Factor_Binding_Contributions",
+    "command": "lemma",
+    "line": 30,
+    "seconds": "0.001",
+    "source_line": "lemma finite_compatible_union_empty [simp]:"
+  },
+  {
+    "theory": "Factor_Binding_Contributions",
+    "command": "by",
+    "line": 32,
+    "seconds": "0.002",
+    "source_line": "  by (rule fset_inject[THEN iffD1])"
+  },
+  {
+    "theory": "Factor_Binding_Contributions",
+    "command": "lemma",
+    "line": 35,
+    "seconds": "0.002",
+    "source_line": "lemma finite_compatible_union_step:"
+  },
+  {
+    "theory": "Factor_Binding_Contributions",
+    "command": "have",
+    "line": 40,
+    "seconds": "0.001",
+    "source_line": "  have subset: \"finite_relation_functional V\" if \"finite_relation_functional (W |\\<union>| V)\" for V"
+  },
+  {
+    "theory": "Factor_Binding_Contributions",
+    "command": "have",
+    "line": 42,
+    "seconds": "0.002",
+    "source_line": "  have \"fset (finite_compatible_unions (finsert W B))="
+  },
+  {
+    "theory": "Factor_Binding_Contributions",
+    "command": "by",
+    "line": 45,
+    "seconds": "0.043",
+    "source_line": "    using subset by (auto simp: finite_compatible_unions_def fPow_finsert"
+  },
+  {
+    "theory": "Factor_Generation_Redundancy_Probe",
+    "command": "theory",
+    "line": 1,
+    "seconds": "0.091",
+    "source_line": "theory Factor_Generation_Redundancy_Probe"
+  },
+  {
+    "theory": "Factor_Generation_Redundancy_Probe",
+    "command": "theorem",
+    "line": 5,
+    "seconds": "0.001",
+    "source_line": "theorem pattern_enumerators_identical:"
+  },
+  {
+    "theory": "Factor_Generation_Redundancy_Probe",
+    "command": "have",
+    "line": 8,
+    "seconds": "0.001",
+    "source_line": "  have \"fset (finite_pattern_values V p)=fset (finite_pattern_instances V p)\""
+  },
+  {
+    "theory": "Factor_Generation_Redundancy_Probe",
+    "command": "by",
+    "line": 9,
+    "seconds": "0.001",
+    "source_line": "    by (auto simp only: finite_pattern_values_exact finite_pattern_instances_member)"
+  },
+  {
+    "theory": "Factor_Generation_Redundancy_Probe",
+    "command": "theorem",
+    "line": 13,
+    "seconds": "0.001",
+    "source_line": "theorem premise_enumerators_identical:"
+  },
+  {
+    "theory": "Factor_Generation_Redundancy_Probe",
+    "command": "by",
+    "line": 16,
+    "seconds": "0.001",
+    "source_line": "  by (simp only: Factor_Requested_Applications.finite_instantiated_premises_def"
+  },
+  {
+    "theory": "Factor_Generation_Redundancy_Probe",
+    "command": "end",
+    "line": 19,
+    "seconds": "0.007",
+    "source_line": "end"
+  }
+]

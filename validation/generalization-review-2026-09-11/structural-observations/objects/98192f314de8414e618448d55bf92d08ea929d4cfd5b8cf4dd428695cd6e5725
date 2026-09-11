@@ -1,0 +1,18 @@
+{
+  "diagnostic": "Isabelle parses O as relation composition in the proposed observation-parameter position.",
+  "operation": "Consistently rename that parameter to obs in both candidate sources; no expression structure or contract is changed.",
+  "sources": [
+    {
+      "theory": "Factor_Binding_Contributions",
+      "occurrences": 19,
+      "before_sha256": "813a911c539a9cfabd9a674d86534643d2ffa880ae072f4212335d326eb486c8",
+      "after_sha256": "d4ea6834cb053f3ed8fbb957830e15154d28ecb1d2914a8f012695990dadb363"
+    },
+    {
+      "theory": "Factor_Observed_Applications",
+      "occurrences": 21,
+      "before_sha256": "145604d73ed18d7d088b54618beab699e6a1a5a88fa5c86b9a94723612ae4925",
+      "after_sha256": "b418526905826eca711dbc8800dd6f268471bada308209931c38053d7db175bc"
+    }
+  ]
+}

@@ -1,0 +1,137 @@
+/tmp/generalization-quality-review/structural-binding-observations/replays1/comparison-interface-rejection/decoded-evidence/anchor/anchor/objects/67b10231f7786a73629b15403fd6934f7081194ae8aaf45b5060315b3b832ad8:255: warning: Pattern 3 is redundant.
+Found near
+  fun
+     equal_boola false p = not p |
+        equal_boola true ... = p |
+        equal_boola ... = ... ... |
+        equal_boola ... = ...
+/tmp/generalization-quality-review/structural-binding-observations/replays1/comparison-interface-rejection/decoded-evidence/anchor/anchor/objects/67b10231f7786a73629b15403fd6934f7081194ae8aaf45b5060315b3b832ad8:256: warning: Pattern 4 is redundant.
+Found near
+  fun
+     equal_boola false p = not p |
+        equal_boola true ... = p |
+        equal_boola ... = ... ... |
+        equal_boola ... = ...
+/tmp/generalization-quality-review/structural-binding-observations/replays1/comparison-interface-rejection/decoded-evidence/anchor/anchor/objects/67b10231f7786a73629b15403fd6934f7081194ae8aaf45b5060315b3b832ad8:273: warning: Matches are not exhaustive.
+Found near
+  fun
+     less_eq_set A_ (... ...) ... = list_all (fn ...) xs |
+        less_eq_set A_ ... = ... ... ys |
+        less_eq_set ... = false
+/tmp/generalization-quality-review/structural-binding-observations/replays1/comparison-interface-rejection/decoded-evidence/anchor/anchor/objects/67b10231f7786a73629b15403fd6934f7081194ae8aaf45b5060315b3b832ad8:699: warning: Matches are not exhaustive. Found near fun bex (Set xs) p = list_ex p xs
+/tmp/generalization-quality-review/structural-binding-observations/replays1/comparison-interface-rejection/decoded-evidence/anchor/anchor/objects/67b10231f7786a73629b15403fd6934f7081194ae8aaf45b5060315b3b832ad8:709: warning: Matches are not exhaustive.
+Found near
+  fun nth (x :: xs) n = (if ... ... zero_nat then x else ... ... (... ...))
+/tmp/generalization-quality-review/structural-binding-observations/replays1/comparison-interface-rejection/decoded-evidence/anchor/anchor/objects/67b10231f7786a73629b15403fd6934f7081194ae8aaf45b5060315b3b832ad8:712: warning: Matches are not exhaustive. Found near fun ball (Set xs) p = list_all p xs
+/tmp/generalization-quality-review/structural-binding-observations/replays1/comparison-interface-rejection/decoded-evidence/anchor/anchor/objects/67b10231f7786a73629b15403fd6934f7081194ae8aaf45b5060315b3b832ad8:723: warning: Matches are not exhaustive.
+Found near fun image f (... ...) = Set (... ... xs)
+/tmp/generalization-quality-review/structural-binding-observations/replays1/comparison-interface-rejection/decoded-evidence/anchor/anchor/objects/67b10231f7786a73629b15403fd6934f7081194ae8aaf45b5060315b3b832ad8:728: warning: Matches are not exhaustive.
+Found near fun filter p (... ...) = Set (... ... xs)
+/tmp/generalization-quality-review/structural-binding-observations/replays1/comparison-interface-rejection/decoded-evidence/anchor/anchor/objects/67b10231f7786a73629b15403fd6934f7081194ae8aaf45b5060315b3b832ad8:749: warning: Matches are not exhaustive.
+Found near fun sup_seta A_ (... ...) = ... ... xs bot_set
+/tmp/generalization-quality-review/structural-binding-observations/replays1/comparison-interface-rejection/decoded-evidence/anchor/anchor/objects/67b10231f7786a73629b15403fd6934f7081194ae8aaf45b5060315b3b832ad8:849: warning: Matches are not exhaustive.
+Found near
+  fun sorted_list_of_set (A1_, ...) (... ...) = ... ... (fn ...) (... ... xs)
+/tmp/generalization-quality-review/structural-binding-observations/replays1/comparison-interface-rejection/decoded-evidence/anchor/anchor/objects/67b10231f7786a73629b15403fd6934f7081194ae8aaf45b5060315b3b832ad8:1215: warning: Matches are not exhaustive.
+Found near fun set_compatible_unions A_ B_ ... = ... ... B_ bs
+/tmp/generalization-quality-review/structural-binding-observations/replays1/comparison-interface-rejection/execute.ML:54: error: Type error in function application.
+   Function: N.application_investigation_observations :
+      'a N.equal * 'a N.linorder ->
+        ('a * 'b N.finite_application_problem_ext) list ->
+          (N.nat * (N.nat * 'a)) list
+   Argument: ws : (N.nat * 'a N.finite_application_problem_ext) list
+   Reason:
+      Can't unify (N.nat * 'a N.finite_application_problem_ext) list to
+         'a N.equal * 'a N.linorder (Incompatible types)
+Found near N.application_investigation_observations ws
+/tmp/generalization-quality-review/structural-binding-observations/replays1/comparison-interface-rejection/execute.ML:55: error: Type error in function application.
+   Function: N.application_investigation_relation :
+      'a N.equal ->
+        ('a * 'b N.finite_application_problem_ext) list ->
+          (N.nat * N.nat) list
+   Argument: ws : (N.nat * 'a N.finite_application_problem_ext) list
+   Reason:
+      Can't unify (N.nat * 'a N.finite_application_problem_ext) list to
+         {equal: 'a -> 'a -> bool} (Incompatible types)
+Found near N.application_investigation_relation ws
+/tmp/generalization-quality-review/structural-binding-observations/replays1/comparison-interface-rejection/execute.ML:58: error: Type error in function application.
+   Function: N.investigation_repairs cs fs selected :
+      (N.nat * (N.nat * N.nat)) list ->
+        (N.nat * N.nat) list ->
+          N.nat list *
+          ((N.nat * (N.nat * (N.nat * N.nat))) list *
+          ((N.nat * (N.nat * (N.nat * N.nat))) list * (N.nat * N.nat) list))
+   Argument: observations :
+      ('a * 'b N.finite_application_problem_ext) list ->
+        (N.nat * (N.nat * 'a)) list
+   Reason:
+      Can't unify (N.nat * (N.nat * N.nat)) list to
+         ('a * 'b N.finite_application_problem_ext) list ->
+           (N.nat * (N.nat * 'a)) list (Incompatible types)
+Found near N.investigation_repairs cs fs selected observations relation
+/tmp/generalization-quality-review/structural-binding-observations/replays1/comparison-interface-rejection/execute.ML:58: error: Type error in function application.
+   Function: N.investigation_repairs cs fs selected observations :
+      (N.nat * N.nat) list ->
+        N.nat list *
+        ((N.nat * (N.nat * (N.nat * N.nat))) list *
+        ((N.nat * (N.nat * (N.nat * N.nat))) list * (N.nat * N.nat) list))
+   Argument: relation :
+      ('a * 'b N.finite_application_problem_ext) list -> (N.nat * N.nat) list
+   Reason:
+      Can't unify (N.nat * N.nat) list to
+         ('a * 'b N.finite_application_problem_ext) list ->
+           (N.nat * N.nat) list (Incompatible types)
+Found near N.investigation_repairs cs fs selected observations relation
+/tmp/generalization-quality-review/structural-binding-observations/replays1/comparison-interface-rejection/execute.ML:60: error: Type error in function application.
+   Function: N.investigation_revision cs fs selected :
+      (N.nat * (N.nat * N.nat)) list ->
+        (N.nat * N.nat) list ->
+          N.nat list *
+          (N.nat list *
+          ((N.nat * (N.nat * (N.nat * N.nat))) list *
+          (N.nat list * (N.nat * N.nat) list)))
+   Argument: observations :
+      ('a * 'b N.finite_application_problem_ext) list ->
+        (N.nat * (N.nat * 'a)) list
+   Reason:
+      Can't unify (N.nat * (N.nat * N.nat)) list to
+         ('a * 'b N.finite_application_problem_ext) list ->
+           (N.nat * (N.nat * 'a)) list (Incompatible types)
+Found near N.investigation_revision cs fs selected observations relation
+/tmp/generalization-quality-review/structural-binding-observations/replays1/comparison-interface-rejection/execute.ML:60: error: Type error in function application.
+   Function: N.investigation_revision cs fs selected observations :
+      (N.nat * N.nat) list ->
+        N.nat list *
+        (N.nat list *
+        ((N.nat * (N.nat * (N.nat * N.nat))) list *
+        (N.nat list * (N.nat * N.nat) list)))
+   Argument: relation :
+      ('a * 'b N.finite_application_problem_ext) list -> (N.nat * N.nat) list
+   Reason:
+      Can't unify (N.nat * N.nat) list to
+         ('a * 'b N.finite_application_problem_ext) list ->
+           (N.nat * N.nat) list (Incompatible types)
+Found near N.investigation_revision cs fs selected observations relation
+/tmp/generalization-quality-review/structural-binding-observations/replays1/comparison-interface-rejection/execute.ML:63: error: Type error in function application.
+   Function: jlist jtriple : (N.nat * (N.nat * N.nat)) list -> string
+   Argument: observations :
+      ('a * 'b N.finite_application_problem_ext) list ->
+        (N.nat * (N.nat * 'a)) list
+   Reason:
+      Can't unify (N.nat * (N.nat * N.nat)) list to
+         ('a * 'b N.finite_application_problem_ext) list ->
+           (N.nat * (N.nat * 'a)) list (Incompatible types)
+Found near
+  ... ^ ... ^ ",\"selection\":" ^ ... ... revised ^ ",\"residual\":" ^
+  jlist jpair newResidual ^ "}}"
+/tmp/generalization-quality-review/structural-binding-observations/replays1/comparison-interface-rejection/execute.ML:63: error: Type error in function application.
+   Function: jlist jpair : (N.nat * N.nat) list -> string
+   Argument: relation :
+      ('a * 'b N.finite_application_problem_ext) list -> (N.nat * N.nat) list
+   Reason:
+      Can't unify (N.nat * N.nat) list to
+         ('a * 'b N.finite_application_problem_ext) list ->
+           (N.nat * N.nat) list (Incompatible types)
+Found near
+  ... ^ ... ^ ",\"selection\":" ^ ... ... revised ^ ",\"residual\":" ^
+  jlist jpair newResidual ^ "}}"

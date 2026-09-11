@@ -1,0 +1,34 @@
+theory Factor_Application_Execution
+  imports Factor_Application_Comparison Factor_Reasoning_Execution
+begin
+
+definition make_application_problem where
+  "make_application_problem d S ps C Q R=
+    \<lparr>application_entry=d, application_schema=S, application_enumeration=ps,
+      application_frontier=C, application_requests=Q, application_required=R\<rparr>"
+
+definition application_observation_scope where
+  "application_observation_scope Ws=finite_observation_subjects_formed
+    application_candidate_subjects application_condition_subjects (fset_of_list Ws)"
+
+export_code make_application_problem application_entry application_schema application_enumeration
+  application_frontier application_requests application_required
+  Separate_Application_Sources Joined_Application_Observations
+  Complete_Instance_Condition Existing_Application_Condition Required_Application_Condition
+  application_candidate_subjects application_condition_subjects application_observation_scope
+  application_construction_result application_condition_holds
+  application_investigation application_investigation_observations application_investigation_relation
+  investigation_repairs investigation_extend investigation_revision
+  finite_pattern_observations finite_observed_bindings finite_binding_support finite_join_observations
+  finite_schema_observation_sources finite_schema_call_observations
+  Finite_Conclusion_Site Finite_Premise_Site Finite_Material_Source_Site Finite_Material_Atoms_Site
+  Finite_Material_Edges_Site Finite_Material_Counts_Site Finite_Material_Functions_Site
+  Finite_Payload Finite_Pair Finite_Target Finite_Whole finite_empty_artifact
+  Finite_Variable Finite_Pattern_Payload Finite_Pattern_Pair Finite_Pattern_Target
+  finite_factor_schema.make finite_schema_conclusion finite_schema_premises finite_schema_materials
+  finite_material_pattern.make finite_material_source finite_material_atoms finite_material_edges
+  finite_material_counts finite_material_functions
+  finite_reasoning_term_equal fset set fset_of_list nat_of_integer integer_of_nat
+  in SML module_name Application_Comparison file_prefix application_comparison
+
+end

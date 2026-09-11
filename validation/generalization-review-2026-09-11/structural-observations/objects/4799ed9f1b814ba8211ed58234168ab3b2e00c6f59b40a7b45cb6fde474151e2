@@ -1,0 +1,70 @@
+theory Factor_Program_Library
+  imports "Factor_Library_Compilation" "Factor_Executable_Systems" "Native_Investigation_Report_Diagnostic_finitepresenters19.Factor_Clause_Rule_Application" "HOL-Library.Product_Lexorder"
+begin
+
+section \<open>A complete program supplies every identified clause\<close>
+
+definition finite_program_clause_rows where
+  "finite_program_clause_rows P=finite_functional_rows (finite_system_clauses P)"
+
+definition finite_program_construction_library where
+  "finite_program_construction_library P=finite_compiled_library
+    (map (\<lambda>((d,c),S). (d,S)) (finite_program_clause_rows P))"
+
+definition finite_program_construction where
+  "finite_program_construction P=(finite_system_formed P,finite_program_construction_library P)"
+
+lemma finite_program_clause_rows_exact:
+  assumes formed: "finite_system_formed P"
+  shows "set (finite_program_clause_rows P)=fset (finite_system_clauses P)"
+  unfolding finite_program_clause_rows_def
+  by (rule finite_functional_rows_exact) (use formed in \<open>simp add: finite_system_formed_def\<close>)
+
+lemma finite_program_library_member:
+  assumes formed: "finite_system_formed P"
+  shows "(d,S,ps)\<in>set (finite_program_construction_library P) \<longleftrightarrow>
+    (\<exists>c. ((d,c),S) |\<in>| finite_system_clauses P) \<and>
+    ps=finite_functional_rows (finite_schema_premises S)"
+  by (auto simp: finite_program_construction_library_def finite_compiled_library_member
+    finite_program_clause_rows_exact[OF formed]; force)
+
+lemma finite_program_library_formed:
+  assumes formed: "finite_system_formed P"
+  shows "finite_schema_library_formed (finite_program_construction_library P)"
+  using formed
+  by (auto simp: finite_program_construction_library_def finite_compiled_library_formed
+    finite_program_clause_rows_exact[OF formed] finite_system_formed_def)
+
+theorem finite_program_library_member_sound:
+  assumes formed: "finite_system_formed P"
+    and member: "(d,S,ps)\<in>set (finite_program_construction_library P)"
+    and interface: "(d,Finite_Variable a) |\<in>| finite_system_interfaces P"
+    and rule_instance: "schema_rule_instance (decode_finite_schema S)
+      (positive_meaning (decode_finite_system P)) t"
+  shows "(d,t)\<in>positive_meaning (decode_finite_system P)"
+proof -
+  obtain c where clause: "((d,c),S) |\<in>| finite_system_clauses P"
+    using member by (simp only: finite_program_library_member[OF formed]; blast)
+  have actual: "((d,c),decode_finite_schema S)\<in>system_clauses (decode_finite_system P)"
+    using clause by (auto simp: map_relation_values_def; force)
+  have call: "(d,Pattern_Variable a)\<in>system_interfaces (decode_finite_system P)"
+    using interface by (auto simp: map_relation_values_def; force)
+  show ?thesis
+    by (rule positive_variable_clause_rule[OF _ actual call rule_instance])
+      (use formed in \<open>simp only: finite_system_formed_correct\<close>)
+qed
+
+text \<open>
+  Clause rows retain both entry and clause identities and the complete schema.
+  The construction library projects the identified rows to the interface used
+  by the existing executor; its membership theorem retains the originating
+  clause as a witness. Different clause identities are enumerated separately.
+  Lexicographic key order is used only for this enumeration.
+
+  Exact extraction and its semantic contract require whole-program formation.
+  The paired construction result retains that check, including interfaces and
+  dependencies. An empty extraction from a malformed program is not acceptance.
+  A variable interface is an explicit premise of the rule's semantic use.
+\<close>
+
+end

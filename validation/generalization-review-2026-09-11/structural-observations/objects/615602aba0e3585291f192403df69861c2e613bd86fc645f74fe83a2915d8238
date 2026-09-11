@@ -1,0 +1,15 @@
+Running Native_Investigation_Report_Diagnostic_bindingintegration24 ...
+Native_Investigation_Report_Diagnostic_bindingintegration24 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_bindingintegration24")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_bindingintegration24.Factor_Guided_Investigation" (unresolved "Native_Investigation_Report_Diagnostic_bindingintegration24.Factor_Observed_Preservation")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_bindingintegration24.Factor_Application_Comparison" (unresolved "Native_Investigation_Report_Diagnostic_bindingintegration24.Factor_Guided_Investigation")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_bindingintegration24.Factor_Binding_Guided_Investigation" (unresolved "Native_Investigation_Report_Diagnostic_bindingintegration24.Factor_Guided_Investigation")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_bindingintegration24.Factor_Reasoning_Execution" (unresolved "Native_Investigation_Report_Diagnostic_bindingintegration24.Factor_Binding_Guided_Investigation")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_bindingintegration24.Factor_Application_Execution" (unresolved "Native_Investigation_Report_Diagnostic_bindingintegration24.Factor_Application_Comparison", "Native_Investigation_Report_Diagnostic_bindingintegration24.Factor_Reasoning_Execution")
+*** Failed to finish proof (line 36 of "/tmp/native-investigation-report-diagnostic-bindingintegration24/theories/Factor_Observed_Preservation.thy"):
+*** goal (1 subgoal):
+***  1. ?p = p ∨
+***     (s, d, ?p)
+***     ∈ set ps
+*** At command "by" (line 36 of "/tmp/native-investigation-report-diagnostic-bindingintegration24/theories/Factor_Observed_Preservation.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_bindingintegration24
+0:00:28 elapsed time, 0:00:57 cpu time, factor 2.02

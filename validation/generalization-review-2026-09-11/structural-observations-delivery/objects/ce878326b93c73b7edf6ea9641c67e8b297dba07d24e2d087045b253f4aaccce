@@ -1,0 +1,6 @@
+{
+  "stage": "native-source-input",
+  "status": "accepted",
+  "replay_kind": "finite_inference_inputs",
+  "replay_sha256": "16e68eef346a6967950f64964394b051a6e5250897ddeb435cbefbd763a32942"
+}

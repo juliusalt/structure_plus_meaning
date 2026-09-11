@@ -1,0 +1,5 @@
+session Native_Investigation_Report_Diagnostic_bindingobservations13 = Native_Investigation_Report_Diagnostic_finitepresenters19 +
+  options [document = false, timeout = 300]
+  sessions "HOL-Library"
+  directories "theories"
+  theories Factor_Application_Execution Factor_Generation_Redundancy_Probe

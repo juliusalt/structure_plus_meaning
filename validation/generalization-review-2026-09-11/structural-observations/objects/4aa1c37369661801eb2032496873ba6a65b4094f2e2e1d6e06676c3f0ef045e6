@@ -1,0 +1,5 @@
+session Native_Investigation_Report_Diagnostic_bindingobservations2 = HOL +
+  options [document = false, timeout = 300]
+  sessions "HOL-Library"
+  directories "theories"
+  theories Factor_Application_Comparison Factor_Generation_Redundancy_Probe Factor_Reasoning_Execution

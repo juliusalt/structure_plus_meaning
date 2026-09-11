@@ -1,0 +1,18 @@
+{
+  "diagnostic_sha256": "55eaf2859ec28f3597b803f91c01691719773753b379cef3c33e85acdc8ebd47",
+  "complete_diagnostic": "Running Native_Investigation_Report_Diagnostic_bindingobservations1 ...\nNative_Investigation_Report_Diagnostic_bindingobservations1 FAILED (see also \"isabelle build_log -H Error Native_Investigation_Report_Diagnostic_bindingobservations1\")\n*** Failed to load theory \"Native_Investigation_Report_Diagnostic_bindingobservations1.Factor_Observed_Applications\" (unresolved \"Native_Investigation_Report_Diagnostic_bindingobservations1.Factor_Binding_Contributions\")\n*** Failed to finish proof (line 32 of \"/tmp/native-investigation-report-diagnostic-bindingobservations1/theories/Factor_Binding_Contributions.thy\"):\n*** goal (1 subgoal):\n***  1. ffilter finite_relation_functional {|{||}|} =\n***     {|{||}|}\n*** At command \"by\" (line 32 of \"/tmp/native-investigation-report-diagnostic-bindingobservations1/theories/Factor_Binding_Contributions.thy\")\n*** Outer syntax error (line 26 of \"/tmp/native-investigation-report-diagnostic-bindingobservations1/theories/Finite_Derived_Observations.thy\"): proposition expected,\n*** but keyword output (line 26 of \"/tmp/native-investigation-report-diagnostic-bindingobservations1/theories/Finite_Derived_Observations.thy\") was found\n*** At command \"<malformed>\" (line 23 of \"/tmp/native-investigation-report-diagnostic-bindingobservations1/theories/Finite_Derived_Observations.thy\")\nUnfinished session(s): Native_Investigation_Report_Diagnostic_bindingobservations1\n0:03:27 elapsed time, 0:08:42 cpu time, factor 2.52\n",
+  "proposed_corrections": [
+    {
+      "subject": "The local theorem fact named output",
+      "operation": "Rename the fact label to output_value; preserve its proposition and every theorem conclusion.",
+      "reason": "The actual Isabelle parser identifies output as a reserved keyword. This instantiates the established proof-label correction, with no change to a semantic subject."
+    },
+    {
+      "subject": "The empty compatible-union equation",
+      "operation": "Apply the existing fset extensionality theorem before checking the concrete empty relation.",
+      "reason": "The failed goal is exactly a singleton fset filter equality. The prior extensionality contract addresses that representation-level goal without changing the intended compatible-union relation."
+    }
+  ],
+  "additional_candidate_condition": "Joining one explicitly supplied observation group must retain every input, including failed source matches; optional choices from a pool and acceptance of an entire group are separate operations. The new group contract tests complete source-key coverage and functional sources and bindings.",
+  "status": "Prospective candidate corrections; no integration or mathematical acceptance claimed."
+}

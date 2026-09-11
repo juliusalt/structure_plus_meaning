@@ -1,0 +1,11 @@
+{
+  "problem": "A presentation of the observation-subject map must retain empty and repeated inputs while rejecting one index mapped to different complete objects.",
+  "independent_contract": "finite_observation_subjects_formed and finite_derived_observation_at_subject",
+  "actual_candidate_change": "Use the proved functional-map result as the subject gate, retain all original workload occurrences, and check that repeated output keys have identical complete application relations. Do not impose list distinctness stronger than the finite relation contract.",
+  "controls": [
+    "comparison-empty-subjects.json",
+    "comparison-repeated-subjects.json",
+    "comparison-ambiguous-subjects.json"
+  ],
+  "status": "Complete structural controls prepared for the accepted compiled operation; execution remains required."
+}

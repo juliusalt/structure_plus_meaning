@@ -1,0 +1,370 @@
+{
+  "problem": "Connect every generated library application to its actual source row without an unbounded automation search.",
+  "actual_timeout": {
+    "proof": "/tmp/native-investigation-report-diagnostic-bindingintegration20/result.json",
+    "exit_code": 142
+  },
+  "complete_related_command_trace": [
+    {
+      "elapsed": "0.078",
+      "name": "theory",
+      "offset": "1",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 1,
+      "source_line": "theory Factor_Observed_Applications"
+    },
+    {
+      "elapsed": "1.019",
+      "name": "datatype",
+      "offset": "185",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 7,
+      "source_line": "datatype ('s,'d) finite_schema_observation_site ="
+    },
+    {
+      "elapsed": "0.008",
+      "name": "definition",
+      "offset": "469",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 16,
+      "source_line": "definition finite_schema_observation_sources where"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "1114",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 27,
+      "source_line": "lemma finite_schema_observation_source_head [simp]:"
+    },
+    {
+      "elapsed": "0.010",
+      "name": "by",
+      "offset": "1274",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 30,
+      "source_line": "  by (auto simp: finite_schema_observation_sources_def ffUnion.rep_eq fimage.rep_eq"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "1401",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 33,
+      "source_line": "lemma finite_schema_observation_source_premise [simp]:"
+    },
+    {
+      "elapsed": "0.011",
+      "name": "by",
+      "offset": "1573",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 36,
+      "source_line": "  by (auto simp: finite_schema_observation_sources_def ffUnion.rep_eq fimage.rep_eq"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "1717",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 39,
+      "source_line": "lemma finite_schema_observation_source_scope:"
+    },
+    {
+      "elapsed": "0.083",
+      "name": "by",
+      "offset": "1902",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 42,
+      "source_line": "  using assms by (auto simp: finite_schema_observation_sources_def finite_schema_variables_def"
+    },
+    {
+      "elapsed": "0.007",
+      "name": "definition",
+      "offset": "2098",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 46,
+      "source_line": "definition finite_schema_call_observations where"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "lemma",
+      "offset": "2408",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 52,
+      "source_line": "lemma finite_schema_call_observation_head [simp]:"
+    },
+    {
+      "elapsed": "0.012",
+      "name": "by",
+      "offset": "2553",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 55,
+      "source_line": "  by (auto simp: finite_schema_call_observations_def ffUnion.rep_eq fimage.rep_eq"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "lemma",
+      "offset": "2675",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 58,
+      "source_line": "lemma finite_schema_call_observation_premise [simp]:"
+    },
+    {
+      "elapsed": "0.085",
+      "name": "by",
+      "offset": "2869",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 61,
+      "source_line": "  by (auto simp: finite_schema_call_observations_def ffUnion.rep_eq fimage.rep_eq"
+    },
+    {
+      "elapsed": "0.006",
+      "name": "definition",
+      "offset": "3072",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 66,
+      "source_line": "definition finite_observed_schema_applications where"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "lemma",
+      "offset": "3497",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 74,
+      "source_line": "lemma finite_observed_schema_application_sound:"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "3788",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 79,
+      "source_line": "  have \"V |\\<in>| finite_observed_bindings (finite_schema_observation_sources S) obs \\<and>"
+    },
+    {
+      "elapsed": "0.008",
+      "name": "by",
+      "offset": "3961",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 81,
+      "source_line": "    using member by (auto simp: finite_observed_schema_applications_def Let_def"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "show",
+      "offset": "4103",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 83,
+      "source_line": "  then show \"V |\\<in>| finite_observed_bindings (finite_schema_observation_sources S) obs\""
+    },
+    {
+      "elapsed": "0.001",
+      "name": "qed",
+      "offset": "4269",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 85,
+      "source_line": "qed"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "theorem",
+      "offset": "4274",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 87,
+      "source_line": "theorem finite_observed_schema_applications_exact:"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "assume",
+      "offset": "4546",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 92,
+      "source_line": "  assume member: \"(t,V,H) |\\<in>| finite_observed_schema_applications S obs\""
+    },
+    {
+      "elapsed": "0.001",
+      "name": "show",
+      "offset": "4619",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 93,
+      "source_line": "  show \"V |\\<in>| finite_observed_bindings (finite_schema_observation_sources S) obs \\<and>"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "assume",
+      "offset": "4855",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 97,
+      "source_line": "  assume valid: \"V |\\<in>| finite_observed_bindings (finite_schema_observation_sources S) obs \\<and>"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "5113",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 100,
+      "source_line": "    using valid by (auto simp: finite_pattern_instances_member finite_schema_instance_def)"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "let",
+      "offset": "5308",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 103,
+      "source_line": "  let ?F=\"\\<lambda>W. fimage (\\<lambda>u. (u,W,finite_instantiated_premises S W))"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "5562",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 106,
+      "source_line": "  have inner: \"(t,V,H) |\\<in>| ?F V\""
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "5614",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 107,
+      "source_line": "    using valid head by (auto simp: body intro!: fimageI)"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "have",
+      "offset": "5653",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 108,
+      "source_line": "  have outer: \"?F V |\\<in>| fimage ?F (finite_observed_bindings (finite_schema_observation_sources S) obs)\""
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "5759",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 109,
+      "source_line": "    by (rule fimageI) (use valid in blast)"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "show",
+      "offset": "5800",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 110,
+      "source_line": "  show \"(t,V,H) |\\<in>| finite_observed_schema_applications S obs\""
+    },
+    {
+      "elapsed": "0.003",
+      "name": "by",
+      "offset": "5883",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 111,
+      "source_line": "    using outer inner by (auto simp only: finite_observed_schema_applications_def Let_def ffUnion.rep_eq)"
+    },
+    {
+      "elapsed": "0.005",
+      "name": "qed",
+      "offset": "5967",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 112,
+      "source_line": "qed"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "theorem",
+      "offset": "5972",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 114,
+      "source_line": "theorem finite_observed_schema_application_origin:"
+    },
+    {
+      "elapsed": "0.001",
+      "name": "by",
+      "offset": "6276",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 118,
+      "source_line": "  by (rule finite_observed_binding_origin[OF finite_observed_schema_application_sound(1)[OF member] row])"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "theorem",
+      "offset": "6381",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 120,
+      "source_line": "theorem finite_observed_schema_application_support:"
+    },
+    {
+      "elapsed": "0.002",
+      "name": "by",
+      "offset": "6689",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 124,
+      "source_line": "  by (auto simp: finite_binding_support_member)"
+    },
+    {
+      "elapsed": "0.009",
+      "name": "definition",
+      "offset": "6736",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 126,
+      "source_line": "definition finite_guided_applications where"
+    },
+    {
+      "elapsed": "0.004",
+      "name": "lemma",
+      "offset": "7057",
+      "file": "/tmp/native-investigation-report-diagnostic-bindingintegration20/theories/Factor_Observed_Applications.thy",
+      "theory": "Factor_Observed_Applications",
+      "line": 133,
+      "source_line": "lemma finite_guided_application:"
+    }
+  ],
+  "finding": "The binding theory, matching bridge, shared premise generator, and propagation/recovery consumers reach their end commands. Library application membership starts but its broad auto/force proof does not finish.",
+  "reused_content": [
+    "finite_union_image_member",
+    "finite_image_member",
+    "finite_singleton_when_member",
+    "finite_unless_member",
+    "ffUnion_membership"
+  ],
+  "candidate": "Move the existing generic finite composition contracts from quotation/generation to one shared lower module and use the exact membership equations. No operation or claimed relation is weakened.",
+  "status": "Submitted together with all affected consumers; further acceptance and execution are still required."
+}

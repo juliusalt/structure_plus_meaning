@@ -1,0 +1,255 @@
+{
+  "problem": "Reproduce the original complete stored JSON assessment while retaining every field and occurrence.",
+  "complete_result": {
+    "question": "Reproduce the original complete stored JSON assessment while retaining every field and occurrence.",
+    "boundary": "These observations are derived from actual complete host objects and operations. The finite comparison has this executed source equation; it is not an Isabelle proof about arbitrary Python or JSON programs, nor a meaning claim based on registry prose.",
+    "specification_sha256": "d9061ba0e1e460e350fd3560592ca07032c2d1ad49684b64d13b8ea156d74e65",
+    "results": [
+      {
+        "problem": "replay-assessment-representation",
+        "initial_result": {
+          "input_formed": true,
+          "residual": [
+            [
+              1,
+              0
+            ]
+          ],
+          "profiles": [
+            {
+              "candidate": 0,
+              "profile": []
+            },
+            {
+              "candidate": 1,
+              "profile": []
+            }
+          ],
+          "losses": [
+            {
+              "from": 0,
+              "to": 0,
+              "losses": []
+            },
+            {
+              "from": 0,
+              "to": 1,
+              "losses": []
+            },
+            {
+              "from": 1,
+              "to": 0,
+              "losses": []
+            },
+            {
+              "from": 1,
+              "to": 1,
+              "losses": []
+            }
+          ],
+          "safe_facets": [
+            0
+          ],
+          "conflicts": [],
+          "repairs": [
+            [
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              0,
+              0,
+              1
+            ],
+            [
+              1,
+              0,
+              0,
+              2
+            ]
+          ],
+          "unrepairable": [],
+          "extension": [
+            0
+          ],
+          "revision": {
+            "retained": [],
+            "withdrawn": [],
+            "repairs": [
+              [
+                1,
+                0,
+                0,
+                0
+              ],
+              [
+                1,
+                0,
+                0,
+                1
+              ],
+              [
+                1,
+                0,
+                0,
+                2
+              ]
+            ],
+            "selection": [
+              0
+            ],
+            "residual": []
+          }
+        },
+        "followed_result": {
+          "input_formed": true,
+          "residual": [],
+          "profiles": [
+            {
+              "candidate": 0,
+              "profile": [
+                [
+                  0,
+                  3
+                ]
+              ]
+            },
+            {
+              "candidate": 1,
+              "profile": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  1
+                ],
+                [
+                  0,
+                  2
+                ],
+                [
+                  0,
+                  3
+                ]
+              ]
+            }
+          ],
+          "losses": [
+            {
+              "from": 0,
+              "to": 0,
+              "losses": []
+            },
+            {
+              "from": 0,
+              "to": 1,
+              "losses": []
+            },
+            {
+              "from": 1,
+              "to": 0,
+              "losses": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  1
+                ],
+                [
+                  0,
+                  2
+                ]
+              ]
+            },
+            {
+              "from": 1,
+              "to": 1,
+              "losses": []
+            }
+          ],
+          "safe_facets": [
+            0
+          ],
+          "conflicts": [],
+          "repairs": [],
+          "unrepairable": [],
+          "extension": [
+            0
+          ],
+          "revision": {
+            "retained": [
+              0
+            ],
+            "withdrawn": [],
+            "repairs": [],
+            "selection": [
+              0
+            ],
+            "residual": []
+          }
+        },
+        "assessment": {
+          "required_observations": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "missing_requirements": {
+            "0": [
+              [
+                0,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                2
+              ]
+            ],
+            "1": []
+          },
+          "eligible": [
+            1
+          ],
+          "dominant": [
+            1
+          ],
+          "strict_improvements": [],
+          "boundary": "Assessment of the supplied finite candidates under explicit mandatory observations. Eligibility uses all original observations, including facets unnecessary for distinguishing these candidates. The returned adequate profiles determine comparison; broader coverage and candidate construction remain separate.",
+          "receipt_sha256": "f46d53892295442868ab9db3f2a30c591c510c30c8c4e4e1db23f447749210e5"
+        }
+      }
+    ]
+  },
+  "selected_repair": "Use the existing whole-object clone_json operation before comparing the reconstructed assessment with its stored JSON representation.",
+  "criticism": [
+    "Every original generated report line already reproduced exactly. The actual mismatch is confined to tuple versus list representations in mandatory pairs.",
+    "The selected operation preserves the exact complete JSON data, including all ordering and repeated occurrences. No field is ignored and no finite-set normalization is used for this equality.",
+    "The observations were recomputed from actual archived checkers, complete original inputs and expected receipt objects. The generic basis execution consumes that externally computed table conditionally; it does not itself prove arbitrary Python or JSON semantics.",
+    "Re-execute all five accepted application-comparison or contribution stages affected by the common replay branch. The other replay paths and expected rejection branch are unchanged."
+  ],
+  "dependent_change": "tools/replay_reasoning_review.py: JSON-copy the original checker assessment through checker.review.clone_json before exact receipt equality."
+}

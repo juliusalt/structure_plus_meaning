@@ -1,0 +1,21 @@
+Running Native_Investigation_Report_Diagnostic_bindingintegration19 ...
+Native_Investigation_Report_Diagnostic_bindingintegration19 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_bindingintegration19")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_bindingintegration19.Factor_Observed_Applications" (unresolved "Native_Investigation_Report_Diagnostic_bindingintegration19.Factor_Binding_Contributions")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_bindingintegration19.Factor_Observed_Preservation" (unresolved "Native_Investigation_Report_Diagnostic_bindingintegration19.Factor_Observed_Applications")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_bindingintegration19.Factor_Guided_Investigation" (unresolved "Native_Investigation_Report_Diagnostic_bindingintegration19.Factor_Observed_Preservation")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_bindingintegration19.Factor_Application_Comparison" (unresolved "Native_Investigation_Report_Diagnostic_bindingintegration19.Factor_Guided_Investigation", "Native_Investigation_Report_Diagnostic_bindingintegration19.Factor_Observed_Applications")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_bindingintegration19.Factor_Binding_Guided_Investigation" (unresolved "Native_Investigation_Report_Diagnostic_bindingintegration19.Factor_Guided_Investigation")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_bindingintegration19.Factor_Reasoning_Execution" (unresolved "Native_Investigation_Report_Diagnostic_bindingintegration19.Factor_Binding_Guided_Investigation")
+*** Failed to load theory "Native_Investigation_Report_Diagnostic_bindingintegration19.Factor_Application_Execution" (unresolved "Native_Investigation_Report_Diagnostic_bindingintegration19.Factor_Application_Comparison", "Native_Investigation_Report_Diagnostic_bindingintegration19.Factor_Reasoning_Execution")
+*** Failed to apply proof method (line 212 of "/tmp/native-investigation-report-diagnostic-bindingintegration19/theories/Factor_Binding_Contributions.thy"):
+*** goal (2 subgoals):
+***  1. finite_matching_bindings p t |∈|
+***     (λ(i, x, y). finite_matching_bindings x y) |`|
+***     finite_pattern_observations P obs
+***  2. finite_relation_functional
+***      (V |∪|
+***       finite_matching_bindings p
+***        t)
+*** At command "apply" (line 212 of "/tmp/native-investigation-report-diagnostic-bindingintegration19/theories/Factor_Binding_Contributions.thy")
+Unfinished session(s): Native_Investigation_Report_Diagnostic_bindingintegration19
+0:00:19 elapsed time, 0:00:25 cpu time, factor 1.32

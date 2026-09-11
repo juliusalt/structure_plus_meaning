@@ -3,12 +3,35 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
+from types import SimpleNamespace
+import sys
 
 import investigate
 import proved_code
 
 
 class ProvedCodeTests(unittest.TestCase):
+    def test_reuse_checks_transitive_context_and_keeps_independent_sources(self):
+        sources = {name: {"sha256": name} for name in ["Leaf", "Middle", "Root", "Independent"]}
+        parents = {"Leaf": ["Main"], "Middle": ["Leaf"], "Root": ["Middle"], "Independent": ["Main"]}
+        accepted = {name: row["sha256"] for name, row in sources.items()}
+        self.assertEqual(proved_code.proved_context_partition(sources, parents, accepted),
+                         (set(sources), set()))
+        accepted["Leaf"] = "earlier source"
+        self.assertEqual(proved_code.proved_context_partition(sources, parents, accepted),
+                         ({"Independent"}, {"Leaf", "Middle", "Root"}))
+
+    def test_absent_proof_does_not_reuse_same_named_source(self):
+        sources = {"New": {"sha256": "current"}, "Root": {"sha256": "root"}}
+        parents = {"New": ["Main"], "Root": ["New"]}
+        self.assertEqual(proved_code.proved_context_partition(sources, parents, {"Root": "root"}),
+                         (set(), {"New", "Root"}))
+
+    def test_incomplete_dependency_inventory_is_rejected(self):
+        with self.assertRaises(AssertionError):
+            proved_code.proved_context_partition({"Root": {"sha256": "root"}}, {}, {"Root": "root"})
+
     def setUp(self):
         temporary = tempfile.TemporaryDirectory(prefix="proved-code-")
         self.addCleanup(temporary.cleanup)
@@ -54,6 +77,44 @@ class ProvedCodeTests(unittest.TestCase):
         self.engine.write_text("changed code\n")
         with self.assertRaises(AssertionError):
             proved_code.proved_export(self.proof, project=self.root)
+
+    def execute(self, name, assess, returncode=0):
+        with patch("proved_code.subprocess.run", return_value=SimpleNamespace(returncode=returncode)):
+            return proved_code.checked_execution(self.proof, Path(sys.executable), self.root / name,
+                required_theories=["Fixture"], inputs={"value": [1, 2]}, input_paths=[],
+                program=lambda engine, data: "val checked = true;\n", assess=assess,
+                question="Check execution evidence guards", boundary="Mock process; no mathematical proof claim.",
+                project=self.root)
+
+    def test_checked_execution_retains_exact_sources_and_inputs(self):
+        receipt = self.execute("accepted", lambda data, raw: {"checked": data["value"]})
+        self.assertEqual(receipt["status"], "accepted")
+        self.assertEqual(receipt["execution_inputs"][str(self.source)], investigate.file_hash(self.source))
+        self.assertTrue(all(investigate.file_hash(Path(r["archive"])) == r["sha256"]
+                            for r in receipt["evidence_archive"]))
+
+    def test_nonzero_process_never_reaches_assessment(self):
+        def forbidden(data, raw):
+            self.fail("A failed process cannot supply assessed evidence.")
+        receipt = self.execute("failed-process", forbidden, returncode=2)
+        self.assertEqual(receipt["status"], "failed")
+        self.assertNotIn("assessment", receipt)
+
+    def test_source_mutation_during_assessment_is_rejected(self):
+        def changed(data, raw):
+            self.source.write_text("modified during execution\n")
+            return {"checked": True}
+        receipt = self.execute("changed-source", changed)
+        self.assertEqual(receipt["status"], "failed")
+        self.assertIn("changed", receipt["error"])
+
+    def test_assessment_failure_retains_failed_receipt(self):
+        def rejected(data, raw):
+            raise ValueError("The result does not recover its complete subject.")
+        receipt = self.execute("failed-assessment", rejected)
+        self.assertEqual(receipt["status"], "failed")
+        self.assertIn("complete subject", receipt["error"])
+        self.assertTrue((self.root / "failed-assessment/receipt.json").is_file())
 
 
 if __name__ == "__main__":

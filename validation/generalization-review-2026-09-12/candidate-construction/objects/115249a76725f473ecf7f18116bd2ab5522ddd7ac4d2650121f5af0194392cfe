@@ -1,0 +1,99 @@
+{
+  "question": "Resolve the remaining projection and necessity proof steps in the same unchanged contracts.",
+  "boundary": "Prospective conditional proof-method comparison. Exact retained proof-body replacements preserve statements and executable definitions. The finite image and order lemmas have their original explicit premises. Acceptance of the entire source context remains mandatory and is not inferred from this table.",
+  "problems": [
+    {
+      "name": "explicit-relational-steps",
+      "case": {
+        "schema": "finite-investigation-1",
+        "kind": "basis",
+        "question": "Resolve the remaining projection and necessity proof steps in the same unchanged contracts.",
+        "scope": {
+          "candidates": {
+            "0": "Repeat current timed-out commands",
+            "1": "Use the retained explicit image-monotonicity and subset-transitivity steps"
+          },
+          "facets": {
+            "0": "Preserve statements and operations",
+            "1": "Avoid each diagnosed relational expansion with its applicable existing lemma"
+          },
+          "subjects": "/tmp/generalization-quality-review/directed-candidate-construction/proof-diagnostic8.json"
+        },
+        "candidates": [
+          0,
+          1
+        ],
+        "facets": [
+          0,
+          1
+        ],
+        "selected": [],
+        "observations": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        "relation": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "evidence": [
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/proof-diagnostic8.json",
+            "sha256": "c2739caa342b8ee71b85e7308557296ee09fbdf54a9f5b8b1fa9dc7bd11eee43"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/draft9/Finite_Candidate_Assembly.thy",
+            "sha256": "127a4c7c62fff4c8981f1fab8b67962f76fd11ec473faa5a6489b960b7d5d50a"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/draft9/Finite_Directed_Contributions.thy",
+            "sha256": "a5dee304d3317c4dd76404239e7e0c6e25c2b5f4737524894f5265e6b3972b15"
+          }
+        ],
+        "semantic_boundary": "Prospective conditional proof-method comparison. Exact retained proof-body replacements preserve statements and executable definitions. The finite image and order lemmas have their original explicit premises. Acceptance of the entire source context remains mandatory and is not inferred from this table."
+      },
+      "required_observations": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    }
+  ]
+}

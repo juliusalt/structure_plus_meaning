@@ -1,0 +1,19 @@
+{
+  "missing_input": "/tmp/generalization-quality-review/directed-candidate-construction/check_candidate_regressions.py",
+  "recorded_sha256": "6aaa70e41169115bdd54869de9ca56cd383a1d1f609b6969e2fde574ec1c8b23",
+  "source": "/tmp/generalization-quality-review/directed-candidate-construction/runtime-draft13/check_candidate_regressions.py",
+  "reconstruction": "Undo the retained shared-normalization replacement and its wording change; account for the earlier removal of the nonexistent settled field. Accept only a complete byte-for-byte digest match.",
+  "candidates": [
+    {
+      "finite_fields": "['demand','settled','residual']",
+      "sha256": "5bae1daee319f00632e0b70f03fc8723682ea999ba2338753ed03f9a4332ce3e",
+      "matches_recorded_input": false
+    },
+    {
+      "finite_fields": "['demand','residual']",
+      "sha256": "6aaa70e41169115bdd54869de9ca56cd383a1d1f609b6969e2fde574ec1c8b23",
+      "matches_recorded_input": true,
+      "recovered_path": "/tmp/generalization-quality-review/candidate-delivery-review/recovered-inputs/6aaa70e41169115bdd54869de9ca56cd383a1d1f609b6969e2fde574ec1c8b23.py"
+    }
+  ]
+}

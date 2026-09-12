@@ -1,0 +1,11 @@
+{
+  "status": "accepted",
+  "invocation": "3561eb7d-0126-4dc2-bc23-2bdc1cb9112b",
+  "question": "Construct source-site candidates on complete structural application families and check the declared scope, malformed boundaries and actual preserved results.",
+  "boundary": "Actual native matching derives coverage and complete application results; source indices carry no supplied satisfaction ratings.",
+  "exit_code": 0,
+  "sources_and_tools_unchanged": true,
+  "proof_receipt_sha256": "119e4977067252e806eda7da209bf3c65671d551d3969f94874574d11a737a11",
+  "export_sha256": "837d36f5e70eec6beafe981a5aed191ae83852fab63f4ab5e8b48688f7b24eae",
+  "results_sha256": "77eb9f75081f1d0a18753384c67b93044e5783b030a2d3e759ffaba785946635"
+}

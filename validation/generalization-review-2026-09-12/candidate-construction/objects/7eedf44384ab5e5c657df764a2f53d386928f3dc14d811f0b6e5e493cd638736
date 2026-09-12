@@ -1,0 +1,6 @@
+Running Native_Directed2 ...
+*** Timeout
+Native_Directed2 FAILED (see also "isabelle build_log -H Error Native_Directed2")
+
+Unfinished session(s): Native_Directed2
+0:05:03 elapsed time

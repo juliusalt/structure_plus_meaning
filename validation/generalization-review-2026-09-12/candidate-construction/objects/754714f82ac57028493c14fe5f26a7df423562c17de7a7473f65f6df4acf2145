@@ -1,0 +1,213 @@
+{
+  "complete_result": {
+    "question": "Resolve the remaining projection and necessity proof steps in the same unchanged contracts.",
+    "boundary": "Prospective conditional proof-method comparison. Exact retained proof-body replacements preserve statements and executable definitions. The finite image and order lemmas have their original explicit premises. Acceptance of the entire source context remains mandatory and is not inferred from this table.",
+    "specification_sha256": "115249a76725f473ecf7f18116bd2ab5522ddd7ac4d2650121f5af0194392cfe",
+    "results": [
+      {
+        "problem": "explicit-relational-steps",
+        "initial_result": {
+          "input_formed": true,
+          "residual": [
+            [
+              1,
+              0
+            ]
+          ],
+          "profiles": [
+            {
+              "candidate": 0,
+              "profile": []
+            },
+            {
+              "candidate": 1,
+              "profile": []
+            }
+          ],
+          "losses": [
+            {
+              "from": 0,
+              "to": 0,
+              "losses": []
+            },
+            {
+              "from": 0,
+              "to": 1,
+              "losses": []
+            },
+            {
+              "from": 1,
+              "to": 0,
+              "losses": []
+            },
+            {
+              "from": 1,
+              "to": 1,
+              "losses": []
+            }
+          ],
+          "safe_facets": [
+            0,
+            1
+          ],
+          "conflicts": [],
+          "repairs": [
+            [
+              1,
+              0,
+              1,
+              0
+            ],
+            [
+              1,
+              0,
+              1,
+              1
+            ]
+          ],
+          "unrepairable": [],
+          "extension": [
+            1
+          ],
+          "revision": {
+            "retained": [],
+            "withdrawn": [],
+            "repairs": [
+              [
+                1,
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                1,
+                1
+              ]
+            ],
+            "selection": [
+              1
+            ],
+            "residual": []
+          }
+        },
+        "followed_result": {
+          "input_formed": true,
+          "residual": [],
+          "profiles": [
+            {
+              "candidate": 0,
+              "profile": []
+            },
+            {
+              "candidate": 1,
+              "profile": [
+                [
+                  1,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ]
+              ]
+            }
+          ],
+          "losses": [
+            {
+              "from": 0,
+              "to": 0,
+              "losses": []
+            },
+            {
+              "from": 0,
+              "to": 1,
+              "losses": []
+            },
+            {
+              "from": 1,
+              "to": 0,
+              "losses": [
+                [
+                  1,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ]
+              ]
+            },
+            {
+              "from": 1,
+              "to": 1,
+              "losses": []
+            }
+          ],
+          "safe_facets": [
+            0,
+            1
+          ],
+          "conflicts": [],
+          "repairs": [],
+          "unrepairable": [],
+          "extension": [
+            1
+          ],
+          "revision": {
+            "retained": [
+              1
+            ],
+            "withdrawn": [],
+            "repairs": [],
+            "selection": [
+              1
+            ],
+            "residual": []
+          }
+        },
+        "assessment": {
+          "required_observations": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "missing_requirements": {
+            "0": [
+              [
+                1,
+                0
+              ],
+              [
+                1,
+                1
+              ]
+            ],
+            "1": []
+          },
+          "eligible": [
+            1
+          ],
+          "dominant": [
+            1
+          ],
+          "strict_improvements": [],
+          "boundary": "Assessment of the supplied finite candidates under explicit mandatory observations. Eligibility uses all original observations, including facets unnecessary for distinguishing these candidates. The returned adequate profiles determine comparison; broader coverage and candidate construction remain separate.",
+          "receipt_sha256": "251322d2c0541f749c008786d1c5e1485d3a5f7a678a0c876bb6210dbe1e735a"
+        }
+      }
+    ]
+  },
+  "decision": "Check the exact proposed replacement proof bodies together under the unchanged contracts.",
+  "criticism": "Selection addresses diagnosed proof methods; all theorem validity and native search performance still require their actual checks."
+}

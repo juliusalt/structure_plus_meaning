@@ -1,0 +1,11 @@
+{
+  "status": "accepted",
+  "invocation": "9b832b0e-7294-4729-ae22-7bfda1b9edd4",
+  "question": "Construct source-site candidates from complete supplied structural problems and retain their declared scope and exact application results.",
+  "boundary": "Native matching derives coverage from complete source patterns and observed terms. Every candidate is constructed from the supplied site parts under the proved application condition.",
+  "exit_code": 0,
+  "sources_and_tools_unchanged": true,
+  "proof_receipt_sha256": "119e4977067252e806eda7da209bf3c65671d551d3969f94874574d11a737a11",
+  "export_sha256": "837d36f5e70eec6beafe981a5aed191ae83852fab63f4ab5e8b48688f7b24eae",
+  "results_sha256": "c4f38ae4b070e94779899e94da9fd329b8b0244cc5eb35b9bcb5defced139c7d"
+}

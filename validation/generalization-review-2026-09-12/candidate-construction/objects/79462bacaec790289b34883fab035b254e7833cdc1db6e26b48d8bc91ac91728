@@ -1,0 +1,11 @@
+{
+  "status": "accepted",
+  "invocation": "e98c5aa3-b069-4ea1-beff-e0870a8d58d3",
+  "question": "Do the proved directed search and part constructor preserve complete finite results and handle the retained larger bases?",
+  "boundary": "This is native execution of the checked generic contracts on actual complete finite inputs. Application-level adoption remains separate.",
+  "exit_code": 0,
+  "sources_and_tools_unchanged": true,
+  "proof_receipt_sha256": "5e355a853864ddd3988fadbc4af8031dbac4dadcf4e259a4ba430b6b89aa92e4",
+  "export_sha256": "3f073242f9ce8434f1c8f516cddda7c7ea275536d39606424cd41e2c4f198010",
+  "results_sha256": "02238fd5df7411d81692f7cee35d4cfcb23299fa83412b5675eaecbcba946b32"
+}

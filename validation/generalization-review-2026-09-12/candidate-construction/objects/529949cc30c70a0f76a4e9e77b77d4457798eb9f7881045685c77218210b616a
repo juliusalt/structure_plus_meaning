@@ -1,0 +1,43 @@
+{
+  "status": "failed",
+  "exit_code": 1,
+  "sources_unchanged": true,
+  "checked_theories": 15,
+  "parent_theories_reused": 404,
+  "roots": [
+    "Factor_Application_Execution",
+    "Factor_Finite_Inference_Premises"
+  ],
+  "command": [
+    "isabelle",
+    "build",
+    "-o",
+    "threads=12",
+    "-o",
+    "parallel_proofs=0",
+    "-o",
+    "build_timing_threshold=0",
+    "-d",
+    "/home/julius/structure_and_semantics",
+    "-D",
+    "/tmp/native-investigation-report-diagnostic-applicationconstruction10"
+  ],
+  "started_utc": "2026-09-11T21:42:58.440233+00:00",
+  "finished_utc": "2026-09-11T21:43:15.973123+00:00",
+  "log": "/tmp/native-investigation-report-diagnostic-applicationconstruction10/build.log"
+}
+Running Native_Application_Construction10 ...
+Native_Application_Construction10 FAILED (see also "isabelle build_log -H Error Native_Application_Construction10")
+*** Failed to load theory "Native_Application_Construction10.Factor_Application_Comparison" (unresolved "Native_Application_Construction10.Factor_Application_Candidates")
+*** Failed to load theory "Native_Application_Construction10.Factor_Application_Execution" (unresolved "Native_Application_Construction10.Factor_Application_Comparison")
+*** Failed to apply initial proof method (line 102 of "/tmp/native-investigation-report-diagnostic-applicationconstruction10/theories/Factor_Application_Candidates.thy"):
+*** using this:
+***   application_construction_case_formed P Xs
+*** goal (1 subgoal):
+***  1. application_instances_valid (application_schema P)
+***      (fset_of_list
+***        Xs)
+*** At command "by" (line 102 of "/tmp/native-investigation-report-diagnostic-applicationconstruction10/theories/Factor_Application_Candidates.thy")
+Unfinished session(s): Native_Application_Construction10
+0:00:16 elapsed time, 0:00:21 cpu time, factor 1.25
+

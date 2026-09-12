@@ -1,0 +1,12 @@
+{
+  "decision": {
+    "selected": 1,
+    "complete_results_read": true,
+    "complete_results": "/tmp/generalization-quality-review/candidate-release/investigation1/complete-results.json",
+    "critical_assessment": "The initial residual (1,0) is repaired by the two missing delivery facets, 1 and 3; the returned selection has no residual and only candidate 1 satisfies all four mandatory conditions. The source/retention facets remain mandatory even though they do not distinguish these proposals. Both complete results and reasons were read. Independent identity checks cover all 3,012 current runtime files and every stored and decoded archive reference. The host supplies this bounded file operation and retains explicit publication guards; the finite verdict is not a proof of filesystem semantics or completeness over other packaging strategies. Apply only the enumerated exact-copy cleanup and retain the four supplemental outputs, then verify the staged artifact before publishing."
+  },
+  "removed_files": 3012,
+  "logical_copy_bytes": 3575559681,
+  "retained_map_sha256": "401d7daabfe56a2884865835f659104818e512d272e4b298bb05dee534983d47",
+  "boundary": "Only enumerated runtime copies were unlinked. Their exact stored or decoded identities remain in the permanent archives."
+}

@@ -1,0 +1,46 @@
+"""Retain structured corruptions of actual accepted application output."""
+from pathlib import Path
+import argparse,copy,json,traceback
+import check_application_candidates as adapter
+
+def main():
+ p=argparse.ArgumentParser();p.add_argument('--baseline',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args()
+ receipt=json.loads((a.baseline/'receipt.json').read_text());assert receipt['status']=='accepted'
+ cases=json.loads((a.baseline/'cases.json').read_text());raw=(a.baseline/'results.log').read_text()
+ adapter.assess(cases,raw)
+ parsed=[]
+ for line in raw.splitlines():
+  if line.startswith('APPLICATION_'):
+   kind,i,value=line.split(' ',2);parsed.append([kind,int(i),json.loads(value)])
+  else:parsed.append(line)
+ def first(rows,kind,predicate):
+  return next(r for r in rows if isinstance(r,list) and r[0]=='APPLICATION_'+kind and predicate(r[2]))
+ def edit_part(rows):
+  r=first(rows,'INPUT',lambda x:bool(x['parts']));r[2]['parts'][0]=['premise',99999,99999]
+ def edit_problem(rows):
+  r=first(rows,'INPUT',lambda x:bool(x['problems']));r[2]['problems'][0]['schema']['head']={'payload':[240,241]}
+ def edit_coverage(rows):
+  r=first(rows,'COVERAGE',lambda x:any(qs for _,qs in x['parts']));next(qs for _,qs in r[2]['parts'] if qs).pop()
+ def edit_feasibility(rows):
+  r=first(rows,'CONSTRUCTION',lambda x:x['report']['plan'] is not None);r[2]['report']['plan']=None
+ def edit_applications(rows):
+  r=first(rows,'RESULTS',lambda x:any(p['plan'] for p in x));next(p['plan'] for p in r[2] if p['plan']).clear()
+ def edit_observation(rows):
+  r=first(rows,'INITIAL',lambda x:any(f==2 for f,_,_ in x['observations']));r[2]['observations']=[q for q in r[2]['observations'] if q[0]!=2]
+ a.output.mkdir();results=[]
+ for name,mutate in [('input-part',edit_part),('input-problem',edit_problem),('coverage',edit_coverage),('feasibility',edit_feasibility),('actual-applications',edit_applications),('required-observation',edit_observation)]:
+  rows=copy.deepcopy(parsed);mutate(rows)
+  modified='\n'.join(' '.join([r[0],str(r[1]),json.dumps(r[2],separators=(',',':'))]) if isinstance(r,list) else r for r in rows)+'\n'
+  assert modified!=raw
+  path=a.output/(name+'.log');path.write_text(modified)
+  try:adapter.assess(cases,modified)
+  except AssertionError as error:
+   trace=traceback.format_exc();(a.output/(name+'-rejection.log')).write_text(trace)
+   result={'mutation':name,'status':'rejected','failure':str(error),'traceback':trace,'mutated_log':str(path)}
+  else:raise AssertionError('The assessment accepted corruption: '+name)
+  results.append(result)
+ result={'baseline':str(a.baseline),'baseline_invocation':receipt['invocation'],'mutations':results,
+  'boundary':'Every mutation starts from an independently accepted native baseline. The modified documents remain complete parseable records. Only assertion failures in the actual semantic assessment count as rejection.'}
+ (a.output/'complete-results.json').write_text(json.dumps(result,indent=2)+'\n')
+ print(json.dumps(result,separators=(',',':')))
+if __name__=='__main__':main()

@@ -1,0 +1,49 @@
+{
+  "status": "failed",
+  "exit_code": 1,
+  "sources_unchanged": true,
+  "checked_theories": 15,
+  "parent_theories_reused": 356,
+  "roots": [
+    "Factor_Application_Execution"
+  ],
+  "command": [
+    "isabelle",
+    "build",
+    "-o",
+    "threads=12",
+    "-o",
+    "parallel_proofs=0",
+    "-o",
+    "build_timing_threshold=0",
+    "-d",
+    "/home/julius/structure_and_semantics",
+    "-D",
+    "/tmp/native-investigation-report-diagnostic-applicationconstruction1"
+  ],
+  "started_utc": "2026-09-11T21:00:39.228252+00:00",
+  "finished_utc": "2026-09-11T21:00:48.306734+00:00",
+  "log": "/tmp/native-investigation-report-diagnostic-applicationconstruction1/build.log"
+}
+Running Native_Application_Construction1 ...
+Native_Application_Construction1 FAILED (see also "isabelle build_log -H Error Native_Application_Construction1")
+*** Failed to load theory "Native_Application_Construction1.Finite_Directed_Contributions" (unresolved "Native_Application_Construction1.Finite_Compatible_Unions")
+*** Failed to load theory "Native_Application_Construction1.Factor_Binding_Contributions" (unresolved "Native_Application_Construction1.Finite_Compatible_Unions")
+*** Failed to load theory "Native_Application_Construction1.Factor_Observed_Applications" (unresolved "Native_Application_Construction1.Factor_Binding_Contributions", "Native_Application_Construction1.Finite_Directed_Contributions")
+*** Failed to load theory "Native_Application_Construction1.Factor_Observed_Preservation" (unresolved "Native_Application_Construction1.Factor_Observed_Applications")
+*** Failed to load theory "Native_Application_Construction1.Factor_Guided_Investigation" (unresolved "Native_Application_Construction1.Factor_Observed_Preservation")
+*** Failed to load theory "Native_Application_Construction1.Factor_Application_Problems" (unresolved "Native_Application_Construction1.Factor_Guided_Investigation", "Native_Application_Construction1.Factor_Observed_Applications")
+*** Failed to load theory "Native_Application_Construction1.Factor_Binding_Guided_Investigation" (unresolved "Native_Application_Construction1.Factor_Guided_Investigation")
+*** Failed to load theory "Native_Application_Construction1.Factor_Reasoning_Execution" (unresolved "Native_Application_Construction1.Factor_Binding_Guided_Investigation")
+*** Failed to load theory "Native_Application_Construction1.Factor_Observation_Assembly" (unresolved "Native_Application_Construction1.Factor_Binding_Contributions")
+*** Failed to load theory "Native_Application_Construction1.Factor_Application_Candidates" (unresolved "Native_Application_Construction1.Factor_Application_Problems", "Native_Application_Construction1.Factor_Observation_Assembly")
+*** Failed to load theory "Native_Application_Construction1.Factor_Application_Comparison" (unresolved "Native_Application_Construction1.Factor_Application_Candidates")
+*** Failed to load theory "Native_Application_Construction1.Factor_Application_Execution" (unresolved "Native_Application_Construction1.Factor_Application_Comparison", "Native_Application_Construction1.Factor_Reasoning_Execution")
+*** Failed to apply initial proof method (line 195 of "/tmp/native-investigation-report-diagnostic-applicationconstruction1/theories/Finite_Compatible_Unions.thy"):
+*** goal (1 subgoal):
+***  1. ffilter (λW. W |⊆| V) B |⊆|
+***     B
+*** At command "by" (line 195 of "/tmp/native-investigation-report-diagnostic-applicationconstruction1/theories/Finite_Compatible_Unions.thy")
+Unfinished session(s): Native_Application_Construction1
+0:00:08 elapsed time, 0:00:05 cpu time, factor 0.70
+

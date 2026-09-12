@@ -1,0 +1,44 @@
+{
+  "status": "evaluated",
+  "exit_code": 0,
+  "elapsed_seconds": 3.167134767980315,
+  "runtime_seconds": 0.0688401609659195,
+  "receipt": "/tmp/generalization-quality-review/directed-candidate-construction/interface4-investigation1/complete-target-owner-fields/initial/receipt.json",
+  "input_formed": true,
+  "residual": [
+    [
+      1,
+      0
+    ]
+  ],
+  "repair_witnesses": 2,
+  "conflicts": 0,
+  "unrepairable": 0,
+  "extension": [
+    0,
+    2
+  ],
+  "revision": {
+    "retained": [],
+    "withdrawn": [],
+    "repairs": [
+      [
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        2,
+        0
+      ]
+    ],
+    "selection": [
+      0,
+      2
+    ],
+    "residual": []
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "status": "failed",
+  "invocation": "0f85681c-af1c-4295-8107-edcf7d69d627",
+  "question": "Do the proved directed search and part constructor preserve complete finite results and handle the retained larger bases?",
+  "boundary": "This is native execution of the checked generic contracts on actual complete finite inputs. Application-level adoption remains separate.",
+  "exit_code": 1,
+  "error": "See the retained results.log."
+}

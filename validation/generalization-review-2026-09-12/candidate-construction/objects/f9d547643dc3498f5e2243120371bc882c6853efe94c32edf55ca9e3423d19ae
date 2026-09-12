@@ -1,0 +1,26 @@
+{
+  "status": "evaluated",
+  "exit_code": 0,
+  "elapsed_seconds": 3.1767752709565684,
+  "runtime_seconds": 0.06645454501267523,
+  "receipt": "/tmp/generalization-quality-review/directed-candidate-construction/scheduling-correction-investigation1/workflow-resumption/followed/receipt.json",
+  "input_formed": true,
+  "residual": [],
+  "repair_witnesses": 0,
+  "conflicts": 0,
+  "unrepairable": 0,
+  "extension": [
+    0
+  ],
+  "revision": {
+    "retained": [
+      0
+    ],
+    "withdrawn": [],
+    "repairs": [],
+    "selection": [
+      0
+    ],
+    "residual": []
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "status": "evaluated",
+  "exit_code": 0,
+  "elapsed_seconds": 3.166835449053906,
+  "runtime_seconds": 0.0674636960029602,
+  "receipt": "/tmp/generalization-quality-review/candidate-delivery-review/retention-patch-investigation1/retain-complete-checked-inputs/followed/receipt.json",
+  "input_formed": true,
+  "residual": [],
+  "repair_witnesses": 0,
+  "conflicts": 0,
+  "unrepairable": 0,
+  "extension": [
+    0,
+    1,
+    2,
+    4,
+    5
+  ],
+  "revision": {
+    "retained": [
+      0,
+      1,
+      2,
+      4,
+      5
+    ],
+    "withdrawn": [],
+    "repairs": [],
+    "selection": [
+      0,
+      1,
+      2,
+      4,
+      5
+    ],
+    "residual": []
+  }
+}

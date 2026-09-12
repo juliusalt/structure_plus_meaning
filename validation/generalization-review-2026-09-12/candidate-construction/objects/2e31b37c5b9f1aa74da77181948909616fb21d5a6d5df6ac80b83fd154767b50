@@ -1,0 +1,73 @@
+{
+  "problem": "Separate concrete search-case evaluation from subsequent domain equalities, and discharge failure by explicit option cases.",
+  "receipt": {
+    "status": "failed",
+    "exit_code": 1,
+    "sources_unchanged": true,
+    "sources": {
+      "Bootstrap_Relations": "50d4bf926dab217fdad8eb114fe1b0d369aa9a06741df1e568a5cc5fea7ceafe",
+      "RRA_Core": "acd13d70482fd6a3bcaed5e07776d76b2afcca45e69353d591a26639c30752db",
+      "RRA_Data": "2ff07ed3d0ae79f3a278b4e4fac5b78320a36e314ffa026db1cd014579fd7af5",
+      "RRA_Footprint": "2177e2f526618e7623714bf72ba8a542ffc3f3ee6b6cdc7e95d15ce5c094926e",
+      "RRA_Exact": "43713b16aee5bb9972674e96dd0aa393cacc9599db6c745bbf413d476f6f850f",
+      "RRA_Finite_Artifacts": "bf551280109ea4f690e7f9e21e3b00f0300c7139205e8ab2f1188c70afaebc0a",
+      "Finite_Set_Composition": "afab9aa6a45378359fb543a95a104326d282ced6a227499397bd24e2208ca2bd",
+      "Finite_Compatible_Unions": "4192efb90e2702fb885576c1b386f267b64a32df40ec082df9a07745f28afce2",
+      "Finite_Demand_Selection": "f078ff337e75c81199a1d6a36fff787dae36c88f1433637b32198d8847f185d6",
+      "Finite_Directed_Contributions": "03a716bf426b8ff9ffec1953ea929c25231fa253c8cff814758cdcaccaa26a92",
+      "Finite_Candidate_Assembly": "0e4b6cd2d8e8359158c08208d0bf5c9368ea996d36b24d485cf38f2aa98cafce",
+      "Finite_Directed_Execution": "a1137abb92cd4762e2b0237465617ced83d0536ea562ace812c61d6df4afd0aa"
+    },
+    "effective_source_hashes": {
+      "Finite_Compatible_Unions": "f5784f26461cada5b4b24b6c9aae37260fc33989d1b11f4c0fd20da27a305eec",
+      "Finite_Demand_Selection": "f8276d5909d64c9858680e5b3e4841044ef7725df96eaf6ee381e7d28e530364",
+      "Finite_Directed_Contributions": "aae95795562309323d678355015ee2d3c7bb218345aecc5eb320e04134d3df50",
+      "Finite_Candidate_Assembly": "6def7498f49a5109828614d975b7cdd222f1a347fe0388f5c26cfc0555f0aff9",
+      "Finite_Directed_Execution": "31f4eeae28274401101d463fcc1ab9edb6fc83ae28f9394fe23342a56ca5ee89"
+    },
+    "checked_theories": 5,
+    "parent_theories_reused": 7,
+    "roots": [
+      "Finite_Directed_Execution"
+    ],
+    "command": [
+      "isabelle",
+      "build",
+      "-o",
+      "threads=12",
+      "-o",
+      "parallel_proofs=0",
+      "-o",
+      "build_timing_threshold=0",
+      "-d",
+      "/home/julius/structure_and_semantics",
+      "-D",
+      "/tmp/native-investigation-report-diagnostic-directed11"
+    ],
+    "started_utc": "2026-09-11T20:26:41.863506+00:00",
+    "finished_utc": "2026-09-11T20:26:50.647787+00:00",
+    "log": "/tmp/native-investigation-report-diagnostic-directed11/build.log"
+  },
+  "complete_log": "Running Native_Directed11 ...\nNative_Directed11 FAILED (see also \"isabelle build_log -H Error Native_Directed11\")\n...\n***      finite_assembly_search (fcard (fset_of_list As)) As Ps K {||} = None\u27e7\n***     \u27f9 \u2203t. t \u2208 set As \u2227 t |\u2209| finite_assembly_coverage K (fset_of_list Ps)\n***  2. \u22c0t. \u27e6\u2200t. t \u2208 set As \u27f6\n***              t |\u2208| finite_assembly_coverage K (fset_of_list Ps) \u27f9\n***          \u2203y. finite_assembly_search (fcard (fset_of_list As)) As Ps K {||} =\n***              Some y;\n***          \u22c0A. finite_assembly_search (fcard (fset_of_list As)) As Ps K {||} =\n***              Some A \u27f9\n***              \u2200t. t \u2208 set As \u27f6\n***                  t |\u2208| finite_assembly_coverage K (fset_of_list Ps);\n***          t \u2208 set As; t |\u2209| finite_assembly_coverage K (fset_of_list Ps)\u27e7\n***         \u27f9 finite_assembly_search (fcard (fset_of_list As)) As Ps K {||} =\n***            None\n*** At command \"by\" (line 225 of \"/tmp/native-investigation-report-diagnostic-directed11/theories/Finite_Candidate_Assembly.thy\")\n*** Failed to finish proof (line 150 of \"/tmp/native-investigation-report-diagnostic-directed11/theories/Finite_Directed_Contributions.thy\"):\n*** goal (1 subgoal):\n***  1. \u27e6V |\u2208|\n***      (case finite_demand_choice\n***             (\u03bba. fcard\n***                   (ffilter (\u03bbr. fst r = a)\n***                     (ffUnion\n***                       (finite_compatible_binding_parts (fset_of_list As) B\n***                         U))))\n***             As (fset_of_list As) of\n***       None \u21d2 {|U|}\n***       | Some a \u21d2\n***           ffUnion\n***            ((\u03bbr. finite_value_binding_search n As\n***                   (ffilter (finite_assignment_agrees r)\n***                     (finite_compatible_binding_parts (fset_of_list As) B U))\n***                   (finsert r U)) |`|\n***             ffilter (\u03bbr. fst r = a)\n***              (ffUnion\n***                (finite_compatible_binding_parts (fset_of_list As) B U))));\n***      U |\u2208| finite_compatible_unions B; fst |`| U = fset_of_list As\u27e7\n***     \u27f9 V |\u2208| finite_compatible_unions B \u2227\n***        fst |`| V = fset_of_list As \u2227\n***        U |\u2286|\n***        V\n*** At command \"by\" (line 150 of \"/tmp/native-investigation-report-diagnostic-directed11/theories/Finite_Directed_Contributions.thy\")\nUnfinished session(s): Native_Directed11\n0:00:08 elapsed time, 0:00:06 cpu time, factor 0.75\n",
+  "changes": [
+    {
+      "source": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Finite_Directed_Contributions.thy",
+      "before": "      show ?thesis using Suc.prems(3) generated domain by (simp add: Let_def covered None)",
+      "after": "      have equal: \"V=U\" using Suc.prems(3) by (simp add: Let_def covered None)\n      show ?thesis using generated domain by (simp add: equal)",
+      "occurrences": 1
+    },
+    {
+      "source": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Finite_Directed_Contributions.thy",
+      "before": "    show ?thesis by (simp only: finite_value_binding_search.simps Let_def covered if_False None option.simps same; simp)",
+      "after": "    have result: \"finite_value_binding_search (Suc n) As ?P U={|U|}\"\n      by (simp add: Let_def covered None)\n    show ?thesis by (simp only: result same; simp)",
+      "occurrences": 1
+    },
+    {
+      "source": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Finite_Candidate_Assembly.thy",
+      "before": "  show ?thesis using complete sound\n    by (auto simp: fsubset_iff fset_of_list_elem finite_construct_candidate_def split: option.splits)",
+      "after": "  show ?thesis\n  proof (cases \"finite_assembly_search (fcard (fset_of_list As)) As Ps K {||}\")\n    case None\n    have uncovered: \"\\<not>fset_of_list As |\\<subseteq>| finite_assembly_coverage K (fset_of_list Ps)\"\n      using complete None by blast\n    show ?thesis by (simp add: finite_construct_candidate_def None uncovered)\n  next\n    case (Some A)\n    have covered: \"fset_of_list As |\\<subseteq>| finite_assembly_coverage K (fset_of_list Ps)\"\n      by (rule sound[OF Some])\n    show ?thesis by (simp add: finite_construct_candidate_def Some covered)\n  qed",
+      "occurrences": 1
+    }
+  ],
+  "remaining": "The exact proof-body replacements remain external proposals. Only the subsequent full Isabelle check can settle acceptance."
+}

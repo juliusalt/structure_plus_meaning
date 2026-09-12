@@ -1,0 +1,34 @@
+{
+  "status": "failed",
+  "exit_code": 142,
+  "sources_unchanged": true,
+  "checked_theories": 15,
+  "parent_theories_reused": 356,
+  "roots": [
+    "Factor_Application_Execution"
+  ],
+  "command": [
+    "isabelle",
+    "build",
+    "-o",
+    "threads=12",
+    "-o",
+    "parallel_proofs=0",
+    "-o",
+    "build_timing_threshold=0",
+    "-d",
+    "/home/julius/structure_and_semantics",
+    "-D",
+    "/tmp/native-investigation-report-diagnostic-applicationconstruction6"
+  ],
+  "started_utc": "2026-09-11T21:23:03.287527+00:00",
+  "finished_utc": "2026-09-11T21:24:37.383457+00:00",
+  "log": "/tmp/native-investigation-report-diagnostic-applicationconstruction6/build.log"
+}
+Running Native_Application_Construction6 ...
+*** Timeout
+Native_Application_Construction6 FAILED (see also "isabelle build_log -H Error Native_Application_Construction6")
+
+Unfinished session(s): Native_Application_Construction6
+0:01:33 elapsed time
+

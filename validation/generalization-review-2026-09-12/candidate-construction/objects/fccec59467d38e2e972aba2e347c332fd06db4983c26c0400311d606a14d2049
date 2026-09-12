@@ -1,0 +1,46 @@
+[
+  {
+    "label": "complete-repository-check",
+    "command": [
+      "python3",
+      "-B",
+      "/home/julius/structure_and_semantics/tools/check.py",
+      "--timeout",
+      "120"
+    ],
+    "exit_code": 142,
+    "log": "/tmp/generalization-quality-review/directed-candidate-construction/main-integration-check1/complete-repository-check.log"
+  },
+  {
+    "label": "all-tools-tests",
+    "command": [
+      "python3",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools",
+      "-p",
+      "test_*.py"
+    ],
+    "exit_code": 0,
+    "log": "/tmp/generalization-quality-review/directed-candidate-construction/main-integration-check1/all-tools-tests.log"
+  },
+  {
+    "label": "proof-timings",
+    "command": [
+      "python3",
+      "-B",
+      "/home/julius/structure_and_semantics/tools/proof_timings.py",
+      "--database",
+      "/tmp/structural-isabelle/.isabelle/Isabelle2025-2/heaps/polyml-5.9.2_x86_64_32-linux/log/RRA_Factor_Structural_Bootstrap.db",
+      "--sources",
+      "/home/julius/structure_and_semantics/theories",
+      "--output",
+      "/tmp/generalization-quality-review/directed-candidate-construction/main-integration-check1/command-timings.json"
+    ],
+    "exit_code": 0,
+    "log": "/tmp/generalization-quality-review/directed-candidate-construction/main-integration-check1/proof-timings.log"
+  }
+]

@@ -1,0 +1,9 @@
+
+Build errors:
+*** Failed to load theory "Native_Application_Construction7.Factor_Application_Comparison" (unresolved "Native_Application_Construction7.Factor_Application_Candidates")
+*** Failed to load theory "Native_Application_Construction7.Factor_Application_Execution" (unresolved "Native_Application_Construction7.Factor_Application_Comparison")
+*** Outer syntax error (line 100 of "/tmp/native-investigation-report-diagnostic-applicationconstruction7/theories/Factor_Application_Candidates.thy"): proposition expected,
+*** but end-of-input (line 100 of "/tmp/native-investigation-report-diagnostic-applicationconstruction7/theories/Factor_Application_Candidates.thy") was found
+*** At command "<malformed>" (line 99 of "/tmp/native-investigation-report-diagnostic-applicationconstruction7/theories/Factor_Application_Candidates.thy")
+
+Return code: 1 (ERROR)

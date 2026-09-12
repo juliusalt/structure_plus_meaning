@@ -1,0 +1,47 @@
+{
+  "status": "failed",
+  "exit_code": 1,
+  "sources_unchanged": true,
+  "sources": {
+    "Bootstrap_Relations": "50d4bf926dab217fdad8eb114fe1b0d369aa9a06741df1e568a5cc5fea7ceafe",
+    "RRA_Core": "acd13d70482fd6a3bcaed5e07776d76b2afcca45e69353d591a26639c30752db",
+    "RRA_Data": "2ff07ed3d0ae79f3a278b4e4fac5b78320a36e314ffa026db1cd014579fd7af5",
+    "RRA_Footprint": "2177e2f526618e7623714bf72ba8a542ffc3f3ee6b6cdc7e95d15ce5c094926e",
+    "RRA_Exact": "43713b16aee5bb9972674e96dd0aa393cacc9599db6c745bbf413d476f6f850f",
+    "RRA_Finite_Artifacts": "bf551280109ea4f690e7f9e21e3b00f0300c7139205e8ab2f1188c70afaebc0a",
+    "Finite_Set_Composition": "afab9aa6a45378359fb543a95a104326d282ced6a227499397bd24e2208ca2bd",
+    "Finite_Compatible_Unions": "0bc0bb6b8f031a01b73de741b9efe47d5257eda3b994c0d446b70fbdbab27a92",
+    "Finite_Demand_Selection": "7315fe7129cf00f1ac9c8b4bbb170068a029621c927c00a68182396eac2d6dd7",
+    "Finite_Directed_Contributions": "585838fa72dc1d9857cb4791f5142bbf53bc011e5525cd75300e32880d2335fa",
+    "Finite_Candidate_Assembly": "98ae7edaad025b2b65209f8d23b910e5dbaa762fe73f4ad03380e5bee80e426b"
+  },
+  "effective_source_hashes": {
+    "Finite_Compatible_Unions": "e099ac140fd05393f2eb3ee6afe2e9721130f52711a32fc2ab96e8e53da4c2d1",
+    "Finite_Demand_Selection": "711628fbb901bd0d7b0724acf8ad640ae20743586261a116578351392b4b4f7f",
+    "Finite_Directed_Contributions": "dbc500125f2edc767e80e71c017e10857e91007b4896326dba23d22f4269f15a",
+    "Finite_Candidate_Assembly": "285f6199e0855c1258fb06bb9e507c3bd2be58d5bff90a97a923c5261cc6ca09"
+  },
+  "checked_theories": 4,
+  "parent_theories_reused": 7,
+  "roots": [
+    "Finite_Directed_Contributions",
+    "Finite_Candidate_Assembly"
+  ],
+  "command": [
+    "isabelle",
+    "build",
+    "-o",
+    "threads=12",
+    "-o",
+    "parallel_proofs=0",
+    "-o",
+    "build_timing_threshold=0",
+    "-d",
+    "/home/julius/structure_and_semantics",
+    "-D",
+    "/tmp/native-investigation-report-diagnostic-directed1"
+  ],
+  "started_utc": "2026-09-11T19:33:52.162933+00:00",
+  "finished_utc": "2026-09-11T19:39:37.199584+00:00",
+  "log": "/tmp/native-investigation-report-diagnostic-directed1/build.log"
+}

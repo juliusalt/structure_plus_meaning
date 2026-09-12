@@ -1,0 +1,59 @@
+"""Run the complete affected retention group and collect all diagnostics."""
+from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor
+import hashlib,json,os,subprocess,sys,time
+C=Path(__file__).parent;B=Path('/tmp/generalization-quality-review/directed-candidate-construction');M=Path('/home/julius/structure_and_semantics');D=C/'retention-draft1';V=C/'retention-validation1';V.mkdir()
+P=Path('/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly');ENV={**os.environ,'PYTHONDONTWRITEBYTECODE':'1'}
+sys.path.insert(0,str(D/'tools'));import replay_reasoning_review as replay
+steps=[]
+def run(label,command,timeout=240):
+ started=time.monotonic()
+ with (V/(label+'.log')).open('w') as log:
+  try:code=subprocess.run(list(map(str,command)),cwd=D,env=ENV,stdout=log,stderr=subprocess.STDOUT,timeout=timeout).returncode
+  except subprocess.TimeoutExpired:code='timeout'
+ return {'label':label,'command':list(map(str,command)),'exit_code':code,'seconds':time.monotonic()-started,'log':str(V/(label+'.log'))}
+def guided(label,baseline,native=None):
+ command=['python3','-B',B/'check_candidate_regressions.py','--project',D,'--proof',B/'application-batch19/reasoning-export/proof.json','--poly',P,'--baseline',baseline,'--output',V/label]
+ if native:command+=['--native-input',native]
+ return run(label,command)
+initial=[('tools-tests',['python3','-B','-m','unittest','discover','-s',D/'tools','-p','test_*.py']),('presenter-export',['python3','-B',C/'export_current_presenter.py'])]
+with ThreadPoolExecutor(max_workers=2) as pool:
+ steps.extend(pool.map(lambda x:run(*x),initial))
+steps.append(guided('original-guided',B/'application-batch19/guided-regression'))
+if steps[-1]['exit_code']==0:
+ step=run('native-source',['python3','-B',D/'tools/check_finite_inference.py','--proof',B/'application-batch19/source-export/proof.json','--poly',P,'--catalogs',V/'original-guided','--source-spec','/tmp/generalization-quality-review/finite-reader-example/native-ground-source-proposal.json','--output',V/'native-source'])
+ steps.append(step)
+ if step['exit_code']==0:steps.append(guided('original-reader',B/'application-batch19/native-reader-regression',V/'native-source'))
+if next(x for x in steps if x['label']=='presenter-export')['exit_code']==0:
+ steps.append(run('finite-presentations',['python3','-B',D/'tools/check_finite_presentations.py','--proof',C/'current-presenter-export/proof.json','--poly',P,'--output',V/'finite-presentations']))
+for label in ['controls','large-7','large-8','large-9','large-10']:
+ steps.append(run('application-'+label,['python3','-B',D/'tools/check_application_comparison.py','--project',D,'--proof',B/'application-batch19/native-export/proof.json','--poly',P,'--specification',B/'production-validation1'/(label+'-specification.json'),'--output',V/('application-'+label)]))
+(V/'steps.json').write_text(json.dumps(steps,indent=2)+'\n')
+diagnostics={'source_status':'unchanged accepted 836-theory session','steps':steps,'preservation':[],'input_retention':[],'documents':[]}
+for label in ['controls','large-7','large-8','large-9','large-10']:
+ old=B/'production-validation1'/label;new=V/('application-'+label)
+ if not (new/'receipt.json').exists():continue
+ receipt=json.loads((new/'receipt.json').read_text())
+ if receipt['status']!='accepted':continue
+ old_receipt=json.loads((old/'receipt.json').read_text())
+ diagnostics['preservation'].append({'stage':label,
+  'all_input_fields_preserved':json.loads((old/'cases.json').read_text())==json.loads((new/'cases.json').read_text()),
+  'complete_native_reports_preserved':replay.timed_data_reports((old/'results.log').read_text(),'application_candidates')==replay.timed_data_reports((new/'results.log').read_text(),'application_candidates'),
+  'complete_assessment_preserved':replay.timed_data_assessment(old_receipt['assessment'])==replay.timed_data_assessment(receipt['assessment'])})
+for p in sorted(V.glob('*/receipt.json')):
+ receipt=json.loads(p.read_text())
+ if receipt['status']!='accepted':continue
+ tracked=receipt['execution_inputs'];entries=receipt['evidence_archive']
+ expected={(str(Path(path).resolve()),sha) for path,sha in tracked.items() if Path(path).resolve()!=P.resolve()}
+ actual={(row['path'],row['sha256']) for row in entries}
+ all_bytes=all(hashlib.sha256(Path(row['archive']).read_bytes()).hexdigest()==row['sha256'] for row in entries)
+ diagnostics['input_retention'].append({'stage':p.parent.name,'checked_nonexternal_inputs':len(expected),'retained_inputs':len(actual),'complete_coverage':expected==actual,'all_retained_bytes_exact':all_bytes})
+for name in ['README.md','REASONING_REUSE.md','THEORY_MAP.md']:
+ before=(M/name).read_text();after=(D/name).read_text()
+ diagnostics['documents'].append({'file':name,'all_nonwhitespace_content_preserved':before.split()==after.split()})
+lines=(D/'THEORY_MAP.md').read_text().splitlines();start=next(i for i,x in enumerate(lines) if x.startswith('| Finite_Compatible_Unions |'))
+diagnostics['table_continuation']=all(x.startswith('| ') for x in lines[start-1:start+9])
+diagnostics['complete']=(all(row['exit_code']==0 for row in steps) and len(diagnostics['preservation'])==5 and len(diagnostics['input_retention'])==9 and all(all(value for key,value in row.items() if key!='stage') for row in diagnostics['preservation']) and all(row['complete_coverage'] and row['all_retained_bytes_exact'] for row in diagnostics['input_retention']) and all(row['all_nonwhitespace_content_preserved'] for row in diagnostics['documents']) and diagnostics['table_continuation'])
+(V/'diagnostics.json').write_text(json.dumps(diagnostics,indent=2)+'\n')
+print(json.dumps({'complete':diagnostics['complete'],'steps':len(steps),'failures':[row for row in steps if row['exit_code']!=0],'diagnostics':str(V/'diagnostics.json')}),flush=True)
+raise SystemExit(0 if diagnostics['complete'] else 1)

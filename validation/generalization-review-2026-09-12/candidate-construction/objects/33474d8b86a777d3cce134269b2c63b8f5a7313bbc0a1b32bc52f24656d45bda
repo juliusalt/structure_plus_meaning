@@ -1,0 +1,34 @@
+"""Retain exact proposed proof repairs and submit their conditional prerequisites."""
+from pathlib import Path
+import json,sys
+sys.path.insert(0,'/home/julius/structure_and_semantics/tools')
+import investigate, compare_reasoning_methods as comparison
+B=Path(__file__).parent
+
+def prepare(number, problem, repairs):
+    D=B/f'draft{number}';D.mkdir()
+    changes=[]
+    for name, replacements in repairs.items():
+        p=B/'worktree/theories'/(name+'.thy');old=p.read_text();new=old
+        for before,after in replacements:
+            assert before != after and before in new,(name,before)
+            changes.append({'source':str(p),'before':before,'after':after,'occurrences':new.count(before)})
+            new=new.replace(before,after)
+        (D/p.name).write_text(new)
+    previous=Path(f'/tmp/native-investigation-report-diagnostic-directed{number-1}')
+    S=B/f'proof-diagnostic{number-1}.json'
+    assert not S.exists()
+    S.write_text(json.dumps({'problem':problem,'receipt':json.loads((previous/'result.json').read_text()),
+      'complete_log':(previous/'build.log').read_text(),'changes':changes,
+      'remaining':'The exact proof-body replacements remain external proposals. Only the subsequent full Isabelle check can settle acceptance.'},indent=2)+'\n')
+    boundary='Conditional prospective proof-repair comparison on exact retained commands. Unchanged statements and executable definitions are required; the supplied diagnostic judgments select a proof attempt. This does not derive those judgments or establish proof acceptance.'
+    observations=[[0,0,0],[0,1,0]]+[[1,1,i] for i in range(len(changes))]
+    case=comparison.comparison_case([0,1],[0,1],observations,[],question=problem,
+      scope={'candidates':{'0':'Repeat the current failed proof commands','1':'Try the complete retained replacement group'},
+             'facets':{'0':'Changes are restricted to the stated proof text','1':'The proposed command addresses this retained diagnostic or repeated proof-method defect'},'subjects':str(S)},
+      evidence=[{'path':str(p),'sha256':investigate.file_hash(p)} for p in [S,Path(__file__),*D.glob('*.thy')]])
+    case['semantic_boundary']=boundary
+    spec=B/f'proof-repair{number}-investigation.json'
+    spec.write_text(json.dumps({'question':problem,'boundary':boundary,'problems':[{'name':'proof-repair','case':case,
+      'required_observations':[[0,0]]+[[1,i] for i in range(len(changes))]}]},indent=2)+'\n')
+    return spec

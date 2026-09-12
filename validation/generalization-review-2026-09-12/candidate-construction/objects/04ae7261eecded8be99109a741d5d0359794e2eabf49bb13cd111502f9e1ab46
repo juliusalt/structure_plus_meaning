@@ -1,0 +1,8 @@
+{
+  "missing_input": "/tmp/generalization-quality-review/directed-candidate-construction/export_context.py",
+  "recorded_sha256": "e87b10e77a4bc40744b674242fc85217bb98723cb132f189c143c62d29318d11",
+  "source": "/tmp/generalization-quality-review/directed-candidate-construction/runtime-draft12/export_context.py",
+  "recovered_path": "/tmp/generalization-quality-review/candidate-delivery-review/recovered-inputs/e87b10e77a4bc40744b674242fc85217bb98723cb132f189c143c62d29318d11.py",
+  "reconstruction": "Reverse the exact recorded owner-selection patch from prepare_application_runtime12.py. The complete reconstructed source matches the original recorded digest.",
+  "matches_recorded_input": true
+}

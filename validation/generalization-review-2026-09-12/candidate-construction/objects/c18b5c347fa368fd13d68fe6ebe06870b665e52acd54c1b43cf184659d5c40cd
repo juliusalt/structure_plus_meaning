@@ -1,0 +1,133 @@
+[
+  {
+    "label": "tools-tests",
+    "command": [
+      "python3",
+      "-B",
+      "-m",
+      "unittest",
+      "test_application_comparison",
+      "test_replay_reasoning_review"
+    ],
+    "exit_code": 0,
+    "log": "/tmp/generalization-quality-review/directed-candidate-construction/production-validation1/tools-tests.log"
+  },
+  {
+    "label": "candidate-replay",
+    "command": [
+      "python3",
+      "-B",
+      "/tmp/generalization-quality-review/directed-candidate-construction/worktree/tools/replay_reasoning_review.py",
+      "--archive",
+      "/tmp/generalization-quality-review/directed-candidate-construction/delivery-replay-fixture1",
+      "--stage",
+      "application-controls",
+      "--poly",
+      "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+      "--output",
+      "/tmp/generalization-quality-review/directed-candidate-construction/production-validation1/candidate-replay"
+    ],
+    "exit_code": 0,
+    "log": "/tmp/generalization-quality-review/directed-candidate-construction/production-validation1/candidate-replay.log"
+  },
+  {
+    "label": "controls",
+    "command": [
+      "python3",
+      "-B",
+      "/tmp/generalization-quality-review/directed-candidate-construction/worktree/tools/check_application_comparison.py",
+      "--specification",
+      "/tmp/generalization-quality-review/directed-candidate-construction/production-validation1/controls-specification.json",
+      "--proof",
+      "/tmp/generalization-quality-review/directed-candidate-construction/application-batch19/native-export/proof.json",
+      "--project",
+      "/tmp/generalization-quality-review/directed-candidate-construction/worktree",
+      "--poly",
+      "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+      "--output",
+      "/tmp/generalization-quality-review/directed-candidate-construction/production-validation1/controls"
+    ],
+    "exit_code": 0,
+    "log": "/tmp/generalization-quality-review/directed-candidate-construction/production-validation1/controls.log"
+  },
+  {
+    "label": "large-7",
+    "command": [
+      "python3",
+      "-B",
+      "/tmp/generalization-quality-review/directed-candidate-construction/worktree/tools/check_application_comparison.py",
+      "--specification",
+      "/tmp/generalization-quality-review/directed-candidate-construction/production-validation1/large-7-specification.json",
+      "--proof",
+      "/tmp/generalization-quality-review/directed-candidate-construction/application-batch19/native-export/proof.json",
+      "--project",
+      "/tmp/generalization-quality-review/directed-candidate-construction/worktree",
+      "--poly",
+      "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+      "--output",
+      "/tmp/generalization-quality-review/directed-candidate-construction/production-validation1/large-7"
+    ],
+    "exit_code": 0,
+    "log": "/tmp/generalization-quality-review/directed-candidate-construction/production-validation1/large-7.log"
+  },
+  {
+    "label": "large-8",
+    "command": [
+      "python3",
+      "-B",
+      "/tmp/generalization-quality-review/directed-candidate-construction/worktree/tools/check_application_comparison.py",
+      "--specification",
+      "/tmp/generalization-quality-review/directed-candidate-construction/production-validation1/large-8-specification.json",
+      "--proof",
+      "/tmp/generalization-quality-review/directed-candidate-construction/application-batch19/native-export/proof.json",
+      "--project",
+      "/tmp/generalization-quality-review/directed-candidate-construction/worktree",
+      "--poly",
+      "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+      "--output",
+      "/tmp/generalization-quality-review/directed-candidate-construction/production-validation1/large-8"
+    ],
+    "exit_code": 0,
+    "log": "/tmp/generalization-quality-review/directed-candidate-construction/production-validation1/large-8.log"
+  },
+  {
+    "label": "large-9",
+    "command": [
+      "python3",
+      "-B",
+      "/tmp/generalization-quality-review/directed-candidate-construction/worktree/tools/check_application_comparison.py",
+      "--specification",
+      "/tmp/generalization-quality-review/directed-candidate-construction/production-validation1/large-9-specification.json",
+      "--proof",
+      "/tmp/generalization-quality-review/directed-candidate-construction/application-batch19/native-export/proof.json",
+      "--project",
+      "/tmp/generalization-quality-review/directed-candidate-construction/worktree",
+      "--poly",
+      "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+      "--output",
+      "/tmp/generalization-quality-review/directed-candidate-construction/production-validation1/large-9"
+    ],
+    "exit_code": 0,
+    "log": "/tmp/generalization-quality-review/directed-candidate-construction/production-validation1/large-9.log"
+  },
+  {
+    "label": "large-10",
+    "command": [
+      "python3",
+      "-B",
+      "/tmp/generalization-quality-review/directed-candidate-construction/worktree/tools/check_application_comparison.py",
+      "--specification",
+      "/tmp/generalization-quality-review/directed-candidate-construction/production-validation1/large-10-specification.json",
+      "--proof",
+      "/tmp/generalization-quality-review/directed-candidate-construction/application-batch19/native-export/proof.json",
+      "--project",
+      "/tmp/generalization-quality-review/directed-candidate-construction/worktree",
+      "--poly",
+      "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+      "--output",
+      "/tmp/generalization-quality-review/directed-candidate-construction/production-validation1/large-10"
+    ],
+    "exit_code": 0,
+    "log": "/tmp/generalization-quality-review/directed-candidate-construction/production-validation1/large-10.log"
+  }
+]

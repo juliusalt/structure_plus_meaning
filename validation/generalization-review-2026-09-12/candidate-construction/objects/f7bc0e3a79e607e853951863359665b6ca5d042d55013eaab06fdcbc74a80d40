@@ -1,0 +1,181 @@
+{
+  "question": "Keep both formation projections as explicit contextual facts instead of consuming the same supplied premise in a repeated first-goal tactic; preserve the complete native validation group.",
+  "boundary": "Conditional prospective proof-repair comparison on exact retained commands. Unchanged statements and executable definitions are required; the supplied diagnostic judgments select a proof attempt. This does not derive those judgments or establish proof acceptance.",
+  "specification_sha256": "a1870f79b10aa8e936cf768d571f1f34e5ff2cc48ec24ed9a5059294215cdb00",
+  "results": [
+    {
+      "problem": "proof-repair",
+      "initial_result": {
+        "input_formed": true,
+        "residual": [
+          [
+            1,
+            0
+          ]
+        ],
+        "profiles": [
+          {
+            "candidate": 0,
+            "profile": []
+          },
+          {
+            "candidate": 1,
+            "profile": []
+          }
+        ],
+        "losses": [
+          {
+            "from": 0,
+            "to": 0,
+            "losses": []
+          },
+          {
+            "from": 0,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 1,
+            "to": 0,
+            "losses": []
+          },
+          {
+            "from": 1,
+            "to": 1,
+            "losses": []
+          }
+        ],
+        "safe_facets": [
+          0,
+          1
+        ],
+        "conflicts": [],
+        "repairs": [
+          [
+            1,
+            0,
+            1,
+            0
+          ]
+        ],
+        "unrepairable": [],
+        "extension": [
+          1
+        ],
+        "revision": {
+          "retained": [],
+          "withdrawn": [],
+          "repairs": [
+            [
+              1,
+              0,
+              1,
+              0
+            ]
+          ],
+          "selection": [
+            1
+          ],
+          "residual": []
+        }
+      },
+      "followed_result": {
+        "input_formed": true,
+        "residual": [],
+        "profiles": [
+          {
+            "candidate": 0,
+            "profile": []
+          },
+          {
+            "candidate": 1,
+            "profile": [
+              [
+                1,
+                0
+              ]
+            ]
+          }
+        ],
+        "losses": [
+          {
+            "from": 0,
+            "to": 0,
+            "losses": []
+          },
+          {
+            "from": 0,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 1,
+            "to": 0,
+            "losses": [
+              [
+                1,
+                0
+              ]
+            ]
+          },
+          {
+            "from": 1,
+            "to": 1,
+            "losses": []
+          }
+        ],
+        "safe_facets": [
+          0,
+          1
+        ],
+        "conflicts": [],
+        "repairs": [],
+        "unrepairable": [],
+        "extension": [
+          1
+        ],
+        "revision": {
+          "retained": [
+            1
+          ],
+          "withdrawn": [],
+          "repairs": [],
+          "selection": [
+            1
+          ],
+          "residual": []
+        }
+      },
+      "assessment": {
+        "required_observations": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "missing_requirements": {
+          "0": [
+            [
+              1,
+              0
+            ]
+          ],
+          "1": []
+        },
+        "eligible": [
+          1
+        ],
+        "dominant": [
+          1
+        ],
+        "strict_improvements": [],
+        "boundary": "Assessment of the supplied finite candidates under explicit mandatory observations. Eligibility uses all original observations, including facets unnecessary for distinguishing these candidates. The returned adequate profiles determine comparison; broader coverage and candidate construction remain separate.",
+        "receipt_sha256": "5c0f06cab741d6f8a5d0ce10a2a4da59a26994ebb56de968cb57efe54e4bd50c"
+      }
+    }
+  ]
+}

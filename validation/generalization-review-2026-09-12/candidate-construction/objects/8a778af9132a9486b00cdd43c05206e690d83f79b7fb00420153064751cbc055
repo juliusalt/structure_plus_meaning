@@ -1,0 +1,35 @@
+{
+  "status": "accepted",
+  "invocation": "ea24d860-129c-47e7-a8ef-10365aed25be",
+  "question": "Recover the complete proved native input and prepare its reader execution.",
+  "source_spec": "/tmp/generalization-quality-review/finite-reader-example/native-ground-source-proposal.json",
+  "catalogs": "/tmp/generalization-quality-review/directed-candidate-construction/application-batch19/guided-regression",
+  "exit_code": 0,
+  "sources_and_tools_unchanged": true,
+  "recovery": {
+    "source_uses": 2,
+    "extended_uses": 3,
+    "old_bindings": 1,
+    "extended_bindings": 2,
+    "retained_bag_occurrences": 2,
+    "argument_fields": 12,
+    "complete_sources_recovered": true
+  },
+  "initial_call_occurrences": 8,
+  "distinct_initial_calls": 7,
+  "compiled_trace_entries": [
+    350,
+    349,
+    342,
+    348,
+    347
+  ],
+  "prepared_cases": 76,
+  "specification": "/tmp/generalization-quality-review/directed-candidate-construction/application-batch19/native-source/specification.json",
+  "specification_sha256": "060772c7626cbfaa9f98f45cbcb9744daa7ad489f2e3c60e62e0cf1c403fb4cf",
+  "results_sha256": "933a779a199e5ca58ea64667d0369934a76bf432b5b360d87858ed67c831d225",
+  "proof_receipt": "/tmp/generalization-quality-review/directed-candidate-construction/application-batch19/source-export/proof.json",
+  "native_input_sha256": "0f7ecf837156819925f7e3fcfdc41a9b84f7689d18a06d0d765a84bff6faa5a1",
+  "proof_receipt_sha256": "95ec8a18ef503f8f8444d1ddfcfe46d5f031546c50e81363967d2560fbdc56d0",
+  "boundary": "Actual code and complete field recovery accepted; prepared reader cases still require execution."
+}

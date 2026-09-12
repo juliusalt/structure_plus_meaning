@@ -1,0 +1,25 @@
+[
+  {
+    "label": "retain-complete-batch",
+    "command": [
+      "python3",
+      "-B",
+      "/home/julius/structure_and_semantics/tools/retain_reasoning_review.py",
+      "--specification",
+      "/tmp/generalization-quality-review/directed-candidate-construction/candidate-archive-spec.json",
+      "--output",
+      "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-12/candidate-construction",
+      "--project",
+      "/home/julius/structure_and_semantics",
+      "--fallback-sources",
+      "/tmp/generalization-quality-review/directed-candidate-construction",
+      "--prior-archive",
+      "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/structural-observations",
+      "--prior-archive",
+      "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/indexed-subject-contracts-retained-inputs"
+    ],
+    "exit_code": 1,
+    "seconds": 2.1672157109715044,
+    "log": "/tmp/generalization-quality-review/directed-candidate-construction/final-archive-validation1/retain-complete-batch.log"
+  }
+]

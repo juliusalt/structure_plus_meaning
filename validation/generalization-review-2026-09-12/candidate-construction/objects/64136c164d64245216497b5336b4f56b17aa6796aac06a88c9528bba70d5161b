@@ -1,0 +1,42 @@
+{
+  "status": "evaluated",
+  "exit_code": 0,
+  "elapsed_seconds": 3.2164582880213857,
+  "runtime_seconds": 0.06862820708192885,
+  "receipt": "/tmp/generalization-quality-review/directed-candidate-construction/proof-repair15-investigation/proof-repair/initial/receipt.json",
+  "input_formed": true,
+  "residual": [
+    [
+      1,
+      0
+    ]
+  ],
+  "repair_witnesses": 2,
+  "conflicts": 0,
+  "unrepairable": 0,
+  "extension": [
+    1
+  ],
+  "revision": {
+    "retained": [],
+    "withdrawn": [],
+    "repairs": [
+      [
+        1,
+        0,
+        1,
+        0
+      ],
+      [
+        1,
+        0,
+        1,
+        1
+      ]
+    ],
+    "selection": [
+      1
+    ],
+    "residual": []
+  }
+}

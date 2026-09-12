@@ -1,0 +1,54 @@
+{
+  "status": "evaluated",
+  "exit_code": 0,
+  "elapsed_seconds": 3.108937975950539,
+  "runtime_seconds": 0.06747014191932976,
+  "receipt": "/tmp/generalization-quality-review/directed-candidate-construction/proposal-investigation2/scope-directed-bindings/initial/receipt.json",
+  "input_formed": true,
+  "residual": [
+    [
+      1,
+      0
+    ]
+  ],
+  "repair_witnesses": 4,
+  "conflicts": 0,
+  "unrepairable": 0,
+  "extension": [
+    0
+  ],
+  "revision": {
+    "retained": [],
+    "withdrawn": [],
+    "repairs": [
+      [
+        1,
+        0,
+        0,
+        33
+      ],
+      [
+        1,
+        0,
+        0,
+        34
+      ],
+      [
+        1,
+        0,
+        0,
+        35
+      ],
+      [
+        1,
+        0,
+        0,
+        36
+      ]
+    ],
+    "selection": [
+      0
+    ],
+    "residual": []
+  }
+}

@@ -1,0 +1,31 @@
+from pathlib import Path
+import prepare_repair as r
+print(r.prepare(8,'Repair the reserved Isar fact name in the target-validity proof, after reviewing all new fact declarations, and validate it together with whole-fragment and complete-binding application controls.',{
+ 'Factor_Application_Candidates':[
+ ('      and instance: "finite_schema_instance','      and inst: "finite_schema_instance'),
+ ('      using instance by','      using inst by'),
+ ('application_plan_result_member enumeration instance material','application_plan_result_member enumeration inst material')]
+},family='applicationconstruction'))
+B=Path(__file__).parent
+s=(B/'application_controls.py').read_text()
+old='    return deepcopy(rows)'
+new='''    conflict=deepcopy(original[1])
+    conflict['frontier']=[[8,{'pair':[{'payload':[99]},{'payload':[8]}]}]]
+    rows.append(case('whole-fragment-conflict',[conflict]))
+    repaired=deepcopy(conflict);repaired['frontier'].append([7,{'payload':[8]}])
+    rows.append(case('whole-fragment-repaired',[repaired]))
+    for name,edit,valid in [
+        ('conflicting-target-binding',lambda bs:bs+[[0,{'payload':[9]}]],False),
+        ('missing-target-binding',lambda bs:bs[:-1],False),
+        ('extra-target-binding',lambda bs:bs+[[999,{'payload':[9]}]],False),
+        ('repeated-equal-target-binding',lambda bs:bs+[bs[0]],True)]:
+        p=deepcopy(original[0]);p['required'][0]['bindings']=edit(p['required'][0]['bindings'])
+        rows.append(case(name,[p],expected_formed=valid))
+    return deepcopy(rows)'''
+assert old in s;(B/'application_controls2.py').write_text(s.replace(old,new))
+s=(B/'check_application_candidates.py').read_text();old="""    values=dict(x['bindings'])
+    for site,_,_,fragment in fragments:
+     if all(values.get(a)==v for a,v in fragment.items()):""";new="""    target_rows={(a,ref.freeze(v)) for a,v in x['bindings']}
+    for site,_,_,fragment in fragments:
+     if {(a,ref.freeze(v)) for a,v in fragment.items()}<=target_rows:"""
+assert old in s;(B/'application-candidates-adapter2.py').write_text(s.replace(old,new))

@@ -1,0 +1,76 @@
+{
+  "status": "accepted",
+  "invocation": "f95ef883-df8c-46e5-8009-5a1c3c060745",
+  "scope": "Complete finite reports for the supplied case family, with native comparisons where declared",
+  "reasoning_cases": 55,
+  "input_starts": [
+    0,
+    335,
+    336,
+    337,
+    1000,
+    10000000000000000000000000
+  ],
+  "binding_source_executions": 1,
+  "construction_frontier_executions": 0,
+  "construction_seed_executions": 0,
+  "coverage_executions": 54,
+  "compilation_executions": 0,
+  "native_library_executions": 54,
+  "binding_gap_executions": 55,
+  "environment_requirement_executions": 54,
+  "guided_state_executions": 265,
+  "native_guided_executions": 0,
+  "unproved_goal_assumption_cases": 0,
+  "exported_libraries": {
+    "specialization_report_reasoning_library": {
+      "path": "/tmp/generalization-quality-review/candidate-final-replays/native/original-guided/run/library-specialization_report_reasoning_library.json",
+      "sha256": "8a8928d4354d5cd3757a7bd1332e32f2a0001a6a865cf8b427090f96dc2b6ef3",
+      "entries": [
+        342
+      ]
+    },
+    "binding_observation_reasoning_library": {
+      "path": "/tmp/generalization-quality-review/candidate-final-replays/native/original-guided/run/library-binding_observation_reasoning_library.json",
+      "sha256": "ee82ed228bb34f482d79e64649568e92cf280149bfb4ca1d7c16ad039910d972",
+      "entries": [
+        347
+      ]
+    },
+    "inference_reader_construction_library": {
+      "path": "/tmp/generalization-quality-review/candidate-final-replays/native/original-guided/run/library-inference_reader_construction_library.json",
+      "sha256": "3d5d9be95bf0c14f1916196d5a678a821c80c2113b43478253991b2ee087f1d2",
+      "entries": [
+        348,
+        349,
+        350
+      ]
+    },
+    "inference_reader_investigation_library": {
+      "path": "/tmp/generalization-quality-review/candidate-final-replays/native/original-guided/run/library-inference_reader_investigation_library.json",
+      "sha256": "7f63721d8a192f0b9333f1751daefe476d69214bb53c58755a1a1f14f2902ed1",
+      "entries": [
+        342,
+        347,
+        345,
+        348,
+        349,
+        350
+      ]
+    }
+  },
+  "cases_source": "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/reader-source-requirements/objects/465559da6b7d830df1fca7c882e6e890308ffc7d3b99d949d739ad5b8d41ab2b",
+  "results_sha256": "9953c2cd1d1d349f2579a44c67042d761060ee192413e79f61c830acb743b528",
+  "proof_receipt": "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-12/candidate-construction/objects/0cc1c1c025f1c3a592b8e098dbc58f76dd4f5d615a27efcaccbf7ef355e0990f",
+  "proof_receipt_sha256": "0cc1c1c025f1c3a592b8e098dbc58f76dd4f5d615a27efcaccbf7ef355e0990f",
+  "boundary": "Structural controls verify exact generation and conditional reports. Native semantic guarantees come from the separately accepted theory contracts; this host review is not native mathematical-proof admission."
+}
+{
+  "stage": "original-guided",
+  "status": "accepted",
+  "receipt_sha256": "6217a7e37242613b4d265cc92df3d7a22669455cdbe0db8e503470d92c98f477",
+  "archive_index_sha256": "3c7673725f2c754e5bb5253867b57c28a90aacf3079f85ced43b7b6a5cb7692e",
+  "replayer_sha256": "bd2ec9ac38183679c38e6c5abe6e6ba12fc987fa07777aa40a1f3561f5d9f34a",
+  "evidence_io_sha256": "72b87df5f4f3ef4c7fc9a425ce4551f0df1c015916857d52eb2eb58040343fff",
+  "boundary": "The retained inputs and original code are replayed. This reproduces complete checked reports; it does not rerun case selection or establish new native source readings."
+}

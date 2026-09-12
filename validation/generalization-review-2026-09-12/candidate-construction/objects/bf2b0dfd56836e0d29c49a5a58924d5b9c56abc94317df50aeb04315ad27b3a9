@@ -1,0 +1,90 @@
+{
+  "question": "The native source consumer needs the complete catalog domain retained in the baseline, but the new wrapper supplied a different four-name list.",
+  "boundary": "Prospective conditional correction of the validation input domain after the actual consumer reported a missing required library. This derives the requested names from the retained actual baseline domain; successful current execution remains required.",
+  "problems": [
+    {
+      "name": "actual-catalog-domain",
+      "case": {
+        "schema": "finite-investigation-1",
+        "kind": "basis",
+        "question": "The native source consumer needs the complete catalog domain retained in the baseline, but the new wrapper supplied a different four-name list.",
+        "scope": {
+          "candidates": {
+            "0": "Keep the manually listed four catalog names",
+            "1": "Reuse the complete actual baseline export domain"
+          },
+          "facets": {
+            "0": "Retain the same original cases and source requirements",
+            "1": "Request every actual catalog needed by the baseline consumer"
+          },
+          "subjects": "/tmp/generalization-quality-review/directed-candidate-construction/application-catalog14-proposal.json"
+        },
+        "candidates": [
+          0,
+          1
+        ],
+        "facets": [
+          0,
+          1
+        ],
+        "selected": [],
+        "observations": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ]
+        ],
+        "relation": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "evidence": [
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-catalog14-proposal.json",
+            "sha256": "27d923eb5b8f133b48eacf19e129bff6a66e34660fbfc6d53bd14a63275b2fb5"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/performance-draft14/check_candidate_regressions.py",
+            "sha256": "a8d7c10b610cd5949145134a5a4b6bd65a7830e72cc3b9b12217603499221bd5"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/structural-binding-observations/guided-regression1/receipt.json",
+            "sha256": "e795be6f78846656b5958fcd5a98a5128e71b437bf0af121e9ad1bc6e8062470"
+          }
+        ],
+        "semantic_boundary": "Prospective conditional correction of the validation input domain after the actual consumer reported a missing required library. This derives the requested names from the retained actual baseline domain; successful current execution remains required."
+      },
+      "required_observations": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ]
+      ]
+    }
+  ]
+}

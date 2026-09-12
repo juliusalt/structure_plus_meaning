@@ -1,0 +1,11 @@
+{
+  "session": "RRA_Factor_Structural_Bootstrap",
+  "accepted_source_theories": 836,
+  "unchanged_recorded_build_inputs": 842,
+  "build_invocation": "6f81afd8-4c5e-4b1c-ab08-500ff03e0264",
+  "whitespace_exit_code": 0,
+  "whitespace_output": "",
+  "tool_validation": "/tmp/generalization-quality-review/candidate-delivery-review/proof-retention-validation1/steps.json",
+  "cosmetic_program_preservation": "/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-diagnostic.json",
+  "boundary": "The current theory sources, ROOT and proof-check tools exactly match the accepted complete build. Changed native execution and retention tools have their separate full test and runtime evidence."
+}

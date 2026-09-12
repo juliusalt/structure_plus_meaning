@@ -1,0 +1,17 @@
+"""Describe prospective result-corruption controls for the complete native adapter."""
+from pathlib import Path
+import json
+B=Path(__file__).parent
+proposal={
+ 'problem':'The new application adapter must reject altered complete subjects, coverage, feasibility and actual application outputs instead of merely accepting the supplied controls.',
+ 'requirements':['Use only retained actual native output as the baseline.','Every changed input or claimed output must be rejected by the independent assessment.','Do not count a malformed log or unrelated parse failure as semantic rejection.','Keep full mutated logs and exact failures.'],
+ 'mutations':[
+  {'kind':'input part','operation':'Replace the first available source site in one decoded input by a foreign premise site.'},
+  {'kind':'input problem','operation':'Change the schema head in the echoed complete problem.'},
+  {'kind':'coverage','operation':'Remove a nonempty covered requirement from one part.'},
+  {'kind':'feasibility','operation':'Replace a successful constructed plan by None.'},
+  {'kind':'applications','operation':'Remove a required application from a successful actual plan result.'},
+  {'kind':'observation','operation':'Remove one actual required-condition observation from a nonempty comparison report.'}],
+ 'boundary':'These are independent proposed corruptions of future actual native results. They do not replace the mathematical observation contracts, and no result has yet been generated or accepted.'}
+(B/'application-assessment-mutations-proposal.json').write_text(json.dumps(proposal,indent=2)+'\n')
+print(json.dumps(proposal,separators=(',',':')))

@@ -1,0 +1,9 @@
+Running Native_Directed13 ...
+Native_Directed13 FAILED (see also "isabelle build_log -H Error Native_Directed13")
+*** Failed to load theory "Native_Directed13.Finite_Directed_Execution" (unresolved "Native_Directed13.Finite_Directed_Contributions")
+*** Failed to finish proof (line 162 of "/tmp/native-investigation-report-diagnostic-directed13/theories/Finite_Directed_Contributions.thy"):
+*** goal (1 subgoal):
+***  1. ¬ False
+*** At command "by" (line 162 of "/tmp/native-investigation-report-diagnostic-directed13/theories/Finite_Directed_Contributions.thy")
+Unfinished session(s): Native_Directed13
+0:00:08 elapsed time, 0:00:06 cpu time, factor 0.80

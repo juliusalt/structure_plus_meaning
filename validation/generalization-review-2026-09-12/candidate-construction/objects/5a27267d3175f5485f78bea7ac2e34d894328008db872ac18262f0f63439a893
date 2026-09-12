@@ -1,0 +1,29 @@
+{
+  "status": "evaluated",
+  "exit_code": 0,
+  "elapsed_seconds": 3.1443282989785075,
+  "runtime_seconds": 0.06835207005497068,
+  "receipt": "/tmp/generalization-quality-review/directed-candidate-construction/application-controls2-investigation1/whole-binding-controls/followed/receipt.json",
+  "input_formed": true,
+  "residual": [],
+  "repair_witnesses": 0,
+  "conflicts": 0,
+  "unrepairable": 0,
+  "extension": [
+    0,
+    1
+  ],
+  "revision": {
+    "retained": [
+      0,
+      1
+    ],
+    "withdrawn": [],
+    "repairs": [],
+    "selection": [
+      0,
+      1
+    ],
+    "residual": []
+  }
+}

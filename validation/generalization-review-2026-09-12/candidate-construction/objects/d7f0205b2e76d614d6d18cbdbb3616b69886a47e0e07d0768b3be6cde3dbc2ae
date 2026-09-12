@@ -1,0 +1,136 @@
+{
+  "schema": "finite-investigation-1",
+  "kind": "basis",
+  "question": "The actual application constructor repeatedly recomputes coverage and compares complete structural requirements inside search: 48 parts take 30.744 seconds and 96 parts exceed the 60-second native budget.",
+  "scope": {
+    "candidates": {
+      "0": "Keep the uncached search over complete structural requirement records",
+      "1": "Check the complete coverage-cache and indexed-subject proposal"
+    },
+    "facets": {
+      "0": "Retain the original semantic scope and actual source conditions",
+      "1": "The retained proposal addresses the diagnosed cost while exposing its proof or measurement obligation"
+    },
+    "subjects": "/tmp/generalization-quality-review/directed-candidate-construction/application-performance14-proposal.json"
+  },
+  "candidates": [
+    0,
+    1
+  ],
+  "facets": [
+    0,
+    1
+  ],
+  "selected": [
+    1
+  ],
+  "observations": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      1
+    ],
+    [
+      1,
+      1,
+      2
+    ],
+    [
+      1,
+      1,
+      3
+    ]
+  ],
+  "relation": [
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      1
+    ]
+  ],
+  "evidence": [
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-performance14-investigation1/actual-application-search-cost/initial/evidence-a6a2da88-faac-4a5b-8992-0c4679530ea1/65be867f37b46e94d6c4cde152b690972e4a39e6853ddeea79226c8aa73fe92e",
+      "sha256": "65be867f37b46e94d6c4cde152b690972e4a39e6853ddeea79226c8aa73fe92e",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/application-performance14-proposal.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-performance14-investigation1/actual-application-search-cost/initial/evidence-a6a2da88-faac-4a5b-8992-0c4679530ea1/2903363bcad22efc5ae146050e64f152228d6dfb2b2165f099641ffb79d2a991",
+      "sha256": "2903363bcad22efc5ae146050e64f152228d6dfb2b2165f099641ffb79d2a991",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/performance-draft14/check_application_candidates.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-performance14-investigation1/actual-application-search-cost/initial/evidence-a6a2da88-faac-4a5b-8992-0c4679530ea1/79803a9a22ccf370039b4335d024c951a05d004fbd5283bb3427679505289532",
+      "sha256": "79803a9a22ccf370039b4335d024c951a05d004fbd5283bb3427679505289532",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/performance-draft14/Factor_Application_Execution.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-performance14-investigation1/actual-application-search-cost/initial/evidence-a6a2da88-faac-4a5b-8992-0c4679530ea1/9ef648c9faedd5c41d2dbe719e4507b7b4dec5a9d366090d52d1ee22e7f0e8b2",
+      "sha256": "9ef648c9faedd5c41d2dbe719e4507b7b4dec5a9d366090d52d1ee22e7f0e8b2",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/performance-draft14/Factor_Application_Candidates.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-performance14-investigation1/actual-application-search-cost/initial/evidence-a6a2da88-faac-4a5b-8992-0c4679530ea1/c9a04639f2fd6fe59c5be9296edecd5be334f6b5e721f52acca105a9be968116",
+      "sha256": "c9a04639f2fd6fe59c5be9296edecd5be334f6b5e721f52acca105a9be968116",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/performance-draft14/Finite_Indexed_Candidate_Assembly.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-performance14-investigation1/actual-application-search-cost/initial/evidence-a6a2da88-faac-4a5b-8992-0c4679530ea1/ee220916b10627ebb36be32dbfecf3681b63da3371a7f9ea17c5ee9947940aaa",
+      "sha256": "ee220916b10627ebb36be32dbfecf3681b63da3371a7f9ea17c5ee9947940aaa",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/performance-draft14/Finite_Candidate_Assembly.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-performance14-investigation1/actual-application-search-cost/initial/evidence-a6a2da88-faac-4a5b-8992-0c4679530ea1/9c435e657cf68540169ef1f1b87ead851e9529330546d865981c0377be44e85f",
+      "sha256": "9c435e657cf68540169ef1f1b87ead851e9529330546d865981c0377be44e85f",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/application-performance14-investigation.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-performance14-investigation1/actual-application-search-cost/initial/evidence-a6a2da88-faac-4a5b-8992-0c4679530ea1/7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "sha256": "7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "original_path": "/home/julius/structure_and_semantics/tools/check_decision_cases.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-performance14-investigation1/actual-application-search-cost/initial/receipt.json",
+      "sha256": "33e167af06b96cfa0904c0baa7adc9a5d5761ad785a6768816b6614d801fac9c"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-performance14-investigation1/actual-application-search-cost/initial/case.json",
+      "sha256": "aa1f47151880c8b985b9ec15f363ba28096091dc786da18e49a8b1bc0181d9f7"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-performance14-investigation1/actual-application-search-cost/initial/run.log",
+      "sha256": "93146c9c59d07a870a002542f916a6daee06b32d5e5f5b979e2aeeb3c3961633"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/revise_investigation_case.py",
+      "sha256": "70466b6a380397ef2c390d33c150d1b536feac4aafcedae6bb20d3e1a5106d66"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/review_investigations.py",
+      "sha256": "368a254b9dc8f4323522d0edf4a6c7c1cac118afd70a97e0e000bf7bf86a6bb0"
+    }
+  ],
+  "semantic_boundary": "Prospective conditional choice driven by retained actual native execution costs and the exact generated call sites. It chooses a proof-and-measurement attempt; it does not establish the proposed equations or their runtime improvement."
+}

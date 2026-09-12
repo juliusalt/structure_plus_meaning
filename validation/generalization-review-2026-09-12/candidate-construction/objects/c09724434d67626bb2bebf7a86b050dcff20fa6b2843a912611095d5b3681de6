@@ -1,0 +1,54 @@
+{
+  "status": "evaluated",
+  "exit_code": 0,
+  "elapsed_seconds": 3.1781877690227702,
+  "runtime_seconds": 0.0642235348932445,
+  "receipt": "/tmp/generalization-quality-review/directed-candidate-construction/application-performance14-investigation1/actual-application-search-cost/initial/receipt.json",
+  "input_formed": true,
+  "residual": [
+    [
+      1,
+      0
+    ]
+  ],
+  "repair_witnesses": 4,
+  "conflicts": 0,
+  "unrepairable": 0,
+  "extension": [
+    1
+  ],
+  "revision": {
+    "retained": [],
+    "withdrawn": [],
+    "repairs": [
+      [
+        1,
+        0,
+        1,
+        0
+      ],
+      [
+        1,
+        0,
+        1,
+        1
+      ],
+      [
+        1,
+        0,
+        1,
+        2
+      ],
+      [
+        1,
+        0,
+        1,
+        3
+      ]
+    ],
+    "selection": [
+      1
+    ],
+    "residual": []
+  }
+}

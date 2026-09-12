@@ -1,0 +1,98 @@
+# Constructive candidate search and scoped binding search
+
+The mechanism now constructs a source-site plan from supplied parts. Its declared
+language contains every subset that preserves the mandatory applications across
+the complete problem family. Under the explicit formation gate, construction
+succeeds exactly when that language is nonempty. Every returned plan is inclusion
+minimal, with a lost-requirement witness for each retained site.
+
+A separate binding method searches for complete bindings over the demanded
+variable domain. Its result is proved equal to restricting the full compatible
+union meaning to that domain. Whole matching fragments remain intact, and the
+original instance and material checks still govern complete applications.
+
+The exact requirement map carries complete problem, target and variable
+subjects. Coverage is computed from actual pattern matching at source sites.
+Caching and indexed computation preserve those equations; returned missing
+requirements and removal witnesses retain their complete original subjects.
+
+The complete repository check is retained in [main-check.json](main-check.json).
+The archive's [index](index.json) distinguishes source proofs, accepted native
+runs, conditional investigations and other retained development evidence.
+Failed proofs, partial executions, timeouts, proposed changes and independent
+criticisms remain available through its attachments and proof contexts.
+The [delivery verification](../candidate-construction-delivery/README.md) retains
+the final archive replay results and the complete combined check.
+
+## Executed scope
+
+The 61 generic cases include 8,256 overlapping binding fragments over 128
+variables. The 30 application cases include the original problems, joint
+families, missing and conflicting whole fragments, repeated presentations,
+invalid target bindings, empty scopes and malformed inputs. Small bases also
+execute every candidate subset and compare its actual application sufficiency.
+The 55 original guided cases and 76 native reader cases preserve every complete
+mathematical report, including their conditions and reasons.
+
+The final experimental run measured these construction reports. All four runs
+also finished their complete native subject, coverage and application checks.
+
+| Source sites | Requirements | Construction report seconds |
+| ---: | ---: | ---: |
+| 48 | 32 | 0.060 |
+| 96 | 64 | 0.936 |
+| 192 | 128 | 14.991 |
+| 240 | 224 | 20.910 |
+
+These are observed timings on the retained inputs. The public supplied-input
+adapter executes the same cases and preserves every mathematical result and
+witness under the explicit outer case enumeration map. The scoped binding
+operation still returns every supported complete binding; large result sets can
+remain expensive. A timeout supplies no absence or impossibility conclusion.
+
+## Supplied inputs and exact replay
+
+The public tool is `tools/check_application_comparison.py`. Its input is an
+object with a `cases` list; every case supplies a name, complete problem records
+and a list of source-site parts. Optional target presentations must be exact.
+Optional `expected_formed` values are test expectations, not native observation
+inputs. Unknown fields and ambiguous workload indices are rejected. Redundant
+entry and schema fields on a target must agree with the enclosing problem.
+
+The JSON term family contains payloads, pairs, the empty artifact target and
+variables in patterns. The Isabelle contract states its wider finite-term
+domain separately. The supplied control and larger cases are retained in
+[cases/controls.json](cases/controls.json), [cases/large-7.json](cases/large-7.json),
+[cases/large-8.json](cases/large-8.json), [cases/large-9.json](cases/large-9.json) and
+[cases/large-10.json](cases/large-10.json).
+
+Use the retained code and original helpers without relying on temporary paths:
+
+```sh
+python3 -B tools/replay_reasoning_review.py \
+  --archive validation/generalization-review-2026-09-12/candidate-construction \
+  --stage application-controls \
+  --poly /opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly \
+  --output /tmp/replay-constructed-application-controls
+```
+
+The final stages are `application-controls`, `application-large-7` through
+`application-large-10`, `generic-search`, `original-guided`, `native-source` and
+`original-reader`; `finite-presentations` checks the shared input-retention
+boundary on complete finite data. Each replay requires a fresh output directory. Helpers are
+resolved from their retained bytes even if an earlier adapter changes Python's
+import path. Native reports retain every mathematical field. Only declared
+clock fields vary; the unordered host necessity-witness family is compared in
+actual-site order with every field and duplicate preserved.
+
+Every explicit proof/export procedure input and parent/helper input is retained
+in the proof entry. The complete [input audit](input-audit.json) also accounts
+for native runs and conditional investigations. Historical driver recovery
+requires the original recorded digest. Current checked execution retains every
+nonexternal input before running it, then checks complete retained coverage and
+both live and retained hashes. Parent metadata is read from its exact retained
+bytes, including compressed earlier evidence.
+
+This closes the candidate-construction and realistic-basis search requirement
+for the declared languages. Whole native mathematical-proof admission, coverage
+of every development decision and the final repository audit remain open.

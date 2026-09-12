@@ -1,0 +1,90 @@
+{
+  "question": "Instantiate whole-fragment filtering with the actual fresh pair premise instead of relying on schematic simplification.",
+  "boundary": "Conditional prospective proof-repair comparison on exact retained commands. Unchanged statements and executable definitions are required; the supplied diagnostic judgments select a proof attempt. This does not derive those judgments or establish proof acceptance.",
+  "problems": [
+    {
+      "name": "proof-repair",
+      "case": {
+        "schema": "finite-investigation-1",
+        "kind": "basis",
+        "question": "Instantiate whole-fragment filtering with the actual fresh pair premise instead of relying on schematic simplification.",
+        "scope": {
+          "candidates": {
+            "0": "Repeat the current failed proof commands",
+            "1": "Try the complete retained replacement group"
+          },
+          "facets": {
+            "0": "Changes are restricted to the stated proof text",
+            "1": "The proposed command addresses this retained diagnostic or repeated proof-method defect"
+          },
+          "subjects": "/tmp/generalization-quality-review/directed-candidate-construction/proof-diagnostic18.json"
+        },
+        "candidates": [
+          0,
+          1
+        ],
+        "facets": [
+          0,
+          1
+        ],
+        "selected": [],
+        "observations": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ]
+        ],
+        "relation": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "evidence": [
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/proof-diagnostic18.json",
+            "sha256": "4471517bc9534e80b5fc670a8e65733a02733eb1f0a8e9960bfbb5241854b6ef"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/prepare_repair.py",
+            "sha256": "33474d8b86a777d3cce134269b2c63b8f5a7313bbc0a1b32bc52f24656d45bda"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/draft19/Finite_Directed_Contributions.thy",
+            "sha256": "33e41ec9613e53ebd3562b9825a8d9bea2c7f7478c6c7aded197d5b4d2ca4147"
+          }
+        ],
+        "semantic_boundary": "Conditional prospective proof-repair comparison on exact retained commands. Unchanged statements and executable definitions are required; the supplied diagnostic judgments select a proof attempt. This does not derive those judgments or establish proof acceptance."
+      },
+      "required_observations": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ]
+      ]
+    }
+  ]
+}

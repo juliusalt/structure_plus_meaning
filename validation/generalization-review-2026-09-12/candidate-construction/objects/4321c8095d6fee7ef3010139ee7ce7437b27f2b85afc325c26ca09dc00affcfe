@@ -1,0 +1,177 @@
+{
+  "problem": "The complete report still compares rich problem records in indexed coverage membership and uncovered-requirement union. Two large constructions return plans at 35.529 and 45.552 seconds but their remaining coverage checks exceed the 60-second run limit.",
+  "requirements": [
+    "Preserve every complete subject, full-subset candidate language, formation gate and removal witness.",
+    "Instantiate a generic filtered-list index equation so native coverage tests use the exact predicate without rich-key membership.",
+    "Use a generic exact decoded-uncovered equation so the report computes the union on indices and returns complete missing subjects.",
+    "Retain the complete native maps, coverage, application results and all existing controls and regressions."
+  ],
+  "source_evidence": "/tmp/generalization-quality-review/directed-candidate-construction/application-batch17/native-export/export/Native_Application_Construction17.Factor_Application_Execution/code/application_comparison.ML",
+  "measurements": [
+    {
+      "receipt": "/tmp/generalization-quality-review/directed-candidate-construction/application-batch17/native-large-7/receipt.json",
+      "status": "accepted",
+      "error": null,
+      "markers": [
+        {
+          "label": "APPLICATION_INPUT",
+          "case": 7,
+          "bytes": 13225,
+          "seconds": null
+        },
+        {
+          "label": "APPLICATION_STARTED",
+          "case": 7,
+          "bytes": 2,
+          "seconds": null
+        },
+        {
+          "label": "APPLICATION_CONSTRUCTION",
+          "case": 7,
+          "bytes": 686,
+          "seconds": 0.16
+        },
+        {
+          "label": "APPLICATION_COVERAGE",
+          "case": 7,
+          "bytes": 570404,
+          "seconds": null
+        },
+        {
+          "label": "APPLICATION_INDEXED_COVERAGE",
+          "case": 7,
+          "bytes": 229126,
+          "seconds": null
+        },
+        {
+          "label": "APPLICATION_RESULTS",
+          "case": 7,
+          "bytes": 4002,
+          "seconds": null
+        },
+        {
+          "label": "APPLICATION_FINISHED",
+          "case": 7,
+          "bytes": 2,
+          "seconds": null
+        }
+      ]
+    },
+    {
+      "receipt": "/tmp/generalization-quality-review/directed-candidate-construction/application-batch17/native-large-8/receipt.json",
+      "status": "accepted",
+      "error": null,
+      "markers": [
+        {
+          "label": "APPLICATION_INPUT",
+          "case": 8,
+          "bytes": 26377,
+          "seconds": null
+        },
+        {
+          "label": "APPLICATION_STARTED",
+          "case": 8,
+          "bytes": 2,
+          "seconds": null
+        },
+        {
+          "label": "APPLICATION_CONSTRUCTION",
+          "case": 8,
+          "bytes": 1326,
+          "seconds": 2.459
+        },
+        {
+          "label": "APPLICATION_COVERAGE",
+          "case": 8,
+          "bytes": 2274900,
+          "seconds": null
+        },
+        {
+          "label": "APPLICATION_INDEXED_COVERAGE",
+          "case": 8,
+          "bytes": 911910,
+          "seconds": null
+        },
+        {
+          "label": "APPLICATION_RESULTS",
+          "case": 8,
+          "bytes": 7970,
+          "seconds": null
+        },
+        {
+          "label": "APPLICATION_FINISHED",
+          "case": 8,
+          "bytes": 2,
+          "seconds": null
+        }
+      ]
+    },
+    {
+      "receipt": "/tmp/generalization-quality-review/directed-candidate-construction/application-batch17/native-large-9/receipt.json",
+      "status": "failed",
+      "error": "Command '['/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly', '--script', '/tmp/generalization-quality-review/directed-candidate-construction/application-batch17/native-large-9/execute.ML']' timed out after 60 seconds",
+      "markers": [
+        {
+          "label": "APPLICATION_INPUT",
+          "case": 9,
+          "bytes": 53838,
+          "seconds": null
+        },
+        {
+          "label": "APPLICATION_STARTED",
+          "case": 9,
+          "bytes": 2,
+          "seconds": null
+        },
+        {
+          "label": "APPLICATION_CONSTRUCTION",
+          "case": 9,
+          "bytes": 2635,
+          "seconds": 35.529
+        },
+        {
+          "label": "APPLICATION_COVERAGE",
+          "case": 9,
+          "bytes": 9284680,
+          "seconds": null
+        }
+      ]
+    },
+    {
+      "receipt": "/tmp/generalization-quality-review/directed-candidate-construction/application-batch17/native-large-10/receipt.json",
+      "status": "failed",
+      "error": "Command '['/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly', '--script', '/tmp/generalization-quality-review/directed-candidate-construction/application-batch17/native-large-10/execute.ML']' timed out after 60 seconds",
+      "markers": [
+        {
+          "label": "APPLICATION_INPUT",
+          "case": 10,
+          "bytes": 91492,
+          "seconds": null
+        },
+        {
+          "label": "APPLICATION_STARTED",
+          "case": 10,
+          "bytes": 2,
+          "seconds": null
+        },
+        {
+          "label": "APPLICATION_CONSTRUCTION",
+          "case": 10,
+          "bytes": 2635,
+          "seconds": 45.552
+        },
+        {
+          "label": "APPLICATION_COVERAGE",
+          "case": 10,
+          "bytes": 12127664,
+          "seconds": null
+        }
+      ]
+    }
+  ],
+  "files": [
+    "/tmp/generalization-quality-review/directed-candidate-construction/performance-draft18/Factor_Application_Candidates.thy",
+    "/tmp/generalization-quality-review/directed-candidate-construction/performance-draft18/Finite_Indexed_Candidate_Assembly.thy"
+  ],
+  "criticism": "fset_of_list and ffilter themselves merely retain/filter lists in the actual exported code. Changing their order would not address the diagnosed rich equality. The proposed equations remove rich comparisons from indexed membership and uncovered union while retaining complete native subject maps. Acceptance and runtime improvement remain to be established by the complete next batch."
+}

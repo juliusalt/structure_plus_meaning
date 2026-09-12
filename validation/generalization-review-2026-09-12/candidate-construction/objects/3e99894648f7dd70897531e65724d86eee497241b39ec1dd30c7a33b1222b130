@@ -1,0 +1,145 @@
+{
+  "schema": "finite-investigation-1",
+  "kind": "basis",
+  "question": "The retainer preserves exported code but omits recorded procedure-input maps from its proof entries. It also parses the live parent receipt after retaining a potentially different historical identity. Bind proof procedure inputs explicitly and parse the exact retained parent bytes.",
+  "scope": {
+    "candidates": {
+      "0": "Leave procedure inputs implicit and parse the current parent path",
+      "1": "Use the exact explicit-input and retained-parent patch"
+    },
+    "facets": {
+      "0": "Retain every explicit export, source-proof, parent and helper input in each proof entry.",
+      "1": "Reject inconsistent identities for a shared recorded input path.",
+      "2": "Recover optional parent-proof links from the original retained parent receipt, including compressed prior evidence.",
+      "3": "Preserve the original proof sources, native reports and archive format compatibility.",
+      "4": "Validate with changed-live-parent, complete procedure-input and compressed historical-data controls, then retain and replay the entire real construction batch."
+    },
+    "subjects": "/tmp/generalization-quality-review/candidate-delivery-review/proof-retention-proposal.json"
+  },
+  "candidates": [
+    0,
+    1
+  ],
+  "facets": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "selected": [
+    0,
+    1,
+    2,
+    4
+  ],
+  "observations": [
+    [
+      3,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      2,
+      1,
+      0
+    ],
+    [
+      3,
+      1,
+      0
+    ],
+    [
+      4,
+      1,
+      0
+    ]
+  ],
+  "relation": [
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      1
+    ]
+  ],
+  "evidence": [
+    {
+      "path": "/tmp/generalization-quality-review/candidate-delivery-review/proof-retention-investigation1/exact-proof-procedure-inputs/initial/evidence-7e7464ea-b555-4109-8f21-ea54c1d5bd76/54c942ead2af53967a4226b1bd93d0831b9778c7954d5a4e6a25043c06a30a48",
+      "sha256": "54c942ead2af53967a4226b1bd93d0831b9778c7954d5a4e6a25043c06a30a48",
+      "original_path": "/tmp/generalization-quality-review/candidate-delivery-review/proof-retention-proposal.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/candidate-delivery-review/proof-retention-investigation1/exact-proof-procedure-inputs/initial/evidence-7e7464ea-b555-4109-8f21-ea54c1d5bd76/3754f1dcd6bd96c0d27d310772bade233c847eecaa1fbfbf5398d4c08bbca557",
+      "sha256": "3754f1dcd6bd96c0d27d310772bade233c847eecaa1fbfbf5398d4c08bbca557",
+      "original_path": "/tmp/generalization-quality-review/candidate-delivery-review/proof-retention-draft1/tools/retain_reasoning_review.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/candidate-delivery-review/proof-retention-investigation1/exact-proof-procedure-inputs/initial/evidence-7e7464ea-b555-4109-8f21-ea54c1d5bd76/56381a89a48d20cc4a5e68827b64494ee5286d092ed2d28e4fce21979e2f90ee",
+      "sha256": "56381a89a48d20cc4a5e68827b64494ee5286d092ed2d28e4fce21979e2f90ee",
+      "original_path": "/tmp/generalization-quality-review/candidate-delivery-review/proof-retention-draft1/tools/test_retain_reasoning_review.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/candidate-delivery-review/proof-retention-investigation1/exact-proof-procedure-inputs/initial/evidence-7e7464ea-b555-4109-8f21-ea54c1d5bd76/2d1ce2ad672aba85ca5297b0ff95a2ab16393abedb1bf21c67f2bb5e650cf57e",
+      "sha256": "2d1ce2ad672aba85ca5297b0ff95a2ab16393abedb1bf21c67f2bb5e650cf57e",
+      "original_path": "/tmp/generalization-quality-review/candidate-delivery-review/complete-input-audit2.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/candidate-delivery-review/proof-retention-investigation1/exact-proof-procedure-inputs/initial/evidence-7e7464ea-b555-4109-8f21-ea54c1d5bd76/04ae7261eecded8be99109a741d5d0359794e2eabf49bb13cd111502f9e1ab46",
+      "sha256": "04ae7261eecded8be99109a741d5d0359794e2eabf49bb13cd111502f9e1ab46",
+      "original_path": "/tmp/generalization-quality-review/candidate-delivery-review/export-input-recovery.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/candidate-delivery-review/proof-retention-investigation1/exact-proof-procedure-inputs/initial/evidence-7e7464ea-b555-4109-8f21-ea54c1d5bd76/61aff5dcf46afc70eb8557be995979195b570a44ea5fdb5f77591d370d18f467",
+      "sha256": "61aff5dcf46afc70eb8557be995979195b570a44ea5fdb5f77591d370d18f467",
+      "original_path": "/home/julius/structure_and_semantics/tools/retain_reasoning_review.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/candidate-delivery-review/proof-retention-investigation1/exact-proof-procedure-inputs/initial/evidence-7e7464ea-b555-4109-8f21-ea54c1d5bd76/109137ec86ae23fe1677267684a3a49927f4083a6fb1762344c2cd6d5a948ad7",
+      "sha256": "109137ec86ae23fe1677267684a3a49927f4083a6fb1762344c2cd6d5a948ad7",
+      "original_path": "/tmp/generalization-quality-review/candidate-delivery-review/proof-retention-investigation.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/candidate-delivery-review/proof-retention-investigation1/exact-proof-procedure-inputs/initial/evidence-7e7464ea-b555-4109-8f21-ea54c1d5bd76/7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "sha256": "7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "original_path": "/home/julius/structure_and_semantics/tools/check_decision_cases.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/candidate-delivery-review/proof-retention-investigation1/exact-proof-procedure-inputs/initial/receipt.json",
+      "sha256": "ccdd19e43e5e330739d70ad9f18ffab8cf69207c339ae32ea847343b26b12640"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/candidate-delivery-review/proof-retention-investigation1/exact-proof-procedure-inputs/initial/case.json",
+      "sha256": "ac4136279d9dc8b05dc2a5be2339961efc89ba7232059f10c1df21e5c5c06edc"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/candidate-delivery-review/proof-retention-investigation1/exact-proof-procedure-inputs/initial/run.log",
+      "sha256": "37255cc9f1efb8485f27ea212e0216f170e841fa3e505d3bbb1b2a860021d368"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/revise_investigation_case.py",
+      "sha256": "70466b6a380397ef2c390d33c150d1b536feac4aafcedae6bb20d3e1a5106d66"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/review_investigations.py",
+      "sha256": "368a254b9dc8f4323522d0edf4a6c7c1cac118afd70a97e0e000bf7bf86a6bb0"
+    }
+  ],
+  "semantic_boundary": "Prospective conditional choice on the exact retainer source, complete expanded input audit and recovered exporter. Byte identity and proof provenance are distinguished from the mathematical source contracts and native observation equations."
+}

@@ -1,0 +1,35 @@
+{
+  "status": "failed",
+  "exit_code": 142,
+  "sources_unchanged": true,
+  "checked_theories": 4,
+  "parent_theories_reused": 7,
+  "roots": [
+    "Finite_Directed_Contributions",
+    "Finite_Candidate_Assembly"
+  ],
+  "command": [
+    "isabelle",
+    "build",
+    "-o",
+    "threads=12",
+    "-o",
+    "parallel_proofs=0",
+    "-o",
+    "build_timing_threshold=0",
+    "-d",
+    "/home/julius/structure_and_semantics",
+    "-D",
+    "/tmp/native-investigation-report-diagnostic-directed7"
+  ],
+  "started_utc": "2026-09-11T20:12:48.279189+00:00",
+  "finished_utc": "2026-09-11T20:13:52.339215+00:00",
+  "log": "/tmp/native-investigation-report-diagnostic-directed7/build.log"
+}
+Running Native_Directed7 ...
+*** Timeout
+Native_Directed7 FAILED (see also "isabelle build_log -H Error Native_Directed7")
+
+Unfinished session(s): Native_Directed7
+0:01:03 elapsed time
+

@@ -1,0 +1,15 @@
+{
+  "problem": "The whitespace check finds one trailing space in the supplied-input checker, and the final archive preparation gives each original B artifact two attachment aliases. Remove those delivery defects while preserving every mathematical native program and every actual retained artifact.",
+  "requirements": [
+    "Keep the checker's parsed program and all five complete supplied-input native programs unchanged.",
+    "Remove the exact trailing whitespace reported by the repository check.",
+    "Retain every original physical artifact once per relative source location, without duplicate aliases introduced only by rescanning.",
+    "Recheck the final input scope and repository whitespace before creating the final archive."
+  ],
+  "files": [
+    "/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-draft1/check_application_comparison.py",
+    "/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-draft1/prepare_final_archive.py"
+  ],
+  "diagnostic": "/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-diagnostic.json",
+  "criticism": "The checker records its own source identity, so a whitespace edit intentionally changes that identity. Its parsed computation and every actual generated native program remain exact; no receipt identity is reused for the edited file."
+}

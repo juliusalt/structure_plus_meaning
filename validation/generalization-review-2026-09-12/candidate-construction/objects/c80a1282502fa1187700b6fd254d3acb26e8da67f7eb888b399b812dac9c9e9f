@@ -1,0 +1,7 @@
+{
+  "status": "failed",
+  "invocation": "99a71657-7bca-4e8e-ae41-e59a13f73a52",
+  "question": "Do the proved directed search and part constructor preserve complete finite results and handle the retained larger bases?",
+  "boundary": "This is native execution of the checked generic contracts on actual complete finite inputs. Application-level adoption remains separate.",
+  "error": "Command '['/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly', '--script', '/tmp/generalization-quality-review/directed-candidate-construction/native-execution2/execute.ML']' timed out after 60 seconds"
+}

@@ -1,0 +1,37 @@
+"""Compare the complete per-part witness family independently of set iteration."""
+from pathlib import Path
+import json,sys
+B=Path(__file__).parent;M=Path('/home/julius/structure_and_semantics');D=B/'replay-draft2';D.mkdir();sys.path.insert(0,str(M/'tools'));import investigate,compare_reasoning_methods as c
+p=B/'replay-draft1/replay_reasoning_review.py';s=p.read_text()
+s=s.replace('''    """The assessed case family's only measurement is each case's seconds field."""''','''    """Retain all mathematical fields and canonicalize the per-part witness family."""''')
+s=s.replace('''        assert float(case.pop("seconds")) >= 0
+    return result''','''        assert float(case.pop("seconds")) >= 0
+        if "necessity_witnesses" in case:
+            case["necessity_witnesses"] = sorted(case["necessity_witnesses"],
+                key=lambda witness: json.dumps(witness["part"], sort_keys=True))
+    return result''')
+s=s.replace("Only each case's seconds and the native constructor's declared clock field are excluded from mathematical equality.","Only each case's seconds and the native constructor's declared clock field are excluded from mathematical equality. The unordered per-part necessity witnesses are compared in actual-site order, retaining every witness field and duplicate.")
+(D/p.name).write_text(s)
+p=B/'replay-draft1/test_replay_reasoning_review.py';s=p.read_text();anchor='    def test_retained_helper_overrides_a_loaded_and_preferred_local_copy(self):'
+new='''    def test_witness_order_preserves_every_witness_content(self):
+        witnesses = [{"part": ["head"], "missing_requirements": [1]},
+                     {"part": ["premise", 2, 3], "missing_requirements": [4]}]
+        a = {"cases": [{"seconds": 1, "necessity_witnesses": witnesses}]}
+        b = {"cases": [{"seconds": 2, "necessity_witnesses": list(reversed(witnesses))}]}
+        self.assertEqual(replay.timed_data_assessment(a), replay.timed_data_assessment(b))
+        b["cases"][0]["necessity_witnesses"] = witnesses + [witnesses[0]]
+        self.assertNotEqual(replay.timed_data_assessment(a), replay.timed_data_assessment(b))
+        b["cases"][0]["necessity_witnesses"] = [dict(witnesses[0], missing_requirements=[9]), witnesses[1]]
+        self.assertNotEqual(replay.timed_data_assessment(a), replay.timed_data_assessment(b))
+
+'''
+assert anchor in s;s=s.replace(anchor,new+anchor);(D/p.name).write_text(s)
+proposal={'problem':'Exact native candidate replay reproduced every raw mathematical report but assessment equality failed because Python set iteration reordered the independently recovered per-part necessity witnesses.',
+ 'requirements':['Keep exact equality of every native mathematical report.','Compare the necessity-witness family independently of the order of the chosen-part set.','Retain every witness field, missing requirement and duplicate, and reject content changes.','Continue excluding only the explicit clock fields and preserve original raw measurements.','Reuse this same assessment comparison for production-interface preservation and retained replay.'],
+ 'diagnostic':str(B/'replay-witness-order-diagnostic.json'),'actual_failed_replay':str(B/'delivery-native-replay1/application-controls.log'),'files':[str(p) for p in D.glob('*.py')],
+ 'criticism':'The native outputs already passed exact comparison. The canonicalization applies only to a host-recovered witness family indexed by actual part objects; it does not weaken native equality or erase arbitrary list order. The retained diagnostic contains every before/after field and confirms that sorting these witness families resolves all non-clock differences.'}
+p=B/'replay2-proposal.json';p.write_text(json.dumps(proposal,indent=2)+'\n')
+boundary='Prospective conditional repair of an actual full-output replay comparison, with the complete differing assessments retained. Native equality and independent semantic checking remain separate prerequisites.'
+case=c.comparison_case([0,1],list(range(5)),[[f,0,0] for f in [0,2,3]]+[[f,1,0] for f in range(5)],[],question=proposal['problem'],scope={'candidates':{'0':'Require the incidental Python set enumeration order','1':'Compare the complete per-part witness family in deterministic actual-site order'},'facets':dict(enumerate(proposal['requirements'])),'subjects':str(p)},evidence=[{'path':str(x),'sha256':investigate.file_hash(x)} for x in [p,B/'replay-witness-order-diagnostic.json',*D.glob('*.py')]]);case['semantic_boundary']=boundary
+(B/'replay2-investigation.json').write_text(json.dumps({'question':proposal['problem'],'boundary':boundary,'problems':[{'name':'actual-witness-replay-order','case':case,'required_observations':[[f,0] for f in range(5)]}]},indent=2)+'\n')
+print(p)

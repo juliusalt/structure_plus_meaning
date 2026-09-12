@@ -1,0 +1,42 @@
+"""Compare complete binding relations using their existing finite-set boundary."""
+from pathlib import Path
+import json
+import sys
+sys.path.insert(0, '/home/julius/structure_and_semantics/tools')
+import check_reasoning as reference
+import investigate
+
+B = Path(__file__).parent
+
+
+def binding_result_key(rows):
+    return frozenset(frozenset(reference.freeze(row) for row in binding) for binding in rows)
+
+
+def main():
+    result = json.loads((B/'prototype-results.json').read_text())
+    correction = []
+    for row in result['bindings']:
+        expected, actual = row['expected'], row['directed']['results']
+        correction.append({'input': {'expected': expected, 'actual': actual},
+                           'outputs': [expected == actual, binding_result_key(expected) == binding_result_key(actual)]})
+    assert all(row['outputs'][1] for row in correction)
+    subjects = B/'assessment-subjects.json'
+    subjects.write_text(json.dumps({'condition': 'The complete collections of complete key/value binding relations are equal; neither finite-set level has an ordering condition.',
+                                   'operation': 'binding_result_key in assess_proposal.py, using the existing structural row freeze operation',
+                                   'cases': correction}, indent=2)+'\n')
+    boundary = 'This comparison retains complete expected and returned rows and the actual equality operations. Its supplied finite table is conditional host evidence, not native proof of Python semantics.'
+    evidence = [{'path': str(p), 'sha256': investigate.file_hash(p)} for p in [subjects, Path(__file__), B/'prototype-results.json']]
+    observations = [[0, c, w] for w, row in enumerate(correction) for c, good in enumerate(row['outputs']) if good]
+    case = {'schema': investigate.SCHEMA, 'kind': 'basis', 'question': 'Compare the same complete binding results at their declared two-level finite-set boundary.',
+            'candidates': [0, 1], 'facets': [0], 'selected': [], 'observations': observations,
+            'relation': [[0, 0], [0, 1], [1, 1]], 'scope': {'candidates': {'0': 'Literal public list equality', '1': 'Complete binding-set equality'},
+            'facets': {'0': 'The result compares equal to the original complete binding collection'}, 'subjects': str(subjects)},
+            'semantic_boundary': boundary, 'evidence': evidence}
+    specification = {'question': case['question'], 'boundary': boundary, 'problems': [{'name': 'binding-result-boundary', 'case': case,
+                      'required_observations': [[0, w] for w in range(len(correction))]}]}
+    (B/'assessment-investigation.json').write_text(json.dumps(specification, indent=2)+'\n')
+
+
+if __name__ == '__main__':
+    main()

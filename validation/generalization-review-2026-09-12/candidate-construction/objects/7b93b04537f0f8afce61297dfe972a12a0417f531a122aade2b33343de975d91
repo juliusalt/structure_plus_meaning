@@ -1,0 +1,106 @@
+{
+  "schema": "finite-investigation-1",
+  "kind": "basis",
+  "question": "Supply the actual input index as the existential witness when proving the complete requirement map: Isabelle has reduced the remaining reverse implication to choosing n=i. Retain the complete indexed-candidate statements and full validation group.",
+  "scope": {
+    "candidates": {
+      "0": "Repeat the current failed proof commands",
+      "1": "Try the complete retained replacement group"
+    },
+    "facets": {
+      "0": "Changes are restricted to the stated proof text",
+      "1": "The proposed command addresses this retained diagnostic or repeated proof-method defect"
+    },
+    "subjects": "/tmp/generalization-quality-review/directed-candidate-construction/applicationconstruction-repairs/proof-diagnostic15.json"
+  },
+  "candidates": [
+    0,
+    1
+  ],
+  "facets": [
+    0,
+    1
+  ],
+  "selected": [
+    1
+  ],
+  "observations": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      0
+    ]
+  ],
+  "relation": [
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      1
+    ]
+  ],
+  "evidence": [
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/applicationconstruction-repairs/proof-repair16-investigation1/proof-repair/initial/evidence-d69b3e61-6874-4379-8736-18d4c94dbec6/ffbf38ff85a77c3a17a217dba5fa96ee3942fb41bf7167ec8129aa440c6638fa",
+      "sha256": "ffbf38ff85a77c3a17a217dba5fa96ee3942fb41bf7167ec8129aa440c6638fa",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/applicationconstruction-repairs/proof-diagnostic15.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/applicationconstruction-repairs/proof-repair16-investigation1/proof-repair/initial/evidence-d69b3e61-6874-4379-8736-18d4c94dbec6/ce9f9dc1a2a7f2f8f2f007a7abaf8aa51c119ba29f73b7f20bc371a6c360d5ae",
+      "sha256": "ce9f9dc1a2a7f2f8f2f007a7abaf8aa51c119ba29f73b7f20bc371a6c360d5ae",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/prepare_repair.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/applicationconstruction-repairs/proof-repair16-investigation1/proof-repair/initial/evidence-d69b3e61-6874-4379-8736-18d4c94dbec6/7b4c354eca7ba2e1bf832a2743f5ff64225b72e0c1dc96e2a3a142b5825996b4",
+      "sha256": "7b4c354eca7ba2e1bf832a2743f5ff64225b72e0c1dc96e2a3a142b5825996b4",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/applicationconstruction-repairs/draft16/Finite_Indexed_Candidate_Assembly.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/applicationconstruction-repairs/proof-repair16-investigation1/proof-repair/initial/evidence-d69b3e61-6874-4379-8736-18d4c94dbec6/55a93e0dad67fbc8564efc979905df35dd69f43c163fbb1b050e30ca96d9be69",
+      "sha256": "55a93e0dad67fbc8564efc979905df35dd69f43c163fbb1b050e30ca96d9be69",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/applicationconstruction-repairs/proof-repair16-investigation.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/applicationconstruction-repairs/proof-repair16-investigation1/proof-repair/initial/evidence-d69b3e61-6874-4379-8736-18d4c94dbec6/7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "sha256": "7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "original_path": "/home/julius/structure_and_semantics/tools/check_decision_cases.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/applicationconstruction-repairs/proof-repair16-investigation1/proof-repair/initial/receipt.json",
+      "sha256": "b6179709ed6aa43102734e283ffffaf18fcf7cb433a27273c1bd883a8cd3b026"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/applicationconstruction-repairs/proof-repair16-investigation1/proof-repair/initial/case.json",
+      "sha256": "732386fd68ed4930c59ab69259c1626b8eeca7eb2068d1e0e76758c01b78be81"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/applicationconstruction-repairs/proof-repair16-investigation1/proof-repair/initial/run.log",
+      "sha256": "e30a9abe2cb25e348a6393c2dba22f256e176383b4d17762f4ea221ca4ca8e8c"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/revise_investigation_case.py",
+      "sha256": "70466b6a380397ef2c390d33c150d1b536feac4aafcedae6bb20d3e1a5106d66"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/review_investigations.py",
+      "sha256": "368a254b9dc8f4323522d0edf4a6c7c1cac118afd70a97e0e000bf7bf86a6bb0"
+    }
+  ],
+  "semantic_boundary": "Conditional prospective proof-repair comparison on exact retained commands. Unchanged statements and executable definitions are required; the supplied diagnostic judgments select a proof attempt. This does not derive those judgments or establish proof acceptance."
+}

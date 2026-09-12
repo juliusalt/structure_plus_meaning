@@ -1,0 +1,85 @@
+{
+  "problem": "Supply finite-image monotonicity explicitly at every analogous completeness domain step.",
+  "receipt": {
+    "status": "failed",
+    "exit_code": 1,
+    "sources_unchanged": true,
+    "sources": {
+      "Bootstrap_Relations": "50d4bf926dab217fdad8eb114fe1b0d369aa9a06741df1e568a5cc5fea7ceafe",
+      "RRA_Core": "acd13d70482fd6a3bcaed5e07776d76b2afcca45e69353d591a26639c30752db",
+      "RRA_Data": "2ff07ed3d0ae79f3a278b4e4fac5b78320a36e314ffa026db1cd014579fd7af5",
+      "RRA_Footprint": "2177e2f526618e7623714bf72ba8a542ffc3f3ee6b6cdc7e95d15ce5c094926e",
+      "RRA_Exact": "43713b16aee5bb9972674e96dd0aa393cacc9599db6c745bbf413d476f6f850f",
+      "RRA_Finite_Artifacts": "bf551280109ea4f690e7f9e21e3b00f0300c7139205e8ab2f1188c70afaebc0a",
+      "Finite_Set_Composition": "afab9aa6a45378359fb543a95a104326d282ced6a227499397bd24e2208ca2bd",
+      "Finite_Compatible_Unions": "4192efb90e2702fb885576c1b386f267b64a32df40ec082df9a07745f28afce2",
+      "Finite_Demand_Selection": "f078ff337e75c81199a1d6a36fff787dae36c88f1433637b32198d8847f185d6",
+      "Finite_Directed_Contributions": "764a8e6e6120a4af0259c25f0dfed50171e85615269c8035eb8dbdffd2538d80",
+      "Finite_Candidate_Assembly": "b2b02487dfb40ce4ed45f68ca35356cfe88c00a75d2f3d2f18074f46d9a8acf2",
+      "Finite_Directed_Execution": "a1137abb92cd4762e2b0237465617ced83d0536ea562ace812c61d6df4afd0aa"
+    },
+    "effective_source_hashes": {
+      "Finite_Compatible_Unions": "f5784f26461cada5b4b24b6c9aae37260fc33989d1b11f4c0fd20da27a305eec",
+      "Finite_Demand_Selection": "f8276d5909d64c9858680e5b3e4841044ef7725df96eaf6ee381e7d28e530364",
+      "Finite_Directed_Contributions": "49f01a4a4718c9ad7ec99ea6cdd0f75ea4406b6c24de6ba882fd64693867776e",
+      "Finite_Candidate_Assembly": "af855bd645b352204a0aac053732d81b56a31d6fae5fd337e41f177a43626a39",
+      "Finite_Directed_Execution": "31f4eeae28274401101d463fcc1ab9edb6fc83ae28f9394fe23342a56ca5ee89"
+    },
+    "checked_theories": 5,
+    "parent_theories_reused": 7,
+    "roots": [
+      "Finite_Directed_Execution"
+    ],
+    "command": [
+      "isabelle",
+      "build",
+      "-o",
+      "threads=12",
+      "-o",
+      "parallel_proofs=0",
+      "-o",
+      "build_timing_threshold=0",
+      "-d",
+      "/home/julius/structure_and_semantics",
+      "-D",
+      "/tmp/native-investigation-report-diagnostic-directed16"
+    ],
+    "started_utc": "2026-09-11T20:36:48.739535+00:00",
+    "finished_utc": "2026-09-11T20:36:57.741258+00:00",
+    "log": "/tmp/native-investigation-report-diagnostic-directed16/build.log"
+  },
+  "complete_log": "Running Native_Directed16 ...\nNative_Directed16 FAILED (see also \"isabelle build_log -H Error Native_Directed16\")\n*** Failed to load theory \"Native_Directed16.Finite_Directed_Execution\" (unresolved \"Native_Directed16.Finite_Directed_Contributions\")\n*** Failed to finish proof (line 182 of \"/tmp/native-investigation-report-diagnostic-directed16/theories/Finite_Directed_Contributions.thy\"):\n*** goal (1 subgoal):\n***  1. \u22c0a b. \u27e6\u2200t. t \u2208 set As \u27f6 t \u2208 fst ` fset U;\n***            \u2200a b. (a, b) |\u2208| U \u27f6 (a, b) |\u2208| V; fst |`| V = fset_of_list As;\n***            (a, b) |\u2208| U\u27e7\n***           \u27f9 a \u2208 set As\n*** At command \"by\" (line 182 of \"/tmp/native-investigation-report-diagnostic-directed16/theories/Finite_Directed_Contributions.thy\")\nUnfinished session(s): Native_Directed16\n0:00:08 elapsed time, 0:00:06 cpu time, factor 0.80\n",
+  "changes": [
+    {
+      "source": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Finite_Directed_Contributions.thy",
+      "before": "  have same_domain: \"fimage fst U=fimage fst V\" using covers \"0.prems\"(1) domain by (auto simp: fsubset_iff fset_of_list_elem)",
+      "after": "  have reverse: \"fimage fst V |\\<subseteq>| fimage fst U\" using covers by (simp only: domain)\n  have same_domain: \"fimage fst U=fimage fst V\"\n    by (rule order_antisym[OF fimage_mono[OF \"0.prems\"(1)] reverse])",
+      "occurrences": 1
+    },
+    {
+      "source": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Finite_Directed_Contributions.thy",
+      "before": "  show ?case using supported by (auto simp: fsubset_iff fset_of_list_elem same domain)",
+      "after": "  have covered: \"fset_of_list As |\\<subseteq>| fimage fst (ffUnion (finite_compatible_binding_parts (fset_of_list As) B U))\"\n    using fimage_mono[OF supported, of fst] by (simp only: domain)\n  have ready: \"fimage fst U=fset_of_list As\" by (simp only: same_domain domain)\n  have result: \"finite_value_binding_search 0 As (finite_compatible_binding_parts (fset_of_list As) B U) U={|U|}\"\n    by (simp add: ready covered)\n  show ?case by (simp only: result same; simp)",
+      "occurrences": 1
+    },
+    {
+      "source": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Finite_Directed_Contributions.thy",
+      "before": "  have covered: \"?A |\\<subseteq>| fimage fst ?M\" using supported domain by (auto simp: fsubset_iff fset_of_list_elem)",
+      "after": "  have covered: \"?A |\\<subseteq>| fimage fst ?M\"\n    using fimage_mono[OF supported, of fst] by (simp only: domain)",
+      "occurrences": 1
+    },
+    {
+      "source": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Finite_Directed_Contributions.thy",
+      "before": "    have same_domain: \"fimage fst U=fimage fst V\" using Suc.prems(1) covers domain by (auto simp: fsubset_iff fset_of_list_elem)",
+      "after": "    have reverse: \"fimage fst V |\\<subseteq>| fimage fst U\" using covers by (simp only: domain)\n    have same_domain: \"fimage fst U=fimage fst V\"\n      by (rule order_antisym[OF fimage_mono[OF Suc.prems(1)] reverse])",
+      "occurrences": 1
+    },
+    {
+      "source": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Finite_Directed_Contributions.thy",
+      "before": "    obtain t where row: \"(a,t) |\\<in>| V\" using key(1) domain by (auto simp: fsubset_iff fset_of_list_elem finite_image_member)",
+      "after": "    have present: \"a |\\<in>| fimage fst V\" using key(1) by (simp only: domain)\n    obtain t where row: \"(a,t) |\\<in>| V\" using present by auto",
+      "occurrences": 1
+    }
+  ],
+  "remaining": "The exact proof-body replacements remain external proposals. Only the subsequent full Isabelle check can settle acceptance."
+}

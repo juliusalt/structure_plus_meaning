@@ -1,0 +1,73 @@
+"""Preserve and check redundant target-owner fields in complete supplied inputs."""
+from pathlib import Path
+import json,sys,shutil,traceback
+B=Path(__file__).parent;M=Path('/home/julius/structure_and_semantics');D=B/'interface-draft4';D.mkdir()
+sys.path[:0]=[str(B/'interface-draft3'),str(M/'tools')]
+import check_application_comparison as prior,investigate,compare_reasoning_methods as c
+rows=json.loads((B/'interface-draft2/cases.json').read_text());spec={'cases':[{k:v for k,v in r.items() if k!='case_id'} for r in rows]}
+try:prior.construction_cases(spec)
+except AssertionError:
+ failure={'operation':'interface-draft3.construction_cases on every original complete case','input':str(B/'interface-draft2/cases.json'),'traceback':traceback.format_exc(),'actual_target_field_sets':sorted({tuple(sorted(x)) for r in rows for p in r['problems'] for x in p['required']})}
+else:raise AssertionError('The retained input validation failure did not recur.')
+(B/'interface3-complete-input-failure.json').write_text(json.dumps(failure,indent=2)+'\n')
+for p in (B/'interface-draft3').glob('*.py'):shutil.copyfile(p,D/p.name)
+p=D/'application_subjects.py';s=p.read_text()
+anchor='def normalized_problem(row):'
+new='''def normalized_schema(schema):
+    return {**schema, "premises": set(map(review.freeze, schema["premises"])),
+            "materials": set(map(review.freeze, schema["materials"]))}
+
+
+'''
+s=s.replace(anchor,new+anchor)
+s=s.replace('''"schema": {**row["schema"],
+            "premises": set(map(review.freeze, row["schema"]["premises"])),
+            "materials": set(map(review.freeze, row["schema"]["materials"]))}''','''"schema": normalized_schema(row["schema"])''')
+a=s.index('def validate_application(row):');z=s.index('    validate_term(row["conclusion"])',a)
+s=s[:a]+'''def validate_application(row, *, owner=None):
+    fields = {"conclusion", "bindings", "premises"}
+    assert type(row) is dict and fields <= set(row) <= fields | {"entry", "schema"}
+    if set(row) != fields:
+        assert owner is not None and set(row) == fields | {"entry", "schema"}
+        assert investigate.natural(row["entry"]) and row["entry"] == owner["entry"]
+        validate_schema(row["schema"])
+        assert normalized_schema(row["schema"]) == normalized_schema(owner["schema"])
+'''+s[z:]
+a=s.index('    schema = row["schema"]\n',s.index('def validate_problem'));z=s.index('    validate_rows(row["enumeration"]',a)
+body=s[a:z].replace('    schema = row["schema"]\n','')
+s=s[:a]+'    validate_schema(row["schema"])\n'+s[z:]
+s=s.replace('def validate_problem(row):','def validate_schema(schema):\n'+body+'\n\ndef validate_problem(row):')
+s=s.replace('        validate_application(target)','        validate_application(target, owner=row)');p.write_text(s)
+p=D/'check_application_comparison.py';s=p.read_text().replace('   for xs in targets:\n','   for p,xs in zip(r[\'problems\'],targets):\n').replace('    for x in xs:old.validate_application(x)','    for x in xs:old.validate_application(x, owner=p)');p.write_text(s)
+p=D/'test_application_comparison.py';s=p.read_text();anchor='    def test_term_constructor_cannot_be_silently_dropped(self):'
+extra='''    def test_redundant_target_owner_is_checked(self):
+        spec = self.construction_case()
+        problem = spec["cases"][0]["problems"][0]
+        target = {"conclusion": review.payload(), "bindings": [], "premises": [],
+                  "entry": problem["entry"], "schema": review.clone_json(problem["schema"])}
+        problem["required"] = [target]
+        self.assertEqual(comparison.construction_cases(spec)[0]["problems"][0]["required"], [target])
+        target["entry"] += 1
+        with self.assertRaises(AssertionError):
+            comparison.construction_cases(spec)
+
+    def test_redundant_target_schema_cannot_disagree(self):
+        spec = self.construction_case()
+        problem = spec["cases"][0]["problems"][0]
+        problem["required"] = [{"conclusion": review.payload(), "bindings": [], "premises": [],
+            "entry": problem["entry"], "schema": review.schema(review.payload(1))}]
+        with self.assertRaises(AssertionError):
+            comparison.construction_cases(spec)
+
+'''
+assert anchor in s;s=s.replace(anchor,extra+anchor);p.write_text(s)
+for p in D.glob('*.py'):compile(p.read_text(),str(p),'exec')
+proposal={'problem':'Complete case validation rejected the larger original targets because they include entry and schema owner fields. Those fields duplicate the enclosing problem, so their agreement must be checked explicitly before using the local target tuple.',
+'requirements':['Preserve the original complete cases, including checked redundant owner fields.','Reject unknown fields and owner entry or schema disagreement.','Factor schema normalization and shape validation once for both problem and owner checks.','Re-run all input/replay tests and all 30 complete program-generation comparisons before native production execution.'],
+'failure':str(B/'interface3-complete-input-failure.json'),'files':[str(x) for x in D.glob('*.py')],
+'criticism':'The input shape check was too narrow. Original native local targets omit owner fields because their enclosing problem already supplies the owner. This proposal validates that connection; it does not silently erase conflicting metadata or change native application semantics.'}
+p=B/'interface4-proposal.json';p.write_text(json.dumps(proposal,indent=2)+'\n')
+boundary='Prospective conditional input-boundary correction using an actual retained all-case validation rejection. Generated source equality and tests remain to be checked.'
+case=c.comparison_case([0,1],list(range(4)),[[1,0,0],[3,0,0]]+[[f,1,0] for f in range(4)],[],question=proposal['problem'],scope={'candidates':{'0':'Keep the local-target-only input validator','1':'Check redundant target owners against the complete enclosing problem'},'facets':dict(enumerate(proposal['requirements'])),'subjects':str(p)},evidence=[{'path':str(x),'sha256':investigate.file_hash(x)} for x in [p,B/'interface3-complete-input-failure.json',*D.glob('*.py')]]);case['semantic_boundary']=boundary
+(B/'interface4-investigation.json').write_text(json.dumps({'question':proposal['problem'],'boundary':boundary,'problems':[{'name':'complete-target-owner-fields','case':case,'required_observations':[[f,0] for f in range(4)]}]},indent=2)+'\n')
+print(p)

@@ -1,0 +1,103 @@
+{
+  "question": "Factor exact lookup in an admitted application family and apply it to the retained target-list member before presentation equalities rewrite the family; validate all application and current-source consumers together.",
+  "boundary": "Conditional prospective proof-repair comparison on exact retained commands. Unchanged statements and executable definitions are required; the supplied diagnostic judgments select a proof attempt. This does not derive those judgments or establish proof acceptance.",
+  "problems": [
+    {
+      "name": "proof-repair",
+      "case": {
+        "schema": "finite-investigation-1",
+        "kind": "basis",
+        "question": "Factor exact lookup in an admitted application family and apply it to the retained target-list member before presentation equalities rewrite the family; validate all application and current-source consumers together.",
+        "scope": {
+          "candidates": {
+            "0": "Repeat the current failed proof commands",
+            "1": "Try the complete retained replacement group"
+          },
+          "facets": {
+            "0": "Preserve all existing statements and executable definitions; add only exact lookup in the admitted application family and instantiate it at the presented target.",
+            "1": "The proposed command addresses this retained diagnostic or repeated proof-method defect"
+          },
+          "subjects": "/tmp/generalization-quality-review/directed-candidate-construction/applicationconstruction-repairs/proof-diagnostic8.json"
+        },
+        "candidates": [
+          0,
+          1
+        ],
+        "facets": [
+          0,
+          1
+        ],
+        "selected": [],
+        "observations": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        "relation": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "evidence": [
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/applicationconstruction-repairs/proof-diagnostic8.json",
+            "sha256": "e0ca7a5379dfc32a76c09e2997d66f2e2418e6210660c46bb9152f1e238a467a"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/prepare_repair.py",
+            "sha256": "ce9f9dc1a2a7f2f8f2f007a7abaf8aa51c119ba29f73b7f20bc371a6c360d5ae"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/applicationconstruction-repairs/draft9/Factor_Application_Candidates.thy",
+            "sha256": "a8a00643d78df4b909b1f4f716e2a4116604825358278175aad7e46631794795"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/applicationconstruction-repairs/draft9/Factor_Application_Problems.thy",
+            "sha256": "683f95c8a9c9dcdfa5bb7dede9c26bb0a5c1a7cde97f343f162e16bfe8858411"
+          }
+        ],
+        "semantic_boundary": "Conditional prospective proof-repair comparison on exact retained commands. Unchanged statements and executable definitions are required; the supplied diagnostic judgments select a proof attempt. This does not derive those judgments or establish proof acceptance."
+      },
+      "required_observations": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    }
+  ]
+}

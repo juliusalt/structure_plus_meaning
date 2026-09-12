@@ -1,0 +1,224 @@
+"""Run actual source-site construction; preserve and independently check its subjects."""
+from __future__ import annotations
+import argparse,itertools,json,sys
+from pathlib import Path
+import check_reasoning as ref,application_subjects as old
+import check_binding_contributions as binding
+import investigate,proved_code,review_investigations
+ROOT=Path(__file__).resolve().parents[1]
+normalized_problem=old.normalized_problem
+application_key=old.application_key
+
+PRELUDE=binding.PRELUDE.split('fun jsource',1)[0]
+PRELUDE+=old.PROBLEM_JSON_PRELUDE
+PRELUDE+=r'''
+type native_problem = unit N.finite_application_problem_ext;
+type native_application = N.finite_factor_term *
+ ((N.nat * N.finite_factor_term) N.fset * (N.nat * (N.nat * N.finite_factor_term)) N.fset);
+type native_construction_case = native_problem * native_application list;
+fun joption NONE = "null" | joption (SOME a) = jf jsite a;
+fun jcase (p,xs) = "[" ^ jproblem (n 0,p) ^ "," ^ jlist jlocal xs ^ "]";
+fun jrequirement (p,(x,a)) = "[" ^ jproblem (n 0,p) ^ "," ^ jlocal x ^ "," ^ jnat a ^ "]";
+fun jcandidate (c,a) = "[" ^ jnat c ^ "," ^ jf jsite a ^ "]";
+fun jconstruction (formed,(uncovered,plan)) = "{\"formed\":" ^ Bool.toString formed ^
+ ",\"uncovered\":" ^ jf jrequirement uncovered ^ ",\"plan\":" ^ joption plan ^ "}";
+fun jpair (a,b) = "[" ^ jnat a ^ "," ^ jnat b ^ "]";
+fun jtriple (a,(b,c)) = "[" ^ jnat a ^ "," ^ jnat b ^ "," ^ jnat c ^ "]";
+fun jquad (a,(b,(c,d))) = "[" ^ jnat a ^ "," ^ jnat b ^ "," ^ jnat c ^ "," ^ jnat d ^ "]";
+fun jprofile (c,p) = "{\"candidate\":" ^ jnat c ^ ",\"profile\":" ^ jlist jpair p ^ "}";
+fun jloss (c,(d,p)) = "{\"from\":" ^ jnat c ^ ",\"to\":" ^ jnat d ^ ",\"losses\":" ^ jlist jpair p ^ "}";
+fun investigation ps cases ws selected = let
+ val (construction,(formed,(residual,(profiles,losses)))) = N.application_investigation ps cases ws selected;
+ val observations = N.application_investigation_observations ps cases ws;
+ val relation = N.application_investigation_relation ps cases ws;
+ val cs = N.application_investigation_candidates ps cases;
+ val facets = [n 0,n 1,n 2];
+ val (safe,(conflicts,(repairs,unrepairable))) = N.investigation_repairs cs facets selected observations relation;
+ val extension = N.investigation_extend selected repairs;
+ val (retained,(withdrawn,(newRepairs,(revised,newResidual)))) = N.investigation_revision cs facets selected observations relation;
+ val text = "{\"construction\":" ^ jconstruction construction ^
+  ",\"input_formed\":" ^ Bool.toString formed ^ ",\"residual\":" ^ jlist jpair residual ^
+  ",\"profiles\":" ^ jlist jprofile profiles ^ ",\"losses\":" ^ jlist jloss losses ^
+  ",\"observations\":" ^ jlist jtriple observations ^ ",\"relation\":" ^ jlist jpair relation ^
+  ",\"safe_facets\":" ^ jlist jnat safe ^ ",\"conflicts\":" ^ jlist jquad conflicts ^
+  ",\"repairs\":" ^ jlist jquad repairs ^ ",\"unrepairable\":" ^ jlist jpair unrepairable ^
+  ",\"extension\":" ^ jlist jnat extension ^ ",\"revision\":{\"retained\":" ^ jlist jnat retained ^
+  ",\"withdrawn\":" ^ jlist jnat withdrawn ^ ",\"repairs\":" ^ jlist jquad newRepairs ^
+  ",\"selection\":" ^ jlist jnat revised ^ ",\"residual\":" ^ jlist jpair newResidual ^ "}}"
+ in (revised,text) end;
+fun distinct_by key [] = []
+ | distinct_by key (x::xs) = x :: distinct_by key (List.filter (fn y => key x <> key y) xs);
+fun powers [] = [[]] | powers (p::ps) = let val rest=powers ps in rest @ map (fn xs=>p::xs) rest end;
+fun emit id ps cs ws full = let
+ fun line kind data = print (kind ^ " " ^ Int.toString id ^ " " ^ data ^ "\n");
+ val ()=line "APPLICATION_INPUT" ("{\"parts\":" ^ jlist jsite ps ^
+  ",\"cases\":" ^ jlist jcase cs ^ ",\"problems\":" ^ jlist jproblem ws ^ "}");
+ val start=Time.now();
+ val ()=line "APPLICATION_STARTED" "{}";
+ val report as (formed,(uncovered,plan))=N.application_construction_report ps cs;
+ val seconds=Time.-(Time.now(),start);
+ val ()=line "APPLICATION_CONSTRUCTION" ("{\"report\":" ^ jconstruction report ^ ",\"seconds\":" ^ Time.toString seconds ^ "}");
+ val requirements=N.application_plan_requirements cs;
+ val coverage=map (fn p=>(p,N.application_part_coverage cs p)) ps;
+ val ()=line "APPLICATION_COVERAGE" ("{\"requirements\":" ^ jlist jrequirement requirements ^
+  ",\"parts\":" ^ jlist (fn (p,k)=>"[" ^ jsite p ^ "," ^ jf jrequirement k ^ "]") coverage ^ "}");
+ val ()=line "APPLICATION_INDEXED_COVERAGE" ("{\"subjects\":" ^
+  jlist (fn (j,q)=>"[" ^ jnat j ^ "," ^ jrequirement q ^ "]") (N.application_requirement_subjects cs) ^
+  ",\"parts\":" ^ jlist (fn p=>"[" ^ jsite p ^ "," ^ jf jnat (N.application_indexed_part_coverage cs p) ^ "]") ps ^ "}");
+ fun results (w,p) = "{\"problem\":" ^ jnat w ^
+  ",\"separate\":" ^ jf jlocal (N.application_construction_result N.Separate_Application_Sources p) ^
+  ",\"joined\":" ^ jf jlocal (N.application_construction_result N.Joined_Application_Observations p) ^
+  ",\"plan\":" ^ (case plan of NONE=>"null" | SOME a=>jf jlocal (N.application_plan_result a p)) ^ "}";
+ val ()=line "APPLICATION_RESULTS" (jlist results ws);
+ val ()=if full then let
+  val candidates=N.application_candidate_subjects ps cs;
+  val ()=line "APPLICATION_CANDIDATES" (jf jcandidate candidates);
+  val (revised,initial)=investigation ps cs ws [];
+  val (_,followed)=investigation ps cs ws revised;
+  val ()=line "APPLICATION_INITIAL" initial;
+  val ()=line "APPLICATION_FOLLOWED" followed;
+  val all=powers (distinct_by jsite (elements (fs ps)));
+  val ()=line "APPLICATION_LANGUAGE" (jlist (fn a=>"{\"parts\":" ^ jlist jsite a ^
+   ",\"sufficient\":" ^ Bool.toString (N.application_plan_sufficient cs (fs a)) ^ "}") all)
+  in () end else ();
+ in line "APPLICATION_FINISHED" "{}" end;
+'''
+
+def program(engine,cases):
+ s='use '+investigate.ml_string(str(engine))+';\n'+PRELUDE
+ for r in cases:
+  i=r['case_id'];suffix=str(i)
+  s+='val ws'+suffix+' : (N.nat * native_problem) list =' +investigate.ml_list(r['problems'],old.ml_problem)+';\n'
+  s+='val ps'+suffix+'='+investigate.ml_list(r['parts'],binding.ml_site)+';\n'
+  if r['target_presentations'] is None:
+   s+='val cs'+suffix+' : native_construction_case list =map (fn (_,p)=>(p,elements (N.application_mandatory_targets p))) ws'+suffix+';\n'
+  else:
+   s+='val xs'+suffix+'='+investigate.ml_list(r['target_presentations'],lambda xs:investigate.ml_list(xs,old.ml_application))+';\n'
+   s+='val cs'+suffix+' : native_construction_case list =ListPair.mapEq (fn ((_,p),xs)=>(p,xs)) (ws'+suffix+',xs'+suffix+');\n'
+  s+='val ()=emit '+suffix+' ps'+suffix+' cs'+suffix+' ws'+suffix+' '+str(len(set(map(ref.freeze,r['parts'])))<=8).lower()+';\n'
+ return s
+
+def pkey(p):
+ n=old.normalized_problem({**p,'id':0})
+ return (n['entry'],ref.freeze(n['schema']['head']),frozenset(n['schema']['premises']),
+   frozenset(n['schema']['materials']),ref.freeze(n['enumeration']),frozenset(n['frontier']),
+   frozenset(n['requests']),frozenset(n['required']))
+def qkey(q):return pkey(q[0]),old.application_key(q[1]),q[2]
+def keys(xs):return {old.application_key(x) for x in xs}
+def control_results(p):
+ e={'entry':p['entry'],'schema':p['schema'],'enumeration':p['enumeration']}
+ item={'library':[e],'frontier':p['frontier']}
+ return e,ref.reconstruct_applications(item)[0]+ref.reconstruct_requested_applications(item,p['requests']),ref.reconstruct_observed_applications(item,p['requests'])
+def applications(p,sites):
+ e={'entry':p['entry'],'schema':p['schema'],'enumeration':p['enumeration']}
+ if set(map(ref.freeze,p['enumeration']))!=set(map(ref.freeze,p['schema']['premises'])):return []
+ if not ref.schema_formed(p['schema']):return []
+ obs=ref.schema_call_observations(e,p['frontier'],p['requests'])
+ fragments=ref.recover_observations(ref.schema_observation_sources(p['schema']),obs)
+ vals=ref.observation_valuations(ref.schema_variables(p['schema']),[v for i,_,_,v in fragments if ref.freeze(i) in sites])
+ return [a for v in vals if (a:=ref.application_from_valuation(e,v)) is not None]
+
+def assess(cases,raw):
+ reports={}
+ for line in raw.splitlines():
+  if line.startswith('APPLICATION_'):
+   kind,i,data=line.split(' ',2);key=(int(i),kind);assert key not in reports,key
+   reports[key]=json.loads(data)
+ result=[]
+ for r in cases:
+  i=r['case_id'];get=lambda kind:reports[i,'APPLICATION_'+kind]
+  assert (i,'APPLICATION_FINISHED') in reports
+  inp=get('INPUT');assert inp['parts']==r['parts']
+  assert [old.normalized_problem(x) for x in inp['problems']]==[old.normalized_problem(x) for x in r['problems']]
+  assert len(inp['cases'])==len(r['problems'])
+  assert ref.functional([[p['id'],pkey(p)] for p in inp['problems']]), 'Ambiguous workload indices' 
+  coverage={};requirements=set();formed=True;mandatory={};controls=[]
+  for j,(p,(actual,xs)) in enumerate(zip(r['problems'],inp['cases'])):
+   assert pkey(actual)==pkey(p)
+   entry,separate,joined=control_results(p);controls.append((separate,joined))
+   targets=keys(p['required']+separate);mandatory[pkey(p)]=targets
+   if r['target_presentations'] is None:assert keys(xs)==targets
+   else:assert [old.application_key(x) for x in xs]==[old.application_key(x) for x in r['target_presentations'][j]]
+   valid=(keys(xs)==targets and ref.schema_formed(p['schema'])
+    and all(ref.formed(t) for _,t in p['frontier']+p['requests'])
+    and set(map(ref.freeze,p['enumeration']))==set(map(ref.freeze,p['schema']['premises']))
+    and all((a:=ref.application_from_valuation(entry,dict(x['bindings']))) is not None and old.application_key(a)==old.application_key(x) for x in xs))
+   formed &= valid
+   fragments=ref.recover_observations(ref.schema_observation_sources(p['schema']),ref.schema_call_observations(entry,p['frontier'],p['requests']))
+   for x in xs:
+    for a in ref.schema_variables(p['schema']):requirements.add((pkey(p),old.application_key(x),a))
+    target_rows={(a,ref.freeze(v)) for a,v in x['bindings']}
+    for site,_,_,fragment in fragments:
+     if {(a,ref.freeze(v)) for a,v in fragment.items()}<=target_rows:
+      coverage.setdefault(ref.freeze(site),set()).update((pkey(p),old.application_key(x),a) for a in fragment if a in ref.schema_variables(p['schema']))
+  if 'expected_formed' in r:assert formed==r['expected_formed']
+  cov=get('COVERAGE');assert set(map(qkey,cov['requirements']))==requirements
+  assert [p for p,_ in cov['parts']]==r['parts']
+  for p,qs in cov['parts']:assert set(map(qkey,qs))==coverage.get(ref.freeze(p),set())
+  indexed=get('INDEXED_COVERAGE')
+  assert [(j,qkey(q)) for j,q in indexed['subjects']]==list(enumerate(map(qkey,cov['requirements'])))
+  assert [p for p,_ in indexed['parts']]==r['parts']
+  for p,js in indexed['parts']:
+   assert set(js)=={j for j,q in enumerate(cov['requirements']) if qkey(q) in coverage.get(ref.freeze(p),set())}
+  def covered(sites):return set().union(*(coverage.get(p,set()) for p in sites))
+  available=set(map(ref.freeze,r['parts']));missing=requirements-covered(available)
+  construction=get('CONSTRUCTION');report=construction['report'];plan=report['plan']
+  assert report['formed']==formed
+  assert set(map(qkey,report['uncovered']))==missing
+  assert (plan is not None)==(formed and not missing)
+  witnesses=[]
+  if plan is not None:
+   chosen=set(map(ref.freeze,plan));assert chosen<=available and requirements<=covered(chosen)
+   for p in chosen:
+    absent=requirements-covered(chosen-{p});assert absent
+    witnesses.append({'part':p,'missing_requirements':[q for q in cov['requirements'] if qkey(q) in absent]})
+  rows=get('RESULTS');assert len(rows)==len(r['problems'])
+  condition_truth=set()
+  for p,row,(separate,joined) in zip(r['problems'],rows,controls):
+   assert row['problem']==p['id'];assert keys(row['separate'])==keys(separate);assert keys(row['joined'])==keys(joined)
+   if plan is None:assert row['plan'] is None
+   else:
+    actual=keys(row['plan']);assert actual==keys(applications(p,chosen))
+    assert mandatory[pkey(p)]<=actual
+    condition_truth.update((f,0,p['id']) for f in [0,1,2])
+  language=[]
+  if len(available)<=8:
+   candidates=get('CANDIDATES');assert candidates==[] if plan is None else len(candidates)==1 and candidates[0][0]==0 and set(map(ref.freeze,candidates[0][1]))==chosen
+   for selection,answer in [([],get('INITIAL')),(get('INITIAL')['revision']['selection'],get('FOLLOWED'))]:
+    case={'candidates':[] if plan is None else [0],'facets':[0,1,2],'selected':selection}
+    mismatches,_,_=review_investigations.basis_analysis(case,answer,{})
+    assert not mismatches and answer['input_formed'],mismatches
+    assert answer['construction']==report
+    assert set(map(tuple,answer['observations']))==condition_truth
+   language=get('LANGUAGE');seen=set()
+   for entry in language:
+    sites=frozenset(map(ref.freeze,entry['parts']));assert sites<=available and sites not in seen;seen.add(sites)
+    sufficient=all(mandatory[pkey(p)]<=keys(applications(p,sites)) for p in r['problems'])
+    assert entry['sufficient']==sufficient
+    if formed:assert sufficient==(requirements<=covered(sites))
+   assert len(seen)==2**len(available)
+   if formed:assert (plan is not None)==any(x['sufficient'] for x in language)
+  result.append({'name':r['name'],'case_id':i,'parts':len(available),'requirements':len(requirements),
+    'formed':formed,'report':report,'seconds':construction['seconds'],'necessity_witnesses':witnesses,
+    'native_subset_cases':len(language),'application_results':rows})
+ return {'cases':result,'checked_cases':len(result),'contracts':['application_plan_coverage_exact','application_construct_plan_sound',
+  'application_construct_plan_complete','application_construct_plan_failure','application_construct_plan_necessity','application_observation_subject'],
+  'boundary':'Native inputs include complete problem records, target presentations and actual site parts. Full outputs are retained; independent matching checks whole-fragment coverage, actual applications and removal witnesses. Completeness is for sufficient subsets of the supplied site basis, under the explicit formation gate.'}
+
+def main():
+ p=argparse.ArgumentParser(description=__doc__)
+ for name in ['specification','proof','poly','output']:p.add_argument('--'+name,type=Path,required=True)
+ p.add_argument('--project',type=Path,default=ROOT);a=p.parse_args()
+ specification=json.loads(a.specification.read_text())
+ assert set(specification)=={'cases'}
+ rows=[]
+ for i,r in enumerate(specification['cases']):
+  assert {'name','problems','parts'}<=set(r)<= {'name','problems','parts','target_presentations','expected_formed'}
+  rows.append({**r,'case_id':i,'target_presentations':r.get('target_presentations')})
+ receipt=proved_code.checked_execution(a.proof,a.poly,a.output,required_theories=['Factor_Application_Execution'],inputs=rows,
+  input_paths=[a.specification,Path(__file__)],program=program,assess=assess,
+  question='Construct source-site candidates from complete supplied structural problems and retain their declared scope and exact application results.',
+  boundary='Native matching derives coverage from complete source patterns and observed terms. Every candidate is constructed from the supplied site parts under the proved application condition.',project=a.project,timeout=60)
+ print(json.dumps({k:v for k,v in receipt.items() if k not in ['assessment','evidence_archive','execution_inputs']},indent=2))
+ return int(receipt['status']!='accepted')
+if __name__=='__main__':raise SystemExit(main())

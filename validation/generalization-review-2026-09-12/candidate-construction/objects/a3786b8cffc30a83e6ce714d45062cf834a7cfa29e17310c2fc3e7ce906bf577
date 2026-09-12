@@ -1,0 +1,49 @@
+
+Build errors:
+*** Failed to load theory "Native_Directed11.Finite_Directed_Execution" (unresolved "Native_Directed11.Finite_Candidate_Assembly", "Native_Directed11.Finite_Directed_Contributions")
+*** Failed to finish proof (line 225 of "/tmp/native-investigation-report-diagnostic-directed11/theories/Finite_Candidate_Assembly.thy"):
+*** goal (2 subgoals):
+***  1. \<lbrakk>\<forall>t. t \<in> set As \<longrightarrow> t |\<in>| finite_assembly_coverage K (fset_of_list Ps) \<Longrightarrow>
+***      False;
+***      finite_assembly_search (fcard (fset_of_list As)) As Ps K {||} = None\<rbrakk>
+***     \<Longrightarrow> \<exists>t. t \<in> set As \<and> t |\<notin>| finite_assembly_coverage K (fset_of_list Ps)
+***  2. \<And>t. \<lbrakk>\<forall>t. t \<in> set As \<longrightarrow>
+***              t |\<in>| finite_assembly_coverage K (fset_of_list Ps) \<Longrightarrow>
+***          \<exists>y. finite_assembly_search (fcard (fset_of_list As)) As Ps K {||} =
+***              Some y;
+***          \<And>A. finite_assembly_search (fcard (fset_of_list As)) As Ps K {||} =
+***              Some A \<Longrightarrow>
+***              \<forall>t. t \<in> set As \<longrightarrow>
+***                  t |\<in>| finite_assembly_coverage K (fset_of_list Ps);
+***          t \<in> set As; t |\<notin>| finite_assembly_coverage K (fset_of_list Ps)\<rbrakk>
+***         \<Longrightarrow> finite_assembly_search (fcard (fset_of_list As)) As Ps K {||} =
+***            None
+*** At command "by" (line 225 of "/tmp/native-investigation-report-diagnostic-directed11/theories/Finite_Candidate_Assembly.thy")
+*** Failed to finish proof (line 150 of "/tmp/native-investigation-report-diagnostic-directed11/theories/Finite_Directed_Contributions.thy"):
+*** goal (1 subgoal):
+***  1. \<lbrakk>V |\<in>|
+***      (case finite_demand_choice
+***             (\<lambda>a. fcard
+***                   (ffilter (\<lambda>r. fst r = a)
+***                     (ffUnion
+***                       (finite_compatible_binding_parts (fset_of_list As) B
+***                         U))))
+***             As (fset_of_list As) of
+***       None \<Rightarrow> {|U|}
+***       | Some a \<Rightarrow>
+***           ffUnion
+***            ((\<lambda>r. finite_value_binding_search n As
+***                   (ffilter (finite_assignment_agrees r)
+***                     (finite_compatible_binding_parts (fset_of_list As) B U))
+***                   (finsert r U)) |`|
+***             ffilter (\<lambda>r. fst r = a)
+***              (ffUnion
+***                (finite_compatible_binding_parts (fset_of_list As) B U))));
+***      U |\<in>| finite_compatible_unions B; fst |`| U = fset_of_list As\<rbrakk>
+***     \<Longrightarrow> V |\<in>| finite_compatible_unions B \<and>
+***        fst |`| V = fset_of_list As \<and>
+***        U |\<subseteq>|
+***        V
+*** At command "by" (line 150 of "/tmp/native-investigation-report-diagnostic-directed11/theories/Finite_Directed_Contributions.thy")
+
+Return code: 1 (ERROR)

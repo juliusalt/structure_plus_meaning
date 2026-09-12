@@ -1,0 +1,112 @@
+{
+  "schema": "finite-investigation-1",
+  "kind": "basis",
+  "question": "The retainer preserves exported code but omits recorded procedure-input maps from its proof entries. It also parses the live parent receipt after retaining a potentially different historical identity. Bind proof procedure inputs explicitly and parse the exact retained parent bytes.",
+  "scope": {
+    "candidates": {
+      "0": "Leave procedure inputs implicit and parse the current parent path",
+      "1": "Use the exact explicit-input and retained-parent patch"
+    },
+    "facets": {
+      "0": "Retain every explicit export, source-proof, parent and helper input in each proof entry.",
+      "1": "Reject inconsistent identities for a shared recorded input path.",
+      "2": "Recover optional parent-proof links from the original retained parent receipt, including compressed prior evidence.",
+      "3": "Preserve the original proof sources, native reports and archive format compatibility.",
+      "4": "Validate with changed-live-parent, complete procedure-input and compressed historical-data controls, then retain and replay the entire real construction batch."
+    },
+    "subjects": "/tmp/generalization-quality-review/candidate-delivery-review/proof-retention-proposal.json"
+  },
+  "candidates": [
+    0,
+    1
+  ],
+  "facets": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "selected": [],
+  "observations": [
+    [
+      3,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      2,
+      1,
+      0
+    ],
+    [
+      3,
+      1,
+      0
+    ],
+    [
+      4,
+      1,
+      0
+    ]
+  ],
+  "relation": [
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      1
+    ]
+  ],
+  "evidence": [
+    {
+      "path": "/tmp/generalization-quality-review/candidate-delivery-review/proof-retention-proposal.json",
+      "sha256": "54c942ead2af53967a4226b1bd93d0831b9778c7954d5a4e6a25043c06a30a48"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/candidate-delivery-review/proof-retention-draft1/tools/retain_reasoning_review.py",
+      "sha256": "3754f1dcd6bd96c0d27d310772bade233c847eecaa1fbfbf5398d4c08bbca557"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/candidate-delivery-review/proof-retention-draft1/tools/test_retain_reasoning_review.py",
+      "sha256": "56381a89a48d20cc4a5e68827b64494ee5286d092ed2d28e4fce21979e2f90ee"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/candidate-delivery-review/complete-input-audit2.json",
+      "sha256": "2d1ce2ad672aba85ca5297b0ff95a2ab16393abedb1bf21c67f2bb5e650cf57e"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/candidate-delivery-review/export-input-recovery.json",
+      "sha256": "04ae7261eecded8be99109a741d5d0359794e2eabf49bb13cd111502f9e1ab46"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/retain_reasoning_review.py",
+      "sha256": "61aff5dcf46afc70eb8557be995979195b570a44ea5fdb5f77591d370d18f467"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/candidate-delivery-review/proof-retention-investigation.json",
+      "sha256": "109137ec86ae23fe1677267684a3a49927f4083a6fb1762344c2cd6d5a948ad7"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/check_decision_cases.py",
+      "sha256": "7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd"
+    }
+  ],
+  "semantic_boundary": "Prospective conditional choice on the exact retainer source, complete expanded input audit and recovered exporter. Byte identity and proof provenance are distinguished from the mathematical source contracts and native observation equations."
+}

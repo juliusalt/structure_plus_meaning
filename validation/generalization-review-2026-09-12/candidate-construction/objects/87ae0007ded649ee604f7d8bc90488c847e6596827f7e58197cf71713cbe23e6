@@ -1,0 +1,13 @@
+lemma finite_binding_support_image:
+  "fimage (\<lambda>(i,p,t). finite_matching_bindings p t) (finite_binding_support P obs V)=
+    ffilter (\<lambda>W. W |\<subseteq>| V)
+      (fimage (\<lambda>(i,p,t). finite_matching_bindings p t) (finite_pattern_observations P obs))"
+  by (rule fset_eqI)
+    (auto simp: finite_binding_support_def finite_image_member split_paired_Ex; force)
+
+theorem finite_observed_bindings_scope_supported:
+  assumes functional: "finite_relation_functional V"
+  shows "V |\<in>| finite_observed_bindings P obs \<longleftrightarrow>
+    fimage fst V |\<subseteq>| fimage fst (finite_observation_union (finite_binding_support P obs V))"
+  by (simp only: finite_observed_bindings_def finite_compatible_union_scope_supported[OF functional]
+    finite_observation_union_def finite_binding_support_image)

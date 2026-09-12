@@ -1,0 +1,9 @@
+{
+  "selection": 1,
+  "complete_results": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/complete-results.json",
+  "criticism": {
+    "evidence": "Every source-19 stage and all 30 supplied-input runtime cases passed. Complete inputs and mathematical outputs agree under the explicit outer-case map. Generic, historical and candidate replay checks have passed.",
+    "scope": "The final source contracts are complete for the declared part and requirement languages under the original gate. This does not discharge the wider repository goal.",
+    "next": "Preserve old main proof/source bytes, integrate the exact retained files, and run the full repository build, source inventory and tooling checks together. Retain and replay all evidence after those checks."
+  }
+}

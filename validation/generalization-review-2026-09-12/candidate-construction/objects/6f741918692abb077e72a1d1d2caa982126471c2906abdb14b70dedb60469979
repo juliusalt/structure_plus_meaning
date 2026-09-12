@@ -1,0 +1,47 @@
+{
+  "status": "failed",
+  "exit_code": 1,
+  "sources_unchanged": true,
+  "checked_theories": 15,
+  "parent_theories_reused": 356,
+  "roots": [
+    "Factor_Application_Execution"
+  ],
+  "command": [
+    "isabelle",
+    "build",
+    "-o",
+    "threads=12",
+    "-o",
+    "parallel_proofs=0",
+    "-o",
+    "build_timing_threshold=0",
+    "-d",
+    "/home/julius/structure_and_semantics",
+    "-D",
+    "/tmp/native-investigation-report-diagnostic-applicationconstruction4"
+  ],
+  "started_utc": "2026-09-11T21:18:10.564061+00:00",
+  "finished_utc": "2026-09-11T21:18:28.210134+00:00",
+  "log": "/tmp/native-investigation-report-diagnostic-applicationconstruction4/build.log"
+}
+Running Native_Application_Construction4 ...
+Native_Application_Construction4 FAILED (see also "isabelle build_log -H Error Native_Application_Construction4")
+*** Failed to load theory "Native_Application_Construction4.Factor_Application_Candidates" (unresolved "Native_Application_Construction4.Factor_Observation_Assembly")
+*** Failed to load theory "Native_Application_Construction4.Factor_Application_Comparison" (unresolved "Native_Application_Construction4.Factor_Application_Candidates")
+*** Failed to load theory "Native_Application_Construction4.Factor_Application_Execution" (unresolved "Native_Application_Construction4.Factor_Application_Comparison")
+*** Failed to apply initial proof method (line 22 of "/tmp/native-investigation-report-diagnostic-applicationconstruction4/theories/Factor_Observation_Assembly.thy"):
+*** goal (1 subgoal):
+***  1. (a |∈| finite_observation_site_coverage P obs V i) =
+***     (∃p t u.
+***         (i, p) |∈| P ∧
+***         (i, t) |∈| obs ∧
+***         finite_pattern_accepts p t ∧
+***         finite_matching_bindings p t |⊆| V ∧
+***         (a, u) |∈|
+***         finite_matching_bindings p
+***          t)
+*** At command "by" (line 22 of "/tmp/native-investigation-report-diagnostic-applicationconstruction4/theories/Factor_Observation_Assembly.thy")
+Unfinished session(s): Native_Application_Construction4
+0:00:17 elapsed time, 0:00:20 cpu time, factor 1.23
+

@@ -1,0 +1,6 @@
+Running Native_Directed7 ...
+*** Timeout
+Native_Directed7 FAILED (see also "isabelle build_log -H Error Native_Directed7")
+
+Unfinished session(s): Native_Directed7
+0:01:03 elapsed time

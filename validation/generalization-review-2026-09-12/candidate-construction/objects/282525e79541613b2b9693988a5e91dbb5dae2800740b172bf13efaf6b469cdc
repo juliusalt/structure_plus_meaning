@@ -1,0 +1,17 @@
+{
+  "problem": "Complete case validation rejected the larger original targets because they include entry and schema owner fields. Those fields duplicate the enclosing problem, so their agreement must be checked explicitly before using the local target tuple.",
+  "requirements": [
+    "Preserve the original complete cases, including checked redundant owner fields.",
+    "Reject unknown fields and owner entry or schema disagreement.",
+    "Factor schema normalization and shape validation once for both problem and owner checks.",
+    "Re-run all input/replay tests and all 30 complete program-generation comparisons before native production execution."
+  ],
+  "failure": "/tmp/generalization-quality-review/directed-candidate-construction/interface3-complete-input-failure.json",
+  "files": [
+    "/tmp/generalization-quality-review/directed-candidate-construction/interface-draft4/application_subjects.py",
+    "/tmp/generalization-quality-review/directed-candidate-construction/interface-draft4/check_binding_contributions.py",
+    "/tmp/generalization-quality-review/directed-candidate-construction/interface-draft4/check_application_comparison.py",
+    "/tmp/generalization-quality-review/directed-candidate-construction/interface-draft4/test_application_comparison.py"
+  ],
+  "criticism": "The input shape check was too narrow. Original native local targets omit owner fields because their enclosing problem already supplies the owner. This proposal validates that connection; it does not silently erase conflicting metadata or change native application semantics."
+}

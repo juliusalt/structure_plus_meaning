@@ -1,0 +1,18 @@
+"""Prospective supplied-input and exact replay delivery comparison."""
+from pathlib import Path
+import json,sys
+B=Path(__file__).parent;M=Path('/home/julius/structure_and_semantics');sys.path.insert(0,str(M/'tools'))
+import investigate,compare_reasoning_methods as c
+files=[*sorted((B/'interface-draft3').glob('*.py')),*sorted((B/'replay-draft1').glob('*.py'))]
+proposal={'problem':'Deliver the constructed-candidate operation through complete supplied inputs and replay its retained output with the exact helper sources, while keeping native subjects separate from clock measurements.',
+'requirements':['A repository tool accepts actual complete problem records, target presentations and site parts without experimental fixture imports.','Reuse the existing subject serializers and independent reconstruction; validate every represented field and reject ambiguous indices.','Keep semantically malformed but representable inputs available for the native formation gate.','Replay complete outputs and independent assessments with original helper bytes even if a module changes the import path.','Exclude only explicitly declared clock fields from mathematical replay equality and keep both raw clocks.','Retain historical comparison and binding replay formats unchanged.'],
+'files':[str(p) for p in files],
+'evidence':{'complete_program_equality':str(B/'interface-draft2/program-comparison.json'),'accepted_preindex_controls':str(B/'application-batch13/native-controls/receipt.json'),'current_full_source_batch':str(B/'application-batch17/steps.json')},
+'validation':['Run nine application input/reference tests and five replay boundary tests on the draft helpers.','Regenerate all 30 complete programs and compare every byte against the experimental driver.','After the application source proof and native runtime batch are accepted, execute the production supplied-input interface on the same 30 cases and compare complete mathematical results.','Retain and replay the generic search, candidate construction, old two-operation comparison and binding observation runs with their own helpers.'],
+'criticism':'The finite proposal comparison selects an implementation attempt. Program equality does not establish native acceptance. The current indexed source proof is still pending; neither the draft interface nor replay has been adopted or validated yet.'}
+p=B/'delivery-interface-replay-proposal.json';p.write_text(json.dumps(proposal,indent=2)+'\n')
+facets=list(range(len(proposal['requirements'])));observations=[[f,0,0] for f in [2,5]]+[[f,1,0] for f in facets]
+boundary='Conditional prospective delivery comparison. The supplied structural change judgments are explicit conditions selecting the complete validation attempt; only the subsequent executions settle source, runtime and replay acceptance.'
+case=c.comparison_case([0,1],facets,observations,[],question=proposal['problem'],scope={'candidates':{'0':'Keep only the experimental fixture driver and existing replay dialects','1':'Validate the complete supplied-input and exact-helper replay drafts'},'facets':dict(enumerate(proposal['requirements'])),'subjects':str(p)},evidence=[{'path':str(x),'sha256':investigate.file_hash(x)} for x in [p,*files,B/'interface-draft2/program-comparison.json']]);case['semantic_boundary']=boundary
+(B/'delivery-interface-replay-investigation.json').write_text(json.dumps({'question':proposal['problem'],'boundary':boundary,'problems':[{'name':'candidate-construction-delivery','case':case,'required_observations':[[f,0] for f in facets]}]},indent=2)+'\n')
+print(p)

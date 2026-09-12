@@ -1,0 +1,6 @@
+Running Native_Directed10 ...
+*** Timeout
+Native_Directed10 FAILED (see also "isabelle build_log -H Error Native_Directed10")
+
+Unfinished session(s): Native_Directed10
+0:01:03 elapsed time

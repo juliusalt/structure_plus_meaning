@@ -1,0 +1,11 @@
+{
+  "problem": "Replace the fixed application candidate list by a constructor with an explicit finite language and structural observation equations.",
+  "candidate": "A finite set of actual schema observation source sites. Its operation filters available observations by those sites and uses the complete scoped binding search.",
+  "scope": "Every subset of the supplied ordered source-part basis. The ordering is an explicit search preference; it does not change existence of an adequate assembly.",
+  "input": "A list of complete application problems, each accompanied by a list of complete required applications. A computed gate requires that this list presents exactly the original required relation union the actual Separate-source results.",
+  "requirements": "The same constructed plan must cover every mandatory application across the entire input family. Every required target must first have a valid enumeration, complete native schema instance and material satisfaction. Invalid targets cannot pass through an empty variable scope.",
+  "coverage": "A part covers a (complete problem, complete target application, variable) requirement exactly when a whole accepted source match at that part is contained in the target binding and supplies that variable.",
+  "construction": "The generic finite_construct_candidate builds a sufficient part set and prunes it to inclusion minimality. Its failure reports the actual uncovered requirements, separately from invalid source or target inputs.",
+  "report": "The candidate subject map is computed from the constructed result. A missing candidate is an explicit construction failure, even if the empty comparison basis has no residual pairs. No claim of uniqueness among all algorithms is made.",
+  "validation": "Check the exact part-coverage/application equation, every subset of small declared languages, joint problem families, impossible goals, repeated source and requirement presentations, complete conflict controls, and large bases. Execute the constructed plan on its original problems before integration."
+}

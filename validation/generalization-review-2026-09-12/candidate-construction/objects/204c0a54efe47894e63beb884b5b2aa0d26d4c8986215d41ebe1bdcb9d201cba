@@ -1,0 +1,21 @@
+{
+  "proofs": 57,
+  "accepted_runs": 35,
+  "conditional_executions": 116,
+  "attachments": 38861,
+  "required_input_identities": 4291,
+  "missing_inputs": [],
+  "canonical_runs": [
+    "generic-search",
+    "application-controls",
+    "application-large-7",
+    "application-large-8",
+    "application-large-9",
+    "application-large-10",
+    "original-guided",
+    "native-source",
+    "original-reader",
+    "finite-presentations"
+  ],
+  "specification": "/tmp/generalization-quality-review/candidate-delivery-review/final-archive-spec.json"
+}

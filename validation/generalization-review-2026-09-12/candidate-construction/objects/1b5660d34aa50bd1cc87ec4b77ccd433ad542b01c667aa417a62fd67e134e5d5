@@ -1,0 +1,217 @@
+[
+  {
+    "label": "tools-tests",
+    "command": [
+      "python3",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "/tmp/generalization-quality-review/candidate-delivery-review/retention-draft1/tools",
+      "-p",
+      "test_*.py"
+    ],
+    "exit_code": 0,
+    "seconds": 3.267827942967415,
+    "log": "/tmp/generalization-quality-review/candidate-delivery-review/retention-validation1/tools-tests.log"
+  },
+  {
+    "label": "presenter-export",
+    "command": [
+      "python3",
+      "-B",
+      "/tmp/generalization-quality-review/candidate-delivery-review/export_current_presenter.py"
+    ],
+    "exit_code": 0,
+    "seconds": 0.8148420619545504,
+    "log": "/tmp/generalization-quality-review/candidate-delivery-review/retention-validation1/presenter-export.log"
+  },
+  {
+    "label": "original-guided",
+    "command": [
+      "python3",
+      "-B",
+      "/tmp/generalization-quality-review/directed-candidate-construction/check_candidate_regressions.py",
+      "--project",
+      "/tmp/generalization-quality-review/candidate-delivery-review/retention-draft1",
+      "--proof",
+      "/tmp/generalization-quality-review/directed-candidate-construction/application-batch19/reasoning-export/proof.json",
+      "--poly",
+      "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+      "--baseline",
+      "/tmp/generalization-quality-review/directed-candidate-construction/application-batch19/guided-regression",
+      "--output",
+      "/tmp/generalization-quality-review/candidate-delivery-review/retention-validation1/original-guided"
+    ],
+    "exit_code": 0,
+    "seconds": 15.588515989016742,
+    "log": "/tmp/generalization-quality-review/candidate-delivery-review/retention-validation1/original-guided.log"
+  },
+  {
+    "label": "native-source",
+    "command": [
+      "python3",
+      "-B",
+      "/tmp/generalization-quality-review/candidate-delivery-review/retention-draft1/tools/check_finite_inference.py",
+      "--proof",
+      "/tmp/generalization-quality-review/directed-candidate-construction/application-batch19/source-export/proof.json",
+      "--poly",
+      "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+      "--catalogs",
+      "/tmp/generalization-quality-review/candidate-delivery-review/retention-validation1/original-guided",
+      "--source-spec",
+      "/tmp/generalization-quality-review/finite-reader-example/native-ground-source-proposal.json",
+      "--output",
+      "/tmp/generalization-quality-review/candidate-delivery-review/retention-validation1/native-source"
+    ],
+    "exit_code": 0,
+    "seconds": 1.315986436093226,
+    "log": "/tmp/generalization-quality-review/candidate-delivery-review/retention-validation1/native-source.log"
+  },
+  {
+    "label": "original-reader",
+    "command": [
+      "python3",
+      "-B",
+      "/tmp/generalization-quality-review/directed-candidate-construction/check_candidate_regressions.py",
+      "--project",
+      "/tmp/generalization-quality-review/candidate-delivery-review/retention-draft1",
+      "--proof",
+      "/tmp/generalization-quality-review/directed-candidate-construction/application-batch19/reasoning-export/proof.json",
+      "--poly",
+      "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+      "--baseline",
+      "/tmp/generalization-quality-review/directed-candidate-construction/application-batch19/native-reader-regression",
+      "--output",
+      "/tmp/generalization-quality-review/candidate-delivery-review/retention-validation1/original-reader",
+      "--native-input",
+      "/tmp/generalization-quality-review/candidate-delivery-review/retention-validation1/native-source"
+    ],
+    "exit_code": 0,
+    "seconds": 86.51265432999935,
+    "log": "/tmp/generalization-quality-review/candidate-delivery-review/retention-validation1/original-reader.log"
+  },
+  {
+    "label": "finite-presentations",
+    "command": [
+      "python3",
+      "-B",
+      "/tmp/generalization-quality-review/candidate-delivery-review/retention-draft1/tools/check_finite_presentations.py",
+      "--proof",
+      "/tmp/generalization-quality-review/candidate-delivery-review/current-presenter-export/proof.json",
+      "--poly",
+      "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+      "--output",
+      "/tmp/generalization-quality-review/candidate-delivery-review/retention-validation1/finite-presentations"
+    ],
+    "exit_code": 0,
+    "seconds": 0.36453326093032956,
+    "log": "/tmp/generalization-quality-review/candidate-delivery-review/retention-validation1/finite-presentations.log"
+  },
+  {
+    "label": "application-controls",
+    "command": [
+      "python3",
+      "-B",
+      "/tmp/generalization-quality-review/candidate-delivery-review/retention-draft1/tools/check_application_comparison.py",
+      "--project",
+      "/tmp/generalization-quality-review/candidate-delivery-review/retention-draft1",
+      "--proof",
+      "/tmp/generalization-quality-review/directed-candidate-construction/application-batch19/native-export/proof.json",
+      "--poly",
+      "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+      "--specification",
+      "/tmp/generalization-quality-review/directed-candidate-construction/production-validation1/controls-specification.json",
+      "--output",
+      "/tmp/generalization-quality-review/candidate-delivery-review/retention-validation1/application-controls"
+    ],
+    "exit_code": 0,
+    "seconds": 0.6150742070749402,
+    "log": "/tmp/generalization-quality-review/candidate-delivery-review/retention-validation1/application-controls.log"
+  },
+  {
+    "label": "application-large-7",
+    "command": [
+      "python3",
+      "-B",
+      "/tmp/generalization-quality-review/candidate-delivery-review/retention-draft1/tools/check_application_comparison.py",
+      "--project",
+      "/tmp/generalization-quality-review/candidate-delivery-review/retention-draft1",
+      "--proof",
+      "/tmp/generalization-quality-review/directed-candidate-construction/application-batch19/native-export/proof.json",
+      "--poly",
+      "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+      "--specification",
+      "/tmp/generalization-quality-review/directed-candidate-construction/production-validation1/large-7-specification.json",
+      "--output",
+      "/tmp/generalization-quality-review/candidate-delivery-review/retention-validation1/application-large-7"
+    ],
+    "exit_code": 0,
+    "seconds": 1.2156619461020455,
+    "log": "/tmp/generalization-quality-review/candidate-delivery-review/retention-validation1/application-large-7.log"
+  },
+  {
+    "label": "application-large-8",
+    "command": [
+      "python3",
+      "-B",
+      "/tmp/generalization-quality-review/candidate-delivery-review/retention-draft1/tools/check_application_comparison.py",
+      "--project",
+      "/tmp/generalization-quality-review/candidate-delivery-review/retention-draft1",
+      "--proof",
+      "/tmp/generalization-quality-review/directed-candidate-construction/application-batch19/native-export/proof.json",
+      "--poly",
+      "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+      "--specification",
+      "/tmp/generalization-quality-review/directed-candidate-construction/production-validation1/large-8-specification.json",
+      "--output",
+      "/tmp/generalization-quality-review/candidate-delivery-review/retention-validation1/application-large-8"
+    ],
+    "exit_code": 0,
+    "seconds": 6.572729675099254,
+    "log": "/tmp/generalization-quality-review/candidate-delivery-review/retention-validation1/application-large-8.log"
+  },
+  {
+    "label": "application-large-9",
+    "command": [
+      "python3",
+      "-B",
+      "/tmp/generalization-quality-review/candidate-delivery-review/retention-draft1/tools/check_application_comparison.py",
+      "--project",
+      "/tmp/generalization-quality-review/candidate-delivery-review/retention-draft1",
+      "--proof",
+      "/tmp/generalization-quality-review/directed-candidate-construction/application-batch19/native-export/proof.json",
+      "--poly",
+      "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+      "--specification",
+      "/tmp/generalization-quality-review/directed-candidate-construction/production-validation1/large-9-specification.json",
+      "--output",
+      "/tmp/generalization-quality-review/candidate-delivery-review/retention-validation1/application-large-9"
+    ],
+    "exit_code": 0,
+    "seconds": 62.50643098098226,
+    "log": "/tmp/generalization-quality-review/candidate-delivery-review/retention-validation1/application-large-9.log"
+  },
+  {
+    "label": "application-large-10",
+    "command": [
+      "python3",
+      "-B",
+      "/tmp/generalization-quality-review/candidate-delivery-review/retention-draft1/tools/check_application_comparison.py",
+      "--project",
+      "/tmp/generalization-quality-review/candidate-delivery-review/retention-draft1",
+      "--proof",
+      "/tmp/generalization-quality-review/directed-candidate-construction/application-batch19/native-export/proof.json",
+      "--poly",
+      "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+      "--specification",
+      "/tmp/generalization-quality-review/directed-candidate-construction/production-validation1/large-10-specification.json",
+      "--output",
+      "/tmp/generalization-quality-review/candidate-delivery-review/retention-validation1/application-large-10"
+    ],
+    "exit_code": 0,
+    "seconds": 92.07092536706477,
+    "log": "/tmp/generalization-quality-review/candidate-delivery-review/retention-validation1/application-large-10.log"
+  }
+]

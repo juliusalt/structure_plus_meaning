@@ -1,0 +1,26 @@
+{
+  "status": "evaluated",
+  "exit_code": 0,
+  "elapsed_seconds": 3.0918888120213524,
+  "runtime_seconds": 0.06958199304062873,
+  "receipt": "/tmp/generalization-quality-review/directed-candidate-construction/application-assessment-mutations-investigation1/assessment-rejection-boundaries/followed/receipt.json",
+  "input_formed": true,
+  "residual": [],
+  "repair_witnesses": 0,
+  "conflicts": 0,
+  "unrepairable": 0,
+  "extension": [
+    1
+  ],
+  "revision": {
+    "retained": [
+      1
+    ],
+    "withdrawn": [],
+    "repairs": [],
+    "selection": [
+      1
+    ],
+    "residual": []
+  }
+}

@@ -1,0 +1,43 @@
+"""Complete application families and boundary controls for the proposed constructor."""
+from copy import deepcopy
+import json
+from pathlib import Path
+import prototype as p
+B=Path(__file__).parent
+
+def case(name,problems,*,parts=None,target_presentations=None,expected_formed=True):
+    if parts is None:
+        parts=p.display(p.ordered({p.reference.freeze(i) for P in problems for i,_ in p.reference.schema_observation_sources(P['schema'])}))
+    return {'name':name,'problems':problems,'parts':parts,'target_presentations':target_presentations,'expected_formed':expected_formed}
+
+def controls():
+    original=json.loads((B/'original-comparison-problems.json').read_text())['problems']
+    rows=[case('original-'+str(i),[x]) for i,x in enumerate(original)]
+    rows += [case('joint-original',original)]
+    rows += [case('large-'+str(n),[p.large_application(n,r)]) for n,r in [(3,3),(6,6),(32,16),(64,32),(128,64)]]
+    rows += [case('joint-large',[p.large_application(n,r) for n,r in [(32,16),(64,32),(128,64)]])]
+    rows += [case('empty-family',[]),case('empty-part-basis',[original[0]],parts=[])]
+    no_head={**original[0],'requests':[]}
+    rows += [case('missing-request-source',[no_head])]
+    repeated=case('repeated-presentations',[original[0],original[0]])
+    repeated['parts']+=repeated['parts']
+    rows.append(repeated)
+    rows += [case('reordered-parts',[original[0]],parts=list(reversed(rows[0]['parts'])))]
+    rows += [case('foreign-unused-part',[original[0]],parts=rows[0]['parts']+[['premise',999,999]])]
+    constant={'id':20,'entry':9,'schema':{'head':{'payload':[5]},'premises':[],'materials':[]},'enumeration':[],'frontier':[],'requests':[],'required':[]}
+    rows += [case('zero-variable-application',[constant])]
+    wrong={**constant,'required':[{'conclusion':{'payload':[6]},'bindings':[],'premises':[]}]}
+    rows += [case('invalid-zero-variable-target',[wrong],expected_formed=False)]
+    malformed={**constant,'schema':{**constant['schema'],'head':{'payload':[256]}}}
+    rows += [case('unused-malformed-schema',[malformed],expected_formed=False)]
+    for field in ['frontier','requests']:
+        bad={**constant,field:[[999,{'payload':[256]}]]}
+        rows += [case('unused-malformed-'+field,[bad],expected_formed=False)]
+    bad_enum={**original[0],'enumeration':original[0]['enumeration'][:-1]}
+    rows += [case('incomplete-premise-enumeration',[bad_enum],expected_formed=False)]
+    rows += [case('incomplete-target-enumeration',[constant],target_presentations=[[]],expected_formed=False)]
+    return deepcopy(rows)
+
+if __name__=='__main__':
+    result=controls();(B/'application-controls.json').write_text(json.dumps(result,indent=2)+'\n')
+    print(json.dumps([{'name':r['name'],'problems':len(r['problems']),'parts':len(r['parts']),'expected_formed':r['expected_formed']} for r in result],indent=2))

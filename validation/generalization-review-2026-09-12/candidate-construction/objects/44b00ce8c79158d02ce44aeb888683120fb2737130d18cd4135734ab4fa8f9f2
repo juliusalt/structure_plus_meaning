@@ -1,0 +1,126 @@
+{
+  "question": "Replace the two finished application alternatives by a constructor over the complete finite language of source-site subsets, using the accepted directed binding search for actual applications.",
+  "boundary": "Prospective conditional choice to check the retained application-constructor proposal. Its source and generic prerequisites are concrete, and the candidate scope is explicit. Proposed application theorems and native performance remain unresolved until their checks; this table does not derive them.",
+  "problems": [
+    {
+      "name": "constructive-application-interface",
+      "case": {
+        "schema": "finite-investigation-1",
+        "kind": "basis",
+        "question": "Replace the two finished application alternatives by a constructor over the complete finite language of source-site subsets, using the accepted directed binding search for actual applications.",
+        "scope": {
+          "candidates": {
+            "0": "Keep the fixed two-operation application interface",
+            "1": "Check the retained constructor and exact source-site coverage integration"
+          },
+          "facets": {
+            "0": "Preserve the current operation meanings and original problem records",
+            "1": "Supply a concrete constructive interface and explicit all-subsets scope with proof and runtime obligations"
+          },
+          "subjects": "/tmp/generalization-quality-review/directed-candidate-construction/application-native-check-proposal.json"
+        },
+        "candidates": [
+          0,
+          1
+        ],
+        "facets": [
+          0,
+          1
+        ],
+        "selected": [],
+        "observations": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ]
+        ],
+        "relation": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "evidence": [
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-native-check-proposal.json",
+            "sha256": "569cf0852566fab179ab1dfb2ffaf092420bd0a32f2c0ed9b4ed5ee7ddad788a"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/receipt.json",
+            "sha256": "54399a866255e00dd47480987f4a14341b7f60e5b7a8f784c8c3e29052eb9530"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-gate-decision.json",
+            "sha256": "11b21971d6583f949b1d5cb56c2cf0fbfcd389863f3869cf40f7ff09714e44d5"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/approach-decision.json",
+            "sha256": "64d6658d9189e6abba0c473cdaed42b5d8f0d43625b32b0492f74dbc7d7b55b2"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-draft1/Factor_Application_Execution.thy",
+            "sha256": "1bc7703b21347a6176f943b4179a13c22d72ed3d65f6739f5af507fcf75b87cf"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-draft1/scoped-applications-code.thy.txt",
+            "sha256": "468d1aedf5766e415dffdf736ac4c40ea8fb44f9094534c88196ec6035f54b8b"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-draft1/Factor_Application_Comparison.thy",
+            "sha256": "9ac154b298d9a07a81f03eb3d17cfc8ba52f2a08353a9903bc1452ed62c4b3c9"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-draft1/Factor_Application_Candidates.thy",
+            "sha256": "dcb8972fb96c9aa14f9107e1bb5efb659694bcdc0c5af87ee7245f4cf89a4db5"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-draft1/binding-support-contracts.thy.txt",
+            "sha256": "87ae0007ded649ee604f7d8bc90488c847e6596827f7e58197cf71713cbe23e6"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-draft1/Factor_Observation_Assembly.thy",
+            "sha256": "39180b2e1ab4ff9f3cf990d1b2bd1987fca94abf8a9a6ed4be0469d1badea108"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-draft1/support-contracts.thy.txt",
+            "sha256": "595002dfebde5c0d98ab069da1c4fcb01743e2b691dd394a18402f8a4698e848"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-draft1/Factor_Application_Problems.thy",
+            "sha256": "347899ec675a75bc69d09df2c4bf89bce1235ea213f52dba005dd511177287a8"
+          }
+        ],
+        "semantic_boundary": "Prospective conditional choice to check the retained application-constructor proposal. Its source and generic prerequisites are concrete, and the candidate scope is explicit. Proposed application theorems and native performance remain unresolved until their checks; this table does not derive them."
+      },
+      "required_observations": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ]
+      ]
+    }
+  ]
+}

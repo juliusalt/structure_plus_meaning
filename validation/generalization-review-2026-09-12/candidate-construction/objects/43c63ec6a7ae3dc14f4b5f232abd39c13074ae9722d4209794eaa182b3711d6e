@@ -1,0 +1,119 @@
+"""Prepare the complete source inventory and cohesive documentation, unadopted."""
+from pathlib import Path
+import json,re
+B=Path(__file__).parent;W=B/'worktree';M=Path('/home/julius/structure_and_semantics');D=B/'repository-delivery-draft1';D.mkdir()
+new=[p.stem for p in (W/'theories').glob('*.thy') if not (M/'theories'/p.name).exists()]
+order=['Finite_Compatible_Unions','Finite_Demand_Selection','Finite_Directed_Contributions','Finite_Candidate_Assembly','Finite_Indexed_Candidate_Assembly','Finite_Directed_Execution','Factor_Application_Problems','Factor_Observation_Assembly','Factor_Application_Candidates'];assert set(order)==set(new)
+s=(M/'ROOT').read_text();s+=''.join('    '+n+'\n' for n in order);(D/'ROOT').write_text(s)
+descriptions={
+ 'Finite_Compatible_Unions':'Full meaning and exact list execution of every functional union of whole finite fragments; support and scope equations preserve complete contributors.',
+ 'Finite_Demand_Selection':'Selects an uncovered required key with least supplied cost, with exact absence, membership and finite progress laws.',
+ 'Finite_Directed_Contributions':'Demand-directed whole-fragment binding search is exactly the full compatible-union relation restricted to the required domain; branch values, support and completeness remain explicit.',
+ 'Finite_Candidate_Assembly':'Complete sufficient-subset language, selective construction, inclusion minimality, failure and per-part necessity witnesses; cached coverage preserves the constructor function.',
+ 'Finite_Indexed_Candidate_Assembly':'Exact index maps retain complete requirement subjects, coverage, uncovered witnesses and the full candidate language; filtered coverage can execute directly on indices.',
+ 'Finite_Directed_Execution':'Native natural-valued scoped binding search and candidate assembly, with complete finite input and result interfaces.',
+ 'Factor_Application_Problems':'Complete schema application problems, former and joined construction controls, instance validity and mandatory application conditions.',
+ 'Factor_Observation_Assembly':'Whole accepted matching fragments cover a target variable exactly when selected source sites support that complete binding; observation and assembly coverage share one equation.',
+ 'Factor_Application_Candidates':'Constructs inclusion-minimal source-site plans for complete problem families; the declared language, formation gate, exact coverage, completeness and missing-requirement witnesses are explicit.',
+ 'Factor_Binding_Contributions':'Instantiates full compatible unions of whole matched binding fragments and retains their complete observation support; required pools and scope remain distinct.',
+ 'Factor_Observed_Applications':'Actual head, premise and material projections supply whole binding fragments; a separate scoped code equation retains every original complete instance and material check.',
+ 'Factor_Application_Comparison':'Computes conditions on the constructed site plan and complete workload family, with exact indexed observation subjects and separate construction feasibility.',
+ 'Factor_Application_Execution':'Native site-plan construction, complete application results, subject maps and scope diagnostics, together with former/joined controls and direct observation groups.'}
+s=(M/'THEORY_MAP.md').read_text();rows=[]
+for name,description in descriptions.items():
+ text=(W/'theories'/(name+'.thy')).read_text();header=text[:text.index('begin')];imports=re.findall(r'"[^"]+"|[A-Za-z_][A-Za-z_0-9.-]*',header.split('imports',1)[1]);imports=', '.join(x.strip('"') for x in imports)
+ row=f'| {name} | {imports} | {description} |'
+ pattern=r'^\| '+re.escape(name)+r' \|.*$'
+ if re.search(pattern,s,re.M):s=re.sub(pattern,lambda m:row,s,flags=re.M)
+ else:rows.append(row)
+s=s.replace('## Executable complete source presentations','\n'.join(rows)+'\n\n## Executable complete source presentations');(D/'THEORY_MAP.md').write_text(s)
+s=(M/'README.md').read_text().replace('The current 827-theory session passes.','The current 836-theory session passes.')
+anchor='original cases retain their complete results. Coverage of every development'
+new='''original cases retain their complete results. A
+[constructive candidate search](validation/generalization-review-2026-09-12/candidate-construction/README.md)
+now assembles source-site plans from parts. Its declared language is every
+sufficient subset of the supplied basis, with complete scope, inclusion
+minimality and a missing-requirement witness for every retained part. A separate
+scoped binding method is proved equal to the required-domain part of the full
+compatible-union meaning. Native tests cover 8,256 overlapping binding
+fragments and joint application construction from 240 source sites; all 131
+original consumer cases retain their complete mathematical reports.
+Coverage of every development'''
+assert anchor in s;s=s.replace(anchor,new);(D/'README.md').write_text(s)
+s=(M/'REASONING_REUSE.md').read_text()
+a=s.index('The application comparison supplies complete finite schema problems and two');z=s.index('`Factor_Binding_Contributions` factors compatible union',a)
+s=s[:a]+'''The original application comparison supplied complete finite schema problems
+and two construction controls. Their conditions compute complete-instance and
+material validity, preservation of the former application relation, and
+inclusion of explicitly required tuples. Those controls remain available. The
+current candidate constructor and its declared scope are described below;
+comparison now operates on the plan actually assembled from source sites.
+
+'''+s[z:]
+s=s.replace('`Factor_Binding_Contributions` factors compatible union of any finite collection\nof binding relations.','`Finite_Compatible_Unions` owns compatible union of arbitrary finite relations.\n`Factor_Binding_Contributions` instantiates it for observed binding fragments.')
+append='''
+
+## Constructive candidate languages and selective search
+
+`Finite_Demand_Selection` selects an actually uncovered requirement of least
+supplied cost and proves progress on the finite scope. The binding search and
+candidate assembler instantiate that operation with their own complete inputs.
+`Finite_Directed_Contributions` finds exactly the full compatible unions with
+the demanded variable domain. It selects a variable with few distinct available
+values, retains only compatible whole fragments, and checks complete support
+before returning a binding. The original full-union meaning and include/exclude
+operation remain available. The scoped result is never truncated to one binding.
+
+`Finite_Candidate_Assembly` declares all sufficient subsets of a supplied part
+basis. Its constructor selects an uncovered requirement with few supporting
+entries in the supplied part list, adds a supporting part, and removes every
+part whose deletion preserves coverage. It succeeds exactly when that language
+is nonempty. The returned set is inclusion minimal; each retained part has an
+actual requirement lost upon removal. Input order and repeated presentations
+may affect which sufficient plan is selected, while the declared language and
+existence depend on the finite subjects. No minimum-cardinality claim is made.
+
+`Finite_Indexed_Candidate_Assembly` connects each ordinal to its complete
+original requirement. Exact coverage and decoded-uncovered equations allow
+search to compare indices. Coverage caching preserves the original constructor
+function. The filtered-coverage equation computes the actual predicate without
+repeatedly comparing complete problem records. The original subject maps and
+witnesses remain in the output and in the independent assessment.
+
+The application consumer uses actual schema observation sites as parts and
+complete problem/target/variable tuples as requirements. A site covers a
+variable only through a whole accepted matching relation contained in the
+target binding. The shared observation-assembly equation connects coverage to
+complete binding generation. The application equation then retains the
+original instance and material checks and every mandatory application across
+the entire supplied family. Mandatory targets include every application of the
+former separate-source operation as well as the explicit required targets.
+
+The formation gate checks schemas, every supplied observed term, the original
+premise enumeration and the exact target presentation. Zero-variable targets
+still pass those checks. Reports distinguish malformed input, uncovered
+requirements and the optional constructed plan. The indexed observation
+contract concerns that actual plan and the complete workload objects. The
+language covers source-site subsets of the declared basis; it does not claim
+coverage of all possible programs or externally proposed proof changes.
+
+The supplied-input tool shares complete subject serializers and independent
+reconstruction with the observation adapter. It rejects unknown fields and
+ambiguous workload indices. Optional repeated target-owner fields must agree
+with the complete enclosing problem. Semantically malformed but representable
+inputs remain available for the native formation check.
+
+The [retained construction review](validation/generalization-review-2026-09-12/candidate-construction/README.md)
+contains 61 generic search cases, 30 actual application cases, original consumer
+regressions, complete native maps and witnesses, corruption controls, failed
+attempts and exact replays. The generic scope includes 8,256 overlapping
+fragments; the application scope includes a joint 240-site basis and 224
+requirements. Replays restore the original helper sources even when an old
+adapter changes its import path. All native mathematical fields are compared;
+only declared clocks vary, and the unordered host per-part witness family is
+compared by actual site with every field and duplicate retained. A timeout is
+an incomplete execution, never proof that a candidate is absent.
+'''
+s+=append;(D/'REASONING_REUSE.md').write_text(s)
+(D/'status.json').write_text(json.dumps({'status':'unadopted draft','new_theories':order,'registered_count':836,'prerequisites':['Complete supplied-input validation','Retained archive and replay','Accepted complete repository check before claiming the 836-theory session passes']},indent=2)+'\n')
+print(D)

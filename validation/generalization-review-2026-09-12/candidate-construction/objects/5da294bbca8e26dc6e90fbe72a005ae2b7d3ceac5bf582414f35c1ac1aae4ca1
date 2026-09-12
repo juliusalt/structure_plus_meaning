@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/home/julius/structure_and_semantics/tools/retain_reasoning_review.py", line 227, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/home/julius/structure_and_semantics/tools/retain_reasoning_review.py", line 179, in main
+    exact_inputs[source] = archive.add(Path(source), sha)
+                           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/julius/structure_and_semantics/tools/retain_reasoning_review.py", line 60, in add
+    assert selected is not None and digest(selected) == sha, (path, sha, "missing exact source bytes")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: (PosixPath('/tmp/generalization-quality-review/directed-candidate-construction/check_candidate_regressions.py'), '6aaa70e41169115bdd54869de9ca56cd383a1d1f609b6969e2fde574ec1c8b23', 'missing exact source bytes')

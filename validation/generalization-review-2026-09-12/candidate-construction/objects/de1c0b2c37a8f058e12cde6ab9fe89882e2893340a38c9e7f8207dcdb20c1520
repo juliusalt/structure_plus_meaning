@@ -1,0 +1,27 @@
+Isabelle2025-2
+Running RRA_Factor_Structural_Bootstrap ...
+*** Timeout
+RRA_Factor_Structural_Bootstrap FAILED (see also "isabelle build_log -H Error RRA_Factor_Structural_Bootstrap")
+Unfinished session(s): RRA_Factor_Structural_Bootstrap
+Finished at Sat Sep 12 01:56:23 GMT+3 2026
+{
+  "invocation": "55afa5b2-d9f4-43dc-b07b-798e0a3c7a83",
+  "status": "failed",
+  "started_utc": "2026-09-11T22:54:13.536218+00:00",
+  "exit_code": 142,
+  "build_receipt": "validation/build.json",
+  "diagnostics_file": "validation/check-errors.log",
+  "build_status": "failed",
+  "theory_count": 836,
+  "missing_theory_files": [],
+  "unlisted_theories": [],
+  "proof_escape_matches": [],
+  "sources_and_tools_unchanged": true,
+  "finished_utc": "2026-09-11T22:56:24.685481+00:00"
+}
+
+Build errors:
+*** Timeout
+
+Return code: 142 (TIMEOUT)
+

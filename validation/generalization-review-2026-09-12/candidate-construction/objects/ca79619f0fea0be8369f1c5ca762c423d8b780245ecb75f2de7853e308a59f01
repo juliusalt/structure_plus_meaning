@@ -1,0 +1,17 @@
+
+Build errors:
+*** Failed to load theory "Native_Application_Construction16.Factor_Application_Candidates" (unresolved "Native_Application_Construction16.Finite_Indexed_Candidate_Assembly")
+*** Failed to load theory "Native_Application_Construction16.Factor_Application_Comparison" (unresolved "Native_Application_Construction16.Factor_Application_Candidates")
+*** Failed to load theory "Native_Application_Construction16.Factor_Application_Execution" (unresolved "Native_Application_Construction16.Factor_Application_Comparison")
+*** Failed to finish proof (line 22 of "/tmp/native-investigation-report-diagnostic-applicationconstruction16/theories/Finite_Indexed_Candidate_Assembly.thy"):
+*** goal (1 subgoal):
+***  1. \<lbrakk>i < length As; As ! i |\<in>| K p\<rbrakk>
+***     \<Longrightarrow> i \<in> fst `
+***            ({(i, a). a |\<in>| K p} \<inter>
+***             fset
+***              (fset_of_list
+***                (finite_requirement_subjects
+***                  As)))
+*** At command "by" (line 21 of "/tmp/native-investigation-report-diagnostic-applicationconstruction16/theories/Finite_Indexed_Candidate_Assembly.thy")
+
+Return code: 1 (ERROR)

@@ -1,0 +1,47 @@
+{
+  "status": "failed",
+  "exit_code": 1,
+  "sources_unchanged": true,
+  "checked_theories": 5,
+  "parent_theories_reused": 7,
+  "roots": [
+    "Finite_Directed_Execution"
+  ],
+  "command": [
+    "isabelle",
+    "build",
+    "-o",
+    "threads=12",
+    "-o",
+    "parallel_proofs=0",
+    "-o",
+    "build_timing_threshold=0",
+    "-d",
+    "/home/julius/structure_and_semantics",
+    "-D",
+    "/tmp/native-investigation-report-diagnostic-directed18"
+  ],
+  "started_utc": "2026-09-11T20:41:05.453905+00:00",
+  "finished_utc": "2026-09-11T20:41:14.422605+00:00",
+  "log": "/tmp/native-investigation-report-diagnostic-directed18/build.log"
+}
+Running Native_Directed18 ...
+Native_Directed18 FAILED (see also "isabelle build_log -H Error Native_Directed18")
+*** Failed to load theory "Native_Directed18.Finite_Directed_Execution" (unresolved "Native_Directed18.Finite_Directed_Contributions")
+*** Failed to apply initial proof method (line 229 of "/tmp/native-investigation-report-diagnostic-directed18/theories/Finite_Directed_Contributions.thy"):
+*** using this:
+***   V |∈|
+***   finite_value_binding_search n As
+***    (finite_compatible_binding_parts (fset_of_list As) B (finsert (a, t) U))
+***    (finsert (a, t) U)
+*** goal (1 subgoal):
+***  1. V |∈|
+***     finite_value_binding_search n As
+***      (ffilter (finite_assignment_agrees (a, t))
+***        (finite_compatible_binding_parts (fset_of_list As) B U))
+***      (finsert (a, t)
+***        U)
+*** At command "by" (line 229 of "/tmp/native-investigation-report-diagnostic-directed18/theories/Finite_Directed_Contributions.thy")
+Unfinished session(s): Native_Directed18
+0:00:08 elapsed time, 0:00:06 cpu time, factor 0.81
+

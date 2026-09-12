@@ -1,0 +1,24 @@
+definition finite_cached_values where
+  "finite_cached_values Ps K p=(case map_of (map (\<lambda>p. (p,K p)) Ps) p of
+    None \<Rightarrow> K p | Some value \<Rightarrow> value)"
+
+lemma finite_cached_values_exact:
+  "finite_cached_values Ps K=K"
+proof (rule ext)
+  fix p
+  show "finite_cached_values Ps K p=K p"
+    unfolding finite_cached_values_def by (induction Ps) (auto split: if_splits)
+qed
+
+lemma finite_construct_candidate_cached [code]:
+  "finite_construct_candidate As Ps K=
+    (let table=map (\<lambda>p. (p,K p)) Ps;
+         cached=\<lambda>p. case map_of table p of None \<Rightarrow> K p | Some value \<Rightarrow> value
+     in map_option (finite_prune_assembly Ps cached (fset_of_list As))
+       (finite_assembly_search (fcard (fset_of_list As)) As Ps cached {||}))"
+proof -
+  have cached: "(\<lambda>p. case map_of (map (\<lambda>p. (p,K p)) Ps) p of
+    None \<Rightarrow> K p | Some value \<Rightarrow> value)=K"
+    using finite_cached_values_exact[of Ps K] by (simp only: finite_cached_values_def)
+  show ?thesis by (simp only: Let_def cached finite_construct_candidate_def)
+qed

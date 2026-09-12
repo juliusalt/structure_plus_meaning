@@ -1,0 +1,28 @@
+{
+  "status": "accepted",
+  "exit_code": 0,
+  "sources_unchanged": true,
+  "checked_theories": 15,
+  "parent_theories_reused": 404,
+  "roots": [
+    "Factor_Application_Execution",
+    "Factor_Finite_Inference_Premises"
+  ],
+  "command": [
+    "isabelle",
+    "build",
+    "-o",
+    "threads=12",
+    "-o",
+    "parallel_proofs=0",
+    "-o",
+    "build_timing_threshold=0",
+    "-d",
+    "/home/julius/structure_and_semantics",
+    "-D",
+    "/tmp/native-investigation-report-diagnostic-applicationconstruction11"
+  ],
+  "started_utc": "2026-09-11T21:48:40.339513+00:00",
+  "finished_utc": "2026-09-11T21:48:58.985986+00:00",
+  "log": "/tmp/native-investigation-report-diagnostic-applicationconstruction11/build.log"
+}

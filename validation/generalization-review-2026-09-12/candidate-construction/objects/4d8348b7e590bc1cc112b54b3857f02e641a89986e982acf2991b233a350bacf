@@ -1,0 +1,6 @@
+Running Native_Directed8 ...
+*** Timeout
+Native_Directed8 FAILED (see also "isabelle build_log -H Error Native_Directed8")
+
+Unfinished session(s): Native_Directed8
+0:01:03 elapsed time

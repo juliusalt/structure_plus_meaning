@@ -1,0 +1,12 @@
+Running Native_Application_Construction9 ...
+Native_Application_Construction9 FAILED (see also "isabelle build_log -H Error Native_Application_Construction9")
+*** Failed to load theory "Native_Application_Construction9.Factor_Application_Comparison" (unresolved "Native_Application_Construction9.Factor_Application_Candidates")
+*** Failed to load theory "Native_Application_Construction9.Factor_Application_Execution" (unresolved "Native_Application_Construction9.Factor_Application_Comparison")
+*** Failed to finish proof (line 101 of "/tmp/native-investigation-report-diagnostic-applicationconstruction9/theories/Factor_Application_Candidates.thy"):
+*** goal (1 subgoal):
+***  1. application_instances_valid (application_schema P)
+***      (fset_of_list
+***        Xs)
+*** At command "by" (line 101 of "/tmp/native-investigation-report-diagnostic-applicationconstruction9/theories/Factor_Application_Candidates.thy")
+Unfinished session(s): Native_Application_Construction9
+0:00:16 elapsed time, 0:00:21 cpu time, factor 1.25

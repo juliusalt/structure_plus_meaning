@@ -1,0 +1,46 @@
+"""Audit the complete selected evidence family, collecting all unavailable inputs."""
+from pathlib import Path
+import json,sys
+M=Path('/home/julius/structure_and_semantics');B=Path('/tmp/generalization-quality-review/directed-candidate-construction');C=Path(__file__).parent
+sys.path.insert(0,str(M/'tools'))
+import retain_reasoning_review as retain
+spec=json.loads((B/'candidate-archive-spec.json').read_text())
+prior=[M/'validation/generalization-review-2026-09-11'/x for x in ['structural-observations','indexed-subject-contracts-retained-inputs']]
+archive=retain.Archive(C/'input-catalog',prior,[B,C,*[Path(x['path']) for x in spec['proofs'].values()]],allow_existing=True)
+spec['proofs']['current-presenter-export']={'path':str(C/'current-presenter-export'),'receipt':'proof.json'}
+required={}
+def add(path,sha=None):
+ path=Path(path).resolve();sha=sha or retain.digest(path)
+ required.setdefault((str(path),sha),set()).add(current)
+ return str(path)
+class Probe:
+ def add(self,path,sha=None):return add(path,sha)
+ def directory(self,source):return {str(p.relative_to(source)):add(p) for p in sorted(source.rglob('*')) if p.is_file()}
+for name,item in spec['proofs'].items():
+ current='proof:'+name;d=Path(item['path']);p=d/item.get('receipt','result.json');r=json.loads(p.read_text());add(p)
+ for theory,sha in r['sources'].items():add(M/'theories'/(theory+'.thy'),sha)
+ for exported in r.get('exports',[]):add(exported['path'],exported['sha256'])
+ for path,sha in r.get('export_inputs',{}).items():add(path,sha)
+ if r.get('source_proof_sha256'):add(r['source_proof'],r['source_proof_sha256'])
+ if (d/'parent.json').exists():
+  parent=json.loads((d/'parent.json').read_text())
+  if 'receipt' in parent:add(parent['receipt'],parent['receipt_sha256'])
+  for field in ['inputs','helper_inputs']:
+   for path,sha in parent.get(field,{}).items():add(path,sha)
+for name,item in spec['runs'].items():
+ current='run:'+name
+ for path,sha in json.loads((Path(item['path'])/'execution-inputs.json').read_text()).items():add(path,sha)
+for name,item in spec['investigations'].items():
+ current='investigation:'+name
+ retain.retain_investigation(Probe(),Path(item['path']))
+missing=[];recovered=[]
+for (path,sha),uses in sorted(required.items()):
+ live=Path(path)
+ available=archive.available.get(sha)
+ if live.is_file() and retain.digest(live)==sha:location=live
+ elif available is not None:location=available
+ else:missing.append({'path':path,'sha256':sha,'uses':sorted(uses)});continue
+ recovered.append({'path':path,'sha256':sha,'available':str(location),'uses':sorted(uses)})
+result={'required_pairs':len(required),'available_pairs':len(recovered),'missing':missing,'resolved':recovered,'boundary':'Every proof source, export, source-proof receipt, export-procedure input, full parent input, parent helper input, accepted-run checked input and conditional investigation input in the selected archive specification is checked. Existing retained byte sources may differ in path but must carry the original digest.'}
+(C/'complete-input-audit2.json').write_text(json.dumps(result,indent=2)+'\n')
+print(json.dumps({k:v for k,v in result.items() if k!='resolved'},indent=2))

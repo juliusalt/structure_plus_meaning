@@ -1,0 +1,38 @@
+"""Preserve complete old consumer reports under the new proved scoped search."""
+import argparse,json,sys
+from pathlib import Path
+
+def main():
+ p=argparse.ArgumentParser()
+ for name in ['project','proof','poly','baseline','output']:p.add_argument('--'+name,type=Path,required=True)
+ p.add_argument('--native-input',type=Path);a=p.parse_args();a.engine=None
+ sys.path.insert(0,str(a.project/'tools'))
+ import check_reasoning as review
+ import check_guided_reasoning as guided
+ before,baseline=guided.load_baseline(a.baseline)
+ dependencies=[a.baseline/name for name in ['receipt.json','cases.json','results.log']]
+ reference=None
+ if any(c.get('native_source_reference') for c in before):
+  assert a.native_input is not None
+  import check_finite_inference
+  reference,paths=check_finite_inference.checked_reference(a.native_input,before);dependencies+=paths
+ status=review.run(a,cases_factory=lambda:before,cases_source=Path(__file__),cases_dependencies=dependencies,
+   library_exports=['inference_reader_construction_library','reader_construction_library',
+                    'inference_reader_investigation_library','binding_observation_construction_library'])
+ if status:return status
+ _,after=guided.load_baseline(a.output)
+ assert set(after)==set(baseline)
+ # Application lists represent finite collections. Preserve complete nested
+ # applications while disregarding only their outer result enumeration order.
+ def normalized(report):
+  return {**report,'applications':frozenset(review.application_key(x) for x in report['applications']),
+   **{k:frozenset(map(review.freeze,report[k])) for k in ['demand','settled','residual']}}
+ differences=[i for i in baseline if normalized(baseline[i])!=normalized(after[i])]
+ result={'cases':len(before),'baseline':str(a.baseline),'baseline_receipt_sha256':review.digest(a.baseline/'receipt.json'),
+  'new_receipt_sha256':review.digest(a.output/'receipt.json'),'different_cases':differences,'source_reference':reference,
+  'boundary':'Every original complete input is reexecuted and assessed with the checked module. Complete mathematical reports agree modulo their finite-set enumerations; no output fields are dropped.'}
+ (a.output/'preservation.json').write_text(json.dumps(result,indent=2)+'\n')
+ print(json.dumps(result,separators=(',',':')))
+ assert not differences,differences
+ return 0
+if __name__=='__main__':raise SystemExit(main())

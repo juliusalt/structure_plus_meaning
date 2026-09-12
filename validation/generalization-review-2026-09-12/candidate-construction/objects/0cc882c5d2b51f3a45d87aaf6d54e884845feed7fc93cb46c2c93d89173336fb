@@ -1,0 +1,275 @@
+{
+  "complete_result": {
+    "question": "The actual application constructor repeatedly recomputes coverage and compares complete structural requirements inside search: 48 parts take 30.744 seconds and 96 parts exceed the 60-second native budget.",
+    "boundary": "Prospective conditional choice driven by retained actual native execution costs and the exact generated call sites. It chooses a proof-and-measurement attempt; it does not establish the proposed equations or their runtime improvement.",
+    "specification_sha256": "9c435e657cf68540169ef1f1b87ead851e9529330546d865981c0377be44e85f",
+    "results": [
+      {
+        "problem": "actual-application-search-cost",
+        "initial_result": {
+          "input_formed": true,
+          "residual": [
+            [
+              1,
+              0
+            ]
+          ],
+          "profiles": [
+            {
+              "candidate": 0,
+              "profile": []
+            },
+            {
+              "candidate": 1,
+              "profile": []
+            }
+          ],
+          "losses": [
+            {
+              "from": 0,
+              "to": 0,
+              "losses": []
+            },
+            {
+              "from": 0,
+              "to": 1,
+              "losses": []
+            },
+            {
+              "from": 1,
+              "to": 0,
+              "losses": []
+            },
+            {
+              "from": 1,
+              "to": 1,
+              "losses": []
+            }
+          ],
+          "safe_facets": [
+            0,
+            1
+          ],
+          "conflicts": [],
+          "repairs": [
+            [
+              1,
+              0,
+              1,
+              0
+            ],
+            [
+              1,
+              0,
+              1,
+              1
+            ],
+            [
+              1,
+              0,
+              1,
+              2
+            ],
+            [
+              1,
+              0,
+              1,
+              3
+            ]
+          ],
+          "unrepairable": [],
+          "extension": [
+            1
+          ],
+          "revision": {
+            "retained": [],
+            "withdrawn": [],
+            "repairs": [
+              [
+                1,
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                1,
+                1
+              ],
+              [
+                1,
+                0,
+                1,
+                2
+              ],
+              [
+                1,
+                0,
+                1,
+                3
+              ]
+            ],
+            "selection": [
+              1
+            ],
+            "residual": []
+          }
+        },
+        "followed_result": {
+          "input_formed": true,
+          "residual": [],
+          "profiles": [
+            {
+              "candidate": 0,
+              "profile": []
+            },
+            {
+              "candidate": 1,
+              "profile": [
+                [
+                  1,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  2
+                ],
+                [
+                  1,
+                  3
+                ]
+              ]
+            }
+          ],
+          "losses": [
+            {
+              "from": 0,
+              "to": 0,
+              "losses": []
+            },
+            {
+              "from": 0,
+              "to": 1,
+              "losses": []
+            },
+            {
+              "from": 1,
+              "to": 0,
+              "losses": [
+                [
+                  1,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  2
+                ],
+                [
+                  1,
+                  3
+                ]
+              ]
+            },
+            {
+              "from": 1,
+              "to": 1,
+              "losses": []
+            }
+          ],
+          "safe_facets": [
+            0,
+            1
+          ],
+          "conflicts": [],
+          "repairs": [],
+          "unrepairable": [],
+          "extension": [
+            1
+          ],
+          "revision": {
+            "retained": [
+              1
+            ],
+            "withdrawn": [],
+            "repairs": [],
+            "selection": [
+              1
+            ],
+            "residual": []
+          }
+        },
+        "assessment": {
+          "required_observations": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ]
+          ],
+          "missing_requirements": {
+            "0": [
+              [
+                1,
+                0
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                1,
+                3
+              ]
+            ],
+            "1": []
+          },
+          "eligible": [
+            1
+          ],
+          "dominant": [
+            1
+          ],
+          "strict_improvements": [],
+          "boundary": "Assessment of the supplied finite candidates under explicit mandatory observations. Eligibility uses all original observations, including facets unnecessary for distinguishing these candidates. The returned adequate profiles determine comparison; broader coverage and candidate construction remain separate.",
+          "receipt_sha256": "72bcf8e505f862c12c0d3c31475c75a137742d56604e84c006b960dc98fc7754"
+        }
+      }
+    ]
+  },
+  "decision": "Check the complete coverage-cache and indexed-requirement implementation, with its actual native index maps, all original controls, generic regressions and realistic source bases.",
+  "criticism": [
+    "All 26 application controls and all six corruptions pass in batch 13.",
+    "Actual construction takes 30.744 seconds at 48 parts; 96, 192 and 240 parts time out after 60 seconds before a report. These timeouts do not establish impossibility.",
+    "The generated code calls K p repeatedly and compares complete problem/application records inside each search membership check.",
+    "The generic cache equation must preserve the existing deterministic constructor. The indexed wrapper must preserve the declared sufficient-subset language, completeness and inclusion minimality through exact index-to-subject and coverage equations.",
+    "Runtime improvement remains unmeasured until these proposed contracts and the new native input/output mappings pass."
+  ]
+}

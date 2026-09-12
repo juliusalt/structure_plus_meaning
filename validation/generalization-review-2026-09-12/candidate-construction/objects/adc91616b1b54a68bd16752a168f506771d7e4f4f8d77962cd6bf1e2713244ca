@@ -1,0 +1,27 @@
+{
+  "status": "accepted",
+  "exit_code": 0,
+  "sources_unchanged": true,
+  "checked_theories": 5,
+  "parent_theories_reused": 7,
+  "roots": [
+    "Finite_Directed_Execution"
+  ],
+  "command": [
+    "isabelle",
+    "build",
+    "-o",
+    "threads=12",
+    "-o",
+    "parallel_proofs=0",
+    "-o",
+    "build_timing_threshold=0",
+    "-d",
+    "/home/julius/structure_and_semantics",
+    "-D",
+    "/tmp/native-investigation-report-diagnostic-directed20"
+  ],
+  "started_utc": "2026-09-11T20:45:00.537422+00:00",
+  "finished_utc": "2026-09-11T20:45:09.917966+00:00",
+  "log": "/tmp/native-investigation-report-diagnostic-directed20/build.log"
+}

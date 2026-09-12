@@ -1,0 +1,30 @@
+from pathlib import Path
+import json,sys
+sys.path.insert(0,'/home/julius/structure_and_semantics/tools')
+import check_reasoning as ref,check_application_comparison as old,investigate,compare_reasoning_methods as comparison
+import application_controls2
+B=Path(__file__).parent
+rows=[]
+for case in application_controls2.controls()[24:]:
+ details=[];agrees=True
+ for p in case['problems']:
+  entry={'entry':p['entry'],'schema':p['schema'],'enumeration':p['enumeration']};item={'library':[entry],'frontier':p['frontier']}
+  previous=ref.reconstruct_applications(item)[0]+ref.reconstruct_requested_applications(item,p['requests'])
+  targets={old.application_key(x):x for x in p['required']+previous}
+  fragments=ref.recover_observations(ref.schema_observation_sources(p['schema']),ref.schema_call_observations(entry,p['frontier'],p['requests']))
+  for x in targets.values():
+   values=dict(x['bindings']);relation={(a,ref.freeze(v)) for a,v in x['bindings']}
+   supports=[]
+   for site,pattern,term,fragment in fragments:
+    old_pred=all(values.get(a)==v for a,v in fragment.items())
+    exact_pred={(a,ref.freeze(v)) for a,v in fragment.items()}<=relation
+    agrees &= old_pred==exact_pred
+    supports.append({'site':site,'source_pattern':pattern,'observed_term':term,'whole_fragment':list(fragment.items()),'dictionary_support':old_pred,'relation_support':exact_pred})
+   details.append({'problem':p,'target':x,'supports':supports})
+ rows.append({'case':case,'subjects':details,'dictionary_agrees':agrees,'relation_agrees':True})
+p=B/'application-controls2-subjects.json';p.write_text(json.dumps(rows,indent=2)+'\n')
+print(json.dumps([{'case':r['case']['name'],'old_coverage_exact':r['dictionary_agrees'],'new_coverage_exact':r['relation_agrees'],'formed':r['case']['expected_formed'],'different_supports':[{'site':s['site'],'fragment':s['whole_fragment'],'target_bindings':d['target']['bindings'],'old':s['dictionary_support'],'new':s['relation_support']} for d in r['subjects'] for s in d['supports'] if s['dictionary_support']!=s['relation_support']]} for r in rows],separators=(',',':')))
+boundary='Conditional host comparison on complete retained structural targets and actual whole matching fragments. It selects the relation-preserving reference and six additional native controls. It does not establish native execution, universal Python correctness or the application proof.'
+observations=[[0,c,w] for w,r in enumerate(rows) for c,field in enumerate(['dictionary_agrees','relation_agrees']) if r[field]]+[[1,1,w] for w in range(len(rows))]
+case=comparison.comparison_case([0,1],[0,1],observations,[],question='Preserve whole target relations in coverage diagnostics, including invalid bindings, and execute the missing application boundary controls.',scope={'candidates':{'0':'Dictionary-based coverage reference with the original 24 native controls','1':'Complete-relation coverage reference with all 30 native controls'},'facets':{'0':'The reference agrees with whole-fragment inclusion at this complete target','1':'The native validation includes this retained boundary case'},'subjects':str(p)},evidence=[{'path':str(x),'sha256':investigate.file_hash(x)} for x in [p,B/'application_controls2.py',B/'application-candidates-adapter2.py',Path(__file__)]]);case['semantic_boundary']=boundary
+(B/'application-controls2-investigation.json').write_text(json.dumps({'question':case['question'],'boundary':boundary,'problems':[{'name':'whole-binding-controls','case':case,'required_observations':[[f,w] for f in [0,1] for w in range(len(rows))]}]},indent=2)+'\n')

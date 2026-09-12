@@ -1,0 +1,45 @@
+Running Native_Directed11 ...
+Native_Directed11 FAILED (see also "isabelle build_log -H Error Native_Directed11")
+...
+***      finite_assembly_search (fcard (fset_of_list As)) As Ps K {||} = None⟧
+***     ⟹ ∃t. t ∈ set As ∧ t |∉| finite_assembly_coverage K (fset_of_list Ps)
+***  2. ⋀t. ⟦∀t. t ∈ set As ⟶
+***              t |∈| finite_assembly_coverage K (fset_of_list Ps) ⟹
+***          ∃y. finite_assembly_search (fcard (fset_of_list As)) As Ps K {||} =
+***              Some y;
+***          ⋀A. finite_assembly_search (fcard (fset_of_list As)) As Ps K {||} =
+***              Some A ⟹
+***              ∀t. t ∈ set As ⟶
+***                  t |∈| finite_assembly_coverage K (fset_of_list Ps);
+***          t ∈ set As; t |∉| finite_assembly_coverage K (fset_of_list Ps)⟧
+***         ⟹ finite_assembly_search (fcard (fset_of_list As)) As Ps K {||} =
+***            None
+*** At command "by" (line 225 of "/tmp/native-investigation-report-diagnostic-directed11/theories/Finite_Candidate_Assembly.thy")
+*** Failed to finish proof (line 150 of "/tmp/native-investigation-report-diagnostic-directed11/theories/Finite_Directed_Contributions.thy"):
+*** goal (1 subgoal):
+***  1. ⟦V |∈|
+***      (case finite_demand_choice
+***             (λa. fcard
+***                   (ffilter (λr. fst r = a)
+***                     (ffUnion
+***                       (finite_compatible_binding_parts (fset_of_list As) B
+***                         U))))
+***             As (fset_of_list As) of
+***       None ⇒ {|U|}
+***       | Some a ⇒
+***           ffUnion
+***            ((λr. finite_value_binding_search n As
+***                   (ffilter (finite_assignment_agrees r)
+***                     (finite_compatible_binding_parts (fset_of_list As) B U))
+***                   (finsert r U)) |`|
+***             ffilter (λr. fst r = a)
+***              (ffUnion
+***                (finite_compatible_binding_parts (fset_of_list As) B U))));
+***      U |∈| finite_compatible_unions B; fst |`| U = fset_of_list As⟧
+***     ⟹ V |∈| finite_compatible_unions B ∧
+***        fst |`| V = fset_of_list As ∧
+***        U |⊆|
+***        V
+*** At command "by" (line 150 of "/tmp/native-investigation-report-diagnostic-directed11/theories/Finite_Directed_Contributions.thy")
+Unfinished session(s): Native_Directed11
+0:00:08 elapsed time, 0:00:06 cpu time, factor 0.75

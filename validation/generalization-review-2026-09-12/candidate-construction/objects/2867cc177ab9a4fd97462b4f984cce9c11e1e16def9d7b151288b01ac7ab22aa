@@ -1,0 +1,78 @@
+"""Prospective elimination of rich-key comparison inside indexed computation."""
+from pathlib import Path
+import json,sys
+B=Path(__file__).parent;W=B/'worktree';M=Path('/home/julius/structure_and_semantics');D=B/'performance-draft18';D.mkdir()
+sys.path.insert(0,str(M/'tools'));import investigate,compare_reasoning_methods as c
+p=W/'theories/Finite_Indexed_Candidate_Assembly.thy';s=p.read_text();anchor='section \\<open>The search result retains the original part and requirement language\\<close>'
+new=r'''lemma finite_indexed_filter_coverage:
+  "finite_indexed_part_coverage As (\<lambda>p. ffilter (R p) (fset_of_list As)) p=
+    fset_of_list (map fst (filter (\<lambda>(i,a). R p a) (finite_requirement_subjects As)))"
+  by (rule fset_eqI)
+    (simp only: finite_indexed_part_coverage_subject finite_filtered_first_member
+      finite_requirement_subject ffmember_filter fset_of_list_elem; auto)
+
+lemma finite_indexed_uncovered:
+  "fimage ((!) As) (fset_of_list [0..<length As] |-|
+      finite_assembly_coverage (finite_indexed_part_coverage As K) A)=
+    fset_of_list As |-| finite_assembly_coverage K A"
+  by (rule fset_eqI)
+    (auto simp: fset_of_list_elem finite_indexed_assembly_coverage in_set_conv_nth)
+
+'''
+assert anchor in s;s=s.replace(anchor,new+anchor);(D/p.name).write_text(s)
+p=W/'theories/Factor_Application_Candidates.thy';s=p.read_text()
+a=s.index('definition application_part_coverage where');z=s.index('lemma application_part_coverage_member:',a)
+new=r'''definition application_requirement_covered where
+  "application_requirement_covered i (q::finite_application_requirement) \<longleftrightarrow>
+    (case q of (P,(t,V,H),a) \<Rightarrow> a |\<in>| finite_observation_site_coverage
+      (finite_schema_observation_sources (application_schema P)) (application_problem_observations P) V i)"
+
+definition application_part_coverage where
+  "application_part_coverage (Cs::finite_application_construction_case list) i=
+    ffilter (application_requirement_covered i) (fset_of_list (application_plan_requirements Cs))"
+
+'''
+s=s[:a]+new+s[z:];s=s.replace('by (auto simp: application_part_coverage_def fset_of_list_elem)','by (auto simp: application_part_coverage_def application_requirement_covered_def fset_of_list_elem)')
+anchor='definition application_construct_plan where'
+new=r'''lemma application_indexed_part_coverage_code [code]:
+  "application_indexed_part_coverage Cs p=fset_of_list (map fst
+    (filter (\<lambda>(i,q). application_requirement_covered p q) (application_requirement_subjects Cs)))"
+  by (simp only: application_indexed_part_coverage_def application_part_coverage_def[abs_def]
+    finite_indexed_filter_coverage application_requirement_subjects_def)
+
+'''
+assert anchor in s;s=s.replace(anchor,new+anchor)
+anchor='definition application_construction_report where'
+new=r'''lemma application_construct_plan_code [code]:
+  "application_construct_plan Ps Cs=(if application_construction_cases_formed Cs then
+    finite_construct_candidate [0..<length (application_plan_requirements Cs)] Ps
+      (application_indexed_part_coverage Cs) else None)"
+  by (simp only: application_construct_plan_def finite_construct_indexed_candidate_def
+    application_indexed_part_coverage_def)
+
+lemma application_uncovered_requirements_code [code]:
+  "application_uncovered_requirements Ps Cs=(let Qs=application_plan_requirements Cs in
+    fimage ((!) Qs) (fset_of_list [0..<length Qs] |-|
+      finite_assembly_coverage (application_indexed_part_coverage Cs) (fset_of_list Ps)))"
+  by (simp only: Let_def application_uncovered_requirements_def application_indexed_part_coverage_def
+    finite_indexed_uncovered)
+
+'''
+assert anchor in s;s=s.replace(anchor,new+anchor);(D/p.name).write_text(s)
+measurements=[]
+for n in [7,8,9,10]:
+ d=B/'application-batch17'/('native-large-'+str(n));r=json.loads((d/'receipt.json').read_text());markers=[]
+ for line in (d/'results.log').read_text().splitlines():
+  if line.startswith('APPLICATION_'):
+   label,i,data=line.split(' ',2);value=json.loads(data);markers.append({'label':label,'case':int(i),'bytes':len(data),'seconds':value.get('seconds') if type(value) is dict else None})
+ measurements.append({'receipt':str(d/'receipt.json'),'status':r['status'],'error':r.get('error'),'markers':markers})
+proposal={'problem':'The complete report still compares rich problem records in indexed coverage membership and uncovered-requirement union. Two large constructions return plans at 35.529 and 45.552 seconds but their remaining coverage checks exceed the 60-second run limit.',
+ 'requirements':['Preserve every complete subject, full-subset candidate language, formation gate and removal witness.','Instantiate a generic filtered-list index equation so native coverage tests use the exact predicate without rich-key membership.','Use a generic exact decoded-uncovered equation so the report computes the union on indices and returns complete missing subjects.','Retain the complete native maps, coverage, application results and all existing controls and regressions.'],
+ 'source_evidence':str(B/'application-batch17/native-export/export/Native_Application_Construction17.Factor_Application_Execution/code/application_comparison.ML'),
+ 'measurements':measurements,'files':[str(x) for x in D.glob('*.thy')],
+ 'criticism':'fset_of_list and ffilter themselves merely retain/filter lists in the actual exported code. Changing their order would not address the diagnosed rich equality. The proposed equations remove rich comparisons from indexed membership and uncovered union while retaining complete native subject maps. Acceptance and runtime improvement remain to be established by the complete next batch.'}
+p=B/'application-performance18-proposal.json';p.write_text(json.dumps(proposal,indent=2)+'\n')
+boundary='Prospective conditional code-equation choice on exact native operations and retained complete-run measurements. It selects a proof and execution attempt, not proof acceptance or a measured speedup.'
+case=c.comparison_case([0,1],list(range(4)),[[0,0,0],[3,0,0]]+[[f,1,0] for f in range(4)],[],question=proposal['problem'],scope={'candidates':{'0':'Keep rich-key indexed membership and complete-key uncovered union','1':'Check direct-predicate indexed coverage and exact decoded uncovered computation'},'facets':dict(enumerate(proposal['requirements'])),'subjects':str(p)},evidence=[{'path':str(x),'sha256':investigate.file_hash(x)} for x in [p,*D.glob('*.thy')]]);case['semantic_boundary']=boundary
+(B/'application-performance18-investigation.json').write_text(json.dumps({'question':proposal['problem'],'boundary':boundary,'problems':[{'name':'indexed-application-cost','case':case,'required_observations':[[f,0] for f in range(4)]}]},indent=2)+'\n')
+print(json.dumps(measurements,separators=(',',':')))

@@ -1,0 +1,5 @@
+{
+  "decision": "/tmp/generalization-quality-review/candidate-delivery-review/retention-patch-decision.json",
+  "validation": "/tmp/generalization-quality-review/candidate-delivery-review/retention-validation1/diagnostics.json",
+  "criticism": "All 74 tests, all 30 complete application cases, both original consumer families, native source recovery and finite presenters pass. Every nonexternal checked input is retained with its exact bytes, and the complete mathematical reports and all documentation words are preserved. Adopt the exact validated files; the accepted 836-theory sources are unchanged."
+}

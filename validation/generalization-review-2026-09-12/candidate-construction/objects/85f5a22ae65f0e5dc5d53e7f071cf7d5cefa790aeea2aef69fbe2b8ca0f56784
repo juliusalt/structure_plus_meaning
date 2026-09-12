@@ -1,0 +1,47 @@
+theory Factor_Observation_Assembly
+  imports Factor_Binding_Contributions Finite_Candidate_Assembly
+begin
+
+definition finite_selected_observations where
+  "finite_selected_observations A obs=ffilter (\<lambda>(i,t). i |\<in>| A) obs"
+
+lemma finite_selected_observation_member:
+  "(i,t) |\<in>| finite_selected_observations A obs \<longleftrightarrow>
+    (i,t) |\<in>| obs \<and> i |\<in>| A"
+  by (auto simp: finite_selected_observations_def)
+
+definition finite_observation_site_coverage where
+  "finite_observation_site_coverage P obs V i=fimage fst
+    (finite_observation_union (finite_binding_support P (finite_selected_observations {|i|} obs) V))"
+
+lemma finite_observation_site_coverage_member:
+  "a |\<in>| finite_observation_site_coverage P obs V i \<longleftrightarrow>
+    (\<exists>p t u. (i,p) |\<in>| P \<and> (i,t) |\<in>| obs \<and>
+      finite_pattern_accepts p t \<and> finite_matching_bindings p t |\<subseteq>| V \<and>
+      (a,u) |\<in>| finite_matching_bindings p t)"
+  by (auto simp: finite_observation_site_coverage_def finite_observation_union_domain_member
+    finite_binding_support_member finite_selected_observation_member)
+
+lemma finite_observation_assembly_coverage:
+  "finite_assembly_coverage (finite_observation_site_coverage P obs V) A=
+    fimage fst (finite_observation_union (finite_binding_support P (finite_selected_observations A obs) V))"
+  by (rule fset_eqI)
+    (auto simp: finite_assembly_coverage_member finite_observation_site_coverage_member
+      finite_observation_union_domain_member finite_binding_support_member finite_selected_observation_member)
+
+
+theorem finite_observation_assembly_exact:
+  assumes functional: "finite_relation_functional V"
+  shows "V |\<in>| finite_observed_bindings P (finite_selected_observations A obs) \<longleftrightarrow>
+    fimage fst V |\<subseteq>| finite_assembly_coverage (finite_observation_site_coverage P obs V) A"
+  by (simp only: finite_observed_bindings_scope_supported[OF functional]
+    finite_observation_assembly_coverage)
+
+text \<open>
+  A source site covers a variable only through a whole accepted matching
+  relation contained in the target binding. Its other pairs cannot be discarded.
+  Coverage by an assembled site set is exactly support for that complete
+  functional binding by observations at those sites.
+\<close>
+
+end

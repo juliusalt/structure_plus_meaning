@@ -1,0 +1,30 @@
+{
+  "required_observations": [
+    [
+      0,
+      0
+    ],
+    [
+      1,
+      0
+    ]
+  ],
+  "missing_requirements": {
+    "0": [
+      [
+        1,
+        0
+      ]
+    ],
+    "1": []
+  },
+  "eligible": [
+    1
+  ],
+  "dominant": [
+    1
+  ],
+  "strict_improvements": [],
+  "boundary": "Assessment of the supplied finite candidates under explicit mandatory observations. Eligibility uses all original observations, including facets unnecessary for distinguishing these candidates. The returned adequate profiles determine comparison; broader coverage and candidate construction remain separate.",
+  "receipt_sha256": "c67170312e50dd4a5c3752b8e5a6587fae15ee514dd04cf93f6bb4fca13375a5"
+}

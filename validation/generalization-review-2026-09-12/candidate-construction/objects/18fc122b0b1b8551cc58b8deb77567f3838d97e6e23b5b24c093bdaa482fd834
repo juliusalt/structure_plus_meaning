@@ -1,0 +1,49 @@
+{
+  "baseline": "/tmp/generalization-quality-review/directed-candidate-construction/application-batch13/native-controls",
+  "baseline_invocation": "6a0db0ae-400a-4f91-ac22-70119bc94e88",
+  "mutations": [
+    {
+      "mutation": "input-part",
+      "status": "rejected",
+      "failure": "",
+      "traceback": "Traceback (most recent call last):\n  File \"/tmp/generalization-quality-review/directed-candidate-construction/check_application_assessment_mutations.py\", line 36, in main\n    try:adapter.assess(cases,modified)\n        ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^\n  File \"/tmp/generalization-quality-review/directed-candidate-construction/check_application_candidates.py\", line 128, in assess\n    inp=get('INPUT');assert inp['parts']==r['parts']\n                            ^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+      "mutated_log": "/tmp/generalization-quality-review/directed-candidate-construction/application-batch13/assessment-mutations/input-part.log"
+    },
+    {
+      "mutation": "input-problem",
+      "status": "rejected",
+      "failure": "",
+      "traceback": "Traceback (most recent call last):\n  File \"/tmp/generalization-quality-review/directed-candidate-construction/check_application_assessment_mutations.py\", line 36, in main\n    try:adapter.assess(cases,modified)\n        ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^\n  File \"/tmp/generalization-quality-review/directed-candidate-construction/check_application_candidates.py\", line 129, in assess\n    assert [old.normalized_problem(x) for x in inp['problems']]==[old.normalized_problem(x) for x in r['problems']]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+      "mutated_log": "/tmp/generalization-quality-review/directed-candidate-construction/application-batch13/assessment-mutations/input-problem.log"
+    },
+    {
+      "mutation": "coverage",
+      "status": "rejected",
+      "failure": "",
+      "traceback": "Traceback (most recent call last):\n  File \"/tmp/generalization-quality-review/directed-candidate-construction/check_application_assessment_mutations.py\", line 36, in main\n    try:adapter.assess(cases,modified)\n        ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^\n  File \"/tmp/generalization-quality-review/directed-candidate-construction/check_application_candidates.py\", line 153, in assess\n    for p,qs in cov['parts']:assert set(map(qkey,qs))==coverage.get(ref.freeze(p),set())\n                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+      "mutated_log": "/tmp/generalization-quality-review/directed-candidate-construction/application-batch13/assessment-mutations/coverage.log"
+    },
+    {
+      "mutation": "feasibility",
+      "status": "rejected",
+      "failure": "",
+      "traceback": "Traceback (most recent call last):\n  File \"/tmp/generalization-quality-review/directed-candidate-construction/check_application_assessment_mutations.py\", line 36, in main\n    try:adapter.assess(cases,modified)\n        ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^\n  File \"/tmp/generalization-quality-review/directed-candidate-construction/check_application_candidates.py\", line 159, in assess\n    assert (plan is not None)==(formed and not missing)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+      "mutated_log": "/tmp/generalization-quality-review/directed-candidate-construction/application-batch13/assessment-mutations/feasibility.log"
+    },
+    {
+      "mutation": "actual-applications",
+      "status": "rejected",
+      "failure": "",
+      "traceback": "Traceback (most recent call last):\n  File \"/tmp/generalization-quality-review/directed-candidate-construction/check_application_assessment_mutations.py\", line 36, in main\n    try:adapter.assess(cases,modified)\n        ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^\n  File \"/tmp/generalization-quality-review/directed-candidate-construction/check_application_candidates.py\", line 172, in assess\n    actual=keys(row['plan']);assert actual==keys(applications(p,chosen))\n                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+      "mutated_log": "/tmp/generalization-quality-review/directed-candidate-construction/application-batch13/assessment-mutations/actual-applications.log"
+    },
+    {
+      "mutation": "required-observation",
+      "status": "rejected",
+      "failure": "",
+      "traceback": "Traceback (most recent call last):\n  File \"/tmp/generalization-quality-review/directed-candidate-construction/check_application_assessment_mutations.py\", line 36, in main\n    try:adapter.assess(cases,modified)\n        ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^\n  File \"/tmp/generalization-quality-review/directed-candidate-construction/check_application_candidates.py\", line 183, in assess\n    assert set(map(tuple,answer['observations']))==condition_truth\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+      "mutated_log": "/tmp/generalization-quality-review/directed-candidate-construction/application-batch13/assessment-mutations/required-observation.log"
+    }
+  ],
+  "boundary": "Every mutation starts from an independently accepted native baseline. The modified documents remain complete parseable records. Only assertion failures in the actual semantic assessment count as rejection."
+}

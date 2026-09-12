@@ -1,0 +1,512 @@
+structure Directed_Search : sig
+  type nat
+  datatype 'a set = Set of 'a list | Coset of 'a list
+  type 'a fset
+  val fset : 'a fset -> 'a set
+  type num
+  val fset_of_list : 'a list -> 'a fset
+  val integer_of_nat : nat -> IntInf.int
+  val nat_of_integer : IntInf.int -> nat
+  val natural_directed_bindings :
+    nat fset -> (nat * nat) fset fset -> (nat * nat) fset fset
+  val natural_candidate_assembly :
+    nat list -> nat list -> (nat * nat) fset -> nat fset option
+end = struct
+
+datatype nat = Zero_nat | Suc of nat;
+
+fun equal_nata Zero_nat (Suc x2) = false
+  | equal_nata (Suc x2) Zero_nat = false
+  | equal_nata (Suc x2) (Suc y2) = equal_nata x2 y2
+  | equal_nata Zero_nat Zero_nat = true;
+
+type 'a equal = {equal : 'a -> 'a -> bool};
+val equal = #equal : 'a equal -> 'a -> 'a -> bool;
+
+val equal_nat = {equal = equal_nata} : nat equal;
+
+fun less_eq_nat Zero_nat n = true
+  | less_eq_nat (Suc m) n = less_nat m n
+and less_nat n Zero_nat = false
+  | less_nat m (Suc n) = less_eq_nat m n;
+
+type 'a ord = {less_eq : 'a -> 'a -> bool, less : 'a -> 'a -> bool};
+val less_eq = #less_eq : 'a ord -> 'a -> 'a -> bool;
+val less = #less : 'a ord -> 'a -> 'a -> bool;
+
+val ord_nat = {less_eq = less_eq_nat, less = less_nat} : nat ord;
+
+type 'a preorder = {ord_preorder : 'a ord};
+val ord_preorder = #ord_preorder : 'a preorder -> 'a ord;
+
+type 'a order = {preorder_order : 'a preorder};
+val preorder_order = #preorder_order : 'a order -> 'a preorder;
+
+val preorder_nat = {ord_preorder = ord_nat} : nat preorder;
+
+val order_nat = {preorder_order = preorder_nat} : nat order;
+
+type 'a linorder = {order_linorder : 'a order};
+val order_linorder = #order_linorder : 'a linorder -> 'a order;
+
+val linorder_nat = {order_linorder = order_nat} : nat linorder;
+
+fun list_all p [] = true
+  | list_all p (x :: xs) = p x andalso list_all p xs;
+
+datatype 'a set = Set of 'a list | Coset of 'a list;
+
+fun eq A_ a b = equal A_ a b;
+
+fun membera A_ [] y = false
+  | membera A_ (x :: xs) y = eq A_ x y orelse membera A_ xs y;
+
+fun member A_ x (Set xs) = membera A_ xs x
+  | member A_ x (Coset xs) = not (membera A_ xs x);
+
+fun less_eq_set A_ (Set xs) b = list_all (fn x => member A_ x b) xs
+  | less_eq_set A_ a (Coset ys) = list_all (fn y => not (member A_ y a)) ys
+  | less_eq_set A_ (Coset []) (Set []) = false;
+
+datatype 'a fset = Abs_fset of 'a set;
+
+fun fset (Abs_fset x) = x;
+
+fun less_eq_fset A_ xa xc = less_eq_set A_ (fset xa) (fset xc);
+
+fun equal_fseta A_ a b = less_eq_fset A_ a b andalso less_eq_fset A_ b a;
+
+fun equal_fset A_ = {equal = equal_fseta A_} : 'a fset equal;
+
+fun equal_proda A_ B_ (x1, x2) (y1, y2) = eq A_ x1 y1 andalso eq B_ x2 y2;
+
+fun equal_prod A_ B_ = {equal = equal_proda A_ B_} : ('a * 'b) equal;
+
+datatype num = One | Bit0 of num | Bit1 of num;
+
+val one_integera : IntInf.int = (1 : IntInf.int);
+
+type 'a one = {one : 'a};
+val one = #one : 'a one -> 'a;
+
+val one_integer = {one = one_integera} : IntInf.int one;
+
+type 'a plus = {plus : 'a -> 'a -> 'a};
+val plus = #plus : 'a plus -> 'a -> 'a -> 'a;
+
+val plus_integer = {plus = (fn a => fn b => IntInf.+ (a, b))} : IntInf.int plus;
+
+type 'a zero = {zero : 'a};
+val zero = #zero : 'a zero -> 'a;
+
+val zero_integer = {zero = (0 : IntInf.int)} : IntInf.int zero;
+
+type 'a semigroup_add = {plus_semigroup_add : 'a plus};
+val plus_semigroup_add = #plus_semigroup_add : 'a semigroup_add -> 'a plus;
+
+type 'a numeral =
+  {one_numeral : 'a one, semigroup_add_numeral : 'a semigroup_add};
+val one_numeral = #one_numeral : 'a numeral -> 'a one;
+val semigroup_add_numeral = #semigroup_add_numeral :
+  'a numeral -> 'a semigroup_add;
+
+val semigroup_add_integer = {plus_semigroup_add = plus_integer} :
+  IntInf.int semigroup_add;
+
+val numeral_integer =
+  {one_numeral = one_integer, semigroup_add_numeral = semigroup_add_integer} :
+  IntInf.int numeral;
+
+type 'a times = {times : 'a -> 'a -> 'a};
+val times = #times : 'a times -> 'a -> 'a -> 'a;
+
+type 'a power = {one_power : 'a one, times_power : 'a times};
+val one_power = #one_power : 'a power -> 'a one;
+val times_power = #times_power : 'a power -> 'a times;
+
+val times_integer = {times = (fn a => fn b => IntInf.* (a, b))} :
+  IntInf.int times;
+
+val power_integer = {one_power = one_integer, times_power = times_integer} :
+  IntInf.int power;
+
+type 'a ab_semigroup_add = {semigroup_add_ab_semigroup_add : 'a semigroup_add};
+val semigroup_add_ab_semigroup_add = #semigroup_add_ab_semigroup_add :
+  'a ab_semigroup_add -> 'a semigroup_add;
+
+type 'a semigroup_mult = {times_semigroup_mult : 'a times};
+val times_semigroup_mult = #times_semigroup_mult :
+  'a semigroup_mult -> 'a times;
+
+type 'a semiring =
+  {ab_semigroup_add_semiring : 'a ab_semigroup_add,
+    semigroup_mult_semiring : 'a semigroup_mult};
+val ab_semigroup_add_semiring = #ab_semigroup_add_semiring :
+  'a semiring -> 'a ab_semigroup_add;
+val semigroup_mult_semiring = #semigroup_mult_semiring :
+  'a semiring -> 'a semigroup_mult;
+
+val ab_semigroup_add_integer =
+  {semigroup_add_ab_semigroup_add = semigroup_add_integer} :
+  IntInf.int ab_semigroup_add;
+
+val semigroup_mult_integer = {times_semigroup_mult = times_integer} :
+  IntInf.int semigroup_mult;
+
+val semiring_integer =
+  {ab_semigroup_add_semiring = ab_semigroup_add_integer,
+    semigroup_mult_semiring = semigroup_mult_integer}
+  : IntInf.int semiring;
+
+type 'a mult_zero = {times_mult_zero : 'a times, zero_mult_zero : 'a zero};
+val times_mult_zero = #times_mult_zero : 'a mult_zero -> 'a times;
+val zero_mult_zero = #zero_mult_zero : 'a mult_zero -> 'a zero;
+
+val mult_zero_integer =
+  {times_mult_zero = times_integer, zero_mult_zero = zero_integer} :
+  IntInf.int mult_zero;
+
+type 'a monoid_add =
+  {semigroup_add_monoid_add : 'a semigroup_add, zero_monoid_add : 'a zero};
+val semigroup_add_monoid_add = #semigroup_add_monoid_add :
+  'a monoid_add -> 'a semigroup_add;
+val zero_monoid_add = #zero_monoid_add : 'a monoid_add -> 'a zero;
+
+type 'a comm_monoid_add =
+  {ab_semigroup_add_comm_monoid_add : 'a ab_semigroup_add,
+    monoid_add_comm_monoid_add : 'a monoid_add};
+val ab_semigroup_add_comm_monoid_add = #ab_semigroup_add_comm_monoid_add :
+  'a comm_monoid_add -> 'a ab_semigroup_add;
+val monoid_add_comm_monoid_add = #monoid_add_comm_monoid_add :
+  'a comm_monoid_add -> 'a monoid_add;
+
+type 'a semiring_0 =
+  {comm_monoid_add_semiring_0 : 'a comm_monoid_add,
+    mult_zero_semiring_0 : 'a mult_zero, semiring_semiring_0 : 'a semiring};
+val comm_monoid_add_semiring_0 = #comm_monoid_add_semiring_0 :
+  'a semiring_0 -> 'a comm_monoid_add;
+val mult_zero_semiring_0 = #mult_zero_semiring_0 :
+  'a semiring_0 -> 'a mult_zero;
+val semiring_semiring_0 = #semiring_semiring_0 : 'a semiring_0 -> 'a semiring;
+
+val monoid_add_integer =
+  {semigroup_add_monoid_add = semigroup_add_integer,
+    zero_monoid_add = zero_integer}
+  : IntInf.int monoid_add;
+
+val comm_monoid_add_integer =
+  {ab_semigroup_add_comm_monoid_add = ab_semigroup_add_integer,
+    monoid_add_comm_monoid_add = monoid_add_integer}
+  : IntInf.int comm_monoid_add;
+
+val semiring_0_integer =
+  {comm_monoid_add_semiring_0 = comm_monoid_add_integer,
+    mult_zero_semiring_0 = mult_zero_integer,
+    semiring_semiring_0 = semiring_integer}
+  : IntInf.int semiring_0;
+
+type 'a monoid_mult =
+  {semigroup_mult_monoid_mult : 'a semigroup_mult,
+    power_monoid_mult : 'a power};
+val semigroup_mult_monoid_mult = #semigroup_mult_monoid_mult :
+  'a monoid_mult -> 'a semigroup_mult;
+val power_monoid_mult = #power_monoid_mult : 'a monoid_mult -> 'a power;
+
+type 'a semiring_numeral =
+  {monoid_mult_semiring_numeral : 'a monoid_mult,
+    numeral_semiring_numeral : 'a numeral,
+    semiring_semiring_numeral : 'a semiring};
+val monoid_mult_semiring_numeral = #monoid_mult_semiring_numeral :
+  'a semiring_numeral -> 'a monoid_mult;
+val numeral_semiring_numeral = #numeral_semiring_numeral :
+  'a semiring_numeral -> 'a numeral;
+val semiring_semiring_numeral = #semiring_semiring_numeral :
+  'a semiring_numeral -> 'a semiring;
+
+type 'a zero_neq_one = {one_zero_neq_one : 'a one, zero_zero_neq_one : 'a zero};
+val one_zero_neq_one = #one_zero_neq_one : 'a zero_neq_one -> 'a one;
+val zero_zero_neq_one = #zero_zero_neq_one : 'a zero_neq_one -> 'a zero;
+
+type 'a semiring_1 =
+  {semiring_numeral_semiring_1 : 'a semiring_numeral,
+    semiring_0_semiring_1 : 'a semiring_0,
+    zero_neq_one_semiring_1 : 'a zero_neq_one};
+val semiring_numeral_semiring_1 = #semiring_numeral_semiring_1 :
+  'a semiring_1 -> 'a semiring_numeral;
+val semiring_0_semiring_1 = #semiring_0_semiring_1 :
+  'a semiring_1 -> 'a semiring_0;
+val zero_neq_one_semiring_1 = #zero_neq_one_semiring_1 :
+  'a semiring_1 -> 'a zero_neq_one;
+
+val monoid_mult_integer =
+  {semigroup_mult_monoid_mult = semigroup_mult_integer,
+    power_monoid_mult = power_integer}
+  : IntInf.int monoid_mult;
+
+val semiring_numeral_integer =
+  {monoid_mult_semiring_numeral = monoid_mult_integer,
+    numeral_semiring_numeral = numeral_integer,
+    semiring_semiring_numeral = semiring_integer}
+  : IntInf.int semiring_numeral;
+
+val zero_neq_one_integer =
+  {one_zero_neq_one = one_integer, zero_zero_neq_one = zero_integer} :
+  IntInf.int zero_neq_one;
+
+val semiring_1_integer =
+  {semiring_numeral_semiring_1 = semiring_numeral_integer,
+    semiring_0_semiring_1 = semiring_0_integer,
+    zero_neq_one_semiring_1 = zero_neq_one_integer}
+  : IntInf.int semiring_1;
+
+fun ball (Set xs) p = list_all p xs;
+
+fun find uu [] = NONE
+  | find p (x :: xs) = (if p x then SOME x else find p xs);
+
+fun fold f [] s = s
+  | fold f (x :: xs) s = fold f xs (f x s);
+
+fun null [] = true
+  | null (x :: xs) = false;
+
+fun map f [] = []
+  | map f (x21 :: x22) = f x21 :: map f x22;
+
+fun image f (Set xs) = Set (map f xs);
+
+fun length_tailrec [] n = n
+  | length_tailrec (x :: xs) n = length_tailrec xs (Suc n);
+
+fun size_list xs = length_tailrec xs Zero_nat;
+
+fun remdups A_ [] = []
+  | remdups A_ (x :: xs) =
+    (if membera A_ xs x then remdups A_ xs else x :: remdups A_ xs);
+
+fun card A_ (Set xs) = size_list (remdups A_ xs);
+
+fun fcard A_ xa = card A_ (fset xa);
+
+fun filtera p [] = []
+  | filtera p (x :: xs) = (if p x then x :: filtera p xs else filtera p xs);
+
+fun filter p (Set xs) = Set (filtera p xs);
+
+fun removeAll A_ x [] = []
+  | removeAll A_ x (y :: xs) =
+    (if eq A_ x y then removeAll A_ x xs else y :: removeAll A_ x xs);
+
+fun inserta A_ x xs = (if membera A_ xs x then xs else x :: xs);
+
+fun insert A_ x (Set xs) = Set (inserta A_ x xs)
+  | insert A_ x (Coset xs) = Coset (removeAll A_ x xs);
+
+fun remove A_ x (Set xs) = Set (removeAll A_ x xs)
+  | remove A_ x (Coset xs) = Coset (inserta A_ x xs);
+
+fun fimage xb xc = Abs_fset (image xb (fset xc));
+
+fun sup_set A_ (Set xs) a = fold (insert A_) xs a
+  | sup_set A_ (Coset xs) a = Coset (filtera (fn x => not (member A_ x a)) xs);
+
+val bot_set : 'a set = Set [];
+
+fun sup_seta A_ (Set xs) = fold (sup_set A_) xs bot_set;
+
+fun ffUnion A_ xa = Abs_fset (sup_seta A_ (image fset (fset xa)));
+
+fun ffilter xb xc = Abs_fset (filter xb (fset xc));
+
+fun finsert A_ xb xc = Abs_fset (insert A_ xb (fset xc));
+
+fun fset_of_list xa = Abs_fset (Set xa);
+
+fun arg_min_list B_ f [x] = x
+  | arg_min_list B_ f (x :: y :: zs) =
+    let
+      val m = arg_min_list B_ f (y :: zs);
+    in
+      (if less_eq ((ord_preorder o preorder_order o order_linorder) B_) (f x)
+            (f m)
+        then x else m)
+    end;
+
+fun apsnd f (x, y) = (x, f y);
+
+fun fst (x1, x2) = x1;
+
+fun snd (x1, x2) = x2;
+
+val one_nat : nat = Suc Zero_nat;
+
+fun map_option f NONE = NONE
+  | map_option f (SOME x2) = SOME (f x2);
+
+fun plus_nat Zero_nat n = n
+  | plus_nat (Suc m) n = plus_nat m (Suc n);
+
+fun divmod_integer k l =
+  (if ((k : IntInf.int) = (0 : IntInf.int))
+    then ((0 : IntInf.int), (0 : IntInf.int))
+    else (if IntInf.< ((0 : IntInf.int), l)
+           then (if IntInf.< ((0 : IntInf.int), k)
+                  then IntInf.divMod (IntInf.abs k, IntInf.abs l)
+                  else let
+                         val (r, s) =
+                           IntInf.divMod (IntInf.abs k, IntInf.abs l);
+                       in
+                         (if ((s : IntInf.int) = (0 : IntInf.int))
+                           then (IntInf.~ r, (0 : IntInf.int))
+                           else (IntInf.- (IntInf.~ r, (1 : IntInf.int)),
+                                  IntInf.- (l, s)))
+                       end)
+           else (if ((l : IntInf.int) = (0 : IntInf.int))
+                  then ((0 : IntInf.int), k)
+                  else apsnd IntInf.~
+                         (if IntInf.< (k, (0 : IntInf.int))
+                           then IntInf.divMod (IntInf.abs k, IntInf.abs l)
+                           else let
+                                  val (r, s) =
+                                    IntInf.divMod (IntInf.abs k, IntInf.abs l);
+                                in
+                                  (if ((s : IntInf.int) = (0 : IntInf.int))
+                                    then (IntInf.~ r, (0 : IntInf.int))
+                                    else (IntInf.- (IntInf.~
+              r, (1 : IntInf.int)),
+   IntInf.- (IntInf.~ l, s)))
+                                end))));
+
+fun of_nat_aux A_ inc Zero_nat i = i
+  | of_nat_aux A_ inc (Suc n) i = of_nat_aux A_ inc n (inc i);
+
+fun of_nat A_ n =
+  of_nat_aux A_
+    (fn i =>
+      plus ((plus_semigroup_add o semigroup_add_numeral o
+              numeral_semiring_numeral o semiring_numeral_semiring_1)
+             A_)
+        i (one ((one_numeral o numeral_semiring_numeral o
+                  semiring_numeral_semiring_1)
+                 A_)))
+    n (zero ((zero_mult_zero o mult_zero_semiring_0 o semiring_0_semiring_1)
+              A_));
+
+fun integer_of_nat x = of_nat semiring_1_integer x;
+
+fun nat_of_integer k =
+  (if IntInf.<= (k, (0 : IntInf.int)) then Zero_nat
+    else let
+           val (l, j) = divmod_integer k (2 : IntInf.int);
+           val la = nat_of_integer l;
+           val lb = plus_nat la la;
+         in
+           (if ((j : IntInf.int) = (0 : IntInf.int)) then lb
+             else plus_nat lb one_nat)
+         end);
+
+val bot_fset : 'a fset = Abs_fset bot_set;
+
+fun sup_fset A_ xb xc = Abs_fset (sup_set A_ (fset xb) (fset xc));
+
+fun minus_set A_ a (Set xs) = fold (remove A_) xs a
+  | minus_set A_ a (Coset xs) = Set (filtera (fn x => member A_ x a) xs);
+
+fun minus_fset A_ xb xc = Abs_fset (minus_set A_ (fset xb) (fset xc));
+
+fun finite_demand_choice A_ B_ cost asa covered =
+  let
+    val remaining = filtera (fn a => not (member A_ a (fset covered))) asa;
+  in
+    (if null remaining then NONE else SOME (arg_min_list B_ cost remaining))
+  end;
+
+fun finite_assembly_coverage B_ k a = ffUnion B_ (fimage k a);
+
+fun finite_prune_assembly A_ B_ [] k required a = a
+  | finite_prune_assembly A_ B_ (p :: ps) k required a =
+    finite_prune_assembly A_ B_ ps k required
+      (if less_eq_fset B_ required
+            (finite_assembly_coverage B_ k
+              (minus_fset A_ a (finsert A_ p bot_fset)))
+        then minus_fset A_ a (finsert A_ p bot_fset) else a);
+
+fun finite_relation_functional A_ B_ f =
+  ball (fset f)
+    (fn x =>
+      ball (fset f)
+        (fn y =>
+          (if eq A_ (fst x) (fst y) then eq B_ (snd x) (snd y) else true)));
+
+fun finite_assembly_search A_ B_ Zero_nat asa ps k a =
+  (if less_eq_fset A_ (fset_of_list asa) (finite_assembly_coverage A_ k a)
+    then SOME a else NONE)
+  | finite_assembly_search A_ B_ (Suc n) asa ps k a =
+    (case finite_demand_choice A_ linorder_nat
+            (fn aa =>
+              size_list (filtera (fn p => member A_ aa (fset (k p))) ps))
+            asa (finite_assembly_coverage A_ k a)
+      of NONE => SOME a
+      | SOME aa =>
+        (case find (fn p => member A_ aa (fset (k p))) ps of NONE => NONE
+          | SOME p =>
+            finite_assembly_search A_ B_ n asa ps k (finsert B_ p a)));
+
+fun finite_compatible_binding_parts A_ B_ scope b u =
+  ffilter
+    (fn w =>
+      less_eq_fset A_ (fimage fst w) scope andalso
+        finite_relation_functional A_ B_ (sup_fset (equal_prod A_ B_) u w))
+    b;
+
+fun finite_assignment_agrees A_ B_ r w =
+  ball (fset w)
+    (fn s => (if eq A_ (fst s) (fst r) then eq B_ (snd s) (snd r) else true));
+
+fun finite_value_binding_search A_ B_ Zero_nat asa b u =
+  (if eq (equal_fset A_) (fimage fst u) (fset_of_list asa) andalso
+        less_eq_fset A_ (fset_of_list asa)
+          (fimage fst (ffUnion (equal_prod A_ B_) b))
+    then finsert (equal_fset (equal_prod A_ B_)) u bot_fset else bot_fset)
+  | finite_value_binding_search A_ B_ (Suc n) asa b u =
+    let
+      val m = ffUnion (equal_prod A_ B_) b;
+    in
+      (if not (less_eq_fset A_ (fset_of_list asa) (fimage fst m)) then bot_fset
+        else (case finite_demand_choice A_ linorder_nat
+                     (fn a =>
+                       fcard (equal_prod A_ B_)
+                         (ffilter (fn r => eq A_ (fst r) a) m))
+                     asa (fimage fst u)
+               of NONE => finsert (equal_fset (equal_prod A_ B_)) u bot_fset
+               | SOME a =>
+                 ffUnion (equal_fset (equal_prod A_ B_))
+                   (fimage
+                     (fn r =>
+                       finite_value_binding_search A_ B_ n asa
+                         (ffilter (finite_assignment_agrees A_ B_ r) b)
+                         (finsert (equal_prod A_ B_) r u))
+                     (ffilter (fn r => eq A_ (fst r) a) m))))
+    end;
+
+fun set_scoped_compatible_unions A_ B_ (Set asa) b =
+  finite_value_binding_search A_ B_ (fcard A_ (fset_of_list asa)) asa
+    (finite_compatible_binding_parts A_ B_ (fset_of_list asa) b bot_fset)
+    bot_fset;
+
+fun finite_scoped_compatible_unions A_ B_ scope b =
+  set_scoped_compatible_unions A_ B_ (fset scope) b;
+
+fun natural_directed_bindings scope b =
+  finite_scoped_compatible_unions equal_nat equal_nat scope b;
+
+fun finite_construct_candidate A_ B_ asa ps k =
+  map_option (finite_prune_assembly B_ A_ ps k (fset_of_list asa))
+    (finite_assembly_search A_ B_ (fcard A_ (fset_of_list asa)) asa ps k
+      bot_fset);
+
+fun natural_candidate_assembly asa ps coverage =
+  finite_construct_candidate equal_nat equal_nat asa ps
+    (fn p => fimage snd (ffilter (fn r => equal_nata (fst r) p) coverage));
+
+end; (*struct Directed_Search*)

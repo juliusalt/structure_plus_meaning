@@ -1,0 +1,52 @@
+"""Retain complete replay evidence while referencing exact copies already in the source archive."""
+from pathlib import Path
+import hashlib,json,sys
+M=Path('/home/julius/structure_and_semantics');T=Path(__file__).parent;A=M/'validation/generalization-review-2026-09-12/candidate-construction';S=A.parent/'candidate-storage-recovery';E=Path('/tmp/generalization-quality-review/candidate-final-replays');F=Path('/tmp/generalization-quality-review/candidate-documentation')
+sys.path.insert(0,str(M/'tools'));import evidence_io
+index=json.loads((A/'index.json').read_text());manifest=json.loads((A/'archive.json').read_text())
+identities={manifest.get('encodings',{}).get(ref,{}).get('sha256',sha):ref for ref,sha in manifest['files'].items()}
+index_hash=evidence_io.digest(A/'index.json');replayer_hash=evidence_io.digest(M/'tools/replay_reasoning_review.py')
+resume=json.loads((S/'resumed-summary.json').read_text());assert resume['complete']
+replays=[]
+for name in sorted(index['investigations']):
+ path=E/'investigations'/name/'replay.json';r=json.loads(path.read_text())
+ assert r['status']=='accepted' and r['archive_index_sha256']==index_hash and r['replayer_sha256']==replayer_hash
+ replays.append({'kind':'investigation','stage':name,'path':str(path),'sha256':evidence_io.digest(path),'status':r['status']})
+native=['application-controls','application-large-7','application-large-8','application-large-9','application-large-10','generic-search','original-guided','native-source','original-reader','finite-presentations']
+for name in native:
+ directory=(S/'runtime' if name in {'original-reader','finite-presentations'} else E/'native')/name
+ path=directory/'replay.json';r=json.loads(path.read_text())
+ assert r['status']=='accepted' and r['archive_index_sha256']==index_hash and r['replayer_sha256']==replayer_hash
+ if 'receipt_sha256' in r:
+  assert evidence_io.digest(directory/'run/receipt.json')==r['receipt_sha256']
+ else:
+  assert evidence_io.digest(directory/'results.log')==r['results_sha256']
+ replays.append({'kind':'native','stage':name,'path':str(path),'sha256':evidence_io.digest(path),'status':r['status']})
+assert len(replays)==128
+original=json.loads((S/'native-results.json').read_text());standard=json.loads((S/'standard-investigation1/complete-results.json').read_text())['results'][0]
+assert original['native_investigations'][0]['result']==standard['initial_result']
+assert original['native_investigations'][1]['result']==standard['followed_result']
+attachments={};copies=[];physical=[]
+for prefix,base in [('replays',E),('recovery',S),('documentation',F)]:
+ for path in sorted(base.rglob('*')):
+  if not path.is_file() or '__pycache__' in path.parts:continue
+  relative=path.relative_to(base);sha=evidence_io.digest(path)
+  parts=set(relative.parts)
+  copied=bool(parts&{'decoded-evidence','source','tools'}) and sha in identities
+  key=('retained-input--'+sha) if copied else prefix+'--'+str(relative).replace('/','--')
+  if key in attachments:
+   assert evidence_io.digest(Path(attachments[key]))==sha
+  else:attachments[key]=str(path)
+  physical.append({'path':str(path),'sha256':sha,'attachment':key,'bytes':path.stat().st_size,'symlink':path.is_symlink()})
+  if copied:copies.append({'path':str(path),'sha256':sha,'primary_reference':identities[sha],'attachment':key})
+(T/'replays.json').write_text(json.dumps({'complete':True,'investigation_replays':118,'native_replays':10,'records':replays,'original_archive_index_sha256':index_hash,'boundary':'Every original conditional investigation and final native family has an accepted exact replay. The quota-interrupted reader preparation remains separately retained; the two stages without accepted receipts were resumed in fresh directories.'},indent=2)+'\n')
+(T/'replay-copy-map.json').write_text(json.dumps(copies,indent=2)+'\n')
+(T/'physical-files.json').write_text(json.dumps(physical,indent=2)+'\n')
+for path in T.glob('*'):
+ if path.is_file():attachments['delivery--'+path.name]=str(path)
+investigations={}
+for name,directory in [('storage',S/'standard-investigation1/retained-storage-recovery'),('documentation',F/'investigation1/record-constructive-search-scope')]:
+ for stage in ['initial','followed']:investigations[name+'-'+stage]={'path':str(directory/stage)}
+spec={'proofs':{},'runs':{},'investigations':investigations,'attachments':attachments,'documents':{'README.md':str(T/'README.md'),'replays.json':str(T/'replays.json'),'replay-copy-map.json':str(T/'replay-copy-map.json')}}
+(T/'specification.json').write_text(json.dumps(spec,indent=2)+'\n')
+print(json.dumps({'accepted_replays':128,'new_conditional_replay_stages':len(investigations),'physical_files':len(physical),'retained_copy_occurrences':len(copies),'attachments':len(attachments)}))

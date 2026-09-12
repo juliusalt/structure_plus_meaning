@@ -1,0 +1,9 @@
+{
+  "tests_exit_code": 0,
+  "cases": 30,
+  "complete_programs_equal": true,
+  "bytes": 170137,
+  "sha256": "90cb514463d9399ae0f3360625525a2681ebe1bf3e12ab21c2eee25306b809c4",
+  "input_rows_preserved": true,
+  "boundary": "Complete input validation and generated-program equality accepted; production native execution remains pending."
+}

@@ -1,0 +1,11 @@
+import prepare_repair as r
+print(r.prepare(10,'Keep both formation projections as explicit contextual facts instead of consuming the same supplied premise in a repeated first-goal tactic; preserve the complete native validation group.',{
+ 'Factor_Application_Candidates':[(r'''    have enumeration: "set (application_enumeration P)=fset (finite_schema_premises (application_schema P))"
+      and targets: "application_instances_valid (application_schema P) (fset_of_list Xs)"
+      using valid by (simp only: application_construction_case_formed_def; blast)+
+''',r'''    have enumeration: "set (application_enumeration P)=fset (finite_schema_premises (application_schema P))"
+      using valid by (simp only: application_construction_case_formed_def; blast)
+    have targets: "application_instances_valid (application_schema P) (fset_of_list Xs)"
+      using valid by (simp only: application_construction_case_formed_def; blast)
+''')]
+},family='applicationconstruction'))

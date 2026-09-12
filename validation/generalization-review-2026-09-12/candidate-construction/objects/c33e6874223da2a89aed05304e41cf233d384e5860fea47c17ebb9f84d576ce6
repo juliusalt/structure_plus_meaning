@@ -1,0 +1,17 @@
+{
+  "problem": "Exact native candidate replay reproduced every raw mathematical report but assessment equality failed because Python set iteration reordered the independently recovered per-part necessity witnesses.",
+  "requirements": [
+    "Keep exact equality of every native mathematical report.",
+    "Compare the necessity-witness family independently of the order of the chosen-part set.",
+    "Retain every witness field, missing requirement and duplicate, and reject content changes.",
+    "Continue excluding only the explicit clock fields and preserve original raw measurements.",
+    "Reuse this same assessment comparison for production-interface preservation and retained replay."
+  ],
+  "diagnostic": "/tmp/generalization-quality-review/directed-candidate-construction/replay-witness-order-diagnostic.json",
+  "actual_failed_replay": "/tmp/generalization-quality-review/directed-candidate-construction/delivery-native-replay1/application-controls.log",
+  "files": [
+    "/tmp/generalization-quality-review/directed-candidate-construction/replay-draft2/test_replay_reasoning_review.py",
+    "/tmp/generalization-quality-review/directed-candidate-construction/replay-draft2/replay_reasoning_review.py"
+  ],
+  "criticism": "The native outputs already passed exact comparison. The canonicalization applies only to a host-recovered witness family indexed by actual part objects; it does not weaken native equality or erase arbitrary list order. The retained diagnostic contains every before/after field and confirms that sorting these witness families resolves all non-clock differences."
+}

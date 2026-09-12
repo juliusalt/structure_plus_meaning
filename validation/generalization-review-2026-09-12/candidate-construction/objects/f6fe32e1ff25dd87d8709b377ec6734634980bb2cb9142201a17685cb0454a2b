@@ -1,0 +1,94 @@
+{
+  "question": "Make the full workflow reread an explicit repository instruction after every context compaction.",
+  "boundary": "Prospective conditional comparison of concrete workflow-instruction placements. The user directly requires the behavior; the comparison concerns a durable repository entry point and preservation of the full existing workflow. It does not certify future compliance.",
+  "problems": [
+    {
+      "name": "workflow-resumption",
+      "case": {
+        "schema": "finite-investigation-1",
+        "kind": "basis",
+        "question": "Make the full workflow reread an explicit repository instruction after every context compaction.",
+        "scope": {
+          "candidates": {
+            "0": "Leave the reread requirement only in the ongoing conversation",
+            "1": "Add the repository instruction entry point and explicit workflow resumption requirement"
+          },
+          "facets": {
+            "0": "The repository states the mandatory full-document reread after every compaction",
+            "1": "All current workflow requirements remain authoritative and intact"
+          },
+          "subjects": "/tmp/generalization-quality-review/directed-candidate-construction/scheduling-correction-problem.json"
+        },
+        "candidates": [
+          0,
+          1
+        ],
+        "facets": [
+          0,
+          1
+        ],
+        "selected": [],
+        "observations": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ]
+        ],
+        "relation": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "evidence": [
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/scheduling-correction-problem.json",
+            "sha256": "fd021f8f027a42b5495fde0a3e94cdaf20589a2bc07c17cbc5e1b5661f0fcda9"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/DEVELOPMENT_WORKFLOW.md",
+            "sha256": "bced9d5fd3ce11dc1a068b91736874f922f6c4cfbcc5e7542a75ba63bf78da54"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/context-policy-proposal/DEVELOPMENT_WORKFLOW.md",
+            "sha256": "bd479d073dc909e57162fd01b208e5bda35d27acc6ec0561d8b8aa637a953a47"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/context-policy-proposal/AGENTS.md",
+            "sha256": "a591251629733907144003d5cd3b13f92ba17bf3ba54c8c25a78d2ea26d9471f"
+          }
+        ],
+        "semantic_boundary": "Prospective conditional comparison of concrete workflow-instruction placements. The user directly requires the behavior; the comparison concerns a durable repository entry point and preservation of the full existing workflow. It does not certify future compliance."
+      },
+      "required_observations": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ]
+      ]
+    }
+  ]
+}

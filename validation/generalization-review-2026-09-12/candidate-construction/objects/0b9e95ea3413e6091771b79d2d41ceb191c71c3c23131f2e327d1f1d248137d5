@@ -1,0 +1,64 @@
+{
+  "problem": "The retained native source receipt predates changed dependencies and cannot establish the current exact source prerequisite for the 76 reader regressions.",
+  "diagnostic": {
+    "status": "failed",
+    "error": "",
+    "traceback": "Traceback (most recent call last):\n  File \"<stdin>\", line 8, in <module>\n  File \"/home/julius/structure_and_semantics/tools/check_finite_inference.py\", line 158, in checked_reference\n    proved_code.proved_export(proof_path, required_theories=[\"Factor_Finite_Inference_Premises\"])\n    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/julius/structure_and_semantics/tools/proved_code.py\", line 39, in proved_export\n    proof, sources = accepted_proof(path, project=project, required_theories=required_theories)\n                     ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/julius/structure_and_semantics/tools/proved_code.py\", line 34, in accepted_proof\n    assert all(investigate.file_hash(Path(p)) == sha for p, sha in sources.items())\n           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+  },
+  "changed_dependencies": [
+    {
+      "theory": "Factor_Binding_Contributions",
+      "accepted_sha256": "165735c1c5b07fc5193025836ff7c50c0d53c60eb499b470ad4dc98922aab0d0",
+      "current_sha256": "b1cf2a1f6d14aee738b9696a48ea339e4aeca34206847b4b32352a1429df58d3"
+    },
+    {
+      "theory": "Factor_Observed_Applications",
+      "accepted_sha256": "b0b955a616492ee7721f7a2c1e28ef53973bd1d122cbaf265eada600de39a1dc",
+      "current_sha256": "1b849fc80fe959fcddf8e68f3c566b66e079270decc61aadad3203e8274f938e"
+    },
+    {
+      "theory": "Finite_Derived_Observations",
+      "accepted_sha256": "58ed58b0fd549b1b6c7a7f01667ffdba1ff6380e5c6d94d6af14caf9b734a5ab",
+      "current_sha256": "550818789821a1675f497f69983b369f86b1d48dad2a70701777e6a03aa26a60"
+    },
+    {
+      "theory": "Factor_Application_Comparison",
+      "accepted_sha256": "650a995c32be630c6815d2a7179f76afc407b8d1772ca7952405dca99b6b28c5",
+      "current_sha256": "43b1db77e9ab712c7069c33777abdc2b004ddb8ada466c59b45a3033233b2712"
+    },
+    {
+      "theory": "Factor_Investigation_Input_Investigation",
+      "accepted_sha256": "07bcf468d2d58dc938bb3cd4c523f3f86709a685ef8459abd4491c5cde59b122",
+      "current_sha256": "f58496f8bfa7068f8da393f92b46b6a05551e0aafcebe9a71797d25a6a46d71d"
+    },
+    {
+      "theory": "Factor_Investigation_Input_Development_Execution",
+      "accepted_sha256": "f79f534326bd3fe670bd21b8215a0a0c03e2ae821aa30bcc35bd498a741bc993",
+      "current_sha256": "dd6ffb0464593b43ee3623dadb0143d217c8e5e9f99dea1508e714e4c8a315eb"
+    },
+    {
+      "theory": "Factor_Permission_Investigation",
+      "accepted_sha256": "f22423b8cc8fd2e8b7361031521717ee026bee8967eab5f8b1f00899d9159fbe",
+      "current_sha256": "e8d446932b39624ab7c2de4bbbdea4d9b5309880da812b7533e2a11cc0287043"
+    },
+    {
+      "theory": "Factor_Proof_Probe_Investigation",
+      "accepted_sha256": "63d891a3aa3ec929555c4f3f656c728975db8b7295648be79c5df8374fae3192",
+      "current_sha256": "3f2bdd0ee87f2c72be3a5abb16537401f64ff56a93f00aa952cfb87ed1e0c14f"
+    },
+    {
+      "theory": "Factor_Application_Execution",
+      "accepted_sha256": "ffb196ec5433177ce1c6d4395779b4d64e040821be3c82056b873832b9503350",
+      "current_sha256": "0476ada81f5afcb1e27d0ca8bb71b13856ef24ebe07fde88ce173c6849dd273e"
+    }
+  ],
+  "source_spec": "/tmp/generalization-quality-review/finite-reader-example/native-ground-source-proposal.json",
+  "catalogs": "/tmp/generalization-quality-review/structural-binding-observations/guided-regression1",
+  "proposed_validation": [
+    "Check Factor_Application_Execution and Factor_Finite_Inference_Premises together in the current isolated source context.",
+    "Export application_comparison, native_reasoning and finite_literal_inference_premises separately from that accepted context.",
+    "Execute the complete original native source specification and catalogs using the current proved module.",
+    "Use the accepted current source execution when reexecuting the unchanged 76 reader cases."
+  ],
+  "remaining": "Source acceptance and every new execution remain unsettled until the combined validation passes."
+}

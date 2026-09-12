@@ -1,0 +1,5 @@
+{
+  "selection": 1,
+  "complete_results": "/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-investigation1/complete-results.json",
+  "criticism": "The one-space edit preserves the parsed program and every complete generated native program on the 30 supplied cases. It changes the recorded checker source identity, as expected. The archive-key correction preserves physical artifacts while removing duplicate aliases. Adopt both exact drafts, then recheck final input availability, whitespace and unchanged proof-source identity before archive creation."
+}

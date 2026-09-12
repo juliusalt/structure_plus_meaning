@@ -1,0 +1,90 @@
+{
+  "question": "Keep both formation projections as explicit contextual facts instead of consuming the same supplied premise in a repeated first-goal tactic; preserve the complete native validation group.",
+  "boundary": "Conditional prospective proof-repair comparison on exact retained commands. Unchanged statements and executable definitions are required; the supplied diagnostic judgments select a proof attempt. This does not derive those judgments or establish proof acceptance.",
+  "problems": [
+    {
+      "name": "proof-repair",
+      "case": {
+        "schema": "finite-investigation-1",
+        "kind": "basis",
+        "question": "Keep both formation projections as explicit contextual facts instead of consuming the same supplied premise in a repeated first-goal tactic; preserve the complete native validation group.",
+        "scope": {
+          "candidates": {
+            "0": "Repeat the current failed proof commands",
+            "1": "Try the complete retained replacement group"
+          },
+          "facets": {
+            "0": "Changes are restricted to the stated proof text",
+            "1": "The proposed command addresses this retained diagnostic or repeated proof-method defect"
+          },
+          "subjects": "/tmp/generalization-quality-review/directed-candidate-construction/applicationconstruction-repairs/proof-diagnostic9.json"
+        },
+        "candidates": [
+          0,
+          1
+        ],
+        "facets": [
+          0,
+          1
+        ],
+        "selected": [],
+        "observations": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ]
+        ],
+        "relation": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "evidence": [
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/applicationconstruction-repairs/proof-diagnostic9.json",
+            "sha256": "eea66ffe93dcfd719e55b4902b19038b9e06e4c4ad1ee75ccee202ff898f833a"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/prepare_repair.py",
+            "sha256": "ce9f9dc1a2a7f2f8f2f007a7abaf8aa51c119ba29f73b7f20bc371a6c360d5ae"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/applicationconstruction-repairs/draft10/Factor_Application_Candidates.thy",
+            "sha256": "d8f69783cb3b173afbb15a76c748aae68865bbe17d762a371ce5352d46232b85"
+          }
+        ],
+        "semantic_boundary": "Conditional prospective proof-repair comparison on exact retained commands. Unchanged statements and executable definitions are required; the supplied diagnostic judgments select a proof attempt. This does not derive those judgments or establish proof acceptance."
+      },
+      "required_observations": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ]
+      ]
+    }
+  ]
+}

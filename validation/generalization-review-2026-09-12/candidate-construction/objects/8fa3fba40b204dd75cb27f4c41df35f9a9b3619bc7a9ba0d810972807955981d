@@ -1,0 +1,16 @@
+{
+  "problem": "Check actual native work on realistic complete scopes before adopting either execution path.",
+  "inputs": "check_directed_native.cases: all 46 binding inputs and 15 assembly inputs, including 8,256 whole fragments and a 240-part joint candidate basis.",
+  "requirements": [
+    "Every native result equals the independently reconstructed complete binding set.",
+    "Each returned assembly covers every mandatory key and has a concrete missing-key witness for every retained part.",
+    "None agrees with uncovered whole-basis scope and is not a timeout.",
+    "Measure actual native execution time; prototype state counts alone are insufficient."
+  ],
+  "specific_concerns": [
+    "Repeated per-part coverage evaluation inside the assembly minimum-cost choice may dominate larger scopes.",
+    "The application coverage function performs real schema matching and should not be repeatedly reconstructed when its complete inputs are unchanged.",
+    "Returning all distinct complete bindings is inherently output-sensitive; avoiding irrelevant partial unions does not make exponentially many requested answers small."
+  ],
+  "boundary": "No optimization is adopted solely on these concerns. The prepared native run is the next evidence source."
+}

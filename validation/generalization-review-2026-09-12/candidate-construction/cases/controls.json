@@ -1,0 +1,3852 @@
+{
+  "cases": [
+    {
+      "name": "original-0",
+      "problems": [
+        {
+          "id": 0,
+          "entry": 9,
+          "schema": {
+            "head": {
+              "var": 0
+            },
+            "premises": [
+              [
+                10,
+                8,
+                {
+                  "var": 1
+                }
+              ],
+              [
+                11,
+                8,
+                {
+                  "var": 2
+                }
+              ]
+            ],
+            "materials": []
+          },
+          "enumeration": [
+            [
+              10,
+              8,
+              {
+                "var": 1
+              }
+            ],
+            [
+              11,
+              8,
+              {
+                "var": 2
+              }
+            ]
+          ],
+          "frontier": [
+            [
+              8,
+              {
+                "payload": [
+                  8
+                ]
+              }
+            ],
+            [
+              8,
+              {
+                "payload": [
+                  9
+                ]
+              }
+            ]
+          ],
+          "requests": [
+            [
+              9,
+              {
+                "payload": [
+                  7
+                ]
+              }
+            ]
+          ],
+          "required": [
+            {
+              "conclusion": {
+                "payload": [
+                  7
+                ]
+              },
+              "bindings": [
+                [
+                  0,
+                  {
+                    "payload": [
+                      7
+                    ]
+                  }
+                ],
+                [
+                  1,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ],
+                [
+                  2,
+                  {
+                    "payload": [
+                      9
+                    ]
+                  }
+                ]
+              ],
+              "premises": [
+                [
+                  10,
+                  8,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ],
+                [
+                  11,
+                  8,
+                  {
+                    "payload": [
+                      9
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "parts": [
+        [
+          "head"
+        ],
+        [
+          "premise",
+          10,
+          8
+        ],
+        [
+          "premise",
+          11,
+          8
+        ]
+      ],
+      "target_presentations": null,
+      "expected_formed": true
+    },
+    {
+      "name": "original-1",
+      "problems": [
+        {
+          "id": 1,
+          "entry": 9,
+          "schema": {
+            "head": {
+              "var": 0
+            },
+            "premises": [
+              [
+                10,
+                8,
+                {
+                  "pair": [
+                    {
+                      "var": 0
+                    },
+                    {
+                      "var": 1
+                    }
+                  ]
+                }
+              ],
+              [
+                11,
+                7,
+                {
+                  "var": 1
+                }
+              ]
+            ],
+            "materials": []
+          },
+          "enumeration": [
+            [
+              10,
+              8,
+              {
+                "pair": [
+                  {
+                    "var": 0
+                  },
+                  {
+                    "var": 1
+                  }
+                ]
+              }
+            ],
+            [
+              11,
+              7,
+              {
+                "var": 1
+              }
+            ]
+          ],
+          "frontier": [
+            [
+              7,
+              {
+                "payload": [
+                  8
+                ]
+              }
+            ]
+          ],
+          "requests": [
+            [
+              9,
+              {
+                "payload": [
+                  7
+                ]
+              }
+            ]
+          ],
+          "required": [
+            {
+              "conclusion": {
+                "payload": [
+                  7
+                ]
+              },
+              "bindings": [
+                [
+                  0,
+                  {
+                    "payload": [
+                      7
+                    ]
+                  }
+                ],
+                [
+                  1,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ]
+              ],
+              "premises": [
+                [
+                  10,
+                  8,
+                  {
+                    "pair": [
+                      {
+                        "payload": [
+                          7
+                        ]
+                      },
+                      {
+                        "payload": [
+                          8
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                [
+                  11,
+                  7,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "parts": [
+        [
+          "head"
+        ],
+        [
+          "premise",
+          10,
+          8
+        ],
+        [
+          "premise",
+          11,
+          7
+        ]
+      ],
+      "target_presentations": null,
+      "expected_formed": true
+    },
+    {
+      "name": "original-2",
+      "problems": [
+        {
+          "id": 2,
+          "entry": 9,
+          "schema": {
+            "head": {
+              "var": 0
+            },
+            "premises": [
+              [
+                10,
+                8,
+                {
+                  "var": 0
+                }
+              ]
+            ],
+            "materials": []
+          },
+          "enumeration": [
+            [
+              10,
+              8,
+              {
+                "var": 0
+              }
+            ]
+          ],
+          "frontier": [
+            [
+              8,
+              {
+                "payload": [
+                  7
+                ]
+              }
+            ]
+          ],
+          "requests": [
+            [
+              9,
+              {
+                "payload": [
+                  7
+                ]
+              }
+            ]
+          ],
+          "required": [
+            {
+              "conclusion": {
+                "payload": [
+                  7
+                ]
+              },
+              "bindings": [
+                [
+                  0,
+                  {
+                    "payload": [
+                      7
+                    ]
+                  }
+                ]
+              ],
+              "premises": [
+                [
+                  10,
+                  8,
+                  {
+                    "payload": [
+                      7
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "parts": [
+        [
+          "head"
+        ],
+        [
+          "premise",
+          10,
+          8
+        ]
+      ],
+      "target_presentations": null,
+      "expected_formed": true
+    },
+    {
+      "name": "original-3",
+      "problems": [
+        {
+          "id": 3,
+          "entry": 9,
+          "schema": {
+            "head": {
+              "payload": [
+                11
+              ]
+            },
+            "premises": [],
+            "materials": []
+          },
+          "enumeration": [],
+          "frontier": [],
+          "requests": [],
+          "required": [
+            {
+              "conclusion": {
+                "payload": [
+                  11
+                ]
+              },
+              "bindings": [],
+              "premises": []
+            }
+          ]
+        }
+      ],
+      "parts": [
+        [
+          "head"
+        ]
+      ],
+      "target_presentations": null,
+      "expected_formed": true
+    },
+    {
+      "name": "joint-original",
+      "problems": [
+        {
+          "id": 0,
+          "entry": 9,
+          "schema": {
+            "head": {
+              "var": 0
+            },
+            "premises": [
+              [
+                10,
+                8,
+                {
+                  "var": 1
+                }
+              ],
+              [
+                11,
+                8,
+                {
+                  "var": 2
+                }
+              ]
+            ],
+            "materials": []
+          },
+          "enumeration": [
+            [
+              10,
+              8,
+              {
+                "var": 1
+              }
+            ],
+            [
+              11,
+              8,
+              {
+                "var": 2
+              }
+            ]
+          ],
+          "frontier": [
+            [
+              8,
+              {
+                "payload": [
+                  8
+                ]
+              }
+            ],
+            [
+              8,
+              {
+                "payload": [
+                  9
+                ]
+              }
+            ]
+          ],
+          "requests": [
+            [
+              9,
+              {
+                "payload": [
+                  7
+                ]
+              }
+            ]
+          ],
+          "required": [
+            {
+              "conclusion": {
+                "payload": [
+                  7
+                ]
+              },
+              "bindings": [
+                [
+                  0,
+                  {
+                    "payload": [
+                      7
+                    ]
+                  }
+                ],
+                [
+                  1,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ],
+                [
+                  2,
+                  {
+                    "payload": [
+                      9
+                    ]
+                  }
+                ]
+              ],
+              "premises": [
+                [
+                  10,
+                  8,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ],
+                [
+                  11,
+                  8,
+                  {
+                    "payload": [
+                      9
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "entry": 9,
+          "schema": {
+            "head": {
+              "var": 0
+            },
+            "premises": [
+              [
+                10,
+                8,
+                {
+                  "pair": [
+                    {
+                      "var": 0
+                    },
+                    {
+                      "var": 1
+                    }
+                  ]
+                }
+              ],
+              [
+                11,
+                7,
+                {
+                  "var": 1
+                }
+              ]
+            ],
+            "materials": []
+          },
+          "enumeration": [
+            [
+              10,
+              8,
+              {
+                "pair": [
+                  {
+                    "var": 0
+                  },
+                  {
+                    "var": 1
+                  }
+                ]
+              }
+            ],
+            [
+              11,
+              7,
+              {
+                "var": 1
+              }
+            ]
+          ],
+          "frontier": [
+            [
+              7,
+              {
+                "payload": [
+                  8
+                ]
+              }
+            ]
+          ],
+          "requests": [
+            [
+              9,
+              {
+                "payload": [
+                  7
+                ]
+              }
+            ]
+          ],
+          "required": [
+            {
+              "conclusion": {
+                "payload": [
+                  7
+                ]
+              },
+              "bindings": [
+                [
+                  0,
+                  {
+                    "payload": [
+                      7
+                    ]
+                  }
+                ],
+                [
+                  1,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ]
+              ],
+              "premises": [
+                [
+                  10,
+                  8,
+                  {
+                    "pair": [
+                      {
+                        "payload": [
+                          7
+                        ]
+                      },
+                      {
+                        "payload": [
+                          8
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                [
+                  11,
+                  7,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "entry": 9,
+          "schema": {
+            "head": {
+              "var": 0
+            },
+            "premises": [
+              [
+                10,
+                8,
+                {
+                  "var": 0
+                }
+              ]
+            ],
+            "materials": []
+          },
+          "enumeration": [
+            [
+              10,
+              8,
+              {
+                "var": 0
+              }
+            ]
+          ],
+          "frontier": [
+            [
+              8,
+              {
+                "payload": [
+                  7
+                ]
+              }
+            ]
+          ],
+          "requests": [
+            [
+              9,
+              {
+                "payload": [
+                  7
+                ]
+              }
+            ]
+          ],
+          "required": [
+            {
+              "conclusion": {
+                "payload": [
+                  7
+                ]
+              },
+              "bindings": [
+                [
+                  0,
+                  {
+                    "payload": [
+                      7
+                    ]
+                  }
+                ]
+              ],
+              "premises": [
+                [
+                  10,
+                  8,
+                  {
+                    "payload": [
+                      7
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "entry": 9,
+          "schema": {
+            "head": {
+              "payload": [
+                11
+              ]
+            },
+            "premises": [],
+            "materials": []
+          },
+          "enumeration": [],
+          "frontier": [],
+          "requests": [],
+          "required": [
+            {
+              "conclusion": {
+                "payload": [
+                  11
+                ]
+              },
+              "bindings": [],
+              "premises": []
+            }
+          ]
+        }
+      ],
+      "parts": [
+        [
+          "head"
+        ],
+        [
+          "premise",
+          10,
+          8
+        ],
+        [
+          "premise",
+          11,
+          7
+        ],
+        [
+          "premise",
+          11,
+          8
+        ]
+      ],
+      "target_presentations": null,
+      "expected_formed": true
+    },
+    {
+      "name": "large-3",
+      "problems": [
+        {
+          "id": 3,
+          "entry": 9,
+          "schema": {
+            "head": {
+              "var": 0
+            },
+            "premises": [
+              [
+                1,
+                1001,
+                {
+                  "var": 1
+                }
+              ],
+              [
+                2,
+                1002,
+                {
+                  "var": 2
+                }
+              ],
+              [
+                3,
+                2000,
+                {
+                  "var": 1
+                }
+              ],
+              [
+                4,
+                2001,
+                {
+                  "var": 1
+                }
+              ],
+              [
+                5,
+                2002,
+                {
+                  "var": 1
+                }
+              ]
+            ],
+            "materials": []
+          },
+          "enumeration": [
+            [
+              1,
+              1001,
+              {
+                "var": 1
+              }
+            ],
+            [
+              2,
+              1002,
+              {
+                "var": 2
+              }
+            ],
+            [
+              3,
+              2000,
+              {
+                "var": 1
+              }
+            ],
+            [
+              4,
+              2001,
+              {
+                "var": 1
+              }
+            ],
+            [
+              5,
+              2002,
+              {
+                "var": 1
+              }
+            ]
+          ],
+          "frontier": [
+            [
+              1001,
+              {
+                "payload": [
+                  1
+                ]
+              }
+            ],
+            [
+              1002,
+              {
+                "payload": [
+                  2
+                ]
+              }
+            ],
+            [
+              2000,
+              {
+                "payload": [
+                  1
+                ]
+              }
+            ],
+            [
+              2001,
+              {
+                "payload": [
+                  1
+                ]
+              }
+            ],
+            [
+              2002,
+              {
+                "payload": [
+                  1
+                ]
+              }
+            ]
+          ],
+          "requests": [
+            [
+              9,
+              {
+                "payload": [
+                  0
+                ]
+              }
+            ]
+          ],
+          "required": [
+            {
+              "entry": 9,
+              "schema": {
+                "head": {
+                  "var": 0
+                },
+                "premises": [
+                  [
+                    1,
+                    1001,
+                    {
+                      "var": 1
+                    }
+                  ],
+                  [
+                    2,
+                    1002,
+                    {
+                      "var": 2
+                    }
+                  ],
+                  [
+                    3,
+                    2000,
+                    {
+                      "var": 1
+                    }
+                  ],
+                  [
+                    4,
+                    2001,
+                    {
+                      "var": 1
+                    }
+                  ],
+                  [
+                    5,
+                    2002,
+                    {
+                      "var": 1
+                    }
+                  ]
+                ],
+                "materials": []
+              },
+              "conclusion": {
+                "payload": [
+                  0
+                ]
+              },
+              "bindings": [
+                [
+                  0,
+                  {
+                    "payload": [
+                      0
+                    ]
+                  }
+                ],
+                [
+                  1,
+                  {
+                    "payload": [
+                      1
+                    ]
+                  }
+                ],
+                [
+                  2,
+                  {
+                    "payload": [
+                      2
+                    ]
+                  }
+                ]
+              ],
+              "premises": [
+                [
+                  1,
+                  1001,
+                  {
+                    "payload": [
+                      1
+                    ]
+                  }
+                ],
+                [
+                  2,
+                  1002,
+                  {
+                    "payload": [
+                      2
+                    ]
+                  }
+                ],
+                [
+                  3,
+                  2000,
+                  {
+                    "payload": [
+                      1
+                    ]
+                  }
+                ],
+                [
+                  4,
+                  2001,
+                  {
+                    "payload": [
+                      1
+                    ]
+                  }
+                ],
+                [
+                  5,
+                  2002,
+                  {
+                    "payload": [
+                      1
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "parts": [
+        [
+          "head"
+        ],
+        [
+          "premise",
+          1,
+          1001
+        ],
+        [
+          "premise",
+          2,
+          1002
+        ],
+        [
+          "premise",
+          3,
+          2000
+        ],
+        [
+          "premise",
+          4,
+          2001
+        ],
+        [
+          "premise",
+          5,
+          2002
+        ]
+      ],
+      "target_presentations": null,
+      "expected_formed": true
+    },
+    {
+      "name": "large-6",
+      "problems": [
+        {
+          "id": 6,
+          "entry": 9,
+          "schema": {
+            "head": {
+              "var": 0
+            },
+            "premises": [
+              [
+                1,
+                1001,
+                {
+                  "var": 1
+                }
+              ],
+              [
+                2,
+                1002,
+                {
+                  "var": 2
+                }
+              ],
+              [
+                3,
+                1003,
+                {
+                  "var": 3
+                }
+              ],
+              [
+                4,
+                1004,
+                {
+                  "var": 4
+                }
+              ],
+              [
+                5,
+                1005,
+                {
+                  "var": 5
+                }
+              ],
+              [
+                6,
+                2000,
+                {
+                  "var": 1
+                }
+              ],
+              [
+                7,
+                2001,
+                {
+                  "var": 1
+                }
+              ],
+              [
+                8,
+                2002,
+                {
+                  "var": 1
+                }
+              ],
+              [
+                9,
+                2003,
+                {
+                  "var": 1
+                }
+              ],
+              [
+                10,
+                2004,
+                {
+                  "var": 1
+                }
+              ],
+              [
+                11,
+                2005,
+                {
+                  "var": 1
+                }
+              ]
+            ],
+            "materials": []
+          },
+          "enumeration": [
+            [
+              1,
+              1001,
+              {
+                "var": 1
+              }
+            ],
+            [
+              2,
+              1002,
+              {
+                "var": 2
+              }
+            ],
+            [
+              3,
+              1003,
+              {
+                "var": 3
+              }
+            ],
+            [
+              4,
+              1004,
+              {
+                "var": 4
+              }
+            ],
+            [
+              5,
+              1005,
+              {
+                "var": 5
+              }
+            ],
+            [
+              6,
+              2000,
+              {
+                "var": 1
+              }
+            ],
+            [
+              7,
+              2001,
+              {
+                "var": 1
+              }
+            ],
+            [
+              8,
+              2002,
+              {
+                "var": 1
+              }
+            ],
+            [
+              9,
+              2003,
+              {
+                "var": 1
+              }
+            ],
+            [
+              10,
+              2004,
+              {
+                "var": 1
+              }
+            ],
+            [
+              11,
+              2005,
+              {
+                "var": 1
+              }
+            ]
+          ],
+          "frontier": [
+            [
+              1001,
+              {
+                "payload": [
+                  1
+                ]
+              }
+            ],
+            [
+              1002,
+              {
+                "payload": [
+                  2
+                ]
+              }
+            ],
+            [
+              1003,
+              {
+                "payload": [
+                  3
+                ]
+              }
+            ],
+            [
+              1004,
+              {
+                "payload": [
+                  4
+                ]
+              }
+            ],
+            [
+              1005,
+              {
+                "payload": [
+                  5
+                ]
+              }
+            ],
+            [
+              2000,
+              {
+                "payload": [
+                  1
+                ]
+              }
+            ],
+            [
+              2001,
+              {
+                "payload": [
+                  1
+                ]
+              }
+            ],
+            [
+              2002,
+              {
+                "payload": [
+                  1
+                ]
+              }
+            ],
+            [
+              2003,
+              {
+                "payload": [
+                  1
+                ]
+              }
+            ],
+            [
+              2004,
+              {
+                "payload": [
+                  1
+                ]
+              }
+            ],
+            [
+              2005,
+              {
+                "payload": [
+                  1
+                ]
+              }
+            ]
+          ],
+          "requests": [
+            [
+              9,
+              {
+                "payload": [
+                  0
+                ]
+              }
+            ]
+          ],
+          "required": [
+            {
+              "entry": 9,
+              "schema": {
+                "head": {
+                  "var": 0
+                },
+                "premises": [
+                  [
+                    1,
+                    1001,
+                    {
+                      "var": 1
+                    }
+                  ],
+                  [
+                    2,
+                    1002,
+                    {
+                      "var": 2
+                    }
+                  ],
+                  [
+                    3,
+                    1003,
+                    {
+                      "var": 3
+                    }
+                  ],
+                  [
+                    4,
+                    1004,
+                    {
+                      "var": 4
+                    }
+                  ],
+                  [
+                    5,
+                    1005,
+                    {
+                      "var": 5
+                    }
+                  ],
+                  [
+                    6,
+                    2000,
+                    {
+                      "var": 1
+                    }
+                  ],
+                  [
+                    7,
+                    2001,
+                    {
+                      "var": 1
+                    }
+                  ],
+                  [
+                    8,
+                    2002,
+                    {
+                      "var": 1
+                    }
+                  ],
+                  [
+                    9,
+                    2003,
+                    {
+                      "var": 1
+                    }
+                  ],
+                  [
+                    10,
+                    2004,
+                    {
+                      "var": 1
+                    }
+                  ],
+                  [
+                    11,
+                    2005,
+                    {
+                      "var": 1
+                    }
+                  ]
+                ],
+                "materials": []
+              },
+              "conclusion": {
+                "payload": [
+                  0
+                ]
+              },
+              "bindings": [
+                [
+                  0,
+                  {
+                    "payload": [
+                      0
+                    ]
+                  }
+                ],
+                [
+                  1,
+                  {
+                    "payload": [
+                      1
+                    ]
+                  }
+                ],
+                [
+                  2,
+                  {
+                    "payload": [
+                      2
+                    ]
+                  }
+                ],
+                [
+                  3,
+                  {
+                    "payload": [
+                      3
+                    ]
+                  }
+                ],
+                [
+                  4,
+                  {
+                    "payload": [
+                      4
+                    ]
+                  }
+                ],
+                [
+                  5,
+                  {
+                    "payload": [
+                      5
+                    ]
+                  }
+                ]
+              ],
+              "premises": [
+                [
+                  1,
+                  1001,
+                  {
+                    "payload": [
+                      1
+                    ]
+                  }
+                ],
+                [
+                  2,
+                  1002,
+                  {
+                    "payload": [
+                      2
+                    ]
+                  }
+                ],
+                [
+                  3,
+                  1003,
+                  {
+                    "payload": [
+                      3
+                    ]
+                  }
+                ],
+                [
+                  4,
+                  1004,
+                  {
+                    "payload": [
+                      4
+                    ]
+                  }
+                ],
+                [
+                  5,
+                  1005,
+                  {
+                    "payload": [
+                      5
+                    ]
+                  }
+                ],
+                [
+                  6,
+                  2000,
+                  {
+                    "payload": [
+                      1
+                    ]
+                  }
+                ],
+                [
+                  7,
+                  2001,
+                  {
+                    "payload": [
+                      1
+                    ]
+                  }
+                ],
+                [
+                  8,
+                  2002,
+                  {
+                    "payload": [
+                      1
+                    ]
+                  }
+                ],
+                [
+                  9,
+                  2003,
+                  {
+                    "payload": [
+                      1
+                    ]
+                  }
+                ],
+                [
+                  10,
+                  2004,
+                  {
+                    "payload": [
+                      1
+                    ]
+                  }
+                ],
+                [
+                  11,
+                  2005,
+                  {
+                    "payload": [
+                      1
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "parts": [
+        [
+          "head"
+        ],
+        [
+          "premise",
+          1,
+          1001
+        ],
+        [
+          "premise",
+          10,
+          2004
+        ],
+        [
+          "premise",
+          11,
+          2005
+        ],
+        [
+          "premise",
+          2,
+          1002
+        ],
+        [
+          "premise",
+          3,
+          1003
+        ],
+        [
+          "premise",
+          4,
+          1004
+        ],
+        [
+          "premise",
+          5,
+          1005
+        ],
+        [
+          "premise",
+          6,
+          2000
+        ],
+        [
+          "premise",
+          7,
+          2001
+        ],
+        [
+          "premise",
+          8,
+          2002
+        ],
+        [
+          "premise",
+          9,
+          2003
+        ]
+      ],
+      "target_presentations": null,
+      "expected_formed": true
+    },
+    {
+      "name": "empty-family",
+      "problems": [],
+      "parts": [],
+      "target_presentations": null,
+      "expected_formed": true
+    },
+    {
+      "name": "empty-part-basis",
+      "problems": [
+        {
+          "id": 0,
+          "entry": 9,
+          "schema": {
+            "head": {
+              "var": 0
+            },
+            "premises": [
+              [
+                10,
+                8,
+                {
+                  "var": 1
+                }
+              ],
+              [
+                11,
+                8,
+                {
+                  "var": 2
+                }
+              ]
+            ],
+            "materials": []
+          },
+          "enumeration": [
+            [
+              10,
+              8,
+              {
+                "var": 1
+              }
+            ],
+            [
+              11,
+              8,
+              {
+                "var": 2
+              }
+            ]
+          ],
+          "frontier": [
+            [
+              8,
+              {
+                "payload": [
+                  8
+                ]
+              }
+            ],
+            [
+              8,
+              {
+                "payload": [
+                  9
+                ]
+              }
+            ]
+          ],
+          "requests": [
+            [
+              9,
+              {
+                "payload": [
+                  7
+                ]
+              }
+            ]
+          ],
+          "required": [
+            {
+              "conclusion": {
+                "payload": [
+                  7
+                ]
+              },
+              "bindings": [
+                [
+                  0,
+                  {
+                    "payload": [
+                      7
+                    ]
+                  }
+                ],
+                [
+                  1,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ],
+                [
+                  2,
+                  {
+                    "payload": [
+                      9
+                    ]
+                  }
+                ]
+              ],
+              "premises": [
+                [
+                  10,
+                  8,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ],
+                [
+                  11,
+                  8,
+                  {
+                    "payload": [
+                      9
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "parts": [],
+      "target_presentations": null,
+      "expected_formed": true
+    },
+    {
+      "name": "missing-request-source",
+      "problems": [
+        {
+          "id": 0,
+          "entry": 9,
+          "schema": {
+            "head": {
+              "var": 0
+            },
+            "premises": [
+              [
+                10,
+                8,
+                {
+                  "var": 1
+                }
+              ],
+              [
+                11,
+                8,
+                {
+                  "var": 2
+                }
+              ]
+            ],
+            "materials": []
+          },
+          "enumeration": [
+            [
+              10,
+              8,
+              {
+                "var": 1
+              }
+            ],
+            [
+              11,
+              8,
+              {
+                "var": 2
+              }
+            ]
+          ],
+          "frontier": [
+            [
+              8,
+              {
+                "payload": [
+                  8
+                ]
+              }
+            ],
+            [
+              8,
+              {
+                "payload": [
+                  9
+                ]
+              }
+            ]
+          ],
+          "requests": [],
+          "required": [
+            {
+              "conclusion": {
+                "payload": [
+                  7
+                ]
+              },
+              "bindings": [
+                [
+                  0,
+                  {
+                    "payload": [
+                      7
+                    ]
+                  }
+                ],
+                [
+                  1,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ],
+                [
+                  2,
+                  {
+                    "payload": [
+                      9
+                    ]
+                  }
+                ]
+              ],
+              "premises": [
+                [
+                  10,
+                  8,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ],
+                [
+                  11,
+                  8,
+                  {
+                    "payload": [
+                      9
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "parts": [
+        [
+          "head"
+        ],
+        [
+          "premise",
+          10,
+          8
+        ],
+        [
+          "premise",
+          11,
+          8
+        ]
+      ],
+      "target_presentations": null,
+      "expected_formed": true
+    },
+    {
+      "name": "repeated-presentations",
+      "problems": [
+        {
+          "id": 0,
+          "entry": 9,
+          "schema": {
+            "head": {
+              "var": 0
+            },
+            "premises": [
+              [
+                10,
+                8,
+                {
+                  "var": 1
+                }
+              ],
+              [
+                11,
+                8,
+                {
+                  "var": 2
+                }
+              ]
+            ],
+            "materials": []
+          },
+          "enumeration": [
+            [
+              10,
+              8,
+              {
+                "var": 1
+              }
+            ],
+            [
+              11,
+              8,
+              {
+                "var": 2
+              }
+            ]
+          ],
+          "frontier": [
+            [
+              8,
+              {
+                "payload": [
+                  8
+                ]
+              }
+            ],
+            [
+              8,
+              {
+                "payload": [
+                  9
+                ]
+              }
+            ]
+          ],
+          "requests": [
+            [
+              9,
+              {
+                "payload": [
+                  7
+                ]
+              }
+            ]
+          ],
+          "required": [
+            {
+              "conclusion": {
+                "payload": [
+                  7
+                ]
+              },
+              "bindings": [
+                [
+                  0,
+                  {
+                    "payload": [
+                      7
+                    ]
+                  }
+                ],
+                [
+                  1,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ],
+                [
+                  2,
+                  {
+                    "payload": [
+                      9
+                    ]
+                  }
+                ]
+              ],
+              "premises": [
+                [
+                  10,
+                  8,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ],
+                [
+                  11,
+                  8,
+                  {
+                    "payload": [
+                      9
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": 0,
+          "entry": 9,
+          "schema": {
+            "head": {
+              "var": 0
+            },
+            "premises": [
+              [
+                10,
+                8,
+                {
+                  "var": 1
+                }
+              ],
+              [
+                11,
+                8,
+                {
+                  "var": 2
+                }
+              ]
+            ],
+            "materials": []
+          },
+          "enumeration": [
+            [
+              10,
+              8,
+              {
+                "var": 1
+              }
+            ],
+            [
+              11,
+              8,
+              {
+                "var": 2
+              }
+            ]
+          ],
+          "frontier": [
+            [
+              8,
+              {
+                "payload": [
+                  8
+                ]
+              }
+            ],
+            [
+              8,
+              {
+                "payload": [
+                  9
+                ]
+              }
+            ]
+          ],
+          "requests": [
+            [
+              9,
+              {
+                "payload": [
+                  7
+                ]
+              }
+            ]
+          ],
+          "required": [
+            {
+              "conclusion": {
+                "payload": [
+                  7
+                ]
+              },
+              "bindings": [
+                [
+                  0,
+                  {
+                    "payload": [
+                      7
+                    ]
+                  }
+                ],
+                [
+                  1,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ],
+                [
+                  2,
+                  {
+                    "payload": [
+                      9
+                    ]
+                  }
+                ]
+              ],
+              "premises": [
+                [
+                  10,
+                  8,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ],
+                [
+                  11,
+                  8,
+                  {
+                    "payload": [
+                      9
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "parts": [
+        [
+          "head"
+        ],
+        [
+          "premise",
+          10,
+          8
+        ],
+        [
+          "premise",
+          11,
+          8
+        ],
+        [
+          "head"
+        ],
+        [
+          "premise",
+          10,
+          8
+        ],
+        [
+          "premise",
+          11,
+          8
+        ]
+      ],
+      "target_presentations": null,
+      "expected_formed": true
+    },
+    {
+      "name": "reordered-parts",
+      "problems": [
+        {
+          "id": 0,
+          "entry": 9,
+          "schema": {
+            "head": {
+              "var": 0
+            },
+            "premises": [
+              [
+                10,
+                8,
+                {
+                  "var": 1
+                }
+              ],
+              [
+                11,
+                8,
+                {
+                  "var": 2
+                }
+              ]
+            ],
+            "materials": []
+          },
+          "enumeration": [
+            [
+              10,
+              8,
+              {
+                "var": 1
+              }
+            ],
+            [
+              11,
+              8,
+              {
+                "var": 2
+              }
+            ]
+          ],
+          "frontier": [
+            [
+              8,
+              {
+                "payload": [
+                  8
+                ]
+              }
+            ],
+            [
+              8,
+              {
+                "payload": [
+                  9
+                ]
+              }
+            ]
+          ],
+          "requests": [
+            [
+              9,
+              {
+                "payload": [
+                  7
+                ]
+              }
+            ]
+          ],
+          "required": [
+            {
+              "conclusion": {
+                "payload": [
+                  7
+                ]
+              },
+              "bindings": [
+                [
+                  0,
+                  {
+                    "payload": [
+                      7
+                    ]
+                  }
+                ],
+                [
+                  1,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ],
+                [
+                  2,
+                  {
+                    "payload": [
+                      9
+                    ]
+                  }
+                ]
+              ],
+              "premises": [
+                [
+                  10,
+                  8,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ],
+                [
+                  11,
+                  8,
+                  {
+                    "payload": [
+                      9
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "parts": [
+        [
+          "premise",
+          11,
+          8
+        ],
+        [
+          "premise",
+          10,
+          8
+        ],
+        [
+          "head"
+        ]
+      ],
+      "target_presentations": null,
+      "expected_formed": true
+    },
+    {
+      "name": "foreign-unused-part",
+      "problems": [
+        {
+          "id": 0,
+          "entry": 9,
+          "schema": {
+            "head": {
+              "var": 0
+            },
+            "premises": [
+              [
+                10,
+                8,
+                {
+                  "var": 1
+                }
+              ],
+              [
+                11,
+                8,
+                {
+                  "var": 2
+                }
+              ]
+            ],
+            "materials": []
+          },
+          "enumeration": [
+            [
+              10,
+              8,
+              {
+                "var": 1
+              }
+            ],
+            [
+              11,
+              8,
+              {
+                "var": 2
+              }
+            ]
+          ],
+          "frontier": [
+            [
+              8,
+              {
+                "payload": [
+                  8
+                ]
+              }
+            ],
+            [
+              8,
+              {
+                "payload": [
+                  9
+                ]
+              }
+            ]
+          ],
+          "requests": [
+            [
+              9,
+              {
+                "payload": [
+                  7
+                ]
+              }
+            ]
+          ],
+          "required": [
+            {
+              "conclusion": {
+                "payload": [
+                  7
+                ]
+              },
+              "bindings": [
+                [
+                  0,
+                  {
+                    "payload": [
+                      7
+                    ]
+                  }
+                ],
+                [
+                  1,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ],
+                [
+                  2,
+                  {
+                    "payload": [
+                      9
+                    ]
+                  }
+                ]
+              ],
+              "premises": [
+                [
+                  10,
+                  8,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ],
+                [
+                  11,
+                  8,
+                  {
+                    "payload": [
+                      9
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "parts": [
+        [
+          "head"
+        ],
+        [
+          "premise",
+          10,
+          8
+        ],
+        [
+          "premise",
+          11,
+          8
+        ],
+        [
+          "premise",
+          999,
+          999
+        ]
+      ],
+      "target_presentations": null,
+      "expected_formed": true
+    },
+    {
+      "name": "zero-variable-application",
+      "problems": [
+        {
+          "id": 20,
+          "entry": 9,
+          "schema": {
+            "head": {
+              "payload": [
+                5
+              ]
+            },
+            "premises": [],
+            "materials": []
+          },
+          "enumeration": [],
+          "frontier": [],
+          "requests": [],
+          "required": []
+        }
+      ],
+      "parts": [
+        [
+          "head"
+        ]
+      ],
+      "target_presentations": null,
+      "expected_formed": true
+    },
+    {
+      "name": "invalid-zero-variable-target",
+      "problems": [
+        {
+          "id": 20,
+          "entry": 9,
+          "schema": {
+            "head": {
+              "payload": [
+                5
+              ]
+            },
+            "premises": [],
+            "materials": []
+          },
+          "enumeration": [],
+          "frontier": [],
+          "requests": [],
+          "required": [
+            {
+              "conclusion": {
+                "payload": [
+                  6
+                ]
+              },
+              "bindings": [],
+              "premises": []
+            }
+          ]
+        }
+      ],
+      "parts": [
+        [
+          "head"
+        ]
+      ],
+      "target_presentations": null,
+      "expected_formed": false
+    },
+    {
+      "name": "unused-malformed-schema",
+      "problems": [
+        {
+          "id": 20,
+          "entry": 9,
+          "schema": {
+            "head": {
+              "payload": [
+                256
+              ]
+            },
+            "premises": [],
+            "materials": []
+          },
+          "enumeration": [],
+          "frontier": [],
+          "requests": [],
+          "required": []
+        }
+      ],
+      "parts": [
+        [
+          "head"
+        ]
+      ],
+      "target_presentations": null,
+      "expected_formed": false
+    },
+    {
+      "name": "unused-malformed-frontier",
+      "problems": [
+        {
+          "id": 20,
+          "entry": 9,
+          "schema": {
+            "head": {
+              "payload": [
+                5
+              ]
+            },
+            "premises": [],
+            "materials": []
+          },
+          "enumeration": [],
+          "frontier": [
+            [
+              999,
+              {
+                "payload": [
+                  256
+                ]
+              }
+            ]
+          ],
+          "requests": [],
+          "required": []
+        }
+      ],
+      "parts": [
+        [
+          "head"
+        ]
+      ],
+      "target_presentations": null,
+      "expected_formed": false
+    },
+    {
+      "name": "unused-malformed-requests",
+      "problems": [
+        {
+          "id": 20,
+          "entry": 9,
+          "schema": {
+            "head": {
+              "payload": [
+                5
+              ]
+            },
+            "premises": [],
+            "materials": []
+          },
+          "enumeration": [],
+          "frontier": [],
+          "requests": [
+            [
+              999,
+              {
+                "payload": [
+                  256
+                ]
+              }
+            ]
+          ],
+          "required": []
+        }
+      ],
+      "parts": [
+        [
+          "head"
+        ]
+      ],
+      "target_presentations": null,
+      "expected_formed": false
+    },
+    {
+      "name": "incomplete-premise-enumeration",
+      "problems": [
+        {
+          "id": 0,
+          "entry": 9,
+          "schema": {
+            "head": {
+              "var": 0
+            },
+            "premises": [
+              [
+                10,
+                8,
+                {
+                  "var": 1
+                }
+              ],
+              [
+                11,
+                8,
+                {
+                  "var": 2
+                }
+              ]
+            ],
+            "materials": []
+          },
+          "enumeration": [
+            [
+              10,
+              8,
+              {
+                "var": 1
+              }
+            ]
+          ],
+          "frontier": [
+            [
+              8,
+              {
+                "payload": [
+                  8
+                ]
+              }
+            ],
+            [
+              8,
+              {
+                "payload": [
+                  9
+                ]
+              }
+            ]
+          ],
+          "requests": [
+            [
+              9,
+              {
+                "payload": [
+                  7
+                ]
+              }
+            ]
+          ],
+          "required": [
+            {
+              "conclusion": {
+                "payload": [
+                  7
+                ]
+              },
+              "bindings": [
+                [
+                  0,
+                  {
+                    "payload": [
+                      7
+                    ]
+                  }
+                ],
+                [
+                  1,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ],
+                [
+                  2,
+                  {
+                    "payload": [
+                      9
+                    ]
+                  }
+                ]
+              ],
+              "premises": [
+                [
+                  10,
+                  8,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ],
+                [
+                  11,
+                  8,
+                  {
+                    "payload": [
+                      9
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "parts": [
+        [
+          "head"
+        ],
+        [
+          "premise",
+          10,
+          8
+        ],
+        [
+          "premise",
+          11,
+          8
+        ]
+      ],
+      "target_presentations": null,
+      "expected_formed": false
+    },
+    {
+      "name": "incomplete-target-enumeration",
+      "problems": [
+        {
+          "id": 20,
+          "entry": 9,
+          "schema": {
+            "head": {
+              "payload": [
+                5
+              ]
+            },
+            "premises": [],
+            "materials": []
+          },
+          "enumeration": [],
+          "frontier": [],
+          "requests": [],
+          "required": []
+        }
+      ],
+      "parts": [
+        [
+          "head"
+        ]
+      ],
+      "target_presentations": [
+        []
+      ],
+      "expected_formed": false
+    },
+    {
+      "name": "whole-fragment-conflict",
+      "problems": [
+        {
+          "id": 1,
+          "entry": 9,
+          "schema": {
+            "head": {
+              "var": 0
+            },
+            "premises": [
+              [
+                10,
+                8,
+                {
+                  "pair": [
+                    {
+                      "var": 0
+                    },
+                    {
+                      "var": 1
+                    }
+                  ]
+                }
+              ],
+              [
+                11,
+                7,
+                {
+                  "var": 1
+                }
+              ]
+            ],
+            "materials": []
+          },
+          "enumeration": [
+            [
+              10,
+              8,
+              {
+                "pair": [
+                  {
+                    "var": 0
+                  },
+                  {
+                    "var": 1
+                  }
+                ]
+              }
+            ],
+            [
+              11,
+              7,
+              {
+                "var": 1
+              }
+            ]
+          ],
+          "frontier": [
+            [
+              8,
+              {
+                "pair": [
+                  {
+                    "payload": [
+                      99
+                    ]
+                  },
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ]
+              }
+            ]
+          ],
+          "requests": [
+            [
+              9,
+              {
+                "payload": [
+                  7
+                ]
+              }
+            ]
+          ],
+          "required": [
+            {
+              "conclusion": {
+                "payload": [
+                  7
+                ]
+              },
+              "bindings": [
+                [
+                  0,
+                  {
+                    "payload": [
+                      7
+                    ]
+                  }
+                ],
+                [
+                  1,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ]
+              ],
+              "premises": [
+                [
+                  10,
+                  8,
+                  {
+                    "pair": [
+                      {
+                        "payload": [
+                          7
+                        ]
+                      },
+                      {
+                        "payload": [
+                          8
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                [
+                  11,
+                  7,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "parts": [
+        [
+          "head"
+        ],
+        [
+          "premise",
+          10,
+          8
+        ],
+        [
+          "premise",
+          11,
+          7
+        ]
+      ],
+      "target_presentations": null,
+      "expected_formed": true
+    },
+    {
+      "name": "whole-fragment-repaired",
+      "problems": [
+        {
+          "id": 1,
+          "entry": 9,
+          "schema": {
+            "head": {
+              "var": 0
+            },
+            "premises": [
+              [
+                10,
+                8,
+                {
+                  "pair": [
+                    {
+                      "var": 0
+                    },
+                    {
+                      "var": 1
+                    }
+                  ]
+                }
+              ],
+              [
+                11,
+                7,
+                {
+                  "var": 1
+                }
+              ]
+            ],
+            "materials": []
+          },
+          "enumeration": [
+            [
+              10,
+              8,
+              {
+                "pair": [
+                  {
+                    "var": 0
+                  },
+                  {
+                    "var": 1
+                  }
+                ]
+              }
+            ],
+            [
+              11,
+              7,
+              {
+                "var": 1
+              }
+            ]
+          ],
+          "frontier": [
+            [
+              8,
+              {
+                "pair": [
+                  {
+                    "payload": [
+                      99
+                    ]
+                  },
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ]
+              }
+            ],
+            [
+              7,
+              {
+                "payload": [
+                  8
+                ]
+              }
+            ]
+          ],
+          "requests": [
+            [
+              9,
+              {
+                "payload": [
+                  7
+                ]
+              }
+            ]
+          ],
+          "required": [
+            {
+              "conclusion": {
+                "payload": [
+                  7
+                ]
+              },
+              "bindings": [
+                [
+                  0,
+                  {
+                    "payload": [
+                      7
+                    ]
+                  }
+                ],
+                [
+                  1,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ]
+              ],
+              "premises": [
+                [
+                  10,
+                  8,
+                  {
+                    "pair": [
+                      {
+                        "payload": [
+                          7
+                        ]
+                      },
+                      {
+                        "payload": [
+                          8
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                [
+                  11,
+                  7,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "parts": [
+        [
+          "head"
+        ],
+        [
+          "premise",
+          10,
+          8
+        ],
+        [
+          "premise",
+          11,
+          7
+        ]
+      ],
+      "target_presentations": null,
+      "expected_formed": true
+    },
+    {
+      "name": "conflicting-target-binding",
+      "problems": [
+        {
+          "id": 0,
+          "entry": 9,
+          "schema": {
+            "head": {
+              "var": 0
+            },
+            "premises": [
+              [
+                10,
+                8,
+                {
+                  "var": 1
+                }
+              ],
+              [
+                11,
+                8,
+                {
+                  "var": 2
+                }
+              ]
+            ],
+            "materials": []
+          },
+          "enumeration": [
+            [
+              10,
+              8,
+              {
+                "var": 1
+              }
+            ],
+            [
+              11,
+              8,
+              {
+                "var": 2
+              }
+            ]
+          ],
+          "frontier": [
+            [
+              8,
+              {
+                "payload": [
+                  8
+                ]
+              }
+            ],
+            [
+              8,
+              {
+                "payload": [
+                  9
+                ]
+              }
+            ]
+          ],
+          "requests": [
+            [
+              9,
+              {
+                "payload": [
+                  7
+                ]
+              }
+            ]
+          ],
+          "required": [
+            {
+              "conclusion": {
+                "payload": [
+                  7
+                ]
+              },
+              "bindings": [
+                [
+                  0,
+                  {
+                    "payload": [
+                      7
+                    ]
+                  }
+                ],
+                [
+                  1,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ],
+                [
+                  2,
+                  {
+                    "payload": [
+                      9
+                    ]
+                  }
+                ],
+                [
+                  0,
+                  {
+                    "payload": [
+                      9
+                    ]
+                  }
+                ]
+              ],
+              "premises": [
+                [
+                  10,
+                  8,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ],
+                [
+                  11,
+                  8,
+                  {
+                    "payload": [
+                      9
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "parts": [
+        [
+          "head"
+        ],
+        [
+          "premise",
+          10,
+          8
+        ],
+        [
+          "premise",
+          11,
+          8
+        ]
+      ],
+      "target_presentations": null,
+      "expected_formed": false
+    },
+    {
+      "name": "missing-target-binding",
+      "problems": [
+        {
+          "id": 0,
+          "entry": 9,
+          "schema": {
+            "head": {
+              "var": 0
+            },
+            "premises": [
+              [
+                10,
+                8,
+                {
+                  "var": 1
+                }
+              ],
+              [
+                11,
+                8,
+                {
+                  "var": 2
+                }
+              ]
+            ],
+            "materials": []
+          },
+          "enumeration": [
+            [
+              10,
+              8,
+              {
+                "var": 1
+              }
+            ],
+            [
+              11,
+              8,
+              {
+                "var": 2
+              }
+            ]
+          ],
+          "frontier": [
+            [
+              8,
+              {
+                "payload": [
+                  8
+                ]
+              }
+            ],
+            [
+              8,
+              {
+                "payload": [
+                  9
+                ]
+              }
+            ]
+          ],
+          "requests": [
+            [
+              9,
+              {
+                "payload": [
+                  7
+                ]
+              }
+            ]
+          ],
+          "required": [
+            {
+              "conclusion": {
+                "payload": [
+                  7
+                ]
+              },
+              "bindings": [
+                [
+                  0,
+                  {
+                    "payload": [
+                      7
+                    ]
+                  }
+                ],
+                [
+                  1,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ]
+              ],
+              "premises": [
+                [
+                  10,
+                  8,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ],
+                [
+                  11,
+                  8,
+                  {
+                    "payload": [
+                      9
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "parts": [
+        [
+          "head"
+        ],
+        [
+          "premise",
+          10,
+          8
+        ],
+        [
+          "premise",
+          11,
+          8
+        ]
+      ],
+      "target_presentations": null,
+      "expected_formed": false
+    },
+    {
+      "name": "extra-target-binding",
+      "problems": [
+        {
+          "id": 0,
+          "entry": 9,
+          "schema": {
+            "head": {
+              "var": 0
+            },
+            "premises": [
+              [
+                10,
+                8,
+                {
+                  "var": 1
+                }
+              ],
+              [
+                11,
+                8,
+                {
+                  "var": 2
+                }
+              ]
+            ],
+            "materials": []
+          },
+          "enumeration": [
+            [
+              10,
+              8,
+              {
+                "var": 1
+              }
+            ],
+            [
+              11,
+              8,
+              {
+                "var": 2
+              }
+            ]
+          ],
+          "frontier": [
+            [
+              8,
+              {
+                "payload": [
+                  8
+                ]
+              }
+            ],
+            [
+              8,
+              {
+                "payload": [
+                  9
+                ]
+              }
+            ]
+          ],
+          "requests": [
+            [
+              9,
+              {
+                "payload": [
+                  7
+                ]
+              }
+            ]
+          ],
+          "required": [
+            {
+              "conclusion": {
+                "payload": [
+                  7
+                ]
+              },
+              "bindings": [
+                [
+                  0,
+                  {
+                    "payload": [
+                      7
+                    ]
+                  }
+                ],
+                [
+                  1,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ],
+                [
+                  2,
+                  {
+                    "payload": [
+                      9
+                    ]
+                  }
+                ],
+                [
+                  999,
+                  {
+                    "payload": [
+                      9
+                    ]
+                  }
+                ]
+              ],
+              "premises": [
+                [
+                  10,
+                  8,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ],
+                [
+                  11,
+                  8,
+                  {
+                    "payload": [
+                      9
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "parts": [
+        [
+          "head"
+        ],
+        [
+          "premise",
+          10,
+          8
+        ],
+        [
+          "premise",
+          11,
+          8
+        ]
+      ],
+      "target_presentations": null,
+      "expected_formed": false
+    },
+    {
+      "name": "repeated-equal-target-binding",
+      "problems": [
+        {
+          "id": 0,
+          "entry": 9,
+          "schema": {
+            "head": {
+              "var": 0
+            },
+            "premises": [
+              [
+                10,
+                8,
+                {
+                  "var": 1
+                }
+              ],
+              [
+                11,
+                8,
+                {
+                  "var": 2
+                }
+              ]
+            ],
+            "materials": []
+          },
+          "enumeration": [
+            [
+              10,
+              8,
+              {
+                "var": 1
+              }
+            ],
+            [
+              11,
+              8,
+              {
+                "var": 2
+              }
+            ]
+          ],
+          "frontier": [
+            [
+              8,
+              {
+                "payload": [
+                  8
+                ]
+              }
+            ],
+            [
+              8,
+              {
+                "payload": [
+                  9
+                ]
+              }
+            ]
+          ],
+          "requests": [
+            [
+              9,
+              {
+                "payload": [
+                  7
+                ]
+              }
+            ]
+          ],
+          "required": [
+            {
+              "conclusion": {
+                "payload": [
+                  7
+                ]
+              },
+              "bindings": [
+                [
+                  0,
+                  {
+                    "payload": [
+                      7
+                    ]
+                  }
+                ],
+                [
+                  1,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ],
+                [
+                  2,
+                  {
+                    "payload": [
+                      9
+                    ]
+                  }
+                ],
+                [
+                  0,
+                  {
+                    "payload": [
+                      7
+                    ]
+                  }
+                ]
+              ],
+              "premises": [
+                [
+                  10,
+                  8,
+                  {
+                    "payload": [
+                      8
+                    ]
+                  }
+                ],
+                [
+                  11,
+                  8,
+                  {
+                    "payload": [
+                      9
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "parts": [
+        [
+          "head"
+        ],
+        [
+          "premise",
+          10,
+          8
+        ],
+        [
+          "premise",
+          11,
+          8
+        ]
+      ],
+      "target_presentations": null,
+      "expected_formed": true
+    }
+  ]
+}

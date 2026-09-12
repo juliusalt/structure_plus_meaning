@@ -1,0 +1,143 @@
+{
+  "schema": "finite-investigation-1",
+  "kind": "basis",
+  "question": "The full main build was given a 120-second session limit even though the preserved previous successful complete build used 600 seconds and ran for 367.573 seconds. Restore the evidenced budget without changing proofs, and describe the current check through its actual receipt.",
+  "scope": {
+    "candidates": {
+      "0": "Repeat the too-short default and leave the premature success statement",
+      "1": "Restore the prior full-session budget and link the actual check status"
+    },
+    "facets": {
+      "0": "Use the previous successful 600-second whole-session budget.",
+      "1": "Preserve every timed-out receipt and diagnostic before rerunning.",
+      "2": "Keep all proof sources and validated runtime tools unchanged.",
+      "3": "Run the complete repository check and collect its diagnostics; existing 72 unchanged-tool tests remain applicable.",
+      "4": "State the registered count and link the actual current proof status without prematurely asserting success."
+    },
+    "subjects": "/tmp/generalization-quality-review/directed-candidate-construction/main-budget2-proposal.json"
+  },
+  "candidates": [
+    0,
+    1
+  ],
+  "facets": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "selected": [
+    0,
+    4
+  ],
+  "observations": [
+    [
+      1,
+      0,
+      0
+    ],
+    [
+      2,
+      0,
+      0
+    ],
+    [
+      3,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      2,
+      1,
+      0
+    ],
+    [
+      3,
+      1,
+      0
+    ],
+    [
+      4,
+      1,
+      0
+    ]
+  ],
+  "relation": [
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      1
+    ]
+  ],
+  "evidence": [
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/main-budget2-investigation1/complete-main-session-budget/initial/evidence-69810c06-0f66-4e83-8f91-96754859dc10/01a70e24d8a9ab28481f8b9f0d7d4902febbbd2907e8b5d056f3f4b00a2651eb",
+      "sha256": "01a70e24d8a9ab28481f8b9f0d7d4902febbbd2907e8b5d056f3f4b00a2651eb",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/main-budget2-proposal.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/main-budget2-investigation1/complete-main-session-budget/initial/evidence-69810c06-0f66-4e83-8f91-96754859dc10/9daeec06661be231bba3b258d33d6c1295d8805caf74d089814899cb0f41e8db",
+      "sha256": "9daeec06661be231bba3b258d33d6c1295d8805caf74d089814899cb0f41e8db",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/main-budget-draft2/README.md"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/main-budget2-investigation1/complete-main-session-budget/initial/evidence-69810c06-0f66-4e83-8f91-96754859dc10/d36f07ba34196614ed1f48e2876154d4978b6409ced2ad81dfd8cd39350353e5",
+      "sha256": "d36f07ba34196614ed1f48e2876154d4978b6409ced2ad81dfd8cd39350353e5",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/main-integration-check1/command-timings.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/main-budget2-investigation1/complete-main-session-budget/initial/evidence-69810c06-0f66-4e83-8f91-96754859dc10/16b28a68af6468b0073a3090aaf16ece557aa804c45408811fbb0a708cb279ca",
+      "sha256": "16b28a68af6468b0073a3090aaf16ece557aa804c45408811fbb0a708cb279ca",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/main-integration-check1/all-tools-tests.log"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/main-budget2-investigation1/complete-main-session-budget/initial/evidence-69810c06-0f66-4e83-8f91-96754859dc10/ec9e6cc487106958a72e062187aa903dd7ef231154d3be8611281db81b92bede",
+      "sha256": "ec9e6cc487106958a72e062187aa903dd7ef231154d3be8611281db81b92bede",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/main-budget2-investigation.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/main-budget2-investigation1/complete-main-session-budget/initial/evidence-69810c06-0f66-4e83-8f91-96754859dc10/7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "sha256": "7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "original_path": "/home/julius/structure_and_semantics/tools/check_decision_cases.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/main-budget2-investigation1/complete-main-session-budget/initial/receipt.json",
+      "sha256": "b23a9100e0412fbd1f1cc13d9a37b92e7b8cef56045690afe90dfe4e3b4c393a"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/main-budget2-investigation1/complete-main-session-budget/initial/case.json",
+      "sha256": "2eb8472345ab3210e2b670882fda80cfca93cbc7b0bc0942d38b3db3cb5d2af1"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/main-budget2-investigation1/complete-main-session-budget/initial/run.log",
+      "sha256": "bae9207a45b6debdfa1befcc18e8015ef0d1752a892fc1aef20cb2c5204544f9"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/revise_investigation_case.py",
+      "sha256": "70466b6a380397ef2c390d33c150d1b536feac4aafcedae6bb20d3e1a5106d66"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/review_investigations.py",
+      "sha256": "368a254b9dc8f4323522d0edf4a6c7c1cac118afd70a97e0e000bf7bf86a6bb0"
+    }
+  ],
+  "semantic_boundary": "Prospective conditional scheduling correction grounded in complete retained previous and current build receipts. It restores a previously successful budget; acceptance of the next whole build remains unsettled."
+}

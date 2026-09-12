@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/tmp/generalization-quality-review/directed-candidate-construction/replay-draft1/replay_reasoning_review.py", line 378, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/tmp/generalization-quality-review/directed-candidate-construction/replay-draft1/replay_reasoning_review.py", line 335, in main
+    return replay_finite_data(args, base, stage, proof, output)
+  File "/tmp/generalization-quality-review/directed-candidate-construction/replay-draft1/replay_reasoning_review.py", line 226, in replay_finite_data
+    assert timed_data_assessment(assessment) == timed_data_assessment(before["assessment"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

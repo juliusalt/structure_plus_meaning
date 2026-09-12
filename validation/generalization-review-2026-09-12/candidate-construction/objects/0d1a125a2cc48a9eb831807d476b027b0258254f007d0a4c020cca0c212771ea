@@ -1,0 +1,53 @@
+Invocation: 1039a6c6-23b1-4d7a-95c2-58fe5255a5f7
+Isabelle2025-2
+Started at Fri Sep 11 23:19:24 GMT+3 2026 (polyml-5.9.2_x86_64_32-linux on julius-arch)
+ISABELLE_TOOL_JAVA_OPTIONS="-Djava.awt.headless=true -Xms512m -Xmx4g -Xss16m"
+ISABELLE_BUILD_OPTIONS=""
+
+ML_PLATFORM="x86_64_32-linux"
+ML_HOME="/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux"
+ML_SYSTEM="polyml-5.9.2"
+ML_OPTIONS="--minheap 500"
+
+Session Pure/Pure
+Session Misc/Tools
+Session HOL/HOL (main)
+Session HOL/HOL-Library (main timing)
+Session Unsorted/Finite_Investigation_9188a917829df6c6d57ee513
+
+Finished at Fri Sep 11 23:19:25 GMT+3 2026
+0:00:01 elapsed time
+export "/tmp/generalization-quality-review/directed-candidate-construction/proof-repair9-investigation/explicit-relational-steps/followed/export-1039a6c6-23b1-4d7a-95c2-58fe5255a5f7/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML"
+/opt/isabelle/contrib/polyml-5.9.2-2
+Poly/ML 5.9.2 Release
+/tmp/generalization-quality-review/directed-candidate-construction/proof-repair9-investigation/explicit-relational-steps/followed/export-1039a6c6-23b1-4d7a-95c2-58fe5255a5f7/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML:70: warning: Matches are not exhaustive.
+Found near
+  fun
+     less_eq_set A_ (... ...) ... = list_all (fn ...) xs |
+        less_eq_set A_ ... = ... ... ys |
+        less_eq_set ... = false
+/tmp/generalization-quality-review/directed-candidate-construction/proof-repair9-investigation/explicit-relational-steps/followed/export-1039a6c6-23b1-4d7a-95c2-58fe5255a5f7/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML:114: warning: Matches are not exhaustive. Found near fun bex (Set xs) p = list_ex p xs
+/tmp/generalization-quality-review/directed-candidate-construction/proof-repair9-investigation/explicit-relational-steps/followed/export-1039a6c6-23b1-4d7a-95c2-58fe5255a5f7/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML:116: warning: Matches are not exhaustive. Found near fun ball (Set xs) p = list_all p xs
+/tmp/generalization-quality-review/directed-candidate-construction/proof-repair9-investigation/explicit-relational-steps/followed/export-1039a6c6-23b1-4d7a-95c2-58fe5255a5f7/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML:127: warning: Matches are not exhaustive.
+Found near fun image f (... ...) = Set (... ... xs)
+/tmp/generalization-quality-review/directed-candidate-construction/proof-repair9-investigation/explicit-relational-steps/followed/export-1039a6c6-23b1-4d7a-95c2-58fe5255a5f7/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML:140: warning: Matches are not exhaustive.
+Found near fun card A_ (... ...) = size_list (... ... xs)
+/tmp/generalization-quality-review/directed-candidate-construction/proof-repair9-investigation/explicit-relational-steps/followed/export-1039a6c6-23b1-4d7a-95c2-58fe5255a5f7/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML:147: warning: Matches are not exhaustive.
+Found near fun filter p (... ...) = Set (... ... xs)
+/tmp/generalization-quality-review/directed-candidate-construction/proof-repair9-investigation/explicit-relational-steps/followed/export-1039a6c6-23b1-4d7a-95c2-58fe5255a5f7/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML:165: warning: Matches are not exhaustive.
+Found near fun sup_seta A_ (... ...) = ... ... xs bot_set
+/tmp/generalization-quality-review/directed-candidate-construction/proof-repair9-investigation/explicit-relational-steps/followed/export-1039a6c6-23b1-4d7a-95c2-58fe5255a5f7/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML:195: warning: Pattern 3 is redundant.
+Found near
+  fun
+     equal_bool false p = not p |
+        equal_bool true ... = p |
+        equal_bool ... = ... ... |
+        equal_bool ... = ...
+/tmp/generalization-quality-review/directed-candidate-construction/proof-repair9-investigation/explicit-relational-steps/followed/export-1039a6c6-23b1-4d7a-95c2-58fe5255a5f7/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML:196: warning: Pattern 4 is redundant.
+Found near
+  fun
+     equal_bool false p = not p |
+        equal_bool true ... = p |
+        equal_bool ... = ... ... |
+        equal_bool ... = ...
+INVESTIGATION_RESULT {"input_formed":true,"residual":[],"profiles":[{"candidate":0,"profile":[]},{"candidate":1,"profile":[[1,0],[1,1]]}],"losses":[{"from":0,"to":0,"losses":[]},{"from":0,"to":1,"losses":[]},{"from":1,"to":0,"losses":[[1,0],[1,1]]},{"from":1,"to":1,"losses":[]}],"safe_facets":[0,1],"conflicts":[],"repairs":[],"unrepairable":[],"extension":[1],"revision":{"retained":[1],"withdrawn":[],"repairs":[],"selection":[1],"residual":[]}}

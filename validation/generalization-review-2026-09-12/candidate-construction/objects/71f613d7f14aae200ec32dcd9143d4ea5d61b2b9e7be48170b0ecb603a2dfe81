@@ -1,0 +1,319 @@
+{
+  "schema": "finite-investigation-1",
+  "kind": "basis",
+  "question": "Check every complete source field even when the target family has no variables.",
+  "scope": {
+    "candidates": {
+      "0": "Target and enumeration checks only",
+      "1": "Target checks plus complete schema and supplied-call formation"
+    },
+    "facets": {
+      "0": "The gate agrees with the independently required whole-input formation result"
+    },
+    "subjects": "/tmp/generalization-quality-review/directed-candidate-construction/application-gate-subjects.json"
+  },
+  "candidates": [
+    0,
+    1
+  ],
+  "facets": [
+    0
+  ],
+  "selected": [
+    0
+  ],
+  "observations": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      0,
+      1
+    ],
+    [
+      0,
+      1,
+      1
+    ],
+    [
+      0,
+      0,
+      2
+    ],
+    [
+      0,
+      1,
+      2
+    ],
+    [
+      0,
+      0,
+      3
+    ],
+    [
+      0,
+      1,
+      3
+    ],
+    [
+      0,
+      0,
+      4
+    ],
+    [
+      0,
+      1,
+      4
+    ],
+    [
+      0,
+      0,
+      5
+    ],
+    [
+      0,
+      1,
+      5
+    ],
+    [
+      0,
+      0,
+      6
+    ],
+    [
+      0,
+      1,
+      6
+    ],
+    [
+      0,
+      0,
+      7
+    ],
+    [
+      0,
+      1,
+      7
+    ],
+    [
+      0,
+      0,
+      8
+    ],
+    [
+      0,
+      1,
+      8
+    ],
+    [
+      0,
+      0,
+      9
+    ],
+    [
+      0,
+      1,
+      9
+    ],
+    [
+      0,
+      0,
+      10
+    ],
+    [
+      0,
+      1,
+      10
+    ],
+    [
+      0,
+      0,
+      11
+    ],
+    [
+      0,
+      1,
+      11
+    ],
+    [
+      0,
+      0,
+      12
+    ],
+    [
+      0,
+      1,
+      12
+    ],
+    [
+      0,
+      0,
+      13
+    ],
+    [
+      0,
+      1,
+      13
+    ],
+    [
+      0,
+      0,
+      14
+    ],
+    [
+      0,
+      1,
+      14
+    ],
+    [
+      0,
+      0,
+      15
+    ],
+    [
+      0,
+      1,
+      15
+    ],
+    [
+      0,
+      0,
+      16
+    ],
+    [
+      0,
+      1,
+      16
+    ],
+    [
+      0,
+      0,
+      17
+    ],
+    [
+      0,
+      1,
+      17
+    ],
+    [
+      0,
+      0,
+      18
+    ],
+    [
+      0,
+      1,
+      18
+    ],
+    [
+      0,
+      1,
+      19
+    ],
+    [
+      0,
+      1,
+      20
+    ],
+    [
+      0,
+      1,
+      21
+    ],
+    [
+      0,
+      0,
+      22
+    ],
+    [
+      0,
+      1,
+      22
+    ],
+    [
+      0,
+      0,
+      23
+    ],
+    [
+      0,
+      1,
+      23
+    ]
+  ],
+  "relation": [
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      1
+    ]
+  ],
+  "evidence": [
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-gate-investigation1/complete-construction-input/initial/evidence-f29634a9-4947-4cdd-8dc6-f2fbb24ef8c6/d0db1cb76c9f3a87a11b1b3a96fc147046e1281f35812f09ab779abc1acc1eac",
+      "sha256": "d0db1cb76c9f3a87a11b1b3a96fc147046e1281f35812f09ab779abc1acc1eac",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/application-gate-subjects.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-gate-investigation1/complete-construction-input/initial/evidence-f29634a9-4947-4cdd-8dc6-f2fbb24ef8c6/2f573570cf0c7f0fdeddbf65424e8bb48c3f44907ca61bd8a7eed3ba9983bbbc",
+      "sha256": "2f573570cf0c7f0fdeddbf65424e8bb48c3f44907ca61bd8a7eed3ba9983bbbc",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/check_application_gate.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-gate-investigation1/complete-construction-input/initial/evidence-f29634a9-4947-4cdd-8dc6-f2fbb24ef8c6/8b3cac53a2524e5934832817ffb29236a350fedee0c1b397d9933f722f3137b9",
+      "sha256": "8b3cac53a2524e5934832817ffb29236a350fedee0c1b397d9933f722f3137b9",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/application_controls.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-gate-investigation1/complete-construction-input/initial/evidence-f29634a9-4947-4cdd-8dc6-f2fbb24ef8c6/9af2e5511872881a26fab7215dde4d77f8f06d279aa5420b7a76e7adb0cb3f8a",
+      "sha256": "9af2e5511872881a26fab7215dde4d77f8f06d279aa5420b7a76e7adb0cb3f8a",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/application-input-gate-criticism.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-gate-investigation1/complete-construction-input/initial/evidence-f29634a9-4947-4cdd-8dc6-f2fbb24ef8c6/3f5d421665f2f7f1e54318914473dbe910bcde6c9e79b93817b95a719094e29d",
+      "sha256": "3f5d421665f2f7f1e54318914473dbe910bcde6c9e79b93817b95a719094e29d",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/application-gate-investigation.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-gate-investigation1/complete-construction-input/initial/evidence-f29634a9-4947-4cdd-8dc6-f2fbb24ef8c6/7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "sha256": "7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "original_path": "/home/julius/structure_and_semantics/tools/check_decision_cases.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-gate-investigation1/complete-construction-input/initial/receipt.json",
+      "sha256": "3c25f6f476001f49c9b17884f4b218569d396333c5896ddfee8f6cf8d7a34fc9"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-gate-investigation1/complete-construction-input/initial/case.json",
+      "sha256": "c21bd4ace3b78e42a18d9067671104a9c14f5fec0958e4db1985cce50afe09db"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-gate-investigation1/complete-construction-input/initial/run.log",
+      "sha256": "162bd16bc8b5a0020265722939f5408102b27cca94c9f6daa66278f3eb9b8630"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/revise_investigation_case.py",
+      "sha256": "70466b6a380397ef2c390d33c150d1b536feac4aafcedae6bb20d3e1a5106d66"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/review_investigations.py",
+      "sha256": "368a254b9dc8f4323522d0edf4a6c7c1cac118afd70a97e0e000bf7bf86a6bb0"
+    }
+  ],
+  "semantic_boundary": "Conditional host comparison using complete retained source records, target presentations and existing independent structural validators. It guides which proposed native gate to check. The universal application constructor contract remains a separate proof obligation."
+}

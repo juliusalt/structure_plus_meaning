@@ -1,0 +1,129 @@
+{
+  "question": "Complete case validation rejected the larger original targets because they include entry and schema owner fields. Those fields duplicate the enclosing problem, so their agreement must be checked explicitly before using the local target tuple.",
+  "boundary": "Prospective conditional input-boundary correction using an actual retained all-case validation rejection. Generated source equality and tests remain to be checked.",
+  "problems": [
+    {
+      "name": "complete-target-owner-fields",
+      "case": {
+        "schema": "finite-investigation-1",
+        "kind": "basis",
+        "question": "Complete case validation rejected the larger original targets because they include entry and schema owner fields. Those fields duplicate the enclosing problem, so their agreement must be checked explicitly before using the local target tuple.",
+        "scope": {
+          "candidates": {
+            "0": "Keep the local-target-only input validator",
+            "1": "Check redundant target owners against the complete enclosing problem"
+          },
+          "facets": {
+            "0": "Preserve the original complete cases, including checked redundant owner fields.",
+            "1": "Reject unknown fields and owner entry or schema disagreement.",
+            "2": "Factor schema normalization and shape validation once for both problem and owner checks.",
+            "3": "Re-run all input/replay tests and all 30 complete program-generation comparisons before native production execution."
+          },
+          "subjects": "/tmp/generalization-quality-review/directed-candidate-construction/interface4-proposal.json"
+        },
+        "candidates": [
+          0,
+          1
+        ],
+        "facets": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "selected": [],
+        "observations": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            3,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            3,
+            1,
+            0
+          ]
+        ],
+        "relation": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "evidence": [
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/interface4-proposal.json",
+            "sha256": "282525e79541613b2b9693988a5e91dbb5dae2800740b172bf13efaf6b469cdc"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/interface3-complete-input-failure.json",
+            "sha256": "99e0ce04e10d9d013b4547211d939ee840d79be022418ad98fb85b2efba73954"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/interface-draft4/application_subjects.py",
+            "sha256": "0acef6ed6f418303e363ff1d17a813bc1a28059f569ea5146b0d9730d41183b6"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/interface-draft4/check_binding_contributions.py",
+            "sha256": "e87a7f88c42bd30125cbc965a2e1b3e40b40c5e827047ed4279d840a23de9d00"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/interface-draft4/check_application_comparison.py",
+            "sha256": "92640d6aec88dfc33083f9db8e25f1ff42638744cf2796c1306fdc1ce4701779"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/directed-candidate-construction/interface-draft4/test_application_comparison.py",
+            "sha256": "2d2acb6c02e6da159b81570f5e0c6c623d5d693efe0636342c9c29dbc46e7d61"
+          }
+        ],
+        "semantic_boundary": "Prospective conditional input-boundary correction using an actual retained all-case validation rejection. Generated source equality and tests remain to be checked."
+      },
+      "required_observations": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ]
+      ]
+    }
+  ]
+}

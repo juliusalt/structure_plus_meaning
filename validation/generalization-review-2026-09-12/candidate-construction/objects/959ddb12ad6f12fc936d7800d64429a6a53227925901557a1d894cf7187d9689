@@ -1,0 +1,26 @@
+{
+  "status": "evaluated",
+  "exit_code": 0,
+  "elapsed_seconds": 3.1294181579723954,
+  "runtime_seconds": 0.06865387398283929,
+  "receipt": "/tmp/generalization-quality-review/directed-candidate-construction/applicationconstruction-repairs/proof-repair16-investigation1/proof-repair/followed/receipt.json",
+  "input_formed": true,
+  "residual": [],
+  "repair_witnesses": 0,
+  "conflicts": 0,
+  "unrepairable": 0,
+  "extension": [
+    1
+  ],
+  "revision": {
+    "retained": [
+      1
+    ],
+    "withdrawn": [],
+    "repairs": [],
+    "selection": [
+      1
+    ],
+    "residual": []
+  }
+}

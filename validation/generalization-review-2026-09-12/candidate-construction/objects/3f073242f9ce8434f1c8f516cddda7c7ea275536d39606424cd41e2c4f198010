@@ -1,0 +1,304 @@
+structure Directed_Search : sig
+  type nat
+  val integer_of_nat : nat -> IntInf.int
+  datatype 'a set = Set of 'a list | Coset of 'a list
+  type 'a fset
+  val fset : 'a fset -> 'a set
+  val fset_of_list : 'a list -> 'a fset
+  val nat_of_integer : IntInf.int -> nat
+  val natural_directed_bindings :
+    nat fset -> (nat * nat) fset fset -> (nat * nat) fset fset
+  val natural_candidate_assembly :
+    nat list -> nat list -> (nat * nat) fset -> nat fset option
+end = struct
+
+datatype nat = Nat of IntInf.int;
+
+fun integer_of_nat (Nat x) = x;
+
+fun equal_nata m n = (((integer_of_nat m) : IntInf.int) = (integer_of_nat n));
+
+type 'a equal = {equal : 'a -> 'a -> bool};
+val equal = #equal : 'a equal -> 'a -> 'a -> bool;
+
+val equal_nat = {equal = equal_nata} : nat equal;
+
+fun less_eq_nat m n = IntInf.<= (integer_of_nat m, integer_of_nat n);
+
+type 'a ord = {less_eq : 'a -> 'a -> bool, less : 'a -> 'a -> bool};
+val less_eq = #less_eq : 'a ord -> 'a -> 'a -> bool;
+val less = #less : 'a ord -> 'a -> 'a -> bool;
+
+fun less_nat m n = IntInf.< (integer_of_nat m, integer_of_nat n);
+
+val ord_nat = {less_eq = less_eq_nat, less = less_nat} : nat ord;
+
+type 'a preorder = {ord_preorder : 'a ord};
+val ord_preorder = #ord_preorder : 'a preorder -> 'a ord;
+
+type 'a order = {preorder_order : 'a preorder};
+val preorder_order = #preorder_order : 'a order -> 'a preorder;
+
+val preorder_nat = {ord_preorder = ord_nat} : nat preorder;
+
+val order_nat = {preorder_order = preorder_nat} : nat order;
+
+type 'a linorder = {order_linorder : 'a order};
+val order_linorder = #order_linorder : 'a linorder -> 'a order;
+
+val linorder_nat = {order_linorder = order_nat} : nat linorder;
+
+fun list_all p [] = true
+  | list_all p (x :: xs) = p x andalso list_all p xs;
+
+datatype 'a set = Set of 'a list | Coset of 'a list;
+
+fun eq A_ a b = equal A_ a b;
+
+fun membera A_ [] y = false
+  | membera A_ (x :: xs) y = eq A_ x y orelse membera A_ xs y;
+
+fun member A_ x (Set xs) = membera A_ xs x
+  | member A_ x (Coset xs) = not (membera A_ xs x);
+
+fun less_eq_set A_ (Set xs) b = list_all (fn x => member A_ x b) xs
+  | less_eq_set A_ a (Coset ys) = list_all (fn y => not (member A_ y a)) ys
+  | less_eq_set A_ (Coset []) (Set []) = false;
+
+datatype 'a fset = Abs_fset of 'a set;
+
+fun fset (Abs_fset x) = x;
+
+fun less_eq_fset A_ xa xc = less_eq_set A_ (fset xa) (fset xc);
+
+fun equal_fseta A_ a b = less_eq_fset A_ a b andalso less_eq_fset A_ b a;
+
+fun equal_fset A_ = {equal = equal_fseta A_} : 'a fset equal;
+
+fun equal_proda A_ B_ (x1, x2) (y1, y2) = eq A_ x1 y1 andalso eq B_ x2 y2;
+
+fun equal_prod A_ B_ = {equal = equal_proda A_ B_} : ('a * 'b) equal;
+
+val ord_integer =
+  {less_eq = (fn a => fn b => IntInf.<= (a, b)),
+    less = (fn a => fn b => IntInf.< (a, b))}
+  : IntInf.int ord;
+
+datatype num = One | Bit0 of num | Bit1 of num;
+
+fun plus_nat m n = Nat (IntInf.+ (integer_of_nat m, integer_of_nat n));
+
+val one_nat : nat = Nat (1 : IntInf.int);
+
+fun suc n = plus_nat n one_nat;
+
+fun ball (Set xs) p = list_all p xs;
+
+fun find uu [] = NONE
+  | find p (x :: xs) = (if p x then SOME x else find p xs);
+
+fun fold f [] s = s
+  | fold f (x :: xs) s = fold f xs (f x s);
+
+fun null [] = true
+  | null (x :: xs) = false;
+
+fun map f [] = []
+  | map f (x21 :: x22) = f x21 :: map f x22;
+
+fun image f (Set xs) = Set (map f xs);
+
+val zero_nat : nat = Nat (0 : IntInf.int);
+
+fun length_tailrec [] n = n
+  | length_tailrec (x :: xs) n = length_tailrec xs (suc n);
+
+fun size_list xs = length_tailrec xs zero_nat;
+
+fun remdups A_ [] = []
+  | remdups A_ (x :: xs) =
+    (if membera A_ xs x then remdups A_ xs else x :: remdups A_ xs);
+
+fun card A_ (Set xs) = size_list (remdups A_ xs);
+
+fun fcard A_ xa = card A_ (fset xa);
+
+fun map_of A_ [] k = NONE
+  | map_of A_ ((l, v) :: ps) k = (if eq A_ l k then SOME v else map_of A_ ps k);
+
+fun filtera p [] = []
+  | filtera p (x :: xs) = (if p x then x :: filtera p xs else filtera p xs);
+
+fun filter p (Set xs) = Set (filtera p xs);
+
+fun removeAll A_ x [] = []
+  | removeAll A_ x (y :: xs) =
+    (if eq A_ x y then removeAll A_ x xs else y :: removeAll A_ x xs);
+
+fun inserta A_ x xs = (if membera A_ xs x then xs else x :: xs);
+
+fun insert A_ x (Set xs) = Set (inserta A_ x xs)
+  | insert A_ x (Coset xs) = Coset (removeAll A_ x xs);
+
+fun remove A_ x (Set xs) = Set (removeAll A_ x xs)
+  | remove A_ x (Coset xs) = Coset (inserta A_ x xs);
+
+fun fimage xb xc = Abs_fset (image xb (fset xc));
+
+fun sup_set A_ (Set xs) a = fold (insert A_) xs a
+  | sup_set A_ (Coset xs) a = Coset (filtera (fn x => not (member A_ x a)) xs);
+
+val bot_set : 'a set = Set [];
+
+fun sup_seta A_ (Set xs) = fold (sup_set A_) xs bot_set;
+
+fun ffUnion A_ xa = Abs_fset (sup_seta A_ (image fset (fset xa)));
+
+fun ffilter xb xc = Abs_fset (filter xb (fset xc));
+
+fun finsert A_ xb xc = Abs_fset (insert A_ xb (fset xc));
+
+fun fset_of_list xa = Abs_fset (Set xa);
+
+fun arg_min_list B_ f [x] = x
+  | arg_min_list B_ f (x :: y :: zs) =
+    let
+      val m = arg_min_list B_ f (y :: zs);
+    in
+      (if less_eq ((ord_preorder o preorder_order o order_linorder) B_) (f x)
+            (f m)
+        then x else m)
+    end;
+
+fun fst (x1, x2) = x1;
+
+fun snd (x1, x2) = x2;
+
+fun max A_ a b = (if less_eq A_ a b then b else a);
+
+fun map_option f NONE = NONE
+  | map_option f (SOME x2) = SOME (f x2);
+
+fun nat_of_integer k = Nat (max ord_integer (0 : IntInf.int) k);
+
+val bot_fset : 'a fset = Abs_fset bot_set;
+
+fun sup_fset A_ xb xc = Abs_fset (sup_set A_ (fset xb) (fset xc));
+
+fun minus_nat m n =
+  Nat (max ord_integer (0 : IntInf.int)
+        (IntInf.- (integer_of_nat m, integer_of_nat n)));
+
+fun minus_set A_ a (Set xs) = fold (remove A_) xs a
+  | minus_set A_ a (Coset xs) = Set (filtera (fn x => member A_ x a) xs);
+
+fun minus_fset A_ xb xc = Abs_fset (minus_set A_ (fset xb) (fset xc));
+
+fun finite_demand_choice A_ B_ cost asa covered =
+  let
+    val remaining = filtera (fn a => not (member A_ a (fset covered))) asa;
+  in
+    (if null remaining then NONE else SOME (arg_min_list B_ cost remaining))
+  end;
+
+fun finite_assembly_coverage B_ k a = ffUnion B_ (fimage k a);
+
+fun finite_prune_assembly A_ B_ [] k required a = a
+  | finite_prune_assembly A_ B_ (p :: ps) k required a =
+    finite_prune_assembly A_ B_ ps k required
+      (if less_eq_fset B_ required
+            (finite_assembly_coverage B_ k
+              (minus_fset A_ a (finsert A_ p bot_fset)))
+        then minus_fset A_ a (finsert A_ p bot_fset) else a);
+
+fun finite_relation_functional A_ B_ f =
+  ball (fset f)
+    (fn x =>
+      ball (fset f)
+        (fn y =>
+          (if eq A_ (fst x) (fst y) then eq B_ (snd x) (snd y) else true)));
+
+fun finite_assembly_search A_ B_ n asa ps k a =
+  (if equal_nata n zero_nat
+    then (if less_eq_fset A_ (fset_of_list asa)
+               (finite_assembly_coverage A_ k a)
+           then SOME a else NONE)
+    else (case finite_demand_choice A_ linorder_nat
+                 (fn aa =>
+                   size_list (filtera (fn p => member A_ aa (fset (k p))) ps))
+                 asa (finite_assembly_coverage A_ k a)
+           of NONE => SOME a
+           | SOME aa =>
+             (case find (fn p => member A_ aa (fset (k p))) ps of NONE => NONE
+               | SOME p =>
+                 finite_assembly_search A_ B_ (minus_nat n one_nat) asa ps k
+                   (finsert B_ p a))));
+
+fun finite_compatible_binding_parts A_ B_ scope b u =
+  ffilter
+    (fn w =>
+      less_eq_fset A_ (fimage fst w) scope andalso
+        finite_relation_functional A_ B_ (sup_fset (equal_prod A_ B_) u w))
+    b;
+
+fun finite_assignment_agrees A_ B_ r w =
+  ball (fset w)
+    (fn s => (if eq A_ (fst s) (fst r) then eq B_ (snd s) (snd r) else true));
+
+fun finite_value_binding_search A_ B_ n asa b u =
+  (if equal_nata n zero_nat
+    then (if eq (equal_fset A_) (fimage fst u) (fset_of_list asa) andalso
+               less_eq_fset A_ (fset_of_list asa)
+                 (fimage fst (ffUnion (equal_prod A_ B_) b))
+           then finsert (equal_fset (equal_prod A_ B_)) u bot_fset
+           else bot_fset)
+    else let
+           val m = ffUnion (equal_prod A_ B_) b;
+         in
+           (if not (less_eq_fset A_ (fset_of_list asa) (fimage fst m))
+             then bot_fset
+             else (case finite_demand_choice A_ linorder_nat
+                          (fn a =>
+                            fcard (equal_prod A_ B_)
+                              (ffilter (fn r => eq A_ (fst r) a) m))
+                          asa (fimage fst u)
+                    of NONE =>
+                      finsert (equal_fset (equal_prod A_ B_)) u bot_fset
+                    | SOME a =>
+                      ffUnion (equal_fset (equal_prod A_ B_))
+                        (fimage
+                          (fn r =>
+                            finite_value_binding_search A_ B_
+                              (minus_nat n one_nat) asa
+                              (ffilter (finite_assignment_agrees A_ B_ r) b)
+                              (finsert (equal_prod A_ B_) r u))
+                          (ffilter (fn r => eq A_ (fst r) a) m))))
+         end);
+
+fun set_scoped_compatible_unions A_ B_ (Set asa) b =
+  finite_value_binding_search A_ B_ (fcard A_ (fset_of_list asa)) asa
+    (finite_compatible_binding_parts A_ B_ (fset_of_list asa) b bot_fset)
+    bot_fset;
+
+fun finite_scoped_compatible_unions A_ B_ scope b =
+  set_scoped_compatible_unions A_ B_ (fset scope) b;
+
+fun natural_directed_bindings scope b =
+  finite_scoped_compatible_unions equal_nat equal_nat scope b;
+
+fun finite_construct_candidate A_ B_ asa ps k =
+  let
+    val table = map (fn p => (p, k p)) ps;
+    val cached =
+      (fn p => (case map_of B_ table p of NONE => k p | SOME value => value));
+  in
+    map_option (finite_prune_assembly B_ A_ ps cached (fset_of_list asa))
+      (finite_assembly_search A_ B_ (fcard A_ (fset_of_list asa)) asa ps cached
+        bot_fset)
+  end;
+
+fun natural_candidate_assembly asa ps coverage =
+  finite_construct_candidate equal_nat equal_nat asa ps
+    (fn p => fimage snd (ffilter (fn r => equal_nata (fst r) p) coverage));
+
+end; (*struct Directed_Search*)

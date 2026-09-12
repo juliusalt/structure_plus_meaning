@@ -1,0 +1,16 @@
+{
+  "basis": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/complete-results.json",
+  "decision": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-decision.json",
+  "remaining_action": "Retain every proof attempt and execution, replay all conditional investigations and all nine canonical final runtime families, and preserve combined diagnostics.",
+  "criticism": [
+    "Original complete inputs and runtime outputs remain available even for unsuccessful and timed-out attempts; those records are not accepted observations.",
+    "The concrete sufficient-subset language and exact scoped compatible-union equation have checked source contracts. The JSON adapter has a narrower declared term codec.",
+    "Retained source hashes establish exact executed bytes; they do not replace the observation equations or independent semantic assessment.",
+    "Only persistent repository archives may supply retained relative references. Temporary replay fixtures may supply bytes but must not become external archive dependencies.",
+    "Replay precedes any delivery success claim. A successful replay preserves the original outcome, including malformed input and negative cases; it does not rerun kernel proof checking.",
+    "The full repository proof check and all 72 tooling tests provide separate source and implementation validation.",
+    "The original system goal, native mathematical-proof admission and final repository audit remain open."
+  ],
+  "batch_script": "/tmp/generalization-quality-review/directed-candidate-construction/validate_candidate_archive.py",
+  "status": "Selected integration action; complete main-session check remains required before archive creation."
+}

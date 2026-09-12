@@ -1,0 +1,51 @@
+{
+  "status": "failed",
+  "exit_code": 1,
+  "sources_unchanged": true,
+  "checked_theories": 17,
+  "parent_theories_reused": 404,
+  "roots": [
+    "Factor_Application_Execution",
+    "Factor_Finite_Inference_Premises",
+    "Finite_Directed_Execution"
+  ],
+  "command": [
+    "isabelle",
+    "build",
+    "-o",
+    "threads=12",
+    "-o",
+    "parallel_proofs=0",
+    "-o",
+    "build_timing_threshold=0",
+    "-d",
+    "/home/julius/structure_and_semantics",
+    "-D",
+    "/tmp/native-investigation-report-diagnostic-applicationconstruction18"
+  ],
+  "started_utc": "2026-09-11T22:35:57.706342+00:00",
+  "finished_utc": "2026-09-11T22:36:15.332365+00:00",
+  "log": "/tmp/native-investigation-report-diagnostic-applicationconstruction18/build.log"
+}
+Running Native_Application_Construction18 ...
+Native_Application_Construction18 FAILED (see also "isabelle build_log -H Error Native_Application_Construction18")
+*** Failed to load theory "Native_Application_Construction18.Factor_Application_Candidates" (unresolved "Native_Application_Construction18.Finite_Indexed_Candidate_Assembly")
+*** Failed to load theory "Native_Application_Construction18.Factor_Application_Comparison" (unresolved "Native_Application_Construction18.Factor_Application_Candidates")
+*** Failed to load theory "Native_Application_Construction18.Factor_Application_Execution" (unresolved "Native_Application_Construction18.Factor_Application_Comparison")
+*** Failed to finish proof (line 45 of "/tmp/native-investigation-report-diagnostic-applicationconstruction18/theories/Finite_Indexed_Candidate_Assembly.thy"):
+*** goal (4 subgoals):
+***  1. ⋀x. ⟦x < length As; R p (As ! x)⟧
+***         ⟹ x ∈ fst `
+***                {x ∈ set (finite_requirement_subjects As).
+***                 case x of (i, x) ⇒ R p x}
+***  2. ⋀a b. ⟦(a, b) ∈ set (finite_requirement_subjects As); R p b⟧
+***           ⟹ a < length As
+***  3. ⋀a b. ⟦(a, b) ∈ set (finite_requirement_subjects As); R p b⟧
+***           ⟹ As ! a ∈ set As
+***  4. ⋀a b. ⟦(a, b) ∈ set (finite_requirement_subjects As); R p b⟧
+***           ⟹ R p (As !
+***                   a)
+*** At command "by" (line 43 of "/tmp/native-investigation-report-diagnostic-applicationconstruction18/theories/Finite_Indexed_Candidate_Assembly.thy")
+Unfinished session(s): Native_Application_Construction18
+0:00:17 elapsed time, 0:00:21 cpu time, factor 1.28
+

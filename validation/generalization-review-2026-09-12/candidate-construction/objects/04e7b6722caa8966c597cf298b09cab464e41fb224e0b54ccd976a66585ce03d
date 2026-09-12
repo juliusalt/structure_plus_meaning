@@ -1,0 +1,20 @@
+{
+  "status": "unadopted draft",
+  "new_theories": [
+    "Finite_Compatible_Unions",
+    "Finite_Demand_Selection",
+    "Finite_Directed_Contributions",
+    "Finite_Candidate_Assembly",
+    "Finite_Indexed_Candidate_Assembly",
+    "Finite_Directed_Execution",
+    "Factor_Application_Problems",
+    "Factor_Observation_Assembly",
+    "Factor_Application_Candidates"
+  ],
+  "registered_count": 836,
+  "prerequisites": [
+    "Complete supplied-input validation",
+    "Retained archive and replay",
+    "Accepted complete repository check before claiming the 836-theory session passes"
+  ]
+}

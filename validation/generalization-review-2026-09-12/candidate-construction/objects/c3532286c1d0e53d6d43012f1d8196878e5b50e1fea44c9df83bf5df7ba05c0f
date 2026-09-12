@@ -1,0 +1,6 @@
+{
+  "stage": "directed",
+  "status": "accepted",
+  "replay_kind": "directed_search",
+  "replay_sha256": "0b3483af2fa19e88772596fcbe6e46cd42740d4f42f189c309cee94e76f11f55"
+}

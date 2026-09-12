@@ -1,0 +1,109 @@
+"""Prepare the complete shared input-retention correction without adopting it."""
+from pathlib import Path
+import json,shutil,sys
+C=Path(__file__).parent;M=Path('/home/julius/structure_and_semantics');D=C/'retention-draft1';D.mkdir();shutil.copytree(M/'tools',D/'tools',ignore=shutil.ignore_patterns('__pycache__'))
+(D/'theories').symlink_to(M/'theories',target_is_directory=True)
+p=D/'tools/proved_code.py';s=p.read_text()
+helpers='''def archive_execution_inputs(output, receipt, inputs, *, external=()):
+    """Retain every checked input except explicitly recorded external binaries."""
+    external = {Path(path).resolve() for path in external}
+    for path, sha in inputs.items():
+        if Path(path).resolve() not in external:
+            investigate.archive_evidence(output, receipt, "checked module input", Path(path), sha)
+
+
+def execution_inputs_unchanged(inputs, receipt, *, external=()):
+    """Check the live inputs, complete retained coverage and every retained byte."""
+    external = {Path(path).resolve() for path in external}
+    expected = {(str(Path(path).resolve()), sha) for path, sha in inputs.items()
+                if Path(path).resolve() not in external}
+    retained = receipt.get("evidence_archive", [])
+    available = {(row["path"], row["sha256"]) for row in retained}
+    return (expected <= available
+            and all(investigate.file_hash(Path(path)) == sha for path, sha in inputs.items())
+            and all(investigate.file_hash(Path(row["archive"])) == row["sha256"] for row in retained))
+
+
+'''
+s=s.replace('def checked_execution(',helpers+'def checked_execution(')
+old='''        for path, sha in tracked.items():
+            if Path(path) != poly:
+                investigate.archive_evidence(output, receipt, "checked module input", Path(path), sha)'''
+assert old in s;s=s.replace(old,'        archive_execution_inputs(output, receipt, tracked, external=[poly])')
+old='''        stable = (all(investigate.file_hash(Path(p)) == sha for p, sha in tracked.items())
+                  and all(investigate.file_hash(Path(row["archive"])) == row["sha256"]
+                          for row in receipt["evidence_archive"]))'''
+assert old in s;s=s.replace(old,'        stable = execution_inputs_unchanged(tracked, receipt, external=[poly])');p.write_text(s)
+p=D/'tools/check_reasoning.py';s=p.read_text().replace('import sys\n','import sys\nimport uuid\n')
+s=s.replace('report = {"status": "failed", "scope":','report = {"status": "failed", "invocation": str(uuid.uuid4()), "scope":')
+anchor='        (output / "execution-inputs.json").write_text(json.dumps(hashes, indent=2) + "\\n")'
+assert anchor in s;s=s.replace(anchor,anchor+'\n        proved_code.archive_execution_inputs(output, report, hashes, external=[args.poly])')
+old='        assert all(digest(p) == sha for p, sha in hashes.items()), "Execution evidence changed."';assert old in s
+s=s.replace(old,'        assert proved_code.execution_inputs_unchanged(hashes, report, external=[args.poly]), "Execution evidence changed."')
+s=s.replace('{"execution_inputs", "findings"}', '{"execution_inputs", "findings", "evidence_archive"}');p.write_text(s)
+p=D/'tools/check_finite_inference.py';s=p.read_text()
+old='''        for path in inputs:
+            if path != args.poly.resolve():
+                investigate.archive_evidence(output, report, "finite native execution input", path, tracked[str(path)])'''
+assert old in s;s=s.replace(old,'        proved_code.archive_execution_inputs(output, report, tracked, external=[args.poly])')
+old='''        assert all(review.digest(path) == sha for path, sha in tracked.items())
+        assert all(review.digest(row["archive"]) == row["sha256"] for row in report["evidence_archive"])'''
+assert old in s;s=s.replace(old,'        assert proved_code.execution_inputs_unchanged(tracked, report, external=[args.poly])');p.write_text(s)
+p=D/'tools/check_finite_presentations.py';s=p.read_text()
+s=s.replace('execution_inputs = {str(path): sha for path, sha in tracked.items()}', 'execution_inputs = {str(path): sha for path, sha in tracked.items()} | sources')
+old='''        for path, sha in tracked.items():
+            if path != poly:
+                investigate.archive_evidence(output, report, "presentation check input", path, sha)'''
+assert old in s;s=s.replace(old,'        proved_code.archive_execution_inputs(output, report, execution_inputs, external=[poly])')
+old='''        stable = (all(review.digest(path) == sha for path, sha in tracked.items())
+                  and all(review.digest(path) == sha for path, sha in sources.items())
+                  and all(review.digest(row["archive"]) == row["sha256"]
+                          for row in report["evidence_archive"]))'''
+assert old in s;s=s.replace(old,'        stable = proved_code.execution_inputs_unchanged(execution_inputs, report, external=[poly])');p.write_text(s)
+p=D/'tools/test_proved_code.py';s=p.read_text()
+anchor='    def test_nonzero_process_never_reaches_assessment(self):'
+new='''    def test_original_input_survives_a_later_source_edit(self):
+        original = self.source.read_bytes()
+        receipt = self.execute("later-edit", lambda data, raw: {"checked": True})
+        self.assertEqual(receipt["status"], "accepted")
+        self.source.write_text("edited after the accepted execution\\n")
+        copies = [Path(row["archive"]) for row in receipt["evidence_archive"]
+                  if row["path"] == str(self.source)]
+        self.assertEqual(len(copies), 1)
+        self.assertEqual(copies[0].read_bytes(), original)
+        expected = {path for path in receipt["execution_inputs"] if path != str(Path(sys.executable).resolve())}
+        self.assertEqual({row["path"] for row in receipt["evidence_archive"]}, expected)
+
+    def test_retained_source_corruption_is_rejected(self):
+        def corrupt(data, raw):
+            copies = list((self.root / "corrupt-copy").glob("evidence-*/" + investigate.file_hash(self.source)))
+            self.assertEqual(len(copies), 1)
+            copies[0].write_text("corrupted retained bytes\\n")
+            return {"checked": True}
+        receipt = self.execute("corrupt-copy", corrupt)
+        self.assertEqual(receipt["status"], "failed")
+        self.assertIn("changed", receipt["error"])
+
+'''
+assert anchor in s;s=s.replace(anchor,new+anchor);p.write_text(s)
+for filename in ['README.md','REASONING_REUSE.md','THEORY_MAP.md']:
+ s=(M/filename).read_text()
+ if filename=='README.md':
+  s=s.replace('The session registers 836 theories; its [latest complete check](validation/check.json) records the current proof status. Native local readers connect an actual\n', 'The session registers 836 theories; its\n[latest complete check](validation/check.json) records the current proof status.\nNative local readers connect an actual\n')
+ if filename=='REASONING_REUSE.md':
+  s=s.replace('`Factor_Binding_Contributions` instantiates it for observed binding fragments. Each fragment is recovered by matching an observed term\n','`Factor_Binding_Contributions` instantiates it for observed binding fragments.\nEach fragment is recovered by matching an observed term\n').replace('\n\n\n## Constructive candidate languages','\n\n## Constructive candidate languages')
+ if filename=='THEORY_MAP.md':
+  s=s.replace(' direct observation groups. |\n\n| Finite_Compatible_Unions', ' direct observation groups. |\n| Finite_Compatible_Unions')
+  assert '\n\n| Finite_Compatible_Unions' not in s
+ (D/filename).write_text(s)
+changed=['proved_code.py','check_reasoning.py','check_finite_inference.py','check_finite_presentations.py','test_proved_code.py']
+for name in changed:compile((D/'tools'/name).read_text(),str(D/'tools'/name),'exec')
+proposal={'problem':'Retain the complete checked input family at execution time and verify that both live and retained evidence stay exact; recover the unique missing historical driver and repair the inventory presentation.', 'requirements':['Use the existing per-file archive operation through one shared complete-input helper.','Require archived coverage of every nonexternal checked input, exact live hashes and exact retained hashes before acceptance.','Apply the shared boundary to the generic proved-code, reasoning, finite-source and finite-presentation runners.','Preserve the exact mathematical programs, inputs and full reports.','Verify delayed source edits cannot erase the accepted input and corruption cannot be accepted.','Preserve every theory-map row and keep it under the table header; only wrap the affected prose.','Use the recovered historical driver only under its original 6aaa70e41169115bdd54869de9ca56cd383a1d1f609b6969e2fde574ec1c8b23 digest.'], 'files':[str(D/'tools'/name) for name in changed]+[str(D/name) for name in ['README.md','REASONING_REUSE.md','THEORY_MAP.md']], 'input_audit':str(C/'complete-input-audit.json'),'recovery':str(C/'input-recovery.json'),'validation':['All tooling tests from the isolated proposed source.','Both full 55/76 consumer regressions and their complete original report comparison.','Fresh native source recovery, finite presentations and all 30 supplied-input application cases.','Complete archive retention and replay with the original accepted proofs and recovered input; kernel proofs remain unchanged.'], 'criticism':'A retained hash identifies the expected historical bytes but cannot supply them. The reconstruction matches those bytes exactly. This change strengthens retention and metadata checks without changing native computation; each affected runner still requires actual execution before adoption.'}
+p=C/'retention-patch-proposal.json';p.write_text(json.dumps(proposal,indent=2)+'\n')
+sys.path.insert(0,str(M/'tools'));import investigate,compare_reasoning_methods as comparison
+facets=list(range(len(proposal['requirements'])))
+boundary='Conditional prospective assessment of the exact isolated patch and recovered historical bytes. Full runtime validation remains required; the input audit is complete for the selected archive family, not a semantic proof of its computations.'
+case=comparison.comparison_case([0,1],facets,[[3,0,0],[6,0,0]]+[[f,1,0] for f in facets],[],question=proposal['problem'],scope={'candidates':{'0':'Use the recovered file but retain the old input lifecycle and broken table continuation','1':'Use the exact shared-retention and documentation patch with the recovered original input'},'facets':dict(enumerate(proposal['requirements'])),'subjects':str(p)},evidence=[{'path':str(x),'sha256':investigate.file_hash(Path(x))} for x in [str(p),*proposal['files'],proposal['input_audit'],proposal['recovery']]])
+case['semantic_boundary']=boundary
+(C/'retention-patch-investigation.json').write_text(json.dumps({'question':proposal['problem'],'boundary':boundary,'problems':[{'name':'retain-complete-checked-inputs','case':case,'required_observations':[[f,0] for f in facets]}]},indent=2)+'\n')
+print(D)

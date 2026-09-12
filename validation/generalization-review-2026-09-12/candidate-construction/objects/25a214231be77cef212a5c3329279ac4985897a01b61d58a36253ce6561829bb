@@ -1,0 +1,38 @@
+{
+  "status": "failed",
+  "exit_code": 1,
+  "sources_unchanged": true,
+  "checked_theories": 15,
+  "parent_theories_reused": 404,
+  "roots": [
+    "Factor_Application_Execution",
+    "Factor_Finite_Inference_Premises"
+  ],
+  "command": [
+    "isabelle",
+    "build",
+    "-o",
+    "threads=12",
+    "-o",
+    "parallel_proofs=0",
+    "-o",
+    "build_timing_threshold=0",
+    "-d",
+    "/home/julius/structure_and_semantics",
+    "-D",
+    "/tmp/native-investigation-report-diagnostic-applicationconstruction7"
+  ],
+  "started_utc": "2026-09-11T21:28:48.853265+00:00",
+  "finished_utc": "2026-09-11T21:29:06.569271+00:00",
+  "log": "/tmp/native-investigation-report-diagnostic-applicationconstruction7/build.log"
+}
+Running Native_Application_Construction7 ...
+Native_Application_Construction7 FAILED (see also "isabelle build_log -H Error Native_Application_Construction7")
+*** Failed to load theory "Native_Application_Construction7.Factor_Application_Comparison" (unresolved "Native_Application_Construction7.Factor_Application_Candidates")
+*** Failed to load theory "Native_Application_Construction7.Factor_Application_Execution" (unresolved "Native_Application_Construction7.Factor_Application_Comparison")
+*** Outer syntax error (line 100 of "/tmp/native-investigation-report-diagnostic-applicationconstruction7/theories/Factor_Application_Candidates.thy"): proposition expected,
+*** but end-of-input (line 100 of "/tmp/native-investigation-report-diagnostic-applicationconstruction7/theories/Factor_Application_Candidates.thy") was found
+*** At command "<malformed>" (line 99 of "/tmp/native-investigation-report-diagnostic-applicationconstruction7/theories/Factor_Application_Candidates.thy")
+Unfinished session(s): Native_Application_Construction7
+0:00:17 elapsed time, 0:00:21 cpu time, factor 1.26
+

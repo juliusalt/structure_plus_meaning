@@ -1,0 +1,25 @@
+from pathlib import Path
+import prepare_repair as r
+shared=r'''lemma finite_observation_union_domain_member:
+  "a |\<in>| fimage fst (finite_observation_union M) \<longleftrightarrow>
+    (\<exists>i p t u. (i,p,t) |\<in>| M \<and> (a,u) |\<in>| finite_matching_bindings p t)"
+  by (auto simp: finite_observation_union_def ffUnion.rep_eq fimage.rep_eq
+    image_iff split: prod.splits; force)
+
+'''
+repairs={
+'Factor_Binding_Contributions':[('lemma finite_observation_union_contains:',shared+'lemma finite_observation_union_contains:')],
+'Factor_Observation_Assembly':[
+(r'''  by (auto simp: finite_observation_site_coverage_def finite_observation_union_def
+    finite_union_image_member finite_image_member finite_binding_support_member
+    finite_selected_observation_member split_paired_Ex; force)''',r'''  by (auto simp: finite_observation_site_coverage_def finite_observation_union_domain_member
+    finite_binding_support_member finite_selected_observation_member)'''),
+(r'''  by (rule fset_eqI)
+    (auto simp: finite_assembly_coverage_member finite_observation_site_coverage_member
+      finite_observation_union_def finite_union_image_member finite_image_member
+      finite_binding_support_member finite_selected_observation_member split_paired_Ex; force)''',r'''  by (rule fset_eqI)
+    (auto simp: finite_assembly_coverage_member finite_observation_site_coverage_member
+      finite_observation_union_domain_member finite_binding_support_member finite_selected_observation_member)
+''')]
+}
+print(r.prepare(5,'Factor the common whole-observation domain projection once and instantiate it for singleton-site and assembled-site coverage; preserve all executable definitions and validate the complete dependent application group.',repairs,family='applicationconstruction',scope_text='Preserve all existing statements and executable definitions; add only the shared whole-observation projection lemma and use it in both consumers.'))

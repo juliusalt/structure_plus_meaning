@@ -1,0 +1,42 @@
+"""Apply only the independently reviewed, exact-copy cleanup and retain final outputs."""
+from pathlib import Path
+import json, shutil, sys
+
+M = Path('/home/julius/structure_and_semantics')
+Q = Path(__file__).parent
+V = M / 'validation/generalization-review-2026-09-12'
+D = V / 'candidate-construction-delivery'
+R = V / 'candidate-storage-recovery/runtime'
+T = Path('/tmp/generalization-quality-review/candidate-delivery')
+sys.path.insert(0, str(M / 'tools'))
+import evidence_io
+
+decision = json.loads((Q / 'decision.json').read_text())
+assert decision['selected'] == 1 and decision['complete_results_read']
+checked = json.loads((Q / 'verification.json').read_text())
+for row in checked['archives']:
+    archive = Path(row['archive'])
+    assert evidence_io.digest(archive / 'index.json') == row['index_sha256']
+    assert evidence_io.digest(archive / 'archive.json') == row['manifest_sha256']
+rows = json.loads((Q / 'runtime-copies.json').read_text())
+assert {Path(row['path']) for row in rows} == {p for p in R.rglob('*') if p.is_file()}
+for row in rows:
+    path = Path(row['path'])
+    assert path.is_relative_to(R) and path.is_symlink() == row['symlink']
+    assert evidence_io.digest(path) == row['sha256']
+for row in rows:
+    Path(row['path']).unlink()
+for directory in sorted((p for p in R.rglob('*') if p.is_dir()), key=lambda p: len(p.parts), reverse=True):
+    directory.rmdir()
+R.rmdir()
+(Q / 'cleanup.json').write_text(json.dumps({'decision': decision, 'removed_files': len(rows),
+    'logical_copy_bytes': sum(row['bytes'] for row in rows), 'retained_map_sha256': evidence_io.digest(Q / 'runtime-copies.json'),
+    'boundary': 'Only enumerated runtime copies were unlinked. Their exact stored or decoded identities remain in the permanent archives.'}, indent=2) + '\n')
+for name in ['storage-initial', 'storage-followed', 'documentation-initial', 'documentation-followed']:
+    source = T / 'supplement-replays' / name
+    target = Q / 'supplement-replays' / name
+    target.mkdir(parents=True)
+    for file in ['replay.json', 'results.log', 'execute.ML']:
+        shutil.copyfile(source / file, target / file)
+        assert evidence_io.digest(source / file) == evidence_io.digest(target / file)
+print(json.dumps({'removed_files': len(rows), 'supplemental_outputs_retained': 12}), flush=True)

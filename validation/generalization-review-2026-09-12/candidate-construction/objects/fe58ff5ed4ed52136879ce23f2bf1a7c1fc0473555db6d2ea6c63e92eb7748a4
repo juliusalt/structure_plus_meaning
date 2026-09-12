@@ -1,0 +1,63 @@
+from pathlib import Path
+B=Path(__file__).parent
+s=(B/'check_directed_native.py').read_text()
+a=s.index('def program(engine,c):');b=s.index('\ndef assess(c,raw):')
+new=r'''def encode_list(xs, encode):
+ return [len(xs)]+[n for x in xs for n in encode(x)]
+def encoded(xs):return investigate.ml_string(' '.join(map(str,xs)))
+def program(engine,c):
+ s='use '+investigate.ml_string(str(engine))+';\nstructure N=Directed_Search;\nval fs=N.fset_of_list;\nval n=N.nat_of_integer;\n'+review.SCALAR_JSON_PRELUDE+r"""
+fun elements a = case N.fset a of N.Set xs => xs | N.Coset _ => raise Fail "Nonfinite representation";
+fun jf f a = jlist f (elements a);
+fun jpair (a,b) = "[" ^ jnat a ^ "," ^ jnat b ^ "]";
+fun joption NONE = "null" | joption (SOME a) = jf jnat a;
+fun number (x::xs) = if x < 0 then raise Fail "Negative natural" else (n x,xs)
+ | number [] = raise Fail "Missing natural";
+fun pair ra rb xs = let val (a,rest)=ra xs; val (b,last)=rb rest in ((a,b),last) end;
+fun sequence read (count::xs) = let
+ fun take 0 rest acc = (rev acc,rest)
+  | take k rest acc = let val (a,more)=read rest in take (k-1) more (a::acc) end
+ in if count < 0 then raise Fail "Negative count" else take (IntInf.toInt count) xs [] end
+ | sequence _ [] = raise Fail "Missing count";
+fun decode read text = let
+ fun token s = if String.size s > 0 andalso List.all Char.isDigit (String.explode s)
+   then (case IntInf.fromString s of SOME n => n | NONE => raise Fail "Invalid integer")
+   else raise Fail "Invalid token";
+ val (value,rest)=read (map token (String.tokens Char.isSpace text))
+ in if null rest then value else raise Fail "Trailing input" end;
+fun timed kind id render action = let val start=Time.now();
+ val ()=print ("SEARCH_STARTED " ^ kind ^ " " ^ Int.toString id ^ "\n");
+ val value=action(); val elapsed=Time.-(Time.now(),start)
+ in print (kind ^ " " ^ Int.toString id ^ " " ^ render value ^ " " ^ Time.toString elapsed ^ "\n") end;
+fun bindingCase id text = let
+ val (scope,parts)=decode (pair (sequence number) (sequence (sequence (pair number number)))) text;
+ val ()=print ("BINDING_INPUT " ^ Int.toString id ^ " {\"scope\":" ^ jlist jnat scope ^
+   ",\"parts\":" ^ jlist (jlist jpair) parts ^ "}\n")
+ in timed "BINDINGS" id (jf (jf jpair)) (fn()=>N.natural_directed_bindings (fs scope) (fs (map fs parts))) end;
+fun assemblyCase id text = let
+ val (required,(parts,coverage))=decode (pair (sequence number) (pair (sequence number) (sequence (pair number number)))) text;
+ val ()=print ("ASSEMBLY_INPUT " ^ Int.toString id ^ " {\"requirements\":" ^ jlist jnat required ^
+   ",\"parts\":" ^ jlist jnat parts ^ ",\"coverage\":" ^ jlist jpair coverage ^ "}\n")
+ in timed "ASSEMBLY" id joption (fn()=>N.natural_candidate_assembly required parts (fs coverage)) end;
+"""
+ for r in c['bindings']:
+  tokens=encode_list(r['scope'],lambda n:[n])+encode_list(r['parts'],lambda xs:encode_list(xs,list))
+  s+='val ()=bindingCase '+str(r['id'])+' '+encoded(tokens)+';\n'
+ for r in c['assemblies']:
+  tokens=encode_list(r['requirements'],lambda n:[n])+encode_list(r['parts'],lambda n:[n])+encode_list(r['coverage'],list)
+  s+='val ()=assemblyCase '+str(r['id'])+' '+encoded(tokens)+';\n'
+ return s
+'''
+s=s[:a]+new+s[b:]
+a='def assess(c,raw):\n rows={}';b='''def assess(c,raw):
+ decoded={}
+ for line in raw.splitlines():
+  if line.startswith(('BINDING_INPUT ','ASSEMBLY_INPUT ')):
+   kind,i,data=line.split(' ',2);subject=(kind,int(i));assert subject not in decoded
+   decoded[subject]=json.loads(data)
+ assert len(decoded)==len(c['bindings'])+len(c['assemblies'])
+ for kind,family,fields in [('BINDING_INPUT','bindings',['scope','parts']),('ASSEMBLY_INPUT','assemblies',['requirements','parts','coverage'])]:
+  for r in c[family]:assert decoded[kind,r['id']]=={k:r[k] for k in fields},(kind,r['id'])
+ rows={}'''
+assert a in s;s=s.replace(a,b)
+(B/'native-driver3.py').write_text(s)

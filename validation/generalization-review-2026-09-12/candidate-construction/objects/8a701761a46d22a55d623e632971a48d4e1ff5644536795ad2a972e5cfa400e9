@@ -1,0 +1,33 @@
+"""Run the supplied-input adapter and compare every original complete case."""
+from pathlib import Path
+import json,os,subprocess,sys
+B=Path(__file__).parent;W=B/'worktree';M=Path('/home/julius/structure_and_semantics')
+sys.path.insert(0,str(W/'tools'))
+import check_application_comparison as adapter,replay_reasoning_review as replay
+D=B/'production-validation1';D.mkdir()
+ENV={**os.environ,'PYTHONDONTWRITEBYTECODE':'1','PYTHONPATH':str(W/'tools')}
+POLY='/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly';proof=B/'application-batch19/native-export/proof.json'
+steps=[]
+def run(label,command):
+ with (D/(label+'.log')).open('w') as log:
+  r=subprocess.run(list(map(str,command)),cwd=W,env=ENV,stdout=log,stderr=subprocess.STDOUT,timeout=150)
+ step={'label':label,'command':list(map(str,command)),'exit_code':r.returncode,'log':str(D/(label+'.log'))}
+ steps.append(step);(D/'steps.json').write_text(json.dumps(steps,indent=2)+'\n');print(json.dumps(step),flush=True)
+ return r.returncode
+assert run('tools-tests',['python3','-B','-m','unittest','test_application_comparison','test_replay_reasoning_review'])==0
+assert run('candidate-replay',['python3','-B',W/'tools/replay_reasoning_review.py','--archive',B/'delivery-replay-fixture1','--stage','application-controls','--poly',POLY,'--output',D/'candidate-replay'])==0
+source=json.loads((B/'interface-draft4/specification.json').read_text())['cases']
+full=adapter.construction_cases({'cases':source})
+for label,ids,baseline in [('controls',[*range(7),*range(11,30)],B/'application-batch19/native-controls'),*[(f'large-{i}',[i],B/'application-batch19'/f'native-large-{i}') for i in [7,8,9,10]]]:
+ spec=D/(label+'-specification.json');selected=[source[i] for i in ids];spec.write_text(json.dumps({'cases':selected},indent=2)+'\n')
+ current=adapter.construction_cases({'cases':selected});prior=json.loads((baseline/'cases.json').read_text())
+ assert [{**r,'case_id':ids[i]} for i,r in enumerate(current)]==prior
+ code=run(label,['python3','-B',W/'tools/check_application_comparison.py','--specification',spec,'--proof',proof,'--project',W,'--poly',POLY,'--output',D/label])
+ assert code==0
+ before=json.loads((baseline/'receipt.json').read_text())['assessment'];after=json.loads((D/label/'receipt.json').read_text())['assessment']
+ mapped=json.loads(json.dumps(after))
+ for row in mapped['cases']:row['case_id']=ids[row['case_id']]
+ assert replay.timed_data_assessment(mapped)==replay.timed_data_assessment(before)
+ result={'status':'accepted','baseline':str(baseline),'new':str(D/label),'complete_cases':len(current),'outer_case_index_map':list(enumerate(ids)),'boundary':'Complete supplied input rows agree under their explicit outer case enumeration map. Every mathematical report and per-part witness agrees; only declared clocks vary.'}
+ (D/(label+'-preservation.json')).write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result),flush=True)
+print(json.dumps({'complete':True,'cases':len(full),'steps':len(steps)}),flush=True)

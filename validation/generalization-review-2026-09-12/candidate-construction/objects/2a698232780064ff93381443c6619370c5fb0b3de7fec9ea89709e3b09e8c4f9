@@ -1,0 +1,146 @@
+[
+  {
+    "name": "original-0",
+    "problems": 1,
+    "parts": 3,
+    "expected_formed": true
+  },
+  {
+    "name": "original-1",
+    "problems": 1,
+    "parts": 3,
+    "expected_formed": true
+  },
+  {
+    "name": "original-2",
+    "problems": 1,
+    "parts": 2,
+    "expected_formed": true
+  },
+  {
+    "name": "original-3",
+    "problems": 1,
+    "parts": 1,
+    "expected_formed": true
+  },
+  {
+    "name": "joint-original",
+    "problems": 4,
+    "parts": 4,
+    "expected_formed": true
+  },
+  {
+    "name": "large-3",
+    "problems": 1,
+    "parts": 6,
+    "expected_formed": true
+  },
+  {
+    "name": "large-6",
+    "problems": 1,
+    "parts": 12,
+    "expected_formed": true
+  },
+  {
+    "name": "large-32",
+    "problems": 1,
+    "parts": 48,
+    "expected_formed": true
+  },
+  {
+    "name": "large-64",
+    "problems": 1,
+    "parts": 96,
+    "expected_formed": true
+  },
+  {
+    "name": "large-128",
+    "problems": 1,
+    "parts": 192,
+    "expected_formed": true
+  },
+  {
+    "name": "joint-large",
+    "problems": 3,
+    "parts": 240,
+    "expected_formed": true
+  },
+  {
+    "name": "empty-family",
+    "problems": 0,
+    "parts": 0,
+    "expected_formed": true
+  },
+  {
+    "name": "empty-part-basis",
+    "problems": 1,
+    "parts": 0,
+    "expected_formed": true
+  },
+  {
+    "name": "missing-request-source",
+    "problems": 1,
+    "parts": 3,
+    "expected_formed": true
+  },
+  {
+    "name": "repeated-presentations",
+    "problems": 2,
+    "parts": 6,
+    "expected_formed": true
+  },
+  {
+    "name": "reordered-parts",
+    "problems": 1,
+    "parts": 3,
+    "expected_formed": true
+  },
+  {
+    "name": "foreign-unused-part",
+    "problems": 1,
+    "parts": 4,
+    "expected_formed": true
+  },
+  {
+    "name": "zero-variable-application",
+    "problems": 1,
+    "parts": 1,
+    "expected_formed": true
+  },
+  {
+    "name": "invalid-zero-variable-target",
+    "problems": 1,
+    "parts": 1,
+    "expected_formed": false
+  },
+  {
+    "name": "unused-malformed-schema",
+    "problems": 1,
+    "parts": 1,
+    "expected_formed": false
+  },
+  {
+    "name": "unused-malformed-frontier",
+    "problems": 1,
+    "parts": 1,
+    "expected_formed": false
+  },
+  {
+    "name": "unused-malformed-requests",
+    "problems": 1,
+    "parts": 1,
+    "expected_formed": false
+  },
+  {
+    "name": "incomplete-premise-enumeration",
+    "problems": 1,
+    "parts": 3,
+    "expected_formed": false
+  },
+  {
+    "name": "incomplete-target-enumeration",
+    "problems": 1,
+    "parts": 1,
+    "expected_formed": false
+  }
+]

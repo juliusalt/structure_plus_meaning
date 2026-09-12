@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/tmp/generalization-quality-review/directed-candidate-construction/check_application_assessment_mutations.py", line 36, in main
+    try:adapter.assess(cases,modified)
+        ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/tmp/generalization-quality-review/directed-candidate-construction/check_application_candidates.py", line 172, in assess
+    actual=keys(row['plan']);assert actual==keys(applications(p,chosen))
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

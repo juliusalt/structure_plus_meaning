@@ -1,0 +1,81 @@
+"""Refine binding search without counting alternative supports as new values."""
+from functools import lru_cache
+from pathlib import Path
+import json
+import time
+import prototype as p
+
+B = Path(__file__).parent
+
+
+def directed_values(scope, parts):
+    scope = frozenset(scope)
+    usable = [part for part in set(parts) if p.functional(part) and p.domain(part) <= scope]
+    trace = []
+    checks = 0
+
+    @lru_cache(None)
+    def search(current):
+        nonlocal checks
+        current_values = dict(current)
+        possible = []
+        for part in usable:
+            checks += 1
+            if all(k not in current_values or current_values[k] == v for k, v in part):
+                possible.append(part)
+        values = {key: set() for key in scope}
+        for part in possible:
+            for key, value in part:
+                values[key].add(value)
+        unsupported = {key for key in scope if not values[key]}
+        if unsupported:
+            trace.append({'current': current, 'unsupported': unsupported})
+            return frozenset()
+        missing = scope - p.domain(current)
+        if not missing:
+            # At complete scope every still-compatible fragment is a whole subset.
+            assert all(part <= current for part in possible)
+            assert set().union(*possible) == set(current)
+            trace.append({'current': current, 'complete': True, 'support': possible})
+            return frozenset({current})
+        key = min(p.ordered(missing), key=lambda k: len(values[k]))
+        trace.append({'current': current, 'key': key, 'values': values[key],
+                      'remaining_value_counts': [(k, len(values[k])) for k in p.ordered(missing)]})
+        result = set()
+        for value in p.ordered(values[key]):
+            result.update(search(current | {(key, value)}))
+        return frozenset(result)
+
+    result = search(frozenset())
+    return {'complete': True, 'results': result, 'states': len(trace), 'compatibility_checks': checks, 'trace': trace}
+
+
+def main():
+    rows = []
+    for case in p.binding_cases():
+        result = directed_values(case['scope'], case['parts'])
+        expected = p.independent_bindings(case['scope'], case['parts'])
+        assert result['results'] == expected
+        rows.append({'case': case, 'expected': expected, 'result': result})
+    overlaps = []
+    for n in [4, 8, 12, 32, 64, 128]:
+        parts = [frozenset({(i, 0), (j, 0)}) for i in range(n) for j in range(i, n)]
+        scope = frozenset(range(n))
+        before = p.directed(scope, parts) if n <= 12 else None
+        start = time.monotonic()
+        result = directed_values(scope, parts)
+        expected = {frozenset((i, 0) for i in range(n))}
+        assert result['results'] == expected and result['states'] == n + 1
+        overlaps.append({'scope': scope, 'parts': parts, 'expected': expected, 'before': before,
+                         'result': result, 'elapsed_seconds': time.monotonic() - start})
+    complete = {'original_cases': rows, 'overlap_cases': overlaps}
+    (B/'value-prototype-results.json').write_text(json.dumps(p.display(complete), indent=2)+'\n')
+    print(json.dumps({'original_cases_exact': len(rows), 'overlaps': [
+        {'variables': len(row['scope']), 'parts': len(row['parts']),
+         'before_states': row['before']['states'] if row['before'] else None,
+         'states': row['result']['states'], 'compatibility_checks': row['result']['compatibility_checks'],
+         'seconds': row['elapsed_seconds']} for row in overlaps]}, indent=2))
+
+
+if __name__ == '__main__':
+    main()

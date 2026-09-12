@@ -1,0 +1,33 @@
+"""Complete application subjects shared by construction and observation adapters."""
+import investigate
+import check_reasoning as review
+
+def ml_application(row):
+    bindings = investigate.ml_list(row["bindings"], review.ml_call)
+    premises = investigate.ml_list(row["premises"], review.ml_premise)
+    return "(" + review.ml_term(row["conclusion"]) + ",(fs " + bindings + ",fs " + premises + "))"
+
+
+def ml_problem(row):
+    return ("(" + investigate.ml_nat(row["id"]) + ",N.make_application_problem (" + investigate.ml_nat(row["entry"])
+            + ") (" + review.ml_schema(row["schema"], schema_constructor="N.make_finite_schema",
+                                       material_constructor="N.make_finite_material") + ") "
+            + investigate.ml_list(row["enumeration"], lambda p: review.ml_premise(p, True))
+            + " (fs " + investigate.ml_list(row["frontier"], review.ml_call) + ") (fs "
+            + investigate.ml_list(row["requests"], review.ml_call) + ") (fs "
+            + investigate.ml_list(row["required"], ml_application) + "))")
+
+
+def normalized_problem(row):
+    return {**row, "schema": {**row["schema"],
+            "premises": set(map(review.freeze, row["schema"]["premises"])),
+            "materials": set(map(review.freeze, row["schema"]["materials"]))},
+            **{key: set(map(review.freeze, row[key])) for key in ["frontier", "requests"]},
+            "required": {application_key(a) for a in row["required"]}}
+
+
+def application_key(row):
+    return (review.freeze(row["conclusion"]), frozenset(map(review.freeze, row["bindings"])),
+            frozenset(map(review.freeze, row["premises"])))
+
+PROBLEM_JSON_PRELUDE='fun jproblem (i,p) = "{\\"id\\":" ^ jnat i ^ ",\\"entry\\":" ^ jnat (N.application_entry p) ^\n ",\\"schema\\":" ^ jschema (N.application_schema p) ^\n ",\\"enumeration\\":" ^ jlist jsymbolic (N.application_enumeration p) ^\n ",\\"frontier\\":" ^ jf jcall (N.application_frontier p) ^\n ",\\"requests\\":" ^ jf jcall (N.application_requests p) ^\n ",\\"required\\":" ^ jf jlocal (N.application_required p) ^ "}";\n'

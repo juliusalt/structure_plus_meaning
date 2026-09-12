@@ -1,0 +1,133 @@
+"""Prepare exact proof-procedure input retention and historical parent lookup."""
+from pathlib import Path
+import json,shutil,sys
+C=Path(__file__).parent;M=Path('/home/julius/structure_and_semantics');D=C/'proof-retention-draft1';D.mkdir();shutil.copytree(M/'tools',D/'tools',ignore=shutil.ignore_patterns('__pycache__'))
+p=D/'tools/retain_reasoning_review.py';s=p.read_text().replace('import hashlib\n','import hashlib\nimport gzip\n')
+anchor='    def directory(self, source):\n'
+method='''    def read_json(self, path, sha=None):
+        """Read the exact retained identity, even if the original path changed."""
+        reference = self.add(path, sha)
+        data = (self.output / reference).read_bytes()
+        encoding = self.encodings.get(reference)
+        if encoding is not None:
+            assert encoding["codec"] == "gzip"
+            data = gzip.decompress(data)
+            assert len(data) == encoding["size"]
+        expected = encoding["sha256"] if encoding else self.stored[reference]
+        assert hashlib.sha256(data).hexdigest() == expected
+        return json.loads(data)
+
+'''
+assert anchor in s;s=s.replace(anchor,method+anchor)
+anchor='def retain_investigation(archive, directory):\n'
+helper='''def proof_execution_inputs(receipt, parent=None):
+    """Recover every explicit export and parent procedure input map."""
+    result = {}
+
+    def include(inputs):
+        for path, sha in inputs.items():
+            assert path not in result or result[path] == sha, (path, "conflicting input identities")
+            result[path] = sha
+
+    include(receipt.get("export_inputs", {}))
+    include(receipt.get("execution_inputs", {}))
+    if "source_proof_sha256" in receipt:
+        include({receipt["source_proof"]: receipt["source_proof_sha256"]})
+    if parent is not None:
+        include(parent.get("inputs", {}))
+        include(parent.get("helper_inputs", {}))
+        if "receipt" in parent:
+            include({parent["receipt"]: parent["receipt_sha256"]})
+    return result
+
+
+'''
+assert anchor in s;s=s.replace(anchor,helper+anchor)
+s=s.replace('        parent_path = directory / "parent.json"\n','        parent = None\n        parent_path = directory / "parent.json"\n')
+s=s.replace('                source = json.loads(parent_receipt.read_text())','                source = archive.read_json(parent_receipt, parent["receipt_sha256"])')
+anchor='        if receipt["status"] == "accepted":\n'
+replacement='''        proof["inputs"] = {path: archive.add(Path(path), sha)
+                           for path, sha in proof_execution_inputs(receipt, parent).items()}
+'''+anchor
+assert s.count(anchor)==1;s=s.replace(anchor,replacement);p.write_text(s)
+tests='''"""Proof retention follows recorded identities after their live paths change."""
+import contextlib
+import io
+import json
+from pathlib import Path
+import tempfile
+import unittest
+from unittest.mock import patch
+
+import retain_reasoning_review as retain
+
+
+class ProofInputRetention(unittest.TestCase):
+    def test_original_parent_and_export_inputs_are_retained(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            context, fallback, live = [base / name for name in ["context", "fallback", "live"]]
+            for directory in [context, fallback, live]:
+                directory.mkdir()
+            old_proof = fallback / "old-proof.json"
+            old_proof.write_text(json.dumps({"identity": "original parent proof"}))
+            old_parent = fallback / "old-parent.json"
+            old_parent.write_text(json.dumps({"proof_receipt_sha256": retain.digest(old_proof)}))
+            parent = live / "build.json"
+            parent.write_text(json.dumps({"proof_receipt_sha256": "different current proof"}))
+            (live / "proof.json").write_text("changed current proof")
+            exporter = live / "export.py"
+            exporter.write_text("original exporter\\n")
+            helper = live / "helper.py"
+            helper.write_text("original helper\\n")
+            exported = {str(exporter): retain.digest(exporter)}
+            inherited = {str(helper): retain.digest(helper)}
+            (context / "result.json").write_text(json.dumps({"status": "accepted", "exit_code": 0,
+                "sources_unchanged": True, "sources": {}, "export_inputs": exported}))
+            (context / "parent.json").write_text(json.dumps({"receipt": str(parent),
+                "receipt_sha256": retain.digest(old_parent), "inputs": inherited}))
+            specification = base / "specification.json"
+            specification.write_text(json.dumps({"proofs": {"fixture": {"path": str(context)}}, "runs": {}}))
+            output = base / "archive"
+            arguments = ["retain", "--specification", str(specification), "--output", str(output),
+                         "--project", str(base), "--fallback-sources", str(fallback)]
+            with patch("sys.argv", arguments), contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(retain.main(), 0)
+            proof = json.loads((output / "index.json").read_text())["proofs"]["fixture"]
+            self.assertEqual(json.loads((output / proof["parent_proof_receipt"]).read_text()),
+                             {"identity": "original parent proof"})
+            self.assertEqual(set(proof["inputs"]), {str(parent), str(exporter), str(helper)})
+            for path, sha in {**exported, **inherited, str(parent): retain.digest(old_parent)}.items():
+                self.assertEqual(retain.digest(output / proof["inputs"][path]), sha)
+
+    def test_compressed_historical_json_keeps_its_original_identity(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            original = base / "original.json"
+            original.write_text(json.dumps({"value": [1, 2, 3]}))
+            sha = retain.digest(original)
+            with patch.object(retain.evidence_io, "PACK_THRESHOLD", 1):
+                first = retain.Archive(base / "first", [], [])
+                first.add(original)
+            (first.output / "archive.json").write_text(json.dumps({"files": first.stored, "encodings": first.encodings}))
+            original.write_text(json.dumps({"value": "changed"}))
+            second = retain.Archive(base / "second", [first.output], [])
+            self.assertEqual(second.read_json(original, sha), {"value": [1, 2, 3]})
+
+    def test_conflicting_procedure_input_identities_are_rejected(self):
+        with self.assertRaisesRegex(AssertionError, "conflicting input identities"):
+            retain.proof_execution_inputs({"export_inputs": {"source": "first"}},
+                                          {"helper_inputs": {"source": "second"}})
+
+
+if __name__ == "__main__":
+    unittest.main()
+'''
+(D/'tools/test_retain_reasoning_review.py').write_text(tests)
+for path in [p,D/'tools/test_retain_reasoning_review.py']:compile(path.read_text(),str(path),'exec')
+proposal={'problem':'The retainer preserves exported code but omits recorded procedure-input maps from its proof entries. It also parses the live parent receipt after retaining a potentially different historical identity. Bind proof procedure inputs explicitly and parse the exact retained parent bytes.', 'requirements':['Retain every explicit export, source-proof, parent and helper input in each proof entry.','Reject inconsistent identities for a shared recorded input path.','Recover optional parent-proof links from the original retained parent receipt, including compressed prior evidence.','Preserve the original proof sources, native reports and archive format compatibility.','Validate with changed-live-parent, complete procedure-input and compressed historical-data controls, then retain and replay the entire real construction batch.'], 'files':[str(p),str(D/'tools/test_retain_reasoning_review.py')], 'evidence':[str(C/'complete-input-audit2.json'),str(C/'export-input-recovery.json'),str(M/'tools/retain_reasoning_review.py')], 'criticism':'The existing construction archive can retain exact bytes through generic attachments, but its proof entries do not bind these procedure inputs. Reading a changed live receipt is outside the identity established by the archive lookup. The correction makes those identities explicit without treating them as semantic justification.'}
+p=C/'proof-retention-proposal.json';p.write_text(json.dumps(proposal,indent=2)+'\n')
+sys.path.insert(0,str(M/'tools'));import investigate,compare_reasoning_methods as comparison
+boundary='Prospective conditional choice on the exact retainer source, complete expanded input audit and recovered exporter. Byte identity and proof provenance are distinguished from the mathematical source contracts and native observation equations.'
+case=comparison.comparison_case([0,1],list(range(5)),[[3,0,0]]+[[f,1,0] for f in range(5)],[],question=proposal['problem'],scope={'candidates':{'0':'Leave procedure inputs implicit and parse the current parent path','1':'Use the exact explicit-input and retained-parent patch'},'facets':dict(enumerate(proposal['requirements'])),'subjects':str(p)},evidence=[{'path':str(x),'sha256':investigate.file_hash(Path(x))} for x in [str(p),*proposal['files'],*proposal['evidence']]]);case['semantic_boundary']=boundary
+(C/'proof-retention-investigation.json').write_text(json.dumps({'question':proposal['problem'],'boundary':boundary,'problems':[{'name':'exact-proof-procedure-inputs','case':case,'required_observations':[[f,0] for f in range(5)]}]},indent=2)+'\n')

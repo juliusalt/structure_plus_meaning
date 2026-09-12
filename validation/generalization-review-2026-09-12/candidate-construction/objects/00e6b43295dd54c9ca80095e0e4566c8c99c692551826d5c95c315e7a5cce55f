@@ -1,0 +1,18 @@
+
+Build errors:
+*** Failed to load theory "Native_Application_Construction14.Finite_Indexed_Candidate_Assembly" (unresolved "Native_Application_Construction14.Finite_Candidate_Assembly")
+*** Failed to load theory "Native_Application_Construction14.Finite_Directed_Execution" (unresolved "Native_Application_Construction14.Finite_Candidate_Assembly")
+*** Failed to load theory "Native_Application_Construction14.Factor_Observation_Assembly" (unresolved "Native_Application_Construction14.Finite_Candidate_Assembly")
+*** Failed to load theory "Native_Application_Construction14.Factor_Application_Candidates" (unresolved "Native_Application_Construction14.Factor_Observation_Assembly", "Native_Application_Construction14.Finite_Indexed_Candidate_Assembly")
+*** Failed to load theory "Native_Application_Construction14.Factor_Application_Comparison" (unresolved "Native_Application_Construction14.Factor_Application_Candidates")
+*** Failed to load theory "Native_Application_Construction14.Factor_Application_Execution" (unresolved "Native_Application_Construction14.Factor_Application_Comparison")
+*** Failed to apply initial proof method (line 321 of "/tmp/native-investigation-report-diagnostic-applicationconstruction14/theories/Finite_Candidate_Assembly.thy"):
+*** using this:
+***   finite_cached_values Ps K = K
+*** goal (1 subgoal):
+***  1. (\<lambda>p. case map_of (map (\<lambda>p. (p, K p)) Ps) p of None \<Rightarrow> K p
+***          | Some value \<Rightarrow> value) =
+***     K
+*** At command "by" (line 321 of "/tmp/native-investigation-report-diagnostic-applicationconstruction14/theories/Finite_Candidate_Assembly.thy")
+
+Return code: 1 (ERROR)

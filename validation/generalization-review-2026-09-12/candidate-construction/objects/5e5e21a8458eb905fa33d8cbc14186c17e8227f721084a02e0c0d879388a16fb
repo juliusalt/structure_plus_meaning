@@ -1,0 +1,19 @@
+import prepare_repair as r
+shared=r'''lemma list_family_requirements_member:
+  "(P,X,a)\<in>set (concat (map (\<lambda>(Q,Ys).
+      concat (map (\<lambda>Y. map (\<lambda>b. (Q,Y,b)) (As Q)) Ys)) Cs)) \<longleftrightarrow>
+    (\<exists>Xs. (P,Xs)\<in>set Cs \<and> X\<in>set Xs \<and> a\<in>set (As P))"
+proof (induction Cs)
+  case Nil
+  then show ?case by simp
+next
+  case (Cons C Cs)
+  obtain Q Ys where C: "C=(Q,Ys)" by (cases C) auto
+  show ?case using Cons.IH by (auto simp: C set_concat image_iff)
+qed
+
+'''
+print(r.prepare(7,'Factor list-family requirement membership at its polymorphic owner before applying it to complete structural application records; retain the diagnosed timeout and prepare complete current-source reader regressions alongside the application checks.',{
+ 'Finite_Candidate_Assembly':[('definition finite_assembly_coverage where',shared+'definition finite_assembly_coverage where')],
+ 'Factor_Application_Candidates':[(r'''  by (auto simp: application_plan_requirements_def split_paired_Ex; force)''',r'''  by (simp only: application_plan_requirements_def list_family_requirements_member; simp)''')]
+},family='applicationconstruction',scope_text='Preserve all existing statements and executable definitions; add only the generic list-family membership equation and instantiate it at complete application subjects.'))

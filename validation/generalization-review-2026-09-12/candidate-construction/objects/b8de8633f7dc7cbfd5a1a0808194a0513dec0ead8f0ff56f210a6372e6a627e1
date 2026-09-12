@@ -1,0 +1,31 @@
+{
+  "problem": "Retain the complete checked input family at execution time and verify that both live and retained evidence stay exact; recover the unique missing historical driver and repair the inventory presentation.",
+  "requirements": [
+    "Use the existing per-file archive operation through one shared complete-input helper.",
+    "Require archived coverage of every nonexternal checked input, exact live hashes and exact retained hashes before acceptance.",
+    "Apply the shared boundary to the generic proved-code, reasoning, finite-source and finite-presentation runners.",
+    "Preserve the exact mathematical programs, inputs and full reports.",
+    "Verify delayed source edits cannot erase the accepted input and corruption cannot be accepted.",
+    "Preserve every theory-map row and keep it under the table header; only wrap the affected prose.",
+    "Use the recovered historical driver only under its original 6aaa70e41169115bdd54869de9ca56cd383a1d1f609b6969e2fde574ec1c8b23 digest."
+  ],
+  "files": [
+    "/tmp/generalization-quality-review/candidate-delivery-review/retention-draft1/tools/proved_code.py",
+    "/tmp/generalization-quality-review/candidate-delivery-review/retention-draft1/tools/check_reasoning.py",
+    "/tmp/generalization-quality-review/candidate-delivery-review/retention-draft1/tools/check_finite_inference.py",
+    "/tmp/generalization-quality-review/candidate-delivery-review/retention-draft1/tools/check_finite_presentations.py",
+    "/tmp/generalization-quality-review/candidate-delivery-review/retention-draft1/tools/test_proved_code.py",
+    "/tmp/generalization-quality-review/candidate-delivery-review/retention-draft1/README.md",
+    "/tmp/generalization-quality-review/candidate-delivery-review/retention-draft1/REASONING_REUSE.md",
+    "/tmp/generalization-quality-review/candidate-delivery-review/retention-draft1/THEORY_MAP.md"
+  ],
+  "input_audit": "/tmp/generalization-quality-review/candidate-delivery-review/complete-input-audit.json",
+  "recovery": "/tmp/generalization-quality-review/candidate-delivery-review/input-recovery.json",
+  "validation": [
+    "All tooling tests from the isolated proposed source.",
+    "Both full 55/76 consumer regressions and their complete original report comparison.",
+    "Fresh native source recovery, finite presentations and all 30 supplied-input application cases.",
+    "Complete archive retention and replay with the original accepted proofs and recovered input; kernel proofs remain unchanged."
+  ],
+  "criticism": "A retained hash identifies the expected historical bytes but cannot supply them. The reconstruction matches those bytes exactly. This change strengthens retention and metadata checks without changing native computation; each affected runner still requires actual execution before adoption."
+}

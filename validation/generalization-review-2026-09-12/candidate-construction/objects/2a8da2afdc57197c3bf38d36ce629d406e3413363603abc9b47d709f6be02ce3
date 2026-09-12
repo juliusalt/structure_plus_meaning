@@ -1,0 +1,24 @@
+"""Create the final archive and replay every conditional case and final native stage."""
+from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor
+import json,os,subprocess,time
+E=Path(__file__).parent;B=Path('/tmp/generalization-quality-review/directed-candidate-construction');C=Path('/tmp/generalization-quality-review/candidate-delivery-review');M=Path('/home/julius/structure_and_semantics')
+A=M/'validation/generalization-review-2026-09-12/candidate-construction'
+P=Path('/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly');ENV={**os.environ,'PYTHONDONTWRITEBYTECODE':'1'}
+def run(name,command,timeout):
+ start=time.monotonic()
+ with (E/(name+'.log')).open('w') as log:
+  try:code=subprocess.run(list(map(str,command)),cwd=M,env=ENV,stdout=log,stderr=subprocess.STDOUT,timeout=timeout).returncode
+  except subprocess.TimeoutExpired:code='timeout'
+ return {'name':name,'command':list(map(str,command)),'exit_code':code,'seconds':time.monotonic()-start,'log':str(E/(name+'.log'))}
+steps=[run('retention',['python3','-B',M/'tools/retain_reasoning_review.py','--specification',C/'final-archive-spec.json','--output',A,'--project',M,'--fallback-sources',B,'--fallback-sources',C,'--prior-archive',M/'validation/generalization-review-2026-09-11/structural-observations','--prior-archive',M/'validation/generalization-review-2026-09-11/indexed-subject-contracts-retained-inputs'],1200)]
+if steps[0]['exit_code']==0:
+ index=json.loads((A/'index.json').read_text())
+ def investigation(name):return run('investigation--'+name,['python3','-B',M/'tools/replay_reasoning_review.py','--archive',A,'--investigation',name,'--poly',P,'--output',E/'investigations'/name],240)
+ with ThreadPoolExecutor(max_workers=4) as pool:steps.extend(pool.map(investigation,sorted(index['investigations'])))
+ native=['application-controls','application-large-7','application-large-8','application-large-9','application-large-10','generic-search','original-guided','native-source','original-reader','finite-presentations']
+ for name in native:steps.append(run('native--'+name,['python3','-B',M/'tools/replay_reasoning_review.py','--archive',A,'--stage',name,'--poly',P,'--output',E/'native'/name],300))
+(E/'steps.json').write_text(json.dumps(steps,indent=2)+'\n')
+summary={'complete':all(row['exit_code']==0 for row in steps),'steps':len(steps),'failures':[row for row in steps if row['exit_code']!=0],'archive':str(A),'diagnostics':str(E/'steps.json')}
+(E/'summary.json').write_text(json.dumps(summary,indent=2)+'\n');print(json.dumps(summary),flush=True)
+raise SystemExit(not summary['complete'])

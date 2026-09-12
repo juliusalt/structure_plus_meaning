@@ -1,0 +1,43 @@
+"""Prepare a repository interface with shared complete-subject serializers."""
+import ast,json
+from pathlib import Path
+B=Path(__file__).parent;M=Path('/home/julius/structure_and_semantics');D=B/'interface-draft1';D.mkdir()
+source=(M/'tools/check_application_comparison.py').read_text();tree=ast.parse(source)
+selected={'ml_application','ml_problem','normalized_problem','application_key'}
+functions=[ast.get_source_segment(source,n) for n in tree.body if isinstance(n,ast.FunctionDef) and n.name in selected]
+assert len(functions)==4
+# Recover the same existing complete native problem serializer without creating
+# an independently maintained second representation.
+namespace={};exec(compile(source,str(M/'tools/check_application_comparison.py'),'exec'),namespace)
+json_prelude='fun jproblem'+namespace['PRELUDE'].split('fun jproblem',1)[1].split('fun jpair',1)[0]
+shared='"""Complete application subjects shared by construction and observation adapters."""\nimport investigate\nimport check_reasoning as review\n\n'+'\n\n\n'.join(functions)+'\n\nPROBLEM_JSON_PRELUDE='+repr(json_prelude)+'\n'
+(D/'application_subjects.py').write_text(shared)
+binding=(M/'tools/check_binding_contributions.py').read_text().replace('import check_application_comparison as comparison','import application_subjects as comparison')
+(D/'check_binding_contributions.py').write_text(binding)
+s=(B/'check_application_candidates.py').read_text()
+s=s.replace("sys.path.insert(0,'/home/julius/structure_and_semantics/tools')\n",'').replace('check_application_comparison as old','application_subjects as old').replace('import application_controls\n','')
+s=s.replace("B=Path(__file__).parent","ROOT=Path(__file__).resolve().parents[1]")
+s=s.replace("PRELUDE+='fun jproblem'+old.PRELUDE.split('fun jproblem',1)[1].split('fun jpair',1)[0]","PRELUDE+=old.PROBLEM_JSON_PRELUDE")
+s=s.replace("  assert formed==r['expected_formed']","  if 'expected_formed' in r:assert formed==r['expected_formed']")
+s=s.replace("  assert len(inp['cases'])==len(r['problems'])","  assert len(inp['cases'])==len(r['problems'])\n  assert ref.functional([[p['id'],pkey(p)] for p in inp['problems']]), 'Ambiguous workload indices' ")
+s=s[:s.index('def main():')]+'''def main():
+ p=argparse.ArgumentParser(description=__doc__)
+ for name in ['specification','proof','poly','output']:p.add_argument('--'+name,type=Path,required=True)
+ p.add_argument('--project',type=Path,default=ROOT);a=p.parse_args()
+ specification=json.loads(a.specification.read_text())
+ assert set(specification)=={'cases'}
+ rows=[]
+ for i,r in enumerate(specification['cases']):
+  assert {'name','problems','parts'}<=set(r)<= {'name','problems','parts','target_presentations','expected_formed'}
+  rows.append({**r,'case_id':i,'target_presentations':r.get('target_presentations')})
+ receipt=proved_code.checked_execution(a.proof,a.poly,a.output,required_theories=['Factor_Application_Execution'],inputs=rows,
+  input_paths=[a.specification,Path(__file__)],program=program,assess=assess,
+  question='Construct source-site candidates from complete supplied structural problems and retain their declared scope and exact application results.',
+  boundary='Native matching derives coverage from complete source patterns and observed terms. Every candidate is constructed from the supplied site parts under the proved application condition.',project=a.project,timeout=60)
+ print(json.dumps({k:v for k,v in receipt.items() if k not in ['assessment','evidence_archive','execution_inputs']},indent=2))
+ return int(receipt['status']!='accepted')
+if __name__=='__main__':raise SystemExit(main())
+'''
+(D/'check_application_comparison.py').write_text(s)
+for p in D.glob('*.py'):compile(p.read_text(),str(p),'exec')
+print('Prepared shared serializers and a complete-input construction interface; unselected and unexecuted.')

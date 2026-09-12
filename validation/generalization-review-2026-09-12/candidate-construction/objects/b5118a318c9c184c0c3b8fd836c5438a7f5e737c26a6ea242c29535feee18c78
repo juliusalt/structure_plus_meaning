@@ -1,0 +1,41 @@
+{
+  "status": "accepted",
+  "started_utc": "2026-09-04T21:49:07.380029+00:00",
+  "command": [
+    "isabelle",
+    "build",
+    "-v",
+    "-o",
+    "threads=4",
+    "-o",
+    "timeout=60",
+    "-D",
+    "/home/julius/structure_and_semantics"
+  ],
+  "base_session": "HOL",
+  "sources": {
+    "ROOT": "edb702d9fd36beb9bcd728da40f23b0768a64c2a0bab512a28a54cd37cd0d714",
+    "theories/Bootstrap_Audit.thy": "8389cf171dc3bf420ed619e1d1576e9a2f47f62261584696620ca8437a554750",
+    "theories/Bootstrap_Relations.thy": "38d8e21ef2634ddf7083cd0b4570d0f3fc2e4363db3f01fae0b300425f0cf064",
+    "theories/Factor_Authority.thy": "8abcab31015602ae29b70b7dbe7f0250d90a5616cf8b4d409c4baaefc920a4da",
+    "theories/Factor_Combinator_Core.thy": "fbcb786a80764d9b763188877e0e60245bea6d4f322eb5703cce5d8d70be41d6",
+    "theories/Factor_Construction.thy": "469fef878d5da90ec519a7d959f8051c725021a9739d50e3fbf8c179cb3d1e78",
+    "theories/Factor_Derivation.thy": "95529a66f052541d71bdecbd499f0f1ef4ac72ae0f91bbf6228002849393a519",
+    "theories/Factor_Evidence.thy": "3b3beaba55b1ae37728eb36b9df0f99f6478ed3c6d792dee71c5d5b29bed1f49",
+    "theories/Factor_Semantics.thy": "9333a3ed0c54b0b47875dc4b6c7f95f1ccd90814ee6cca02d5e39bd35070197a",
+    "theories/Foundation_Computational_Sufficiency.thy": "bea1086efe53dfc35f5516f9b8c477d1947bc900d26182663c97dd3709c6bdd7",
+    "theories/Foundation_Genesis.thy": "883977e90f23109efc4d41b55b522de8f40dcd11247632d31cff153ad37960b8",
+    "theories/Foundation_Reflection.thy": "75679c132699e668334fee1c7db29b0ed8ed71e4746fdbca0005ef89a544ec83",
+    "theories/RRA_Assembly.thy": "e5a7e5f49661999dd5227610a537f438f68b961787a9f8f89b1c381190389790",
+    "theories/RRA_Core.thy": "bf9f36caa499ca09ad3966fca3ebadf31ac2567b587fda27df2e574def04f809",
+    "theories/RRA_Data.thy": "7a6634f3b02e8105b010ee2f7627151f6054413df4c7a3bfc42d7738cdec6d93",
+    "theories/RRA_Evidence.thy": "4ead59b93b7c997d94de25fa4c92488e0ebc169a0a89111b66472d8d72fb4e47",
+    "theories/RRA_Exact.thy": "ea2e1f35d63d3f7938f5ace42f65e672251bb2deb0336a57ebc6de2ae22691de",
+    "theories/RRA_Fragment.thy": "e32e27a7fce5984c791242671b64d51e8f74f8886128c3a67165dcc91de6db7a",
+    "theories/RRA_Structural_Syntax.thy": "d9c9903822189a3edb688d36e3131d1a9f81d2fd09b636d9383ff000fe1e4c8e",
+    "theories/RRA_Trajectory.thy": "8792681d1121fcf8d5c6e099a4bfe2c92f8b0c1f46b82d86f700b014d606a141"
+  },
+  "isabelle_version": "Isabelle2025-2",
+  "exit_code": 0,
+  "finished_utc": "2026-09-04T21:49:15.823105+00:00"
+}

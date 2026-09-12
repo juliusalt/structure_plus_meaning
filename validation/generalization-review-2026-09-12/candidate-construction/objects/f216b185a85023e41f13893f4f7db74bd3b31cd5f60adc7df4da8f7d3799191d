@@ -1,0 +1,185 @@
+{
+  "complete_result": {
+    "question": "Instantiate whole-fragment filtering with the actual fresh pair premise instead of relying on schematic simplification.",
+    "boundary": "Conditional prospective proof-repair comparison on exact retained commands. Unchanged statements and executable definitions are required; the supplied diagnostic judgments select a proof attempt. This does not derive those judgments or establish proof acceptance.",
+    "specification_sha256": "49c65e73682e7ea152c57f7e1a3982c8baccfde6438af0cd46209bbb2e0ceb7e",
+    "results": [
+      {
+        "problem": "proof-repair",
+        "initial_result": {
+          "input_formed": true,
+          "residual": [
+            [
+              1,
+              0
+            ]
+          ],
+          "profiles": [
+            {
+              "candidate": 0,
+              "profile": []
+            },
+            {
+              "candidate": 1,
+              "profile": []
+            }
+          ],
+          "losses": [
+            {
+              "from": 0,
+              "to": 0,
+              "losses": []
+            },
+            {
+              "from": 0,
+              "to": 1,
+              "losses": []
+            },
+            {
+              "from": 1,
+              "to": 0,
+              "losses": []
+            },
+            {
+              "from": 1,
+              "to": 1,
+              "losses": []
+            }
+          ],
+          "safe_facets": [
+            0,
+            1
+          ],
+          "conflicts": [],
+          "repairs": [
+            [
+              1,
+              0,
+              1,
+              0
+            ]
+          ],
+          "unrepairable": [],
+          "extension": [
+            1
+          ],
+          "revision": {
+            "retained": [],
+            "withdrawn": [],
+            "repairs": [
+              [
+                1,
+                0,
+                1,
+                0
+              ]
+            ],
+            "selection": [
+              1
+            ],
+            "residual": []
+          }
+        },
+        "followed_result": {
+          "input_formed": true,
+          "residual": [],
+          "profiles": [
+            {
+              "candidate": 0,
+              "profile": []
+            },
+            {
+              "candidate": 1,
+              "profile": [
+                [
+                  1,
+                  0
+                ]
+              ]
+            }
+          ],
+          "losses": [
+            {
+              "from": 0,
+              "to": 0,
+              "losses": []
+            },
+            {
+              "from": 0,
+              "to": 1,
+              "losses": []
+            },
+            {
+              "from": 1,
+              "to": 0,
+              "losses": [
+                [
+                  1,
+                  0
+                ]
+              ]
+            },
+            {
+              "from": 1,
+              "to": 1,
+              "losses": []
+            }
+          ],
+          "safe_facets": [
+            0,
+            1
+          ],
+          "conflicts": [],
+          "repairs": [],
+          "unrepairable": [],
+          "extension": [
+            1
+          ],
+          "revision": {
+            "retained": [
+              1
+            ],
+            "withdrawn": [],
+            "repairs": [],
+            "selection": [
+              1
+            ],
+            "residual": []
+          }
+        },
+        "assessment": {
+          "required_observations": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ]
+          ],
+          "missing_requirements": {
+            "0": [
+              [
+                1,
+                0
+              ]
+            ],
+            "1": []
+          },
+          "eligible": [
+            1
+          ],
+          "dominant": [
+            1
+          ],
+          "strict_improvements": [],
+          "boundary": "Assessment of the supplied finite candidates under explicit mandatory observations. Eligibility uses all original observations, including facets unnecessary for distinguishing these candidates. The returned adequate profiles determine comparison; broader coverage and candidate construction remain separate.",
+          "receipt_sha256": "ae4e94e1252e0d330b139a23b802d389e344edcedda56371e8f1901bf167b67d"
+        }
+      }
+    ]
+  },
+  "decision": "Check the filtering equality with its explicit fresh-pair premise.",
+  "criticism": "The argument reuses the same whole-fragment filtering contract already used in soundness; full acceptance and native performance still need checking."
+}

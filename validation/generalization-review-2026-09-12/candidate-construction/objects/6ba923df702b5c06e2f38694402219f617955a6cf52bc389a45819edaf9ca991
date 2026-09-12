@@ -1,0 +1,1032 @@
+{
+  "problem": "Complete the same four formal contracts after diagnosing the timed-out support proof.",
+  "source_result": {
+    "status": "failed",
+    "exit_code": 142,
+    "sources_unchanged": true,
+    "sources": {
+      "Bootstrap_Relations": "50d4bf926dab217fdad8eb114fe1b0d369aa9a06741df1e568a5cc5fea7ceafe",
+      "RRA_Core": "acd13d70482fd6a3bcaed5e07776d76b2afcca45e69353d591a26639c30752db",
+      "RRA_Data": "2ff07ed3d0ae79f3a278b4e4fac5b78320a36e314ffa026db1cd014579fd7af5",
+      "RRA_Footprint": "2177e2f526618e7623714bf72ba8a542ffc3f3ee6b6cdc7e95d15ce5c094926e",
+      "RRA_Exact": "43713b16aee5bb9972674e96dd0aa393cacc9599db6c745bbf413d476f6f850f",
+      "RRA_Finite_Artifacts": "bf551280109ea4f690e7f9e21e3b00f0300c7139205e8ab2f1188c70afaebc0a",
+      "Finite_Set_Composition": "afab9aa6a45378359fb543a95a104326d282ced6a227499397bd24e2208ca2bd",
+      "Finite_Compatible_Unions": "142aa316a028ba1dac257ce8717dca95109854713de461d65509b9bd4ab2780b",
+      "Finite_Demand_Selection": "f078ff337e75c81199a1d6a36fff787dae36c88f1433637b32198d8847f185d6",
+      "Finite_Directed_Contributions": "31aa730402c8f592e1d64e61f8c3079febb9ef14d3f7aca364571199b604fc32",
+      "Finite_Candidate_Assembly": "98ae7edaad025b2b65209f8d23b910e5dbaa762fe73f4ad03380e5bee80e426b"
+    },
+    "effective_source_hashes": {
+      "Finite_Compatible_Unions": "19630af0d1e493cdffb8e1527134355d1af04e881f81d3a99a52b9c0a0f04709",
+      "Finite_Demand_Selection": "f8276d5909d64c9858680e5b3e4841044ef7725df96eaf6ee381e7d28e530364",
+      "Finite_Directed_Contributions": "5a21a6804fcdadfebe82feddac1de32e9c785eb7519a2a750debca076d909982",
+      "Finite_Candidate_Assembly": "285f6199e0855c1258fb06bb9e507c3bd2be58d5bff90a97a923c5261cc6ca09"
+    },
+    "checked_theories": 4,
+    "parent_theories_reused": 7,
+    "roots": [
+      "Finite_Directed_Contributions",
+      "Finite_Candidate_Assembly"
+    ],
+    "command": [
+      "isabelle",
+      "build",
+      "-o",
+      "threads=12",
+      "-o",
+      "parallel_proofs=0",
+      "-o",
+      "build_timing_threshold=0",
+      "-d",
+      "/home/julius/structure_and_semantics",
+      "-D",
+      "/tmp/native-investigation-report-diagnostic-directed2"
+    ],
+    "started_utc": "2026-09-11T19:50:55.316816+00:00",
+    "finished_utc": "2026-09-11T19:55:59.317785+00:00",
+    "log": "/tmp/native-investigation-report-diagnostic-directed2/build.log"
+  },
+  "timings": {
+    "database": "/tmp/structural-isabelle/.isabelle/Isabelle2025-2/heaps/polyml-5.9.2_x86_64_32-linux/log/Native_Directed2.db",
+    "sources": {
+      "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Demand_Selection.thy": "f8276d5909d64c9858680e5b3e4841044ef7725df96eaf6ee381e7d28e530364",
+      "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy": "19630af0d1e493cdffb8e1527134355d1af04e881f81d3a99a52b9c0a0f04709",
+      "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Candidate_Assembly.thy": "285f6199e0855c1258fb06bb9e507c3bd2be58d5bff90a97a923c5261cc6ca09"
+    },
+    "tool_sha256": "5ca4c7d46c6d1d1a265f54221eb062740a5436d6164c85374496e877a8252afc",
+    "completed_commands": [
+      {
+        "elapsed": "0.041",
+        "name": "theory",
+        "offset": "1",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Demand_Selection.thy",
+        "theory": "Finite_Demand_Selection",
+        "line": 1,
+        "source_line": "theory Finite_Demand_Selection"
+      },
+      {
+        "elapsed": "0.005",
+        "name": "definition",
+        "offset": "174",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Demand_Selection.thy",
+        "theory": "Finite_Demand_Selection",
+        "line": 7,
+        "source_line": "definition finite_demand_choice where"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "lemma",
+        "offset": "380",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Demand_Selection.thy",
+        "theory": "Finite_Demand_Selection",
+        "line": 12,
+        "source_line": "lemma finite_demand_choice_none:"
+      },
+      {
+        "elapsed": "0.008",
+        "name": "by",
+        "offset": "491",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Demand_Selection.thy",
+        "theory": "Finite_Demand_Selection",
+        "line": 14,
+        "source_line": "  by (auto simp: finite_demand_choice_def Let_def filter_empty_conv fset_of_list_elem split: if_splits)"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "lemma",
+        "offset": "594",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Demand_Selection.thy",
+        "theory": "Finite_Demand_Selection",
+        "line": 16,
+        "source_line": "lemma finite_demand_choice_member:"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "using",
+        "offset": "735",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Demand_Selection.thy",
+        "theory": "Finite_Demand_Selection",
+        "line": 19,
+        "source_line": "  using assms arg_min_list_in[of \"filter (\\<lambda>a. a |\\<notin>| covered) As\" cost]"
+      },
+      {
+        "elapsed": "0.025",
+        "name": "by",
+        "offset": "806",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Demand_Selection.thy",
+        "theory": "Finite_Demand_Selection",
+        "line": 20,
+        "source_line": "  by (auto simp: finite_demand_choice_def Let_def fset_of_list_elem split: if_splits)"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "lemma",
+        "offset": "891",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Demand_Selection.thy",
+        "theory": "Finite_Demand_Selection",
+        "line": 22,
+        "source_line": "lemma finite_demand_choice_least:"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "have",
+        "offset": "1123",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Demand_Selection.thy",
+        "theory": "Finite_Demand_Selection",
+        "line": 28,
+        "source_line": "  have nonempty: \"?R\\<noteq>[]\" and chosen: \"a=arg_min_list cost ?R\""
+      },
+      {
+        "elapsed": "0.009",
+        "name": "by",
+        "offset": "1202",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Demand_Selection.thy",
+        "theory": "Finite_Demand_Selection",
+        "line": 29,
+        "source_line": "    using selected by (auto simp: finite_demand_choice_def Let_def split: if_splits)"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "have",
+        "offset": "1270",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Demand_Selection.thy",
+        "theory": "Finite_Demand_Selection",
+        "line": 30,
+        "source_line": "  have member: \"cost b\\<in>cost ` set ?R\" using other by (auto simp: fset_of_list_elem)"
+      },
+      {
+        "elapsed": "0.002",
+        "name": "by",
+        "offset": "1318",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Demand_Selection.thy",
+        "theory": "Finite_Demand_Selection",
+        "line": 30,
+        "source_line": "  have member: \"cost b\\<in>cost ` set ?R\" using other by (auto simp: fset_of_list_elem)"
+      },
+      {
+        "elapsed": "0.004",
+        "name": "by",
+        "offset": "1367",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Demand_Selection.thy",
+        "theory": "Finite_Demand_Selection",
+        "line": 31,
+        "source_line": "  show ?thesis by (simp only: chosen f_arg_min_list_f[OF nonempty])"
+      },
+      {
+        "elapsed": "0.100",
+        "name": "theory",
+        "offset": "1",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 1,
+        "source_line": "theory Finite_Compatible_Unions"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "lemma",
+        "offset": "234",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 7,
+        "source_line": "lemma finite_relation_functional_subset:"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "lemma",
+        "offset": "1463",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Demand_Selection.thy",
+        "theory": "Finite_Demand_Selection",
+        "line": 35,
+        "source_line": "lemma finite_demand_progress:"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "by",
+        "offset": "1625",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Demand_Selection.thy",
+        "theory": "Finite_Demand_Selection",
+        "line": 38,
+        "source_line": "  by (rule pfsubset_fcard_mono) (use assms in auto)"
+      },
+      {
+        "elapsed": "0.002",
+        "name": "by",
+        "offset": "379",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 10,
+        "source_line": "  using assms by (auto simp: finite_relation_functional_correct single_valued_def)"
+      },
+      {
+        "elapsed": "0.003",
+        "name": "definition",
+        "offset": "449",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 12,
+        "source_line": "definition finite_compatible_unions where"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "lemma",
+        "offset": "584",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 15,
+        "source_line": "lemma finite_compatible_union_member:"
+      },
+      {
+        "elapsed": "0.007",
+        "name": "end",
+        "offset": "1910",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Demand_Selection.thy",
+        "theory": "Finite_Demand_Selection",
+        "line": 46,
+        "source_line": "end"
+      },
+      {
+        "elapsed": "0.002",
+        "name": "by",
+        "offset": "726",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 18,
+        "source_line": "  by (auto simp: finite_compatible_unions_def)"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "lemma",
+        "offset": "772",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 20,
+        "source_line": "lemma finite_compatible_union_origin:"
+      },
+      {
+        "elapsed": "0.011",
+        "name": "by",
+        "offset": "919",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 23,
+        "source_line": "  using assms by (auto simp: finite_compatible_union_member ffUnion.rep_eq; blast)"
+      },
+      {
+        "elapsed": "0.012",
+        "name": "theory",
+        "offset": "1",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Candidate_Assembly.thy",
+        "theory": "Finite_Candidate_Assembly",
+        "line": 1,
+        "source_line": "theory Finite_Candidate_Assembly"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "lemma",
+        "offset": "989",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 25,
+        "source_line": "lemma finite_compatible_unions_mono:"
+      },
+      {
+        "elapsed": "0.002",
+        "name": "definition",
+        "offset": "156",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Candidate_Assembly.thy",
+        "theory": "Finite_Candidate_Assembly",
+        "line": 7,
+        "source_line": "definition finite_assembly_coverage where"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "lemma",
+        "offset": "253",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Candidate_Assembly.thy",
+        "theory": "Finite_Candidate_Assembly",
+        "line": 10,
+        "source_line": "lemma finite_assembly_coverage_member:"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "by",
+        "offset": "361",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Candidate_Assembly.thy",
+        "theory": "Finite_Candidate_Assembly",
+        "line": 12,
+        "source_line": "  by (simp only: finite_assembly_coverage_def finite_union_image_member)"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "lemma",
+        "offset": "433",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Candidate_Assembly.thy",
+        "theory": "Finite_Candidate_Assembly",
+        "line": 14,
+        "source_line": "lemma finite_assembly_coverage_mono:"
+      },
+      {
+        "elapsed": "0.004",
+        "name": "by",
+        "offset": "548",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Candidate_Assembly.thy",
+        "theory": "Finite_Candidate_Assembly",
+        "line": 16,
+        "source_line": "  by (auto simp: finite_assembly_coverage_member)"
+      },
+      {
+        "elapsed": "0.070",
+        "name": "by",
+        "offset": "1128",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 28,
+        "source_line": "  using assms by (auto simp: finite_compatible_union_member; blast)"
+      },
+      {
+        "elapsed": "0.002",
+        "name": "theorem",
+        "offset": "1183",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 30,
+        "source_line": "theorem finite_compatible_union_support:"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "obtain",
+        "offset": "1336",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 34,
+        "source_line": "  obtain A where included: \"A |\\<subseteq>| B\" and union: \"V=ffUnion A\""
+      },
+      {
+        "elapsed": "0.002",
+        "name": "by",
+        "offset": "1416",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 35,
+        "source_line": "    using generated by (simp only: finite_compatible_union_member) blast"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "have",
+        "offset": "1471",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 36,
+        "source_line": "  have supported: \"A |\\<subseteq>| ffilter (\\<lambda>W. W |\\<subseteq>| V) B\""
+      },
+      {
+        "elapsed": "0.002",
+        "name": "by",
+        "offset": "1538",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 37,
+        "source_line": "    using included by (auto simp: union ffUnion.rep_eq less_eq_fset.rep_eq; blast)"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "have",
+        "offset": "1604",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 38,
+        "source_line": "  have complete: \"V |\\<subseteq>| ffUnion (ffilter (\\<lambda>W. W |\\<subseteq>| V) B)\""
+      },
+      {
+        "elapsed": "0.001",
+        "name": "by",
+        "offset": "1698",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 39,
+        "source_line": "    using ffunion_mono[OF supported] by (simp only: union)"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "have",
+        "offset": "1722",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 40,
+        "source_line": "  have inside: \"ffUnion (ffilter (\\<lambda>W. W |\\<subseteq>| V) B) |\\<subseteq>| V\""
+      },
+      {
+        "elapsed": "0.002",
+        "name": "by",
+        "offset": "1781",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 41,
+        "source_line": "    by (auto simp: ffUnion.rep_eq less_eq_fset.rep_eq)"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "by",
+        "offset": "1847",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 42,
+        "source_line": "  show ?thesis by (rule order_antisym[OF inside complete])"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "qed",
+        "offset": "1891",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 43,
+        "source_line": "qed"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "lemma",
+        "offset": "1896",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 45,
+        "source_line": "lemma finite_compatible_union_empty [simp]:"
+      },
+      {
+        "elapsed": "0.002",
+        "name": "by",
+        "offset": "1985",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 47,
+        "source_line": "  by (rule fset_inject[THEN iffD1])"
+      },
+      {
+        "elapsed": "0.003",
+        "name": "lemma",
+        "offset": "2119",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 50,
+        "source_line": "lemma finite_compatible_union_step:"
+      },
+      {
+        "elapsed": "0.002",
+        "name": "let",
+        "offset": "2352",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 55,
+        "source_line": "  let ?R=\"finite_compatible_unions B |\\<union>| fimage (\\<lambda>V. W |\\<union>| V)"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "have",
+        "offset": "2501",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 57,
+        "source_line": "  have forward: \"V |\\<in>| ?R\" if member: \"V |\\<in>| finite_compatible_unions (finsert W B)\" for V"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "obtain",
+        "offset": "2604",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 59,
+        "source_line": "    obtain A where functional: \"finite_relation_functional V\" and inside: \"A |\\<subseteq>| finsert W B\""
+      },
+      {
+        "elapsed": "0.002",
+        "name": "by",
+        "offset": "2738",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 60,
+        "source_line": "      and union: \"V=ffUnion A\" using member by (simp only: finite_compatible_union_member) blast"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "proof",
+        "offset": "2812",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 62,
+        "source_line": "    proof (cases \"W |\\<in>| A\")"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "by",
+        "offset": "2893",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 64,
+        "source_line": "      have \"A |\\<subseteq>| B\" using inside False by auto"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "by",
+        "offset": "2983",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 66,
+        "source_line": "        using functional union by (simp only: finite_compatible_union_member) blast"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "show",
+        "offset": "3047",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 67,
+        "source_line": "      then show ?thesis by simp"
+      },
+      {
+        "elapsed": "0.002",
+        "name": "by",
+        "offset": "3060",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 67,
+        "source_line": "      then show ?thesis by simp"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "let",
+        "offset": "3099",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 70,
+        "source_line": "      let ?A=\"A |-| {|W|}\""
+      },
+      {
+        "elapsed": "0.002",
+        "name": "by",
+        "offset": "3165",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 71,
+        "source_line": "      have included: \"?A |\\<subseteq>| B\" using inside by auto"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "have",
+        "offset": "3179",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 72,
+        "source_line": "      have reconstruct: \"A=finsert W ?A\" using True by auto"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "by",
+        "offset": "3225",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 72,
+        "source_line": "      have reconstruct: \"A=finsert W ?A\" using True by auto"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "have",
+        "offset": "3239",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 73,
+        "source_line": "      have shape: \"V=W |\\<union>| ffUnion ?A\""
+      },
+      {
+        "elapsed": "0.001",
+        "name": "by",
+        "offset": "3323",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 74,
+        "source_line": "        using arg_cong[OF reconstruct, of ffUnion] by (simp only: union ffunion_insert)"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "by",
+        "offset": "3399",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 75,
+        "source_line": "      have smaller: \"ffUnion ?A |\\<subseteq>| V\" by (simp only: shape) simp"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "have",
+        "offset": "3569",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 78,
+        "source_line": "      have generated: \"ffUnion ?A |\\<in>| finite_compatible_unions B\""
+      },
+      {
+        "elapsed": "0.001",
+        "name": "by",
+        "offset": "3660",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 79,
+        "source_line": "        using partial included by (simp only: finite_compatible_union_member) blast"
+      },
+      {
+        "elapsed": "0.002",
+        "name": "have",
+        "offset": "3719",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 80,
+        "source_line": "      have filtered: \"ffUnion ?A |\\<in>| ffilter (\\<lambda>U. finite_relation_functional (W |\\<union>| U))"
+      },
+      {
+        "elapsed": "0.002",
+        "name": "by",
+        "offset": "3876",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 82,
+        "source_line": "        using generated functional by (simp only: shape) simp"
+      },
+      {
+        "elapsed": "0.002",
+        "name": "have",
+        "offset": "3909",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 83,
+        "source_line": "      have image: \"W |\\<union>| ffUnion ?A |\\<in>| fimage (\\<lambda>U. W |\\<union>| U)"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "by",
+        "offset": "4065",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 85,
+        "source_line": "        by (rule fimageI[OF filtered])"
+      },
+      {
+        "elapsed": "0.004",
+        "name": "by",
+        "offset": "4127",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 86,
+        "source_line": "      show ?thesis using image by (simp only: shape) simp"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "qed",
+        "offset": "4158",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 87,
+        "source_line": "    qed"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "qed",
+        "offset": "4164",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 88,
+        "source_line": "  qed"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "have",
+        "offset": "4170",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 89,
+        "source_line": "  have reverse: \"V |\\<in>| finite_compatible_unions (finsert W B)\" if member: \"V |\\<in>| ?R\" for V"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "proof",
+        "offset": "4261",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 90,
+        "source_line": "  proof (cases \"V |\\<in>| finite_compatible_unions B\")"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "have",
+        "offset": "4328",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 92,
+        "source_line": "    have \"finite_compatible_unions B |\\<subseteq>| finite_compatible_unions (finsert W B)\""
+      },
+      {
+        "elapsed": "0.001",
+        "name": "by",
+        "offset": "4411",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 93,
+        "source_line": "      by (rule finite_compatible_unions_mono) auto"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "by",
+        "offset": "4489",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 94,
+        "source_line": "    then show ?thesis using True by auto"
+      },
+      {
+        "elapsed": "0.002",
+        "name": "obtain",
+        "offset": "4523",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 97,
+        "source_line": "    obtain U where generated: \"U |\\<in>| finite_compatible_unions B\""
+      },
+      {
+        "elapsed": "0.003",
+        "name": "by",
+        "offset": "4693",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 99,
+        "source_line": "      using member False by auto"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "obtain",
+        "offset": "4705",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 100,
+        "source_line": "    obtain A where inside: \"A |\\<subseteq>| B\" and union: \"U=ffUnion A\""
+      },
+      {
+        "elapsed": "0.002",
+        "name": "by",
+        "offset": "4785",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 101,
+        "source_line": "      using generated by (simp only: finite_compatible_union_member) blast"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "have",
+        "offset": "4842",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 102,
+        "source_line": "    have included: \"finsert W A |\\<subseteq>| finsert W B\" using inside by auto"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "by",
+        "offset": "4900",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 102,
+        "source_line": "    have included: \"finsert W A |\\<subseteq>| finsert W B\" using inside by auto"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "have",
+        "offset": "4912",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 103,
+        "source_line": "    have reconstruct: \"V=ffUnion (finsert W A)\""
+      },
+      {
+        "elapsed": "0.001",
+        "name": "by",
+        "offset": "5066",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 106,
+        "source_line": "      by (simp only: finite_compatible_union_member shape) blast"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "qed",
+        "offset": "5127",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 107,
+        "source_line": "  qed"
+      },
+      {
+        "elapsed": "0.012",
+        "name": "by",
+        "offset": "5146",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 108,
+        "source_line": "  show ?thesis by (rule fset_inject[THEN iffD1]) (use forward reverse in auto)"
+      },
+      {
+        "elapsed": "0.005",
+        "name": "qed",
+        "offset": "5210",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 109,
+        "source_line": "qed"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "by",
+        "offset": "5303",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 113,
+        "source_line": "  by (auto simp: finite_compatible_union_member finite_relation_functional_correct single_valued_def"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "lemma",
+        "offset": "5433",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 116,
+        "source_line": "lemma finite_compatible_union_add:"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "have",
+        "offset": "5664",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 121,
+        "source_line": "  have extended: \"V |\\<union>| W |\\<in>| finite_compatible_unions (finsert W B)\""
+      },
+      {
+        "elapsed": "0.001",
+        "name": "by",
+        "offset": "5763",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 122,
+        "source_line": "    using generated compatible by (auto simp: finite_compatible_union_step sup_commute)"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "by",
+        "offset": "5857",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 124,
+        "source_line": "    by (rule fset_inject[THEN iffD1]) (use member in auto)"
+      },
+      {
+        "elapsed": "0.035",
+        "name": "fun",
+        "offset": "5972",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 128,
+        "source_line": "fun finite_compatible_union_list where"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "lemma",
+        "offset": "6239",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 135,
+        "source_line": "lemma finite_compatible_unions_list:"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "by",
+        "offset": "6357",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 137,
+        "source_line": "  by (induction Bs) (simp_all add: finite_compatible_union_step Let_def)"
+      },
+      {
+        "elapsed": "0.002",
+        "name": "definition",
+        "offset": "6429",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 139,
+        "source_line": "definition set_compatible_unions where"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "lemma",
+        "offset": "6535",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 142,
+        "source_line": "lemma set_compatible_unions_list [code]:"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "lemma",
+        "offset": "6898",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 150,
+        "source_line": "lemma finite_compatible_unions_code [code]:"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "lemma",
+        "offset": "7062",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 154,
+        "source_line": "lemma finite_functional_included_domain:"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "by",
+        "offset": "7365",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 160,
+        "source_line": "  obtain a b where shape: \"row=(a,b)\" by (cases row)"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "by",
+        "offset": "7513",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 162,
+        "source_line": "  have projected: \"a |\\<in>| fimage fst V\" using fimageI[OF actual, of fst] by simp"
+      },
+      {
+        "elapsed": "0.002",
+        "name": "by",
+        "offset": "7644",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 164,
+        "source_line": "  obtain c where original: \"(a,c) |\\<in>| U\" using key by auto"
+      },
+      {
+        "elapsed": "0.002",
+        "name": "by",
+        "offset": "7714",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 166,
+        "source_line": "    by (auto simp: shape finite_relation_functional_correct single_valued_def; blast)"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "lemma",
+        "offset": "7862",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 170,
+        "source_line": "lemma finite_compatible_union_covering_part:"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "have",
+        "offset": "8062",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 174,
+        "source_line": "  have support: \"ffUnion (ffilter (\\<lambda>W. W |\\<subseteq>| V) B)=V\""
+      },
+      {
+        "elapsed": "0.002",
+        "name": "by",
+        "offset": "8220",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 176,
+        "source_line": "  obtain t where row: \"(a,t) |\\<in>| V\" using key by auto"
+      },
+      {
+        "elapsed": "0.001",
+        "name": "obtain",
+        "offset": "8230",
+        "file": "/tmp/native-investigation-report-diagnostic-directed2/theories/Finite_Compatible_Unions.thy",
+        "theory": "Finite_Compatible_Unions",
+        "line": 177,
+        "source_line": "  obtain W where parts: \"W |\\<in>| B\" \"W |\\<subseteq>| V\" \"(a,t) |\\<in>| W\""
+      }
+    ],
+    "boundary": "These are retained completed command timings. The next command may be unfinished; timing data does not establish proof acceptance."
+  },
+  "diagnosis": "The last unfinished compatible-union proof rewrites V to a union whose filtering predicate still contains V. Replacing that reverse simplification by a single use of the established equality avoids self expansion. The assembly insertion proof can instantiate the existing finite-image and union equations directly.",
+  "candidate_repairs": [
+    "Transport the supported row once with the forward union equality, then use the shared membership law.",
+    "Use the existing union/image equations for insertion.",
+    "Supply the exact fset_of_list_elem bridge at the remaining list/set boundaries."
+  ],
+  "boundary": "These are concrete proof-script proposals. Their acceptance and later integration remain contingent on the next actual complete proof check."
+}

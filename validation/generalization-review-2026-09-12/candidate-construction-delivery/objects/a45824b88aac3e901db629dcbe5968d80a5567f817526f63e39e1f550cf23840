@@ -1,0 +1,5 @@
+{
+  "investigation": "delivery--retention-patch-investigation1--retain-complete-checked-inputs--initial",
+  "status": "accepted",
+  "replay_sha256": "9014c7d3ab6637a6b13b8f2400fd4273edec05aa142cb63a22fa3afe1df84304"
+}

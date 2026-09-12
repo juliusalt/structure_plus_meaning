@@ -1,0 +1,55 @@
+{
+  "status": "failed",
+  "exit_code": 1,
+  "sources_unchanged": true,
+  "checked_theories": 5,
+  "parent_theories_reused": 7,
+  "roots": [
+    "Finite_Directed_Execution"
+  ],
+  "command": [
+    "isabelle",
+    "build",
+    "-o",
+    "threads=12",
+    "-o",
+    "parallel_proofs=0",
+    "-o",
+    "build_timing_threshold=0",
+    "-d",
+    "/home/julius/structure_and_semantics",
+    "-D",
+    "/tmp/native-investigation-report-diagnostic-directed12"
+  ],
+  "started_utc": "2026-09-11T20:28:05.221717+00:00",
+  "finished_utc": "2026-09-11T20:28:14.280594+00:00",
+  "log": "/tmp/native-investigation-report-diagnostic-directed12/build.log"
+}
+Running Native_Directed12 ...
+Native_Directed12 FAILED (see also "isabelle build_log -H Error Native_Directed12")
+*** Failed to load theory "Native_Directed12.Finite_Directed_Execution" (unresolved "Native_Directed12.Finite_Directed_Contributions")
+*** Failed to finish proof (line 157 of "/tmp/native-investigation-report-diagnostic-directed12/theories/Finite_Directed_Contributions.thy"):
+*** goal (1 subgoal):
+***  1. ⟦⋀aa b.
+***         ⟦(a, b) |∈|
+***          ffUnion (finite_compatible_binding_parts (fset_of_list As) B U);
+***          aa = a;
+***          V |∈|
+***          finite_value_binding_search n As
+***           (ffilter (finite_assignment_agrees (a, b))
+***             (finite_compatible_binding_parts (fset_of_list As) B U))
+***           (finsert (a, b) U)⟧
+***         ⟹ thesis;
+***      V |∈|
+***      ffUnion
+***       ((λr. finite_value_binding_search n As
+***              (ffilter (finite_assignment_agrees r)
+***                (finite_compatible_binding_parts (fset_of_list As) B U))
+***              (finsert r U)) |`|
+***        ffilter (λr. fst r = a)
+***         (ffUnion (finite_compatible_binding_parts (fset_of_list As) B U)))⟧
+***     ⟹ thesis
+*** At command "by" (line 156 of "/tmp/native-investigation-report-diagnostic-directed12/theories/Finite_Directed_Contributions.thy")
+Unfinished session(s): Native_Directed12
+0:00:08 elapsed time, 0:00:06 cpu time, factor 0.80
+

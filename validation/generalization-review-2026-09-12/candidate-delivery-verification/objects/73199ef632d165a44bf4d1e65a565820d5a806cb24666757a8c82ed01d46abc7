@@ -1,0 +1,2560 @@
+{
+  "archives": [
+    {
+      "archive": "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-12/candidate-construction",
+      "index_sha256": "3c7673725f2c754e5bb5253867b57c28a90aacf3079f85ced43b7b6a5cb7692e",
+      "manifest_sha256": "6424d1317b84230f59ddec2f05ddd7fe80d177cbd4e7db277344e38a31d93867",
+      "verified_references": 2964,
+      "verified_decoded_blobs": 15
+    },
+    {
+      "archive": "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-12/candidate-construction-delivery",
+      "index_sha256": "eaf99fc288c485a5ba3dfeaa54a95f36c881903860396ec525e5853f0ebf011c",
+      "manifest_sha256": "85ffd8a11e10b1ab580c4b79a596309f8e6e1339d03df778c9d29babccd4e737",
+      "verified_references": 2357,
+      "verified_decoded_blobs": 11
+    }
+  ],
+  "source_check": {
+    "session": "RRA_Factor_Structural_Bootstrap",
+    "accepted_source_theories": 836,
+    "unchanged_recorded_build_inputs": 842,
+    "build_invocation": "6f81afd8-4c5e-4b1c-ab08-500ff03e0264"
+  },
+  "verified_runtime_copies": 3012,
+  "logical_copy_bytes": 3575559681,
+  "supplemental_replays": [
+    {
+      "stage": "storage-initial",
+      "receipt": {
+        "investigation": "storage-initial",
+        "status": "accepted",
+        "original_receipt_sha256": "92504a9374b60f9f6b0ec302dfec3c264a8d66c061c38b54b6ace53435bdd481",
+        "archive_index_sha256": "eaf99fc288c485a5ba3dfeaa54a95f36c881903860396ec525e5853f0ebf011c",
+        "replayer_sha256": "bd2ec9ac38183679c38e6c5abe6e6ba12fc987fa07777aa40a1f3561f5d9f34a",
+        "runtime_program_sha256": "7d3a016a661a2d274c339731fcc724727e9ab5be52a3f69107256e5d53fd7ad3",
+        "evidence_io_sha256": "72b87df5f4f3ef4c7fc9a425ce4551f0df1c015916857d52eb2eb58040343fff",
+        "results_log_sha256": "d8893ade35d72de25790c1eafbe17115147bde95f17df79e3e3f44c54766f286",
+        "generated_engine_sha256": "268dd5589c44fd3efa8b3a90cc12dea283fa2a4fc1d6975f23732e7172da7a5b",
+        "poly_sha256": "47efc18d0b38bc908c8b29798575501e8b7b027f593022c80ff1acc55b9495b4",
+        "checked_fields": [
+          "input_formed",
+          "residual",
+          "safe_facets",
+          "conflicts",
+          "repairs",
+          "unrepairable",
+          "extension",
+          "complete profiles",
+          "complete ordered losses",
+          "complete revision and admission gate"
+        ],
+        "facts": {
+          "input_formed": true,
+          "candidate_count": 2,
+          "available_facets": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "selected": [],
+          "safe": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "invalid_selected": [],
+          "residual_count": 1,
+          "conflict_count": 0,
+          "missing_count": 1,
+          "repair_count": 3,
+          "unrepairable_count": 0,
+          "positive_comparisons": 3,
+          "negative_comparisons": 1,
+          "relation_reflexive": true,
+          "relation_transitive": true,
+          "empty_selection_adequate": false,
+          "adequate_selections": [
+            [
+              1
+            ],
+            [
+              2
+            ],
+            [
+              3
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              0,
+              1,
+              2
+            ],
+            [
+              0,
+              1,
+              3
+            ],
+            [
+              0,
+              2,
+              3
+            ],
+            [
+              1,
+              2,
+              3
+            ],
+            [
+              0,
+              1,
+              2,
+              3
+            ]
+          ],
+          "adequate_selection_enumeration": "complete",
+          "extension_adequate": true,
+          "sound_language_adequate": true,
+          "revision": {
+            "retained": [],
+            "required_withdrawals": [],
+            "new_missing_after_withdrawal": [],
+            "reuse_original_repairs_adequate": true,
+            "recomputed_selection": [
+              1,
+              2,
+              3
+            ],
+            "residual": []
+          },
+          "evaluation_signature": "50288d9f83bd93d3093635c1b271b0b0610bb40be7fdc0bd8aedbbaeec32e95d"
+        },
+        "result": {
+          "input_formed": true,
+          "residual": [
+            [
+              1,
+              0
+            ]
+          ],
+          "profiles": [
+            {
+              "candidate": 0,
+              "profile": []
+            },
+            {
+              "candidate": 1,
+              "profile": []
+            }
+          ],
+          "losses": [
+            {
+              "from": 0,
+              "to": 0,
+              "losses": []
+            },
+            {
+              "from": 0,
+              "to": 1,
+              "losses": []
+            },
+            {
+              "from": 1,
+              "to": 0,
+              "losses": []
+            },
+            {
+              "from": 1,
+              "to": 1,
+              "losses": []
+            }
+          ],
+          "safe_facets": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "conflicts": [],
+          "repairs": [
+            [
+              1,
+              0,
+              1,
+              0
+            ],
+            [
+              1,
+              0,
+              2,
+              0
+            ],
+            [
+              1,
+              0,
+              3,
+              0
+            ]
+          ],
+          "unrepairable": [],
+          "extension": [
+            1,
+            2,
+            3
+          ],
+          "revision": {
+            "retained": [],
+            "withdrawn": [],
+            "repairs": [
+              [
+                1,
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                2,
+                0
+              ],
+              [
+                1,
+                0,
+                3,
+                0
+              ]
+            ],
+            "selection": [
+              1,
+              2,
+              3
+            ],
+            "residual": []
+          }
+        },
+        "boundary": "Exact retained code and inputs reproduce every complete result and pass independent reconstruction. This does not repeat proof checking, candidate construction, or subject-meaning justification."
+      },
+      "receipt_sha256": "832e21e22731a7f95711aa56b497ea25917f9aedb26aadb832462c5b082a0b58"
+    },
+    {
+      "stage": "storage-followed",
+      "receipt": {
+        "investigation": "storage-followed",
+        "status": "accepted",
+        "original_receipt_sha256": "61fb6628804a9e800c98b781c952faf482b8c05abb20af305b2c7d49c511efe3",
+        "archive_index_sha256": "eaf99fc288c485a5ba3dfeaa54a95f36c881903860396ec525e5853f0ebf011c",
+        "replayer_sha256": "bd2ec9ac38183679c38e6c5abe6e6ba12fc987fa07777aa40a1f3561f5d9f34a",
+        "runtime_program_sha256": "3ebab27dec09ac3509f621de6440ef062de7676cc4c9e5424ae2f9373ed7662c",
+        "evidence_io_sha256": "72b87df5f4f3ef4c7fc9a425ce4551f0df1c015916857d52eb2eb58040343fff",
+        "results_log_sha256": "8f2e3a4bd2532139583791e97e04991ff87465a7fa7f842a7c029214034f73a2",
+        "generated_engine_sha256": "268dd5589c44fd3efa8b3a90cc12dea283fa2a4fc1d6975f23732e7172da7a5b",
+        "poly_sha256": "47efc18d0b38bc908c8b29798575501e8b7b027f593022c80ff1acc55b9495b4",
+        "checked_fields": [
+          "input_formed",
+          "residual",
+          "safe_facets",
+          "conflicts",
+          "repairs",
+          "unrepairable",
+          "extension",
+          "complete profiles",
+          "complete ordered losses",
+          "complete revision and admission gate"
+        ],
+        "facts": {
+          "input_formed": true,
+          "candidate_count": 2,
+          "available_facets": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "selected": [
+            1,
+            2,
+            3
+          ],
+          "safe": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "invalid_selected": [],
+          "residual_count": 0,
+          "conflict_count": 0,
+          "missing_count": 0,
+          "repair_count": 0,
+          "unrepairable_count": 0,
+          "positive_comparisons": 3,
+          "negative_comparisons": 1,
+          "relation_reflexive": true,
+          "relation_transitive": true,
+          "empty_selection_adequate": false,
+          "adequate_selections": [
+            [
+              1
+            ],
+            [
+              2
+            ],
+            [
+              3
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              0,
+              1,
+              2
+            ],
+            [
+              0,
+              1,
+              3
+            ],
+            [
+              0,
+              2,
+              3
+            ],
+            [
+              1,
+              2,
+              3
+            ],
+            [
+              0,
+              1,
+              2,
+              3
+            ]
+          ],
+          "adequate_selection_enumeration": "complete",
+          "extension_adequate": true,
+          "sound_language_adequate": true,
+          "revision": {
+            "retained": [
+              1,
+              2,
+              3
+            ],
+            "required_withdrawals": [],
+            "new_missing_after_withdrawal": [],
+            "reuse_original_repairs_adequate": true,
+            "recomputed_selection": [
+              1,
+              2,
+              3
+            ],
+            "residual": []
+          },
+          "evaluation_signature": "c2a3a473088fb29639a1303ef064d07dfc134866dfdb2a79194e1439a89c569f"
+        },
+        "result": {
+          "input_formed": true,
+          "residual": [],
+          "profiles": [
+            {
+              "candidate": 0,
+              "profile": []
+            },
+            {
+              "candidate": 1,
+              "profile": [
+                [
+                  1,
+                  0
+                ],
+                [
+                  2,
+                  0
+                ],
+                [
+                  3,
+                  0
+                ]
+              ]
+            }
+          ],
+          "losses": [
+            {
+              "from": 0,
+              "to": 0,
+              "losses": []
+            },
+            {
+              "from": 0,
+              "to": 1,
+              "losses": []
+            },
+            {
+              "from": 1,
+              "to": 0,
+              "losses": [
+                [
+                  1,
+                  0
+                ],
+                [
+                  2,
+                  0
+                ],
+                [
+                  3,
+                  0
+                ]
+              ]
+            },
+            {
+              "from": 1,
+              "to": 1,
+              "losses": []
+            }
+          ],
+          "safe_facets": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "conflicts": [],
+          "repairs": [],
+          "unrepairable": [],
+          "extension": [
+            1,
+            2,
+            3
+          ],
+          "revision": {
+            "retained": [
+              1,
+              2,
+              3
+            ],
+            "withdrawn": [],
+            "repairs": [],
+            "selection": [
+              1,
+              2,
+              3
+            ],
+            "residual": []
+          }
+        },
+        "boundary": "Exact retained code and inputs reproduce every complete result and pass independent reconstruction. This does not repeat proof checking, candidate construction, or subject-meaning justification."
+      },
+      "receipt_sha256": "14a49e0da7fec77b0af27e58cc49becc36355a1d129137cb52a0f88a78c2a224"
+    },
+    {
+      "stage": "documentation-initial",
+      "receipt": {
+        "investigation": "documentation-initial",
+        "status": "accepted",
+        "original_receipt_sha256": "baee91f04303bf13ec705e793ef261c78b4e4684e86c59e142e90db6888cd235",
+        "archive_index_sha256": "eaf99fc288c485a5ba3dfeaa54a95f36c881903860396ec525e5853f0ebf011c",
+        "replayer_sha256": "bd2ec9ac38183679c38e6c5abe6e6ba12fc987fa07777aa40a1f3561f5d9f34a",
+        "runtime_program_sha256": "e4840b90dd0c726a203d64ec766e5657d4121746a77986bfa7f638a9af5b85b3",
+        "evidence_io_sha256": "72b87df5f4f3ef4c7fc9a425ce4551f0df1c015916857d52eb2eb58040343fff",
+        "results_log_sha256": "67f29547cea0ad2864d1dc3d294d8e3d047227e1b1159292acf104d142a7e364",
+        "generated_engine_sha256": "268dd5589c44fd3efa8b3a90cc12dea283fa2a4fc1d6975f23732e7172da7a5b",
+        "poly_sha256": "47efc18d0b38bc908c8b29798575501e8b7b027f593022c80ff1acc55b9495b4",
+        "checked_fields": [
+          "input_formed",
+          "residual",
+          "safe_facets",
+          "conflicts",
+          "repairs",
+          "unrepairable",
+          "extension",
+          "complete profiles",
+          "complete ordered losses",
+          "complete revision and admission gate"
+        ],
+        "facts": {
+          "input_formed": true,
+          "candidate_count": 2,
+          "available_facets": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "selected": [],
+          "safe": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "invalid_selected": [],
+          "residual_count": 1,
+          "conflict_count": 0,
+          "missing_count": 1,
+          "repair_count": 5,
+          "unrepairable_count": 0,
+          "positive_comparisons": 3,
+          "negative_comparisons": 1,
+          "relation_reflexive": true,
+          "relation_transitive": true,
+          "empty_selection_adequate": false,
+          "adequate_selections": [
+            [
+              0
+            ],
+            [
+              1
+            ],
+            [
+              2
+            ],
+            [
+              3
+            ],
+            [
+              5
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              4
+            ],
+            [
+              0,
+              5
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              2,
+              4
+            ],
+            [
+              2,
+              5
+            ],
+            [
+              3,
+              4
+            ],
+            [
+              3,
+              5
+            ],
+            [
+              4,
+              5
+            ],
+            [
+              0,
+              1,
+              2
+            ],
+            [
+              0,
+              1,
+              3
+            ],
+            [
+              0,
+              1,
+              4
+            ],
+            [
+              0,
+              1,
+              5
+            ],
+            [
+              0,
+              2,
+              3
+            ],
+            [
+              0,
+              2,
+              4
+            ],
+            [
+              0,
+              2,
+              5
+            ],
+            [
+              0,
+              3,
+              4
+            ],
+            [
+              0,
+              3,
+              5
+            ],
+            [
+              0,
+              4,
+              5
+            ],
+            [
+              1,
+              2,
+              3
+            ],
+            [
+              1,
+              2,
+              4
+            ],
+            [
+              1,
+              2,
+              5
+            ],
+            [
+              1,
+              3,
+              4
+            ],
+            [
+              1,
+              3,
+              5
+            ],
+            [
+              1,
+              4,
+              5
+            ],
+            [
+              2,
+              3,
+              4
+            ],
+            [
+              2,
+              3,
+              5
+            ],
+            [
+              2,
+              4,
+              5
+            ],
+            [
+              3,
+              4,
+              5
+            ],
+            [
+              0,
+              1,
+              2,
+              3
+            ],
+            [
+              0,
+              1,
+              2,
+              4
+            ],
+            [
+              0,
+              1,
+              2,
+              5
+            ],
+            [
+              0,
+              1,
+              3,
+              4
+            ],
+            [
+              0,
+              1,
+              3,
+              5
+            ],
+            [
+              0,
+              1,
+              4,
+              5
+            ],
+            [
+              0,
+              2,
+              3,
+              4
+            ],
+            [
+              0,
+              2,
+              3,
+              5
+            ],
+            [
+              0,
+              2,
+              4,
+              5
+            ],
+            [
+              0,
+              3,
+              4,
+              5
+            ],
+            [
+              1,
+              2,
+              3,
+              4
+            ],
+            [
+              1,
+              2,
+              3,
+              5
+            ],
+            [
+              1,
+              2,
+              4,
+              5
+            ],
+            [
+              1,
+              3,
+              4,
+              5
+            ],
+            [
+              2,
+              3,
+              4,
+              5
+            ],
+            [
+              0,
+              1,
+              2,
+              3,
+              4
+            ],
+            [
+              0,
+              1,
+              2,
+              3,
+              5
+            ],
+            [
+              0,
+              1,
+              2,
+              4,
+              5
+            ],
+            [
+              0,
+              1,
+              3,
+              4,
+              5
+            ],
+            [
+              0,
+              2,
+              3,
+              4,
+              5
+            ],
+            [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          ],
+          "adequate_selection_enumeration": "complete",
+          "extension_adequate": true,
+          "sound_language_adequate": true,
+          "revision": {
+            "retained": [],
+            "required_withdrawals": [],
+            "new_missing_after_withdrawal": [],
+            "reuse_original_repairs_adequate": true,
+            "recomputed_selection": [
+              0,
+              1,
+              2,
+              3,
+              5
+            ],
+            "residual": []
+          },
+          "evaluation_signature": "c723410202d94fda62a52c9aaa08547cd688a51c3270343a441e5dc9031c282a"
+        },
+        "result": {
+          "input_formed": true,
+          "residual": [
+            [
+              1,
+              0
+            ]
+          ],
+          "profiles": [
+            {
+              "candidate": 0,
+              "profile": []
+            },
+            {
+              "candidate": 1,
+              "profile": []
+            }
+          ],
+          "losses": [
+            {
+              "from": 0,
+              "to": 0,
+              "losses": []
+            },
+            {
+              "from": 0,
+              "to": 1,
+              "losses": []
+            },
+            {
+              "from": 1,
+              "to": 0,
+              "losses": []
+            },
+            {
+              "from": 1,
+              "to": 1,
+              "losses": []
+            }
+          ],
+          "safe_facets": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "conflicts": [],
+          "repairs": [
+            [
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              0,
+              1,
+              0
+            ],
+            [
+              1,
+              0,
+              2,
+              0
+            ],
+            [
+              1,
+              0,
+              3,
+              0
+            ],
+            [
+              1,
+              0,
+              5,
+              0
+            ]
+          ],
+          "unrepairable": [],
+          "extension": [
+            0,
+            1,
+            2,
+            3,
+            5
+          ],
+          "revision": {
+            "retained": [],
+            "withdrawn": [],
+            "repairs": [
+              [
+                1,
+                0,
+                0,
+                0
+              ],
+              [
+                1,
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                2,
+                0
+              ],
+              [
+                1,
+                0,
+                3,
+                0
+              ],
+              [
+                1,
+                0,
+                5,
+                0
+              ]
+            ],
+            "selection": [
+              0,
+              1,
+              2,
+              3,
+              5
+            ],
+            "residual": []
+          }
+        },
+        "boundary": "Exact retained code and inputs reproduce every complete result and pass independent reconstruction. This does not repeat proof checking, candidate construction, or subject-meaning justification."
+      },
+      "receipt_sha256": "9bb06aeea2b0f71b7f5e693734837c88aca8c8d3d05183d430d94b457275c56b"
+    },
+    {
+      "stage": "documentation-followed",
+      "receipt": {
+        "investigation": "documentation-followed",
+        "status": "accepted",
+        "original_receipt_sha256": "a567ecdd37feb217f1eba372277230c78114229d8372eb137707c1f7473a62ee",
+        "archive_index_sha256": "eaf99fc288c485a5ba3dfeaa54a95f36c881903860396ec525e5853f0ebf011c",
+        "replayer_sha256": "bd2ec9ac38183679c38e6c5abe6e6ba12fc987fa07777aa40a1f3561f5d9f34a",
+        "runtime_program_sha256": "592fe85b3add22a28e04b636827595aec051d2ffa01d9aa58947c567f3d46752",
+        "evidence_io_sha256": "72b87df5f4f3ef4c7fc9a425ce4551f0df1c015916857d52eb2eb58040343fff",
+        "results_log_sha256": "5496dc6122cb18740cbac3fc07586dd279e3d7a54d852189b22eac7365e97495",
+        "generated_engine_sha256": "268dd5589c44fd3efa8b3a90cc12dea283fa2a4fc1d6975f23732e7172da7a5b",
+        "poly_sha256": "47efc18d0b38bc908c8b29798575501e8b7b027f593022c80ff1acc55b9495b4",
+        "checked_fields": [
+          "input_formed",
+          "residual",
+          "safe_facets",
+          "conflicts",
+          "repairs",
+          "unrepairable",
+          "extension",
+          "complete profiles",
+          "complete ordered losses",
+          "complete revision and admission gate"
+        ],
+        "facts": {
+          "input_formed": true,
+          "candidate_count": 2,
+          "available_facets": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "selected": [
+            0,
+            1,
+            2,
+            3,
+            5
+          ],
+          "safe": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "invalid_selected": [],
+          "residual_count": 0,
+          "conflict_count": 0,
+          "missing_count": 0,
+          "repair_count": 0,
+          "unrepairable_count": 0,
+          "positive_comparisons": 3,
+          "negative_comparisons": 1,
+          "relation_reflexive": true,
+          "relation_transitive": true,
+          "empty_selection_adequate": false,
+          "adequate_selections": [
+            [
+              0
+            ],
+            [
+              1
+            ],
+            [
+              2
+            ],
+            [
+              3
+            ],
+            [
+              5
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              4
+            ],
+            [
+              0,
+              5
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              2,
+              4
+            ],
+            [
+              2,
+              5
+            ],
+            [
+              3,
+              4
+            ],
+            [
+              3,
+              5
+            ],
+            [
+              4,
+              5
+            ],
+            [
+              0,
+              1,
+              2
+            ],
+            [
+              0,
+              1,
+              3
+            ],
+            [
+              0,
+              1,
+              4
+            ],
+            [
+              0,
+              1,
+              5
+            ],
+            [
+              0,
+              2,
+              3
+            ],
+            [
+              0,
+              2,
+              4
+            ],
+            [
+              0,
+              2,
+              5
+            ],
+            [
+              0,
+              3,
+              4
+            ],
+            [
+              0,
+              3,
+              5
+            ],
+            [
+              0,
+              4,
+              5
+            ],
+            [
+              1,
+              2,
+              3
+            ],
+            [
+              1,
+              2,
+              4
+            ],
+            [
+              1,
+              2,
+              5
+            ],
+            [
+              1,
+              3,
+              4
+            ],
+            [
+              1,
+              3,
+              5
+            ],
+            [
+              1,
+              4,
+              5
+            ],
+            [
+              2,
+              3,
+              4
+            ],
+            [
+              2,
+              3,
+              5
+            ],
+            [
+              2,
+              4,
+              5
+            ],
+            [
+              3,
+              4,
+              5
+            ],
+            [
+              0,
+              1,
+              2,
+              3
+            ],
+            [
+              0,
+              1,
+              2,
+              4
+            ],
+            [
+              0,
+              1,
+              2,
+              5
+            ],
+            [
+              0,
+              1,
+              3,
+              4
+            ],
+            [
+              0,
+              1,
+              3,
+              5
+            ],
+            [
+              0,
+              1,
+              4,
+              5
+            ],
+            [
+              0,
+              2,
+              3,
+              4
+            ],
+            [
+              0,
+              2,
+              3,
+              5
+            ],
+            [
+              0,
+              2,
+              4,
+              5
+            ],
+            [
+              0,
+              3,
+              4,
+              5
+            ],
+            [
+              1,
+              2,
+              3,
+              4
+            ],
+            [
+              1,
+              2,
+              3,
+              5
+            ],
+            [
+              1,
+              2,
+              4,
+              5
+            ],
+            [
+              1,
+              3,
+              4,
+              5
+            ],
+            [
+              2,
+              3,
+              4,
+              5
+            ],
+            [
+              0,
+              1,
+              2,
+              3,
+              4
+            ],
+            [
+              0,
+              1,
+              2,
+              3,
+              5
+            ],
+            [
+              0,
+              1,
+              2,
+              4,
+              5
+            ],
+            [
+              0,
+              1,
+              3,
+              4,
+              5
+            ],
+            [
+              0,
+              2,
+              3,
+              4,
+              5
+            ],
+            [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          ],
+          "adequate_selection_enumeration": "complete",
+          "extension_adequate": true,
+          "sound_language_adequate": true,
+          "revision": {
+            "retained": [
+              0,
+              1,
+              2,
+              3,
+              5
+            ],
+            "required_withdrawals": [],
+            "new_missing_after_withdrawal": [],
+            "reuse_original_repairs_adequate": true,
+            "recomputed_selection": [
+              0,
+              1,
+              2,
+              3,
+              5
+            ],
+            "residual": []
+          },
+          "evaluation_signature": "b77466e18d211a785f08671627de3e800386bf64da8392a774549d3dafcd1793"
+        },
+        "result": {
+          "input_formed": true,
+          "residual": [],
+          "profiles": [
+            {
+              "candidate": 0,
+              "profile": []
+            },
+            {
+              "candidate": 1,
+              "profile": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  1,
+                  0
+                ],
+                [
+                  2,
+                  0
+                ],
+                [
+                  3,
+                  0
+                ],
+                [
+                  5,
+                  0
+                ]
+              ]
+            }
+          ],
+          "losses": [
+            {
+              "from": 0,
+              "to": 0,
+              "losses": []
+            },
+            {
+              "from": 0,
+              "to": 1,
+              "losses": []
+            },
+            {
+              "from": 1,
+              "to": 0,
+              "losses": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  1,
+                  0
+                ],
+                [
+                  2,
+                  0
+                ],
+                [
+                  3,
+                  0
+                ],
+                [
+                  5,
+                  0
+                ]
+              ]
+            },
+            {
+              "from": 1,
+              "to": 1,
+              "losses": []
+            }
+          ],
+          "safe_facets": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "conflicts": [],
+          "repairs": [],
+          "unrepairable": [],
+          "extension": [
+            0,
+            1,
+            2,
+            3,
+            5
+          ],
+          "revision": {
+            "retained": [
+              0,
+              1,
+              2,
+              3,
+              5
+            ],
+            "withdrawn": [],
+            "repairs": [],
+            "selection": [
+              0,
+              1,
+              2,
+              3,
+              5
+            ],
+            "residual": []
+          }
+        },
+        "boundary": "Exact retained code and inputs reproduce every complete result and pass independent reconstruction. This does not repeat proof checking, candidate construction, or subject-meaning justification."
+      },
+      "receipt_sha256": "e6388cbde89b476dc741635115612b44b778ed7e9ec649958007d9258fc9eaef"
+    }
+  ],
+  "primary_replays": {
+    "complete": true,
+    "investigation_replays": 118,
+    "native_replays": 10,
+    "records": [
+      {
+        "kind": "investigation",
+        "stage": "application-assessment-mutations-investigation1--assessment-rejection-boundaries--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/application-assessment-mutations-investigation1--assessment-rejection-boundaries--followed/replay.json",
+        "sha256": "dca687e433e28a951c01a0e73bca4ad7f84a62ea7661a6994b9e8ffbba9e102e",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "application-assessment-mutations-investigation1--assessment-rejection-boundaries--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/application-assessment-mutations-investigation1--assessment-rejection-boundaries--initial/replay.json",
+        "sha256": "6f8f274a0db03e7124bfb36e181f9f1035ce9fea51c87ddb393139b2df4ae352",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "application-catalog14-investigation1--actual-catalog-domain--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/application-catalog14-investigation1--actual-catalog-domain--followed/replay.json",
+        "sha256": "726fc0142fdf008b0abe017758fdcd421e101d754528f74442a83cf82080e02c",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "application-catalog14-investigation1--actual-catalog-domain--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/application-catalog14-investigation1--actual-catalog-domain--initial/replay.json",
+        "sha256": "d6f339edc3d95161715a697f20100ab78e95b4272acd61982ccbdcd6f0fb10de",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "application-controls2-investigation1--whole-binding-controls--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/application-controls2-investigation1--whole-binding-controls--followed/replay.json",
+        "sha256": "fde4fa915f94d5eca0f5857820aaf34bfd94c9c417225123ce7eeb0072e66cc1",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "application-controls2-investigation1--whole-binding-controls--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/application-controls2-investigation1--whole-binding-controls--initial/replay.json",
+        "sha256": "31af3bdd549c212c72cc0a76c6d8251fa13289e15a3803c9c1f11de54c785ff8",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "application-gate-investigation1--complete-construction-input--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/application-gate-investigation1--complete-construction-input--followed/replay.json",
+        "sha256": "6cc203e3c9769b6c3bc4ef2e79457ffb85c3d32cfd997712df63cf57f9dedf6c",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "application-gate-investigation1--complete-construction-input--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/application-gate-investigation1--complete-construction-input--initial/replay.json",
+        "sha256": "a1f7cc41c14db2a43fcc2a73ea3362e8aad9bc86f78d697d604e0d895fb82780",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "application-native-check-investigation1--constructive-application-interface--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/application-native-check-investigation1--constructive-application-interface--followed/replay.json",
+        "sha256": "71f242354e9fcca16992c0f379e0701ff15c48450bd25bf0e4b9a59c68c8ec23",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "application-native-check-investigation1--constructive-application-interface--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/application-native-check-investigation1--constructive-application-interface--initial/replay.json",
+        "sha256": "4aeb7cff290707330123b719d7918657968597776a77398e1e8645af7d02a807",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "application-performance14-investigation1--actual-application-search-cost--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/application-performance14-investigation1--actual-application-search-cost--followed/replay.json",
+        "sha256": "2292ec465d111a3cd969111383e45d34a62ba5b25ec9a8dcc84c620803a5aebe",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "application-performance14-investigation1--actual-application-search-cost--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/application-performance14-investigation1--actual-application-search-cost--initial/replay.json",
+        "sha256": "a261b5d3f9fabd44e43f56a2805c998c8df284139be3e493f2e2d39d91294787",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "application-performance18-investigation1--indexed-application-cost--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/application-performance18-investigation1--indexed-application-cost--followed/replay.json",
+        "sha256": "fc6b0636996402049a93ba79e921e9859fbe20783856fc7063d8262150146a50",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "application-performance18-investigation1--indexed-application-cost--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/application-performance18-investigation1--indexed-application-cost--initial/replay.json",
+        "sha256": "7b26166b02a50066a7acb9c9031eaba296478875bbb3f2222972f23b1bbd9a4c",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "application-runtime12-investigation1--native-completion--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/application-runtime12-investigation1--native-completion--followed/replay.json",
+        "sha256": "85b5e56094552061c0665edcc12ad4d9b88768834645b8241ba64b4802504847",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "application-runtime12-investigation1--native-completion--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/application-runtime12-investigation1--native-completion--initial/replay.json",
+        "sha256": "48bc5034c296f6b4bd26c0740f893feb30eef7ddb3ed8bf6c3bf54c551b3a497",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "application-runtime13-investigation1--complete-finite-collections--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/application-runtime13-investigation1--complete-finite-collections--followed/replay.json",
+        "sha256": "e5e663df83166ead293dfa1abd5c4d50b5b9ce7332c2799e5477515a25c9fb5f",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "application-runtime13-investigation1--complete-finite-collections--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/application-runtime13-investigation1--complete-finite-collections--initial/replay.json",
+        "sha256": "a257ef7e302564f9fd5f90d7c7cdad7207246f828478e780e30b84ec2917e1fa",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "applicationconstruction-repairs--proof-repair10-investigation1--proof-repair--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/applicationconstruction-repairs--proof-repair10-investigation1--proof-repair--followed/replay.json",
+        "sha256": "48888256a77465e956390f5b7180d38e78f9c30a3a3cf6c1a8eab6a87024d332",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "applicationconstruction-repairs--proof-repair10-investigation1--proof-repair--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/applicationconstruction-repairs--proof-repair10-investigation1--proof-repair--initial/replay.json",
+        "sha256": "aaa72557f0597d1bea60d514777958fbca7a32d683b6a3787d788eb4592480ee",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "applicationconstruction-repairs--proof-repair11-investigation1--proof-repair--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/applicationconstruction-repairs--proof-repair11-investigation1--proof-repair--followed/replay.json",
+        "sha256": "49f11501893b510d5599de931223381df15f1026e01f45de2101e94fdff80fa0",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "applicationconstruction-repairs--proof-repair11-investigation1--proof-repair--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/applicationconstruction-repairs--proof-repair11-investigation1--proof-repair--initial/replay.json",
+        "sha256": "e3c9d24e23db00af0ce1cb88ca7fd67e63152ad395cf2e1cb966dea51b21b4bb",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "applicationconstruction-repairs--proof-repair15-investigation1--proof-repair--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/applicationconstruction-repairs--proof-repair15-investigation1--proof-repair--followed/replay.json",
+        "sha256": "5913695b123cd8c7cc97685c0f229bf2d3dc2fce3d45ce6789a8f783564b088d",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "applicationconstruction-repairs--proof-repair15-investigation1--proof-repair--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/applicationconstruction-repairs--proof-repair15-investigation1--proof-repair--initial/replay.json",
+        "sha256": "dbb64cc4e5d1c3e0f974d54cca5d58b6d24dad788bb2d6559b19bf463f2a2b87",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "applicationconstruction-repairs--proof-repair16-investigation1--proof-repair--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/applicationconstruction-repairs--proof-repair16-investigation1--proof-repair--followed/replay.json",
+        "sha256": "2410fe2d5e8f79fcac81934d5111c605e1f8ca37a2d69d1ea920847ed3d104db",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "applicationconstruction-repairs--proof-repair16-investigation1--proof-repair--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/applicationconstruction-repairs--proof-repair16-investigation1--proof-repair--initial/replay.json",
+        "sha256": "c3b3bdf71fd36ff83bf5c7cf42506dc3f584967dfeebe96039490ea6ea99f6ef",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "applicationconstruction-repairs--proof-repair17-investigation1--proof-repair--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/applicationconstruction-repairs--proof-repair17-investigation1--proof-repair--followed/replay.json",
+        "sha256": "6137540e6e8d6d95558a8f616ebd121a207120ab176c2af315b332bbdde3e487",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "applicationconstruction-repairs--proof-repair17-investigation1--proof-repair--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/applicationconstruction-repairs--proof-repair17-investigation1--proof-repair--initial/replay.json",
+        "sha256": "70184c60715f255a422dfd6a62e09af6d11072a9baafb0fa7afc69643d59df02",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "applicationconstruction-repairs--proof-repair19-investigation1--proof-repair--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/applicationconstruction-repairs--proof-repair19-investigation1--proof-repair--followed/replay.json",
+        "sha256": "4407bc0b6cc5b4ba38731daa76345a2961e5fc0e82b0fe07fdca0b4d520bdab6",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "applicationconstruction-repairs--proof-repair19-investigation1--proof-repair--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/applicationconstruction-repairs--proof-repair19-investigation1--proof-repair--initial/replay.json",
+        "sha256": "a571117723fa22c99c640a396190dd4513e4e5b213a47ffe6cfdf954667d8ae3",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "applicationconstruction-repairs--proof-repair2-investigation--proof-repair--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/applicationconstruction-repairs--proof-repair2-investigation--proof-repair--followed/replay.json",
+        "sha256": "9b5ca2a5064edc79de6a82497e24f19abd9ad745404c25d339cef6d88f4a2bf3",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "applicationconstruction-repairs--proof-repair2-investigation--proof-repair--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/applicationconstruction-repairs--proof-repair2-investigation--proof-repair--initial/replay.json",
+        "sha256": "12f6298f77f0d3c0a31dd4a2f61814208981895dea26931ceb8a31a87bb3b88c",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "applicationconstruction-repairs--proof-repair3-investigation1--proof-repair--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/applicationconstruction-repairs--proof-repair3-investigation1--proof-repair--followed/replay.json",
+        "sha256": "e48ce61334eff5960b4f749d8aca3188b4a0476ec7b78564d1412b892ffd9ec1",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "applicationconstruction-repairs--proof-repair3-investigation1--proof-repair--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/applicationconstruction-repairs--proof-repair3-investigation1--proof-repair--initial/replay.json",
+        "sha256": "ab92d76791b1066f051bf16c5557d742cf04a2e705899b3e1f396a263d6cc390",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "applicationconstruction-repairs--proof-repair4-investigation1--proof-repair--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/applicationconstruction-repairs--proof-repair4-investigation1--proof-repair--followed/replay.json",
+        "sha256": "a493a74e96e412c4d277c2bd5d0d4cf582882057ebd9caf0951e4dd0bac2a7ec",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "applicationconstruction-repairs--proof-repair4-investigation1--proof-repair--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/applicationconstruction-repairs--proof-repair4-investigation1--proof-repair--initial/replay.json",
+        "sha256": "dfc2e908fdef3002c4a79ded037327c0b66c37b1efa794fa6fb09da9c60efe62",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "applicationconstruction-repairs--proof-repair5-investigation1--proof-repair--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/applicationconstruction-repairs--proof-repair5-investigation1--proof-repair--followed/replay.json",
+        "sha256": "56df26457e72dd26e8da197da79024a9a975a8d5b3e20b4e22469e525b43e42b",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "applicationconstruction-repairs--proof-repair5-investigation1--proof-repair--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/applicationconstruction-repairs--proof-repair5-investigation1--proof-repair--initial/replay.json",
+        "sha256": "205241554d7a343ddb32464242be44e0451bbe90d3b4cab8fb990ec9635ec18b",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "applicationconstruction-repairs--proof-repair6-investigation1--proof-repair--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/applicationconstruction-repairs--proof-repair6-investigation1--proof-repair--followed/replay.json",
+        "sha256": "cf82e474f804514848506390ccea0470fefa38cdc577415ee62b5e598781d2d6",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "applicationconstruction-repairs--proof-repair6-investigation1--proof-repair--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/applicationconstruction-repairs--proof-repair6-investigation1--proof-repair--initial/replay.json",
+        "sha256": "b92cf5a9436952abb177efe188a978755cee3e1f5592e24672fc060683752f67",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "applicationconstruction-repairs--proof-repair7-investigation1--proof-repair--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/applicationconstruction-repairs--proof-repair7-investigation1--proof-repair--followed/replay.json",
+        "sha256": "26270a15b70a84737c8f5a717cc6189d6fd60f6b098159cb04f39770014916f4",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "applicationconstruction-repairs--proof-repair7-investigation1--proof-repair--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/applicationconstruction-repairs--proof-repair7-investigation1--proof-repair--initial/replay.json",
+        "sha256": "80a70c340b1e27efac0879489532ecc27a9f9d46bd8feb099170f630fc5e67bf",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "applicationconstruction-repairs--proof-repair8-investigation1--proof-repair--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/applicationconstruction-repairs--proof-repair8-investigation1--proof-repair--followed/replay.json",
+        "sha256": "e94cf83b146630ea5edc8ebc4f9678d5df96144fc5764ba82ea104f4b464b8f4",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "applicationconstruction-repairs--proof-repair8-investigation1--proof-repair--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/applicationconstruction-repairs--proof-repair8-investigation1--proof-repair--initial/replay.json",
+        "sha256": "ec5b5cfd632cd04f02d925abb6bffd76c38805f5c3096e36741b931f5552cc56",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "applicationconstruction-repairs--proof-repair9-investigation1--proof-repair--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/applicationconstruction-repairs--proof-repair9-investigation1--proof-repair--followed/replay.json",
+        "sha256": "5866e2db88105c708f633f4040c521049921d54103ac758b0f451c3b4c5b6dd9",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "applicationconstruction-repairs--proof-repair9-investigation1--proof-repair--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/applicationconstruction-repairs--proof-repair9-investigation1--proof-repair--initial/replay.json",
+        "sha256": "23fecb9e26284554406ac8bad89f5524555518c62294395c994d6fca35ceaa8f",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "assessment-investigation1--binding-result-boundary--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/assessment-investigation1--binding-result-boundary--followed/replay.json",
+        "sha256": "49ab5feba6c63d6202bc466d15e4b18c6b49adc0c0a7d215f9c9a4d99e5628ee",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "assessment-investigation1--binding-result-boundary--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/assessment-investigation1--binding-result-boundary--initial/replay.json",
+        "sha256": "ab2bf47ac4c4486c713d473fac517ebb5585fe43249d3aa9cb8ba59651a36c54",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "current-source-validation-investigation1--current-native-source--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/current-source-validation-investigation1--current-native-source--followed/replay.json",
+        "sha256": "f6a917ec3955df7a323ca3c2d2615172e3dbdf0d173ab5486d41d61df5d846bc",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "current-source-validation-investigation1--current-native-source--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/current-source-validation-investigation1--current-native-source--initial/replay.json",
+        "sha256": "5eb71d1d0cb0a05b3564be67ce66309a074ff90678e48b8b25a1bf2db27344d7",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "delivery--closure-audit-investigation1--complete-export-input-scope--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/delivery--closure-audit-investigation1--complete-export-input-scope--followed/replay.json",
+        "sha256": "4b0711ebe3982d876531816c0dc9b93a1b673172d273f8aabb82d54462429aff",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "delivery--closure-audit-investigation1--complete-export-input-scope--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/delivery--closure-audit-investigation1--complete-export-input-scope--initial/replay.json",
+        "sha256": "d8850b4d40d63b7bc51d75b2dcd4cc5b4b0df53f5152330fedcc42544c5648b9",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "delivery--delivery-cleanup-investigation1--preserve-delivery-content--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/delivery--delivery-cleanup-investigation1--preserve-delivery-content--followed/replay.json",
+        "sha256": "d8469120c2be6a1e2bae59feef77829b2b4f241ad93b2033eb47fc442f33859f",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "delivery--delivery-cleanup-investigation1--preserve-delivery-content--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/delivery--delivery-cleanup-investigation1--preserve-delivery-content--initial/replay.json",
+        "sha256": "f2875e28a1f0cb943de90c9f23c074203f2cd8c37f56cd78070c5dbbad18b42f",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "delivery--delivery-gap-investigation1--complete-evidence-delivery--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/delivery--delivery-gap-investigation1--complete-evidence-delivery--followed/replay.json",
+        "sha256": "f2f1df4d85b8876de7d59b0e8e304f6cd9c6d70ce8b0d35fa4d64b9926d3a760",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "delivery--delivery-gap-investigation1--complete-evidence-delivery--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/delivery--delivery-gap-investigation1--complete-evidence-delivery--initial/replay.json",
+        "sha256": "8cf0d649c34c0d29b72223a26cd026a884c896ee77617b9ede155129d4178561",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "delivery--proof-retention-investigation1--exact-proof-procedure-inputs--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/delivery--proof-retention-investigation1--exact-proof-procedure-inputs--followed/replay.json",
+        "sha256": "d80a750ee82cf8be17d5af99e6318498eba281337bf9003720c270a42bb760ee",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "delivery--proof-retention-investigation1--exact-proof-procedure-inputs--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/delivery--proof-retention-investigation1--exact-proof-procedure-inputs--initial/replay.json",
+        "sha256": "028702ccc0f7f7f43e060a428210e555e1a9172e797f79dbcb634e27977e19a5",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "delivery--retention-patch-investigation1--retain-complete-checked-inputs--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/delivery--retention-patch-investigation1--retain-complete-checked-inputs--followed/replay.json",
+        "sha256": "f6432b189596bcc7ec4983ea56ef9199bc578d632ec54398dc2ff16524d67d43",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "delivery--retention-patch-investigation1--retain-complete-checked-inputs--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/delivery--retention-patch-investigation1--retain-complete-checked-inputs--initial/replay.json",
+        "sha256": "9014c7d3ab6637a6b13b8f2400fd4273edec05aa142cb63a22fa3afe1df84304",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "delivery-interface-replay-investigation1--candidate-construction-delivery--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/delivery-interface-replay-investigation1--candidate-construction-delivery--followed/replay.json",
+        "sha256": "126ed10a9b8b112f9815856561a6dd7c427672ade045aa115a1f2880a77c197c",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "delivery-interface-replay-investigation1--candidate-construction-delivery--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/delivery-interface-replay-investigation1--candidate-construction-delivery--initial/replay.json",
+        "sha256": "cebe6fa0abe92771f4189374df2cf8227db79b0bfa2ac814517d71b51d121b4b",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "interface4-investigation1--complete-target-owner-fields--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/interface4-investigation1--complete-target-owner-fields--followed/replay.json",
+        "sha256": "43fde69b63ddbddce6a16a4acdf03f14221065e892e2c7c392851af3291b6d70",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "interface4-investigation1--complete-target-owner-fields--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/interface4-investigation1--complete-target-owner-fields--initial/replay.json",
+        "sha256": "3c8fe6e6c8ebd105a3e1278cc62018eaba7d477481aa771586d52bb7e3e77eb9",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "main-budget2-investigation1--complete-main-session-budget--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/main-budget2-investigation1--complete-main-session-budget--followed/replay.json",
+        "sha256": "6e25072bf0ed4827256291fc9dbd2e8d15773cbaae5000793d5c84847d3c1f22",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "main-budget2-investigation1--complete-main-session-budget--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/main-budget2-investigation1--complete-main-session-budget--initial/replay.json",
+        "sha256": "ecaac8fadfa86dc8b9c09f6539b35c7abe8b22e9925b54dba7ab55f22b664efb",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "native-adoption-investigation1--complete-native-workload--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/native-adoption-investigation1--complete-native-workload--followed/replay.json",
+        "sha256": "0b43acbd8131711e100a86ab27547b07d273a974477139f359b92a812dd82584",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "native-adoption-investigation1--complete-native-workload--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/native-adoption-investigation1--complete-native-workload--initial/replay.json",
+        "sha256": "044a859b839e980325cf7fa74c8a89cf258fed25c9460fa55bd4cb469aeca921",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "native-driver-investigation1--runtime-input-conversion--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/native-driver-investigation1--runtime-input-conversion--followed/replay.json",
+        "sha256": "5aff898ab16f8d0a473375a62ad876bbbecde311c1a534fdd9c2f52a2a9801b4",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "native-driver-investigation1--runtime-input-conversion--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/native-driver-investigation1--runtime-input-conversion--initial/replay.json",
+        "sha256": "92857a81d61fff864a63d57916357bae583cf1a530a75eb90282138f3374bdbd",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "native-performance-investigation1--framed-input--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/native-performance-investigation1--framed-input--followed/replay.json",
+        "sha256": "5ea6263a985cc77b02adc69612311d563160ef5dee589b9538cd385cf51e5e58",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "native-performance-investigation1--framed-input--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/native-performance-investigation1--framed-input--initial/replay.json",
+        "sha256": "2fe04caf2f2d9f7a1ffdd8a429c64b90b2c98621defdafe8976dcf3f63415a6a",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "native-performance-investigation1--integer-representation--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/native-performance-investigation1--integer-representation--followed/replay.json",
+        "sha256": "472d0e2dc8a3da28714668c9e8a0e62699e6c27d0fc8912f1b166122b9fcaf49",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "native-performance-investigation1--integer-representation--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/native-performance-investigation1--integer-representation--initial/replay.json",
+        "sha256": "f3bbbf88462db8c7fde8abe7f851541244b0e80c3acfe57ecf84a8257748f3c4",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proof-repair10-investigation--proof-repair--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proof-repair10-investigation--proof-repair--followed/replay.json",
+        "sha256": "00816d1a629a006712b0c0480f936cc49b71a37064cef6735a6198d41e8479d1",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proof-repair10-investigation--proof-repair--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proof-repair10-investigation--proof-repair--initial/replay.json",
+        "sha256": "52d6fd97c810f89eb9091ace7c8de22a0076281a5542ca06d3887dc3aab24aaa",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proof-repair11-investigation--proof-repair--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proof-repair11-investigation--proof-repair--followed/replay.json",
+        "sha256": "eb70c28b542b934b47f88eba2aeb912e9bdc7b8600143438eedc7033ce8a8031",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proof-repair11-investigation--proof-repair--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proof-repair11-investigation--proof-repair--initial/replay.json",
+        "sha256": "7afe7008e41f4b9c82b1e657bbe44265b072717d2a0f0568807cf0485873c556",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proof-repair12-investigation--proof-repair--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proof-repair12-investigation--proof-repair--followed/replay.json",
+        "sha256": "b799be748e3d09e4ee51e982ab5740c262b8e9e22a418b78b0ba5e73f5785ffb",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proof-repair12-investigation--proof-repair--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proof-repair12-investigation--proof-repair--initial/replay.json",
+        "sha256": "52236613c97fd7079af5ee5542fcb0ab8663106c4b2567abc4e015a4d613303a",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proof-repair13-investigation--proof-repair--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proof-repair13-investigation--proof-repair--followed/replay.json",
+        "sha256": "1152850e5fd5a7d11bd949f8bc6e6a4b910e4a86be0a604ec783f30a5fc23260",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proof-repair13-investigation--proof-repair--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proof-repair13-investigation--proof-repair--initial/replay.json",
+        "sha256": "7c0e3104af72891615aa3bf0dcd7a6365f0d396e218f1a4435de38b4d3ae03b2",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proof-repair14-investigation--proof-repair--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proof-repair14-investigation--proof-repair--followed/replay.json",
+        "sha256": "e21d410e8f3436b702f3b1879daeb29c4b373f1789d684a18ea0565db52c6ece",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proof-repair14-investigation--proof-repair--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proof-repair14-investigation--proof-repair--initial/replay.json",
+        "sha256": "af09ec4d68ff0f79512da7c30ebf418e9d77ae89551aa9d25349f7322263730e",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proof-repair15-investigation--proof-repair--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proof-repair15-investigation--proof-repair--followed/replay.json",
+        "sha256": "7135f45cc11cccc2a30aacb87bebb770203e8b7b4121bc33ce80cb33d261510f",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proof-repair15-investigation--proof-repair--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proof-repair15-investigation--proof-repair--initial/replay.json",
+        "sha256": "b4f333d7899cc57e455aa4c48c7edc236c75b696352dc0cb0def14b436f31d2f",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proof-repair16-investigation--proof-repair--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proof-repair16-investigation--proof-repair--followed/replay.json",
+        "sha256": "cfd17bb55001cfe1c9ad8ef09a04859764f8e4d513722506a09f0faca26383cc",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proof-repair16-investigation--proof-repair--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proof-repair16-investigation--proof-repair--initial/replay.json",
+        "sha256": "b1755d2d1ef0870ed7c020ab6347e3d639c099a42b87ff656b494b9cc4377bd7",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proof-repair17-investigation--proof-repair--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proof-repair17-investigation--proof-repair--followed/replay.json",
+        "sha256": "4950a7b04165f8c4b76383caba3c056d9bfbc4f7fa060d695d53f7f128d7f965",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proof-repair17-investigation--proof-repair--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proof-repair17-investigation--proof-repair--initial/replay.json",
+        "sha256": "a997ba9dfe8126cbbecf7b73d41c71d834b418562c344fc3d912c436177e95ae",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proof-repair18-investigation--proof-repair--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proof-repair18-investigation--proof-repair--followed/replay.json",
+        "sha256": "c8bc818af656930a49ac4cae327f3dd95bafa3160374fd7dded71ae4b2e8e621",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proof-repair18-investigation--proof-repair--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proof-repair18-investigation--proof-repair--initial/replay.json",
+        "sha256": "edeba79e342b22881f84b4f25da2de4e273e5f1ac120f4c044eb3d504ad51709",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proof-repair19-investigation--proof-repair--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proof-repair19-investigation--proof-repair--followed/replay.json",
+        "sha256": "4568708b65b02a99436deafa71b78951014fd10c4d2c2087f95d59e0a8d3bd29",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proof-repair19-investigation--proof-repair--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proof-repair19-investigation--proof-repair--initial/replay.json",
+        "sha256": "c8b2c983771558d3c716dcfe916fba5e50dd53089c978b18244960ebb8bb943e",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proof-repair20-investigation--proof-repair--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proof-repair20-investigation--proof-repair--followed/replay.json",
+        "sha256": "91c804887f007cb9985a61991f6abf652d2d03c1074f000609d119015796a009",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proof-repair20-investigation--proof-repair--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proof-repair20-investigation--proof-repair--initial/replay.json",
+        "sha256": "3f29da43922ef203e32a9b1d3b2081f8babcc493d1061fa3ee9f3407884e7849",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proof-repair8-investigation--explicit-proof-steps--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proof-repair8-investigation--explicit-proof-steps--followed/replay.json",
+        "sha256": "19f8cdd242199201df36711fdfd9292b2683e2ce53dc4d734bada3029078a244",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proof-repair8-investigation--explicit-proof-steps--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proof-repair8-investigation--explicit-proof-steps--initial/replay.json",
+        "sha256": "80afd89852ae6baa33c6e00c494500dacd584debf2be865e09a3bf63fa721221",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proof-repair9-investigation--explicit-relational-steps--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proof-repair9-investigation--explicit-relational-steps--followed/replay.json",
+        "sha256": "a8d45223caa4060e3c233cd206f0b67fc1eca9ea17935b889014dfbd27d487ff",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proof-repair9-investigation--explicit-relational-steps--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proof-repair9-investigation--explicit-relational-steps--initial/replay.json",
+        "sha256": "0e29fc17a77968008f5cb2349136338ebc9ed39740836aba1d8215374eb66662",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proposal-investigation1--construct-application-plans--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proposal-investigation1--construct-application-plans--followed/replay.json",
+        "sha256": "38f8ad274c310691cfc12bb3820f95884fdcbcf8dbfcd332e98436cab50e97dd",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proposal-investigation1--construct-application-plans--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proposal-investigation1--construct-application-plans--initial/replay.json",
+        "sha256": "71468afcafdd26070ddd588bb39dd4125852e559f64b47133f1808a824943103",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proposal-investigation1--scope-directed-bindings--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proposal-investigation1--scope-directed-bindings--followed/replay.json",
+        "sha256": "ba75e05a2b02e7f16548ea39795dd31234297cc4c9e5a8955dc205cd69db82da",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proposal-investigation1--scope-directed-bindings--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proposal-investigation1--scope-directed-bindings--initial/replay.json",
+        "sha256": "18e774caa8be7fe30c7cbe6813a7159d09f67b21ed28b512aab1a97862acd2a1",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proposal-investigation2--construct-application-plans--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proposal-investigation2--construct-application-plans--followed/replay.json",
+        "sha256": "fb9024c9524b142fad977e5991d8571dc931447da7b43f12efa725106a50f04a",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proposal-investigation2--construct-application-plans--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proposal-investigation2--construct-application-plans--initial/replay.json",
+        "sha256": "2e6df8aa95f9d9abc1240734ce71df9bb7ddb368f7d3ac2eb4207d9219bfa929",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proposal-investigation2--scope-directed-bindings--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proposal-investigation2--scope-directed-bindings--followed/replay.json",
+        "sha256": "131467378b1e7f93257a88b1927b9ea74f3366d06502b181f1b98d53984406f6",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "proposal-investigation2--scope-directed-bindings--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/proposal-investigation2--scope-directed-bindings--initial/replay.json",
+        "sha256": "e2e40c6fbfa1ce89610584f2bba4992339faad0feaf54369b1eebdf2423331a8",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "regression-validation-investigation1--complete-consumer-preservation--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/regression-validation-investigation1--complete-consumer-preservation--followed/replay.json",
+        "sha256": "8e6d01e1052f456c34288ad33e432464ae0e20b19f753ceb5d94d418bc4ef9fd",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "regression-validation-investigation1--complete-consumer-preservation--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/regression-validation-investigation1--complete-consumer-preservation--initial/replay.json",
+        "sha256": "ec2fd2d7b399bee7808b145cdcd990bb0f42f463460371bf3a25defc5f44fc19",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "replay2-investigation1--actual-witness-replay-order--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/replay2-investigation1--actual-witness-replay-order--followed/replay.json",
+        "sha256": "0fcb2a6f891f5627c20303b73d282c55dbead312737fcd5a25766d3dd6298221",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "replay2-investigation1--actual-witness-replay-order--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/replay2-investigation1--actual-witness-replay-order--initial/replay.json",
+        "sha256": "ffce46cc0fffe5bf9d26737886b8fc779e3f398ce47911dc2487ee7524cc1a65",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "repository-integration-investigation1--deliver-constructive-candidate-mechanism--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/repository-integration-investigation1--deliver-constructive-candidate-mechanism--followed/replay.json",
+        "sha256": "2b5fe129d5c24f377b2b42cc7c18831699b1859363560889566f60e9fd6be6cc",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "repository-integration-investigation1--deliver-constructive-candidate-mechanism--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/repository-integration-investigation1--deliver-constructive-candidate-mechanism--initial/replay.json",
+        "sha256": "7adea83de4631e875f9a12cc9acab02372c188ea745c517e789ed169242de035",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "scheduling-correction-investigation1--workflow-resumption--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/scheduling-correction-investigation1--workflow-resumption--followed/replay.json",
+        "sha256": "d4fbf46358a0f64efdcefe16847983eeeb6c3a6d0ac18cdac2596cd499a55c58",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "scheduling-correction-investigation1--workflow-resumption--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/scheduling-correction-investigation1--workflow-resumption--initial/replay.json",
+        "sha256": "e8f9362f607f71ad8d8d47e503db3b79c83605727d733430c9aadb9915f9501a",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "value-investigation1--distinct-assignment-search--followed",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/value-investigation1--distinct-assignment-search--followed/replay.json",
+        "sha256": "45b775003e120f8b83cf44b5d2ba11c578b7f040397dfc2ce35ec28a5a9eebb7",
+        "status": "accepted"
+      },
+      {
+        "kind": "investigation",
+        "stage": "value-investigation1--distinct-assignment-search--initial",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/investigations/value-investigation1--distinct-assignment-search--initial/replay.json",
+        "sha256": "cb175f81720ede471786d91483ab38a15d1f5fedc0c04f106a453be7fb8ec60d",
+        "status": "accepted"
+      },
+      {
+        "kind": "native",
+        "stage": "application-controls",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/native/application-controls/replay.json",
+        "sha256": "25a69fa43eb7062ca2f40a17129a92d8adede0a429a7e482d4f8ed692023d6f1",
+        "status": "accepted"
+      },
+      {
+        "kind": "native",
+        "stage": "application-large-7",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/native/application-large-7/replay.json",
+        "sha256": "d3f16880e2da14b72bdfc9888a2ca8efa09d0dcfe821b3bac3b1ee78af88612d",
+        "status": "accepted"
+      },
+      {
+        "kind": "native",
+        "stage": "application-large-8",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/native/application-large-8/replay.json",
+        "sha256": "e01a5f52a7e3f157f69ebd40bfdfcf68f78be56aca717037754a7d6ad237efb5",
+        "status": "accepted"
+      },
+      {
+        "kind": "native",
+        "stage": "application-large-9",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/native/application-large-9/replay.json",
+        "sha256": "21d2086c94364c67a1a4230ad186eae8cc4034c07501578ee43c372d4030e899",
+        "status": "accepted"
+      },
+      {
+        "kind": "native",
+        "stage": "application-large-10",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/native/application-large-10/replay.json",
+        "sha256": "a035d3ab43678b8e13dab846e730ca0a685a3bd1d633620b7e870e2576a977a7",
+        "status": "accepted"
+      },
+      {
+        "kind": "native",
+        "stage": "generic-search",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/native/generic-search/replay.json",
+        "sha256": "7b025e6c96f7a492e2de65dccb5afc6ba8e6dbc556ba6ace5a695d06a3a1d876",
+        "status": "accepted"
+      },
+      {
+        "kind": "native",
+        "stage": "original-guided",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/native/original-guided/replay.json",
+        "sha256": "8f2d28d20b54decbeb755298fcbc181ace30aafe8e9053c74735a330953270f3",
+        "status": "accepted"
+      },
+      {
+        "kind": "native",
+        "stage": "native-source",
+        "path": "/tmp/generalization-quality-review/candidate-final-replays/native/native-source/replay.json",
+        "sha256": "7f556bfe7d08afbdf6052a0b6df934aebb5d9b5b36a8cbe97265441436bb3d6b",
+        "status": "accepted"
+      },
+      {
+        "kind": "native",
+        "stage": "original-reader",
+        "path": "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-12/candidate-storage-recovery/runtime/original-reader/replay.json",
+        "sha256": "94ddb929038f51d307e238c1c2905bf4d4a35bac9afca1e3e63c32d78fd87d9d",
+        "status": "accepted"
+      },
+      {
+        "kind": "native",
+        "stage": "finite-presentations",
+        "path": "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-12/candidate-storage-recovery/runtime/finite-presentations/replay.json",
+        "sha256": "ee402b3824199fc22103942f3d791870784e38532c82984387641b1eacb082cd",
+        "status": "accepted"
+      }
+    ],
+    "original_archive_index_sha256": "3c7673725f2c754e5bb5253867b57c28a90aacf3079f85ced43b7b6a5cb7692e",
+    "boundary": "Every original conditional investigation and final native family has an accepted exact replay. The quota-interrupted reader preparation remains separately retained; the two stages without accepted receipts were resumed in fresh directories."
+  },
+  "delivery_steps": [
+    {
+      "name": "retention",
+      "command": [
+        "python3",
+        "-B",
+        "/home/julius/structure_and_semantics/tools/retain_reasoning_review.py",
+        "--specification",
+        "/tmp/generalization-quality-review/candidate-delivery/specification.json",
+        "--output",
+        "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-12/candidate-construction-delivery",
+        "--project",
+        "/home/julius/structure_and_semantics",
+        "--prior-archive",
+        "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-12/candidate-construction",
+        "--fallback-sources",
+        "/tmp/generalization-quality-review/candidate-documentation",
+        "--fallback-sources",
+        "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-12/candidate-storage-recovery"
+      ],
+      "exit_code": 0,
+      "seconds": 10.629599923966452
+    },
+    {
+      "name": "storage-initial",
+      "command": [
+        "python3",
+        "-B",
+        "/home/julius/structure_and_semantics/tools/replay_reasoning_review.py",
+        "--archive",
+        "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-12/candidate-construction-delivery",
+        "--investigation",
+        "storage-initial",
+        "--poly",
+        "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+        "--output",
+        "/tmp/generalization-quality-review/candidate-delivery/supplement-replays/storage-initial"
+      ],
+      "exit_code": 0,
+      "seconds": 0.31438349199015647
+    },
+    {
+      "name": "storage-followed",
+      "command": [
+        "python3",
+        "-B",
+        "/home/julius/structure_and_semantics/tools/replay_reasoning_review.py",
+        "--archive",
+        "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-12/candidate-construction-delivery",
+        "--investigation",
+        "storage-followed",
+        "--poly",
+        "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+        "--output",
+        "/tmp/generalization-quality-review/candidate-delivery/supplement-replays/storage-followed"
+      ],
+      "exit_code": 0,
+      "seconds": 0.3140621589263901
+    },
+    {
+      "name": "documentation-initial",
+      "command": [
+        "python3",
+        "-B",
+        "/home/julius/structure_and_semantics/tools/replay_reasoning_review.py",
+        "--archive",
+        "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-12/candidate-construction-delivery",
+        "--investigation",
+        "documentation-initial",
+        "--poly",
+        "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+        "--output",
+        "/tmp/generalization-quality-review/candidate-delivery/supplement-replays/documentation-initial"
+      ],
+      "exit_code": 0,
+      "seconds": 0.3141685499576852
+    },
+    {
+      "name": "documentation-followed",
+      "command": [
+        "python3",
+        "-B",
+        "/home/julius/structure_and_semantics/tools/replay_reasoning_review.py",
+        "--archive",
+        "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-12/candidate-construction-delivery",
+        "--investigation",
+        "documentation-followed",
+        "--poly",
+        "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+        "--output",
+        "/tmp/generalization-quality-review/candidate-delivery/supplement-replays/documentation-followed"
+      ],
+      "exit_code": 0,
+      "seconds": 0.3141225390136242
+    }
+  ],
+  "documentation_adoption": {
+    "decision": "/tmp/generalization-quality-review/candidate-documentation/decision.json",
+    "delivery_validation": "/tmp/generalization-quality-review/candidate-delivery/steps.json",
+    "status": "Exact reviewed documentation adopted after all primary and supplemental replay checks passed.",
+    "remaining": "Final source/archive verification, workspace cleanup, commit and push. The wider system goal and final repository audit remain open."
+  },
+  "boundary": "All stored and decoded archive identities and current accepted build inputs are checked. Complete replay receipts are retained; proof checking and host scheduling claims remain distinct."
+}

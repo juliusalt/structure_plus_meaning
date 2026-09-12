@@ -1,0 +1,9 @@
+{
+  "source_proof": "/tmp/native-investigation-report-diagnostic-applicationconstruction19/result.json",
+  "native_batch": "/tmp/generalization-quality-review/directed-candidate-construction/application-batch19/steps.json",
+  "interface_decision": "/tmp/generalization-quality-review/directed-candidate-construction/interface4-decision.json",
+  "delivery_decision": "/tmp/generalization-quality-review/directed-candidate-construction/delivery-interface-replay-decision.json",
+  "replay_decision": "/tmp/generalization-quality-review/directed-candidate-construction/replay2-decision.json",
+  "prechecks": "/tmp/generalization-quality-review/directed-candidate-construction/delivery-validation2/complete-results.json",
+  "action": "Install the exact validated drafts in the isolated worktree and execute the supplied-input interface on all original complete cases. Main repository integration remains after complete runtime comparison."
+}

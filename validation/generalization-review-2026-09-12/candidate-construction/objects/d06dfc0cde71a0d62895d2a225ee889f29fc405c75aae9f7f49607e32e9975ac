@@ -1,0 +1,19 @@
+
+Build errors:
+*** Failed to load theory "Native_Application_Construction4.Factor_Application_Candidates" (unresolved "Native_Application_Construction4.Factor_Observation_Assembly")
+*** Failed to load theory "Native_Application_Construction4.Factor_Application_Comparison" (unresolved "Native_Application_Construction4.Factor_Application_Candidates")
+*** Failed to load theory "Native_Application_Construction4.Factor_Application_Execution" (unresolved "Native_Application_Construction4.Factor_Application_Comparison")
+*** Failed to apply initial proof method (line 22 of "/tmp/native-investigation-report-diagnostic-applicationconstruction4/theories/Factor_Observation_Assembly.thy"):
+*** goal (1 subgoal):
+***  1. (a |\<in>| finite_observation_site_coverage P obs V i) =
+***     (\<exists>p t u.
+***         (i, p) |\<in>| P \<and>
+***         (i, t) |\<in>| obs \<and>
+***         finite_pattern_accepts p t \<and>
+***         finite_matching_bindings p t |\<subseteq>| V \<and>
+***         (a, u) |\<in>|
+***         finite_matching_bindings p
+***          t)
+*** At command "by" (line 22 of "/tmp/native-investigation-report-diagnostic-applicationconstruction4/theories/Factor_Observation_Assembly.thy")
+
+Return code: 1 (ERROR)

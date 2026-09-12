@@ -1,0 +1,19 @@
+{
+  "specification": "/tmp/generalization-quality-review/directed-candidate-construction/candidate-archive-spec.json",
+  "output": "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-12/candidate-construction",
+  "proofs": 56,
+  "accepted_runs": 26,
+  "conditional_executions": 108,
+  "attachments": 17030,
+  "canonical_runs": [
+    "generic-search",
+    "original-guided",
+    "native-source",
+    "original-reader",
+    "application-controls",
+    "application-large-7",
+    "application-large-8",
+    "application-large-9",
+    "application-large-10"
+  ]
+}

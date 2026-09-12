@@ -1,0 +1,60 @@
+{
+  "status": "evaluated",
+  "exit_code": 0,
+  "elapsed_seconds": 3.187353824963793,
+  "runtime_seconds": 0.07066707103513181,
+  "receipt": "/tmp/generalization-quality-review/directed-candidate-construction/native-adoption-investigation1/complete-native-workload/initial/receipt.json",
+  "input_formed": true,
+  "residual": [
+    [
+      1,
+      0
+    ]
+  ],
+  "repair_witnesses": 5,
+  "conflicts": 0,
+  "unrepairable": 0,
+  "extension": [
+    0
+  ],
+  "revision": {
+    "retained": [],
+    "withdrawn": [],
+    "repairs": [
+      [
+        1,
+        0,
+        0,
+        56
+      ],
+      [
+        1,
+        0,
+        0,
+        57
+      ],
+      [
+        1,
+        0,
+        0,
+        58
+      ],
+      [
+        1,
+        0,
+        0,
+        59
+      ],
+      [
+        1,
+        0,
+        0,
+        60
+      ]
+    ],
+    "selection": [
+      0
+    ],
+    "residual": []
+  }
+}

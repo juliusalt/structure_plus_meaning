@@ -1,0 +1,51 @@
+[
+  {
+    "label": "input-tests",
+    "command": [
+      "python3",
+      "-B",
+      "-m",
+      "unittest",
+      "test_application_comparison",
+      "test_replay_reasoning_review"
+    ],
+    "exit_code": 0,
+    "log": "/tmp/generalization-quality-review/directed-candidate-construction/delivery-validation1/input-tests.log"
+  },
+  {
+    "label": "legacy-comparison",
+    "command": [
+      "python3",
+      "-B",
+      "/tmp/generalization-quality-review/directed-candidate-construction/replay-draft1/replay_reasoning_review.py",
+      "--archive",
+      "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/structural-observations",
+      "--stage",
+      "comparison-current",
+      "--poly",
+      "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+      "--output",
+      "/tmp/generalization-quality-review/directed-candidate-construction/delivery-validation1/legacy-comparison"
+    ],
+    "exit_code": 0,
+    "log": "/tmp/generalization-quality-review/directed-candidate-construction/delivery-validation1/legacy-comparison.log"
+  },
+  {
+    "label": "legacy-bindings",
+    "command": [
+      "python3",
+      "-B",
+      "/tmp/generalization-quality-review/directed-candidate-construction/replay-draft1/replay_reasoning_review.py",
+      "--archive",
+      "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-11/structural-observations",
+      "--stage",
+      "direct-observation-groups",
+      "--poly",
+      "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly",
+      "--output",
+      "/tmp/generalization-quality-review/directed-candidate-construction/delivery-validation1/legacy-bindings"
+    ],
+    "exit_code": 0,
+    "log": "/tmp/generalization-quality-review/directed-candidate-construction/delivery-validation1/legacy-bindings.log"
+  }
+]

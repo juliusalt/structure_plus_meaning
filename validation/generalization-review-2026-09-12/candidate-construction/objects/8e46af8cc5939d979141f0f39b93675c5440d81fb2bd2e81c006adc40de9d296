@@ -1,0 +1,109 @@
+"""Execute the proved generic search on retained complete finite inputs."""
+import argparse,json,sys
+from pathlib import Path
+sys.path.insert(0,'/home/julius/structure_and_semantics/tools')
+import investigate,proved_code,check_reasoning as review
+B=Path(__file__).parent
+
+def key(value):return review.freeze(value)
+def relations(values):return frozenset(frozenset(map(tuple,r)) for r in values)
+
+def cases():
+ v=json.loads((B/'value-prototype-results.json').read_text());p=json.loads((B/'prototype-results.json').read_text());j=json.loads((B/'joint-prototype-results.json').read_text())
+ bindings=[{**r['case'],'expected':r['expected']} for r in v['original_cases']]
+ bindings += [{'id':len(bindings)+i,'scope':r['scope'],'parts':r['parts'],'expected':r['expected']} for i,r in enumerate(v['overlap_cases'])]
+ assemblies=[]
+ for r in p['candidate_construction']+j:
+  scope=r['scope'];idx={key(q):i for i,q in enumerate(scope)}
+  effects=r.get('part_effects',r.get('effects'))
+  coverage=[[i,idx[key(q)]] for i,rows in enumerate(effects) for q,_ in rows]
+  assemblies.append({'id':len(assemblies),'requirements':list(range(len(scope))),'parts':list(range(len(effects))),'coverage':coverage,'requirement_subjects':scope,'part_subjects':r['parts'],'possible':not r.get('missing_requirements',[]) and not r.get('invalid_required_applications',[])})
+ # Repeated presentations and impossible/empty scopes exercise the generic interface.
+ assemblies += [{'id':len(assemblies)+i,**x} for i,x in enumerate([
+  {'requirements':[],'parts':[],'coverage':[],'possible':True},
+  {'requirements':[0],'parts':[],'coverage':[],'possible':False},
+  {'requirements':[0,1,0],'parts':[0,1,0,2],'coverage':[[0,0],[1,1],[2,0],[2,1]],'possible':True}])]
+ return {'bindings':bindings,'assemblies':assemblies}
+
+def ml_pair(r):return '('+investigate.ml_nat(r[0])+','+investigate.ml_nat(r[1])+')'
+def ml_fs(rows,f):return '(fs '+investigate.ml_list(rows,f)+')'
+def encode_list(xs, encode):
+ return [len(xs)]+[n for x in xs for n in encode(x)]
+def encoded(xs):return investigate.ml_string(' '.join(map(str,xs)))
+def program(engine,c):
+ s='use '+investigate.ml_string(str(engine))+';\nstructure N=Directed_Search;\nval fs=N.fset_of_list;\nval n=N.nat_of_integer;\n'+review.SCALAR_JSON_PRELUDE+r"""
+fun elements a = case N.fset a of N.Set xs => xs | N.Coset _ => raise Fail "Nonfinite representation";
+fun jf f a = jlist f (elements a);
+fun jpair (a,b) = "[" ^ jnat a ^ "," ^ jnat b ^ "]";
+fun joption NONE = "null" | joption (SOME a) = jf jnat a;
+fun number (x::xs) = if x < 0 then raise Fail "Negative natural" else (n x,xs)
+ | number [] = raise Fail "Missing natural";
+fun pair ra rb xs = let val (a,rest)=ra xs; val (b,last)=rb rest in ((a,b),last) end;
+fun sequence read (count::xs) = let
+ fun take 0 rest acc = (rev acc,rest)
+  | take k rest acc = let val (a,more)=read rest in take (k-1) more (a::acc) end
+ in if count < 0 then raise Fail "Negative count" else take (IntInf.toInt count) xs [] end
+ | sequence _ [] = raise Fail "Missing count";
+fun decode read text = let
+ fun token s = if String.size s > 0 andalso List.all Char.isDigit (String.explode s)
+   then (case IntInf.fromString s of SOME n => n | NONE => raise Fail "Invalid integer")
+   else raise Fail "Invalid token";
+ val (value,rest)=read (map token (String.tokens Char.isSpace text))
+ in if null rest then value else raise Fail "Trailing input" end;
+fun timed kind id render action = let val start=Time.now();
+ val ()=print ("SEARCH_STARTED " ^ kind ^ " " ^ Int.toString id ^ "\n");
+ val value=action(); val elapsed=Time.-(Time.now(),start)
+ in print (kind ^ " " ^ Int.toString id ^ " " ^ render value ^ " " ^ Time.toString elapsed ^ "\n") end;
+fun bindingCase id text = let
+ val (scope,parts)=decode (pair (sequence number) (sequence (sequence (pair number number)))) text;
+ val ()=print ("BINDING_INPUT " ^ Int.toString id ^ " {\"scope\":" ^ jlist jnat scope ^
+   ",\"parts\":" ^ jlist (jlist jpair) parts ^ "}\n")
+ in timed "BINDINGS" id (jf (jf jpair)) (fn()=>N.natural_directed_bindings (fs scope) (fs (map fs parts))) end;
+fun assemblyCase id text = let
+ val (required,(parts,coverage))=decode (pair (sequence number) (pair (sequence number) (sequence (pair number number)))) text;
+ val ()=print ("ASSEMBLY_INPUT " ^ Int.toString id ^ " {\"requirements\":" ^ jlist jnat required ^
+   ",\"parts\":" ^ jlist jnat parts ^ ",\"coverage\":" ^ jlist jpair coverage ^ "}\n")
+ in timed "ASSEMBLY" id joption (fn()=>N.natural_candidate_assembly required parts (fs coverage)) end;
+"""
+ for r in c['bindings']:
+  tokens=encode_list(r['scope'],lambda n:[n])+encode_list(r['parts'],lambda xs:encode_list(xs,list))
+  s+='val ()=bindingCase '+str(r['id'])+' '+encoded(tokens)+';\n'
+ for r in c['assemblies']:
+  tokens=encode_list(r['requirements'],lambda n:[n])+encode_list(r['parts'],lambda n:[n])+encode_list(r['coverage'],list)
+  s+='val ()=assemblyCase '+str(r['id'])+' '+encoded(tokens)+';\n'
+ return s
+
+def assess(c,raw):
+ decoded={}
+ for line in raw.splitlines():
+  if line.startswith(('BINDING_INPUT ','ASSEMBLY_INPUT ')):
+   kind,i,data=line.split(' ',2);subject=(kind,int(i));assert subject not in decoded
+   decoded[subject]=json.loads(data)
+ assert len(decoded)==len(c['bindings'])+len(c['assemblies'])
+ for kind,family,fields in [('BINDING_INPUT','bindings',['scope','parts']),('ASSEMBLY_INPUT','assemblies',['requirements','parts','coverage'])]:
+  for r in c[family]:assert decoded[kind,r['id']]=={k:r[k] for k in fields},(kind,r['id'])
+ rows={}
+ for line in raw.splitlines():
+  if line.startswith(('BINDINGS ','ASSEMBLY ')):
+   kind,i,rest=line.split(' ',2);data,t=rest.rsplit(' ',1);k=(kind,int(i));assert k not in rows;rows[k]=(json.loads(data),float(t))
+ assert len(rows)==len(c['bindings'])+len(c['assemblies'])
+ checks=[]
+ for r in c['bindings']:
+  result,t=rows['BINDINGS',r['id']];assert relations(result)==relations(r['expected']),(r,result)
+  checks.append({'kind':'bindings','id':r['id'],'scope_size':len(set(r['scope'])),'part_count':len(r['parts']),'results':result,'seconds':t})
+ for r in c['assemblies']:
+  result,t=rows['ASSEMBLY',r['id']];available=set(r['parts']);required=set(r['requirements'])
+  def covered(ps):return {q for p,q in r['coverage'] if p in ps}
+  possible=required<=covered(available);assert possible==r['possible'];assert (result is not None)==possible
+  witnesses={}
+  if result is not None:
+   chosen=set(result);assert chosen<=available and required<=covered(chosen)
+   witnesses={p:sorted(required-covered(chosen-{p})) for p in chosen};assert all(witnesses.values())
+  checks.append({'kind':'assembly','id':r['id'],'scope_size':len(required),'part_count':len(available),'result':result,'witnesses':witnesses,'seconds':t})
+ return {'cases':checks,'boundary':'Complete generic inputs and results are retained. Binding equality preserves both finite-set levels. Coverage/minimality is recomputed independently for each constructed part set. Application semantics require the separate application coverage contract and actual application executions.'}
+
+def main():
+ p=argparse.ArgumentParser();p.add_argument('--proof',type=Path,required=True);p.add_argument('--project',type=Path,required=True);p.add_argument('--poly',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args()
+ r=proved_code.checked_execution(a.proof,a.poly,a.output,required_theories=['Finite_Directed_Execution'],inputs=cases(),input_paths=[Path(__file__),B/'value-prototype-results.json',B/'prototype-results.json',B/'joint-prototype-results.json'],program=program,assess=assess,question='Do the proved directed search and part constructor preserve complete finite results and handle the retained larger bases?',boundary='This is native execution of the checked generic contracts on actual complete finite inputs. Application-level adoption remains separate.',project=a.project,timeout=60)
+ print(json.dumps({k:v for k,v in r.items() if k not in ['assessment','evidence_archive','execution_inputs']},indent=2));return int(r['status']!='accepted')
+if __name__=='__main__':raise SystemExit(main())

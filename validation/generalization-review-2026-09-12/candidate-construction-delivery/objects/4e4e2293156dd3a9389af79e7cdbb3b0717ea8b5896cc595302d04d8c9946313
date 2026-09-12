@@ -1,0 +1,68 @@
+{
+  "status": "evaluated",
+  "exit_code": 0,
+  "elapsed_seconds": 3.202821735991165,
+  "runtime_seconds": 0.07080199907068163,
+  "receipt": "/tmp/generalization-quality-review/candidate-documentation/investigation1/record-constructive-search-scope/initial/receipt.json",
+  "input_formed": true,
+  "residual": [
+    [
+      1,
+      0
+    ]
+  ],
+  "repair_witnesses": 5,
+  "conflicts": 0,
+  "unrepairable": 0,
+  "extension": [
+    0,
+    1,
+    2,
+    3,
+    5
+  ],
+  "revision": {
+    "retained": [],
+    "withdrawn": [],
+    "repairs": [
+      [
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        1,
+        0
+      ],
+      [
+        1,
+        0,
+        2,
+        0
+      ],
+      [
+        1,
+        0,
+        3,
+        0
+      ],
+      [
+        1,
+        0,
+        5,
+        0
+      ]
+    ],
+    "selection": [
+      0,
+      1,
+      2,
+      3,
+      5
+    ],
+    "residual": []
+  }
+}

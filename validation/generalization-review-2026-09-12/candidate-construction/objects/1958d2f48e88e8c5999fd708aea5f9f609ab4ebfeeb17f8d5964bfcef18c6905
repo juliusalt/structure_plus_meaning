@@ -1,0 +1,17 @@
+{
+  "required_pairs": 4036,
+  "available_pairs": 4035,
+  "missing": [
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/export_context.py",
+      "sha256": "e87b10e77a4bc40744b674242fc85217bb98723cb132f189c143c62d29318d11",
+      "uses": [
+        "proof:code--application-batch11--native-export",
+        "proof:code--application-batch11--reasoning-export",
+        "proof:code--native-export1",
+        "proof:code--native-export2"
+      ]
+    }
+  ],
+  "boundary": "Every proof source, export, source-proof receipt, export-procedure input, full parent input, parent helper input, accepted-run checked input and conditional investigation input in the selected archive specification is checked. Existing retained byte sources may differ in path but must carry the original digest."
+}

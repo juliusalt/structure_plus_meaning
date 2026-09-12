@@ -1,0 +1,7 @@
+{
+  "status": "failed",
+  "invocation": "432bead8-2cdc-4309-be47-f69def7edbcd",
+  "question": "Construct source-site candidates on complete structural application families and check the declared scope, malformed boundaries and actual preserved results.",
+  "boundary": "Actual native matching derives coverage and complete application results; source indices carry no supplied satisfaction ratings.",
+  "error": "Command '['/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly', '--script', '/tmp/generalization-quality-review/directed-candidate-construction/application-batch13/native-large-10/execute.ML']' timed out after 60 seconds"
+}

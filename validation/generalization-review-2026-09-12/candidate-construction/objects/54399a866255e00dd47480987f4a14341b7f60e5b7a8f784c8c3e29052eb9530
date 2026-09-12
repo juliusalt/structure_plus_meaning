@@ -1,0 +1,4812 @@
+{
+  "status": "accepted",
+  "invocation": "9b6fda99-2694-4175-af9a-e1429fb452a2",
+  "question": "Do the proved directed search and part constructor preserve complete finite results and handle the retained larger bases?",
+  "boundary": "This is native execution of the checked generic contracts on actual complete finite inputs. Application-level adoption remains separate.",
+  "evidence_archive": [
+    {
+      "role": "checked module input",
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Finite_Directed_Execution.thy",
+      "sha256": "d1e87242b30ae51007b953b1d3fd0fbe0f3cb2404d7c5df7f3a79424f182ff70",
+      "archive": "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/evidence-9b6fda99-2694-4175-af9a-e1429fb452a2/d1e87242b30ae51007b953b1d3fd0fbe0f3cb2404d7c5df7f3a79424f182ff70"
+    },
+    {
+      "role": "checked module input",
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/execute.ML",
+      "sha256": "24132bbd8478b0a91e843ec182e54083877ef098f5cc3f004a8273e45564c0ad",
+      "archive": "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/evidence-9b6fda99-2694-4175-af9a-e1429fb452a2/24132bbd8478b0a91e843ec182e54083877ef098f5cc3f004a8273e45564c0ad"
+    },
+    {
+      "role": "checked module input",
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/joint-prototype-results.json",
+      "sha256": "869133353a4e26768423fffbb1cbe6c3df5f316db5f5343a7a8ad6f4cdf97e58",
+      "archive": "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/evidence-9b6fda99-2694-4175-af9a-e1429fb452a2/869133353a4e26768423fffbb1cbe6c3df5f316db5f5343a7a8ad6f4cdf97e58"
+    },
+    {
+      "role": "checked module input",
+      "path": "/home/julius/structure_and_semantics/tools/investigate.py",
+      "sha256": "e7e353ce55e89dcfaab53f8f5dc39ac11a94c02af448c80d858bf0896d790c10",
+      "archive": "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/evidence-9b6fda99-2694-4175-af9a-e1429fb452a2/e7e353ce55e89dcfaab53f8f5dc39ac11a94c02af448c80d858bf0896d790c10"
+    },
+    {
+      "role": "checked module input",
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Finite_Candidate_Assembly.thy",
+      "sha256": "b2b02487dfb40ce4ed45f68ca35356cfe88c00a75d2f3d2f18074f46d9a8acf2",
+      "archive": "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/evidence-9b6fda99-2694-4175-af9a-e1429fb452a2/b2b02487dfb40ce4ed45f68ca35356cfe88c00a75d2f3d2f18074f46d9a8acf2"
+    },
+    {
+      "role": "checked module input",
+      "path": "/home/julius/structure_and_semantics/tools/build.py",
+      "sha256": "8915b7a480b2a17b5cea5b819f3be43323f69cb79dc1513a76c07eb83f6b491e",
+      "archive": "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/evidence-9b6fda99-2694-4175-af9a-e1429fb452a2/8915b7a480b2a17b5cea5b819f3be43323f69cb79dc1513a76c07eb83f6b491e"
+    },
+    {
+      "role": "checked module input",
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Bootstrap_Relations.thy",
+      "sha256": "50d4bf926dab217fdad8eb114fe1b0d369aa9a06741df1e568a5cc5fea7ceafe",
+      "archive": "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/evidence-9b6fda99-2694-4175-af9a-e1429fb452a2/50d4bf926dab217fdad8eb114fe1b0d369aa9a06741df1e568a5cc5fea7ceafe"
+    },
+    {
+      "role": "checked module input",
+      "path": "/home/julius/structure_and_semantics/tools/check_reasoning.py",
+      "sha256": "63b5ecd1411a85ba3c02ad3eb5609a0232012ad33dc81d73c8d2e762b75494b1",
+      "archive": "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/evidence-9b6fda99-2694-4175-af9a-e1429fb452a2/63b5ecd1411a85ba3c02ad3eb5609a0232012ad33dc81d73c8d2e762b75494b1"
+    },
+    {
+      "role": "checked module input",
+      "path": "/home/julius/structure_and_semantics/tools/proved_code.py",
+      "sha256": "6abc15336d6b23c7b63343cd0d1f3b169397838a0273552c6932f5fadd96917a",
+      "archive": "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/evidence-9b6fda99-2694-4175-af9a-e1429fb452a2/6abc15336d6b23c7b63343cd0d1f3b169397838a0273552c6932f5fadd96917a"
+    },
+    {
+      "role": "checked module input",
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/prototype-results.json",
+      "sha256": "7a44ca425276609c48723b3c3f15af9dd97c96c666d6ff3aaa6356ff2fe68b9a",
+      "archive": "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/evidence-9b6fda99-2694-4175-af9a-e1429fb452a2/7a44ca425276609c48723b3c3f15af9dd97c96c666d6ff3aaa6356ff2fe68b9a"
+    },
+    {
+      "role": "checked module input",
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Finite_Set_Composition.thy",
+      "sha256": "afab9aa6a45378359fb543a95a104326d282ced6a227499397bd24e2208ca2bd",
+      "archive": "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/evidence-9b6fda99-2694-4175-af9a-e1429fb452a2/afab9aa6a45378359fb543a95a104326d282ced6a227499397bd24e2208ca2bd"
+    },
+    {
+      "role": "checked module input",
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Finite_Compatible_Unions.thy",
+      "sha256": "4192efb90e2702fb885576c1b386f267b64a32df40ec082df9a07745f28afce2",
+      "archive": "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/evidence-9b6fda99-2694-4175-af9a-e1429fb452a2/4192efb90e2702fb885576c1b386f267b64a32df40ec082df9a07745f28afce2"
+    },
+    {
+      "role": "checked module input",
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/value-prototype-results.json",
+      "sha256": "71f1797c49dae3277fdbf59d2264c49096df9de55c87cb8022709923ab96d5cd",
+      "archive": "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/evidence-9b6fda99-2694-4175-af9a-e1429fb452a2/71f1797c49dae3277fdbf59d2264c49096df9de55c87cb8022709923ab96d5cd"
+    },
+    {
+      "role": "checked module input",
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/native-export2/export/Native_Directed21.Finite_Directed_Execution/code/directed_search.ML",
+      "sha256": "7161547e20e294fc41066b9c87ff6211f91b89c668dd916c7ace561fdd22ef49",
+      "archive": "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/evidence-9b6fda99-2694-4175-af9a-e1429fb452a2/7161547e20e294fc41066b9c87ff6211f91b89c668dd916c7ace561fdd22ef49"
+    },
+    {
+      "role": "checked module input",
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Finite_Demand_Selection.thy",
+      "sha256": "f078ff337e75c81199a1d6a36fff787dae36c88f1433637b32198d8847f185d6",
+      "archive": "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/evidence-9b6fda99-2694-4175-af9a-e1429fb452a2/f078ff337e75c81199a1d6a36fff787dae36c88f1433637b32198d8847f185d6"
+    },
+    {
+      "role": "checked module input",
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/RRA_Footprint.thy",
+      "sha256": "2177e2f526618e7623714bf72ba8a542ffc3f3ee6b6cdc7e95d15ce5c094926e",
+      "archive": "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/evidence-9b6fda99-2694-4175-af9a-e1429fb452a2/2177e2f526618e7623714bf72ba8a542ffc3f3ee6b6cdc7e95d15ce5c094926e"
+    },
+    {
+      "role": "checked module input",
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/native-export2/proof.json",
+      "sha256": "05ff332c3afa554306f89289bdb866f8d18421676f0941323cb504a2db307585",
+      "archive": "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/evidence-9b6fda99-2694-4175-af9a-e1429fb452a2/05ff332c3afa554306f89289bdb866f8d18421676f0941323cb504a2db307585"
+    },
+    {
+      "role": "checked module input",
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/RRA_Finite_Artifacts.thy",
+      "sha256": "bf551280109ea4f690e7f9e21e3b00f0300c7139205e8ab2f1188c70afaebc0a",
+      "archive": "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/evidence-9b6fda99-2694-4175-af9a-e1429fb452a2/bf551280109ea4f690e7f9e21e3b00f0300c7139205e8ab2f1188c70afaebc0a"
+    },
+    {
+      "role": "checked module input",
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/check_directed_native.py",
+      "sha256": "8e46af8cc5939d979141f0f39b93675c5440d81fb2bd2e81c006adc40de9d296",
+      "archive": "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/evidence-9b6fda99-2694-4175-af9a-e1429fb452a2/8e46af8cc5939d979141f0f39b93675c5440d81fb2bd2e81c006adc40de9d296"
+    },
+    {
+      "role": "checked module input",
+      "path": "/home/julius/structure_and_semantics/tools/observation_contracts.py",
+      "sha256": "06ca5897c3f894507808e6ae26138f101d2492aa9f08f42770094a5293129191",
+      "archive": "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/evidence-9b6fda99-2694-4175-af9a-e1429fb452a2/06ca5897c3f894507808e6ae26138f101d2492aa9f08f42770094a5293129191"
+    },
+    {
+      "role": "checked module input",
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/RRA_Data.thy",
+      "sha256": "2ff07ed3d0ae79f3a278b4e4fac5b78320a36e314ffa026db1cd014579fd7af5",
+      "archive": "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/evidence-9b6fda99-2694-4175-af9a-e1429fb452a2/2ff07ed3d0ae79f3a278b4e4fac5b78320a36e314ffa026db1cd014579fd7af5"
+    },
+    {
+      "role": "checked module input",
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/RRA_Core.thy",
+      "sha256": "acd13d70482fd6a3bcaed5e07776d76b2afcca45e69353d591a26639c30752db",
+      "archive": "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/evidence-9b6fda99-2694-4175-af9a-e1429fb452a2/acd13d70482fd6a3bcaed5e07776d76b2afcca45e69353d591a26639c30752db"
+    },
+    {
+      "role": "checked module input",
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/RRA_Exact.thy",
+      "sha256": "43713b16aee5bb9972674e96dd0aa393cacc9599db6c745bbf413d476f6f850f",
+      "archive": "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/evidence-9b6fda99-2694-4175-af9a-e1429fb452a2/43713b16aee5bb9972674e96dd0aa393cacc9599db6c745bbf413d476f6f850f"
+    },
+    {
+      "role": "checked module input",
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Finite_Directed_Contributions.thy",
+      "sha256": "837dc35c45f253e2a5ef024ef21fc5d41932eb8183175da4dbf9474af552669f",
+      "archive": "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/evidence-9b6fda99-2694-4175-af9a-e1429fb452a2/837dc35c45f253e2a5ef024ef21fc5d41932eb8183175da4dbf9474af552669f"
+    },
+    {
+      "role": "checked module input",
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/cases.json",
+      "sha256": "1132487a75f6fe3a69adddbb1db4340dd877dfdd8d78b38e1b3da4f81ff42626",
+      "archive": "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/evidence-9b6fda99-2694-4175-af9a-e1429fb452a2/1132487a75f6fe3a69adddbb1db4340dd877dfdd8d78b38e1b3da4f81ff42626"
+    }
+  ],
+  "exit_code": 0,
+  "sources_and_tools_unchanged": true,
+  "assessment": {
+    "cases": [
+      {
+        "kind": "bindings",
+        "id": 0,
+        "scope_size": 0,
+        "part_count": 0,
+        "results": [
+          []
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 1,
+        "scope_size": 1,
+        "part_count": 0,
+        "results": [],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 2,
+        "scope_size": 1,
+        "part_count": 1,
+        "results": [],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 3,
+        "scope_size": 2,
+        "part_count": 2,
+        "results": [
+          [
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ]
+          ]
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 4,
+        "scope_size": 2,
+        "part_count": 2,
+        "results": [
+          [
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ],
+          [
+            [
+              1,
+              1
+            ],
+            [
+              0,
+              1
+            ]
+          ]
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 5,
+        "scope_size": 1,
+        "part_count": 2,
+        "results": [
+          [
+            [
+              0,
+              1
+            ]
+          ]
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 6,
+        "scope_size": 2,
+        "part_count": 2,
+        "results": [
+          [
+            [
+              1,
+              1
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 7,
+        "scope_size": 2,
+        "part_count": 4,
+        "results": [
+          [
+            [
+              1,
+              1
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 8,
+        "scope_size": 3,
+        "part_count": 1,
+        "results": [],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 9,
+        "scope_size": 1,
+        "part_count": 3,
+        "results": [
+          [
+            [
+              0,
+              1
+            ]
+          ],
+          [
+            [
+              0,
+              0
+            ]
+          ]
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 10,
+        "scope_size": 2,
+        "part_count": 6,
+        "results": [
+          [
+            [
+              1,
+              1
+            ],
+            [
+              0,
+              1
+            ]
+          ]
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 11,
+        "scope_size": 4,
+        "part_count": 1,
+        "results": [],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 12,
+        "scope_size": 4,
+        "part_count": 8,
+        "results": [
+          [
+            [
+              3,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          [
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 13,
+        "scope_size": 4,
+        "part_count": 4,
+        "results": [
+          [
+            [
+              3,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              0,
+              1
+            ]
+          ]
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 14,
+        "scope_size": 3,
+        "part_count": 6,
+        "results": [
+          [
+            [
+              2,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          [
+            [
+              2,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          [
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              0,
+              0
+            ]
+          ],
+          [
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 15,
+        "scope_size": 2,
+        "part_count": 1,
+        "results": [],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 16,
+        "scope_size": 4,
+        "part_count": 5,
+        "results": [
+          [
+            [
+              1,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              2,
+              1
+            ]
+          ],
+          [
+            [
+              1,
+              1
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              2,
+              1
+            ]
+          ]
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 17,
+        "scope_size": 3,
+        "part_count": 1,
+        "results": [],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 18,
+        "scope_size": 3,
+        "part_count": 5,
+        "results": [
+          [
+            [
+              2,
+              0
+            ],
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          [
+            [
+              2,
+              1
+            ],
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ]
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 19,
+        "scope_size": 1,
+        "part_count": 4,
+        "results": [
+          [
+            [
+              0,
+              0
+            ]
+          ]
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 20,
+        "scope_size": 3,
+        "part_count": 1,
+        "results": [],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 21,
+        "scope_size": 1,
+        "part_count": 3,
+        "results": [
+          [
+            [
+              0,
+              1
+            ]
+          ]
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 22,
+        "scope_size": 4,
+        "part_count": 1,
+        "results": [],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 23,
+        "scope_size": 2,
+        "part_count": 6,
+        "results": [
+          [
+            [
+              1,
+              1
+            ],
+            [
+              0,
+              0
+            ]
+          ],
+          [
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ],
+          [
+            [
+              1,
+              1
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          [
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              1
+            ]
+          ]
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 24,
+        "scope_size": 2,
+        "part_count": 3,
+        "results": [],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 25,
+        "scope_size": 3,
+        "part_count": 8,
+        "results": [
+          [
+            [
+              2,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          [
+            [
+              2,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          [
+            [
+              2,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          [
+            [
+              2,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              1
+            ]
+          ]
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 26,
+        "scope_size": 1,
+        "part_count": 5,
+        "results": [
+          [
+            [
+              0,
+              0
+            ]
+          ],
+          [
+            [
+              0,
+              1
+            ]
+          ]
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 27,
+        "scope_size": 1,
+        "part_count": 6,
+        "results": [
+          [
+            [
+              0,
+              1
+            ]
+          ]
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 28,
+        "scope_size": 1,
+        "part_count": 4,
+        "results": [
+          [
+            [
+              0,
+              1
+            ]
+          ]
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 29,
+        "scope_size": 3,
+        "part_count": 1,
+        "results": [],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 30,
+        "scope_size": 2,
+        "part_count": 2,
+        "results": [],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 31,
+        "scope_size": 2,
+        "part_count": 4,
+        "results": [
+          [
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          [
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ],
+          [
+            [
+              1,
+              1
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 32,
+        "scope_size": 12,
+        "part_count": 12,
+        "results": [
+          [
+            [
+              9,
+              0
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              7,
+              0
+            ],
+            [
+              6,
+              0
+            ],
+            [
+              5,
+              0
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              11,
+              0
+            ],
+            [
+              10,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 33,
+        "scope_size": 16,
+        "part_count": 16,
+        "results": [
+          [
+            [
+              9,
+              0
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              7,
+              0
+            ],
+            [
+              6,
+              0
+            ],
+            [
+              5,
+              0
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              15,
+              0
+            ],
+            [
+              14,
+              0
+            ],
+            [
+              13,
+              0
+            ],
+            [
+              12,
+              0
+            ],
+            [
+              11,
+              0
+            ],
+            [
+              10,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 34,
+        "scope_size": 32,
+        "part_count": 32,
+        "results": [
+          [
+            [
+              9,
+              0
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              7,
+              0
+            ],
+            [
+              6,
+              0
+            ],
+            [
+              5,
+              0
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              31,
+              0
+            ],
+            [
+              30,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              29,
+              0
+            ],
+            [
+              28,
+              0
+            ],
+            [
+              27,
+              0
+            ],
+            [
+              26,
+              0
+            ],
+            [
+              25,
+              0
+            ],
+            [
+              24,
+              0
+            ],
+            [
+              23,
+              0
+            ],
+            [
+              22,
+              0
+            ],
+            [
+              21,
+              0
+            ],
+            [
+              20,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              19,
+              0
+            ],
+            [
+              18,
+              0
+            ],
+            [
+              17,
+              0
+            ],
+            [
+              16,
+              0
+            ],
+            [
+              15,
+              0
+            ],
+            [
+              14,
+              0
+            ],
+            [
+              13,
+              0
+            ],
+            [
+              12,
+              0
+            ],
+            [
+              11,
+              0
+            ],
+            [
+              10,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 35,
+        "scope_size": 64,
+        "part_count": 64,
+        "results": [
+          [
+            [
+              9,
+              0
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              7,
+              0
+            ],
+            [
+              63,
+              0
+            ],
+            [
+              62,
+              0
+            ],
+            [
+              61,
+              0
+            ],
+            [
+              60,
+              0
+            ],
+            [
+              6,
+              0
+            ],
+            [
+              59,
+              0
+            ],
+            [
+              58,
+              0
+            ],
+            [
+              57,
+              0
+            ],
+            [
+              56,
+              0
+            ],
+            [
+              55,
+              0
+            ],
+            [
+              54,
+              0
+            ],
+            [
+              53,
+              0
+            ],
+            [
+              52,
+              0
+            ],
+            [
+              51,
+              0
+            ],
+            [
+              50,
+              0
+            ],
+            [
+              5,
+              0
+            ],
+            [
+              49,
+              0
+            ],
+            [
+              48,
+              0
+            ],
+            [
+              47,
+              0
+            ],
+            [
+              46,
+              0
+            ],
+            [
+              45,
+              0
+            ],
+            [
+              44,
+              0
+            ],
+            [
+              43,
+              0
+            ],
+            [
+              42,
+              0
+            ],
+            [
+              41,
+              0
+            ],
+            [
+              40,
+              0
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              39,
+              0
+            ],
+            [
+              38,
+              0
+            ],
+            [
+              37,
+              0
+            ],
+            [
+              36,
+              0
+            ],
+            [
+              35,
+              0
+            ],
+            [
+              34,
+              0
+            ],
+            [
+              33,
+              0
+            ],
+            [
+              32,
+              0
+            ],
+            [
+              31,
+              0
+            ],
+            [
+              30,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              29,
+              0
+            ],
+            [
+              28,
+              0
+            ],
+            [
+              27,
+              0
+            ],
+            [
+              26,
+              0
+            ],
+            [
+              25,
+              0
+            ],
+            [
+              24,
+              0
+            ],
+            [
+              23,
+              0
+            ],
+            [
+              22,
+              0
+            ],
+            [
+              21,
+              0
+            ],
+            [
+              20,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              19,
+              0
+            ],
+            [
+              18,
+              0
+            ],
+            [
+              17,
+              0
+            ],
+            [
+              16,
+              0
+            ],
+            [
+              15,
+              0
+            ],
+            [
+              14,
+              0
+            ],
+            [
+              13,
+              0
+            ],
+            [
+              12,
+              0
+            ],
+            [
+              11,
+              0
+            ],
+            [
+              10,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        ],
+        "seconds": 0.003
+      },
+      {
+        "kind": "bindings",
+        "id": 36,
+        "scope_size": 128,
+        "part_count": 128,
+        "results": [
+          [
+            [
+              99,
+              0
+            ],
+            [
+              98,
+              0
+            ],
+            [
+              97,
+              0
+            ],
+            [
+              96,
+              0
+            ],
+            [
+              95,
+              0
+            ],
+            [
+              94,
+              0
+            ],
+            [
+              93,
+              0
+            ],
+            [
+              92,
+              0
+            ],
+            [
+              91,
+              0
+            ],
+            [
+              90,
+              0
+            ],
+            [
+              9,
+              0
+            ],
+            [
+              89,
+              0
+            ],
+            [
+              88,
+              0
+            ],
+            [
+              87,
+              0
+            ],
+            [
+              86,
+              0
+            ],
+            [
+              85,
+              0
+            ],
+            [
+              84,
+              0
+            ],
+            [
+              83,
+              0
+            ],
+            [
+              82,
+              0
+            ],
+            [
+              81,
+              0
+            ],
+            [
+              80,
+              0
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              79,
+              0
+            ],
+            [
+              78,
+              0
+            ],
+            [
+              77,
+              0
+            ],
+            [
+              76,
+              0
+            ],
+            [
+              75,
+              0
+            ],
+            [
+              74,
+              0
+            ],
+            [
+              73,
+              0
+            ],
+            [
+              72,
+              0
+            ],
+            [
+              71,
+              0
+            ],
+            [
+              70,
+              0
+            ],
+            [
+              7,
+              0
+            ],
+            [
+              69,
+              0
+            ],
+            [
+              68,
+              0
+            ],
+            [
+              67,
+              0
+            ],
+            [
+              66,
+              0
+            ],
+            [
+              65,
+              0
+            ],
+            [
+              64,
+              0
+            ],
+            [
+              63,
+              0
+            ],
+            [
+              62,
+              0
+            ],
+            [
+              61,
+              0
+            ],
+            [
+              60,
+              0
+            ],
+            [
+              6,
+              0
+            ],
+            [
+              59,
+              0
+            ],
+            [
+              58,
+              0
+            ],
+            [
+              57,
+              0
+            ],
+            [
+              56,
+              0
+            ],
+            [
+              55,
+              0
+            ],
+            [
+              54,
+              0
+            ],
+            [
+              53,
+              0
+            ],
+            [
+              52,
+              0
+            ],
+            [
+              51,
+              0
+            ],
+            [
+              50,
+              0
+            ],
+            [
+              5,
+              0
+            ],
+            [
+              49,
+              0
+            ],
+            [
+              48,
+              0
+            ],
+            [
+              47,
+              0
+            ],
+            [
+              46,
+              0
+            ],
+            [
+              45,
+              0
+            ],
+            [
+              44,
+              0
+            ],
+            [
+              43,
+              0
+            ],
+            [
+              42,
+              0
+            ],
+            [
+              41,
+              0
+            ],
+            [
+              40,
+              0
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              39,
+              0
+            ],
+            [
+              38,
+              0
+            ],
+            [
+              37,
+              0
+            ],
+            [
+              36,
+              0
+            ],
+            [
+              35,
+              0
+            ],
+            [
+              34,
+              0
+            ],
+            [
+              33,
+              0
+            ],
+            [
+              32,
+              0
+            ],
+            [
+              31,
+              0
+            ],
+            [
+              30,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              29,
+              0
+            ],
+            [
+              28,
+              0
+            ],
+            [
+              27,
+              0
+            ],
+            [
+              26,
+              0
+            ],
+            [
+              25,
+              0
+            ],
+            [
+              24,
+              0
+            ],
+            [
+              23,
+              0
+            ],
+            [
+              22,
+              0
+            ],
+            [
+              21,
+              0
+            ],
+            [
+              20,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              19,
+              0
+            ],
+            [
+              18,
+              0
+            ],
+            [
+              17,
+              0
+            ],
+            [
+              16,
+              0
+            ],
+            [
+              15,
+              0
+            ],
+            [
+              14,
+              0
+            ],
+            [
+              13,
+              0
+            ],
+            [
+              127,
+              0
+            ],
+            [
+              126,
+              0
+            ],
+            [
+              125,
+              0
+            ],
+            [
+              124,
+              0
+            ],
+            [
+              123,
+              0
+            ],
+            [
+              122,
+              0
+            ],
+            [
+              121,
+              0
+            ],
+            [
+              120,
+              0
+            ],
+            [
+              12,
+              0
+            ],
+            [
+              119,
+              0
+            ],
+            [
+              118,
+              0
+            ],
+            [
+              117,
+              0
+            ],
+            [
+              116,
+              0
+            ],
+            [
+              115,
+              0
+            ],
+            [
+              114,
+              0
+            ],
+            [
+              113,
+              0
+            ],
+            [
+              112,
+              0
+            ],
+            [
+              111,
+              0
+            ],
+            [
+              110,
+              0
+            ],
+            [
+              11,
+              0
+            ],
+            [
+              109,
+              0
+            ],
+            [
+              108,
+              0
+            ],
+            [
+              107,
+              0
+            ],
+            [
+              106,
+              0
+            ],
+            [
+              105,
+              0
+            ],
+            [
+              104,
+              0
+            ],
+            [
+              103,
+              0
+            ],
+            [
+              102,
+              0
+            ],
+            [
+              101,
+              0
+            ],
+            [
+              100,
+              0
+            ],
+            [
+              10,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        ],
+        "seconds": 0.018
+      },
+      {
+        "kind": "bindings",
+        "id": 37,
+        "scope_size": 2,
+        "part_count": 9,
+        "results": [
+          [
+            [
+              0,
+              7
+            ],
+            [
+              1,
+              0
+            ]
+          ]
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 38,
+        "scope_size": 2,
+        "part_count": 33,
+        "results": [
+          [
+            [
+              0,
+              31
+            ],
+            [
+              1,
+              0
+            ]
+          ]
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 39,
+        "scope_size": 2,
+        "part_count": 129,
+        "results": [
+          [
+            [
+              0,
+              127
+            ],
+            [
+              1,
+              0
+            ]
+          ]
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 40,
+        "scope_size": 4,
+        "part_count": 10,
+        "results": [
+          [
+            [
+              3,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 41,
+        "scope_size": 8,
+        "part_count": 36,
+        "results": [
+          [
+            [
+              7,
+              0
+            ],
+            [
+              6,
+              0
+            ],
+            [
+              5,
+              0
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 42,
+        "scope_size": 12,
+        "part_count": 78,
+        "results": [
+          [
+            [
+              9,
+              0
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              7,
+              0
+            ],
+            [
+              6,
+              0
+            ],
+            [
+              5,
+              0
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              11,
+              0
+            ],
+            [
+              10,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        ],
+        "seconds": 0.0
+      },
+      {
+        "kind": "bindings",
+        "id": 43,
+        "scope_size": 32,
+        "part_count": 528,
+        "results": [
+          [
+            [
+              9,
+              0
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              7,
+              0
+            ],
+            [
+              6,
+              0
+            ],
+            [
+              5,
+              0
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              31,
+              0
+            ],
+            [
+              30,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              29,
+              0
+            ],
+            [
+              28,
+              0
+            ],
+            [
+              27,
+              0
+            ],
+            [
+              26,
+              0
+            ],
+            [
+              25,
+              0
+            ],
+            [
+              24,
+              0
+            ],
+            [
+              23,
+              0
+            ],
+            [
+              22,
+              0
+            ],
+            [
+              21,
+              0
+            ],
+            [
+              20,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              19,
+              0
+            ],
+            [
+              18,
+              0
+            ],
+            [
+              17,
+              0
+            ],
+            [
+              16,
+              0
+            ],
+            [
+              15,
+              0
+            ],
+            [
+              14,
+              0
+            ],
+            [
+              13,
+              0
+            ],
+            [
+              12,
+              0
+            ],
+            [
+              11,
+              0
+            ],
+            [
+              10,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        ],
+        "seconds": 0.003
+      },
+      {
+        "kind": "bindings",
+        "id": 44,
+        "scope_size": 64,
+        "part_count": 2080,
+        "results": [
+          [
+            [
+              9,
+              0
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              7,
+              0
+            ],
+            [
+              63,
+              0
+            ],
+            [
+              62,
+              0
+            ],
+            [
+              61,
+              0
+            ],
+            [
+              60,
+              0
+            ],
+            [
+              6,
+              0
+            ],
+            [
+              59,
+              0
+            ],
+            [
+              58,
+              0
+            ],
+            [
+              57,
+              0
+            ],
+            [
+              56,
+              0
+            ],
+            [
+              55,
+              0
+            ],
+            [
+              54,
+              0
+            ],
+            [
+              53,
+              0
+            ],
+            [
+              52,
+              0
+            ],
+            [
+              51,
+              0
+            ],
+            [
+              50,
+              0
+            ],
+            [
+              5,
+              0
+            ],
+            [
+              49,
+              0
+            ],
+            [
+              48,
+              0
+            ],
+            [
+              47,
+              0
+            ],
+            [
+              46,
+              0
+            ],
+            [
+              45,
+              0
+            ],
+            [
+              44,
+              0
+            ],
+            [
+              43,
+              0
+            ],
+            [
+              42,
+              0
+            ],
+            [
+              41,
+              0
+            ],
+            [
+              40,
+              0
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              39,
+              0
+            ],
+            [
+              38,
+              0
+            ],
+            [
+              37,
+              0
+            ],
+            [
+              36,
+              0
+            ],
+            [
+              35,
+              0
+            ],
+            [
+              34,
+              0
+            ],
+            [
+              33,
+              0
+            ],
+            [
+              32,
+              0
+            ],
+            [
+              31,
+              0
+            ],
+            [
+              30,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              29,
+              0
+            ],
+            [
+              28,
+              0
+            ],
+            [
+              27,
+              0
+            ],
+            [
+              26,
+              0
+            ],
+            [
+              25,
+              0
+            ],
+            [
+              24,
+              0
+            ],
+            [
+              23,
+              0
+            ],
+            [
+              22,
+              0
+            ],
+            [
+              21,
+              0
+            ],
+            [
+              20,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              19,
+              0
+            ],
+            [
+              18,
+              0
+            ],
+            [
+              17,
+              0
+            ],
+            [
+              16,
+              0
+            ],
+            [
+              15,
+              0
+            ],
+            [
+              14,
+              0
+            ],
+            [
+              13,
+              0
+            ],
+            [
+              12,
+              0
+            ],
+            [
+              11,
+              0
+            ],
+            [
+              10,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        ],
+        "seconds": 0.038
+      },
+      {
+        "kind": "bindings",
+        "id": 45,
+        "scope_size": 128,
+        "part_count": 8256,
+        "results": [
+          [
+            [
+              99,
+              0
+            ],
+            [
+              98,
+              0
+            ],
+            [
+              97,
+              0
+            ],
+            [
+              96,
+              0
+            ],
+            [
+              95,
+              0
+            ],
+            [
+              94,
+              0
+            ],
+            [
+              93,
+              0
+            ],
+            [
+              92,
+              0
+            ],
+            [
+              91,
+              0
+            ],
+            [
+              90,
+              0
+            ],
+            [
+              9,
+              0
+            ],
+            [
+              89,
+              0
+            ],
+            [
+              88,
+              0
+            ],
+            [
+              87,
+              0
+            ],
+            [
+              86,
+              0
+            ],
+            [
+              85,
+              0
+            ],
+            [
+              84,
+              0
+            ],
+            [
+              83,
+              0
+            ],
+            [
+              82,
+              0
+            ],
+            [
+              81,
+              0
+            ],
+            [
+              80,
+              0
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              79,
+              0
+            ],
+            [
+              78,
+              0
+            ],
+            [
+              77,
+              0
+            ],
+            [
+              76,
+              0
+            ],
+            [
+              75,
+              0
+            ],
+            [
+              74,
+              0
+            ],
+            [
+              73,
+              0
+            ],
+            [
+              72,
+              0
+            ],
+            [
+              71,
+              0
+            ],
+            [
+              70,
+              0
+            ],
+            [
+              7,
+              0
+            ],
+            [
+              69,
+              0
+            ],
+            [
+              68,
+              0
+            ],
+            [
+              67,
+              0
+            ],
+            [
+              66,
+              0
+            ],
+            [
+              65,
+              0
+            ],
+            [
+              64,
+              0
+            ],
+            [
+              63,
+              0
+            ],
+            [
+              62,
+              0
+            ],
+            [
+              61,
+              0
+            ],
+            [
+              60,
+              0
+            ],
+            [
+              6,
+              0
+            ],
+            [
+              59,
+              0
+            ],
+            [
+              58,
+              0
+            ],
+            [
+              57,
+              0
+            ],
+            [
+              56,
+              0
+            ],
+            [
+              55,
+              0
+            ],
+            [
+              54,
+              0
+            ],
+            [
+              53,
+              0
+            ],
+            [
+              52,
+              0
+            ],
+            [
+              51,
+              0
+            ],
+            [
+              50,
+              0
+            ],
+            [
+              5,
+              0
+            ],
+            [
+              49,
+              0
+            ],
+            [
+              48,
+              0
+            ],
+            [
+              47,
+              0
+            ],
+            [
+              46,
+              0
+            ],
+            [
+              45,
+              0
+            ],
+            [
+              44,
+              0
+            ],
+            [
+              43,
+              0
+            ],
+            [
+              42,
+              0
+            ],
+            [
+              41,
+              0
+            ],
+            [
+              40,
+              0
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              39,
+              0
+            ],
+            [
+              38,
+              0
+            ],
+            [
+              37,
+              0
+            ],
+            [
+              36,
+              0
+            ],
+            [
+              35,
+              0
+            ],
+            [
+              34,
+              0
+            ],
+            [
+              33,
+              0
+            ],
+            [
+              32,
+              0
+            ],
+            [
+              31,
+              0
+            ],
+            [
+              30,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              29,
+              0
+            ],
+            [
+              28,
+              0
+            ],
+            [
+              27,
+              0
+            ],
+            [
+              26,
+              0
+            ],
+            [
+              25,
+              0
+            ],
+            [
+              24,
+              0
+            ],
+            [
+              23,
+              0
+            ],
+            [
+              22,
+              0
+            ],
+            [
+              21,
+              0
+            ],
+            [
+              20,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              19,
+              0
+            ],
+            [
+              18,
+              0
+            ],
+            [
+              17,
+              0
+            ],
+            [
+              16,
+              0
+            ],
+            [
+              15,
+              0
+            ],
+            [
+              14,
+              0
+            ],
+            [
+              13,
+              0
+            ],
+            [
+              127,
+              0
+            ],
+            [
+              126,
+              0
+            ],
+            [
+              125,
+              0
+            ],
+            [
+              124,
+              0
+            ],
+            [
+              123,
+              0
+            ],
+            [
+              122,
+              0
+            ],
+            [
+              121,
+              0
+            ],
+            [
+              120,
+              0
+            ],
+            [
+              12,
+              0
+            ],
+            [
+              119,
+              0
+            ],
+            [
+              118,
+              0
+            ],
+            [
+              117,
+              0
+            ],
+            [
+              116,
+              0
+            ],
+            [
+              115,
+              0
+            ],
+            [
+              114,
+              0
+            ],
+            [
+              113,
+              0
+            ],
+            [
+              112,
+              0
+            ],
+            [
+              111,
+              0
+            ],
+            [
+              110,
+              0
+            ],
+            [
+              11,
+              0
+            ],
+            [
+              109,
+              0
+            ],
+            [
+              108,
+              0
+            ],
+            [
+              107,
+              0
+            ],
+            [
+              106,
+              0
+            ],
+            [
+              105,
+              0
+            ],
+            [
+              104,
+              0
+            ],
+            [
+              103,
+              0
+            ],
+            [
+              102,
+              0
+            ],
+            [
+              101,
+              0
+            ],
+            [
+              100,
+              0
+            ],
+            [
+              10,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        ],
+        "seconds": 0.477
+      },
+      {
+        "kind": "assembly",
+        "id": 0,
+        "scope_size": 3,
+        "part_count": 3,
+        "result": [
+          2,
+          1,
+          0
+        ],
+        "witnesses": {
+          "0": [
+            0
+          ],
+          "1": [
+            1
+          ],
+          "2": [
+            2
+          ]
+        },
+        "seconds": 0.0
+      },
+      {
+        "kind": "assembly",
+        "id": 1,
+        "scope_size": 2,
+        "part_count": 3,
+        "result": [
+          2,
+          0
+        ],
+        "witnesses": {
+          "0": [
+            0
+          ],
+          "2": [
+            1
+          ]
+        },
+        "seconds": 0.0
+      },
+      {
+        "kind": "assembly",
+        "id": 2,
+        "scope_size": 1,
+        "part_count": 2,
+        "result": [
+          0
+        ],
+        "witnesses": {
+          "0": [
+            0
+          ]
+        },
+        "seconds": 0.0
+      },
+      {
+        "kind": "assembly",
+        "id": 3,
+        "scope_size": 0,
+        "part_count": 1,
+        "result": [],
+        "witnesses": {},
+        "seconds": 0.0
+      },
+      {
+        "kind": "assembly",
+        "id": 4,
+        "scope_size": 3,
+        "part_count": 6,
+        "result": [
+          1,
+          2,
+          0
+        ],
+        "witnesses": {
+          "0": [
+            0
+          ],
+          "1": [
+            1
+          ],
+          "2": [
+            2
+          ]
+        },
+        "seconds": 0.0
+      },
+      {
+        "kind": "assembly",
+        "id": 5,
+        "scope_size": 6,
+        "part_count": 12,
+        "result": [
+          1,
+          7,
+          6,
+          5,
+          4,
+          0
+        ],
+        "witnesses": {
+          "0": [
+            0
+          ],
+          "1": [
+            1
+          ],
+          "4": [
+            2
+          ],
+          "5": [
+            3
+          ],
+          "6": [
+            4
+          ],
+          "7": [
+            5
+          ]
+        },
+        "seconds": 0.0
+      },
+      {
+        "kind": "assembly",
+        "id": 6,
+        "scope_size": 32,
+        "part_count": 48,
+        "result": [
+          1,
+          47,
+          46,
+          45,
+          44,
+          43,
+          34,
+          25,
+          24,
+          23,
+          22,
+          21,
+          20,
+          19,
+          18,
+          17,
+          16,
+          15,
+          14,
+          13,
+          12,
+          11,
+          10,
+          9,
+          8,
+          7,
+          6,
+          5,
+          4,
+          3,
+          2,
+          0
+        ],
+        "witnesses": {
+          "0": [
+            0
+          ],
+          "1": [
+            1
+          ],
+          "2": [
+            2
+          ],
+          "3": [
+            3
+          ],
+          "4": [
+            4
+          ],
+          "5": [
+            5
+          ],
+          "6": [
+            6
+          ],
+          "7": [
+            7
+          ],
+          "8": [
+            8
+          ],
+          "9": [
+            9
+          ],
+          "10": [
+            10
+          ],
+          "11": [
+            11
+          ],
+          "12": [
+            12
+          ],
+          "13": [
+            13
+          ],
+          "14": [
+            14
+          ],
+          "15": [
+            15
+          ],
+          "16": [
+            16
+          ],
+          "17": [
+            17
+          ],
+          "18": [
+            18
+          ],
+          "19": [
+            19
+          ],
+          "20": [
+            20
+          ],
+          "21": [
+            21
+          ],
+          "22": [
+            22
+          ],
+          "23": [
+            23
+          ],
+          "24": [
+            24
+          ],
+          "25": [
+            25
+          ],
+          "34": [
+            26
+          ],
+          "43": [
+            27
+          ],
+          "44": [
+            28
+          ],
+          "45": [
+            29
+          ],
+          "46": [
+            30
+          ],
+          "47": [
+            31
+          ]
+        },
+        "seconds": 0.003
+      },
+      {
+        "kind": "assembly",
+        "id": 7,
+        "scope_size": 64,
+        "part_count": 96,
+        "result": [
+          1,
+          89,
+          78,
+          67,
+          60,
+          59,
+          58,
+          57,
+          56,
+          55,
+          54,
+          53,
+          52,
+          51,
+          50,
+          49,
+          48,
+          47,
+          46,
+          45,
+          44,
+          43,
+          42,
+          41,
+          40,
+          39,
+          38,
+          37,
+          36,
+          35,
+          34,
+          33,
+          32,
+          31,
+          30,
+          29,
+          28,
+          27,
+          26,
+          25,
+          24,
+          23,
+          22,
+          21,
+          20,
+          19,
+          18,
+          17,
+          16,
+          15,
+          14,
+          13,
+          12,
+          11,
+          10,
+          9,
+          8,
+          7,
+          6,
+          5,
+          4,
+          3,
+          2,
+          0
+        ],
+        "witnesses": {
+          "0": [
+            0
+          ],
+          "1": [
+            1
+          ],
+          "2": [
+            2
+          ],
+          "3": [
+            3
+          ],
+          "4": [
+            4
+          ],
+          "5": [
+            5
+          ],
+          "6": [
+            6
+          ],
+          "7": [
+            7
+          ],
+          "8": [
+            8
+          ],
+          "9": [
+            9
+          ],
+          "10": [
+            10
+          ],
+          "11": [
+            11
+          ],
+          "12": [
+            12
+          ],
+          "13": [
+            13
+          ],
+          "14": [
+            14
+          ],
+          "15": [
+            15
+          ],
+          "16": [
+            16
+          ],
+          "17": [
+            17
+          ],
+          "18": [
+            18
+          ],
+          "19": [
+            19
+          ],
+          "20": [
+            20
+          ],
+          "21": [
+            21
+          ],
+          "22": [
+            22
+          ],
+          "23": [
+            23
+          ],
+          "24": [
+            24
+          ],
+          "25": [
+            25
+          ],
+          "26": [
+            26
+          ],
+          "27": [
+            27
+          ],
+          "28": [
+            28
+          ],
+          "29": [
+            29
+          ],
+          "30": [
+            30
+          ],
+          "31": [
+            31
+          ],
+          "32": [
+            32
+          ],
+          "33": [
+            33
+          ],
+          "34": [
+            34
+          ],
+          "35": [
+            35
+          ],
+          "36": [
+            36
+          ],
+          "37": [
+            37
+          ],
+          "38": [
+            38
+          ],
+          "39": [
+            39
+          ],
+          "40": [
+            40
+          ],
+          "41": [
+            41
+          ],
+          "42": [
+            42
+          ],
+          "43": [
+            43
+          ],
+          "44": [
+            44
+          ],
+          "45": [
+            45
+          ],
+          "46": [
+            46
+          ],
+          "47": [
+            47
+          ],
+          "48": [
+            48
+          ],
+          "49": [
+            49
+          ],
+          "50": [
+            50
+          ],
+          "51": [
+            51
+          ],
+          "52": [
+            52
+          ],
+          "53": [
+            53
+          ],
+          "54": [
+            54
+          ],
+          "55": [
+            55
+          ],
+          "56": [
+            56
+          ],
+          "57": [
+            57
+          ],
+          "58": [
+            58
+          ],
+          "59": [
+            59
+          ],
+          "60": [
+            60
+          ],
+          "67": [
+            61
+          ],
+          "78": [
+            62
+          ],
+          "89": [
+            63
+          ]
+        },
+        "seconds": 0.044
+      },
+      {
+        "kind": "assembly",
+        "id": 8,
+        "scope_size": 128,
+        "part_count": 192,
+        "result": [
+          1,
+          191,
+          190,
+          189,
+          188,
+          187,
+          186,
+          185,
+          184,
+          183,
+          182,
+          181,
+          180,
+          179,
+          178,
+          177,
+          176,
+          175,
+          174,
+          173,
+          172,
+          171,
+          170,
+          169,
+          168,
+          167,
+          166,
+          165,
+          164,
+          163,
+          162,
+          161,
+          160,
+          159,
+          158,
+          157,
+          156,
+          155,
+          154,
+          153,
+          152,
+          151,
+          150,
+          149,
+          148,
+          147,
+          146,
+          145,
+          144,
+          143,
+          142,
+          141,
+          140,
+          139,
+          138,
+          137,
+          136,
+          135,
+          134,
+          133,
+          132,
+          131,
+          130,
+          129,
+          128,
+          127,
+          126,
+          125,
+          124,
+          123,
+          122,
+          121,
+          120,
+          119,
+          118,
+          117,
+          116,
+          115,
+          114,
+          113,
+          112,
+          111,
+          110,
+          109,
+          108,
+          107,
+          106,
+          105,
+          104,
+          101,
+          90,
+          79,
+          68,
+          57,
+          46,
+          35,
+          32,
+          31,
+          30,
+          29,
+          28,
+          27,
+          26,
+          25,
+          24,
+          23,
+          22,
+          21,
+          20,
+          19,
+          18,
+          17,
+          16,
+          15,
+          14,
+          13,
+          12,
+          11,
+          10,
+          9,
+          8,
+          7,
+          6,
+          5,
+          4,
+          3,
+          2,
+          0
+        ],
+        "witnesses": {
+          "0": [
+            0
+          ],
+          "1": [
+            1
+          ],
+          "2": [
+            2
+          ],
+          "3": [
+            3
+          ],
+          "4": [
+            4
+          ],
+          "5": [
+            5
+          ],
+          "6": [
+            6
+          ],
+          "7": [
+            7
+          ],
+          "8": [
+            8
+          ],
+          "9": [
+            9
+          ],
+          "10": [
+            10
+          ],
+          "11": [
+            11
+          ],
+          "12": [
+            12
+          ],
+          "13": [
+            13
+          ],
+          "14": [
+            14
+          ],
+          "15": [
+            15
+          ],
+          "16": [
+            16
+          ],
+          "17": [
+            17
+          ],
+          "18": [
+            18
+          ],
+          "19": [
+            19
+          ],
+          "20": [
+            20
+          ],
+          "21": [
+            21
+          ],
+          "22": [
+            22
+          ],
+          "23": [
+            23
+          ],
+          "24": [
+            24
+          ],
+          "25": [
+            25
+          ],
+          "26": [
+            26
+          ],
+          "27": [
+            27
+          ],
+          "28": [
+            28
+          ],
+          "29": [
+            29
+          ],
+          "30": [
+            30
+          ],
+          "31": [
+            31
+          ],
+          "32": [
+            32
+          ],
+          "35": [
+            33
+          ],
+          "46": [
+            34
+          ],
+          "57": [
+            35
+          ],
+          "68": [
+            36
+          ],
+          "79": [
+            37
+          ],
+          "90": [
+            38
+          ],
+          "101": [
+            39
+          ],
+          "104": [
+            40
+          ],
+          "105": [
+            41
+          ],
+          "106": [
+            42
+          ],
+          "107": [
+            43
+          ],
+          "108": [
+            44
+          ],
+          "109": [
+            45
+          ],
+          "110": [
+            46
+          ],
+          "111": [
+            47
+          ],
+          "112": [
+            48
+          ],
+          "113": [
+            49
+          ],
+          "114": [
+            50
+          ],
+          "115": [
+            51
+          ],
+          "116": [
+            52
+          ],
+          "117": [
+            53
+          ],
+          "118": [
+            54
+          ],
+          "119": [
+            55
+          ],
+          "120": [
+            56
+          ],
+          "121": [
+            57
+          ],
+          "122": [
+            58
+          ],
+          "123": [
+            59
+          ],
+          "124": [
+            60
+          ],
+          "125": [
+            61
+          ],
+          "126": [
+            62
+          ],
+          "127": [
+            63
+          ],
+          "128": [
+            64
+          ],
+          "129": [
+            65
+          ],
+          "130": [
+            66
+          ],
+          "131": [
+            67
+          ],
+          "132": [
+            68
+          ],
+          "133": [
+            69
+          ],
+          "134": [
+            70
+          ],
+          "135": [
+            71
+          ],
+          "136": [
+            72
+          ],
+          "137": [
+            73
+          ],
+          "138": [
+            74
+          ],
+          "139": [
+            75
+          ],
+          "140": [
+            76
+          ],
+          "141": [
+            77
+          ],
+          "142": [
+            78
+          ],
+          "143": [
+            79
+          ],
+          "144": [
+            80
+          ],
+          "145": [
+            81
+          ],
+          "146": [
+            82
+          ],
+          "147": [
+            83
+          ],
+          "148": [
+            84
+          ],
+          "149": [
+            85
+          ],
+          "150": [
+            86
+          ],
+          "151": [
+            87
+          ],
+          "152": [
+            88
+          ],
+          "153": [
+            89
+          ],
+          "154": [
+            90
+          ],
+          "155": [
+            91
+          ],
+          "156": [
+            92
+          ],
+          "157": [
+            93
+          ],
+          "158": [
+            94
+          ],
+          "159": [
+            95
+          ],
+          "160": [
+            96
+          ],
+          "161": [
+            97
+          ],
+          "162": [
+            98
+          ],
+          "163": [
+            99
+          ],
+          "164": [
+            100
+          ],
+          "165": [
+            101
+          ],
+          "166": [
+            102
+          ],
+          "167": [
+            103
+          ],
+          "168": [
+            104
+          ],
+          "169": [
+            105
+          ],
+          "170": [
+            106
+          ],
+          "171": [
+            107
+          ],
+          "172": [
+            108
+          ],
+          "173": [
+            109
+          ],
+          "174": [
+            110
+          ],
+          "175": [
+            111
+          ],
+          "176": [
+            112
+          ],
+          "177": [
+            113
+          ],
+          "178": [
+            114
+          ],
+          "179": [
+            115
+          ],
+          "180": [
+            116
+          ],
+          "181": [
+            117
+          ],
+          "182": [
+            118
+          ],
+          "183": [
+            119
+          ],
+          "184": [
+            120
+          ],
+          "185": [
+            121
+          ],
+          "186": [
+            122
+          ],
+          "187": [
+            123
+          ],
+          "188": [
+            124
+          ],
+          "189": [
+            125
+          ],
+          "190": [
+            126
+          ],
+          "191": [
+            127
+          ]
+        },
+        "seconds": 0.599
+      },
+      {
+        "kind": "assembly",
+        "id": 9,
+        "scope_size": 6,
+        "part_count": 4,
+        "result": [
+          2,
+          3,
+          1,
+          0
+        ],
+        "witnesses": {
+          "0": [
+            0,
+            3
+          ],
+          "1": [
+            1
+          ],
+          "2": [
+            4
+          ],
+          "3": [
+            2
+          ]
+        },
+        "seconds": 0.0
+      },
+      {
+        "kind": "assembly",
+        "id": 10,
+        "scope_size": 224,
+        "part_count": 240,
+        "result": [
+          1,
+          239,
+          238,
+          237,
+          236,
+          234,
+          232,
+          230,
+          228,
+          226,
+          224,
+          221,
+          219,
+          217,
+          215,
+          213,
+          211,
+          209,
+          207,
+          205,
+          203,
+          200,
+          198,
+          196,
+          194,
+          192,
+          190,
+          188,
+          186,
+          184,
+          182,
+          179,
+          177,
+          175,
+          173,
+          171,
+          169,
+          32,
+          31,
+          30,
+          29,
+          28,
+          27,
+          26,
+          25,
+          23,
+          22,
+          21,
+          20,
+          19,
+          18,
+          17,
+          16,
+          15,
+          14,
+          12,
+          11,
+          10,
+          9,
+          8,
+          7,
+          6,
+          5,
+          4,
+          3,
+          168,
+          167,
+          166,
+          165,
+          163,
+          162,
+          161,
+          160,
+          159,
+          158,
+          157,
+          156,
+          155,
+          154,
+          152,
+          151,
+          149,
+          147,
+          145,
+          143,
+          141,
+          139,
+          137,
+          135,
+          132,
+          130,
+          128,
+          126,
+          124,
+          122,
+          120,
+          118,
+          223,
+          202,
+          181,
+          164,
+          153,
+          134,
+          117,
+          116,
+          115,
+          114,
+          113,
+          112,
+          111,
+          110,
+          109,
+          108,
+          107,
+          106,
+          105,
+          104,
+          101,
+          90,
+          79,
+          68,
+          57,
+          46,
+          35,
+          24,
+          13,
+          2,
+          0
+        ],
+        "witnesses": {
+          "0": [
+            0,
+            32,
+            96
+          ],
+          "1": [
+            1,
+            33,
+            97
+          ],
+          "2": [
+            2,
+            34,
+            98
+          ],
+          "3": [
+            99
+          ],
+          "4": [
+            100
+          ],
+          "5": [
+            101
+          ],
+          "6": [
+            102
+          ],
+          "7": [
+            103
+          ],
+          "8": [
+            104
+          ],
+          "9": [
+            105
+          ],
+          "10": [
+            106
+          ],
+          "11": [
+            107
+          ],
+          "12": [
+            108
+          ],
+          "13": [
+            3,
+            35,
+            109
+          ],
+          "14": [
+            110
+          ],
+          "15": [
+            111
+          ],
+          "16": [
+            112
+          ],
+          "17": [
+            113
+          ],
+          "18": [
+            114
+          ],
+          "19": [
+            115
+          ],
+          "20": [
+            116
+          ],
+          "21": [
+            117
+          ],
+          "22": [
+            118
+          ],
+          "23": [
+            119
+          ],
+          "24": [
+            4,
+            36,
+            120
+          ],
+          "25": [
+            121
+          ],
+          "26": [
+            122
+          ],
+          "27": [
+            123
+          ],
+          "28": [
+            124
+          ],
+          "29": [
+            125
+          ],
+          "30": [
+            126
+          ],
+          "31": [
+            127
+          ],
+          "32": [
+            128
+          ],
+          "35": [
+            5,
+            37,
+            129
+          ],
+          "46": [
+            6,
+            38,
+            130
+          ],
+          "57": [
+            7,
+            39,
+            131
+          ],
+          "68": [
+            8,
+            40,
+            132
+          ],
+          "79": [
+            9,
+            41,
+            133
+          ],
+          "90": [
+            10,
+            42,
+            134
+          ],
+          "101": [
+            11,
+            43,
+            135
+          ],
+          "104": [
+            12,
+            44,
+            136
+          ],
+          "105": [
+            13,
+            45,
+            137
+          ],
+          "106": [
+            14,
+            46,
+            138
+          ],
+          "107": [
+            15,
+            47,
+            139
+          ],
+          "108": [
+            16,
+            48,
+            140
+          ],
+          "109": [
+            17,
+            49,
+            141
+          ],
+          "110": [
+            18,
+            50,
+            142
+          ],
+          "111": [
+            19,
+            51,
+            143
+          ],
+          "112": [
+            20,
+            52,
+            144
+          ],
+          "113": [
+            21,
+            53,
+            145
+          ],
+          "114": [
+            22,
+            54,
+            146
+          ],
+          "115": [
+            23,
+            55,
+            147
+          ],
+          "116": [
+            24,
+            56,
+            148
+          ],
+          "117": [
+            25,
+            57,
+            149
+          ],
+          "118": [
+            58,
+            150
+          ],
+          "120": [
+            59,
+            151
+          ],
+          "122": [
+            60,
+            152
+          ],
+          "124": [
+            61,
+            153
+          ],
+          "126": [
+            62,
+            154
+          ],
+          "128": [
+            63,
+            155
+          ],
+          "130": [
+            64,
+            156
+          ],
+          "132": [
+            65,
+            157
+          ],
+          "134": [
+            26,
+            66,
+            158
+          ],
+          "135": [
+            67,
+            159
+          ],
+          "137": [
+            68,
+            160
+          ],
+          "139": [
+            69,
+            161
+          ],
+          "141": [
+            70,
+            162
+          ],
+          "143": [
+            71,
+            163
+          ],
+          "145": [
+            72,
+            164
+          ],
+          "147": [
+            73,
+            165
+          ],
+          "149": [
+            74,
+            166
+          ],
+          "151": [
+            75,
+            167
+          ],
+          "152": [
+            76,
+            168
+          ],
+          "153": [
+            27,
+            77,
+            169
+          ],
+          "154": [
+            78,
+            170
+          ],
+          "155": [
+            79,
+            171
+          ],
+          "156": [
+            80,
+            172
+          ],
+          "157": [
+            81,
+            173
+          ],
+          "158": [
+            82,
+            174
+          ],
+          "159": [
+            83,
+            175
+          ],
+          "160": [
+            84,
+            176
+          ],
+          "161": [
+            85,
+            177
+          ],
+          "162": [
+            86,
+            178
+          ],
+          "163": [
+            87,
+            179
+          ],
+          "164": [
+            28,
+            88,
+            180
+          ],
+          "165": [
+            89,
+            181
+          ],
+          "166": [
+            90,
+            182
+          ],
+          "167": [
+            91,
+            183
+          ],
+          "168": [
+            92,
+            184
+          ],
+          "169": [
+            185
+          ],
+          "171": [
+            186
+          ],
+          "173": [
+            187
+          ],
+          "175": [
+            188
+          ],
+          "177": [
+            189
+          ],
+          "179": [
+            190
+          ],
+          "181": [
+            29,
+            93,
+            191
+          ],
+          "182": [
+            192
+          ],
+          "184": [
+            193
+          ],
+          "186": [
+            194
+          ],
+          "188": [
+            195
+          ],
+          "190": [
+            196
+          ],
+          "192": [
+            197
+          ],
+          "194": [
+            198
+          ],
+          "196": [
+            199
+          ],
+          "198": [
+            200
+          ],
+          "200": [
+            201
+          ],
+          "202": [
+            30,
+            94,
+            202
+          ],
+          "203": [
+            203
+          ],
+          "205": [
+            204
+          ],
+          "207": [
+            205
+          ],
+          "209": [
+            206
+          ],
+          "211": [
+            207
+          ],
+          "213": [
+            208
+          ],
+          "215": [
+            209
+          ],
+          "217": [
+            210
+          ],
+          "219": [
+            211
+          ],
+          "221": [
+            212
+          ],
+          "223": [
+            31,
+            95,
+            213
+          ],
+          "224": [
+            214
+          ],
+          "226": [
+            215
+          ],
+          "228": [
+            216
+          ],
+          "230": [
+            217
+          ],
+          "232": [
+            218
+          ],
+          "234": [
+            219
+          ],
+          "236": [
+            220
+          ],
+          "237": [
+            221
+          ],
+          "238": [
+            222
+          ],
+          "239": [
+            223
+          ]
+        },
+        "seconds": 1.669
+      },
+      {
+        "kind": "assembly",
+        "id": 11,
+        "scope_size": 3,
+        "part_count": 3,
+        "result": null,
+        "witnesses": {},
+        "seconds": 0.0
+      },
+      {
+        "kind": "assembly",
+        "id": 12,
+        "scope_size": 0,
+        "part_count": 0,
+        "result": [],
+        "witnesses": {},
+        "seconds": 0.0
+      },
+      {
+        "kind": "assembly",
+        "id": 13,
+        "scope_size": 1,
+        "part_count": 0,
+        "result": null,
+        "witnesses": {},
+        "seconds": 0.0
+      },
+      {
+        "kind": "assembly",
+        "id": 14,
+        "scope_size": 2,
+        "part_count": 3,
+        "result": [
+          0,
+          1
+        ],
+        "witnesses": {
+          "0": [
+            0
+          ],
+          "1": [
+            1
+          ]
+        },
+        "seconds": 0.0
+      }
+    ],
+    "boundary": "Complete generic inputs and results are retained. Binding equality preserves both finite-set levels. Coverage/minimality is recomputed independently for each constructed part set. Application semantics require the separate application coverage contract and actual application executions."
+  },
+  "proof_receipt_sha256": "05ff332c3afa554306f89289bdb866f8d18421676f0941323cb504a2db307585",
+  "export_sha256": "7161547e20e294fc41066b9c87ff6211f91b89c668dd916c7ace561fdd22ef49",
+  "results_sha256": "2608bd11c100b9476793d980d0793066184e127adbcb44c15985223fc11bb445",
+  "execution_inputs": {
+    "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Finite_Directed_Execution.thy": "d1e87242b30ae51007b953b1d3fd0fbe0f3cb2404d7c5df7f3a79424f182ff70",
+    "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/execute.ML": "24132bbd8478b0a91e843ec182e54083877ef098f5cc3f004a8273e45564c0ad",
+    "/tmp/generalization-quality-review/directed-candidate-construction/joint-prototype-results.json": "869133353a4e26768423fffbb1cbe6c3df5f316db5f5343a7a8ad6f4cdf97e58",
+    "/home/julius/structure_and_semantics/tools/investigate.py": "e7e353ce55e89dcfaab53f8f5dc39ac11a94c02af448c80d858bf0896d790c10",
+    "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Finite_Candidate_Assembly.thy": "b2b02487dfb40ce4ed45f68ca35356cfe88c00a75d2f3d2f18074f46d9a8acf2",
+    "/home/julius/structure_and_semantics/tools/build.py": "8915b7a480b2a17b5cea5b819f3be43323f69cb79dc1513a76c07eb83f6b491e",
+    "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Bootstrap_Relations.thy": "50d4bf926dab217fdad8eb114fe1b0d369aa9a06741df1e568a5cc5fea7ceafe",
+    "/home/julius/structure_and_semantics/tools/check_reasoning.py": "63b5ecd1411a85ba3c02ad3eb5609a0232012ad33dc81d73c8d2e762b75494b1",
+    "/home/julius/structure_and_semantics/tools/proved_code.py": "6abc15336d6b23c7b63343cd0d1f3b169397838a0273552c6932f5fadd96917a",
+    "/tmp/generalization-quality-review/directed-candidate-construction/prototype-results.json": "7a44ca425276609c48723b3c3f15af9dd97c96c666d6ff3aaa6356ff2fe68b9a",
+    "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Finite_Set_Composition.thy": "afab9aa6a45378359fb543a95a104326d282ced6a227499397bd24e2208ca2bd",
+    "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Finite_Compatible_Unions.thy": "4192efb90e2702fb885576c1b386f267b64a32df40ec082df9a07745f28afce2",
+    "/tmp/generalization-quality-review/directed-candidate-construction/value-prototype-results.json": "71f1797c49dae3277fdbf59d2264c49096df9de55c87cb8022709923ab96d5cd",
+    "/tmp/generalization-quality-review/directed-candidate-construction/native-export2/export/Native_Directed21.Finite_Directed_Execution/code/directed_search.ML": "7161547e20e294fc41066b9c87ff6211f91b89c668dd916c7ace561fdd22ef49",
+    "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Finite_Demand_Selection.thy": "f078ff337e75c81199a1d6a36fff787dae36c88f1433637b32198d8847f185d6",
+    "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/RRA_Footprint.thy": "2177e2f526618e7623714bf72ba8a542ffc3f3ee6b6cdc7e95d15ce5c094926e",
+    "/tmp/generalization-quality-review/directed-candidate-construction/native-export2/proof.json": "05ff332c3afa554306f89289bdb866f8d18421676f0941323cb504a2db307585",
+    "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly": "47efc18d0b38bc908c8b29798575501e8b7b027f593022c80ff1acc55b9495b4",
+    "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/RRA_Finite_Artifacts.thy": "bf551280109ea4f690e7f9e21e3b00f0300c7139205e8ab2f1188c70afaebc0a",
+    "/tmp/generalization-quality-review/directed-candidate-construction/check_directed_native.py": "8e46af8cc5939d979141f0f39b93675c5440d81fb2bd2e81c006adc40de9d296",
+    "/home/julius/structure_and_semantics/tools/observation_contracts.py": "06ca5897c3f894507808e6ae26138f101d2492aa9f08f42770094a5293129191",
+    "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/RRA_Data.thy": "2ff07ed3d0ae79f3a278b4e4fac5b78320a36e314ffa026db1cd014579fd7af5",
+    "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/RRA_Core.thy": "acd13d70482fd6a3bcaed5e07776d76b2afcca45e69353d591a26639c30752db",
+    "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/RRA_Exact.thy": "43713b16aee5bb9972674e96dd0aa393cacc9599db6c745bbf413d476f6f850f",
+    "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Finite_Directed_Contributions.thy": "837dc35c45f253e2a5ef024ef21fc5d41932eb8183175da4dbf9474af552669f",
+    "/tmp/generalization-quality-review/directed-candidate-construction/native-execution4/cases.json": "1132487a75f6fe3a69adddbb1db4340dd877dfdd8d78b38e1b3da4f81ff42626"
+  }
+}

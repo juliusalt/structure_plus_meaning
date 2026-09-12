@@ -1,0 +1,271 @@
+{
+  "schema": "finite-investigation-1",
+  "kind": "basis",
+  "question": "Integrate the proved constructive candidate mechanism and scoped binding search, its complete-input tool and exact replay, so the repository exposes the declared scope and retained evidence rather than leaving the result in a temporary worktree.",
+  "scope": {
+    "candidates": {
+      "0": "Keep the accepted result isolated in temporary source and output directories",
+      "1": "Integrate the exact result, check the full repository and retain complete replayable evidence"
+    },
+    "facets": {
+      "0": "Copy exactly the proved theory sources and runtime-validated tool files.",
+      "1": "Register all nine new owners and synchronize their actual import map and explanation.",
+      "2": "Preserve the previous parent proof receipts and changed source bytes before replacing the main checkout.",
+      "3": "Run the complete 836-theory session check and all tooling tests; collect full diagnostics in the same batch.",
+      "4": "Retain every proposal, proof attempt, conditional investigation, native input/output, control and successful regression with exact helper bytes.",
+      "5": "Replay the final supplied-input applications, generic search and preserved consumer families from the retained archive.",
+      "6": "Keep the original wider system goal and remaining native-admission obligations open."
+    },
+    "subjects": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-proposal.json"
+  },
+  "candidates": [
+    0,
+    1
+  ],
+  "facets": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "selected": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "observations": [
+    [
+      6,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      2,
+      1,
+      0
+    ],
+    [
+      3,
+      1,
+      0
+    ],
+    [
+      4,
+      1,
+      0
+    ],
+    [
+      5,
+      1,
+      0
+    ],
+    [
+      6,
+      1,
+      0
+    ]
+  ],
+  "relation": [
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      1
+    ]
+  ],
+  "evidence": [
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/a12c7c4f08c35818be32d0a2af4735575403146b279cfc41c6aaed2a301da97a",
+      "sha256": "a12c7c4f08c35818be32d0a2af4735575403146b279cfc41c6aaed2a301da97a",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-proposal.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/d623e6ccf0a10022adc5ff7c806fe45040b484e2f8ce238e61085502cd2ed363",
+      "sha256": "d623e6ccf0a10022adc5ff7c806fe45040b484e2f8ce238e61085502cd2ed363",
+      "original_path": "/tmp/native-investigation-report-diagnostic-applicationconstruction19/result.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/dce26c3bee67cfdcfd46e1c22d028d6220c305d42197cbacd4e017851b865e18",
+      "sha256": "dce26c3bee67cfdcfd46e1c22d028d6220c305d42197cbacd4e017851b865e18",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Factor_Application_Candidates.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/43b1db77e9ab712c7069c33777abdc2b004ddb8ada466c59b45a3033233b2712",
+      "sha256": "43b1db77e9ab712c7069c33777abdc2b004ddb8ada466c59b45a3033233b2712",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Factor_Application_Comparison.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/79803a9a22ccf370039b4335d024c951a05d004fbd5283bb3427679505289532",
+      "sha256": "79803a9a22ccf370039b4335d024c951a05d004fbd5283bb3427679505289532",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Factor_Application_Execution.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/683f95c8a9c9dcdfa5bb7dede9c26bb0a5c1a7cde97f343f162e16bfe8858411",
+      "sha256": "683f95c8a9c9dcdfa5bb7dede9c26bb0a5c1a7cde97f343f162e16bfe8858411",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Factor_Application_Problems.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/b1cf2a1f6d14aee738b9696a48ea339e4aeca34206847b4b32352a1429df58d3",
+      "sha256": "b1cf2a1f6d14aee738b9696a48ea339e4aeca34206847b4b32352a1429df58d3",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Factor_Binding_Contributions.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/c91bc826cf48700e28f340ea09d8478c61f2ea84fc5b16e2666f2e713f6918c0",
+      "sha256": "c91bc826cf48700e28f340ea09d8478c61f2ea84fc5b16e2666f2e713f6918c0",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Factor_Observation_Assembly.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/1b849fc80fe959fcddf8e68f3c566b66e079270decc61aadad3203e8274f938e",
+      "sha256": "1b849fc80fe959fcddf8e68f3c566b66e079270decc61aadad3203e8274f938e",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Factor_Observed_Applications.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/65375577add91f90094665453024470407a81f0ef468de0d72ffa6ed8320447f",
+      "sha256": "65375577add91f90094665453024470407a81f0ef468de0d72ffa6ed8320447f",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Finite_Candidate_Assembly.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/f39124fc033277117563a52336d1a8052eb58b9c920136f04e2446afdeeaf847",
+      "sha256": "f39124fc033277117563a52336d1a8052eb58b9c920136f04e2446afdeeaf847",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Finite_Compatible_Unions.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/f078ff337e75c81199a1d6a36fff787dae36c88f1433637b32198d8847f185d6",
+      "sha256": "f078ff337e75c81199a1d6a36fff787dae36c88f1433637b32198d8847f185d6",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Finite_Demand_Selection.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/837dc35c45f253e2a5ef024ef21fc5d41932eb8183175da4dbf9474af552669f",
+      "sha256": "837dc35c45f253e2a5ef024ef21fc5d41932eb8183175da4dbf9474af552669f",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Finite_Directed_Contributions.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/d1e87242b30ae51007b953b1d3fd0fbe0f3cb2404d7c5df7f3a79424f182ff70",
+      "sha256": "d1e87242b30ae51007b953b1d3fd0fbe0f3cb2404d7c5df7f3a79424f182ff70",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Finite_Directed_Execution.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/852cc3817359c565aab4cb8cb09d3183eec8baa9ea3d04cf8943b608298db0ad",
+      "sha256": "852cc3817359c565aab4cb8cb09d3183eec8baa9ea3d04cf8943b608298db0ad",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/theories/Finite_Indexed_Candidate_Assembly.thy"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/46d9abb43665ca4333102e422d77292a2bfcc4936251cbbd039285c1ce162587",
+      "sha256": "46d9abb43665ca4333102e422d77292a2bfcc4936251cbbd039285c1ce162587",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/tools/check_reasoning.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/0acef6ed6f418303e363ff1d17a813bc1a28059f569ea5146b0d9730d41183b6",
+      "sha256": "0acef6ed6f418303e363ff1d17a813bc1a28059f569ea5146b0d9730d41183b6",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/tools/application_subjects.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/92640d6aec88dfc33083f9db8e25f1ff42638744cf2796c1306fdc1ce4701779",
+      "sha256": "92640d6aec88dfc33083f9db8e25f1ff42638744cf2796c1306fdc1ce4701779",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/tools/check_application_comparison.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/e87a7f88c42bd30125cbc965a2e1b3e40b40c5e827047ed4279d840a23de9d00",
+      "sha256": "e87a7f88c42bd30125cbc965a2e1b3e40b40c5e827047ed4279d840a23de9d00",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/tools/check_binding_contributions.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/2d2acb6c02e6da159b81570f5e0c6c623d5d693efe0636342c9c29dbc46e7d61",
+      "sha256": "2d2acb6c02e6da159b81570f5e0c6c623d5d693efe0636342c9c29dbc46e7d61",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/tools/test_application_comparison.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/bd2ec9ac38183679c38e6c5abe6e6ba12fc987fa07777aa40a1f3561f5d9f34a",
+      "sha256": "bd2ec9ac38183679c38e6c5abe6e6ba12fc987fa07777aa40a1f3561f5d9f34a",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/tools/replay_reasoning_review.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/f825b1b625c68632014190792ef04fd342b12d5b0a259048003fcdec39e6f7b9",
+      "sha256": "f825b1b625c68632014190792ef04fd342b12d5b0a259048003fcdec39e6f7b9",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/worktree/tools/test_replay_reasoning_review.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/d11dab5390917230fa2574729ea408085148682944f78e07d4aa3826571d7188",
+      "sha256": "d11dab5390917230fa2574729ea408085148682944f78e07d4aa3826571d7188",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-delivery-draft1/ROOT"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/75df293159477769322fd48596f30ebefbb50aa48df07e94c71f1627e3957c1e",
+      "sha256": "75df293159477769322fd48596f30ebefbb50aa48df07e94c71f1627e3957c1e",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-delivery-draft1/README.md"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/9579b5909a4caeefeb25065266319bf736c14329f4c43bb9d22ba0e53444501c",
+      "sha256": "9579b5909a4caeefeb25065266319bf736c14329f4c43bb9d22ba0e53444501c",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-delivery-draft1/REASONING_REUSE.md"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/c0074d553df288632dde0829ef86e1c02e16aa665c166d4f5c80e4af1123e908",
+      "sha256": "c0074d553df288632dde0829ef86e1c02e16aa665c166d4f5c80e4af1123e908",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-delivery-draft1/THEORY_MAP.md"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/dfbeb093d985d30186e6e417f3b68cb8aeed61a9990d1014aa2f5d2747473a78",
+      "sha256": "dfbeb093d985d30186e6e417f3b68cb8aeed61a9990d1014aa2f5d2747473a78",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/application-batch19/steps.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/c18b5c347fa368fd13d68fe6ebe06870b665e52acd54c1b43cf184659d5c40cd",
+      "sha256": "c18b5c347fa368fd13d68fe6ebe06870b665e52acd54c1b43cf184659d5c40cd",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/production-validation1/steps.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/7090266b833b0bf6150a21c7498a9d37719aecf2753e0501d7a1961b04547716",
+      "sha256": "7090266b833b0bf6150a21c7498a9d37719aecf2753e0501d7a1961b04547716",
+      "original_path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation.json"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/evidence-0298db4a-d50d-42de-8e05-ef6b0567e03f/7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "sha256": "7d4ddee689d9cf18a65f0cec9edbafe0c70cf07eff173211bcdddbde308f02cd",
+      "original_path": "/home/julius/structure_and_semantics/tools/check_decision_cases.py"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/receipt.json",
+      "sha256": "7cbaf40d679e9bb050770d56c611b3b2ff68c85a00d3b35e313de5eae0879354"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/case.json",
+      "sha256": "930976b00fc8debb4ae2102d19587f3a1794f735ceb2583f3c8549b2f5c1b086"
+    },
+    {
+      "path": "/tmp/generalization-quality-review/directed-candidate-construction/repository-integration-investigation1/deliver-constructive-candidate-mechanism/initial/run.log",
+      "sha256": "8ed45c970ccf8afd7feea6b52c0448da2e401ffc23c5ec79305fb6a0fcd70776"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/revise_investigation_case.py",
+      "sha256": "70466b6a380397ef2c390d33c150d1b536feac4aafcedae6bb20d3e1a5106d66"
+    },
+    {
+      "path": "/home/julius/structure_and_semantics/tools/review_investigations.py",
+      "sha256": "368a254b9dc8f4323522d0edf4a6c7c1cac118afd70a97e0e000bf7bf86a6bb0"
+    }
+  ],
+  "semantic_boundary": "Prospective conditional integration choice using actual accepted proof, complete native validation and exact source files. It selects the complete repository-check and retention action; no unexecuted main build or replay is treated as already accepted."
+}

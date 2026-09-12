@@ -1,0 +1,1602 @@
+{
+  "byte_comparison": {
+    "copies": [
+      {
+        "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-batch17/native-reader-regression/cases.json",
+        "bytes": 1067592473,
+        "reference": "../../generalization-review-2026-09-11/finite-native-reader/objects/22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978.gz",
+        "sha256": "22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978",
+        "encoding": {
+          "codec": "gzip",
+          "sha256": "22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978",
+          "size": 1067592473
+        }
+      },
+      {
+        "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-batch19/native-reader-regression/cases.json",
+        "bytes": 1067592473,
+        "reference": "../../generalization-review-2026-09-11/finite-native-reader/objects/22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978.gz",
+        "sha256": "22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978",
+        "encoding": {
+          "codec": "gzip",
+          "sha256": "22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978",
+          "size": 1067592473
+        }
+      },
+      {
+        "path": "/tmp/generalization-quality-review/candidate-delivery-review/retention-validation1/original-reader/cases.json",
+        "bytes": 1067592473,
+        "reference": "../../generalization-review-2026-09-11/finite-native-reader/objects/22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978.gz",
+        "sha256": "22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978",
+        "encoding": {
+          "codec": "gzip",
+          "sha256": "22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978",
+          "size": 1067592473
+        }
+      },
+      {
+        "path": "/tmp/generalization-quality-review/candidate-delivery-review/retention-validation1/original-reader/evidence-a38bb5ab-1bdd-4533-bb5c-50498daf7dec/22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978",
+        "bytes": 1067592473,
+        "reference": "../../generalization-review-2026-09-11/finite-native-reader/objects/22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978.gz",
+        "sha256": "22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978",
+        "encoding": {
+          "codec": "gzip",
+          "sha256": "22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978",
+          "size": 1067592473
+        }
+      }
+    ],
+    "complete_byte_equality": true,
+    "decoded_sha256": "22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978",
+    "bytes_per_copy": 1067592473,
+    "reclaimable_bytes": 4270369892,
+    "retained_reference": "../../generalization-review-2026-09-11/finite-native-reader/objects/22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978.gz"
+  },
+  "completed": [
+    {
+      "kind": "investigations",
+      "name": "application-assessment-mutations-investigation1--assessment-rejection-boundaries--followed",
+      "status": "accepted",
+      "receipt_sha256": "dca687e433e28a951c01a0e73bca4ad7f84a62ea7661a6994b9e8ffbba9e102e"
+    },
+    {
+      "kind": "investigations",
+      "name": "application-assessment-mutations-investigation1--assessment-rejection-boundaries--initial",
+      "status": "accepted",
+      "receipt_sha256": "6f8f274a0db03e7124bfb36e181f9f1035ce9fea51c87ddb393139b2df4ae352"
+    },
+    {
+      "kind": "investigations",
+      "name": "application-catalog14-investigation1--actual-catalog-domain--followed",
+      "status": "accepted",
+      "receipt_sha256": "726fc0142fdf008b0abe017758fdcd421e101d754528f74442a83cf82080e02c"
+    },
+    {
+      "kind": "investigations",
+      "name": "application-catalog14-investigation1--actual-catalog-domain--initial",
+      "status": "accepted",
+      "receipt_sha256": "d6f339edc3d95161715a697f20100ab78e95b4272acd61982ccbdcd6f0fb10de"
+    },
+    {
+      "kind": "investigations",
+      "name": "application-controls2-investigation1--whole-binding-controls--followed",
+      "status": "accepted",
+      "receipt_sha256": "fde4fa915f94d5eca0f5857820aaf34bfd94c9c417225123ce7eeb0072e66cc1"
+    },
+    {
+      "kind": "investigations",
+      "name": "application-controls2-investigation1--whole-binding-controls--initial",
+      "status": "accepted",
+      "receipt_sha256": "31af3bdd549c212c72cc0a76c6d8251fa13289e15a3803c9c1f11de54c785ff8"
+    },
+    {
+      "kind": "investigations",
+      "name": "application-gate-investigation1--complete-construction-input--followed",
+      "status": "accepted",
+      "receipt_sha256": "6cc203e3c9769b6c3bc4ef2e79457ffb85c3d32cfd997712df63cf57f9dedf6c"
+    },
+    {
+      "kind": "investigations",
+      "name": "application-gate-investigation1--complete-construction-input--initial",
+      "status": "accepted",
+      "receipt_sha256": "a1f7cc41c14db2a43fcc2a73ea3362e8aad9bc86f78d697d604e0d895fb82780"
+    },
+    {
+      "kind": "investigations",
+      "name": "application-native-check-investigation1--constructive-application-interface--followed",
+      "status": "accepted",
+      "receipt_sha256": "71f242354e9fcca16992c0f379e0701ff15c48450bd25bf0e4b9a59c68c8ec23"
+    },
+    {
+      "kind": "investigations",
+      "name": "application-native-check-investigation1--constructive-application-interface--initial",
+      "status": "accepted",
+      "receipt_sha256": "4aeb7cff290707330123b719d7918657968597776a77398e1e8645af7d02a807"
+    },
+    {
+      "kind": "investigations",
+      "name": "application-performance14-investigation1--actual-application-search-cost--followed",
+      "status": "accepted",
+      "receipt_sha256": "2292ec465d111a3cd969111383e45d34a62ba5b25ec9a8dcc84c620803a5aebe"
+    },
+    {
+      "kind": "investigations",
+      "name": "application-performance14-investigation1--actual-application-search-cost--initial",
+      "status": "accepted",
+      "receipt_sha256": "a261b5d3f9fabd44e43f56a2805c998c8df284139be3e493f2e2d39d91294787"
+    },
+    {
+      "kind": "investigations",
+      "name": "application-performance18-investigation1--indexed-application-cost--followed",
+      "status": "accepted",
+      "receipt_sha256": "fc6b0636996402049a93ba79e921e9859fbe20783856fc7063d8262150146a50"
+    },
+    {
+      "kind": "investigations",
+      "name": "application-performance18-investigation1--indexed-application-cost--initial",
+      "status": "accepted",
+      "receipt_sha256": "7b26166b02a50066a7acb9c9031eaba296478875bbb3f2222972f23b1bbd9a4c"
+    },
+    {
+      "kind": "investigations",
+      "name": "application-runtime12-investigation1--native-completion--followed",
+      "status": "accepted",
+      "receipt_sha256": "85b5e56094552061c0665edcc12ad4d9b88768834645b8241ba64b4802504847"
+    },
+    {
+      "kind": "investigations",
+      "name": "application-runtime12-investigation1--native-completion--initial",
+      "status": "accepted",
+      "receipt_sha256": "48bc5034c296f6b4bd26c0740f893feb30eef7ddb3ed8bf6c3bf54c551b3a497"
+    },
+    {
+      "kind": "investigations",
+      "name": "application-runtime13-investigation1--complete-finite-collections--followed",
+      "status": "accepted",
+      "receipt_sha256": "e5e663df83166ead293dfa1abd5c4d50b5b9ce7332c2799e5477515a25c9fb5f"
+    },
+    {
+      "kind": "investigations",
+      "name": "application-runtime13-investigation1--complete-finite-collections--initial",
+      "status": "accepted",
+      "receipt_sha256": "a257ef7e302564f9fd5f90d7c7cdad7207246f828478e780e30b84ec2917e1fa"
+    },
+    {
+      "kind": "investigations",
+      "name": "applicationconstruction-repairs--proof-repair10-investigation1--proof-repair--followed",
+      "status": "accepted",
+      "receipt_sha256": "48888256a77465e956390f5b7180d38e78f9c30a3a3cf6c1a8eab6a87024d332"
+    },
+    {
+      "kind": "investigations",
+      "name": "applicationconstruction-repairs--proof-repair10-investigation1--proof-repair--initial",
+      "status": "accepted",
+      "receipt_sha256": "aaa72557f0597d1bea60d514777958fbca7a32d683b6a3787d788eb4592480ee"
+    },
+    {
+      "kind": "investigations",
+      "name": "applicationconstruction-repairs--proof-repair11-investigation1--proof-repair--followed",
+      "status": "accepted",
+      "receipt_sha256": "49f11501893b510d5599de931223381df15f1026e01f45de2101e94fdff80fa0"
+    },
+    {
+      "kind": "investigations",
+      "name": "applicationconstruction-repairs--proof-repair11-investigation1--proof-repair--initial",
+      "status": "accepted",
+      "receipt_sha256": "e3c9d24e23db00af0ce1cb88ca7fd67e63152ad395cf2e1cb966dea51b21b4bb"
+    },
+    {
+      "kind": "investigations",
+      "name": "applicationconstruction-repairs--proof-repair15-investigation1--proof-repair--followed",
+      "status": "accepted",
+      "receipt_sha256": "5913695b123cd8c7cc97685c0f229bf2d3dc2fce3d45ce6789a8f783564b088d"
+    },
+    {
+      "kind": "investigations",
+      "name": "applicationconstruction-repairs--proof-repair15-investigation1--proof-repair--initial",
+      "status": "accepted",
+      "receipt_sha256": "dbb64cc4e5d1c3e0f974d54cca5d58b6d24dad788bb2d6559b19bf463f2a2b87"
+    },
+    {
+      "kind": "investigations",
+      "name": "applicationconstruction-repairs--proof-repair16-investigation1--proof-repair--followed",
+      "status": "accepted",
+      "receipt_sha256": "2410fe2d5e8f79fcac81934d5111c605e1f8ca37a2d69d1ea920847ed3d104db"
+    },
+    {
+      "kind": "investigations",
+      "name": "applicationconstruction-repairs--proof-repair16-investigation1--proof-repair--initial",
+      "status": "accepted",
+      "receipt_sha256": "c3b3bdf71fd36ff83bf5c7cf42506dc3f584967dfeebe96039490ea6ea99f6ef"
+    },
+    {
+      "kind": "investigations",
+      "name": "applicationconstruction-repairs--proof-repair17-investigation1--proof-repair--followed",
+      "status": "accepted",
+      "receipt_sha256": "6137540e6e8d6d95558a8f616ebd121a207120ab176c2af315b332bbdde3e487"
+    },
+    {
+      "kind": "investigations",
+      "name": "applicationconstruction-repairs--proof-repair17-investigation1--proof-repair--initial",
+      "status": "accepted",
+      "receipt_sha256": "70184c60715f255a422dfd6a62e09af6d11072a9baafb0fa7afc69643d59df02"
+    },
+    {
+      "kind": "investigations",
+      "name": "applicationconstruction-repairs--proof-repair19-investigation1--proof-repair--followed",
+      "status": "accepted",
+      "receipt_sha256": "4407bc0b6cc5b4ba38731daa76345a2961e5fc0e82b0fe07fdca0b4d520bdab6"
+    },
+    {
+      "kind": "investigations",
+      "name": "applicationconstruction-repairs--proof-repair19-investigation1--proof-repair--initial",
+      "status": "accepted",
+      "receipt_sha256": "a571117723fa22c99c640a396190dd4513e4e5b213a47ffe6cfdf954667d8ae3"
+    },
+    {
+      "kind": "investigations",
+      "name": "applicationconstruction-repairs--proof-repair2-investigation--proof-repair--followed",
+      "status": "accepted",
+      "receipt_sha256": "9b5ca2a5064edc79de6a82497e24f19abd9ad745404c25d339cef6d88f4a2bf3"
+    },
+    {
+      "kind": "investigations",
+      "name": "applicationconstruction-repairs--proof-repair2-investigation--proof-repair--initial",
+      "status": "accepted",
+      "receipt_sha256": "12f6298f77f0d3c0a31dd4a2f61814208981895dea26931ceb8a31a87bb3b88c"
+    },
+    {
+      "kind": "investigations",
+      "name": "applicationconstruction-repairs--proof-repair3-investigation1--proof-repair--followed",
+      "status": "accepted",
+      "receipt_sha256": "e48ce61334eff5960b4f749d8aca3188b4a0476ec7b78564d1412b892ffd9ec1"
+    },
+    {
+      "kind": "investigations",
+      "name": "applicationconstruction-repairs--proof-repair3-investigation1--proof-repair--initial",
+      "status": "accepted",
+      "receipt_sha256": "ab92d76791b1066f051bf16c5557d742cf04a2e705899b3e1f396a263d6cc390"
+    },
+    {
+      "kind": "investigations",
+      "name": "applicationconstruction-repairs--proof-repair4-investigation1--proof-repair--followed",
+      "status": "accepted",
+      "receipt_sha256": "a493a74e96e412c4d277c2bd5d0d4cf582882057ebd9caf0951e4dd0bac2a7ec"
+    },
+    {
+      "kind": "investigations",
+      "name": "applicationconstruction-repairs--proof-repair4-investigation1--proof-repair--initial",
+      "status": "accepted",
+      "receipt_sha256": "dfc2e908fdef3002c4a79ded037327c0b66c37b1efa794fa6fb09da9c60efe62"
+    },
+    {
+      "kind": "investigations",
+      "name": "applicationconstruction-repairs--proof-repair5-investigation1--proof-repair--followed",
+      "status": "accepted",
+      "receipt_sha256": "56df26457e72dd26e8da197da79024a9a975a8d5b3e20b4e22469e525b43e42b"
+    },
+    {
+      "kind": "investigations",
+      "name": "applicationconstruction-repairs--proof-repair5-investigation1--proof-repair--initial",
+      "status": "accepted",
+      "receipt_sha256": "205241554d7a343ddb32464242be44e0451bbe90d3b4cab8fb990ec9635ec18b"
+    },
+    {
+      "kind": "investigations",
+      "name": "applicationconstruction-repairs--proof-repair6-investigation1--proof-repair--followed",
+      "status": "accepted",
+      "receipt_sha256": "cf82e474f804514848506390ccea0470fefa38cdc577415ee62b5e598781d2d6"
+    },
+    {
+      "kind": "investigations",
+      "name": "applicationconstruction-repairs--proof-repair6-investigation1--proof-repair--initial",
+      "status": "accepted",
+      "receipt_sha256": "b92cf5a9436952abb177efe188a978755cee3e1f5592e24672fc060683752f67"
+    },
+    {
+      "kind": "investigations",
+      "name": "applicationconstruction-repairs--proof-repair7-investigation1--proof-repair--followed",
+      "status": "accepted",
+      "receipt_sha256": "26270a15b70a84737c8f5a717cc6189d6fd60f6b098159cb04f39770014916f4"
+    },
+    {
+      "kind": "investigations",
+      "name": "applicationconstruction-repairs--proof-repair7-investigation1--proof-repair--initial",
+      "status": "accepted",
+      "receipt_sha256": "80a70c340b1e27efac0879489532ecc27a9f9d46bd8feb099170f630fc5e67bf"
+    },
+    {
+      "kind": "investigations",
+      "name": "applicationconstruction-repairs--proof-repair8-investigation1--proof-repair--followed",
+      "status": "accepted",
+      "receipt_sha256": "e94cf83b146630ea5edc8ebc4f9678d5df96144fc5764ba82ea104f4b464b8f4"
+    },
+    {
+      "kind": "investigations",
+      "name": "applicationconstruction-repairs--proof-repair8-investigation1--proof-repair--initial",
+      "status": "accepted",
+      "receipt_sha256": "ec5b5cfd632cd04f02d925abb6bffd76c38805f5c3096e36741b931f5552cc56"
+    },
+    {
+      "kind": "investigations",
+      "name": "applicationconstruction-repairs--proof-repair9-investigation1--proof-repair--followed",
+      "status": "accepted",
+      "receipt_sha256": "5866e2db88105c708f633f4040c521049921d54103ac758b0f451c3b4c5b6dd9"
+    },
+    {
+      "kind": "investigations",
+      "name": "applicationconstruction-repairs--proof-repair9-investigation1--proof-repair--initial",
+      "status": "accepted",
+      "receipt_sha256": "23fecb9e26284554406ac8bad89f5524555518c62294395c994d6fca35ceaa8f"
+    },
+    {
+      "kind": "investigations",
+      "name": "assessment-investigation1--binding-result-boundary--followed",
+      "status": "accepted",
+      "receipt_sha256": "49ab5feba6c63d6202bc466d15e4b18c6b49adc0c0a7d215f9c9a4d99e5628ee"
+    },
+    {
+      "kind": "investigations",
+      "name": "assessment-investigation1--binding-result-boundary--initial",
+      "status": "accepted",
+      "receipt_sha256": "ab2bf47ac4c4486c713d473fac517ebb5585fe43249d3aa9cb8ba59651a36c54"
+    },
+    {
+      "kind": "investigations",
+      "name": "current-source-validation-investigation1--current-native-source--followed",
+      "status": "accepted",
+      "receipt_sha256": "f6a917ec3955df7a323ca3c2d2615172e3dbdf0d173ab5486d41d61df5d846bc"
+    },
+    {
+      "kind": "investigations",
+      "name": "current-source-validation-investigation1--current-native-source--initial",
+      "status": "accepted",
+      "receipt_sha256": "5eb71d1d0cb0a05b3564be67ce66309a074ff90678e48b8b25a1bf2db27344d7"
+    },
+    {
+      "kind": "investigations",
+      "name": "delivery--closure-audit-investigation1--complete-export-input-scope--followed",
+      "status": "accepted",
+      "receipt_sha256": "4b0711ebe3982d876531816c0dc9b93a1b673172d273f8aabb82d54462429aff"
+    },
+    {
+      "kind": "investigations",
+      "name": "delivery--closure-audit-investigation1--complete-export-input-scope--initial",
+      "status": "accepted",
+      "receipt_sha256": "d8850b4d40d63b7bc51d75b2dcd4cc5b4b0df53f5152330fedcc42544c5648b9"
+    },
+    {
+      "kind": "investigations",
+      "name": "delivery--delivery-cleanup-investigation1--preserve-delivery-content--followed",
+      "status": "accepted",
+      "receipt_sha256": "d8469120c2be6a1e2bae59feef77829b2b4f241ad93b2033eb47fc442f33859f"
+    },
+    {
+      "kind": "investigations",
+      "name": "delivery--delivery-cleanup-investigation1--preserve-delivery-content--initial",
+      "status": "accepted",
+      "receipt_sha256": "f2875e28a1f0cb943de90c9f23c074203f2cd8c37f56cd78070c5dbbad18b42f"
+    },
+    {
+      "kind": "investigations",
+      "name": "delivery--delivery-gap-investigation1--complete-evidence-delivery--followed",
+      "status": "accepted",
+      "receipt_sha256": "f2f1df4d85b8876de7d59b0e8e304f6cd9c6d70ce8b0d35fa4d64b9926d3a760"
+    },
+    {
+      "kind": "investigations",
+      "name": "delivery--delivery-gap-investigation1--complete-evidence-delivery--initial",
+      "status": "accepted",
+      "receipt_sha256": "8cf0d649c34c0d29b72223a26cd026a884c896ee77617b9ede155129d4178561"
+    },
+    {
+      "kind": "investigations",
+      "name": "delivery--proof-retention-investigation1--exact-proof-procedure-inputs--followed",
+      "status": "accepted",
+      "receipt_sha256": "d80a750ee82cf8be17d5af99e6318498eba281337bf9003720c270a42bb760ee"
+    },
+    {
+      "kind": "investigations",
+      "name": "delivery--proof-retention-investigation1--exact-proof-procedure-inputs--initial",
+      "status": "accepted",
+      "receipt_sha256": "028702ccc0f7f7f43e060a428210e555e1a9172e797f79dbcb634e27977e19a5"
+    },
+    {
+      "kind": "investigations",
+      "name": "delivery--retention-patch-investigation1--retain-complete-checked-inputs--followed",
+      "status": "accepted",
+      "receipt_sha256": "f6432b189596bcc7ec4983ea56ef9199bc578d632ec54398dc2ff16524d67d43"
+    },
+    {
+      "kind": "investigations",
+      "name": "delivery--retention-patch-investigation1--retain-complete-checked-inputs--initial",
+      "status": "accepted",
+      "receipt_sha256": "9014c7d3ab6637a6b13b8f2400fd4273edec05aa142cb63a22fa3afe1df84304"
+    },
+    {
+      "kind": "investigations",
+      "name": "delivery-interface-replay-investigation1--candidate-construction-delivery--followed",
+      "status": "accepted",
+      "receipt_sha256": "126ed10a9b8b112f9815856561a6dd7c427672ade045aa115a1f2880a77c197c"
+    },
+    {
+      "kind": "investigations",
+      "name": "delivery-interface-replay-investigation1--candidate-construction-delivery--initial",
+      "status": "accepted",
+      "receipt_sha256": "cebe6fa0abe92771f4189374df2cf8227db79b0bfa2ac814517d71b51d121b4b"
+    },
+    {
+      "kind": "investigations",
+      "name": "interface4-investigation1--complete-target-owner-fields--followed",
+      "status": "accepted",
+      "receipt_sha256": "43fde69b63ddbddce6a16a4acdf03f14221065e892e2c7c392851af3291b6d70"
+    },
+    {
+      "kind": "investigations",
+      "name": "interface4-investigation1--complete-target-owner-fields--initial",
+      "status": "accepted",
+      "receipt_sha256": "3c8fe6e6c8ebd105a3e1278cc62018eaba7d477481aa771586d52bb7e3e77eb9"
+    },
+    {
+      "kind": "investigations",
+      "name": "main-budget2-investigation1--complete-main-session-budget--followed",
+      "status": "accepted",
+      "receipt_sha256": "6e25072bf0ed4827256291fc9dbd2e8d15773cbaae5000793d5c84847d3c1f22"
+    },
+    {
+      "kind": "investigations",
+      "name": "main-budget2-investigation1--complete-main-session-budget--initial",
+      "status": "accepted",
+      "receipt_sha256": "ecaac8fadfa86dc8b9c09f6539b35c7abe8b22e9925b54dba7ab55f22b664efb"
+    },
+    {
+      "kind": "investigations",
+      "name": "native-adoption-investigation1--complete-native-workload--followed",
+      "status": "accepted",
+      "receipt_sha256": "0b43acbd8131711e100a86ab27547b07d273a974477139f359b92a812dd82584"
+    },
+    {
+      "kind": "investigations",
+      "name": "native-adoption-investigation1--complete-native-workload--initial",
+      "status": "accepted",
+      "receipt_sha256": "044a859b839e980325cf7fa74c8a89cf258fed25c9460fa55bd4cb469aeca921"
+    },
+    {
+      "kind": "investigations",
+      "name": "native-driver-investigation1--runtime-input-conversion--followed",
+      "status": "accepted",
+      "receipt_sha256": "5aff898ab16f8d0a473375a62ad876bbbecde311c1a534fdd9c2f52a2a9801b4"
+    },
+    {
+      "kind": "investigations",
+      "name": "native-driver-investigation1--runtime-input-conversion--initial",
+      "status": "accepted",
+      "receipt_sha256": "92857a81d61fff864a63d57916357bae583cf1a530a75eb90282138f3374bdbd"
+    },
+    {
+      "kind": "investigations",
+      "name": "native-performance-investigation1--framed-input--followed",
+      "status": "accepted",
+      "receipt_sha256": "5ea6263a985cc77b02adc69612311d563160ef5dee589b9538cd385cf51e5e58"
+    },
+    {
+      "kind": "investigations",
+      "name": "native-performance-investigation1--framed-input--initial",
+      "status": "accepted",
+      "receipt_sha256": "2fe04caf2f2d9f7a1ffdd8a429c64b90b2c98621defdafe8976dcf3f63415a6a"
+    },
+    {
+      "kind": "investigations",
+      "name": "native-performance-investigation1--integer-representation--followed",
+      "status": "accepted",
+      "receipt_sha256": "472d0e2dc8a3da28714668c9e8a0e62699e6c27d0fc8912f1b166122b9fcaf49"
+    },
+    {
+      "kind": "investigations",
+      "name": "native-performance-investigation1--integer-representation--initial",
+      "status": "accepted",
+      "receipt_sha256": "f3bbbf88462db8c7fde8abe7f851541244b0e80c3acfe57ecf84a8257748f3c4"
+    },
+    {
+      "kind": "investigations",
+      "name": "proof-repair10-investigation--proof-repair--followed",
+      "status": "accepted",
+      "receipt_sha256": "00816d1a629a006712b0c0480f936cc49b71a37064cef6735a6198d41e8479d1"
+    },
+    {
+      "kind": "investigations",
+      "name": "proof-repair10-investigation--proof-repair--initial",
+      "status": "accepted",
+      "receipt_sha256": "52d6fd97c810f89eb9091ace7c8de22a0076281a5542ca06d3887dc3aab24aaa"
+    },
+    {
+      "kind": "investigations",
+      "name": "proof-repair11-investigation--proof-repair--followed",
+      "status": "accepted",
+      "receipt_sha256": "eb70c28b542b934b47f88eba2aeb912e9bdc7b8600143438eedc7033ce8a8031"
+    },
+    {
+      "kind": "investigations",
+      "name": "proof-repair11-investigation--proof-repair--initial",
+      "status": "accepted",
+      "receipt_sha256": "7afe7008e41f4b9c82b1e657bbe44265b072717d2a0f0568807cf0485873c556"
+    },
+    {
+      "kind": "investigations",
+      "name": "proof-repair12-investigation--proof-repair--followed",
+      "status": "accepted",
+      "receipt_sha256": "b799be748e3d09e4ee51e982ab5740c262b8e9e22a418b78b0ba5e73f5785ffb"
+    },
+    {
+      "kind": "investigations",
+      "name": "proof-repair12-investigation--proof-repair--initial",
+      "status": "accepted",
+      "receipt_sha256": "52236613c97fd7079af5ee5542fcb0ab8663106c4b2567abc4e015a4d613303a"
+    },
+    {
+      "kind": "investigations",
+      "name": "proof-repair13-investigation--proof-repair--followed",
+      "status": "accepted",
+      "receipt_sha256": "1152850e5fd5a7d11bd949f8bc6e6a4b910e4a86be0a604ec783f30a5fc23260"
+    },
+    {
+      "kind": "investigations",
+      "name": "proof-repair13-investigation--proof-repair--initial",
+      "status": "accepted",
+      "receipt_sha256": "7c0e3104af72891615aa3bf0dcd7a6365f0d396e218f1a4435de38b4d3ae03b2"
+    },
+    {
+      "kind": "investigations",
+      "name": "proof-repair14-investigation--proof-repair--followed",
+      "status": "accepted",
+      "receipt_sha256": "e21d410e8f3436b702f3b1879daeb29c4b373f1789d684a18ea0565db52c6ece"
+    },
+    {
+      "kind": "investigations",
+      "name": "proof-repair14-investigation--proof-repair--initial",
+      "status": "accepted",
+      "receipt_sha256": "af09ec4d68ff0f79512da7c30ebf418e9d77ae89551aa9d25349f7322263730e"
+    },
+    {
+      "kind": "investigations",
+      "name": "proof-repair15-investigation--proof-repair--followed",
+      "status": "accepted",
+      "receipt_sha256": "7135f45cc11cccc2a30aacb87bebb770203e8b7b4121bc33ce80cb33d261510f"
+    },
+    {
+      "kind": "investigations",
+      "name": "proof-repair15-investigation--proof-repair--initial",
+      "status": "accepted",
+      "receipt_sha256": "b4f333d7899cc57e455aa4c48c7edc236c75b696352dc0cb0def14b436f31d2f"
+    },
+    {
+      "kind": "investigations",
+      "name": "proof-repair16-investigation--proof-repair--followed",
+      "status": "accepted",
+      "receipt_sha256": "cfd17bb55001cfe1c9ad8ef09a04859764f8e4d513722506a09f0faca26383cc"
+    },
+    {
+      "kind": "investigations",
+      "name": "proof-repair16-investigation--proof-repair--initial",
+      "status": "accepted",
+      "receipt_sha256": "b1755d2d1ef0870ed7c020ab6347e3d639c099a42b87ff656b494b9cc4377bd7"
+    },
+    {
+      "kind": "investigations",
+      "name": "proof-repair17-investigation--proof-repair--followed",
+      "status": "accepted",
+      "receipt_sha256": "4950a7b04165f8c4b76383caba3c056d9bfbc4f7fa060d695d53f7f128d7f965"
+    },
+    {
+      "kind": "investigations",
+      "name": "proof-repair17-investigation--proof-repair--initial",
+      "status": "accepted",
+      "receipt_sha256": "a997ba9dfe8126cbbecf7b73d41c71d834b418562c344fc3d912c436177e95ae"
+    },
+    {
+      "kind": "investigations",
+      "name": "proof-repair18-investigation--proof-repair--followed",
+      "status": "accepted",
+      "receipt_sha256": "c8bc818af656930a49ac4cae327f3dd95bafa3160374fd7dded71ae4b2e8e621"
+    },
+    {
+      "kind": "investigations",
+      "name": "proof-repair18-investigation--proof-repair--initial",
+      "status": "accepted",
+      "receipt_sha256": "edeba79e342b22881f84b4f25da2de4e273e5f1ac120f4c044eb3d504ad51709"
+    },
+    {
+      "kind": "investigations",
+      "name": "proof-repair19-investigation--proof-repair--followed",
+      "status": "accepted",
+      "receipt_sha256": "4568708b65b02a99436deafa71b78951014fd10c4d2c2087f95d59e0a8d3bd29"
+    },
+    {
+      "kind": "investigations",
+      "name": "proof-repair19-investigation--proof-repair--initial",
+      "status": "accepted",
+      "receipt_sha256": "c8b2c983771558d3c716dcfe916fba5e50dd53089c978b18244960ebb8bb943e"
+    },
+    {
+      "kind": "investigations",
+      "name": "proof-repair20-investigation--proof-repair--followed",
+      "status": "accepted",
+      "receipt_sha256": "91c804887f007cb9985a61991f6abf652d2d03c1074f000609d119015796a009"
+    },
+    {
+      "kind": "investigations",
+      "name": "proof-repair20-investigation--proof-repair--initial",
+      "status": "accepted",
+      "receipt_sha256": "3f29da43922ef203e32a9b1d3b2081f8babcc493d1061fa3ee9f3407884e7849"
+    },
+    {
+      "kind": "investigations",
+      "name": "proof-repair8-investigation--explicit-proof-steps--followed",
+      "status": "accepted",
+      "receipt_sha256": "19f8cdd242199201df36711fdfd9292b2683e2ce53dc4d734bada3029078a244"
+    },
+    {
+      "kind": "investigations",
+      "name": "proof-repair8-investigation--explicit-proof-steps--initial",
+      "status": "accepted",
+      "receipt_sha256": "80afd89852ae6baa33c6e00c494500dacd584debf2be865e09a3bf63fa721221"
+    },
+    {
+      "kind": "investigations",
+      "name": "proof-repair9-investigation--explicit-relational-steps--followed",
+      "status": "accepted",
+      "receipt_sha256": "a8d45223caa4060e3c233cd206f0b67fc1eca9ea17935b889014dfbd27d487ff"
+    },
+    {
+      "kind": "investigations",
+      "name": "proof-repair9-investigation--explicit-relational-steps--initial",
+      "status": "accepted",
+      "receipt_sha256": "0e29fc17a77968008f5cb2349136338ebc9ed39740836aba1d8215374eb66662"
+    },
+    {
+      "kind": "investigations",
+      "name": "proposal-investigation1--construct-application-plans--followed",
+      "status": "accepted",
+      "receipt_sha256": "38f8ad274c310691cfc12bb3820f95884fdcbcf8dbfcd332e98436cab50e97dd"
+    },
+    {
+      "kind": "investigations",
+      "name": "proposal-investigation1--construct-application-plans--initial",
+      "status": "accepted",
+      "receipt_sha256": "71468afcafdd26070ddd588bb39dd4125852e559f64b47133f1808a824943103"
+    },
+    {
+      "kind": "investigations",
+      "name": "proposal-investigation1--scope-directed-bindings--followed",
+      "status": "accepted",
+      "receipt_sha256": "ba75e05a2b02e7f16548ea39795dd31234297cc4c9e5a8955dc205cd69db82da"
+    },
+    {
+      "kind": "investigations",
+      "name": "proposal-investigation1--scope-directed-bindings--initial",
+      "status": "accepted",
+      "receipt_sha256": "18e774caa8be7fe30c7cbe6813a7159d09f67b21ed28b512aab1a97862acd2a1"
+    },
+    {
+      "kind": "investigations",
+      "name": "proposal-investigation2--construct-application-plans--followed",
+      "status": "accepted",
+      "receipt_sha256": "fb9024c9524b142fad977e5991d8571dc931447da7b43f12efa725106a50f04a"
+    },
+    {
+      "kind": "investigations",
+      "name": "proposal-investigation2--construct-application-plans--initial",
+      "status": "accepted",
+      "receipt_sha256": "2e6df8aa95f9d9abc1240734ce71df9bb7ddb368f7d3ac2eb4207d9219bfa929"
+    },
+    {
+      "kind": "investigations",
+      "name": "proposal-investigation2--scope-directed-bindings--followed",
+      "status": "accepted",
+      "receipt_sha256": "131467378b1e7f93257a88b1927b9ea74f3366d06502b181f1b98d53984406f6"
+    },
+    {
+      "kind": "investigations",
+      "name": "proposal-investigation2--scope-directed-bindings--initial",
+      "status": "accepted",
+      "receipt_sha256": "e2e40c6fbfa1ce89610584f2bba4992339faad0feaf54369b1eebdf2423331a8"
+    },
+    {
+      "kind": "investigations",
+      "name": "regression-validation-investigation1--complete-consumer-preservation--followed",
+      "status": "accepted",
+      "receipt_sha256": "8e6d01e1052f456c34288ad33e432464ae0e20b19f753ceb5d94d418bc4ef9fd"
+    },
+    {
+      "kind": "investigations",
+      "name": "regression-validation-investigation1--complete-consumer-preservation--initial",
+      "status": "accepted",
+      "receipt_sha256": "ec2fd2d7b399bee7808b145cdcd990bb0f42f463460371bf3a25defc5f44fc19"
+    },
+    {
+      "kind": "investigations",
+      "name": "replay2-investigation1--actual-witness-replay-order--followed",
+      "status": "accepted",
+      "receipt_sha256": "0fcb2a6f891f5627c20303b73d282c55dbead312737fcd5a25766d3dd6298221"
+    },
+    {
+      "kind": "investigations",
+      "name": "replay2-investigation1--actual-witness-replay-order--initial",
+      "status": "accepted",
+      "receipt_sha256": "ffce46cc0fffe5bf9d26737886b8fc779e3f398ce47911dc2487ee7524cc1a65"
+    },
+    {
+      "kind": "investigations",
+      "name": "repository-integration-investigation1--deliver-constructive-candidate-mechanism--followed",
+      "status": "accepted",
+      "receipt_sha256": "2b5fe129d5c24f377b2b42cc7c18831699b1859363560889566f60e9fd6be6cc"
+    },
+    {
+      "kind": "investigations",
+      "name": "repository-integration-investigation1--deliver-constructive-candidate-mechanism--initial",
+      "status": "accepted",
+      "receipt_sha256": "7adea83de4631e875f9a12cc9acab02372c188ea745c517e789ed169242de035"
+    },
+    {
+      "kind": "investigations",
+      "name": "scheduling-correction-investigation1--workflow-resumption--followed",
+      "status": "accepted",
+      "receipt_sha256": "d4fbf46358a0f64efdcefe16847983eeeb6c3a6d0ac18cdac2596cd499a55c58"
+    },
+    {
+      "kind": "investigations",
+      "name": "scheduling-correction-investigation1--workflow-resumption--initial",
+      "status": "accepted",
+      "receipt_sha256": "e8f9362f607f71ad8d8d47e503db3b79c83605727d733430c9aadb9915f9501a"
+    },
+    {
+      "kind": "investigations",
+      "name": "value-investigation1--distinct-assignment-search--followed",
+      "status": "accepted",
+      "receipt_sha256": "45b775003e120f8b83cf44b5d2ba11c578b7f040397dfc2ce35ec28a5a9eebb7"
+    },
+    {
+      "kind": "investigations",
+      "name": "value-investigation1--distinct-assignment-search--initial",
+      "status": "accepted",
+      "receipt_sha256": "cb175f81720ede471786d91483ab38a15d1f5fedc0c04f106a453be7fb8ec60d"
+    },
+    {
+      "kind": "native",
+      "name": "application-controls",
+      "status": "accepted",
+      "receipt_sha256": "25a69fa43eb7062ca2f40a17129a92d8adede0a429a7e482d4f8ed692023d6f1"
+    },
+    {
+      "kind": "native",
+      "name": "application-large-7",
+      "status": "accepted",
+      "receipt_sha256": "d3f16880e2da14b72bdfc9888a2ca8efa09d0dcfe821b3bac3b1ee78af88612d"
+    },
+    {
+      "kind": "native",
+      "name": "application-large-8",
+      "status": "accepted",
+      "receipt_sha256": "e01a5f52a7e3f157f69ebd40bfdfcf68f78be56aca717037754a7d6ad237efb5"
+    },
+    {
+      "kind": "native",
+      "name": "application-large-9",
+      "status": "accepted",
+      "receipt_sha256": "21d2086c94364c67a1a4230ad186eae8cc4034c07501578ee43c372d4030e899"
+    },
+    {
+      "kind": "native",
+      "name": "application-large-10",
+      "status": "accepted",
+      "receipt_sha256": "a035d3ab43678b8e13dab846e730ca0a685a3bd1d633620b7e870e2576a977a7"
+    },
+    {
+      "kind": "native",
+      "name": "generic-search",
+      "status": "accepted",
+      "receipt_sha256": "7b025e6c96f7a492e2de65dccb5afc6ba8e6dbc556ba6ace5a695d06a3a1d876"
+    },
+    {
+      "kind": "native",
+      "name": "original-guided",
+      "status": "accepted",
+      "receipt_sha256": "8f2d28d20b54decbeb755298fcbc181ace30aafe8e9053c74735a330953270f3"
+    },
+    {
+      "kind": "native",
+      "name": "native-source",
+      "status": "accepted",
+      "receipt_sha256": "7f556bfe7d08afbdf6052a0b6df934aebb5d9b5b36a8cbe97265441436bb3d6b"
+    }
+  ],
+  "unfinished": [
+    {
+      "kind": "native",
+      "name": "original-reader"
+    },
+    {
+      "kind": "native",
+      "name": "finite-presentations"
+    }
+  ],
+  "failure_logs": {
+    "batch.log": "",
+    "native--original-reader.log": "",
+    "native--finite-presentations.log": ""
+  },
+  "native_investigations": [
+    {
+      "stage": "initial",
+      "case": {
+        "schema": "finite-investigation-1",
+        "kind": "basis",
+        "question": "Recover from the actual replay quota failure without losing any complete input or repeating accepted stages.",
+        "scope": {
+          "candidates": {
+            "0": "Leave all temporary copies and repeat the same storage use",
+            "1": "Remove the four verified duplicates and retain/resume the identified unfinished stages"
+          },
+          "facets": {
+            "0": "Preserve every original byte in the verified archive.",
+            "1": "Remove exactly the four verified temporary duplicates, subject to a final unchanged-byte check.",
+            "2": "Restore capacity for the unfinished replay and keep its large outputs within an adequate storage budget.",
+            "3": "Preserve the quota failure and resume only unfinished or rejected stages in fresh output directories."
+          },
+          "subjects": {
+            "copies": [
+              {
+                "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-batch17/native-reader-regression/cases.json",
+                "bytes": 1067592473,
+                "reference": "../../generalization-review-2026-09-11/finite-native-reader/objects/22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978.gz",
+                "sha256": "22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978",
+                "encoding": {
+                  "codec": "gzip",
+                  "sha256": "22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978",
+                  "size": 1067592473
+                }
+              },
+              {
+                "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-batch19/native-reader-regression/cases.json",
+                "bytes": 1067592473,
+                "reference": "../../generalization-review-2026-09-11/finite-native-reader/objects/22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978.gz",
+                "sha256": "22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978",
+                "encoding": {
+                  "codec": "gzip",
+                  "sha256": "22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978",
+                  "size": 1067592473
+                }
+              },
+              {
+                "path": "/tmp/generalization-quality-review/candidate-delivery-review/retention-validation1/original-reader/cases.json",
+                "bytes": 1067592473,
+                "reference": "../../generalization-review-2026-09-11/finite-native-reader/objects/22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978.gz",
+                "sha256": "22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978",
+                "encoding": {
+                  "codec": "gzip",
+                  "sha256": "22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978",
+                  "size": 1067592473
+                }
+              },
+              {
+                "path": "/tmp/generalization-quality-review/candidate-delivery-review/retention-validation1/original-reader/evidence-a38bb5ab-1bdd-4533-bb5c-50498daf7dec/22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978",
+                "bytes": 1067592473,
+                "reference": "../../generalization-review-2026-09-11/finite-native-reader/objects/22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978.gz",
+                "sha256": "22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978",
+                "encoding": {
+                  "codec": "gzip",
+                  "sha256": "22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978",
+                  "size": 1067592473
+                }
+              }
+            ],
+            "unfinished": [
+              {
+                "kind": "native",
+                "name": "original-reader"
+              },
+              {
+                "kind": "native",
+                "name": "finite-presentations"
+              }
+            ]
+          }
+        },
+        "candidates": [
+          0,
+          1
+        ],
+        "facets": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "selected": [],
+        "observations": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            3,
+            1,
+            0
+          ]
+        ],
+        "relation": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "evidence": [
+          {
+            "path": "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-12/candidate-construction/../../generalization-review-2026-09-11/finite-native-reader/objects/22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978.gz",
+            "sha256": "738d2bc75046079fd91555088972ef948dc6c9f43087052e333d7b03c60174b2"
+          }
+        ],
+        "semantic_boundary": "The generic evaluator consumes conditional host-operation claims. Complete streaming comparison establishes the actual byte equality of the four temporary inputs and their retained decoded source. The native table does not itself prove filesystem semantics."
+      },
+      "program_source": "/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-investigation1/preserve-delivery-content/initial/execute.ML",
+      "program_sha256": "b3a65e99d5a9ccdd84861b31d205fefa45f30cd94f081f1f344350abb00a8c36",
+      "engine": "/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-investigation1/preserve-delivery-content/initial/export-763a67d2-4bcf-46aa-9239-f86204a2b943/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML",
+      "engine_sha256": "268dd5589c44fd3efa8b3a90cc12dea283fa2a4fc1d6975f23732e7172da7a5b",
+      "poly_sha256": "47efc18d0b38bc908c8b29798575501e8b7b027f593022c80ff1acc55b9495b4",
+      "result": {
+        "input_formed": true,
+        "residual": [
+          [
+            1,
+            0
+          ]
+        ],
+        "profiles": [
+          {
+            "candidate": 0,
+            "profile": []
+          },
+          {
+            "candidate": 1,
+            "profile": []
+          }
+        ],
+        "losses": [
+          {
+            "from": 0,
+            "to": 0,
+            "losses": []
+          },
+          {
+            "from": 0,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 1,
+            "to": 0,
+            "losses": []
+          },
+          {
+            "from": 1,
+            "to": 1,
+            "losses": []
+          }
+        ],
+        "safe_facets": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "conflicts": [],
+        "repairs": [
+          [
+            1,
+            0,
+            1,
+            0
+          ],
+          [
+            1,
+            0,
+            2,
+            0
+          ],
+          [
+            1,
+            0,
+            3,
+            0
+          ]
+        ],
+        "unrepairable": [],
+        "extension": [
+          1,
+          2,
+          3
+        ],
+        "revision": {
+          "retained": [],
+          "withdrawn": [],
+          "repairs": [
+            [
+              1,
+              0,
+              1,
+              0
+            ],
+            [
+              1,
+              0,
+              2,
+              0
+            ],
+            [
+              1,
+              0,
+              3,
+              0
+            ]
+          ],
+          "selection": [
+            1,
+            2,
+            3
+          ],
+          "residual": []
+        }
+      },
+      "checked_fields": [
+        "input_formed",
+        "residual",
+        "safe_facets",
+        "conflicts",
+        "repairs",
+        "unrepairable",
+        "extension",
+        "complete profiles",
+        "complete ordered losses",
+        "complete revision and admission gate"
+      ],
+      "facts": {
+        "input_formed": true,
+        "candidate_count": 2,
+        "available_facets": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "selected": [],
+        "safe": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "invalid_selected": [],
+        "residual_count": 1,
+        "conflict_count": 0,
+        "missing_count": 1,
+        "repair_count": 3,
+        "unrepairable_count": 0,
+        "positive_comparisons": 3,
+        "negative_comparisons": 1,
+        "relation_reflexive": true,
+        "relation_transitive": true,
+        "empty_selection_adequate": false,
+        "adequate_selections": [
+          [
+            1
+          ],
+          [
+            2
+          ],
+          [
+            3
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2
+          ],
+          [
+            0,
+            1,
+            3
+          ],
+          [
+            0,
+            2,
+            3
+          ],
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ]
+        ],
+        "adequate_selection_enumeration": "complete",
+        "extension_adequate": true,
+        "sound_language_adequate": true,
+        "revision": {
+          "retained": [],
+          "required_withdrawals": [],
+          "new_missing_after_withdrawal": [],
+          "reuse_original_repairs_adequate": true,
+          "recomputed_selection": [
+            1,
+            2,
+            3
+          ],
+          "residual": []
+        },
+        "evaluation_signature": "50288d9f83bd93d3093635c1b271b0b0610bb40be7fdc0bd8aedbbaeec32e95d"
+      },
+      "raw_output": "/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-investigation1/preserve-delivery-content/initial/export-763a67d2-4bcf-46aa-9239-f86204a2b943/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML:70: warning: Matches are not exhaustive.\nFound near\n  fun\n     less_eq_set A_ (... ...) ... = list_all (fn ...) xs |\n        less_eq_set A_ ... = ... ... ys |\n        less_eq_set ... = false\n/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-investigation1/preserve-delivery-content/initial/export-763a67d2-4bcf-46aa-9239-f86204a2b943/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML:114: warning: Matches are not exhaustive. Found near fun bex (Set xs) p = list_ex p xs\n/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-investigation1/preserve-delivery-content/initial/export-763a67d2-4bcf-46aa-9239-f86204a2b943/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML:116: warning: Matches are not exhaustive. Found near fun ball (Set xs) p = list_all p xs\n/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-investigation1/preserve-delivery-content/initial/export-763a67d2-4bcf-46aa-9239-f86204a2b943/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML:127: warning: Matches are not exhaustive.\nFound near fun image f (... ...) = Set (... ... xs)\n/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-investigation1/preserve-delivery-content/initial/export-763a67d2-4bcf-46aa-9239-f86204a2b943/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML:140: warning: Matches are not exhaustive.\nFound near fun card A_ (... ...) = size_list (... ... xs)\n/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-investigation1/preserve-delivery-content/initial/export-763a67d2-4bcf-46aa-9239-f86204a2b943/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML:147: warning: Matches are not exhaustive.\nFound near fun filter p (... ...) = Set (... ... xs)\n/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-investigation1/preserve-delivery-content/initial/export-763a67d2-4bcf-46aa-9239-f86204a2b943/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML:165: warning: Matches are not exhaustive.\nFound near fun sup_seta A_ (... ...) = ... ... xs bot_set\n/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-investigation1/preserve-delivery-content/initial/export-763a67d2-4bcf-46aa-9239-f86204a2b943/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML:195: warning: Pattern 3 is redundant.\nFound near\n  fun\n     equal_bool false p = not p |\n        equal_bool true ... = p |\n        equal_bool ... = ... ... |\n        equal_bool ... = ...\n/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-investigation1/preserve-delivery-content/initial/export-763a67d2-4bcf-46aa-9239-f86204a2b943/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML:196: warning: Pattern 4 is redundant.\nFound near\n  fun\n     equal_bool false p = not p |\n        equal_bool true ... = p |\n        equal_bool ... = ... ... |\n        equal_bool ... = ...\nINVESTIGATION_RESULT {\"input_formed\":true,\"residual\":[[1,0]],\"profiles\":[{\"candidate\":0,\"profile\":[]},{\"candidate\":1,\"profile\":[]}],\"losses\":[{\"from\":0,\"to\":0,\"losses\":[]},{\"from\":0,\"to\":1,\"losses\":[]},{\"from\":1,\"to\":0,\"losses\":[]},{\"from\":1,\"to\":1,\"losses\":[]}],\"safe_facets\":[0,1,2,3],\"conflicts\":[],\"repairs\":[[1,0,1,0],[1,0,2,0],[1,0,3,0]],\"unrepairable\":[],\"extension\":[1,2,3],\"revision\":{\"retained\":[],\"withdrawn\":[],\"repairs\":[[1,0,1,0],[1,0,2,0],[1,0,3,0]],\"selection\":[1,2,3],\"residual\":[]}}\n"
+    },
+    {
+      "stage": "followed",
+      "case": {
+        "schema": "finite-investigation-1",
+        "kind": "basis",
+        "question": "Recover from the actual replay quota failure without losing any complete input or repeating accepted stages.",
+        "scope": {
+          "candidates": {
+            "0": "Leave all temporary copies and repeat the same storage use",
+            "1": "Remove the four verified duplicates and retain/resume the identified unfinished stages"
+          },
+          "facets": {
+            "0": "Preserve every original byte in the verified archive.",
+            "1": "Remove exactly the four verified temporary duplicates, subject to a final unchanged-byte check.",
+            "2": "Restore capacity for the unfinished replay and keep its large outputs within an adequate storage budget.",
+            "3": "Preserve the quota failure and resume only unfinished or rejected stages in fresh output directories."
+          },
+          "subjects": {
+            "copies": [
+              {
+                "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-batch17/native-reader-regression/cases.json",
+                "bytes": 1067592473,
+                "reference": "../../generalization-review-2026-09-11/finite-native-reader/objects/22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978.gz",
+                "sha256": "22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978",
+                "encoding": {
+                  "codec": "gzip",
+                  "sha256": "22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978",
+                  "size": 1067592473
+                }
+              },
+              {
+                "path": "/tmp/generalization-quality-review/directed-candidate-construction/application-batch19/native-reader-regression/cases.json",
+                "bytes": 1067592473,
+                "reference": "../../generalization-review-2026-09-11/finite-native-reader/objects/22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978.gz",
+                "sha256": "22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978",
+                "encoding": {
+                  "codec": "gzip",
+                  "sha256": "22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978",
+                  "size": 1067592473
+                }
+              },
+              {
+                "path": "/tmp/generalization-quality-review/candidate-delivery-review/retention-validation1/original-reader/cases.json",
+                "bytes": 1067592473,
+                "reference": "../../generalization-review-2026-09-11/finite-native-reader/objects/22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978.gz",
+                "sha256": "22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978",
+                "encoding": {
+                  "codec": "gzip",
+                  "sha256": "22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978",
+                  "size": 1067592473
+                }
+              },
+              {
+                "path": "/tmp/generalization-quality-review/candidate-delivery-review/retention-validation1/original-reader/evidence-a38bb5ab-1bdd-4533-bb5c-50498daf7dec/22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978",
+                "bytes": 1067592473,
+                "reference": "../../generalization-review-2026-09-11/finite-native-reader/objects/22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978.gz",
+                "sha256": "22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978",
+                "encoding": {
+                  "codec": "gzip",
+                  "sha256": "22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978",
+                  "size": 1067592473
+                }
+              }
+            ],
+            "unfinished": [
+              {
+                "kind": "native",
+                "name": "original-reader"
+              },
+              {
+                "kind": "native",
+                "name": "finite-presentations"
+              }
+            ]
+          }
+        },
+        "candidates": [
+          0,
+          1
+        ],
+        "facets": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "selected": [
+          1,
+          2,
+          3
+        ],
+        "observations": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            3,
+            1,
+            0
+          ]
+        ],
+        "relation": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "evidence": [
+          {
+            "path": "/home/julius/structure_and_semantics/validation/generalization-review-2026-09-12/candidate-construction/../../generalization-review-2026-09-11/finite-native-reader/objects/22cfd6a08d25edadc0075ff4acbdf32cbb91e614ab93cc9c8fece195c8b4f978.gz",
+            "sha256": "738d2bc75046079fd91555088972ef948dc6c9f43087052e333d7b03c60174b2"
+          }
+        ],
+        "semantic_boundary": "The generic evaluator consumes conditional host-operation claims. Complete streaming comparison establishes the actual byte equality of the four temporary inputs and their retained decoded source. The native table does not itself prove filesystem semantics."
+      },
+      "program_source": "/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-investigation1/preserve-delivery-content/followed/execute.ML",
+      "program_sha256": "28110d1143f93939c1e78c09dadd6392a5a1321c81d0bbe4c59f257a0cfc7435",
+      "engine": "/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-investigation1/preserve-delivery-content/followed/export-8d78f7a2-cf44-490b-bc02-31542c2fa3ae/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML",
+      "engine_sha256": "268dd5589c44fd3efa8b3a90cc12dea283fa2a4fc1d6975f23732e7172da7a5b",
+      "poly_sha256": "47efc18d0b38bc908c8b29798575501e8b7b027f593022c80ff1acc55b9495b4",
+      "result": {
+        "input_formed": true,
+        "residual": [],
+        "profiles": [
+          {
+            "candidate": 0,
+            "profile": []
+          },
+          {
+            "candidate": 1,
+            "profile": [
+              [
+                1,
+                0
+              ],
+              [
+                2,
+                0
+              ],
+              [
+                3,
+                0
+              ]
+            ]
+          }
+        ],
+        "losses": [
+          {
+            "from": 0,
+            "to": 0,
+            "losses": []
+          },
+          {
+            "from": 0,
+            "to": 1,
+            "losses": []
+          },
+          {
+            "from": 1,
+            "to": 0,
+            "losses": [
+              [
+                1,
+                0
+              ],
+              [
+                2,
+                0
+              ],
+              [
+                3,
+                0
+              ]
+            ]
+          },
+          {
+            "from": 1,
+            "to": 1,
+            "losses": []
+          }
+        ],
+        "safe_facets": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "conflicts": [],
+        "repairs": [],
+        "unrepairable": [],
+        "extension": [
+          1,
+          2,
+          3
+        ],
+        "revision": {
+          "retained": [
+            1,
+            2,
+            3
+          ],
+          "withdrawn": [],
+          "repairs": [],
+          "selection": [
+            1,
+            2,
+            3
+          ],
+          "residual": []
+        }
+      },
+      "checked_fields": [
+        "input_formed",
+        "residual",
+        "safe_facets",
+        "conflicts",
+        "repairs",
+        "unrepairable",
+        "extension",
+        "complete profiles",
+        "complete ordered losses",
+        "complete revision and admission gate"
+      ],
+      "facts": {
+        "input_formed": true,
+        "candidate_count": 2,
+        "available_facets": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "selected": [
+          1,
+          2,
+          3
+        ],
+        "safe": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "invalid_selected": [],
+        "residual_count": 0,
+        "conflict_count": 0,
+        "missing_count": 0,
+        "repair_count": 0,
+        "unrepairable_count": 0,
+        "positive_comparisons": 3,
+        "negative_comparisons": 1,
+        "relation_reflexive": true,
+        "relation_transitive": true,
+        "empty_selection_adequate": false,
+        "adequate_selections": [
+          [
+            1
+          ],
+          [
+            2
+          ],
+          [
+            3
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2
+          ],
+          [
+            0,
+            1,
+            3
+          ],
+          [
+            0,
+            2,
+            3
+          ],
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ]
+        ],
+        "adequate_selection_enumeration": "complete",
+        "extension_adequate": true,
+        "sound_language_adequate": true,
+        "revision": {
+          "retained": [
+            1,
+            2,
+            3
+          ],
+          "required_withdrawals": [],
+          "new_missing_after_withdrawal": [],
+          "reuse_original_repairs_adequate": true,
+          "recomputed_selection": [
+            1,
+            2,
+            3
+          ],
+          "residual": []
+        },
+        "evaluation_signature": "c2a3a473088fb29639a1303ef064d07dfc134866dfdb2a79194e1439a89c569f"
+      },
+      "raw_output": "/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-investigation1/preserve-delivery-content/followed/export-8d78f7a2-cf44-490b-bc02-31542c2fa3ae/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML:70: warning: Matches are not exhaustive.\nFound near\n  fun\n     less_eq_set A_ (... ...) ... = list_all (fn ...) xs |\n        less_eq_set A_ ... = ... ... ys |\n        less_eq_set ... = false\n/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-investigation1/preserve-delivery-content/followed/export-8d78f7a2-cf44-490b-bc02-31542c2fa3ae/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML:114: warning: Matches are not exhaustive. Found near fun bex (Set xs) p = list_ex p xs\n/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-investigation1/preserve-delivery-content/followed/export-8d78f7a2-cf44-490b-bc02-31542c2fa3ae/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML:116: warning: Matches are not exhaustive. Found near fun ball (Set xs) p = list_all p xs\n/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-investigation1/preserve-delivery-content/followed/export-8d78f7a2-cf44-490b-bc02-31542c2fa3ae/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML:127: warning: Matches are not exhaustive.\nFound near fun image f (... ...) = Set (... ... xs)\n/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-investigation1/preserve-delivery-content/followed/export-8d78f7a2-cf44-490b-bc02-31542c2fa3ae/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML:140: warning: Matches are not exhaustive.\nFound near fun card A_ (... ...) = size_list (... ... xs)\n/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-investigation1/preserve-delivery-content/followed/export-8d78f7a2-cf44-490b-bc02-31542c2fa3ae/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML:147: warning: Matches are not exhaustive.\nFound near fun filter p (... ...) = Set (... ... xs)\n/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-investigation1/preserve-delivery-content/followed/export-8d78f7a2-cf44-490b-bc02-31542c2fa3ae/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML:165: warning: Matches are not exhaustive.\nFound near fun sup_seta A_ (... ...) = ... ... xs bot_set\n/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-investigation1/preserve-delivery-content/followed/export-8d78f7a2-cf44-490b-bc02-31542c2fa3ae/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML:195: warning: Pattern 3 is redundant.\nFound near\n  fun\n     equal_bool false p = not p |\n        equal_bool true ... = p |\n        equal_bool ... = ... ... |\n        equal_bool ... = ...\n/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-investigation1/preserve-delivery-content/followed/export-8d78f7a2-cf44-490b-bc02-31542c2fa3ae/Finite_Investigation_9188a917829df6c6d57ee513.Finite_Investigation_Export/code/finite_investigation.ML:196: warning: Pattern 4 is redundant.\nFound near\n  fun\n     equal_bool false p = not p |\n        equal_bool true ... = p |\n        equal_bool ... = ... ... |\n        equal_bool ... = ...\nINVESTIGATION_RESULT {\"input_formed\":true,\"residual\":[],\"profiles\":[{\"candidate\":0,\"profile\":[]},{\"candidate\":1,\"profile\":[[1,0],[2,0],[3,0]]}],\"losses\":[{\"from\":0,\"to\":0,\"losses\":[]},{\"from\":0,\"to\":1,\"losses\":[]},{\"from\":1,\"to\":0,\"losses\":[[1,0],[2,0],[3,0]]},{\"from\":1,\"to\":1,\"losses\":[]}],\"safe_facets\":[0,1,2,3],\"conflicts\":[],\"repairs\":[],\"unrepairable\":[],\"extension\":[1,2,3],\"revision\":{\"retained\":[1,2,3],\"withdrawn\":[],\"repairs\":[],\"selection\":[1,2,3],\"residual\":[]}}\n"
+    }
+  ],
+  "assessment": {
+    "required_observations": [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        3,
+        0
+      ]
+    ],
+    "missing_requirements": {
+      "0": [
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ]
+      ],
+      "1": []
+    },
+    "eligible": [
+      1
+    ],
+    "dominant": [
+      1
+    ],
+    "strict_improvements": [],
+    "boundary": "Assessment of the supplied finite candidates under explicit mandatory observations. Eligibility uses all original observations, including facets unnecessary for distinguishing these candidates. The returned adequate profiles determine comparison; broader coverage and candidate construction remain separate."
+  }
+}

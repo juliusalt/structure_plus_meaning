@@ -1,0 +1,5 @@
+{
+  "selection": 1,
+  "complete_results": "/tmp/generalization-quality-review/candidate-delivery-review/closure-audit-investigation1/complete-results.json",
+  "criticism": "The returned result correctly requires the procedure-input maps omitted by the earlier diagnostic. This is a coverage correction to the byte-availability audit, without changing native proof or runtime conclusions. Run the expanded scope and inspect every unresolved input together before retrying retention."
+}

@@ -1,0 +1,6 @@
+{
+  "selection": 1,
+  "complete_results": "/tmp/generalization-quality-review/directed-candidate-construction/application-performance18-investigation1/complete-results.json",
+  "criticism": "The actual generated code preserves fset list presentations directly; the costs addressed here are rich-key membership and union comparisons. Generic exact equations retain all subjects and preserve the existing application statements. No native speedup is assumed.",
+  "boundary": "The conditional result selects the complete retained validation attempt. Acceptance comes only from subsequent proofs or executions."
+}

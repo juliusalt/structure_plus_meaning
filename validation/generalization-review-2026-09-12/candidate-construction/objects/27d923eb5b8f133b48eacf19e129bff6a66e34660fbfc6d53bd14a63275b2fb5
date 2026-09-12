@@ -1,0 +1,20 @@
+{
+  "problem": "The native source consumer needs the complete catalog domain retained in the baseline, but the new wrapper supplied a different four-name list.",
+  "complete_native_source_failure": "Traceback (most recent call last):\n  File \"/tmp/generalization-quality-review/directed-candidate-construction/worktree/tools/check_finite_inference.py\", line 246, in <module>\n    raise SystemExit(main())\n                     ~~~~^^\n  File \"/tmp/generalization-quality-review/directed-candidate-construction/worktree/tools/check_finite_inference.py\", line 187, in main\n    catalogs = construction.load_catalogs(args.catalogs.resolve())\n  File \"/tmp/generalization-quality-review/directed-candidate-construction/worktree/tools/reader_construction_cases.py\", line 29, in load_catalogs\n    assert review.digest(path) == receipt[\"exported_libraries\"][name][\"sha256\"]\n           ~~~~~~~~~~~~~^^^^^^\n  File \"/tmp/generalization-quality-review/directed-candidate-construction/worktree/tools/check_reasoning.py\", line 26, in digest\n    return hashlib.sha256(Path(path).read_bytes()).hexdigest()\n                          ~~~~~~~~~~~~~~~~~~~~~^^\n  File \"/usr/lib/python3.14/pathlib/__init__.py\", line 777, in read_bytes\n    with self.open(mode='rb', buffering=0) as f:\n         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.14/pathlib/__init__.py\", line 771, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/tmp/generalization-quality-review/directed-candidate-construction/application-batch13/guided-regression/library-specialization_report_reasoning_library.json'\n",
+  "baseline": "/tmp/generalization-quality-review/structural-binding-observations/guided-regression1/receipt.json",
+  "required_actual_catalogs": [
+    "specialization_report_reasoning_library",
+    "binding_observation_reasoning_library",
+    "inference_reader_construction_library",
+    "inference_reader_investigation_library"
+  ],
+  "current_catalogs": [
+    "inference_reader_construction_library",
+    "reader_construction_library",
+    "inference_reader_investigation_library",
+    "binding_observation_construction_library"
+  ],
+  "proposal": "Take the exact exported-library domain from the checked baseline receipt when reexecuting that baseline.",
+  "source": "/tmp/generalization-quality-review/directed-candidate-construction/performance-draft14/check_candidate_regressions.py",
+  "remaining": "New native source and reader executions still need to complete with the corrected actual catalog domain."
+}

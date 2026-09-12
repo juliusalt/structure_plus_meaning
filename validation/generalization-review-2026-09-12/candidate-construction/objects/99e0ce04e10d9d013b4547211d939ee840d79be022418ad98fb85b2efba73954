@@ -1,0 +1,19 @@
+{
+  "operation": "interface-draft3.construction_cases on every original complete case",
+  "input": "/tmp/generalization-quality-review/directed-candidate-construction/interface-draft2/cases.json",
+  "traceback": "Traceback (most recent call last):\n  File \"/tmp/generalization-quality-review/directed-candidate-construction/prepare_interface4.py\", line 8, in <module>\n    try:prior.construction_cases(spec)\n        ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^\n  File \"/tmp/generalization-quality-review/directed-candidate-construction/interface-draft3/check_application_comparison.py\", line 216, in construction_cases\n    for p in r['problems']:old.validate_problem(p)\n                           ~~~~~~~~~~~~~~~~~~~~^^^\n  File \"/tmp/generalization-quality-review/directed-candidate-construction/interface-draft3/application_subjects.py\", line 83, in validate_problem\n    validate_application(target)\n    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^\n  File \"/tmp/generalization-quality-review/directed-candidate-construction/interface-draft3/application_subjects.py\", line 59, in validate_application\n    assert type(row) is dict and set(row) == {\"conclusion\", \"bindings\", \"premises\"}\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+  "actual_target_field_sets": [
+    [
+      "bindings",
+      "conclusion",
+      "entry",
+      "premises",
+      "schema"
+    ],
+    [
+      "bindings",
+      "conclusion",
+      "premises"
+    ]
+  ]
+}

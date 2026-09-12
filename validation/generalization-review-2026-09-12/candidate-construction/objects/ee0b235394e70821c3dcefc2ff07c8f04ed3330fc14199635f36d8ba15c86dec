@@ -1,0 +1,9 @@
+{
+  "cases": 55,
+  "baseline": "/tmp/generalization-quality-review/directed-candidate-construction/application-batch19/guided-regression",
+  "baseline_receipt_sha256": "8f924a97e0e433126829a1cfd26fd2978a1c835c7ba4fc663dfb887465d000ac",
+  "new_receipt_sha256": "b50c94195fbcdd20c969a46f1c3927652e2c5eb2278c6cc014efb2e23deb01ed",
+  "different_cases": [],
+  "source_reference": null,
+  "boundary": "Every original complete input is reexecuted and assessed with the checked module. Complete mathematical reports are compared modulo their finite-set enumerations; no output fields are dropped."
+}

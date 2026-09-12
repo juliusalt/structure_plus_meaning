@@ -1,0 +1,120 @@
+{
+  "question": "The whitespace check finds one trailing space in the supplied-input checker, and the final archive preparation gives each original B artifact two attachment aliases. Remove those delivery defects while preserving every mathematical native program and every actual retained artifact.",
+  "boundary": "Prospective conditional delivery correction grounded in the actual whitespace failure, parsed source equality, five complete native program comparisons and the attachment-key construction. It preserves the mathematical programs while recording the edited source independently.",
+  "problems": [
+    {
+      "name": "preserve-delivery-content",
+      "case": {
+        "schema": "finite-investigation-1",
+        "kind": "basis",
+        "question": "The whitespace check finds one trailing space in the supplied-input checker, and the final archive preparation gives each original B artifact two attachment aliases. Remove those delivery defects while preserving every mathematical native program and every actual retained artifact.",
+        "scope": {
+          "candidates": {
+            "0": "Keep the observed trailing space and duplicate attachment aliases",
+            "1": "Use the exact cleanup drafts and recheck the final evidence scope"
+          },
+          "facets": {
+            "0": "Keep the checker's parsed program and all five complete supplied-input native programs unchanged.",
+            "1": "Remove the exact trailing whitespace reported by the repository check.",
+            "2": "Retain every original physical artifact once per relative source location, without duplicate aliases introduced only by rescanning.",
+            "3": "Recheck the final input scope and repository whitespace before creating the final archive."
+          },
+          "subjects": "/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-proposal.json"
+        },
+        "candidates": [
+          0,
+          1
+        ],
+        "facets": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "selected": [],
+        "observations": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            3,
+            1,
+            0
+          ]
+        ],
+        "relation": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "evidence": [
+          {
+            "path": "/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-proposal.json",
+            "sha256": "6d2031a10908ebe3acebdcc09a8c2d22ee6e10af63d52d5ad70ea13c67a8f12c"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-draft1/check_application_comparison.py",
+            "sha256": "26bf07ad877785d7aafe0aa5c0585114b89a9f68ca91f511882e7441f1acfbd7"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-draft1/prepare_final_archive.py",
+            "sha256": "dba10553afd9a926ecfe8e03194038c7ee3a50ebda403177ab37598af13ffd0e"
+          },
+          {
+            "path": "/tmp/generalization-quality-review/candidate-delivery-review/delivery-cleanup-diagnostic.json",
+            "sha256": "62e2015a8cce39b389a8595fd481ee45c69309f2913653fbc6a91306257bda6b"
+          },
+          {
+            "path": "/home/julius/structure_and_semantics/tools/check_application_comparison.py",
+            "sha256": "92640d6aec88dfc33083f9db8e25f1ff42638744cf2796c1306fdc1ce4701779"
+          }
+        ],
+        "semantic_boundary": "Prospective conditional delivery correction grounded in the actual whitespace failure, parsed source equality, five complete native program comparisons and the attachment-key construction. It preserves the mathematical programs while recording the edited source independently."
+      },
+      "required_observations": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ]
+      ]
+    }
+  ]
+}

@@ -1,0 +1,213 @@
+{
+  "complete_result": {
+    "question": "Replace the two proof commands stalled in the complete 60-second session with bounded lemma-directed proofs of the identical claims.",
+    "boundary": "Conditional prospective comparison of the retained proof commands and proposed replacements. The replacements preserve statements and executable definitions by exact replacement of proof bodies only. The stalled commands and library lemma signatures are actual diagnostic evidence. Successful proof checking remains an unresolved prerequisite.",
+    "specification_sha256": "62265a8f7d01df6b7de7365ba8fe87ae983c91e56ad6ae34912ec4e302be6acd",
+    "results": [
+      {
+        "problem": "explicit-proof-steps",
+        "initial_result": {
+          "input_formed": true,
+          "residual": [
+            [
+              1,
+              0
+            ]
+          ],
+          "profiles": [
+            {
+              "candidate": 0,
+              "profile": []
+            },
+            {
+              "candidate": 1,
+              "profile": []
+            }
+          ],
+          "losses": [
+            {
+              "from": 0,
+              "to": 0,
+              "losses": []
+            },
+            {
+              "from": 0,
+              "to": 1,
+              "losses": []
+            },
+            {
+              "from": 1,
+              "to": 0,
+              "losses": []
+            },
+            {
+              "from": 1,
+              "to": 1,
+              "losses": []
+            }
+          ],
+          "safe_facets": [
+            0,
+            1
+          ],
+          "conflicts": [],
+          "repairs": [
+            [
+              1,
+              0,
+              1,
+              0
+            ],
+            [
+              1,
+              0,
+              1,
+              1
+            ]
+          ],
+          "unrepairable": [],
+          "extension": [
+            1
+          ],
+          "revision": {
+            "retained": [],
+            "withdrawn": [],
+            "repairs": [
+              [
+                1,
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                1,
+                1
+              ]
+            ],
+            "selection": [
+              1
+            ],
+            "residual": []
+          }
+        },
+        "followed_result": {
+          "input_formed": true,
+          "residual": [],
+          "profiles": [
+            {
+              "candidate": 0,
+              "profile": []
+            },
+            {
+              "candidate": 1,
+              "profile": [
+                [
+                  1,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ]
+              ]
+            }
+          ],
+          "losses": [
+            {
+              "from": 0,
+              "to": 0,
+              "losses": []
+            },
+            {
+              "from": 0,
+              "to": 1,
+              "losses": []
+            },
+            {
+              "from": 1,
+              "to": 0,
+              "losses": [
+                [
+                  1,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ]
+              ]
+            },
+            {
+              "from": 1,
+              "to": 1,
+              "losses": []
+            }
+          ],
+          "safe_facets": [
+            0,
+            1
+          ],
+          "conflicts": [],
+          "repairs": [],
+          "unrepairable": [],
+          "extension": [
+            1
+          ],
+          "revision": {
+            "retained": [
+              1
+            ],
+            "withdrawn": [],
+            "repairs": [],
+            "selection": [
+              1
+            ],
+            "residual": []
+          }
+        },
+        "assessment": {
+          "required_observations": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "missing_requirements": {
+            "0": [
+              [
+                1,
+                0
+              ],
+              [
+                1,
+                1
+              ]
+            ],
+            "1": []
+          },
+          "eligible": [
+            1
+          ],
+          "dominant": [
+            1
+          ],
+          "strict_improvements": [],
+          "boundary": "Assessment of the supplied finite candidates under explicit mandatory observations. Eligibility uses all original observations, including facets unnecessary for distinguishing these candidates. The returned adequate profiles determine comparison; broader coverage and candidate construction remain separate.",
+          "receipt_sha256": "6b12c9577003b65d0c7db5f8e3deb7a519f7aeb9b5465681e769bc66ba584c52"
+        }
+      }
+    ]
+  },
+  "decision": "Try the exact retained proof replacements, then check both roots together.",
+  "criticism": "This is an external proof proposal selected under diagnostic conditions. It does not establish proof validity or select a new search algorithm; Isabelle acceptance remains required."
+}

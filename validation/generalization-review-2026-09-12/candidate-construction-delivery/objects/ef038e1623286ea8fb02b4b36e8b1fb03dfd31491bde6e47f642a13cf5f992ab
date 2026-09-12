@@ -1,0 +1,6 @@
+{
+  "stage": "generic-search",
+  "status": "accepted",
+  "replay_kind": "directed_search",
+  "replay_sha256": "7b025e6c96f7a492e2de65dccb5afc6ba8e6dbc556ba6ace5a695d06a3a1d876"
+}

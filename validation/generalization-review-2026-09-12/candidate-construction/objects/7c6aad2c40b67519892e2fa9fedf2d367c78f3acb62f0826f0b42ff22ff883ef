@@ -1,0 +1,100 @@
+from pathlib import Path
+import prepare_repair as r
+W=Path(__file__).parent/'worktree/theories'
+repairs={}
+def change(owner,before,after):repairs.setdefault(owner,[]).append((before,after))
+change('Finite_Compatible_Unions',r'''  show "V |\<in>| finite_compatible_unions B"
+    by (simp only: finite_compatible_union_member; intro conjI)
+      (use valid in blast, rule exI[of _ "ffilter (\<lambda>W. W |\<subseteq>| V) B"]; use valid included in blast)''',r'''  have functional: "finite_relation_functional V" using valid by blast
+  have represented: "\<exists>A. A |\<subseteq>| B \<and> V=ffUnion A"
+    by (rule exI[of _ "ffilter (\<lambda>W. W |\<subseteq>| V) B"])
+      (use valid included in blast)
+  show "V |\<in>| finite_compatible_unions B"
+    using functional represented by (simp only: finite_compatible_union_member; blast)''')
+change('Finite_Compatible_Unions','    by (simp only: finite_compatible_union_support[OF generated]) simp','    by (simp only: finite_compatible_union_support[OF generated]; rule order_refl)')
+change('Factor_Application_Candidates',r'''  show ?thesis
+    using target application_plan_coverage_at_target presentations
+    by (auto simp: application_plan_sufficient_def fsubset_iff fset_of_list_elem
+      application_plan_requirement_member split_paired_All split_paired_Ex; blast)''',r'''  show ?thesis
+  proof
+    assume sufficient: "application_plan_sufficient Cs A"
+    show "fset_of_list (application_plan_requirements Cs) |\<subseteq>|
+      finite_assembly_coverage (application_part_coverage Cs) A"
+    proof (rule fsubsetI)
+      fix q
+      assume member: "q |\<in>| fset_of_list (application_plan_requirements Cs)"
+      obtain P t V H a where q: "q=(P,(t,V,H),a)" by (cases q; auto)
+      obtain Xs where actual: "(P,Xs)\<in>set Cs" "(t,V,H)\<in>set Xs"
+        and variable: "a |\<in>| finite_schema_variables (application_schema P)"
+        using member by (simp only: q fset_of_list_elem application_plan_requirement_member; blast)
+      have mandatory: "(t,V,H) |\<in>| application_mandatory_targets P"
+        using actual(2) by (simp only: presentations[OF actual(1), symmetric] fset_of_list_elem)
+      have preserved: "application_mandatory_targets P |\<subseteq>| application_plan_result A P"
+        using sufficient actual(1) by (auto simp: application_plan_sufficient_def)
+      have result: "(t,V,H) |\<in>| application_plan_result A P"
+        by (rule fsubsetD[OF preserved mandatory])
+      have covered: "finite_schema_variables (application_schema P) |\<subseteq>|
+        finite_assembly_coverage (finite_observation_site_coverage
+          (finite_schema_observation_sources (application_schema P)) (application_problem_observations P) V) A"
+        using result by (simp only: target[OF actual])
+      show "q |\<in>| finite_assembly_coverage (application_part_coverage Cs) A"
+        using fsubsetD[OF covered variable]
+        by (simp only: q application_plan_coverage_at_target[OF actual variable])
+    qed
+  next
+    assume covered: "fset_of_list (application_plan_requirements Cs) |\<subseteq>|
+      finite_assembly_coverage (application_part_coverage Cs) A"
+    have preserved: "application_mandatory_targets P |\<subseteq>| application_plan_result A P"
+      if actual: "(P,Xs)\<in>set Cs" for P Xs
+    proof (rule fsubsetI)
+      fix X
+      assume mandatory: "X |\<in>| application_mandatory_targets P"
+      obtain t V H where X: "X=(t,V,H)" by (cases X; auto)
+      have listed: "(t,V,H)\<in>set Xs"
+        using mandatory by (simp only: X presentations[OF actual, symmetric] fset_of_list_elem)
+      have scope: "finite_schema_variables (application_schema P) |\<subseteq>|
+        finite_assembly_coverage (finite_observation_site_coverage
+          (finite_schema_observation_sources (application_schema P)) (application_problem_observations P) V) A"
+      proof (rule fsubsetI)
+        fix a
+        assume variable: "a |\<in>| finite_schema_variables (application_schema P)"
+        have requirement: "(P,(t,V,H),a) |\<in>| fset_of_list (application_plan_requirements Cs)"
+          using actual listed variable by (simp only: fset_of_list_elem application_plan_requirement_member; blast)
+        have global: "(P,(t,V,H),a) |\<in>| finite_assembly_coverage (application_part_coverage Cs) A"
+          by (rule fsubsetD[OF covered requirement])
+        show "a |\<in>| finite_assembly_coverage (finite_observation_site_coverage
+          (finite_schema_observation_sources (application_schema P)) (application_problem_observations P) V) A"
+          using global by (simp only: application_plan_coverage_at_target[OF actual listed variable])
+      qed
+      show "X |\<in>| application_plan_result A P"
+        using scope by (simp only: X target[OF actual listed])
+    qed
+    show "application_plan_sufficient Cs A"
+      using preserved by (auto simp: application_plan_sufficient_def)
+  qed''')
+change('Factor_Application_Comparison',r'''  unfolding application_observations_def
+  apply (rule finite_derived_observation_at_subject[OF _ candidate condition problem])
+  using workloads application_candidate_subjects_functional[of Ps Cs]
+  by (auto simp: finite_observation_subjects_formed_def application_condition_subjects_def
+    single_valued_def fset_of_list.rep_eq)''',r'''proof -
+  have conditions: "single_valued (fset application_condition_subjects)"
+    by (auto simp: application_condition_subjects_def single_valued_def fset_of_list.rep_eq)
+  have scope: "finite_observation_subjects_formed (application_candidate_subjects Ps Cs)
+    application_condition_subjects W"
+    using application_candidate_subjects_functional[of Ps Cs] conditions workloads
+    by (simp only: finite_observation_subjects_formed_def; blast)
+  show ?thesis unfolding application_observations_def
+    by (rule finite_derived_observation_at_subject[OF scope candidate condition problem])
+qed''')
+change('Factor_Application_Comparison',r'''  using application_observation_subject[OF workloads, of 0 A Ps Cs 2 Required_Application_Condition w P]
+    problem built
+  by (simp add: application_candidate_subject application_condition_subjects_def fset_of_list.rep_eq)''',r'''proof -
+  have candidate: "(0,A) |\<in>| application_candidate_subjects Ps Cs"
+    by (simp only: application_candidate_subject built; simp)
+  have condition: "(2,Required_Application_Condition) |\<in>| application_condition_subjects"
+    by (simp add: application_condition_subjects_def fset_of_list.rep_eq)
+  show ?thesis
+    using application_observation_subject[OF workloads candidate condition problem]
+    by simp
+qed''')
+print(r.prepare(3,'Check one related application-proof batch with explicit support witnesses, per-target coverage transport and exact indexed observation subjects; prepare the full native application adapter and combined diagnostics before validation.',repairs,family='applicationconstruction'))

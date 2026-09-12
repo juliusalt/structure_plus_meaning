@@ -35,7 +35,18 @@ proof, exported code, input construction and all 185 complete native reports
 from repository sources. Earlier validation archives remain recoverable from
 the pinned GitHub revision recorded in [validation/history.json](validation/history.json).
 
-The session registers 872 theories; its
+Native requirement construction now checks that each requested predicate exists
+in the source and checks the allocation boundary before admitting a plan. The original request is
+fixed in the admission program before a candidate arrives. An ordinary reader
+checks the candidate artifact's complete body, including its entire carrier
+and attached data. Closed RRA generations retain that same previously fixed
+cause program; a separate extension uses existing predecessor references.
+The [requirement reconstruction](validation/reconstruction/requirement-plans.md)
+rebuilds the proofs and all 75 complete native reports from sources. These local
+results leave the complete development workflow, historical permission and
+overall cost account open.
+
+The session registers 903 theories; its
 [latest complete check](validation/check.json) records the current proof status.
 Native local readers connect an actual
 inference node's bindings to its symbolic replacement record and complete

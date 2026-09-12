@@ -34,6 +34,9 @@ missing internal operation.
 | Preserve actual premise and binder boundaries | A rule transformation must retain every premise socket, callee, head variable, premise-only variable, and material-only variable. | Native symbolic-call and clause-specialization checkers admit actual complete substitutions and prescribed socket presentations. | Use the admitted transformations to instantiate reusable reasoning schemas and retain their complete assertion and material boundaries. |
 | Compare complete claims through jointly determining observations | Injective paired observations with a retained callee determine the original claim; functional claim tables and complete socket joins preserve the original premise relation. | Generic functional joins, keyed fibre and table comparisons, and prefixed observations feed native entry 359; its complete actual-source contract is equivalent to the original symbolic local judgment under the stated graph and claim-domain premises. | Generate these applications from a complete symbolic-graph admission obligation, including every node, formed symbolic call, material condition, and identified assertion boundary. The local example does not supply that traversal. |
 | Join only agreeing components | A program union preserves the intended component meanings when whole definitions agree on their actual overlap and dependencies are closed. | Shared-definition agreement, rooted groups, rebasing, and least dependency closures support the native joins. | Make agreement and closure explicit generated prerequisites of composition; do not discharge them merely from a shared component name. |
+| Construct admission for every original requirement | A finite supported goal family and a fresh allocation boundary produce component definitions and one exact same-subject conjunction. | Native sequence construction, recursive source-support checks and allocation admission produce the actual installation arguments. The original source meanings are preserved. | Use this construction for the complete workflow's independently established requirements, including problem adequacy, criticism and evidence; a supplied goal family alone does not establish that coverage. |
+| Judge the artifact for the original request | The previously installed request boundary and an exact whole-body reader prevent another request, result or incomplete artifact from supplying admission. | Native entry 369 reads the actual literal artifact and applies the checked constructor contract to its whole body; its finite evaluator has an all-input equation. | Integrate the admitted construction with complete development decisions and their original problem subjects. The current execution covers requirement construction and complete artifact admission. |
+| Record through existing predecessors | A formed existing environment and actual predecessor readings support a new record while its cause retains the previously fixed native judgment program. | Scope and base-cause extension instantiate the existing RRA record constructor and preserve separate replay evidence. | Supply the actual continuation policy, local allocation and lookup implementation, and complete cost account. Reference sharing and an existence proof do not establish those conditions. |
 | Change an inadequate observation language | A full-language residual proves that selecting more of the same observations cannot suffice. A new observation needs its own semantic and coverage contract. | Repair obstructions and multiple newly constructed native observations exhibit this transition. | Use the failed subject relation and the reusable construction rules to generate new observation candidates, then evaluate them. |
 | Preserve useful selections while revising conflicts | Withdraw unsound selections, retain the selected sound part, and recompute repair needs after withdrawal. | The new revision rule and list execution have Isabelle proofs; they have not yet received native Factor presentation and checking. | Integrate the transition with native construction and evidence, while keeping observation-language limits visible. |
 
@@ -708,3 +711,32 @@ the proof and code and checks equality of every complete report. Its common
 recipe factors the repeated proof, export, source-input, catalog and reasoning
 sequence. These host checks establish reproducibility and execution provenance;
 they do not compute the development decisions required by `problems.txt`.
+
+## Original requests and complete candidate artifacts
+
+`Factor_Admission_Sequences` factors repeated planning across a complete goal
+family. `Factor_Requirement_Plans` installs its computed instructions and the
+conjunction guard. The request checker derives source support and the allocation
+floor from the actual program's complete definition domain. Empty requests
+retain that allocation condition, and repeated requirements retain their
+occurrences in the constructed sequence.
+
+`Factor_Pattern_Restrictions` uses the existing interface and argument-call
+clause to fix the original request. `Factor_Quoted_Body_Guards` uses the existing
+literal projection and complete quotation readers. Their concrete program
+join proves agreement on every shared definition. The resulting native
+artifact predicate has an all-term contract, and the finite implementation
+reads the actual artifact's complete carrier, incidence and data.
+
+The 75 executed reports retain all inputs, generated plans and observations.
+They include unsupported leaves, occupied counters, altered results and
+requests, a malformed payload, an extra counted attachment and an isolated
+carrier atom. Valid nested pair and collection plans pass. Closed generation
+and predecessor-reference extension are proved separately from that finite
+artifact execution. Their cause program is fixed before future candidates.
+
+The two reconstruction entry points instantiate `tools/reconstruction.py`.
+The common runner checks ordered stages, complete report equality and unchanged
+recipe inputs. Its purpose is reproducibility; these host launch arguments
+provide no native decision or semantic authority. The complete protocol and
+its cost bound remain open.

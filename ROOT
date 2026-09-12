@@ -875,3 +875,34 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Keyed_Table_Execution
     Option_List_Maps
     Paired_Relation_Observations
+    Checked_Requirement_Execution
+    Factor_Admission_Goal_Support
+    Factor_Admission_Request_Boundary
+    Factor_Admission_Request_Clauses
+    Factor_Admission_Request_Primitives
+    Factor_Admission_Sequence_Clauses
+    Factor_Admission_Sequence_Exact
+    Factor_Admission_Sequences
+    Factor_Base_Generation_Extensions
+    Factor_Checked_Requirement_Plans
+    Factor_Closed_Base_Programs
+    Factor_Finite_Complete_Quotation
+    Factor_Finite_Data_Syntax
+    Factor_Fixed_Requirement_Plans
+    Factor_Generation_Scope_Extensions
+    Factor_Pattern_Restrictions
+    Factor_Portable_Table_Development
+    Factor_Portable_Table_Guard
+    Factor_Quoted_Body_Guards
+    Factor_Request_Quotation_Base
+    Factor_Requirement_Artifact_Admission
+    Factor_Requirement_Generations
+    Factor_Requirement_Guards
+    Factor_Requirement_Installation
+    Factor_Requirement_Plan_Realization
+    Factor_Requirement_Plans
+    Factor_Requirement_Result_Values
+    Finite_Portable_Table_Guard
+    Finite_Requirement_Artifact_Admission
+    Requirement_Artifact_Execution
+    Requirement_Plan_Execution

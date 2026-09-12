@@ -688,3 +688,35 @@ the mathematical proofs remain. The six structural development conditions in
 The normal 872-theory repository check also passes, with exact source and tool
 identities and no proof escapes. All 94 tooling tests pass, including rejection
 of an unpublished assessment before an execution can be accepted.
+
+The requirement-construction extension adds native checks of the actual source
+domain, allocation counter, complete original goal family and generated plan.
+The installed predicate preserves the source meanings and holds exactly when
+every original requirement holds on the same formed subject. The artifact
+admission program fixes the request before all future candidates and reads
+the exact complete body of the actual literal artifact. A changed request,
+result, attachment or carrier cannot borrow another body's successful check.
+
+Closed native programs precede the candidate generations, whose recorded
+causes retain the same complete program scope and separate replay evidence.
+The extension through existing predecessor uses avoids invoking recursive
+presentation construction on those predecessor cores. This is a structural
+extension contract, not an overall execution-cost result or historical
+permission. Finite execution checks 75 complete reports, including 17 actual
+artifact cases. The source-only reconstruction uses the same factored runner
+as the earlier child-claim validation.
+
+The six conditions in `problems.txt` remain the full next milestone. Complete
+problem and approach selection, criticism, workflow coverage, historical
+acceptance, and an execution-cost account still require native integration.
+The current plan record retains the source definition domain. A complete
+development account must also retain the exact source program supplying those
+predicates and the actual installed program; equal domains do not identify
+their meanings.
+This extension does not close O-85, genesis, or the final repository audit.
+
+The complete 903-theory repository check passes with unchanged source and tool
+identities and no proof escapes. All 98 tooling tests pass. Independent source
+materializations rebuild the 487-theory requirement context and the updated
+524-theory child-claim context from HOL. They reproduce all 75 and 185 complete
+native reports respectively through the same reconstruction runner.

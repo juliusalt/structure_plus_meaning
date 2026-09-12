@@ -7638,3 +7638,27 @@ system's verdict cannot create its own authority. Native operations may already
 be used within an Isabelle-established scope before genesis. Whether a broader
 earlier handoff can meet its complete obligations is not settled by these edits;
 the existing D-9 boundary remains in force.
+
+## Requirement construction and artifact admission
+
+The construction request consists of the complete original goal family and
+initial allocation counter, governed by the actual source definition domain.
+The native checker establishes support and allocation before its computed
+plan is admitted. The installed guard has the exact same-subject conjunction
+meaning under the Isabelle-established bootstrap contract.
+
+An existing interface pattern fixes the original request. The artifact reader
+must recover its complete body from the actual literal artifact before applying
+that request's checker. This avoids a separate supplied body or satisfaction
+table. The complete program join preserves both readers' original meanings.
+
+The closed native cause program precedes future payloads. Recorded generations
+and extensions through existing predecessor uses preserve that program and
+keep replay evidence separate. They establish neither a continuation policy
+nor a cost bound. These are implemented parts of the structural-development
+repair; the six conditions in `problems.txt` remain the milestone boundary.
+
+The previous and new reconstruction recipes now instantiate one host runner.
+Only sources, required fixtures, toolchain requirements and complete-report
+comparison boundaries are retained for new reconstruction. The runner supplies
+execution provenance and reproducibility, without adding semantic authority.

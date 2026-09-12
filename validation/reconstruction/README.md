@@ -1,4 +1,10 @@
-# Reconstruct the native child-claim validation
+# Reconstruct native validation from sources
+
+The child-claim recipe below and the
+[requirement-plan recipe](requirement-plans.md) use the same reconstruction
+runner. Each retains its own complete source and report boundary. The runner
+schedules proof, diagnostics, code export and the required execution stages;
+it supplies no semantic judgment about their subjects.
 
 The retained boundary contains repository theories and Python sources, the
 original finite source fixture, the toolchain requirements, and the expected
@@ -21,9 +27,9 @@ and executes the reasoning family. It fails if a stage fails, complete reports
 change, or its checked inputs change. The optional `--proof` mode rechecks an
 existing accepted export and records `sources_rebuilt: false`.
 
-[native-child-sources.json](native-child-sources.json) lists the exact 554 source
-and fixture files sufficient for the completed cold run, including 524 theory
-sources and 28 Python modules. To materialize that boundary independently:
+[native-child-sources.json](native-child-sources.json) lists the exact 555 source
+and fixture files, including 524 theory sources and 29 Python modules. The
+shared reconstruction runner is included. To materialize that boundary independently:
 
 ```sh
 python3 -B tools/materialize_source_boundary.py \

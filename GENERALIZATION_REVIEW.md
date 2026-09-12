@@ -8,6 +8,14 @@ the available language cannot repair a failure, and auditing the evidence that
 connects a finite table to its intended subject. Successful evaluator execution
 does not discharge those steps.
 
+The subsequent requirement-construction work now has native source-support,
+allocation, fixed-request and complete-artifact admission contracts. Its
+75-report source reconstruction is described in
+[the retained boundary](validation/reconstruction/requirement-plans.md).
+The previously fixed cause program is preserved by the generation proofs.
+These additions do not complete the problem-selection, criticism and whole
+workflow obligations identified in this review.
+
 This review covers every accessible earlier evaluator result found in the
 project artifacts: 165 executions, comprising 141 observation investigations
 and 24 inference investigations. There are 157 evaluated inputs and eight

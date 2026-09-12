@@ -108,19 +108,24 @@ lemma keyed_table_comparison_clause:
   using keyed_table_group.no_old_clause[of d c S] assms
   by (auto simp: keyed_table_comparison_system_def)
 
-lemma keyed_table_fibre_meaning:
-  "(28,t)\<in>positive_meaning keyed_table_comparison_system \<longleftrightarrow>
-    (28,t)\<in>positive_meaning key_fibre_system"
+lemma keyed_table_source_meaning:
+  assumes member: "d\<in>system_definitions keyed_table_base_system"
+  shows "(d,t)\<in>positive_meaning keyed_table_comparison_system \<longleftrightarrow>
+    (d,t)\<in>positive_meaning key_fibre_system"
 proof -
-  have member: "28\<in>system_definitions keyed_table_base_system" using keyed_table_base_roots by blast
-  have closure: "28\<in>system_definition_closure key_fibre_system
+  have closure: "d\<in>system_definition_closure key_fibre_system
       (system_external_dependencies keyed_table_group_system)"
     using member by (auto simp: keyed_table_base_system_def rooted_system_def)
   show ?thesis using keyed_table_group.old_meaning[OF member, of t]
     rooted_system_meaning[OF key_fibre_system_formed,
-      where roots="system_external_dependencies keyed_table_group_system" and d=28 and t=t] closure
+      where roots="system_external_dependencies keyed_table_group_system" and d=d and t=t] closure
     by (simp only: keyed_table_comparison_system_def keyed_table_base_system_def; blast)
 qed
+
+lemma keyed_table_fibre_meaning:
+  "(28,t)\<in>positive_meaning keyed_table_comparison_system \<longleftrightarrow>
+    (28,t)\<in>positive_meaning key_fibre_system"
+  by (rule keyed_table_source_meaning) (use keyed_table_base_roots in blast)
 
 interpretation keyed_table_rows: context_list_profile keyed_table_comparison_system 351 352
   by (rule context_list_profile.intro)

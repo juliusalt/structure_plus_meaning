@@ -709,14 +709,27 @@ as the earlier child-claim validation.
 The six conditions in `problems.txt` remain the full next milestone. Complete
 problem and approach selection, criticism, workflow coverage, historical
 acceptance, and an execution-cost account still require native integration.
-The current plan record retains the source definition domain. A complete
-development account must also retain the exact source program supplying those
-predicates and the actual installed program; equal domains do not identify
-their meanings.
+The current plan record retains the source definition domain. A separate
+native package construction now retains the actual original source and its
+installed guard, with exact all-term meaning and an admitted complete operand.
+The general checker reads the actual package member, preserves all original
+environment rows, and checks its complete expected clause. It does not require
+the candidate's entire program to equal one chosen extension. Joining every
+recursive plan and original request to that source and installation account
+remains open; equal domains still do not identify their meanings.
 This extension does not close O-85, genesis, or the final repository audit.
 
-The complete 903-theory repository check passes with unchanged source and tool
+The complete 914-theory repository check passes with unchanged source and tool
 identities and no proof escapes. All 98 tooling tests pass. Independent source
 materializations rebuild the 487-theory requirement context and the updated
 524-theory child-claim context from HOL. They reproduce all 75 and 185 complete
 native reports respectively through the same reconstruction runner.
+
+The source-and-installation boundary reconstructs 356 theories and all 19
+complete reports from 375 source and comparison files. Its two ordinary
+programs expose the domain-only gap; fifteen complete environment controls
+check source retention and whole-clause admission; two recovered native
+programs give different results under an unchanged guard and equal domains.
+The separate all-term theorem identifies equality and general formed-term
+acceptance as their meanings. These local results do not establish complete
+workflow enforcement or historical permission.

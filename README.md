@@ -46,7 +46,16 @@ rebuilds the proofs and all 75 complete native reports from sources. These local
 results leave the complete development workflow, historical permission and
 overall cost account open.
 
-The session registers 903 theories; its
+A separate native installation contract now retains the actual source package
+and admits the complete installed guard clause. Equal source domains can hide
+different meanings: the same native guard calls either equality or acceptance
+of every formed term when its actual source clause changes. The source-retention
+checker rejects that replacement under the original declared source. The
+[installation reconstruction](validation/reconstruction/requirement-sources.md)
+reproduces 19 complete reports. Joining every recursive plan to this actual
+source and installation account remains open.
+
+The session registers 914 theories; its
 [latest complete check](validation/check.json) records the current proof status.
 Native local readers connect an actual
 inference node's bindings to its symbolic replacement record and complete

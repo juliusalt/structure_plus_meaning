@@ -5,7 +5,7 @@ begin
 section \<open>Every required predicate receives the same complete subject\<close>
 
 definition requirement_guard_schema ::
-  "(nat\<times>nat) set \<Rightarrow> (nat,nat,nat) factor_schema" where
+  "('s\<times>'d) set \<Rightarrow> (nat,'s,'d) factor_schema" where
   "requirement_guard_schema R=data_rule data_x ((\<lambda>(s,d). (s,d,data_x)) ` R)"
 
 lemma requirement_guard_conclusion [simp]:
@@ -33,6 +33,43 @@ lemma requirement_guard_formed:
   assumes "finite R" "single_valued R"
   shows "schema_formed (requirement_guard_schema R)"
   using assms by (auto simp: requirement_guard_schema_def schema_formed_def single_valued_def)
+
+theorem requirement_guard_rule:
+  assumes finite: "finite R" and functional: "single_valued R"
+  shows "schema_rule_instance (requirement_guard_schema R) X t \<longleftrightarrow>
+    term_formed t \<and> (\<forall>(s,d)\<in>R. (d,t)\<in>X)"
+proof
+  let ?S="requirement_guard_schema R"
+  assume rule: "schema_rule_instance ?S X t"
+  obtain V Q where inst: "schema_instance ?S V t Q"
+    and support: "\<forall>s d z. (s,d,z)\<in>Q \<longrightarrow> (d,z)\<in>X"
+    using rule by (auto simp: schema_rule_instance_def)
+  obtain h where assignment: "\<forall>a\<in>schema_variables ?S. (a,h a)\<in>V \<and> term_formed (h a)"
+    and head: "t=evaluate_pattern h (schema_conclusion ?S)"
+    and body: "Q=evaluate_schema_premises h ?S"
+    using schema_instance_evaluation[OF inst] by blast
+  have operand_value: "t=h 0" using head by simp
+  have formed: "term_formed t" using assignment operand_value by simp
+  have called: "\<forall>(s,d)\<in>R. (d,t)\<in>X"
+    using body support operand_value
+    by (auto simp: requirement_guard_schema_def evaluate_schema_premises_def; force)
+  show "term_formed t \<and> (\<forall>(s,d)\<in>R. (d,t)\<in>X)" using formed called by blast
+next
+  let ?S="requirement_guard_schema R"
+  let ?Q="(\<lambda>(s,d). (s,d,t)) ` R"
+  assume data: "term_formed t \<and> (\<forall>(s,d)\<in>R. (d,t)\<in>X)"
+  have sf: "schema_formed ?S" by (rule requirement_guard_formed[OF finite functional])
+  have assigned: "\<forall>a\<in>schema_variables ?S. term_formed ((\<lambda>_. t) a)" using data by simp
+  have inst: "schema_instance ?S {(0,t)} t ?Q"
+    using schema_evaluation_instance[OF sf assigned]
+    by (simp only: requirement_guard_variables requirement_guard_conclusion)
+      (simp add: requirement_guard_schema_def evaluate_schema_premises_def image_image split_def)
+  have material: "schema_material_satisfied ?S {(0,t)}"
+    by (simp add: schema_material_satisfied_def)
+  show "schema_rule_instance ?S X t" unfolding schema_rule_instance_def
+    by (rule exI[of _ "{(0,t)}"], rule exI[of _ ?Q])
+      (use inst material data in auto)
+qed
 
 locale requirement_guard_profile =
   fixes P :: "(nat,nat,nat,nat) schema_system" and entry :: nat

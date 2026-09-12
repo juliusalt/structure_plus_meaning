@@ -13,8 +13,12 @@ allocation, fixed-request and complete-artifact admission contracts. Its
 75-report source reconstruction is described in
 [the retained boundary](validation/reconstruction/requirement-plans.md).
 The previously fixed cause program is preserved by the generation proofs.
-These additions do not complete the problem-selection, criticism and whole
-workflow obligations identified in this review.
+The further [source-and-installation review](validation/reconstruction/requirement-sources.md)
+proves and executes the failure of equal domains to identify source meanings.
+A native package constructor and fixed source-retention checker now connect
+an actual installed guard to its original source for every term. Nineteen
+complete reports exercise that boundary. The recursive plan record and the
+problem-selection, criticism and whole workflow obligations remain open.
 
 This review covers every accessible earlier evaluator result found in the
 project artifacts: 165 executions, comprising 141 observation investigations

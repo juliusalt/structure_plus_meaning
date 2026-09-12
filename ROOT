@@ -906,3 +906,14 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Requirement_Artifact_Admission
     Requirement_Artifact_Execution
     Requirement_Plan_Execution
+    Factor_Finite_Equality_Source
+    Factor_Requirement_Packages
+    Factor_Requirement_Source_Boundary
+    Factor_Requirement_Source_Examples
+    Factor_Requirement_Source_Readings
+    Factor_Retained_Clause_Admission
+    Factor_Selected_Definition_Graphs
+    Finite_Retained_Clause_Admission
+    RRA_Finite_Inclusion
+    Requirement_Source_Execution
+    Retained_Clause_Execution

@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "reports": {
+    "source-boundary": {
+      "records": 2,
+      "tags": {
+        "REQUIREMENT_SOURCE_BOUNDARY": 2
+      },
+      "sha256": "e45c756254730682889977b661db8f9a5dc8616686ca69d3b7c41d2da65bb9df"
+    },
+    "retained-clauses": {
+      "records": 15,
+      "tags": {
+        "RETAINED_CLAUSE": 15
+      },
+      "sha256": "1fd5c95162bb9e28ef0c4528b7a723c4b4362882476c95f2e5f8f9d1733d5eee"
+    },
+    "native-meanings": {
+      "records": 2,
+      "tags": {
+        "NATIVE_GUARD_MEANING": 2
+      },
+      "sha256": "b6eb05e6136e8d84a99cf8563c3e865de8685a1cc29152e6db7da7124bff381c"
+    }
+  },
+  "boundary": "Complete tagged JSON reports preserve every index, field, order and duplicate. Reproduction equality supplies no semantic authority; the Isabelle-established native contracts govern the actual operations and subjects."
+}

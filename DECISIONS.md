@@ -7662,3 +7662,21 @@ The previous and new reconstruction recipes now instantiate one host runner.
 Only sources, required fixtures, toolchain requirements and complete-report
 comparison boundaries are retained for new reconstruction. The runner supplies
 execution provenance and reproducibility, without adding semantic authority.
+
+## Source retention is a native package and clause condition
+
+An accepted blueprint and equal definition domains cannot identify the source
+meaning: the actual-program counterexample establishes their insufficiency.
+Requirements therefore call existing sites in the retained native source
+package. The existing arbitrary-clause constructor provides the extension;
+one common complete-presentation theorem connects it to admission.
+
+The general checker fixes the complete source environment and expected clause
+before future operands. It checks inclusion of all original rows and the
+actual designated package member's complete variable-interface clause. It
+allows additional environment rows and does not require the entire candidate
+program to equal one particular constructed extension. The construction
+contract separately preserves the exact old domain plus its fresh guard.
+These distinct conditions are recorded in the
+[reconstructible boundary](validation/reconstruction/requirement-sources.md).
+Joining the complete recursive plan to these actual packages remains open.

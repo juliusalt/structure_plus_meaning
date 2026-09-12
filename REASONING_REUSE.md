@@ -740,3 +740,27 @@ The common runner checks ordered stages, complete report equality and unchanged
 recipe inputs. Its purpose is reproducibility; these host launch arguments
 provide no native decision or semantic authority. The complete protocol and
 its cost bound remain open.
+
+## Actual source programs and admitted clause installations
+
+`Factor_Requirement_Guards` now accepts arbitrary callee and socket types;
+its ordinary rule contract applies to every support relation and term.
+`Factor_Requirement_Packages` instantiates the existing native single-clause
+package constructor over actual source definition sites. Both original and
+installed packages remain readable in the same environment. The shared-package
+meaning theorem supplies the old callee meanings used by the new conjunction.
+
+`Factor_Retained_Clause_Admission` composes the existing package-membership,
+environment-inclusion and complete single-clause readers. Their fixed source
+and schema reference precede future candidates. A common presentation theorem
+connects any retained installation to this checker; requirement construction
+consumes it. `RRA_Finite_Inclusion` and `Finite_Retained_Clause_Admission` give
+the exact finite implementations, with all formation premises retained.
+
+`Factor_Selected_Definition_Graphs` factors coverage of a complete closed graph
+by selected roots. One concrete variable frame supplies both executed native
+source readings, while the unchanged equality source reuses its earlier proof.
+The resulting all-term meaning equations govern the two runtime observations.
+The [source reconstruction](validation/reconstruction/requirement-sources.md)
+instantiates the common runner for all 19 complete reports. It leaves the
+recursive plan-to-package record and full development process open.

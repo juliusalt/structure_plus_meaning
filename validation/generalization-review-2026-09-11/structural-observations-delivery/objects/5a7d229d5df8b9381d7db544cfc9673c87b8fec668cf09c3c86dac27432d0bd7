@@ -1,6 +1,0 @@
-{
-  "stage": "comparison-interface-rejection",
-  "status": "expected failure reproduced",
-  "replay_kind": "application_comparison",
-  "replay_sha256": "0ec5debf886433052a66f47a403c6670ab410a6d5f2bd3f48f3bf1e38875529c"
-}

@@ -1,6 +1,0 @@
-{
-  "command": "PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -s tools -p 'test_*.py'",
-  "status": "passed",
-  "tests": 27,
-  "scope": "All 27 Python tests passed again after the final imported-tool provenance change; actual generated-code checks also passed for all 50 compiler cases and 65 coverage cases. This file is a summary, not a reconstructed raw test log."
-}

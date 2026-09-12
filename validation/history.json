@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "repository": "https://github.com/juliusalt/structure_plus_meaning",
+  "commit": "393213d603e5dc728cdb15a37c1d091c10a26417",
+  "ref_verified": "refs/heads/main",
+  "archives": {
+    "validation/generalization-review-2026-09-10": {
+      "files": 476,
+      "bytes": 27424391
+    },
+    "validation/generalization-review-2026-09-11": {
+      "files": 5152,
+      "bytes": 515982413
+    },
+    "validation/generalization-review-2026-09-12": {
+      "files": 3182,
+      "bytes": 727880206
+    }
+  },
+  "recovery": "git restore --source=393213d603e5dc728cdb15a37c1d091c10a26417 -- validation/generalization-review-2026-09-10 validation/generalization-review-2026-09-11 validation/generalization-review-2026-09-12",
+  "boundary": "The owner authorized retaining these previous archives in GitHub history. They were unchanged from this remotely verified commit before removal from the current tree. New native-child validation is reconstructed separately from the repository source boundary."
+}

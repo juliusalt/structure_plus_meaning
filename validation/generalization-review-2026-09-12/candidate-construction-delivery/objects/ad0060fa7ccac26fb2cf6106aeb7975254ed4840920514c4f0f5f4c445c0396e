@@ -1,6 +1,0 @@
-{
-  "specification": "/tmp/generalization-quality-review/candidate-delivery-review/final-archive-spec.json",
-  "input_audit": "/tmp/generalization-quality-review/candidate-delivery-review/final-input-audit.json",
-  "source_check": "/tmp/generalization-quality-review/candidate-delivery-review/final-source-check.json",
-  "criticism": "The combined source, unit, native preservation and complete input-availability checks pass. The final archive includes all original and repaired input identities; real archival verification and replay are the remaining required checks."
-}

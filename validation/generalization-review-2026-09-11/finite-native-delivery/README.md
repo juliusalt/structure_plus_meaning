@@ -1,3 +1,0 @@
-# Finite native delivery evidence
-
-This instantiates the [earlier byte-preservation comparison](../reader-composition-packaging/README.md) for eleven staged whitespace warnings in three exact evidence objects: two upstream library sources and one proof log. Removing their trailing whitespace changes all three recorded hashes. Code and documentation pass their separate whitespace check. The followed comparison retains both observations; its mandatory original-identity requirement admits only byte preservation. The complete source and tool identities in the accepted 817-theory build still match. This qualification concerns retained evidence and does not close the remaining system obligations.

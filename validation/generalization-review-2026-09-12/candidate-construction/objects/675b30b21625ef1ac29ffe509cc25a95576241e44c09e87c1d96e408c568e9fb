@@ -1,6 +1,0 @@
-{
-  "decision": "/tmp/generalization-quality-review/candidate-delivery-review/proof-retention-decision.json",
-  "validation": "/tmp/generalization-quality-review/candidate-delivery-review/proof-retention-validation1/steps.json",
-  "complete_input_audit": "/tmp/generalization-quality-review/candidate-delivery-review/final-input-audit.json",
-  "criticism": "All 77 tool tests pass, including original parent selection, exact procedure input retention and compressed historical JSON. The final scope has 4,291 recoverable input identities and no missing bytes. Adopt the exact tested retainer; real final-archive creation and replay remain required."
-}

@@ -1,9 +1,0 @@
-Running Native_Investigation_Report_Diagnostic_coverage4 ...
-Native_Investigation_Report_Diagnostic_coverage4 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_coverage4")
-*** Failed to load theory "Native_Investigation_Report_Diagnostic_coverage4.Factor_Reader_Library_Coverage" (unresolved "Native_Investigation_Report_Diagnostic_coverage4.Factor_Library_Coverage")
-*** Failed to load theory "Native_Investigation_Report_Diagnostic_coverage4.Factor_Reasoning_Execution" (unresolved "Native_Investigation_Report_Diagnostic_coverage4.Factor_Reader_Library_Coverage")
-*** Outer syntax error (line 18 of "/tmp/native-investigation-report-diagnostic-coverage4/theories/Factor_Library_Coverage.thy"): proposition expected,
-*** but keyword premises (line 18 of "/tmp/native-investigation-report-diagnostic-coverage4/theories/Factor_Library_Coverage.thy") was found
-*** At command "<malformed>" (line 18 of "/tmp/native-investigation-report-diagnostic-coverage4/theories/Factor_Library_Coverage.thy")
-Unfinished session(s): Native_Investigation_Report_Diagnostic_coverage4
-0:02:02 elapsed time, 0:04:39 cpu time, factor 2.28

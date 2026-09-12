@@ -12,22 +12,23 @@ Related reads, changes, and checks are prepared in complete batches; content
 quality governs their scope. The [current review](GENERALIZATION_REVIEW.md) and
 [reasoning inventory](REASONING_REUSE.md) record evidence and remaining gaps.
 
-An explicit finite example now executes the complete local
-inference-specialization reader from eight proved initial call occurrences.
-Complete source presentations retain two original artifact uses, an existing
-binding and a repeated counted attachment inside an extension with a separate
-node. The actual target report and every support field are preserved. The
-final inference call is derived without being supplied as initial evidence.
-The [retained example](validation/generalization-review-2026-09-11/finite-native-reader/README.md)
-includes 30 complete presenter cases, 76 reader cases and their exact replays.
+The native local inference reader now joins an actual parent claim to every
+discharged child claim. The comparison preserves each premise socket, callee,
+and complete pattern through two jointly determining observations. Its proved
+correspondence retains the original symbolic local judgment, complete source
+replacement, target report, and all support lists.
 
-The universal actual-source construction also retains the original package
-fields, replacement and target presentations, and every old artifact and
-binding. Source-reading requirements remain at that native-reading boundary;
-local construction is reusable without them. Whole-derivation admission
-remains open.
+An explicit one-premise source example derives both the inference and
+child-claim checks from eight proved source call occurrences and checked table
+operations. The separate assertion child remains an identified assumption.
+Reordered claims pass; missing or incorrect claims and duplicate keys remain
+unresolved. Whole-graph admission and assertion truth remain separate.
+The [reconstruction recipe](validation/reconstruction/README.md) rebuilds the
+proof, exported code, input construction and all 185 complete native reports
+from repository sources. Earlier validation archives remain recoverable from
+the pinned GitHub revision recorded in [validation/history.json](validation/history.json).
 
-The session registers 836 theories; its
+The session registers 872 theories; its
 [latest complete check](validation/check.json) records the current proof status.
 Native local readers connect an actual
 inference node's bindings to its symbolic replacement record and complete
@@ -55,16 +56,16 @@ reader fixture's payload environments make its native requests impossible.
 The executed finite example supplies actual source presentations and complete
 reader evidence. A matching outer shape alone remains insufficient. The
 complete construction, guidance, source-requirement, coverage, and compilation
-families pass. A new [structural comparison](validation/generalization-review-2026-09-11/structural-observations/README.md)
+families pass. A new [structural comparison](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/structural-observations/README.md)
 computes conditions on complete schema problems through actual operations;
 its proved observation equation connects the presentation indices to those
 subjects. The thirteen fixed observation adapters now also have
-[structural subject contracts](validation/generalization-review-2026-09-11/indexed-subject-contracts/README.md).
+[structural subject contracts](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/indexed-subject-contracts/README.md).
 Their runtime receipts retain the checked equations, full typed subject terms
 and defining equations. Candidate and facet domains come from the actual
 calculation; registry descriptions do not supply the runtime scope. All 98
 original cases retain their complete results. A
-[constructive candidate search](validation/generalization-review-2026-09-12/candidate-construction/README.md)
+[constructive candidate search](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-12/candidate-construction/README.md)
 now assembles source-site plans from parts. Its declared language is every
 sufficient subset of the supplied basis, with complete scope, inclusion
 minimality and a missing-requirement witness for every retained part. A separate

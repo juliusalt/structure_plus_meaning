@@ -1,8 +1,0 @@
-Running Native_Investigation_Report_Diagnostic_finitepresenters15 ...
-Native_Investigation_Report_Diagnostic_finitepresenters15 FAILED (see also "isabelle build_log -H Error Native_Investigation_Report_Diagnostic_finitepresenters15")
-*** Failed to load theory "Native_Investigation_Report_Diagnostic_finitepresenters15.Factor_Finite_Inference_Example" (unresolved "Native_Investigation_Report_Diagnostic_finitepresenters15.Factor_Finite_Inference_Source_Checks")
-*** Outer syntax error (line 53 of "/tmp/native-investigation-report-diagnostic-finitepresenters15/theories/Factor_Finite_Inference_Source_Checks.thy"): proposition expected,
-*** but end-of-input (line 53 of "/tmp/native-investigation-report-diagnostic-finitepresenters15/theories/Factor_Finite_Inference_Source_Checks.thy") was found
-*** At command "<malformed>" (line 53 of "/tmp/native-investigation-report-diagnostic-finitepresenters15/theories/Factor_Finite_Inference_Source_Checks.thy")
-Unfinished session(s): Native_Investigation_Report_Diagnostic_finitepresenters15
-0:03:11 elapsed time, 0:07:31 cpu time, factor 2.35

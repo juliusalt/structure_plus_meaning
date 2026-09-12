@@ -1,2 +1,0 @@
-PASS: comparison builder preserves every logical field of the previous method case.
-PASS: reviser reproduces every logical field of the previous followed case and verifies all retained evidence.

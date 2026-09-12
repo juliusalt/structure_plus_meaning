@@ -1,5 +1,0 @@
-from pathlib import Path
-import importlib.util,json,sys
-path=Path(sys.argv[1]);sys.path.insert(0,str(path.parent));sys.path.append('/home/julius/structure_and_semantics/tools')
-spec=importlib.util.spec_from_file_location('candidate_adapter',path);module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
-cases=json.loads(Path(sys.argv[2]).read_text());Path(sys.argv[3]).write_text(module.program(Path('/retained/engine.ML'),cases))

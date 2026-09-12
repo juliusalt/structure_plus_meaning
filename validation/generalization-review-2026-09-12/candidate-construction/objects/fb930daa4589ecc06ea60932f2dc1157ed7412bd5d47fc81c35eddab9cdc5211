@@ -1,5 +1,0 @@
-session Native_Application_Construction7 = RRA_Factor_Structural_Bootstrap +
-  options [document = false, timeout = 90]
-  sessions "HOL-Library"
-  directories "theories"
-  theories Factor_Application_Execution

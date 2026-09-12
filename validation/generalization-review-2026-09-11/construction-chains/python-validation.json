@@ -1,7 +1,0 @@
-{
-  "command": "PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -s tools -p 'test_*.py'",
-  "exit_code": 0,
-  "tests": 27,
-  "reported_seconds": 3.08,
-  "scope": "The tooling unit checks passed. The subsequently adjusted execution harness is checked separately by the complete 64-case execution and retained replay."
-}

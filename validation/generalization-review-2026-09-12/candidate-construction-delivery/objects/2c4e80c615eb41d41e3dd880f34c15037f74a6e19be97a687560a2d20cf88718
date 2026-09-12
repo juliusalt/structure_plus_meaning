@@ -1,7 +1,0 @@
-
-Checked execution now retains every actual nonexternal input before running the
-native module and requires complete retained coverage together with live and
-retained byte stability. The proof archive records the exporter and parent
-procedure inputs explicitly and reads parent metadata from the recorded
-historical identity. These reusable guards preserve execution evidence when
-later edits replace its original paths; they do not supply semantic proof.

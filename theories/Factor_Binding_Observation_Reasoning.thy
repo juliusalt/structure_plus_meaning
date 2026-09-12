@@ -21,7 +21,7 @@ definition finite_binding_observation_schema :: "(nat,nat,nat) finite_factor_sch
 
 lemma finite_binding_observation_schema_exact:
   "decode_finite_schema finite_binding_observation_schema=binding_observation_pair_schema"
-  by (simp add: finite_binding_observation_schema_def binding_observation_pair_schema_def
+  by (simp add: finite_binding_observation_schema_def binding_observation_pair_schema_def paired_context_results_schema_def
     decode_finite_schema_def decode_finite_call_pattern_def map_relation_values_def; auto)
 
 definition binding_observation_reasoning_library ::

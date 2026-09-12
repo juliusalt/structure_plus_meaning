@@ -1,6 +1,0 @@
-{
-  "baseline": "complete replay accepted",
-  "coverage": "complete replay accepted",
-  "compiler": "complete replay accepted",
-  "duplicate-failure": "expected runtime failure reproduced"
-}

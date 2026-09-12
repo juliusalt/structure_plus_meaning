@@ -1,6 +1,0 @@
-{
-  "stage": "ambiguous-subject-rejection",
-  "status": "expected failure reproduced",
-  "replay_kind": "application_comparison",
-  "replay_sha256": "872cc317e056bd016effddf9d0ddac72a5b5e10b0c7cf044c397b24c3fc31050"
-}

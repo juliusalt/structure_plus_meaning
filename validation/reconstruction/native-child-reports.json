@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "reports": {
+    "baseline": {
+      "records": 8,
+      "tags": {
+        "FIBRE_VALUES": 5,
+        "LEGACY_SOURCE": 1,
+        "NONEMPTY_APPLICATION": 1,
+        "NONEMPTY_SOURCE": 1
+      },
+      "sha256": "d2b49b7e57f5087bd994b27c0cc6022f4bef30051900ae1af0b86346f7bab3d1"
+    },
+    "catalog": {
+      "records": 31,
+      "tags": {
+        "COMPILED_LIBRARY": 3,
+        "PREFIX_RESULT": 27,
+        "SOURCE_RESULT": 1
+      },
+      "sha256": "115d304d9b4c4277d2aab432b099db77121976a697e6061e5cefcb1d95361ca6"
+    },
+    "inputs": {
+      "records": 18,
+      "tags": {
+        "CHECKED_CHILD": 1,
+        "CHECKED_CONTROL": 9,
+        "FIBRE_VALUES": 5,
+        "LEGACY_SOURCE": 1,
+        "NONEMPTY_APPLICATION": 1,
+        "NONEMPTY_SOURCE": 1
+      },
+      "sha256": "77314ba9d7bf93dc9e2825ce62aaac368634a26005adee3decea53df97ed3e59"
+    },
+    "reasoning": {
+      "records": 128,
+      "tags": {
+        "COMPILED_LIBRARY": 18,
+        "GUIDED_STATE": 86,
+        "INPUT_RESULT": 6,
+        "REASONING_RESULT": 18
+      },
+      "sha256": "689d87c6024b7943dfad420bfc351bdccc19ebc10eb9c66d3713bf0253eef570"
+    }
+  },
+  "boundary": "Complete tagged JSON reports in original order, including every index, field and duplicate. These hashes check reproduction; the proof, native contracts and independent assessments establish meaning."
+}

@@ -1,5 +1,5 @@
 theory Factor_Binding_Observation_Execution
-  imports Factor_Binding_Observation_Contracts Factor_Executable_Data_Values
+  imports Factor_Binding_Observation_Contracts Factor_Executable_Data_Values Option_List_Maps
 begin
 
 section \<open>The native row operation constructs its selected value\<close>
@@ -23,21 +23,18 @@ theorem finite_binding_observation_row_correct:
     (auto simp: finite_binding_observation_row_def binding_observation_row_def
       finite_term_formed_correct split: finite_factor_term.splits)
 
-fun finite_binding_observation_view ::
+definition finite_binding_observation_view ::
   "bool\<Rightarrow>finite_factor_term\<Rightarrow>finite_factor_term list\<Rightarrow>finite_factor_term list option" where
-  "finite_binding_observation_view first u []=(if finite_term_formed u then Some [] else None)"
-| "finite_binding_observation_view first u (r#rs)=
-    (case finite_binding_observation_row first u r of None \<Rightarrow> None
-      | Some v \<Rightarrow> map_option (Cons v) (finite_binding_observation_view first u rs))"
+  "finite_binding_observation_view first u rs=
+    guarded_option_map (finite_term_formed u) (finite_binding_observation_row first u) rs"
 
 theorem finite_binding_observation_view_correct:
   "finite_binding_observation_view first u bs=Some xs \<longleftrightarrow>
     term_formed (decode_finite_term u) \<and>
     list_all2 (binding_observation_row first (decode_finite_term u))
       (map decode_finite_term bs) (map decode_finite_term xs)"
-  by (induction bs arbitrary: xs; cases xs)
-    (auto simp: finite_term_formed_correct finite_binding_observation_row_correct[symmetric]
-      list_all2_Cons1 split: option.splits)
+  by (simp only: finite_binding_observation_view_def guarded_option_map_result
+    finite_term_formed_correct finite_binding_observation_row_correct list_all2_map1 list_all2_map2)
 
 theorem finite_binding_observation_view_native:
   "finite_binding_observation_view first u bs=Some xs \<longleftrightarrow>
@@ -50,14 +47,14 @@ theorem finite_binding_observation_view_native:
       binding_observation_first.at_arguments binding_observation_second.at_arguments)
 
 definition finite_binding_observation_outputs where
-  "finite_binding_observation_outputs u bs=(case finite_binding_observation_view True u bs of
-    None \<Rightarrow> None | Some xs \<Rightarrow> map_option (Pair xs) (finite_binding_observation_view False u bs))"
+  "finite_binding_observation_outputs u bs=paired_option_outputs
+    (finite_binding_observation_view True u) (finite_binding_observation_view False u) bs"
 
 lemma finite_binding_observation_outputs_parts:
   "finite_binding_observation_outputs u bs=Some (xs,ys) \<longleftrightarrow>
     finite_binding_observation_view True u bs=Some xs \<and>
     finite_binding_observation_view False u bs=Some ys"
-  by (auto simp: finite_binding_observation_outputs_def split: option.splits)
+  by (simp only: finite_binding_observation_outputs_def paired_option_outputs_result)
 
 theorem finite_binding_observation_outputs_native:
   "finite_binding_observation_outputs u bs=Some (xs,ys) \<longleftrightarrow>

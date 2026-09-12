@@ -1,6 +1,0 @@
-{
-  "finding": "The initial combined execution-and-use facet was incorrectly credited to the minimal amendment, which mentions only prior execution. Split these requirements and correct the observations before choosing text.",
-  "original_receipt": "/tmp/generalization-quality-review/workflow-wording-initial/receipt.json",
-  "original_receipt_sha256": "80f897ab10f3421e70d2bca8507c1ee601def7a686b44f10edc75a76154defe8",
-  "boundary": "This is an external reading correction, not a defect in the computed initial report."
-}

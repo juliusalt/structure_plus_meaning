@@ -5,11 +5,13 @@ begin
 
 section \<open>The existing contracts compose at their actual shared source\<close>
 
-theorem inference_specialization_extension:
+theorem inference_specialization_discharge_extension:
   assumes actual: "schema_clause_specialization_at E pu pr d c F v r G w t"
+    and keys: "distinct (map fst ds)"
+    and positions: "rel_dom (set ds)\<union>rel_ran (set ds)\<subseteq>environment_positions E"
   shows "\<exists>H nu report NIs NKs RIs RKs. environment_formed H \<and> environment_included E H \<and>
     nu\<notin>environment_uses E \<and>
-    inference_specialization_at H pu pr nu [] d c F v r G w t report [] NIs NKs RIs RKs \<and>
+    inference_specialization_at H pu pr nu [] d c F v r G w t report ds NIs NKs RIs RKs \<and>
     (\<forall>u\<in>environment_uses E. \<forall>A. artifact_at H u A \<longleftrightarrow> artifact_at E u A) \<and>
     (\<forall>u\<in>environment_uses E. \<forall>k x. binds_slot H u k x \<longleftrightarrow> binds_slot E u k x)"
 proof -
@@ -22,24 +24,81 @@ proof -
     using actual by (simp only: schema_clause_specialization_at_def; blast)
   have ef: "environment_formed E"
     using native_package_projection(1)[OF package] by (simp add: native_package_formed_def)
+  have input: "graph_node_inputs_at E (set ds) (Schema_Inference (fst d,c) (fset_of_list bs))"
+    using binding(3) positions by simp
+  have row_properties: "distinct ds \<and> single_valued (set ds)"
+    by (rule iffD1[OF distinct_keys_iff keys])
+  have functional: "single_valued (set ds)" and order: "distinct ds"
+    using row_properties by blast+
+  have targets: "rel_ran (set ds)\<subseteq>environment_positions E" using positions by blast
   obtain H nu I K where node: "environment_formed H" "environment_included E H"
-    "nu\<notin>environment_uses E" "native_proof_node_at H nu [] (Schema_Inference (fst d,c) (fset_of_list bs)) {} I K"
+    "nu\<notin>environment_uses E"
+    "native_proof_node_at H nu [] (Schema_Inference (fst d,c) (fset_of_list bs)) (set ds) I K"
     "\<forall>u\<in>environment_uses E. \<forall>A. artifact_at H u A \<longleftrightarrow> artifact_at E u A"
     "\<forall>u\<in>environment_uses E. \<forall>k x. binds_slot H u k x \<longleftrightarrow> binds_slot E u k x"
-    using native_proof_node_extension[OF ef binding(3)] by (auto simp: single_valued_def)
+    using native_proof_node_extension[OF ef input finite_set functional targets] by blast
   obtain NIs NKs where supports: "distinct NIs" "set NIs=I" "distinct NKs" "set NKs=K"
     using finite_distinct_list[OF native_proof_node_properties(6)[OF node(4)]]
       finite_distinct_list[OF native_proof_node_properties(7)[OF node(4)]] by blast
   have retained: "specialization_binding_at H pu pr d c F v r G w t report
-    (positioned_binding_rows_term bs) RIs RKs"
+      (positioned_binding_rows_term bs) RIs RKs"
     by (rule specialization_binding_source_included[OF binding(2) node(2,1)])
-  have result: "inference_specialization_at H pu pr nu [] d c F v r G w t report [] NIs NKs RIs RKs"
+  have result: "inference_specialization_at H pu pr nu [] d c F v r G w t report ds NIs NKs RIs RKs"
     unfolding inference_specialization_at_def
-    by (intro conjI, simp, rule supports(1), rule supports(3), rule exI[of _ bs])
+    by (intro conjI, rule order, rule supports(1), rule supports(3), rule exI[of _ bs])
       (use binding(1) node(4) retained supports in simp)
   show ?thesis by (rule exI[of _ H], rule exI[of _ nu], rule exI[of _ report],
     rule exI[of _ NIs], rule exI[of _ NKs], rule exI[of _ RIs], rule exI[of _ RKs])
     (use node result in blast)
+qed
+
+theorem inference_specialization_extension:
+  assumes actual: "schema_clause_specialization_at E pu pr d c F v r G w t"
+  shows "\<exists>H nu report NIs NKs RIs RKs. environment_formed H \<and> environment_included E H \<and>
+    nu\<notin>environment_uses E \<and>
+    inference_specialization_at H pu pr nu [] d c F v r G w t report [] NIs NKs RIs RKs \<and>
+    (\<forall>u\<in>environment_uses E. \<forall>A. artifact_at H u A \<longleftrightarrow> artifact_at E u A) \<and>
+    (\<forall>u\<in>environment_uses E. \<forall>k x. binds_slot H u k x \<longleftrightarrow> binds_slot E u k x)"
+  by (rule inference_specialization_discharge_extension[OF actual, where ds="[]"]) auto
+
+theorem inference_specialization_discharge_reading_total:
+  assumes actual: "schema_clause_specialization_at E pu pr d c F v r G w t"
+    and keys: "distinct (map fst ds)"
+    and positions: "rel_dom (set ds)\<union>rel_ran (set ds)\<subseteq>environment_positions E"
+    and replacement: "environment_value_presents F f" and target: "environment_value_presents G g"
+  shows "\<exists>H h nu b body NIs NKs RIs RKs. environment_value_presents H h \<and>
+    environment_included E H \<and> nu\<notin>environment_uses E \<and>
+    (350,inference_specialization_argument h (use_data_term pu) (Payload_Term pr)
+      (use_data_term nu) (Payload_Term []) (use_data_term (fst d)) (Payload_Term (snd d)) (Payload_Term c)
+      f (use_data_term v) (Payload_Term r) (Pair_Term g (Pair_Term (use_data_term w) (Payload_Term t)))
+      b body (discharge_rows_term ds) (data_list_term (map Payload_Term NIs))
+      (data_list_term (map Payload_Term NKs)) (data_list_term (map Payload_Term RIs))
+      (data_list_term (map Payload_Term RKs)))\<in>positive_meaning inference_specialization_system \<and>
+    (\<forall>u\<in>environment_uses E. \<forall>A. artifact_at H u A \<longleftrightarrow> artifact_at E u A) \<and>
+    (\<forall>u\<in>environment_uses E. \<forall>k x. binds_slot H u k x \<longleftrightarrow> binds_slot E u k x)"
+proof -
+  obtain H nu report NIs NKs RIs RKs where extension: "environment_formed H"
+    "environment_included E H" "nu\<notin>environment_uses E"
+    "inference_specialization_at H pu pr nu [] d c F v r G w t report ds NIs NKs RIs RKs"
+    "\<forall>u\<in>environment_uses E. \<forall>A. artifact_at H u A \<longleftrightarrow> artifact_at E u A"
+    "\<forall>u\<in>environment_uses E. \<forall>k x. binds_slot H u k x \<longleftrightarrow> binds_slot E u k x"
+    using inference_specialization_discharge_extension[OF actual keys positions] by blast
+  obtain b body where shape: "report=Pair_Term b body"
+    using extension(4) by (auto simp only: inference_specialization_at_def specialization_binding_at_def
+      schema_reference_presents_fields)
+  obtain h where source: "environment_value_presents H h"
+    using environment_value_presents_total[OF extension(1)] by blast
+  have read: "(350,inference_specialization_argument h (use_data_term pu) (Payload_Term pr)
+      (use_data_term nu) (Payload_Term []) (use_data_term (fst d)) (Payload_Term (snd d)) (Payload_Term c)
+      f (use_data_term v) (Payload_Term r) (Pair_Term g (Pair_Term (use_data_term w) (Payload_Term t)))
+      b body (discharge_rows_term ds) (data_list_term (map Payload_Term NIs))
+      (data_list_term (map Payload_Term NKs)) (data_list_term (map Payload_Term RIs))
+      (data_list_term (map Payload_Term RKs)))\<in>positive_meaning inference_specialization_system"
+    using extension(4) shape
+    by (simp only: inference_specialization_on_sources[OF source replacement target] prod.collapse)
+  show ?thesis by (rule exI[of _ H], rule exI[of _ h], rule exI[of _ nu], rule exI[of _ b],
+    rule exI[of _ body], rule exI[of _ NIs], rule exI[of _ NKs], rule exI[of _ RIs], rule exI[of _ RKs])
+    (use extension source read in blast)
 qed
 
 theorem inference_specialization_reading_total:
@@ -55,30 +114,7 @@ theorem inference_specialization_reading_total:
       (data_list_term (map Payload_Term RKs)))\<in>positive_meaning inference_specialization_system \<and>
     (\<forall>u\<in>environment_uses E. \<forall>A. artifact_at H u A \<longleftrightarrow> artifact_at E u A) \<and>
     (\<forall>u\<in>environment_uses E. \<forall>k x. binds_slot H u k x \<longleftrightarrow> binds_slot E u k x)"
-proof -
-  obtain H nu report NIs NKs RIs RKs where extension: "environment_formed H"
-    "environment_included E H" "nu\<notin>environment_uses E"
-    "inference_specialization_at H pu pr nu [] d c F v r G w t report [] NIs NKs RIs RKs"
-    "\<forall>u\<in>environment_uses E. \<forall>A. artifact_at H u A \<longleftrightarrow> artifact_at E u A"
-    "\<forall>u\<in>environment_uses E. \<forall>k x. binds_slot H u k x \<longleftrightarrow> binds_slot E u k x"
-    using inference_specialization_extension[OF actual] by blast
-  obtain b body where shape: "report=Pair_Term b body"
-    using extension(4) by (auto simp only: inference_specialization_at_def specialization_binding_at_def
-      schema_reference_presents_fields)
-  obtain h where source: "environment_value_presents H h"
-    using environment_value_presents_total[OF extension(1)] by blast
-  have read: "(350,inference_specialization_argument h (use_data_term pu) (Payload_Term pr)
-      (use_data_term nu) (Payload_Term []) (use_data_term (fst d)) (Payload_Term (snd d)) (Payload_Term c)
-      f (use_data_term v) (Payload_Term r) (Pair_Term g (Pair_Term (use_data_term w) (Payload_Term t)))
-      b body (discharge_rows_term []) (data_list_term (map Payload_Term NIs))
-      (data_list_term (map Payload_Term NKs)) (data_list_term (map Payload_Term RIs))
-      (data_list_term (map Payload_Term RKs)))\<in>positive_meaning inference_specialization_system"
-    using extension(4) shape
-    by (simp only: inference_specialization_on_sources[OF source replacement target] prod.collapse)
-  show ?thesis by (rule exI[of _ H], rule exI[of _ h], rule exI[of _ nu], rule exI[of _ b],
-    rule exI[of _ body], rule exI[of _ NIs], rule exI[of _ NKs], rule exI[of _ RIs], rule exI[of _ RKs])
-    (use extension source read in blast)
-qed
+  by (rule inference_specialization_discharge_reading_total[OF actual _ _ replacement target, where ds="[]"]) auto
 
 corollary inference_specialization_reading_inhabited:
   "\<exists>z. (350,z)\<in>positive_meaning inference_specialization_system"
@@ -94,9 +130,12 @@ qed
 
 text \<open>
   The universal extension keeps the complete specialization and every old
-  artifact and binding. The installed node has an explicitly empty discharge
-  table, as permitted by this local reader. This does not establish a complete
-  derivation for a rule whose premises need child proofs.
+  artifact and binding. It now retains any supplied complete discharge list
+  whose keys are distinct and whose source sockets and targets are existing
+  environment positions. The earlier empty-discharge statements instantiate
+  this general construction. These local source readings do not establish that
+  the supplied child claims match a rule's premises; that uses the separate
+  child-reader correspondence.
 
   The native reading theorem keeps every original public source field and
   accepts the caller's existing replacement and target presentations. The

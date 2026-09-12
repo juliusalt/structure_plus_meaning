@@ -1,5 +1,5 @@
 theory Factor_Binding_Observation_Clauses
-  imports Factor_Related_Lists
+  imports Factor_Paired_Context_Results
 begin
 
 section \<open>One owning use relates each paired row to its two observations\<close>
@@ -17,10 +17,7 @@ abbreviation binding_observation_pattern where
   "binding_observation_pattern u bs xs ys \<equiv> Pattern_Pair u (Pattern_Pair bs (Pattern_Pair xs ys))"
 
 definition binding_observation_pair_schema :: "(nat,nat,nat) factor_schema" where
-  "binding_observation_pair_schema=data_rule
-    (binding_observation_pattern data_x data_y data_z data_w)
-    {(0,345,context_relation_pattern data_x data_y data_z),
-     (1,346,context_relation_pattern data_x data_y data_w)}"
+  "binding_observation_pair_schema=paired_context_results_schema 345 346"
 
 definition binding_observation_clauses :: "nat\<Rightarrow>(nat\<times>(nat,nat,nat) factor_schema) set" where
   "binding_observation_clauses d=(if d=343 then {(0,binding_observation_row_schema True)}
@@ -53,7 +50,8 @@ lemma binding_observation_clause [simp]:
   by (auto simp: binding_observation_program_def binding_observation_clauses_def related_list_clauses_def)
 
 lemmas binding_observation_schema_defs=binding_observation_row_schema_def
-  binding_observation_pair_schema_def related_list_nil_schema_def related_list_step_schema_def
+  binding_observation_pair_schema_def paired_context_results_schema_def
+  related_list_nil_schema_def related_list_step_schema_def
 
 lemma binding_observation_program_formed [simp]: "schema_system_formed binding_observation_program"
   by (simp only: schema_system_formed_def binding_observation_definitions)

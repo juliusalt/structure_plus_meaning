@@ -93,6 +93,28 @@ class ProvedCodeTests(unittest.TestCase):
         self.assertTrue(all(investigate.file_hash(Path(r["archive"])) == r["sha256"]
                             for r in receipt["evidence_archive"]))
 
+    def test_accepted_execution_rechecks_complete_evidence(self):
+        receipt = self.execute("downstream", lambda data, raw: {"checked": True})
+        actual = proved_code.accepted_execution(self.root / "downstream", Path(sys.executable), self.proof)
+        self.assertEqual(actual, receipt)
+
+    def test_accepted_execution_rejects_stale_or_corrupt_inputs(self):
+        receipt = self.execute("rechecked", lambda data, raw: {"checked": True})
+        archive = next(Path(row["archive"]) for row in receipt["evidence_archive"]
+                       if row["path"] == str(self.source))
+        for path in [self.root / "rechecked/results.log", self.source, self.proof, archive]:
+            with self.subTest(path=path.name):
+                original = path.read_bytes()
+                path.write_bytes(original + b"\n")
+                with self.assertRaises(AssertionError):
+                    proved_code.accepted_execution(self.root / "rechecked", Path(sys.executable), self.proof)
+                path.write_bytes(original)
+        path = self.root / "rechecked/receipt.json"
+        receipt["status"] = "failed"
+        path.write_text(json.dumps(receipt))
+        with self.assertRaises(AssertionError):
+            proved_code.accepted_execution(self.root / "rechecked", Path(sys.executable), self.proof)
+
     def test_original_input_survives_a_later_source_edit(self):
         original = self.source.read_bytes()
         receipt = self.execute("later-edit", lambda data, raw: {"checked": True})
@@ -131,12 +153,45 @@ class ProvedCodeTests(unittest.TestCase):
         self.assertIn("changed", receipt["error"])
 
     def test_assessment_failure_retains_failed_receipt(self):
-        def rejected(data, raw):
-            raise ValueError("The result does not recover its complete subject.")
-        receipt = self.execute("failed-assessment", rejected)
+        errors = [ValueError("The result does not recover its complete subject."),
+                  AssertionError(), KeyError("missing subject")]
+        for error in errors:
+            with self.subTest(error=type(error).__name__):
+                def rejected(data, raw):
+                    raise error
+                name = "failed-assessment-" + type(error).__name__
+                receipt = self.execute(name, rejected)
+                self.assertEqual(receipt["status"], "failed")
+                self.assertEqual(receipt["error_type"], type(error).__name__)
+                self.assertIn("rejected", receipt["error_traceback"])
+                self.assertIn(type(error).__name__, receipt["error_traceback"])
+                self.assertTrue((self.root / name / "receipt.json").is_file())
+
+    def test_unpublished_assessment_never_leaves_an_accepted_receipt(self):
+        original_write = proved_code.write_json
+
+        def refuse_assessment(path, value):
+            if Path(path).name == "complete-results.json":
+                raise OSError("Assessment could not be published.")
+            return original_write(path, value)
+
+        with patch("proved_code.write_json", side_effect=refuse_assessment):
+            receipt = self.execute("unpublished", lambda data, raw: {"checked": True})
         self.assertEqual(receipt["status"], "failed")
-        self.assertIn("complete subject", receipt["error"])
-        self.assertTrue((self.root / "failed-assessment/receipt.json").is_file())
+        self.assertEqual(receipt["error_type"], "OSError")
+        self.assertFalse((self.root / "unpublished/complete-results.json").exists())
+        saved = json.loads((self.root / "unpublished/receipt.json").read_text())
+        self.assertEqual(saved, receipt)
+        with self.assertRaises(AssertionError):
+            proved_code.accepted_execution(self.root / "unpublished", Path(sys.executable), self.proof)
+
+    def test_unserializable_assessment_still_publishes_a_failed_receipt(self):
+        receipt = self.execute("unserializable", lambda data, raw: {"invalid": object()})
+        self.assertEqual(receipt["status"], "failed")
+        self.assertEqual(receipt["error_type"], "TypeError")
+        self.assertFalse((self.root / "unserializable/complete-results.json").exists())
+        saved = json.loads((self.root / "unserializable/receipt.json").read_text())
+        self.assertEqual(saved, receipt)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,0 @@
-{
-  "selection": 1,
-  "complete_results": "/tmp/generalization-quality-review/directed-candidate-construction/main-budget2-investigation1/complete-results.json",
-  "criticism": "The preserved accepted build used 600 seconds and took 367.573 seconds. The first integration build hit a global 120-second limit without a proof rejection; 72 tooling tests and source inventory passed. Restore the evidenced budget, preserve this failure, and link the actual current status. No source or tool change requires repeating the already passed unit tests."
-}

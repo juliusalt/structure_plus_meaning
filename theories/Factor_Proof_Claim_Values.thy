@@ -1,5 +1,5 @@
 theory Factor_Proof_Claim_Values
-  imports Factor_Keyed_Row_Join Factor_Positioned_Instances
+  imports Factor_Keyed_Row_Join Factor_Positioned_Instances Functional_Relation_Lists
 begin
 
 section \<open>One faithful row shape serves node claims and positioned premises\<close>
@@ -223,21 +223,6 @@ proof -
   show ?thesis using every by (simp add: proof_claim_values_def)
 qed
 
-lemma finite_filter_order:
-  assumes finite: "finite A" and order: "distinct ys" and exact: "set ys={x\<in>A. F x}"
-  obtains xs where "set xs=A" "distinct xs" "filter F xs=ys"
-proof -
-  have rest_finite: "finite (A-set ys)" using finite by simp
-  obtain zs where rest: "set zs=A-set ys" "distinct zs"
-    using finite_distinct_list[OF rest_finite] by blast
-  have all_selected: "\<forall>y\<in>set ys. F y" using exact by blast
-  have selected: "filter F ys=ys" using all_selected by (induction ys) auto
-  have excluded: "filter F zs=[]" using exact rest(1) by (auto simp: filter_empty_conv)
-  have complete: "set (ys@zs)=A" using exact rest(1) by auto
-  have distinct: "distinct (ys@zs)" using order rest by auto
-  show thesis by (rule that[OF complete distinct]) (simp add: selected excluded)
-qed
-
 theorem schema_graph_claim_order:
   assumes read: "schema_graph_reading P G root d t J" and order: "distinct hs"
     and boundary: "set hs=schema_graph_assumptions G J"
@@ -247,12 +232,11 @@ proof -
   have finite: "finite J" by (rule schema_graph_reading_finite[OF read])
   have exact: "set hs={z\<in>J. (fst z,Schema_Assertion)\<in>fset (graph_inferences G)}"
     using boundary by (auto simp: schema_graph_assumptions_def)
-  obtain xs where rows: "set xs=J" "distinct xs"
-    "filter (\<lambda>z. (fst z,Schema_Assertion)\<in>fset (graph_inferences G)) xs=hs"
-    by (rule finite_filter_order[OF finite order exact]) (rule that; assumption)
   have jsv: "single_valued J" using read by (simp add: schema_graph_reading_def)
-  have keys: "distinct (map fst xs)" using rows(1,2) jsv by (simp only: distinct_keys_iff; blast)
-  show thesis by (rule that[OF rows(1) keys]) (use rows(3) in \<open>simp add: case_prod_unfold\<close>)
+  obtain xs where rows: "set xs=J" "distinct (map fst xs)"
+    "filter (\<lambda>z. (fst z,Schema_Assertion)\<in>fset (graph_inferences G)) xs=hs"
+    by (rule functional_filter_order[OF finite jsv order exact]) (rule that; assumption)
+  show thesis by (rule that[OF rows(1,2)]) (use rows(3) in \<open>simp add: case_prod_unfold\<close>)
 qed
 
 section \<open>Native readings form every actual claim value\<close>

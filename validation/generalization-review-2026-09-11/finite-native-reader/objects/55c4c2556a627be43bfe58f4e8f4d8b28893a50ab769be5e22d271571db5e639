@@ -1,5 +1,0 @@
-{
-  "decision_sha256": "fa5f78133fd7766bd441cfb330f6efabc9e24a6c8ce48a61d6a7100827a0b9bf",
-  "critical_assessment": "Large evidence is kept byte-for-byte in gzip with separate physical and decoded SHA256 values and exact decoded size. Hashing and packing stream the original bytes. The existing archive adds optional encodings while keeping plain archives valid; prior encoded references retain their raw identity. Replay materializes only selected stage dependencies and reuses every original checker. Roundtrip, both identity checks, prior references and selective materialization are being tested; real current archive replay remains required.",
-  "tests": "/tmp/finite-native-tool-tests-storage.log"
-}

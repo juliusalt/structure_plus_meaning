@@ -68,37 +68,13 @@ interpretation binding_observation_second_list: related_list_profile binding_obs
 
 section \<open>Both complete observations concern the same input sequence\<close>
 
-lemma binding_observation_pair_valuation:
-  "(347,t)\<in>positive_meaning binding_observation_program \<longleftrightarrow>
-    (\<exists>h::nat\<Rightarrow>factor_term. term_formed (h 0) \<and> term_formed (h 1) \<and>
-      term_formed (h 2) \<and> term_formed (h 3) \<and>
-      t=binding_observation_argument (h 0) (h 1) (h 2) (h 3) \<and>
-      (345,context_relation_argument (h 0) (h 1) (h 2))\<in>positive_meaning binding_observation_program \<and>
-      (346,context_relation_argument (h 0) (h 1) (h 3))\<in>positive_meaning binding_observation_program)"
-  by (subst ordinary_positive_entry_valuation)
-    (auto simp: binding_observation_clauses_def binding_observation_pair_schema_def
-      schema_variables_def binding_observation_call)
+interpretation binding_observation_pair:
+  paired_context_results_profile binding_observation_program 347 345 346
+  by (rule paired_context_results_profile.intro)
+    (auto simp: binding_observation_clauses_def binding_observation_pair_schema_def binding_observation_call)
 
-lemma binding_observation_pair_arguments:
-  "(347,binding_observation_argument u bs xs ys)\<in>positive_meaning binding_observation_program \<longleftrightarrow>
-    (345,context_relation_argument u bs xs)\<in>positive_meaning binding_observation_program \<and>
-    (346,context_relation_argument u bs ys)\<in>positive_meaning binding_observation_program"
-proof
-  assume "(347,binding_observation_argument u bs xs ys)\<in>positive_meaning binding_observation_program"
-  then show "(345,context_relation_argument u bs xs)\<in>positive_meaning binding_observation_program \<and>
-      (346,context_relation_argument u bs ys)\<in>positive_meaning binding_observation_program"
-    by (simp only: binding_observation_pair_valuation factor_term.inject) blast
-next
-  assume reads: "(345,context_relation_argument u bs xs)\<in>positive_meaning binding_observation_program \<and>
-    (346,context_relation_argument u bs ys)\<in>positive_meaning binding_observation_program"
-  have terms: "term_formed u" "term_formed bs" "term_formed xs" "term_formed ys"
-    using reads positive_meaning_formed[of 345 "context_relation_argument u bs xs" binding_observation_program]
-      positive_meaning_formed[of 346 "context_relation_argument u bs ys" binding_observation_program]
-    by (auto dest: schema_call_formed_target)
-  let ?h="(\<lambda>_::nat. u)(1:=bs,2:=xs,3:=ys)"
-  show "(347,binding_observation_argument u bs xs ys)\<in>positive_meaning binding_observation_program"
-    by (simp only: binding_observation_pair_valuation; rule exI[of _ ?h]) (use reads terms in auto)
-qed
+lemmas binding_observation_pair_valuation=binding_observation_pair.valuation
+lemmas binding_observation_pair_arguments=binding_observation_pair.at_arguments
 
 definition binding_observation_result :: "factor_term\<Rightarrow>bool" where
   "binding_observation_result t \<longleftrightarrow>
@@ -108,39 +84,10 @@ definition binding_observation_result :: "factor_term\<Rightarrow>bool" where
 
 theorem binding_observation_exact:
   "(347,t)\<in>positive_meaning binding_observation_program \<longleftrightarrow> binding_observation_result t"
-proof
-  assume admitted: "(347,t)\<in>positive_meaning binding_observation_program"
-  obtain u b x y where body: "t=binding_observation_argument u b x y"
-    using admitted by (simp only: binding_observation_pair_valuation; blast)
-  have first: "(345,context_relation_argument u b x)\<in>positive_meaning binding_observation_program"
-    and second: "(346,context_relation_argument u b y)\<in>positive_meaning binding_observation_program"
-    using admitted by (simp only: body binding_observation_pair_arguments; blast)+
-  obtain bs xs where left: "b=data_list_term bs" "x=data_list_term xs" "term_formed u"
-    "list_all2 (binding_observation_row True u) bs xs"
-    using first by (auto simp: binding_observation_first_list.exact binding_observation_first.at_arguments)
-  obtain cs ys where right: "b=data_list_term cs" "y=data_list_term ys"
-    "list_all2 (binding_observation_row False u) cs ys"
-    using second by (auto simp: binding_observation_second_list.exact binding_observation_second.at_arguments)
-  have same: "cs=bs" using left(1) right(1) by (simp only: data_list_term_injective)
-  show "binding_observation_result t" unfolding binding_observation_result_def
-    by (rule exI[of _ u], rule exI[of _ bs], rule exI[of _ xs], rule exI[of _ ys])
-      (use body left right same in simp)
-next
-  assume "binding_observation_result t"
-  then obtain u bs xs ys where fields:
-    "t=binding_observation_argument u (data_list_term bs) (data_list_term xs) (data_list_term ys)"
-    "term_formed u" "list_all2 (binding_observation_row True u) bs xs"
-    "list_all2 (binding_observation_row False u) bs ys"
-    by (auto simp: binding_observation_result_def)
-  have first: "(345,context_relation_argument u (data_list_term bs) (data_list_term xs))
-      \<in>positive_meaning binding_observation_program"
-    using fields by (simp only: binding_observation_first_list.lists binding_observation_first.at_arguments)
-  have second: "(346,context_relation_argument u (data_list_term bs) (data_list_term ys))
-      \<in>positive_meaning binding_observation_program"
-    using fields by (simp only: binding_observation_second_list.lists binding_observation_second.at_arguments)
-  show "(347,t)\<in>positive_meaning binding_observation_program"
-    using first second by (simp only: fields(1) binding_observation_pair_arguments)
-qed
+  unfolding binding_observation_result_def
+  by (rule binding_observation_pair.related_lists_exact)
+    (simp only: binding_observation_first_list.exact binding_observation_first.at_arguments
+      binding_observation_second_list.exact binding_observation_second.at_arguments)+
 
 corollary binding_observation_lists:
   "(347,binding_observation_argument u (data_list_term bs) (data_list_term xs) (data_list_term ys))

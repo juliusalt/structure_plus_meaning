@@ -1,9 +1,0 @@
-{
-  "cases": 55,
-  "baseline": "/tmp/generalization-quality-review/structural-binding-observations/guided-regression1",
-  "baseline_receipt_sha256": "e795be6f78846656b5958fcd5a98a5128e71b437bf0af121e9ad1bc6e8062470",
-  "new_receipt_sha256": "8f924a97e0e433126829a1cfd26fd2978a1c835c7ba4fc663dfb887465d000ac",
-  "different_cases": [],
-  "source_reference": null,
-  "boundary": "Every original complete input is reexecuted and assessed with the checked module. Complete mathematical reports are compared modulo their finite-set enumerations; no output fields are dropped."
-}

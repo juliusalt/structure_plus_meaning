@@ -1,2 +1,0 @@
-{"problem": "scope-directed-bindings", "initial_residual": [[1, 0]], "returned_selection": [0], "followed_residual": [], "eligible": [], "dominant": []}
-{"problem": "construct-application-plans", "initial_residual": [[1, 0]], "returned_selection": [0], "followed_residual": [], "eligible": [1], "dominant": [1]}

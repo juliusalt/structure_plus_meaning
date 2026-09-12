@@ -1,7 +1,0 @@
-Running Native_Indexed_Subjects1 ...
-Warning - Unable to increase stack - interrupting thread
-*** Timeout
-Native_Indexed_Subjects1 FAILED (see also "isabelle build_log -H Error Native_Indexed_Subjects1")
-
-Unfinished session(s): Native_Indexed_Subjects1
-0:05:04 elapsed time

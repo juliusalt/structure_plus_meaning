@@ -1,8 +1,0 @@
-{
-  "stage": "guided",
-  "status": "accepted",
-  "receipt_sha256": "9bc1fbca5a86ada8466bff1df051c282f2b15d9ee4e13813e83170dcf9460591",
-  "archive_index_sha256": "e64ab0b1b86943ad4ebecc374cec4957e058f1f51ccef7828aba907b8b1b4986",
-  "replayer_sha256": "15a9ed7be0b7c4132050bfedf5d2d0e76d0e15ebb5c6cde6f939b830f816d684",
-  "boundary": "The retained inputs and original code are replayed. This reproduces complete checked reports; it does not rerun case selection or establish new native source readings."
-}

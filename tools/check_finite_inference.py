@@ -32,6 +32,25 @@ def source_root(term):
     return values.environment_value(source), values.use_value(use), values.payload_value(root)
 
 
+def recovered_site(term):
+    use, address = values.pair_values(term)
+    return [values.use_value(use), values.payload_value(address)]
+
+
+def recovered_call_rows(term):
+    rows = []
+    for row in review.sequence_items(term):
+        socket, call = values.pair_values(row)
+        callee, argument = values.pair_values(call)
+        rows.append([values.payload_value(socket), recovered_site(callee), argument])
+    return rows
+
+
+def recovered_discharge_rows(term):
+    return [[recovered_site(a), recovered_site(b)]
+            for a, b in map(values.pair_values, review.sequence_items(term))]
+
+
 def recover_argument(argument, expected):
     fields = review.sequence_items(argument)
     assert len(fields) == 12
@@ -60,8 +79,9 @@ def recover_argument(argument, expected):
         head, rows = values.pair_values(output)
         ordinary, material = values.pair_values(rows)
         assert values.payload_value(head) == expected["literal_payload"]
-        assert review.sequence_items(ordinary) == review.sequence_items(material) == []
-    assert review.sequence_items(ds) == expected["discharges"] == []
+        assert recovered_call_rows(ordinary) == expected.get("ordinary_premises", [])
+        assert review.sequence_items(material) == expected.get("material_premises", [])
+    assert recovered_discharge_rows(ds) == expected["discharges"]
     for term, key in [(ni, "node_interior"), (nk, "node_slots"),
                       (ri, "replacement_interior"), (rk, "replacement_slots")]:
         assert [values.payload_value(x) for x in review.sequence_items(term)] == expected[key]

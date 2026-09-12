@@ -1,6 +1,0 @@
-{
-  "selection": 1,
-  "complete_results": "/tmp/generalization-quality-review/directed-candidate-construction/interface4-investigation1/complete-results.json",
-  "criticism": "The original larger inputs include checked redundant owner fields. The revised validator keeps them, rejects disagreement, and reuses schema validation and normalization. Complete 30-case program equality remains required.",
-  "boundary": "The conditional result selects the complete retained validation attempt. Acceptance comes only from subsequent proofs or executions."
-}

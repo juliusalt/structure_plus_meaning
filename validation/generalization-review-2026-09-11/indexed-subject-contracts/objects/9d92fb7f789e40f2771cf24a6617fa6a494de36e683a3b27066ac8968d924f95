@@ -1,7 +1,0 @@
-{
-  "problem": "Reject a source contract specialized to different observation arguments even when the observer constant has the same name.",
-  "actual_counterexample": "The pattern observation equation instantiated at True has the same constant head as the general pattern calculation, but it cannot serve as the sole source equation for a runtime call at False.",
-  "proposed_correction": "Compare the complete typed observation applications in the calculation, source equation and observation corollary, and the complete comparison applications in the calculation and comparison corollary.",
-  "validation": "Add an actual checked True-specialized pattern theorem as a negative registration control, alongside the four unrelated-function controls and all thirteen positive owner registrations.",
-  "boundary": "The source equations already registered by the owners are general and correct. This corrects the reusable exporter admission rule before integration."
-}

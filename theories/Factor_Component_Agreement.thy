@@ -9,6 +9,28 @@ lemma whole_agreement_definitions:
   shows "system_definitions P\<subseteq>system_definitions Q"
   using assms by (auto simp: systems_agree_on_def system_definitions_def rel_dom_def; blast)
 
+lemma whole_agreement_clause_interface:
+  assumes agreement: "systems_agree_on P Q (system_definitions P)"
+    and clause: "((d,c),S)\<in>system_clauses P"
+    and interface: "(d,p)\<in>system_interfaces P"
+  shows "((d,c),S)\<in>system_clauses Q \<and> (d,p)\<in>system_interfaces Q"
+  using assms by (auto simp: systems_agree_on_def system_definitions_def rel_dom_def; blast)
+
+theorem whole_agreement_positive_subset:
+  assumes source: "schema_system_formed P" and target: "schema_system_formed Q"
+    and agreement: "systems_agree_on P Q (system_definitions P)"
+  shows "positive_meaning P\<subseteq>positive_meaning Q"
+proof
+  fix q assume known: "q\<in>positive_meaning P"
+  obtain d t where shape: "q=(d,t)" by (cases q)
+  have inside: "d\<in>system_definitions P"
+    using positive_meaning_formed[OF known[unfolded shape]]
+    by (auto simp: schema_call_formed_def system_definitions_def rel_dom_def)
+  show "q\<in>positive_meaning Q"
+    using known whole_system_agreement_meaning[OF source target agreement inside, of t]
+    by (simp only: shape)
+qed
+
 theorem whole_agreement_transitive:
   assumes "systems_agree_on P Q (system_definitions P)"
     "systems_agree_on Q T (system_definitions Q)"

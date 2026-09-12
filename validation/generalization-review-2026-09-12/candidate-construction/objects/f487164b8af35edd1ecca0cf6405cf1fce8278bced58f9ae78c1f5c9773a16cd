@@ -1,4 +1,0 @@
-{
-  "error": "",
-  "traceback": "Traceback (most recent call last):\n  File \"<stdin>\", line 5, in <module>\n  File \"/tmp/generalization-quality-review/directed-candidate-construction/check_application_candidates.py\", line 184, in assess\n    sites=frozenset(map(ref.freeze,entry['parts']));assert sites<=available and sites not in seen;seen.add(sites)\n                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
-}

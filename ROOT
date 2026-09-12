@@ -839,3 +839,39 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Application_Problems
     Factor_Observation_Assembly
     Factor_Application_Candidates
+    Factor_Clause_Specialization_Graphs
+    Factor_Finite_Child_Example
+    Factor_Finite_Child_Premises
+    Factor_Finite_Child_Source_Checks
+    Factor_Finite_Child_Sources
+    Factor_Ground_Inference_Premises
+    Factor_Inference_Claim_Clauses
+    Factor_Inference_Claim_Compilation
+    Factor_Inference_Claim_Components
+    Factor_Inference_Claim_Contracts
+    Factor_Inference_Claim_Correspondence
+    Factor_Inference_Specialization_Observed
+    Factor_Keyed_Row_Admission
+    Factor_Keyed_Table_Clauses
+    Factor_Keyed_Table_Comparison
+    Factor_Keyed_Table_Views
+    Factor_Paired_Context_Results
+    Factor_Prefixed_Observation_Clauses
+    Factor_Prefixed_Observation_Contracts
+    Factor_Prefixed_Observation_Execution
+    Factor_Prefixed_Observation_Patterns
+    Factor_Scheme_Claim_Joins
+    Factor_Scheme_Claim_Tables
+    Factor_Scheme_Claim_Values
+    Factor_Single_Premise_Graphs
+    Factor_Specialization_Binding_Observed
+    Finite_Keyed_Fibre_Values
+    Finite_Keyed_Table_Comparison
+    Functional_Relation_Joins
+    Functional_Relation_Lists
+    Inference_Claim_Execution
+    Inference_Claim_Input_Execution
+    Keyed_Fibre_Identity
+    Keyed_Table_Execution
+    Option_List_Maps
+    Paired_Relation_Observations

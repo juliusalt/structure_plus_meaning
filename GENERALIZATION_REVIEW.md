@@ -11,8 +11,8 @@ does not discharge those steps.
 This review covers every accessible earlier evaluator result found in the
 project artifacts: 165 executions, comprising 141 observation investigations
 and 24 inference investigations. There are 157 evaluated inputs and eight
-deliberate formation rejections. The [individual run ledger](validation/generalization-review-2026-09-10/RUNS.md)
-and [complete finite results](validation/generalization-review-2026-09-10/historical-runs.json)
+deliberate formation rejections. The [individual run ledger](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-10/RUNS.md)
+and [complete finite results](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-10/historical-runs.json)
 retain the per-run findings. The inventory contains 78 distinct finite
 evaluation states. Repeated states often check changed implementations or
 proof contexts; they are not counted as independent content discoveries.
@@ -45,7 +45,7 @@ remains unverified. The earliest execution also records less runtime provenance
 than the later command. These are limits on retrospective verification, not
 evidence that the corresponding mathematical claims are false.
 
-The [historical evidence audit](validation/generalization-review-2026-09-10/historical-evidence.json)
+The [historical evidence audit](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-10/historical-evidence.json)
 retains the source checks and unavailable versions. The supplementary inventory
 includes failed, interrupted, and successful proof
 diagnostics, native decision matrices, fixture runs, and duplicate summaries.
@@ -278,7 +278,7 @@ Its claim comparison uses paired determining observations, preserving shared
 variable identity and every premise socket. The existing compilation theorem
 is reused for the native report operation. These results address local argument
 checking; complete native graph admission and mathematical-proof admission
-remain open. The [retained evidence and replay](validation/generalization-review-2026-09-10/specialization-report/README.md)
+remain open. The [retained evidence and replay](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-10/specialization-report/README.md)
 state that boundary explicitly.
 
 The complete 763-theory main session passes with unchanged source and tool
@@ -328,7 +328,7 @@ The complete 772-theory main session passes with unchanged source and tool
 digests. The 327-theory export context also passes, including the complete
 positioning and report-totality roots. All 27 Python checks pass. The retained
 module and original checker replay all 53 reports and 21 source computations.
-The [execution archive](validation/generalization-review-2026-09-10/binding-observation/README.md)
+The [execution archive](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-10/binding-observation/README.md)
 preserves both the earlier and expanded control families.
 
 After the accepted main build, the same three reasoning source roots have no
@@ -446,7 +446,7 @@ catalog has exactly the same fields before and after the selector repair.
 The 65 coverage cases and earlier 64 chaining cases also pass. These
 overlapping validation families are not counted as separate discoveries.
 
-The [archive](validation/generalization-review-2026-09-11/reader-libraries/README.md)
+The [archive](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/reader-libraries/README.md)
 retains the failed executions and proof attempts as failures, together with
 the accepted evidence. Historical import-provenance gaps are stated;
 current reviews also track imported local tool modules. Retained replays
@@ -505,7 +505,7 @@ all development decisions. Those remain distinct adequacy questions.
 
 The complete 795-theory session passes with unchanged source and validation
 tool digests. The existing 27 Python tooling tests also pass. The
-[retained archive](validation/generalization-review-2026-09-11/reader-construction/README.md)
+[retained archive](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/reader-construction/README.md)
 records the exact proof contexts, complete executions, failures, and replay
 inputs; its reusable retention tool verifies every original input digest.
 
@@ -570,7 +570,7 @@ declared scope. Candidate proposal and code construction remain external;
 the investigation does not claim coverage of every possible method, workload,
 or development decision.
 
-The [archive](validation/generalization-review-2026-09-11/binding-guidance/README.md)
+The [archive](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/binding-guidance/README.md)
 retains all 25 proof contexts, including failed proof and startup attempts,
 complete code exports, original execution inputs, intermediate reports, both
 method investigations, and their cached proof sources. The full 802-theory
@@ -633,7 +633,7 @@ exact archived bytes from the preceding run, retaining the original paths as
 provenance. The subsequent execution succeeds. This repairs evidence handling
 without changing any observation, comparison, or returned selection.
 
-The [archive](validation/generalization-review-2026-09-11/reader-source-requirements/README.md)
+The [archive](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/reader-source-requirements/README.md)
 retains the source contracts, original and revised case families, complete
 generated code, both successful comparison results, the rejected invocation,
 and their independent assessments. Native admission of a complete argument,
@@ -654,7 +654,7 @@ proof repairs, and validation were made outside that process. Later reports
 do not make those choices compliant retrospectively. Native proof-admission
 gaps provide no exemption from using the existing conditional machinery.
 
-The [workflow wording review](validation/generalization-review-2026-09-11/workflow-execution/README.md)
+The [workflow wording review](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/workflow-execution/README.md)
 compares three exact texts against explicit execution, timing, use of results,
 critical feedback, and scope requirements. An error in the externally supplied
 reading of the minimal amendment is retained and corrected before application.
@@ -716,7 +716,7 @@ decision cases. Disabled assertions, duplicate problem names, and unsafe
 output names reject before creating an output directory. The conditional-case
 adapter also rejects changed evidence and disabled assertions.
 
-The [archive](validation/generalization-review-2026-09-11/reader-native-composition/README.md)
+The [archive](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/reader-native-composition/README.md)
 retains nine proof contexts, three complete construction runs, and thirty-six
 decision and method investigations. Failed proofs, the timeout, the launcher
 failure, and the corrected external diagnosis remain available. Candidate
@@ -731,7 +731,7 @@ construction runs and thirty-six decision or method investigations. The
 existing twenty-seven tooling tests and the new adapters' complete-result
 equivalence and rejection checks pass.
 
-The [packaging comparison](validation/generalization-review-2026-09-11/reader-composition-packaging/README.md)
+The [packaging comparison](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/reader-composition-packaging/README.md)
 records seven whitespace warnings confined to verbatim archive fragments.
 Normalizing their endings changes every expected evidence identity. The
 mandatory byte-preservation criterion therefore selects retaining them; code
@@ -772,7 +772,7 @@ check actual settlements and residual goal occurrences after conditional
 report reconstruction. These host checks do not replace the native source
 proofs.
 
-The [archive](validation/generalization-review-2026-09-11/finite-native-reader/README.md)
+The [archive](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/finite-native-reader/README.md)
 retains 19 proof attempts, four derived module receipts, seven accepted
 execution or input-preparation stages and 104 development investigations.
 All 111 stages and investigations replay successfully with their original
@@ -790,7 +790,7 @@ This closes the finite executed local-reader requirement. Whole-derivation
 admission, native mathematical-proof admission and the continuing final
 repository audit remain open.
 
-The [finite-result assessment](validation/generalization-review-2026-09-11/finite-native-assessment/README.md)
+The [finite-result assessment](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/finite-native-assessment/README.md)
 applies the original mandatory requirements to the abstract theorem, the
 conditional marker fixture and the concrete executed result. Only the last
 supplies every required finite field, native premise proof and executed
@@ -798,7 +798,7 @@ settlement together. The four documentation and quality investigation reports
 also replay successfully; this finite comparison does not establish coverage
 of every possible construction method.
 
-The [delivery comparison](validation/generalization-review-2026-09-11/finite-native-delivery/README.md)
+The [delivery comparison](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/finite-native-delivery/README.md)
 instantiates the established byte-preservation rule for eleven whitespace
 warnings in three verbatim evidence objects. Normalization changes all three
 recorded identities, so the mandatory criterion selects preservation. Code
@@ -867,7 +867,7 @@ one index fail the proved subject gate even though the conditional table is
 formed. This rejection directly exercises the owner's distinction between
 retaining a description and establishing an observation subject.
 
-The [archive](validation/generalization-review-2026-09-11/structural-observations/README.md)
+The [archive](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/structural-observations/README.md)
 retains 29 proof attempts, six derived code receipts, twelve execution stages,
 one dependency investigation, every complete comparison, and the complete
 regression differences. Integration 29 accepts 414 source contexts; the main
@@ -879,7 +879,7 @@ Whole native derivation admission, native mathematical-proof admission,
 complete workflow coverage, and the final repository audit remain open.
 
 All thirteen stages and investigations in this archive replay successfully,
-including both expected rejections. The [delivery evidence](validation/generalization-review-2026-09-11/structural-observations-delivery/README.md)
+including both expected rejections. The [delivery evidence](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/structural-observations-delivery/README.md)
 retains three initial host-assessment failures and their prospective bounded
 comparison. The generated reports already reproduced exactly; Python tuples
 in mandatory pairs needed the existing whole-object JSON conversion before
@@ -940,7 +940,7 @@ candidate under all 196 mandatory observations. These observations have
 explicit complete host inputs and equality conditions. Their finite-table
 evaluation remains conditional on that host computation.
 
-The [retained review](validation/generalization-review-2026-09-11/indexed-subject-contracts/README.md)
+The [retained review](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/indexed-subject-contracts/README.md)
 contains sixteen raw or derived proof receipts, four complete execution
 stages, six investigations, the failed proposals and serialization rejection,
 and every original parent input. All four stages and six investigations replay
@@ -957,7 +957,7 @@ statement and executable definitions. The complete 197-theory dependency
 context passes with no reused local parent. A prospective comparison of the
 actual complete source contexts and checker results selects that repair before
 integration; the following full session establishes repository-wide admission.
-The [delivery evidence](validation/generalization-review-2026-09-11/indexed-subject-contracts-delivery/README.md)
+The [delivery evidence](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/indexed-subject-contracts-delivery/README.md)
 retains the original failure, dependency proof, two repair investigations,
 all ten earlier replays, and final full-session validation. Eight proof-context
 guard tests pass after adding the independent dependency-build mode.
@@ -966,7 +966,7 @@ complete output and original independent assessment preserved.
 
 The staged whitespace scan passes on active source and documentation. Six
 diagnostics concern exact retained inputs: five original failure logs and one
-generated proof-context source. A [prospective byte comparison](validation/generalization-review-2026-09-11/indexed-subject-contracts-retained-inputs/README.md)
+generated proof-context source. A [prospective byte comparison](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/indexed-subject-contracts-retained-inputs/README.md)
 retains every complete input and actual output, selects identity under all six
 requirements, and reproduces both investigations on replay. Those historical
 bytes and the complete diagnostic are retained unchanged.
@@ -1025,11 +1025,11 @@ repeated presentations and zero-variable targets have explicit controls.
 
 The complete 836-theory session passes in invocation
 `6f81afd8-4c5e-4b1c-ab08-500ff03e0264`. All 77 tool tests pass. The
-[retained review](validation/generalization-review-2026-09-12/candidate-construction/README.md)
+[retained review](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-12/candidate-construction/README.md)
 contains the source proofs, successful and failed attempts, complete native
 executions and prospective conditional investigations. Its input audit binds
 all recorded proof, export, parent, helper and runtime inputs to recoverable
-bytes. The [delivery evidence](validation/generalization-review-2026-09-12/candidate-construction-delivery/README.md)
+bytes. The [delivery evidence](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-12/candidate-construction-delivery/README.md)
 records complete replay outcomes and the interrupted storage attempt.
 
 The retention review recovers two historical drivers only under their original
@@ -1045,3 +1045,67 @@ constructed and conditionally assessed. The native construction demonstrated
 here has the stated source-site language. Whole native symbolic-derivation
 admission, native mathematical-proof admission, complete development-workflow
 coverage and the final repository audit remain open.
+
+## Local child-claim correspondence and reconstruction
+
+The completed source reader consumes a complete parent claim and every
+discharged child claim. Generic functional joins and jointly determining paired
+observations preserve each actual socket, callee, and pattern. Table formation
+and unique keys apply to every supplied row, including unused rows. Independent
+table orders remain admissible.
+
+The native entry's full operand is proved equivalent to the original symbolic
+local judgment under independently stated source, package, graph, target-schema
+and claim-domain premises. Actual replacement data, the complete report,
+discharges and four support lists remain explicit. The one-premise example
+instantiates the shared eight-source-call theorem, has a separate assertion
+child, and proves the original symbolic local reading and exact assumption
+boundary. Both exported local-reader operands are admitted.
+
+Execution checks 27 complete projection cases and the complete compiled
+clauses, nine input controls, and 18 reasoning cases. Complete and reordered
+claims settle both requested entries without assuming either goal. An extra
+formed row passes the standalone local check; the exact whole-graph claim
+domain is a separate premise. Missing children, incorrect patterns or callees,
+duplicate keys, an incorrect parent and a malformed unused row leave the claim
+goal unresolved. The malformed case still permits useful source-level progress.
+Withheld source evidence, child operations, reader clauses and construction
+depth have explicit residual controls.
+
+An isolated 872-theory context passes. A separate reconstruction starts with
+554 repository source and fixture files, including the complete 524-theory
+dependency closure. It checks the proof from HOL, exports the code afresh,
+constructs the source input and reruns every native stage. All 185 complete
+tagged reports match the retained boundary, including every index, field,
+occurrence and duplicate in order. No generated ML, proof receipt, diagnostic
+database or previous result log is supplied to that reconstruction.
+The [recipe and scope](validation/reconstruction/README.md) identify its inputs
+and remaining semantic limits.
+
+The normal full repository check also accepts all 872 registered theories in
+invocation `a898cc4e-80cc-4952-b704-f3b1bf1478b9`, with unchanged sources and
+validation tools and no missing theories or proof escapes. The first attempt
+reached its 480-second session limit; the unchanged sources pass with a larger
+session allowance. All 94 tooling tests pass. Two added failure controls exposed
+an acceptance flag being set before assessment publication: publication now
+precedes acceptance, and failed or unserializable assessments retain a failed
+receipt. The final cold reconstruction includes that correction.
+
+The owner's `problems.txt` identifies a distinct defect in development itself:
+supplied facet tables do not compute the conditions steering the work, workflow
+requirements are remembered rather than enforced, and generated bulk is retained
+instead of a sufficient reconstruction boundary. This reader milestone does not
+repair the six development conditions. Pending that repair, unsupported host
+decisions are explicitly external judgments; another self-rated table is not
+presented as a machinery-derived selection. Existing proved native operations
+continue to be executed where their actual contracts apply.
+
+The owner subsequently authorizes recovering the earlier archives from GitHub.
+All 8,810 removed historical validation files were unchanged from remotely
+verified commit `393213d603e5dc728cdb15a37c1d091c10a26417`, totaling
+1,271,287,010 bytes. Historical documentation links point to that revision;
+[the recovery record](validation/history.json) gives the local restore command.
+This exception is separate from the new source-only recipe. The structural
+development protocol is the next milestone; whole native symbolic-graph
+admission, assertion truth, native mathematical-proof admission, and the final
+repository audit remain open.

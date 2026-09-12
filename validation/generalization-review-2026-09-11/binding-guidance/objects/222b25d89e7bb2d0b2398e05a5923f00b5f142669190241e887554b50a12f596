@@ -1,5 +1,0 @@
-session Native_Investigation_Report_Diagnostic_requestedapplications16 = Finite_Investigation_a24c220cc9c60a2a4f495caf +
-  options [document = false, timeout = 300]
-  sessions "HOL-Library"
-  directories "theories"
-  theories Factor_Binding_Guided_Investigation

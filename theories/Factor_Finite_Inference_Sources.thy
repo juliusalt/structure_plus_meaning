@@ -4,14 +4,19 @@ begin
 
 section \<open>One finite source constructor for literal clauses\<close>
 
-definition finite_literal_artifact :: "octets \<Rightarrow> finite_exact_artifact" where
-  "finite_literal_artifact p = finite_enumerated_artifact
-    (map (\<lambda>n. [n]) [0,1,2,3,5,6,7,8,14,15,16,17,18,19,20,21,22,23])
+definition finite_literal_definition_artifact :: "octets \<Rightarrow> local_address list \<Rightarrow>
+  (local_address \<times> local_address \<times> local_address) list \<Rightarrow>
+  (local_address \<times> octets) list \<Rightarrow> finite_exact_artifact" where
+  "finite_literal_definition_artifact p a e f = finite_enumerated_artifact
+    (map (\<lambda>n. [n]) [0,1,2,3,5,6,7,8,14,15,16,17,18,19,20,21,22,23] @ a)
     (map (\<lambda>(r,s,x). ([r],[s],[x]))
       [(0,16,15),(15,15,1),(1,17,2),(1,18,6),(17,17,18),
        (2,19,3),(2,20,5),(19,19,20),(6,7,8),(8,21,3),
-       (8,22,5),(8,23,14),(21,21,22),(22,22,23)])
-    [] [([5],p)]"
+       (8,22,5),(8,23,14),(21,21,22),(22,22,23)] @ e)
+    [] (([5],p)#f)"
+
+definition finite_literal_artifact :: "octets \<Rightarrow> finite_exact_artifact" where
+  "finite_literal_artifact p=finite_literal_definition_artifact p [] [] []"
 
 definition finite_literal_background :: finite_exact_artifact where
   "finite_literal_background = finite_enumerated_artifact [[]] []
@@ -37,12 +42,17 @@ definition finite_literal_program ::
 
 section \<open>A fresh node retains the existing complete sources\<close>
 
+definition finite_inference_node_artifact :: "octets \<Rightarrow> local_address list \<Rightarrow>
+  (local_address \<times> local_address \<times> local_address) list \<Rightarrow>
+  (local_address \<times> octets) list \<Rightarrow> finite_exact_artifact" where
+  "finite_inference_node_artifact c a e f = finite_enumerated_artifact
+    ([] # map (\<lambda>n. [n]) [0,1,2,3,4,5,6,7] @ a)
+    ([([],[3],[0]),([],[4],[1]),([],[5],[2]),([3],[3],[4]),([4],[4],[5]),
+      ([0],[0],[6]),([0],[6],[7])] @ e)
+    [] (([7],c)#f)"
+
 definition finite_literal_node :: finite_exact_artifact where
-  "finite_literal_node = finite_enumerated_artifact
-    ([] # map (\<lambda>n. [n]) [0,1,2,3,4,5,6,7])
-    [([],[3],[0]),([],[4],[1]),([],[5],[2]),([3],[3],[4]),([4],[4],[5]),
-      ([0],[0],[6]),([0],[6],[7])]
-    [] [([7],[7])]"
+  "finite_literal_node=finite_inference_node_artifact [7] [] [] []"
 
 definition finite_literal_extension ::
   "octets \<Rightarrow> local_address option finite_artifact_environment" where

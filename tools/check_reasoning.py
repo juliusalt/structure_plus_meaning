@@ -15,10 +15,13 @@ import json
 from pathlib import Path
 import subprocess
 import sys
+import traceback
 import uuid
 
 import investigate
 import proved_code
+from evidence_io import write_json
+from reasoning_known_calls import KnownCallContract
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -803,7 +806,8 @@ def normalized_reasoning_report(actual):
                          r["premise"], freeze(r["condition"])) for r in actual["reasons"]}}
 
 
-def run(args, *, cases_factory=cases, cases_source=None, cases_dependencies=(), library_exports=()):
+def run(args, *, cases_factory=cases, cases_source=None, cases_dependencies=(), library_exports=(),
+        known_call_contract=None):
     if not __debug__:
         raise ValueError("Execution review requires Python assertions to be enabled.")
     output = args.output.resolve()
@@ -812,12 +816,18 @@ def run(args, *, cases_factory=cases, cases_source=None, cases_dependencies=(), 
     output.mkdir(parents=True)
     report = {"status": "failed", "invocation": str(uuid.uuid4()), "scope": "Complete finite reports for the supplied case family, with native comparisons where declared"}
     try:
+        if known_call_contract is None:
+            known_call_contract = KnownCallContract(binding_call_true,
+                "Exact binding-observation row and list conditions for native entries 343 through 347")
+        if not isinstance(known_call_contract, KnownCallContract):
+            raise ValueError("Expected an explicit KnownCallContract.")
+        report["known_call_contract"] = known_call_contract.record()
         proof_path = args.proof.resolve()
         proof, engine, source_files = proved_code.proved_export(proof_path, args.engine, project=ROOT)
         if cases_factory is not cases:
             assert cases_source is not None, "A separate case family requires its source provenance."
         inputs = cases_factory()
-        (output / "cases.json").write_text(json.dumps(inputs, indent=2) + "\n")
+        write_json(output / "cases.json", inputs)
         program = "use " + investigate.ml_string(str(engine)) + ";\n" + PRELUDE
         if any(item.get("environment_requirements") for item in inputs):
             assert "Factor_Reader_Source_Requirements" in proof["sources"]
@@ -919,11 +929,12 @@ def run(args, *, cases_factory=cases, cases_source=None, cases_dependencies=(), 
         tracked = [proof_path, engine, args.poly.resolve(), Path(__file__).resolve(), Path(investigate.__file__).resolve(),
                    runtime, output / "cases.json"]
         tracked.extend(loaded_tool_sources())
+        tracked.extend(known_call_contract.inputs())
         if cases_source is not None:
             tracked.append(Path(cases_source).resolve())
         tracked.extend(Path(p).resolve() for p in cases_dependencies)
         hashes = {str(p): digest(p) for p in tracked} | source_files
-        (output / "execution-inputs.json").write_text(json.dumps(hashes, indent=2) + "\n")
+        write_json(output / "execution-inputs.json", hashes)
         proved_code.archive_execution_inputs(output, report, hashes, external=[args.poly])
         with (output / "results.log").open("w") as log:
             completed = subprocess.run([str(args.poly.resolve()), "--script", str(runtime)], stdout=log,
@@ -955,7 +966,7 @@ def run(args, *, cases_factory=cases, cases_source=None, cases_dependencies=(), 
                                  "demand": len(normalized["demand"]), "reasons": len(normalized["reasons"]),
                                  "checked": list(expected)})
                 if "native_goal_truth" in inputs[index]:
-                    assert all(binding_call_true(*call) for call in inputs[index]["known"])
+                    findings[-1]["known_calls_checked"] = known_call_contract.validate(inputs[index]["known"])
                     assert all(truth or freeze(goal) in normalized["residual"]
                                for goal, truth in zip(inputs[index]["goals"], inputs[index]["native_goal_truth"]))
                     findings[-1]["native_goal_truth"] = inputs[index]["native_goal_truth"]
@@ -999,7 +1010,7 @@ def run(args, *, cases_factory=cases, cases_source=None, cases_dependencies=(), 
                            set(map(freeze, e["enumeration"])) == set(map(freeze, e["schema"]["premises"]))
                            for e in entries), (name, "incomplete or malformed exported library")
                 catalog = output / ("library-" + name + ".json")
-                catalog.write_text(json.dumps(entries, indent=2) + "\n")
+                write_json(catalog, entries)
                 exported_libraries[name] = {"path": str(catalog), "sha256": digest(catalog),
                                             "entries": [e["entry"] for e in entries]}
             elif line.startswith("COMPILED_LIBRARY "):
@@ -1095,7 +1106,9 @@ def run(args, *, cases_factory=cases, cases_source=None, cases_dependencies=(), 
                       boundary="Structural controls verify exact generation and conditional reports. Native semantic guarantees come from the separately accepted theory contracts; this host review is not native mathematical-proof admission.")
     except Exception as error:
         report["error"] = str(error)
-    (output / "receipt.json").write_text(json.dumps(report, indent=2) + "\n")
+        report["error_type"] = type(error).__name__
+        report["error_traceback"] = traceback.format_exc()
+    write_json(output / "receipt.json", report)
     print(json.dumps({k: v for k, v in report.items() if k not in {"execution_inputs", "findings", "evidence_archive"}}, indent=2))
     if report["status"] != "accepted":
         print((output / "results.log").read_text()[-5000:] if (output / "results.log").exists() else report["error"])

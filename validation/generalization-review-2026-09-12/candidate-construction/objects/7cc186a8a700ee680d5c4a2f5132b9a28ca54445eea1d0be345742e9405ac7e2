@@ -1,8 +1,0 @@
-Traceback (most recent call last):
-  File "/tmp/generalization-quality-review/directed-candidate-construction/export_context.py", line 21, in <module>
-    if __name__=='__main__':main()
-                            ~~~~^^
-  File "/tmp/generalization-quality-review/directed-candidate-construction/export_context.py", line 17, in main
-    exports=list((a.output/'export').rglob(a.prefix+'.ML'));assert len(exports)==1
-                                                                   ^^^^^^^^^^^^^^^
-AssertionError

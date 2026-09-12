@@ -1,9 +1,0 @@
-{
-  "status": "accepted",
-  "controls": [
-    "case.json",
-    "receipt.json"
-  ],
-  "meaning": "Each source is read once; replacements after that read cannot change the proposed case or its evidence digest, and are rejected before execution.",
-  "tool_sha256": "6838b11aedc0130fa6b4cec1e76949f4495391481e3f76fe94f97a90f7daddf1"
-}

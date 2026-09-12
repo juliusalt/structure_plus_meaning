@@ -1,7 +1,0 @@
-{
-  "status": "unadopted draft preparation corrected",
-  "problem": "The accepted-status text occurs in both proof and runtime branches, so the draft generator rejected its nonunique insertion anchor.",
-  "correction": "Insert the proof-input map at the unique proof-index assignment.",
-  "previous_generator": "/tmp/generalization-quality-review/candidate-delivery-review/prepare_proof_retention_failed1.py",
-  "adopted_production_changes": []
-}

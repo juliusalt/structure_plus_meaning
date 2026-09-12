@@ -1,5 +1,5 @@
 theory Factor_Scheme_Observations
-  imports Factor_Scheme_Local_Readings Factor_Specialization_Reports Factor_Pattern_Binding_Keys
+  imports Factor_Scheme_Local_Readings Factor_Specialization_Reports Factor_Pattern_Binding_Keys Paired_Relation_Observations
 begin
 
 section \<open>Native term equality compares complete symbolic claims\<close>
@@ -26,12 +26,6 @@ lemma pattern_claim_observation_formed:
   using evaluate_pattern_formed[OF assms(1), where f=Payload_Term]
     evaluate_pattern_formed[OF assms(1), where f="\<lambda>_. Target_Term (Whole_Artifact empty_artifact)"] assms(2)
   by (simp add: pattern_claim_observation_def)
-
-lemma single_valued_paired_observations:
-  assumes "single_valued R"
-  shows "(k,(x,y))\<in>map_relation_values (\<lambda>v. (f v,g v)) R \<longleftrightarrow>
-    (k,x)\<in>map_relation_values f R \<and> (k,y)\<in>map_relation_values g R"
-  using assms by (auto simp: single_valued_def; blast)
 
 definition observed_schema_premises ::
   "(local_address,'s,'d) factor_schema\<Rightarrow>('s\<times>('d\<times>factor_term)) set" where

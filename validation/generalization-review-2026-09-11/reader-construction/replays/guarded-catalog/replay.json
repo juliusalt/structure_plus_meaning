@@ -1,8 +1,0 @@
-{
-  "stage": "catalog-after",
-  "status": "accepted",
-  "receipt_sha256": "1ea54eaa07e36eabc6f33527acad2da65ebbda6eb16faf12e74fd1d7a11e8161",
-  "archive_index_sha256": "630aecd056f6526183bf6b4c1c8b30731981e0359f55cb910d0b770917a8a931",
-  "replayer_sha256": "6f4073249b9403fed4712187c1ec751cb3f46f2fd7914b846c93eae4228f1dfc",
-  "boundary": "The retained inputs and original code are replayed. This reproduces complete checked reports; it does not rerun case selection or establish new native source readings."
-}

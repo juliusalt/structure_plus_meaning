@@ -1,5 +1,0 @@
-import prepare_repair as r
-print(r.prepare(4,'Resolve the same filter-membership conjunction-order defect at both selected observations and derived part coverage; retain the complete prepared application validation batch.',{
- 'Factor_Observation_Assembly':[('  by (simp add: finite_selected_observations_def)','  by (auto simp: finite_selected_observations_def)')],
- 'Factor_Application_Candidates':[('  by (simp add: application_part_coverage_def fset_of_list_elem)','  by (auto simp: application_part_coverage_def fset_of_list_elem)')]
-},family='applicationconstruction'))

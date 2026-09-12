@@ -1,9 +1,0 @@
-Running Native_Indexed_Subjects8 ...
-Native_Indexed_Subjects8 FAILED (see also "isabelle build_log -H Error Native_Indexed_Subjects8")
-*** exception TERM raised (line 518 of "~~/src/HOL/Tools/hologic.ML"):
-***   dest_nat
-***   1
-*** 
-*** At command "setup" (line 5 of "/tmp/native-investigation-report-diagnostic-indexedsubjects8/theories/Indexed_Subject_Exports.thy")
-Unfinished session(s): Native_Indexed_Subjects8
-0:02:14 elapsed time, 0:03:12 cpu time, factor 1.43

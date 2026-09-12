@@ -272,7 +272,7 @@ Three kinds of statement are kept apart. They are not interchangeable.
 |---|---|
 | **built** | Isabelle accepted or rejected it in this session |
 | **read** | established by reading the delivered theory source |
-| **reported** | taken from `problems.txt` and not independently confirmed here |
+| **reported** | taken from the [original review](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/problems.txt) and not independently confirmed here |
 
 ### 1.1 Built
 
@@ -339,7 +339,7 @@ defect list assumes the text is at least well-formed.
 
 ### 1.3 Not carried forward
 
-`problems.txt` §12 concerns `check_static.sh`, `check_lines.sh`, and
+The [original review](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/problems.txt) §12 concerns `check_static.sh`, `check_lines.sh`, and
 `FINAL_LINE_AUDIT.md`. Those files are not in this repository. The finding that
 a lexical scan cannot establish a mathematical property is carried into §11; the
 specific script defects are not.
@@ -1984,6 +1984,23 @@ The replacement record and target schema retain their separately supplied
 environments and uses. Their relative variable correspondence is explicit;
 one actual shared graph binder is further work. Complete graph admission,
 assertion boundaries, and native mathematical-proof checking remain open.
+
+The local native reader now also compares the actual parent claim and complete
+discharged child claims with that specialization. Functional claim tables and
+complete socket joins retain every occurrence. Two jointly determining views
+retain both the callee and whole pattern. Under the actual package, graph,
+target and complete claim-domain premises, the native entry is equivalent to
+the original symbolic local-reading judgment, with whole-table formation and
+unique keys explicit. Every replacement, report, discharge and support field
+remains part of its input.
+
+A constructed one-premise source proves this correspondence on an actual
+inference and separate assertion child. Reusable source-call evidence drives
+native construction without assuming the requested reader conclusions. The
+exact child assertion remains conditional. Complete graph traversal, formed
+symbolic calls at every node, assertion truth and native mathematical-proof
+checking remain open. The development protocol must also meet all six
+conditions in `problems.txt`; that is the next milestone after this local reader.
 
 An executed comparison uses the existing native incidence schema and its
 material-socket variant. Their complete rule-instance relations agree, as do

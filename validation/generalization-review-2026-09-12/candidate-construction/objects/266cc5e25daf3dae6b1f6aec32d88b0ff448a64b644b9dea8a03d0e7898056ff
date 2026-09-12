@@ -1,5 +1,0 @@
-session Native_Directed9 = RRA_Factor_Structural_Bootstrap +
-  options [document = false, timeout = 60]
-  sessions "HOL-Library"
-  directories "theories"
-  theories Finite_Directed_Contributions Finite_Candidate_Assembly

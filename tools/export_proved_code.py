@@ -18,6 +18,7 @@ import proved_code
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--proof", type=Path, required=True)
+    parser.add_argument("--project", type=Path, default=proved_code.ROOT)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--module", action="append", required=True, metavar="THEORY:FILENAME")
     args = parser.parse_args()
@@ -26,7 +27,9 @@ def main():
     assert all(len(row) == 2 and re.fullmatch(r"[A-Za-z_][A-Za-z_0-9]*", row[0])
                and re.fullmatch(r"[A-Za-z_][A-Za-z_0-9]*\.ML", row[1]) for row in modules)
     assert len({name for _, name in modules}) == len(modules)
-    proof, sources = proved_code.accepted_proof(proof_path, required_theories=[t for t, _ in modules])
+    project = args.project.resolve()
+    proof, sources = proved_code.accepted_proof(proof_path, project=project,
+                                               required_theories=[t for t, _ in modules])
     snapshot = proof_path.parent
     effective = {str(snapshot / "theories" / (name + ".thy")): sha
                  for name, sha in proof["effective_source_hashes"].items()}
@@ -40,6 +43,7 @@ def main():
     assert not output.exists(), "Retain preceding exports and use a new directory."
     output.mkdir(parents=True)
     report = {"status": "failed", "invocation": str(uuid.uuid4()),
+              "source_project": str(project),
               "proof": str(proof_path), "proof_sha256": investigate.digest(original),
               "session": session, "execution_inputs": tracked}
     command = ["isabelle", "export", "-n", "-d", str(snapshot), "-O", str(output / "code")]

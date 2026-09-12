@@ -1,5 +1,0 @@
-{
-  "status": "failed",
-  "error": "",
-  "traceback": "Traceback (most recent call last):\n  File \"<stdin>\", line 8, in <module>\n  File \"/home/julius/structure_and_semantics/tools/check_finite_inference.py\", line 158, in checked_reference\n    proved_code.proved_export(proof_path, required_theories=[\"Factor_Finite_Inference_Premises\"])\n    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/julius/structure_and_semantics/tools/proved_code.py\", line 39, in proved_export\n    proof, sources = accepted_proof(path, project=project, required_theories=required_theories)\n                     ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/julius/structure_and_semantics/tools/proved_code.py\", line 34, in accepted_proof\n    assert all(investigate.file_hash(Path(p)) == sha for p, sha in sources.items())\n           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
-}

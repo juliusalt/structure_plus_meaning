@@ -62,13 +62,13 @@ next
   show ?case using Cons.IH[OF parts(3)] parts(1,2) by (auto simp: row; blast)
 qed
 
-lemma keyed_row_join_mapped:
+lemma keyed_row_join_row_values:
   assumes rows: "formed_key_rows js"
     and fibres: "\<forall>s n. (s,n)\<in>set ds \<longrightarrow>
       term_formed (key s) \<and> term_formed (target n) \<and> self_contained_term (target n) \<and>
-      key_values (target n) js=[val (f s)]"
+      key_values (target n) js=[val (f s n)]"
   shows "keyed_row_join (pair_list_term js)
-    (map (\<lambda>(s,n). (key s,target n)) ds) (map (\<lambda>(s,n). (key s,val (f s))) ds)"
+    (map (\<lambda>(s,n). (key s,target n)) ds) (map (\<lambda>(s,n). (key s,val (f s n))) ds)"
   using fibres
 proof (induction ds)
   case Nil
@@ -77,12 +77,43 @@ next
   case (Cons row ds)
   obtain s n where row: "row=(s,n)" by (cases row)
   have first: "term_formed (key s)" "term_formed (target n)" "self_contained_term (target n)"
-    "key_values (target n) js=[val (f s)]" using Cons.prems by (auto simp: row)
+    "key_values (target n) js=[val (f s n)]" using Cons.prems by (auto simp: row)
   have tail: "keyed_row_join (pair_list_term js)
-      (map (\<lambda>(s,n). (key s,target n)) ds) (map (\<lambda>(s,n). (key s,val (f s))) ds)"
+      (map (\<lambda>(s,n). (key s,target n)) ds) (map (\<lambda>(s,n). (key s,val (f s n))) ds)"
     by (rule Cons.IH) (use Cons.prems in auto)
   show ?case by (simp only: row list.map case_prod_conv keyed_row_join.simps)
     (use rows first tail in blast)
+qed
+
+lemma keyed_row_join_mapped:
+  assumes rows: "formed_key_rows js"
+    and fibres: "\<forall>s n. (s,n)\<in>set ds \<longrightarrow>
+      term_formed (key s) \<and> term_formed (target n) \<and> self_contained_term (target n) \<and>
+      key_values (target n) js=[val (f s)]"
+  shows "keyed_row_join (pair_list_term js)
+    (map (\<lambda>(s,n). (key s,target n)) ds) (map (\<lambda>(s,n). (key s,val (f s))) ds)"
+  by (rule keyed_row_join_row_values[OF rows, where f="\<lambda>s n. f s"]) (rule fibres)
+
+lemma keyed_row_join_output_unique:
+  assumes "keyed_row_join b ds xs" "keyed_row_join b ds ys"
+  shows "xs=ys"
+  using assms
+proof (induction ds arbitrary: xs ys)
+  case Nil
+  then show ?case by simp
+next
+  case (Cons row ds)
+  obtain s n where row: "row=(s,n)" by (cases row)
+  obtain js v tail where first: "b=pair_list_term js" "key_values n js=[v]"
+    "xs=(s,v)#tail" "keyed_row_join b ds tail"
+    using Cons.prems(1) by (simp only: row keyed_row_join.simps; blast)
+  obtain ks w rest where second: "b=pair_list_term ks" "key_values n ks=[w]"
+    "ys=(s,w)#rest" "keyed_row_join b ds rest"
+    using Cons.prems(2) by (simp only: row keyed_row_join.simps; blast)
+  have same: "js=ks" using first(1) second(1) by (simp only: pair_list_term_injective)
+  have selected_value: "v=w" using first(2) second(2) same by simp
+  have tail: "tail=rest" by (rule Cons.IH[OF first(4) second(4)])
+  show ?case by (simp only: first(3) second(3) selected_value tail)
 qed
 
 definition keyed_row_join_nil_schema :: "(nat,nat,nat) factor_schema" where

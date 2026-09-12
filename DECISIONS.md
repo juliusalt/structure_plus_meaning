@@ -7519,7 +7519,7 @@ enumerates valuations and requires coverage by whole compatible fragments,
 providing a check distinct from the exported compatible-union recursion.
 
 The full 826-theory session, 50 tooling tests, and complete new and regression
-execution families pass. The [retained review](validation/generalization-review-2026-09-11/structural-observations/README.md)
+execution families pass. The [retained review](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/structural-observations/README.md)
 keeps the failed proposals, complete decision results, raw proof contexts,
 original source objects, and execution differences. It does not establish
 the missing structural boundaries of older adapters or close the whole
@@ -7561,7 +7561,7 @@ proofs; it does not prove their meanings or arbitrary Python semantics.
 Integration follows the accepted complete source context, exact preservation
 of all 98 original reports and assessments, five exporter rejection controls,
 60 tooling tests, and successful replay of all ten archived stages and
-investigations. The [evidence](validation/generalization-review-2026-09-11/indexed-subject-contracts/README.md)
+investigations. The [evidence](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/indexed-subject-contracts/README.md)
 retains the complete original problem, failed attempts, concrete proposals,
 actual operation inputs and outputs, and their critical assessments. These
 fixed subject contracts do not close native mathematical-proof checking or
@@ -7573,5 +7573,37 @@ preserved. The actual failed full-session context and accepted 197-theory
 dependency context supply the prospective repair comparison; the failed
 receipt supplies no reused proof context. After following the returned repair,
 the full 827-theory session passes with matching source, tool and log evidence.
-The [delivery record](validation/generalization-review-2026-09-11/indexed-subject-contracts-delivery/README.md)
+The [delivery record](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/indexed-subject-contracts-delivery/README.md)
 retains both attempts and their complete decision inputs and results.
+
+## Complete the local child reader and replace generated retention
+
+The local child reader is completed before the development-protocol repair,
+as permitted by the owner's `problems.txt`. Its original symbolic meaning is
+fixed independently. Complete claim tables, actual discharges and two jointly
+determining observations provide the native comparison. Both views retain
+callees; payload observations alone do not determine the complete pattern call.
+The one-premise example retains its separate asserted child and supplies no
+closed-proof claim.
+
+The existing development decision tables lack an applicable proved contract
+computing the conditions on the actual proposed edits and their independent
+requirements. Until that operation is supplied, these host choices are external
+judgments under the exception in condition 1 of `problems.txt`. Evaluating
+another supplied suitability table would leave that condition unmet. Native
+proof and execution contracts justify their stated mathematical results, not
+the external choice of development work. This exception does not discharge
+conditions 1, 2, 4, 5 or 6 for a repaired protocol.
+
+New validation retains repository sources, the exact source fixture, executable
+recipe, required toolchain and complete report comparison boundary. A cold run
+has rebuilt proof, code and all native results from that boundary. Subsequent
+reconstruction instantiates this common recipe; supplied-export rechecking is
+explicitly distinguished from reconstruction of proof and code.
+
+The owner permits previous validation archives to remain recoverable from
+GitHub history. Their exact committed identity is verified on remote `main`
+before removing their current-tree copies. Historical links are pinned to that
+commit. This authorization avoids reconstructing each obsolete historical
+development environment as part of this milestone. New results use the
+source-only recipe and are not attributed to the historical archive.

@@ -1,6 +1,0 @@
-{
-  "cases": 30,
-  "complete_programs_equal": true,
-  "bytes": 167450,
-  "boundary": "Actual complete generated program equality on the retained 30 structural input families. The engine path is a retained text-comparison parameter; no native execution or proof is claimed by this check."
-}

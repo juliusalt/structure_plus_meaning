@@ -5,9 +5,11 @@ import json
 from pathlib import Path
 import subprocess
 import sys
+import traceback
 import uuid
 
 import investigate
+from evidence_io import write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -63,6 +65,19 @@ def execution_inputs_unchanged(inputs, receipt, *, external=()):
             and all(investigate.file_hash(Path(row["archive"])) == row["sha256"] for row in retained))
 
 
+def accepted_execution(directory, poly, proof):
+    """Recheck a complete execution before using its results as downstream inputs."""
+    if not __debug__:
+        raise ValueError("Execution evidence checks require Python assertions.")
+    directory, poly, proof = map(lambda path: Path(path).resolve(), (directory, poly, proof))
+    receipt = json.loads((directory / "receipt.json").read_text())
+    assert receipt["status"] == "accepted"
+    assert receipt["proof_receipt_sha256"] == investigate.file_hash(proof), "Different proved execution context."
+    assert investigate.file_hash(directory / "results.log") == receipt["results_sha256"]
+    assert execution_inputs_unchanged(receipt["execution_inputs"], receipt, external=[poly])
+    return receipt
+
+
 def checked_execution(proof_path, poly, output, *, required_theories, inputs,
                       input_paths, program, assess, question, boundary, timeout=60, project=ROOT):
     """Run one proved module with retained inputs and a caller's result review."""
@@ -74,7 +89,7 @@ def checked_execution(proof_path, poly, output, *, required_theories, inputs,
                "question": question, "boundary": boundary}
     try:
         input_file = output / "cases.json"
-        input_file.write_text(json.dumps(inputs, indent=2) + "\n")
+        write_json(input_file, inputs)
         runtime = output / "execute.ML"
         runtime.write_text(program(engine, inputs))
         directory = Path(__file__).resolve().parent
@@ -84,7 +99,7 @@ def checked_execution(proof_path, poly, output, *, required_theories, inputs,
         paths = {proof_path, engine, poly, runtime, input_file, *modules,
                  *(Path(p).resolve() for p in input_paths), *(Path(p) for p in sources)}
         tracked = {str(p): investigate.file_hash(p) for p in paths}
-        (output / "execution-inputs.json").write_text(json.dumps(tracked, indent=2) + "\n")
+        write_json(output / "execution-inputs.json", tracked)
         archive_execution_inputs(output, receipt, tracked, external=[poly])
         log_path = output / "results.log"
         with log_path.open("w") as log:
@@ -95,12 +110,15 @@ def checked_execution(proof_path, poly, output, *, required_theories, inputs,
         assessment = assess(inputs, log_path.read_text())
         stable = execution_inputs_unchanged(tracked, receipt, external=[poly])
         assert stable, "Execution source, input or retained evidence changed."
+        write_json(output / "complete-results.json", assessment)
         receipt.update(status="accepted", sources_and_tools_unchanged=stable, assessment=assessment,
                        proof_receipt_sha256=investigate.file_hash(proof_path),
                        export_sha256=investigate.file_hash(engine),
                        results_sha256=investigate.file_hash(log_path), execution_inputs=tracked)
-        (output / "complete-results.json").write_text(json.dumps(assessment, indent=2) + "\n")
-    except (AssertionError, ValueError, OSError, subprocess.SubprocessError) as error:
+    except Exception as error:
+        receipt["status"] = "failed"
         receipt["error"] = str(error)
-    (output / "receipt.json").write_text(json.dumps(receipt, indent=2) + "\n")
+        receipt["error_type"] = type(error).__name__
+        receipt["error_traceback"] = traceback.format_exc()
+    write_json(output / "receipt.json", receipt)
     return receipt

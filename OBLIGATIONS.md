@@ -659,3 +659,24 @@ subject without changing its statement or executable definitions. The retained
 failed attempt, prospective repair comparison and independent 197-theory
 dependency proof establish that bounded repair; they do not discharge the
 remaining native-admission or whole-system audit obligations.
+
+The 872 registered theories include complete actual-source local child-claim
+correspondence. Generic functional joins, keyed-table comparisons and paired
+observations retain complete sockets, callees and patterns. Native entry 359
+is equivalent to the original symbolic local reading under the stated source,
+package, graph, target and claim-domain premises, with whole-table formation
+and unique keys preserved. The one-premise example proves the native operands
+and original symbolic claim assignment with its exact assertion child.
+
+The independent whole source context passes. Cold reconstruction rebuilds the
+524-theory local dependency proof, code, inputs and all 185 native reports from
+554 source and fixture files. Eighteen reasoning cases cover positive results,
+semantic failures, withheld prerequisites and construction depth. These results
+do not close O-85: whole symbolic graph admission, formed pattern calls, exact
+material and assertion boundaries throughout the graph, and native checking of
+the mathematical proofs remain. The six structural development conditions in
+`problems.txt` form the next milestone. The final repository audit remains open.
+
+The normal 872-theory repository check also passes, with exact source and tool
+identities and no proof escapes. All 94 tooling tests pass, including rejection
+of an unpublished assessment before an execution can be accepted.

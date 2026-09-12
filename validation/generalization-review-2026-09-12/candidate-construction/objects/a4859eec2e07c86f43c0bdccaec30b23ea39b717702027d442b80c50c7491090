@@ -1,4 +1,0 @@
-import prepare_repair as r
-print(r.prepare(11,'Preserve the target-presentation equality when extracting both formation projections: the retained single-goal failure shows that splitting goals alone was insufficient. Use equality-aware simplification in both projections and run the complete validation group.',{
- 'Factor_Application_Candidates':[('      using valid by (simp only: application_construction_case_formed_def; blast)','      using valid by (auto simp: application_construction_case_formed_def)')]
-},family='applicationconstruction'))

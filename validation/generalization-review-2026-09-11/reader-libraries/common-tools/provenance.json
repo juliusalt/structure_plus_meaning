@@ -1,5 +1,0 @@
-{
-  "sha256": "8915b7a480b2a17b5cea5b819f3be43323f69cb79dc1513a76c07eb83f6b491e",
-  "unchanged_from_commit": "78af3b0",
-  "boundary": "Earlier reasoning receipts did not independently track this imported helper. Its bytes are unchanged from the source commit and are retained for replay. New receipts discover and track imported local tools."
-}

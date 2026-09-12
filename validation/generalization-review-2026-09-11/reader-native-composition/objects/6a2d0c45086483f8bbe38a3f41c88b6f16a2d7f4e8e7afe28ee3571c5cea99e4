@@ -1,5 +1,0 @@
-{
-  "type_finding": "The source environment is already constrained through the binding use terms. graph_node_inputs_at deliberately permits an unrelated discharge target type. The locally obtained empty relation leaves that target type rigid and arbitrary, while native_proof_node_extension requires actual environment sites. The previous commentary attributing the mismatch to E was premature. Native proof acceptance remains necessary to confirm this diagnosis.",
-  "reuse_finding": "The previous execution loop is reusable reasoning orchestration. Factor it now; otherwise each later batch reconstructs the same execution/revision/assessment procedure. The proposed adapter is candidate content until this comparison is evaluated.",
-  "scheduling_reason": "This diagnostic appeared only after the preceding source repair succeeded. Its dependent repair needs this new result; the new adapter validation and complete native composition check can be grouped. No earlier proof source is edited while a live proof checks it."
-}

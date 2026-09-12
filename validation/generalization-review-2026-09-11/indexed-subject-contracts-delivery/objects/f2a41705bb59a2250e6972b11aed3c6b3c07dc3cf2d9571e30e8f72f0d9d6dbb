@@ -1,5 +1,0 @@
-session Native_Indexed_Downstream1 = HOL +
-  options [document = false, timeout = 300]
-  sessions "HOL-Library"
-  directories "theories"
-  theories Factor_Investigation_Input_Development_Execution

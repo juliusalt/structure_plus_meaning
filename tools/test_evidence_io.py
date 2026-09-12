@@ -26,6 +26,24 @@ class EvidenceStorageTests(unittest.TestCase):
         (archive.output / "archive.json").write_text(json.dumps(manifest))
         return manifest
 
+    def test_nested_json_keeps_complete_values_without_depth_padding(self):
+        value = {"literal": "retained \u03bb", "occurrences": [True, 1, True, None]}
+        for i in range(96):
+            value = [i, value]
+        path = self.root / "nested.json"
+        evidence_io.write_json(path, value)
+        self.assertEqual(json.loads(path.read_text()), value)
+        self.assertLess(path.stat().st_size, 1000)
+        self.assertEqual(path.read_text().count("\n"), 1)
+
+    def test_failed_json_encoding_preserves_the_previous_file(self):
+        path = self.root / "receipt.json"
+        path.write_text('{"status":"prior"}\n')
+        with self.assertRaises(TypeError):
+            evidence_io.write_json(path, {"valid": [1, 2], "invalid": object()})
+        self.assertEqual(path.read_text(), '{"status":"prior"}\n')
+        self.assertEqual(list(self.root.glob("receipt.json.*.tmp")), [])
+
     def test_packed_roundtrip_and_prior_reference(self):
         with patch.object(evidence_io, "PACK_THRESHOLD", 1):
             first = Archive(self.root / "first", [], [])

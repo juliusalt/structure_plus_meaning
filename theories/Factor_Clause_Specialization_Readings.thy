@@ -1,5 +1,5 @@
 theory Factor_Clause_Specialization_Readings
-  imports Factor_Schema_Pattern_Admission
+  imports Factor_Schema_Pattern_Admission Factor_Clause_Specialization_Graphs
 begin
 
 section \<open>The package clause, replacement record, and substituted schema remain explicit\<close>
@@ -35,7 +35,7 @@ proof -
       \<in>positive_meaning schema_pattern_reading_system"
     using reads by (auto simp: clause_specialization_reading_calls_def)
   obtain ar where root: "a=Payload_Term ar"
-    using calls(1) by (simp only: definition_clause_reading_exact factor_term.inject) blast
+    using calls(1) by (simp only: definition_clause_reading_exact factor_term.inject; blast)
   have substitution: "schema_substitution_at E du ar F v q G w t"
     using calls(2) by (simp only: root substitution_reading_on_sources[OF sources])
   obtain S s As I K where raw: "native_schema_at E du ar S" "distinct As" "set As=schema_variables S"
@@ -146,21 +146,15 @@ proof -
     show ?thesis using formed_rows scope by blast
   qed
   let ?V="image (\<lambda>a. (a,s a)) (schema_variables S)"
-  have formed: "schema_formed S"
-    using native_package_system_formed[OF package] source by (cases d) (auto simp: schema_system_formed_def)
-  have bindings: "pattern_bindings_formed (schema_variables S) ?V"
-    by (rule graph_pattern_bindings_formed[OF schema_variables_finite[OF formed] replacements])
+  have graph_boundary: "schema_pattern_boundary P d (schema_substitute s S)"
+    using read(7) program clause by simp
+  have relation: "schema_clause_specialization P d c ?V T"
+    using schema_clause_specialization_graph(1)[OF source graph_boundary replacements]
+    by (simp only: schema)
   have lookup: "rel_value ?V a=s a" if "a\<in>schema_variables S" for a
-    by (rule rel_value_eq) (use that in \<open>auto simp: single_valued_def\<close>)
-  have substitution: "schema_substitute (rel_value ?V) S=schema_substitute s S"
-    by (rule schema_substitute_cong) (rule lookup, assumption)
-  have result: "T=schema_substitute (rel_value ?V) S" using schema by (simp only: substitution)
+    by (rule schema_clause_specialization_graph(2)[OF source graph_boundary replacements that])
   have row_patterns: "substitution_row_patterns As (rel_value ?V)=substitution_row_patterns As s"
     by (simp only: substitution_row_patterns_def; rule map_cong) (use lookup scope in auto)
-  have relation: "schema_clause_specialization P d c ?V T"
-    unfolding schema_clause_specialization_def
-    by (rule conjI, use read(7) program clause schema in simp,
-      rule exI[of _ S]) (use source bindings result in blast)
   show ?thesis by (rule exI[of _ ?V], rule exI[of _ As], rule exI[of _ I], rule exI[of _ K])
     (use relation read(3,5) scope clause schema row_patterns in simp)
 qed
@@ -221,12 +215,12 @@ proof -
   obtain E pu pr a b where package: "environment_value_presents E e" "u=use_data_term pu"
     "r=Payload_Term pr" "du=use_data_term a" "dr=Payload_Term b"
     using calls(3) by (simp only: schema_pattern_reading_exact schema_pattern_reading_result_def
-      site_data_term_def factor_term.inject) blast
+      site_data_term_def factor_term.inject; blast)
   obtain k where key: "c=Payload_Term k"
-    using calls(1) by (simp only: definition_clause_reading_exact factor_term.inject) blast
+    using calls(1) by (simp only: definition_clause_reading_exact factor_term.inject; blast)
   obtain F fv fq G gw gt where sources: "environment_value_presents F f" "v=use_data_term fv" "q=Payload_Term fq"
     "environment_value_presents G g" "w=use_data_term gw" "t=Payload_Term gt"
-    using calls(2) by (simp only: substitution_reading_exact substitution_reading_result_def factor_term.inject) blast
+    using calls(2) by (simp only: substitution_reading_exact substitution_reading_result_def factor_term.inject; blast)
   show ?thesis using package key sources by blast
 qed
 

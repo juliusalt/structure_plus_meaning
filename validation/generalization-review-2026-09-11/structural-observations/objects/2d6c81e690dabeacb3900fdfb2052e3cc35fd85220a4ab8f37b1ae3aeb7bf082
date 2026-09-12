@@ -1,6 +1,0 @@
-{
-  "original_prelude_sha256": "0e67ec78d4f2d190c4f6eee6506d0a68cc1d099d936fb0b8867719c1644ebe4b",
-  "refactored_prelude_sha256": "0e67ec78d4f2d190c4f6eee6506d0a68cc1d099d936fb0b8867719c1644ebe4b",
-  "byte_identical": true,
-  "reused_interface": "FSET_TERM_SCHEMA_JSON_PRELUDE, under a caller-supplied N module alias. Existing serializer constructors and empty-target control boundary are preserved."
-}

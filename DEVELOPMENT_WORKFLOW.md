@@ -71,6 +71,12 @@ before preparing the next batch. Avoid separate polling, one-file reads, and
 one-fix proof retries when independent useful work can be included. Dependencies
 within the batch remain ordered. Quality takes precedence over batch size.
 
+After preserving the source, proof, and execution evidence needed for continued
+work or repository validation, remove generated files and temporary build
+copies that are no longer needed. Record the retained evidence that replaces
+those copies. Keep temporary storage bounded throughout the work, including
+after failed runs; do not accumulate obsolete files under `/tmp`.
+
 Current implementation boundaries and the accumulated reasoning inventory are
 recorded in [REASONING_REUSE.md](REASONING_REUSE.md). The continuing content review
 rule and historical evidence are in [GENERALIZATION_REVIEW.md](GENERALIZATION_REVIEW.md).

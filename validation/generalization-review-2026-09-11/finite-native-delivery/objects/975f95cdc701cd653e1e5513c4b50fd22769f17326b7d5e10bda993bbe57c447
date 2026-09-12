@@ -1,6 +1,0 @@
-{
-  "selected": 1,
-  "decision": "Retain the three original evidence objects byte for byte and explicitly qualify the full whitespace scan.",
-  "critical_assessment": "The initial report could not distinguish the candidates on the code/documentation check. Its actual returned revision includes both exact identity and cosmetic whitespace observations. The followed report records both directions of loss, and the mandatory identity criterion admits only preservation. All three original hashes were measured and match their archive identities; normalization changes each. The comparison does not certify its externally supplied candidate meanings or the entire project. No source normalization is performed. Existing 817-theory build source and validation-tool identities remain current.",
-  "scheduling": "Measurement, proof-identity checking and the instantiated comparison were batched. Retention depends on inspecting the complete comparison and is ordered after it; the two replay executions can run independently. The existing packaging and byte-preservation operations are reused, with only current fragment data and warning syntax specific to this case."
-}

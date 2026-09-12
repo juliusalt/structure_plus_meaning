@@ -23,6 +23,7 @@ its application.
 | Preserve a shared witness | Separate existential successes do not imply joint success; linked uses require one witness satisfying every participating condition. | Completion contracts and the existing compatible native construction/permission readers preserve the common source or witness. | Recognize the common intrinsic input in a development problem and keep its compatibility condition in the generated reasoning. |
 | Reuse exact local contracts through products, transport, and specialization | Independently owned class and relation contracts determine when a larger construction may consume a component. | Complete product, list, finite-set, source, scope, and quotation classes; several ordinary readers implement their contracts. | Pair and collection admission goals now produce actual constructor arguments with source and component prerequisites. General transport, specialization, and applicability of the other complete contracts still need this connection. |
 | Preserve actual premise and binder boundaries | A rule transformation must retain every premise socket, callee, head variable, premise-only variable, and material-only variable. | Native symbolic-call and clause-specialization checkers admit actual complete substitutions and prescribed socket presentations. | Use the admitted transformations to instantiate reusable reasoning schemas and retain their complete assertion and material boundaries. |
+| Compare complete claims through jointly determining observations | Injective paired observations with a retained callee determine the original claim; functional claim tables and complete socket joins preserve the original premise relation. | Generic functional joins, keyed fibre and table comparisons, and prefixed observations feed native entry 359; its complete actual-source contract is equivalent to the original symbolic local judgment under the stated graph and claim-domain premises. | Generate these applications from a complete symbolic-graph admission obligation, including every node, formed symbolic call, material condition, and identified assertion boundary. The local example does not supply that traversal. |
 | Join only agreeing components | A program union preserves the intended component meanings when whole definitions agree on their actual overlap and dependencies are closed. | Shared-definition agreement, rooted groups, rebasing, and least dependency closures support the native joins. | Make agreement and closure explicit generated prerequisites of composition; do not discharge them merely from a shared component name. |
 | Change an inadequate observation language | A full-language residual proves that selecting more of the same observations cannot suffice. A new observation needs its own semantic and coverage contract. | Repair obstructions and multiple newly constructed native observations exhibit this transition. | Use the failed subject relation and the reusable construction rules to generate new observation candidates, then evaluate them. |
 | Preserve useful selections while revising conflicts | Withdraw unsound selections, retain the selected sound part, and recompute repair needs after withdrawal. | The new revision rule and list execution have Isabelle proofs; they have not yet received native Factor presentation and checking. | Integrate the transition with native construction and evidence, while keeping observation-language limits visible. |
@@ -92,7 +93,7 @@ admission alone satisfies every supplied condition. The useful-settlement
 facet alone is adequate for this particular finite family; retaining the
 original sound facet follows the general revision contract.
 
-The [execution evidence](validation/generalization-review-2026-09-10/learned-reasoning/receipt.json)
+The [execution evidence](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-10/learned-reasoning/receipt.json)
 checks thirty complete reports, including shared variables, separate premise
 occurrences, premise-only and unbound private variables, each of the five
 material operands, incomplete enumerations, socket conflicts, and malformed
@@ -125,7 +126,7 @@ target reference. Its finite schema decodes to this same ordinary rule and is
 consumed by the existing generation and inference engine. The existing general
 compilation contract supplies one native program before every future report.
 
-The [complete execution evidence](validation/generalization-review-2026-09-10/specialization-report/receipt.json)
+The [complete execution evidence](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-10/specialization-report/receipt.json)
 adds eight structural controls to the earlier thirty cases. Adding the rule
 constructs an application with its two identified premises; a different target
 constructs none. Multiple targets, alternative reports, repeated frontier
@@ -196,7 +197,7 @@ and an empty-list premise. These are actual component predicates with existing
 exact contracts. The independent native converter establishes the requested
 two-row result.
 
-In the [retained baseline](validation/generalization-review-2026-09-11/construction-chains/before/adequacy.json),
+In the [retained baseline](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/construction-chains/before/adequacy.json),
 one construction succeeds, while the two- and three-step goals remain
 unresolved. Supplying an intermediate call only as a possible premise allows
 the existing inference closure to finish. Withholding its scalar evidence
@@ -216,7 +217,7 @@ exactly the original report, and the formation gate retains every original
 input. The common variable-interface clause application step is now reused by
 all three native construction libraries.
 
-The [expanded investigation](validation/generalization-review-2026-09-11/construction-chains/after/adequacy.json)
+The [expanded investigation](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/construction-chains/after/adequacy.json)
 contains 64 complete reports, 84 intermediate-frontier checks, nine computed
 native seeds, and an independent native list comparison. Two- and three-step
 goals settle from their original seeds. Missing evidence and insufficient
@@ -278,7 +279,7 @@ distinct. All 50 compilation cases pass, including repeated encodings,
 unordered sockets, empty families, malformed fields, and chained construction.
 The exported native clause catalog is unchanged by the repair.
 
-The [retained investigation](validation/generalization-review-2026-09-11/reader-libraries/README.md)
+The [retained investigation](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/reader-libraries/README.md)
 includes the original failure, its minimal control, proof inputs, complete
 reports, and successful replays. The complete 794-theory session passes.
 Using the compiled clauses to construct the new reader heads from their
@@ -313,7 +314,7 @@ target report, clause specialization, two record observations, reference
 bindings, and node reading. The two record calls retain different sockets.
 The fixture's environment markers are structural controls, not inhabited
 native source examples. Establishing actual source evidence remains a
-separate requirement. The [archive](validation/generalization-review-2026-09-11/reader-construction/README.md)
+separate requirement. The [archive](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/reader-construction/README.md)
 retains the complete cases, original tools and code, failed proof attempts,
 and replay evidence. Whole argument admission and the broader development
 workflow remain open.
@@ -343,7 +344,7 @@ Shared interpretation and closure theorems cover every finite bound. A
 monotonicity argument also proves that every application produced by the old
 bounded chain is retained at the same bound.
 
-The [retained review](validation/generalization-review-2026-09-11/binding-guidance/README.md)
+The [retained review](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/binding-guidance/README.md)
 compares 46 unchanged workloads, including 20 native binding cases. It checks
 188 complete intermediate states, every generated application and report,
 and the actual native library and wrapper. Fifteen cases gain settlements;
@@ -385,7 +386,7 @@ The executable necessary-condition test rules out every possible environment
 witness when that outer shape fails. A matching shape establishes no table,
 artifact, binding, or reader admission.
 
-The [source review](validation/generalization-review-2026-09-11/reader-source-requirements/README.md)
+The [source review](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/reader-source-requirements/README.md)
 keeps the original library, possible calls, known evidence, and goals. All
 52 original top-reader goal occurrences fail this necessary source condition.
 Their native judgments are impossible, even though conditional clause
@@ -427,7 +428,7 @@ package fields and the caller's replacement and target presentations. The existi
 proves that this complete native reading is inhabited. This does not establish
 the validity of a whole derivation or supply an executed finite example.
 
-The [composition review](validation/generalization-review-2026-09-11/reader-native-composition/README.md)
+The [composition review](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/reader-native-composition/README.md)
 compares the original and factored dependencies on nine identical workloads.
 The returned adequate profiles support keeping source-reading requirements at
 the native-reading boundary: local construction gains two settlements without
@@ -469,7 +470,7 @@ exposes both complete reference tables and record instances for its original
 consumer and the new finite example. Component-meaning preservation carries
 those initial calls into the same program as the compiled reader.
 
-The [finite example](validation/generalization-review-2026-09-11/finite-native-reader/README.md)
+The [finite example](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/finite-native-reader/README.md)
 supplies all twelve argument fields and eight proved initial call occurrences,
 seven of them distinct. The final inference entry is absent from the initial
 set. Seventy-six reader cases check 311 complete construction frontiers and
@@ -534,7 +535,7 @@ shared by their respective consumers. Universal inclusion preserves every
 earlier forward and requested application and the existing bounded guided
 soundness theorem. The full 826-theory session and 50 tooling tests pass.
 
-The [retained executions](validation/generalization-review-2026-09-11/structural-observations/README.md)
+The [retained executions](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/structural-observations/README.md)
 include 22 direct observation groups and 16 guided controls. They check missing
 and conflicting fragments, every material operand, complete witness recovery,
 and the original malformed-input boundary. The 55 original guided cases retain
@@ -564,7 +565,7 @@ The runtime's candidate and facet lists come from the checked calculation.
 The repair and revision calls use that actual facet domain. A retained label
 or digest does not supply a subject or an equation.
 
-The [fixed-family review](validation/generalization-review-2026-09-11/indexed-subject-contracts/README.md)
+The [fixed-family review](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-11/indexed-subject-contracts/README.md)
 checks every original facet subset, both marker assignments, and fourteen
 unavailable-facet controls: 98 complete cases. All results and independent
 assessments agree with the baseline, including the unrepairable collapsed
@@ -635,7 +636,7 @@ universal Isabelle application contract has its independently stated wider
 finite-term domain. Optional expected gate values are test expectations and do
 not supply native coverage or condition observations.
 
-The [retained construction review](validation/generalization-review-2026-09-12/candidate-construction/README.md)
+The [retained construction review](https://github.com/juliusalt/structure_plus_meaning/blob/393213d603e5dc728cdb15a37c1d091c10a26417/validation/generalization-review-2026-09-12/candidate-construction/README.md)
 contains 61 generic search cases, 30 actual application cases, original consumer
 regressions, complete native maps and witnesses, corruption controls, failed
 attempts and exact replays. The generic scope includes 8,256 overlapping
@@ -652,3 +653,49 @@ retained byte stability. The proof archive records the exporter and parent
 procedure inputs explicitly and reads parent metadata from the recorded
 historical identity. These reusable guards preserve execution evidence when
 later edits replace its original paths; they do not supply semantic proof.
+
+## Complete local child claims on actual sources
+
+`Functional_Relation_Lists`, `Functional_Relation_Joins`, and
+`Paired_Relation_Observations` own the shared list, join, and determining-view
+arguments. Native keyed-table comparison rejects duplicate keys and malformed
+rows throughout the supplied tables. Complete comparison allows independent
+row orders. A keyed fibre isolates the parent's claim; the existing singleton
+row join follows every actual discharge to its child's unique claim.
+
+Both prefixed observations retain the callee. Their generic injectivity
+contract therefore recovers the complete pattern call from the paired values.
+The two projected child tables agree exactly with the corresponding complete
+premise tables in the target schema report. Empty discharges still check the
+whole claim table and the parent claim.
+
+`Factor_Inference_Claim_Correspondence.inference_claim_on_symbolic_sources`
+relates native entry 359 to the existing `schema_scheme_local_reading`.
+Its premises identify the actual source environments, package, observed graph,
+inference node, target schema, complete claim domain, and parent claim. Its
+conclusion retains the original inference-specialization judgment, whole-table
+formation, and unique keys. Replacement data, binders, all material fields,
+discharge occurrences, and all four support lists remain explicit. This is a
+local equivalence; formation of every symbolic claim and admission of every
+graph node remain separate requirements.
+
+`Factor_Ground_Inference_Premises` supplies one reusable source-call contract.
+The earlier literal example and new one-premise example instantiate its eight
+actual call occurrences. `Factor_Finite_Child_Example` constructs the separate
+assertion child, preserves the original environments, and proves the original
+symbolic local reading and exact identified assumption boundary. Both exported
+operands, at entries 350 and 359, are proved admitted.
+
+The native construction executes 18 complete cases. Complete and reordered
+inputs settle both entries. An extra formed row also passes the standalone
+local check; its exact whole-graph claim domain is not established. Six semantic
+negative controls leave 359 unresolved. Withheld source or child operations
+and construction depth expose the remaining conditions. No goal is supplied
+as its own initial evidence. A malformed unused row makes the complete input
+malformed while still allowing the valid source subgoal 350 to settle.
+
+The [source-only reconstruction](validation/reconstruction/README.md) rebuilds
+the proof and code and checks equality of every complete report. Its common
+recipe factors the repeated proof, export, source-input, catalog and reasoning
+sequence. These host checks establish reproducibility and execution provenance;
+they do not compute the development decisions required by `problems.txt`.

@@ -1,8 +1,0 @@
-theory Finite_Investigation_Export
-  imports Factor_Investigation_Input_Investigation Finite_Investigation_Interface
-begin
-
-export_code investigation_inference investigation_basis investigation_repairs investigation_extend investigation_revision nat_of_integer integer_of_nat input_investigation input_investigation_observations input_investigation_relation
-  in SML module_name Finite_Investigation file_prefix "finite_investigation"
-
-end

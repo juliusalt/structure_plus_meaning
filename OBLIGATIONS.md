@@ -8,11 +8,12 @@ conflicts with another required distinction. Reasons are recorded in
 are historical and are not counted as implementation evidence.
 
 The standing owner rule prohibits outside semantics, reasoning, or anything
-else anywhere, including development and bootstrap. All required accounts and
-justifications must be internal to RRA and Factor. An Isabelle proof or host
-execution does not by itself establish that internal account. Missing native
-representations, operations, reasoning, and acceptance remain unmet obligations;
-they authorize no external fallback. This applies to every row in this ledger.
+else anywhere in the system and development. Isabelle/HOL retains its explicitly
+reaffirmed normative bootstrap role through genesis. It establishes the required
+internal accounts and their adequacy; a host execution or a proof about an
+external substitute does not provide a missing native operation. Missing native
+representations, operations, reasoning, and acceptance remain unmet obligations
+and authorize no ad hoc external fallback. This applies to every row below.
 
 The owner's correction of 2026-09-08 supersedes single-grammar and quotation
 principality. O-21 and O-43 through O-45, O-79, and O-80 below use the amended

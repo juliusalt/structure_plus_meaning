@@ -6,11 +6,11 @@ explicitness, non-conflation, irredundancy, and non-nominality. Individual claim
 in the supplied documents remain subject to proof and alignment review.
 
 Standing owner rule: no outside semantics, reasoning, or anything else is
-allowed anywhere, including development and bootstrap. Every part requires its
-complete RRA account and Factor meaning. Missing internal machinery is an unmet
-requirement, not an external fallback permission. The rule is recorded in
-[DEVELOPMENT_WORKFLOW.md](DEVELOPMENT_WORKFLOW.md); existing external proofs and
-host procedures do not by themselves establish compliance.
+allowed anywhere in the system or its development. The owner explicitly
+preserves Isabelle/HOL's normative bootstrap role through genesis. Every part
+still requires its complete RRA account and Factor meaning; host procedures
+and supplied judgments cannot replace missing internal machinery. The full rule
+and bootstrap boundary are in [DEVELOPMENT_WORKFLOW.md](DEVELOPMENT_WORKFLOW.md).
 
 The [development workflow](DEVELOPMENT_WORKFLOW.md) applies the generalization
 machinery to content and to decisions about the work itself. Reusable reasoning

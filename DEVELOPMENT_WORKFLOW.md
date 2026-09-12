@@ -10,20 +10,25 @@ The owner's standing rule is:
 
 > No outside semantics or reasoning or anything else is allowed anywhere.
 
-This governs the system and its entire development, including bootstrap,
-candidate construction, observation, criticism, selection, validation,
-implementation, and retention. Every subject, relation, requirement, rule,
-operation, and judgment must have its complete RRA account and Factor meaning.
-Prose, host code, external models or proof procedures, manual judgment,
-metadata, digests, and supplied satisfaction tables cannot supply a missing
-internal account. Storage and execution mechanisms receive no exemption.
+The owner explicitly preserves Isabelle/HOL's normative bootstrap role through
+genesis. The prohibition does not revoke that boundary. Isabelle establishes
+the bootstrap definitions, proofs, and adequacy of the internal RRA/Factor
+account, including the handoff and transition mechanism.
+
+Within that established bootstrap boundary, the rule governs the system and
+its development: candidate construction, observation, criticism, selection,
+validation, implementation, and retention require their complete structural
+and semantic accounts. Prose, host code, manual judgments, metadata, digests,
+and supplied satisfaction tables cannot add semantics or substitute for an
+unimplemented internal operation. Storage and execution do not confer semantic
+authority.
 
 A missing internal representation, operation, or justification remains an unmet
-requirement. It does not authorize an external substitute, an interim fallback,
-or a bootstrap exception. This rule supersedes earlier permissions for outside
-candidate generation, criticism, development decisions, and semantic or proof
-authority. Recording this rule does not establish that the repository already
-complies with it.
+requirement. It does not authorize an ad hoc external substitute or interim
+fallback. The established Isabelle bootstrap role is not such a fallback.
+Native machinery may be used before genesis under its Isabelle-established
+contracts; its own verdict cannot authorize its own handoff. Recording this
+rule does not establish that the repository already complies with it.
 
 The owner's instructions apply to every problem encountered during the work,
 including questions about the generalization machinery itself. A generalizable

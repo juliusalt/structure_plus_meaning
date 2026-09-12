@@ -1102,6 +1102,11 @@ another self-rated table nor an outside judgment can replace the required
 structural process. The prohibition applies to development and bootstrap as
 well as the resulting system.
 
+The owner explicitly preserves Isabelle/HOL's normative bootstrap role through
+genesis. The standing rule does not revoke it. Isabelle-established contracts
+can support scoped native execution before genesis; a receiving system's own
+verdict cannot justify a transfer of authority to that system.
+
 The owner subsequently authorizes recovering the earlier archives from GitHub.
 All 8,810 removed historical validation files were unchanged from remotely
 verified commit `393213d603e5dc728cdb15a37c1d091c10a26417`, totaling

@@ -18,6 +18,10 @@ The owner's standing rule prohibits outside semantics, reasoning, or anything
 else anywhere. External steps described in this inventory are implementation
 gaps, not permitted fallbacks. They require complete internal RRA accounts and
 Factor meaning before they can perform the corresponding development role.
+Isabelle/HOL remains the normative bootstrap source through genesis, as the
+owner explicitly reaffirmed. Its proofs establish the contracts under which
+native operations can be used; they do not turn an outside substitute into the
+missing internal operation.
 
 | Repeated argument | General premises and conclusion | Existing native content | Missing use by development |
 |---|---|---|---|

@@ -7,9 +7,10 @@ request. Isabelle checks statements relative to definitions. Alignment of those
 definitions with the intended system remains a separate review obligation.
 
 The standing owner rule of 2026-09-12 prohibits outside semantics, reasoning,
-or anything else anywhere. It supersedes all earlier outside-reasoning and
-bootstrap permissions recorded below. Their historical presence grants no
-current exception; the complete instruction is in DEVELOPMENT_WORKFLOW.md.
+or anything else anywhere. The owner explicitly preserves Isabelle/HOL's
+normative bootstrap role through genesis. Earlier ad hoc outside-reasoning
+permissions provide no current exception; the complete instruction and
+bootstrap boundary are in DEVELOPMENT_WORKFLOW.md.
 
 Each choice below records its reason and its limits. Proof references are added
 only after the corresponding theory is accepted.
@@ -7620,11 +7621,20 @@ The owner's explicit instruction of 2026-09-12 is:
 It applies to the entire system and development process. All subjects,
 requirements, observations, candidates, operations, evidence interpretations,
 inferences, decisions, and acceptance judgments require complete RRA accounts
-and Factor meaning. The rule includes bootstrap, implementation, validation,
-storage, and execution. Earlier external-judgment and candidate-generation
-permissions and Isabelle's former normative bootstrap role are superseded.
+and Factor meaning. The rule governs implementation, validation, storage,
+execution, and the internal account established during bootstrap. Earlier
+ad hoc external-judgment and candidate-generation permissions are superseded.
 
 The repository does not yet meet this requirement throughout. Missing native
 representations, operations, proofs, and process integration remain defects to
 repair. They supply no exception. Recording the standing rule is not a claim
 that those defects have been resolved.
+
+The owner then clarified that Isabelle's normative bootstrap role remains in
+force through genesis. My withdrawal of that role was an overextension of the
+standing rule and is reversed. Isabelle establishes the receiving foundation's
+adequacy and transition account before the normative handoff; a receiving
+system's verdict cannot create its own authority. Native operations may already
+be used within an Isabelle-established scope before genesis. Whether a broader
+earlier handoff can meet its complete obligations is not settled by these edits;
+the existing D-9 boundary remains in force.

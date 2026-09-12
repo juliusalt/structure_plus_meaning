@@ -7,8 +7,9 @@ summary or remembered version does not replace this read.
 
 Standing owner rule: no outside semantics, reasoning, or anything else is
 allowed anywhere. It applies to the system and all development activity.
-Follow the complete rule in DEVELOPMENT_WORKFLOW.md; a missing internal
-account creates an unmet requirement, never an external fallback permission.
+The owner explicitly preserves Isabelle/HOL's normative bootstrap role through
+genesis. Follow that boundary and the complete rule in DEVELOPMENT_WORKFLOW.md;
+a missing internal account creates no ad hoc external fallback permission.
 
 Follow all requirements in that document, including preparing the largest useful
 group of related work, requesting independent information together, and reviewing

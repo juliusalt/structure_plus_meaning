@@ -70,10 +70,13 @@ The owner's standing rule of 2026-09-12 is:
 It governs every part of the system and its development, including bootstrap,
 candidate construction, observation, criticism, selection, validation,
 implementation, and retention. All subjects and operations require complete
-RRA accounts and Factor meaning. A missing internal account remains an unmet
-requirement; no external judgment, host implementation, proof procedure, or
-bootstrap exception may substitute for it. This supersedes the earlier external
-candidate-generation permission and Isabelle's former normative bootstrap role.
+RRA accounts and Factor meaning. The owner subsequently clarified that
+Isabelle/HOL's normative bootstrap role remains in force through genesis.
+Isabelle establishes the bootstrap account and its adequacy; the prohibition
+does not withdraw that authority. A missing internal operation is still an
+unmet requirement, and no ad hoc external judgment or host implementation may
+substitute for it. Native execution under an Isabelle-established contract is
+distinct from the full normative handoff at genesis.
 The operational standing instruction is in [DEVELOPMENT_WORKFLOW.md](DEVELOPMENT_WORKFLOW.md).
 
 ### 0.2 Status of every decision in this document
@@ -275,8 +278,9 @@ the latter should guide the content of each batch.
 This plan establishes nothing. It records defects, the authority that governs
 each repair, the change, and the obligation that closes it. A repair is closed
 only when its required structural and semantic account and justification are
-internally established. Isabelle acceptance alone does not discharge that
-obligation or provide an external source of semantic authority.
+established. Until genesis, Isabelle/HOL is the normative proof source. A proof
+of an external model does not by itself provide a missing native implementation
+or establish alignment with the independently stated requirement.
 
 ---
 
@@ -513,10 +517,10 @@ the plan must exhibit the exact structural case the constrained encoding cannot
 preserve.
 
 **D-9 — Internally closed predecessor-authorized amendment.** *(Endorsed;
-bootstrap qualification superseded by the owner's standing rule of 2026-09-12.)*
-There is no external normative bootstrap authority. Genesis and its structural
-foundation-transition mechanism require their own complete internal accounts.
-A successor is legitimate only through an exact transition accepted
+normative bootstrap role explicitly reaffirmed by the owner on 2026-09-12.)*
+Isabelle/HOL is normative through genesis, where it proves the adequacy of
+$\Phi_0$ including a general structural foundation-transition mechanism.
+Thereafter a successor is legitimate only through an exact transition accepted
 under its predecessor. The transition may alter any component of the successor,
 including the amendment protocol itself, provided the predecessor's current
 amendment semantics accepts the certificate. No successor may justify its own
@@ -552,11 +556,11 @@ on its own terms — an owned position may be open, so $\operatorname{Own}(a,p)$
 can hold while no $x$ has $\operatorname{End}(p,x)$, and a raw triple $(a,p,x)$
 cannot represent that without supplying an $x$.
 
-The current specification expresses the recognizers in Isabelle over RRA,
-using carrier, incidence, exact identity, and bounded structure. That external
-specification does not discharge their required internal account or create a
-bootstrap exception. Their structural reading must not depend on the truth
-predicate `factor_holds`. The required dependency is
+During bootstrap the recognizers are Isabelle-defined over RRA, using carrier,
+incidence, exact identity, and bounded structure. Isabelle establishes their
+required internal accounts and contracts; an external specification alone is
+not a native implementation. Their structural reading must not depend on the
+truth predicate `factor_holds`. The required dependency is
 RRA $\to$ Factor structural view $\to$ Factor definitions $\to$ Factor truth,
 with no cycle. A later theorem may show a recovered relation simplifies
 extensionally to a direct projection; such simplification is derived, not
@@ -633,8 +637,8 @@ not one recursively nested artifact and not a graph of mutable references.
 * currentness relative to an exact authority, publication, locus, generation,
   purpose, and foundation, with no ambient form;
 * SK as an external adequacy target;
-* the required internal account of bootstrap and genesis; the earlier assignment
-  of normative authority to Isabelle/HOL is superseded by the standing rule;
+* Isabelle/HOL as the normative bootstrap source through genesis, including
+  proof of the adequacy of the internal account and transition mechanism;
 * the prohibition on deriving semantic force from implementation.
 
 ---
@@ -2421,9 +2425,9 @@ denies.
 
 **Warrant.** **D-9**.
 
-**Change.** Bootstrap, genesis, and the transition mechanism have no outside
-semantic or reasoning authority. Under the internally established predecessor
-account:
+**Change.** Isabelle/HOL is normative through genesis; its final bootstrap
+obligation is the adequacy of $\Phi_0$ including the transition mechanism.
+Thereafter, under the predecessor's established account:
 
 $$
 \boxed{

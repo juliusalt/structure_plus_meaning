@@ -6,6 +6,25 @@ A retained summary or remembered version does not replace this read. Restore the
 active problem, outstanding requirements, and the current batch from the retained
 context only after rereading these operating requirements.
 
+The owner's standing rule is:
+
+> No outside semantics or reasoning or anything else is allowed anywhere.
+
+This governs the system and its entire development, including bootstrap,
+candidate construction, observation, criticism, selection, validation,
+implementation, and retention. Every subject, relation, requirement, rule,
+operation, and judgment must have its complete RRA account and Factor meaning.
+Prose, host code, external models or proof procedures, manual judgment,
+metadata, digests, and supplied satisfaction tables cannot supply a missing
+internal account. Storage and execution mechanisms receive no exemption.
+
+A missing internal representation, operation, or justification remains an unmet
+requirement. It does not authorize an external substitute, an interim fallback,
+or a bootstrap exception. This rule supersedes earlier permissions for outside
+candidate generation, criticism, development decisions, and semantic or proof
+authority. Recording this rule does not establish that the repository already
+complies with it.
+
 The owner's instructions apply to every problem encountered during the work,
 including questions about the generalization machinery itself. A generalizable
 argument must be factored into reusable content at its first use. A later use
@@ -32,10 +51,10 @@ Independently criticize the question, candidate scope, observations, reusable
 reasoning, evidence, and returned results. Execution does not certify their
 adequacy, accuracy, reliability, or usefulness. When criticism exposes a gap,
 submit that gap and the proposed correction through the same process. Candidate
-generation and independent criticism may remain external; a manually selected
-answer must not be presented as a machinery-generated recommendation. Quality
-remains paramount, and criticism is part of this workflow, not an exemption
-from using it.
+generation and independent criticism are themselves subject to the standing
+rule. A manually selected answer cannot replace an internally derived decision.
+Quality remains paramount, and criticism is part of this workflow, not an
+exemption from using it.
 
 Each content cycle must retain the independently stated problem, applicable
 reusable reasoning, instantiated premises, generated candidates or proposed
@@ -51,14 +70,15 @@ operation and complete input to the independently stated condition. If indices
 present those subjects, their maps and the observation equation must establish
 that connection. A retained description or digest establishes which bytes
 accompanied an execution; it does not establish what the computation means.
-An externally supplied observation table remains conditional input unless its
-subject and satisfaction boundary are separately established. Its evaluation
-must not be reported as derivation of those observations.
+A supplied observation table establishes no satisfaction claim about another
+subject. That subject, the observation operation, and its satisfaction boundary
+must be internally established. Evaluation of a supplied table cannot replace
+derivation of the required observations.
 
-Incomplete native admission does not suspend this workflow. The existing
-conditional machinery can be used with its current contracts and explicit
-unresolved premises. A missing representation or reasoning operation becomes
-a development problem in that machinery. Source-readiness investigations
+Incomplete native admission does not suspend the standing rule. A conditional
+result retains every unresolved premise and cannot discharge it through an
+outside judgment. A missing representation or reasoning operation becomes a
+development problem in the machinery. Source-readiness investigations
 answer questions about proof dependencies; they do not by themselves choose
 or justify a problem, approach, decomposition, or proposed change.
 

@@ -14,6 +14,11 @@ implementation boundary. A native construction already exists in several
 rows. That does not mean that the machinery currently recognizes or chooses
 its application.
 
+The owner's standing rule prohibits outside semantics, reasoning, or anything
+else anywhere. External steps described in this inventory are implementation
+gaps, not permitted fallbacks. They require complete internal RRA accounts and
+Factor meaning before they can perform the corresponding development role.
+
 | Repeated argument | General premises and conclusion | Existing native content | Missing use by development |
 |---|---|---|---|
 | Complete a computation's result class | A sound total computation witness and an exact comparison on its result class yield a function admitting every presentation of the result. | `context_result_comparison_schema` and its binary variant keep a private result and call the actual comparator; profile, loss, and complete table operations consume their contracts. | Discover the compatible witness/comparator pair from the requested contract, instantiate the construction, and return its prerequisites and candidate without my selecting the wrapper. |

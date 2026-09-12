@@ -5,6 +5,13 @@ material. The owner's principles govern the reconstruction: structurality,
 explicitness, non-conflation, irredundancy, and non-nominality. Individual claims
 in the supplied documents remain subject to proof and alignment review.
 
+Standing owner rule: no outside semantics, reasoning, or anything else is
+allowed anywhere, including development and bootstrap. Every part requires its
+complete RRA account and Factor meaning. Missing internal machinery is an unmet
+requirement, not an external fallback permission. The rule is recorded in
+[DEVELOPMENT_WORKFLOW.md](DEVELOPMENT_WORKFLOW.md); existing external proofs and
+host procedures do not by themselves establish compliance.
+
 The [development workflow](DEVELOPMENT_WORKFLOW.md) applies the generalization
 machinery to content and to decisions about the work itself. Reusable reasoning
 must become input to later decisions, with its actual prerequisites retained.

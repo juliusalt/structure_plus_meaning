@@ -7,6 +7,13 @@ conflicts with another required distinction. Reasons are recorded in
 `DECISIONS.md`. All unlisted higher-layer results from the delivered bootstrap
 are historical and are not counted as implementation evidence.
 
+The standing owner rule prohibits outside semantics, reasoning, or anything
+else anywhere, including development and bootstrap. All required accounts and
+justifications must be internal to RRA and Factor. An Isabelle proof or host
+execution does not by itself establish that internal account. Missing native
+representations, operations, reasoning, and acceptance remain unmet obligations;
+they authorize no external fallback. This applies to every row in this ledger.
+
 The owner's correction of 2026-09-08 supersedes single-grammar and quotation
 principality. O-21 and O-43 through O-45, O-79, and O-80 below use the amended
 requirements in the plan. In particular, O-44 and O-80 apply throughout the

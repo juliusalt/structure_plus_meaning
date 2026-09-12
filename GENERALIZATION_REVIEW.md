@@ -1095,10 +1095,12 @@ The owner's `problems.txt` identifies a distinct defect in development itself:
 supplied facet tables do not compute the conditions steering the work, workflow
 requirements are remembered rather than enforced, and generated bulk is retained
 instead of a sufficient reconstruction boundary. This reader milestone does not
-repair the six development conditions. Pending that repair, unsupported host
-decisions are explicitly external judgments; another self-rated table is not
-presented as a machinery-derived selection. Existing proved native operations
-continue to be executed where their actual contracts apply.
+repair the six development conditions. Host decisions in that milestone were
+recorded as external judgments. The owner's subsequent standing rule prohibits
+that fallback: missing internal accounts remain unmet requirements. Neither
+another self-rated table nor an outside judgment can replace the required
+structural process. The prohibition applies to development and bootstrap as
+well as the resulting system.
 
 The owner subsequently authorizes recovering the earlier archives from GitHub.
 All 8,810 removed historical validation files were unchanged from remotely

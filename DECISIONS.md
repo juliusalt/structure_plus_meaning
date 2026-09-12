@@ -6,6 +6,11 @@ to the owner; those attributions do not elevate their details above the current
 request. Isabelle checks statements relative to definitions. Alignment of those
 definitions with the intended system remains a separate review obligation.
 
+The standing owner rule of 2026-09-12 prohibits outside semantics, reasoning,
+or anything else anywhere. It supersedes all earlier outside-reasoning and
+bootstrap permissions recorded below. Their historical presence grants no
+current exception; the complete instruction is in DEVELOPMENT_WORKFLOW.md.
+
 Each choice below records its reason and its limits. Proof references are added
 only after the corresponding theory is accepted.
 
@@ -7586,14 +7591,12 @@ callees; payload observations alone do not determine the complete pattern call.
 The one-premise example retains its separate asserted child and supplies no
 closed-proof claim.
 
-The existing development decision tables lack an applicable proved contract
-computing the conditions on the actual proposed edits and their independent
-requirements. Until that operation is supplied, these host choices are external
-judgments under the exception in condition 1 of `problems.txt`. Evaluating
-another supplied suitability table would leave that condition unmet. Native
-proof and execution contracts justify their stated mathematical results, not
-the external choice of development work. This exception does not discharge
-conditions 1, 2, 4, 5 or 6 for a repaired protocol.
+The development choices in that milestone were recorded as external judgments
+because an applicable internal condition contract was missing. The owner's
+subsequent standing rule withdraws that exception. Such missing accounts remain
+unmet requirements and cannot authorize continued outside reasoning, candidate
+construction, criticism, or decision-making. The historical record does not
+grant a current operating permission.
 
 New validation retains repository sources, the exact source fixture, executable
 recipe, required toolchain and complete report comparison boundary. A cold run
@@ -7607,3 +7610,21 @@ before removing their current-tree copies. Historical links are pinned to that
 commit. This authorization avoids reconstructing each obsolete historical
 development environment as part of this milestone. New results use the
 source-only recipe and are not attributed to the historical archive.
+
+## Standing prohibition on outside semantics and reasoning
+
+The owner's explicit instruction of 2026-09-12 is:
+
+> No outside semantics or reasoning or anything else is allowed anywhere. Make this a standing rule.
+
+It applies to the entire system and development process. All subjects,
+requirements, observations, candidates, operations, evidence interpretations,
+inferences, decisions, and acceptance judgments require complete RRA accounts
+and Factor meaning. The rule includes bootstrap, implementation, validation,
+storage, and execution. Earlier external-judgment and candidate-generation
+permissions and Isabelle's former normative bootstrap role are superseded.
+
+The repository does not yet meet this requirement throughout. Missing native
+representations, operations, proofs, and process integration remain defects to
+repair. They supply no exception. Recording the standing rule is not a claim
+that those defects have been resolved.

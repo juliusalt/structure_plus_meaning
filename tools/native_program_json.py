@@ -20,11 +20,13 @@ fun jenvironment (artifacts,bindings) =
   "{\"artifacts\":" ^ jlist jartifactRow artifacts ^ ",\"bindings\":" ^ jlist jbinding bindings ^ "}";
 '''
 
-SCHEMAS = r'''
+TARGETS = r'''
 fun jtarget (N.Finite_Whole a) = "{\"whole_artifact\":" ^ jartifact (N.finite_artifact_rows a) ^ "}"
   | jtarget (N.Finite_Anchor (a,r)) = "{\"anchored_artifact\":[" ^
       jartifact (N.finite_artifact_rows a) ^ "," ^ jaddress r ^ "]}";
-fun jpatternWith variable (N.Finite_Variable a) = "{\"variable\":" ^ variable a ^ "}"
+'''
+
+SCHEMAS = TARGETS + r'''fun jpatternWith variable (N.Finite_Variable a) = "{\"variable\":" ^ variable a ^ "}"
   | jpatternWith variable (N.Finite_Pattern_Payload p) = "{\"payload\":" ^ jaddress p ^ "}"
   | jpatternWith variable (N.Finite_Pattern_Pair (p,q)) =
       "{\"pair\":[" ^ jpatternWith variable p ^ "," ^ jpatternWith variable q ^ "]}"

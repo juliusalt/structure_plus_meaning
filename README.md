@@ -109,8 +109,13 @@ An added requirement excludes valid terms in 31 ready cases. The preceding
 three-condition observation set leaves six comparisons unresolved in the
 expanded family; the computed revision adds completeness and resolves them.
 
-The session registers 1025 theories; its
+The session registers 1039 theories; its
 [latest complete check](validation/check.json) records the current proof status.
+The [native node constructor](validation/reconstruction/native-nodes.md) produces complete
+assertion and inference metadata in fresh native artifacts. Its actual-source
+comparison exposes metadata loss even when a defective method refuses invalid
+inputs correctly.
+
 The [native inference histories](validation/reconstruction/native-histories.md)
 retain every progressive preceding state and complete activated clause,
 binding and indexed premise family. Their result projects exactly to the

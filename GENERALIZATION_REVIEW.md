@@ -1373,3 +1373,31 @@ and 41 reports. The nine boundaries retain 746 reports. The
 selection does not establish arbitrary-method coverage, native proof artifacts,
 mathematical-proof checking, complete development enforcement, the full cost
 account or genesis.
+
+
+The native proof-node review states the original complete metadata and actual
+source conditions before comparing constructors. The compiler constructs both
+node forms under the original source-position and formation prerequisites.
+Local installation additionally checks every actual target. Each observation
+inspects the returned environment and full native reading; a candidate cannot
+supply its own recovery flags. The original assembly argument is reused by the
+finite and abstract constructors, and the complete packet retains all subjects,
+readings, comparisons and revisions.
+
+The first eight-method, 24-input run selected only the complete constructor,
+but its four-condition basis omitted metadata. Independent criticism added
+methods that first check original readiness, then erase bindings, erase targets
+or change the clause. Two new inputs cover recursively paired quotation values
+and distinct binding values. The original 24 problems and 192 candidate and
+assessment cells remain unchanged. The eleven-method run finds 15 missing
+comparisons and 111 repair witnesses for that basis, adds both metadata
+conditions and resolves every residual. Only method 0 is adequate in this
+expanded scope; allocation freshness does not establish matching-node reuse.
+
+The full 1,039-theory check and 98 host-tool tests passed. All ten reconstruction
+boundaries rebuilt their complete current source closures from HOL and
+reproduced 804 reports with no proof errors and every original source and
+execution input verified. The new node family retains 58 complete reports.
+These results do not establish inference validity, whole-graph construction or
+replay, native mathematical-proof checking, complete development enforcement,
+the full cost account or genesis.

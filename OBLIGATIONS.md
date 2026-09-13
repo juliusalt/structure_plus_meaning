@@ -845,3 +845,20 @@ development cycle and its native enforcement, historical permission, the
 complete physical cost account, genesis and the final line-by-line audit remain
 open. The finite investigation and its own accepted results do not authorize
 the handoff.
+
+
+The native node-construction milestone supplies complete finite syntax for
+both node forms, original clauses and bindings, and every indexed target. Its
+universal compiler contract is the existing proof-node code condition. Local
+installation preserves the complete source and recovers the original metadata
+through the native reader. The eleven-method, 26-input investigation rejects
+metadata loss independently of refusal behavior and follows the returned
+repair to a complete comparison. The 1,039-theory check and ten reconstructions
+retain 804 complete reports.
+
+This completes a local metadata and fresh-allocation operation. It does not
+validate clause applications or discharge proof premises. Complete derivation
+construction, graph placement and replay, native mathematical-proof checking
+and O-85, development-cycle admission and enforcement, historical permission,
+the complete cost account, genesis and the final line-by-line audit remain
+open. The native result does not authorize its own handoff.

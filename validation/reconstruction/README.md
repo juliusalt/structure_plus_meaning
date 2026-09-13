@@ -7,8 +7,9 @@ The child-claim recipe below, the
 [source-checking extension recipe](native-sources.md),
 [native program evaluation recipe](native-evaluation.md),
 [native admission recipe](native-admission.md),
-[native requirement-family recipe](native-requirements.md), and
-[native inference-history recipe](native-histories.md) use the same reconstruction
+[native requirement-family recipe](native-requirements.md),
+[native inference-history recipe](native-histories.md), and
+[native proof-node recipe](native-nodes.md) use the same reconstruction
 runner and source collector. Each retains its own complete source and report boundary. The runner
 schedules proof, diagnostics, code export and the required execution stages;
 it supplies no semantic judgment about their subjects.
@@ -55,7 +56,7 @@ when those inputs change. The usual repository build is independent:
 
 `tools/reconstruction_sources.py` derives each recipe's complete original
 theory closure and local Python import closure, together with its declared
-fixtures and report comparison. The same collector serves all nine boundaries.
+fixtures and report comparison. The same collector serves all ten boundaries.
 `tools/prepare_proof_sources.py` prepares a complete source prefix for local
 proof work; ordinary validation must accept it before a saved heap is reused.
 

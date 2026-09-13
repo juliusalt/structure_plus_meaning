@@ -1028,3 +1028,17 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Assessment_Reports
     Factor_Native_History_Reports
     Native_History_Investigation_Execution
+    Factor_Finite_Block_Installation
+    Factor_Finite_Citation_Syntax
+    Factor_Finite_Graph_Metadata
+    Factor_Finite_Proof_Node_Installation
+    Factor_Finite_Proof_Nodes
+    Factor_Finite_Proof_Rows
+    Factor_Finite_Proof_Tables
+    Factor_Finite_Syntax_Blocks
+    Factor_Finite_Term_Encoding
+    Factor_Native_Node_Assessment
+    Factor_Native_Node_Cases
+    Factor_Native_Node_Investigation
+    Finite_Unique_Inspections
+    Native_Node_Investigation_Execution

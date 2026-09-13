@@ -1,5 +1,6 @@
 theory Factor_Finite_Template_Syntax
   imports Factor_Finite_Pattern_Syntax Factor_Finite_Reference_Forests Factor_Executable_Premises Factor_Schema_Bodies
+    Factor_Finite_Citation_Syntax
 begin
 
 section \<open>Complete finite pattern records reuse the original child placement\<close>
@@ -40,11 +41,6 @@ definition finite_material_syntax :: "('a\<Rightarrow>local_address) \<Rightarro
 lemma decode_finite_material_syntax [simp]:
   "decode_finite_object (finite_material_syntax f M)=material_syntax f (decode_finite_material M)"
   by (simp add: finite_material_syntax_def material_syntax_def finite_material_fields_correct)
-
-lemma decode_finite_external_occurrence_syntax [simp]:
-  "decode_finite_object (finite_external_occurrence_syntax a)=external_occurrence_syntax a"
-  by (simp add: finite_external_occurrence_syntax_def external_occurrence_syntax_def
-    decode_finite_object_def decode_finite_structure_def)
 
 definition finite_prospective_syntax :: "('a\<Rightarrow>local_address) \<Rightarrow> local_address \<Rightarrow>
     'a finite_term_pattern \<Rightarrow> finite_exact_artifact" where

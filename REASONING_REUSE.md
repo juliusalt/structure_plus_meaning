@@ -962,3 +962,23 @@ a mistaken closed-negative fixture description while retaining the original
 case. Only the original history constructor is adequate in this scope. Native
 proof-artifact construction, mathematical-proof checking, complete development
 record enforcement, the full cost account and genesis remain separate problems.
+
+
+The complete native node constructor shares recursive term quotation, literal
+and citation tables, full row and table assembly, record framing and generic
+block installation. The original abstract inference-node assembly and its
+finite compiler instantiate one common argument. Successful compilation has
+the existing universal proof-node code contract; local installation preserves
+every old artifact and outgoing binding and recovers all original metadata
+through the existing native reader. A generic unique-reading conjunction joins
+the independent node and indexed-target inspections.
+
+The [node investigation](validation/reconstruction/native-nodes.md) evaluates
+eleven actual methods on 26 native inputs. Three added candidates preserve
+correct refusal while changing only metadata. Their native results expose 15
+comparisons omitted by the earlier four-condition basis; 111 repair witnesses
+direct both metadata conditions, and the followed comparison has no residual.
+Only the complete constructor is adequate. This is fresh local allocation;
+searching for an existing matching node, constructing and replaying complete
+derivation graphs, native mathematical-proof checking, the full cost account,
+development-cycle enforcement and genesis remain separate requirements.

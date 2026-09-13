@@ -108,6 +108,48 @@ lemma decode_finite_term_binding [simp]:
   "(a,decode_finite_term t) \<in> decode_finite_term_bindings V \<longleftrightarrow> (a,t) |\<in>| V"
   by (auto simp: decode_finite_term_bindings_def)
 
+lemma decode_finite_term_bindings_functional:
+  "single_valued (decode_finite_term_bindings V)=finite_relation_functional V"
+proof -
+  have injective: "inj decode_finite_term" by (auto simp: inj_def)
+  show ?thesis by (simp only: decode_finite_term_bindings_def
+    map_relation_values_functional[OF injective] finite_relation_functional_correct)
+qed
+
+lemma decode_finite_term_bindings_domain:
+  "rel_dom (decode_finite_term_bindings V)=fset (fimage fst V)"
+  by (simp only: decode_finite_term_bindings_def map_relation_values_domain rel_dom_image fimage.rep_eq
+    map_relation_values_domain[unfolded rel_dom_image])
+
+lemma decode_finite_term_bindings_finite [simp]:
+  "finite (decode_finite_term_bindings V)"
+  by (simp add: decode_finite_term_bindings_def)
+
+lemma decode_finite_term_bindings_all:
+  "(\<forall>a t. (a,t)\<in>decode_finite_term_bindings V \<longrightarrow> test a t)=
+    fBall V (\<lambda>(a,t). test a (decode_finite_term t))"
+proof
+  assume all: "\<forall>a t. (a,t)\<in>decode_finite_term_bindings V \<longrightarrow> test a t"
+  show "fBall V (\<lambda>(a,t). test a (decode_finite_term t))"
+  proof (rule fBallI)
+    fix q assume member: "q |\<in>| V"
+    obtain a t where pair: "q=(a,t)" by (cases q)
+    have decoded: "(a,decode_finite_term t)\<in>decode_finite_term_bindings V"
+      using member by (simp add: pair)
+    show "(case q of (a,t) \<Rightarrow> test a (decode_finite_term t))"
+      using all decoded by (simp only: pair case_prod_conv; blast)
+  qed
+next
+  assume all: "fBall V (\<lambda>(a,t). test a (decode_finite_term t))"
+  show "\<forall>a t. (a,t)\<in>decode_finite_term_bindings V \<longrightarrow> test a t"
+  proof (intro allI impI)
+    fix a t assume member: "(a,t)\<in>decode_finite_term_bindings V"
+    obtain v where original: "(a,v) |\<in>| V" and decoded_value: "t=decode_finite_term v"
+      using member by (auto simp: decode_finite_term_bindings_def map_relation_values_def)
+    show "test a t" using fbspec[OF all original] by (simp only: case_prod_conv decoded_value)
+  qed
+qed
+
 definition finite_term_bindings_formed ::
   "'a fset \<Rightarrow> ('a \<times> finite_factor_term) fset \<Rightarrow> bool" where
   "finite_term_bindings_formed B V \<longleftrightarrow>
@@ -117,15 +159,9 @@ definition finite_term_bindings_formed ::
 lemma finite_term_bindings_formed_correct:
   "finite_term_bindings_formed B V \<longleftrightarrow>
     term_bindings_formed (fset B) (decode_finite_term_bindings V)"
-proof -
-  have injective: "inj decode_finite_term" by (auto simp: inj_def)
-  show ?thesis
-    by (auto simp: finite_term_bindings_formed_def term_bindings_formed_def
-        finite_relation_functional_correct decode_finite_term_bindings_def
-        map_relation_values_functional[OF injective] finite_term_formed_correct
-        rel_dom_image fimage.rep_eq fset_inject[symmetric]
-        Ball_def split_paired_All; blast)
-qed
+  by (simp add: finite_term_bindings_formed_def term_bindings_formed_def
+    decode_finite_term_bindings_functional decode_finite_term_bindings_domain
+    decode_finite_term_bindings_all finite_term_formed_correct fset_inject[symmetric] fimage.rep_eq split_def)
 
 fun finite_pattern_instance ::
   "('a \<times> finite_factor_term) fset \<Rightarrow> 'a finite_term_pattern \<Rightarrow>

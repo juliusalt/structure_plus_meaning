@@ -1,18 +1,8 @@
 theory Factor_Package_Extensions
-  imports Factor_Root_Environments
+  imports Factor_Root_Environments Factor_Closed_Native_Definitions
 begin
 
 section \<open>Complete definition readings determine their outgoing edges\<close>
-
-lemma native_definition_edges_at:
-  assumes read: "native_definition_at E (fst d) (snd d) p C"
-  shows "(d,e)\<in>native_definition_edges E \<longleftrightarrow>
-    (\<exists>c S. (c,S)\<in>C \<and> e\<in>schema_dependencies S)"
-proof -
-  have unique: "q=p \<and> B=C" if "native_definition_at E (fst d) (snd d) q B" for q B
-    by (rule native_definition_unique[OF that read])
-  show ?thesis unfolding native_definition_edges_def using read unique by blast
-qed
 
 lemma native_package_edge_closed:
   assumes package: "native_package_at E u r P" and member: "d\<in>system_definitions P"

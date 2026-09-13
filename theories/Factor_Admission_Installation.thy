@@ -1,5 +1,5 @@
 theory Factor_Admission_Installation
-  imports Factor_Admission_Plans
+  imports Factor_Admission_Plans Factor_System_Composition
 begin
 
 section \<open>Construction retains every original definition\<close>
@@ -7,8 +7,12 @@ section \<open>Construction retains every original definition\<close>
 definition admission_extension :: "(nat,nat,nat,nat) schema_system \<Rightarrow>
     (nat,nat,nat,nat) schema_system \<Rightarrow> bool" where
   "admission_extension P Q \<longleftrightarrow> schema_system_formed P \<and> schema_system_formed Q \<and>
-    system_definitions P\<subseteq>system_definitions Q \<and>
     systems_agree_on P Q (system_definitions P)"
+
+lemma admission_extension_definitions:
+  assumes "admission_extension P Q"
+  shows "system_definitions P\<subseteq>system_definitions Q"
+  by (rule whole_agreement_definitions) (use assms in \<open>simp add: admission_extension_def\<close>)
 
 definition admission_source :: "(nat,nat,nat,nat) schema_system \<Rightarrow> nat \<Rightarrow> bool" where
   "admission_source P n \<longleftrightarrow> schema_system_formed P \<and> (\<forall>d\<in>system_definitions P. d<n)"
@@ -22,8 +26,18 @@ lemma admission_extension_refl:
   by (auto simp: admission_extension_def systems_agree_on_def)
 
 lemma admission_extension_trans:
-  "admission_extension P Q \<Longrightarrow> admission_extension Q R \<Longrightarrow> admission_extension P R"
-  by (auto simp: admission_extension_def systems_agree_on_def; blast)
+  assumes first: "admission_extension P Q" and second: "admission_extension Q R"
+  shows "admission_extension P R"
+proof -
+  have old: "systems_agree_on P Q (system_definitions P)"
+    and continued: "systems_agree_on Q R (system_definitions Q)"
+    using first second unfolding admission_extension_def by blast+
+  have restricted: "systems_agree_on Q R (system_definitions P)"
+    by (rule systems_agree_on_subdomain[OF continued admission_extension_definitions[OF first]])
+  have agreement: "systems_agree_on P R (system_definitions P)"
+    by (rule systems_agree_on_transitive[OF old restricted])
+  show ?thesis using first second agreement by (auto simp: admission_extension_def)
+qed
 
 lemma admission_extension_meaning:
   assumes extension: "admission_extension P Q" and member: "d\<in>system_definitions P"
@@ -32,10 +46,7 @@ proof -
   have formed: "schema_system_formed P" "schema_system_formed Q"
     and agree: "systems_agree_on P Q (system_definitions P)"
     using extension by (auto simp: admission_extension_def)
-  have closed: "system_dependency_closed P (system_definitions P)"
-    using system_dependency_boundary(1)[OF formed(1)]
-    by (auto simp: system_dependency_closed_def)
-  show ?thesis using positive_meaning_dependency_locality[OF formed agree closed member] by blast
+  show ?thesis by (rule whole_system_agreement_meaning[OF formed agree member])
 qed
 
 lemma admission_extension_goal:

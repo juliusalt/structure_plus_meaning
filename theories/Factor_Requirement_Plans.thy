@@ -24,6 +24,10 @@ definition required_admission_system where
   "required_admission_system P ds k cs=
     install_requirement_guard (install_admission_plan P cs) k (requirement_sockets ds)"
 
+lemma required_admission_entry [simp]:
+  "k\<in>system_definitions (required_admission_system P ds k cs)"
+  by (simp add: required_admission_system_def install_requirement_guard_def)
+
 theorem required_admission_installed:
   assumes source: "admission_source P n"
     and supported: "\<forall>g\<in>set gs. admission_goal_sites g\<subseteq>system_definitions P"
@@ -32,6 +36,8 @@ theorem required_admission_installed:
     "admission_extension P (required_admission_system P ds k cs)"
     "(k,t)\<in>positive_meaning (required_admission_system P ds k cs) \<longleftrightarrow>
       term_formed t \<and> (\<forall>g\<in>set gs. admission_goal_holds (positive_meaning P) g t)"
+    "schema_call_formed (required_admission_system P ds k cs) k t \<longleftrightarrow> term_formed t"
+    "k\<notin>system_definitions P"
 proof -
   let ?Q="install_admission_plan P cs"
   have built: "admission_source ?Q k \<and> admission_extension P ?Q \<and>
@@ -63,6 +69,10 @@ proof -
   show "(k,t)\<in>positive_meaning (required_admission_system P ds k cs) \<longleftrightarrow>
       term_formed t \<and> (\<forall>g\<in>set gs. admission_goal_holds (positive_meaning P) g t)"
     by (simp only: required_admission_system_def guard.guarded_meaning requirement_sockets_all exact)
+  show "schema_call_formed (required_admission_system P ds k cs) k t \<longleftrightarrow> term_formed t"
+    by (simp only: required_admission_system_def guard.guarded_call)
+  show "k\<notin>system_definitions P"
+    using current admission_extension_definitions[OF extension] by (auto simp: admission_source_def)
 qed
 
 corollary required_admission_failed_goal:

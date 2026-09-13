@@ -1,5 +1,5 @@
 theory Factor_Positive_Locality
-  imports Factor_Positive_Meaning
+  imports Factor_Positive_Meaning Factor_System_Clauses
 begin
 
 section \<open>Agreement on a complete definition dependency boundary\<close>
@@ -19,6 +19,27 @@ lemma systems_agree_on_sym:
   assumes "systems_agree_on P T U"
   shows "systems_agree_on T P U"
   using assms by (auto simp: systems_agree_on_def)
+
+lemma whole_agreement_definitions:
+  assumes "systems_agree_on P Q (system_definitions P)"
+  shows "system_definitions P\<subseteq>system_definitions Q"
+  using assms by (auto simp: systems_agree_on_def system_definitions_def rel_dom_def; blast)
+
+lemma systems_agree_on_fields:
+  assumes source: "schema_system_formed P" and target: "schema_system_formed T"
+    and agree: "systems_agree_on P T U" and inside: "d\<in>U"
+    and member: "d\<in>system_definitions P"
+  shows "system_interface T d=system_interface P d"
+    and "system_clause_family T d=system_clause_family P d"
+proof -
+  have interface: "(d,system_interface P d)\<in>system_interfaces T"
+    using system_interface_member[OF source member] agree inside
+    by (auto simp: systems_agree_on_def)
+  show "system_interface T d=system_interface P d"
+    by (rule system_interface_unique[OF target interface])
+  show "system_clause_family T d=system_clause_family P d"
+    using agree inside by (auto simp: systems_agree_on_def)
+qed
 
 lemma systems_agree_on_dependencies:
   assumes agree: "systems_agree_on P T U" and member: "d \<in> U"

@@ -7,13 +7,11 @@ section \<open>The request predicates reuse the actual original operations\<clos
 lemma admission_sequence_data_extension:
   "admission_extension data_append_system admission_sequence_system"
 proof -
-  have included: "system_definitions data_append_system\<subseteq>system_definitions admission_sequence_system"
-    by auto
   have agreement: "systems_agree_on data_append_system admission_sequence_system
       (system_definitions data_append_system)"
     by (auto simp: systems_agree_on_def admission_sequence_system_def admission_plan_system_def
       admission_counter_system_def admission_counter_element_system_def)
-  show ?thesis using included agreement
+  show ?thesis using agreement
     by (simp only: admission_extension_def data_append_system_formed admission_sequence_system_formed; blast)
 qed
 

@@ -139,6 +139,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Definition_Compilation
     Factor_Definition_Code
     Factor_Definition_Environments
+    Factor_Rooted_Code_Families
+    Factor_Native_Program_Variants
     Factor_Program_Construction
     Factor_Schema_Environments
     Factor_Positive_Meaning
@@ -380,6 +382,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Package_Omissions
     Factor_Continuation_Omissions
     Factor_Program_Scopes
+    Factor_Fresh_Program_Coordinates
     Factor_Historical_Programs
     Factor_Current_Values
     Factor_Current_Scopes
@@ -627,6 +630,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Related_Test_Clauses
     Factor_Construction_Permission_Completion
     Factor_Package_Extensions
+    Factor_Native_Group_Extensions
+    Factor_Native_System_Extensions
     Factor_Single_Clause_Packages
     Factor_Program_Entry_Presentations
     Factor_Related_Test_References
@@ -885,6 +890,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Admission_Sequences
     Factor_Base_Generation_Extensions
     Factor_Checked_Requirement_Plans
+    Factor_Native_Requirement_Plans
     Factor_Closed_Base_Programs
     Factor_Finite_Complete_Quotation
     Factor_Finite_Data_Syntax
@@ -910,6 +916,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Requirement_Packages
     Factor_Requirement_Source_Boundary
     Factor_Requirement_Source_Examples
+    Factor_Native_Requirement_Source_Models
+    Factor_Native_Requirement_Cases
     Factor_Requirement_Source_Readings
     Factor_Retained_Clause_Admission
     Factor_Selected_Definition_Graphs

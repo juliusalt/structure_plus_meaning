@@ -32,6 +32,24 @@ proof -
   show ?thesis using formed entry by (cases dc) (auto simp: schema_system_formed_def)
 qed
 
+lemma renamed_system_agreeing_coordinates:
+  assumes formed: "schema_system_formed P"
+    and agree: "\<forall>d\<in>system_definitions P. g d=h d"
+  shows "rename_system g P=rename_system h P"
+proof -
+  have clauses: "rename_schema id id g S=rename_schema id id h S"
+    if "((d,c),S)\<in>system_clauses P" for d c S
+  proof -
+    have dependencies: "schema_dependencies S\<subseteq>system_definitions P"
+      using formed that unfolding schema_system_formed_def by blast
+    have callees: "\<forall>e\<in>schema_dependencies S. g e=h e" using dependencies agree by blast
+    show ?thesis by (rule rename_schema_agreement[OF _ _ callees]) simp_all
+  qed
+  show ?thesis by (rule schema_system.equality)
+    (use clauses formed agree in \<open>auto simp: rename_system_def map_prod_def
+      system_definitions_def rel_dom_def schema_system_formed_def intro!: image_cong\<close>)
+qed
+
 theorem renamed_system_formed:
   fixes P :: "('a,'s,'d,'c) schema_system" and g :: "'d \<Rightarrow> 'e"
   assumes formed: "schema_system_formed P" and injective: "inj_on g (system_definitions P)"

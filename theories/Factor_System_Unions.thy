@@ -28,6 +28,36 @@ lemma system_union_definitions [simp]:
 lemma system_union_commute: "system_union P Q=system_union Q P"
   by (simp add: system_union_def Un_commute)
 
+lemma renamed_system_extension_agreement:
+  assumes source: "schema_system_formed P" and target: "schema_system_formed T"
+    and agree: "systems_agree_on P T (system_definitions P)"
+    and injective: "inj_on h (system_definitions T)"
+  shows "systems_agree_on (rename_system h P) (rename_system h T) (h ` system_definitions P)"
+proof -
+  have inside: "system_definitions P\<subseteq>system_definitions T"
+    by (rule whole_agreement_definitions[OF agree])
+  have old_injective: "inj_on h (system_definitions P)" by (rule inj_on_subset[OF injective inside])
+  have interfaces: "(h d,p)\<in>system_interfaces (rename_system h P) \<longleftrightarrow>
+    (h d,p)\<in>system_interfaces (rename_system h T)" if member: "d\<in>system_definitions P" for d p
+  proof -
+    have new: "d\<in>system_definitions T" using inside member by blast
+    show ?thesis by (simp only: renamed_system_interface_at[OF source old_injective member]
+      renamed_system_interface_at[OF target injective new])
+      (use agree member in \<open>auto simp: systems_agree_on_def\<close>)
+  qed
+  have clauses: "((h d,c),S)\<in>system_clauses (rename_system h P) \<longleftrightarrow>
+    ((h d,c),S)\<in>system_clauses (rename_system h T)" if member: "d\<in>system_definitions P" for d c S
+  proof -
+    have new: "d\<in>system_definitions T" using inside member by blast
+    have families: "system_clause_family T d=system_clause_family P d"
+      by (rule systems_agree_on_fields(2)[OF source target agree member member])
+    show ?thesis by (simp only: system_clause_member[symmetric]
+      renamed_system_clause_at[OF source old_injective member]
+      renamed_system_clause_at[OF target injective new] families)
+  qed
+  show ?thesis using interfaces clauses by (auto simp: systems_agree_on_def)
+qed
+
 theorem system_union_formed:
   assumes left: "schema_system_formed P" and right: "schema_system_formed Q"
     and separate: "system_definitions P \<inter> system_definitions Q={}"

@@ -29,41 +29,48 @@ lemma system_restriction_intersection:
   "system_restriction (system_restriction P U) V=system_restriction P (U\<inter>V)"
   by (auto simp: system_restriction_def)
 
-theorem system_restriction_formed:
-  assumes formed: "schema_system_formed P" and closed: "system_dependency_closed P U"
-  shows "schema_system_formed (system_restriction P U)"
+lemma system_restriction_fields:
+  assumes formed: "schema_system_formed P"
+  shows "finite (system_interfaces (system_restriction P U))"
+    and "single_valued (system_interfaces (system_restriction P U))"
+    and "\<forall>d p. (d,p)\<in>system_interfaces (system_restriction P U) \<longrightarrow> pattern_formed p"
+    and "finite (system_clauses (system_restriction P U))"
+    and "single_valued (system_clauses (system_restriction P U))"
+    and "\<forall>d c S. ((d,c),S)\<in>system_clauses (system_restriction P U) \<longrightarrow>
+      d\<in>system_definitions (system_restriction P U) \<and> schema_formed S \<and>
+      schema_dependencies S\<subseteq>system_definitions P"
 proof -
   have old_finite: "finite (system_interfaces P)" "finite (system_clauses P)"
     using formed unfolding schema_system_formed_def by blast+
   have subsets: "system_interfaces (system_restriction P U)\<subseteq>system_interfaces P"
     "system_clauses (system_restriction P U)\<subseteq>system_clauses P"
     by (auto simp: system_restriction_def)
-  have finite: "finite (system_interfaces (system_restriction P U))"
+  show "finite (system_interfaces (system_restriction P U))"
     "finite (system_clauses (system_restriction P U))"
     using finite_subset[OF subsets(1) old_finite(1)] finite_subset[OF subsets(2) old_finite(2)] by blast+
   have old_interfaces: "single_valued (system_interfaces P)"
     and old_clauses: "single_valued (system_clauses P)"
     using formed unfolding schema_system_formed_def by blast+
-  have interfaces: "single_valued (system_interfaces (system_restriction P U))"
-    and clauses: "single_valued (system_clauses (system_restriction P U))"
+  show "single_valued (system_interfaces (system_restriction P U))"
+    "single_valued (system_clauses (system_restriction P U))"
     using old_interfaces old_clauses by (auto simp: single_valued_def)
-  have patterns: "\<forall>d p. (d,p)\<in>system_interfaces (system_restriction P U) \<longrightarrow> pattern_formed p"
+  show "\<forall>d p. (d,p)\<in>system_interfaces (system_restriction P U) \<longrightarrow> pattern_formed p"
     using formed by (auto simp: schema_system_formed_def)
-  have schemas: "\<forall>d c S. ((d,c),S)\<in>system_clauses (system_restriction P U) \<longrightarrow>
+  show "\<forall>d c S. ((d,c),S)\<in>system_clauses (system_restriction P U) \<longrightarrow>
       d\<in>system_definitions (system_restriction P U) \<and> schema_formed S \<and>
-      schema_dependencies S\<subseteq>system_definitions (system_restriction P U)"
-  proof (intro allI impI)
-    fix d c S assume row: "((d,c),S)\<in>system_clauses (system_restriction P U)"
-    have original: "((d,c),S)\<in>system_clauses P" and member: "d\<in>U" using row by auto
-    have facts: "d\<in>system_definitions P" "schema_formed S" "schema_dependencies S\<subseteq>system_definitions P"
-      using formed original unfolding schema_system_formed_def by blast+
-    have retained: "schema_dependencies S\<subseteq>U"
-      using closed original member by (auto simp: system_dependency_closed_def system_dependency_edges_def)
-    show "d\<in>system_definitions (system_restriction P U) \<and> schema_formed S \<and>
-        schema_dependencies S\<subseteq>system_definitions (system_restriction P U)"
-      using facts member retained by auto
-  qed
-  show ?thesis using finite interfaces clauses patterns schemas by (simp only: schema_system_formed_def)
+      schema_dependencies S\<subseteq>system_definitions P"
+    using formed by (auto simp: schema_system_formed_def; blast)
+qed
+
+theorem system_restriction_formed:
+  assumes formed: "schema_system_formed P" and closed: "system_dependency_closed P U"
+  shows "schema_system_formed (system_restriction P U)"
+proof -
+  have retained: "schema_dependencies S\<subseteq>U"
+    if "((d,c),S)\<in>system_clauses (system_restriction P U)" for d c S
+    using closed that by (auto simp: system_dependency_closed_def system_dependency_edges_def)
+  show ?thesis using system_restriction_fields[OF formed, where U=U] retained
+    by (auto simp: schema_system_formed_def; blast)
 qed
 
 theorem system_restriction_calls:

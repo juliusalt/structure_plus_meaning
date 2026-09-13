@@ -714,22 +714,29 @@ native package construction now retains the actual original source and its
 installed guard, with exact all-term meaning and an admitted complete operand.
 The general checker reads the actual package member, preserves all original
 environment rows, and checks its complete expected clause. It does not require
-the candidate's entire program to equal one chosen extension. Joining every
-recursive plan and original request to that source and installation account
-remains open; equal domains still do not identify their meanings.
+the candidate's entire program to equal one chosen extension. A complete
+checked recursive plan now has a native installation theorem over its actual
+source, including fresh coordinates, preserved original material and the exact
+whole target meaning. Its source correspondence remains an explicit premise.
+Constructing and admitting the complete source, correspondence, request and
+installed-program record remains open; equal domains do not identify meaning.
 This extension does not close O-85, genesis, or the final repository audit.
 
-The complete 914-theory repository check passes with unchanged source and tool
+The complete 922-theory repository check passes with unchanged source and tool
 identities and no proof escapes. All 98 tooling tests pass. Independent source
-materializations rebuild the 487-theory requirement context and the updated
-524-theory child-claim context from HOL. They reproduce all 75 and 185 complete
+materializations rebuild the 489-theory requirement context and the updated
+526-theory child-claim context from HOL. They reproduce all 75 and 185 complete
 native reports respectively through the same reconstruction runner.
 
-The source-and-installation boundary reconstructs 356 theories and all 19
-complete reports from 375 source and comparison files. Its two ordinary
+The source-and-installation boundary reconstructs 364 theories and all 23
+complete reports from 385 source and comparison files. Its two ordinary
 programs expose the domain-only gap; fifteen complete environment controls
 check source retention and whole-clause admission; two recovered native
 programs give different results under an unchanged guard and equal domains.
 The separate all-term theorem identifies equality and general formed-term
-acceptance as their meanings. These local results do not establish complete
-workflow enforcement or historical permission.
+acceptance as their meanings. Four further reports retain recursive list and
+pair instructions and the actual source requirements on three concrete terms.
+The installation theorem connects those observations to resulting native
+packages. The reports do not execute the existential package constructor. These
+local results do not establish complete workflow enforcement or historical
+permission.

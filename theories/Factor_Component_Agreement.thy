@@ -4,11 +4,6 @@ begin
 
 section \<open>Whole component agreements compose through their own boundaries\<close>
 
-lemma whole_agreement_definitions:
-  assumes "systems_agree_on P Q (system_definitions P)"
-  shows "system_definitions P\<subseteq>system_definitions Q"
-  using assms by (auto simp: systems_agree_on_def system_definitions_def rel_dom_def; blast)
-
 lemma whole_agreement_clause_interface:
   assumes agreement: "systems_agree_on P Q (system_definitions P)"
     and clause: "((d,c),S)\<in>system_clauses P"

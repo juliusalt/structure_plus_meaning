@@ -37,7 +37,7 @@ next
   have left_source: "admission_source ?Q m" and left_extension: "admission_extension P ?Q"
     and first_member: "a\<in>system_definitions ?Q" using left by blast+
   have supported_right: "admission_goal_sites h\<subseteq>system_definitions ?Q"
-    using supported_h left_extension by (auto simp: admission_extension_def)
+    using supported_h admission_extension_definitions[OF left_extension] by blast
   have right: "admission_source ?R l \<and> admission_extension ?Q ?R \<and>
       b\<in>system_definitions ?R \<and>
       (\<forall>t. (b,t)\<in>positive_meaning ?R \<longleftrightarrow> admission_goal_holds (positive_meaning ?Q) h t)"
@@ -45,7 +45,7 @@ next
   have right_source: "admission_source ?R l" and right_extension: "admission_extension ?Q ?R"
     and second_member: "b\<in>system_definitions ?R" using right by blast+
   have retained_first: "a\<in>system_definitions ?R"
-    using first_member right_extension by (auto simp: admission_extension_def)
+    using first_member admission_extension_definitions[OF right_extension] by blast
   interpret assembled: install_admission_pair ?R l a b
     by unfold_locales (rule right_source, rule retained_first, rule second_member)
   have left_meaning: "(a,t)\<in>positive_meaning ?R \<longleftrightarrow>

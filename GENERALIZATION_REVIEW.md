@@ -16,9 +16,14 @@ The previously fixed cause program is preserved by the generation proofs.
 The further [source-and-installation review](validation/reconstruction/requirement-sources.md)
 proves and executes the failure of equal domains to identify source meanings.
 A native package constructor and fixed source-retention checker now connect
-an actual installed guard to its original source for every term. Nineteen
-complete reports exercise that boundary. The recursive plan record and the
-problem-selection, criticism and whole workflow obligations remain open.
+an actual installed guard to its original source for every term. The complete
+checked recursive plan now has an installation theorem over that actual source,
+using shared code families, fresh coordinates and whole-program correspondence.
+Twenty-three complete reports exercise the source boundary and four recursive
+plan cases. Those reports compute plans and source observations; they do not
+execute the existential package constructor. Native construction and admission
+of the whole development record, problem selection, criticism and workflow
+coverage remain open.
 
 This review covers every accessible earlier evaluator result found in the
 project artifacts: 165 executions, comprising 141 observation investigations

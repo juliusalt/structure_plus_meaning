@@ -40,6 +40,8 @@ theorem checked_admission_sequence_installed:
     "admission_extension P (required_admission_system P ds k cs)"
     "(k,t)\<in>positive_meaning (required_admission_system P ds k cs) \<longleftrightarrow>
       term_formed t \<and> (\<forall>g\<in>set gs. admission_goal_holds (positive_meaning P) g t)"
+    "schema_call_formed (required_admission_system P ds k cs) k t \<longleftrightarrow> term_formed t"
+    "k\<notin>system_definitions P"
 proof -
   have source: "admission_source P n"
     and supported: "\<forall>g\<in>set gs. admission_goal_sites g\<subseteq>system_definitions P"
@@ -50,6 +52,8 @@ proof -
     "admission_extension P (required_admission_system P ds k cs)"
     "(k,t)\<in>positive_meaning (required_admission_system P ds k cs) \<longleftrightarrow>
       term_formed t \<and> (\<forall>g\<in>set gs. admission_goal_holds (positive_meaning P) g t)"
+    "schema_call_formed (required_admission_system P ds k cs) k t \<longleftrightarrow> term_formed t"
+    "k\<notin>system_definitions P"
     by (rule required_admission_installed[OF source supported sequence])+
 qed
 

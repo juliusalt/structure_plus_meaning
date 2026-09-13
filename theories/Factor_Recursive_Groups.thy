@@ -23,6 +23,70 @@ lemma schema_system_formed_over_mono:
   shows "schema_system_formed_over E Q"
   using assms by (auto simp: schema_system_formed_over_def; blast)
 
+lemma system_restriction_formed_over:
+  assumes formed: "schema_system_formed T"
+  shows "schema_system_formed_over (system_definitions T-U) (system_restriction T U)"
+proof -
+  have boundary: "system_definitions T-U\<union>system_definitions (system_restriction T U)=system_definitions T"
+    by auto
+  show ?thesis using system_restriction_fields[OF formed, where U=U]
+    by (simp only: schema_system_formed_over_def boundary)
+qed
+
+theorem extension_definition_group:
+  fixes P T :: "('a,'s,'d,'c) schema_system"
+  assumes source: "schema_system_formed P" and target: "schema_system_formed T"
+    and agree: "systems_agree_on P T (system_definitions P)"
+  shows "schema_system_formed_over (system_definitions P)
+      (system_restriction T (system_definitions T-system_definitions P))"
+    and "system_union P (system_restriction T (system_definitions T-system_definitions P))=T"
+proof -
+  have outside: "system_definitions T-(system_definitions T-system_definitions P)\<subseteq>system_definitions P"
+    by blast
+  show "schema_system_formed_over (system_definitions P)
+    (system_restriction T (system_definitions T-system_definitions P))"
+    by (rule schema_system_formed_over_mono[OF system_restriction_formed_over[OF target] outside])
+  have old_interface: "d\<in>system_definitions P" if "(d,p)\<in>system_interfaces P" for d p
+    using that by (auto simp: system_definitions_def rel_dom_def)
+  have new_interface: "d\<in>system_definitions T" if "(d,p)\<in>system_interfaces T" for d p
+    using that by (auto simp: system_definitions_def rel_dom_def)
+  have old_clause: "d\<in>system_definitions P" if "((d,c),S)\<in>system_clauses P" for d c S
+    using source that unfolding schema_system_formed_def by blast
+  have new_clause: "d\<in>system_definitions T" if "((d,c),S)\<in>system_clauses T" for d c S
+    using target that unfolding schema_system_formed_def by blast
+  have interfaces: "(d,p)\<in>system_interfaces (system_union P
+      (system_restriction T (system_definitions T-system_definitions P))) \<longleftrightarrow>
+    (d,p)\<in>system_interfaces T" for d p
+    using agree old_interface new_interface by (auto simp: systems_agree_on_def; blast)
+  have clauses: "((d,c),S)\<in>system_clauses (system_union P
+      (system_restriction T (system_definitions T-system_definitions P))) \<longleftrightarrow>
+    ((d,c),S)\<in>system_clauses T" for d c S
+    using agree old_clause new_clause by (auto simp: systems_agree_on_def; blast)
+  show "system_union P (system_restriction T (system_definitions T-system_definitions P))=T"
+  proof (rule schema_system.equality)
+    show "system_interfaces (system_union P (system_restriction T
+        (system_definitions T-system_definitions P)))=system_interfaces T"
+    proof (rule set_eqI)
+      fix row :: "'d\<times>'a term_pattern"
+      show "row\<in>system_interfaces (system_union P (system_restriction T
+          (system_definitions T-system_definitions P))) \<longleftrightarrow> row\<in>system_interfaces T"
+        by (cases row) (simp only: interfaces)
+    qed
+    show "system_clauses (system_union P (system_restriction T
+        (system_definitions T-system_definitions P)))=system_clauses T"
+    proof (rule set_eqI)
+      fix row :: "('d\<times>'c)\<times>('a,'s,'d) factor_schema"
+      obtain d c S where shape: "row=((d,c),S)" by (cases row) auto
+      show "row\<in>system_clauses (system_union P (system_restriction T
+          (system_definitions T-system_definitions P))) \<longleftrightarrow> row\<in>system_clauses T"
+        by (simp only: shape clauses)
+    qed
+    show "schema_system.more (system_union P (system_restriction T
+        (system_definitions T-system_definitions P)))=schema_system.more T"
+      by (simp add: system_union_def)
+  qed
+qed
+
 theorem schema_system_formed_over_families:
   assumes interfaces: "system_interfaces Q={(d,p d) |d. d\<in>D}"
     and clauses: "system_clauses Q={((d,c),S). d\<in>D \<and> (c,S)\<in>C d}"

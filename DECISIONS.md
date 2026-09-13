@@ -7679,4 +7679,29 @@ program to equal one particular constructed extension. The construction
 contract separately preserves the exact old domain plus its fresh guard.
 These distinct conditions are recorded in the
 [reconstructible boundary](validation/reconstruction/requirement-sources.md).
-Joining the complete recursive plan to these actual packages remains open.
+The complete recursive plan now has a proved installation over these actual
+packages. Constructing and admitting its complete development record remains
+open.
+
+## Extend recursive plans without replacing the original source
+
+A source domain is insufficient to identify meaning. The native extension
+therefore requires a complete program correspondence between the ordinary
+source and the actual retained native package. The original coordinate map is
+fixed on every old definition; fresh coordinates cover only added definitions.
+All original artifacts and outgoing bindings remain exactly unchanged.
+
+The added group is derived from the complete ordinary extension by restriction.
+It may contain mutually recursive definitions. The shared code-family and
+reference constructors install it before exact package selection, and complete
+readings establish the whole-program variant and all-term meaning. This uses
+the existing pair, recursive list and conjunction contracts without defining a
+replacement source program with merely the same domain.
+
+The concrete numeric models recover complete clauses from the actual native
+source schemas. Their whole-program correspondences precede the four source
+and requirement observations. The runtime records the complete computed plans
+and those observations; the native package witnesses are supplied by the
+bootstrap construction theorem. Runtime construction and native admission of
+the complete source, correspondence, request and installed-program record are
+still required by the full development protocol.

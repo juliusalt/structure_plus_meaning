@@ -21,6 +21,13 @@
         "NATIVE_GUARD_MEANING": 2
       },
       "sha256": "b6eb05e6136e8d84a99cf8563c3e865de8685a1cc29152e6db7da7124bff381c"
+    },
+    "native-plans": {
+      "records": 4,
+      "tags": {
+        "NATIVE_REQUIREMENT_PLAN": 4
+      },
+      "sha256": "13ac17bfff43c67480c07d6d7bde2cef3553feed83eba6dca528d83b71fa781b"
     }
   },
   "boundary": "Complete tagged JSON reports preserve every index, field, order and duplicate. Reproduction equality supplies no semantic authority; the Isabelle-established native contracts govern the actual operations and subjects."

@@ -1,10 +1,12 @@
 theory Requirement_Source_Execution
-  imports Factor_Requirement_Source_Examples Factor_Requirement_Source_Boundary
+  imports Factor_Native_Requirement_Cases Factor_Requirement_Source_Boundary
 begin
 
 section \<open>The complete source-boundary and native installation observations\<close>
 
 export_code requirement_source_boundary_report retained_clause_control_report native_guard_source_meaning_report
+  source_requirement_plan_report
+  Pair_Admission_Instruction List_Admission_Instruction
   finite_schema_conclusion finite_schema_premises finite_schema_materials
   Finite_Variable Finite_Pattern_Payload Finite_Pattern_Pair Finite_Pattern_Target
   fset set nat_of_integer integer_of_nat

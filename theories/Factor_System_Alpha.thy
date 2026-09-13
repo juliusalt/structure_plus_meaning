@@ -4,6 +4,19 @@ begin
 
 section \<open>Independent positive meaning under private interface and clause renaming\<close>
 
+lemma system_alpha_identity:
+  assumes formed: "schema_system_formed P"
+  shows "system_alpha_variant P P"
+proof -
+  have fields: "\<exists>f h. inj_on f (pattern_variables (system_interface P d)) \<and>
+    system_interface P d=rename_pattern f (system_interface P d) \<and>
+    schema_family_variant h (system_clause_family P d) (system_clause_family P d)" for d
+    by (rule exI[of _ id], rule exI[of _ id])
+      (use schema_family_variant_identity[OF system_clause_family_finite[OF formed]
+        system_clause_family_functional[OF formed], of d] in simp)
+  show ?thesis using formed fields by (simp add: system_alpha_variant_def)
+qed
+
 lemma system_alpha_calls:
   assumes variant: "system_alpha_variant P Q"
   shows "schema_call_formed P d t \<longleftrightarrow> schema_call_formed Q d t"

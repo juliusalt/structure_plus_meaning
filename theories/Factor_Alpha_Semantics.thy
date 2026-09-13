@@ -122,6 +122,10 @@ definition schema_alpha_variant ::
   "schema_alpha_variant S T \<longleftrightarrow> (\<exists>f h. inj_on f (schema_variables S) \<and>
     inj_on h (schema_sockets S) \<and> T = rename_schema f h id S)"
 
+lemma schema_alpha_identity: "schema_alpha_variant S S"
+  unfolding schema_alpha_variant_def
+  by (rule exI[of _ id], rule exI[of _ id]) simp
+
 lemma schema_alpha_dependencies:
   assumes "schema_alpha_variant S T"
   shows "schema_dependencies T = schema_dependencies S"
@@ -164,6 +168,11 @@ definition schema_family_variant ::
     rel_dom D = h ` rel_dom C \<and>
     (\<forall>c S. (c,S) \<in> C \<longrightarrow> (\<exists>T. (h c,T) \<in> D \<and> schema_alpha_variant S T))"
 
+lemma schema_family_variant_identity:
+  assumes "finite C" "single_valued C"
+  shows "schema_family_variant id C C"
+  using assms schema_alpha_identity by (auto simp: schema_family_variant_def)
+
 lemma schema_family_variant_entry:
   assumes "schema_family_variant h C D" "(c,S) \<in> C"
   shows "\<exists>T. (h c,T) \<in> D \<and> schema_alpha_variant S T"
@@ -201,6 +210,17 @@ proof -
     show "q\<in>{(h c,T)}" using shape key same by simp
   qed
   show ?thesis by (rule exI[of _ T]) (use subset entry in auto)
+qed
+
+lemma schema_family_variant_singleton_iff:
+  "schema_family_variant h {(c,S)} D \<longleftrightarrow> (\<exists>T. D={(h c,T)} \<and> schema_alpha_variant S T)"
+proof
+  assume "schema_family_variant h {(c,S)} D"
+  then show "\<exists>T. D={(h c,T)} \<and> schema_alpha_variant S T" by (rule schema_family_variant_singleton)
+next
+  assume "\<exists>T. D={(h c,T)} \<and> schema_alpha_variant S T"
+  then show "schema_family_variant h {(c,S)} D"
+    by (auto simp: schema_family_variant_def single_valued_def rel_dom_def)
 qed
 
 lemma schema_family_variant_rules:

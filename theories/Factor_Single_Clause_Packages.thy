@@ -79,7 +79,7 @@ proof -
     case True
     have read: "native_definition_at H (fst d) (snd d) (Pattern_Variable i) {(c,T)}"
       using single True by simp
-    have "e\<in>schema_dependencies T" using edge by (simp only: native_definition_edges_at[OF read]; auto)
+    have "e\<in>schema_dependencies T" using native_definition_edges_at[OF read, of e] edge by auto
     then show ?thesis using dep by blast
   next
     case False

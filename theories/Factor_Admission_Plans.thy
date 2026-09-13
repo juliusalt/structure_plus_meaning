@@ -26,6 +26,35 @@ lemma admission_goal_holds_agreement:
   shows "admission_goal_holds M g t \<longleftrightarrow> admission_goal_holds N g t"
   using assms by (induction g arbitrary: t) auto
 
+lemma admission_paired_holds:
+  "admission_goal_holds M (Paired_Admission g h) (Pair_Term x y) \<longleftrightarrow>
+    admission_goal_holds M g x \<and> admission_goal_holds M h y"
+  by simp
+
+lemma admission_collected_empty [simp]:
+  "admission_goal_holds M (Collected_Admission g) (Payload_Term [])"
+  by (simp only: admission_goal_holds.simps; rule exI[of _ "[]"]) simp
+
+lemma admission_collected_pair:
+  "admission_goal_holds M (Collected_Admission g) (Pair_Term x y) \<longleftrightarrow>
+    admission_goal_holds M g x \<and> admission_goal_holds M (Collected_Admission g) y"
+proof
+  assume "admission_goal_holds M (Collected_Admission g) (Pair_Term x y)"
+  then obtain xs where shape: "Pair_Term x y=data_list_term xs"
+    and elements: "\<forall>z\<in>set xs. admission_goal_holds M g z" by auto
+  obtain z zs where list: "xs=z#zs" using shape by (cases xs) auto
+  have fields: "x=z" "y=data_list_term zs" using shape list by simp_all
+  show "admission_goal_holds M g x \<and> admission_goal_holds M (Collected_Admission g) y"
+    using elements list fields by auto
+next
+  assume "admission_goal_holds M g x \<and> admission_goal_holds M (Collected_Admission g) y"
+  then obtain xs where first: "admission_goal_holds M g x" and tail: "y=data_list_term xs"
+    "\<forall>z\<in>set xs. admission_goal_holds M g z" by auto
+  show "admission_goal_holds M (Collected_Admission g) (Pair_Term x y)"
+    by (simp only: admission_goal_holds.simps; rule exI[of _ "x#xs"])
+      (use first tail in simp)
+qed
+
 section \<open>The plan contains actual constructor arguments\<close>
 
 datatype admission_instruction = Pair_Admission_Instruction nat nat nat | List_Admission_Instruction nat nat

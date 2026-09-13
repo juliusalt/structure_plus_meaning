@@ -52,10 +52,14 @@ different meanings: the same native guard calls either equality or acceptance
 of every formed term when its actual source clause changes. The source-retention
 checker rejects that replacement under the original declared source. The
 [installation reconstruction](validation/reconstruction/requirement-sources.md)
-reproduces 19 complete reports. Joining every recursive plan to this actual
-source and installation account remains open.
+reproduces 23 complete reports. Checked recursive plans now have a proved
+installation over the actual retained native source: fresh coordinates keep
+every old address fixed, and the complete target program has the required
+meaning. Four cases execute the computed plans and source observations. The
+existential package constructor is not executed by those reports; constructing
+and admitting the complete development record remains open.
 
-The session registers 914 theories; its
+The session registers 922 theories; its
 [latest complete check](validation/check.json) records the current proof status.
 Native local readers connect an actual
 inference node's bindings to its symbolic replacement record and complete

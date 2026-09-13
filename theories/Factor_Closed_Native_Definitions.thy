@@ -95,6 +95,27 @@ proof -
   qed
 qed
 
+lemma native_complete_definition_family:
+  assumes ef: "environment_formed E"
+    and definitions: "\<forall>d\<in>D. native_definition_at E (fst d) (snd d) (p d) (Cs d)"
+    and closed: "\<forall>d\<in>D. (\<Union>S\<in>rel_ran (Cs d). schema_dependencies S)\<subseteq>D"
+  shows "native_definition_sites E D=D" "native_package_formed E D"
+proof -
+  let ?G="{(d,p d,Cs d) |d. d\<in>D}"
+  have domain: "rel_dom ?G=D" by (auto simp: rel_dom_def)
+  have reads: "native_definition_at E (fst d) (snd d) q C" if "(d,q,C)\<in>?G" for d q C
+    using definitions that by auto
+  have dependencies: "schema_dependencies S\<subseteq>rel_dom ?G"
+    if row: "(d,q,C)\<in>?G" and clause: "(c,S)\<in>C" for d q C c S
+  proof -
+    have member: "d\<in>D" and family: "C=Cs d" using row by auto
+    have schema: "S\<in>rel_ran (Cs d)" using clause family by (auto simp: rel_ran_def)
+    show ?thesis using closed member schema by (simp only: domain; blast)
+  qed
+  show "native_definition_sites E D=D" "native_package_formed E D"
+    using native_closed_definition_graph(1,2)[OF ef reads dependencies] by (simp_all only: domain)
+qed
+
 text \<open>
   The supplied graph contains actual complete definition readings. Closure
   concerns their prospective definition calls and permits mutually referring

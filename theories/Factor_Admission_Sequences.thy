@@ -60,7 +60,7 @@ next
   have child_source: "admission_source ?Q m" and child_extension: "admission_extension P ?Q"
     and child_member: "a\<in>system_definitions ?Q" using child by blast+
   have supported_rest: "\<forall>h\<in>set gs. admission_goal_sites h\<subseteq>system_definitions ?Q"
-    using support_gs child_extension by (auto simp: admission_extension_def)
+    using support_gs admission_extension_definitions[OF child_extension] by blast
   have tail: "admission_source ?R l \<and> admission_extension ?Q ?R \<and>
     list_all2 (\<lambda>h d. d\<in>system_definitions ?R \<and>
       (\<forall>t. (d,t)\<in>positive_meaning ?R \<longleftrightarrow>
@@ -72,7 +72,7 @@ next
     (\<forall>t. (a,t)\<in>positive_meaning ?R \<longleftrightarrow>
       admission_goal_holds (positive_meaning P) g t)"
     using child admission_extension_meaning[OF tail_extension child_member]
-      tail_extension by (auto simp: admission_extension_def)
+      admission_extension_definitions[OF tail_extension] by blast
   have remaining: "list_all2 (\<lambda>h d. d\<in>system_definitions ?R \<and>
     (\<forall>t. (d,t)\<in>positive_meaning ?R \<longleftrightarrow>
       admission_goal_holds (positive_meaning P) h t)) gs es"

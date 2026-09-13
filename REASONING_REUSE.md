@@ -34,7 +34,7 @@ missing internal operation.
 | Preserve actual premise and binder boundaries | A rule transformation must retain every premise socket, callee, head variable, premise-only variable, and material-only variable. | Native symbolic-call and clause-specialization checkers admit actual complete substitutions and prescribed socket presentations. | Use the admitted transformations to instantiate reusable reasoning schemas and retain their complete assertion and material boundaries. |
 | Compare complete claims through jointly determining observations | Injective paired observations with a retained callee determine the original claim; functional claim tables and complete socket joins preserve the original premise relation. | Generic functional joins, keyed fibre and table comparisons, and prefixed observations feed native entry 359; its complete actual-source contract is equivalent to the original symbolic local judgment under the stated graph and claim-domain premises. | Generate these applications from a complete symbolic-graph admission obligation, including every node, formed symbolic call, material condition, and identified assertion boundary. The local example does not supply that traversal. |
 | Join only agreeing components | A program union preserves the intended component meanings when whole definitions agree on their actual overlap and dependencies are closed. | Shared-definition agreement, rooted groups, rebasing, and least dependency closures support the native joins. | Make agreement and closure explicit generated prerequisites of composition; do not discharge them merely from a shared component name. |
-| Construct admission for every original requirement | A finite supported goal family and a fresh allocation boundary produce component definitions and one exact same-subject conjunction. | Native sequence construction, recursive source-support checks and allocation admission produce the actual installation arguments. The original source meanings are preserved. | Use this construction for the complete workflow's independently established requirements, including problem adequacy, criticism and evidence; a supplied goal family alone does not establish that coverage. |
+| Construct admission for every original requirement | A finite supported goal family and a fresh allocation boundary produce component definitions and one exact same-subject conjunction. | Native sequence construction, recursive source-support checks and allocation admission produce the actual installation arguments. A complete source correspondence now joins them to a constructed native extension with fixed old addresses, exact retained material and all-term meaning. | Use this construction for the complete workflow's independently established requirements, including problem adequacy, criticism and evidence; a supplied goal family alone does not establish that coverage. |
 | Judge the artifact for the original request | The previously installed request boundary and an exact whole-body reader prevent another request, result or incomplete artifact from supplying admission. | Native entry 369 reads the actual literal artifact and applies the checked constructor contract to its whole body; its finite evaluator has an all-input equation. | Integrate the admitted construction with complete development decisions and their original problem subjects. The current execution covers requirement construction and complete artifact admission. |
 | Record through existing predecessors | A formed existing environment and actual predecessor readings support a new record while its cause retains the previously fixed native judgment program. | Scope and base-cause extension instantiate the existing RRA record constructor and preserve separate replay evidence. | Supply the actual continuation policy, local allocation and lookup implementation, and complete cost account. Reference sharing and an existence proof do not establish those conditions. |
 | Change an inadequate observation language | A full-language residual proves that selecting more of the same observations cannot suffice. A new observation needs its own semantic and coverage contract. | Repair obstructions and multiple newly constructed native observations exhibit this transition. | Use the failed subject relation and the reusable construction rules to generate new observation candidates, then evaluate them. |
@@ -762,5 +762,34 @@ by selected roots. One concrete variable frame supplies both executed native
 source readings, while the unchanged equality source reuses its earlier proof.
 The resulting all-term meaning equations govern the two runtime observations.
 The [source reconstruction](validation/reconstruction/requirement-sources.md)
-instantiates the common runner for all 19 complete reports. It leaves the
-recursive plan-to-package record and full development process open.
+instantiates the common runner for all 23 complete reports. The recursive
+installation has a complete bootstrap theorem; constructing and admitting its
+whole development record and executing the package constructor remain open.
+
+## Recursive installation over an actual native source
+
+`Factor_Rooted_Code_Families` factors the compiler's complete selected source
+fields and their reference and dependency contracts. The original whole-program
+compiler and the new group installer consume that same family. Complete graph
+closure has one owner in `Factor_Closed_Native_Definitions`; the duplicate edge
+wrapper is removed. Complete readings determine the program fields and variant
+through `Factor_Native_Program_Variants`.
+
+`Factor_Native_Group_Extensions` compiles all added definitions before resolving
+recursive references. Its ordinary source must correspond completely to the
+actual retained native package. `Factor_Fresh_Program_Coordinates` fixes every
+old address and allocates distinct fresh uses. Complete restriction fields and
+the derived extension group supply `Factor_Native_System_Extensions`; it retains
+all original artifacts and outgoing bindings and proves the whole target's
+meaning. Source definition inclusion is derived from complete agreement, and
+the admission extension no longer stores that redundant condition.
+
+`Factor_Native_Requirement_Plans` instantiates this construction for the existing
+checked pair, list and conjunction plan. Its entry is fresh and has the exact
+original native predicates' composed meaning on every term. The two ordinary
+source models derive their complete clauses from the actual source schemas and
+have proved whole-program correspondences. Four executions retain the computed
+instructions and distinguish those source meanings and the empty collection.
+They compute source observations; they do not execute the existential native
+package constructor or admit the complete development record. The two report
+launchers share one complete instruction serializer.

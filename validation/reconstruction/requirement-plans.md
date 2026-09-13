@@ -1,6 +1,6 @@
 # Reconstruct requirement construction and artifact admission
 
-The boundary contains 487 theory sources, 16 Python modules and one complete
+The boundary contains 489 theory sources, 17 Python modules and one complete
 report comparison file. The source fixture is defined in the execution
 theories: it contains actual goals, counters, table operands and complete
 candidate artifacts. No saved proof, generated code or result log is an input.
@@ -25,7 +25,7 @@ module and executes all controls. It fails on a failed or missing stage,
 changed recipe bytes or any difference in the complete native reports.
 
 [requirement-plans-sources.json](requirement-plans-sources.json) identifies all
-504 inputs. [requirement-plans-reports.json](requirement-plans-reports.json)
+507 inputs. [requirement-plans-reports.json](requirement-plans-reports.json)
 retains the exact comparison boundary. The
 [verified reconstruction](requirement-plans-verified.json) and
 [materialization receipt](requirement-plans-materialization.json) record the

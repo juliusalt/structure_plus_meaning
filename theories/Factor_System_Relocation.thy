@@ -100,6 +100,40 @@ proof -
   show ?thesis using transported by (simp only: positive_meaning_def lift)
 qed
 
+lemma renamed_system_meaning_at:
+  assumes formed: "schema_system_formed P" and injective: "inj_on g (system_definitions P)"
+    and member: "d\<in>system_definitions P"
+  shows "(g d,t)\<in>positive_meaning (rename_system g P) \<longleftrightarrow> (d,t)\<in>positive_meaning P"
+proof
+  assume target: "(g d,t)\<in>positive_meaning (rename_system g P)"
+  obtain e x where old: "(e,x)\<in>positive_meaning P" "g d=g e" "t=x"
+    using target by (auto simp: renamed_system_positive_meaning[OF formed injective] map_prod_def)
+  have site: "e\<in>system_definitions P"
+    using schema_call_formed_target[OF positive_meaning_formed[OF old(1)]] by blast
+  have same: "d=e" by (rule inj_onD[OF injective old(2) member site])
+  show "(d,t)\<in>positive_meaning P" using old(1,3) same by simp
+next
+  assume "(d,t)\<in>positive_meaning P"
+  then show "(g d,t)\<in>positive_meaning (rename_system g P)"
+    by (auto simp: renamed_system_positive_meaning[OF formed injective] map_prod_def)
+qed
+
+lemma system_variant_renamed_meaning_at:
+  assumes formed: "schema_system_formed P" and injective: "inj_on g (system_definitions P)"
+    and variant: "system_alpha_variant (rename_system g P) Q" and member: "d\<in>system_definitions P"
+  shows "(g d,t)\<in>positive_meaning Q \<longleftrightarrow> (d,t)\<in>positive_meaning P"
+  using renamed_system_meaning_at[OF formed injective member] system_alpha_positive_meaning[OF variant] by simp
+
+lemma system_variant_renamed_meaning_source:
+  assumes formed: "schema_system_formed P" and injective: "inj_on g (system_definitions P)"
+    and variant: "system_alpha_variant (rename_system g P) Q"
+  shows "positive_meaning P={(d,t). d\<in>system_definitions P \<and> (g d,t)\<in>positive_meaning Q}"
+proof -
+  have scope: "d\<in>system_definitions P" if "(d,t)\<in>positive_meaning P" for d t
+    using schema_call_formed_target[OF positive_meaning_formed[OF that]] by blast
+  show ?thesis using system_variant_renamed_meaning_at[OF formed injective variant] scope by auto
+qed
+
 text \<open>
   Relocation commutes with the independent positive consequence operator on
   support relations over the source definitions. Every least-fixed-point fact

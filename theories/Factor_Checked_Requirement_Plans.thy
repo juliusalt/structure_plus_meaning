@@ -81,6 +81,8 @@ theorem checked_native_requirement_installation:
     "admission_extension P (required_admission_system P ds k cs)"
     "(k,t)\<in>positive_meaning (required_admission_system P ds k cs) \<longleftrightarrow>
       term_formed t \<and> (\<forall>g\<in>set gs. admission_goal_holds (positive_meaning P) g t)"
+    "schema_call_formed (required_admission_system P ds k cs) k t \<longleftrightarrow> term_formed t"
+    "k\<notin>system_definitions P"
 proof -
   have checked: "checked_admission_sequence (system_definitions P) gs n=Some (ds,k,cs)"
     using native by (simp only: checked_admission_sequence_at_values[OF system_definitions_finite[OF source]])
@@ -88,6 +90,8 @@ proof -
     "admission_extension P (required_admission_system P ds k cs)"
     "(k,t)\<in>positive_meaning (required_admission_system P ds k cs) \<longleftrightarrow>
       term_formed t \<and> (\<forall>g\<in>set gs. admission_goal_holds (positive_meaning P) g t)"
+    "schema_call_formed (required_admission_system P ds k cs) k t \<longleftrightarrow> term_formed t"
+    "k\<notin>system_definitions P"
     by (rule checked_admission_sequence_installed[OF source checked])+
 qed
 

@@ -27,8 +27,8 @@ and executes the reasoning family. It fails if a stage fails, complete reports
 change, or its checked inputs change. The optional `--proof` mode rechecks an
 existing accepted export and records `sources_rebuilt: false`.
 
-[native-child-sources.json](native-child-sources.json) lists the exact 555 source
-and fixture files, including 524 theory sources and 29 Python modules. The
+[native-child-sources.json](native-child-sources.json) lists the exact 557 source
+and fixture files, including 526 theory sources and 29 Python modules. The
 shared reconstruction runner is included. To materialize that boundary independently:
 
 ```sh

@@ -7,12 +7,14 @@ import investigate
 import machine_reports
 import proved_code
 import check_reasoning
+import admission_plan_json
 
 
 def program(engine, inputs):
     code = 'use ' + investigate.ml_string(str(engine)) + ';\n'
     code += 'structure N = Requirement_Plans;\n'
     code += check_reasoning.SCALAR_JSON_PRELUDE
+    code += admission_plan_json.PRELUDE
     code += r'''
 val n = N.nat_of_integer;
 val emptyTerm = N.Finite_Target (N.Finite_Whole N.finite_empty_artifact);
@@ -24,16 +26,9 @@ fun jtarget t = if N.finite_reasoning_term_equal (N.Finite_Target t) emptyTerm
 fun jgoal (N.Existing_Admission d) = "[\"existing\"," ^ jnat d ^ "]"
   | jgoal (N.Paired_Admission (g,h)) = "[\"pair\"," ^ jgoal g ^ "," ^ jgoal h ^ "]"
   | jgoal (N.Collected_Admission g) = "[\"list\"," ^ jgoal g ^ "]";
-fun jinstruction (N.Pair_Admission_Instruction (d,a,b)) =
-    "[\"pair\"," ^ jnat d ^ "," ^ jnat a ^ "," ^ jnat b ^ "]"
-  | jinstruction (N.List_Admission_Instruction (d,a)) =
-    "[\"list\"," ^ jnat d ^ "," ^ jnat a ^ "]";
-fun jsequence (ds,(next,cs)) = "{\"entries\":" ^ jlist jnat ds ^
-    ",\"next\":" ^ jnat next ^ ",\"instructions\":" ^ jlist jinstruction cs ^ "}";
 fun jexecution NONE = "null"
   | jexecution (SOME (plan,accepted)) = "{\"plan\":" ^ jsequence plan ^
     ",\"holds\":" ^ Bool.toString accepted ^ "}";
-fun jchecked NONE = "null" | jchecked (SOME plan) = jsequence plan;
 fun jrow (k,v) = "[" ^ jterm k ^ "," ^ jterm v ^ "]";
 fun enumerate f xs = List.app f (ListPair.zip (List.tabulate (length xs, fn i => i),xs));
 fun emitPlan (i,(gs,(start,result))) = print ("REQUIREMENT_PLAN " ^ Int.toString i ^
@@ -108,7 +103,7 @@ def main():
     receipt = proved_code.checked_execution(
         args.proof, args.poly, args.output,
         required_theories=['Requirement_Artifact_Execution'], inputs=inputs,
-        input_paths=[Path(__file__)], program=program, assess=assess,
+        input_paths=[Path(__file__), Path(admission_plan_json.__file__)], program=program, assess=assess,
         question='What plans and actual-subject judgments do the requirement constructors produce on the complete declared controls?',
         boundary='The finite execution supplements the universal native planning and installation contracts; whole development-protocol admission remains separate.',
         timeout=60, project=args.project.resolve())

@@ -8,6 +8,8 @@ export_code requirement_source_boundary_report retained_clause_control_report na
   source_requirement_plan_report
   Pair_Admission_Instruction List_Admission_Instruction
   finite_schema_conclusion finite_schema_premises finite_schema_materials
+  finite_material_source finite_material_atoms finite_material_edges finite_material_counts finite_material_functions
+  finite_artifact_rows Finite_Whole Finite_Anchor
   Finite_Variable Finite_Pattern_Payload Finite_Pattern_Pair Finite_Pattern_Target
   fset set nat_of_integer integer_of_nat
   in SML module_name Requirement_Source_Execution file_prefix requirement_sources

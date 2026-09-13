@@ -1,0 +1,16 @@
+theory Native_Extension_Execution
+  imports Factor_Finite_Native_Extension_Cases Factor_Finite_Native_Controls Factor_Executable_Artifact_Values
+begin
+
+section \<open>Execute the actual package construction and complete native recovery\<close>
+
+export_code finite_native_extension_report finite_native_control_report
+  finite_system_interfaces finite_system_clauses
+  finite_schema_conclusion finite_schema_premises finite_schema_materials
+  finite_material_source finite_material_atoms finite_material_edges finite_material_counts finite_material_functions
+  finite_artifact_rows Finite_Whole Finite_Anchor
+  Finite_Variable Finite_Pattern_Payload Finite_Pattern_Pair Finite_Pattern_Target
+  fset set nat_of_integer integer_of_nat
+  in SML module_name Native_Extension_Execution file_prefix native_extensions
+
+end

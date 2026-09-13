@@ -4,12 +4,26 @@ begin
 
 section \<open>Ordered keys enumerate a complete finite functional relation\<close>
 
+lemma listed_relation_values:
+  "set (zip (map fst rows) (map f (map snd rows)))=map_relation_values f (set rows)"
+  by (induction rows) (auto simp: map_relation_values_def split: prod.splits)
+
 definition finite_functional_rows :: "('i::linorder\<times>'a) fset \<Rightarrow> ('i\<times>'a) list" where
   "finite_functional_rows R=
     (if finite_relation_functional R then
       map (\<lambda>i. (i,fthe_elem (fimage snd (ffilter (\<lambda>r. fst r=i) R))))
         (sorted_list_of_fset (fimage fst R))
      else [])"
+
+lemma finite_functional_rows_keys:
+  assumes "finite_relation_functional R"
+  shows "map fst (finite_functional_rows R)=sorted_list_of_fset (fimage fst R)"
+  using assms by (simp add: finite_functional_rows_def comp_def)
+
+lemma finite_functional_rows_distinct_keys:
+  assumes "finite_relation_functional R"
+  shows "distinct (map fst (finite_functional_rows R))"
+  by (simp only: finite_functional_rows_keys[OF assms]) simp
 
 lemma finite_functional_slot_singleton:
   assumes functional: "finite_relation_functional R" and member: "(i,a) |\<in>| R"

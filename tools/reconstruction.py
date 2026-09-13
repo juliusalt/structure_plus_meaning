@@ -29,6 +29,7 @@ class Recipe:
     session: str
     groups: tuple[tuple[Execution, ...], ...]
     boundary: str
+    fixtures: tuple[str, ...] = ()
 
     @property
     def executions(self):

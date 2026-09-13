@@ -20,8 +20,11 @@ definition schema_body_callees ::
   "('a,'u) premise_template list \<Rightarrow> (local_address \<times> 'u definition_site) set" where
   "schema_body_callees ts = map_slot_keys (syntax_prefix 3) (premise_forest_callees ts)"
 
-definition schema_body_roots :: "('a,'u) premise_template list \<Rightarrow> local_address list" where
+definition schema_body_roots :: "'a list \<Rightarrow> local_address list" where
   "schema_body_roots ts = map (\<lambda>i. syntax_prefix 3 (premise_branch i [])) [0..<length ts]"
+
+lemma schema_body_roots_map [simp]: "schema_body_roots (map f ts)=schema_body_roots ts"
+  by (simp add: schema_body_roots_def)
 
 lemma schema_body_roots_length [simp]: "length (schema_body_roots ts) = length ts"
   by (simp add: schema_body_roots_def)

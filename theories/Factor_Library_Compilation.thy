@@ -1,5 +1,5 @@
 theory Factor_Library_Compilation
-  imports Factor_Learned_Investigation Finite_Functional_Enumeration
+  imports Factor_Learned_Investigation Finite_Functional_Enumeration Finite_Set_Encoding
 begin
 
 section \<open>A schema supplies its own complete premise enumeration\<close>
@@ -54,12 +54,7 @@ definition natural_compiled_library where
 
 section \<open>Closed native clause syntax reduces to the existing finite representation\<close>
 
-lemma finite_set_empty_encoding [simp]: "Abs_fset {}={||}"
-  by (rule fset_inject[THEN iffD1]) (simp add: Abs_fset_inverse)
 
-lemma finite_set_insert_encoding [simp]:
-  "finite A \<Longrightarrow> Abs_fset (insert a A)=finsert a (Abs_fset A)"
-  by (rule fset_inject[THEN iffD1]) (simp add: Abs_fset_inverse)
 
 text \<open>
   The original schema is retained even when malformed, so the whole library

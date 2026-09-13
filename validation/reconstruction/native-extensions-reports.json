@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "reports": {
+    "extensions": {
+      "records": 18,
+      "tags": {
+        "NATIVE_CONSTRUCTOR": 14,
+        "NATIVE_EXTENSION": 4
+      },
+      "sha256": "3339da45fff65f9929d0303a6c2d64c494ad92b94d108c6cd2cb479e30d14e46"
+    }
+  }
+}

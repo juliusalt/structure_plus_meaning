@@ -29,10 +29,9 @@ theorem native_definition_family_selection:
     (\<forall>w\<in>environment_uses E. \<forall>s x. binds_slot F w s x \<longleftrightarrow> binds_slot E w s x)"
 proof -
   have sites: "native_definition_sites E D=D"
-    by (rule subset_antisym[OF native_definition_sites_least[OF subset_refl closed]
-      native_definition_roots])
+    by (rule native_definition_family_closed(1)[OF environment]) (use readings closed in blast)+
   have dependency: "native_package_formed E D"
-    unfolding native_package_formed_def sites using environment readings by blast
+    by (rule native_definition_family_closed(2)[OF environment]) (use readings closed in blast)+
   have targets: "\<forall>d\<in>D. \<exists>A. artifact_at E (fst d) A \<and> anchor_formed (A,snd d)"
   proof (intro ballI)
     fix d assume member: "d\<in>D"

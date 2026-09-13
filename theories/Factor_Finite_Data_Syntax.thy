@@ -1,34 +1,8 @@
 theory Factor_Finite_Data_Syntax
-  imports Factor_Finite_Artifact_Enumeration Factor_Executable_Data_Values Factor_Complete_Data_Quotation
+  imports Factor_Finite_Artifact_Enumeration Factor_Executable_Data_Values Factor_Complete_Data_Quotation RRA_Finite_Syntax_Construction
 begin
 
 section \<open>Finite constructors preserve the complete existing data syntax\<close>
-
-definition finite_payload_syntax :: "octets \<Rightarrow> finite_exact_artifact" where
-  "finite_payload_syntax v=finite_enumerated_artifact [[]] [] [] [([],v)]"
-
-lemma decode_finite_payload_syntax [simp]:
-  "decode_finite_object (finite_payload_syntax v)=payload_syntax v"
-  by (simp add: finite_payload_syntax_def enumerated_artifact_def payload_syntax_def fun_eq_iff)
-
-definition finite_pair_syntax :: "finite_exact_artifact \<Rightarrow> finite_exact_artifact \<Rightarrow> finite_exact_artifact" where
-  "finite_pair_syntax R S=\<lparr>
-    finite_structure=\<lparr>
-      finite_carrier={|[],[0],[1]|} |\<union>|
-        fimage (Cons 2) (finite_carrier (finite_structure R)) |\<union>|
-        fimage (Cons 3) (finite_carrier (finite_structure S)),
-      finite_incidence={|([],[0],[2]),([],[1],[3]),([0],[0],[1])|} |\<union>|
-        fimage (\<lambda>(a,p,x). (2#a,2#p,2#x)) (finite_incidence (finite_structure R)) |\<union>|
-        fimage (\<lambda>(a,p,x). (3#a,3#p,3#x)) (finite_incidence (finite_structure S))\<rparr>,
-    finite_data=\<lparr>finite_bag={#},finite_bindings=
-      fimage (\<lambda>(a,v). (2#a,v)) (finite_bindings (finite_data R)) |\<union>|
-      fimage (\<lambda>(a,v). (3#a,v)) (finite_bindings (finite_data S))\<rparr>\<rparr>"
-
-lemma decode_finite_pair_syntax [simp]:
-  "decode_finite_object (finite_pair_syntax R S)=pair_syntax (decode_finite_object R) (decode_finite_object S)"
-  by (simp add: finite_pair_syntax_def pair_syntax_def decode_finite_object_def
-    decode_finite_structure_def decode_finite_basis_def push_structure_def
-    fimage.rep_eq fun_eq_iff)
 
 fun finite_data_syntax :: "factor_term \<Rightarrow> finite_exact_artifact option" where
   "finite_data_syntax (Target_Term t)=None"

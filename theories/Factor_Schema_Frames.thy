@@ -149,40 +149,62 @@ end
 
 section \<open>Fresh frames exist for every finite list of body roots\<close>
 
+definition schema_header_parts :: "'a list \<Rightarrow> 'a\<times>'a\<times>'a\<times>'a list\<times>'a list" where
+  "schema_header_parts xs=(xs!0,xs!1,xs!2,take 3 (drop 3 xs),drop 6 xs)"
+
+lemma schema_header_parts_properties:
+  assumes length: "length xs=6+n" and separate: "distinct xs" "set xs\<inter>U={}"
+    and formed: "\<forall>a\<in>set xs. octets_formed a" and result: "schema_header_parts xs=(b,m,r,ps,ss)"
+  shows "length ps=3" "length ss=n" "distinct (b#m#r#(ps@ss))"
+    "({b,m,r}\<union>set ps\<union>set ss)\<inter>U={}"
+    "\<forall>a\<in>{b,m,r}\<union>set ps\<union>set ss. octets_formed a"
+    "b#m#r#(ps@ss)=xs"
+proof -
+  obtain x y z ys where list: "xs=x#y#z#ys"
+    using length by (auto simp: numeral_eq_Suc length_Suc_conv)
+  have tail: "length ys=3+n" using length by (simp add: list numeral_eq_Suc)
+  have fields: "b=x" "m=y" "r=z" "ps=take 3 ys" "ss=drop 3 ys"
+    using result by (auto simp: schema_header_parts_def list numeral_eq_Suc)
+  show sizes: "length ps=3" "length ss=n" by (simp_all add: fields tail)
+  show rebuilt: "b#m#r#(ps@ss)=xs" by (simp add: fields list)
+  have positions: "{b,m,r}\<union>set ps\<union>set ss=set xs"
+    using arg_cong[OF rebuilt, of set] by auto
+  show "distinct (b#m#r#(ps@ss))" using separate(1) by (simp only: rebuilt)
+  show "({b,m,r}\<union>set ps\<union>set ss)\<inter>U={}"
+    "\<forall>a\<in>{b,m,r}\<union>set ps\<union>set ss. octets_formed a"
+    using separate(2) formed by (simp_all only: positions)
+qed
+
 lemma fresh_schema_headers:
   assumes fin: "finite U"
   shows "\<exists>b m r ps ss. length ps = 3 \<and> length ss = n \<and>
     distinct (b#m#r#(ps@ss)) \<and> ({b,m,r} \<union> set ps \<union> set ss) \<inter> U = {} \<and>
     (\<forall>a\<in>{b,m,r} \<union> set ps \<union> set ss. octets_formed a)"
 proof -
-  let ?b = "fresh_address U"
-  let ?m = "fresh_address (insert ?b U)"
-  let ?r = "fresh_address (insert ?m (insert ?b U))"
-  let ?A = "insert ?r (insert ?m (insert ?b U))"
-  let ?ps = "take 3 (fresh_addresses ?A (3+n))"
-  let ?ss = "drop 3 (fresh_addresses ?A (3+n))"
-  have shape: "fresh_addresses U (6+n) = ?b # ?m # ?r # fresh_addresses ?A (3+n)"
-    by (simp add: numeral_eq_Suc)
-  have separate: "distinct (fresh_addresses U (6+n)) \<and> set (fresh_addresses U (6+n)) \<inter> U = {}"
-    by (rule fresh_addresses_disjoint[OF fin])
-  have addresses: "\<forall>a\<in>set (fresh_addresses U (6+n)). octets_formed a"
-    by (rule fresh_addresses_formed)
-  have split_set: "set ?ps \<union> set ?ss = set (fresh_addresses ?A (3+n))"
-  proof -
-    have "set ?ps \<union> set ?ss = set (?ps @ ?ss)" by (rule sym, rule set_append)
-    also have "\<dots> = set (fresh_addresses ?A (3+n))" by (simp only: append_take_drop_id)
-    finally show ?thesis .
-  qed
-  have header_set: "{?b,?m,?r} \<union> set ?ps \<union> set ?ss = set (fresh_addresses U (6+n))"
-    using split_set shape by auto
-  have header_list: "?b#?m#?r#(?ps@?ss) = fresh_addresses U (6+n)"
-    using shape by simp
-  have result: "length ?ps = 3 \<and> length ?ss = n \<and>
-    distinct (?b#?m#?r#(?ps@?ss)) \<and> ({?b,?m,?r} \<union> set ?ps \<union> set ?ss) \<inter> U = {} \<and>
-    (\<forall>a\<in>{?b,?m,?r} \<union> set ?ps \<union> set ?ss. octets_formed a)"
-    using separate addresses by (simp only: header_set header_list) simp
-  show ?thesis by (rule exI[of _ ?b], rule exI[of _ ?m], rule exI[of _ ?r],
-    rule exI[of _ ?ps], rule exI[of _ ?ss]) (rule result)
+  let ?xs="fresh_addresses U (6+n)"
+  obtain b m r ps ss where result: "schema_header_parts ?xs=(b,m,r,ps,ss)" by (metis surjective_pairing)
+  have length: "length ?xs=6+n" by simp
+  have separate: "distinct ?xs" "set ?xs\<inter>U={}"
+    using fresh_addresses_disjoint[OF fin, of "6+n"] by blast+
+  have addresses: "\<forall>a\<in>set ?xs. octets_formed a" by (rule fresh_addresses_formed)
+  show ?thesis using schema_header_parts_properties(1-5)[OF length separate addresses result] by blast
+qed
+
+lemma schema_frame_from_headers:
+  assumes rf: "exact_formed R" and silent: "binder_silent R"
+    and vars: "V\<subseteq>rra_carrier (object_structure R)" "V\<subseteq>binder_addresses"
+    and concl: "c\<in>rra_carrier (object_structure R)"
+    and roots: "set xs\<subseteq>rra_carrier (object_structure R)"
+    and head: "length ps=3" "length ss=length xs" "distinct (b#m#r#(ps@ss))"
+      "({b,m,r}\<union>set ps\<union>set ss)\<inter>rra_carrier (object_structure R)={}"
+      "\<forall>a\<in>{b,m,r}\<union>set ps\<union>set ss. octets_formed a"
+  shows "schema_frame R V c b m r ps (set (zip ss xs))"
+proof -
+  have dom: "rel_dom (set (zip ss xs))=set ss" by (rule zip_domain[OF head(2)])
+  have ran: "rel_ran (set (zip ss xs))=set xs" by (rule zip_range[OF head(2)])
+  have sv: "single_valued (set (zip ss xs))" by (rule single_valued_zip) (use head(3) in simp)
+  show ?thesis by (rule schema_frame.intro[OF rf silent vars concl _ sv])
+    (use roots head in \<open>auto simp: dom ran distinct_append\<close>)
 qed
 
 theorem schema_frame_total:
@@ -201,13 +223,8 @@ proof -
     "\<forall>a\<in>{b,m,r} \<union> set ps \<union> set ss. octets_formed a"
     using fresh_schema_headers[OF fin, where n="length xs"]
     by metis
-  have dom: "rel_dom (set (zip ss xs)) = set ss" by (rule zip_domain[OF head(2)])
-  have ran: "rel_ran (set (zip ss xs)) = set xs" by (rule zip_range[OF head(2)])
-  have sv: "single_valued (set (zip ss xs))"
-    by (rule single_valued_zip) (use head(3) in simp)
   have frame: "schema_frame R V c b m r ps (set (zip ss xs))"
-    by (rule schema_frame.intro[OF rf silent vars concl _ sv])
-       (use roots head in \<open>auto simp: dom ran distinct_append\<close>)
+    by (rule schema_frame_from_headers[OF rf silent vars concl roots head])
   show ?thesis using frame head(2,3) by auto
 qed
 

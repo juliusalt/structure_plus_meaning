@@ -763,8 +763,9 @@ source readings, while the unchanged equality source reuses its earlier proof.
 The resulting all-term meaning equations govern the two runtime observations.
 The [source reconstruction](validation/reconstruction/requirement-sources.md)
 instantiates the common runner for all 23 complete reports. The recursive
-installation has a complete bootstrap theorem; constructing and admitting its
-whole development record and executing the package constructor remain open.
+installation has a complete bootstrap theorem. The later finite constructor
+executes it; constructing and admitting the whole development record remains
+open.
 
 ## Recursive installation over an actual native source
 
@@ -793,3 +794,33 @@ instructions and distinguish those source meanings and the empty collection.
 They compute source observations; they do not execute the existential native
 package constructor or admit the complete development record. The two report
 launchers share one complete instruction serializer.
+
+## Executable native package construction
+
+Finite syntax, fresh addresses, reference forests and environment operations
+now decode exactly to their original constructors. Interface, schema, forest
+and definition proofs share the same construction arguments with their finite
+implementations. Strict keyed partial traversal retains every original
+selected definition and clause. Finite set encoding and schema renaming have
+thin shared owners, also used by their previous clients.
+
+Complete old native readings and actual new code instantiate one definition
+extension contract. The existing existence theorem and the executed constructor
+use that same whole-program argument. Automatic coordinates reuse the original
+fresh-use construction and one complete extension-relocation proof. The finite
+operation checks the actual source and target fields, installs every code block
+before its recursive references, and builds the complete root selector.
+
+Eighteen executions retain complete constructed environments, recovered
+programs and computed source comparisons. The source correspondence is proved
+for the concrete complete source models. Its general native admission and
+admission of the whole development record remain open. The whole target's
+meaning is supplied by the universal constructor contract under that explicit
+source premise. Construction preserves material operands as rule obligations.
+
+One complete native serializer now serves the new reports and the earlier
+source-retention reports. All four source-only reconstruction boundaries use
+one collector of recipe roots, local Python imports, fixtures and complete
+report comparisons. Accepted source prefixes support local proof work without
+rebuilding unchanged foundations. These host scheduling and retention tools
+supply no native decision, adequacy judgment or whole-process cost proof.

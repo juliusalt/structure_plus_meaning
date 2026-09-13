@@ -4,17 +4,21 @@ begin
 
 section \<open>Extend existing definition coordinates without moving their material\<close>
 
-theorem fresh_program_coordinates:
+definition program_coordinate_extension where
+  "program_coordinate_extension E U g f d=(if d\<in>U then g d
+    else (fresh_use_map (environment_uses E) None (Some (f d)),[]))"
+
+theorem program_coordinate_extension_properties:
   fixes E :: "local_address option artifact_environment"
     and g :: "'d\<Rightarrow>local_address option definition_site"
-  assumes environment: "environment_formed E" and finite: "finite V"
+  assumes environment: "environment_formed E"
     and injective: "inj_on g U" and positions: "g ` U\<subseteq>environment_positions E"
-  shows "\<exists>h. inj_on h V \<and> (\<forall>d\<in>U. h d=g d) \<and>
+    and addressing: "finite_addressing (V-U) f"
+  shows "let h=program_coordinate_extension E U g f in
+    inj_on h V \<and> (\<forall>d\<in>U. h d=g d) \<and>
     (\<forall>d\<in>V-U. snd (h d)=[]) \<and>
     fst ` h ` (V-U)\<inter>environment_uses E={}"
 proof -
-  obtain f where addressing: "finite_addressing (V-U) f"
-    using finite_addressing_exists[of "V-U"] finite by blast
   let ?uses="environment_uses E"
   let ?new="\<lambda>d. fresh_use_map ?uses None (Some (f d))"
   let ?h="\<lambda>d. if d\<in>U then g d else (?new d,[])"
@@ -51,7 +55,22 @@ proof -
       show ?thesis by (rule inj_onD[OF new_injective same]) (use x y newx newy in auto)
     qed
   qed
-  show ?thesis by (rule exI[of _ ?h]) (use all_injective fresh in auto)
+  show ?thesis using all_injective fresh by (auto simp: program_coordinate_extension_def[abs_def] Let_def)
+qed
+
+theorem fresh_program_coordinates:
+  fixes E :: "local_address option artifact_environment"
+    and g :: "'d\<Rightarrow>local_address option definition_site"
+  assumes environment: "environment_formed E" and finite: "finite V"
+    and injective: "inj_on g U" and positions: "g ` U\<subseteq>environment_positions E"
+  shows "\<exists>h. inj_on h V \<and> (\<forall>d\<in>U. h d=g d) \<and>
+    (\<forall>d\<in>V-U. snd (h d)=[]) \<and>
+    fst ` h ` (V-U)\<inter>environment_uses E={}"
+proof -
+  obtain f where addressing: "finite_addressing (V-U) f"
+    using finite_addressing_exists[of "V-U"] finite by blast
+  show ?thesis using program_coordinate_extension_properties[OF environment injective positions addressing]
+    by (simp only: Let_def; blast)
 qed
 
 text \<open>

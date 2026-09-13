@@ -1133,3 +1133,42 @@ This exception is separate from the new source-only recipe. The structural
 development protocol is the next milestone; whole native symbolic-graph
 admission, assertion truth, native mathematical-proof admission, and the final
 repository audit remain open.
+
+The finite native extension now has an executed constructor under the owner's
+preserved Isabelle bootstrap boundary. Every finite syntax and reference
+operation decodes to its original constructor. Shared construction arguments
+serve both the existing totality theorems and finite implementations; complete
+keyed traversals retain every selected definition and clause. One contract
+combines actual old readings and newly compiled code into the whole target
+program, and both installation paths instantiate it.
+
+Eighteen complete reports execute automatic placement, all code and reference
+installation, root selection and native program recovery. Four checked plans
+retain the actual source clause distinction. Fourteen program controls cover
+empty clauses, recursive peers, a seeded cycle, both literal forms, all material
+operands and rejected old-field changes, missing callees, conflicting clauses
+and malformed unused clauses. Every returned artifact, binding, interface and
+clause is retained in the reproduced report. Formation and source comparisons
+are computed from those actual subjects.
+
+The general construction contract still requires the complete correspondence
+between the ordinary source and its actual native package. Both concrete
+source models have that proof. General native admission of the correspondence
+and the whole development record remains open, together with the complete
+workflow, historical permission and cost account. No source-domain substitute
+or supplied satisfaction table discharges that condition.
+
+The new source-only recipe and the three existing recipes share one source
+collector and one reconstruction runner. Complete native serializers are also
+shared with the earlier source-retention reports. Reusable accepted source
+prefixes replace repeated rebuilding during local proof work. Superseded
+build copies are removed after their replacement evidence is retained.
+
+The normal 959-theory check accepts the complete registered source graph with
+unchanged sources and tools and no proof escapes. All 98 tooling tests pass.
+Independent materializations reconstruct all four proof contexts from HOL and
+all 301 complete reports: 18 native extensions, 23 source-retention reports,
+75 requirement reports and 185 child-claim reports. Every comparison is exact.
+The four manifests contain 402, 390, 510 and 559 repository input files,
+respectively. Only their reconstruction boundaries and verification receipts
+are retained in the repository.

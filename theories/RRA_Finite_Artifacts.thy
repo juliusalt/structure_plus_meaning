@@ -4,6 +4,10 @@ begin
 
 section \<open>Complete finite input values\<close>
 
+lemma finite_sorted_list_distinct [simp]:
+  "distinct (sorted_list_of_fset A)"
+  by (simp add: sorted_list_of_fset.rep_eq)
+
 record ('a,'v) finite_opaque_basis =
   finite_bag :: "('a \<times> 'v) multiset"
   finite_bindings :: "('a \<times> 'v) fset"

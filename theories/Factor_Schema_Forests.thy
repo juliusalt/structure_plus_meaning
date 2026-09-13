@@ -49,27 +49,34 @@ proof -
   qed
 qed
 
-theorem schema_forest_total:
+locale schema_forest_construction =
   fixes Ss :: "('a,'s,local_address option definition_site) factor_schema list"
-  assumes formed: "\<forall>S\<in>set Ss. schema_formed S"
-    and addresses: "\<forall>S\<in>set Ss. \<forall>d\<in>schema_dependencies S. octets_formed (snd d)"
-  shows "\<exists>R rs As L C. exact_formed R \<and> bag_count (object_data R) = (\<lambda>_. 0) \<and>
-    length rs = length Ss \<and> length As = length Ss \<and> reference_table_formed L C \<and>
-    rel_dom L \<union> rel_dom C \<subseteq> rra_carrier (object_structure R) \<and>
-    rel_ran C = (\<Union>S\<in>set Ss. schema_dependencies S) \<and> set rs \<subseteq> rra_carrier (object_structure R) \<and>
-    (\<forall>i<length Ss. schema_alpha_variant (Ss!i) (As!i)) \<and>
-    (\<forall>E u. environment_formed E \<longrightarrow> artifact_at E u R \<longrightarrow>
-      syntax_references E u L C \<longrightarrow>
-      (\<forall>i<length Ss. native_schema_at E u (rs!i) (As!i)))"
-proof -
-  obtain Rs :: "exact_artifact list" and rs :: "local_address list"
+    and Rs :: "exact_artifact list" and rs :: "local_address list"
     and As :: "local_address option native_schema list"
-    and Ls :: "(local_address \<times> exact_artifact) set list"
-    and Cs :: "(local_address \<times> local_address option definition_site) set list" where built:
-    "length Rs = length Ss" "length rs = length Ss" "length As = length Ss"
-    "length Ls = length Ss" "length Cs = length Ss"
+    and Ls :: "(local_address\<times>exact_artifact) set list"
+    and Cs :: "(local_address\<times>local_address option definition_site) set list"
+  assumes built: "length Rs=length Ss" "length rs=length Ss" "length As=length Ss"
+    "length Ls=length Ss" "length Cs=length Ss"
     "\<forall>i<length Ss. schema_alpha_variant (Ss!i) (As!i) \<and> schema_code (Rs!i) (rs!i) (As!i) (Ls!i) (Cs!i)"
-    using schema_code_list_total[OF formed addresses] by metis
+begin
+
+abbreviation artifact where "artifact \<equiv> syntax_forest Rs"
+abbreviation roots where "roots \<equiv> map (\<lambda>i. syntax_branch i (rs!i)) [0..<length Ss]"
+abbreviation schemas where "schemas \<equiv> map (\<lambda>i. rename_schema (syntax_branch i) (syntax_branch i) id (As!i)) [0..<length Ss]"
+abbreviation literals where "literals \<equiv> syntax_forest_table Ls"
+abbreviation callees where "callees \<equiv> syntax_forest_table Cs"
+
+lemma properties:
+  "exact_formed artifact" "bag_count (object_data artifact)=(\<lambda>_. 0)"
+  "length roots=length Ss" "length schemas=length Ss" "reference_table_formed literals callees"
+  "rel_dom literals\<union>rel_dom callees\<subseteq>rra_carrier (object_structure artifact)"
+  "rel_ran callees=(\<Union>S\<in>set Ss. schema_dependencies S)"
+  "set roots\<subseteq>rra_carrier (object_structure artifact)"
+  "\<forall>i<length Ss. schema_alpha_variant (Ss!i) (schemas!i)"
+  "\<forall>E u. environment_formed E \<longrightarrow> artifact_at E u artifact \<longrightarrow>
+    syntax_references E u literals callees \<longrightarrow>
+    (\<forall>i<length Ss. native_schema_at E u (roots!i) (schemas!i))"
+proof -
   let ?R = "syntax_forest Rs"
   let ?rs = "map (\<lambda>i. syntax_branch i (rs!i)) [0..<length Ss]"
   let ?As = "map (\<lambda>i. rename_schema (syntax_branch i) (syntax_branch i) id (As!i)) [0..<length Ss]"
@@ -140,8 +147,46 @@ proof -
       by (rule schema_codes_forest_recovers[OF lengths codes ef source identity_reads refs])
     show "\<forall>i<length Ss. native_schema_at E u (?rs!i) (?As!i)" using reads built(1) by simp
   qed
-  show ?thesis by (rule exI[of _ ?R], rule exI[of _ ?rs], rule exI[of _ ?As], rule exI[of _ ?L], rule exI[of _ ?C])
-    (use rf profile bounds range roots alpha recover in auto)
+  show "exact_formed artifact" "bag_count (object_data artifact)=(\<lambda>_. 0)"
+    "length roots=length Ss" "length schemas=length Ss" "reference_table_formed literals callees"
+    "rel_dom literals\<union>rel_dom callees\<subseteq>rra_carrier (object_structure artifact)"
+    "rel_ran callees=(\<Union>S\<in>set Ss. schema_dependencies S)"
+    "set roots\<subseteq>rra_carrier (object_structure artifact)"
+    "\<forall>i<length Ss. schema_alpha_variant (Ss!i) (schemas!i)"
+    "\<forall>E u. environment_formed E \<longrightarrow> artifact_at E u artifact \<longrightarrow>
+      syntax_references E u literals callees \<longrightarrow>
+      (\<forall>i<length Ss. native_schema_at E u (roots!i) (schemas!i))"
+    using rf profile bounds range roots alpha recover by auto
+qed
+
+end
+
+theorem schema_forest_total:
+  fixes Ss :: "('a,'s,local_address option definition_site) factor_schema list"
+  assumes formed: "\<forall>S\<in>set Ss. schema_formed S"
+    and addresses: "\<forall>S\<in>set Ss. \<forall>d\<in>schema_dependencies S. octets_formed (snd d)"
+  shows "\<exists>R rs As L C. exact_formed R \<and> bag_count (object_data R) = (\<lambda>_. 0) \<and>
+    length rs = length Ss \<and> length As = length Ss \<and> reference_table_formed L C \<and>
+    rel_dom L \<union> rel_dom C \<subseteq> rra_carrier (object_structure R) \<and>
+    rel_ran C = (\<Union>S\<in>set Ss. schema_dependencies S) \<and> set rs \<subseteq> rra_carrier (object_structure R) \<and>
+    (\<forall>i<length Ss. schema_alpha_variant (Ss!i) (As!i)) \<and>
+    (\<forall>E u. environment_formed E \<longrightarrow> artifact_at E u R \<longrightarrow>
+      syntax_references E u L C \<longrightarrow>
+      (\<forall>i<length Ss. native_schema_at E u (rs!i) (As!i)))"
+proof -
+  obtain Rs :: "exact_artifact list" and rs :: "local_address list"
+    and As :: "local_address option native_schema list"
+    and Ls :: "(local_address \<times> exact_artifact) set list"
+    and Cs :: "(local_address \<times> local_address option definition_site) set list" where built:
+    "length Rs = length Ss" "length rs = length Ss" "length As = length Ss"
+    "length Ls = length Ss" "length Cs = length Ss"
+    "\<forall>i<length Ss. schema_alpha_variant (Ss!i) (As!i) \<and> schema_code (Rs!i) (rs!i) (As!i) (Ls!i) (Cs!i)"
+    using schema_code_list_total[OF formed addresses] by metis
+  interpret forest: schema_forest_construction Ss Rs rs As Ls Cs
+    by (rule schema_forest_construction.intro[OF built])
+  show ?thesis by (rule exI[of _ forest.artifact], rule exI[of _ forest.roots], rule exI[of _ forest.schemas],
+    rule exI[of _ forest.literals], rule exI[of _ forest.callees])
+    (use forest.properties in blast)
 qed
 
 text \<open>

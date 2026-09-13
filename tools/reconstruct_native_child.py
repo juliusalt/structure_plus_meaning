@@ -15,7 +15,8 @@ RECIPE = Recipe(
                    ("--catalog", "{output}/catalog", "--inputs", "{output}/inputs"), 1200),)),
     boundary=("A run without --proof reconstructs proof, exported code, baseline inputs and all native checks "
               "from repository sources. The optional supplied-export mode rechecks execution only. "
-              "The assertion child remains an assumption; whole-graph and closed-proof admission are separate."))
+              "The assertion child remains an assumption; whole-graph and closed-proof admission are separate."),
+    fixtures=("validation/fixtures/finite-inference-source.json",))
 
 
 if __name__ == "__main__":

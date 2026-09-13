@@ -1,5 +1,5 @@
 theory Factor_Native_System_Extensions
-  imports Factor_Native_Group_Extensions Factor_Fresh_Program_Coordinates
+  imports Factor_Mapped_Extension_Coordinates
 begin
 
 section \<open>Install an ordinary program extension over its actual retained native source\<close>
@@ -30,10 +30,8 @@ proof -
     using native_package_projection(1)[OF native] by (simp add: native_package_formed_def)
   have inside: "system_definitions P\<subseteq>system_definitions Q"
     by (rule whole_agreement_definitions[OF old_agreement])
-  have source_sites: "g ` system_definitions P=system_definitions N"
-    using source_variant by (simp add: system_alpha_variant_def renamed_system_definitions)
   have positions: "g ` system_definitions P\<subseteq>environment_positions E"
-    using native_package_entry_position[OF native] source_sites by blast
+    by (rule native_renamed_source_positions[OF native source_variant])
   obtain h where coordinates: "inj_on h (system_definitions Q)"
     "\<forall>d\<in>system_definitions P. h d=g d"
     "\<forall>d\<in>system_definitions Q-system_definitions P. snd (h d)=[]"
@@ -43,22 +41,13 @@ proof -
   let ?V="rename_system h Q"
   let ?D="system_definitions ?V-system_definitions ?S"
   let ?C="system_restriction ?V ?D"
-  have source_injective_h: "inj_on h (system_definitions P)" by (rule inj_on_subset[OF coordinates(1) inside])
-  have same_source: "?S=rename_system g P" by (rule renamed_system_agreeing_coordinates[OF source coordinates(2)])
-  have source_native: "system_alpha_variant ?S N" using source_variant same_source by simp
-  have sf: "schema_system_formed ?S" by (rule renamed_system_formed[OF source source_injective_h])
-  have vf: "schema_system_formed ?V" by (rule renamed_system_formed[OF target coordinates(1)])
-  have agree: "systems_agree_on ?S ?V (system_definitions ?S)"
-    by (simp only: renamed_system_definitions;
-      rule renamed_system_extension_agreement[OF source target old_agreement coordinates(1)])
-  have group: "schema_system_formed_over (system_definitions ?S) ?C"
-    and complete: "system_union ?S ?C=?V"
-    by (rule extension_definition_group[OF sf vf agree])+
-  have image_difference: "h ` (system_definitions Q-system_definitions P)=
-    h ` system_definitions Q-h ` system_definitions P"
-    by (rule inj_on_image_set_diff[OF coordinates(1) _ inside]) auto
+  interpret maps: mapped_extension_coordinates P Q g h
+    by (rule mapped_extension_coordinates.intro[OF source target old_agreement coordinates(1,2)])
+  have source_native: "system_alpha_variant ?S N" using source_variant maps.source_equation by simp
+  have group: "schema_system_formed_over (system_definitions ?S) ?C" and complete: "system_union ?S ?C=?V"
+    by (rule maps.group_formed, rule maps.whole)
   have definitions: "system_definitions ?C=h ` (system_definitions Q-system_definitions P)"
-    by (auto simp: renamed_system_definitions image_difference)
+    by (rule maps.group_definitions)
   have roots: "\<forall>d\<in>system_definitions ?C. snd d=[]"
     by (simp only: definitions) (use coordinates(3) in auto)
   have fresh: "fst ` system_definitions ?C\<inter>environment_uses E={}"

@@ -6,6 +6,7 @@ import json
 import check_reasoning
 import investigate
 import machine_reports
+import native_program_json
 import proved_code
 
 
@@ -13,9 +14,8 @@ def program(engine, inputs):
     code = 'use ' + investigate.ml_string(str(engine)) + ';\n'
     code += 'structure N = Requirement_Source_Execution;\n'
     code += check_reasoning.SCALAR_JSON_PRELUDE
+    code += native_program_json.COORDINATES
     code += r'''
-fun juse NONE = "null" | juse (SOME a) = jlist jnat a;
-fun jsite (u,r) = "[" ^ juse u ^ "," ^ jlist jnat r ^ "]";
 fun emit (i,changed) =
   let val (domain,holds) = N.native_guard_source_meaning_report changed
   in print ("NATIVE_GUARD_MEANING " ^ Int.toString i ^
@@ -49,7 +49,7 @@ def main():
 
     receipt = proved_code.checked_execution(
         args.proof, args.poly, args.output, required_theories=['Factor_Requirement_Source_Examples'],
-        inputs={'source_variants': [False, True]}, input_paths=[Path(__file__)],
+        inputs={'source_variants': [False, True]}, input_paths=[Path(__file__), Path(native_program_json.__file__)],
         program=program, assess=assess, project=args.project.resolve(),
         question='Can identical installed native guards with equal domains have different meanings when their source changes?',
         boundary='The source constructor changes one actual clause; both complete native package readings '

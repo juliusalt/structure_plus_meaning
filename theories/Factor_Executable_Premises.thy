@@ -5,10 +5,13 @@ begin
 
 section \<open>Recovering the two native premise forms\<close>
 
-type_synonym 'u finite_native_premise =
-  "('u definition_site \<times> local_address finite_term_pattern) + local_address finite_material_pattern"
+type_synonym ('a,'u) finite_premise_template =
+  "('u definition_site \<times> 'a finite_term_pattern) + 'a finite_material_pattern"
 
-fun decode_finite_native_premise :: "'u finite_native_premise \<Rightarrow> 'u native_premise" where
+type_synonym 'u finite_native_premise = "(local_address,'u) finite_premise_template"
+
+fun decode_finite_native_premise :: "('a,'u) finite_premise_template \<Rightarrow>
+    ('u definition_site \<times> 'a term_pattern) + 'a material_pattern" where
   "decode_finite_native_premise (Inl c) = Inl (decode_finite_call_pattern c)"
 | "decode_finite_native_premise (Inr M) = Inr (decode_finite_material M)"
 
@@ -107,6 +110,13 @@ definition finite_right_sockets :: "('s \<times> ('a + 'b)) fset \<Rightarrow> (
 lemma finite_socket_sum_correct:
   "fset (finite_socket_sum Q A)=socket_sum (fset Q) (fset A)"
   by (auto simp: finite_socket_sum_def socket_sum_def fimage.rep_eq)
+
+lemma finite_socket_sum_functional:
+  "finite_relation_functional (finite_socket_sum P Q) \<longleftrightarrow>
+    finite_relation_functional P \<and> finite_relation_functional Q \<and>
+    fimage fst P |\<inter>| fimage fst Q={||}"
+  by (simp only: finite_relation_functional_correct finite_socket_sum_correct socket_sum_single_valued)
+    (simp add: fset_inject[symmetric] fimage.rep_eq rel_dom_image)
 
 lemma finite_socket_parts_member [simp]:
   "(s,x) |\<in>| finite_left_sockets F \<longleftrightarrow> (s,Inl x) |\<in>| F"

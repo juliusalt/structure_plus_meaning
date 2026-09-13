@@ -6,6 +6,7 @@ import json
 import check_reasoning
 import investigate
 import machine_reports
+import native_program_json
 import proved_code
 
 
@@ -13,30 +14,9 @@ def program(engine, inputs):
     code = 'use ' + investigate.ml_string(str(engine)) + ';\n'
     code += 'structure N = Requirement_Source_Execution;\n'
     code += check_reasoning.SCALAR_JSON_PRELUDE
+    code += native_program_json.COORDINATES + native_program_json.ARTIFACT_ROWS + native_program_json.SCHEMAS
     code += r'''
 val n = N.nat_of_integer;
-fun elements a = case N.fset a of N.Set xs => xs | N.Coset _ => raise Fail "Nonfinite representation";
-fun juse NONE = "null" | juse (SOME a) = jlist jnat a;
-fun jsite (u,r) = "[" ^ juse u ^ "," ^ jlist jnat r ^ "]";
-fun jedge (r,(s,t)) = "[" ^ jlist jnat r ^ "," ^ jlist jnat s ^ "," ^ jlist jnat t ^ "]";
-fun jdata (r,p) = "[" ^ jlist jnat r ^ "," ^ jlist jnat p ^ "]";
-fun jartifact (carrier,(incidence,(counts,functions))) =
-  "{\"carrier\":" ^ jlist (jlist jnat) carrier ^ ",\"incidence\":" ^ jlist jedge incidence ^
-  ",\"counted_data\":" ^ jlist jdata counts ^ ",\"functional_data\":" ^ jlist jdata functions ^ "}";
-fun jartifactRow (u,a) = "[" ^ juse u ^ "," ^ jartifact a ^ "]";
-fun jbinding (k,v) = "[" ^ jsite k ^ "," ^ juse v ^ "]";
-fun jenvironment (artifacts,bindings) =
-  "{\"artifacts\":" ^ jlist jartifactRow artifacts ^ ",\"bindings\":" ^ jlist jbinding bindings ^ "}";
-fun jpattern (N.Finite_Variable a) = "{\"variable\":" ^ jlist jnat a ^ "}"
-  | jpattern (N.Finite_Pattern_Payload p) = "{\"payload\":" ^ jlist jnat p ^ "}"
-  | jpattern (N.Finite_Pattern_Pair (p,q)) = "{\"pair\":[" ^ jpattern p ^ "," ^ jpattern q ^ "]}"
-  | jpattern (N.Finite_Pattern_Target _) = raise Fail "The complete control family contains no target patterns";
-fun jpremise (s,(d,p)) = "[" ^ jlist jnat s ^ "," ^ jsite d ^ "," ^ jpattern p ^ "]";
-fun jschema s =
-  let val materials = elements (N.finite_schema_materials s)
-      val () = if null materials then () else raise Fail "The complete control family has no material premises"
-  in "{\"conclusion\":" ^ jpattern (N.finite_schema_conclusion s) ^
-    ",\"premises\":" ^ jlist jpremise (elements (N.finite_schema_premises s)) ^ ",\"materials\":[]}" end;
 fun jobs [source,target,included,member,clause,admitted] =
   "{\"source_formed\":" ^ Bool.toString source ^ ",\"candidate_formed\":" ^ Bool.toString target ^
   ",\"source_included\":" ^ Bool.toString included ^ ",\"package_member\":" ^ Bool.toString member ^
@@ -82,7 +62,7 @@ def main():
 
     receipt = proved_code.checked_execution(
         args.proof, args.poly, args.output, required_theories=['Retained_Clause_Execution'],
-        inputs={'indices': list(range(15))}, input_paths=[Path(__file__)],
+        inputs={'indices': list(range(15))}, input_paths=[Path(__file__), Path(native_program_json.__file__)],
         program=program, assess=assess, project=args.project.resolve(), timeout=600,
         question='Does complete clause admission retain the actual declared source when candidate sources change?',
         boundary='Both complete environment tables, the expected schema, recovered domains and all six '

@@ -24,6 +24,18 @@ qed
 
 section \<open>A complete closed reading graph is the exact selected graph\<close>
 
+theorem native_definition_family_closed:
+  assumes formed: "environment_formed E"
+    and readings: "\<And>d. d\<in>D \<Longrightarrow> \<exists>p C. native_definition_at E (fst d) (snd d) p C"
+    and closed: "\<And>d e. d\<in>D \<Longrightarrow> (d,e)\<in>native_definition_edges E \<Longrightarrow> e\<in>D"
+  shows "native_definition_sites E D=D" and "native_package_formed E D"
+proof -
+  have sites: "native_definition_sites E D=D"
+    by (rule subset_antisym[OF native_definition_sites_least[OF subset_refl closed] native_definition_roots])
+  show "native_definition_sites E D=D" by (rule sites)
+  show "native_package_formed E D" unfolding native_package_formed_def sites using formed readings by blast
+qed
+
 theorem native_closed_definition_graph:
   assumes formed: "environment_formed E"
     and reads: "\<And>d p C. (d,p,C)\<in>G \<Longrightarrow> native_definition_at E (fst d) (snd d) p C"

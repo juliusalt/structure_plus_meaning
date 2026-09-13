@@ -22,10 +22,6 @@ definition finite_artifact_rows :: "finite_exact_artifact \<Rightarrow> artifact
     sorted_list_of_multiset (finite_bag (finite_data C)),
     sorted_list_of_fset (finite_bindings (finite_data C)))"
 
-lemma finite_sorted_list_distinct [simp]:
-  "distinct (sorted_list_of_fset A)"
-  by (simp add: sorted_list_of_fset.rep_eq)
-
 lemma finite_sorted_multiset_counts [simp]:
   "count_list (sorted_list_of_multiset M)=count M"
   by (rule ext) (metis count_mset mset_sorted_list_of_multiset)

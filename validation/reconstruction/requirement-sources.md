@@ -77,9 +77,11 @@ source-only reconstruction boundary. Comparison hashes identify reproduction
 of all JSON fields, indices, ordering and repeated records. The
 Isabelle-established contracts determine their meaning.
 
-The boundary now contains 364 theory sources, 20 Python modules and one
-complete-report comparison: 385 input files and 23 reports. The instruction
-serializer is shared with the earlier 75-report plan reconstruction.
+The boundary contains 367 theory sources, 22 Python modules and one
+complete-report comparison: 390 input files and 23 reports. The instruction
+serializer is shared with the earlier 75-report plan reconstruction; complete
+native coordinates, artifacts and schemas share their serializer with the
+executed package-construction reports.
 
 `Factor_Native_Requirement_Plans` connects every admitted supported plan to
 a constructed package over the actual native source. The ordinary source must
@@ -95,7 +97,9 @@ repeated-variable distinction. The four cases combine these sources with
 collection and nonempty-collection requirements; they compute the complete
 plans and three source observations. The installation theorem connects those
 observations to every resulting package. This execution does not construct
-the existential package witnesses.
+the existential package witnesses. The separate
+[native extension recipe](native-extensions.md) executes the finite constructor
+and recovers every resulting program field.
 
 This is a contribution to the six conditions in `problems.txt`. The earlier
 plan artifact still records a source domain. A complete development record

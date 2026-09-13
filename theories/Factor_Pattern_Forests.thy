@@ -29,9 +29,15 @@ fun pattern_forest_bindings :: "'a term_pattern list \<Rightarrow> (local_addres
     (\<lambda>(k,R). (2#k,R)) ` pattern_literal_bindings p \<union>
     (\<lambda>(k,R). (3#k,R)) ` pattern_forest_bindings ps"
 
-fun pattern_forest_roots :: "'a term_pattern list \<Rightarrow> local_address list" where
+fun pattern_forest_roots :: "'a list \<Rightarrow> local_address list" where
   "pattern_forest_roots [] = []"
 | "pattern_forest_roots (p#ps) = [2] # map (Cons 3) (pattern_forest_roots ps)"
+
+lemma pattern_forest_roots_map [simp]: "pattern_forest_roots (map f ps)=pattern_forest_roots ps"
+  by (induction ps) simp_all
+
+lemma pattern_forest_roots_outside: "set (pattern_forest_roots ps)\<inter>binder_addresses={}"
+  by (cases ps) auto
 
 lemma pattern_forest_slots [simp]:
   "rel_dom (pattern_forest_bindings []) = {}"
@@ -189,7 +195,7 @@ lemma pattern_forest_roots_prefix:
 proof (rule map_cong[OF refl])
   fix a assume member: "a \<in> set (pattern_forest_roots ps)"
   have outside: "a \<notin> binder_addresses"
-    using pattern_forest_roots_inside[of ps] pattern_forest_interior_outside[of ps] member by blast
+    using pattern_forest_roots_outside[of ps] member by blast
   show "syntax_prefix n a = n#a" using outside by (simp add: syntax_prefix_def)
 qed
 

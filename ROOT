@@ -925,3 +925,40 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     RRA_Finite_Inclusion
     Requirement_Source_Execution
     Retained_Clause_Execution
+    Finite_Set_Encoding
+    Factor_Finite_Schema_Renaming
+    Factor_Finite_Checked_Requirements
+    RRA_Finite_Syntax_Construction
+    Factor_Finite_Reference_Tables
+    Finite_List_Rekey
+    Factor_Finite_Pattern_Syntax
+    Factor_Finite_Reference_Forests
+    Factor_Finite_Template_Syntax
+    RRA_Finite_Fresh_Addresses
+    Factor_Finite_Schema_Syntax
+    Factor_Finite_Schema_Compilation
+    Factor_Finite_Schema_Forests
+    Factor_Finite_Interface_Syntax
+    Factor_Finite_Definition_Compilation
+    Factor_Finite_System_Fields
+    Keyed_Option_Maps
+    Factor_Finite_Program_Compilation
+    RRA_Finite_Environment_Construction
+    Factor_Finite_Reference_Environments
+    Factor_Finite_Code_Installation
+    Factor_Finite_Root_Syntax
+    Factor_Finite_Root_Environments
+    Factor_Finite_System_Agreement
+    Factor_Native_Definition_Extensions
+    Factor_Finite_Native_Extensions
+    Factor_Finite_Program_Coordinates
+    Factor_Mapped_Extension_Coordinates
+    Factor_Finite_Mapped_Extensions
+    Factor_Finite_Guard_Source_Extensions
+    Factor_Finite_Native_Observations
+    Factor_Finite_System_Unions
+    Factor_Finite_View_Installation
+    Factor_Finite_Requirement_Installation
+    Factor_Finite_Native_Controls
+    Factor_Finite_Native_Extension_Cases
+    Native_Extension_Execution

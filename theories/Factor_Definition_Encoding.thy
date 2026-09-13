@@ -4,38 +4,45 @@ begin
 
 section \<open>Total native syntax for a complete interface and clause list\<close>
 
-theorem definition_list_syntax_total:
-  fixes Ss :: "('a,'s,local_address option definition_site) factor_schema list"
-  assumes pf: "pattern_formed p" and formed: "\<forall>S\<in>set Ss. schema_formed S"
-    and addresses: "\<forall>S\<in>set Ss. \<forall>d\<in>schema_dependencies S. octets_formed (snd d)"
-  shows "\<exists>T f ss As L C. exact_formed T \<and> bag_count (object_data T) = (\<lambda>_. 0) \<and>
-    [] \<in> rra_carrier (object_structure T) \<and> inj_on f (pattern_variables p) \<and>
-    length ss = length Ss \<and> distinct ss \<and> length As = length Ss \<and>
-    (\<forall>i<length Ss. schema_alpha_variant (Ss!i) (As!i)) \<and>
-    reference_table_formed L C \<and> rel_dom L \<union> rel_dom C \<subseteq> rra_carrier (object_structure T) \<and>
-    rel_ran C = (\<Union>S\<in>set Ss. schema_dependencies S) \<and>
-    (\<forall>E u. environment_formed E \<longrightarrow> artifact_at E u T \<longrightarrow> syntax_references E u L C \<longrightarrow>
-      native_definition_at E u [] (rename_pattern f p) (set (zip ss As)))"
-proof -
-  obtain R :: exact_artifact and r :: local_address and f and L :: "(local_address \<times> exact_artifact) set" where interface:
-    "exact_formed R" "inj_on f (pattern_variables p)" "reference_table_formed L ({} :: (local_address \<times> local_address option definition_site) set)"
+locale definition_list_construction =
+  fixes p :: "'b term_pattern" and Ss :: "('a,'s,local_address option definition_site) factor_schema list"
+    and R S :: exact_artifact and r :: local_address and f :: "'b\<Rightarrow>local_address"
+    and L A :: "(local_address\<times>exact_artifact) set" and B :: "(local_address\<times>local_address option definition_site) set"
+    and rs :: "local_address list" and As :: "local_address option native_schema list"
+  assumes interface: "exact_formed R" "inj_on f (pattern_variables p)" "reference_table_formed L ({} :: (local_address \<times> local_address option definition_site) set)"
     "rel_dom L \<subseteq> rra_carrier (object_structure R)" "bag_count (object_data R) = (\<lambda>_. 0)"
     "r \<in> rra_carrier (object_structure R)"
     "\<forall>E :: local_address option artifact_environment. \<forall>u.
       environment_formed E \<longrightarrow> artifact_at E u R \<longrightarrow> syntax_references E u L {} \<longrightarrow>
       (\<exists>I K. scoped_pattern_at E u r (rename_pattern f p) I K \<and> rra_carrier (object_structure R) = I \<union> K)"
-    using interface_syntax_total[OF pf] by metis
-  obtain S :: exact_artifact and rs :: "local_address list" and As :: "local_address option native_schema list"
-    and A :: "(local_address \<times> exact_artifact) set"
-    and B :: "(local_address \<times> local_address option definition_site) set" where clauses:
-    "exact_formed S" "bag_count (object_data S) = (\<lambda>_. 0)"
+    and clauses: "exact_formed S" "bag_count (object_data S) = (\<lambda>_. 0)"
     "length rs = length Ss" "length As = length Ss" "reference_table_formed A B"
     "rel_dom A \<union> rel_dom B \<subseteq> rra_carrier (object_structure S)"
     "rel_ran B = (\<Union>Q\<in>set Ss. schema_dependencies Q)" "set rs \<subseteq> rra_carrier (object_structure S)"
     "\<forall>i<length Ss. schema_alpha_variant (Ss!i) (As!i)"
     "\<forall>E u. environment_formed E \<longrightarrow> artifact_at E u S \<longrightarrow>
       syntax_references E u A B \<longrightarrow> (\<forall>i<length Ss. native_schema_at E u (rs!i) (As!i))"
-    using schema_forest_total[OF formed addresses] by metis
+begin
+
+abbreviation artifact where "artifact \<equiv> definition_wrapper R r S rs"
+abbreviation variables where "variables \<equiv> Cons 2 \<circ> f"
+abbreviation ports where "ports \<equiv> family_ports (length rs)"
+abbreviation schemas where "schemas \<equiv> map (rename_schema (Cons 3) (Cons 3) id) As"
+abbreviation literals where "literals \<equiv> map_slot_keys (Cons 2) L\<union>map_slot_keys (Cons 3) A"
+abbreviation callees where "callees \<equiv> map_slot_keys (Cons 3) B"
+
+lemma properties:
+  "exact_formed artifact" "bag_count (object_data artifact)=(\<lambda>_. 0)"
+  "[]\<in>rra_carrier (object_structure artifact)" "inj_on variables (pattern_variables p)"
+  "length ports=length Ss" "distinct ports" "length schemas=length Ss"
+  "\<forall>i<length Ss. schema_alpha_variant (Ss!i) (schemas!i)"
+  "reference_table_formed literals callees"
+  "rel_dom literals\<union>rel_dom callees\<subseteq>rra_carrier (object_structure artifact)"
+  "rel_ran callees=(\<Union>S\<in>set Ss. schema_dependencies S)"
+  "\<forall>E u. environment_formed E \<longrightarrow> artifact_at E u artifact \<longrightarrow>
+    syntax_references E u literals callees \<longrightarrow>
+    native_definition_at E u [] (rename_pattern variables p) (set (zip ports schemas))"
+proof -
   interpret frame: definition_frame R S r rs
     by (rule definition_frame.intro[OF interface(1) clauses(1) interface(5) clauses(2) interface(6) clauses(8)])
   let ?T = "definition_wrapper R r S rs"
@@ -118,9 +125,58 @@ proof -
           rule exI[of _ "2#r"], rule exI[of _ "[1,0]"], rule exI[of _ I], rule exI[of _ K])
          (use source frame.record_read interface_read family top_separate body_separate in auto)
   qed
-  show ?thesis by (rule exI[of _ ?T], rule exI[of _ ?f], rule exI[of _ ?ss], rule exI[of _ ?As],
-      rule exI[of _ ?L], rule exI[of _ ?C])
-    (use frame.formed frame.no_counts frame.root_inside finj clauses(3,4) alpha profile bounds range recover in auto)
+  show "exact_formed artifact" "bag_count (object_data artifact)=(\<lambda>_. 0)"
+    "[]\<in>rra_carrier (object_structure artifact)" "inj_on variables (pattern_variables p)"
+    "length ports=length Ss" "distinct ports" "length schemas=length Ss"
+    "\<forall>i<length Ss. schema_alpha_variant (Ss!i) (schemas!i)"
+    "reference_table_formed literals callees"
+    "rel_dom literals\<union>rel_dom callees\<subseteq>rra_carrier (object_structure artifact)"
+    "rel_ran callees=(\<Union>S\<in>set Ss. schema_dependencies S)"
+    "\<forall>E u. environment_formed E \<longrightarrow> artifact_at E u artifact \<longrightarrow>
+      syntax_references E u literals callees \<longrightarrow>
+      native_definition_at E u [] (rename_pattern variables p) (set (zip ports schemas))"
+    using frame.formed frame.no_counts frame.root_inside finj clauses(3,4) alpha profile bounds range recover by auto
+qed
+
+end
+
+theorem definition_list_syntax_total:
+  fixes Ss :: "('a,'s,local_address option definition_site) factor_schema list"
+  assumes pf: "pattern_formed p" and formed: "\<forall>S\<in>set Ss. schema_formed S"
+    and addresses: "\<forall>S\<in>set Ss. \<forall>d\<in>schema_dependencies S. octets_formed (snd d)"
+  shows "\<exists>T f ss As L C. exact_formed T \<and> bag_count (object_data T) = (\<lambda>_. 0) \<and>
+    [] \<in> rra_carrier (object_structure T) \<and> inj_on f (pattern_variables p) \<and>
+    length ss = length Ss \<and> distinct ss \<and> length As = length Ss \<and>
+    (\<forall>i<length Ss. schema_alpha_variant (Ss!i) (As!i)) \<and>
+    reference_table_formed L C \<and> rel_dom L \<union> rel_dom C \<subseteq> rra_carrier (object_structure T) \<and>
+    rel_ran C = (\<Union>S\<in>set Ss. schema_dependencies S) \<and>
+    (\<forall>E u. environment_formed E \<longrightarrow> artifact_at E u T \<longrightarrow> syntax_references E u L C \<longrightarrow>
+      native_definition_at E u [] (rename_pattern f p) (set (zip ss As)))"
+proof -
+  obtain R :: exact_artifact and r :: local_address and f and L :: "(local_address \<times> exact_artifact) set" where interface:
+    "exact_formed R" "inj_on f (pattern_variables p)" "reference_table_formed L ({} :: (local_address \<times> local_address option definition_site) set)"
+    "rel_dom L \<subseteq> rra_carrier (object_structure R)" "bag_count (object_data R) = (\<lambda>_. 0)"
+    "r \<in> rra_carrier (object_structure R)"
+    "\<forall>E :: local_address option artifact_environment. \<forall>u.
+      environment_formed E \<longrightarrow> artifact_at E u R \<longrightarrow> syntax_references E u L {} \<longrightarrow>
+      (\<exists>I K. scoped_pattern_at E u r (rename_pattern f p) I K \<and> rra_carrier (object_structure R) = I \<union> K)"
+    using interface_syntax_total[OF pf] by metis
+  obtain S :: exact_artifact and rs :: "local_address list" and As :: "local_address option native_schema list"
+    and A :: "(local_address \<times> exact_artifact) set"
+    and B :: "(local_address \<times> local_address option definition_site) set" where clauses:
+    "exact_formed S" "bag_count (object_data S) = (\<lambda>_. 0)"
+    "length rs = length Ss" "length As = length Ss" "reference_table_formed A B"
+    "rel_dom A \<union> rel_dom B \<subseteq> rra_carrier (object_structure S)"
+    "rel_ran B = (\<Union>Q\<in>set Ss. schema_dependencies Q)" "set rs \<subseteq> rra_carrier (object_structure S)"
+    "\<forall>i<length Ss. schema_alpha_variant (Ss!i) (As!i)"
+    "\<forall>E u. environment_formed E \<longrightarrow> artifact_at E u S \<longrightarrow>
+      syntax_references E u A B \<longrightarrow> (\<forall>i<length Ss. native_schema_at E u (rs!i) (As!i))"
+    using schema_forest_total[OF formed addresses] by metis
+  interpret code: definition_list_construction p Ss R S r f L A B rs As
+    by (rule definition_list_construction.intro[OF interface clauses])
+  show ?thesis by (rule exI[of _ code.artifact], rule exI[of _ code.variables], rule exI[of _ code.ports],
+    rule exI[of _ code.schemas], rule exI[of _ code.literals], rule exI[of _ code.callees])
+    (use code.properties in blast)
 qed
 
 text \<open>

@@ -9,6 +9,10 @@ lemma those_map_result:
   by (induction xs arbitrary: ys; cases ys)
     (auto simp: list_all2_Cons1 split: option.splits)
 
+lemma those_map_none_iff:
+  "those (map f xs)=None \<longleftrightarrow> (\<exists>x\<in>set xs. f x=None)"
+  by (induction xs) (auto split: option.splits)
+
 definition guarded_option_map :: "bool\<Rightarrow>('a\<Rightarrow>'b option)\<Rightarrow>'a list\<Rightarrow>'b list option" where
   "guarded_option_map accepted f xs=(if accepted then those (map f xs) else None)"
 

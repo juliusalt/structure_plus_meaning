@@ -12,6 +12,14 @@ fun decode_finite_target :: "finite_exact_target \<Rightarrow> exact_target" whe
   "decode_finite_target (Finite_Whole C) = Whole_Artifact (decode_finite_object C)"
 | "decode_finite_target (Finite_Anchor C a) = Occurrence_Anchor (decode_finite_object C,a)"
 
+fun finite_target_artifact :: "finite_exact_target \<Rightarrow> finite_exact_artifact" where
+  "finite_target_artifact (Finite_Whole C)=C"
+| "finite_target_artifact (Finite_Anchor C a)=C"
+
+lemma decode_finite_target_artifact [simp]:
+  "decode_finite_object (finite_target_artifact t)=target_artifact (decode_finite_target t)"
+  by (cases t) simp_all
+
 fun finite_target_of :: "exact_target \<Rightarrow> finite_exact_target" where
   "finite_target_of (Whole_Artifact R) = Finite_Whole (finite_object_of R)"
 | "finite_target_of (Occurrence_Anchor (R,a)) = Finite_Anchor (finite_object_of R) a"

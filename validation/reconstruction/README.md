@@ -1,8 +1,10 @@
 # Reconstruct native validation from sources
 
-The child-claim recipe below and the
-[requirement-plan recipe](requirement-plans.md) use the same reconstruction
-runner. Each retains its own complete source and report boundary. The runner
+The child-claim recipe below, the
+[requirement-plan recipe](requirement-plans.md),
+[source-retention recipe](requirement-sources.md), and
+[executed native extension recipe](native-extensions.md) use the same reconstruction
+runner and source collector. Each retains its own complete source and report boundary. The runner
 schedules proof, diagnostics, code export and the required execution stages;
 it supplies no semantic judgment about their subjects.
 
@@ -27,8 +29,8 @@ and executes the reasoning family. It fails if a stage fails, complete reports
 change, or its checked inputs change. The optional `--proof` mode rechecks an
 existing accepted export and records `sources_rebuilt: false`.
 
-[native-child-sources.json](native-child-sources.json) lists the exact 557 source
-and fixture files, including 526 theory sources and 29 Python modules. The
+[native-child-sources.json](native-child-sources.json) lists the exact 559 source
+and fixture files, including 527 theory sources and 30 Python modules. The
 shared reconstruction runner is included. To materialize that boundary independently:
 
 ```sh
@@ -45,6 +47,12 @@ The materializer rejects changed bytes and paths outside the source repository.
 It copies only declared inputs. Update the manifest and repeat verification
 when those inputs change. The usual repository build is independent:
 `python3 -B tools/check.py --timeout 1800` checks every registered theory.
+
+`tools/reconstruction_sources.py` derives each recipe's complete original
+theory closure and local Python import closure, together with its declared
+fixtures and report comparison. The same collector serves all four boundaries.
+`tools/prepare_proof_sources.py` prepares a complete source prefix for local
+proof work; ordinary validation must accept it before a saved heap is reused.
 
 [native-child-verified.json](native-child-verified.json) records the successful
 cold reconstruction. The [materialization receipt](native-child-materialization.json)

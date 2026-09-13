@@ -1,5 +1,5 @@
 theory Factor_Native_Group_Extensions
-  imports Factor_Recursive_Groups Factor_Package_Extensions Factor_Program_Scopes Factor_Rooted_Code_Families
+  imports Factor_Recursive_Groups Factor_Package_Extensions Factor_Program_Scopes Factor_Rooted_Code_Families Factor_Native_Definition_Extensions
 begin
 
 section \<open>Recursive definition families extend the actual existing source\<close>
@@ -100,37 +100,20 @@ proof -
   have compiled: "native_definition_at H (fst d) (snd d) (code_interface (K d)) (code_clauses (K d))"
     if "d\<in>?D" for d
     using family.installed[OF built(1,3)] that by blast
-  have reads: "\<exists>p C. native_definition_at H (fst d) (snd d) p C" if "d\<in>?B" for d
-  proof (cases "d\<in>?D")
-    case True
-    show ?thesis using compiled[OF True] by blast
-  next
-    case False
-    have old: "d\<in>system_definitions P" using that False by blast
-    show ?thesis by (rule native_package_definition_exists[OF copied source_site[OF old]])
-  qed
-  have closed: "e\<in>?B" if member: "d\<in>?B" and edge: "(d,e)\<in>native_definition_edges H" for d e
-  proof (cases "d\<in>?D")
-    case True
-    have dependency: "e\<in>(\<Union>S\<in>rel_ran (code_clauses (K d)). schema_dependencies S)"
-      using native_definition_edges_at[OF compiled[OF True], of e] edge
-      by (auto simp: rel_ran_def)
-    show ?thesis using family.compiled_dependencies[OF True] dependency by auto
-  next
-    case False
-    have old: "d\<in>system_definitions P" using member False by blast
-    show ?thesis using native_package_edge_closed[OF copied source_site[OF old] edge] source_definitions by simp
-  qed
+  interpret extension: native_definition_extension H P ?V pu pr N K
+    by (rule native_definition_extension.intro[OF copied source_variant algebra.formed algebra.old_agreement])
+      (use codes compiled separate in auto)
   have selectable: "\<exists>F u T. environment_formed F \<and> environment_included H F \<and>
     native_package_at F u [] T \<and> system_definitions T=?B \<and>
     (\<forall>w\<in>environment_uses H. \<forall>A. artifact_at F w A \<longleftrightarrow> artifact_at H w A) \<and>
     (\<forall>w\<in>environment_uses H. \<forall>k v. binds_slot F w k v \<longleftrightarrow> binds_slot H w k v)"
   proof (rule native_definition_family_selection[OF built(1)])
     fix d assume member: "d\<in>?B"
-    show "\<exists>p C. native_definition_at H (fst d) (snd d) p C" by (rule reads[OF member])
+    show "\<exists>p C. native_definition_at H (fst d) (snd d) p C"
+      using extension.readings[where d=d] member by simp
   next
     fix d e assume member: "d\<in>?B" and edge: "(d,e)\<in>native_definition_edges H"
-    show "e\<in>?B" by (rule closed[OF member edge])
+    show "e\<in>?B" using extension.closed[where d=d and e=e] member edge by simp
   qed
   obtain F u T where selected: "environment_formed F" "environment_included H F"
     "native_package_at F u [] T" "system_definitions T=?B"
@@ -160,44 +143,11 @@ proof -
       using native_packages_shared_call[OF selected(3) original target source_site[OF member], of t]
         native_packages_shared_meaning[OF selected(3) original target source_site[OF member], of t] by blast
   qed
-  have variants: "\<exists>p C f h. native_definition_at F (fst d) (snd d) p C \<and>
-    inj_on f (pattern_variables (system_interface ?V d)) \<and>
-    p=rename_pattern f (system_interface ?V d) \<and>
-    schema_family_variant h (system_clause_family ?V d) C"
-    if member: "d\<in>system_definitions ?V" for d
-  proof (cases "d\<in>?D")
-    case True
-    have code: "definition_code_for (system_interface ?V d) (system_clause_family ?V d) (K d)"
-      and read: "native_definition_at F (fst d) (snd d) (code_interface (K d)) (code_clauses (K d))"
-      using new_reads True by blast+
-    show ?thesis using definition_code_properties(4)[OF code] read by blast
-  next
-    case False
-    have old: "d\<in>system_definitions P" using member False by simp
-    obtain p C where read: "native_definition_at F (fst d) (snd d) p C"
-      using native_package_definition_exists[OF original source_site[OF old]] by blast
-    obtain f h where renaming: "inj_on f (pattern_variables (system_interface P d))"
-      "system_interface N d=rename_pattern f (system_interface P d)"
-      "schema_family_variant h (system_clause_family P d) (system_clause_family N d)"
-      using source_variant old unfolding system_alpha_variant_def by blast
-    have fields: "system_interface N d=p" "system_clause_family N d=C"
-      by (rule native_package_fields_at[OF original source_site[OF old] read])+
-    have agreement: "system_interface ?V d=system_interface P d"
-      "system_clause_family ?V d=system_clause_family P d"
-      by (rule systems_agree_on_fields[OF pf algebra.formed algebra.old_agreement old old])+
-    show ?thesis by (rule exI[of _ p], rule exI[of _ C], rule exI[of _ f], rule exI[of _ h])
-      (use read renaming fields agreement in simp)
-  qed
+  interpret complete: native_definition_extension F P ?V pu pr N K
+    by (rule native_definition_extension.intro[OF original source_variant algebra.formed algebra.old_agreement])
+      (use codes new_reads separate in auto)
   have variant: "system_alpha_variant ?V T"
-  proof (rule native_package_variant_from_readings[OF algebra.formed selected(3)])
-    show "system_definitions ?V=system_definitions T" using selected(4) by simp
-  next
-    fix d assume member: "d\<in>system_definitions ?V"
-    show "\<exists>p C f h. native_definition_at F (fst d) (snd d) p C \<and>
-      inj_on f (pattern_variables (system_interface ?V d)) \<and>
-      p=rename_pattern f (system_interface ?V d) \<and>
-      schema_family_variant h (system_clause_family ?V d) C" by (rule variants[OF member])
-  qed
+    using complete.package_variant[OF selected(3)] selected(4) by simp
   have complete_meaning: "positive_meaning T=positive_meaning ?V"
     using system_alpha_positive_meaning[OF variant] by simp
   have complete_calls: "\<forall>d t. schema_call_formed T d t \<longleftrightarrow> schema_call_formed ?V d t"

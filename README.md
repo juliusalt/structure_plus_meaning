@@ -55,11 +55,22 @@ checker rejects that replacement under the original declared source. The
 reproduces 23 complete reports. Checked recursive plans now have a proved
 installation over the actual retained native source: fresh coordinates keep
 every old address fixed, and the complete target program has the required
-meaning. Four cases execute the computed plans and source observations. The
-existential package constructor is not executed by those reports; constructing
-and admitting the complete development record remains open.
+meaning. Those four reports compute plans and source observations.
 
-The session registers 922 theories; its
+The finite constructor now executes that complete installation. It derives
+fresh coordinates, compiles every new interface and clause, installs all code
+before binding recursive references, and constructs the complete root selector.
+The [native extension reconstruction](validation/reconstruction/native-extensions.md)
+reproduces eighteen reports containing every returned artifact and binding and
+every recovered interface and clause. The controls retain empty clause
+families, recursive peers, literal targets and all material operands. Changed
+or missing old fields, absent callees, conflicting clauses and malformed
+clauses fail the construction gates. Successful construction preserves the
+entire target meaning under the established whole-source correspondence.
+General native admission of that correspondence and of the complete
+development record remains open.
+
+The session registers 959 theories; its
 [latest complete check](validation/check.json) records the current proof status.
 Native local readers connect an actual
 inference node's bindings to its symbolic replacement record and complete

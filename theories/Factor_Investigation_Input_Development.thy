@@ -4,7 +4,7 @@ begin
 
 section \<open>The original input requirement supplies a construction goal\<close>
 
-definition investigation_input_goal :: admission_goal where
+definition investigation_input_goal :: "nat admission_goal" where
   "investigation_input_goal=Paired_Admission (Existing_Admission 311)
     (Collected_Admission (Paired_Admission (Existing_Admission 2) (Existing_Admission 2)))"
 

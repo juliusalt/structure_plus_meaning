@@ -88,7 +88,15 @@ The selected operation evaluates 21 actual native package inputs under the
 existing positive-query contract. Missing prerequisites give no answer.
 Complete development-cycle enforcement and its cost account remain open.
 
-The session registers 975 theories; its
+The [native admission constructor](validation/reconstruction/native-admission.md)
+builds nested pair and collection requirements over the actual recovered
+source definitions. Its universal contract preserves the original goal meaning
+and every old artifact and binding. A 63-problem investigation computes the
+condition observations, counterexamples and revisions for six actual operations;
+only the direct constructor satisfies every represented condition. The shared
+investigation and goal-construction contracts also serve the existing clients.
+
+The session registers 995 theories; its
 [latest complete check](validation/check.json) records the current proof status.
 Native local readers connect an actual
 inference node's bindings to its symbolic replacement record and complete

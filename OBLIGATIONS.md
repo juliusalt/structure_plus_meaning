@@ -791,3 +791,17 @@ request construction in recovered coordinates, native proof-artifact
 generation, complete development-record admission and enforcement, historical
 permission or the full cost account. The remaining six-condition milestone,
 O-85, genesis and the final line-by-line audit remain open.
+
+Nested existing, pair and collection requests can now be constructed directly
+over the actual source definitions. The shared constructor has an all-term
+goal-meaning contract and retains every old artifact and outgoing binding.
+Complete native term comparisons derive the new investigation's observations;
+its actual 63-problem scope selects only the direct constructor and checks
+adequacy against every represented condition. Counterexamples and followed
+facet revisions are reconstructible with the complete inputs and outputs.
+
+This closes that goal-grammar construction gap. The complete development
+record, independently established coverage of all its requirements, native
+mathematical-proof artifacts, broader criticism and decision integration,
+historical permission and the full cost account remain unresolved. The six
+conditions in `problems.txt`, O-85, genesis and the final audit remain open.

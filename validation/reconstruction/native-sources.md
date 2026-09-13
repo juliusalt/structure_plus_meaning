@@ -81,7 +81,7 @@ python3 -B /tmp/native-source-inputs/tools/reconstruct_native_sources.py \
   --output /tmp/native-source-results
 ```
 
-The [source manifest](native-sources-sources.json) contains 408 files: 387
+The [source manifest](native-sources-sources.json) contains 412 files: 391
 theory sources, 20 Python modules and the
 [complete-report comparison](native-sources-reports.json). The common runner
 rebuilds the proof from HOL, obtains full diagnostics, exports accepted code,

@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "reports": {
+    "comparison": {
+      "records": 131,
+      "tags": {
+        "ADMISSION_ASSESSMENT": 63,
+        "ADMISSION_COMPARISON": 1,
+        "ADMISSION_INVESTIGATION": 3,
+        "ADMISSION_SCOPE": 1,
+        "ADMISSION_SUBJECT": 63
+      },
+      "sha256": "0df15b2277c5c534ad8966dfb2568cf78f2840ab943de02af01a943dcef87f61"
+    }
+  }
+}

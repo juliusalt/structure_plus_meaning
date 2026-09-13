@@ -5,7 +5,7 @@ begin
 section \<open>The exact artifact body carries the checked construction of the original request\<close>
 
 definition requirement_artifact_admitted ::
-  "nat set \<Rightarrow> admission_goal list \<Rightarrow> nat \<Rightarrow> exact_artifact \<Rightarrow> bool" where
+  "nat set \<Rightarrow> nat admission_goal list \<Rightarrow> nat \<Rightarrow> exact_artifact \<Rightarrow> bool" where
   "requirement_artifact_admitted D gs n R \<longleftrightarrow>
     (\<exists>r ds k cs. checked_admission_sequence D gs n=Some (ds,k,cs) \<and>
       complete_data_quoted_at R r
@@ -13,7 +13,7 @@ definition requirement_artifact_admitted ::
           (data_list_term (map admission_counter ds)) (admission_counter k)
           (data_list_term (map admission_instruction_value cs))))"
 
-definition requirement_artifact_system :: "nat set \<Rightarrow> admission_goal list \<Rightarrow> nat \<Rightarrow>
+definition requirement_artifact_system :: "nat set \<Rightarrow> nat admission_goal list \<Rightarrow> nat \<Rightarrow>
     (nat,nat,nat,nat) schema_system" where
   "requirement_artifact_system D gs n=add_view_definition (fixed_requirement_system D gs n) 369 data_x
     {(0,quoted_body_guard_schema 10 123 368)}"

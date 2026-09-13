@@ -4,7 +4,7 @@ begin
 
 section \<open>Recursive collection plans retain the actual source distinction\<close>
 
-definition source_requirement_goal :: "bool\<Rightarrow>admission_goal" where
+definition source_requirement_goal :: "bool\<Rightarrow>nat admission_goal" where
   "source_requirement_goal paired=(if paired then
     Paired_Admission (Existing_Admission 0) (Collected_Admission (Existing_Admission 0))
     else Collected_Admission (Existing_Admission 0))"

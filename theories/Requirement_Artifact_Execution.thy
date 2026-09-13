@@ -13,7 +13,7 @@ definition requirement_artifact_add_atom :: "finite_exact_artifact \<Rightarrow>
   "requirement_artifact_add_atom C=C\<lparr>finite_structure :=
     (finite_structure C)\<lparr>finite_carrier := finsert [255] (finite_carrier (finite_structure C))\<rparr>\<rparr>"
 
-definition requirement_artifact_controls :: "(admission_goal list\<times>nat\<times>finite_exact_artifact) list" where
+definition requirement_artifact_controls :: "(nat admission_goal list\<times>nat\<times>finite_exact_artifact) list" where
   "requirement_artifact_controls=(let
     gs=[Existing_Admission 2]; n=3; plan=admission_sequence gs n;
     C=finite_requirement_candidate gs n plan;

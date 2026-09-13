@@ -104,7 +104,7 @@ theorem collection_complete:
   using assms
 proof (induction xs)
   case Nil
-  have result: "(list_site,evaluate_pattern (\<lambda>_. Payload_Term []) (schema_conclusion data_list_nil_schema))
+  have result: "(list_site,evaluate_pattern (\<lambda>_. Payload_Term []) (schema_conclusion (data_list_nil_schema :: (nat,nat,nat) factor_schema)))
       \<in>positive_meaning P"
     by (rule collection_rule[where c=0])
       (auto simp: separated_list_clauses_def data_list_nil_schema_def schema_variables_def)

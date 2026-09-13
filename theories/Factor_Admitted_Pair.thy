@@ -1,24 +1,11 @@
 theory Factor_Admitted_Pair
-  imports Factor_Data_Term_Presentations
+  imports Factor_Data_Term_Presentations Factor_Admission_Pair_Schemas
 begin
 
 section \<open>Each field retains its own native admission\<close>
 
-definition admitted_pair_schema :: "nat \<Rightarrow> nat \<Rightarrow> (nat,nat,nat) factor_schema" where
-  "admitted_pair_schema first second=data_rule (Pattern_Pair data_x data_y)
-    {(0,first,data_x),(1,second,data_y)}"
-
-lemma admitted_pair_formed [simp]: "schema_formed (admitted_pair_schema first second)"
-  by (auto simp: admitted_pair_schema_def schema_formed_def single_valued_def)
-
-lemma admitted_pair_dependencies [simp]: "schema_dependencies (admitted_pair_schema first second)={first,second}"
-  by (auto simp: admitted_pair_schema_def schema_dependencies_def rel_ran_image)
-
-lemma admitted_data_pair_schema: "admitted_pair_schema 2 2=data_pair_schema"
-  by (simp only: admitted_pair_schema_def data_pair_schema_def)
-
 locale admitted_pair_profile =
-  fixes P :: "(nat,nat,nat,nat) schema_system" and entry first second :: nat
+  fixes P :: "(nat,nat,'d,nat) schema_system" and entry first second :: 'd
   assumes system_formed: "schema_system_formed P"
     and family: "\<And>c S. ((entry,c),S)\<in>system_clauses P \<longleftrightarrow> c=0 \<and> S=admitted_pair_schema first second"
     and call: "\<And>t. schema_call_formed P entry t \<longleftrightarrow> term_formed t"
@@ -34,20 +21,7 @@ lemma valuation:
 theorem exact:
   "(entry,t)\<in>positive_meaning P \<longleftrightarrow>
     (\<exists>p q. t=Pair_Term p q \<and> (first,p)\<in>positive_meaning P \<and> (second,q)\<in>positive_meaning P)"
-proof
-  assume "(entry,t)\<in>positive_meaning P"
-  then show "\<exists>p q. t=Pair_Term p q \<and> (first,p)\<in>positive_meaning P \<and> (second,q)\<in>positive_meaning P"
-    by (simp only: valuation) blast
-next
-  assume "\<exists>p q. t=Pair_Term p q \<and> (first,p)\<in>positive_meaning P \<and> (second,q)\<in>positive_meaning P"
-  then obtain p q where parts: "t=Pair_Term p q" "(first,p)\<in>positive_meaning P" "(second,q)\<in>positive_meaning P" by blast
-  have terms: "term_formed p" "term_formed q"
-    using schema_call_formed_target[OF positive_meaning_formed[OF parts(2)]]
-      schema_call_formed_target[OF positive_meaning_formed[OF parts(3)]] by blast+
-  show "(entry,t)\<in>positive_meaning P"
-    by (simp only: valuation; rule exI[of _ "\<lambda>i::nat. if i=0 then p else q"])
-      (use parts terms in auto)
-qed
+  by (rule admitted_pair_rule_family[OF call]) (auto simp: system_clause_member family)
 
 corollary at_pair:
   "(entry,Pair_Term p q)\<in>positive_meaning P \<longleftrightarrow>

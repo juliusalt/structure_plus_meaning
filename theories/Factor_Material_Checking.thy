@@ -158,7 +158,7 @@ lemma material_rows_checking_components:
 lemma material_rows_checking_nil:
   "(67,binding_rows_term [])\<in>positive_meaning material_rows_checking_system"
 proof -
-  have "(67,evaluate_pattern (\<lambda>_. Payload_Term []) (schema_conclusion data_list_nil_schema))\<in>positive_meaning material_rows_checking_system"
+  have "(67,evaluate_pattern (\<lambda>_. Payload_Term []) (schema_conclusion (data_list_nil_schema :: (nat,nat,nat) factor_schema)))\<in>positive_meaning material_rows_checking_system"
     by (rule ordinary_positive_valuation_step[where c=0])
       (auto simp: material_rows_checking_clauses_def data_list_nil_schema_def schema_variables_def material_rows_checking_call octets_formed_def)
   then show ?thesis by (simp add: data_list_nil_schema_def)

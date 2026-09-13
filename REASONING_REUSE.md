@@ -888,3 +888,24 @@ Constructing general requests over recovered source coordinates, producing
 native proof artifacts, admitting and enforcing the complete development cycle,
 broader decision and criticism coverage, historical permission and the full
 cost account remain unresolved.
+
+Nested admission goals now name the actual recovered native definitions.
+`Factor_Admission_Goal_Construction` factors semantic realization through whole
+program extensions; both the older numbered planner and the finite native
+constructor instantiate its pair and collection steps. The original clause
+families and their complete positive rule equations are also shared. One final
+source compilation returns the placed entry and preserves all old material.
+
+`Finite_Subject_Investigation` supplies one reusable derivation of the subject
+maps, observations, comparison and selection. Its assessment extension shares
+each computation across facets and comparisons and separately requires every
+condition for adequacy. The program-evaluation investigation and the new native
+constructor investigation consume these contracts. Native term observations
+and their two-sided differences reuse the original positive meaning and retain
+all evaluation prerequisites. The complete execution and remaining limits are
+in the [native admission boundary](validation/reconstruction/native-admission.md).
+
+This supplies nested goal construction in recovered coordinates. Recognition
+and admission of the complete development record, coverage of its independently
+established requirements, native mathematical evidence, complete criticism,
+historical permission and the full cost account remain open.

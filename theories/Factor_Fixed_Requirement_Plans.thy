@@ -17,7 +17,7 @@ lemma requirement_request_value_injective [simp]:
   "requirement_request_value gs n=requirement_request_value hs m \<longleftrightarrow> gs=hs \<and> n=m"
   by simp
 
-definition fixed_requirement_system :: "nat set \<Rightarrow> admission_goal list \<Rightarrow> nat \<Rightarrow>
+definition fixed_requirement_system :: "nat set \<Rightarrow> nat admission_goal list \<Rightarrow> nat \<Rightarrow>
     (nat,nat,nat,nat) schema_system" where
   "fixed_requirement_system D gs n=restrict_call_system (request_quotation_system D) 368
     (Pattern_Pair (exact_term_pattern (requirement_request_value gs n)) data_x) 367"

@@ -1280,3 +1280,23 @@ approach coverage, independent criticism throughout the process, historical
 permission and the complete cost account remain open. The finite experiment
 does not extend the universal evaluator beyond its checked coverage and
 closure prerequisites, or establish genesis or the final repository audit.
+
+## Native construction of the original nested goal
+
+The [native admission reconstruction](validation/reconstruction/native-admission.md)
+retains the next concrete problem, original conditions, shared construction
+arguments, complete candidate operations and executed criticism. The source
+reader establishes the actual program premise, and one generic goal constructor
+produces the pair and list definitions before compiling their complete native
+extension. The all-term semantic contract is separate from the finite method
+comparison. Both the older planner and the new native constructor reuse the
+same semantic composition lemmas.
+
+The 63-problem execution derives 1,303 satisfied condition observations. It
+selects the direct constructor alone and establishes its adequacy on that
+scope. Counterexamples distinguish incorrect term meaning, ignored original
+requirements and lost old material. Returned facet revisions are consumed by
+further basis evaluation; no required condition is dropped from adequacy.
+The complete 131-report result has a source-only reconstruction boundary.
+The finite scope, observation prerequisites and remaining complete-workflow,
+native-proof, cost and genesis obligations remain explicit in that record.

@@ -7,10 +7,16 @@ section \<open>Complete lists and removal of one occurrence\<close>
 abbreviation data_elements :: "factor_term list \<Rightarrow> bool" where
   "data_elements xs \<equiv> \<forall>x\<in>set xs. term_formed x \<and> self_contained_term x"
 
-definition data_list_nil_schema :: "(nat,nat,nat) factor_schema" where
+definition data_list_nil_schema :: "(nat,nat,'d) factor_schema" where
   "data_list_nil_schema=data_rule (Pattern_Payload []) {}"
 
-definition list_step_schema :: "nat \<Rightarrow> nat \<Rightarrow> (nat,nat,nat) factor_schema" where
+lemma data_list_nil_formed [simp]: "schema_formed (data_list_nil_schema :: (nat,nat,'d) factor_schema)"
+  by (auto simp: data_list_nil_schema_def schema_formed_def single_valued_def octets_formed_def)
+
+lemma data_list_nil_dependencies [simp]: "schema_dependencies (data_list_nil_schema :: (nat,nat,'d) factor_schema)={}"
+  by (auto simp: data_list_nil_schema_def schema_dependencies_def)
+
+definition list_step_schema :: "'d \<Rightarrow> 'd \<Rightarrow> (nat,nat,'d) factor_schema" where
   "list_step_schema element list=data_rule (Pattern_Pair data_x data_y)
     {(0,element,data_x),(1,list,data_y)}"
 
@@ -212,7 +218,7 @@ theorem data_list_complete:
   using assms
 proof (induction xs)
   case Nil
-  have result: "(4,evaluate_pattern (\<lambda>_. Payload_Term []) (schema_conclusion data_list_nil_schema))
+  have result: "(4,evaluate_pattern (\<lambda>_. Payload_Term []) (schema_conclusion (data_list_nil_schema :: (nat,nat,nat) factor_schema)))
     \<in>positive_meaning bag_comparison_system"
     by (rule bag_comparison_rule[where c=0])
       (auto simp: data_list_clauses_def data_list_nil_schema_def schema_variables_def)

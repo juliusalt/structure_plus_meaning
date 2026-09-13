@@ -83,6 +83,26 @@ proof -
   show ?thesis using finite isv csv interfaces clauses by (simp only: schema_system_formed_def)
 qed
 
+lemma added_fresh_variable_call:
+  assumes fresh: "d\<notin>system_definitions P"
+    and target: "schema_system_formed (add_view_definition P d (Pattern_Variable a) C)"
+  shows "schema_call_formed (add_view_definition P d (Pattern_Variable a) C) d t \<longleftrightarrow> term_formed t"
+proof -
+  have absent: "(d,p)\<notin>system_interfaces P" for p
+    using fresh by (auto simp: system_definitions_def rel_dom_def)
+  show ?thesis by (simp only: schema_call_formed_def target added_view_interfaces)
+    (use absent in auto)
+qed
+
+lemma added_fresh_clause_family:
+  assumes source: "schema_system_formed P" and fresh: "d\<notin>system_definitions P"
+  shows "system_clause_family (add_view_definition P d p C) d=C"
+proof -
+  have absent: "((d,c),S)\<notin>system_clauses P" for c S
+    using source fresh by (auto simp: schema_system_formed_def)
+  show ?thesis by (rule set_eqI; rename_tac q; case_tac q) (simp add: absent)
+qed
+
 lemma added_variable_calls:
   assumes source: "schema_system_formed P"
     and target: "schema_system_formed (add_view_definition P d (Pattern_Variable a) C)"
@@ -157,7 +177,7 @@ lemma view_call: "schema_call_formed extended d t \<longleftrightarrow> pattern_
      (use no_old_interface in auto)
 
 lemma view_clause_family: "system_clause_family extended d = C"
-  by (rule set_eqI; rename_tac entry; case_tac entry; simp add: no_old_clause)
+  by (rule added_fresh_clause_family[OF source_formed fresh])
 
 lemma view_rule:
   assumes clause: "(c,S) \<in> C"

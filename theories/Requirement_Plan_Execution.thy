@@ -34,7 +34,7 @@ definition portable_requirement_reports where
     (xs,ys,portable_table_diagnostics xs ys,finite_keyed_table_comparison xs ys,
       portable_requirement_execution n xs ys)) portable_requirement_controls"
 
-definition admission_sequence_controls :: "(admission_goal list\<times>nat) list" where
+definition admission_sequence_controls :: "(nat admission_goal list\<times>nat) list" where
   "admission_sequence_controls=
     [([],360),([Existing_Admission 2],360),(portable_table_goals,360),
      ([Existing_Admission 353,Existing_Admission 2],360),

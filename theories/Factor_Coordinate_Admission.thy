@@ -86,7 +86,7 @@ theorem natural_admission_complete:
   "(17,natural_data_term n)\<in>positive_meaning natural_admission_system"
 proof (induction n)
   case 0
-  have result: "(17,evaluate_pattern (\<lambda>_. Payload_Term []) (schema_conclusion data_list_nil_schema))
+  have result: "(17,evaluate_pattern (\<lambda>_. Payload_Term []) (schema_conclusion (data_list_nil_schema :: (nat,nat,nat) factor_schema)))
     \<in>positive_meaning natural_admission_system"
     by (rule ordinary_positive_valuation_step[where c=0])
       (auto simp: natural_admission_clauses_def data_list_nil_schema_def schema_variables_def
@@ -247,7 +247,7 @@ next
   have "(19,use_data_term u)\<in>positive_meaning coordinate_admission_system"
   proof (cases u)
     case None
-    have result: "(19,evaluate_pattern (\<lambda>_. Payload_Term []) (schema_conclusion data_list_nil_schema))
+    have result: "(19,evaluate_pattern (\<lambda>_. Payload_Term []) (schema_conclusion (data_list_nil_schema :: (nat,nat,nat) factor_schema)))
       \<in>positive_meaning coordinate_admission_system"
       by (rule ordinary_positive_valuation_step[where c=0])
         (auto simp: coordinate_admission_clauses_def data_list_nil_schema_def schema_variables_def

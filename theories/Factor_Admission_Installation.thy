@@ -4,8 +4,8 @@ begin
 
 section \<open>Construction retains every original definition\<close>
 
-definition admission_extension :: "(nat,nat,nat,nat) schema_system \<Rightarrow>
-    (nat,nat,nat,nat) schema_system \<Rightarrow> bool" where
+definition admission_extension :: "('a,'s,'d,'c) schema_system \<Rightarrow>
+    ('a,'s,'d,'c) schema_system \<Rightarrow> bool" where
   "admission_extension P Q \<longleftrightarrow> schema_system_formed P \<and> schema_system_formed Q \<and>
     systems_agree_on P Q (system_definitions P)"
 
@@ -67,20 +67,18 @@ lemma admission_fresh_extension:
 lemma admission_fresh_call:
   assumes "admission_source P n" "schema_system_formed (add_view_definition P n data_x C)"
   shows "schema_call_formed (add_view_definition P n data_x C) n t \<longleftrightarrow> term_formed t"
-proof -
-  have absent: "(n,p)\<notin>system_interfaces P" for p
-    using assms(1) by (auto simp: admission_source_def system_definitions_def rel_dom_def)
-  show ?thesis by (simp only: schema_call_formed_def assms(2) added_view_interfaces)
-    (use absent in auto)
-qed
+  by (rule added_fresh_variable_call[OF _ assms(2)])
+    (use assms(1) in \<open>auto simp: admission_source_def\<close>)
 
 lemma admission_fresh_family:
   assumes "admission_source P n"
   shows "((n,c),S)\<in>system_clauses (add_view_definition P n data_x C) \<longleftrightarrow> (c,S)\<in>C"
 proof -
-  have absent: "((n,c),S)\<notin>system_clauses P"
-    using assms by (auto simp: admission_source_def schema_system_formed_def)
-  show ?thesis by (simp add: absent)
+  have formed: "schema_system_formed P" and fresh: "n\<notin>system_definitions P"
+    using assms by (auto simp: admission_source_def)
+  have family: "system_clause_family (add_view_definition P n data_x C) n=C"
+    by (rule added_fresh_clause_family[OF formed fresh])
+  show ?thesis by (simp only: system_clause_member[symmetric] family)
 qed
 
 section \<open>Each installed constructor has its complete meaning\<close>

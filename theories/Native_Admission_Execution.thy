@@ -1,0 +1,19 @@
+theory Native_Admission_Execution
+  imports Factor_Native_Admission_Cases
+begin
+
+definition native_admission_indices :: "nat list" where
+  "native_admission_indices=[0..<length native_admission_shapes]"
+
+export_code native_admission_indices native_admission_report
+  finite_environment_artifact_rows finite_environment_bindings
+  finite_system_interfaces finite_system_clauses
+  finite_schema_conclusion finite_schema_premises finite_schema_materials
+  finite_material_source finite_material_atoms finite_material_edges finite_material_counts finite_material_functions
+  finite_artifact_rows Finite_Whole Finite_Anchor
+  Finite_Variable Finite_Pattern_Payload Finite_Pattern_Pair Finite_Pattern_Target
+  Finite_Target Finite_Payload Finite_Pair Existing_Admission Paired_Admission Collected_Admission
+  fset set nat_of_integer integer_of_nat
+  in SML module_name Native_Admission_Execution file_prefix native_admission
+
+end

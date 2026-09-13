@@ -978,3 +978,23 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Finite_Native_Evaluation
     Factor_Native_Evaluation_Cases
     Program_Evaluation_Execution
+    Factor_Admission_Goal_Construction
+    Factor_Admission_Pair_Schemas
+    Factor_Clause_Family_Rules
+    Factor_Finite_Admission_Goal_Evaluation
+    Factor_Finite_Goal_Term_Comparison
+    Factor_Finite_Goal_Term_Observations
+    Factor_Finite_Native_Admission_Construction
+    Factor_Finite_Native_Admission_Installation
+    Factor_Finite_Native_Admission_Syntax
+    Factor_Finite_Sequence_Reading
+    Factor_Finite_Term_Components
+    Factor_Finite_Term_Demands
+    Factor_Native_Admission_Assessment
+    Factor_Native_Admission_Cases
+    Factor_Native_Admission_Investigation
+    Finite_Assessed_Investigation
+    Finite_Subject_Investigation
+    Native_Admission_Execution
+    Native_Admission_Investigation_Execution
+    RRA_Finite_Environment_Preservation

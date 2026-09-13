@@ -1,5 +1,5 @@
 theory Factor_Single_Clause_Reading
-  imports Factor_Schema_Reading Factor_Scope_Admission Factor_Reader_Clauses Factor_System_Composition
+  imports Factor_Schema_Reading Factor_Scope_Admission Factor_Reader_Clauses Factor_System_Composition Factor_Clause_Family_Rules
 begin
 
 section \<open>A complete variable interface and one arbitrary schema\<close>
@@ -70,16 +70,8 @@ proof -
   have family: "system_clause_family P d={(c,S)}"
     by (rule set_eqI; rename_tac q; case_tac q)
       (simp only: system_clause_member native_package_complete_at(2)[OF package member raw])
-  have formed_call: "schema_call_formed P (fst q) (snd q)" if "q\<in>positive_meaning P" for q
-    using that positive_meaning_formed by (cases q) auto
-  have support: "{q\<in>positive_meaning P. schema_call_formed P (fst q) (snd q)}=positive_meaning P"
-    using formed_call by auto
-  have formed: "term_formed t" if "schema_rule_instance S (positive_meaning P) t"
-    using that schema_instance_formed by (auto simp: schema_rule_instance_def)
-  show ?thesis
-    by (subst positive_meaning_unfold)
-      (simp only: schema_consequence_rule family support native_single_clause_call[OF package member read];
-        use formed in auto)
+  show ?thesis by (simp only: positive_variable_rule_family[OF native_single_clause_call[OF package member read]] family)
+    simp
 qed
 
 lemma native_schema_family_singleton_source:

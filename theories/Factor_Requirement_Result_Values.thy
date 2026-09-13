@@ -6,7 +6,7 @@ lemma admission_goal_value_self_contained [simp]:
   "self_contained_term (admission_goal_value g)"
   by (induction g) auto
 
-fun admission_sequence_value :: "admission_goal list \<Rightarrow> nat \<Rightarrow>
+fun admission_sequence_value :: "nat admission_goal list \<Rightarrow> nat \<Rightarrow>
     nat list\<times>(nat\<times>admission_instruction list) \<Rightarrow> factor_term" where
   "admission_sequence_value gs n (ds,k,cs)=
     admission_plan_argument (data_list_term (map admission_goal_value gs)) (admission_counter n)

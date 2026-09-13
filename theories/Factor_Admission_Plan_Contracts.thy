@@ -1,5 +1,5 @@
 theory Factor_Admission_Plan_Contracts
-  imports Factor_Admission_Installation
+  imports Factor_Admission_Goal_Construction
 begin
 
 section \<open>The generated program meets the supplied admission goal\<close>
@@ -48,21 +48,17 @@ next
     using first_member admission_extension_definitions[OF right_extension] by blast
   interpret assembled: install_admission_pair ?R l a b
     by unfold_locales (rule right_source, rule retained_first, rule second_member)
-  have left_meaning: "(a,t)\<in>positive_meaning ?R \<longleftrightarrow>
-      admission_goal_holds (positive_meaning P) g t" for t
-    using left admission_extension_meaning[OF right_extension first_member] by blast
-  have right_meaning: "(b,t)\<in>positive_meaning ?R \<longleftrightarrow>
-      admission_goal_holds (positive_meaning P) h t" for t
-    using right admission_extension_goal[OF left_extension supported_h] by blast
-  have correct: "(l,t)\<in>positive_meaning assembled.target \<longleftrightarrow>
-      admission_goal_holds (positive_meaning P) (Paired_Admission g h) t" for t
-    by (simp only: assembled.exact admission_goal_holds.simps left_meaning right_meaning)
-  have extension: "admission_extension P assembled.target"
-    by (rule admission_extension_trans[OF admission_extension_trans[OF left_extension right_extension]
-      assembled.extension])
+  have left_realized: "admission_goal_realized P g a ?Q"
+    using left by (simp only: admission_goal_realized_def; blast)
+  have right_realized: "admission_goal_realized ?Q h b ?R"
+    using right by (simp only: admission_goal_realized_def; blast)
+  have member: "l\<in>system_definitions assembled.target" by simp
+  have realized: "admission_goal_realized P (Paired_Admission g h) l assembled.target"
+    by (rule admission_goal_realized_pair[OF left_realized right_realized supported_h
+      assembled.extension member assembled.exact])
   show ?case
-    using assembled.next_source extension correct
-    by (simp add: fields install_admission_plan_append)
+    using assembled.next_source realized
+    by (simp add: admission_goal_realized_def fields install_admission_plan_append)
 next
   case (Collected_Admission g)
   obtain a m xs where first: "admission_plan g n=(a,m,xs)"
@@ -80,15 +76,13 @@ next
     and child_member: "a\<in>system_definitions ?Q" using child by blast+
   interpret assembled: install_admission_list ?Q m a
     by unfold_locales (rule child_source, rule child_member)
-  have child_meaning: "(a,t)\<in>positive_meaning ?Q \<longleftrightarrow>
-      admission_goal_holds (positive_meaning P) g t" for t using child by blast
-  have correct: "(m,t)\<in>positive_meaning assembled.target \<longleftrightarrow>
-      admission_goal_holds (positive_meaning P) (Collected_Admission g) t" for t
-    by (simp only: assembled.exact admission_goal_holds.simps child_meaning)
-  have extension: "admission_extension P assembled.target"
-    by (rule admission_extension_trans[OF child_extension assembled.extension])
-  show ?case using assembled.next_source extension correct
-    by (simp add: fields install_admission_plan_append)
+  have child_realized: "admission_goal_realized P g a ?Q"
+    using child by (simp only: admission_goal_realized_def; blast)
+  have member: "m\<in>system_definitions assembled.target" by simp
+  have realized: "admission_goal_realized P (Collected_Admission g) m assembled.target"
+    by (rule admission_goal_realized_collection[OF child_realized assembled.extension member assembled.exact])
+  show ?case using assembled.next_source realized
+    by (simp add: admission_goal_realized_def fields install_admission_plan_append)
 qed
 
 text \<open>
@@ -97,7 +91,9 @@ text \<open>
   original definitions, and admits exactly the required terms. The conclusion
   quantifies over all terms, including the empty collection and terms that fail
   a component predicate. A subject-specific class still needs its independently
-  owned equivalence with the supplied admission goal.
+  owned equivalence with the supplied admission goal. The induction retains the
+  planner's counter and instruction-list invariant; both semantic steps reuse
+  the shared goal-realization contracts.
 \<close>
 
 end

@@ -4,7 +4,7 @@ theory Finite_Requirement_Artifact_Admission
 begin
 
 definition finite_requirement_artifact_admitted ::
-  "nat set \<Rightarrow> admission_goal list \<Rightarrow> nat \<Rightarrow> finite_exact_artifact \<Rightarrow> bool" where
+  "nat set \<Rightarrow> nat admission_goal list \<Rightarrow> nat \<Rightarrow> finite_exact_artifact \<Rightarrow> bool" where
   "finite_requirement_artifact_admitted D gs n C=(case checked_admission_sequence D gs n of
     None \<Rightarrow> False | Some plan \<Rightarrow>
       finite_complete_data_roots C (finite_admission_sequence_value gs n plan)\<noteq>{||})"
@@ -40,7 +40,7 @@ theorem finite_requirement_artifact_original_source:
   by (rule finite_requirement_artifact_native[OF system_definitions_finite[OF assms]])
 
 definition finite_requirement_candidate ::
-  "admission_goal list \<Rightarrow> nat \<Rightarrow> nat list\<times>(nat\<times>admission_instruction list)
+  "nat admission_goal list \<Rightarrow> nat \<Rightarrow> nat list\<times>(nat\<times>admission_instruction list)
     \<Rightarrow> finite_exact_artifact" where
   "finite_requirement_candidate gs n plan=the (finite_data_syntax (admission_sequence_value gs n plan))"
 

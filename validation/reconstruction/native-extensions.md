@@ -38,8 +38,8 @@ environment. Controls also retain the complete candidate and its computed
 formation and old-field agreement. Material operands remain part of each
 rule application's semantic obligations.
 
-The [source manifest](native-extensions-sources.json) contains 383 theory
-sources, 18 Python modules and the complete-report comparison: 402 files.
+The [source manifest](native-extensions-sources.json) contains 387 theory
+sources, 18 Python modules and the complete-report comparison: 406 files.
 With the declared Isabelle, Python and Poly/ML toolchain, use fresh directories
 and a fresh session:
 

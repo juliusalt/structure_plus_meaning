@@ -4,7 +4,7 @@ begin
 
 section \<open>The complete finite source boundary executes the original checked planner\<close>
 
-fun finite_admission_goal_sites :: "admission_goal\<Rightarrow>nat fset" where
+fun finite_admission_goal_sites :: "'d admission_goal\<Rightarrow>'d fset" where
   "finite_admission_goal_sites (Existing_Admission d)={|d|}"
 | "finite_admission_goal_sites (Paired_Admission g h)=finite_admission_goal_sites g |\<union>| finite_admission_goal_sites h"
 | "finite_admission_goal_sites (Collected_Admission g)=finite_admission_goal_sites g"

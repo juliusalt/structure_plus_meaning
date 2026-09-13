@@ -4,7 +4,7 @@ begin
 
 section \<open>The actual two table requirements determine the generated guard\<close>
 
-definition portable_table_goals :: "admission_goal list" where
+definition portable_table_goals :: "nat admission_goal list" where
   "portable_table_goals=[Existing_Admission 2,Existing_Admission 353]"
 
 lemma portable_table_goal_support:

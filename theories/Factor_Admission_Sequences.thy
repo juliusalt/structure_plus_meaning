@@ -4,7 +4,7 @@ begin
 
 section \<open>One construction threads every requirement through the current source\<close>
 
-fun admission_sequence :: "admission_goal list \<Rightarrow> nat \<Rightarrow>
+fun admission_sequence :: "nat admission_goal list \<Rightarrow> nat \<Rightarrow>
     nat list\<times>(nat\<times>admission_instruction list)" where
   "admission_sequence [] n=([],n,[])"
 | "admission_sequence (g#gs) n=

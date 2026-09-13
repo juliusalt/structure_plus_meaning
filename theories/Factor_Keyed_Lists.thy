@@ -284,7 +284,7 @@ theorem keyed_list_complete:
   using assms
 proof (induction xs)
   case Nil
-  have result: "(21,evaluate_pattern (\<lambda>_. Payload_Term []) (schema_conclusion data_list_nil_schema))
+  have result: "(21,evaluate_pattern (\<lambda>_. Payload_Term []) (schema_conclusion (data_list_nil_schema :: (nat,nat,nat) factor_schema)))
     \<in>positive_meaning keyed_list_system"
     by (rule ordinary_positive_valuation_step[where c=0])
       (auto simp: keyed_list_clauses_def data_list_nil_schema_def schema_variables_def

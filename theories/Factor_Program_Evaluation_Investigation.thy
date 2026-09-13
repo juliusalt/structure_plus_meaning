@@ -1,5 +1,5 @@
 theory Factor_Program_Evaluation_Investigation
-  imports Factor_Finite_Program_Evaluation Factor_Finite_Native_Controls Factor_Finite_Material_Arguments Finite_Observation_Contracts
+  imports Factor_Finite_Program_Evaluation Factor_Finite_Native_Controls Factor_Finite_Material_Arguments Finite_Subject_Investigation
 begin
 
 section \<open>Actual programs criticize proposed evaluation operations\<close>
@@ -109,74 +109,65 @@ proof -
   qed
 qed
 
+interpretation program_evaluation: finite_subject_investigation "[0,1,2,3,4]" "[0,1,2]"
+    program_evaluation_workload_indices program_evaluation_method program_evaluation_condition
+    program_evaluation_subject program_evaluation_quality
+  by (unfold_locales) (rule program_evaluation_quality_exact)
+
 definition program_evaluation_investigation_observations :: "(nat\<times>nat\<times>nat) list" where
-  "program_evaluation_investigation_observations=concat (map (\<lambda>f.
-    concat (map (\<lambda>m. map (\<lambda>w. (f,m,w))
-      (filter (\<lambda>w. program_evaluation_quality m w f) program_evaluation_workload_indices)) [0,1,2,3,4])) [0,1,2])"
+  "program_evaluation_investigation_observations=subject_investigation_observations
+    [0,1,2,3,4] [0,1,2] program_evaluation_workload_indices program_evaluation_quality"
 
 definition program_evaluation_investigation_relation :: "(nat\<times>nat) list" where
-  "program_evaluation_investigation_relation=filter (\<lambda>(m,n).
-    \<forall>w\<in>set program_evaluation_workload_indices. \<forall>f\<in>set [0,1,2].
-      program_evaluation_quality m w f \<longrightarrow> program_evaluation_quality n w f)
-    (investigation_pairs [0,1,2,3,4])"
+  "program_evaluation_investigation_relation=subject_investigation_relation
+    [0,1,2,3,4] [0,1,2] program_evaluation_workload_indices program_evaluation_quality"
 
 definition program_evaluation_investigation where
   "program_evaluation_investigation selected=investigation_basis [0,1,2,3,4] [0,1,2] selected
     program_evaluation_investigation_observations program_evaluation_investigation_relation"
 
 definition program_evaluation_candidates where
-  "program_evaluation_candidates=fimage (\<lambda>m. (m,program_evaluation_method m)) {|0::nat,1,2,3,4|}"
+  "program_evaluation_candidates=fimage (\<lambda>m. (m,program_evaluation_method m)) (fset_of_list [0,1,2,3,4])"
 definition program_evaluation_conditions where
-  "program_evaluation_conditions=fimage (\<lambda>f. (f,program_evaluation_condition f)) {|0::nat,1,2|}"
+  "program_evaluation_conditions=fimage (\<lambda>f. (f,program_evaluation_condition f)) (fset_of_list [0,1,2])"
 definition program_evaluation_workloads where
   "program_evaluation_workloads=fimage (\<lambda>w. (w,program_evaluation_subject w)) (fset_of_list program_evaluation_workload_indices)"
 
 lemma program_evaluation_subject_maps:
   "finite_observation_subjects_formed program_evaluation_candidates program_evaluation_conditions program_evaluation_workloads"
-  unfolding program_evaluation_candidates_def program_evaluation_conditions_def program_evaluation_workloads_def
-  by (rule finite_observation_function_graphs_formed)
+  by (simp only: program_evaluation_candidates_def program_evaluation_conditions_def program_evaluation_workloads_def;
+    rule program_evaluation.maps_formed)
 
 lemma program_evaluation_observations_derived:
   "fset_of_list program_evaluation_investigation_observations=finite_derived_observations
     program_evaluation_candidates program_evaluation_conditions program_evaluation_workloads
       (\<lambda>condition method problem. condition method problem)"
-  unfolding program_evaluation_candidates_def program_evaluation_conditions_def program_evaluation_workloads_def
-  apply (rule finite_table_derived_from_function_graphs)
-  by (simp only: fset_of_list.rep_eq program_evaluation_investigation_observations_def indexed_predicate_rows_member
-    program_evaluation_quality_exact; auto)
+  by (simp only: program_evaluation_investigation_observations_def program_evaluation_candidates_def
+    program_evaluation_conditions_def program_evaluation_workloads_def;
+    rule program_evaluation.observations_derived)
 
 theorem program_evaluation_observation_at_subject:
   assumes "(m,method) |\<in>| program_evaluation_candidates"
     "(f,condition) |\<in>| program_evaluation_conditions"
     "(w,problem) |\<in>| program_evaluation_workloads"
   shows "(f,m,w)\<in>set program_evaluation_investigation_observations \<longleftrightarrow> condition method problem"
-  using finite_derived_observation_at_subject[OF program_evaluation_subject_maps assms,
-    where P="\<lambda>condition method problem. condition method problem"]
-  by (simp only: program_evaluation_observations_derived[symmetric] fset_of_list.rep_eq)
+  by (simp only: program_evaluation_investigation_observations_def;
+    rule program_evaluation.observation_at_subject)
+    (use assms in \<open>simp_all only: program_evaluation_candidates_def program_evaluation_conditions_def
+      program_evaluation_workloads_def\<close>)
 
 definition program_evaluation_comparison where
-  "program_evaluation_comparison method other \<longleftrightarrow>
-    (\<forall>(f,condition)\<in>fset program_evaluation_conditions. \<forall>(w,problem)\<in>fset program_evaluation_workloads.
-      condition method problem \<longrightarrow> condition other problem)"
+  "program_evaluation_comparison method other=finite_subject_comparison
+    program_evaluation_conditions program_evaluation_workloads method other"
 
 theorem program_evaluation_comparison_at_subject:
   assumes "(m,method) |\<in>| program_evaluation_candidates"
     "(n,other) |\<in>| program_evaluation_candidates"
   shows "(m,n)\<in>set program_evaluation_investigation_relation \<longleftrightarrow> program_evaluation_comparison method other"
-proof -
-  have mapped: "m\<in>{0,1,2,3,4} \<and> method=program_evaluation_method m"
-    "n\<in>{0,1,2,3,4} \<and> other=program_evaluation_method n"
-    using assms by (simp_all only: program_evaluation_candidates_def finite_function_graph_member
-      finsert.rep_eq bot_fset.rep_eq)
-  have comparison: "program_evaluation_comparison (program_evaluation_method m) (program_evaluation_method n) \<longleftrightarrow>
-    (\<forall>w\<in>set program_evaluation_workload_indices. \<forall>f\<in>set [0,1,2].
-      program_evaluation_quality m w f \<longrightarrow> program_evaluation_quality n w f)"
-    by (simp only: program_evaluation_comparison_def program_evaluation_conditions_def
-      program_evaluation_workloads_def finite_function_graph_all program_evaluation_quality_exact
-      finsert.rep_eq bot_fset.rep_eq list.set fset_of_list.rep_eq; blast)
-  show ?thesis using mapped comparison
-    by (simp only: program_evaluation_investigation_relation_def indexed_relation_rows_member list.set; blast)
-qed
+  by (simp only: program_evaluation_investigation_relation_def program_evaluation_comparison_def
+    program_evaluation_conditions_def program_evaluation_workloads_def;
+    rule program_evaluation.comparison_at_subject)
+    (use assms in \<open>simp_all only: program_evaluation_candidates_def\<close>)
 
 setup \<open>Finite_Observation_Contracts.register
   {definition = @{thm program_evaluation_investigation_def},
@@ -186,28 +177,17 @@ setup \<open>Finite_Observation_Contracts.register
    comparison = @{thm program_evaluation_comparison_at_subject}}\<close>
 
 definition program_evaluation_selected where
-  "program_evaluation_selected=filter (\<lambda>m. \<forall>n\<in>set [0,1,2,3,4]. (n,m)\<in>set program_evaluation_investigation_relation)
-    [0,1,2,3,4]"
+  "program_evaluation_selected=subject_investigation_selected
+    [0,1,2,3,4] [0,1,2] program_evaluation_workload_indices program_evaluation_quality"
 
 theorem program_evaluation_selection_at_subject:
   assumes "(m,method) |\<in>| program_evaluation_candidates"
   shows "m\<in>set program_evaluation_selected \<longleftrightarrow>
     (\<forall>(n,other)\<in>fset program_evaluation_candidates. program_evaluation_comparison other method)"
-proof -
-  have mapped: "m\<in>{0,1,2,3,4} \<and> method=program_evaluation_method m"
-    using assms by (simp only: program_evaluation_candidates_def finite_function_graph_member
-      finsert.rep_eq bot_fset.rep_eq)
-  have comparison: "(n,m)\<in>set program_evaluation_investigation_relation \<longleftrightarrow>
-      program_evaluation_comparison (program_evaluation_method n) method"
-    if "n\<in>{0,1,2,3,4}" for n
-    by (rule program_evaluation_comparison_at_subject[OF _ assms])
-      (use that in \<open>simp only: program_evaluation_candidates_def finite_function_graph_member
-        finsert.rep_eq bot_fset.rep_eq; simp\<close>)
-  show ?thesis
-    by (simp only: program_evaluation_selected_def set_filter mem_Collect_eq list.set
-      program_evaluation_candidates_def finite_function_graph_all finsert.rep_eq bot_fset.rep_eq;
-      use mapped comparison in blast)
-qed
+  by (simp only: program_evaluation_selected_def program_evaluation_candidates_def
+    program_evaluation_comparison_def program_evaluation_conditions_def program_evaluation_workloads_def;
+    rule program_evaluation.selection_at_subject)
+    (use assms in \<open>simp_all only: program_evaluation_candidates_def\<close>)
 
 definition program_evaluation_report where
   "program_evaluation_report w=(let X=program_evaluation_subject w in case X of (P,D) \<Rightarrow>

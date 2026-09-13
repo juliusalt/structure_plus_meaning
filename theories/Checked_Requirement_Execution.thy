@@ -41,7 +41,7 @@ proof -
       (auto simp: checked_admission_sequence_def sequence)
 qed
 
-definition checked_requirement_controls :: "(admission_goal list\<times>nat) list" where
+definition checked_requirement_controls :: "(nat admission_goal list\<times>nat) list" where
   "checked_requirement_controls=
     [([],0),([],2),([],3),([Existing_Admission 2],2),([Existing_Admission 2],3),
      ([Existing_Admission 3],3),

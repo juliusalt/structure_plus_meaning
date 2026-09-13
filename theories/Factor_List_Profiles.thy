@@ -1,14 +1,85 @@
 theory Factor_List_Profiles
-  imports Factor_Bag_Comparison
+  imports Factor_Bag_Comparison Factor_Admission_Pair_Schemas
 begin
 
 section \<open>Complete lists call one fixed element definition\<close>
 
-definition list_profile_clauses :: "nat \<Rightarrow> nat \<Rightarrow> (nat \<times> (nat,nat,nat) factor_schema) set" where
+definition list_profile_clauses :: "'d \<Rightarrow> 'd \<Rightarrow> (nat \<times> (nat,nat,'d) factor_schema) set" where
   "list_profile_clauses element list={(0,data_list_nil_schema),(1,list_step_schema element list)}"
 
+lemma data_list_nil_rule_instance:
+  "schema_rule_instance data_list_nil_schema M t \<longleftrightarrow> t=Payload_Term []"
+  by (subst ordinary_schema_rule_valuation)
+    (auto simp: data_list_nil_schema_def schema_formed_def schema_variables_def
+      single_valued_def octets_formed_def)
+
+locale list_rule_relation =
+  fixes M :: "('d\<times>factor_term) set" and element list :: 'd
+  assumes equation: "\<And>t. (list,t)\<in>M \<longleftrightarrow> t=Payload_Term [] \<or>
+    (\<exists>x y. t=Pair_Term x y \<and> (element,x)\<in>M \<and> (list,y)\<in>M)"
+begin
+
+theorem sound:
+  assumes "(list,t)\<in>M"
+  shows "\<exists>xs. t=data_list_term xs \<and> (\<forall>x\<in>set xs. (element,x)\<in>M)"
+  using assms
+proof (induction t)
+  case (Target_Term target)
+  then show ?case by (simp only: equation[of "Target_Term target"]) simp
+next
+  case (Payload_Term bytes)
+  have "bytes=[]" using Payload_Term.prems by (simp only: equation[of "Payload_Term bytes"]) simp
+  then show ?case by (rule_tac x="[]" in exI) simp
+next
+  case (Pair_Term x y)
+  have parts: "(element,x)\<in>M \<and> (list,y)\<in>M"
+    using Pair_Term.prems by (simp only: equation[of "Pair_Term x y"]) simp
+  have first: "(element,x)\<in>M" and tail: "(list,y)\<in>M" using parts by blast+
+  obtain xs where fields: "y=data_list_term xs" "\<forall>z\<in>set xs. (element,z)\<in>M"
+    using Pair_Term.IH(2)[OF tail] by blast
+  show ?case by (rule exI[of _ "x#xs"]) (use first fields in simp)
+qed
+
+theorem complete:
+  assumes "\<forall>x\<in>set xs. (element,x)\<in>M"
+  shows "(list,data_list_term xs)\<in>M"
+  using assms
+proof (induction xs)
+  case Nil
+  show ?case by (subst equation) simp
+next
+  case (Cons x xs)
+  show ?case by (subst equation) (use Cons in auto)
+qed
+
+theorem exact:
+  "(list,t)\<in>M \<longleftrightarrow> (\<exists>xs. t=data_list_term xs \<and> (\<forall>x\<in>set xs. (element,x)\<in>M))"
+  using sound complete by blast
+
+end
+
+theorem list_profile_rule_family:
+  assumes call: "\<And>t. schema_call_formed P d t \<longleftrightarrow> term_formed t"
+    and family: "\<And>t. (\<exists>c S. (c,S)\<in>system_clause_family P d \<and> schema_rule_instance S (positive_meaning P) t)
+      \<longleftrightarrow> (\<exists>c S. (c,S)\<in>list_profile_clauses a d \<and> schema_rule_instance S (positive_meaning P) t)"
+  shows "list_rule_relation (positive_meaning P) a d"
+proof
+  fix t
+  have step: "list_step_schema a d=admitted_pair_schema a d"
+    by (simp only: list_step_schema_def admitted_pair_schema_def)
+  have rules: "(\<exists>c S. (c,S)\<in>list_profile_clauses a d \<and> schema_rule_instance S (positive_meaning P) t) \<longleftrightarrow>
+      schema_rule_instance data_list_nil_schema (positive_meaning P) t \<or>
+      schema_rule_instance (admitted_pair_schema a d) (positive_meaning P) t"
+    by (simp only: list_profile_clauses_def schema_two_clause_rules step)
+  show "(d,t)\<in>positive_meaning P \<longleftrightarrow> t=Payload_Term [] \<or>
+      (\<exists>x y. t=Pair_Term x y \<and> (a,x)\<in>positive_meaning P \<and> (d,y)\<in>positive_meaning P)"
+    by (subst positive_variable_rule_family[OF call], subst family)
+      (simp only: rules data_list_nil_rule_instance admitted_pair_positive_rule)
+
+qed
+
 locale list_profile =
-  fixes P :: "(nat,nat,nat,nat) schema_system" and element_site list_site :: nat
+  fixes P :: "(nat,nat,'d,nat) schema_system" and element_site list_site :: 'd
   assumes system_formed: "schema_system_formed P"
     and family: "\<And>c S. ((list_site,c),S)\<in>system_clauses P \<longleftrightarrow>
       (c,S)\<in>list_profile_clauses element_site list_site"
@@ -39,67 +110,11 @@ proof -
   show ?thesis by (rule ordinary_positive_valuation_step[OF member ordinary assignment head support])
 qed
 
-theorem sound:
-  assumes holds: "(list_site,t)\<in>positive_meaning P"
-  shows "\<exists>xs. t=data_list_term xs \<and> (\<forall>x\<in>set xs. (element_site,x)\<in>positive_meaning P)"
-proof -
-  let ?Q="\<lambda>t. \<exists>xs. t=data_list_term xs \<and> (\<forall>x\<in>set xs. (element_site,x)\<in>positive_meaning P)"
-  have invariant: "list_site=list_site \<longrightarrow> ?Q t"
-  proof (rule positive_valuation_induct[OF holds, where property="\<lambda>d t. d=list_site \<longrightarrow> ?Q t"])
-    fix d c S f
-    assume clause: "((d,c),S)\<in>system_clauses P"
-      and assignment: "\<forall>a\<in>schema_variables S. term_formed (f a)"
-      and head: "schema_call_formed P d (evaluate_pattern f (schema_conclusion S))"
-      and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
-        (e,evaluate_pattern f p)\<in>positive_meaning P \<and>
-        (e=list_site \<longrightarrow> ?Q (evaluate_pattern f p))"
-    show "d=list_site \<longrightarrow> ?Q (evaluate_pattern f (schema_conclusion S))"
-    proof
-      assume "d=list_site"
-      then have cases: "S=data_list_nil_schema \<or> S=list_step_schema element_site list_site"
-        using clause by (auto simp: family list_profile_clauses_def)
-      then show "?Q (evaluate_pattern f (schema_conclusion S))"
-      proof
-        assume "S=data_list_nil_schema"
-        then show ?thesis by (intro exI[of _ "[]"]) (simp add: data_list_nil_schema_def)
-      next
-        assume schema: "S=list_step_schema element_site list_site"
-        have first: "(element_site,f 0)\<in>positive_meaning P"
-          using support schema by (auto simp: list_step_schema_def)
-        obtain xs where tail: "f 1=data_list_term xs" "\<forall>x\<in>set xs. (element_site,x)\<in>positive_meaning P"
-          using support[rule_format, of 1 list_site data_y] schema by (auto simp: list_step_schema_def)
-        show ?thesis by (intro exI[of _ "f 0#xs"])
-          (use first tail in \<open>simp add: schema list_step_schema_def\<close>)
-      qed
-    qed
-  qed
-  show ?thesis using invariant by simp
-qed
+sublocale semantics: list_rule_relation "positive_meaning P" element_site list_site
+  by (rule list_profile_rule_family[OF call]) (auto simp: system_clause_member family)
 
-theorem complete:
-  assumes "\<forall>x\<in>set xs. (element_site,x)\<in>positive_meaning P"
-  shows "(list_site,data_list_term xs)\<in>positive_meaning P"
-  using assms
-proof (induction xs)
-  case Nil
-  have result: "(list_site,evaluate_pattern (\<lambda>_. Payload_Term []) (schema_conclusion data_list_nil_schema))
-    \<in>positive_meaning P"
-    by (rule rule[where c=0])
-      (auto simp: list_profile_clauses_def data_list_nil_schema_def schema_variables_def)
-  show ?case using result by (simp add: data_list_nil_schema_def)
-next
-  case (Cons x xs)
-  have first: "(element_site,x)\<in>positive_meaning P" and tail: "(list_site,data_list_term xs)\<in>positive_meaning P"
-    using Cons by auto
-  have formed: "term_formed x" "term_formed (data_list_term xs)"
-    using element_formed[OF first] schema_call_formed_target[OF positive_meaning_formed[OF tail]] by auto
-  let ?f="\<lambda>i::nat. if i=0 then x else data_list_term xs"
-  have result: "(list_site,evaluate_pattern ?f (schema_conclusion (list_step_schema element_site list_site)))
-    \<in>positive_meaning P"
-    by (rule rule[where c=1])
-      (use formed first tail in \<open>auto simp: list_profile_clauses_def list_step_schema_def schema_variables_def\<close>)
-  show ?case using result by (simp add: list_step_schema_def)
-qed
+lemmas sound = semantics.sound
+lemmas complete = semantics.complete
 
 theorem exact:
   "(list_site,t)\<in>positive_meaning P \<longleftrightarrow>

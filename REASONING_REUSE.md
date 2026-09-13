@@ -909,3 +909,19 @@ This supplies nested goal construction in recovered coordinates. Recognition
 and admission of the complete development record, coverage of its independently
 established requirements, native mathematical evidence, complete criticism,
 historical permission and the full cost account remain open.
+
+Requirement families now reuse that constructor at every original occurrence,
+then install one original conjunction guard at the same term. The generic
+sequence retains indexed correspondence and composes complete program
+extensions. Its executable traversal also supplies the older numbered planner.
+Actual-source recovery, complete construction, entry placement and preservation
+are shared between single goals and families. Source evaluation and term-mask
+comparison are separate reusable contracts, with availability retained explicitly.
+
+The [family reconstruction](validation/reconstruction/native-requirements.md)
+records the 90 actual problems, seven operations, computed condition failures,
+adequacy and followed revisions. Repeated occurrences and the empty family have
+separate structural and all-term contracts. An available strengthening candidate,
+minimal intermediate construction, complete native development-record admission,
+native mathematical proofs and the wider cost and workflow requirements remain
+separate problems.

@@ -96,7 +96,16 @@ condition observations, counterexamples and revisions for six actual operations;
 only the direct constructor satisfies every represented condition. The shared
 investigation and goal-construction contracts also serve the existing clients.
 
-The session registers 995 theories; its
+The [native requirement constructor](validation/reconstruction/native-requirements.md)
+builds one entry requiring every original goal of the same term. It preserves
+repeated occurrences, accepts exactly formed terms for an empty family, and
+compiles the complete target into the actual source environment once. Ninety
+problems compare seven operations through computed semantic and preservation
+conditions. Only the direct constructor is selected and adequate in that scope.
+The sequence traversal, source installation and term comparison are shared with
+the earlier constructors and investigations.
+
+The session registers 1011 theories; its
 [latest complete check](validation/check.json) records the current proof status.
 Native local readers connect an actual
 inference node's bindings to its symbolic replacement record and complete

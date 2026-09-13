@@ -1,5 +1,5 @@
 theory Factor_Admission_Sequences
-  imports Factor_Admission_Plan_Contracts
+  imports Factor_Admission_Plan_Contracts Factor_Admission_Goal_Sequences
 begin
 
 section \<open>One construction threads every requirement through the current source\<close>
@@ -11,20 +11,37 @@ fun admission_sequence :: "nat admission_goal list \<Rightarrow> nat \<Rightarro
     (case admission_plan g n of (d,m,xs) \<Rightarrow>
       case admission_sequence gs m of (ds,k,ys) \<Rightarrow> (d#ds,k,xs@ys))"
 
+definition admission_sequence_step where
+  "admission_sequence_step g n=(case admission_plan g n of (d,m,xs) \<Rightarrow> Some ((d,xs),m))"
+
+lemma admission_sequence_shared:
+  "\<exists>xs k. construct_admission_sequence admission_sequence_step gs n=Some (xs,k) \<and>
+    admission_sequence gs n=(map fst xs,k,concat (map snd xs))"
+proof (induction gs arbitrary: n)
+  case Nil
+  then show ?case by simp
+next
+  case (Cons g gs)
+  obtain d m cs where head: "admission_plan g n=(d,m,cs)" by (cases "admission_plan g n") auto
+  obtain xs k where tail: "construct_admission_sequence admission_sequence_step gs m=Some (xs,k)"
+    and original: "admission_sequence gs m=(map fst xs,k,concat (map snd xs))"
+    using Cons.IH by blast
+  have step: "admission_sequence_step g n=Some ((d,cs),m)"
+    by (simp only: admission_sequence_step_def head prod.case)
+  show ?case by (rule exI[of _ "(d,cs)#xs"], rule exI[of _ k])
+    (simp add: step head tail original)
+qed
+
+declare [[code drop: admission_sequence]]
+
+lemma admission_sequence_code [code]:
+  "admission_sequence gs n=(case construct_admission_sequence admission_sequence_step gs n of
+    None \<Rightarrow> ([],n,[]) | Some (xs,k) \<Rightarrow> (map fst xs,k,concat (map snd xs)))"
+  using admission_sequence_shared[of gs n] by auto
+
 lemma admission_sequence_length:
   "admission_sequence gs n=(ds,k,cs) \<Longrightarrow> length ds=length gs"
   by (induction gs arbitrary: n ds k cs) (auto split: prod.splits)
-
-lemma admission_goal_list_agreement:
-  assumes extension: "admission_extension P Q"
-    and supported: "\<forall>g\<in>set gs. admission_goal_sites g\<subseteq>system_definitions P"
-  shows "list_all2 (\<lambda>g d. F d \<and>
-      (\<forall>t. M d t \<longleftrightarrow> admission_goal_holds (positive_meaning Q) g t)) gs ds \<longleftrightarrow>
-    list_all2 (\<lambda>g d. F d \<and>
-      (\<forall>t. M d t \<longleftrightarrow> admission_goal_holds (positive_meaning P) g t)) gs ds"
-  using supported
-  by (induction gs arbitrary: ds) (case_tac ds;
-    auto simp: admission_extension_goal[OF extension])+
 
 theorem admission_sequence_installed:
   assumes source: "admission_source P n"
@@ -68,19 +85,14 @@ next
     by (rule Cons.IH[OF child_source supported_rest rest])
   have tail_source: "admission_source ?R l" and tail_extension: "admission_extension ?Q ?R"
     using tail by blast+
-  have old: "a\<in>system_definitions ?R \<and>
-    (\<forall>t. (a,t)\<in>positive_meaning ?R \<longleftrightarrow>
-      admission_goal_holds (positive_meaning P) g t)"
-    using child admission_extension_meaning[OF tail_extension child_member]
-      admission_extension_definitions[OF tail_extension] by blast
-  have remaining: "list_all2 (\<lambda>h d. d\<in>system_definitions ?R \<and>
-    (\<forall>t. (d,t)\<in>positive_meaning ?R \<longleftrightarrow>
-      admission_goal_holds (positive_meaning P) h t)) gs es"
-    using tail by (simp only: admission_goal_list_agreement[OF child_extension support_gs]; blast)
-  have extension: "admission_extension P ?R"
-    by (rule admission_extension_trans[OF child_extension tail_extension])
-  show ?case using tail_source extension old remaining
-    by (simp only: fields install_admission_plan_append; simp)
+  have realized: "admission_goal_realized P g a ?Q"
+    using child by (simp only: admission_goal_realized_def; blast)
+  have results: "admission_goal_results ?Q gs es ?R"
+    using tail by (simp only: admission_goal_results_def; blast)
+  have combined: "admission_extension P ?R \<and> admission_goal_results P (g#gs) (a#es) ?R"
+    by (rule admission_goal_sequence_cons[OF realized tail_extension results support_gs])
+  show ?case using tail_source combined
+    by (simp add: admission_goal_results_def fields install_admission_plan_append)
 qed
 
 text \<open>
@@ -88,6 +100,8 @@ text \<open>
   goal starts at the preceding goal's returned counter. The complete sequence
   retains one result entry for each original requirement occurrence, including
   repetitions, and preserves every component's meaning in the final source.
+  Its executable equation uses the same stateful traversal as the native
+  constructor and combines the returned instruction chunks in their order.
   This shared construction does not decide which requirements a problem has.
 \<close>
 

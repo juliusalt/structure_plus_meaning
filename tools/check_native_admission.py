@@ -12,13 +12,14 @@ import program_evaluation_json
 import proved_code
 
 
-def serialization(engine, module):
+def serialization(engine, module, *, goal_serializer="jgoalWith jsite", goal_field="goal"):
     code = 'use ' + investigate.ml_string(str(engine)) + ';\n'
     code += 'structure N = ' + module + ';\n'
     code += check_reasoning.SCALAR_JSON_PRELUDE
     code += native_program_json.COORDINATES + native_program_json.ARTIFACT_ROWS
     code += native_program_json.SCHEMAS + native_program_json.PROGRAMS
     code += program_evaluation_json.PRELUDE + admission_goal_json.PRELUDE
+    code += "fun jgoalValue x = (" + goal_serializer + ") x;\n"
     code += r'''
 fun jenv e = jenvironment
   (N.finite_environment_artifact_rows e,elements (N.finite_environment_bindings e));
@@ -28,7 +29,7 @@ fun jevaluation NONE = "null" | jevaluation (SOME (p,a)) =
 fun jterms NONE = "null" | jterms (SOME t) = jf jterm t;
 fun jproblem (e,(u,(r,(g,t)))) =
   "{\"environment\":" ^ jenv e ^ ",\"use\":" ^ juse u ^ ",\"root\":" ^ jaddress r ^
-  ",\"goal\":" ^ jgoalWith jsite g ^ ",\"terms\":" ^ jf jterm t ^ "}";
+  ",\"GOAL_FIELD\":" ^ jgoalValue g ^ ",\"terms\":" ^ jf jterm t ^ "}";
 fun jsourceReport (p,(supported,(d,(a,t)))) =
   "{\"program\":" ^ jsource p ^ ",\"supported\":" ^ Bool.toString supported ^
   ",\"demand\":" ^ jf (jcallWith jsite) d ^ ",\"evaluation\":" ^ jevaluation a ^
@@ -44,7 +45,7 @@ fun jreport NONE = "null"
   | jreport (SOME (problem,(source,methods))) =
     "{\"problem\":" ^ jproblem problem ^ ",\"source\":" ^ jsourceReport source ^
     ",\"methods\":" ^ jlist jmethod methods ^ "}";
-'''
+'''.replace('GOAL_FIELD', goal_field)
     return code
 
 

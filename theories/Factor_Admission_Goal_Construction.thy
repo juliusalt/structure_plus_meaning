@@ -59,6 +59,17 @@ proof -
   show ?thesis using composed member meaning by (simp only: admission_goal_realized_def; blast)
 qed
 
+lemma admission_goal_list_agreement:
+  assumes extension: "admission_extension P Q"
+    and supported: "\<forall>g\<in>set gs. admission_goal_sites g\<subseteq>system_definitions P"
+  shows "list_all2 (\<lambda>g d. F d \<and>
+      (\<forall>t. M d t \<longleftrightarrow> admission_goal_holds (positive_meaning Q) g t)) gs ds \<longleftrightarrow>
+    list_all2 (\<lambda>g d. F d \<and>
+      (\<forall>t. M d t \<longleftrightarrow> admission_goal_holds (positive_meaning P) g t)) gs ds"
+  using supported
+  by (induction gs arbitrary: ds) (case_tac ds;
+    auto simp: admission_extension_goal[OF extension])+
+
 section \<open>The shared goal constructor uses the component contracts once\<close>
 
 locale admission_goal_constructor =

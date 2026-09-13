@@ -38,37 +38,26 @@ theorem requirement_guard_rule:
   assumes finite: "finite R" and functional: "single_valued R"
   shows "schema_rule_instance (requirement_guard_schema R) X t \<longleftrightarrow>
     term_formed t \<and> (\<forall>(s,d)\<in>R. (d,t)\<in>X)"
-proof
-  let ?S="requirement_guard_schema R"
-  assume rule: "schema_rule_instance ?S X t"
-  obtain V Q where inst: "schema_instance ?S V t Q"
-    and support: "\<forall>s d z. (s,d,z)\<in>Q \<longrightarrow> (d,z)\<in>X"
-    using rule by (auto simp: schema_rule_instance_def)
-  obtain h where assignment: "\<forall>a\<in>schema_variables ?S. (a,h a)\<in>V \<and> term_formed (h a)"
-    and head: "t=evaluate_pattern h (schema_conclusion ?S)"
-    and body: "Q=evaluate_schema_premises h ?S"
-    using schema_instance_evaluation[OF inst] by blast
-  have operand_value: "t=h 0" using head by simp
-  have formed: "term_formed t" using assignment operand_value by simp
-  have called: "\<forall>(s,d)\<in>R. (d,t)\<in>X"
-    using body support operand_value
-    by (auto simp: requirement_guard_schema_def evaluate_schema_premises_def; force)
-  show "term_formed t \<and> (\<forall>(s,d)\<in>R. (d,t)\<in>X)" using formed called by blast
-next
-  let ?S="requirement_guard_schema R"
-  let ?Q="(\<lambda>(s,d). (s,d,t)) ` R"
-  assume data: "term_formed t \<and> (\<forall>(s,d)\<in>R. (d,t)\<in>X)"
-  have sf: "schema_formed ?S" by (rule requirement_guard_formed[OF finite functional])
-  have assigned: "\<forall>a\<in>schema_variables ?S. term_formed ((\<lambda>_. t) a)" using data by simp
-  have inst: "schema_instance ?S {(0,t)} t ?Q"
-    using schema_evaluation_instance[OF sf assigned]
-    by (simp only: requirement_guard_variables requirement_guard_conclusion)
-      (simp add: requirement_guard_schema_def evaluate_schema_premises_def image_image split_def)
-  have material: "schema_material_satisfied ?S {(0,t)}"
-    by (simp add: schema_material_satisfied_def)
-  show "schema_rule_instance ?S X t" unfolding schema_rule_instance_def
-    by (rule exI[of _ "{(0,t)}"], rule exI[of _ ?Q])
-      (use inst material data in auto)
+proof -
+  have formed: "schema_formed (requirement_guard_schema R)"
+    by (rule requirement_guard_formed[OF finite functional])
+  have support: "(\<forall>s d p. (s,d,p)\<in>schema_premises (requirement_guard_schema R) \<longrightarrow>
+      (d,evaluate_pattern h p)\<in>X) \<longleftrightarrow> (\<forall>(s,d)\<in>R. (d,h 0)\<in>X)" for h
+    by (auto simp: case_prod_unfold)
+  have valuation: "schema_rule_instance (requirement_guard_schema R) X t \<longleftrightarrow>
+      (\<exists>h::nat\<Rightarrow>factor_term. term_formed (h 0) \<and> t=h 0 \<and> (\<forall>(s,d)\<in>R. (d,h 0)\<in>X))"
+    by (simp only: ordinary_schema_rule_valuation[OF formed requirement_guard_ordinary]
+      support requirement_guard_variables requirement_guard_conclusion; simp)
+  show ?thesis
+  proof
+    assume "schema_rule_instance (requirement_guard_schema R) X t"
+    then show "term_formed t \<and> (\<forall>(s,d)\<in>R. (d,t)\<in>X)"
+      by (simp only: valuation; blast)
+  next
+    assume actual: "term_formed t \<and> (\<forall>(s,d)\<in>R. (d,t)\<in>X)"
+    show "schema_rule_instance (requirement_guard_schema R) X t"
+      by (simp only: valuation; rule exI[of _ "\<lambda>_. t"]) (use actual in simp)
+  qed
 qed
 
 locale requirement_guard_profile =

@@ -79,11 +79,11 @@ definition program_evaluation_condition :: "nat\<Rightarrow>finite_evaluation_op
 
 definition program_evaluation_quality :: "nat\<Rightarrow>nat\<Rightarrow>nat\<Rightarrow>bool" where
   "program_evaluation_quality m w f=(let X=program_evaluation_subject w in case X of (P,D) \<Rightarrow>
-    case finite_program_evaluation P D of None \<Rightarrow>
+    (case finite_program_evaluation P D of None \<Rightarrow>
       (if f=0 \<or> f=1 then True else f=2 \<and> program_evaluation_method m X=None)
     | Some A \<Rightarrow> if f=2 then True else
       (case program_evaluation_method m X of None \<Rightarrow> False
-       | Some B \<Rightarrow> if f=0 then B |\<subseteq>| A else f=1 \<and> A |\<subseteq>| B \<and> B |\<subseteq>| D))"
+       | Some B \<Rightarrow> if f=0 then B |\<subseteq>| A else f=1 \<and> A |\<subseteq>| B \<and> B |\<subseteq>| D)))"
 
 lemma program_evaluation_quality_exact:
   "program_evaluation_quality m w f=

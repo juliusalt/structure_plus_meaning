@@ -4,7 +4,7 @@ begin
 
 section \<open>The generated entry requires every original goal on the same subject\<close>
 
-definition requirement_sockets :: "nat list \<Rightarrow> (nat\<times>nat) set" where
+definition requirement_sockets :: "'d list \<Rightarrow> (nat\<times>'d) set" where
   "requirement_sockets ds=set (zip [0..<length ds] ds)"
 
 lemma requirement_sockets_finite [simp]: "finite (requirement_sockets ds)"
@@ -50,11 +50,13 @@ proof -
       (\<forall>t. (d,t)\<in>positive_meaning ?Q \<longleftrightarrow>
         admission_goal_holds (positive_meaning P) g t)) gs ds"
     using built by blast+
+  have results: "admission_goal_results P gs ds ?Q"
+    using correspondence by (simp only: admission_goal_results_def)
   have members: "set ds\<subseteq>system_definitions ?Q"
-    using correspondence by (induction rule: list_all2_induct) auto
+    by (rule admission_goal_results_members[OF results])
   have exact: "(\<forall>d\<in>set ds. (d,t)\<in>positive_meaning ?Q) \<longleftrightarrow>
       (\<forall>g\<in>set gs. admission_goal_holds (positive_meaning P) g t)" for t
-    using correspondence by (induction rule: list_all2_induct) auto
+    by (rule admission_goal_results_all[OF results])
   interpret guard: requirement_guard_extension ?Q k "requirement_sockets ds"
     by (rule requirement_guard_extension.intro)
       (use current members in \<open>auto simp: admission_source_def\<close>)

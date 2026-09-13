@@ -43,18 +43,21 @@ definition native_admission_seed where
       (Some [255],finite_payload_syntax [47]) (finite_environment_artifacts (finite_guard_source False))\<rparr>,None,[0])
     else finite_source_extension_seed i)"
 
+definition native_source_goal_problem where
+  "native_source_goal_problem goal samples k E u r B=(let
+    P=(case finite_native_source E u r of None \<Rightarrow>
+      \<lparr>finite_system_interfaces={||},finite_system_clauses={||}\<rparr> | Some Q \<Rightarrow> Q);
+    absent=finite_native_admission_fresh P; ds=sorted_list_of_fset (finite_system_definitions P);
+    a=(case ds of [] \<Rightarrow> absent | d#rest \<Rightarrow> d);
+    b=(case ds of [] \<Rightarrow> absent | d#rest \<Rightarrow> (case rest of [] \<Rightarrow> d | e#remaining \<Rightarrow> e));
+    g=goal k a b absent
+    in (E,u,r,g,B |\<union>| samples B g))"
+
 definition native_admission_problem :: "nat\<Rightarrow>native_admission_problem option" where
   "native_admission_problem w=(if w<length native_admission_shapes then
     (case native_admission_shapes!w of (s,k) \<Rightarrow> map_option (\<lambda>(E,u,r).
-      let P=(case finite_native_source E u r of None \<Rightarrow>
-          \<lparr>finite_system_interfaces={||},finite_system_clauses={||}\<rparr> | Some Q \<Rightarrow> Q);
-        absent=finite_native_admission_fresh P;
-        ds=sorted_list_of_fset (finite_system_definitions P);
-        a=(case ds of [] \<Rightarrow> absent | d#rest \<Rightarrow> d);
-        b=(case ds of [] \<Rightarrow> absent | d#rest \<Rightarrow> (case rest of [] \<Rightarrow> d | e#remaining \<Rightarrow> e));
-        g=native_admission_goal k a b absent;
-        B=finsert (Finite_Payload [256]) program_evaluation_terms
-      in (E,u,r,g,B |\<union>| admission_goal_samples B g)) (native_admission_seed s)) else None)"
+      native_source_goal_problem native_admission_goal admission_goal_samples k E u r
+        (finsert (Finite_Payload [256]) program_evaluation_terms)) (native_admission_seed s)) else None)"
 
 definition native_admission_method :: "nat\<Rightarrow>native_admission_problem\<Rightarrow>
     (local_address option definition_site\<times>local_address option finite_artifact_environment\<times>local_address option) option" where
@@ -78,13 +81,17 @@ definition native_admission_source_report where
       evaluated=finite_native_program_evaluation E u r D
     in (source,supported,D,evaluated,map_option (\<lambda>(P,A). ffilter (finite_admission_goal_test A g) T) evaluated))"
 
-definition native_admission_target_report where
-  "native_admission_target_report X result=(case X of (E,u,r,g,T) \<Rightarrow>
-    map_option (\<lambda>(d,F,v). let source=finite_native_source F v [];
+definition native_entry_target_report where
+  "native_entry_target_report u r T result=map_option (\<lambda>(d,F,v).
+    let source=finite_native_source F v [];
       D=(case source of None \<Rightarrow> {||} | Some P \<Rightarrow> finite_program_term_demand P T);
       evaluated=finite_native_program_evaluation F v [] D
     in (d,F,v,source,D,evaluated,map_option (\<lambda>(P,A). ffilter (\<lambda>t. (d,t) |\<in>| A) T) evaluated,
-      finite_native_source F u r)) result)"
+      finite_native_source F u r)) result"
+
+definition native_admission_target_report where
+  "native_admission_target_report X result=(case X of (E,u,r,g,T) \<Rightarrow>
+    native_entry_target_report u r T result)"
 
 definition native_admission_report where
   "native_admission_report w=map_option (\<lambda>X. (X,native_admission_source_report X,

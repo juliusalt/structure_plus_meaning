@@ -1300,3 +1300,20 @@ further basis evaluation; no required condition is dropped from adequacy.
 The complete 131-report result has a source-only reconstruction boundary.
 The finite scope, observation prerequisites and remaining complete-workflow,
 native-proof, cost and genesis obligations remain explicit in that record.
+
+## Follow-up: all original requirements at the same term
+
+The [requirement-family boundary](validation/reconstruction/native-requirements.md)
+uses the actual source reader, shared occurrence traversal and original conjunction
+schema. Its universal contract preserves original meaning and every old artifact
+and binding. Ninety concrete problems compare seven actual functions through exact
+native observations. The direct constructor is the sole selected and adequate
+operation. Empty and repeated requirements, missing original leaves and an unused
+artifact expose distinct failures; the returned revisions are executed again.
+
+The review also found a limit: no available comparison in this particular family
+has missing terms. Completeness failures come from absent construction. A proposed
+strengthening operation is being investigated separately against the previous
+returned observation basis. The all-condition adequacy rule remains in force.
+Whole native development-record enforcement, native mathematical evidence,
+complete criticism coverage, execution cost and genesis remain open.

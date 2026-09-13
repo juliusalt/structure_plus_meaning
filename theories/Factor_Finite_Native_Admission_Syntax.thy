@@ -1,5 +1,5 @@
 theory Factor_Finite_Native_Admission_Syntax
-  imports Factor_Finite_Requirement_Installation Factor_Finite_Source_Extensions Factor_Finite_Checked_Requirements
+  imports Factor_Finite_Requirement_Installation Factor_Finite_Source_Construction Factor_Finite_Checked_Requirements
 begin
 
 section \<open>The original admission clauses use native private coordinates\<close>
@@ -97,15 +97,14 @@ definition finite_construct_native_admission where
     finite_native_admission_pair finite_native_admission_list g P"
 
 definition finite_native_admission_target where
-  "finite_native_admission_target E pu pr g=(case finite_native_source E pu pr of None \<Rightarrow> None
-    | Some P \<Rightarrow> if finite_admission_goal_sites g |\<subseteq>| finite_system_definitions P
-      then map_option (\<lambda>(d,Q). (P,d,Q)) (finite_construct_native_admission g P) else None)"
+  "finite_native_admission_target E pu pr g=finite_native_source_target
+    (\<lambda>P. finite_admission_goal_sites g |\<subseteq>| finite_system_definitions P)
+    (finite_construct_native_admission g) E pu pr"
 
 definition finite_construct_source_admission where
-  "finite_construct_source_admission E pu pr g=(case finite_native_admission_target E pu pr g of None \<Rightarrow> None
-    | Some (P,d,Q) \<Rightarrow> map_option (\<lambda>(N,F,u).
-      (finite_program_coordinates E (finite_system_definitions P) (finite_system_definitions Q) id d,F,u))
-        (finite_extend_source_native E pu pr Q))"
+  "finite_construct_source_admission E pu pr g=finite_construct_source
+    (\<lambda>P. finite_admission_goal_sites g |\<subseteq>| finite_system_definitions P)
+    (finite_construct_native_admission g) E pu pr"
 
 export_code finite_construct_source_admission checking SML
 

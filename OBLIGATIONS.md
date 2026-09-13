@@ -805,3 +805,17 @@ record, independently established coverage of all its requirements, native
 mathematical-proof artifacts, broader criticism and decision integration,
 historical permission and the full cost account remain unresolved. The six
 conditions in `problems.txt`, O-85, genesis and the final audit remain open.
+
+Multiple original goals can now be constructed over one recovered source and
+required of the same term. Indexed sequence correspondence and the guard's
+complete socket family preserve repeated occurrences; the empty family retains
+term formation. Single goals, families and the older numbered sequence share
+construction and preservation content. A 90-problem native investigation computes
+its observations from the actual sources and targets, selects the direct operation,
+requires all four conditions for adequacy and executes its returned revisions.
+
+Available strengthening counterexamples, minimal construction, complete native
+development-record admission and enforcement, native mathematical-proof artifacts,
+broader question and criticism coverage, historical permission and the whole cost
+account remain separate. The six conditions in `problems.txt`, O-85, genesis and
+the final line-by-line audit are not discharged by this family result.

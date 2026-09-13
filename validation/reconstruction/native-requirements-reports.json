@@ -1,16 +1,1 @@
-{
-  "version": 1,
-  "reports": {
-    "comparison": {
-      "records": 185,
-      "tags": {
-        "REQUIREMENT_ASSESSMENT": 90,
-        "REQUIREMENT_COMPARISON": 1,
-        "REQUIREMENT_INVESTIGATION": 3,
-        "REQUIREMENT_SCOPE": 1,
-        "REQUIREMENT_SUBJECT": 90
-      },
-      "sha256": "40d74cafa36b2bd92031cddb29b45187d36bcdd43bcbccf60d9d928867ea0138"
-    }
-  }
-}
+{"version":1,"reports":{"comparison":{"records":186,"tags":{"REQUIREMENT_ASSESSMENT":90,"REQUIREMENT_COMPARISON":1,"REQUIREMENT_INVESTIGATION":4,"REQUIREMENT_SCOPE":1,"REQUIREMENT_SUBJECT":90},"sha256":"8a07808b8be5aa21742f6359750483c58063dff25d93f9db65169213424f097c"}}}

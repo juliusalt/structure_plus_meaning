@@ -24,38 +24,38 @@ lemma native_requirement_quality_exact:
     native_requirement_optional_inspect_def native_requirement_optional_condition_def
     native_requirement_assessment_exact split: option.splits)
 
-interpretation native_requirement: finite_subject_investigation "[0,1,2,3,4,5,6]" "[0,1,2,3]" ws
+interpretation native_requirement: finite_subject_investigation "[0,1,2,3,4,5,6,7]" "[0,1,2,3]" ws
     native_requirement_method native_requirement_optional_condition native_requirement_problem native_requirement_quality
     for ws
   by (unfold_locales) (rule native_requirement_quality_exact)
 
 definition native_requirement_investigation_observations where
-  "native_requirement_investigation_observations ws=assessed_subject_observations [0,1,2,3,4,5,6] [0,1,2,3] ws
+  "native_requirement_investigation_observations ws=assessed_subject_observations [0,1,2,3,4,5,6,7] [0,1,2,3] ws
     native_requirement_assess native_requirement_optional_inspect"
 
 definition native_requirement_investigation_relation where
-  "native_requirement_investigation_relation ws=subject_investigation_relation [0,1,2,3,4,5,6] [0,1,2,3] ws native_requirement_quality"
+  "native_requirement_investigation_relation ws=subject_investigation_relation [0,1,2,3,4,5,6,7] [0,1,2,3] ws native_requirement_quality"
 
 definition native_requirement_calculation where
-  "native_requirement_calculation ws=assessed_subject_investigation [0,1,2,3,4,5,6] [0,1,2,3] ws
+  "native_requirement_calculation ws=assessed_subject_investigation [0,1,2,3,4,5,6,7] [0,1,2,3] ws
     native_requirement_assess native_requirement_optional_inspect"
 
 lemma native_requirement_investigation_observations_equation:
   "fset_of_list (native_requirement_investigation_observations ws)=fset_of_list
-    (subject_investigation_observations [0,1,2,3,4,5,6] [0,1,2,3] ws native_requirement_quality)"
+    (subject_investigation_observations [0,1,2,3,4,5,6,7] [0,1,2,3] ws native_requirement_quality)"
   by (rule fset_inject[THEN iffD1])
     (simp only: fset_of_list.rep_eq native_requirement_investigation_observations_def
       native_requirement_quality_def[abs_def]; rule assessed_subject_observations_equation)
 
 lemma native_requirement_calculation_equation:
   "native_requirement_calculation ws=(native_requirement_investigation_observations ws,native_requirement_investigation_relation ws,
-    subject_investigation_selected [0,1,2,3,4,5,6] [0,1,2,3] ws native_requirement_quality,
-    subject_investigation_adequate [0,1,2,3,4,5,6] [0,1,2,3] ws native_requirement_quality)"
+    subject_investigation_selected [0,1,2,3,4,5,6,7] [0,1,2,3] ws native_requirement_quality,
+    subject_investigation_adequate [0,1,2,3,4,5,6,7] [0,1,2,3] ws native_requirement_quality)"
   by (simp only: native_requirement_calculation_def assessed_subject_investigation_equation
     native_requirement_investigation_observations_def native_requirement_investigation_relation_def native_requirement_quality_def[abs_def])
 
 definition native_requirement_candidates where
-  "native_requirement_candidates=fimage (\<lambda>m. (m,native_requirement_method m)) (fset_of_list [0,1,2,3,4,5,6])"
+  "native_requirement_candidates=fimage (\<lambda>m. (m,native_requirement_method m)) (fset_of_list [0,1,2,3,4,5,6,7])"
 definition native_requirement_conditions where
   "native_requirement_conditions=fimage (\<lambda>f. (f,native_requirement_optional_condition f)) (fset_of_list [0,1,2,3])"
 definition native_requirement_workloads where
@@ -93,7 +93,7 @@ theorem native_requirement_comparison_at_subject:
     (use assms in \<open>simp_all only: native_requirement_candidates_def\<close>)
 
 definition native_requirement_investigation where
-  "native_requirement_investigation ws selected=investigation_basis [0,1,2,3,4,5,6] [0,1,2,3] selected
+  "native_requirement_investigation ws selected=investigation_basis [0,1,2,3,4,5,6,7] [0,1,2,3] selected
     (native_requirement_investigation_observations ws) (native_requirement_investigation_relation ws)"
 
 setup \<open>Finite_Observation_Contracts.register
@@ -115,10 +115,10 @@ theorem native_requirement_adequacy_at_subject:
 definition native_requirement_investigation_report where
   "native_requirement_investigation_report ws selections=(let result=native_requirement_calculation ws;
     rows=fst result; relation=fst (snd result)
-    in (result,map (investigation_cycle_report [0,1,2,3,4,5,6] [0,1,2,3] rows relation) selections))"
+    in (result,map (investigation_cycle_report [0,1,2,3,4,5,6,7] [0,1,2,3] rows relation) selections))"
 
 lemma native_requirement_report_initial:
-  "fst (snd (investigation_cycle_report [0,1,2,3,4,5,6] [0,1,2,3]
+  "fst (snd (investigation_cycle_report [0,1,2,3,4,5,6,7] [0,1,2,3]
     (fst (native_requirement_calculation ws)) (fst (snd (native_requirement_calculation ws))) selected))=
       native_requirement_investigation ws selected"
   by (simp only: investigation_cycle_initial native_requirement_calculation_equation fst_conv snd_conv

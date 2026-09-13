@@ -1317,3 +1317,20 @@ strengthening operation is being investigated separately against the previous
 returned observation basis. The all-condition adequacy rule remains in force.
 Whole native development-record enforcement, native mathematical evidence,
 complete criticism coverage, execution cost and genesis remain open.
+
+## Added requirements expose a missing comparison observation
+
+The earlier requirement-family comparison lacked an available result with missing
+terms. The next candidate appends the first goal paired with itself, retaining
+the same original requests and term samples. The complete eight-operation run
+finds missing terms in 31 ready cases and changes no earlier failure group.
+It produces 186 reports, 2,597 satisfied condition positions, and only method 0
+as selected and adequate. The preceding returned basis `[0,3,2]` leaves six
+comparisons against the added-requirement method. Their 186 repair witnesses
+all concern completeness. The returned `[0,3,2,1]` basis resolves all six;
+adequacy has required all four original conditions throughout. All complete
+repair groups and missing-term families were inspected, retaining occurrences
+and full material target values. The [reconstruction boundary](validation/reconstruction/native-requirements.md)
+records both the exposed coverage gap and the computed correction. Broader
+method and problem coverage and enforcement of the full development cycle
+remain open.

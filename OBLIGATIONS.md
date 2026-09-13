@@ -819,3 +819,10 @@ development-record admission and enforcement, native mathematical-proof artifact
 broader question and criticism coverage, historical permission and the whole cost
 account remain separate. The six conditions in `problems.txt`, O-85, genesis and
 the final line-by-line audit are not discharged by this family result.
+
+Requirement-family criticism now includes an actual construction that adds an
+unwarranted goal. Its 31 available missing-term counterexamples expose six
+comparisons omitted by the earlier observation basis. The computed revision
+adds completeness and resolves those comparisons. This is a bounded coverage
+improvement; arbitrary-method coverage, native proof construction, the full
+development-cycle account and genesis remain unmet.

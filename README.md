@@ -100,10 +100,14 @@ The [native requirement constructor](validation/reconstruction/native-requiremen
 builds one entry requiring every original goal of the same term. It preserves
 repeated occurrences, accepts exactly formed terms for an empty family, and
 compiles the complete target into the actual source environment once. Ninety
-problems compare seven operations through computed semantic and preservation
+problems compare eight operations through computed semantic and preservation
 conditions. Only the direct constructor is selected and adequate in that scope.
 The sequence traversal, source installation and term comparison are shared with
 the earlier constructors and investigations.
+
+An added requirement excludes valid terms in 31 ready cases. The preceding
+three-condition observation set leaves six comparisons unresolved in the
+expanded family; the computed revision adds completeness and resolves them.
 
 The session registers 1011 theories; its
 [latest complete check](validation/check.json) records the current proof status.

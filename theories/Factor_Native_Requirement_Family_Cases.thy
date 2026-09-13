@@ -28,9 +28,10 @@ definition native_requirement_problem :: "nat\<Rightarrow>native_requirement_pro
       native_source_goal_problem native_requirement_family native_requirement_samples k E u r
         (finsert (Finite_Payload [256]) program_evaluation_terms)) (native_admission_seed s)) else None)"
 
-definition native_requirement_variant :: "nat\<Rightarrow>'g list\<Rightarrow>'g list" where
+definition native_requirement_variant :: "nat\<Rightarrow>'d admission_goal list\<Rightarrow>'d admission_goal list" where
   "native_requirement_variant m gs=(if m=1 then tl gs else if m=2 then butlast gs
-    else if m=3 then (case gs of [] \<Rightarrow> [] | g#rest \<Rightarrow> map (\<lambda>_. g) gs) else gs)"
+    else if m=3 then (case gs of [] \<Rightarrow> [] | g#rest \<Rightarrow> map (\<lambda>_. g) gs)
+    else if m=7 then (case gs of [] \<Rightarrow> [] | g#rest \<Rightarrow> gs@[Paired_Admission g g]) else gs)"
 
 lemma native_requirement_variant_original [simp]: "native_requirement_variant 0 gs=gs"
   by (simp only: native_requirement_variant_def; simp)
@@ -63,7 +64,7 @@ definition native_requirement_target_report where
 
 definition native_requirement_report where
   "native_requirement_report w=map_option (\<lambda>X. (X,native_requirement_source_report X,
-    map (\<lambda>m. (m,native_requirement_target_report X (native_requirement_method m X))) [0,1,2,3,4,5,6]))
+    map (\<lambda>m. (m,native_requirement_target_report X (native_requirement_method m X))) [0,1,2,3,4,5,6,7]))
     (native_requirement_problem w)"
 
 definition native_requirement_indices :: "nat list" where

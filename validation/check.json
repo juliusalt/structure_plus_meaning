@@ -1,15 +1,15 @@
 {
-  "invocation": "3b691a10-bb55-49cc-a2ac-3f742b889e59",
+  "invocation": "dd455c37-e40e-4f0b-b8e5-f9e6e238ad7d",
   "status": "accepted",
-  "started_utc": "2026-09-13T16:48:59.789722+00:00",
+  "started_utc": "2026-09-13T17:29:15.585382+00:00",
   "exit_code": 0,
   "build_receipt": "validation/build.json",
   "diagnostics_file": "validation/check-errors.log",
   "build_status": "accepted",
   "build_evidence": {
-    "invocation": "3b691a10-bb55-49cc-a2ac-3f742b889e59",
+    "invocation": "dd455c37-e40e-4f0b-b8e5-f9e6e238ad7d",
     "status": "accepted",
-    "started_utc": "2026-09-13T16:48:59.789923+00:00",
+    "started_utc": "2026-09-13T17:29:15.585562+00:00",
     "command": [
       "isabelle",
       "build",
@@ -19,7 +19,7 @@
       "-o",
       "timeout=1800",
       "-D",
-      "/tmp/generalization-quality-review/native-requirement-families/worktree"
+      "/tmp/generalization-quality-review/native-requirement-criticism/worktree"
     ],
     "base_session": "HOL",
     "exit_code": 0,
@@ -523,8 +523,8 @@
       "theories/Factor_Native_References.thy": "5fc1f504bc3d8c4a81554a41d064d7ea65214c73047dde289b283438021ded45",
       "theories/Factor_Native_Requirement_Assessment.thy": "69c3a4ad2ecd581a0e3cc33d5ff950e07c991c26926806f55cc30707f10b9e46",
       "theories/Factor_Native_Requirement_Cases.thy": "7980b0ee60713220eb4f4e94b577b9a9df21084c8c70165df0548b855fbc330b",
-      "theories/Factor_Native_Requirement_Family_Cases.thy": "6ab8a34cecb168d45871cf358007ac031a3ff6aca1ac3e267b44a2111c3f1e27",
-      "theories/Factor_Native_Requirement_Investigation.thy": "8458e4ba743b889fbd5e849a73e2165699cb9011ea9b618faf8a95b2dfd09362",
+      "theories/Factor_Native_Requirement_Family_Cases.thy": "5bc357356ff315215be011717e85c27af61b5902e4a0be7bb350bef8cc86a6e6",
+      "theories/Factor_Native_Requirement_Investigation.thy": "f2cd70ed452f5de157deca0ca4033e77308d2f4c6eb40c4ddf5d82d42d8d143e",
       "theories/Factor_Native_Requirement_Plans.thy": "3d764dbfabcb37e6fca13d1d58fa877ee8e3be6cd9b1e02c9f02164da0ed5124",
       "theories/Factor_Native_Requirement_Source_Models.thy": "295dd683d87c239de857acd694884f3fa7c7a380ef4cbd2b95481a54c14ac312",
       "theories/Factor_Native_SK.thy": "7fd976f928d7939369cb467ddd9586dfda532ff0f050754ef77e07ebdcf571f2",
@@ -1045,13 +1045,13 @@
     "isabelle_version": "Isabelle2025-2",
     "sources_unchanged": true,
     "tools_unchanged": true,
-    "finished_utc": "2026-09-13T16:57:30.421818+00:00",
-    "log_sha256": "e00ab17d5037552af8f4566baee21e74d45678a637e2d5f372f8bd7414a1dbce"
+    "finished_utc": "2026-09-13T17:40:02.108718+00:00",
+    "log_sha256": "bc566d8fb001fb844be67f001414c1240194c900922523ae584514ab0e677797"
   },
   "theory_count": 1011,
   "missing_theory_files": [],
   "unlisted_theories": [],
   "proof_escape_matches": [],
   "sources_and_tools_unchanged": true,
-  "finished_utc": "2026-09-13T16:57:30.599781+00:00"
+  "finished_utc": "2026-09-13T17:40:02.284165+00:00"
 }

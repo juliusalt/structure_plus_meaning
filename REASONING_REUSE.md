@@ -925,3 +925,10 @@ separate structural and all-term contracts. An available strengthening candidate
 minimal intermediate construction, complete native development-record admission,
 native mathematical proofs and the wider cost and workflow requirements remain
 separate problems.
+
+The native family investigation now also constructs an extra paired requirement.
+It reuses the original four conditions and actual source subjects. Thirty-one
+ready cases expose missing terms, and the earlier comparison basis requires
+the completeness observation. The machinery returns `[0,3,2,1]` from the
+previous `[0,3,2]` basis, resolving all six residual comparisons. This extends
+the finite criticism scope without introducing a supplied satisfaction table.

@@ -102,7 +102,7 @@ def main():
     receipt = proved_code.checked_execution(
         args.proof, args.poly, args.output, required_theories=['Native_Requirement_Investigation_Execution'],
         inputs={'candidates': contract['candidate_indices'], 'facets': contract['facet_indices'],
-                'cases': args.cases, 'selections': [[], [0], [0, 1, 2, 3]]},
+                'cases': args.cases, 'selections': [[], [0], [0, 3, 2], [0, 1, 2, 3]]},
         input_paths=[Path(__file__), Path(check_native_admission.__file__), Path(admission_goal_json.__file__),
                      Path(investigation_json.__file__), Path(native_program_json.__file__),
                      Path(program_evaluation_json.__file__), *(Path(c['path']) for c in contracts)],

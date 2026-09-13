@@ -1172,3 +1172,61 @@ all 301 complete reports: 18 native extensions, 23 source-retention reports,
 The four manifests contain 402, 390, 510 and 559 repository input files,
 respectively. Only their reconstruction boundaries and verification receipts
 are retained in the repository.
+
+The next independently stated problem is establishing the complete source
+premise from the actual environment before constructing an extension. Seven
+complete subjects derive domain, interface, clause and whole-source observations
+from the original native reader. Their index maps, observation equation and
+truth comparison are proved and exported with the execution. The existing
+investigator computes all pair losses, conflicts, repairs and revisions before
+the consuming source extension is introduced. All three returned selections
+are investigated again and leave no residual pairs.
+
+Criticism distinguishes equality of a separate field profile from conjunction
+of the complete field conditions. The profile unnecessarily separates some
+rejected inputs under the chosen truth comparison. The whole observation's
+universal equation identifies the sufficient interface-and-clause conjunction;
+the finite investigation does not prove the insufficiency of that conjunction.
+The accepted combined executable reproduces all eleven original investigation
+reports exactly after this reusable clarification is added.
+
+The consuming operation now obtains its source from the complete unique native
+reader and existing singleton selector. The returned source's actual coordinates
+supply identity placement on the old program. Target formation and full old-field
+agreement establish all premises of the previous mapped constructor. Its result
+contract is reused directly, preserving whole target meaning and every old
+artifact and outgoing binding. No supplied source model or satisfaction table
+discharges the source premise.
+
+Twelve actual native environments supply six proposals each. Complete results
+retain all input and output programs, coordinates, artifacts, bindings, original
+readings and target readings. Twenty-two constructions succeed and fifty fail.
+Absent and malformed sources reject every proposal; changing no interface or
+clause rows on the empty source remains valid. Successful code retention of
+material operands does not establish their satisfaction in a rule application.
+The new [source-only reconstruction](validation/reconstruction/native-sources.md)
+uses the same execution and dependency collectors as the earlier four families.
+
+The source operation closes this premise for extensions formulated directly
+over its recovered private coordinates. It does not choose or justify the next
+development problem, construct every request in those coordinates, provide
+independent native criticism, or enforce the complete retained content cycle.
+Those workflow requirements, the historical and full cost accounts, O-85,
+genesis and the final repository audit remain open.
+
+The normal 965-theory check accepts the complete registered graph with
+unchanged sources and validation tools and no proof escapes. All 98 tooling
+tests pass. Five independent source materializations rebuild their proof
+contexts from HOL and reproduce all 324 complete reports, including the 23
+new source and extension reports. Full diagnostics contain no session or
+message errors. Four initial concurrent launches failed in Isabelle's Java
+startup before proof checking; unchanged source copies pass with separate
+temporary directories. No failed launch is recorded as accepted evidence.
+
+At the owner's request, 141 obsolete temporary directories and 69 loose files
+are removed from `/tmp/generalization-quality-review`, including three retired
+worktrees. Ninety-one changed source files are already reachable in repository
+history; two other small drafts are retained verbatim in
+[the cleanup receipt](validation/temporary-cleanup.json). The active source,
+proof and execution work is preserved. This storage record supplies no
+semantic or development-admission claim.

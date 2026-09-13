@@ -824,3 +824,32 @@ one collector of recipe roots, local Python imports, fixtures and complete
 report comparisons. Accepted source prefixes support local proof work without
 rebuilding unchanged foundations. These host scheduling and retention tools
 supply no native decision, adequacy judgment or whole-process cost proof.
+
+## Source premises derived from the actual package
+
+`Factor_Finite_Source_Observations` defines the complete source-reading
+condition independently of its computed field observations. All observation
+and comparison rows in the seven-subject investigation have proved equations
+through their actual source maps. Existing conflict, repair and revision
+operations supply the selected whole-source observation, and consume their
+own returned selection in a further investigation. Separate field profiles
+distinguish some rejected inputs; that criticism does not refute the sufficient
+conjunction of complete interface and clause equality.
+
+The existing complete, unique package reader and singleton selector now
+supply `Factor_Finite_Native_Sources`. Its success and absence contracts concern
+the original native package relation on every input. The source-checking
+extension uses that returned complete program directly, in its existing
+private coordinates. Checked target formation and complete old-field agreement
+establish every premise of the existing mapped constructor. The identity
+renaming equation has one owner in `Factor_System_Renaming`.
+
+`finite_source_native_run` assumes only the actual successful operation result
+and instantiates the existing whole-target meaning and material-preservation
+contract. It requires no separately supplied ordinary source model. Twelve
+actual source environments execute 72 attempts, including empty and malformed
+sources, recursion, literals and material fields. The shared reconstruction
+runner and source collector reproduce both this family and the complete source
+investigation. Arbitrary alpha-model search, request integration with the
+recovered coordinate types and the complete native development cycle remain
+separate requirements.

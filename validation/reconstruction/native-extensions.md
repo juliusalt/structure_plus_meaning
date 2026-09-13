@@ -19,8 +19,10 @@ and the original native package remains readable at its existing address.
 The source coordinate map must be injective on the complete source definition
 set. Its whole-program correspondence concerns that actual native package.
 The concrete source models establish it from their complete native
-readings. General native admission of an arbitrary source correspondence
-remains open.
+readings. The separate [source-checking entrypoint](native-sources.md) recovers
+the actual native program and establishes this premise with its original
+coordinates. Admission of arbitrary externally supplied alpha models remains
+open.
 
 The recipe executes eighteen complete reports:
 

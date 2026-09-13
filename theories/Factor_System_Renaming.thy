@@ -10,6 +10,9 @@ definition rename_system ::
     \<lparr>system_interfaces = map_prod g id ` system_interfaces P,
       system_clauses = map_prod (map_prod g id) (rename_schema id id g) ` system_clauses P\<rparr>"
 
+lemma rename_system_identity [simp]: "rename_system id P=P"
+  by (cases P) (simp add: rename_system_def map_prod_def)
+
 lemma renamed_system_interface:
   "(e,p) \<in> system_interfaces (rename_system g P) \<longleftrightarrow>
     (\<exists>d. (d,p) \<in> system_interfaces P \<and> e=g d)"

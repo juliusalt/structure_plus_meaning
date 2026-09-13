@@ -67,10 +67,19 @@ families, recursive peers, literal targets and all material operands. Changed
 or missing old fields, absent callees, conflicting clauses and malformed
 clauses fail the construction gates. Successful construction preserves the
 entire target meaning under the established whole-source correspondence.
-General native admission of that correspondence and of the complete
-development record remains open.
+That general constructor retains the correspondence as an explicit premise.
 
-The session registers 959 theories; its
+The [source-checking extension](validation/reconstruction/native-sources.md)
+now recovers its complete source directly from the actual native environment.
+Each successful call establishes all premises of the existing constructor,
+including the source program and its original coordinates. Seven complete
+source subjects derive observations for the existing revision machinery;
+twelve actual source environments execute 72 extension attempts. The operation
+uses the recovered source's private coordinates. Native construction and
+selection of development decisions, independent criticism and enforcement of
+the complete retained cycle remain open.
+
+The session registers 965 theories; its
 [latest complete check](validation/check.json) records the current proof status.
 Native local readers connect an actual
 inference node's bindings to its symbolic replacement record and complete

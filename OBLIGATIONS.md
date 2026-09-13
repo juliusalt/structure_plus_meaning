@@ -758,3 +758,20 @@ development record, workflow coverage, independent criticism, historical
 permission, the whole cost account, O-85, genesis and the final repository
 audit remain open. All reconstruction boundaries now instantiate one source
 collector and one execution runner; their metadata establishes reproduction.
+
+The complete source premise is now established by an executable entrypoint
+that reads its actual native source and uses that program's original private
+coordinates. Success proves source recovery, target formation, complete old-field
+agreement and the actual mapped-constructor result. The existing universal
+contract then supplies whole target meaning and preservation of every original
+artifact and binding without a separately assumed source correspondence.
+Seven complete source subjects derive the observations used by the existing
+revision machinery; 72 actual extension attempts retain complete programs,
+coordinates, environments and native readings.
+
+This closes source recovery and correspondence for that operation. General
+request construction over the recovered coordinates, native problem and approach
+selection, independent criticism, admission and enforcement of the complete
+development record, historical permission and the full execution-cost account
+remain unresolved. The six conditions in `problems.txt`, O-85, genesis and the
+final line-by-line repository audit remain open.

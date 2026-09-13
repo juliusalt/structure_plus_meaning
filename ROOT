@@ -962,3 +962,9 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Finite_Native_Controls
     Factor_Finite_Native_Extension_Cases
     Native_Extension_Execution
+    Factor_Finite_Source_Observations
+    Factor_Source_Observation_Investigation
+    Factor_Finite_Native_Sources
+    Factor_Finite_Source_Extensions
+    Factor_Finite_Source_Extension_Cases
+    Native_Source_Execution

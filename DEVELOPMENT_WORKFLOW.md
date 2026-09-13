@@ -91,8 +91,11 @@ For host scheduling, prepare the largest useful group of related work that
 preserves quality. Determine its information needs first, then request all
 independent reads together. Use that information to prepare the complete group
 of changes. Submit those changes together with the applicable validation and
-the diagnostics needed to plan the next group. Inspect the combined results
-before preparing the next batch. Avoid separate polling, one-file reads, and
+the diagnostics needed for their dependent follow-up. While builds and checks
+run, continue independent next problems in isolated working copies. Keep all
+inputs of each active validation fixed. Inspect the combined results before
+making dependent decisions or integrating the corresponding changes.
+Avoid separate polling, one-file reads, and
 one-fix proof retries when independent useful work can be included. Dependencies
 within the batch remain ordered. Quality takes precedence over batch size.
 

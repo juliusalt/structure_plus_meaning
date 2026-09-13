@@ -1230,3 +1230,53 @@ history; two other small drafts are retained verbatim in
 [the cleanup receipt](validation/temporary-cleanup.json). The active source,
 proof and execution work is preserved. This storage record supplies no
 semantic or development-admission claim.
+
+## Program evaluation from actual requested applications
+
+The concrete problem was to derive judgments from the actual program clauses
+without supplied true seeds or a satisfaction table. Available applications
+alone do not establish their conclusions, and a finite negative answer needs
+complete coverage of the requested rules and their premises. The candidate
+construction instantiates the existing requested-head matcher, complete
+premise constructor and admitted-instance checker. Injective inference
+translation and restriction to a closed demand factor the shared argument.
+
+Five executable operations were submitted with complete program and demand
+subjects. The independently stated conditions are soundness and completeness
+against the original positive meaning, and no answer when the exact decision
+prerequisites are absent. All observations and comparisons have checked
+equations through their structural subject maps. The first 17-subject execution
+selected checked closure. Independent review found that neither material
+fixture supplied a successful material observation: their payload terminators
+did not encode the original material enumeration.
+
+That coverage gap was submitted again with five additional actual subjects.
+A shared constructor derives all five material operands from complete RRA
+rows and has an exact formation-and-satisfaction contract. The original 17
+subject reports were preserved. The expanded execution selects checked
+closure alone, retains all losses and repair reasons, and reinvestigates its
+returned facet selections. It does not rank identifiers or accept a manually
+supplied truth table. The runtime contract reader supplies the actual
+candidate and facet domains and checks the operation identity.
+
+The selected operation was then composed with the complete native package
+reader. Its universal success theorem concerns the original native program;
+the query theorem instantiates the existing positive-query predicate on the
+complete environment, selector, definition and term. Twenty-one actual package
+executions retain all inputs, generated applications, rules and answers. The
+four previously constructed pair and collection plans distinguish the two
+original source meanings without a separately supplied source model.
+
+The final 47-report boundary reconstructs the proof, code and complete outputs
+from repository sources. Earlier proof attempts include bounded timeouts and
+proof-interface errors; their results did not establish acceptance. The final
+accepted source proof and source-only reconstruction replace temporary build
+copies. The initial material failure remains directly reproducible in the
+unchanged first 17 subjects of the final family.
+
+This closes a conditional program-evaluation gap. Complete development-cycle
+admission and enforcement, general request integration, wider problem and
+approach coverage, independent criticism throughout the process, historical
+permission and the complete cost account remain open. The finite experiment
+does not extend the universal evaluator beyond its checked coverage and
+closure prerequisites, or establish genesis or the final repository audit.

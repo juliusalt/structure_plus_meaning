@@ -81,8 +81,8 @@ python3 -B /tmp/native-source-inputs/tools/reconstruct_native_sources.py \
   --output /tmp/native-source-results
 ```
 
-The [source manifest](native-sources-sources.json) contains 407 files: 387
-theory sources, 19 Python modules and the
+The [source manifest](native-sources-sources.json) contains 408 files: 387
+theory sources, 20 Python modules and the
 [complete-report comparison](native-sources-reports.json). The common runner
 rebuilds the proof from HOL, obtains full diagnostics, exports accepted code,
 and executes both report families. Every result field, index, occurrence and
@@ -91,6 +91,11 @@ ordering participates in comparison. The
 [materialization receipt](native-sources-materialization.json) identify the
 accepted source-only boundary. Generated proof snapshots, modules and runtime
 logs are outputs of that recipe.
+
+The investigation serializer is shared with the
+[native program evaluation](native-evaluation.md) reports. Its source-only
+reconstruction preserves all 23 complete reports of this source-and-extension
+boundary.
 
 The entrypoint operates in the recovered source's private coordinate types.
 It does not search for correspondence with arbitrary external alpha models.

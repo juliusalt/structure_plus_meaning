@@ -775,3 +775,19 @@ selection, independent criticism, admission and enforcement of the complete
 development record, historical permission and the full execution-cost account
 remain unresolved. The six conditions in `problems.txt`, O-85, genesis and the
 final line-by-line repository audit remain open.
+
+The finite evaluator now constructs requested applications from every actual
+program clause and checks complete head coverage and closure of all premises
+within the demand. Empty-seed least inference returns exactly the original
+positive judgments there. Its native entrypoint recovers the complete actual
+source itself and has the existing positive-query predicate as its independent
+condition. The operation comparison derives its observations from 22 complete
+subjects and revises an exposed material-coverage gap through the same
+investigation. Twenty-one actual package inputs execute 294 requested calls.
+
+This supplies conditional judgments and a bounded method-selection and
+criticism use. It does not establish unrestricted program decision, general
+request construction in recovered coordinates, native proof-artifact
+generation, complete development-record admission and enforcement, historical
+permission or the full cost account. The remaining six-condition milestone,
+O-85, genesis and the final line-by-line audit remain open.

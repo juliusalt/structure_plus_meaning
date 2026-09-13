@@ -968,3 +968,13 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Finite_Source_Extensions
     Factor_Finite_Source_Extension_Cases
     Native_Source_Execution
+    Inference_Embeddings
+    Factor_Requested_Application_Readings
+    Factor_Finite_Program_Applications
+    Factor_Finite_Program_Evaluation
+    Factor_Finite_Exact_Patterns
+    Factor_Finite_Material_Arguments
+    Factor_Program_Evaluation_Investigation
+    Factor_Finite_Native_Evaluation
+    Factor_Native_Evaluation_Cases
+    Program_Evaluation_Execution

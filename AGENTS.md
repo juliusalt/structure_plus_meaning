@@ -13,4 +13,5 @@ a missing internal account creates no ad hoc external fallback permission.
 
 Follow all requirements in that document, including preparing the largest useful
 group of related work, requesting independent information together, and reviewing
-combined validation and diagnostics before preparing the next group.
+combined validation and diagnostics before dependent follow-up. Continue
+independent next problems while checks run, keeping their checked inputs fixed.

@@ -853,3 +853,38 @@ runner and source collector reproduce both this family and the complete source
 investigation. Arbitrary alpha-model search, request integration with the
 recovered coordinate types and the complete native development cycle remain
 separate requirements.
+
+## Exact judgments from complete requested program rules
+
+`Factor_Requested_Application_Readings` connects the existing requested-head
+constructor to every original abstract instance when the head covers the
+whole variable scope. `Factor_Finite_Program_Applications` reads the complete
+actual clauses and retains every original application witness. The original
+admitted-instance checker owns material and interface obligations.
+`Inference_Embeddings` supplies the shared injective translation of the entire
+rule and premise family. The existing finite least closure and closed-demand
+restriction then establish `Factor_Finite_Program_Evaluation` without true seeds.
+
+Five actual operations are compared on complete program and demand subjects.
+Their observations concern the original positive meaning and have checked
+subject equations. The initial execution exposed missing positive material
+coverage: both earlier material operands were rejected. The shared finite
+material-argument constructor now derives every operand from the actual RRA
+rows. Its universal contract retains anchors, incidence and counted
+multiplicity. The corrected 22-subject investigation selects checked closure
+and consumes its returned facet revisions in a further investigation.
+
+`Factor_Finite_Native_Evaluation` uses the actual complete package reader and
+instantiates that selected generic operation in the recovered coordinates.
+Every successful requested answer has the existing positive-query program as
+its independent native condition. Twenty-one actual package inputs include
+recursive clauses, corrected material operands and the already constructed
+pair and collection requirements. Both report families instantiate the common
+reconstruction runner. Their term, application and investigation serializers
+share complete field owners.
+
+Head coverage and finite demand closure delimit this decision procedure.
+Constructing general requests over recovered source coordinates, producing
+native proof artifacts, admitting and enforcing the complete development cycle,
+broader decision and criticism coverage, historical permission and the full
+cost account remain unresolved.

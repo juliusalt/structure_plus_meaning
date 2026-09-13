@@ -79,7 +79,16 @@ uses the recovered source's private coordinates. Native construction and
 selection of development decisions, independent criticism and enforcement of
 the complete retained cycle remain open.
 
-The session registers 965 theories; its
+The [native program evaluator](validation/reconstruction/native-evaluation.md)
+derives complete requested applications from the actual clauses and checks
+head coverage and premise closure before returning exact positive and negative
+answers. Its operation comparison uses computed observations on 22 complete
+subjects, including a material-operand correction found by independent review.
+The selected operation evaluates 21 actual native package inputs under the
+existing positive-query contract. Missing prerequisites give no answer.
+Complete development-cycle enforcement and its cost account remain open.
+
+The session registers 975 theories; its
 [latest complete check](validation/check.json) records the current proof status.
 Native local readers connect an actual
 inference node's bindings to its symbolic replacement record and complete

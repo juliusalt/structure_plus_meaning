@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "reports": {
+    "comparison": {
+      "records": 26,
+      "tags": {
+        "PROGRAM_COMPARISON": 1,
+        "PROGRAM_EVALUATION": 22,
+        "PROGRAM_INVESTIGATION": 3
+      },
+      "sha256": "1313ac524f7eb88ac49d9aae522326cc344ccc98108b0cfc6d7c00378ed960d0"
+    },
+    "native": {
+      "records": 21,
+      "tags": {
+        "NATIVE_EVALUATION": 21
+      },
+      "sha256": "4d7fea0a16bd0bcefb079ee775f0f04713113c27896306a65dd548f46a487bdb"
+    }
+  }
+}

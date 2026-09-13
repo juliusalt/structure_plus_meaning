@@ -5,6 +5,7 @@ import json
 
 import check_reasoning
 import investigate
+import investigation_json
 import machine_reports
 import native_program_json
 import proved_code
@@ -16,22 +17,8 @@ def program(engine, inputs):
     code += check_reasoning.SCALAR_JSON_PRELUDE
     code += native_program_json.COORDINATES + native_program_json.ARTIFACT_ROWS
     code += native_program_json.SCHEMAS + native_program_json.PROGRAMS
+    code += investigation_json.PRELUDE
     code += r'''
-fun jpair (a,b) = "[" ^ jnat a ^ "," ^ jnat b ^ "]";
-fun jtriple (a,(b,c)) = "[" ^ jnat a ^ "," ^ jnat b ^ "," ^ jnat c ^ "]";
-fun jquad (a,(b,(c,d))) = "[" ^ jnat a ^ "," ^ jnat b ^ "," ^ jnat c ^ "," ^ jnat d ^ "]";
-fun jprofile (c,p) = "{\"candidate\":" ^ jnat c ^ ",\"profile\":" ^ jlist jpair p ^ "}";
-fun jloss (c,(d,p)) = "{\"from\":" ^ jnat c ^ ",\"to\":" ^ jnat d ^ ",\"losses\":" ^ jlist jpair p ^ "}";
-fun jbasis (formed,(residual,(profiles,losses))) =
-  "{\"formed\":" ^ Bool.toString formed ^ ",\"residual\":" ^ jlist jpair residual ^
-  ",\"profiles\":" ^ jlist jprofile profiles ^ ",\"losses\":" ^ jlist jloss losses ^ "}";
-fun jrepairs (safe,(conflicts,(repairs,unrepairable))) =
-  "{\"safe\":" ^ jlist jnat safe ^ ",\"conflicts\":" ^ jlist jquad conflicts ^
-  ",\"repairs\":" ^ jlist jquad repairs ^ ",\"unrepairable\":" ^ jlist jpair unrepairable ^ "}";
-fun jrevision (retained,(withdrawn,(repairs,(revised,residual)))) =
-  "{\"retained\":" ^ jlist jnat retained ^ ",\"withdrawn\":" ^ jlist jnat withdrawn ^
-  ",\"repairs\":" ^ jlist jquad repairs ^ ",\"selection\":" ^ jlist jnat revised ^
-  ",\"residual\":" ^ jlist jpair residual ^ "}";
 val candidates = map N.nat_of_integer [0,1,2,3,4,5,6];
 val facets = map N.nat_of_integer [0,1,2,3];
 val observations = N.source_investigation_observations;
@@ -94,7 +81,8 @@ def main():
     receipt = proved_code.checked_execution(
         args.proof, args.poly, args.output, required_theories=['Native_Source_Execution'],
         inputs={'selections': [[0, 1, 2], [], [3]]},
-        input_paths=[Path(__file__), Path(native_program_json.__file__), *(Path(c['path']) for c in contracts)],
+        input_paths=[Path(__file__), Path(investigation_json.__file__), Path(native_program_json.__file__),
+                     *(Path(c['path']) for c in contracts)],
         program=program, assess=assess, project=args.project.resolve(), timeout=600,
         question='Which complete native-source observations determine the independently stated source-reading condition?',
         boundary='The subject and observation equations are proved against native_package_at on the actual '

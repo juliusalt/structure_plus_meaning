@@ -67,7 +67,7 @@ definition native_requirement_condition where
 theorem native_requirement_assessment_exact:
   "native_admission_inspect (native_requirement_assessment X (method X)) f=
     native_requirement_condition f method X"
-  by (simp only: native_admission_inspect_def native_requirement_assessment_def prod.case
+  by (simp only: native_admission_inspect_def finite_partial_result_inspect_def native_requirement_assessment_def prod.case
     native_requirement_condition_def native_requirement_ready_exact native_requirement_preservation_exact
     native_requirement_term_exact)
 

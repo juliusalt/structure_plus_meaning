@@ -1334,3 +1334,42 @@ and full material target values. The [reconstruction boundary](validation/recons
 records both the exposed coverage gap and the computed correction. Broader
 method and problem coverage and enforcement of the full development cycle
 remain open.
+
+
+The inference-history problem independently requires exact requested answers,
+the original source, refusal when unavailable, every progressive preceding
+state, and all activated clause, binding and indexed premise witnesses. Generic
+iteration and labelled inference contracts construct those histories and exact
+full reviews. Their actual-source instance projects to the existing evaluator.
+The six-condition observation equation assesses the complete actual method and
+source problem. Candidate source claims do not supply the reference program.
+
+The first nine-method, 21-problem comparison selected only the original
+constructor. Answer and source checks alone left 25 comparisons unresolved;
+the returned revision added state and witness checks. The full structural
+reviews retain every offending occurrence and every altered or omitted witness.
+A native sharing proposal proved equality of every subject, assessment,
+ordered observation, comparison and revision field. The complete shared run
+matched all 38 reports retained before the original execution's timeout.
+
+Independent scope criticism added true answers outside the demand, an unrelated
+uncovered clause, unavailable head coverage and an open demand. Its native
+execution exposed a mistaken fixture description: the actual closed demand
+had two positive calls. The original case is retained; a further nonempty closed demand now has a
+computed empty answer and history.
+All earlier subjects and assessment cells remain unchanged. Eleven methods on
+26 problems again select only the original operation; the original returned
+basis still has no residual. Starting with the first four conditions leaves
+32 comparisons and 393 repair witnesses. Its revision adds both evidence
+conditions and resolves every residual. The complete final report contains all
+121 pair losses and eleven profiles at each initial and followed selection.
+
+The full 1,025-theory check passed. Seven complete source-only reconstructions
+reproduced 705 reports with no proof errors and all original source and runtime
+inputs checked. Two unaffected boundaries retain their verified complete inputs
+and 41 reports. The nine boundaries retain 746 reports. The
+[history boundary](validation/reconstruction/native-histories.md) records the
+58 complete new reports and the original-problem criticism. This finite
+selection does not establish arbitrary-method coverage, native proof artifacts,
+mathematical-proof checking, complete development enforcement, the full cost
+account or genesis.

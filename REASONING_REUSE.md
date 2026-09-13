@@ -932,3 +932,33 @@ ready cases expose missing terms, and the earlier comparison basis requires
 the completeness observation. The machinery returns `[0,3,2,1]` from the
 previous `[0,3,2]` basis, resolving all six residual comparisons. This extends
 the finite criticism scope without introducing a supplied satisfaction table.
+
+Inference histories now factor the complete preceding-state argument through
+`Finite_Iteration_Histories` and instantiate it for the existing finite inference
+operation. The labelled instance retains every enabled original witness at each
+state. Actual program applications supply the complete clause, binding and
+indexed premise families. Native source recovery supplies the program; the
+history result projects exactly to the original evaluator, with all readiness
+premises and unavailable inputs retained.
+
+`Factor_Finite_Program_History_Inspection` independently specifies the complete
+state sequence and original admitted witnesses. Its finite reviews retain every
+expected and offered occurrence and every extra or missing witness. Shared
+finite containment and partial-result inspection also serve the earlier
+admission and requirement investigations, whose complete reports are unchanged.
+
+`Finite_Assessment_Reports` constructs each context and cell from its actual
+operation. Its lookup and congruence theorems preserve the complete ordered
+observations and investigation. `Factor_Native_History_Reports` instantiates
+that argument once for the original source, candidate, assessment and full
+evidence packet. The complete projection theorem includes every comparison and
+revision field. The host serializes this native packet.
+
+The [history reconstruction](validation/reconstruction/native-histories.md)
+retains eleven methods, 26 actual problems, six conditions, complete criticism
+and followed selections. True calls outside the actual demand and an unrelated
+uncovered clause have separate counterexamples. Native execution also corrected
+a mistaken closed-negative fixture description while retaining the original
+case. Only the original history constructor is adequate in this scope. Native
+proof-artifact construction, mathematical-proof checking, complete development
+record enforcement, the full cost account and genesis remain separate problems.

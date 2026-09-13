@@ -8,6 +8,13 @@ lemma map_relation_values_range:
   "rel_ran (map_relation_values f H)=f ` rel_ran H"
   by (auto simp: rel_ran_def)
 
+lemma finite_relation_values_support:
+  assumes "inj f"
+  shows "rel_ran (map_relation_values f (fset H))\<subseteq>image f (fset X) \<longleftrightarrow>
+    fimage snd H |\<subseteq>| X"
+  by (simp only: rel_ran_image map_relation_values_range[unfolded rel_ran_image] inj_image_subset_iff[OF assms]
+    less_eq_fset.rep_eq fimage.rep_eq rel_ran_image)
+
 definition embedded_inferences where
   "embedded_inferences f R b H \<longleftrightarrow>
     (\<exists>a G. b=f a \<and> finite G \<and> single_valued G \<and> R a G \<and> H=map_relation_values f G)"

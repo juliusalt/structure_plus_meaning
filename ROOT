@@ -1014,3 +1014,17 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Native_Requirement_Investigation
     Finite_Term_Observation_Comparisons
     Native_Requirement_Investigation_Execution
+    Finite_Iteration_Histories
+    Finite_Set_Transformations
+    Finite_Inference_Histories
+    Factor_Finite_Program_Histories
+    Factor_Finite_Native_Histories
+    Factor_Finite_Program_History_Inspection
+    Factor_Finite_Native_Evaluation_Readings
+    Finite_Partial_Result_Inspection
+    Factor_Native_History_Cases
+    Factor_Native_History_Assessment
+    Factor_Native_History_Investigation
+    Finite_Assessment_Reports
+    Factor_Native_History_Reports
+    Native_History_Investigation_Execution

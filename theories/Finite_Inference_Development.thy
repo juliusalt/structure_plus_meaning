@@ -19,11 +19,15 @@ definition finite_inference_rules ::
   "('a\<times>('i\<times>'a) fset) fset \<Rightarrow> 'a \<Rightarrow> ('i\<times>'a) set \<Rightarrow> bool" where
   "finite_inference_rules F a H \<longleftrightarrow> (\<exists>G. (a,G) |\<in>| F \<and> H=fset G)"
 
+definition finite_inference_enabled ::
+  "('a\<times>('i\<times>'a) fset) fset \<Rightarrow> 'a set \<Rightarrow> ('a\<times>('i\<times>'a) fset) fset" where
+  "finite_inference_enabled F X=ffilter (\<lambda>(a,H).
+    finite_premise_functional H \<and> fset (fimage snd H)\<subseteq>X) F"
+
 definition finite_inference_round ::
   "('a\<times>('i\<times>'a) fset) fset \<Rightarrow> 'a fset \<Rightarrow> 'a set \<Rightarrow> 'a set" where
   "finite_inference_round F K X=fset K \<union>
-    fset (fimage fst (ffilter (\<lambda>(a,H).
-      finite_premise_functional H \<and> fset (fimage snd H)\<subseteq>X) F))"
+    fset (fimage fst (finite_inference_enabled F X))"
 
 lemma finite_inference_round_exact:
   "finite_inference_round F K X=fset K\<union>inference_consequences (finite_inference_rules F) X"
@@ -46,7 +50,7 @@ proof -
         (use formed support rule in \<open>simp add: rel_ran_image\<close>)
   qed
   show ?thesis
-    apply (auto simp: finite_inference_round_def consequences finite_premise_functional_exact
+    apply (auto simp: finite_inference_round_def finite_inference_enabled_def consequences finite_premise_functional_exact
       fimage.rep_eq image_iff split: prod.splits)
     subgoal for x G
       by (drule bspec[where x="(x,G)"]) auto
@@ -60,7 +64,7 @@ lemma finite_inference_round_mono:
 
 lemma finite_inference_round_bound:
   "finite_inference_round F K X\<subseteq>fset K\<union>fst ` fset F"
-  by (auto simp: finite_inference_round_def fimage.rep_eq split: prod.splits)
+  by (auto simp: finite_inference_round_def finite_inference_enabled_def fimage.rep_eq split: prod.splits)
 
 definition finite_inference_result ::
   "('a\<times>('i\<times>'a) fset) fset \<Rightarrow> 'a fset \<Rightarrow> 'a set" where

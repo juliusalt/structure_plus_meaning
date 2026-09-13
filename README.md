@@ -109,8 +109,15 @@ An added requirement excludes valid terms in 31 ready cases. The preceding
 three-condition observation set leaves six comparisons unresolved in the
 expanded family; the computed revision adds completeness and resolves them.
 
-The session registers 1011 theories; its
+The session registers 1025 theories; its
 [latest complete check](validation/check.json) records the current proof status.
+The [native inference histories](validation/reconstruction/native-histories.md)
+retain every progressive preceding state and complete activated clause,
+binding and indexed premise family. Their result projects exactly to the
+existing evaluator. Eleven operations on 26 actual source problems compare
+six independent answer, source, availability and evidence conditions. Only the
+original operation is adequate. Complete native report sharing preserves every
+subject, assessment and revision; source reconstruction reproduces all 58 reports.
 Native local readers connect an actual
 inference node's bindings to its symbolic replacement record and complete
 target report. A workflow adequacy investigation exposed a construction-reuse

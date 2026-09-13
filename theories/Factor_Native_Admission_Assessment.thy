@@ -1,12 +1,12 @@
 theory Factor_Native_Admission_Assessment
   imports Factor_Native_Admission_Cases Factor_Finite_Goal_Term_Comparison
-    Factor_Finite_Source_Preservation
+    Factor_Finite_Source_Preservation Finite_Partial_Result_Inspection
 begin
 
 type_synonym native_admission_result = "finite_native_entry_result"
 
 type_synonym native_admission_assessment =
-  "bool\<times>(finite_factor_term fset\<times>finite_factor_term fset) option\<times>bool\<times>bool"
+  "finite_factor_term finite_partial_result_assessment"
 
 definition native_admission_ready :: "native_admission_problem\<Rightarrow>bool" where
   "native_admission_ready X=(case X of (E,u,r,g,T) \<Rightarrow>
@@ -68,11 +68,7 @@ definition native_admission_assessment where
     native_admission_preservation_observation X result,result=None)"
 
 definition native_admission_inspect :: "native_admission_assessment\<Rightarrow>nat\<Rightarrow>bool" where
-  "native_admission_inspect A (f::nat)=(case A of (ready,terms,preserved,rejected) \<Rightarrow>
-    if f=3 then (\<not>ready \<longrightarrow> rejected)
-    else if f<3 then (ready \<longrightarrow>
-      (if f=2 then preserved else case terms of None \<Rightarrow> False | Some (extra,missing) \<Rightarrow>
-        (if f=0 then extra={||} else missing={||}))) else False)"
+  "native_admission_inspect A f=finite_partial_result_inspect A f"
 
 definition native_admission_condition where
   "native_admission_condition f method X=(if f=3 then
@@ -99,7 +95,7 @@ lemma native_admission_term_exact:
 theorem native_admission_assessment_exact:
   "native_admission_inspect (native_admission_assessment X (method X)) f=
     native_admission_condition f method X"
-  by (simp only: native_admission_inspect_def native_admission_assessment_def prod.case
+  by (simp only: native_admission_inspect_def finite_partial_result_inspect_def native_admission_assessment_def prod.case
     native_admission_condition_def native_admission_ready_exact native_admission_preservation_exact
     native_admission_term_exact)
 

@@ -826,3 +826,22 @@ comparisons omitted by the earlier observation basis. The computed revision
 adds completeness and resolves those comparisons. This is a bounded coverage
 improvement; arbitrary-method coverage, native proof construction, the full
 development-cycle account and genesis remain unmet.
+
+
+The native inference-history milestone constructs every progressive preceding
+state and original activated clause, binding and indexed premise family from
+the actual source. Its universal projection preserves the existing evaluator;
+complete state and witness reviews have exact independent observation equations.
+The eleven-method, 26-problem investigation selects only that constructor and
+retains all counterexamples and followed revisions. Native report sharing has
+an exact complete-packet projection. A mistaken closed-negative fixture was
+criticized against the actual native result, retained, and supplemented by a
+separate verified negative demand. The full 1,025-theory check and all nine
+reconstruction boundaries account for 746 complete reports.
+
+This supplies source-derived iteration evidence. Native proof-artifact
+construction, native mathematical-proof checking and O-85, the full retained
+development cycle and its native enforcement, historical permission, the
+complete physical cost account, genesis and the final line-by-line audit remain
+open. The finite investigation and its own accepted results do not authorize
+the handoff.

@@ -1,0 +1,19 @@
+theory Native_History_Investigation_Execution
+  imports Factor_Native_History_Reports
+begin
+
+setup \<open>Finite_Observation_Contracts.export @{term native_history_investigation}\<close>
+
+export_code native_history_report_packet native_history_indices native_history_report native_history_assess native_history_assess_report
+  native_history_optional_inspect native_history_investigation_report
+  finite_environment_artifact_rows finite_environment_bindings
+  finite_system_interfaces finite_system_clauses
+  finite_schema_conclusion finite_schema_premises finite_schema_materials
+  finite_material_source finite_material_atoms finite_material_edges finite_material_counts finite_material_functions
+  finite_artifact_rows Finite_Whole Finite_Anchor
+  Finite_Variable Finite_Pattern_Payload Finite_Pattern_Pair Finite_Pattern_Target
+  Finite_Target Finite_Payload Finite_Pair
+  fset set nat_of_integer integer_of_nat
+  in SML module_name Native_History_Investigation_Execution file_prefix native_history_investigation
+
+end

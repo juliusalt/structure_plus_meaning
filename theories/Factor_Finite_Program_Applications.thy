@@ -26,6 +26,17 @@ definition finite_program_head_covered where
     fBall (finite_system_clauses P) (\<lambda>((d,c),S).
       d |\<in>| fimage fst D \<longrightarrow> finite_schema_head_missing S={||})"
 
+lemma finite_program_requested_head_covered:
+  assumes covered: "finite_program_head_covered P D"
+    and clause: "((d,c),S) |\<in>| finite_system_clauses P"
+    and demand: "(d,t) |\<in>| D"
+  shows "finite_schema_head_missing S={||}"
+proof -
+  have key: "d |\<in>| fimage fst D" using demand by force
+  show ?thesis
+    using fbspec[OF covered[unfolded finite_program_head_covered_def] clause] key by simp
+qed
+
 lemma finite_program_application_complete:
   assumes inst: "admitted_schema_instance (decode_finite_system P) d c V (decode_finite_term t) H"
     and demand: "(d,t) |\<in>| D" and covered: "finite_program_head_covered P D"
@@ -37,10 +48,7 @@ proof -
     and material: "schema_material_satisfied (decode_finite_schema S) V"
     using inst by (auto simp: admitted_schema_instance_def)
   have scope: "finite_schema_head_missing S={||}"
-  proof -
-    have key: "d |\<in>| fimage fst D" using demand by force
-    show ?thesis using fbspec[OF covered[unfolded finite_program_head_covered_def] clause] key by simp
-  qed
+    by (rule finite_program_requested_head_covered[OF covered clause demand])
   obtain B G where application: "(t,B,G) |\<in>| finite_requested_schema_applications S t"
     and fields: "decode_finite_term_bindings B=V" "decode_finite_premises G=H"
     using finite_requested_application_reading[OF schema material scope] by blast
@@ -50,13 +58,41 @@ proof -
     (use demand checked clause application fields in \<open>auto simp: finite_program_application_member\<close>)
 qed
 
+theorem finite_program_application_exact:
+  assumes covered: "finite_program_head_covered P D"
+  shows "(d,c,t,V,H) |\<in>| finite_program_applications P D \<longleftrightarrow>
+    (d,t) |\<in>| D \<and> finite_admitted_schema_instance P d c V t H"
+proof
+  assume "(d,c,t,V,H) |\<in>| finite_program_applications P D"
+  then show "(d,t) |\<in>| D \<and> finite_admitted_schema_instance P d c V t H"
+    by (simp only: finite_program_application_member; blast)
+next
+  assume fields: "(d,t) |\<in>| D \<and> finite_admitted_schema_instance P d c V t H"
+  obtain S where clause: "((d,c),S) |\<in>| finite_system_clauses P"
+    and inst: "finite_schema_instance S V t H" and material: "finite_schema_material_satisfied S V"
+    using fields by (auto simp: finite_admitted_schema_instance_def)
+  have scope: "finite_schema_head_missing S={||}"
+    by (rule finite_program_requested_head_covered[OF covered clause]) (use fields in blast)
+  have requested: "(t,V,H) |\<in>| finite_requested_schema_applications S t"
+    by (simp only: finite_requested_schema_applications_exact[OF scope] inst material)
+  show "(d,c,t,V,H) |\<in>| finite_program_applications P D"
+    using fields clause requested by (simp only: finite_program_application_member; blast)
+qed
+
+fun finite_program_application_rule where
+  "finite_program_application_rule (d,c,t,V,H)=((d,t),H)"
+
 definition finite_program_rule_table where
-  "finite_program_rule_table P D=fimage (\<lambda>(d,c,t,V,H). ((d,t),H)) (finite_program_applications P D)"
+  "finite_program_rule_table P D=fimage finite_program_application_rule (finite_program_applications P D)"
 
 lemma finite_program_rule_member:
   "((d,t),H) |\<in>| finite_program_rule_table P D \<longleftrightarrow>
     (\<exists>c V. (d,c,t,V,H) |\<in>| finite_program_applications P D)"
   by (auto simp: finite_program_rule_table_def fimage.rep_eq split: prod.splits; force)
+
+lemma finite_program_rule_head:
+  "(q,H) |\<in>| finite_program_rule_table P D \<Longrightarrow> q |\<in>| D"
+  by (cases q) (auto simp: finite_program_rule_member finite_program_application_member)
 
 lemma finite_program_rule_functional:
   assumes "(q,H) |\<in>| finite_program_rule_table P D"

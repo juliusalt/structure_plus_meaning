@@ -71,17 +71,18 @@ python3 -B /tmp/native-admission-inputs/tools/reconstruct_native_admission.py \
   --output /tmp/native-admission-results
 ```
 
-The [source boundary](native-admission-sources.json) contains 444 theories,
+The [source boundary](native-admission-sources.json) contains 446 theories,
 22 Python modules and the [complete-report comparison](native-admission-reports.json).
 The common runner rebuilds the proofs from HOL, collects complete diagnostics,
 exports the checked code and reproduces every report. Generated proof snapshots,
 modules and logs are reproducible outputs rather than repository inputs.
 The [verified reconstruction](native-admission-verified.json) and
 [materialization receipt](native-admission-materialization.json) retain the
-completed source-only run. The complete 1,011-theory check passed. The eight
-current reconstruction boundaries retain 688 complete reports, including the
-expanded requirement-family criticism; the seven unchanged boundaries retain
-the exact inputs of their preceding successful reconstructions.
+completed source-only run. The complete 1,025-theory check passed. The nine
+current reconstruction boundaries retain 746 complete reports, including the
+expanded requirement-family criticism and native inference histories. Seven
+boundaries rebuilt their complete current source closures; two unaffected
+boundaries retain the exact inputs of their preceding successful reconstructions.
 
 The candidate scope does not establish optimality among arbitrary methods.
 The term samples do not prove universal correctness; the separate constructor

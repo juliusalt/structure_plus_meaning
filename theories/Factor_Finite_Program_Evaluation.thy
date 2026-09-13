@@ -33,9 +33,8 @@ proof
     have support: "fimage snd G |\<subseteq>| D"
       using fbspec[OF closed[unfolded finite_program_demand_closed_def] member] by simp
     show "rel_ran H\<subseteq>decode_finite_call_term ` fset D"
-      using image_mono[OF support[unfolded less_eq_fset.rep_eq], where f=decode_finite_call_term]
-      by (simp only: fields decode_finite_premises_def rel_ran_image
-        map_relation_values_range[unfolded rel_ran_image] fimage.rep_eq)
+      using support by (simp only: fields decode_finite_premises_def
+        finite_relation_values_support[OF decode_finite_call_inj(2)])
   qed
 next
   assume closed: "program_demand_closed (decode_finite_system P) (decode_finite_call_term ` fset D)"
@@ -52,8 +51,8 @@ next
     have support: "rel_ran (decode_finite_premises G)\<subseteq>decode_finite_call_term ` fset D"
       using closed embedded by (simp only: finite_program_rules_exact[OF covered] program_demand_closed_def; blast)
     show "fimage snd G |\<subseteq>| D"
-      using support by (simp only: decode_finite_premises_def rel_ran_image map_relation_values_range[unfolded rel_ran_image]
-        inj_image_subset_iff[OF decode_finite_call_inj(2)] less_eq_fset.rep_eq fimage.rep_eq)
+      using support by (simp only: decode_finite_premises_def
+        finite_relation_values_support[OF decode_finite_call_inj(2)])
   qed
   show "finite_program_demand_closed P D"
     unfolding finite_program_demand_closed_def
@@ -94,16 +93,19 @@ proof -
   show ?thesis by (simp only: reflect[symmetric] image restricted schema_inference_closure)
 qed
 
+definition finite_program_evaluation_ready where
+  "finite_program_evaluation_ready P D=
+    (finite_system_formed P \<and> finite_program_head_covered P D \<and> finite_program_demand_closed P D)"
+
 definition finite_program_evaluation where
-  "finite_program_evaluation P D=(if finite_system_formed P \<and> finite_program_head_covered P D \<and>
-    finite_program_demand_closed P D then
+  "finite_program_evaluation P D=(if finite_program_evaluation_ready P D then
       Some (let settled=finite_inference_result (finite_program_rule_table P D) {||}
         in ffilter (\<lambda>q. q\<in>settled) D) else None)"
 
 theorem finite_program_evaluation_conditions:
   "(\<exists>A. finite_program_evaluation P D=Some A) \<longleftrightarrow>
     finite_system_formed P \<and> finite_program_head_covered P D \<and> finite_program_demand_closed P D"
-  by (auto simp: finite_program_evaluation_def Let_def split: if_splits)
+  by (auto simp: finite_program_evaluation_def finite_program_evaluation_ready_def Let_def split: if_splits)
 
 theorem finite_program_evaluation_exact:
   assumes result: "finite_program_evaluation P D=Some A"
@@ -113,7 +115,7 @@ proof -
   have formed: "finite_system_formed P" and covered: "finite_program_head_covered P D"
     and closed: "finite_program_demand_closed P D"
     and answer: "A=ffilter (\<lambda>q. q\<in>finite_inference_result (finite_program_rule_table P D) {||}) D"
-    using result by (auto simp: finite_program_evaluation_def Let_def split: if_splits)
+    using result by (auto simp: finite_program_evaluation_def finite_program_evaluation_ready_def Let_def split: if_splits)
   show "schema_system_formed (decode_finite_system P)"
     using formed by (simp only: finite_system_formed_correct)
   show "fset A={q\<in>fset D. decode_finite_call_term q\<in>positive_meaning (decode_finite_system P)}"

@@ -17,14 +17,18 @@ definition native_evaluation_seed where
     else map_option (\<lambda>(F,u,d). (F,u,[],Some d))
       (finite_source_requirement_extension (i=19 \<or> i=20) (i=18 \<or> i=20)))"
 
-definition native_evaluation_report where
-  "native_evaluation_report i=map_option (\<lambda>(E,u,r,focus).
+definition native_evaluation_input where
+  "native_evaluation_input i=map_option (\<lambda>(E,u,r,focus).
     (let source=finite_native_source E u r;
       D=(case source of None \<Rightarrow> {||} | Some P \<Rightarrow>
-        ffUnion (fimage (\<lambda>d. fimage (\<lambda>t. (d,t)) native_evaluation_terms) (finite_system_definitions P)));
-      details=map_option (\<lambda>P. (finite_system_formed P,finite_program_head_covered P D,
+        ffUnion (fimage (\<lambda>d. fimage (\<lambda>t. (d,t)) native_evaluation_terms) (finite_system_definitions P)))
+    in (E,u,r,focus,source,D))) (native_evaluation_seed i)"
+
+definition native_evaluation_report where
+  "native_evaluation_report i=map_option (\<lambda>(E,u,r,focus,source,D).
+    (let details=map_option (\<lambda>P. (finite_system_formed P,finite_program_head_covered P D,
         finite_program_demand_closed P D,finite_program_applications P D,finite_program_rule_table P D)) source
-    in (E,u,r,focus,source,D,details,finite_native_program_evaluation E u r D))) (native_evaluation_seed i)"
+    in (E,u,r,focus,source,D,details,finite_native_program_evaluation E u r D))) (native_evaluation_input i)"
 
 text \<open>
   The first twelve inputs reuse the previously executed actual native source

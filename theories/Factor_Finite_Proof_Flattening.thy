@@ -1,6 +1,6 @@
 theory Factor_Finite_Proof_Flattening
   imports Factor_Finite_Proof_Positions Factor_Proof_Flattening Factor_Graph_Transport
-    Finite_Indexed_Relation_Families
+    Finite_Indexed_Relation_Families Finite_Function_Graphs
 begin
 
 fun finite_schema_proof_kind :: "('a,'s,'c) finite_schema_proof\<Rightarrow>('a,'c) finite_schema_graph_node" where
@@ -64,6 +64,42 @@ proof -
     by (simp only: fset_inject[symmetric] edges positions schema_proof_graph_fields)
   show ?thesis by (rule inference_graph.equality) (rule inferences, rule discharges, simp)
 qed
+
+theorem finite_schema_proof_graph_reading:
+  assumes checked: "finite_checks_schema_proof P p d t"
+  shows "schema_graph_reading (decode_finite_system P)
+    (decode_finite_graph (finite_schema_proof_graph P (p,d,t))) (p,d,t) d (decode_finite_term t)
+    (graph_map (fset (finite_schema_proof_positions P p d t)) (snd\<circ>decode_finite_instantiated_node))"
+proof -
+  let ?D = decode_finite_instantiated_node
+  let ?P = "decode_finite_system P"
+  let ?N = "fset (finite_schema_proof_positions P p d t)"
+  let ?J = "graph_map ?N (snd\<circ>?D)"
+  have original: "schema_graph_reading ?P (schema_proof_graph ?P (?D (p,d,t))) (?D (p,d,t)) d (decode_finite_term t)
+    (graph_map (schema_proof_positions ?P (?D (p,d,t))) snd)"
+    by (simp only: decode_finite_instantiated_node_pair; rule schema_proof_graph_reading;
+      use checked in \<open>simp only: finite_checks_schema_proof_exact\<close>)
+  have positions: "schema_proof_positions ?P (?D (p,d,t))=?D ` ?N"
+    using finite_schema_proof_positions_correct[of P p d t] by (simp only: fimage.rep_eq)
+  have claims: "graph_map (schema_proof_positions ?P (?D (p,d,t))) snd=map_prod ?D id ` ?J"
+    by (simp only: positions graph_map_source_image)
+  have copied: "schema_graph_reading ?P
+    (rename_schema_graph ?D (decode_finite_graph (finite_schema_proof_graph P (p,d,t))))
+    (?D (p,d,t)) d (decode_finite_term t) (map_prod ?D id ` ?J)"
+    using original by (simp only: finite_schema_proof_graph_correct claims)
+  have injective: "inj ?D" by (auto simp: inj_def)
+  show ?thesis by (rule schema_graph_reading_rename_reflect[where f="?D", OF copied injective])
+qed
+
+lemma finite_schema_proof_graph_no_assertion:
+  "(n,Schema_Assertion)\<notin>fset (graph_inferences (decode_finite_graph (finite_schema_proof_graph P root)))"
+  by (cases root)
+    (auto simp: finite_schema_proof_graph_def Let_def decode_finite_graph_def map_prod_def fimage.rep_eq)
+
+lemma finite_schema_proof_graph_assumptions:
+  "schema_graph_assumptions (decode_finite_graph (finite_schema_proof_graph P root)) J={}"
+  unfolding schema_graph_assumptions_def
+  by (simp only: finite_schema_proof_graph_no_assertion; simp)
 
 theorem finite_schema_proof_graph_derives:
   assumes checked: "finite_checks_schema_proof P p d t"

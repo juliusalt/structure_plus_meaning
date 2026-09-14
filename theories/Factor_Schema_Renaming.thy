@@ -13,6 +13,10 @@ lemma map_socket_graph_domain:
   "rel_dom (map_socket_graph h g f Q) = h ` rel_dom Q"
   by (simp add: map_socket_graph_def pair_image_domain)
 
+lemma map_socket_graph_keys:
+  "map_socket_graph h id id Q=map_prod h id ` Q"
+  by (simp add: map_socket_graph_def map_prod_def case_prod_unfold)
+
 lemma map_socket_graph_finite:
   assumes "finite Q"
   shows "finite (map_socket_graph h g f Q)"

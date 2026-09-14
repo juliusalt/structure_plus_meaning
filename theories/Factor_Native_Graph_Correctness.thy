@@ -1,5 +1,5 @@
 theory Factor_Native_Graph_Correctness
-  imports Factor_Native_Graph_Assessment
+  imports Factor_Native_Graph_Assessment Factor_Finite_Graph_Correspondence
 begin
 
 lemma native_graph_constructor_result:
@@ -19,17 +19,15 @@ proof -
     "image fst (fset (finite_graph_nodes H))\<inter>fset (finite_environment_uses E)={}"
     "H |\<in>| finite_native_graph_readings F r"
     by (rule finite_extend_native_graph_correct[OF extended])+
-  have formed: "finite_graph_formed G root"
-    using facts(1) by (simp only: finite_graph_construction_ready_def; blast)
   have mapping: "finite_graph_mapping M G root H r"
-    by (simp only: facts(5,6,7); rule finite_graph_mapping_rename[OF formed])
+    by (rule finite_extend_native_graph_correspondence(1)[OF extended])
   have injective: "single_valued ((fset M)\<inverse>)"
-    using facts(8) by (simp only: facts(5) finite_function_graph graph_map_converse_functional)
-  show ?thesis using facts(2,3,4,9,10) mapping injective facet
-    by (auto simp: native_graph_result_condition_def finite_environment_formed_correct
-      finite_environment_agrees_on_correct finite_native_graph_readings_correct
-      finite_graph_mapping_exact finite_graph_nodes_correct finite_environment_uses_correct;
-      arith)
+    by (rule finite_extend_native_graph_correspondence(2)[OF extended])
+  show ?thesis
+    by (simp only: native_graph_result_condition_def case_prod_conv;
+      rule finite_native_graph_result_conditions[OF facts(2) facts(10) mapping facts(3) facts(4)
+        facts(9) injective facet])
+
 qed
 
 theorem native_graph_constructor_all_conditions:

@@ -9,6 +9,55 @@ definition schema_graph_mapping where
     fset (graph_discharges H)={((m,s),k). \<exists>n q.
       ((n,s),q)\<in>fset (graph_discharges G) \<and> (n,m)\<in>M \<and> (q,k)\<in>M})"
 
+lemma schema_graph_mapping_node:
+  assumes "schema_graph_mapping M G root H r"
+  shows "(m,A)\<in>fset (graph_inferences H) \<longleftrightarrow>
+    (\<exists>n. (n,A)\<in>fset (graph_inferences G) \<and> (n,m)\<in>M)"
+  using assms by (simp only: schema_graph_mapping_def mem_Collect_eq case_prod_conv; blast)
+
+lemma schema_graph_mapping_discharge:
+  assumes "schema_graph_mapping M G root H r"
+  shows "((m,s),k)\<in>fset (graph_discharges H) \<longleftrightarrow>
+    (\<exists>n q. ((n,s),q)\<in>fset (graph_discharges G) \<and> (n,m)\<in>M \<and> (q,k)\<in>M)"
+  using assms by (simp only: schema_graph_mapping_def mem_Collect_eq case_prod_conv; blast)
+
+lemma schema_graph_mapping_nodes:
+  assumes mapping: "schema_graph_mapping M G root H r"
+  shows "schema_graph_nodes H=rel_ran M"
+proof -
+  have domain: "rel_dom M=rel_dom (fset (graph_inferences G))"
+    using mapping by (simp only: schema_graph_mapping_def schema_graph_nodes_def; blast)
+  show ?thesis using domain
+    by (auto simp: schema_graph_nodes_def rel_dom_def rel_ran_def
+      schema_graph_mapping_node[OF mapping]; blast)
+qed
+
+theorem schema_graph_mapping_compose:
+  assumes first: "schema_graph_mapping M G root H r"
+    and second: "schema_graph_mapping N H r K s"
+  shows "schema_graph_mapping (M O N) G root K s"
+proof -
+  have mf: "single_valued M" and nf: "single_valued N"
+    and md: "rel_dom M=schema_graph_nodes G" and nd: "rel_dom N=schema_graph_nodes H"
+    and mr: "(root,r)\<in>M" and nr: "(r,s)\<in>N"
+    using first second by (simp only: schema_graph_mapping_def; blast)+
+  have coverage: "rel_ran M\<subseteq>rel_dom N"
+    by (simp only: nd schema_graph_mapping_nodes[OF first])
+  have functional: "single_valued (M O N)" by (rule relation_join_functional[OF mf nf])
+  have domain: "rel_dom (M O N)=schema_graph_nodes G"
+    by (simp only: relation_join_domain[OF coverage] md)
+  have root: "(root,s)\<in>M O N" using mr nr by blast
+  have nodes: "fset (graph_inferences K)={(k,A). \<exists>n.
+      (n,A)\<in>fset (graph_inferences G) \<and> (n,k)\<in>M O N}"
+    by (rule set_eqI)
+      (auto simp: schema_graph_mapping_node[OF second] schema_graph_mapping_node[OF first]; blast)
+  have edges: "fset (graph_discharges K)={((k,t),l). \<exists>n q.
+      ((n,t),q)\<in>fset (graph_discharges G) \<and> (n,k)\<in>M O N \<and> (q,l)\<in>M O N}"
+    by (rule set_eqI)
+      (auto simp: schema_graph_mapping_discharge[OF second] schema_graph_mapping_discharge[OF first]; blast)
+  show ?thesis by (simp only: schema_graph_mapping_def functional domain root nodes edges simp_thms)
+qed
+
 lemma schema_graph_mapping_unique:
   fixes H K :: "('a,'s,'c,'m,'v) inference_graph"
   assumes left: "schema_graph_mapping M G root H r" and right: "schema_graph_mapping M G root K s"

@@ -2375,8 +2375,17 @@ method 0. The complete 193-report sequence is covered by five
 Full development-workflow enforcement and the six conditions in `problems.txt`
 remain the next milestone.
 
-The complete repository check now covers 1,103 theories. All seventeen source-only
-reconstructions reproduce 1,136 complete native reports; 98 host tests and 59
-subtests pass. The [combined certificate-cycle verification](validation/reconstruction/certificate-cycle-verified.json)
-records the rebuilt source boundaries and removal of generated copies. The six
-conditions in `problems.txt` remain the active development-workflow milestone.
+[Complete native certificate replay](validation/reconstruction/native-certificate-replay.md)
+now constructs the actual source-positioned graph and call, preserving the
+original source and retaining the least environment for closed replay.
+[Original-requirement decisions](validation/reconstruction/requirement-decisions.md)
+construct admitted terms and checked evidence from all original requirements.
+Both reuse the existing subject and constructor machinery. The whole development
+workflow and six conditions in `problems.txt` remain the immediate milestone.
+
+The complete 1,129-theory check and all 98 host tests with 59 subtests pass.
+Nineteen source-only reconstructions rebuild their contracts from HOL and
+reproduce all 1,184 complete native reports. The [current verification](validation/reconstruction/current-verified.json)
+retains every current source and report boundary after removal of generated
+copies. Earlier verification boundaries remain in Git. The six conditions in
+`problems.txt` remain the active development milestone.

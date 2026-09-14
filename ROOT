@@ -1106,3 +1106,29 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Native_Certificate_Input_Execution
     Native_Certificate_Investigation_Execution
     Native_Certificate_Scope_Repair_Execution
+    Factor_Finite_Application_Construction
+    Factor_Finite_Application_Encoding
+    Factor_Finite_Graph_Correspondence
+    Factor_Finite_Graph_Positioning
+    Factor_Finite_Graph_Reindexing
+    Factor_Finite_Native_Certificate_Graphs
+    Factor_Finite_Native_Certificate_Replay
+    Factor_Finite_Native_Graph_Assessment
+    Factor_Finite_Proof_Positioning
+    Factor_Finite_Requirement_Decisions
+    Factor_Finite_Source_Coordinate_Graphs
+    Factor_Finite_Source_Decisions
+    Factor_Graph_Positioning
+    Factor_Graph_Reindexing
+    Factor_Native_Replay_Assessment
+    Factor_Native_Replay_Caches
+    Factor_Native_Replay_Cases
+    Factor_Native_Replay_Correctness
+    Factor_Native_Replay_Investigation
+    Factor_Requirement_Decision_Assessment
+    Factor_Requirement_Decision_Cases
+    Factor_Requirement_Decision_Investigation
+    Finite_Evaluation_Caches
+    Indexed_Value_Images
+    Native_Certificate_Replay_Execution
+    Requirement_Decision_Execution

@@ -1059,3 +1059,35 @@ and every new value and reason was inspected. The five [reconstruction recipes](
 sequence through source boundaries. The full native development protocol,
 arbitrary-development adequacy, historical permission and complete cost account
 remain open; this scoped gate does not discharge `problems.txt`.
+
+## Native replay and original-requirement decisions
+
+Complete indexed-value images, graph reindexing and source positioning factor
+coordinate transport while retaining every original inference, call and indexed
+edge. Actual native graph and application construction compose through their
+existing preservation contracts. The full extending environment and the least
+replay environment are distinct outputs. One universal certificate constructor
+contract establishes all ten original replay conditions. Direct graph placement
+and replay share the complete graph-assessment operation.
+
+`Finite_Evaluation_Caches` retains full actual inputs and their computed values,
+with exact lookup and fallback on every input. Its five replay instances preserve
+the entire earlier assessment, comparison and revision packet. The complete
+19-report before and after executions agree. This reduces measured repeated-read
+work; the full physical cost account remains open.
+
+`Factor_Finite_Source_Decisions` shares source construction, installed-program
+reading, term-derived demand and complete native certificate construction.
+Each constructor instance supplies its independent original entry condition.
+The requirement instance admits precisely the terms satisfying every original
+requirement and returns checked evidence for every positive call. Its eight
+computed conditions and complete comparison instantiate the existing subject
+and assessment registry. The complete source and result boundaries are retained
+by the [replay](validation/reconstruction/native-certificate-replay.md) and
+[decision](validation/reconstruction/requirement-decisions.md) recipes.
+
+A complete native development workflow still needs concrete subjects and original
+contracts for problem choice, changes, information and criticism, their operative
+admission transitions, adequate coverage, historical permission and the complete
+cost account. This composition work remains directed at `problems.txt`; neither
+scoped operation alone establishes that milestone or genesis.

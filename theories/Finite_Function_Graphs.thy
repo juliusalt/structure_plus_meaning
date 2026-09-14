@@ -2,6 +2,10 @@ theory Finite_Function_Graphs
   imports Bootstrap_Relations "HOL-Library.FSet"
 begin
 
+lemma graph_map_source_image:
+  "graph_map (f ` A) g=map_prod f id ` graph_map A (g\<circ>f)"
+  by (auto simp: graph_map_def map_prod_def comp_def; force)
+
 lemma finite_function_graph:
   "fset (fimage (\<lambda>i. (i,S i)) I)=graph_map (fset I) S"
   by (auto simp: fimage.rep_eq graph_map_def)

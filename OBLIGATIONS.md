@@ -932,10 +932,30 @@ the six-condition development milestone in `problems.txt`. Native source
 positioning and complete certificate replay are still under development in the
 preserved parallel working copy.
 
-This certificate-cycle batch passed the complete 1,103-theory check and all
-98 host tests with 59 subtests. Seventeen source-only reconstructions rebuilt
-their entire source closures from HOL and reproduced 1,136 complete native
-reports. The [combined verification](validation/reconstruction/certificate-cycle-verified.json)
-retains every current source and report boundary after removal of generated
-copies. This verification does not discharge the remaining six-condition
-workflow milestone.
+## Native certificate replay and requirement decisions
+
+Original checked certificates now construct source-positioned graphs, native
+applications and the least replay environment. The original graph correspondence,
+all old source material and genuine sharing are preserved; actual native replay
+returns the empty assertion boundary. All ten conditions share one universal
+constructor contract. Complete-input caches preserve every earlier result while
+sharing repeated native reads.
+
+Original requirement decisions now construct their installed entry, complete
+finite demand, positive answer and checked certificate family in one operation.
+Their admitted terms satisfy every original requirement. Eight actual-subject
+conditions distinguish preservation, exactness, sound evidence and refusal.
+The [replay](validation/reconstruction/native-certificate-replay.md) and
+[decision](validation/reconstruction/requirement-decisions.md) recipes retain
+48 complete reports through source boundaries.
+
+Whole-workflow presentation and enforced transitions, complete original-subject
+and criticism coverage, historical permission, decision-certificate replay and
+the full physical cost account remain required for `problems.txt`. Native
+mathematical-proof admission, genesis and the final audit are also still open.
+
+The [current verification](validation/reconstruction/current-verified.json) records
+the complete 1,129-theory check, 98 host tests with 59 subtests, and nineteen
+source-only reconstructions reproducing 1,184 complete native reports. Every
+current source and full report boundary was verified before generated copies
+were removed. The six-condition workflow milestone remains open.

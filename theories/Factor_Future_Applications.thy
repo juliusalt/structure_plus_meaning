@@ -105,11 +105,12 @@ theorem future_call_existing_bindings:
   unfolding future_call_environment_def
   by (rule graft_existing_bindings_unchanged[OF ef call_environment_target_passive member])
 
-theorem future_call_representation:
+theorem future_call_application:
   assumes ef: "environment_formed E" and source: "artifact_at E u R"
     and anchor: "anchor_formed (R,a)" and arg: "term_formed t"
-  shows "\<exists>I K. native_application_at (future_call_environment E u R a t) (future_call_use E u) [] (u,a) t I K \<and>
-    rra_carrier (object_structure (call_syntax R a t)) = I \<union> K"
+  shows "native_application_at (future_call_environment E u R a t) (future_call_use E u) [] (u,a) t
+    (term_syntax_interior (Pair_Term (Target_Term (Occurrence_Anchor (R,a))) t))
+    (rel_dom (term_literal_bindings (Pair_Term (Target_Term (Occurrence_Anchor (R,a))) t)))"
 proof -
   let ?C = "call_environment R a t"
   let ?h = "fresh_use_map (environment_uses E) u"
@@ -127,8 +128,15 @@ proof -
   have ff: "environment_formed ?F" by (rule future_call_environment_formed[OF assms])
   have recovered: "native_application_at ?F (future_call_use E u) [] (u,a) t ?I ?K"
     by (rule native_application_included[OF placed included ff])
-  show ?thesis using recovered native_application_complete_carrier[of R a t] by blast
+  show ?thesis by (rule recovered)
 qed
+
+theorem future_call_representation:
+  assumes ef: "environment_formed E" and source: "artifact_at E u R"
+    and anchor: "anchor_formed (R,a)" and arg: "term_formed t"
+  shows "\<exists>I K. native_application_at (future_call_environment E u R a t) (future_call_use E u) [] (u,a) t I K \<and>
+    rra_carrier (object_structure (call_syntax R a t)) = I \<union> K"
+  using future_call_application[OF assms] native_application_complete_carrier[of R a t] by blast
 
 theorem future_call_preserves_program:
   assumes package: "native_package_at E pu pr P" and source: "artifact_at E u R"

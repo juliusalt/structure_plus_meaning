@@ -1,5 +1,5 @@
 theory Factor_Graph_Transport
-  imports Factor_Graph_Renaming Factor_Proof_Flattening
+  imports Factor_Graph_Renaming Factor_Proof_Flattening Indexed_Value_Images
 begin
 
 section \<open>The complete claim assignment moves with its private nodes\<close>
@@ -131,6 +131,18 @@ proof
     by (auto simp: map_prod_def schema_graph_assumptions_def schema_graph_renamed_node key_image_member; blast)
 qed
 
+theorem schema_graph_reading_rename_reflect:
+  assumes read: "schema_graph_reading P (rename_schema_graph f G) (f root) d t (map_prod f id ` J)"
+    and injective: "inj f"
+  shows "schema_graph_reading P G root d t J"
+proof -
+  have copied: "schema_graph_reading P (rename_schema_graph (inv f) (rename_schema_graph f G))
+      (inv f (f root)) d t (map_prod (inv f) id ` (map_prod f id ` J))"
+    by (rule schema_graph_reading_rename[OF read schema_graph_renamed_inverse_injective])
+  show ?thesis using copied
+    by (simp only: rename_schema_graph_inverse[OF injective] inv_f_f[OF injective] key_image_inverse[OF injective])
+qed
+
 theorem schema_graph_derives_rename:
   assumes derived: "schema_graph_derives P G root d t H"
     and injective: "inj_on f (schema_graph_nodes G)"
@@ -156,7 +168,7 @@ proof -
       (inv f (f root)) d t (map_prod (inv f) id ` (map_prod f id ` H))"
     by (rule schema_graph_derives_rename[OF derived schema_graph_renamed_inverse_injective])
   have boundary: "map_prod (inv f) id ` (map_prod f id ` H)=H"
-    by (simp add: image_image map_prod_def case_prod_unfold inv_f_f[OF injective])
+    by (rule key_image_inverse[OF injective])
   show ?thesis using copied_back
     by (simp only: rename_schema_graph_inverse[OF injective] inv_f_f[OF injective] boundary)
 qed

@@ -1,0 +1,207 @@
+{
+  "status": "accepted",
+  "complete_repository_theories": 1129,
+  "host_tests": {
+    "passed": 98,
+    "subtests_passed": 59
+  },
+  "full_build_messages": 52609,
+  "full_build_errors": [],
+  "source_only_reconstructions": [
+    {
+      "recipe": "certificate-coverage",
+      "reports": 7,
+      "source_files": 498,
+      "theories": 474,
+      "python_modules": 23,
+      "source_manifest_sha256": "4c938d053eb41d1e688a531507cbaf05b325177132f857f3b4c4e9d24e4bcae6",
+      "verification_sha256": "ef5b322664637d4ce48b2881836cbfb80f2f63bb15c8b64a82cd5865a123d525",
+      "removed_bytes": 624097578
+    },
+    {
+      "recipe": "certificate-development",
+      "reports": 57,
+      "source_files": 506,
+      "theories": 480,
+      "python_modules": 25,
+      "source_manifest_sha256": "c778e7b75a7209df4158a41571301381f5526940215aa35d91e4bd896aab4e1a",
+      "verification_sha256": "835ba19c13ef5f55d27f6912d42c8f56925e776942fd8478c1f571cf51746853",
+      "removed_bytes": 638773353
+    },
+    {
+      "recipe": "certificate-input-development",
+      "reports": 65,
+      "source_files": 512,
+      "theories": 485,
+      "python_modules": 26,
+      "source_manifest_sha256": "094b0df689c693b32c3fb9b4241226c2d1b514d2a6514a07de7feb172e595645",
+      "verification_sha256": "694f36825ba1d7cffffea4558367151a1c6137a45d5eb56e87a0b2ffa8848f32",
+      "removed_bytes": 650544708
+    },
+    {
+      "recipe": "certificate-scope-repair",
+      "reports": 7,
+      "source_files": 509,
+      "theories": 482,
+      "python_modules": 26,
+      "source_manifest_sha256": "70c0b577700953c9f680f0dda9ac272db4844568f5d8c7e69f74bf8fa84019bd",
+      "verification_sha256": "c9525c3a5d3e1bba64ba6cf5f6904fc6281d8eeede72586b0d851e095f51ff7f",
+      "removed_bytes": 628109017
+    },
+    {
+      "recipe": "native-admission",
+      "reports": 131,
+      "source_files": 476,
+      "theories": 453,
+      "python_modules": 22,
+      "source_manifest_sha256": "599f42ce6ed29d1a298a3eb2174aef00295fb148507e9f997c805bc619fe1877",
+      "verification_sha256": "8a2627213f496c50ec1f1d1c00aefa1aecea7b2ae918b2ea3c27f6eb368c4ec8",
+      "removed_bytes": 616679547
+    },
+    {
+      "recipe": "native-certificate-replay",
+      "reports": 19,
+      "source_files": 546,
+      "theories": 521,
+      "python_modules": 24,
+      "source_manifest_sha256": "f462d22cb129821f465436c1bc238b4f3b212bf44127ebd4f91722dcb1d7eec1",
+      "verification_sha256": "976087966696fbb3061f66c061b68a242d0682e65968072f6bcf5b714dd9a703",
+      "removed_bytes": 682788273
+    },
+    {
+      "recipe": "native-certificates",
+      "reports": 57,
+      "source_files": 499,
+      "theories": 475,
+      "python_modules": 23,
+      "source_manifest_sha256": "973ab9662de5379eb7850350c4074c3e62b74af2b21850e4c290c0bc1d412636",
+      "verification_sha256": "8e0205122ea1cdca46e37855f4ba273cd805527c9b56ca7a13dc871db179aece",
+      "removed_bytes": 627831451
+    },
+    {
+      "recipe": "native-child",
+      "reports": 185,
+      "source_files": 566,
+      "theories": 534,
+      "python_modules": 30,
+      "source_manifest_sha256": "6a0f5d2cad40be31a6f92829378028ad931f61f4a2977ac947761d735133698c",
+      "verification_sha256": "2f2cfb102129ffd26a26f6a2511b792159f6bba6b0d6df8966d2ddeb36914e9e",
+      "removed_bytes": 1020625672
+    },
+    {
+      "recipe": "native-derivations",
+      "reports": 58,
+      "source_files": 490,
+      "theories": 467,
+      "python_modules": 22,
+      "source_manifest_sha256": "aaf0cd5c23b577344935a3d0e984e8c5b7ebdd5a081989e1298c902407ce9638",
+      "verification_sha256": "3ad5e5e0cf6485fba5966b44e3169ab8b415bd22597a094ab76c72bab9ef46f8",
+      "removed_bytes": 618985110
+    },
+    {
+      "recipe": "native-evaluation",
+      "reports": 47,
+      "source_files": 458,
+      "theories": 436,
+      "python_modules": 21,
+      "source_manifest_sha256": "c1c97901925c985d15d930396a4fc99013095142eadf87226f37254b54b7c6ab",
+      "verification_sha256": "13099c9d7db6e8a8b1a10737a2e941d1b20adc4aa397d640680ef5e8fe0129d9",
+      "removed_bytes": 592811570
+    },
+    {
+      "recipe": "native-extensions",
+      "reports": 18,
+      "source_files": 412,
+      "theories": 393,
+      "python_modules": 18,
+      "source_manifest_sha256": "800e5d4ce15df7e4e054c1228dc7046129bcad156cf76cdbbf2dd4675627c9f7",
+      "verification_sha256": "f7c0560122dd847d70185ac4b49953ab251399b84dc1ba6099b34fd40b3d580f",
+      "removed_bytes": 547314137
+    },
+    {
+      "recipe": "native-graphs",
+      "reports": 81,
+      "source_files": 404,
+      "theories": 382,
+      "python_modules": 21,
+      "source_manifest_sha256": "c47ef9cb0ab6146cf234c7cd9f20560a4694d9bc342f345bec64c0d8af4749e4",
+      "verification_sha256": "e134180eef9f519754df0b38877c807ddc5df8161efc65ce05cf2b51b67b6b0a",
+      "removed_bytes": 566370218
+    },
+    {
+      "recipe": "native-histories",
+      "reports": 58,
+      "source_files": 473,
+      "theories": 451,
+      "python_modules": 21,
+      "source_manifest_sha256": "08a3f660d5e9c89a245aab0d8e703f1fb30977ed0bd8e920ff9160ae1a99dae7",
+      "verification_sha256": "f4b2d57bc0d15cfb084b33295d18ea4cb6ee0d0f5bd3e5a08d4267b950b3902c",
+      "removed_bytes": 609103565
+    },
+    {
+      "recipe": "native-nodes",
+      "reports": 58,
+      "source_files": 384,
+      "theories": 363,
+      "python_modules": 20,
+      "source_manifest_sha256": "09da0d36103ea8215b418d76a6ff1fba1fe5123231925e6db91e6c84b59c7411",
+      "verification_sha256": "24bc717f1af21c15935450c0217750b30cdcae053ea00f442afd57e7e6f3b5dc",
+      "removed_bytes": 552058480
+    },
+    {
+      "recipe": "native-requirements",
+      "reports": 186,
+      "source_files": 483,
+      "theories": 460,
+      "python_modules": 22,
+      "source_manifest_sha256": "8ed79cb05a3e4c058438fa1e2894c90699bf696f1362381bcd834feca675b417",
+      "verification_sha256": "db30d73509fa14fc39cb4fcb59ccaaa922b6adfb462fa3225658c1d1ce709f7e",
+      "removed_bytes": 628464840
+    },
+    {
+      "recipe": "native-sources",
+      "reports": 23,
+      "source_files": 419,
+      "theories": 398,
+      "python_modules": 20,
+      "source_manifest_sha256": "c5b6596aed6942b1b081e8db082d0ef4927fcf1d8a621129b68baa0844954e02",
+      "verification_sha256": "b855d210acd3ffbd2e9dace944b0d5e6e0b963c1e42bee557abb123c5ba5ea7c",
+      "removed_bytes": 571654793
+    },
+    {
+      "recipe": "requirement-decisions",
+      "reports": 29,
+      "source_files": 500,
+      "theories": 474,
+      "python_modules": 25,
+      "source_manifest_sha256": "9911b48cb79e176823c241faaa15913afbb2a4060b9145feea3f4f7de1e9d9c2",
+      "verification_sha256": "02fee2c8942d57358777176d1ea7c8969010d8a8d7e5e85e1fd7779a8bba10e2",
+      "removed_bytes": 625651885
+    },
+    {
+      "recipe": "requirement-plans",
+      "reports": 75,
+      "source_files": 519,
+      "theories": 500,
+      "python_modules": 18,
+      "source_manifest_sha256": "cecc97900c9ba8bed144b7f971c9c06f76595855609554a18a59469cc2cc9558",
+      "verification_sha256": "d0215bf89aecd24db9e3685811d2f99fdde285cf362502e9231b9df37228c7d3",
+      "removed_bytes": 639740822
+    },
+    {
+      "recipe": "requirement-sources",
+      "reports": 23,
+      "source_files": 399,
+      "theories": 376,
+      "python_modules": 22,
+      "source_manifest_sha256": "58e5c23bb3f50074723e548a81dd1c847e62f6b1e3c8a8b26912e50ab3b45d40",
+      "verification_sha256": "80fded794de6386edfa3c337988bbec1fb516fadef107421c36be6bb3375749d",
+      "removed_bytes": 566068382
+    }
+  ],
+  "complete_native_reports": 1184,
+  "new_reports": 48,
+  "retention": "Every recipe was materialized only from repository source, fixture and expected-report boundaries. All contracts were rebuilt from HOL, fully diagnosed, exported and executed. Every native report field, leading index, order and repeated row matched. Generated copies and databases were removed after complete source and report review. This single current verification replaces the previous current summary; Git retains that earlier boundary.",
+  "previous_current_boundary_commit": "11780d014a90cd4b8ca24e6292f0c211d99ccac7",
+  "scope": "Complete certificate placement and replay, and scoped original-requirement decisions. Whole native workflow enforcement, subject and criticism coverage, historical permission, full cost, mathematical-proof admission and genesis remain open."
+}

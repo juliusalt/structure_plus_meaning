@@ -123,6 +123,25 @@ proof -
     by (auto simp: answer)
 qed
 
+lemma finite_program_evaluation_semantics:
+  "finite_program_evaluation Q D=Some A \<longleftrightarrow> finite_program_evaluation_ready Q D \<and>
+    fset A={q\<in>fset D. decode_finite_call_term q\<in>positive_meaning (decode_finite_system Q)}"
+proof
+  assume computed: "finite_program_evaluation Q D=Some A"
+  show "finite_program_evaluation_ready Q D \<and>
+    fset A={q\<in>fset D. decode_finite_call_term q\<in>positive_meaning (decode_finite_system Q)}"
+    using finite_program_evaluation_exact(2)[OF computed] computed
+    by (auto simp: finite_program_evaluation_def split: if_splits)
+next
+  assume original: "finite_program_evaluation_ready Q D \<and>
+    fset A={q\<in>fset D. decode_finite_call_term q\<in>positive_meaning (decode_finite_system Q)}"
+  obtain B where computed: "finite_program_evaluation Q D=Some B"
+    using original by (auto simp: finite_program_evaluation_def split: if_splits)
+  have "A=B" using original finite_program_evaluation_exact(2)[OF computed]
+    by (simp only: fset_inject[symmetric]; blast)
+  then show "finite_program_evaluation Q D=Some A" using computed by simp
+qed
+
 export_code finite_program_demand_closed finite_program_evaluation checking SML
 
 text \<open>

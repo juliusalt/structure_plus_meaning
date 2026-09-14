@@ -1517,10 +1517,40 @@ operation, criticism or workflow requirement has an implemented native account.
 All six conditions in `problems.txt`, including full enforcement and the cost
 account, remain the immediate development milestone.
 
-This certificate-cycle batch passed the complete 1,103-theory check and all
-98 host tests with 59 subtests. Seventeen source-only reconstructions rebuilt
-their entire source closures from HOL and reproduced 1,136 complete native
-reports. The [combined verification](validation/reconstruction/certificate-cycle-verified.json)
-retains every current source and report boundary after removal of generated
-copies. This verification does not discharge the remaining six-condition
-workflow milestone.
+## Complete native replay and original-requirement decisions
+
+The preserved replay investigation positions every original certificate node in
+its actual source, constructs the native graph and application, and retains
+exactly the replay environment. Fourteen methods on seven families retain 392
+complete individual results and all 980 family condition positions. Separate
+map, graph, call, old-source and retention failures remain visible even where
+closed replay succeeds. Only method 0 is selected and adequate. Every original
+value and reason was inspected before admission to integration.
+
+The repeated native readers were then factored through caches of complete inputs.
+Universal exactness includes uncached inputs and full result values. The complete
+19-report execution is identical before and after sharing. The observed runtime
+fell from about 1,121 to 202 seconds under concurrent work. This is execution
+evidence, not a history-independent physical cost proof.
+
+The direct requirement-decision investigation keeps the complete original source,
+requirements and terms before all candidate calculations. Twelve methods on
+twelve inputs produce 1,152 computed condition positions. Missing or altered
+requirements, unavailable original conditions, erased claimed fields, malformed
+proofs and loss of an unused original artifact have independently computed
+reasons. Only method 0 is selected and adequate. Every full result, evaluation,
+certificate check, comparison and repair field was inspected. A successful empty
+answer remains distinct from an unavailable decision.
+
+Both additions reuse the established constructor and subject machinery and have
+[source-only replay](validation/reconstruction/native-certificate-replay.md) and
+[decision](validation/reconstruction/requirement-decisions.md) reconstructions.
+The complete workflow, broader subject and criticism coverage, historical
+permission, full cost and genesis remain open. Completing these constructions
+is progress toward the six conditions in `problems.txt`, not their discharge.
+
+The [current verification](validation/reconstruction/current-verified.json) records
+the complete 1,129-theory check, 98 host tests with 59 subtests, and nineteen
+source-only reconstructions reproducing 1,184 complete native reports. Every
+current source and full report boundary was verified before generated copies
+were removed. The six-condition workflow milestone remains open.

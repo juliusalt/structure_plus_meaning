@@ -10,13 +10,8 @@ definition finite_native_source :: "'u finite_artifact_environment \<Rightarrow>
 
 lemma finite_native_source_member:
   "finite_native_source E u r=Some P \<longleftrightarrow> P |\<in>| finite_native_package_readings E u r"
-proof -
-  have singleton: "finite_native_package_readings E u r={|P|} \<longleftrightarrow>
-    P |\<in>| finite_native_package_readings E u r"
-    using finite_native_package_readings_unique[of P E u r]
-    by (auto intro!: fset_inject[THEN iffD1] set_eqI)
-  show ?thesis by (simp only: finite_native_source_def finite_singleton_option_some singleton)
-qed
+  unfolding finite_native_source_def
+  by (rule finite_singleton_option_member) (rule finite_native_package_readings_unique; assumption)
 
 theorem finite_native_source_correct:
   "finite_native_source E u r=Some P \<longleftrightarrow>

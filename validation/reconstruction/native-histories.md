@@ -85,7 +85,7 @@ python3 -B /tmp/native-history-inputs/tools/reconstruct_native_histories.py \
   --output /tmp/native-history-results
 ```
 
-The [source boundary](native-histories-sources.json) contains 472 files: 450
+The [source boundary](native-histories-sources.json) contains 473 files: 451
 theories, 21 Python modules and the [complete-report comparison](native-histories-reports.json).
 The [verified reconstruction](native-histories-verified.json) rebuilt every
 theory from HOL and reproduced every report field. The
@@ -93,9 +93,9 @@ theory from HOL and reproduced every report field. The
 exact input boundary. All original source bytes, actual execution inputs and
 complete proof diagnostics were checked.
 
-The full 1,103-theory repository check passed. All seventeen current reconstruction
+The full 1,129-theory repository check passed. All nineteen current reconstruction
 boundaries rebuilt their entire source closures from HOL, with every original
-source and runtime input verified and all 1,136 complete reports reproduced.
+source and runtime input verified and all 1,184 complete reports reproduced.
 
 Native proof-artifact construction, native mathematical-proof checking, complete
 development-cycle enforcement, arbitrary-method coverage, the full cost account,

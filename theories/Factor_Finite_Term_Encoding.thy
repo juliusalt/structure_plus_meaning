@@ -39,13 +39,18 @@ definition finite_term_syntax_interior where
   "finite_term_syntax_interior t=
     finite_carrier (finite_structure (finite_term_syntax t)) |-| fimage fst (finite_term_literal_bindings t)"
 
+lemma finite_term_literal_domain:
+  "fset (fimage fst (finite_term_literal_bindings t))=
+    rel_dom (term_literal_bindings (decode_finite_term t))"
+  by (simp only: finite_term_literal_bindings_exact[symmetric] map_relation_values_domain
+    rel_dom_image fimage.rep_eq map_relation_values_domain[unfolded rel_dom_image])
+
 lemma finite_term_syntax_interior_exact:
   "fset (finite_term_syntax_interior t)=term_syntax_interior (decode_finite_term t)"
 proof -
   have slots: "fset (fimage fst (finite_term_literal_bindings t))=
       rel_dom (term_literal_bindings (decode_finite_term t))"
-    by (simp only: finite_term_literal_bindings_exact[symmetric] map_relation_values_domain
-      rel_dom_image fimage.rep_eq map_relation_values_domain[unfolded rel_dom_image])
+    by (rule finite_term_literal_domain)
   have carrier: "fset (finite_carrier (finite_structure (finite_term_syntax t)))=
       term_syntax_interior (decode_finite_term t) \<union> fset (fimage fst (finite_term_literal_bindings t))"
     using term_syntax_carrier[of "decode_finite_term t"]

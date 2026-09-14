@@ -59,6 +59,22 @@ proof -
     finite_relation_functional_correct finite_graph_mapping_inferences domain discharges)
 qed
 
+theorem finite_graph_mapping_compose:
+  fixes G :: "('a,'s,'c,'n) finite_derivation_graph"
+    and H :: "('a,'s,'c,'m) finite_derivation_graph"
+    and K :: "('a,'s,'c,'k) finite_derivation_graph"
+  assumes "finite_graph_mapping M G root H r" "finite_graph_mapping N H r K s"
+  shows "finite_graph_mapping (finite_edge_compose M N) G root K s"
+  using schema_graph_mapping_compose[of "fset M" "decode_finite_graph G" root
+      "decode_finite_graph H" r "fset N" "decode_finite_graph K" s] assms
+  by (simp only: finite_graph_mapping_exact finite_edge_compose_correct)
+
+lemma finite_graph_mapping_compose_injective:
+  assumes "single_valued ((fset M)\<inverse>)" "single_valued ((fset N)\<inverse>)"
+  shows "single_valued ((fset (finite_edge_compose M N))\<inverse>)"
+  by (simp only: finite_edge_compose_correct converse_relcomp;
+    rule relation_join_functional[OF assms(2,1)])
+
 theorem finite_graph_mapping_rename:
   assumes formed: "finite_graph_formed G root"
   shows "finite_graph_mapping (fimage (\<lambda>n. (n,h n)) (finite_graph_nodes G))

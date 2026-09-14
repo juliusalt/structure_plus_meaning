@@ -34,6 +34,15 @@ lemma finite_singleton_option_singleton [simp]:
   "finite_singleton_option {|a|}=Some a"
   by (simp only: finite_singleton_option_some)
 
+lemma finite_singleton_option_member:
+  assumes unique: "\<And>x y. x |\<in>| R \<Longrightarrow> y |\<in>| R \<Longrightarrow> x=y"
+  shows "finite_singleton_option R=Some a \<longleftrightarrow> a |\<in>| R"
+proof -
+  have "R={|a|} \<longleftrightarrow> a |\<in>| R"
+    using unique by (auto intro!: fset_inject[THEN iffD1] set_eqI)
+  then show ?thesis by (simp only: finite_singleton_option_some)
+qed
+
 text \<open>
   The executable list comparison checks every supplied value. Repeating the
   same value still presents one set member. Empty and distinct

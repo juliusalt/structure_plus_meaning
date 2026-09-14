@@ -11,8 +11,10 @@ The child-claim recipe below, the
 [native inference-history recipe](native-histories.md),
 [native proof-node recipe](native-nodes.md),
 [source-derived certificate recipe](native-derivations.md),
-[whole native graph recipe](native-graphs.md), and five
-[certificate path and development recipes](native-certificates.md) use the same reconstruction
+[whole native graph recipe](native-graphs.md), five
+[certificate path and development recipes](native-certificates.md),
+[complete certificate replay](native-certificate-replay.md), and
+[original-requirement decisions](requirement-decisions.md) use the same reconstruction
 runner and source collector. Each retains its own complete source and report boundary. The runner
 schedules proof, diagnostics, code export and the required execution stages;
 it supplies no semantic judgment about their subjects.
@@ -38,8 +40,8 @@ and executes the reasoning family. It fails if a stage fails, complete reports
 change, or its checked inputs change. The optional `--proof` mode rechecks an
 existing accepted export and records `sources_rebuilt: false`.
 
-[native-child-sources.json](native-child-sources.json) lists the exact 565 source
-and fixture files, including 533 theory sources and 30 Python modules. The
+[native-child-sources.json](native-child-sources.json) lists the exact 566 source
+and fixture files, including 534 theory sources and 30 Python modules. The
 shared reconstruction runner is included. To materialize that boundary independently:
 
 ```sh
@@ -59,7 +61,7 @@ when those inputs change. The usual repository build is independent:
 
 `tools/reconstruction_sources.py` derives each recipe's complete original
 theory closure and local Python import closure, together with its declared
-fixtures and report comparison. The same collector serves all seventeen boundaries.
+fixtures and report comparison. The same collector serves all nineteen boundaries.
 `tools/prepare_proof_sources.py` prepares a complete source prefix for local
 proof work; ordinary validation must accept it before a saved heap is reused.
 

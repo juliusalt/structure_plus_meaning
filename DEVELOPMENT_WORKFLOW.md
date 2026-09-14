@@ -95,6 +95,17 @@ the diagnostics needed for their dependent follow-up. While builds and checks
 run, continue independent next problems in isolated working copies. Keep all
 inputs of each active validation fixed. Inspect the combined results before
 making dependent decisions or integrating the corresponding changes.
+Keep as many independent problems advancing in parallel as possible without
+degrading quality. Parallel work is a standing requirement, not only a response
+to waiting for a check. Identify actual dependencies across the open problems;
+do not serialize independent work behind the current task. Work alone; do not
+use concurrent agents. Use isolated working copies and background builds or
+checks to overlap independent work, keeping each task's changes and validation
+inputs explicit. Each task remains subject to the same native reasoning,
+criticism, evidence, and review requirements. Keep dependent steps ordered and
+review the combined results before integration. When concurrency is limited,
+identify the concrete dependency, resource limit, or quality constraint and
+continue every other useful independent task.
 Avoid separate polling, one-file reads, and
 one-fix proof retries when independent useful work can be included. Dependencies
 within the batch remain ordered. Quality takes precedence over batch size.

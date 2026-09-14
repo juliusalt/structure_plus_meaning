@@ -31,6 +31,14 @@ lemma paired_option_outputs_result:
     first x=Some y \<and> second x=Some z"
   by (auto simp: paired_option_outputs_def split: option.splits)
 
+definition option_product_map where
+  "option_product_map left right=paired_option_outputs (left \<circ> fst) (right \<circ> snd)"
+
+lemma option_product_map_result:
+  "option_product_map left right (x,y)=Some (a,b) \<longleftrightarrow>
+    left x=Some a \<and> right y=Some b"
+  by (simp only: option_product_map_def paired_option_outputs_result comp_apply fst_conv snd_conv)
+
 text \<open>
   The guard applies even to an empty sequence. A result contains one output
   for every input occurrence, in its original order. The paired operation

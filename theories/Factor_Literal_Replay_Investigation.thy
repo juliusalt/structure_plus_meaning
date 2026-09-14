@@ -4,18 +4,16 @@ begin
 
 definition literal_replay_context_from where
   "literal_replay_context_from seed w=(seed,w,literal_replay_covered seed,
-    fimage (\<lambda>(c,X). (c,map_option (\<lambda>x. (x,literal_replay_report x)) X))
-      (literal_replay_family seed w))"
+    prepare_decision_family literal_replay_report (literal_replay_family seed w))"
 
 definition literal_replay_cell where
   "literal_replay_cell m context=(case context of (seed,w,covered,rows) \<Rightarrow>
-    (covered,fimage (\<lambda>(c,X). (c,map_option (\<lambda>(x,report).
-      (x,report,literal_replay_decide 0 report,literal_replay_decide m report)) X)) rows))"
+    assess_prepared_decision_family (literal_replay_decide 0) (literal_replay_decide m) (covered,rows))"
 
 lemma literal_replay_cell_exact:
   "literal_replay_cell m (literal_replay_context_from seed w)=literal_replay_family_assessment m (seed,w)"
-  by (simp add: literal_replay_cell_def literal_replay_context_from_def literal_replay_family_assessment_def
-    literal_replay_row_assessment_def[abs_def] fimage_fimage comp_def case_prod_unfold Let_def option.map_comp)
+  by (simp only: literal_replay_cell_def literal_replay_context_from_def literal_replay_family_assessment_def
+    decision_family_assessment_def case_prod_conv)
 
 definition literal_replay_problem where
   "literal_replay_problem w=(literal_replay_seed,w)"

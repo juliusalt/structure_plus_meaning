@@ -965,12 +965,18 @@ have all-input correctness proofs. [Literal replay admission](validation/reconst
 connects actual closed replay to the exact whole payload of the call, with
 separate soundness and completeness conditions. The joined constructor has
 an all-input certified-base-cause theorem and an exact availability boundary.
-Its complete runtime execution, arbitrary cause reading, whole workflow
-transitions, historical permission and the full cost account remain further work.
+Its complete execution now produces the fixture for [arbitrary cause admission](validation/reconstruction/certified-causes.md).
+Complete value and quotation readers recover every original judgment scope;
+the checker is equivalent to the original certified-base-cause relation on all
+inputs. Native criticism exposes extra byte restrictions and omitted scope
+inclusion. [Data-reader specialization](validation/reconstruction/data-reading.md)
+preserves the complete original result through a computed formation guard and
+proved quotation-root support. Whole workflow policy and transitions,
+historical permission, coverage and the full cost account remain further work.
 
 The [current verification](validation/reconstruction/current-verified.json) records
-the complete 1,180-theory check, 98 host tests with 59 subtests, and twenty-two
-source-only boundaries reproducing 1,270 complete reports. All recipes were
+the complete 1,212-theory check, 98 host tests with 59 subtests, and twenty-four
+source-only boundaries reproducing 1,338 complete reports. All recipes were
 freshly reconstructed through one proof of their complete combined dependencies
 from HOL and their original execution groups. Generated copies were removed
 after review. The six-condition workflow milestone remains open.

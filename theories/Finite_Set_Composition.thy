@@ -22,6 +22,10 @@ lemma finite_singleton_when_member:
   "x |\<in>| (if P then {|y|} else {||}) \<longleftrightarrow> P \<and> x=y"
   by (cases P) auto
 
+lemma finite_optional_value_member:
+  "y |\<in>| (case a of None \<Rightarrow> {||} | Some x \<Rightarrow> {|x|}) \<longleftrightarrow> a=Some y"
+  by (cases a) auto
+
 lemma finite_image_member:
   "y |\<in>| fimage f A \<longleftrightarrow> (\<exists>x. x |\<in>| A \<and> y=f x)"
   by (auto simp: fimage.rep_eq)

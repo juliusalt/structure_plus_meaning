@@ -1,0 +1,16 @@
+theory Data_Reading_Execution
+  imports Factor_Data_Reading_Investigation Factor_Executable_Artifact_Values Factor_Data_Reading_Fixture
+begin
+
+setup \<open>Finite_Observation_Contracts.export @{term data_reading_investigation}\<close>
+
+export_code data_reading_packet data_reading_indices data_reading_inspect
+  data_reading_fixture_packet Schema_Proof
+  finite_complete_data_readings finite_complete_data_readings_prepared
+  finite_complete_data_root_candidates finite_complete_data_readings_at_roots
+  finite_artifact_rows finite_enumerated_artifact
+  Finite_Target Finite_Payload Finite_Pair Finite_Whole Finite_Anchor
+  fset set nat_of_integer integer_of_nat
+  in SML module_name Data_Reading_Execution file_prefix data_reading
+
+end

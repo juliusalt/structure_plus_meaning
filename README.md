@@ -2392,12 +2392,18 @@ original predecessor reference. Actual counterexamples distinguish equal cores
 from identical references and formation from preservation of history.
 [Literal replay admission](validation/reconstruction/literal-replay.md) checks
 that the actual closed replay proves the same whole payload named by the call.
-The joined replay-to-generation constructor has an all-input certified-cause
-contract; its complete runtime execution and arbitrary cause reading remain
-further work.
+The joined replay-to-generation constructor now executes with its all-input
+certified-cause contract. [Recorded-cause admission](validation/reconstruction/certified-causes.md)
+recovers arbitrary complete judgment quotations and checks the original
+generation, least scope, whole literal payload, scope inclusion and retained
+closed replay. Actual comparisons reject extra byte restrictions and omitted
+scope inclusion while preserving shifted roots and reversed enumerations.
+[Complete data reading](validation/reconstruction/data-reading.md) shares the
+computed source-formation check and restricts roots through the original
+quotation boundary. Its fixture is constructed natively from source.
 
-The complete 1,180-theory check and all 98 host tests with 59 subtests pass.
-Twenty-two source-only boundaries reproduce 1,270 complete native reports.
+The complete 1,212-theory check and all 98 host tests with 59 subtests pass.
+Twenty-four source-only boundaries reproduce 1,338 complete native reports.
 One fresh proof of their combined dependencies serves all original recipes;
 each keeps its own complete source and report boundary. The
 [current verification](validation/reconstruction/current-verified.json) records

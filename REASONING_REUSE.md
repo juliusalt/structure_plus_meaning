@@ -36,7 +36,7 @@ missing internal operation.
 | Join only agreeing components | A program union preserves the intended component meanings when whole definitions agree on their actual overlap and dependencies are closed. | Shared-definition agreement, rooted groups, rebasing, and least dependency closures support the native joins. | Make agreement and closure explicit generated prerequisites of composition; do not discharge them merely from a shared component name. |
 | Construct admission for every original requirement | A finite supported goal family and a fresh allocation boundary produce component definitions and one exact same-subject conjunction. | Native sequence construction, recursive source-support checks and allocation admission produce the actual installation arguments. A complete source correspondence now joins them to a constructed native extension with fixed old addresses, exact retained material and all-term meaning. | Use this construction for the complete workflow's independently established requirements, including problem adequacy, criticism and evidence; a supplied goal family alone does not establish that coverage. |
 | Judge the artifact for the original request | The previously installed request boundary and an exact whole-body reader prevent another request, result or incomplete artifact from supplying admission. | Native entry 369 reads the actual literal artifact and applies the checked constructor contract to its whole body; its finite evaluator has an all-input equation. | Integrate the admitted construction with complete development decisions and their original problem subjects. The current execution covers requirement construction and complete artifact admission. |
-| Record through existing predecessors | A formed existing environment, actual distinct predecessor readings and their original sites support a new record. A cause also needs its actual judgment and replay. | The finite guarded constructor now recovers every field, preserves all old artifacts and bindings, and retains every original predecessor reference. Actual construction and literal-replay comparisons have complete subject contracts; the joined constructor has a certified-base-cause theorem. | Execute the complete joined constructor, read arbitrary admitted cause values, and supply the actual workflow policy, transitions, local allocation and lookup implementation, and complete cost account. Current flat environment checks still inspect accumulated history. |
+| Record through existing predecessors | A formed existing environment, actual distinct predecessor readings and their original sites support a new record. A cause also needs its actual judgment and replay. | The finite guarded constructor now recovers every field, preserves all old artifacts and bindings, and retains every original predecessor reference. The joined constructor executes, and complete arbitrary cause readers have original-relation equations and actual-subject comparisons. | Supply and enforce the actual workflow policy and transitions, local allocation and lookup implementation, and complete cost account. Current flat environment checks still inspect accumulated history. |
 | Change an inadequate observation language | A full-language residual proves that selecting more of the same observations cannot suffice. A new observation needs its own semantic and coverage contract. | Repair obstructions and multiple newly constructed native observations exhibit this transition. | Use the failed subject relation and the reusable construction rules to generate new observation candidates, then evaluate them. |
 | Preserve useful selections while revising conflicts | Withdraw unsound selections, retain the selected sound part, and recompute repair needs after withdrawal. | The new revision rule and list execution have Isabelle proofs; they have not yet received native Factor presentation and checking. | Integrate the transition with native construction and evidence, while keeping observation-language limits visible. |
 
@@ -1129,7 +1129,17 @@ compare literal replay admission. Actual application uniqueness supports the
 alternative singleton gate; both admitted methods have all-input equations.
 The complete native results reproduce through the [generation record](validation/reconstruction/generation-records.md)
 and [literal replay](validation/reconstruction/literal-replay.md) boundaries.
-The joined constructor has a certified-base-cause theorem, while its complete
-runtime, arbitrary cause-value reading, workflow policy and transitions,
-subject and criticism coverage, historical permission and physical cost remain
-open.
+The joined constructor now executes, and complete value and quotation readers
+recover arbitrary recorded judgment scopes. [Cause admission](validation/reconstruction/certified-causes.md)
+has an all-input equation to the original certified-base-cause relation.
+Its native comparison exposed missing byte-word and inclusion cases; adding
+those actual subjects removes the corresponding incomplete methods.
+
+[Data reading](validation/reconstruction/data-reading.md) factors local syntax
+bodies from their computed whole-source formation guard. Complete quotation
+support determines the possible roots. Generic supported-image restriction
+preserves the whole judgment reader, and the original reference relation
+supplies shared soundness and completeness assessment. Optional uniform-family
+selection derives the fixture directly from the native constructor, preserving
+every failure position. Workflow policy and transitions, complete subject and
+criticism coverage, historical permission and physical cost remain open.

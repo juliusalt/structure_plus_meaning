@@ -1597,7 +1597,41 @@ All 57 complete reports retain their original subjects, actual outputs, reader
 values, conditions, comparisons and revisions. The explicitly empty test policy
 is not adequate workflow policy. The generation execution lacks a successful
 anchored-target fixture, although its constructor theorems cover both target
-forms. The joined replay-to-generation constructor has a certified-base-cause
-proof but has not yet been executed as a whole. Arbitrary cause-value readers,
-full workflow subjects and transitions, independent criticism, historical
-permission, physical cost and genesis remain open.
+forms. That boundary left complete execution of the joined constructor and
+arbitrary cause-value reading for the following review. Full workflow subjects
+and transitions, independent criticism, historical permission, physical cost
+and genesis remain open.
+
+## Whole recorded causes and complete data reading
+
+The native joined constructor now produces the complete fixture. Arbitrary
+cause-value reading and certification have all-input original-relation
+equations. The first thirteen-case comparison left methods imposing a byte
+restriction or omitting scope inclusion adequate. Native extension to fifteen
+cases rejects both. A use word containing 300 remains valid; changing the whole
+program artifact preserves actual package, application and closed replay
+readings while failing recorded scope inclusion. The final comparison retains
+only the original exact method. All earlier complete subjects and assessments
+remain directly equal.
+
+The data-reader comparison retains original, prepared and root-filtered
+methods. Their independent all-input equations preserve the complete quotation
+relation. Malformed bytes, missing or shifted roots, extra carrier material and
+counted duplicates retain their separate failures. The shared formation and
+root equations specialize the cause reader without changing its results.
+Native fixture construction reproduces the previous complete source and all
+31 original reports, adding its complete keyed family as one report. Boolean
+family assessment, relation-reader assessment and result serialization are
+factored for their actual consumers.
+
+Both additions have source-only reconstruction boundaries. Complete reports
+and reasons are retained through those boundaries; large fields are streamed
+without omission. The explicitly empty test requirement family and history
+do not establish whole-workflow policy, historical permission, unrestricted
+question and criticism coverage, physical decision cost or genesis.
+
+The current combined boundary checks all 1,212 theories and 98 host tests with
+59 subtests. Twenty-four source-only recipes reproduce 1,338 complete reports.
+Their 930-theory union was proved once from HOL, and all original and copied
+inputs, database sources, execution evidence and complete reports were verified
+before generated copies were removed. The six-condition milestone remains open.

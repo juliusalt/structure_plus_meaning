@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "reports": {
+    "comparison": {
+      "records": 32,
+      "tags": {
+        "DATA_READING_ASSESSMENT": 12,
+        "DATA_READING_COMPARISON": 1,
+        "DATA_READING_FIXTURE": 1,
+        "DATA_READING_INVESTIGATION": 3,
+        "DATA_READING_PREPARED": 1,
+        "DATA_READING_SCOPE": 1,
+        "DATA_READING_SOURCE": 1,
+        "DATA_READING_SUBJECT": 12
+      },
+      "sha256": "d5d9250a5b6236a1589dca72c2de87d7086ada2300fbddd5e613fb15b93b2f46"
+    }
+  }
+}

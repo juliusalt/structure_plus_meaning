@@ -1183,3 +1183,35 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     RRA_Generation_Record_References
     RRA_Generation_References
     RRA_Included_Artifacts
+    Boolean_Decision_Assessments
+    Certified_Cause_Execution
+    Data_Reading_Execution
+    Factor_Certified_Cause_Assessment
+    Factor_Certified_Cause_Cases
+    Factor_Certified_Cause_Investigation
+    Factor_Certified_Cause_Variants
+    Factor_Data_Collection_Transport
+    Factor_Data_Reading_Fixture
+    Factor_Data_Reading_Investigation
+    Factor_Data_Reading_Methods
+    Factor_Finite_Artifact_Value_Readers
+    Factor_Finite_Certified_Causes
+    Factor_Finite_Collection_Value_Readers
+    Factor_Finite_Complete_Data_Readings
+    Factor_Finite_Coordinate_Value_Readers
+    Factor_Finite_Data_Reading_Sharing
+    Factor_Finite_Data_Value_Readers
+    Factor_Finite_Environment_Value_Readers
+    Factor_Finite_Judgment_Reading_Sharing
+    Factor_Finite_Judgment_Readings
+    Factor_Finite_Judgment_Root_Selection
+    Factor_Finite_Judgment_Scope_Readings
+    Factor_Finite_Judgment_Value_Readers
+    Factor_Finite_Prepared_Data_Readings
+    Factor_Finite_Quotation_Roots
+    Factor_Finite_Singleton_Quotation
+    Finite_Supported_Images
+    Finite_Uniform_Optional_Values
+    RRA_Finite_Role_Projections
+    RRA_Finite_Syntax_Bodies
+    Finite_Relation_Reader_Assessments

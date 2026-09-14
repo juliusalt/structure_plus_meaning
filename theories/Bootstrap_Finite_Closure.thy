@@ -12,6 +12,11 @@ lemma finite_edge_compose_correct:
   "fset (finite_edge_compose R S) = fset R O fset S"
   by (auto simp: finite_edge_compose_def fimage.rep_eq ffUnion.rep_eq split: prod.splits; force)
 
+lemma finite_edge_compose_member:
+  "(a,c) |\<in>| finite_edge_compose R S \<longleftrightarrow>
+    (\<exists>b. (a,b) |\<in>| R \<and> (b,c) |\<in>| S)"
+  by (auto simp: finite_edge_compose_correct)
+
 section \<open>Bounded iteration stops when its state no longer changes\<close>
 
 fun stabilizing_iteration :: "nat \<Rightarrow> ('a \<Rightarrow> 'a) \<Rightarrow> 'a \<Rightarrow> 'a" where

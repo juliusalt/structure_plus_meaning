@@ -1,26 +1,25 @@
 theory Factor_Finite_Native_Evaluation
-  imports Factor_Finite_Program_Evaluation Factor_Finite_Native_Sources
+  imports Factor_Finite_Program_Evaluation Factor_Finite_Source_Computation
     Factor_Executable_Environment_Values Factor_Positive_Admission
 begin
 
 section \<open>Recover the actual package before deciding its requested calls\<close>
 
 definition finite_native_program_evaluation where
-  "finite_native_program_evaluation E u r D=(case finite_native_source E u r of None \<Rightarrow> None
-    | Some P \<Rightarrow> map_option (Pair P) (finite_program_evaluation P D))"
+  "finite_native_program_evaluation E u r D=
+    finite_source_computation E u r (\<lambda>P. finite_program_evaluation P D)"
 
 theorem finite_native_program_evaluation_conditions:
   "finite_native_program_evaluation E u r D=Some (P,A) \<longleftrightarrow>
     native_package_at (decode_finite_environment E) u r (decode_finite_system P) \<and>
     finite_program_evaluation P D=Some A"
-  by (auto simp: finite_native_program_evaluation_def finite_native_source_correct[symmetric]
-    split: option.splits)
+  by (simp only: finite_native_program_evaluation_def finite_source_computation_exact)
 
 theorem finite_native_program_evaluation_failure:
   "finite_native_program_evaluation E u r D=None \<longleftrightarrow>
     finite_native_source E u r=None \<or>
       (\<exists>P. finite_native_source E u r=Some P \<and> finite_program_evaluation P D=None)"
-  by (auto simp: finite_native_program_evaluation_def split: option.splits)
+  by (auto simp: finite_native_program_evaluation_def finite_source_computation_def split: option.splits)
 
 theorem finite_native_program_evaluation_exact:
   assumes result: "finite_native_program_evaluation E u r D=Some (P,A)"

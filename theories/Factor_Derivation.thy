@@ -4,8 +4,10 @@ begin
 
 section \<open>Finite derivation certificates\<close>
 
-datatype ('a,'s,'c) schema_proof =
-  Schema_Proof 'c "('a \<times> factor_term) fset" "('s \<times> ('a,'s,'c) schema_proof) fset"
+datatype ('a,'s,'c,'v) inference_proof =
+  Schema_Proof 'c "('a \<times> 'v) fset" "('s \<times> ('a,'s,'c,'v) inference_proof) fset"
+
+type_synonym ('a,'s,'c) schema_proof = "('a,'s,'c,factor_term) inference_proof"
 
 primrec checks_schema_proof ::
   "('a,'s,'d,'c) schema_system \<Rightarrow> ('a,'s,'c) schema_proof \<Rightarrow> 'd \<Rightarrow> factor_term \<Rightarrow> bool" where

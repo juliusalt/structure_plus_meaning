@@ -82,6 +82,13 @@ qed
 fun finite_program_application_rule where
   "finite_program_application_rule (d,c,t,V,H)=((d,t),H)"
 
+lemma finite_program_application_rule_head:
+  "fst (finite_program_application_rule z)=(case z of (d,c,t,V,H) \<Rightarrow> (d,t))"
+proof -
+  obtain d c t V H where shape: "z=(d,c,t,V,H)" by (cases z) auto
+  show ?thesis by (simp only: shape finite_program_application_rule.simps case_prod_conv fst_conv)
+qed
+
 definition finite_program_rule_table where
   "finite_program_rule_table P D=fimage finite_program_application_rule (finite_program_applications P D)"
 

@@ -1,0 +1,19 @@
+theory Native_Derivation_Investigation_Execution
+  imports Factor_Native_Derivation_Reports
+begin
+
+setup \<open>Finite_Observation_Contracts.export @{term native_derivation_investigation}\<close>
+
+export_code native_derivation_report_packet native_derivation_indices native_derivation_report native_derivation_assess native_derivation_assess_report
+  native_derivation_optional_inspect native_derivation_investigation_report
+  finite_environment_artifact_rows finite_environment_bindings
+  finite_system_interfaces finite_system_clauses
+  finite_schema_conclusion finite_schema_premises finite_schema_materials
+  finite_material_source finite_material_atoms finite_material_edges finite_material_counts finite_material_functions
+  finite_artifact_rows Finite_Whole Finite_Anchor
+  Finite_Variable Finite_Pattern_Payload Finite_Pattern_Pair Finite_Pattern_Target
+  Finite_Target Finite_Payload Finite_Pair
+  Schema_Proof fset set nat_of_integer integer_of_nat
+  in SML module_name Native_Derivation_Investigation_Execution file_prefix native_derivation_investigation
+
+end

@@ -109,7 +109,7 @@ An added requirement excludes valid terms in 31 ready cases. The preceding
 three-condition observation set leaves six comparisons unresolved in the
 expanded family; the computed revision adds completeness and resolves them.
 
-The session registers 1039 theories; its
+The session registers 1056 theories; its
 [latest complete check](validation/check.json) records the current proof status.
 The [native node constructor](validation/reconstruction/native-nodes.md) produces complete
 assertion and inference metadata in fresh native artifacts. Its actual-source
@@ -123,6 +123,15 @@ existing evaluator. Eleven operations on 26 actual source problems compare
 six independent answer, source, availability and evidence conditions. Only the
 original operation is adequate. Complete native report sharing preserves every
 subject, assessment and revision; source reconstruction reproduces all 58 reports.
+
+The [certificate constructor](validation/reconstruction/native-derivations.md)
+uses those histories to construct complete valid proofs for exactly the original
+requested positive calls. Its independent recursive checker is exact to the
+original proof relation on every finite input. Fifteen actual methods on the
+same 26 source problems expose invalid children, wrong binding values and valid
+extra certificates. Only the complete constructor is adequate. Every original
+comparison cell is preserved, and all 58 complete reports are reconstructible.
+
 Native local readers connect an actual
 inference node's bindings to its symbolic replacement record and complete
 target report. A workflow adequacy investigation exposed a construction-reuse

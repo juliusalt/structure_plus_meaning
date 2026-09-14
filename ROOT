@@ -1042,3 +1042,20 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Native_Node_Investigation
     Finite_Unique_Inspections
     Native_Node_Investigation_Execution
+    Factor_Finite_Application_Proofs
+    Factor_Finite_Derivations
+    Factor_Finite_Instance_Readings
+    Factor_Finite_Native_Proof_Construction
+    Factor_Finite_Program_Proofs
+    Factor_Finite_Proof_Checking
+    Factor_Finite_Proof_Inspection
+    Factor_Finite_Source_Computation
+    Factor_Native_Derivation_Assessment
+    Factor_Native_Derivation_Cases
+    Factor_Native_Derivation_Correctness
+    Factor_Native_Derivation_Investigation
+    Factor_Native_Derivation_Reports
+    Finite_Functional_Selections
+    Finite_Inspection_Rows
+    Finite_Iteration_Folds
+    Native_Derivation_Investigation_Execution

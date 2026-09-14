@@ -8,6 +8,7 @@ import investigate
 import investigation_json
 import machine_reports
 import native_program_json
+import native_history_json
 import observation_contracts
 import program_evaluation_json
 import proved_code
@@ -27,28 +28,8 @@ def program(engine, inputs):
     code += 'val scope = ' + scope + ';\n'
     code += 'val selections = ' + investigate.ml_list(inputs['selections'],
         lambda s: 'map N.nat_of_integer ' + investigate.ml_list(s, str)) + ';\n'
+    code += native_history_json.SOURCE
     code += r'''
-fun jcall q = jcallWith jsite q;
-fun japplication a = japplicationWith jaddress jaddress jsite jaddress a;
-fun jstep (x,w) = "{\"before\":" ^ jf jcall x ^ ",\"applications\":" ^ jf japplication w ^ "}";
-fun jsource NONE = "null" | jsource (SOME p) = jprogram p;
-fun jdetails NONE = "null"
-  | jdetails (SOME (formed,(covered,(closed,applications)))) =
-      "{\"formed\":" ^ Bool.toString formed ^ ",\"head_covered\":" ^ Bool.toString covered ^
-      ",\"demand_closed\":" ^ Bool.toString closed ^ ",\"applications\":" ^ jf japplication applications ^ "}";
-fun jevaluation NONE = "null" | jevaluation (SOME (p,a)) =
-  "{\"program\":" ^ jprogram p ^ ",\"answer\":" ^ jf jcall a ^ "}";
-fun jcoverage (d,(heads,result)) =
-  "{\"expanded_demand\":" ^ jf jcall d ^ ",\"all_source_heads_covered\":" ^
-    (case heads of NONE => "null" | SOME b => Bool.toString b) ^
-    ",\"expanded_evaluation\":" ^ jevaluation result ^ "}";
-fun jreference (source,(details,(result,coverage))) =
-  "{\"source\":" ^ jsource source ^ ",\"details\":" ^ jdetails details ^
-  ",\"evaluation\":" ^ jevaluation result ^ ",\"coverage\":" ^ jcoverage coverage ^ "}";
-fun jproblem (e,(u,(r,d))) =
-  "{\"environment\":" ^ jenvironment
-    (N.finite_environment_artifact_rows e,elements (N.finite_environment_bindings e)) ^
-  ",\"use\":" ^ juse u ^ ",\"root\":" ^ jaddress r ^ ",\"demand\":" ^ jf jcall d ^ "}";
 fun jhistory NONE = "null"
   | jhistory (SOME (p,(a,steps))) = "{\"program\":" ^ jprogram p ^
       ",\"answer\":" ^ jf jcall a ^ ",\"steps\":" ^ jlist jstep steps ^ "}";
@@ -56,10 +37,9 @@ fun jcandidate (m,result) = "{\"method\":" ^ jnat m ^ ",\"result\":" ^ jhistory 
 fun jreport NONE = "null"
   | jreport (SOME (x,(reference,candidates))) =
       "{\"problem\":" ^ jproblem x ^ ",\"reference\":" ^ jreference reference ^
-      ",\"candidates\":" ^ jlist jcandidate candidates ^ "}";
-fun jdifferences NONE = "null"
-  | jdifferences (SOME (extra,missing)) = "{\"extra\":" ^ jf jcall extra ^
-      ",\"missing\":" ^ jf jcall missing ^ "}";
+      ",\"candidates\":" ^ jlist jcandidate candidates ^ "}";'''
+    code += native_history_json.DIFFERENCES
+    code += r'''
 fun jassessment NONE = "null"
   | jassessment (SOME ((ready,(answers,(preserved,rejected))),(steps,witnesses))) =
       "{\"ready\":" ^ Bool.toString ready ^ ",\"differences\":" ^ jdifferences answers ^
@@ -153,7 +133,7 @@ def main():
         inputs={'candidates': contract['candidate_indices'], 'facets': contract['facet_indices'],
                 'cases': args.cases, 'selections': [[], [0, 1, 2, 3], [0, 1, 2, 3, 4, 5], [3, 0, 1, 4, 5, 2]]},
         input_paths=[Path(__file__), Path(check_reasoning.__file__), Path(investigation_json.__file__),
-                     Path(native_program_json.__file__), Path(program_evaluation_json.__file__),
+                     Path(native_program_json.__file__), Path(native_history_json.__file__), Path(program_evaluation_json.__file__),
                      *(Path(c['path']) for c in contracts)],
         program=program, assess=assess, project=args.project.resolve(), timeout=1800,
         question='Which actual native history operations retain exact requested positive answers, the original '

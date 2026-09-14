@@ -15,14 +15,16 @@ theorem finite_native_term_observation_conditions:
     finite_native_source E u r=Some P \<and> supported P \<and>
     (\<exists>A. finite_native_program_evaluation E u r (finite_program_term_demand P T)=Some (P,A) \<and>
       M=ffilter (test A) T)"
-  by (auto simp: finite_native_term_observation_def finite_native_program_evaluation_def
+  by (auto simp: finite_native_term_observation_def finite_native_program_evaluation_conditions
+    finite_native_source_correct[symmetric]
     split: option.splits prod.splits if_splits)
 
 theorem finite_native_term_observation_ready:
   "(\<exists>M. finite_native_term_observation supported test E u r T=Some (P,M)) \<longleftrightarrow>
     finite_native_source E u r=Some P \<and> supported P \<and>
     (\<exists>A. finite_program_evaluation P (finite_program_term_demand P T)=Some A)"
-  by (auto simp: finite_native_term_observation_conditions finite_native_program_evaluation_def)
+  by (auto simp: finite_native_term_observation_conditions finite_native_program_evaluation_conditions
+    finite_native_source_correct[symmetric])
 
 theorem finite_native_term_observation_semantics:
   assumes exact: "\<And>A. finite_native_program_evaluation E u r (finite_program_term_demand P T)=Some (P,A) \<Longrightarrow>
@@ -54,7 +56,8 @@ next
   obtain A where evaluation: "finite_program_evaluation P (finite_program_term_demand P T)=Some A"
     using facts by blast
   have evaluated: "finite_native_program_evaluation E u r (finite_program_term_demand P T)=Some (P,A)"
-    by (simp add: finite_native_program_evaluation_def source evaluation)
+    by (simp only: finite_native_program_evaluation_conditions
+      finite_native_source_correct[symmetric] source evaluation; simp)
   have mask: "M=ffilter (test A) T"
     using exact[OF evaluated supported] facts by (simp only: fset_inject[symmetric]; blast)
   show "finite_native_term_observation supported test E u r T=Some (P,M)"

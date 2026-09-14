@@ -1401,3 +1401,57 @@ execution input verified. The new node family retains 58 complete reports.
 These results do not establish inference validity, whole-graph construction or
 replay, native mathematical-proof checking, complete development enforcement,
 the full cost account or genesis.
+
+
+The certificate construction retains the original environment, package root and
+complete demand before comparing methods. The actual source reader and inference
+history supply every clause, binding and indexed premise family. Complete
+functional selections construct children only from actual earlier certificates.
+The universal projection and validity theorems preserve the original evaluator
+and proof checker, including available empty answers and unavailable inputs.
+
+The independent assessment separates answer soundness and completeness, source
+identity, certificate validity, exact certificate claim domain and refusal.
+Each actual certificate is recursively checked against the original program.
+Full counterexamples demonstrate that the same certificate can pass in one
+program and fail in another; the same empty result can satisfy an available
+source and violate an unavailable one. Context cannot be discarded from those
+subjects or observations.
+
+The first eleven-method execution selected only the complete constructor.
+Criticism then exposed missing child corruption, wrong binding values under
+unchanged keys, and valid extra certificates under unchanged answers. Four added
+operations address those gaps. The expanded run retains every field of all
+286 original cells and evaluates 2,340 condition positions, of which 2,007 hold.
+Only method 0 is selected and adequate. The child controls fail validity on six
+inputs, the binding-value control on twenty, and the valid extra-certificate
+control fails claim-domain equality on twenty-one, including a nonempty negative
+demand. All complete extra-claim families and counterexample proofs were read.
+
+All four complete revision cycles were inspected, including every profile,
+ordered pair loss and repair witness. Starting with no conditions leaves 162
+comparisons and 3,808 witnesses; the returned basis is [4,2,1,0,5,3]. Starting
+from [0,2,5] leaves 96 comparisons and 1,485 witnesses; the returned revision
+adds [4,1,3]. Both followed comparisons have no residual. The complete basis
+and the first run's returned basis remain sufficient. These results make no
+minimum-cardinality or arbitrary-method claim.
+
+The [certificate boundary](validation/reconstruction/native-derivations.md)
+retains all 58 complete reports and reconstructs every original structural value,
+candidate, assessment, evidence row and revision. Shared report construction
+has a complete packet equation; host serialization supplies no observations.
+The full 1,056-theory check and 98 host-tool tests passed. Two old term-observation
+proofs were repaired by instantiating the evaluator's existing success contract;
+their operations and theorem statements are unchanged.
+
+Recursive explanation traces remain incomplete. Local proof metadata still
+requires actual source positioning before native graph placement and replay.
+Native mathematical-proof checking, complete candidate generation and criticism,
+development-cycle admission and enforcement, the full physical cost account,
+genesis and the final repository audit remain open.
+
+All eleven current reconstruction boundaries rebuilt their full source closures
+from HOL and reproduced 862 complete reports. Every original source and
+execution input was verified, and the complete proof diagnostics contain no
+errors. The two repaired observation clients were included in both affected
+reconstructions; the other nine accepted boundaries have unchanged inputs.

@@ -862,3 +862,26 @@ construction, graph placement and replay, native mathematical-proof checking
 and O-85, development-cycle admission and enforcement, historical permission,
 the complete cost account, genesis and the final line-by-line audit remain
 open. The native result does not authorize its own handoff.
+
+
+The source-derived certificate milestone constructs complete valid certificates
+for exactly the original requested positive calls. It reuses the actual native
+source, progressive inference history and complete functional child selections.
+An independent recursive checker is exact to the original proof relation on all
+finite inputs, and complete inspection rows retain each certificate and verdict.
+The fifteen-method, 26-input comparison selects only the complete constructor.
+All original cells are unchanged, and complete criticism and revision reports
+expose invalid children, wrong binding values and valid extra certificates.
+
+The [58-report reconstruction](validation/reconstruction/native-derivations.md)
+retains this finite subject and result boundary. The full 1,056-theory check and
+98 host-tool tests passed. This establishes finite certificate construction and
+checking under the original source and evaluation prerequisites. It leaves
+recursive explanation traces, actual source positioning, complete graph
+placement and replay, native mathematical-proof checking and O-85, complete
+native development admission and enforcement, historical permission, the full
+physical cost account, genesis and the final line-by-line audit open. The native
+comparison does not authorize its own handoff.
+
+All eleven current source-only reconstructions passed with 862 complete reports,
+no proof errors, and exact original-source and execution-input verification.

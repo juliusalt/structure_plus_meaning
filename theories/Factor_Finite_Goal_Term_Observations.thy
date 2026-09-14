@@ -46,7 +46,8 @@ theorem finite_native_goal_term_observation_ready:
     finite_native_source E u r=Some P \<and>
     finite_admission_goal_sites g |\<subseteq>| finite_system_definitions P \<and>
     (\<exists>A. finite_program_evaluation P (finite_program_term_demand P T)=Some A)"
-  by (auto simp: finite_native_goal_term_observation_conditions finite_native_program_evaluation_def)
+  by (auto simp: finite_native_goal_term_observation_conditions finite_native_program_evaluation_conditions
+    finite_native_source_correct[symmetric])
 
 theorem finite_native_goal_term_observation_semantics:
   "finite_native_goal_term_observation E u r g T=Some (P,M) \<longleftrightarrow>

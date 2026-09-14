@@ -982,3 +982,34 @@ Only the complete constructor is adequate. This is fresh local allocation;
 searching for an existing matching node, constructing and replaying complete
 derivation graphs, native mathematical-proof checking, the full cost account,
 development-cycle enforcement and genesis remain separate requirements.
+
+
+Source-derived certificates now instantiate the existing inference-proof
+structure with finite terms. `Finite_Functional_Selections` constructs every
+complete functional child family from the actual available relation and the
+independent required socket domain. `Finite_Iteration_Folds` preserves the
+original evaluator through each construction step. The resulting certificate
+family has exactly the original requested positive claims, and every member
+passes the original proof checker. Positive cycles require only a sufficient
+finite family, not enumeration of every possible proof.
+
+The independent recursive checker recovers each admitted premise relation from
+the complete original program and checks every child at its required socket.
+Its exactness theorem includes malformed child families. Shared inspection rows
+retain every complete certificate and actual checking result. The evaluator,
+history and certificate constructors instantiate one source-computation wrapper
+whose projection preserves the same original package reading. Two older term
+observation clients now use that wrapper's existing success contract instead of
+unfolding the previous evaluator implementation.
+
+The [certificate investigation](validation/reconstruction/native-derivations.md)
+compares fifteen operations on the original 26 native source problems. Added
+controls retain the root while corrupting children, preserve keys while changing
+binding values, or retain valid extra certificates under unchanged answers.
+All 286 original cells are unchanged. Only the complete constructor is adequate;
+the answer/source/refusal basis leaves 96 comparisons and 1,485 repair witnesses,
+and the returned revision adds validity, claim-domain equality and completeness.
+The followed comparison has no residual. Recursive explanation traces, actual
+source positioning, graph placement and replay, native mathematical-proof
+checking, complete development admission and enforcement, the full physical cost
+account and genesis remain separate requirements.

@@ -1215,3 +1215,36 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     RRA_Finite_Role_Projections
     RRA_Finite_Syntax_Bodies
     Finite_Relation_Reader_Assessments
+    Artifact_Lookup_Execution
+    Binary_Path_Stores
+    Binary_Relation_Stores
+    Factor_Finite_Application_Value_Selection
+    Factor_Finite_Policy_Causes
+    Factor_Finite_Required_Causes
+    Factor_Native_Requirement_Report_Assessment
+    Factor_Native_Requirement_Sharing
+    Factor_Package_Scope_Identity
+    Factor_Policy_Causes
+    Factor_Required_Cause_Assessment
+    Factor_Required_Cause_Cases
+    Factor_Required_Cause_Investigation
+    Finite_Optional_Report_Observations
+    RRA_Artifact_Lookup_Investigation
+    RRA_Artifact_Lookup_Methods
+    RRA_Binary_Use_Paths
+    RRA_Indexed_Artifact_Lookup
+    Required_Cause_Execution
+    Binary_Nested_Stores
+    Binary_Store_Entries
+    Environment_Update_Execution
+    Finite_Optional_Images
+    Optional_Result_Invariants
+    RRA_Binary_Path_Decoding
+    RRA_Environment_Update_Correctness
+    RRA_Environment_Update_Investigation
+    RRA_Environment_Update_Methods
+    RRA_Environment_Update_References
+    RRA_Formed_Environment_Stores
+    RRA_Indexed_Environment_Views
+    RRA_Indexed_Environments
+    RRA_Local_Environment_Updates

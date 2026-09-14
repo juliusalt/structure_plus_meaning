@@ -1,0 +1,11 @@
+theory Artifact_Lookup_Execution
+  imports RRA_Artifact_Lookup_Investigation Factor_Executable_Artifact_Values
+begin
+
+setup \<open>Finite_Observation_Contracts.export @{term artifact_lookup_investigation}\<close>
+
+export_code artifact_lookup_packet artifact_lookup_indices artifact_lookup_inspect artifact_lookup_path_report
+  finite_artifact_rows Finite_Whole Finite_Anchor fset set nat_of_integer integer_of_nat
+  in SML module_name Artifact_Lookup_Execution file_prefix artifact_lookup
+
+end

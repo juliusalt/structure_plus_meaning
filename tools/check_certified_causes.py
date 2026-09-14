@@ -8,6 +8,7 @@ import check_native_certificates as shared
 import investigate
 import machine_reports
 import native_replay_json
+import native_cause_json
 import native_stream_json
 import observation_contracts
 import proved_code
@@ -50,18 +51,13 @@ fun jquality (f,b) = "[" ^ jnat f ^ "," ^ Bool.toString b ^ "]";
 fun jassessed (m,assessment) = "{\"method\":" ^ jnat m ^
   ",\"qualities\":" ^ jlist jquality (map (fn f => (f,N.decision_family_inspect assessment f)) facets) ^ "}";
 fun emit tag data = (print (tag ^ " " ^ data ^ "\n"); TextIO.flushOut TextIO.stdOut);
-fun wsubject (e,(u,(r,(g,(h,(root,a)))))) = wobject [
-  ("\"generation_environment\"",fn () => wenvironment e),
-  ("\"generation_use\"",fn () => print (juse u)),
-  ("\"generation_address\"",fn () => waddress r),
-  ("\"generation\"",fn () => wgeneration g),
-  ("\"replay_environment\"",fn () => wenvironment h),
-  ("\"proof_root\"",fn () => print (jsite root)),
-  ("\"payload\"",fn () => wartifact (N.finite_artifact_rows a))];
+'''
+    code += native_cause_json.SUBJECT
+    code += r'''
 fun wprepared (certificate,result) = wobject [
   ("\"certificate\"",fn () => print (jcertificate certificate)),
   ("\"result\"",fn () => woption (fn (x,report) => wobject [
-    ("\"subject\"",fn () => wsubject x),
+    ("\"subject\"",fn () => wcause x),
     ("\"readings\"",fn () => print (jreport report))]) result)];
 fun wcontext (seed,(w,(covered,rows))) = wobject [
   ("\"seed\"",fn () => print (jseed seed)),
@@ -71,7 +67,7 @@ fun wcontext (seed,(w,(covered,rows))) = wobject [
 fun wrow row = let val (certificate,result) = row in wobject [
   ("\"certificate\"",fn () => print (jcertificate certificate)),
   ("\"result\"",fn () => woption (fn (x,(report,(original,chosen))) => wobject [
-    ("\"subject\"",fn () => wsubject x),
+    ("\"subject\"",fn () => wcause x),
     ("\"readings\"",fn () => print (jreport report)),
     ("\"original\"",fn () => print (Bool.toString original)),
     ("\"chosen\"",fn () => print (Bool.toString chosen))]) result),

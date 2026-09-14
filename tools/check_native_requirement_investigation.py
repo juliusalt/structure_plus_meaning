@@ -34,21 +34,23 @@ fun jassessment NONE = "null"
       "{\"ready\":" ^ Bool.toString ready ^ ",\"differences\":" ^ jdifferences terms ^
       ",\"preserved\":" ^ Bool.toString preserved ^ ",\"rejected\":" ^ Bool.toString rejected ^ "}";
 fun jquality (f,b) = "[" ^ jnat f ^ "," ^ Bool.toString b ^ "]";
-fun assess w m = let val a = N.native_requirement_assess m w in
+fun assess (m,a) =
   "{\"method\":" ^ jnat m ^ ",\"assessment\":" ^ jassessment a ^
-    ",\"qualities\":" ^ jlist jquality (map (fn f => (f,N.native_requirement_optional_inspect a f)) facets) ^ "}" end;
-fun emitSubject w = print ("REQUIREMENT_SUBJECT " ^ jnat w ^ " " ^
-  jreport (N.native_requirement_report w) ^ "\n");
-fun emitAssessment w = print ("REQUIREMENT_ASSESSMENT " ^ jnat w ^ " " ^
-  jlist (assess w) candidates ^ "\n");
+    ",\"qualities\":" ^ jlist jquality (map (fn f => (f,N.native_requirement_optional_inspect a f)) facets) ^ "}";
+fun emitSubject (w,(subject,cells)) = print ("REQUIREMENT_SUBJECT " ^ jnat w ^ " " ^
+  jreport subject ^ "\n");
+fun emitAssessment (w,(subject,cells)) = print ("REQUIREMENT_ASSESSMENT " ^ jnat w ^ " " ^
+  jlist assess cells ^ "\n");
 fun jcycle (selected,(initial,(repairs,(revision,followed)))) =
   "{\"selected\":" ^ jlist jnat selected ^ ",\"initial\":" ^ jbasis initial ^
   ",\"repairs\":" ^ jrepairs repairs ^ ",\"revision\":" ^ jrevision revision ^
   ",\"followed\":" ^ jbasis followed ^ "}";
 val () = print ("REQUIREMENT_SCOPE " ^ jlist jnat N.native_requirement_indices ^ "\n");
-val () = List.app emitSubject scope;
-val () = List.app emitAssessment scope;
-val ((rows,(relation,(selected,adequate))),cycles) = N.native_requirement_investigation_report scope selections;
+val timer = Timer.startRealTimer ();
+val (table,((rows,(relation,(selected,adequate))),cycles)) = N.native_requirement_shared_packet scope selections;
+val () = print ("Physicaltime shared-requirement-packet " ^ LargeInt.toString (Time.toMilliseconds (Timer.checkRealTimer timer)) ^ "ms\n");
+val () = List.app emitSubject table;
+val () = List.app emitAssessment table;
 val () = print ("REQUIREMENT_COMPARISON {\"scope\":" ^ jlist jnat scope ^
   ",\"observations\":" ^ jlist jtriple rows ^ ",\"relation\":" ^ jlist jpair relation ^
   ",\"selected_methods\":" ^ jlist jnat selected ^ ",\"adequate_methods\":" ^ jlist jnat adequate ^ "}\n");

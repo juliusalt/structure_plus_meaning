@@ -2402,10 +2402,25 @@ scope inclusion while preserving shifted roots and reversed enumerations.
 computed source-formation check and restricts roots through the original
 quotation boundary. Its fixture is constructed natively from source.
 
-The complete 1,212-theory check and all 98 host tests with 59 subtests pass.
-Twenty-four source-only boundaries reproduce 1,338 complete native reports.
-One fresh proof of their combined dependencies serves all original recipes;
-each keeps its own complete source and report boundary. The
-[current verification](validation/reconstruction/current-verified.json) records
-these checks after removal of generated copies. The six conditions in
+
+[Original-policy cause admission](validation/reconstruction/required-causes.md)
+now binds each actual record to the complete original source and requirement
+family. Its gate preserves package identity and called entry, with an all-input
+theorem for every original requirement. Shared requirement execution derives
+the same 186 complete reports from one table and its already computed readings.
+[Indexed lookup](validation/reconstruction/artifact-lookup.md) preserves complete
+artifact relations. [Incremental environment updates](validation/reconstruction/environment-updates.md)
+carry formation in a closed store type and preserve it through exact local
+guards. Complete result comparison rejects omitted guards and changed outputs.
+Generation-store adoption, allocation, whole-workflow policy and enforcement,
+historical permission and the full physical cost remain further work.
+
+The complete 1,245-theory check and all 98 host tests with 59 subtests pass.
+Twenty-seven source-only boundaries cover 1,438 complete native reports.
+Five changed or new families were freshly reconstructed through one proof of
+621 theories from HOL and direct comparison of all 322 reports. The complete
+input closures and toolchains of the other twenty-two families are unchanged;
+their earlier reconstruction evidence is retained through explicit Git provenance.
+The [current verification](validation/reconstruction/current-verified.json)
+records these checks after removal of generated copies. The six conditions in
 `problems.txt` remain the active development milestone.

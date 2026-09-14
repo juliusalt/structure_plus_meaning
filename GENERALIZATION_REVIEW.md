@@ -1635,3 +1635,42 @@ The current combined boundary checks all 1,212 theories and 98 host tests with
 Their 930-theory union was proved once from HOL, and all original and copied
 inputs, database sources, execution evidence and complete reports were verified
 before generated copies were removed. The six-condition milestone remains open.
+
+
+## Original policy, shared reports and incremental environment stores
+
+The original source and complete requirement family now construct a policy
+whose package scope and called entry must agree with the actual recorded cause.
+All-input soundness yields every original requirement under its original source
+meaning. Ten complete subjects and eight methods retain only the exact gate.
+Independent original requirement decisions distinguish payload permission from
+the stricter identity and replay requirements. A different realization needs
+its own policy-equivalence contract; permission alone does not provide one.
+
+One shared requirement table and its computed source and target reports supply
+all original subjects, assessments, comparisons and revisions. Every complete
+report remains equal. The all-input equations retain unavailable source and
+projection positions, original formation, preservation and meaning boundaries.
+
+Complete indexed artifact lookup preserves every original relation value.
+The closed environment store then carries original formation and uses the
+actual local prerequisites for each insertion. Independent all-input equations
+identify both the typed API and raw full guard with the original constructor.
+Sixteen subjects expose omitted prerequisites; only those two operations are
+selected and adequate. Refusal and a no-op fail complete output comparison.
+Three persistent chains retain 1, 33 and 129 artifacts while the fixed original
+lookup still takes two structural path steps. Whole-view export traverses the
+store and remains separate from a local update.
+
+These scopes do not complete workflow-policy adequacy, historical permission,
+generation-store adoption and allocation, unrestricted criticism coverage,
+native mathematical-proof admission, full physical cost or genesis. The six
+conditions in problems.txt and the final audit remain open.
+
+The combined check now covers 1,245 theories and 98 host tests with 59 subtests.
+Five changed or new report families rebuild their 621-theory union from HOL;
+all 322 reports directly equal the preceding complete executions. The other
+twenty-two complete source closures and toolchains are unchanged and retain
+their previous proof and execution evidence through explicit Git provenance.
+The twenty-seven source-only recipes cover 1,438 reports. Complete reviewed
+archives replace 2.45 GB of temporary full-build and reconstruction copies.

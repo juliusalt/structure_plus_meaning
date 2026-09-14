@@ -1,10 +1,11 @@
 theory Native_Requirement_Investigation_Execution
-  imports Factor_Native_Requirement_Investigation
+  imports Factor_Native_Requirement_Sharing
 begin
 
 setup \<open>Finite_Observation_Contracts.export @{term native_requirement_investigation}\<close>
 
 export_code native_requirement_indices native_requirement_report native_requirement_assess
+  native_requirement_shared_packet
   native_requirement_optional_inspect native_requirement_investigation_report
   finite_environment_artifact_rows finite_environment_bindings
   finite_system_interfaces finite_system_clauses

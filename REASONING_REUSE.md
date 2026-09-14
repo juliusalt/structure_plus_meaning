@@ -1143,3 +1143,26 @@ supplies shared soundness and completeness assessment. Optional uniform-family
 selection derives the fixture directly from the native constructor, preserving
 every failure position. Workflow policy and transitions, complete subject and
 criticism coverage, historical permission and physical cost remain open.
+
+
+## Reusing original policy and stored invariants
+
+The [original-policy cause gate](validation/reconstruction/required-causes.md)
+reuses complete package identity, actual application selection, certified cause
+soundness and the original requirement-constructor contract. It does not infer
+policy identity from equal local program readings or payload permission.
+
+The shared requirement packet derives original observations from already
+computed optional reports through a reusable projection contract. Its entire
+output agrees with the preceding execution. Source readiness, original truth,
+preservation and absence remain separate values and conditions.
+
+[Indexed lookup](validation/reconstruction/artifact-lookup.md) factors exact
+path storage, finite relation buckets and unrestricted use-word encoding.
+[Local environment updates](validation/reconstruction/environment-updates.md)
+reuse those representations, nested-key storage, original formation theorems,
+optional-result invariants, exact entry decoding and complete relation-reader
+assessment. The closed store type preserves its invariant through every exposed
+update. The generation constructor must still adopt that store and establish
+its own allocation and cost contracts. Scoped store formation does not enforce
+all development-workflow requirements.

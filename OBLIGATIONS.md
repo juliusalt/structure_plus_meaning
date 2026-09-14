@@ -974,9 +974,25 @@ preserves the complete original result through a computed formation guard and
 proved quotation-root support. Whole workflow policy and transitions,
 historical permission, coverage and the full cost account remain further work.
 
+
+[Original-policy cause admission](validation/reconstruction/required-causes.md)
+now binds each actual record to the complete original source and requirement
+family. Its gate preserves package identity and called entry, with an all-input
+theorem for every original requirement. Shared requirement execution derives
+the same 186 complete reports from one table and its already computed readings.
+[Indexed lookup](validation/reconstruction/artifact-lookup.md) preserves complete
+artifact relations. [Incremental environment updates](validation/reconstruction/environment-updates.md)
+carry formation in a closed store type and preserve it through exact local
+guards. Complete result comparison rejects omitted guards and changed outputs.
+Generation-store adoption, allocation, whole-workflow policy and enforcement,
+historical permission and the full physical cost remain further work.
+
 The [current verification](validation/reconstruction/current-verified.json) records
-the complete 1,212-theory check, 98 host tests with 59 subtests, and twenty-four
-source-only boundaries reproducing 1,338 complete reports. All recipes were
-freshly reconstructed through one proof of their complete combined dependencies
-from HOL and their original execution groups. Generated copies were removed
-after review. The six-condition workflow milestone remains open.
+the complete 1,245-theory check, 98 host tests with 59 subtests, and twenty-seven
+source-only boundaries covering 1,438 complete reports. Five changed or new
+families were freshly reconstructed through one proof of 621 theories from HOL,
+and all 322 reports were directly compared. Twenty-two unchanged complete input
+closures and toolchains retain their earlier reconstruction through explicit
+Git provenance. Generated copies were removed after full review. The six-condition
+workflow milestone, native mathematical-proof admission, genesis and final audit
+remain open.

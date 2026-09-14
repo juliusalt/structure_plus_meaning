@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "reports": {
+    "comparison": {
+      "records": 35,
+      "tags": {
+        "ARTIFACT_LOOKUP_ASSESSMENT": 10,
+        "ARTIFACT_LOOKUP_COMPARISON": 1,
+        "ARTIFACT_LOOKUP_INVESTIGATION": 3,
+        "ARTIFACT_LOOKUP_PATH": 10,
+        "ARTIFACT_LOOKUP_SCOPE": 1,
+        "ARTIFACT_LOOKUP_SUBJECT": 10
+      },
+      "sha256": "9103f836fc9ecffce28e9b69e96b8ae1470193be2255002b42bd57cd14c6732a"
+    }
+  }
+}

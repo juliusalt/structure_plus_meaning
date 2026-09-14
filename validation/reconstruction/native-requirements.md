@@ -124,3 +124,13 @@ native mathematical-proof artifacts, broader native problem and criticism
 selection, historical permission, the full cost account, O-85, genesis or the
 final repository audit. Isabelle retains its normative bootstrap role through
 genesis; the native operation's own result does not authorize that handoff.
+
+
+The requirement execution now computes one complete source/target table and
+derives its assessments from those actual reports. The original optional source
+observations and projections have reusable exact contracts. Every one of the
+186 complete reports remains unchanged, including original conditions and
+revision reasons. Recorded packet execution was 445,033 ms after sharing these
+reads, compared with 830,178 ms for the preceding shared table. These are
+individual execution diagnostics, not a complete physical-cost theorem or a
+claim about every development decision.

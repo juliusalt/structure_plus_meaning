@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "reports": {
+    "comparison": {
+      "records": 25,
+      "tags": {
+        "REQUIRED_CAUSE_ASSESSMENT": 10,
+        "REQUIRED_CAUSE_COMPARISON": 1,
+        "REQUIRED_CAUSE_INVESTIGATION": 3,
+        "REQUIRED_CAUSE_SCOPE": 1,
+        "REQUIRED_CAUSE_SUBJECT": 10
+      },
+      "sha256": "4fd6fa79895876166d69fd0d2402bf7902d64ea438c210c46ac50426d25317c4"
+    }
+  }
+}

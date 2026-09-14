@@ -1,5 +1,5 @@
 theory Factor_Graph_Mappings
-  imports Factor_Graph_Renaming
+  imports Factor_Graph_Transport Finite_Function_Graphs
 begin
 
 definition schema_graph_mapping where
@@ -8,6 +8,19 @@ definition schema_graph_mapping where
     fset (graph_inferences H)={(m,N). \<exists>n. (n,N)\<in>fset (graph_inferences G) \<and> (n,m)\<in>M} \<and>
     fset (graph_discharges H)={((m,s),k). \<exists>n q.
       ((n,s),q)\<in>fset (graph_discharges G) \<and> (n,m)\<in>M \<and> (q,k)\<in>M})"
+
+lemma schema_graph_mapping_unique:
+  fixes H K :: "('a,'s,'c,'m,'v) inference_graph"
+  assumes left: "schema_graph_mapping M G root H r" and right: "schema_graph_mapping M G root K s"
+  shows "H=K" "r=s"
+proof -
+  have nodes: "graph_inferences H=graph_inferences K"
+    and edges: "graph_discharges H=graph_discharges K"
+    using left right by (auto simp: schema_graph_mapping_def fset_inject[symmetric])
+  show "H=K" by (rule inference_graph.equality) (rule nodes, rule edges, simp)
+  show "r=s" using left right
+    by (auto simp: schema_graph_mapping_def dest: single_valued_outputs)
+qed
 
 theorem schema_graph_mapping_rename:
   assumes formed: "schema_graph_formed G root"
@@ -25,6 +38,32 @@ proof -
     using root node endpoints
     by (auto simp: schema_graph_mapping_def graph_map_single_valued graph_map_dom
       graph_map_member schema_graph_renamed_node schema_graph_renamed_discharge; blast)
+qed
+
+theorem schema_graph_mapping_derives:
+  assumes derived: "schema_graph_derives P G root d t A"
+    and mapping: "schema_graph_mapping M G root H r"
+    and injective: "single_valued (M\<inverse>)"
+  shows "schema_graph_derives P H r d t (map_prod (rel_value M) id ` A)"
+proof -
+  let ?N = "schema_graph_nodes G"
+  let ?h = "rel_value M"
+  have formed: "schema_graph_formed G root"
+    using derived by (auto simp: schema_graph_derives_def schema_graph_reading_def)
+  have functional: "single_valued M" and domain: "rel_dom M=?N"
+    using mapping by (simp only: schema_graph_mapping_def; blast)+
+  have graph: "M=graph_map ?N ?h"
+    using single_valued_graph[OF functional] by (simp only: domain)
+  have inverse: "single_valued ((graph_map ?N ?h)\<inverse>)"
+    by (simp only: graph[symmetric]; rule injective)
+  have one_to_one: "inj_on ?h ?N"
+    using inverse by (simp only: graph_map_converse_functional)
+  have canonical: "schema_graph_mapping M G root (rename_schema_graph ?h G) (?h root)"
+    using schema_graph_mapping_rename[OF formed, where h="?h"]
+    by (simp only: graph[symmetric])
+  have equal: "H=rename_schema_graph ?h G" "r=?h root"
+    by (rule schema_graph_mapping_unique[OF mapping canonical])+
+  show ?thesis by (simp only: equal; rule schema_graph_derives_rename[OF derived one_to_one])
 qed
 
 text \<open>

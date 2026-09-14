@@ -17,3 +17,10 @@ fun jrevision (retained,(withdrawn,(repairs,(revised,residual)))) =
   ",\"repairs\":" ^ jlist jquad repairs ^ ",\"selection\":" ^ jlist jnat revised ^
   ",\"residual\":" ^ jlist jpair residual ^ "}";
 '''
+
+
+CYCLE = r'''fun jcycle (selected,(initial,(repairs,(revision,followed)))) =
+  "{\"selected\":" ^ jlist jnat selected ^ ",\"initial\":" ^ jbasis initial ^
+  ",\"repairs\":" ^ jrepairs repairs ^ ",\"revision\":" ^ jrevision revision ^
+  ",\"followed\":" ^ jbasis followed ^ "}";
+'''

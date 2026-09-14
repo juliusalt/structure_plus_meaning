@@ -18,7 +18,7 @@ primrec checks_schema_proof ::
         \<exists>e x. (s,e,x) \<in> Q \<and> F e x))"
 
 lemma schema_proof_child_size:
-  fixes B :: "('s \<times> ('a,'s,'c) schema_proof) fset"
+  fixes B :: "('s \<times> ('a,'s,'c,'v) inference_proof) fset"
   assumes member: "(s,p) \<in> fset B"
   shows "size p < size (Schema_Proof c V B)"
 proof -

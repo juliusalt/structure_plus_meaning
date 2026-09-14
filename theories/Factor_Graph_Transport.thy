@@ -147,6 +147,20 @@ proof -
     by (rule exI[of _ "map_prod f id ` J"]) (use copied exact in simp)
 qed
 
+theorem schema_graph_derives_rename_reflect:
+  assumes derived: "schema_graph_derives P (rename_schema_graph f G) (f root) d t (map_prod f id ` H)"
+    and injective: "inj f"
+  shows "schema_graph_derives P G root d t H"
+proof -
+  have copied_back: "schema_graph_derives P (rename_schema_graph (inv f) (rename_schema_graph f G))
+      (inv f (f root)) d t (map_prod (inv f) id ` (map_prod f id ` H))"
+    by (rule schema_graph_derives_rename[OF derived schema_graph_renamed_inverse_injective])
+  have boundary: "map_prod (inv f) id ` (map_prod f id ` H)=H"
+    by (simp add: image_image map_prod_def case_prod_unfold inv_f_f[OF injective])
+  show ?thesis using copied_back
+    by (simp only: rename_schema_graph_inverse[OF injective] inv_f_f[OF injective] boundary)
+qed
+
 section \<open>Every positive judgment has an addressed closed proof graph\<close>
 
 theorem addressed_schema_graph_complete:

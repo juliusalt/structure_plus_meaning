@@ -12,7 +12,7 @@ lemma finite_relation_test:
 
 lemma decode_finite_premises_member [simp]:
   "(n,d,decode_finite_term t) \<in> decode_finite_premises J \<longleftrightarrow> (n,d,t) |\<in>| J"
-  by (auto simp: decode_finite_premises_def decode_finite_call_term_def)
+  by (auto simp: decode_finite_premises_value_member)
 
 lemma decode_finite_premises_domain [simp]:
   "rel_dom (decode_finite_premises J) = fset (fimage fst J)"

@@ -158,6 +158,12 @@ definition decode_finite_premises ::
   "('s \<times> ('d \<times> finite_factor_term)) fset \<Rightarrow> ('s \<times> ('d \<times> factor_term)) set" where
   "decode_finite_premises Q = map_relation_values decode_finite_call_term (fset Q)"
 
+lemma decode_finite_premises_value_member:
+  "(s,e,x)\<in>decode_finite_premises Q \<longleftrightarrow>
+    (\<exists>t. (s,e,t) |\<in>| Q \<and> x=decode_finite_term t)"
+  by (simp only: decode_finite_premises_def map_relation_values_member
+    split_paired_Ex decode_finite_call_pair prod.inject; blast)
+
 definition finite_schema_premise_instance ::
   "('a,'s,'d) finite_factor_schema \<Rightarrow> ('a \<times> finite_factor_term) fset \<Rightarrow>
     ('s \<times> ('d \<times> finite_factor_term)) fset \<Rightarrow> bool" where

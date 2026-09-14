@@ -31,8 +31,7 @@ proof (induction p arbitrary: d t)
       checks_schema_proof (decode_finite_system P) (decode_finite_proof p) e x) \<longleftrightarrow>
     (\<exists>e x. (s,e,x) |\<in>| H \<and> finite_checks_schema_proof P p e x)"
     if member: "(s,p) |\<in>| B" for s p H
-    apply (simp only: decode_finite_premises_def map_relation_values_member
-      split_paired_Ex decode_finite_call_pair prod.inject)
+    apply (simp only: decode_finite_premises_value_member)
     using recursive[OF member] by blast
   have children: "(\<forall>s q. (s,q)\<in>fset (fimage (map_prod id decode_finite_proof) B) \<longrightarrow>
       (\<exists>e x. (s,e,x)\<in>decode_finite_premises H \<and>

@@ -2,11 +2,24 @@ theory Factor_Finite_Graph_Mappings
   imports Factor_Finite_Graph_Transport Factor_Graph_Mappings Finite_Indexed_Relation_Images
 begin
 
+definition finite_mapped_graph :: "('n\<times>'m) fset\<Rightarrow>('a,'s,'c,'n) finite_derivation_graph\<Rightarrow>
+    ('a,'s,'c,'m) finite_derivation_graph" where
+  "finite_mapped_graph M G=\<lparr>
+    finite_graph_inferences=finite_edge_compose (fimage prod.swap M) (finite_graph_inferences G),
+    finite_graph_discharges=finite_indexed_relation_image M (finite_graph_discharges G)\<rparr>"
+
 definition finite_graph_mapping where
   "finite_graph_mapping M G root H r=(finite_relation_functional M \<and>
     fimage fst M=finite_graph_nodes G \<and> (root,r) |\<in>| M \<and>
     finite_graph_inferences H=finite_edge_compose (fimage prod.swap M) (finite_graph_inferences G) \<and>
     finite_graph_discharges H=finite_indexed_relation_image M (finite_graph_discharges G))"
+
+lemma finite_mapped_graph_mapping:
+  assumes functional: "finite_relation_functional M"
+    and domain: "fimage fst M=finite_graph_nodes G" and root: "(root,r) |\<in>| M"
+  shows "finite_graph_mapping M G root (finite_mapped_graph M G) r"
+  by (simp only: finite_graph_mapping_def finite_mapped_graph_def finite_derivation_graph.select_convs
+    functional domain root simp_thms)
 
 lemma finite_graph_mapping_inferences:
   fixes G :: "('a,'s,'c,'n) finite_derivation_graph"
@@ -54,6 +67,6 @@ theorem finite_graph_mapping_rename:
       finite_graph_nodes_correct finite_rename_graph_exact;
     rule schema_graph_mapping_rename; use formed in \<open>simp only: finite_graph_formed_correct\<close>)
 
-export_code finite_graph_mapping checking SML
+export_code finite_graph_mapping finite_mapped_graph checking SML
 
 end

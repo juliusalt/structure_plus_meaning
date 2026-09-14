@@ -65,13 +65,13 @@ python3 -B tools/reconstruct_native_nodes.py \
   --output /tmp/native-node-reconstruction
 ```
 
-The [source boundary](native-nodes-sources.json) contains 382 files: 361 theories,
+The [source boundary](native-nodes-sources.json) contains 383 files: 362 theories,
 20 Python modules and the [complete-report comparison](native-nodes-reports.json).
 The [verified reconstruction](native-nodes-verified.json) rebuilt the entire
 closure from HOL, collected complete proof diagnostics with no errors, exported
 the accepted code and reproduced every report field. Every original source and
 execution input was verified. The [materialization receipt](native-nodes-materialization.json)
-identifies the exact collected inputs. The complete 1,073-theory repository
+identifies the exact collected inputs. The complete 1,103-theory repository
 check and all 98 host-tool tests also passed.
 
 Fresh allocation is an explicit requirement of this local problem. Searching

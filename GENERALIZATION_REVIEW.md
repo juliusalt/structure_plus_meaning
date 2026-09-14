@@ -1488,3 +1488,39 @@ At this graph milestone, all twelve source-only reconstructions rebuilt their
 complete theory closures from HOL and reproduced 943 complete reports. Every
 original source and execution input matched its recorded boundary; the complete
 proof diagnostics contain no errors.
+
+## Executed certificate-scope correction and admission
+
+The original certificate comparison selected methods 0, 12 and 13 on its 26
+complete inputs. Independent native criticism computed every original path and
+all projection conflicts and found no required identity/sharing witnesses. The
+shared cycle returned no admissions. That failure was retained as the next actual
+scope problem before a dependent scope choice.
+
+The corrective comparison retained every complete original input and compared
+actual scope operations. Appended compiled native sources and independently
+checked supplied certificates supplied all three distinctions. Omitted answers
+and corrupted root clauses retained their actual rejection reasons. Native
+comparison selected only the expanded scope; every candidate, condition,
+comparison and repair reason was inspected before executing the expanded cycle.
+
+The expanded cycle retained every earlier complete output and evaluated all
+3,360 condition positions. Proof-only and call-only merging fail the original
+endpoint condition on the new inputs. Computed criticism accepts the actual
+scope and admission returns method 0. Every full new graph value, all 256 directed
+loss rows and all revision fields were read through exact complete-value
+correspondences. The [source reconstruction boundary](validation/reconstruction/native-certificates.md) retains this sequence.
+
+This repairs one concrete development cycle through the same subject machinery.
+It does not establish that every development decision, required reasoning
+operation, criticism or workflow requirement has an implemented native account.
+All six conditions in `problems.txt`, including full enforcement and the cost
+account, remain the immediate development milestone.
+
+This certificate-cycle batch passed the complete 1,103-theory check and all
+98 host tests with 59 subtests. Seventeen source-only reconstructions rebuilt
+their entire source closures from HOL and reproduced 1,136 complete native
+reports. The [combined verification](validation/reconstruction/certificate-cycle-verified.json)
+retains every current source and report boundary after removal of generated
+copies. This verification does not discharge the remaining six-condition
+workflow milestone.

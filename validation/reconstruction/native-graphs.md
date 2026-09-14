@@ -91,17 +91,18 @@ python3 -B tools/reconstruct_native_graphs.py \
 The [complete-report boundary](native-graphs-reports.json) records the expected
 reproduction. The recipe rebuilds the full theory closure from HOL, collects
 complete proof diagnostics, exports the proved code and checks every report
-field. The [source boundary](native-graphs-sources.json) contains 399 files:
-378 theories, 20 Python modules and the complete-report comparison. The
+field. The [source boundary](native-graphs-sources.json) contains 401 files:
+379 theories, 21 Python modules and the complete-report comparison. The
 [verified reconstruction](native-graphs-verified.json) rebuilt every theory from
 HOL and reproduced all 81 reports with no proof errors. Every original source
-and execution input matched its recorded boundary. All twelve current recipes
-passed the same fresh-copy reconstruction and reproduced 943 complete reports.
-The full 1,073-theory repository check and 98 host-tool tests also passed.
+and execution input matched its recorded boundary. All seventeen current recipes
+passed the same fresh-copy reconstruction and reproduced 1,136 complete reports.
+The full 1,103-theory repository check and 98 host-tool tests also passed.
 
 Native metadata realization does not validate inference claims or supply the
-truth of explicit assertions. Certificate positioning, ordered coordinates
-for certificate nodes, full native proof placement and replay, recursive
+truth of explicit assertions. [Complete certificate paths and coordinates](native-certificates.md) have a separate
+reconstruction. Actual source positioning of certificate metadata, full native proof
+placement and replay, recursive
 explanation traces, native mathematical-proof checking, complete development
 admission and enforcement, the full physical cost account, genesis and the
 final repository audit remain open. The comparison cannot authorize its own

@@ -88,14 +88,14 @@ python3 -B tools/materialize_source_boundary.py \
   --manifest validation/reconstruction/native-evaluation-sources.json \
   --output /tmp/native-evaluation-inputs
 python3 -B /tmp/native-evaluation-inputs/tools/reconstruct_native_evaluation.py \
-  --poly /opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly \
+  --poly /opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly \
   --session Native_Evaluation_Independent_Run \
   --timeout 1200 \
   --output /tmp/native-evaluation-results
 ```
 
-The [source boundary](native-evaluation-sources.json) contains 456 files:
-434 theories, 21 Python modules and the
+The [source boundary](native-evaluation-sources.json) contains 457 files:
+435 theories, 21 Python modules and the
 [complete-report comparison](native-evaluation-reports.json). The common
 runner rebuilds from HOL, obtains complete proof diagnostics, exports accepted
 code and executes both report families. The

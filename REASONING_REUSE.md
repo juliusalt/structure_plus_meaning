@@ -1034,3 +1034,28 @@ These results preserve the distinction between graph realization and inference
 validity. Certificate positioning, ordered certificate-node coordinates, native
 proof replay, mathematical-proof checking, complete development admission, the
 full physical cost account and genesis remain separate requirements.
+
+## Certificate paths and the shared subject cycle
+
+`Indexed_Relation_Families` and `Indexed_Relation_Paths` factor complete child,
+node and path construction. Their finite instances retain full certificates and
+required calls. Finite keyed products, least available keys and complete conflict
+families avoid an order on certificate values. The original path family, complete
+graph correspondence and actual endpoint condition remain separate contracts.
+The canonical constructor satisfies all seven conditions on every original family.
+
+`Finite_Subject_Cycles` constructs the full context table, computed criticism,
+comparison, revision and admission in one operation. Admission requires all
+original subject conditions, an available original basis, a formed followed
+comparison without residual and accepted computed criticism. One exact admission
+theorem serves both query and supplied-certificate cycles. Each registry directly
+instantiates the existing subject-map and observation theorems. The source
+compiler, original-family assessment and scope criticism are also shared.
+
+The initial cycle admitted nothing because original identity and sharing witnesses
+were absent. Native scope comparison selected an actual source-generated repair;
+the expanded cycle then admitted method 0. Complete old outputs are unchanged,
+and every new value and reason was inspected. The five [reconstruction recipes](validation/reconstruction/native-certificates.md) retain the complete 193-report
+sequence through source boundaries. The full native development protocol,
+arbitrary-development adequacy, historical permission and complete cost account
+remain open; this scoped gate does not discharge `problems.txt`.

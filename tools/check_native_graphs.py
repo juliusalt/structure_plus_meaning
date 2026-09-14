@@ -8,6 +8,7 @@ import investigate
 import investigation_json
 import machine_reports
 import native_program_json
+import native_graph_json
 import observation_contracts
 import program_evaluation_json
 import proved_code
@@ -29,14 +30,9 @@ def program(engine, inputs):
     code += r'''
 fun jenv e = jenvironment
   (N.finite_environment_artifact_rows e,elements (N.finite_environment_bindings e));
-fun jnode N.Finite_Assertion = "{\"kind\":\"assertion\"}"
-  | jnode (N.Finite_Inference (c,v)) = "{\"kind\":\"inference\",\"clause\":" ^ jsite c ^
-      ",\"bindings\":" ^ jf (jbindingWith jsite) v ^ "}";
-fun jgraphWith key g = "{\"inferences\":" ^
-  jf (fn (n,v) => "[" ^ key n ^ "," ^ jnode v ^ "]") (N.finite_graph_inferences g) ^
-  ",\"discharges\":" ^ jf (fn ((n,s),q) => "[[" ^ key n ^ "," ^ jsite s ^ "]," ^ key q ^ "]")
-    (N.finite_graph_discharges g) ^ "}";
-fun jproblem (x as (e,(g,root))) = let
+'''
+    code += native_graph_json.prelude('jsite')
+    code += r'''fun jproblem (x as (e,(g,root))) = let
   val (formed,(graph,metadata)) = N.native_graph_input_inspection x
 in "{\"environment\":" ^ jenv e ^ ",\"graph\":" ^ jgraphWith jaddress g ^
   ",\"root\":" ^ jaddress root ^ ",\"prerequisites\":{\"environment\":" ^ Bool.toString formed ^
@@ -122,7 +118,7 @@ def main():
                 'cases': args.cases,
                 'selections': [[], [0, 2, 3, 5], [0, 1, 2, 3, 4, 5],
                                [0, 2, 3, 5, 1], [0, 1, 2, 4, 5]]},
-        input_paths=[Path(__file__), Path(check_reasoning.__file__), Path(investigation_json.__file__),
+        input_paths=[Path(__file__), Path(native_graph_json.__file__), Path(check_reasoning.__file__), Path(investigation_json.__file__),
                      Path(native_program_json.__file__), Path(program_evaluation_json.__file__),
                      *(Path(c['path']) for c in contracts)],
         program=program, assess=assess, project=args.project.resolve(), timeout=1800,

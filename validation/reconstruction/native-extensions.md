@@ -38,8 +38,8 @@ environment. Controls also retain the complete candidate and its computed
 formation and old-field agreement. Material operands remain part of each
 rule application's semantic obligations.
 
-The [source manifest](native-extensions-sources.json) contains 391 theory
-sources, 18 Python modules and the complete-report comparison: 410 files.
+The [source manifest](native-extensions-sources.json) contains 392 theory
+sources, 18 Python modules and the complete-report comparison: 411 files.
 With the declared Isabelle, Python and Poly/ML toolchain, use fresh directories
 and a fresh session:
 
@@ -48,7 +48,7 @@ python3 -B tools/materialize_source_boundary.py \
   --manifest validation/reconstruction/native-extensions-sources.json \
   --output /tmp/native-extension-sources
 python3 -B /tmp/native-extension-sources/tools/reconstruct_native_extensions.py \
-  --poly /opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly \
+  --poly /opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly \
   --session Native_Extension_Independent_Run \
   --timeout 900 \
   --output /tmp/native-extension-results
@@ -69,7 +69,7 @@ in that recipe. Refresh a changed boundary with:
 ```sh
 python3 -B tools/reconstruction_sources.py \
   --recipe tools/reconstruct_native_extensions.py \
-  --poly /opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly \
+  --poly /opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly \
   --output validation/reconstruction/native-extensions-sources.json
 ```
 

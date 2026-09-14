@@ -56,7 +56,7 @@ def constant_head(body):
     return node["attributes"]["0"]
 
 
-def read_contract(path, theory, function):
+def read_contract(path, theory, function, *, observer=None, relation=None):
     root = parse_yxml(Path(path).read_text())
     if root["tag"] != "finite_observation_contract":
         raise ValueError("Expected a checked finite-observation contract.")
@@ -72,10 +72,11 @@ def read_contract(path, theory, function):
         raise ValueError("The complete subject contract must retain every field.")
     names = {field: constant_head(fields[field]["body"])
              for field in ["function", "observer", "relation"]}
-    required = {"function": function, "observer": function + "_observations",
-                "relation": function + "_relation"}
+    required = {"function": theory + "." + function,
+                "observer": observer or theory + "." + function + "_observations",
+                "relation": relation or theory + "." + function + "_relation"}
     for field, name in names.items():
-        if name.split(".")[-2:] != [theory, required[field]]:
+        if name.split(".")[-2:] != required[field].split(".")[-2:]:
             raise ValueError("The typed contract belongs to a different runtime operation.")
     if root["attributes"] != {"function": names["function"]}:
         raise ValueError("The contract identity must equal its actual typed function.")

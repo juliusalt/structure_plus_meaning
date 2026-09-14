@@ -908,3 +908,34 @@ At this graph milestone, all twelve source-only reconstructions rebuilt their
 complete theory closures from HOL and reproduced 943 complete reports. Every
 original source and execution input matched its recorded boundary; the complete
 proof diagnostics contain no errors.
+
+## Certificate path construction and scoped admission
+
+Complete proof-and-call nodes now have executable child, position, path and
+coordinate constructions with exact contracts against their original relations.
+Their full graphs preserve genuine sharing. The source-derived and supplied-family
+interfaces share one constructor and assessment; every supplied certificate is
+checked against the actual native source and its stated answer family.
+
+A shared subject cycle now derives complete tables, criticism, comparison,
+revision and scoped admission. An initial native coverage failure prevented
+admission. Native scope comparison then selected actual identity/sharing examples,
+and the corrected cycle admitted method 0 after all original conditions and
+computed criticism held. All earlier outputs remain unchanged. Five
+[source-only recipes](validation/reconstruction/native-certificates.md) retain
+193 complete reports for this sequence.
+
+This advances the construction and application work without changing the open
+status of complete development enforcement, native mathematical-proof admission,
+full physical cost, genesis or the final audit. In particular, it does not close
+the six-condition development milestone in `problems.txt`. Native source
+positioning and complete certificate replay are still under development in the
+preserved parallel working copy.
+
+This certificate-cycle batch passed the complete 1,103-theory check and all
+98 host tests with 59 subtests. Seventeen source-only reconstructions rebuilt
+their entire source closures from HOL and reproduced 1,136 complete native
+reports. The [combined verification](validation/reconstruction/certificate-cycle-verified.json)
+retains every current source and report boundary after removal of generated
+copies. This verification does not discharge the remaining six-condition
+workflow milestone.

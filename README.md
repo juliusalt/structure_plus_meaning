@@ -2366,3 +2366,17 @@ and omitted object are derived, with complete reconstruction proved.
 Supplied and intermediate systems are preserved under `source-material/`.
 Their statements of completeness or normativity describe their historical
 claims. They do not extend the active session selected by `ROOT`.
+
+Complete certificate paths, graph correspondences and a shared scoped development
+cycle are now implemented. Native criticism first blocked admission on missing
+identity/sharing examples; the natively selected scope correction then allowed
+method 0. The complete 193-report sequence is covered by five
+[source reconstruction recipes](validation/reconstruction/native-certificates.md).
+Full development-workflow enforcement and the six conditions in `problems.txt`
+remain the next milestone.
+
+The complete repository check now covers 1,103 theories. All seventeen source-only
+reconstructions reproduce 1,136 complete native reports; 98 host tests and 59
+subtests pass. The [combined certificate-cycle verification](validation/reconstruction/certificate-cycle-verified.json)
+records the rebuilt source boundaries and removal of generated copies. The six
+conditions in `problems.txt` remain the active development-workflow milestone.

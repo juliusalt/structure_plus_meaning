@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "reports": {
+    "comparison": {
+      "records": 57,
+      "tags": {
+        "CERTIFICATE_ASSESSMENT": 26,
+        "CERTIFICATE_COMPARISON": 1,
+        "CERTIFICATE_INVESTIGATION": 3,
+        "CERTIFICATE_SCOPE": 1,
+        "CERTIFICATE_SUBJECT": 26
+      },
+      "sha256": "30ef953b42e70f69289f07c062b37a3bb4031643f26bf9ac2783ecbfc3181b87"
+    }
+  }
+}

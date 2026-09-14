@@ -75,13 +75,13 @@ python3 -B tools/materialize_source_boundary.py \
   --manifest validation/reconstruction/native-sources-sources.json \
   --output /tmp/native-source-inputs
 python3 -B /tmp/native-source-inputs/tools/reconstruct_native_sources.py \
-  --poly /opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly \
+  --poly /opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly \
   --session Native_Source_Independent_Run \
   --timeout 1200 \
   --output /tmp/native-source-results
 ```
 
-The [source manifest](native-sources-sources.json) contains 417 files: 396
+The [source manifest](native-sources-sources.json) contains 418 files: 397
 theory sources, 20 Python modules and the
 [complete-report comparison](native-sources-reports.json). The common runner
 rebuilds the proof from HOL, obtains full diagnostics, exports accepted code,

@@ -79,13 +79,13 @@ python3 -B tools/materialize_source_boundary.py \
   --manifest validation/reconstruction/native-histories-sources.json \
   --output /tmp/native-history-inputs
 python3 -B /tmp/native-history-inputs/tools/reconstruct_native_histories.py \
-  --poly /opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly \
+  --poly /opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly \
   --session Native_History_Independent_Run \
   --timeout 1200 \
   --output /tmp/native-history-results
 ```
 
-The [source boundary](native-histories-sources.json) contains 471 files: 449
+The [source boundary](native-histories-sources.json) contains 472 files: 450
 theories, 21 Python modules and the [complete-report comparison](native-histories-reports.json).
 The [verified reconstruction](native-histories-verified.json) rebuilt every
 theory from HOL and reproduced every report field. The
@@ -93,9 +93,9 @@ theory from HOL and reproduced every report field. The
 exact input boundary. All original source bytes, actual execution inputs and
 complete proof diagnostics were checked.
 
-The full 1,073-theory repository check passed. All twelve current reconstruction
+The full 1,103-theory repository check passed. All seventeen current reconstruction
 boundaries rebuilt their entire source closures from HOL, with every original
-source and runtime input verified and all 943 complete reports reproduced.
+source and runtime input verified and all 1,136 complete reports reproduced.
 
 Native proof-artifact construction, native mathematical-proof checking, complete
 development-cycle enforcement, arbitrary-method coverage, the full cost account,

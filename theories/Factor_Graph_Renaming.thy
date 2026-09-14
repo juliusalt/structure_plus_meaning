@@ -11,6 +11,21 @@ definition rename_schema_graph ::
     \<lparr>graph_inferences = fimage (map_prod f id) (graph_inferences G),
      graph_discharges = fimage (map_prod (map_prod f id) f) (graph_discharges G)\<rparr>"
 
+lemma rename_schema_graph_compose:
+  "rename_schema_graph g (rename_schema_graph f G)=rename_schema_graph (g\<circ>f) G"
+  by (simp add: rename_schema_graph_def fimage_fimage comp_def map_prod_def case_prod_unfold)
+
+lemma rename_schema_graph_identity:
+  fixes G :: "('a,'s,'c,'n,'v) inference_graph"
+  shows "rename_schema_graph id G=G"
+  by (cases G) (simp add: rename_schema_graph_def map_prod_def case_prod_unfold)
+
+lemma rename_schema_graph_inverse:
+  fixes G :: "('a,'s,'c,'n,'v) inference_graph"
+  assumes "inj f"
+  shows "rename_schema_graph (inv f) (rename_schema_graph f G)=G"
+  by (simp only: rename_schema_graph_compose inv_o_cancel[OF assms] rename_schema_graph_identity)
+
 lemma schema_graph_renamed_node:
   "(m,A) \<in> fset (graph_inferences (rename_schema_graph f G)) \<longleftrightarrow>
     (\<exists>n. (n,A) \<in> fset (graph_inferences G) \<and> m=f n)"
@@ -24,6 +39,10 @@ lemma schema_graph_renamed_discharge:
 lemma schema_graph_renamed_nodes:
   "schema_graph_nodes (rename_schema_graph f G) = f ` schema_graph_nodes G"
   by (auto simp: schema_graph_nodes_def schema_graph_renamed_node rel_dom_def)
+
+lemma schema_graph_renamed_inverse_injective:
+  "inj_on (inv f) (schema_graph_nodes (rename_schema_graph f G))"
+  by (simp only: schema_graph_renamed_nodes; rule inj_on_inv_into; blast)
 
 lemma schema_graph_renamed_edges:
   "schema_graph_edges (rename_schema_graph f G) = map_prod f f ` schema_graph_edges G"
@@ -179,6 +198,13 @@ proof -
   show ?thesis using nodes discharges assertions root bounds paths wf'
     by (simp add: schema_graph_formed_def schema_graph_renamed_nodes)
 qed
+
+theorem renamed_schema_graph_formed_reflect:
+  fixes G :: "('a,'s,'c,'n,'v) inference_graph"
+  assumes formed: "schema_graph_formed (rename_schema_graph f G) (f root)" and injective: "inj f"
+  shows "schema_graph_formed G root"
+  using renamed_schema_graph_formed[OF formed schema_graph_renamed_inverse_injective]
+  by (simp only: rename_schema_graph_inverse[OF injective] inv_f_f[OF injective])
 
 text \<open>
   Only private proof-node coordinates move. Inference clauses, variable

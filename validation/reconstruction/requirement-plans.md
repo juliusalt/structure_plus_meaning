@@ -1,6 +1,6 @@
 # Reconstruct requirement construction and artifact admission
 
-The boundary contains 498 theory sources, 18 Python modules and one complete
+The boundary contains 499 theory sources, 18 Python modules and one complete
 report comparison file. The source fixture is defined in the execution
 theories: it contains actual goals, counters, table operands and complete
 candidate artifacts. No saved proof, generated code or result log is an input.
@@ -13,7 +13,7 @@ python3 -B tools/materialize_source_boundary.py \
   --manifest validation/reconstruction/requirement-plans-sources.json \
   --output /tmp/requirement-plan-sources
 python3 -B /tmp/requirement-plan-sources/tools/reconstruct_requirement_plans.py \
-  --poly /opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly \
+  --poly /opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly \
   --session Requirement_Plan_Source_Reconstruction \
   --output /tmp/requirement-plan-results
 ```

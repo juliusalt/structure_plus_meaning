@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "reports": {
+    "comparison": {
+      "records": 65,
+      "tags": {
+        "CERTIFICATE_ADMISSIONS": 1,
+        "CERTIFICATE_ASSESSMENT": 30,
+        "CERTIFICATE_COMPARISON": 1,
+        "CERTIFICATE_CRITICISM": 1,
+        "CERTIFICATE_INVESTIGATION": 1,
+        "CERTIFICATE_SCOPE": 1,
+        "CERTIFICATE_SUBJECT": 30
+      },
+      "sha256": "e3d05aaf8f82a4c5443f28f120aebe13b532455982580e4b8fd80f6205c36d55"
+    }
+  }
+}

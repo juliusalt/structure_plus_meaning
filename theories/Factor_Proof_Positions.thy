@@ -4,6 +4,11 @@ begin
 
 section \<open>Finite predecessors in a well-founded relation\<close>
 
+lemma rtrancl_predecessors_unfold:
+  "{b. (b,a) \<in> r\<^sup>*} =
+    insert a (\<Union>c\<in>{c. (c,a) \<in> r}. {b. (b,c) \<in> r\<^sup>*})"
+  by (auto elim: rtrancl.cases intro: rtrancl_into_rtrancl)
+
 lemma finite_well_founded_predecessors:
   assumes well_founded: "wf r" and branching: "\<And>a. finite {b. (b,a) \<in> r}"
   shows "finite {b. (b,a) \<in> r\<^sup>*}"
@@ -11,7 +16,7 @@ proof (induction a rule: wf_induct[OF well_founded])
   case (1 a)
   have decomposition: "{b. (b,a) \<in> r\<^sup>*} =
     insert a (\<Union>c\<in>{c. (c,a) \<in> r}. {b. (b,c) \<in> r\<^sup>*})"
-    by (auto elim: rtrancl.cases intro: rtrancl_into_rtrancl)
+    by (rule rtrancl_predecessors_unfold)
   have finite: "finite (\<Union>c\<in>{c. (c,a) \<in> r}. {b. (b,c) \<in> r\<^sup>*})"
     by (rule finite_UN_I[OF branching]) (use "1.IH" in blast)
   show ?case using finite decomposition by simp
@@ -182,11 +187,15 @@ proof -
   show ?thesis by (rule wf_subset[OF wf_measure subset])
 qed
 
+lemma schema_proof_edge_predecessors:
+  "{m. (m,n) \<in> schema_proof_edges P} = rel_ran (schema_proof_children P n)"
+  by (auto simp: schema_proof_edges_def rel_ran_def)
+
 lemma schema_proof_edges_finitely_branching:
   "finite {m. (m,n) \<in> schema_proof_edges P}"
 proof -
   have same: "{m. (m,n) \<in> schema_proof_edges P} = rel_ran (schema_proof_children P n)"
-    by (auto simp: schema_proof_edges_def rel_ran_def)
+    by (rule schema_proof_edge_predecessors)
   show ?thesis unfolding same by (rule finite_rel_ran[OF schema_proof_children_finite])
 qed
 
@@ -194,6 +203,12 @@ definition schema_proof_positions ::
   "('a,'s,'d,'c) schema_system \<Rightarrow> ('a,'s,'d,'c) instantiated_proof_node \<Rightarrow>
     ('a,'s,'d,'c) instantiated_proof_node set" where
   "schema_proof_positions P root = {n. (n,root) \<in> (schema_proof_edges P)\<^sup>*}"
+
+lemma schema_proof_positions_unfold:
+  "schema_proof_positions P root=insert root
+    (\<Union>n\<in>rel_ran (schema_proof_children P root). schema_proof_positions P n)"
+  using rtrancl_predecessors_unfold[of root "schema_proof_edges P"]
+  by (simp only: schema_proof_positions_def[symmetric] schema_proof_edge_predecessors)
 
 lemma schema_proof_positions_finite:
   "finite (schema_proof_positions P root)"

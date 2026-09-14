@@ -16,12 +16,17 @@ type_synonym native_history_problem =
 definition native_history_empty_program :: "local_address option finite_native_system" where
   "native_history_empty_program=\<lparr>finite_system_interfaces={||},finite_system_clauses={||}\<rparr>"
 
-definition native_history_compiled_problem :: "nat\<Rightarrow>native_history_problem option" where
-  "native_history_compiled_problem i=(let E=finite_guard_source False;
-    P=finite_nat_guard_source_model False; Q=fst (program_evaluation_subject i); D=snd (program_evaluation_subject i);
+definition native_history_compile :: "(nat,nat,nat,nat) finite_schema_system\<Rightarrow>
+    (nat\<times>finite_factor_term) fset\<Rightarrow>native_history_problem option" where
+  "native_history_compile Q D=(let E=finite_guard_source False;
+    P=finite_nat_guard_source_model False;
     h=finite_program_coordinates E (finite_system_definitions P) (finite_system_definitions Q) native_guard_source_coordinate
     in map_option (\<lambda>(F,u). (F,u,[],fimage (\<lambda>(d,t). (h d,t)) D))
       (finite_extend_mapped_native E P Q native_guard_source_coordinate))"
+
+definition native_history_compiled_problem :: "nat\<Rightarrow>native_history_problem option" where
+  "native_history_compiled_problem i=native_history_compile
+    (fst (program_evaluation_subject i)) (snd (program_evaluation_subject i))"
 
 definition native_history_closed_negative_problem :: "native_history_problem option" where
   "native_history_closed_negative_problem=map_option (\<lambda>(E,u,r,D).

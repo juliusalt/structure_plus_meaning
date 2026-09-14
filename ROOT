@@ -1076,3 +1076,33 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Indexed_Relation_Images
     Fixed_Second_Projections
     Native_Graph_Investigation_Execution
+    Factor_Finite_Proof_Children
+    Factor_Finite_Proof_Coordinate_Graphs
+    Factor_Finite_Proof_Coordinates
+    Factor_Finite_Proof_Flattening
+    Factor_Finite_Proof_Paths
+    Factor_Finite_Proof_Positions
+    Factor_Native_Certificate_Assessment
+    Factor_Native_Certificate_Cases
+    Factor_Native_Certificate_Correctness
+    Factor_Native_Certificate_Coverage
+    Factor_Native_Certificate_Coverage_Investigation
+    Factor_Native_Certificate_Development
+    Factor_Native_Certificate_Identity_Cases
+    Factor_Native_Certificate_Input_Development
+    Factor_Native_Certificate_Inputs
+    Factor_Native_Certificate_Investigation
+    Factor_Native_Certificate_Scope_Repair
+    Finite_Indexed_Relation_Families
+    Finite_Investigation_Readiness
+    Finite_Keyed_Products
+    Finite_Ordered_Representatives
+    Finite_Relation_Conflicts
+    Finite_Subject_Cycles
+    Indexed_Relation_Families
+    Indexed_Relation_Paths
+    Native_Certificate_Coverage_Execution
+    Native_Certificate_Development_Execution
+    Native_Certificate_Input_Execution
+    Native_Certificate_Investigation_Execution
+    Native_Certificate_Scope_Repair_Execution

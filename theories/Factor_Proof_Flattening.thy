@@ -1,5 +1,5 @@
 theory Factor_Proof_Flattening
-  imports Factor_Proof_Positions Factor_Derivation_Recovery
+  imports Factor_Proof_Positions Factor_Derivation_Recovery Indexed_Relation_Families
 begin
 
 section \<open>Flattened node and discharge graphs\<close>
@@ -18,19 +18,18 @@ lemma assertion_not_schema_proof_kind [simp]:
 definition schema_flat_discharges ::
   "('a,'s,'d,'c) schema_system \<Rightarrow> ('a,'s,'d,'c) instantiated_proof_node set \<Rightarrow>
     ((('a,'s,'d,'c) instantiated_proof_node \<times> 's) \<times> ('a,'s,'d,'c) instantiated_proof_node) set" where
-  "schema_flat_discharges P N =
-    (\<Union>n\<in>N. (\<lambda>(s,m). ((n,s),m)) ` schema_proof_children P n)"
+  "schema_flat_discharges P N = indexed_relation_family N (schema_proof_children P)"
 
 lemma schema_flat_discharge_member:
   "((n,s),m) \<in> schema_flat_discharges P N \<longleftrightarrow>
     n \<in> N \<and> (s,m) \<in> schema_proof_children P n"
-  by (auto simp: schema_flat_discharges_def)
+  by (simp only: schema_flat_discharges_def indexed_relation_family_member)
 
 lemma schema_flat_discharges_finite:
   assumes "finite N"
   shows "finite (schema_flat_discharges P N)"
   unfolding schema_flat_discharges_def
-  by (rule finite_UN_I[OF assms]) (simp add: schema_proof_children_finite)
+  by (rule indexed_relation_family_finite[OF assms]) (simp only: schema_proof_children_finite)
 
 lemma schema_flat_discharges_single_valued:
   assumes "\<And>n. n \<in> N \<Longrightarrow> instantiated_node_checked P n"

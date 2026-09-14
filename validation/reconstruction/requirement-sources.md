@@ -41,7 +41,7 @@ python3 -B tools/materialize_source_boundary.py \
   --manifest validation/reconstruction/requirement-sources-sources.json \
   --output /tmp/requirement-source-inputs
 python3 -B /tmp/requirement-source-inputs/tools/reconstruct_requirement_sources.py \
-  --poly /opt/isabelle/contrib/polyml-5.9.2-2/x86_64-linux/poly \
+  --poly /opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly \
   --session Requirement_Source_Independent_Run \
   --output /tmp/requirement-source-results
 ```
@@ -77,7 +77,7 @@ source-only reconstruction boundary. Comparison hashes identify reproduction
 of all JSON fields, indices, ordering and repeated records. The
 Isabelle-established contracts determine their meaning.
 
-The boundary contains 374 theory sources, 22 Python modules and one
+The boundary contains 375 theory sources, 22 Python modules and one
 complete-report comparison: 397 input files and 23 reports. The instruction
 serializer is shared with the earlier 75-report plan reconstruction; complete
 native coordinates, artifacts and schemas share their serializer with the

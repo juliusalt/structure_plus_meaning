@@ -9,6 +9,7 @@ import investigation_json
 import machine_reports
 import native_program_json
 import native_history_json
+import native_certificate_json
 import observation_contracts
 import program_evaluation_json
 import proved_code
@@ -30,14 +31,9 @@ def program(engine, inputs):
         lambda s: 'map N.nat_of_integer ' + investigate.ml_list(s, str)) + ';\n'
     code += native_history_json.SOURCE
     code += r'''
-fun jproof (N.Schema_Proof (c,v,b)) = "{\"clause\":" ^ jaddress c ^
-  ",\"bindings\":" ^ jf (jbindingWith jaddress) v ^ ",\"children\":" ^
-  jf (fn (s,p) => "{\"socket\":" ^ jaddress s ^ ",\"proof\":" ^ jproof p ^ "}") b ^ "}";
-fun jcertificate (q,p) = "{\"claim\":" ^ jcall q ^ ",\"proof\":" ^ jproof p ^ "}";
-fun jderivation NONE = "null"
-  | jderivation (SOME (p,(a,t))) = "{\"program\":" ^ jprogram p ^
-      ",\"answer\":" ^ jf jcall a ^ ",\"certificates\":" ^ jf jcertificate t ^ "}";
-fun jcandidate (m,result) = "{\"method\":" ^ jnat m ^ ",\"result\":" ^ jderivation result ^ "}";
+'''
+    code += native_certificate_json.PRELUDE
+    code += r'''fun jcandidate (m,result) = "{\"method\":" ^ jnat m ^ ",\"result\":" ^ jderivation result ^ "}";
 fun jreport NONE = "null"
   | jreport (SOME (x,(reference,candidates))) =
       "{\"problem\":" ^ jproblem x ^ ",\"reference\":" ^ jreference reference ^
@@ -129,7 +125,7 @@ def main():
         args.proof, args.poly, args.output, required_theories=['Native_Derivation_Investigation_Execution'],
         inputs={'candidates': contract['candidate_indices'], 'facets': contract['facet_indices'],
                 'cases': args.cases, 'selections': [[], [0, 2, 5], [0, 1, 2, 3, 4, 5], [5, 3, 4, 2, 1, 0]]},
-        input_paths=[Path(__file__), Path(check_reasoning.__file__), Path(investigation_json.__file__),
+        input_paths=[Path(__file__), Path(native_certificate_json.__file__), Path(check_reasoning.__file__), Path(investigation_json.__file__),
                      Path(native_program_json.__file__), Path(native_history_json.__file__), Path(program_evaluation_json.__file__),
                      *(Path(c['path']) for c in contracts)],
         program=program, assess=assess, project=args.project.resolve(), timeout=1800,

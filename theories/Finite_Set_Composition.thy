@@ -12,6 +12,12 @@ lemma finite_union_image_member:
   "x |\<in>| ffUnion (fimage f A) \<longleftrightarrow> (\<exists>a. a |\<in>| A \<and> x |\<in>| f a)"
   by (auto simp: ffUnion.rep_eq fimage.rep_eq)
 
+lemma finite_union_image_flatten:
+  "ffUnion (fimage f (ffUnion (fimage g A)))=
+    ffUnion (fimage (\<lambda>a. ffUnion (fimage f (g a))) A)"
+  by (rule fset_inject[THEN iffD1], rule set_eqI)
+    (simp only: finite_union_image_member; blast)
+
 lemma finite_singleton_when_member:
   "x |\<in>| (if P then {|y|} else {||}) \<longleftrightarrow> P \<and> x=y"
   by (cases P) auto
@@ -19,6 +25,11 @@ lemma finite_singleton_when_member:
 lemma finite_image_member:
   "y |\<in>| fimage f A \<longleftrightarrow> (\<exists>x. x |\<in>| A \<and> y=f x)"
   by (auto simp: fimage.rep_eq)
+
+lemma finite_value_image_member:
+  "(s,y) |\<in>| fimage (map_prod id f) A \<longleftrightarrow>
+    (\<exists>x. (s,x) |\<in>| A \<and> y=f x)"
+  by (simp only: finite_image_member split_paired_Ex map_prod_def case_prod_conv id_apply prod.inject; blast)
 
 lemma finite_first_projection_member:
   "a |\<in>| fimage fst R \<longleftrightarrow> (\<exists>b. (a,b) |\<in>| R)"

@@ -1,0 +1,19 @@
+theory Decision_Replay_Execution
+  imports Factor_Decision_Replay_Sharing
+begin
+
+setup \<open>Finite_Observation_Contracts.export @{term decision_replay_investigation}\<close>
+
+export_code decision_replay_packet requirement_decision_indices decision_replay_inspect decision_replay_cell_inspect
+  decision_replay_row_inspect requirement_decision_inspect
+  finite_system_interfaces finite_system_clauses finite_schema_conclusion finite_schema_premises finite_schema_materials
+  finite_material_source finite_material_atoms finite_material_edges finite_material_counts finite_material_functions
+  finite_environment_artifact_rows finite_environment_bindings finite_artifact_rows
+  finite_graph_inferences finite_graph_discharges
+  Finite_Variable Finite_Pattern_Payload Finite_Pattern_Pair Finite_Pattern_Target
+  Schema_Proof Finite_Inference Finite_Assertion Finite_Target Finite_Payload Finite_Pair Finite_Whole Finite_Anchor
+  Existing_Admission Paired_Admission Collected_Admission
+  fset set nat_of_integer integer_of_nat
+  in SML module_name Decision_Replay_Execution file_prefix decision_replay
+
+end

@@ -1091,3 +1091,21 @@ contracts for problem choice, changes, information and criticism, their operativ
 admission transitions, adequate coverage, historical permission and the complete
 cost account. This composition work remains directed at `problems.txt`; neither
 scoped operation alone establishes that milestone or genesis.
+
+## Complete decisions composed with native replay
+
+Finite function graphs now lift the existing native replay constructor to
+complete certificate families. The source-decision instance preserves the
+entire earlier decision and its original entry-condition contract. The
+requirement instance adds exactly the target certificate family for admitted
+terms. Its original conditions and every existing native replay condition
+instantiate the same subject and assessment registry.
+
+`Exact_Cache_Readings` factors the pointwise lookup/fallback argument shared by
+list and finite-relation caches. The relation instance reuses complete
+inspection rows. `Finite_Assessment_Projections` preserves whole public tables
+when their internal contexts carry derived cached values. Six native readers
+instantiate these contracts; all 29 complete reports remain equal. The
+[decision replay boundary](validation/reconstruction/decision-replay.md) retains
+the full executed scope. Workflow subject and transition coverage, original
+policy and history permission, and the physical cost account remain open.

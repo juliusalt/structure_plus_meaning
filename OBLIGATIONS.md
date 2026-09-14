@@ -949,13 +949,17 @@ The [replay](validation/reconstruction/native-certificate-replay.md) and
 [decision](validation/reconstruction/requirement-decisions.md) recipes retain
 48 complete reports through source boundaries.
 
-Whole-workflow presentation and enforced transitions, complete original-subject
-and criticism coverage, historical permission, decision-certificate replay and
-the full physical cost account remain required for `problems.txt`. Native
-mathematical-proof admission, genesis and the final audit are also still open.
+[Decision-certificate replay](validation/reconstruction/decision-replay.md) now
+preserves the entire original decision and constructs exactly its required
+native replay family. All original decision and replay conditions remain
+separate. Whole-workflow presentation and enforced transitions, complete
+original-subject and criticism coverage, original-policy and historical
+permission, and the full physical cost account remain required for `problems.txt`.
+Native mathematical-proof admission, genesis and the final audit are also still open.
 
 The [current verification](validation/reconstruction/current-verified.json) records
-the complete 1,129-theory check, 98 host tests with 59 subtests, and nineteen
-source-only reconstructions reproducing 1,184 complete native reports. Every
-current source and full report boundary was verified before generated copies
-were removed. The six-condition workflow milestone remains open.
+the complete 1,142-theory check, 98 host tests with 59 subtests, and twenty
+source-only boundaries reproducing 1,213 complete reports. Three changed recipes
+were rebuilt; seventeen unchanged complete input boundaries retain their earlier
+verification. Generated copies were removed after review. The six-condition
+workflow milestone remains open.

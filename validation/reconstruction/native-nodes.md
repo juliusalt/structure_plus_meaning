@@ -71,7 +71,7 @@ The [verified reconstruction](native-nodes-verified.json) rebuilt the entire
 closure from HOL, collected complete proof diagnostics with no errors, exported
 the accepted code and reproduced every report field. Every original source and
 execution input was verified. The [materialization receipt](native-nodes-materialization.json)
-identifies the exact collected inputs. The complete 1,129-theory repository
+identifies the exact collected inputs. The complete 1,142-theory repository
 check and all 98 host-tool tests also passed.
 
 Fresh allocation is an explicit requirement of this local problem. Searching

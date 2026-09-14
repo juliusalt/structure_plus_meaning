@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "reports": {
+    "comparison": {
+      "records": 29,
+      "tags": {
+        "DECISION_REPLAY_ASSESSMENT": 12,
+        "DECISION_REPLAY_COMPARISON": 1,
+        "DECISION_REPLAY_INVESTIGATION": 3,
+        "DECISION_REPLAY_SCOPE": 1,
+        "DECISION_REPLAY_SUBJECT": 12
+      },
+      "sha256": "249b2ad391a4ddbbaa4d1c2b97cbba1a73d1381dcbff3bbb38fd3d3889a6bc2a"
+    }
+  }
+}

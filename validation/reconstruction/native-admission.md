@@ -78,10 +78,10 @@ exports the checked code and reproduces every report. Generated proof snapshots,
 modules and logs are reproducible outputs rather than repository inputs.
 The [verified reconstruction](native-admission-verified.json) and
 [materialization receipt](native-admission-materialization.json) retain the
-completed source-only run. The complete 1,129-theory check passed. All nineteen current
-reconstruction boundaries rebuilt their entire source closures from HOL and
-reproduced all 1,184 complete reports, including the expanded requirement-family
-criticism, native inference histories and native node construction.
+completed source-only run. The [current verification](current-verified.json) records the complete
+1,142-theory build, passing host tests and twenty source-only boundaries for
+1,213 complete reports. Three changed recipes were freshly reconstructed;
+seventeen unchanged complete input boundaries retain their earlier verification.
 
 The candidate scope does not establish optimality among arbitrary methods.
 The term samples do not prove universal correctness; the separate constructor

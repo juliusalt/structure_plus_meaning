@@ -113,9 +113,10 @@ The [verified reconstruction](native-requirements-verified.json) and
 [materialization receipt](native-requirements-materialization.json) retain the
 successful independent run from those 483 files. Every original source and
 execution input was checked, with complete proof diagnostics and all 186
-complete reports reproduced. The full 1,129-theory check also passed. All nineteen current
-boundaries rebuilt their complete source closures from HOL and reproduced all
-1,184 complete reports.
+complete reports reproduced. The [current verification](current-verified.json) records the complete
+1,142-theory build, passing host tests and twenty source-only boundaries for
+1,213 complete reports. Three changed recipes were freshly reconstructed;
+seventeen unchanged complete input boundaries retain their earlier verification.
 
 These results do not establish arbitrary-method coverage, general finite
 program decision, admission and enforcement of the complete development record,

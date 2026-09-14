@@ -2380,12 +2380,16 @@ now constructs the actual source-positioned graph and call, preserving the
 original source and retaining the least environment for closed replay.
 [Original-requirement decisions](validation/reconstruction/requirement-decisions.md)
 construct admitted terms and checked evidence from all original requirements.
-Both reuse the existing subject and constructor machinery. The whole development
-workflow and six conditions in `problems.txt` remain the immediate milestone.
+[Decision replay](validation/reconstruction/decision-replay.md) preserves the
+complete original decision and constructs native replay for its exact admitted
+certificate family. All three reuse the existing subject and constructor
+machinery. The whole development workflow and six conditions in `problems.txt`
+remain the immediate milestone.
 
-The complete 1,129-theory check and all 98 host tests with 59 subtests pass.
-Nineteen source-only reconstructions rebuild their contracts from HOL and
-reproduce all 1,184 complete native reports. The [current verification](validation/reconstruction/current-verified.json)
-retains every current source and report boundary after removal of generated
-copies. Earlier verification boundaries remain in Git. The six conditions in
+The complete 1,142-theory check and all 98 host tests with 59 subtests pass.
+Twenty source-only boundaries retain accepted reconstructions of 1,213 complete
+native reports. Three changed recipes were rebuilt; seventeen complete input
+boundaries are unchanged and retain their earlier verification. The
+[current verification](validation/reconstruction/current-verified.json) records
+these checks after removal of generated copies. The six conditions in
 `problems.txt` remain the active development milestone.

@@ -93,9 +93,10 @@ theory from HOL and reproduced every report field. The
 exact input boundary. All original source bytes, actual execution inputs and
 complete proof diagnostics were checked.
 
-The full 1,129-theory repository check passed. All nineteen current reconstruction
-boundaries rebuilt their entire source closures from HOL, with every original
-source and runtime input verified and all 1,184 complete reports reproduced.
+The [current verification](current-verified.json) records the complete
+1,142-theory build, passing host tests and twenty source-only boundaries for
+1,213 complete reports. Three changed recipes were freshly reconstructed;
+seventeen unchanged complete input boundaries retain their earlier verification.
 
 Native proof-artifact construction, native mathematical-proof checking, complete
 development-cycle enforcement, arbitrary-method coverage, the full cost account,

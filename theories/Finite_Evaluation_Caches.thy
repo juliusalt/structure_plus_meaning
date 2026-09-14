@@ -1,12 +1,12 @@
 theory Finite_Evaluation_Caches
-  imports Finite_Assessment_Reports
+  imports Finite_Assessment_Reports Exact_Cache_Readings
 begin
 
 definition finite_evaluation_cache where
   "finite_evaluation_cache evaluate inputs=map (\<lambda>x. (x,evaluate x)) (remdups inputs)"
 
 definition finite_cached_evaluation where
-  "finite_cached_evaluation evaluate cache x=(case map_of cache x of None \<Rightarrow> evaluate x | Some y \<Rightarrow> y)"
+  "finite_cached_evaluation evaluate cache x=exact_cache_read evaluate (map_of cache) x"
 
 theorem finite_evaluation_cache_lookup:
   "map_of (finite_evaluation_cache evaluate inputs) x=(if x\<in>set inputs then Some (evaluate x) else None)"
@@ -14,7 +14,8 @@ theorem finite_evaluation_cache_lookup:
 
 theorem finite_cached_evaluation_exact:
   "finite_cached_evaluation evaluate (finite_evaluation_cache evaluate inputs) x=evaluate x"
-  by (simp only: finite_cached_evaluation_def finite_evaluation_cache_lookup; simp)
+  unfolding finite_cached_evaluation_def
+  by (rule exact_cache_read_correct) (auto simp: finite_evaluation_cache_lookup split: if_splits)
 
 theorem finite_evaluation_cache_inputs:
   "map fst (finite_evaluation_cache evaluate inputs)=remdups inputs"

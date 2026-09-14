@@ -7,6 +7,7 @@ import admission_goal_json
 import check_native_certificates as shared
 import investigate
 import machine_reports
+import requirement_decision_json
 import observation_contracts
 import proved_code
 
@@ -14,34 +15,7 @@ import proved_code
 def program(engine, inputs):
     code = shared.source_preamble(engine, inputs, 'Requirement_Decision_Execution', 'requirement_decision_indices')
     code += admission_goal_json.PRELUDE + shared.investigation_json.CYCLE
-    code += r'''
-fun jo f NONE = "null" | jo f (SOME x) = f x;
-fun jenv e = jenvironment (N.finite_environment_artifact_rows e,elements (N.finite_environment_bindings e));
-fun jsubject (e,(u,(r,(gs,xs)))) = "{\"environment\":" ^ jenv e ^ ",\"use\":" ^ juse u ^
-  ",\"root\":" ^ jaddress r ^ ",\"requirements\":" ^ jlist (jgoalWith jsite) gs ^ ",\"terms\":" ^ jf jterm xs ^ "}";
-fun jreference (p,expected) = "{\"program\":" ^ jprogram p ^ ",\"admitted_terms\":" ^ jf jterm expected ^ "}";
-fun jevaluated (formed,(covered,(closed,(applications,(rules,answer))))) =
-  "{\"formed\":" ^ Bool.toString formed ^ ",\"head_covered\":" ^ Bool.toString covered ^
-  ",\"demand_closed\":" ^ Bool.toString closed ^ ",\"applications\":" ^ jf japplication applications ^
-  ",\"rules\":" ^ jf (jruleWith jaddress jsite) rules ^ ",\"answer\":" ^ janswerWith jsite answer ^ "}";
-fun joriginal (source,(supported,(demand,evaluated))) = "{\"source\":" ^ jsource source ^
-  ",\"supported\":" ^ jo Bool.toString supported ^ ",\"demand\":" ^ jo (jf jcall) demand ^
-  ",\"evaluation\":" ^ jo jevaluated evaluated ^ "}";
-fun jresult (d,(e,(u,(p,(demand,(answer,(proofs,terms))))))) = "{\"definition\":" ^ jsite d ^
-  ",\"environment\":" ^ jenv e ^ ",\"use\":" ^ juse u ^ ",\"program\":" ^ jprogram p ^
-  ",\"demand\":" ^ jf jcall demand ^ ",\"answer\":" ^ jf jcall answer ^
-  ",\"certificates\":" ^ jf jcertificate proofs ^ ",\"admitted_terms\":" ^ jf jterm terms ^ "}";
-fun jchecked (certificate,checked) = "{\"certificate\":" ^ jcertificate certificate ^
-  ",\"checked\":" ^ Bool.toString checked ^ "}";
-fun jbody (source,(actual,(inspected,(precise,(complete,(preserved,(native,(answers,(proofs,terms))))))))) =
-  "{\"actual_source\":" ^ jsource source ^ ",\"actual_evaluation\":" ^ jevaluated actual ^
-  ",\"certificate_checks\":" ^ jf jchecked inspected ^ ",\"precise\":" ^ Bool.toString precise ^
-  ",\"complete\":" ^ Bool.toString complete ^ ",\"preserved\":" ^ Bool.toString preserved ^
-  ",\"native\":" ^ Bool.toString native ^ ",\"answers_exact\":" ^ Bool.toString answers ^
-  ",\"proofs_sound_and_complete\":" ^ Bool.toString proofs ^ ",\"terms_exact\":" ^ Bool.toString terms ^ "}";
-fun jassessment (ready,(body,rejected)) = "{\"ready\":" ^ Bool.toString ready ^
-  ",\"result\":" ^ jo jbody body ^ ",\"rejected\":" ^ Bool.toString rejected ^ "}";
-fun jbase (m,result) = "{\"method\":" ^ jnat m ^ ",\"result\":" ^ jo jresult result ^ "}";
+    code += requirement_decision_json.PRELUDE + r'''fun jbase (m,result) = "{\"method\":" ^ jnat m ^ ",\"result\":" ^ jo jresult result ^ "}";
 fun jcontext (x,((reference,original),bases)) = "{\"subject\":" ^ jsubject x ^
   ",\"reference\":" ^ jo jreference reference ^ ",\"original\":" ^ joriginal original ^
   ",\"bases\":" ^ jlist jbase bases ^ "}";
@@ -110,7 +84,7 @@ def main():
                             'all certificates and independent proof checks, admitted terms and comparison '
                             'reasons remain actual native outputs. The host checks reproduction only.'}
 
-    modules = [shared, admission_goal_json, shared.check_reasoning, shared.investigation_json,
+    modules = [shared, requirement_decision_json, admission_goal_json, shared.check_reasoning, shared.investigation_json,
                shared.native_program_json, shared.native_history_json, shared.native_graph_json,
                shared.native_certificate_json, shared.program_evaluation_json]
     receipt = proved_code.checked_execution(

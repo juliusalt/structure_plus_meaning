@@ -94,7 +94,7 @@ closure from HOL, collected full proof diagnostics with no errors, exported
 the proved code and reproduced every report field. Every original source and
 execution input was verified. The
 [materialization receipt](native-derivations-materialization.json) identifies
-the exact collected inputs. The full 1,129-theory repository check and all
+the exact collected inputs. The full 1,142-theory repository check and all
 98 host-tool tests passed.
 
 Recursive explanation traces for every failed checker subcondition remain a

@@ -64,9 +64,11 @@ admission, historical permission, the full cost account, native mathematical
 proof admission and genesis remain open. The six conditions in `problems.txt`
 remain the immediate development milestone.
 
-The source boundary contains 546 files: 521 theories, 24 Python
+The source boundary contains 548 files: 522 theories, 25 Python
 modules and the expected-report comparison. A fresh materialization rebuilt
 the entire proof closure from HOL and reproduced all 19 complete reports.
-The [current verification](current-verified.json) records this and all eighteen
-other reconstructions, the complete 1,129-theory build and passing host tests.
+The [current verification](current-verified.json) records the complete
+1,142-theory build, passing host tests and twenty source-only boundaries for
+1,213 complete reports. Three changed recipes were freshly reconstructed;
+seventeen unchanged complete input boundaries retain their earlier verification.
 Generated copies were removed after source, diagnostic and full-report review.

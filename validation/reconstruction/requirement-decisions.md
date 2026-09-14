@@ -54,13 +54,15 @@ This is a scoped native decision operation. A use for problem choice, proposed
 changes, information requests or criticism still requires the complete actual
 native subject and its original-condition contract. The entire workflow needs
 those instances, operative transitions, coverage criticism, historical
-permission and a complete cost account. Native replay of these newly generated
-decision certificates is a further composition problem. This operation alone
+permission and a complete cost account. [Native replay of these generated decision certificates](decision-replay.md)
+now preserves the complete original decision and constructs its exact replay family. This operation alone
 does not close the six conditions in `problems.txt` or establish genesis.
 
-The source boundary contains 500 files: 474 theories, 25 Python
+The source boundary contains 501 files: 474 theories, 26 Python
 modules and the expected-report comparison. A fresh materialization rebuilt
 the entire proof closure from HOL and reproduced all 29 complete reports.
-The [current verification](current-verified.json) records this and all eighteen
-other reconstructions, the complete 1,129-theory build and passing host tests.
+The [current verification](current-verified.json) records the complete
+1,142-theory build, passing host tests and twenty source-only boundaries for
+1,213 complete reports. Three changed recipes were freshly reconstructed;
+seventeen unchanged complete input boundaries retain their earlier verification.
 Generated copies were removed after source, diagnostic and full-report review.

@@ -1550,7 +1550,26 @@ permission, full cost and genesis remain open. Completing these constructions
 is progress toward the six conditions in `problems.txt`, not their discharge.
 
 The [current verification](validation/reconstruction/current-verified.json) records
-the complete 1,129-theory check, 98 host tests with 59 subtests, and nineteen
-source-only reconstructions reproducing 1,184 complete native reports. Every
-current source and full report boundary was verified before generated copies
-were removed. The six-condition workflow milestone remains open.
+the complete 1,142-theory check, 98 host tests with 59 subtests, and twenty
+source-only boundaries reproducing 1,213 complete reports. Three changed recipes
+were rebuilt; seventeen unchanged complete input boundaries retain their earlier
+verification. Generated copies were removed after review. The six-condition
+workflow milestone remains open.
+
+## Original decisions and exact native replay families
+
+The composition retained every earlier complete original context and decision.
+Twelve actual methods produced 2,736 family condition positions and 1,890
+individual replay positions. Every complete value, all four profile and loss
+bases, and all 2,849 initial and 320 partial repair witnesses were inspected.
+Native selection and adequacy return only method 0. Omitted requirements can
+produce replayable guards but fail original precision or refusal. Missing or
+extra certificate keys, unavailable rows, erased mappings and call interiors,
+and excess retained material retain their separate computed failures.
+
+Complete-input sharing was admitted after its entire 29-report result matched
+the original execution, including every field, index, order and repeated row.
+The [source-only reconstruction](validation/reconstruction/decision-replay.md)
+retains the complete scope and reasons. Replay against the installed guard
+does not prove original-policy adequacy or historical permission. Arbitrary
+workflow coverage, full physical cost and genesis remain open.

@@ -79,13 +79,10 @@ proved code and reproduces every report. Generated proof snapshots, native code
 and complete result logs are reproducible bulk, rather than retained repository
 inputs.
 
-The complete 1,129-theory repository check passed with no proof errors, along
-with 98 host tests and 59 subtests. All nineteen source-only reconstructions
-rebuilt their complete contracts from HOL and reproduced all 1,184 native
-reports, including the 193 certificate reports. Every current source, runtime
-input and complete report boundary was verified before the generated copies
-were removed. [The current verification](current-verified.json)
-records those reconstruction and retention boundaries.
+The [current verification](current-verified.json) records the complete
+1,142-theory build, passing host tests and twenty source-only boundaries for
+1,213 complete reports. Three changed recipes were freshly reconstructed;
+seventeen unchanged complete input boundaries retain their earlier verification.
 
 This is a scoped development admission construction. The six-condition milestone
 in `problems.txt` remains open: the complete development workflow still needs its

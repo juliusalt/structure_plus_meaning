@@ -1132,3 +1132,16 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Indexed_Value_Images
     Native_Certificate_Replay_Execution
     Requirement_Decision_Execution
+    Decision_Replay_Execution
+    Exact_Cache_Readings
+    Factor_Decision_Replay_Assessment
+    Factor_Decision_Replay_Cases
+    Factor_Decision_Replay_Correctness
+    Factor_Decision_Replay_Investigation
+    Factor_Decision_Replay_Sharing
+    Factor_Finite_Certificate_Replay_Families
+    Factor_Finite_Requirement_Decision_Replay
+    Factor_Finite_Source_Decision_Replay
+    Factor_Native_Replay_Relation_Caches
+    Finite_Assessment_Projections
+    Finite_Evaluation_Relations

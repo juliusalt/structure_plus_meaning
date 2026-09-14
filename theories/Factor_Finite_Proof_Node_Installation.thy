@@ -50,7 +50,9 @@ proof -
       (map_relation_values decode_finite_object (fset (finite_block_literals B))) (fset (finite_block_callees B))"
     and bounds: "rel_dom (fset (finite_block_literals B))\<union>rel_dom (fset (finite_block_callees B))\<subseteq>
       fset (finite_carrier (finite_structure (finite_block_artifact B)))"
-    using code by (auto simp: proof_node_code_for_def finite_exact_formed_correct map_relation_values_domain)
+    using proof_node_code_properties(1,3,4)[OF code]
+    by (simp_all only: finite_exact_formed_correct map_relation_values_domain
+      decode_finite_object_selectors decode_finite_structure_fields)
   have references: "rel_ran (fset (finite_block_callees B))\<subseteq>environment_positions (decode_finite_environment E)"
     using proof_node_reference_boundary[OF inputs targets] code
     by (simp only: proof_node_code_for_def; blast)

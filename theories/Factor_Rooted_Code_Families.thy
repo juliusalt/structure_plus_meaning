@@ -1,5 +1,5 @@
 theory Factor_Rooted_Code_Families
-  imports Factor_System_Clauses Factor_Definition_Code Factor_Packages
+  imports Factor_System_Clauses Factor_Definition_Code Factor_Packages Fixed_Second_Projections
 begin
 
 section \<open>Compile a selected family from one complete source system\<close>
@@ -52,15 +52,12 @@ lemma finite_uses: "finite uses" using finite_sites by simp
 lemma site_shape:
   assumes "d\<in>D"
   shows "(fst d,[])=d"
-  using roots assms by (cases d) auto
+  by (rule fixed_second_shape[OF roots assms])
 
 lemma use_site:
   assumes "u\<in>uses"
   shows "(u,[])\<in>D"
-proof -
-  obtain d where source: "d\<in>D" "u=fst d" using assms by blast
-  show ?thesis using source site_shape[OF source(1)] by simp
-qed
+  by (rule fixed_second_image_member[OF roots assms])
 
 lemma use_codes:
   assumes "u\<in>uses"

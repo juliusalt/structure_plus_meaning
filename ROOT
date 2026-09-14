@@ -1059,3 +1059,20 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Inspection_Rows
     Finite_Iteration_Folds
     Native_Derivation_Investigation_Execution
+    Factor_Finite_Graph_Codes
+    Factor_Finite_Graph_Construction
+    Factor_Finite_Graph_Coordinates
+    Factor_Finite_Graph_Inputs
+    Factor_Finite_Graph_Installation
+    Factor_Finite_Graph_Mappings
+    Factor_Finite_Graph_Transport
+    Factor_Graph_Mappings
+    Factor_Native_Graph_Assessment
+    Factor_Native_Graph_Cases
+    Factor_Native_Graph_Correctness
+    Factor_Native_Graph_Investigation
+    Factor_Rooted_Proof_Families
+    Finite_Function_Graphs
+    Finite_Indexed_Relation_Images
+    Fixed_Second_Projections
+    Native_Graph_Investigation_Execution

@@ -109,7 +109,7 @@ An added requirement excludes valid terms in 31 ready cases. The preceding
 three-condition observation set leaves six comparisons unresolved in the
 expanded family; the computed revision adds completeness and resolves them.
 
-The session registers 1056 theories; its
+The session registers 1073 theories; its
 [latest complete check](validation/check.json) records the current proof status.
 The [native node constructor](validation/reconstruction/native-nodes.md) produces complete
 assertion and inference metadata in fresh native artifacts. Its actual-source
@@ -131,6 +131,15 @@ original proof relation on every finite input. Fifteen actual methods on the
 same 26 source problems expose invalid children, wrong binding values and valid
 extra certificates. Only the complete constructor is adequate. Every original
 comparison cell is preserved, and all 58 complete reports are reconstructible.
+
+The [whole-graph constructor](validation/reconstruction/native-graphs.md)
+allocates every original node, installs the complete artifact and reference
+family, and recovers the graph through the native reader. Its comparison permits
+different placements through complete correspondences. Fifteen operations on
+37 workloads retain both the direct constructor and an alternative placement.
+Guarded reuse and merging expose freshness and injectivity separately, and the
+returned revisions recover both omitted conditions. Inference validity and
+certificate positioning remain separate requirements.
 
 Native local readers connect an actual
 inference node's bindings to its symbolic replacement record and complete

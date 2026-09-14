@@ -1,5 +1,5 @@
 theory Finite_Derived_Observations
-  imports Finite_Investigation_Interface
+  imports Finite_Investigation_Interface Finite_Function_Graphs
 begin
 
 section \<open>Observation indices present actual subjects, operations and values\<close>
@@ -92,19 +92,6 @@ lemma indexed_satisfied_rows_member:
   "(f,c,w)\<in>set (concat (map (\<lambda>f. map (\<lambda>c. (f,c,v)) (filter (P f) cs)) fs)) \<longleftrightarrow>
     f\<in>set fs \<and> c\<in>set cs \<and> w=v \<and> P f c"
   by auto
-
-lemma finite_function_graph:
-  "fset (fimage (\<lambda>i. (i,S i)) I)=graph_map (fset I) S"
-  by (auto simp: fimage.rep_eq graph_map_def)
-
-lemma finite_function_graph_member:
-  "(i,s) |\<in>| fimage (\<lambda>j. (j,S j)) I \<longleftrightarrow> i |\<in>| I \<and> s=S i"
-  by (simp only: finite_function_graph graph_map_member)
-
-lemma finite_function_graph_all:
-  "(\<forall>(i,s)\<in>fset (fimage (\<lambda>j. (j,S j)) I). P i s) \<longleftrightarrow>
-    (\<forall>i\<in>fset I. P i (S i))"
-  by (auto simp: fimage.rep_eq)
 
 lemma finite_observation_function_graphs_formed:
   "finite_observation_subjects_formed

@@ -9,8 +9,9 @@ The child-claim recipe below, the
 [native admission recipe](native-admission.md),
 [native requirement-family recipe](native-requirements.md),
 [native inference-history recipe](native-histories.md),
-[native proof-node recipe](native-nodes.md), and
-[source-derived certificate recipe](native-derivations.md) use the same reconstruction
+[native proof-node recipe](native-nodes.md),
+[source-derived certificate recipe](native-derivations.md), and
+[whole native graph recipe](native-graphs.md) use the same reconstruction
 runner and source collector. Each retains its own complete source and report boundary. The runner
 schedules proof, diagnostics, code export and the required execution stages;
 it supplies no semantic judgment about their subjects.
@@ -36,8 +37,8 @@ and executes the reasoning family. It fails if a stage fails, complete reports
 change, or its checked inputs change. The optional `--proof` mode rechecks an
 existing accepted export and records `sources_rebuilt: false`.
 
-[native-child-sources.json](native-child-sources.json) lists the exact 562 source
-and fixture files, including 530 theory sources and 30 Python modules. The
+[native-child-sources.json](native-child-sources.json) lists the exact 564 source
+and fixture files, including 532 theory sources and 30 Python modules. The
 shared reconstruction runner is included. To materialize that boundary independently:
 
 ```sh
@@ -57,7 +58,7 @@ when those inputs change. The usual repository build is independent:
 
 `tools/reconstruction_sources.py` derives each recipe's complete original
 theory closure and local Python import closure, together with its declared
-fixtures and report comparison. The same collector serves all eleven boundaries.
+fixtures and report comparison. The same collector serves all twelve boundaries.
 `tools/prepare_proof_sources.py` prepares a complete source prefix for local
 proof work; ordinary validation must accept it before a saved heap is reused.
 

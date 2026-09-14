@@ -1455,3 +1455,36 @@ from HOL and reproduced 862 complete reports. Every original source and
 execution input was verified, and the complete proof diagnostics contain no
 errors. The two repaired observation clients were included in both affected
 reconstructions; the other nine accepted boundaries have unchanged inputs.
+
+
+The whole-graph review compares actual constructions from complete original
+environments, graphs and roots. Its conditions independently retain native
+recovery, arbitrary complete graph correspondence, source preservation,
+freshness, injectivity and refusal. The original constructor satisfies all six
+universally. The actual correspondence keeps alternative placements admissible.
+The initial run selected both methods 0 and 11, and every field of its 481 cells
+was inspected. Its returned five-condition basis omitted injectivity.
+
+Criticism found that merging also returned no result on four available inputs,
+and reuse also mismatched other original graphs. Two added operations retain
+the valid base construction in those cases. The expanded run preserves every
+original cell and all original structural tables. It evaluates 3,330 positions,
+with 3,024 true observations. Methods 0 and 11 remain selected and adequate.
+Guarded reuse fails only freshness on cases 0, 23 and 36; guarded merging fails
+only injectivity on case 9. Complete maps, native readings and original contexts
+retain those exact counterexamples.
+
+All five cycles, including every profile, ordered pair loss and repair witness,
+were read. The former five-condition basis now has twelve residual comparisons
+and twelve injectivity witnesses. The freshness-omitting basis has twelve
+residuals and thirty-six witnesses. Each revision adds the omitted condition;
+every followed comparison has no residual. The [81-report boundary](validation/reconstruction/native-graphs.md)
+retains all complete inputs, results and reasons. The 1,073-theory repository
+check and all 98 host-tool tests passed. No unique placement, arbitrary-method
+coverage, inference-validity, native mathematical-proof, complete physical-cost
+or genesis claim follows from this finite comparison.
+
+At this graph milestone, all twelve source-only reconstructions rebuilt their
+complete theory closures from HOL and reproduced 943 complete reports. Every
+original source and execution input matched its recorded boundary; the complete
+proof diagnostics contain no errors.

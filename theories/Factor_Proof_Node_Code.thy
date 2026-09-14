@@ -23,6 +23,13 @@ definition proof_node_code_for ::
     (\<forall>E u. environment_formed E \<longrightarrow> artifact_at E u R \<longrightarrow> syntax_references E u L C \<longrightarrow>
       native_proof_node_at E u [] N D I K)"
 
+lemma proof_node_code_properties:
+  assumes "proof_node_code_for N D R L C I K"
+  shows "exact_formed R" "[]\<in>rra_carrier (object_structure R)"
+    "reference_table_formed L C"
+    "rel_dom L\<union>rel_dom C\<subseteq>rra_carrier (object_structure R)"
+  using assms by (auto simp: proof_node_code_for_def)
+
 theorem proof_node_code_total:
   fixes E :: "local_address option artifact_environment"
   assumes ef: "environment_formed E" and inputs: "graph_node_inputs_at E D N"

@@ -54,11 +54,7 @@ proof -
   have sequence: "?us=map fst ds" using keys by (simp only: keys[symmetric] map_map comp_def)
   have uses: "set ?us=family.uses" by (simp only: sequence set_map)
   have injective: "inj_on fst (set ds)"
-  proof (rule inj_onI)
-    fix d e assume left: "d\<in>set ds" and right: "e\<in>set ds" and same: "fst d=fst e"
-    have "(fst d,[]::local_address)=(fst e,[])" using same by simp
-    then show "d=e" by (simp only: family.site_shape[OF left] family.site_shape[OF right])
-  qed
+    by (rule fixed_second_first_injective[OF roots])
   have unique: "distinct ?us" using distinct injective by (simp add: sequence distinct_map)
   have separate: "set ?us\<inter>fset (finite_environment_uses E)={}" using fresh by (simp only: uses)
   have artifacts: "\<forall>u\<in>set ?us. finite_exact_formed (?R u)"

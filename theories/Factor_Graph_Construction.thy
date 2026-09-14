@@ -1,5 +1,5 @@
 theory Factor_Graph_Construction
-  imports Factor_Proof_Node_Code Factor_Reference_Packages
+  imports Factor_Rooted_Proof_Families Factor_Reference_Packages
 begin
 
 section \<open>One complete artifact for each fresh proof-node use\<close>
@@ -19,13 +19,7 @@ proof -
   let ?D = "\<lambda>u. schema_graph_premises G (u,[])"
   have fin: "finite ?U" by simp
   have at_root: "\<And>u. u\<in>?U \<Longrightarrow> (u,[])\<in>schema_graph_nodes G"
-  proof -
-    fix u assume member: "u\<in>?U"
-    obtain n where inside: "n\<in>schema_graph_nodes G" "u=fst n" using member by blast
-    have addr: "snd n=[]" using roots inside(1) by blast
-    have same: "(u,[])=n" using inside(2) addr by (cases n) auto
-    show "(u,[])\<in>schema_graph_nodes G" using inside(1) same by simp
-  qed
+    by (rule fixed_second_image_member[OF roots])
   have row: "\<And>u. u\<in>?U \<Longrightarrow> ((u,[]),?N u)\<in>fset (graph_inferences G)"
     by (rule schema_graph_node_value[OF formed at_root]; assumption)
   have inputs: "\<And>u. u\<in>?U \<Longrightarrow> graph_node_inputs_at E (?D u) (?N u)"
@@ -61,68 +55,29 @@ proof -
     show "proof_node_code_for (?N u) (?D u) (?R u) (?L u) (?C u) (?I u) (?K u)"
       using selected[rule_format, OF member] by (simp add: shape)
   qed
-  have properties: "\<forall>u\<in>?U. exact_formed (?R u) \<and>
-    []\<in>rra_carrier (object_structure (?R u)) \<and> reference_table_formed (?L u) (?C u) \<and>
-    rel_dom (?L u)\<union>rel_dom (?C u)\<subseteq>rra_carrier (object_structure (?R u))"
-  proof (intro ballI)
-    fix u assume member: "u\<in>?U"
-    show "exact_formed (?R u) \<and> []\<in>rra_carrier (object_structure (?R u)) \<and>
-      reference_table_formed (?L u) (?C u) \<and>
-      rel_dom (?L u)\<union>rel_dom (?C u)\<subseteq>rra_carrier (object_structure (?R u))"
-      using codes[OF member] by (auto simp: proof_node_code_for_def)
+  have family_codes: "\<forall>n N. (n,N)\<in>fset (graph_inferences G) \<longrightarrow>
+    proof_node_code_for N (schema_graph_premises G n) (?R (fst n)) (?L (fst n)) (?C (fst n)) (?I (fst n)) (?K (fst n))"
+  proof (intro allI impI)
+    fix n N assume row: "(n,N)\<in>fset (graph_inferences G)"
+    have inside: "n\<in>schema_graph_nodes G" using row by (auto simp: schema_graph_nodes_def rel_dom_def)
+    have use: "fst n\<in>?U" by (rule imageI[OF inside])
+    have site: "(fst n,[])=n" by (rule fixed_second_shape[OF roots inside])
+    have functional: "single_valued (fset (graph_inferences G))"
+      using formed by (simp only: schema_graph_formed_def; blast)
+    have node: "rel_value (fset (graph_inferences G)) n=N" by (rule rel_value_eq[OF functional row])
+    show "proof_node_code_for N (schema_graph_premises G n)
+      (?R (fst n)) (?L (fst n)) (?C (fst n)) (?I (fst n)) (?K (fst n))"
+      using codes[OF use] by (simp only: site node)
   qed
-  have rformed: "\<forall>u\<in>?U. exact_formed (?R u)"
-    and rroot: "\<forall>u\<in>?U. []\<in>rra_carrier (object_structure (?R u))"
-    and profiles: "\<forall>u\<in>?U. reference_table_formed (?L u) (?C u)"
-    and bounds: "\<forall>u\<in>?U. rel_dom (?L u)\<union>rel_dom (?C u)\<subseteq>rra_carrier (object_structure (?R u))"
-    using properties by blast+
-  have targets: "\<forall>u\<in>?U. \<forall>d\<in>rel_ran (?C u).
-    d\<in>environment_positions E \<or>
-    (fst d\<in>?U \<and> snd d\<in>rra_carrier (object_structure (?R (fst d))))"
-  proof (intro ballI)
-    fix u d assume member: "u\<in>?U" and dependency: "d\<in>rel_ran (?C u)"
-    have complete: "rel_ran (?C u)=proof_node_reference_sites (?N u) (?D u)"
-      using codes[OF member] by (simp add: proof_node_code_for_def)
-    have scope: "proof_node_reference_sites (?N u) (?D u)\<subseteq>environment_positions E\<union>schema_graph_nodes G"
-      by (rule proof_node_reference_boundary[OF inputs[OF member] schema_graph_premises_targets[OF formed]])
-    have alternative: "d\<in>environment_positions E \<or> d\<in>schema_graph_nodes G"
-      using complete scope dependency by blast
-    show "d\<in>environment_positions E \<or>
-      (fst d\<in>?U \<and> snd d\<in>rra_carrier (object_structure (?R (fst d))))"
-    proof (cases "d\<in>schema_graph_nodes G")
-      case True
-      have inside: "fst d\<in>?U" by (rule imageI[OF True])
-      have address: "snd d=[]" using roots True by blast
-      show ?thesis using inside rroot[rule_format, OF inside] by (simp add: address)
-    next
-      case False
-      then show ?thesis using alternative by blast
-    qed
-  qed
+  interpret family: rooted_proof_code_family E G root ?R ?L ?C ?I ?K
+    by (rule rooted_proof_code_family.intro[OF ef formed metadata roots family_codes])
   obtain F where installed: "environment_formed F" "environment_included E F"
     "\<forall>u\<in>?U. artifact_at F u (?R u) \<and> syntax_references F u (?L u) (?C u)"
     "\<forall>u\<in>environment_uses E. \<forall>T. artifact_at F u T \<longleftrightarrow> artifact_at E u T"
     "\<forall>u\<in>environment_uses E. \<forall>k v. binds_slot F u k v \<longleftrightarrow> binds_slot E u k v"
-    using fresh_reference_environment[OF ef fin fresh rformed profiles bounds targets] by blast
-  have native: "native_schema_graph_at F root G"
-    unfolding native_schema_graph_at_def
-  proof (intro conjI allI impI)
-    show "schema_graph_formed G root" by (rule formed)
-    fix n N assume original: "(n,N)\<in>fset (graph_inferences G)"
-    have inside: "n\<in>schema_graph_nodes G" using original by (auto simp: schema_graph_nodes_def rel_dom_def)
-    have source: "fst n\<in>?U" by (rule imageI[OF inside])
-    have address: "snd n=[]" using roots inside by blast
-    have pair: "(fst n,[])=n" using address by (cases n) auto
-    have sv: "single_valued (fset (graph_inferences G))" using formed by (simp add: schema_graph_formed_def)
-    have projected: "?N (fst n)=N" using rel_value_eq[OF sv original] pair by simp
-    have art: "artifact_at F (fst n) (?R (fst n))"
-      and refs: "syntax_references F (fst n) (?L (fst n)) (?C (fst n))"
-      using installed(3) source by blast+
-    have node: "native_proof_node_at F (fst n) [] (?N (fst n)) (?D (fst n)) (?I (fst n)) (?K (fst n))"
-      by (rule proof_node_code_recovers[OF codes[OF source] installed(1) art refs])
-    show "\<exists>I K. native_proof_node_at F (fst n) (snd n) N (schema_graph_premises G n) I K"
-      using node projected pair address by auto
-  qed
+    using fresh_reference_environment[OF ef family.finite_uses fresh family.artifact_formation
+      family.profiles family.bounds family.targets] by blast
+  have native: "native_schema_graph_at F root G" by (rule family.installed[OF installed(1,3)])
   show ?thesis by (rule exI[of _ F]) (use installed native in blast)
 qed
 

@@ -1013,3 +1013,24 @@ The followed comparison has no residual. Recursive explanation traces, actual
 source positioning, graph placement and replay, native mathematical-proof
 checking, complete development admission and enforcement, the full physical cost
 account and genesis remain separate requirements.
+
+
+Whole native graph construction now shares the complete rooted code-family
+argument with the original abstract construction. Existing coordinate extension,
+node compilation and reference-family installation construct every original
+node and indexed edge before the actual native reader recovers the complete
+graph. Old artifacts and outgoing bindings remain unchanged. Generic
+fixed-coordinate projections, finite relation lookup and complete relation
+images also serve the earlier code and observation clients.
+
+The [graph comparison](validation/reconstruction/native-graphs.md) keeps the
+complete original input and an arbitrary explicit returned correspondence.
+Metadata preservation and injectivity are separate conditions. Fifteen methods
+on 37 workloads retain both the direct constructor and an alternative placement.
+All 481 original cells remain unchanged. Guarded reuse and merging isolate
+freshness and injectivity; the incomplete bases each expose twelve comparisons,
+and their native revisions add the omitted condition and resolve every residual.
+These results preserve the distinction between graph realization and inference
+validity. Certificate positioning, ordered certificate-node coordinates, native
+proof replay, mathematical-proof checking, complete development admission, the
+full physical cost account and genesis remain separate requirements.

@@ -57,6 +57,31 @@ lemma finite_functional_selected_value:
   shows "fthe_elem (fimage snd (ffilter (\<lambda>r. fst r=i) R))=a"
   by (simp only: finite_functional_slot_singleton[OF functional member] fthe_felem_eq)
 
+definition finite_relation_option where
+  "finite_relation_option R k=finite_singleton_option (fimage snd (ffilter (\<lambda>r. fst r=k) R))"
+
+lemma finite_relation_option_member:
+  assumes selected: "finite_relation_option R k=Some a"
+  shows "(k,a) |\<in>| R"
+proof -
+  have singleton: "fimage snd (ffilter (\<lambda>r. fst r=k) R)={|a|}"
+    using selected by (simp only: finite_relation_option_def finite_singleton_option_some)
+  have member: "a |\<in>| fimage snd (ffilter (\<lambda>r. fst r=k) R)" by (simp only: singleton) simp
+  show ?thesis using member by auto
+qed
+
+theorem finite_relation_option_correct:
+  assumes functional: "finite_relation_functional R"
+  shows "finite_relation_option R k=Some a \<longleftrightarrow> (k,a) |\<in>| R"
+proof
+  show "finite_relation_option R k=Some a \<Longrightarrow> (k,a) |\<in>| R"
+    by (rule finite_relation_option_member)
+  assume member: "(k,a) |\<in>| R"
+  show "finite_relation_option R k=Some a"
+    by (simp only: finite_relation_option_def finite_functional_slot_singleton[OF functional member]
+      finite_singleton_option_singleton)
+qed
+
 theorem finite_functional_rows_exact:
   assumes functional: "finite_relation_functional R"
   shows "set (finite_functional_rows R)=fset R"

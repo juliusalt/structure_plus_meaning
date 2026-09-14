@@ -885,3 +885,26 @@ comparison does not authorize its own handoff.
 
 All eleven current source-only reconstructions passed with 862 complete reports,
 no proof errors, and exact original-source and execution-input verification.
+
+
+The whole native graph constructor now allocates every original node, compiles
+its full metadata and indexed targets, installs the entire reference family and
+recovers the graph through the native reader. Its universal contract preserves
+the complete original environment and every old reading. The comparison accepts
+arbitrary complete correspondences and keeps injectivity independent. Fifteen
+actual methods on 37 workloads retain both the direct and alternative placements;
+guarded controls expose freshness and injectivity independently. All original
+cells and complete revision reasons are retained in the [81-report graph boundary](validation/reconstruction/native-graphs.md).
+The full 1,073-theory check and 98 host-tool tests passed.
+
+This supplies complete native graph realization under the original source and
+metadata prerequisites. Inference claims and explicit assertion truth remain
+separate. Certificate positioning, ordered certificate-node coordinates, full
+native proof placement and replay, native mathematical-proof checking and O-85,
+complete development admission and enforcement, historical permission, the full
+physical cost account, genesis and the final line-by-line audit remain open.
+
+At this graph milestone, all twelve source-only reconstructions rebuilt their
+complete theory closures from HOL and reproduced 943 complete reports. Every
+original source and execution input matched its recorded boundary; the complete
+proof diagnostics contain no errors.

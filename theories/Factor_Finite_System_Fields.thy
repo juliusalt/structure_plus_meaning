@@ -5,8 +5,7 @@ begin
 section \<open>Executable projections and simultaneous definition relocation\<close>
 
 definition finite_system_interface_option :: "('a,'s,'d,'c) finite_schema_system\<Rightarrow>'d\<Rightarrow>'a finite_term_pattern option" where
-  "finite_system_interface_option P d=finite_singleton_option
-    (fimage snd (ffilter (\<lambda>r. fst r=d) (finite_system_interfaces P)))"
+  "finite_system_interface_option P d=finite_relation_option (finite_system_interfaces P) d"
 
 definition finite_system_clause_family :: "('a,'s,'d,'c) finite_schema_system\<Rightarrow>'d\<Rightarrow>
     ('c\<times>('a,'s,'d) finite_factor_schema) fset" where
@@ -23,8 +22,7 @@ proof -
   have functional: "finite_relation_functional (finite_system_interfaces P)"
     using formed by (simp add: finite_system_formed_def)
   have selected: "finite_system_interface_option P d=Some p"
-    by (simp only: finite_system_interface_option_def
-      finite_functional_slot_singleton[OF functional row] finite_singleton_option_singleton)
+    by (simp only: finite_system_interface_option_def finite_relation_option_correct[OF functional]; rule row)
   have source: "schema_system_formed (decode_finite_system P)"
     using formed by (simp only: finite_system_formed_correct)
   have actual: "(d,decode_finite_pattern p)\<in>system_interfaces (decode_finite_system P)"

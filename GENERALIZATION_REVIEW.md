@@ -1674,3 +1674,42 @@ twenty-two complete source closures and toolchains are unchanged and retain
 their previous proof and execution evidence through explicit Git provenance.
 The twenty-seven source-only recipes cover 1,438 reports. Complete reviewed
 archives replace 2.45 GB of temporary full-build and reconstruction copies.
+
+
+## Original-policy histories and fresh-prefix allocation
+
+The complete original source and requirement family prepare a closed history
+state before any generation is admitted. Every requested predecessor must
+already occur in the admission ledger. The actual replay-to-generation
+constructor and fixed original-policy gate then determine the complete next
+state. Accepted steps preserve every original request and policy field, previous
+material, actual generation readings and original payload requirements.
+
+Twelve history methods run on twelve complete certificate-family subjects.
+The exact typed and raw operations are selected and adequate. Controls expose
+omitted membership or policy, altered state, removed or added family rows and
+conflated unavailable and rejected results. The family-scope correction retains
+every earlier complete subject and first-nine result and condition. A fixture
+with retained material and an empty admission ledger distinguishes the two
+relations; it is not claimed reachable through the public transition API.
+
+A common fresh-prefix embedding contract covers the original allocator and a
+prefix with one natural coordinate. Complete native function graphs determine
+boundary identity, freshness, injectivity, unchanged suffixes and the separate
+growth condition. Criticism adds two collisions with an unstored supplied
+boundary and a method omitting that boundary from its head calculation. All
+previous complete subjects, first-nine results and conditions remain unchanged.
+Ten methods run on fourteen subjects: both exact methods satisfy the semantic
+comparison; only the compact method also satisfies the growth comparison.
+The semantic-only observation basis has six residual pairs; adding the growth
+facet leaves none. The current unary coordinate encoding and all full physical
+cost obligations remain explicit.
+
+The combined source check accepts 1,263 theories, 98 host tests and 59 subtests.
+The history and allocation reconstructions rebuild 588 and 50 theories from HOL
+and reproduce all 76 complete reports directly. All twenty-seven previous
+complete source closures, toolchains and verification bytes remain unchanged.
+Twenty-nine recipes cover 1,514 reports. Complete verified archives replace the
+temporary generated copies. Complete workflow adequacy, historical permission
+and reachability, cached and indexed generation allocation, unrestricted scope
+coverage, native mathematical-proof checking, genesis and the final audit remain open.

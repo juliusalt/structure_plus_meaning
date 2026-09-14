@@ -1166,3 +1166,23 @@ assessment. The closed store type preserves its invariant through every exposed
 update. The generation constructor must still adopt that store and establish
 its own allocation and cost contracts. Scoped store formation does not enforce
 all development-workflow requirements.
+
+
+## Original histories and fresh-prefix embeddings
+
+The history transition reuses original policy construction, certified-cause
+soundness, native replay construction and generation monotonicity. A generic
+optional-result invariant supplies its closed state API. Complete original
+state equality, finite relation-reader assessments, shared context tables and
+streamed result formatting preserve every rejected or unavailable position.
+Payload truth and admission-ledger membership remain distinct from retention
+and complete historical permission.
+
+The general prefix embedding owns boundary identity, global injectivity and
+freshness. Original and compact allocators instantiate it with their actual
+premises. Reusable function-graph observations compute finite injectivity and
+preservation; exact suffix checking supplies its original relation. Their
+allocation instance separates semantic conditions from word-coordinate growth.
+The current unary component path and physical cost are not discharged by that
+growth theorem. The common constructor and view contracts must still be used
+when allocation is joined to the actual generation store.

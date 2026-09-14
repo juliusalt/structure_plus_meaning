@@ -987,12 +987,26 @@ guards. Complete result comparison rejects omitted guards and changed outputs.
 Generation-store adoption, allocation, whole-workflow policy and enforcement,
 historical permission and the full physical cost remain further work.
 
+
+[Original-policy histories](validation/reconstruction/required-history.md) now
+retain the original request and policy in a closed state. A step checks actual
+admitted predecessors, joined replay construction and the fixed original policy;
+all earlier material and original requirement truth are preserved. Complete
+optional results distinguish missing input, rejection and changed state.
+
+[Fresh-use allocation](validation/reconstruction/use-allocation.md) factors the
+common fresh-prefix contract. Both the original and compact methods preserve
+its semantic conditions; only the compact method satisfies the one-coordinate
+growth condition throughout the executed scope. Boundary-only collision cases
+expose omission of the supplied boundary. The current index still encodes a
+natural component n with n+1 path positions. Cached allocation, encoding and
+generation-store adoption, full physical cost and the whole workflow remain open.
+
 The [current verification](validation/reconstruction/current-verified.json) records
-the complete 1,245-theory check, 98 host tests with 59 subtests, and twenty-seven
-source-only boundaries covering 1,438 complete reports. Five changed or new
-families were freshly reconstructed through one proof of 621 theories from HOL,
-and all 322 reports were directly compared. Twenty-two unchanged complete input
-closures and toolchains retain their earlier reconstruction through explicit
-Git provenance. Generated copies were removed after full review. The six-condition
-workflow milestone, native mathematical-proof admission, genesis and final audit
-remain open.
+the complete 1,263-theory check, 98 host tests with 59 subtests, and twenty-nine
+source-only boundaries covering 1,514 complete reports. Two fresh reconstructions
+rebuilt 588 and 50 theories from HOL and directly reproduced all 76 new reports.
+The other twenty-seven complete source closures, toolchains and verification
+bytes are unchanged. Complete review preceded removal of generated copies.
+The six-condition workflow milestone, complete historical permission and
+reachability, native mathematical-proof admission, genesis and final audit remain open.

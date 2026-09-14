@@ -1248,3 +1248,21 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     RRA_Indexed_Environment_Views
     RRA_Indexed_Environments
     RRA_Local_Environment_Updates
+    RRA_Finite_Generation_Monotonicity
+    Factor_Required_History_States
+    Factor_Required_History_Steps
+    Factor_Required_History_Construction
+    Factor_Required_History_Projection
+    Factor_Required_History_References
+    Factor_Required_History_Methods
+    Factor_Required_History_Cases
+    Factor_Required_History_Investigation
+    Required_History_Execution
+    RRA_Use_Prefix_Embeddings
+    RRA_Compact_Uses
+    RRA_Finite_Compact_Uses
+    Finite_Map_Observations
+    RRA_Use_Allocation_Observations
+    RRA_Use_Allocation_Methods
+    RRA_Use_Allocation_Investigation
+    Use_Allocation_Execution

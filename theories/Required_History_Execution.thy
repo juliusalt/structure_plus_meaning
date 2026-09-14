@@ -1,0 +1,18 @@
+theory Required_History_Execution
+  imports Factor_Required_History_Investigation Factor_Executable_Artifact_Values
+    Factor_Finite_Judgment_Reading_Sharing
+begin
+
+setup \<open>Finite_Observation_Contracts.export @{term required_history_investigation}\<close>
+
+export_code required_history_packet required_history_indices required_history_subject_coverage
+  required_history_inspect raw_required_history required_history_source required_history_source_use
+  required_history_source_root required_history_goals required_history_entry required_history_policy
+  required_history_policy_use required_history_material required_history_members
+  generation_locus generation_payload generation_cause generation_predecessors
+  finite_artifact_rows finite_environment_artifact_rows finite_environment_bindings
+  History_Step Schema_Proof Finite_Target Finite_Payload Finite_Pair Finite_Whole Finite_Anchor
+  Existing_Admission Paired_Admission Collected_Admission fset set nat_of_integer integer_of_nat
+  in SML module_name Required_History_Execution file_prefix required_history
+
+end

@@ -1,7 +1,7 @@
 {
-  "invocation": "5e5375ac-f414-4a34-b791-607cd804dffc",
+  "invocation": "895d677c-d999-4fa1-b379-235df7c15af3",
   "status": "accepted",
-  "started_utc": "2026-09-14T22:28:48.864563+00:00",
+  "started_utc": "2026-09-14T23:27:37.803054+00:00",
   "command": [
     "isabelle",
     "build",
@@ -9,15 +9,15 @@
     "-o",
     "threads=12",
     "-o",
-    "timeout=1500",
+    "timeout=900",
     "-D",
-    "/tmp/generalization-quality-review/native-storage-required-integration/worktree"
+    "/tmp/generalization-quality-review/native-history-allocation-integration/worktree"
   ],
   "base_session": "HOL",
   "exit_code": 0,
   "session_diagnostics": "",
   "sources": {
-    "ROOT": "37208c8d45db0a8470c9d43061d8f227ca17764a727f9f22e0adcfcf9b186eec",
+    "ROOT": "e33eeef0942056e1b6fe90e09d71fed76d081091a4132e8ee6d17dbbb1a660ff",
     "theories/Artifact_Lookup_Execution.thy": "2dd0871fbc0069fbfa3176b6ffcfaab452c14527d1c6d010f20d65a4e6a183f3",
     "theories/Bag_Difference_Witnesses.thy": "d5b919d0e2fb895fcb241ca351faa839a108a639a4f374b724941439746efe33",
     "theories/Bag_Readings.thy": "03d4158d527863bfd03904cfb3ae2b13f3caf62fc9ef8f9a0644754dae34cbae",
@@ -872,6 +872,14 @@
     "theories/Factor_Required_Cause_Assessment.thy": "01aa59da2d0668e9b08d89e149bd6a6000bf6bafd245d03cd31fca678f4fe3fc",
     "theories/Factor_Required_Cause_Cases.thy": "29e7408d4cce13e2ed20453cdffaad258783d1773acb4def64e4ad00bd790c2e",
     "theories/Factor_Required_Cause_Investigation.thy": "334db41084f360e2556a11dfebf42bd1b1628450dc4a6697f743d12991c07ddb",
+    "theories/Factor_Required_History_Cases.thy": "021010532dfda26d6219768b28f41b59595a6d1d9bc5a0fcd4add135a04160e8",
+    "theories/Factor_Required_History_Construction.thy": "1b2003bda66b02357a9edc167757a8afe26335a8f9c0792b7d93dfbd8ba9a030",
+    "theories/Factor_Required_History_Investigation.thy": "a0fe48cecf7a2e60a56f94ac128877b229d5512fecf1d200b5b2f5f7deac190e",
+    "theories/Factor_Required_History_Methods.thy": "49aab426cabf00e529b638642385610384496851fbadef55a1300838403a6a32",
+    "theories/Factor_Required_History_Projection.thy": "c519a488475930e6da583716f9db97410cbb4c622940778c0648d785e2800be8",
+    "theories/Factor_Required_History_References.thy": "2dc1aaf9527b97cca92538a8550c5b543bb3a5c0b9f63517f1da5f88e6eaf017",
+    "theories/Factor_Required_History_States.thy": "fc2bf4ddf4b6245e140876981fe7fe3ce82a1b467a317f0ff3c493bf06c2fc55",
+    "theories/Factor_Required_History_Steps.thy": "35ad1a27d2fdb117b8f388e59cdacdbdb9e9e9041dcee0d218a1a35073d0d77f",
     "theories/Factor_Requirement_Artifact_Admission.thy": "420f26dcb439cbc3d905839ac847b86c640b7c5880b05afe340e78b57e26f315",
     "theories/Factor_Requirement_Decision_Assessment.thy": "b0e9a87051247ee4681158869a2f3905a06937fff04e101894e7b23e50c62c09",
     "theories/Factor_Requirement_Decision_Cases.thy": "39876e8d291d2468f8af212571cb71dd5c2cdbeebedd0fbdfa00d927ead0895d",
@@ -1061,6 +1069,7 @@
     "theories/Finite_Keyed_Products.thy": "7c931b86fead8d7d8102fd30ba82e87ac8655da0c09760377c78e45a71887583",
     "theories/Finite_Keyed_Table_Comparison.thy": "6acb738ef46736f820415d340973b9b5649e19c99fb0db6e066237f7fa6f4679",
     "theories/Finite_List_Rekey.thy": "1a203deaefb7c8620584f6288c2db6846936d773425d12a5483dc153d0dc546c",
+    "theories/Finite_Map_Observations.thy": "d8dff960271fe870f106004c3f67cf4c6cdb28ea1f56536a7975096fb6f0c17d",
     "theories/Finite_Observation_Contracts.thy": "b2d519b484f12d3a001b156ad8f5a8c3654f10dec954ed9040842cb9c546d5a4",
     "theories/Finite_Observation_Repairs.thy": "2834ce8cf69fc2c69be1ce9c02015d0da9c1723b701ebf7c2aa82633c26d8f24",
     "theories/Finite_Observation_Tables.thy": "3940b2239cec42a817e7e29804cabff423086bde3a025be20d44fbe253f3e37d",
@@ -1169,6 +1178,7 @@
     "theories/RRA_Collection_Frames.thy": "cdd04dd4431c4ecef57470df127cc9b56ed3190ae894a8d0959d22c098765420",
     "theories/RRA_Collection_References.thy": "4447962cbc3b8a45ca9bc4f15574231c9ad77874981128ec10fca5d35a3bdcd9",
     "theories/RRA_Collection_Selections.thy": "c2865a26c0da59b32ed1b1eaba7a7ceb7ddca430d6d0fd3a4603003bede47f46",
+    "theories/RRA_Compact_Uses.thy": "e8331b7a593f52d2d4a329cc2e8841c3da487e047d1739ad9343c3763dbdfef6",
     "theories/RRA_Core.thy": "acd13d70482fd6a3bcaed5e07776d76b2afcca45e69353d591a26639c30752db",
     "theories/RRA_Data.thy": "2ff07ed3d0ae79f3a278b4e4fac5b78320a36e314ffa026db1cd014579fd7af5",
     "theories/RRA_Data_Enumerations.thy": "5b8f22ad91d9e01706823bfbb4d47f95bd32afbbd7610e13f75f623e4f9ea4ea",
@@ -1187,6 +1197,7 @@
     "theories/RRA_External_Occurrence_Syntax.thy": "1112276e553ebd977bb7a6c24ee61c4a74657d1fe97c1c5d5d987f893eca0ab5",
     "theories/RRA_Finite_Anchor_Selection.thy": "ecc383240b075e26d6f498cdbbcda8e88f3f4ef12e06e575c1ca4faeec213be0",
     "theories/RRA_Finite_Artifacts.thy": "1cedd2efc4995df234b87218154fb11e3aae53b16af8c742ac02fac68d9e2c06",
+    "theories/RRA_Finite_Compact_Uses.thy": "79a549e12e5f5b4d81e1697d87613b387cab1f403490e8fb9edc01370a0da541",
     "theories/RRA_Finite_Environment_Construction.thy": "3b2b98fafb149a9a0daf5c0058365dcd319c41804c60929d9cd4f55f2a28f258",
     "theories/RRA_Finite_Environment_Positions.thy": "fe8a19075208ba7ab9b60caf4d51142f746481dacdbce0c8c633b1d9e3d45104",
     "theories/RRA_Finite_Environment_Preservation.thy": "17eb9f33cbdaa4ccf07562979918a2af967cb0eec46f160d43a008825cbacaf2",
@@ -1195,6 +1206,7 @@
     "theories/RRA_Finite_Generation_Checking.thy": "36aa67f453b572b545c2fbdca5f64b98b21c02ed66c8c10e1e4e819838c0393b",
     "theories/RRA_Finite_Generation_Construction.thy": "87badac4625b3ebbae4264a32707f18f92c6731534548b21314b5692f4598f36",
     "theories/RRA_Finite_Generation_Encoding.thy": "7f3a36f315f66141bd3f68b1c60343afdf1251ea35cc9d061cd12a1dba078139",
+    "theories/RRA_Finite_Generation_Monotonicity.thy": "875f4b4fc8e3b670183645f01586534e28fe53d257a6a73fad9c56ec3743556c",
     "theories/RRA_Finite_Generation_Projections.thy": "55c873f07f93248834941ce3ca456147436ac82b8e78706f3683dbb8292e962f",
     "theories/RRA_Finite_Generation_Readings.thy": "3795a50a8d076a640e85a2bce3734a2f2935e27c7ac7005396f859ae6adad51c",
     "theories/RRA_Finite_Generation_Record_Cases.thy": "667990594a1ad0875bf95b89b6ad23a681dd812659129568a88cfbf959b8472c",
@@ -1248,7 +1260,12 @@
     "theories/RRA_Syntax_Forests.thy": "894da092e856a3eae87335103e9bb2b3142befb070b6f7f3c209eb907187af58",
     "theories/RRA_Syntax_Records.thy": "f3862704a82cb2829b9aab71fb22794aaa2c2c4aab6377fee1497ac10cb6b090",
     "theories/RRA_Transaction.thy": "53ca0820fac510835275e4af06c00546d10c515282c9f530399707a7a4e9ca16",
+    "theories/RRA_Use_Allocation_Investigation.thy": "4904b4bfbeea50d855d493fddd703ddd9b756873ca464a16f8d66c1e7f622f66",
+    "theories/RRA_Use_Allocation_Methods.thy": "9601f52a4389c635dbc2bfd4f4a4f9bebe68873985672a82db3d8867507dee0b",
+    "theories/RRA_Use_Allocation_Observations.thy": "28b50dcc1fdc63bc3d7c33e7670b6705b9042b564a20976bcf46729439f9306c",
+    "theories/RRA_Use_Prefix_Embeddings.thy": "d6a5b30824babed3f1c8f07cde75556322f4b78e41e4d00b34308154e8d3babe",
     "theories/Required_Cause_Execution.thy": "bf8f949c6214d02290058a6bc65c85d2087a0bc579b45dea425b353cd0cf01d3",
+    "theories/Required_History_Execution.thy": "915d4cf5c717108088ad5a16904a7e8a04dc1cf6964f105adf47b0c529fd449f",
     "theories/Requirement_Artifact_Execution.thy": "e2132930c093f7d8135c53f0db1c097b986ed27fc61c72838b04d1356dddd3cb",
     "theories/Requirement_Decision_Execution.thy": "038e1451d74f5f62bc4c6d8497c1ec3cfe1320547e1936adbbef3dbd7807846e",
     "theories/Requirement_Plan_Execution.thy": "26638a4df01ebb1103b5b243a1e85f676e8292cfa02d5c43ba5c7c37bdf568b4",
@@ -1262,7 +1279,8 @@
     "theories/SK_Lambda_Results.thy": "115c29372a7879586561ef4ad6a1d10e72d76b23a4810e39729019231421f358",
     "theories/SK_Lambda_Termination.thy": "7d2f3248170e07f792caea84333de3702deb0c6727d6ba2869b3d12e1e4f2636",
     "theories/SK_Numerals.thy": "476bb45aae6af3ba3ce524c1a8ff2ca40744ee4c5a561daab9dbe0bb983f51dd",
-    "theories/SK_Reduction.thy": "8cf39661c474f3556af3f348581d8936a406073700dab2e43b901dcdc74f9860"
+    "theories/SK_Reduction.thy": "8cf39661c474f3556af3f348581d8936a406073700dab2e43b901dcdc74f9860",
+    "theories/Use_Allocation_Execution.thy": "d91ccdb56f447660a711095dd6147b0c87c6540f7d18df1980ff5725aed1628b"
   },
   "tools": {
     "tools/build.py": "8915b7a480b2a17b5cea5b819f3be43323f69cb79dc1513a76c07eb83f6b491e",
@@ -1271,6 +1289,6 @@
   "isabelle_version": "Isabelle2025-2",
   "sources_unchanged": true,
   "tools_unchanged": true,
-  "finished_utc": "2026-09-14T22:38:19.507473+00:00",
-  "log_sha256": "3517bf6886ac2ad4eda691f13003ea32eaebd78544b8ff6b9b5675c170926aec"
+  "finished_utc": "2026-09-14T23:36:11.929507+00:00",
+  "log_sha256": "257619d0f8669894c120ef1e8d8c38938fcb482d4012a150d7dcb883cc37cc5e"
 }

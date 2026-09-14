@@ -2415,12 +2415,26 @@ guards. Complete result comparison rejects omitted guards and changed outputs.
 Generation-store adoption, allocation, whole-workflow policy and enforcement,
 historical permission and the full physical cost remain further work.
 
-The complete 1,245-theory check and all 98 host tests with 59 subtests pass.
-Twenty-seven source-only boundaries cover 1,438 complete native reports.
-Five changed or new families were freshly reconstructed through one proof of
-621 theories from HOL and direct comparison of all 322 reports. The complete
-input closures and toolchains of the other twenty-two families are unchanged;
-their earlier reconstruction evidence is retained through explicit Git provenance.
+
+[Original-policy histories](validation/reconstruction/required-history.md) now
+retain the original request and policy in a closed state. A step checks actual
+admitted predecessors, joined replay construction and the fixed original policy;
+all earlier material and original requirement truth are preserved. Complete
+optional results distinguish missing input, rejection and changed state.
+
+[Fresh-use allocation](validation/reconstruction/use-allocation.md) factors the
+common fresh-prefix contract. Both the original and compact methods preserve
+its semantic conditions; only the compact method satisfies the one-coordinate
+growth condition throughout the executed scope. Boundary-only collision cases
+expose omission of the supplied boundary. The current index still encodes a
+natural component n with n+1 path positions. Cached allocation, encoding and
+generation-store adoption, full physical cost and the whole workflow remain open.
+
+The complete 1,263-theory check and all 98 host tests with 59 subtests pass.
+Twenty-nine source-only boundaries cover 1,514 complete native reports.
+The two new families freshly rebuilt 588 and 50 theories from HOL, respectively;
+all 76 reports directly equal their preceding executions. The other twenty-seven
+complete source closures, toolchains and verification records are unchanged.
 The [current verification](validation/reconstruction/current-verified.json)
-records these checks after removal of generated copies. The six conditions in
-`problems.txt` remain the active development milestone.
+records these checks and the retained evidence replacing generated copies.
+The six conditions in `problems.txt` remain the active development milestone.

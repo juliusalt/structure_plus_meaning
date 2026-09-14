@@ -80,9 +80,9 @@ and complete result logs are reproducible bulk, rather than retained repository
 inputs.
 
 The [current verification](current-verified.json) records the complete
-1,142-theory build, passing host tests and twenty source-only boundaries for
-1,213 complete reports. Three changed recipes were freshly reconstructed;
-seventeen unchanged complete input boundaries retain their earlier verification.
+1,180-theory build, passing host tests and twenty-two source-only boundaries
+for 1,270 complete reports. All recipes were freshly reconstructed through
+one source proof of their combined dependencies and their original executions.
 
 This is a scoped development admission construction. The six-condition milestone
 in `problems.txt` remains open: the complete development workflow still needs its

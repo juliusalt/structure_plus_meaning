@@ -1,5 +1,5 @@
 theory RRA_Finite_Syntax_Construction
-  imports RRA_Executable_Syntax RRA_Bound_Forests RRA_Syntax_Forests
+  imports RRA_Executable_Syntax RRA_Bound_Forests RRA_Syntax_Forests RRA_External_Occurrence_Syntax
 begin
 
 section \<open>Finite construction preserves the existing complete syntax objects\<close>
@@ -16,6 +16,11 @@ definition finite_external_occurrence_syntax :: "local_address\<Rightarrow>finit
   "finite_external_occurrence_syntax a=\<lparr>
     finite_structure=\<lparr>finite_carrier={|[],[4],[5]|},finite_incidence={|([],[],[4]),([],[4],[5])|}\<rparr>,
     finite_data=finite_payload_basis [5] a\<rparr>"
+
+lemma decode_finite_external_occurrence_syntax [simp]:
+  "decode_finite_object (finite_external_occurrence_syntax a)=external_occurrence_syntax a"
+  by (simp add: finite_external_occurrence_syntax_def external_occurrence_syntax_def
+    decode_finite_object_def decode_finite_structure_def)
 
 fun finite_literal_syntax :: "finite_exact_target \<Rightarrow> finite_exact_artifact" where
   "finite_literal_syntax (Finite_Whole R)=\<lparr>

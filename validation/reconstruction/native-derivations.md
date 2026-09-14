@@ -86,15 +86,15 @@ python3 -B tools/reconstruct_native_derivations.py \
   --output /tmp/native-derivation-reconstruction
 ~~~
 
-The [source boundary](native-derivations-sources.json) retains 490 files:
-467 theories, 22 Python modules and the
+The [source boundary](native-derivations-sources.json) retains 492 files:
+469 theories, 22 Python modules and the
 [complete-report comparison](native-derivations-reports.json).
 The [verified reconstruction](native-derivations-verified.json) rebuilt that
 closure from HOL, collected full proof diagnostics with no errors, exported
 the proved code and reproduced every report field. Every original source and
 execution input was verified. The
 [materialization receipt](native-derivations-materialization.json) identifies
-the exact collected inputs. The full 1,142-theory repository check and all
+the exact collected inputs. The full 1,180-theory repository check and all
 98 host-tool tests passed.
 
 Recursive explanation traces for every failed checker subcondition remain a

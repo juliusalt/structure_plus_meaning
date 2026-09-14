@@ -77,8 +77,8 @@ source-only reconstruction boundary. Comparison hashes identify reproduction
 of all JSON fields, indices, ordering and repeated records. The
 Isabelle-established contracts determine their meaning.
 
-The boundary contains 376 theory sources, 22 Python modules and one
-complete-report comparison: 397 input files and 23 reports. The instruction
+The boundary contains 378 theory sources, 22 Python modules and one
+complete-report comparison: 401 input files and 23 reports. The instruction
 serializer is shared with the earlier 75-report plan reconstruction; complete
 native coordinates, artifacts and schemas share their serializer with the
 executed package-construction reports.

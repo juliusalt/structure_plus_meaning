@@ -957,9 +957,20 @@ original-subject and criticism coverage, original-policy and historical
 permission, and the full physical cost account remain required for `problems.txt`.
 Native mathematical-proof admission, genesis and the final audit are also still open.
 
+[Generation record construction](validation/reconstruction/generation-records.md)
+now preserves the complete original history and every requested predecessor use
+and address. Actual native comparisons expose reference replacement and deletion
+of unrelated history as separate failures. The original and reversed constructors
+have all-input correctness proofs. [Literal replay admission](validation/reconstruction/literal-replay.md)
+connects actual closed replay to the exact whole payload of the call, with
+separate soundness and completeness conditions. The joined constructor has
+an all-input certified-base-cause theorem and an exact availability boundary.
+Its complete runtime execution, arbitrary cause reading, whole workflow
+transitions, historical permission and the full cost account remain further work.
+
 The [current verification](validation/reconstruction/current-verified.json) records
-the complete 1,142-theory check, 98 host tests with 59 subtests, and twenty
-source-only boundaries reproducing 1,213 complete reports. Three changed recipes
-were rebuilt; seventeen unchanged complete input boundaries retain their earlier
-verification. Generated copies were removed after review. The six-condition
-workflow milestone remains open.
+the complete 1,180-theory check, 98 host tests with 59 subtests, and twenty-two
+source-only boundaries reproducing 1,270 complete reports. All recipes were
+freshly reconstructed through one proof of their complete combined dependencies
+from HOL and their original execution groups. Generated copies were removed
+after review. The six-condition workflow milestone remains open.

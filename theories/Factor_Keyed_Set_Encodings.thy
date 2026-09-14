@@ -1,5 +1,5 @@
 theory Factor_Keyed_Set_Encodings
-  imports Factor_Keyed_Set_Contracts
+  imports Factor_Keyed_Set_Contracts Finite_Set_Composition
 begin
 
 section \<open>Complete encoded rows expose both finite-set levels\<close>
@@ -53,11 +53,6 @@ proof -
 qed
 
 section \<open>Injective field encodings preserve both finite-set identities\<close>
-
-lemma fset_image_equality:
-  assumes "inj f"
-  shows "fimage f S=fimage f T \<longleftrightarrow> S=T"
-  by (simp only: fset_inject[symmetric] fimage.rep_eq inj_image_eq_iff[OF assms])
 
 lemma keyed_fset_encoding_injective:
   assumes keys: "inj f" and members: "inj g"

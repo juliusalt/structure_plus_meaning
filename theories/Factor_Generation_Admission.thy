@@ -185,7 +185,7 @@ next
       using target_difference_contract.at[OF first(2) second(2)] target_difference_contract.at[OF first(4) second(4)]
         target_difference_contract.at[OF first(5) second(5)] by (simp_all only: generation_value_components)
     show ?thesis by (simp only: first(1) second(1) core other generation_identity_fields generation_difference_fields
-      admitted equal_targets unequal_targets predecessor_identity predecessor_difference generation_core.inject; blast)
+      admitted equal_targets unequal_targets predecessor_identity predecessor_difference generation_structure.inject; blast)
   qed
   show ?case using admission comparison by blast
 qed

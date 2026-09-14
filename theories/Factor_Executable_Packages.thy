@@ -1,19 +1,9 @@
 theory Factor_Executable_Packages
   imports Factor_Executable_Definitions Factor_Executable_Systems Factor_Packages
-    Bootstrap_Finite_Closure
+    Bootstrap_Finite_Closure RRA_Finite_Environment_Positions
 begin
 
 section \<open>Every candidate definition comes from a supplied occurrence\<close>
-
-definition finite_environment_positions ::
-  "'u finite_artifact_environment \<Rightarrow> 'u definition_site fset" where
-  "finite_environment_positions E = ffUnion (fimage (\<lambda>(u,C).
-    fimage (Pair u) (finite_carrier (finite_structure C))) (finite_environment_artifacts E))"
-
-lemma finite_environment_positions_correct:
-  "fset (finite_environment_positions E) = environment_positions (decode_finite_environment E)"
-  by (auto simp: finite_environment_positions_def finite_union_image_member finite_image_member
-      environment_positions_def artifact_at_def split: prod.splits; force)
 
 definition decode_finite_definition ::
   "'u finite_native_definition \<Rightarrow>

@@ -1,31 +1,8 @@
 theory Factor_Executable_Replay_Retention
-  imports Factor_Executable_Dependencies Factor_Executable_Realization Factor_Replay_Retention
+  imports Factor_Executable_Judgment_Retention Factor_Executable_Realization Factor_Replay_Retention
 begin
 
 section \<open>Application and proof metadata determine their external slots\<close>
-
-definition finite_native_application_demands ::
-  "'u finite_artifact_environment \<Rightarrow> 'u \<Rightarrow> local_address \<Rightarrow> ('u \<times> local_address) fset" where
-  "finite_native_application_demands E u r =
-    fimage (Pair u) (finite_reading_slots (finite_application_readings E u r))"
-
-theorem finite_native_application_demands_correct:
-  "fset (finite_native_application_demands E u r) = native_application_demands (decode_finite_environment E) u r"
-proof -
-  have projected: "fset (finite_reading_slots (finite_application_readings E u r)) =
-      {k. \<exists>q I K. native_application_at (decode_finite_environment E) u r (fst q) (snd q) I K \<and> k \<in> K}"
-  proof (rule finite_reading_slots_correct[where D=decode_finite_call_term])
-    show "(q,I,K) |\<in>| finite_application_readings E u r \<longleftrightarrow>
-        native_application_at (decode_finite_environment E) u r
-          (fst (decode_finite_call_term q)) (snd (decode_finite_call_term q)) (fset I) (fset K)" for q I K
-      by (cases q) (simp add: finite_application_readings_correct)
-    fix q I K assume read: "native_application_at (decode_finite_environment E) u r (fst q) (snd q) I K"
-    show "\<exists>p J A. (p,J,A) |\<in>| finite_application_readings E u r \<and> fset A=K"
-      using finite_application_readings_complete[OF read] by blast
-  qed
-  show ?thesis by (auto simp: finite_native_application_demands_def native_application_demands_def
-      fimage.rep_eq projected split: prod.splits; force)
-qed
 
 definition finite_native_node_slots ::
   "'u finite_artifact_environment \<Rightarrow> 'u definition_site \<Rightarrow>
@@ -110,25 +87,25 @@ definition finite_native_replay_sources ::
   "'u finite_artifact_environment \<Rightarrow> 'u \<Rightarrow> local_address \<Rightarrow> 'u \<Rightarrow>
     'u finite_native_derivation_graph \<Rightarrow> 'u fset" where
   "finite_native_replay_sources E pu pr au G =
-    finite_native_package_sources E pu pr |\<union>| {|au|} |\<union>| finite_native_graph_sources G"
+    finite_native_judgment_sources E pu pr au |\<union>| finite_native_graph_sources G"
 
 lemma finite_native_replay_sources_correct:
   "fset (finite_native_replay_sources E pu pr au G) =
     native_replay_sources (decode_finite_environment E) pu pr au (decode_finite_graph G)"
   by (simp add: finite_native_replay_sources_def native_replay_sources_def
-      finite_native_package_sources_correct finite_native_graph_sources_correct)
+      finite_native_judgment_sources_correct native_judgment_sources_def finite_native_graph_sources_correct)
 
 definition finite_native_replay_demands ::
   "'u finite_artifact_environment \<Rightarrow> 'u \<Rightarrow> local_address \<Rightarrow> 'u \<Rightarrow> local_address \<Rightarrow>
     'u finite_native_derivation_graph \<Rightarrow> ('u \<times> local_address) fset" where
   "finite_native_replay_demands E pu pr au ar G =
-    finite_native_package_demands E pu pr |\<union>| finite_native_application_demands E au ar |\<union>| finite_native_graph_demands E G"
+    finite_native_judgment_demands E pu pr au ar |\<union>| finite_native_graph_demands E G"
 
 lemma finite_native_replay_demands_correct:
   "fset (finite_native_replay_demands E pu pr au ar G) =
     native_replay_demands (decode_finite_environment E) pu pr au ar (decode_finite_graph G)"
   by (simp add: finite_native_replay_demands_def native_replay_demands_def
-      finite_native_package_demands_correct finite_native_application_demands_correct finite_native_graph_demands_correct)
+      finite_native_judgment_demands_correct native_judgment_demands_def finite_native_graph_demands_correct)
 
 definition finite_native_replay_environment ::
   "'u finite_artifact_environment \<Rightarrow> 'u \<Rightarrow> local_address \<Rightarrow> 'u \<Rightarrow> local_address \<Rightarrow>

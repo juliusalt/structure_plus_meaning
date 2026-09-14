@@ -13,12 +13,29 @@ The child-claim recipe below, the
 [source-derived certificate recipe](native-derivations.md),
 [whole native graph recipe](native-graphs.md), five
 [certificate path and development recipes](native-certificates.md),
-[complete certificate replay](native-certificate-replay.md), and
-[original-requirement decisions](requirement-decisions.md), and
-[decision replay](decision-replay.md) use the same reconstruction
+[complete certificate replay](native-certificate-replay.md),
+[original-requirement decisions](requirement-decisions.md),
+[decision replay](decision-replay.md),
+[generation records](generation-records.md), and
+[literal replay admission](literal-replay.md) use the same reconstruction
 runner and source collector. Each retains its own complete source and report boundary. The runner
 schedules proof, diagnostics, code export and the required execution stages;
 it supplies no semantic judgment about their subjects.
+
+Related recipes can share one fresh proof of their combined dependencies:
+
+```sh
+python3 -B tools/reconstruction_suite.py \
+  --poly /opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly \
+  --output /tmp/related-reconstructions
+```
+
+The suite materializes the complete union of the original recipe inputs,
+rebuilds their joint dependency context from HOL, exports each required module,
+and executes the existing recipe groups. Each recipe keeps its own complete
+report comparison and source manifest. The combined proof and diagnostics are
+shared evidence of the same fresh build; no supplied export is counted as a
+source rebuild. Individual recipes remain independently reconstructible.
 
 The retained boundary contains repository theories and Python sources, the
 original finite source fixture, the toolchain requirements, and the expected
@@ -41,8 +58,8 @@ and executes the reasoning family. It fails if a stage fails, complete reports
 change, or its checked inputs change. The optional `--proof` mode rechecks an
 existing accepted export and records `sources_rebuilt: false`.
 
-[native-child-sources.json](native-child-sources.json) lists the exact 566 source
-and fixture files, including 534 theory sources and 30 Python modules. The
+[native-child-sources.json](native-child-sources.json) lists the exact 568 source
+and fixture files, including 536 theory sources and 30 Python modules. The
 shared reconstruction runner is included. To materialize that boundary independently:
 
 ```sh
@@ -62,7 +79,7 @@ when those inputs change. The usual repository build is independent:
 
 `tools/reconstruction_sources.py` derives each recipe's complete original
 theory closure and local Python import closure, together with its declared
-fixtures and report comparison. The same collector serves all twenty boundaries.
+fixtures and report comparison. The same collector serves all twenty-two boundaries.
 `tools/prepare_proof_sources.py` prepares a complete source prefix for local
 proof work; ordinary validation must accept it before a saved heap is reused.
 

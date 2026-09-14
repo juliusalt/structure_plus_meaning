@@ -1145,3 +1145,41 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Native_Replay_Relation_Caches
     Finite_Assessment_Projections
     Finite_Evaluation_Relations
+    Complete_Child_Assignments
+    Factor_Executable_Application_Retention
+    Factor_Executable_Judgment_Retention
+    Factor_Finite_Generation_Replay
+    Factor_Finite_Generation_Replay_Completion
+    Factor_Finite_Judgment_Quotation
+    Factor_Finite_Literal_Replay
+    Factor_Literal_Replay_Alternatives
+    Factor_Literal_Replay_Assessment
+    Factor_Literal_Replay_Cases
+    Factor_Literal_Replay_Investigation
+    Finite_Bijective_Relations
+    Finite_Optional_Relation_Predicates
+    Finite_Singleton_Projections
+    Generation_Record_Execution
+    Generation_Structures
+    Literal_Replay_Execution
+    RRA_External_Occurrence_Syntax
+    RRA_Finite_Anchor_Selection
+    RRA_Finite_Environment_Positions
+    RRA_Finite_Generation_Checking
+    RRA_Finite_Generation_Construction
+    RRA_Finite_Generation_Encoding
+    RRA_Finite_Generation_Projections
+    RRA_Finite_Generation_Readings
+    RRA_Finite_Generation_Record_Cases
+    RRA_Finite_Generation_Reference_Construction
+    RRA_Finite_Generation_References
+    RRA_Finite_Generations
+    RRA_Generation_Child_Assignments
+    RRA_Generation_Record_Assessment
+    RRA_Generation_Record_Construction
+    RRA_Generation_Record_Correctness
+    RRA_Generation_Record_Investigation
+    RRA_Generation_Record_Permutations
+    RRA_Generation_Record_References
+    RRA_Generation_References
+    RRA_Included_Artifacts

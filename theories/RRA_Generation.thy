@@ -1,29 +1,16 @@
 theory RRA_Generation
-  imports RRA_Structural_Syntax "HOL-Library.FSet"
+  imports RRA_Structural_Syntax Generation_Structures
 begin
 
 section \<open>Finite exact generation cores\<close>
 
-datatype generation_core =
-  Generation
-    (generation_locus: exact_target)
-    (generation_predecessors: "generation_core fset")
-    (generation_payload: exact_target)
-    (generation_cause: exact_target)
+type_synonym generation_core = "exact_target generation_structure"
 
 inductive generation_formed :: "generation_core \<Rightarrow> bool" where
   formed:
     "target_formed l \<Longrightarrow> target_formed p \<Longrightarrow> target_formed c \<Longrightarrow>
      (\<forall>H\<in>fset P. generation_formed H) \<Longrightarrow>
      generation_formed (Generation l P p c)"
-
-lemma generation_identity:
-  "G = H \<longleftrightarrow>
-    generation_locus G = generation_locus H \<and>
-    generation_predecessors G = generation_predecessors H \<and>
-    generation_payload G = generation_payload H \<and>
-    generation_cause G = generation_cause H"
-  by (cases G; cases H) auto
 
 lemma generation_formed_fields:
   assumes "generation_formed G"
@@ -32,40 +19,6 @@ lemma generation_formed_fields:
     target_formed (generation_cause G) \<and>
     (\<forall>H\<in>fset (generation_predecessors G). generation_formed H)"
   using assms by (cases rule: generation_formed.cases) auto
-
-definition predecessor_edges :: "(generation_core \<times> generation_core) set" where
-  "predecessor_edges = {(H,G). H \<in> fset (generation_predecessors G)}"
-
-lemma predecessor_size_decreases:
-  assumes "(H,G) \<in> predecessor_edges"
-  shows "size H < size G"
-proof (cases G)
-  case (Generation l P p c)
-  have member: "H \<in> fset P" using assms Generation by (simp add: predecessor_edges_def)
-  have bound: "Suc (size H) \<le> (\<Sum>K\<in>fset P. Suc (size K))"
-    by (rule member_le_sum[OF member]) simp_all
-  show ?thesis using bound by (simp add: Generation)
-qed
-
-lemma predecessor_ancestry_decreases:
-  assumes "(H,G) \<in> predecessor_edges\<^sup>+"
-  shows "size H < size G"
-  using assms
-  by (induction rule: trancl_induct)
-     (auto dest: predecessor_size_decreases intro: less_trans)
-
-lemma predecessor_acyclic:
-  "acyclic_edges predecessor_edges"
-  using predecessor_ancestry_decreases
-  by (auto simp: acyclic_edges_def)
-
-lemma predecessor_well_founded:
-  "wf predecessor_edges"
-proof -
-  have sub: "predecessor_edges \<subseteq> measure size"
-    using predecessor_size_decreases by auto
-  show ?thesis by (rule wf_subset[OF wf_measure sub])
-qed
 
 lemma base_core_exists:
   "\<exists>G. generation_formed G \<and> generation_predecessors G = {||}"

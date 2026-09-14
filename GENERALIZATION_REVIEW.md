@@ -1573,3 +1573,31 @@ The [source-only reconstruction](validation/reconstruction/decision-replay.md)
 retains the complete scope and reasons. Replay against the installed guard
 does not prove original-policy adequacy or historical permission. Arbitrary
 workflow coverage, full physical cost and genesis remain open.
+
+## Original generation records and literal replay admission
+
+The generation investigation computes 1,872 condition positions from sixteen
+complete subjects and thirteen actual operations. It retains the original and
+reversed constructors. Case 13 method 11 preserves the generation core and old
+environment while changing the original predecessor use; only reference
+identity fails. Method 12 preserves the new native generation after deleting
+unrelated old material; only old-environment preservation fails. The complete
+initial and partial comparisons retain their repair witnesses and add these
+missing distinctions before their followed reports become adequate.
+
+The literal-replay investigation retains every actual decision certificate and
+replay, including unavailable values. Seven methods on seven complete subjects
+compute soundness and completeness through the original native relations.
+The original and singleton gates are selected and adequate, with independent
+all-input equivalence proofs. Missing proof material, a wrong root, a mismatched
+payload and malformed environments retain their distinct native readings and
+failures. A valid renaming uses natural-word coordinates containing 300.
+
+All 57 complete reports retain their original subjects, actual outputs, reader
+values, conditions, comparisons and revisions. The explicitly empty test policy
+is not adequate workflow policy. The generation execution lacks a successful
+anchored-target fixture, although its constructor theorems cover both target
+forms. The joined replay-to-generation constructor has a certified-base-cause
+proof but has not yet been executed as a whole. Arbitrary cause-value readers,
+full workflow subjects and transitions, independent criticism, historical
+permission, physical cost and genesis remain open.

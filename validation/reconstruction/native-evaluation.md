@@ -94,8 +94,8 @@ python3 -B /tmp/native-evaluation-inputs/tools/reconstruct_native_evaluation.py 
   --output /tmp/native-evaluation-results
 ```
 
-The [source boundary](native-evaluation-sources.json) contains 458 files:
-436 theories, 21 Python modules and the
+The [source boundary](native-evaluation-sources.json) contains 460 files:
+438 theories, 21 Python modules and the
 [complete-report comparison](native-evaluation-reports.json). The common
 runner rebuilds from HOL, obtains complete proof diagnostics, exports accepted
 code and executes both report families. The

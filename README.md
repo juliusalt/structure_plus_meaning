@@ -2386,10 +2386,20 @@ certificate family. All three reuse the existing subject and constructor
 machinery. The whole development workflow and six conditions in `problems.txt`
 remain the immediate milestone.
 
-The complete 1,142-theory check and all 98 host tests with 59 subtests pass.
-Twenty source-only boundaries retain accepted reconstructions of 1,213 complete
-native reports. Three changed recipes were rebuilt; seventeen complete input
-boundaries are unchanged and retain their earlier verification. The
+[Native generation records](validation/reconstruction/generation-records.md) now
+construct the requested core while preserving every old artifact, binding and
+original predecessor reference. Actual counterexamples distinguish equal cores
+from identical references and formation from preservation of history.
+[Literal replay admission](validation/reconstruction/literal-replay.md) checks
+that the actual closed replay proves the same whole payload named by the call.
+The joined replay-to-generation constructor has an all-input certified-cause
+contract; its complete runtime execution and arbitrary cause reading remain
+further work.
+
+The complete 1,180-theory check and all 98 host tests with 59 subtests pass.
+Twenty-two source-only boundaries reproduce 1,270 complete native reports.
+One fresh proof of their combined dependencies serves all original recipes;
+each keeps its own complete source and report boundary. The
 [current verification](validation/reconstruction/current-verified.json) records
 these checks after removal of generated copies. The six conditions in
 `problems.txt` remain the active development milestone.

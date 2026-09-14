@@ -4,6 +4,16 @@ begin
 
 section \<open>Complete finite environment operations decode to their original constructors\<close>
 
+definition finite_add_artifact_use :: "'u finite_artifact_environment\<Rightarrow>'u\<Rightarrow>
+    finite_exact_artifact\<Rightarrow>'u finite_artifact_environment" where
+  "finite_add_artifact_use E u R=E\<lparr>finite_environment_artifacts:=finsert (u,R) (finite_environment_artifacts E)\<rparr>"
+
+lemma decode_finite_add_artifact_use [simp]:
+  "decode_finite_environment (finite_add_artifact_use E u R)=
+    add_artifact_use (decode_finite_environment E) u (decode_finite_object R)"
+  by (simp add: finite_add_artifact_use_def add_artifact_use_def decode_finite_environment_def
+    map_relation_values_def)
+
 definition finite_merge_environment :: "'u finite_artifact_environment\<Rightarrow>'u finite_artifact_environment\<Rightarrow>'u finite_artifact_environment" where
   "finite_merge_environment E F=\<lparr>
     finite_environment_artifacts=finite_environment_artifacts E |\<union>| finite_environment_artifacts F,
@@ -78,7 +88,7 @@ lemma decode_finite_artifact_family_environment [simp]:
   by (simp add: finite_artifact_family_environment_def artifact_family_environment_def
     decode_finite_environment_def map_relation_values_def fimage.rep_eq image_image split_def)
 
-export_code finite_merge_environment finite_rename_environment finite_fresh_use_map finite_graft_environment
+export_code finite_add_artifact_use finite_merge_environment finite_rename_environment finite_fresh_use_map finite_graft_environment
   finite_add_source_bindings finite_literal_environment finite_artifact_family_environment checking SML
 
 text \<open>

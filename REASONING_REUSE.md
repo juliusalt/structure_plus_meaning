@@ -36,7 +36,7 @@ missing internal operation.
 | Join only agreeing components | A program union preserves the intended component meanings when whole definitions agree on their actual overlap and dependencies are closed. | Shared-definition agreement, rooted groups, rebasing, and least dependency closures support the native joins. | Make agreement and closure explicit generated prerequisites of composition; do not discharge them merely from a shared component name. |
 | Construct admission for every original requirement | A finite supported goal family and a fresh allocation boundary produce component definitions and one exact same-subject conjunction. | Native sequence construction, recursive source-support checks and allocation admission produce the actual installation arguments. A complete source correspondence now joins them to a constructed native extension with fixed old addresses, exact retained material and all-term meaning. | Use this construction for the complete workflow's independently established requirements, including problem adequacy, criticism and evidence; a supplied goal family alone does not establish that coverage. |
 | Judge the artifact for the original request | The previously installed request boundary and an exact whole-body reader prevent another request, result or incomplete artifact from supplying admission. | Native entry 369 reads the actual literal artifact and applies the checked constructor contract to its whole body; its finite evaluator has an all-input equation. | Integrate the admitted construction with complete development decisions and their original problem subjects. The current execution covers requirement construction and complete artifact admission. |
-| Record through existing predecessors | A formed existing environment and actual predecessor readings support a new record while its cause retains the previously fixed native judgment program. | Scope and base-cause extension instantiate the existing RRA record constructor and preserve separate replay evidence. | Supply the actual continuation policy, local allocation and lookup implementation, and complete cost account. Reference sharing and an existence proof do not establish those conditions. |
+| Record through existing predecessors | A formed existing environment, actual distinct predecessor readings and their original sites support a new record. A cause also needs its actual judgment and replay. | The finite guarded constructor now recovers every field, preserves all old artifacts and bindings, and retains every original predecessor reference. Actual construction and literal-replay comparisons have complete subject contracts; the joined constructor has a certified-base-cause theorem. | Execute the complete joined constructor, read arbitrary admitted cause values, and supply the actual workflow policy, transitions, local allocation and lookup implementation, and complete cost account. Current flat environment checks still inspect accumulated history. |
 | Change an inadequate observation language | A full-language residual proves that selecting more of the same observations cannot suffice. A new observation needs its own semantic and coverage contract. | Repair obstructions and multiple newly constructed native observations exhibit this transition. | Use the failed subject relation and the reusable construction rules to generate new observation candidates, then evaluate them. |
 | Preserve useful selections while revising conflicts | Withdraw unsound selections, retain the selected sound part, and recompute repair needs after withdrawal. | The new revision rule and list execution have Isabelle proofs; they have not yet received native Factor presentation and checking. | Integrate the transition with native construction and evidence, while keeping observation-language limits visible. |
 
@@ -1109,3 +1109,27 @@ instantiate these contracts; all 29 complete reports remain equal. The
 [decision replay boundary](validation/reconstruction/decision-replay.md) retains
 the full executed scope. Workflow subject and transition coverage, original
 policy and history permission, and the physical cost account remain open.
+
+## Actual generation records and literal replay admission
+
+The existing generation-extension proof now has one explicit record kernel.
+Finite construction, generation checking and exact predecessor-reference
+recovery instantiate it. Actual anchor lookup, environment positions, external
+occurrence syntax and application/judgment retention are factored at their
+shared owners. The generation structure remains the same original structure,
+with an explicit reusable target parameter.
+
+The original and reversed constructors satisfy all nine independent conditions
+on every complete input. Their native comparison retains both. An equal core
+at another use fails reference identity; deleting unrelated history fails old
+material preservation even when the new native generation remains valid.
+
+The same original-subject investigation and shared context/cell machinery
+compare literal replay admission. Actual application uniqueness supports the
+alternative singleton gate; both admitted methods have all-input equations.
+The complete native results reproduce through the [generation record](validation/reconstruction/generation-records.md)
+and [literal replay](validation/reconstruction/literal-replay.md) boundaries.
+The joined constructor has a certified-base-cause theorem, while its complete
+runtime, arbitrary cause-value reading, workflow policy and transitions,
+subject and criticism coverage, historical permission and physical cost remain
+open.

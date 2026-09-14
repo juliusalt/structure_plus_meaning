@@ -37,4 +37,17 @@ proof -
   show ?thesis using keyed_option_map_result(2)[OF result] row by (auto simp: selected)
 qed
 
+theorem keyed_option_map_at:
+  assumes result: "keyed_option_map f xs=Some rows" and index: "i<length xs"
+  shows "i<length rows \<and> fst (rows!i)=xs!i \<and> f (xs!i)=Some (snd (rows!i))"
+proof -
+  have keys: "map fst rows=xs" by (rule keyed_option_map_result(1)[OF result])
+  have bound: "i<length rows" using index keys by (metis length_map)
+  have key: "fst (rows!i)=xs!i" using keys bound by (metis nth_map)
+  have queried: "f (fst (rows!i))=Some (snd (rows!i))"
+    using keyed_option_map_result(2)[OF result] nth_mem[OF bound]
+    by (cases "rows!i") auto
+  show ?thesis using bound key queried by simp
+qed
+
 end

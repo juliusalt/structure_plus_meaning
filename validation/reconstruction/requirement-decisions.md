@@ -58,11 +58,11 @@ permission and a complete cost account. [Native replay of these generated decisi
 now preserves the complete original decision and constructs its exact replay family. This operation alone
 does not close the six conditions in `problems.txt` or establish genesis.
 
-The source boundary contains 501 files: 474 theories, 26 Python
+The source boundary contains 503 files: 476 theories, 26 Python
 modules and the expected-report comparison. A fresh materialization rebuilt
 the entire proof closure from HOL and reproduced all 29 complete reports.
 The [current verification](current-verified.json) records the complete
-1,142-theory build, passing host tests and twenty source-only boundaries for
-1,213 complete reports. Three changed recipes were freshly reconstructed;
-seventeen unchanged complete input boundaries retain their earlier verification.
+1,180-theory build, passing host tests and twenty-two source-only boundaries
+for 1,270 complete reports. All recipes were freshly reconstructed through
+one source proof of their combined dependencies and their original executions.
 Generated copies were removed after source, diagnostic and full-report review.

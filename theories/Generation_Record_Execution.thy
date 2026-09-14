@@ -1,0 +1,12 @@
+theory Generation_Record_Execution
+  imports RRA_Generation_Record_Investigation Factor_Executable_Environment_Values
+begin
+
+setup \<open>Finite_Observation_Contracts.export @{term generation_record_investigation}\<close>
+
+export_code generation_record_packet generation_record_indices generation_record_inspect
+  generation_record_cell_inspect finite_environment_artifact_rows finite_environment_bindings finite_artifact_rows
+  Generation Finite_Whole Finite_Anchor fset set nat_of_integer integer_of_nat
+  in SML module_name Generation_Record_Execution file_prefix generation_record
+
+end

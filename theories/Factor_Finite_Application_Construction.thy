@@ -1,27 +1,7 @@
 theory Factor_Finite_Application_Construction
   imports Factor_Finite_Application_Encoding Factor_Finite_Native_Sources
-    Factor_Executable_Calls RRA_Finite_Environment_Preservation
+    Factor_Executable_Calls RRA_Finite_Environment_Preservation RRA_Finite_Anchor_Selection
 begin
-
-definition finite_application_target where
-  "finite_application_target E d=finite_singleton_option
-    (ffilter (\<lambda>R. snd d |\<in>| finite_carrier (finite_structure R)) (finite_artifacts_at E (fst d)))"
-
-lemma finite_application_target_member:
-  assumes formed: "finite_environment_formed E"
-  shows "finite_application_target E d=Some R \<longleftrightarrow>
-    (fst d,R) |\<in>| finite_environment_artifacts E \<and> snd d |\<in>| finite_carrier (finite_structure R)"
-proof -
-  let ?T="ffilter (\<lambda>R. snd d |\<in>| finite_carrier (finite_structure R)) (finite_artifacts_at E (fst d))"
-  have unique: "x=y" if "x |\<in>| ?T" "y |\<in>| ?T" for x y
-    using formed that
-    by (auto simp: finite_environment_formed_def finite_relation_functional_correct
-      single_valued_def finite_artifacts_at_member)
-  have selected: "finite_singleton_option ?T=Some R \<longleftrightarrow> R |\<in>| ?T"
-    by (rule finite_singleton_option_member[OF unique])
-  show ?thesis using selected
-    by (auto simp only: finite_application_target_def ffmember_filter finite_artifacts_at_member)
-qed
 
 definition finite_application_ready where
   "finite_application_ready E d t=(finite_environment_formed E \<and>
@@ -38,7 +18,7 @@ definition finite_extend_native_application where
     map_option (\<lambda>R. let q=Finite_Pair (Finite_Target (Finite_Anchor R (snd d))) t in
       (finite_future_call_environment E (fst d) R (snd d) t,finite_future_call_use E (fst d),
         finite_term_syntax_interior q,fimage fst (finite_term_literal_bindings q)))
-      (finite_application_target E d) else None)"
+      (finite_anchor_artifact E d) else None)"
 
 theorem finite_extend_native_application_domain:
   "(\<exists>F u I K. finite_extend_native_application E d t=Some (F,u,I,K)) \<longleftrightarrow>
@@ -50,11 +30,8 @@ next
   case True
   have formed: "finite_environment_formed E" and position: "d |\<in>| finite_environment_positions E"
     using True by (simp only: finite_application_ready_def; blast)+
-  obtain R where artifact: "(fst d,R) |\<in>| finite_environment_artifacts E"
-    and address: "snd d |\<in>| finite_carrier (finite_structure R)"
-    using position by (cases d) (auto simp: finite_environment_positions_correct environment_positions_def)
-  have target: "finite_application_target E d=Some R"
-    using artifact address by (simp only: finite_application_target_member[OF formed]; blast)
+  obtain R where target: "finite_anchor_artifact E d=Some R"
+    using position by (simp only: finite_anchor_artifact_domain[OF formed, symmetric]; blast)
   show ?thesis by (simp add: finite_extend_native_application_def True target Let_def)
 qed
 
@@ -74,7 +51,7 @@ proof -
     using ready by (simp only: finite_application_ready_exact; blast)+
   have finite_ef: "finite_environment_formed E"
     using ef by (simp only: finite_environment_formed_correct)
-  obtain R where target: "finite_application_target E d=Some R"
+  obtain R where target: "finite_anchor_artifact E d=Some R"
     and fields: "F=finite_future_call_environment E (fst d) R (snd d) t"
       "u=finite_future_call_use E (fst d)"
       "I=finite_term_syntax_interior (Finite_Pair (Finite_Target (Finite_Anchor R (snd d))) t)"
@@ -83,7 +60,7 @@ proof -
   have art: "artifact_at (decode_finite_environment E) (fst d) (decode_finite_object R)"
     and anchor: "anchor_formed (decode_finite_object R,snd d)"
     using target finite_ef
-    by (auto simp: finite_application_target_member[OF finite_ef] finite_environment_formed_def
+    by (auto simp: finite_anchor_artifact_member[OF finite_ef] finite_environment_formed_def
       anchor_formed_def finite_exact_formed_correct)
   show "finite_application_ready E d t" by (rule ready)
   show "finite_environment_formed F"

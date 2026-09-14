@@ -4,12 +4,6 @@ begin
 
 section \<open>Executable complete root citation families\<close>
 
-lemma decode_finite_external_occurrence_syntax [simp]:
-  "decode_finite_object (finite_external_occurrence_syntax a)=external_occurrence_syntax a"
-  using decode_finite_literal_syntax[of "Finite_Anchor (finite_payload_syntax []) a"]
-  by (simp only: finite_literal_syntax.simps decode_finite_target.simps
-    external_occurrence_syntax_literal[where R="decode_finite_object (finite_payload_syntax [])"])
-
 definition finite_root_family_syntax :: "'u definition_site list\<Rightarrow>finite_exact_artifact" where
   "finite_root_family_syntax ds=finite_family_wrapper
     (finite_syntax_forest (map (\<lambda>d. finite_external_occurrence_syntax (snd d)) ds)) []

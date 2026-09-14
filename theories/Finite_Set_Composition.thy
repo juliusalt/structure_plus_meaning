@@ -43,6 +43,15 @@ lemma finite_value_image_domain:
   "fimage fst (fimage (map_prod id f) R)=fimage fst R"
   by (simp add: fimage_fimage comp_def map_prod_def case_prod_unfold)
 
+lemma finite_value_image_range:
+  "fimage snd (fimage (map_prod id f) R)=fimage f (fimage snd R)"
+  by (simp add: fimage_fimage comp_def map_prod_def case_prod_unfold)
+
+lemma fset_image_equality:
+  assumes "inj f"
+  shows "fimage f S=fimage f T \<longleftrightarrow> S=T"
+  by (simp only: fset_inject[symmetric] fimage.rep_eq inj_image_eq_iff[OF assms])
+
 lemma finite_unless_member:
   "x |\<in>| (if P then {||} else A) \<longleftrightarrow> \<not>P \<and> x |\<in>| A"
   by (cases P) auto

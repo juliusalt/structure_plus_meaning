@@ -41,7 +41,7 @@ python3 -B tools/reconstruct_decision_replay.py \
   --output /tmp/decision-replay-reconstruction
 ~~~
 
-The source boundary contains 583 files: 555 theories, 27 Python modules and the
+The source boundary contains 588 files: 560 theories, 27 Python modules and the
 expected complete-report comparison. The shared reconstruction runner rebuilds
 the contracts from HOL and executes the native operation. Host serialization,
 hashes and reproduction do not supply any subject's meaning.
@@ -53,9 +53,9 @@ workflow subjects and enforced transitions, candidate and criticism coverage,
 history permission, the full cost account, native mathematical-proof admission
 and genesis remain open. This composition does not close `problems.txt`.
 
-A fresh source-only materialization rebuilt all 555 theory dependencies and
+A fresh source-only materialization rebuilt all 560 theory dependencies and
 reproduced every field in all 29 reports. Complete source and diagnostic review
 preceded removal of the generated copies. The [current verification](current-verified.json) records the complete
-1,142-theory build, passing host tests and twenty source-only boundaries for
-1,213 complete reports. Three changed recipes were freshly reconstructed;
-seventeen unchanged complete input boundaries retain their earlier verification.
+1,180-theory build, passing host tests and twenty-two source-only boundaries
+for 1,270 complete reports. All recipes were freshly reconstructed through
+one source proof of their combined dependencies and their original executions.

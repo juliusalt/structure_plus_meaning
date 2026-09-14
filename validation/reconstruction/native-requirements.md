@@ -107,16 +107,16 @@ Run `tools/reconstruct_native_requirements.py --poly <PolyML executable>
 closure from HOL, exports the checked implementation and reproduces the complete
 reports. The source descriptor and report boundary retain the inputs needed for
 that reconstruction; generated proofs, modules and logs are reproducible outputs.
-The [source boundary](native-requirements-sources.json) contains 460 theories,
+The [source boundary](native-requirements-sources.json) contains 462 theories,
 22 Python modules and the [complete-report comparison](native-requirements-reports.json).
 The [verified reconstruction](native-requirements-verified.json) and
 [materialization receipt](native-requirements-materialization.json) retain the
-successful independent run from those 483 files. Every original source and
+successful independent run from those 485 files. Every original source and
 execution input was checked, with complete proof diagnostics and all 186
 complete reports reproduced. The [current verification](current-verified.json) records the complete
-1,142-theory build, passing host tests and twenty source-only boundaries for
-1,213 complete reports. Three changed recipes were freshly reconstructed;
-seventeen unchanged complete input boundaries retain their earlier verification.
+1,180-theory build, passing host tests and twenty-two source-only boundaries
+for 1,270 complete reports. All recipes were freshly reconstructed through
+one source proof of their combined dependencies and their original executions.
 
 These results do not establish arbitrary-method coverage, general finite
 program decision, admission and enforcement of the complete development record,

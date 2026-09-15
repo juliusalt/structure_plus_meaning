@@ -1328,3 +1328,15 @@ record, not the completed graph proposed in `plan.md`.
 | RRA_Graft_Admission_Methods | RRA_Compact_Graft_Admission, RRA_Graft_Methods, Finite_Relation_Reader_Assessments | Actual guards and destructive or restrictive controls compare whole original optional graft outcomes. |
 | RRA_Graft_Admission_Investigation | RRA_Graft_Admission_Methods | Registered exact subject equations derive whole guarded graft observations and revisions. |
 | Graft_Admission_Execution | RRA_Graft_Admission_Investigation, Factor_Executable_Artifact_Values | Checked native export retains original graft inputs, all prerequisites, complete outputs and revision reasons. |
+| RRA_Encoded_Environment_Merges | RRA_Encoded_Environment_Views | Actual imported rows update encoded stores locally with exact whole environment union views. |
+| RRA_Encoded_Graft_Rows | RRA_Encoded_Environment_Merges, RRA_Finite_Embedded_Grafts, RRA_Digit_Environment_Instance | Renamed original rows instantiate encoded merges and preserve the complete generic graft. |
+| RRA_Lookup_Graft_Readiness | RRA_Finite_Graft_Readiness, RRA_Environment_Lookup_Contracts | Imported rows and original lookup contracts compute exact shared-artifact and binding prerequisites. |
+| RRA_Finite_Graft_Bounds | RRA_Lookup_Graft_Readiness, RRA_Encoded_Bounded_States | Every actual valid head bound establishes a fresh prefix and bounds the complete successful graft. |
+| RRA_Encoded_Bounded_Grafts | RRA_Finite_Graft_Bounds, RRA_Encoded_Graft_Rows, RRA_Digit_Allocated_Projection | Local indexed grafts preserve original formation, whole optional results and the actual successor bound. |
+| RRA_Digit_Allocated_Grafts | RRA_Encoded_Bounded_Grafts, RRA_Digit_Allocated_Projection | Closed digit stores retain validity through exact cached graft operations. |
+| RRA_Cached_Graft_References | RRA_Digit_Allocated_Grafts, Finite_Prepared_Results | The original whole environment graft relation also retains the explicit counter reservation policy. |
+| RRA_Graft_Case_Families | RRA_Graft_Admission_Methods | One source-case constructor recovers the preceding raw and guarded graft investigations. |
+| RRA_Cached_Graft_Methods | RRA_Cached_Graft_References, RRA_Graft_Case_Families | Actual typed grafts and adverse controls are compared against independent complete original results. |
+| RRA_Cached_Graft_Cases | RRA_Cached_Graft_Methods | Persistent successful graft chains construct complete cache states and recover every previous source case. |
+| RRA_Cached_Graft_Investigation | RRA_Cached_Graft_Cases | Registered exact subject equations derive complete graft assessments and investigation revisions. |
+| Cached_Graft_Execution | RRA_Cached_Graft_Investigation, Factor_Executable_Artifact_Values | Checked native export retains complete persistent inputs, original source cases and all candidate results. |

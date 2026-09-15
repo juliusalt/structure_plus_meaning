@@ -1229,3 +1229,22 @@ theorem proves the alternative full-merge check. Native comparisons preserve
 the previous raw constructor subjects while adding admission and complete
 optional results. Closed cached indexed grafts and generation-store adoption
 remain subsequent uses requiring their own complete contracts and executions.
+
+
+## Original guarded grafts in a persistent digit store
+
+Generic encoded row insertion preserves every old lookup and implements the
+whole original finite merge. Row renaming composes that contract with any
+proved fresh embedding. Original lookup contracts make shared-artifact and
+binding readiness local to the imported rows and required old buckets. The
+actual head bound supplies the prefix embedding and is preserved through the
+complete graft. These arguments instantiate the established digit codec and
+closed state directly.
+
+The original bounded result relation reuses original graft admission and adds
+the explicit successor reservation condition. One generic source-case family
+recovers both preceding graft investigations. Complete native observations
+retain actual input row lists, original states and counters, all optional
+results, previous source correspondence and persistent histories. A valid
+bound is not assumed minimal. Indexed generation and history adoption remain
+subsequent uses requiring their own complete contracts and executions.

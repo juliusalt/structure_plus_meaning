@@ -1801,3 +1801,38 @@ reports, with all thirty-three previous boundaries and verification bytes
 unchanged. Closed cached graft and generation adoption, full physical cost, all
 six workflow conditions, historical permission and reachability, native proof
 checking, genesis and the final audit remain open.
+
+
+## Closed cached grafts and complete reservation state
+
+The actual digit index now supports original guarded grafts. A shared-artifact
+lookup establishes the old boundary; the actual valid head bound proves the
+fresh embedding. Imported bindings and relevant old buckets decide the exact
+original compatibility condition. Generic row insertion and renaming retain
+the complete merged environment and establish its successor bound. The closed
+store's existing invariant governs every output.
+
+One original result relation retains the whole optional environment and the
+explicit counter reservation policy. Fourteen methods execute on twenty-seven
+cases. Typed insertion and the complete original reference are selected and
+adequate. Adverse controls expose omitted prerequisites, dropped bindings,
+changed counters, missing preparation, unconditional output, refusal and a
+no-op. The generic case constructor recovers all twenty-two original source
+cases, including their complete inputs and unavailable preparation.
+
+Actual growing chains retain 33 and 129 artifacts with heads 33 and 129. Three
+boundary-only grafts retain one artifact and advance the counter to 4. The next
+specified graft uses Some [4]; recomputing a minimal bound uses Some [1]. Both
+environments are formed. This is a distinction between complete reservation
+operations, not a claim that every alternative fresh embedding is invalid.
+The empty basis exposes 124 residual distinctions and 2,251 repairs; native
+revision selects both original facets and leaves no scoped residual.
+
+The fresh source-only reconstruction rebuilds all 127 theories from HOL and
+reproduces every one of the 86 complete reports. The combined repository check
+accepts 1,335 theories and 98 host tests with 59 subtests. Thirty-six recipes
+cover 1,904 reports; all thirty-five preceding closures, toolchains and original
+verification bytes are unchanged. Generation-store adoption, history admission
+indexing, complete physical cost, all six workflow conditions, complete
+historical permission and reachability, native mathematical-proof admission,
+genesis and the final audit remain open.

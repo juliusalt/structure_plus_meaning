@@ -1326,3 +1326,15 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     RRA_Graft_Admission_Investigation
     RRA_Graft_Admission_Methods
     RRA_Graft_Readiness
+    Cached_Graft_Execution
+    RRA_Cached_Graft_Cases
+    RRA_Cached_Graft_Investigation
+    RRA_Cached_Graft_Methods
+    RRA_Cached_Graft_References
+    RRA_Digit_Allocated_Grafts
+    RRA_Encoded_Bounded_Grafts
+    RRA_Encoded_Environment_Merges
+    RRA_Encoded_Graft_Rows
+    RRA_Finite_Graft_Bounds
+    RRA_Graft_Case_Families
+    RRA_Lookup_Graft_Readiness

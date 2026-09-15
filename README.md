@@ -2464,12 +2464,25 @@ refused. Complete raw merge formation alone does not authorize a graft. Both
 the direct boundary check and the equivalent full-merge check retain all-input
 contracts and complete native comparisons.
 
-The complete 1,323-theory check and all 98 host tests with 59 subtests pass.
-Thirty-five source-only boundaries cover 1,818 complete native reports. The two
-new families rebuild 117 and 79 theories from HOL and reproduce all 127 reports.
-All thirty-three preceding source closures, toolchains and verification records
+[Cached digit grafts](validation/reconstruction/cached-grafts.md) now preserve
+original graft admission, the whole optional environment result and the actual
+stored counter in the existing closed store. They inspect the imported rows
+and relevant original lookups, then insert every renamed row into the same
+index. The original history is preserved through chains of 32 and 128 grafts.
+All twenty-two preceding source cases remain directly recoverable.
+
+The operation reserves its stored prefix and advances the counter after every
+successful graft, including a graft that only reintroduces the shared boundary.
+Other fresh embeddings remain valid constructions. A complete native example
+separates the stored bound 4 from the recomputed minimum 1; both outputs are
+formed, and only one is the specified complete operation result.
+
+The complete 1,335-theory check and all 98 host tests with 59 subtests pass.
+Thirty-six source-only boundaries cover 1,904 complete native reports. The new
+cached-graft family rebuilds 127 theories from HOL and reproduces all 86 reports.
+All thirty-five preceding source closures, toolchains and verification records
 remain unchanged. The [current verification](validation/reconstruction/current-verified.json)
 records the accepted checks and evidence replacing generated copies.
-Closed cached indexed grafts, indexed generation, full physical cost, the six
-conditions in `problems.txt`, historical permission and reachability, native
+Generation-store adoption, history admission indexing, full physical cost, all
+six conditions in `problems.txt`, historical permission and reachability, native
 mathematical-proof admission, genesis and the final audit remain open.

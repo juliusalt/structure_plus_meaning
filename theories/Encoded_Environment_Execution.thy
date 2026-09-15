@@ -1,0 +1,12 @@
+theory Encoded_Environment_Execution
+  imports RRA_Encoded_Environment_Investigation Factor_Executable_Artifact_Values
+begin
+
+setup \<open>Finite_Observation_Contracts.export @{term codec_environment_investigation}\<close>
+
+export_code codec_environment_packet codec_environment_indices codec_environment_full_inspect
+  codec_environment_path_comparison finite_artifact_rows finite_environment_artifacts finite_environment_bindings
+  Install_Artifact Install_Binding Finite_Whole Finite_Anchor fset set nat_of_integer integer_of_nat
+  in SML module_name Encoded_Environment_Execution file_prefix encoded_environment
+
+end

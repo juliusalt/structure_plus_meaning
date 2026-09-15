@@ -1713,3 +1713,52 @@ Twenty-nine recipes cover 1,514 reports. Complete verified archives replace the
 temporary generated copies. Complete workflow adequacy, historical permission
 and reachability, cached and indexed generation allocation, unrestricted scope
 coverage, native mathematical-proof checking, genesis and the final audit remain open.
+
+
+## Cached allocation, exact key codecs and general grafts
+
+The actual cached state bounds all original artifact uses. Its closed API
+preserves formation, performs local insertion at the stored head and increments
+that head. Complete native states distinguish unavailable preparation, rejected
+updates and changed outputs. Counting the actual next insertion exposed unary
+traversals of 4, 36 and 132 at heads 1, 33 and 129; a fixed two-step None lookup
+had not answered this cost question.
+
+A generic exact nonempty prefix reader now composes natural digit codes into
+complete words. The codec comparison retains full forward and reverse graphs,
+original magnitude prerequisites and independent path budgets. Unary, digit and
+reversed-digit methods satisfy semantic conditions; digit variants satisfy the
+budget throughout the supplied scope. Small-coordinate overhead remains visible.
+
+General lookup contracts transfer original environment formation and guards to
+any exact use and slot codec. The first update-only comparison admitted a slot
+clamp without inspecting malformed raw rows. The revised question adds original
+raw-view equality and actual malformed `[256]` slots. Native execution rejects
+that candidate on the new condition and recovers every one of the previous
+forty-nine complete reports. Supplied-key insertion reports retain both actual
+traversals and the whole resulting environment. They do not claim persistent
+digit allocation or full physical cost.
+
+A general shared-boundary embedding factors occurrence origins and artifact
+preservation. Complete graft formation is equivalent to shared-source binding
+compatibility under formed inputs, the shared artifact and the embedding.
+Passive boundaries and unbound literal slots instantiate that condition. The
+native graft comparison retains complete original and imported environments,
+actual maps, all outputs and their formation. A conflicting boundary is retained
+as an unformed result; deleting its rows fails the independent whole-output
+condition. Original and compact methods have all-input semantic results, while
+the reversed-suffix alternative retains its stated finite comparison scope.
+
+The combined check accepts 1,304 theories and 98 host tests with 59 subtests.
+Four source-only reconstructions rebuild 94, 44, 96 and 73 theories and reproduce
+177 complete reports. All twenty-nine preceding source closures, toolchains and
+verification bytes remain unchanged. Thirty-three recipes cover 1,691 reports.
+Complete verified archives replace generated copies. The six workflow conditions,
+full physical cost, complete historical permission and reachability, native
+mathematical-proof checking, genesis and the final audit remain open.
+
+A final staging check found a trailing space in the reader-product serializer.
+After its removal, the affected complete source boundary was reconstructed again;
+all fifty-nine reports were unchanged. The 1,304 theory sources and the other
+thirty-two reconstruction boundaries were unchanged, so their accepted evidence
+remains applicable. The original and corrected source revisions are retained.

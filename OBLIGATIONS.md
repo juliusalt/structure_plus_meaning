@@ -998,15 +998,36 @@ optional results distinguish missing input, rejection and changed state.
 common fresh-prefix contract. Both the original and compact methods preserve
 its semantic conditions; only the compact method satisfies the one-coordinate
 growth condition throughout the executed scope. Boundary-only collision cases
-expose omission of the supplied boundary. The current index still encodes a
-natural component n with n+1 path positions. Cached allocation, encoding and
-generation-store adoption, full physical cost and the whole workflow remain open.
+expose omission of the supplied boundary. The original index encodes a natural component n with n+1 path positions.
+The further implementations below retain this cost boundary explicitly.
 
-The [current verification](validation/reconstruction/current-verified.json) records
-the complete 1,263-theory check, 98 host tests with 59 subtests, and twenty-nine
-source-only boundaries covering 1,514 complete reports. Two fresh reconstructions
-rebuilt 588 and 50 theories from HOL and directly reproduced all 76 new reports.
-The other twenty-seven complete source closures, toolchains and verification
-bytes are unchanged. Complete review preceded removal of generated copies.
-The six-condition workflow milestone, complete historical permission and
-reachability, native mathematical-proof admission, genesis and final audit remain open.
+
+[Cached allocation](validation/reconstruction/allocated-environments.md) keeps
+formation and an upper bound on every actual stored use in a closed state.
+Allocation checks the new artifact and advances the bound without scanning old
+rows. Its retained paths expose the original unary encoding's growing traversal.
+
+[Exact use codecs](validation/reconstruction/use-codecs.md) and
+[generic environment indexes](validation/reconstruction/encoded-environments.md)
+provide complete digit decoding and original update contracts. Native comparisons
+retain small-key overhead and every raw input row. The initial update-only
+comparison missed a slot-clamping error; the added raw-view condition exposes it
+while recovering all forty-nine previous complete reports unchanged.
+
+[General environment grafts](validation/reconstruction/environment-grafts.md)
+reuse a shared-boundary embedding and preserve every original and renamed row.
+Formation depends exactly on the stated boundary-binding compatibility under
+its original premises. Raw output equality, formation and coordinate growth
+remain distinct. Compact grafts add one coordinate to each present imported use;
+conflicting and malformed cases retain their actual unformed results.
+
+The complete 1,304-theory check and all 98 host tests with 59 subtests pass.
+Thirty-three source-only boundaries cover 1,691 complete native reports. The
+four new families freshly rebuild 94, 44, 96 and 73 theories from HOL, and all
+177 reports equal their preceding executions. The other twenty-nine complete
+source closures, toolchains and verification records are unchanged.
+The [current verification](validation/reconstruction/current-verified.json)
+records the accepted checks and the retained evidence replacing generated copies.
+Persistent digit allocation, indexed generation and graft adoption, full physical
+cost, the six conditions in `problems.txt`, historical permission and reachability,
+native mathematical-proof admission, genesis and the final audit remain open.

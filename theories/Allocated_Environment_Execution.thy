@@ -1,0 +1,13 @@
+theory Allocated_Environment_Execution
+  imports RRA_Allocated_Environment_Investigation Factor_Executable_Artifact_Values
+begin
+
+setup \<open>Finite_Observation_Contracts.export @{term allocated_update_investigation}\<close>
+
+export_code allocated_update_packet allocated_update_indices allocated_update_inspect
+  allocated_environment_chain_report allocated_environment_chain_paths allocated_environment_view raw_allocated_environment
+  Allocate_Artifact Add_Allocated_Binding finite_environment_artifacts finite_environment_bindings
+  finite_artifact_rows Finite_Whole Finite_Anchor fset set nat_of_integer integer_of_nat
+  in SML module_name Allocated_Environment_Execution file_prefix allocated_environment
+
+end

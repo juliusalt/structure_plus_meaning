@@ -1266,3 +1266,44 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     RRA_Use_Allocation_Methods
     RRA_Use_Allocation_Investigation
     Use_Allocation_Execution
+    Allocated_Environment_Execution
+    Binary_Counted_Relation_Stores
+    RRA_Allocated_Environment_Cases
+    RRA_Allocated_Environment_Investigation
+    RRA_Allocated_Environment_Methods
+    RRA_Allocated_Environment_Paths
+    RRA_Allocated_Environment_Projection
+    RRA_Allocated_Environment_References
+    RRA_Allocated_Environment_Stores
+    RRA_Bounded_Environment_States
+    RRA_Bounded_Environment_Updates
+    RRA_Use_Head_Bounds
+    Delimited_Bit_Words
+    Finite_Codec_Observations
+    Natural_Binary_Digits
+    Prefix_Code_Words
+    RRA_Digit_Natural_Paths
+    RRA_Digit_Use_Paths
+    RRA_Use_Codec_Cases
+    RRA_Use_Codec_Investigation
+    RRA_Use_Codec_Methods
+    RRA_Use_Codec_Observations
+    Use_Codec_Execution
+    Graft_Execution
+    RRA_Boundary_Use_Embeddings
+    RRA_Finite_Embedded_Grafts
+    RRA_General_Environment_Grafts
+    RRA_Graft_Investigation
+    RRA_Graft_Methods
+    RRA_Graft_Observations
+    Encoded_Environment_Execution
+    RRA_Digit_Environment_Instance
+    RRA_Encoded_Environment_Assessments
+    RRA_Encoded_Environment_Investigation
+    RRA_Encoded_Environment_Methods
+    RRA_Encoded_Environment_References
+    RRA_Encoded_Environment_Updates
+    RRA_Encoded_Environment_Views
+    RRA_Encoded_Environments
+    RRA_Environment_Lookup_Contracts
+    RRA_Unary_Environment_Instance

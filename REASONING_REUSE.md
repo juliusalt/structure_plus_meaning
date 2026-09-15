@@ -1186,3 +1186,27 @@ allocation instance separates semantic conditions from word-coordinate growth.
 The current unary component path and physical cost are not discharged by that
 growth theorem. The common constructor and view contracts must still be used
 when allocation is joined to the actual generation store.
+
+
+## Encoded stores and shared-boundary grafts
+
+The allocation invariant factors actual use-head bounds and reuses original local
+formation. Counted relation insertion reuses the underlying read and update,
+retaining the exact resulting store and both traversal counts. Prefix-code words
+factor complete decoding for every exact nonempty component reader. Finite codec
+graphs factor roundtrip, reflection, injectivity and independent preservation.
+
+A complete environment lookup contract now owns transfer of the original guards
+and formation proof. Injective key encodings supply the raw insertion equations;
+exact decoders supply complete views. Unary and digit instances use those local
+contracts directly. The extended assessment preserves the earlier reader result
+and adds a separately computed whole raw view; its product serializer reuses the
+existing reader writer.
+
+The graft embedding factors the unique origin of an imported use meeting the
+original environment. The general graft contract derives artifact preservation
+and reduces remaining compatibility to the shared boundary. Passive packages
+and unbound literal slots instantiate it. Complete finite grafts reuse the
+original merge and rename equations, with mapping, whole-output, formation and
+coordinate conditions kept explicit. Cached digit state, indexed generation
+integration and full physical cost still require their own contracts and runs.

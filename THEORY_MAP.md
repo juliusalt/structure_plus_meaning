@@ -1268,3 +1268,44 @@ record, not the completed graph proposed in `plan.md`.
 | RRA_Use_Allocation_Methods | RRA_Use_Allocation_Observations | Ten actual methods and fourteen concrete subjects expose missing boundary reservation, collisions, collapsed inputs, altered suffixes and coordinate bounds. |
 | RRA_Use_Allocation_Investigation | RRA_Use_Allocation_Methods | Registered native allocation observations retain complete semantic and growth comparisons and every repair reason. |
 | Use_Allocation_Execution | RRA_Use_Allocation_Investigation | Checked export of complete allocation subjects, function graphs, native coordinate counts, comparisons and revisions. |
+| RRA_Use_Head_Bounds | RRA_Finite_Compact_Uses | Original use heads and every finite reserved row determine a fresh upper bound. |
+| RRA_Bounded_Environment_States | RRA_Use_Head_Bounds, RRA_Indexed_Environment_Views | Actual stored artifacts obey the head bound and original environment formation invariant. |
+| RRA_Bounded_Environment_Updates | RRA_Bounded_Environment_States | Local allocation advances the bound and preserves the complete original environment without rescanning old rows. |
+| RRA_Allocated_Environment_Stores | RRA_Bounded_Environment_Updates | A closed allocated-store type enforces formation and fresh-head invariants through checked construction. |
+| RRA_Allocated_Environment_Projection | RRA_Allocated_Environment_Stores, RRA_Environment_Update_Correctness | Complete raw-state and optional-result projections preserve the closed allocated store. |
+| RRA_Allocated_Environment_References | RRA_Allocated_Environment_Projection | Original guards and constructors determine all fields of the allocated-environment reference result. |
+| RRA_Allocated_Environment_Methods | RRA_Allocated_Environment_References | Actual typed and raw allocation operations retain complete outcomes and persistent state chains. |
+| RRA_Allocated_Environment_Cases | RRA_Allocated_Environment_Paths | Complete original states, successful chains and distinct omitted-guard cases exercise actual allocation. |
+| RRA_Allocated_Environment_Investigation | RRA_Allocated_Environment_Cases | Registered subject equations derive allocation observations, complete comparisons and repair reasons. |
+| Allocated_Environment_Execution | RRA_Allocated_Environment_Investigation, Factor_Executable_Artifact_Values | Checked export of complete allocation inputs, states, comparisons, chains and actual path reports. |
+| Binary_Counted_Relation_Stores | Binary_Relation_Stores | Instrumented relation insertion executes the original read and update and counts both traversals exactly. |
+| RRA_Allocated_Environment_Paths | RRA_Allocated_Environment_Methods, Binary_Counted_Relation_Stores | The actual next allocation key determines both traversal counts and the entire updated environment. |
+| Natural_Binary_Digits | Main, HOL-Library.Code_Target_Nat | Actual binary digits recover every natural number and satisfy an independent magnitude bound. |
+| Delimited_Bit_Words | Main | An exact prefix reader preserves every bit and the complete remaining suffix. |
+| RRA_Digit_Natural_Paths | Natural_Binary_Digits, Delimited_Bit_Words, RRA_Binary_Use_Paths | Canonical binary digits and an explicit terminator encode arbitrary natural coordinates exactly. |
+| Prefix_Code_Words | Main | Every exact nonempty prefix reader extends to an exact complete finite-word reader. |
+| RRA_Digit_Use_Paths | RRA_Digit_Natural_Paths, Prefix_Code_Words | Composed digit paths preserve complete natural use words and distinguish absent from present empty uses. |
+| Finite_Codec_Observations | Finite_Map_Observations | Complete actual encoding and decoding graphs determine roundtrip, reflection, injection and preservation observations. |
+| RRA_Use_Codec_Observations | RRA_Digit_Use_Paths, RRA_Binary_Path_Decoding, Finite_Codec_Observations | Original use recovery and path reflection remain separate from an independently stated coordinate budget. |
+| RRA_Use_Codec_Methods | RRA_Use_Codec_Observations | Exact unary, digit and reversed-digit methods retain all-input contracts alongside lossy and malformed controls. |
+| RRA_Use_Codec_Cases | RRA_Use_Codec_Methods | Complete use and path inputs retain magnitude boundaries, malformed paths, empty words and small-key overhead. |
+| RRA_Use_Codec_Investigation | RRA_Use_Codec_Cases | Registered observations compare complete semantic and path-budget results and retain native revision reasons. |
+| Use_Codec_Execution | RRA_Use_Codec_Investigation | Checked export of complete use-codec graphs, original bounds and native comparison reports. |
+| RRA_Boundary_Use_Embeddings | RRA_Finite_Compact_Uses | A general shared-boundary mapping owns injection, freshness and the unique origin of imported old uses. |
+| RRA_General_Environment_Grafts | RRA_Boundary_Use_Embeddings | Whole graft formation is exactly shared-source binding compatibility under explicit original and embedding premises. |
+| RRA_Finite_Embedded_Grafts | RRA_General_Environment_Grafts | Executable original and compact grafts instantiate the same complete merge and rename contract. |
+| RRA_Graft_Observations | RRA_Finite_Embedded_Grafts, Finite_Map_Observations | Actual complete maps and output environments determine original graft conditions independently of formation and coordinate growth. |
+| RRA_Graft_Methods | RRA_Graft_Observations, RRA_Finite_Syntax_Construction | Complete environment pairs compare exact original and compact grafts with collisions, lost rows and changed boundaries. |
+| RRA_Graft_Investigation | RRA_Graft_Methods | Registered native graft comparisons retain semantic and coordinate observations and every revision reason. |
+| Graft_Execution | RRA_Graft_Investigation, Factor_Executable_Artifact_Values | Checked export of whole graft inputs, mappings, outputs, formation observations and native comparisons. |
+| RRA_Environment_Lookup_Contracts | RRA_Indexed_Environment_Views | Complete original relations determine lookup functions and transfer established guards and formation results. |
+| RRA_Encoded_Environments | RRA_Environment_Lookup_Contracts | Independent injective use and slot encodings preserve every environment row and local insertion lookup. |
+| RRA_Encoded_Environment_Views | RRA_Encoded_Environments | Exact complete key decoders recover the entire original finite environment from actual store entries. |
+| RRA_Encoded_Environment_Updates | RRA_Encoded_Environment_Views | Generic local updates reuse original formation through complete lookup contracts. |
+| RRA_Unary_Environment_Instance | RRA_Encoded_Environment_Updates | Every original unary environment operation is exactly an instance of the general encoding contract. |
+| RRA_Digit_Environment_Instance | RRA_Unary_Environment_Instance, RRA_Digit_Use_Paths | Exact digit codecs instantiate original environment lookup, whole-view and local-update contracts. |
+| RRA_Encoded_Environment_References | RRA_Digit_Environment_Instance, RRA_Environment_Update_Correctness | Every exact environment codec implements the whole independent original guarded update on all inputs. |
+| RRA_Encoded_Environment_Methods | RRA_Encoded_Environment_References, Binary_Counted_Relation_Stores | Actual indexed updates, encoding faults and complete counted insertions expose changed original rows and paths. |
+| RRA_Encoded_Environment_Assessments | RRA_Encoded_Environment_Methods | Raw representation and guarded updates have separate computed conditions while preserving the previous complete assessment. |
+| RRA_Encoded_Environment_Investigation | RRA_Encoded_Environment_Assessments | Registered complete candidate pairs derive raw-view and update comparisons and retain the original update-only scope. |
+| Encoded_Environment_Execution | RRA_Encoded_Environment_Investigation, Factor_Executable_Artifact_Values | Checked export of complete raw views, guarded updates, previous comparisons and actual insertion-path reports. |

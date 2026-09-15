@@ -1309,3 +1309,26 @@ The complete operation comparison and independent original nine-condition
 generation assessment preserve their separate questions. Shared preparation,
 whole subject projection, registered observations and revisions reuse the
 existing investigation content with the actual constructor candidates.
+
+
+## Complete history components, policy scopes and optional result views
+
+The fixed header and variable material and ledger have one complete reconstruction
+contract. The generation backend contract owns readiness, core identity,
+original reading, old-use agreement and original predecessor sites. Formation
+and inclusion are consequences, avoiding duplicate primitive assumptions.
+Original and digit constructors instantiate the same backend account.
+
+Optional filtering, whole-result views and availability compose exact operations
+without conflating unavailable input, refusal and success. Constructor-parametric
+replay and policy attempts reuse the whole optional projection. Complete scope
+reading supplies the original certification and policy-alignment predicates,
+retaining their distinct existential witnesses. Original append validity is
+reused through the backend instead of reconstructed for the digit store.
+
+Closed digit histories combine these contracts with the exact membership index.
+Actual append updates material, the ordered ledger and its cache. Subsequent
+requests use each returned state and ledger through the generic iteration
+projection. Complete subject and reference equations feed the existing registered
+investigation and revision machinery. Cache fidelity, original validity,
+complete output correctness and historical reachability remain distinct.

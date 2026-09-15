@@ -1977,3 +1977,60 @@ Record construction alone does not establish cause truth or historical
 permission. Actual replay and history adoption, full physical cost, all six
 workflow conditions, complete historical permission and reachability, native
 mathematical-proof admission, genesis and the final audit remain open.
+
+
+## Complete original history transitions over persistent digit material
+
+The closed history stores its fixed source and policy header, actual digit
+material, ordered ledger and exact membership cache. The original finite state
+is a derived view. Whole optional loading and transition projection retain
+every original field, allocation head and cache member.
+
+A reusable generation backend contract establishes readiness, complete core
+identity, original generation reading, old-use agreement and exact predecessor
+sites. Original formation and inclusion follow from these prerequisites.
+Constructor-parametric replay and policy attempts reuse those facts. The actual
+digit policy checker computes one complete scope family while preserving the
+original separate existential witnesses for certification and policy alignment.
+The original history append contract establishes validity of each actual result.
+
+Nineteen methods run on sixteen complete subjects. The typed operation and
+bounded reference are selected and adequate. Coverage requires an actual
+successful original bounded transition. The legacy original allocation remains
+a distinct operation; different successful results fail the bounded comparison
+without invalidating that allocation policy's original meaning.
+
+Omitted membership admits case 3; omitted policy admits cases 7 and 8. Omitting
+both replay and policy also admits cases 5 and 6. Other controls expose missing,
+truncated or reordered ledger rows, stale or unsupported cache members, lost old
+material, altered requirements, refusal and a no-op. An empty family passes
+soundness and fails completeness on every case. Conflated unavailable inputs
+fail cases 9 and 10. A stale cache preserves the complete original state but
+loses the new member. A real additional boundary reservation preserves that
+state and the cache while advancing the head once more. Complete comparison
+separately detects both changes.
+
+Every original source family is compared with the preceding accepted execution.
+Four further inputs use one through four actual returned states and their ordered
+ledgers. After four steps, the next input has head 9, four members, sixteen
+artifacts and eighteen bindings; its result has head 11, five members, twenty
+artifacts and twenty-five bindings. Native equality holds for every complete
+bounded input projection. Finite-set enumeration order remains visible and is
+not used as a substitute for relation identity.
+
+The initial selections have 205, 18 and zero residual distinctions and 1,822,
+191 and zero repairs. Every revision selects both facets with no scoped residual.
+The fresh reconstruction rebuilds 690 theories from HOL and reproduces all 54
+complete parsed reports. All original and database sources and all execution
+and archived inputs are verified. The repository check accepts 1,398 theories
+and all 98 host tests with 59 subtests. Forty recipes cover 2,204 reports, with
+all thirty-nine preceding source closures and verification records unchanged.
+
+A first full build timed out. Its follow-up review initially searched the wrong
+cache directory; both attempts had used isolated caches. The actual databases
+were located and reviewed. The later full build and host checks pass. This
+correction does not turn the timed-out attempt into an accepted proof.
+
+Full physical cost, broader workflow adoption, all six workflow conditions,
+complete historical permission and reachability, native mathematical-proof
+admission, genesis and the final audit remain open.

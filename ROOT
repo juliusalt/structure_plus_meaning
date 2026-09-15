@@ -1377,3 +1377,27 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     RRA_Generation_Record_Recovery
     RRA_Literal_Environment_Rows
     RRA_Selected_Generation_Predecessors
+    Factor_History_State_Components
+    RRA_Digit_Environment_Availability
+    Factor_Digit_History_States
+    Optional_Result_Views
+    Factor_Digit_History_Projection
+    RRA_Complete_Environment_Agreement
+    RRA_Generation_Record_Backends
+    Factor_Replay_Generation_Certification
+    Factor_Parametric_Generation_Replay
+    Factor_Generation_History_Append
+    Optional_Checked_Results
+    Factor_Parametric_Policy_Attempts
+    Factor_Certified_Policy_Readings
+    Factor_Digit_Generation_Scopes
+    Factor_Digit_Policy_Causes
+    RRA_Digit_Generation_Backend
+    Factor_Digit_Policy_Replay
+    Factor_Digit_History_Steps
+    Factor_Digit_History_References
+    Factor_Digit_History_Methods
+    History_Input_Transitions
+    Factor_Digit_History_Cases
+    Factor_Digit_History_Investigation
+    Digit_History_Execution

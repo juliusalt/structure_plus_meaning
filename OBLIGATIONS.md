@@ -1086,12 +1086,25 @@ reservations. Omitting readiness produces four formed environments with invalid
 claimed generations. The original allocator still passes every original
 generation condition; its different uses remain a valid allocation policy.
 
-The complete 1,374-theory check and all 98 host tests with 59 subtests pass.
-Thirty-nine source-only boundaries cover 2,150 complete native reports. The new
-digit-generation family rebuilds 201 theories from HOL and reproduces all 78
-reports. All thirty-eight preceding source closures, toolchains and verification
-records remain unchanged. The [current verification](validation/reconstruction/current-verified.json)
+[Persistent digit histories](validation/reconstruction/digit-history.md)
+now combine actual digit material, indexed membership, original replay and
+complete policy checking. A fixed header, ordered ledger and exact cache
+recover every original state field. Whole optional projection preserves the
+bounded original transition, including refusal and the actual allocation head.
+
+Nineteen methods run on sixteen complete subjects. The typed operation and
+bounded reference are selected and adequate. Controls expose missing policy or
+membership checks, lost or reordered ledger rows, stale caches and changed
+allocation heads. A real extra reservation preserves the entire original state
+and cache while failing the required head comparison. All original sources and
+four subsequent input states retain complete native correspondence.
+
+The complete 1,398-theory check and all 98 host tests with 59 subtests pass.
+Forty source-only boundaries cover 2,204 complete native reports. The new history
+family rebuilds 690 theories from HOL and reproduces all 54 reports. All
+thirty-nine preceding source closures, toolchains and verification records
+remain unchanged. The [current verification](validation/reconstruction/current-verified.json)
 records the accepted checks and evidence replacing generated copies.
-Actual replay and history adoption, full physical cost, all six conditions in
-`problems.txt`, historical permission and reachability, native mathematical-proof
-admission, genesis and the final audit remain open.
+Broader workflow adoption, full physical cost, all six conditions in
+`problems.txt`, complete historical permission and reachability, native
+mathematical-proof admission, genesis and the final audit remain open.

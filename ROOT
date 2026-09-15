@@ -1401,3 +1401,11 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Digit_History_Cases
     Factor_Digit_History_Investigation
     Digit_History_Execution
+    Factor_Digit_History_Known_Generation
+    Factor_Digit_Policy_Backends
+    Factor_History_Generation_Members
+    Factor_Known_History_Investigation
+    Factor_Replay_Constructor_Congruence
+    Finite_Reader_Identity_Maps
+    Known_History_Execution
+    RRA_Known_Generation_Rows

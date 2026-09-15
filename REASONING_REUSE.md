@@ -1332,3 +1332,23 @@ requests use each returned state and ledger through the generic iteration
 projection. Complete subject and reference equations feed the existing registered
 investigation and revision machinery. Cache fidelity, original validity,
 complete output correctness and historical reachability remain distinct.
+
+
+## Established readings, constructor congruence and complete result identity
+
+An established original generation reading for each predecessor reduces the
+readiness question to target formation and distinctness. The factored constructor
+body keeps the actual anchors, allocation, bindings and grafts. Original history
+validity and exact indexed membership supply that prerequisite for the concrete
+requested rows; arbitrary readable material outside the ledger does not.
+
+Constructor congruence at the fixed material, locus and rows quantifies every
+payload and quotation target and preserves the complete optional replay result.
+The digit policy wrapper instantiates that congruence while executing its original
+whole policy predicate. Injective optional result maps lift complete raw equality
+to equality of closed histories. The registered comparison reuses the original
+subject conditions and methods with their actual shifted indices.
+
+The shared compressed execution transport, complete packet parser and existing
+reconstruction checks preserve every byte and parsed field. They establish storage
+and execution boundaries; the original Isabelle contracts establish meaning.

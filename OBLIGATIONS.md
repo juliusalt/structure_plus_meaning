@@ -1099,11 +1099,23 @@ allocation heads. A real extra reservation preserves the entire original state
 and cache while failing the required head comparison. All original sources and
 four subsequent input states retain complete native correspondence.
 
-The complete 1,398-theory check and all 98 host tests with 59 subtests pass.
-Forty source-only boundaries cover 2,204 complete native reports. The new history
-family rebuilds 690 theories from HOL and reproduces all 54 reports. All
-thirty-nine preceding source closures, toolchains and verification records
-remain unchanged. The [current verification](validation/reconstruction/current-verified.json)
+[History construction from admitted predecessor readings](validation/reconstruction/known-history.md)
+now uses the original closed-state invariant and actual indexed membership to
+avoid recursively checking those readings again. Target formation, distinctness,
+anchors, allocation, bindings, literal grafts, replay and policy remain executable.
+The whole optional result equals the original closed history step.
+
+Twenty methods run on all sixteen original subjects. The new step, original
+digit step and bounded reference are selected and adequate. All original values,
+controls, sources and subsequent inputs are retained. One initial facet selection
+is invalid; the native cycle rejects it, removes the unavailable facet and
+recomputes a formed complete basis. The error and correction remain explicit.
+
+The complete 1,406-theory check and all 102 host tests with 59 subtests pass.
+Forty-one source-only boundaries cover 2,578 complete native reports. The new
+history family rebuilds 697 theories from HOL and reproduces all 374 reports.
+All forty preceding source closures, toolchains and verification records remain
+unchanged. The [current verification](validation/reconstruction/current-verified.json)
 records the accepted checks and evidence replacing generated copies.
 Broader workflow adoption, full physical cost, all six conditions in
 `problems.txt`, complete historical permission and reachability, native

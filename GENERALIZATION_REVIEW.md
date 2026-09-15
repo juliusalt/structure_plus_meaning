@@ -2034,3 +2034,45 @@ correction does not turn the timed-out attempt into an accepted proof.
 Full physical cost, broader workflow adoption, all six workflow conditions,
 complete historical permission and reachability, native mathematical-proof
 admission, genesis and the final audit remain open.
+
+
+## History construction from established predecessor readings
+
+The original closed history invariant and actual indexed membership establish
+each complete requested generation reading. The constructor retains target
+formation and distinctness, then performs the original anchor selection,
+allocation, bindings and literal grafts. Whole replay constructor congruence
+preserves the existing complete digit policy check. Equality of the entire
+optional closed result retains every refusal and all material, head, header,
+ordered ledger and cache fields.
+
+The native comparison retains all sixteen original subjects and nineteen
+original methods, adding the new operation at index 0. Methods 0, 1 and 2 are
+selected and adequate. Every original context, complete method result, native
+inspection and source field equals the preceding execution. The new operation's
+whole values equal the original typed operation on every subject. All seventeen
+controls retain their distinct failures, including missing membership, replay
+or policy, dropped families, stale caches, changed heads and conflated absence.
+
+The final initial selection mistakenly used method indices `[0,1,2]` for facets.
+Only `[0,1]` are available. The native initial report rejects that selection as
+unformed; its empty residual alone does not establish a valid basis. Revision
+removes unavailable facet 2 and computes a formed basis on `[0,1]` with no
+residual. This is recorded as an input error and a domain rejection. The empty
+and single-facet initial selections have 222 and 19 residual comparisons and
+2,032 and 207 repair witnesses. Every followed report is formed and complete.
+
+The fresh reconstruction rebuilds 697 theories from HOL and reproduces all 374
+complete parsed reports, compared directly with the warm execution. Complete
+original and database sources and every current and archived native input are
+verified. Lossless compression preserves the whole report stream; the repository
+retains its reconstructible source boundary. Full integration accepts 1,406
+theories and all 102 host tests with 59 subtests. Forty-one recipes cover 2,578
+reports, with all forty preceding source and verification boundaries unchanged.
+
+The initial host review completed its report comparison but failed to serialize
+the theory count because it treated an integer as a list. The corrected review
+repeated the full comparison before acceptance and retention. No proof or native
+result changed. Full physical cost, all six workflow conditions, complete
+historical permission and reachability, native mathematical-proof admission,
+genesis and the final repository audit remain open.

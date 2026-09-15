@@ -1210,3 +1210,22 @@ and unbound literal slots instantiate it. Complete finite grafts reuse the
 original merge and rename equations, with mapping, whole-output, formation and
 coordinate conditions kept explicit. Cached digit state, indexed generation
 integration and full physical cost still require their own contracts and runs.
+
+
+## Complete allocation results and guarded graft prerequisites
+
+Complete index equivalence transfers existing bound and formation arguments to
+every exact codec. Original allocation results depend on the counter and whole
+original environment; both store representations instantiate that relation.
+Prepared-result families preserve unavailable inputs separately from failed
+operations. One source-case family constructs both actual persistent APIs.
+Shared serializers retain both complete result families and native equality,
+with presentation order kept explicit.
+
+Original graft readiness instantiates the complete general graft contract.
+Shared-artifact and boundary-binding checks have exact finite equations;
+whole-result formation follows from those prerequisites. The same general
+theorem proves the alternative full-merge check. Native comparisons preserve
+the previous raw constructor subjects while adding admission and complete
+optional results. Closed cached indexed grafts and generation-store adoption
+remain subsequent uses requiring their own complete contracts and executions.

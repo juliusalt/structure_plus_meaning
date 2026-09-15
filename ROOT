@@ -1307,3 +1307,22 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     RRA_Encoded_Environments
     RRA_Environment_Lookup_Contracts
     RRA_Unary_Environment_Instance
+    Digit_Allocation_Execution
+    Finite_Prepared_Results
+    RRA_Allocation_Case_Families
+    RRA_Allocation_Result_Relations
+    RRA_Digit_Allocated_Projection
+    RRA_Digit_Allocated_Stores
+    RRA_Digit_Allocation_Investigation
+    RRA_Digit_Allocation_Methods
+    RRA_Digit_Allocation_Paths
+    RRA_Digit_Allocation_References
+    RRA_Encoded_Bounded_States
+    RRA_Encoded_Bounded_Updates
+    RRA_Environment_Index_Equivalence
+    Graft_Admission_Execution
+    RRA_Compact_Graft_Admission
+    RRA_Finite_Graft_Readiness
+    RRA_Graft_Admission_Investigation
+    RRA_Graft_Admission_Methods
+    RRA_Graft_Readiness

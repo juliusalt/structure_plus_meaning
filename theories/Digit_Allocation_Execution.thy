@@ -1,0 +1,15 @@
+theory Digit_Allocation_Execution
+  imports RRA_Digit_Allocation_Investigation Factor_Executable_Artifact_Values
+begin
+
+setup \<open>Finite_Observation_Contracts.export @{term digit_allocation_investigation}\<close>
+
+export_code digit_allocation_packet digit_allocation_indices digit_allocation_inspect
+  digit_allocation_chain_paths allocated_environment_chain_paths allocation_case_views allocation_case_views_equal
+  allocation_original_context allocation_case_result_pairs
+  digit_allocated_view allocated_environment_view raw_allocated_environment
+  Allocate_Artifact Add_Allocated_Binding finite_environment_artifacts finite_environment_bindings
+  finite_artifact_rows Finite_Whole Finite_Anchor fset set nat_of_integer integer_of_nat
+  in SML module_name Digit_Allocation_Execution file_prefix digit_allocation
+
+end

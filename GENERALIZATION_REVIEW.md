@@ -1762,3 +1762,42 @@ After its removal, the affected complete source boundary was reconstructed again
 all fifty-nine reports were unchanged. The 1,304 theory sources and the other
 thirty-two reconstruction boundaries were unchanged, so their accepted evidence
 remains applicable. The original and corrected source revisions are retained.
+
+
+## Persistent digit allocation and original graft admission
+
+The complete cached allocation state now transfers through exact lookup
+equivalence to the digit encoding. Its counter bounds every actual original
+artifact use; local allocation and binding operations preserve the original
+formed environment and all optional outcomes. An original complete result
+relation is factored independently of either index, and a reusable source-case
+family instantiates both actual APIs.
+
+Native persistent histories retain heads 1, 33 and 129 and the complete old
+material. Both actual next insertion traversals take 5, 15 and 19 positions,
+against 4, 36 and 132 in the original unary store. All sixteen complete input
+views compare equal natively. Three serialized subject reports enumerate the
+same finite sets differently; criticism adds both actual result families and
+native equality for every method and case. All 192 comparisons are true, all
+forty original reports are exactly recovered, and every previous digit report
+field is preserved. Host normalization supplies no semantic equality.
+
+Original graft readiness now retains both formed inputs, their identical shared
+artifact, the complete embedding and compatible shared bindings. The existing
+general graft theorem proves whole result formation and the equivalence of a
+boundary check with full-merge formation under the other premises. Actual
+comparisons admit matching shared bindings and refuse conflicts, missing shared
+sources and malformed inputs. Empty and missing-source cases show that a formed
+raw merge alone is insufficient. All sixteen previous complete subjects and raw
+compact grafts remain unchanged. The complete optional result relation exposes
+deleted bindings, unsupported rows, changed constructors and over-restriction.
+
+Fresh source-only reconstructions rebuild 117 and 79 theories and reproduce all
+127 reports. The combined check accepts 1,323 theories and 98 host tests with
+59 subtests. Its first unchanged source context exceeded a mistakenly short
+120-second session limit; complete failed-attempt evidence was retained before
+the successful run with a 900-second limit. Thirty-five recipes cover 1,818
+reports, with all thirty-three previous boundaries and verification bytes
+unchanged. Closed cached graft and generation adoption, full physical cost, all
+six workflow conditions, historical permission and reachability, native proof
+checking, genesis and the final audit remain open.

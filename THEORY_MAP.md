@@ -1309,3 +1309,22 @@ record, not the completed graph proposed in `plan.md`.
 | RRA_Encoded_Environment_Assessments | RRA_Encoded_Environment_Methods | Raw representation and guarded updates have separate computed conditions while preserving the previous complete assessment. |
 | RRA_Encoded_Environment_Investigation | RRA_Encoded_Environment_Assessments | Registered complete candidate pairs derive raw-view and update comparisons and retain the original update-only scope. |
 | Encoded_Environment_Execution | RRA_Encoded_Environment_Investigation, Factor_Executable_Artifact_Values | Checked export of complete raw views, guarded updates, previous comparisons and actual insertion-path reports. |
+| RRA_Environment_Index_Equivalence | RRA_Digit_Environment_Instance | Complete original lookups relate independent encodings and transfer exact environment views. |
+| RRA_Encoded_Bounded_States | RRA_Environment_Index_Equivalence, RRA_Allocated_Environment_Projection | The actual counter and encoded original environment instantiate the established bound invariant. |
+| RRA_Encoded_Bounded_Updates | RRA_Encoded_Bounded_States | Local encoded steps preserve the original counter and whole optional environment transition. |
+| RRA_Digit_Allocated_Stores | RRA_Encoded_Bounded_Updates | A closed digit store enforces original formation and its actual strict head bound. |
+| RRA_Digit_Allocated_Projection | RRA_Digit_Allocated_Stores | Complete generic and typed state projections preserve all original optional update fields. |
+| Finite_Prepared_Results | Finite_Set_Composition | Unavailable input and an absent result of an available operation remain distinct through a reusable result family. |
+| RRA_Allocation_Result_Relations | RRA_Allocated_Environment_References, Finite_Prepared_Results | Original counters and environments determine complete guarded allocation results independently of a store. |
+| RRA_Digit_Allocation_References | RRA_Digit_Allocated_Projection, RRA_Allocation_Result_Relations | Typed digit operations satisfy the factored whole original result relation. |
+| RRA_Allocation_Case_Families | RRA_Allocated_Environment_Cases | One source-case constructor instantiates each allocator and recovers every original case. |
+| RRA_Digit_Allocation_Methods | RRA_Digit_Allocation_References, RRA_Allocation_Case_Families | Actual typed operations and adverse controls are assessed against independently specified original results. |
+| RRA_Digit_Allocation_Paths | RRA_Digit_Allocation_Methods | Persistent digit chains expose actual next-key traversals and complete original/digit candidate-result pairs. |
+| RRA_Digit_Allocation_Investigation | RRA_Digit_Allocation_Paths | Registered observations derive complete persistent allocation comparisons and revision reasons. |
+| Digit_Allocation_Execution | RRA_Digit_Allocation_Investigation, Factor_Executable_Artifact_Values | Checked native export retains complete states, both histories, candidate-result equality and original reports. |
+| RRA_Graft_Readiness | RRA_General_Environment_Grafts | Original formed inputs, the shared artifact, embedding and compatible bindings determine guarded graft readiness. |
+| RRA_Finite_Graft_Readiness | RRA_Graft_Readiness, RRA_Finite_Embedded_Grafts | Actual finite rows compute original shared-artifact and binding conditions under the proved compact embedding. |
+| RRA_Compact_Graft_Admission | RRA_Finite_Graft_Readiness, Optional_Result_Invariants | The optional compact graft exactly preserves original readiness and the complete successful constructor. |
+| RRA_Graft_Admission_Methods | RRA_Compact_Graft_Admission, RRA_Graft_Methods, Finite_Relation_Reader_Assessments | Actual guards and destructive or restrictive controls compare whole original optional graft outcomes. |
+| RRA_Graft_Admission_Investigation | RRA_Graft_Admission_Methods | Registered exact subject equations derive whole guarded graft observations and revisions. |
+| Graft_Admission_Execution | RRA_Graft_Admission_Investigation, Factor_Executable_Artifact_Values | Checked native export retains original graft inputs, all prerequisites, complete outputs and revision reasons. |

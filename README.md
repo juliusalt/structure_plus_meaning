@@ -2449,13 +2449,27 @@ its original premises. Raw output equality, formation and coordinate growth
 remain distinct. Compact grafts add one coordinate to each present imported use;
 conflicting and malformed cases retain their actual unformed results.
 
-The complete 1,304-theory check and all 98 host tests with 59 subtests pass.
-Thirty-three source-only boundaries cover 1,691 complete native reports. The
-four new families freshly rebuild 94, 44, 96 and 73 theories from HOL, and all
-177 reports equal their preceding executions. The other twenty-nine complete
-source closures, toolchains and verification records are unchanged.
-The [current verification](validation/reconstruction/current-verified.json)
-records the accepted checks and the retained evidence replacing generated copies.
-Persistent digit allocation, indexed generation and graft adoption, full physical
-cost, the six conditions in `problems.txt`, historical permission and reachability,
-native mathematical-proof admission, genesis and the final audit remain open.
+[Persistent digit allocation](validation/reconstruction/digit-allocation.md)
+transfers original formation, head bounds and complete optional results to exact
+digit paths. All 192 native candidate-result comparisons agree with the original
+store, and all forty preceding reports are recovered. Actual next insertions
+after zero, 32 and 128 allocations take 5, 15 and 19 positions per traversal,
+versus the original 4, 36 and 132. Finite-set enumeration differences and the
+cost of key construction, arithmetic and whole reporting remain explicit.
+
+[Guarded graft admission](validation/reconstruction/graft-admission.md) computes
+original formation, shared-artifact and binding-compatibility prerequisites.
+Matching shared bindings are admitted; conflicts and absent shared sources are
+refused. Complete raw merge formation alone does not authorize a graft. Both
+the direct boundary check and the equivalent full-merge check retain all-input
+contracts and complete native comparisons.
+
+The complete 1,323-theory check and all 98 host tests with 59 subtests pass.
+Thirty-five source-only boundaries cover 1,818 complete native reports. The two
+new families rebuild 117 and 79 theories from HOL and reproduce all 127 reports.
+All thirty-three preceding source closures, toolchains and verification records
+remain unchanged. The [current verification](validation/reconstruction/current-verified.json)
+records the accepted checks and evidence replacing generated copies.
+Closed cached indexed grafts, indexed generation, full physical cost, the six
+conditions in `problems.txt`, historical permission and reachability, native
+mathematical-proof admission, genesis and the final audit remain open.

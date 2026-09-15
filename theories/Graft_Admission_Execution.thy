@@ -1,0 +1,12 @@
+theory Graft_Admission_Execution
+  imports RRA_Graft_Admission_Investigation Factor_Executable_Artifact_Values
+begin
+
+setup \<open>Finite_Observation_Contracts.export @{term graft_admission_investigation}\<close>
+
+export_code graft_admission_packet graft_admission_indices graft_admission_inspect graft_admission_requirements
+  graft_admission_case graft_view_formed finite_environment_artifacts finite_environment_bindings
+  finite_artifact_rows Finite_Whole Finite_Anchor fset set nat_of_integer integer_of_nat
+  in SML module_name Graft_Admission_Execution file_prefix graft_admission
+
+end

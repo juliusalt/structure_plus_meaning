@@ -1,7 +1,7 @@
 {
-  "invocation": "e549af67-24c6-4fed-8f65-cfc05c5068ea",
+  "invocation": "7385d461-4edb-4fb3-815a-34fdbcc17023",
   "status": "accepted",
-  "started_utc": "2026-09-15T03:03:54.779162+00:00",
+  "started_utc": "2026-09-15T04:38:38.559985+00:00",
   "command": [
     "isabelle",
     "build",
@@ -11,13 +11,13 @@
     "-o",
     "timeout=900",
     "-D",
-    "/tmp/generalization-quality-review/native-cached-graft-adoption/worktree"
+    "/tmp/generalization-quality-review/native-history-index-adoption/worktree"
   ],
   "base_session": "HOL",
   "exit_code": 0,
   "session_diagnostics": "",
   "sources": {
-    "ROOT": "22e1e576203a5050bd9b3c872655d2428bca7d2918eb5d15d5d6ff0d79dcd329",
+    "ROOT": "6391a614775dc3440bad0f6208aa10435a09211f60db6abc46b175bcb8c076ca",
     "theories/Allocated_Environment_Execution.thy": "1ad5dc271272984cae2ce85d88eba6ee0ee9fec98b3b3015b7c11470d7397047",
     "theories/Artifact_Lookup_Execution.thy": "2dd0871fbc0069fbfa3176b6ffcfaab452c14527d1c6d010f20d65a4e6a183f3",
     "theories/Bag_Difference_Witnesses.thy": "d5b919d0e2fb895fcb241ca351faa839a108a639a4f374b724941439746efe33",
@@ -531,7 +531,14 @@
     "theories/Factor_Headed_Material.thy": "a2a720862dd6f38a3072c539991a148b8d2f196f7fc62a50ac6c2286327c9c45",
     "theories/Factor_Historical_Programs.thy": "14464b3906f2f1497c00298a2ef7d5687f2df5bb7d713d3680bb549a91803d82",
     "theories/Factor_Historical_Views.thy": "5d6ea17e64e3a95f685186ce229c77bf8baab12c0f9908e340ff380b6cbb9831",
+    "theories/Factor_History_Index_Cases.thy": "d37d7fcc6faae566681fd90bd662648b4f850349bf73b843d813090dd4ee9dfb",
+    "theories/Factor_History_Index_Investigation.thy": "f852ce191857d1ff68c73b8916dbdae841c7bcbeae4587751d4a1abc73ed22e0",
+    "theories/Factor_History_Index_Methods.thy": "3ab3023cd22f59aad9cdb15071e9954c5ef342f7ef6670fcb4072d49fb034e3f",
+    "theories/Factor_History_Index_References.thy": "da8de5359e4c0aabaaf8f6e50250a4f6f3bab86fa1a7b2838ce106020a76dd7e",
     "theories/Factor_Incidence_Queries.thy": "96345d9f6ce65051b872c7d5fe1ddc39a6e03afae3ae649e9d00ddaf3f65ec60",
+    "theories/Factor_Indexed_History_Members.thy": "7fbba4f730a634bf524dd5492438b75182353db6eb0baba86891e4ff804f4255",
+    "theories/Factor_Indexed_History_Projection.thy": "a349becacbd316e0dbfb514c26d6e0718bd97758479977feee8dcbae8d6a69fc",
+    "theories/Factor_Indexed_History_Steps.thy": "598e48bcc3a6fa5be40532bb0cc5f7ccc4632e037e6bc0dbbad9874f6a65be8a",
     "theories/Factor_Inference_Claim_Clauses.thy": "308e4245a4a66f750ec6b4194bcee4a59b05a5f369365fad7b83b7f185e7f5c5",
     "theories/Factor_Inference_Claim_Compilation.thy": "9418e1e91dd18d5f46cdd4117b8f06308e437d341d06d497f4f7f09679ba68f5",
     "theories/Factor_Inference_Claim_Components.thy": "e50a0cd2b8e605675273e9248ea120bd4734c000f6ed74e7ea8025532eaeaefd",
@@ -886,6 +893,7 @@
     "theories/Factor_Required_History_References.thy": "2dc1aaf9527b97cca92538a8550c5b543bb3a5c0b9f63517f1da5f88e6eaf017",
     "theories/Factor_Required_History_States.thy": "fc2bf4ddf4b6245e140876981fe7fe3ce82a1b467a317f0ff3c493bf06c2fc55",
     "theories/Factor_Required_History_Steps.thy": "35ad1a27d2fdb117b8f388e59cdacdbdb9e9e9041dcee0d218a1a35073d0d77f",
+    "theories/Factor_Required_History_Transitions.thy": "2a314b8c97aea10809aefbaea77fb000ba112cd0afdc6ac4f5192e200c6f00a0",
     "theories/Factor_Requirement_Artifact_Admission.thy": "420f26dcb439cbc3d905839ac847b86c640b7c5880b05afe340e78b57e26f315",
     "theories/Factor_Requirement_Decision_Assessment.thy": "b0e9a87051247ee4681158869a2f3905a06937fff04e101894e7b23e50c62c09",
     "theories/Factor_Requirement_Decision_Cases.thy": "39876e8d291d2468f8af212571cb71dd5c2cdbeebedd0fbdfa00d927ead0895d",
@@ -1109,6 +1117,7 @@
     "theories/Generation_Structures.thy": "7b70e3b4e64e3c7aa5c61acea2b7baba752b93ad5faaa2a273f9f74389ef3162",
     "theories/Graft_Admission_Execution.thy": "da3632bc531f481146d216e99003e18d7261460c5ff1efcd2e2ba3513ef833bf",
     "theories/Graft_Execution.thy": "3fb819e33c59c43dbcc57e47732208612ea50bb25a61c860c53b2e17c621cb61",
+    "theories/History_Index_Execution.thy": "418ba88b336aa2f93614dba681209f685f0d62a78e7f480dbde5e63cd3a14586",
     "theories/Indexed_Relation_Families.thy": "ac4b8f485996387015e9fbc732e78c9b37153d25b831f5e9b857b4d316ffb8dc",
     "theories/Indexed_Relation_Paths.thy": "bde20977d4d13471e245cf91b3f12875208486542b44e5c25aa9d753bab940ec",
     "theories/Indexed_Value_Images.thy": "84b02b8d9e0e8a7b660dd7a4c8dc864f72d89c7b0a67d2c60ae2e88551b127e2",
@@ -1234,6 +1243,7 @@
     "theories/RRA_Encoded_Environment_Views.thy": "39c354568b604586a67889f2f0e6ccca3d74126ce2b55b2c0697daa20c02ffc2",
     "theories/RRA_Encoded_Environments.thy": "31f1760c3a2cde5ed27123d6221f7e6827e0643c0bede192bc1b368eb08b2677",
     "theories/RRA_Encoded_Graft_Rows.thy": "4fb844fa89310a0dd9af691c73c49cd2f22ebf5e9ca75da140d5ee91f9622f94",
+    "theories/RRA_Encoded_Site_Relations.thy": "a61186cfbae103bb4adfb04fc3a80d51b8f951ac33568790d5213706c6be8f95",
     "theories/RRA_Environment.thy": "25f8205e1e3b1f395269b7ffc85f4a841d6ef762a72f78e2dd9e6d72cdbaa2af",
     "theories/RRA_Environment_Index_Equivalence.thy": "ae5b623727be1845244169d6b87565e628632b1d8558af9d443e3a2b50ebe17f",
     "theories/RRA_Environment_Lookup_Contracts.thy": "75b289942b330d650d40e49322eb9055585764a96279e0a594aa978368503611",
@@ -1361,6 +1371,6 @@
   "isabelle_version": "Isabelle2025-2",
   "sources_unchanged": true,
   "tools_unchanged": true,
-  "finished_utc": "2026-09-15T03:11:51.580045+00:00",
-  "log_sha256": "680ed040323370fef03c9dbefd0b682bf22ca3a61620f5969d0890cbafacf18c"
+  "finished_utc": "2026-09-15T04:46:43.850774+00:00",
+  "log_sha256": "1708f64db5bc03ee66458fc603075d2edb7bf060cdecbe2616fffe4ccb373116"
 }

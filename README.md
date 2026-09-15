@@ -2477,12 +2477,24 @@ Other fresh embeddings remain valid constructions. A complete native example
 separates the stored bound 4 from the recomputed minimum 1; both outputs are
 formed, and only one is the specified complete operation result.
 
-The complete 1,335-theory check and all 98 host tests with 59 subtests pass.
-Thirty-six source-only boundaries cover 1,904 complete native reports. The new
-cached-graft family rebuilds 127 theories from HOL and reproduces all 86 reports.
-All thirty-five preceding source closures, toolchains and verification records
+[Indexed history admission](validation/reconstruction/history-index.md) now
+retains the whole original state and an exact index of the ordered admission
+ledger. Actual lookups decide membership; original replay and policy operations
+remain the attempt, and a successful step appends and indexes the same row.
+All twelve original history subjects are recovered, including the distinction
+between readable material and ledger admission.
+
+Whole-result comparison rejects a stale cache even when the complete immediate
+original state is preserved. Actual subsequent steps retain both every prior
+ledger row and the complete index. This admission index does not settle the
+cost of generation construction, replay, policy or material operations.
+
+The complete 1,345-theory check and all 98 host tests with 59 subtests pass.
+Thirty-seven source-only boundaries cover 1,970 complete native reports. The new
+history-index family rebuilds 619 theories from HOL and reproduces all 66 reports.
+All thirty-six preceding source closures, toolchains and verification records
 remain unchanged. The [current verification](validation/reconstruction/current-verified.json)
 records the accepted checks and evidence replacing generated copies.
-Generation-store adoption, history admission indexing, full physical cost, all
-six conditions in `problems.txt`, historical permission and reachability, native
-mathematical-proof admission, genesis and the final audit remain open.
+Generation-store adoption, full physical cost, all six conditions in
+`problems.txt`, historical permission and reachability, native mathematical-proof
+admission, genesis and the final audit remain open.

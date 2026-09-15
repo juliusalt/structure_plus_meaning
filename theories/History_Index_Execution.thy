@@ -1,0 +1,20 @@
+theory History_Index_Execution
+  imports Factor_History_Index_Investigation Factor_Executable_Artifact_Values
+    Factor_Finite_Judgment_Reading_Sharing
+begin
+
+setup \<open>Finite_Observation_Contracts.export @{term history_index_investigation}\<close>
+
+export_code history_index_packet history_index_indices history_index_inspect
+  history_index_original_family history_index_previous_cases history_index_source_equal history_index_source_scope
+  indexed_history_view raw_indexed_required_history history_index_state_view
+  raw_required_history required_history_source required_history_source_use required_history_source_root
+  required_history_goals required_history_entry required_history_policy required_history_policy_use
+  required_history_material required_history_members required_history_subject_coverage
+  generation_locus generation_payload generation_cause generation_predecessors
+  finite_artifact_rows finite_environment_artifact_rows finite_environment_bindings
+  History_Step Schema_Proof Finite_Target Finite_Payload Finite_Pair Finite_Whole Finite_Anchor
+  Existing_Admission Paired_Admission Collected_Admission fset set nat_of_integer integer_of_nat
+  in SML module_name History_Index_Execution file_prefix history_index
+
+end

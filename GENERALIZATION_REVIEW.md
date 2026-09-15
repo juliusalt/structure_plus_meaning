@@ -1836,3 +1836,42 @@ verification bytes are unchanged. Generation-store adoption, history admission
 indexing, complete physical cost, all six workflow conditions, complete
 historical permission and reachability, native mathematical-proof admission,
 genesis and the final audit remain open.
+
+
+## Complete indexed history admission and original state preservation
+
+The original history transition factors into its ledger-membership guard,
+actual replay and policy attempt, and complete ordered ledger append. A new
+closed state retains that whole original state and a persistent index whose
+decoded relation is exactly every ledger member. Generic encoded site lookup
+and insertion establish the complete optional-use, address and generation-value
+boundary. List order and repeated rows remain in the original ledger.
+
+Fourteen actual methods run on sixteen cases. Both the typed operation and
+original complete reference are selected and adequate. Stale or empty indexes,
+missing prior or new rows, ledger reversal, unsupported cached facts, changed
+requirements, membership bypass, refusal, a no-op, empty output families and
+unavailable-input conflation are exposed by complete native conditions.
+
+A stale cache preserves the entire immediate original state on successful
+paths. Observing only that projection would miss the failure. Whole-result
+equality rejects it. Another original formed fixture has four artifacts and
+three bindings but no ledger member. Only the membership-bypassing method
+admits its request. Readability does not establish admission; reachability of
+that fixture is not asserted. Actual subsequent steps preserve growing ledgers
+of two through five entries and material up to twenty artifacts and twenty-five
+bindings. All twelve original history subjects are recovered as complete inputs.
+
+The three initial selections have 103, 13 and zero residual distinctions and
+960, 137 and zero repairs. Native revisions select both original facets and
+leave no scoped residual. Every complete comparison and repair reason is
+retained by the source reconstruction boundary.
+
+The fresh reconstruction rebuilds 619 theories from HOL and reproduces every
+one of the 66 complete reports. Every original source, database source, runtime
+input and archived input was verified. The complete repository check accepts
+1,345 theories and all 98 host tests with 59 subtests. Thirty-seven recipes
+cover 1,970 reports; every preceding closure, toolchain and original verification
+record remains unchanged. Generation-store adoption, full physical cost, all
+six workflow conditions, complete historical permission and reachability,
+native mathematical-proof admission, genesis and the final audit remain open.

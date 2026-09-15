@@ -1338,3 +1338,13 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     RRA_Finite_Graft_Bounds
     RRA_Graft_Case_Families
     RRA_Lookup_Graft_Readiness
+    Factor_History_Index_Cases
+    Factor_History_Index_Investigation
+    Factor_History_Index_Methods
+    Factor_History_Index_References
+    Factor_Indexed_History_Members
+    Factor_Indexed_History_Projection
+    Factor_Indexed_History_Steps
+    Factor_Required_History_Transitions
+    History_Index_Execution
+    RRA_Encoded_Site_Relations

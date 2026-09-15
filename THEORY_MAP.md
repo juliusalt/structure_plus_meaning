@@ -1340,3 +1340,13 @@ record, not the completed graph proposed in `plan.md`.
 | RRA_Cached_Graft_Cases | RRA_Cached_Graft_Methods | Persistent successful graft chains construct complete cache states and recover every previous source case. |
 | RRA_Cached_Graft_Investigation | RRA_Cached_Graft_Cases | Registered exact subject equations derive complete graft assessments and investigation revisions. |
 | Cached_Graft_Execution | RRA_Cached_Graft_Investigation, Factor_Executable_Artifact_Values | Checked native export retains complete persistent inputs, original source cases and all candidate results. |
+| RRA_Encoded_Site_Relations | RRA_Encoded_Environment_Views | Generic encoded site buckets preserve complete optional-use, address and value relations through lookup and insertion. |
+| Factor_Required_History_Transitions | Factor_Required_History_Steps | Original guarded history steps factor into complete actual attempts and ordered ledger appends. |
+| Factor_Indexed_History_Members | Factor_Required_History_Projection, RRA_Encoded_Site_Relations, RRA_Digit_Environment_Instance | An exact complete membership index accompanies the unchanged original admission ledger. |
+| Factor_Indexed_History_Steps | Factor_Indexed_History_Members, Factor_Required_History_Transitions | Actual indexed membership guards and local insertion preserve original history validity and index fidelity. |
+| Factor_Indexed_History_Projection | Factor_Indexed_History_Steps | Whole optional results retain every original state field and exactly every indexed ledger member. |
+| Factor_History_Index_References | Factor_Indexed_History_Projection, Factor_Required_History_Methods | Original history transitions determine complete independent state and cache results. |
+| Factor_History_Index_Methods | Factor_History_Index_References | Shared actual operations derive complete candidate results and expose stale caches or altered admission. |
+| Factor_History_Index_Cases | Factor_History_Index_Methods, Factor_Required_History_Cases | Persistent subsequent steps retain all original source cases and their exact full projections. |
+| Factor_History_Index_Investigation | Factor_History_Index_Cases | Registered complete subject equations derive native observations, comparisons and revisions. |
+| History_Index_Execution | Factor_History_Index_Investigation, Factor_Executable_Artifact_Values, Factor_Finite_Judgment_Reading_Sharing | Native exports retain complete indexed histories, original sources and all assessment reasons. |

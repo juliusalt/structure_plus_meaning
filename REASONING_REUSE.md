@@ -1248,3 +1248,21 @@ retain actual input row lists, original states and counters, all optional
 results, previous source correspondence and persistent histories. A valid
 bound is not assumed minimal. Indexed generation and history adoption remain
 subsequent uses requiring their own complete contracts and executions.
+
+
+## Original history transitions with complete membership indexes
+
+Generic encoded site relations establish whole lookup and insertion equations
+for separate use and address coordinates and arbitrary values. The original
+required-history transition is factored once into membership, actual attempt
+and ordered append. Its indexed instance reuses the same attempt and appends
+the same row, while local insertion preserves equality of the complete cache
+and the original ledger relation.
+
+Closed state projection retains the whole original history and every cached
+member. The reference relation is determined by the original transition and
+ledger; it does not treat cache validity as complete output correctness.
+Shared actual operations feed the candidate family through exact preparation
+equations. Original-source recovery and subsequent-step construction reuse
+these complete contracts. Indexed generation construction and full development
+adoption remain later uses with their own outstanding premises.

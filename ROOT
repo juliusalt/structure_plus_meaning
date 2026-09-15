@@ -1348,3 +1348,13 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Required_History_Transitions
     History_Index_Execution
     RRA_Encoded_Site_Relations
+    Indexed_Generation_Execution
+    RRA_Digit_Environment_Loading
+    RRA_Digit_Generation_Readings
+    RRA_Indexed_Generation_Cases
+    RRA_Indexed_Generation_Investigation
+    RRA_Indexed_Generation_Methods
+    RRA_Indexed_Generation_Reports
+    RRA_Lookup_Citation_Readings
+    RRA_Lookup_Generation_Checking
+    RRA_Lookup_Generation_Fields

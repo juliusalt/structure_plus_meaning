@@ -1875,3 +1875,48 @@ cover 1,970 reports; every preceding closure, toolchain and original verificatio
 record remains unchanged. Generation-store adoption, full physical cost, all
 six workflow conditions, complete historical permission and reachability,
 native mathematical-proof admission, genesis and the final audit remain open.
+
+
+## Complete generation reading through original lookup contracts
+
+The original generation fields, recursive checker, readiness and anchor
+selection now have actual indexed implementations. Generic lookup contracts
+first recover every original citation target, location, anchored value and
+anchor. Field and recursive generation proofs instantiate those contracts.
+The closed digit environment supplies original formation without rebuilding
+or scanning the whole environment inside each reader.
+
+Initialization enumerates all original artifact and binding relations and
+retains their exact meaning and actual initial head. A review initially
+required equality of the displayed artifact lists. Native source equality
+held, but twenty-eight inputs used a different finite-set enumeration. The
+revised boundary retains every complete pre-loading source and the complete
+projected input, with the proved native relation-equality computation. Exact
+source bytes are compared with the earlier original execution; enumeration
+identity is recorded separately and cannot substitute for relation equality.
+
+Fifteen methods run on thirty-two subjects. Each retains complete requested
+sites and generations, ordered queries, optional selected anchors, all field
+readings and actual recursive checks. Typed lookup and the complete original
+reference are selected and adequate. Controls omit bindings, change query
+coordinates, force checks or readiness, inspect only top fields, discard
+anchors, fields or query results, return empty families or conflate unavailable
+input. Ten cases reject shallow checks that accept altered predecessors while
+the complete top field readings remain identical. Duplicate generation values
+at different uses remain readable but fail original record readiness.
+
+All sixteen original requests and sixteen resulting or retained requests have
+their complete sources recovered. Malformed loading stays unavailable in cases
+11 and 27. The three initial selections have 130, 11 and zero residual
+distinctions and 3,020, 170 and zero repairs. Native revisions select both
+original facets and leave no scoped residual. All complete reasons remain in
+the source reconstruction boundary.
+
+The fresh reconstruction rebuilds 168 theories from HOL and reproduces all
+102 complete reports. Every source, database source, execution input and
+archived input was verified. The complete repository check accepts 1,355
+theories and all 98 host tests with 59 subtests. Thirty-eight recipes cover
+2,072 reports, with all preceding closures, toolchains and verification records
+unchanged. Complete generation construction and adoption, full physical cost,
+all six workflow conditions, complete historical permission and reachability,
+native mathematical-proof admission, genesis and the final audit remain open.

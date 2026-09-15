@@ -1,0 +1,14 @@
+theory Indexed_Generation_Execution
+  imports RRA_Indexed_Generation_Investigation Factor_Executable_Environment_Values
+begin
+
+setup \<open>Finite_Observation_Contracts.export @{term indexed_generation_investigation}\<close>
+
+export_code indexed_generation_packet indexed_generation_indices indexed_generation_inspect
+  indexed_generation_original_subject indexed_generation_source_scope indexed_generation_previous_cases indexed_generation_source_equal
+  digit_allocated_view finite_environment_artifact_rows finite_environment_bindings finite_artifact_rows
+  generation_locus generation_predecessors generation_payload generation_cause
+  Generation Finite_Whole Finite_Anchor fset set nat_of_integer integer_of_nat
+  in SML module_name Indexed_Generation_Execution file_prefix indexed_generation
+
+end

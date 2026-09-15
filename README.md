@@ -2489,12 +2489,24 @@ original state is preserved. Actual subsequent steps retain both every prior
 ledger row and the complete index. This admission index does not settle the
 cost of generation construction, replay, policy or material operations.
 
-The complete 1,345-theory check and all 98 host tests with 59 subtests pass.
-Thirty-seven source-only boundaries cover 1,970 complete native reports. The new
-history-index family rebuilds 619 theories from HOL and reproduces all 66 reports.
-All thirty-six preceding source closures, toolchains and verification records
-remain unchanged. The [current verification](validation/reconstruction/current-verified.json)
+[Indexed generation reading](validation/reconstruction/indexed-generation.md)
+now computes complete generation fields, recursive predecessor checks, readiness
+and anchor selection through actual artifact and binding lookups. The closed
+store carries original formation. Initialization preserves the whole original
+environment; individual readers avoid rebuilding or rechecking it.
+
+Every complete source before loading is retained. Native projection equality
+establishes identity of the original finite relations even when their displayed
+enumeration order changes. Actual shallow-check controls expose false recursive
+claims with unchanged top fields, and unavailable input remains distinct from
+an available false-valued report.
+
+The complete 1,355-theory check and all 98 host tests with 59 subtests pass.
+Thirty-eight source-only boundaries cover 2,072 complete native reports. The new
+indexed-generation family rebuilds 168 theories from HOL and reproduces all 102
+reports. All thirty-seven preceding source closures, toolchains and verification
+records remain unchanged. The [current verification](validation/reconstruction/current-verified.json)
 records the accepted checks and evidence replacing generated copies.
-Generation-store adoption, full physical cost, all six conditions in
-`problems.txt`, historical permission and reachability, native mathematical-proof
-admission, genesis and the final audit remain open.
+Complete generation installation and adoption, full physical cost, all six
+conditions in `problems.txt`, historical permission and reachability, native
+mathematical-proof admission, genesis and the final audit remain open.

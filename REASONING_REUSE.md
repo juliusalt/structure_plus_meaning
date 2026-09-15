@@ -1266,3 +1266,22 @@ Shared actual operations feed the candidate family through exact preparation
 equations. Original-source recovery and subsequent-step construction reuse
 these complete contracts. Indexed generation construction and full development
 adoption remain later uses with their own outstanding premises.
+
+
+## Original generation readers over complete lookups
+
+One generic lookup-reading contract owns all original citation forms, target
+artifacts, locations, anchored values and anchor selection. The generation
+field operation instantiates it for the whole socket family. Recursive
+predecessor checking uses the same locations and original bijection condition;
+its proof composes over the supplied generation core. Record readiness reuses
+that complete checker and the original target and distinctness conditions.
+
+The closed digit store supplies lookup fidelity and formation once. All four
+actual operations have complete original equations. Initial loading reuses
+functional finite-relation enumeration and retains the whole original state
+and its allocation bound. A generic observation equation composes that loading
+with any complete downstream view. Complete pre-loading sources and native
+projection equality distinguish finite-set presentation order from relation
+identity. The report, shared-preparation and assessment contracts instantiate
+the existing relation-reader and subject-investigation machinery.

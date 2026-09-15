@@ -1,15 +1,15 @@
 {
-  "invocation": "7385d461-4edb-4fb3-815a-34fdbcc17023",
+  "invocation": "3689fb0b-7f69-4de5-b2e4-68442dca15aa",
   "status": "accepted",
-  "started_utc": "2026-09-15T04:38:38.559755+00:00",
+  "started_utc": "2026-09-15T05:00:30.167576+00:00",
   "exit_code": 0,
   "build_receipt": "validation/build.json",
   "diagnostics_file": "validation/check-errors.log",
   "build_status": "accepted",
   "build_evidence": {
-    "invocation": "7385d461-4edb-4fb3-815a-34fdbcc17023",
+    "invocation": "3689fb0b-7f69-4de5-b2e4-68442dca15aa",
     "status": "accepted",
-    "started_utc": "2026-09-15T04:38:38.559985+00:00",
+    "started_utc": "2026-09-15T05:00:30.167801+00:00",
     "command": [
       "isabelle",
       "build",
@@ -19,13 +19,13 @@
       "-o",
       "timeout=900",
       "-D",
-      "/tmp/generalization-quality-review/native-history-index-adoption/worktree"
+      "/tmp/generalization-quality-review/native-indexed-generation-adoption/worktree"
     ],
     "base_session": "HOL",
     "exit_code": 0,
     "session_diagnostics": "",
     "sources": {
-      "ROOT": "6391a614775dc3440bad0f6208aa10435a09211f60db6abc46b175bcb8c076ca",
+      "ROOT": "f706a4aca98f1b6ceec47a86a79d0125f73597a536b9e43d1618b497d1562e7c",
       "theories/Allocated_Environment_Execution.thy": "1ad5dc271272984cae2ce85d88eba6ee0ee9fec98b3b3015b7c11470d7397047",
       "theories/Artifact_Lookup_Execution.thy": "2dd0871fbc0069fbfa3176b6ffcfaab452c14527d1c6d010f20d65a4e6a183f3",
       "theories/Bag_Difference_Witnesses.thy": "d5b919d0e2fb895fcb241ca351faa839a108a639a4f374b724941439746efe33",
@@ -1126,6 +1126,7 @@
       "theories/Graft_Admission_Execution.thy": "da3632bc531f481146d216e99003e18d7261460c5ff1efcd2e2ba3513ef833bf",
       "theories/Graft_Execution.thy": "3fb819e33c59c43dbcc57e47732208612ea50bb25a61c860c53b2e17c621cb61",
       "theories/History_Index_Execution.thy": "418ba88b336aa2f93614dba681209f685f0d62a78e7f480dbde5e63cd3a14586",
+      "theories/Indexed_Generation_Execution.thy": "4bafd0ec65622a333d4ee0bba251a31905022a502295bf1af400899b0307ce2e",
       "theories/Indexed_Relation_Families.thy": "ac4b8f485996387015e9fbc732e78c9b37153d25b831f5e9b857b4d316ffb8dc",
       "theories/Indexed_Relation_Paths.thy": "bde20977d4d13471e245cf91b3f12875208486542b44e5c25aa9d753bab940ec",
       "theories/Indexed_Value_Images.thy": "84b02b8d9e0e8a7b660dd7a4c8dc864f72d89c7b0a67d2c60ae2e88551b127e2",
@@ -1237,6 +1238,8 @@
       "theories/RRA_Digit_Allocation_Paths.thy": "b759a5088d3ec2c2afc8ddddac0679b48d181efb8e4507926b30726459d7f8c4",
       "theories/RRA_Digit_Allocation_References.thy": "9a9f386060d849c56c8bfa372e5edadc1b29ef79be6a1a0e2632ab98a34a6743",
       "theories/RRA_Digit_Environment_Instance.thy": "76032897afe1f2845964313f67c7b136be6cc25872c84d1b218e07fed4a1f7b3",
+      "theories/RRA_Digit_Environment_Loading.thy": "face75cbe4912f9132d2dbab362210881e542767483d3ce3eb52f772b5648c54",
+      "theories/RRA_Digit_Generation_Readings.thy": "95cb7be7e865b6fb26d12cd12e6a4d681f88d61aec6a69ca154043417b8a993d",
       "theories/RRA_Digit_Natural_Paths.thy": "2e2b70ea2c4bbfc232c1348274db80cf5d5edc97bdf8530e893594b4d14bb7a2",
       "theories/RRA_Digit_Use_Paths.thy": "92c8a09ec14319ed4a834e79e10031460b875c55a18854b171f9fbccd4f0e1cf",
       "theories/RRA_Encoded_Bounded_Grafts.thy": "f2941a2f8ac43d2128809de6cbe741cfded6f89f635c60a0f72326a10869b044",
@@ -1321,8 +1324,15 @@
       "theories/RRA_Indexed_Artifact_Lookup.thy": "f60f0b0aca8ecc11b2d4b128086743acb2f320c35ac848df711887288540074b",
       "theories/RRA_Indexed_Environment_Views.thy": "9d0853ff915d30786737d4cf87e8225f6ef3c2424e91375b4956407ff91a72a3",
       "theories/RRA_Indexed_Environments.thy": "d86e348b3dca528273d1a5acaa7c9f78d01ea747fed5409958f157693f19eb1c",
+      "theories/RRA_Indexed_Generation_Cases.thy": "f6a3bad6b84a43bb6751bb67512591077ebb05210d65685c6412f5e60e70eef9",
+      "theories/RRA_Indexed_Generation_Investigation.thy": "8fae4554097bc765ffc990476e2fbae5250d925abebf209d06c66fb36a3885c9",
+      "theories/RRA_Indexed_Generation_Methods.thy": "095d84bf7306fa4d4d769aef10f4477f0ff77c6531f07f22a5dd2463277cf449",
+      "theories/RRA_Indexed_Generation_Reports.thy": "176099892f652a162715c9b236a5f14b3d61945fbb3dd37509437149cae64a13",
       "theories/RRA_Literal_Extension.thy": "807aca3764544f9d8ac62909e0517ee94a1f3adc761f9cf57d3c75ce66513e44",
       "theories/RRA_Local_Environment_Updates.thy": "0d011a1edb04b7079b3cc314fcd6804a27a4272dd469ebbf8f76e216906be6dc",
+      "theories/RRA_Lookup_Citation_Readings.thy": "100c3417c4e9a892dbb0b3c13e8dcb5e794bc82a4c3a1b414d87d07464df399d",
+      "theories/RRA_Lookup_Generation_Checking.thy": "cc7f20494222e6d6aaabef2861724ea5589893cd95b6a555783c04f635b3784d",
+      "theories/RRA_Lookup_Generation_Fields.thy": "a27142e32bd9e09de485882324344484ca56c271515730825f4f73763fb01974",
       "theories/RRA_Lookup_Graft_Readiness.thy": "656621bab0c493501781fcc92d636ad54ea027414daed9dc5ec2813b23084e74",
       "theories/RRA_Prescribed_Addresses.thy": "ddf78609042e7a456b2083daaa3952e00a396074324a622681aaa1d2ac271a5f",
       "theories/RRA_Publication.thy": "610b397c95dee0ecf0efc37d9ee9525114fac4340d751a408683cbdcd9ed4cc4",
@@ -1379,13 +1389,13 @@
     "isabelle_version": "Isabelle2025-2",
     "sources_unchanged": true,
     "tools_unchanged": true,
-    "finished_utc": "2026-09-15T04:46:43.850774+00:00",
-    "log_sha256": "1708f64db5bc03ee66458fc603075d2edb7bf060cdecbe2616fffe4ccb373116"
+    "finished_utc": "2026-09-15T05:10:48.401216+00:00",
+    "log_sha256": "660225a2a381c000554679346f10ed3d539c4c2f893b9093960f99e1124b9da5"
   },
-  "theory_count": 1345,
+  "theory_count": 1355,
   "missing_theory_files": [],
   "unlisted_theories": [],
   "proof_escape_matches": [],
   "sources_and_tools_unchanged": true,
-  "finished_utc": "2026-09-15T04:46:44.043156+00:00"
+  "finished_utc": "2026-09-15T05:10:48.595454+00:00"
 }

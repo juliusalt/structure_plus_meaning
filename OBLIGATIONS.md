@@ -1073,12 +1073,25 @@ enumeration order changes. Actual shallow-check controls expose false recursive
 claims with unchanged top fields, and unavailable input remains distinct from
 an available false-valued report.
 
-The complete 1,355-theory check and all 98 host tests with 59 subtests pass.
-Thirty-eight source-only boundaries cover 2,072 complete native reports. The new
-indexed-generation family rebuilds 168 theories from HOL and reproduces all 102
-reports. All thirty-seven preceding source closures, toolchains and verification
+[Persistent digit generation construction](validation/reconstruction/digit-generation.md)
+now uses actual point readers, stored-head allocation, guarded predecessor
+bindings and cached literal grafts. General fresh-use and embedding contracts
+establish the complete generation and original references while preserving
+every old artifact and binding. The whole optional result equals the bounded
+constructor, including refusal and the counter advanced twice.
+
+All sixteen original generation inputs remain complete sources. Further inputs
+use actual returned generations through sixteen steps and three prefix
+reservations. Omitting readiness produces four formed environments with invalid
+claimed generations. The original allocator still passes every original
+generation condition; its different uses remain a valid allocation policy.
+
+The complete 1,374-theory check and all 98 host tests with 59 subtests pass.
+Thirty-nine source-only boundaries cover 2,150 complete native reports. The new
+digit-generation family rebuilds 201 theories from HOL and reproduces all 78
+reports. All thirty-eight preceding source closures, toolchains and verification
 records remain unchanged. The [current verification](validation/reconstruction/current-verified.json)
 records the accepted checks and evidence replacing generated copies.
-Complete generation installation and adoption, full physical cost, all six
-conditions in `problems.txt`, historical permission and reachability, native
-mathematical-proof admission, genesis and the final audit remain open.
+Actual replay and history adoption, full physical cost, all six conditions in
+`problems.txt`, historical permission and reachability, native mathematical-proof
+admission, genesis and the final audit remain open.

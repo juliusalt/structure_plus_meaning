@@ -1920,3 +1920,60 @@ theories and all 98 host tests with 59 subtests. Thirty-eight recipes cover
 unchanged. Complete generation construction and adoption, full physical cost,
 all six workflow conditions, complete historical permission and reachability,
 native mathematical-proof admission, genesis and the final audit remain open.
+
+
+## Complete generation installation through general fresh-use contracts
+
+The generation constructor now accepts any fresh record use and any embedding
+whose complete boundary prerequisites hold. Fresh-frame, literal installation,
+selected-predecessor and whole-record recovery arguments are factored once.
+The original constructor is an exact instance. A strict head bound supplies a
+second instance: Some [n] holds the record, [n+1] embeds the three literals and
+the resulting head is n+2. This explicit reservation policy is not a claim of
+intrinsically canonical allocation.
+
+The actual digit constructor uses original point readings, allocation, guarded
+source bindings and cached grafts. Generic optional bind, transition sequence
+and function iteration projection retain every absent result. Complete original
+readiness discharges each actual stage guard, establishing equality of the whole
+optional result to the independent bounded constructor on every closed state.
+Old artifacts and bindings, the complete core, exact predecessor sites and the
+updated head are all retained in that equation.
+
+Seventeen methods run on twenty-four subjects. Original generation diagnostics
+retain all nine conditions, complete field readings and original references in
+addition to whole-operation soundness and completeness. The typed operation and
+bounded reference are selected and adequate. The original allocator passes all
+nine generation conditions on every available input; different allocation does
+not invalidate its original generation meaning. Complete operation comparison
+still detects every differing successful result.
+
+Controls change actual bindings, old material, predecessor values, result uses,
+stored heads and payloads, return refusal or a no-op, discard result families or
+conflate unavailable input. Omitting readiness admits cases 6, 7, 9 and 15.
+Every such output environment is formed while its claimed generation is invalid.
+The invalid locus-anchor case also loses the required original reference.
+Original formation cannot replace generation validity or readiness.
+
+Every original input is compared directly with the earlier generation execution.
+New requests use each actual returned state, site and generation after zero,
+one, two, four and sixteen constructions. After sixteen steps, the next input
+has 66 artifacts, 64 bindings and head 42; its successful result has 70 artifacts,
+68 bindings, record use Some [42] and head 44. Three boundary-only reservations
+preserve two artifacts and one binding while advancing the head from 10 to 13.
+Complete initial sources and native equality of independently computed bounded
+inputs remain distinct from finite-set enumeration order.
+
+The initial selections have 144, 16 and zero residual distinctions and 2,192,
+186 and zero repairs. Their revisions select [1,0], [0,1] and [0,1] respectively;
+each retains both facets with no scoped residual. The fresh reconstruction
+rebuilds all 201 theories from HOL and reproduces all 78 complete reports.
+Every original and database source and every execution and archived input was
+verified. The full repository accepts 1,374 theories and all 98 host tests with
+59 subtests. Thirty-nine recipes cover 2,150 reports; every prior complete source
+closure, toolchain and verification record remains unchanged.
+
+Record construction alone does not establish cause truth or historical
+permission. Actual replay and history adoption, full physical cost, all six
+workflow conditions, complete historical permission and reachability, native
+mathematical-proof admission, genesis and the final audit remain open.

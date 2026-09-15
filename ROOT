@@ -1358,3 +1358,22 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     RRA_Lookup_Citation_Readings
     RRA_Lookup_Generation_Checking
     RRA_Lookup_Generation_Fields
+    Digit_Generation_Execution
+    Optional_Transition_Sequences
+    RRA_Bounded_Generation_Construction
+    RRA_Digit_Generation_Cases
+    RRA_Digit_Generation_Construction
+    RRA_Digit_Generation_Installation
+    RRA_Digit_Generation_Investigation
+    RRA_Digit_Generation_Methods
+    RRA_Digit_Generation_References
+    RRA_Embedded_Generation_Records
+    RRA_Embedded_Literal_Extensions
+    RRA_Finite_Binding_Sequences
+    RRA_Finite_Embedded_Generation_Construction
+    RRA_Finite_Embedded_Generation_Records
+    RRA_Fresh_Generation_Frames
+    RRA_Generation_Input_Transitions
+    RRA_Generation_Record_Recovery
+    RRA_Literal_Environment_Rows
+    RRA_Selected_Generation_Predecessors

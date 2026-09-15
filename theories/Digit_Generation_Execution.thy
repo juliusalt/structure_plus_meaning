@@ -1,0 +1,14 @@
+theory Digit_Generation_Execution
+  imports RRA_Digit_Generation_Investigation Factor_Executable_Environment_Values
+begin
+
+setup \<open>Finite_Observation_Contracts.export @{term digit_generation_investigation}\<close>
+
+export_code digit_generation_packet digit_generation_indices digit_generation_inspect digit_generation_original_inspect
+  digit_generation_subject_view digit_generation_source_scope digit_generation_source_cases digit_generation_source_equal
+  digit_generation_chain_length generation_record_condition_scope finite_environment_artifact_rows finite_environment_bindings finite_artifact_rows
+  generation_locus generation_predecessors generation_payload generation_cause
+  Generation Finite_Whole Finite_Anchor fset set nat_of_integer integer_of_nat
+  in SML module_name Digit_Generation_Execution file_prefix digit_generation
+
+end

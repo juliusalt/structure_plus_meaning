@@ -1285,3 +1285,27 @@ with any complete downstream view. Complete pre-loading sources and native
 projection equality distinguish finite-set presentation order from relation
 identity. The report, shared-preparation and assessment contracts instantiate
 the existing relation-reader and subject-investigation machinery.
+
+
+## General generation installation and complete optional composition
+
+An arbitrary fresh use supplies the complete predecessor frame prerequisites.
+An arbitrary admitted boundary embedding supplies literal installation and old
+material preservation. Selected anchors establish injectivity, each original
+reading and each cited site. The recovery theorem reconstructs the entire
+generation from these fields and locations. The old and bounded constructors
+instantiate this content with their respective fresh-use policies.
+
+Optional bind, transition sequence and function iteration projection now own
+the reusable composition argument, including every refusal. Distinct initially
+ready source bindings instantiate the sequence contract and recover the
+original complete batch extension. Literal artifact and binding lists present
+the whole original literal environment. The digit constructor composes actual
+readers, allocation, bindings and cached grafts through those contracts; the
+general frame prerequisites discharge all actual guards. Persistent input chains
+instantiate the same iteration projection instead of reconstructing its proof.
+
+The complete operation comparison and independent original nine-condition
+generation assessment preserve their separate questions. Shared preparation,
+whole subject projection, registered observations and revisions reuse the
+existing investigation content with the actual constructor candidates.

@@ -2076,3 +2076,84 @@ repeated the full comparison before acceptance and retention. No proof or native
 result changed. Full physical cost, all six workflow conditions, complete
 historical permission and reachability, native mathematical-proof admission,
 genesis and the final repository audit remain open.
+
+
+## Complete replay and construction from the quoted policy scope
+
+The replay comparison uses the actual digit generation constructor, original
+literal admission and complete quotation. Original cause readings accompany
+every complete result. Eighteen methods run on all twenty-four original and
+subsequent subjects. The typed operation and bounded reference are selected
+and adequate. All original source fields remain in correspondence; actual
+chains after one, two, four and eight steps retain their complete material.
+Finite-set enumeration order remains distinct from the native relation identity.
+
+The omitted replay guard produces additional uncertified results on cases 1,
+2, 3, 12 and 13. Alternate quotation and output controls demonstrate that
+generation or certification alone does not establish the requested operation.
+The original non-byte-valued case 6 remains successful and certified. Its
+very large complete quotation remains present. Dropped input families remain
+sound and incomplete. All three native facet selections are formed; revisions
+use both facets and their followed reports have no residual comparisons.
+
+The separate policy refinement uses the complete scope supplied by actual
+quotation and the generation-backend certification of successful replay.
+The remaining original package and policy-alignment predicate is computed
+before construction under the reusable constant-check result theorem.
+Original indexed membership and complete append preserve the whole closed
+history result. The ordinary constructor retains its predecessor checks.
+
+Its generic additional-producer framework keeps all nineteen original methods,
+sixteen subjects and complete original reference conditions. The new operation,
+original digit operation and bounded reference are selected and adequate.
+The added control retains policy alignment while omitting literal replay.
+It admits the changed-root case 6 and fails both original result conditions.
+It still refuses the changed-payload case 5. These actual results distinguish
+the remaining alignment check from replay admission. The control yields a raw
+candidate result and cannot construct an admitted closed history.
+
+Every preceding history result, inspection and source field is compared
+directly at its shifted method index. All policy-family facet selections are
+formed. Their 257, 20 and zero residual comparisons and 2,272, 222 and zero
+repair witnesses lead to formed followed bases with no residual comparison.
+
+Verified compressed storage preserves every complete record and byte. The
+complete shared packet parser preserves the original canonical boundary.
+The new source-only reconstructions rebuild 691, 700 and 710 theories from HOL,
+reproduce 512, 390 and 422 reports, and compare every complete parsed report directly
+with the reviewed native execution. All original, effective and database
+sources and every current and archived execution input are verified.
+The whole repository check accepts 1,442 theories and all 102 host tests with
+59 subtests. All forty-one preceding source closures and verification records
+remain unchanged; forty-four families cover 3,902 complete reports.
+
+The earlier replay runs that timed out or stopped under storage quota remain
+incomplete evidence. Their complete prefixes and unfinished bytes are retained.
+The first replay reconstruction invocation lacked the required expected-report
+version and stopped before creating a proof or execution. The corrected
+version-1 source boundary retained all 512 expected reports. The first policy
+review used the wrong serialized reference field and left its report streams
+open after the exception; it was stopped and the corrected complete review
+closed both streams on every exit. These failures do not become accepted runs.
+
+The large full outputs and long native executions retain the physical cost
+problem explicitly. Full workflow adoption, all six conditions in
+problems.txt, historical permission and reachability, native mathematical-proof
+admission, genesis and the final repository audit remain open.
+
+The composite operation instantiates the source-policy constructor with the
+known predecessor backend under the actual closed-history and membership
+premise. The guarded step and complete optional identity preserve the whole
+original transition. Twenty-three methods retain all sixteen subjects; methods
+0, 1, 2, 4 and 5 are selected and adequate. The added raw omitted-membership
+control fails both conditions on case 3. Its complete value matches the
+original omitted-membership control there. All original values and observations
+remain exact at offset four. The three formed initial selections have 292, 22
+and zero residual comparisons and 2,696, 254 and zero repair witnesses. Every
+followed basis is formed with no residual. Its source-only reconstruction
+reproduces all 422 complete reports.
+
+The owner has directed that execution time become manageable before any
+further work on problems.txt. This performance work proceeds independently
+while the existing integration finishes. The large complete comparison
+runtimes remain an unresolved operational problem.

@@ -1409,3 +1409,39 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Reader_Identity_Maps
     Known_History_Execution
     RRA_Known_Generation_Rows
+    Digit_Replay_Execution
+    Factor_Digit_Generation_Replay
+    Factor_Digit_Replay_Cases
+    Factor_Digit_Replay_Families
+    Factor_Digit_Replay_Investigation
+    Factor_Digit_Replay_Methods
+    Factor_Digit_Replay_Reading_Sharing
+    Factor_Digit_Replay_References
+    Factor_Digit_Replay_Reports
+    Factor_Digit_Replay_Variants
+    Factor_Replay_Input_Transitions
+    Factor_Structural_Replay_Identity
+    Finite_Query_Value_Rows
+    Optional_State_Requests
+    RRA_Generation_Child_Row_Images
+    RRA_Structural_Generation_Checking
+    Structural_Artifact_Identity
+    Structural_Environment_Identity
+    Structural_Generation_Identity
+    Structural_Word_Collections
+    Structural_Word_Lists
+    Factor_Digit_History_Attempt_Refinement
+    Factor_Digit_History_Policy_Construction
+    Factor_Digit_History_Result_Candidates
+    Factor_Digit_Policy_Construction
+    Factor_Finite_Known_Judgment_Scopes
+    Factor_Known_Replay_Policy
+    Factor_Quoted_History_Investigation
+    Factor_Quoted_Policy_Attempts
+    Optional_Known_Checks
+    Quoted_History_Execution
+    Constructed_History_Execution
+    Factor_Constructed_History_Investigation
+    Factor_Digit_History_Constructed_Attempts
+    Factor_Digit_History_Constructed_Steps
+    Factor_Policy_Constructor_Congruence

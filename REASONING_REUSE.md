@@ -1352,3 +1352,38 @@ subject conditions and methods with their actual shifted indices.
 The shared compressed execution transport, complete packet parser and existing
 reconstruction checks preserve every byte and parsed field. They establish storage
 and execution boundaries; the original Isabelle contracts establish meaning.
+
+
+## Complete structural identity and checks on actual result scopes
+
+Structural word, artifact, environment and generation representations preserve
+complete original equality. Injective presentations reuse the generic finite
+reader identity contract. Query-value rows and child-row images share actual
+lookup results while preserving every original assignment. Replay preparation
+and original cause reading use these complete contracts without reducing
+subjects, quotienting distinct results or supplying satisfaction tables.
+
+Successful quotation establishes a unique complete judgment scope. The actual
+generation backend and replay result supply generation and base-cause
+certification. A generic optional-result check that is constant on every actual
+successful output can move before construction while preserving the whole
+optional result. The quoted policy operation instantiates that theorem with
+the actual package and policy-alignment predicate.
+
+The guarded history step factors its exact index check and complete append.
+An attempt refinement needs its result equation under that actual guard.
+The generic additional-producer family computes every proposed operation on
+the actual subject and applies the original complete reference and coverage
+conditions. It imposes no producer correctness assumption, supporting both
+proved refinements and deliberately failing controls through the same observer.
+
+The shared packet parser and reconstruction adapter preserve complete data
+and record order through lossless compression. They provide storage and
+execution boundaries; the original registered subject and operation equations
+establish meaning. Whole physical cost remains a separate obligation.
+
+The source-policy constructor congruence quantifies every actual payload and
+quotation target at fixed material, locus and rows. The complete closed
+history and actual index guard instantiate the known predecessor equation.
+This composes the two established refinements through the existing guarded
+append and injective optional result contracts.

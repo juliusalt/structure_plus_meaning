@@ -1111,12 +1111,34 @@ controls, sources and subsequent inputs are retained. One initial facet selectio
 is invalid; the native cycle rejects it, removes the unavailable facet and
 recomputes a formed complete basis. The error and correction remain explicit.
 
-The complete 1,406-theory check and all 102 host tests with 59 subtests pass.
-Forty-one source-only boundaries cover 2,578 complete native reports. The new
-history family rebuilds 697 theories from HOL and reproduces all 374 reports.
-All forty preceding source closures, toolchains and verification records remain
-unchanged. The [current verification](validation/reconstruction/current-verified.json)
+[Composite history construction](validation/reconstruction/constructed-history.md)
+now uses both established local premises while retaining original membership,
+replay, policy and all complete state fields. Its native comparison keeps both
+preceding refinements and every original method. An omitted-membership control
+is rejected on the input with readable material outside the admission ledger.
+
+[Complete persistent replay](validation/reconstruction/digit-replay.md)
+now preserves the full bounded operation and its separate original cause
+readings. Eighteen methods run on twenty-four original and subsequent inputs.
+The typed operation and reference are selected and adequate. Alternate
+quotations, changed outputs, missing replay and lost availability remain
+observable, including the original non-byte-valued quotation case.
+
+[Policy construction from the actual quoted scope](validation/reconstruction/quoted-history.md)
+uses the generation-backend and replay contracts to compute the remaining policy
+check before construction. Twenty-one methods retain all sixteen original
+subjects and every original method. The operation and original references are
+selected and adequate. A control that retains policy alignment but omits replay
+admits a changed root, exposing why the original replay guard remains necessary.
+
+The complete 1,442-theory check and all 102 host tests with 59 subtests pass.
+Forty-four source-only boundaries cover 3,902 complete native reports. The three
+new families rebuild 691, 700 and 710 theories from HOL and reproduce all 512,
+390 and 422 reports. Every complete parsed report is compared directly with its earlier
+native execution. All forty-one preceding complete source closures, toolchains
+and verification records remain unchanged. The
+[current verification](validation/reconstruction/current-verified.json)
 records the accepted checks and evidence replacing generated copies.
 Broader workflow adoption, full physical cost, all six conditions in
-`problems.txt`, complete historical permission and reachability, native
+problems.txt, complete historical permission and reachability, native
 mathematical-proof admission, genesis and the final audit remain open.

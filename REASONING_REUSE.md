@@ -1387,3 +1387,36 @@ quotation target at fixed material, locus and rows. The complete closed
 history and actual index guard instantiate the known predecessor equation.
 This composes the two established refinements through the existing guarded
 append and injective optional result contracts.
+
+
+## Complete execution sharing and independent native tasks
+
+Actual computed caches retain complete values and execute the original function
+on a miss. Prepared assessments compute their shared source scope once before
+traversing candidates. Replay cause keys contain the actual material, use and
+generation; each complete cause subject is rebuilt from the actual result.
+No cached truth value is supplied in place of a generation or cause reading.
+
+The exact successful-result rule permits a checked history result to serve an
+omitted-guard operation only under its proved complete equality. A failed checked
+result still executes the original control. Known predecessor refinements keep
+the actual closed-state and membership prerequisites, including for the legacy
+allocator and controls that retain membership.
+
+Complete artifact references preserve every field, count and occurrence. Nested
+identity and ordered relation checks preserve their original equality or formation
+conditions. Source projection reads the complete inputs from actual packet
+contexts. Observation lookup reads actual derived rows under the original packet
+and cell equation; arbitrary supplied tables gain no subject claim.
+
+Isabelle's Parallel.map equation preserves the entire ordered map. Independent
+input contexts, candidate inspections and initial-selection cycles use that
+existing Eval implementation. Preparation within an input remains ordered before
+its dependent assessments, and reporting follows the joined computations.
+Shared revision cycles reuse complete reports only when their actual retained or
+revised facet lists agree. The same followed basis supplies its residual field.
+
+These contracts support the two concurrent packet reconstructions. The physical
+speed measurements do not prove the accumulated-process cost condition or select
+future development problems. Full workflow construction and the six conditions
+in problems.txt remain the next high-level objective.

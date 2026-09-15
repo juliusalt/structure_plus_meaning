@@ -2157,3 +2157,26 @@ The owner has directed that execution time become manageable before any
 further work on problems.txt. This performance work proceeds independently
 while the existing integration finishes. The large complete comparison
 runtimes remain an unresolved operational problem.
+
+
+The performance phase now has an accepted 1,497-theory build and a fresh shared
+788-theory reconstruction from HOL. All 934 original replay and history reports
+are preserved. Forty-six reconstruction families retain 4,838 records, including
+two complete native artifact dictionaries; all forty-four earlier source
+boundaries remain unchanged. The 135 host tests and 59 subtests pass, with two
+historical kernel tests skipped for absent optional schema packages.
+
+Complete replay execution falls from 5,731.7 to 78.6 seconds (about 73 times
+faster); complete history falls from 2,131.2 to 33.4 seconds (about 64 times
+faster). These are measured execution and retention times, not complexity
+theorems. Native sharing preserves complete results, and Isabelle parallel
+maps expose independent contexts, inspections and revision cycles. The
+[performance record](validation/reconstruction/concurrent-performance.json)
+retains the measurement boundary and the complete original presentation
+comparison limits. No further performance investigation is planned.
+
+The current priority is the high-level workflow in problems.txt: construct
+the complete required process so violations fail, then use condition 6 to
+resolve remaining details. These performance results do not discharge any
+of the six workflow conditions or the existing genesis and final-audit
+requirements.

@@ -15,3 +15,16 @@ Follow all requirements in that document, including preparing the largest useful
 group of related work, requesting independent information together, and reviewing
 combined validation and diagnostics before dependent follow-up. Continue
 independent next problems while checks run, keeping their checked inputs fixed.
+
+The owner's CPU has 16 cores and 32 hardware threads; use available parallelism for independent
+work while keeping timing evidence and validation inputs reliable. Thread-count
+settings alone do not satisfy this direction: structurally expose independent
+computations so the runtime can actually execute them concurrently, where that
+can be achieved without a lengthy detour.
+
+Current owner priority: proceed directly to the high-level goals in problems.txt. Prioritize
+establishing the complete workflow by construction over deep exploration of
+individual components. Once that workflow is enforced, use component 6 to work
+out the remaining details. Preserve the standing native-account, reusable
+reasoning, criticism, and proof requirements while pursuing those high-level
+goals; do not let component-level work become a tangent after compaction.

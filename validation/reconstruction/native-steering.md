@@ -54,3 +54,11 @@ normative bootstrap role through genesis.
 
 [Sources](native-steering-sources.json), [reports](native-steering-reports.json)
 and [verification](native-steering-verified.json) retain the reconstruction boundary.
+
+
+The source-development batch factors this question construction into shared
+criterion-source and finite-question operations, with a proved equality to the
+previous definition. Its fresh shared 502-theory proof reconstructs all 280
+steering records unchanged. The current complete workspace passes 1,537 theories.
+The current source and verification links above refer to this newer boundary;
+the earlier diagnostic-storage recovery remains part of the historical record.

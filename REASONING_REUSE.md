@@ -1443,3 +1443,32 @@ scope selects 0; one question leaves both 0 and 8 adequate and gives no choice.
 The [reconstruction](validation/reconstruction/native-steering.md) retains those
 complete operations and both input lists. Broader discovery, scope criticism
 and the global cost account remain open.
+
+## Source development through the computed native choice
+
+Factor_Development_Criterion_Sources factors the existing source-meaning
+argument. Factor_Finite_Development_Questions constructs native questions from
+finite value families and separately checks coverage by actual generation.
+Factor_Development_Steering instantiates that shared constructor with a proved
+equality to its previous definition. Subject-specific observation equations
+remain required; finite membership alone supplies no outside satisfaction.
+
+Factor_Source_Development_Subjects connects every proposed complete program
+and entry to its original source and permitted target family. The existing
+native cycle and computed producer choose a complete target value, retaining
+duplicate occurrences. Factor_Source_Development_Cycle installs that value
+and passes the resulting source directly to the original subsequent query.
+
+Factor_Workflow_Evidence_Meaning factors the complete ordered-answer argument
+for any admitted stage evidence. Factor_Source_Development_Admission combines
+it with the universal installation contract: every old artifact and binding
+is preserved, and query answers are exactly the original target's ordered
+answer filter. Input formation is not a separate admission assertion; the
+malformed-payload case completes with an empty answer under the existing
+query semantics. Missing required query evidence still refuses admission.
+
+The [source reconstruction](validation/reconstruction/source-development.md)
+retains the original inputs and complete report boundary. This finite source
+extension interface does not establish broader discovery or practical
+usefulness. Condition 5a remains open; condition 5b is deferred until after
+genesis. These are reusable bootstrap contracts, not a self-authorized handoff.

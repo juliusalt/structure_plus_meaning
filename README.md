@@ -28,6 +28,12 @@ retaining their original admission gates. Empty or ambiguous choices leave
 those requests unexecuted and retained. Its finite scope and remaining
 high-level obligations accompany the reconstruction boundary.
 
+The [source-development entry](validation/reconstruction/source-development.md)
+uses that computed choice to select an actual permitted source extension,
+install it and run the original subsequent query against the installed source.
+Its contract preserves every old artifact and binding and the entire target
+meaning. Practical usefulness on real development work remains a separate gate.
+
 The native local inference reader now joins an actual parent claim to every
 discharged child claim. The comparison preserves each premise socket, callee,
 and complete pattern through two jointly determining observations. Its proved

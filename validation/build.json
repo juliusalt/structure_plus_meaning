@@ -1,7 +1,7 @@
 {
-  "invocation": "68231b37-687b-45d2-a8df-c50eb00a9194",
+  "invocation": "3a178295-1283-4d8f-b9c9-1dc6ff4eb646",
   "status": "accepted",
-  "started_utc": "2026-09-16T04:34:05.840097+00:00",
+  "started_utc": "2026-09-16T06:55:35.397673+00:00",
   "command": [
     "isabelle",
     "build",
@@ -9,7 +9,7 @@
     "-o",
     "threads=16",
     "-o",
-    "timeout=1200",
+    "timeout=1800",
     "-D",
     "/home/julius/structure_and_semantics"
   ],
@@ -17,7 +17,7 @@
   "exit_code": 0,
   "session_diagnostics": "",
   "sources": {
-    "ROOT": "f55c428b9563fe17e45c6f5857cb911193a4ae0584667bd4d50fd93388a92034",
+    "ROOT": "d21ef42a934f52c3cd37622aca4f189b7998aaefa4a762ca738f005efcbbf3f7",
     "theories/Allocated_Environment_Execution.thy": "1ad5dc271272984cae2ce85d88eba6ee0ee9fec98b3b3015b7c11470d7397047",
     "theories/Artifact_Lookup_Execution.thy": "2dd0871fbc0069fbfa3176b6ffcfaab452c14527d1c6d010f20d65a4e6a183f3",
     "theories/Bag_Difference_Witnesses.thy": "d5b919d0e2fb895fcb241ca351faa839a108a639a4f374b724941439746efe33",
@@ -300,8 +300,9 @@
     "theories/Factor_Development_Cases.thy": "c1ee4b4c9170566444299aaebb0ff7e583e5b47e2dc6cbc1e7292f6b160fab9d",
     "theories/Factor_Development_Comparison.thy": "f70bc830862d85f4de2d6cac3062fc88ead9a911963cf895f20db4f78beaa837",
     "theories/Factor_Development_Conditions.thy": "2226af7db78ab8754caa5b3f4783ada53ca62f8e573ae1a9ba856edff0046581",
+    "theories/Factor_Development_Criterion_Sources.thy": "407296a8c0c00cfa965fdacb1947f16fb56264c246b8cf7f602417253237bb05",
     "theories/Factor_Development_Cycle.thy": "0f580130c5a2e3c5ccebce7b8866ba5779bcdbe57aee81a31b229e86251d7931",
-    "theories/Factor_Development_Steering.thy": "4fa76584e717619ff701e031f482bb5d411dc65c4e798f7b3ba936d665d6b00c",
+    "theories/Factor_Development_Steering.thy": "d579e03dc8632b36597322f6839040cef5ab7e33bfd49e192de07e076284c440",
     "theories/Factor_Development_Subjects.thy": "e50091d96c60c7fcd09aad5d0f5c38c90d4b3535a12bd28698b606a33091e763",
     "theories/Factor_Digit_Generation_Replay.thy": "6beb7eb9a9a7b901a84545b2811b08e974ea4c044af896d0dee882a888439986",
     "theories/Factor_Digit_Generation_Scopes.thy": "6d7e789ab77a2f3a3815e294857c58e80d649c9ee2396e250bc3f42d4b76ae58",
@@ -401,6 +402,7 @@
     "theories/Factor_Finite_Data_Value_Readers.thy": "e78b60e1842fb81fdcdd0489749d957cbfadf6114f093b604908ede58bc611c0",
     "theories/Factor_Finite_Definition_Compilation.thy": "427bfdf9ae08861179a1b4abefe40144e705b8fa601014d8429d86fea6f32aa3",
     "theories/Factor_Finite_Derivations.thy": "13afe16b3cceedf878e6d7df260f01ecfa08673d0b2d99c9634aecaf54ea37fc",
+    "theories/Factor_Finite_Development_Questions.thy": "3d7e77b8b7a5c08327e819a5a114e386ccb709176afdb0a66423e7cc6333111e",
     "theories/Factor_Finite_Environment_Value_Readers.thy": "bcfcea9677474cf6207adc5c9eba16c34797545b896eeb59cf567b4442862ddf",
     "theories/Factor_Finite_Equality_Source.thy": "44c4ff1b71a167f0f0e9b1f4e109115ebdef1aa37b12d12b91c200379e26137e",
     "theories/Factor_Finite_Exact_Patterns.thy": "4a63c839bf3771b4b0d6bc33f289b21c689cf754506fd1dae9f536ba9af2aaf9",
@@ -1071,6 +1073,11 @@
     "theories/Factor_Source_Admission.thy": "16be9e71c4a1aeb5f41ff6db5222c831b354bac275f97d527ac3e824fc18a171",
     "theories/Factor_Source_Clauses.thy": "df91c262472024878916419db77dae7d19bb7d4f9008a7a81ada426e7ef27ef2",
     "theories/Factor_Source_Contracts.thy": "21579c4e3cf7abd640780baa7134d8ee6f5c3307c0792a75a44cc729be2f5fa6",
+    "theories/Factor_Source_Development_Admission.thy": "780ebf8789c38068ca07b6de481c57e534145eeeff257caa6f03c290b4cf496d",
+    "theories/Factor_Source_Development_Cases.thy": "5cfdde10b8bf4517e76c7360903d2ae88903c4ba4443e84c9544fa4da587f5ca",
+    "theories/Factor_Source_Development_Cycle.thy": "dc6f99ff2dc1468daaef69ed8099b54e891e47e101047b26e11593d5c73112d4",
+    "theories/Factor_Source_Development_Input.thy": "3f61af54d71fad63a9869267cb16e72c7c8ca474a128a67dfe2a90470aba42f9",
+    "theories/Factor_Source_Development_Subjects.thy": "67ba466b1fdedcf0d5cf4b5a00d0b898c62710be55d6bcffae19900e4daaedb1",
     "theories/Factor_Source_Lookup.thy": "a5f762bc4d93a38ab2f8a92bf0a7db83743b38f8e7cfe5f25a92653a6af5b6b6",
     "theories/Factor_Source_Observation_Investigation.thy": "ac8180926e1baa8fc570e8a45ff303c7ef853ebb1620bf815ae4eaa002c9ab1d",
     "theories/Factor_Source_Presentations.thy": "00592097ada5f8ff4e373607e85d04e642a05a5086c126786dc2e2afa5eb3211",
@@ -1147,6 +1154,7 @@
     "theories/Factor_Workflow_Admission.thy": "4d449d9b359382a02d177fa06212e5b95b7d7956735f61b6de93ab10b6e89202",
     "theories/Factor_Workflow_Cases.thy": "8c8dc86881d457eb66e277e9eefb0616b7d5ea333312492dc34ae9b9772e014e",
     "theories/Factor_Workflow_Comparison.thy": "0a9b87dfedfe791e2f1f3732ac05f4c99a0a0db5304763fee6cc6de41967c146",
+    "theories/Factor_Workflow_Evidence_Meaning.thy": "24f9352b9e15a0d04942dadbc35f05807a5bf85046c61deddf850d9fafb32627",
     "theories/Factor_Workflow_Execution.thy": "7176c6e27e67a7c7e2d1d2b9ef92ead9ba257a3d25a0c8675239e622c501c0e2",
     "theories/Factor_Workflow_Expanded_Comparison.thy": "91825f3368d368dcc216cefc63987e88dfb3698f9712498d3323eb7eabea55fa",
     "theories/Factor_Workflow_Input_Scope.thy": "75b3f1b1784781814a1fc6d5bac7bbcb7ed07db511b15206650b5e517bfb4fce",
@@ -1283,6 +1291,7 @@
     "theories/Native_History_Investigation_Execution.thy": "ee8f1dd5a55bc3eb2af550dd8178d86beb83553a101fa514bfeeb8c98aff9b99",
     "theories/Native_Node_Investigation_Execution.thy": "755407c17db877b016a17496b62453408b6e5a6ecc0b72c28b130d6a64f2b605",
     "theories/Native_Requirement_Investigation_Execution.thy": "8890a38fae87ffdbe10c2c7d148e68b65e57f8fb8ddca17c62013f77db70688b",
+    "theories/Native_Source_Development.thy": "125f68a2c600e368d3be73cdd8e601ff8db23bef8bffe974133075d506d755ac",
     "theories/Native_Source_Execution.thy": "3febf322d4171f37123a6a5dfaf4b94a881da0aa1670b5b6f1156aed2c564024",
     "theories/Native_Workflow_Execution.thy": "4e652d2adcf1e8ac560e4822097899b2decd44794dbec0fae7ac61c11fe723fd",
     "theories/Natural_Binary_Digits.thy": "40c9cbf8726a96b1d2b19e317e08994c9b6096f40c5581c47cdf08ef88df845d",
@@ -1554,6 +1563,6 @@
   "isabelle_version": "Isabelle2025-2",
   "sources_unchanged": true,
   "tools_unchanged": true,
-  "finished_utc": "2026-09-16T04:42:50.219310+00:00",
-  "log_sha256": "673669a718167454ef7505b1a1436ab4fba04eeb28bf1dd7a357c6a534644f2f"
+  "finished_utc": "2026-09-16T07:07:20.458868+00:00",
+  "log_sha256": "f03147734c2efa035b4e541dda5d6f65b5955ad7ad749a552ece2214be43c2ce"
 }

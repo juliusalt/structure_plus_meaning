@@ -22,6 +22,13 @@ runner and source collector. Each retains its own complete source and report bou
 schedules proof, diagnostics, code export and the required execution stages;
 it supplies no semantic judgment about their subjects.
 
+The [closed workflow](native-workflow.md), [development cycle](native-development.md),
+[computed producer choice](native-steering.md) and
+[source development](source-development.md) also use this factored runner.
+Their native operations retain original inputs, computed observations and
+complete admission evidence. The current validated inventory is recorded in
+[current-verified.json](current-verified.json).
+
 Related recipes can share one fresh proof of their combined dependencies:
 
 ```sh

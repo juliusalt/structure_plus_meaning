@@ -2222,3 +2222,36 @@ retain uncovered requirements explicitly, and establish practical benefit.
 Prepare substantial candidate batches promptly and repair exposed failures in
 groups. Native mathematical-proof admission, historical permission and
 reachability, genesis and the final audit remain open.
+
+
+## Computed source development and completed validation
+
+The [source-development operation](validation/reconstruction/source-development.md)
+extends the computed producer choice to complete source-change requests. Every
+source-compatibility, entry, target-family and generated-scope observation is
+computed from the original structural subjects. The same closed native cycle
+selects a complete target, installs it and queries the actual resulting source.
+The reusable finite-question constructor also replaces the earlier steering
+construction with a proved equality and unchanged complete results.
+
+Admission preserves all original material, the entire target meaning and the
+ordered complete query answer, including duplicates. Equal target occurrences
+can determine one value; distinct adequate targets remain ambiguous. Missing
+query, installation or proposal evidence refuses admission. The existing total
+query semantics permit a malformed-payload input to complete with an empty
+answer; query-input formation is not a separate admission assertion.
+
+The fresh shared proof rebuilds 502 theories from HOL with no supplied project
+parent. All 298 source-development and 280 steering records directly match
+their complete reviewed originals. The actual main-workspace check passes all
+1,537 theories with no proof errors; 135 host tests and 59 subtests pass, with
+two existing optional-dependency skips. All 48 other reconstruction boundaries
+retain identical inputs. No validation stage is left unfinished for this batch.
+
+This completes the current finite source-extension batch. It does not resolve
+problems.txt: practical usefulness on real development work under condition 5a
+remains unestablished, while theoretical bounds under 5b remain deferred until
+after genesis. Broader discovery and adequate scope, historical permission,
+native mathematical-proof admission, genesis and the final audit remain open.
+The owner requested a clean stop after committing this batch and closing its
+temporary working copies.

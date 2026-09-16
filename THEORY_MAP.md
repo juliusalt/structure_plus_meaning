@@ -1533,3 +1533,17 @@ record, not the completed graph proposed in `plan.md`.
 | Native_Development_Execution | Factor_Development_Comparison, Native_Workflow_Execution | Parallel complete-question execution and native export of the closed development cycle and its producer comparison. |
 | Native_Development_Steering | Factor_Steered_Development, Native_Development_Execution | Native export of computed producer selection, complete original subjects and subsequent request execution. |
 | Native_Workflow_Execution | Factor_Workflow_Expanded_Comparison, Factor_Workflow_Request_Batch, Parallel_Assessment_Execution | Native export of original requirements, complete workflow branches, selected input scope and parallel requests. |
+
+## Native source development
+
+| Theory | Imports | Responsibility |
+|---|---|---|
+| Factor_Development_Criterion_Sources | Factor_Development_Cases, Factor_Finite_Ground_Source | Reusable construction of native criteria with exact original source meaning. |
+| Factor_Finite_Development_Questions | Factor_Development_Criterion_Sources | Finite original value and facet families instantiate the closed native cycle; actual generation determines scope coverage. |
+| Factor_Source_Development_Admission | Factor_Source_Development_Cycle, Factor_Workflow_Evidence_Meaning | Admission preserves every old artifact and binding, the entire target meaning and the ordered complete query answer. |
+| Factor_Source_Development_Cases | Factor_Source_Development_Admission, Factor_Source_Development_Input | Native cases cover source installation, duplicate targets and answers, ambiguity and failed prerequisites. |
+| Factor_Source_Development_Cycle | Factor_Source_Development_Subjects, Factor_Steered_Development | The computed native producer selects and installs an actual source, then uses it for the original subsequent query. |
+| Factor_Source_Development_Input | Factor_Source_Development_Subjects | Complete typed constructors retain every source, target program, clause, material and query field. |
+| Factor_Source_Development_Subjects | Factor_Finite_Development_Questions, Factor_Finite_Source_Entry_Installation | Complete original source-change subjects derive all candidate observations and target selection conditions. |
+| Factor_Workflow_Evidence_Meaning | Factor_Workflow_Reference | A complete native stage result has exactly its original ordered semantic answer scope. |
+| Native_Source_Development | Factor_Source_Development_Cases, Native_Development_Steering | Public native source-development execution, complete serialization and inherited subject-contract export. |

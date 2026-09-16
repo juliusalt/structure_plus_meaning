@@ -1,66 +1,13 @@
 theory Factor_Development_Steering
-  imports Factor_Development_Subjects Factor_Finite_Ground_Source
+  imports Factor_Development_Subjects Factor_Finite_Development_Questions
 begin
-
-definition development_existing_condition where
-  "development_existing_condition d F u=\<lparr>condition_source=F,condition_source_use=u,
-    condition_source_root=[],condition_goals=[Existing_Admission d]\<rparr>"
-
-lemma development_existing_condition_exact:
-  assumes native: "native_package_at (decode_finite_environment F) u [] P"
-  shows "development_condition_holds (development_existing_condition d F u) x y \<longleftrightarrow>
-    (d,Pair_Term (decode_finite_term x) (decode_finite_term y))\<in>positive_meaning P"
-proof -
-  have present: "finite_native_source F u []\<noteq>None"
-    using native by (simp only: finite_native_source_absent; blast)
-  obtain N where finite: "native_package_at (decode_finite_environment F) u [] (decode_finite_system N)"
-    using present by (cases "finite_native_source F u []") (auto simp only: finite_native_source_correct)
-  have same: "decode_finite_system N=P" by (rule native_package_unique[OF finite native])
-  have unique: "decode_finite_system M=P"
-    if "native_package_at (decode_finite_environment F) u [] (decode_finite_system M)" for M
-    by (rule native_package_unique[OF that native])
-  let ?t="Pair_Term (decode_finite_term x) (decode_finite_term y)"
-  have representation: "development_condition_holds (development_existing_condition d F u) x y \<longleftrightarrow>
-    (\<exists>M. native_package_at (decode_finite_environment F) u [] (decode_finite_system M) \<and>
-      term_formed ?t \<and> (d,?t)\<in>positive_meaning (decode_finite_system M))"
-    by (simp add: development_condition_holds_def development_condition_requirement_def
-      workflow_requirement_holds_def development_existing_condition_def admission_requirements_hold_def)
-  show ?thesis
-  proof
-    assume holds: "development_condition_holds (development_existing_condition d F u) x y"
-    obtain M where actual: "native_package_at (decode_finite_environment F) u [] (decode_finite_system M)"
-      and positive: "(d,?t)\<in>positive_meaning (decode_finite_system M)"
-      using holds by (simp only: representation; blast)
-    show "(d,?t)\<in>positive_meaning P" using positive by (simp only: unique[OF actual])
-  next
-    assume positive: "(d,?t)\<in>positive_meaning P"
-    have formed: "term_formed ?t"
-      using schema_call_formed_target[OF positive_meaning_formed[OF positive]] by blast
-    show "development_condition_holds (development_existing_condition d F u) x y"
-      unfolding representation by (rule exI[of _ N]) (use finite formed positive in \<open>simp only: same; blast\<close>)
-  qed
-qed
-
-definition finite_ground_condition where
-  "finite_ground_condition xs=map_option (\<lambda>(d,F,u). development_existing_condition d F u) (finite_ground_source xs)"
-
-lemma finite_ground_condition_exact:
-  assumes source: "finite_ground_condition xs=Some C"
-  shows "development_condition_holds C x y \<longleftrightarrow> Finite_Pair x y\<in>set xs"
-proof -
-  obtain d F u where installed: "finite_ground_source xs=Some (d,F,u)"
-    and condition: "C=development_existing_condition d F u"
-    using source by (auto simp: finite_ground_condition_def split: option.splits prod.splits)
-  obtain P where native: "native_package_at (decode_finite_environment F) u [] P"
-    and exact: "\<forall>t. (d,t)\<in>positive_meaning P \<longleftrightarrow> t\<in>decode_finite_term ` set xs"
-    by (rule finite_ground_source_meaning[OF installed]) blast
-  show ?thesis using exact
-    by (simp only: condition development_existing_condition_exact[OF native])
-      (metis decode_finite_term_injective decode_finite_term.simps(3) image_iff)
-qed
 
 definition development_method_row :: "nat \<Rightarrow> finite_factor_term" where
   "development_method_row m=Finite_Pair (Finite_Payload []) (Finite_Payload [m])"
+
+lemma development_method_row_function:
+  "development_method_row=(\<lambda>m. Finite_Pair (Finite_Payload []) (Finite_Payload [m]))"
+  by (rule ext) (simp only: development_method_row_def)
 
 definition development_criterion_rows where
   "development_criterion_rows table nquestions f=map development_method_row
@@ -74,7 +21,16 @@ lemma development_criterion_rows_exact:
   using method by (auto simp: development_criterion_rows_def development_method_row_def
     development_table_condition_exact)
 
+definition development_criterion_values where
+  "development_criterion_values table nquestions f=map (\<lambda>m. Finite_Payload [m])
+    (filter (\<lambda>m. development_table_condition table nquestions m f) development_methods)"
+
 definition development_steering_question_from where
+  "development_steering_question_from table nquestions=(if nquestions=0 then None else
+    finite_development_question (map (\<lambda>m. Finite_Payload [m]) development_methods)
+      (map (development_criterion_values table nquestions) development_facets))"
+
+lemma development_steering_question_from_equation:
   "development_steering_question_from table nquestions=(let source=finite_ground_source (map development_method_row development_methods);
     cs=map (\<lambda>f. finite_ground_condition (development_criterion_rows table nquestions f)) development_facets in
     if nquestions=0 \<or> \<not>list_all (\<lambda>C. C\<noteq>None) cs then None else
@@ -82,6 +38,10 @@ definition development_steering_question_from where
         Some \<lparr>development_source=F,development_source_use=u,development_source_root=[],development_generator_entry=d,
           development_problem=Finite_Payload [],development_conditions=map the cs,
           development_scope_criticism=development_scope_condition True,development_selected_facets=[]\<rparr>)"
+  by (auto simp: development_steering_question_from_def finite_development_question_def
+    finite_development_source_def finite_development_rows_def development_criterion_values_def
+    development_criterion_rows_def development_method_row_function development_methods_def
+    development_facets_def Let_def comp_def split: option.splits prod.splits if_splits)
 
 definition development_steering_question where
   "development_steering_question qs=development_steering_question_from (development_subject_table qs) (length qs)"
@@ -95,7 +55,7 @@ proof -
   have complete: "list_all (\<lambda>C. C\<noteq>None) ?cs"
     and conditions: "development_conditions Q=map the ?cs"
     and problem: "development_problem Q=Finite_Payload []"
-    using constructed by (auto simp: development_steering_question_def development_steering_question_from_def
+    using constructed by (auto simp: development_steering_question_def development_steering_question_from_equation
       Let_def split: if_splits option.splits prod.splits)
   have present: "finite_ground_condition (development_criterion_rows (development_subject_table qs) (length qs) f)\<noteq>None"
     using complete facet by (auto simp: list_all_iff)

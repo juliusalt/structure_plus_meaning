@@ -1165,3 +1165,37 @@ the complete required process so violations fail, then use condition 6 to
 resolve remaining details. These performance results do not discharge any
 of the six workflow conditions or the existing genesis and final-audit
 requirements.
+
+
+## Closed workflow and computed self-development
+
+The [workflow compiler](validation/reconstruction/native-workflow.md) preserves
+all original requirement positions and complete generation and traces. The
+[closed cycle](validation/reconstruction/native-development.md) performs the
+actual required operations and rejects omitted phases. Original native
+conditions, complete certificates and independent criticism remain mandatory.
+
+The [self-development entry](validation/reconstruction/native-steering.md)
+derives native criteria from actual producer computations. Its subject equation
+and native admission connect the selected method to every original condition
+on every represented question. The native choice then performs subsequent
+requests under their original admission gates. The full scope selects producer
+0 and reproduces all eight original results. A single-question scope returns
+both 0 and 8 and declines to choose; the empty scope also leaves all subsequent
+requests unexecuted and retained.
+
+Three source-only recipes reproduce 747 complete records: 342 for original
+workflow requirements, 125 for the closed cycle and 280 for computed
+steering. Their fresh proofs rebuild 486 and 493 theories from HOL with
+no supplied project parent. Every complete record directly matches the
+reviewed warm execution. All 1,528 repository theories and 135 host tests
+pass; the latter also includes 59 passing subtests and two existing
+optional dependency skips. All 46 earlier reconstruction boundaries are
+unchanged. The steering verification retains a diagnostic storage failure
+and the successful recovery as separate results.
+
+These local boundaries do not establish adequate scope for every development
+problem, global physical cost as sources grow, native mathematical-proof
+admission, historical permission and reachability, genesis or the final audit.
+Remaining high-level work must retain actual problem subjects and use these
+operations where their established contracts apply.

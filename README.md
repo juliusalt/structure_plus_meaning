@@ -19,6 +19,15 @@ Related reads, changes, and checks are prepared in complete batches; content
 quality governs their scope. The [current review](GENERALIZATION_REVIEW.md) and
 [reasoning inventory](REASONING_REUSE.md) record evidence and remaining gaps.
 
+A [closed native development cycle](validation/reconstruction/native-development.md)
+now performs generation, original requirement construction, certified observation,
+independent criticism, comparison, revision and admission. Its
+[self-development entry](validation/reconstruction/native-steering.md) computes
+a producer choice from actual subjects and invokes it for subsequent requests,
+retaining their original admission gates. Empty or ambiguous choices leave
+those requests unexecuted and retained. Its finite scope and remaining
+high-level obligations accompany the reconstruction boundary.
+
 The native local inference reader now joins an actual parent claim to every
 discharged child claim. The comparison preserves each premise socket, callee,
 and complete pattern through two jointly determining observations. Its proved

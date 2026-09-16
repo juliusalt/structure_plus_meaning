@@ -1,0 +1,50 @@
+theory Native_Workflow_Execution
+  imports Factor_Workflow_Expanded_Comparison Factor_Workflow_Request_Batch Parallel_Assessment_Execution
+begin
+
+setup \<open>Finite_Observation_Contracts.export @{term workflow_investigation}\<close>
+setup \<open>Finite_Observation_Contracts.export @{term required_workflow_investigation}\<close>
+
+setup \<open>Finite_Observation_Contracts.export @{term workflow_input_scope_investigation}\<close>
+setup \<open>Finite_Observation_Contracts.export @{term required_workflow_scope_investigation}\<close>
+
+definition workflow_input_scope_indices :: "nat list" where
+  "workflow_input_scope_indices=[0]"
+
+definition workflow_indices :: "nat list" where
+  "workflow_indices=[0..<length workflow_case_inputs]"
+
+definition required_workflow_indices :: "nat list" where
+  "required_workflow_indices=[0..<length required_workflow_case_inputs]"
+
+definition native_workflow_inspect ::
+  "finite_factor_term list list \<times> finite_factor_term list list \<times> bool \<Rightarrow> nat \<Rightarrow> bool" where
+  "native_workflow_inspect report f=workflow_inspect report f"
+
+export_code workflow_input_scope_packet workflow_input_scope_indices selected_workflow_input_scope
+  expanded_workflow_packet expanded_workflow_indices
+  workflow_packet native_workflow_inspect workflow_case_inputs workflow_indices
+  required_workflow_packet required_workflow_case_inputs required_workflow_indices
+  construct_development_workflow admit_development_workflow development_workflow_results workflow_trace_valid
+  workflow_reconstruction_boundary reconstruct_development_workflow
+  workflow_scope_result finite_native_generation finite_generated_outputs
+  compile_workflow_requirement compile_development_workflow construct_required_development_workflow
+  admit_required_development_workflow required_workflow_boundary reconstruct_required_workflow
+  development_workflow_requirements requirement_source requirement_source_use requirement_source_root
+  requirement_goals requirement_candidates
+  workflow_requirement_input workflow_requirements_input execute_workflow_request admit_workflow_request workflow_request_packet
+  workflow_request_batch
+  finite_enumerated_artifact finite_enumerated_environment
+  development_workflow_stages workflow_source workflow_source_use workflow_source_root workflow_entry workflow_outputs
+  finite_system_interfaces finite_system_clauses finite_schema_conclusion finite_schema_premises finite_schema_materials
+  finite_material_source finite_material_atoms finite_material_edges finite_material_counts finite_material_functions
+  finite_environment_artifact_rows finite_environment_bindings finite_artifact_rows
+  finite_graph_inferences finite_graph_discharges
+  Finite_Variable Finite_Pattern_Payload Finite_Pattern_Pair Finite_Pattern_Target
+  Schema_Proof Finite_Inference Finite_Assertion Finite_Target Finite_Payload Finite_Pair Finite_Whole Finite_Anchor
+  Existing_Admission Paired_Admission Collected_Admission
+  Workflow_Input Workflow_Values Workflow_Generated Workflow_Finished Workflow_Unavailable Workflow_Executed
+  fset set nat_of_integer integer_of_nat
+  in Eval module_name Native_Workflow file_prefix "native_workflow"
+
+end

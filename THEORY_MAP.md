@@ -1502,3 +1502,34 @@ record, not the completed graph proposed in `plan.md`.
 | Shared_Investigation_Cycles | Finite_Assessed_Investigation | The actual retained and revised facet lists control reuse of complete reports. |
 | Sorted_Finite_Identity_Images | "HOL-Library.FSet" | An injective presentation that preserves the whole order preserves the exact sorted list of a finite collection. |
 | Value_Reference_Identity_Maps | Complete_Value_References | Referencing an original value and then applying an injective complete presentation produces the same index and presented table as referencing that presentation directly. |
+| Factor_Development_Admission | Factor_Development_Cycle | Admission is tied to the original question, every original native criterion, actual generation and independent criticism. |
+| Factor_Development_Cases | Factor_Development_Admission, Factor_Workflow_Cases | The scope critic is an actual installed native clause. |
+| Factor_Development_Comparison | Factor_Development_Cases, Factor_Finite_Requirement_Term_Observations | The reference observes the original uncompiled native goals directly; it does not consume proposed criterion certificates or satisfaction flags. |
+| Factor_Development_Conditions | Factor_Workflow_Requirements, Factor_Executable_Environment_Values | Original conditions are complete native source-and-goal subjects. |
+| Factor_Development_Cycle | Factor_Development_Conditions, Finite_Assessment_Reports | This closed composition performs the actual operations: reading the reusable native source, constructing guards for the original conditions, generating every candidate occurrence from actual premise answers, observing all candidates with native certificates, independently checking complete evidence and a native criticism of the original question and whole candidate family, then deriving comparison, revision and admission. |
+| Factor_Development_Steering | Factor_Development_Subjects, Factor_Finite_Ground_Source | This is a closed computed-observation use. |
+| Factor_Development_Subjects | Factor_Development_Comparison | The inputs are complete original questions. |
+| Factor_Finite_Ground_Source | Factor_Finite_Exact_Patterns, Factor_Finite_Relations, Factor_Finite_View_Installation, Factor_Finite_Source_Entry_Installation, Factor_Requirement_Source_Examples | The reusable construction installs ordinary ground clauses with distinct occurrence keys, including repeated values. |
+| Factor_Native_Generation | Factor_Schema_Generation_Rows, Factor_Finite_Term_Demands | The source and complete input determine the known premise calls. |
+| Factor_Native_Generation_Semantics | Factor_Native_Generation | Soundness of actual native generation rows and output projections against the original source meaning. |
+| Factor_Required_Workflow_Cases | Factor_Workflow_Requirements, Factor_Workflow_Cases | These original subjects contain every native source and goal occurrence. |
+| Factor_Required_Workflow_Comparison | Factor_Required_Workflow_Cases, Factor_Workflow_Comparison | Actual required-workflow assessments and registered original-subject observation equations. |
+| Factor_Schema_Generation_Rows | Factor_Schema_Generation, Finite_Functional_Enumeration | This is an ordered presentation of the existing schema generator, with the same complete result set. |
+| Factor_Steered_Development | Factor_Development_Steering, Finite_Singleton_Selection, "HOL-Library.Parallel" | The computed native choice now performs subsequent development work. |
+| Factor_Workflow_Admission | Factor_Workflow_Protocol, Factor_Workflow_Reference | Submission checks the complete original workflow and every actual input, answer, certificate and branch. |
+| Factor_Workflow_Cases | Factor_Workflow_Admission, Factor_Requirement_Source_Examples, Factor_Finite_Source_Entry_Installation, Factor_Finite_View_Installation | These are complete native-source experiments for the whole workflow constructor and admission mechanism. |
+| Factor_Workflow_Comparison | Factor_Workflow_Cases, Finite_Assessment_Reports | Every observation is derived from the complete original workflow source and actual candidate execution. |
+| Factor_Workflow_Execution | Factor_Workflow_Stage | Every stage receives the same original problem and all actual preceding outputs. |
+| Factor_Workflow_Expanded_Comparison | Factor_Workflow_Input_Scope | The scope is the unique result of the native coverage comparison. |
+| Factor_Workflow_Input_Scope | Factor_Required_Workflow_Comparison, Finite_Selected_Assessments | The original complete native requests are the scope problem. |
+| Factor_Workflow_Protocol | Factor_Workflow_Execution | The full workflow has fixed required positions, shared original subjects and computed predecessor results. |
+| Factor_Workflow_Readiness | Factor_Workflow_Execution | Completeness requires availability on every actually admitted branch. |
+| Factor_Workflow_Reference | Factor_Workflow_Readiness, Factor_Finite_Proof_Inspection | The independent complete-answer reference evaluates the original native source. |
+| Factor_Workflow_Request_Batch | Factor_Workflow_Request_Input, "HOL-Library.Parallel" | Each request is independent. |
+| Factor_Workflow_Request_Input | Factor_Workflow_Requirements | The request contains complete original requirement values and the actual problem. |
+| Factor_Workflow_Requirements | Factor_Workflow_Admission, Factor_Finite_Native_Requirements | The original requirements are complete native source-and-goal subjects. |
+| Factor_Workflow_Stage | Factor_Finite_Native_Proof_Construction, Factor_Native_Generation_Semantics | A stage reads its actual native source and derives answers and certificates for every permitted complete input/output pair. |
+| Finite_Selected_Assessments | Finite_Assessed_Investigation, Finite_Singleton_Selection | A unique adequate index inherits every original computed condition. |
+| Native_Development_Execution | Factor_Development_Comparison, Native_Workflow_Execution | Parallel complete-question execution and native export of the closed development cycle and its producer comparison. |
+| Native_Development_Steering | Factor_Steered_Development, Native_Development_Execution | Native export of computed producer selection, complete original subjects and subsequent request execution. |
+| Native_Workflow_Execution | Factor_Workflow_Expanded_Comparison, Factor_Workflow_Request_Batch, Parallel_Assessment_Execution | Native export of original requirements, complete workflow branches, selected input scope and parallel requests. |

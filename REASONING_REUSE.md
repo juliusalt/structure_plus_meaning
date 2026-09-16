@@ -1420,3 +1420,26 @@ These contracts support the two concurrent packet reconstructions. The physical
 speed measurements do not prove the accumulated-process cost condition or select
 future development problems. Full workflow construction and the six conditions
 in problems.txt remain the next high-level objective.
+
+
+## Closed native workflow and its operative producer choice
+
+Factor_Development_Cycle composes actual generation, requirement construction,
+observation, evidence inspection, native criticism, comparison and revision.
+Factor_Development_Admission retains every original condition and generator
+judgment. Missing phases refuse admission; the original question reconstructs
+the local cycle.
+
+Factor_Finite_Ground_Source factors exact-clause installation at first use,
+including distinct occurrences with equal values. Membership alone makes no
+claim about an outside subject. Factor_Development_Subjects supplies the actual
+producer and original-question observation equation. Factor_Development_Steering
+combines those contracts into native criteria and an original-condition theorem.
+
+Factor_Steered_Development reuses singleton selection and the closed cycle to
+invoke the computed producer. Its subsequent-request theorem retains the new
+original conditions independently of the finite prior comparison. The full
+scope selects 0; one question leaves both 0 and 8 adequate and gives no choice.
+The [reconstruction](validation/reconstruction/native-steering.md) retains those
+complete operations and both input lists. Broader discovery, scope criticism
+and the global cost account remain open.

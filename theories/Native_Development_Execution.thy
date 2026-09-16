@@ -1,0 +1,46 @@
+theory Native_Development_Execution
+  imports Factor_Development_Comparison Native_Workflow_Execution
+begin
+
+setup \<open>Finite_Observation_Contracts.export @{term development_producer_investigation}\<close>
+
+definition native_development_indices :: "nat list" where
+  "native_development_indices=[0..<length development_case_inputs]"
+
+definition native_development_batch :: "native_development_question list \<Rightarrow>
+    (nat\<times>native_development_question\<times>native_development_report\<times>finite_factor_term list option) list" where
+  "native_development_batch qs=Parallel.map (\<lambda>(i,Q). (i,native_development_packet Q)) (zip [0..<length qs] qs)"
+
+lemma native_development_batch_at:
+  "i<length qs \<Longrightarrow> native_development_batch qs!i=(i,native_development_packet (qs!i))"
+  by (simp add: native_development_batch_def Parallel.map_def)
+
+export_code native_development_batch development_condition_input native_development_question_input
+  finite_enumerated_artifact finite_enumerated_environment
+  native_development_packet construct_native_development native_development_admission
+  native_development_boundary reconstruct_native_development
+  development_producer_packet development_producer_inspect native_development_indices development_case_inputs
+  development_source development_source_use development_source_root development_generator_entry development_problem
+  development_conditions development_scope_criticism development_selected_facets
+  condition_source condition_source_use condition_source_root condition_goals
+  development_generation development_compiled_conditions development_observed_conditions development_scope_review
+  development_comparison development_revision
+  development_condition_outputs development_review_input development_question_value
+  development_generated_values development_condition_reference development_reference
+  workflow_scope_result finite_native_generation finite_generated_outputs
+  development_workflow_requirements requirement_source requirement_source_use requirement_source_root
+  requirement_goals requirement_candidates
+  development_workflow_stages workflow_source workflow_source_use workflow_source_root workflow_entry workflow_outputs
+  finite_system_interfaces finite_system_clauses finite_schema_conclusion finite_schema_premises finite_schema_materials
+  finite_material_source finite_material_atoms finite_material_edges finite_material_counts finite_material_functions
+  finite_environment_artifact_rows finite_environment_bindings finite_artifact_rows
+  finite_graph_inferences finite_graph_discharges
+  Finite_Variable Finite_Pattern_Payload Finite_Pattern_Pair Finite_Pattern_Target
+  Schema_Proof Finite_Inference Finite_Assertion Finite_Target Finite_Payload Finite_Pair Finite_Whole Finite_Anchor
+  Existing_Admission Paired_Admission Collected_Admission
+  Workflow_Input Workflow_Values Workflow_Generated Workflow_Finished Workflow_Unavailable Workflow_Executed
+  native_workflow_inspect
+  fset set nat_of_integer integer_of_nat
+  in Eval module_name Native_Development file_prefix "native_development"
+
+end

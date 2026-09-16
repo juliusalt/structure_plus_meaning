@@ -1501,3 +1501,34 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Shared_Investigation_Cycles
     Sorted_Finite_Identity_Images
     Value_Reference_Identity_Maps
+    Factor_Development_Admission
+    Factor_Development_Cases
+    Factor_Development_Comparison
+    Factor_Development_Conditions
+    Factor_Development_Cycle
+    Factor_Development_Steering
+    Factor_Development_Subjects
+    Factor_Finite_Ground_Source
+    Factor_Native_Generation
+    Factor_Native_Generation_Semantics
+    Factor_Required_Workflow_Cases
+    Factor_Required_Workflow_Comparison
+    Factor_Schema_Generation_Rows
+    Factor_Steered_Development
+    Factor_Workflow_Admission
+    Factor_Workflow_Cases
+    Factor_Workflow_Comparison
+    Factor_Workflow_Execution
+    Factor_Workflow_Expanded_Comparison
+    Factor_Workflow_Input_Scope
+    Factor_Workflow_Protocol
+    Factor_Workflow_Readiness
+    Factor_Workflow_Reference
+    Factor_Workflow_Request_Batch
+    Factor_Workflow_Request_Input
+    Factor_Workflow_Requirements
+    Factor_Workflow_Stage
+    Finite_Selected_Assessments
+    Native_Development_Execution
+    Native_Development_Steering
+    Native_Workflow_Execution

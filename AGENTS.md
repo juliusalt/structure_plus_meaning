@@ -28,3 +28,10 @@ individual components. Once that workflow is enforced, use component 6 to work
 out the remaining details. Preserve the standing native-account, reusable
 reasoning, criticism, and proof requirements while pursuing those high-level
 goals; do not let component-level work become a tangent after compaction.
+
+The closed native workflow and computed producer dispatcher are implemented in
+Factor_Development_Cycle, Factor_Development_Steering and Factor_Steered_Development.
+Use that path for covered native questions while pursuing the remaining
+high-level conditions in problems.txt. Its finite scopes do not establish
+broader adequacy; scope extensions require actual subjects, computed criticism
+and review.

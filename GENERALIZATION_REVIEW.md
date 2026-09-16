@@ -2319,3 +2319,32 @@ source paths; the base now stays in one directory and refuses a changed heap.
 These choices came from host timings and profiles, not from a native subject
 contract. The gap under conditions 1 and 6 of problems.txt remains, and
 practical usefulness under condition 5a remains open.
+
+
+## Presented report review
+
+The required-history recipe now also retains the proved digit word of its
+complete report: scope, context tables, comparison, investigation cycles and
+coverage. The host only packs delivered bits into bytes and hashes them; it no
+longer reads a generated representation in that stage. The existing JSON stage
+runs on the same export in this batch, so the new boundary is established
+against an independently accepted report of the same packet.
+
+A type-class presentation was not used. Octets, local addresses and index lists
+are the same HOL type, so type-directed instances would present distinct notions
+identically; each presentation names its notion instead. The canonical
+collection order is one admissible enumeration. Factor_Encoding_Order_Audit
+shows such an order is observable to native programs, so the word boundary relies
+only on injectivity and makes no invariance claim about native observations of
+the word.
+
+The word is 34.4 MB because shared environments and artifacts are presented at
+every occurrence; sharing would reduce bytes without changing identity. A
+first measurement exported the pilot for the SML target and lost the parallel
+table, because Isabelle's Par_List printing is registered only for the Eval
+target; recipe exports use Eval.
+
+The pilot family and the design came from the owner's direction and host
+timings, not from a native subject contract for selection. The gap under
+conditions 1 and 6 of problems.txt remains, and practical usefulness under
+condition 5a remains open.

@@ -267,7 +267,7 @@ def validate(base, output, *, threads, jobs, selected, all_recipes, timeout):
         summary['error'] = f'{type(error).__name__}: {error}'
     if proof is not None and (proof / 'result.json').is_file():
         # Exports and receipts are retained as files; the child heap and database are not reused.
-        child = json.loads((proof / 'result.json').read_text())['command'][-1]
+        child = re.search(r'^session (\S+) =', (proof / 'ROOT').read_text(), re.M).group(1)
         for stored in Path(ENV['USER_HOME']).glob('.isabelle/*/heaps/*/' + child) :
             stored.unlink()
         for stored in Path(ENV['USER_HOME']).glob('.isabelle/*/heaps/*/log/' + child + '.*'):

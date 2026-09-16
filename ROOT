@@ -1290,6 +1290,14 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Required_History_Methods
     Factor_Required_History_Cases
     Factor_Required_History_Investigation
+    Ordered_Finite_Terms
+    Finite_Presented_Collections
+    Finite_Presented_Coordinates
+    Finite_Presented_Structures
+    Finite_Presented_Investigations
+    Finite_Presented_Histories
+    Finite_Term_Words
+    Required_History_Presentation
     Required_History_Execution
     RRA_Use_Prefix_Embeddings
     RRA_Compact_Uses

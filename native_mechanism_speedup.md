@@ -6,10 +6,12 @@ inventory, and completed work presented as future tasks.
 
 ## Current result
 
-**An ordinary commit cycle now runs without a complete build: this batch was
-validated in 831 s. Digit replay and decision replay still keep a cycle that
-touches every recipe above single-digit minutes, and the reconstruction transport
-is outside presentation classes. The speedup objective is unfinished.**
+**An ordinary commit cycle now runs without a complete build. A change confined
+to one family was validated in 80 s; a change to shared tools or the refinement
+bundle was validated in 831 s, because digit replay and decision replay still
+keep a cycle that touches every recipe above single-digit minutes. Reports can
+now be transported through the presentation classes of their notions; one
+family uses that transport so far. The speedup objective is unfinished.**
 The previous delivered commit is `4becc454be0d9b7c94d71fff0fe280a4833ee3c3`
 (`Remove repeated native execution work across validation families`). This batch
 commits the export-theory split, the incremental check and the host verification
@@ -29,7 +31,8 @@ batch's 1,590-theory workspace.
 | Accepted base | Complete check accepted **1,589 theories** in the fixed base directory, with source and tool identities equal to the committed build receipt | The proof base for incremental checks; this batch's workspace adds one theory, proved incrementally with its 94 dependents. |
 | Recipe executions | **All 50 recipes and 5,883 complete records accepted**; 125 tool tests and 35 kernel tests passed, two optional-dependency skips | The two lost workflow contract registrations are restored in `Native_Workflow_Execution`; `native-workflow` completes. |
 | Retained manifests | All 50 source manifests regenerated from the validated workspace | Each recipe's retained verification now binds the exact inputs it was executed with. |
-| Incremental validation | `tools/incremental_check.py` validated this batch in 831 s against a fixed accepted base | See [Development cycle structure](#development-cycle-structure); the complete build is not part of an ordinary cycle. |
+| Incremental validation | `tools/incremental_check.py` validated the incremental-check batch in 831 s and the presentation batch in 80 s against a fixed accepted base | See [Development cycle structure](#development-cycle-structure); the complete build is not part of an ordinary cycle. |
+| Presented report | The required-history recipe retains the digit word of its complete presented report beside the unchanged report comparison on the same export | See [Native report presentation](#native-report-presentation); 49 recipes still use host renderers. |
 | Whole development workflow | Conditions 1, 6 and practical-usefulness gate 5a remain open | Faster native packets and successful fixtures do not establish native-driven refinement selection or acceptable real development throughput. Gate 5b remains deferred until after genesis. |
 
 ## Where the time goes
@@ -125,22 +128,64 @@ duplicate elimination while accumulating join results: list-set insertion
 compares each new result triple with every accumulated one. Decision replay's
 assessments take 78 s for four contexts; its investigation cycles dominate.
 
-**Open: host transport is outside presentation classes.** Every native notion
-has an owned presentation class with local contracts in the proofs, but the
-reconstruction transport does not use them. Generated code is printed to JSON by
-host ML in `tools/*.py` that pattern-matches code-generator datatypes (for
-example `N.fset a` as `N.Set xs`), no tool refers to a presentation class or
-contract, and recipes compare those printouts byte for byte. Reports therefore
-fix the stored order of finite sets, which forbids ordered or indexed set
-representations that would remove the digit replay cost above, and nothing stops
-host programs from using that representation: `check_application_comparison.py`
-enumerates subsets of `elements (fs ps)` and passes a representation-ordered list
-back into native operations. The correction is native presentation and
-comparison: retained references are native presentations of accepted results
-under their owned classes, reconstruction compares recovered subjects through
-the class contracts in the same runtime, the host stores opaque bytes and
-verdicts, and a structural check rejects host access to generated
-representations.
+**Host transport outside presentation classes.** Reports printed code-generator
+representations through host ML and recipes compared those bytes, which fixed the
+stored order of finite sets and forbade the ordered or indexed set representations
+that would remove the digit replay cost above. The correction is under way; see
+[Native report presentation](#native-report-presentation).
+
+## Native report presentation
+
+**Design.** A report subject is presented by composing the executable
+presentations of its notions, each decoding into the notion's existing data term
+or class: natural and truth-value data, uses, sites and calls, goals, complete
+artifact rows and environment values, and the native target class. Pairs,
+sequences, finite collections and options decode into the generic classes, and
+generations and proofs reuse the collection presentation. Every presentation is
+injective whenever its components are. Context tables, subject comparisons and
+investigation cycles share one packet presentation across families. Counted
+digit words compose the natural and address digit paths into a prefix-free word
+of every executable term, delivered by a fold. Presentation names its notion
+instead of dispatching on HOL types, because octets, local addresses and index
+lists share one type. A collection's canonical order is one admissible
+enumeration; the word boundary relies only on injectivity.
+
+**Pilot, required history.** Theories: `Ordered_Finite_Terms`,
+`Finite_Presented_Collections`, `Finite_Presented_Coordinates`,
+`Finite_Presented_Structures`, `Finite_Presented_Investigations`,
+`Finite_Presented_Histories`, `Finite_Term_Words` and
+`Required_History_Presentation`; together they built in about eight seconds over
+the accepted base. `tools/check_presented_report.py` streams the word of an
+exported report value into bytes and records its size and SHA-256 as one tagged
+record, so the existing boundary, recipe and retention code applies unchanged.
+
+| Measured boundary, 16 workers | Time |
+|---|---:|
+| Required-history packet | 13.2-13.4 s |
+| Presentation of the complete packet | 0.6-0.7 s |
+| Digit word of the report, 34.4 MB | 2.4 s |
+| Presentation stage, standalone | 18.4 s |
+| Presentation stage beside the report comparison stage in the recipe | 22.6 s (comparison 23.5 s) |
+| Complete cycle: 103 theories proved, one recipe, host tests | 80.1 s |
+
+The word is large because shared environments and artifacts are presented at
+every occurrence. Two runs produced identical bytes, and the recipe's export
+produced the digest established from a separate probe export.
+
+**Migration.**
+
+1. Present the remaining history families (digit, known, quoted and constructed
+   histories and the history index) through the existing store projections
+   `digit_history_state_view`, `digit_allocated_view` and the indexed member
+   view, then digit replay and decision replay.
+2. Run each family's presented stage beside its report comparison once; after
+   both are accepted on the same export, remove the comparison stage and its
+   host renderer.
+3. Once a family is compared only by presented words, refine its set
+   representations; the reading-join accumulation of digit replay is the first
+   target.
+4. Compute each collection element's key once, and share repeated environments
+   and artifacts in the word, if their measured cost warrants it.
 
 ## Implementation record and corrections
 
@@ -230,7 +275,7 @@ subjects, computed observations, reusable reasoning and independent criticism.
 | Make proof invalidation follow real dependencies | Establish reusable accepted base contexts and separate execution-layer proof/code work where the dependency boundary permits. The proposed execution session requires distinct theory directories and a shared theory-path/session resolver across `build.py`, `prove_context.py`, `export_proved_code.py`, `proved_code.py`, `investigate.py` and `reconstruction_sources.py`; they currently assume one session and/or `theories/<name>.thy`. A directory split alone is not a validated solution. Preserve normative bootstrap and exact source/tool invalidation. |
 | Provide a working incremental development path | Keep an immutable accepted parent distinct from the changed workspace; rebuild changed subjects and actual dependents, export affected modules and execute every affected client. Store exact source/tool/fixture dependencies and complete receipts so unchanged results can be reused soundly. Exercise realistic repeated edits and refusal/repair cycles, not only a no-change fixture. |
 | Reduce full and cold validation cost | Build the combined required proof closure once, then reuse its accepted exports across the complete recipe set. Preserve a separate source-only release reconstruction with complete fixture and manifest checks. Remove redundant proofs across storage modes where one actual proof is applicable, without claiming warm reuse is a cold run. Cold/full costs remain optimization targets; moving them out of the inner loop does not meet the whole objective by itself. |
-| Remove remaining expensive native/host work | Start from the current costly families: digit replay, decision replay, constructed/digit/known/quoted histories, native-child reasoning, history index and certificate replay. Separate native stages, serialization, parsing, direct comparison and retention before choosing refinements. Remaining source-level leads include repeated family/schema/scoped-reader formation, `finite_join_readings` footprint unions, and grounding/evaluation unions. Preserve representation-observable finite-set order or prove the applicable presentation transport. |
+| Remove remaining expensive native/host work | Start from the current costly families: digit replay, decision replay, constructed/digit/known/quoted histories, native-child reasoning, history index and certificate replay. Separate native stages, serialization, parsing, direct comparison and retention before choosing refinements. Remaining source-level leads include repeated family/schema/scoped-reader formation, `finite_join_readings` footprint unions, and grounding/evaluation unions. A refinement that changes finite-set order requires the family's reports to be compared through presented words first; see [Native report presentation](#native-report-presentation). |
 | Schedule and retain one complete batch efficiently | Budget native workers across simultaneous recipes and their nested execution groups. Eight outer jobs can launch further processes with their own workers; thread-count settings alone do not establish useful concurrency. Start independent heavy jobs when dependencies allow, overlap independent work with fixed checks, aggregate diagnostics, and retain one reconstructible boundary instead of recopying/rechecking bulk for commit. |
 | Demonstrate actual useful development | Measure a real edit through native construction, criticism, admission, installation, subsequent use, proof/export, complete validation and commit preparation. Record latency, memory, storage and failure/repair cost. Routine edits should have a demonstrated seconds-scale feedback path; complete/cold work also needs acceptable observed cost, not just faster packet profiles. |
 

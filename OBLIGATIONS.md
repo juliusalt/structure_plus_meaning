@@ -1253,3 +1253,11 @@ Incremental proof over an accepted base, manifest-scoped recipe execution,
 deferred report hashing and pairwise join conditions change validation and
 execution cost only. No obligation row changes status; condition 5a remains
 open and 5b stays deferred until after genesis.
+
+
+## Presented report batch
+
+Executable presentations, digit words and a presented report stage for
+required histories change the validation transport only. No obligation row
+changes status; condition 5a remains open and 5b stays deferred until after
+genesis.

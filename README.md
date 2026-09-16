@@ -2622,3 +2622,10 @@ directory, executes only recipes whose complete source manifests changed, and
 runs the host tests; `retain` records the result. The
 [cycle record](native_mechanism_speedup.md#development-cycle-structure) retains
 the measured phases.
+
+Reports can now be transported through the presentation classes of their
+notions. The required-history recipe retains the proved digit word of its
+complete presented report beside the existing report comparison, and the host
+only hashes the delivered bytes. The
+[presentation record](native_mechanism_speedup.md#native-report-presentation)
+retains the measurements and the migration of the remaining recipes.

@@ -42,3 +42,10 @@ results, certificate keys and absence positions, computed conditions, comparison
 and revision reasons, and coverage counts. Complete workflow-policy adequacy,
 historical permission and reachability, indexed generation storage and allocation,
 full physical cost, native mathematical-proof admission and genesis remain open.
+
+A second stage on the same export retains the digit word of the complete
+presented report: requested scope, context tables, comparison, investigation
+cycles and coverage. Required_History_Presentation presents every component
+through its notion, and equal words identify equal reports. The host packs the
+delivered bits into bytes and records their size and SHA-256 as one record, so
+the stage adds one report to the forty-one above.

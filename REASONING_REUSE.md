@@ -1531,3 +1531,40 @@ An accepted proof base is reused by proving only changed theories and their
 dependents over its heap, and a recipe is executed again only when its complete
 source manifest changed. Isabelle binds a heap to the absolute paths of its
 sources, so the base keeps one fixed directory.
+
+
+## Presented report batch
+
+A report subject is presented by composing the executable presentations of its
+notions, and each executable presentation decodes into the notion's existing
+data term or class: natural_data_term for indices, report_boolean_term for
+truth values, use_data_term, site_data_term and call_instance_value for uses,
+sites and calls, admission_goal_value_with for goals, and the complete artifact
+rows and environment values. A target's executable presentation is exactly the
+native target class of its decoded target when it is formed. Pairs, sequences
+and finite collections decode into the generic pair, sequence and collection
+classes; an optional value is the sequence of its present elements, so
+optional_payload_term and use_data_term are instances of the sequence
+presentation. Generations and inference proofs reuse the collection presentation
+for their predecessor and premise collections.
+
+Injectivity is proved once per construction and composes: a pair, sequence,
+collection, option, goal, generation or proof presentation is injective whenever
+its components are, and environment presentations are injective over all
+values, including unformed ones. The context table, subject comparison and
+investigation cycles of every family share one packet presentation parameterized
+by the family's context and assessment presentations.
+
+A counted digit word composes the existing natural digit path of a length with
+the address digit path, so addresses and octets keep their digit representation
+and become self-delimiting. Pairs, artifact rows and executable terms compose
+those words, and one cancellation lemma per construction gives injectivity of
+the whole term word. Finite_Term_Words delivers the word through a fold, so a
+report word is streamed without materializing it.
+
+Missing use: 49 recipes still transport reports through host renderers. The
+history, index, digit replay and decision replay families need presentations of
+their stores; the stores already have proved projections to original notions
+(digit_history_state_view, digit_allocated_view and the indexed member view),
+which are the presentations to reuse. Collection ordering compares complete
+term keys on every comparison; computing each key once is a later refinement.

@@ -60,6 +60,7 @@ def main():
     for name in ['module', 'report', 'scope', 'selections']:
         parser.add_argument('--' + name, required=True)
     parser.add_argument('--theory', help='Exporting Isabelle theory; defaults to the ML module name.')
+    parser.add_argument('--workers', type=int, default=16)
     parser.add_argument('--timeout', type=int, default=2400)
     args = parser.parse_args()
     if not __debug__:
@@ -67,6 +68,7 @@ def main():
     assert MODULE.fullmatch(args.module)
     theory = args.theory or args.module
     assert MODULE.fullmatch(theory)
+    assert 1 <= args.workers <= 16
     assert all(CONSTANT.fullmatch(getattr(args, name)) for name in ['report', 'scope', 'selections'])
     output, poly = args.output.resolve(), args.poly.resolve()
     proof_path = args.proof.resolve()
@@ -76,13 +78,14 @@ def main():
     output.mkdir(parents=True)
     inputs = {'theory': theory, 'module': args.module, 'report': args.report,
               'scope': args.scope, 'selections': args.selections}
-    receipt = {'status': 'failed', 'invocation': str(uuid.uuid4()), 'inputs': inputs, 'boundary': BOUNDARY}
+    receipt = {'status': 'failed', 'invocation': str(uuid.uuid4()), 'inputs': inputs,
+               'workers': args.workers, 'boundary': BOUNDARY}
     word = output / 'report.word'
     try:
         input_file = output / 'cases.json'
         write_json(input_file, inputs)
         code, command, runtime_inputs = native_execution_runtime.prepare(
-            proof, engine, program(engine, inputs, word), poly, output)
+            proof, engine, program(engine, inputs, word), poly, output, workers=args.workers)
         runtime = output / 'execute.ML'
         runtime.write_text(code)
         modules = [investigate, native_execution_runtime, proved_code]

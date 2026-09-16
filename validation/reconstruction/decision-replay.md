@@ -59,3 +59,18 @@ preceded removal of the generated copies. The [current verification](current-ver
 1,180-theory build, passing host tests and twenty-two source-only boundaries
 for 1,270 complete reports. All recipes were freshly reconstructed through
 one source proof of their combined dependencies and their original executions.
+
+## Native presented report (2026-09-17)
+
+The current recipe accepts both the original comparison and the native presented
+word on the same actual export. The word is 1,296,760 bytes and retains
+all report content through reusable notion presentations. Original comparison
+took 382.86 s and presentation 376.65 s;
+these stages overlap, with 8 workers in the presented execution.
+The complete seven-recipe cycle passed in 914.05 s, covering 1,610 theories and
+both host suites. The prior cold-build counts above are historical.
+
+See [the measurements](replay-presentation-measurements.json) for source
+identities, exact word boundaries, the digit word's stack-failure repair and
+execution boundaries. Accepted pairing permits subsequent removal of the legacy
+stage; it does not establish native refinement selection or practical usefulness.

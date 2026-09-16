@@ -1590,3 +1590,19 @@ Missing use: 45 families still need native presented report stages. Digit replay
 and decision replay remain the dominant complete-cycle costs; their full seed,
 program, graph, cause and source notions must be presented before changing
 representation-sensitive set operations.
+
+## Replay presentation and exact word traversal
+
+Complete schema programs, graphs, proof nodes, replay/cause subjects and
+requirement/decision inspections now compose reusable notion presenters.
+`assessment_truth_rows` maps each actual assessment and requested facet to the
+actual inspector result, preserving every occurrence; its indexing law is reused
+by both replay reports. It supplies no independent satisfaction assertion.
+
+Counted streaming folds reuse a delivery/code equation for each element. Explicit
+term worklists use the combined pending-term size measure, with an exact fold law
+for table collection and output. The artifact header is delivered incrementally;
+the original prefix-free word and five accepted history boundaries are unchanged.
+The two replay families pass both old comparisons and native words. Forty-three
+families still need native report stages. Indexed reading accumulation and raw
+artifact lookup remain unadopted isolated candidates.

@@ -1606,3 +1606,11 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Invariant_Evaluation_Sharing
     Factor_Formation_Once_Readings
     Factor_Join_Reading_Conditions
+    Finite_Presented_Programs
+    Finite_Presented_Graphs
+    Finite_Presented_Replays
+    Finite_Presented_Assessments
+    Digit_Replay_Presentation
+    Finite_Presented_Decisions
+    Decision_Replay_Presentation
+    Finite_Term_Word_Streaming

@@ -1270,3 +1270,13 @@ exports. The checked cycle covers 1,602 theories and retains 5,888 records acros
 50 recipe boundaries. No obligation row changes status: native selection of
 refinements, practical-usefulness gate 5a, broader workflow coverage, O-85 and
 genesis remain open; theoretical cost gate 5b remains deferred.
+
+## Replay presentation and streaming batch
+
+Seven families have accepted native words; five historical comparison stages
+were removed after accepted pairing. The new replay stages retain original
+comparisons in this batch. All 1,610 theories, seven affected recipes and both
+host suites pass, with 4,609 records over 50 retained boundaries. Exact streaming
+repairs a stack failure but the cycle still takes 914.05 s. No obligation row
+changes status: native refinement selection, actual workflow usefulness under
+5a, wider coverage, O-85 and genesis remain open; 5b stays deferred.

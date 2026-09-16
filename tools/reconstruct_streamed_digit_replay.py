@@ -7,7 +7,11 @@ RECIPE = Recipe(
     roots=('Digit_Replay_Execution', 'Factor_Generation_History_Append'),
     export='Digit_Replay_Execution:digit_replay.ML',
     session='Reconstruct_Digit_Replay',
-    groups=((Execution('comparison', 'check_streamed_digit_replay.py', ('--project', '{project}'), 10800),),),
+    groups=((Execution('comparison', 'check_streamed_digit_replay.py', ('--project', '{project}'), 10800),
+             Execution('presentation', 'check_presented_report.py', ('--project', '{project}',
+                 '--module', 'Digit_Replay_Execution', '--report', 'digit_replay_report_value',
+                 '--scope', 'digit_replay_indices', '--selections', 'digit_replay_report_selections',
+                 '--workers', '4', '--timeout', '3600'), 10800)),),
     boundary='The complete original replay packet is rebuilt and executed from repository sources. '
              'Every context, candidate result, original certified-cause report, comparison, revision and '
              'source correspondence is retained through lossless compression and separate complete records. '

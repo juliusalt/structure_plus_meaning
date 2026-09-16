@@ -1,5 +1,5 @@
 theory Constructed_History_Execution
-  imports Factor_Constructed_History_Investigation Factor_Executable_Artifact_Values Constructed_History_Presentation Native_Execution_Refinements
+  imports Finite_Term_Word_Streaming Factor_Constructed_History_Investigation Factor_Executable_Artifact_Values Constructed_History_Presentation Native_Execution_Refinements
 begin
 
 setup \<open>Finite_Observation_Contracts.export @{term constructed_history_investigation}\<close>

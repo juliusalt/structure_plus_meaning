@@ -7,7 +7,11 @@ RECIPE = Recipe(
     roots=("Decision_Replay_Execution",),
     export="Decision_Replay_Execution:decision_replay.ML",
     session="Reconstruct_decision_replay",
-    groups=((Execution("comparison", "check_decision_replay.py", ("--project", "{project}"), 2100),),),
+    groups=((Execution("comparison", "check_decision_replay.py", ("--project", "{project}"), 2100),
+             Execution('presentation', 'check_presented_report.py', ('--project', '{project}',
+                 '--module', 'Decision_Replay_Execution', '--report', 'decision_replay_report_value',
+                 '--scope', 'requirement_decision_indices', '--selections', 'decision_replay_report_selections',
+                 '--workers', '8', '--timeout', '3600'), 4200)),),
     boundary="Complete original source, requirements and terms determine each full decision and its exact target-certificate replay family. Every native graph, call, extending and retained environment, original-condition assessment, comparison and revision is reproduced. Derived sharing preserves the complete public reports. This scoped composition does not establish whole-workflow enforcement, original-policy and historical permission, complete subject and criticism coverage, physical cost or genesis.")
 
 

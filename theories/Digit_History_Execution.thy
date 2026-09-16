@@ -1,5 +1,5 @@
 theory Digit_History_Execution
-  imports Factor_Digit_History_Investigation Factor_Executable_Artifact_Values Digit_History_Presentation Native_Execution_Refinements
+  imports Finite_Term_Word_Streaming Factor_Digit_History_Investigation Factor_Executable_Artifact_Values Digit_History_Presentation Native_Execution_Refinements
 begin
 
 setup \<open>Finite_Observation_Contracts.export @{term digit_history_investigation}\<close>

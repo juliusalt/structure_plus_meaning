@@ -7,11 +7,10 @@ RECIPE = Recipe(
     roots=('Required_History_Execution',),
     export='Required_History_Execution:required_history.ML',
     session='Reconstruct_required_history',
-    groups=((Execution('comparison', 'check_required_history.py', ('--project', '{project}'), 2400),
-             Execution('presentation', 'check_presented_report.py', ('--project', '{project}',
+    groups=((Execution('presentation', 'check_presented_report.py', ('--project', '{project}',
                  '--module', 'Required_History_Execution', '--report', 'required_history_report_value',
                  '--scope', 'required_history_indices', '--selections', 'required_history_report_selections'),
-                 2400)),),
+                 2400),),),
     boundary='Actual original requirement evaluation supplies complete certificate and replay families. '
              'The invariant-carrying history API preserves the original request and policy, checks '
              'every requested predecessor against the admission ledger, joins actual replay and '

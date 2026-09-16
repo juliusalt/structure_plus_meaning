@@ -1,5 +1,5 @@
 theory Required_History_Execution
-  imports Factor_Required_History_Investigation Factor_Executable_Artifact_Values
+  imports Finite_Term_Word_Streaming Factor_Required_History_Investigation Factor_Executable_Artifact_Values
     Factor_Finite_Judgment_Reading_Sharing Required_History_Presentation Native_Execution_Refinements
 begin
 

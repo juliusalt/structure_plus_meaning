@@ -2372,3 +2372,26 @@ recorded output-cost criticism. A native subject contract selecting this
 refinement from measured physical costs is still absent. Conditions 1 and 6,
 actual development usefulness under 5a, and the wider coverage audit remain
 open; 5b remains deferred until after genesis.
+
+## Replay presentation and streaming review
+
+The complete seven-family integration passed: 1,610 theories, 125 tool tests,
+35 kernel tests (two skips), seven executed recipes and 43 unchanged manifests.
+The five histories use their previously accepted words only; both replay families
+pass original comparisons and native words on the same exports. The retained
+4,609 records contain complete presented content; fewer physical records do not
+mean fewer subjects or conditions. Removed renderers had no remaining importers;
+other history renderers remain dependencies of concurrent reporting.
+
+The first digit presentation computed its report but exhausted its stack during
+word delivery. Exact counted folds and explicit worklists repair this without
+changing the word. The accepted cycle still took 914.05 s, dominated by digit
+replay at 834.86 s. That is not the requested practical speedup. An append-only
+union experiment was stopped without a complete result or demonstrated benefit;
+it was not adopted. Indexed complete-value accumulation and shared artifact-row
+conversion remain isolated candidates pending execution and cost evidence.
+
+The architecture follows the owner's presentation direction and Isabelle proves
+the bootstrap contracts. Native selection of physical refinements is still
+missing. Conditions 1 and 6, practical gate 5a, broader coverage and genesis
+remain open; theoretical gate 5b remains deferred.

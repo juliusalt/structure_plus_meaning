@@ -74,13 +74,13 @@ all six `problems.txt` conditions, native mathematical-proof admission,
 genesis and the final repository audit remain open.
 
 
-## Shared presented report (2026-09-17)
+## Native presented report (2026-09-17)
 
-The current recipe has two accepted stages on the same export: the original
-complete comparison and a native presented report word of 418,306
-bytes. The word includes each distinct complete artifact once and identifies
-every presented term and every store through its original view. The combined
-recipe retains 55 records. See [the measurement record](presented-history-measurements.json)
-for source identities, word digests and timing boundaries. This incremental
-validation reused the fixed accepted base; the earlier cold-build counts above
-are historical, not a description of this run.
+After accepted paired validation, this recipe now retains only its native word:
+418,306 bytes, one complete report record. Every prior subject and
+field remains in that presentation, with stores identified through their original
+views and each distinct artifact given once. The word boundary is unchanged.
+The current presentation took 228.95 s under the combined schedule.
+See [the current measurements](replay-presentation-measurements.json) and
+[current verification](current-verified.json). The earlier source-only counts and
+JSON report counts above describe historical boundaries.

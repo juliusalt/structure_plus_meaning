@@ -73,3 +73,18 @@ they do not establish a bound for the whole operation or reporting process.
 Broader workflow adoption, all six conditions in `problems.txt`, historical
 permission and reachability, native mathematical-proof admission, genesis and
 the final repository audit remain open.
+
+## Native presented report (2026-09-17)
+
+The current recipe accepts both the original comparison and the native presented
+word on the same actual export. The word is 20,519,284 bytes and retains
+all report content through reusable notion presentations. Original comparison
+took 794.30 s and presentation 828.92 s;
+these stages overlap, with 4 workers in the presented execution.
+The complete seven-recipe cycle passed in 914.05 s, covering 1,610 theories and
+both host suites. The prior cold-build counts above are historical.
+
+See [the measurements](replay-presentation-measurements.json) for source
+identities, exact word boundaries, the digit word's stack-failure repair and
+execution boundaries. Accepted pairing permits subsequent removal of the legacy
+stage; it does not establish native refinement selection or practical usefulness.

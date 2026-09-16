@@ -1,21 +1,22 @@
 # Making native development and validation fast
 
-Updated 2026-09-16 from the committed speedup batch and the subsequent local
-export-theory split. This replaces the original proposal, interim timing
-inventory, and completed work presented as future tasks.
+Updated 2026-09-17 from the accepted incremental cycle and the five-family
+shared-presentation batch. Historical measurements remain labeled by their
+actual source and execution boundaries.
 
 ## Current result
 
-**An ordinary commit cycle now runs without a complete build. A change confined
-to one family was validated in 80 s; a change to shared tools or the refinement
-bundle was validated in 831 s, because digit replay and decision replay still
-keep a cycle that touches every recipe above single-digit minutes. Reports can
-now be transported through the presentation classes of their notions; one
-family uses that transport so far. The speedup objective is unfinished.**
+**Five history families now transport their complete presented reports through
+shared artifact words, with both the word and original comparison validated on
+the same exports. Words range from 160 KB to 552 KB instead of repeating hundreds
+of megabytes of artifact data. The accepted incremental validation took 289.87 s;
+this excludes the separate probe measurements and the first failed integration
+attempt. Digit replay and decision replay remain the main cycle bottlenecks.
+The speedup objective is unfinished.**
 The previous delivered commit is `4becc454be0d9b7c94d71fff0fe280a4833ee3c3`
-(`Remove repeated native execution work across validation families`). This batch
-commits the export-theory split, the incremental check and the host verification
-corrections.
+(`Remove repeated native execution work across validation families`). Local commits `92cad1e` and `233c1a0` established the incremental cycle and
+the required-history presentation pilot. The current batch extends the native
+presentation transport to five history families.
 
 The [measurement ledger](validation/reconstruction/native-speedup-observations.json)
 retains the latest stage timings, reported outcomes, source identities, cold-suite
@@ -23,16 +24,16 @@ logs and readiness failures. It records physical observations, not semantic
 admission; its per-recipe entries predate this batch. The
 [last complete recipe review](validation/reconstruction/current-verified.json)
 and [incremental check receipt](validation/incremental-check.json) describe this
-batch's 1,590-theory workspace.
+current 1,602-theory workspace.
 
 | Boundary | Latest evidence | What it establishes |
 |---|---|---|
 | Delivered commit | 1,554 theories accepted; 158 host tests and 95 subtests passed, two optional-dependency skips; all 50 recipes and 5,883 complete records accepted | Proof and complete report reconstruction for `4becc45`; their committed source/tool/log identities were checked against Git contents before push. |
-| Accepted base | Complete check accepted **1,589 theories** in the fixed base directory, with source and tool identities equal to the committed build receipt | The proof base for incremental checks; this batch's workspace adds one theory, proved incrementally with its 94 dependents. |
-| Recipe executions | **All 50 recipes and 5,883 complete records accepted**; 125 tool tests and 35 kernel tests passed, two optional-dependency skips | The two lost workflow contract registrations are restored in `Native_Workflow_Execution`; `native-workflow` completes. |
+| Accepted base | Complete check accepted **1,589 theories** in the fixed base directory, with source and tool identities equal to the committed build receipt | The proof base for incremental checks; the current workspace is checked by 107 rebuilt contexts and 1,495 reused contexts. |
+| Recipe executions | **All 50 recipe boundaries and 5,888 records retained**; five affected recipes executed in this batch; 125 tool tests and 35 kernel tests passed, two optional-dependency skips | The two lost workflow contract registrations are restored in `Native_Workflow_Execution`; `native-workflow` completes. |
 | Retained manifests | All 50 source manifests regenerated from the validated workspace | Each recipe's retained verification now binds the exact inputs it was executed with. |
-| Incremental validation | `tools/incremental_check.py` validated the incremental-check batch in 831 s and the presentation batch in 80 s against a fixed accepted base | See [Development cycle structure](#development-cycle-structure); the complete build is not part of an ordinary cycle. |
-| Presented report | The required-history recipe retains the digit word of its complete presented report beside the unchanged report comparison on the same export | See [Native report presentation](#native-report-presentation); 49 recipes still use host renderers. |
+| Incremental validation | `tools/incremental_check.py` validated the incremental-check batch in 831 s, the initial presentation batch in 80 s and the five-family shared-word batch in 290 s against a fixed accepted base | See [Development cycle structure](#development-cycle-structure); the complete build is not part of an ordinary cycle. |
+| Presented report | Required, digit, known, quoted and constructed histories retain their complete presented report words beside the unchanged comparisons on the same exports | See [Native report presentation](#native-report-presentation); 45 families still need presented report stages; the five migrated families retain their old comparison stages pending removal. |
 | Whole development workflow | Conditions 1, 6 and practical-usefulness gate 5a remain open | Faster native packets and successful fixtures do not establish native-driven refinement selection or acceptable real development throughput. Gate 5b remains deferred until after genesis. |
 
 ## Where the time goes
@@ -42,11 +43,11 @@ batch's 1,590-theory workspace.
 | Full check for delivered revision, 12 threads | **673.91 s — 11 min 14 s** | 1,554 theories, 14:46:21–14:57:35 UTC. |
 | Full check after export-theory split, 16 threads | **625.14 s — 10 min 25 s** | 1,589 theories, 15:23:17–15:33:42 UTC. Source reorganization did not deliver validation in seconds. Different thread/source boundaries prevent treating the difference as a controlled speedup ratio. |
 | Export all 50 recipe modules from accepted main build | About **1–2 s** | Reuses the already accepted proof. Export itself is not the multi-minute bottleneck. |
-| Current streamed digit-replay check | **997.93 s — 16 min 38 s** | One execution/checking stage, after the shared build; four native workers. Delivered revision: 990.29 s. |
+| Earlier split digit-replay check | **997.93 s — 16 min 38 s** | Historical execution/checking stage; four workers. The later shared-tool cycle recorded about 774 s after host corrections. |
 | Earlier plain source-only suite | **1,470 s — 24 min 30 s** | 40 recipes accepted on an earlier source revision. |
 | Earlier compressed source-only suite | **1,598 s — 26 min 38 s** | 10 recipes attempted; digit replay failed. Together those two suites accepted 49/50, not a complete current cold run. |
 | Final delivered check start to commit creation | **35 min 49 s clock span** | 14:46:21–15:22:10 UTC: proof, executions, retries, evidence integration and intervening work. This is not a measurement of the Git commit command. |
-| Latest local check start to last recipe receipt | **About 32 min 22 s observed interval** | 15:23:17–15:55:39 UTC, ending at the receipt file timestamp. The batch still failed one recipe. |
+| Earlier split check start to last recipe receipt | **About 32 min 22 s observed interval** | Historical interval, 15:23:17–15:55:39 UTC, ending with a missing-contract failure subsequently repaired. |
 
 The cold suites materialized declared source/fixture inputs and rebuilt their
 project proofs from HOL without a supplied project heap. This is a source-only
@@ -57,9 +58,9 @@ current cold reconstruction. The two suite times must not be added as serial
 wall time when their work overlapped.
 
 A previous packet-only profile reported complete steering at about **4.9 s**.
-The current complete steering checker takes **27.02 s**, its request roundtrip
+The split-era complete steering checker took **27.02 s**, its request roundtrip
 **45.10 s**, and its empty-scope check **13.30 s**, under the recorded concurrent
-recipe schedule. Source-development checking takes **38.67 s** and its request
+recipe schedule. That source-development check took **38.67 s** and its request
 roundtrip **53.04 s**. Native computation, startup, transport, comparison, proof
 and final retention are distinct costs. The empty-scope time makes the need to
 measure the surrounding process concrete; it does not by itself attribute that
@@ -136,56 +137,73 @@ that would remove the digit replay cost above. The correction is under way; see
 
 ## Native report presentation
 
-**Design.** A report subject is presented by composing the executable
-presentations of its notions, each decoding into the notion's existing data term
-or class: natural and truth-value data, uses, sites and calls, goals, complete
-artifact rows and environment values, and the native target class. Pairs,
-sequences, finite collections and options decode into the generic classes, and
-generations and proofs reuse the collection presentation. Every presentation is
-injective whenever its components are. Context tables, subject comparisons and
-investigation cycles share one packet presentation across families. Counted
-digit words compose the natural and address digit paths into a prefix-free word
-of every executable term, delivered by a fold. Presentation names its notion
-instead of dispatching on HOL types, because octets, local addresses and index
-lists share one type. A collection's canonical order is one admissible
-enumeration; the word boundary relies only on injectivity.
+**Construction.** Presentations name their notions and compose through the
+existing pair, sequence, finite-collection and optional-value classes. Coordinates,
+goals, generations, proof trees, contexts and investigation packets reuse those
+presentations. Stores are identified by their original views, not by a new
+identity of their internal layout. Octets, addresses and indices remain distinct
+notions even when their HOL carriers coincide; there is no type-class dispatch
+for their meanings. Collection ordering supplies an admissible enumeration and
+an identifying word, not an invariance claim about programs observing that word.
 
-**Pilot, required history.** Theories: `Ordered_Finite_Terms`,
-`Finite_Presented_Collections`, `Finite_Presented_Coordinates`,
-`Finite_Presented_Structures`, `Finite_Presented_Investigations`,
-`Finite_Presented_Histories`, `Finite_Term_Words` and
-`Required_History_Presentation`; together they built in about eight seconds over
-the accepted base. `tools/check_presented_report.py` streams the word of an
-exported report value into bytes and records its size and SHA-256 as one tagged
-record, so the existing boundary, recipe and retention code applies unchanged.
+**Shared artifact words.** Artifacts and targets occur as native target terms.
+An environment presents its use/artifact members and binding members. The word
+starts with the complete rows of each distinct artifact in first-occurrence
+order, then presents target leaves by their table indices and any anchors.
+`Complete_Value_References` supplies the exact index contract. The generalized
+term-word cancellation lemma consumes that contract on the actual target family;
+`finite_term_shared_word_injective` and `finite_term_shared_word_fold_exact`
+establish identification and exact streaming of the complete word. Malformed
+values and every optional failure level are retained.
 
-| Measured boundary, 16 workers | Time |
-|---|---:|
-| Required-history packet | 13.2-13.4 s |
-| Presentation of the complete packet | 0.6-0.7 s |
-| Digit word of the report, 34.4 MB | 2.4 s |
-| Presentation stage, standalone | 18.4 s |
-| Presentation stage beside the report comparison stage in the recipe | 22.6 s (comparison 23.5 s) |
-| Complete cycle: 103 theories proved, one recipe, host tests | 80.1 s |
+The previous unshared digit and known history words were 572.6 MB and 611.6 MB.
+The new words below retain the complete presented subjects through direct target
+terms and the shared table. These size changes are not timing speedup ratios.
 
-The word is large because shared environments and artifacts are presented at
-every occurrence. Two runs produced identical bytes, and the recipe's export
-produced the digest established from a separate probe export.
+| Family | Complete word bytes | Probe execution (s) | Recipe comparison (s) | Recipe presentation (s) |
+|---|---:|---:|---:|---:|
+| required-history | 159,908 | 22.06 | 98.58 | 88.24 |
+| digit-history | 418,306 | 114.79 | 162.30 | 193.76 |
+| known-history | 449,531 | 117.83 | 169.42 | 201.59 |
+| quoted-history | 483,348 | 121.46 | 168.75 | 205.84 |
+| constructed-history | 551,708 | 126.55 | 175.51 | 212.48 |
 
-**Migration.**
+Probe executions used two host jobs and sixteen workers per job. The complete
+cycle used eight recipe jobs with each recipe's original internal scheduling;
+its proof took 70.28 s and its execution/test phase 213.81 s. These overlap with
+independent proof preparation and are observed resource boundaries, not isolated
+comparative timings. Both host suites passed (125 tools; 35 kernel, two skips).
+All five presented words from the real exports matched their probe boundaries,
+and every original JSON comparison remained equal. The five added word records
+bring the retained inventory to 5,888 records.
 
-1. Present the remaining history families (digit, known, quoted and constructed
-   histories and the history index) through the existing store projections
-   `digit_history_state_view`, `digit_allocated_view` and the indexed member
-   view, then digit replay and decision replay.
-2. Run each family's presented stage beside its report comparison once; after
-   both are accepted on the same export, remove the comparison stage and its
-   host renderer.
-3. Once a family is compared only by presented words, refine its set
-   representations; the reading-join accumulation of digit replay is the first
-   target.
-4. Compute each collection element's key once, and share repeated environments
-   and artifacts in the word, if their measured cost warrants it.
+The first integration exposed a distinction between exporting theory and emitted
+ML structure: known, quoted and constructed histories emit the shared
+`Digit_History_Execution` structure. `check_presented_report.py` now records and
+checks `--theory` separately from `--module`; all three callers were corrected
+as a group. A named probe module did not exercise that actual client boundary.
+
+[Presented history measurements](validation/reconstruction/presented-history-measurements.json)
+retain the complete sizes, digests, source identities and validation phases.
+The generic host checker packs the native bits and retains their byte boundary;
+it does not inspect generated representations or supply semantic verdicts.
+
+**Remaining migration.**
+
+1. Remove the old comparison stages for the five families whose paired stages
+   are now accepted. Keep any old renderer modules still imported by other
+   families until those callers migrate.
+2. Present digit replay next, including every seed, previous source, prepared
+   operation, cause diagnostic and source correspondence. Decision replay and
+   the history index follow. Reuse complete program, graph, proof and generation
+   notions; do not flatten the report into a new host schema.
+3. After a family is validated through its presented word, refine the set
+   representation that its old JSON order had constrained. Digit replay context
+   6 and its reading-join accumulation remain the first major target.
+4. Extend presentation to the remaining families and complete the non-recipe
+   coverage audit. Profiling may justify preparing term-order keys or complete
+   artifact rows once; preserve the existing word by an exact equation whenever
+   that is the intended refinement.
 
 ## Implementation record and corrections
 
@@ -216,7 +234,7 @@ imported the common refinement bundle. The local change moves their content
 into `*_Base` theories and leaves export wrappers, redirecting content imports.
 The original export-theory names are retained.
 
-The current source graph has **1,589 theories, 402 theories containing
+At the export-theory split, the source graph had **1,589 theories, 402 theories containing
 `export_code`, 86 file-export theories and 50 reconstruction recipes**. The
 refinement import closure shrank from the previously measured 296 theories to
 **94 including the bundle itself**: 86 exports, five sharing refinements, two
@@ -224,43 +242,17 @@ execution bases, and the bundle. The earlier description omitted the bundle
 when explaining the total.
 
 This is a dependency-graph improvement. `ROOT` still declares **one Isabelle
-session**, `RRA_Factor_Structural_Bootstrap`. Its latest full build still took
-625 seconds. There is no implemented separate execution session, persistent
-interactive proof service, or measured seconds-scale edit validation.
+session**, `RRA_Factor_Structural_Bootstrap`. That full build took
+625 seconds. The fixed-base incremental checker now avoids it in ordinary
+cycles; a separate execution session or persistent interactive proof service
+has not been implemented.
 
-Three readiness defects were found in the split and are resolved or bounded in this batch:
-
-1. `Native_Workflow_Execution.thy` lost the exports of
-   `required_workflow_investigation` and
-   `required_workflow_scope_investigation`. The latest `native-workflow`
-   requirements step fails `assert len(contracts) == 1` after 0.16 s; the
-   ordinary workflow step passed, but the rest of the complete recipe did not.
-   A successful theory build did not detect this client contract omission.
-   *Resolved:* a regular expression consumed the line boundary shared by
-   adjacent registrations; both registrations are restored and the recipe passes.
-2. `incremental_check.py` calls `accepted_parent(ROOT)` before computing changed
-   theories. That function requires the current source bytes to equal the
-   accepted receipt. A changed workspace fails that prerequisite; an unchanged
-   workspace produces no changes to check. The draft also does not establish
-   impact coverage for changed tools/fixtures, deleted inputs or non-recipe
-   entry points. Its claimed changed-workspace behavior has not been validated.
-   *Resolved for recipes:* the base is a separate fixed directory accepted by
-   its own complete check, recipe impact compares complete source manifests
-   (theories, tools, fixtures and expected reports), and the tool validated this
-   batch. Non-recipe entry points remain outside the check.
-3. The scratch `fast_validate.sh` reports `FASTDONE` and can exit zero after
-   a failed child/export because it does not propagate aggregate failure.
-   The latest task did exactly that while `native-workflow` failed. A shell
-   completion marker is not recipe acceptance. Final commit readiness must
-   inspect the complete receipts and their exact inputs.
-   *Resolved:* `incremental_check.py` accepts only when every executed recipe
-   receipt and both host test suites are accepted, and exits non-zero otherwise.
-
-The latest 49 accepted recipe runs were checked against their current module
-proof receipt hashes. Their observations are retained in the measurement ledger;
-they have not been substituted into a falsely accepted 50-recipe manifest set.
-The split remains local until its full applicable contract, source-manifest,
-execution and retention boundaries are repaired and checked.
+The earlier split defects were repaired in `92cad1e`: both workflow
+registrations are restored, the proof base has its own fixed accepted directory,
+recipe impact compares complete manifests, and failed recipes or host tests make
+the incremental check fail. Non-recipe entry points remain outside that recipe
+check. Current evidence is `validation/incremental-check.json`; the measurement
+ledger's earlier 49/50 table is historical and does not describe this batch.
 
 ## Remaining work, in useful batches
 
@@ -271,9 +263,9 @@ subjects, computed observations, reusable reasoning and independent criticism.
 
 | Work group | Required outcome and evidence |
 |---|---|
-| Repair the current split and validation orchestration | Preserve every exported contract and original client entry point; propagate actual failures; demonstrate changed-source, unchanged-source, tool/fixture and missing-input cases. Reuse accepted unchanged inputs and rerun the complete affected checks. Regenerate manifests only for the actual final validated source state. |
+| Maintain the repaired split and validation orchestration | Preserve every exported contract and original client entry point; propagate actual failures; demonstrate changed-source, unchanged-source, tool/fixture and missing-input cases. Reuse accepted unchanged inputs and rerun the complete affected checks. Regenerate manifests only for the actual final validated source state. |
 | Make proof invalidation follow real dependencies | Establish reusable accepted base contexts and separate execution-layer proof/code work where the dependency boundary permits. The proposed execution session requires distinct theory directories and a shared theory-path/session resolver across `build.py`, `prove_context.py`, `export_proved_code.py`, `proved_code.py`, `investigate.py` and `reconstruction_sources.py`; they currently assume one session and/or `theories/<name>.thy`. A directory split alone is not a validated solution. Preserve normative bootstrap and exact source/tool invalidation. |
-| Provide a working incremental development path | Keep an immutable accepted parent distinct from the changed workspace; rebuild changed subjects and actual dependents, export affected modules and execute every affected client. Store exact source/tool/fixture dependencies and complete receipts so unchanged results can be reused soundly. Exercise realistic repeated edits and refusal/repair cycles, not only a no-change fixture. |
+| Extend the working incremental development path | Keep an immutable accepted parent distinct from the changed workspace; rebuild changed subjects and actual dependents, export affected modules and execute every affected client. Store exact source/tool/fixture dependencies and complete receipts so unchanged results can be reused soundly. Exercise realistic repeated edits and refusal/repair cycles, not only a no-change fixture. |
 | Reduce full and cold validation cost | Build the combined required proof closure once, then reuse its accepted exports across the complete recipe set. Preserve a separate source-only release reconstruction with complete fixture and manifest checks. Remove redundant proofs across storage modes where one actual proof is applicable, without claiming warm reuse is a cold run. Cold/full costs remain optimization targets; moving them out of the inner loop does not meet the whole objective by itself. |
 | Remove remaining expensive native/host work | Start from the current costly families: digit replay, decision replay, constructed/digit/known/quoted histories, native-child reasoning, history index and certificate replay. Separate native stages, serialization, parsing, direct comparison and retention before choosing refinements. Remaining source-level leads include repeated family/schema/scoped-reader formation, `finite_join_readings` footprint unions, and grounding/evaluation unions. A refinement that changes finite-set order requires the family's reports to be compared through presented words first; see [Native report presentation](#native-report-presentation). |
 | Schedule and retain one complete batch efficiently | Budget native workers across simultaneous recipes and their nested execution groups. Eight outer jobs can launch further processes with their own workers; thread-count settings alone do not establish useful concurrency. Start independent heavy jobs when dependencies allow, overlap independent work with fixed checks, aggregate diagnostics, and retain one reconstructible boundary instead of recopying/rechecking bulk for commit. |
@@ -324,73 +316,17 @@ Condition 5a still requires useful real development with quality at acceptable
 observed cost. Condition 5b is deferred until after genesis. O-85, historical
 permission, broader adequacy and genesis are not closed by this performance work.
 
-## Complete current recipe inventory
+## Current validation inventory
 
-Each number below is **the sum of recorded execution-step wall seconds** for a
-recipe, including checker startup, native work, reporting and host checking.
-Some stages and recipes overlap: these sums are neither elapsed suite time nor
-CPU time, and exclude shared proof/export and outer recipe coordination.
-The ledger retains individual stage names, times, worker settings and outcomes.
+`validation/reconstruction/current-verified.json` and each family's source and
+verification records are the current inventory. The last accepted check covers
+1,602 theories, executes all five affected history recipes with their paired
+stages, retains the other 45 unchanged recipe boundaries, and records 5,888
+complete report records in total. It does not claim that every non-recipe entry
+point was exercised or that all 50 recipes were rerun in this cycle.
 
-The linked repository receipts describe the delivered `4becc45` boundary. The
-right column comes from the latest local split executions, retained separately
-in the measurement ledger. Resource contention and changed build boundaries
-prevent interpreting each column difference as a controlled speedup ratio.
-
-| Recipe | Delivered step sum (s) | Latest local split step sum (s) |
-|---|---:|---:|
-| [allocated-environments](validation/reconstruction/allocated-environments-verified.json) | 2.32 | 2.37 |
-| [artifact-lookup](validation/reconstruction/artifact-lookup-verified.json) | 1.92 | 1.97 |
-| [cached-grafts](validation/reconstruction/cached-grafts-verified.json) | 2.87 | 2.77 |
-| [certificate-coverage](validation/reconstruction/certificate-coverage-verified.json) | 8.28 | 8.33 |
-| [certificate-development](validation/reconstruction/certificate-development-verified.json) | 8.03 | 8.28 |
-| [certificate-input-development](validation/reconstruction/certificate-input-development-verified.json) | 10.24 | 10.98 |
-| [certificate-scope-repair](validation/reconstruction/certificate-scope-repair-verified.json) | 7.33 | 7.43 |
-| [certified-causes](validation/reconstruction/certified-causes-verified.json) | 110.53 | 109.91 |
-| [concurrent-history](validation/reconstruction/concurrent-history-verified.json) | 25.42 | 51.33 |
-| [concurrent-replay](validation/reconstruction/concurrent-replay-verified.json) | 78.29 | 149.96 |
-| [constructed-history](validation/reconstruction/constructed-history-verified.json) | 320.31 | 323.08 |
-| [data-reading](validation/reconstruction/data-reading-verified.json) | 3.97 | 3.87 |
-| [decision-replay](validation/reconstruction/decision-replay-verified.json) | 368.54 | 374.86 |
-| [digit-allocation](validation/reconstruction/digit-allocation-verified.json) | 2.92 | 2.97 |
-| [digit-generation](validation/reconstruction/digit-generation-verified.json) | 8.30 | 7.95 |
-| [digit-history](validation/reconstruction/digit-history-verified.json) | 265.15 | 259.08 |
-| [digit-replay](validation/reconstruction/digit-replay-verified.json) | 990.29 | 997.93 |
-| [encoded-environments](validation/reconstruction/encoded-environments-verified.json) | 8.30 | 9.15 |
-| [environment-grafts](validation/reconstruction/environment-grafts-verified.json) | 9.44 | 8.97 |
-| [environment-updates](validation/reconstruction/environment-updates-verified.json) | 9.66 | 10.01 |
-| [generation-records](validation/reconstruction/generation-records-verified.json) | 13.96 | 14.33 |
-| [graft-admission](validation/reconstruction/graft-admission-verified.json) | 8.98 | 10.27 |
-| [history-index](validation/reconstruction/history-index-verified.json) | 174.27 | 165.38 |
-| [indexed-generation](validation/reconstruction/indexed-generation-verified.json) | 13.95 | 14.50 |
-| [known-history](validation/reconstruction/known-history-verified.json) | 258.26 | 267.08 |
-| [literal-replay](validation/reconstruction/literal-replay-verified.json) | 12.76 | 13.33 |
-| [native-admission](validation/reconstruction/native-admission-verified.json) | 85.17 | 86.54 |
-| [native-certificate-replay](validation/reconstruction/native-certificate-replay-verified.json) | 135.50 | 137.81 |
-| [native-certificates](validation/reconstruction/native-certificates-verified.json) | 10.39 | 9.43 |
-| [native-child](validation/reconstruction/native-child-verified.json) | 222.76 | 225.21 |
-| [native-derivations](validation/reconstruction/native-derivations-verified.json) | 8.03 | 8.08 |
-| [native-development](validation/reconstruction/native-development-verified.json) | 23.97 | 24.16 |
-| [native-evaluation](validation/reconstruction/native-evaluation-verified.json) | 6.54 | 6.29 |
-| [native-extensions](validation/reconstruction/native-extensions-verified.json) | 2.72 | 2.62 |
-| [native-graphs](validation/reconstruction/native-graphs-verified.json) | 22.46 | 24.09 |
-| [native-histories](validation/reconstruction/native-histories-verified.json) | 7.33 | 11.10 |
-| [native-nodes](validation/reconstruction/native-nodes-verified.json) | 3.97 | 4.52 |
-| [native-requirements](validation/reconstruction/native-requirements-verified.json) | 41.86 | 41.20 |
-| [native-sources](validation/reconstruction/native-sources-verified.json) | 7.69 | 17.78 |
-| [native-steering](validation/reconstruction/native-steering-verified.json) | 119.52 | 105.23 |
-| [native-workflow](validation/reconstruction/native-workflow-verified.json) | 134.62 | **failed at requirements** |
-| [quoted-history](validation/reconstruction/quoted-history-verified.json) | 197.60 | 197.08 |
-| [required-causes](validation/reconstruction/required-causes-verified.json) | 18.26 | 18.68 |
-| [required-history](validation/reconstruction/required-history-verified.json) | 30.12 | 39.08 |
-| [requirement-decisions](validation/reconstruction/requirement-decisions-verified.json) | 9.84 | 14.65 |
-| [requirement-plans](validation/reconstruction/requirement-plans-verified.json) | 1.97 | 1.72 |
-| [requirement-sources](validation/reconstruction/requirement-sources-verified.json) | 9.33 | 9.08 |
-| [source-development](validation/reconstruction/source-development-verified.json) | 109.62 | 113.28 |
-| [use-allocation](validation/reconstruction/use-allocation-verified.json) | 2.17 | 2.22 |
-| [use-codecs](validation/reconstruction/use-codecs-verified.json) | 2.02 | 2.32 |
-
-The failed workflow is incomplete, not a faster result. Its later stages remain
-unvalidated. The older original-baseline table, interim probe timeouts, resolved
-streaming failures and completed five-batch proposal have been removed from this
-current plan; underlying historical evidence remains available in version control.
+The older delivered/local-split timing table and its resolved workflow failure
+are removed from this live plan. Their raw observations remain in
+`validation/reconstruction/native-speedup-observations.json`. Current native
+presentation measurements are retained separately, with their actual source and
+execution boundaries. None of these records closes conditions 1, 6 or 5a.

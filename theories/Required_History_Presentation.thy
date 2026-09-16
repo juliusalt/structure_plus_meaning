@@ -42,10 +42,10 @@ theorem required_history_report_value_exact:
       finite_sequence_presentation_injective)
 
 theorem required_history_report_word_exact:
-  "finite_term_word (required_history_report_value ws selections)=
-      finite_term_word (required_history_report_value vs choices) \<longleftrightarrow>
+  "finite_term_shared_word (required_history_report_value ws selections)=
+      finite_term_shared_word (required_history_report_value vs choices) \<longleftrightarrow>
     required_history_report ws selections=required_history_report vs choices"
-  by (simp only: finite_term_word_injective required_history_report_value_exact)
+  by (simp only: finite_term_shared_word_injective required_history_report_value_exact)
 
 export_code required_history_report_value checking SML
 

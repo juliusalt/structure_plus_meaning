@@ -73,3 +73,15 @@ policy, new material and reporting retain their own costs. Original history
 validity also remains distinct from complete historical permission and
 reachability. Broader workflow adoption, all six conditions in `problems.txt`,
 native mathematical-proof admission, genesis and the final audit remain open.
+
+
+## Shared presented report (2026-09-17)
+
+The current recipe has two accepted stages on the same export: the original
+complete comparison and a native presented report word of 449,531
+bytes. The word includes each distinct complete artifact once and identifies
+every presented term and every store through its original view. The combined
+recipe retains 375 records. See [the measurement record](presented-history-measurements.json)
+for source identities, word digests and timing boundaries. This incremental
+validation reused the fixed accepted base; the earlier cold-build counts above
+are historical, not a description of this run.

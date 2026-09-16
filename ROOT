@@ -1441,6 +1441,10 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     History_Input_Transitions
     Factor_Digit_History_Cases
     Factor_Digit_History_Investigation
+    Digit_History_Presentation
+    Known_History_Presentation
+    Quoted_History_Presentation
+    Constructed_History_Presentation
     Digit_History_Execution
     Factor_Digit_History_Known_Generation
     Factor_Digit_Policy_Backends

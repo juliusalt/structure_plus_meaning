@@ -18,11 +18,13 @@ from evidence_io import write_json
 TAG = 'PRESENTED_REPORT_WORD'
 CONSTANT = re.compile(r'[a-z][a-z_0-9]*')
 MODULE = re.compile(r'[A-Z][A-Za-z_0-9]*')
-BOUNDARY = ('The exported report value presents the complete report through the injective presentations of its '
-            'notions, and finite_term_word_fold delivers the proved prefix-free digit word of that presentation. '
-            'The host packs the delivered bits into bytes, followed by one terminating bit and zero padding, and '
-            'retains their size and SHA-256; it never reads a generated representation. Equal words identify '
-            'equal reports. The chosen collection order of a word carries no meaning of its own.')
+BOUNDARY = ('The exported report value presents the complete report through the presentations of its notions; '
+            'each presentation identifies its subject exactly, and a store exactly by its original view. '
+            'finite_term_shared_word_fold delivers the proved prefix-free digit word of that presentation, with every '
+            'distinct artifact given once. The host packs '
+            'the delivered bits into bytes, followed by one terminating bit and zero padding, and retains their size '
+            'and SHA-256; it never reads a generated representation. Equal words identify equal presented reports. '
+            'The chosen collection order of a word carries no meaning of its own.')
 
 
 def program(engine, inputs, word):
@@ -35,7 +37,7 @@ def program(engine, inputs, word):
             '  let val acc = acc * 2 + (if b then 1 else 0)\n'
             '  in if n = 7 then (BinIO.output1 (stream, Word8.fromInt acc); (0, 0)) else (acc, n + 1) end;\n'
             'fun pad (acc, n) = if n = 0 then () else pad (sink (acc, n) false);\n'
-            'val () = pad (sink (N.finite_term_word_fold sink (' + report + ') (0, 0)) true);\n'
+            'val () = pad (sink (N.finite_term_shared_word_fold sink (' + report + ') (0, 0)) true);\n'
             'val () = BinIO.closeOut stream;\n')
 
 
@@ -57,19 +59,23 @@ def main():
         parser.add_argument('--' + name, type=Path, required=True)
     for name in ['module', 'report', 'scope', 'selections']:
         parser.add_argument('--' + name, required=True)
+    parser.add_argument('--theory', help='Exporting Isabelle theory; defaults to the ML module name.')
     parser.add_argument('--timeout', type=int, default=2400)
     args = parser.parse_args()
     if not __debug__:
         raise ValueError('Presented report checks require Python assertions.')
     assert MODULE.fullmatch(args.module)
+    theory = args.theory or args.module
+    assert MODULE.fullmatch(theory)
     assert all(CONSTANT.fullmatch(getattr(args, name)) for name in ['report', 'scope', 'selections'])
     output, poly = args.output.resolve(), args.poly.resolve()
     proof_path = args.proof.resolve()
-    proof, engine, sources = proved_code.proved_export(proof_path, required_theories=[args.module],
+    proof, engine, sources = proved_code.proved_export(proof_path, required_theories=[theory],
                                                        project=args.project.resolve())
     assert not output.exists(), 'Retain preceding executions and use a new directory.'
     output.mkdir(parents=True)
-    inputs = {'module': args.module, 'report': args.report, 'scope': args.scope, 'selections': args.selections}
+    inputs = {'theory': theory, 'module': args.module, 'report': args.report,
+              'scope': args.scope, 'selections': args.selections}
     receipt = {'status': 'failed', 'invocation': str(uuid.uuid4()), 'inputs': inputs, 'boundary': BOUNDARY}
     word = output / 'report.word'
     try:
@@ -93,7 +99,10 @@ def main():
         value = retain_word(word, output / 'report.word.gz')
         word.unlink()
         assert value['bytes'] > 0
-        (output / 'results.log').write_text(TAG + ' ' + json.dumps(value, separators=(',', ':')) + '\n')
+        record = TAG + ' ' + json.dumps(value, separators=(',', ':')) + '\n'
+        (output / 'results.log').write_text(record)
+        with gzip.open(output / 'results.log.gz', 'wt') as compressed:
+            compressed.write(record)
         stable = proved_code.execution_inputs_unchanged(tracked, receipt, external=[poly])
         assert stable, 'Execution source, input or retained evidence changed.'
         receipt.update(status='accepted', word=value, sources_and_tools_unchanged=stable,

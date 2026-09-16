@@ -66,3 +66,15 @@ become manageable before continuing problems.txt. Performance work proceeds
 independently while this integration finishes. Full physical cost, all six workflow conditions,
 historical permission and reachability, native mathematical-proof admission,
 genesis and the final repository audit remain open.
+
+
+## Shared presented report (2026-09-17)
+
+The current recipe has two accepted stages on the same export: the original
+complete comparison and a native presented report word of 551,708
+bytes. The word includes each distinct complete artifact once and identifies
+every presented term and every store through its original view. The combined
+recipe retains 423 records. See [the measurement record](presented-history-measurements.json)
+for source identities, word digests and timing boundaries. This incremental
+validation reused the fixed accepted base; the earlier cold-build counts above
+are historical, not a description of this run.

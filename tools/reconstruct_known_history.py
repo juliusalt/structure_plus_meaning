@@ -7,7 +7,8 @@ RECIPE = Recipe(
     roots=('Known_History_Execution',),
     export='Known_History_Execution:known_history.ML',
     session='Reconstruct_Known_History',
-    groups=((Execution('comparison', 'check_known_history.py', ('--project', '{project}'), 10800),),),
+    groups=((Execution('comparison', 'check_known_history.py', ('--project', '{project}'), 10800),
+             Execution('presentation', 'check_presented_report.py', ('--project', '{project}', '--theory', 'Known_History_Execution', '--module', 'Digit_History_Execution', '--report', 'known_history_report_value', '--scope', 'digit_history_indices', '--selections', 'known_history_report_selections'), 10800)),),
     boundary='Original closed history validity and actual index membership establish each complete '
              'predecessor reading. The reconstructed operation preserves the original target, replay, '
              'policy, allocation and append behavior. Every original subject, method, source field, '

@@ -7,13 +7,13 @@ section \<open>A required history keeps every stored component\<close>
 
 definition finite_history_member_value ::
   "(local_address option definition_site\<times>finite_generation) \<Rightarrow> finite_factor_term" where
-  "finite_history_member_value=finite_pair_presentation finite_site_data (finite_generation_value finite_target_value)"
+  "finite_history_member_value=finite_pair_presentation finite_site_data (finite_generation_value Finite_Target)"
 
 lemma finite_history_members_injective [intro]:
   "inj (finite_sequence_presentation finite_history_member_value)"
   unfolding finite_history_member_value_def
   by (intro finite_sequence_presentation_injective finite_pair_presentation_injective finite_site_data_injective
-      finite_generation_value_injective finite_target_value_injective)
+      finite_generation_value_injective finite_target_injective)
 
 lemma finite_history_goals_injective [intro]:
   "inj (finite_sequence_presentation (finite_goal_value finite_site_data))"
@@ -21,14 +21,14 @@ lemma finite_history_goals_injective [intro]:
 
 definition finite_history_state_value :: "finite_required_history_state \<Rightarrow> finite_factor_term" where
   "finite_history_state_value q=
-    Finite_Pair (finite_environment_value (required_history_source q))
+    Finite_Pair (finite_environment_presentation (required_history_source q))
     (Finite_Pair (finite_use_data (required_history_source_use q))
     (Finite_Pair (Finite_Payload (required_history_source_root q))
     (Finite_Pair (finite_sequence_presentation (finite_goal_value finite_site_data) (required_history_goals q))
     (Finite_Pair (finite_site_data (required_history_entry q))
-    (Finite_Pair (finite_environment_value (required_history_policy q))
+    (Finite_Pair (finite_environment_presentation (required_history_policy q))
     (Finite_Pair (finite_use_data (required_history_policy_use q))
-    (Finite_Pair (finite_environment_value (required_history_material q))
+    (Finite_Pair (finite_environment_presentation (required_history_material q))
       (finite_sequence_presentation finite_history_member_value (required_history_members q)))))))))"
 
 lemma finite_history_state_value_injective [intro]: "inj finite_history_state_value"
@@ -36,7 +36,7 @@ proof (rule injI)
   fix q r assume same: "finite_history_state_value q=finite_history_state_value r"
   show "q=r"
     by (rule finite_required_history_state.equality;
-      use same in \<open>simp add: finite_history_state_value_def inj_eq[OF finite_environment_value_injective]
+      use same in \<open>simp add: finite_history_state_value_def inj_eq[OF finite_environment_presentation_injective]
         inj_eq[OF finite_use_data_injective] inj_eq[OF finite_site_data_injective]
         inj_eq[OF finite_history_goals_injective] inj_eq[OF finite_history_members_injective]\<close>)
 qed
@@ -50,22 +50,22 @@ lemma finite_required_history_value_injective [intro]: "inj finite_required_hist
 
 fun finite_history_input_value :: "required_history_input \<Rightarrow> finite_factor_term" where
   "finite_history_input_value (History_Step l rows E pu pr au ar root R)=
-    Finite_Pair (finite_target_value l)
+    Finite_Pair (Finite_Target l)
     (Finite_Pair (finite_sequence_presentation finite_history_member_value rows)
-    (Finite_Pair (finite_environment_value E)
+    (Finite_Pair (finite_environment_presentation E)
     (Finite_Pair (finite_use_data pu)
     (Finite_Pair (Finite_Payload pr)
     (Finite_Pair (finite_use_data au)
     (Finite_Pair (Finite_Payload ar)
-    (Finite_Pair (finite_site_data root) (finite_artifact_value R))))))))"
+    (Finite_Pair (finite_site_data root) (finite_artifact_term R))))))))"
 
 lemma finite_history_input_value_injective [intro]: "inj finite_history_input_value"
 proof (rule injI)
   fix x y assume same: "finite_history_input_value x=finite_history_input_value y"
   then show "x=y"
-    by (cases x; cases y) (simp add: inj_eq[OF finite_target_value_injective]
-      inj_eq[OF finite_history_members_injective] inj_eq[OF finite_environment_value_injective]
-      inj_eq[OF finite_use_data_injective] inj_eq[OF finite_site_data_injective] finite_artifact_value_injective)
+    by (cases x; cases y) (simp add: inj_eq[OF finite_target_injective]
+      inj_eq[OF finite_history_members_injective] inj_eq[OF finite_environment_presentation_injective]
+      inj_eq[OF finite_use_data_injective] inj_eq[OF finite_site_data_injective] inj_eq[OF finite_artifact_term_injective])
 qed
 
 section \<open>Certificates, subjects and result rows compose those presentations\<close>

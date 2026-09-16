@@ -1,0 +1,532 @@
+{
+  "status": "accepted",
+  "proof_seconds": 44.65556104299321,
+  "source_hashes": {
+    "/home/julius/structure_and_semantics/theories/Ordered_Finite_Terms.thy": "9fbb0800c3fbcc987c733e945dd454b398e206e57809efeaa7246fa2709cdf2b",
+    "/home/julius/structure_and_semantics/theories/Finite_Presented_Collections.thy": "f8add064c776567b5e831d1bbbef22d574fb484639bc114c107891a3844fd191",
+    "/home/julius/structure_and_semantics/theories/Finite_Presented_Coordinates.thy": "2fae2c561fb204a3bb96182555f972cc071b7468852219a38fb7ef190d19cae8",
+    "/home/julius/structure_and_semantics/theories/Finite_Presented_Structures.thy": "3b001315b23c91d11638e2145d9e02cfaccb0d3ea7a4617130bede85ca0e4c04",
+    "/home/julius/structure_and_semantics/theories/Finite_Presented_Investigations.thy": "17177e145c17935f59faee3b2f383d345d595554f38803a5c2580aeb9a42bd0c",
+    "/home/julius/structure_and_semantics/theories/Finite_Presented_Histories.thy": "3ba96da31874de56b8aea58485970baa9661fe14df82e23b029556713bc0d12f",
+    "/home/julius/structure_and_semantics/theories/Finite_Term_Words.thy": "8aad52ae44d1f49e7094f7873f09ce8689a95e6658a5e58fa1fd9af3dd9bcf9b",
+    "/home/julius/structure_and_semantics/theories/Required_History_Presentation.thy": "6f853838c0af0ba762251529df99002c84c2c4cdd05f3b7e46232c8ee4250918",
+    "/home/julius/structure_and_semantics/theories/Digit_History_Presentation.thy": "7d1a36ee848314f1bb74722e73c95716b7f6e03b170f355ade06d7b39c4be751",
+    "/home/julius/structure_and_semantics/theories/Known_History_Presentation.thy": "d9d7c5dc88e747ac69c6a71dbc5c93698eadbaefa3b685f2bb195a2ecc88a1f3",
+    "/home/julius/structure_and_semantics/theories/Quoted_History_Presentation.thy": "00729e69026bb926860f1c10e941a13d7d4cb90efb838f3e1bc208d561af8ce7",
+    "/home/julius/structure_and_semantics/theories/Constructed_History_Presentation.thy": "779aac96c7f615869599168ccd2dc5b634511a82c7a837f74b5cd470f60f0e98",
+    "/home/julius/structure_and_semantics/tools/check_presented_report.py": "ebe527fd8c92699c5fbc7c437defb7c63299ee106e68686feae3b26dfc211955",
+    "/home/julius/structure_and_semantics/tools/native_execution_runtime.py": "e71231e26ce05ed14a61a28b4dc8f9e742b98e480b66a3e7154fc15a3c896913",
+    "/home/julius/structure_and_semantics/tools/machine_reports.py": "dffab23ed8a5a52c8d40d2e822a020060798aa6f9797afbce37be8846dc511d6",
+    "/home/julius/structure_and_semantics/tools/native_artifact_stream.py": "8109ad9272c9fc1b1e8ee358beeec4e69ac3b7371b1cb1f65e91dcc47de74113"
+  },
+  "measurements": [
+    {
+      "family": "constructed_history",
+      "command": [
+        "/usr/bin/env",
+        "USER_HOME=/tmp/presented-shared-probe-2c01bdr4/run-constructed_history/runtime-home",
+        "/opt/isabelle/bin/isabelle",
+        "ML_process",
+        "-l",
+        "Pure",
+        "-o",
+        "threads=16",
+        "-o",
+        "threads_stack_limit=0",
+        "-f",
+        "/tmp/presented-shared-probe-2c01bdr4/export/Presented_Shared_Probe_f23c1d20.Probe_Constructed_History/code/constructed_history.ML",
+        "-f",
+        "/tmp/presented-shared-probe-2c01bdr4/run-constructed_history/execute.ML"
+      ],
+      "workers": 16,
+      "host_jobs": 2,
+      "exit_code": 0,
+      "native_seconds": 126.54786796500412,
+      "engine_sha256": "8556923f7aa73611e1354b3a812c46acf3e7bd012a4f9a60ee4baf7f3100dd15",
+      "driver_sha256": "25f2fb44d5869b83d30c8c55d2f9b276a258ad65351de259d814c813e083756c",
+      "retention_seconds": 0.0025179759977618232,
+      "word": {
+        "bytes": 551708,
+        "sha256": "45bde64a359e20ca765fb219b6a98215e8359cc8c4479e42f753028d283b8ff2"
+      },
+      "boundary": {
+        "records": 1,
+        "tags": {
+          "PRESENTED_REPORT_WORD": 1
+        },
+        "sha256": "70719735001873807717a13f31aaa4f9739e9115323ad6fe112aa93b0e0e3249"
+      },
+      "compressed_bytes": 92502,
+      "sources_unchanged": true,
+      "status": "accepted"
+    },
+    {
+      "family": "digit_history",
+      "command": [
+        "/usr/bin/env",
+        "USER_HOME=/tmp/presented-shared-probe-2c01bdr4/run-digit_history/runtime-home",
+        "/opt/isabelle/bin/isabelle",
+        "ML_process",
+        "-l",
+        "Pure",
+        "-o",
+        "threads=16",
+        "-o",
+        "threads_stack_limit=0",
+        "-f",
+        "/tmp/presented-shared-probe-2c01bdr4/export/Presented_Shared_Probe_f23c1d20.Probe_Digit_History/code/digit_history.ML",
+        "-f",
+        "/tmp/presented-shared-probe-2c01bdr4/run-digit_history/execute.ML"
+      ],
+      "workers": 16,
+      "host_jobs": 2,
+      "exit_code": 0,
+      "native_seconds": 114.78897954399872,
+      "engine_sha256": "33bf925da4aaab736017ca077714bcb2e8af34f012bf0f8a21f293d82657e5df",
+      "driver_sha256": "7350e252f49f1ab796d634666df7165d0dfc1a651794c3ebd7a39a659ad255f8",
+      "retention_seconds": 0.00214979299926199,
+      "word": {
+        "bytes": 418306,
+        "sha256": "1a96e74b4bc51b7963f019504eb0b9a4436c58c58dde6d289d0be090f1764356"
+      },
+      "boundary": {
+        "records": 1,
+        "tags": {
+          "PRESENTED_REPORT_WORD": 1
+        },
+        "sha256": "75e7b3a6055d4a9e0bac740c4b95576ffb59baf7338dd967dce51b7293d56c1f"
+      },
+      "compressed_bytes": 77545,
+      "sources_unchanged": true,
+      "status": "accepted"
+    },
+    {
+      "family": "known_history",
+      "command": [
+        "/usr/bin/env",
+        "USER_HOME=/tmp/presented-shared-probe-2c01bdr4/run-known_history/runtime-home",
+        "/opt/isabelle/bin/isabelle",
+        "ML_process",
+        "-l",
+        "Pure",
+        "-o",
+        "threads=16",
+        "-o",
+        "threads_stack_limit=0",
+        "-f",
+        "/tmp/presented-shared-probe-2c01bdr4/export/Presented_Shared_Probe_f23c1d20.Probe_Known_History/code/known_history.ML",
+        "-f",
+        "/tmp/presented-shared-probe-2c01bdr4/run-known_history/execute.ML"
+      ],
+      "workers": 16,
+      "host_jobs": 2,
+      "exit_code": 0,
+      "native_seconds": 117.83286655900156,
+      "engine_sha256": "d87426daf548f89c2b378613e435eba1369bcba61764d149519146b556beb990",
+      "driver_sha256": "5070a4106c846198570e3fd9a2b23486b816214c12ec1a8b2686297f77171622",
+      "retention_seconds": 0.0022258940007304773,
+      "word": {
+        "bytes": 449531,
+        "sha256": "17cf3a0bc8feea9e8fa5af0acfb71c9c14871db5259087abf45a05da1e5fd3e0"
+      },
+      "boundary": {
+        "records": 1,
+        "tags": {
+          "PRESENTED_REPORT_WORD": 1
+        },
+        "sha256": "a0580363428b22d84d3a59688715d412324cc1b4c5e5f020672f19957f02404c"
+      },
+      "compressed_bytes": 81055,
+      "sources_unchanged": true,
+      "status": "accepted"
+    },
+    {
+      "family": "quoted_history",
+      "command": [
+        "/usr/bin/env",
+        "USER_HOME=/tmp/presented-shared-probe-2c01bdr4/run-quoted_history/runtime-home",
+        "/opt/isabelle/bin/isabelle",
+        "ML_process",
+        "-l",
+        "Pure",
+        "-o",
+        "threads=16",
+        "-o",
+        "threads_stack_limit=0",
+        "-f",
+        "/tmp/presented-shared-probe-2c01bdr4/export/Presented_Shared_Probe_f23c1d20.Probe_Quoted_History/code/quoted_history.ML",
+        "-f",
+        "/tmp/presented-shared-probe-2c01bdr4/run-quoted_history/execute.ML"
+      ],
+      "workers": 16,
+      "host_jobs": 2,
+      "exit_code": 0,
+      "native_seconds": 121.46290406999469,
+      "engine_sha256": "a112cdee28ad12f44e273df87a1b5ee2a1bff8348738bd357e9f1fcb8c4c3285",
+      "driver_sha256": "5b037e6d6849285f9f613cb8b6fa1761a3afb97470c6e2ab5408d56adb8130ce",
+      "retention_seconds": 0.002320355000847485,
+      "word": {
+        "bytes": 483348,
+        "sha256": "35caeae2adfd4b2844bdd61b2d24f3c1cbf9e497f631b740aeab3113b2d4b9d9"
+      },
+      "boundary": {
+        "records": 1,
+        "tags": {
+          "PRESENTED_REPORT_WORD": 1
+        },
+        "sha256": "7892a8a18aed17d9ac6030d2e4f09f562fc2a59e6a2f63eb46156c87cb6910a3"
+      },
+      "compressed_bytes": 84762,
+      "sources_unchanged": true,
+      "status": "accepted"
+    },
+    {
+      "family": "required_history",
+      "command": [
+        "/usr/bin/env",
+        "USER_HOME=/tmp/presented-shared-probe-2c01bdr4/run-required_history/runtime-home",
+        "/opt/isabelle/bin/isabelle",
+        "ML_process",
+        "-l",
+        "Pure",
+        "-o",
+        "threads=16",
+        "-o",
+        "threads_stack_limit=0",
+        "-f",
+        "/tmp/presented-shared-probe-2c01bdr4/export/Presented_Shared_Probe_f23c1d20.Probe_Required_History/code/required_history.ML",
+        "-f",
+        "/tmp/presented-shared-probe-2c01bdr4/run-required_history/execute.ML"
+      ],
+      "workers": 16,
+      "host_jobs": 2,
+      "exit_code": 0,
+      "native_seconds": 22.06014525199862,
+      "engine_sha256": "123655749764b904fc65e6a00741868166d9eaf92e67989a8b571c330c680753",
+      "driver_sha256": "bd99c7864f562924fef0fe1068752b990ab9ee64d4df88a709fabf0af956d87b",
+      "retention_seconds": 0.00122914800158469,
+      "word": {
+        "bytes": 159908,
+        "sha256": "67d59453b643d202dfdc5a40fd654a7212244847de5b535f820065f675a9b067"
+      },
+      "boundary": {
+        "records": 1,
+        "tags": {
+          "PRESENTED_REPORT_WORD": 1
+        },
+        "sha256": "cecc421282b9dbecc715ef92caeda40b74e10d5a5bc5d537db345d1c232587db"
+      },
+      "compressed_bytes": 43592,
+      "sources_unchanged": true,
+      "status": "accepted"
+    }
+  ],
+  "boundary": "The probe uses copies of the actual presentation theories over the accepted base and exports the real module names in Eval. These establish new word boundaries, not replacement of the independent original comparisons; both stages must pass on the same actual recipe export.",
+  "incremental_cycle": {
+    "theories": 1602,
+    "reused_theories": 1495,
+    "rebuilt_theories": [
+      "Allocated_Environment_Execution",
+      "Artifact_Lookup_Execution",
+      "Cached_Graft_Execution",
+      "Certified_Cause_Execution",
+      "Checked_Requirement_Execution",
+      "Concurrent_History_Execution",
+      "Concurrent_Replay_Execution",
+      "Constructed_History_Execution",
+      "Constructed_History_Presentation",
+      "Data_Reading_Execution",
+      "Decision_Replay_Execution",
+      "Digit_Allocation_Execution",
+      "Digit_Generation_Execution",
+      "Digit_History_Execution",
+      "Digit_History_Presentation",
+      "Digit_Replay_Execution",
+      "Encoded_Environment_Execution",
+      "Environment_Update_Execution",
+      "Factor_Admission_Pair_Reasoning",
+      "Factor_Application_Execution",
+      "Factor_Constructed_Development_Execution",
+      "Factor_Data_Product_Execution",
+      "Factor_Development_Execution_Sharing",
+      "Factor_Executable_Environment_Values",
+      "Factor_Finite_Inference_Example",
+      "Factor_Finite_Inference_Premises",
+      "Factor_Finite_Inference_Sources",
+      "Factor_Investigation_Input_Execution",
+      "Factor_Investigation_Input_Investigation",
+      "Factor_Join_Reading_Conditions",
+      "Factor_Keyed_Set_Execution",
+      "Factor_Observation_Collection_Investigation",
+      "Factor_Observation_Execution",
+      "Factor_Observation_Investigation",
+      "Factor_Observation_Scope_Execution",
+      "Factor_Observation_Scope_Investigation",
+      "Factor_Observation_Table_Controls",
+      "Factor_Observation_Table_Execution",
+      "Factor_Observation_Table_Investigation",
+      "Factor_Pair_Scope_Investigation",
+      "Factor_Permission_Investigation",
+      "Factor_Proof_Probe_Investigation",
+      "Factor_Reasoning_Execution",
+      "Factor_Requirement_Source_Boundary",
+      "Factor_Requirement_Source_Examples",
+      "Factor_Schema_Socket_Investigation",
+      "Factor_Source_Execution_Sharing",
+      "Factor_Steered_Execution_Sharing",
+      "Factor_Substitution_Investigation",
+      "Factor_Workflow_Execution_Sharing",
+      "Finite_Directed_Execution",
+      "Finite_Presented_Collections",
+      "Finite_Presented_Coordinates",
+      "Finite_Presented_Histories",
+      "Finite_Presented_Investigations",
+      "Finite_Presented_Structures",
+      "Finite_Term_Words",
+      "Generation_Record_Execution",
+      "Graft_Admission_Execution",
+      "Graft_Execution",
+      "History_Index_Execution",
+      "Indexed_Generation_Execution",
+      "Inference_Claim_Execution",
+      "Inference_Claim_Input_Execution",
+      "Keyed_Table_Execution",
+      "Known_History_Execution",
+      "Known_History_Presentation",
+      "Literal_Replay_Execution",
+      "Native_Admission_Execution",
+      "Native_Admission_Investigation_Execution",
+      "Native_Certificate_Coverage_Execution",
+      "Native_Certificate_Development_Execution",
+      "Native_Certificate_Input_Execution",
+      "Native_Certificate_Investigation_Execution",
+      "Native_Certificate_Replay_Execution",
+      "Native_Certificate_Scope_Repair_Execution",
+      "Native_Derivation_Investigation_Execution",
+      "Native_Development_Execution",
+      "Native_Development_Execution_Base",
+      "Native_Development_Steering",
+      "Native_Execution_Refinements",
+      "Native_Extension_Execution",
+      "Native_Graph_Investigation_Execution",
+      "Native_History_Investigation_Execution",
+      "Native_Node_Investigation_Execution",
+      "Native_Requirement_Investigation_Execution",
+      "Native_Source_Development",
+      "Native_Source_Execution",
+      "Native_Workflow_Execution",
+      "Native_Workflow_Execution_Base",
+      "Ordered_Finite_Terms",
+      "Presentation_Completion_Investigation",
+      "Program_Evaluation_Execution",
+      "Quoted_History_Execution",
+      "Quoted_History_Presentation",
+      "Required_Cause_Execution",
+      "Required_History_Execution",
+      "Required_History_Presentation",
+      "Requirement_Artifact_Execution",
+      "Requirement_Decision_Execution",
+      "Requirement_Plan_Execution",
+      "Requirement_Source_Execution",
+      "Retained_Clause_Execution",
+      "Shared_Constructed_History_Execution",
+      "Shared_Digit_Replay_Execution",
+      "Use_Allocation_Execution",
+      "Use_Codec_Execution"
+    ],
+    "phases": {
+      "base_and_impact": 0.61,
+      "proof": 70.28,
+      "recipe_impact": 4.32,
+      "export": 0.82,
+      "recipes_and_host_tests": 213.81
+    },
+    "seconds": 289.87,
+    "host_tests": {
+      "tools": {
+        "exit_code": 0,
+        "ran": 125,
+        "skipped": 0,
+        "tail": [
+          "OK"
+        ]
+      },
+      "kernel": {
+        "exit_code": 0,
+        "ran": 35,
+        "skipped": 2,
+        "tail": [
+          "OK (skipped=2)"
+        ]
+      }
+    },
+    "recipes": {
+      "allocated-environments": {
+        "status": "unchanged"
+      },
+      "artifact-lookup": {
+        "status": "unchanged"
+      },
+      "cached-grafts": {
+        "status": "unchanged"
+      },
+      "certificate-coverage": {
+        "status": "unchanged"
+      },
+      "certificate-development": {
+        "status": "unchanged"
+      },
+      "certificate-input-development": {
+        "status": "unchanged"
+      },
+      "certificate-scope-repair": {
+        "status": "unchanged"
+      },
+      "certified-causes": {
+        "status": "unchanged"
+      },
+      "concurrent-history": {
+        "status": "unchanged"
+      },
+      "concurrent-replay": {
+        "status": "unchanged"
+      },
+      "constructed-history": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 213.81,
+        "receipt": "/tmp/presented-history-cycle-1789594701796066816/recipes/constructed-history/reconstruction.json"
+      },
+      "data-reading": {
+        "status": "unchanged"
+      },
+      "decision-replay": {
+        "status": "unchanged"
+      },
+      "digit-allocation": {
+        "status": "unchanged"
+      },
+      "digit-generation": {
+        "status": "unchanged"
+      },
+      "digit-history": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 194.87,
+        "receipt": "/tmp/presented-history-cycle-1789594701796066816/recipes/digit-history/reconstruction.json"
+      },
+      "encoded-environments": {
+        "status": "unchanged"
+      },
+      "environment-grafts": {
+        "status": "unchanged"
+      },
+      "environment-updates": {
+        "status": "unchanged"
+      },
+      "generation-records": {
+        "status": "unchanged"
+      },
+      "graft-admission": {
+        "status": "unchanged"
+      },
+      "history-index": {
+        "status": "unchanged"
+      },
+      "indexed-generation": {
+        "status": "unchanged"
+      },
+      "known-history": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 202.74,
+        "receipt": "/tmp/presented-history-cycle-1789594701796066816/recipes/known-history/reconstruction.json"
+      },
+      "literal-replay": {
+        "status": "unchanged"
+      },
+      "native-admission": {
+        "status": "unchanged"
+      },
+      "native-certificate-replay": {
+        "status": "unchanged"
+      },
+      "native-certificates": {
+        "status": "unchanged"
+      },
+      "native-child": {
+        "status": "unchanged"
+      },
+      "native-derivations": {
+        "status": "unchanged"
+      },
+      "native-development": {
+        "status": "unchanged"
+      },
+      "native-evaluation": {
+        "status": "unchanged"
+      },
+      "native-extensions": {
+        "status": "unchanged"
+      },
+      "native-graphs": {
+        "status": "unchanged"
+      },
+      "native-histories": {
+        "status": "unchanged"
+      },
+      "native-nodes": {
+        "status": "unchanged"
+      },
+      "native-requirements": {
+        "status": "unchanged"
+      },
+      "native-sources": {
+        "status": "unchanged"
+      },
+      "native-steering": {
+        "status": "unchanged"
+      },
+      "native-workflow": {
+        "status": "unchanged"
+      },
+      "quoted-history": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 207.04,
+        "receipt": "/tmp/presented-history-cycle-1789594701796066816/recipes/quoted-history/reconstruction.json"
+      },
+      "required-causes": {
+        "status": "unchanged"
+      },
+      "required-history": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 98.8,
+        "receipt": "/tmp/presented-history-cycle-1789594701796066816/recipes/required-history/reconstruction.json"
+      },
+      "requirement-decisions": {
+        "status": "unchanged"
+      },
+      "requirement-plans": {
+        "status": "unchanged"
+      },
+      "requirement-sources": {
+        "status": "unchanged"
+      },
+      "source-development": {
+        "status": "unchanged"
+      },
+      "digit-replay": {
+        "status": "unchanged"
+      },
+      "use-allocation": {
+        "status": "unchanged"
+      },
+      "use-codecs": {
+        "status": "unchanged"
+      }
+    }
+  },
+  "comparison_boundary": "Every unchanged original JSON comparison and every presented-word boundary passed on the same actual family export. The exporting theory and emitted ML structure are recorded separately."
+}

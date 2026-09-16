@@ -7,7 +7,8 @@ RECIPE = Recipe(
     roots=('Constructed_History_Execution',),
     export='Constructed_History_Execution:constructed_history.ML',
     session='Reconstruct_Constructed_History',
-    groups=((Execution('comparison', 'check_constructed_history.py', ('--project', '{project}'), 10800),),),
+    groups=((Execution('comparison', 'check_constructed_history.py', ('--project', '{project}'), 10800),
+             Execution('presentation', 'check_presented_report.py', ('--project', '{project}', '--theory', 'Constructed_History_Execution', '--module', 'Digit_History_Execution', '--report', 'constructed_history_report_value', '--scope', 'digit_history_indices', '--selections', 'constructed_history_report_selections'), 10800)),),
     boundary='Original closed history validity and actual indexed membership supply every known '
              'predecessor reading. Actual replay and quotation supply the complete policy scope. '
              'The composite operation retains both guards and every remaining original check, '

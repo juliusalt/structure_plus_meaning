@@ -1568,3 +1568,25 @@ their stores; the stores already have proved projections to original notions
 (digit_history_state_view, digit_allocated_view and the indexed member view),
 which are the presentations to reuse. Collection ordering compares complete
 term keys on every comparison; computing each key once is a later refinement.
+
+## Shared presented history words
+
+A term word is parameterized by the prefix code of its target leaves. One
+cancellation theorem consumes that code's cancellation on the actual target
+family. `Complete_Value_References` supplies first-occurrence artifact indices;
+the complete artifact-row table precedes the term word, so equality identifies
+both the table and the complete presented term. The streaming fold has an exact
+equation with that same word. Targets retain their native target terms rather
+than expanding their artifact data at every occurrence.
+
+Required, digit, known, quoted and constructed histories instantiate the shared
+coordinate, environment, generation, proof, collection and investigation
+presentations. Digit stores use their existing history and subject views. The
+known context adds an admitted predecessor family; quoted and constructed
+contexts retain an ordered list of every additional producer family. The
+exporting theory and generated ML structure are separate interface subjects.
+
+Missing use: 45 families still need native presented report stages. Digit replay
+and decision replay remain the dominant complete-cycle costs; their full seed,
+program, graph, cause and source notions must be presented before changing
+representation-sensitive set operations.

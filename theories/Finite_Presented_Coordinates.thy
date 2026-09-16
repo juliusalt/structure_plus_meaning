@@ -3,8 +3,7 @@ theory Finite_Presented_Coordinates
     Factor_Coordinate_Values
     Factor_Premise_Instances
     Factor_Report_Programs
-    Factor_Target_Values
-    Factor_Executable_Environment_Values_Base
+    Factor_Environment_Values
 begin
 
 section \<open>Coordinates keep their owned data terms\<close>
@@ -67,98 +66,66 @@ lemma finite_call_value_injective [intro]: "inj finite_call_value"
   unfolding finite_call_value_def
   by (intro finite_pair_presentation_injective finite_site_data_injective inj_on_id)
 
-section \<open>Artifacts, targets and environments keep their complete values\<close>
+section \<open>Artifacts and targets are target terms; environments present their members\<close>
 
-lemma finite_artifact_value_inj [intro]: "inj finite_artifact_value"
-  by (rule injI) (simp add: finite_artifact_value_injective)
+lemma finite_target_injective [intro]: "inj Finite_Target"
+  by (rule injI) simp
 
-fun finite_target_occurrence :: "finite_exact_target \<Rightarrow> local_address option" where
-  "finite_target_occurrence (Finite_Whole C)=None"
-| "finite_target_occurrence (Finite_Anchor C a)=Some a"
+definition finite_artifact_term :: "finite_exact_artifact \<Rightarrow> finite_factor_term" where
+  "finite_artifact_term R=Finite_Target (Finite_Whole R)"
 
-definition finite_target_value :: "finite_exact_target \<Rightarrow> finite_factor_term" where
-  "finite_target_value x=Finite_Pair (finite_artifact_value (finite_target_artifact x))
-    (finite_option_presentation Finite_Payload (finite_target_occurrence x))"
+lemma decode_finite_artifact_term [simp]:
+  "decode_finite_term (finite_artifact_term R)=Target_Term (Whole_Artifact (decode_finite_object R))"
+  by (simp add: finite_artifact_term_def)
 
-lemma decode_finite_target_value [simp]:
-  "decode_finite_term (finite_target_value x)=Pair_Term
-    (artifact_rows_term (finite_artifact_rows (finite_target_artifact x)))
-    (optional_payload_term (finite_target_occurrence x))"
-  by (cases "finite_target_occurrence x") (simp_all add: finite_target_value_def)
+lemma finite_artifact_term_injective [intro]: "inj finite_artifact_term"
+  by (rule injI) (simp add: finite_artifact_term_def)
 
-lemma finite_target_value_injective [intro]: "inj finite_target_value"
-proof (rule injI)
-  fix x y assume same: "finite_target_value x=finite_target_value y"
-  have "finite_target_artifact x=finite_target_artifact y" "finite_target_occurrence x=finite_target_occurrence y"
-    using same by (simp_all add: finite_target_value_def finite_artifact_value_injective
-      inj_eq[OF finite_option_presentation_injective[OF finite_payload_injective]])
-  then show "x=y" by (cases x; cases y) simp_all
-qed
+definition finite_binding_value ::
+  "((local_address option\<times>local_address)\<times>local_address option) \<Rightarrow> finite_factor_term" where
+  "finite_binding_value=finite_pair_presentation finite_site_data finite_use_data"
 
-theorem finite_target_value_exact:
-  "target_value_presents x (decode_finite_term (finite_target_value C)) \<longleftrightarrow>
-    finite_target_formed C \<and> x=decode_finite_target C"
-proof -
-  let ?R="finite_target_artifact C" and ?u="finite_target_occurrence C"
-  have "target_value_presents x (decode_finite_term (finite_target_value C)) \<longleftrightarrow>
-      target_formed x \<and> artifact_value_presents (target_artifact x) (artifact_rows_term (finite_artifact_rows ?R)) \<and>
-      optional_payload_term ?u=optional_payload_term (target_occurrence x)"
-    by (auto simp: target_value_presents_def)
-  also have "\<dots> \<longleftrightarrow> target_formed x \<and> finite_exact_formed ?R \<and>
-      target_artifact x=decode_finite_object ?R \<and> ?u=target_occurrence x"
-    by (simp add: finite_artifact_rows_value_exact inj_eq[OF optional_payload_term_injective])
-  also have "\<dots> \<longleftrightarrow> finite_target_formed C \<and> x=decode_finite_target C"
-  proof -
-    have identity: "x=decode_finite_target C \<longleftrightarrow>
-        target_artifact x=decode_finite_object ?R \<and> ?u=target_occurrence x"
-      by (cases C; cases x) (auto simp: prod_eq_iff)
-    have formed: "finite_target_formed C \<longleftrightarrow> target_formed (decode_finite_target C)"
-      by (rule finite_target_formed_correct)
-    have artifact: "finite_target_formed C \<Longrightarrow> finite_exact_formed ?R"
-      by (cases C) simp_all
-    show ?thesis using identity formed artifact by blast
-  qed
-  finally show ?thesis .
-qed
+lemma decode_finite_binding_value [simp]:
+  "decode_finite_term (finite_binding_value z)=binding_data z"
+  by (cases z) (simp add: finite_binding_value_def binding_data_def site_data_term_def)
 
-lemma finite_environment_value_injective [intro]: "inj finite_environment_value"
+lemma finite_binding_value_injective [intro]: "inj finite_binding_value"
+  unfolding finite_binding_value_def
+  by (intro finite_pair_presentation_injective finite_site_data_injective finite_use_data_injective)
+
+definition finite_environment_presentation ::
+  "local_address option finite_artifact_environment \<Rightarrow> finite_factor_term" where
+  "finite_environment_presentation C=Finite_Pair
+    (finite_collection_presentation (finite_pair_presentation finite_use_data finite_artifact_term)
+      (finite_environment_artifacts C))
+    (finite_collection_presentation finite_binding_value (finite_environment_bindings C))"
+
+lemma finite_environment_presentation_injective [intro]: "inj finite_environment_presentation"
 proof (rule injI)
   fix C D :: "local_address option finite_artifact_environment"
-  assume same: "finite_environment_value C=finite_environment_value D"
-  have row_terms: "inj environment_artifact_rows_term"
-    by (rule injI) (auto simp: environment_artifact_rows_term_def prod_eq_iff inj_eq[OF use_data_term_injective])
-  have "finite_environment_term C=finite_environment_term D"
-    using arg_cong[OF same, of decode_finite_term] by simp
-  then have rows: "finite_environment_artifact_rows C=finite_environment_artifact_rows D"
-    and bindings: "sorted_list_of_fset (finite_environment_bindings C)=sorted_list_of_fset (finite_environment_bindings D)"
-    by (simp_all add: finite_environment_term_def data_list_term_injective inj_map_eq_map[OF row_terms]
-      inj_map_eq_map[OF binding_data_injective])
-  have artifacts: "finite_environment_artifacts C=finite_environment_artifacts D"
-  proof (rule fset_eqI)
-    fix z :: "local_address option\<times>finite_exact_artifact"
-    obtain u R where z: "z=(u,R)" by (cases z)
-    have "(u,finite_artifact_rows R)\<in>set (finite_environment_artifact_rows C) \<longleftrightarrow>
-        (u,finite_artifact_rows R)\<in>set (finite_environment_artifact_rows D)"
-      by (simp only: rows)
-    then show "z |\<in>| finite_environment_artifacts C \<longleftrightarrow> z |\<in>| finite_environment_artifacts D"
-      by (auto simp: z finite_environment_artifact_rows_def fimage.rep_eq finite_artifact_rows_injective)
-  qed
-  have "finite_environment_bindings C=finite_environment_bindings D"
-    using arg_cong[OF bindings, of fset_of_list] by simp
-  then show "C=D" using artifacts by (intro finite_artifact_environment.equality) simp_all
+  assume same: "finite_environment_presentation C=finite_environment_presentation D"
+  have members: "inj (finite_collection_presentation (finite_pair_presentation finite_use_data finite_artifact_term))"
+    by (intro finite_collection_presentation_injective finite_pair_presentation_injective
+      finite_use_data_injective finite_artifact_term_injective)
+  have bindings: "inj (finite_collection_presentation finite_binding_value)"
+    by (intro finite_collection_presentation_injective finite_binding_value_injective)
+  show "C=D"
+    by (rule finite_artifact_environment.equality;
+      use same in \<open>simp add: finite_environment_presentation_def inj_eq[OF members] inj_eq[OF bindings]\<close>)
 qed
 
 export_code finite_natural_data finite_boolean_data finite_use_data finite_site_data finite_call_value
-  finite_target_value finite_environment_value checking SML
+  finite_artifact_term finite_binding_value finite_environment_presentation checking SML
 
 text \<open>
   Every coordinate presentation decodes into the notion's existing data term:
   natural indices into natural_data_term, truth values into report_boolean_term,
-  uses into use_data_term, definition sites into site_data_term and calls into
-  call_instance_value. Targets and environments keep their complete artifact
-  rows. Each executable presentation is injective over all values, including
-  unformed ones, and a target's presentation is exactly the native target class
-  of its decoded target when it is formed.
+  uses into use_data_term, definition sites into site_data_term, calls into
+  call_instance_value and bindings into binding_data. Artifacts and targets are
+  the native target terms, so repeated artifacts keep one identity that a word
+  can share. An environment presents its use and artifact members and its
+  bindings. Each presentation is injective over all values, including unformed
+  ones.
 \<close>
 
 end

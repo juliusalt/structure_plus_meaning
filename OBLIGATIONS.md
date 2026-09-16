@@ -1261,3 +1261,12 @@ Executable presentations, digit words and a presented report stage for
 required histories change the validation transport only. No obligation row
 changes status; condition 5a remains open and 5b stays deferred until after
 genesis.
+
+## Shared presented history batch
+
+Five history families now reconstruct native presented words with exact shared
+artifact indices and retain their unchanged original comparisons on the same
+exports. The checked cycle covers 1,602 theories and retains 5,888 records across
+50 recipe boundaries. No obligation row changes status: native selection of
+refinements, practical-usefulness gate 5a, broader workflow coverage, O-85 and
+genesis remain open; theoretical cost gate 5b remains deferred.

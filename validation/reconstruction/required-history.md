@@ -49,3 +49,15 @@ cycles and coverage. Required_History_Presentation presents every component
 through its notion, and equal words identify equal reports. The host packs the
 delivered bits into bytes and records their size and SHA-256 as one record, so
 the stage adds one report to the forty-one above.
+
+
+## Shared presented report (2026-09-17)
+
+The current recipe has two accepted stages on the same export: the original
+complete comparison and a native presented report word of 159,908
+bytes. The word includes each distinct complete artifact once and identifies
+every presented term and every store through its original view. The combined
+recipe retains 42 records. See [the measurement record](presented-history-measurements.json)
+for source identities, word digests and timing boundaries. This incremental
+validation reused the fixed accepted base; the earlier cold-build counts above
+are historical, not a description of this run.

@@ -2348,3 +2348,27 @@ The pilot family and the design came from the owner's direction and host
 timings, not from a native subject contract for selection. The gap under
 conditions 1 and 6 of problems.txt remains, and practical usefulness under
 condition 5a remains open.
+
+## Shared presented history review
+
+The five history families now pass both the unchanged original comparisons and
+the presented-word stage on their actual exports. The artifact table reduces
+digit and known history words from 572.6/611.6 MB to 418,306/449,531 bytes; the
+required-history word is 159,908 bytes. Whole presented terms remain identified
+by the prefix-free shared word. Stores are identified exactly through their
+existing views, matching the original reporting boundary. This is not a claim
+that native programs cannot observe a chosen enumeration.
+
+The probe generated separate named modules and therefore missed that three
+actual exports share the `Digit_History_Execution` ML structure. Full integration
+caught the error; the generic checker now separates the exporting theory from
+the ML structure, and all three callers were repaired together. The first cycle
+failed three presentation stages; the corrected cycle passed in 289.87 s with
+125 tool tests and 35 kernel tests (two skips). That time excludes the separate
+probe runs and the failed integration attempt.
+
+The architecture follows the owner's native-presentation direction and the
+recorded output-cost criticism. A native subject contract selecting this
+refinement from measured physical costs is still absent. Conditions 1 and 6,
+actual development usefulness under 5a, and the wider coverage audit remain
+open; 5b remains deferred until after genesis.

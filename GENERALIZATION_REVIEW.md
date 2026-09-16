@@ -2210,7 +2210,15 @@ unchanged. The steering verification retains a diagnostic storage failure
 and the successful recovery as separate results.
 
 These local boundaries do not establish adequate scope for every development
-problem, global physical cost as sources grow, native mathematical-proof
-admission, historical permission and reachability, genesis or the final audit.
-Remaining high-level work must retain actual problem subjects and use these
-operations where their established contracts apply.
+problem or practical usefulness on real development work. The owner separated
+condition 5 into practical usefulness before resolving problems.txt and
+theoretical cost bounds after genesis. The latter is no longer a gate for this
+workflow repair.
+
+The owner also identified that development still mostly constructs and tests the
+workflow instead of being driven through it. Successful native fixtures do not
+close that gap. Use the available operations on actual development subjects,
+retain uncovered requirements explicitly, and establish practical benefit.
+Prepare substantial candidate batches promptly and repair exposed failures in
+groups. Native mathematical-proof admission, historical permission and
+reachability, genesis and the final audit remain open.

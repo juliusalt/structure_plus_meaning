@@ -110,6 +110,20 @@ Avoid separate polling, one-file reads, and
 one-fix proof retries when independent useful work can be included. Dependencies
 within the batch remain ordered. Quality takes precedence over batch size.
 
+Prepare substantial candidate batches and exercise them promptly. Individual
+first-pass mistakes are acceptable. Collect the exposed failures, repair
+independent failures together, and rerun the affected group. Limit prolonged
+analysis and polishing of individual small changes before the first executable
+batch. Adoption still requires the complete applicable semantic account and
+validation.
+
+For condition 5 of problems.txt, practical usefulness is a current gate:
+demonstrate actual development use, useful throughput and quality at acceptable
+observed cost before declaring those workflow problems resolved. Theoretical
+cost bounds, including dependence on accumulated process, are deferred until
+after genesis. An available interface and successful fixtures do not establish
+practical usefulness or satisfy condition 6.
+
 After preserving the source, proof, and execution evidence needed for continued
 work or repository validation, remove generated files and temporary build
 copies that are no longer needed. Record the retained evidence that replaces

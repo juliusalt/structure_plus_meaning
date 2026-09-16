@@ -16,12 +16,15 @@ Conditions any resolution must meet.
 2. A workflow requirement holds by construction. Violating it fails; it does not depend on being.
 3. Retained evidence is reconstructible from the repository without storing the reproducible bulk. What is retained is the boundary sufficient to reproduce, not the reproduction.
 4. The repeated process pattern is factored at first use and instantiated thereafter.
-5. Cost per decision does not scale with accumulated process.
+5. Two separate cost gates apply.
+   5a. Practical usefulness must be demonstrated before this file is considered resolved: use the workflow on real development work and establish useful throughput and quality at acceptable observed cost. Successful fixtures or an available interface alone do not establish this.
+   5b. Establish theoretical bounds for the claim that cost per decision does not scale with accumulated process. This gate is deferred until after genesis and is not a prerequisite for resolving the current workflow problems.
 6. The resolution is reached through the process it repairs, or the exception is justified under condition 1.
 
 What does not meet them. A further prose rule, another document, or a stronger instruction — these restate the defect. A metadata dictionary or an added digest. Reducing the number of recorded decisions — that trades quality for throughput, which is not the ask.
 
+Development scheduling: prepare substantial groups of changes, run them together, collect the exposed failures, and repair them in groups. Individual mistakes in candidate work are acceptable. Avoid prolonged deliberation and polishing of each small change before exercising the complete batch. Adoption still requires the applicable semantic account and validation.
+
 Declared parts. The following exist and are proved; whether and how they assemble into a resolution is not determined here. RRA_Generation, RRA_Exact, RRA_Structural_Syntax, RRA_Evidence; finite_derived_observations with the contract registry and its runtime reader; positive_meaning and finite_schema_generation; finite_candidate_assemblies and application_construct_plan; evidence_io and content-addressed retention. REASONING_REUSE.md column four already records, per row, which of these the development does not yet recognize, select or instantiate.
 
 If you think that you are close to achieving the current milestone then you do not have to immediately work through the problems in this file. Some parts like the retention should be already adressed with the next commit others can be the subject of the next milestone. You should also adjust your workflow for the time being before the repairs required exist as the current pace of progress is extremely slow.
-

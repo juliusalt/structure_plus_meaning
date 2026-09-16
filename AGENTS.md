@@ -35,3 +35,14 @@ Use that path for covered native questions while pursuing the remaining
 high-level conditions in problems.txt. Its finite scopes do not establish
 broader adequacy; scope extensions require actual subjects, computed criticism
 and review.
+
+Condition 5 has two gates: demonstrate practical usefulness on real development
+work before declaring problems.txt resolved; defer theoretical cost bounds
+until after genesis. Prioritize actual use of the available workflow and
+observed benefit. Availability and successful fixtures do not establish that
+development is being driven through it.
+
+Prepare substantial candidate batches and exercise them promptly. Individual
+first-pass mistakes are acceptable; collect and repair exposed failures in
+groups. Limit prolonged analysis of individual small changes. Adoption still
+requires the complete applicable semantic account and validation.

@@ -1195,7 +1195,10 @@ unchanged. The steering verification retains a diagnostic storage failure
 and the successful recovery as separate results.
 
 These local boundaries do not establish adequate scope for every development
-problem, global physical cost as sources grow, native mathematical-proof
-admission, historical permission and reachability, genesis or the final audit.
-Remaining high-level work must retain actual problem subjects and use these
-operations where their established contracts apply.
+problem or practical usefulness on real development work. Condition 5a requires
+that practical evidence before problems.txt is resolved. Condition 5b, the
+theoretical cost bound, is deferred until after genesis by the owner's current
+instruction. Native mathematical-proof admission, historical permission and
+reachability, genesis and the final audit also remain open. Remaining high-level
+work must use the available native operations on actual development subjects
+where their established contracts apply.

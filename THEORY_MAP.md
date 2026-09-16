@@ -1547,3 +1547,25 @@ record, not the completed graph proposed in `plan.md`.
 | Factor_Source_Development_Subjects | Factor_Finite_Development_Questions, Factor_Finite_Source_Entry_Installation | Complete original source-change subjects derive all candidate observations and target selection conditions. |
 | Factor_Workflow_Evidence_Meaning | Factor_Workflow_Reference | A complete native stage result has exactly its original ordered semantic answer scope. |
 | Native_Source_Development | Factor_Source_Development_Cases, Native_Development_Steering | Public native source-development execution, complete serialization and inherited subject-contract export. |
+
+## Native execution refinements
+
+| Theory | Imports | Responsibility |
+|---|---|---|
+| Complete_Term_References | Complete_Value_References, Factor_Executable_Environment_Values | Complete-value references instantiated for entire finite terms, with exact reading and preservation. |
+| Constructed_Assessment_Functions | Prepared_Assessment_Functions, "HOL-Library.Parallel" | One actual computation supplies a retained context and its prepared assessment; the complete ordered table is unchanged. |
+| Factor_Constructed_Development_Execution | Factor_Steered_Execution_Sharing, Constructed_Assessment_Functions, Factor_Development_Report_Identity | Constructor-established reports and decisions are reused; arbitrary submitted reports keep original admission. |
+| Factor_Development_Execution_Sharing | Factor_Development_Subjects, Native_Execution_Refinements | Compiled conditions, independent condition executions, comparison and revision are shared under complete-result equations. |
+| Factor_Development_Report_Identity | Factor_Development_Cycle, Projected_Identity_Execution | Report shape can reject identity early; the complete record, including its extension, decides equality. |
+| Factor_Source_Execution_Sharing | Factor_Source_Development_Cycle, Factor_Steered_Execution_Sharing, Factor_Workflow_Execution_Sharing | Constructed source-development results admit exactly as the original admission; mutated reports are rechecked. |
+| Factor_Steered_Execution_Sharing | Factor_Steered_Development, Factor_Development_Execution_Sharing | Exact reuse of computed admission on the steered path. |
+| Factor_Workflow_Execution_Sharing | Factor_Workflow_Reference, Native_Execution_Refinements | Recovered source, output scope, evaluation and proof-source work are shared across stage and generation construction. |
+| Finite_Collection_Subset_Execution | Main | List superset has a complete-equality fast path with the original result. |
+| Finite_Filtered_Keyed_Products | Finite_Relation_Conflicts | Keyed conflicts are filtered before intermediate products are formed; every witness remains. |
+| Factor_Formation_Once_Readings | Factor_Executable_Packages, Factor_Executable_Quotation, Factor_Executable_Patterns, Factor_Finite_Prepared_Data_Readings | Bounded term and pattern readings, citation choices and definition rows establish environment or object formation once; formed artifacts use formation-free record, citation, payload and variable bodies. |
+| Factor_Invariant_Evaluation_Sharing | Finite_Inference_Histories, Factor_Executable_Instances, Factor_Executable_Systems, Factor_Finite_Program_Applications, Finite_Observation_Repairs, Factor_Schema_Generation | Loop-invariant sets in inference witnesses, material satisfaction, premise joins, system formation, head coverage and candidate profiles are computed once; every order and result is unchanged. |
+| Finite_Investigation_Basis_Sharing | Ordered_Finite_Rows | Investigation basis, repairs and retention compute each profile once and use ordered row indexes; every list result is equal. |
+| Native_Execution_Refinements | Finite_Sorted_Set_Execution, Finite_Ordered_Relation_Checks, Finite_Relation_Functionality_Execution, Finite_Collection_Equality_Execution, RRA_Ordered_Artifact_Formation, Factor_Ordered_Target_Equality, Factor_Finite_Accumulated_Data_Syntax, Finite_Investigation_Execution_Sharing, Shared_Investigation_Cycles, Finite_Prepared_Reader_Inspections, Parallel_Assessment_Execution, Complete_Object_References, Ordered_Environment_Artifact_Objects, Prepared_Computed_Functions, Complete_Term_References, Finite_Collection_Subset_Execution, Finite_Filtered_Keyed_Products, RRA_Linked_Record_Candidates, Finite_Investigation_Basis_Sharing, Factor_Finite_Judgment_Reading_Sharing, Factor_Invariant_Evaluation_Sharing, Factor_Formation_Once_Readings | One import boundary gives every file export the proved complete-result code equations. |
+| Ordered_Finite_Rows | Finite_Investigation_Interface, "HOL-Library.RBT", "HOL-Library.Product_Lexorder" | Exact last-occurrence deduplication and finite-set membership through ordered indexes. |
+| Projected_Identity_Execution | Main | A cheap actual observation may reject identity; the injective complete view decides it. |
+| RRA_Linked_Record_Candidates | RRA_Finite_Syntax_Bodies | Record candidates follow actual successor incidences, and object formation is checked once per read. |

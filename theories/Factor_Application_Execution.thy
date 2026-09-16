@@ -1,5 +1,5 @@
 theory Factor_Application_Execution
-  imports Factor_Application_Comparison Factor_Reasoning_Execution "HOL-Library.Code_Target_Nat"
+  imports Factor_Application_Comparison Factor_Reasoning_Execution "HOL-Library.Code_Target_Nat" Native_Execution_Refinements
 begin
 
 definition make_finite_schema where
@@ -73,6 +73,7 @@ export_code make_finite_schema make_finite_material make_application_problem app
   finite_material_pattern.make finite_material_source finite_material_atoms finite_material_edges
   finite_material_counts finite_material_functions
   finite_reasoning_term_equal fset set fset_of_list nat_of_integer integer_of_nat
-  in SML module_name Application_Comparison file_prefix application_comparison
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Application_Comparison file_prefix application_comparison
 
 end

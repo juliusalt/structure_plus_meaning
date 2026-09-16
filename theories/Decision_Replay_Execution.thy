@@ -1,5 +1,5 @@
 theory Decision_Replay_Execution
-  imports Factor_Decision_Replay_Sharing
+  imports Factor_Decision_Replay_Sharing Native_Execution_Refinements
 begin
 
 setup \<open>Finite_Observation_Contracts.export @{term decision_replay_investigation}\<close>
@@ -14,6 +14,7 @@ export_code decision_replay_packet requirement_decision_indices decision_replay_
   Schema_Proof Finite_Inference Finite_Assertion Finite_Target Finite_Payload Finite_Pair Finite_Whole Finite_Anchor
   Existing_Admission Paired_Admission Collected_Admission
   fset set nat_of_integer integer_of_nat
-  in SML module_name Decision_Replay_Execution file_prefix decision_replay
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Decision_Replay_Execution file_prefix decision_replay
 
 end

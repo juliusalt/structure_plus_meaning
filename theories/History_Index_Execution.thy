@@ -1,6 +1,6 @@
 theory History_Index_Execution
   imports Factor_History_Index_Investigation Factor_Executable_Artifact_Values
-    Factor_Finite_Judgment_Reading_Sharing
+    Factor_Finite_Judgment_Reading_Sharing Native_Execution_Refinements
 begin
 
 setup \<open>Finite_Observation_Contracts.export @{term history_index_investigation}\<close>
@@ -15,6 +15,7 @@ export_code history_index_packet history_index_indices history_index_inspect
   finite_artifact_rows finite_environment_artifact_rows finite_environment_bindings
   History_Step Schema_Proof Finite_Target Finite_Payload Finite_Pair Finite_Whole Finite_Anchor
   Existing_Admission Paired_Admission Collected_Admission fset set nat_of_integer integer_of_nat
-  in SML module_name History_Index_Execution file_prefix history_index
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name History_Index_Execution file_prefix history_index
 
 end

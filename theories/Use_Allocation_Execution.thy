@@ -1,11 +1,12 @@
 theory Use_Allocation_Execution
-  imports RRA_Use_Allocation_Investigation
+  imports RRA_Use_Allocation_Investigation Native_Execution_Refinements
 begin
 
 setup \<open>Finite_Observation_Contracts.export @{term use_allocation_investigation}\<close>
 
 export_code use_allocation_packet use_allocation_indices use_allocation_inspect use_word_length
   fset set nat_of_integer integer_of_nat
-  in SML module_name Use_Allocation_Execution file_prefix use_allocation
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Use_Allocation_Execution file_prefix use_allocation
 
 end

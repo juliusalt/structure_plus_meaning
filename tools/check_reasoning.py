@@ -19,6 +19,7 @@ import traceback
 import uuid
 
 import investigate
+import native_execution_runtime
 import proved_code
 from evidence_io import write_json
 from reasoning_known_calls import KnownCallContract
@@ -925,9 +926,11 @@ def run(args, *, cases_factory=cases, cases_source=None, cases_dependencies=(), 
         starts = [0, 335, 336, 337, 1000, 10**25]
         program += "val () = List.app emitInput [" + ",".join(map(str, starts)) + "];\n"
         runtime = output / "execute.ML"
+        program, command, runtime_inputs = native_execution_runtime.prepare(
+            proof, engine, program, args.poly.resolve(), output)
         runtime.write_text(program)
         tracked = [proof_path, engine, args.poly.resolve(), Path(__file__).resolve(), Path(investigate.__file__).resolve(),
-                   runtime, output / "cases.json"]
+                   runtime, output / "cases.json", *runtime_inputs, output / "runtime-command.json"]
         tracked.extend(loaded_tool_sources())
         tracked.extend(known_call_contract.inputs())
         if cases_source is not None:
@@ -937,7 +940,7 @@ def run(args, *, cases_factory=cases, cases_source=None, cases_dependencies=(), 
         write_json(output / "execution-inputs.json", hashes)
         proved_code.archive_execution_inputs(output, report, hashes, external=[args.poly])
         with (output / "results.log").open("w") as log:
-            completed = subprocess.run([str(args.poly.resolve()), "--script", str(runtime)], stdout=log,
+            completed = subprocess.run(command, stdout=log,
                                        stderr=subprocess.STDOUT, timeout=180, check=False)
         assert completed.returncode == 0, "The generated module or runtime serializer failed; inspect results.log."
         seen, seen_starts, seen_views, seen_frontiers, seen_seeds, seen_coverage, seen_compilations, findings = set(), set(), set(), set(), set(), set(), set(), []

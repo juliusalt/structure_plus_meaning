@@ -1,5 +1,5 @@
 theory Certified_Cause_Execution
-  imports Factor_Certified_Cause_Investigation Factor_Executable_Environment_Values Factor_Finite_Judgment_Reading_Sharing
+  imports Factor_Certified_Cause_Investigation Factor_Executable_Environment_Values Factor_Finite_Judgment_Reading_Sharing Native_Execution_Refinements
 begin
 
 setup \<open>Finite_Observation_Contracts.export @{term certified_cause_investigation}\<close>
@@ -14,6 +14,7 @@ export_code certified_cause_packet certified_cause_indices decision_row_inspect 
   Finite_Variable Finite_Pattern_Payload Finite_Pattern_Pair Finite_Pattern_Target
   Schema_Proof Finite_Inference Finite_Assertion Finite_Target Finite_Payload Finite_Pair Finite_Whole Finite_Anchor
   Existing_Admission Paired_Admission Collected_Admission fset set nat_of_integer integer_of_nat
-  in SML module_name Certified_Cause_Execution file_prefix certified_cause
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Certified_Cause_Execution file_prefix certified_cause
 
 end

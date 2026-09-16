@@ -1,5 +1,5 @@
 theory Factor_Observation_Investigation
-  imports Factor_Observation_Results Finite_Observation_Contracts
+  imports Factor_Observation_Results Finite_Observation_Contracts Native_Execution_Refinements
 begin
 
 section \<open>The Same-set presentations are checked alongside a different result\<close>
@@ -127,7 +127,8 @@ setup \<open>Finite_Observation_Contracts.register
 export_code investigation_inference investigation_basis investigation_repairs investigation_extend observation_investigation
   observation_investigation_observations observation_investigation_relation
   nat_of_integer integer_of_nat
-  in SML module_name Finite_Investigation file_prefix finite_investigation
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Finite_Investigation file_prefix finite_investigation
 
 text \<open>
   The subjects are the actual ordered, reversed, repeated, and missing-row output lists.

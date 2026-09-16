@@ -1,5 +1,5 @@
 theory Factor_Finite_Inference_Premises
-  imports Factor_Finite_Inference_Example Factor_Ground_Inference_Premises
+  imports Factor_Finite_Inference_Example Factor_Ground_Inference_Premises Native_Execution_Refinements
 begin
 
 section \<open>The complete initial calls concern the actual supplied sources\<close>
@@ -54,7 +54,8 @@ lemma finite_literal_known_entries:
 
 export_code finite_literal_inference_value finite_literal_inference_known
   Finite_Payload Finite_Pair Finite_Target Finite_Whole nat_of_integer integer_of_nat
-  in SML module_name Finite_Literal_Inference_Premises file_prefix finite_literal_inference_premises
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Finite_Literal_Inference_Premises file_prefix finite_literal_inference_premises
 
 text \<open>
   The two reference instantiations coincide for an empty scope, but both

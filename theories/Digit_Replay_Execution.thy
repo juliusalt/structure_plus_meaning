@@ -1,6 +1,6 @@
 theory Digit_Replay_Execution
   imports Factor_Digit_Replay_Investigation Factor_Executable_Environment_Values
-    Factor_Finite_Judgment_Reading_Sharing Factor_Digit_Replay_Reading_Sharing Factor_Structural_Replay_Identity RRA_Generation_Child_Row_Images
+    Factor_Finite_Judgment_Reading_Sharing Factor_Digit_Replay_Reading_Sharing Factor_Structural_Replay_Identity RRA_Generation_Child_Row_Images Native_Execution_Refinements
 begin
 
 setup \<open>Finite_Observation_Contracts.export @{term digit_replay_investigation}\<close>
@@ -20,6 +20,7 @@ export_code digit_replay_packet digit_replay_indices digit_replay_inspect digit_
   Finite_Variable Finite_Pattern_Payload Finite_Pattern_Pair Finite_Pattern_Target History_Step
   Schema_Proof Finite_Inference Finite_Assertion Finite_Target Finite_Payload Finite_Pair Finite_Whole Finite_Anchor
   Existing_Admission Paired_Admission Collected_Admission fset set nat_of_integer integer_of_nat
-  in SML module_name Digit_Replay_Execution file_prefix digit_replay
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Digit_Replay_Execution file_prefix digit_replay
 
 end

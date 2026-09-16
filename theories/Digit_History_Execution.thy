@@ -1,5 +1,5 @@
 theory Digit_History_Execution
-  imports Factor_Digit_History_Investigation Factor_Executable_Artifact_Values
+  imports Factor_Digit_History_Investigation Factor_Executable_Artifact_Values Native_Execution_Refinements
 begin
 
 setup \<open>Finite_Observation_Contracts.export @{term digit_history_investigation}\<close>
@@ -14,6 +14,7 @@ export_code digit_history_packet digit_history_indices digit_history_question_in
   finite_artifact_rows finite_environment_artifact_rows finite_environment_bindings
   History_Step Schema_Proof Finite_Target Finite_Payload Finite_Pair Finite_Whole Finite_Anchor
   Existing_Admission Paired_Admission Collected_Admission fset set nat_of_integer integer_of_nat
-  in SML module_name Digit_History_Execution file_prefix digit_history
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Digit_History_Execution file_prefix digit_history
 
 end

@@ -1,5 +1,5 @@
 theory Native_Source_Development
-  imports Factor_Source_Development_Cases Native_Development_Steering
+  imports Factor_Source_Execution_Sharing Factor_Source_Development_Cases Native_Development_Steering Native_Execution_Refinements
 begin
 
 setup \<open>Finite_Observation_Contracts.export @{term development_subject_investigation}\<close>
@@ -33,6 +33,7 @@ export_code
   requirement_candidates development_workflow_stages finite_graph_inferences finite_graph_discharges Schema_Proof
   Finite_Inference Finite_Assertion Workflow_Input Workflow_Values Workflow_Generated
   Workflow_Finished Workflow_Unavailable Workflow_Executed native_workflow_inspect set
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
   in Eval module_name Native_Source_Development file_prefix native_source_development
 
 end

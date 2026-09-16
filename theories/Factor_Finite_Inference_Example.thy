@@ -1,6 +1,6 @@
 theory Factor_Finite_Inference_Example
   imports Factor_Finite_Inference_Source_Checks Factor_Executable_Environment_Values
-    Factor_Ground_Schema_Reports Factor_Inference_Specialization_Total
+    Factor_Ground_Schema_Reports Factor_Inference_Specialization_Total Native_Execution_Refinements
 begin
 
 section \<open>Complete finite environments and retained source material\<close>
@@ -135,7 +135,8 @@ theorem finite_literal_inference_admitted:
   by (simp add: finite_literal_inference_term_def ground_schema_report_def)
 
 export_code finite_literal_inference_value Finite_Payload Finite_Pair Finite_Target Finite_Whole
-  nat_of_integer integer_of_nat in SML module_name Finite_Literal_Inference file_prefix finite_literal_inference
+  nat_of_integer integer_of_nat  complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Finite_Literal_Inference file_prefix finite_literal_inference
 
 text \<open>
   This input contains the complete extended package environment, the complete

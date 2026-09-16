@@ -1,6 +1,6 @@
 theory Inference_Claim_Execution
   imports Keyed_Table_Execution Factor_Inference_Claim_Compilation
-    Factor_Inference_Claim_Contracts Factor_Prefixed_Observation_Execution Factor_Scheme_Claim_Joins
+    Factor_Inference_Claim_Contracts Factor_Prefixed_Observation_Execution Factor_Scheme_Claim_Joins Native_Execution_Refinements
 begin
 
 export_code
@@ -32,6 +32,7 @@ export_code
   natural_schema_observation_sources natural_schema_call_observations natural_observation_join natural_observed_bindings natural_binding_support
   natural_observed_schema_applications Finite_Conclusion_Site Finite_Premise_Site Finite_Material_Source_Site Finite_Material_Atoms_Site
   Finite_Material_Edges_Site Finite_Material_Counts_Site Finite_Material_Functions_Site
-  in SML module_name Native_Reasoning file_prefix inference_claim
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Native_Reasoning file_prefix inference_claim
 
 end

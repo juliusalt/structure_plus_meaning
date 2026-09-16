@@ -1235,3 +1235,13 @@ after genesis. Broader discovery and adequate scope, historical permission,
 native mathematical-proof admission, genesis and the final audit remain open.
 The owner requested a clean stop after committing this batch and closing its
 temporary working copies.
+
+
+## Native execution speedup batch
+
+Exact code equations for record candidates, ordered investigation rows, shared
+judgment readings, loop-invariant evaluation and formation-once syntax reading
+now reach every file export; the shared Eval runtime
+no longer prints bound packets. No obligation row changes status. Remaining
+per-call formation checks and footprint unions keep development costs open, so condition 5a of problems.txt remains open; 5b stays deferred until
+after genesis. O-85, historical permission, genesis and the final audit remain open.

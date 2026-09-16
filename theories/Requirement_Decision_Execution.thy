@@ -1,5 +1,5 @@
 theory Requirement_Decision_Execution
-  imports Factor_Requirement_Decision_Investigation
+  imports Factor_Requirement_Decision_Investigation Native_Execution_Refinements
 begin
 
 setup \<open>Finite_Observation_Contracts.export @{term requirement_decision_investigation}\<close>
@@ -13,6 +13,7 @@ export_code requirement_decision_packet requirement_decision_indices requirement
   Schema_Proof Finite_Inference Finite_Assertion Finite_Target Finite_Payload Finite_Pair Finite_Whole Finite_Anchor
   Existing_Admission Paired_Admission Collected_Admission
   fset set nat_of_integer integer_of_nat
-  in SML module_name Requirement_Decision_Execution file_prefix requirement_decisions
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Requirement_Decision_Execution file_prefix requirement_decisions
 
 end

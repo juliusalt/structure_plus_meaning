@@ -1,5 +1,5 @@
 theory Native_Derivation_Investigation_Execution
-  imports Factor_Native_Derivation_Reports
+  imports Factor_Native_Derivation_Reports Native_Execution_Refinements
 begin
 
 setup \<open>Finite_Observation_Contracts.export @{term native_derivation_investigation}\<close>
@@ -14,6 +14,7 @@ export_code native_derivation_report_packet native_derivation_indices native_der
   Finite_Variable Finite_Pattern_Payload Finite_Pattern_Pair Finite_Pattern_Target
   Finite_Target Finite_Payload Finite_Pair
   Schema_Proof fset set nat_of_integer integer_of_nat
-  in SML module_name Native_Derivation_Investigation_Execution file_prefix native_derivation_investigation
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Native_Derivation_Investigation_Execution file_prefix native_derivation_investigation
 
 end

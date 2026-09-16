@@ -1,5 +1,5 @@
 theory Factor_Data_Product_Execution
-  imports Factor_Data_Product_Contracts
+  imports Factor_Data_Product_Contracts Native_Execution_Refinements
 begin
 
 section \<open>Independent injective encodings retain ordered pairs\<close>
@@ -95,6 +95,7 @@ lemma data_product_reference_decision_code [code]:
   by (subst data_product_lists) (auto simp: octets_formed_def split: if_splits)
 
 export_code data_product_octets data_product_reference_formed data_product_reference_decision
-  nat_of_integer integer_of_nat in SML module_name Native_Data_Product file_prefix native_data_product
+  nat_of_integer integer_of_nat  complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Native_Data_Product file_prefix native_data_product
 
 end

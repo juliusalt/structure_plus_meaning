@@ -1,5 +1,5 @@
 theory Presentation_Completion_Investigation
-  imports Finite_Observation_Contracts Presentation_Completion
+  imports Finite_Observation_Contracts Presentation_Completion Native_Execution_Refinements
 begin
 
 section \<open>Joint feasibility distinguishes separately completable tests\<close>
@@ -118,7 +118,8 @@ setup \<open>Finite_Observation_Contracts.register
 export_code investigation_inference investigation_basis investigation_repairs investigation_extend completion_investigation
   completion_investigation_observations completion_investigation_relation
   nat_of_integer integer_of_nat
-  in SML module_name Finite_Investigation file_prefix finite_investigation
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Finite_Investigation file_prefix finite_investigation
 
 text \<open>
   The two candidates pair the identity test with identity or negation on the

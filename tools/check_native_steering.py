@@ -14,6 +14,7 @@ import native_development_input
 import native_development_json
 import workflow_input
 import workflow_json
+import native_stage_timing
 
 
 def program(engine, inputs):
@@ -26,8 +27,10 @@ def program(engine, inputs):
     requests = inputs['requests']
     code += ('val requests = N.development_case_inputs;\n' if requests is None else
              'val requests = [' + ','.join(native_development_input.question(q) for q in requests) + '];\n')
-    code += r"""
-val (originalRequests,(steering,(chosen,results))) = N.native_steered_development questions requests;
+    code += native_stage_timing.PRELUDE + r"""
+val (originalRequests,(steering,(chosen,results))) = native_stage_timed "steering"
+  (fn () => N.native_steered_development questions requests);
+val physical_report_clock = Timer.startRealTimer ();
 val (originals,(table,execution)) = steering;
 val () = print ("STEERING_SCOPE {\"question_count\":" ^ Int.toString (length originals) ^ ",\"request_count\":" ^ Int.toString (length originalRequests) ^
   ",\"methods\":" ^ jlist jnat N.development_methods ^ ",\"facets\":" ^ jlist jnat N.development_facets ^ "}\n");
@@ -57,7 +60,7 @@ fun jsteeredResult (m,(Q,(report,(claim,admission)))) = "{\"method\":" ^ jnat m 
 val () = (case results of NONE => () | SOME rows => eachIndexed
   (fn (i,result) => print ("STEERED_RESULT " ^ Int.toString i ^ " " ^ jsteeredResult result ^ "\n")) rows);
 """
-    return code
+    return code + native_stage_timing.REPORT_END
 
 
 def main():
@@ -93,7 +96,7 @@ def main():
         relation='Finite_Subject_Investigation.subject_investigation_relation')
 
     def assess(inputs, log):
-        with closing(machine_reports.reports(log)) as records:
+        with closing(machine_reports.reports(log, deferred=True)) as records:
             first = next(records)
             assert first['tag'] == 'STEERING_SCOPE' and first['indices'] == []
             scope = first['value']
@@ -105,7 +108,7 @@ def main():
                 r = next(records)
                 assert r['tag'] == 'STEERING_CONTEXT' and r['indices'] == [w]
                 if inputs['questions'] is not None:
-                    assert r['value']['question'] == inputs['questions'][w]
+                    assert machine_reports.field(r, 'question') == inputs['questions'][w]
                 for m in inputs['candidates']:
                     r = next(records)
                     assert r['tag'] == 'STEERING_CANDIDATE' and r['indices'] == [w, m]
@@ -133,9 +136,9 @@ def main():
                 for i in range(request_count):
                     r = next(records)
                     assert r['tag'] == 'STEERED_RESULT' and r['indices'] == [i]
-                    assert set(r['value']) == {'method', 'question', 'report', 'claim', 'admission'}
+                    assert machine_reports.value_keys(r) == {'method', 'question', 'report', 'claim', 'admission'}
                     if inputs['requests'] is not None:
-                        assert r['value']['question'] == inputs['requests'][i]
+                        assert machine_reports.field(r, 'question') == inputs['requests'][i]
             assert next(records, None) is None
             return {'scope': scope, 'reproduction_boundary': compressed_boundary(log.with_name('results.log')),
                     'boundary': 'Complete original subjects, computed producer results and observations, derived '

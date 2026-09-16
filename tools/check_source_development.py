@@ -14,6 +14,7 @@ import observation_contracts
 import source_development_input
 import source_development_json
 import workflow_input
+import native_stage_timing
 
 
 def program(engine, inputs):
@@ -24,8 +25,10 @@ def program(engine, inputs):
         '[' + ','.join(native_development_input.question(q) for q in inputs['questions']) + ']') + ';\n'
     code += 'val requests = ' + ('N.source_development_cases' if inputs['requests'] is None else
         '[' + ','.join(source_development_input.request(r) for r in inputs['requests']) + ']') + ';\n'
-    code += r'''
-val (originalRequests,(policy,results)) = N.native_source_development questions requests;
+    code += native_stage_timing.PRELUDE + r'''
+val (originalRequests,(policy,results)) = native_stage_timed "source-development"
+  (fn () => N.native_source_development questions requests);
+val physical_report_clock = Timer.startRealTimer ();
 val (policyRequests,(steering,(chosen,policyResults))) = policy;
 val (originals,(table,execution)) = steering;
 val () = print ("SOURCE_SCOPE {\"question_count\":" ^ Int.toString (length originals) ^
@@ -60,7 +63,7 @@ val () = (case results of SOME ((R,(report,admission))::_) =>
       (N.source_development_report_controls R report)
   | _ => ());
 '''
-    return code
+    return code + native_stage_timing.REPORT_END
 
 
 def read_inputs(path, encode):
@@ -97,7 +100,7 @@ def main():
         relation='Finite_Subject_Investigation.subject_investigation_relation')
 
     def assess(inputs, log):
-        with closing(machine_reports.reports(log)) as records:
+        with closing(machine_reports.reports(log, deferred=True)) as records:
             r = next(records)
             assert r['tag'] == 'SOURCE_SCOPE' and r['indices'] == []
             scope = r['value']
@@ -108,7 +111,7 @@ def main():
                 r = next(records)
                 assert r['tag'] == 'SOURCE_POLICY_CONTEXT' and r['indices'] == [w]
                 if inputs['questions'] is not None:
-                    assert r['value']['question'] == inputs['questions'][w]
+                    assert machine_reports.field(r, 'question') == inputs['questions'][w]
                 for m in inputs['candidates']:
                     r = next(records)
                     assert r['tag'] == 'SOURCE_POLICY_CANDIDATE' and r['indices'] == [w, m]
@@ -139,16 +142,16 @@ def main():
                 for i in range(count):
                     r = next(records)
                     assert r['tag'] == 'SOURCE_RESULT' and r['indices'] == [i]
-                    assert set(r['value']) == {'request', 'report', 'admission'}
-                    assert r['value']['request'] == originals[i]
-                    assert set(r['value']['report']) == {'proposals', 'observations', 'question', 'execution',
+                    assert machine_reports.value_keys(r) == {'request', 'report', 'admission'}
+                    assert machine_reports.field(r, 'request') == originals[i]
+                    assert machine_reports.value_keys(r, 'report') == {'proposals', 'observations', 'question', 'execution',
                         'selected', 'installed', 'stage', 'query'}
                 if count:
                     for i in range(4):
                         r = next(records)
                         assert r['tag'] == 'SOURCE_CONTROL' and r['indices'] == [i]
-                        assert set(r['value']) == {'control', 'report', 'admission'}
-                        assert r['value']['control'] == i
+                        assert machine_reports.value_keys(r) == {'control', 'report', 'admission'}
+                        assert machine_reports.field(r, 'control') == i
             assert next(records, None) is None
         return {'scope': scope, 'reproduction_boundary': compressed_boundary(log.with_name('results.log')),
                 'boundary': 'Every complete input, computed native policy, proposal, observation, report, '

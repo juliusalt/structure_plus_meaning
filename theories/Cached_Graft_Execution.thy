@@ -1,5 +1,5 @@
 theory Cached_Graft_Execution
-  imports RRA_Cached_Graft_Investigation Factor_Executable_Artifact_Values
+  imports RRA_Cached_Graft_Investigation Factor_Executable_Artifact_Values Native_Execution_Refinements
 begin
 
 setup \<open>Finite_Observation_Contracts.export @{term cached_graft_investigation}\<close>
@@ -8,6 +8,7 @@ export_code cached_graft_packet cached_graft_indices cached_graft_inspect digit_
   cached_graft_source_report cached_graft_sources_equal cached_graft_source_scope cached_graft_chain_report graft_view_formed
   finite_environment_artifacts finite_environment_bindings finite_enumerated_environment
   finite_artifact_rows Finite_Whole Finite_Anchor fset set nat_of_integer integer_of_nat
-  in SML module_name Cached_Graft_Execution file_prefix cached_graft
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Cached_Graft_Execution file_prefix cached_graft
 
 end

@@ -1,5 +1,5 @@
 theory Native_Certificate_Coverage_Execution
-  imports Factor_Native_Certificate_Coverage_Investigation
+  imports Factor_Native_Certificate_Coverage_Investigation Native_Execution_Refinements
 begin
 
 setup \<open>Finite_Observation_Contracts.export @{term certificate_coverage_investigation}\<close>
@@ -12,6 +12,7 @@ export_code certificate_coverage_packet certificate_coverage_inspect native_cert
   Finite_Variable Finite_Pattern_Payload Finite_Pattern_Pair Finite_Pattern_Target
   Schema_Proof Finite_Inference Finite_Assertion Finite_Target Finite_Payload Finite_Pair Finite_Whole Finite_Anchor
   fset set nat_of_integer integer_of_nat
-  in SML module_name Native_Certificate_Coverage_Execution file_prefix certificate_coverage
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Native_Certificate_Coverage_Execution file_prefix certificate_coverage
 
 end

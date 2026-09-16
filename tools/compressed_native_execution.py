@@ -12,6 +12,7 @@ import traceback
 import uuid
 
 import investigate
+import native_execution_runtime
 from evidence_io import write_json
 import proved_code
 
@@ -58,9 +59,10 @@ def compressed_execution(command, output, timeout):
 
 
 def checked_execution(proof_path, poly, output, *, required_theories, inputs,
-                      input_paths, program, assess, question, boundary, timeout, project):
+                      input_paths, program, assess, question, boundary, timeout, project,
+                      workers=16, runtime_target=None):
     proof_path, poly, output = (Path(p).resolve() for p in (proof_path, poly, output))
-    _, engine, sources = proved_code.proved_export(proof_path, required_theories=required_theories, project=project)
+    proof, engine, sources = proved_code.proved_export(proof_path, required_theories=required_theories, project=project)
     assert not output.exists(), 'Use a new directory after retaining preceding executions.'
     output.mkdir(parents=True)
     receipt = {'status': 'failed', 'invocation': str(uuid.uuid4()), 'question': question, 'boundary': boundary}
@@ -68,18 +70,22 @@ def checked_execution(proof_path, poly, output, *, required_theories, inputs,
         cases = output / 'cases.json'
         write_json(cases, inputs)
         runtime = output / 'execute.ML'
-        runtime.write_text(program(engine, inputs))
+        code, command, runtime_inputs = native_execution_runtime.prepare(
+            proof, engine, program(engine, inputs), poly, output,
+            workers=workers, target=runtime_target)
+        runtime.write_text(code)
         directory = Path(__file__).resolve().parent
         modules = {Path(m.__file__).resolve() for m in tuple(sys.modules.values())
                    if getattr(m, '__file__', None) and Path(m.__file__).resolve().is_relative_to(directory)
                    and Path(m.__file__).is_file()}
         paths = {proof_path, engine, poly, runtime, cases, *modules,
-                 *(Path(p).resolve() for p in input_paths), *(Path(p) for p in sources)}
+                 *(Path(p).resolve() for p in input_paths), *(Path(p) for p in sources), *runtime_inputs,
+                 output / 'runtime-command.json'}
         tracked = {str(p): investigate.file_hash(p) for p in paths}
         write_json(output / 'execution-inputs.json', tracked)
         proved_code.archive_execution_inputs(output, receipt, tracked, external=[poly])
         log = output / 'results.log.gz'
-        code, identity = compressed_execution([str(poly), '--script', str(runtime)], log, timeout)
+        code, identity = compressed_execution(command, log, timeout)
         receipt.update(exit_code=code, uncompressed_results=identity)
         assert code == 0, 'See the complete retained results.log.gz.'
         assessment = assess(inputs, log)

@@ -11,6 +11,7 @@ import uuid
 import check_reasoning as review
 import finite_presentation_cases as family
 import investigate
+import native_execution_runtime
 import proved_code
 
 
@@ -95,15 +96,17 @@ def main():
         cases_path = output / "cases.json"
         cases_path.write_text(json.dumps(inputs, indent=2) + "\n")
         runtime = output / "execute.ML"
-        runtime.write_text(program(engine, inputs))
+        code, command, runtime_inputs = native_execution_runtime.prepare(proof, engine, program(engine, inputs), poly, output)
+        runtime.write_text(code)
         tracked = {path: review.digest(path) for path in
-                   [proof_path, engine, poly, runtime, cases_path, *review.loaded_tool_sources()]}
+                   [proof_path, engine, poly, runtime, cases_path, *review.loaded_tool_sources(), *runtime_inputs,
+                    output / "runtime-command.json"]}
         execution_inputs = {str(path): sha for path, sha in tracked.items()} | sources
         (output / "execution-inputs.json").write_text(json.dumps(execution_inputs, indent=2) + "\n")
         proved_code.archive_execution_inputs(output, report, execution_inputs, external=[poly])
         log_path = output / "results.log"
         with log_path.open("w") as log:
-            result = subprocess.run([str(poly), "--script", str(runtime)], stdout=log,
+            result = subprocess.run(command, stdout=log,
                                     stderr=subprocess.STDOUT, timeout=60)
         report["exit_code"] = result.returncode
         assert result.returncode == 0, "See the retained results.log."

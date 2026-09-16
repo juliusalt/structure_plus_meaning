@@ -1,6 +1,6 @@
 theory Requirement_Artifact_Execution
   imports Finite_Requirement_Artifact_Admission Factor_Requirement_Generations
-    Checked_Requirement_Execution Factor_Executable_Artifact_Values
+    Checked_Requirement_Execution Factor_Executable_Artifact_Values Native_Execution_Refinements
 begin
 
 section \<open>Complete artifact controls are judged against their original requests\<close>
@@ -60,7 +60,8 @@ export_code requirement_artifact_reports checked_requirement_source checked_requ
   Existing_Admission Paired_Admission Collected_Admission Pair_Admission_Instruction List_Admission_Instruction
   Finite_Payload Finite_Pair Finite_Target Finite_Whole finite_empty_artifact
   finite_reasoning_term_equal nat_of_integer integer_of_nat
-  in SML module_name Requirement_Plans file_prefix requirement_artifacts
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Requirement_Plans file_prefix requirement_artifacts
 
 text \<open>
   Each report retains all four complete artifact fields and the independently

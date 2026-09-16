@@ -32,16 +32,7 @@ def main(entrypoint, *, kind, root):
     isabelle = Path('/opt/isabelle/bin/isabelle')
     pure = Path('/opt/isabelle/heaps/polyml-5.9.2_x86_64_32-linux/Pure')
     assert args.poly.resolve() == Path('/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly')
-    runtime_home = args.output.resolve() / 'runtime-home'
     assert args.timeout > 0
-    original_compressed_execution = compressed_native_execution.compressed_execution
-    def measured_execution(command, output, timeout):
-        runtime_home.mkdir(exist_ok=True)
-        actual = ['/usr/bin/env', 'USER_HOME=' + str(runtime_home), str(isabelle),
-            'ML_process', '-l', 'Pure', '-o', 'threads=' + str(args.workers),
-            '-f', proof['exports'][0]['path'], '-f', command[-1]]
-        write_json(output.parent / 'runtime-command.json', actual)
-        return original_compressed_execution(actual, output, timeout)
     runtime_inputs = [pure,
         isabelle, Path('/usr/bin/env'),
         Path('/opt/isabelle/src/Pure/ML/ml_process.scala'),
@@ -104,38 +95,29 @@ def main(entrypoint, *, kind, root):
             'val () = artifact_reporting_clock := Timer.startRealTimer ();\n')
         code = code.replace(before, timing + 'val () = print (\"Physicalworkers \" ^ Int.toString (Multithreading.max_threads ()) ^ \"\\n\");\n' + stages)
         code = shared_object_stream.program_with_references(code, prefix)
-        loading = 'use ' + investigate.ml_string(str(engine)) + ';\n'
-        assert code.count(loading) == 1
-        code = code.replace(loading, '', 1)
         assert code.count('= ref ') == 2
         code = code.replace('= ref ', '= Unsynchronized.ref ')
         return code + '''
     val () = print ("Physicaltime reporting " ^ LargeInt.toString
       (Time.toMilliseconds (Timer.checkRealTimer (!artifact_reporting_clock))) ^ "ms\\n");
     val () = TextIO.flushOut TextIO.stdOut;
-    val () = Future.shutdown ();
-    val () = OS.Process.exit OS.Process.success;
     '''
 
 
     cpu_before = resource.getrusage(resource.RUSAGE_CHILDREN)
     started = time.monotonic()
-    compressed_native_execution.compressed_execution = measured_execution
-    try:
-        result = compressed_native_execution.checked_execution(args.proof,
-            args.poly.resolve(), args.output,
-            required_theories=[root],
-            inputs={'workers': args.workers, 'cases': args.cases, 'candidates': contract['candidate_indices'],
-                    'facets': contract['facet_indices'], 'selections': [[], [0], [0, 1]]},
-            input_paths=[Path(__file__), Path(entrypoint), Path(entry['path']), *runtime_inputs], program=program,
-            assess=lambda inputs, path: shared_artifact_reports.assess(inputs, path,
-                prefix=prefix, introductory=introductory), project=args.project.resolve(), timeout=args.timeout,
-            question='Can the complete original packet execute and retain every value within the declared development-time budget?',
-            boundary='The proved stages reconstruct the complete native packet and retain the original subject contract. Source projection reads actual stored contexts. The proved exact artifact-reference '
-                     'operation retains every full artifact and every occurrence, including repeated counts. '
-                     'The complete reference table accompanies the stored reports. Timers are physical metadata.')
-    finally:
-        compressed_native_execution.compressed_execution = original_compressed_execution
+    result = compressed_native_execution.checked_execution(args.proof,
+        args.poly.resolve(), args.output, workers=args.workers, runtime_target='Eval',
+        required_theories=[root],
+        inputs={'workers': args.workers, 'cases': args.cases, 'candidates': contract['candidate_indices'],
+                'facets': contract['facet_indices'], 'selections': [[], [0], [0, 1]]},
+        input_paths=[Path(__file__), Path(entrypoint), Path(entry['path']), *runtime_inputs], program=program,
+        assess=lambda inputs, path: shared_artifact_reports.assess(inputs, path,
+            prefix=prefix, introductory=introductory), project=args.project.resolve(), timeout=args.timeout,
+        question='Can the complete original packet execute and retain every value within the declared development-time budget?',
+        boundary='The proved stages reconstruct the complete native packet and retain the original subject contract. Source projection reads actual stored contexts. The proved exact artifact-reference '
+                 'operation retains every full artifact and every occurrence, including repeated counts. '
+                 'The complete reference table accompanies the stored reports. Timers are physical metadata.')
     write_json(args.output / 'runtime-metadata.json', {'files': {name: digest(args.output / name) for name in ['runtime-command.json'] if (args.output / name).is_file()}, 'boundary': 'Physical runtime and garbage collection diagnostics; complete native stages reconstruct the original packet under their established equation.'})
     elapsed = time.monotonic() - started
     cpu_after = resource.getrusage(resource.RUSAGE_CHILDREN)

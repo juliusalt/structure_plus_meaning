@@ -1,5 +1,5 @@
 theory Factor_Requirement_Source_Examples
-  imports Factor_Requirement_Source_Readings Factor_Requirement_Packages Factor_Selected_Definition_Graphs
+  imports Factor_Requirement_Source_Readings Factor_Requirement_Packages Factor_Selected_Definition_Graphs Native_Execution_Refinements
 begin
 
 section \<open>Complete native packages are recovered from the executed source artifacts\<close>
@@ -190,7 +190,8 @@ lemma native_guard_source_meaning_report_code [code]:
   by (simp add: native_guard_source_meaning_report_def finite_guard_program_meaning octets_formed_def)
 
 export_code native_guard_source_meaning_report integer_of_nat
-  in SML module_name Native_Guard_Source_Meaning file_prefix native_guard_source_meaning
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Native_Guard_Source_Meaning file_prefix native_guard_source_meaning
 
 text \<open>
   Complete native package recovery fixes both original source programs and

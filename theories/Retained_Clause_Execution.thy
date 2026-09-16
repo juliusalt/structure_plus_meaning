@@ -1,5 +1,5 @@
 theory Retained_Clause_Execution
-  imports Finite_Retained_Clause_Admission Factor_Finite_Equality_Source
+  imports Finite_Retained_Clause_Admission Factor_Finite_Equality_Source Native_Execution_Refinements
 begin
 
 section \<open>Actual finite source changes keep their complete material\<close>
@@ -95,7 +95,8 @@ definition retained_clause_control_report where
 
 export_code retained_clause_control_report finite_schema_conclusion finite_schema_premises finite_schema_materials
   Finite_Variable Finite_Pattern_Payload Finite_Pattern_Pair Finite_Pattern_Target
-  fset set nat_of_integer integer_of_nat in SML module_name Retained_Clause_Execution file_prefix retained_clause_execution
+  fset set nat_of_integer integer_of_nat  complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Retained_Clause_Execution file_prefix retained_clause_execution
 
 text \<open>
   The input index selects the complete source, expected schema, candidate

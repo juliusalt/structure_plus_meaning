@@ -9,6 +9,7 @@ import traceback
 import uuid
 
 import investigate
+import native_execution_runtime
 from evidence_io import write_json
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -82,7 +83,7 @@ def checked_execution(proof_path, poly, output, *, required_theories, inputs,
                       input_paths, program, assess, question, boundary, timeout=60, project=ROOT):
     """Run one proved module with retained inputs and a caller's result review."""
     proof_path, poly, output = map(lambda p: Path(p).resolve(), (proof_path, poly, output))
-    _, engine, sources = proved_export(proof_path, required_theories=required_theories, project=project)
+    proof, engine, sources = proved_export(proof_path, required_theories=required_theories, project=project)
     assert not output.exists(), "Retain preceding executions and use a new directory."
     output.mkdir(parents=True)
     receipt = {"status": "failed", "invocation": str(uuid.uuid4()),
@@ -91,19 +92,22 @@ def checked_execution(proof_path, poly, output, *, required_theories, inputs,
         input_file = output / "cases.json"
         write_json(input_file, inputs)
         runtime = output / "execute.ML"
-        runtime.write_text(program(engine, inputs))
+        code, command, runtime_inputs = native_execution_runtime.prepare(
+            proof, engine, program(engine, inputs), poly, output)
+        runtime.write_text(code)
         directory = Path(__file__).resolve().parent
         modules = {Path(m.__file__).resolve() for m in tuple(sys.modules.values())
                    if getattr(m, "__file__", None) and Path(m.__file__).resolve().is_relative_to(directory)
                    and Path(m.__file__).is_file()}
         paths = {proof_path, engine, poly, runtime, input_file, *modules,
-                 *(Path(p).resolve() for p in input_paths), *(Path(p) for p in sources)}
+                 *(Path(p).resolve() for p in input_paths), *(Path(p) for p in sources), *runtime_inputs,
+                 output / 'runtime-command.json'}
         tracked = {str(p): investigate.file_hash(p) for p in paths}
         write_json(output / "execution-inputs.json", tracked)
         archive_execution_inputs(output, receipt, tracked, external=[poly])
         log_path = output / "results.log"
         with log_path.open("w") as log:
-            result = subprocess.run([str(poly), "--script", str(runtime)], stdout=log,
+            result = subprocess.run(command, stdout=log,
                                     stderr=subprocess.STDOUT, timeout=timeout)
         receipt["exit_code"] = result.returncode
         assert result.returncode == 0, "See the retained results.log."

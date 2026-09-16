@@ -54,7 +54,7 @@ def main():
     def assess(inputs, raw):
         path = args.output / 'results.log'
         assert path.read_text() == raw
-        reports = list(machine_reports.reports(path))
+        reports = list(machine_reports.reports(path, deferred=True))
         assert len(reports) == 4 + len(inputs['selections'])
         assert [(r['tag'], r['indices']) for r in reports[:4]] == [
             ('SCOPE_REPAIR_SCOPE', []), ('SCOPE_REPAIR_SUBJECT', [0]),

@@ -1,5 +1,5 @@
 theory Factor_Observation_Scope_Execution
-  imports Factor_Observation_Scope_Contracts Factor_Observation_Execution
+  imports Factor_Observation_Scope_Contracts Factor_Observation_Execution Native_Execution_Refinements
 begin
 
 section \<open>Finite execution calls the actual native admission operation\<close>
@@ -70,6 +70,7 @@ lemma observation_scope_reference_decision_code [code]:
 
 export_code observation_octet_scope observation_scope_reference_decision observation_scope_reference_call_formed
   nat_of_integer integer_of_nat
-  in SML module_name Native_Observation_Scope file_prefix native_observation_scope
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Native_Observation_Scope file_prefix native_observation_scope
 
 end

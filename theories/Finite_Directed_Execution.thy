@@ -1,5 +1,5 @@
 theory Finite_Directed_Execution
-  imports Finite_Directed_Contributions Finite_Candidate_Assembly "HOL-Library.Code_Target_Nat"
+  imports Finite_Directed_Contributions Finite_Candidate_Assembly "HOL-Library.Code_Target_Nat" Native_Execution_Refinements
 begin
 
 definition natural_directed_bindings where
@@ -12,6 +12,7 @@ definition natural_candidate_assembly where
 
 export_code natural_directed_bindings natural_candidate_assembly
   fset_of_list fset set nat_of_integer integer_of_nat
-  in SML module_name Directed_Search file_prefix directed_search
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Directed_Search file_prefix directed_search
 
 end

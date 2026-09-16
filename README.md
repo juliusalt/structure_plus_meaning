@@ -2608,3 +2608,10 @@ the complete required process so violations fail, then use condition 6 to
 resolve remaining details. These performance results do not discharge any
 of the six workflow conditions or the existing genesis and final-audit
 requirements.
+
+
+Native execution is now substantially faster across most validation families:
+exact code equations remove repeated work in record reading and investigation
+rows, and the shared Eval runtime no longer prints bound packets. The
+[implementation record](native_mechanism_speedup.md#implementation-record-and-corrections)
+retains the paired measurements and the remaining development-path costs.

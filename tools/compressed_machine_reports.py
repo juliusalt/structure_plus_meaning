@@ -9,8 +9,13 @@ import threading
 
 import machine_reports
 
+field = machine_reports.field
+value_keys = machine_reports.value_keys
+record_equal = machine_reports.record_equal
+field_equal = machine_reports.field_equal
 
-def reports(path):
+
+def reports(path, *, deferred=False):
     with tempfile.TemporaryDirectory(prefix='native-report-stream-') as temporary:
         pipe = Path(temporary) / 'complete.log'
         os.mkfifo(pipe)
@@ -27,7 +32,7 @@ def reports(path):
 
         worker = threading.Thread(target=produce)
         worker.start()
-        parsed = machine_reports.reports(pipe)
+        parsed = machine_reports.reports(pipe, deferred=deferred)
         try:
             yield from parsed
         finally:
@@ -39,6 +44,4 @@ def reports(path):
 
 def canonical_update(checksum, row):
     # Each complete record is independent; use the original parser's canonical encoding.
-    encoded = json.dumps(row, sort_keys=True, separators=(',', ':'), allow_nan=False)
-    checksum.update(encoded.encode('utf-8'))
-    checksum.update(b'\n')
+    machine_reports.canonical_update(checksum, row)

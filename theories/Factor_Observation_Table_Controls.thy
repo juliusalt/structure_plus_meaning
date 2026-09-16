@@ -1,5 +1,5 @@
 theory Factor_Observation_Table_Controls
-  imports Factor_Observation_Table_Execution
+  imports Factor_Observation_Table_Execution Native_Execution_Refinements
 begin
 
 section \<open>Formed references test every field and empty result admission\<close>
@@ -146,6 +146,7 @@ qed
 export_code observation_octet_profile_table observation_octet_loss_table
   observation_table_reference_formed observation_table_reference_profiles observation_table_reference_losses
   observation_table_structured_profiles observation_table_structured_losses nat_of_integer integer_of_nat
-  in SML module_name Native_Observation_Tables file_prefix native_observation_tables
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Native_Observation_Tables file_prefix native_observation_tables
 
 end

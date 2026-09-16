@@ -1,5 +1,5 @@
 theory Factor_Observation_Table_Execution
-  imports Factor_Observation_Table_Native Factor_Observation_Scope_Execution Factor_Keyed_Set_Execution
+  imports Factor_Observation_Table_Native Factor_Observation_Scope_Execution Factor_Keyed_Set_Execution Native_Execution_Refinements
 begin
 
 section \<open>The computed row witnesses retain complete comparison\<close>
@@ -108,7 +108,8 @@ lemma observation_octet_loss_table_code [code]:
     observation_octet_scope_def observation_scope_encoded observation_loss_table_octet_encoding keyed_octet_losses_def)
 
 export_code observation_octet_profile_table observation_octet_loss_table nat_of_integer integer_of_nat
-  in SML module_name Native_Observation_Tables file_prefix native_observation_tables
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Native_Observation_Tables file_prefix native_observation_tables
 
 text \<open>
   Both exported decisions are actual calls of the complete native table

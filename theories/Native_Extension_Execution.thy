@@ -1,5 +1,5 @@
 theory Native_Extension_Execution
-  imports Factor_Finite_Native_Extension_Cases Factor_Finite_Native_Controls Factor_Executable_Artifact_Values
+  imports Factor_Finite_Native_Extension_Cases Factor_Finite_Native_Controls Factor_Executable_Artifact_Values Native_Execution_Refinements
 begin
 
 section \<open>Execute the actual package construction and complete native recovery\<close>
@@ -11,6 +11,7 @@ export_code finite_native_extension_report finite_native_control_report
   finite_artifact_rows Finite_Whole Finite_Anchor
   Finite_Variable Finite_Pattern_Payload Finite_Pattern_Pair Finite_Pattern_Target
   fset set nat_of_integer integer_of_nat
-  in SML module_name Native_Extension_Execution file_prefix native_extensions
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Native_Extension_Execution file_prefix native_extensions
 
 end

@@ -1,5 +1,5 @@
 theory Environment_Update_Execution
-  imports RRA_Environment_Update_Investigation RRA_Environment_Update_Correctness Factor_Executable_Artifact_Values
+  imports RRA_Environment_Update_Investigation RRA_Environment_Update_Correctness Factor_Executable_Artifact_Values Native_Execution_Refinements
 begin
 
 setup \<open>Finite_Observation_Contracts.export @{term environment_update_investigation}\<close>
@@ -7,6 +7,7 @@ setup \<open>Finite_Observation_Contracts.export @{term environment_update_inves
 export_code environment_update_packet environment_update_indices environment_update_inspect
   environment_update_chain_report finite_artifact_rows finite_environment_artifacts finite_environment_bindings
   Install_Artifact Install_Binding Finite_Whole Finite_Anchor fset set nat_of_integer integer_of_nat
-  in SML module_name Environment_Update_Execution file_prefix environment_update
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Environment_Update_Execution file_prefix environment_update
 
 end

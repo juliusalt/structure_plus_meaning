@@ -1,5 +1,5 @@
 theory Factor_Observation_Execution
-  imports Factor_Observation_Contracts "HOL-Library.Code_Target_Nat"
+  imports Factor_Observation_Contracts "HOL-Library.Code_Target_Nat" Native_Execution_Refinements
 begin
 
 section \<open>Injective changes preserve the list computations\<close>
@@ -144,7 +144,8 @@ lemma observation_reference_losses_decision_code [code]:
 
 export_code observation_octet_profile observation_octet_losses
   observation_reference_profile_decision observation_reference_losses_decision nat_of_integer integer_of_nat
-  in SML module_name Native_Observation file_prefix native_observation
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Native_Observation file_prefix native_observation
 
 text \<open>
   Each exported decision is defined by the actual native call. The proved

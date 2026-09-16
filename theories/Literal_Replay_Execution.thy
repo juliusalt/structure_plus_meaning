@@ -1,5 +1,5 @@
 theory Literal_Replay_Execution
-  imports Factor_Literal_Replay_Investigation Factor_Executable_Environment_Values
+  imports Factor_Literal_Replay_Investigation Factor_Executable_Environment_Values Native_Execution_Refinements
 begin
 
 setup \<open>Finite_Observation_Contracts.export @{term literal_replay_investigation}\<close>
@@ -11,6 +11,7 @@ export_code literal_replay_packet literal_replay_indices literal_replay_family_i
   Finite_Variable Finite_Pattern_Payload Finite_Pattern_Pair Finite_Pattern_Target
   Schema_Proof Finite_Inference Finite_Assertion Finite_Target Finite_Payload Finite_Pair Finite_Whole Finite_Anchor
   Existing_Admission Paired_Admission Collected_Admission fset set nat_of_integer integer_of_nat
-  in SML module_name Literal_Replay_Execution file_prefix literal_replay
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Literal_Replay_Execution file_prefix literal_replay
 
 end

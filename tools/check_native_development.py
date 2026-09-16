@@ -49,7 +49,7 @@ def main():
         relation='Finite_Subject_Investigation.subject_investigation_relation')
 
     def assess(inputs, log):
-        records = list(machine_reports.reports(log))
+        records = list(machine_reports.reports(log, deferred=True))
         assert records[0]['tag'] == 'DEVELOPMENT_SCOPE' and records[0]['indices'] == []
         scope = records[0]['value']
         requested = scope if inputs['cases'] is None else inputs['cases']

@@ -1,5 +1,5 @@
 theory Native_Certificate_Development_Execution
-  imports Factor_Native_Certificate_Development
+  imports Factor_Native_Certificate_Development Native_Execution_Refinements
 begin
 
 setup \<open>Finite_Observation_Contracts.export @{term native_certificate_investigation}\<close>
@@ -13,6 +13,7 @@ export_code native_certificate_development_packet native_certificate_indices nat
   Finite_Variable Finite_Pattern_Payload Finite_Pattern_Pair Finite_Pattern_Target
   Schema_Proof Finite_Inference Finite_Assertion Finite_Target Finite_Payload Finite_Pair Finite_Whole Finite_Anchor
   fset set nat_of_integer integer_of_nat
-  in SML module_name Native_Certificate_Development_Execution file_prefix certificate_development
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Native_Certificate_Development_Execution file_prefix certificate_development
 
 end

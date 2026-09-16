@@ -1,7 +1,7 @@
 theory Factor_Reasoning_Execution
   imports Factor_Reasoning_Premise_Admission Factor_Investigation_Input_Development_Execution
     Factor_Specialization_Report_Reasoning Factor_Binding_Observation_Reasoning
-    Factor_Inference_Reader_Investigation Factor_Binding_Guided_Investigation Factor_Reader_Source_Requirements
+    Factor_Inference_Reader_Investigation Factor_Binding_Guided_Investigation Factor_Reader_Source_Requirements Native_Execution_Refinements
 begin
 
 definition finite_reasoning_term_equal :: "finite_factor_term \<Rightarrow> finite_factor_term \<Rightarrow> bool" where
@@ -33,6 +33,7 @@ export_code admission_plan generated_input_execution admission_pair_reasoning_ex
   finite_material_counts finite_material_functions
   finite_reasoning_term_equal fset set fset_of_list
   nat_of_integer integer_of_nat
-  in SML module_name Native_Reasoning file_prefix native_reasoning
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Native_Reasoning file_prefix native_reasoning
 
 end

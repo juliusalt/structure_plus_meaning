@@ -1,5 +1,5 @@
 theory Factor_Substitution_Investigation
-  imports Factor_Substitution Factor_Pattern_Determination Finite_Observation_Contracts
+  imports Factor_Substitution Factor_Pattern_Determination Finite_Observation_Contracts Native_Execution_Refinements
 begin
 
 section \<open>The finite case evaluates actual repeated substitutions\<close>
@@ -214,7 +214,8 @@ setup \<open>Finite_Observation_Contracts.register
 export_code investigation_inference investigation_basis investigation_repairs investigation_extend pattern_investigation
   pattern_investigation_observations pattern_investigation_relation
   nat_of_integer integer_of_nat
-  in SML module_name Finite_Investigation file_prefix finite_investigation
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Finite_Investigation file_prefix finite_investigation
 
 text \<open>
   The five replacements are two variables, two distinct payload literals, and

@@ -1,5 +1,5 @@
 theory Native_Admission_Investigation_Execution
-  imports Native_Admission_Execution Factor_Native_Admission_Investigation
+  imports Native_Admission_Execution Factor_Native_Admission_Investigation Native_Execution_Refinements
 begin
 
 setup \<open>Finite_Observation_Contracts.export @{term native_admission_investigation}\<close>
@@ -14,6 +14,7 @@ export_code native_admission_indices native_admission_report native_admission_as
   Finite_Variable Finite_Pattern_Payload Finite_Pattern_Pair Finite_Pattern_Target
   Finite_Target Finite_Payload Finite_Pair Existing_Admission Paired_Admission Collected_Admission
   fset set nat_of_integer integer_of_nat
-  in SML module_name Native_Admission_Investigation_Execution file_prefix native_admission_investigation
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Native_Admission_Investigation_Execution file_prefix native_admission_investigation
 
 end

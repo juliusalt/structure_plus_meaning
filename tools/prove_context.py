@@ -100,7 +100,7 @@ def main():
     (output/'parent.json').write_text(json.dumps({'session':parent_session, **parent_evidence,
         'inputs':parent_inputs, 'reused_complete_contexts':sorted(reused),
         'rebuilt_contexts':sorted(rebuilt), 'helper_inputs':helper_inputs}, indent=2)+'\n')
-    command = ['isabelle','build','-o','threads='+str(args.threads),'-o','parallel_proofs=0',
+    command = ['isabelle','build','-b','-o','threads='+str(args.threads),'-o','parallel_proofs=0',
                '-o','build_timing_threshold=0']
     if parent_project:
         command += ['-d',str(parent_project)]

@@ -21,14 +21,14 @@ def main():
     parser.add_argument('--workers', type=int, default=16)
     args = parser.parse_args()
     questions, requests, scope = [], [], None
-    with closing(machine_reports.reports(args.comparison)) as original:
+    with closing(machine_reports.reports(args.comparison, deferred=True)) as original:
         for r in original:
             if r['tag'] == 'STEERING_SCOPE':
                 assert scope is None
                 scope = r['value']
             elif r['tag'] == 'STEERING_CONTEXT':
                 assert r['indices'] == [len(questions)]
-                questions.append(r['value']['question'])
+                questions.append(machine_reports.field(r, 'question'))
             elif r['tag'] == 'STEERED_REQUEST':
                 assert r['indices'] == [len(requests)]
                 requests.append(r['value'])
@@ -38,9 +38,9 @@ def main():
 
     def assess(inputs, log):
         count = 0
-        with closing(machine_reports.reports(log)) as actual, closing(machine_reports.reports(args.comparison)) as original:
+        with closing(machine_reports.reports(log, deferred=True)) as actual, closing(machine_reports.reports(args.comparison, deferred=True)) as original:
             for old in original:
-                assert next(actual, None) == old
+                assert machine_reports.record_equal(next(actual, None), old)
                 count += 1
             assert next(actual, None) is None
         return {'reports_directly_equal': count, 'complete_original_question_roundtrip': True,

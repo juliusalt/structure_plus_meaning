@@ -1,5 +1,5 @@
 theory Graft_Execution
-  imports RRA_Graft_Investigation Factor_Executable_Artifact_Values
+  imports RRA_Graft_Investigation Factor_Executable_Artifact_Values Native_Execution_Refinements
 begin
 
 setup \<open>Finite_Observation_Contracts.export @{term graft_investigation}\<close>
@@ -7,6 +7,7 @@ setup \<open>Finite_Observation_Contracts.export @{term graft_investigation}\<cl
 export_code graft_packet graft_indices graft_inspect graft_view_formed use_word_length
   finite_artifact_rows finite_environment_artifacts finite_environment_bindings
   fset set nat_of_integer integer_of_nat
-  in SML module_name Graft_Execution file_prefix graft
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Graft_Execution file_prefix graft
 
 end

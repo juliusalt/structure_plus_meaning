@@ -19,24 +19,24 @@ def main():
         parser.add_argument('--' + name, type=Path, required=True)
     parser.add_argument('--workers', type=int, default=16)
     args = parser.parse_args()
-    original = list(machine_reports.reports(args.comparison))
+    original = list(machine_reports.reports(args.comparison, deferred=True))
     contexts = [r for r in original if r['tag'] == 'DEVELOPMENT_CONTEXT']
-    questions = [r['value']['question'] for r in contexts]
-    controls = {r['indices'][0]: r['value'] for r in original if r['tag'] == 'DEVELOPMENT_CANDIDATE' and r['indices'][1] == 0}
+    questions = [machine_reports.field(r, 'question') for r in contexts]
+    controls = {r['indices'][0]: r for r in original if r['tag'] == 'DEVELOPMENT_CANDIDATE' and r['indices'][1] == 0}
     assert contexts and len(controls) == len(contexts)
     for question in questions:
         native_development_input.question(question)
 
     def assess(inputs, log):
-        records = list(machine_reports.reports(log))
+        records = list(machine_reports.reports(log, deferred=True))
         assert len(records) == 3 * len(questions)
         for i, context in enumerate(contexts):
             group = records[3*i:3*i+3]
             assert [r['tag'] for r in group] == ['DEVELOPMENT_QUESTION', 'DEVELOPMENT_REPORT', 'DEVELOPMENT_ADMISSION']
             assert all(r['indices'] == [i] for r in group)
-            assert group[0]['value'] == context['value']['question']
-            assert group[1]['value'] == context['value']['original']
-            assert group[2]['value'] == controls[context['indices'][0]]['decision']
+            assert machine_reports.field_equal(group[0], (), context, ('question',))
+            assert machine_reports.field_equal(group[1], (), context, ('original',))
+            assert machine_reports.field_equal(group[2], (), controls[context['indices'][0]], ('decision',))
         return {'reproduction_boundary': compressed_boundary(log.with_name('results.log')),
                 'complete_question_report_admission_roundtrip': True,
                 'boundary': 'The full original native question, every operation and certificate, every comparison '

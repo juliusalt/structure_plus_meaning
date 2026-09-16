@@ -1,5 +1,5 @@
 theory Native_Admission_Execution
-  imports Factor_Native_Admission_Cases
+  imports Factor_Native_Admission_Cases Native_Execution_Refinements
 begin
 
 definition native_admission_indices :: "nat list" where
@@ -14,6 +14,7 @@ export_code native_admission_indices native_admission_report
   Finite_Variable Finite_Pattern_Payload Finite_Pattern_Pair Finite_Pattern_Target
   Finite_Target Finite_Payload Finite_Pair Existing_Admission Paired_Admission Collected_Admission
   fset set nat_of_integer integer_of_nat
-  in SML module_name Native_Admission_Execution file_prefix native_admission
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Native_Admission_Execution file_prefix native_admission
 
 end

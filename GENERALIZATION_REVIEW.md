@@ -2255,3 +2255,38 @@ after genesis. Broader discovery and adequate scope, historical permission,
 native mathematical-proof admission, genesis and the final audit remain open.
 The owner requested a clean stop after committing this batch and closing its
 temporary working copies.
+
+
+## Native execution speedup batch
+
+The problem was native execution as a development bottleneck. Complete-packet
+profiles and paired old/new executions with identical drivers directed this
+batch; [native_mechanism_speedup.md](native_mechanism_speedup.md) records the
+measurements and the corrections to the earlier plan.
+
+The largest regression was not native computation. Pure `ML_process` echoed
+every bound packet at the toplevel after all exports moved to the Eval target.
+Suppressing that echo in the shared runtime returned literal replay and scope
+repair to their native cost. Exact code equations then removed generic
+quadratic work in record candidates, investigation rows and judgment readings,
+loop-invariant recomputation in evaluation, and repeated formation checks in
+syntax reading. Most families became ten to sixty times faster in native packet
+time. The complete eight-question steering computation fell from 123.7 to about
+5 seconds.
+
+Criticism. These refinement choices were selected from host profiles and
+timings, then established by Isabelle code equations and complete report
+reconstruction. They were not derived by the native development cycle: no
+subject contract yet connects a profile, a timing observation or a refinement
+candidate to a native condition. That gap remains under conditions 1 and 6 of
+problems.txt, and this record does not claim machinery-driven selection.
+
+The development path is no longer dominated by one repeated check, but it is
+not yet cheap enough to rule out bottlenecks. Family, schema and scoped-pattern
+readers still re-check environment formation; certified causes are dominated by
+list-set footprint unions; and evaluation outputs reach reports through raw
+finite-set order, which constrains representation-changing refinements. Sixteen
+deep-recursion workers also exhausted memory for streamed digit replay in the
+Eval runtime; its checker now uses four workers. Practical
+usefulness under condition 5a therefore remains unestablished; theoretical
+cost bounds under 5b remain deferred until after genesis.

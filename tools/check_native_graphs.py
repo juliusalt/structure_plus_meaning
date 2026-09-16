@@ -90,7 +90,7 @@ def main():
     def assess(inputs, raw):
         path = args.output / 'results.log'
         assert path.read_text() == raw
-        reports = list(machine_reports.reports(path))
+        reports = list(machine_reports.reports(path, deferred=True))
         assert reports and reports[0]['tag'] == 'GRAPH_SCOPE' and reports[0]['indices'] == []
         scope = reports[0]['value']
         requested = scope if inputs['cases'] is None else inputs['cases']

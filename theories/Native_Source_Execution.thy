@@ -1,5 +1,5 @@
 theory Native_Source_Execution
-  imports Factor_Finite_Source_Extension_Cases Factor_Source_Observation_Investigation Factor_Executable_Environment_Values
+  imports Factor_Finite_Source_Extension_Cases Factor_Source_Observation_Investigation Factor_Executable_Environment_Values Native_Execution_Refinements
 begin
 
 setup \<open>Finite_Observation_Contracts.export @{term source_investigation}\<close>
@@ -13,6 +13,7 @@ export_code finite_source_extension_cases source_example_report source_investiga
   finite_artifact_rows Finite_Whole Finite_Anchor
   Finite_Variable Finite_Pattern_Payload Finite_Pattern_Pair Finite_Pattern_Target
   fset set nat_of_integer integer_of_nat
-  in SML module_name Native_Source_Execution file_prefix native_sources
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Native_Source_Execution file_prefix native_sources
 
 end

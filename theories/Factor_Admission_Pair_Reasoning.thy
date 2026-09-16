@@ -1,5 +1,5 @@
 theory Factor_Admission_Pair_Reasoning
-  imports Factor_Admission_Plan_Exact Factor_Learned_Investigation
+  imports Factor_Admission_Plan_Exact Factor_Learned_Investigation Native_Execution_Refinements
 begin
 
 section \<open>A reusable construction argument becomes a conditional rule\<close>
@@ -118,7 +118,8 @@ definition admission_pair_reasoning_experiment where
 export_code admission_plan admission_pair_reasoning_experiment
   finite_generated_schema_applications finite_generated_schema_rules finite_learned_investigation
   nat_of_integer integer_of_nat
-  in SML module_name Native_Learned_Reasoning file_prefix native_learned_reasoning
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Native_Learned_Reasoning file_prefix native_learned_reasoning
 
 text \<open>
   Pairing two already named admission predicates repeatedly required the same

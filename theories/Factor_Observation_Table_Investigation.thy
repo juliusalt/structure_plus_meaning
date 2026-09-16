@@ -1,5 +1,5 @@
 theory Factor_Observation_Table_Investigation
-  imports Factor_Observation_Collection_Contracts Factor_Observation_Table_Execution Finite_Observation_Contracts
+  imports Factor_Observation_Collection_Contracts Factor_Observation_Table_Execution Finite_Observation_Contracts Native_Execution_Refinements
 begin
 
 section \<open>A complete table retains rows whose computed result is empty\<close>
@@ -161,7 +161,8 @@ setup \<open>Finite_Observation_Contracts.register
 
 export_code investigation_inference investigation_basis investigation_repairs investigation_extend table_investigation
   table_investigation_observations table_investigation_relation nat_of_integer integer_of_nat
-  in SML module_name Finite_Investigation file_prefix finite_investigation
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Finite_Investigation file_prefix finite_investigation
 
 text \<open>
   Both sparse reference collections retain only nonempty results of the

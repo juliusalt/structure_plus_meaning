@@ -1,5 +1,5 @@
 theory Native_Development_Execution
-  imports Factor_Development_Comparison Native_Workflow_Execution
+  imports Factor_Constructed_Development_Execution Native_Workflow_Execution Native_Execution_Refinements
 begin
 
 setup \<open>Finite_Observation_Contracts.export @{term development_producer_investigation}\<close>
@@ -41,6 +41,7 @@ export_code native_development_batch development_condition_input native_developm
   Workflow_Input Workflow_Values Workflow_Generated Workflow_Finished Workflow_Unavailable Workflow_Executed
   native_workflow_inspect
   fset set nat_of_integer integer_of_nat
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
   in Eval module_name Native_Development file_prefix "native_development"
 
 end

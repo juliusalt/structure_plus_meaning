@@ -1,5 +1,5 @@
 theory Requirement_Source_Execution
-  imports Factor_Native_Requirement_Cases Factor_Requirement_Source_Boundary
+  imports Factor_Native_Requirement_Cases Factor_Requirement_Source_Boundary Native_Execution_Refinements
 begin
 
 section \<open>The complete source-boundary and native installation observations\<close>
@@ -12,6 +12,7 @@ export_code requirement_source_boundary_report retained_clause_control_report na
   finite_artifact_rows Finite_Whole Finite_Anchor
   Finite_Variable Finite_Pattern_Payload Finite_Pattern_Pair Finite_Pattern_Target
   fset set nat_of_integer integer_of_nat
-  in SML module_name Requirement_Source_Execution file_prefix requirement_sources
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Requirement_Source_Execution file_prefix requirement_sources
 
 end

@@ -1472,3 +1472,41 @@ retains the original inputs and complete report boundary. This finite source
 extension interface does not establish broader discovery or practical
 usefulness. Condition 5a remains open; condition 5b is deferred until after
 genesis. These are reusable bootstrap contracts, not a self-authorized handoff.
+
+
+## Execution refinements chosen from complete native profiles
+
+Three repeated execution arguments are now reusable code contracts at their
+single use sites, imported through Native_Execution_Refinements.
+
+A record reader that needs the unique record of a stated arity does not need
+every list of that arity: each exact record is a successor chain from one of
+its actual headed rows. RRA_Linked_Record_Candidates constructs those chains
+and keeps the original record filter; whole-object formation becomes a premise
+of the read instead of being checked for every enumerated list.
+
+Last-occurrence deduplication over a linearly ordered carrier, and membership
+in a finite set, can use an ordered index while returning exactly the original
+list. Ordered_Finite_Rows proves this once; Finite_Investigation_Basis_Sharing
+consumes it for basis, repairs and retention after computing every candidate
+profile once. An existing prepared judgment reader now reaches every export
+through the same import boundary rather than through per-family imports.
+
+A set that does not depend on the traversed element is computed once for the
+traversal. Factor_Invariant_Evaluation_Sharing applies this to inference
+witnesses, material satisfaction, premise joins, system formation, head
+coverage and candidate profiles. A witness is kept exactly when its projected
+rule satisfies the enabling condition, so the per-witness recomputation of the
+whole enabled family is unnecessary.
+
+A formed environment has formed artifacts. Factor_Formation_Once_Readings uses
+this once at the entry of bounded term and pattern readings and definition rows,
+so the recursions consume formation-free record, citation, payload and variable
+bodies. Citation choices share one object formation for their root.
+
+Missing use: family, schema and scoped-pattern readers still re-check
+environment formation per call. The grounding union in native program
+evaluation and footprint unions in syntax readings have a repeated-scan shape,
+but their results reach reports through raw finite-set list order. Their results
+reach reports through raw finite-set list order, so a refinement needs either
+a representation-preserving equation or a presentation-invariant comparison.

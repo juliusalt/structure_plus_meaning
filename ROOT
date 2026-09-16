@@ -1541,3 +1541,20 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Source_Development_Subjects
     Factor_Workflow_Evidence_Meaning
     Native_Source_Development
+    Native_Execution_Refinements
+    Factor_Development_Execution_Sharing
+    Factor_Workflow_Execution_Sharing
+    Factor_Source_Execution_Sharing
+    Factor_Steered_Execution_Sharing
+    Complete_Term_References
+    Constructed_Assessment_Functions
+    Factor_Constructed_Development_Execution
+    Projected_Identity_Execution
+    Factor_Development_Report_Identity
+    Finite_Collection_Subset_Execution
+    Finite_Filtered_Keyed_Products
+    RRA_Linked_Record_Candidates
+    Ordered_Finite_Rows
+    Finite_Investigation_Basis_Sharing
+    Factor_Invariant_Evaluation_Sharing
+    Factor_Formation_Once_Readings

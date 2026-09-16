@@ -12,6 +12,7 @@ import uuid
 import check_reasoning as review
 import finite_presentation_cases as values
 import investigate
+import native_execution_runtime
 import proved_code
 import reader_construction_cases as construction
 
@@ -212,8 +213,11 @@ def main():
               "source_spec": str(args.source_spec.resolve()), "catalogs": str(args.catalogs.resolve())}
     try:
         runtime = output / "execute.ML"
-        runtime.write_text("use " + investigate.ml_string(str(engine)) + ";\n" + PRELUDE)
+        code, command, runtime_inputs = native_execution_runtime.prepare(
+            proof, engine, "use " + investigate.ml_string(str(engine)) + ";\n" + PRELUDE, args.poly.resolve(), output)
+        runtime.write_text(code)
         inputs = [proof_path, engine, args.poly.resolve(), args.source_spec.resolve(), runtime,
+                  *runtime_inputs, output / "runtime-command.json",
                   args.catalogs.resolve() / "receipt.json", *review.loaded_tool_sources()]
         inputs += [args.catalogs.resolve() / ("library-" + name + ".json") for name in catalogs]
         tracked = {str(p): review.digest(p) for p in inputs} | sources
@@ -221,7 +225,7 @@ def main():
         proved_code.archive_execution_inputs(output, report, tracked, external=[args.poly])
         log_path = output / "results.log"
         with log_path.open("w") as log:
-            completed = subprocess.run([str(args.poly.resolve()), "--script", str(runtime)],
+            completed = subprocess.run(command,
                                        stdout=log, stderr=subprocess.STDOUT, timeout=60)
         assert completed.returncode == 0, "See the retained results.log."
         results = [json.loads(line.removeprefix("NATIVE_INPUT ")) for line in log_path.read_text().splitlines()

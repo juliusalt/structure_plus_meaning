@@ -1,5 +1,5 @@
 theory Requirement_Plan_Execution
-  imports Factor_Portable_Table_Development Factor_Investigation_Input_Development Factor_Reasoning_Execution
+  imports Factor_Portable_Table_Development Factor_Investigation_Input_Development Factor_Reasoning_Execution Native_Execution_Refinements
 begin
 
 section \<open>Complete executable observations accompany the actual subjects\<close>
@@ -51,7 +51,8 @@ export_code admission_sequence admission_sequence_reports portable_requirement_r
   Existing_Admission Paired_Admission Collected_Admission Pair_Admission_Instruction List_Admission_Instruction
   Finite_Payload Finite_Pair Finite_Target Finite_Whole finite_empty_artifact
   finite_reasoning_term_equal nat_of_integer integer_of_nat
-  in SML module_name Requirement_Plans file_prefix requirement_plans
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Requirement_Plans file_prefix requirement_plans
 
 text \<open>
   Each report retains both complete table inputs, all seven actual condition

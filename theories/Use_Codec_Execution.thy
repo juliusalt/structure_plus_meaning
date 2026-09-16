@@ -1,11 +1,12 @@
 theory Use_Codec_Execution
-  imports RRA_Use_Codec_Investigation
+  imports RRA_Use_Codec_Investigation Native_Execution_Refinements
 begin
 
 setup \<open>Finite_Observation_Contracts.export @{term use_codec_investigation}\<close>
 
 export_code use_codec_packet use_codec_indices use_codec_inspect use_coordinate_bound use_path_budget
   length fset set nat_of_integer integer_of_nat
-  in SML module_name Use_Codec_Execution file_prefix use_codec
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Use_Codec_Execution file_prefix use_codec
 
 end

@@ -1,5 +1,5 @@
 theory Factor_Finite_Inference_Sources
-  imports Factor_Executable_Packages Factor_Executable_Metadata Factor_Finite_Artifact_Enumeration
+  imports Factor_Executable_Packages Factor_Executable_Metadata Factor_Finite_Artifact_Enumeration Native_Execution_Refinements
 begin
 
 section \<open>One finite source constructor for literal clauses\<close>
@@ -77,7 +77,8 @@ definition finite_literal_native_checks :: "octets \<Rightarrow> bool list" wher
        finite_proof_node_readings (finite_literal_extension p) (Some []) []]"
 
 export_code finite_literal_native_checks nat_of_integer integer_of_nat
-  in SML module_name Finite_Literal_Sources file_prefix finite_literal_sources
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Finite_Literal_Sources file_prefix finite_literal_sources
 
 text \<open>
   The payload parameter supplies one source-construction family. The closed

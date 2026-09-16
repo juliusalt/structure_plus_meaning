@@ -21,14 +21,14 @@ def main():
     parser.add_argument('--workers', type=int, default=16)
     args = parser.parse_args()
     questions, requests, scope = [], [], None
-    with closing(machine_reports.reports(args.comparison)) as records:
+    with closing(machine_reports.reports(args.comparison, deferred=True)) as records:
         for row in records:
             if row['tag'] == 'SOURCE_SCOPE':
                 assert scope is None
                 scope = row['value']
             elif row['tag'] == 'SOURCE_POLICY_CONTEXT':
                 assert row['indices'] == [len(questions)]
-                questions.append(row['value']['question'])
+                questions.append(machine_reports.field(row, 'question'))
             elif row['tag'] == 'SOURCE_REQUEST':
                 assert row['indices'] == [len(requests)]
                 requests.append(row['value'])
@@ -40,9 +40,9 @@ def main():
 
     def assess(inputs, log):
         count = 0
-        with closing(machine_reports.reports(log)) as actual, closing(machine_reports.reports(args.comparison)) as reference:
+        with closing(machine_reports.reports(log, deferred=True)) as actual, closing(machine_reports.reports(args.comparison, deferred=True)) as reference:
             for old in reference:
-                assert next(actual, None) == old
+                assert machine_reports.record_equal(next(actual, None), old)
                 count += 1
             assert next(actual, None) is None
         return {'reports_directly_equal': count, 'complete_original_input_roundtrip': True,

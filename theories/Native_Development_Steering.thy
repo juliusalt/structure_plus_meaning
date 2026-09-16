@@ -1,5 +1,5 @@
 theory Native_Development_Steering
-  imports Factor_Steered_Development Native_Development_Execution
+  imports Factor_Steered_Execution_Sharing Native_Development_Execution Native_Execution_Refinements
 begin
 
 setup \<open>Finite_Observation_Contracts.export @{term development_subject_investigation}\<close>
@@ -33,6 +33,7 @@ export_code native_steered_development development_steering_choice steered_devel
   Workflow_Input Workflow_Values Workflow_Generated Workflow_Finished Workflow_Unavailable Workflow_Executed
   native_workflow_inspect
   fset set nat_of_integer integer_of_nat
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
   in Eval module_name Native_Steering file_prefix "native_steering"
 
 

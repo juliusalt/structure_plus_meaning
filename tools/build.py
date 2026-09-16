@@ -137,7 +137,7 @@ def run_build(args, invocation: str) -> dict:
     log_path = output / "build.log"
     env = os.environ.copy()
     env["USER_HOME"] = str(args.cache_home.resolve())
-    command = [args.isabelle, "build", "-v", "-o", f"threads={args.threads}",
+    command = [args.isabelle, "build", "-b", "-v", "-o", f"threads={args.threads}",
                "-o", f"timeout={args.timeout}"]
     command += ["-d", str(ROOT), *args.session] if args.session else ["-D", str(ROOT)]
     receipt = {"invocation": invocation, "status": "running", "started_utc": utc_now(),

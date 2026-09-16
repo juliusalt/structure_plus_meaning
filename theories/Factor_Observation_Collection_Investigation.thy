@@ -1,5 +1,5 @@
 theory Factor_Observation_Collection_Investigation
-  imports Factor_Observation_Collection_Contracts Factor_Keyed_Set_Execution Finite_Observation_Contracts
+  imports Factor_Observation_Collection_Contracts Factor_Keyed_Set_Execution Finite_Observation_Contracts Native_Execution_Refinements
 begin
 
 section \<open>Nested profiles retain both levels of finite-set identity\<close>
@@ -162,7 +162,8 @@ setup \<open>Finite_Observation_Contracts.register
 
 export_code investigation_inference investigation_basis investigation_repairs investigation_extend collection_investigation
   collection_investigation_observations collection_investigation_relation nat_of_integer integer_of_nat
-  in SML module_name Finite_Investigation file_prefix finite_investigation
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Finite_Investigation file_prefix finite_investigation
 
 text \<open>
   The source profiles are outputs of the actual native profile computation.

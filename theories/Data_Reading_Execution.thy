@@ -1,5 +1,5 @@
 theory Data_Reading_Execution
-  imports Factor_Data_Reading_Investigation Factor_Executable_Artifact_Values Factor_Data_Reading_Fixture
+  imports Factor_Data_Reading_Investigation Factor_Executable_Artifact_Values Factor_Data_Reading_Fixture Native_Execution_Refinements
 begin
 
 setup \<open>Finite_Observation_Contracts.export @{term data_reading_investigation}\<close>
@@ -11,6 +11,7 @@ export_code data_reading_packet data_reading_indices data_reading_inspect
   finite_artifact_rows finite_enumerated_artifact
   Finite_Target Finite_Payload Finite_Pair Finite_Whole Finite_Anchor
   fset set nat_of_integer integer_of_nat
-  in SML module_name Data_Reading_Execution file_prefix data_reading
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Data_Reading_Execution file_prefix data_reading
 
 end

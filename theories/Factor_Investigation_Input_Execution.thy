@@ -1,5 +1,5 @@
 theory Factor_Investigation_Input_Execution
-  imports Factor_Investigation_Input_Contracts Factor_Observation_Scope_Execution
+  imports Factor_Investigation_Input_Contracts Factor_Observation_Scope_Execution Native_Execution_Refinements
 begin
 
 section \<open>Finite execution calls the actual complete input operation\<close>
@@ -20,7 +20,8 @@ lemma investigation_input_octets_code [code]:
     (auto simp: list_all_iff octets_formed_def split: prod.splits)
 
 export_code investigation_input_octets nat_of_integer integer_of_nat
-  in SML module_name Native_Investigation_Input file_prefix native_investigation_input
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Native_Investigation_Input file_prefix native_investigation_input
 
 text \<open>
   The exported Boolean is defined by the actual native whole-input call.

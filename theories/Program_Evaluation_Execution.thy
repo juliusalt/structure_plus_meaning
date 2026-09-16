@@ -1,5 +1,5 @@
 theory Program_Evaluation_Execution
-  imports Factor_Native_Evaluation_Cases
+  imports Factor_Native_Evaluation_Cases Native_Execution_Refinements
 begin
 
 setup \<open>Finite_Observation_Contracts.export @{term program_evaluation_investigation}\<close>
@@ -14,6 +14,7 @@ export_code native_evaluation_report program_evaluation_workload_indices program
   Finite_Variable Finite_Pattern_Payload Finite_Pattern_Pair Finite_Pattern_Target
   Finite_Target Finite_Payload Finite_Pair
   fset set nat_of_integer integer_of_nat
-  in SML module_name Program_Evaluation_Execution file_prefix program_evaluation
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Program_Evaluation_Execution file_prefix program_evaluation
 
 end

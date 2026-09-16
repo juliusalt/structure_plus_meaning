@@ -1,5 +1,5 @@
 theory Factor_Requirement_Source_Boundary
-  imports Finite_Requirement_Artifact_Admission
+  imports Finite_Requirement_Artifact_Admission Native_Execution_Refinements
 begin
 
 section \<open>A source-domain check does not identify the source's meaning\<close>
@@ -99,7 +99,8 @@ proof -
 qed
 
 export_code requirement_source_boundary_report integer_of_nat
-  in SML module_name Requirement_Source_Boundary file_prefix requirement_source_boundary
+   complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Requirement_Source_Boundary file_prefix requirement_source_boundary
 
 text \<open>
   The two complete ordinary programs have the same source domain and admit

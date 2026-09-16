@@ -21,7 +21,7 @@ def compressed_boundary(path):
     counts = Counter()
     checksum = hashlib.sha256()
     try:
-        for row in compressed_machine_reports.reports(compressed):
+        for row in compressed_machine_reports.reports(compressed, deferred=True):
             counts[row['tag']] += 1
             compressed_machine_reports.canonical_update(checksum, row)
     except (EOFError, zlib.error) as error:

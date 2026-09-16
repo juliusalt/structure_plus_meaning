@@ -51,6 +51,8 @@ def main():
                 'cases': args.cases, 'selections': [[], [0], [0, 1]]},
         input_paths=[Path(__file__), *(Path(c['path']) for c in contracts)],
         program=program, assess=assess, project=args.project.resolve(), timeout=args.timeout,
+        # Sixteen deep-recursion workers exhaust the compact Poly/ML address space for this packet.
+        workers=4,
         question='Which complete persistent digit replay recordings preserve the independently established '
                  'bounded operation and original certified-cause meaning on every original and subsequent input?',
         boundary='The unchanged proved native packet and registered original-subject contracts own every '

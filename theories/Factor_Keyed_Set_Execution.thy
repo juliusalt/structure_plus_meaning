@@ -1,5 +1,5 @@
 theory Factor_Keyed_Set_Execution
-  imports Factor_Keyed_Set_Encodings
+  imports Factor_Keyed_Set_Encodings Native_Execution_Refinements
 begin
 
 section \<open>Finite interfaces call the actual compiled collection comparison\<close>
@@ -102,6 +102,7 @@ lemma keyed_reference_decision_code [code]:
     (simp add: octets_formed_def finsert_commute split: if_splits; auto simp: fset_eq_iff)
 
 export_code keyed_octet_sets keyed_octet_profiles keyed_octet_losses keyed_reference_decision keyed_reference_call_formed
-  nat_of_integer integer_of_nat in SML module_name Native_Keyed_Sets file_prefix native_keyed_sets
+  nat_of_integer integer_of_nat  complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
+  in Eval module_name Native_Keyed_Sets file_prefix native_keyed_sets
 
 end

@@ -13,24 +13,44 @@ import uuid
 
 import investigate
 import proved_code
+import prove_context
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--proof", type=Path, required=True)
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--proof", type=Path)
+    source.add_argument("--main-project", type=Path,
+                        help="Export directly from a fully checked unchanged main session.")
     parser.add_argument("--project", type=Path, default=proved_code.ROOT)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--module", action="append", required=True, metavar="THEORY:FILENAME")
     args = parser.parse_args()
-    proof_path, output = args.proof.resolve(), args.output.resolve()
+    output = args.output.resolve()
     modules = [value.split(":") for value in args.module]
     assert all(len(row) == 2 and re.fullmatch(r"[A-Za-z_][A-Za-z_0-9]*", row[0])
                and re.fullmatch(r"[A-Za-z_][A-Za-z_0-9]*\.ML", row[1]) for row in modules)
     assert len({name for _, name in modules}) == len(modules)
-    project = args.project.resolve()
-    proof, sources = proved_code.accepted_proof(proof_path, project=project,
-                                               required_theories=[t for t, _ in modules])
-    snapshot = proof_path.parent
+    if args.main_project:
+        project = args.main_project.resolve()
+        session, accepted_sources, parent_inputs = prove_context.accepted_parent(project)
+        proof_path = project / 'validation/build.json'
+        main = json.loads(proof_path.read_text())
+        assert all(t in accepted_sources for t, _ in modules)
+        proof = {'status': 'accepted', 'exit_code': 0, 'sources_unchanged': True,
+                 'sources': accepted_sources, 'effective_source_hashes': accepted_sources,
+                 'checked_theories': len(accepted_sources), 'parent_theories_reused': 0,
+                 'roots': [t for t, _ in modules], 'command': main['command'],
+                 'main_proof_inputs': parent_inputs,
+                 'proof_boundary': 'The unchanged complete main build and source checks were verified by accepted_parent.'}
+        sources = {str(project / 'theories' / (n + '.thy')): sha for n, sha in accepted_sources.items()}
+        snapshot = project
+    else:
+        project = args.project.resolve()
+        proof_path = args.proof.resolve()
+        proof, sources = proved_code.accepted_proof(proof_path, project=project,
+                                                   required_theories=[t for t, _ in modules])
+        snapshot = proof_path.parent
     effective = {str(snapshot / "theories" / (name + ".thy")): sha
                  for name, sha in proof["effective_source_hashes"].items()}
     assert all(investigate.file_hash(Path(p)) == sha for p, sha in effective.items())
@@ -40,16 +60,24 @@ def main():
     tracked = {str(p.resolve()): investigate.file_hash(p) for p in
                [proof_path, root_file, Path(__file__), Path(proved_code.__file__),
                 Path(investigate.__file__)]} | sources | effective
+    tracked.update(proof.get('main_proof_inputs', {}))
     assert not output.exists(), "Retain preceding exports and use a new directory."
     output.mkdir(parents=True)
     report = {"status": "failed", "invocation": str(uuid.uuid4()),
               "source_project": str(project),
               "proof": str(proof_path), "proof_sha256": investigate.digest(original),
               "session": session, "execution_inputs": tracked}
-    command = ["isabelle", "export", "-n", "-d", str(snapshot), "-O", str(output / "code")]
+    command = ["isabelle", "export", "-n"]
+    build_command = proof.get('command', [])
+    for i, item in enumerate(build_command[:-1]):
+        if item == '-d' and Path(build_command[i + 1]).resolve() != snapshot:
+            parent_directory = Path(build_command[i + 1]).resolve()
+            command += ['-d', str(parent_directory)]
+            tracked[str(parent_directory / 'ROOT')] = investigate.file_hash(parent_directory / 'ROOT')
+    command += ["-d", str(snapshot), "-O", str(output / "code")]
     for theory, filename in modules:
-        command += ["-x", f"*{theory}:code/{filename}"]
-        command += ["-x", f"*{theory}:subjects/*.yxml"]
+        command += ["-x", f"*.{theory}:code/{filename}"]
+        command += ["-x", f"*.{theory}:subjects/*.yxml"]
     command.append(session)
     report["command"] = command
     log_path = output / "export.log"
@@ -63,14 +91,22 @@ def main():
         assert all(investigate.file_hash(Path(p)) == sha for p, sha in tracked.items())
         exports = []
         for theory, filename in modules:
-            paths = list((output / "code").rglob(filename))
+            paths = [p for p in (output / "code").rglob(filename)
+                     if p.parent.name == 'code' and p.parent.parent.name.endswith('.' + theory)]
             assert len(paths) == 1, (theory, filename, paths)
             path = paths[0]
             entry = {"path": str(path), "sha256": investigate.file_hash(path)}
             contracts = [{"path": str(p), "sha256": investigate.file_hash(p)}
                          for p in sorted((path.parent.parent / "subjects").glob("*.yxml"))]
             derived = copy.deepcopy(proof)
+            original_theory = (project / 'theories' / (theory + '.thy')).read_text()
+            targets = re.findall(r'\bin\s+(Eval|SML)\s+module_name\s+\S+\s+file_prefix\s+"?'
+                                 + re.escape(path.stem) + r'"?(?=\s|$)', original_theory)
+            assert len(targets) == 1, 'Expected one declared target for the exported module.'
             derived.update(exports=[entry], subject_contracts=contracts,
+                           code_target=targets[0],
+                           complete_artifact_transport='complete_artifact_reference' in path.read_text(),
+                           complete_term_transport='complete_term_reference' in path.read_text(),
                            export_theory=theory, export_command=command,
                            pre_export_receipt_sha256=investigate.digest(original),
                            export_exit_code=0, export_log=str(log_path),

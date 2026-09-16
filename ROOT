@@ -52,7 +52,9 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Executable_Terms
     Factor_Executable_Data_Values
     Factor_Executable_Artifact_Values
+    Factor_Executable_Environment_Values_Base
     Factor_Executable_Environment_Values
+    Factor_Finite_Inference_Sources_Base
     Factor_Finite_Inference_Sources
     Factor_Finite_Inference_Source_Checks
     Factor_Closed_Native_Definitions
@@ -662,6 +664,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Construction_Cause_Admission
     Factor_Construction_Cause_Contracts
     Finite_Investigation_Interface
+    Presentation_Completion_Investigation_Base
     Presentation_Completion_Investigation
     Presentation_Observation_Contracts
     Factor_Permission_Invariance
@@ -669,6 +672,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Permission_Families
     Factor_Permission_Admission
     Factor_Permission_Completion
+    Factor_Permission_Investigation_Base
     Factor_Permission_Investigation
     Factor_Adoption_Comparison
     Factor_Adoption_Permission_Admission
@@ -678,10 +682,12 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Substitution_Readings
     Factor_Substitution_Admission
     Factor_Substitution_Contracts
+    Factor_Substitution_Investigation_Base
     Factor_Substitution_Investigation
     Factor_Inference_Value_Maps
     Factor_Pattern_Bindings
     Factor_Proof_Schemes
+    Factor_Proof_Probe_Investigation_Base
     Factor_Proof_Probe_Investigation
     Factor_Proof_Scheme_Instances
     Factor_Pattern_Specialization
@@ -700,6 +706,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Prescribed_Schemas
     Factor_Prescribed_Environments
     Factor_Clause_Specialization_Presentations
+    Factor_Schema_Socket_Investigation_Base
     Factor_Schema_Socket_Investigation
     Factor_List_Set_Presentations
     Factor_Observation_Admission
@@ -707,7 +714,9 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Observation_Components
     Factor_Observation_Contracts
     Factor_Observation_Equations
+    Factor_Observation_Execution_Base
     Factor_Observation_Execution
+    Factor_Observation_Investigation_Base
     Factor_Observation_Investigation
     Factor_Observation_Presentations
     Factor_Observation_Profiles
@@ -718,7 +727,9 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Observation_Scope_Admission
     Factor_Observation_Scope_Clauses
     Factor_Observation_Scope_Contracts
+    Factor_Observation_Scope_Execution_Base
     Factor_Observation_Scope_Execution
+    Factor_Observation_Scope_Investigation_Base
     Factor_Observation_Scope_Investigation
     Factor_Observation_Scope_Presentations
     Factor_Observation_Scope_Rows
@@ -729,8 +740,10 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Keyed_Set_Clauses
     Factor_Keyed_Set_Contracts
     Factor_Keyed_Set_Encodings
+    Factor_Keyed_Set_Execution_Base
     Factor_Keyed_Set_Execution
     Factor_Observation_Collection_Contracts
+    Factor_Observation_Collection_Investigation_Base
     Factor_Observation_Collection_Investigation
     Factor_Related_Sets
     Factor_Binary_Result_Comparison
@@ -739,23 +752,29 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Data_Product_Components
     Factor_Data_Product_Contracts
     Factor_Data_Product_Equations
+    Factor_Data_Product_Execution_Base
     Factor_Data_Product_Execution
     Factor_Keyed_Calculation
     Factor_Observation_Table_Clauses
     Factor_Observation_Table_Components
     Factor_Observation_Table_Contracts
+    Factor_Observation_Table_Controls_Base
     Factor_Observation_Table_Controls
     Factor_Observation_Table_Equations
+    Factor_Observation_Table_Execution_Base
     Factor_Observation_Table_Execution
+    Factor_Observation_Table_Investigation_Base
     Factor_Observation_Table_Investigation
     Factor_Observation_Table_Native
     Factor_Observation_Table_Witnesses
+    Factor_Pair_Scope_Investigation_Base
     Factor_Pair_Scope_Investigation
     Factor_Scope_Computation_Contracts
     Finite_Observation_Tables
     Finite_Derived_Observations
     Finite_Observation_Contracts
     Factor_Admission_Installation
+    Factor_Admission_Pair_Reasoning_Base
     Factor_Admission_Pair_Reasoning
     Factor_Admission_Plan_Clauses
     Factor_Admission_Plan_Contracts
@@ -768,11 +787,14 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Investigation_Input_Contracts
     Factor_Investigation_Input_Development
     Factor_Investigation_Input_Development_Execution
+    Factor_Investigation_Input_Execution_Base
     Factor_Investigation_Input_Execution
+    Factor_Investigation_Input_Investigation_Base
     Factor_Investigation_Input_Investigation
     Factor_Investigation_Input_Presentations
     Factor_Learned_Investigation
     Factor_Learned_Schemas
+    Factor_Reasoning_Execution_Base
     Factor_Reasoning_Execution
     Factor_Schema_Generation
     Observation_Revision_Investigation
@@ -823,6 +845,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Observed_Preservation
     Factor_Guided_Investigation
     Factor_Application_Comparison
+    Factor_Application_Execution_Base
     Factor_Application_Execution
     Factor_Binding_Guided_Investigation
     Factor_Source_Shape_Requirements
@@ -833,13 +856,16 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Generation_Monotonicity
     Factor_Recursive_Construction_Investigation
     Factor_Ground_Schema_Reports
+    Factor_Finite_Inference_Example_Base
     Factor_Finite_Inference_Example
+    Factor_Finite_Inference_Premises_Base
     Factor_Finite_Inference_Premises
     Finite_Compatible_Unions
     Finite_Demand_Selection
     Finite_Directed_Contributions
     Finite_Candidate_Assembly
     Finite_Indexed_Candidate_Assembly
+    Finite_Directed_Execution_Base
     Finite_Directed_Execution
     Factor_Application_Problems
     Factor_Observation_Assembly
@@ -880,6 +906,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Keyed_Table_Execution
     Option_List_Maps
     Paired_Relation_Observations
+    Checked_Requirement_Execution_Base
     Checked_Requirement_Execution
     Factor_Admission_Goal_Support
     Factor_Admission_Request_Boundary
@@ -910,11 +937,15 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Requirement_Result_Values
     Finite_Portable_Table_Guard
     Finite_Requirement_Artifact_Admission
+    Requirement_Artifact_Execution_Base
     Requirement_Artifact_Execution
+    Requirement_Plan_Execution_Base
     Requirement_Plan_Execution
     Factor_Finite_Equality_Source
     Factor_Requirement_Packages
+    Factor_Requirement_Source_Boundary_Base
     Factor_Requirement_Source_Boundary
+    Factor_Requirement_Source_Examples_Base
     Factor_Requirement_Source_Examples
     Factor_Native_Requirement_Source_Models
     Factor_Native_Requirement_Cases
@@ -924,6 +955,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Retained_Clause_Admission
     RRA_Finite_Inclusion
     Requirement_Source_Execution
+    Retained_Clause_Execution_Base
     Retained_Clause_Execution
     Finite_Set_Encoding
     Factor_Finite_Schema_Renaming
@@ -995,6 +1027,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Native_Admission_Investigation
     Finite_Assessed_Investigation
     Finite_Subject_Investigation
+    Native_Admission_Execution_Base
     Native_Admission_Execution
     Native_Admission_Investigation_Execution
     RRA_Finite_Environment_Preservation
@@ -1529,8 +1562,10 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Workflow_Requirements
     Factor_Workflow_Stage
     Finite_Selected_Assessments
+    Native_Development_Execution_Base
     Native_Development_Execution
     Native_Development_Steering
+    Native_Workflow_Execution_Base
     Native_Workflow_Execution
     Factor_Development_Criterion_Sources
     Factor_Finite_Development_Questions
@@ -1558,3 +1593,4 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Investigation_Basis_Sharing
     Factor_Invariant_Evaluation_Sharing
     Factor_Formation_Once_Readings
+    Factor_Join_Reading_Conditions

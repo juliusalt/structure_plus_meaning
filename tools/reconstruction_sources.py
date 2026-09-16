@@ -69,7 +69,7 @@ def local_python_closure(directory, seeds):
     return files
 
 
-def collect(project, recipe, poly):
+def collect(project, recipe, poly, *, isabelle_version=None):
     if not __debug__:
         raise ValueError("Source-boundary collection requires assertions.")
     project, recipe, poly = map(lambda path: path.resolve(), [project, recipe, poly])
@@ -88,7 +88,8 @@ def collect(project, recipe, poly):
         files[item] = digest(path)
     assert investigate.current_sources(sources)
     assert all(digest(project / path) == sha for path, sha in files.items()), "Inputs changed during collection."
-    version = subprocess.run(["isabelle", "version"], capture_output=True, text=True, check=True).stdout.strip()
+    version = isabelle_version or subprocess.run(["isabelle", "version"], capture_output=True, text=True,
+                                                check=True).stdout.strip()
     return {
         "version": 1, "roots": list(roots),
         "toolchain": {"isabelle": version, "python": platform.python_version(), "poly_sha256": digest(poly)},

@@ -1,19 +1,6 @@
 theory Native_Development_Execution
-  imports Factor_Constructed_Development_Execution Native_Workflow_Execution Native_Execution_Refinements
+  imports Native_Development_Execution_Base Native_Execution_Refinements
 begin
-
-setup \<open>Finite_Observation_Contracts.export @{term development_producer_investigation}\<close>
-
-definition native_development_indices :: "nat list" where
-  "native_development_indices=[0..<length development_case_inputs]"
-
-definition native_development_batch :: "native_development_question list \<Rightarrow>
-    (nat\<times>native_development_question\<times>native_development_report\<times>finite_factor_term list option) list" where
-  "native_development_batch qs=Parallel.map (\<lambda>(i,Q). (i,native_development_packet Q)) (zip [0..<length qs] qs)"
-
-lemma native_development_batch_at:
-  "i<length qs \<Longrightarrow> native_development_batch qs!i=(i,native_development_packet (qs!i))"
-  by (simp add: native_development_batch_def Parallel.map_def)
 
 export_code native_development_batch development_condition_input native_development_question_input
   finite_enumerated_artifact finite_enumerated_environment
@@ -43,5 +30,7 @@ export_code native_development_batch development_condition_input native_developm
   fset set nat_of_integer integer_of_nat
    complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
   in Eval module_name Native_Development file_prefix "native_development"
+
+setup \<open>Finite_Observation_Contracts.export @{term development_producer_investigation}\<close>
 
 end

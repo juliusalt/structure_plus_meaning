@@ -1,5 +1,5 @@
 theory Factor_Proof_Scheme_Instances
-  imports Factor_Proof_Schemes Factor_Proof_Probe_Investigation Factor_Material_Meaning
+  imports Factor_Proof_Schemes Factor_Proof_Probe_Investigation_Base Factor_Material_Meaning
 begin
 
 section \<open>One inference uses the same constructor for every binding value type\<close>

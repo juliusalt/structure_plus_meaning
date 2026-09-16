@@ -1,5 +1,5 @@
 theory Factor_Finite_Child_Sources
-  imports Factor_Finite_Inference_Sources
+  imports Factor_Finite_Inference_Sources_Base
 begin
 
 section \<open>The new package retains all original source artifacts and bindings\<close>

@@ -1,5 +1,5 @@
 theory Factor_Native_Node_Cases
-  imports Factor_Finite_Proof_Node_Installation Retained_Clause_Execution
+  imports Factor_Finite_Proof_Node_Installation Retained_Clause_Execution_Base
 begin
 
 type_synonym native_node_metadata =

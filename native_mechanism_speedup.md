@@ -1,546 +1,351 @@
-# Making the whole native development machinery efficient
+# Making native development and validation fast
 
-## Objective and evidence boundary
+Updated 2026-09-16 from the committed speedup batch and the subsequent local
+export-theory split. This replaces the original proposal, interim timing
+inventory, and completed work presented as future tasks.
 
-The owner's objective is to remove native execution as a development bottleneck,
-reusing the replay/history speedup across the remaining mechanisms and seeking
-orders-of-magnitude improvement. This plan covers the complete current executable
-inventory and the missing measurement coverage, not only the newest dispatcher.
-It proposes implementation and validation; it does not claim those speedups have
-already been obtained or that every suspected hotspot has been measured.
+## Current result
 
-The inspected baseline is `f460a9a34d2f5e70444bb8044a22d539af49ffd5`.
-The relevant performance commit is
-`0ff553f9db580b05f426397966a166f627bc0b17`, committed on 2026-09-16 at
-01:38:12 +03:00: **Share complete native packets and execute independent stages
-in parallel**. Identify it by its content and hash rather than “yesterday”.
+**An ordinary commit cycle now runs without a complete build: this batch was
+validated in 831 s. Digit replay and decision replay still keep a cycle that
+touches every recipe above single-digit minutes, and the reconstruction transport
+is outside presentation classes. The speedup objective is unfinished.**
+The previous delivered commit is `4becc454be0d9b7c94d71fff0fe280a4833ee3c3`
+(`Remove repeated native execution work across validation families`). This batch
+commits the export-theory split, the incremental check and the host verification
+corrections.
 
-The review inspected that commit's 55 theory files, its execution/transport
-tools, the current dependency graph, all 50 reconstruction recipes and their
-retained timing evidence. Every file in all 50 source manifests matches the
-current repository bytes. Some current verification files refer to an earlier
-receipt at `eba0edc`; those Git objects were read and their recorded SHA-256
-identities checked before extracting timings. The inventory at the end records
-every family, including the already fast and previously optimized ones.
+The [measurement ledger](validation/reconstruction/native-speedup-observations.json)
+retains the latest stage timings, reported outcomes, source identities, cold-suite
+logs and readiness failures. It records physical observations, not semantic
+admission; its per-recipe entries predate this batch. The
+[last complete recipe review](validation/reconstruction/current-verified.json)
+and [incremental check receipt](validation/incremental-check.json) describe this
+batch's 1,590-theory workspace.
 
-The previous plan-review delay was a fresh Isabelle reconstruction that rebuilt
-Pure/HOL before entering the project session. It was interrupted without an
-accepted project proof or a native execution. That delay is evidence about
-bootstrap/build overhead, not a native-function profile. The retained execution
-records provide independent evidence that several native paths are also slow.
-No expensive reconstruction was launched merely to write this plan.
+| Boundary | Latest evidence | What it establishes |
+|---|---|---|
+| Delivered commit | 1,554 theories accepted; 158 host tests and 95 subtests passed, two optional-dependency skips; all 50 recipes and 5,883 complete records accepted | Proof and complete report reconstruction for `4becc45`; their committed source/tool/log identities were checked against Git contents before push. |
+| Accepted base | Complete check accepted **1,589 theories** in the fixed base directory, with source and tool identities equal to the committed build receipt | The proof base for incremental checks; this batch's workspace adds one theory, proved incrementally with its 94 dependents. |
+| Recipe executions | **All 50 recipes and 5,883 complete records accepted**; 125 tool tests and 35 kernel tests passed, two optional-dependency skips | The two lost workflow contract registrations are restored in `Native_Workflow_Execution`; `native-workflow` completes. |
+| Retained manifests | All 50 source manifests regenerated from the validated workspace | Each recipe's retained verification now binds the exact inputs it was executed with. |
+| Incremental validation | `tools/incremental_check.py` validated this batch in 831 s against a fixed accepted base | See [Development cycle structure](#development-cycle-structure); the complete build is not part of an ordinary cycle. |
+| Whole development workflow | Conditions 1, 6 and practical-usefulness gate 5a remain open | Faster native packets and successful fixtures do not establish native-driven refinement selection or acceptable real development throughput. Gate 5b remains deferred until after genesis. |
 
-This remains a candidate decomposition under
-[DEVELOPMENT_WORKFLOW.md](DEVELOPMENT_WORKFLOW.md). The actual optimization
-choices and their criticism must enter the existing native development cycle
-on represented subjects before adoption. This prose inventory and host timing
-extraction supply no native admission of the plan. Missing subject/measurement
-adapters remain explicit work, with no outside-reasoning fallback. Isabelle/HOL
-retains its established normative bootstrap role through genesis.
+## Where the time goes
+
+| Measured or recorded boundary | Time | Interpretation |
+|---|---:|---|
+| Full check for delivered revision, 12 threads | **673.91 s — 11 min 14 s** | 1,554 theories, 14:46:21–14:57:35 UTC. |
+| Full check after export-theory split, 16 threads | **625.14 s — 10 min 25 s** | 1,589 theories, 15:23:17–15:33:42 UTC. Source reorganization did not deliver validation in seconds. Different thread/source boundaries prevent treating the difference as a controlled speedup ratio. |
+| Export all 50 recipe modules from accepted main build | About **1–2 s** | Reuses the already accepted proof. Export itself is not the multi-minute bottleneck. |
+| Current streamed digit-replay check | **997.93 s — 16 min 38 s** | One execution/checking stage, after the shared build; four native workers. Delivered revision: 990.29 s. |
+| Earlier plain source-only suite | **1,470 s — 24 min 30 s** | 40 recipes accepted on an earlier source revision. |
+| Earlier compressed source-only suite | **1,598 s — 26 min 38 s** | 10 recipes attempted; digit replay failed. Together those two suites accepted 49/50, not a complete current cold run. |
+| Final delivered check start to commit creation | **35 min 49 s clock span** | 14:46:21–15:22:10 UTC: proof, executions, retries, evidence integration and intervening work. This is not a measurement of the Git commit command. |
+| Latest local check start to last recipe receipt | **About 32 min 22 s observed interval** | 15:23:17–15:55:39 UTC, ending at the receipt file timestamp. The batch still failed one recipe. |
+
+The cold suites materialized declared source/fixture inputs and rebuilt their
+project proofs from HOL without a supplied project heap. This is a source-only
+reconstruction boundary, not evidence of an empty operating-system cache or a
+fresh Pure/HOL installation. They preceded the final formation/stack fixes;
+acceptance of the later main-build exports does not retroactively validate a
+current cold reconstruction. The two suite times must not be added as serial
+wall time when their work overlapped.
+
+A previous packet-only profile reported complete steering at about **4.9 s**.
+The current complete steering checker takes **27.02 s**, its request roundtrip
+**45.10 s**, and its empty-scope check **13.30 s**, under the recorded concurrent
+recipe schedule. Source-development checking takes **38.67 s** and its request
+roundtrip **53.04 s**. Native computation, startup, transport, comparison, proof
+and final retention are distinct costs. The empty-scope time makes the need to
+measure the surrounding process concrete; it does not by itself attribute that
+cost to one operation.
+
+There is no isolated timing of Git commit/push or a complete per-phase latency
+and peak-memory account for the entire development loop. Those gaps remain
+explicit. Native packet ratios cannot stand in for edit-to-accepted-commit time.
+
+## Development cycle structure
+
+The owner requirement is an edit-to-accepted-commit cycle in single-digit
+minutes. A complete build (about 600 s) cannot be part of every cycle.
+
+**Measured cycle, this batch.** `tools/incremental_check.py check` validated the
+committed workspace against the accepted base in **831 s**: base and impact
+0.6 s, incremental proof of 95 changed and dependent theories over 1,495
+reused theories 50.3 s, recipe impact 4.1 s, exports 1.3 s, all 50 recipes and
+both host test suites 774.4 s. The change touched shared tools and the
+refinement bundle, so every recipe was executed. Digit replay (774 s) and
+decision replay (399 s) set the recipe phase; every other recipe finished
+within 192 s under eight concurrent jobs.
+
+**Complete build profile.** The latest complete build recorded 543 s elapsed
+and 3,569 s CPU on 16 threads. Proof methods took 2,099 command-seconds,
+`export_code` 1,292 and theory setup 259; HOL-Library theories re-checked inside
+the session took 139; two single proofs took 163 s each.
+
+**Host verification.** Before this batch, host verification after the native
+process took about 1,100 s across the suite. Each correction reproduces every
+retained report boundary exactly:
+
+| Cost | Correction | Effect |
+|---|---|---|
+| The dictionary reader deep-copied every referenced artifact for each occurrence | Packet and ordered-subject assessments read deferred records whose digests use each dictionary entry's retained encoding; eager readers copy an occurrence by parsing its exact encoding | Known history 147 s to 1.1 s; quoted 101 s to 1.2 s; constructed 171 s to 1.3 s; digit replay 261 s to 6.4 s; history index, digit history, certified causes, required history and certificate replay 0.2-1.7 s |
+| `json.dump` streams through the pure-Python encoder | `write_json` encodes with the C encoder and writes identical text | 125 s of native-child reasoning |
+| `freeze` rebuilt the same large terms 84,824 times | Results are shared under a lossless `marshal` key | Up to 144 s of native-child reasoning |
+
+**Incremental proof over one accepted base.** Isabelle pairs every session
+source hash with its absolute path (`Sessions.sources_shasum`), so an accepted
+heap is current only for the directory where it was built. The base therefore
+lives in one fixed directory (`/tmp/structural-accepted`).
+`incremental_check.py establish` replaces changed files there and runs the
+complete check; it is not part of an ordinary cycle. `check` refuses unless the
+base heap and database are those recorded at establishment, proves only changed
+theories and their dependents through `prove_context.py`, executes every recipe
+whose complete source manifest changed together with the host tests, and keeps
+retained verification for unchanged manifests; it propagates every failure.
+`retain` records executed recipes and `validation/incremental-check.json`. The
+dependent closures of the last fifteen commits cost 49-443 command-seconds, and
+the whole refinement closure of 95 theories took 50 s.
+
+**Correction: copying a base rebuilt the session.** A dry
+`isabelle build -n -d copy` did not report copied sources as unfinished, but a
+check inside the copy rebuilt the session and deleted the accepted heap. The dry
+run is not a currency check. The base now records its heap and database
+identity and refuses a changed heap instead of rebuilding it.
+
+**Native cost after host fixes.** Digit replay is dominated by one context:
+contexts 0-5 take 2.6 s together, context 6 takes 687 s single-threaded and the
+remaining 17 contexts 179 s. Its profile is dominated by reading joins.
+`Factor_Join_Reading_Conditions` decides join admissibility by twelve pairwise
+disjointness checks and preserves every result list; it is exact but did not
+change digit replay's cost. The refined profile shows the remaining cost is
+duplicate elimination while accumulating join results: list-set insertion
+compares each new result triple with every accumulated one. Decision replay's
+assessments take 78 s for four contexts; its investigation cycles dominate.
+
+**Open: host transport is outside presentation classes.** Every native notion
+has an owned presentation class with local contracts in the proofs, but the
+reconstruction transport does not use them. Generated code is printed to JSON by
+host ML in `tools/*.py` that pattern-matches code-generator datatypes (for
+example `N.fset a` as `N.Set xs`), no tool refers to a presentation class or
+contract, and recipes compare those printouts byte for byte. Reports therefore
+fix the stored order of finite sets, which forbids ordered or indexed set
+representations that would remove the digit replay cost above, and nothing stops
+host programs from using that representation: `check_application_comparison.py`
+enumerates subsets of `elements (fs ps)` and passes a representation-ordered list
+back into native operations. The correction is native presentation and
+comparison: retained references are native presentations of accepted results
+under their owned classes, reconstruction compares recovered subjects through
+the class contracts in the same runtime, the host stores opaque bytes and
+verdicts, and a structural check rejects host access to generated
+representations.
 
 ## Implementation record and corrections
 
-This section records the executed batch. The remaining sections keep the
-original inventory and proposals; where they conflict with the measurements
-below, the measurements govern.
+These changes are delivered in `4becc45`; they are no longer proposed work.
 
-**Correction: the dominant regression was toplevel printing, not native work.**
-Every file export was moved to the Eval target and runs in Pure `ML_process`.
-That toplevel echoes each bound value; drivers bind whole packets (for example
-`val (table,(comparison,cycles)) = N.certificate_scope_repair_packet ...`).
-The same baseline literal-replay packet ran in 0.09 s under standalone Poly/ML
-and did not finish printing in four minutes under `ML_process`. The shared
-runtime ([native_execution_runtime.py](tools/native_execution_runtime.py)) now
-sets the ML print depth to zero; tagged reports are printed explicitly as
-before. On the accepted L exports with unchanged record boundaries, certificate
-scope repair fell from 1,262.4 s to 99.1 s. Steering, source development and
-certificate coverage were unchanged, because their drivers did not print packets.
-
-**Correction: choose refinements from native profiles of complete packets.**
-A profile sweep of every family driver, with printing suppressed, exposed three
-generic costs shared by most families. Each now has one exact code equation at
-its single use site, imported through
-[Native_Execution_Refinements](theories/Native_Execution_Refinements.thy):
-
-| Refinement | Replaced cost | Contract |
-|---|---|---|
-| [RRA_Linked_Record_Candidates](theories/RRA_Linked_Record_Candidates.thy) | Every syntax reader enumerated all arity-length lists over the headed incidence (256 lists for four fields, with quadratic deduplication), rechecking whole-object formation for each list. | Candidates follow actual successor incidences from each headed row; the original record filter is unchanged, every exact record is constructed, and formation is checked once per read. |
-| [Ordered_Finite_Rows](theories/Ordered_Finite_Rows.thy) with [Finite_Investigation_Basis_Sharing](theories/Finite_Investigation_Basis_Sharing.thy) | Investigation basis, repairs and retention deduplicated all observation and candidate-pair loss rows quadratically, recomputing each candidate profile per pair. | Each profile is computed once; ordered indexes return exactly the original last-occurrence list and membership. Basis, repairs and retention are equal on every input. |
-| [Factor_Finite_Judgment_Reading_Sharing](theories/Factor_Finite_Judgment_Reading_Sharing.thy) in the bundle | Whole judgment readings visited every carrier position without the prepared formation-once data reader. | The existing proved equation now reaches every export. |
-
-Native packet times, identical drivers and inputs, old accepted C export beside
-the refined export, two threads each, measured concurrently:
-
-| Family | Before (s) | After (s) | Ratio |
-|---|---:|---:|---:|
-| encoded-environments | 53.05 | 0.85 | 63× |
-| cached-grafts | 7.56 | 0.14 | 55× |
-| generation-records | 53.97 | 1.46 | 37× |
-| native-nodes | 34.48 | 1.15 | 30× |
-| graft-admission | 3.70 | 0.13 | 29× |
-| digit-allocation, allocated-environments, use-allocation, use-codecs, environment-grafts, environment-updates | 1.1–6.0 | 0.05–0.28 | 21–24× |
-| certificate-coverage | 319.69 | 26.90 | 11.9× |
-| native-histories | 201.43 | 17.30 | 11.6× |
-| certificate-scope-repair | 66.97 | 6.80 | 9.8× |
-| requirement-decisions | 51.19 | 33.28 | 1.5× |
-| certified-causes, required-history, native-certificate-replay, native-requirements, required-causes, native-admission | 15.7–467.3 | 14.1–412.6 | 1.07–1.19× |
-
-The refined native-certificates, native-derivations and native-graphs packets
-finished in 18.9 s, 14.5 s and 44.0 s; their concurrent old runs were stopped
-before completion, so no ratio is claimed. Steering on the L export was
-unchanged (357.8 s old, 350.9 s refined, contended).
-
-**Loop-invariant evaluation.** After those refinements, a one-question steering
-profile spent 68% in four-level tuple equality. The cause was
-`finite_inference_witnesses`, which recomputed the whole enabled-rule family
-for every candidate witness in every history round, together with similar
-recomputation in material satisfaction, premise joins, system formation, head
-coverage and candidate profiles.
-[Factor_Invariant_Evaluation_Sharing](theories/Factor_Invariant_Evaluation_Sharing.thy)
-computes each invariant set once and tests a witness directly against the
-enabling condition. Every filter order and result is unchanged. One-question
-steering fell from 60.8 s to 12.2 s with the same inputs.
-
-**Formation established once.** For one development question, construction and
-admission then performed 30 native source reads, which took 87% of their time,
-with about 15,000 environment and 72,000 artifact formation checks. Every
-guarded reader re-checked formation of the whole environment at each recursive
-step, and every citation choice re-checked its artifact.
-[Factor_Formation_Once_Readings](theories/Factor_Formation_Once_Readings.thy)
-checks environment formation once at the entry of bounded term and pattern
-readings and definition rows. Artifacts of a formed environment are formed, so
-the recursions use formation-free record, citation, payload and variable bodies.
-Citation choices share one object formation per root. On the same inputs,
-construction fell from 0.48 s to 0.14 s, admission from 0.48 s to 0.14 s,
-one-question steering from 11.3 s to 3.3 s and the complete eight-question
-steering computation from 14.2 s to 4.9 s. That computation took 123.7 s before
-this batch.
-
-**Runtime memory.** Streamed digit replay was interrupted in the Eval runtime
-("Unable to increase stack"). Removing Isabelle's worker stack cap with
-`threads_stack_limit=0` did not change that; sixteen deep-recursion workers
-exhaust the compact Poly/ML address space for this packet. Its checker now uses
-four workers and completes; the uncapped stack setting remains, matching
-standalone execution.
-
-**Correction: validation repeated the same proofs.** A validation round ran the
-whole-project build from HOL and then two storage-matched source-only suites,
-each proving the same theories from HOL again, so most wall time was waiting on
-duplicated proof work. The inner loop now builds the main workspace once, exports
-every recipe module from that accepted build with
-`export_proved_code.py --main-project`, and runs all recipes against those
-exports in parallel with their complete report comparisons. Cold source-only
-reconstruction remains a release check of manifest completeness, not a step of
-every change.
-
-**Remaining costs.** Family, schema and scoped-pattern readers still check
-environment formation per call; certified causes spend most of their time in
-list-set footprint unions of `finite_join_readings`; grounding and footprint
-unions reach reports through raw finite-set list order (`elements` in
-[native_program_json.py](tools/native_program_json.py)), so a representation-
-changing refinement also needs a presentation-invariant rendering.
-
-## What the successful commit actually changed
-
-The [performance record](validation/reconstruction/concurrent-performance.json)
-reports complete execution and retention, not just a selected inner function:
-
-| Workload | Earlier run | Optimized run | Observed ratio |
-|---|---:|---:|---:|
-| Replay | 5,731.722 s | 78.564 s | 72.956× |
-| History | 2,131.231 s | 33.444 s | 63.725× |
-
-All 934 original native reports were preserved. The original comparison accounts
-explicitly for permitted finite-set presentation bijections; ordered ledgers
-remain unchanged. The final warm and cold packets were directly equal. Different
-cold-suite executions took 100.9 s and 51.5 s with a different resource boundary;
-do not mix those figures with the 16-worker measurements to calculate speedups.
-
-The change was a composition of reusable exact refinements:
-
-| Technique | Existing reusable content | What its contract permits |
-|---|---|---|
-| Compute invariant context once | [Prepared_Assessment_Functions](theories/Prepared_Assessment_Functions.thy), `Factor_Prepared_Replay_Assessments`, `Factor_Prepared_Cause_Scope_Reports` | Prepare an actual assessment function before traversing candidates; return the same complete ordered table. |
-| Memoize actual complete computations | [Memoized_Function_Sequences](theories/Memoized_Function_Sequences.thy), `Prepared_Computed_Functions`, `Optional_Constructed_Caches`, `Exact_Cache_Readings` | Cache actual evaluations under exact keys; prove every hit and execute the original operation on a miss. The entire optional result is preserved. |
-| Reuse constructor knowledge and successful results | [Optional_Success_Reuse](theories/Optional_Success_Reuse.thy), `Factor_Known_Cause_Reports`, `Factor_Known_History_Control_Construction`, `Factor_Success_Shared_History` | Consume established invariants and complete-result equations. A failed checked result still runs the omitted-guard control unless a separate theorem covers that failure. |
-| Share original producer/reference work | `Factor_Shared_Replay_Construction`, `Factor_Shared_History_Construction`, `Factor_Constructed_Original_History_Execution` | Derive original views from actual constructed results under their correspondence theorems; retain every distinct control and refusal. |
-| Prepare equality and inspections once | `Nested_Artifact_Value_Identity`, `Generation_Identity_Maps`, `Factor_Nested_Replay_Identity`, `Factor_Nested_History_Identity`, `Finite_Prepared_Reader_Inspections`, `Finite_Shared_Inspection_Rows` | Compare injective complete structural representations and prepare inspection before the facet loop. No field or optional level is discarded. |
-| Improve finite collection operations | `Finite_Sorted_Set_Execution`, `Finite_Ordered_Relation_Checks`, `Finite_Relation_Functionality_Execution`, `Finite_Collection_Equality_Execution`, `RRA_Ordered_Artifact_Formation` | Sort then remove adjacent set duplicates, scan ordered subsets, avoid unnecessary self/reverse comparisons, and use exact equality fast paths. Set laws do not apply to counted data or premise occurrences. |
-| Construct syntax without repeatedly rebuilding prefixes | `Factor_Finite_Syntax_Accumulation`, [Factor_Finite_Accumulated_Data_Syntax](theories/Factor_Finite_Accumulated_Data_Syntax.thy) | Place rows at final addresses and accumulate them once, with the original complete optional syntax result. |
-| Reuse observations and revisions already computed | `Finite_Assessed_Observation_Readings`, `Context_Source_Projections`, `Factor_Packet_Observation_Readings`, [Finite_Investigation_Execution_Sharing](theories/Finite_Investigation_Execution_Sharing.thy), [Shared_Investigation_Cycles](theories/Shared_Investigation_Cycles.thy) | Read actual constructed cells; share relation, selected values and followed basis. Changed facet lists still receive their required computations. |
-| Expose independent computations | [Parallel_Assessment_Execution](theories/Parallel_Assessment_Execution.thy), `Factor_Packet_Stages`, `Factor_Parallel_Packet_Cycles` | Preserve complete ordered maps while independently executing contexts, inspections and selection cycles through Isabelle's Eval/Pure runtime. |
-| Share full output values and reconstruct occurrences | [Complete_Value_References](theories/Complete_Value_References.thy), `Complete_Object_References`, `Value_Reference_Identity_Maps`, `Ordered_Environment_Artifact_Objects`, [shared_artifact_reports.py](tools/shared_artifact_reports.py) | Retain a complete dictionary and exact occurrence references. Decode to the entire original report, including malformed values and multiplicities. |
-
-There was no deletion of inconvenient methods, subjects, checks or results.
-Neither a new thread count nor compression alone explains the improvement.
-The reference dictionary reduced replay's uncompressed output from about
-6.77 GB to 65.45 MB, and history's from 2.25 GB to 3.32 MB, without changing
-the decoded original records.
-
-The optimized paths still have measurable costs. Replay spends 26.494 s in
-table construction, 5.867 s in cycles and 33.817 s reporting; history spends
-14.095 s in cycles and 8.371 s reporting. Reporting is about 43% of replay's
-measured total; history cycles are about 42% of its total. The history packet
-timer encloses sub-stages, so it must not be added to them. Average observed CPU
-use was only about 3.13 and 3.41 cores, including startup and retention. These
-are starting measurements, not evidence that another fixed ratio is achievable.
-
-## The scope is larger than the two optimized exports
-
-At this baseline there are 1,537 theories, 394 theories containing `export_code`,
-86 with file exports, 50 reconstruction recipes and 13 built-in investigations
-in [investigate.py](tools/investigate.py). Recipe dependency closures cover 1,255
-theories. The remaining 282 require classification as proof-only, unexercised
-executable content, or content reached through another harness; absence from a
-recipe is not evidence of low cost.
-
-The source graph exposes a particularly actionable integration gap:
-
-| Refinement available in the recipe's import closure | Families |
-|---|---:|
-| `Parallel_Assessment_Execution` | 6/50 |
-| `Shared_Investigation_Cycles` | 2/50 |
-| `Finite_Investigation_Execution_Sharing` | 2/50 |
-| `Prepared_Computed_Functions` | 1/50 |
-| `Complete_Object_References` | 2/50 |
-| `Finite_Sorted_Set_Execution` | 2/50 |
-| `Finite_Ordered_Relation_Checks` | 2/50 |
-| `Finite_Relation_Functionality_Execution` | 2/50 |
-| `Factor_Finite_Accumulated_Data_Syntax` | 2/50 |
-
-The six parallel families are concurrent replay/history, workflow, development,
-steering and source development. Of these nine sampled refinements, the four
-new development families import only parallel assessment. The other 44 recipes
-run through standalone execution paths. This is an import/runtime coverage
-finding, not proof that every absent refinement applies or that an imported
-code equation is active in the generated program. Inspect generated code and
-measure its effect before claiming physical reuse.
-
-Fifteen exporting theories are outside every recipe's dependency closure:
-`Factor_Data_Product_Execution`, `Factor_Keyed_Set_Execution`,
-`Factor_Observation_Collection_Investigation`, `Factor_Observation_Investigation`,
-`Factor_Observation_Scope_Investigation`, `Factor_Observation_Table_Controls`,
-`Factor_Observation_Table_Execution`, `Factor_Observation_Table_Investigation`,
-`Factor_Pair_Scope_Investigation`, `Factor_Reasoning_Method_Investigation`,
-`Factor_Schema_Socket_Investigation`, `Factor_Substitution_Investigation`,
-`Finite_Directed_Execution`, `Observation_Revision_Investigation`, and
-`Presentation_Completion_Investigation`. Include their original subjects and
-callers in the measurement matrix. The 36 file-exporting theories that are not
-direct recipe roots also need an entry-point audit: being imported does not
-establish that each exported operation was exercised.
-
-Maintain coverage over actual operations and their source dependencies, not
-over names containing “Native”. Include every built-in investigation, callable
-`check_*`, `run_*`, roundtrip and comparison client, and the source/contract,
-proof/export, transport and retention paths they depend on. Future native agenda,
-provenance and mathematical-proof mechanisms from
-[native_control_plan.md](native_control_plan.md) have no present runtime to
-measure; their first implementation must enter this same coverage boundary.
-
-## Remaining bottlenecks and candidate remedies
-
-**Measured** below means a complete retained execution boundary. **Source evidence**
-identifies repeated work or an algorithmic expansion in definitions; it does not
-attribute a measured percentage without a profile. Keep these claims separate.
-
-| Mechanism and evidence | Substantial candidate batch | Contract and measurement needed |
-|---|---|---|
-| **Closed development and admission.** Measured producers 256.0 s; question roundtrip 100.7 s. [Factor_Development_Cycle](theories/Factor_Development_Cycle.thy) constructs compiled conditions and then compiles them again through `execute_development_condition`; comparison is repeated through revision, and admission mentions regeneration, compilation, comparison and revision repeatedly. | Prepare one complete question context; share generation, compilation and expected comparison/revision results across construction and admission. Extend the generic prepared-function and cycle laws instead of creating per-producer caches. | An equation for the complete original packet and an admission equation for arbitrary submitted reports. Still inspect the submitted evidence. A constructor's own result or a cached success bit cannot certify a corrupted report. Measure actual call counts after code generation. |
-| **Steering.** Measured full scope 405.2 s and roundtrip 439.4 s. Context construction already shares the original report and independent reference per question. `development_producer_cell` still supplies admission of the original report per method, and assessment checks the actual report's admission. | Preserve the existing context sharing; extend preparation to repeated actual admissions, original-question encodings and exact repeated scopes. Reuse a whole policy result only when its complete inputs and applicability contract agree. | Keep the independent original-goal reference, all ten producers, all five facets, the ambiguous and empty scopes, and renewed admission for subsequent requests. No reuse keyed only by a method number or output count. |
-| **Source development.** Measured full run 1,168.7 s and roundtrip 1,178.2 s. [Factor_Source_Development_Cycle](theories/Factor_Source_Development_Cycle.thy) rederives proposals, observations, question, steered execution and installation during admission. Source observations already share the generation-coverage Boolean. | Prepare the original source/request once; reuse proved complete proposal, question, installation and query contexts. Share source/program readings across compatible targets and source-preserving stages under actual equality/extension premises. | Preserve the original proposal family, distinct/equal target behavior, every observation, installed environment, query scope and ordered answers. Recheck arbitrary report mutations. The policy is already computed once for the request batch; do not invent a duplicate-policy defect. |
-| **Requirement and native-source construction.** Requirements 476.6 s; admission 260.4 s; source extensions 79.6 s. Recursive guards repeatedly depend on native package reading, allocation and source installation. | Share recovered source and supported goal/guard plans; construct a batch of dependent clauses with one justified installation where its contract permits. Apply accumulated syntax and known-constructor reading refinements. | Same original goal conjunction and full target meaning, complete source agreement and freshness. Empty/repeated goals, absent definitions, changed old bindings and malformed sources retain their original outcomes. |
-| **Certificates, graphs, histories and replay consumers.** Graphs 925.3 s; derivations/certificates about 549 s; decision replay 732.6 s; several certificate workflows 200–298 s. | Share whole inference histories, installed graph components, source readings, exact nested identity views and computed inspections. Apply constructor-derived premises to redundant re-reading. | Preserve every node, assertion origin, binding, premise socket, material operand and rejected control. Independent checker conditions remain; derivation, realization, graph installation and replay are distinct. Profile construction, checking, equality and reporting separately. |
-| **Earlier persistent-store/history entry points.** History index 1,209.5 s; digit, known and quoted histories about 1,819–1,873 s. Earlier constructed history is 2,131.2 s. | Route applicable production consumers through the already proved shared/known-history refinements; retain and accelerate the complete comparisons of old and new methods. Prepare closed-state invariants, membership and lookup structures once. | Same whole states, order, cache relation, failed steps and original controls. Preserve historical baseline source boundaries; a faster sibling export does not automatically accelerate the old entry points. |
-| **Structural reading, equality, sets, relations and allocation.** Data reading 92.9 s; encoded environments 95.9 s. Several other fixtures are under 16 s but may grow with larger inputs. | Propagate applicable sort/scan, injective nested equality, prepared source lookup, final-address accumulation and complete-value sharing. Profile list `map_of`, repeated sorting, deep equality, environment traversal and allocation as source size grows. | Universal result equations over malformed and differently presented inputs as well as formed values. Sort only under an established order/encoding contract. Keep counted multiplicity and original occurrence order. |
-| **Inference, matching, guided reasoning and candidate assembly.** Native-child reasoning 147.8 s. [Factor_Schema_Generation](theories/Factor_Schema_Generation.thy) scans possible calls during premise joins; [Finite_Inference_Development](theories/Finite_Inference_Development.thy) repeatedly computes whole rounds; guided investigations obtain related states at successive depths; `finite_candidate_assemblies` filters `fPow parts`. | Index calls by structural callee/pattern conditions; share complete matching fragments and successive states; evaluate dependency-triggered increments with an exact closure/history equation. Instantiate existing demand and directed-contribution machinery before proposing a new search engine. | Preserve all compatible bindings, original premise occurrences, material checks, candidates and residual reasons. Replacing powerset enumeration by finding one sufficient candidate changes the result contract unless an established caller needs only that result. Do not prune by arbitrary depth, score or unsupported “no progress”. |
-| **Observation, comparison and revision across every family.** Even optimized history spends 14.095 s in cycles. `subject_investigation_selected` recomputes a relation in its unrefined definition; assessed observations and repeated relation membership can revisit large row lists. | Reuse the shared cycle and investigation laws broadly. Prepare the actual observation relation once; consider exact indexed rows/sets and batch all independent initial selections. | Preserve all comparison pairs, selected/adequate candidates, withdrawals, repair witnesses and followed residuals, including repeated indices. A supplied Boolean matrix has no new subject authority. |
-| **Reporting and host verification.** Optimized replay reporting alone is 33.817 s. The newer workflow serializers recursively print whole sources/stages/reports. `Complete_Value_References` itself uses linear lookup and append; `shared_artifact_reports.read_transport` materializes all records, and compressed checks make multiple passes. | Apply complete artifact references to the workflow/development/certificate families; factor a generic codec. Profile native dictionary construction, field conversion, string construction, compression, parsing, reconstruction and comparison. If needed, refine exact dictionary lookup and use bounded streaming/chunking. | Decode every original ordered record exactly. Keep reference integrity, end-of-stream/truncation failures and whole-record checks. Hashes identify storage bytes, not semantic equality. Streaming and compression must not hide partial or omitted reports. |
-| **Bootstrap, proofs, exports, startup and evidence copying.** Current shared proof steps take about 349–380 s, diagnostics 20–31 s, and exports around 1 s; the previous cold start also rebuilt HOL. | Reuse accepted exact source contexts through `proved_context_partition` and checked exports; share dependency proofs and runtime startup across appropriate batches. Profile repeated input hashing/archive copies and parser passes. Keep a bounded, verified reusable build cache instead of repeatedly discarding useful base heaps. | Changed import contexts invalidate reuse. A warm proof/export is never reported as a fresh reconstruction. Preserve independent cold reconstruction as a release check, not the inner edit loop. Native execution optimization and host scheduling remain separate claims. |
-
-These rows cover measured family costs and shared algorithmic dependencies.
-They do not pretend to be an exhaustive per-function profile. Every unmeasured
-entry stays in the coverage ledger until profiled or given an explicit justified
-non-executable status. A fast small fixture does not exempt its mechanism from
-scale testing.
-
-## Principles and admissible optimization
-
-Use the owner's directions and corrections in
-[plan.md §0](plan.md#0-status-authority-and-governing-principles),
-[REASONING_REUSE.md](REASONING_REUSE.md), and the workflow. Their implications for
-this work are concrete:
-
-| Direction | Required discipline |
+| Implemented mechanism | Preserved contract and effect |
 |---|---|
-| Structurality and explicitness | Identify the complete function input, source/authority context, result and observation contract. Make cache keys, applicability guards, preparation boundaries, schedule dependencies and measured workload explicit. No host representation supplies semantics. |
-| Non-conflation | Keep performance, semantic equality, scope adequacy, proof validity, evidence retention and adoption separate. A successful process exit, a faster fixture or a matching hash cannot replace native admission. |
-| Irredundancy and first-use factoring | Prove one reusable complete-result refinement, instantiate it with its actual prerequisites, and remove redundant computation at those uses. Avoid a separate optimization framework for each family. Keep logically distinct judgments even when their computation is shared. |
-| Non-nominality | No special truth path for familiar method IDs, source names or fixture cases. Fast paths recognize actual structure or proved invariant premises and have an exact fallback. References must recover complete values; pointer identity or a digest alone is insufficient. |
-| Exact presentations and intrinsic links | Prove injectivity/recovery and composition for new representations. Permitted changes of unordered presentation need an explicit correspondence; ordered queries, ledgers, sockets and counted data retain their required distinctions. |
-| Independent notions and meaningful abstraction | State the original operation independently of the optimization. Preparation, caching, indexing, syntax accumulation, parallel maps and codecs become reusable contracts that reduce work without redefining what counts as success. |
-| Completeness and criticism | Preserve whole contributors, all controls, all original observations and residual evidence. Independently criticize the benchmark scope and optimized checker as well as the implementation. Small-input equivalence is not a universal proof or a scale result. |
-| Self-application and predecessor authority | Use the native workflow to construct and compare covered optimization candidates and follow its residuals. Its own optimization is judged under the established predecessor contracts; it cannot lower its admission conditions to make itself fast. |
-| Practical usefulness with quality | Measure useful complete development, not just inner loops. Maintain batching and actual concurrency on 16 cores/32 threads, bounded memory/storage, recoverable failures and reconstructible evidence. Preserve problems conditions 1–6; theoretical accumulated-process bounds under 5b remain deferred until after genesis. |
+| Shared Eval runtime and controlled output | `native_execution_runtime.py` suppresses ML toplevel printing of bound packets while retaining explicit tagged reports. The earlier scope-repair/literal-replay printing regression is fixed. The long silent packet binding was not reliable evidence of native computation time. |
+| Successor-chain record construction | `RRA_Linked_Record_Candidates` constructs candidates from actual record incidences, retaining the original complete record filter instead of enumerating every arity-length list. Formation is established once per read. |
+| Ordered investigation rows and shared basis | `Ordered_Finite_Rows` and `Finite_Investigation_Basis_Sharing` preserve exact last-occurrence order, membership, complete profiles, comparisons, repairs and retention while removing repeated quadratic work. |
+| Invariant evaluation and prepared reading | `Factor_Invariant_Evaluation_Sharing`, `Factor_Formation_Once_Readings`, and the existing finite judgment-reading refinement share invariant rule families and established formation premises across traversals. All original outputs and refusal levels remain. |
+| Constructed development and source admission | The development/workflow/source sharing theories and `Factor_Constructed_Development_Execution` reuse complete actual constructor results under universal equations. Arbitrary or modified submitted reports retain the original independent admission requirements. |
+| Complete-value transport and comparison | Artifact/term dictionaries, streamed footer transport, linear term rendering and deferred complete-byte comparison reduce physical repetition. Complete records, order, multiplicity, malformed inputs and reference-integrity failures remain checked. Hashes do not replace semantic or whole-result comparison. |
+| Broad export/runtime integration | `Native_Execution_Refinements`, the shared runtime, accepted-main export, explicit worker routing and reusable heaps reach the executable families. Generated code and real executions, not import presence alone, establish application. |
+| Digit-replay memory correction | The checker uses four workers; the runtime removes its worker stack cap. This fixes the observed failure, but the complete check still takes over sixteen minutes. Raising every process to sixteen workers is not a remedy. |
 
-The primary refinement target is `optimized input = original input` for the
-whole result, on the declared complete domain. Where a representation changes,
-state the exact decode/transport equation instead. A fast path conditional on
-an invariant must retain its evidence and the original fallback outside that
-boundary. Cache eviction may change cost; it must not change answers or remove
-the independently sufficient evidence boundary.
+The earlier paired native profiles showed large gains across many families.
+Intermediate C/L/G/H timings and the original unimplemented-remedy tables are
+superseded here by current complete execution data. Historical proofs, report
+boundaries and the earlier replay/history performance record remain in Git and
+`validation/reconstruction`; they are not deleted merely because their timings
+are no longer current.
 
-Timing is physical observation. To use a timing result as a development
-criterion, connect the actual run, complete input, resource boundary and
-measurement operation to that criterion. Do not submit an authored “fast” facet
-or let the host clock establish semantic adequacy. New profile/selection adapters
-must enter the same internal-account workflow as the operations they assess.
+## What the last split actually achieved
 
-## Implementation batches
+Thirty-five theories mixed reusable definitions/proofs with file exports and
+imported the common refinement bundle. The local change moves their content
+into `*_Base` theories and leaves export wrappers, redirecting content imports.
+The original export-theory names are retained.
 
-### 1. Expose complete stages and prepare the first executable batch
+The current source graph has **1,589 theories, 402 theories containing
+`export_code`, 86 file-export theories and 50 reconstruction recipes**. The
+refinement import closure shrank from the previously measured 296 theories to
+**94 including the bundle itself**: 86 exports, five sharing refinements, two
+execution bases, and the bundle. The earlier description omitted the bundle
+when explaining the total.
 
-Start from the inventory and actual high-cost source-development, steering,
-requirement and certificate/graph subjects. Prepare their stage decomposition,
-sharing candidates, generic-refinement imports and complete-reference reporting
-together. Stage boundaries should separate source reading, generation, guard
-construction, evaluation, evidence checking, inspection, comparison, revision,
-installation, query and reporting. Instantiate the packet-stage equation pattern
-so the staged operation reconstructs the original complete result.
+This is a dependency-graph improvement. `ROOT` still declares **one Isabelle
+session**, `RRA_Factor_Structural_Bootstrap`. Its latest full build still took
+625 seconds. There is no implemented separate execution session, persistent
+interactive proof service, or measured seconds-scale edit validation.
 
-Reuse [parallel_packet_execution.py](tools/parallel_packet_execution.py)'s timers
-and [isabelle_native_execution.py](tools/isabelle_native_execution.py)'s runtime
-and input tracking through a shared adapter. Do not maintain family-specific
-string replacement as the general architecture. Record native timings/counters
-separately from startup, proof/export, parsing, retention and roundtrip overhead.
+Three readiness defects were found in the split and are resolved or bounded in this batch:
 
-Exercise the complete first batch promptly on original subjects and representative
-real requests; collect failures and repair them in groups. Use already accepted
-unchanged exports where available. If absent, build one combined needed source
-closure, retain that usable checked context, and avoid repeated clean builds.
-Initial scale/cost probes can be bounded, but bounds and incomplete runs must
-remain visible and cannot replace the final complete workload.
+1. `Native_Workflow_Execution.thy` lost the exports of
+   `required_workflow_investigation` and
+   `required_workflow_scope_investigation`. The latest `native-workflow`
+   requirements step fails `assert len(contracts) == 1` after 0.16 s; the
+   ordinary workflow step passed, but the rest of the complete recipe did not.
+   A successful theory build did not detect this client contract omission.
+   *Resolved:* a regular expression consumed the line boundary shared by
+   adjacent registrations; both registrations are restored and the recipe passes.
+2. `incremental_check.py` calls `accepted_parent(ROOT)` before computing changed
+   theories. That function requires the current source bytes to equal the
+   accepted receipt. A changed workspace fails that prerequisite; an unchanged
+   workspace produces no changes to check. The draft also does not establish
+   impact coverage for changed tools/fixtures, deleted inputs or non-recipe
+   entry points. Its claimed changed-workspace behavior has not been validated.
+   *Resolved for recipes:* the base is a separate fixed directory accepted by
+   its own complete check, recipe impact compares complete source manifests
+   (theories, tools, fixtures and expected reports), and the tool validated this
+   batch. Non-recipe entry points remain outside the check.
+3. The scratch `fast_validate.sh` reports `FASTDONE` and can exit zero after
+   a failed child/export because it does not propagate aggregate failure.
+   The latest task did exactly that while `native-workflow` failed. A shell
+   completion marker is not recipe acceptance. Final commit readiness must
+   inspect the complete receipts and their exact inputs.
+   *Resolved:* `incremental_check.py` accepts only when every executed recipe
+   receipt and both host test suites are accepted, and exits non-zero otherwise.
 
-**Gate:** every measured stage belongs to the complete original operation,
-all original conditions and reports are available, and the resulting native
-criticism determines the next refinement rather than merely confirming a
-preselected implementation. Missing subject or cost-observation contracts remain
-development obligations; no retrospective investigation repairs an outside choice.
+The latest 49 accepted recipe runs were checked against their current module
+proof receipt hashes. Their observations are retained in the measurement ledger;
+they have not been substituted into a falsely accepted 50-recipe manifest set.
+The split remains local until its full applicable contract, source-manifest,
+execution and retention boundaries are repaired and checked.
 
-### 2. Reuse the established refinements across covered exports
+## Remaining work, in useful batches
 
-Factor a reusable execution-refinement import layer where dependencies and types
-permit. Instantiate shared comparisons/cycles, prepared inspections, accumulated
-syntax, structural equality and complete reference transport across the first
-batch, then every applicable inventory family. Keep family-specific correctness
-theorems local and consume them through the generic contracts.
+The immediate priority is the complete validation and commit path. The following
+continues the existing plan and owner requirement; it is not native admission of
+these candidates. Decisions and corrections still require the applicable native
+subjects, computed observations, reusable reasoning and independent criticism.
 
-Check generated code for the actual selected equations, preparation occurring
-outside inner loops, delayed fallback branches and actual parallel calls. Merely
-adding an import or a `let` binding does not establish that the compiler avoids
-duplicate work. Prevent conflicting code equations and import cycles; perform
-one joint proof/export/diagnostic review for the affected group.
+| Work group | Required outcome and evidence |
+|---|---|
+| Repair the current split and validation orchestration | Preserve every exported contract and original client entry point; propagate actual failures; demonstrate changed-source, unchanged-source, tool/fixture and missing-input cases. Reuse accepted unchanged inputs and rerun the complete affected checks. Regenerate manifests only for the actual final validated source state. |
+| Make proof invalidation follow real dependencies | Establish reusable accepted base contexts and separate execution-layer proof/code work where the dependency boundary permits. The proposed execution session requires distinct theory directories and a shared theory-path/session resolver across `build.py`, `prove_context.py`, `export_proved_code.py`, `proved_code.py`, `investigate.py` and `reconstruction_sources.py`; they currently assume one session and/or `theories/<name>.thy`. A directory split alone is not a validated solution. Preserve normative bootstrap and exact source/tool invalidation. |
+| Provide a working incremental development path | Keep an immutable accepted parent distinct from the changed workspace; rebuild changed subjects and actual dependents, export affected modules and execute every affected client. Store exact source/tool/fixture dependencies and complete receipts so unchanged results can be reused soundly. Exercise realistic repeated edits and refusal/repair cycles, not only a no-change fixture. |
+| Reduce full and cold validation cost | Build the combined required proof closure once, then reuse its accepted exports across the complete recipe set. Preserve a separate source-only release reconstruction with complete fixture and manifest checks. Remove redundant proofs across storage modes where one actual proof is applicable, without claiming warm reuse is a cold run. Cold/full costs remain optimization targets; moving them out of the inner loop does not meet the whole objective by itself. |
+| Remove remaining expensive native/host work | Start from the current costly families: digit replay, decision replay, constructed/digit/known/quoted histories, native-child reasoning, history index and certificate replay. Separate native stages, serialization, parsing, direct comparison and retention before choosing refinements. Remaining source-level leads include repeated family/schema/scoped-reader formation, `finite_join_readings` footprint unions, and grounding/evaluation unions. Preserve representation-observable finite-set order or prove the applicable presentation transport. |
+| Schedule and retain one complete batch efficiently | Budget native workers across simultaneous recipes and their nested execution groups. Eight outer jobs can launch further processes with their own workers; thread-count settings alone do not establish useful concurrency. Start independent heavy jobs when dependencies allow, overlap independent work with fixed checks, aggregate diagnostics, and retain one reconstructible boundary instead of recopying/rechecking bulk for commit. |
+| Demonstrate actual useful development | Measure a real edit through native construction, criticism, admission, installation, subsequent use, proof/export, complete validation and commit preparation. Record latency, memory, storage and failure/repair cost. Routine edits should have a demonstrated seconds-scale feedback path; complete/cold work also needs acceptable observed cost, not just faster packet profiles. |
 
-Where independent computation exists, run the Eval export through Isabelle's
-Pure runtime. Standalone SML and a high thread setting do not activate the same
-parallel behavior. Batch independent contexts, inspections, conditions where
-independent, and revision selections, preserving output order and duplicates.
-Join dependent work before admission or reporting. Budget workers across nested
-maps and simultaneous processes rather than assigning sixteen to every process.
+Do not narrow coverage to the easiest passing recipes. The 50 recipes are not
+an audit of every exported operation, all 13 built-in investigations, all direct
+check/run/roundtrip clients, or their growth with realistic source/graph/history
+sizes. Keep that non-recipe complement explicit. Future mechanisms in
+[native_control_plan.md](native_control_plan.md) must enter the same boundary.
 
-**Gate:** complete-result proofs, generated-code inspection and full differential
-results establish the refinement; controlled timings show its actual benefit.
-No family receives a blanket “optimized” status from importing the layer.
+## Semantic and validation requirements
 
-### 3. Remove repeated source work and refine growing algorithms
+[DEVELOPMENT_WORKFLOW.md](DEVELOPMENT_WORKFLOW.md) remains binding: no outside
+semantics or reasoning; Isabelle/HOL retains its normative bootstrap role
+through genesis. A profile, host table, digest, metadata record or timing does
+not establish a native subject condition. The batch review explicitly records
+that refinement choices came from host profiles/timings, not a native contract
+connecting those observations and candidates to selection. That gap under
+conditions 1 and 6 remains; the new documentation does not repair it.
 
-Use the measured results to develop generic prepared source, compiled-condition,
-admission and installation contexts. Reuse actual complete computations across
-control variants only when their conditions match the existing successful-result
-or constructor-invariant laws. Cache keys include every semantically read source,
-binding, site, goal, scope and policy dependency, or have a theorem justifying
-each omitted component. Avoid large linear caches whose lookup/deep-key equality
-cost recreates the original bottleneck.
+Use `Factor_Development_Cycle`, `Factor_Development_Steering`,
+`Factor_Steered_Development` and the source-development cycle for covered native
+questions. Scope extensions need actual subjects and computed criticism. For
+history producer candidates, reuse `Factor_Digit_History_Result_Candidates` and
+its complete original-reference boundary. Factor reusable arguments at first use;
+retain all applicable premises and every unresolved native-account obligation.
 
-In parallel, where profiles justify it, prepare exact indexing/delta candidates
-for inference rounds, joins, matching, directed construction, relation lookup
-and reference dictionaries. Existing demand and application-construction laws
-are the first reuse points. Prove closure and complete-output equivalence, with
-original history/diagnostic order where the interface exposes it. If output
-itself is necessarily large, sharing or reconstructible presentation can reduce
-physical repetition; dropping required alternatives is not a speedup.
+Each adopted refinement must preserve complete results and independent evidence
+checks on original and expanded inputs, including malformed/empty values,
+repeated keys and occurrences, changed bindings, missing evidence, stale caches,
+miss/eviction, ambiguous choices, deep structures and deliberately defective
+controls. Preserve all candidates, facets, refusals, witnesses, ordered ledgers
+and optional failure levels. A cached constructor result cannot admit an
+arbitrary changed report. Complete reference dictionaries must retain every
+original value and reject incomplete transport.
 
-**Gate:** parameter sweeps show improvements at realistic source, candidate,
-binding, graph and history sizes. Preserve failures, unavailable results and
-language obstructions. If an operation remains dominant, keep it open and
-continue refinement; do not stop after easier microbenchmarks pass.
+Measure distinct boundaries for proof/build, export/startup, native computation,
+reporting, host verification, retention, repeated requests, and edit-to-commit.
+Record exact inputs, revisions, worker and concurrent-job settings, warm/cold
+state, wall/CPU/GC time, peak memory and bytes where measured. Do not invent
+missing phase attribution, add overlapping times as elapsed time, compare
+unmatched resource boundaries, or treat timeout as a semantic refusal. Review
+combined proof, code, metadata, execution, diagnostics and performance evidence
+before adoption. Preserve reconstructible evidence before removing obsolete bulk.
 
-### 4. Finish transport, build reuse and inventory coverage
-
-Carry the same proven packet/codec/refinement pattern through all remaining
-families and the uncovered exporting theories and built-in investigations.
-Separate reusable native values from their serialized occurrences. Keep complete
-decoding and independent reference comparison while reducing repeated conversion,
-copying, parsing and whole-log materialization. Retain the original inputs,
-contracts, source closures, recipes and compact measurement records, not expanded
-bulk. Keep a bounded cache of useful validated build/runtime artifacts; obsolete
-failed copies are removed after their diagnostic evidence is retained.
-
-Use isolated working copies, fixed validation inputs and background checks.
-One worker performs the development, as required by the repository; process and
-native computation parallelism remain available. While a batch validates,
-continue independent next work. Review combined proof, execution, diagnostic,
-transport and performance results before dependent integration.
-
-**Gate:** every current recipe and other operative entry point has an explicit
-coverage/result status, and no omitted slow family is hidden behind an aggregate
-speedup. Reconstruct accepted output independently from source at the combined
-integration boundary and run the applicable repository checks.
-
-### 5. Demonstrate the whole development path is usable
-
-Run real required work through the closed native workflow and computed dispatcher,
-including candidate construction, independent criticism, repair, admission,
-source installation, subsequent query and retention where applicable. Use the
-same original requirements before and after refinement. Measure complete accepted
-and subsequently consumed work, repeated-use cost, refusal and repair latency,
-memory/storage pressure and failures, including production of the next request.
-
-Seek the requested orders-of-magnitude gains for the dominant multi-minute paths
-and for the complete workload. This is a target to demonstrate, not a theorem
-inferred from the prior two cases. Parallelism on sixteen cores alone cannot
-provide arbitrary hundredfold speedups. Measure the remaining serial fraction,
-startup/output floors and unavoidable output size; use those results to direct
-additional sharing and algorithmic work. Already sub-second cases still need
-scale coverage, without inventing a claim that each primitive can improve 100×.
-
-**Gate:** the whole machinery meets acceptable observed cost for actual repeated
-development with the complete quality requirements intact. Preserve both
-per-family and end-to-end results so one spectacular ratio cannot mask another
-remaining bottleneck. Unmet cost or coverage conditions stay open. This is the
-live usefulness gate under problems condition 5a, not the deferred global cost
-theory or a claim of genesis.
-
-## Validation and performance evidence
-
-For each batch retain the original problem, applicable general refinement,
-instantiated premises, actual candidates, computed observations, independent
-criticism, full results, reasons and residuals. Route covered questions through
-`Factor_Development_Cycle`, `Factor_Development_Steering` and
-`Factor_Steered_Development`; use `Factor_Source_Development_Cycle` for admitted
-source changes. The ten-producer fixtures do not judge arbitrary optimization
-methods without actual subjects and corresponding contracts.
-
-For history refinements, instantiate the existing
-[Factor_Digit_History_Result_Candidates](theories/Factor_Digit_History_Result_Candidates.thy)
-framework: it computes additional producers on complete original subjects,
-keeps every earlier method, and assesses against the original reference without
-assuming that a proposed producer is correct. Reuse that construction pattern
-for other operation families through their own subject equations, including
-deliberately defective candidates. Keep semantic comparison, independent evidence
-checks and the separately established physical-cost observation as distinct
-requirements; a fast but incomplete producer must remain inadequate.
-
-Prove universal complete-result or presentation-transport equations, then compare
-complete actual results on original and expanded subjects. Include empty and
-malformed inputs, conflicting/repeated keys, equal values at distinct occurrences,
-changed bindings, absent evidence, all optional failure levels, stale caches,
-cache miss/eviction, ambiguous choices, deep graphs and large shared artifacts.
-Exercise controls that omit individual gates and require their original failures.
-Preserve independent reference computations and their original condition meaning.
-Hash equality alone is not the whole-result comparison.
-
-Measure at least these separate boundaries: cold proof/build, accepted-export
-startup, native stages, reporting/transport, independent verification, warm
-repeated request and complete development cycle. Record exact source/toolchain,
-inputs and cardinalities, worker settings, concurrent jobs, wall/user/system/GC
-time, peak memory, bytes and storage cost. Benchmark baseline and candidate under
-comparable resource conditions; repeat noisy measurements and report variation.
-Use one-worker and multi-worker runs to distinguish sharing gains from concurrency.
-Do not add overlapping stage timers or compare a warm inner loop with a cold
-end-to-end baseline. Timeouts are incomplete observations, not negative answers.
-
-Derive scope-sensitive budgets from actual development needs before acceptance;
-do not move them after seeing a candidate's result. Report the speedup ratio for
-each equal-workload boundary, the absolute remaining time and the work actually
-offloaded. Universal semantic proofs and executable equality checks do not prove
-physical speed; physical speed does not discharge those proofs. Theoretical
-dependence on accumulated process remains explicitly deferred under condition 5b.
+Condition 5a still requires useful real development with quality at acceptable
+observed cost. Condition 5b is deferred until after genesis. O-85, historical
+permission, broader adequacy and genesis are not closed by this performance work.
 
 ## Complete current recipe inventory
 
-Times below are retained successful **execution-step wall seconds**, excluding
-the separately recorded proof, diagnostics and export steps but including each
-step's own startup, native work, transport and checks. They are profiling leads,
-not normalized per-request costs or exclusive inner-function timings. Workload
-sizes and contention differ. “Earlier receipt” means the current verification
-boundary explicitly reuses the checked receipt at `eba0edc`; all current source
-manifests were checked unchanged. E means Eval/Pure, S means standalone execution.
-Each family links to its authoritative current verification record, which names
-its source and report boundaries and, where needed, the earlier receipt.
+Each number below is **the sum of recorded execution-step wall seconds** for a
+recipe, including checker startup, native work, reporting and host checking.
+Some stages and recipes overlap: these sums are neither elapsed suite time nor
+CPU time, and exclude shared proof/export and outer recipe coordination.
+The ledger retains individual stage names, times, worker settings and outcomes.
 
-| Family | Runtime | Execution steps (seconds) | Timing source |
-|---|:---:|---|---|
-| [allocated-environments](validation/reconstruction/allocated-environments-verified.json) | S | comparison 3.1 | Current receipt |
-| [artifact-lookup](validation/reconstruction/artifact-lookup-verified.json) | S | comparison 0.7 | Current receipt |
-| [cached-grafts](validation/reconstruction/cached-grafts-verified.json) | S | comparison 15.3 | Current receipt |
-| [certificate-coverage](validation/reconstruction/certificate-coverage-verified.json) | S | comparison 298.1 | Earlier receipt |
-| [certificate-development](validation/reconstruction/certificate-development-verified.json) | S | comparison 235.3 | Earlier receipt |
-| [certificate-input-development](validation/reconstruction/certificate-input-development-verified.json) | S | comparison 293.9 | Earlier receipt |
-| [certificate-scope-repair](validation/reconstruction/certificate-scope-repair-verified.json) | S | comparison 97.5 | Earlier receipt |
-| [certified-causes](validation/reconstruction/certified-causes-verified.json) | S | comparison 298.2 | Current receipt |
-| [concurrent-history](validation/reconstruction/concurrent-history-verified.json) | E | comparison 51.5 | Current receipt |
-| [concurrent-replay](validation/reconstruction/concurrent-replay-verified.json) | E | comparison 100.9 | Current receipt |
-| [constructed-history](validation/reconstruction/constructed-history-verified.json) | S | comparison 2131.2 | Current receipt |
-| [data-reading](validation/reconstruction/data-reading-verified.json) | S | comparison 92.9 | Earlier receipt |
-| [decision-replay](validation/reconstruction/decision-replay-verified.json) | S | comparison 732.6 | Earlier receipt |
-| [digit-allocation](validation/reconstruction/digit-allocation-verified.json) | S | comparison 3.2 | Current receipt |
-| [digit-generation](validation/reconstruction/digit-generation-verified.json) | S | comparison 28.7 | Current receipt |
-| [digit-history](validation/reconstruction/digit-history-verified.json) | S | comparison 1873.5 | Current receipt |
-| [digit-replay](validation/reconstruction/digit-replay-verified.json) | S | comparison 5731.7 | Current receipt |
-| [encoded-environments](validation/reconstruction/encoded-environments-verified.json) | S | comparison 95.9 | Current receipt |
-| [environment-grafts](validation/reconstruction/environment-grafts-verified.json) | S | comparison 12.2 | Current receipt |
-| [environment-updates](validation/reconstruction/environment-updates-verified.json) | S | comparison 3.2 | Current receipt |
-| [generation-records](validation/reconstruction/generation-records-verified.json) | S | comparison 106.8 | Earlier receipt |
-| [graft-admission](validation/reconstruction/graft-admission-verified.json) | S | comparison 7.6 | Current receipt |
-| [history-index](validation/reconstruction/history-index-verified.json) | S | comparison 1209.5 | Current receipt |
-| [indexed-generation](validation/reconstruction/indexed-generation-verified.json) | S | comparison 23.8 | Current receipt |
-| [known-history](validation/reconstruction/known-history-verified.json) | S | comparison 1819.2 | Current receipt |
-| [literal-replay](validation/reconstruction/literal-replay-verified.json) | S | comparison 4.8 | Earlier receipt |
-| [native-admission](validation/reconstruction/native-admission-verified.json) | S | comparison 260.4 | Earlier receipt |
-| [native-certificate-replay](validation/reconstruction/native-certificate-replay-verified.json) | S | comparison 200.6 | Earlier receipt |
-| [native-certificates](validation/reconstruction/native-certificates-verified.json) | S | comparison 549.0 | Earlier receipt |
-| [native-child](validation/reconstruction/native-child-verified.json) | S | baseline 1.7; catalog 1.3; inputs 2.6; reasoning 147.8 | Earlier receipt |
-| [native-derivations](validation/reconstruction/native-derivations-verified.json) | S | comparison 548.5 | Earlier receipt |
-| [native-development](validation/reconstruction/native-development-verified.json) | E | producers 256.0; questions 100.7 | Current receipt |
-| [native-evaluation](validation/reconstruction/native-evaluation-verified.json) | S | comparison 2.4; native 60.1 | Earlier receipt |
-| [native-extensions](validation/reconstruction/native-extensions-verified.json) | S | extensions 19.5 | Earlier receipt |
-| [native-graphs](validation/reconstruction/native-graphs-verified.json) | S | comparison 925.3 | Earlier receipt |
-| [native-histories](validation/reconstruction/native-histories-verified.json) | S | comparison 242.3 | Earlier receipt |
-| [native-nodes](validation/reconstruction/native-nodes-verified.json) | S | comparison 69.9 | Earlier receipt |
-| [native-requirements](validation/reconstruction/native-requirements-verified.json) | S | comparison 476.6 | Current receipt |
-| [native-sources](validation/reconstruction/native-sources-verified.json) | S | observations 1.8; extensions 79.6 | Earlier receipt |
-| [native-steering](validation/reconstruction/native-steering-verified.json) | E | subjects 405.2; empty 12.7; first 188.3; questions 439.4 | Current receipt |
-| [native-workflow](validation/reconstruction/native-workflow-verified.json) | E | workflow 39.7; requirements 51.2; input-scope 4.0; expanded 77.2; requests 16.7; expanded-requests 31.5 | Current receipt |
-| [quoted-history](validation/reconstruction/quoted-history-verified.json) | S | comparison 1831.4 | Current receipt |
-| [required-causes](validation/reconstruction/required-causes-verified.json) | S | comparison 38.5 | Current receipt |
-| [required-history](validation/reconstruction/required-history-verified.json) | S | comparison 176.3 | Current receipt |
-| [requirement-decisions](validation/reconstruction/requirement-decisions-verified.json) | S | comparison 57.8 | Earlier receipt |
-| [requirement-plans](validation/reconstruction/requirement-plans-verified.json) | S | requirements 1.6 | Earlier receipt |
-| [requirement-sources](validation/reconstruction/requirement-sources-verified.json) | S | source-boundary 1.2; retained-clauses 1.4; native-meanings 1.1; native-plans 1.2 | Earlier receipt |
-| [source-development](validation/reconstruction/source-development-verified.json) | E | sources 1168.7; empty 14.1; first 191.4; requests 1178.2 | Current receipt |
-| [use-allocation](validation/reconstruction/use-allocation-verified.json) | S | comparison 7.7 | Current receipt |
-| [use-codecs](validation/reconstruction/use-codecs-verified.json) | S | comparison 6.5 | Current receipt |
+The linked repository receipts describe the delivered `4becc45` boundary. The
+right column comes from the latest local split executions, retained separately
+in the measurement ledger. Resource contention and changed build boundaries
+prevent interpreting each column difference as a controlled speedup ratio.
 
-The census used `reconstruction_sources.recipe_inputs` on every
-`tools/reconstruct_*.py`, `investigate.source_graph` and `import_context` on every
-current theory, and the recipes' local Python import closures to identify the
-runtime adapters. It inspected every current `*-sources.json` and corresponding
-`*-verified.json`; indirections were followed through local Git with their recorded
-byte identities. Import coverage establishes availability only. These physical
-and dependency observations do not supply an observation-satisfaction table or
-prove semantic applicability of a proposed optimization.
+| Recipe | Delivered step sum (s) | Latest local split step sum (s) |
+|---|---:|---:|
+| [allocated-environments](validation/reconstruction/allocated-environments-verified.json) | 2.32 | 2.37 |
+| [artifact-lookup](validation/reconstruction/artifact-lookup-verified.json) | 1.92 | 1.97 |
+| [cached-grafts](validation/reconstruction/cached-grafts-verified.json) | 2.87 | 2.77 |
+| [certificate-coverage](validation/reconstruction/certificate-coverage-verified.json) | 8.28 | 8.33 |
+| [certificate-development](validation/reconstruction/certificate-development-verified.json) | 8.03 | 8.28 |
+| [certificate-input-development](validation/reconstruction/certificate-input-development-verified.json) | 10.24 | 10.98 |
+| [certificate-scope-repair](validation/reconstruction/certificate-scope-repair-verified.json) | 7.33 | 7.43 |
+| [certified-causes](validation/reconstruction/certified-causes-verified.json) | 110.53 | 109.91 |
+| [concurrent-history](validation/reconstruction/concurrent-history-verified.json) | 25.42 | 51.33 |
+| [concurrent-replay](validation/reconstruction/concurrent-replay-verified.json) | 78.29 | 149.96 |
+| [constructed-history](validation/reconstruction/constructed-history-verified.json) | 320.31 | 323.08 |
+| [data-reading](validation/reconstruction/data-reading-verified.json) | 3.97 | 3.87 |
+| [decision-replay](validation/reconstruction/decision-replay-verified.json) | 368.54 | 374.86 |
+| [digit-allocation](validation/reconstruction/digit-allocation-verified.json) | 2.92 | 2.97 |
+| [digit-generation](validation/reconstruction/digit-generation-verified.json) | 8.30 | 7.95 |
+| [digit-history](validation/reconstruction/digit-history-verified.json) | 265.15 | 259.08 |
+| [digit-replay](validation/reconstruction/digit-replay-verified.json) | 990.29 | 997.93 |
+| [encoded-environments](validation/reconstruction/encoded-environments-verified.json) | 8.30 | 9.15 |
+| [environment-grafts](validation/reconstruction/environment-grafts-verified.json) | 9.44 | 8.97 |
+| [environment-updates](validation/reconstruction/environment-updates-verified.json) | 9.66 | 10.01 |
+| [generation-records](validation/reconstruction/generation-records-verified.json) | 13.96 | 14.33 |
+| [graft-admission](validation/reconstruction/graft-admission-verified.json) | 8.98 | 10.27 |
+| [history-index](validation/reconstruction/history-index-verified.json) | 174.27 | 165.38 |
+| [indexed-generation](validation/reconstruction/indexed-generation-verified.json) | 13.95 | 14.50 |
+| [known-history](validation/reconstruction/known-history-verified.json) | 258.26 | 267.08 |
+| [literal-replay](validation/reconstruction/literal-replay-verified.json) | 12.76 | 13.33 |
+| [native-admission](validation/reconstruction/native-admission-verified.json) | 85.17 | 86.54 |
+| [native-certificate-replay](validation/reconstruction/native-certificate-replay-verified.json) | 135.50 | 137.81 |
+| [native-certificates](validation/reconstruction/native-certificates-verified.json) | 10.39 | 9.43 |
+| [native-child](validation/reconstruction/native-child-verified.json) | 222.76 | 225.21 |
+| [native-derivations](validation/reconstruction/native-derivations-verified.json) | 8.03 | 8.08 |
+| [native-development](validation/reconstruction/native-development-verified.json) | 23.97 | 24.16 |
+| [native-evaluation](validation/reconstruction/native-evaluation-verified.json) | 6.54 | 6.29 |
+| [native-extensions](validation/reconstruction/native-extensions-verified.json) | 2.72 | 2.62 |
+| [native-graphs](validation/reconstruction/native-graphs-verified.json) | 22.46 | 24.09 |
+| [native-histories](validation/reconstruction/native-histories-verified.json) | 7.33 | 11.10 |
+| [native-nodes](validation/reconstruction/native-nodes-verified.json) | 3.97 | 4.52 |
+| [native-requirements](validation/reconstruction/native-requirements-verified.json) | 41.86 | 41.20 |
+| [native-sources](validation/reconstruction/native-sources-verified.json) | 7.69 | 17.78 |
+| [native-steering](validation/reconstruction/native-steering-verified.json) | 119.52 | 105.23 |
+| [native-workflow](validation/reconstruction/native-workflow-verified.json) | 134.62 | **failed at requirements** |
+| [quoted-history](validation/reconstruction/quoted-history-verified.json) | 197.60 | 197.08 |
+| [required-causes](validation/reconstruction/required-causes-verified.json) | 18.26 | 18.68 |
+| [required-history](validation/reconstruction/required-history-verified.json) | 30.12 | 39.08 |
+| [requirement-decisions](validation/reconstruction/requirement-decisions-verified.json) | 9.84 | 14.65 |
+| [requirement-plans](validation/reconstruction/requirement-plans-verified.json) | 1.97 | 1.72 |
+| [requirement-sources](validation/reconstruction/requirement-sources-verified.json) | 9.33 | 9.08 |
+| [source-development](validation/reconstruction/source-development-verified.json) | 109.62 | 113.28 |
+| [use-allocation](validation/reconstruction/use-allocation-verified.json) | 2.17 | 2.22 |
+| [use-codecs](validation/reconstruction/use-codecs-verified.json) | 2.02 | 2.32 |
 
-Completion of this plan's implementation requires the whole inventory and its
-non-recipe complement, all applicable semantic gates, controlled comparative
-measurements and actual development usefulness. A document, a profile, a green
-build, or two optimized families alone does not meet that objective.
+The failed workflow is incomplete, not a faster result. Its later stages remain
+unvalidated. The older original-baseline table, interim probe timeouts, resolved
+streaming failures and completed five-batch proposal have been removed from this
+current plan; underlying historical evidence remains available in version control.

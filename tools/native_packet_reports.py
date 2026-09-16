@@ -6,7 +6,8 @@ import compressed_machine_reports
 
 
 def assess(inputs, path, *, prefix, introductory=()):
-    iterator = iter(compressed_machine_reports.reports(path))
+    # Deferred records hash each shared dictionary value through its retained exact encoding.
+    iterator = iter(compressed_machine_reports.reports(path, deferred=True))
     counts = Counter()
     checksum = hashlib.sha256()
 
@@ -16,9 +17,9 @@ def assess(inputs, path, *, prefix, introductory=()):
         assert row['tag'] == tag and row['indices'] == indices
         compressed_machine_reports.canonical_update(checksum, row)
         counts[tag] += 1
-        return row['value']
+        return row
 
-    scope = take('SCOPE', [])
+    scope = take('SCOPE', [])['value']
     requested = scope if inputs['cases'] is None else inputs['cases']
     assert set(requested) <= set(scope)
     for tag in introductory:
@@ -29,10 +30,10 @@ def assess(inputs, path, *, prefix, introductory=()):
             take('CANDIDATE', [w, m])
     for w in requested:
         take('ASSESSMENT', [w])
-    assert take('COMPARISON', [])['scope'] == requested
+    assert take('COMPARISON', [])['value']['scope'] == requested
     for selection in inputs['selections']:
-        assert take('INVESTIGATION', [])['selected'] == selection
-    assert take('SOURCE_SCOPE', []) == requested
+        assert take('INVESTIGATION', [])['value']['selected'] == selection
+    assert take('SOURCE_SCOPE', [])['value'] == requested
     for w in requested:
         take('SOURCE', [w])
     assert next(iterator, None) is None

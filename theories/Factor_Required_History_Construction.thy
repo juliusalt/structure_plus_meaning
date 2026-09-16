@@ -1,5 +1,5 @@
 theory Factor_Required_History_Construction
-  imports Factor_Required_History_Steps Factor_Requirement_Source_Examples Optional_Result_Invariants
+  imports Factor_Required_History_Steps Factor_Requirement_Source_Examples_Base Optional_Result_Invariants
 begin
 
 lemma finite_required_histories_nonempty:

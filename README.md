@@ -2615,3 +2615,10 @@ exact code equations remove repeated work in record reading and investigation
 rows, and the shared Eval runtime no longer prints bound packets. The
 [implementation record](native_mechanism_speedup.md#implementation-record-and-corrections)
 retains the paired measurements and the remaining development-path costs.
+
+An ordinary change is validated by `tools/incremental_check.py check`: it proves
+only changed theories and their dependents over an accepted base in a fixed
+directory, executes only recipes whose complete source manifests changed, and
+runs the host tests; `retain` records the result. The
+[cycle record](native_mechanism_speedup.md#development-cycle-structure) retains
+the measured phases.

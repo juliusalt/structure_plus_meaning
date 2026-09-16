@@ -1,5 +1,5 @@
 theory Factor_Pattern_Call_Instances
-  imports Factor_Pattern_Call_Admission Factor_Pattern_Encoding Factor_Proof_Probe_Investigation
+  imports Factor_Pattern_Call_Admission Factor_Pattern_Encoding Factor_Proof_Probe_Investigation_Base
 begin
 
 section \<open>Private target coordinates preserve the complete call boundary\<close>

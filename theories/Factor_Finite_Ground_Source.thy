@@ -1,6 +1,5 @@
 theory Factor_Finite_Ground_Source
-  imports Factor_Finite_Exact_Patterns Factor_Finite_Relations
-    Factor_Finite_View_Installation Factor_Finite_Source_Entry_Installation Factor_Requirement_Source_Examples
+  imports Factor_Finite_Exact_Patterns Factor_Finite_Relations Factor_Finite_View_Installation Factor_Finite_Source_Entry_Installation Factor_Requirement_Source_Examples_Base
 begin
 
 definition finite_ground_rule :: "finite_factor_term \<Rightarrow>

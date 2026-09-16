@@ -1,5 +1,5 @@
 theory Factor_Finite_Inference_Source_Checks
-  imports Factor_Finite_Inference_Sources Factor_Closed_Native_Definitions
+  imports Factor_Finite_Inference_Sources_Base Factor_Closed_Native_Definitions
 begin
 
 section \<open>Retain separate component certificates before package composition\<close>

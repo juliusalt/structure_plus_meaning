@@ -1,5 +1,5 @@
 theory Factor_Investigation_Input_Development_Execution
-  imports Factor_Investigation_Input_Development Factor_Investigation_Input_Investigation
+  imports Factor_Investigation_Input_Development Factor_Investigation_Input_Investigation_Base
 begin
 
 lemma investigation_input_source_336:

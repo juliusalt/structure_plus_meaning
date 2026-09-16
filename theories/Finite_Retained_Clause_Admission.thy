@@ -1,6 +1,5 @@
 theory Finite_Retained_Clause_Admission
-  imports Factor_Retained_Clause_Admission Factor_Executable_Packages
-    Factor_Executable_Environment_Values RRA_Finite_Inclusion
+  imports Factor_Retained_Clause_Admission Factor_Executable_Packages Factor_Executable_Environment_Values_Base RRA_Finite_Inclusion
 begin
 
 section \<open>Finite recovery checks the complete variable-interface definition\<close>

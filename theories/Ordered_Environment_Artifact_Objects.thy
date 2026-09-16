@@ -1,5 +1,5 @@
 theory Ordered_Environment_Artifact_Objects
-  imports Ordered_Complete_Artifacts Sorted_Finite_Identity_Images Factor_Executable_Environment_Values
+  imports Ordered_Complete_Artifacts Sorted_Finite_Identity_Images Factor_Executable_Environment_Values_Base
 begin
 
 definition ordered_artifact_placement_rows where

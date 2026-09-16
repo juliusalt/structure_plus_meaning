@@ -1,5 +1,5 @@
 theory Factor_Source_Observation_Investigation
-  imports Factor_Finite_Source_Observations Factor_Requirement_Source_Examples Finite_Observation_Contracts
+  imports Factor_Finite_Source_Observations Factor_Requirement_Source_Examples_Base Finite_Observation_Contracts
 begin
 
 section \<open>Missing and altered source fields are concrete investigation subjects\<close>

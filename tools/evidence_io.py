@@ -13,12 +13,14 @@ PACK_THRESHOLD = 32 * CHUNK
 
 
 def write_json(path, value):
-    """Stream complete JSON without depth padding and publish it only after success."""
+    """Write complete JSON without depth padding and publish it only after success."""
     path = Path(path)
+    # json.dump streams through the pure-Python encoder; json.dumps produces the same text in C.
+    text = json.dumps(value, separators=(",", ":"), allow_nan=False)
     fd, temporary = tempfile.mkstemp(prefix=path.name + ".", suffix=".tmp", dir=path.parent)
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as stream:
-            json.dump(value, stream, separators=(",", ":"), allow_nan=False)
+            stream.write(text)
             stream.write("\n")
         os.replace(temporary, path)
     finally:

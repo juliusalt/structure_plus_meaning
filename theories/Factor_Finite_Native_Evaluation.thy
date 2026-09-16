@@ -1,6 +1,5 @@
 theory Factor_Finite_Native_Evaluation
-  imports Factor_Finite_Program_Evaluation Factor_Finite_Source_Computation
-    Factor_Executable_Environment_Values Factor_Positive_Admission
+  imports Factor_Finite_Program_Evaluation Factor_Finite_Source_Computation Factor_Executable_Environment_Values_Base Factor_Positive_Admission
 begin
 
 section \<open>Recover the actual package before deciding its requested calls\<close>

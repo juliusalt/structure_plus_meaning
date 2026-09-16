@@ -1,6 +1,5 @@
 theory Factor_Required_Cause_Cases
-  imports Factor_Finite_Required_Causes Factor_Certified_Cause_Variants
-    Factor_Requirement_Source_Examples
+  imports Factor_Finite_Required_Causes Factor_Certified_Cause_Variants Factor_Requirement_Source_Examples_Base
 begin
 
 type_synonym required_cause_request = "local_address option finite_artifact_environment\<times>

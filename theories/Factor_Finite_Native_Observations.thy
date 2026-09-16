@@ -1,5 +1,5 @@
 theory Factor_Finite_Native_Observations
-  imports Factor_Executable_Packages Factor_Executable_Environment_Values
+  imports Factor_Executable_Packages Factor_Executable_Environment_Values_Base
 begin
 
 section \<open>Recover complete source and target programs from the returned environment\<close>

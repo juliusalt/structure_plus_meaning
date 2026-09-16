@@ -2290,3 +2290,32 @@ deep-recursion workers also exhausted memory for streamed digit replay in the
 Eval runtime; its checker now uses four workers. Practical
 usefulness under condition 5a therefore remains unestablished; theoretical
 cost bounds under 5b remain deferred until after genesis.
+
+
+## Validation cycle review
+
+The last complete commit cycle took about an hour, mostly waiting: a
+600-second complete build, two storage-matched source-only suites that proved
+the same theories again, and host verification that deep-copied shared report
+values. A check now proves only changed theories over a fixed accepted base and
+executes only recipes whose manifests changed; host readers hash retained
+encodings. Digit replay is dominated by one context whose reading joins
+accumulate results by quadratic list-set insertion; deciding admissibility by
+pairwise disjointness did not change that cost. An ordered or indexed set
+representation would, but reports fix the stored order of finite sets: the
+reconstruction transport prints code-generator representations through host ML
+and compares bytes, outside the owned presentation classes and their local
+contracts. Nothing prevents host programs from using that representation, and
+one does. Native presentation and comparison of results is the recorded
+correction.
+
+The split of export theories lost two contract registrations of the native
+workflow, because a regular expression consumed a line boundary shared by
+adjacent registrations. The recipe detected it and the registrations are
+restored. Establishing a base by copying the sources to another path rebuilt
+the session and removed the accepted heap, because Isabelle binds heaps to
+source paths; the base now stays in one directory and refuses a changed heap.
+
+These choices came from host timings and profiles, not from a native subject
+contract. The gap under conditions 1 and 6 of problems.txt remains, and
+practical usefulness under condition 5a remains open.

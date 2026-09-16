@@ -1507,6 +1507,27 @@ bodies. Citation choices share one object formation for their root.
 Missing use: family, schema and scoped-pattern readers still re-check
 environment formation per call. The grounding union in native program
 evaluation and footprint unions in syntax readings have a repeated-scan shape,
-but their results reach reports through raw finite-set list order. Their results
+and their results
 reach reports through raw finite-set list order, so a refinement needs either
 a representation-preserving equation or a presentation-invariant comparison.
+
+
+## Validation cycle batch
+
+A join of two readings is admissible exactly when twelve pairwise footprint
+disjointness conditions hold. One depends on neither reading, four on the left
+reading, four on the right reading and three on both.
+Factor_Join_Reading_Conditions checks each once at its own level and keeps the
+admitted footprints and the traversal of both readings, so every result list is
+unchanged. It did not change digit replay's cost: accumulating join results by
+list-set insertion compares each new result with every accumulated one.
+
+Complete report dictionaries retain each entry's exact encoding. Assessments
+that hash records and read only scope fields use that encoding through deferred
+records instead of expanding shared values; eager readers copy an occurrence by
+parsing its exact encoding.
+
+An accepted proof base is reused by proving only changed theories and their
+dependents over its heap, and a recipe is executed again only when its complete
+source manifest changed. Isabelle binds a heap to the absolute paths of its
+sources, so the base keeps one fixed directory.

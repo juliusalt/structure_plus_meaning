@@ -1,6 +1,5 @@
 theory Factor_Inference_Claim_Compilation
-  imports Factor_Inference_Claim_Clauses Factor_Inference_Reader_Investigation
-    Finite_Keyed_Table_Comparison Factor_Finite_Inference_Premises
+  imports Factor_Inference_Claim_Clauses Factor_Inference_Reader_Investigation Finite_Keyed_Table_Comparison Factor_Finite_Inference_Premises_Base
 begin
 
 section \<open>New finite schemas are compiled from the complete actual native clauses\<close>

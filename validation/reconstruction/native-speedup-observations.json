@@ -1,0 +1,3994 @@
+{
+  "schema_version": 1,
+  "kind": "physical_execution_and_readiness_observations",
+  "observed_at_utc": "2026-09-16T16:13:15.356599+00:00",
+  "boundary": "Extracted physical timings and reported validation statuses. No new native condition, semantic admission, speedup theorem, or condition-5a/6 closure is supplied by this ledger.",
+  "committed_revision": "4becc454be0d9b7c94d71fff0fe280a4833ee3c3",
+  "committed_validation": {
+    "status": "accepted",
+    "theories": 1554,
+    "started_utc": "2026-09-16T14:46:21.339865+00:00",
+    "finished_utc": "2026-09-16T14:57:35.245451+00:00",
+    "wall_seconds": 673.905586,
+    "command": [
+      "/opt/isabelle/bin/isabelle",
+      "build",
+      "-b",
+      "-v",
+      "-o",
+      "threads=12",
+      "-o",
+      "timeout=1200",
+      "-D",
+      "/home/julius/structure_and_semantics"
+    ]
+  },
+  "committed_complete_recipe_count": 50,
+  "committed_complete_native_records": 5883,
+  "committed_host_tests": {
+    "passed": 158,
+    "subtests_passed": 95,
+    "skipped": 2,
+    "tool_log_sha256": "0f5da484064ec86e70d119f766902f664f9742050345ade0eb427645a6496bf2",
+    "kernel_log_sha256": "a1343cdb777e5e14d8f229ae7a4f436d1f89db57cd86487afa13f8bc8378b4cb"
+  },
+  "working_validation": {
+    "status": "accepted",
+    "theories": 1589,
+    "started_utc": "2026-09-16T15:23:17.090099+00:00",
+    "finished_utc": "2026-09-16T15:33:42.231579+00:00",
+    "wall_seconds": 625.14148,
+    "command": [
+      "/opt/isabelle/bin/isabelle",
+      "build",
+      "-b",
+      "-v",
+      "-o",
+      "threads=16",
+      "-o",
+      "timeout=1200",
+      "-D",
+      "/home/julius/structure_and_semantics"
+    ]
+  },
+  "working_build_receipt_sha256": "e14ced7ba16e84af12a5caee98944686aee7322677019b1f8abde3874a330671",
+  "working_check_receipt_sha256": "1038ca116d537d1c63e80e7a4aca485eef791f348c98c522a752c8c14ac41685",
+  "working_export_receipt": "/tmp/native-speed-exports-main/receipt.json",
+  "working_export_receipt_sha256": "ffd010642d54d6b92b31bb570eb342b53eb95b5116722e7a9289e869ed6034d3",
+  "working_complete_recipe_count": 49,
+  "working_failed_recipes": [
+    "native-workflow"
+  ],
+  "working_complete_native_records": 5541,
+  "working_source_manifest_mismatches": [
+    {
+      "recipe": "allocated-environments",
+      "changed_input_count": 3
+    },
+    {
+      "recipe": "artifact-lookup",
+      "changed_input_count": 3
+    },
+    {
+      "recipe": "cached-grafts",
+      "changed_input_count": 3
+    },
+    {
+      "recipe": "certificate-coverage",
+      "changed_input_count": 10
+    },
+    {
+      "recipe": "certificate-development",
+      "changed_input_count": 10
+    },
+    {
+      "recipe": "certificate-input-development",
+      "changed_input_count": 10
+    },
+    {
+      "recipe": "certificate-scope-repair",
+      "changed_input_count": 10
+    },
+    {
+      "recipe": "certified-causes",
+      "changed_input_count": 11
+    },
+    {
+      "recipe": "concurrent-history",
+      "changed_input_count": 14
+    },
+    {
+      "recipe": "concurrent-replay",
+      "changed_input_count": 14
+    },
+    {
+      "recipe": "constructed-history",
+      "changed_input_count": 14
+    },
+    {
+      "recipe": "data-reading",
+      "changed_input_count": 11
+    },
+    {
+      "recipe": "decision-replay",
+      "changed_input_count": 11
+    },
+    {
+      "recipe": "digit-allocation",
+      "changed_input_count": 3
+    },
+    {
+      "recipe": "digit-generation",
+      "changed_input_count": 3
+    },
+    {
+      "recipe": "digit-history",
+      "changed_input_count": 14
+    },
+    {
+      "recipe": "digit-replay",
+      "changed_input_count": 13
+    },
+    {
+      "recipe": "encoded-environments",
+      "changed_input_count": 3
+    },
+    {
+      "recipe": "environment-grafts",
+      "changed_input_count": 3
+    },
+    {
+      "recipe": "environment-updates",
+      "changed_input_count": 3
+    },
+    {
+      "recipe": "generation-records",
+      "changed_input_count": 3
+    },
+    {
+      "recipe": "graft-admission",
+      "changed_input_count": 3
+    },
+    {
+      "recipe": "history-index",
+      "changed_input_count": 13
+    },
+    {
+      "recipe": "indexed-generation",
+      "changed_input_count": 3
+    },
+    {
+      "recipe": "known-history",
+      "changed_input_count": 14
+    },
+    {
+      "recipe": "literal-replay",
+      "changed_input_count": 10
+    },
+    {
+      "recipe": "native-admission",
+      "changed_input_count": 11
+    },
+    {
+      "recipe": "native-certificate-replay",
+      "changed_input_count": 11
+    },
+    {
+      "recipe": "native-certificates",
+      "changed_input_count": 10
+    },
+    {
+      "recipe": "native-child",
+      "changed_input_count": 24
+    },
+    {
+      "recipe": "native-derivations",
+      "changed_input_count": 10
+    },
+    {
+      "recipe": "native-development",
+      "changed_input_count": 13
+    },
+    {
+      "recipe": "native-evaluation",
+      "changed_input_count": 10
+    },
+    {
+      "recipe": "native-extensions",
+      "changed_input_count": 9
+    },
+    {
+      "recipe": "native-graphs",
+      "changed_input_count": 6
+    },
+    {
+      "recipe": "native-histories",
+      "changed_input_count": 10
+    },
+    {
+      "recipe": "native-nodes",
+      "changed_input_count": 6
+    },
+    {
+      "recipe": "native-requirements",
+      "changed_input_count": 10
+    },
+    {
+      "recipe": "native-sources",
+      "changed_input_count": 10
+    },
+    {
+      "recipe": "native-steering",
+      "changed_input_count": 13
+    },
+    {
+      "recipe": "native-workflow",
+      "changed_input_count": 10
+    },
+    {
+      "recipe": "quoted-history",
+      "changed_input_count": 14
+    },
+    {
+      "recipe": "required-causes",
+      "changed_input_count": 12
+    },
+    {
+      "recipe": "required-history",
+      "changed_input_count": 13
+    },
+    {
+      "recipe": "requirement-decisions",
+      "changed_input_count": 10
+    },
+    {
+      "recipe": "requirement-plans",
+      "changed_input_count": 18
+    },
+    {
+      "recipe": "requirement-sources",
+      "changed_input_count": 9
+    },
+    {
+      "recipe": "source-development",
+      "changed_input_count": 13
+    },
+    {
+      "recipe": "use-allocation",
+      "changed_input_count": 3
+    },
+    {
+      "recipe": "use-codecs",
+      "changed_input_count": 3
+    }
+  ],
+  "timing_boundary": "Stage values are checker/roundtrip wall seconds, including each process startup, native computation, reporting and host checking, excluding the shared proof/export and outer recipe coordination. Parallel stage sums are not elapsed suite time or CPU time. Eight recipes were scheduled concurrently; nested worker counts vary.",
+  "recipes": [
+    {
+      "recipe": "allocated-environments",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 40,
+        "report_boundaries": {
+          "comparison": {
+            "records": 40,
+            "tags": {
+              "ALLOCATED_ENVIRONMENT_ASSESSMENT": 16,
+              "ALLOCATED_ENVIRONMENT_CHAIN": 3,
+              "ALLOCATED_ENVIRONMENT_COMPARISON": 1,
+              "ALLOCATED_ENVIRONMENT_INVESTIGATION": 3,
+              "ALLOCATED_ENVIRONMENT_SCOPE": 1,
+              "ALLOCATED_ENVIRONMENT_SUBJECT": 16
+            },
+            "sha256": "59a2f2ffdce911dcb7031ed8028e6dc68a061da98e78fb31ae9ecd1ceb79d2c8"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 2.317112595999788,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 40,
+        "report_boundaries": {
+          "comparison": {
+            "records": 40,
+            "tags": {
+              "ALLOCATED_ENVIRONMENT_ASSESSMENT": 16,
+              "ALLOCATED_ENVIRONMENT_CHAIN": 3,
+              "ALLOCATED_ENVIRONMENT_COMPARISON": 1,
+              "ALLOCATED_ENVIRONMENT_INVESTIGATION": 3,
+              "ALLOCATED_ENVIRONMENT_SCOPE": 1,
+              "ALLOCATED_ENVIRONMENT_SUBJECT": 16
+            },
+            "sha256": "59a2f2ffdce911dcb7031ed8028e6dc68a061da98e78fb31ae9ecd1ceb79d2c8"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 2.367747247000807,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "3b9ea61763b0541d628caeb21aeff889e204bc44d72766a533a3314cce8ac7d9",
+      "working_receipt": "/tmp/native-speed-recipes/allocated-environments/reconstruction.json",
+      "working_receipt_sha256": "f5861e7183edffc3d2fc707adc94a212c37219f0549dcb409103fba4cbc6a9cf"
+    },
+    {
+      "recipe": "artifact-lookup",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 35,
+        "report_boundaries": {
+          "comparison": {
+            "records": 35,
+            "tags": {
+              "ARTIFACT_LOOKUP_ASSESSMENT": 10,
+              "ARTIFACT_LOOKUP_COMPARISON": 1,
+              "ARTIFACT_LOOKUP_INVESTIGATION": 3,
+              "ARTIFACT_LOOKUP_PATH": 10,
+              "ARTIFACT_LOOKUP_SCOPE": 1,
+              "ARTIFACT_LOOKUP_SUBJECT": 10
+            },
+            "sha256": "9103f836fc9ecffce28e9b69e96b8ae1470193be2255002b42bd57cd14c6732a"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 1.9167519169968728,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 35,
+        "report_boundaries": {
+          "comparison": {
+            "records": 35,
+            "tags": {
+              "ARTIFACT_LOOKUP_ASSESSMENT": 10,
+              "ARTIFACT_LOOKUP_COMPARISON": 1,
+              "ARTIFACT_LOOKUP_INVESTIGATION": 3,
+              "ARTIFACT_LOOKUP_PATH": 10,
+              "ARTIFACT_LOOKUP_SCOPE": 1,
+              "ARTIFACT_LOOKUP_SUBJECT": 10
+            },
+            "sha256": "9103f836fc9ecffce28e9b69e96b8ae1470193be2255002b42bd57cd14c6732a"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 1.9663112240014016,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "5f28c5b71359b7c857a6185b8ce91360962c5391743405e10b0dadbcf9936683",
+      "working_receipt": "/tmp/native-speed-recipes/artifact-lookup/reconstruction.json",
+      "working_receipt_sha256": "bc9d6c59f6c771673ba4010738bdbf23e26c03c718ed377e4ea29d1dfd99bb1d"
+    },
+    {
+      "recipe": "cached-grafts",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 86,
+        "report_boundaries": {
+          "comparison": {
+            "records": 86,
+            "tags": {
+              "CACHED_GRAFT_ASSESSMENT": 27,
+              "CACHED_GRAFT_CHAIN": 4,
+              "CACHED_GRAFT_COMPARISON": 1,
+              "CACHED_GRAFT_INVESTIGATION": 3,
+              "CACHED_GRAFT_SCOPE": 1,
+              "CACHED_GRAFT_SOURCE": 22,
+              "CACHED_GRAFT_SOURCE_SCOPE": 1,
+              "CACHED_GRAFT_SUBJECT": 27
+            },
+            "sha256": "e4c2f42319fea36e7e1827da7fae68cabbf6be155736d2895f2e0b82d6d4e7a5"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 2.86805359400023,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 86,
+        "report_boundaries": {
+          "comparison": {
+            "records": 86,
+            "tags": {
+              "CACHED_GRAFT_ASSESSMENT": 27,
+              "CACHED_GRAFT_CHAIN": 4,
+              "CACHED_GRAFT_COMPARISON": 1,
+              "CACHED_GRAFT_INVESTIGATION": 3,
+              "CACHED_GRAFT_SCOPE": 1,
+              "CACHED_GRAFT_SOURCE": 22,
+              "CACHED_GRAFT_SOURCE_SCOPE": 1,
+              "CACHED_GRAFT_SUBJECT": 27
+            },
+            "sha256": "e4c2f42319fea36e7e1827da7fae68cabbf6be155736d2895f2e0b82d6d4e7a5"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 2.7679409379998106,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "7ab47e083d605611c9952a0363c76316fe15d92dfa620f85be80736e30e60af0",
+      "working_receipt": "/tmp/native-speed-recipes/cached-grafts/reconstruction.json",
+      "working_receipt_sha256": "53bc2e15f3f3cee1f981dd5d1699caf7ced22ee179bf723b39e6cf101668f540"
+    },
+    {
+      "recipe": "certificate-coverage",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 7,
+        "report_boundaries": {
+          "comparison": {
+            "records": 7,
+            "tags": {
+              "COVERAGE_ASSESSMENT": 1,
+              "COVERAGE_COMPARISON": 1,
+              "COVERAGE_INVESTIGATION": 3,
+              "COVERAGE_SCOPE": 1,
+              "COVERAGE_SUBJECT": 1
+            },
+            "sha256": "123db5b81a326a7c119a2b7899133c8bf5aba56e3db50c8cee39aa933789419f"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 8.278887527001643,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 7,
+        "report_boundaries": {
+          "comparison": {
+            "records": 7,
+            "tags": {
+              "COVERAGE_ASSESSMENT": 1,
+              "COVERAGE_COMPARISON": 1,
+              "COVERAGE_INVESTIGATION": 3,
+              "COVERAGE_SCOPE": 1,
+              "COVERAGE_SUBJECT": 1
+            },
+            "sha256": "123db5b81a326a7c119a2b7899133c8bf5aba56e3db50c8cee39aa933789419f"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 8.32962215400039,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "340904041ccbdfda4eed1a295cef2df5b467d8c0300e82a763f6f222899194d6",
+      "working_receipt": "/tmp/native-speed-recipes/certificate-coverage/reconstruction.json",
+      "working_receipt_sha256": "90615e2989155743aa0d4cbd8f2016b770db5f4d53de603ac0b670ba8746a354"
+    },
+    {
+      "recipe": "certificate-development",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 57,
+        "report_boundaries": {
+          "comparison": {
+            "records": 57,
+            "tags": {
+              "CERTIFICATE_ADMISSIONS": 1,
+              "CERTIFICATE_ASSESSMENT": 26,
+              "CERTIFICATE_COMPARISON": 1,
+              "CERTIFICATE_CRITICISM": 1,
+              "CERTIFICATE_INVESTIGATION": 1,
+              "CERTIFICATE_SCOPE": 1,
+              "CERTIFICATE_SUBJECT": 26
+            },
+            "sha256": "1a39b75c3a9075983c493392aa3f841823f873294ad90f16c38599c8ce5ff9b8"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 8.033070343997679,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 57,
+        "report_boundaries": {
+          "comparison": {
+            "records": 57,
+            "tags": {
+              "CERTIFICATE_ADMISSIONS": 1,
+              "CERTIFICATE_ASSESSMENT": 26,
+              "CERTIFICATE_COMPARISON": 1,
+              "CERTIFICATE_CRITICISM": 1,
+              "CERTIFICATE_INVESTIGATION": 1,
+              "CERTIFICATE_SCOPE": 1,
+              "CERTIFICATE_SUBJECT": 26
+            },
+            "sha256": "1a39b75c3a9075983c493392aa3f841823f873294ad90f16c38599c8ce5ff9b8"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 8.280923806996725,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "9afa9870332d1334b491892e5efd485d078cbc4d00242ca5aef88a33a2874c3d",
+      "working_receipt": "/tmp/native-speed-recipes/certificate-development/reconstruction.json",
+      "working_receipt_sha256": "70210d30d64e0c9d3185e90d612589e30e1a0370df5dd0f0f7bee67f5dc42a5f"
+    },
+    {
+      "recipe": "certificate-input-development",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 65,
+        "report_boundaries": {
+          "comparison": {
+            "records": 65,
+            "tags": {
+              "CERTIFICATE_ADMISSIONS": 1,
+              "CERTIFICATE_ASSESSMENT": 30,
+              "CERTIFICATE_COMPARISON": 1,
+              "CERTIFICATE_CRITICISM": 1,
+              "CERTIFICATE_INVESTIGATION": 1,
+              "CERTIFICATE_SCOPE": 1,
+              "CERTIFICATE_SUBJECT": 30
+            },
+            "sha256": "e3d05aaf8f82a4c5443f28f120aebe13b532455982580e4b8fd80f6205c36d55"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 10.235037261001708,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 65,
+        "report_boundaries": {
+          "comparison": {
+            "records": 65,
+            "tags": {
+              "CERTIFICATE_ADMISSIONS": 1,
+              "CERTIFICATE_ASSESSMENT": 30,
+              "CERTIFICATE_COMPARISON": 1,
+              "CERTIFICATE_CRITICISM": 1,
+              "CERTIFICATE_INVESTIGATION": 1,
+              "CERTIFICATE_SCOPE": 1,
+              "CERTIFICATE_SUBJECT": 30
+            },
+            "sha256": "e3d05aaf8f82a4c5443f28f120aebe13b532455982580e4b8fd80f6205c36d55"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 10.98438872800034,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "bf41a327c46ef3bba6fb7b33aeb9c35a30e7f8b1934c0587bbbc203cb764acc6",
+      "working_receipt": "/tmp/native-speed-recipes/certificate-input-development/reconstruction.json",
+      "working_receipt_sha256": "aacb95b47479073dc85238389f9c30520953ecdd1c727a1d6e94dd893701dda7"
+    },
+    {
+      "recipe": "certificate-scope-repair",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 7,
+        "report_boundaries": {
+          "comparison": {
+            "records": 7,
+            "tags": {
+              "SCOPE_REPAIR_ASSESSMENT": 1,
+              "SCOPE_REPAIR_COMPARISON": 1,
+              "SCOPE_REPAIR_INVESTIGATION": 3,
+              "SCOPE_REPAIR_SCOPE": 1,
+              "SCOPE_REPAIR_SUBJECT": 1
+            },
+            "sha256": "ec47a30a73d69c72b86955ce7a1221d8baec94233b06c49c90f3cf38b2cac71b"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 7.325681839000026,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 7,
+        "report_boundaries": {
+          "comparison": {
+            "records": 7,
+            "tags": {
+              "SCOPE_REPAIR_ASSESSMENT": 1,
+              "SCOPE_REPAIR_COMPARISON": 1,
+              "SCOPE_REPAIR_INVESTIGATION": 3,
+              "SCOPE_REPAIR_SCOPE": 1,
+              "SCOPE_REPAIR_SUBJECT": 1
+            },
+            "sha256": "ec47a30a73d69c72b86955ce7a1221d8baec94233b06c49c90f3cf38b2cac71b"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 7.427694758000143,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "0662633dec65f625297db1d50ac3272c5f9f3ff033941313cc17c7ec503bb53a",
+      "working_receipt": "/tmp/native-speed-recipes/certificate-scope-repair/reconstruction.json",
+      "working_receipt_sha256": "6d412171b86e4bd6f251627a18a40b09d4affb6b80df404a7fcd129880bfcbe2"
+    },
+    {
+      "recipe": "certified-causes",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 36,
+        "report_boundaries": {
+          "comparison": {
+            "records": 36,
+            "tags": {
+              "CERTIFIED_CAUSE_ASSESSMENT": 15,
+              "CERTIFIED_CAUSE_COMPARISON": 1,
+              "CERTIFIED_CAUSE_INVESTIGATION": 3,
+              "CERTIFIED_CAUSE_SCOPE": 1,
+              "CERTIFIED_CAUSE_SEED": 1,
+              "CERTIFIED_CAUSE_SUBJECT": 15
+            },
+            "sha256": "2a68e27c7334b2defda61f25b148b798af1c02e2b8d417ee837f595ca25a8d9b"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 110.52675025899953,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 36,
+        "report_boundaries": {
+          "comparison": {
+            "records": 36,
+            "tags": {
+              "CERTIFIED_CAUSE_ASSESSMENT": 15,
+              "CERTIFIED_CAUSE_COMPARISON": 1,
+              "CERTIFIED_CAUSE_INVESTIGATION": 3,
+              "CERTIFIED_CAUSE_SCOPE": 1,
+              "CERTIFIED_CAUSE_SEED": 1,
+              "CERTIFIED_CAUSE_SUBJECT": 15
+            },
+            "sha256": "2a68e27c7334b2defda61f25b148b798af1c02e2b8d417ee837f595ca25a8d9b"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 109.91327767099938,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "45c78e1137c43d6349868950e8951e024981906498258e3702b6b0e6e16f97ef",
+      "working_receipt": "/tmp/native-speed-recipes/certified-causes/reconstruction.json",
+      "working_receipt_sha256": "1030e86eb12f716e9f6fa59a24a849b6819c6e7c43abcabca8c56c8aebd35081"
+    },
+    {
+      "recipe": "concurrent-history",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 423,
+        "report_boundaries": {
+          "comparison": {
+            "records": 423,
+            "tags": {
+              "CONSTRUCTED_HISTORY_ARTIFACTS": 1,
+              "CONSTRUCTED_HISTORY_ASSESSMENT": 16,
+              "CONSTRUCTED_HISTORY_CANDIDATE": 368,
+              "CONSTRUCTED_HISTORY_COMPARISON": 1,
+              "CONSTRUCTED_HISTORY_CONTEXT": 16,
+              "CONSTRUCTED_HISTORY_INVESTIGATION": 3,
+              "CONSTRUCTED_HISTORY_SCOPE": 1,
+              "CONSTRUCTED_HISTORY_SOURCE": 16,
+              "CONSTRUCTED_HISTORY_SOURCE_SCOPE": 1
+            },
+            "sha256": "52caceb08f87b04d38b7e0d0b4617ea08ed8b02c77fced07049c672d3bc37b12"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 25.42139167500136,
+            "exit_code": 0,
+            "workers": 8
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 423,
+        "report_boundaries": {
+          "comparison": {
+            "records": 423,
+            "tags": {
+              "CONSTRUCTED_HISTORY_ARTIFACTS": 1,
+              "CONSTRUCTED_HISTORY_ASSESSMENT": 16,
+              "CONSTRUCTED_HISTORY_CANDIDATE": 368,
+              "CONSTRUCTED_HISTORY_COMPARISON": 1,
+              "CONSTRUCTED_HISTORY_CONTEXT": 16,
+              "CONSTRUCTED_HISTORY_INVESTIGATION": 3,
+              "CONSTRUCTED_HISTORY_SCOPE": 1,
+              "CONSTRUCTED_HISTORY_SOURCE": 16,
+              "CONSTRUCTED_HISTORY_SOURCE_SCOPE": 1
+            },
+            "sha256": "52caceb08f87b04d38b7e0d0b4617ea08ed8b02c77fced07049c672d3bc37b12"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 51.329805405002844,
+            "exit_code": 0,
+            "workers": 8
+          }
+        ]
+      },
+      "committed_receipt_sha256": "3461a15974d463b4bcadcf02c75aefff36bf6f97f00bf7b7cae95854dd04bbdd",
+      "working_receipt": "/tmp/native-speed-recipes/concurrent-history/reconstruction.json",
+      "working_receipt_sha256": "3aa00cc61e5fed4d25dc4fa84f90effcb5c27af34c085b751eafa16770954559"
+    },
+    {
+      "recipe": "concurrent-replay",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 513,
+        "report_boundaries": {
+          "comparison": {
+            "records": 513,
+            "tags": {
+              "DIGIT_REPLAY_ARTIFACTS": 1,
+              "DIGIT_REPLAY_ASSESSMENT": 24,
+              "DIGIT_REPLAY_CANDIDATE": 432,
+              "DIGIT_REPLAY_COMPARISON": 1,
+              "DIGIT_REPLAY_CONTEXT": 24,
+              "DIGIT_REPLAY_INVESTIGATION": 3,
+              "DIGIT_REPLAY_PREVIOUS_SOURCES": 1,
+              "DIGIT_REPLAY_SCOPE": 1,
+              "DIGIT_REPLAY_SEEDS": 1,
+              "DIGIT_REPLAY_SOURCE": 24,
+              "DIGIT_REPLAY_SOURCE_SCOPE": 1
+            },
+            "sha256": "794867644ebe490d49db8ad85fd1c30b5162e64bf9e8230c9d9922e257e871fb"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 78.29406461799954,
+            "exit_code": 0,
+            "workers": 8
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 513,
+        "report_boundaries": {
+          "comparison": {
+            "records": 513,
+            "tags": {
+              "DIGIT_REPLAY_ARTIFACTS": 1,
+              "DIGIT_REPLAY_ASSESSMENT": 24,
+              "DIGIT_REPLAY_CANDIDATE": 432,
+              "DIGIT_REPLAY_COMPARISON": 1,
+              "DIGIT_REPLAY_CONTEXT": 24,
+              "DIGIT_REPLAY_INVESTIGATION": 3,
+              "DIGIT_REPLAY_PREVIOUS_SOURCES": 1,
+              "DIGIT_REPLAY_SCOPE": 1,
+              "DIGIT_REPLAY_SEEDS": 1,
+              "DIGIT_REPLAY_SOURCE": 24,
+              "DIGIT_REPLAY_SOURCE_SCOPE": 1
+            },
+            "sha256": "794867644ebe490d49db8ad85fd1c30b5162e64bf9e8230c9d9922e257e871fb"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 149.9611778690014,
+            "exit_code": 0,
+            "workers": 8
+          }
+        ]
+      },
+      "committed_receipt_sha256": "49e6cf1775ce1709d0256842f072d35ae02f099c89b702cbdeeb2be385db3df3",
+      "working_receipt": "/tmp/native-speed-recipes/concurrent-replay/reconstruction.json",
+      "working_receipt_sha256": "116a154cdac5b0404c43ab03a2ea160eefa18442c9defff9e04a80b5e339a5ed"
+    },
+    {
+      "recipe": "constructed-history",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 422,
+        "report_boundaries": {
+          "comparison": {
+            "records": 422,
+            "tags": {
+              "CONSTRUCTED_HISTORY_ASSESSMENT": 16,
+              "CONSTRUCTED_HISTORY_CANDIDATE": 368,
+              "CONSTRUCTED_HISTORY_COMPARISON": 1,
+              "CONSTRUCTED_HISTORY_CONTEXT": 16,
+              "CONSTRUCTED_HISTORY_INVESTIGATION": 3,
+              "CONSTRUCTED_HISTORY_SCOPE": 1,
+              "CONSTRUCTED_HISTORY_SOURCE": 16,
+              "CONSTRUCTED_HISTORY_SOURCE_SCOPE": 1
+            },
+            "sha256": "1ac10679b9c32c4047f3cab54c720bbd3406e88b2a1404a01b5cfae8f31675b3"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 320.31342252599643,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 422,
+        "report_boundaries": {
+          "comparison": {
+            "records": 422,
+            "tags": {
+              "CONSTRUCTED_HISTORY_ASSESSMENT": 16,
+              "CONSTRUCTED_HISTORY_CANDIDATE": 368,
+              "CONSTRUCTED_HISTORY_COMPARISON": 1,
+              "CONSTRUCTED_HISTORY_CONTEXT": 16,
+              "CONSTRUCTED_HISTORY_INVESTIGATION": 3,
+              "CONSTRUCTED_HISTORY_SCOPE": 1,
+              "CONSTRUCTED_HISTORY_SOURCE": 16,
+              "CONSTRUCTED_HISTORY_SOURCE_SCOPE": 1
+            },
+            "sha256": "1ac10679b9c32c4047f3cab54c720bbd3406e88b2a1404a01b5cfae8f31675b3"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 323.07520695399944,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "81e75243ee692acaa838b96caa237b3306f956ae2bafe0368ba7b85f4aa4eacb",
+      "working_receipt": "/tmp/native-speed-recipes/constructed-history/reconstruction.json",
+      "working_receipt_sha256": "95d3cc49d2d41de555b98a9b65fa1026af13cc7a294f8edb125feb837aa4d4f6"
+    },
+    {
+      "recipe": "data-reading",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 32,
+        "report_boundaries": {
+          "comparison": {
+            "records": 32,
+            "tags": {
+              "DATA_READING_ASSESSMENT": 12,
+              "DATA_READING_COMPARISON": 1,
+              "DATA_READING_FIXTURE": 1,
+              "DATA_READING_INVESTIGATION": 3,
+              "DATA_READING_PREPARED": 1,
+              "DATA_READING_SCOPE": 1,
+              "DATA_READING_SOURCE": 1,
+              "DATA_READING_SUBJECT": 12
+            },
+            "sha256": "d5d9250a5b6236a1589dca72c2de87d7086ada2300fbddd5e613fb15b93b2f46"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 3.970540780999727,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 32,
+        "report_boundaries": {
+          "comparison": {
+            "records": 32,
+            "tags": {
+              "DATA_READING_ASSESSMENT": 12,
+              "DATA_READING_COMPARISON": 1,
+              "DATA_READING_FIXTURE": 1,
+              "DATA_READING_INVESTIGATION": 3,
+              "DATA_READING_PREPARED": 1,
+              "DATA_READING_SCOPE": 1,
+              "DATA_READING_SOURCE": 1,
+              "DATA_READING_SUBJECT": 12
+            },
+            "sha256": "d5d9250a5b6236a1589dca72c2de87d7086ada2300fbddd5e613fb15b93b2f46"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 3.8698577340001066,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "d81c28d8fe2d6c6de812286191cc3869915d76057e8ffa03ad6d485cb8d4c743",
+      "working_receipt": "/tmp/native-speed-recipes/data-reading/reconstruction.json",
+      "working_receipt_sha256": "e8122f42eb5f2609c28ed884e9adc13bc998d9166b6dd9e81a0f8157e9ebf5d0"
+    },
+    {
+      "recipe": "decision-replay",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 29,
+        "report_boundaries": {
+          "comparison": {
+            "records": 29,
+            "tags": {
+              "DECISION_REPLAY_ASSESSMENT": 12,
+              "DECISION_REPLAY_COMPARISON": 1,
+              "DECISION_REPLAY_INVESTIGATION": 3,
+              "DECISION_REPLAY_SCOPE": 1,
+              "DECISION_REPLAY_SUBJECT": 12
+            },
+            "sha256": "249b2ad391a4ddbbaa4d1c2b97cbba1a73d1381dcbff3bbb38fd3d3889a6bc2a"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 368.54313259099945,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 29,
+        "report_boundaries": {
+          "comparison": {
+            "records": 29,
+            "tags": {
+              "DECISION_REPLAY_ASSESSMENT": 12,
+              "DECISION_REPLAY_COMPARISON": 1,
+              "DECISION_REPLAY_INVESTIGATION": 3,
+              "DECISION_REPLAY_SCOPE": 1,
+              "DECISION_REPLAY_SUBJECT": 12
+            },
+            "sha256": "249b2ad391a4ddbbaa4d1c2b97cbba1a73d1381dcbff3bbb38fd3d3889a6bc2a"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 374.8586488159999,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "b9d12c262ae1e9f3d156e9502278419bd9890d53c068cce1da636addc2a711db",
+      "working_receipt": "/tmp/native-speed-recipes/decision-replay/reconstruction.json",
+      "working_receipt_sha256": "10d9e2b03b6db9cac2ec63cc412329cc2ad7ced7436d0f92434a24b12f24e5ce"
+    },
+    {
+      "recipe": "digit-allocation",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 56,
+        "report_boundaries": {
+          "comparison": {
+            "records": 56,
+            "tags": {
+              "DIGIT_ALLOCATION_ASSESSMENT": 16,
+              "DIGIT_ALLOCATION_CASE_VIEWS": 16,
+              "DIGIT_ALLOCATION_CHAIN": 3,
+              "DIGIT_ALLOCATION_COMPARISON": 1,
+              "DIGIT_ALLOCATION_INVESTIGATION": 3,
+              "DIGIT_ALLOCATION_SCOPE": 1,
+              "DIGIT_ALLOCATION_SUBJECT": 16
+            },
+            "sha256": "c3db3521ae1acd1a8269e712d5966129b86c375dab6b5bbf1ca961a4ee590c70"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 2.91809453300084,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 56,
+        "report_boundaries": {
+          "comparison": {
+            "records": 56,
+            "tags": {
+              "DIGIT_ALLOCATION_ASSESSMENT": 16,
+              "DIGIT_ALLOCATION_CASE_VIEWS": 16,
+              "DIGIT_ALLOCATION_CHAIN": 3,
+              "DIGIT_ALLOCATION_COMPARISON": 1,
+              "DIGIT_ALLOCATION_INVESTIGATION": 3,
+              "DIGIT_ALLOCATION_SCOPE": 1,
+              "DIGIT_ALLOCATION_SUBJECT": 16
+            },
+            "sha256": "c3db3521ae1acd1a8269e712d5966129b86c375dab6b5bbf1ca961a4ee590c70"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 2.9692361739980697,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "5893daaffb59f8a1c8005259b2e5271edeb6646233cd0c9624a9615962543752",
+      "working_receipt": "/tmp/native-speed-recipes/digit-allocation/reconstruction.json",
+      "working_receipt_sha256": "7fb0682e349e7cc628f45b7f37de0f0a55351516e1b931769381575a53fc1291"
+    },
+    {
+      "recipe": "digit-generation",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 78,
+        "report_boundaries": {
+          "comparison": {
+            "records": 78,
+            "tags": {
+              "DIGIT_GENERATION_ASSESSMENT": 24,
+              "DIGIT_GENERATION_COMPARISON": 1,
+              "DIGIT_GENERATION_INVESTIGATION": 3,
+              "DIGIT_GENERATION_SCOPE": 1,
+              "DIGIT_GENERATION_SOURCE": 24,
+              "DIGIT_GENERATION_SOURCE_SCOPE": 1,
+              "DIGIT_GENERATION_SUBJECT": 24
+            },
+            "sha256": "ba62a477d3772e62810cae400ff3bc9796419b8cef4d18aea810e472b5d30c7c"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 8.295009401997959,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 78,
+        "report_boundaries": {
+          "comparison": {
+            "records": 78,
+            "tags": {
+              "DIGIT_GENERATION_ASSESSMENT": 24,
+              "DIGIT_GENERATION_COMPARISON": 1,
+              "DIGIT_GENERATION_INVESTIGATION": 3,
+              "DIGIT_GENERATION_SCOPE": 1,
+              "DIGIT_GENERATION_SOURCE": 24,
+              "DIGIT_GENERATION_SOURCE_SCOPE": 1,
+              "DIGIT_GENERATION_SUBJECT": 24
+            },
+            "sha256": "ba62a477d3772e62810cae400ff3bc9796419b8cef4d18aea810e472b5d30c7c"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 7.951500684001076,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "216a0e1d47e7176a21c71bdc21f661db991518e26881b5b41f106c719ff91531",
+      "working_receipt": "/tmp/native-speed-recipes/digit-generation/reconstruction.json",
+      "working_receipt_sha256": "3aec9624aede22698ee6cf01c872bf954c75c6e100bd921a047eff08b04cb9dc"
+    },
+    {
+      "recipe": "digit-history",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 54,
+        "report_boundaries": {
+          "comparison": {
+            "records": 54,
+            "tags": {
+              "DIGIT_HISTORY_ASSESSMENT": 16,
+              "DIGIT_HISTORY_COMPARISON": 1,
+              "DIGIT_HISTORY_INVESTIGATION": 3,
+              "DIGIT_HISTORY_SCOPE": 1,
+              "DIGIT_HISTORY_SOURCE": 16,
+              "DIGIT_HISTORY_SOURCE_SCOPE": 1,
+              "DIGIT_HISTORY_SUBJECT": 16
+            },
+            "sha256": "723dcd063d61898f0a762622a972ec497061e10816b3ab865f86937a782e0a6f"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 265.1514912120001,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 54,
+        "report_boundaries": {
+          "comparison": {
+            "records": 54,
+            "tags": {
+              "DIGIT_HISTORY_ASSESSMENT": 16,
+              "DIGIT_HISTORY_COMPARISON": 1,
+              "DIGIT_HISTORY_INVESTIGATION": 3,
+              "DIGIT_HISTORY_SCOPE": 1,
+              "DIGIT_HISTORY_SOURCE": 16,
+              "DIGIT_HISTORY_SOURCE_SCOPE": 1,
+              "DIGIT_HISTORY_SUBJECT": 16
+            },
+            "sha256": "723dcd063d61898f0a762622a972ec497061e10816b3ab865f86937a782e0a6f"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 259.07625150400054,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "a7ee0c4e00d252ee652dca8c5c44f041b5dd50a579425e51ddab84b94abbae64",
+      "working_receipt": "/tmp/native-speed-recipes/digit-history/reconstruction.json",
+      "working_receipt_sha256": "fd7a4f40dce27cd3e8e2bd5059c8189fff4043f59ecdc019604c4389fc562684"
+    },
+    {
+      "recipe": "digit-replay",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 512,
+        "report_boundaries": {
+          "comparison": {
+            "records": 512,
+            "tags": {
+              "DIGIT_REPLAY_ASSESSMENT": 24,
+              "DIGIT_REPLAY_CANDIDATE": 432,
+              "DIGIT_REPLAY_COMPARISON": 1,
+              "DIGIT_REPLAY_CONTEXT": 24,
+              "DIGIT_REPLAY_INVESTIGATION": 3,
+              "DIGIT_REPLAY_PREVIOUS_SOURCES": 1,
+              "DIGIT_REPLAY_SCOPE": 1,
+              "DIGIT_REPLAY_SEEDS": 1,
+              "DIGIT_REPLAY_SOURCE": 24,
+              "DIGIT_REPLAY_SOURCE_SCOPE": 1
+            },
+            "sha256": "419933fdb7e2a1c8ef5eda53303641a42ee5c623c97a8bcca9e452b56413d422"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 990.2859740530002,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 512,
+        "report_boundaries": {
+          "comparison": {
+            "records": 512,
+            "tags": {
+              "DIGIT_REPLAY_ASSESSMENT": 24,
+              "DIGIT_REPLAY_CANDIDATE": 432,
+              "DIGIT_REPLAY_COMPARISON": 1,
+              "DIGIT_REPLAY_CONTEXT": 24,
+              "DIGIT_REPLAY_INVESTIGATION": 3,
+              "DIGIT_REPLAY_PREVIOUS_SOURCES": 1,
+              "DIGIT_REPLAY_SCOPE": 1,
+              "DIGIT_REPLAY_SEEDS": 1,
+              "DIGIT_REPLAY_SOURCE": 24,
+              "DIGIT_REPLAY_SOURCE_SCOPE": 1
+            },
+            "sha256": "419933fdb7e2a1c8ef5eda53303641a42ee5c623c97a8bcca9e452b56413d422"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 997.9331775179999,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "db45c7eafe347fc63cf2cbffb5a89c006613d356855aaa280b733287738cac47",
+      "working_receipt": "/tmp/native-speed-recipes/digit-replay/reconstruction.json",
+      "working_receipt_sha256": "41b8dbc2970c5b83b5cdccbd47c6cccd248c4a4cc2dbb5e8af3684cb5d841213"
+    },
+    {
+      "recipe": "encoded-environments",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 59,
+        "report_boundaries": {
+          "comparison": {
+            "records": 59,
+            "tags": {
+              "ENCODED_ENVIRONMENT_ASSESSMENT": 22,
+              "ENCODED_ENVIRONMENT_COMPARISON": 1,
+              "ENCODED_ENVIRONMENT_INVESTIGATION": 4,
+              "ENCODED_ENVIRONMENT_PATH": 4,
+              "ENCODED_ENVIRONMENT_PREVIOUS_COMPARISON": 1,
+              "ENCODED_ENVIRONMENT_PREVIOUS_INVESTIGATION": 3,
+              "ENCODED_ENVIRONMENT_PREVIOUS_SCOPE": 1,
+              "ENCODED_ENVIRONMENT_SCOPE": 1,
+              "ENCODED_ENVIRONMENT_SUBJECT": 22
+            },
+            "sha256": "150a6305ec210a24ad67ffe75c19b2c5df46cef91e0b523c01dc1bb65a5595d7"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 8.29860899400228,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 59,
+        "report_boundaries": {
+          "comparison": {
+            "records": 59,
+            "tags": {
+              "ENCODED_ENVIRONMENT_ASSESSMENT": 22,
+              "ENCODED_ENVIRONMENT_COMPARISON": 1,
+              "ENCODED_ENVIRONMENT_INVESTIGATION": 4,
+              "ENCODED_ENVIRONMENT_PATH": 4,
+              "ENCODED_ENVIRONMENT_PREVIOUS_COMPARISON": 1,
+              "ENCODED_ENVIRONMENT_PREVIOUS_INVESTIGATION": 3,
+              "ENCODED_ENVIRONMENT_PREVIOUS_SCOPE": 1,
+              "ENCODED_ENVIRONMENT_SCOPE": 1,
+              "ENCODED_ENVIRONMENT_SUBJECT": 22
+            },
+            "sha256": "150a6305ec210a24ad67ffe75c19b2c5df46cef91e0b523c01dc1bb65a5595d7"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 9.151311467001506,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "ccbd662cef8717bd21ffaf5f22237e96f6333131df51dc0f62b87c18b71efb78",
+      "working_receipt": "/tmp/native-speed-recipes/encoded-environments/reconstruction.json",
+      "working_receipt_sha256": "69fe92493313515c8edd2e249c3bef3847e093a8f36b3ce43b557890970254b3"
+    },
+    {
+      "recipe": "environment-grafts",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 39,
+        "report_boundaries": {
+          "comparison": {
+            "records": 39,
+            "tags": {
+              "GRAFT_ASSESSMENT": 16,
+              "GRAFT_COMPARISON": 1,
+              "GRAFT_INVESTIGATION": 4,
+              "GRAFT_SCOPE": 1,
+              "GRAFT_SEMANTICS": 1,
+              "GRAFT_SUBJECT": 16
+            },
+            "sha256": "f8dcfefd5ec82288717c6c67761f3f3c2c613fcf8be6f1e3c57e3c4088d9e89f"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 9.441533535999042,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 39,
+        "report_boundaries": {
+          "comparison": {
+            "records": 39,
+            "tags": {
+              "GRAFT_ASSESSMENT": 16,
+              "GRAFT_COMPARISON": 1,
+              "GRAFT_INVESTIGATION": 4,
+              "GRAFT_SCOPE": 1,
+              "GRAFT_SEMANTICS": 1,
+              "GRAFT_SUBJECT": 16
+            },
+            "sha256": "f8dcfefd5ec82288717c6c67761f3f3c2c613fcf8be6f1e3c57e3c4088d9e89f"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 8.968044793000445,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "0e925fe20058aceacc17e164e12341ee0af6538b1ec69473380bb6d833c4c8a9",
+      "working_receipt": "/tmp/native-speed-recipes/environment-grafts/reconstruction.json",
+      "working_receipt_sha256": "0925c5e6d1ba06884e33bfcac86d646666edf6e8b2c28daefd3b19bd4f73a19f"
+    },
+    {
+      "recipe": "environment-updates",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 40,
+        "report_boundaries": {
+          "comparison": {
+            "records": 40,
+            "tags": {
+              "ENVIRONMENT_UPDATE_ASSESSMENT": 16,
+              "ENVIRONMENT_UPDATE_CHAIN": 3,
+              "ENVIRONMENT_UPDATE_COMPARISON": 1,
+              "ENVIRONMENT_UPDATE_INVESTIGATION": 3,
+              "ENVIRONMENT_UPDATE_SCOPE": 1,
+              "ENVIRONMENT_UPDATE_SUBJECT": 16
+            },
+            "sha256": "6ee1aa92f75f90ccceb417fa339e2a8de6395e8474374cb74d8f28e48bac5ea4"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 9.658400661999622,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 40,
+        "report_boundaries": {
+          "comparison": {
+            "records": 40,
+            "tags": {
+              "ENVIRONMENT_UPDATE_ASSESSMENT": 16,
+              "ENVIRONMENT_UPDATE_CHAIN": 3,
+              "ENVIRONMENT_UPDATE_COMPARISON": 1,
+              "ENVIRONMENT_UPDATE_INVESTIGATION": 3,
+              "ENVIRONMENT_UPDATE_SCOPE": 1,
+              "ENVIRONMENT_UPDATE_SUBJECT": 16
+            },
+            "sha256": "6ee1aa92f75f90ccceb417fa339e2a8de6395e8474374cb74d8f28e48bac5ea4"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 10.012433146999683,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "19b14e07603bc964783de85049203ee4ada3ee142dffb697f0ff9d31fea2aead",
+      "working_receipt": "/tmp/native-speed-recipes/environment-updates/reconstruction.json",
+      "working_receipt_sha256": "d968474d665777f1237c3f2815dc4490abe327f21fa115da44aea6a26a128909"
+    },
+    {
+      "recipe": "generation-records",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 37,
+        "report_boundaries": {
+          "comparison": {
+            "records": 37,
+            "tags": {
+              "GENERATION_RECORD_ASSESSMENT": 16,
+              "GENERATION_RECORD_COMPARISON": 1,
+              "GENERATION_RECORD_INVESTIGATION": 3,
+              "GENERATION_RECORD_SCOPE": 1,
+              "GENERATION_RECORD_SUBJECT": 16
+            },
+            "sha256": "19b4353a409522404bd575a853ab0dba1e3c2d0c5107be468f02e31c61f9a3b7"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 13.962460570997791,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 37,
+        "report_boundaries": {
+          "comparison": {
+            "records": 37,
+            "tags": {
+              "GENERATION_RECORD_ASSESSMENT": 16,
+              "GENERATION_RECORD_COMPARISON": 1,
+              "GENERATION_RECORD_INVESTIGATION": 3,
+              "GENERATION_RECORD_SCOPE": 1,
+              "GENERATION_RECORD_SUBJECT": 16
+            },
+            "sha256": "19b4353a409522404bd575a853ab0dba1e3c2d0c5107be468f02e31c61f9a3b7"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 14.331969184000627,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "3810071f699797a53a5f037fa3a6ee04175ec8c07c02bbdc424a01d98735259a",
+      "working_receipt": "/tmp/native-speed-recipes/generation-records/reconstruction.json",
+      "working_receipt_sha256": "82e367b075686bebaef322108fb38c4fc597d0dfc8bf38caaf62646fc74dce56"
+    },
+    {
+      "recipe": "graft-admission",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 71,
+        "report_boundaries": {
+          "comparison": {
+            "records": 71,
+            "tags": {
+              "GRAFT_ADMISSION_ASSESSMENT": 22,
+              "GRAFT_ADMISSION_COMPARISON": 1,
+              "GRAFT_ADMISSION_INVESTIGATION": 3,
+              "GRAFT_ADMISSION_REQUIREMENTS": 22,
+              "GRAFT_ADMISSION_SCOPE": 1,
+              "GRAFT_ADMISSION_SUBJECT": 22
+            },
+            "sha256": "c3101081f8b7e1781f943df6da5e1ba9d4e6c9caa08af159477ef67b8e9974b2"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 8.977971307002008,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 71,
+        "report_boundaries": {
+          "comparison": {
+            "records": 71,
+            "tags": {
+              "GRAFT_ADMISSION_ASSESSMENT": 22,
+              "GRAFT_ADMISSION_COMPARISON": 1,
+              "GRAFT_ADMISSION_INVESTIGATION": 3,
+              "GRAFT_ADMISSION_REQUIREMENTS": 22,
+              "GRAFT_ADMISSION_SCOPE": 1,
+              "GRAFT_ADMISSION_SUBJECT": 22
+            },
+            "sha256": "c3101081f8b7e1781f943df6da5e1ba9d4e6c9caa08af159477ef67b8e9974b2"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 10.270463779997954,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "bbec0cf4320e691d4c1edb85f03ef2d287e3aa89133505f243986884ea2c18cd",
+      "working_receipt": "/tmp/native-speed-recipes/graft-admission/reconstruction.json",
+      "working_receipt_sha256": "2bac54ba49a64aa4c480215e15225ef666b473b07492445f3cb8841951077b28"
+    },
+    {
+      "recipe": "history-index",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 66,
+        "report_boundaries": {
+          "comparison": {
+            "records": 66,
+            "tags": {
+              "HISTORY_INDEX_ASSESSMENT": 16,
+              "HISTORY_INDEX_COMPARISON": 1,
+              "HISTORY_INDEX_COVERAGE": 16,
+              "HISTORY_INDEX_INVESTIGATION": 3,
+              "HISTORY_INDEX_SCOPE": 1,
+              "HISTORY_INDEX_SOURCE": 12,
+              "HISTORY_INDEX_SOURCE_SCOPE": 1,
+              "HISTORY_INDEX_SUBJECT": 16
+            },
+            "sha256": "efa791b6b882dda3bd13744f776235df85a453a861915345c5301199a5b660df"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 174.268509472,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 66,
+        "report_boundaries": {
+          "comparison": {
+            "records": 66,
+            "tags": {
+              "HISTORY_INDEX_ASSESSMENT": 16,
+              "HISTORY_INDEX_COMPARISON": 1,
+              "HISTORY_INDEX_COVERAGE": 16,
+              "HISTORY_INDEX_INVESTIGATION": 3,
+              "HISTORY_INDEX_SCOPE": 1,
+              "HISTORY_INDEX_SOURCE": 12,
+              "HISTORY_INDEX_SOURCE_SCOPE": 1,
+              "HISTORY_INDEX_SUBJECT": 16
+            },
+            "sha256": "efa791b6b882dda3bd13744f776235df85a453a861915345c5301199a5b660df"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 165.37546567800018,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "fdc047a01298629eadb816033a455fa9703e121937a8142be2fcd28b8791fe92",
+      "working_receipt": "/tmp/native-speed-recipes/history-index/reconstruction.json",
+      "working_receipt_sha256": "6e27c42580706b03777a8bd720d607d9c1892cb773e22b8d920bf7815bcbbb49"
+    },
+    {
+      "recipe": "indexed-generation",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 102,
+        "report_boundaries": {
+          "comparison": {
+            "records": 102,
+            "tags": {
+              "INDEXED_GENERATION_ASSESSMENT": 32,
+              "INDEXED_GENERATION_COMPARISON": 1,
+              "INDEXED_GENERATION_INVESTIGATION": 3,
+              "INDEXED_GENERATION_SCOPE": 1,
+              "INDEXED_GENERATION_SOURCE": 32,
+              "INDEXED_GENERATION_SOURCE_SCOPE": 1,
+              "INDEXED_GENERATION_SUBJECT": 32
+            },
+            "sha256": "f11a94e35df431984f2b74c61c4cf2b436724de88f40d570f5d48c954d8287f6"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 13.947038414000417,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 102,
+        "report_boundaries": {
+          "comparison": {
+            "records": 102,
+            "tags": {
+              "INDEXED_GENERATION_ASSESSMENT": 32,
+              "INDEXED_GENERATION_COMPARISON": 1,
+              "INDEXED_GENERATION_INVESTIGATION": 3,
+              "INDEXED_GENERATION_SCOPE": 1,
+              "INDEXED_GENERATION_SOURCE": 32,
+              "INDEXED_GENERATION_SOURCE_SCOPE": 1,
+              "INDEXED_GENERATION_SUBJECT": 32
+            },
+            "sha256": "f11a94e35df431984f2b74c61c4cf2b436724de88f40d570f5d48c954d8287f6"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 14.503240858000936,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "718b764b6082e944616af05d00bab3898ffdf8683b94f3b2f87fcdd513fb7992",
+      "working_receipt": "/tmp/native-speed-recipes/indexed-generation/reconstruction.json",
+      "working_receipt_sha256": "5c09214c0f8b71f47c1dbee926eb8b444fe519fac62ffeaa66dbf0d3f33ae216"
+    },
+    {
+      "recipe": "known-history",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 374,
+        "report_boundaries": {
+          "comparison": {
+            "records": 374,
+            "tags": {
+              "KNOWN_HISTORY_ASSESSMENT": 16,
+              "KNOWN_HISTORY_CANDIDATE": 320,
+              "KNOWN_HISTORY_COMPARISON": 1,
+              "KNOWN_HISTORY_CONTEXT": 16,
+              "KNOWN_HISTORY_INVESTIGATION": 3,
+              "KNOWN_HISTORY_SCOPE": 1,
+              "KNOWN_HISTORY_SOURCE": 16,
+              "KNOWN_HISTORY_SOURCE_SCOPE": 1
+            },
+            "sha256": "e9e71a86544df8b823b63c18dc0e78356848631f3ee5bd259d9e64cd54e26a4e"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 258.26134016799915,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 374,
+        "report_boundaries": {
+          "comparison": {
+            "records": 374,
+            "tags": {
+              "KNOWN_HISTORY_ASSESSMENT": 16,
+              "KNOWN_HISTORY_CANDIDATE": 320,
+              "KNOWN_HISTORY_COMPARISON": 1,
+              "KNOWN_HISTORY_CONTEXT": 16,
+              "KNOWN_HISTORY_INVESTIGATION": 3,
+              "KNOWN_HISTORY_SCOPE": 1,
+              "KNOWN_HISTORY_SOURCE": 16,
+              "KNOWN_HISTORY_SOURCE_SCOPE": 1
+            },
+            "sha256": "e9e71a86544df8b823b63c18dc0e78356848631f3ee5bd259d9e64cd54e26a4e"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 267.0828573260005,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "ab52e1d9c8f69f1737da1904e7197bbe0cf5136c73f12d77b63e201f24f938ae",
+      "working_receipt": "/tmp/native-speed-recipes/known-history/reconstruction.json",
+      "working_receipt_sha256": "3822721d8216476326a8124fb76fab3d255e24cfcd34b7f25fca11d6cdb78eea"
+    },
+    {
+      "recipe": "literal-replay",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 20,
+        "report_boundaries": {
+          "comparison": {
+            "records": 20,
+            "tags": {
+              "LITERAL_REPLAY_ASSESSMENT": 7,
+              "LITERAL_REPLAY_COMPARISON": 1,
+              "LITERAL_REPLAY_INVESTIGATION": 3,
+              "LITERAL_REPLAY_SCOPE": 1,
+              "LITERAL_REPLAY_SEED": 1,
+              "LITERAL_REPLAY_SUBJECT": 7
+            },
+            "sha256": "8d56c7a83a99d11751406f77e826f45e7f54892d3a9947c5bb004728213f8c4d"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 12.76146257399887,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 20,
+        "report_boundaries": {
+          "comparison": {
+            "records": 20,
+            "tags": {
+              "LITERAL_REPLAY_ASSESSMENT": 7,
+              "LITERAL_REPLAY_COMPARISON": 1,
+              "LITERAL_REPLAY_INVESTIGATION": 3,
+              "LITERAL_REPLAY_SCOPE": 1,
+              "LITERAL_REPLAY_SEED": 1,
+              "LITERAL_REPLAY_SUBJECT": 7
+            },
+            "sha256": "8d56c7a83a99d11751406f77e826f45e7f54892d3a9947c5bb004728213f8c4d"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 13.331983351999952,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "0572c6bce7458bc353256815f156e56edbe79a8463c8658c344e833267672690",
+      "working_receipt": "/tmp/native-speed-recipes/literal-replay/reconstruction.json",
+      "working_receipt_sha256": "cd30e1d3d67726f3cb67be209cc1aa18a9ad36558f825886876286ed453f99e3"
+    },
+    {
+      "recipe": "native-admission",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 131,
+        "report_boundaries": {
+          "comparison": {
+            "records": 131,
+            "tags": {
+              "ADMISSION_ASSESSMENT": 63,
+              "ADMISSION_COMPARISON": 1,
+              "ADMISSION_INVESTIGATION": 3,
+              "ADMISSION_SCOPE": 1,
+              "ADMISSION_SUBJECT": 63
+            },
+            "sha256": "0df15b2277c5c534ad8966dfb2568cf78f2840ab943de02af01a943dcef87f61"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 85.16545387200313,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 131,
+        "report_boundaries": {
+          "comparison": {
+            "records": 131,
+            "tags": {
+              "ADMISSION_ASSESSMENT": 63,
+              "ADMISSION_COMPARISON": 1,
+              "ADMISSION_INVESTIGATION": 3,
+              "ADMISSION_SCOPE": 1,
+              "ADMISSION_SUBJECT": 63
+            },
+            "sha256": "0df15b2277c5c534ad8966dfb2568cf78f2840ab943de02af01a943dcef87f61"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 86.53650465399915,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "cae66d268a2d65c82391887c2b56eea5b9c337df95936f90f805f14811f287cb",
+      "working_receipt": "/tmp/native-speed-recipes/native-admission/reconstruction.json",
+      "working_receipt_sha256": "c805185f0b3688010c19e970447a62562b27386f8cbac89d007f82f77c98dd7a"
+    },
+    {
+      "recipe": "native-certificate-replay",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 19,
+        "report_boundaries": {
+          "comparison": {
+            "records": 19,
+            "tags": {
+              "REPLAY_ASSESSMENT": 7,
+              "REPLAY_COMPARISON": 1,
+              "REPLAY_INVESTIGATION": 3,
+              "REPLAY_SCOPE": 1,
+              "REPLAY_SUBJECT": 7
+            },
+            "sha256": "d165e6d0406508de26521e88dbb32f83ad1e1a0b0219a851ba11d34e971c8e21"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 135.49858424799822,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 19,
+        "report_boundaries": {
+          "comparison": {
+            "records": 19,
+            "tags": {
+              "REPLAY_ASSESSMENT": 7,
+              "REPLAY_COMPARISON": 1,
+              "REPLAY_INVESTIGATION": 3,
+              "REPLAY_SCOPE": 1,
+              "REPLAY_SUBJECT": 7
+            },
+            "sha256": "d165e6d0406508de26521e88dbb32f83ad1e1a0b0219a851ba11d34e971c8e21"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 137.81180838,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "8fdbd447389906b5ab2c01c6b14aaac47c6d90f533798e837875d04426b30d20",
+      "working_receipt": "/tmp/native-speed-recipes/native-certificate-replay/reconstruction.json",
+      "working_receipt_sha256": "91c774ed301aa3fbc85339b977d14440b9aa674d100e7b638256ee29a6132344"
+    },
+    {
+      "recipe": "native-certificates",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 57,
+        "report_boundaries": {
+          "comparison": {
+            "records": 57,
+            "tags": {
+              "CERTIFICATE_ASSESSMENT": 26,
+              "CERTIFICATE_COMPARISON": 1,
+              "CERTIFICATE_INVESTIGATION": 3,
+              "CERTIFICATE_SCOPE": 1,
+              "CERTIFICATE_SUBJECT": 26
+            },
+            "sha256": "30ef953b42e70f69289f07c062b37a3bb4031643f26bf9ac2783ecbfc3181b87"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 10.388367513001867,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 57,
+        "report_boundaries": {
+          "comparison": {
+            "records": 57,
+            "tags": {
+              "CERTIFICATE_ASSESSMENT": 26,
+              "CERTIFICATE_COMPARISON": 1,
+              "CERTIFICATE_INVESTIGATION": 3,
+              "CERTIFICATE_SCOPE": 1,
+              "CERTIFICATE_SUBJECT": 26
+            },
+            "sha256": "30ef953b42e70f69289f07c062b37a3bb4031643f26bf9ac2783ecbfc3181b87"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 9.427736434001417,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "4e7636828a5dd32b3e38f5532debeeb6064e94b9b74395baf25211d074735f2d",
+      "working_receipt": "/tmp/native-speed-recipes/native-certificates/reconstruction.json",
+      "working_receipt_sha256": "35e77f0fbcbdc9dcabf33c47f90c2100faff1f88e5a123fb0eb5b60d234991d9"
+    },
+    {
+      "recipe": "native-child",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 185,
+        "report_boundaries": {
+          "baseline": {
+            "records": 8,
+            "tags": {
+              "FIBRE_VALUES": 5,
+              "LEGACY_SOURCE": 1,
+              "NONEMPTY_APPLICATION": 1,
+              "NONEMPTY_SOURCE": 1
+            },
+            "sha256": "d2b49b7e57f5087bd994b27c0cc6022f4bef30051900ae1af0b86346f7bab3d1"
+          },
+          "catalog": {
+            "records": 31,
+            "tags": {
+              "COMPILED_LIBRARY": 3,
+              "PREFIX_RESULT": 27,
+              "SOURCE_RESULT": 1
+            },
+            "sha256": "115d304d9b4c4277d2aab432b099db77121976a697e6061e5cefcb1d95361ca6"
+          },
+          "inputs": {
+            "records": 18,
+            "tags": {
+              "CHECKED_CHILD": 1,
+              "CHECKED_CONTROL": 9,
+              "FIBRE_VALUES": 5,
+              "LEGACY_SOURCE": 1,
+              "NONEMPTY_APPLICATION": 1,
+              "NONEMPTY_SOURCE": 1
+            },
+            "sha256": "77314ba9d7bf93dc9e2825ce62aaac368634a26005adee3decea53df97ed3e59"
+          },
+          "reasoning": {
+            "records": 128,
+            "tags": {
+              "COMPILED_LIBRARY": 18,
+              "GUIDED_STATE": 86,
+              "INPUT_RESULT": 6,
+              "REASONING_RESULT": 18
+            },
+            "sha256": "689d87c6024b7943dfad420bfc351bdccc19ebc10eb9c66d3713bf0253eef570"
+          }
+        },
+        "stages": [
+          {
+            "name": "baseline",
+            "seconds": 2.9681124630005797,
+            "exit_code": 0,
+            "workers": null
+          },
+          {
+            "name": "catalog",
+            "seconds": 2.517340743001114,
+            "exit_code": 0,
+            "workers": null
+          },
+          {
+            "name": "inputs",
+            "seconds": 4.120341240002745,
+            "exit_code": 0,
+            "workers": null
+          },
+          {
+            "name": "reasoning",
+            "seconds": 213.1493920339999,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 185,
+        "report_boundaries": {
+          "baseline": {
+            "records": 8,
+            "tags": {
+              "FIBRE_VALUES": 5,
+              "LEGACY_SOURCE": 1,
+              "NONEMPTY_APPLICATION": 1,
+              "NONEMPTY_SOURCE": 1
+            },
+            "sha256": "d2b49b7e57f5087bd994b27c0cc6022f4bef30051900ae1af0b86346f7bab3d1"
+          },
+          "catalog": {
+            "records": 31,
+            "tags": {
+              "COMPILED_LIBRARY": 3,
+              "PREFIX_RESULT": 27,
+              "SOURCE_RESULT": 1
+            },
+            "sha256": "115d304d9b4c4277d2aab432b099db77121976a697e6061e5cefcb1d95361ca6"
+          },
+          "inputs": {
+            "records": 18,
+            "tags": {
+              "CHECKED_CHILD": 1,
+              "CHECKED_CONTROL": 9,
+              "FIBRE_VALUES": 5,
+              "LEGACY_SOURCE": 1,
+              "NONEMPTY_APPLICATION": 1,
+              "NONEMPTY_SOURCE": 1
+            },
+            "sha256": "77314ba9d7bf93dc9e2825ce62aaac368634a26005adee3decea53df97ed3e59"
+          },
+          "reasoning": {
+            "records": 128,
+            "tags": {
+              "COMPILED_LIBRARY": 18,
+              "GUIDED_STATE": 86,
+              "INPUT_RESULT": 6,
+              "REASONING_RESULT": 18
+            },
+            "sha256": "689d87c6024b7943dfad420bfc351bdccc19ebc10eb9c66d3713bf0253eef570"
+          }
+        },
+        "stages": [
+          {
+            "name": "baseline",
+            "seconds": 3.119017329001508,
+            "exit_code": 0,
+            "workers": null
+          },
+          {
+            "name": "catalog",
+            "seconds": 2.71796221600016,
+            "exit_code": 0,
+            "workers": null
+          },
+          {
+            "name": "inputs",
+            "seconds": 3.820986067999911,
+            "exit_code": 0,
+            "workers": null
+          },
+          {
+            "name": "reasoning",
+            "seconds": 215.55481509200035,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "6e8fbba05179f4d5c483901c7cbb4e78a3faebc9e2e99a239813c93d2df8ef5f",
+      "working_receipt": "/tmp/native-speed-recipes/native-child/reconstruction.json",
+      "working_receipt_sha256": "7c52a7e16db65342daa869967bfbe19b9d81540d1ec24d481080bc7387704556"
+    },
+    {
+      "recipe": "native-derivations",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 58,
+        "report_boundaries": {
+          "comparison": {
+            "records": 58,
+            "tags": {
+              "DERIVATION_ASSESSMENT": 26,
+              "DERIVATION_COMPARISON": 1,
+              "DERIVATION_INVESTIGATION": 4,
+              "DERIVATION_SCOPE": 1,
+              "DERIVATION_SUBJECT": 26
+            },
+            "sha256": "1852ca0c554778b420cf355c93a612465c52098abb5595bb18398ae597fc5dcf"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 8.025540981998347,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 58,
+        "report_boundaries": {
+          "comparison": {
+            "records": 58,
+            "tags": {
+              "DERIVATION_ASSESSMENT": 26,
+              "DERIVATION_COMPARISON": 1,
+              "DERIVATION_INVESTIGATION": 4,
+              "DERIVATION_SCOPE": 1,
+              "DERIVATION_SUBJECT": 26
+            },
+            "sha256": "1852ca0c554778b420cf355c93a612465c52098abb5595bb18398ae597fc5dcf"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 8.079523201002303,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "caa895f07c75d0fb4d401ee26c75d1e8ab2cb5e3e403a5ca9cfc1e23abea44d1",
+      "working_receipt": "/tmp/native-speed-recipes/native-derivations/reconstruction.json",
+      "working_receipt_sha256": "93c63c702c80762a85411035adecd7b6c567816fd0c7a1173ea5f5feef6430cf"
+    },
+    {
+      "recipe": "native-development",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 125,
+        "report_boundaries": {
+          "producers": {
+            "records": 101,
+            "tags": {
+              "DEVELOPMENT_ASSESSMENT": 8,
+              "DEVELOPMENT_CANDIDATE": 80,
+              "DEVELOPMENT_COMPARISON": 1,
+              "DEVELOPMENT_CONTEXT": 8,
+              "DEVELOPMENT_INVESTIGATION": 3,
+              "DEVELOPMENT_SCOPE": 1
+            },
+            "sha256": "eeab011a1185619c376c859bea1fabac9a765978e0a9e7c4f6de2c714eb92642"
+          },
+          "questions": {
+            "records": 24,
+            "tags": {
+              "DEVELOPMENT_ADMISSION": 8,
+              "DEVELOPMENT_QUESTION": 8,
+              "DEVELOPMENT_REPORT": 8
+            },
+            "sha256": "2edda61cb291c834bf7d91f8ec0fbaa7d31c40e99fd68c40bd15abc5b99a1357"
+          }
+        },
+        "stages": [
+          {
+            "name": "producers",
+            "seconds": 16.043524310996872,
+            "exit_code": 0,
+            "workers": 16
+          },
+          {
+            "name": "questions",
+            "seconds": 7.924948290001339,
+            "exit_code": 0,
+            "workers": 16
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 125,
+        "report_boundaries": {
+          "producers": {
+            "records": 101,
+            "tags": {
+              "DEVELOPMENT_ASSESSMENT": 8,
+              "DEVELOPMENT_CANDIDATE": 80,
+              "DEVELOPMENT_COMPARISON": 1,
+              "DEVELOPMENT_CONTEXT": 8,
+              "DEVELOPMENT_INVESTIGATION": 3,
+              "DEVELOPMENT_SCOPE": 1
+            },
+            "sha256": "eeab011a1185619c376c859bea1fabac9a765978e0a9e7c4f6de2c714eb92642"
+          },
+          "questions": {
+            "records": 24,
+            "tags": {
+              "DEVELOPMENT_ADMISSION": 8,
+              "DEVELOPMENT_QUESTION": 8,
+              "DEVELOPMENT_REPORT": 8
+            },
+            "sha256": "2edda61cb291c834bf7d91f8ec0fbaa7d31c40e99fd68c40bd15abc5b99a1357"
+          }
+        },
+        "stages": [
+          {
+            "name": "producers",
+            "seconds": 16.33665322700108,
+            "exit_code": 0,
+            "workers": 16
+          },
+          {
+            "name": "questions",
+            "seconds": 7.8274820360020385,
+            "exit_code": 0,
+            "workers": 16
+          }
+        ]
+      },
+      "committed_receipt_sha256": "eab87b7a9e51f4ddc42437c2ffbbb2971d7b65220ab0d79809eebfea9dba7b9e",
+      "working_receipt": "/tmp/native-speed-recipes/native-development/reconstruction.json",
+      "working_receipt_sha256": "6ef6c73a8cd3f6a3c187cbf383cf8f13235bb0a8d1ba51043810977371aba81d"
+    },
+    {
+      "recipe": "native-evaluation",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 47,
+        "report_boundaries": {
+          "comparison": {
+            "records": 26,
+            "tags": {
+              "PROGRAM_COMPARISON": 1,
+              "PROGRAM_EVALUATION": 22,
+              "PROGRAM_INVESTIGATION": 3
+            },
+            "sha256": "1313ac524f7eb88ac49d9aae522326cc344ccc98108b0cfc6d7c00378ed960d0"
+          },
+          "native": {
+            "records": 21,
+            "tags": {
+              "NATIVE_EVALUATION": 21
+            },
+            "sha256": "4d7fea0a16bd0bcefb079ee775f0f04713113c27896306a65dd548f46a487bdb"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 3.0691157529981865,
+            "exit_code": 0,
+            "workers": null
+          },
+          {
+            "name": "native",
+            "seconds": 3.469539770998381,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 47,
+        "report_boundaries": {
+          "comparison": {
+            "records": 26,
+            "tags": {
+              "PROGRAM_COMPARISON": 1,
+              "PROGRAM_EVALUATION": 22,
+              "PROGRAM_INVESTIGATION": 3
+            },
+            "sha256": "1313ac524f7eb88ac49d9aae522326cc344ccc98108b0cfc6d7c00378ed960d0"
+          },
+          "native": {
+            "records": 21,
+            "tags": {
+              "NATIVE_EVALUATION": 21
+            },
+            "sha256": "4d7fea0a16bd0bcefb079ee775f0f04713113c27896306a65dd548f46a487bdb"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 2.8682685229978233,
+            "exit_code": 0,
+            "workers": null
+          },
+          {
+            "name": "native",
+            "seconds": 3.4186173869966296,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "accaa851716a1c7faae6791a12e5e4c8b5ff42997b5f8cb2c299539ec537b20b",
+      "working_receipt": "/tmp/native-speed-recipes/native-evaluation/reconstruction.json",
+      "working_receipt_sha256": "feb0fb6e30fc43e0bf0d21a7bb4e8fd8dccac9026bb0e91b8f4af357a3cc0181"
+    },
+    {
+      "recipe": "native-extensions",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 18,
+        "report_boundaries": {
+          "extensions": {
+            "records": 18,
+            "tags": {
+              "NATIVE_CONSTRUCTOR": 14,
+              "NATIVE_EXTENSION": 4
+            },
+            "sha256": "3339da45fff65f9929d0303a6c2d64c494ad92b94d108c6cd2cb479e30d14e46"
+          }
+        },
+        "stages": [
+          {
+            "name": "extensions",
+            "seconds": 2.719344799999817,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 18,
+        "report_boundaries": {
+          "extensions": {
+            "records": 18,
+            "tags": {
+              "NATIVE_CONSTRUCTOR": 14,
+              "NATIVE_EXTENSION": 4
+            },
+            "sha256": "3339da45fff65f9929d0303a6c2d64c494ad92b94d108c6cd2cb479e30d14e46"
+          }
+        },
+        "stages": [
+          {
+            "name": "extensions",
+            "seconds": 2.617262281000876,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "8452209f2a83db7d66b6cc015fc7ecaebe47a06d2e33c7b68d3498c8b3b9d3f4",
+      "working_receipt": "/tmp/native-speed-recipes/native-extensions/reconstruction.json",
+      "working_receipt_sha256": "b25621389ee9034a2c42c902c3dc7090ac301fea139920177e2f51e16833d617"
+    },
+    {
+      "recipe": "native-graphs",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 81,
+        "report_boundaries": {
+          "comparison": {
+            "records": 81,
+            "tags": {
+              "GRAPH_ASSESSMENT": 37,
+              "GRAPH_COMPARISON": 1,
+              "GRAPH_INVESTIGATION": 5,
+              "GRAPH_SCOPE": 1,
+              "GRAPH_SUBJECT": 37
+            },
+            "sha256": "e4dd282f6d2c917ea2f2ff6c7b341e3738693c9e2d0b24e776e9fd5debefd56b"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 22.464174063999963,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 81,
+        "report_boundaries": {
+          "comparison": {
+            "records": 81,
+            "tags": {
+              "GRAPH_ASSESSMENT": 37,
+              "GRAPH_COMPARISON": 1,
+              "GRAPH_INVESTIGATION": 5,
+              "GRAPH_SCOPE": 1,
+              "GRAPH_SUBJECT": 37
+            },
+            "sha256": "e4dd282f6d2c917ea2f2ff6c7b341e3738693c9e2d0b24e776e9fd5debefd56b"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 24.085431728999538,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "c4500413430b3aef4d912664c97746ae59a6b96bcc62f2f35af1838350c83e03",
+      "working_receipt": "/tmp/native-speed-recipes/native-graphs/reconstruction.json",
+      "working_receipt_sha256": "b7a7d692f30dbb5df73f6549725e32cb2f3ad63de06a9b347dd1aab4267762da"
+    },
+    {
+      "recipe": "native-histories",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 58,
+        "report_boundaries": {
+          "comparison": {
+            "records": 58,
+            "tags": {
+              "HISTORY_ASSESSMENT": 26,
+              "HISTORY_COMPARISON": 1,
+              "HISTORY_INVESTIGATION": 4,
+              "HISTORY_SCOPE": 1,
+              "HISTORY_SUBJECT": 26
+            },
+            "sha256": "f4e49aa3104ad517facdc1685dd93d6f650cc00b3f56034d6d29ab7259cfdd7a"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 7.32532397900286,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 58,
+        "report_boundaries": {
+          "comparison": {
+            "records": 58,
+            "tags": {
+              "HISTORY_ASSESSMENT": 26,
+              "HISTORY_COMPARISON": 1,
+              "HISTORY_INVESTIGATION": 4,
+              "HISTORY_SCOPE": 1,
+              "HISTORY_SUBJECT": 26
+            },
+            "sha256": "f4e49aa3104ad517facdc1685dd93d6f650cc00b3f56034d6d29ab7259cfdd7a"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 11.09709970500262,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "648d780711a757ed0cab22784194c2c9ad3583f5feb427727799683594006303",
+      "working_receipt": "/tmp/native-speed-recipes/native-histories/reconstruction.json",
+      "working_receipt_sha256": "3e5b27405322789fae66f8790263d6d409402f7674169c4cb0542877a5c3ad32"
+    },
+    {
+      "recipe": "native-nodes",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 58,
+        "report_boundaries": {
+          "comparison": {
+            "records": 58,
+            "tags": {
+              "NODE_ASSESSMENT": 26,
+              "NODE_COMPARISON": 1,
+              "NODE_INVESTIGATION": 4,
+              "NODE_SCOPE": 1,
+              "NODE_SUBJECT": 26
+            },
+            "sha256": "97595956b79260e951ec800fced0bc04931f2eea85c23a8b45e788347db11a19"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 3.971417897999345,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 58,
+        "report_boundaries": {
+          "comparison": {
+            "records": 58,
+            "tags": {
+              "NODE_ASSESSMENT": 26,
+              "NODE_COMPARISON": 1,
+              "NODE_INVESTIGATION": 4,
+              "NODE_SCOPE": 1,
+              "NODE_SUBJECT": 26
+            },
+            "sha256": "97595956b79260e951ec800fced0bc04931f2eea85c23a8b45e788347db11a19"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 4.5207268970007135,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "809728c4d65a01d261fa942cf7c6d7065e44935e55daf6fc15503694decf665b",
+      "working_receipt": "/tmp/native-speed-recipes/native-nodes/reconstruction.json",
+      "working_receipt_sha256": "71d5d2bc7cd485f8ee27f7ec5ee1af549eea3b89cd0a0f57234736f28e77ab3e"
+    },
+    {
+      "recipe": "native-requirements",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 186,
+        "report_boundaries": {
+          "comparison": {
+            "records": 186,
+            "tags": {
+              "REQUIREMENT_ASSESSMENT": 90,
+              "REQUIREMENT_COMPARISON": 1,
+              "REQUIREMENT_INVESTIGATION": 4,
+              "REQUIREMENT_SCOPE": 1,
+              "REQUIREMENT_SUBJECT": 90
+            },
+            "sha256": "8a07808b8be5aa21742f6359750483c58063dff25d93f9db65169213424f097c"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 41.85714358599944,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 186,
+        "report_boundaries": {
+          "comparison": {
+            "records": 186,
+            "tags": {
+              "REQUIREMENT_ASSESSMENT": 90,
+              "REQUIREMENT_COMPARISON": 1,
+              "REQUIREMENT_INVESTIGATION": 4,
+              "REQUIREMENT_SCOPE": 1,
+              "REQUIREMENT_SUBJECT": 90
+            },
+            "sha256": "8a07808b8be5aa21742f6359750483c58063dff25d93f9db65169213424f097c"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 41.20446443199762,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "b9eb8086b5bba47f1a7eee38a0de7d7bd04f2fbd678bfbf5da2f20e164839d0c",
+      "working_receipt": "/tmp/native-speed-recipes/native-requirements/reconstruction.json",
+      "working_receipt_sha256": "cb87a8eb30ff66d3f3c4312047c40f3208508a9593846bee737598f8221c14ef"
+    },
+    {
+      "recipe": "native-sources",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 23,
+        "report_boundaries": {
+          "observations": {
+            "records": 11,
+            "tags": {
+              "SOURCE_INPUT": 7,
+              "SOURCE_INVESTIGATION": 3,
+              "SOURCE_TABLE": 1
+            },
+            "sha256": "32209a0fba66f97826bafb661495bf8d9018a2905fe9f12196e2ed8e5dd90c86"
+          },
+          "extensions": {
+            "records": 12,
+            "tags": {
+              "SOURCE_EXTENSION": 12
+            },
+            "sha256": "5b87faf539e90a131a592d3d2041189f2430899013be302dfa1db7738a8f0c78"
+          }
+        },
+        "stages": [
+          {
+            "name": "observations",
+            "seconds": 2.417640218998713,
+            "exit_code": 0,
+            "workers": null
+          },
+          {
+            "name": "extensions",
+            "seconds": 5.274525741999241,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 23,
+        "report_boundaries": {
+          "observations": {
+            "records": 11,
+            "tags": {
+              "SOURCE_INPUT": 7,
+              "SOURCE_INVESTIGATION": 3,
+              "SOURCE_TABLE": 1
+            },
+            "sha256": "32209a0fba66f97826bafb661495bf8d9018a2905fe9f12196e2ed8e5dd90c86"
+          },
+          "extensions": {
+            "records": 12,
+            "tags": {
+              "SOURCE_EXTENSION": 12
+            },
+            "sha256": "5b87faf539e90a131a592d3d2041189f2430899013be302dfa1db7738a8f0c78"
+          }
+        },
+        "stages": [
+          {
+            "name": "observations",
+            "seconds": 6.907840045998455,
+            "exit_code": 0,
+            "workers": null
+          },
+          {
+            "name": "extensions",
+            "seconds": 10.867689561000589,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "8758bdffc6f5db432cb4bdfa32fd36135e3bc80cb49712d0b451b3ab7499709f",
+      "working_receipt": "/tmp/native-speed-recipes/native-sources/reconstruction.json",
+      "working_receipt_sha256": "f54aa1813856d56527b2342c720285c31afa47017e107efde21b0186548767bc"
+    },
+    {
+      "recipe": "native-steering",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 280,
+        "report_boundaries": {
+          "subjects": {
+            "records": 119,
+            "tags": {
+              "STEERED_AVAILABLE": 1,
+              "STEERED_CHOICE": 1,
+              "STEERED_REQUEST": 8,
+              "STEERED_RESULT": 8,
+              "STEERING_ADMISSION": 1,
+              "STEERING_ASSESSMENT": 8,
+              "STEERING_CANDIDATE": 80,
+              "STEERING_CONTEXT": 8,
+              "STEERING_METHODS": 1,
+              "STEERING_QUESTION": 1,
+              "STEERING_REPORT": 1,
+              "STEERING_SCOPE": 1
+            },
+            "sha256": "3333f8f7ad42b53a2d022d9a8b88d6c2d55d90fce82dde13ee3b7812da37b904"
+          },
+          "empty": {
+            "records": 15,
+            "tags": {
+              "STEERED_AVAILABLE": 1,
+              "STEERED_CHOICE": 1,
+              "STEERED_REQUEST": 8,
+              "STEERING_ADMISSION": 1,
+              "STEERING_METHODS": 1,
+              "STEERING_QUESTION": 1,
+              "STEERING_REPORT": 1,
+              "STEERING_SCOPE": 1
+            },
+            "sha256": "a91e5119e8a6fadc4cd93c6bde79124c479e0ab1c739a6d302b6cfba0e06712a"
+          },
+          "first": {
+            "records": 27,
+            "tags": {
+              "STEERED_AVAILABLE": 1,
+              "STEERED_CHOICE": 1,
+              "STEERED_REQUEST": 8,
+              "STEERING_ADMISSION": 1,
+              "STEERING_ASSESSMENT": 1,
+              "STEERING_CANDIDATE": 10,
+              "STEERING_CONTEXT": 1,
+              "STEERING_METHODS": 1,
+              "STEERING_QUESTION": 1,
+              "STEERING_REPORT": 1,
+              "STEERING_SCOPE": 1
+            },
+            "sha256": "d780f4e570fcdf68d19bbbe373ca2b49654143a57d39bc6b4097f73380166a01"
+          },
+          "questions": {
+            "records": 119,
+            "tags": {
+              "STEERED_AVAILABLE": 1,
+              "STEERED_CHOICE": 1,
+              "STEERED_REQUEST": 8,
+              "STEERED_RESULT": 8,
+              "STEERING_ADMISSION": 1,
+              "STEERING_ASSESSMENT": 8,
+              "STEERING_CANDIDATE": 80,
+              "STEERING_CONTEXT": 8,
+              "STEERING_METHODS": 1,
+              "STEERING_QUESTION": 1,
+              "STEERING_REPORT": 1,
+              "STEERING_SCOPE": 1
+            },
+            "sha256": "3333f8f7ad42b53a2d022d9a8b88d6c2d55d90fce82dde13ee3b7812da37b904"
+          }
+        },
+        "stages": [
+          {
+            "name": "subjects",
+            "seconds": 33.921256680001534,
+            "exit_code": 0,
+            "workers": 16
+          },
+          {
+            "name": "empty",
+            "seconds": 17.687153393002518,
+            "exit_code": 0,
+            "workers": 2
+          },
+          {
+            "name": "first",
+            "seconds": 26.160218977001932,
+            "exit_code": 0,
+            "workers": 4
+          },
+          {
+            "name": "questions",
+            "seconds": 41.75104196600296,
+            "exit_code": 0,
+            "workers": 16
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 280,
+        "report_boundaries": {
+          "subjects": {
+            "records": 119,
+            "tags": {
+              "STEERED_AVAILABLE": 1,
+              "STEERED_CHOICE": 1,
+              "STEERED_REQUEST": 8,
+              "STEERED_RESULT": 8,
+              "STEERING_ADMISSION": 1,
+              "STEERING_ASSESSMENT": 8,
+              "STEERING_CANDIDATE": 80,
+              "STEERING_CONTEXT": 8,
+              "STEERING_METHODS": 1,
+              "STEERING_QUESTION": 1,
+              "STEERING_REPORT": 1,
+              "STEERING_SCOPE": 1
+            },
+            "sha256": "3333f8f7ad42b53a2d022d9a8b88d6c2d55d90fce82dde13ee3b7812da37b904"
+          },
+          "empty": {
+            "records": 15,
+            "tags": {
+              "STEERED_AVAILABLE": 1,
+              "STEERED_CHOICE": 1,
+              "STEERED_REQUEST": 8,
+              "STEERING_ADMISSION": 1,
+              "STEERING_METHODS": 1,
+              "STEERING_QUESTION": 1,
+              "STEERING_REPORT": 1,
+              "STEERING_SCOPE": 1
+            },
+            "sha256": "a91e5119e8a6fadc4cd93c6bde79124c479e0ab1c739a6d302b6cfba0e06712a"
+          },
+          "first": {
+            "records": 27,
+            "tags": {
+              "STEERED_AVAILABLE": 1,
+              "STEERED_CHOICE": 1,
+              "STEERED_REQUEST": 8,
+              "STEERING_ADMISSION": 1,
+              "STEERING_ASSESSMENT": 1,
+              "STEERING_CANDIDATE": 10,
+              "STEERING_CONTEXT": 1,
+              "STEERING_METHODS": 1,
+              "STEERING_QUESTION": 1,
+              "STEERING_REPORT": 1,
+              "STEERING_SCOPE": 1
+            },
+            "sha256": "d780f4e570fcdf68d19bbbe373ca2b49654143a57d39bc6b4097f73380166a01"
+          },
+          "questions": {
+            "records": 119,
+            "tags": {
+              "STEERED_AVAILABLE": 1,
+              "STEERED_CHOICE": 1,
+              "STEERED_REQUEST": 8,
+              "STEERED_RESULT": 8,
+              "STEERING_ADMISSION": 1,
+              "STEERING_ASSESSMENT": 8,
+              "STEERING_CANDIDATE": 80,
+              "STEERING_CONTEXT": 8,
+              "STEERING_METHODS": 1,
+              "STEERING_QUESTION": 1,
+              "STEERING_REPORT": 1,
+              "STEERING_SCOPE": 1
+            },
+            "sha256": "3333f8f7ad42b53a2d022d9a8b88d6c2d55d90fce82dde13ee3b7812da37b904"
+          }
+        },
+        "stages": [
+          {
+            "name": "subjects",
+            "seconds": 27.020248590000847,
+            "exit_code": 0,
+            "workers": 16
+          },
+          {
+            "name": "empty",
+            "seconds": 13.299868427999172,
+            "exit_code": 0,
+            "workers": 2
+          },
+          {
+            "name": "first",
+            "seconds": 19.811177565003163,
+            "exit_code": 0,
+            "workers": 4
+          },
+          {
+            "name": "questions",
+            "seconds": 45.10007871000198,
+            "exit_code": 0,
+            "workers": 16
+          }
+        ]
+      },
+      "committed_receipt_sha256": "21e764fcf9e2fcf2dac97f1b880f5b261015d27da33390dadb1ec4b558cf567e",
+      "working_receipt": "/tmp/native-speed-recipes/native-steering/reconstruction.json",
+      "working_receipt_sha256": "f2eb17a6c26cd378a0534834c68f2108cdc3483cb28bdace8dc3aaffc2112ec2"
+    },
+    {
+      "recipe": "native-workflow",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 342,
+        "report_boundaries": {
+          "workflow": {
+            "records": 125,
+            "tags": {
+              "WORKFLOW_ASSESSMENT": 10,
+              "WORKFLOW_CANDIDATE": 100,
+              "WORKFLOW_COMPARISON": 1,
+              "WORKFLOW_CONTEXT": 10,
+              "WORKFLOW_INVESTIGATION": 3,
+              "WORKFLOW_SCOPE": 1
+            },
+            "sha256": "dc30b327ba1ee9e7ec99248dc1fd78248e70847278a03408dc6378149d87f81d"
+          },
+          "requirements": {
+            "records": 59,
+            "tags": {
+              "WORKFLOW_ASSESSMENT": 6,
+              "WORKFLOW_CANDIDATE": 42,
+              "WORKFLOW_COMPARISON": 1,
+              "WORKFLOW_CONTEXT": 6,
+              "WORKFLOW_INVESTIGATION": 3,
+              "WORKFLOW_SCOPE": 1
+            },
+            "sha256": "b95ee63b3e155e5542366f4aa5a3d3a200a3146ee3d51ea2fe5e827578ad7691"
+          },
+          "input-scope": {
+            "records": 12,
+            "tags": {
+              "WORKFLOW_ASSESSMENT": 1,
+              "WORKFLOW_CANDIDATE": 4,
+              "WORKFLOW_COMPARISON": 1,
+              "WORKFLOW_CONTEXT": 1,
+              "WORKFLOW_INVESTIGATION": 3,
+              "WORKFLOW_SCOPE": 1,
+              "WORKFLOW_SELECTED_SCOPE": 1
+            },
+            "sha256": "1dc154d07ed7b4560728222367ae3882a8ed04300256ac9434a8656e3f7253cf"
+          },
+          "expanded": {
+            "records": 86,
+            "tags": {
+              "WORKFLOW_ASSESSMENT": 9,
+              "WORKFLOW_CANDIDATE": 63,
+              "WORKFLOW_COMPARISON": 1,
+              "WORKFLOW_CONTEXT": 9,
+              "WORKFLOW_INVESTIGATION": 3,
+              "WORKFLOW_SCOPE": 1
+            },
+            "sha256": "c1be5e632d4e56eeab0531d455f622570bbc2c4867924b611af9114aa3895e73"
+          },
+          "requests": {
+            "records": 24,
+            "tags": {
+              "WORKFLOW_ADMISSION": 6,
+              "WORKFLOW_COMPILED": 6,
+              "WORKFLOW_EXECUTION": 6,
+              "WORKFLOW_REQUEST": 6
+            },
+            "sha256": "a33e047026528b68fe516be70f63f9658043e33d2cc6ac1246b5d6057ae43f65"
+          },
+          "expanded-requests": {
+            "records": 36,
+            "tags": {
+              "WORKFLOW_ADMISSION": 9,
+              "WORKFLOW_COMPILED": 9,
+              "WORKFLOW_EXECUTION": 9,
+              "WORKFLOW_REQUEST": 9
+            },
+            "sha256": "2faefc9a11ad0b170f38292a12c5d4b05c86697a7f313ee7d1fd92089f301606"
+          }
+        },
+        "stages": [
+          {
+            "name": "workflow",
+            "seconds": 17.752664367999387,
+            "exit_code": 0,
+            "workers": 8
+          },
+          {
+            "name": "requirements",
+            "seconds": 22.158587034002267,
+            "exit_code": 0,
+            "workers": 8
+          },
+          {
+            "name": "input-scope",
+            "seconds": 4.7236926580008,
+            "exit_code": 0,
+            "workers": 2
+          },
+          {
+            "name": "expanded",
+            "seconds": 42.40412211799776,
+            "exit_code": 0,
+            "workers": 8
+          },
+          {
+            "name": "requests",
+            "seconds": 17.255921846997808,
+            "exit_code": 0,
+            "workers": 6
+          },
+          {
+            "name": "expanded-requests",
+            "seconds": 30.32648697199693,
+            "exit_code": 0,
+            "workers": 16
+          }
+        ]
+      },
+      "working": {
+        "status": "failed",
+        "reports_equal": false,
+        "complete_records": 0,
+        "report_boundaries": {},
+        "stages": [
+          {
+            "name": "workflow",
+            "seconds": 16.151702884999395,
+            "exit_code": 0,
+            "workers": 8
+          },
+          {
+            "name": "requirements",
+            "seconds": 0.1640891150018433,
+            "exit_code": 1,
+            "workers": 8
+          }
+        ]
+      },
+      "committed_receipt_sha256": "a6dff1f10623ac35456ed2580d8cc71c1a3dcbcecf8bdd00894ba8ca2a891ee7",
+      "working_receipt": "/tmp/native-speed-recipes/native-workflow/reconstruction.json",
+      "working_receipt_sha256": "90efedc2a7c6114d7a1cc6a79a5908e9c92baca18a34ddb755111497735c2469"
+    },
+    {
+      "recipe": "quoted-history",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 390,
+        "report_boundaries": {
+          "comparison": {
+            "records": 390,
+            "tags": {
+              "QUOTED_HISTORY_ASSESSMENT": 16,
+              "QUOTED_HISTORY_CANDIDATE": 336,
+              "QUOTED_HISTORY_COMPARISON": 1,
+              "QUOTED_HISTORY_CONTEXT": 16,
+              "QUOTED_HISTORY_INVESTIGATION": 3,
+              "QUOTED_HISTORY_SCOPE": 1,
+              "QUOTED_HISTORY_SOURCE": 16,
+              "QUOTED_HISTORY_SOURCE_SCOPE": 1
+            },
+            "sha256": "f6f9df47e73d5bd0656616029410cc7fd3ad1e3f1bc73f193bb5c16f1f985145"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 197.60055421699872,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 390,
+        "report_boundaries": {
+          "comparison": {
+            "records": 390,
+            "tags": {
+              "QUOTED_HISTORY_ASSESSMENT": 16,
+              "QUOTED_HISTORY_CANDIDATE": 336,
+              "QUOTED_HISTORY_COMPARISON": 1,
+              "QUOTED_HISTORY_CONTEXT": 16,
+              "QUOTED_HISTORY_INVESTIGATION": 3,
+              "QUOTED_HISTORY_SCOPE": 1,
+              "QUOTED_HISTORY_SOURCE": 16,
+              "QUOTED_HISTORY_SOURCE_SCOPE": 1
+            },
+            "sha256": "f6f9df47e73d5bd0656616029410cc7fd3ad1e3f1bc73f193bb5c16f1f985145"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 197.08224989500013,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "07a4fd210236b6431f329015f42b8934c8d5eccb4b0cf451afa980fa0d2da563",
+      "working_receipt": "/tmp/native-speed-recipes/quoted-history/reconstruction.json",
+      "working_receipt_sha256": "6d3138156a839abab819417d99eda151aa758b0eea1af1868995db44147d8c2e"
+    },
+    {
+      "recipe": "required-causes",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 25,
+        "report_boundaries": {
+          "comparison": {
+            "records": 25,
+            "tags": {
+              "REQUIRED_CAUSE_ASSESSMENT": 10,
+              "REQUIRED_CAUSE_COMPARISON": 1,
+              "REQUIRED_CAUSE_INVESTIGATION": 3,
+              "REQUIRED_CAUSE_SCOPE": 1,
+              "REQUIRED_CAUSE_SUBJECT": 10
+            },
+            "sha256": "4fd6fa79895876166d69fd0d2402bf7902d64ea438c210c46ac50426d25317c4"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 18.260517417998926,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 25,
+        "report_boundaries": {
+          "comparison": {
+            "records": 25,
+            "tags": {
+              "REQUIRED_CAUSE_ASSESSMENT": 10,
+              "REQUIRED_CAUSE_COMPARISON": 1,
+              "REQUIRED_CAUSE_INVESTIGATION": 3,
+              "REQUIRED_CAUSE_SCOPE": 1,
+              "REQUIRED_CAUSE_SUBJECT": 10
+            },
+            "sha256": "4fd6fa79895876166d69fd0d2402bf7902d64ea438c210c46ac50426d25317c4"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 18.683588776999386,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "e5a1801a171a0ec15eed5cfcd4e5acb3fc2c8dc5b9d0c4a9ec4c60a7bc7264fc",
+      "working_receipt": "/tmp/native-speed-recipes/required-causes/reconstruction.json",
+      "working_receipt_sha256": "86e1eea304b3e2f51be46641c9072dc65e11400f72f567b21859c56116318065"
+    },
+    {
+      "recipe": "required-history",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 41,
+        "report_boundaries": {
+          "comparison": {
+            "records": 41,
+            "tags": {
+              "REQUIRED_HISTORY_ASSESSMENT": 12,
+              "REQUIRED_HISTORY_COMPARISON": 1,
+              "REQUIRED_HISTORY_COVERAGE": 12,
+              "REQUIRED_HISTORY_INVESTIGATION": 3,
+              "REQUIRED_HISTORY_SCOPE": 1,
+              "REQUIRED_HISTORY_SUBJECT": 12
+            },
+            "sha256": "87688039336736f4279392270187058195a499ea0f195cb701d897e0b633007c"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 30.121055592997436,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 41,
+        "report_boundaries": {
+          "comparison": {
+            "records": 41,
+            "tags": {
+              "REQUIRED_HISTORY_ASSESSMENT": 12,
+              "REQUIRED_HISTORY_COMPARISON": 1,
+              "REQUIRED_HISTORY_COVERAGE": 12,
+              "REQUIRED_HISTORY_INVESTIGATION": 3,
+              "REQUIRED_HISTORY_SCOPE": 1,
+              "REQUIRED_HISTORY_SUBJECT": 12
+            },
+            "sha256": "87688039336736f4279392270187058195a499ea0f195cb701d897e0b633007c"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 39.082404095999664,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "4a27acba47baed6196738de8bd6ec3dfc3a393f71be81fee2ef76aa333c7f1c1",
+      "working_receipt": "/tmp/native-speed-recipes/required-history/reconstruction.json",
+      "working_receipt_sha256": "6142b77aaf73ab830c58266817d024e2bd2c9240f0181c5cd28da83b4e072ff3"
+    },
+    {
+      "recipe": "requirement-decisions",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 29,
+        "report_boundaries": {
+          "comparison": {
+            "records": 29,
+            "tags": {
+              "DECISION_ASSESSMENT": 12,
+              "DECISION_COMPARISON": 1,
+              "DECISION_INVESTIGATION": 3,
+              "DECISION_SCOPE": 1,
+              "DECISION_SUBJECT": 12
+            },
+            "sha256": "a4bb21563f4ea49cc26e5b2c2c359c3e5ce74bfe0b7c558faaef87a268495314"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 9.839239893000922,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 29,
+        "report_boundaries": {
+          "comparison": {
+            "records": 29,
+            "tags": {
+              "DECISION_ASSESSMENT": 12,
+              "DECISION_COMPARISON": 1,
+              "DECISION_INVESTIGATION": 3,
+              "DECISION_SCOPE": 1,
+              "DECISION_SUBJECT": 12
+            },
+            "sha256": "a4bb21563f4ea49cc26e5b2c2c359c3e5ce74bfe0b7c558faaef87a268495314"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 14.649934142998973,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "7ed4848859e750e919a1e53d41c9b31ba800a31750cf6d7e847b0640e8c2e3b0",
+      "working_receipt": "/tmp/native-speed-recipes/requirement-decisions/reconstruction.json",
+      "working_receipt_sha256": "24c85f1d910c91d1520a803c44d323958606951db93b18ac45f2e11feddfb39e"
+    },
+    {
+      "recipe": "requirement-plans",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 75,
+        "report_boundaries": {
+          "requirements": {
+            "records": 75,
+            "tags": {
+              "CHECKED_REQUIREMENT": 14,
+              "REQUIREMENT_ARTIFACT": 17,
+              "REQUIREMENT_PLAN": 7,
+              "REQUIREMENT_SOURCE": 1,
+              "REQUIREMENT_TABLE": 36
+            },
+            "sha256": "fc6a1803eafee8a72652ef81958f04a387123fa8bc967f56ea5ccd1d0f3ebe2f"
+          }
+        },
+        "stages": [
+          {
+            "name": "requirements",
+            "seconds": 1.9668569660025241,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 75,
+        "report_boundaries": {
+          "requirements": {
+            "records": 75,
+            "tags": {
+              "CHECKED_REQUIREMENT": 14,
+              "REQUIREMENT_ARTIFACT": 17,
+              "REQUIREMENT_PLAN": 7,
+              "REQUIREMENT_SOURCE": 1,
+              "REQUIREMENT_TABLE": 36
+            },
+            "sha256": "fc6a1803eafee8a72652ef81958f04a387123fa8bc967f56ea5ccd1d0f3ebe2f"
+          }
+        },
+        "stages": [
+          {
+            "name": "requirements",
+            "seconds": 1.716859594998823,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "ca2abb40f8d4432b1717a7d38f709fdb02be2dd518821568b93fc636f8ec680d",
+      "working_receipt": "/tmp/native-speed-recipes/requirement-plans/reconstruction.json",
+      "working_receipt_sha256": "a4a9615b4a8a69613cf675348913bfb2ac06ee2812f27a4c208b3833026b9230"
+    },
+    {
+      "recipe": "requirement-sources",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 23,
+        "report_boundaries": {
+          "source-boundary": {
+            "records": 2,
+            "tags": {
+              "REQUIREMENT_SOURCE_BOUNDARY": 2
+            },
+            "sha256": "e45c756254730682889977b661db8f9a5dc8616686ca69d3b7c41d2da65bb9df"
+          },
+          "retained-clauses": {
+            "records": 15,
+            "tags": {
+              "RETAINED_CLAUSE": 15
+            },
+            "sha256": "1fd5c95162bb9e28ef0c4528b7a723c4b4362882476c95f2e5f8f9d1733d5eee"
+          },
+          "native-meanings": {
+            "records": 2,
+            "tags": {
+              "NATIVE_GUARD_MEANING": 2
+            },
+            "sha256": "b6eb05e6136e8d84a99cf8563c3e865de8685a1cc29152e6db7da7124bff381c"
+          },
+          "native-plans": {
+            "records": 4,
+            "tags": {
+              "NATIVE_REQUIREMENT_PLAN": 4
+            },
+            "sha256": "13ac17bfff43c67480c07d6d7bde2cef3553feed83eba6dca528d83b71fa781b"
+          }
+        },
+        "stages": [
+          {
+            "name": "source-boundary",
+            "seconds": 2.3184123280007043,
+            "exit_code": 0,
+            "workers": null
+          },
+          {
+            "name": "retained-clauses",
+            "seconds": 2.370741493999958,
+            "exit_code": 0,
+            "workers": null
+          },
+          {
+            "name": "native-meanings",
+            "seconds": 2.3179774140007794,
+            "exit_code": 0,
+            "workers": null
+          },
+          {
+            "name": "native-plans",
+            "seconds": 2.3181370659985987,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 23,
+        "report_boundaries": {
+          "source-boundary": {
+            "records": 2,
+            "tags": {
+              "REQUIREMENT_SOURCE_BOUNDARY": 2
+            },
+            "sha256": "e45c756254730682889977b661db8f9a5dc8616686ca69d3b7c41d2da65bb9df"
+          },
+          "retained-clauses": {
+            "records": 15,
+            "tags": {
+              "RETAINED_CLAUSE": 15
+            },
+            "sha256": "1fd5c95162bb9e28ef0c4528b7a723c4b4362882476c95f2e5f8f9d1733d5eee"
+          },
+          "native-meanings": {
+            "records": 2,
+            "tags": {
+              "NATIVE_GUARD_MEANING": 2
+            },
+            "sha256": "b6eb05e6136e8d84a99cf8563c3e865de8685a1cc29152e6db7da7124bff381c"
+          },
+          "native-plans": {
+            "records": 4,
+            "tags": {
+              "NATIVE_REQUIREMENT_PLAN": 4
+            },
+            "sha256": "13ac17bfff43c67480c07d6d7bde2cef3553feed83eba6dca528d83b71fa781b"
+          }
+        },
+        "stages": [
+          {
+            "name": "source-boundary",
+            "seconds": 2.2182505620003212,
+            "exit_code": 0,
+            "workers": null
+          },
+          {
+            "name": "retained-clauses",
+            "seconds": 2.3213566089980304,
+            "exit_code": 0,
+            "workers": null
+          },
+          {
+            "name": "native-meanings",
+            "seconds": 2.321864032001031,
+            "exit_code": 0,
+            "workers": null
+          },
+          {
+            "name": "native-plans",
+            "seconds": 2.2191556959987793,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "302ff39dfe6ea450fa2a30d8813255091011adda2709cafead40f0b7ddb257f9",
+      "working_receipt": "/tmp/native-speed-recipes/requirement-sources/reconstruction.json",
+      "working_receipt_sha256": "caa2a90500e4f647ef08418275c397dfe1e35ec1474f617b8216e332d28df440"
+    },
+    {
+      "recipe": "source-development",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 298,
+        "report_boundaries": {
+          "sources": {
+            "records": 126,
+            "tags": {
+              "SOURCE_AVAILABLE": 1,
+              "SOURCE_CHOICE": 1,
+              "SOURCE_CONTROL": 4,
+              "SOURCE_POLICY_ADMISSION": 1,
+              "SOURCE_POLICY_ASSESSMENT": 8,
+              "SOURCE_POLICY_CANDIDATE": 80,
+              "SOURCE_POLICY_CONTEXT": 8,
+              "SOURCE_POLICY_DISPATCH": 1,
+              "SOURCE_POLICY_METHODS": 1,
+              "SOURCE_POLICY_QUESTION": 1,
+              "SOURCE_POLICY_REPORT": 1,
+              "SOURCE_REQUEST": 9,
+              "SOURCE_RESULT": 9,
+              "SOURCE_SCOPE": 1
+            },
+            "sha256": "0994e95ffedfb97f0ec4a0512ae8891118105df163e594f61a6341e54113fe1d"
+          },
+          "empty": {
+            "records": 17,
+            "tags": {
+              "SOURCE_AVAILABLE": 1,
+              "SOURCE_CHOICE": 1,
+              "SOURCE_POLICY_ADMISSION": 1,
+              "SOURCE_POLICY_DISPATCH": 1,
+              "SOURCE_POLICY_METHODS": 1,
+              "SOURCE_POLICY_QUESTION": 1,
+              "SOURCE_POLICY_REPORT": 1,
+              "SOURCE_REQUEST": 9,
+              "SOURCE_SCOPE": 1
+            },
+            "sha256": "0099bacabd60f13e04e6b77a266712c146b208d0aa22b5c59091c5bc6760766d"
+          },
+          "first": {
+            "records": 29,
+            "tags": {
+              "SOURCE_AVAILABLE": 1,
+              "SOURCE_CHOICE": 1,
+              "SOURCE_POLICY_ADMISSION": 1,
+              "SOURCE_POLICY_ASSESSMENT": 1,
+              "SOURCE_POLICY_CANDIDATE": 10,
+              "SOURCE_POLICY_CONTEXT": 1,
+              "SOURCE_POLICY_DISPATCH": 1,
+              "SOURCE_POLICY_METHODS": 1,
+              "SOURCE_POLICY_QUESTION": 1,
+              "SOURCE_POLICY_REPORT": 1,
+              "SOURCE_REQUEST": 9,
+              "SOURCE_SCOPE": 1
+            },
+            "sha256": "e5f8273c195196f04c468e0c14a7abbc8a51a9cc4eca1d113ab618d030924240"
+          },
+          "requests": {
+            "records": 126,
+            "tags": {
+              "SOURCE_AVAILABLE": 1,
+              "SOURCE_CHOICE": 1,
+              "SOURCE_CONTROL": 4,
+              "SOURCE_POLICY_ADMISSION": 1,
+              "SOURCE_POLICY_ASSESSMENT": 8,
+              "SOURCE_POLICY_CANDIDATE": 80,
+              "SOURCE_POLICY_CONTEXT": 8,
+              "SOURCE_POLICY_DISPATCH": 1,
+              "SOURCE_POLICY_METHODS": 1,
+              "SOURCE_POLICY_QUESTION": 1,
+              "SOURCE_POLICY_REPORT": 1,
+              "SOURCE_REQUEST": 9,
+              "SOURCE_RESULT": 9,
+              "SOURCE_SCOPE": 1
+            },
+            "sha256": "0994e95ffedfb97f0ec4a0512ae8891118105df163e594f61a6341e54113fe1d"
+          }
+        },
+        "stages": [
+          {
+            "name": "sources",
+            "seconds": 38.627322292002646,
+            "exit_code": 0,
+            "workers": 16
+          },
+          {
+            "name": "empty",
+            "seconds": 7.475599486002466,
+            "exit_code": 0,
+            "workers": 2
+          },
+          {
+            "name": "first",
+            "seconds": 13.484448537001299,
+            "exit_code": 0,
+            "workers": 4
+          },
+          {
+            "name": "requests",
+            "seconds": 50.03616617899752,
+            "exit_code": 0,
+            "workers": 16
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 298,
+        "report_boundaries": {
+          "sources": {
+            "records": 126,
+            "tags": {
+              "SOURCE_AVAILABLE": 1,
+              "SOURCE_CHOICE": 1,
+              "SOURCE_CONTROL": 4,
+              "SOURCE_POLICY_ADMISSION": 1,
+              "SOURCE_POLICY_ASSESSMENT": 8,
+              "SOURCE_POLICY_CANDIDATE": 80,
+              "SOURCE_POLICY_CONTEXT": 8,
+              "SOURCE_POLICY_DISPATCH": 1,
+              "SOURCE_POLICY_METHODS": 1,
+              "SOURCE_POLICY_QUESTION": 1,
+              "SOURCE_POLICY_REPORT": 1,
+              "SOURCE_REQUEST": 9,
+              "SOURCE_RESULT": 9,
+              "SOURCE_SCOPE": 1
+            },
+            "sha256": "0994e95ffedfb97f0ec4a0512ae8891118105df163e594f61a6341e54113fe1d"
+          },
+          "empty": {
+            "records": 17,
+            "tags": {
+              "SOURCE_AVAILABLE": 1,
+              "SOURCE_CHOICE": 1,
+              "SOURCE_POLICY_ADMISSION": 1,
+              "SOURCE_POLICY_DISPATCH": 1,
+              "SOURCE_POLICY_METHODS": 1,
+              "SOURCE_POLICY_QUESTION": 1,
+              "SOURCE_POLICY_REPORT": 1,
+              "SOURCE_REQUEST": 9,
+              "SOURCE_SCOPE": 1
+            },
+            "sha256": "0099bacabd60f13e04e6b77a266712c146b208d0aa22b5c59091c5bc6760766d"
+          },
+          "first": {
+            "records": 29,
+            "tags": {
+              "SOURCE_AVAILABLE": 1,
+              "SOURCE_CHOICE": 1,
+              "SOURCE_POLICY_ADMISSION": 1,
+              "SOURCE_POLICY_ASSESSMENT": 1,
+              "SOURCE_POLICY_CANDIDATE": 10,
+              "SOURCE_POLICY_CONTEXT": 1,
+              "SOURCE_POLICY_DISPATCH": 1,
+              "SOURCE_POLICY_METHODS": 1,
+              "SOURCE_POLICY_QUESTION": 1,
+              "SOURCE_POLICY_REPORT": 1,
+              "SOURCE_REQUEST": 9,
+              "SOURCE_SCOPE": 1
+            },
+            "sha256": "e5f8273c195196f04c468e0c14a7abbc8a51a9cc4eca1d113ab618d030924240"
+          },
+          "requests": {
+            "records": 126,
+            "tags": {
+              "SOURCE_AVAILABLE": 1,
+              "SOURCE_CHOICE": 1,
+              "SOURCE_CONTROL": 4,
+              "SOURCE_POLICY_ADMISSION": 1,
+              "SOURCE_POLICY_ASSESSMENT": 8,
+              "SOURCE_POLICY_CANDIDATE": 80,
+              "SOURCE_POLICY_CONTEXT": 8,
+              "SOURCE_POLICY_DISPATCH": 1,
+              "SOURCE_POLICY_METHODS": 1,
+              "SOURCE_POLICY_QUESTION": 1,
+              "SOURCE_POLICY_REPORT": 1,
+              "SOURCE_REQUEST": 9,
+              "SOURCE_RESULT": 9,
+              "SOURCE_SCOPE": 1
+            },
+            "sha256": "0994e95ffedfb97f0ec4a0512ae8891118105df163e594f61a6341e54113fe1d"
+          }
+        },
+        "stages": [
+          {
+            "name": "sources",
+            "seconds": 38.67158756700155,
+            "exit_code": 0,
+            "workers": 16
+          },
+          {
+            "name": "empty",
+            "seconds": 7.877246862000902,
+            "exit_code": 0,
+            "workers": 2
+          },
+          {
+            "name": "first",
+            "seconds": 13.687326147999556,
+            "exit_code": 0,
+            "workers": 4
+          },
+          {
+            "name": "requests",
+            "seconds": 53.04022711000289,
+            "exit_code": 0,
+            "workers": 16
+          }
+        ]
+      },
+      "committed_receipt_sha256": "de43f97daa7dcde3e4fa4f6619c1b0448965268c03d78b7ea946b1e2bf7447b0",
+      "working_receipt": "/tmp/native-speed-recipes/source-development/reconstruction.json",
+      "working_receipt_sha256": "fb83d36799711f37fce83a25e13478e4efa52370caf8628c22245f2d6dc2ee4a"
+    },
+    {
+      "recipe": "use-allocation",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 35,
+        "report_boundaries": {
+          "comparison": {
+            "records": 35,
+            "tags": {
+              "USE_ALLOCATION_ASSESSMENT": 14,
+              "USE_ALLOCATION_COMPARISON": 1,
+              "USE_ALLOCATION_INVESTIGATION": 4,
+              "USE_ALLOCATION_SCOPE": 1,
+              "USE_ALLOCATION_SEMANTICS": 1,
+              "USE_ALLOCATION_SUBJECT": 14
+            },
+            "sha256": "5868bf5462a2012b508da2e29e85d4299b8b40167ee0c877a42211d9dc8431e8"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 2.166834875999484,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 35,
+        "report_boundaries": {
+          "comparison": {
+            "records": 35,
+            "tags": {
+              "USE_ALLOCATION_ASSESSMENT": 14,
+              "USE_ALLOCATION_COMPARISON": 1,
+              "USE_ALLOCATION_INVESTIGATION": 4,
+              "USE_ALLOCATION_SCOPE": 1,
+              "USE_ALLOCATION_SEMANTICS": 1,
+              "USE_ALLOCATION_SUBJECT": 14
+            },
+            "sha256": "5868bf5462a2012b508da2e29e85d4299b8b40167ee0c877a42211d9dc8431e8"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 2.217850394001289,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "4c42fe026a554d3220e73a9896da9dbf71a352d6adf24c4253c9517800bc28a3",
+      "working_receipt": "/tmp/native-speed-recipes/use-allocation/reconstruction.json",
+      "working_receipt_sha256": "67fecfbb57beecf77900cbc1e322c47ed3b3b5f6608176afed5965400e094e71"
+    },
+    {
+      "recipe": "use-codecs",
+      "committed": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 39,
+        "report_boundaries": {
+          "comparison": {
+            "records": 39,
+            "tags": {
+              "USE_CODEC_ASSESSMENT": 16,
+              "USE_CODEC_COMPARISON": 1,
+              "USE_CODEC_INVESTIGATION": 4,
+              "USE_CODEC_SCOPE": 1,
+              "USE_CODEC_SEMANTICS": 1,
+              "USE_CODEC_SUBJECT": 16
+            },
+            "sha256": "305e95699c75ab3be02878c5df3332f036edd76e67a7ca56c8092971ebf1dacd"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 2.016314600001351,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "working": {
+        "status": "accepted",
+        "reports_equal": true,
+        "complete_records": 39,
+        "report_boundaries": {
+          "comparison": {
+            "records": 39,
+            "tags": {
+              "USE_CODEC_ASSESSMENT": 16,
+              "USE_CODEC_COMPARISON": 1,
+              "USE_CODEC_INVESTIGATION": 4,
+              "USE_CODEC_SCOPE": 1,
+              "USE_CODEC_SEMANTICS": 1,
+              "USE_CODEC_SUBJECT": 16
+            },
+            "sha256": "305e95699c75ab3be02878c5df3332f036edd76e67a7ca56c8092971ebf1dacd"
+          }
+        },
+        "stages": [
+          {
+            "name": "comparison",
+            "seconds": 2.318106065999018,
+            "exit_code": 0,
+            "workers": null
+          }
+        ]
+      },
+      "committed_receipt_sha256": "f4ae9b2ad65a82e8466cfe00dbdc8ca05f068ff07a704fbf54e7d2c0a1b0e92e",
+      "working_receipt": "/tmp/native-speed-recipes/use-codecs/reconstruction.json",
+      "working_receipt_sha256": "3b429c95b76767646c0f0d46f86964afaba2e615b5d9962371f239fecb03b4e5"
+    }
+  ],
+  "cold_suite_observations": {
+    "source": "/tmp/claude-1000/-home-julius-structure-and-semantics/30c4d4f0-aed2-4636-9a6b-ff8c01b105ee/scratchpad/evidence/batch12a-suite-timings.json",
+    "source_sha256": "9b3644d09b6e5a68e19df7f9e6e2e35b23f24a2a26d34f3258344ab14ce67ddf",
+    "plain": {
+      "recipes": 40,
+      "wall_seconds": 1470,
+      "status": "accepted"
+    },
+    "compressed": {
+      "recipes": 10,
+      "wall_seconds": 1598,
+      "status": "failed",
+      "failed_recipes": [
+        "digit-replay"
+      ]
+    },
+    "boundary": "Earlier storage-matched materialized-source suites from HOL, before final formation-once/runtime fixes; not a current-revision cold validation or an operating-system-cache-cold measurement. Per-recipe figures in the retained extract cover execution stages, not their shared proof.",
+    "plain_log": {
+      "path": "/tmp/claude-1000/-home-julius-structure-and-semantics/30c4d4f0-aed2-4636-9a6b-ff8c01b105ee/tasks/b4xbzyien.output",
+      "sha256": "3c41466dfdf10a0007d0f0eedd42cc71c6e2dea8f59fac3bce3d3458f2dcfae7",
+      "text": "plain final exit 0 seconds 1470\naccepted True []\n\n[exited with code 0]\n"
+    },
+    "compressed_log": {
+      "path": "/tmp/claude-1000/-home-julius-structure-and-semantics/30c4d4f0-aed2-4636-9a6b-ff8c01b105ee/tasks/by1v5huc9.output",
+      "sha256": "aeb5e9c7a320e2b4f47a1d07491d163477610afac35692e24f4294e1c7ad00d6",
+      "text": "compressed final exit 1 seconds 1598\nfailed True [('digit-replay', False)]\n\n[exited with code 0]\n"
+    }
+  },
+  "commit_preparation_observation": {
+    "check_started_utc": "2026-09-16T14:46:21.339865+00:00",
+    "commit_time": "2026-09-16T18:22:10+03:00",
+    "clock_span_seconds": 2148.660135,
+    "boundary": "Clock span from the final committed full-check start to commit creation. Includes execution, failed recipe retries, evidence integration and intervening work; not isolated Git commit runtime."
+  },
+  "working_validation_observation": {
+    "check_started_utc": "2026-09-16T15:23:17.090099+00:00",
+    "last_recipe_receipt_mtime_utc": "2026-09-16T15:55:39.371713+00:00",
+    "clock_span_seconds": 1942.281614,
+    "boundary": "Observed interval ending at the last recipe receipt file timestamp; not an instrumented end-to-end stopwatch. The batch still has one failed recipe."
+  },
+  "orchestration_logs": {
+    "committed": {
+      "path": "/tmp/claude-1000/-home-julius-structure-and-semantics/30c4d4f0-aed2-4636-9a6b-ff8c01b105ee/tasks/bhr3qljeo.output",
+      "sha256": "be6745954546d534c516e2749a6a15330ec3e81dac5820050462b99781b0210a",
+      "text": "check exit 0 seconds 674\n{'status': 'accepted', 'exit_code': 0, 'build_status': 'accepted', 'theory_count': 1554, 'missing_theory_files': [], 'unlisted_theories': [], 'proof_escape_matches': [], 'sources_and_tools_unchanged': True}\n\n[exited with code 0]\nexport exit 0 seconds 2\nartifact-lookup exit=0 seconds=2 accepted True\nallocated-environments exit=0 seconds=3 accepted True\ncached-grafts exit=0 seconds=3 accepted True\ncertificate-scope-repair exit=0 seconds=8 accepted True\ncertificate-coverage exit=0 seconds=8 accepted True\ncertificate-development exit=0 seconds=9 accepted True\ndata-reading exit=0 seconds=4 accepted True\ncertificate-input-development exit=0 seconds=12 accepted True\ndigit-allocation exit=0 seconds=3 accepted True\ndigit-generation exit=0 seconds=9 accepted True\nencoded-environments exit=0 seconds=9 accepted True\nenvironment-grafts exit=0 seconds=10 accepted True\nenvironment-updates exit=0 seconds=10 accepted True\ngraft-admission exit=0 seconds=9 accepted True\ngeneration-records exit=0 seconds=14 accepted True\nconcurrent-history exit=1 seconds=53 failed False\nindexed-generation exit=0 seconds=16 accepted True\nliteral-replay exit=0 seconds=12 accepted True\ncertified-causes exit=0 seconds=112 accepted True\nconcurrent-replay exit=1 seconds=146 failed False\nnative-admission exit=0 seconds=86 accepted True\nnative-certificates exit=0 seconds=11 accepted True\nnative-derivations exit=0 seconds=9 accepted True\nnative-development exit=0 seconds=28 accepted True\nnative-evaluation exit=0 seconds=3 accepted True\nnative-extensions exit=0 seconds=3 accepted True\nhistory-index exit=0 seconds=175 accepted True\nnative-histories exit=0 seconds=8 accepted True\nnative-graphs exit=0 seconds=23 accepted True\nnative-nodes exit=0 seconds=4 accepted True\nnative-sources exit=0 seconds=6 accepted True\nnative-certificate-replay exit=0 seconds=136 accepted True\nnative-requirements exit=0 seconds=43 accepted True\ndigit-history exit=0 seconds=266 accepted True\nrequired-causes exit=0 seconds=19 accepted True\nknown-history exit=0 seconds=260 accepted True\nnative-steering exit=0 seconds=87 accepted True\nrequirement-plans exit=0 seconds=2 accepted True\nrequirement-sources exit=0 seconds=3 accepted True\nconstructed-history exit=0 seconds=322 accepted True\nrequirement-decisions exit=0 seconds=10 accepted True\nrequired-history exit=0 seconds=30 accepted True\nuse-allocation exit=0 seconds=2 accepted True\nuse-codecs exit=0 seconds=2 accepted True\nnative-workflow exit=0 seconds=97 accepted True\ndecision-replay exit=0 seconds=370 accepted True\nnative-child exit=0 seconds=243 accepted True\nsource-development exit=0 seconds=102 accepted True\nquoted-history exit=0 seconds=199 accepted True\ndigit-replay exit=0 seconds=996 accepted True\nFASTDONE\n\n[exited with code 0]\n"
+    },
+    "repair": {
+      "path": "/tmp/claude-1000/-home-julius-structure-and-semantics/30c4d4f0-aed2-4636-9a6b-ff8c01b105ee/tasks/b3g73n5ic.output",
+      "sha256": "7cba0ecc234c5564f54cfb7fa3d64244fbb7adc915346b5dfa427bbc933e38c5",
+      "text": "rerunning: concurrent-history\nconcurrent-replay\nconcurrent-history rerun seconds=26 accepted True\nconcurrent-replay rerun seconds=80 accepted True\n50 5883\nINTEGRATED\n\n[exited with code 0]\n"
+    },
+    "working": {
+      "path": "/tmp/claude-1000/-home-julius-structure-and-semantics/30c4d4f0-aed2-4636-9a6b-ff8c01b105ee/tasks/b62ytk694.output",
+      "sha256": "c4c0090830eb1a5afd0d4815279d69e8b89c9ca225ace37a94913e1be4137eea",
+      "text": "check exit 0 seconds 625\naccepted 1589 True 0 0 0\nexport exit 0 seconds 1\nnative-workflow exit=1 seconds=17 failed False\nFASTDONE\n\n[exited with code 0]\n"
+    }
+  },
+  "pending_findings": [
+    {
+      "kind": "observed_failure",
+      "subject": "Native_Workflow_Execution",
+      "missing_exports": [
+        "required_workflow_investigation",
+        "required_workflow_scope_investigation"
+      ],
+      "evidence": "/tmp/native-speed-recipes/native-workflow/requirements.log",
+      "evidence_sha256": "0dbaed2ea2de14b70c5f4ca1d5a07ebc624dab2062b34e3ec41ea8ad93727b53",
+      "failure": "check_native_workflow.py requires exactly one matching exported contract; requirements has none."
+    },
+    {
+      "kind": "source_review",
+      "subject": "tools/incremental_check.py",
+      "source_sha256": "ce2c02a82d5e764d89c6b4f5706857e725f84901b59e3aa254ed27aa3e59a22d",
+      "finding": "accepted_parent(ROOT) requires every accepted source to be unchanged before the wrapper computes changed. Changed workspaces therefore fail that prerequisite; unchanged workspaces yield no affected roots. The wrapper also lacks complete tool/fixture/removal/non-recipe impact coverage."
+    },
+    {
+      "kind": "source_review_and_observed_status",
+      "subject": "fast_validate.sh",
+      "source_sha256": "a4b0fc1b1fbe5539083d5345af739fca87a50610019ec821107e868b3b624740",
+      "finding": "The script does not enforce export or aggregate recipe failure as its final exit code; its final echo FASTDONE can return zero after child failure. Latest task log exits zero while native-workflow failed."
+    }
+  ]
+}

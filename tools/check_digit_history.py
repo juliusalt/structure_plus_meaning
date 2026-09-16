@@ -115,7 +115,7 @@ def main():
         observer='Finite_Subject_Investigation.subject_investigation_observations',
         relation='Finite_Subject_Investigation.subject_investigation_relation')
     def assess(inputs,raw):
-        path=args.output/'results.log';assert path.read_text()==raw;rows=list(machine_reports.reports(path))
+        path=args.output/'results.log';assert path.read_text()==raw;rows=list(machine_reports.reports(path, deferred=True))
         assert rows[0]['tag']=='DIGIT_HISTORY_SCOPE' and rows[0]['indices']==[]
         scope=rows[0]['value'];requested=scope if inputs['cases'] is None else inputs['cases'];assert set(requested)<=set(scope)
         size=len(requested)

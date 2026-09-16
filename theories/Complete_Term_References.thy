@@ -1,5 +1,5 @@
 theory Complete_Term_References
-  imports Complete_Value_References Factor_Executable_Environment_Values
+  imports Complete_Value_References Factor_Executable_Environment_Values_Base
 begin
 
 definition complete_empty_terms :: "finite_factor_term list" where

@@ -1,5 +1,5 @@
 theory Factor_Requirement_Source_Readings
-  imports Retained_Clause_Execution
+  imports Retained_Clause_Execution_Base
 begin
 
 section \<open>Both executed artifacts use the same complete variable frame\<close>

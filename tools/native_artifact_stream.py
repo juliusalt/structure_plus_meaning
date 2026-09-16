@@ -1,5 +1,4 @@
 """Transport complete native artifacts through the proved exact reference operation."""
-import copy
 import re
 import json
 
@@ -148,6 +147,8 @@ class Decoder:
         self.terms_used = set()
         self.artifact_bytes = []
         self.term_bytes = []
+        self.artifact_values = []
+        self.term_values = []
         self.footer_loaded = False
 
     def reference(self, value):
@@ -174,7 +175,28 @@ class Decoder:
         if reference is None:
             return value
         table, _, i = reference
-        return copy.deepcopy(table[i]) if REFERENCE in value else clone(table[i])
+        return self.occurrence(table, self.artifact_values if REFERENCE in value else self.term_values, i)
+
+    @staticmethod
+    def occurrence(table, encodings, i):
+        """Give one occurrence its own complete mutable value, decoded from the entry's exact encoding.
+
+        Parsing the retained insertion-order encoding reproduces every key order, number and nesting
+        without sharing a container between occurrences. A value too deep for the JSON codec keeps
+        the iterative copy.
+        """
+        while len(encodings) < len(table):
+            try:
+                encodings.append(json.dumps(table[len(encodings)], ensure_ascii=False,
+                                            separators=(',', ':'), allow_nan=False))
+            except RecursionError:
+                encodings.append(None)
+        if encodings[i] is not None:
+            try:
+                return json.loads(encodings[i])
+            except RecursionError:
+                pass
+        return clone(table[i])
 
     def canonical_chunks(self, value):
         pending = [(False, value)]

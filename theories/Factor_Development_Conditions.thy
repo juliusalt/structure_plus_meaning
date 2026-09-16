@@ -1,5 +1,5 @@
 theory Factor_Development_Conditions
-  imports Factor_Workflow_Requirements Factor_Executable_Environment_Values
+  imports Factor_Workflow_Requirements Factor_Executable_Environment_Values_Base
 begin
 
 record native_development_condition =

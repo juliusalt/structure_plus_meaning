@@ -1,6 +1,5 @@
 theory Factor_Finite_Judgment_Quotation
-  imports Factor_Executable_Judgment_Retention Factor_Executable_Environment_Values
-    Factor_Finite_Data_Syntax Factor_Judgment_Values
+  imports Factor_Executable_Judgment_Retention Factor_Executable_Environment_Values_Base Factor_Finite_Data_Syntax Factor_Judgment_Values
 begin
 
 definition finite_judgment_term where

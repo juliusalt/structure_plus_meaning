@@ -12,6 +12,7 @@ import copy
 import hashlib
 import itertools
 import json
+import marshal
 from pathlib import Path
 import subprocess
 import sys
@@ -63,12 +64,33 @@ def loaded_tool_sources():
     return sorted(paths)
 
 
-def freeze(value):
+def _freeze(value):
     if isinstance(value, dict):
-        return tuple((k, freeze(v)) for k, v in sorted(value.items()))
+        return tuple((k, _freeze(v)) for k, v in sorted(value.items()))
     if isinstance(value, list):
-        return tuple(map(freeze, value))
+        return tuple(map(_freeze, value))
     return value
+
+
+_FROZEN = {}
+
+
+def freeze(value):
+    """Hashable complete value; repeated structurally identical inputs share one conversion.
+
+    The marshal encoding is lossless and distinguishes every container and scalar type, so equal
+    keys denote identical inputs. Different encodings of equal values only miss the cache.
+    """
+    if not isinstance(value, (dict, list)):
+        return value
+    try:
+        key = marshal.dumps(value)
+    except ValueError:
+        return _freeze(value)
+    frozen = _FROZEN.get(key)
+    if frozen is None:
+        frozen = _FROZEN[key] = _freeze(value)
+    return frozen
 
 
 def payload(*values):

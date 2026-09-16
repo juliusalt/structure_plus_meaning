@@ -1245,3 +1245,11 @@ now reach every file export; the shared Eval runtime
 no longer prints bound packets. No obligation row changes status. Remaining
 per-call formation checks and footprint unions keep development costs open, so condition 5a of problems.txt remains open; 5b stays deferred until
 after genesis. O-85, historical permission, genesis and the final audit remain open.
+
+
+## Validation cycle batch
+
+Incremental proof over an accepted base, manifest-scoped recipe execution,
+deferred report hashing and pairwise join conditions change validation and
+execution cost only. No obligation row changes status; condition 5a remains
+open and 5b stays deferred until after genesis.

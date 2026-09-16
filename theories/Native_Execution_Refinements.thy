@@ -8,7 +8,7 @@ theory Native_Execution_Refinements
     Ordered_Environment_Artifact_Objects Prepared_Computed_Functions Complete_Term_References
     Finite_Collection_Subset_Execution Finite_Filtered_Keyed_Products
     RRA_Linked_Record_Candidates Finite_Investigation_Basis_Sharing Factor_Finite_Judgment_Reading_Sharing
-    Factor_Invariant_Evaluation_Sharing Factor_Formation_Once_Readings
+    Factor_Invariant_Evaluation_Sharing Factor_Formation_Once_Readings Factor_Join_Reading_Conditions
 begin
 
 text \<open>The export boundary consumes the existing complete-result refinements.

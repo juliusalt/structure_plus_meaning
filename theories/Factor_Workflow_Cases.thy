@@ -1,6 +1,5 @@
 theory Factor_Workflow_Cases
-  imports Factor_Workflow_Admission Factor_Requirement_Source_Examples Factor_Finite_Source_Entry_Installation
-    Factor_Finite_View_Installation
+  imports Factor_Workflow_Admission Factor_Requirement_Source_Examples_Base Factor_Finite_Source_Entry_Installation Factor_Finite_View_Installation
 begin
 
 definition workflow_guard_stage where

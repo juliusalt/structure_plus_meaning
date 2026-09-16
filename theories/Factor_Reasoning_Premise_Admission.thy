@@ -1,5 +1,5 @@
 theory Factor_Reasoning_Premise_Admission
-  imports Factor_Admission_Pair_Reasoning
+  imports Factor_Admission_Pair_Reasoning_Base
 begin
 
 section \<open>Possible premise values have an actual native admission test\<close>

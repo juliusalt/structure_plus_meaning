@@ -1,9 +1,6 @@
 theory Native_Admission_Execution
-  imports Factor_Native_Admission_Cases Native_Execution_Refinements
+  imports Native_Admission_Execution_Base Native_Execution_Refinements
 begin
-
-definition native_admission_indices :: "nat list" where
-  "native_admission_indices=[0..<length native_admission_shapes]"
 
 export_code native_admission_indices native_admission_report
   finite_environment_artifact_rows finite_environment_bindings

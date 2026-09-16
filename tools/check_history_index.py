@@ -118,7 +118,7 @@ def main():
     def assess(inputs, raw):
         path = args.output / 'results.log'
         assert path.read_text() == raw
-        rows = list(machine_reports.reports(path))
+        rows = list(machine_reports.reports(path, deferred=True))
         assert rows[0]['tag'] == 'HISTORY_INDEX_SCOPE' and rows[0]['indices'] == []
         scope = rows[0]['value']
         requested = scope if inputs['cases'] is None else inputs['cases']

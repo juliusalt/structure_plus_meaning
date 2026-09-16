@@ -1,6 +1,5 @@
 theory Factor_Ground_Inference_Premises
-  imports Factor_Inference_Reader_Investigation Factor_Executable_Environment_Values
-    Factor_Specialization_Binding_Contracts
+  imports Factor_Inference_Reader_Investigation Factor_Executable_Environment_Values_Base Factor_Specialization_Binding_Contracts
 begin
 
 section \<open>Complete source calls for an empty replacement scope\<close>

@@ -1,11 +1,6 @@
 theory Factor_Reasoning_Execution
-  imports Factor_Reasoning_Premise_Admission Factor_Investigation_Input_Development_Execution
-    Factor_Specialization_Report_Reasoning Factor_Binding_Observation_Reasoning
-    Factor_Inference_Reader_Investigation Factor_Binding_Guided_Investigation Factor_Reader_Source_Requirements Native_Execution_Refinements
+  imports Factor_Reasoning_Execution_Base Native_Execution_Refinements
 begin
-
-definition finite_reasoning_term_equal :: "finite_factor_term \<Rightarrow> finite_factor_term \<Rightarrow> bool" where
-  "finite_reasoning_term_equal t u \<longleftrightarrow> t=u"
 
 export_code admission_plan generated_input_execution admission_pair_reasoning_experiment
   reasoning_counterexample_experiment finite_admission_counter_check admitted_reasoning_frontier

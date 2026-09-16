@@ -1,25 +1,6 @@
 theory Native_Workflow_Execution
-  imports Factor_Workflow_Execution_Sharing Factor_Workflow_Expanded_Comparison Factor_Workflow_Request_Batch Parallel_Assessment_Execution Native_Execution_Refinements
+  imports Native_Workflow_Execution_Base Native_Execution_Refinements
 begin
-
-setup \<open>Finite_Observation_Contracts.export @{term workflow_investigation}\<close>
-setup \<open>Finite_Observation_Contracts.export @{term required_workflow_investigation}\<close>
-
-setup \<open>Finite_Observation_Contracts.export @{term workflow_input_scope_investigation}\<close>
-setup \<open>Finite_Observation_Contracts.export @{term required_workflow_scope_investigation}\<close>
-
-definition workflow_input_scope_indices :: "nat list" where
-  "workflow_input_scope_indices=[0]"
-
-definition workflow_indices :: "nat list" where
-  "workflow_indices=[0..<length workflow_case_inputs]"
-
-definition required_workflow_indices :: "nat list" where
-  "required_workflow_indices=[0..<length required_workflow_case_inputs]"
-
-definition native_workflow_inspect ::
-  "finite_factor_term list list \<times> finite_factor_term list list \<times> bool \<Rightarrow> nat \<Rightarrow> bool" where
-  "native_workflow_inspect report f=workflow_inspect report f"
 
 export_code workflow_input_scope_packet workflow_input_scope_indices selected_workflow_input_scope
   expanded_workflow_packet expanded_workflow_indices
@@ -47,5 +28,11 @@ export_code workflow_input_scope_packet workflow_input_scope_indices selected_wo
   fset set nat_of_integer integer_of_nat
    complete_artifact_reference complete_object_reference complete_empty_artifacts complete_object_table_rows complete_environment_artifact_objects complete_term_reference complete_empty_terms
   in Eval module_name Native_Workflow file_prefix "native_workflow"
+
+setup \<open>Finite_Observation_Contracts.export @{term workflow_investigation}\<close>
+setup \<open>Finite_Observation_Contracts.export @{term required_workflow_investigation}\<close>
+
+setup \<open>Finite_Observation_Contracts.export @{term workflow_input_scope_investigation}\<close>
+setup \<open>Finite_Observation_Contracts.export @{term required_workflow_scope_investigation}\<close>
 
 end

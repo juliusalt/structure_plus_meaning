@@ -1,5 +1,5 @@
 theory Factor_Native_Requirement_Source_Models
-  imports Factor_Requirement_Source_Examples Factor_Native_Program_Variants
+  imports Factor_Requirement_Source_Examples_Base Factor_Native_Program_Variants
 begin
 
 section \<open>Ordinary coordinates recover the actual complete source clauses\<close>

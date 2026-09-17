@@ -110,8 +110,6 @@ lemmas correct = extension.correct[OF construction]
 
 end
 
-export_code finite_source_extension_context finite_extend_source_native checking SML
-
 text \<open>
   The operation receives the actual source environment, selector and complete
   proposed target. It recovers every source field, checks target formation and

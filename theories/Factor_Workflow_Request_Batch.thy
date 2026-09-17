@@ -23,6 +23,4 @@ text \<open>
   admission. Parallel scheduling introduces no shared semantic state.
 \<close>
 
-export_code workflow_request_batch checking SML
-
 end

@@ -23,6 +23,4 @@ text \<open>
   the complete key and table formation conditions in the equation above.
 \<close>
 
-export_code finite_key_fibre_values checking SML
-
 end

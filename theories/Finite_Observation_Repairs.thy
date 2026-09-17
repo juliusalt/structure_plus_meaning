@@ -97,7 +97,4 @@ proof -
       comparison_failures_def comparison_observations_sound_def split: prod.splits; blast)
 qed
 
-export_code finite_sound_observation_facets finite_observation_conflicts
-  finite_available_observation_repairs finite_unrepairable_comparisons checking SML
-
 end

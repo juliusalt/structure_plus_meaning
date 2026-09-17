@@ -54,8 +54,6 @@ theorem finite_graph_presentation_class:
   by (rule finite_presents_class[where D="\<lambda>_. True", simplified];
       rule finite_graph_presentation_injective[OF assms])
 
-export_code finite_graph_node_presentation finite_graph_presentation checking SML
-
 text \<open>
   The inference collection keeps every node identity, inference clause, binding
   and assertion constructor. The discharge collection keeps each source node,

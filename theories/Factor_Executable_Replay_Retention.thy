@@ -181,9 +181,6 @@ proof -
     by (simp add: finite_native_replay_environment_correct)
 qed
 
-export_code finite_native_application_demands finite_native_graph_demands
-  finite_native_replay_sources finite_native_replay_demands finite_native_replay_environment checking SML
-
 text \<open>
   The actual program, application, and proof grammars determine one complete
   source-and-slot boundary. At each proof node, demanded slots come from the

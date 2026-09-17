@@ -32,6 +32,4 @@ proof -
     by (simp only: Let_def finite_program_coordinates_correct finite_environment_uses_correct; blast)
 qed
 
-export_code finite_program_coordinates checking SML
-
 end

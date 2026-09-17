@@ -25,5 +25,4 @@ theorem native_derivation_report_word_exact:
 definition native_derivation_report_selections :: "nat list list" where
   "native_derivation_report_selections=[[],[0,2,5],[0,1,2,3,4,5],[5,3,4,2,1,0]]"
 
-export_code native_derivation_report_value checking SML
 end

@@ -75,6 +75,4 @@ text \<open>
   Equal completed paths alone cannot replace that inspection.
 \<close>
 
-export_code workflow_stage_reference workflow_reference_paths workflow_stage_evidence checking SML
-
 end

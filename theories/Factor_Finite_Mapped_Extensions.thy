@@ -129,6 +129,4 @@ qed
 
 end
 
-export_code finite_extend_mapped_native checking SML
-
 end

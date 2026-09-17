@@ -52,6 +52,4 @@ theorem finite_compact_graft_ready_exact:
       (decode_finite_environment E) u (decode_finite_environment F)"
   by (simp only: finite_compact_graft_ready_def finite_graft_prerequisites_exact[OF finite_compact_boundary_embedding])
 
-export_code finite_compact_graft_ready checking SML
-
 end

@@ -62,8 +62,6 @@ theorem finite_complete_data_readings_prepared_exact:
     (simp only: finite_complete_data_readings_prepared_def finite_complete_data_body_values_def finite_complete_data_readings_def
       finite_singleton_bound_readings finite_data_body_readings_exact; simp)+
 
-export_code finite_complete_data_readings_prepared checking SML
-
 text \<open>
   The complete original source is checked before recursion. Each recursive
   step consumes the local leaf and record bodies under that same proved

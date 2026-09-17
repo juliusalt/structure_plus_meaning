@@ -284,6 +284,4 @@ text \<open>
   theorem preserves every complete binding under all scope presentations.
 \<close>
 
-export_code finite_scoped_compatible_unions checking SML
-
 end

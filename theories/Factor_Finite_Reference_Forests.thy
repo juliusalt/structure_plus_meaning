@@ -32,6 +32,4 @@ lemma pattern_forest_reference_table:
   "syntax_forest_table (map pattern_literal_bindings ps)=pattern_forest_bindings ps"
   by (induction ps) (simp_all add: map_slot_keys_def)
 
-export_code finite_syntax_forest_table checking SML
-
 end

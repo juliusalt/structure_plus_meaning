@@ -217,8 +217,6 @@ corollary finite_closed_graph_reading_sound:
   shows "(d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
   by (rule finite_graph_reading_conditional_sound[OF assms(1)]) (use assms(2) in simp)
 
-export_code finite_graph_reading finite_graph_assumptions checking SML
-
 text \<open>
   Supplied claims are checked against every identified inference and assertion.
   Socket links and child claims determine the full premise relation. Exact

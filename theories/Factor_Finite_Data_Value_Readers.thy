@@ -103,8 +103,6 @@ proof -
   show ?thesis by (simp only: reference list_all2_function; auto)
 qed
 
-export_code finite_payload_value_read finite_data_list_read finite_data_list_values checking SML
-
 text \<open>
   The list reader recovers the actual sequence, including repeated elements.
   Element interpretation uses the existing strict optional traversal. These

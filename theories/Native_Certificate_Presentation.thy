@@ -25,5 +25,4 @@ theorem native_certificate_report_word_exact:
 definition native_certificate_report_selections :: "nat list list" where
   "native_certificate_report_selections=[[],[0,1,2,6],[0,1,2,3,4,5,6]]"
 
-export_code native_certificate_report_value checking SML
 end

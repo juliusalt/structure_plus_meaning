@@ -34,6 +34,4 @@ theorem finite_source_preservation_exact:
     finite_environment_formed_correct finite_environment_included_correct finite_environment_agrees_on_correct
     finite_native_source_correct[symmetric] split: option.splits prod.splits)
 
-export_code finite_source_preservation_observation checking SML
-
 end

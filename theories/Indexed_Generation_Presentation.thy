@@ -25,5 +25,4 @@ definition indexed_generation_report_value where
  "indexed_generation_report_value ws selections=(finite_pair_presentation finite_index_sequence_value (finite_pair_presentation finite_index_sequence_value (finite_pair_presentation (finite_investigation_packet_value finite_indexed_generation_context_value finite_indexed_generation_assessment_value) (finite_pair_presentation finite_assessment_truth_value (finite_pair_presentation finite_index_sequence_value (finite_sequence_presentation finite_indexed_generation_source_value)))))) (indexed_generation_report ws selections)"
 
 definition indexed_generation_report_selections :: "nat list list" where "indexed_generation_report_selections=[[],[0],[0,1]]"
-export_code indexed_generation_report_value checking SML
 end

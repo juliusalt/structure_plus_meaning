@@ -112,9 +112,6 @@ theorem finite_system_presentation_class:
   by (rule finite_presents_class[where D="\<lambda>_. True", simplified];
       rule finite_system_presentation_injective[OF assms])
 
-export_code finite_pattern_presentation finite_material_presentation
-  finite_schema_presentation finite_system_presentation checking SML
-
 text \<open>
   Every program keeps its interface collection and its complete keyed clause
   collection. Each clause keeps its conclusion, socket-indexed ordinary premises,

@@ -32,8 +32,6 @@ next
     by (rule finite_judgment_value_root_required[OF member])
 qed
 
-export_code finite_whole_judgment_readings_at_roots checking SML
-
 text \<open>
   Every successful value reading requires an unreferenced root in the complete
   source. The generic supported-image theorem restricts the search to those

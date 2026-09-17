@@ -99,8 +99,6 @@ definition digit_history_report_value :: "nat list \<Rightarrow> nat list list \
 definition digit_history_report_selections :: "nat list list" where
   "digit_history_report_selections=[[],[0],[0,1]]"
 
-export_code digit_history_report_value checking SML
-
 text \<open>
   A digit history, its stored state and its subjects are presented through the
   existing original views, so two stores are identified exactly when their

@@ -91,8 +91,6 @@ lemma finite_investigation_packet_value_injective [intro]:
   by (intro finite_pair_presentation_injective finite_assessment_table_value_injective
       finite_sequence_presentation_injective finite_investigation_values_injective)
 
-export_code finite_investigation_packet_value checking SML
-
 text \<open>
   A context assessment table, its subject comparison and its investigation cycles
   have the same shape in every family; only the context and assessment

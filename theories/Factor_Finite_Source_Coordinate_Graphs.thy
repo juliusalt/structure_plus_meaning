@@ -51,8 +51,6 @@ proof -
   show ?thesis by (simp only: finite_graph_construction_ready_exact environment formed metadata simp_thms)
 qed
 
-export_code finite_source_coordinate_graph checking SML
-
 text \<open>
   Source metadata is positioned before the complete original node family is
   assigned its actual path representatives. The complete map retains the

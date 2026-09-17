@@ -25,14 +25,7 @@ bootstrap:
 python -B tools/reconstruct_concurrent_history.py --poly /opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly --output /tmp/reconstruct-concurrent-history --threads 16
 ```
 
-The two recipes can share a fresh proof of their combined source dependencies:
-
-```sh
-python -B tools/compressed_reconstruction_suite.py --recipe reconstruct_concurrent_replay.py --recipe reconstruct_concurrent_history.py --poly /opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly --output /tmp/reconstruct-concurrent-packets --threads 16 --workers 2
-```
-
-Each recipe assigns eight native workers so the two executions can run together
-on sixteen cores. A direct `tools/check_concurrent_history.py` execution accepts
+A direct `tools/check_concurrent_history.py` execution accepts
 `--workers` and defaults to sixteen. The runtime uses Isabelle's Pure heap for
 its established parallel-list implementation; standalone SML export does not
 activate that implementation.

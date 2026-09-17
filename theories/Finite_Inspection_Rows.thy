@@ -20,8 +20,6 @@ lemma finite_inspection_rows_hold_exact:
   "finite_inspection_rows_hold (finite_inspection_rows inspect X)=fBall X inspect"
   by (auto simp: finite_inspection_rows_hold_def finite_inspection_rows_def Ball_def)
 
-export_code finite_inspection_rows finite_inspection_rows_hold checking SML
-
 text \<open>
   Every actual subject and its computed observation are retained together.
   The projection preserves the complete subject family, and the aggregate

@@ -11,5 +11,4 @@ definition generation_record_report_value :: "nat list \<Rightarrow> nat list li
 
 definition generation_record_report_selections :: "nat list list" where
  "generation_record_report_selections=[[],[0..<7],[0..<9]]"
-export_code generation_record_report_value checking SML
 end

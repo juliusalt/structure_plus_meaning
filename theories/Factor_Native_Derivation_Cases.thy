@@ -101,8 +101,6 @@ definition native_derivation_methods :: "nat list" where
 definition native_derivation_indices :: "nat list" where
   "native_derivation_indices=native_history_indices"
 
-export_code native_derivation_method native_derivation_methods native_derivation_indices checking SML
-
 text \<open>
   The existing twenty-six native history problems supply complete original
   environments and requests. Candidates construct actual certificates, erase

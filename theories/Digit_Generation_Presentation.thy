@@ -26,5 +26,4 @@ definition digit_generation_report_value where
  "digit_generation_report_value ws selections=(finite_pair_presentation finite_index_sequence_value (finite_pair_presentation finite_index_sequence_value (finite_pair_presentation (finite_investigation_packet_value finite_digit_generation_context_value finite_digit_generation_assessment_value) (finite_pair_presentation finite_assessment_truth_value (finite_pair_presentation finite_index_sequence_value (finite_sequence_presentation finite_digit_generation_source_value)))))) (digit_generation_report ws selections)"
 
 definition digit_generation_report_selections :: "nat list list" where "digit_generation_report_selections=[[],[0],[0,1]]"
-export_code digit_generation_report_value checking SML
 end

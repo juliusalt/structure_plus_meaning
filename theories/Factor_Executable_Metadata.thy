@@ -264,8 +264,6 @@ proof -
   show ?thesis using native_proof_node_unique[OF first second] by (simp add: fset_inject)
 qed
 
-export_code finite_proof_node_readings checking SML
-
 text \<open>
   The empty assertion record and the three-field inference record are recovered
   with their complete metadata. Inferences retain the actual clause site, every

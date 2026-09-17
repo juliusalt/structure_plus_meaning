@@ -60,6 +60,4 @@ theorem finite_native_goal_term_observation_semantics:
     finite_native_term_observation_semantics[OF finite_native_goal_terms_exact]
     less_eq_fset.rep_eq finite_admission_goal_sites_correct finite_system_definitions_correct)
 
-export_code finite_native_goal_term_observation checking SML
-
 end

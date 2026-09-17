@@ -70,6 +70,4 @@ definition native_requirement_report where
 definition native_requirement_indices :: "nat list" where
   "native_requirement_indices=[0..<length native_requirement_shapes]"
 
-export_code native_requirement_report native_requirement_indices checking SML
-
 end

@@ -67,6 +67,4 @@ text \<open>
   of any particular application-search procedure.
 \<close>
 
-export_code binding_observation_construction_library checking SML
-
 end

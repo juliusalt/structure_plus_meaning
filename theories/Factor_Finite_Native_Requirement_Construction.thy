@@ -107,6 +107,4 @@ theorem finite_construct_native_requirements_correct:
   shows "admission_requirements_realized (decode_finite_system P) gs d (decode_finite_system Q)"
   using finite_construct_native_requirements_total[OF assms(1,2)] assms(3) by auto
 
-export_code finite_construct_native_requirements checking SML
-
 end

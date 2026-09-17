@@ -188,7 +188,4 @@ text \<open>
   those premises or admit a whole symbolic proof graph.
 \<close>
 
-export_code finite_keyed_table_comparison finite_keyed_data_comparison finite_key_fibre_holds
-  keyed_table_construction_library checking SML
-
 end

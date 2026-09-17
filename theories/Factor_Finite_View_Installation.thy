@@ -18,6 +18,4 @@ lemma finite_add_view_definition_correct [simp]:
   by (simp add: finite_add_view_definition_def add_view_definition_def decode_finite_system_def
     map_relation_values_def fimage.rep_eq image_Un image_image case_prod_unfold)
 
-export_code finite_add_view_definition checking SML
-
 end

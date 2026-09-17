@@ -62,8 +62,6 @@ proof -
   show ?thesis using member decode by blast
 qed
 
-export_code finite_whole_judgment_readings finite_generation_judgment_readings checking SML
-
 text \<open>
   Candidate roots are actual carrier positions of the whole recorded cause.
   The reader preserves every complete quotation layout and every admitted value

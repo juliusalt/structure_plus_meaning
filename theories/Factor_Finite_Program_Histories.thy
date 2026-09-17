@@ -139,8 +139,6 @@ proof -
     using admitted finite_program_evaluation_exact(2)[OF evaluation] by auto
 qed
 
-export_code finite_program_history checking SML
-
 text \<open>
   Every activation retains the actual clause and its complete binding and
   premise relations. The computation starts with no supplied true calls.

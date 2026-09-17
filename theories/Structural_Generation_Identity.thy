@@ -38,8 +38,6 @@ theorem structural_generation_code_injective:
   "structural_generation_code G=structural_generation_code H \<longleftrightarrow> G=H"
   using structural_generation_code_recovers by blast
 
-export_code structural_generation_code structural_target_code structural_artifact_code checking SML
-
 text \<open>
   Recursive codes retain every original target and the complete unordered
   predecessor family. Sorting only its complete child codes chooses a value

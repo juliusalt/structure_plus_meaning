@@ -77,8 +77,6 @@ proof (induction p arbitrary: d t)
   qed
 qed
 
-export_code finite_checks_schema_proof checking SML
-
 text \<open>
   The executable checker recovers each complete premise relation from the
   original source clause, checks complete bindings and material conditions,

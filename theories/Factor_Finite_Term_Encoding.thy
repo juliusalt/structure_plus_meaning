@@ -67,8 +67,6 @@ lemma finite_term_syntax_formed:
   by (simp only: finite_exact_formed_correct finite_term_syntax_exact)
     (rule term_syntax_formed; simp only: finite_term_formed_correct[symmetric])
 
-export_code finite_term_syntax finite_term_literal_bindings finite_term_syntax_interior checking SML
-
 text \<open>
   The complete finite term supplies both quotation syntax and every literal
   reference. Whole and anchored targets retain their actual artifact values.

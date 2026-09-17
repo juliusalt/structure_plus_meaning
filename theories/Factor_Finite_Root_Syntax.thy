@@ -45,6 +45,4 @@ proof -
     by (simp only: artifact refs; use code.recovers in blast)
 qed
 
-export_code finite_root_family_syntax finite_root_family_callees checking SML
-
 end

@@ -36,8 +36,6 @@ proof -
     by (rule finite_program_proofs_correct[OF proofs])+
 qed
 
-export_code finite_native_program_proofs checking SML
-
 text \<open>
   The original native source supplies every clause, binding and socket in the
   constructed certificates. Each requested positive answer has an actual

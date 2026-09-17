@@ -174,9 +174,6 @@ setup \<open>Finite_Observation_Contracts.register
    observation = @{thm revision_observation_at_subject},
    comparison = @{thm revision_comparison_at_subject}}\<close>
 
-export_code revision_investigation revision_investigation_observations
-  revision_investigation_relation checking SML
-
 text \<open>
   The six supplied methods preserve the original selection, reuse its old
   repairs after withdrawal, recompute revision, select the whole sound

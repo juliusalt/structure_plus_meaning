@@ -159,6 +159,4 @@ theorem admission_plan_exact:
   "(341,z)\<in>positive_meaning admission_plan_system \<longleftrightarrow> admission_plan_result z"
   using admission_plan_sound admission_plan_complete by (auto simp: admission_plan_result_def)
 
-export_code admission_plan checking SML
-
 end

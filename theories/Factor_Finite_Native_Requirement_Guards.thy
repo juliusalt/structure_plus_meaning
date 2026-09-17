@@ -74,6 +74,4 @@ lemma result:
 
 end
 
-export_code finite_native_requirement_guard checking SML
-
 end

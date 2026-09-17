@@ -139,8 +139,6 @@ theorem native_graph_report_packet_exact:
     native_graph_cell_at native_graph_context_def native_graph_cell_def native_graph_method_def
     native_graph_assess_def Let_def comp_def)
 
-export_code native_graph_report_packet checking SML
-
 text \<open>
   Each actual original source and graph supplies one shared base construction.
   Every candidate cell computes its actual result and complete independent

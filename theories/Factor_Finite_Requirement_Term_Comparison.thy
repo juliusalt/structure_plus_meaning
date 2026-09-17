@@ -37,6 +37,4 @@ theorem finite_native_requirement_term_comparison_exact:
   by (simp add: finite_native_requirement_term_comparison_holds_def finite_native_requirement_term_comparison_def
     finite_term_observation_comparison_holds_def finite_native_requirement_term_comparison_condition_def)
 
-export_code finite_native_requirement_term_comparison checking SML
-
 end

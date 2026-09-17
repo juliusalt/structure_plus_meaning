@@ -192,9 +192,6 @@ next
   then show ?case by (cases t) auto
 qed
 
-export_code finite_term_formed finite_pattern_formed finite_term_bindings_formed
-  finite_pattern_instance checking SML
-
 text \<open>
   Instance checking recurses over the supplied pattern and term. It preserves
   every variable key and tests literal targets by complete exact value equality.

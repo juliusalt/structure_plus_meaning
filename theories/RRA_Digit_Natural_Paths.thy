@@ -34,8 +34,6 @@ theorem digit_natural_path_bound:
   "n<2^k \<Longrightarrow> length (digit_natural_path n)\<le>2*k+1"
   using natural_binary_digits_bound by (simp add: digit_natural_path_length)
 
-export_code digit_natural_path read_digit_natural_path checking SML
-
 text \<open>
   Actual binary digits carry the natural coordinate. A separate prefix code
   keeps its endpoint explicit. The inverse checks the canonical digit word and

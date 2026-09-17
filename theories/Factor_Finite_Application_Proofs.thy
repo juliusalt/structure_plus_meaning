@@ -98,8 +98,6 @@ proof -
       (use inst functional domain children in \<open>simp only: decode_finite_binding_set_values; blast\<close>)
 qed
 
-export_code finite_application_proofs checking SML
-
 definition finite_proofs_sound where
   "finite_proofs_sound P T=(\<forall>d t p. ((d,t),p) |\<in>| T \<longrightarrow>
     checks_schema_proof (decode_finite_system P) (decode_finite_proof p) d (decode_finite_term t))"

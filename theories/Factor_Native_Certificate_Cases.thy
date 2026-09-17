@@ -110,8 +110,6 @@ definition native_certificate_indices :: "nat list" where
 definition native_certificate_problem :: "nat\<Rightarrow>native_certificate_problem" where
   "native_certificate_problem w=native_history_problem w"
 
-export_code native_certificate_method native_certificate_methods native_certificate_indices checking SML
-
 text \<open>
   Complete original native sources and requests supply the already constructed
   certificate families. Every certificate retains its full required call.

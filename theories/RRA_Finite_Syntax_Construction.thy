@@ -149,9 +149,6 @@ lemma decode_finite_scope_wrapper [simp]:
   by (simp add: finite_scope_wrapper_def decode_finite_structure_def attach_structure_def
     scope_wrapper_def fimage.rep_eq Un_assoc)
 
-export_code finite_payload_syntax finite_literal_syntax finite_pair_syntax finite_bound_pair_syntax finite_syntax_forest
-  finite_bound_union finite_record_wrapper finite_family_wrapper finite_scope_wrapper checking SML
-
 text \<open>
   Executable inputs and results contain complete finite incidence and data.
   Each decoding equation identifies the existing structural constructor

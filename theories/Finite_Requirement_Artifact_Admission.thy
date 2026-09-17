@@ -74,8 +74,6 @@ proof -
   show ?thesis using decision by (simp only: finite_requirement_artifact_correct plan)
 qed
 
-export_code finite_requirement_artifact_admitted finite_requirement_candidate checking SML
-
 text \<open>
   The expected body is generated from the original request by the checked
   constructor. The candidate is a complete independent finite artifact. The

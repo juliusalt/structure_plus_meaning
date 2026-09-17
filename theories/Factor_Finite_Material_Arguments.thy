@@ -80,8 +80,6 @@ proof -
       material_pattern_satisfied_def material_pattern_instance_def observation)
 qed
 
-export_code finite_material_arguments finite_literal_material checking SML
-
 text \<open>
   The existing complete artifact-row constructor supplies every carrier entry,
   incidence and attachment occurrence. The material operands retain exact

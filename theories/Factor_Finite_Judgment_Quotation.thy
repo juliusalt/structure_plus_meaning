@@ -94,8 +94,6 @@ proof -
     by (simp only: actual; rule native_judgment_program_environment[OF package app])
 qed
 
-export_code finite_native_judgment_quote checking SML
-
 text \<open>
   The actual program and call are read before their least environment is
   computed and quoted. The complete environment and both exact sites determine

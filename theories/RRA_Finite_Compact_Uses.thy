@@ -21,6 +21,4 @@ corollary finite_compact_use_map_outside:
   "finite_compact_use_map U u (Some word)\<notin>insert u (fset U)"
   by (simp only: finite_compact_use_map_exact; rule compact_use_map_outside; simp)
 
-export_code finite_compact_use_head finite_compact_use_map checking SML
-
 end

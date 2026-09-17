@@ -288,8 +288,6 @@ proof -
   show ?thesis using prospective_call_unique[OF first second] by (simp add: fset_inject)
 qed
 
-export_code finite_application_readings finite_prospective_call_readings checking SML
-
 text \<open>
   A call's citation recovers its use occurrence and local definition position.
   Ground arguments and prospective patterns use the same exact record geometry,

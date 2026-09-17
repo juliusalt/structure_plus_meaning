@@ -90,6 +90,4 @@ theorem generation_record_packet_comparison:
 definition generation_record_indices :: "nat list" where
   "generation_record_indices=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]"
 
-export_code generation_record_packet generation_record_indices checking SML
-
 end

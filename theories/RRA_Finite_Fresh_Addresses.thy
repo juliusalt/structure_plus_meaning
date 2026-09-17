@@ -47,8 +47,6 @@ proof -
     using finite_fresh_addresses_properties(2-4)[of U 4] by (simp_all add: list same)
 qed
 
-export_code finite_fresh_addresses finite_four_addresses checking SML
-
 text \<open>
   The existing fresh-address operation supplies the exact construction and
   its separation proof. The finite boundary additionally reserves the empty

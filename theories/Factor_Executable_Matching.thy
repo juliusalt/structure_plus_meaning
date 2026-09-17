@@ -127,8 +127,6 @@ next
         finite_term_bindings_formed_correct finite_pattern_variables_correct finite_pattern_instance_correct)
 qed
 
-export_code finite_pattern_accepts checking SML
-
 text \<open>
   Repeated occurrences of one variable contribute their actual encountered
   values. The functional-binding check rejects inconsistent repetitions.

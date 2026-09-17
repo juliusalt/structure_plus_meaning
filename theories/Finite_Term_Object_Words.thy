@@ -62,8 +62,6 @@ lemma finite_term_shared_object_word_code [code]:
       (counted_word_fold artifact_word_fold f rows s))"
   by (simp add: finite_term_shared_word_stream_code Let_def target_object_word_rows finite_term_objects_table)
 
-export_code finite_term_shared_word_fold checking SML
-
 text \<open>
   Reference lookup retains the complete artifact itself. Its complete row
   conversion is applied once to each retained table entry, not again at each

@@ -88,9 +88,6 @@ lemma decode_finite_artifact_family_environment [simp]:
   by (simp add: finite_artifact_family_environment_def artifact_family_environment_def
     decode_finite_environment_def map_relation_values_def fimage.rep_eq image_image split_def)
 
-export_code finite_add_artifact_use finite_merge_environment finite_rename_environment finite_fresh_use_map finite_graft_environment
-  finite_add_source_bindings finite_literal_environment finite_artifact_family_environment checking SML
-
 text \<open>
   The operations retain complete artifact and binding tables. Their decoding
   equations are exact environment equality. Fresh uses come from the original

@@ -74,7 +74,6 @@ proof -
     by (simp only: shape Let_def listed)
 qed
 
-
 lemma ordered_member_tree_none:
   "RBT.lookup (ordered_member_tree A) x=None \<longleftrightarrow> x\<notin>fset A"
   using ordered_member_tree_exact[of A x] by blast
@@ -117,8 +116,6 @@ lemma investigation_retain_ordered_code [code]:
     ordered_investigation_select selected (finite_sound_observation_facets (fset_of_list candidates)
       (\<lambda>c d. (c,d)\<in>set relation) (fset_of_list facets) (fset_of_list observations))"
   by (simp only: investigation_retain_def ordered_investigation_select_exact)
-
-export_code investigation_basis investigation_repairs investigation_retain checking SML
 
 text \<open>
   The deduplicated observation rows, every candidate profile and every loss

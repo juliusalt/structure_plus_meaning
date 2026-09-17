@@ -37,5 +37,4 @@ definition history_index_report_value where
  "history_index_report_value ws selections=(finite_pair_presentation finite_index_sequence_value (finite_pair_presentation finite_index_sequence_value (finite_pair_presentation (finite_investigation_packet_value finite_history_index_context_value finite_history_index_assessment_value) (finite_pair_presentation finite_assessment_truth_value (finite_pair_presentation (finite_sequence_presentation (finite_pair_presentation finite_natural_data (finite_pair_presentation finite_natural_data finite_natural_data))) (finite_pair_presentation finite_index_sequence_value (finite_sequence_presentation finite_history_index_source_value))))))) (history_index_report ws selections)"
 
 definition history_index_report_selections :: "nat list list" where "history_index_report_selections=[[],[0],[0,1]]"
-export_code history_index_report_value checking SML
 end

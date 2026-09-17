@@ -88,8 +88,6 @@ next
     using source call by (simp only: finite_native_judgment_ready_def; blast)
 qed
 
-export_code finite_native_judgment_environment finite_native_judgment_ready checking SML
-
 text \<open>
   The two actual readers determine the complete judgment boundary. Its finite
   implementation is exactly the original least environment, preserving the

@@ -93,8 +93,6 @@ definition native_certificate_input_packet where
     (table,criticism,result,cycle,admissions) \<Rightarrow>
       (map (\<lambda>(w,(X,original,base),cells). (w,X,original,cells)) table,criticism,result,cycle,map fst admissions))"
 
-export_code native_certificate_input_packet native_certificate_input_indices checking SML
-
 text \<open>
   This proposed expanded cycle instantiates the same complete context, cell,
   criticism and admission operations. The input embedding preserves every old

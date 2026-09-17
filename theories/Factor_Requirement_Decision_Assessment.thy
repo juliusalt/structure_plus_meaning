@@ -81,6 +81,4 @@ theorem requirement_decision_assessment_exact:
     (auto simp: requirement_decision_assessment_from_def requirement_decision_inspect_def
       requirement_decision_condition_def requirement_decision_result_assessment_exact Let_def split: prod.splits)
 
-export_code requirement_decision_result_assessment requirement_decision_inspect checking SML
-
 end

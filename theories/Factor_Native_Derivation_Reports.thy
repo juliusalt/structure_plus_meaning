@@ -137,8 +137,6 @@ theorem native_derivation_report_packet_exact:
     native_derivation_shared_assessments_exact native_derivation_shared_calculation_exact
     native_derivation_investigation_report_def native_derivation_methods_def)
 
-export_code native_derivation_report_packet checking SML
-
 text \<open>
   One context retains each original native problem, source report, evaluation
   and base and expanded certificate families. Each cell applies its actual candidate and

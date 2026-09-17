@@ -13,10 +13,4 @@ lemma digit_replay_report_concurrent_code [code]:
      digit_replay_presented_sources (fst packet)))"
  by (simp only: digit_replay_report_def replay_packet_stages_exact Let_def)
 
-definition concurrent_replay_report_value where
- "concurrent_replay_report_value=digit_replay_report_value"
-
-definition concurrent_replay_report_selections :: "nat list list" where
- "concurrent_replay_report_selections=digit_replay_report_selections"
-export_code concurrent_replay_report_value checking SML
 end

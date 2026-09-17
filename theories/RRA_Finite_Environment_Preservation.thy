@@ -60,8 +60,6 @@ proof -
     decode_finite_environment_fields)
 qed
 
-export_code finite_environment_agrees_on checking SML
-
 lemma finite_environment_agrees_on_trans:
   assumes "finite_environment_agrees_on E F U" "finite_environment_agrees_on F G V" "U |\<subseteq>| V"
   shows "finite_environment_agrees_on E G U"

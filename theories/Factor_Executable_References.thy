@@ -202,8 +202,6 @@ proof -
   show ?thesis using native_site_link_unique[OF first second] by (simp add: fset_inject)
 qed
 
-export_code finite_site_citation_readings finite_site_link_readings checking SML
-
 text \<open>
   Located citations retain the actual target use and position, their whole
   syntax interior, and their external slots. A two-field link checks both

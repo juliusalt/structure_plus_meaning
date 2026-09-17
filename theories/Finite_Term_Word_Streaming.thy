@@ -98,8 +98,6 @@ lemma finite_term_shared_word_stream_code [code]:
   by (simp add: finite_term_shared_word_fold_exact finite_term_shared_word_def Let_def
       finite_term_word_pending_exact counted_word_fold_exact[where deliver="artifact_word_fold" and code="artifact_rows_word", OF artifact_word_fold_exact])
 
-export_code finite_term_shared_word_fold checking SML
-
 text \<open>
   The streamed word is exactly the existing shared word. Artifact rows, payloads
   and term branches are delivered without constructing their concatenated bit

@@ -91,8 +91,6 @@ proof -
     by (simp only: finite_native_source_correct)
 qed
 
-export_code finite_native_certificate_graph checking SML
-
 text \<open>
   The actual native source and supplied certificate determine success. Checked
   certificates are positioned, assigned actual path coordinates and installed

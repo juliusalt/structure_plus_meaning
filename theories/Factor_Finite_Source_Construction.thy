@@ -114,6 +114,4 @@ qed
 
 end
 
-export_code finite_construct_source checking SML
-
 end

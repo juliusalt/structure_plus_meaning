@@ -96,6 +96,4 @@ definition finite_native_extension_report where
     (d,finite_native_package_observation F None [0] (finite_guard_source_program b) (finite_guard_source_program (\<not>b)) u))
     (finite_source_requirement_extension b paired)"
 
-export_code finite_source_requirement_extension finite_native_extension_report checking SML
-
 end

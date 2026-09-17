@@ -17,6 +17,4 @@ theorem finite_indexed_relation_family_correct:
   "fset (finite_indexed_relation_family N R)=indexed_relation_family (fset N) (\<lambda>n. fset (R n))"
   by (rule set_eqI) (auto simp: finite_indexed_relation_family_member indexed_relation_family_member)
 
-export_code finite_indexed_relation_family checking SML
-
 end

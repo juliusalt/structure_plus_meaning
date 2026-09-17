@@ -84,8 +84,6 @@ qed
 
 end
 
-export_code policy_record_replay_from_source checking SML
-
 text \<open>
   The actual replay result establishes the generation and its uniquely quoted
   scope. Its existing certification theorem supplies the original base-cause

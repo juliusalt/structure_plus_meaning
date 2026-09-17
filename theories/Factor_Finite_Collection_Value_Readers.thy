@@ -18,8 +18,6 @@ theorem finite_data_collection_read_exact:
   by (simp only: finite_data_collection_read_result finite_data_list_values_present[where read=read and P=P, OF element]
     fset_inject[symmetric] fset_of_list.rep_eq data_collection_presents_def; blast)
 
-export_code finite_data_collection_read checking SML
-
 text \<open>
   Collection recovery instantiates the complete list traversal and requires
   distinct recovered members. Every original member presentation and every

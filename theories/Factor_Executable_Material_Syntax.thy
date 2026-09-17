@@ -272,8 +272,6 @@ proof -
   show ?thesis using native_material_unique[OF first second] by (simp add: fset_inject)
 qed
 
-export_code finite_pattern_vector_readings finite_pattern_record_readings finite_native_material_readings checking SML
-
 text \<open>
   Vectors follow the fields of the actual ordered record. Their readers check
   disjoint interiors and the complete external boundary at every join. A native

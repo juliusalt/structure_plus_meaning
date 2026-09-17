@@ -79,8 +79,6 @@ theorem finite_environment_value_read_exact:
     finite_environment_formed_correct finite_environment_artifact_collection_read_exact
     finite_binding_collection_read_exact environment_value_presents_def)
 
-export_code finite_environment_value_read checking SML
-
 text \<open>
   Both complete collections are recovered before the original environment
   formation condition is checked. Equal artifacts at different uses remain

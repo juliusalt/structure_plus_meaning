@@ -115,9 +115,6 @@ lemma anchor_artifact_exact: "lookup_anchor_artifact artifacts d=finite_anchor_a
 
 end
 
-export_code lookup_citation_targets lookup_citation_locations lookup_anchored_targets
-  lookup_located_values lookup_anchor_artifact checking SML
-
 text \<open>
   Complete artifact and binding lookups preserve all four citation forms, whole
   target values and distinct locations. No original environment view is built

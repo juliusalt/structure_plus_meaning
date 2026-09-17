@@ -154,7 +154,6 @@ theorem investigation_basis_losses:
   by (auto simp: fset_of_list.rep_eq image_image image_iff case_prod_beta' investigation_basis_def Let_def investigation_pairs_exact
     investigation_select_def investigation_profile_exact finite_candidate_losses_def)
 
-
 section \<open>Repair guidance retains all available witnesses and both obstructions\<close>
 
 definition investigation_loss_rows ::
@@ -334,9 +333,6 @@ proof -
     by (simp only: investigation_revision_def Let_def fst_conv snd_conv investigation_basis_residual
       residual selected revision_has_exactly_the_full_sound_language_failures)
 qed
-
-export_code investigation_inference investigation_basis investigation_repairs investigation_extend
-  investigation_revision nat_of_integer integer_of_nat checking SML
 
 text \<open>
   Natural numbers are private input identifiers, with equality as their only

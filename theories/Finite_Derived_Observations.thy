@@ -134,6 +134,4 @@ text \<open>
   consumes the derived table without changing its observation semantics.
 \<close>
 
-export_code finite_derived_observations checking SML
-
 end

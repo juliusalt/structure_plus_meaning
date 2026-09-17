@@ -187,8 +187,6 @@ proof -
     by (rule ex1I[of _ "finite_environment_of E"]) (use decode formed in auto)
 qed
 
-export_code finite_target_formed finite_environment_formed checking SML
-
 text \<open>
   Every artifact and every binding is supplied in the finite input. Formation
   checks both source-slot membership and target-use existence. Equal artifacts

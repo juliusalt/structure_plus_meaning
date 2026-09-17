@@ -126,8 +126,6 @@ corollary finite_check_generation_position:
   using generation_at_has_anchor[OF checked[unfolded finite_check_generation_exact]]
   by (auto simp: finite_environment_positions_correct environment_positions_def anchor_formed_def)
 
-export_code finite_check_generation checking SML
-
 text \<open>
   The checker reads the actual source fields and resolves every predecessor
   citation. Recursive checks follow the supplied complete finite core; all

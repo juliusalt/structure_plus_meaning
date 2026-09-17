@@ -100,8 +100,6 @@ proof -
     by (simp only: following; simp)
 qed
 
-export_code finite_prepare_required_history finite_required_history_step checking SML
-
 text \<open>
   A step can use only predecessor rows already admitted at their original sites.
   The existing joined constructor validates their readings, preserves every old

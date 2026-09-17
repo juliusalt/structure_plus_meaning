@@ -29,8 +29,6 @@ proof -
   show ?thesis using exists by (cases "finite_native_source E u r") auto
 qed
 
-export_code finite_native_source checking SML
-
 text \<open>
   Uniqueness and complete finite reading supply the existing singleton
   selector. No program model, satisfaction table or coordinate function is

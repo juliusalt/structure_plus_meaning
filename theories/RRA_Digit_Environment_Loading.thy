@@ -56,8 +56,6 @@ next
   case False then show ?thesis by (simp only: load_digit_environment_def if_False option.map)
 qed
 
-export_code load_digit_environment checking SML
-
 text \<open>
   Initialization enumerates the complete formed input once using the existing
   functional-relation construction. It preserves every original artifact and

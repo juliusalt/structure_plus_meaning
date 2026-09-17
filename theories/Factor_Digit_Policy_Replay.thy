@@ -32,8 +32,6 @@ theorem digit_policy_record_replay_append_valid:
   using result[unfolded digit_policy_record_replay_exact]
   by (rule policy_record_replay_append_valid[OF digit_generation_backend.generation_record_backend_axioms previous material])
 
-export_code digit_policy_record_replay checking SML
-
 text \<open>
   The actual digit policy check filters the actual digit replay result. Its
   full optional result projects to the independently established bounded policy

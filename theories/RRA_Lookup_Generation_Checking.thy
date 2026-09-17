@@ -68,8 +68,6 @@ theorem generation_readiness_exact:
 
 end
 
-export_code lookup_check_generation lookup_generation_record_ready checking SML
-
 text \<open>
   Recursive checks follow the supplied complete generation core and the actual
   predecessor locations. A formed environment and its complete lookup relation

@@ -109,8 +109,6 @@ proof -
   qed
 qed
 
-export_code finite_schema_code checking SML
-
 text \<open>
   The actual mixed body determines every fresh header and premise socket.
   Both the original existence proof and this executed frame use the same

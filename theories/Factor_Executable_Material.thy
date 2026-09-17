@@ -227,8 +227,6 @@ next
   then show ?thesis by (simp add: material_observation_def)
 qed
 
-export_code finite_material_observation checking SML
-
 text \<open>
   The checker reads each actual enumeration term and compares the reconstructed
   finite value with the complete supplied artifact. Distinctness applies to the

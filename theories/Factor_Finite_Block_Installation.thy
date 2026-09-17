@@ -64,8 +64,6 @@ proof -
     using actual fresh by blast+
 qed
 
-export_code finite_install_syntax_block checking SML
-
 text \<open>
   A fresh block uses the original complete reference installation sequence.
   Every literal and callee table is installed unchanged. Its formation and

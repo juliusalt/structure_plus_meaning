@@ -84,8 +84,6 @@ definition workflow_packet where
     in (table,comparison,map (investigation_cycle_report [0,1,2,3,4,5,6,7,8,9] [0,1,2,3]
       (fst comparison) (fst (snd comparison))) selections))"
 
-export_code workflow_packet workflow_inspect checking SML
-
 text \<open>
   Every observation is derived from the complete original workflow source and
   actual candidate execution. Ordered complete output comparison remains

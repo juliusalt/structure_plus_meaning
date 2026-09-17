@@ -52,8 +52,6 @@ lemma finite_join_readings_disjoint_code [code]:
   unfolding finite_join_readings_def Let_def finite_join_condition_split case_prod_unfold
   by (simp only: ffUnion_fimage_if_conj ffUnion_fimage_if_filter ffUnion_fimage_if_const)
 
-export_code finite_join_readings checking SML
-
 text \<open>
   A join of two readings is admissible exactly when twelve pairwise footprint
   disjointness conditions hold. One depends on neither reading, four on the

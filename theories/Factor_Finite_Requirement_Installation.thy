@@ -78,8 +78,6 @@ lemma finite_required_admission_system_correct [simp]:
   by (simp add: finite_required_admission_system_def required_admission_system_def install_requirement_guard_def
     map_relation_values_def fset_of_list.rep_eq requirement_sockets_def)
 
-export_code finite_install_admission_plan finite_required_admission_system checking SML
-
 text \<open>
   Every instruction adds its actual complete clause family to the current
   source, in the original sequence. The final guard retains every requirement

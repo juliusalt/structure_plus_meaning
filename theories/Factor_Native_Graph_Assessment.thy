@@ -61,8 +61,6 @@ theorem native_graph_assessment_exact:
       native_graph_result_condition_def case_prod_conv native_graph_ready_exact
       finite_native_graph_result_assessment_exact)
 
-export_code native_graph_assessment native_graph_inspect checking SML
-
 text \<open>
   The actual returned environment supplies the complete native graph readings.
   The original graph and full returned correspondence independently determine

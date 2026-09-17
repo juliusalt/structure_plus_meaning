@@ -1495,7 +1495,6 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Complete_Object_References
     Complete_Value_References
     Concurrent_History_Execution
-    Concurrent_Replay_Execution
     Context_Source_Projections
     Factor_Computed_Replay_Causes
     Factor_Constructed_Cause_Cache

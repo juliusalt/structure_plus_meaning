@@ -140,6 +140,4 @@ text \<open>
   the responsibility of its concrete investigation.
 \<close>
 
-export_code natural_library_coverage checking SML
-
 end

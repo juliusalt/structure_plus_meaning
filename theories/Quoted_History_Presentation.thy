@@ -16,8 +16,6 @@ definition quoted_history_report_value :: "nat list \<Rightarrow> nat list list 
 definition quoted_history_report_selections :: "nat list list" where
   "quoted_history_report_selections=[[],[0],[0,1]]"
 
-export_code quoted_history_report_value checking SML
-
 text \<open>
   A context of the additional-producer framework keeps the digit history
   context and the complete result family of every additional producer in order.

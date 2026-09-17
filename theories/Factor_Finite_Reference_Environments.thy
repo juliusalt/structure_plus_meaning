@@ -83,8 +83,6 @@ proof -
     by (simp only: Let_def finite_environment_formed_correct decode_finite_fresh_reference_sequence finite_environment_uses_correct; blast)
 qed
 
-export_code finite_install_reference_tables finite_install_reference_sequence finite_fresh_reference_sequence checking SML
-
 text \<open>
   Every code artifact is present before the reference sequence starts. A
   callee may therefore be an original source or any new code block, including

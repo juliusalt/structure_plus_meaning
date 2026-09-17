@@ -30,8 +30,6 @@ proof -
     digit_allocated_view_raw encoded_bounded_view_def fst_conv snd_conv Let_def)
 qed
 
-export_code digit_allocated_graft digit_allocated_view checking SML
-
 text \<open>
   The existing closed digit store gains a whole graft operation. Its type
   carries original formation and the actual updated bound. The operation checks

@@ -76,8 +76,6 @@ proof -
     using available actual compiled recovered by blast+
 qed
 
-export_code finite_extend_proof_node finite_proof_node_installable checking SML
-
 text \<open>
   Local installation additionally requires every proof target in the actual
   environment. The compiler can represent future targets; that wider domain

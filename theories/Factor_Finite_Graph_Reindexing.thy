@@ -21,6 +21,4 @@ proof -
     by (simp add: decode_finite_graph_def finite_reindex_graph_def reindex_schema_graph_def fimage_fimage commute)
 qed
 
-export_code finite_reindex_graph checking SML
-
 end

@@ -85,8 +85,6 @@ lemma native_node_method_original:
 definition native_node_methods :: "nat list" where "native_node_methods=[0,1,2,3,4,5,6,7,8,9,10]"
 definition native_node_indices :: "nat list" where "native_node_indices=[0..<26]"
 
-export_code native_node_problem native_node_method native_node_methods native_node_indices checking SML
-
 text \<open>
   The source contains the actual guard artifacts and two existing assertion
   nodes. Inputs vary complete binding and target families, conflicting keys,

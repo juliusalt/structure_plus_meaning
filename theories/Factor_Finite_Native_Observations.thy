@@ -19,6 +19,4 @@ lemma finite_native_package_observation_conditions:
   by (simp_all add: finite_native_package_observation_def Let_def finite_environment_formed_correct
     finite_native_package_readings_correct)
 
-export_code finite_native_package_observation checking SML
-
 end

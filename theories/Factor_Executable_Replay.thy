@@ -189,8 +189,6 @@ corollary finite_native_replay_proves_sound:
   shows "native_positive_holds (decode_finite_environment E) pu pr au ar"
   by (rule native_replay_closed_sound) (use assms in \<open>simp add: finite_native_replay_proves_correct\<close>)
 
-export_code finite_graph_derivation_readings finite_native_replay_readings finite_native_replay_proves checking SML
-
 text \<open>
   The supplied finite environment and the program, application, and proof roots
   determine the entire check. Recovery supplies the program and graph, finite

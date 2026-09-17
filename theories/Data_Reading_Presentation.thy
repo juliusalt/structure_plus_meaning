@@ -14,5 +14,4 @@ definition data_reading_report_value where
 
 definition data_reading_report_selections :: "nat list list" where
  "data_reading_report_selections=[[],[0],[0,1]]"
-export_code data_reading_report_value checking SML
 end

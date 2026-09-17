@@ -70,8 +70,6 @@ lemma indexed_history_step_raw:
     indexed_required_history_step (raw_indexed_required_history q) l rows E pu pr au ar root R"
   by transfer (simp add: option.map_id[unfolded id_def])
 
-export_code index_required_history indexed_history_step raw_indexed_required_history history_member_view checking SML
-
 text \<open>
   Initialization indexes an existing valid history once. Every successful step
   checks only requested predecessor buckets and inserts only the newly admitted

@@ -99,8 +99,6 @@ theorem native_admission_assessment_exact:
     native_admission_condition_def native_admission_ready_exact native_admission_preservation_exact
     native_admission_term_exact)
 
-export_code native_admission_assessment native_admission_inspect checking SML
-
 text \<open>
   The independently stated conditions concern the original goal's positive
   meaning, a usable evaluation of both actual programs, the returned definition,

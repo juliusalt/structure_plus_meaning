@@ -190,9 +190,6 @@ theorem finite_option_presentation_admitted:
     (decode_finite_term (finite_option_presentation f x))"
   unfolding finite_option_presentation_def by (rule finite_sequence_presentation_admitted)
 
-export_code finite_pair_presentation finite_sequence_presentation finite_collection_presentation
-  finite_option_presentation checking SML
-
 text \<open>
   Each executable presentation decodes into the generic pair, sequence or
   collection class of the presented components, and it is injective whenever

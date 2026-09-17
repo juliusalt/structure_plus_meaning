@@ -39,8 +39,6 @@ proof -
     (use assms decode in \<open>simp add: finite_complete_data_readings_exact\<close>)
 qed
 
-export_code finite_complete_data_readings checking SML
-
 text \<open>
   The existing actual quotation reader recovers the term and checks its whole
   interior and empty external boundary. The root query and value query select

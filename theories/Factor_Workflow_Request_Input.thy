@@ -67,7 +67,4 @@ text \<open>
   certificate, callback or permission flag.
 \<close>
 
-export_code workflow_requirement_input workflow_requirements_input execute_workflow_request
-  admit_workflow_request workflow_request_packet checking SML
-
 end

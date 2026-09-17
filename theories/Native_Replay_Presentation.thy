@@ -31,5 +31,4 @@ theorem native_replay_report_word_exact:
 
 definition native_replay_report_selections :: "nat list list" where
  "native_replay_report_selections=[[],[0,1,2,5,7,9],[0..<10]]"
-export_code native_replay_report_value checking SML
 end

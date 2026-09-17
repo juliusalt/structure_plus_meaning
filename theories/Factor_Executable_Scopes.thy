@@ -178,8 +178,6 @@ proof -
   show ?thesis using scoped_pattern_unique[OF first second] by (simp add: fset_inject)
 qed
 
-export_code finite_binder_scope_candidates finite_scoped_pattern_readings checking SML
-
 text \<open>
   The complete actual family determines the binder scope. Scoped recovery
   requires its declarations to equal exactly the variables used in the body,

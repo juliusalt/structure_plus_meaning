@@ -11,5 +11,4 @@ definition allocated_environment_report_value :: "nat list \<Rightarrow> nat lis
 
 definition allocated_environment_report_selections :: "nat list list" where
  "allocated_environment_report_selections=[[],[0],[0,1]]"
-export_code allocated_environment_report_value checking SML
 end

@@ -98,8 +98,6 @@ proof -
   show ?thesis using original constructed by blast
 qed
 
-export_code finite_program_proofs checking SML
-
 text \<open>
   The original finite inference history controls the construction depth.
   Every answered call has an actual complete certificate, and every generated

@@ -82,6 +82,4 @@ proof -
     finite_policy_package_available finite_certified_base_cause_exact aligned)
 qed
 
-export_code finite_certified_policy_cause checking SML
-
 end

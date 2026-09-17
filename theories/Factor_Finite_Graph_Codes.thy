@@ -124,8 +124,6 @@ proof -
   qed
 qed
 
-export_code finite_compile_graph_nodes checking SML
-
 text \<open>
   Every original graph key selects its actual metadata through the shared
   finite relation reader. The complete keyed traversal preserves all node

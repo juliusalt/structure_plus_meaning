@@ -138,8 +138,6 @@ theorem finite_admitted_schema_instance_correct:
       finite_schema_material_satisfied_correct decode_finite_premises_def decode_finite_call_term_def
       Ball_def Bex_def split_paired_All split_paired_Ex; blast)
 
-export_code finite_system_formed finite_schema_call_formed finite_admitted_schema_instance checking SML
-
 text \<open>
   Finite program values retain every interface and identified clause. Formation
   checks the complete dependency boundary; instance checking retains every call

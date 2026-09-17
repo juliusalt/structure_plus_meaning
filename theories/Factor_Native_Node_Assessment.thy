@@ -90,8 +90,6 @@ theorem native_node_assessment_exact:
     finite_environment_formed_correct finite_environment_included_correct finite_environment_agrees_on_correct
     finite_environment_uses_correct Let_def split: prod.splits option.splits if_splits; arith)
 
-export_code native_node_assessment native_node_inspect checking SML
-
 text \<open>
   The actual returned environment supplies every finite native reading. The
   node and discharge inspections preserve distinct complete fields of those

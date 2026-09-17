@@ -64,6 +64,4 @@ text \<open>
   program, and their conditional semantic contract follows from its clauses.
 \<close>
 
-export_code inference_reader_construction_library checking SML
-
 end

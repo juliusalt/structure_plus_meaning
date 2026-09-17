@@ -187,8 +187,6 @@ proof -
     by (rule exI[of _ "Abs_fset (map_relation_values F R)"]) (simp add: represented recovered)
 qed
 
-export_code finite_reading_values finite_socket_readings finite_family_readings checking SML
-
 text \<open>
   The complete actual family determines the socket domain. Every endpoint must
   have a reading, and the resulting socket relation must be functional. Distinct

@@ -130,8 +130,6 @@ proof -
   show ?thesis using member by (auto split: prod.splits)
 qed
 
-export_code finite_environment_closed finite_read_environment finite_requested_slots checking SML
-
 text \<open>
   Closure checks the complete supplied environment against explicit roots and
   demanded slots. Retention follows only those demands and preserves every

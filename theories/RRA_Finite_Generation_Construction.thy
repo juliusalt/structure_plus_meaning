@@ -209,8 +209,6 @@ proof -
   show "u\<notin>fset (finite_environment_uses E)" by (simp only: result_fields; rule construction.properties(5))
 qed
 
-export_code finite_construct_generation_record checking SML
-
 text \<open>
   Every original predecessor is checked at its actual cited site before its
   anchor is selected. The same guard applies to an empty predecessor list.

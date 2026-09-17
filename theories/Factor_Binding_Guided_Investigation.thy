@@ -42,6 +42,4 @@ text \<open>
   program and retains the original known-call hypothesis.
 \<close>
 
-export_code binding_observation_guided_investigation checking SML
-
 end

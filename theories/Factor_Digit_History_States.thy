@@ -109,8 +109,6 @@ definition digit_history_state_view :: "digit_required_history_state\<Rightarrow
 definition digit_history_view where
   "digit_history_view q=digit_history_state_view (raw_digit_required_history q)"
 
-export_code load_digit_required_history digit_history_view checking SML
-
 text \<open>
   The state stores one fixed header, one actual persistent digit material,
   the complete ordered ledger and its exact membership cache. The full original

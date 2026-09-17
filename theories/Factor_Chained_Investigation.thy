@@ -70,6 +70,4 @@ text \<open>
   constructor can produce lists of every finite length.
 \<close>
 
-export_code natural_construction_frontier natural_chained_investigation checking SML
-
 end

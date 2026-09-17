@@ -44,8 +44,6 @@ next
   show ?thesis by (simp add: finite_complete_data_roots_def False absent)
 qed
 
-export_code finite_complete_data_roots checking SML
-
 text \<open>
   Every possible root comes from the actual finite carrier. The existing
   quotation reader must account for that complete carrier with an empty

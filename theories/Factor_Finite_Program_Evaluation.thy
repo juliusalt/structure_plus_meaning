@@ -142,8 +142,6 @@ next
   then show "finite_program_evaluation Q D=Some A" using computed by simp
 qed
 
-export_code finite_program_demand_closed finite_program_evaluation checking SML
-
 text \<open>
   The independent condition is the original positive meaning. The operation
   first checks program formation, complete requested head scope, and closure

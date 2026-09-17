@@ -91,10 +91,6 @@ lemma finite_premise_joins_single_match [code]:
 
 lemmas [code] = finite_premise_joins.simps(1)
 
-export_code finite_inference_witnesses finite_material_satisfied finite_system_formed
-  finite_program_head_covered finite_candidate_losses finite_basis_residual
-  finite_sound_observation_facets finite_premise_joins checking SML
-
 text \<open>
   Each equation evaluates a set or binding that does not depend on the element
   under inspection once for the enclosing traversal. A witness is kept exactly

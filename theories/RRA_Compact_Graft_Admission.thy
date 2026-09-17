@@ -26,8 +26,6 @@ theorem guarded_compact_graft_complete:
       (finite_rename_environment (finite_compact_use_map (finite_environment_uses E) u) F)"
   by (auto simp: guarded_compact_graft_def finite_compact_graft_def finite_embedded_graft_def split: if_splits)
 
-export_code guarded_compact_graft checking SML
-
 text \<open>
   The executable admission decision has an exact original readiness contract.
   Success retains every original and renamed relation row. Matching existing

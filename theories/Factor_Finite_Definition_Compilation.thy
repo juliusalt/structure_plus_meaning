@@ -168,8 +168,6 @@ proof -
     by (simp only: actual native_clauses source_range; blast)
 qed
 
-export_code finite_compile_definition checking SML
-
 text \<open>
   The complete interface and original keyed clause family are the inputs.
   Every clause is compiled, all private blocks are assembled, and the complete

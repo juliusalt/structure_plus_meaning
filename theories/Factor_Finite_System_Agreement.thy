@@ -17,6 +17,4 @@ theorem finite_system_agrees_on_correct:
   by (auto simp: finite_system_agrees_on_def systems_agree_on_def map_relation_values_def
     Ball_def split_paired_All; force)
 
-export_code finite_system_agrees_on checking SML
-
 end

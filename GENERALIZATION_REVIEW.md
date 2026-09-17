@@ -2491,3 +2491,21 @@ validation remains expensive. The verified cleanup archive preserves complete
 working evidence while the active full proof stays reusable. Native problem and
 approach selection, broader adequacy, actual gate 5a usefulness, O-85 and genesis
 remain open; 5b remains deferred. No additional batch is begun by this review.
+
+## Execution reuse and proof-cost batch review
+
+The 373.03-second cycle accepted all 50 boundaries on 1,648 theories: 981 proof
+contexts rebuilt, 38 recipes reused accepted executions with unchanged complete
+execution boundaries, 12 recipes executed, 2,603 physical records, 152 tool tests
+and 35 kernel tests (two optional skips). The reused boundaries were recorded
+from archived receipts of the preceding accepted cycle: every receipt names the
+module the current proof context regenerates, and 1,425 recorded input digests
+match. 327 of 364 inline SML checks named only constants that accepted exports
+compile and execute and were removed; for the same 981 theories command time fell
+from 4,052.5 to 1,710.2 seconds. Forked proofs turned the chain-limited build into
+a CPU-bound one (ready tasks in 81 % instead of 12 % of samples; GC 12 % instead of
+28 %). Profiles attribute most native history and decision time to repeated
+canonical sorting from formation re-checks and per-comparison artifact rows; that
+refinement is not yet implemented. No complete source proof was repeated. Native
+problem and approach selection, broader adequacy, actual gate 5a usefulness,
+O-85 and genesis remain open; 5b remains deferred.

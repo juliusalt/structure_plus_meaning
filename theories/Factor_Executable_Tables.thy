@@ -506,9 +506,6 @@ proof -
   show ?thesis using native_table_unique[OF first second] by (simp add: fset_inject)
 qed
 
-export_code finite_native_table_readings finite_binding_table_readings
-  finite_discharge_table_readings checking SML
-
 text \<open>
   Recovery computes all readings at every actual socket. It checks that the
   resulting row relation is functional and has the complete socket domain.

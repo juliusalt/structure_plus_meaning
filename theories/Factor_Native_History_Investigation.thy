@@ -134,8 +134,6 @@ lemma native_history_report_initial:
   by (simp only: investigation_cycle_initial native_history_calculation_equation fst_conv snd_conv
     native_history_investigation_def)
 
-export_code native_history_investigation_report native_history_assess checking SML
-
 text \<open>
   Each subject contains its actual native environment, package selector and
   requested calls. Each candidate is its complete evidence-producing operation.

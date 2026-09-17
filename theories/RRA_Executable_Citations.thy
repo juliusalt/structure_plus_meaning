@@ -223,8 +223,6 @@ lemma finite_citation_slots_correct:
   "fset (finite_citation_slots c)=citation_slots c"
   by (cases c) simp_all
 
-export_code finite_citation_candidates finite_citation_targets finite_citation_locations finite_citation_slots checking SML
-
 text \<open>
   Citation recognition recovers the structural form and its exact interior.
   Target recovery follows only the supplied environment bindings and retains

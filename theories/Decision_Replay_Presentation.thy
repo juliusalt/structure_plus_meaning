@@ -32,8 +32,6 @@ theorem decision_replay_report_word_exact:
 definition decision_replay_report_selections :: "nat list list" where
   "decision_replay_report_selections=[[],[0,1,2,3,4,5,6,7,17],[0..<19]]"
 
-export_code decision_replay_report_value checking SML
-
 text \<open>
   Original requirements, environments, evaluation applications and rules,
   certificate inspections, every replay graph and retained environment, all

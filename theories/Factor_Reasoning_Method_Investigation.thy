@@ -138,9 +138,6 @@ setup \<open>Finite_Observation_Contracts.register
    observation = @{thm reasoning_observation_at_subject},
    comparison = @{thm reasoning_comparison_at_subject}}\<close>
 
-export_code reasoning_method_investigation reasoning_method_investigation_observations
-  reasoning_method_investigation_relation checking SML
-
 text \<open>
   The methods admit possible premises through their actual native predicate,
   trust every possible premise, or establish none. Each uses the same generated

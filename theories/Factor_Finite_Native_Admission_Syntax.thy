@@ -106,8 +106,6 @@ definition finite_construct_source_admission where
     (\<lambda>P. finite_admission_goal_sites g |\<subseteq>| finite_system_definitions P)
     (finite_construct_native_admission g) E pu pr"
 
-export_code finite_construct_source_admission checking SML
-
 text \<open>
   The source reader supplies the complete program. Every requested leaf must
   already be a definition of that source. The shared goal constructor adds the

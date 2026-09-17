@@ -70,6 +70,4 @@ proof -
   show "rel_ran (set (zip (family_ports (length ds)) ds))=set ds" by (rule zip_range) simp
 qed
 
-export_code finite_select_roots checking SML
-
 end

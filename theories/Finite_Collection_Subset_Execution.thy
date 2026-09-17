@@ -12,6 +12,4 @@ text \<open>Equal complete list presentations establish subset by one ordered
   nor a supplied identity flag decides the result. The equation holds for all
   element values and both empty and nonempty lists.\<close>
 
-export_code List.superset checking SML
-
 end

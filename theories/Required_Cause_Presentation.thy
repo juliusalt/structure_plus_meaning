@@ -31,5 +31,4 @@ theorem required_cause_report_word_exact:
 
 definition required_cause_report_selections :: "nat list list" where
  "required_cause_report_selections=[[],[0],[0,1]]"
-export_code required_cause_report_value checking SML
 end

@@ -19,8 +19,6 @@ corollary digit_certified_policy_cause_original:
       (decode_finite_environment H) root (decode_finite_object R)"
   by (simp only: digit_certified_policy_cause_exact finite_certified_policy_cause_exact)
 
-export_code digit_certified_policy_cause checking SML
-
 text \<open>
   The actual digit policy checker derives the generation's complete scopes once
   and instantiates the original package, certification and alignment checks.

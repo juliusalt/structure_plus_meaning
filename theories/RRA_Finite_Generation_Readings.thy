@@ -77,8 +77,6 @@ lemma finite_generation_field_readings_unique:
   using generation_fields_unique[OF assms[unfolded finite_generation_field_readings_correct]]
   by (simp add: fset_inject)
 
-export_code finite_anchored_targets finite_generation_field_readings checking SML
-
 text \<open>
   The four field roles and complete predecessor socket family come from the
   actual record incidence. Every target follows the original citation and its

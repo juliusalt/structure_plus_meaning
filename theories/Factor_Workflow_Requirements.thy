@@ -200,7 +200,4 @@ text \<open>
   of those meanings.
 \<close>
 
-export_code compile_development_workflow construct_required_development_workflow
-  admit_required_development_workflow required_workflow_boundary reconstruct_required_workflow checking SML
-
 end

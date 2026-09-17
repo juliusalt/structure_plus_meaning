@@ -12,6 +12,4 @@ definition constructed_history_report_value :: "nat list \<Rightarrow> nat list 
 definition constructed_history_report_selections :: "nat list list" where
   "constructed_history_report_selections=[[],[0],[0,1]]"
 
-export_code constructed_history_report_value checking SML
-
 end

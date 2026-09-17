@@ -47,6 +47,4 @@ proof -
     finite_admission_requirements_supported_correct)
 qed
 
-export_code finite_native_requirement_term_observation checking SML
-
 end

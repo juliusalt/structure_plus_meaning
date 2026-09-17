@@ -63,8 +63,6 @@ lemma certified_cause_covered_exact:
     (\<exists>c X. (c,Some X) |\<in>| certified_cause_family seed 0 \<and> certified_cause_holds X)"
   by (simp only: certified_cause_covered_def certified_cause_direct_exact finite_optional_relation_exists)
 
-export_code certified_cause_family certified_cause_covered checking SML
-
 text \<open>
   The native constructors retain failed positions. Variants change the actual
   proof material, proof root, requested payload, recorded environment, cause

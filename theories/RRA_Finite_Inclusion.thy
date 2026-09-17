@@ -15,8 +15,6 @@ theorem finite_environment_included_correct:
     environment_included (decode_finite_environment C) (decode_finite_environment D)"
   by (auto simp: finite_environment_included_def environment_included_def map_relation_values_def)
 
-export_code finite_environment_included checking SML
-
 text \<open>
   Complete artifact equality includes every carrier, incidence, and data row.
   Inclusion also retains every outgoing binding. Formation is a separate

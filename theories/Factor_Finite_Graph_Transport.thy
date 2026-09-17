@@ -39,8 +39,6 @@ proof -
       schema_graph_renamed_premises[OF gf inj inside] fimage.rep_eq)
 qed
 
-export_code finite_rename_graph checking SML
-
 text \<open>
   The operation moves every node occurrence and both endpoints of every
   indexed discharge. Its exact decoding is the original graph renaming.

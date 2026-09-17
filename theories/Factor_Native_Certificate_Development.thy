@@ -78,8 +78,6 @@ definition native_certificate_development_packet where
       (map (\<lambda>(w,(X,original,base),cells). (w,X,original,cells)) table,
         criticism,result,cycle,map fst admissions))"
 
-export_code native_certificate_development_packet checking SML
-
 text \<open>
   The pending certificate construction is the first development-cycle subject.
   Its actual comparison remains unchanged. Independent scope criticism reads

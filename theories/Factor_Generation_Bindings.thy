@@ -95,6 +95,4 @@ definition natural_schema_binding_gaps where
   "natural_schema_binding_gaps (S::(nat,nat,nat) finite_factor_schema)=
     (finite_schema_premise_missing S,finite_schema_head_missing S)"
 
-export_code natural_schema_binding_gaps checking SML
-
 end

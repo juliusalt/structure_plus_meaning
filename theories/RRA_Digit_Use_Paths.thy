@@ -50,8 +50,6 @@ lemma digit_single_use_path_length:
   "length (digit_use_path (Some [n]))=2*length (natural_binary_digits n)+2"
   by (simp add: digit_address_path_length)
 
-export_code digit_address_path read_digit_address_path digit_use_path read_digit_use_path checking SML
-
 text \<open>
   Every original optional natural use word has an exact injective path and
   complete inverse. None, a present empty word and every tuple boundary remain

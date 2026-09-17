@@ -39,8 +39,6 @@ proof -
     by (simp only: optional_identity_map_injective[OF raw_digit_required_history_inject])
 qed
 
-export_code digit_history_constructed_step digit_history_view checking SML
-
 text \<open>
   The original membership guard and ordered append are unchanged. The closed
   operation preserves every refusal and complete state, including its stored

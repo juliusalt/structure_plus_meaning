@@ -82,8 +82,6 @@ proof (induction p arbitrary: d t rule: measure_induct_rule[of size])
       image_UN image_image case_prod_unfold prod.collapse)
 qed
 
-export_code finite_schema_proof_positions checking SML
-
 text \<open>
   Structural recursion retains the root and every descendant generated from
   the actual source premise relation. Every position pairs a complete

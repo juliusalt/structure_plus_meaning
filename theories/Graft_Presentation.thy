@@ -11,5 +11,4 @@ definition graft_report_value :: "nat list \<Rightarrow> nat list list \<Rightar
 
 definition graft_report_selections :: "nat list list" where
  "graft_report_selections=[[],[0],[0,1,2,3],[0,1,2,3,4]]"
-export_code graft_report_value checking SML
 end

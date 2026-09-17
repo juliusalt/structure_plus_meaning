@@ -40,8 +40,6 @@ lemma digit_replay_family_inspect_structural_code [code]:
   by (simp only: finite_reader_inspect_identity_map[OF structural_replay_row_injective]
     digit_replay_family_inspect_def case_prod_conv)
 
-export_code digit_replay_inspect digit_replay_family_inspect checking SML
-
 text \<open>
   The complete optional result retains the allocation head, every resulting
   artifact and binding, record use, original generation core, judgment

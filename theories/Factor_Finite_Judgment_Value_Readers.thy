@@ -30,8 +30,6 @@ theorem finite_judgment_value_read_exact:
       finite_environment_positions_correct finite_environment_value_read_exact
       finite_site_value_read_exact judgment_value_presents_def)
 
-export_code finite_judgment_value_read checking SML
-
 text \<open>
   The complete environment and both actual sites are recovered from the value.
   Environment formation and occurrence membership are required by the original

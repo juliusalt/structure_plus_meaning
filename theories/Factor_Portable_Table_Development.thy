@@ -88,8 +88,6 @@ next
     generated_portable_table_contract(3)[OF bound] finite_portable_table_comparison_correct)
 qed
 
-export_code admission_sequence portable_table_goals portable_requirement_execution checking SML
-
 text \<open>
   The independently defined subject is the complete pair of keyed tables.
   Its two conditions are actual table equality with unique keys and actual

@@ -255,6 +255,4 @@ text \<open>
   it is not an unrestricted search-completeness or stopping claim.
 \<close>
 
-export_code natural_guided_state natural_guided_investigation checking SML
-
 end

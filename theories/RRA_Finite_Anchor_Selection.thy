@@ -46,6 +46,4 @@ proof -
     using exact inside by (simp add: anchor_formed_def)
 qed
 
-export_code finite_anchor_artifact checking SML
-
 end

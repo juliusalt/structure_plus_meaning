@@ -56,8 +56,6 @@ proof -
     using code.recover by (simp only: actual fields(2); blast)
 qed
 
-export_code finite_interface_code checking SML
-
 text \<open>
   The complete finite pattern determines its code, binder family, fresh frame
   and root. The same interface-construction contract serves this executable

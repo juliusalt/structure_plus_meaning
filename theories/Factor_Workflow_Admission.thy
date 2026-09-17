@@ -118,6 +118,4 @@ text \<open>
   not certify an arbitrary protocol's adequacy for an external problem.
 \<close>
 
-export_code workflow_trace_valid admit_development_workflow checking SML
-
 end

@@ -34,8 +34,6 @@ lemma finite_schema_proof_coordinates_root:
   "((p,d,t),[]) |\<in>| finite_schema_proof_coordinates P (p,d,t)"
   by (simp add: finite_schema_proof_coordinates_member finite_schema_proof_paths_root)
 
-export_code finite_schema_proof_coordinates checking SML
-
 text \<open>
   Each complete certificate-and-call node receives one of its actual source
   socket paths. The complete map covers exactly the existing position family.

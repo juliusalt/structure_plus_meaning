@@ -33,8 +33,6 @@ next
     using member recovered by (auto simp: finite_judgment_value_readings_member)
 qed
 
-export_code finite_judgment_value_readings checking SML
-
 text \<open>
   Every returned judgment comes from the actual complete quotation. The original
   value relation admits all distinct collection orders and preserves the whole

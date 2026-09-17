@@ -68,8 +68,6 @@ theorem finite_prefixed_observation_outputs_native:
   by (simp only: finite_prefixed_observation_outputs_parts prefixed_observation_pair.at_arguments
     finite_prefixed_observation_view_native if_True if_False)
 
-export_code finite_prefixed_observation_outputs checking SML
-
 text \<open>
   The output equation concerns the complete decoded input and both complete
   returned lists. It may supply a native paired-view fact after the actual

@@ -11,5 +11,4 @@ definition use_codec_report_value :: "nat list \<Rightarrow> nat list list \<Rig
 
 definition use_codec_report_selections :: "nat list list" where
  "use_codec_report_selections=[[],[0],[0,1,2],[0,1,2,3]]"
-export_code use_codec_report_value checking SML
 end

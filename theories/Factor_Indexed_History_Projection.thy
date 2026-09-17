@@ -79,8 +79,6 @@ proof -
   then show ?thesis by (simp add: option.map_comp comp_def indexed_history_view_def[abs_def])
 qed
 
-export_code indexed_history_original indexed_history_view history_index_state_view history_index_original_result checking SML
-
 text \<open>
   The complete observation retains every original state field and the exact
   decoded membership relation. Both come from the actual output. Equality of

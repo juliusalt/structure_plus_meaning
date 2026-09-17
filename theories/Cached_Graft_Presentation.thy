@@ -11,5 +11,4 @@ definition cached_graft_report_value :: "nat list \<Rightarrow> nat list list \<
 
 definition cached_graft_report_selections :: "nat list list" where
  "cached_graft_report_selections=[[],[0],[0,1]]"
-export_code cached_graft_report_value checking SML
 end

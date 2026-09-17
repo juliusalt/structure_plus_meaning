@@ -90,10 +90,6 @@ lemma source_example_report_subject [simp]:
   "fst (source_example_report c)=source_example_subject c"
   by (simp add: source_example_report_def Let_def)
 
-export_code source_example_subject source_investigation source_investigation_observations source_investigation_relation
-  investigation_repairs investigation_revision finite_source_subject_matches finite_source_observation
-  checking SML
-
 text \<open>
   The seven subjects include the actual source, an altered interface, missing
   clauses, an extra definition, a changed clause at the same source site, the

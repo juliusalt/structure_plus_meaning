@@ -143,8 +143,6 @@ proof -
   then show ?thesis by (simp only: option.map_comp comp_def digit_history_view_def[abs_def])
 qed
 
-export_code digit_history_step digit_history_view checking SML
-
 text \<open>
   The actual member index checks every requested predecessor. The actual digit
   replay and policy operation returns the new material, generation and use, then

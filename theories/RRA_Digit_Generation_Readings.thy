@@ -59,8 +59,6 @@ theorem digit_generation_anchor_exact:
   unfolding digit_generation_anchor_def
   by (rule environment_lookup_reading.anchor_artifact_exact[OF digit_allocated_reading_contract])
 
-export_code digit_generation_fields digit_check_generation digit_generation_ready digit_generation_anchor checking SML
-
 text \<open>
   The existing closed digit-store type carries original formation and complete
   lookups. Every field reading, recursive generation check, readiness result

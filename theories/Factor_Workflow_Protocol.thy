@@ -98,7 +98,4 @@ text \<open>
   this conditional contract does not declare the six conditions settled.
 \<close>
 
-export_code construct_development_workflow development_workflow_results
-  workflow_reconstruction_boundary reconstruct_development_workflow checking SML
-
 end

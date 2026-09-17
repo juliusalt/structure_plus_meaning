@@ -73,8 +73,6 @@ proof -
     finite_relation_least_key_member[OF left] finite_relation_least_key_member[OF right]])
 qed
 
-export_code finite_relation_least_key checking SML
-
 definition finite_representative_map where
   "finite_representative_map R=ffUnion (fimage (\<lambda>v.
     case finite_relation_least_key R v of None \<Rightarrow> {||} | Some k \<Rightarrow> {|(v,k)|}) (fimage snd R))"
@@ -106,8 +104,6 @@ theorem finite_representative_map_injective:
   shows "single_valued ((fset (finite_representative_map R))\<inverse>)"
   by (auto simp: single_valued_def finite_representative_map_member
     intro: finite_relation_representatives_distinct[OF assms])
-
-export_code finite_representative_map checking SML
 
 text \<open>
   The least label comes from the actual complete fibre. Missing values return

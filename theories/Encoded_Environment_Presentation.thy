@@ -12,5 +12,4 @@ definition encoded_environment_report_value where
 
 definition encoded_environment_report_selections :: "nat list list" where
  "encoded_environment_report_selections=[[],[0],[0,1],[0,1,2]]"
-export_code encoded_environment_report_value checking SML
 end

@@ -70,8 +70,6 @@ lemma investigation_input_original_installation:
     add_view_definition_def admitted_data_pair_schema list_profile_clauses_def;
     auto simp: fun_eq_iff)
 
-export_code admission_plan investigation_input_goal checking SML
-
 text \<open>
   The goal retains the original scope predicate and the independently admitted
   complete relation. The earlier component contracts establish its exactness

@@ -44,8 +44,6 @@ proof -
     by (simp only: optional_identity_map_injective[OF raw_digit_required_history_inject])
 qed
 
-export_code digit_history_policy_step digit_history_view checking SML
-
 text \<open>
   The ordinary digit constructor instantiates the established semantic backend.
   Original history membership still guards the attempt, and the same complete

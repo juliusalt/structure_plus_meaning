@@ -94,8 +94,6 @@ proof -
   show ?thesis using member represented by blast
 qed
 
-export_code finite_record_candidates finite_family_candidates checking SML
-
 text \<open>
   Record candidates use only incidences actually headed at the selected root.
   The number of those incidences must equal the grammar's arity before candidates

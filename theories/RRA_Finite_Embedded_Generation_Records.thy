@@ -58,8 +58,6 @@ theorem finite_original_embedded_generation_instance:
     finite_embedded_generation_record_environment_def finite_generation_record_literals_def
     Let_def finite_original_graft_instance)
 
-export_code finite_fresh_generation_predecessor_environment finite_embedded_generation_record_environment checking SML
-
 text \<open>
   The finite operations preserve the entire original environment and supplied
   embedding, with no restriction to a selected set of observable fields.

@@ -62,9 +62,6 @@ theorem finite_generation_record_environment_exact:
     finite_generation_record_predecessor_environment_exact finite_generation_record_use_exact
     finite_generation_record_frame_exact Let_def map_relation_values_def)
 
-export_code finite_generation_record_frame finite_generation_record_use
-  finite_generation_record_environment checking SML
-
 text \<open>
   The executable frame and environment decode to the complete existing RRA
   construction. Each predecessor slot targets the supplied existing use;

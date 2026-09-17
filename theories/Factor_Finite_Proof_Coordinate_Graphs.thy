@@ -32,8 +32,6 @@ proof -
       finite_schema_proof_coordinates_injective[OF checked]] by (simp only: image_empty)
 qed
 
-export_code finite_schema_coordinate_graph checking SML
-
 text \<open>
   The complete relation map moves all original nodes and both endpoints of
   every indexed discharge. It preserves the certificate graph and its closed

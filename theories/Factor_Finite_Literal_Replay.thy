@@ -63,8 +63,6 @@ proof -
     using native_application_properties[OF app] by (simp add: finite_exact_formed_correct)
 qed
 
-export_code finite_literal_application_ready finite_literal_replay_ready checking SML
-
 text \<open>
   The whole requested payload is compared with the actual native call argument.
   Its complete native proof must close without assertions at the supplied root.

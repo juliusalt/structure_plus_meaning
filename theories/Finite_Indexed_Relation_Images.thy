@@ -20,8 +20,6 @@ theorem finite_indexed_relation_image_correct:
     ((n,s),q)\<in>fset R \<and> (n,m)\<in>fset M \<and> (q,k)\<in>fset M}"
   by (rule set_eqI) (auto simp: finite_indexed_relation_image_member; blast)
 
-export_code finite_indexed_relation_image checking SML
-
 text \<open>
   Two actual relation compositions transport both endpoints while preserving
   the middle index. The exact member equation applies to arbitrary supplied

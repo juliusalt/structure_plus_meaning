@@ -65,8 +65,6 @@ theorem native_derivation_assessment_exact:
     finite_partial_result_inspect_def native_derivation_condition_def native_history_ready_exact
     native_history_program_observation_exact native_history_answer_exact split: if_splits; arith)
 
-export_code native_derivation_assessment native_derivation_inspect native_derivation_evidence_review checking SML
-
 text \<open>
   The original native source and request supply the reference meaning and
   certificate checker. Candidate source substitutions cannot change that

@@ -122,8 +122,6 @@ proof -
     by (simp only: result_fields construction.result_environment[symmetric]; rule finite_bounded_generation_head[OF bound])
 qed
 
-export_code finite_construct_bounded_generation checking SML
-
 text \<open>
   The explicit stored head supplies the record use and its successor supplies
   the literal embedding. Complete original readiness still checks each cited

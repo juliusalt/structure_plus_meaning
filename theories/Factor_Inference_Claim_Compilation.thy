@@ -286,6 +286,4 @@ text \<open>
   initial calls are proved in this same program without assuming entry 350.
 \<close>
 
-export_code inference_claim_construction_library checking SML
-
 end

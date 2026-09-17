@@ -40,6 +40,4 @@ theorem finite_construct_source_requirements_correct:
     result[unfolded finite_construct_source_requirements_def]]
   by (simp only: finite_admission_requirements_supported_correct admission_requirements_realized_def; blast)
 
-export_code finite_construct_source_requirements checking SML
-
 end

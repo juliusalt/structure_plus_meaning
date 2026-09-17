@@ -78,8 +78,6 @@ lemma digit_allocated_view_raw:
   "digit_allocated_view q=encoded_bounded_view read_digit_use_path read_digit_address_path (raw_digit_allocated q)"
   by transfer simp
 
-export_code digit_allocated_update digit_allocated_view checking SML
-
 text \<open>
   The complete view preserves the actual counter and every original relation.
   Generic optional-step equivalence transfers the established original

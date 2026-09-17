@@ -45,8 +45,6 @@ theorem finite_positioned_graph_reading:
     (use formed in \<open>simp only: finite_system_formed_correct\<close>,
       use owners in \<open>simp only: finite_graph_nodes_correct\<close>)
 
-export_code finite_positioned_graph checking SML
-
 text \<open>
   The actual finite operation pairs each clause, binder and premise socket
   with its source node's specified owner. Exact decoding recovers the complete

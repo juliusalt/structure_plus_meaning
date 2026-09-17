@@ -78,8 +78,6 @@ theorem certificate_scope_repair_packet_comparison:
     context_assessment_investigation_exact; rule assessed_subject_investigation_cong)
     (simp only: certificate_scope_repair_cell_def certificate_scope_repair_assess_def Let_def case_prod_conv)
 
-export_code certificate_scope_repair_packet certificate_scope_repair_inspect checking SML
-
 text \<open>
   The original scope consists of full native inputs, including unavailable and
   rejected requests. Candidates retain it, erase it, or append the proposed

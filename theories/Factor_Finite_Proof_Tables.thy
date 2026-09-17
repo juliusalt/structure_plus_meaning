@@ -65,7 +65,6 @@ proof -
     by (rule finite_functional_rows_exact[OF functional])
 qed
 
-
 locale finite_binding_table_construction =
   fixes V :: "(local_address option definition_site\<times>finite_factor_term) fset"
   assumes ready: "finite_binding_table_ready V"
@@ -185,8 +184,6 @@ theorem recovers:
   by (simp only: boundaries finite_discharge_table_rows(2)[OF ready])
 
 end
-
-export_code finite_compile_binding_table finite_compile_discharge_table checking SML
 
 text \<open>
   Each functional relation is enumerated by its actual keys. Every binding

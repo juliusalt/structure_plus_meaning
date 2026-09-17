@@ -60,8 +60,6 @@ proof -
     finite_native_program_evaluation_call[OF result demand])
 qed
 
-export_code finite_native_program_evaluation checking SML
-
 text \<open>
   No source model, coordinate function or initial truths are supplied. The
   actual complete reader returns the program in its original native

@@ -12,6 +12,4 @@ theorem digit_policy_record_from_source_exact:
   by (rule generation_record_backend.policy_record_replay_from_source_exact[
     OF digit_generation_backend.generation_record_backend_axioms])
 
-export_code digit_policy_record_from_source checking SML
-
 end

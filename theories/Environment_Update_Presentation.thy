@@ -11,5 +11,4 @@ definition environment_update_report_value :: "nat list \<Rightarrow> nat list l
 
 definition environment_update_report_selections :: "nat list list" where
  "environment_update_report_selections=[[],[0],[0,1]]"
-export_code environment_update_report_value checking SML
 end

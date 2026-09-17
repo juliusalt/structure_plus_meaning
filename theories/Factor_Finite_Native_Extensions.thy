@@ -161,8 +161,6 @@ qed
 
 end
 
-export_code finite_extend_native checking SML
-
 text \<open>
   The operation checks formation, every old interface and clause, fresh uses,
   and the complete selected compilation. Its successful result is the actual

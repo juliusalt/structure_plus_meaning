@@ -188,8 +188,6 @@ theorem native_history_assessment_exact:
     native_history_program_observation_exact native_history_steps_exact native_history_witness_exact
     native_history_answer_exact split: if_splits; arith)
 
-export_code native_history_assessment native_history_inspect native_history_evidence_review checking SML
-
 text \<open>
   Answers are compared with the original positive meaning, restricted to the
   actual demand. Extra and missing calls are retained completely. Availability

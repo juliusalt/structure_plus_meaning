@@ -58,8 +58,6 @@ theorem finite_source_proof_graph_derives:
   by (rule exI[of _ "graph_map (fset (finite_schema_proof_positions P p d t)) (snd\<circ>decode_finite_instantiated_node)"])
     (simp only: finite_source_proof_graph_reading[OF checked] finite_source_proof_graph_assumptions simp_thms)
 
-export_code finite_source_proof_graph checking SML
-
 text \<open>
   Every node's full required call determines its owning definition use.
   The complete finite claim assignment is the exact transported original

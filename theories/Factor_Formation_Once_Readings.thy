@@ -169,9 +169,6 @@ lemma finite_pattern_readings_bounded_formed_once_code [code]:
     then finite_pattern_readings_formed n E u V r else {||})"
   by (cases "finite_environment_formed E"; cases n) (simp_all add: finite_pattern_readings_formed_exact)
 
-export_code finite_citation_candidates finite_native_definition_rows finite_term_readings_bounded
-  finite_pattern_readings_bounded checking SML
-
 text \<open>
   A formed environment has formed artifacts. Its bounded term and pattern
   readings therefore consume the formation-free bodies of record candidates,

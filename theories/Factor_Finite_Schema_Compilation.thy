@@ -146,8 +146,6 @@ proof -
     by (auto simp: schema_code_def finite_exact_formed_correct)
 qed
 
-export_code finite_compile_schema checking SML
-
 text \<open>
   The constructor checks the actual complete source schema and callee addresses,
   enumerates every original socket, computes its binder and socket coordinates,

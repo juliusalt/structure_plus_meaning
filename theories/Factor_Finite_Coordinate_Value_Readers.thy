@@ -41,8 +41,6 @@ theorem finite_site_value_read_exact:
   by (cases t) (simp_all add: site_data_term_def option_product_map_result
     finite_use_value_read_exact finite_payload_value_read_exact)
 
-export_code finite_natural_value_read finite_use_value_read finite_site_value_read checking SML
-
 text \<open>
   Use words preserve arbitrary natural components. Site addresses retain their
   exact payload; occurrence and formation conditions belong to the consuming

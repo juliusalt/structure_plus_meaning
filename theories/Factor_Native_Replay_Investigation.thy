@@ -69,8 +69,6 @@ theorem native_replay_packet_comparison:
   by (simp only: native_replay_packet_def Let_def fst_conv snd_conv context_assessment_investigation_exact
     native_replay_family_assess_def[abs_def])
 
-export_code native_replay_packet native_replay_indices native_replay_inspect native_replay_family_inspect checking SML
-
 text \<open>
   Complete finite subject families retain actual certificates without assigning
   an order to proof values. Each family member has one shared base construction;

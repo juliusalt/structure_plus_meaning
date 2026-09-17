@@ -31,5 +31,4 @@ theorem requirement_decision_report_word_exact:
 
 definition requirement_decision_report_selections :: "nat list list" where
  "requirement_decision_report_selections=[[],[0,1,2,7],[0..<8]]"
-export_code requirement_decision_report_value checking SML
 end

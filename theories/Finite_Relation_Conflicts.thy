@@ -64,8 +64,6 @@ next
       (use members in auto)
 qed
 
-export_code finite_relation_conflicts finite_projection_conflicts checking SML
-
 text \<open>
   Conflicts retain the common key and both unequal original values. They are
   computed from the complete relation. Projecting an original finite family

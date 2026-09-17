@@ -25,6 +25,4 @@ theorem finite_native_program_history_evaluation:
     finite_native_program_evaluation E u r D=Some (P,A)"
   using finite_native_program_history_projection[of E u r D] by simp
 
-export_code finite_native_program_history checking SML
-
 end

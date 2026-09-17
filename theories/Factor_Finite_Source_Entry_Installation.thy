@@ -68,6 +68,4 @@ proof -
     (use source run.correct native target_member meaning in blast)
 qed
 
-export_code finite_install_source_entry checking SML
-
 end

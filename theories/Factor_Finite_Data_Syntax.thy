@@ -47,8 +47,6 @@ proof -
   show ?thesis by (simp only: decode; rule complete_data_quotation_total[OF formed closed])
 qed
 
-export_code finite_data_syntax checking SML
-
 text \<open>
   The constructors use the existing payload and pair syntax and preserve its
   complete incidence and bindings. Their decoding equation is exact object

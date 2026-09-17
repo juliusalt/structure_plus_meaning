@@ -49,8 +49,6 @@ lemma finite_source_extension_case_subject:
   "fst (snd (finite_source_extension_case E pu pr P i))=finite_source_extension_candidate E P i"
   by (simp add: finite_source_extension_case_def Let_def)
 
-export_code finite_source_extension_cases checking SML
-
 text \<open>
   The first eight sources are actual constructed packages, including empty
   added clause families, unseeded and seeded cycles, whole and anchored literal

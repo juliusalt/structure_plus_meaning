@@ -11,5 +11,4 @@ definition use_allocation_report_value :: "nat list \<Rightarrow> nat list list 
 
 definition use_allocation_report_selections :: "nat list list" where
  "use_allocation_report_selections=[[],[0],[0,1,2,3],[0,1,2,3,4]]"
-export_code use_allocation_report_value checking SML
 end

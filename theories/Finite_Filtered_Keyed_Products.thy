@@ -31,6 +31,4 @@ text \<open>The original condition is applied before constructing the correspond
   relation and its duplicate checks. This is a whole-result equation, not a
   bound, functionality assumption, or restriction of the observation scope.\<close>
 
-export_code finite_filtered_keyed_product finite_relation_conflicts checking SML
-
 end

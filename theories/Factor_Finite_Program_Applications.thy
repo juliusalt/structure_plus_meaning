@@ -155,8 +155,6 @@ next
         \<open>auto simp: finite_inference_rules_def decode_finite_premises_def\<close>)
 qed
 
-export_code finite_program_applications finite_program_head_covered finite_program_rule_table checking SML
-
 text \<open>
   The inputs are a complete program and actual requested calls. Every returned
   application retains its original clause, complete bindings and premise

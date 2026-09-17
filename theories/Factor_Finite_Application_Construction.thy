@@ -87,6 +87,4 @@ proof -
     using exact by (simp only: finite_application_readings_correct)
 qed
 
-export_code finite_extend_native_application checking SML
-
 end

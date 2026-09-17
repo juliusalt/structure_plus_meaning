@@ -98,8 +98,6 @@ definition native_admission_report where
     map (\<lambda>m. (m,native_admission_target_report X (native_admission_method m X))) [0,1,2,3,4,5]))
     (native_admission_problem w)"
 
-export_code native_admission_report checking SML
-
 text \<open>
   The source environments are actual previously constructed packages. They
   include distinct component meanings, empty families, recursion, literal

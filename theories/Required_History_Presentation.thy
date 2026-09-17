@@ -47,8 +47,6 @@ theorem required_history_report_word_exact:
     required_history_report ws selections=required_history_report vs choices"
   by (simp only: finite_term_shared_word_injective required_history_report_value_exact)
 
-export_code required_history_report_value checking SML
-
 text \<open>
   The report retains the requested scope, the complete packet of context tables,
   comparison and investigation cycles, and the certificate position coverage of

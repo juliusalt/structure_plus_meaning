@@ -96,8 +96,6 @@ proof (rule injI)
   qed
 qed
 
-export_code finite_goal_value finite_generation_value finite_proof_value checking SML
-
 text \<open>
   An admission goal is presented by the existing admission_goal_value_with
   construction over the decoded site presentation. A generation keeps its locus,

@@ -62,8 +62,6 @@ next
   show "finite_functional_selections K R\<noteq>{||}" using selected by auto
 qed
 
-export_code finite_functional_selections checking SML
-
 definition finite_family_images where
   "finite_family_images H T=finite_functional_selections (fimage fst H) (finite_edge_compose H T)"
 
@@ -95,8 +93,6 @@ proof -
   qed
   show ?thesis by (simp only: finite_family_images_def finite_functional_selection_domain; rule covered)
 qed
-
-export_code finite_family_images checking SML
 
 text \<open>
   The operation constructs every complete functional selection from the actual

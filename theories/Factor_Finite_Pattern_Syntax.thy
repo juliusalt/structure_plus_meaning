@@ -86,8 +86,6 @@ lemma finite_pattern_syntax_formed:
   by (simp only: finite_exact_formed_correct decode_finite_pattern_syntax)
     (rule pattern_syntax_formed; use assms in \<open>simp_all add: finite_pattern_formed_correct\<close>)
 
-export_code finite_pattern_syntax finite_pattern_literal_bindings finite_binder_coordinates checking SML
-
 text \<open>
   Variables, repeated variables, payloads, literal targets and paired patterns
   retain their complete original fields. The executable artifact decodes to

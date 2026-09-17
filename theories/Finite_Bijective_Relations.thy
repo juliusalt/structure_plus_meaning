@@ -46,8 +46,6 @@ next
       graph_map_single_valued graph_map_converse_functional graph_map_finite)
 qed
 
-export_code finite_bijective_relation checking SML
-
 theorem finite_bijective_relation_value_map:
   assumes injective: "inj f"
   shows "finite_bijective_relation A (fimage f B) (fimage (map_prod id f) R)=

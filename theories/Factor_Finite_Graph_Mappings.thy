@@ -83,6 +83,4 @@ theorem finite_graph_mapping_rename:
       finite_graph_nodes_correct finite_rename_graph_exact;
     rule schema_graph_mapping_rename; use formed in \<open>simp only: finite_graph_formed_correct\<close>)
 
-export_code finite_graph_mapping finite_mapped_graph checking SML
-
 end

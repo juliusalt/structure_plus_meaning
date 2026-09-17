@@ -145,8 +145,6 @@ proof -
   qed
 qed
 
-export_code evaluate_workflow_stage checking SML
-
 text \<open>
   A stage reads its actual native source and derives answers and certificates
   for every permitted complete input/output pair. No truth or certificate is

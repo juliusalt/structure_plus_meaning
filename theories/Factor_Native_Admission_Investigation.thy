@@ -124,8 +124,6 @@ lemma native_admission_report_initial:
   by (simp only: investigation_cycle_initial native_admission_calculation_equation fst_conv snd_conv
     native_admission_investigation_def)
 
-export_code native_admission_investigation_report native_admission_assess checking SML
-
 text \<open>
   The actual source packages and original goals are the problem subjects. Each
   candidate is its complete constructor operation. The independent conditions

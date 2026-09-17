@@ -62,11 +62,8 @@ definition digit_replay_report where
 definition digit_replay_report_value :: "nat list \<Rightarrow> nat list list \<Rightarrow> finite_factor_term" where
   "digit_replay_report_value ws selections=(finite_pair_presentation finite_index_sequence_value (finite_pair_presentation finite_index_sequence_value (finite_pair_presentation finite_digit_replay_seeds_value (finite_pair_presentation finite_digit_replay_previous_value (finite_pair_presentation (finite_investigation_packet_value finite_digit_replay_context_value finite_digit_replay_assessment_value) (finite_pair_presentation finite_assessment_truth_value (finite_pair_presentation finite_index_sequence_value (finite_sequence_presentation finite_digit_replay_source_value)))))))) (digit_replay_report ws selections)"
 
-
 definition digit_replay_report_selections :: "nat list list" where
   "digit_replay_report_selections=[[],[0],[0,1]]"
-
-export_code digit_replay_report_value checking SML
 
 text \<open>
   The report keeps the full available scope and the requested scope, all literal

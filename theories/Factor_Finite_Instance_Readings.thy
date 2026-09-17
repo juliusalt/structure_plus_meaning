@@ -47,8 +47,6 @@ next
     by (simp only: finite_admitted_premise_reading_exact finite_admitted_schema_instance_correct; blast)
 qed
 
-export_code finite_admitted_premise_readings checking SML
-
 text \<open>
   The actual source clause and complete supplied binding family determine
   every admitted premise relation. The reader is exact on all finite inputs

@@ -49,8 +49,6 @@ lemma finite_source_whole_fields:
     finite_system_interfaces P=finite_system_interfaces N \<and> finite_system_clauses P=finite_system_clauses N"
   by (auto simp: finite_source_fields_match_def intro: finite_schema_system.equality)
 
-export_code finite_source_subject_matches finite_source_observation checking SML
-
 text \<open>
   The independent condition is the complete program reading at the supplied
   environment, use, and root. Every observation reads that same native source.

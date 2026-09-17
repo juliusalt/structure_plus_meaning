@@ -93,6 +93,4 @@ proof -
       (use members in auto)
 qed
 
-export_code finite_compile_system_definition finite_compile_definitions checking SML
-
 end

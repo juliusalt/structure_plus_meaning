@@ -140,8 +140,6 @@ theorem native_certificate_report_packet_exact:
     native_certificate_cell_at native_certificate_context_def native_certificate_cell_def native_certificate_method_def
     native_certificate_assess_def native_certificate_assessment_def native_certificate_base_def Let_def comp_def)
 
-export_code native_certificate_report_packet checking SML
-
 text \<open>
   Each complete original native source and request supplies its actual program,
   answers and certificate family. The shared cells retain that original family,

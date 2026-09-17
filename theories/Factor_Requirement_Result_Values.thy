@@ -27,6 +27,4 @@ lemma decode_finite_admission_sequence_value [simp]:
   unfolding finite_admission_sequence_value_def
   by (rule decode_finite_self_contained_term) simp
 
-export_code admission_sequence_value finite_admission_sequence_value checking SML
-
 end

@@ -458,10 +458,6 @@ corollary finite_native_package_readings_unique:
   using assms native_package_unique
   by (metis finite_native_package_readings_correct decode_finite_system_injective)
 
-export_code finite_environment_positions finite_native_definition_rows finite_native_definition_edges
-  finite_native_definition_sites finite_native_package_formed finite_native_program
-  finite_native_root_family_readings finite_native_package_readings checking SML
-
 text \<open>
   The supplied positions bound candidate recovery. The actual root citation
   family and every recovered prospective callee select the program. Every

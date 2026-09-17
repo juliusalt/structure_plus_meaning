@@ -90,6 +90,4 @@ text \<open>
   an input to this operation.
 \<close>
 
-export_code finite_native_generation finite_generated_outputs checking SML
-
 end

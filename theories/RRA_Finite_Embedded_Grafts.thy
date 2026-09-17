@@ -47,6 +47,4 @@ proof -
   show ?thesis by (simp only: finite_environment_formed_correct compact_graft_instance graft.formed_exact)
 qed
 
-export_code finite_embedded_graft finite_compact_graft checking SML
-
 end

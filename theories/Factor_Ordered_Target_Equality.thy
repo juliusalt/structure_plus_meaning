@@ -17,8 +17,6 @@ lemma finite_target_equal_ordered_code [code]:
   "HOL.equal (x::finite_exact_target) y=ordered_target_equal x y"
   by (simp only: equal_eq ordered_target_equal_exact)
 
-export_code ordered_target_equal checking SML
-
 text \<open>Target equality compares the existing complete canonical artifact
   rows. Carrier, incidence, every counted occurrence and functional binding
   remain part of equality, and anchored targets retain their exact address.

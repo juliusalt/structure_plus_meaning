@@ -69,8 +69,6 @@ theorem finite_artifact_value_read_exact:
   by (simp only: finite_artifact_value_read_result finite_artifact_rows_read_exact
     finite_artifact_enumeration_correct artifact_value_presents_def; blast)
 
-export_code finite_artifact_rows_read finite_artifact_value_read checking SML
-
 text \<open>
   The actual four lists determine the reconstructed artifact. Every admitted
   enumeration order remains available. Counted attachments retain repetitions;

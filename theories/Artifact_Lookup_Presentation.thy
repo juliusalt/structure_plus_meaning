@@ -11,5 +11,4 @@ definition artifact_lookup_report_value :: "nat list \<Rightarrow> nat list list
 
 definition artifact_lookup_report_selections :: "nat list list" where
  "artifact_lookup_report_selections=[[],[0],[0,1]]"
-export_code artifact_lookup_report_value checking SML
 end

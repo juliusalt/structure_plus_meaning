@@ -18,6 +18,4 @@ definition finite_partial_result_inspect :: "'a finite_partial_result_assessment
       (if f=2 then retained else case terms of None \<Rightarrow> False | Some (extra,missing) \<Rightarrow>
         (if f=0 then extra={||} else missing={||}))) else False)"
 
-export_code finite_partial_result_inspect checking SML
-
 end

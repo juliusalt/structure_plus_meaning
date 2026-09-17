@@ -114,9 +114,6 @@ proof (rule injI)
       use same in \<open>simp add: finite_environment_presentation_def inj_eq[OF members] inj_eq[OF bindings]\<close>)
 qed
 
-export_code finite_natural_data finite_boolean_data finite_use_data finite_site_data finite_call_value
-  finite_artifact_term finite_binding_value finite_environment_presentation checking SML
-
 text \<open>
   Every coordinate presentation decodes into the notion's existing data term:
   natural indices into natural_data_term, truth values into report_boolean_term,

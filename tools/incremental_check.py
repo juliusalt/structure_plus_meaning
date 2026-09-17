@@ -2,8 +2,10 @@
 """Validate a workspace using exact accepted proof contexts at their original paths.
 
 Rebuild only changed theories and their dependents, export each module from its actual provider,
-and execute every recipe whose complete input manifest changed. Successful complete checks retain
+and execute every recipe whose complete execution boundary changed. Successful complete checks retain
 their proof context for the next edit; unchanged recipe manifests retain their accepted verification.
+A changed manifest whose exported module, subject contracts, execution tools, fixtures, expected
+reports and native runtime all equal an accepted execution's boundary reuses that execution.
 The original fixed base is used only when no newer context has been selected. Neither reuse nor
 adoption rebuilds a parent heap, and a partial recipe check cannot replace the complete inventory.
 """
@@ -25,6 +27,7 @@ import uuid
 
 import check
 import execution_support as investigate
+import native_execution_runtime
 import prove_context
 import proof_contexts
 import proved_code
@@ -35,6 +38,8 @@ ROOT = Path(__file__).resolve().parents[1]
 TOOLS = ROOT / 'tools'
 POLY = Path('/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly')
 ENV = {**os.environ, 'PYTHONDONTWRITEBYTECODE': '1', 'USER_HOME': '/tmp/structural-isabelle'}
+# Every Isabelle/Poly/ML runtime file read by native executions, beyond the toolchain digests.
+NATIVE_RUNTIME = (*native_execution_runtime.inputs(), Path('/opt/isabelle/src/Pure/ML/ml_statistics.ML'))
 
 
 def theory_names(project):
@@ -156,6 +161,41 @@ def host_tests():
         return dict(pool.map(run, suites.items()))
 
 
+def execution_boundary(row, manifest, proof_path):
+    """Every input a recipe's executions read, with theory sources present only through their export.
+
+    The accepted proof context establishes that the exported module and subject contracts belong to
+    the current sources. An execution reads that export, its own Python closure, declared fixtures,
+    the expected report boundaries and the native runtime; equal boundaries determine equal reports.
+    """
+    proof = json.loads(Path(proof_path).read_text())
+    (export,) = proof['exports']
+    script = TOOLS / row['script']
+    name, _, fixtures, jobs = reconstruction_sources.recipe_inputs(script)
+    assert name == row['name']
+    closure = reconstruction_sources.local_python_closure(TOOLS, [script, *(TOOLS / job for job in jobs)])
+    tools = {str(path.relative_to(ROOT)): sha for path, sha in sorted(closure.items())}
+    files = manifest['files']
+    assert all(files.get(path) == sha for path, sha in tools.items()), 'Execution tools differ from the manifest.'
+    declared = (*fixtures, 'validation/reconstruction/' + name + '-reports.json')
+    assert investigate.file_hash(Path(export['path'])) == export['sha256']
+    return {'export': {'theory': proof['export_theory'], 'module_sha256': export['sha256'],
+                       'subject_contracts': dict(sorted((Path(c['path']).name, c['sha256'])
+                                                        for c in proof['subject_contracts'])),
+                       'code_target': proof['code_target'],
+                       'complete_artifact_transport': proof['complete_artifact_transport'],
+                       'complete_term_transport': proof['complete_term_transport']},
+            'tools': tools, 'declared_inputs': {path: files[path] for path in declared},
+            'toolchain': manifest['toolchain'],
+            'runtime': {str(path): investigate.file_hash(path) for path in NATIVE_RUNTIME}}
+
+
+def reusable_execution(verified, boundary):
+    """An accepted execution applies to every check whose complete execution boundary is equal."""
+    return (verified.get('status') == 'accepted' and verified.get('reports_equal') is True
+            and verified.get('execution_boundary') == boundary)
+
+
 def verify_manifest_inputs(manifests):
     """Check each distinct input once, including tools and fixtures of unchanged recipes."""
     files = {}
@@ -250,6 +290,18 @@ def validate(base, output, *, threads, jobs, selected, all_recipes, timeout):
         phase('export', begin)
 
         begin = time.monotonic()
+        boundaries = {row['name']: execution_boundary(row, row['manifest'], exports[row['name']]) for row in affected}
+        write_json(output / 'boundaries.json', boundaries)
+        results = {}
+        for row in affected:
+            verified = ROOT / 'validation/reconstruction' / (row['name'] + '-verified.json')
+            previous = json.loads(verified.read_text()) if verified.is_file() else {}
+            if not all_recipes and reusable_execution(previous, boundaries[row['name']]):
+                results[row['name']] = {'status': 'reused', 'exit_code': 0, 'seconds': 0.0, 'receipt': str(verified)}
+        executed = [row for row in affected if row['name'] not in results]
+        phase('execution_impact', begin)
+
+        begin = time.monotonic()
 
         def expected_seconds(row):
             path = ROOT / 'validation/reconstruction' / (row['name'] + '-verified.json')
@@ -258,7 +310,6 @@ def validate(base, output, *, threads, jobs, selected, all_recipes, timeout):
             return sum(step.get('seconds', 0) for step in json.loads(path.read_text()).get('steps', []))
 
         lock = threading.Lock()
-        results = {}
 
         def execute(row):
             directory = output / 'recipes' / row['name']
@@ -274,7 +325,7 @@ def validate(base, output, *, threads, jobs, selected, all_recipes, timeout):
                                         'seconds': round(seconds, 2), 'receipt': str(receipt)}
                 print(json.dumps({'recipe': row['name'], **results[row['name']]}), flush=True)
 
-        ordered = sorted(affected, key=expected_seconds, reverse=True)
+        ordered = sorted(executed, key=expected_seconds, reverse=True)
         with ThreadPoolExecutor(max_workers=1) as test_pool, ThreadPoolExecutor(max_workers=jobs) as pool:
             tests = test_pool.submit(host_tests)
             list(pool.map(execute, ordered))
@@ -282,7 +333,7 @@ def validate(base, output, *, threads, jobs, selected, all_recipes, timeout):
         phase('recipes_and_host_tests', begin)
         summary['recipes'] = {row['name']: results.get(row['name'], {'status': 'unchanged'}) for row in rows}
         write_json(output / 'manifests.json', {row['name']: row['manifest'] for row in rows})
-        failed = sorted(name for name, result in results.items() if result['status'] != 'accepted')
+        failed = sorted(name for name, result in results.items() if result['status'] not in ('accepted', 'reused'))
         summary['failed_recipes'] = failed
         assert not failed, 'Failed recipes: ' + ', '.join(failed)
         assert all(r['exit_code'] == 0 for r in summary['host_tests'].values()), 'Host tests failed.'
@@ -290,6 +341,8 @@ def validate(base, output, *, threads, jobs, selected, all_recipes, timeout):
         assert stable and investigate.current_sources(sources), 'Base or workspace sources changed during the check.'
         verify_manifest_inputs({row['name']: row['manifest'] for row in rows}
                                | {'validation': {'files': summary['validation_inputs']}})
+        assert all(investigate.file_hash(Path(p)) == sha for boundary in boundaries.values()
+                   for p, sha in boundary['runtime'].items()), 'Native runtime changed during the check.'
         summary['status'] = 'accepted'
     except Exception as error:
         summary['error'] = f'{type(error).__name__}: {error}'
@@ -322,9 +375,15 @@ def retain(output, host_tests=None):
     manifests = json.loads((output / 'manifests.json').read_text())
     assert set(manifests) == set(summary['recipes'])
     verify_manifest_inputs(manifests | {'validation': {'files': summary.get('validation_inputs', {})}})
+    boundaries_path = output / 'boundaries.json'
+    boundaries = json.loads(boundaries_path.read_text()) if boundaries_path.is_file() else {}
+    assert {n for n, r in summary['recipes'].items() if r['status'] != 'unchanged'} <= boundaries.keys()
+    assert all(investigate.file_hash(Path(p)) == sha for boundary in boundaries.values()
+               for p, sha in boundary['runtime'].items()), 'Native runtime changed after validation.'
     target = ROOT / 'validation/reconstruction'
     base = Path(summary['base'])
     proof = summary.get('proof')
+    context_receipt = Path(summary['accepted_proof_context']) / proof_contexts.CONTEXT_FILE
     entries = []
     for name, result in sorted(summary['recipes'].items()):
         sources_path = target / (name + '-sources.json')
@@ -333,6 +392,23 @@ def retain(output, host_tests=None):
             assert json.loads(sources_path.read_text()) == manifests[name]
             previous = json.loads(verified_path.read_text())
             records = sum(b['records'] for b in previous['report_boundaries'].values())
+        elif result['status'] == 'reused':
+            previous = json.loads(verified_path.read_text())
+            assert reusable_execution(previous, boundaries[name]), 'The retained execution no longer applies.'
+            write_json(sources_path, manifests[name])
+            records = sum(b['records'] for b in previous['report_boundaries'].values())
+            previous.update(
+                complete_recipe_source_manifest=sources_path.name,
+                source_manifest_sha256=investigate.file_hash(sources_path),
+                execution_reuse={'base_receipt_sha256': summary['base_receipt_sha256'],
+                                 'proof_receipt_sha256': investigate.file_hash(Path(proof)) if proof else None,
+                                 'proof_context_receipt_sha256': investigate.file_hash(context_receipt),
+                                 'export_module_sha256': boundaries[name]['export']['module_sha256'],
+                                 'boundary': 'The current accepted proof context exported an identical module and '
+                                             'subject contracts; execution tools, fixtures, expected reports and '
+                                             'native runtime are unchanged. The accepted execution determines '
+                                             'these complete report boundaries without being repeated.'})
+            write_json(verified_path, previous)
         else:
             assert result['status'] == 'accepted'
             receipt = json.loads(Path(result['receipt']).read_text())
@@ -342,6 +418,7 @@ def retain(output, host_tests=None):
             receipt.update(
                 complete_recipe_source_manifest=sources_path.name,
                 source_manifest_sha256=investigate.file_hash(sources_path),
+                execution_boundary=boundaries[name],
                 complete_review={'status': 'accepted', 'records': records, 'reports_equal': True,
                                  'base_receipt_sha256': summary['base_receipt_sha256'],
                                  'proof_receipt_sha256': investigate.file_hash(Path(proof)) if proof else None,
@@ -350,6 +427,7 @@ def retain(output, host_tests=None):
                           'dependent supplied the exported module; every complete report boundary equals its '
                           'retained original. Generated result bulk is not a repository input.')
             write_json(verified_path, receipt)
+        if result['status'] != 'unchanged':
             write_json(target / (name + '-materialization.json'), {
                 'recipe_source_manifest': sources_path.name,
                 'recipe_source_manifest_sha256': investigate.file_hash(sources_path),
@@ -362,9 +440,11 @@ def retain(output, host_tests=None):
                         'python_modules': sum(f.endswith('.py') for f in files),
                         'source_manifest_sha256': investigate.file_hash(sources_path),
                         'verification_sha256': investigate.file_hash(verified_path),
-                        'validation': 'unchanged complete manifest; retained verification applies'
-                                      if result['status'] == 'unchanged' else
-                                      'executed against the accepted base and incremental proof'})
+                        'validation': {'unchanged': 'unchanged complete manifest; retained verification applies',
+                                       'reused': 'unchanged complete execution boundary; the accepted execution '
+                                                 'applies to the current proof',
+                                       'accepted': 'executed against the accepted base and incremental proof'}
+                                      [result['status']]})
     base_theories = summary.get('base_theories')
     if base_theories is None:
         base_theories = len(proof_contexts.load_parent(base)['sources'])
@@ -375,6 +455,7 @@ def retain(output, host_tests=None):
         'base_receipt_sha256': summary['base_receipt_sha256'],
         'source_only_reconstructions': entries, 'complete_native_reports': sum(e['reports'] for e in entries),
         'executed_recipes': sum(r['status'] == 'accepted' for r in summary['recipes'].values()),
+        'reused_recipes': sum(r['status'] == 'reused' for r in summary['recipes'].values()),
         'unchanged_recipes': sum(r['status'] == 'unchanged' for r in summary['recipes'].values()),
         'phase_seconds': summary['phases'], 'total_seconds': summary['seconds']})
     write_json(ROOT / 'validation/incremental-check.json', {

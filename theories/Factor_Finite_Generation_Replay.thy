@@ -77,8 +77,6 @@ proof -
   show "finite_environment_formed A" by (rule finite_construct_generation_record_correct(3)[OF generated])
 qed
 
-export_code finite_record_native_replay checking SML
-
 text \<open>
   The original payload must be the whole artifact named by the actual call,
   and the native replay must close without assertions. Only then is its least

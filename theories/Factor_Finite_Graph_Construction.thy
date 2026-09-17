@@ -106,8 +106,6 @@ proof -
     by (simp only: fields; rule construction.fresh)
 qed
 
-export_code finite_extend_native_graph checking SML
-
 text \<open>
   The complete original source and graph determine availability. Every source
   node receives an explicit distinct fresh position, and the returned finite

@@ -113,8 +113,6 @@ proof -
   show ?thesis using trans shape decoded_term by blast
 qed
 
-export_code finite_graph_transitions checking SML
-
 text \<open>
   Each transition is derived from an actual inference occurrence, a matching
   program clause, an identified premise, and its actual discharge. Its target

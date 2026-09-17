@@ -77,8 +77,6 @@ corollary finite_certified_base_cause_sound:
       (decode_finite_object R)"
   by (simp only: finite_certified_base_cause_exact; rule certified_base_cause_sound)
 
-export_code finite_certified_judgment_context finite_certified_base_cause checking SML
-
 text \<open>
   Admission reads the original generation and its actual complete recorded cause.
   That cause must recover the least judgment environment, preserve its whole

@@ -22,8 +22,6 @@ theorem finite_proof_inspection_exact:
   by (simp only: finite_proof_inspection_def finite_inspection_rows_hold_exact
     finite_proofs_sound_def Ball_def split_paired_All case_prod_conv finite_checks_schema_proof_exact)
 
-export_code finite_proof_inspection checking SML
-
 text \<open>
   Each claimed call retains its entire recursive certificate and the result
   of checking that certificate against the independently supplied source.

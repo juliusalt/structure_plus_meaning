@@ -218,6 +218,4 @@ lemma finite_schema_material_satisfied_correct:
   by (auto simp: finite_schema_material_satisfied_def schema_material_satisfied_def
       finite_material_satisfied_correct Ball_def split_paired_All)
 
-export_code finite_schema_formed finite_schema_instance finite_schema_material_satisfied checking SML
-
 end

@@ -115,8 +115,6 @@ proof -
     using forest.properties(10) by (simp only: actual schemas[symmetric]) (simp add: size)
 qed
 
-export_code finite_compile_schema_forest checking SML
-
 text \<open>
   Partial compilation uses the existing complete option-list traversal. A
   failed clause prevents the whole result; every successful source occurrence

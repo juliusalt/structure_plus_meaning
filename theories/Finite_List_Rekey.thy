@@ -21,8 +21,6 @@ proof -
     using source(2) by (subst map_cong[OF refl actual]) simp
 qed
 
-export_code listed_rekey checking SML
-
 text \<open>
   The existing distinct-list correspondence supplies the proof, and the
   executable lookup agrees with it on every actual source key. The fallback

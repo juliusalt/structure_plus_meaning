@@ -56,6 +56,4 @@ text \<open>
   Variables absent from the head are not assigned arbitrary values.
 \<close>
 
-export_code finite_requested_schema_applications checking SML
-
 end

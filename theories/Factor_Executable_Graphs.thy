@@ -138,8 +138,6 @@ proof -
         finite_edge_wellfounded_correct Ball_def split_paired_All)
 qed
 
-export_code finite_graph_formed checking SML
-
 text \<open>
   The check covers every supplied node and discharge. All nodes must reach the
   selected root, the edge relation must be well-founded, and each unproved

@@ -20,5 +20,4 @@ definition concurrent_history_report_value where
 
 definition concurrent_history_report_selections :: "nat list list" where
  "concurrent_history_report_selections=[[],[0],[0,1]]"
-export_code concurrent_history_report_value checking SML
 end

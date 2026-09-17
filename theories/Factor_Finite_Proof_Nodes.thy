@@ -192,8 +192,6 @@ proof -
   qed
 qed
 
-export_code finite_compile_proof_node checking SML
-
 text \<open>
   The compiler receives the actual source environment, original node metadata
   and complete indexed proof-target relation. Its successful output satisfies

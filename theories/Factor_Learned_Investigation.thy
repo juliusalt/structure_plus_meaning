@@ -106,9 +106,6 @@ definition natural_learned_investigation where
     (L::(nat\<times>(nat,nat,nat) finite_factor_schema\<times>(nat\<times>nat\<times>nat finite_term_pattern) list) list)
     C K (goals::(nat\<times>nat\<times>finite_factor_term) fset)=finite_learned_investigation L C K goals"
 
-export_code finite_generated_schema_applications finite_generated_schema_rules
-  finite_learned_investigation checking SML
-
 text \<open>
   The investigation receives reusable schemas and a finite frontier of possible
   premise calls. It constructs the concrete applications, their conclusions,

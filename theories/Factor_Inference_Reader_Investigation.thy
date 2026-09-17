@@ -152,6 +152,4 @@ text \<open>
   supplied as possible premises, or the remaining whole-argument conditions.
 \<close>
 
-export_code inference_reader_investigation_library inference_reader_investigation checking SML
-
 end

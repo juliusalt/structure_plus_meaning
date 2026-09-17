@@ -24,8 +24,6 @@ corollary finite_positioned_program_formed:
   using positioned_program_formed[of "decode_finite_system P"] assms
   by (simp add: finite_system_formed_correct finite_positioned_program_correct)
 
-export_code finite_positioned_program checking SML
-
 text \<open>
   Local binder, socket, and clause coordinates are paired with the owning
   definition's use. The transformation maps every pattern operand and every

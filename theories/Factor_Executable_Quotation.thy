@@ -427,8 +427,6 @@ proof -
   show ?thesis using term_quoted_unique[OF first second] by (simp add: fset_inject)
 qed
 
-export_code finite_term_readings checking SML
-
 text \<open>
   The reader obtains every leaf and record from the supplied artifact and
   environment. Pair composition checks the full private interiors and external

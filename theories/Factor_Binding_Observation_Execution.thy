@@ -101,8 +101,6 @@ proof -
     by (auto simp: finite_binding_observation_frontier_def split: option.splits)
 qed
 
-export_code finite_binding_observation_outputs finite_binding_observation_frontier checking SML
-
 text \<open>
   Every returned pair of lists is exactly a true call of the native operation.
   The original input determines both outputs. A different owner, a missing

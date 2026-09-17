@@ -50,8 +50,6 @@ lemma finite_check_generation_word_rows_code [code]:
           (fimage (\<lambda>H. (structural_generation_code H,finite_check_generation H)) P)))"
   by (simp only: finite_generation_child_rows_value_image[where encode=structural_generation_code] finite_check_generation_structural_code)
 
-export_code lookup_check_generation finite_check_generation checking SML
-
 text \<open>
   Both original child readers instantiate the same complete value-image law.
   Their recursive checks still use the original supplied generation at each

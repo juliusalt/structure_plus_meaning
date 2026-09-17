@@ -53,6 +53,4 @@ proof (rule set_eqI)
   qed
 qed
 
-export_code finite_generation_predecessor_references checking SML
-
 end

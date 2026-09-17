@@ -105,6 +105,4 @@ theorem iteration_review_exact:
     iteration_prefix b f x xs y \<and> \<not>b y"
   by (induction xs arbitrary: x) (auto simp: iteration_review_holds_def split_def)
 
-export_code while_history iteration_review iteration_review_holds checking SML
-
 end

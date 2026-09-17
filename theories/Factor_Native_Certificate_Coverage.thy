@@ -92,8 +92,6 @@ theorem native_certificate_scope_coverage_exact:
   by (auto simp: native_certificate_scope_coverage_inspect_def native_certificate_scope_coverage_def
     list_ex_iff native_certificate_family_coverage_exact native_certificate_scope_coverage_condition_def)
 
-export_code native_certificate_scope_coverage native_certificate_scope_coverage_inspect checking SML
-
 text \<open>
   The independent conditions require actual original nodes with equal proof
   values and unequal calls, equal calls and unequal proofs, or distinct source

@@ -36,8 +36,6 @@ lemma finite_future_call_use_exact:
   "finite_future_call_use E u=future_call_use (decode_finite_environment E) u"
   by (simp only: finite_future_call_use_def finite_fresh_use_map_exact finite_environment_uses_correct future_call_use_def)
 
-export_code finite_term_environment finite_call_environment finite_future_call_environment finite_future_call_use checking SML
-
 text \<open>
   Whole native call construction instantiates the existing quotation, use
   permutation and environment grafting operations. Exact environment equality

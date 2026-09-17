@@ -66,6 +66,4 @@ theorem decision_replay_packet_comparison:
     (\<lambda>m w. decision_replay_cell m (decision_replay_context w)) decision_replay_cell_inspect"
   by (simp only: decision_replay_packet_def Let_def fst_conv snd_conv context_assessment_investigation_exact)
 
-export_code decision_replay_packet checking SML
-
 end

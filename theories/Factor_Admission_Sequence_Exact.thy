@@ -112,6 +112,4 @@ theorem admission_sequence_exact:
   "(361,z)\<in>positive_meaning admission_sequence_system \<longleftrightarrow> admission_sequence_result z"
   using admission_sequence_sound admission_sequence_complete by (auto simp: admission_sequence_result_def)
 
-export_code admission_sequence checking SML
-
 end

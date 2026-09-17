@@ -29,6 +29,4 @@ corollary finite_requirement_decision_replay_failed_requirement:
   using required failed by (simp only: finite_requirement_decision_replay_terms(1)[OF result original]
     mem_Collect_eq admission_requirements_hold_def; blast)
 
-export_code finite_requirement_decision_replay checking SML
-
 end

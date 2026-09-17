@@ -99,8 +99,6 @@ proof -
       (use finite functional finite_schema_generation_inference[OF generated library] in blast)
 qed
 
-export_code finite_pattern_instances finite_premise_joins finite_schema_generation checking SML
-
 text \<open>
   Inputs are schemas and available calls. Candidate conclusions are generated
   from bindings found by matching the schemas' complete premise families.

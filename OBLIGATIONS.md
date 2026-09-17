@@ -1334,3 +1334,12 @@ refinements preserve original contracts, but full/cold cost remains substantial.
 No obligation row changes status. Conditions 1 and 6, practical 5a, wider coverage,
 O-85 and genesis remain open; theoretical 5b is deferred. This batch is being
 committed and cleaned up at the owner's request; further implementation stops.
+
+## Execution reuse and reduced proof checks
+
+The accepted workspace has 1,648 theories and 50 recipe boundaries: 38 reused
+accepted executions, 12 executed recipes, 2,603 retained records and both host
+suites in 373.03 seconds, with 981 rebuilt proof contexts. The concurrent-replay
+recipe was retired as definitionally identical to digit replay. No obligation row
+changes status. Conditions 1 and 6, practical 5a, wider coverage, O-85 and genesis
+remain open; theoretical 5b is deferred.

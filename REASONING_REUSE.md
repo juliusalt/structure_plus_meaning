@@ -1684,3 +1684,17 @@ rules, preserving their statements and premises. The full 1,649-theory proof
 now supplies one accepted reusable context without a project parent. These are
 bootstrap and execution refinements; they do not supply native selection or
 native mathematical-proof admission. See [current measurements](native_mechanism_speedup.md).
+
+## Execution boundaries and removed repeated code checks
+
+An accepted recipe execution now carries its complete execution boundary: the
+exported module and subject contracts, its Python closure, fixtures, expected
+reports, toolchain and native runtime. Equal boundaries reuse the accepted
+execution instead of repeating it; theory sources enter only through the export
+that the accepted proof context supplies. This instantiates the proof-context
+reuse already factored in `proof_contexts.py` for executions. Inline SML code
+checks whose constants accepted recipe exports compile and execute were removed;
+checks for constants without such an execution remain. The definitionally
+identical concurrent-replay recipe was retired. These are bootstrap validation
+refinements; they do not supply native selection or native mathematical-proof
+admission. See [current measurements](native_mechanism_speedup.md).

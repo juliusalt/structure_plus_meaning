@@ -32,8 +32,6 @@ theorem finite_graph_construction_ready_exact:
   by (simp only: finite_graph_construction_ready_def finite_environment_formed_correct
     finite_graph_formed_correct finite_graph_metadata_at_exact)
 
-export_code finite_graph_metadata_at finite_graph_construction_ready checking SML
-
 text \<open>
   The complete graph supplies every metadata inspection. Available positions
   come from the original actual environment. These exact executable checks

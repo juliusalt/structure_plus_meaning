@@ -124,8 +124,6 @@ lemma native_requirement_report_initial:
   by (simp only: investigation_cycle_initial native_requirement_calculation_equation fst_conv snd_conv
     native_requirement_investigation_def)
 
-export_code native_requirement_investigation_report native_requirement_assess checking SML
-
 text \<open>
   The actual source packages and original requirement families are the problem subjects. Each
   candidate is its complete constructor operation. The independent conditions

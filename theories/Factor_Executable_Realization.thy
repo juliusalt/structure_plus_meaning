@@ -393,9 +393,6 @@ proof -
   show ?thesis using native_schema_graph_unique[OF first second] by simp
 qed
 
-export_code finite_proof_node_rows finite_native_proof_edges finite_native_proof_sites
-  finite_native_graph_readings checking SML
-
 text \<open>
   Recovery follows every premise reference back from the chosen root and retains
   each reached site's full metadata and all its discharge occurrences. It then

@@ -70,8 +70,6 @@ theorem ordered_investigation_select_exact:
   by (simp add: ordered_investigation_select_def investigation_select_def Let_def
     ordered_remdups_exact ordered_member_tree_some)
 
-export_code ordered_remdups ordered_investigation_select checking SML
-
 text \<open>
   The ordered index records exactly the rows already retained. Each input row
   is inspected once, and the last occurrence order of the original list is

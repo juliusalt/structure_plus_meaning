@@ -32,8 +32,6 @@ corollary finite_requirement_decision_failed_condition:
   shows "t |\<notin>| Ys"
   using finite_requirement_decision_each[OF result original _ required] failed by blast
 
-export_code finite_requirement_decision checking SML
-
 text \<open>
   The original requirement list and actual source meanings determine admission.
   Installation constructs every required occurrence and its shared final guard.

@@ -84,6 +84,4 @@ definition required_workflow_packet where
     in (table,comparison,map (investigation_cycle_report [0,1,2,3,4,5,6] [0,1,2,3]
       (fst comparison) (fst (snd comparison))) selections))"
 
-export_code required_workflow_packet checking SML
-
 end

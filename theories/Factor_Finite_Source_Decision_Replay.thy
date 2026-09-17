@@ -84,8 +84,6 @@ qed
 
 end
 
-export_code finite_source_decision_replay checking SML
-
 text \<open>
   The original complete decision is preserved exactly. Its admitted terms
   determine the required target certificates; every such certificate receives

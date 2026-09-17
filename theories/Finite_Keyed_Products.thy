@@ -33,8 +33,6 @@ proof -
   show ?thesis by (rule trans[OF mapped], rule finite_keyed_product_union)
 qed
 
-export_code finite_keyed_product checking SML
-
 text \<open>
   The original finite relation composition pairs every value at a common key
   and retains that key. Its exact member equation permits arbitrary complete

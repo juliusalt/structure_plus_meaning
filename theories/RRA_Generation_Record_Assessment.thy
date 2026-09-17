@@ -109,8 +109,6 @@ theorem generation_record_assessment_exact:
   by (simp only: generation_record_assessment_def generation_record_inspect_def case_prod_conv
     generation_record_condition_def generation_record_reference_exact generation_record_result_assessment_exact)
 
-export_code generation_record_reference generation_record_assessment generation_record_inspect checking SML
-
 text \<open>
   The independent conditions concern actual original targets, every original
   predecessor reading, the whole old environment, and each actual cited use and

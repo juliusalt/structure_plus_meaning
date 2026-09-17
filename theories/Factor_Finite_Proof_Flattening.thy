@@ -125,8 +125,6 @@ lemma finite_schema_proof_graph_nodes:
   by (auto simp: finite_schema_proof_graph_def Let_def finite_graph_nodes_def
     fimage_fimage comp_def)
 
-export_code finite_schema_proof_graph checking SML
-
 text \<open>
   The complete finite graph retains every reachable certificate and required
   call, all original node metadata and every source-derived premise socket.

@@ -40,8 +40,6 @@ theorem required_history_valid:
   "finite_required_history_valid (raw_required_history q)"
   using raw_required_history[of q] by simp
 
-export_code prepare_required_history required_history_step raw_required_history checking SML
-
 text \<open>
   The exposed type carries the proved state invariant. Only checked preparation
   and checked insertion construct its optional results. Its invariant concerns

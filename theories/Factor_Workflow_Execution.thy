@@ -98,8 +98,6 @@ next
   qed
 qed
 
-export_code execute_workflow workflow_completed_paths checking SML
-
 text \<open>
   Every stage receives the same original problem and all actual preceding
   outputs. Every permitted branch is executed, and complete failed stages and

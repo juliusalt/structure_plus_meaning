@@ -159,8 +159,6 @@ next
     by (auto simp: finite_record_candidates_def Let_def finite_record_at_def)
 qed
 
-export_code finite_record_candidates finite_record_body_candidates checking SML
-
 text \<open>
   The complete original candidate filter is unchanged. Only candidate rows that
   follow the actual successor incidences from each actual headed row are

@@ -90,8 +90,6 @@ theorem requirement_decision_packet_comparison:
   by (simp only: requirement_decision_packet_def Let_def fst_conv snd_conv
     context_assessment_investigation_exact)
 
-export_code requirement_decision_packet requirement_decision_indices requirement_decision_inspect checking SML
-
 text \<open>
   Complete original contexts precede every candidate cell. Shared base
   constructions are reused without changing any candidate operation. The

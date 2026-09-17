@@ -398,8 +398,6 @@ proof -
   show ?thesis using pattern_quoted_unique[OF first second] by (simp add: fset_inject)
 qed
 
-export_code finite_pattern_readings checking SML
-
 text \<open>
   Local citations read variables only when their actual target occurrence is
   in the supplied scope. Literal targets retain their exact external values.

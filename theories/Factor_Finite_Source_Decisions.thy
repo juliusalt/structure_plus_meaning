@@ -90,8 +90,6 @@ qed
 
 end
 
-export_code finite_source_decision checking SML
-
 text \<open>
   One shared operation constructs the required entry from the complete actual
   source, reads the installed native program, derives its finite demand from

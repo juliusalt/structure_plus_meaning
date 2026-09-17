@@ -150,8 +150,6 @@ theorem native_history_report_packet_exact:
     native_history_shared_assessments_exact native_history_shared_calculation_exact
     native_history_investigation_report_def native_history_methods_def)
 
-export_code native_history_report_packet checking SML
-
 text \<open>
   The packet constructs one context per problem, retaining its actual source
   report, original evaluation and base history. Each cell applies the original candidate

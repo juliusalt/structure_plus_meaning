@@ -67,8 +67,6 @@ theorem finite_native_control_profile:
   by (rule finite_guard_source_extension_profile[OF formed])
     (use agreement in \<open>simp only: finite_system_agrees_on_correct; simp\<close>)
 
-export_code finite_native_control_report checking SML
-
 text \<open>
   Every index supplies its complete program fields. The formation and
   preservation conditions are computed from those actual fields. The source

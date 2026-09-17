@@ -33,8 +33,6 @@ lemma finite_relation_functional_rows_code [code]:
   "finite_relation_functional F=single_valued (fset F)"
   by (rule finite_relation_functional_correct)
 
-export_code finite_relation_functional checking SML
-
 text \<open>The list traversal compares each row only with following rows.
   Reflexivity supplies the diagonal cases and equality symmetry supplies the
   reverse comparisons. Repeated equal rows are allowed and conflicting values

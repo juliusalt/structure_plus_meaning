@@ -44,7 +44,4 @@ theorem digit_allocated_valid:
   "encoded_bounded_valid digit_use_path digit_address_path (raw_digit_allocated q)"
   using raw_digit_allocated[of q] by simp
 
-export_code empty_digit_allocated load_digit_allocated digit_allocated_allocate digit_allocated_add_binding
-  digit_allocated_next_use digit_allocated_artifacts digit_allocated_bindings checking SML
-
 end

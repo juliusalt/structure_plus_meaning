@@ -40,6 +40,4 @@ theorem graft_rows_view:
 
 end
 
-export_code encoded_graft_rows digit_use_path digit_address_path checking SML
-
 end

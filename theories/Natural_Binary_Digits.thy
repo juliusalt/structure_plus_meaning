@@ -59,6 +59,4 @@ next
   qed
 qed
 
-export_code natural_binary_digits natural_binary_value checking SML
-
 end

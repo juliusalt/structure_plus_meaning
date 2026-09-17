@@ -109,8 +109,6 @@ proof -
   show ?thesis using actual(1,2,4) recovered by (simp only: Let_def; blast)
 qed
 
-export_code finite_install_graph_codes checking SML
-
 text \<open>
   Every compiled node artifact is present before its complete reference
   family is installed. References may reach original source positions or

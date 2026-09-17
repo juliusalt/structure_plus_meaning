@@ -122,8 +122,6 @@ proof -
     by (simp only: node tree result fst_conv)
 qed
 
-export_code finite_schema_proof_children checking SML
-
 text \<open>
   Every child retains its complete certificate and actual required call.
   The original source reader supplies that call through the same indexed

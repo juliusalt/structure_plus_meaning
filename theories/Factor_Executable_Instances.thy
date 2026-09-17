@@ -125,8 +125,6 @@ theorem finite_material_satisfied_correct:
       material_pattern_satisfied_def material_pattern_instance_def decode_finite_material_def
       finite_pattern_instances_complete; blast)
 
-export_code finite_pattern_instances finite_material_formed finite_material_satisfied checking SML
-
 text \<open>
   The candidates arise only from the supplied bindings and literal subterms.
   The completeness equation covers every abstract instance, including terms

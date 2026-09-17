@@ -59,8 +59,6 @@ proof -
     by (simp only: optional_identity_map_injective[OF raw_digit_required_history_inject])
 qed
 
-export_code digit_history_known_step digit_history_view checking SML
-
 text \<open>
   Only the closed valid history and its actual membership guard authorize the
   known predecessor premise. All original target, replay and policy checks

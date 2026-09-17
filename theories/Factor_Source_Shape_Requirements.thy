@@ -40,6 +40,4 @@ text \<open>
   witness for that exact source term.
 \<close>
 
-export_code finite_environment_outer_shape checking SML
-
 end

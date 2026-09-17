@@ -136,6 +136,4 @@ text \<open>Known constructor results discharge the original evidence-inspection
   every unequal report still receives the original independent admission.
   The original question, reference, all producers and every condition are kept.\<close>
 
-export_code native_development_packet development_subject_table steered_development_result checking SML
-
 end

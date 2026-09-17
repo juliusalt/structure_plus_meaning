@@ -16,8 +16,6 @@ definition known_history_report_value :: "nat list \<Rightarrow> nat list list \
 definition known_history_report_selections :: "nat list list" where
   "known_history_report_selections=[[],[0],[0,1,2]]"
 
-export_code known_history_report_value checking SML
-
 text \<open>
   The known history report reuses the digit history presentations and adds the
   admitted predecessor result rows of every context.

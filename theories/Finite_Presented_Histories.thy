@@ -95,8 +95,6 @@ lemma finite_history_rows_injective [intro]:
       finite_history_certificate_value_injective finite_required_history_value_injective
       finite_history_input_value_injective finite_history_state_value_injective)+
 
-export_code finite_history_subject_value finite_history_result_value checking SML
-
 text \<open>
   A required history is presented by its raw state; the state keeps its source,
   policy and material environments, uses, root, goal sequence, entry site and

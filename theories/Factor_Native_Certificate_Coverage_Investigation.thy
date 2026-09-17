@@ -132,8 +132,6 @@ definition certificate_coverage_packet where
     in (Xs,originals,cells,compared,
       map (investigation_cycle_report [0,1] [0,1,2,3] (fst compared) (fst (snd compared))) selections))"
 
-export_code certificate_coverage_packet certificate_coverage_inspect checking SML
-
 text \<open>
   This scope comparison consumes the actual complete original source-derived
   certificate families. Retention is checked on those full values. The other

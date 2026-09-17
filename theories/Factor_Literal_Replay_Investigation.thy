@@ -59,6 +59,4 @@ theorem literal_replay_packet_comparison:
 definition literal_replay_indices :: "nat list" where
   "literal_replay_indices=[0,1,2,3,4,5,6]"
 
-export_code literal_replay_packet checking SML
-
 end

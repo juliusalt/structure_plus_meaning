@@ -127,8 +127,6 @@ theorem native_node_report_packet_exact:
   by (simp only: native_node_report_table_def context_assessment_table_def native_node_cell_def
     native_node_assess_def Let_def)
 
-export_code native_node_report_packet checking SML
-
 text \<open>
   Actual source and metadata subjects supply the constructor inputs. Every cell
   retains its returned environment, exact native readings and independent

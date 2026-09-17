@@ -63,6 +63,4 @@ theorem certified_cause_packet_comparison:
 definition certified_cause_indices :: "nat list" where
   "certified_cause_indices=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14]"
 
-export_code certified_cause_packet checking SML
-
 end

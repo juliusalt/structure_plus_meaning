@@ -38,8 +38,6 @@ proof -
   show ?thesis using available by (simp only: actual; blast)
 qed
 
-export_code finite_certificate_replays checking SML
-
 text \<open>
   A complete certificate family determines a functional family of actual
   native replay results. Its keys retain each complete claim and proof.

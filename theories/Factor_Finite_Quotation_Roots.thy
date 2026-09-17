@@ -26,8 +26,6 @@ proof -
     (use required in \<open>auto simp: finite_complete_data_readings_at_roots_def finite_complete_data_readings_prepared_exact\<close>)
 qed
 
-export_code finite_complete_data_root_candidates finite_complete_data_readings_at_roots checking SML
-
 text \<open>
   The existing complete-quotation theorem identifies its root as exactly the
   carrier positions that occur in neither the participation nor reached role.

@@ -115,8 +115,6 @@ corollary original_replay_certification_instance:
   using original_generation_backend.record_replay_certified
   by (simp only: original_record_replay_instance id_apply)
 
-export_code record_native_replay_with checking SML
-
 text \<open>
   The actual replay guard and judgment quotation are independent of the state
   backend. A successful builder result retains its whole state, generation and

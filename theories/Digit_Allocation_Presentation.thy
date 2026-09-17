@@ -11,5 +11,4 @@ definition digit_allocation_report_value :: "nat list \<Rightarrow> nat list lis
 
 definition digit_allocation_report_selections :: "nat list list" where
  "digit_allocation_report_selections=[[],[0],[0,1]]"
-export_code digit_allocation_report_value checking SML
 end

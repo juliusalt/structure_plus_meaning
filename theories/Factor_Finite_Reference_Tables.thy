@@ -30,8 +30,6 @@ lemma finite_reference_union_values:
     map_relation_values f (fset M)\<union>map_relation_values f (fset N)"
   by simp
 
-export_code finite_slot_keys checking SML
-
 text \<open>
   Rekeying moves each actual reference socket and preserves its value.
   Decoding commutes with rekeying and union. These operations preserve the

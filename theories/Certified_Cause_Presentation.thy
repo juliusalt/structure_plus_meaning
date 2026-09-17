@@ -31,5 +31,4 @@ theorem certified_cause_report_word_exact:
 
 definition certified_cause_report_selections :: "nat list list" where
  "certified_cause_report_selections=[[],[0],[0,1]]"
-export_code certified_cause_report_value checking SML
 end

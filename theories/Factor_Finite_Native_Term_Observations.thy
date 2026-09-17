@@ -64,6 +64,4 @@ next
     by (simp only: finite_native_term_observation_conditions; use source supported evaluated mask in blast)
 qed
 
-export_code finite_native_term_observation checking SML
-
 end

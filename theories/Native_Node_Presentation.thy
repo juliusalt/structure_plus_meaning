@@ -27,5 +27,4 @@ theorem native_node_report_word_exact:
 definition native_node_report_selections :: "nat list list" where
   "native_node_report_selections=[[],[0,3,4,5],[0,1,2,3,4,5],[5,3,0,1,2,4]]"
 
-export_code native_node_report_value checking SML
 end

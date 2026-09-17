@@ -47,6 +47,4 @@ lemma finite_rename_system_correct [simp]:
   by (simp add: finite_rename_system_def rename_system_def decode_finite_system_def
     map_relation_values_def fimage.rep_eq image_image map_prod_def case_prod_unfold finite_rename_schema_correct)
 
-export_code finite_system_interface_option finite_system_clause_family finite_rename_system checking SML
-
 end

@@ -382,9 +382,6 @@ proof -
     by (simp add: map_relation_values_injective[OF injective] fset_inject)
 qed
 
-export_code finite_native_schema_readings finite_native_schema_family_readings
-  finite_native_definition_readings checking SML
-
 text \<open>
   A schema's actual three-field record determines its declared scope, conclusion,
   and complete mixed premise family. The scope must equal all variables used

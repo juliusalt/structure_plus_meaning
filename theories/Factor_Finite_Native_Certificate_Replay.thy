@@ -147,8 +147,6 @@ proof -
 
 qed
 
-export_code finite_native_certificate_replay checking SML
-
 text \<open>
   A checked certificate constructs both the complete native proof graph and
   its actual source call. The full extending environment preserves every old

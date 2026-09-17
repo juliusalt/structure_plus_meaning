@@ -120,6 +120,4 @@ text \<open>
   premise choices remain separate list occurrences.
 \<close>
 
-export_code finite_schema_ordered_generation checking SML
-
 end

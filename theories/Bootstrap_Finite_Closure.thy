@@ -48,7 +48,6 @@ fun finite_path_bound :: "nat \<Rightarrow> ('a \<times> 'a) fset \<Rightarrow> 
 | "finite_path_bound (Suc n) E =
     finite_path_bound n E |\<union>| finite_edge_compose (finite_path_bound n E) E"
 
-
 lemma finite_path_bound_shared_step:
   "finite_path_bound (Suc n) E =
     (let previous=finite_path_bound n E in previous |\<union>| finite_edge_compose previous E)"
@@ -155,7 +154,6 @@ proof -
   qed
 qed
 
-
 section \<open>Several roots share the same complete transition closure\<close>
 
 definition finite_reachable_outputs_from ::
@@ -217,8 +215,6 @@ text \<open>
   definition or path bound. Choosing a private iteration order does not add a
   root, omit an edge, or identify output values through their keys.
 \<close>
-
-export_code finite_edge_closure finite_edge_reaches finite_edge_wellfounded finite_reachable_outputs checking SML
 
 text \<open>
   Bounded iteration stops as soon as its state is unchanged. Its exactness

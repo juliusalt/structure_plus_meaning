@@ -67,8 +67,6 @@ theorem finite_native_graph_result_conditions:
     finite_environment_agrees_on_correct finite_native_graph_readings_correct finite_graph_mapping_exact
     finite_graph_nodes_correct finite_environment_uses_correct; arith)
 
-export_code finite_native_graph_result_assessment finite_native_graph_result_inspect checking SML
-
 text \<open>
   Direct graph placement and certificate replay inspect the same complete
   returned environment, correspondence and graph. Original-node types remain

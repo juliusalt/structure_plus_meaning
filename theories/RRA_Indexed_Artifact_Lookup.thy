@@ -24,6 +24,4 @@ theorem indexed_artifact_lookup_steps:
   "snd (counted_store_lookup tree (use_binary_path u))=Suc (length (use_binary_path u))"
   by (simp only: counted_store_lookup_exact snd_conv)
 
-export_code artifact_relation_store indexed_artifacts_at counted_store_lookup counted_store_update checking SML
-
 end

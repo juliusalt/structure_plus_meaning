@@ -71,6 +71,4 @@ theorem native_requirement_assessment_exact:
     native_requirement_condition_def native_requirement_ready_exact native_requirement_preservation_exact
     native_requirement_term_exact)
 
-export_code native_requirement_assessment checking SML
-
 end

@@ -40,8 +40,6 @@ proof -
     by (simp only: finite_graph_construction_ready_def; blast)
 qed
 
-export_code finite_graph_coordinates checking SML
-
 text \<open>
   The existing finite coordinate extension is instantiated with an empty
   retained domain. Every original graph node receives a distinct fresh use,

@@ -19,8 +19,6 @@ theorem finite_graph_node_inputs_at_exact:
     decode_finite_term_bindings_all finite_term_formed_correct finite_environment_positions_correct
     rel_dom_image fimage.rep_eq less_eq_fset.rep_eq fset_inject[symmetric] bot_fset.rep_eq)
 
-export_code finite_graph_node_inputs_at checking SML
-
 text \<open>
   Clause references, binding keys and premise sockets are checked against
   positions in the actual source environment. Complete bound terms retain

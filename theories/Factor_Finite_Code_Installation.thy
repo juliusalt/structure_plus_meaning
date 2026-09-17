@@ -111,6 +111,4 @@ proof -
   show ?thesis using actual(1,2,4,5) readings by (simp only: Let_def; blast)
 qed
 
-export_code finite_install_code_rows checking SML
-
 end

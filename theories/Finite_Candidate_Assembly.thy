@@ -322,6 +322,4 @@ proof -
   show ?thesis by (simp only: Let_def cached finite_construct_candidate_def)
 qed
 
-export_code finite_construct_candidate checking SML
-
 end

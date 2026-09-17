@@ -27,5 +27,4 @@ theorem native_graph_report_word_exact:
 definition native_graph_report_selections :: "nat list list" where
   "native_graph_report_selections=[[],[0,2,3,5],[0,1,2,3,4,5],[0,2,3,5,1],[0,1,2,4,5]]"
 
-export_code native_graph_report_value checking SML
 end

@@ -53,8 +53,6 @@ lemma finite_data_projection_exact:
     self_contained_term (decode_finite_term t) \<and> v=t"
   by (simp add: finite_data_projection_def finite_self_contained_term_exact)
 
-export_code finite_data_projection checking SML
-
 text \<open>
   The converter reuses existing payload-and-pair layouts without constructing
   a finite inverse for an arbitrary target artifact. Target-bearing terms

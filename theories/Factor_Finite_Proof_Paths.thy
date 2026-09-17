@@ -149,8 +149,6 @@ proof -
     by (simp only: finite_relation_functional_correct finite_schema_proof_paths_correct[symmetric] fimage.rep_eq)
 qed
 
-export_code finite_schema_proof_paths checking SML
-
 text \<open>
   The actual source reader supplies every socket and required child call.
   The operation retains all complete paths and the full certificate-and-call

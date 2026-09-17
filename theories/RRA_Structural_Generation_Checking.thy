@@ -60,9 +60,6 @@ lemma finite_generation_record_ready_structural_code [code]:
       finite_check_generation G E (fst d) (snd d)) rows)"
   by (simp only: structural_generation_distinct finite_generation_record_ready_def)
 
-export_code lookup_check_generation finite_check_generation
-  lookup_generation_record_ready finite_generation_record_ready checking SML
-
 text \<open>
   Exact value-map and distinctness equations compare complete generation words
   inside the original predecessor bijection and readiness operations. Original

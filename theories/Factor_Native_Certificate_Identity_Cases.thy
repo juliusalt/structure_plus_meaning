@@ -28,8 +28,6 @@ definition native_certificate_identity_inputs :: "native_certificate_input list"
 definition native_certificate_original_inputs :: "native_certificate_input list" where
   "native_certificate_original_inputs=map (Native_Certificate_Query \<circ> native_certificate_problem) native_certificate_indices"
 
-export_code native_certificate_identity_inputs native_certificate_original_inputs checking SML
-
 text \<open>
   These are proposed corrective subjects. The actual source compiler constructs
   two equal leaf definitions with two clauses each, a parent requiring one leaf

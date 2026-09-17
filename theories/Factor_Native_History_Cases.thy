@@ -115,8 +115,6 @@ definition native_history_report where
   "native_history_report i=map_option (\<lambda>X. (X,native_history_source_report X,
     map (\<lambda>m. (m,native_history_method m X)) native_history_methods)) (native_history_problem i)"
 
-export_code native_history_report native_history_indices native_history_methods checking SML
-
 text \<open>
   The actual source environment and requested calls are the complete inputs.
   The original evaluator cases supply those values without candidate answers.

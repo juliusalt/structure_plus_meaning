@@ -29,6 +29,4 @@ theorem finite_checked_admission_sequence_native:
       (data_list_term (map admission_instruction_value cs)))\<in>positive_meaning (admission_request_system (fset D))"
   by (simp only: finite_checked_admission_sequence_correct checked_admission_sequence_at_values[OF finite_fset])
 
-export_code finite_checked_admission_sequence checking SML
-
 end

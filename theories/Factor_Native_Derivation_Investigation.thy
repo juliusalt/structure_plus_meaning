@@ -134,8 +134,6 @@ lemma native_derivation_report_initial:
   by (simp only: investigation_cycle_initial native_derivation_calculation_equation fst_conv snd_conv
     native_derivation_investigation_def)
 
-export_code native_derivation_investigation_report native_derivation_assess checking SML
-
 text \<open>
   Every subject contains its actual native environment and requested calls.
   Candidates return complete recursive certificates or actual structural

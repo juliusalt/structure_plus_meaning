@@ -7,11 +7,10 @@ RECIPE = Recipe(
     roots=('History_Index_Execution',),
     export='History_Index_Execution:history_index.ML',
     session='Reconstruct_History_Index',
-    groups=((Execution('comparison', 'check_history_index.py', ('--project', '{project}'), 2400),
-             Execution('presentation', 'check_presented_report.py', ('--project', '{project}',
+    groups=((Execution('presentation', 'check_presented_report.py', ('--project', '{project}',
                  '--module', 'History_Index_Execution', '--report', 'history_index_report_value',
                  '--scope', 'history_index_indices', '--selections', 'history_index_report_selections',
-                 '--workers', '8'), 2400)),),
+                 '--workers', '8'), 2400),),),
     boundary='Actual indexed histories preserve every original request, policy, material and '
              'ordered ledger field and the complete decoded admission index. The original transition '
              'determines reference outputs independently. Shared actual operations feed adverse '

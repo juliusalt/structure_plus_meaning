@@ -1653,3 +1653,12 @@ fields; the indexed subject's query sequence is retained separately from the
 original-source projection. Every original nine-facet generation inspection is
 computed from its actual assessment. The three new packets reuse existing
 scope, investigation and actual-inspection composers.
+
+## Exact reusable proof-provider contexts
+
+Immutable bootstrap contexts now retain actual provider sessions. Dependency closure invalidates unchanged-text descendants of changed ancestors; exports use each surviving actual provider. Original sources, exact import-only rewriting, helper inputs, session configuration and heap/database identity are checked. New proofs retain their original ROOT through completion. This is bootstrap proof reuse, not native selection or development admission. The complete 403.75 s check reused all 1,624 theories, executed all 50 recipes and passed 143 tool tests plus 35 kernel tests (2 skips). Fourteen families now use native words only.
+
+The final unchanged-workspace check passed in 11.30 s, retaining all 50 complete
+recipe manifests and 1,624 proof contexts. It ran 144 tool tests and 35 kernel
+tests (two optional skips), with ROOT and orchestration inputs bound through
+retention. The outer recipe limit now matches the requested job count.

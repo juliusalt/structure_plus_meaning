@@ -1,0 +1,20 @@
+{
+  "status": "verified",
+  "source": "/tmp/context-complete-cycle-1789612365488782338/recipes",
+  "archive": "/tmp/context-complete-cycle-1789612365488782338-recipes.tar.gz",
+  "archive_sha256": "badadffe0ae6910b29be0cd9938a6284a048861c71030310dfca8539361f2146",
+  "archive_bytes": 883158529,
+  "expanded_file_bytes": 3675321549,
+  "files_or_links": 116709,
+  "inventory_sha256": "262bed41d4bd87f10c87b9f6513acd5204090f966b26b8890cf57b2373674984",
+  "restore": [
+    "tar",
+    "-xzf",
+    "/tmp/context-complete-cycle-1789612365488782338-recipes.tar.gz",
+    "-C",
+    "/tmp"
+  ],
+  "boundary": "Every file content, size and symbolic link was verified against the archive before deleting generated recipe copies. Accepted parent contexts, current exports, manifests, summaries and the original digit comparison word remain in place.",
+  "expanded_copy_removed": true,
+  "seconds": 33.763083012003335
+}

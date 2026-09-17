@@ -1,0 +1,816 @@
+{
+  "version": 1,
+  "status": "accepted",
+  "implementation_revision": "See commit containing this file; parent 4dd813f.",
+  "ordinary_check": {
+    "output": "/tmp/context-complete-cycle-1789612365488782338",
+    "receipt_sha256": "c74b21e1dc85bb4a83a8dc9e1766df78e324cbc61970ad82f5ca79434e6f63e3",
+    "status": "accepted",
+    "base": "/tmp/context-reuse-client-1789610839024614686/proof",
+    "phases": {
+      "base_and_impact": 1.39,
+      "recipe_impact": 4.28,
+      "export": 3.57,
+      "recipes_and_host_tests": 392.64
+    },
+    "source_checks": {
+      "theory_count": 1624,
+      "missing_theory_files": [],
+      "unlisted_theories": [],
+      "proof_escape_matches": []
+    },
+    "base_receipt_sha256": "8d33605c6bf6001b94bb3cc7fbb84e1df7711d829c961add1fce95c8eb4eb1da",
+    "base_theories": 1624,
+    "base_context_receipt": "/tmp/context-reuse-client-1789610839024614686/proof/accepted-context.json",
+    "theories": 1624,
+    "reused_theories": 1624,
+    "rebuilt_theories": [],
+    "accepted_proof_context": "/tmp/context-reuse-client-1789610839024614686/proof",
+    "host_tests": {
+      "tools": {
+        "exit_code": 0,
+        "ran": 143,
+        "skipped": 0,
+        "tail": [
+          "OK"
+        ]
+      },
+      "kernel": {
+        "exit_code": 0,
+        "ran": 35,
+        "skipped": 2,
+        "tail": [
+          "OK (skipped=2)"
+        ]
+      }
+    },
+    "recipes": {
+      "allocated-environments": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 2.47,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/allocated-environments/reconstruction.json"
+      },
+      "artifact-lookup": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 2.17,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/artifact-lookup/reconstruction.json"
+      },
+      "cached-grafts": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 3.07,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/cached-grafts/reconstruction.json"
+      },
+      "certificate-coverage": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 8.83,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/certificate-coverage/reconstruction.json"
+      },
+      "certificate-development": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 9.38,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/certificate-development/reconstruction.json"
+      },
+      "certificate-input-development": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 12.58,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/certificate-input-development/reconstruction.json"
+      },
+      "certificate-scope-repair": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 7.62,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/certificate-scope-repair/reconstruction.json"
+      },
+      "certified-causes": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 49.55,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/certified-causes/reconstruction.json"
+      },
+      "concurrent-history": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 31.77,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/concurrent-history/reconstruction.json"
+      },
+      "concurrent-replay": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 99.77,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/concurrent-replay/reconstruction.json"
+      },
+      "constructed-history": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 207.9,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/constructed-history/reconstruction.json"
+      },
+      "data-reading": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 4.07,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/data-reading/reconstruction.json"
+      },
+      "decision-replay": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 369.54,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/decision-replay/reconstruction.json"
+      },
+      "digit-allocation": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 3.02,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/digit-allocation/reconstruction.json"
+      },
+      "digit-generation": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 3.52,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/digit-generation/reconstruction.json"
+      },
+      "digit-history": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 188.28,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/digit-history/reconstruction.json"
+      },
+      "encoded-environments": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 4.37,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/encoded-environments/reconstruction.json"
+      },
+      "environment-grafts": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 2.62,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/environment-grafts/reconstruction.json"
+      },
+      "environment-updates": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 2.62,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/environment-updates/reconstruction.json"
+      },
+      "generation-records": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 4.32,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/generation-records/reconstruction.json"
+      },
+      "graft-admission": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 2.62,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/graft-admission/reconstruction.json"
+      },
+      "history-index": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 86.36,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/history-index/reconstruction.json"
+      },
+      "indexed-generation": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 2.62,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/indexed-generation/reconstruction.json"
+      },
+      "known-history": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 194.98,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/known-history/reconstruction.json"
+      },
+      "literal-replay": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 6.57,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/literal-replay/reconstruction.json"
+      },
+      "native-admission": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 75.48,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/native-admission/reconstruction.json"
+      },
+      "native-certificate-replay": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 172.27,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/native-certificate-replay/reconstruction.json"
+      },
+      "native-certificates": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 4.37,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/native-certificates/reconstruction.json"
+      },
+      "native-child": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 106.07,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/native-child/reconstruction.json"
+      },
+      "native-derivations": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 4.62,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/native-derivations/reconstruction.json"
+      },
+      "native-development": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 48.12,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/native-development/reconstruction.json"
+      },
+      "native-evaluation": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 3.82,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/native-evaluation/reconstruction.json"
+      },
+      "native-extensions": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 2.82,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/native-extensions/reconstruction.json"
+      },
+      "native-graphs": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 20.99,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/native-graphs/reconstruction.json"
+      },
+      "native-histories": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 6.68,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/native-histories/reconstruction.json"
+      },
+      "native-nodes": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 2.62,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/native-nodes/reconstruction.json"
+      },
+      "native-requirements": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 47.48,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/native-requirements/reconstruction.json"
+      },
+      "native-sources": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 4.22,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/native-sources/reconstruction.json"
+      },
+      "native-steering": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 82.79,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/native-steering/reconstruction.json"
+      },
+      "native-workflow": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 71.93,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/native-workflow/reconstruction.json"
+      },
+      "quoted-history": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 195.28,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/quoted-history/reconstruction.json"
+      },
+      "required-causes": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 12.68,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/required-causes/reconstruction.json"
+      },
+      "required-history": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 32.08,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/required-history/reconstruction.json"
+      },
+      "requirement-decisions": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 11.64,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/requirement-decisions/reconstruction.json"
+      },
+      "requirement-plans": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 1.97,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/requirement-plans/reconstruction.json"
+      },
+      "requirement-sources": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 2.38,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/requirement-sources/reconstruction.json"
+      },
+      "source-development": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 123.87,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/source-development/reconstruction.json"
+      },
+      "digit-replay": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 390.42,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/digit-replay/reconstruction.json"
+      },
+      "use-allocation": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 2.37,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/use-allocation/reconstruction.json"
+      },
+      "use-codecs": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 2.47,
+        "receipt": "/tmp/context-complete-cycle-1789612365488782338/recipes/use-codecs/reconstruction.json"
+      }
+    },
+    "failed_recipes": [],
+    "active_context": "/tmp/context-reuse-client-1789610839024614686/proof",
+    "seconds": 403.75,
+    "jobs": 6,
+    "proof_threads": 16
+  },
+  "partial_checks": [
+    {
+      "output": "/tmp/context-reuse-client-1789610839024614686",
+      "receipt_sha256": "689aba2338dd2267791f25844d549d8e329c27a6c589bdfcc3aba2b5efb9f287",
+      "status": "accepted",
+      "theories": 1624,
+      "base_theories": 1620,
+      "reused_theories": 1617,
+      "rebuilt_theories": [
+        "Digit_Generation_Execution",
+        "Digit_Generation_Presentation",
+        "Finite_Presented_Generation_Queries",
+        "History_Index_Execution",
+        "History_Index_Presentation",
+        "Indexed_Generation_Execution",
+        "Indexed_Generation_Presentation"
+      ],
+      "phases": {
+        "base_and_impact": 0.9,
+        "proof": 20.95,
+        "recipe_impact": 0.16,
+        "export": 2.32,
+        "recipes_and_host_tests": 4.72
+      },
+      "host_tests": {
+        "tools": {
+          "exit_code": 0,
+          "ran": 135,
+          "skipped": 0,
+          "tail": [
+            "OK"
+          ]
+        },
+        "kernel": {
+          "exit_code": 0,
+          "ran": 35,
+          "skipped": 2,
+          "tail": [
+            "OK (skipped=2)"
+          ]
+        }
+      },
+      "seconds": 34.93,
+      "recipes": {
+        "indexed-generation": {
+          "status": "accepted",
+          "exit_code": 0,
+          "seconds": 4.72,
+          "receipt": "/tmp/context-reuse-client-1789610839024614686/recipes/indexed-generation/reconstruction.json"
+        }
+      },
+      "boundary": "A partial recipe check, not a replacement for the complete inventory."
+    },
+    {
+      "output": "/tmp/context-provider-export-1789610998956723938",
+      "receipt_sha256": "a7a4cb261d5728a91a1807e1398f2ba65feb5391d9fc3a892e75a671be315549",
+      "status": "accepted",
+      "theories": 1624,
+      "base_theories": 1624,
+      "reused_theories": 1624,
+      "rebuilt_theories": [],
+      "phases": {
+        "base_and_impact": 1.41,
+        "recipe_impact": 0.21,
+        "export": 2.97,
+        "recipes_and_host_tests": 4.82
+      },
+      "host_tests": {
+        "tools": {
+          "exit_code": 0,
+          "ran": 135,
+          "skipped": 0,
+          "tail": [
+            "OK"
+          ]
+        },
+        "kernel": {
+          "exit_code": 0,
+          "ran": 35,
+          "skipped": 2,
+          "tail": [
+            "OK (skipped=2)"
+          ]
+        }
+      },
+      "seconds": 9.77,
+      "recipes": {
+        "indexed-generation": {
+          "status": "accepted",
+          "exit_code": 0,
+          "seconds": 4.82,
+          "receipt": "/tmp/context-provider-export-1789610998956723938/recipes/indexed-generation/reconstruction.json"
+        },
+        "native-nodes": {
+          "status": "accepted",
+          "exit_code": 0,
+          "seconds": 2.37,
+          "receipt": "/tmp/context-provider-export-1789610998956723938/recipes/native-nodes/reconstruction.json"
+        }
+      },
+      "boundary": "A partial recipe check, not a replacement for the complete inventory."
+    }
+  ],
+  "explicit_currency_check": {
+    "command": [
+      "/usr/bin/env",
+      "USER_HOME=/tmp/structural-isabelle",
+      "/opt/isabelle/bin/isabelle",
+      "build",
+      "-n",
+      "-b",
+      "-o",
+      "threads=16",
+      "-o",
+      "parallel_proofs=0",
+      "-o",
+      "build_timing_threshold=0",
+      "-d",
+      "/tmp/native-cold-proof-1789607852088028357",
+      "Native_Cold_1789607852088028357"
+    ],
+    "exit_code": 0,
+    "seconds": 3.3232085430063307,
+    "output": "0:00:02 elapsed time\n",
+    "before": {
+      "/tmp/structural-isabelle/.isabelle/Isabelle2025-2/heaps/polyml-5.9.2_x86_64_32-linux/Native_Cold_1789607852088028357": "d641e8e537f9838ab16decba90388cb59d726396a1ceaf6e9c92862e5190e30a",
+      "/tmp/structural-isabelle/.isabelle/Isabelle2025-2/heaps/polyml-5.9.2_x86_64_32-linux/log/Native_Cold_1789607852088028357.db": "814964a4aa357e5136b9f6b71c36f6d07e7d4b301e7eeb0977594993fdcc2cd8"
+    }
+  },
+  "relocated_context": {
+    "refused": "Stored context is not current; see context-currency.log.",
+    "original_heap_unchanged": true,
+    "log": "/tmp/context-lineage-real-mtb8toww/relocated/context-currency.log"
+  },
+  "lineage_exercise": {
+    "status": "accepted",
+    "directory": "/tmp/context-lineage-real-g343suoj",
+    "steps": [
+      {
+        "label": "initial",
+        "output": "/tmp/context-lineage-real-g343suoj/initial",
+        "exit_code": 0,
+        "status": "accepted",
+        "rebuilt": 3,
+        "reused": 0,
+        "seconds": 22.44286850199569
+      },
+      {
+        "label": "stale_dependent",
+        "output": "/tmp/context-lineage-real-g343suoj/stale_dependent",
+        "exit_code": 1,
+        "status": "failed",
+        "rebuilt": 2,
+        "reused": 0,
+        "seconds": 6.383544304000679
+      },
+      {
+        "label": "repaired",
+        "output": "/tmp/context-lineage-real-g343suoj/repaired",
+        "exit_code": 0,
+        "status": "accepted",
+        "rebuilt": 2,
+        "reused": 0,
+        "seconds": 8.591984890997992
+      }
+    ],
+    "provider_sessions": {
+      "A": {
+        "session": "Context_repaired_1789612440332101839",
+        "directory": "/tmp/context-lineage-real-g343suoj/repaired",
+        "theory": "Context_repaired_1789612440332101839.A"
+      },
+      "B": {
+        "session": "Context_repaired_1789612440332101839",
+        "directory": "/tmp/context-lineage-real-g343suoj/repaired",
+        "theory": "Context_repaired_1789612440332101839.B"
+      },
+      "Unrelated": {
+        "session": "Context_initial_1789612406147323476",
+        "directory": "/tmp/context-lineage-real-g343suoj/initial",
+        "theory": "Context_initial_1789612406147323476.Unrelated"
+      }
+    },
+    "actual_values": [
+      2,
+      7
+    ],
+    "boundary": "Changing only an ancestor forced the unchanged dependent theorem to fail. Repairing that theorem produced a new accepted child; exports from the child and its unchanged ancestor both executed with the expected actual values."
+  },
+  "earlier_lineage_exercise": {
+    "status": "accepted",
+    "directory": "/tmp/context-lineage-real-mtb8toww",
+    "steps": [
+      {
+        "label": "initial",
+        "output": "/tmp/context-lineage-real-mtb8toww/initial",
+        "exit_code": 0,
+        "status": "accepted",
+        "rebuilt": 3,
+        "reused": 0,
+        "seconds": 4.671795716996712
+      },
+      {
+        "label": "stale_dependent",
+        "output": "/tmp/context-lineage-real-mtb8toww/stale_dependent",
+        "exit_code": 1,
+        "status": "failed",
+        "rebuilt": 2,
+        "reused": 0,
+        "seconds": 3.2701789359998656
+      },
+      {
+        "label": "repaired",
+        "output": "/tmp/context-lineage-real-mtb8toww/repaired",
+        "exit_code": 0,
+        "status": "accepted",
+        "rebuilt": 2,
+        "reused": 0,
+        "seconds": 4.822110013999918
+      }
+    ],
+    "provider_sessions": {
+      "A": {
+        "session": "Context_repaired_1789611410499775022",
+        "directory": "/tmp/context-lineage-real-mtb8toww/repaired",
+        "theory": "Context_repaired_1789611410499775022.A"
+      },
+      "B": {
+        "session": "Context_repaired_1789611410499775022",
+        "directory": "/tmp/context-lineage-real-mtb8toww/repaired",
+        "theory": "Context_repaired_1789611410499775022.B"
+      },
+      "Unrelated": {
+        "session": "Context_initial_1789611400355588542",
+        "directory": "/tmp/context-lineage-real-mtb8toww/initial",
+        "theory": "Context_initial_1789611400355588542.Unrelated"
+      }
+    },
+    "actual_values": [
+      2,
+      7
+    ],
+    "boundary": "Changing only an ancestor forced the unchanged dependent theorem to fail. Repairing that theorem produced a new accepted child; exports from the child and its unchanged ancestor both executed with the expected actual values."
+  },
+  "lineage_reproducer": {
+    "source": "from pathlib import Path\nimport hashlib,json,subprocess,sys,tempfile,time\nsys.path.insert(0,'/home/julius/structure_and_semantics/tools')\nimport proof_contexts as c, export_proved_code as e, native_execution_runtime as rt, investigate\nD=Path(tempfile.mkdtemp(prefix='context-lineage-real-',dir='/tmp'));P=D/'source';(P/'theories').mkdir(parents=True)\n(P/'ROOT').write_text('session Lineage_Source = HOL +\\n  theories\\n    A\\n    B\\n    Unrelated\\n')\n(P/'theories/A.thy').write_text('theory A imports Main begin\\ndefinition versioned :: nat where \"versioned=1\"\\nend\\n')\n(P/'theories/B.thy').write_text('theory B imports A begin\\nlemma dependent_claim: \"versioned=1\" by (simp add: versioned_def)\\nexport_code versioned integer_of_nat in Eval module_name B file_prefix \"versioned\"\\nend\\n')\n(P/'theories/Unrelated.thy').write_text('theory Unrelated imports Main begin\\ndefinition stable :: nat where \"stable=7\"\\nexport_code stable integer_of_nat in Eval module_name Unrelated file_prefix \"stable\"\\nend\\n')\nresults=[]\ndef prove(label,parent=None,roots=('B','Unrelated')):\n O=D/label;session='Context_'+label+'_'+str(time.time_ns());cmd=['python','-B','/home/julius/structure_and_semantics/tools/prove_context.py','--project',str(P),'--output',str(O),'--session',session,'--threads','4','--timeout','120']\n if parent:cmd+=['--parent-project',str(parent)]\n cmd+=list(roots);start=time.monotonic()\n with (D/(label+'.log')).open('w') as f:r=subprocess.run(cmd,stdout=f,stderr=subprocess.STDOUT,timeout=180)\n q=json.loads((O/'result.json').read_text());results.append({'label':label,'output':str(O),'exit_code':r.returncode,'status':q['status'],'rebuilt':q['checked_theories'],'reused':q['parent_theories_reused'],'seconds':time.monotonic()-start});print(results[-1],flush=True);return O,q\nfirst,a=prove('initial');assert a['status']=='accepted';c.adopt_proof_context(first,P)\np=P/'theories/A.thy';p.write_text(p.read_text().replace('versioned=1','versioned=2'))\nbad,b=prove('stale_dependent',first,('B',));assert b['status']=='failed' and b['checked_theories']==2\ntry:c.adopt_proof_context(bad,P)\nexcept AssertionError:pass\nelse:raise AssertionError('Failed dependent proof was admitted.')\np=P/'theories/B.thy';p.write_text(p.read_text().replace('versioned=1','versioned=2'))\nlast,z=prove('repaired',first,('B',));assert z['status']=='accepted';ctx=c.adopt_proof_context(last,P)\nassert ctx['providers']['B']['directory']==str(last) and ctx['providers']['Unrelated']['directory']==str(first)\nO=D/'exports';assert e.export_context(last,P,O,[('B','versioned.ML'),('Unrelated','stable.ML')])==0\nengines={n:Path(json.loads((O/(n+'.proof.json')).read_text())['exports'][0]['path']) for n in ('versioned','stable')}\nrun=D/'run';run.mkdir();text='use '+investigate.ml_string(str(engines['versioned']))+';\\nuse '+investigate.ml_string(str(engines['stable']))+';\\nval () = print (\"ACTUAL_VALUES \" ^ IntInf.toString (B.integer_of_nat B.versioned) ^ \" \" ^ IntInf.toString (Unrelated.integer_of_nat Unrelated.stable) ^ \"\\\\n\");\\n'\ncode,cmd,_=rt.prepare({'code_target':'Eval'},engines['versioned'],text,Path('/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly'),run,workers=2);(run/'execute.ML').write_text(code)\nwith (run/'native.log').open('w') as f:r=subprocess.run(cmd,stdout=f,stderr=subprocess.STDOUT,timeout=60)\nassert r.returncode==0 and 'ACTUAL_VALUES 2 7' in (run/'native.log').read_text()\nsummary={'status':'accepted','directory':str(D),'steps':results,'provider_sessions':{n:ctx['providers'][n] for n in ('A','B','Unrelated')},'actual_values':[2,7],'boundary':'Changing only an ancestor forced the unchanged dependent theorem to fail. Repairing that theorem produced a new accepted child; exports from the child and its unchanged ancestor both executed with the expected actual values.'};(D/'exercise.json').write_text(json.dumps(summary,indent=2)+'\\n');Path('/tmp/native-context-lineage-exercise.json').write_text(json.dumps(summary,indent=2)+'\\n');print('LINEAGE VERIFIED',D,flush=True)\n",
+    "sha256": "e1e2b25c7c8d7db36b2d93d8fa24fcbaf19a919f3ba6bd752fcd32c3ce240f6e",
+    "boundary": "Physical regression of bootstrap proof reuse, not native development admission."
+  },
+  "configuration_boundary": "New proofs retain original-ROOT, compare it at completion, and bind its session declaration on adoption and reuse. Existing accepted legacy proofs retain their original evidence and explicit native currency check.",
+  "retention_boundary": "Partial inventories, conflicting or missing inputs, post-validation source/tool/fixture changes, failed host suites and invented host test counts are refused before retention.",
+  "concurrency": "The complete recipe batch ran with six configured outer jobs; its independent proof-lineage exercise overlapped. Recipes retain their actual worker settings and nested groups. Times are not controlled speedup ratios.",
+  "remaining": "Cold rebuild cost, complete non-recipe execution coverage, native selection/criticism, real practical usefulness and native control remain open.",
+  "unchanged_complete_check": {
+    "output": "/tmp/context-unchanged-final-1789612851",
+    "receipt_sha256": "7303dfa73c9e8155b389f34512e6805c5643c2559817c6a76ce788b5843ab7c7",
+    "status": "accepted",
+    "base": "/tmp/context-reuse-client-1789610839024614686/proof",
+    "phases": {
+      "base_and_impact": 1.41,
+      "recipe_impact": 3.68,
+      "export": 0.0,
+      "recipes_and_host_tests": 4.38
+    },
+    "validation_inputs": {
+      "ROOT": "64c31cd498d98cb241c759f55b08dcbd178dfbed12f87656ef1cf20068a22bba",
+      "tools/incremental_check.py": "aa28ca3efb3dc5c78ab40262b221b0b4826a48e47127f375bd4f4654d90e1154",
+      "tools/check.py": "2d035d05d6e1dd4246d9bb810f612cd0edb923ca350ba04960d8bfd83b9116d2"
+    },
+    "source_checks": {
+      "theory_count": 1624,
+      "missing_theory_files": [],
+      "unlisted_theories": [],
+      "proof_escape_matches": []
+    },
+    "base_receipt_sha256": "8d33605c6bf6001b94bb3cc7fbb84e1df7711d829c961add1fce95c8eb4eb1da",
+    "base_theories": 1624,
+    "base_context_receipt": "/tmp/context-reuse-client-1789610839024614686/proof/accepted-context.json",
+    "theories": 1624,
+    "reused_theories": 1624,
+    "rebuilt_theories": [],
+    "accepted_proof_context": "/tmp/context-reuse-client-1789610839024614686/proof",
+    "host_tests": {
+      "tools": {
+        "exit_code": 0,
+        "ran": 144,
+        "skipped": 0,
+        "tail": [
+          "OK"
+        ]
+      },
+      "kernel": {
+        "exit_code": 0,
+        "ran": 35,
+        "skipped": 2,
+        "tail": [
+          "OK (skipped=2)"
+        ]
+      }
+    },
+    "recipes": {
+      "allocated-environments": {
+        "status": "unchanged"
+      },
+      "artifact-lookup": {
+        "status": "unchanged"
+      },
+      "cached-grafts": {
+        "status": "unchanged"
+      },
+      "certificate-coverage": {
+        "status": "unchanged"
+      },
+      "certificate-development": {
+        "status": "unchanged"
+      },
+      "certificate-input-development": {
+        "status": "unchanged"
+      },
+      "certificate-scope-repair": {
+        "status": "unchanged"
+      },
+      "certified-causes": {
+        "status": "unchanged"
+      },
+      "concurrent-history": {
+        "status": "unchanged"
+      },
+      "concurrent-replay": {
+        "status": "unchanged"
+      },
+      "constructed-history": {
+        "status": "unchanged"
+      },
+      "data-reading": {
+        "status": "unchanged"
+      },
+      "decision-replay": {
+        "status": "unchanged"
+      },
+      "digit-allocation": {
+        "status": "unchanged"
+      },
+      "digit-generation": {
+        "status": "unchanged"
+      },
+      "digit-history": {
+        "status": "unchanged"
+      },
+      "encoded-environments": {
+        "status": "unchanged"
+      },
+      "environment-grafts": {
+        "status": "unchanged"
+      },
+      "environment-updates": {
+        "status": "unchanged"
+      },
+      "generation-records": {
+        "status": "unchanged"
+      },
+      "graft-admission": {
+        "status": "unchanged"
+      },
+      "history-index": {
+        "status": "unchanged"
+      },
+      "indexed-generation": {
+        "status": "unchanged"
+      },
+      "known-history": {
+        "status": "unchanged"
+      },
+      "literal-replay": {
+        "status": "unchanged"
+      },
+      "native-admission": {
+        "status": "unchanged"
+      },
+      "native-certificate-replay": {
+        "status": "unchanged"
+      },
+      "native-certificates": {
+        "status": "unchanged"
+      },
+      "native-child": {
+        "status": "unchanged"
+      },
+      "native-derivations": {
+        "status": "unchanged"
+      },
+      "native-development": {
+        "status": "unchanged"
+      },
+      "native-evaluation": {
+        "status": "unchanged"
+      },
+      "native-extensions": {
+        "status": "unchanged"
+      },
+      "native-graphs": {
+        "status": "unchanged"
+      },
+      "native-histories": {
+        "status": "unchanged"
+      },
+      "native-nodes": {
+        "status": "unchanged"
+      },
+      "native-requirements": {
+        "status": "unchanged"
+      },
+      "native-sources": {
+        "status": "unchanged"
+      },
+      "native-steering": {
+        "status": "unchanged"
+      },
+      "native-workflow": {
+        "status": "unchanged"
+      },
+      "quoted-history": {
+        "status": "unchanged"
+      },
+      "required-causes": {
+        "status": "unchanged"
+      },
+      "required-history": {
+        "status": "unchanged"
+      },
+      "requirement-decisions": {
+        "status": "unchanged"
+      },
+      "requirement-plans": {
+        "status": "unchanged"
+      },
+      "requirement-sources": {
+        "status": "unchanged"
+      },
+      "source-development": {
+        "status": "unchanged"
+      },
+      "digit-replay": {
+        "status": "unchanged"
+      },
+      "use-allocation": {
+        "status": "unchanged"
+      },
+      "use-codecs": {
+        "status": "unchanged"
+      }
+    },
+    "failed_recipes": [],
+    "active_context": "/tmp/context-reuse-client-1789610839024614686/proof",
+    "seconds": 11.3
+  },
+  "scheduler_correction": "The 403.75-second batch configured six jobs but its shared jobs+1 pool could run seven recipes after the host-suite task completed. The final checker uses separate host-suite and recipe pools so --jobs is the actual outer recipe limit. Its unchanged check launched no recipes.",
+  "recipe_bulk_archive": {
+    "record": "proof-context-temporary-archive.json",
+    "record_sha256": "356c8c422314be3ae50bbba1d43b9c3eea5f5fa8b1481a5b8c55cb2a1e45c692"
+  }
+}

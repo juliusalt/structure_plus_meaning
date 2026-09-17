@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-"""Validate a changed workspace against an accepted proof base in one fixed directory.
+"""Validate a workspace using exact accepted proof contexts at their original paths.
 
-Isabelle pairs every session source hash with its absolute path, so the accepted heap is current only
-for the fixed base directory it was built in. A base is established rarely, by a complete check in
-that directory. A check never rebuilds it: it refuses unless the base heap is the one recorded at
-establishment, proves only changed theories and their dependents over that heap, executes every recipe
-whose complete source manifest differs from its retained verification against exports of the proof
-containing its roots, and keeps the retained verification of every recipe whose manifest is unchanged.
+Rebuild only changed theories and their dependents, export each module from its actual provider,
+and execute every recipe whose complete input manifest changed. Successful complete checks retain
+their proof context for the next edit; unchanged recipe manifests retain their accepted verification.
+The original fixed base is used only when no newer context has been selected. Neither reuse nor
+adoption rebuilds a parent heap, and a partial recipe check cannot replace the complete inventory.
 """
 from __future__ import annotations
 
@@ -27,6 +26,7 @@ import uuid
 import check
 import investigate
 import prove_context
+import proof_contexts
 import proved_code
 import reconstruction_sources
 from evidence_io import write_json
@@ -43,16 +43,35 @@ def theory_names(project):
 
 def session_declaration(project):
     """ROOT without its theory entries: session name, parent, options, sessions and directories."""
-    return re.sub(r'^    [A-Za-z_][A-Za-z_0-9]*\s*\n', '', (project / 'ROOT').read_text(), flags=re.M)
+    return proof_contexts.session_declaration(project)
+
+
+ACTIVE_CONTEXT = Path('/tmp/structural-active-context.json')
 
 
 def heap_identity(session):
-    """The stored heap and build database of a session; a rebuild replaces both."""
-    stored = sorted(Path(ENV['USER_HOME']).glob('.isabelle/*/heaps/*/' + session))
-    databases = sorted(Path(ENV['USER_HOME']).glob('.isabelle/*/heaps/*/log/' + session + '.db'))
-    assert len(stored) == 1 and len(databases) == 1, 'The accepted session heap is missing.'
-    return {'heap': str(stored[0]), 'heap_sha256': investigate.file_hash(stored[0]),
-            'database': str(databases[0]), 'database_sha256': investigate.file_hash(databases[0])}
+    return proof_contexts.heap_identity(session)
+
+
+def activate_context(directory):
+    context = proof_contexts.load_parent(directory)
+    assert context['project_declaration'] == session_declaration(ROOT)
+    temporary = ACTIVE_CONTEXT.with_suffix('.new.json')
+    write_json(temporary, {'directory': str(Path(directory).resolve()),
+                           'receipt_sha256': investigate.file_hash(Path(context['receipt']))})
+    temporary.replace(ACTIVE_CONTEXT)
+    return context
+
+
+def selected_base(explicit):
+    if explicit is not None:
+        return explicit
+    if ACTIVE_CONTEXT.is_file():
+        selected = json.loads(ACTIVE_CONTEXT.read_text())
+        context = proof_contexts.load_parent(selected['directory'])
+        assert investigate.file_hash(Path(context['receipt'])) == selected['receipt_sha256']
+        return Path(selected['directory'])
+    return Path('/tmp/structural-accepted')
 
 
 def recipes():
@@ -137,6 +156,19 @@ def host_tests():
         return dict(pool.map(run, suites.items()))
 
 
+def verify_manifest_inputs(manifests):
+    """Check each distinct input once, including tools and fixtures of unchanged recipes."""
+    files = {}
+    for manifest in manifests.values():
+        for name, sha in manifest['files'].items():
+            path = (ROOT / name).resolve()
+            assert path.is_relative_to(ROOT) and path.is_file(), 'Missing recipe input: ' + name
+            assert name not in files or files[name] == sha, 'Conflicting input versions: ' + name
+            files[name] = sha
+    assert all(investigate.file_hash(ROOT / name) == sha for name, sha in files.items()), \
+        'Recipe inputs changed after validation.'
+
+
 def validate(base, output, *, threads, jobs, selected, all_recipes, timeout):
     started = time.monotonic()
     base = base.resolve()
@@ -149,21 +181,23 @@ def validate(base, output, *, threads, jobs, selected, all_recipes, timeout):
     def phase(name, begin):
         phases[name] = round(time.monotonic() - begin, 2)
 
+    proof = None
     try:
+        summary['validation_inputs'] = {str(path.relative_to(ROOT)): investigate.file_hash(path)
+            for path in (ROOT / 'ROOT', Path(__file__).resolve(), Path(check.__file__).resolve())}
         begin = time.monotonic()
-        session, base_sources, base_inputs = prove_context.accepted_parent(base)
-        recorded = json.loads((base / 'base.json').read_text())
-        assert recorded['session'] == session and recorded['stored'] == heap_identity(session), \
-            'The accepted base heap changed since establishment; establish the base again.'
-        assert session_declaration(ROOT) == session_declaration(base), \
-            'The session declaration changed; a complete check is required.'
+        parent = proof_contexts.load_parent(base)
+        session, base_sources, base_inputs = parent['session'], parent['sources'], parent['inputs']
+        assert session_declaration(ROOT) == parent['project_declaration'], \
+            'The project session declaration changed; a complete check is required.'
         structure = check.source_checks()
         summary['source_checks'] = structure
         assert not any(structure[k] for k in ('missing_theory_files', 'unlisted_theories', 'proof_escape_matches'))
         names = theory_names(ROOT)
         sources, parents = investigate.source_graph(ROOT, [], names)
         reused, rebuilt = proved_code.proved_context_partition(sources, parents, base_sources)
-        summary.update(base_receipt_sha256=base_inputs[str(base / 'validation/build.json')],
+        summary.update(base_receipt_sha256=base_inputs[parent['receipt']],
+                       base_theories=len(base_sources), base_context_receipt=parent['receipt'],
                        theories=len(sources), reused_theories=len(reused), rebuilt_theories=sorted(rebuilt))
         phase('base_and_impact', begin)
 
@@ -178,6 +212,9 @@ def validate(base, output, *, threads, jobs, selected, all_recipes, timeout):
             phase('proof', begin)
             summary['proof'] = str(proof / 'result.json')
             assert code == 0, 'Incremental proof failed; see ' + str(proof / 'build.log')
+            proof_contexts.adopt_proof_context(proof, ROOT)
+        export_context = proof if proof is not None else base
+        summary['accepted_proof_context'] = str(export_context)
 
         begin = time.monotonic()
         version = subprocess.run(['isabelle', 'version'], capture_output=True, text=True, check=True,
@@ -200,28 +237,16 @@ def validate(base, output, *, threads, jobs, selected, all_recipes, timeout):
         phase('recipe_impact', begin)
 
         begin = time.monotonic()
-        groups = {'context': [r for r in affected if r['theory'] in rebuilt],
-                  'base': [r for r in affected if r['theory'] not in rebuilt]}
         exports = {}
-
-        def export(kind):
-            members = groups[kind]
-            if not members:
-                return kind, 0
-            directory = output / ('exports-' + kind)
-            source = ['--proof', str(proof / 'result.json'), '--project', str(ROOT)] if kind == 'context' \
-                else ['--main-project', str(base), '--project', str(ROOT)]
-            modules = [item for r in members for item in ('--module', r['theory'] + ':' + r['filename'])]
-            code, _ = run_logged([sys.executable, '-B', str(TOOLS / 'export_proved_code.py'), *source,
-                                  '--output', str(directory), *modules], output / ('export-' + kind + '.log'), 1800)
-            for r in members:
-                exports[r['name']] = directory / r['filename'].replace('.ML', '.proof.json')
-            return kind, code
-
-        with ThreadPoolExecutor(max_workers=2) as pool:
-            codes = dict(pool.map(export, groups))
+        if affected:
+            directory = output / 'exports-context'
+            modules = [item for row in affected for item in ('--module', row['theory'] + ':' + row['filename'])]
+            code, _ = run_logged([sys.executable, '-B', str(TOOLS / 'export_proved_code.py'),
+                '--context', str(export_context), '--project', str(ROOT), '--output', str(directory),
+                *modules], output / 'export-context.log', 1800)
+            assert code == 0, 'Export failed; see export-context.log.'
+            exports = {r['name']: directory / r['filename'].replace('.ML', '.proof.json') for r in affected}
         phase('export', begin)
-        assert not any(codes.values()), 'Export failed: ' + json.dumps(codes)
 
         begin = time.monotonic()
 
@@ -249,8 +274,8 @@ def validate(base, output, *, threads, jobs, selected, all_recipes, timeout):
                 print(json.dumps({'recipe': row['name'], **results[row['name']]}), flush=True)
 
         ordered = sorted(affected, key=expected_seconds, reverse=True)
-        with ThreadPoolExecutor(max_workers=jobs + 1) as pool:
-            tests = pool.submit(host_tests)
+        with ThreadPoolExecutor(max_workers=1) as test_pool, ThreadPoolExecutor(max_workers=jobs) as pool:
+            tests = test_pool.submit(host_tests)
             list(pool.map(execute, ordered))
             summary['host_tests'] = tests.result()
         phase('recipes_and_host_tests', begin)
@@ -262,28 +287,40 @@ def validate(base, output, *, threads, jobs, selected, all_recipes, timeout):
         assert all(r['exit_code'] == 0 for r in summary['host_tests'].values()), 'Host tests failed.'
         stable = all(investigate.file_hash(Path(p)) == sha for p, sha in base_inputs.items())
         assert stable and investigate.current_sources(sources), 'Base or workspace sources changed during the check.'
+        verify_manifest_inputs({row['name']: row['manifest'] for row in rows}
+                               | {'validation': {'files': summary['validation_inputs']}})
         summary['status'] = 'accepted'
     except Exception as error:
         summary['error'] = f'{type(error).__name__}: {error}'
-    if proof is not None and (proof / 'result.json').is_file():
-        # Exports and receipts are retained as files; the child heap and database are not reused.
-        child = re.search(r'^session (\S+) =', (proof / 'ROOT').read_text(), re.M).group(1)
-        for stored in Path(ENV['USER_HOME']).glob('.isabelle/*/heaps/*/' + child) :
-            stored.unlink()
-        for stored in Path(ENV['USER_HOME']).glob('.isabelle/*/heaps/*/log/' + child + '.*'):
-            stored.unlink()
+    if summary['status'] == 'accepted' and not selected:
+        activate_context(export_context)
+        summary['active_context'] = str(export_context)
+    elif proof is not None:
+        # Failed/partial checks do not advance the complete-workspace checkpoint.
+        # Their accepted proof artifacts remain available for explicit reuse/review.
+        summary['active_context'] = None
     summary['seconds'] = round(time.monotonic() - started, 2)
     write_json(output / 'incremental.json', summary)
     print(json.dumps({k: v for k, v in summary.items() if k not in ('rebuilt_theories', 'recipes', 'source_checks')}))
     return 0 if summary['status'] == 'accepted' else 1
 
 
-def retain(output, host_tests):
+def retain(output, host_tests=None):
     """Record an accepted check: executed recipes receive their current manifests and receipts."""
     output = output.resolve()
     summary = json.loads((output / 'incremental.json').read_text())
     assert summary['status'] == 'accepted'
+    assert set(summary['recipes']) == {row['name'] for row in recipes()}, \
+        'A partial recipe check cannot replace the complete inventory.'
+    actual_tests = {name: {key: result[key] for key in ('ran', 'skipped')}
+                    for name, result in summary['host_tests'].items()}
+    assert all(result['exit_code'] == 0 and result['ran'] is not None
+               for result in summary['host_tests'].values()), 'Host tests did not pass.'
+    assert host_tests is None or host_tests == actual_tests, 'Supplied test counts differ from the actual run.'
+    host_tests = actual_tests
     manifests = json.loads((output / 'manifests.json').read_text())
+    assert set(manifests) == set(summary['recipes'])
+    verify_manifest_inputs(manifests | {'validation': {'files': summary.get('validation_inputs', {})}})
     target = ROOT / 'validation/reconstruction'
     base = Path(summary['base'])
     proof = summary.get('proof')
@@ -327,10 +364,12 @@ def retain(output, host_tests):
                         'validation': 'unchanged complete manifest; retained verification applies'
                                       if result['status'] == 'unchanged' else
                                       'executed against the accepted base and incremental proof'})
-    base_check = json.loads((base / 'validation/check.json').read_text())
+    base_theories = summary.get('base_theories')
+    if base_theories is None:
+        base_theories = len(proof_contexts.load_parent(base)['sources'])
     write_json(ROOT / 'validation/reconstruction/current-verified.json', {
         'status': 'accepted', 'host_tests': host_tests,
-        'base_theories': base_check['theory_count'], 'workspace_theories': summary['theories'],
+        'base_theories': base_theories, 'workspace_theories': summary['theories'],
         'incremental_proof_theories': len(summary['rebuilt_theories']),
         'base_receipt_sha256': summary['base_receipt_sha256'],
         'source_only_reconstructions': entries, 'complete_native_reports': sum(e['reports'] for e in entries),
@@ -340,7 +379,8 @@ def retain(output, host_tests):
     write_json(ROOT / 'validation/incremental-check.json', {
         key: summary[key] for key in ('status', 'base_receipt_sha256', 'theories', 'reused_theories',
                                       'rebuilt_theories', 'phases', 'seconds', 'source_checks', 'host_tests')}
-        | {'recipes': {n: {k: v for k, v in r.items() if k != 'receipt'} for n, r in summary['recipes'].items()}})
+        | {'validation_inputs': summary.get('validation_inputs', {}),
+           'recipes': {n: {k: v for k, v in r.items() if k != 'receipt'} for n, r in summary['recipes'].items()}})
     print(json.dumps({'retained': len(entries), 'reports': sum(e['reports'] for e in entries)}))
     return 0
 
@@ -353,25 +393,35 @@ def main():
     base.add_argument('--threads', type=int, default=16)
     base.add_argument('--timeout', type=int, default=1200)
     run = commands.add_parser('check', help='Validate the workspace against the current accepted base.')
-    run.add_argument('--base', type=Path, default=Path('/tmp/structural-accepted'))
+    run.add_argument('--base', type=Path, help='Override the active accepted context.')
     run.add_argument('--output', type=Path, required=True)
     run.add_argument('--threads', type=int, default=16)
     run.add_argument('--jobs', type=int, default=8)
     run.add_argument('--timeout', type=int, default=1200)
     run.add_argument('--recipe', action='append', default=[])
     run.add_argument('--all-recipes', action='store_true')
+    adopt = commands.add_parser('adopt', help='Reuse a successful immutable proof context without rebuilding it.')
+    adopt.add_argument('--proof', type=Path, required=True)
+    adopt.add_argument('--source-project', type=Path, default=ROOT)
     keep = commands.add_parser('retain', help='Record the evidence of an accepted check.')
     keep.add_argument('--output', type=Path, required=True)
-    keep.add_argument('--host-tests', type=json.loads, required=True)
+    keep.add_argument('--host-tests', type=json.loads, help='Optional cross-check of recorded test counts.')
     args = parser.parse_args()
     if not __debug__:
         raise ValueError('Incremental validation requires Python assertions.')
+    if args.command == 'adopt':
+        directory = args.proof.resolve()
+        if not (directory / proof_contexts.CONTEXT_FILE).is_file():
+            proof_contexts.adopt_proof_context(directory, args.source_project)
+        context = activate_context(directory)
+        print(json.dumps({'active_context': str(directory), 'theories': len(context['sources'])}))
+        return 0
     if args.command == 'retain':
         return retain(args.output, args.host_tests)
     if args.command == 'establish':
         args.base.mkdir(parents=True, exist_ok=True)
         return establish(args.base.resolve(), args.threads, args.timeout)
-    return validate(args.base, args.output, threads=args.threads, jobs=args.jobs, selected=args.recipe,
+    return validate(selected_base(args.base), args.output, threads=args.threads, jobs=args.jobs, selected=args.recipe,
                     all_recipes=args.all_recipes, timeout=args.timeout)
 
 

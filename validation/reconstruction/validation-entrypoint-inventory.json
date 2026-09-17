@@ -1,0 +1,491 @@
+{
+  "kind": "syntactic_entry_point_inventory",
+  "source_revision": "4dd813f plus current proof-context tool batch",
+  "recipes": 50,
+  "direct_execution_scripts": 49,
+  "client_tools": [
+    {
+      "tool": "check_allocated_environment.py",
+      "direct_recipe_callers": [
+        "allocated-environments"
+      ]
+    },
+    {
+      "tool": "check_application_comparison.py",
+      "direct_recipe_callers": []
+    },
+    {
+      "tool": "check_artifact_lookup.py",
+      "direct_recipe_callers": [
+        "artifact-lookup"
+      ]
+    },
+    {
+      "tool": "check_binding_contributions.py",
+      "direct_recipe_callers": []
+    },
+    {
+      "tool": "check_binding_generation.py",
+      "direct_recipe_callers": []
+    },
+    {
+      "tool": "check_builtin_cases.py",
+      "direct_recipe_callers": []
+    },
+    {
+      "tool": "check_cached_grafts.py",
+      "direct_recipe_callers": [
+        "cached-grafts"
+      ]
+    },
+    {
+      "tool": "check_certified_causes.py",
+      "direct_recipe_callers": [
+        "certified-causes"
+      ]
+    },
+    {
+      "tool": "check_child_primitives.py",
+      "direct_recipe_callers": [
+        "native-child"
+      ]
+    },
+    {
+      "tool": "check_concurrent_history.py",
+      "direct_recipe_callers": [
+        "concurrent-history"
+      ]
+    },
+    {
+      "tool": "check_concurrent_replay.py",
+      "direct_recipe_callers": [
+        "concurrent-replay"
+      ]
+    },
+    {
+      "tool": "check_constructed_history.py",
+      "direct_recipe_callers": []
+    },
+    {
+      "tool": "check_construction_chains.py",
+      "direct_recipe_callers": []
+    },
+    {
+      "tool": "check_data_reading.py",
+      "direct_recipe_callers": [
+        "data-reading"
+      ]
+    },
+    {
+      "tool": "check_decision_cases.py",
+      "direct_recipe_callers": []
+    },
+    {
+      "tool": "check_digit_allocation.py",
+      "direct_recipe_callers": [
+        "digit-allocation"
+      ]
+    },
+    {
+      "tool": "check_digit_history.py",
+      "direct_recipe_callers": []
+    },
+    {
+      "tool": "check_digit_replay.py",
+      "direct_recipe_callers": []
+    },
+    {
+      "tool": "check_encoded_environments.py",
+      "direct_recipe_callers": [
+        "encoded-environments"
+      ]
+    },
+    {
+      "tool": "check_environment_updates.py",
+      "direct_recipe_callers": [
+        "environment-updates"
+      ]
+    },
+    {
+      "tool": "check_finite_inference.py",
+      "direct_recipe_callers": []
+    },
+    {
+      "tool": "check_finite_presentations.py",
+      "direct_recipe_callers": []
+    },
+    {
+      "tool": "check_generation_records.py",
+      "direct_recipe_callers": [
+        "generation-records"
+      ]
+    },
+    {
+      "tool": "check_graft_admission.py",
+      "direct_recipe_callers": [
+        "graft-admission"
+      ]
+    },
+    {
+      "tool": "check_grafts.py",
+      "direct_recipe_callers": [
+        "environment-grafts"
+      ]
+    },
+    {
+      "tool": "check_guided_reasoning.py",
+      "direct_recipe_callers": []
+    },
+    {
+      "tool": "check_keyed_tables.py",
+      "direct_recipe_callers": []
+    },
+    {
+      "tool": "check_library_compilation.py",
+      "direct_recipe_callers": []
+    },
+    {
+      "tool": "check_library_coverage.py",
+      "direct_recipe_callers": []
+    },
+    {
+      "tool": "check_literal_replay.py",
+      "direct_recipe_callers": [
+        "literal-replay"
+      ]
+    },
+    {
+      "tool": "check_native_admission.py",
+      "direct_recipe_callers": []
+    },
+    {
+      "tool": "check_native_admission_investigation.py",
+      "direct_recipe_callers": [
+        "native-admission"
+      ]
+    },
+    {
+      "tool": "check_native_certificate_coverage.py",
+      "direct_recipe_callers": [
+        "certificate-coverage"
+      ]
+    },
+    {
+      "tool": "check_native_certificate_development.py",
+      "direct_recipe_callers": [
+        "certificate-development"
+      ]
+    },
+    {
+      "tool": "check_native_certificate_input.py",
+      "direct_recipe_callers": [
+        "certificate-input-development"
+      ]
+    },
+    {
+      "tool": "check_native_certificate_replay.py",
+      "direct_recipe_callers": [
+        "native-certificate-replay"
+      ]
+    },
+    {
+      "tool": "check_native_certificate_scope_repair.py",
+      "direct_recipe_callers": [
+        "certificate-scope-repair"
+      ]
+    },
+    {
+      "tool": "check_native_certificates.py",
+      "direct_recipe_callers": []
+    },
+    {
+      "tool": "check_native_development.py",
+      "direct_recipe_callers": [
+        "native-development"
+      ]
+    },
+    {
+      "tool": "check_native_evaluation.py",
+      "direct_recipe_callers": [
+        "native-evaluation"
+      ]
+    },
+    {
+      "tool": "check_native_extensions.py",
+      "direct_recipe_callers": [
+        "native-extensions"
+      ]
+    },
+    {
+      "tool": "check_native_guard_meanings.py",
+      "direct_recipe_callers": [
+        "requirement-sources"
+      ]
+    },
+    {
+      "tool": "check_native_history.py",
+      "direct_recipe_callers": [
+        "native-histories"
+      ]
+    },
+    {
+      "tool": "check_native_requirement_investigation.py",
+      "direct_recipe_callers": [
+        "native-requirements"
+      ]
+    },
+    {
+      "tool": "check_native_requirement_plans.py",
+      "direct_recipe_callers": [
+        "requirement-sources"
+      ]
+    },
+    {
+      "tool": "check_native_steering.py",
+      "direct_recipe_callers": [
+        "native-steering",
+        "native-steering",
+        "native-steering"
+      ]
+    },
+    {
+      "tool": "check_native_workflow.py",
+      "direct_recipe_callers": [
+        "native-workflow",
+        "native-workflow",
+        "native-workflow",
+        "native-workflow"
+      ]
+    },
+    {
+      "tool": "check_nonempty_construction_inputs.py",
+      "direct_recipe_callers": [
+        "native-child"
+      ]
+    },
+    {
+      "tool": "check_presented_report.py",
+      "direct_recipe_callers": [
+        "constructed-history",
+        "decision-replay",
+        "digit-generation",
+        "digit-history",
+        "history-index",
+        "indexed-generation",
+        "known-history",
+        "native-certificates",
+        "native-derivations",
+        "native-graphs",
+        "native-nodes",
+        "quoted-history",
+        "required-history",
+        "digit-replay"
+      ]
+    },
+    {
+      "tool": "check_program_evaluation.py",
+      "direct_recipe_callers": [
+        "native-evaluation"
+      ]
+    },
+    {
+      "tool": "check_proved_nonempty_inputs.py",
+      "direct_recipe_callers": [
+        "native-child"
+      ]
+    },
+    {
+      "tool": "check_proved_nonempty_reasoning.py",
+      "direct_recipe_callers": [
+        "native-child"
+      ]
+    },
+    {
+      "tool": "check_quoted_history.py",
+      "direct_recipe_callers": []
+    },
+    {
+      "tool": "check_reader_construction.py",
+      "direct_recipe_callers": []
+    },
+    {
+      "tool": "check_reader_requirements.py",
+      "direct_recipe_callers": []
+    },
+    {
+      "tool": "check_reasoning.py",
+      "direct_recipe_callers": []
+    },
+    {
+      "tool": "check_reasoning_cases.py",
+      "direct_recipe_callers": []
+    },
+    {
+      "tool": "check_required_causes.py",
+      "direct_recipe_callers": [
+        "required-causes"
+      ]
+    },
+    {
+      "tool": "check_requirement_decisions.py",
+      "direct_recipe_callers": [
+        "requirement-decisions"
+      ]
+    },
+    {
+      "tool": "check_requirement_plans.py",
+      "direct_recipe_callers": [
+        "requirement-plans"
+      ]
+    },
+    {
+      "tool": "check_requirement_source_boundary.py",
+      "direct_recipe_callers": [
+        "requirement-sources"
+      ]
+    },
+    {
+      "tool": "check_retained_clauses.py",
+      "direct_recipe_callers": [
+        "requirement-sources"
+      ]
+    },
+    {
+      "tool": "check_source_development.py",
+      "direct_recipe_callers": [
+        "source-development",
+        "source-development",
+        "source-development"
+      ]
+    },
+    {
+      "tool": "check_source_extensions.py",
+      "direct_recipe_callers": [
+        "native-sources"
+      ]
+    },
+    {
+      "tool": "check_source_observations.py",
+      "direct_recipe_callers": [
+        "native-sources"
+      ]
+    },
+    {
+      "tool": "check_streamed_digit_replay.py",
+      "direct_recipe_callers": []
+    },
+    {
+      "tool": "check_use_allocation.py",
+      "direct_recipe_callers": [
+        "use-allocation"
+      ]
+    },
+    {
+      "tool": "check_use_codec.py",
+      "direct_recipe_callers": [
+        "use-codecs"
+      ]
+    },
+    {
+      "tool": "roundtrip_native_development.py",
+      "direct_recipe_callers": [
+        "native-development"
+      ]
+    },
+    {
+      "tool": "roundtrip_native_steering.py",
+      "direct_recipe_callers": [
+        "native-steering"
+      ]
+    },
+    {
+      "tool": "roundtrip_native_workflow.py",
+      "direct_recipe_callers": [
+        "native-workflow",
+        "native-workflow"
+      ]
+    },
+    {
+      "tool": "roundtrip_source_development.py",
+      "direct_recipe_callers": [
+        "source-development"
+      ]
+    },
+    {
+      "tool": "run_native_development.py",
+      "direct_recipe_callers": []
+    },
+    {
+      "tool": "run_native_workflow.py",
+      "direct_recipe_callers": []
+    }
+  ],
+  "builtin_investigations": [
+    {
+      "name": "reasoning_methods",
+      "theory": "Factor_Reasoning_Method_Investigation",
+      "function": "reasoning_method_investigation"
+    },
+    {
+      "name": "investigation_input",
+      "theory": "Factor_Investigation_Input_Investigation",
+      "function": "input_investigation"
+    },
+    {
+      "name": "revision_methods",
+      "theory": "Observation_Revision_Investigation",
+      "function": "revision_investigation"
+    },
+    {
+      "name": "observation_tables",
+      "theory": "Factor_Observation_Table_Investigation",
+      "function": "table_investigation"
+    },
+    {
+      "name": "pair_scope",
+      "theory": "Factor_Pair_Scope_Investigation",
+      "function": "pair_scope_investigation"
+    },
+    {
+      "name": "observation_collections",
+      "theory": "Factor_Observation_Collection_Investigation",
+      "function": "collection_investigation"
+    },
+    {
+      "name": "observation_scope",
+      "theory": "Factor_Observation_Scope_Investigation",
+      "function": "scope_investigation"
+    },
+    {
+      "name": "observation",
+      "theory": "Factor_Observation_Investigation",
+      "function": "observation_investigation"
+    },
+    {
+      "name": "completion",
+      "theory": "Presentation_Completion_Investigation",
+      "function": "completion_investigation"
+    },
+    {
+      "name": "permission",
+      "theory": "Factor_Permission_Investigation",
+      "function": "permission_investigation"
+    },
+    {
+      "name": "pattern",
+      "theory": "Factor_Substitution_Investigation",
+      "function": "pattern_investigation"
+    },
+    {
+      "name": "proof_probes",
+      "theory": "Factor_Proof_Probe_Investigation",
+      "function": "proof_probes_investigation"
+    },
+    {
+      "name": "schema_sockets",
+      "theory": "Factor_Schema_Socket_Investigation",
+      "function": "schema_sockets_investigation"
+    }
+  ],
+  "boundary": "Literal recipe calls and registered built-in investigations only. Transitive imports, theory proofs and a passing recipe do not establish execution of each CLI mode, custom-input path, empty scope, roundtrip or growth case. This inventory is not semantic coverage or adequacy."
+}

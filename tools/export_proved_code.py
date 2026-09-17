@@ -16,10 +16,91 @@ import proved_code
 import prove_context
 
 
+def export_context(directory, project, output, modules):
+    """Export from the actual immutable provider session of each current theory."""
+    import proof_contexts
+    context = proof_contexts.load_parent(directory)
+    assert proof_contexts.session_declaration(project) == context['project_declaration'], \
+        'Project session configuration changed.'
+    source_rows, graph = investigate.source_graph(project, [],
+        re.findall(r'^    ([A-Za-z_][A-Za-z_0-9]*)\s*$', (project / 'ROOT').read_text(), re.M))
+    reused, _ = proved_code.proved_context_partition(source_rows, graph, context['sources'])
+    required = {t for t, _ in modules}
+    assert required <= reused, 'Requested export does not have a current complete proof context.'
+    sources = {n: source_rows[n]['sha256'] for n in reused}
+    tracked = context['inputs'] | {source_rows[n]['path']: sources[n] for n in reused}
+    tracked[str(project / 'ROOT')] = investigate.file_hash(project / 'ROOT')
+    tracked |= {str(Path(m.__file__).resolve()): investigate.file_hash(Path(m.__file__))
+                for m in (investigate, proved_code, proof_contexts)}
+    tracked[str(Path(__file__).resolve())] = investigate.file_hash(Path(__file__))
+    assert not output.exists()
+    output.mkdir(parents=True)
+    report = {'status': 'failed', 'source_project': str(project), 'proof_context': str(directory),
+              'execution_inputs': tracked, 'exports': []}
+    groups = {}
+    for theory, filename in modules:
+        provider = context['providers'][theory]
+        groups.setdefault(provider['session'], []).append((theory, filename, provider))
+    try:
+        for session, members in groups.items():
+            command = ['isabelle', 'export', '-n']
+            for parent in context['directories']:
+                command += ['-d', parent]
+            destination = output / 'code' / session
+            command += ['-O', str(destination)]
+            for theory, filename, provider in members:
+                command += ['-x', provider['theory'] + ':code/' + filename,
+                            '-x', provider['theory'] + ':subjects/*.yxml']
+            command += [session]
+            log = output / (session + '-export.log')
+            with log.open('w') as stream:
+                done = subprocess.run(command, stdout=stream, stderr=subprocess.STDOUT,
+                                      env=proof_contexts.ENV, timeout=60)
+            assert done.returncode == 0, 'Export failed: ' + str(log)
+            for theory, filename, provider in members:
+                paths = [p for p in destination.rglob(filename)
+                         if p.parent.name == 'code' and p.parent.parent.name == provider['theory']]
+                assert len(paths) == 1, (theory, filename, paths)
+                path = paths[0]
+                contracts = [{'path': str(p), 'sha256': investigate.file_hash(p)}
+                             for p in sorted((path.parent.parent / 'subjects').glob('*.yxml'))]
+                text = (project / 'theories' / (theory + '.thy')).read_text()
+                targets = re.findall(r'\bin\s+(Eval|SML)\s+module_name\s+\S+\s+file_prefix\s+"?'
+                                     + re.escape(path.stem) + r'"?(?=\s|$)', text)
+                assert len(targets) == 1
+                entry = {'path': str(path), 'sha256': investigate.file_hash(path)}
+                derived = {'status': 'accepted', 'exit_code': 0, 'sources_unchanged': True,
+                           'sources': sources, 'effective_source_hashes': {},
+                           'roots': [theory], 'checked_theories': len(sources),
+                           'parent_theories_reused': len(sources), 'exports': [entry],
+                           'subject_contracts': contracts, 'code_target': targets[0],
+                           'complete_artifact_transport': 'complete_artifact_reference' in path.read_text(),
+                           'complete_term_transport': 'complete_term_reference' in path.read_text(),
+                           'export_theory': theory, 'export_command': command, 'export_exit_code': 0,
+                           'export_log': str(log), 'export_log_sha256': investigate.file_hash(log),
+                           'proof_context': {'path': context['receipt'],
+                               'sha256': investigate.file_hash(Path(context['receipt'])),
+                               'provider': provider},
+                           'proof_boundary': 'Every supplied source has its unchanged entire import context '
+                               'in the accepted provider graph; code was exported from its actual provider session.'}
+                receipt = output / (path.stem + '.proof.json')
+                receipt.write_text(json.dumps(derived, indent=2) + '\n')
+                report['exports'].append({'theory': theory, **entry, 'proof': str(receipt),
+                                          'proof_sha256': investigate.file_hash(receipt)})
+        assert all(investigate.file_hash(Path(p)) == h for p, h in tracked.items()), 'Export inputs changed.'
+        report.update(status='accepted', sources_and_tools_unchanged=True)
+    except Exception as error:
+        report['error'] = repr(error)
+    (output / 'receipt.json').write_text(json.dumps(report, indent=2) + '\n')
+    print(json.dumps({k: v for k, v in report.items() if k != 'execution_inputs'}))
+    return int(report['status'] != 'accepted')
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     source = parser.add_mutually_exclusive_group(required=True)
     source.add_argument("--proof", type=Path)
+    source.add_argument("--context", type=Path, help="Export from an accepted graph of immutable proof providers.")
     source.add_argument("--main-project", type=Path,
                         help="Export directly from a fully checked unchanged main session.")
     parser.add_argument("--project", type=Path, default=proved_code.ROOT)
@@ -31,6 +112,8 @@ def main():
     assert all(len(row) == 2 and re.fullmatch(r"[A-Za-z_][A-Za-z_0-9]*", row[0])
                and re.fullmatch(r"[A-Za-z_][A-Za-z_0-9]*\.ML", row[1]) for row in modules)
     assert len({name for _, name in modules}) == len(modules)
+    if args.context:
+        return export_context(args.context.resolve(), args.project.resolve(), output, modules)
     if args.main_project:
         project = args.main_project.resolve()
         session, accepted_sources, parent_inputs = prove_context.accepted_parent(project)

@@ -1,0 +1,172 @@
+{
+  "version": 1,
+  "baseline": {
+    "output": "/tmp/presented-decision-replay-run-i1ct_t3g",
+    "seconds": 260.76,
+    "boundary": "Earlier probe under a different concurrent schedule; not a controlled comparison."
+  },
+  "candidates": [
+    {
+      "status": "accepted",
+      "output": "/tmp/decision-refinement-run-fjp0kt9q",
+      "probe": "/tmp/fast-target-equality-candidate",
+      "engine": "/tmp/fast-target-equality-candidate/export/Fast_Complete_Equality_1789611294373950061.Probe_Fast_Target/code/decision_replay_fast_target.ML",
+      "workers": 8,
+      "profile_time": false,
+      "sources": {
+        "/tmp/fast-target-equality-candidate/Probe_Combined_Order.thy": "fa0758df0b289bc8b41fc3516080d69a57cacdd03f7ae4fdcca82cc54a73a212",
+        "/tmp/fast-target-equality-candidate/Probe_Fast_Target.thy": "deb8f28443f15a1b25bae146557e170a5829d5a575f504ee4a11dee3c68bfa7b",
+        "/tmp/fast-target-equality-candidate/Fast_Complete_Target_Equality.thy": "166d564dbab80d6e5d7f5e8a31eb71597bf6c3d178fd18e2e34c0c1e4b887d7b",
+        "/tmp/fast-target-equality-candidate/Canonical_Collection_Equality.thy": "05a16a50ab129bbe49b06ed271ed5cd7f55f9a5204602c23f4e0fa0f5ab8885f",
+        "/tmp/fast-target-equality-candidate/Decision_Replay_Presentation.thy": "0aada6a8658437eafa70cd45fa6882e7744e40cc2cfd5f1cfb9141d8baab087e",
+        "/tmp/fast-target-equality-candidate/Finite_Presented_Decisions.thy": "9ee0994cce6cbb28b8559ae46f4f7ab593002d02b235bc09a1be1ff77aabff00",
+        "/tmp/fast-target-equality-candidate/Finite_Presented_Programs.thy": "39fd8434536eb2b2d19cc183ea0afd7c58367fa06be079fa32397ee2515431d9",
+        "/tmp/fast-target-equality-candidate/Ordered_Finite_Terms.thy": "7f8fc231ccaa7aeaaa7513311b87ddd0a688fd496e9301722969ab6288580c35",
+        "/tmp/fast-target-equality-candidate/Finite_Presented_Collections.thy": "b3e113357a28dbb9ab94381b9b48ba538f7f569c7b29c99105856eb69271c4cf",
+        "/tmp/fast-target-equality-candidate/Finite_Presented_Coordinates.thy": "bc9c74383a54742d38c94ea57519f59b150f9eb4a6d81ba9a8b1c0b82a02f86e",
+        "/tmp/fast-target-equality-candidate/Finite_Presented_Graphs.thy": "72b8ced159b150936fce7f1917d6a0ebb39c7c938ff13c8ce422d4c771a445b4",
+        "/tmp/fast-target-equality-candidate/Finite_Presented_Replays.thy": "c09c26e63236417ba357334f609653364390c26cfdb61659adaa8ecd7048a26a",
+        "/tmp/fast-target-equality-candidate/Finite_Presented_Structures.thy": "86dca2defcfa176b329cf043bf20b65e8508882ecb2540a5e81e955390cb534a",
+        "/tmp/fast-target-equality-candidate/Finite_Presented_Investigations.thy": "17177e145c17935f59faee3b2f383d345d595554f38803a5c2580aeb9a42bd0c",
+        "/tmp/fast-target-equality-candidate/Finite_Presented_Histories.thy": "39088c89ea9bfa0560afbc533a3f4447f0c9b31d9e0840821efa13a7857dc253",
+        "/tmp/fast-target-equality-candidate/Finite_Term_Words.thy": "7def532bd202688d6bfc5bb22fc79aa66e24e42a66fe3703714660b85092ec07",
+        "/tmp/fast-target-equality-candidate/Digit_History_Presentation.thy": "6d5dbea851dfc1af1537070fae4dffb4bf3bb612d2900a3f34e4a02ddaef1db6",
+        "/tmp/fast-target-equality-candidate/Digit_Replay_Presentation.thy": "bf2ee8a4af6a71149f15793d389c8a5f88dce020ca5ce5c950bfcd54cc64b17d",
+        "/tmp/fast-target-equality-candidate/Finite_Presented_Assessments.thy": "c1cc28a8601ea5ea47b5f6df00c76089cf42f729e1bc0d5489ae95d15473f025",
+        "/tmp/fast-target-equality-candidate/Finite_Term_Word_Streaming.thy": "53b1f5974dc8d8f59e2c674d99e8b1a2e0702dc5fdc1fa5ffcfaaa30a241f2bf",
+        "/tmp/fast-target-equality-candidate/Prepared_Ordered_Sorts.thy": "a5711f19756679a0a90a9de2c17cbdbdd81a2dc756e11dbc9ce9c2fd0c042251",
+        "/tmp/fast-target-equality-candidate/Prepared_Finite_Term_Order.thy": "d7e25ebdcdfa65168115d24165d3793316afad1314cdd0ced6333672f0d4e98d",
+        "/tmp/fast-target-equality-candidate/export/Fast_Complete_Equality_1789611294373950061.Probe_Fast_Target/code/decision_replay_fast_target.ML": "fe7533cb61db3a347ddbe5427ff11c1a7a191d72831fefa9269ca65af637eb85",
+        "/tmp/decision-refinement-run-fjp0kt9q/execute.ML": "fd063c1ce3ac47669c5410c136f5e4d36b9796e4e38ee8086e4490c69662c3d9"
+      },
+      "command": [
+        "/usr/bin/env",
+        "USER_HOME=/tmp/decision-refinement-run-fjp0kt9q/runtime-home",
+        "/opt/isabelle/bin/isabelle",
+        "ML_process",
+        "-l",
+        "Pure",
+        "-o",
+        "threads=8",
+        "-o",
+        "threads_stack_limit=0",
+        "-f",
+        "/tmp/fast-target-equality-candidate/export/Fast_Complete_Equality_1789611294373950061.Probe_Fast_Target/code/decision_replay_fast_target.ML",
+        "-f",
+        "/tmp/decision-refinement-run-fjp0kt9q/execute.ML"
+      ],
+      "baseline": "/tmp/presented-decision-replay-run-i1ct_t3g",
+      "exit_code": 0,
+      "seconds": 268.3138799860026,
+      "word": {
+        "bytes": 1296760,
+        "sha256": "de8e13566c3bb91bee5f75f3061a0e7d9671ee5c920209f8f9c9a5518cd48271"
+      },
+      "boundary": {
+        "records": 1,
+        "tags": {
+          "PRESENTED_REPORT_WORD": 1
+        },
+        "sha256": "e80d30794f8ee8d8d02a8ad27915d6098c754f659aed34ec1d305539b86a251a"
+      },
+      "complete_word_equal": true,
+      "sources_unchanged": true,
+      "stage_seconds": {
+        "presentation": 265.566,
+        "word": 0.133
+      },
+      "adopted": false
+    },
+    {
+      "status": "accepted",
+      "output": "/tmp/decision-refinement-run-7t5ulxfq",
+      "probe": "/tmp/fast-target-equality-candidate",
+      "engine": "/tmp/fast-target-equality-candidate/export/Fast_Complete_Equality_1789611294373950061.Probe_Combined_Order/code/decision_replay_combined_order.ML",
+      "workers": 8,
+      "profile_time": false,
+      "sources": {
+        "/tmp/fast-target-equality-candidate/Probe_Combined_Order.thy": "fa0758df0b289bc8b41fc3516080d69a57cacdd03f7ae4fdcca82cc54a73a212",
+        "/tmp/fast-target-equality-candidate/Probe_Fast_Target.thy": "deb8f28443f15a1b25bae146557e170a5829d5a575f504ee4a11dee3c68bfa7b",
+        "/tmp/fast-target-equality-candidate/Fast_Complete_Target_Equality.thy": "166d564dbab80d6e5d7f5e8a31eb71597bf6c3d178fd18e2e34c0c1e4b887d7b",
+        "/tmp/fast-target-equality-candidate/Canonical_Collection_Equality.thy": "05a16a50ab129bbe49b06ed271ed5cd7f55f9a5204602c23f4e0fa0f5ab8885f",
+        "/tmp/fast-target-equality-candidate/Decision_Replay_Presentation.thy": "0aada6a8658437eafa70cd45fa6882e7744e40cc2cfd5f1cfb9141d8baab087e",
+        "/tmp/fast-target-equality-candidate/Finite_Presented_Decisions.thy": "9ee0994cce6cbb28b8559ae46f4f7ab593002d02b235bc09a1be1ff77aabff00",
+        "/tmp/fast-target-equality-candidate/Finite_Presented_Programs.thy": "39fd8434536eb2b2d19cc183ea0afd7c58367fa06be079fa32397ee2515431d9",
+        "/tmp/fast-target-equality-candidate/Ordered_Finite_Terms.thy": "7f8fc231ccaa7aeaaa7513311b87ddd0a688fd496e9301722969ab6288580c35",
+        "/tmp/fast-target-equality-candidate/Finite_Presented_Collections.thy": "b3e113357a28dbb9ab94381b9b48ba538f7f569c7b29c99105856eb69271c4cf",
+        "/tmp/fast-target-equality-candidate/Finite_Presented_Coordinates.thy": "bc9c74383a54742d38c94ea57519f59b150f9eb4a6d81ba9a8b1c0b82a02f86e",
+        "/tmp/fast-target-equality-candidate/Finite_Presented_Graphs.thy": "72b8ced159b150936fce7f1917d6a0ebb39c7c938ff13c8ce422d4c771a445b4",
+        "/tmp/fast-target-equality-candidate/Finite_Presented_Replays.thy": "c09c26e63236417ba357334f609653364390c26cfdb61659adaa8ecd7048a26a",
+        "/tmp/fast-target-equality-candidate/Finite_Presented_Structures.thy": "86dca2defcfa176b329cf043bf20b65e8508882ecb2540a5e81e955390cb534a",
+        "/tmp/fast-target-equality-candidate/Finite_Presented_Investigations.thy": "17177e145c17935f59faee3b2f383d345d595554f38803a5c2580aeb9a42bd0c",
+        "/tmp/fast-target-equality-candidate/Finite_Presented_Histories.thy": "39088c89ea9bfa0560afbc533a3f4447f0c9b31d9e0840821efa13a7857dc253",
+        "/tmp/fast-target-equality-candidate/Finite_Term_Words.thy": "7def532bd202688d6bfc5bb22fc79aa66e24e42a66fe3703714660b85092ec07",
+        "/tmp/fast-target-equality-candidate/Digit_History_Presentation.thy": "6d5dbea851dfc1af1537070fae4dffb4bf3bb612d2900a3f34e4a02ddaef1db6",
+        "/tmp/fast-target-equality-candidate/Digit_Replay_Presentation.thy": "bf2ee8a4af6a71149f15793d389c8a5f88dce020ca5ce5c950bfcd54cc64b17d",
+        "/tmp/fast-target-equality-candidate/Finite_Presented_Assessments.thy": "c1cc28a8601ea5ea47b5f6df00c76089cf42f729e1bc0d5489ae95d15473f025",
+        "/tmp/fast-target-equality-candidate/Finite_Term_Word_Streaming.thy": "53b1f5974dc8d8f59e2c674d99e8b1a2e0702dc5fdc1fa5ffcfaaa30a241f2bf",
+        "/tmp/fast-target-equality-candidate/Prepared_Ordered_Sorts.thy": "a5711f19756679a0a90a9de2c17cbdbdd81a2dc756e11dbc9ce9c2fd0c042251",
+        "/tmp/fast-target-equality-candidate/Prepared_Finite_Term_Order.thy": "d7e25ebdcdfa65168115d24165d3793316afad1314cdd0ced6333672f0d4e98d",
+        "/tmp/fast-target-equality-candidate/export/Fast_Complete_Equality_1789611294373950061.Probe_Combined_Order/code/decision_replay_combined_order.ML": "b9094b38f7542fd53fdc859999bf0a8acedf093ef6b3155d13ab3a9cf817a08b",
+        "/tmp/decision-refinement-run-7t5ulxfq/execute.ML": "ad1539850393259444a32bd80034bdf92d1908270376ce147960c0e8b61683f9"
+      },
+      "command": [
+        "/usr/bin/env",
+        "USER_HOME=/tmp/decision-refinement-run-7t5ulxfq/runtime-home",
+        "/opt/isabelle/bin/isabelle",
+        "ML_process",
+        "-l",
+        "Pure",
+        "-o",
+        "threads=8",
+        "-o",
+        "threads_stack_limit=0",
+        "-f",
+        "/tmp/fast-target-equality-candidate/export/Fast_Complete_Equality_1789611294373950061.Probe_Combined_Order/code/decision_replay_combined_order.ML",
+        "-f",
+        "/tmp/decision-refinement-run-7t5ulxfq/execute.ML"
+      ],
+      "baseline": "/tmp/presented-decision-replay-run-i1ct_t3g",
+      "exit_code": 0,
+      "seconds": 265.3179581370059,
+      "word": {
+        "bytes": 1296760,
+        "sha256": "de8e13566c3bb91bee5f75f3061a0e7d9671ee5c920209f8f9c9a5518cd48271"
+      },
+      "boundary": {
+        "records": 1,
+        "tags": {
+          "PRESENTED_REPORT_WORD": 1
+        },
+        "sha256": "e80d30794f8ee8d8d02a8ad27915d6098c754f659aed34ec1d305539b86a251a"
+      },
+      "complete_word_equal": true,
+      "sources_unchanged": true,
+      "stage_seconds": {
+        "presentation": 261.691,
+        "word": 0.218
+      },
+      "adopted": false
+    }
+  ],
+  "profile": {
+    "directory": "/tmp/decision-bounded-profile-e_ydalpg",
+    "seconds": 48.47,
+    "ml_limit_seconds": 45,
+    "samples": 97925,
+    "leading_samples": {
+      "less_list_1_1_1": 25950,
+      "part_5": 18975,
+      "sort_key": 7384,
+      "less_list_1_1": 6710,
+      "equal_lista": 4845
+    },
+    "boundary": "Bounded complete-report diagnostic; sorting/list comparison dominates but its originating semantic operation is not isolated."
+  },
+  "packet_only_profile": {
+    "directory": "/tmp/decision-packet-profile-k11i3vbe",
+    "outer_timeout_seconds": 90,
+    "completed": false
+  },
+  "assessment": "Both candidates proved and preserved every decompressed byte but demonstrated no useful speed improvement. They remain isolated and are not adopted. Word emission is below 0.3 seconds; these observations do not justify another word-only optimization for decision replay."
+}

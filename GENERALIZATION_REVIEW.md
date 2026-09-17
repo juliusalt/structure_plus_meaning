@@ -2455,3 +2455,12 @@ scheduling boundaries forbid a controlled ratio to the older build. This proof
 predates the four new presentation theories and does not rerun all recipes.
 Native selection, real usefulness under 5a, broader coverage and genesis remain
 open; theoretical 5b remains deferred.
+
+## Proof reuse, retention and complete execution review
+
+The complete batch passed in 403.75 s with all 1,624 theory contexts reused, all 50 recipes executed, 3,575 complete physical records, 143 tool tests and 35 kernel tests (2 optional skips). A separate real ancestor edit caused its unchanged dependent theorem to fail; repair restored acceptance while independent exports remained in their original session. Relocated contexts, partial retention and stale input controls refuse unsupported reuse. New proofs bind the original session configuration. Decision equality/prepared-key candidates preserved complete words but showed no useful gain and were not adopted. The earlier claim that no native dry currency check is possible was too broad: explicit session selection with -n -b and saved options works, with a relocated negative control. Native refinement selection, real 5a usefulness, non-recipe coverage, O-85 and genesis remain open; 5b is deferred.
+
+The final unchanged-workspace check passed in 11.30 s, retaining all 50 complete
+recipe manifests and 1,624 proof contexts. It ran 144 tool tests and 35 kernel
+tests (two optional skips), with ROOT and orchestration inputs bound through
+retention. The outer recipe limit now matches the requested job count.

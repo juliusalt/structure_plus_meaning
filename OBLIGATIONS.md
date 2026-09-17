@@ -1309,3 +1309,12 @@ proof from HOL passed in 542.886 s with no reused project contexts. Fourteen
 families now have accepted native words; 3,821 records are retained over 50
 boundaries. No obligation row changes status. Native-driven work, practical 5a,
 wider coverage, O-85 and genesis remain open; 5b stays deferred.
+
+## Proof-context reuse and complete current batch
+
+All 50 recipes and both host suites pass in 403.75 s with 1,624 contexts reused and no proof rebuild. The inventory retains 3,575 complete physical records; all fourteen migrated families now use native words only. The separate 1,620-theory cold proof remains 542.886 s. Real dependency failure/repair and negative retention controls establish the physical proof-reuse boundary, not native control. No obligation row changes status. Conditions 1 and 6, practical 5a, wider coverage, O-85 and genesis remain open; 5b remains deferred.
+
+The final unchanged-workspace check passed in 11.30 s, retaining all 50 complete
+recipe manifests and 1,624 proof contexts. It ran 144 tool tests and 35 kernel
+tests (two optional skips), with ROOT and orchestration inputs bound through
+retention. The outer recipe limit now matches the requested job count.

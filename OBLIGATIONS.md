@@ -1280,3 +1280,13 @@ host suites pass, with 4,609 records over 50 retained boundaries. Exact streamin
 repairs a stack failure but the cycle still takes 914.05 s. No obligation row
 changes status: native refinement selection, actual workflow usefulness under
 5a, wider coverage, O-85 and genesis remain open; 5b stays deferred.
+
+## Native construction/certificate and proof-cost batch
+
+The complete affected check accepts 1,616 theories, all 50 recipes, 4,072 records
+and both host suites. Eleven families now retain native words; four new families
+have paired stages and seven history/replay families use words alone. Direct
+proof replacements remove expensive search while preserving the original
+statements. The 909.51 s cycle still fails the requested practical speed target.
+No obligation row changes status; native-driven selection and real usefulness
+under 5a, wider coverage, O-85 and genesis remain open, with 5b deferred.

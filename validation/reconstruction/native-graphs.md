@@ -108,3 +108,19 @@ explanation traces, native mathematical-proof checking, complete development
 admission and enforcement, the full physical cost account, genesis and the
 final repository audit remain open. The comparison cannot authorize its own
 handoff.
+
+## Accepted native presentation (2026-09-17)
+
+The original comparison and native word both passed on the same actual export.
+The word contains 1,000,741 bytes; this recipe now retains
+82 complete physical records.
+Comparison took 31.64 s and presentation
+31.90 s under the combined schedule; stages overlap.
+Original subjects, results, independent readings, inspections and revisions remain
+complete. Actual quality rows are computed from actual returned assessments.
+
+The all-recipe cycle covered 1,616 theories and passed both host suites in
+909.51 s. See [current measurements](native-presentation-cycle-measurements.json).
+The preceding source-only counts describe historical boundaries. This paired
+transition permits later removal of the legacy stage; it does not establish
+whole-workflow adequacy, native refinement selection or practical gate 5a.

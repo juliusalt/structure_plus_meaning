@@ -80,11 +80,10 @@ the final repository audit remain open.
 
 ## Native presented report (2026-09-17)
 
-After accepted paired validation, this recipe now retains only its native word:
-483,348 bytes, one complete report record. Every prior subject and
-field remains in that presentation, with stores identified through their original
-views and each distinct artifact given once. The word boundary is unchanged.
-The current presentation took 237.67 s under the combined schedule.
-See [the current measurements](replay-presentation-measurements.json) and
-[current verification](current-verified.json). The earlier source-only counts and
-JSON report counts above describe historical boundaries.
+This recipe retains only its native word after accepted paired validation:
+483,348 bytes, one complete report record. Every original subject and
+field remains, with stores identified through their original views and each
+distinct artifact given once. The word boundary is unchanged. Presentation took
+192.69 s in the accepted 1,616-theory, all-50-recipe cycle.
+See [current measurements](native-presentation-cycle-measurements.json).
+Earlier source-only and JSON record counts above are historical.

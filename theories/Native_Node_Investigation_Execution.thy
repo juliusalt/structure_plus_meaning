@@ -1,10 +1,10 @@
 theory Native_Node_Investigation_Execution
-  imports Factor_Native_Node_Investigation Native_Execution_Refinements
+  imports Finite_Term_Word_Streaming Native_Node_Presentation Factor_Native_Node_Investigation Native_Execution_Refinements
 begin
 
 setup \<open>Finite_Observation_Contracts.export @{term native_node_investigation}\<close>
 
-export_code native_node_indices native_node_report_packet native_node_inspect
+export_code native_node_report_value native_node_report_selections finite_term_shared_word_fold native_node_indices native_node_report_packet native_node_inspect
   finite_environment_artifact_rows finite_environment_bindings finite_artifact_rows
   Finite_Inference Finite_Assertion Finite_Target Finite_Payload Finite_Pair Finite_Whole Finite_Anchor
   fset set nat_of_integer integer_of_nat

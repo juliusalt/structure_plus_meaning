@@ -91,3 +91,19 @@ candidate generation and criticism, historical permission, and a complete accoun
 of decision cost independent of accumulated process. [Source positioning, native certificate placement and replay](native-certificate-replay.md)
 have a separate complete reconstruction. Native
 mathematical-proof admission, genesis and the final repository audit also remain.
+
+## Accepted native presentation (2026-09-17)
+
+The original comparison and native word both passed on the same actual export.
+The word contains 890,378 bytes; this recipe now retains
+58 complete physical records.
+Comparison took 10.53 s and presentation
+5.43 s under the combined schedule; stages overlap.
+Original subjects, results, independent readings, inspections and revisions remain
+complete. Actual quality rows are computed from actual returned assessments.
+
+The all-recipe cycle covered 1,616 theories and passed both host suites in
+909.51 s. See [current measurements](native-presentation-cycle-measurements.json).
+The preceding source-only counts describe historical boundaries. This paired
+transition permits later removal of the legacy stage; it does not establish
+whole-workflow adequacy, native refinement selection or practical gate 5a.

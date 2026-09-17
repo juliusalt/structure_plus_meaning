@@ -2395,3 +2395,26 @@ The architecture follows the owner's presentation direction and Isabelle proves
 the bootstrap contracts. Native selection of physical refinements is still
 missing. Conditions 1 and 6, practical gate 5a, broader coverage and genesis
 remain open; theoretical gate 5b remains deferred.
+
+## Complete native presentation/proof-cost review
+
+All 50 recipes, 1,616 theories and both host suites pass: 125 tool tests and
+35 kernel tests (two skips). Four new native families pass original comparisons
+and native words together. The two replay legacy stages were removed only after
+their accepted paired transition. The 4,072 records still retain complete native
+content. The complete cycle took 909.51 s; digit replay remains 825.47 s.
+
+The two formerly expensive proofs use direct reusable coverage and conflict
+contracts, preserving their statements and defined computations. Their combined
+probe took 5.44 s; this is not a measured full/cold build speedup. Physical
+profiles and native uniqueness contradict treating every reading cost as many
+distinct output rows. Footprint-only indexing preserved the word but took
+982.13 s; a broader indexed export was unexecutable despite accepted equations;
+ordered footprints were interrupted after 939.55 s without a report. No such
+runtime candidate was adopted. Timed ML-local profiles now retain counters
+without pretending a timeout is a semantic refusal.
+
+The next cache candidates reuse existing actual-quotation and complete-target
+lookup contracts, with the original reader on a miss. They are not adopted yet.
+Native selection/criticism coverage under conditions 1 and 6, practical gate 5a,
+non-recipe coverage, O-85 and genesis remain open. Gate 5b remains deferred.

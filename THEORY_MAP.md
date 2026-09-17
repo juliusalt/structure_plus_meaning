@@ -1634,3 +1634,9 @@ shared refinement import, so refinement changes rebuild only thin export theorie
 | Finite_Presented_Decisions | Finite_Presented_Replays Factor_Decision_Replay_Assessment | Original requirements, evaluations, certificate inspections and complete native replay assessments. |
 | Decision_Replay_Presentation | Finite_Presented_Decisions Finite_Presented_Assessments Finite_Term_Words     Factor_Decision_Replay_Investigation | A complete decision-replay report and its identifying shared word. |
 | Finite_Term_Word_Streaming | Finite_Term_Words | Exact incremental artifact-header and pending-term folds without a materialized word or recursive traversal stack. |
+| Finite_Presented_Native_Construction | Finite_Presented_Replays, Finite_Presented_Assessments, Factor_Native_Node_Investigation, Factor_Native_Graph_Investigation | Complete node/graph input and result presentations, shared reading assessments and scoped inspected packets. |
+| Native_Node_Presentation | Finite_Presented_Native_Construction, Finite_Term_Words | Complete native node report, actual inspections and identifying shared word. |
+| Native_Graph_Presentation | Finite_Presented_Native_Construction, Finite_Term_Words | Complete native graph report, actual inspections and identifying shared word. |
+| Finite_Presented_Native_Certificates | Finite_Presented_Native_Construction, Finite_Presented_Decisions, Factor_Native_Derivation_Reports, Factor_Native_Certificate_Investigation | Complete original sources, evaluations, certificates, path/graph correspondences and actual inspections. |
+| Native_Derivation_Presentation | Finite_Presented_Native_Certificates, Finite_Term_Words | Complete native derivation packet, scopes and computed quality rows with an identifying word. |
+| Native_Certificate_Presentation | Finite_Presented_Native_Certificates, Finite_Term_Words | Complete native certificate packet, scopes and computed quality rows with an identifying word. |

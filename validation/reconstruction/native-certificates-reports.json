@@ -1,16 +1,1 @@
-{
-  "version": 1,
-  "reports": {
-    "comparison": {
-      "records": 57,
-      "tags": {
-        "CERTIFICATE_ASSESSMENT": 26,
-        "CERTIFICATE_COMPARISON": 1,
-        "CERTIFICATE_INVESTIGATION": 3,
-        "CERTIFICATE_SCOPE": 1,
-        "CERTIFICATE_SUBJECT": 26
-      },
-      "sha256": "30ef953b42e70f69289f07c062b37a3bb4031643f26bf9ac2783ecbfc3181b87"
-    }
-  }
-}
+{"version":1,"reports":{"comparison":{"records":57,"tags":{"CERTIFICATE_ASSESSMENT":26,"CERTIFICATE_COMPARISON":1,"CERTIFICATE_INVESTIGATION":3,"CERTIFICATE_SCOPE":1,"CERTIFICATE_SUBJECT":26},"sha256":"30ef953b42e70f69289f07c062b37a3bb4031643f26bf9ac2783ecbfc3181b87"},"presentation":{"records":1,"tags":{"PRESENTED_REPORT_WORD":1},"sha256":"015ee2500788f5f4b9ee6213f25ec8915e75228b75df5b6f192822961dd44f05"}}}

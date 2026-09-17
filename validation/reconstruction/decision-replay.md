@@ -62,15 +62,14 @@ one source proof of their combined dependencies and their original executions.
 
 ## Native presented report (2026-09-17)
 
-The current recipe accepts both the original comparison and the native presented
-word on the same actual export. The word is 1,296,760 bytes and retains
-all report content through reusable notion presentations. Original comparison
-took 382.86 s and presentation 376.65 s;
-these stages overlap, with 8 workers in the presented execution.
-The complete seven-recipe cycle passed in 914.05 s, covering 1,610 theories and
-both host suites. The prior cold-build counts above are historical.
+After the accepted paired transition in `3313f4f`, the current recipe uses only
+its native presented word: 1,296,760 bytes, one complete report record.
+Its boundary is unchanged and retains all original report content through the
+complete notion presentations. Presentation took 375.85 s
+under the all-recipe schedule. The complete 1,616-theory cycle, all 50 recipes
+and both host suites passed in 909.51 s.
 
-See [the measurements](replay-presentation-measurements.json) for source
-identities, exact word boundaries, the digit word's stack-failure repair and
-execution boundaries. Accepted pairing permits subsequent removal of the legacy
-stage; it does not establish native refinement selection or practical usefulness.
+See [current measurements](native-presentation-cycle-measurements.json) and
+[prior replay evidence](replay-presentation-measurements.json). The old source-only
+counts and JSON record counts above remain historical. Native refinement
+selection, practical usefulness and wider workflow coverage remain open.

@@ -1614,3 +1614,9 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Presented_Decisions
     Decision_Replay_Presentation
     Finite_Term_Word_Streaming
+    Finite_Presented_Native_Construction
+    Native_Node_Presentation
+    Native_Graph_Presentation
+    Finite_Presented_Native_Certificates
+    Native_Derivation_Presentation
+    Native_Certificate_Presentation

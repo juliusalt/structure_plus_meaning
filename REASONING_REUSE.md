@@ -1606,3 +1606,24 @@ the original prefix-free word and five accepted history boundaries are unchanged
 The two replay families pass both old comparisons and native words. Forty-three
 families still need native report stages. Indexed reading accumulation and raw
 artifact lookup remain unadopted isolated candidates.
+
+## Native construction/certificate presentations and proof coverage
+
+Node and graph reports share the complete construction-assessment envelope;
+derivation and certificate reports share original source/evaluation, proof-tree,
+path and coordinate notions. `finite_scoped_report_value` composes available and
+requested scopes, any complete packet presentation and actual inspection rows.
+Its injectivity factors the common argument before reuse by four packet shapes.
+All optional levels, original references and malformed subjects are retained.
+
+`listed_fields_subset` factors flattened-list coverage. The artifact-formation
+proof separately instantiates it for incidence and retains the original counted
+and bound address conditions. Revision-quality soundness now composes the
+existing list-empty, conflict and soundness equations directly. Computations
+and original theorem statements remain unchanged. Both source theories prove
+in one 5.44 s probe; complete affected integration also passes.
+
+Eleven families now have native words; thirty-nine remain. The exact constructed
+cause cache is already proved but absent from the digit export's active code;
+its actual use and cost are under investigation. Result indexes and ordered
+footprint candidates did not demonstrate a benefit and were not adopted.

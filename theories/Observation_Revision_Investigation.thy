@@ -80,8 +80,7 @@ proof -
   have conflicts: "fst (snd (investigation_repairs C U G T R))=[] \<longleftrightarrow>
       comparison_observations_sound (set C) (\<lambda>c d. (c,d)\<in>set R) (set G)
         (finite_table_observations (fset_of_list T))" for G
-    using investigation_conflicts[of C U G T R]
-    by (metis observation_conflicts_empty set_empty)
+    by (simp only: set_empty[symmetric] investigation_conflicts observation_conflicts_empty)
   show ?thesis
     by (simp only: revision_method_quality_def assms case_prod_conv Let_def
       conflicts missing investigation_retain_exact investigation_unrepairable_comparisons

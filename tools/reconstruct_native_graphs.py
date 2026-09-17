@@ -8,7 +8,11 @@ RECIPE = Recipe(
     export="Native_Graph_Investigation_Execution:native_graph_investigation.ML",
     session="Native_Graph_Reconstruction",
     groups=((Execution("comparison", "check_native_graphs.py",
-                       ("--project", "{project}"), 2100),),),
+                       ("--project", "{project}"), 2100),
+             Execution("presentation", "check_presented_report.py", ("--project", "{project}",
+                       "--module", "Native_Graph_Investigation_Execution",
+                       "--report", "native_graph_report_value", "--scope", "native_graph_indices",
+                       "--selections", "native_graph_report_selections", "--workers", "8"), 2400)),),
     boundary=("A run without --proof reconstructs the complete contracts from HOL. The graph "
               "constructor receives the complete original environment, graph and root. It preserves "
               "every original node and indexed discharge through a fresh injective correspondence, "

@@ -13,11 +13,32 @@ definition ordered_object_formed ::
     in ordered_relation_functional (finite_bindings D) \<and>
       ordered_fset_subset (fset_of_list used) (finite_carrier S))"
 
+lemma listed_fields_subset:
+  "fset_of_list (concat (map slots_of xs)) |\<subseteq>| U \<longleftrightarrow>
+    (\<forall>x\<in>set xs. \<forall>a\<in>set (slots_of x). a |\<in>| U)"
+  by (auto simp: fsubset_iff fset_of_list.rep_eq)
+
 theorem ordered_object_formed_exact:
   "ordered_object_formed C=finite_object_formed C"
-  by (auto simp: ordered_object_formed_def Let_def ordered_relation_functional_exact
-      ordered_fset_subset_exact finite_object_formed_def finite_structure_formed_def
-      finite_basis_formed_def fsubset_iff fset_of_list_elem split: prod.splits; blast)
+proof -
+  let ?S="finite_structure C" and ?D="finite_data C"
+  have incidence:
+    "fset_of_list (concat (map (\<lambda>(r,p,x). [r,p,x]) (sorted_list_of_fset (finite_incidence ?S))))
+      |\<subseteq>| finite_carrier ?S \<longleftrightarrow> finite_structure_formed ?S"
+    by (simp add: listed_fields_subset finite_structure_formed_def split_beta)
+  have counted:
+    "fset_of_list (map fst (sorted_list_of_multiset (finite_bag ?D))) |\<subseteq>| finite_carrier ?S
+      \<longleftrightarrow> (\<forall>x\<in>set_mset (finite_bag ?D). fst x |\<in>| finite_carrier ?S)"
+    by (auto simp: fsubset_iff fset_of_list.rep_eq)
+  have bindings:
+    "fset_of_list (map fst (sorted_list_of_fset (finite_bindings ?D))) |\<subseteq>| finite_carrier ?S
+      \<longleftrightarrow> fBall (finite_bindings ?D) (\<lambda>x. fst x |\<in>| finite_carrier ?S)"
+    by (auto simp: fsubset_iff fset_of_list.rep_eq)
+  show ?thesis
+    by (simp only: ordered_object_formed_def Let_def ordered_relation_functional_exact
+        ordered_fset_subset_exact fset_of_list_append funion_fsubset_iff incidence counted bindings
+        finite_object_formed_def finite_basis_formed_def conj_assoc conj_left_commute)
+qed
 
 declare finite_exact_formed_def[code del]
 

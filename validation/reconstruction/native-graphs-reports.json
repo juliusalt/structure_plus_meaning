@@ -1,16 +1,1 @@
-{
-  "version": 1,
-  "reports": {
-    "comparison": {
-      "records": 81,
-      "tags": {
-        "GRAPH_ASSESSMENT": 37,
-        "GRAPH_COMPARISON": 1,
-        "GRAPH_INVESTIGATION": 5,
-        "GRAPH_SCOPE": 1,
-        "GRAPH_SUBJECT": 37
-      },
-      "sha256": "e4dd282f6d2c917ea2f2ff6c7b341e3738693c9e2d0b24e776e9fd5debefd56b"
-    }
-  }
-}
+{"version":1,"reports":{"comparison":{"records":81,"tags":{"GRAPH_ASSESSMENT":37,"GRAPH_COMPARISON":1,"GRAPH_INVESTIGATION":5,"GRAPH_SCOPE":1,"GRAPH_SUBJECT":37},"sha256":"e4dd282f6d2c917ea2f2ff6c7b341e3738693c9e2d0b24e776e9fd5debefd56b"},"presentation":{"records":1,"tags":{"PRESENTED_REPORT_WORD":1},"sha256":"accc58c358e96a11aa6d660f57b5c9246e3608b447580a8f3f77237b856580e1"}}}

@@ -1,0 +1,1145 @@
+{
+ "version": 1,
+ "status": "accepted",
+ "boundary": "Physical wall-clock observations of accepted incremental checks and diagnostic executions on one machine (16 cores, 32 hardware threads, 60 GB). Every listed cycle accepted all 50 recipe boundaries with identical report words. Schedules, concurrency and background load differ between cycles, so differences are observed costs, not controlled ratios. Diagnostics used unchanged accepted exports.",
+ "cycles": [
+  {
+   "cycle": "baseline",
+   "output": "/tmp/native-order-check-1789633773",
+   "check_stdout_sha256": "81d765c41a9397d1b7b8cd595026819dd79ad5ed99af5307c19a6bfd52d6aaea",
+   "change": "Structural term comparison, the retained start of the refinement work.",
+   "status": "accepted",
+   "phases": {
+    "base_and_impact": 4.24,
+    "proof": 63.54,
+    "recipe_impact": 4.18,
+    "export": 7.02,
+    "execution_impact": 1.03,
+    "recipes_and_host_tests": 126.83
+   },
+   "seconds": 227.88,
+   "theories": 1671,
+   "reused_theories": 1570,
+   "host_tests": {
+    "tools": {
+     "ran": 152,
+     "skipped": 0,
+     "exit_code": 0
+    },
+    "kernel": {
+     "ran": 35,
+     "skipped": 2,
+     "exit_code": 0
+    }
+   },
+   "executed_recipes": 48,
+   "recipe_seconds_sum": 692.54,
+   "recipe_seconds": {
+    "digit-replay": 126.83,
+    "constructed-history": 57.12,
+    "quoted-history": 49.74,
+    "concurrent-history": 49.06,
+    "known-history": 46.28,
+    "history-index": 44.78,
+    "digit-history": 43.23,
+    "native-admission": 40.24,
+    "certified-causes": 35.37,
+    "source-development": 20.27,
+    "native-requirements": 20.1,
+    "native-steering": 13.91,
+    "required-history": 12.83,
+    "decision-replay": 11.08,
+    "native-certificate-replay": 8.38,
+    "native-workflow": 7.68,
+    "native-development": 6.97,
+    "required-causes": 5.57,
+    "native-child": 5.27,
+    "native-graphs": 5.22,
+    "requirement-decisions": 4.87,
+    "certificate-coverage": 4.72,
+    "native-derivations": 4.67,
+    "native-certificates": 4.52,
+    "certificate-input-development": 4.32,
+    "native-histories": 3.87,
+    "certificate-scope-repair": 3.77,
+    "literal-replay": 3.47,
+    "certificate-development": 3.47,
+    "data-reading": 3.37,
+    "native-sources": 3.27,
+    "native-evaluation": 2.97,
+    "digit-generation": 2.77,
+    "generation-records": 2.67,
+    "encoded-environments": 2.57,
+    "native-extensions": 2.52,
+    "native-nodes": 2.52,
+    "indexed-generation": 2.52,
+    "digit-allocation": 2.22,
+    "cached-grafts": 2.12,
+    "allocated-environments": 2.07,
+    "environment-updates": 2.07,
+    "requirement-sources": 2.02,
+    "graft-admission": 1.97,
+    "use-allocation": 1.97,
+    "environment-grafts": 1.97,
+    "use-codecs": 1.72,
+    "artifact-lookup": 1.62
+   }
+  },
+  {
+   "cycle": "canonical-listings",
+   "output": "/tmp/native-speed-check-1789642043",
+   "check_stdout_sha256": "9829395f00ef77e6ff56e64d4ad60af46f0f0e2e5bd2454b9156167d05d70810",
+   "change": "Canonical listings recognized in one adjacent pass, functionality without re-sorting, field-wise target equality, shared policy judgment scopes and a keyed word reference table.",
+   "status": "accepted",
+   "phases": {
+    "base_and_impact": 5.2,
+    "proof": 65.65,
+    "recipe_impact": 4.9,
+    "export": 8.13,
+    "execution_impact": 1.0,
+    "recipes_and_host_tests": 117.06
+   },
+   "seconds": 226.47,
+   "theories": 1673,
+   "reused_theories": 1566,
+   "host_tests": {
+    "tools": {
+     "ran": 152,
+     "skipped": 0,
+     "exit_code": 0
+    },
+    "kernel": {
+     "ran": 35,
+     "skipped": 2,
+     "exit_code": 0
+    }
+   },
+   "executed_recipes": 50,
+   "recipe_seconds_sum": 568.68,
+   "recipe_seconds": {
+    "digit-replay": 117.06,
+    "certified-causes": 39.13,
+    "native-admission": 38.18,
+    "constructed-history": 35.17,
+    "quoted-history": 32.68,
+    "known-history": 30.43,
+    "concurrent-history": 28.08,
+    "digit-history": 25.75,
+    "history-index": 24.02,
+    "native-requirements": 21.54,
+    "source-development": 17.05,
+    "decision-replay": 13.78,
+    "native-steering": 10.98,
+    "native-certificate-replay": 9.59,
+    "required-history": 8.98,
+    "native-development": 7.57,
+    "native-workflow": 5.93,
+    "required-causes": 5.37,
+    "native-graphs": 5.02,
+    "native-derivations": 4.97,
+    "native-certificates": 4.87,
+    "requirement-decisions": 4.67,
+    "certificate-coverage": 4.52,
+    "certificate-input-development": 4.32,
+    "native-child": 4.12,
+    "native-histories": 3.82,
+    "certificate-scope-repair": 3.77,
+    "data-reading": 3.52,
+    "certificate-development": 3.42,
+    "native-sources": 3.37,
+    "literal-replay": 3.22,
+    "native-evaluation": 3.22,
+    "digit-generation": 2.97,
+    "native-nodes": 2.82,
+    "generation-records": 2.67,
+    "encoded-environments": 2.67,
+    "indexed-generation": 2.67,
+    "native-extensions": 2.67,
+    "digit-allocation": 2.27,
+    "cached-grafts": 2.22,
+    "requirement-sources": 2.17,
+    "allocated-environments": 2.12,
+    "environment-updates": 2.07,
+    "graft-admission": 2.02,
+    "environment-grafts": 2.02,
+    "builtin-investigations": 1.92,
+    "use-allocation": 1.92,
+    "use-codecs": 1.87,
+    "requirement-plans": 1.82,
+    "artifact-lookup": 1.67
+   }
+  },
+  {
+   "cycle": "three-way-comparisons",
+   "output": "/tmp/native-compare-check-1789642935",
+   "check_stdout_sha256": "98b16eb6dcfa2bcca763dd972c7f66da8d7c720157b081c529a5cb7e14fadb28",
+   "change": "One-pass three-outcome comparisons for rows, artifacts and terms.",
+   "status": "accepted",
+   "phases": {
+    "base_and_impact": 6.23,
+    "proof": 69.8,
+    "recipe_impact": 4.78,
+    "export": 9.33,
+    "execution_impact": 1.01,
+    "recipes_and_host_tests": 88.56
+   },
+   "seconds": 207.83,
+   "theories": 1675,
+   "reused_theories": 1571,
+   "host_tests": {
+    "tools": {
+     "ran": 152,
+     "skipped": 0,
+     "exit_code": 0
+    },
+    "kernel": {
+     "ran": 35,
+     "skipped": 2,
+     "exit_code": 0
+    }
+   },
+   "executed_recipes": 50,
+   "recipe_seconds_sum": 493.18,
+   "recipe_seconds": {
+    "digit-replay": 88.56,
+    "native-admission": 36.89,
+    "certified-causes": 36.05,
+    "constructed-history": 24.47,
+    "native-requirements": 23.76,
+    "quoted-history": 23.68,
+    "history-index": 21.96,
+    "known-history": 20.91,
+    "digit-history": 19.31,
+    "source-development": 17.55,
+    "native-steering": 17.12,
+    "concurrent-history": 15.28,
+    "decision-replay": 14.29,
+    "native-certificate-replay": 9.53,
+    "native-workflow": 9.06,
+    "native-development": 7.37,
+    "required-history": 7.23,
+    "required-causes": 5.42,
+    "native-graphs": 4.87,
+    "native-certificates": 4.62,
+    "requirement-decisions": 4.57,
+    "certificate-coverage": 4.47,
+    "native-derivations": 4.32,
+    "native-child": 4.27,
+    "certificate-input-development": 4.07,
+    "native-histories": 3.77,
+    "certificate-scope-repair": 3.62,
+    "data-reading": 3.47,
+    "certificate-development": 3.42,
+    "native-sources": 3.32,
+    "literal-replay": 3.17,
+    "native-evaluation": 3.02,
+    "digit-generation": 2.77,
+    "generation-records": 2.72,
+    "encoded-environments": 2.62,
+    "native-extensions": 2.57,
+    "native-nodes": 2.52,
+    "indexed-generation": 2.42,
+    "digit-allocation": 2.17,
+    "cached-grafts": 2.12,
+    "requirement-sources": 2.12,
+    "allocated-environments": 2.07,
+    "environment-updates": 2.02,
+    "graft-admission": 1.97,
+    "environment-grafts": 1.97,
+    "use-allocation": 1.97,
+    "builtin-investigations": 1.97,
+    "use-codecs": 1.97,
+    "requirement-plans": 1.92,
+    "artifact-lookup": 1.87
+   }
+  },
+  {
+   "cycle": "formation-once-definitions",
+   "output": "/tmp/native-formed-check-1789643335",
+   "check_stdout_sha256": "123de91084899c996b0090c4db596222d3ef3ace73bb4c1600587131a6529dc9",
+   "change": "Definition, schema, pattern, premise, material, call and vector readings check environment formation once per guarded entry.",
+   "status": "accepted",
+   "phases": {
+    "base_and_impact": 7.37,
+    "proof": 82.22,
+    "recipe_impact": 4.15,
+    "export": 10.93,
+    "execution_impact": 1.33,
+    "recipes_and_host_tests": 58.29
+   },
+   "seconds": 196.45,
+   "theories": 1676,
+   "reused_theories": 1575,
+   "host_tests": {
+    "tools": {
+     "ran": 152,
+     "skipped": 0,
+     "exit_code": 0
+    },
+    "kernel": {
+     "ran": 35,
+     "skipped": 2,
+     "exit_code": 0
+    }
+   },
+   "executed_recipes": 34,
+   "recipe_seconds_sum": 346.27,
+   "recipe_seconds": {
+    "digit-replay": 58.19,
+    "certified-causes": 38.5,
+    "constructed-history": 24.78,
+    "quoted-history": 22.3,
+    "known-history": 18.94,
+    "source-development": 18.91,
+    "digit-history": 16.79,
+    "history-index": 16.46,
+    "concurrent-history": 14.44,
+    "native-steering": 13.65,
+    "native-admission": 10.9,
+    "native-development": 7.12,
+    "native-requirements": 6.78,
+    "native-workflow": 6.7,
+    "required-history": 6.18,
+    "decision-replay": 5.72,
+    "required-causes": 4.87,
+    "native-graphs": 4.77,
+    "native-certificate-replay": 4.52,
+    "native-certificates": 4.07,
+    "native-derivations": 4.07,
+    "certificate-input-development": 3.62,
+    "data-reading": 3.47,
+    "requirement-decisions": 3.32,
+    "native-histories": 3.32,
+    "literal-replay": 3.27,
+    "certificate-development": 3.07,
+    "certificate-coverage": 2.87,
+    "certificate-scope-repair": 2.72,
+    "native-evaluation": 2.62,
+    "native-nodes": 2.57,
+    "native-sources": 2.42,
+    "native-extensions": 2.42,
+    "requirement-sources": 1.92
+   }
+  },
+  {
+   "cycle": "sized-parallel-word-keys",
+   "output": "/tmp/native-word-check-1789644302",
+   "check_stdout_sha256": "23e204b74de1160e923c48c129ab3ef70760d7fbde71a1aa0d0eb4552eda2128",
+   "change": "Word reference keys carry field sizes, are computed in parallel and searched with one comparison per tree node.",
+   "status": "accepted",
+   "phases": {
+    "base_and_impact": 8.55,
+    "proof": 75.35,
+    "recipe_impact": 5.27,
+    "export": 12.58,
+    "execution_impact": 1.1,
+    "recipes_and_host_tests": 62.08
+   },
+   "seconds": 201.82,
+   "theories": 1676,
+   "reused_theories": 1572,
+   "host_tests": {
+    "tools": {
+     "ran": 152,
+     "skipped": 0,
+     "exit_code": 0
+    },
+    "kernel": {
+     "ran": 35,
+     "skipped": 2,
+     "exit_code": 0
+    }
+   },
+   "executed_recipes": 50,
+   "recipe_seconds_sum": 367.91,
+   "recipe_seconds": {
+    "digit-replay": 60.91,
+    "certified-causes": 36.85,
+    "constructed-history": 23.42,
+    "quoted-history": 19.56,
+    "source-development": 18.17,
+    "known-history": 17.5,
+    "digit-history": 15.55,
+    "history-index": 13.6,
+    "native-steering": 12.86,
+    "concurrent-history": 11.48,
+    "native-admission": 7.08,
+    "native-workflow": 7.04,
+    "native-development": 6.63,
+    "required-history": 6.63,
+    "decision-replay": 6.03,
+    "native-requirements": 5.87,
+    "native-graphs": 5.27,
+    "required-causes": 5.22,
+    "native-certificate-replay": 4.47,
+    "native-certificates": 4.42,
+    "native-child": 4.17,
+    "native-derivations": 4.07,
+    "certificate-development": 3.67,
+    "certificate-input-development": 3.57,
+    "data-reading": 3.57,
+    "native-histories": 3.22,
+    "literal-replay": 3.17,
+    "requirement-decisions": 3.07,
+    "digit-generation": 2.87,
+    "indexed-generation": 2.87,
+    "certificate-coverage": 2.82,
+    "certificate-scope-repair": 2.82,
+    "native-evaluation": 2.72,
+    "generation-records": 2.62,
+    "encoded-environments": 2.62,
+    "native-nodes": 2.57,
+    "native-sources": 2.47,
+    "native-extensions": 2.32,
+    "digit-allocation": 2.27,
+    "cached-grafts": 2.22,
+    "allocated-environments": 2.07,
+    "environment-updates": 2.02,
+    "use-codecs": 2.02,
+    "environment-grafts": 2.02,
+    "builtin-investigations": 2.02,
+    "graft-admission": 2.02,
+    "use-allocation": 1.97,
+    "requirement-sources": 1.92,
+    "requirement-plans": 1.87,
+    "artifact-lookup": 1.72
+   }
+  },
+  {
+   "cycle": "linear-lineage-and-data-walks",
+   "output": "/tmp/native-walk-check-1789646880",
+   "check_stdout_sha256": "2b5d412979d9f8f52c948b423a021b71f3af2108493e9c16de467c033ba55470",
+   "change": "Lineage verification reads each distinct input once; complete data readings follow one walk; duplicate shared exports retired.",
+   "status": "accepted",
+   "phases": {
+    "base_and_impact": 0.23,
+    "proof": 65.9,
+    "recipe_impact": 0.31,
+    "export": 3.82,
+    "execution_impact": 1.0,
+    "recipes_and_host_tests": 55.84
+   },
+   "seconds": 135.07,
+   "theories": 1675,
+   "reused_theories": 1576,
+   "host_tests": {
+    "tools": {
+     "ran": 152,
+     "skipped": 0,
+     "exit_code": 0
+    },
+    "kernel": {
+     "ran": 35,
+     "skipped": 2,
+     "exit_code": 0
+    }
+   },
+   "executed_recipes": 50,
+   "recipe_seconds_sum": 331.57,
+   "recipe_seconds": {
+    "digit-replay": 47.58,
+    "constructed-history": 21.57,
+    "certified-causes": 21.27,
+    "quoted-history": 18.3,
+    "source-development": 16.91,
+    "known-history": 15.65,
+    "digit-history": 13.89,
+    "history-index": 12.78,
+    "native-steering": 12.25,
+    "concurrent-history": 12.13,
+    "native-admission": 7.63,
+    "native-development": 7.23,
+    "native-workflow": 6.69,
+    "decision-replay": 6.22,
+    "native-requirements": 5.87,
+    "required-history": 5.47,
+    "native-graphs": 5.27,
+    "required-causes": 4.87,
+    "native-certificate-replay": 4.42,
+    "native-child": 4.27,
+    "native-certificates": 4.02,
+    "native-derivations": 3.92,
+    "certificate-input-development": 3.47,
+    "data-reading": 3.47,
+    "native-histories": 3.42,
+    "certificate-development": 3.32,
+    "literal-replay": 3.17,
+    "requirement-decisions": 3.17,
+    "indexed-generation": 3.12,
+    "digit-generation": 3.07,
+    "certificate-coverage": 3.07,
+    "certificate-scope-repair": 3.02,
+    "native-evaluation": 2.97,
+    "encoded-environments": 2.82,
+    "generation-records": 2.72,
+    "native-nodes": 2.72,
+    "native-sources": 2.72,
+    "native-extensions": 2.57,
+    "digit-allocation": 2.32,
+    "cached-grafts": 2.17,
+    "allocated-environments": 2.17,
+    "environment-updates": 2.17,
+    "environment-grafts": 2.12,
+    "graft-admission": 2.07,
+    "builtin-investigations": 2.07,
+    "use-codecs": 1.97,
+    "requirement-sources": 1.92,
+    "use-allocation": 1.87,
+    "requirement-plans": 1.87,
+    "artifact-lookup": 1.82
+   }
+  },
+  {
+   "cycle": "heapless-ordered-unreferenced-positions",
+   "output": "/tmp/native-difference-check-1789648225",
+   "check_stdout_sha256": "b4d2f846d5c3bb007484d7f18b63921def8cce5985751efb24371d046086ae95",
+   "change": "First heapless check on the complete-proof base; unreferenced positions subtract canonical listings in one merge pass.",
+   "status": "accepted",
+   "phases": {
+    "base_and_impact": 0.23,
+    "proof": 36.94,
+    "recipe_impact": 0.3,
+    "export": 2.32,
+    "execution_impact": 1.0,
+    "recipes_and_host_tests": 47.64
+   },
+   "seconds": 93.2,
+   "theories": 1676,
+   "reused_theories": 1577,
+   "host_tests": {
+    "tools": {
+     "ran": 155,
+     "skipped": 0,
+     "exit_code": 0
+    },
+    "kernel": {
+     "ran": 35,
+     "skipped": 2,
+     "exit_code": 0
+    }
+   },
+   "executed_recipes": 11,
+   "recipe_seconds_sum": 174.48,
+   "recipe_seconds": {
+    "digit-replay": 47.64,
+    "certified-causes": 23.26,
+    "constructed-history": 18.21,
+    "quoted-history": 17.45,
+    "known-history": 15.75,
+    "digit-history": 14.94,
+    "history-index": 12.09,
+    "concurrent-history": 11.78,
+    "required-history": 5.62,
+    "required-causes": 4.52,
+    "data-reading": 3.22
+   }
+  },
+  {
+   "cycle": "thirty-two-proof-threads",
+   "output": "/tmp/native-threads-check-1789648620",
+   "check_stdout_sha256": "0f6263adf9bd7aeb5555e29e3ff6b1fa0cc0baba67f9fb104a1527eb40bb6c84",
+   "change": "The same rebuilt theories with 32 proof threads; exports and recipe manifests unchanged.",
+   "status": "accepted",
+   "phases": {
+    "base_and_impact": 0.23,
+    "proof": 36.82,
+    "recipe_impact": 0.33,
+    "export": 0.0,
+    "execution_impact": 0.0,
+    "recipes_and_host_tests": 4.39
+   },
+   "seconds": 46.0,
+   "theories": 1676,
+   "reused_theories": 1577,
+   "host_tests": {
+    "tools": {
+     "ran": 155,
+     "skipped": 0,
+     "exit_code": 0
+    },
+    "kernel": {
+     "ran": 35,
+     "skipped": 2,
+     "exit_code": 0
+    }
+   },
+   "executed_recipes": 0,
+   "recipe_seconds_sum": 0,
+   "recipe_seconds": {}
+  },
+  {
+   "cycle": "final-state",
+   "output": "/tmp/native-final-check-1789648868",
+   "check_stdout_sha256": "3659a1f7b0cd08efeb4fba4c0d3e96847ae06fd42858b67adbbd428e825fe138",
+   "change": "Final workspace state after reverting the unadopted recipe priority; recipe manifests unchanged.",
+   "status": "accepted",
+   "phases": {
+    "base_and_impact": 0.23,
+    "proof": 37.5,
+    "recipe_impact": 0.34,
+    "export": 0.0,
+    "execution_impact": 0.0,
+    "recipes_and_host_tests": 4.38
+   },
+   "seconds": 46.7,
+   "theories": 1676,
+   "reused_theories": 1577,
+   "host_tests": {
+    "tools": {
+     "ran": 155,
+     "skipped": 0,
+     "exit_code": 0
+    },
+    "kernel": {
+     "ran": 35,
+     "skipped": 2,
+     "exit_code": 0
+    }
+   },
+   "executed_recipes": 0,
+   "recipe_seconds_sum": 0,
+   "recipe_seconds": {}
+  },
+  {
+   "cycle": "generation-target-fields-with-predecessor-words",
+   "output": "/tmp/native-generation-check-1789649425",
+   "check_stdout_sha256": "eabf8d6ac84f35248d61fd537f0f612dcafeb5abfb773d052e7d62b0e574cc33",
+   "change": "Target fields compared by value but predecessor words kept; imported into every export. Rejected: history families slowed by 25-48 percent.",
+   "status": "accepted",
+   "phases": {
+    "base_and_impact": 0.23,
+    "proof": 37.15,
+    "recipe_impact": 0.33,
+    "export": 2.32,
+    "execution_impact": 1.01,
+    "recipes_and_host_tests": 42.8
+   },
+   "seconds": 88.64,
+   "theories": 1677,
+   "reused_theories": 1577,
+   "host_tests": {
+    "tools": {
+     "ran": 155,
+     "skipped": 0,
+     "exit_code": 0
+    },
+    "kernel": {
+     "ran": 35,
+     "skipped": 2,
+     "exit_code": 0
+    }
+   },
+   "executed_recipes": 14,
+   "recipe_seconds_sum": 213.25,
+   "recipe_seconds": {
+    "digit-replay": 42.8,
+    "certified-causes": 30.08,
+    "constructed-history": 24.22,
+    "known-history": 23.38,
+    "quoted-history": 23.07,
+    "digit-history": 21.06,
+    "history-index": 15.08,
+    "concurrent-history": 11.84,
+    "required-history": 5.62,
+    "required-causes": 4.27,
+    "data-reading": 3.42,
+    "indexed-generation": 2.97,
+    "digit-generation": 2.97,
+    "generation-records": 2.47
+   }
+  },
+  {
+   "cycle": "generation-checks-by-value",
+   "output": "/tmp/native-generation-values-check-1789649729",
+   "check_stdout_sha256": "0e7f21eb751a0f1b9c0e3f913d1c16d76abeebd27271f6d76537b83705eccfd8",
+   "change": "Original generation check and readiness equations executable in every export.",
+   "status": "accepted",
+   "phases": {
+    "base_and_impact": 0.23,
+    "proof": 36.34,
+    "recipe_impact": 0.33,
+    "export": 2.32,
+    "execution_impact": 1.01,
+    "recipes_and_host_tests": 28.55
+   },
+   "seconds": 73.56,
+   "theories": 1677,
+   "reused_theories": 1577,
+   "host_tests": {
+    "tools": {
+     "ran": 155,
+     "skipped": 0,
+     "exit_code": 0
+    },
+    "kernel": {
+     "ran": 35,
+     "skipped": 2,
+     "exit_code": 0
+    }
+   },
+   "executed_recipes": 3,
+   "recipe_seconds_sum": 43.8,
+   "recipe_seconds": {
+    "digit-replay": 28.55,
+    "concurrent-history": 10.38,
+    "required-history": 4.87
+   }
+  },
+  {
+   "cycle": "resources-twelve-jobs-three-gigabyte-heaps",
+   "output": "/tmp/native-resources-check-1789649965",
+   "check_stdout_sha256": "6cd0a90024d04e920ca6855554976ab206832bf499f24e906c83229fe2eea201",
+   "change": "Twelve recipe jobs, 3 GB initial Poly/ML heaps, digit replay with 16 workers; every recipe executed. Rejected: memory exhausted.",
+   "status": "accepted",
+   "phases": {
+    "base_and_impact": 0.23,
+    "proof": 37.64,
+    "recipe_impact": 0.32,
+    "export": 2.32,
+    "execution_impact": 1.01,
+    "recipes_and_host_tests": 46.6
+   },
+   "seconds": 93.0,
+   "theories": 1677,
+   "reused_theories": 1577,
+   "host_tests": {
+    "tools": {
+     "ran": 155,
+     "skipped": 0,
+     "exit_code": 0
+    },
+    "kernel": {
+     "ran": 35,
+     "skipped": 2,
+     "exit_code": 0
+    }
+   },
+   "executed_recipes": 50,
+   "recipe_seconds_sum": 500.34,
+   "recipe_seconds": {
+    "digit-replay": 46.6,
+    "constructed-history": 30.3,
+    "quoted-history": 29.83,
+    "certified-causes": 28.85,
+    "digit-history": 27.07,
+    "known-history": 26.98,
+    "source-development": 25.66,
+    "history-index": 23.88,
+    "concurrent-history": 23.77,
+    "native-steering": 20.18,
+    "native-admission": 18.2,
+    "native-development": 12.74,
+    "native-workflow": 10.96,
+    "required-history": 8.99,
+    "decision-replay": 8.84,
+    "native-requirements": 8.1,
+    "native-graphs": 7.55,
+    "required-causes": 7.51,
+    "native-certificate-replay": 6.69,
+    "native-child": 6.54,
+    "native-certificates": 6.45,
+    "native-derivations": 5.84,
+    "certificate-input-development": 5.68,
+    "native-histories": 5.48,
+    "data-reading": 5.43,
+    "literal-replay": 5.18,
+    "certificate-development": 4.93,
+    "requirement-decisions": 4.88,
+    "digit-generation": 4.43,
+    "indexed-generation": 4.32,
+    "native-nodes": 4.18,
+    "certificate-coverage": 4.13,
+    "certificate-scope-repair": 4.13,
+    "generation-records": 4.08,
+    "native-evaluation": 4.07,
+    "native-sources": 4.03,
+    "native-extensions": 3.98,
+    "encoded-environments": 3.82,
+    "digit-allocation": 3.68,
+    "cached-grafts": 3.68,
+    "allocated-environments": 3.38,
+    "environment-grafts": 3.38,
+    "graft-admission": 3.33,
+    "environment-updates": 3.27,
+    "builtin-investigations": 3.13,
+    "use-codecs": 2.88,
+    "requirement-sources": 2.87,
+    "requirement-plans": 2.32,
+    "use-allocation": 2.12,
+    "artifact-lookup": 2.02
+   }
+  },
+  {
+   "cycle": "resources-eight-jobs-default-heaps",
+   "output": "/tmp/native-jobs8-check-1789650100",
+   "check_stdout_sha256": "42ab983e06c05641c4845a53afb763f352a09b2fe936b1d16954f67d1890a79f",
+   "change": "Eight recipe jobs, default heaps, digit replay with 16 workers; every recipe executed.",
+   "status": "accepted",
+   "phases": {
+    "base_and_impact": 0.23,
+    "proof": 38.5,
+    "recipe_impact": 0.35,
+    "export": 2.32,
+    "execution_impact": 1.0,
+    "recipes_and_host_tests": 46.74
+   },
+   "seconds": 93.88,
+   "theories": 1677,
+   "reused_theories": 1577,
+   "host_tests": {
+    "tools": {
+     "ran": 155,
+     "skipped": 0,
+     "exit_code": 0
+    },
+    "kernel": {
+     "ran": 35,
+     "skipped": 2,
+     "exit_code": 0
+    }
+   },
+   "executed_recipes": 50,
+   "recipe_seconds_sum": 369.83,
+   "recipe_seconds": {
+    "digit-replay": 45.65,
+    "certified-causes": 28.8,
+    "constructed-history": 23.44,
+    "quoted-history": 22.5,
+    "known-history": 20.34,
+    "source-development": 19.09,
+    "digit-history": 16.31,
+    "native-steering": 14.68,
+    "history-index": 13.49,
+    "concurrent-history": 12.24,
+    "native-admission": 8.08,
+    "native-workflow": 7.75,
+    "native-development": 7.57,
+    "required-history": 6.53,
+    "decision-replay": 6.42,
+    "native-requirements": 6.22,
+    "native-graphs": 5.43,
+    "native-certificate-replay": 5.33,
+    "native-certificates": 5.28,
+    "required-causes": 5.08,
+    "native-child": 5.02,
+    "native-derivations": 4.87,
+    "certificate-input-development": 3.97,
+    "data-reading": 3.82,
+    "native-histories": 3.67,
+    "certificate-development": 3.57,
+    "literal-replay": 3.52,
+    "requirement-decisions": 3.47,
+    "certificate-coverage": 3.27,
+    "indexed-generation": 3.22,
+    "digit-generation": 3.22,
+    "certificate-scope-repair": 3.17,
+    "native-evaluation": 3.07,
+    "generation-records": 3.07,
+    "native-nodes": 3.02,
+    "encoded-environments": 2.97,
+    "native-sources": 2.82,
+    "native-extensions": 2.72,
+    "digit-allocation": 2.57,
+    "cached-grafts": 2.52,
+    "allocated-environments": 2.32,
+    "environment-updates": 2.32,
+    "environment-grafts": 2.27,
+    "graft-admission": 2.27,
+    "requirement-sources": 2.27,
+    "use-codecs": 2.17,
+    "requirement-plans": 2.17,
+    "builtin-investigations": 2.12,
+    "use-allocation": 2.12,
+    "artifact-lookup": 2.02
+   }
+  },
+  {
+   "cycle": "committed-state",
+   "output": "/tmp/native-committed-check-1789650228",
+   "check_stdout_sha256": "31a4716fd5327c49f9c4ed9790dd49108c2eecb2303b872bf5b3390d93270443",
+   "change": "Final workspace: eight jobs, default heaps, digit replay with 16 workers; only digit replay re-executed.",
+   "status": "accepted",
+   "phases": {
+    "base_and_impact": 0.23,
+    "proof": 36.79,
+    "recipe_impact": 0.35,
+    "export": 1.77,
+    "execution_impact": 0.02,
+    "recipes_and_host_tests": 24.25
+   },
+   "seconds": 67.65,
+   "theories": 1677,
+   "reused_theories": 1577,
+   "host_tests": {
+    "tools": {
+     "ran": 155,
+     "skipped": 0,
+     "exit_code": 0
+    },
+    "kernel": {
+     "ran": 35,
+     "skipped": 2,
+     "exit_code": 0
+    }
+   },
+   "executed_recipes": 1,
+   "recipe_seconds_sum": 24.25,
+   "recipe_seconds": {
+    "digit-replay": 24.25
+   }
+  }
+ ],
+ "lineage_verification": {
+  "depth_levels": 10,
+  "distinct_inputs": 17712,
+  "before": {
+   "seconds": 9.46,
+   "digests_read": 126331,
+   "cause": "Each level re-read every ancestor input, including every ancestor heap, and recomputed import closures per theory."
+  },
+  "after": {
+   "seconds": 1.37,
+   "digests_read": 17712,
+   "retained_theory_scans": 2050,
+   "rule": "One verification pass reads each distinct input once and scans each retained theory text once per name and digest; the verified context is identical."
+  },
+  "all_inputs_hashed_once_seconds": 0.92,
+  "check_phase_effect_seconds": {
+   "base_and_impact": [
+    8.55,
+    0.23
+   ],
+   "recipe_impact": [
+    5.27,
+    0.31
+   ],
+   "export": [
+    12.58,
+    3.82
+   ],
+   "check_total": [
+    201.82,
+    135.07
+   ]
+  }
+ },
+ "isabelle_session_overhead": {
+  "trivial_child_of_ten_level_lineage": {
+   "session_seconds": 11,
+   "build_seconds": 17.85,
+   "theory_seconds": 0.083
+  },
+  "trivial_child_of_one_level_base": {
+   "session_seconds": 6,
+   "build_seconds": 10.25,
+   "theory_seconds": 0.073
+  },
+  "stored_heap_cost_seconds": "about 9: a child without a stored heap spent 1.8 seconds outside its 11.2 theory seconds",
+  "heap_saving": "Isabelle shares common data over the whole loaded heap and saves the child; both are fixed per stored session."
+ },
+ "export_code": {
+  "repeated_exports_in_one_theory_seconds": [
+   3.599,
+   3.754,
+   3.591
+  ],
+  "finding": "Code generation is not shared between export commands, even for identical constant lists.",
+  "digit_replay_minimal_versus_recorded_constants": {
+   "seconds": [
+    3.871,
+    4.052
+   ],
+   "compressed_module_bytes": [
+    71901,
+    76229
+   ]
+  },
+  "decision": "Trimming exported constants saves about five percent and was not adopted."
+ },
+ "digit_replay_runtime_options": {
+  "runs": [
+   {
+    "family": "digit-replay",
+    "ml_options": "",
+    "threads": 4,
+    "exit": 0,
+    "seconds": 32.18,
+    "stages": [
+     "STAGE report 21955",
+     "STAGE word 6501 bits 164154270"
+    ]
+   },
+   {
+    "family": "digit-replay",
+    "ml_options": "",
+    "threads": 8,
+    "exit": 0,
+    "seconds": 31.07,
+    "stages": [
+     "STAGE report 21192",
+     "STAGE word 6170 bits 164154270"
+    ]
+   },
+   {
+    "family": "digit-replay",
+    "ml_options": "",
+    "threads": 16,
+    "exit": 0,
+    "seconds": 29.38,
+    "stages": [
+     "STAGE report 20267",
+     "STAGE word 5421 bits 164154270"
+    ]
+   },
+   {
+    "family": "digit-replay",
+    "ml_options": "--minheap 4000",
+    "threads": 4,
+    "exit": 0,
+    "seconds": 28.57,
+    "stages": [
+     "STAGE report 18182",
+     "STAGE word 6188 bits 164154270"
+    ]
+   },
+   {
+    "family": "digit-replay",
+    "ml_options": "--minheap 4000",
+    "threads": 16,
+    "exit": 0,
+    "seconds": 27.82,
+    "stages": [
+     "STAGE report 18072",
+     "STAGE word 5540 bits 164154270"
+    ]
+   },
+   {
+    "family": "digit-replay",
+    "ml_options": "--minheap 8000",
+    "threads": 16,
+    "exit": 0,
+    "seconds": 26.07,
+    "stages": [
+     "STAGE report 16630",
+     "STAGE word 5217 bits 164154270"
+    ]
+   }
+  ],
+  "finding": "Workers and a larger initial Poly/ML heap reduce the standalone execution by at most about one fifth; neither was adopted as a structural change."
+ },
+ "digit_replay_report_attribution": {
+  "boundary": "Single-thread counters around selected generated functions; inclusive times overlap and include counter overhead.",
+  "report_stage_seconds": 38.31,
+  "counts": {
+   "artifact_formation_checks": 141819,
+   "environment_formation_checks": 14877,
+   "generation_field_readings": 559,
+   "sorted_set_listings": 876573,
+   "artifact_comparisons": 19768,
+   "artifact_row_listings": 41798,
+   "collection_presentations": 20874
+  },
+  "inclusive_seconds": {
+   "artifact_formation": 13.0,
+   "environment_formation": 8.7,
+   "generation_field_readings": 10.2,
+   "sorted_set_listings": 19.6,
+   "collection_presentations": 4.55,
+   "artifact_rows": 4.65
+  }
+ },
+ "complete_source_proof": {
+  "output": "/tmp/native-complete-proof-1789647297",
+  "session": "Native_Complete_1789647297",
+  "theories": 1675,
+  "parent": "HOL",
+  "threads": 16,
+  "parallel_proofs": 1,
+  "wall_seconds": 470,
+  "session_elapsed_seconds": 454,
+  "cpu_seconds": 3060,
+  "theory_elapsed_seconds": 398.731,
+  "theory_cpu_seconds": 2915.762,
+  "gc_seconds": 423.976,
+  "statistics": {
+   "samples": 794,
+   "fraction_ready_waiting": 0.928,
+   "mean_ready": 12309.7,
+   "mean_workers_active": 7.99,
+   "workers": 32,
+   "mean_GC_percent": 1.1,
+   "peak_heap_GiB": 15.81,
+   "sampled_seconds": 398.0
+  },
+  "previous": {
+   "seconds": 830.44,
+   "session_elapsed_seconds": 815,
+   "cpu_seconds": 4940,
+   "parallel_proofs": 0
+  },
+  "decision": "Ready tasks waited in most samples, but the heap peaked near the 16 GB compact-heap limit; complete proofs and checks keep 16 threads. The proof was adopted as the one-level base."
+ },
+ "heapless_sessions": {
+  "trivial_child_on_one_level_base": {
+   "stored_heap_build_seconds": 10.62,
+   "stored_heap_session_seconds": 7,
+   "without_heap_build_seconds": 5.23,
+   "without_heap_session_seconds": 1
+  },
+  "currency_without_heap": "isabelle build -n without -b accepts the current session (3.3 seconds); with -b it refuses the missing heap.",
+  "database_output_heap": "A session without a stored heap records an empty output heap.",
+  "exports": "isabelle export -n reads code exports from a session without a stored heap."
+ },
+ "generation_check_attribution": {
+  "boundary": "Single-thread counters around generated functions of the digit replay report; inclusive times overlap and include counter overhead.",
+  "report_stage_seconds": 114.625,
+  "cause_report_with_scopes": {
+   "calls": 197,
+   "seconds": 97.216
+  },
+  "structural_target_code": {
+   "calls": 11094,
+   "seconds": 87.503
+  },
+  "structural_artifact_code_seconds": 86.889,
+  "finite_generation_field_readings": {
+   "calls": 566,
+   "seconds": 9.609
+  },
+  "finite_bijective_relation_seconds": 0.146,
+  "known_history_report_stage_seconds": {
+   "original_equations": 7.383,
+   "target_fields_with_predecessor_words": 11.353
+  }
+ },
+ "machine_resources": {
+  "machine": {
+   "cores": 16,
+   "hardware_threads": 32,
+   "memory_gb": 64
+  },
+  "twelve_jobs_three_gigabyte_heaps": {
+   "samples": 93,
+   "peak_used_mb": 59942,
+   "min_available_mb": 1879,
+   "peak_load_one_minute": 17.79
+  },
+  "eight_jobs_default_heaps": {
+   "samples": 93,
+   "peak_used_mb": 28835,
+   "min_available_mb": 32986,
+   "peak_load_one_minute": 14.18,
+   "max_poly_processes": 15,
+   "peak_poly_rss_sum_mb": 8315,
+   "largest_poly_rss_mb": 6719
+  },
+  "findings": [
+   "Memory binds concurrency before processors: per-process Poly/ML heaps and Isabelle launchers grow with concurrent executions.",
+   "A compact 32-bit Poly/ML heap is limited to 16 GB; the complete proof peaked at 15.8 GB.",
+   "Allocation and stop-the-world garbage collection limit parallel speedup within a process.",
+   "Incremental proofs are bounded by their critical path of dependent export commands.",
+   "Concurrent Poly/ML processes slow each other below full load through collection and memory traffic."
+  ],
+  "decision": "Keep 16 proof threads, eight recipe jobs and default heaps; digit replay uses 16 workers."
+ }
+}

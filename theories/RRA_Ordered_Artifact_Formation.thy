@@ -10,7 +10,7 @@ definition ordered_object_formed ::
         counted=sorted_list_of_multiset (finite_bag D);
         bindings=sorted_list_of_fset (finite_bindings D);
         used=concat (map (\<lambda>(r,p,x). [r,p,x]) incidence) @ map fst counted @ map fst bindings
-    in ordered_relation_functional (finite_bindings D) \<and>
+    in ascending_listing (map fst bindings) \<and>
       ordered_fset_subset (fset_of_list used) (finite_carrier S))"
 
 lemma listed_fields_subset:
@@ -35,7 +35,8 @@ proof -
       \<longleftrightarrow> fBall (finite_bindings ?D) (\<lambda>x. fst x |\<in>| finite_carrier ?S)"
     by (auto simp: fsubset_iff fset_of_list.rep_eq)
   show ?thesis
-    by (simp only: ordered_object_formed_def Let_def ordered_relation_functional_exact
+    by (simp only: ordered_object_formed_def Let_def ordered_relation_functional_def[symmetric]
+        ordered_relation_functional_exact
         ordered_fset_subset_exact fset_of_list_append funion_fsubset_iff incidence counted bindings
         finite_object_formed_def finite_basis_formed_def conj_assoc conj_left_commute)
 qed

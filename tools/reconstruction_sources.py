@@ -43,25 +43,29 @@ def recipe_inputs(path):
     return name, tuple(roots), tuple(fixtures), tuple(jobs)
 
 
-def local_python_closure(directory, seeds):
+def local_python_closure(directory, seeds, modules=None):
+    """The local import closure of seeds; modules shares each file's digest and imports between calls."""
     pending = list(seeds)
     files = {}
+    modules = {} if modules is None else modules
     while pending:
         path = pending.pop().resolve()
         assert path.is_relative_to(directory) and path.is_file()
         if path in files:
             continue
-        raw = path.read_bytes()
-        tree = ast.parse(raw, filename=str(path))
-        files[path] = investigate.digest(raw)
-        names = []
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                names.extend(item.name.split(".")[0] for item in node.names)
-            elif isinstance(node, ast.ImportFrom):
-                assert not node.level, "Relative tool imports require an explicit source-closure account."
-                if node.module:
-                    names.append(node.module.split(".")[0])
+        if path not in modules:
+            raw = path.read_bytes()
+            tree = ast.parse(raw, filename=str(path))
+            names = []
+            for node in ast.walk(tree):
+                if isinstance(node, ast.Import):
+                    names.extend(item.name.split(".")[0] for item in node.names)
+                elif isinstance(node, ast.ImportFrom):
+                    assert not node.level, "Relative tool imports require an explicit source-closure account."
+                    if node.module:
+                        names.append(node.module.split(".")[0])
+            modules[path] = (investigate.digest(raw), names)
+        files[path], names = modules[path]
         for name in names:
             candidate = directory / (name + ".py")
             if candidate.is_file():
@@ -69,15 +73,26 @@ def local_python_closure(directory, seeds):
     return files
 
 
-def collect(project, recipe, poly, *, isabelle_version=None):
+def collect(project, recipe, poly, *, isabelle_version=None, graph=None, modules=None):
+    """A recipe's complete input manifest.
+
+    Given the project's already read source graph, the theory closure is its projection onto the
+    recipe roots and the caller checks every collected input once when its validation completes.
+    """
     if not __debug__:
         raise ValueError("Source-boundary collection requires assertions.")
     project, recipe, poly = map(lambda path: path.resolve(), [project, recipe, poly])
     directory = project / "tools"
     assert recipe.is_relative_to(directory) and recipe.is_file() and poly.is_file()
     name, roots, fixtures, jobs = recipe_inputs(recipe)
-    sources, _ = investigate.source_graph(project, [], list(roots))
-    python = local_python_closure(directory, [recipe, *(directory / item for item in (*STAGE_TOOLS, *jobs))])
+    if graph is None:
+        sources, _ = investigate.source_graph(project, [], list(roots))
+    else:
+        complete, parents = graph
+        assert set(roots) <= complete.keys(), "Missing requested theory."
+        sources = {theory: complete[theory] for theory in investigate.import_contexts(parents, roots)}
+    python = local_python_closure(directory, [recipe, *(directory / item for item in (*STAGE_TOOLS, *jobs))],
+                                  modules)
     files = {"theories/" + key + ".thy": value["sha256"] for key, value in sources.items()}
     files.update({str(path.relative_to(project)): sha for path, sha in python.items()})
     for item in (*fixtures, "validation/reconstruction/" + name + "-reports.json"):
@@ -86,8 +101,9 @@ def collect(project, recipe, poly, *, isabelle_version=None):
         assert not relative.is_absolute() and ".." not in relative.parts
         assert path.is_relative_to(project) and path.is_file(), item
         files[item] = digest(path)
-    assert investigate.current_sources(sources)
-    assert all(digest(project / path) == sha for path, sha in files.items()), "Inputs changed during collection."
+    if graph is None:
+        assert investigate.current_sources(sources)
+        assert all(digest(project / path) == sha for path, sha in files.items()), "Inputs changed during collection."
     version = isabelle_version or subprocess.run(["isabelle", "version"], capture_output=True, text=True,
                                                 check=True).stdout.strip()
     return {

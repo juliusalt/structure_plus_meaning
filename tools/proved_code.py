@@ -20,9 +20,9 @@ def proved_context_partition(sources, parents, accepted_sources):
     if not __debug__:
         raise ValueError("Proof context checks require Python assertions.")
     assert sources.keys() == parents.keys()
-    reused = {name for name in sources if all(
-        accepted_sources.get(parent) == sources[parent]["sha256"]
-        for parent in investigate.import_context(parents, name))}
+    proved = investigate.contexts_satisfying(
+        parents, lambda name: accepted_sources.get(name) == sources[name]["sha256"])
+    reused = {name for name in sources if proved[name]}
     return reused, sources.keys() - reused
 
 

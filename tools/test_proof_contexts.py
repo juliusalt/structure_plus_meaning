@@ -156,6 +156,29 @@ class RetainedContextTests(unittest.TestCase):
         p.write_text(p.read_text().replace('= HOL +', '= Pure +'))
         with self.assertRaises(AssertionError): self.load()
 
+    def test_heapless_context_is_identified_by_its_database(self):
+        self.proof['command'] = ['isabelle', 'build', '-D', str(self.root)]
+        self.proof['stored_heap'] = False
+        self.save()
+        stored = {'database': '/fixture/database', 'database_sha256': 'db'}
+        with patch.object(contexts, 'verify_currency', return_value=stored), \
+                patch.object(contexts, 'session_identity', return_value=stored):
+            adopted = contexts.adopt_proof_context(self.root, self.project)
+            loaded = contexts.load_parent(self.root)
+        self.assertFalse(adopted['stored_heap'])
+        self.assertEqual(loaded['inputs']['/fixture/database'], 'db')
+        self.assertNotIn('/fixture/heap', loaded['inputs'])
+
+    def test_recorded_heap_storage_must_match_the_build(self):
+        self.proof['stored_heap'] = False
+        self.save()
+        with self.assertRaises(AssertionError): self.adopt()
+
+    def test_heapless_context_cannot_be_a_parent(self):
+        parent = contexts._empty_context() | {'stored_heap': False}
+        with self.assertRaises(AssertionError):
+            contexts._proof_claims(self.root, parent, contexts.session_declaration(self.project))
+
     def test_optimized_adoption_rejects_before_reading_inputs(self):
         result = subprocess.run([sys.executable, '-B', '-O', '-c',
             "import proof_contexts; proof_contexts.adopt_proof_context('/missing-proof', '/missing-project')"],

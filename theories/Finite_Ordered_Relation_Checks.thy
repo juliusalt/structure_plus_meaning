@@ -38,20 +38,29 @@ lemma finite_relation_functional_first_injective:
   "finite_relation_functional R \<longleftrightarrow> inj_on fst (fset R)"
   by (auto simp: finite_relation_functional_def inj_on_def prod_eq_iff)
 
+lemma sorted_pair_keys:
+  "sorted (xs::('a::linorder \<times> 'b::linorder) list) \<Longrightarrow> sorted (map fst xs)"
+  unfolding sorted_wrt_map
+  by (rule sorted_wrt_mono_rel[of _ "(\<le>)"]) (auto simp: less_eq_prod_def)
+
 definition ordered_relation_functional ::
   "('a::linorder \<times> 'b::linorder) fset \<Rightarrow> bool" where
-  "ordered_relation_functional R=(let keys=sort (map fst (sorted_list_of_fset R))
-    in remdups_adj keys=keys)"
+  "ordered_relation_functional R=ascending_listing (map fst (sorted_list_of_fset R))"
 
 theorem ordered_relation_functional_exact:
   "ordered_relation_functional R=finite_relation_functional R"
-  by (simp add: ordered_relation_functional_def Let_def sorted_duplicate_check
+proof -
+  have "sorted (map fst (sorted_list_of_fset R))" by (rule sorted_pair_keys) (simp add: sorted_list_of_fset.rep_eq)
+  then show ?thesis
+    by (simp add: ordered_relation_functional_def ascending_listing_exact
       distinct_map finite_relation_functional_first_injective)
+qed
 
 text \<open>The original finite subset and functionality predicates are computed
   from their complete canonical lists. The subsequence scan is the existing
-  proved list operation. Functionality checks duplicate keys after exact-pair
-  deduplication; repeated equal rows and conflicting values remain distinct
-  cases under the original relation. No supplied satisfaction table is used.\<close>
+  proved list operation. The canonical list of exact pairs orders their keys,
+  so functionality is one adjacent pass over those keys: repeated equal rows are
+  already one pair, and conflicting values at one key remain adjacent equal keys
+  under the original relation. No supplied satisfaction table is used.\<close>
 
 end

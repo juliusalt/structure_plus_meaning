@@ -1351,3 +1351,16 @@ each retain one proved report word; no recipe runs a host comparison, roundtrip 
 host re-derivation. 152 tool tests and 35 kernel tests pass (two optional skips). No
 obligation row changes status. Conditions 1 and 6, practical 5a, wider coverage, O-85
 and genesis remain open; theoretical 5b is deferred.
+
+## Refined native computation and heapless validation
+
+The accepted workspace has 1,677 theories and 50 recipe boundaries with 57 retained
+words, all identical after the native computation refinements; 155 tool tests and
+35 kernel tests pass (two optional skips). Checks store no heap and verify lineages
+linearly; a complete source proof of 1,675 theories is the one-level base. No
+obligation row changes status. Conditions 1 and 6, practical 5a, wider coverage,
+O-85 and genesis remain open; theoretical 5b is deferred.
+
+Generation checks and readiness execute their original equations in every export; the
+resource review kept 16 proof threads, eight recipe jobs and default heaps. No
+obligation row changes status.

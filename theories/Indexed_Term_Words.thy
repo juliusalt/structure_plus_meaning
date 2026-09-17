@@ -1,5 +1,5 @@
 theory Indexed_Term_Words
-  imports Finite_Term_Object_Words
+  imports Finite_Term_Object_Words Keyed_Value_References Ordered_Artifact_Comparison "HOL-Library.Parallel"
 begin
 
 section \<open>One reference sequence supplies every artifact index of a term word\<close>
@@ -84,7 +84,7 @@ qed
 
 declare finite_term_shared_object_word_code[code del]
 
-lemma finite_term_shared_word_indexed_code [code]:
+lemma finite_term_shared_word_indexed:
   "finite_term_shared_word_fold f t s=(let
       (indices,T)=value_reference_sequence (map finite_target_artifact (finite_term_targets_pending [t] [])) []
     in finite_term_word_indexed f [t] indices (counted_word_fold artifact_word_fold f (map finite_artifact_rows T) s))"
@@ -128,12 +128,42 @@ proof -
       case_prod_conv append_Nil2 concat.simps list.map)
 qed
 
+lemma compared_artifact_rows_key_inj: "inj (compared_artifact_rows \<circ> finite_artifact_rows)"
+  by (rule injI) (simp add: compared_artifact_rows_def finite_artifact_rows_injective)
+
+lemma finite_term_shared_word_compared_code [code]:
+  "finite_term_shared_word_fold f t s=(let
+      keys=Parallel.map (compared_artifact_rows \<circ> finite_artifact_rows \<circ> finite_target_artifact)
+        (finite_term_targets_pending [t] []);
+      (indices,table)=keyed_reference_compared_run compare_compared_rows keys RBT.empty 0 [] []
+    in finite_term_word_indexed f [t] indices (counted_word_fold artifact_word_fold f (map compared_rows_listing table) s))"
+proof -
+  let ?key="compared_artifact_rows \<circ> finite_artifact_rows"
+  let ?objects="map finite_target_artifact (finite_term_targets_pending [t] [])"
+  have run: "keyed_reference_compared_run compare_compared_rows (map ?key ?objects) RBT.empty 0 [] []=
+      (fst (value_reference_sequence ?objects []),map ?key (snd (value_reference_sequence ?objects [])))"
+    by (simp only: keyed_reference_compared_run_exact[OF compare_compared_rows_linear]
+      keyed_reference_run_keys[symmetric] keyed_reference_run_exact[OF compared_artifact_rows_key_inj])
+  have keys: "Parallel.map (compared_artifact_rows \<circ> finite_artifact_rows \<circ> finite_target_artifact)
+      (finite_term_targets_pending [t] [])=map ?key ?objects"
+    by (simp add: comp_def)
+  have rows: "map compared_rows_listing (map ?key T)=map finite_artifact_rows T" for T
+    by (induction T) simp_all
+  show ?thesis
+    by (simp only: finite_term_shared_word_indexed keys run rows Let_def case_prod_unfold fst_conv snd_conv)
+qed
+
 text \<open>
   Each complete artifact occurrence is compared with the first-occurrence table
   once. The existing reference sequence returns every occurrence's index while it
   builds exactly the prior object table, whose complete rows are still converted
   once per entry. The word consumes those indices in traversal order instead of
-  searching the table again. The delivered word is the existing shared word.
+  searching the table again. The complete rows of each occurrence are its
+  injective ordered key with its field sizes, computed for all occurrences in
+  parallel. The first-occurrence table is searched through an ordered tree of
+  those keys with one comparison of three outcomes per node, and its table
+  already supplies the emitted rows. The
+  delivered word is the existing shared word.
 \<close>
 
 end

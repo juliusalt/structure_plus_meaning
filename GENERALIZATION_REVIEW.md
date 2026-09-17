@@ -2527,3 +2527,32 @@ inspections and flat earlier presentations remain for re-established words. Larg
 development and requirement words are slower than their former host stages, which is
 now the main measured presentation cost. Native problem and approach selection, broader
 adequacy, actual gate 5a usefulness, O-85 and genesis remain open; 5b remains deferred.
+
+## Native computation, lineage and heapless check review
+
+Six accepted cycles moved the check from 227.88 to 135.07 seconds with every recipe
+executing, and a heapless check on the complete-proof base took 93.20 seconds with 11
+recipes executed and 39 reused; every word stayed identical and the tool and
+kernel tests passed (152, later 155 with the heapless-context tests, and 35, two
+optional skips). Profiles and call counters chose each
+refinement; runtime options, an allocation-free word sink, priority for the longest
+recipe, 32 proof threads and trimmed exports were measured and not adopted because
+they showed at most small benefits. The generic parts were factored at first use:
+three-outcome comparisons compose through listings and pairs, keyed reference runs
+apply to any injective ordered key, the merge difference applies to any canonical
+listings, and the verification pass and context predicate serve every lineage. The
+repeated complete source proof (470 seconds, memory-bound at 15.8 GB) replaced the
+eleven-level lineage. Remaining measured costs are formation re-established at every
+reading entry of replay and history states and the data walk's per-node scans.
+Native problem and approach selection, broader adequacy, actual gate 5a usefulness,
+O-85 and genesis remain open; 5b remains deferred.
+
+A later cycle returned generation checks to their original value equations after
+call counters attributed 87.5 of 114.6 instrumented replay seconds to word encodings
+of targets; a first variant that kept predecessor words slowed the history families
+by 25–48 % and was replaced, and digit replay then fell from 47.6 to 28.6 seconds with
+all other affected executions reused. A resource review found that twelve concurrent
+recipes with 3 GB heaps exhausted memory (59.9 GB used, load 17.8) and inflated recipe
+time by half, while eight jobs with default heaps stayed at 28.8 GB; the settings were
+kept and the structural limits recorded. The owner then paused optimization in favour
+of using the machinery.

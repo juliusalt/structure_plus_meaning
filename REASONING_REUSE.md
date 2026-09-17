@@ -1716,3 +1716,27 @@ equations. All pairs passed before the comparisons, request roundtrips and host
 fixtures were retired. These are bootstrap presentation and execution refinements;
 they do not supply native selection or native mathematical-proof admission. See
 [current measurements](native_mechanism_speedup.md).
+
+## Native computation refinements, linear lineage and heapless checks
+
+Native computation reuses canonical structure instead of recomputing it: canonical
+listings are recognized in one pass; functionality, formation and target equality are
+decided from canonical keys; rows, artifacts and terms compare in one three-outcome
+pass; word references use sized ordered keys; guarded definition, pattern, call and
+vector readings check formation once; a complete data reading is one walk compared
+once with the canonical carrier; and canonical listings are subtracted in one merge
+pass. Each is an exact code equation with identical words. Lineage verification
+reads each distinct input once per verification pass, recipe manifests project the
+one source graph already read, and checks rebuild changed theories into sessions
+without stored heaps on a fixed base, since their products are exports; heapless
+contexts are identified by their databases and cannot supply import contexts. A
+repeated complete source proof took 470 seconds and is the one-level base. These are
+bootstrap validation and execution refinements; they do not supply native selection
+or native mathematical-proof admission. See [current measurements](native_mechanism_speedup.md).
+
+Generation checks execute their original equations everywhere: value equality of
+targets (canonical fields with early exit) and of the few predecessors of a node
+replaces encoding complete targets and predecessor subtrees as words at every node,
+which had been the dominant replay cost. Concurrency settings stay at 16 proof
+threads, eight recipe jobs and default Poly/ML heaps because memory, allocation,
+stop-the-world collection and sequential dependency chains bound the machine's use.

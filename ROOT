@@ -1233,6 +1233,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Finite_Complete_Data_Readings
     Factor_Finite_Coordinate_Value_Readers
     Factor_Finite_Data_Reading_Sharing
+    Factor_Complete_Data_Walks
     Factor_Finite_Data_Value_Readers
     Factor_Finite_Environment_Value_Readers
     Factor_Finite_Judgment_Reading_Sharing
@@ -1291,6 +1292,9 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Required_History_Cases
     Factor_Required_History_Investigation
     Ordered_Finite_Terms
+    Linear_Comparisons
+    Ordered_Artifact_Comparison
+    Ordered_Term_Comparison
     Finite_Presented_Collections
     Finite_Presented_Coordinates
     Finite_Presented_Structures
@@ -1432,6 +1436,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Optional_Checked_Results
     Factor_Parametric_Policy_Attempts
     Factor_Certified_Policy_Readings
+    Factor_Policy_Scope_Sharing
     Factor_Digit_Generation_Scopes
     Factor_Digit_Policy_Causes
     RRA_Digit_Generation_Backend
@@ -1495,6 +1500,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Complete_Artifact_References
     Complete_Object_References
     Complete_Value_References
+    Keyed_Value_References
     Concurrent_History_Execution
     Context_Source_Projections
     Factor_Computed_Replay_Causes
@@ -1541,8 +1547,6 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Prepared_Computed_Functions
     RRA_Known_Original_Generation_Rows
     RRA_Ordered_Artifact_Formation
-    Shared_Constructed_History_Execution
-    Shared_Digit_Replay_Execution
     Shared_Investigation_Cycles
     Sorted_Finite_Identity_Images
     Value_Reference_Identity_Maps
@@ -1605,6 +1609,9 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Investigation_Basis_Sharing
     Factor_Invariant_Evaluation_Sharing
     Factor_Formation_Once_Readings
+    Factor_Formation_Once_Definitions
+    Finite_Ordered_Set_Difference
+    Factor_Ordered_Generation_Checking
     Factor_Recovered_Graph_Sharing
     Parallel_History_Source_Rows
     Parallel_Presented_Investigations

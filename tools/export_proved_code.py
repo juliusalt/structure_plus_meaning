@@ -76,7 +76,7 @@ def export_context(directory, project, output, modules, module_roots=None):
                                      + re.escape(path.stem) + r'"?(?=\s|$)', text)
                 assert len(targets) == 1
                 entry = {'path': str(path), 'sha256': investigate.file_hash(path)}
-                module_closure = set().union(*(investigate.import_context(graph, n) for n in requirements[theory]))
+                module_closure = investigate.import_contexts(graph, requirements[theory])
                 module_sources = {n: sources[n] for n in module_closure}
                 derived = {'status': 'accepted', 'exit_code': 0, 'sources_unchanged': True,
                            'sources': module_sources, 'effective_source_hashes': {},

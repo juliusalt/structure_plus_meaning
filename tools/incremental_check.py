@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Validate a workspace using exact accepted proof contexts at their original paths.
 
-Rebuild only changed theories and their dependents, export each module from its actual provider,
-and execute every recipe whose complete execution boundary changed. Successful complete checks retain
-their proof context for the next edit; unchanged recipe manifests retain their accepted verification.
+Rebuild only theories changed since the accepted base and their dependents, export each module from its
+actual provider, and execute every recipe whose complete execution boundary changed. A check stores no heap:
+its rebuilt theories supply exports, not import contexts, so the base stays the one selected context. Only a
+check that advances the base stores a heap and becomes the next base. Unchanged recipe manifests retain their
+accepted verification.
 A changed manifest whose exported module, subject contracts, execution tools, fixtures, expected
 reports and native runtime all equal an accepted execution's boundary reuses that execution.
 The original fixed base is used only when no newer context has been selected. Neither reuse nor
@@ -58,9 +60,10 @@ def heap_identity(session):
     return proof_contexts.heap_identity(session)
 
 
-def activate_context(directory):
-    context = proof_contexts.load_parent(directory)
+def activate_context(directory, lineage=None):
+    context = proof_contexts.load_parent(directory, None, *(lineage or proof_contexts.new_lineage()))
     assert context['project_declaration'] == session_declaration(ROOT)
+    assert context['stored_heap'], 'Only a context with a stored heap can be the base of later checks.'
     temporary = ACTIVE_CONTEXT.with_suffix('.new.json')
     write_json(temporary, {'directory': str(Path(directory).resolve()),
                            'receipt_sha256': investigate.file_hash(Path(context['receipt']))})
@@ -68,12 +71,12 @@ def activate_context(directory):
     return context
 
 
-def selected_base(explicit):
+def selected_base(explicit, lineage=None):
     if explicit is not None:
         return explicit
     if ACTIVE_CONTEXT.is_file():
         selected = json.loads(ACTIVE_CONTEXT.read_text())
-        context = proof_contexts.load_parent(selected['directory'])
+        context = proof_contexts.load_parent(selected['directory'], None, *(lineage or proof_contexts.new_lineage()))
         assert investigate.file_hash(Path(context['receipt'])) == selected['receipt_sha256']
         return Path(selected['directory'])
     return Path('/tmp/structural-accepted')
@@ -209,8 +212,10 @@ def verify_manifest_inputs(manifests):
         'Recipe inputs changed after validation.'
 
 
-def validate(base, output, *, threads, jobs, selected, all_recipes, timeout):
+def validate(base, output, *, threads, jobs, selected, all_recipes, timeout, lineage=None, advance_base=False):
     started = time.monotonic()
+    # One verified lineage (contexts and input digests) serves the base, adoption and activation.
+    lineage = lineage or proof_contexts.new_lineage()
     base = base.resolve()
     output = output.resolve()
     assert not output.exists(), 'Use a fresh output directory.'
@@ -226,10 +231,12 @@ def validate(base, output, *, threads, jobs, selected, all_recipes, timeout):
         summary['validation_inputs'] = {str(path.relative_to(ROOT)): investigate.file_hash(path)
             for path in (ROOT / 'ROOT', Path(__file__).resolve(), Path(check.__file__).resolve())}
         begin = time.monotonic()
-        parent = proof_contexts.load_parent(base)
+        parent = proof_contexts.load_parent(base, None, *lineage)
         session, base_sources, base_inputs = parent['session'], parent['sources'], parent['inputs']
         assert session_declaration(ROOT) == parent['project_declaration'], \
             'The project session declaration changed; a complete check is required.'
+        assert parent['stored_heap'], 'The base must store the heap that supplies its import contexts.'
+        summary['advance_base'] = advance_base
         structure = check.source_checks()
         summary['source_checks'] = structure
         assert not any(structure[k] for k in ('missing_theory_files', 'unlisted_theories', 'proof_escape_matches'))
@@ -248,11 +255,12 @@ def validate(base, output, *, threads, jobs, selected, all_recipes, timeout):
             code, _ = run_logged([sys.executable, '-B', str(TOOLS / 'prove_context.py'), '--parent-project', str(base),
                                   '--project', str(ROOT), '--output', str(proof),
                                   '--session', 'Incremental_' + uuid.uuid4().hex[:8], '--threads', str(threads),
-                                  '--timeout', str(timeout), *sorted(rebuilt)], output / 'proof.log', 7200)
+                                  '--timeout', str(timeout), *([] if advance_base else ['--without-heap']),
+                                  *sorted(rebuilt)], output / 'proof.log', 7200)
             phase('proof', begin)
             summary['proof'] = str(proof / 'result.json')
             assert code == 0, 'Incremental proof failed; see ' + str(proof / 'build.log')
-            proof_contexts.adopt_proof_context(proof, ROOT)
+            proof_contexts.adopt_proof_context(proof, ROOT, *lineage)
         export_context = proof if proof is not None else base
         summary['accepted_proof_context'] = str(export_context)
 
@@ -262,8 +270,11 @@ def validate(base, output, *, threads, jobs, selected, all_recipes, timeout):
         rows = [row for row in recipes() if not selected or row['name'] in selected]
         assert not selected or {row['name'] for row in rows} == set(selected), 'Unknown recipe name.'
 
+        modules = {}
+
         def impact(row):
-            manifest = reconstruction_sources.collect(ROOT, TOOLS / row['script'], POLY, isabelle_version=version)
+            manifest = reconstruction_sources.collect(ROOT, TOOLS / row['script'], POLY, isabelle_version=version,
+                                                      graph=(sources, parents), modules=modules)
             retained = ROOT / 'validation/reconstruction' / (row['name'] + '-sources.json')
             verified = ROOT / 'validation/reconstruction' / (row['name'] + '-verified.json')
             unchanged = (retained.is_file() and verified.is_file()
@@ -346,9 +357,12 @@ def validate(base, output, *, threads, jobs, selected, all_recipes, timeout):
         summary['status'] = 'accepted'
     except Exception as error:
         summary['error'] = f'{type(error).__name__}: {error}'
-    if summary['status'] == 'accepted' and not selected:
-        activate_context(export_context)
+    if summary['status'] == 'accepted' and not selected and (proof is None or advance_base):
+        activate_context(export_context, lineage)
         summary['active_context'] = str(export_context)
+    elif summary['status'] == 'accepted' and not selected:
+        # The checked context exports without supplying import contexts; the base remains selected.
+        summary['active_context'] = str(base)
     elif proof is not None:
         # Failed/partial checks do not advance the complete-workspace checkpoint.
         # Their accepted proof artifacts remain available for explicit reuse/review.
@@ -482,6 +496,8 @@ def main():
     run.add_argument('--timeout', type=int, default=1200)
     run.add_argument('--recipe', action='append', default=[])
     run.add_argument('--all-recipes', action='store_true')
+    run.add_argument('--advance-base', action='store_true',
+                     help='Store the heap of the rebuilt theories and select this check as the next base.')
     adopt = commands.add_parser('adopt', help='Reuse a successful immutable proof context without rebuilding it.')
     adopt.add_argument('--proof', type=Path, required=True)
     adopt.add_argument('--source-project', type=Path, default=ROOT)
@@ -503,8 +519,10 @@ def main():
     if args.command == 'establish':
         args.base.mkdir(parents=True, exist_ok=True)
         return establish(args.base.resolve(), args.threads, args.timeout)
-    return validate(selected_base(args.base), args.output, threads=args.threads, jobs=args.jobs, selected=args.recipe,
-                    all_recipes=args.all_recipes, timeout=args.timeout)
+    lineage = proof_contexts.new_lineage()
+    return validate(selected_base(args.base, lineage), args.output, threads=args.threads, jobs=args.jobs,
+                    selected=args.recipe, all_recipes=args.all_recipes, timeout=args.timeout, lineage=lineage,
+                    advance_base=args.advance_base)
 
 
 if __name__ == '__main__':

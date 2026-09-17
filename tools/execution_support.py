@@ -64,18 +64,43 @@ def source_graph(project: Path, overlays: list[Path], roots: list[str]) -> tuple
     return sources, parents
 
 
-def import_context(parents: dict, name: str) -> set[str]:
-    result = set()
-
-    def visit(node):
+def import_contexts(parents: dict, names) -> set[str]:
+    """The union of the import contexts of names; each local theory is visited once."""
+    result, pending = set(), list(names)
+    while pending:
+        node = pending.pop()
         if node in result or node not in parents:
-            return
+            continue
         result.add(node)
-        for parent in parents[node]:
-            visit(parent)
-
-    visit(name)
+        pending.extend(parents[node])
     return result
+
+
+def import_context(parents: dict, name: str) -> set[str]:
+    return import_contexts(parents, [name])
+
+
+def contexts_satisfying(parents: dict, holds) -> dict[str, bool]:
+    """Whether holds is true throughout the entire import context of every local theory.
+
+    A context is the theory and the contexts of its local parents, so each theory is decided once
+    from its own condition and its parents' decisions.
+    """
+    decided = {}
+    for root in parents:
+        pending = [(root, False)]
+        while pending:
+            name, expanded = pending.pop()
+            if name in decided:
+                continue
+            local = [parent for parent in parents[name] if parent in parents]
+            if expanded:
+                require(all(parent in decided for parent in local), f"Cyclic theory import: {name}")
+                decided[name] = holds(name) and all(decided[parent] for parent in local)
+            else:
+                pending.append((name, True))
+                pending.extend((parent, False) for parent in local if parent not in decided)
+    return decided
 
 
 def current_sources(sources: dict) -> bool:

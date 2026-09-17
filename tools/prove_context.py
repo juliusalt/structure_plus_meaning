@@ -27,6 +27,8 @@ def main():
     parser.add_argument('--session', required=True)
     parser.add_argument('--threads', type=int, default=12)
     parser.add_argument('--timeout', type=int, default=300)
+    parser.add_argument('--without-heap', action='store_true',
+                        help='Export the rebuilt theories without storing a heap; the result supplies no import context.')
     parser.add_argument('roots', nargs='+')
     args = parser.parse_args()
     assert re.fullmatch(r'[A-Za-z_][A-Za-z_0-9]*', args.session)
@@ -35,6 +37,7 @@ def main():
     project, output = args.project.resolve(), args.output.resolve()
     assert not output.exists(), 'Retain previous proof contexts and use a fresh directory.'
     parent = proof_contexts.load_parent(parent_project) if parent_project else proof_contexts._empty_context()
+    assert parent['stored_heap'], 'A context without a stored heap cannot supply import contexts.'
     parent_session, parent_sources, parent_inputs = parent['session'], parent['sources'], parent['inputs']
     original_root = (project / 'ROOT').read_bytes()
     original_root_digest = investigate.digest(original_root)
@@ -75,8 +78,8 @@ def main():
     (output/'parent.json').write_text(json.dumps({'session':parent_session, **parent_evidence,
         'inputs':parent_inputs, 'reused_complete_contexts':sorted(reused),
         'rebuilt_contexts':sorted(rebuilt), 'helper_inputs':helper_inputs}, indent=2)+'\n')
-    command = ['isabelle','build','-b','-o','threads='+str(args.threads),'-o','parallel_proofs=1',
-               '-o','build_timing_threshold=0']
+    command = ['isabelle','build',*([] if args.without_heap else ['-b']),'-o','threads='+str(args.threads),
+               '-o','parallel_proofs=1','-o','build_timing_threshold=0']
     for directory in parent['directories']:
         command += ['-d', directory]
     command += ['-D',str(output)]
@@ -94,7 +97,7 @@ def main():
         'exit_code':process.returncode, 'sources_unchanged':stable,'sources':manifest,
         'effective_source_hashes':effective, 'root_sha256':root_digest,
         'project_session_declaration':project_declaration, 'original_root_sha256':original_root_digest,
-        'checked_theories':len(rebuilt),
+        'checked_theories':len(rebuilt), 'stored_heap':not args.without_heap,
         'parent_theories_reused':len(reused), 'roots':args.roots, 'command':command,
         'started_utc':started, 'finished_utc':build.utc_now(), 'log':str(output/'build.log')}
     (output/'result.json').write_text(json.dumps(result,indent=2)+'\n')

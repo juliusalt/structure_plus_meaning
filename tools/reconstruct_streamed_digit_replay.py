@@ -10,7 +10,7 @@ RECIPE = Recipe(
     groups=((Execution('presentation', 'check_presented_report.py', ('--project', '{project}',
                  '--module', 'Digit_Replay_Execution', '--report', 'digit_replay_report_value',
                  '--scope', 'digit_replay_indices', '--selections', 'digit_replay_report_selections',
-                 '--workers', '4', '--timeout', '3600'), 10800),),),
+                 '--workers', '16', '--timeout', '3600'), 10800),),),
     boundary='The complete original replay packet is rebuilt and executed from repository sources. '
              'Every context, candidate result, original certified-cause report, comparison, revision and '
              'source correspondence is retained in the complete native presented word through lossless compression. '

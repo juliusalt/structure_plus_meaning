@@ -1627,3 +1627,18 @@ Eleven families now have native words; thirty-nine remain. The exact constructed
 cause cache is already proved but absent from the digit export's active code;
 its actual use and cost are under investigation. Result indexes and ordered
 footprint candidates did not demonstrate a benefit and were not adopted.
+
+## Actual cause preparation and complete-object words
+
+`Parallel_Computed_Preparation` factors distinct-key parallel evaluation under
+the existing computed-cache and exact-read contracts. Its returned function is
+equal to the original on its whole domain; misses use that original function.
+Each actual prepared digit subject carries its own result function, so no
+unjustified equality on opaque stores or function values is needed. Actual
+returned generation targets supply shared complete scope reads, and the existing
+prepared-table equation preserves every public context and candidate cell.
+
+The complete-object word table instantiates existing injective identity-map laws:
+lookup keeps whole artifacts, row conversion occurs once per distinct entry,
+and the original word is unchanged. Four further legacy stages were retired
+after accepted pairing; eleven recipes now use native words only.

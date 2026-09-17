@@ -1620,3 +1620,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Presented_Native_Certificates
     Native_Derivation_Presentation
     Native_Certificate_Presentation
+    Parallel_Computed_Preparation
+    Prepared_Digit_Cause_Assessments
+    Prepared_Digit_Replay_Packets
+    Finite_Term_Object_Words

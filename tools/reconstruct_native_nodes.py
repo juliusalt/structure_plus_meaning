@@ -7,12 +7,10 @@ RECIPE = Recipe(
     roots=("Native_Node_Investigation_Execution",),
     export="Native_Node_Investigation_Execution:native_node_investigation.ML",
     session="Native_Node_Reconstruction",
-    groups=((Execution("comparison", "check_native_nodes.py",
-                       ("--project", "{project}"), 2100),
-             Execution("presentation", "check_presented_report.py", ("--project", "{project}",
+    groups=((Execution("presentation", "check_presented_report.py", ("--project", "{project}",
                        "--module", "Native_Node_Investigation_Execution",
                        "--report", "native_node_report_value", "--scope", "native_node_indices",
-                       "--selections", "native_node_report_selections", "--workers", "8"), 2400)),),
+                       "--selections", "native_node_report_selections", "--workers", "8"), 2400),),),
     boundary=("A run without --proof reconstructs the complete contracts from HOL. The node compiler "
               "constructs both node forms with the original clause, complete binding family and every "
               "indexed target. Local installation retains the actual source and recovers the complete "

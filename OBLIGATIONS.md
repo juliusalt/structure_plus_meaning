@@ -1290,3 +1290,13 @@ proof replacements remove expensive search while preserving the original
 statements. The 909.51 s cycle still fails the requested practical speed target.
 No obligation row changes status; native-driven selection and real usefulness
 under 5a, wider coverage, O-85 and genesis remain open, with 5b deferred.
+
+## Actual cause sharing and renderer retirement
+
+The accepted workspace contains 1,620 theories. The affected digit recipe and
+both host suites pass, with all other retained recipe manifests unchanged.
+Eleven families now use native words alone; 3,818 complete physical records
+remain over 50 boundaries. Digit replay takes 279.14 s in the latest accepted
+execution; the affected cycle takes 365.58 s. No obligation row changes status.
+Native-driven development and practical 5a, broader coverage, O-85 and genesis
+remain open; theoretical 5b is deferred and the full-source measurement pending.

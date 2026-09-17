@@ -106,18 +106,14 @@ candidate generation and criticism, development-cycle admission and enforcement,
 the full physical cost account, genesis and the final line-by-line audit remain
 open. The investigation's own result does not authorize its handoff.
 
-## Accepted native presentation (2026-09-17)
+## Native presentation (2026-09-17)
 
-The original comparison and native word both passed on the same actual export.
-The word contains 648,713 bytes; this recipe now retains
-59 complete physical records.
-Comparison took 9.14 s and presentation
-5.68 s under the combined schedule; stages overlap.
-Original subjects, results, independent readings, inspections and revisions remain
-complete. Actual quality rows are computed from actual returned assessments.
+The paired transition was accepted in `760dcf5`. This recipe now retains only
+its native word: 648,713 bytes, one complete report record. The
+boundary is unchanged and all original subjects, results, readings, inspections
+and revisions remain in it. The retirement stage passed in 6.28 s;
+the combined four-recipe validation took 106.14 s with both host suites passing.
 
-The all-recipe cycle covered 1,616 theories and passed both host suites in
-909.51 s. See [current measurements](native-presentation-cycle-measurements.json).
-The preceding source-only counts describe historical boundaries. This paired
-transition permits later removal of the legacy stage; it does not establish
-whole-workflow adequacy, native refinement selection or practical gate 5a.
+See [retirement measurements](native-retirement-measurements.json) and the
+[preceding paired evidence](native-presentation-cycle-measurements.json).
+Earlier source-only and JSON counts above describe historical boundaries.

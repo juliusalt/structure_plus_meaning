@@ -2418,3 +2418,22 @@ The next cache candidates reuse existing actual-quotation and complete-target
 lookup contracts, with the original reader on a miss. They are not adopted yet.
 Native selection/criticism coverage under conditions 1 and 6, practical gate 5a,
 non-recipe coverage, O-85 and genesis remain open. Gate 5b remains deferred.
+
+## Shared actual causes and object words review
+
+The complete digit probe matched every baseline byte. Shared preparation reduced
+its observed presentation time from the recorded 684.56 s baseline to 216.236 s;
+those runs had different concurrent schedules. On the same computed report,
+old and new word encoders took 96.260 and 25.986 s, respectively, with identical
+complete bytes; baseline ran first. The actual recipe passed in 279.14 s and
+its complete affected cycle in 365.58 s. Both host suites passed. Four separate
+renderer retirements passed in 106.14 s; the inventory retains 3,818 records.
+
+The first preparation design demanded equality on opaque digit stores. It was
+replaced by a per-subject prepared function, preserving the original store
+boundary. Source-prediction caches had not completed their bounded probes; the
+adopted keys instead come from actual returned generations. Every cache value
+comes from the original computation, and no changed report is admitted merely
+because a constructor was cached. Native global selection/criticism, actual
+workflow usefulness under 5a, wider coverage and genesis remain open; 5b is
+still deferred. The independent full-source proof is pending.

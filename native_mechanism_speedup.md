@@ -1,40 +1,42 @@
 # Making native development and validation fast
 
-Updated 2026-09-17 from the accepted 1,616-theory, all-recipe batch.
-Older measurements remain in the linked evidence and Git history; the current
-state and outstanding work below replace their obsolete descriptions.
+Updated 2026-09-17 from accepted cause preparation, object-word emission and
+legacy-renderer retirement. Historical observations keep their own boundaries.
 
 ## Current result
 
-**Eleven families have accepted native report words. Seven history/replay
-recipes now use only those words; nodes, graphs, derivations and certificates
-passed paired original comparisons and words on their actual exports. Both
-expensive bootstrap proofs have direct replacements. The complete affected
-cycle still took 909.51 s (15 min 10 s), dominated by digit replay at 825.47 s.
-The requested practical speedup remains unfinished.**
+**Digit replay now passes its complete native word in 279.14 s. Its earlier
+all-recipe execution took 825.47 s. Actual returned cause targets are shared
+across candidate assessments and independent target reads execute in parallel.
+The artifact-word refinement also removes repeated row conversions. The latest
+affected validation took 365.58 s (6 min 6 s), including proof and host tests.
+These are observed runs under different concurrent schedules, not a controlled
+whole-cycle speedup ratio. The broader speedup objective remains unfinished.**
 
-The accepted workspace has 1,616 theories, 123 rebuilt over 1,493 reused contexts.
-All 50 recipes executed and passed. The inventory contains 4,072 physical report
-records: the preceding 4,609 minus 541 retired replay records plus four new
-words. A word still retains the complete presented report; fewer physical
-records do not mean fewer subjects or conditions.
+The accepted workspace has 1,620 theories, 127 rebuilt over 1,493 reused contexts.
+The latest cycle executed digit replay and retained 49 unchanged recipe inputs.
+Eleven families now use native words only; thirty-nine still need migration.
+The 50 retained boundaries contain 3,818 physical records. Removing 254 legacy
+records from the four newly migrated families preserved their whole native words.
 
 | Boundary | Current accepted evidence |
 |---|---|
-| Proof base | 1,589 theories at the fixed `/tmp/structural-accepted` path; unchanged heap/database identities. Do not relocate or routinely rebuild it. |
-| Incremental proof | 77.29 s for all 123 changed/dependent theories, including both proof-cost fixes; no missing, unlisted or escaped proofs. |
-| Execution and host tests | 825.47 s, six outer recipe jobs; all 50 recipes, 125 tool tests and 35 kernel tests passed, with two optional-dependency skips. |
-| Native presentation | Seven history/replay families use words only; four new native families have accepted paired stages. Thirty-nine families remain to migrate. |
-| Proof-cost probes | Two original proof commands cost 177.871 and 155.672 s in the accepted base. Both replacement source theories built together in 5.44 s; the full/cold elapsed benefit has not yet been measured. |
-| Complete/cold reconstruction | Not rerun by this incremental batch. Earlier complete checks cost 625–674 s; source-only runs remain historical evidence. |
-| Whole development workflow | Conditions 1, 6 and practical-usefulness gate 5a remain open. Gate 5b stays deferred until after genesis. |
+| Proof base | 1,589 theories at fixed `/tmp/structural-accepted`; accepted heap/database identities preserved. |
+| Incremental proof | 80.34 s for all 127 changed/dependent theories; no missing, unlisted or escaped proofs. |
+| Latest execution and tests | Digit replay 279.14 s; 125 tool tests and 35 kernel tests passed, with two optional skips. |
+| Complete recipe inventory | All 50 recipes passed the preceding 909.51 s cycle. Subsequent scoped cycles retained unchanged complete manifests and reran every affected recipe. |
+| Native presentation | Eleven families use words alone. Four renderer retirements validated in 106.14 s; the shared certificate renderer remains for its other callers. |
+| Same-report word comparison | Old encoder 96.260 s, object lookup 25.986 s on the same computed report; all 20,519,284 bytes match. Old encoder ran first, so this is not a cold-cache comparison. |
+| Full source proof | A separate frozen 1,620-theory proof from HOL is running to measure full-build cost after the proof fixes. No new full/cold result is claimed yet. |
+| Whole workflow | Native selection/criticism under conditions 1 and 6 and practical gate 5a remain open. Gate 5b is deferred until after genesis. |
 
 The [current inventory](validation/reconstruction/current-verified.json),
-[incremental receipt](validation/incremental-check.json), and
-[current measurements](validation/reconstruction/native-presentation-cycle-measurements.json)
-bind this batch. [Replay experiments](validation/reconstruction/replay-presentation-measurements.json)
-and [proof-cost measurements](validation/reconstruction/proof-cost-measurements.json)
-retain their actual boundaries, including unsuccessful candidates.
+[incremental receipt](validation/incremental-check.json),
+[cause-preparation measurements](validation/reconstruction/prepared-cause-measurements.json)
+and [word measurements](validation/reconstruction/object-word-measurements.json)
+bind the current state. [Retirement measurements](validation/reconstruction/native-retirement-measurements.json)
+and the preceding [all-recipe measurements](validation/reconstruction/native-presentation-cycle-measurements.json)
+retain their actual validation boundaries.
 
 ## Where the time goes
 
@@ -75,17 +77,18 @@ explicit. Native packet ratios cannot stand in for edit-to-accepted-commit time.
 The owner requirement is an edit-to-accepted-commit cycle in single-digit
 minutes. A complete build (about 600 s) cannot be part of every cycle.
 
-**Measured cycle, current batch.** Base/impact checks took 0.66 s, proof
-77.29 s, recipe impact 4.64 s, export 1.42 s and all 50 recipes plus host tests
-825.47 s; total 909.51 s. Digit replay remains the critical path. Both replay
-families now execute one presentation stage. The four new native families run
-their old and new stages concurrently; stage times must not be added as elapsed
-time. Isolated candidate proofs and bounded profiles overlapped this cycle.
+**Measured cycle, current batch.** Base/impact checks took 0.65 s, proof
+80.34 s, recipe impact 4.65 s, export 0.77 s and digit replay plus host tests
+279.14 s; total 365.58 s. Other recipe inputs were unchanged. The four renderer
+retirements separately passed in 106.14 s: proof 82.75 s and execution/tests
+18.30 s. The unchanged deltas still rebuild against the older fixed base;
+promoting accepted incremental contexts is not implemented.
 
-Earlier cycles took 831 s (shared-tool batch), 80 s (required-history pilot),
-289.87 s (five shared history words), and 914.05 s (paired replay migration).
-Their different affected closures and schedules are not controlled speedup
-comparisons.
+The preceding complete affected batch ran all 50 recipes in 909.51 s, with
+digit replay at 825.47 s and decision replay around 376 s. A current all-recipe
+cycle after these changes has not been measured. Probe measurements and the
+independent full-source proof overlapped validation; their times are not serial
+parts to add to the reported cycle.
 
 **Full-build proof work.** An earlier complete build recorded 543 s elapsed
 and 3,569 s CPU: 2,099 command-seconds in proof methods, 1,292 in code exports
@@ -145,11 +148,23 @@ Their bounded profile moved substantial work to list ordering. None was adopted.
 A separate raw-artifact word lookup has an exact proof but no successful full
 execution measurement yet. Raising thread counts does not resolve these costs.
 
-The repository already proves known-source and constructed-cause cache
-refinements, including equality with the actual cause and complete-reader
-fallback on a miss. The current digit export still uses its uncached cause
-reader. Isolated probes are testing these existing refinements; no benefit or
-adoption is claimed until complete-word and timing checks pass.
+Existing known-source and constructed-source caches were tested, but neither
+bounded probe completed the difficult case. Guessing a source reconstruction was
+therefore not adopted. The successful preparation instead collects **actual
+returned targets**. The native diagnostic found sixteen distinct method/target
+pairs but four targets for context 6. Each prepared subject carries its own
+result function, avoiding an invented equality on opaque digit stores. Generic
+computed caches evaluate actual values, preserve the original function on its
+entire domain, and execute the original computation on an unprepared key.
+
+`Prepared_Digit_Cause_Assessments` prepares complete target scopes once per
+context, then reuses them in every original cause assessment. Generation presence,
+payload, policy/package/application/replay readings and all verdicts remain
+computed. `Prepared_Digit_Replay_Packets` instantiates the existing prepared
+context-table contract. Generated Eval code builds the cache before the returned
+method function and uses `Par_List.map` for distinct inputs. The complete probe
+matched every baseline byte: 216.236 s presentation, 97.734 s word, 321.401 s
+total. After the exact word refinement, the real recipe passed in 279.14 s.
 
 **Host transport outside presentation classes.** Reports printed code-generator
 representations through host ML and recipes compared those bytes, which fixed the
@@ -182,24 +197,24 @@ The previous unshared digit and known history words were 572.6 MB and 611.6 MB.
 The new words below retain the complete presented subjects through direct target
 terms and the shared table. These size changes are not timing speedup ratios.
 
-| Family | Complete word bytes | Current comparison (s) | Current presentation (s) |
-|---|---:|---:|---:|
-| required-history | 159,908 | retired after accepted pairing | 20.30 |
-| digit-history | 418,306 | retired after accepted pairing | 186.76 |
-| known-history | 449,531 | retired after accepted pairing | 193.05 |
-| quoted-history | 483,348 | retired after accepted pairing | 192.69 |
-| constructed-history | 551,708 | retired after accepted pairing | 204.16 |
-| digit-replay | 20,519,284 | retired after accepted pairing | 825.39 |
-| decision-replay | 1,296,760 | retired after accepted pairing | 375.85 |
-| native-nodes | 341,007 | 4.67 | 2.72 |
-| native-graphs | 1,000,741 | 31.64 | 31.90 |
-| native-derivations | 648,713 | 9.14 | 5.68 |
-| native-certificates | 890,378 | 10.53 | 5.43 |
+| Family | Complete word bytes | Last accepted presentation (s) |
+|---|---:|---:|
+| required-history | 159,908 | 20.30 |
+| digit-history | 418,306 | 186.76 |
+| known-history | 449,531 | 193.05 |
+| quoted-history | 483,348 | 192.69 |
+| constructed-history | 551,708 | 204.16 |
+| digit-replay | 20,519,284 | 279.14 |
+| decision-replay | 1,296,760 | 375.85 |
+| native-nodes | 341,007 | 3.42 |
+| native-graphs | 1,000,741 | 18.25 |
+| native-derivations | 648,713 | 6.28 |
+| native-certificates | 890,378 | 6.53 |
 
-History jobs use sixteen workers, digit replay four, and decision replay and the
-four new native families eight. Every word matches its established boundary.
-Exporting theory and emitted ML structure remain separate inputs: three history
-theories emit `Digit_History_Execution`.
+All eleven use words only. These latest timings come from the linked distinct
+cycles and are not additive or a controlled ranking. Every word boundary is
+unchanged. Exporting theory and ML structure remain separate inputs: three
+history theories emit `Digit_History_Execution`.
 
 **Four additional native families.** Node and graph reports retain complete
 source environments, metadata, target/discharge relations, returned environments,
@@ -235,18 +250,26 @@ retain the four accepted paired transitions. The generic host only packs native
 bits and records their complete byte boundary; it does not inspect generated
 report representations or supply semantic verdicts.
 
+**Object-table word emission.** `Finite_Term_Object_Words` stores complete
+artifacts for reference lookup and converts each distinct table entry to rows
+once. Existing injective identity-map laws prove exactly the old indices, row
+table and word. The paired measurement ran both encoders on one actual report:
+96.260 s then 25.986 s, with complete byte equality. This refinement is currently
+applied to the large digit-replay word. No word boundary was reset.
+
 **Remaining migration and dominant work.**
 
-1. Exercise the existing exact cause caches on digit replay; inspect actual code
-   application, complete words and physical cost before adoption. Use the bounded
-   profiler for initial diagnosis rather than speculative fifteen-minute runs.
-2. Remove the four newly accepted legacy stages, preserving still-used renderer
-   dependencies. Migrate history-index and the other remaining thirty-nine
-   families through their complete notion presentations.
-3. Measure full/cold reconstruction with the proof fixes and reduce remaining
-   complete-cycle cost. Keep the immutable proof base while ordinary checks run.
-4. Complete the non-recipe coverage audit and demonstrate real native-driven
-   development at acceptable cost. Faster fixtures do not meet that requirement.
+1. Complete paired migration of history-index, indexed-generation and
+   digit-generation; their isolated proofs and probe words are already prepared.
+   Continue the remaining thirty-nine families with the same native notions.
+2. Reduce decision-replay cost and remaining native computation. Reuse complete
+   computed-input sharing, with actual dependencies and independent criticism;
+   availability of a cache is not evidence of its effective use.
+3. Finish the separate full-source measurement and reduce proof invalidation cost
+   while preserving exact accepted contexts. Ordinary checks still reprove the
+   whole delta against the original fixed base.
+4. Complete the non-recipe audit and demonstrate native-driven real development
+   at acceptable cost. Faster fixtures do not establish the complete workflow.
 
 ## Implementation record and corrections
 
@@ -361,11 +384,16 @@ permission, broader adequacy and genesis are not closed by this performance work
 
 ## Current validation inventory
 
-The current inventory covers 1,616 theories, all 50 freshly executed recipes,
-4,072 complete physical records and both host suites. Eleven families transport
-native words, seven without their former comparison stages. These executions
-reuse the accepted base and incremental proof; they are not fresh cold rebuilds.
-Non-recipe entry points and broader workflow adequacy remain outside this count.
+The retained inventory covers 1,620 theories and 50 recipe boundaries with 3,818
+complete physical records. All fifty were executed in the preceding batch;
+subsequent checks reran every affected recipe and verified unchanged manifests.
+Eleven families now use native words only. Host suites pass with two optional
+kernel skips. Incremental acceptance is separate from the pending full-source
+proof and from any cold reconstruction of all recipe executions.
 
-Historical performance and failure evidence remains in the measurement records
-and Git. None of these records closes conditions 1, 6 or practical gate 5a.
+Obsolete expanded history-cycle copies were replaced by verified reconstructible
+archives, reducing about 1.1 GB to 250 MB. Archive identities and restore commands
+are in [the temporary archive record](validation/reconstruction/native-temporary-archives.json).
+No cleanup removed the accepted proof base or the complete digit comparison word.
+
+Conditions 1, 6 and practical gate 5a remain open; theoretical 5b stays deferred.

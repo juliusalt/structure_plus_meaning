@@ -76,14 +76,17 @@ the final repository audit remain open.
 
 ## Native presented report (2026-09-17)
 
-After the accepted paired transition in `3313f4f`, the current recipe uses only
-its native presented word: 20,519,284 bytes, one complete report record.
-Its boundary is unchanged and retains all original report content through the
-complete notion presentations. Presentation took 825.39 s
-under the all-recipe schedule. The complete 1,616-theory cycle, all 50 recipes
-and both host suites passed in 909.51 s.
+The current recipe uses only its complete native word: 20,519,284 bytes, with
+unchanged SHA-256 `3bb5958241e74fd03e43412abb5073a5ffef2cd98073f724bbf4207530ccc36b`.
+Actual candidate results supply complete cause targets for shared computation;
+independent target reads run through the existing parallel map. Every original
+cause assessment still computes its own generation, payload and policy fields.
+The word encoder retains complete objects for lookup and converts each distinct
+artifact to rows once, preserving exactly the old word.
 
-See [current measurements](native-presentation-cycle-measurements.json) and
-[prior replay evidence](replay-presentation-measurements.json). The old source-only
-counts and JSON record counts above remain historical. Native refinement
-selection, practical usefulness and wider workflow coverage remain open.
+Complete probe words were compared byte for byte. The actual recipe passed in
+279.14 s and its affected validation cycle in 365.58 s, with both host suites
+passing. See [cause measurements](prepared-cause-measurements.json) and
+[word measurements](object-word-measurements.json). Earlier timings, cold-source
+counts and JSON counts above are historical. Broader adequacy and native-driven
+refinement selection remain open.

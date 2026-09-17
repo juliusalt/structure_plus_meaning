@@ -7,12 +7,10 @@ RECIPE = Recipe(
     roots=("Native_Derivation_Investigation_Execution",),
     export="Native_Derivation_Investigation_Execution:native_derivation_investigation.ML",
     session="Native_Derivation_Reconstruction",
-    groups=((Execution("comparison", "check_native_derivations.py",
-                       ("--project", "{project}"), 2100),
-             Execution("presentation", "check_presented_report.py", ("--project", "{project}",
+    groups=((Execution("presentation", "check_presented_report.py", ("--project", "{project}",
                        "--module", "Native_Derivation_Investigation_Execution",
                        "--report", "native_derivation_report_value", "--scope", "native_derivation_indices",
-                       "--selections", "native_derivation_report_selections", "--workers", "8"), 2400)),),
+                       "--selections", "native_derivation_report_selections", "--workers", "8"), 2400),),),
     boundary=("A run without --proof reconstructs the complete contracts from HOL. The certificate "
               "constructor recovers the actual source and follows its complete finite inference history. "
               "Each original requested positive call has a complete valid certificate, and the independent "

@@ -1,443 +1,781 @@
 # Native control of development
 
-## Objective and authority
+Candidate plan, revised 2026-09-17 with the owner after the native speedup work
+and a trace of the existing contracts for native development control.
+It is not an admitted controller and supplies no evidence that
+[problems.txt](problems.txt) is resolved. Its decomposition, ordering and gates are
+candidate bootstrap obligations (see [Bootstrap](#bootstrap-and-authority)), not
+permissions created by recording a choice. They require the established
+Isabelle/HOL bootstrap account and become problems re-derived, reviewed and
+superseded by the process as soon as it can represent them.
 
-The owner's question, as recorded in the original plan, is preserved:
+## Owner directions
+
+The original question:
 
 > Ok so what can't be done natively? I want to make it so that the native
 > process drives the development rather than the other way around so that
 > agents are tools rather than the controller of the whole process.
 
-The intended result is a development process that derives its work, constructs
-and criticizes candidates, establishes their prerequisites, and controls their
-adoption. Offloading only the final verdict leaves most of that work with the
-agent. Existing native construction and reusable reasoning must therefore drive
-the process wherever their actual contracts apply.
+Its resolution, stated by the owner on 2026-09-17:
 
-This is a candidate plan, not an admitted controller or evidence that
-[problems.txt](problems.txt) is resolved. Its proposed subjects, decomposition,
-ordering and gates remain subject to the process they describe. No native
-original-subject adapter or admission for this prose plan is supplied here.
-That is an explicit unresolved requirement, not an outside-reasoning exception.
+> every semantically significant choice needs to be made through the native
+> development machinery so that it can enforce mechanically my intent, the
+> consistency of every decision with existing base, the soundness of the decision
+> and it can be then mechanically reviewed, changed, superseded and so on while
+> always doing the minimum amount of work due to mechanically computed boundaries.
 
-Authority follows [plan.md §0.1–0.2](plan.md#01-precedence): current owner
-directions, their justified implications, broad architecture, then implementation
-details and earlier generated proposals. Attributions in historical documents
-are evidence of direction; they do not make every generated formulation
-normative. The standing rule and Isabelle/HOL's normative bootstrap role through
-genesis remain exactly those in
-[DEVELOPMENT_WORKFLOW.md](DEVELOPMENT_WORKFLOW.md). A successful native verdict
-cannot authorize its own handoff. Neither a small declared external base nor a
-tool labelled “untrusted” creates permission for missing external semantics,
-candidate generation, criticism or reasoning.
+> It receives a well defined non-prose task that is made through the same
+> machinery with data required to solve the task supplied by that same machinery
+> and outputs a well defined non-prose answer that then gets mechanically verified.
+> The agent is completely inert/does not have any power over anything, it can be
+> replaced by deterministic program, solver, database, human or anything else.
 
-## Principles that constrain the construction
+> I think that admission and the whole rest of machinery already cover everything.
 
-The first five principles below are named by the current owner request. The
-further directions are supported by the owner's corrections recorded in
-[plan.md §0](plan.md#0-status-authority-and-governing-principles), the opening of
-[OBLIGATIONS.md](OBLIGATIONS.md), and the workflow. The construction consequences
-are proposals to enforce those directions, not additional owner quotations.
-They concern the direction of development, not preservation of today's file
-layout, numeric entries, record shapes or finite examples.
+> the key is that every problem and I mean EVERY problem itself goes through the
+> same machinery - that means which problem to solve, how to schedule, what to give
+> to the agent and even how to improve the development machienry itself goes through
+> the same process - which in turn enforces generalization, reuse, structurality,
+> non-nominlity and everything else I require. Depth is the way I want this to be
+> solved - the agents are not supposed to get broad problems that take a very big
+> amount of context.
 
-| Principle or owner direction | Consequence for native control; evidence needed |
-|---|---|
-| **Structurality** | State, questions, requirements, candidates, observations, reasoning and transitions need complete RRA subjects and Factor meaning. A HOL record, JSON object, digest or diagram alone provides none of that account. Prove the observation equation from the actual operation and complete subject to the independently stated condition. See P-1 and problems condition 1. |
-| **Explicitness** | Expose every meaning-affecting choice: originating problem, scope, source package, rule applicability, premises, evidence, residuals, authority, stopping and resource boundaries. Unavailable information remains unavailable; defaults cannot silently settle it. See P-1 and the workflow's complete content cycle. |
-| **Non-conflation** | Keep formation, truth, derivation, realization, evidence, retention, adequacy, selection and authority as distinct judgments. A valid candidate need not be selected; a generated premise is not established evidence; a passing build does not prove alignment. See P-2, D-5 and O-55. |
-| **Irredundancy** | Use existing contracts and constructors, factor repeated reasoning at first use, and derive recoverable fields instead of creating another authoritative copy. Eliminate a primitive only with a complete-domain recovery or equivalence argument. Preserve distinct judgments even when their representation is shared. See P-3 together with P-2. |
-| **Non-nominality** | Names, positions, stage tags and method numbers must not supply meaning or priority. Dispatch follows actual admitted structures and their proved maps to operations. Renaming and changes of admissible presentation must preserve the appropriate judgments. Numeric coordinates may present subjects; their spelling cannot justify a choice. See O-33, O-37 and §6.11. |
-| **Independent notions; exact presentations and intrinsic links** | State each subject domain independently of its current use. Establish exact local or joint contracts, then compose them with explicit shared-context and compatibility premises. Reuse presentation transport; do not privilege one grammar or repeat a meaning proof for each pairing. See the 2026-09-08 corrections and P-4. |
-| **Meaningful abstraction and reusable reasoning** | General rules must reduce unresolved work at their uses, including recognizing applicability and choosing decompositions. Return instantiated premises and residuals. Extra layers or a catalogue of theorem names do not establish this benefit. See P-5 and [REASONING_REUSE.md](REASONING_REUSE.md). |
-| **Complete boundaries and scoped coverage** | Preserve every required occurrence, binding, material operand and intrinsic relation, including empty cases, repeated equal values and alternative presentations. Account separately for construction, semantic correctness, candidate-language completeness and adequacy for the original problem. Finite success and bounded failure cannot establish unrestricted coverage or impossibility. See D-7 and the 2026-09-11 candidate-axis correction. |
-| **Criticism and self-application before action** | Execute the machinery before a dependent decision; independently criticize the question, candidates, observations, evidence and result. Feed exposed gaps and proposed repairs back through it. Apply the same account to choosing work, information needs, proof repairs, validation and the machinery itself. See the workflow and problems condition 6. |
-| **Predecessor-grounded authority and permanence** | The current established package judges a proposed change, including changes to the controller. Preserve old meanings with their complete environments. Historical ancestry, semantic dependency and authority remain different relations. Successor rules may be inspected as data without authorizing their own acceptance. See D-9, §6.16–6.18 and O-82. |
-| **Useful progress with preserved quality** | Demonstrate useful real development, reduced repeated work and acceptable observed cost. Expose independent computations, batch candidates and repairs, retain reasons, and reconstruct bulk instead of storing it. Do not lower requirements or decision coverage to obtain throughput. See problems conditions 3–5 and the owner's scheduling directions. |
-| **Evidence-bounded improvement and stopping** | Report what a result settles and why, which language or scope exhausted, and what remains. Distinguish timeout, unsupported construction, unavailable evidence, refusal, empty success and ambiguity. Do not assume a universal abstraction hierarchy, depth bound or cost theorem. See P-5 and the continuing review rule in [GENERALIZATION_REVIEW.md](GENERALIZATION_REVIEW.md#continuing-review-rule). |
+Asked whether Isabelle theory and tool changes should themselves be generations
+over the native state: "Yes they should be otherwise wouldn't it all become
+pointless?"
 
-These principles constrain each other. For example, explicitness does not require
-duplicating a derivable field; irredundancy does not permit erasing premise
-occurrences; non-nominality does not forbid proved coordinate encodings; and
-self-application does not authorize circular evidence.
+On authority, adequacy and local contracts, stated by the owner on 2026-09-17:
 
-## Existing boundary and corrections to the earlier plan
+> my statements, directions, decisions and every other action needs to be the
+> highest authority for things that are not determined by positive meaning - truth
+> is always the highest authority, but I'm always second and anything generated by
+> anything else needs to be lower.
 
-The inspected source baseline is `f460a9a`. The implemented route is
-`Factor_Development_Cycle` → `Factor_Development_Steering` →
-`Factor_Steered_Development`, extended by `Factor_Source_Development_Cycle`.
-The [source-development contract](theories/Factor_Source_Development_Admission.thy)
-preserves old artifacts and bindings, the entire selected target meaning, and
-the original ordered query answer, including repetitions. The resulting native
-environment and entry supply the query. This is a useful implemented transition
-class, under its original request and admission premises.
+> adequacy really does have no grounding it has just a current basis which itself
+> should be constantly critisized and improved. The problem is that even I make
+> mistakes and understand new things that I haven't considered before, thus the
+> notion of adequacy has to reflect this reality and the system has to account for
+> it by making sure that adequacy is constantly improved.
 
-It does not yet establish a controller for arbitrary repository work. The
-original question family, finite producer library, source target family and
-query scope remain supplied. Native environment installation does not itself
-write or justify a `.thy` edit, a filesystem change or a Git transition. A
-correspondence to any such development subject must be established explicitly.
+> semantic scope needs to be local rather than every use having to reestablish
+> everything every time - it is proved once for a notion and given as a local
+> contract.
 
-The revision corrects the following claims and omissions:
+> I'm always talking about reuse but if the semantic boundary of a given notion
+> increases with every use then its reuse becomes more and more difficult the more
+> it is used.
 
-| Earlier proposal | Required correction |
-|---|---|
-| Prefer a request record and `Workflow_Values` because it is cheaper than another scope constructor. | Keep both as presentation candidates, with composition through existing subjects as the first reuse candidate. Choose through exactness, compatibility, irredundancy and observed implementation evidence; prose estimates do not settle the architecture. Neither a tag nor a record supplies the native account. |
-| Convert returned bytes into ground rows and thereby judge their admissibility. | `finite_ground_condition_exact` proves membership in the installed rows. The caller still owes an exact subject reader, the actual observation computation and its condition equation. Installing assertions about arbitrary bytes would reproduce the supplied-table defect. |
-| Obtain substantive conditions from the eight workflow positions. | `workflow_requirements_input` enforces eight supplied positions. It does not derive what problem formation, adequate criticism or retention should mean on a new subject. Derive or establish those original requirements, then compile them. |
-| Treat the finite question helper as sufficient scope criticism. | `finite_development_question` uses `development_scope_condition True`: the parameter selects a review-shape check requiring a nonempty candidate sequence, not a problem-adequacy test. Its generation-coverage check concerns its supplied values. Reuse those contracts while separately establishing adequate questions and an applicable critic for each new use. |
-| Make agent invention permanently external because only admission has authority. | Candidate generation and criticism are also subject to the standing rule. First use the existing native generators, assemblers, matching and learned reasoning. A missing internal operation stays open; later validation does not retrospectively internalize an external construction. |
-| Delay provenance until after requests and agenda construction. | The first accepted response needs an established issuing state, original requirement and predecessor authority. Advanced history optimizations can follow; the authority boundary cannot. |
-| Obtain the agenda's dependency partial order from `Factor_System_Restriction`. | That theory preserves meaning on a closed definition boundary. It does not derive task readiness, independence or an acyclic schedule. Work dependencies, active semantic dependencies, historical links and resource conflicts need their own connected accounts; cycles need explicit treatment. |
-| Issue no request whenever the current choice is ambiguous. | Refuse the unsupported adoption. Where justified, derive requests for discriminating observations, broader candidates or missing evidence. Otherwise retain an explicit obstruction. Ambiguity must not become an agent tie-break or an unexplained permanent stall. |
-| Justify the plan or a supplied requirement base by declaring an exception under condition 1. | A declaration is not justification, and the current standing rule grants no ad hoc fallback. Isabelle establishes bootstrap adequacy; condition 6 remains owed for the process's own choices. |
+Authority is therefore ordered: truth, as determined by positive meaning; then the
+owner's statements, directions, decisions and other actions; then everything
+generated by anything else, below them in the order of
+[plan.md §0.1–0.2](plan.md#01-precedence), where a generated formulation of an
+endorsed direction is not automatically normative. The standing rule and
+Isabelle/HOL's normative bootstrap role through genesis are those of
+[DEVELOPMENT_WORKFLOW.md](DEVELOPMENT_WORKFLOW.md). The governing principles are
+stated in [plan.md §0.3](plan.md#03-governing-principles) and the workflow; this plan
+records how the process enforces them.
 
-## Reuse and offloading map
+## The development process
 
-“Existing” below means content available under its stated contract. Connecting
-that content to a new development subject is work unless the connection is
-already proved. [REASONING_REUSE.md](REASONING_REUSE.md) records exactly this
-distinction between construction and recognition of its applicability.
+There is one process, and every problem goes through it:
 
-| Work to move out of the agent | Existing machinery to instantiate | Remaining connection or limit |
+```
+a problem in the established native state
+  -> decomposition by inference over the development library: applicable schemas
+     construct applications, premise demands become subproblems, residuals stay explicit
+  -> each leaf becomes a request: problem, least closed context, verifying contract
+  -> an executor returns an answer in a declared presentation
+  -> the answer is verified; verified subresults compose into the parent's result
+  -> admission as a generation whose cause is certified under policy
+  -> successor state, from which the next problems derive
+```
+
+Consequences:
+
+1. **Every problem is uniform.** Changing a theory or tool, choosing which problem
+   to solve next, scheduling problems, constructing what an executor receives,
+   choosing a verifier, encoding a requirement and improving the development
+   machinery itself are all problems in the native state, decomposed, answered,
+   verified and admitted by the same process. A native computation that answers a
+   request is an executor like any other; its answer is verified the same way.
+   Every significant choice is made or recorded through the process. The owner's
+   statements, directions, decisions and actions enter it with owner authority; every
+   other significant choice is made by the process, and a choice generated outside it
+   is a residual that justifies nothing ([Bootstrap](#bootstrap-and-authority)).
+   Initial establishment follows the existing Isabelle/HOL bootstrap boundary.
+2. **The process enforces the principles.** Policy conditions apply to every
+   generation, including decompositions, schedules, requests and machinery
+   amendments. Generalization and reuse follow because a decomposition must apply
+   the library's applicable schemas and a repeated argument is extracted as a schema
+   at its first use; structurality and non-nominality follow because admission reads
+   only structural subjects, never names or positions.
+3. **Depth, not breadth.** A problem is solved by recursive decomposition. Where an
+   applicable decomposition exists, a broad request is not issued. Leaves are narrow
+   problems whose context is the least closed restriction they need; no executor
+   receives a broad problem, a large context or the repository.
+4. **Significance is fixed by contracts.** Existing facets, comparisons and
+   presentation contracts establish the relevant relation between answers. The
+   intended relation and original requirements precede the observations; the
+   comparison-basis contract establishes that the observations determine that
+   relation on the stated scope. Every presentation allowed by the request's
+   contract is accepted. A missing required distinction produces comparison
+   failures, repair witnesses or a language obstruction through the existing
+   machinery. Its repair is another problem, never executor discretion.
+5. **Executors are inert.** An executor receives only a request presentation and
+   returns only an answer presentation. Any executor that returns an admissible answer
+   is interchangeable with any other.
+6. **Reuse the existing accounts.** Problems, decomposition, recorded choices, issued work,
+   verification, intent, scheduling, supersession, review, minimal context and
+   self-amendment already exist in the machinery (next section). The work is to
+   instantiate them on the actual development state and connect them to executors.
+7. **Theory and tool changes are generations.** Changes to Isabelle theories and host
+   tools are generations over the native development state. Native control restricted
+   to fixture environments would leave every significant choice outside it.
+8. **Minimum work is computed under the applicable boundary contract.** Backward
+   demand, dependency closures, least retained environments, candidate coverage,
+   proof contexts and execution boundaries determine the required work. Their
+   existing leastness and necessity results have different subjects: a least
+   context for fixed readings is not a claim about the cheapest proof or schedule.
+   The development instance must connect the actual requested operation to its
+   complete dependencies before using them for invalidation or reuse. Theoretical
+   cost bounds remain deferred under condition 5b.
+
+Identification is structural, so theory, constant and file names are presentations.
+Existing schema, system and graph renaming contracts are reused; their connection
+to exported development entities must be established. Occurrence coordinates retain
+real distinctions, while names and list positions confer no selection priority.
+Every problem retains its complete premises, refusals, alternatives and
+multiplicities. Formation, soundness, adequacy, selection and authority remain
+distinct judgments: an accepted answer is not thereby selected, and Isabelle
+acceptance is not adequacy.
+
+## Existing machinery for each role
+
+The trace below identifies reusable contracts, not merely related filenames.
+Mathematical contracts established in Isabelle, their executable instances, ordinary
+Factor programs, and native admission of the mathematical proofs remain distinct.
+Each use carries its source, premises and scope. A missing development instance is
+not evidence that its general account needs to be invented again.
+
+### Reasoning, construction, comparison and criticism
+
+| Role and existing source | Contract already available | Development instance to establish |
 |---|---|---|
-| Present questions, requests, responses and their links | [Presentation_Contracts](theories/Presentation_Contracts.thy), `Presentation_Contract_Constructions`, `Presentation_Transport`; existing native data, record, source and quotation readers | Establish independent domains and joint request/state/response relations. Transport cannot invent the missing notion or its authority. |
-| Construct requirement guards and check complete responses | [Factor_Finite_Native_Requirement_Construction](theories/Factor_Finite_Native_Requirement_Construction.thy), `Factor_Workflow_Requirements`, [Factor_Requirement_Artifact_Admission](theories/Factor_Requirement_Artifact_Admission.thy) | Reuse complete same-subject conjunction and the pattern that fixes the request before checking the whole artifact. The existing artifact checker concerns admission-plan artifacts; extending it to other response types needs an exact contract. |
-| Recognize and instantiate reusable reasoning | [Factor_Inference_Development](theories/Factor_Inference_Development.thy), `Factor_Learned_Schemas`, `Factor_Schema_Generation`, `Factor_Learned_Investigation` | Supply admitted library content, actual source correspondence and evidence for known calls. Preserve assertion origins and material premises. General applicability discovery and whole symbolic/mathematical-proof admission are not automatic. |
-| Construct candidates from parts instead of hand-listing finished answers | [Finite_Candidate_Assembly](theories/Finite_Candidate_Assembly.thy), [Factor_Application_Candidates](theories/Factor_Application_Candidates.thy), `application_construct_plan` | Use actual parts and computed coverage with the stated formation premises. Soundness, completeness, failure and necessity are relative to that declared language; these operations are not a planner for arbitrary prose. |
-| Guide deeper construction and information requests | [Factor_Guided_Investigation](theories/Factor_Guided_Investigation.thy), `Factor_Binding_Guided_Investigation`, [Inference_Demands](theories/Inference_Demands.thy) | Retain whole compatible bindings and all premise occurrences. Demand reachability identifies relevant work; it does not discharge a goal. Library/entry obstructions must guide repair instead of blindly increasing depth. |
-| Compute comparisons and repair observation selections | [Factor_Development_Cycle](theories/Factor_Development_Cycle.thy), `Factor_Development_Subjects`, [Observation_Repairs](theories/Observation_Repairs.thy), finite revision operations | Require independent original conditions and computed subject equations. Selection within an existing observation language cannot create a missing discriminating observation; construct and justify that extension separately. |
-| Choose and invoke applicable development producers | [Factor_Development_Steering](theories/Factor_Development_Steering.thy), [Factor_Steered_Development](theories/Factor_Steered_Development.thy) | Reuse the computed choice and renewed admission on each subsequent request. The ten-producer library and represented questions do not establish universal producer adequacy or native agenda construction. |
-| Install constructed native targets and consume them | [Factor_Source_Development_Cycle](theories/Factor_Source_Development_Cycle.thy), `Factor_Finite_Source_Entry_Installation`, `Factor_Workflow_Evidence_Meaning` | Derive the target family and its role in the original problem. Current compatibility and target-membership tests do not establish usefulness of supplied targets or correct repository edits. |
-| Establish evidence, record causes and recover exact state | `RRA_Generation`, `RRA_Evidence`, existing native certificate/graph/replay and closed-history constructors; [Factor_Transition_Selection](theories/Factor_Transition_Selection.thy) | Compose the exact admitted change with its current predecessor and publication/authority boundary. Local valid history construction does not close historical permission or reachability. |
-| Preserve dependencies and avoid repeated computation | [Factor_System_Restriction](theories/Factor_System_Restriction.thy), existing complete-result sharing, history caches and replay refinements | Keep closure, source agreement, complete keys and cache congruence premises. These give reusable local results, not global cost bounds or task-independence proofs. |
-| Execute independent work and reconstruct evidence | Existing `Parallel.map` sites; [compressed reconstruction suite](tools/compressed_reconstruction_suite.py), source manifests, original input encoders and report recipes | Host execution transports and schedules established operations. Prove new semantic independence and composition before parallel adoption; physical timings and hashes do not supply semantics. |
+| Problems and recursive composition: [Obligation_Reductions](theories/Obligation_Reductions.thy), [Factor_Inference_Development](theories/Factor_Inference_Development.thy) | `obligation_reduction_compose` and `exact_obligation_reduction_compose` substitute qualified premise occurrences. `schema_graph_development_complete` discharges a root from its actual conditional graph and true known calls. Equal conditions at distinct occurrences remain separate. | Represent development goals and their independently stated requirements; instantiate these reductions and the graph-to-goal contract for each decomposition. |
+| Problems about reasoning itself: [Method_Development](theories/Method_Development.thy), [Presentation_Development](theories/Presentation_Development.thy) | `method_comparison_reduction` reduces method refinement to its actual rule uses; `method_composition_developed` decomposes those obligations through the same account. Presentation transport preserves closure and residual occurrences. | Apply the same reductions to proposed development methods, their presentations and machinery amendments. |
+| First-use factoring and reuse: [Factor_Learned_Schemas](theories/Factor_Learned_Schemas.thy), [Factor_Schema_Generation](theories/Factor_Schema_Generation.thy), [Factor_Learned_Execution_Soundness](theories/Factor_Learned_Execution_Soundness.thy) | `schema_scheme_rule_sound` extracts a conditional rule from a read symbolic argument, retaining assertion and material sockets. Generated instances preserve the library's semantic contract with evidence for every known call. | Register actual development arguments and their premises at first use; require the applicable library construction in admission. Automatic discovery of an arbitrary argument's generalization and complete symbolic-graph admission are not supplied by the extraction theorem. |
+| Depth, termination and blocked scope: [Finite_Inference_Development](theories/Finite_Inference_Development.thy), [Factor_Chained_Investigation](theories/Factor_Chained_Investigation.thy), [Factor_Library_Coverage](theories/Factor_Library_Coverage.thy) | `finite_inference_terminates` and `finite_inference_result_exact` compute the finite least closure. Chained construction retains conditional premises at each bound; `finite_library_blocked_at_every_depth` proves reported blocked goals remain residual at every depth. [Inference_Closure](theories/Inference_Closure.thy) excludes unsupported cycles. | Carry the actual library, frontier, known evidence and construction bound. Select depth/scope extensions through the process; retain the distinction between a bounded residual and a proved library obstruction. |
+| Demand and leaf construction: [Inference_Demands](theories/Inference_Demands.thy), [Factor_Guided_Investigation](theories/Factor_Guided_Investigation.thy) | `guided_goal_residual_exact` preserves original goal residuals under demand restriction. Guided construction joins requested heads with premise observations, carries complete premise calls as further requests, and retains the forward applications at the same bound. | Construct development leaf subjects from these demands. Show the request's support and applicable decomposition scope; an exhausted bound alone does not establish leafhood. |
+| Candidate construction and useful stopping: [Finite_Candidate_Assembly](theories/Finite_Candidate_Assembly.thy), [Factor_Application_Candidates](theories/Factor_Application_Candidates.thy), [Inference_Development](theories/Inference_Development.thy) | Finite assembly has soundness, failure and necessity witnesses; `application_plan_coverage_exact` connects coverage to actual application requirements. Candidate covers justify reduced comparisons; maximality, completeness, plateaus and unbounded-scope limitations are explicit. | Derive the parts, coverage and scope for development candidates. Inclusion-minimal assemblies are not automatically globally cheapest work; search order is not authority for selecting an inequivalent result. |
+| Answer significance and comparison: [Candidate_Observations](theories/Candidate_Observations.thy), [Observation_Invariance](theories/Observation_Invariance.thy) | `comparison_basis_exact` separates soundness from missing comparisons against the intended relation. Profiles retain facet/witness pairs and directed losses; omitted facets have witnesses. Observation obligations retain both endpoints and reduce through the ordinary obligation machinery. | Instantiate the intended answer relation and relevant uses from the original request and policy; make admission consume the resulting adequacy and comparison judgments. No separate equivalence mechanism is needed. |
+| Independent criticism and correction: [Observation_Repairs](theories/Observation_Repairs.thy), [Observation_Revisions](theories/Observation_Revisions.thy) | Repairs preserve soundness and remove witnessed failures. Revision retains sound selections, withdraws exactly the unsound selections and recomputes repairs. Its residual equals that of the full sound available language; obstruction remains explicit. | Apply criticism to answer distinctions, observation choices, candidate scope, depth and the machinery itself. Construct observations outside an inadequate language with their own subject contracts. |
+| Computed conditions and selection: [Finite_Derived_Observations](theories/Finite_Derived_Observations.thy), [Finite_Subject_Investigation](theories/Finite_Subject_Investigation.thy) | `finite_derived_observation_at_subject` connects actual candidates, operations and result subjects. `comparison_at_subject` and `selection_at_subject` derive the comparison and retain every represented candidate satisfying the selection condition. | Supply exact subject maps and observation equations for actual development problems. Identifiers may present subjects; supplied tables or labels cannot establish their conditions. |
 
-The implementation should make these contracts executable inputs to development,
-including their applicability tests and unresolved premises. A second prose
-inventory or a registry populated with “suitable” flags would leave the agent
-performing the same work.
+### Requests, contexts, verification and execution
 
-### Existing execution entry points
+| Role and existing source | Contract already available | Development instance to establish |
+|---|---|---|
+| Complete answer classes: [Presentation_Contracts](theories/Presentation_Contracts.thy), [Presentation_Contract_Constructions](theories/Presentation_Contract_Constructions.thy), [Factor_Result_Comparison](theories/Factor_Result_Comparison.thy) | Relation/function contracts compose through products, lists and other established constructions. `presented_function_contract.output_equivalence` relates outputs through their subject. `context_result_comparison_profile.presented_contract` completes a computed witness by an exact comparator, admitting every presentation of the result. | Build request and answer contracts from the relevant notions and existing comparators. A generic computation/comparison wrapper may recompute a witness; it does not by itself establish a cheaper proof-verification path. |
+| Least retained program: [Factor_Definition_Closure](theories/Factor_Definition_Closure.thy), [Factor_System_Restriction](theories/Factor_System_Restriction.thy) | Definition closure follows prospective callees; `rooted_system_least` gives the least closed definition domain containing the roots, preserving calls and meaning. | Derive request roots from actual operations and demands, then apply restriction. Their sufficiency for a new Isabelle proof request and the export-to-program correspondence require their own instances. |
+| Complete request and proof context: [Factor_Application_Retention](theories/Factor_Application_Retention.thy), [Factor_Proof_Retention](theories/Factor_Proof_Retention.thy), [Factor_Replay_Retention](theories/Factor_Replay_Retention.thy) | Application and graph grammars derive source uses and demanded slots. `native_replay_environment_recovers`, `native_replay_environment_idempotent` and `native_replay_environment_least` preserve the selected program, call and proof in the least supporting subenvironment. | Carry the actual development request and evidence in these readings. Reuse this established context account; connect new exported entities and proof requests to it. Leastness is relative to the fixed readings. |
+| Requirement and verifier construction: [Factor_Admission_Goal_Construction](theories/Factor_Admission_Goal_Construction.thy), [Factor_Admission_Goal_Sequences](theories/Factor_Admission_Goal_Sequences.thy), [Factor_Requirement_Plans](theories/Factor_Requirement_Plans.thy) | Goal constructors compose leaf, pair and collection meanings with totality/correctness under support premises. `required_admission_installed` builds a guard requiring every original goal on the same subject while preserving the old program. | Encode owner requirements as supported native goals and construct the request verifier through this machinery. A supplied goal family still needs adequacy against the original direction. |
+| Whole submitted artifacts: [Factor_Requirement_Artifact_Admission](theories/Factor_Requirement_Artifact_Admission.thy), [Factor_Finite_Certified_Causes](theories/Factor_Finite_Certified_Causes.thy) | `requirement_artifact_on_complete_body` binds the actual complete artifact to the original goals and allocation; installation retains the original requirements. Certified causes check actual proof witnesses. | Present executor answers and certificates with these complete boundaries; establish the relevant verifier instance, including rejection of extra material. |
+| Workflow enforcement and readiness: [Factor_Workflow_Requirements](theories/Factor_Workflow_Requirements.thy), [Factor_Workflow_Admission](theories/Factor_Workflow_Admission.thy), [Factor_Workflow_Readiness](theories/Factor_Workflow_Readiness.thy) | `compiled_workflow_requirement_exact` connects compiled stages to original source-and-goal requirements. Admission checks all inputs, certificates and branches; `admitted_compiled_workflow_requirements` recovers every original condition. Readiness distinguishes unavailable computation from empty results. | Instantiate the substantive requirements for each development role. Eight occupied positions alone do not establish those requirements; bind them to the initial policy before using the workflow. |
+| Closed control and actual source change: [Factor_Development_Cycle](theories/Factor_Development_Cycle.thy), [Factor_Development_Steering](theories/Factor_Development_Steering.thy), [Factor_Steered_Development](theories/Factor_Steered_Development.thy), [Factor_Source_Development_Admission](theories/Factor_Source_Development_Admission.thy) | Computed criticism and comparison choose a producer; subsequent requests retain their original admission. Source development selects and installs a compatible target, preserves old material and establishes the query's original meaning on the installed source. [Finite_Singleton_Selection](theories/Finite_Singleton_Selection.thy) recognizes one value across duplicate occurrences and refuses distinct-value ambiguity. | Extend the finite producer, facet, target and question subjects to real development under proved maps. Existing installation/query contracts supply a starting composition; theory export and external executor requests are still to be connected. |
+| Scheduling and parallel work: [Inference_Demands](theories/Inference_Demands.thy), [Factor_Workflow_Readiness](theories/Factor_Workflow_Readiness.thy), [Parallel_Assessment_Execution](theories/Parallel_Assessment_Execution.thy) | Demand and readiness retain actual prerequisites; exact parallel-map equations preserve complete contexts, order, multiplicity and results while exposing independent work. [Finite_Demand_Selection](theories/Finite_Demand_Selection.thy) supplies uncovered-demand progress and a minimum for a supplied cost, with list-order tie resolution. | Derive readiness and independence for open development problems and admit the schedule under policy. Do not use list-order ties as semantic selection. Parallel assessment is not a theorem of concurrent adoption; transaction composition needs its own instance. |
 
-For represented questions, use
-[check_native_steering.py](tools/check_native_steering.py) with explicit
-`--questions` and `--requests` lists, encoded through
-[native_development_input.py](tools/native_development_input.py). For represented
-source changes use [check_source_development.py](tools/check_source_development.py)
-and [source_development_input.py](tools/source_development_input.py). Both accept
-`--proof`, `--poly`, `--project`, a fresh `--output` and `--workers` (up to 16).
-The proof must be an accepted export covering the exact unchanged inputs, not
-a path borrowed from an old receipt. Omitting the lists runs the built-in cases;
-that does not submit a new development problem.
+### State, authority, retention and physical realization
 
-For the thirteen existing registered fixed-subject investigations,
-`Builtin_Investigation_Execution` provides one shared export with all original
-typed contracts. `investigate.py --proof /path/to/builtin_investigations.proof.json`
-executes its existing modes without rebuilding an engine; `--output` and the
-original mode/selection arguments remain explicit. The complete recipe exercises
-56 cases, and the actual CLI modes have matching complete-result checks. Their
-fixed subject languages do not admit this prose plan or derive new development
-questions. Preserve that distinction when using the faster path.
+| Role and existing source | Contract already available | Development instance to establish |
+|---|---|---|
+| Recorded choices and dependency boundaries: [RRA_Generation](theories/RRA_Generation.thy), [RRA_Generation_Record_Construction](theories/RRA_Generation_Record_Construction.thy), [RRA_Generation_Dependencies](theories/RRA_Generation_Dependencies.thy), [RRA_Publication_Dependencies](theories/RRA_Publication_Dependencies.thy) | Generations retain locus, predecessors, payload and cause. Successful readings require their recursive references; restrictions recover the same core. Publication has a unique least retained environment. [Factor_Generation_Dependency_Contracts](theories/Factor_Generation_Dependency_Contracts.thy) presents the actual read sites, requests and demanded bindings. | Supply development payloads and their exact dependency readings, including negative/absence observations wherever a decision uses them. Connect invalidation and reuse to those readings. |
+| Owner policy and history preservation: [Factor_Policy_Causes](theories/Factor_Policy_Causes.thy), [Factor_Certified_Policy_Readings](theories/Factor_Certified_Policy_Readings.thy), [Factor_Generation_History_Append](theories/Factor_Generation_History_Append.thy) | `certified_policy_cause_sound` binds acceptance to the original policy package, scope and entry; a different accepting program cannot substitute. `finite_required_history_append_valid` preserves old validity and requires the new generation's actual policy cause. | Establish an authorized initial policy instance for the first loop, then encode further directions through that policy. Membership validity alone does not establish historical reachability. |
+| Selection, supersession and publication: [RRA_Selection](theories/RRA_Selection.thy), [RRA_Transaction](theories/RRA_Transaction.thy), [RRA_Publication](theories/RRA_Publication.thy), [Factor_Transition_Selection](theories/Factor_Transition_Selection.thy) | Replacement changes exactly its loci. Transactions compare expected selections and absence; conflict retains observations and yields no successor. Certified transition selection binds the accepted continuation to the actual successful successor snapshot and preserves unrelated loci. | Select admitted development generations into the published state; instantiate conflict and composition contracts for simultaneous changes. Admission and selection remain separate. |
+| Self-amendment under predecessor authority: [Factor_Native_Amendment](theories/Factor_Native_Amendment.thy), [Factor_Current_Acceptance_Certificates](theories/Factor_Current_Acceptance_Certificates.thy), [Factor_Predecessor_Continuation](theories/Factor_Predecessor_Continuation.thy) | Compilation preserves a policy for all complete future arguments. Acceptance certificates derive calls using the predecessor's selected program; successor data contributes no clauses to that derivation. Continuation retains the predecessor's adoption and active dependency boundary. | Make changes to development policy, theory, tools and request constructors actual amendments using these contracts. O-73 and O-85 remain separate genesis obligations. |
+| Reconstruction and retained evidence: [Factor_Workflow_Protocol](theories/Factor_Workflow_Protocol.thy), [Factor_Workflow_Requirements](theories/Factor_Workflow_Requirements.thy), [RRA_Executable_Retention](theories/RRA_Executable_Retention.thy), [Factor_Decision_Replay_Investigation](theories/Factor_Decision_Replay_Investigation.thy) | `workflow_reconstructed` and `required_workflow_reconstructed` recover the execution from the original protocol/requirements and problem. Finite retention computes the existing read-environment relation. Decision and history replay retain original subjects, conditions and causes. | Retain actual externally supplied answers, their proof dependencies and verification alongside the native reconstruction boundary. A deterministic constructor's replay theorem does not reconstruct an unretained external answer. |
+| Structural identification and transport: [Factor_Schema_Renaming](theories/Factor_Schema_Renaming.thy), [Factor_System_Relocation](theories/Factor_System_Relocation.thy), [Factor_Graph_Renaming](theories/Factor_Graph_Renaming.thy), [Finite_Term_Words](theories/Finite_Term_Words.thy) | Schema instances and material conditions respect injective coordinate changes; `renamed_system_positive_meaning` transports meaning; graph renaming preserves occurrence structure. `finite_term_shared_word_injective` and its fold equation support existing report transport. | Compose exact presentations/readers for theory exports, requests and answers. Word injectivity is not a native reader for an arbitrary new format, and name erasure is not a structural correspondence. |
+| Physical checking, reuse and executor isolation: [proof_contexts.py](tools/proof_contexts.py), [incremental_check.py](tools/incremental_check.py), [isabelle_native_execution.py](tools/isabelle_native_execution.py) | Existing host tools check immutable proof-provider contexts and complete execution inputs, support heapless checking and retained execution reuse, and run proved exported operations. These are physical bootstrap facilities, not native policy decisions. | Bind physical actions and observations to admitted requests; instantiate native dependency and retention contracts for choices presently made by the host. Build the request-only executor harness and exact Isabelle-context bridge. |
 
-Inspect complete native questions, computations, admissions, residuals and
-refusals. The host receipt's `accepted` status establishes its execution and
-transport checks; it does not mean that every native request was admitted.
-Use the existing source-only recipes when a matching proved export is absent
-or changed inputs require rebuilding. Share their dependency proof where useful;
-do not routinely rebuild HOL merely to review a plan or rerun unchanged work.
+Apart from the physical facilities, these contracts concern native meaning, which
+exported theory content lacks, so every development instance depends first on
+[acceptance](#the-development-state). The open task is to construct and enforce
+these instances on the actual development state, retaining any prerequisite that the
+existing contract does not discharge. The tables also seed
+[stage 1](#stage-1--seed-the-native-development-state): each right-hand cell becomes
+a problem whose dependencies are the cited theorems, which become entity references
+once the export is read.
 
-## The proposed control relation
+## Every problem, in depth
 
-Use the following as a requirement on the composition, not a new primitive or
-an implemented function:
+### Problems
 
-```
-established state + original problem
-  -> native reasoning, criticism and candidate construction
-  -> justified requests for the remaining work
-  -> executions and complete responses
-  -> original-request checks + predecessor-authorized transition
-  -> retained successor and its derived next work
-```
+A problem is a subject in the native state: a goal with its contract, the state it
+is judged against, its dependencies and its origin (an obligation, a residual, a
+demand, a repair witness, an owner direction, or an exposed incompleteness). Problems
+include, uniformly:
 
-Some work can be completed entirely by existing native constructors. Tools are
-used only through an established operation/response contract. A missing native
-representation, generator, reader or proof is a residual development problem;
-it is not a request for an agent to supply an authoritative substitute.
+- theory, presentation, refinement and tool changes;
+- which open problem to solve next, and in what order or concurrency;
+- what a request carries: its statement, its least closed context and its contract;
+- which verifier and presentation apply to an answer;
+- encoding an owner direction as a requirement;
+- improving the development machinery, including this plan's remaining stages.
 
-The composed boundary must recover the following content, reusing existing
-structures and deriving fields whenever recovery is proved:
+### Decomposition and depth
 
-1. The exact source and authority package, originating problem and complete
-   original requirements, including their source and applicability evidence.
-2. The request's issuing state and occurrence, its required result relation,
-   permitted scope, dependency premises, reusable rule instance and residual.
-3. The complete response subject, construction/observation evidence and exact
-   correspondence to that request. Evidence is inspected; a tool's claim of
-   success is not accepted in its place.
-4. Independent criticism of question adequacy, candidate-language coverage,
-   observations and proposed change; comparison and revision with reasons.
-5. The admitted transition, preserved meanings and reconstruction boundary,
-   together with every unresolved condition and refused or unexecuted request.
+A problem is either decomposed or issued. Decomposition is inference over the
+development library: applicable schemas construct applications, their premise
+demands become subproblems, and unmet premises remain explicit residuals at every
+depth. `obligation_reduction_compose` supplies the reusable composition law;
+the exact variant is used when the reduction must also reflect the parent's
+requirement. `schema_graph_development_complete` connects verified premises to
+the root native call. Each development use supplies the actual domain, parent
+condition, premise conditions, graph and evidence required by those contracts.
 
-Prove preservation and reflection of the intrinsic links between these parts.
-Separate local exactness theorems do not establish their composition. Retaining
-the issuing state by hash alone does not establish reachability or permission.
-Equal result values may support a unique selection while their distinct evidence
-occurrences remain intact; semantic equivalence does not erase exact artifacts.
-Keep generation identity separate from later evidence and authority: the
-development state can refer to all three without adding them to the generation's
-intrinsic content. New evidence about an existing generation must not create a
-different generation identity (D-4).
+The applicable library, possible frontier, requested heads and construction bound
+are explicit subjects. Within that admitted scope, all applicable schema
+applications and their premise occurrences are retained. Guided restriction uses
+`guided_goal_residual_exact`; a smaller search scope needs the applicable coverage
+contract and criticism. Choosing the scope or increasing a bound is itself a
+problem. A bound exhausted with a residual is not evidence that no decomposition
+exists. `finite_library_blocked_at_every_depth` supplies a stronger obstruction
+where its premise-entry abstraction actually blocks the goal.
 
-On failure, no unsupported development change is committed. Recording a refused
-attempt or issuing a justified repair may be a separate admitted transition;
-“unchanged” must name the state component it concerns. A timed-out execution
-remains uncompleted, not a negative mathematical result.
+Finite inference already terminates at its exact least closure. Unsupported cycles
+do not establish their own premises, and demand reachability does not discharge
+truth. Chained construction adds possible calls without treating them as known.
+These contracts supply the stopping and residual account for the existing finite
+operations; they do not claim termination of unrestricted future library growth.
+Any remaining coverage or progress condition enters the same comparison and
+development machinery.
 
-## Candidate implementation batches and gates
+[Inference_Rounds](theories/Inference_Rounds.thy) already supplies depth observations
+that retain each conditional use and its inference-round budget. Its round-capability
+comparison enters the existing method-evaluation account. Instantiate these
+observations when they distinguish proposed decompositions; an inference round is
+not elapsed time or a universal measure of depth.
 
-These batches group related proof and execution work. They are candidate
-decompositions to evaluate, not agent-selected answers already adopted. Establish
-the complete usable workflow first and use condition 6 to refine its components.
-Do not turn the reuse survey or a general scheduler into a prerequisite research
-project before exercising the first substantive batch.
+Depth is preferred over breadth. General schemas are reused at every level, and a
+decomposition repeated across problems is extracted as a schema at its first use, so
+later problems instantiate it instead of repeating it. Flat enumerations of work are
+not admitted where a schema applies. Extraction uses `schema_scheme_rule_sound`
+with the actual read argument and all assertion/material premises. The controller
+must enforce that use; the theorem alone does not perform arbitrary discovery or
+native admission of the mathematical justification.
 
-### Batch A — one shared account of development requests and residuals
+### Comparison, criticism and answer classes
 
-Start with the actual open issue: the native source-development operation still
-receives its target family and original work from its caller. State the desired
-change independently of its encoding. Include the plan's own decomposition,
-scope and missing applicability operations among the questions to be represented.
-Keep unsupported aspects visible instead of assigning them nominal facet scores.
-Begin with the bounded actual source-construction subject and its linked workflow
-obligations; a universal planner or a reader of arbitrary natural-language plans
-is not a prerequisite for that use.
+The original request and authorized policy fix the intended subject relation.
+`comparison_basis` relates that relation to facet profiles on the actual scope;
+`Finite_Derived_Observations` and `Finite_Subject_Investigation` connect its
+observations and selections to actual operations. A facet name or a successful
+test alone cannot supply that equation.
 
-Prepare together the independent subject contracts, their presentation candidates,
-reusable-rule instances, original requirement construction, response reading,
-scope criticism and minimal predecessor link. Compare composition of existing
-request/stage subjects with a new aggregate presentation and any justified scope
-extension. The eight workflow positions are reused as enforcement positions;
-their substantive goals require their own established source.
+The same operations compare candidate decompositions, observation methods,
+contexts, schedules, verifiers and amendments. `Observation_Repairs` retains every
+sound separating witness. `Observation_Revisions` withdraws unsound selections,
+retains useful sound ones and recomputes the repairs, preserving any full-language
+obstruction. A new observation or a broader scope is constructed and assessed as
+another problem through the existing generalization machinery.
 
-Use native schema matching, inference and demand machinery for covered reasoning
-and the computed dispatcher for covered questions. If the original problem or
-an applicability rule cannot yet enter those interfaces, establish the missing
-internal account within the Isabelle bootstrap boundary. Keep its unsettled
-adequacy explicit; neither an encoded sentence nor a source-readiness result
-selects a decomposition.
+Equivalent answer presentations use the existing presentation and result-comparison
+contracts. If two answers differ in a required observation, their difference is
+handled by the existing comparison/repair process before either determines the
+successor. Distinct justified alternatives remain explicit until policy establishes
+their selection; singleton recognition already treats duplicate presentations of
+the same selected value correctly. The request verifier and selection policy have
+separate obligations.
 
-**Gate:** complete original-subject and linked-presentation contracts, executable
-constructors/readers, original-condition equations, and independent criticism.
-Controls must reject wrong request/state, altered requirements, omitted premises,
-fabricated satisfaction rows and missing phases. They must preserve valid empty
-results, required multiplicities and compatible alternative presentations. This
-is enabling construction; it is not yet practical-use evidence.
+### Adequacy as a current basis
 
-### Batch B — use the constructors to produce a real development result
+Truth is settled by positive meaning; adequacy is not. It has no grounding, only a
+current basis. The machinery already proves that adequacy can only be relative:
+`comparison_basis` is relative to a stated relation and scope,
+`revision_is_adequate_exactly_when_an_available_basis_exists` to the available
+observation language, and [Inference_Development](theories/Inference_Development.thy)
+proves the limits of stopping claims (`an_immediate_plateau_can_hide_improvement`,
+`an_unbounded_scope_need_not_have_a_maximal_candidate`,
+`a_complete_candidate_can_leave_obligations`). A judgment required before adoption is
+established under the current basis, never finally, and the process keeps improving
+that basis.
 
-Develop this batch alongside A where inputs are independent. The first proposed
-use is constructing the admission requirements for the actual request/response
-boundary needed by the next source-development change. This gives existing
-requirement construction a real consumer and exposes the missing connection
-between the desired operation and its generated target family.
+- **The basis is state.** A decision's basis is the requirements, scope, observation
+  language, critics and methods its judgments used. Each element is an admitted
+  generation with a local contract and an authority: truth for what positive meaning
+  determines; the owner for the owner's statements, directions, decisions and actions,
+  including authorized encodings of them; generated for everything else. The
+  decision's dependency reading records the elements it used.
+- **Authority decides what criticism can change.** Criticism is generated and
+  produces problems. An improvement admitted through the process supersedes a
+  generated basis element. For an owner-level element the problem goes to the owner
+  with its evidence, and only the owner revises the element. A proved contradiction
+  between truth and an owner-level element is retained as a conflict for the owner;
+  truth prevails.
+- **Use exposes the basis's limits.** Each admission retains the limits its judgments
+  carry as open problems: comparison failures, repair witnesses, observation-language
+  obstructions, search bounds, plateaus, unbounded scopes and residual choices in the
+  basis.
+- **Outcomes criticize the basis.** Later observations of an adopted decision's
+  consequences, such as measured cost, refusals, supersession and owner corrections,
+  are compared with what its basis required. A mismatch is a comparison failure on
+  the basis, and its repair is an ordinary problem.
+- **Improvement is not starved.** Basis-improvement problems go through selection
+  like any other problem, and the policy must guarantee they are taken.
+  `finite_demand_progress` covers only a fixed finite scope, so with new problems
+  arriving the policy needs its own progress condition. The
+  [continuing review rule](GENERALIZATION_REVIEW.md#continuing-review-rule) states this
+  intent in prose; its triggers (completed loops, repeated reasoning, a scope that
+  proves too weak) are computed from the state and become a policy requirement.
+- **Revision stays local.** A notion's semantic scope is its local contract, proved
+  once; uses consume it and never re-establish it, so its boundary does not grow with
+  use. Reuse established local contracts. A changed scope, observation or measured
+  cost can change a decision while the contract governing its computation remains the
+  same, so a change reaches exactly the decisions whose relevant inputs, readings or
+  contractual guarantees it alters, and no other. `Factor_Native_Amendment` preserves
+  the predecessor program and old bindings; that preservation alone does not establish
+  a decision's applicability to changed inputs.
+- **Readings include absences.** The existing dependency and locality contracts
+  establish when successful readings are preserved, allowing a decision to be reused.
+  A decision that rests on something being absent (a tie, a refusal, no applicable
+  schema at a bound, no missing distinction) can be changed by extending a scope,
+  library or observation language even when none of its positive readings changes.
+  Its relevant readings therefore include the absences it relied on, recorded as the
+  [dependency boundaries](#state-authority-retention-and-physical-realization) already
+  require and compared as `RRA_Transaction` compares expected absence.
+- **Re-evaluation is scheduled, not cascaded.** When a decision's result is consumed,
+  its recorded readings, absences included, are compared with the current state. A
+  mismatch makes it a re-evaluation problem, selected and scheduled by the process
+  under the same progress condition, or a problem for the owner when the decision is
+  owner-level; until it is re-evaluated it is not used as current. The process may
+  select a re-evaluation before the result is consumed. Each re-evaluated decision is
+  kept or superseded, with its historical basis retained. A decision whose result
+  nothing consumes keeps its historical basis without recomputation, so re-evaluation
+  follows what current work demands rather than the whole history of uses, and the
+  notion's semantic contract is neither enlarged nor re-proved.
 
-For that use, run the following complete path:
+### Leaves and executors
 
-1. Derive the work and its requirements from the established problem/state and
-   retain the reasoning that makes this request applicable.
-2. Construct alternatives from admitted reusable schemas/parts with actual
-   bindings and coverage evidence. Ask only for the residual operations or
-   observations that the native machinery cannot already supply.
-3. Compute observations on complete actual candidates; independently criticize
-   their scope and requirements. Feed any gap through the same cycle.
-4. Use the computed producer, then the original request's admission, to obtain
-   the permitted source targets. Connect those targets to the intended new
-   requirement meaning; simple membership in a caller's target list is insufficient.
-5. Install the selected native target using the existing source-development path
-   and use the resulting entry in the next actual request. Retain the exact
-   ordered query result and the complete preservation evidence.
-6. Where the work includes a repository edit, establish its correspondence to
-   the admitted structural change and validate the exact files. Native environment
-   installation alone cannot discharge that requirement.
+A problem is issued as a leaf only with an admitted account of its decomposition
+scope and remaining demands; finding no application at one tested bound is
+insufficient. The request carries the problem, the justified roots and source/slot
+demands of its selected operations, their least closed restriction, and the
+verifying contract. The existing program, application, proof and replay retention
+contracts supply the corresponding boundaries. A large least closure remains a
+context/decomposition problem under the owner's depth requirement.
 
-**Gate:** a real needed result is constructed, adopted under the established
-boundary, and consumed by subsequent development. Retain what native operations
-actually replaced, the residual work, exposed failures and their repairs.
-Running prewritten target fixtures again, or moving an authored target list into
-a response field, does not pass this gate.
+A new Isabelle proof request carries issued support, the entities its answer may use.
+The demand and coverage account reasons over native schema libraries, not Isabelle's
+lemmas and automation, so support is derived from the export: for a refinement it
+starts from the exported dependencies of the definitions and code equations being
+refined. An answer whose re-exported dependencies exceed the support is refused, and
+the refusal becomes a context or decomposition problem; the process constructs and
+verifies any revised request through the same machinery. Deriving support for other
+proof requests is itself a request-construction problem.
 
-The next use must instantiate the same general reasoning with different actual
-prerequisites, rather than repeat the first argument. A proposed second use is
-the plan/controller's own next-step or scope-repair decision. Its original-subject
-adapter must exist before claiming that the plan has become machinery-driven.
+- An executor receives the request presentation and returns an answer presentation.
+  It has no repository, tools, network or retained state.
+- Native computations, deterministic programs, solvers, agents and humans are
+  executors alike. The host only routes answers to verification. A refused request may
+  be reissued to another executor; the refusal remains recorded.
+- Interchangeability is itself checked: an agent, a deterministic program and a
+  replayed retained answer must produce the same admission.
 
-### Batch C — derive the agenda from actual remaining obligations
+## Theory and tool development as generations
 
-Build on A and the residuals exposed by B. Use inference demands with their
-premise reasons, observation repair witnesses, source/library obstructions and
-declared candidate-language coverage to construct the open work and readiness
-relation. Prove both that issued requests are justified and the coverage claimed
-for unresolved work in the declared scope; issuing nothing must not pass vacuously.
+### The development state
 
-Distinguish missing evidence, incompatible constructions, insufficient candidate
-language, insufficient observation language, unavailable operations and ambiguous
-adequate results. Reuse the applicable repair law for each. Preserve alternatives
-and conjunctions: one satisfied premise or one successful alternative cannot
-stand in for a complete linked argument.
+- **Theory content.** The checked context defines its own development state. An
+  exporter running inside that context follows the shared constant closure
+  ([Isabelle_Constant_Closure](theories/Isabelle_Constant_Closure.thy)) and defines the
+  declarations of every reached constant together with the kernel definitions,
+  non-definitional specifications and code equations its expanded constants contribute
+  ([Isabelle_Entity_Export](theories/Isabelle_Entity_Export.thy)). Types and terms follow
+  the Pure constructors, and every name of a constant, type constructor, class, free or
+  schematic variable is a position in one table of the defined context
+  ([Isabelle_Terms](theories/Isabelle_Terms.thy)), so the state holds structural subjects
+  and no host parses theory text or an export file. The result is an ordinary definition:
+  a failed build defines nothing, and every later use reads exactly the defined value.
+  A development constant the state mentions without expanding is declared on its
+  frontier, so the state says how far it reaches and extends on demand.
+  Isabelle's `export_theory` option additionally carries entity kinds this state does not
+  yet reach (parents, classes, class relations, arities, locales and their dependencies,
+  typedefs, datatypes, and theorem dependencies); reaching them is demanded work, and
+  enabling that option would cost one complete rebuild (the last complete proof took
+  470 s). Establish the correspondence for each entity kind in scope;
+  reuse the existing presentation, renaming, dependency and retention constructions.
+  Logical entity dependencies and the complete physical checking boundary are
+  distinct: preserve the existing source, helper, option and runtime checks while
+  proving which boundary each development operation needs.
+- **Acceptance.** Isabelle's acceptance is normative before genesis, but nothing yet
+  carries it into native admission. The only existing export of checked theorems,
+  [Finite_Observation_Contracts](theories/Finite_Observation_Contracts.thy), presents
+  them as full typed propositions with their reachable definitions and
+  records the remaining constants as dependencies on the accepted Isabelle context;
+  only host tools read that export. Which existing notion carries an acceptance into
+  admission (known calls for `schema_graph_development_complete`, a certified cause's
+  witness, or complete-artifact admission) is the first problem of stage 1, and every
+  development instance in the trace depends on it. Acceptance is a notion with a
+  local contract, proved once: it determines the checked Isabelle subject, its exact
+  context and the native judgment an accepted entity supports. Receiving notions
+  consume that contract through their own local contracts; for known calls it
+  supplies that `K` is a subset of `positive_meaning P`, and certified causes and
+  artifact admission receive the premises their contracts place on accepted inputs.
+  No use re-establishes the connection, and provenance checks alone do not establish
+  it. Isabelle remains normative for this connection through genesis; native
+  mathematical-proof admission under O-85 remains separate.
+- **Report words.** Retained report words and their boundaries are already structural
+  presentations.
+- **Problems, policy and obligations.** Open problems, owner-authorized requirements
+  and obligations; the rows of [OBLIGATIONS.md](OBLIGATIONS.md) and this plan's stages
+  become native problems as they are represented. The initial state includes the
+  owner's recorded directions and authorizations, the actual policy source, goals,
+  compiled guard, selected entry and bootstrap justification needed to govern the
+  first loop, and the residuals of choices generated outside the process. Later
+  policy encoding extends that established boundary.
+- **Tools.** A fixed transport recorded as bootstrap base (see [Tools](#tools)).
 
-Do not derive global impossibility from finite exhaustion or impose a hidden
-priority by method number, list order, name, smallest premise count or shortest
-proof. If scheduling or selection needs a preference, give it an explicit
-structural subject, applicable criterion and justification against the owner's
-requirements. Preserve supported ties when no criterion distinguishes them.
+### Request classes
 
-**Gate:** the represented real workload produces its own next requests and
-repair requests, with reasons, and retains every unresolved obligation. Exercise
-ambiguity, an unsupported cycle, an exhausted language, missing evidence and
-an independent ready task. Show that refusal of one adoption does not discard
-other justified work. The native result must actually guide the next batch.
+| Request | Fixed by the contract | Answer | Verification |
+|---|---|---|---|
+| Proof | Statement and issued support | Proof text | Accepted by Isabelle in the request's context; re-exported statement equal; dependencies within the issued support; no other content changed. |
+| Refinement | Equality to an existing constant | Code equation with proof | As for proofs; every affected report word unchanged; ranked by measured cost. |
+| Presentation | Notion and its local contract | A member of the presentation class | Contract proof; changed words re-established once. |
+| Definition | Original requirements and intended comparison relation | Definition with proofs of the properties | Requirement guards and the applicable extension contract; facets/comparisons establish permitted answer variation and retain unresolved distinctions. |
+| Decomposition | Parent problem, its contract and admitted library/frontier scope | Subproblems with a composition | Instantiate the existing obligation/graph composition contracts; retain all applicable applications and qualified premise occurrences in that scope. |
+| Selection | Open problems and policy criteria | The next problems with their criterion evaluations | Criteria computed on actual subjects; supported ties preserved; no ordering by name or position. |
+| Scheduling | Selected problems and their dependencies | Order and independent groups | Readiness and independence computed; concurrent adoption only under composition contracts. |
+| Request construction | A leaf problem | Statement, issued support, context and contract presentation | Demand/coverage account justifies leafhood; support derived from the export; existing restriction and retention contracts establish the boundary; the presentation reads back exactly. |
+| Requirement encoding | An owner direction | A structural requirement | Consistency with truth and existing policy checked mechanically. The encoding is generated; owner authorization gives it owner authority, and later criticism of it becomes a problem for the owner. |
+| Machinery improvement | An exposed problem of the machinery | An amendment | Predecessor admission with preservation of the predecessor program and bindings. |
 
-### Batch D — compose state continuity, concurrent work and retention
+### Verifying a theory answer
 
-Start the predecessor/authority contract with A. Use existing generation,
-history, replay and transition-selection contracts for the later composition;
-do not build another event log with independent semantics. Prove the connection
-from an established initial state through admitted transitions to each state
-from which requests are issued. Local validity and a predecessor pointer alone
-do not establish that chain.
+1. Read the answer through its declared presentation; an unreadable answer is refused.
+   Construct this reading and its comparisons from the existing presentation and
+   admission contracts, preserving the complete submitted subject.
+2. Check it with Isabelle in exactly the request's proof context, through a heapless
+   check.
+3. Re-export and compare structurally: the requested content is present and equal, no
+   other entity is added or changed, and dependencies stay within the issued
+   support. Proof/refinement requests introduce no axioms. A definition request
+   must satisfy its declared conservative-extension contract and account for every
+   added declaration. Existing facets compare actual answers under the independently
+   fixed relation, with adequacy, conflicts and missing distinctions retained.
+4. Execute the affected report words: unchanged for refinements, re-established once
+   under their contracts for presentations.
+5. Compose the verified result into its parent and admit a generation whose
+   predecessors are the exported dependencies and whose cause is certified from the
+   problem under policy, with acceptance entering through its stage 1 instance;
+   select it into the published successor. Refusals are retained with their reasons.
 
-Parallel proposal/observation work can use one fixed established state. Parallel
-adoption additionally needs compatible read/write boundaries and a proved
-composition or commutation result. A result produced against an older state is
-reused only under an established applicability/preservation contract; otherwise
-it requires renewed admission. Semantic dependency closure alone supplies no
-such concurrency theorem. Preserve cyclic semantic programs while refusing to
-treat an unsupported task cycle as settled work.
+The current `native_development_admission` recomputes generation, compiled
+conditions, comparison and revision while checking evidence. Its exactness is
+reusable, but reconstructing an answer in order to compare it delegates nothing:
+the verifier of an external leaf request checks the submitted answer against its
+contract without constructing it. Instantiate the existing requirement guards,
+complete artifact checks, presentation comparators and policy causes for that
+interface, and measure the actual verification cost.
 
-Retain exact original inputs, applicable source closures, proofs/contracts and
-the reconstruction recipe needed to recover complete results and refusals.
-Compute shared results once only under complete equality/congruence contracts.
-Use existing compression and source-only reconstruction to avoid reproducible
-bulk. Remove temporary copies after preserving the sufficient boundary. Digests
-serve byte identification; they do not replace subject identity or satisfaction.
+### Tools
 
-**Gate:** changed predecessor bindings, fabricated reachable states, stale
-responses without a reuse premise, conflicting parallel changes and incomplete
-retention cannot produce an admitted development successor. Reconstruct the
-accepted work from retained sources and inputs, then inspect its full results.
-O-82 and broader historical permission/reachability remain open until their
-actual scopes are established; this batch cannot close them by naming them.
+The existing host implementations do not thereby have a native semantic account.
+Each operation is classified. Transport (moving bytes, invoking Isabelle and Poly/ML,
+hashing) has a declared physical bootstrap boundary and no authority to choose
+requirements or acceptance. Its changes are owner-authorized generations.
+Operations that choose which theories rebuild, which executions are reused, or what
+is retained instantiate the existing dependency, locality and retention contracts
+on their actual inputs and move into exported proved code. Scheduling instantiates
+demand/readiness and comparison contracts. Exact parallel execution already exists;
+policy, subject correspondence and concurrent adoption are separate premises.
 
-### Batch E — make the agent a consumer of issued work
+### Bootstrap and authority
 
-After B–D establish coverage for a development role, the native process issues
-the operation, inputs, result contract and unresolved premises. The host or agent
-performs the permitted execution, returns its complete result, and consumes the
-next issued work. Problem priority, applicability, scope expansion, stopping,
-semantic review and adoption remain subject to the native account.
+- The initial state is seeded from the accepted base (commit c4dfad1 with its
+  accepted proof-provider context). Its account includes the actual material,
+  library contracts, known-call evidence, policy source and goals, verifier entries,
+  presentation contracts and permitted physical operations. Establish these under
+  Isabelle/HOL's normative bootstrap role before relying on their native verdicts.
+  Recording a construction choice does not discharge any of these requirements or
+  create an exception to the standing rule.
+- The bootstrap record retains the origin, justification and unresolved conditions
+  of the initial establishment. Every significant choice generated outside the
+  process, by anything other than the owner, is a residual there that justifies
+  nothing and gives its maker no authority; the owner's own choices are recorded with
+  owner authority. After the initial establishment residuals are only discharged or
+  superseded through the process, with their history retained; a further generated
+  outside choice is a defect, recorded when exposed. A missing internal operation
+  remains an explicit problem.
+- Changes to the machinery's own theories are machinery-improvement problems, admitted
+  by the predecessor machinery through amendment, transition selection and acceptance
+  certificates.
+- Before genesis, Isabelle/HOL is normative for truth: it checks the bootstrap
+  definitions and proves their consequences, including formal adequacy results that
+  relate one stated account to another, such as the adequacy of Φ₀ in plan.md D-9 or
+  of observations relative to a stated relation. Adequacy to intent is not determined
+  by positive meaning, so no proof establishes it; it is a current basis under the
+  owner's authority ([Adequacy](#adequacy-as-a-current-basis)). On Isabelle's role the
+  owner stated: "I am not sure how it can establish adequacy or why should it."
+  [DEVELOPMENT_WORKFLOW.md](DEVELOPMENT_WORKFLOW.md) and
+  [plan.md §0.1](plan.md#01-precedence) still say that Isabelle establishes the
+  bootstrap account's adequacy; this plan reads that as formal adequacy only, pending
+  the owner's decision. Authority after genesis requires the still-open handoff O-73
+  and the remaining native mathematical-proof admission under O-85. The predecessor
+  contracts above do not authorize their own normative handoff.
 
-Retire an instruction from `AGENTS.md` or the workflow only when a demonstrated
-replacement enforces that exact role by construction, including failure cases.
-Until then the current instructions remain in force; partial coverage does not
-grant an agent fallback. The transport interface must preserve all distinctions
-without supplying meaning through a prompt or tool name.
+## Stages and gates
 
-**Gate:** real development continues through requests, responses, criticism,
-repair and reuse without the agent independently supplying the controller's
-decisions. The controller's own amendments undergo the predecessor's admission.
-Native mathematical-proof admission under O-85 and genesis under O-73 retain
-their separate obligations. Pre-genesis use relies on Isabelle-established
-contracts; autonomous post-genesis authority requires the established handoff.
+This order is a candidate bootstrap sequence. Stages 1–2 establish enough of the
+process to represent problems; from then on, the remaining stages and every gap they expose are
+problems selected, decomposed and scheduled by the process itself. Each gate lists
+checkable controls. The policy needed by stages 1–2 belongs to the initial
+establishment; stage 4 extends it through the process.
 
-## Dependencies, batching and useful cost
+### Stage 1 — Seed the native development state
 
-A's subject and authority boundaries are prerequisites for admitting new work.
-B's real construction and C's residual-to-request adapter share those boundaries;
-prepare their independent candidate work together. D's minimal provenance starts
-in A, while its history, reconstruction and concurrency refinements can advance
-alongside B/C. E follows demonstrated coverage for each role, not an all-or-nothing
-rewrite of the instructions.
+Define the development state inside the checked context and take the
+[acceptance](#the-development-state) problem first. Seed the
+state for the entity-level dependency closure of the constants the paused refinement
+candidates would change, not the import closure of `Native_Execution_Refinements`
+(413 of 1,677 theories); identifying those constants is recorded as a residual choice.
+Represent the open problems of that closure, the refinement candidates, the trace's
+development instances and this plan's remaining stages as problems with their
+dependencies. Seed the supported library instances, evidence for known calls and
+authorized policy requirements needed for this first loop. Compile its guards and bind
+the selected verifier/policy entries using the existing requirement and
+certified-cause contracts. Extension to the rest of the workspace proceeds as
+demanded development work.
 
-Work alone, as the workflow requires. Use isolated working copies and background
-checks; keep active validation inputs fixed. Request all independent information
-for the largest useful batch together. Expose independent subject, producer,
-observation and request computations through actual parallel operations on the
-owner's 16-core/32-thread machine. Thread settings alone are insufficient.
-Bound memory and temporary storage, and state concrete dependencies or resource
-limits when concurrency is restricted. Keep dependent proof and adoption steps
-ordered and inspect combined validation and diagnostics before follow-up.
+**Gate:** the acceptance notion's local contract is proved once: it connects the
+exact checked Isabelle subject and context to the specified native judgment and
+supplies what the receiving notions' local contracts require of accepted inputs, so
+no use re-proves it. An entity from a failed, stale or different-context build is not
+admitted as accepted; correct provenance without that contract supplies no known call
+or admission witness. The read state corresponds exactly to every exported entity
+kind in scope; the read-state difference caused by a theory change lies within that
+theory's entities and their dependents; reused readings obey their established
+dependency/locality contracts; unchanged content is identical across rebuilds;
+missing or extra entities are refused. Renaming controls instantiate the structural
+correspondence and expose unsupported name dependence. Every seeded problem has a
+structural contract and dependencies. The first loop's policy has authorized original
+requirements, supported goals, compiled guards and fixed source/entry bindings; a
+substituted permissive policy or an unsupported known premise is refused. Every
+seeded basis element carries its authority, and owner-level elements are exactly
+those the owner stated or authorized.
 
-Exercise substantial candidates promptly. Collect independent failures and repair
-them together; do not polish each small component before the first executable
-batch. Review content after two completed loops, or sooner when reasoning repeats
-or a successful scope proves inadequate. Generalize the exposed repeated argument
-at first use and then instantiate it with its actual prerequisites.
+### Stage 2 — The first problem through the uniform process, in depth
 
-For condition 5a, retain observations of complete useful development cycles:
-accepted and subsequently used results, native work performed, residual manual
-or missing operations, caught defects, wall/CPU time, memory/storage and failure
-recovery cost. Compare equivalent requirements and workload boundaries; concurrent
-measurements must disclose shared resource use. A slower first bootstrap build
-and faster warm executions are different costs. A count of green fixtures or
-theories proves neither quality improvement nor acceptable throughput. If cost
-remains unacceptable, feed that actual problem through the same process.
-Theoretical accumulated-process cost bounds under 5b remain deferred until after
-genesis. No new numeric usefulness threshold is invented here.
+Select the first problem from the seeded ones under policy, among the measured paused
+refinements in [native_mechanism_speedup.md](native_mechanism_speedup.md#native-computation):
+formation carried through history states, an artifact index built once per data walk,
+or replay values compared without nested row keys. That candidate list was
+generated: it has owner authority only if the owner authorizes it, and is otherwise a
+residual in the first loop's basis. Decompose the selected problem through the
+library into narrow leaves (for example one exact equation per constant and one lemma
+per premise), construct each leaf request with its issued support and least closed
+context, derive the schedule of independent leaves, execute, verify, compose and
+admit.
 
-## Completion evidence for the intended workflow
+**Gate:** selection, decomposition, scheduling and request construction are admitted
+generations, and every choice still generated outside the process is a recorded
+residual. The existing comparison and independent criticism contracts apply to every
+actual decision from this first loop, including problem selection, decomposition,
+measured cost and the adequacy of its observations and scope under the current basis.
+Equality fixes a refinement's functional correctness relation; it does not discharge
+those other judgments.
+Every leaf carries its derived support and least closed context; a broad request is
+refused where an applicable decomposition exists; decomposition uses the existing
+composition contract and refuses missing premises. Answers that alter a statement,
+add constants, axioms or declarations, use a stale context, exceed their issued
+support, fail in Isabelle or change report words are refused. The heapless check
+uses the established proof and execution boundaries. The whole problem tree replays
+from retained problems, requests, external answers and verification. Subsequent real
+development consumes the adopted result, with the total observed cost retained for
+condition 5a.
 
-This table describes future closure evidence, not the status of this document.
+Additional test cases that the loop's actual problems do not exercise may remain
+open problems with their contracts: exhausted bounds and unsupported cycles,
+missing distinctions and observation-language obstructions, alternative valid
+answer presentations, or conflicting parallel adoptions. Deferral concerns those
+test cases. Every contract and judgment required by an actual decision must be
+established under the current basis before adoption, including comparison,
+independent criticism and any needed repair. The basis elements used are recorded as
+the decision's dependencies, and the limits they carry remain open problems
+([Adequacy](#adequacy-as-a-current-basis)). If the first loop uses parallel execution
+or adoption, its applicable preservation and transaction conditions already belong to
+this gate.
+
+### Stage 3 — Executor isolation
+
+Run leaf requests through a harness in which the executor sees only the request
+presentation.
+
+**Gate:** an agent, a deterministic program and a replayed retained answer yield the
+same admission; any attempt to exceed the request (other files, tool use, extra
+content) cannot affect admission.
+
+### Stage 4 — Extend policy from owner directions
+
+Issue further requirement-encoding requests under the initial policy established
+in stage 1. Depth and the uniform process already govern the first loop; their
+broader instances and newly exposed requirements are developed here. Check each
+encoding for consistency with existing policy and admit it only with owner
+authorization. Apply the admitted policy to every generation, including
+decompositions, schedules, requests and machinery
+amendments.
+
+**Gate:** a generated requirement that conflicts with admitted policy is refused, and
+a conflict between owner-level requirements is retained as a problem for the owner;
+an unauthorized requirement is not admitted; criticism of an owner-authorized
+requirement produces a problem for the owner, never a generated revision, and a proved
+contradiction with truth is retained as a conflict for the owner; a decomposition that
+skips an applicable schema, a request carrying more than its least context, and a
+choice depending on a name or position are refused; required variation unresolved by
+the admitted comparisons creates a problem; refusal of one adoption does not discard
+other justified work.
+
+### Stage 5 — The machinery improves itself through the process
+
+Treat every gap exposed by the earlier stages as a machinery-improvement problem:
+further request classes (proof, presentation, definition), derived observations moved
+out of storage and decision presenters, flat earlier presentations deepened, faster
+class members for large reports, tool choices moved into exported proved code, and
+structural subjects replacing numbered producers, facets and workflow positions.
+For each gap, first instantiate the applicable traced generalization, construction,
+comparison and admission contracts; retain any missing prerequisite as a subproblem.
+Basis limits exposed by use or outcomes enter as improvement problems in the same way
+([Adequacy](#adequacy-as-a-current-basis)). Retire an instruction from `AGENTS.md` or
+the workflow only when a demonstrated construction enforces that role, including its
+failure cases.
+
+**Gate:** real development, including the choice and decomposition of machinery
+improvements, proceeds through the process. Since the initial establishment the
+residual set of generated outside choices has only shrunk, apart from exposed
+defects, and no residual has gained authority; every bootstrap dependency is
+discharged or an explicit outstanding obligation. Basis-improvement problems are
+taken under the policy's progress condition. Established local contracts are reused.
+A change reaches exactly the decisions whose relevant readings, including recorded
+absences, or contractual guarantees it alters: extending a scope, library or
+observation language reaches the decisions that relied on its absences; a consumed
+decision with a changed reading is never used as current and becomes a re-evaluation
+problem; a decision with preserved readings and guarantees is reused; and a decision
+that nothing consumes keeps its historical basis without recomputation. Every
+decision retains its historical basis. The machinery's own amendments pass the
+predecessor's admission.
+
+## Corrections to earlier plans
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Derive problem selection, scheduling and request construction as computations beside the request/answer cycle. | Every problem, including these and improving the machinery, goes through the same process; native computations are executors whose answers are verified. |
+| Issue a whole refinement, such as formation carried through history states, as one request. | Decompose in depth until leaves are narrow with their least closed context; executors never receive broad problems. |
+| Enforce generalization, reuse, structurality and non-nominality through instructions to agents. | They are admission conditions applied to every generation, including decompositions, schedules and amendments. |
+| Follow a fixed sequence of stages. | The stages are a candidate bootstrap sequence; after stage 2 they are problems re-derived by the process. |
+| Introduce a new decision, task and verifier kernel. | Admission and the existing machinery cover these roles; instantiate them. |
+| Leave Isabelle theory and tool changes outside native control until genesis. | They are generations over the native development state now; otherwise native control is pointless. |
+| Treat reconstruction of the whole expected report as the external executor interface. | Reconstructing an answer to compare it delegates nothing. Instantiate the existing exact admission contracts so the verifier checks the submitted answer against its contract without constructing it; accept the complete permitted presentation class and measure verification cost. |
+| Justify significant choices by recording a bootstrap exception, or require only that no executor choice gains authority. | Establish the initial account under the existing Isabelle/HOL boundary. Every significant choice is made or recorded through the process: the owner's carry owner authority, and a choice generated outside the process is a residual that justifies nothing. After the initial establishment residuals are only discharged or superseded, with historical evidence preserved. |
+| Build a broad enabling batch of complete contracts before any use. | Seed a thin loop on real work first; complete coverage follows from use. |
+| Start with a self-referential use: requirements for the machinery's next request boundary. | Start with a measured refinement whose significant content is fully determined. |
+| Enter new questions through the host encoders `native_development_input.py` and `source_development_input.py`. | No recipe or test has exercised them since the report-word migration; transport is presented words and native readers. |
+| Treat numbered producers, facets and workflow positions as development subjects. | Replace them by structural subjects with proved maps to operations. |
+| Obtain substantive conditions from the eight workflow positions or the finite question helper. | Positions enforce occupancy and the helper checks review shape; original requirements come from policy. |
+| Read the development state by enabling `export_theory` and having the host turn its export into artifacts. | The checked context defines its own state: an exporter inside that context defines the reached entities as an ordinary constant of the theory. No host reads theory content, a failed build defines nothing, every later use reads exactly the defined value, and no complete rebuild is needed to enable a session option. Entity kinds outside that definition are demanded work, not a silent gap. |
+| Take the roots of a state as fixed data beside the context. | Roots and the context they reach are one subject: every control, renaming, demand and report reads that whole rooted state, so a control cannot judge one state's entities against another state's roots. |
+| Turn returned bytes into ground rows that judge their own admissibility. | Readers with exact contracts and computed observation equations establish admissibility; installed assertions about arbitrary bytes do not. |
+| Derive the work order from `Factor_System_Restriction`. | That theory supplies least closed contexts; readiness and independence come from dependency lists, demands and problems, with cycles explicit. |
+| Issue nothing when a choice is ambiguous, or justify a base by declaring an exception. | Derive discriminating problems or retain an explicit obstruction; a declaration is not justification. |
+| Equate a least dependency closure with a sufficient small proof request. | Derive a proof request's support from the export, check the answer's re-exported dependencies against it and turn missing support into a context problem; oversized contexts remain decomposition problems. |
+| Establish the first governing policy only after the first admitted development loop. | The initial state includes that loop's authorized requirements and compiled policy; later policy extensions are ordinary problems under it. |
+| Treat proof dependencies as the entire physical execution boundary, or parallel map as concurrent adoption. | Instantiate the appropriate locality/retention and transaction contracts while preserving all existing physical input checks. |
+| Require every judgment, including adequacy, to be established before adoption without a basis. | Adequacy has only a current basis: judgments are established under it and recorded as dependencies, and the basis is continually criticized and improved. |
+| Connect an Isabelle acceptance separately under each receiving contract. | Acceptance has one local contract, proved once and consumed through the receiving notions' contracts; semantic scope stays local, so reuse does not get harder with use. |
+| Treat a preserved local contract as leaving dependent decisions unaffected, or re-assess every affected decision at once. | A preserved contract avoids re-proof, not re-evaluation. A change reaches exactly the decisions whose relevant readings, including recorded absences, it alters; their re-evaluations are scheduled by the process, and no stale decision is used as current. |
+
+## Useful cost and evidence
+
+The seeded state's own size was measured inside the checked context before it was
+defined: the ten roots of the three paused refinement candidates reach 60 constants and
+20 items (10 kernel definitions of 229 nodes, no non-definitional specification, 10 code
+equations of 181 nodes, largest item 48 nodes), over one name table of 104 names and
+3,293 characters; 325 type occurrences reduce to 151 distinct types. The defined context
+term is 133,084 nodes and the root list 4,177, both dominated by the character-level
+presentation of the name table, and the checked context defines them in about 1.2 s. That
+measurement was made by a probe theory which is not part of the state and was removed
+after it was recorded.
+
+**The proof cost of this batch is not bounded yet, and that is the open obstacle.** Seeding
+this state changed four theories that 517 of the 1,686 listed theories import; the
+incremental check reused 1,169 accepted contexts in 0.23 s, rebuilt the rest, and was
+refused with `*** Timeout` after 1,209 s against the 1,200 s session timeout
+(2026-09-17 20:01–20:21 UTC). Rebuild volume alone does not account for that: a complete
+proof of 1,677 theories from HOL took 470 s. Probing the new theories on the accepted base
+heap attributes the cost instead, and it was one proof. Until this session no probe had
+ever completed: with forked proofs the loader returns once theories are registered, and
+the injectivity of a renamed term had not returned after 413 s because its induction
+hypotheses were handed to the simplifier, which turns each into a conditional rewrite of
+an arbitrary equation between components. Instantiated at the components the case analysis
+supplies, `Isabelle_Renaming` loads in 0.6 s and the whole batch loads in 9.1 s with every
+proof checked in place, stopping at a type error in the seeded problems. A probe that only
+registers theories therefore certifies nothing about their proofs, and the cost of this
+batch is a proof to attribute, not a rebuild to absorb.
+
+The measured basis is in [native_mechanism_speedup.md](native_mechanism_speedup.md):
+about 70 seconds to validate an edit that changes executed code, 470 seconds for a
+complete source proof, and machine use bounded by memory, garbage collection and
+sequential dependency chains. For condition 5a, each problem retains its decomposition,
+requests, answers, refusals and verification results; for each request, the size of its
+context; for the process, decomposition depth, schemas reused and extracted, wall and
+CPU time, memory, executor calls, and every significant choice still generated
+outside the process. Faster fixtures or green builds alone are not usefulness
+evidence. Theoretical cost bounds under 5b remain deferred until after genesis.
+
+## Completion evidence
 
 | Requirement | Evidence needed before claiming it met |
 |---|---|
-| Problems condition 1: computed satisfaction | Exact contracts and executions for every decision's actual subject/condition, with all prerequisites retained. No author-filled satisfaction table or unsupported exceptional base. |
-| Condition 2: workflow by construction | The whole real cycle, including origin, criticism, validation, authority and retention, refuses omitted or mismatched obligations. Eight occupied positions alone are insufficient. |
-| Condition 3: reconstructible retention | Original inputs and sufficient source/contract boundaries reproduce the complete reviewed results without retained reproducible bulk. |
-| Condition 4: first-use factoring | The repeated process and reasoning are native reusable content; subsequent actual uses instantiate them and expose their residuals. |
-| Condition 5a: practical usefulness | Real adopted work and subsequent consumption, with preserved quality and acceptable observed total cost, including failed work. Availability and fixtures remain separate evidence. |
-| Condition 5b: theoretical cost | Explicitly deferred until after genesis; not a current workflow-resolution prerequisite. |
-| Condition 6: resolution through the process | The process derives and evaluates actual choices about its own development before dependent action; uncovered operations remain open. This prose revision does not discharge it. |
-| Owner's control inversion | Issued work, candidate construction, information requests, criticism, repair, selection and legitimate state succession demonstrably run through the established native account; tools consume that work. |
-| Principle alignment | Complete original-subject contracts, linked exact presentations, explicit premises, necessary primitives, renaming/presentation invariance and independent review against the owner's directions. Green proofs alone are insufficient. |
+| Owner's control inversion | Every significant choice in real development is an admitted generation, derived by the process or carrying owner authority; executors only answer issued requests; no residual generated outside choice remains. |
+| Authority and adequacy | Every admitted element carries its authority: truth, owner or generated. Generated criticism never revises an owner-level element; semantic connections, including acceptance, are local contracts proved once; every adopted decision records its basis, including the absences it relied on; limits exposed by use and outcome mismatches are retained and taken under the policy's progress condition; revisions reuse established local contracts and reach exactly the decisions whose relevant readings or guarantees they alter; no stale decision is used as current, re-evaluations are scheduled by the process, and every decision retains its historical basis. |
+| Uniform process | Problem selection, scheduling, request construction and machinery improvement are admitted generations of the same process. |
+| Depth | Admitted demand/coverage accounts justify leafhood; leaves carry support derived from the export and their least closed contexts; unresolved bounds and cycles stay explicit; repeated decompositions reuse extracted schemas. |
+| Executor inertness | Interchangeable executors produce identical admissions; no executor action outside an answer affects any state. |
+| Answer significance and criticism | Actual facet observations satisfy the intended comparison-basis contract; permitted presentation variants are accepted; required distinctions, repairs, withdrawals and scope obstructions remain explicit. |
+| Theory and tool changes as generations | The development state is read from Isabelle's export; admitted theory and tool changes are generations with certified causes and computed dependency boundaries. |
+| Problems condition 1: computed satisfaction | Exact contracts and executions for every decision's actual subject and condition; no author-filled satisfaction table. |
+| Condition 2: workflow by construction | Omitted or mismatched obligations, stale contexts, oversized requests and unauthorized changes are refused mechanically. |
+| Condition 3: reconstructible retention | Retained problems, requests, answers, sources and contracts reproduce every reviewed result without reproducible bulk. |
+| Condition 4: first-use factoring | Decompositions and request contracts are extracted as schemas at first use; later problems instantiate them with actual prerequisites. |
+| Condition 5a: practical usefulness | Real adopted and subsequently consumed work at acceptable observed cost, including refused and repaired work. |
+| Condition 5b: theoretical cost | Deferred until after genesis. |
+| Condition 6: resolution through the process | Changes to this plan and to the machinery are admitted generations of the process; initial establishment has its Isabelle/HOL bootstrap justification and explicit outstanding conditions; every remaining residual generated outside choice is justified under condition 1. A record alone authorizes no exception. |
 
-## Evidence for this plan review
+## Basis of this revision
 
-The review read the current owner instructions, principle and correction history,
-reasoning inventory, and cited definitions and contracts. Every file in the
-retained [steering source manifest](validation/reconstruction/native-steering-sources.json)
-(530 files) and [source-development manifest](validation/reconstruction/source-development-sources.json)
-(539 files) matches the current repository bytes. Their existing verification
-records report an accepted shared 502-theory reconstruction, 280 steering records
-and 298 source-development records with complete comparisons:
-[steering verification](validation/reconstruction/native-steering-verified.json)
-and [source verification](validation/reconstruction/source-development-verified.json).
-These are retained implementation results, not a new execution or admission of
-the plan. File and link checks support the review's references, not its semantics.
+The trace was made against commit c4dfad1 and the working candidate plan and is
+retained as [validation/native-control-plan-trace.json](validation/native-control-plan-trace.json).
+By its own boundary it is a reconstruction-boundary and execution-diagnostic record: it
+supplies no satisfaction table for this plan, no native admission of these plan changes,
+no broader subject adequacy and no condition-5a development-use claim.
+Isabelle2025-2 provides `export_theory`, whose exported content kinds are listed
+above. The operative steering and source-development recipes still exercise built-in
+subjects; `development_methods` is `[0..<10]` and `development_facets` is `[0..<5]`.
+The reusable contracts in the trace often quantify over broader inputs than those
+fixtures. Their theorem scope and their actual use by development must both be
+retained.
 
-A fresh shared reconstruction was also started during this review. It rebuilt
-Pure and HOL and reached the project session before being stopped with exit 130.
-It produced no accepted project-proof receipt and no completed native execution;
-it supplies no new validation claim. Rebuilding that boundary was unnecessary
-for this document review. The invocation was:
-
-```sh
-python -B tools/compressed_reconstruction_suite.py \
-  --project /home/julius/structure_and_semantics \
-  --output /tmp/native-control-plan-review \
-  --poly /opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly \
-  --recipe reconstruct_native_steering.py \
-  --recipe reconstruct_source_development.py \
-  --session Native_Control_Plan_Review --threads 16 --workers 2 --timeout 1800
-```
-
-The temporary copy is removed after recording this
-incomplete outcome; the existing manifests and recipes retain the reproducible
-implementation boundary.
-
-The review does not satisfy the future gates above. In particular it supplies
-no native admission of the plan's decomposition, broader scope adequacy or real
-development usefulness. Its proposals must be revised by the results of actual
-use, rather than defended as a fixed five-batch architecture.
+Executable instances of several traced operations are exercised by existing
+recipes, for example the accepted reconstructions retained at c4dfad1 in
+[builtin-investigations-verified.json](validation/reconstruction/builtin-investigations-verified.json),
+[native-steering-verified.json](validation/reconstruction/native-steering-verified.json)
+and [native-workflow-verified.json](validation/reconstruction/native-workflow-verified.json).
+Every registered original-subject operation computes its complete observations,
+comparison, repairs and revision for empty, partial, complete and repeated
+selections; steering refuses an empty original scope, retaining the unexecuted
+requests, and a single-question scope exercises actual choice ambiguity. These
+recipes exercise the reusable operations on their established subjects. They do not
+encode or admit this document, establish any development instance, or satisfy
+condition 5a. No native state yet represents the repository's development. This
+revision is a candidate contract trace and implementation plan; its unrepresented
+requirements remain explicit. O-73 is open, O-85 remains partial, and genesis has
+not occurred.

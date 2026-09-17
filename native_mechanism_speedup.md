@@ -174,6 +174,36 @@ python -B tools/incremental_check.py retain --output /tmp/NEW-UNIQUE-DIR
 accepted context or rebuild its named session from a copied directory. Keep
 active check inputs fixed.
 
+**Probing candidates on the accepted base heap.** A theory the base does not contain can
+be loaded directly onto its stored heap, with every unchanged import resolved from the
+heap session, so a first pass over new sources costs their own load instead of a
+repository build:
+
+```sh
+python -B tools/probe_theories.py --work /tmp/NEW-UNIQUE-DIR [--theory NAME]
+```
+
+One probe per directory; `DIR/probe.log` streams while it runs. Registration is not proof
+checking: with forked proofs the loader returns once a theory is registered and its
+theorems are stated, so only the probe's own completion marker, reported as `loaded`,
+says that the proofs were checked. `--parallel-proofs 0` checks each proof in place and
+attributes the elapsed time to the command that does not return. A theory the base already holds is resolved
+from the heap and reported, because the heap holds its dependents built against the
+accepted text; `--prelude` supplies a theory stating added content on top of the heap and
+`--substitute` resolves a changed base theory to it. The probe observes that candidate
+sources load against accepted content and nothing about the dependents of a changed base
+theory, so it selects work for the check rather than replacing it.
+
+**Temporary storage is retired against the repository.**
+`python -B tools/retire_temporary_storage.py --manifest FILE [--apply]` hashes every file
+of each declared path, reports those byte-identical to a blob reachable in history, and
+refuses the retirement unless the rest fall under a disposition whose replacement it can
+check: retained evidence must be tracked at the recorded commit, a regenerable path must
+name the command that rebuilds it. The record it writes,
+[validation/temporary-cleanup.json](validation/temporary-cleanup.json), also lists the
+kept paths with the same justification, so what remains under `/tmp` is stated to be
+discardable and restorable.
+
 ## Native computation
 
 **Refinements of this work.** Poly/ML time profiles attributed most native time to
@@ -362,11 +392,15 @@ The measured speed work above is adopted. The useful remaining groups are:
    [syntactic inventory](validation/reconstruction/validation-entrypoint-inventory.json)
    lists CLI tools and modes without direct recipe execution; about thirty export
    commands outside recipes still run on every rebuild of their theories.
-4. Demonstrate real development through native construction, criticism,
-   admission, installation and subsequent use, with complete latency and
-   failure/repair evidence. Then continue the native-control work in
-   [native_control_plan.md](native_control_plan.md). Faster fixture execution
-   alone does not close that requirement.
+4. Demonstrate real development under native control, as revised with the owner in
+   [native_control_plan.md](native_control_plan.md): every problem, including which
+   problem to solve, scheduling, what an executor receives and improving the machinery,
+   goes through one process; Isabelle theory and tool changes are admitted generations
+   over a native development state read from Isabelle's theory export; problems are
+   decomposed in depth so inert executors answer only narrow requests with their least
+   context. Its first stages seed that state and carry one measured refinement from
+   item 1 through the process.
+   Faster fixture execution alone does not close that requirement.
 
 [DEVELOPMENT_WORKFLOW.md](DEVELOPMENT_WORKFLOW.md) remains binding. Isabelle/HOL
 retains its normative bootstrap role through genesis. Physical timings, host

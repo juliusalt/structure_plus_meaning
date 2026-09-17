@@ -61,6 +61,56 @@ theorem finite_inference_result_embedding:
     inference_closure (embedded_inferences f (finite_inference_rules F)) (f ` fset K)"
   by (simp only: finite_inference_result_exact embedded_inference_closure[OF assms])
 
+section \<open>A finite rule table has the same embedding\<close>
+
+definition finite_embedded_inferences ::
+  "('a \<Rightarrow> 'b) \<Rightarrow> ('a\<times>('i\<times>'a) fset) fset \<Rightarrow> ('b\<times>('i\<times>'b) fset) fset" where
+  "finite_embedded_inferences f F=fimage (\<lambda>(a,H). (f a,fimage (\<lambda>(i,b). (i,f b)) H)) F"
+
+lemma finite_embedded_premises:
+  "fset (fimage (\<lambda>(i,b). (i,f b)) H)=map_relation_values f (fset H)"
+  by (auto simp: map_relation_values_def fimage.rep_eq)
+
+theorem finite_embedded_inference_rules:
+  assumes formed: "finite_inference_formed F"
+  shows "finite_inference_rules (finite_embedded_inferences f F)=embedded_inferences f (finite_inference_rules F)"
+proof (intro ext iffI)
+  fix b H assume "finite_inference_rules (finite_embedded_inferences f F) b H"
+  then obtain a K where member: "(a,K) |\<in>| F" and image: "b=f a"
+    and mapped: "H=map_relation_values f (fset K)"
+    by (auto simp: finite_inference_rules_def finite_embedded_inferences_def
+      map_relation_values_def fimage.rep_eq)
+  have functional: "single_valued (fset K)"
+    using formed member by (auto simp: finite_inference_formed_def finite_premise_functional_exact)
+  show "embedded_inferences f (finite_inference_rules F) b H"
+    unfolding embedded_inferences_def
+    by (rule exI[of _ a], rule exI[of _ "fset K"])
+      (use member image mapped functional in \<open>auto simp: finite_inference_rules_def\<close>)
+next
+  fix b H assume "embedded_inferences f (finite_inference_rules F) b H"
+  then obtain a K where member: "(a,K) |\<in>| F" and image: "b=f a"
+    and mapped: "H=map_relation_values f (fset K)"
+    by (auto simp: embedded_inferences_def finite_inference_rules_def)
+  show "finite_inference_rules (finite_embedded_inferences f F) b H"
+    unfolding finite_inference_rules_def
+    by (rule exI[of _ "fimage (\<lambda>(i,x). (i,f x)) K"])
+      (use member image mapped in \<open>auto simp: finite_embedded_inferences_def
+        map_relation_values_def fimage.rep_eq\<close>)
+qed
+
+theorem finite_inference_result_renaming:
+  assumes injective: "inj f" and formed: "finite_inference_formed F"
+  shows "finite_inference_result (finite_embedded_inferences f F) (fimage f K)=f ` finite_inference_result F K"
+  by (simp only: finite_inference_result_exact finite_embedded_inference_rules[OF formed]
+    embedded_inference_closure[OF injective] fimage.rep_eq)
+
+text \<open>
+  The finite table of a renamed subject holds exactly the mapped rules of the original
+  table, so the existing terminating evaluator computes the image of the original least
+  closure. Formation of the supplied table is what makes the two rule readings agree;
+  injectivity is what permits the reflection.
+\<close>
+
 text \<open>
   Every premise occurrence and the seed boundary is mapped. Injectivity is
   what permits reflection of a derivation. The result concerns the original

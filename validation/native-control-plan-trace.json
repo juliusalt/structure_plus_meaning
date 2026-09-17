@@ -1,0 +1,623 @@
+{
+  "version": 1,
+  "date": "2026-09-17",
+  "source_commit": "c4dfad107540456611ed0d60c93a21d57927ce23",
+  "purpose": "Exercise existing original-subject comparison, repair, workflow and steering contracts while tracing their reuse in native_control_plan.md.",
+  "boundary": "This is a reconstruction boundary and execution diagnostic record. It supplies no satisfaction table for this plan, no native admission of the plan changes, no broader subject adequacy, and no condition-5a development-use claim. All thirteen cases use their registered actual-subject contracts.",
+  "source_manifests": [
+    {
+      "path": "validation/reconstruction/builtin-investigations-sources.json",
+      "sha256": "af7a8d5fd893fd7ad7d08094f8ae8bccfff669cd93a8a08d12c30564f6462405",
+      "files_checked": 611,
+      "all_files_match": true
+    },
+    {
+      "path": "validation/reconstruction/native-steering-sources.json",
+      "sha256": "4d2ba48b3ca3310f3ed83ac7db3d428f3befb17a7601a96e628e6d38f6e04f47",
+      "files_checked": 900,
+      "all_files_match": true
+    },
+    {
+      "path": "validation/reconstruction/native-workflow-sources.json",
+      "sha256": "90320040f95b1bf310efc25b32e08f5e056dfa3d3526627bc8c8a9f131250cd4",
+      "files_checked": 876,
+      "all_files_match": true
+    }
+  ],
+  "additional_repo_tool_inputs": {
+    "tools/investigate.py": "983a3ab4c6c7a1fb5967e4a39785bc7f02a1798cb75cf831955054e0951a048b",
+    "tools/build.py": "d374b9eb382e53392f006158928406b224c94cc289f6203c3d8641bcf32b665d",
+    "tools/observation_contracts.py": "29495eb3e0d83f66f95cfb18c0ebcb5f844272a2e7283cc91da83a2d14a4eb24",
+    "tools/execution_support.py": "526b78b9986448890a5ee7703734124c0d73be2480c35c1d7d8c12f024a4d289",
+    "tools/native_program_json.py": "8f4fabff64f45a8d83a7da77aaec12f3792bea55a82d5e3c9feb9644957898a3",
+    "tools/program_evaluation_json.py": "23c5173983420922384ac9a9d2d3be6c5814858300ebf9294fb3e30fa1d9b937",
+    "tools/native_artifact_stream.py": "8109ad9272c9fc1b1e8ee358beeec4e69ac3b7371b1cb1f65e91dcc47de74113",
+    "tools/native_execution_runtime.py": "ded4c2831202c5b524434bb37b2864f69a0a9ce22b87aecfb7e991f71c4621c9",
+    "tools/evidence_io.py": "ace2fd1311f7d2e536557e02a7762b0952c17ba0425ff7a5209811ff5c333a85",
+    "tools/proved_code.py": "f513203aa259478e4cab51678e4281bffa61caa1afb39c0387d3ed7947076eb7",
+    "tools/proved_investigation.py": "d9b14fcf586c5665106cab59a2521bc740f5e914c2073d1ddf11025298404046"
+  },
+  "proof_context": {
+    "path": "/tmp/native-committed-check-1789650228/proof/accepted-context.json",
+    "sha256": "c66ae66cd45e5c47a898717a9dae129f3f5be495523d11f6cadf2b7b2792e7cd",
+    "fresh_proof_built": false
+  },
+  "exports": [
+    {
+      "theory": "Builtin_Investigation_Execution",
+      "module_sha256": "844a9ef8d230e215e6544d7ba6cf36e6f15a662ca4b14cbee74926999e5af97e",
+      "provider": {
+        "session": "Incremental_adc74956",
+        "directory": "/tmp/native-committed-check-1789650228/proof",
+        "theory": "Incremental_adc74956.Builtin_Investigation_Execution"
+      },
+      "code_target": "Eval"
+    },
+    {
+      "theory": "Native_Development_Steering",
+      "module_sha256": "bd7243fa26ad08f9ab844618cb3559483995d2626625b0c3b591819fd362354d",
+      "provider": {
+        "session": "Incremental_adc74956",
+        "directory": "/tmp/native-committed-check-1789650228/proof",
+        "theory": "Incremental_adc74956.Native_Development_Steering"
+      },
+      "code_target": "Eval"
+    },
+    {
+      "theory": "Native_Workflow_Execution",
+      "module_sha256": "27e62ff766a7e07b342322c4e22270fb428b50c02f4e40c6d879bbbd46515c3c",
+      "provider": {
+        "session": "Incremental_adc74956",
+        "directory": "/tmp/native-committed-check-1789650228/proof",
+        "theory": "Incremental_adc74956.Native_Workflow_Execution"
+      },
+      "code_target": "Eval"
+    }
+  ],
+  "refused_export": {
+    "context": "/tmp/native-complete-proof-1789647297",
+    "reason": "Requested export does not have a current complete proof context.",
+    "outcome": "Refused before export; reused the current accepted proof-provider context instead."
+  },
+  "reproduction": {
+    "export": [
+      "python",
+      "-B",
+      "tools/export_proved_code.py",
+      "--context",
+      "{current_accepted_context}",
+      "--project",
+      "{repo}",
+      "--output",
+      "{run}/export",
+      "--module",
+      "Builtin_Investigation_Execution:builtin_investigations.ML",
+      "--module",
+      "Native_Development_Steering:native_steering.ML",
+      "--module",
+      "Native_Workflow_Execution:native_workflow.ML"
+    ],
+    "investigation": [
+      "python",
+      "-B",
+      "tools/investigate.py",
+      "--proof",
+      "{run}/export/builtin_investigations.proof.json",
+      "--poly",
+      "{poly}",
+      "--runtime-timeout",
+      "180",
+      "--output",
+      "{run}/investigations/{kind}",
+      "{kind_with_hyphens}"
+    ],
+    "reconstructions": [
+      [
+        "python",
+        "-B",
+        "tools/reconstruct_native_steering.py",
+        "--proof",
+        "{run}/export/native_steering.proof.json",
+        "--poly",
+        "{poly}",
+        "--output",
+        "{run}/steering"
+      ],
+      [
+        "python",
+        "-B",
+        "tools/reconstruct_native_workflow.py",
+        "--proof",
+        "{run}/export/native_workflow.proof.json",
+        "--poly",
+        "{poly}",
+        "--output",
+        "{run}/workflow"
+      ]
+    ],
+    "result_digest": "SHA-256 of UTF-8 json.dumps(receipt[\"result\"], sort_keys=True, separators=(\",\", \":\")); complete results are reconstructible, not retained as bulk.",
+    "fresh_context": "The existing reconstruction entrypoints can rebuild their proof/export from source when --proof is omitted. Check the source manifests before reusing a context.",
+    "schedule": "Four independent investigation processes, alongside the steering and workflow reconstructions; each reconstruction executes its independent recipe group concurrently. No performance ratio is claimed."
+  },
+  "investigations": [
+    {
+      "kind": "completion",
+      "selected_facets": [
+        0,
+        1
+      ],
+      "status": "evaluated",
+      "case_sha256": "a76923163623ef31d73c958aa7eb1f7f6a0f0bb80a1dbb64431b49a094685336",
+      "result_sha256": "e56d6e5a100db7f82feaa2ced659baf7e357d140cb49a9a4c471a38c66b019a3",
+      "contract": {
+        "function": "Presentation_Completion_Investigation_Base.completion_investigation",
+        "observer": "Presentation_Completion_Investigation_Base.completion_investigation_observations",
+        "relation": "Presentation_Completion_Investigation_Base.completion_investigation_relation",
+        "sha256": "14738a80191f198604772b636afa323452a4de13de93cee029205f768e56e6e1"
+      },
+      "input_formed": true,
+      "initial_residual_count": 1,
+      "conflict_count": 0,
+      "repair_witness_count": 1,
+      "unrepairable_count": 0,
+      "revision_retained": [
+        0,
+        1
+      ],
+      "revision_withdrawn": [],
+      "revision_selection": [
+        0,
+        1,
+        2
+      ],
+      "revision_residual": [],
+      "sources_and_tools_unchanged": true
+    },
+    {
+      "kind": "investigation_input",
+      "selected_facets": [
+        0,
+        1
+      ],
+      "status": "evaluated",
+      "case_sha256": "e829c8a0fcb82516a4f24bf57729c32bf8dcd82fbf54b7f1788120253a3d7926",
+      "result_sha256": "040a2f6f8e6e70da51859ef71265d11c6f0564d01f288956b526b9db1ce80b55",
+      "contract": {
+        "function": "Factor_Investigation_Input_Investigation_Base.input_investigation",
+        "observer": "Factor_Investigation_Input_Investigation_Base.input_investigation_observations",
+        "relation": "Factor_Investigation_Input_Investigation_Base.input_investigation_relation",
+        "sha256": "4254e55288d38e5b0478850ebb7b416c11492be059d21307520d74783efa1e40"
+      },
+      "input_formed": true,
+      "initial_residual_count": 24,
+      "conflict_count": 24,
+      "repair_witness_count": 0,
+      "unrepairable_count": 0,
+      "revision_retained": [
+        1
+      ],
+      "revision_withdrawn": [
+        0
+      ],
+      "revision_selection": [
+        1
+      ],
+      "revision_residual": [],
+      "sources_and_tools_unchanged": true
+    },
+    {
+      "kind": "observation",
+      "selected_facets": [
+        0,
+        1
+      ],
+      "status": "evaluated",
+      "case_sha256": "db65f4378dba94583b45704840eeb13eed0b3c751c11b19058c04db94a9b3f0d",
+      "result_sha256": "12ed115322bf5481f6d86bfdce05ff34f3e7f97a03f3f0b5017fc961affd32fc",
+      "contract": {
+        "function": "Factor_Observation_Investigation_Base.observation_investigation",
+        "observer": "Factor_Observation_Investigation_Base.observation_investigation_observations",
+        "relation": "Factor_Observation_Investigation_Base.observation_investigation_relation",
+        "sha256": "60b4db0a2f45f91c47c1806c3a761a006649a2590770063dbe2a5242ddfac25e"
+      },
+      "input_formed": true,
+      "initial_residual_count": 4,
+      "conflict_count": 4,
+      "repair_witness_count": 0,
+      "unrepairable_count": 0,
+      "revision_retained": [
+        1
+      ],
+      "revision_withdrawn": [
+        0
+      ],
+      "revision_selection": [
+        1
+      ],
+      "revision_residual": [],
+      "sources_and_tools_unchanged": true
+    },
+    {
+      "kind": "observation_collections",
+      "selected_facets": [
+        0,
+        1
+      ],
+      "status": "evaluated",
+      "case_sha256": "8164957b25fbaeb9af16ecd988d411724c4e883a7e67ab6cd93fdeed1012b4e2",
+      "result_sha256": "242ede3db6954ecb30fcb3ab1639ba8224a2d904ceadf6135b7a154c6a93c4c2",
+      "contract": {
+        "function": "Factor_Observation_Collection_Investigation_Base.collection_investigation",
+        "observer": "Factor_Observation_Collection_Investigation_Base.collection_investigation_observations",
+        "relation": "Factor_Observation_Collection_Investigation_Base.collection_investigation_relation",
+        "sha256": "c999a28ad1ff50c5ef79d63281a65a030a9af044f79d23405c83cce5b658e3a3"
+      },
+      "input_formed": true,
+      "initial_residual_count": 18,
+      "conflict_count": 18,
+      "repair_witness_count": 0,
+      "unrepairable_count": 0,
+      "revision_retained": [
+        1
+      ],
+      "revision_withdrawn": [
+        0
+      ],
+      "revision_selection": [
+        1
+      ],
+      "revision_residual": [],
+      "sources_and_tools_unchanged": true
+    },
+    {
+      "kind": "observation_scope",
+      "selected_facets": [
+        0,
+        1
+      ],
+      "status": "evaluated",
+      "case_sha256": "d50deef3b611a0b36545a2b08c2eec8b23f6430015600b442314a8befcedd17f",
+      "result_sha256": "7a02bd73ca77588fc7f0224c3102278d1f3889198a576a5a46bf1e53b5f243ec",
+      "contract": {
+        "function": "Factor_Observation_Scope_Investigation_Base.scope_investigation",
+        "observer": "Factor_Observation_Scope_Investigation_Base.scope_investigation_observations",
+        "relation": "Factor_Observation_Scope_Investigation_Base.scope_investigation_relation",
+        "sha256": "fde974eed74ecbb2bdd7bd0ed3b67623e14ce1827a0acd15770e1b6a65aad7ca"
+      },
+      "input_formed": true,
+      "initial_residual_count": 12,
+      "conflict_count": 12,
+      "repair_witness_count": 0,
+      "unrepairable_count": 0,
+      "revision_retained": [
+        1
+      ],
+      "revision_withdrawn": [
+        0
+      ],
+      "revision_selection": [
+        1
+      ],
+      "revision_residual": [],
+      "sources_and_tools_unchanged": true
+    },
+    {
+      "kind": "observation_tables",
+      "selected_facets": [
+        0,
+        1
+      ],
+      "status": "evaluated",
+      "case_sha256": "dc49340598f07d276ca75e2c0d9a9eaf08012ce9a05107f44ec06a1d299324b0",
+      "result_sha256": "18058aacbe4cbd51fb243ba8e645e68d098e89a48140239680525bdcc3b52a93",
+      "contract": {
+        "function": "Factor_Observation_Table_Investigation_Base.table_investigation",
+        "observer": "Factor_Observation_Table_Investigation_Base.table_investigation_observations",
+        "relation": "Factor_Observation_Table_Investigation_Base.table_investigation_relation",
+        "sha256": "a691cf0bf24f247347ec6859700a1973c56fb777e7bf3309832ad14e6341be54"
+      },
+      "input_formed": true,
+      "initial_residual_count": 8,
+      "conflict_count": 8,
+      "repair_witness_count": 0,
+      "unrepairable_count": 0,
+      "revision_retained": [
+        1
+      ],
+      "revision_withdrawn": [
+        0
+      ],
+      "revision_selection": [
+        1
+      ],
+      "revision_residual": [],
+      "sources_and_tools_unchanged": true
+    },
+    {
+      "kind": "pair_scope",
+      "selected_facets": [
+        0,
+        1
+      ],
+      "status": "evaluated",
+      "case_sha256": "b5d5134f23e0f1df9889373d07e5c4a967726258c5f3cc9b5445f70243dff1aa",
+      "result_sha256": "fc714cbebe2933e226d796b629654896994a804182e022b353e67140b862cfc3",
+      "contract": {
+        "function": "Factor_Pair_Scope_Investigation_Base.pair_scope_investigation",
+        "observer": "Factor_Pair_Scope_Investigation_Base.pair_scope_investigation_observations",
+        "relation": "Factor_Pair_Scope_Investigation_Base.pair_scope_investigation_relation",
+        "sha256": "e2483352b67a02c90dde05a38aa91b81c265bbaf650751a11c4350537805f79e"
+      },
+      "input_formed": true,
+      "initial_residual_count": 4,
+      "conflict_count": 4,
+      "repair_witness_count": 0,
+      "unrepairable_count": 0,
+      "revision_retained": [
+        1
+      ],
+      "revision_withdrawn": [
+        0
+      ],
+      "revision_selection": [
+        1
+      ],
+      "revision_residual": [],
+      "sources_and_tools_unchanged": true
+    },
+    {
+      "kind": "pattern",
+      "selected_facets": [
+        0,
+        1
+      ],
+      "status": "evaluated",
+      "case_sha256": "17abd884ac6fc92df519bb8a01eb68d8da2c1832315686d2631803b30fcc59e0",
+      "result_sha256": "70dbdca931ff3ecacec831ef8e89fbb432f062365bee48377fc78b8bd514dfeb",
+      "contract": {
+        "function": "Factor_Substitution_Investigation_Base.pattern_investigation",
+        "observer": "Factor_Substitution_Investigation_Base.pattern_investigation_observations",
+        "relation": "Factor_Substitution_Investigation_Base.pattern_investigation_relation",
+        "sha256": "d912814fbfe1b35e58fb8de47a13bc07a4933dc0d35e41190c70a0eda670244e"
+      },
+      "input_formed": true,
+      "initial_residual_count": 0,
+      "conflict_count": 0,
+      "repair_witness_count": 0,
+      "unrepairable_count": 0,
+      "revision_retained": [
+        0,
+        1
+      ],
+      "revision_withdrawn": [],
+      "revision_selection": [
+        0,
+        1
+      ],
+      "revision_residual": [],
+      "sources_and_tools_unchanged": true
+    },
+    {
+      "kind": "permission",
+      "selected_facets": [
+        0,
+        1
+      ],
+      "status": "evaluated",
+      "case_sha256": "4e9fbc8fd1c629b1a6d1e2de9647a20d04080d5bfdb0f033ef6ee31a3706d670",
+      "result_sha256": "f46b4f804ef3a93f6d1c707edee4b910c5c97aaa777bbb4a760a752c36bb9a70",
+      "contract": {
+        "function": "Factor_Permission_Investigation_Base.permission_investigation",
+        "observer": "Factor_Permission_Investigation_Base.permission_investigation_observations",
+        "relation": "Factor_Permission_Investigation_Base.permission_investigation_relation",
+        "sha256": "ebfcd8d87039719aee5feff07238d63b3718a34c0caf894fc87be5d69a3fe1e6"
+      },
+      "input_formed": true,
+      "initial_residual_count": 0,
+      "conflict_count": 0,
+      "repair_witness_count": 0,
+      "unrepairable_count": 0,
+      "revision_retained": [
+        0,
+        1
+      ],
+      "revision_withdrawn": [],
+      "revision_selection": [
+        0,
+        1
+      ],
+      "revision_residual": [],
+      "sources_and_tools_unchanged": true
+    },
+    {
+      "kind": "proof_probes",
+      "selected_facets": [
+        0,
+        1
+      ],
+      "status": "evaluated",
+      "case_sha256": "6b683acad975db66884807321b16ee0c781746f7145bffccdcbf9dc1df85de2d",
+      "result_sha256": "34daddd0fe44fc23a3508c4ab693c8eec2506eea56972e7fbb16f096a46d8a01",
+      "contract": {
+        "function": "Factor_Proof_Probe_Investigation_Base.proof_probes_investigation",
+        "observer": "Factor_Proof_Probe_Investigation_Base.proof_probes_investigation_observations",
+        "relation": "Factor_Proof_Probe_Investigation_Base.proof_probes_investigation_relation",
+        "sha256": "60fa5c6af7e89d25c0fcd03118ffee8708b3404fa09379feea5102fc7f250a3b"
+      },
+      "input_formed": true,
+      "initial_residual_count": 2,
+      "conflict_count": 0,
+      "repair_witness_count": 2,
+      "unrepairable_count": 0,
+      "revision_retained": [
+        0,
+        1
+      ],
+      "revision_withdrawn": [],
+      "revision_selection": [
+        0,
+        1,
+        2
+      ],
+      "revision_residual": [],
+      "sources_and_tools_unchanged": true
+    },
+    {
+      "kind": "reasoning_methods",
+      "selected_facets": [
+        0,
+        1
+      ],
+      "status": "evaluated",
+      "case_sha256": "23a492795812505a74586616bfa213f467329e7304138db5ba2bfac3155a19ba",
+      "result_sha256": "7bef2a612f4afe01f0aef68384dacdec5e13e7a9274f56e6627a8b76dc8e7b84",
+      "contract": {
+        "function": "Factor_Reasoning_Method_Investigation.reasoning_method_investigation",
+        "observer": "Factor_Reasoning_Method_Investigation.reasoning_method_investigation_observations",
+        "relation": "Factor_Reasoning_Method_Investigation.reasoning_method_investigation_relation",
+        "sha256": "422f39050bcda06afb9803874f3fde0f49fa6bb698995a87f8692db5a28097f8"
+      },
+      "input_formed": true,
+      "initial_residual_count": 2,
+      "conflict_count": 0,
+      "repair_witness_count": 2,
+      "unrepairable_count": 0,
+      "revision_retained": [
+        0,
+        1
+      ],
+      "revision_withdrawn": [],
+      "revision_selection": [
+        0,
+        1,
+        2
+      ],
+      "revision_residual": [],
+      "sources_and_tools_unchanged": true
+    },
+    {
+      "kind": "revision_methods",
+      "selected_facets": [
+        0,
+        1
+      ],
+      "status": "evaluated",
+      "case_sha256": "f4f93187121fa7bab1fc526fb0e3b805f2ad3ee4d7cb7b45fd3ab9ac9ade80e0",
+      "result_sha256": "c68a91df57e085cfc11dbcf8e11218f165fed7c60aefd18102322f35d506f360",
+      "contract": {
+        "function": "Observation_Revision_Investigation.revision_investigation",
+        "observer": "Observation_Revision_Investigation.revision_investigation_observations",
+        "relation": "Observation_Revision_Investigation.revision_investigation_relation",
+        "sha256": "6aec00ed35ee823943bbca9bd406f7771527115b6779cb715eed51a026183e3c"
+      },
+      "input_formed": true,
+      "initial_residual_count": 14,
+      "conflict_count": 0,
+      "repair_witness_count": 43,
+      "unrepairable_count": 0,
+      "revision_retained": [
+        0,
+        1
+      ],
+      "revision_withdrawn": [],
+      "revision_selection": [
+        0,
+        1,
+        3,
+        2
+      ],
+      "revision_residual": [],
+      "sources_and_tools_unchanged": true
+    },
+    {
+      "kind": "schema_sockets",
+      "selected_facets": [
+        0,
+        1
+      ],
+      "status": "evaluated",
+      "case_sha256": "1a946b90cb439d796a9b3ea023a4ab2f832f41976ba0407984f99d0f103cc284",
+      "result_sha256": "bbdb64e5641699d574f33cf5f26d47a8e7fe24e377622997455b06987390d532",
+      "contract": {
+        "function": "Factor_Schema_Socket_Investigation_Base.schema_sockets_investigation",
+        "observer": "Factor_Schema_Socket_Investigation_Base.schema_sockets_investigation_observations",
+        "relation": "Factor_Schema_Socket_Investigation_Base.schema_sockets_investigation_relation",
+        "sha256": "4d8dd077094612e6009a8dae843519b06ec91cb11b02332682b8ab921ea1a68b"
+      },
+      "input_formed": true,
+      "initial_residual_count": 2,
+      "conflict_count": 0,
+      "repair_witness_count": 2,
+      "unrepairable_count": 0,
+      "revision_retained": [
+        0,
+        1
+      ],
+      "revision_withdrawn": [],
+      "revision_selection": [
+        0,
+        1,
+        2
+      ],
+      "revision_residual": [],
+      "sources_and_tools_unchanged": true
+    }
+  ],
+  "reconstructions": [
+    {
+      "recipe": "native-steering",
+      "status": "accepted",
+      "sources_rebuilt": false,
+      "reports_equal": true,
+      "recipe_inputs_unchanged": true,
+      "expected_reports": {
+        "path": "validation/reconstruction/native-steering-reports.json",
+        "sha256": "fb7a61d856f65f807c7753e1ddf0c68ab64359407a59a756c4158384eb01d3ea"
+      },
+      "stages": [
+        {
+          "name": "presentation",
+          "exit_code": 0
+        },
+        {
+          "name": "presentation-empty",
+          "exit_code": 0
+        },
+        {
+          "name": "presentation-first",
+          "exit_code": 0
+        }
+      ]
+    },
+    {
+      "recipe": "native-workflow",
+      "status": "accepted",
+      "sources_rebuilt": false,
+      "reports_equal": true,
+      "recipe_inputs_unchanged": true,
+      "expected_reports": {
+        "path": "validation/reconstruction/native-workflow-reports.json",
+        "sha256": "bb45f55ff16127080f31953f3b8ee740ee0e434e3c84933017178cba548b295b"
+      },
+      "stages": [
+        {
+          "name": "presentation-workflow",
+          "exit_code": 0
+        },
+        {
+          "name": "presentation-requirements",
+          "exit_code": 0
+        },
+        {
+          "name": "presentation-input-scope",
+          "exit_code": 0
+        },
+        {
+          "name": "presentation-expanded",
+          "exit_code": 0
+        }
+      ]
+    }
+  ],
+  "retention": "Generated exports, runtime homes, reproduced words, per-run archives and logs are replaced by this record and the referenced source/report boundaries; the existing accepted proof-provider context is preserved."
+}

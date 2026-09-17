@@ -2,27 +2,6 @@ theory Finite_Presented_Storage_Notions
  imports Finite_Derived_Values Finite_Presented_Generation_Queries RRA_Artifact_Lookup_Investigation RRA_Environment_Update_Investigation RRA_Use_Allocation_Investigation RRA_Allocated_Environment_Investigation RRA_Encoded_Environment_Investigation RRA_Graft_Investigation RRA_Graft_Admission_Investigation RRA_Cached_Graft_Investigation RRA_Digit_Allocation_Investigation RRA_Use_Codec_Investigation RRA_Generation_Record_Investigation Factor_Data_Reading_Investigation Factor_Data_Reading_Fixture
 begin
 
-definition finite_storage_path_value where
- "finite_storage_path_value path=Finite_Payload (map (\<lambda>b. if b then 1 else 0) path)"
-
-lemma finite_storage_path_value_injective [intro]: "inj finite_storage_path_value"
-proof -
- have digit: "inj (\<lambda>b. if b then (1::nat) else 0)" by (auto simp: inj_def)
- show ?thesis by (rule injI) (simp add: finite_storage_path_value_def inj_map_eq_map[OF digit])
-qed
-
-text \<open>A bit path is one flat native payload of its exact zero/one digits.
- This injective presentation preserves long paths without a deeply nested pair
- per bit. It changes the presentation, not the path, its length or any reading.\<close>
-
-definition finite_binary_natural_value where
- "finite_binary_natural_value n=finite_storage_path_value (natural_binary_digits n)"
-lemma finite_binary_natural_value_injective [intro]: "inj finite_binary_natural_value"
- by (rule injI) (simp add: finite_binary_natural_value_def inj_eq[OF finite_storage_path_value_injective])
-lemma finite_binary_natural_identity:
- "finite_binary_natural_value n=finite_binary_natural_value m \<longleftrightarrow> finite_natural_data n=finite_natural_data m"
- by (simp only: inj_eq[OF finite_binary_natural_value_injective] inj_eq[OF finite_natural_data_injective])
-
 definition finite_digit_use_value where
  "finite_digit_use_value u=finite_storage_path_value (digit_use_path u)"
 lemma finite_digit_use_value_injective [intro]: "inj finite_digit_use_value"

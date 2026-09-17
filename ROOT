@@ -1681,3 +1681,13 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Cached_Graft_Presentation
     Encoded_Environment_Presentation
     Data_Reading_Presentation
+    Isabelle_Constant_Closure
+    Isabelle_Terms
+    Isabelle_Entities
+    Isabelle_Renaming
+    Isabelle_Acceptance
+    Isabelle_Entity_Export
+    Development_Problems
+    Development_Seed
+    Native_Development_Seed
+    Development_Policy

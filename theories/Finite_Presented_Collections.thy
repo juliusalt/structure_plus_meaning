@@ -51,6 +51,22 @@ lemma decode_finite_data_list [simp]:
 lemma finite_data_list_injective: "finite_data_list xs=finite_data_list ys \<longleftrightarrow> xs=ys"
   by (induction xs arbitrary: ys) (case_tac ys; auto)+
 
+lemma finite_data_list_formed: "finite_term_formed (finite_data_list ts) \<longleftrightarrow> list_all finite_term_formed ts"
+  by (induction ts) (simp_all add: octets_formed_def)
+
+lemma map_members_injective:
+  assumes members: "\<And>x y. x\<in>set xs \<Longrightarrow> f x=f y \<Longrightarrow> x=y" and same: "map f xs=map f ys"
+  shows "xs=ys"
+  using same members
+proof (induction xs arbitrary: ys)
+  case (Cons x xs)
+  obtain z zs where ys: "ys=z#zs" and head: "f x=f z" and tail: "map f xs=map f zs"
+    using Cons.prems(1) by (auto simp: map_eq_Cons_conv)
+  have "x=z" by (rule Cons.prems(2)) (use head in auto)
+  moreover have "xs=zs" by (rule Cons.IH[OF tail]) (use Cons.prems(2) in auto)
+  ultimately show ?case by (simp add: ys)
+qed simp
+
 definition finite_sequence_presentation ::
   "('a \<Rightarrow> finite_factor_term) \<Rightarrow> 'a list \<Rightarrow> finite_factor_term" where
   "finite_sequence_presentation f xs=finite_data_list (map f xs)"
@@ -59,6 +75,15 @@ lemma finite_sequence_presentation_simps [simp]:
   "finite_sequence_presentation f []=Finite_Payload []"
   "finite_sequence_presentation f (x#xs)=Finite_Pair (f x) (finite_sequence_presentation f xs)"
   by (simp_all add: finite_sequence_presentation_def)
+
+lemma finite_sequence_presentation_member_injective:
+  assumes members: "\<And>x y. x\<in>set xs \<Longrightarrow> f x=f y \<Longrightarrow> x=y"
+    and same: "finite_sequence_presentation f xs=finite_sequence_presentation f ys"
+  shows "xs=ys"
+proof (rule map_members_injective[OF members])
+  show "map f xs=map f ys"
+    using same by (simp add: finite_sequence_presentation_def finite_data_list_injective)
+qed
 
 lemma finite_sequence_presentation_injective [intro]:
   assumes "inj f"

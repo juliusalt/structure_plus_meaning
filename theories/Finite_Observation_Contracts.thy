@@ -1,5 +1,5 @@
 theory Finite_Observation_Contracts
-  imports Finite_Derived_Observations
+  imports Finite_Derived_Observations Isabelle_Constant_Closure
 begin
 
 section \<open>The runtime exports its checked observation equation\<close>
@@ -83,24 +83,11 @@ struct
 
   fun definitions thy seeds =
     let
-      val by_constant = Symtab.make_list (Defs.dest_constdefs [] (Theory.defs_of thy));
-      val axioms = Symtab.make (Theory.all_axioms_of thy);
-      fun expand [] seen selected = (seen, selected)
-        | expand (name :: pending) seen selected =
-            if Symtab.defined seen name then expand pending seen selected
-            else
-              let
-                val names = these (Symtab.lookup by_constant name);
-                fun fetch def =
-                  (case Symtab.lookup axioms def of SOME prop => (def, prop)
-                  | NONE => error ("Missing kernel definition " ^ quote def));
-                val equations = map fetch names;
-                val more = maps (fn (_, prop) => Term.add_const_names prop []) equations;
-              in expand (more @ pending) (Symtab.update (name, ()) seen)
-                (fold Symtab.update equations selected) end;
-      val (seen, selected) = expand (maps (fn t => Term.add_const_names t []) seeds)
-        Symtab.empty Symtab.empty;
-      val primitives = filter (fn name => not (Symtab.defined by_constant name)) (Symtab.keys seen);
+      val kernel = Isabelle_Constant_Closure.kernel_definitions thy;
+      val (seen, selected) =
+        Isabelle_Constant_Closure.closure kernel (fn prop => Term.add_const_names prop [])
+          (maps (fn t => Term.add_const_names t []) seeds);
+      val primitives = filter (null o kernel) (Symtab.keys seen);
     in
       XML.Elem (("definitions", []), map (fn (name, prop) =>
         XML.Elem (("definition", [("name", name)]), Term_XML.Encode.term_raw prop)) (Symtab.dest selected)) ::

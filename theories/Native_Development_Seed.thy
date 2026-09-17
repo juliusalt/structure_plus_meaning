@@ -1,0 +1,11 @@
+theory Native_Development_Seed
+  imports Development_Seed Native_Execution_Refinements
+begin
+
+export_code development_seed_report_value development_seed_state development_seed_missing_declaration
+  development_seed_extra_entities development_seed_renamed development_seed_moved_equality
+  development_seed_problem_value development_seed_unanswered development_seed_replay_answered
+  finite_term_shared_word_fold
+  in Eval module_name Native_Development_Seed file_prefix "native_development_seed"
+
+end

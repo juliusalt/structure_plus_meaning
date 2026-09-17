@@ -1,8 +1,10 @@
 theory Inference_Claim_Input_Execution
   imports Inference_Claim_Execution Finite_Keyed_Fibre_Values Factor_Finite_Child_Premises Native_Execution_Refinements
+    Native_Child_Presentation
 begin
 
 export_code
+  native_child_report_value child_projection_cases finite_term_shared_word_fold
   finite_child_inference_value finite_child_claim_value finite_child_inference_known
   finite_key_fibre_values finite_enumerated_artifact finite_enumerated_environment
   finite_environment_term finite_self_contained_term use_data_term

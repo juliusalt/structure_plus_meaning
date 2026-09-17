@@ -1,16 +1,12 @@
 {
   "version": 1,
   "reports": {
-    "comparison": {
-      "records": 131,
+    "presentation": {
+      "records": 1,
       "tags": {
-        "ADMISSION_ASSESSMENT": 63,
-        "ADMISSION_COMPARISON": 1,
-        "ADMISSION_INVESTIGATION": 3,
-        "ADMISSION_SCOPE": 1,
-        "ADMISSION_SUBJECT": 63
+        "PRESENTED_REPORT_WORD": 1
       },
-      "sha256": "0df15b2277c5c534ad8966dfb2568cf78f2840ab943de02af01a943dcef87f61"
+      "sha256": "6bae1176e164a8f645cc5f1c77060b8f21db483de6787c959a6c0fdd42b23025"
     }
   }
 }

@@ -1,5 +1,5 @@
 theory Finite_Presented_Decisions
-  imports Finite_Presented_Replays Factor_Decision_Replay_Assessment
+  imports Finite_Presented_Native_Programs Factor_Decision_Replay_Assessment
 begin
 
 section \<open>Original requirements, evaluations and native replay inspections\<close>
@@ -10,11 +10,20 @@ definition finite_native_application_value where
 definition finite_native_rule_value where
   "finite_native_rule_value=(finite_pair_presentation finite_call_value (finite_collection_presentation (finite_pair_presentation Finite_Payload finite_call_value)))"
 
+definition finite_goal_problem_value where
+  "finite_goal_problem_value goals=finite_native_source_problem_value
+    (finite_pair_presentation goals (finite_collection_presentation id))"
+
+lemma finite_goal_problem_value_injective [intro]: "inj goals \<Longrightarrow> inj (finite_goal_problem_value goals)"
+  unfolding finite_goal_problem_value_def
+  by (intro finite_native_source_problem_value_injective finite_pair_presentation_injective
+      finite_collection_presentation_injective inj_on_id)
+
 definition finite_requirement_subject_value where
-  "finite_requirement_subject_value=(finite_pair_presentation finite_environment_presentation (finite_pair_presentation finite_use_data (finite_pair_presentation Finite_Payload (finite_pair_presentation (finite_sequence_presentation (finite_goal_value finite_site_data)) (finite_collection_presentation id)))))"
+  "finite_requirement_subject_value=finite_goal_problem_value (finite_sequence_presentation (finite_goal_value finite_site_data))"
 
 definition finite_requirement_reference_value where
-  "finite_requirement_reference_value=(finite_option_presentation (finite_pair_presentation finite_native_system_value (finite_collection_presentation id)))"
+  "finite_requirement_reference_value=finite_native_answers_value id"
 
 definition finite_evaluation_report_value where
   "finite_evaluation_report_value=(finite_pair_presentation finite_boolean_data (finite_pair_presentation finite_boolean_data (finite_pair_presentation finite_boolean_data (finite_pair_presentation (finite_collection_presentation finite_native_application_value) (finite_pair_presentation (finite_collection_presentation finite_native_rule_value) (finite_option_presentation (finite_collection_presentation finite_call_value)))))))"
@@ -29,7 +38,8 @@ definition finite_requirement_assessment_value where
   "finite_requirement_assessment_value=(finite_pair_presentation finite_boolean_data (finite_pair_presentation finite_requirement_result_review_value finite_boolean_data))"
 
 definition finite_native_replay_subject_value where
-  "finite_native_replay_subject_value=(finite_pair_presentation finite_environment_presentation (finite_pair_presentation finite_use_data (finite_pair_presentation Finite_Payload (finite_pair_presentation (finite_proof_value Finite_Payload (finite_pair_presentation Finite_Payload id) Finite_Payload) (finite_pair_presentation finite_site_data id)))))"
+  "finite_native_replay_subject_value=finite_native_source_problem_value
+    (finite_pair_presentation finite_native_schema_proof_value (finite_pair_presentation finite_site_data id))"
 
 definition finite_native_replay_reference_value where
   "finite_native_replay_reference_value=(finite_option_presentation (finite_pair_presentation finite_native_system_value finite_boolean_data))"
@@ -76,7 +86,7 @@ lemma finite_native_rule_value_injective [intro]: "inj finite_native_rule_value"
 
 lemma finite_requirement_subject_value_injective [intro]: "inj finite_requirement_subject_value"
   unfolding finite_requirement_subject_value_def
-  by (intro finite_pair_presentation_injective finite_option_presentation_injective
+  by (intro finite_goal_problem_value_injective finite_native_source_problem_value_injective finite_native_answers_value_injective finite_native_schema_proof_value_injective finite_pair_presentation_injective finite_option_presentation_injective
       finite_collection_presentation_injective finite_sequence_presentation_injective finite_goal_value_injective
       finite_proof_value_injective finite_natural_data_injective finite_boolean_data_injective
       finite_payload_injective finite_site_data_injective finite_use_data_injective
@@ -87,7 +97,7 @@ lemma finite_requirement_subject_value_injective [intro]: "inj finite_requiremen
 
 lemma finite_requirement_reference_value_injective [intro]: "inj finite_requirement_reference_value"
   unfolding finite_requirement_reference_value_def
-  by (intro finite_pair_presentation_injective finite_option_presentation_injective
+  by (intro finite_native_source_problem_value_injective finite_native_answers_value_injective finite_native_schema_proof_value_injective finite_pair_presentation_injective finite_option_presentation_injective
       finite_collection_presentation_injective finite_sequence_presentation_injective finite_goal_value_injective
       finite_proof_value_injective finite_natural_data_injective finite_boolean_data_injective
       finite_payload_injective finite_site_data_injective finite_use_data_injective
@@ -142,7 +152,7 @@ lemma finite_requirement_assessment_value_injective [intro]: "inj finite_require
 
 lemma finite_native_replay_subject_value_injective [intro]: "inj finite_native_replay_subject_value"
   unfolding finite_native_replay_subject_value_def
-  by (intro finite_pair_presentation_injective finite_option_presentation_injective
+  by (intro finite_native_source_problem_value_injective finite_native_answers_value_injective finite_native_schema_proof_value_injective finite_pair_presentation_injective finite_option_presentation_injective
       finite_collection_presentation_injective finite_sequence_presentation_injective finite_goal_value_injective
       finite_proof_value_injective finite_natural_data_injective finite_boolean_data_injective
       finite_payload_injective finite_site_data_injective finite_use_data_injective

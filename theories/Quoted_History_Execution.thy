@@ -1,5 +1,6 @@
 theory Quoted_History_Execution
   imports Finite_Term_Word_Streaming Factor_Quoted_History_Investigation Factor_Executable_Artifact_Values Quoted_History_Presentation Native_Execution_Refinements
+    Parallel_History_Source_Rows
 begin
 
 setup \<open>Finite_Observation_Contracts.export @{term quoted_history_investigation}\<close>

@@ -1343,3 +1343,11 @@ suites in 373.03 seconds, with 981 rebuilt proof contexts. The concurrent-replay
 recipe was retired as definitionally identical to digit replay. No obligation row
 changes status. Conditions 1 and 6, practical 5a, wider coverage, O-85 and genesis
 remain open; theoretical 5b is deferred.
+
+## Word-only recipe inventory
+
+The accepted workspace has 1,670 theories and 50 recipe boundaries whose 57 stages
+each retain one proved report word; no recipe runs a host comparison, roundtrip or
+host re-derivation. 152 tool tests and 35 kernel tests pass (two optional skips). No
+obligation row changes status. Conditions 1 and 6, practical 5a, wider coverage, O-85
+and genesis remain open; theoretical 5b is deferred.

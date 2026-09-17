@@ -1,17 +1,12 @@
 {
   "version": 1,
   "reports": {
-    "comparison": {
-      "records": 20,
+    "presentation": {
+      "records": 1,
       "tags": {
-        "LITERAL_REPLAY_ASSESSMENT": 7,
-        "LITERAL_REPLAY_COMPARISON": 1,
-        "LITERAL_REPLAY_INVESTIGATION": 3,
-        "LITERAL_REPLAY_SCOPE": 1,
-        "LITERAL_REPLAY_SEED": 1,
-        "LITERAL_REPLAY_SUBJECT": 7
+        "PRESENTED_REPORT_WORD": 1
       },
-      "sha256": "8d56c7a83a99d11751406f77e826f45e7f54892d3a9947c5bb004728213f8c4d"
+      "sha256": "f1affd12f9c2f00bafb1c76b5acbfaac37d61fc9ad05881f5bfdceb6100a5d02"
     }
   }
 }

@@ -1,16 +1,12 @@
 {
   "version": 1,
   "reports": {
-    "comparison": {
-      "records": 7,
+    "presentation": {
+      "records": 1,
       "tags": {
-        "COVERAGE_ASSESSMENT": 1,
-        "COVERAGE_COMPARISON": 1,
-        "COVERAGE_INVESTIGATION": 3,
-        "COVERAGE_SCOPE": 1,
-        "COVERAGE_SUBJECT": 1
+        "PRESENTED_REPORT_WORD": 1
       },
-      "sha256": "123db5b81a326a7c119a2b7899133c8bf5aba56e3db50c8cee39aa933789419f"
+      "sha256": "53cc4375e29373e87b8118175c76a6da53e79aa61b2d2a917e9b6a6e471338d7"
     }
   }
 }

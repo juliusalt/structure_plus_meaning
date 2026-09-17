@@ -1,10 +1,12 @@
 theory Native_Extension_Execution
   imports Factor_Finite_Native_Extension_Cases Factor_Finite_Native_Controls Factor_Executable_Artifact_Values Native_Execution_Refinements
+    Native_Package_Presentation
 begin
 
 section \<open>Execute the actual package construction and complete native recovery\<close>
 
-export_code finite_native_extension_report finite_native_control_report
+export_code finite_native_extension_report native_extension_report_value source_requirement_variants
+  native_control_indices finite_term_shared_word_fold finite_native_control_report
   finite_system_interfaces finite_system_clauses
   finite_schema_conclusion finite_schema_premises finite_schema_materials
   finite_material_source finite_material_atoms finite_material_edges finite_material_counts finite_material_functions

@@ -13,4 +13,12 @@ lemma digit_replay_report_concurrent_code [code]:
      digit_replay_presented_sources (fst packet)))"
  by (simp only: digit_replay_report_def replay_packet_stages_exact Let_def)
 
+declare digit_replay_presented_sources_def[code del]
+lemma digit_replay_presented_sources_parallel_code [code]:
+ "digit_replay_presented_sources table=Parallel.map (\<lambda>(w,C,cells).
+   let subjects=fst C; original=bounded_replay_case w
+   in (w,digit_replay_original_inputs w,original,subjects,digit_replay_chain_length w,
+     digit_replay_source_equal subjects original)) table"
+ by (simp only: digit_replay_presented_sources_def Parallel.map_def)
+
 end

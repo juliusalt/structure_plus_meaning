@@ -2509,3 +2509,21 @@ canonical sorting from formation re-checks and per-comparison artifact rows; tha
 refinement is not yet implemented. No complete source proof was repeated. Native
 problem and approach selection, broader adequacy, actual gate 5a usefulness,
 O-85 and genesis remain open; 5b remains deferred.
+
+## Native presentation migration review
+
+The 308.62-second paired cycle accepted all 50 boundaries on 1,668 theories with 164
+rebuilt contexts; nineteen new report words and every original comparison passed on
+the same exports. Two word-only cycles then accepted the nineteen families and native
+child alone, and the twelve storage families retired their paired comparisons after
+passing again. The final workspace has 1,670 theories, 50 word-only recipes, 57
+retained words, 152 tool tests and 35 kernel tests (two optional skips). Native child
+controls, projections and guided constructions were moved from host scripts to
+definitions over the existing child example; their native summaries equal the former
+host results. The owner directed that presentations be single members of independently
+defined notion classes with local contracts and built from specialized generalizations;
+new presentations follow that rule, while earlier row presentations with computed
+inspections and flat earlier presentations remain for re-established words. Large
+development and requirement words are slower than their former host stages, which is
+now the main measured presentation cost. Native problem and approach selection, broader
+adequacy, actual gate 5a usefulness, O-85 and genesis remain open; 5b remains deferred.

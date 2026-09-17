@@ -1,0 +1,594 @@
+{
+  "version": 1,
+  "status": "accepted",
+  "cycles": [
+    {
+      "label": "native computation refinements",
+      "output": "/tmp/native-refinement-check-1789627037",
+      "receipt_sha256": "6f3e58d012464b08deb6c1ef1beff96f286147e4b40b237ee32ff127c24c61ab",
+      "seconds": 252.0,
+      "phases": {
+        "base_and_impact": 1.7,
+        "proof": 54.88,
+        "recipe_impact": 4.83,
+        "export": 4.22,
+        "execution_impact": 1.45,
+        "recipes_and_host_tests": 172.71
+      },
+      "theories": 1652,
+      "rebuilt_theories": 98,
+      "recipe_status": {
+        "accepted": 48,
+        "reused": 2
+      },
+      "host_tests": {
+        "tools": {
+          "ran": 152,
+          "skipped": 0,
+          "exit_code": 0
+        },
+        "kernel": {
+          "ran": 35,
+          "skipped": 2,
+          "exit_code": 0
+        }
+      }
+    },
+    {
+      "label": "nineteen new presentations paired with original comparisons",
+      "output": "/tmp/native-presentation-check-1789631889",
+      "receipt_sha256": "a4d90e4d8376b44de2ec49eef2974ce6294a33efc9821cdb2e913e8753637ec1",
+      "seconds": 308.62,
+      "phases": {
+        "base_and_impact": 2.5,
+        "proof": 66.18,
+        "recipe_impact": 5.32,
+        "export": 5.12,
+        "execution_impact": 1.47,
+        "recipes_and_host_tests": 212.81
+      },
+      "theories": 1668,
+      "rebuilt_theories": 164,
+      "recipe_status": {
+        "accepted": 49,
+        "reused": 1
+      },
+      "host_tests": {
+        "tools": {
+          "ran": 152,
+          "skipped": 0,
+          "exit_code": 0
+        },
+        "kernel": {
+          "ran": 35,
+          "skipped": 2,
+          "exit_code": 0
+        }
+      }
+    },
+    {
+      "label": "nineteen families retire comparisons; native child paired",
+      "output": "/tmp/native-words-check-1789632412",
+      "receipt_sha256": "8d3f6484446e6075ccb8c4b7937634d6ef9eb4088f6e670b2885445a0ebc7baa",
+      "seconds": 156.63,
+      "phases": {
+        "base_and_impact": 3.42,
+        "proof": 21.45,
+        "recipe_impact": 4.41,
+        "export": 6.17,
+        "execution_impact": 0.44,
+        "recipes_and_host_tests": 103.18
+      },
+      "theories": 1670,
+      "rebuilt_theories": 3,
+      "recipe_status": {
+        "accepted": 19,
+        "unchanged": 31
+      },
+      "host_tests": {
+        "tools": {
+          "ran": 152,
+          "skipped": 0,
+          "exit_code": 0
+        },
+        "kernel": {
+          "ran": 35,
+          "skipped": 2,
+          "exit_code": 0
+        }
+      }
+    },
+    {
+      "label": "native child retires its host stages",
+      "output": "/tmp/native-child-words-check-1789632628",
+      "receipt_sha256": "27d261a089299e83ee9956b838db62dae125fb3567ba24548260a240b638c2c7",
+      "seconds": 25.43,
+      "phases": {
+        "base_and_impact": 4.26,
+        "recipe_impact": 3.84,
+        "export": 5.37,
+        "execution_impact": 0.02,
+        "recipes_and_host_tests": 6.88
+      },
+      "theories": 1670,
+      "rebuilt_theories": 0,
+      "recipe_status": {
+        "accepted": 1,
+        "unchanged": 49
+      },
+      "host_tests": {
+        "tools": {
+          "ran": 152,
+          "skipped": 0,
+          "exit_code": 0
+        },
+        "kernel": {
+          "ran": 35,
+          "skipped": 2,
+          "exit_code": 0
+        }
+      }
+    },
+    {
+      "label": "twelve storage families retire their paired comparisons",
+      "output": "/tmp/native-storage-words-check-1789632698",
+      "receipt_sha256": "29231b377ba7360741ba1ce6eb3b6aab32027e7ea9009931432f97c86aff623d",
+      "seconds": 24.57,
+      "phases": {
+        "base_and_impact": 4.27,
+        "recipe_impact": 4.01,
+        "export": 5.42,
+        "execution_impact": 0.27,
+        "recipes_and_host_tests": 5.39
+      },
+      "theories": 1670,
+      "rebuilt_theories": 0,
+      "recipe_status": {
+        "accepted": 12,
+        "unchanged": 38
+      },
+      "host_tests": {
+        "tools": {
+          "ran": 152,
+          "skipped": 0,
+          "exit_code": 0
+        },
+        "kernel": {
+          "ran": 35,
+          "skipped": 2,
+          "exit_code": 0
+        }
+      }
+    }
+  ],
+  "retained_report_records": {
+    "preceding_commit": 2603,
+    "paired_cycle": 2628,
+    "words_cycle": 811,
+    "child_cycle": 626,
+    "final": 57
+  },
+  "migrated_families": {
+    "builtin-investigations": {
+      "host_seconds_before": 8.68,
+      "host_status_before": "accepted",
+      "paired_seconds": 9.98,
+      "word_only_seconds": 2.37,
+      "words": {
+        "presentation": {
+          "bytes": 25624,
+          "sha256": "be0e04b89abb0c858925e1aa8d3494abed2465de3d47523b0c5a8774d4f540cf"
+        }
+      }
+    },
+    "certificate-coverage": {
+      "host_seconds_before": 6.68,
+      "host_status_before": "accepted",
+      "paired_seconds": 8.43,
+      "word_only_seconds": 4.57,
+      "words": {
+        "presentation": {
+          "bytes": 28258,
+          "sha256": "8f064951533a2433a20c5627b92fdd4dcd60d0c68d42d2ed5a83cf2af4c71f3b"
+        }
+      }
+    },
+    "certificate-development": {
+      "host_seconds_before": 8.68,
+      "host_status_before": "accepted",
+      "paired_seconds": 10.74,
+      "word_only_seconds": 3.97,
+      "words": {
+        "presentation": {
+          "bytes": 564443,
+          "sha256": "6fccc548562418d71fc6c1d440a7b2906b1a8e9c586fdf8cf46136b36252b374"
+        }
+      }
+    },
+    "certificate-input-development": {
+      "host_seconds_before": 11.68,
+      "host_status_before": "accepted",
+      "paired_seconds": 17.4,
+      "word_only_seconds": 4.67,
+      "words": {
+        "presentation": {
+          "bytes": 758086,
+          "sha256": "42b688b8fb202c2a4a7f6f9c9243ea9082b347f8b81fb81befc79c1aa2cf0d57"
+        }
+      }
+    },
+    "certificate-scope-repair": {
+      "host_seconds_before": 7.02,
+      "host_status_before": "accepted",
+      "paired_seconds": 7.98,
+      "word_only_seconds": 4.12,
+      "words": {
+        "presentation": {
+          "bytes": 50342,
+          "sha256": "c26b2b8e2074302550f640ea082b8d1e8dfb678b6b53ed5d0494f0f589a920bc"
+        }
+      }
+    },
+    "literal-replay": {
+      "host_seconds_before": 7.47,
+      "host_status_before": "accepted",
+      "paired_seconds": 8.23,
+      "word_only_seconds": 4.22,
+      "words": {
+        "presentation": {
+          "bytes": 52715,
+          "sha256": "c6738a41efc92fa67a6e2e0e1709073df48a5e1bdb1f623912a0d35e575b1abf"
+        }
+      }
+    },
+    "native-admission": {
+      "host_seconds_before": 41.79,
+      "host_status_before": "accepted",
+      "paired_seconds": 57.98,
+      "word_only_seconds": 60.19,
+      "words": {
+        "presentation": {
+          "bytes": 922585,
+          "sha256": "d42caa8274d322631a8360c207efbac6d659a399bcd5a616dc91e2f7703c57f9"
+        }
+      }
+    },
+    "native-child": {
+      "host_seconds_before": 0.0,
+      "host_status_before": "reused",
+      "paired_seconds": 0.0,
+      "word_only_seconds": 6.88,
+      "words": {
+        "presentation": {
+          "bytes": 7569375,
+          "sha256": "bb944afb40f715359d40338ede748219cb9aba1335f9ba7da3069c5eec0f96e7"
+        }
+      }
+    },
+    "native-development": {
+      "host_seconds_before": 28.06,
+      "host_status_before": "accepted",
+      "paired_seconds": 48.76,
+      "word_only_seconds": 42.86,
+      "words": {
+        "presentation": {
+          "bytes": 30692955,
+          "sha256": "0b323622a5e1e6465e8f84c0cce4c0fb5bdcbf881ce25ed587555b6f668d4e93"
+        }
+      }
+    },
+    "native-evaluation": {
+      "host_seconds_before": 3.53,
+      "host_status_before": "accepted",
+      "paired_seconds": 3.83,
+      "word_only_seconds": 3.82,
+      "words": {
+        "presentation": {
+          "bytes": 49659,
+          "sha256": "df1aa92abb85d5dc4ad08308e6952b4afd3b27a4f00dced00719ffa6a16dfff5"
+        }
+      }
+    },
+    "native-extensions": {
+      "host_seconds_before": 2.32,
+      "host_status_before": "accepted",
+      "paired_seconds": 2.82,
+      "word_only_seconds": 3.17,
+      "words": {
+        "presentation": {
+          "bytes": 14139,
+          "sha256": "45a17091b8d9f4f159feee58d3e46d5477a303e0fe18578433ae4a3de4f39724"
+        }
+      }
+    },
+    "native-histories": {
+      "host_seconds_before": 7.33,
+      "host_status_before": "accepted",
+      "paired_seconds": 8.19,
+      "word_only_seconds": 4.32,
+      "words": {
+        "presentation": {
+          "bytes": 410973,
+          "sha256": "e724f5a598a957f9716789f753d4d8fc55c698b33b66fab74238e04148c24d6e"
+        }
+      }
+    },
+    "native-requirements": {
+      "host_seconds_before": 17.9,
+      "host_status_before": "accepted",
+      "paired_seconds": 37.62,
+      "word_only_seconds": 42.69,
+      "words": {
+        "presentation": {
+          "bytes": 2033835,
+          "sha256": "85692e9a2c098b05510ffd74e1e8b926ba9a13608bf0d981fa3b1fb5395102f3"
+        }
+      }
+    },
+    "native-sources": {
+      "host_seconds_before": 3.62,
+      "host_status_before": "accepted",
+      "paired_seconds": 3.97,
+      "word_only_seconds": 4.17,
+      "words": {
+        "presentation": {
+          "bytes": 19257,
+          "sha256": "655e180325237266877ea5b2d74e257e541b7b63f3ad6cbf1305cff17fa7b007"
+        }
+      }
+    },
+    "native-steering": {
+      "host_seconds_before": 66.38,
+      "host_status_before": "accepted",
+      "paired_seconds": 97.02,
+      "word_only_seconds": 50.76,
+      "words": {
+        "presentation": {
+          "bytes": 38226571,
+          "sha256": "410c7a4cd3a887d582026fe0db57210e6400b53b65705efda60a66c57cb6101e"
+        },
+        "presentation-empty": {
+          "bytes": 3873,
+          "sha256": "63d2bd2520e1b03381be72cc7e95446e2ea06bf22db241a2a3efad0056daef21"
+        },
+        "presentation-first": {
+          "bytes": 7573350,
+          "sha256": "7cdf20ebf2760d0a973f734d84c97b1ebbeaa2ca260be93df5f06c49304b89fb"
+        }
+      }
+    },
+    "native-workflow": {
+      "host_seconds_before": 53.65,
+      "host_status_before": "accepted",
+      "paired_seconds": 88.53,
+      "word_only_seconds": 13.22,
+      "words": {
+        "presentation-workflow": {
+          "bytes": 570106,
+          "sha256": "d7d0e7ae02691db0c77f1ada8a9ea3649aa6632234146111b0da218059e26464"
+        },
+        "presentation-requirements": {
+          "bytes": 734369,
+          "sha256": "da40b48819c814ca9c3f7da16a0acce9064f601a8f5ee811974f6f9709a72b8e"
+        },
+        "presentation-input-scope": {
+          "bytes": 5996,
+          "sha256": "50f2279fad6e331f765e7f14801f05fd462c67e2ac75561496a20150d75d28f0"
+        },
+        "presentation-expanded": {
+          "bytes": 1308854,
+          "sha256": "4bc09ecf419f0fab4756e9f3d236b73056f1772768ee61367028caa398b93c54"
+        }
+      }
+    },
+    "requirement-plans": {
+      "host_seconds_before": 0.0,
+      "host_status_before": "reused",
+      "paired_seconds": 1.77,
+      "word_only_seconds": 2.07,
+      "words": {
+        "presentation": {
+          "bytes": 38991,
+          "sha256": "92568266b12acd0eb5bc807c08860f33f3846dd07e61fc16f59efc8a0664e094"
+        }
+      }
+    },
+    "requirement-sources": {
+      "host_seconds_before": 2.32,
+      "host_status_before": "accepted",
+      "paired_seconds": 3.22,
+      "word_only_seconds": 2.47,
+      "words": {
+        "presentation": {
+          "bytes": 6235,
+          "sha256": "801ed40d3da4c90c6584c855e105433339a18bd613d761815e36c3047d415823"
+        }
+      }
+    },
+    "source-development": {
+      "host_seconds_before": 113.3,
+      "host_status_before": "accepted",
+      "paired_seconds": 140.87,
+      "word_only_seconds": 69.08,
+      "words": {
+        "presentation": {
+          "bytes": 61315261,
+          "sha256": "ed8268224414a86545569d522b3fdeb0076479ac634446ddec33da93b4ca33f1"
+        },
+        "presentation-empty": {
+          "bytes": 838,
+          "sha256": "9d8d10ece66e19b4e35f60ca68a0404fa990a5ebaccc8ef41427fb4b8ec7889b"
+        },
+        "presentation-first": {
+          "bytes": 7571604,
+          "sha256": "1be8aec2cf0ecae73f7668153c12b540e7499d5752c46025ef8442742a2e5090"
+        }
+      }
+    }
+  },
+  "standalone_word_probes": {
+    "certificate-development": {
+      "seconds": 3.12,
+      "bytes": 564443
+    },
+    "certificate-input": {
+      "seconds": 4.07,
+      "bytes": 758086
+    },
+    "certificate-coverage": {
+      "seconds": 3.97,
+      "bytes": 28258
+    },
+    "certificate-scope-repair": {
+      "seconds": 3.37,
+      "bytes": 50342
+    },
+    "native-requirements": {
+      "seconds": 13.99,
+      "bytes": 2033835
+    },
+    "native-admission": {
+      "seconds": 31.32,
+      "bytes": 922585
+    },
+    "literal-replay": {
+      "seconds": 3.32,
+      "bytes": 52715
+    },
+    "native-histories": {
+      "seconds": 3.82,
+      "bytes": 410973
+    },
+    "native-development": {
+      "seconds": 17.59,
+      "bytes": 30692955
+    },
+    "steering": {
+      "seconds": 24.1,
+      "bytes": 38226571
+    },
+    "steering-empty": {
+      "seconds": 2.52,
+      "bytes": 3873
+    },
+    "steering-first": {
+      "seconds": 16.01,
+      "bytes": 7573350
+    },
+    "source": {
+      "seconds": 35.44,
+      "bytes": 61315261
+    },
+    "source-empty": {
+      "seconds": 2.77,
+      "bytes": 838
+    },
+    "source-first": {
+      "seconds": 10.33,
+      "bytes": 7571604
+    },
+    "workflow": {
+      "seconds": 3.42,
+      "bytes": 570106
+    },
+    "workflow-requirements": {
+      "seconds": 4.42,
+      "bytes": 734369
+    },
+    "workflow-input-scope": {
+      "seconds": 2.42,
+      "bytes": 5996
+    },
+    "workflow-expanded": {
+      "seconds": 5.02,
+      "bytes": 1308854
+    },
+    "native-evaluation": {
+      "seconds": 2.52,
+      "bytes": 49659
+    },
+    "native-extensions": {
+      "seconds": 2.02,
+      "bytes": 14139
+    },
+    "native-sources": {
+      "seconds": 2.67,
+      "bytes": 19257
+    },
+    "requirement-plans": {
+      "seconds": 1.42,
+      "bytes": 38991
+    },
+    "requirement-sources": {
+      "seconds": 1.62,
+      "bytes": 6235
+    },
+    "builtin-investigations": {
+      "seconds": 1.27,
+      "bytes": 25624
+    },
+    "native-child": {
+      "seconds": 6.63,
+      "bytes": 7569375
+    }
+  },
+  "storage_families": {
+    "allocated-environments": {
+      "paired_seconds": 3.37,
+      "word_only_seconds": 2.17
+    },
+    "artifact-lookup": {
+      "paired_seconds": 2.47,
+      "word_only_seconds": 1.67
+    },
+    "cached-grafts": {
+      "paired_seconds": 4.53,
+      "word_only_seconds": 2.52
+    },
+    "data-reading": {
+      "paired_seconds": 4.77,
+      "word_only_seconds": 3.72
+    },
+    "digit-allocation": {
+      "paired_seconds": 3.97,
+      "word_only_seconds": 2.72
+    },
+    "encoded-environments": {
+      "paired_seconds": 4.72,
+      "word_only_seconds": 3.22
+    },
+    "environment-grafts": {
+      "paired_seconds": 3.37,
+      "word_only_seconds": 1.97
+    },
+    "environment-updates": {
+      "paired_seconds": 2.82,
+      "word_only_seconds": 2.07
+    },
+    "generation-records": {
+      "paired_seconds": 5.68,
+      "word_only_seconds": 2.77
+    },
+    "graft-admission": {
+      "paired_seconds": 3.77,
+      "word_only_seconds": 2.22
+    },
+    "use-allocation": {
+      "paired_seconds": 3.02,
+      "word_only_seconds": 2.07
+    },
+    "use-codecs": {
+      "paired_seconds": 3.67,
+      "word_only_seconds": 1.97
+    }
+  },
+  "native_child_host_agreement": {
+    "guided_cases": 18,
+    "claim_table_controls": 9,
+    "paired_projections": 27,
+    "fibre_controls": 5,
+    "application_targets": 1,
+    "boundary": "Formation, residual goals and application counts of every guided construction, every control truth vector and local truth, every projection size, fibre and application target count computed from the native report equal those of the host stages in the same words cycle."
+  },
+  "boundary": "Every recipe now executes proved report presentations and the host retains only the packed word size and SHA-256. Nineteen families were first paired with their unchanged original comparisons in one accepted cycle, then retired; the twelve storage families accepted as paired earlier were retired after their comparisons passed again with the changed exports. Recipe seconds come from cycles with six concurrent jobs and are observed costs, not controlled ratios. Standalone probe seconds ran outside the cycles. Presentation contracts are injectivity only; each word identifies its presented report exactly."
+}

@@ -181,7 +181,8 @@ class ExecutionBoundaryTests(unittest.TestCase):
             'recipes': {'family': {'status': 'reused', 'exit_code': 0, 'seconds': 0.0}},
             'host_tests': {'tools': {'exit_code': 0, 'ran': 1, 'skipped': 0}}}))
         with patch.object(checker, 'recipes', return_value=[{'name': 'family'}]), \
-                patch.object(checker.proof_contexts, 'CONTEXT_FILE', 'accepted-context.json'):
+                patch.object(checker.proof_contexts, 'CONTEXT_FILE', 'accepted-context.json'), \
+                patch('builtins.print'):
             checker.retain(output)
         verified = json.loads((target / 'family-verified.json').read_text())
         self.assertEqual(verified['report_boundaries'], reports)

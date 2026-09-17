@@ -1,44 +1,44 @@
 # Making native development and validation fast
 
-Updated 2026-09-17 from the accepted execution-reuse and proof-cost batch.
+Updated 2026-09-17 from the accepted native presentation migration.
 Superseded measurements remain historical evidence in their retained files.
 
 ## Current result
 
-**The current batch passed in 373.03 s.** It covers **1,648 theories** and all
-**50 recipe boundaries**. The proof rebuilt 981 contexts over 667 reused contexts
-in 295.93 s. **38 recipes reused accepted executions** whose complete execution
-boundaries were unchanged; the 12 recipes without a recorded boundary executed.
-Recipes and both host suites took 57.62 s: 152 tool tests and 35 kernel tests
-(two optional skips). The inventory retains **2,603 physical report records**.
+**Every recipe now executes only proved report presentations.** The accepted
+workspace has **1,670 theories** and **50 recipe boundaries** whose 57 execution
+stages each run one exported report value and retain the size and SHA-256 of its
+packed digit word; 152 tool tests and 35 kernel tests (two optional skips) pass.
+The inventory retains **57 report records**, down from 2,603 physical host records.
+No recipe runs a host renderer, host comparison, request roundtrip or host
+re-derivation of native results.
 
-The preceding accepted cycle took 663.11 s for 219 rebuilt contexts: 128.24 s of
-proof and 487.63 s of recipes and host suites with 39 executed recipes. This batch
-changed 325 theories and removed one, so its proof covered four times as many contexts; its
-recipe phase fell by 88 % because unchanged programs were not executed again.
-The schedules differ, so these are observed costs, not a controlled ratio.
-
-| Current measured boundary | Result |
+| Accepted cycle | Result |
 |---|---|
-| Complete affected validation | 373.03 s; 38 reused executions, 12 executed recipes and both host suites. Six outer jobs. |
-| Base and dependency checks | 0.90 s. |
-| Incremental proof | 295.93 s wrapper; session 247.10 s elapsed, 1,617.94 s CPU, 198.05 s GC; 981 rebuilt contexts. |
-| Recipe input comparison | 4.31 s. |
-| Export | 3.32 s for all 50 modules from their actual provider sessions. |
-| Execution boundary comparison | 1.51 s. |
-| Recipe execution and host suites | 57.62 s. |
-| Same 981 theories, previous full proof | 4,052.5 command seconds; now 1,710.2. `export_code` fell from 1,622 to 326. |
-| Previous complete source proof | 830.44 s wrapper; 778.74 s session elapsed, 4,846 s CPU, 1,365 s GC, parallel_proofs=0. Not re-measured. |
+| Native computation refinements | 252.0 s; 98 rebuilt contexts in 54.88 s proof; 48 executed and 2 reused recipes with both host suites in 172.71 s. |
+| Nineteen new presentations paired with their original comparisons | 308.62 s; 164 rebuilt contexts in 66.18 s proof; 49 executed recipes and both host suites in 212.81 s; every comparison and word passed. |
+| Nineteen families as words alone, native child paired | 156.63 s; 3 contexts in 21.45 s; 19 executed recipes and host suites in 103.18 s. |
+| Native child as words alone | 25.43 s; 1 executed recipe. |
+| Twelve storage families retire their paired comparisons | 24.57 s; 12 executed recipes and host suites in 5.39 s. |
+
+Under six concurrent jobs, the refinements reduced digit replay from 322.78 s to
+142.67 s, decision replay from 143.27 s to 9.98 s, native certificate replay from
+133.67 s to 7.73 s, the five history families from 167–238 s to 55–70 s, history
+index from 123.28 s to 50.65 s and certified causes from 57.30 s to 35.69 s.
+Schedules and concurrency differ between cycles, so these are observed costs, not
+controlled ratios.
 
 The [current inventory](validation/reconstruction/current-verified.json),
 [incremental receipt](validation/incremental-check.json) and
-[cycle measurements](validation/reconstruction/execution-reuse-cycle-measurements.json)
-bind the accepted result. The earlier [storage cycle](validation/reconstruction/storage-current-cycle-measurements.json),
+[migration measurements](validation/reconstruction/native-presentation-migration-measurements.json)
+bind the accepted result. The [execution reuse cycle](validation/reconstruction/execution-reuse-cycle-measurements.json),
+[storage cycle](validation/reconstruction/storage-current-cycle-measurements.json),
 [staged digit comparison](validation/reconstruction/staged-digit-reuse-measurements.json),
 [direct proof measurements](validation/reconstruction/direct-bootstrap-proof-measurements.json)
 and [full-source measurements](validation/reconstruction/storage-cold-proof-measurements.json)
-retain their scopes. Practical gate 5a, complete edit-to-commit attribution,
-remaining coverage and actual native-driven development remain open.
+retain their scopes. A complete source proof has not been repeated. Practical
+gate 5a, complete edit-to-commit attribution, remaining coverage and actual
+native-driven development remain open.
 
 ## Reusing accepted executions
 
@@ -145,10 +145,14 @@ The report's source rows also rebuild the original history cases from which its
 packet contexts were already constructed. The same guards, sorts and row conversions occur in digit,
 decision and certificate replay, history index and the development exports.
 
-`Factor_Formation_Once_Readings` already establishes formation once per bounded
-term and pattern traversal. The next structural step is to establish it once per
-environment value and share constructed cases between packet and presentation,
-using existing exact equations and complete-result contracts.
+`Factor_Formation_Once_Readings` establishes formation once per bounded term and
+pattern traversal. `Factor_Recovered_Graph_Sharing` recovers each proof graph from
+its node rows with one edge closure instead of recomputing sites per row, and
+establishes node row, slot and demand formation once. `Parallel_History_Source_Rows`
+and `Parallel_Presented_Investigations` compute independent history source rows,
+presented assessment rows and truth rows through exact parallel map equations.
+`Indexed_Term_Words` computes the first-occurrence artifact reference indices of a
+shared word once. Each is an exact code equation; every affected word is unchanged.
 
 **Existing refinements.** `Parallel_Inspection_Caches` prepares actual distinct
 reader keys under the complete computed-function contract and retains the original
@@ -167,56 +171,60 @@ evidence prevents repeating them without new evidence.
 
 ## Complete report words
 
-Presentations compose named notions through existing pair, sequence, finite
-collection and optional-value contracts. Stores use their original views.
-Coordinates, addresses and indices retain distinct meanings. Canonical ordering
-identifies a presentation; it is not invariance of programs that observe order.
-Shared artifact tables retain complete values, and the host only packs native bits
-and checks the complete boundary.
+Each notion has an independently defined presentation class whose local contract is
+injectivity (`injective_presentation_class`); a composite presentation uses only the
+contracts of its parts, and each report theorem only the composite's contract. Any
+presentation may therefore be replaced by another member of its class without
+changing any other proof. Presentations compose parameterized generic notions and
+specialize them: indexed rows, subject reports, subject assessment and development
+cycle packets and investigation outcomes in `Finite_Presented_Investigations`;
+collection differences, observation comparisons, partial result and evidence
+assessments and iteration and witness reviews in `Finite_Presented_Reviews`;
+decision rows, families, contexts and investigation packets in
+`Finite_Presented_Decision_Families`; native source problems, answers, evaluations
+and evidenced results in `Finite_Presented_Native_Programs`; coordinate-parameterized
+calls, applications, rules and readings in `Finite_Presented_Evaluations`; record
+views in `Finite_Viewed_Values`; and workflow and reasoning notions in
+`Finite_Presented_Workflows` and `Finite_Presented_Reasoning`. Earlier presentations
+that are instances of these layers are defined through them with identical terms,
+so their words are unchanged. No new presentation computes an observation of its
+subject; report contents are defined by the presented report.
 
-Thirty-one families have native words: nineteen use words alone and twelve retain
-their original comparisons beside the words. Nineteen recipe families still need
-native words: built-in investigations, the four certificate development families,
-literal replay, native admission, child, development, evaluation, extensions,
-histories, requirements, sources, steering and workflow, requirement plans,
-requirement sources and source development.
+All fifty recipes have native words. The nineteen families migrated in this batch
+were paired with their unchanged original comparisons in one accepted cycle before
+their comparisons, request roundtrips and host fixtures were retired. The native
+child controls, projections and guided constructions are definitions over the
+existing child example; its native summaries equal the former host stages' results.
 
-| Family | Complete word bytes | Last executed recipe seconds |
-|---|---:|---:|
-| required-history | 159,908 | 29.20 |
-| digit-history | 418,306 | 185.05 |
-| known-history | 449,531 | 217.38 |
-| quoted-history | 483,348 | 167.62 |
-| constructed-history | 551,708 | 238.16 |
-| concurrent-history | 555,495 | 211.84 |
-| digit-replay | 20,519,284 | 322.78 |
-| decision-replay | 1,296,760 | 143.27 |
-| native-certificate-replay | 722,239 | 133.67 |
-| history-index | 316,651 | 123.28 |
-| certified-causes | 5,538,773 | 57.30 |
-| native-graphs | 1,000,741 | 33.96 |
-| required-causes | 495,123 | 15.61 |
-| requirement-decisions | 494,768 | 11.31 |
-| native-derivations | 648,713 | 8.18 |
-| native-certificates | 890,378 | 6.43 |
-| native-nodes | 341,007 | 3.37 |
-| indexed-generation | 550,833 | 3.07 |
-| digit-generation | 743,867 | 3.57 |
-| generation-records | 350,679 | 5.97 |
-| encoded-environments | 691,705 | 5.78 |
-| data-reading | 104,639 | 4.77 |
-| cached-grafts | 407,523 | 4.62 |
-| digit-allocation | 346,069 | 3.97 |
-| environment-grafts | 158,937 | 3.77 |
-| graft-admission | 177,251 | 3.77 |
-| use-codecs | 178,732 | 3.67 |
-| environment-updates | 165,530 | 3.57 |
-| allocated-environments | 203,706 | 3.42 |
-| use-allocation | 376,332 | 3.02 |
-| artifact-lookup | 20,000 | 2.57 |
+| Family | Word bytes | Standalone word seconds | Word-only recipe seconds | Preceding host recipe seconds |
+|---|---:|---:|---:|---:|
+| builtin-investigations | 25,624 | 1.27 | 2.37 | 8.68 |
+| certificate-coverage | 28,258 | 3.97 | 4.57 | 6.68 |
+| certificate-development | 564,443 | 3.12 | 3.97 | 8.68 |
+| certificate-input-development | 758,086 | 4.07 | 4.67 | 11.68 |
+| certificate-scope-repair | 50,342 | 3.37 | 4.12 | 7.02 |
+| literal-replay | 52,715 | 3.32 | 4.22 | 7.47 |
+| native-admission | 922,585 | 31.32 | 60.19 | 41.79 |
+| native-child | 7,569,375 | 6.63 | 6.88 | reused |
+| native-development | 30,692,955 | 17.59 | 42.86 | 28.06 |
+| native-evaluation | 49,659 | 2.52 | 3.82 | 3.53 |
+| native-extensions | 14,139 | 2.02 | 3.17 | 2.32 |
+| native-histories | 410,973 | 3.82 | 4.32 | 7.33 |
+| native-requirements | 2,033,835 | 13.99 | 42.69 | 17.90 |
+| native-sources | 19,257 | 2.67 | 4.17 | 3.62 |
+| native-steering | 45,803,794 | 42.63 | 50.76 | 66.38 |
+| native-workflow | 2,619,325 | 15.28 | 13.22 | 53.65 |
+| requirement-plans | 38,991 | 1.42 | 2.07 | reused |
+| requirement-sources | 6,235 | 1.62 | 2.47 | 2.32 |
+| source-development | 68,887,703 | 48.54 | 69.08 | 113.30 |
 
-The last twelve rows are the paired families. Seconds are whole recipe times from
-the preceding cycle, where six jobs ran concurrently; this batch reused them.
+Standalone seconds are single word probes outside the cycles; recipe seconds ran
+with six concurrent jobs. Several large development and requirement words take
+longer than their former host stages: presenting multi-megabyte reports is now the
+dominant cost there, which the presentation contracts allow to be optimized freely.
+Earlier families keep their recorded words; accepted presentations that attach
+computed row inspections (`Finite_Inspected_Values`, `Finite_Derived_Values`) remain
+until their words are re-established.
 
 ## Investigation feedback
 
@@ -239,8 +247,10 @@ The useful remaining groups are:
    contracts, and require a completed beneficial execution with identical words.
 2. Measure a complete source proof under forked proofs and the reduced code checks;
    decide thread counts from the CPU-bound statistics.
-3. Finish native presentation for the remaining nineteen families, reusing existing
-   notion contracts. Preserve complete old/new comparisons before retiring stages.
+3. Optimize presentation implementations under their contracts: replace slow
+   presentations of large reports by faster members of the same classes, remove
+   derived inspections from the earlier row presentations, and deepen the remaining
+   flat earlier presentations, re-establishing each changed word once.
 4. Complete the non-recipe coverage audit and its executions. The
    [syntactic inventory](validation/reconstruction/validation-entrypoint-inventory.json)
    lists CLI tools and modes without direct recipe execution.

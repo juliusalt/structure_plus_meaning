@@ -73,9 +73,41 @@ next
   show ?case using Cons.IH[of next_table] kept by (simp add: step case_prod_unfold Let_def)
 qed
 
+lemma value_reference_sequence_append:
+  "value_reference_sequence (xs@ys) T=(let (is,U)=value_reference_sequence xs T;
+    (js,V)=value_reference_sequence ys U in (is@js,V))"
+  by (induction xs arbitrary: T) (simp_all add: case_prod_unfold Let_def)
+
+lemma value_reference_step_distinct:
+  "distinct T \<Longrightarrow> distinct (snd (value_reference_step x T))"
+  by (auto simp: value_reference_step_def value_reference_index_absent split: option.splits)
+
+lemma value_reference_sequence_distinct:
+  "distinct T \<Longrightarrow> distinct (snd (value_reference_sequence xs T))"
+proof (induction xs arbitrary: T)
+  case (Cons x xs)
+  show ?case
+    using Cons.IH[OF value_reference_step_distinct[OF Cons.prems, of x]]
+    by (simp add: case_prod_unfold Let_def)
+qed simp
+
+lemma value_reference_index_distinct_read:
+  assumes distinct: "distinct T" and read: "value_reference_read T i=Some x"
+  shows "value_reference_index x T=Some i"
+proof -
+  have bound: "i<length T" and at: "T!i=x" using read by (auto simp: value_reference_read_def split: if_splits)
+  obtain j where found: "value_reference_index x T=Some j"
+    using value_reference_index_absent[of x T] at bound nth_mem by (cases "value_reference_index x T") auto
+  have jj: "j<length T" "T!j=x" using value_reference_index_read[OF found] by simp_all
+  have "j=i" using nth_eq_iff_index_eq[OF distinct jj(1) bound] jj(2) at by simp
+  then show ?thesis using found by simp
+qed
+
 text \<open>Each reference recovers the complete supplied value. Later insertions
   preserve every earlier reference, and decoding an entire reference sequence
   recovers the original ordered sequence exactly. The table may start with
-  arbitrary values or duplicates; no cache-supplied assertion is trusted.\<close>
+  arbitrary values or duplicates; no cache-supplied assertion is trusted.
+  Sequences compose over appended values, a table built from distinct values
+  stays distinct, and in such a table every returned index is the first one.\<close>
 
 end

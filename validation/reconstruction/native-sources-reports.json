@@ -1,21 +1,12 @@
 {
   "version": 1,
   "reports": {
-    "observations": {
-      "records": 11,
+    "presentation": {
+      "records": 1,
       "tags": {
-        "SOURCE_INPUT": 7,
-        "SOURCE_INVESTIGATION": 3,
-        "SOURCE_TABLE": 1
+        "PRESENTED_REPORT_WORD": 1
       },
-      "sha256": "32209a0fba66f97826bafb661495bf8d9018a2905fe9f12196e2ed8e5dd90c86"
-    },
-    "extensions": {
-      "records": 12,
-      "tags": {
-        "SOURCE_EXTENSION": 12
-      },
-      "sha256": "5b87faf539e90a131a592d3d2041189f2430899013be302dfa1db7738a8f0c78"
+      "sha256": "0bd753a0df05b22345f1e68b704eb7747f7ce9e8bf91a68eb3f448edc17b8fda"
     }
   }
 }

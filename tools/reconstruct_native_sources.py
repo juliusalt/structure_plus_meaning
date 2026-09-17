@@ -3,19 +3,15 @@ from reconstruction import Execution, Recipe, main
 
 
 RECIPE = Recipe(
-    name="native-sources",
-    roots=("Native_Source_Execution",),
-    export="Native_Source_Execution:native_sources.ML",
-    session="Native_Source_Reconstruction",
-    groups=((Execution("observations", "check_source_observations.py", ("--project", "{project}"), 900),
-             Execution("extensions", "check_source_extensions.py", ("--project", "{project}"), 1800)),),
-    boundary=("A run without --proof rebuilds the complete source and extension contracts from HOL. "
-              "Native readers derive observations on the actual complete inputs; the existing investigation "
-              "computes revisions and re-evaluates them. The source-checking constructor derives its complete "
-              "source premise from each actual environment, then extends the package under the same universal "
-              "meaning and preservation theorem. Every complete report is compared. Arbitrary alpha-model "
-              "search, the whole development protocol, its cost account and genesis remain open."))
+    name='native-sources',
+    roots=('Native_Source_Execution',),
+    export='Native_Source_Execution:native_sources.ML',
+    session='Native_Source_Reconstruction',
+    groups=((
+        Execution('presentation', 'check_presented_report.py', ('--project', '{project}', '--theory', 'Native_Source_Execution', '--module', 'Native_Source_Execution', '--report', 'native_source_report_value', '--scope', 'native_source_example_indices', '--selections', 'native_source_report_selections', '--workers', '4', '--timeout', '1200'), 1300),
+    ),),
+    boundary='A run without --proof rebuilds the complete source and extension contracts from HOL. Native readers derive observations on the actual complete inputs; the existing investigation computes revisions and re-evaluates them. The source-checking constructor derives its complete source premise from each actual environment, then extends the package under the same universal meaning and preservation theorem. Every complete report is compared. Arbitrary alpha-model search, the whole development protocol, its cost account and genesis remain open.')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     raise SystemExit(main(RECIPE, __file__))

@@ -1,10 +1,12 @@
 theory Requirement_Source_Execution
   imports Factor_Native_Requirement_Cases Factor_Requirement_Source_Boundary Native_Execution_Refinements
+    Requirement_Plan_Presentation
 begin
 
 section \<open>The complete source-boundary and native installation observations\<close>
 
-export_code requirement_source_boundary_report retained_clause_control_report native_guard_source_meaning_report
+export_code requirement_source_boundary_report requirement_source_report_value retained_clause_indices
+  source_requirement_variants finite_term_shared_word_fold retained_clause_control_report native_guard_source_meaning_report
   source_requirement_plan_report
   Pair_Admission_Instruction List_Admission_Instruction
   finite_schema_conclusion finite_schema_premises finite_schema_materials

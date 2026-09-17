@@ -1698,3 +1698,21 @@ checks for constants without such an execution remain. The definitionally
 identical concurrent-replay recipe was retired. These are bootstrap validation
 refinements; they do not supply native selection or native mathematical-proof
 admission. See [current measurements](native_mechanism_speedup.md).
+
+## Native presentation of every recipe report
+
+Every recipe now retains only the digit word of a proved report presentation. The
+last nineteen host-rendered families present their existing report packets through
+parameterized generic notions: indexed rows, subject reports, subject assessment and
+development-cycle packets, collection differences, observation comparisons, partial
+result and evidence assessments, iteration and witness reviews, decision families,
+native source problems, evidenced results, coordinate-parameterized program readings,
+record views, workflow notions and natural reasoning notions. Earlier presentations
+that are instances of these notions are defined through them with identical terms.
+Each presentation states only injectivity, so it can be replaced by another member of
+its class. Graph recovery, node-row formation, history source rows, presented
+assessment rows and word reference indices gained exact sharing and parallel code
+equations. All pairs passed before the comparisons, request roundtrips and host
+fixtures were retired. These are bootstrap presentation and execution refinements;
+they do not supply native selection or native mathematical-proof admission. See
+[current measurements](native_mechanism_speedup.md).

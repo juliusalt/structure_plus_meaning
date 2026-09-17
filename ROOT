@@ -1295,6 +1295,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Presented_Coordinates
     Finite_Presented_Structures
     Finite_Presented_Investigations
+    Finite_Presented_Reviews
     Finite_Presented_Histories
     Finite_Term_Words
     Required_History_Presentation
@@ -1604,10 +1605,15 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Investigation_Basis_Sharing
     Factor_Invariant_Evaluation_Sharing
     Factor_Formation_Once_Readings
+    Factor_Recovered_Graph_Sharing
+    Parallel_History_Source_Rows
+    Parallel_Presented_Investigations
+    Indexed_Term_Words
     Factor_Join_Reading_Conditions
     Finite_Presented_Programs
     Finite_Presented_Graphs
     Finite_Presented_Replays
+    Finite_Presented_Native_Programs
     Finite_Presented_Assessments
     Digit_Replay_Presentation
     Finite_Presented_Decisions
@@ -1628,11 +1634,27 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Indexed_Generation_Presentation
     Digit_Generation_Presentation
     Finite_Inspected_Values
+    Finite_Presented_Decision_Families
     Finite_Presented_Cause_Families
     Native_Replay_Presentation
     Requirement_Decision_Presentation
     Required_Cause_Presentation
     Certified_Cause_Presentation
+    Native_History_Presentation
+    Certificate_Cycle_Presentation
+    Requirement_Admission_Presentation
+    Literal_Replay_Presentation
+    Finite_Viewed_Values
+    Finite_Presented_Workflows
+    Development_Presentation
+    Workflow_Presentation
+    Finite_Presented_Evaluations
+    Evaluation_Presentation
+    Native_Package_Presentation
+    Requirement_Plan_Presentation
+    Builtin_Investigation_Presentation
+    Finite_Presented_Reasoning
+    Native_Child_Presentation
     Concurrent_History_Presentation
     Concurrent_Replay_Presentation
     Parallel_Inspection_Caches

@@ -1,16 +1,12 @@
 {
   "version": 1,
   "reports": {
-    "comparison": {
-      "records": 7,
+    "presentation": {
+      "records": 1,
       "tags": {
-        "SCOPE_REPAIR_ASSESSMENT": 1,
-        "SCOPE_REPAIR_COMPARISON": 1,
-        "SCOPE_REPAIR_INVESTIGATION": 3,
-        "SCOPE_REPAIR_SCOPE": 1,
-        "SCOPE_REPAIR_SUBJECT": 1
+        "PRESENTED_REPORT_WORD": 1
       },
-      "sha256": "ec47a30a73d69c72b86955ce7a1221d8baec94233b06c49c90f3cf38b2cac71b"
+      "sha256": "e4d633d9a794d43c37143abcbe18671a65ac21b0f3b1aa97388eea560f41ac4f"
     }
   }
 }

@@ -70,14 +70,20 @@ qed
 
 section \<open>Certificates, subjects and result rows compose those presentations\<close>
 
+definition finite_native_schema_proof_value ::
+  "(local_address,local_address,local_address) finite_schema_proof \<Rightarrow> finite_factor_term" where
+  "finite_native_schema_proof_value=finite_proof_value Finite_Payload (finite_pair_presentation Finite_Payload id) Finite_Payload"
+
+lemma finite_native_schema_proof_value_injective [intro]: "inj finite_native_schema_proof_value"
+  unfolding finite_native_schema_proof_value_def
+  by (intro finite_proof_value_injective finite_pair_presentation_injective finite_payload_injective inj_on_id)
+
 definition finite_history_certificate_value :: "required_history_certificate \<Rightarrow> finite_factor_term" where
-  "finite_history_certificate_value=finite_pair_presentation finite_call_value
-    (finite_proof_value Finite_Payload (finite_pair_presentation Finite_Payload id) Finite_Payload)"
+  "finite_history_certificate_value=finite_pair_presentation finite_call_value finite_native_schema_proof_value"
 
 lemma finite_history_certificate_value_injective [intro]: "inj finite_history_certificate_value"
   unfolding finite_history_certificate_value_def
-  by (intro finite_pair_presentation_injective finite_call_value_injective finite_proof_value_injective
-      finite_payload_injective inj_on_id)
+  by (intro finite_pair_presentation_injective finite_call_value_injective finite_native_schema_proof_value_injective)
 
 definition finite_history_subject_value ::
   "(required_history_certificate option\<times>required_history_subject option) \<Rightarrow> finite_factor_term" where

@@ -29,7 +29,7 @@ BOUNDARY = ('The exported report value presents the complete report through the 
 
 def program(engine, inputs, word):
     """Stream the proved word of one report value into a byte file."""
-    report = 'N.' + inputs['report'] + ' N.' + inputs['scope'] + ' N.' + inputs['selections']
+    report = ' '.join('N.' + inputs[name] for name in ['report', 'scope', 'selections'] if inputs[name] is not None)
     return ('use ' + investigate.ml_string(str(engine)) + ';\n'
             'structure N = ' + inputs['module'] + ';\n'
             'val stream = BinIO.openOut ' + investigate.ml_string(str(word)) + ';\n'
@@ -57,8 +57,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ['proof', 'poly', 'project', 'output']:
         parser.add_argument('--' + name, type=Path, required=True)
-    for name in ['module', 'report', 'scope', 'selections']:
+    for name in ['module', 'report', 'scope']:
         parser.add_argument('--' + name, required=True)
+    parser.add_argument('--selections', help='Second argument of the report value; omitted for a report of its scope alone.')
     parser.add_argument('--theory', help='Exporting Isabelle theory; defaults to the ML module name.')
     parser.add_argument('--workers', type=int, default=16)
     parser.add_argument('--timeout', type=int, default=2400)
@@ -69,7 +70,8 @@ def main():
     theory = args.theory or args.module
     assert MODULE.fullmatch(theory)
     assert 1 <= args.workers <= 16
-    assert all(CONSTANT.fullmatch(getattr(args, name)) for name in ['report', 'scope', 'selections'])
+    assert all(CONSTANT.fullmatch(getattr(args, name)) for name in ['report', 'scope'])
+    assert args.selections is None or CONSTANT.fullmatch(args.selections)
     output, poly = args.output.resolve(), args.poly.resolve()
     proof_path = args.proof.resolve()
     proof, engine, sources = proved_code.proved_export(proof_path, required_theories=[theory],

@@ -9,6 +9,7 @@ theory Native_Execution_Refinements
     Finite_Collection_Subset_Execution Finite_Filtered_Keyed_Products
     RRA_Linked_Record_Candidates Finite_Investigation_Basis_Sharing Factor_Finite_Judgment_Reading_Sharing
     Factor_Invariant_Evaluation_Sharing Factor_Formation_Once_Readings Factor_Join_Reading_Conditions
+    Factor_Recovered_Graph_Sharing Parallel_Presented_Investigations Indexed_Term_Words
 begin
 
 text \<open>The export boundary consumes the existing complete-result refinements.

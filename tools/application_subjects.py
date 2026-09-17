@@ -1,5 +1,5 @@
 """Complete application subjects shared by construction and observation adapters."""
-import investigate
+import execution_support as investigate
 import check_reasoning as review
 
 def ml_application(row):

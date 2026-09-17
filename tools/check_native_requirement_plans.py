@@ -5,7 +5,7 @@ import json
 
 import check_reasoning
 import admission_plan_json
-import investigate
+import execution_support as investigate
 import machine_reports
 import proved_code
 

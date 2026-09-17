@@ -8,7 +8,7 @@ import platform
 import subprocess
 
 from evidence_io import digest, write_json
-import investigate
+import execution_support as investigate
 
 
 STAGE_TOOLS = (

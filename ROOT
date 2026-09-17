@@ -1628,3 +1628,14 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     History_Index_Presentation
     Indexed_Generation_Presentation
     Digit_Generation_Presentation
+    Finite_Inspected_Values
+    Finite_Presented_Cause_Families
+    Native_Replay_Presentation
+    Requirement_Decision_Presentation
+    Required_Cause_Presentation
+    Certified_Cause_Presentation
+    Concurrent_History_Presentation
+    Concurrent_Replay_Presentation
+    Parallel_Inspection_Caches
+    Parallel_Replay_Readers
+    Builtin_Investigation_Execution

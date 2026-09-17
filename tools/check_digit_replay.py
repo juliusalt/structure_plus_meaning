@@ -8,7 +8,7 @@ import cause_reading_json
 import check_native_certificates as shared
 import generation_program_json
 import history_program_json
-import investigate
+import execution_support as investigate
 import machine_reports
 import native_cause_json
 import native_replay_json

@@ -1,5 +1,5 @@
 """Serialize complete artifact rows as arguments to the proved finite constructor."""
-import investigate
+import execution_support as investigate
 
 
 def word(values):

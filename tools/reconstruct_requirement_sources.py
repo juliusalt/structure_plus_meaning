@@ -4,7 +4,7 @@ from reconstruction import Execution, Recipe, main
 
 RECIPE = Recipe(
     name="requirement-sources",
-    roots=("Requirement_Source_Execution",),
+    roots=('Requirement_Source_Execution', 'Retained_Clause_Execution', 'Factor_Requirement_Source_Examples'),
     export="Requirement_Source_Execution:requirement_sources.ML",
     session="Requirement_Source_Reconstruction",
     groups=((

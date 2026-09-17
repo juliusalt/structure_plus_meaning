@@ -3,7 +3,7 @@ from pathlib import Path
 import argparse
 import json
 
-import investigate
+import execution_support as investigate
 import machine_reports
 import proved_code
 import check_reasoning

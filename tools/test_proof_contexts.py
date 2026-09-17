@@ -9,7 +9,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-import investigate
+import execution_support as investigate
 import proof_contexts as contexts
 
 

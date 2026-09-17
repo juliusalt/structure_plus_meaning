@@ -4,7 +4,7 @@ from reconstruction import Execution, Recipe, main
 
 RECIPE = Recipe(
     name="native-child",
-    roots=("Inference_Claim_Input_Execution",),
+    roots=('Inference_Claim_Input_Execution', 'Factor_Executable_Environment_Values'),
     export="Inference_Claim_Input_Execution:inference_claim_input.ML",
     session="Native_Child_Reconstruction",
     groups=(

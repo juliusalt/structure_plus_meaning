@@ -1,0 +1,20 @@
+{
+  "status": "verified",
+  "source": "/tmp/native-support-final-cycle-1789618024247222963/recipes",
+  "archive": "/tmp/native-support-final-cycle-1789618024247222963-recipes.tar.gz",
+  "archive_sha256": "c839e2013f2f19a3a9032832cf01bc6dc20deae772076d228526c8442fd2279f",
+  "archive_bytes": 787075236,
+  "expanded_file_bytes": 3307250433,
+  "files_or_links": 48311,
+  "inventory_sha256": "a042b40dbbe7f165bb9b66203c3540083a3750d7bac6e75a591b3ac583da5252",
+  "restore": [
+    "tar",
+    "-xzf",
+    "/tmp/native-support-final-cycle-1789618024247222963-recipes.tar.gz",
+    "-C",
+    "/tmp"
+  ],
+  "boundary": "Every file content, size and symbolic link was verified against the archive before deleting generated recipe copies. Accepted parent contexts, current exports, manifests, summaries and the original digit comparison word remain in place.",
+  "expanded_copy_removed": true,
+  "seconds": 25.5965556059964
+}

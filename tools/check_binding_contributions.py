@@ -8,7 +8,7 @@ from pathlib import Path
 
 import application_subjects as comparison
 import check_reasoning as review
-import investigate
+import execution_support as investigate
 import proved_code
 
 

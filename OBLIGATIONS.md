@@ -1318,3 +1318,7 @@ The final unchanged-workspace check passed in 11.30 s, retaining all 50 complete
 recipe manifests and 1,624 proof contexts. It ran 144 tool tests and 35 kernel
 tests (two optional skips), with ROOT and orchestration inputs bound through
 retention. The outer recipe limit now matches the requested job count.
+
+## Parallel-reader and complete investigation batch
+
+All 51 recipes and both host suites pass on 1,635 theories; twenty families have native words, fourteen without legacy stages and six paired. The retained inventory has 3,637 records. All thirteen registered investigations are executed in 56 cases, and the actual accepted-export CLI is usable in seconds with original-contract failure controls. This is concrete execution and coverage progress; it does not derive this batch through a native controller or close any obligation row. Conditions 1 and 6, practical 5a, wider coverage, O-85 and genesis remain open; 5b stays deferred.

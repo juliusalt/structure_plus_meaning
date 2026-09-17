@@ -4,7 +4,7 @@ import argparse
 import json
 
 import check_native_certificates
-import investigate
+import execution_support as investigate
 import machine_reports
 import native_certificate_coverage_json
 import observation_contracts

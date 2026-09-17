@@ -21,6 +21,8 @@ import uuid
 
 import build
 import observation_contracts
+from execution_support import (
+    archive_evidence, current_sources, digest, file_hash, import_context, ml_list, ml_nat, ml_string, ml_tuple, natural, require, source_graph, theory_imports)
 
 ROOT = Path(__file__).resolve().parents[1]
 ENGINE_THEORY = "Presentation_Completion_Investigation"
@@ -55,7 +57,7 @@ BUILTIN_CASES = {
         "semantic_boundary": "Every method calls the same learned-schema generator and inference driver. Counter admission is defined by the actual native predicate with a proved code equation. Goal outcomes are independently proved in the original native planner. The quality observations include both soundness and useful settlement. The supplied finite family does not cover all reasoning methods or generalize their mathematical proofs natively."
     },
     "investigation_input": {
-        "theory": "Factor_Investigation_Input_Investigation",
+        "theory": "Factor_Investigation_Input_Investigation_Base",
         "function": "input_investigation",
         "help": "Compare native endpoint restrictions against the complete investigation input",
         "question": "Do the selected native decisions distinguish exactly the complete investigation input, retaining comparison rows outside the candidate scope?",
@@ -117,7 +119,7 @@ BUILTIN_CASES = {
         "semantic_boundary": "Every observation is computed by an actual composition of the exported investigation operations and has an exact contract against independently stated soundness, conservation, language capability, or witness conditions. Successful-condition inclusion is the comparison being investigated. A separate universal theorem proves the recomputed revision meets all four conditions. This finite method comparison does not enumerate every possible development method."
     },
     "observation_tables": {
-        "theory": "Factor_Observation_Table_Investigation",
+        "theory": "Factor_Observation_Table_Investigation_Base",
         "function": "table_investigation",
         "help": "Compare sparse and complete native profile and loss tables",
         "question": "Do the selected native decisions distinguish complete profile and loss tables, including every empty row?",
@@ -143,7 +145,7 @@ BUILTIN_CASES = {
         "semantic_boundary": "The source result values are proved outputs of actual native profile and loss calls. The sparse-reference observation uses actual native nested comparisons. The second observation calls both complete native table calculations on the same declared scope and displayed results. The independent criterion retains every declared row. These executions use proved code equations; native checking of mathematical proofs remains separate."
     },
     "pair_scope": {
-        "theory": "Factor_Pair_Scope_Investigation",
+        "theory": "Factor_Pair_Scope_Investigation_Base",
         "function": "pair_scope_investigation",
         "help": "Compare native pair operations against complete ordered pair coverage",
         "question": "Do the selected native decisions distinguish complete ordered pair coverage?",
@@ -168,7 +170,7 @@ BUILTIN_CASES = {
         "semantic_boundary": "The first observation calls the actual native diagonal operation, whose own meaning remains self pairing. The second calls the complete native Cartesian operation. The independent criterion requires complete ordered pair coverage. These executions use proved code equations; native checking of mathematical proofs remains separate."
     },
     "observation_collections": {
-        "theory": "Factor_Observation_Collection_Investigation",
+        "theory": "Factor_Observation_Collection_Investigation_Base",
         "function": "collection_investigation",
         "help": "Compare complete collections with varying inner profile presentations",
         "question": "Do the selected native comparisons preserve both finite-set levels of observation collections?",
@@ -193,7 +195,7 @@ BUILTIN_CASES = {
         "semantic_boundary": "The source profiles are proved results of the actual native profile operation. Both observations call actual native comparators. The independent subject keeps both finite-set levels. The second comparator composes generic membership, traversals, retained-key and finite-set contracts. These executions use proved code equations; native checking of mathematical proofs remains separate."
     },
     "observation_scope": {
-        "theory": "Factor_Observation_Scope_Investigation",
+        "theory": "Factor_Observation_Scope_Investigation_Base",
         "function": "scope_investigation",
         "help": "Compare native table traversal with complete declared scope admission",
         "question": "Do the selected native decisions distinguish complete observation input admission?",
@@ -218,7 +220,7 @@ BUILTIN_CASES = {
         "semantic_boundary": "Each observation is defined by its actual native call. The independent comparison uses data domains, the original finite observation table formation, and selected-facet inclusion. The complete operation reuses a generic context-admission clause. These executions use proved code equations; native checking of mathematical proofs remains separate."
     },
     "observation": {
-        "theory": "Factor_Observation_Investigation",
+        "theory": "Factor_Observation_Investigation_Base",
         "function": "observation_investigation",
         "help": "Compare output presentations of an actual native observation profile",
         "question": "Do the selected native decisions preserve the represented observation set?",
@@ -245,7 +247,7 @@ BUILTIN_CASES = {
         ),
     },
     "completion": {
-        "theory": "Presentation_Completion_Investigation",
+        "theory": "Presentation_Completion_Investigation_Base",
         "function": "completion_investigation",
         "help": "Compute and compare the linked completion example",
         "question": "Do the selected observations distinguish joint completion feasibility?",
@@ -264,7 +266,7 @@ BUILTIN_CASES = {
         },
     },
     "permission": {
-        "theory": "Factor_Permission_Investigation",
+        "theory": "Factor_Permission_Investigation_Base",
         "function": "permission_investigation",
         "help": "Compute actual program formation and truth observations",
         "question": "Do the selected facets preserve complete formation and truth decisions?",
@@ -293,7 +295,7 @@ BUILTIN_CASES = {
         ),
     },
     "pattern": {
-        "theory": "Factor_Substitution_Investigation",
+        "theory": "Factor_Substitution_Investigation_Base",
         "function": "pattern_investigation",
         "help": "Compute actual substitutions and their two marker observations",
         "question": "Do the selected probes determine the actual substituted patterns?",
@@ -326,7 +328,7 @@ BUILTIN_CASES = {
         ),
     },
     "proof_probes": {
-        "theory": "Factor_Proof_Probe_Investigation",
+        "theory": "Factor_Proof_Probe_Investigation_Base",
         "function": "proof_probes_investigation",
         "help": "Compare finite call probes with complete program decisions",
         "question": "Do the selected call probes determine complete formation and truth agreement?",
@@ -356,7 +358,7 @@ BUILTIN_CASES = {
         ),
     },
     "schema_sockets": {
-        "theory": "Factor_Schema_Socket_Investigation",
+        "theory": "Factor_Schema_Socket_Investigation_Base",
         "function": "schema_sockets_investigation",
         "help": "Compare exact substitutions with socket-free schema observations",
         "question": "Do the selected observations determine an actual substitution between these linked schemas?",
@@ -394,23 +396,6 @@ def builtin_case(kind: str, selected: list[int], collapsed: bool = False) -> dic
         case["collapsed"] = collapsed
         case["scope"]["marker_assignment"] = "All payload markers are [0]" if collapsed else "Variable a has payload marker [a]"
     return case
-
-
-def digest(data: bytes) -> str:
-    return hashlib.sha256(data).hexdigest()
-
-
-def file_hash(path: Path) -> str:
-    return digest(path.read_bytes())
-
-
-def require(condition: bool, message: str) -> None:
-    if not condition:
-        raise ValueError(message)
-
-
-def natural(value) -> bool:
-    return type(value) is int and value >= 0
 
 
 def rows(value, width: int) -> bool:
@@ -468,62 +453,6 @@ def validate_case(case: dict) -> None:
 def verify_evidence(case: dict) -> None:
     for item in case.get("evidence", []):
         require(file_hash(Path(item["path"])) == item["sha256"], f"Evidence changed: {item['path']}")
-
-
-def theory_imports(source: str, name: str) -> list[str]:
-    # Only this repository's deliberately simple theory headers are accepted.
-    # No declaration, proof body, or arbitrary Isabelle syntax is parsed here.
-    match = re.match(r"\s*theory\s+([A-Za-z_][A-Za-z_0-9]*)\s+imports\s+([\s\S]*?)\s+begin\b", source)
-    require(match is not None and match[1] == name, f"Unsupported theory header: {name}")
-    tokens = re.findall(r'"[A-Za-z_][A-Za-z_0-9./-]*"|[A-Za-z_][A-Za-z_0-9.-]*', match[2])
-    require("".join(tokens) == re.sub(r"\s+", "", match[2]), f"Unsupported imports in {name}")
-    return [token.strip('"') for token in tokens]
-
-
-def source_graph(project: Path, overlays: list[Path], roots: list[str]) -> tuple[dict, dict]:
-    inventory = {p.stem: p for p in (project / "theories").glob("*.thy")}
-    for directory in overlays:
-        require(directory.is_dir(), f"Missing overlay directory: {directory}")
-        inventory.update({p.stem: p for p in directory.glob("*.thy")})
-    sources, parents, active = {}, {}, set()
-
-    def visit(name: str) -> None:
-        if name in active:
-            raise ValueError(f"Cyclic theory import: {name}")
-        if name in sources:
-            return
-        if name not in inventory:
-            require(name in {"Main", "HOL", "Pure"} or name.startswith(("HOL.", "HOL-Library.")),
-                    f"Missing local theory: {name}")
-            return
-        active.add(name)
-        path = inventory[name].resolve()
-        data = path.read_bytes()
-        imported = theory_imports(data.decode("utf-8"), name)
-        for parent in imported:
-            visit(parent)
-        active.remove(name)
-        parents[name] = imported
-        sources[name] = {"path": str(path), "sha256": digest(data), "text": data.decode("utf-8")}
-
-    for root in roots:
-        require(root in inventory, f"Missing requested theory: {root}")
-        visit(root)
-    return sources, parents
-
-
-def import_context(parents: dict, name: str) -> set[str]:
-    result = set()
-
-    def visit(node):
-        if node in result or node not in parents:
-            return
-        result.add(node)
-        for parent in parents[node]:
-            visit(parent)
-
-    visit(name)
-    return result
 
 
 def source_case(args) -> dict:
@@ -611,23 +540,6 @@ def run_command(command: list[str], args, receipt: dict, log, seconds: float, *,
         step.update(finished_utc=build.utc_now(), elapsed_seconds=time.monotonic() - started)
 
 
-def current_sources(sources: dict) -> bool:
-    return all(file_hash(Path(item["path"])) == item["sha256"] for item in sources.values())
-
-
-def archive_evidence(output: Path, receipt: dict, role: str, path: Path, expected: str) -> None:
-    data = path.read_bytes()
-    require(digest(data) == expected, f"Evidence changed before archiving: {path}")
-    archive = output / ("evidence-" + receipt["invocation"]) / expected
-    archive.parent.mkdir(parents=True, exist_ok=True)
-    if archive.exists():
-        require(archive.read_bytes() == data, f"Evidence archive changed: {archive}")
-    else:
-        archive.write_bytes(data)
-    receipt.setdefault("evidence_archive", []).append({"role": role, "path": str(path.resolve()),
-        "sha256": expected, "archive": str(archive)})
-
-
 def engine_export(engine_theory: str, kind: str) -> tuple[str, str]:
     name = "Finite_Investigation_Export"
     functions = ["investigation_inference", "investigation_basis", "investigation_repairs",
@@ -645,6 +557,9 @@ def engine_export(engine_theory: str, kind: str) -> tuple[str, str]:
 
 
 def prepare_engine(args, receipt: dict, output: Path, log, kind: str) -> tuple[Path, Path, dict]:
+    if getattr(args, "proof", None) is not None:
+        import proved_investigation
+        return proved_investigation.prepare(args, receipt, output, log, kind)
     version = run_command([args.isabelle, "version"], args, receipt, log, 30).strip()
     engine_theory = BUILTIN_CASES[kind]["theory"] if kind in BUILTIN_CASES else ENGINE_THEORY
     sources, _ = source_graph(ROOT, [], [engine_theory, "Finite_Investigation_Interface"])
@@ -720,36 +635,22 @@ def prepare_engine(args, receipt: dict, output: Path, log, kind: str) -> tuple[P
                 "Engine sources changed during export.")
         receipt.update(generated_engine=str(engine), generated_engine_sha256=file_hash(engine),
                        proof_snapshot_hashes=snapshot_hashes)
+    return engine, select_poly(args, receipt, log), sources
+
+
+def select_poly(args, receipt, log):
     if args.poly:
         poly = args.poly.resolve()
     else:
-        poly_home = run_command([args.isabelle, "getenv", "-b", "POLYML_HOME"], args, receipt, log, 30).strip()
-        require(bool(poly_home), "Isabelle did not identify its Poly/ML installation; pass --poly.")
-        poly = Path(poly_home) / (platform.machine() + "-linux") / "poly"
+        executable = run_command([args.isabelle, "scala", "-e",
+            "print(isabelle.File.platform_path(isabelle.ML_Settings.init().polyml_exe))"],
+            args, receipt, log, 30).strip()
+        require(bool(executable), "Isabelle did not identify its Poly/ML executable; pass --poly.")
+        poly = Path(executable)
     require(poly.is_file() and os.access(poly, os.X_OK), f"Missing executable Poly/ML: {poly}")
     receipt.update(poly=str(poly), poly_sha256=file_hash(poly))
     receipt["poly_version"] = run_command([str(poly), "--version"], args, receipt, log, 30).strip()
-    return engine, poly, sources
-
-
-def ml_string(value: str) -> str:
-    return '"' + "".join(f"\\{byte:03d}" for byte in value.encode("utf-8")) + '"'
-
-
-def ml_list(values, encode) -> str:
-    return "[" + ",".join(encode(value) for value in values) + "]"
-
-
-def ml_nat(value: int) -> str:
-    require(natural(value), "Only natural numbers can be passed as identifiers.")
-    return f"n {value}"
-
-
-def ml_tuple(values) -> str:
-    # Isabelle tuples associate to the right; SML tuples do not.
-    if len(values) == 2:
-        return "(" + ml_nat(values[0]) + "," + ml_nat(values[1]) + ")"
-    return "(" + ml_nat(values[0]) + "," + ml_tuple(values[1:]) + ")"
+    return poly
 
 
 def runtime_program(case: dict, engine: Path, formal_contract: dict | None = None) -> str:
@@ -889,10 +790,21 @@ def run(args, invocation: str, output: Path) -> int:
                 semantic_boundary=contract.get("semantic_boundary", "Results are exact for the supplied finite data. Independent meanings, evidence validity, and wider coverage require their own justification."))
             engine, poly, sources = prepare_engine(args, receipt, output, log, case["kind"])
             program = output / "execute.ML"
-            program.write_text(runtime_program(case, engine, receipt.get("formal_subject_contract")))
+            code = runtime_program(case, engine, receipt.get("formal_subject_contract"))
+            command = [str(poly), "--script", str(program)]
+            if receipt.get("code_target") == "Eval":
+                import native_execution_runtime
+                code, command, runtime_inputs = native_execution_runtime.prepare(
+                    {"code_target": "Eval"}, engine, code, poly, output, workers=args.threads)
+                tracked = {str(path): file_hash(path) for path in runtime_inputs}
+                tracked[str(output / "runtime-command.json")] = file_hash(output / "runtime-command.json")
+                receipt["reused_export_inputs"].update(tracked)
+                for path, sha in tracked.items():
+                    archive_evidence(output, receipt, "accepted native runtime input", Path(path), sha)
+            program.write_text(code)
             receipt["runtime_program_sha256"] = file_hash(program)
             runtime_started = time.monotonic()
-            runtime = run_command([str(poly), "--script", str(program)], args, receipt, log, args.runtime_timeout)
+            runtime = run_command(command, args, receipt, log, args.runtime_timeout)
             receipt["runtime_seconds"] = time.monotonic() - runtime_started
             lines = [line[len("INVESTIGATION_RESULT "):] for line in runtime.splitlines()
                      if line.startswith("INVESTIGATION_RESULT ")]
@@ -903,6 +815,8 @@ def run(args, invocation: str, output: Path) -> int:
             require(current_sources(sources), "Engine source changed during execution.")
             require(all(file_hash(Path(p)) == h for p, h in receipt["tools"].items()), "Investigation tool changed during execution.")
             require(file_hash(engine) == receipt["generated_engine_sha256"], "Generated engine changed during execution.")
+            require(all(file_hash(Path(path)) == sha for path, sha in receipt.get("reused_export_inputs", {}).items()),
+                    "Accepted export or runtime input changed during execution.")
             if "formal_subject_contract" in receipt:
                 contract = receipt["formal_subject_contract"]
                 require(file_hash(Path(contract["path"])) == contract["sha256"],
@@ -955,6 +869,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--isabelle", default="isabelle")
     parser.add_argument("--poly", type=Path)
+    parser.add_argument("--proof", type=Path, help="Reuse an accepted export containing the requested operation and its typed subject contract.")
     parser.add_argument("--threads", type=int, default=min(12, os.cpu_count() or 1))
     parser.add_argument("--build-timeout", type=float, default=300)
     parser.add_argument("--runtime-timeout", type=float, default=60)

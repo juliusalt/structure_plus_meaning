@@ -1,0 +1,28 @@
+{
+  "shared_function_bodies_identical": 13,
+  "reference_revision": "278e568",
+  "cli_dependent_recipes": [
+    "builtin-investigations",
+    "native-child"
+  ],
+  "independent_recipes": 49,
+  "boundary": "Physical Python import closure and exact AST body comparison; no native condition or semantic adequacy is supplied.",
+  "module_source_boundaries": "Each export retains its complete import closure plus explicitly declared client proof roots. Native-child adds Factor_Executable_Environment_Values; requirement-sources adds Retained_Clause_Execution and Factor_Requirement_Source_Examples. These roots are also present in their source-only recipes.",
+  "default_poly_lookup": {
+    "failed_directory": "/tmp/native-main-builtin-proof-reuse",
+    "reason": "ML_HOME is unset in the shell environment; Isabelle computes the actual ML platform in ML_Settings.",
+    "accepted_directory": "/tmp/native-main-builtin-proof-reuse-corrected",
+    "seconds": 2.875396595991333
+  },
+  "pre_separation_cycle": {
+    "output": "/tmp/native-complete-builtin-cycle-1789616826622969812",
+    "seconds": 617.38,
+    "status": "accepted",
+    "boundary": "All 51 recipes used explicit Poly paths. This did not test default executable discovery."
+  },
+  "final_cycle": {
+    "output": "/tmp/native-support-final-cycle-1789618024247222963",
+    "seconds": 481.87,
+    "status": "accepted"
+  }
+}

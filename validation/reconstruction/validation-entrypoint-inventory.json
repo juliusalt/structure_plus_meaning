@@ -1,8 +1,8 @@
 {
   "kind": "syntactic_entry_point_inventory",
-  "source_revision": "4dd813f plus current proof-context tool batch",
-  "recipes": 50,
-  "direct_execution_scripts": 49,
+  "source_revision": "278e568 plus the current parallel-reader, presentation and CLI batch",
+  "recipes": 51,
+  "direct_execution_scripts": 50,
   "client_tools": [
     {
       "tool": "check_allocated_environment.py",
@@ -30,7 +30,9 @@
     },
     {
       "tool": "check_builtin_cases.py",
-      "direct_recipe_callers": []
+      "direct_recipe_callers": [
+        "builtin-investigations"
+      ]
     },
     {
       "tool": "check_cached_grafts.py",
@@ -266,6 +268,9 @@
     {
       "tool": "check_presented_report.py",
       "direct_recipe_callers": [
+        "certified-causes",
+        "concurrent-history",
+        "concurrent-replay",
         "constructed-history",
         "decision-replay",
         "digit-generation",
@@ -273,12 +278,15 @@
         "history-index",
         "indexed-generation",
         "known-history",
+        "native-certificate-replay",
         "native-certificates",
         "native-derivations",
         "native-graphs",
         "native-nodes",
         "quoted-history",
+        "required-causes",
         "required-history",
+        "requirement-decisions",
         "digit-replay"
       ]
     },
@@ -428,7 +436,7 @@
     },
     {
       "name": "investigation_input",
-      "theory": "Factor_Investigation_Input_Investigation",
+      "theory": "Factor_Investigation_Input_Investigation_Base",
       "function": "input_investigation"
     },
     {
@@ -438,54 +446,55 @@
     },
     {
       "name": "observation_tables",
-      "theory": "Factor_Observation_Table_Investigation",
+      "theory": "Factor_Observation_Table_Investigation_Base",
       "function": "table_investigation"
     },
     {
       "name": "pair_scope",
-      "theory": "Factor_Pair_Scope_Investigation",
+      "theory": "Factor_Pair_Scope_Investigation_Base",
       "function": "pair_scope_investigation"
     },
     {
       "name": "observation_collections",
-      "theory": "Factor_Observation_Collection_Investigation",
+      "theory": "Factor_Observation_Collection_Investigation_Base",
       "function": "collection_investigation"
     },
     {
       "name": "observation_scope",
-      "theory": "Factor_Observation_Scope_Investigation",
+      "theory": "Factor_Observation_Scope_Investigation_Base",
       "function": "scope_investigation"
     },
     {
       "name": "observation",
-      "theory": "Factor_Observation_Investigation",
+      "theory": "Factor_Observation_Investigation_Base",
       "function": "observation_investigation"
     },
     {
       "name": "completion",
-      "theory": "Presentation_Completion_Investigation",
+      "theory": "Presentation_Completion_Investigation_Base",
       "function": "completion_investigation"
     },
     {
       "name": "permission",
-      "theory": "Factor_Permission_Investigation",
+      "theory": "Factor_Permission_Investigation_Base",
       "function": "permission_investigation"
     },
     {
       "name": "pattern",
-      "theory": "Factor_Substitution_Investigation",
+      "theory": "Factor_Substitution_Investigation_Base",
       "function": "pattern_investigation"
     },
     {
       "name": "proof_probes",
-      "theory": "Factor_Proof_Probe_Investigation",
+      "theory": "Factor_Proof_Probe_Investigation_Base",
       "function": "proof_probes_investigation"
     },
     {
       "name": "schema_sockets",
-      "theory": "Factor_Schema_Socket_Investigation",
+      "theory": "Factor_Schema_Socket_Investigation_Base",
       "function": "schema_sockets_investigation"
     }
   ],
-  "boundary": "Literal recipe calls and registered built-in investigations only. Transitive imports, theory proofs and a passing recipe do not establish execution of each CLI mode, custom-input path, empty scope, roundtrip or growth case. This inventory is not semantic coverage or adequacy."
+  "builtin_execution_cases": 56,
+  "boundary": "Literal recipe calls and actual built-in execution coverage only. A direct call, transitive import or proof does not establish every CLI mode, custom-input path, empty scope, roundtrip or growth case. Fixed coverage is not semantic adequacy or native development control."
 }

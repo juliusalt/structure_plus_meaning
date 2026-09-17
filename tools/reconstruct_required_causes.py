@@ -7,7 +7,8 @@ RECIPE = Recipe(
     roots=('Required_Cause_Execution',),
     export='Required_Cause_Execution:required_cause.ML',
     session='Reconstruct_required_causes',
-    groups=((Execution('comparison', 'check_required_causes.py', ('--project', '{project}'), 3900),),),
+    groups=((Execution('comparison', 'check_required_causes.py', ('--project', '{project}'), 3900),
+        Execution('presentation', 'check_presented_report.py', ('--project', '{project}', '--theory', 'Required_Cause_Execution', '--module', 'Required_Cause_Execution', '--report', 'required_cause_report_value', '--scope', 'required_cause_indices', '--selections', 'required_cause_report_selections', '--workers', '4', '--timeout', '1200'), 1300),),),
     boundary='The complete original source and requirement family determine the constructed policy and entry. Actual native records, scope and application readings, independent original requirement decisions, all method conditions and revision reasons are reconstructed. Exact policy identity is separate from payload permission and from admitting alternative proved policy realizations. Full workflow policy coverage, enforced transitions, history permission, physical cost and genesis remain open.')
 
 

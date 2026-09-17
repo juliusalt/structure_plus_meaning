@@ -11,7 +11,7 @@ import uuid
 
 import check_reasoning as review
 import finite_presentation_cases as values
-import investigate
+import execution_support as investigate
 import native_execution_runtime
 import proved_code
 import reader_construction_cases as construction

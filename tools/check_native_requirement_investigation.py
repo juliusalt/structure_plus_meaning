@@ -5,7 +5,7 @@ import json
 
 import admission_goal_json
 import check_native_admission
-import investigate
+import execution_support as investigate
 import investigation_json
 import machine_reports
 import native_program_json

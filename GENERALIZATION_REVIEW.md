@@ -2464,3 +2464,7 @@ The final unchanged-workspace check passed in 11.30 s, retaining all 50 complete
 recipe manifests and 1,624 proof contexts. It ran 144 tool tests and 35 kernel
 tests (two optional skips), with ROOT and orchestration inputs bound through
 retention. The outer recipe limit now matches the requested job count.
+
+## Complete native and investigation feedback review
+
+The final 481.87-second cycle passes all 51 recipes, 1,635 theories, 147 tool tests and 35 kernel tests (two optional skips), retaining 3,637 physical records. Every six-family old/new pairing passed without resetting an original boundary. Decision replay and certificate replay complete-word probes took 102.01 and 55.78 seconds with every byte equal; concurrent schedules differ. The independent coverage exercise exposed eleven stale definition-owner registrations and three undeclared client proof roots. Actual typed contracts now match the owners, 56 cases and thirteen CLI invocations pass, and wrong/missing contracts and changed sources fail before execution. A default Poly lookup failure was repaired through Isabelle ML_Settings and verified. Utility factoring preserves thirteen function bodies and makes 49 recipes independent of CLI-only changes. Native problem/approach selection, broader adequacy, real gate 5a, O-85 and genesis remain open; 5b is deferred.

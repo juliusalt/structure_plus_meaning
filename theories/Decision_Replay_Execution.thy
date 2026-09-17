@@ -1,5 +1,5 @@
 theory Decision_Replay_Execution
-  imports Finite_Term_Word_Streaming Decision_Replay_Presentation Factor_Decision_Replay_Sharing Native_Execution_Refinements
+  imports Parallel_Replay_Readers Finite_Term_Word_Streaming Decision_Replay_Presentation Factor_Decision_Replay_Sharing Native_Execution_Refinements
 begin
 
 setup \<open>Finite_Observation_Contracts.export @{term decision_replay_investigation}\<close>

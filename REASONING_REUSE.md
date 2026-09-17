@@ -1662,3 +1662,7 @@ The final unchanged-workspace check passed in 11.30 s, retaining all 50 complete
 recipe manifests and 1,624 proof contexts. It ran 144 tool tests and 35 kernel
 tests (two optional skips), with ROOT and orchestration inputs bound through
 retention. The outer recipe limit now matches the requested job count.
+
+## Parallel readers, complete cause families and reusable investigation exports
+
+Parallel_Inspection_Caches instantiates the existing complete-key computed-function contract before the original inspection map, and preserves the original list-cache order. Both replay cache families reuse it. Finite_Inspected_Values factors retention of an entire value with actual ordered inspections; the generic Boolean decision-family presentation serves both cause families. Six further reports preserve their complete original subjects, optional levels, sources and inspections. Shared execution utilities now have one implementation apart from the CLI, and module exports retain explicit real client proof roots.

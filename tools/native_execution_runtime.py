@@ -2,7 +2,7 @@
 from pathlib import Path
 import json
 
-import investigate
+import execution_support as investigate
 import native_artifact_stream
 
 

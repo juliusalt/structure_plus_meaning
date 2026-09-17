@@ -6,7 +6,7 @@ import json
 import admission_goal_json
 import check_reasoning
 import history_program_json
-import investigate
+import execution_support as investigate
 import investigation_json
 import machine_reports
 import native_certificate_json

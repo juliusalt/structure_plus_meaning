@@ -4,7 +4,7 @@ import argparse
 import json
 
 import check_reasoning
-import investigate
+import execution_support as investigate
 import machine_reports
 import native_program_json
 import program_evaluation_json

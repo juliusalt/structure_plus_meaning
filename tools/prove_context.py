@@ -10,9 +10,10 @@ import re
 import subprocess
 
 import build
-import investigate
+import execution_support as investigate
 import proved_code
 import proof_contexts
+import observation_contracts
 from proof_contexts import accepted_parent
 
 
@@ -48,7 +49,7 @@ def main():
     (output/'helper-sources').mkdir()
     (output/'original-ROOT').write_bytes(original_root)
     helper_inputs = {str(Path(module.__file__).resolve()): investigate.file_hash(Path(module.__file__))
-                     for module in [build, investigate, proved_code, proof_contexts, investigate.observation_contracts]}
+                     for module in [build, investigate, proved_code, proof_contexts, observation_contracts]}
     helper_inputs[str(Path(__file__).resolve())] = investigate.file_hash(Path(__file__))
     for path in helper_inputs:
         (output/'helper-sources'/Path(path).name).write_bytes(Path(path).read_bytes())

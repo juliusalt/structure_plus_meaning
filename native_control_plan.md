@@ -131,6 +131,15 @@ The proof must be an accepted export covering the exact unchanged inputs, not
 a path borrowed from an old receipt. Omitting the lists runs the built-in cases;
 that does not submit a new development problem.
 
+For the thirteen existing registered fixed-subject investigations,
+`Builtin_Investigation_Execution` provides one shared export with all original
+typed contracts. `investigate.py --proof /path/to/builtin_investigations.proof.json`
+executes its existing modes without rebuilding an engine; `--output` and the
+original mode/selection arguments remain explicit. The complete recipe exercises
+56 cases, and the actual CLI modes have matching complete-result checks. Their
+fixed subject languages do not admit this prose plan or derive new development
+questions. Preserve that distinction when using the faster path.
+
 Inspect complete native questions, computations, admissions, residuals and
 refusals. The host receipt's `accepted` status establishes its execution and
 transport checks; it does not mean that every native request was admitted.

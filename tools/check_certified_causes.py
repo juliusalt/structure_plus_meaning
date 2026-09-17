@@ -5,7 +5,7 @@ import json
 
 import admission_goal_json
 import check_native_certificates as shared
-import investigate
+import execution_support as investigate
 import machine_reports
 import native_replay_json
 import native_cause_json

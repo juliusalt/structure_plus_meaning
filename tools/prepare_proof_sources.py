@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 import re
 
-import investigate
+import execution_support as investigate
 
 
 def prepare(project: Path, roots: list[str], output: Path, session: str, timeout: int):

@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 import check_constructed_history
 import check_streamed_digit_replay
 import compressed_native_execution
-import investigate
+import execution_support as investigate
 import observation_contracts
 import shared_artifact_reports
 import shared_object_stream

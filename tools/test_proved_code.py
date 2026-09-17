@@ -7,7 +7,7 @@ from unittest.mock import patch
 from types import SimpleNamespace
 import sys
 
-import investigate
+import execution_support as investigate
 import proved_code
 
 

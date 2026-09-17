@@ -8,7 +8,8 @@ RECIPE = Recipe(
     export='Concurrent_Replay_Execution:concurrent_replay.ML',
     session='Reconstruct_Concurrent_Replay',
     groups=((Execution('comparison', 'check_concurrent_replay.py',
-        ('--project', '{project}', '--workers', '8'), 240),),),
+        ('--project', '{project}', '--workers', '8'), 240),
+        Execution('presentation', 'check_presented_report.py', ('--project', '{project}', '--theory', 'Concurrent_Replay_Execution', '--module', 'Digit_Replay_Execution', '--report', 'concurrent_replay_report_value', '--scope', 'digit_replay_indices', '--selections', 'concurrent_replay_report_selections', '--workers', '4', '--timeout', '1200'), 1300),),),
     fixtures=('tools/compressed_reconstruction_suite.py',),
     boundary='Every original subject, candidate, complete result, observation, comparison and revision '
              'is reconstructed from source under the original subject contract. Native exact sharing, '

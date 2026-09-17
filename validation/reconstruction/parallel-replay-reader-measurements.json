@@ -1,0 +1,288 @@
+{
+  "version": 1,
+  "status": "accepted",
+  "proof_directory": "/tmp/parallel-replay-reader-candidate/proof",
+  "proof_sha256": "c81fb4dcd515b34064379f14959a963d46bab8aeb93b59d4d0f12441cd758379",
+  "stage_diagnostic": {
+    "status": "incomplete",
+    "output": "/tmp/decision-phase-profile-qaf59eu5",
+    "original_engine": "/tmp/context-complete-cycle-1789612365488782338/exports-context/code/Native_Cold_1789607852088028357/Native_Cold_1789607852088028357.Decision_Replay_Execution/code/decision_replay.ML",
+    "original_engine_sha256": "f7ba6e645cf955de9e2b36210e1468da5aac7cc6ba519cd637f956e38c73510f",
+    "exposure": "Only the generated module signature was removed to expose internal functions for physical timing; its entire implementation body is unchanged. This instrumented module is not an adopted export.",
+    "engine": "/tmp/decision-phase-profile-qaf59eu5/diagnostic-engine.ML",
+    "engine_sha256": "703bb61a5753d79fe578e929d0edae21cddec71efc2bcaa5df15086b07e74a4c",
+    "script_sha256": "0964d23c8005b38afa19af2f9e9785eb85580878ace1a087d19af59fe86b862d",
+    "command": [
+      "/usr/bin/env",
+      "USER_HOME=/tmp/decision-phase-profile-qaf59eu5/runtime-home",
+      "/opt/isabelle/bin/isabelle",
+      "ML_process",
+      "-l",
+      "Pure",
+      "-o",
+      "threads=8",
+      "-o",
+      "threads_stack_limit=0",
+      "-f",
+      "/tmp/decision-phase-profile-qaf59eu5/diagnostic-engine.ML",
+      "-f",
+      "/tmp/decision-phase-profile-qaf59eu5/execute.ML"
+    ],
+    "workers": 8,
+    "boundary": "Physical diagnostic of the actual context, query preparation, caches and all twelve candidate cells for each declared context; no condition or selection is supplied by timings.",
+    "outer_timeout_seconds": 150,
+    "seconds": 150.00040311300836,
+    "stage_lines": [
+      "PHASE 8 context 0.041",
+      "PHASE 8 queries 0.000",
+      "PHASE 2 context 0.163",
+      "PHASE 0 context 0.181",
+      "PHASE 12 context 0.184",
+      "PHASE 2 queries 0.043",
+      "PHASE 12 queries 0.026",
+      "PHASE 0 queries 0.051",
+      "PHASE 10 context 0.301",
+      "PHASE 10 queries 0.088",
+      "PHASE 7 context 0.563",
+      "PHASE 7 queries 0.383",
+      "PHASE 22 context 1.189",
+      "PHASE 8 caches 1.205",
+      "PHASE 8 cells 0.000",
+      "PHASE 22 queries 0.360",
+      "PHASE 32 context 0.393",
+      "PHASE 32 queries 0.121",
+      "PHASE 15 context 2.487",
+      "PHASE 0 caches 3.433",
+      "PHASE 0 cells 0.159",
+      "PHASE 62 context 0.000",
+      "PHASE 62 queries 0.000",
+      "PHASE 62 caches 0.000",
+      "PHASE 62 cells 0.000",
+      "PHASE 72 context 0.000",
+      "PHASE 72 queries 0.000",
+      "PHASE 72 caches 0.000",
+      "PHASE 72 cells 0.000",
+      "PHASE 15 queries 1.406",
+      "PHASE 82 context 0.175",
+      "PHASE 82 queries 0.052",
+      "PHASE 2 caches 4.739",
+      "PHASE 2 cells 0.297",
+      "PHASE 12 caches 5.499",
+      "PHASE 10 caches 5.485",
+      "PHASE 12 cells 0.353",
+      "PHASE 10 cells 0.212",
+      "PHASE 82 caches 3.911",
+      "PHASE 82 cells 0.218",
+      "PHASE 32 caches 13.153",
+      "PHASE 32 cells 0.538",
+      "PHASE 22 caches 22.487",
+      "PHASE 22 cells 1.645",
+      "PHASE 7 caches 56.667",
+      "PHASE 7 cells 0.948"
+    ]
+  },
+  "reader_diagnostic": {
+    "status": "incomplete",
+    "output": "/tmp/decision-reader-profile-pfjxrf4g",
+    "original_engine": "/tmp/context-complete-cycle-1789612365488782338/exports-context/code/Native_Cold_1789607852088028357/Native_Cold_1789607852088028357.Decision_Replay_Execution/code/decision_replay.ML",
+    "original_engine_sha256": "f7ba6e645cf955de9e2b36210e1468da5aac7cc6ba519cd637f956e38c73510f",
+    "exposure": "The generated signature is exposed and six original query function bodies are enclosed by timers returning their complete original result. This physical instrumented module is not an adopted export.",
+    "engine": "/tmp/decision-reader-profile-pfjxrf4g/diagnostic-engine.ML",
+    "engine_sha256": "33c4375188ebc5c64b1a031846ac40f73418b8e7a697d372b321fac4cd9abe8d",
+    "script_sha256": "2ead9449f63b85ea31eed0f33d9d1b06b5db61aa5d405d7034e75862396bcb22",
+    "command": [
+      "/usr/bin/env",
+      "USER_HOME=/tmp/decision-reader-profile-pfjxrf4g/runtime-home",
+      "/opt/isabelle/bin/isabelle",
+      "ML_process",
+      "-l",
+      "Pure",
+      "-o",
+      "threads=4",
+      "-o",
+      "threads_stack_limit=0",
+      "-f",
+      "/tmp/decision-reader-profile-pfjxrf4g/diagnostic-engine.ML",
+      "-f",
+      "/tmp/decision-reader-profile-pfjxrf4g/execute.ML"
+    ],
+    "workers": 4,
+    "boundary": "Physical diagnostic of the actual context, query preparation, caches and all twelve candidate cells for each declared context; no condition or selection is supplied by timings.",
+    "outer_timeout_seconds": 100,
+    "seconds": 100.00100878099329
+  },
+  "completed_reader_calls": {
+    "native_replay_reference": {
+      "count": 17,
+      "seconds": 1.7089999999999999,
+      "maximum_seconds": 0.121
+    },
+    "native_replay_source_query": {
+      "count": 26,
+      "seconds": 4.243,
+      "maximum_seconds": 0.425
+    },
+    "native_replay_graph_query": {
+      "count": 13,
+      "seconds": 83.475,
+      "maximum_seconds": 30.147
+    }
+  },
+  "complete_word_probes": [
+    {
+      "status": "accepted",
+      "output": "/tmp/parallel-reader-word-run-ubosn0bf",
+      "probe": "/tmp/parallel-replay-reader-candidate",
+      "engine": "/tmp/parallel-replay-reader-candidate/export/code/Parallel_Replay_Readers_1789614333412891385/Parallel_Replay_Readers_1789614333412891385.Probe_Decision_Parallel/code/decision_replay_parallel.ML",
+      "workers": 8,
+      "profile_time": false,
+      "command": [
+        "/usr/bin/env",
+        "USER_HOME=/tmp/parallel-reader-word-run-ubosn0bf/runtime-home",
+        "/opt/isabelle/bin/isabelle",
+        "ML_process",
+        "-l",
+        "Pure",
+        "-o",
+        "threads=8",
+        "-o",
+        "threads_stack_limit=0",
+        "-f",
+        "/tmp/parallel-replay-reader-candidate/export/code/Parallel_Replay_Readers_1789614333412891385/Parallel_Replay_Readers_1789614333412891385.Probe_Decision_Parallel/code/decision_replay_parallel.ML",
+        "-f",
+        "/tmp/parallel-reader-word-run-ubosn0bf/execute.ML"
+      ],
+      "baseline": "/tmp/presented-decision-replay-run-i1ct_t3g",
+      "exit_code": 0,
+      "seconds": 102.01448475799407,
+      "word": {
+        "bytes": 1296760,
+        "sha256": "de8e13566c3bb91bee5f75f3061a0e7d9671ee5c920209f8f9c9a5518cd48271"
+      },
+      "boundary": {
+        "records": 1,
+        "tags": {
+          "PRESENTED_REPORT_WORD": 1
+        },
+        "sha256": "e80d30794f8ee8d8d02a8ad27915d6098c754f659aed34ec1d305539b86a251a"
+      },
+      "complete_word_equal": true,
+      "sources_unchanged": true,
+      "input_manifest_path": "/tmp/parallel-reader-word-run-ubosn0bf/measurement.json",
+      "input_manifest_sha256": "23865f0ae5eeb7e3d371d8cbc50b60c2ba47596fc06137c4d58e1403b1c3190e"
+    },
+    {
+      "status": "accepted",
+      "output": "/tmp/parallel-reader-word-run-_ie_toh0",
+      "probe": "/tmp/parallel-replay-reader-candidate",
+      "engine": "/tmp/parallel-replay-reader-candidate/export/code/Parallel_Replay_Readers_1789614333412891385/Parallel_Replay_Readers_1789614333412891385.Probe_Native_Replay_Parallel/code/native_replay_parallel.ML",
+      "workers": 8,
+      "profile_time": false,
+      "command": [
+        "/usr/bin/env",
+        "USER_HOME=/tmp/parallel-reader-word-run-_ie_toh0/runtime-home",
+        "/opt/isabelle/bin/isabelle",
+        "ML_process",
+        "-l",
+        "Pure",
+        "-o",
+        "threads=8",
+        "-o",
+        "threads_stack_limit=0",
+        "-f",
+        "/tmp/parallel-replay-reader-candidate/export/code/Parallel_Replay_Readers_1789614333412891385/Parallel_Replay_Readers_1789614333412891385.Probe_Native_Replay_Parallel/code/native_replay_parallel.ML",
+        "-f",
+        "/tmp/parallel-reader-word-run-_ie_toh0/execute.ML"
+      ],
+      "baseline": "/tmp/presented-cause-family-candidate/run-native_replay",
+      "exit_code": 0,
+      "seconds": 55.78035491799528,
+      "word": {
+        "bytes": 722239,
+        "sha256": "c18cd57964dabed07c670431d70ef3fe88aa0d0662890b7dcfe9aea1e623b27c"
+      },
+      "boundary": {
+        "records": 1,
+        "tags": {
+          "PRESENTED_REPORT_WORD": 1
+        },
+        "sha256": "d1b669fe916e0470e73b4dd894aa78cdfbce7b4ca6db0515a8f9c16bf33ae436"
+      },
+      "complete_word_equal": true,
+      "sources_unchanged": true,
+      "input_manifest_path": "/tmp/parallel-reader-word-run-_ie_toh0/measurement.json",
+      "input_manifest_sha256": "943454983a9ab34b8017e4ae00d459788a3fea018631e179c4fd22ab8098d079"
+    }
+  ],
+  "startup_failure": {
+    "directory": "/tmp/parallel-reader-word-run-x3djdbjg",
+    "exit_code": 1,
+    "error": "Java could not load isabelle.Isabelle_Tool before any native computation. A fresh invocation with unchanged engine inputs completed."
+  },
+  "complete_integration": {
+    "decision-replay": {
+      "seconds": 114.7,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "e80d30794f8ee8d8d02a8ad27915d6098c754f659aed34ec1d305539b86a251a"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 114.62227852900105,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 1296760,
+        "sha256": "de8e13566c3bb91bee5f75f3061a0e7d9671ee5c920209f8f9c9a5518cd48271"
+      }
+    },
+    "native-certificate-replay": {
+      "seconds": 135.93,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 19,
+          "tags": {
+            "REPLAY_ASSESSMENT": 7,
+            "REPLAY_COMPARISON": 1,
+            "REPLAY_INVESTIGATION": 3,
+            "REPLAY_SCOPE": 1,
+            "REPLAY_SUBJECT": 7
+          },
+          "sha256": "d165e6d0406508de26521e88dbb32f83ad1e1a0b0219a851ba11d34e971c8e21"
+        },
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "d1b669fe916e0470e73b4dd894aa78cdfbce7b4ca6db0515a8f9c16bf33ae436"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 134.98744298200472,
+          "exit_code": 0
+        },
+        "presentation": {
+          "seconds": 134.04593080100312,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 722239,
+        "sha256": "c18cd57964dabed07c670431d70ef3fe88aa0d0662890b7dcfe9aea1e623b27c"
+      }
+    }
+  },
+  "boundary": "Parallel_Inspection_Caches reuses the original complete-key computed-function contract and preserves every original finite inspection row; list caches preserve their exact original key order. Distinct actual reader keys execute through Par_List.map before dependent lookup. Complete baseline words agree byte for byte. Diagnostic instrumentation only exposed the generated module signature and wrapped original reader bodies in timers; it is not adopted code. Timeouts remain incomplete evidence, and concurrent workloads differ."
+}

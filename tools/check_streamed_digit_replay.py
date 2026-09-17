@@ -6,7 +6,7 @@ import json
 import check_digit_replay
 import native_packet_reports
 import compressed_native_execution
-import investigate
+import execution_support as investigate
 import observation_contracts
 
 

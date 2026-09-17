@@ -6,7 +6,7 @@ import unittest
 from unittest.mock import patch
 
 import incremental_check as checker
-import investigate
+import execution_support as investigate
 
 
 class RetentionBoundaryTests(unittest.TestCase):

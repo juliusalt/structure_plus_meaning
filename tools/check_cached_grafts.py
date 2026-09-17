@@ -5,7 +5,7 @@ import json
 
 import graft_program_json
 import check_reasoning
-import investigate
+import execution_support as investigate
 import investigation_json
 import machine_reports
 import native_program_json

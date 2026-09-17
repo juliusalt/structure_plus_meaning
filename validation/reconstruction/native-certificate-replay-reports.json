@@ -1,16 +1,1 @@
-{
-  "version": 1,
-  "reports": {
-    "comparison": {
-      "records": 19,
-      "tags": {
-        "REPLAY_ASSESSMENT": 7,
-        "REPLAY_COMPARISON": 1,
-        "REPLAY_INVESTIGATION": 3,
-        "REPLAY_SCOPE": 1,
-        "REPLAY_SUBJECT": 7
-      },
-      "sha256": "d165e6d0406508de26521e88dbb32f83ad1e1a0b0219a851ba11d34e971c8e21"
-    }
-  }
-}
+{"version":1,"reports":{"comparison":{"records":19,"tags":{"REPLAY_ASSESSMENT":7,"REPLAY_COMPARISON":1,"REPLAY_INVESTIGATION":3,"REPLAY_SCOPE":1,"REPLAY_SUBJECT":7},"sha256":"d165e6d0406508de26521e88dbb32f83ad1e1a0b0219a851ba11d34e971c8e21"},"presentation":{"records":1,"tags":{"PRESENTED_REPORT_WORD":1},"sha256":"d1b669fe916e0470e73b4dd894aa78cdfbce7b4ca6db0515a8f9c16bf33ae436"}}}

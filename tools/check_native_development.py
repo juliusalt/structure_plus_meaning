@@ -7,7 +7,7 @@ import check_native_certificates as shared
 import compressed_machine_reports as machine_reports
 from compressed_reconstruction import compressed_boundary
 import isabelle_native_execution
-import investigate
+import execution_support as investigate
 import observation_contracts
 import native_development_json
 import workflow_json

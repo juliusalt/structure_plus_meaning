@@ -1,0 +1,412 @@
+{
+  "version": 1,
+  "status": "accepted",
+  "isolated_project": "/tmp/builtin-context-coverage/project",
+  "proof_directory": "/tmp/builtin-context-coverage/proof",
+  "proof_sha256": "e9cbbed47dead701333800564ca5d1574d8810d57738b51cd8ffa5bca75d391d",
+  "contract_scopes": [
+    {
+      "kind": "reasoning_methods",
+      "definition_owner": "Factor_Reasoning_Method_Investigation",
+      "candidate_indices": [
+        0,
+        1,
+        2
+      ],
+      "facet_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "kind": "investigation_input",
+      "definition_owner": "Factor_Investigation_Input_Investigation_Base",
+      "candidate_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "facet_indices": [
+        0,
+        1
+      ]
+    },
+    {
+      "kind": "revision_methods",
+      "definition_owner": "Observation_Revision_Investigation",
+      "candidate_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "facet_indices": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "kind": "observation_tables",
+      "definition_owner": "Factor_Observation_Table_Investigation_Base",
+      "candidate_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "facet_indices": [
+        0,
+        1
+      ]
+    },
+    {
+      "kind": "pair_scope",
+      "definition_owner": "Factor_Pair_Scope_Investigation_Base",
+      "candidate_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "facet_indices": [
+        0,
+        1
+      ]
+    },
+    {
+      "kind": "observation_collections",
+      "definition_owner": "Factor_Observation_Collection_Investigation_Base",
+      "candidate_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "facet_indices": [
+        0,
+        1
+      ]
+    },
+    {
+      "kind": "observation_scope",
+      "definition_owner": "Factor_Observation_Scope_Investigation_Base",
+      "candidate_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "facet_indices": [
+        0,
+        1
+      ]
+    },
+    {
+      "kind": "observation",
+      "definition_owner": "Factor_Observation_Investigation_Base",
+      "candidate_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "facet_indices": [
+        0,
+        1
+      ]
+    },
+    {
+      "kind": "completion",
+      "definition_owner": "Presentation_Completion_Investigation_Base",
+      "candidate_indices": [
+        0,
+        1
+      ],
+      "facet_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "kind": "permission",
+      "definition_owner": "Factor_Permission_Investigation_Base",
+      "candidate_indices": [
+        0,
+        1,
+        2
+      ],
+      "facet_indices": [
+        0,
+        1
+      ]
+    },
+    {
+      "kind": "pattern",
+      "definition_owner": "Factor_Substitution_Investigation_Base",
+      "candidate_indices": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "facet_indices": [
+        0,
+        1
+      ]
+    },
+    {
+      "kind": "proof_probes",
+      "definition_owner": "Factor_Proof_Probe_Investigation_Base",
+      "candidate_indices": [
+        0,
+        1
+      ],
+      "facet_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "kind": "schema_sockets",
+      "definition_owner": "Factor_Schema_Socket_Investigation_Base",
+      "candidate_indices": [
+        0,
+        1
+      ],
+      "facet_indices": [
+        0,
+        1,
+        2
+      ]
+    }
+  ],
+  "complete_case_execution": {
+    "command": [
+      "python",
+      "-B",
+      "/tmp/builtin-context-coverage/project/tools/check_builtin_cases.py",
+      "--proof",
+      "/tmp/builtin-context-coverage/export/builtin_investigations.proof.json",
+      "--theory",
+      "Builtin_Investigation_Execution",
+      "--specification",
+      "/tmp/builtin-context-coverage/specification.json",
+      "--poly",
+      "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+      "--output",
+      "/tmp/builtin-context-coverage/run"
+    ],
+    "cases": 56,
+    "kinds": 13,
+    "seconds": 5.938975171011407,
+    "exit_code": 0
+  },
+  "all_cases_formed": true,
+  "cli_executions": {
+    "status": "accepted",
+    "seconds": 7.195414746995084,
+    "outer_jobs": 4,
+    "workers_per_job": 4,
+    "runs": [
+      {
+        "kind": "reasoning_methods",
+        "exit_code": 0,
+        "status": "evaluated",
+        "seconds": 2.171247680991655,
+        "complete_result_equal": true,
+        "output": "/tmp/builtin-context-coverage/cli-reasoning_methods",
+        "error": null
+      },
+      {
+        "kind": "investigation_input",
+        "exit_code": 0,
+        "status": "evaluated",
+        "seconds": 2.258377680002013,
+        "complete_result_equal": true,
+        "output": "/tmp/builtin-context-coverage/cli-investigation_input",
+        "error": null
+      },
+      {
+        "kind": "revision_methods",
+        "exit_code": 0,
+        "status": "evaluated",
+        "seconds": 1.8038194480031962,
+        "complete_result_equal": true,
+        "output": "/tmp/builtin-context-coverage/cli-revision_methods",
+        "error": null
+      },
+      {
+        "kind": "observation_tables",
+        "exit_code": 0,
+        "status": "evaluated",
+        "seconds": 2.3219560489960713,
+        "complete_result_equal": true,
+        "output": "/tmp/builtin-context-coverage/cli-observation_tables",
+        "error": null
+      },
+      {
+        "kind": "pair_scope",
+        "exit_code": 0,
+        "status": "evaluated",
+        "seconds": 2.0416096319968347,
+        "complete_result_equal": true,
+        "output": "/tmp/builtin-context-coverage/cli-pair_scope",
+        "error": null
+      },
+      {
+        "kind": "observation_collections",
+        "exit_code": 0,
+        "status": "evaluated",
+        "seconds": 1.985317742000916,
+        "complete_result_equal": true,
+        "output": "/tmp/builtin-context-coverage/cli-observation_collections",
+        "error": null
+      },
+      {
+        "kind": "observation_scope",
+        "exit_code": 0,
+        "status": "evaluated",
+        "seconds": 2.0436834789870773,
+        "complete_result_equal": true,
+        "output": "/tmp/builtin-context-coverage/cli-observation_scope",
+        "error": null
+      },
+      {
+        "kind": "observation",
+        "exit_code": 0,
+        "status": "evaluated",
+        "seconds": 1.9824941950064385,
+        "complete_result_equal": true,
+        "output": "/tmp/builtin-context-coverage/cli-observation",
+        "error": null
+      },
+      {
+        "kind": "completion",
+        "exit_code": 0,
+        "status": "evaluated",
+        "seconds": 1.7663337559934007,
+        "complete_result_equal": true,
+        "output": "/tmp/builtin-context-coverage/cli-completion",
+        "error": null
+      },
+      {
+        "kind": "permission",
+        "exit_code": 0,
+        "status": "evaluated",
+        "seconds": 1.8036795209918637,
+        "complete_result_equal": true,
+        "output": "/tmp/builtin-context-coverage/cli-permission",
+        "error": null
+      },
+      {
+        "kind": "pattern",
+        "exit_code": 0,
+        "status": "evaluated",
+        "seconds": 1.810732879996067,
+        "complete_result_equal": true,
+        "output": "/tmp/builtin-context-coverage/cli-pattern",
+        "error": null
+      },
+      {
+        "kind": "proof_probes",
+        "exit_code": 0,
+        "status": "evaluated",
+        "seconds": 1.7867478600092,
+        "complete_result_equal": true,
+        "output": "/tmp/builtin-context-coverage/cli-proof_probes",
+        "error": null
+      },
+      {
+        "kind": "schema_sockets",
+        "exit_code": 0,
+        "status": "evaluated",
+        "seconds": 1.5820478469977388,
+        "complete_result_equal": true,
+        "output": "/tmp/builtin-context-coverage/cli-schema_sockets",
+        "error": null
+      }
+    ]
+  },
+  "first_direct_cli": {
+    "status": "evaluated",
+    "elapsed_seconds": 1.672229885996785,
+    "runtime_seconds": 1.1739629469957436,
+    "sources_and_tools_unchanged": true
+  },
+  "main_direct_cli": {
+    "status": "evaluated",
+    "elapsed_seconds": 2.875396595991333,
+    "runtime_seconds": 1.1959572119958466,
+    "sources_and_tools_unchanged": true
+  },
+  "negative_controls": [
+    {
+      "control": "wrong-operation",
+      "status": "failed",
+      "error": "The typed contract belongs to a different runtime operation.",
+      "runtime_not_started": true
+    },
+    {
+      "control": "missing-contract",
+      "status": "failed",
+      "error": "Missing or ambiguous original-subject contract.",
+      "runtime_not_started": true
+    },
+    {
+      "control": "changed-source",
+      "status": "failed",
+      "error": "",
+      "runtime_not_started": true
+    }
+  ],
+  "complete_integration": {
+    "seconds": 12.74,
+    "status": "accepted",
+    "inputs_unchanged": true,
+    "report_boundaries": {
+      "comparison": {
+        "records": 56,
+        "tags": {
+          "INDEXED_INVESTIGATION": 56
+        },
+        "sha256": "a709db3260c8089cab087eb59f8c9117b2387f24f94aee9bd630b0df9824d806"
+      }
+    },
+    "stages": {
+      "comparison": {
+        "seconds": 12.642159736991744,
+        "exit_code": 0
+      }
+    }
+  },
+  "boundary": "Eleven registry entries named export wrappers after their definitions had moved to Base theories. Their exact owner names are corrected without relaxing typed contract identity. All thirteen registered operations execute 56 complete cases; thirteen CLI invocations reuse one accepted export and match the corresponding full results. Wrong-operation contracts, missing contracts and changed sources fail before runtime. Fixed-domain coverage and a working CLI do not derive the current development plan or close practical gate 5a."
+}

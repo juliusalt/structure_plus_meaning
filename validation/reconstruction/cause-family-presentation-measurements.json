@@ -1,0 +1,741 @@
+{
+  "version": 1,
+  "status": "accepted",
+  "prototype_directory": "/tmp/presented-cause-family-candidate",
+  "prototype_proof_sha256": "982cd5a8fa6045b80a5271a10b7e96d043fe2f82efb852f867d5cb33d153004d",
+  "prototype_proof": {
+    "checked_theories": 14,
+    "parent_theories_reused": 872,
+    "started_utc": "2026-09-17T03:00:00.821276+00:00",
+    "finished_utc": "2026-09-17T03:00:27.828355+00:00",
+    "sources_unchanged": true
+  },
+  "prototype_executions": {
+    "status": "accepted",
+    "seconds": 191.40265388700936,
+    "outer_jobs": 3,
+    "workers_per_job": 4,
+    "runs": [
+      {
+        "name": "native_replay",
+        "output": "/tmp/presented-cause-family-candidate/run-native_replay",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/presented-cause-family-candidate/project",
+          "--proof",
+          "/tmp/presented-cause-family-candidate/export/native_replay_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/presented-cause-family-candidate/run-native_replay",
+          "--theory",
+          "Probe_Native_Replay",
+          "--module",
+          "Native_Certificate_Replay_Execution",
+          "--report",
+          "native_replay_report_value",
+          "--scope",
+          "native_replay_indices",
+          "--selections",
+          "native_replay_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "1200"
+        ],
+        "exit_code": 0,
+        "seconds": 102.12268695699458,
+        "status": "accepted",
+        "word": {
+          "bytes": 722239,
+          "sha256": "c18cd57964dabed07c670431d70ef3fe88aa0d0662890b7dcfe9aea1e623b27c"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "663da826cf2fdc715030e8780b38fe9532632b118600f40f8535008ce2828887",
+        "export_sha256": "325bdc55897118527376b2a2ff5ec11a44a1a6f357430eb60c4c8089b6bf588f"
+      },
+      {
+        "name": "requirement_decision",
+        "output": "/tmp/presented-cause-family-candidate/run-requirement_decision",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/presented-cause-family-candidate/project",
+          "--proof",
+          "/tmp/presented-cause-family-candidate/export/requirement_decision_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/presented-cause-family-candidate/run-requirement_decision",
+          "--theory",
+          "Probe_Requirement_Decision",
+          "--module",
+          "Requirement_Decision_Execution",
+          "--report",
+          "requirement_decision_report_value",
+          "--scope",
+          "requirement_decision_indices",
+          "--selections",
+          "requirement_decision_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "1200"
+        ],
+        "exit_code": 0,
+        "seconds": 6.712024609994842,
+        "status": "accepted",
+        "word": {
+          "bytes": 494768,
+          "sha256": "e3679b7c06bdedb5b0b58ee4c51d2a63ee983026dcd124274ede499e7f4876f3"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "28afbbd96f01d7282f7d47408095ed8024cce59bdd52a178c8f6720c59522f3d",
+        "export_sha256": "5f4c2daa39083ea2a681d2a1f39b426dcca09bf215fbd6c6eed0265249de4f68"
+      },
+      {
+        "name": "required_cause",
+        "output": "/tmp/presented-cause-family-candidate/run-required_cause",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/presented-cause-family-candidate/project",
+          "--proof",
+          "/tmp/presented-cause-family-candidate/export/required_cause_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/presented-cause-family-candidate/run-required_cause",
+          "--theory",
+          "Probe_Required_Cause",
+          "--module",
+          "Required_Cause_Execution",
+          "--report",
+          "required_cause_report_value",
+          "--scope",
+          "required_cause_indices",
+          "--selections",
+          "required_cause_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "1200"
+        ],
+        "exit_code": 0,
+        "seconds": 8.39544361901062,
+        "status": "accepted",
+        "word": {
+          "bytes": 495123,
+          "sha256": "3e78f462d246a8631848ab90b7c0e8fe751c59b7f411801845c45fcc3529f5d5"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "7a533889ff8182cc9adc3e063e35d7fc468a6911108c608af826fb09e193e8de",
+        "export_sha256": "e7ae1869d9df1d4853618e567ecea6b4b2a0ae2c8535f48c2fe390606d0a9427"
+      },
+      {
+        "name": "certified_cause",
+        "output": "/tmp/presented-cause-family-candidate/run-certified_cause",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/presented-cause-family-candidate/project",
+          "--proof",
+          "/tmp/presented-cause-family-candidate/export/certified_cause_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/presented-cause-family-candidate/run-certified_cause",
+          "--theory",
+          "Probe_Certified_Cause",
+          "--module",
+          "Certified_Cause_Execution",
+          "--report",
+          "certified_cause_report_value",
+          "--scope",
+          "certified_cause_indices",
+          "--selections",
+          "certified_cause_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "1200"
+        ],
+        "exit_code": 0,
+        "seconds": 41.25249399400491,
+        "status": "accepted",
+        "word": {
+          "bytes": 5538773,
+          "sha256": "4e65ae97d197e8d474dea4ece8ed32c7c680d84df4925523a8ff4a3dce4a6eef"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "e8c83b392d581bf4b76ade469206b335325d9917210f6827b177d28514e87771",
+        "export_sha256": "db911aa9b83b7c36373d9a4d98df259fa495f98581b77a71b80e8bdcf2dbce2a"
+      },
+      {
+        "name": "concurrent_history",
+        "output": "/tmp/presented-cause-family-candidate/run-concurrent_history",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/presented-cause-family-candidate/project",
+          "--proof",
+          "/tmp/presented-cause-family-candidate/export/concurrent_history_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/presented-cause-family-candidate/run-concurrent_history",
+          "--theory",
+          "Probe_Concurrent_History",
+          "--module",
+          "Digit_History_Execution",
+          "--report",
+          "concurrent_history_report_value",
+          "--scope",
+          "digit_history_indices",
+          "--selections",
+          "concurrent_history_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "1200"
+        ],
+        "exit_code": 0,
+        "seconds": 113.46247012700769,
+        "status": "accepted",
+        "word": {
+          "bytes": 555495,
+          "sha256": "40976dd537c8bcf25c78e74c82209ea4c5f29214d94d97a87c9d43e5cc20c823"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "62b5bca5b7d44e8c948ae4ab649a9d55017dc65f0a094dd8420fe8ef44035199",
+        "export_sha256": "148323391719498b043b1aad3544b8a499d8e289efbb13aaebc89258a596d738"
+      },
+      {
+        "name": "concurrent_replay",
+        "output": "/tmp/presented-cause-family-candidate/run-concurrent_replay",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/presented-cause-family-candidate/project",
+          "--proof",
+          "/tmp/presented-cause-family-candidate/export/concurrent_replay_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/presented-cause-family-candidate/run-concurrent_replay",
+          "--theory",
+          "Probe_Concurrent_Replay",
+          "--module",
+          "Digit_Replay_Execution",
+          "--report",
+          "concurrent_replay_report_value",
+          "--scope",
+          "digit_replay_indices",
+          "--selections",
+          "concurrent_replay_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "1200"
+        ],
+        "exit_code": 0,
+        "seconds": 143.43705243300064,
+        "status": "accepted",
+        "word": {
+          "bytes": 20519284,
+          "sha256": "3bb5958241e74fd03e43412abb5073a5ffef2cd98073f724bbf4207530ccc36b"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "730edc72849ef541cfffe9b7502e79d043921d08183efe8abddbbaede812750c",
+        "export_sha256": "3daf698759378806e4e79b5e249efd9ab6bf59cb04d28963b755a0daa0aa6932"
+      }
+    ]
+  },
+  "first_integration": {
+    "status": "accepted",
+    "theories": 1634,
+    "reused_theories": 1625,
+    "rebuilt_theories": [
+      "Certified_Cause_Execution",
+      "Concurrent_History_Execution",
+      "Concurrent_History_Presentation",
+      "Concurrent_Replay_Execution",
+      "Concurrent_Replay_Presentation",
+      "Decision_Replay_Execution",
+      "Native_Certificate_Replay_Execution",
+      "Required_Cause_Execution",
+      "Requirement_Decision_Execution"
+    ],
+    "phases": {
+      "base_and_impact": 2.51,
+      "proof": 33.68,
+      "recipe_impact": 4.46,
+      "export": 4.12,
+      "recipes_and_host_tests": 267.25
+    },
+    "seconds": 325.01,
+    "host_tests": {
+      "tools": {
+        "exit_code": 0,
+        "ran": 144,
+        "skipped": 0,
+        "tail": [
+          "OK"
+        ]
+      },
+      "kernel": {
+        "exit_code": 0,
+        "ran": 35,
+        "skipped": 2,
+        "tail": [
+          "OK (skipped=2)"
+        ]
+      }
+    },
+    "recipes": {
+      "allocated-environments": {
+        "status": "unchanged"
+      },
+      "artifact-lookup": {
+        "status": "unchanged"
+      },
+      "cached-grafts": {
+        "status": "unchanged"
+      },
+      "certificate-coverage": {
+        "status": "unchanged"
+      },
+      "certificate-development": {
+        "status": "unchanged"
+      },
+      "certificate-input-development": {
+        "status": "unchanged"
+      },
+      "certificate-scope-repair": {
+        "status": "unchanged"
+      },
+      "certified-causes": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 48.19,
+        "receipt": "/tmp/cause-parallel-integration-1789614764056953831/recipes/certified-causes/reconstruction.json"
+      },
+      "concurrent-history": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 110.57,
+        "receipt": "/tmp/cause-parallel-integration-1789614764056953831/recipes/concurrent-history/reconstruction.json"
+      },
+      "concurrent-replay": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 225.62,
+        "receipt": "/tmp/cause-parallel-integration-1789614764056953831/recipes/concurrent-replay/reconstruction.json"
+      },
+      "constructed-history": {
+        "status": "unchanged"
+      },
+      "data-reading": {
+        "status": "unchanged"
+      },
+      "decision-replay": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 156.68,
+        "receipt": "/tmp/cause-parallel-integration-1789614764056953831/recipes/decision-replay/reconstruction.json"
+      },
+      "digit-allocation": {
+        "status": "unchanged"
+      },
+      "digit-generation": {
+        "status": "unchanged"
+      },
+      "digit-history": {
+        "status": "unchanged"
+      },
+      "encoded-environments": {
+        "status": "unchanged"
+      },
+      "environment-grafts": {
+        "status": "unchanged"
+      },
+      "environment-updates": {
+        "status": "unchanged"
+      },
+      "generation-records": {
+        "status": "unchanged"
+      },
+      "graft-admission": {
+        "status": "unchanged"
+      },
+      "history-index": {
+        "status": "unchanged"
+      },
+      "indexed-generation": {
+        "status": "unchanged"
+      },
+      "known-history": {
+        "status": "unchanged"
+      },
+      "literal-replay": {
+        "status": "unchanged"
+      },
+      "native-admission": {
+        "status": "unchanged"
+      },
+      "native-certificate-replay": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 116.53,
+        "receipt": "/tmp/cause-parallel-integration-1789614764056953831/recipes/native-certificate-replay/reconstruction.json"
+      },
+      "native-certificates": {
+        "status": "unchanged"
+      },
+      "native-child": {
+        "status": "unchanged"
+      },
+      "native-derivations": {
+        "status": "unchanged"
+      },
+      "native-development": {
+        "status": "unchanged"
+      },
+      "native-evaluation": {
+        "status": "unchanged"
+      },
+      "native-extensions": {
+        "status": "unchanged"
+      },
+      "native-graphs": {
+        "status": "unchanged"
+      },
+      "native-histories": {
+        "status": "unchanged"
+      },
+      "native-nodes": {
+        "status": "unchanged"
+      },
+      "native-requirements": {
+        "status": "unchanged"
+      },
+      "native-sources": {
+        "status": "unchanged"
+      },
+      "native-steering": {
+        "status": "unchanged"
+      },
+      "native-workflow": {
+        "status": "unchanged"
+      },
+      "quoted-history": {
+        "status": "unchanged"
+      },
+      "required-causes": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 14.3,
+        "receipt": "/tmp/cause-parallel-integration-1789614764056953831/recipes/required-causes/reconstruction.json"
+      },
+      "required-history": {
+        "status": "unchanged"
+      },
+      "requirement-decisions": {
+        "status": "accepted",
+        "exit_code": 0,
+        "seconds": 9.88,
+        "receipt": "/tmp/cause-parallel-integration-1789614764056953831/recipes/requirement-decisions/reconstruction.json"
+      },
+      "requirement-plans": {
+        "status": "unchanged"
+      },
+      "requirement-sources": {
+        "status": "unchanged"
+      },
+      "source-development": {
+        "status": "unchanged"
+      },
+      "digit-replay": {
+        "status": "unchanged"
+      },
+      "use-allocation": {
+        "status": "unchanged"
+      },
+      "use-codecs": {
+        "status": "unchanged"
+      }
+    }
+  },
+  "complete_cycle": {
+    "output": "/tmp/native-support-final-cycle-1789618024247222963",
+    "receipt_sha256": "61cf3d938eb3bbadbf108d5747af6863facaa57f9dd90660fddd5906354de4ec",
+    "seconds": 481.87,
+    "recipes": {
+      "native-certificate-replay": {
+        "seconds": 135.93,
+        "status": "accepted",
+        "inputs_unchanged": true,
+        "report_boundaries": {
+          "comparison": {
+            "records": 19,
+            "tags": {
+              "REPLAY_ASSESSMENT": 7,
+              "REPLAY_COMPARISON": 1,
+              "REPLAY_INVESTIGATION": 3,
+              "REPLAY_SCOPE": 1,
+              "REPLAY_SUBJECT": 7
+            },
+            "sha256": "d165e6d0406508de26521e88dbb32f83ad1e1a0b0219a851ba11d34e971c8e21"
+          },
+          "presentation": {
+            "records": 1,
+            "tags": {
+              "PRESENTED_REPORT_WORD": 1
+            },
+            "sha256": "d1b669fe916e0470e73b4dd894aa78cdfbce7b4ca6db0515a8f9c16bf33ae436"
+          }
+        },
+        "stages": {
+          "comparison": {
+            "seconds": 134.98744298200472,
+            "exit_code": 0
+          },
+          "presentation": {
+            "seconds": 134.04593080100312,
+            "exit_code": 0
+          }
+        },
+        "word": {
+          "bytes": 722239,
+          "sha256": "c18cd57964dabed07c670431d70ef3fe88aa0d0662890b7dcfe9aea1e623b27c"
+        }
+      },
+      "requirement-decisions": {
+        "seconds": 13.94,
+        "status": "accepted",
+        "inputs_unchanged": true,
+        "report_boundaries": {
+          "comparison": {
+            "records": 29,
+            "tags": {
+              "DECISION_ASSESSMENT": 12,
+              "DECISION_COMPARISON": 1,
+              "DECISION_INVESTIGATION": 3,
+              "DECISION_SCOPE": 1,
+              "DECISION_SUBJECT": 12
+            },
+            "sha256": "a4bb21563f4ea49cc26e5b2c2c359c3e5ce74bfe0b7c558faaef87a268495314"
+          },
+          "presentation": {
+            "records": 1,
+            "tags": {
+              "PRESENTED_REPORT_WORD": 1
+            },
+            "sha256": "1397ee397fc4db0d26057425e47ae5aa901749caf99eb1fe5c1c5bdfe466e8bf"
+          }
+        },
+        "stages": {
+          "comparison": {
+            "seconds": 13.445417947004898,
+            "exit_code": 0
+          },
+          "presentation": {
+            "seconds": 8.331408384998213,
+            "exit_code": 0
+          }
+        },
+        "word": {
+          "bytes": 494768,
+          "sha256": "e3679b7c06bdedb5b0b58ee4c51d2a63ee983026dcd124274ede499e7f4876f3"
+        }
+      },
+      "required-causes": {
+        "seconds": 11.93,
+        "status": "accepted",
+        "inputs_unchanged": true,
+        "report_boundaries": {
+          "comparison": {
+            "records": 25,
+            "tags": {
+              "REQUIRED_CAUSE_ASSESSMENT": 10,
+              "REQUIRED_CAUSE_COMPARISON": 1,
+              "REQUIRED_CAUSE_INVESTIGATION": 3,
+              "REQUIRED_CAUSE_SCOPE": 1,
+              "REQUIRED_CAUSE_SUBJECT": 10
+            },
+            "sha256": "4fd6fa79895876166d69fd0d2402bf7902d64ea438c210c46ac50426d25317c4"
+          },
+          "presentation": {
+            "records": 1,
+            "tags": {
+              "PRESENTED_REPORT_WORD": 1
+            },
+            "sha256": "d23c652c7b0a65bca5e91af446be012c98aa035f278669eb9141ffa0613cf197"
+          }
+        },
+        "stages": {
+          "comparison": {
+            "seconds": 11.636428666999564,
+            "exit_code": 0
+          },
+          "presentation": {
+            "seconds": 7.5755358550086385,
+            "exit_code": 0
+          }
+        },
+        "word": {
+          "bytes": 495123,
+          "sha256": "3e78f462d246a8631848ab90b7c0e8fe751c59b7f411801845c45fcc3529f5d5"
+        }
+      },
+      "certified-causes": {
+        "seconds": 49.94,
+        "status": "accepted",
+        "inputs_unchanged": true,
+        "report_boundaries": {
+          "comparison": {
+            "records": 36,
+            "tags": {
+              "CERTIFIED_CAUSE_ASSESSMENT": 15,
+              "CERTIFIED_CAUSE_COMPARISON": 1,
+              "CERTIFIED_CAUSE_INVESTIGATION": 3,
+              "CERTIFIED_CAUSE_SCOPE": 1,
+              "CERTIFIED_CAUSE_SEED": 1,
+              "CERTIFIED_CAUSE_SUBJECT": 15
+            },
+            "sha256": "2a68e27c7334b2defda61f25b148b798af1c02e2b8d417ee837f595ca25a8d9b"
+          },
+          "presentation": {
+            "records": 1,
+            "tags": {
+              "PRESENTED_REPORT_WORD": 1
+            },
+            "sha256": "8d96f3233263f71ad71f1a18a9e0ff408472200a9389b589228a881b8898a9a9"
+          }
+        },
+        "stages": {
+          "comparison": {
+            "seconds": 48.78757416699955,
+            "exit_code": 0
+          },
+          "presentation": {
+            "seconds": 46.93904271199426,
+            "exit_code": 0
+          }
+        },
+        "word": {
+          "bytes": 5538773,
+          "sha256": "4e65ae97d197e8d474dea4ece8ed32c7c680d84df4925523a8ff4a3dce4a6eef"
+        }
+      },
+      "concurrent-history": {
+        "seconds": 199.5,
+        "status": "accepted",
+        "inputs_unchanged": true,
+        "report_boundaries": {
+          "comparison": {
+            "records": 423,
+            "tags": {
+              "CONSTRUCTED_HISTORY_ARTIFACTS": 1,
+              "CONSTRUCTED_HISTORY_ASSESSMENT": 16,
+              "CONSTRUCTED_HISTORY_CANDIDATE": 368,
+              "CONSTRUCTED_HISTORY_COMPARISON": 1,
+              "CONSTRUCTED_HISTORY_CONTEXT": 16,
+              "CONSTRUCTED_HISTORY_INVESTIGATION": 3,
+              "CONSTRUCTED_HISTORY_SCOPE": 1,
+              "CONSTRUCTED_HISTORY_SOURCE": 16,
+              "CONSTRUCTED_HISTORY_SOURCE_SCOPE": 1
+            },
+            "sha256": "52caceb08f87b04d38b7e0d0b4617ea08ed8b02c77fced07049c672d3bc37b12"
+          },
+          "presentation": {
+            "records": 1,
+            "tags": {
+              "PRESENTED_REPORT_WORD": 1
+            },
+            "sha256": "7661e6710ccbe095cf66d6aae7f2995fd55bb5d891a69de3b79eafb8ce6b3817"
+          }
+        },
+        "stages": {
+          "comparison": {
+            "seconds": 83.45873416299582,
+            "exit_code": 0
+          },
+          "presentation": {
+            "seconds": 199.35367821599357,
+            "exit_code": 0
+          }
+        },
+        "word": {
+          "bytes": 555495,
+          "sha256": "40976dd537c8bcf25c78e74c82209ea4c5f29214d94d97a87c9d43e5cc20c823"
+        }
+      },
+      "concurrent-replay": {
+        "seconds": 294.35,
+        "status": "accepted",
+        "inputs_unchanged": true,
+        "report_boundaries": {
+          "comparison": {
+            "records": 513,
+            "tags": {
+              "DIGIT_REPLAY_ARTIFACTS": 1,
+              "DIGIT_REPLAY_ASSESSMENT": 24,
+              "DIGIT_REPLAY_CANDIDATE": 432,
+              "DIGIT_REPLAY_COMPARISON": 1,
+              "DIGIT_REPLAY_CONTEXT": 24,
+              "DIGIT_REPLAY_INVESTIGATION": 3,
+              "DIGIT_REPLAY_PREVIOUS_SOURCES": 1,
+              "DIGIT_REPLAY_SCOPE": 1,
+              "DIGIT_REPLAY_SEEDS": 1,
+              "DIGIT_REPLAY_SOURCE": 24,
+              "DIGIT_REPLAY_SOURCE_SCOPE": 1
+            },
+            "sha256": "794867644ebe490d49db8ad85fd1c30b5162e64bf9e8230c9d9922e257e871fb"
+          },
+          "presentation": {
+            "records": 1,
+            "tags": {
+              "PRESENTED_REPORT_WORD": 1
+            },
+            "sha256": "ec62b35b12207ca2e16b8f77cf260314fa557f71ac48918c80d511db635aadd5"
+          }
+        },
+        "stages": {
+          "comparison": {
+            "seconds": 177.8701922409964,
+            "exit_code": 0
+          },
+          "presentation": {
+            "seconds": 292.61636200599605,
+            "exit_code": 0
+          }
+        },
+        "word": {
+          "bytes": 20519284,
+          "sha256": "3bb5958241e74fd03e43412abb5073a5ffef2cd98073f724bbf4207530ccc36b"
+        }
+      }
+    }
+  },
+  "boundary": "Six complete old/new report pairs passed on the actual exports. The common inspected-value and Boolean-family presenters retain original subjects, reader values, both verdicts, every optional level and each actual row/family inspection. Concurrent clients still invoke their exact established stages. No old report or word boundary was reset."
+}

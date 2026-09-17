@@ -7,7 +7,7 @@ import sys
 import tempfile
 import unittest
 
-import investigate
+import execution_support as investigate
 import prove_context
 
 

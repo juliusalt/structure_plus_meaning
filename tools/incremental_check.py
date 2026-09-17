@@ -24,7 +24,7 @@ import time
 import uuid
 
 import check
-import investigate
+import execution_support as investigate
 import prove_context
 import proof_contexts
 import proved_code
@@ -243,6 +243,7 @@ def validate(base, output, *, threads, jobs, selected, all_recipes, timeout):
             modules = [item for row in affected for item in ('--module', row['theory'] + ':' + row['filename'])]
             code, _ = run_logged([sys.executable, '-B', str(TOOLS / 'export_proved_code.py'),
                 '--context', str(export_context), '--project', str(ROOT), '--output', str(directory),
+                '--module-roots', json.dumps({row['theory']: row['roots'] for row in affected}),
                 *modules], output / 'export-context.log', 1800)
             assert code == 0, 'Export failed; see export-context.log.'
             exports = {r['name']: directory / r['filename'].replace('.ML', '.proof.json') for r in affected}

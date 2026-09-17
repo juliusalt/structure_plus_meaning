@@ -1,0 +1,46 @@
+{
+  "status": "verified",
+  "archives": [
+    {
+      "status": "verified",
+      "source": "/tmp/cause-parallel-integration-1789614764056953831/recipes",
+      "archive": "/tmp/cause-parallel-integration-1789614764056953831-recipes.tar.gz",
+      "archive_sha256": "9049e297ff6b40b571e84c4bcef040ef1e092e123256c18416ff499039f0d4ea",
+      "archive_bytes": 163534023,
+      "expanded_file_bytes": 659039595,
+      "files_or_links": 21781,
+      "inventory_sha256": "58470d5572ee74bb0a801646fed18a8c5f9b21e8d7cb117c1211455a8e1be214",
+      "restore": [
+        "tar",
+        "-xzf",
+        "/tmp/cause-parallel-integration-1789614764056953831-recipes.tar.gz",
+        "-C",
+        "/tmp"
+      ],
+      "boundary": "Every file content, size and symbolic link was verified against the archive before deleting generated recipe copies. Accepted parent contexts, current exports, manifests, summaries and the original digit comparison word remain in place.",
+      "expanded_copy_removed": true,
+      "seconds": 8.773997907002922
+    },
+    {
+      "status": "verified",
+      "source": "/tmp/native-complete-builtin-cycle-1789616826622969812/recipes",
+      "archive": "/tmp/native-complete-builtin-cycle-1789616826622969812-recipes.tar.gz",
+      "archive_sha256": "4f588b98df7f674fec753ec8a40162a9241f75a7ecec4a1cf0b041d7083e4b8e",
+      "archive_bytes": 788587637,
+      "expanded_file_bytes": 3312158354,
+      "files_or_links": 48370,
+      "inventory_sha256": "70312190aa460fa12cedcab3ad2de784c9becb3bff2590f548c0e1feb875bc39",
+      "restore": [
+        "tar",
+        "-xzf",
+        "/tmp/native-complete-builtin-cycle-1789616826622969812-recipes.tar.gz",
+        "-C",
+        "/tmp"
+      ],
+      "boundary": "Every file content, size and symbolic link was verified against the archive before deleting generated recipe copies. Accepted parent contexts, current exports, manifests, summaries and the original digit comparison word remain in place.",
+      "expanded_copy_removed": true,
+      "seconds": 35.07110822800314
+    }
+  ],
+  "boundary": "Only completed generated recipe copies were replaced. Every source, log and execution input is recoverable from verified archives; active proof-provider directories and heaps remain at their original paths."
+}

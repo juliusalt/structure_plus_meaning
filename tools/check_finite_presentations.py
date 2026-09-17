@@ -10,7 +10,7 @@ import uuid
 
 import check_reasoning as review
 import finite_presentation_cases as family
-import investigate
+import execution_support as investigate
 import native_execution_runtime
 import proved_code
 

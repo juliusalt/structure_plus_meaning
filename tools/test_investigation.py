@@ -70,8 +70,8 @@ if sys.argv[1] == "export":
     if case["kind"] in {"proof_probes", "schema_sockets"} and mode != "missing_contract":
         # Protocol fixture only: the separate Isabelle executions validate
         # actual theorems, complete subject terms and their defining equations.
-        owner, function = {"proof_probes": ("Factor_Proof_Probe_Investigation", "proof_probes_investigation"),
-                           "schema_sockets": ("Factor_Schema_Socket_Investigation", "schema_sockets_investigation")}[case["kind"]]
+        owner, function = {"proof_probes": ("Factor_Proof_Probe_Investigation_Base", "proof_probes_investigation"),
+                           "schema_sockets": ("Factor_Schema_Socket_Investigation_Base", "schema_sockets_investigation")}[case["kind"]]
         x, y = chr(5), chr(6)
         def node(tag, body="", attributes=()):
             return x+y+tag+"".join(y+k+"="+v for k,v in attributes)+x+body+x+y+x
@@ -101,7 +101,7 @@ class InvestigationTests(unittest.TestCase):
         self.root = Path(temporary.name)
         for name in ("tools", "theories", "output"):
             (self.root / name).mkdir()
-        for name in ("build.py", "investigate.py", "observation_contracts.py"):
+        for name in ("build.py", "investigate.py", "observation_contracts.py", "execution_support.py"):
             shutil.copyfile(TOOLS / name, self.root / "tools" / name)
         (self.root / "theories/Presentation_Completion_Investigation.thy").write_text(
             "theory Presentation_Completion_Investigation imports Main begin end\n")
@@ -236,8 +236,8 @@ class InvestigationTests(unittest.TestCase):
         self.assertFalse(receipt["result"]["input_formed"])
 
     def test_registered_case_keeps_its_export_and_scope(self):
-        (self.root / "theories/Factor_Proof_Probe_Investigation.thy").write_text(
-            "theory Factor_Proof_Probe_Investigation imports Main begin end\n")
+        (self.root / "theories/Factor_Proof_Probe_Investigation_Base.thy").write_text(
+            "theory Factor_Proof_Probe_Investigation_Base imports Main begin end\n")
         self.case = {"schema": "finite-investigation-1", "kind": "proof_probes", "selected": [0, 1],
                      "question": "Does the proposal cover every program?", "scope": "All programs",
                      "semantic_boundary": "Unrestricted universal coverage", "function": "Untrusted_Export",
@@ -246,7 +246,7 @@ class InvestigationTests(unittest.TestCase):
         result, receipt, proof = self.execute("registered")
         self.assertEqual(result.returncode, 0, result.stdout)
         self.assertEqual(proof["status"], "accepted")
-        self.assertEqual(receipt["registered_operation"], {"theory": "Factor_Proof_Probe_Investigation",
+        self.assertEqual(receipt["registered_operation"], {"theory": "Factor_Proof_Probe_Investigation_Base",
                                                          "function": "proof_probes_investigation"})
         self.assertEqual(receipt["scope"]["coverage"],
                          "These two fixed actual programs; the three probes form a complete basis for this family")
@@ -259,8 +259,8 @@ class InvestigationTests(unittest.TestCase):
         self.assertNotIn("Untrusted", source)
 
     def test_registered_socket_case_keeps_its_actual_subject_scope(self):
-        (self.root / "theories/Factor_Schema_Socket_Investigation.thy").write_text(
-            "theory Factor_Schema_Socket_Investigation imports Main begin end\n")
+        (self.root / "theories/Factor_Schema_Socket_Investigation_Base.thy").write_text(
+            "theory Factor_Schema_Socket_Investigation_Base imports Main begin end\n")
         self.case = {"schema": "finite-investigation-1", "kind": "schema_sockets", "selected": [2],
                      "question": "Does this compare arbitrary schemas?", "scope": "All schemas",
                      "semantic_boundary": "Unrestricted schema generation", "function": "Untrusted_Export",
@@ -269,7 +269,7 @@ class InvestigationTests(unittest.TestCase):
         result, receipt, proof = self.execute("registered")
         self.assertEqual(result.returncode, 0, result.stdout)
         self.assertEqual(proof["status"], "accepted")
-        self.assertEqual(receipt["registered_operation"], {"theory": "Factor_Schema_Socket_Investigation",
+        self.assertEqual(receipt["registered_operation"], {"theory": "Factor_Schema_Socket_Investigation_Base",
                                                          "function": "schema_sockets_investigation"})
         self.assertEqual(receipt["scope"]["coverage"],
                          "These two socket variants of the existing native incidence schema")
@@ -279,8 +279,8 @@ class InvestigationTests(unittest.TestCase):
         self.assertEqual(json.loads((self.root / "output/case.json").read_text()), self.case)
 
     def test_missing_or_unrelated_contract_never_executes(self):
-        (self.root / "theories/Factor_Proof_Probe_Investigation.thy").write_text(
-            "theory Factor_Proof_Probe_Investigation imports Main begin end\n")
+        (self.root / "theories/Factor_Proof_Probe_Investigation_Base.thy").write_text(
+            "theory Factor_Proof_Probe_Investigation_Base imports Main begin end\n")
         self.case = {"schema": "finite-investigation-1", "kind": "proof_probes", "selected": [2],
                      "question": "Protocol guard fixture", "scope": "Fixture only"}
         self.save_case()
@@ -292,8 +292,8 @@ class InvestigationTests(unittest.TestCase):
                 self.assertFalse((self.root / "runtime_called").exists())
 
     def test_subject_contract_mutation_during_execution_is_rejected(self):
-        (self.root / "theories/Factor_Proof_Probe_Investigation.thy").write_text(
-            "theory Factor_Proof_Probe_Investigation imports Main begin end\n")
+        (self.root / "theories/Factor_Proof_Probe_Investigation_Base.thy").write_text(
+            "theory Factor_Proof_Probe_Investigation_Base imports Main begin end\n")
         self.case = {"schema": "finite-investigation-1", "kind": "proof_probes", "selected": [2],
                      "question": "Protocol guard fixture", "scope": "Fixture only"}
         self.save_case()

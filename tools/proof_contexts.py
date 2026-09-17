@@ -11,7 +11,7 @@ import os
 import re
 import subprocess
 
-import investigate
+import execution_support as investigate
 import proved_code
 
 USER_HOME = Path('/tmp/structural-isabelle')
@@ -158,8 +158,8 @@ def _proof_claims(directory, parent, project_declaration):
         assert investigate.file_hash(path) == sha
         tracked[str(path)] = sha
     helper_names = {Path(name).name for name in evidence['helper_inputs']}
-    assert {'build.py', 'investigate.py', 'proved_code.py', 'observation_contracts.py', 'prove_context.py'} <= helper_names, \
-        'Incomplete retained proof-tool inventory.'
+    assert {'build.py', 'proved_code.py', 'observation_contracts.py', 'prove_context.py'} <= helper_names \
+        and helper_names & {'investigate.py', 'execution_support.py'}, 'Incomplete retained proof-tool inventory.'
     for name, sha in evidence['helper_inputs'].items():
         path = directory / 'helper-sources' / Path(name).name
         assert investigate.file_hash(path) == sha

@@ -4,7 +4,7 @@ import argparse
 import json
 
 import compressed_native_execution
-import investigate
+import execution_support as investigate
 import native_packet_reports
 import observation_contracts
 

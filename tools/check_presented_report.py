@@ -10,7 +10,7 @@ import subprocess
 import traceback
 import uuid
 
-import investigate
+import execution_support as investigate
 import native_execution_runtime
 import proved_code
 from evidence_io import write_json

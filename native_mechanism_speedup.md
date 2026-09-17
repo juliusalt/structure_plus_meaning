@@ -1,65 +1,65 @@
 # Making native development and validation fast
 
-Updated 2026-09-17 from the complete parallel-reader, presentation and investigation
-batch. Superseded measurements remain in their retained evidence files and Git.
+Updated 2026-09-17 from the accepted storage-presentation, staged-replay and
+full-source proof batch. Superseded measurements remain historical evidence.
 
 ## Current result
 
-**All 51 recipes and both host suites passed in 481.87 s.** The workspace
-has **1,635 theories**, with all contexts reused in the final cycle; 147 tool
-tests and 35 kernel tests passed (two optional skips). The preceding substantive
-integration proved nine changed contexts over 1,625 reused contexts and passed
-all seven affected recipes in 325.01 s. The shared built-in export then added one
-proved theory. The inventory retains **3,637 physical records**.
+**The current batch passed in 663.11 s.** It covers **1,649 theories** and all
+**51 recipe boundaries**: 39 affected recipes executed and 12 complete input
+manifests remained unchanged. The proof rebuilt 219 contexts and reused 1,430
+workspace contexts. Both host suites passed: 147 tool tests and 35 kernel tests
+(two optional skips). The inventory retains **2,604 physical report records**.
 
-Twenty families now have native words: fourteen use words alone and six passed
-old/new stages together. All original comparison boundaries remain unchanged.
-The new fifty-first recipe covers all thirteen registered built-in investigations
-with 56 complete cases. It restores execution coverage beyond the old recipe set;
-it does not establish general native control or practical gate 5a.
+**The complete source proof passed in 830.44 s**, rebuilding all 1,649 project
+theories from the installed HOL with zero project proof contexts reused.
+The session itself reports 815 s elapsed and 4,940 s CPU. It overlapped integration;
+it is neither an empty OS cache nor a cold execution of every recipe. Full-source
+cost remains large. The prior 1,620-theory proof took 542.886 s under a different
+source and scheduling boundary; the current batch does not establish a cold
+speedup.
 
-**Decision replay's complete parallel-reader probe took 102.01 s**, versus the
-earlier 260.76-second probe. Certificate replay's complete native word took
-55.78 s. Every decompressed byte matched. Independent complete graph reads now
-run in parallel; the earlier code prepared them sequentially within each context.
-The schedules differ, so these are observed improvements, not controlled ratios.
+Thirty-two families now have native words: **20 use words alone and 12 passed
+original comparisons and new words together**. Six previously accepted paired
+stages were retired without resetting their complete native boundaries. The
+original CLI checkers remain available. Nineteen recipe families still need
+native words, including built-in investigations.
 
-**All thirteen investigation CLI modes now reuse one accepted export in roughly
-1.6–2.3 s per request.** Their complete results match the shared 56-case execution.
-A default-executable invocation passed in 2.88 s. The unchanged whole-workspace
-validation observation from the previous batch remains 11.30 s; this batch does
-not claim that figure as its new complete execution time.
+Ordinary digit replay now uses the already proved parallel packet stages and
+complete prepared scope reports. Its standalone export matched every one of the
+original 20,519,284 bytes in **130.31 s**; the integrated recipe took **322.78 s**
+while other checks and the full-source proof ran. A new complete-cause-key cache
+also proved and matched the full word but took 213.41 s in its probe and was not
+adopted. These schedules do not support a controlled speedup ratio.
 
 | Current measured boundary | Result |
 |---|---|
-| Complete affected validation | 481.87 s; 51 recipes and both host suites. Six outer jobs, with existing nested groups and recorded worker settings. |
-| Base and dependency checks | 3.59 s. |
-| Recipe input comparison | 4.17 s. |
-| Export | 7.13 s; actual provider sessions and per-client proof roots. |
-| Recipe execution and host suites | 462.86 s. |
-| Seven-recipe integration | 325.01 s; 1,634 theories, nine rebuilt and 1,625 reused; every original/new pair passed. |
-| Shared built-in proof | One new export theory, 462 imported contexts reused; 21.61 s in the isolated exercise. |
-| Built-in execution and CLI | 56 cases passed in 5.94 s; thirteen separate CLI modes matched their complete results in a 7.20-second concurrent batch. |
-| Full source proof | The retained 1,620-theory frozen source proof still costs 542.886 s, rebuilding all project contexts from HOL. Later additions are outside that snapshot. |
-| Prior unchanged validation | 11.30 s with all 50 then-current results and 1,624 proof contexts reused, both host suites executed. |
-
-Different workloads, source boundaries and concurrent schedules must not be
-turned into controlled whole-cycle speedup ratios. The built-in proof and
-isolated checks overlapped independent validation. A pre-separation 51-recipe
-cycle took 617.38 s with four outer jobs and explicit Poly paths; it did not test
-default executable discovery. The final cycle above includes the corrected
-shared utility boundary. Verified archiving of earlier generated recipe copies
-also overlapped it. Full and cold cost, complete edit-to-commit attribution,
-peak memory, remaining client coverage and actual native-driven work remain open.
+| Complete affected validation | 663.11 s; 39 executed recipes, 12 unchanged complete manifests and both host suites. Six outer jobs. |
+| Base and dependency checks | 4.21 s. |
+| Incremental proof | 128.24 s; 219 rebuilt contexts. The actual proof closure imported 932 parent contexts. |
+| Recipe input comparison | 5.42 s. |
+| Export | 10.09 s; actual provider sessions and explicit client proof roots. |
+| Recipe execution and host suites | 487.63 s. |
+| Twelve-word prototype batch | 7.384 s; four jobs/four workers each, after the exact codec repair. |
+| Staged digit probe | 130.309 s; presentation 94.991 s, word emission 27.754 s, eight workers. |
+| Direct-proof probe | 51.378 s; 21 rebuilt contexts over 493 reused contexts. |
+| Full source proof | 830.440 s; all 1,649 project theories from HOL, sixteen threads, parallel_proofs=0. |
 
 The [current inventory](validation/reconstruction/current-verified.json),
 [incremental receipt](validation/incremental-check.json) and
-[complete cycle measurements](validation/reconstruction/native-current-cycle-measurements.json)
-bind the latest accepted result. The [parallel-reader measurements](validation/reconstruction/parallel-replay-reader-measurements.json),
-[six-family presentations](validation/reconstruction/cause-family-presentation-measurements.json),
-[investigation reuse](validation/reconstruction/builtin-investigation-reuse-measurements.json)
-and [utility dependency measurements](validation/reconstruction/execution-support-measurements.json)
-retain the independent probes, failures, negative controls and actual scopes.
+[current cycle measurements](validation/reconstruction/storage-current-cycle-measurements.json)
+bind the accepted result. The [storage presentations](validation/reconstruction/storage-presentation-measurements.json),
+[staged digit comparison](validation/reconstruction/staged-digit-reuse-measurements.json),
+[direct proof measurements](validation/reconstruction/direct-bootstrap-proof-measurements.json)
+and [full-source measurements](validation/reconstruction/storage-cold-proof-measurements.json)
+retain their actual scopes, failures and repairs. Practical gate 5a, complete
+edit-to-commit attribution, peak memory, remaining coverage and actual native-driven
+development remain open.
+
+The previously accepted shared investigation export still covers thirteen modes
+and 56 complete cases; actual CLI requests took roughly 1.6–2.3 s. Those modes
+retain their original finite contracts and do not admit arbitrary development
+plans or establish native control.
 
 ## Reusing accepted proofs across edits
 
@@ -71,14 +71,17 @@ contexts; independent contexts continue to come from their original providers.
 mixed parent/child requests. It does not infer a provider from a theory basename.
 
 Accepted source directories are immutable because Isabelle includes absolute
-paths in session currency. The original 1,589-theory base remains at
-`/tmp/structural-accepted`. The completed cold proof and its seven-theory child
-supplied the earlier 1,624 contexts; subsequent immutable children now supply
-all 1,635 current contexts. Their original sources, rewritten import
-headers, manifests, helper sources, session configuration, heaps and databases
-are checked. Requalification may change imports but not theorem bodies.
-New proofs preserve the original project ROOT before execution and verify that
-it and the checked inputs remain unchanged through completion.
+paths in session currency. The complete current proof is retained at
+`/tmp/native-cold-storage-proof-1789621295299849636`; it supplies all 1,649
+contexts directly from HOL. Its snapshot matches the current ROOT and every
+original source hash. It passed the existing read-only currency and heap checks
+before becoming the active context. Earlier provider chains and working copies
+are recoverable from the [verified cleanup archive](validation/reconstruction/storage-temporary-cleanup.json).
+
+Original sources, rewritten import headers, helper sources, session configuration,
+heaps and databases remain checked. Requalification may change imports but not
+theorem bodies. New proofs preserve the original project ROOT before execution
+and verify that it and the checked inputs remain unchanged through completion.
 
 **Correction to the old dry-run claim:** an underspecified
 `isabelle build -n -d copy` was not a sufficient currency check. Explicitly
@@ -202,37 +205,68 @@ Every source/result field, query occurrence, assessment, failure level and
 malformed value remains accounted for. Shared artifact tables retain complete
 values, and the host only packs native bits and checks the complete boundary.
 
-| Family | Complete word bytes | Latest complete-batch recipe seconds |
+| Family | Complete word bytes | Current batch recipe seconds |
 |---|---:|---:|
-| required-history | 159,908 | 21.25 |
-| digit-history | 418,306 | 137.49 |
-| known-history | 449,531 | 216.62 |
-| quoted-history | 483,348 | 152.58 |
-| constructed-history | 551,708 | 225.43 |
-| digit-replay | 20,519,284 | 394.94 |
-| decision-replay | 1,296,760 | 114.70 |
-| native-nodes | 341,007 | 2.57 |
-| native-graphs | 1,000,741 | 22.90 |
-| native-derivations | 648,713 | 5.08 |
-| native-certificates | 890,378 | 4.97 |
-| history-index | 316,651 | 89.04 |
-| indexed-generation | 550,833 | 2.52 |
-| digit-generation | 743,867 | 3.02 |
-| native-certificate-replay | 722,239 | 135.93 |
-| requirement-decisions | 494,768 | 13.94 |
-| required-causes | 495,123 | 11.93 |
-| certified-causes | 5,538,773 | 49.94 |
-| concurrent-history | 555,495 | 199.50 |
-| concurrent-replay | 20,519,284 | 294.35 |
+| required-history | 159,908 | 29.20 |
+| digit-history | 418,306 | 185.05 |
+| known-history | 449,531 | 217.38 |
+| quoted-history | 483,348 | 167.62 |
+| constructed-history | 551,708 | 238.16 |
+| digit-replay | 20,519,284 | 322.78 |
+| decision-replay | 1,296,760 | 143.27 |
+| native-nodes | 341,007 | 3.37 |
+| native-graphs | 1,000,741 | 33.96 |
+| native-derivations | 648,713 | 8.18 |
+| native-certificates | 890,378 | 6.43 |
+| history-index | 316,651 | 123.28 |
+| indexed-generation | 550,833 | 3.07 |
+| digit-generation | 743,867 | 3.57 |
+| native-certificate-replay | 722,239 | 133.67 |
+| requirement-decisions | 494,768 | 11.31 |
+| required-causes | 495,123 | 15.61 |
+| certified-causes | 5,538,773 | 57.30 |
+| concurrent-history | 555,495 | 211.84 |
+| concurrent-replay | 20,519,284 | 295.65 |
+| artifact-lookup | 20,000 | 2.57 |
+| environment-updates | 165,530 | 3.57 |
+| allocated-environments | 203,706 | 3.42 |
+| use-allocation | 376,332 | 3.02 |
+| environment-grafts | 158,937 | 3.77 |
+| graft-admission | 177,251 | 3.77 |
+| cached-grafts | 407,523 | 4.62 |
+| digit-allocation | 346,069 | 3.97 |
+| use-codecs | 178,732 | 3.67 |
+| generation-records | 350,679 | 5.97 |
+| encoded-environments | 691,705 | 5.78 |
+| data-reading | 104,639 | 4.77 |
 
-The first fourteen use words alone. The final six include both original
-comparisons and new native words in this batch; those paired times are not
-presentation-only times. The shared inspected-value composer retains complete
-subjects and all actual facet occurrences. Boolean-family reports preserve
-coverage, optional rows, original and selected verdicts and each row inspection.
-Concurrent clients retain their established exact stages and original source
-views. Thirty original recipe families, plus the new built-in family, still
-require word migration. Remaining shared renderers keep their existing callers.
+The first twenty use words alone. The final twelve include both original
+comparisons and new native words; their times are whole recipe times.
+The twelve new presenters preserve complete original source/reference/result
+values, actual inspections, all optional levels, counted paths, chain growth,
+raw formation, codec budgets and additional original comparisons. Opaque stores
+retain their original views and allocation counters with explicit identity laws.
+`finite_derived_value` factors the common complete-value/derived-field contract
+before its reuse by these families.
+
+Use-codec initially exhausted the stack because large decoded natural coordinates
+were expanded as unary terms. Flattening bit paths alone was insufficient.
+The accepted repair uses the existing exact binary natural and digit-use
+encoders, with proved identity equivalence to the original natural/use notions.
+Every natural, path, optional level and refusal remains; there is no magnitude
+cutoff or truncated report. All twelve final words passed beside unchanged
+original comparisons.
+
+Three bootstrap proof searches now instantiate existing facts directly: the
+actual image witness in steering, the existing per-clause generation formation
+law, and the relevant conjuncts of the complete source-installation run theorem.
+Statements, definitions and premises are unchanged. In the isolated probe,
+steering and installation commands took 0.002 s and 0.014 s; generation schema
+formation still took 36.152 s. The new full-source run remains expensive: its
+largest commands include child-source simplification (183.543 s), inference-claim
+compilation (87.399 s), inference clauses (80.480 s), and generation schema
+formation (72.344 s). Concurrent command times cannot be subtracted from total
+build elapsed time.
 
 **Earlier equality and prepared-order experiments did not demonstrate a useful gain.** Exact
 fieldwise target equality completed in 268.31 s; adding proved prepared-key term
@@ -255,12 +289,12 @@ Prepare substantial independent candidates and checks together; expose actual
 parallel computations and review combined results before dependent integration.
 The useful remaining groups are:
 
-1. Finish native presentation for the other thirty-one families, reusing existing
+1. Finish native presentation for the remaining nineteen families, reusing existing
    notion contracts. Preserve complete old/new comparisons before retiring stages.
 2. Reduce the measured dominant native computation and full-source proof costs.
-   Remaining cold commands include child-source simplification (96 s), generation
-   retention (41–56 s), source-entry installation (46 s) and steering (45 s).
-   Reuse existing exact mechanisms and require a completed beneficial execution.
+   Use the current full-source command measurements above; the old installation
+   and steering searches have already been replaced. Reuse existing exact
+   mechanisms and require a completed beneficial execution.
 3. Complete the non-recipe coverage audit and its executions. The
    [syntactic inventory](validation/reconstruction/validation-entrypoint-inventory.json)
    finds 74 check/run/roundtrip CLI tools, 50 directly called execution scripts
@@ -285,15 +319,20 @@ selection account.
 Preserve all candidates, facets, refusals, witnesses, ordered ledgers, optional
 levels and complete original evidence. Exercise changed bindings, stale caches,
 missing evidence, repeats, empty/malformed inputs and defective controls. Cached
-construction does not admit arbitrary modified reports. Retain reproducible
-sources and contracts before removing obsolete bulk; preserve the accepted
-contexts and full digit comparison word. Existing [verified temporary archives](validation/reconstruction/native-temporary-archives.json)
-replace obsolete expanded copies. The latest
-[verified recipe archive](validation/reconstruction/native-final-temporary-archive.json)
-replaces 3.31 GB of generated files with 0.79 GB. The
-[preceding batch archives](validation/reconstruction/parallel-previous-temporary-archives.json)
-retain their complete earlier evidence. Accepted contexts and current exports
-remain in place.
+construction does not admit arbitrary modified reports.
+
+The [cleanup record](validation/reconstruction/storage-temporary-cleanup.json)
+identifies the verified local archive under `.git/native-speedup-evidence`.
+It retains the exact source, proof, execution, diagnostic and earlier archive
+contents. Cleanup removed 77 work directories and 187 standalone files/old heap
+artifacts after full verification: 17.31 GB of expanded data became a 3.70 GB
+archive. The [post-cleanup check](validation/reconstruction/storage-cleanup-verification.json)
+confirms every retained input still matches and the current proof remains current. These
+large historical artifacts are local, not part of the Git commit; tracked
+measurements and reproducible source/recipe boundaries remain in the repository.
+The current full-source proof, its Pure/HOL runtime and active pointer stay at
+their original paths for immediate proof reuse. Earlier absolute temporary
+paths in historical receipts are archive restoration paths, not live providers.
 
 Conditions 1 and 6, practical gate 5a, O-85, broader coverage and genesis remain
 open. Theoretical cost gate 5b remains deferred until after genesis.

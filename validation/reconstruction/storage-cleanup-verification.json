@@ -1,0 +1,16 @@
+{
+  "status": "accepted",
+  "active_context": "/tmp/native-cold-storage-proof-1789621295299849636",
+  "context_receipt_sha256": "ed1db8e6d8a813aa52c2b06b3e11f3c0c3a68f42754e791eaff26e067bdbfa9a",
+  "workspace_theories": 1649,
+  "provider_directories": [
+    "/tmp/native-cold-storage-proof-1789621295299849636"
+  ],
+  "current_recipe_manifests": 51,
+  "all_retained_inputs_match": true,
+  "read_only_currency_passed_after_cleanup": true,
+  "heap_database_unchanged": true,
+  "removed_directories": 77,
+  "removed_files": 187,
+  "audit_correction": "The first documentary verification selected every historical *-sources.json and correctly encountered conflicting old tool versions. The final check selects exactly the 51 recipes in the current retained inventory and registered recipe set; all their actual inputs match."
+}

@@ -2468,3 +2468,26 @@ retention. The outer recipe limit now matches the requested job count.
 ## Complete native and investigation feedback review
 
 The final 481.87-second cycle passes all 51 recipes, 1,635 theories, 147 tool tests and 35 kernel tests (two optional skips), retaining 3,637 physical records. Every six-family old/new pairing passed without resetting an original boundary. Decision replay and certificate replay complete-word probes took 102.01 and 55.78 seconds with every byte equal; concurrent schedules differ. The independent coverage exercise exposed eleven stale definition-owner registrations and three undeclared client proof roots. Actual typed contracts now match the owners, 56 cases and thirteen CLI invocations pass, and wrong/missing contracts and changed sources fail before execution. A default Poly lookup failure was repaired through Isabelle ML_Settings and verified. Utility factoring preserves thirteen function bodies and makes 49 recipes independent of CLI-only changes. Native problem/approach selection, broader adequacy, real gate 5a, O-85 and genesis remain open; 5b is deferred.
+
+## Storage and staged replay: completed batch review
+
+The 663.11-second cycle accepted all 51 boundaries: 39 recipes executed and 12
+complete input manifests unchanged, with 1,649 theories, 2,604 physical records,
+147 tool tests and 35 kernel tests (two optional skips). Thirty-two families have
+native words: twenty alone and twelve paired. The lower record count retires
+six accepted duplicate comparison stages; complete word boundaries remain.
+The new codec initially exhausted the stack on large decoded naturals. Flattening
+paths alone failed; exact compact natural/use notions with identity laws repaired
+the full case without truncation. Two narrow direct-proof application failures
+were also repaired. The full frozen source proof accepted all 1,649 theories
+from HOL with zero project context reuse in 830.440 seconds. Its original ROOT
+and source hashes match main.
+
+The staged digit probe matched every byte in 130.309 seconds, while its integrated
+recipe took 322.78 seconds under concurrent load. The new complete-cause cache
+also matched but took 213.408 seconds and was not adopted. Different schedules
+and the overlapping full-source proof prevent controlled speedup ratios. Full
+validation remains expensive. The verified cleanup archive preserves complete
+working evidence while the active full proof stays reusable. Native problem and
+approach selection, broader adequacy, actual gate 5a usefulness, O-85 and genesis
+remain open; 5b remains deferred. No additional batch is begun by this review.

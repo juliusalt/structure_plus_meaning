@@ -1,0 +1,1648 @@
+{
+  "version": 1,
+  "output": "/tmp/storage-staged-integration-1789621221417434186",
+  "receipt_sha256": "a4cab424dcf9995ebbe9bf2e6d4f2cfa559e9f344e11ccb245fd03fd4bef8ca0",
+  "status": "accepted",
+  "base": "/tmp/direct-proof-cost-candidate/proof-3",
+  "phases": {
+    "base_and_impact": 4.21,
+    "proof": 128.24,
+    "recipe_impact": 5.42,
+    "export": 10.09,
+    "recipes_and_host_tests": 487.63
+  },
+  "validation_inputs": {
+    "ROOT": "e2e17e4323e85de91cc610cfd242625c325e996a6722b3ac3611a24949babefd",
+    "tools/incremental_check.py": "85a24f19fcf6bc3d77677cbe457bfdff960e20ab89bf23a9bb2ac05cddd412cf",
+    "tools/check.py": "2d035d05d6e1dd4246d9bb810f612cd0edb923ca350ba04960d8bfd83b9116d2"
+  },
+  "source_checks": {
+    "theory_count": 1649,
+    "missing_theory_files": [],
+    "unlisted_theories": [],
+    "proof_escape_matches": []
+  },
+  "base_receipt_sha256": "8baa904e925abc260faecd251407a388910b850c73d4fe880b64a1707ac96ad1",
+  "base_theories": 1441,
+  "base_context_receipt": "/tmp/direct-proof-cost-candidate/proof-3/accepted-context.json",
+  "theories": 1649,
+  "reused_theories": 1430,
+  "rebuilt_theories": [
+    "Allocated_Environment_Execution",
+    "Allocated_Environment_Presentation",
+    "Artifact_Lookup_Execution",
+    "Artifact_Lookup_Presentation",
+    "Cached_Graft_Execution",
+    "Cached_Graft_Presentation",
+    "Certified_Cause_Execution",
+    "Certified_Cause_Presentation",
+    "Concurrent_History_Execution",
+    "Concurrent_History_Presentation",
+    "Concurrent_Replay_Execution",
+    "Concurrent_Replay_Presentation",
+    "Constructed_History_Execution",
+    "Constructed_History_Presentation",
+    "Data_Reading_Execution",
+    "Data_Reading_Presentation",
+    "Decision_Replay_Execution",
+    "Decision_Replay_Presentation",
+    "Digit_Allocation_Execution",
+    "Digit_Allocation_Presentation",
+    "Digit_Generation_Execution",
+    "Digit_Generation_Presentation",
+    "Digit_History_Execution",
+    "Digit_History_Presentation",
+    "Digit_Replay_Execution",
+    "Digit_Replay_Presentation",
+    "Encoded_Environment_Execution",
+    "Encoded_Environment_Presentation",
+    "Environment_Update_Execution",
+    "Environment_Update_Presentation",
+    "Factor_Certified_Cause_Assessment",
+    "Factor_Certified_Cause_Cases",
+    "Factor_Certified_Cause_Investigation",
+    "Factor_Certified_Cause_Variants",
+    "Factor_Computed_Replay_Causes",
+    "Factor_Constructed_Cause_Cache",
+    "Factor_Constructed_Development_Execution",
+    "Factor_Constructed_History_Investigation",
+    "Factor_Constructed_Judgment_Sources",
+    "Factor_Constructed_Original_History_Execution",
+    "Factor_Data_Reading_Fixture",
+    "Factor_Decision_Replay_Assessment",
+    "Factor_Decision_Replay_Cases",
+    "Factor_Decision_Replay_Correctness",
+    "Factor_Decision_Replay_Investigation",
+    "Factor_Decision_Replay_Sharing",
+    "Factor_Development_Execution_Sharing",
+    "Factor_Development_Report_Identity",
+    "Factor_Digit_History_Attempt_Refinement",
+    "Factor_Digit_History_Cases",
+    "Factor_Digit_History_Constructed_Attempts",
+    "Factor_Digit_History_Constructed_Steps",
+    "Factor_Digit_History_Investigation",
+    "Factor_Digit_History_Known_Generation",
+    "Factor_Digit_History_Methods",
+    "Factor_Digit_History_Policy_Construction",
+    "Factor_Digit_History_Projection",
+    "Factor_Digit_History_References",
+    "Factor_Digit_History_Result_Candidates",
+    "Factor_Digit_History_States",
+    "Factor_Digit_History_Steps",
+    "Factor_Digit_Policy_Backends",
+    "Factor_Digit_Policy_Construction",
+    "Factor_Digit_Policy_Replay",
+    "Factor_Digit_Replay_Cases",
+    "Factor_Digit_Replay_Families",
+    "Factor_Digit_Replay_Investigation",
+    "Factor_Digit_Replay_Known_Reports",
+    "Factor_Digit_Replay_Methods",
+    "Factor_Digit_Replay_Reading_Sharing",
+    "Factor_Digit_Replay_References",
+    "Factor_Digit_Replay_Reports",
+    "Factor_Digit_Replay_Variants",
+    "Factor_Finite_Required_Causes",
+    "Factor_Finite_Requirement_Decision_Replay",
+    "Factor_Finite_Requirement_Decisions",
+    "Factor_Finite_Source_Decision_Replay",
+    "Factor_Finite_Source_Decisions",
+    "Factor_Generation_Citation_Roots",
+    "Factor_Generation_Dependency_Contracts",
+    "Factor_Generation_History_Append",
+    "Factor_Generation_Read_Sites",
+    "Factor_Generation_Requests",
+    "Factor_Generation_Retention_Admission",
+    "Factor_Generation_Retention_Contracts",
+    "Factor_History_Generation_Members",
+    "Factor_History_Index_Cases",
+    "Factor_History_Index_Investigation",
+    "Factor_History_Index_Methods",
+    "Factor_History_Index_References",
+    "Factor_History_State_Components",
+    "Factor_Indexed_History_Members",
+    "Factor_Indexed_History_Projection",
+    "Factor_Indexed_History_Steps",
+    "Factor_Known_Cause_Reports",
+    "Factor_Known_History_Control_Construction",
+    "Factor_Known_History_Investigation",
+    "Factor_Known_Replay_Policy",
+    "Factor_Literal_Replay_Alternatives",
+    "Factor_Literal_Replay_Assessment",
+    "Factor_Literal_Replay_Cases",
+    "Factor_Literal_Replay_Investigation",
+    "Factor_Native_Admission_Assessment",
+    "Factor_Native_Admission_Cases",
+    "Factor_Native_Admission_Investigation",
+    "Factor_Native_Requirement_Assessment",
+    "Factor_Native_Requirement_Family_Cases",
+    "Factor_Native_Requirement_Investigation",
+    "Factor_Native_Requirement_Report_Assessment",
+    "Factor_Native_Requirement_Sharing",
+    "Factor_Nested_History_Identity",
+    "Factor_Nested_Replay_Identity",
+    "Factor_Packet_Observation_Readings",
+    "Factor_Packet_Source_Projections",
+    "Factor_Packet_Stages",
+    "Factor_Parallel_Packet_Cycles",
+    "Factor_Parametric_Policy_Attempts",
+    "Factor_Policy_Constructor_Congruence",
+    "Factor_Prepared_Cause_Scope_Reports",
+    "Factor_Prepared_Replay_Assessments",
+    "Factor_Prepared_Replay_Inspections",
+    "Factor_Primary_Computed_Cause_Execution",
+    "Factor_Quoted_History_Investigation",
+    "Factor_Quoted_Policy_Attempts",
+    "Factor_Replay_Input_Transitions",
+    "Factor_Required_Cause_Assessment",
+    "Factor_Required_Cause_Cases",
+    "Factor_Required_Cause_Investigation",
+    "Factor_Required_History_Cases",
+    "Factor_Required_History_Construction",
+    "Factor_Required_History_Investigation",
+    "Factor_Required_History_Methods",
+    "Factor_Required_History_Projection",
+    "Factor_Required_History_References",
+    "Factor_Required_History_States",
+    "Factor_Required_History_Steps",
+    "Factor_Required_History_Transitions",
+    "Factor_Required_Workflow_Cases",
+    "Factor_Required_Workflow_Comparison",
+    "Factor_Requirement_Decision_Assessment",
+    "Factor_Requirement_Decision_Cases",
+    "Factor_Requirement_Decision_Investigation",
+    "Factor_Shared_History_Construction",
+    "Factor_Shared_Replay_Construction",
+    "Factor_Source_Development_Admission",
+    "Factor_Source_Development_Cases",
+    "Factor_Source_Development_Cycle",
+    "Factor_Source_Development_Input",
+    "Factor_Source_Development_Subjects",
+    "Factor_Source_Execution_Sharing",
+    "Factor_Steered_Development",
+    "Factor_Steered_Execution_Sharing",
+    "Factor_Structural_Replay_Identity",
+    "Factor_Success_Shared_History",
+    "Factor_Workflow_Comparison",
+    "Factor_Workflow_Expanded_Comparison",
+    "Factor_Workflow_Input_Scope",
+    "Factor_Workflow_Request_Batch",
+    "Factor_Workflow_Request_Input",
+    "Finite_Derived_Values",
+    "Finite_Presented_Cause_Families",
+    "Finite_Presented_Decisions",
+    "Finite_Presented_Generation_Queries",
+    "Finite_Presented_Histories",
+    "Finite_Presented_Native_Certificates",
+    "Finite_Presented_Native_Construction",
+    "Finite_Presented_Replays",
+    "Finite_Presented_Storage_Notions",
+    "Generation_Record_Execution",
+    "Generation_Record_Presentation",
+    "Graft_Admission_Execution",
+    "Graft_Admission_Presentation",
+    "Graft_Execution",
+    "Graft_Presentation",
+    "History_Index_Execution",
+    "History_Index_Presentation",
+    "History_Input_Transitions",
+    "History_Stage_Operations",
+    "Indexed_Generation_Execution",
+    "Indexed_Generation_Presentation",
+    "Known_History_Execution",
+    "Known_History_Presentation",
+    "Literal_Replay_Execution",
+    "Native_Admission_Execution",
+    "Native_Admission_Execution_Base",
+    "Native_Admission_Investigation_Execution",
+    "Native_Certificate_Investigation_Execution",
+    "Native_Certificate_Presentation",
+    "Native_Certificate_Replay_Execution",
+    "Native_Derivation_Investigation_Execution",
+    "Native_Derivation_Presentation",
+    "Native_Development_Execution",
+    "Native_Development_Execution_Base",
+    "Native_Development_Steering",
+    "Native_Graph_Investigation_Execution",
+    "Native_Graph_Presentation",
+    "Native_Node_Investigation_Execution",
+    "Native_Node_Presentation",
+    "Native_Replay_Presentation",
+    "Native_Requirement_Investigation_Execution",
+    "Native_Source_Development",
+    "Native_Workflow_Execution",
+    "Native_Workflow_Execution_Base",
+    "Prepared_Digit_Cause_Assessments",
+    "Prepared_Digit_Replay_Packets",
+    "Quoted_History_Execution",
+    "Quoted_History_Presentation",
+    "Required_Cause_Execution",
+    "Required_Cause_Presentation",
+    "Required_History_Execution",
+    "Required_History_Presentation",
+    "Requirement_Decision_Execution",
+    "Requirement_Decision_Presentation",
+    "Shared_Constructed_History_Execution",
+    "Shared_Digit_Replay_Execution",
+    "Use_Allocation_Execution",
+    "Use_Allocation_Presentation",
+    "Use_Codec_Execution",
+    "Use_Codec_Presentation"
+  ],
+  "proof": "/tmp/storage-staged-integration-1789621221417434186/proof/result.json",
+  "accepted_proof_context": "/tmp/storage-staged-integration-1789621221417434186/proof",
+  "host_tests": {
+    "tools": {
+      "exit_code": 0,
+      "ran": 147,
+      "skipped": 0,
+      "tail": [
+        "OK"
+      ]
+    },
+    "kernel": {
+      "exit_code": 0,
+      "ran": 35,
+      "skipped": 2,
+      "tail": [
+        "OK (skipped=2)"
+      ]
+    }
+  },
+  "recipes": {
+    "allocated-environments": {
+      "seconds": 3.42,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 40,
+          "tags": {
+            "ALLOCATED_ENVIRONMENT_ASSESSMENT": 16,
+            "ALLOCATED_ENVIRONMENT_CHAIN": 3,
+            "ALLOCATED_ENVIRONMENT_COMPARISON": 1,
+            "ALLOCATED_ENVIRONMENT_INVESTIGATION": 3,
+            "ALLOCATED_ENVIRONMENT_SCOPE": 1,
+            "ALLOCATED_ENVIRONMENT_SUBJECT": 16
+          },
+          "sha256": "59a2f2ffdce911dcb7031ed8028e6dc68a061da98e78fb31ae9ecd1ceb79d2c8"
+        },
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "1d83929e3a5ca3aac9ac1cb92defb17ab495a578261f23378b84a6297ca40e64"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 3.2786183139978675,
+          "exit_code": 0
+        },
+        "presentation": {
+          "seconds": 2.622788294000202,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 203706,
+        "sha256": "65a710e0ac6af897512c8386f374861c934e1f0865d300684dc4c2dd8f347621"
+      }
+    },
+    "artifact-lookup": {
+      "seconds": 2.57,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 35,
+          "tags": {
+            "ARTIFACT_LOOKUP_ASSESSMENT": 10,
+            "ARTIFACT_LOOKUP_COMPARISON": 1,
+            "ARTIFACT_LOOKUP_INVESTIGATION": 3,
+            "ARTIFACT_LOOKUP_PATH": 10,
+            "ARTIFACT_LOOKUP_SCOPE": 1,
+            "ARTIFACT_LOOKUP_SUBJECT": 10
+          },
+          "sha256": "9103f836fc9ecffce28e9b69e96b8ae1470193be2255002b42bd57cd14c6732a"
+        },
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "344e83d78225b2693c026db6348ffbc39567e44b63318af4eb3d8dec17305c31"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 2.471663467993494,
+          "exit_code": 0
+        },
+        "presentation": {
+          "seconds": 2.1190425759996288,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 20000,
+        "sha256": "b8196ef2eca56c36391663333532fcd37b7ccdfe4e9d70c9d90321778da58697"
+      }
+    },
+    "cached-grafts": {
+      "seconds": 4.62,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 86,
+          "tags": {
+            "CACHED_GRAFT_ASSESSMENT": 27,
+            "CACHED_GRAFT_CHAIN": 4,
+            "CACHED_GRAFT_COMPARISON": 1,
+            "CACHED_GRAFT_INVESTIGATION": 3,
+            "CACHED_GRAFT_SCOPE": 1,
+            "CACHED_GRAFT_SOURCE": 22,
+            "CACHED_GRAFT_SOURCE_SCOPE": 1,
+            "CACHED_GRAFT_SUBJECT": 27
+          },
+          "sha256": "e4c2f42319fea36e7e1827da7fae68cabbf6be155736d2895f2e0b82d6d4e7a5"
+        },
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "0a870c05e52213907d9ff5181318b80c2ac06ab525e06baac875b352853aa7ac"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 4.42400540401286,
+          "exit_code": 0
+        },
+        "presentation": {
+          "seconds": 2.4684951170056593,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 407523,
+        "sha256": "98dfe49e950253c251d83e08d0854352bf3643fd1ce3a131b62a87a0a7d19f7a"
+      }
+    },
+    "certified-causes": {
+      "seconds": 57.3,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "8d96f3233263f71ad71f1a18a9e0ff408472200a9389b589228a881b8898a9a9"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 57.22606836298655,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 5538773,
+        "sha256": "4e65ae97d197e8d474dea4ece8ed32c7c680d84df4925523a8ff4a3dce4a6eef"
+      }
+    },
+    "concurrent-history": {
+      "seconds": 211.84,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "7661e6710ccbe095cf66d6aae7f2995fd55bb5d891a69de3b79eafb8ce6b3817"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 211.75142069801223,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 555495,
+        "sha256": "40976dd537c8bcf25c78e74c82209ea4c5f29214d94d97a87c9d43e5cc20c823"
+      }
+    },
+    "concurrent-replay": {
+      "seconds": 295.65,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "ec62b35b12207ca2e16b8f77cf260314fa557f71ac48918c80d511db635aadd5"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 295.5499523640028,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 20519284,
+        "sha256": "3bb5958241e74fd03e43412abb5073a5ffef2cd98073f724bbf4207530ccc36b"
+      }
+    },
+    "constructed-history": {
+      "seconds": 238.16,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "70719735001873807717a13f31aaa4f9739e9115323ad6fe112aa93b0e0e3249"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 238.04642422100005,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 551708,
+        "sha256": "45bde64a359e20ca765fb219b6a98215e8359cc8c4479e42f753028d283b8ff2"
+      }
+    },
+    "data-reading": {
+      "seconds": 4.77,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 32,
+          "tags": {
+            "DATA_READING_ASSESSMENT": 12,
+            "DATA_READING_COMPARISON": 1,
+            "DATA_READING_FIXTURE": 1,
+            "DATA_READING_INVESTIGATION": 3,
+            "DATA_READING_PREPARED": 1,
+            "DATA_READING_SCOPE": 1,
+            "DATA_READING_SOURCE": 1,
+            "DATA_READING_SUBJECT": 12
+          },
+          "sha256": "d5d9250a5b6236a1589dca72c2de87d7086ada2300fbddd5e613fb15b93b2f46"
+        },
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "93787d14383a0557d209c6868aabf7104a7fef59eeb4cbb2c6c9690e67969696"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 4.672320504003437,
+          "exit_code": 0
+        },
+        "presentation": {
+          "seconds": 4.121183631999884,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 104639,
+        "sha256": "533ece0f80b88008f41aaea7519b710ddf95497c7e3e68c9c70f09c74d3a726d"
+      }
+    },
+    "decision-replay": {
+      "seconds": 143.27,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "e80d30794f8ee8d8d02a8ad27915d6098c754f659aed34ec1d305539b86a251a"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 143.20494931499707,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 1296760,
+        "sha256": "de8e13566c3bb91bee5f75f3061a0e7d9671ee5c920209f8f9c9a5518cd48271"
+      }
+    },
+    "digit-allocation": {
+      "seconds": 3.97,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 56,
+          "tags": {
+            "DIGIT_ALLOCATION_ASSESSMENT": 16,
+            "DIGIT_ALLOCATION_CASE_VIEWS": 16,
+            "DIGIT_ALLOCATION_CHAIN": 3,
+            "DIGIT_ALLOCATION_COMPARISON": 1,
+            "DIGIT_ALLOCATION_INVESTIGATION": 3,
+            "DIGIT_ALLOCATION_SCOPE": 1,
+            "DIGIT_ALLOCATION_SUBJECT": 16
+          },
+          "sha256": "c3db3521ae1acd1a8269e712d5966129b86c375dab6b5bbf1ca961a4ee590c70"
+        },
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "5b5c96f12efe28ac4f997e269cfcb60c0d30bb0207f714d79ded8a835c6ac462"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 3.821117151004728,
+          "exit_code": 0
+        },
+        "presentation": {
+          "seconds": 3.0697363460058114,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 346069,
+        "sha256": "f0aa638f37d8254e8102495d56056566f8e8bbe1ec3424c97fe9d722f78dee6a"
+      }
+    },
+    "digit-generation": {
+      "seconds": 3.57,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "b401a02caa2157044fdc4dd1d7184b3d37ca06b1b1671e2c424a49133e2f18d1"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 3.5203148040018277,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 743867,
+        "sha256": "5b1e06ac29094de1347c5884664503f64c4deb688a1b196d9baddf7e129e7766"
+      }
+    },
+    "digit-history": {
+      "seconds": 185.05,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "75e7b3a6055d4a9e0bac740c4b95576ffb59baf7338dd967dce51b7293d56c1f"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 184.92862782799057,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 418306,
+        "sha256": "1a96e74b4bc51b7963f019504eb0b9a4436c58c58dde6d289d0be090f1764356"
+      }
+    },
+    "encoded-environments": {
+      "seconds": 5.78,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 59,
+          "tags": {
+            "ENCODED_ENVIRONMENT_ASSESSMENT": 22,
+            "ENCODED_ENVIRONMENT_COMPARISON": 1,
+            "ENCODED_ENVIRONMENT_INVESTIGATION": 4,
+            "ENCODED_ENVIRONMENT_PATH": 4,
+            "ENCODED_ENVIRONMENT_PREVIOUS_COMPARISON": 1,
+            "ENCODED_ENVIRONMENT_PREVIOUS_INVESTIGATION": 3,
+            "ENCODED_ENVIRONMENT_PREVIOUS_SCOPE": 1,
+            "ENCODED_ENVIRONMENT_SCOPE": 1,
+            "ENCODED_ENVIRONMENT_SUBJECT": 22
+          },
+          "sha256": "150a6305ec210a24ad67ffe75c19b2c5df46cef91e0b523c01dc1bb65a5595d7"
+        },
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "d5b9c6d4cd77e3f10ab776934bf10a8e0d6557cd0e5930c68b9eb8369032af88"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 5.47483261799789,
+          "exit_code": 0
+        },
+        "presentation": {
+          "seconds": 3.8216885830042884,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 691705,
+        "sha256": "40ba10b0cfdd0b18aa28492d7195c11738adf572fbf0d4f4765fffb377daf048"
+      }
+    },
+    "environment-grafts": {
+      "seconds": 3.77,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 39,
+          "tags": {
+            "GRAFT_ASSESSMENT": 16,
+            "GRAFT_COMPARISON": 1,
+            "GRAFT_INVESTIGATION": 4,
+            "GRAFT_SCOPE": 1,
+            "GRAFT_SEMANTICS": 1,
+            "GRAFT_SUBJECT": 16
+          },
+          "sha256": "f8dcfefd5ec82288717c6c67761f3f3c2c613fcf8be6f1e3c57e3c4088d9e89f"
+        },
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "ce5ca1504409ee058245003e991d6d9d787fc008d2bf086566cefa2d0787bc32"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 3.6290352670039283,
+          "exit_code": 0
+        },
+        "presentation": {
+          "seconds": 2.673270789004164,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 158937,
+        "sha256": "a4c5706f531a0436d36fd4b8a28ba665d516a9aaaaac8b9bbfff7bf8712b5c93"
+      }
+    },
+    "environment-updates": {
+      "seconds": 3.57,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 40,
+          "tags": {
+            "ENVIRONMENT_UPDATE_ASSESSMENT": 16,
+            "ENVIRONMENT_UPDATE_CHAIN": 3,
+            "ENVIRONMENT_UPDATE_COMPARISON": 1,
+            "ENVIRONMENT_UPDATE_INVESTIGATION": 3,
+            "ENVIRONMENT_UPDATE_SCOPE": 1,
+            "ENVIRONMENT_UPDATE_SUBJECT": 16
+          },
+          "sha256": "6ee1aa92f75f90ccceb417fa339e2a8de6395e8474374cb74d8f28e48bac5ea4"
+        },
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "42cf4c81fa416df968afe51fa707d73f98b48b517aa39795924c16fc6ad0dd98"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 3.4773444259917596,
+          "exit_code": 0
+        },
+        "presentation": {
+          "seconds": 2.6750543450034456,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 165530,
+        "sha256": "ad4509e600d247126f5fbb9535b033e0e959a9cf7d09e40ec26c5f982dc9967e"
+      }
+    },
+    "generation-records": {
+      "seconds": 5.97,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 37,
+          "tags": {
+            "GENERATION_RECORD_ASSESSMENT": 16,
+            "GENERATION_RECORD_COMPARISON": 1,
+            "GENERATION_RECORD_INVESTIGATION": 3,
+            "GENERATION_RECORD_SCOPE": 1,
+            "GENERATION_RECORD_SUBJECT": 16
+          },
+          "sha256": "19b4353a409522404bd575a853ab0dba1e3c2d0c5107be468f02e31c61f9a3b7"
+        },
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "04eee141dcc0ec080b5b083e59f5af51695103dd2f9f5177c1d2632141a05258"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 5.524358601003769,
+          "exit_code": 0
+        },
+        "presentation": {
+          "seconds": 3.0194907060067635,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 350679,
+        "sha256": "849a944920cb2a8fb32fdeeb828bf4fe7b66a864c230a4a751d235c872ee1b9b"
+      }
+    },
+    "graft-admission": {
+      "seconds": 3.77,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 71,
+          "tags": {
+            "GRAFT_ADMISSION_ASSESSMENT": 22,
+            "GRAFT_ADMISSION_COMPARISON": 1,
+            "GRAFT_ADMISSION_INVESTIGATION": 3,
+            "GRAFT_ADMISSION_REQUIREMENTS": 22,
+            "GRAFT_ADMISSION_SCOPE": 1,
+            "GRAFT_ADMISSION_SUBJECT": 22
+          },
+          "sha256": "c3101081f8b7e1781f943df6da5e1ba9d4e6c9caa08af159477ef67b8e9974b2"
+        },
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "ecae638eeba0e9aa4f0776fb2991d5c93b62f2ff53bc6a767b9ff1a94c74dd49"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 3.6234171129908646,
+          "exit_code": 0
+        },
+        "presentation": {
+          "seconds": 2.6231556459970307,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 177251,
+        "sha256": "0c9b78ad23436dc0af0320adf12f303f31d2acf4898dbc4dac0bda4b7d515e7d"
+      }
+    },
+    "history-index": {
+      "seconds": 123.28,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "d2b94be8212f085c70df3e26a24a464bd86dd5ec78d4b06db2bb57cdef4ce094"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 123.2025111529947,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 316651,
+        "sha256": "33e8d2a3a2f1fbbdb2c25d968ed2e44af4ca83b93d4da2d64f253977b74de9b4"
+      }
+    },
+    "indexed-generation": {
+      "seconds": 3.07,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "904fa55f6849b4c1824adb7d056aa6f601056faf6e18bab10bc11f437be9d8b5"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 2.971362758005853,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 550833,
+        "sha256": "262e3a083dd6c80bc88b0eb026287675a9fcc2f72cc658ab73a902f141bf03c0"
+      }
+    },
+    "known-history": {
+      "seconds": 217.38,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "a0580363428b22d84d3a59688715d412324cc1b4c5e5f020672f19957f02404c"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 217.32311162899714,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 449531,
+        "sha256": "17cf3a0bc8feea9e8fa5af0acfb71c9c14871db5259087abf45a05da1e5fd3e0"
+      }
+    },
+    "literal-replay": {
+      "seconds": 11.89,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 20,
+          "tags": {
+            "LITERAL_REPLAY_ASSESSMENT": 7,
+            "LITERAL_REPLAY_COMPARISON": 1,
+            "LITERAL_REPLAY_INVESTIGATION": 3,
+            "LITERAL_REPLAY_SCOPE": 1,
+            "LITERAL_REPLAY_SEED": 1,
+            "LITERAL_REPLAY_SUBJECT": 7
+          },
+          "sha256": "8d56c7a83a99d11751406f77e826f45e7f54892d3a9947c5bb004728213f8c4d"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 11.7494541460037,
+          "exit_code": 0
+        }
+      }
+    },
+    "native-admission": {
+      "seconds": 106.74,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 131,
+          "tags": {
+            "ADMISSION_ASSESSMENT": 63,
+            "ADMISSION_COMPARISON": 1,
+            "ADMISSION_INVESTIGATION": 3,
+            "ADMISSION_SCOPE": 1,
+            "ADMISSION_SUBJECT": 63
+          },
+          "sha256": "0df15b2277c5c534ad8966dfb2568cf78f2840ab943de02af01a943dcef87f61"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 105.93555557799118,
+          "exit_code": 0
+        }
+      }
+    },
+    "native-certificate-replay": {
+      "seconds": 133.67,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "d1b669fe916e0470e73b4dd894aa78cdfbce7b4ca6db0515a8f9c16bf33ae436"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 133.59225892800896,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 722239,
+        "sha256": "c18cd57964dabed07c670431d70ef3fe88aa0d0662890b7dcfe9aea1e623b27c"
+      }
+    },
+    "native-certificates": {
+      "seconds": 6.43,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "015ee2500788f5f4b9ee6213f25ec8915e75228b75df5b6f192822961dd44f05"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 6.326690155998222,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 890378,
+        "sha256": "ec051877a34c7ab1270a3276954faebb2ebbbc79f5b2d6a574dfe0f4623b3e28"
+      }
+    },
+    "native-derivations": {
+      "seconds": 8.18,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "653f681ea492a8a37c4d3e0a5106dd9e4ae642a404fa1ba6ae705ac860613b1e"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 8.092310467996867,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 648713,
+        "sha256": "6dae30b06be7d74131692adf92c4e9b9c3292b15520bff79a0625848df6f80f0"
+      }
+    },
+    "native-development": {
+      "seconds": 55.42,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "producers": {
+          "records": 101,
+          "tags": {
+            "DEVELOPMENT_ASSESSMENT": 8,
+            "DEVELOPMENT_CANDIDATE": 80,
+            "DEVELOPMENT_COMPARISON": 1,
+            "DEVELOPMENT_CONTEXT": 8,
+            "DEVELOPMENT_INVESTIGATION": 3,
+            "DEVELOPMENT_SCOPE": 1
+          },
+          "sha256": "eeab011a1185619c376c859bea1fabac9a765978e0a9e7c4f6de2c714eb92642"
+        },
+        "questions": {
+          "records": 24,
+          "tags": {
+            "DEVELOPMENT_ADMISSION": 8,
+            "DEVELOPMENT_QUESTION": 8,
+            "DEVELOPMENT_REPORT": 8
+          },
+          "sha256": "2edda61cb291c834bf7d91f8ec0fbaa7d31c40e99fd68c40bd15abc5b99a1357"
+        }
+      },
+      "stages": {
+        "producers": {
+          "seconds": 36.981869027993525,
+          "exit_code": 0
+        },
+        "questions": {
+          "seconds": 11.34788956400007,
+          "exit_code": 0
+        }
+      }
+    },
+    "native-graphs": {
+      "seconds": 33.96,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "accc58c358e96a11aa6d660f57b5c9246e3608b447580a8f3f77237b856580e1"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 33.84647632300039,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 1000741,
+        "sha256": "8b04457c71bc18ceabccdf577bbb4eb5e335117ff48d35d70914e7eadd215e4d"
+      }
+    },
+    "native-nodes": {
+      "seconds": 3.37,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "763862dc55492a8e7528c3a78a2e38143fb6fb81203e666a519fbc3ceed0b9cf"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 3.2721319289994426,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 341007,
+        "sha256": "977e6572847801f1002b14179b76512035e5a0f3f063ba05a44fd6859e28a295"
+      }
+    },
+    "native-requirements": {
+      "seconds": 56.82,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 186,
+          "tags": {
+            "REQUIREMENT_ASSESSMENT": 90,
+            "REQUIREMENT_COMPARISON": 1,
+            "REQUIREMENT_INVESTIGATION": 4,
+            "REQUIREMENT_SCOPE": 1,
+            "REQUIREMENT_SUBJECT": 90
+          },
+          "sha256": "8a07808b8be5aa21742f6359750483c58063dff25d93f9db65169213424f097c"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 54.68472560599912,
+          "exit_code": 0
+        }
+      }
+    },
+    "native-steering": {
+      "seconds": 113.72,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "subjects": {
+          "records": 119,
+          "tags": {
+            "STEERED_AVAILABLE": 1,
+            "STEERED_CHOICE": 1,
+            "STEERED_REQUEST": 8,
+            "STEERED_RESULT": 8,
+            "STEERING_ADMISSION": 1,
+            "STEERING_ASSESSMENT": 8,
+            "STEERING_CANDIDATE": 80,
+            "STEERING_CONTEXT": 8,
+            "STEERING_METHODS": 1,
+            "STEERING_QUESTION": 1,
+            "STEERING_REPORT": 1,
+            "STEERING_SCOPE": 1
+          },
+          "sha256": "3333f8f7ad42b53a2d022d9a8b88d6c2d55d90fce82dde13ee3b7812da37b904"
+        },
+        "empty": {
+          "records": 15,
+          "tags": {
+            "STEERED_AVAILABLE": 1,
+            "STEERED_CHOICE": 1,
+            "STEERED_REQUEST": 8,
+            "STEERING_ADMISSION": 1,
+            "STEERING_METHODS": 1,
+            "STEERING_QUESTION": 1,
+            "STEERING_REPORT": 1,
+            "STEERING_SCOPE": 1
+          },
+          "sha256": "a91e5119e8a6fadc4cd93c6bde79124c479e0ab1c739a6d302b6cfba0e06712a"
+        },
+        "first": {
+          "records": 27,
+          "tags": {
+            "STEERED_AVAILABLE": 1,
+            "STEERED_CHOICE": 1,
+            "STEERED_REQUEST": 8,
+            "STEERING_ADMISSION": 1,
+            "STEERING_ASSESSMENT": 1,
+            "STEERING_CANDIDATE": 10,
+            "STEERING_CONTEXT": 1,
+            "STEERING_METHODS": 1,
+            "STEERING_QUESTION": 1,
+            "STEERING_REPORT": 1,
+            "STEERING_SCOPE": 1
+          },
+          "sha256": "d780f4e570fcdf68d19bbbe373ca2b49654143a57d39bc6b4097f73380166a01"
+        },
+        "questions": {
+          "records": 119,
+          "tags": {
+            "STEERED_AVAILABLE": 1,
+            "STEERED_CHOICE": 1,
+            "STEERED_REQUEST": 8,
+            "STEERED_RESULT": 8,
+            "STEERING_ADMISSION": 1,
+            "STEERING_ASSESSMENT": 8,
+            "STEERING_CANDIDATE": 80,
+            "STEERING_CONTEXT": 8,
+            "STEERING_METHODS": 1,
+            "STEERING_QUESTION": 1,
+            "STEERING_REPORT": 1,
+            "STEERING_SCOPE": 1
+          },
+          "sha256": "3333f8f7ad42b53a2d022d9a8b88d6c2d55d90fce82dde13ee3b7812da37b904"
+        }
+      },
+      "stages": {
+        "subjects": {
+          "seconds": 33.90062575999764,
+          "exit_code": 0
+        },
+        "empty": {
+          "seconds": 14.965829031993053,
+          "exit_code": 0
+        },
+        "first": {
+          "seconds": 22.02883021598973,
+          "exit_code": 0
+        },
+        "questions": {
+          "seconds": 64.28238284800318,
+          "exit_code": 0
+        }
+      }
+    },
+    "native-workflow": {
+      "seconds": 96.87,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "workflow": {
+          "records": 125,
+          "tags": {
+            "WORKFLOW_ASSESSMENT": 10,
+            "WORKFLOW_CANDIDATE": 100,
+            "WORKFLOW_COMPARISON": 1,
+            "WORKFLOW_CONTEXT": 10,
+            "WORKFLOW_INVESTIGATION": 3,
+            "WORKFLOW_SCOPE": 1
+          },
+          "sha256": "dc30b327ba1ee9e7ec99248dc1fd78248e70847278a03408dc6378149d87f81d"
+        },
+        "requirements": {
+          "records": 59,
+          "tags": {
+            "WORKFLOW_ASSESSMENT": 6,
+            "WORKFLOW_CANDIDATE": 42,
+            "WORKFLOW_COMPARISON": 1,
+            "WORKFLOW_CONTEXT": 6,
+            "WORKFLOW_INVESTIGATION": 3,
+            "WORKFLOW_SCOPE": 1
+          },
+          "sha256": "b95ee63b3e155e5542366f4aa5a3d3a200a3146ee3d51ea2fe5e827578ad7691"
+        },
+        "input-scope": {
+          "records": 12,
+          "tags": {
+            "WORKFLOW_ASSESSMENT": 1,
+            "WORKFLOW_CANDIDATE": 4,
+            "WORKFLOW_COMPARISON": 1,
+            "WORKFLOW_CONTEXT": 1,
+            "WORKFLOW_INVESTIGATION": 3,
+            "WORKFLOW_SCOPE": 1,
+            "WORKFLOW_SELECTED_SCOPE": 1
+          },
+          "sha256": "1dc154d07ed7b4560728222367ae3882a8ed04300256ac9434a8656e3f7253cf"
+        },
+        "expanded": {
+          "records": 86,
+          "tags": {
+            "WORKFLOW_ASSESSMENT": 9,
+            "WORKFLOW_CANDIDATE": 63,
+            "WORKFLOW_COMPARISON": 1,
+            "WORKFLOW_CONTEXT": 9,
+            "WORKFLOW_INVESTIGATION": 3,
+            "WORKFLOW_SCOPE": 1
+          },
+          "sha256": "c1be5e632d4e56eeab0531d455f622570bbc2c4867924b611af9114aa3895e73"
+        },
+        "requests": {
+          "records": 24,
+          "tags": {
+            "WORKFLOW_ADMISSION": 6,
+            "WORKFLOW_COMPILED": 6,
+            "WORKFLOW_EXECUTION": 6,
+            "WORKFLOW_REQUEST": 6
+          },
+          "sha256": "a33e047026528b68fe516be70f63f9658043e33d2cc6ac1246b5d6057ae43f65"
+        },
+        "expanded-requests": {
+          "records": 36,
+          "tags": {
+            "WORKFLOW_ADMISSION": 9,
+            "WORKFLOW_COMPILED": 9,
+            "WORKFLOW_EXECUTION": 9,
+            "WORKFLOW_REQUEST": 9
+          },
+          "sha256": "2faefc9a11ad0b170f38292a12c5d4b05c86697a7f313ee7d1fd92089f301606"
+        }
+      },
+      "stages": {
+        "workflow": {
+          "seconds": 18.711927095995634,
+          "exit_code": 0
+        },
+        "requirements": {
+          "seconds": 21.923518370997044,
+          "exit_code": 0
+        },
+        "input-scope": {
+          "seconds": 5.274207613008912,
+          "exit_code": 0
+        },
+        "expanded": {
+          "seconds": 38.26603984000394,
+          "exit_code": 0
+        },
+        "requests": {
+          "seconds": 18.57600361200457,
+          "exit_code": 0
+        },
+        "expanded-requests": {
+          "seconds": 32.96685714900377,
+          "exit_code": 0
+        }
+      }
+    },
+    "quoted-history": {
+      "seconds": 167.62,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "7892a8a18aed17d9ac6030d2e4f09f562fc2a59e6a2f63eb46156c87cb6910a3"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 167.49124696099898,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 483348,
+        "sha256": "35caeae2adfd4b2844bdd61b2d24f3c1cbf9e497f631b740aeab3113b2d4b9d9"
+      }
+    },
+    "required-causes": {
+      "seconds": 15.61,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "d23c652c7b0a65bca5e91af446be012c98aa035f278669eb9141ffa0613cf197"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 15.523567227006424,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 495123,
+        "sha256": "3e78f462d246a8631848ab90b7c0e8fe751c59b7f411801845c45fcc3529f5d5"
+      }
+    },
+    "required-history": {
+      "seconds": 29.2,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "cecc421282b9dbecc715ef92caeda40b74e10d5a5bc5d537db345d1c232587db"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 29.106853357996442,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 159908,
+        "sha256": "67d59453b643d202dfdc5a40fd654a7212244847de5b535f820065f675a9b067"
+      }
+    },
+    "requirement-decisions": {
+      "seconds": 11.31,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "1397ee397fc4db0d26057425e47ae5aa901749caf99eb1fe5c1c5bdfe466e8bf"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 11.207357452003635,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 494768,
+        "sha256": "e3679b7c06bdedb5b0b58ee4c51d2a63ee983026dcd124274ede499e7f4876f3"
+      }
+    },
+    "source-development": {
+      "seconds": 169.05,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "sources": {
+          "records": 126,
+          "tags": {
+            "SOURCE_AVAILABLE": 1,
+            "SOURCE_CHOICE": 1,
+            "SOURCE_CONTROL": 4,
+            "SOURCE_POLICY_ADMISSION": 1,
+            "SOURCE_POLICY_ASSESSMENT": 8,
+            "SOURCE_POLICY_CANDIDATE": 80,
+            "SOURCE_POLICY_CONTEXT": 8,
+            "SOURCE_POLICY_DISPATCH": 1,
+            "SOURCE_POLICY_METHODS": 1,
+            "SOURCE_POLICY_QUESTION": 1,
+            "SOURCE_POLICY_REPORT": 1,
+            "SOURCE_REQUEST": 9,
+            "SOURCE_RESULT": 9,
+            "SOURCE_SCOPE": 1
+          },
+          "sha256": "0994e95ffedfb97f0ec4a0512ae8891118105df163e594f61a6341e54113fe1d"
+        },
+        "empty": {
+          "records": 17,
+          "tags": {
+            "SOURCE_AVAILABLE": 1,
+            "SOURCE_CHOICE": 1,
+            "SOURCE_POLICY_ADMISSION": 1,
+            "SOURCE_POLICY_DISPATCH": 1,
+            "SOURCE_POLICY_METHODS": 1,
+            "SOURCE_POLICY_QUESTION": 1,
+            "SOURCE_POLICY_REPORT": 1,
+            "SOURCE_REQUEST": 9,
+            "SOURCE_SCOPE": 1
+          },
+          "sha256": "0099bacabd60f13e04e6b77a266712c146b208d0aa22b5c59091c5bc6760766d"
+        },
+        "first": {
+          "records": 29,
+          "tags": {
+            "SOURCE_AVAILABLE": 1,
+            "SOURCE_CHOICE": 1,
+            "SOURCE_POLICY_ADMISSION": 1,
+            "SOURCE_POLICY_ASSESSMENT": 1,
+            "SOURCE_POLICY_CANDIDATE": 10,
+            "SOURCE_POLICY_CONTEXT": 1,
+            "SOURCE_POLICY_DISPATCH": 1,
+            "SOURCE_POLICY_METHODS": 1,
+            "SOURCE_POLICY_QUESTION": 1,
+            "SOURCE_POLICY_REPORT": 1,
+            "SOURCE_REQUEST": 9,
+            "SOURCE_SCOPE": 1
+          },
+          "sha256": "e5f8273c195196f04c468e0c14a7abbc8a51a9cc4eca1d113ab618d030924240"
+        },
+        "requests": {
+          "records": 126,
+          "tags": {
+            "SOURCE_AVAILABLE": 1,
+            "SOURCE_CHOICE": 1,
+            "SOURCE_CONTROL": 4,
+            "SOURCE_POLICY_ADMISSION": 1,
+            "SOURCE_POLICY_ASSESSMENT": 8,
+            "SOURCE_POLICY_CANDIDATE": 80,
+            "SOURCE_POLICY_CONTEXT": 8,
+            "SOURCE_POLICY_DISPATCH": 1,
+            "SOURCE_POLICY_METHODS": 1,
+            "SOURCE_POLICY_QUESTION": 1,
+            "SOURCE_POLICY_REPORT": 1,
+            "SOURCE_REQUEST": 9,
+            "SOURCE_RESULT": 9,
+            "SOURCE_SCOPE": 1
+          },
+          "sha256": "0994e95ffedfb97f0ec4a0512ae8891118105df163e594f61a6341e54113fe1d"
+        }
+      },
+      "stages": {
+        "sources": {
+          "seconds": 56.82196655399457,
+          "exit_code": 0
+        },
+        "empty": {
+          "seconds": 9.438903622998623,
+          "exit_code": 0
+        },
+        "first": {
+          "seconds": 19.524090724997222,
+          "exit_code": 0
+        },
+        "requests": {
+          "seconds": 84.77529833599692,
+          "exit_code": 0
+        }
+      }
+    },
+    "digit-replay": {
+      "seconds": 322.78,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "ec62b35b12207ca2e16b8f77cf260314fa557f71ac48918c80d511db635aadd5"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 322.675688340998,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 20519284,
+        "sha256": "3bb5958241e74fd03e43412abb5073a5ffef2cd98073f724bbf4207530ccc36b"
+      }
+    },
+    "use-allocation": {
+      "seconds": 3.02,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 35,
+          "tags": {
+            "USE_ALLOCATION_ASSESSMENT": 14,
+            "USE_ALLOCATION_COMPARISON": 1,
+            "USE_ALLOCATION_INVESTIGATION": 4,
+            "USE_ALLOCATION_SCOPE": 1,
+            "USE_ALLOCATION_SEMANTICS": 1,
+            "USE_ALLOCATION_SUBJECT": 14
+          },
+          "sha256": "5868bf5462a2012b508da2e29e85d4299b8b40167ee0c877a42211d9dc8431e8"
+        },
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "14fa7b4557f6e83b078805798279d9e03ca9a8f1f48f7865cb632d3f1b7abdb1"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 2.920509838993894,
+          "exit_code": 0
+        },
+        "presentation": {
+          "seconds": 2.369281035003951,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 376332,
+        "sha256": "da007bec68a22f286bb944e82963c3809e34e5531863406a95cd3eda3e509e11"
+      }
+    },
+    "use-codecs": {
+      "seconds": 3.67,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 39,
+          "tags": {
+            "USE_CODEC_ASSESSMENT": 16,
+            "USE_CODEC_COMPARISON": 1,
+            "USE_CODEC_INVESTIGATION": 4,
+            "USE_CODEC_SCOPE": 1,
+            "USE_CODEC_SEMANTICS": 1,
+            "USE_CODEC_SUBJECT": 16
+          },
+          "sha256": "305e95699c75ab3be02878c5df3332f036edd76e67a7ca56c8092971ebf1dacd"
+        },
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "06beaeaac46d2b0d73008c5c724b3ab7a41196ef20caf5992342df67435aa7be"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 3.573204618995078,
+          "exit_code": 0
+        },
+        "presentation": {
+          "seconds": 2.219281625992153,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 178732,
+        "sha256": "6a10bb30549c968f7562422b6e12385ae470a28962ca5d7815f17be13db46413"
+      }
+    }
+  },
+  "failed_recipes": [],
+  "active_context": "/tmp/storage-staged-integration-1789621221417434186/proof",
+  "seconds": 663.11,
+  "configured_outer_jobs": 6,
+  "boundary": "Complete affected validation with retained unchanged manifests and both host suites. The independent frozen full-source proof overlapped this check; timings are not controlled ratios."
+}

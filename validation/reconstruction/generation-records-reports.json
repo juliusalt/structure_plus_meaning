@@ -1,16 +1,1 @@
-{
-  "version": 1,
-  "reports": {
-    "comparison": {
-      "records": 37,
-      "tags": {
-        "GENERATION_RECORD_ASSESSMENT": 16,
-        "GENERATION_RECORD_COMPARISON": 1,
-        "GENERATION_RECORD_INVESTIGATION": 3,
-        "GENERATION_RECORD_SCOPE": 1,
-        "GENERATION_RECORD_SUBJECT": 16
-      },
-      "sha256": "19b4353a409522404bd575a853ab0dba1e3c2d0c5107be468f02e31c61f9a3b7"
-    }
-  }
-}
+{"version":1,"reports":{"comparison":{"records":37,"tags":{"GENERATION_RECORD_ASSESSMENT":16,"GENERATION_RECORD_COMPARISON":1,"GENERATION_RECORD_INVESTIGATION":3,"GENERATION_RECORD_SCOPE":1,"GENERATION_RECORD_SUBJECT":16},"sha256":"19b4353a409522404bd575a853ab0dba1e3c2d0c5107be468f02e31c61f9a3b7"},"presentation":{"records":1,"tags":{"PRESENTED_REPORT_WORD":1},"sha256":"04eee141dcc0ec080b5b083e59f5af51695103dd2f9f5177c1d2632141a05258"}}}

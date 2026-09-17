@@ -1322,3 +1322,15 @@ retention. The outer recipe limit now matches the requested job count.
 ## Parallel-reader and complete investigation batch
 
 All 51 recipes and both host suites pass on 1,635 theories; twenty families have native words, fourteen without legacy stages and six paired. The retained inventory has 3,637 records. All thirteen registered investigations are executed in 56 cases, and the actual accepted-export CLI is usable in seconds with original-contract failure controls. This is concrete execution and coverage progress; it does not derive this batch through a native controller or close any obligation row. Conditions 1 and 6, practical 5a, wider coverage, O-85 and genesis remain open; 5b stays deferred.
+
+## Storage presentation and complete current-source proof
+
+The current accepted workspace has 1,649 theories and 51 recipe boundaries:
+39 executed, 12 unchanged, 2,604 retained records and both host suites accepted
+in 663.11 seconds. Thirty-two families have native words (twenty alone, twelve
+paired); nineteen remain. The complete source proof from HOL passed in
+830.440 seconds without project proof reuse. The direct proof and staged replay
+refinements preserve original contracts, but full/cold cost remains substantial.
+No obligation row changes status. Conditions 1 and 6, practical 5a, wider coverage,
+O-85 and genesis remain open; theoretical 5b is deferred. This batch is being
+committed and cleaned up at the owner's request; further implementation stops.

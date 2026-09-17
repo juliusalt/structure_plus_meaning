@@ -1,0 +1,2911 @@
+{
+  "version": 1,
+  "status": "accepted",
+  "prototype": "/tmp/native-storage-presentation-candidate",
+  "proof": "/tmp/native-storage-presentation-candidate/proof-5",
+  "proof_sha256": "f6ce7382f230313f41745e17e0aa7f43fb6e55004e0d34b92ffa08f934e2e2cf",
+  "executions": {
+    "status": "accepted",
+    "seconds": 7.384061136006494,
+    "outer_jobs": 4,
+    "workers_per_job": 4,
+    "runs": [
+      {
+        "family": "artifact_lookup",
+        "output": "/tmp/native-storage-presentation-candidate/run-5-artifact_lookup",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export-5/artifact_lookup_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-5-artifact_lookup",
+          "--theory",
+          "Probe_Artifact_Lookup",
+          "--module",
+          "Artifact_Lookup_Execution",
+          "--report",
+          "artifact_lookup_report_value",
+          "--scope",
+          "artifact_lookup_indices",
+          "--selections",
+          "artifact_lookup_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 1.7543539649923332,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 20000,
+          "sha256": "b8196ef2eca56c36391663333532fcd37b7ccdfe4e9d70c9d90321778da58697"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "4cc778d0015790e547f9a11471f2270f2e1f4b62c6e76712961c5dcd78e7d28b",
+        "export_sha256": "2ad8ca0bc671ba8836df5bd259bf8dc736689f5acdb6d1e7d8e7900da6f881b0"
+      },
+      {
+        "family": "environment_update",
+        "output": "/tmp/native-storage-presentation-candidate/run-5-environment_update",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export-5/environment_update_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-5-environment_update",
+          "--theory",
+          "Probe_Environment_Update",
+          "--module",
+          "Environment_Update_Execution",
+          "--report",
+          "environment_update_report_value",
+          "--scope",
+          "environment_update_indices",
+          "--selections",
+          "environment_update_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 1.9463510979985585,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 165530,
+          "sha256": "ad4509e600d247126f5fbb9535b033e0e959a9cf7d09e40ec26c5f982dc9967e"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "65d7e9b147b9a313644a69df89e109bb92dded049a8b6f352031d704a783fe55",
+        "export_sha256": "900e29ea9fdbfd849c13b8abdaa8044c63c49334704f4ddc9432d339572dce17"
+      },
+      {
+        "family": "allocated_environment",
+        "output": "/tmp/native-storage-presentation-candidate/run-5-allocated_environment",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export-5/allocated_environment_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-5-allocated_environment",
+          "--theory",
+          "Probe_Allocated_Environment",
+          "--module",
+          "Allocated_Environment_Execution",
+          "--report",
+          "allocated_environment_report_value",
+          "--scope",
+          "allocated_update_indices",
+          "--selections",
+          "allocated_environment_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 1.9499093190097483,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 203706,
+          "sha256": "65a710e0ac6af897512c8386f374861c934e1f0865d300684dc4c2dd8f347621"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "82c42d3cf7d7af5766adea0cb0236881de8978a4b9349776099d6df4d322b8c6",
+        "export_sha256": "3d041d732dcbd313f2abfcce4d2c337c6f8f9c5577178c75b516f9c787431136"
+      },
+      {
+        "family": "graft_admission",
+        "output": "/tmp/native-storage-presentation-candidate/run-5-graft_admission",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export-5/graft_admission_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-5-graft_admission",
+          "--theory",
+          "Probe_Graft_Admission",
+          "--module",
+          "Graft_Admission_Execution",
+          "--report",
+          "graft_admission_report_value",
+          "--scope",
+          "graft_admission_indices",
+          "--selections",
+          "graft_admission_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 1.8965173960023094,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 177251,
+          "sha256": "0c9b78ad23436dc0af0320adf12f303f31d2acf4898dbc4dac0bda4b7d515e7d"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "db6dd1c07b82548381400c84e20686735efe922eb833111ad843d1bc14015940",
+        "export_sha256": "7a095c5c970a1eb1a39f1b067be0b0872302629509cd5e13465990747629a909"
+      },
+      {
+        "family": "generation_record",
+        "output": "/tmp/native-storage-presentation-candidate/run-5-generation_record",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export-5/generation_record_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-5-generation_record",
+          "--theory",
+          "Probe_Generation_Record",
+          "--module",
+          "Generation_Record_Execution",
+          "--report",
+          "generation_record_report_value",
+          "--scope",
+          "generation_record_indices",
+          "--selections",
+          "generation_record_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 2.3107200780068524,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 350679,
+          "sha256": "849a944920cb2a8fb32fdeeb828bf4fe7b66a864c230a4a751d235c872ee1b9b"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "5ebfbef80576720a3141d8216d344e7c6fc38695226ece9b4f0c9a2299aec621",
+        "export_sha256": "25c76eb0b09459eae04acd21e65c40f36e7b010a41b424ecb9c282d6f9f268c4"
+      },
+      {
+        "family": "use_allocation",
+        "output": "/tmp/native-storage-presentation-candidate/run-5-use_allocation",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export-5/use_allocation_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-5-use_allocation",
+          "--theory",
+          "Probe_Use_Allocation",
+          "--module",
+          "Use_Allocation_Execution",
+          "--report",
+          "use_allocation_report_value",
+          "--scope",
+          "use_allocation_indices",
+          "--selections",
+          "use_allocation_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 1.9475454200000968,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 376332,
+          "sha256": "da007bec68a22f286bb944e82963c3809e34e5531863406a95cd3eda3e509e11"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "39c85ba67cf4b292485c1b8d571d098f34310feeaabb4839d15738b067bc87bd",
+        "export_sha256": "e8b860a2052e788dcb0929154b5126d5e47157b50708be0226ac73fa2ec306f7"
+      },
+      {
+        "family": "graft",
+        "output": "/tmp/native-storage-presentation-candidate/run-5-graft",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export-5/graft_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-5-graft",
+          "--theory",
+          "Probe_Graft",
+          "--module",
+          "Graft_Execution",
+          "--report",
+          "graft_report_value",
+          "--scope",
+          "graft_indices",
+          "--selections",
+          "graft_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 1.8517155699955765,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 158937,
+          "sha256": "a4c5706f531a0436d36fd4b8a28ba665d516a9aaaaac8b9bbfff7bf8712b5c93"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "0ec3a524702a89c1d9f2903dbaccac06666aec64f9f9868ada0a2836572abd02",
+        "export_sha256": "10bbe42d9c6d8838254e3fbe5a13bd3bd0caa552fc95d95252f44f5ae1d7f0da"
+      },
+      {
+        "family": "use_codec",
+        "output": "/tmp/native-storage-presentation-candidate/run-5-use_codec",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export-5/use_codec_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-5-use_codec",
+          "--theory",
+          "Probe_Use_Codec",
+          "--module",
+          "Use_Codec_Execution",
+          "--report",
+          "use_codec_report_value",
+          "--scope",
+          "use_codec_indices",
+          "--selections",
+          "use_codec_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 1.751762134997989,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 178732,
+          "sha256": "6a10bb30549c968f7562422b6e12385ae470a28962ca5d7815f17be13db46413"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "1ccdde8babb0d3840a282b4f6fa57a76f41d5bb801c50f72f50c1ce3c6f8c798",
+        "export_sha256": "86d37081c3a23ec937d8e403a4b16470b5b4b4036fcefca101b7bedbc117d055"
+      },
+      {
+        "family": "digit_allocation",
+        "output": "/tmp/native-storage-presentation-candidate/run-5-digit_allocation",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export-5/digit_allocation_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-5-digit_allocation",
+          "--theory",
+          "Probe_Digit_Allocation",
+          "--module",
+          "Digit_Allocation_Execution",
+          "--report",
+          "digit_allocation_report_value",
+          "--scope",
+          "digit_allocation_indices",
+          "--selections",
+          "digit_allocation_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 2.3624374119972344,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 346069,
+          "sha256": "f0aa638f37d8254e8102495d56056566f8e8bbe1ec3424c97fe9d722f78dee6a"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "8eafd86ffaa27d97b3378e9e5ada5a608016bbfaeb321f7a23853a4b36dc0624",
+        "export_sha256": "b976536ff11aae216717c642d3ac757fbaebcbadd737696a7a4f51eb9c54bf69"
+      },
+      {
+        "family": "cached_graft",
+        "output": "/tmp/native-storage-presentation-candidate/run-5-cached_graft",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export-5/cached_graft_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-5-cached_graft",
+          "--theory",
+          "Probe_Cached_Graft",
+          "--module",
+          "Cached_Graft_Execution",
+          "--report",
+          "cached_graft_report_value",
+          "--scope",
+          "cached_graft_indices",
+          "--selections",
+          "cached_graft_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 2.2106692329980433,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 407523,
+          "sha256": "98dfe49e950253c251d83e08d0854352bf3643fd1ce3a131b62a87a0a7d19f7a"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "38b2f74c849458d4c83b8f3165ef1be9ce6558fb29c3fba8c85a1c44663eaeff",
+        "export_sha256": "76042dd2f0d0e691bd4aaaff02964385f1d42677457418a2f2db8e37e9b8441e"
+      },
+      {
+        "family": "encoded_environment",
+        "output": "/tmp/native-storage-presentation-candidate/run-5-encoded_environment",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export-5/encoded_environment_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-5-encoded_environment",
+          "--theory",
+          "Probe_Encoded_Environment",
+          "--module",
+          "Encoded_Environment_Execution",
+          "--report",
+          "encoded_environment_report_value",
+          "--scope",
+          "codec_environment_indices",
+          "--selections",
+          "encoded_environment_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 2.705380969986436,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 691705,
+          "sha256": "40ba10b0cfdd0b18aa28492d7195c11738adf572fbf0d4f4765fffb377daf048"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "e37a79354e9c1abca8f58509eee702c8f794a6b178d91ec3981722e64a619ad5",
+        "export_sha256": "b5f6bde97361fada6c8f3003087709716e6ef6fa49af7b9272b60d51379bac21"
+      },
+      {
+        "family": "data_reading",
+        "output": "/tmp/native-storage-presentation-candidate/run-5-data_reading",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export-5/data_reading_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-5-data_reading",
+          "--theory",
+          "Probe_Data_Reading",
+          "--module",
+          "Data_Reading_Execution",
+          "--report",
+          "data_reading_report_value",
+          "--scope",
+          "data_reading_indices",
+          "--selections",
+          "data_reading_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 3.3179868610022822,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 104639,
+          "sha256": "533ece0f80b88008f41aaea7519b710ddf95497c7e3e68c9c70f09c74d3a726d"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "efa148477ff60111d8dc33713fcd76206dcf915c23c5c5c44a56526c7768abd8",
+        "export_sha256": "4f9638a15cee72817c67743f624cd5f766fb728bf0e5d4395d296e9e9d65d45d"
+      }
+    ]
+  },
+  "earlier_execution": {
+    "status": "failed",
+    "seconds": 13.677804427003139,
+    "outer_jobs": 4,
+    "workers_per_job": 4,
+    "runs": [
+      {
+        "family": "artifact_lookup",
+        "output": "/tmp/native-storage-presentation-candidate/run-artifact_lookup",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export/artifact_lookup_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-artifact_lookup",
+          "--theory",
+          "Probe_Artifact_Lookup",
+          "--module",
+          "Artifact_Lookup_Execution",
+          "--report",
+          "artifact_lookup_report_value",
+          "--scope",
+          "artifact_lookup_indices",
+          "--selections",
+          "artifact_lookup_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 1.6734274339978583,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 20190,
+          "sha256": "49647da517dbd1fbdef0298558f075bd4e827fd89698c754037cdd439b38a9c0"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "50bf2d5d9540f06d53313849c30c4b5f56bc9242fb86c821dc508338cbb8c21a",
+        "export_sha256": "a0490790a235924aa9535c6c585aec20d4e79935b5eec0d55744d2b1b81872ad"
+      },
+      {
+        "family": "environment_update",
+        "output": "/tmp/native-storage-presentation-candidate/run-environment_update",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export/environment_update_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-environment_update",
+          "--theory",
+          "Probe_Environment_Update",
+          "--module",
+          "Environment_Update_Execution",
+          "--report",
+          "environment_update_report_value",
+          "--scope",
+          "environment_update_indices",
+          "--selections",
+          "environment_update_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 1.9143591559986817,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 165530,
+          "sha256": "ad4509e600d247126f5fbb9535b033e0e959a9cf7d09e40ec26c5f982dc9967e"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "438315f7837dc217a84a3e90e7c8485a470d178d570e3a67a9daf10bf68db13a",
+        "export_sha256": "900e29ea9fdbfd849c13b8abdaa8044c63c49334704f4ddc9432d339572dce17"
+      },
+      {
+        "family": "allocated_environment",
+        "output": "/tmp/native-storage-presentation-candidate/run-allocated_environment",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export/allocated_environment_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-allocated_environment",
+          "--theory",
+          "Probe_Allocated_Environment",
+          "--module",
+          "Allocated_Environment_Execution",
+          "--report",
+          "allocated_environment_report_value",
+          "--scope",
+          "allocated_update_indices",
+          "--selections",
+          "allocated_environment_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 1.9668089100014186,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 203807,
+          "sha256": "64fe950e932ee41b7638c7f13972c9116f750d45f25b9c4b0bf9af58fb0589dd"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "c124a030c8beffd66dfe2eeb9ba3ed3c314e972de49ff54706b0eae79ac3faa5",
+        "export_sha256": "212ae0fb4d63026a8dee4ff127426db7eda60eaeb8fa9f9f365a8d9e8f8e0ae5"
+      },
+      {
+        "family": "graft_admission",
+        "output": "/tmp/native-storage-presentation-candidate/run-graft_admission",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export/graft_admission_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-graft_admission",
+          "--theory",
+          "Probe_Graft_Admission",
+          "--module",
+          "Graft_Admission_Execution",
+          "--report",
+          "graft_admission_report_value",
+          "--scope",
+          "graft_admission_indices",
+          "--selections",
+          "graft_admission_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 1.8653228269977262,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 177251,
+          "sha256": "0c9b78ad23436dc0af0320adf12f303f31d2acf4898dbc4dac0bda4b7d515e7d"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "9f81566fe69cd3e8e93fd78550ea2182b37631fa99737c3551740981213c521f",
+        "export_sha256": "7a095c5c970a1eb1a39f1b067be0b0872302629509cd5e13465990747629a909"
+      },
+      {
+        "family": "generation_record",
+        "output": "/tmp/native-storage-presentation-candidate/run-generation_record",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export/generation_record_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-generation_record",
+          "--theory",
+          "Probe_Generation_Record",
+          "--module",
+          "Generation_Record_Execution",
+          "--report",
+          "generation_record_report_value",
+          "--scope",
+          "generation_record_indices",
+          "--selections",
+          "generation_record_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 2.249756963996333,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 350679,
+          "sha256": "849a944920cb2a8fb32fdeeb828bf4fe7b66a864c230a4a751d235c872ee1b9b"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "0c0871decb700602dc1e0eb377f8405517f98075ad514cfb9176dcb04178941c",
+        "export_sha256": "25c76eb0b09459eae04acd21e65c40f36e7b010a41b424ecb9c282d6f9f268c4"
+      },
+      {
+        "family": "use_allocation",
+        "output": "/tmp/native-storage-presentation-candidate/run-use_allocation",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export/use_allocation_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-use_allocation",
+          "--theory",
+          "Probe_Use_Allocation",
+          "--module",
+          "Use_Allocation_Execution",
+          "--report",
+          "use_allocation_report_value",
+          "--scope",
+          "use_allocation_indices",
+          "--selections",
+          "use_allocation_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 1.8470992770016892,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 376332,
+          "sha256": "da007bec68a22f286bb944e82963c3809e34e5531863406a95cd3eda3e509e11"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "02ed535a7ad5ee6c76c9b751f15a3f14804d160d45a7403430d075680cc089fb",
+        "export_sha256": "e8b860a2052e788dcb0929154b5126d5e47157b50708be0226ac73fa2ec306f7"
+      },
+      {
+        "family": "graft",
+        "output": "/tmp/native-storage-presentation-candidate/run-graft",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export/graft_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-graft",
+          "--theory",
+          "Probe_Graft",
+          "--module",
+          "Graft_Execution",
+          "--report",
+          "graft_report_value",
+          "--scope",
+          "graft_indices",
+          "--selections",
+          "graft_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 1.7533176289871335,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 158937,
+          "sha256": "a4c5706f531a0436d36fd4b8a28ba665d516a9aaaaac8b9bbfff7bf8712b5c93"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "612cc66d67d168beb49393b551fbfea88fb7d0a02fd8f6e3d032cd46fec7db80",
+        "export_sha256": "10bbe42d9c6d8838254e3fbe5a13bd3bd0caa552fc95d95252f44f5ae1d7f0da"
+      },
+      {
+        "family": "use_codec",
+        "output": "/tmp/native-storage-presentation-candidate/run-use_codec",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export/use_codec_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-use_codec",
+          "--theory",
+          "Probe_Use_Codec",
+          "--module",
+          "Use_Codec_Execution",
+          "--report",
+          "use_codec_report_value",
+          "--scope",
+          "use_codec_indices",
+          "--selections",
+          "use_codec_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 11.70935734899831,
+        "exit_code": 1,
+        "status": "failed",
+        "word": null,
+        "error": "See the retained native.log.",
+        "sources_and_tools_unchanged": null,
+        "proof_receipt_sha256": null,
+        "export_sha256": null
+      },
+      {
+        "family": "digit_allocation",
+        "output": "/tmp/native-storage-presentation-candidate/run-digit_allocation",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export/digit_allocation_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-digit_allocation",
+          "--theory",
+          "Probe_Digit_Allocation",
+          "--module",
+          "Digit_Allocation_Execution",
+          "--report",
+          "digit_allocation_report_value",
+          "--scope",
+          "digit_allocation_indices",
+          "--selections",
+          "digit_allocation_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 2.14309887100535,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 346186,
+          "sha256": "f5ba74a51c593e437817234e536b8e8e3252670eabdffa8da3ea74fba7b906fc"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "0fe165689005a53daef1506845f18a660978196931d23e4478fe397ff0e548c7",
+        "export_sha256": "c30cce0e73275b1c13c803e25a4d7e4b0f1acb276bbc0c956aaf58bc0a74d2c0"
+      },
+      {
+        "family": "cached_graft",
+        "output": "/tmp/native-storage-presentation-candidate/run-cached_graft",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export/cached_graft_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-cached_graft",
+          "--theory",
+          "Probe_Cached_Graft",
+          "--module",
+          "Cached_Graft_Execution",
+          "--report",
+          "cached_graft_report_value",
+          "--scope",
+          "cached_graft_indices",
+          "--selections",
+          "cached_graft_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 1.9912587729922961,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 407523,
+          "sha256": "98dfe49e950253c251d83e08d0854352bf3643fd1ce3a131b62a87a0a7d19f7a"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "d2016dab64d0fa8c07025b023a6f94c608b3d46d411fab86a6367065366466de",
+        "export_sha256": "76042dd2f0d0e691bd4aaaff02964385f1d42677457418a2f2db8e37e9b8441e"
+      },
+      {
+        "family": "encoded_environment",
+        "output": "/tmp/native-storage-presentation-candidate/run-encoded_environment",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export/encoded_environment_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-encoded_environment",
+          "--theory",
+          "Probe_Encoded_Environment",
+          "--module",
+          "Encoded_Environment_Execution",
+          "--report",
+          "encoded_environment_report_value",
+          "--scope",
+          "codec_environment_indices",
+          "--selections",
+          "encoded_environment_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 2.5805371919996105,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 691826,
+          "sha256": "91c5ceb57eb487d2d03bf2972cb14fb3851e38ceb93705d5d0f1d784c12cd8ef"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "772b5a97e369b787aef42133c5f8b57568350a43521b7175ca021e0db2cbf6b0",
+        "export_sha256": "0b782d517d1b116b035396452acd2f3cf3f90501fc808fc3ae4d1aeaae359d31"
+      },
+      {
+        "family": "data_reading",
+        "output": "/tmp/native-storage-presentation-candidate/run-data_reading",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export/data_reading_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-data_reading",
+          "--theory",
+          "Probe_Data_Reading",
+          "--module",
+          "Data_Reading_Execution",
+          "--report",
+          "data_reading_report_value",
+          "--scope",
+          "data_reading_indices",
+          "--selections",
+          "data_reading_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 2.789351600993541,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 104639,
+          "sha256": "533ece0f80b88008f41aaea7519b710ddf95497c7e3e68c9c70f09c74d3a726d"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "db5516c0ca28f296e98785e2d478813360bde75b34b0a45612dee473bdaed086",
+        "export_sha256": "4f9638a15cee72817c67743f624cd5f766fb728bf0e5d4395d296e9e9d65d45d"
+      }
+    ]
+  },
+  "flat_path_execution": {
+    "status": "failed",
+    "seconds": 14.115514625998912,
+    "outer_jobs": 4,
+    "workers_per_job": 4,
+    "runs": [
+      {
+        "family": "artifact_lookup",
+        "output": "/tmp/native-storage-presentation-candidate/run-4-artifact_lookup",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export-4/artifact_lookup_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-4-artifact_lookup",
+          "--theory",
+          "Probe_Artifact_Lookup",
+          "--module",
+          "Artifact_Lookup_Execution",
+          "--report",
+          "artifact_lookup_report_value",
+          "--scope",
+          "artifact_lookup_indices",
+          "--selections",
+          "artifact_lookup_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 1.6529446419881424,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 20000,
+          "sha256": "b8196ef2eca56c36391663333532fcd37b7ccdfe4e9d70c9d90321778da58697"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "64b0e40f72a5e1b6215389e998c7d7c7ebb6ecf06ea91557893d96859a9d545e",
+        "export_sha256": "2ad8ca0bc671ba8836df5bd259bf8dc736689f5acdb6d1e7d8e7900da6f881b0"
+      },
+      {
+        "family": "environment_update",
+        "output": "/tmp/native-storage-presentation-candidate/run-4-environment_update",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export-4/environment_update_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-4-environment_update",
+          "--theory",
+          "Probe_Environment_Update",
+          "--module",
+          "Environment_Update_Execution",
+          "--report",
+          "environment_update_report_value",
+          "--scope",
+          "environment_update_indices",
+          "--selections",
+          "environment_update_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 1.9466555289982352,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 165530,
+          "sha256": "ad4509e600d247126f5fbb9535b033e0e959a9cf7d09e40ec26c5f982dc9967e"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "ec6a50bae9e6b92118cf0a7dfcd5e9955a1aed466722903c50450bb22a6a10d4",
+        "export_sha256": "900e29ea9fdbfd849c13b8abdaa8044c63c49334704f4ddc9432d339572dce17"
+      },
+      {
+        "family": "allocated_environment",
+        "output": "/tmp/native-storage-presentation-candidate/run-4-allocated_environment",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export-4/allocated_environment_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-4-allocated_environment",
+          "--theory",
+          "Probe_Allocated_Environment",
+          "--module",
+          "Allocated_Environment_Execution",
+          "--report",
+          "allocated_environment_report_value",
+          "--scope",
+          "allocated_update_indices",
+          "--selections",
+          "allocated_environment_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 2.0032368389947806,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 203706,
+          "sha256": "65a710e0ac6af897512c8386f374861c934e1f0865d300684dc4c2dd8f347621"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "95329fbed2089dd05158c83f65a816b44aa92175de9e742bbf26e0a9afea2d9f",
+        "export_sha256": "3d041d732dcbd313f2abfcce4d2c337c6f8f9c5577178c75b516f9c787431136"
+      },
+      {
+        "family": "graft_admission",
+        "output": "/tmp/native-storage-presentation-candidate/run-4-graft_admission",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export-4/graft_admission_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-4-graft_admission",
+          "--theory",
+          "Probe_Graft_Admission",
+          "--module",
+          "Graft_Admission_Execution",
+          "--report",
+          "graft_admission_report_value",
+          "--scope",
+          "graft_admission_indices",
+          "--selections",
+          "graft_admission_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 1.8006681989936624,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 177251,
+          "sha256": "0c9b78ad23436dc0af0320adf12f303f31d2acf4898dbc4dac0bda4b7d515e7d"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "45e759953e3c338011192ddb3932c83c6fc6cc2733da81425db5683437e066c5",
+        "export_sha256": "7a095c5c970a1eb1a39f1b067be0b0872302629509cd5e13465990747629a909"
+      },
+      {
+        "family": "generation_record",
+        "output": "/tmp/native-storage-presentation-candidate/run-4-generation_record",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export-4/generation_record_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-4-generation_record",
+          "--theory",
+          "Probe_Generation_Record",
+          "--module",
+          "Generation_Record_Execution",
+          "--report",
+          "generation_record_report_value",
+          "--scope",
+          "generation_record_indices",
+          "--selections",
+          "generation_record_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 2.307196964000468,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 350679,
+          "sha256": "849a944920cb2a8fb32fdeeb828bf4fe7b66a864c230a4a751d235c872ee1b9b"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "2446e56f722b0892504bb880d767df0d5ec7fb666fc00221a8b35a80cc138d8c",
+        "export_sha256": "25c76eb0b09459eae04acd21e65c40f36e7b010a41b424ecb9c282d6f9f268c4"
+      },
+      {
+        "family": "use_allocation",
+        "output": "/tmp/native-storage-presentation-candidate/run-4-use_allocation",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export-4/use_allocation_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-4-use_allocation",
+          "--theory",
+          "Probe_Use_Allocation",
+          "--module",
+          "Use_Allocation_Execution",
+          "--report",
+          "use_allocation_report_value",
+          "--scope",
+          "use_allocation_indices",
+          "--selections",
+          "use_allocation_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 1.8970772530010436,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 376332,
+          "sha256": "da007bec68a22f286bb944e82963c3809e34e5531863406a95cd3eda3e509e11"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "3b07cdcfa7d96b7f51f89c3b81dd243035af222867f6e9a7f541851eb0b974be",
+        "export_sha256": "e8b860a2052e788dcb0929154b5126d5e47157b50708be0226ac73fa2ec306f7"
+      },
+      {
+        "family": "graft",
+        "output": "/tmp/native-storage-presentation-candidate/run-4-graft",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export-4/graft_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-4-graft",
+          "--theory",
+          "Probe_Graft",
+          "--module",
+          "Graft_Execution",
+          "--report",
+          "graft_report_value",
+          "--scope",
+          "graft_indices",
+          "--selections",
+          "graft_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 1.8073185859975638,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 158937,
+          "sha256": "a4c5706f531a0436d36fd4b8a28ba665d516a9aaaaac8b9bbfff7bf8712b5c93"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "16c093faf464b0296db572cbf6dfe8b6be978340791d39fe076217be1a46b853",
+        "export_sha256": "10bbe42d9c6d8838254e3fbe5a13bd3bd0caa552fc95d95252f44f5ae1d7f0da"
+      },
+      {
+        "family": "use_codec",
+        "output": "/tmp/native-storage-presentation-candidate/run-4-use_codec",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export-4/use_codec_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-4-use_codec",
+          "--theory",
+          "Probe_Use_Codec",
+          "--module",
+          "Use_Codec_Execution",
+          "--report",
+          "use_codec_report_value",
+          "--scope",
+          "use_codec_indices",
+          "--selections",
+          "use_codec_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 12.111283181002364,
+        "exit_code": 1,
+        "status": "failed",
+        "word": null,
+        "error": "See the retained native.log.",
+        "sources_and_tools_unchanged": null,
+        "proof_receipt_sha256": null,
+        "export_sha256": null
+      },
+      {
+        "family": "digit_allocation",
+        "output": "/tmp/native-storage-presentation-candidate/run-4-digit_allocation",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export-4/digit_allocation_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-4-digit_allocation",
+          "--theory",
+          "Probe_Digit_Allocation",
+          "--module",
+          "Digit_Allocation_Execution",
+          "--report",
+          "digit_allocation_report_value",
+          "--scope",
+          "digit_allocation_indices",
+          "--selections",
+          "digit_allocation_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 2.2042149049957516,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 346069,
+          "sha256": "f0aa638f37d8254e8102495d56056566f8e8bbe1ec3424c97fe9d722f78dee6a"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "4c12cc79293a1720049ad27455dbf8cc46373fdf469a88cb7ff8bb025559ecde",
+        "export_sha256": "b976536ff11aae216717c642d3ac757fbaebcbadd737696a7a4f51eb9c54bf69"
+      },
+      {
+        "family": "cached_graft",
+        "output": "/tmp/native-storage-presentation-candidate/run-4-cached_graft",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export-4/cached_graft_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-4-cached_graft",
+          "--theory",
+          "Probe_Cached_Graft",
+          "--module",
+          "Cached_Graft_Execution",
+          "--report",
+          "cached_graft_report_value",
+          "--scope",
+          "cached_graft_indices",
+          "--selections",
+          "cached_graft_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 2.000105553001049,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 407523,
+          "sha256": "98dfe49e950253c251d83e08d0854352bf3643fd1ce3a131b62a87a0a7d19f7a"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "f042397ba5b8e5ab9aa731be7059905ffdb52b98b3edfb3b1f01e5d3f0735473",
+        "export_sha256": "76042dd2f0d0e691bd4aaaff02964385f1d42677457418a2f2db8e37e9b8441e"
+      },
+      {
+        "family": "encoded_environment",
+        "output": "/tmp/native-storage-presentation-candidate/run-4-encoded_environment",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export-4/encoded_environment_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-4-encoded_environment",
+          "--theory",
+          "Probe_Encoded_Environment",
+          "--module",
+          "Encoded_Environment_Execution",
+          "--report",
+          "encoded_environment_report_value",
+          "--scope",
+          "codec_environment_indices",
+          "--selections",
+          "encoded_environment_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 2.5172677770024166,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 691705,
+          "sha256": "40ba10b0cfdd0b18aa28492d7195c11738adf572fbf0d4f4765fffb377daf048"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "c265611d539825dad98df0b8f3f53083c4feb73ed05f6e0fef82c9187cc39147",
+        "export_sha256": "b5f6bde97361fada6c8f3003087709716e6ef6fa49af7b9272b60d51379bac21"
+      },
+      {
+        "family": "data_reading",
+        "output": "/tmp/native-storage-presentation-candidate/run-4-data_reading",
+        "command": [
+          "python",
+          "-B",
+          "/home/julius/structure_and_semantics/tools/check_presented_report.py",
+          "--project",
+          "/tmp/native-storage-presentation-candidate/project",
+          "--proof",
+          "/tmp/native-storage-presentation-candidate/export-4/data_reading_presented.proof.json",
+          "--poly",
+          "/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly",
+          "--output",
+          "/tmp/native-storage-presentation-candidate/run-4-data_reading",
+          "--theory",
+          "Probe_Data_Reading",
+          "--module",
+          "Data_Reading_Execution",
+          "--report",
+          "data_reading_report_value",
+          "--scope",
+          "data_reading_indices",
+          "--selections",
+          "data_reading_report_selections",
+          "--workers",
+          "4",
+          "--timeout",
+          "600"
+        ],
+        "seconds": 2.9449221350078005,
+        "exit_code": 0,
+        "status": "accepted",
+        "word": {
+          "bytes": 104639,
+          "sha256": "533ece0f80b88008f41aaea7519b710ddf95497c7e3e68c9c70f09c74d3a726d"
+        },
+        "error": null,
+        "sources_and_tools_unchanged": true,
+        "proof_receipt_sha256": "2d0b5ae4560f4bc38e4cabe1e144e70b9e2bb0b139b105deced3a57588f95d79",
+        "export_sha256": "4f9638a15cee72817c67743f624cd5f766fb728bf0e5d4395d296e9e9d65d45d"
+      }
+    ]
+  },
+  "boundary": "Twelve complete original/new pairs preserve original source, reference and actual result data, independent inspections, all optional levels, counted paths, additional comparisons and growing-chain results. Opaque stores are identified through their original views and retained allocation counters. Native digit coordinate values preserve arbitrary naturals and have exact identity links to the original unary data terms. No accepted old comparison was reset.",
+  "failure_and_repair": "Use-codec exposed stack exhaustion when decoded large naturals were expanded as unary terms. Flattening bit paths alone was insufficient. Proved digit natural/use presentations fixed the full case without truncation or a magnitude limit. Earlier new-word prototypes were not adopted.",
+  "integration": {
+    "allocated-environments": {
+      "seconds": 3.42,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 40,
+          "tags": {
+            "ALLOCATED_ENVIRONMENT_ASSESSMENT": 16,
+            "ALLOCATED_ENVIRONMENT_CHAIN": 3,
+            "ALLOCATED_ENVIRONMENT_COMPARISON": 1,
+            "ALLOCATED_ENVIRONMENT_INVESTIGATION": 3,
+            "ALLOCATED_ENVIRONMENT_SCOPE": 1,
+            "ALLOCATED_ENVIRONMENT_SUBJECT": 16
+          },
+          "sha256": "59a2f2ffdce911dcb7031ed8028e6dc68a061da98e78fb31ae9ecd1ceb79d2c8"
+        },
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "1d83929e3a5ca3aac9ac1cb92defb17ab495a578261f23378b84a6297ca40e64"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 3.2786183139978675,
+          "exit_code": 0
+        },
+        "presentation": {
+          "seconds": 2.622788294000202,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 203706,
+        "sha256": "65a710e0ac6af897512c8386f374861c934e1f0865d300684dc4c2dd8f347621"
+      }
+    },
+    "artifact-lookup": {
+      "seconds": 2.57,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 35,
+          "tags": {
+            "ARTIFACT_LOOKUP_ASSESSMENT": 10,
+            "ARTIFACT_LOOKUP_COMPARISON": 1,
+            "ARTIFACT_LOOKUP_INVESTIGATION": 3,
+            "ARTIFACT_LOOKUP_PATH": 10,
+            "ARTIFACT_LOOKUP_SCOPE": 1,
+            "ARTIFACT_LOOKUP_SUBJECT": 10
+          },
+          "sha256": "9103f836fc9ecffce28e9b69e96b8ae1470193be2255002b42bd57cd14c6732a"
+        },
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "344e83d78225b2693c026db6348ffbc39567e44b63318af4eb3d8dec17305c31"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 2.471663467993494,
+          "exit_code": 0
+        },
+        "presentation": {
+          "seconds": 2.1190425759996288,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 20000,
+        "sha256": "b8196ef2eca56c36391663333532fcd37b7ccdfe4e9d70c9d90321778da58697"
+      }
+    },
+    "cached-grafts": {
+      "seconds": 4.62,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 86,
+          "tags": {
+            "CACHED_GRAFT_ASSESSMENT": 27,
+            "CACHED_GRAFT_CHAIN": 4,
+            "CACHED_GRAFT_COMPARISON": 1,
+            "CACHED_GRAFT_INVESTIGATION": 3,
+            "CACHED_GRAFT_SCOPE": 1,
+            "CACHED_GRAFT_SOURCE": 22,
+            "CACHED_GRAFT_SOURCE_SCOPE": 1,
+            "CACHED_GRAFT_SUBJECT": 27
+          },
+          "sha256": "e4c2f42319fea36e7e1827da7fae68cabbf6be155736d2895f2e0b82d6d4e7a5"
+        },
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "0a870c05e52213907d9ff5181318b80c2ac06ab525e06baac875b352853aa7ac"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 4.42400540401286,
+          "exit_code": 0
+        },
+        "presentation": {
+          "seconds": 2.4684951170056593,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 407523,
+        "sha256": "98dfe49e950253c251d83e08d0854352bf3643fd1ce3a131b62a87a0a7d19f7a"
+      }
+    },
+    "certified-causes": {
+      "seconds": 57.3,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "8d96f3233263f71ad71f1a18a9e0ff408472200a9389b589228a881b8898a9a9"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 57.22606836298655,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 5538773,
+        "sha256": "4e65ae97d197e8d474dea4ece8ed32c7c680d84df4925523a8ff4a3dce4a6eef"
+      }
+    },
+    "concurrent-history": {
+      "seconds": 211.84,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "7661e6710ccbe095cf66d6aae7f2995fd55bb5d891a69de3b79eafb8ce6b3817"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 211.75142069801223,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 555495,
+        "sha256": "40976dd537c8bcf25c78e74c82209ea4c5f29214d94d97a87c9d43e5cc20c823"
+      }
+    },
+    "concurrent-replay": {
+      "seconds": 295.65,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "ec62b35b12207ca2e16b8f77cf260314fa557f71ac48918c80d511db635aadd5"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 295.5499523640028,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 20519284,
+        "sha256": "3bb5958241e74fd03e43412abb5073a5ffef2cd98073f724bbf4207530ccc36b"
+      }
+    },
+    "constructed-history": {
+      "seconds": 238.16,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "70719735001873807717a13f31aaa4f9739e9115323ad6fe112aa93b0e0e3249"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 238.04642422100005,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 551708,
+        "sha256": "45bde64a359e20ca765fb219b6a98215e8359cc8c4479e42f753028d283b8ff2"
+      }
+    },
+    "data-reading": {
+      "seconds": 4.77,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 32,
+          "tags": {
+            "DATA_READING_ASSESSMENT": 12,
+            "DATA_READING_COMPARISON": 1,
+            "DATA_READING_FIXTURE": 1,
+            "DATA_READING_INVESTIGATION": 3,
+            "DATA_READING_PREPARED": 1,
+            "DATA_READING_SCOPE": 1,
+            "DATA_READING_SOURCE": 1,
+            "DATA_READING_SUBJECT": 12
+          },
+          "sha256": "d5d9250a5b6236a1589dca72c2de87d7086ada2300fbddd5e613fb15b93b2f46"
+        },
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "93787d14383a0557d209c6868aabf7104a7fef59eeb4cbb2c6c9690e67969696"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 4.672320504003437,
+          "exit_code": 0
+        },
+        "presentation": {
+          "seconds": 4.121183631999884,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 104639,
+        "sha256": "533ece0f80b88008f41aaea7519b710ddf95497c7e3e68c9c70f09c74d3a726d"
+      }
+    },
+    "decision-replay": {
+      "seconds": 143.27,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "e80d30794f8ee8d8d02a8ad27915d6098c754f659aed34ec1d305539b86a251a"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 143.20494931499707,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 1296760,
+        "sha256": "de8e13566c3bb91bee5f75f3061a0e7d9671ee5c920209f8f9c9a5518cd48271"
+      }
+    },
+    "digit-allocation": {
+      "seconds": 3.97,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 56,
+          "tags": {
+            "DIGIT_ALLOCATION_ASSESSMENT": 16,
+            "DIGIT_ALLOCATION_CASE_VIEWS": 16,
+            "DIGIT_ALLOCATION_CHAIN": 3,
+            "DIGIT_ALLOCATION_COMPARISON": 1,
+            "DIGIT_ALLOCATION_INVESTIGATION": 3,
+            "DIGIT_ALLOCATION_SCOPE": 1,
+            "DIGIT_ALLOCATION_SUBJECT": 16
+          },
+          "sha256": "c3db3521ae1acd1a8269e712d5966129b86c375dab6b5bbf1ca961a4ee590c70"
+        },
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "5b5c96f12efe28ac4f997e269cfcb60c0d30bb0207f714d79ded8a835c6ac462"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 3.821117151004728,
+          "exit_code": 0
+        },
+        "presentation": {
+          "seconds": 3.0697363460058114,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 346069,
+        "sha256": "f0aa638f37d8254e8102495d56056566f8e8bbe1ec3424c97fe9d722f78dee6a"
+      }
+    },
+    "digit-generation": {
+      "seconds": 3.57,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "b401a02caa2157044fdc4dd1d7184b3d37ca06b1b1671e2c424a49133e2f18d1"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 3.5203148040018277,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 743867,
+        "sha256": "5b1e06ac29094de1347c5884664503f64c4deb688a1b196d9baddf7e129e7766"
+      }
+    },
+    "digit-history": {
+      "seconds": 185.05,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "75e7b3a6055d4a9e0bac740c4b95576ffb59baf7338dd967dce51b7293d56c1f"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 184.92862782799057,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 418306,
+        "sha256": "1a96e74b4bc51b7963f019504eb0b9a4436c58c58dde6d289d0be090f1764356"
+      }
+    },
+    "encoded-environments": {
+      "seconds": 5.78,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 59,
+          "tags": {
+            "ENCODED_ENVIRONMENT_ASSESSMENT": 22,
+            "ENCODED_ENVIRONMENT_COMPARISON": 1,
+            "ENCODED_ENVIRONMENT_INVESTIGATION": 4,
+            "ENCODED_ENVIRONMENT_PATH": 4,
+            "ENCODED_ENVIRONMENT_PREVIOUS_COMPARISON": 1,
+            "ENCODED_ENVIRONMENT_PREVIOUS_INVESTIGATION": 3,
+            "ENCODED_ENVIRONMENT_PREVIOUS_SCOPE": 1,
+            "ENCODED_ENVIRONMENT_SCOPE": 1,
+            "ENCODED_ENVIRONMENT_SUBJECT": 22
+          },
+          "sha256": "150a6305ec210a24ad67ffe75c19b2c5df46cef91e0b523c01dc1bb65a5595d7"
+        },
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "d5b9c6d4cd77e3f10ab776934bf10a8e0d6557cd0e5930c68b9eb8369032af88"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 5.47483261799789,
+          "exit_code": 0
+        },
+        "presentation": {
+          "seconds": 3.8216885830042884,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 691705,
+        "sha256": "40ba10b0cfdd0b18aa28492d7195c11738adf572fbf0d4f4765fffb377daf048"
+      }
+    },
+    "environment-grafts": {
+      "seconds": 3.77,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 39,
+          "tags": {
+            "GRAFT_ASSESSMENT": 16,
+            "GRAFT_COMPARISON": 1,
+            "GRAFT_INVESTIGATION": 4,
+            "GRAFT_SCOPE": 1,
+            "GRAFT_SEMANTICS": 1,
+            "GRAFT_SUBJECT": 16
+          },
+          "sha256": "f8dcfefd5ec82288717c6c67761f3f3c2c613fcf8be6f1e3c57e3c4088d9e89f"
+        },
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "ce5ca1504409ee058245003e991d6d9d787fc008d2bf086566cefa2d0787bc32"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 3.6290352670039283,
+          "exit_code": 0
+        },
+        "presentation": {
+          "seconds": 2.673270789004164,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 158937,
+        "sha256": "a4c5706f531a0436d36fd4b8a28ba665d516a9aaaaac8b9bbfff7bf8712b5c93"
+      }
+    },
+    "environment-updates": {
+      "seconds": 3.57,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 40,
+          "tags": {
+            "ENVIRONMENT_UPDATE_ASSESSMENT": 16,
+            "ENVIRONMENT_UPDATE_CHAIN": 3,
+            "ENVIRONMENT_UPDATE_COMPARISON": 1,
+            "ENVIRONMENT_UPDATE_INVESTIGATION": 3,
+            "ENVIRONMENT_UPDATE_SCOPE": 1,
+            "ENVIRONMENT_UPDATE_SUBJECT": 16
+          },
+          "sha256": "6ee1aa92f75f90ccceb417fa339e2a8de6395e8474374cb74d8f28e48bac5ea4"
+        },
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "42cf4c81fa416df968afe51fa707d73f98b48b517aa39795924c16fc6ad0dd98"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 3.4773444259917596,
+          "exit_code": 0
+        },
+        "presentation": {
+          "seconds": 2.6750543450034456,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 165530,
+        "sha256": "ad4509e600d247126f5fbb9535b033e0e959a9cf7d09e40ec26c5f982dc9967e"
+      }
+    },
+    "generation-records": {
+      "seconds": 5.97,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 37,
+          "tags": {
+            "GENERATION_RECORD_ASSESSMENT": 16,
+            "GENERATION_RECORD_COMPARISON": 1,
+            "GENERATION_RECORD_INVESTIGATION": 3,
+            "GENERATION_RECORD_SCOPE": 1,
+            "GENERATION_RECORD_SUBJECT": 16
+          },
+          "sha256": "19b4353a409522404bd575a853ab0dba1e3c2d0c5107be468f02e31c61f9a3b7"
+        },
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "04eee141dcc0ec080b5b083e59f5af51695103dd2f9f5177c1d2632141a05258"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 5.524358601003769,
+          "exit_code": 0
+        },
+        "presentation": {
+          "seconds": 3.0194907060067635,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 350679,
+        "sha256": "849a944920cb2a8fb32fdeeb828bf4fe7b66a864c230a4a751d235c872ee1b9b"
+      }
+    },
+    "graft-admission": {
+      "seconds": 3.77,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 71,
+          "tags": {
+            "GRAFT_ADMISSION_ASSESSMENT": 22,
+            "GRAFT_ADMISSION_COMPARISON": 1,
+            "GRAFT_ADMISSION_INVESTIGATION": 3,
+            "GRAFT_ADMISSION_REQUIREMENTS": 22,
+            "GRAFT_ADMISSION_SCOPE": 1,
+            "GRAFT_ADMISSION_SUBJECT": 22
+          },
+          "sha256": "c3101081f8b7e1781f943df6da5e1ba9d4e6c9caa08af159477ef67b8e9974b2"
+        },
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "ecae638eeba0e9aa4f0776fb2991d5c93b62f2ff53bc6a767b9ff1a94c74dd49"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 3.6234171129908646,
+          "exit_code": 0
+        },
+        "presentation": {
+          "seconds": 2.6231556459970307,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 177251,
+        "sha256": "0c9b78ad23436dc0af0320adf12f303f31d2acf4898dbc4dac0bda4b7d515e7d"
+      }
+    },
+    "history-index": {
+      "seconds": 123.28,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "d2b94be8212f085c70df3e26a24a464bd86dd5ec78d4b06db2bb57cdef4ce094"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 123.2025111529947,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 316651,
+        "sha256": "33e8d2a3a2f1fbbdb2c25d968ed2e44af4ca83b93d4da2d64f253977b74de9b4"
+      }
+    },
+    "indexed-generation": {
+      "seconds": 3.07,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "904fa55f6849b4c1824adb7d056aa6f601056faf6e18bab10bc11f437be9d8b5"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 2.971362758005853,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 550833,
+        "sha256": "262e3a083dd6c80bc88b0eb026287675a9fcc2f72cc658ab73a902f141bf03c0"
+      }
+    },
+    "known-history": {
+      "seconds": 217.38,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "a0580363428b22d84d3a59688715d412324cc1b4c5e5f020672f19957f02404c"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 217.32311162899714,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 449531,
+        "sha256": "17cf3a0bc8feea9e8fa5af0acfb71c9c14871db5259087abf45a05da1e5fd3e0"
+      }
+    },
+    "literal-replay": {
+      "seconds": 11.89,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 20,
+          "tags": {
+            "LITERAL_REPLAY_ASSESSMENT": 7,
+            "LITERAL_REPLAY_COMPARISON": 1,
+            "LITERAL_REPLAY_INVESTIGATION": 3,
+            "LITERAL_REPLAY_SCOPE": 1,
+            "LITERAL_REPLAY_SEED": 1,
+            "LITERAL_REPLAY_SUBJECT": 7
+          },
+          "sha256": "8d56c7a83a99d11751406f77e826f45e7f54892d3a9947c5bb004728213f8c4d"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 11.7494541460037,
+          "exit_code": 0
+        }
+      }
+    },
+    "native-admission": {
+      "seconds": 106.74,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 131,
+          "tags": {
+            "ADMISSION_ASSESSMENT": 63,
+            "ADMISSION_COMPARISON": 1,
+            "ADMISSION_INVESTIGATION": 3,
+            "ADMISSION_SCOPE": 1,
+            "ADMISSION_SUBJECT": 63
+          },
+          "sha256": "0df15b2277c5c534ad8966dfb2568cf78f2840ab943de02af01a943dcef87f61"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 105.93555557799118,
+          "exit_code": 0
+        }
+      }
+    },
+    "native-certificate-replay": {
+      "seconds": 133.67,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "d1b669fe916e0470e73b4dd894aa78cdfbce7b4ca6db0515a8f9c16bf33ae436"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 133.59225892800896,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 722239,
+        "sha256": "c18cd57964dabed07c670431d70ef3fe88aa0d0662890b7dcfe9aea1e623b27c"
+      }
+    },
+    "native-certificates": {
+      "seconds": 6.43,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "015ee2500788f5f4b9ee6213f25ec8915e75228b75df5b6f192822961dd44f05"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 6.326690155998222,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 890378,
+        "sha256": "ec051877a34c7ab1270a3276954faebb2ebbbc79f5b2d6a574dfe0f4623b3e28"
+      }
+    },
+    "native-derivations": {
+      "seconds": 8.18,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "653f681ea492a8a37c4d3e0a5106dd9e4ae642a404fa1ba6ae705ac860613b1e"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 8.092310467996867,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 648713,
+        "sha256": "6dae30b06be7d74131692adf92c4e9b9c3292b15520bff79a0625848df6f80f0"
+      }
+    },
+    "native-development": {
+      "seconds": 55.42,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "producers": {
+          "records": 101,
+          "tags": {
+            "DEVELOPMENT_ASSESSMENT": 8,
+            "DEVELOPMENT_CANDIDATE": 80,
+            "DEVELOPMENT_COMPARISON": 1,
+            "DEVELOPMENT_CONTEXT": 8,
+            "DEVELOPMENT_INVESTIGATION": 3,
+            "DEVELOPMENT_SCOPE": 1
+          },
+          "sha256": "eeab011a1185619c376c859bea1fabac9a765978e0a9e7c4f6de2c714eb92642"
+        },
+        "questions": {
+          "records": 24,
+          "tags": {
+            "DEVELOPMENT_ADMISSION": 8,
+            "DEVELOPMENT_QUESTION": 8,
+            "DEVELOPMENT_REPORT": 8
+          },
+          "sha256": "2edda61cb291c834bf7d91f8ec0fbaa7d31c40e99fd68c40bd15abc5b99a1357"
+        }
+      },
+      "stages": {
+        "producers": {
+          "seconds": 36.981869027993525,
+          "exit_code": 0
+        },
+        "questions": {
+          "seconds": 11.34788956400007,
+          "exit_code": 0
+        }
+      }
+    },
+    "native-graphs": {
+      "seconds": 33.96,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "accc58c358e96a11aa6d660f57b5c9246e3608b447580a8f3f77237b856580e1"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 33.84647632300039,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 1000741,
+        "sha256": "8b04457c71bc18ceabccdf577bbb4eb5e335117ff48d35d70914e7eadd215e4d"
+      }
+    },
+    "native-nodes": {
+      "seconds": 3.37,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "763862dc55492a8e7528c3a78a2e38143fb6fb81203e666a519fbc3ceed0b9cf"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 3.2721319289994426,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 341007,
+        "sha256": "977e6572847801f1002b14179b76512035e5a0f3f063ba05a44fd6859e28a295"
+      }
+    },
+    "native-requirements": {
+      "seconds": 56.82,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 186,
+          "tags": {
+            "REQUIREMENT_ASSESSMENT": 90,
+            "REQUIREMENT_COMPARISON": 1,
+            "REQUIREMENT_INVESTIGATION": 4,
+            "REQUIREMENT_SCOPE": 1,
+            "REQUIREMENT_SUBJECT": 90
+          },
+          "sha256": "8a07808b8be5aa21742f6359750483c58063dff25d93f9db65169213424f097c"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 54.68472560599912,
+          "exit_code": 0
+        }
+      }
+    },
+    "native-steering": {
+      "seconds": 113.72,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "subjects": {
+          "records": 119,
+          "tags": {
+            "STEERED_AVAILABLE": 1,
+            "STEERED_CHOICE": 1,
+            "STEERED_REQUEST": 8,
+            "STEERED_RESULT": 8,
+            "STEERING_ADMISSION": 1,
+            "STEERING_ASSESSMENT": 8,
+            "STEERING_CANDIDATE": 80,
+            "STEERING_CONTEXT": 8,
+            "STEERING_METHODS": 1,
+            "STEERING_QUESTION": 1,
+            "STEERING_REPORT": 1,
+            "STEERING_SCOPE": 1
+          },
+          "sha256": "3333f8f7ad42b53a2d022d9a8b88d6c2d55d90fce82dde13ee3b7812da37b904"
+        },
+        "empty": {
+          "records": 15,
+          "tags": {
+            "STEERED_AVAILABLE": 1,
+            "STEERED_CHOICE": 1,
+            "STEERED_REQUEST": 8,
+            "STEERING_ADMISSION": 1,
+            "STEERING_METHODS": 1,
+            "STEERING_QUESTION": 1,
+            "STEERING_REPORT": 1,
+            "STEERING_SCOPE": 1
+          },
+          "sha256": "a91e5119e8a6fadc4cd93c6bde79124c479e0ab1c739a6d302b6cfba0e06712a"
+        },
+        "first": {
+          "records": 27,
+          "tags": {
+            "STEERED_AVAILABLE": 1,
+            "STEERED_CHOICE": 1,
+            "STEERED_REQUEST": 8,
+            "STEERING_ADMISSION": 1,
+            "STEERING_ASSESSMENT": 1,
+            "STEERING_CANDIDATE": 10,
+            "STEERING_CONTEXT": 1,
+            "STEERING_METHODS": 1,
+            "STEERING_QUESTION": 1,
+            "STEERING_REPORT": 1,
+            "STEERING_SCOPE": 1
+          },
+          "sha256": "d780f4e570fcdf68d19bbbe373ca2b49654143a57d39bc6b4097f73380166a01"
+        },
+        "questions": {
+          "records": 119,
+          "tags": {
+            "STEERED_AVAILABLE": 1,
+            "STEERED_CHOICE": 1,
+            "STEERED_REQUEST": 8,
+            "STEERED_RESULT": 8,
+            "STEERING_ADMISSION": 1,
+            "STEERING_ASSESSMENT": 8,
+            "STEERING_CANDIDATE": 80,
+            "STEERING_CONTEXT": 8,
+            "STEERING_METHODS": 1,
+            "STEERING_QUESTION": 1,
+            "STEERING_REPORT": 1,
+            "STEERING_SCOPE": 1
+          },
+          "sha256": "3333f8f7ad42b53a2d022d9a8b88d6c2d55d90fce82dde13ee3b7812da37b904"
+        }
+      },
+      "stages": {
+        "subjects": {
+          "seconds": 33.90062575999764,
+          "exit_code": 0
+        },
+        "empty": {
+          "seconds": 14.965829031993053,
+          "exit_code": 0
+        },
+        "first": {
+          "seconds": 22.02883021598973,
+          "exit_code": 0
+        },
+        "questions": {
+          "seconds": 64.28238284800318,
+          "exit_code": 0
+        }
+      }
+    },
+    "native-workflow": {
+      "seconds": 96.87,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "workflow": {
+          "records": 125,
+          "tags": {
+            "WORKFLOW_ASSESSMENT": 10,
+            "WORKFLOW_CANDIDATE": 100,
+            "WORKFLOW_COMPARISON": 1,
+            "WORKFLOW_CONTEXT": 10,
+            "WORKFLOW_INVESTIGATION": 3,
+            "WORKFLOW_SCOPE": 1
+          },
+          "sha256": "dc30b327ba1ee9e7ec99248dc1fd78248e70847278a03408dc6378149d87f81d"
+        },
+        "requirements": {
+          "records": 59,
+          "tags": {
+            "WORKFLOW_ASSESSMENT": 6,
+            "WORKFLOW_CANDIDATE": 42,
+            "WORKFLOW_COMPARISON": 1,
+            "WORKFLOW_CONTEXT": 6,
+            "WORKFLOW_INVESTIGATION": 3,
+            "WORKFLOW_SCOPE": 1
+          },
+          "sha256": "b95ee63b3e155e5542366f4aa5a3d3a200a3146ee3d51ea2fe5e827578ad7691"
+        },
+        "input-scope": {
+          "records": 12,
+          "tags": {
+            "WORKFLOW_ASSESSMENT": 1,
+            "WORKFLOW_CANDIDATE": 4,
+            "WORKFLOW_COMPARISON": 1,
+            "WORKFLOW_CONTEXT": 1,
+            "WORKFLOW_INVESTIGATION": 3,
+            "WORKFLOW_SCOPE": 1,
+            "WORKFLOW_SELECTED_SCOPE": 1
+          },
+          "sha256": "1dc154d07ed7b4560728222367ae3882a8ed04300256ac9434a8656e3f7253cf"
+        },
+        "expanded": {
+          "records": 86,
+          "tags": {
+            "WORKFLOW_ASSESSMENT": 9,
+            "WORKFLOW_CANDIDATE": 63,
+            "WORKFLOW_COMPARISON": 1,
+            "WORKFLOW_CONTEXT": 9,
+            "WORKFLOW_INVESTIGATION": 3,
+            "WORKFLOW_SCOPE": 1
+          },
+          "sha256": "c1be5e632d4e56eeab0531d455f622570bbc2c4867924b611af9114aa3895e73"
+        },
+        "requests": {
+          "records": 24,
+          "tags": {
+            "WORKFLOW_ADMISSION": 6,
+            "WORKFLOW_COMPILED": 6,
+            "WORKFLOW_EXECUTION": 6,
+            "WORKFLOW_REQUEST": 6
+          },
+          "sha256": "a33e047026528b68fe516be70f63f9658043e33d2cc6ac1246b5d6057ae43f65"
+        },
+        "expanded-requests": {
+          "records": 36,
+          "tags": {
+            "WORKFLOW_ADMISSION": 9,
+            "WORKFLOW_COMPILED": 9,
+            "WORKFLOW_EXECUTION": 9,
+            "WORKFLOW_REQUEST": 9
+          },
+          "sha256": "2faefc9a11ad0b170f38292a12c5d4b05c86697a7f313ee7d1fd92089f301606"
+        }
+      },
+      "stages": {
+        "workflow": {
+          "seconds": 18.711927095995634,
+          "exit_code": 0
+        },
+        "requirements": {
+          "seconds": 21.923518370997044,
+          "exit_code": 0
+        },
+        "input-scope": {
+          "seconds": 5.274207613008912,
+          "exit_code": 0
+        },
+        "expanded": {
+          "seconds": 38.26603984000394,
+          "exit_code": 0
+        },
+        "requests": {
+          "seconds": 18.57600361200457,
+          "exit_code": 0
+        },
+        "expanded-requests": {
+          "seconds": 32.96685714900377,
+          "exit_code": 0
+        }
+      }
+    },
+    "quoted-history": {
+      "seconds": 167.62,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "7892a8a18aed17d9ac6030d2e4f09f562fc2a59e6a2f63eb46156c87cb6910a3"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 167.49124696099898,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 483348,
+        "sha256": "35caeae2adfd4b2844bdd61b2d24f3c1cbf9e497f631b740aeab3113b2d4b9d9"
+      }
+    },
+    "required-causes": {
+      "seconds": 15.61,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "d23c652c7b0a65bca5e91af446be012c98aa035f278669eb9141ffa0613cf197"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 15.523567227006424,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 495123,
+        "sha256": "3e78f462d246a8631848ab90b7c0e8fe751c59b7f411801845c45fcc3529f5d5"
+      }
+    },
+    "required-history": {
+      "seconds": 29.2,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "cecc421282b9dbecc715ef92caeda40b74e10d5a5bc5d537db345d1c232587db"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 29.106853357996442,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 159908,
+        "sha256": "67d59453b643d202dfdc5a40fd654a7212244847de5b535f820065f675a9b067"
+      }
+    },
+    "requirement-decisions": {
+      "seconds": 11.31,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "1397ee397fc4db0d26057425e47ae5aa901749caf99eb1fe5c1c5bdfe466e8bf"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 11.207357452003635,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 494768,
+        "sha256": "e3679b7c06bdedb5b0b58ee4c51d2a63ee983026dcd124274ede499e7f4876f3"
+      }
+    },
+    "source-development": {
+      "seconds": 169.05,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "sources": {
+          "records": 126,
+          "tags": {
+            "SOURCE_AVAILABLE": 1,
+            "SOURCE_CHOICE": 1,
+            "SOURCE_CONTROL": 4,
+            "SOURCE_POLICY_ADMISSION": 1,
+            "SOURCE_POLICY_ASSESSMENT": 8,
+            "SOURCE_POLICY_CANDIDATE": 80,
+            "SOURCE_POLICY_CONTEXT": 8,
+            "SOURCE_POLICY_DISPATCH": 1,
+            "SOURCE_POLICY_METHODS": 1,
+            "SOURCE_POLICY_QUESTION": 1,
+            "SOURCE_POLICY_REPORT": 1,
+            "SOURCE_REQUEST": 9,
+            "SOURCE_RESULT": 9,
+            "SOURCE_SCOPE": 1
+          },
+          "sha256": "0994e95ffedfb97f0ec4a0512ae8891118105df163e594f61a6341e54113fe1d"
+        },
+        "empty": {
+          "records": 17,
+          "tags": {
+            "SOURCE_AVAILABLE": 1,
+            "SOURCE_CHOICE": 1,
+            "SOURCE_POLICY_ADMISSION": 1,
+            "SOURCE_POLICY_DISPATCH": 1,
+            "SOURCE_POLICY_METHODS": 1,
+            "SOURCE_POLICY_QUESTION": 1,
+            "SOURCE_POLICY_REPORT": 1,
+            "SOURCE_REQUEST": 9,
+            "SOURCE_SCOPE": 1
+          },
+          "sha256": "0099bacabd60f13e04e6b77a266712c146b208d0aa22b5c59091c5bc6760766d"
+        },
+        "first": {
+          "records": 29,
+          "tags": {
+            "SOURCE_AVAILABLE": 1,
+            "SOURCE_CHOICE": 1,
+            "SOURCE_POLICY_ADMISSION": 1,
+            "SOURCE_POLICY_ASSESSMENT": 1,
+            "SOURCE_POLICY_CANDIDATE": 10,
+            "SOURCE_POLICY_CONTEXT": 1,
+            "SOURCE_POLICY_DISPATCH": 1,
+            "SOURCE_POLICY_METHODS": 1,
+            "SOURCE_POLICY_QUESTION": 1,
+            "SOURCE_POLICY_REPORT": 1,
+            "SOURCE_REQUEST": 9,
+            "SOURCE_SCOPE": 1
+          },
+          "sha256": "e5f8273c195196f04c468e0c14a7abbc8a51a9cc4eca1d113ab618d030924240"
+        },
+        "requests": {
+          "records": 126,
+          "tags": {
+            "SOURCE_AVAILABLE": 1,
+            "SOURCE_CHOICE": 1,
+            "SOURCE_CONTROL": 4,
+            "SOURCE_POLICY_ADMISSION": 1,
+            "SOURCE_POLICY_ASSESSMENT": 8,
+            "SOURCE_POLICY_CANDIDATE": 80,
+            "SOURCE_POLICY_CONTEXT": 8,
+            "SOURCE_POLICY_DISPATCH": 1,
+            "SOURCE_POLICY_METHODS": 1,
+            "SOURCE_POLICY_QUESTION": 1,
+            "SOURCE_POLICY_REPORT": 1,
+            "SOURCE_REQUEST": 9,
+            "SOURCE_RESULT": 9,
+            "SOURCE_SCOPE": 1
+          },
+          "sha256": "0994e95ffedfb97f0ec4a0512ae8891118105df163e594f61a6341e54113fe1d"
+        }
+      },
+      "stages": {
+        "sources": {
+          "seconds": 56.82196655399457,
+          "exit_code": 0
+        },
+        "empty": {
+          "seconds": 9.438903622998623,
+          "exit_code": 0
+        },
+        "first": {
+          "seconds": 19.524090724997222,
+          "exit_code": 0
+        },
+        "requests": {
+          "seconds": 84.77529833599692,
+          "exit_code": 0
+        }
+      }
+    },
+    "digit-replay": {
+      "seconds": 322.78,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "ec62b35b12207ca2e16b8f77cf260314fa557f71ac48918c80d511db635aadd5"
+        }
+      },
+      "stages": {
+        "presentation": {
+          "seconds": 322.675688340998,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 20519284,
+        "sha256": "3bb5958241e74fd03e43412abb5073a5ffef2cd98073f724bbf4207530ccc36b"
+      }
+    },
+    "use-allocation": {
+      "seconds": 3.02,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 35,
+          "tags": {
+            "USE_ALLOCATION_ASSESSMENT": 14,
+            "USE_ALLOCATION_COMPARISON": 1,
+            "USE_ALLOCATION_INVESTIGATION": 4,
+            "USE_ALLOCATION_SCOPE": 1,
+            "USE_ALLOCATION_SEMANTICS": 1,
+            "USE_ALLOCATION_SUBJECT": 14
+          },
+          "sha256": "5868bf5462a2012b508da2e29e85d4299b8b40167ee0c877a42211d9dc8431e8"
+        },
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "14fa7b4557f6e83b078805798279d9e03ca9a8f1f48f7865cb632d3f1b7abdb1"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 2.920509838993894,
+          "exit_code": 0
+        },
+        "presentation": {
+          "seconds": 2.369281035003951,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 376332,
+        "sha256": "da007bec68a22f286bb944e82963c3809e34e5531863406a95cd3eda3e509e11"
+      }
+    },
+    "use-codecs": {
+      "seconds": 3.67,
+      "status": "accepted",
+      "inputs_unchanged": true,
+      "report_boundaries": {
+        "comparison": {
+          "records": 39,
+          "tags": {
+            "USE_CODEC_ASSESSMENT": 16,
+            "USE_CODEC_COMPARISON": 1,
+            "USE_CODEC_INVESTIGATION": 4,
+            "USE_CODEC_SCOPE": 1,
+            "USE_CODEC_SEMANTICS": 1,
+            "USE_CODEC_SUBJECT": 16
+          },
+          "sha256": "305e95699c75ab3be02878c5df3332f036edd76e67a7ca56c8092971ebf1dacd"
+        },
+        "presentation": {
+          "records": 1,
+          "tags": {
+            "PRESENTED_REPORT_WORD": 1
+          },
+          "sha256": "06beaeaac46d2b0d73008c5c724b3ab7a41196ef20caf5992342df67435aa7be"
+        }
+      },
+      "stages": {
+        "comparison": {
+          "seconds": 3.573204618995078,
+          "exit_code": 0
+        },
+        "presentation": {
+          "seconds": 2.219281625992153,
+          "exit_code": 0
+        }
+      },
+      "word": {
+        "bytes": 178732,
+        "sha256": "6a10bb30549c968f7562422b6e12385ae470a28962ca5d7815f17be13db46413"
+      }
+    }
+  }
+}

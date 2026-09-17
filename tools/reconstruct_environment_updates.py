@@ -7,7 +7,8 @@ RECIPE = Recipe(
     roots=('Environment_Update_Execution',),
     export='Environment_Update_Execution:environment_update.ML',
     session='Reconstruct_environment_updates',
-    groups=((Execution('comparison', 'check_environment_updates.py', ('--project', '{project}'), 1200),),),
+    groups=((Execution('comparison', 'check_environment_updates.py', ('--project', '{project}'), 1200),
+        Execution('presentation', 'check_presented_report.py', ('--project', '{project}', '--theory', 'Environment_Update_Execution', '--module', 'Environment_Update_Execution', '--report', 'environment_update_report_value', '--scope', 'environment_update_indices', '--selections', 'environment_update_report_selections', '--workers', '4', '--timeout', '600'), 660),),),
     boundary='The complete original artifact and binding relations, requested update, original guarded '
              'constructor and all candidate output fields determine soundness and completeness. '
              'The closed store API preserves original environment formation by construction. '

@@ -1,0 +1,125 @@
+{
+  "version": 1,
+  "status": "accepted",
+  "probes": [
+    {
+      "status": "accepted",
+      "output": "/tmp/parallel-reader-word-run-evw9bhqs",
+      "probe": "/tmp/actual-complete-cause-cache-candidate",
+      "engine": "/tmp/actual-complete-cause-cache-candidate/export/code/Complete_Causes_1789618922879654413_3/Complete_Causes_1789618922879654413_3.Probe_Complete_Cause_Cache/code/digit_replay_complete_causes.ML",
+      "workers": 8,
+      "profile_time": false,
+      "command": [
+        "/usr/bin/env",
+        "USER_HOME=/tmp/parallel-reader-word-run-evw9bhqs/runtime-home",
+        "/opt/isabelle/bin/isabelle",
+        "ML_process",
+        "-l",
+        "Pure",
+        "-o",
+        "threads=8",
+        "-o",
+        "threads_stack_limit=0",
+        "-f",
+        "/tmp/actual-complete-cause-cache-candidate/export/code/Complete_Causes_1789618922879654413_3/Complete_Causes_1789618922879654413_3.Probe_Complete_Cause_Cache/code/digit_replay_complete_causes.ML",
+        "-f",
+        "/tmp/parallel-reader-word-run-evw9bhqs/execute.ML"
+      ],
+      "baseline": "/tmp/presented-digit-stream-run-im6fbwd4",
+      "exit_code": 0,
+      "seconds": 213.40833049999492,
+      "word": {
+        "bytes": 20519284,
+        "sha256": "3bb5958241e74fd03e43412abb5073a5ffef2cd98073f724bbf4207530ccc36b"
+      },
+      "boundary": {
+        "records": 1,
+        "tags": {
+          "PRESENTED_REPORT_WORD": 1
+        },
+        "sha256": "ec62b35b12207ca2e16b8f77cf260314fa557f71ac48918c80d511db635aadd5"
+      },
+      "complete_word_equal": true,
+      "sources_unchanged": true,
+      "full_input_manifest": "/tmp/parallel-reader-word-run-evw9bhqs/measurement.json",
+      "full_input_manifest_sha256": "546bfebe6112b4802f81dccf126e0cc101890115bed295b48e15e86221249789",
+      "stage_seconds": {
+        "presentation": 174.808,
+        "word": 31.324
+      }
+    },
+    {
+      "status": "accepted",
+      "output": "/tmp/parallel-reader-word-run-llcb3n74",
+      "probe": "/tmp/accepted-staged-digit-probe",
+      "engine": "/tmp/accepted-staged-digit-probe/export/code/Incremental_dbe669c7/Incremental_dbe669c7.Concurrent_Replay_Execution/code/concurrent_replay.ML",
+      "workers": 8,
+      "profile_time": false,
+      "command": [
+        "/usr/bin/env",
+        "USER_HOME=/tmp/parallel-reader-word-run-llcb3n74/runtime-home",
+        "/opt/isabelle/bin/isabelle",
+        "ML_process",
+        "-l",
+        "Pure",
+        "-o",
+        "threads=8",
+        "-o",
+        "threads_stack_limit=0",
+        "-f",
+        "/tmp/accepted-staged-digit-probe/export/code/Incremental_dbe669c7/Incremental_dbe669c7.Concurrent_Replay_Execution/code/concurrent_replay.ML",
+        "-f",
+        "/tmp/parallel-reader-word-run-llcb3n74/execute.ML"
+      ],
+      "baseline": "/tmp/presented-digit-stream-run-im6fbwd4",
+      "exit_code": 0,
+      "seconds": 130.30892237900116,
+      "word": {
+        "bytes": 20519284,
+        "sha256": "3bb5958241e74fd03e43412abb5073a5ffef2cd98073f724bbf4207530ccc36b"
+      },
+      "boundary": {
+        "records": 1,
+        "tags": {
+          "PRESENTED_REPORT_WORD": 1
+        },
+        "sha256": "ec62b35b12207ca2e16b8f77cf260314fa557f71ac48918c80d511db635aadd5"
+      },
+      "complete_word_equal": true,
+      "sources_unchanged": true,
+      "full_input_manifest": "/tmp/parallel-reader-word-run-llcb3n74/measurement.json",
+      "full_input_manifest_sha256": "ed79d3e6aeb4638d64898818e525194ff8faae49af72d56f93fda2e9287b22f0",
+      "stage_seconds": {
+        "presentation": 94.991,
+        "word": 27.754
+      }
+    }
+  ],
+  "chosen": "The already established staged packet/complete scope-report reader is now used by the ordinary Digit_Replay_Execution export. Its complete 20,519,284-byte word matches the original baseline.",
+  "unadopted": "The new actual-complete-key cache proved and matched every byte but took 213.41 seconds, versus 130.31 seconds for the existing staged export. The new cache remains an isolated candidate. Different concurrent schedules prevent a controlled speedup ratio.",
+  "integration": {
+    "seconds": 322.78,
+    "status": "accepted",
+    "inputs_unchanged": true,
+    "report_boundaries": {
+      "presentation": {
+        "records": 1,
+        "tags": {
+          "PRESENTED_REPORT_WORD": 1
+        },
+        "sha256": "ec62b35b12207ca2e16b8f77cf260314fa557f71ac48918c80d511db635aadd5"
+      }
+    },
+    "stages": {
+      "presentation": {
+        "seconds": 322.675688340998,
+        "exit_code": 0
+      }
+    },
+    "word": {
+      "bytes": 20519284,
+      "sha256": "3bb5958241e74fd03e43412abb5073a5ffef2cd98073f724bbf4207530ccc36b"
+    }
+  },
+  "proof_account": "The original stage decomposition, prepared cause-reader equations and complete report equation remain the contracts; no report field, original condition or miss path is replaced by timing evidence."
+}

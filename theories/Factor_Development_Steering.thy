@@ -62,7 +62,7 @@ proof -
   obtain C where source: "finite_ground_condition (development_criterion_rows (development_subject_table qs) (length qs) f)=Some C"
     using present by auto
   have in_cs: "Some C\<in>set ?cs"
-    using facet by (metis imageI set_map source)
+    by (simp only: set_map; rule image_eqI[where x=f]; fact source[symmetric] facet)
   have member: "C\<in>set (development_conditions Q)"
     using imageI[OF in_cs, of the] by (simp only: conditions set_map option.sel)
   show thesis by (rule that[OF member problem source])

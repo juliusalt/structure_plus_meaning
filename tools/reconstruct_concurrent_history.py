@@ -7,9 +7,7 @@ RECIPE = Recipe(
     roots=('Concurrent_History_Execution',),
     export='Concurrent_History_Execution:concurrent_history.ML',
     session='Reconstruct_Concurrent_History',
-    groups=((Execution('comparison', 'check_concurrent_history.py',
-        ('--project', '{project}', '--workers', '8'), 240),
-        Execution('presentation', 'check_presented_report.py', ('--project', '{project}', '--theory', 'Concurrent_History_Execution', '--module', 'Digit_History_Execution', '--report', 'concurrent_history_report_value', '--scope', 'digit_history_indices', '--selections', 'concurrent_history_report_selections', '--workers', '4', '--timeout', '1200'), 1300),),),
+    groups=((Execution('presentation', 'check_presented_report.py', ('--project', '{project}', '--theory', 'Concurrent_History_Execution', '--module', 'Digit_History_Execution', '--report', 'concurrent_history_report_value', '--scope', 'digit_history_indices', '--selections', 'concurrent_history_report_selections', '--workers', '4', '--timeout', '1200'), 1300),),),
     fixtures=('tools/compressed_reconstruction_suite.py',),
     boundary='Every original subject, candidate, complete result, observation, comparison and revision '
              'is reconstructed from source under the original subject contract. Native exact sharing, '

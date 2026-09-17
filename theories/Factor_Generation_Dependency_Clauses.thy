@@ -153,7 +153,18 @@ proof -
     d\<in>system_definitions generation_retention_definition_group \<and> schema_formed S \<and>
     schema_dependencies S\<subseteq>system_definitions generation_retention_components_system\<union>
       system_definitions generation_retention_definition_group"
-    using generation_retention_group_schema_formation by auto
+  proof (intro allI impI)
+    fix d c S assume member: "((d,c),S)\<in>system_clauses generation_retention_definition_group"
+    have domain: "d\<in>system_definitions generation_retention_definition_group"
+      using member by (simp only: generation_retention_group_family generation_retention_group_definitions;
+        erule conjE; assumption)
+    have local_clause: "(c,S)\<in>generation_retention_group_clauses d"
+      using member by (simp only: generation_retention_group_family; erule conjE; assumption)
+    show "d\<in>system_definitions generation_retention_definition_group \<and> schema_formed S \<and>
+      schema_dependencies S\<subseteq>system_definitions generation_retention_components_system\<union>
+        system_definitions generation_retention_definition_group"
+      by (rule conjI[OF domain generation_retention_group_schema_formation[OF local_clause]])
+  qed
   show ?thesis using finite interfaces clauses schemas by (simp add: schema_system_formed_over_def)
 qed
 

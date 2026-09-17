@@ -53,9 +53,10 @@ proof -
   obtain T where native: "native_package_at (decode_finite_environment F) u [] T"
     and variant: "system_alpha_variant (rename_system ?h (decode_finite_system Q)) T"
     and definitions: "system_definitions T=image ?h (fset (finite_system_definitions Q))"
-    using run.correct by blast
+    using run.correct[THEN conjunct2, THEN conjunct2, THEN conjunct2, THEN conjunct2, THEN conjunct2, THEN conjunct1] by blast
   have injective: "inj_on ?h (system_definitions (decode_finite_system Q))"
-    using run.correct by (simp only: finite_system_definitions_correct; blast)
+    using run.correct[THEN conjunct2, THEN conjunct2, THEN conjunct2, THEN conjunct1]
+    by (simp only: finite_system_definitions_correct)
   have old_member: "e\<in>system_definitions (decode_finite_system Q)"
     using member by (simp only: finite_system_definitions_correct)
   have target_member: "d\<in>system_definitions T"

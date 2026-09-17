@@ -1639,3 +1639,17 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Parallel_Inspection_Caches
     Parallel_Replay_Readers
     Builtin_Investigation_Execution
+    Finite_Derived_Values
+    Finite_Presented_Storage_Notions
+    Artifact_Lookup_Presentation
+    Environment_Update_Presentation
+    Allocated_Environment_Presentation
+    Graft_Admission_Presentation
+    Generation_Record_Presentation
+    Use_Allocation_Presentation
+    Graft_Presentation
+    Use_Codec_Presentation
+    Digit_Allocation_Presentation
+    Cached_Graft_Presentation
+    Encoded_Environment_Presentation
+    Data_Reading_Presentation

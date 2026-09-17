@@ -1666,3 +1666,21 @@ retention. The outer recipe limit now matches the requested job count.
 ## Parallel readers, complete cause families and reusable investigation exports
 
 Parallel_Inspection_Caches instantiates the existing complete-key computed-function contract before the original inspection map, and preserves the original list-cache order. Both replay cache families reuse it. Finite_Inspected_Values factors retention of an entire value with actual ordered inspections; the generic Boolean decision-family presentation serves both cause families. Six further reports preserve their complete original subjects, optional levels, sources and inspections. Shared execution utilities now have one implementation apart from the CLI, and module exports retain explicit real client proof roots.
+
+## Storage notions, staged replay and direct bootstrap proofs
+
+Finite_Derived_Values factors retention of a complete original value together
+with an actual derived field. Finite_Presented_Storage_Notions composes the
+existing view, sequence, optional, counted-path and codec contracts for twelve
+report families. Binary natural/use values have explicit identity equivalence
+to their original notions; they avoid unary expansion without a magnitude bound.
+Opaque stores retain their original views and counters. Every original/new
+pair passed. Six previously paired families now retain native words alone.
+
+Ordinary digit replay reuses the established parallel packet-stage and complete
+scope-report equations. The slower new complete-cause cache remains unadopted.
+Three expensive proof searches were replaced by direct instances of existing
+rules, preserving their statements and premises. The full 1,649-theory proof
+now supplies one accepted reusable context without a project parent. These are
+bootstrap and execution refinements; they do not supply native selection or
+native mathematical-proof admission. See [current measurements](native_mechanism_speedup.md).

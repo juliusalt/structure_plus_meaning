@@ -1300,3 +1300,12 @@ remain over 50 boundaries. Digit replay takes 279.14 s in the latest accepted
 execution; the affected cycle takes 365.58 s. No obligation row changes status.
 Native-driven development and practical 5a, broader coverage, O-85 and genesis
 remain open; theoretical 5b is deferred and the full-source measurement pending.
+
+## Generation presentation and full-source measurement
+
+The 1,624-theory generation-presentation batch passed in 152.10 s with all three
+paired recipes and both host suites. The separate frozen 1,620-theory project
+proof from HOL passed in 542.886 s with no reused project contexts. Fourteen
+families now have accepted native words; 3,821 records are retained over 50
+boundaries. No obligation row changes status. Native-driven work, practical 5a,
+wider coverage, O-85 and genesis remain open; 5b stays deferred.

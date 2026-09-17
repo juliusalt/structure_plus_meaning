@@ -62,3 +62,18 @@ Record generation does not establish cause truth or historical permission.
 Actual replay and history adoption, full physical cost, all six `problems.txt`
 conditions, complete historical permission and reachability, native
 mathematical-proof admission, genesis and the final audit remain open.
+
+## Accepted native presentation (2026-09-17)
+
+Both the original comparison and native word passed on the same actual export.
+The word contains 743,867 bytes and retains every reported original
+subject/view, result, independent assessment and source correspondence. Indexed
+queries retain their complete order; digit allocation views retain their counter;
+original assessment qualities are computed from the actual returned assessment.
+
+Comparison took 5.92 s and presentation
+3.02 s under the combined schedule. The three-recipe
+cycle passed in 152.10 s with 1,624 theories and both host suites. Earlier cold
+and JSON counts above are historical. See [the measurements](generation-presentation-measurements.json).
+Accepted pairing permits retirement of the old stage; it does not establish
+native-driven development or broader workflow adequacy.

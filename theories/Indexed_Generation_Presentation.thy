@@ -1,0 +1,29 @@
+theory Indexed_Generation_Presentation
+ imports Finite_Presented_Generation_Queries Finite_Term_Words
+begin
+
+definition finite_indexed_generation_context_value where
+ "finite_indexed_generation_context_value=(finite_pair_presentation finite_indexed_generation_subject_value (finite_pair_presentation (finite_collection_presentation finite_indexed_generation_result_value) (finite_sequence_presentation (finite_pair_presentation finite_natural_data (finite_collection_presentation finite_indexed_generation_result_value)))))"
+
+definition finite_indexed_generation_assessment_value where
+ "finite_indexed_generation_assessment_value=(finite_pair_presentation (finite_collection_presentation finite_indexed_generation_result_value) (finite_collection_presentation finite_indexed_generation_result_value))"
+
+definition finite_indexed_generation_source_value where
+ "finite_indexed_generation_source_value=(finite_pair_presentation finite_natural_data (finite_pair_presentation finite_generation_problem_value (finite_pair_presentation (finite_option_presentation finite_generation_problem_value) finite_boolean_data)))"
+
+definition indexed_generation_presented_sources where
+ "indexed_generation_presented_sources table=map (\<lambda>(w,C,cells).
+   let subject=fst C; original=indexed_generation_problem w
+   in (w,original,indexed_generation_original_subject subject,indexed_generation_source_equal subject original)) table"
+
+definition indexed_generation_report where
+ "indexed_generation_report ws selections=(let packet=indexed_generation_packet ws selections in
+   (indexed_generation_indices,ws,packet,assessment_truth_rows indexed_generation_inspect [0,1] (fst packet),
+     indexed_generation_source_scope ws,indexed_generation_presented_sources (fst packet)))"
+
+definition indexed_generation_report_value where
+ "indexed_generation_report_value ws selections=(finite_pair_presentation finite_index_sequence_value (finite_pair_presentation finite_index_sequence_value (finite_pair_presentation (finite_investigation_packet_value finite_indexed_generation_context_value finite_indexed_generation_assessment_value) (finite_pair_presentation finite_assessment_truth_value (finite_pair_presentation finite_index_sequence_value (finite_sequence_presentation finite_indexed_generation_source_value)))))) (indexed_generation_report ws selections)"
+
+definition indexed_generation_report_selections :: "nat list list" where "indexed_generation_report_selections=[[],[0],[0,1]]"
+export_code indexed_generation_report_value checking SML
+end

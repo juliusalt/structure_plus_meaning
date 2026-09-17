@@ -54,3 +54,18 @@ revision selects both original facets and leaves no scoped residual.
 Complete generation installation, full physical cost, all six `problems.txt`
 conditions, complete historical permission and reachability, native
 mathematical-proof admission, genesis and the final audit remain open.
+
+## Accepted native presentation (2026-09-17)
+
+Both the original comparison and native word passed on the same actual export.
+The word contains 550,833 bytes and retains every reported original
+subject/view, result, independent assessment and source correspondence. Indexed
+queries retain their complete order; digit allocation views retain their counter;
+original assessment qualities are computed from the actual returned assessment.
+
+Comparison took 6.17 s and presentation
+2.52 s under the combined schedule. The three-recipe
+cycle passed in 152.10 s with 1,624 theories and both host suites. Earlier cold
+and JSON counts above are historical. See [the measurements](generation-presentation-measurements.json).
+Accepted pairing permits retirement of the old stage; it does not establish
+native-driven development or broader workflow adequacy.

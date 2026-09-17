@@ -2437,3 +2437,21 @@ comes from the original computation, and no changed report is admitted merely
 because a constructor was cached. Native global selection/criticism, actual
 workflow usefulness under 5a, wider coverage and genesis remain open; 5b is
 still deferred. The independent full-source proof is pending.
+
+## Generation presentation and full-source review
+
+History-index, indexed-generation and digit-generation passed both old comparisons
+and native words on their actual exports. The 152.10 s cycle covers 1,624 theories,
+three executed recipes, 47 unchanged manifests, 3,821 retained records and both
+host suites. Fourteen families now have native words. Views retain the full
+original state/counter and indexed members; query occurrences and independent
+original assessment inspections are not discarded by source projection.
+
+A separate frozen 1,620-theory proof rebuilt the complete project from HOL with
+zero reused project contexts in 542.886 s. It used sixteen threads and
+parallel_proofs=0 alongside independent validation. The two direct proof repairs
+are accepted, but this complete build is still expensive; different source and
+scheduling boundaries forbid a controlled ratio to the older build. This proof
+predates the four new presentation theories and does not rerun all recipes.
+Native selection, real usefulness under 5a, broader coverage and genesis remain
+open; theoretical 5b remains deferred.

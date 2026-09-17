@@ -1,40 +1,45 @@
 # Making native development and validation fast
 
-Updated 2026-09-17 from accepted cause preparation, object-word emission and
-legacy-renderer retirement. Historical observations keep their own boundaries.
+Updated 2026-09-17 from accepted cause/word refinements, three further paired
+presentations and the completed full-source proof. Historical observations retain
+their own execution boundaries.
 
 ## Current result
 
 **Digit replay now passes its complete native word in 279.14 s. Its earlier
 all-recipe execution took 825.47 s. Actual returned cause targets are shared
 across candidate assessments and independent target reads execute in parallel.
-The artifact-word refinement also removes repeated row conversions. The latest
-affected validation took 365.58 s (6 min 6 s), including proof and host tests.
+The artifact-word refinement also removes repeated row conversions. That runtime-refinement
+validation took 365.58 s (6 min 6 s), including proof and host tests.
 These are observed runs under different concurrent schedules, not a controlled
 whole-cycle speedup ratio. The broader speedup objective remains unfinished.**
 
-The accepted workspace has 1,620 theories, 127 rebuilt over 1,493 reused contexts.
-The latest cycle executed digit replay and retained 49 unchanged recipe inputs.
-Eleven families now use native words only; thirty-nine still need migration.
-The 50 retained boundaries contain 3,818 physical records. Removing 254 legacy
-records from the four newly migrated families preserved their whole native words.
+The accepted workspace has 1,624 theories, 131 rebuilt over 1,493 reused contexts.
+The latest generation/history-index batch passed in 152.10 s, executing three
+affected paired recipes and retaining 47 unchanged inputs. Fourteen families now
+have native words: eleven use words only, and the three newly paired families
+are ready for legacy-stage removal. Thirty-six families still need migration.
+The 50 retained boundaries contain 3,821 physical records, including the three
+new words; each retains its complete presented report.
 
 | Boundary | Current accepted evidence |
 |---|---|
 | Proof base | 1,589 theories at fixed `/tmp/structural-accepted`; accepted heap/database identities preserved. |
-| Incremental proof | 80.34 s for all 127 changed/dependent theories; no missing, unlisted or escaped proofs. |
-| Latest execution and tests | Digit replay 279.14 s; 125 tool tests and 35 kernel tests passed, with two optional skips. |
+| Latest incremental proof | 74.76 s for all 131 changed/dependent theories; no missing, unlisted or escaped proofs. |
+| Latest execution and tests | Three paired recipes in 71.97 s; 125 tool tests and 35 kernel tests passed, with two optional skips. The preceding digit recipe passed in 279.14 s. |
 | Complete recipe inventory | All 50 recipes passed the preceding 909.51 s cycle. Subsequent scoped cycles retained unchanged complete manifests and reran every affected recipe. |
-| Native presentation | Eleven families use words alone. Four renderer retirements validated in 106.14 s; the shared certificate renderer remains for its other callers. |
+| Native presentation | Fourteen accepted words; eleven presentation-only recipes and three paired migrations. Shared renderers remain for their existing callers. |
 | Same-report word comparison | Old encoder 96.260 s, object lookup 25.986 s on the same computed report; all 20,519,284 bytes match. Old encoder ran first, so this is not a cold-cache comparison. |
-| Full source proof | A separate frozen 1,620-theory proof from HOL is running to measure full-build cost after the proof fixes. No new full/cold result is claimed yet. |
+| Full source proof | All 1,620 frozen theories rebuilt from HOL with no project parent in 542.886 s; sixteen threads, parallel_proofs=0. The four later presentation theories are outside this snapshot. Full rebuild cost remains substantial. |
 | Whole workflow | Native selection/criticism under conditions 1 and 6 and practical gate 5a remain open. Gate 5b is deferred until after genesis. |
 
 The [current inventory](validation/reconstruction/current-verified.json),
 [incremental receipt](validation/incremental-check.json),
 [cause-preparation measurements](validation/reconstruction/prepared-cause-measurements.json)
 and [word measurements](validation/reconstruction/object-word-measurements.json)
-bind the current state. [Retirement measurements](validation/reconstruction/native-retirement-measurements.json)
+bind the runtime refinement. [Generation presentation measurements](validation/reconstruction/generation-presentation-measurements.json)
+and [full-source measurements](validation/reconstruction/cold-source-proof-measurements.json)
+record the latest extensions. [Retirement measurements](validation/reconstruction/native-retirement-measurements.json)
 and the preceding [all-recipe measurements](validation/reconstruction/native-presentation-cycle-measurements.json)
 retain their actual validation boundaries.
 
@@ -77,7 +82,9 @@ explicit. Native packet ratios cannot stand in for edit-to-accepted-commit time.
 The owner requirement is an edit-to-accepted-commit cycle in single-digit
 minutes. A complete build (about 600 s) cannot be part of every cycle.
 
-**Measured cycle, current batch.** Base/impact checks took 0.65 s, proof
+**Measured cycles.** The latest three-family batch took 152.10 s: proof 74.76 s,
+export 0.77 s, execution/tests 71.97 s, with the other 47 manifests unchanged.
+The preceding cause/word batch had base/impact 0.65 s, proof
 80.34 s, recipe impact 4.65 s, export 0.77 s and digit replay plus host tests
 279.14 s; total 365.58 s. Other recipe inputs were unchanged. The four renderer
 retirements separately passed in 106.14 s: proof 82.75 s and execution/tests
@@ -100,7 +107,13 @@ existing list-empty, conflict and soundness equations instead of metis search.
 The original statements, premises and defined computations are unchanged.
 The combined replacement probe built in 5.44 s, and full affected integration
 passed. This does not license subtracting 333 s from a concurrent full build;
-end-to-end cold benefit remains to be measured.
+a comparable end-to-end ratio is not established. The new complete frozen
+1,620-theory source proof passed in 542.886 s, with no project parent reused.
+Its session reports 524 s elapsed and 3,318 s CPU. Source count, proof scheduling
+and concurrent work differ from older full checks. Remaining long commands
+include child-source code simplification (96 s), generation retention proofs
+(41–56 s), source-entry installation (46 s) and steering (45 s). Full and cold
+reconstruction cost remains an open target.
 
 **Host verification.** Before this batch, host verification after the native
 process took about 1,100 s across the suite. Each correction reproduces every
@@ -210,8 +223,12 @@ terms and the shared table. These size changes are not timing speedup ratios.
 | native-graphs | 1,000,741 | 18.25 |
 | native-derivations | 648,713 | 6.28 |
 | native-certificates | 890,378 | 6.53 |
+| history-index | 316,651 | 71.17 |
+| indexed-generation | 550,833 | 2.52 |
+| digit-generation | 743,867 | 3.02 |
 
-All eleven use words only. These latest timings come from the linked distinct
+The first eleven use words only; the final three passed paired stages. These
+latest timings come from the linked distinct
 cycles and are not additive or a controlled ranking. Every word boundary is
 unchanged. Exporting theory and ML structure remain separate inputs: three
 history theories emit `Digit_History_Execution`.
@@ -250,6 +267,15 @@ retain the four accepted paired transitions. The generic host only packs native
 bits and records their complete byte boundary; it does not inspect generated
 report representations or supply semantic verdicts.
 
+**History-index and generation content.** The indexed-history presentation keeps
+both the full original history and actual indexed membership, including typed
+and unguarded result views, coverage and original source projections. Indexed
+generation keeps the full query sequence separately from its original-source
+projection. Digit generation retains allocation counters and views, every
+original assessment and its computed nine-facet inspection, original and
+projected inputs and chain lengths. All three complete native words matched
+their probes beside unchanged original comparisons on the same actual exports.
+
 **Object-table word emission.** `Finite_Term_Object_Words` stores complete
 artifacts for reference lookup and converts each distinct table entry to rows
 once. Existing injective identity-map laws prove exactly the old indices, row
@@ -259,15 +285,14 @@ applied to the large digit-replay word. No word boundary was reset.
 
 **Remaining migration and dominant work.**
 
-1. Complete paired migration of history-index, indexed-generation and
-   digit-generation; their isolated proofs and probe words are already prepared.
-   Continue the remaining thirty-nine families with the same native notions.
+1. Retire the three newly accepted legacy stages after auditing renderer imports.
+   Continue the remaining thirty-six families with the same native notions.
 2. Reduce decision-replay cost and remaining native computation. Reuse complete
    computed-input sharing, with actual dependencies and independent criticism;
    availability of a cache is not evidence of its effective use.
-3. Finish the separate full-source measurement and reduce proof invalidation cost
-   while preserving exact accepted contexts. Ordinary checks still reprove the
-   whole delta against the original fixed base.
+3. Reduce the measured full-source cost and ordinary proof invalidation while
+   preserving exact accepted contexts. Ordinary checks still reprove the whole
+   delta against the original fixed base.
 4. Complete the non-recipe audit and demonstrate native-driven real development
    at acceptable cost. Faster fixtures do not establish the complete workflow.
 
@@ -384,16 +409,16 @@ permission, broader adequacy and genesis are not closed by this performance work
 
 ## Current validation inventory
 
-The retained inventory covers 1,620 theories and 50 recipe boundaries with 3,818
-complete physical records. All fifty were executed in the preceding batch;
-subsequent checks reran every affected recipe and verified unchanged manifests.
-Eleven families now use native words only. Host suites pass with two optional
-kernel skips. Incremental acceptance is separate from the pending full-source
-proof and from any cold reconstruction of all recipe executions.
+The retained inventory covers 1,624 theories and 50 recipe boundaries with 3,821
+complete physical records. The latest cycle executed three paired recipes and
+retained 47 unchanged inputs; both host suites passed. Fourteen families have
+native words, eleven without their old stages. The separate 1,620-theory frozen
+source proof from HOL also passed in 542.886 s. It precedes the four new
+presentation theories and does not rerun every recipe from cold sources.
 
 Obsolete expanded history-cycle copies were replaced by verified reconstructible
 archives, reducing about 1.1 GB to 250 MB. Archive identities and restore commands
 are in [the temporary archive record](validation/reconstruction/native-temporary-archives.json).
-No cleanup removed the accepted proof base or the complete digit comparison word.
+The accepted base and complete digit comparison word were preserved.
 
 Conditions 1, 6 and practical gate 5a remain open; theoretical 5b stays deferred.

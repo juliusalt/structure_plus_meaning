@@ -1624,3 +1624,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Prepared_Digit_Cause_Assessments
     Prepared_Digit_Replay_Packets
     Finite_Term_Object_Words
+    Finite_Presented_Generation_Queries
+    History_Index_Presentation
+    Indexed_Generation_Presentation
+    Digit_Generation_Presentation

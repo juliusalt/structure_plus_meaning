@@ -1642,3 +1642,14 @@ The complete-object word table instantiates existing injective identity-map laws
 lookup keeps whole artifacts, row conversion occurs once per distinct entry,
 and the original word is unchanged. Four further legacy stages were retired
 after accepted pairing; eleven recipes now use native words only.
+
+## History-index and generation query presentations
+
+Complete generation states, target/field readings, optional anchors, predecessor
+and query sequences and original result assessments now share reusable notion
+presenters. History-index views retain the original history and actual indexed
+members. Digit subject views preserve allocation counters and all requested
+fields; the indexed subject's query sequence is retained separately from the
+original-source projection. Every original nine-facet generation inspection is
+computed from its actual assessment. The three new packets reuse existing
+scope, investigation and actual-inspection composers.

@@ -1,27 +1,63 @@
-# Handoff — B1 committed; B2 certified development causes in progress
+# Handoff — graph readings and listed positions committed; B2 certified development causes in progress
 
-## impl-9 session (2026-09-19)
+## impl-10 session (2026-09-19)
 
-- B1 DONE, VALIDATED, COMMITTED AND PUSHED (see the commit after 78ae153, "Address complete data quotations
-  compactly ..."). The regression impl-8 found is fixed at its cause: compact quotation rows arrive in
-  construction order, so every later listing/equality/formation sorted them again. Now
-  `Factor_Finite_Syntax_Accumulation.finite_syntax_rows_object_listed` (listing each row family again in
-  canonical order presents the same object) and `Factor_Finite_Accumulated_Data_Syntax`:
-  `finite_data_syntax_accumulated` (the old statement, no longer code) and `finite_data_syntax_accumulated_code
-  [code]` (rows listed once in canonical order). Probe: build 0.032 s at 4,000 rows incl. the sort; x20 listing
-  0.027 vs 0.446, equality 0.061 vs 0.849, formation 0.514 vs 1.077.
-- Check `.build/check-20260919c --advance-base`: accepted, 153 theories in 196.8 s, the 13 recipes whose export
-  changed re-executed with every word equal, 168 tool + 35 kernel tests; retained. ACTIVE BASE:
-  `.build/check-20260919c/proof` (lineage c -> a -> z -> x -> w -> u -> s -> p -> complete-20260918n; nine
-  levels — reset with a complete proof when its cost shows). History recipes alone on c's export: digit
-  history 7.2 s, history index 6.5, concurrent history 6.6, known history 7.1, digit replay 7.7.
-- Plan section "The executable quotation is compact — 2026-09-19", REASONING_REUSE and THEORY_MAP rows written.
-- Removed: check b, probe-impl8-*/impl9-a, impl3/impl4 run outputs (replay, packets, judged, adoption copy),
-  impl8 solo runs. Kept: scratch .thy drafts in `.build/impl3-scratch`, `.build/impl4`, `.build/impl6`,
-  `.build/impl8`, `.build/impl9`.
-- NEXT (B2): certified development causes — see impl-8's design below; impl-9 is refining it in
-  `.build/impl9/` (drafts are not in `theories/` so checks keep fixed inputs).
+- The listed-union fix is integrated: `theories/Listed_Set_Unions.thy`, `theories/RRA_Listed_Environment_Positions.thy`
+  (ROOT after Factor_Demanded_Graph_Readings; imported by Native_Execution_Refinements), THEORY_MAP rows, REASONING_REUSE
+  section "Unions computed once are listed", plan section "Certified causes pay for what they read — 2026-09-19".
+  Check `.build/check-20260919e --advance-base` ACCEPTED (152 theories 200.3 s, 16 recipes re-executed all words equal,
+  168+35 tests) and RETAINED. ACTIVE BASE: `.build/check-20260919e/proof` (lineage e->d->c->a->z->x->w->u->s->p->complete-n).
+  Committed and pushed together with impl-9's demanded graph readings as one milestone.
+- Probe b finished (both fixes, first seed family, payload 11,589): policy 0.326 s, proofs 0.336, pick 0.001, replay 1.560,
+  record 3.976 (cause 350,817 addresses: the payload twice, as policy literal and as call argument), check 13.736 (reads the
+  cause back), ok true; the second family (17,649) did not finish its replay before the 400 s probe timeout (load time
+  unknown, not attributed).
+- B2 decision: `development_recorded_generation` REUSES `policy_record_replay_from_source finite_construct_generation_record`
+  (Factor_Known_Replay_Policy; exactness `policy_record_replay_from_source_exact` in the `generation_record_backend` locale,
+  instance `original_generation_backend`), which checks package + alignment on the quoted scope instead of reading the
+  cause back. The draft's hand-written record+check is replaced by that instance.
 
+## impl-9 session (2026-09-19) — parked at the context limit
+
+- COMMITTED+PUSHED: 5ea1fbf "Address complete data quotations compactly and list their rows once" (B1 + sorted rows).
+- VALIDATED, NOW COMMITTED BY impl-10 (with the listed-union fix below as one performance milestone):
+  `theories/Factor_Demanded_Graph_Readings.thy` (2nd instance of Finite_Demanded_Closures: recovered proof graphs read
+  nodes only at sites the root reaches; code eq `finite_recovered_graph_demanded_code`), ROOT entry, import in
+  `Native_Execution_Refinements`, THEORY_MAP row, REASONING_REUSE row (+ Finite_Demanded_Closures row updated),
+  `tools/probe_theories.py --candidates DIR` (probe theories from a scratch dir; never touch theories/ while a check runs).
+  Check `.build/check-20260919d --advance-base` ACCEPTED (151 theories 201.9 s, 15 recipes re-executed all words equal,
+  168+35 tests) and RETAINED. ACTIVE BASE: `.build/check-20260919d/proof` (lineage d->c->a->z->x->w->u->s->p->complete-n).
+- NEXT FIX, PROBED, NOT INTEGRATED: `.build/impl9/listed/Listed_Set_Unions.thy` (listed_union: set xs ∪ set ys executed as
+  set (xs@ys); listed_image_union with fold code) and `.build/impl9/listed/RRA_Listed_Environment_Positions.thy`
+  (`[code abstract]` fset (finite_environment_positions E) = listed_image_union ...; accepted in probe-impl9-e).
+  Cause: library set union inserts member by member (quadratic); environment positions were quadratic, and certificate
+  replay/installation inherited it. Probe e (payload 1601/3201/6401/11601): app readiness 0.049/0.189/0.764 -> 0.002/
+  0.003/0.007/0.014 s; graph installation 0.140/0.558/2.474 -> 0.005/0.010/0.025/0.056; whole certificate replay at
+  11,601 addresses 13.7 -> 1.3 s. TO DO: copy both into theories/, ROOT (after Factor_Demanded_Graph_Readings), import
+  RRA_Listed_Environment_Positions in Native_Execution_Refinements, THEORY_MAP rows, REASONING_REUSE rows, plan section
+  "Certified causes pay for what they read — 2026-09-19" (graph reading + listed positions + evidence: replay-proves at
+  101/201/401: 0.015/0.069/0.366 s universe reading; demanded graph 0.011/0.024/0.050 at 401/801/1601), then
+  `incremental_check.py check --advance-base --output .build/check-20260919e` (all words equal expected), retain, COMMIT+PUSH.
+- RUNNING at park (may have finished): probe `.build/probe-impl9-b` (seed chain with both fixes; log
+  `.build/probe-impl9-b/probe.log`, summary `.build/probe-impl9-b.out`) — read PROBE lines: policy/proofs/pick/replay/
+  record/check at 11589, incumbents10, answer1. Before the listed fix: policy 0.35 s, proofs 0.35 s, replay 13.7 s,
+  record 4.0 s, check did not return in >60 s (check = finite_certified_policy_cause; its base_cause and
+  judgment_readings grow ~x2.6 per doubling: 0.151/0.302/0.668/1.758 s at 401..3201 — attribute next if still slow).
+- Probe b partial result at park (both fixes): PROBE policy 11589 0.326;PROBE counts single ~1;PROBE counts full 3,3,3,1,1,3;PROBE proofs 11589 0.336;PROBE pick 11589 0.001;PROBE replay 11589 1.560;PROBE record 11589 3.976;
+- B2 DRAFTS (not in theories/; probe them from `.build/impl9/drafts` via --candidates): Development_Policy.thy
+  (impl-8's generalization + development_policy_with_package), Development_Certified_Generations.thy (judgment =
+  policy -> ONE source read with TERM DEMAND `finite_program_term_demand Q {|t|}` (the one-call demand is not closed:
+  the guard calls the listing entry on the same payload) -> pick certificate -> finite_certificate_replay; recorded
+  generation via finite_record_native_replay + finite_certified_policy_cause check; family generation guarded by
+  set es ⊆ set (snd C); per-problem incumbents each in its OWN environment (one growing environment makes every later
+  record/check pay for all earlier ones); answers recorded beside their incumbent citing it), Development_Publication.thy
+  (recorded-cause constructors removed; only Development_Seed_Publication used them), Development_Seed_Publication.thy
+  (incumbents computed per problem with Parallel.map inside the report, not as a load-time constant). Theorems drafted:
+  _recorded_generation_certified/_listed, _family_generation_certified, _certified_incumbent_base,
+  _certified_answer_accepted — none probed yet. Also update recipe boundary text in
+  tools/reconstruct_native_development_seed.py (publication stage) and re-record its word after the check.
+- Scratch: `.build/impl9/{candidates,cost,cost2,union,listed,drafts}`, probe dirs `.build/probe-impl9-{b,c,d,e}`.
+  Tasks #1-#3 in the task list mirror this.
 
 ## impl-8 session (2026-09-19) — parked at the context limit; B1 validated, NOT committed
 

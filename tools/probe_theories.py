@@ -26,8 +26,15 @@ import proof_contexts
 ROOT = Path(__file__).resolve().parent.parent
 
 
-def workspace_theories():
-    return {path.stem: path for path in sorted((ROOT / 'theories').glob('*.thy'))}
+def workspace_theories(candidates=()):
+    """Theories of the workspace, overridden by candidate theories kept in scratch directories.
+
+A candidate outside `theories/` is probed without entering the workspace, so a probe never changes
+the inputs of a repository check that runs beside it."""
+    present = {path.stem: path for path in sorted((ROOT / 'theories').glob('*.thy'))}
+    for directory in candidates:
+        present |= {path.stem: path for path in sorted(Path(directory).glob('*.thy'))}
+    return present
 
 
 def changed(sources, present):
@@ -65,10 +72,10 @@ def prepare(work, context, present, loaded, substitutions, prelude):
     return directory, imports
 
 
-def probe(base, work, targets, loaded, substitutions, prelude, parallel_proofs, timeout):
+def probe(base, work, targets, loaded, substitutions, prelude, parallel_proofs, timeout, candidates=()):
     context = proof_contexts.load_parent(base, None, *proof_contexts.new_lineage())
     assert context['sources'], 'The base carries no accepted sources.'
-    present = workspace_theories()
+    present = workspace_theories(candidates)
     differing = changed(context['sources'], present)
     new = {name for name, accepted in differing.items() if accepted is None}
     loaded = set(loaded or new) | set(prelude)
@@ -115,6 +122,9 @@ def main():
     parser.add_argument('--parallel-proofs', type=int,
                         help='Override Isabelle parallel_proofs; 0 attributes elapsed time to one failing proof.')
     parser.add_argument('--timeout', type=int, default=1200)
+    parser.add_argument('--candidates', type=Path, action='append', default=[],
+                        help='Directory of candidate theories kept outside theories/; a candidate overrides '
+                             'the workspace theory of its name.')
     args = parser.parse_args()
     if not __debug__:
         raise ValueError('Probing requires Python assertions.')
@@ -123,7 +133,8 @@ def main():
     prelude = {path.stem: path.resolve() for path in args.prelude}
     assert set(substitutions.values()) <= set(prelude), 'A substitution names no supplied prelude.'
     summary = probe(incremental_check.selected_base(args.base).resolve(), args.work.resolve(), args.theory,
-                    args.load, substitutions, prelude, args.parallel_proofs, args.timeout)
+                    args.load, substitutions, prelude, args.parallel_proofs, args.timeout,
+                    [directory.resolve() for directory in args.candidates])
     print(json.dumps(summary))
     return 0 if summary['loaded'] and not summary['exit'] else 1
 

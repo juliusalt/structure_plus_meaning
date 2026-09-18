@@ -1121,3 +1121,33 @@ digit replay 7.7; before the compact quotation digit replay and known history to
 seconds alone. The same prefix addressing still makes the native compiler's syntax quadratic in a
 term's depth, which remains the next instance of this correction. Both fixes were chosen outside the
 process, like the certified-cause route they serve, and are residuals.
+
+## Certified causes pay for what they read — 2026-09-19
+
+Certifying an admitted answer's cause replays the policy's judgment on the payload and records the
+replayed scope. With the policy read on demand and the quotation compact, two further costs grew with
+the literal payload although nothing read it. Both were attributed on synthetic payloads before
+anything changed.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| A recovered proof graph reads a node at every position of its environment and keeps the nodes its root reaches. | The proof graph is the second instance of the demanded reading (`Factor_Demanded_Graph_Readings`): a node is read only at the sites its root reaches through the premises the nodes discharge, and the node grammar supplies the reading's boundary (a node is read from a record at its use). Replaying a judgment on a whole artifact had read a node at every address of the literal: 0.35, 2.5 and 19.6 seconds at 401, 801 and 1,601 addresses, against 0.011, 0.024 and 0.050 for the demanded reading. |
+| The positions of an environment are collected by the library's union of finite sets. | The library inserts one listing into another member by member, testing each insertion against every member present, so collecting the positions of an environment holding a literal of n addresses cost n². A union computed once and then only read is listed (`Listed_Set_Unions`: the concatenation of the listings, equal to the union by definition) and the positions are the listed union of each artifact's carrier (`RRA_Listed_Environment_Positions`). An accumulation iterated to a fixed point keeps the library's union, because its repetitions would grow every round. At payloads of 1,601, 3,201 and 6,401 addresses, application readiness fell from 0.049, 0.189 and 0.764 seconds to 0.002, 0.003 and 0.007, and installing the certificate's graph from 0.140, 0.558 and 2.474 to 0.005, 0.010 and 0.025; the whole certificate replay takes 1.3 seconds at 11,601 addresses. |
+
+Evidence: the check that put the demanded graph reading on the base (`.build/check-20260919d`) proved
+151 theories in 201.9 seconds and re-executed 15 recipes with every report word equal; the check that
+added the listed positions and advanced the base to `.build/check-20260919e` proved 152 theories in
+200.3 seconds and re-executed 16 recipes with every report word equal (168 tool and 35 kernel tests).
+The recipes hold no large literal, so their times are unchanged within the noise of eight concurrent
+jobs.
+
+Measured next, on the first seed problem's family (a payload of 11,589 addresses): constructing the
+policy takes 0.33 seconds, its certificates 0.34, the replay 1.56 and recording the generation 3.98,
+which quotes the replayed judgment's least scope as a cause of 350,817 addresses (it holds the payload
+twice, once as the policy's literal and once as the call's argument). Checking that recorded cause
+against the policy then takes 13.7 seconds, because it reads the whole cause back. At construction the
+cause is known: the existing known-scope contract (`Factor_Known_Replay_Policy`,
+`policy_record_replay_from_source_exact`) already states that a replayed record is certified under a
+policy exactly when the policy package is read and the quoted scope aligns with it, so the constructor
+consumes that contract instead of reading back what it has just written. A reader of a retained history
+still reads each cause back; that cost and the cause's size remain open.

@@ -1,0 +1,466 @@
+{
+  "history_commit": "d85a02eeb1a9a4f09cc1f4b80c6e767d4a54f756",
+  "owner_request": "Clean up excessive validation retention and commit again. Preserve unique useful sources; retain reconstructible boundaries, not generated output bulk.",
+  "removed_tracked": [
+    {
+      "path": "validation/overnight-20260918/capture-inputs.json",
+      "bytes": 16929,
+      "sha256": "2d94109f57031221e9e2b5bace2d0d4db897615ac64b5c1e065b978af9d37b74"
+    },
+    {
+      "path": "validation/overnight-20260918/archive/capture.json",
+      "bytes": 16929,
+      "sha256": "2d94109f57031221e9e2b5bace2d0d4db897615ac64b5c1e065b978af9d37b74"
+    },
+    {
+      "path": "validation/overnight-20260918/archive/index.json.gz",
+      "bytes": 13082363,
+      "sha256": "20d4ff5ca1b67b057e75a5c0ada19142f36bacc7975c1036708712aec7e619cd"
+    },
+    {
+      "path": "validation/overnight-20260918/archive/pack/000.part",
+      "bytes": 33554432,
+      "sha256": "7e92f0eba19f8715f6e69a7fbe14173226cb47d35eea62a70e650e426460d21c"
+    },
+    {
+      "path": "validation/overnight-20260918/archive/pack/001.part",
+      "bytes": 33554432,
+      "sha256": "812069d84b94e6c261ed2cb9657b5a4ce61f75497743edb3cc095060f06947d1"
+    },
+    {
+      "path": "validation/overnight-20260918/archive/pack/002.part",
+      "bytes": 33554432,
+      "sha256": "e3104f5dab92e457f509244792988355e37fab2b450b29a5e50ab6ecb7374351"
+    },
+    {
+      "path": "validation/overnight-20260918/archive/pack/003.part",
+      "bytes": 13998184,
+      "sha256": "72fedae06842c99878f9547f61f8dcc923cd0b44d506ef56aded68cc49d9c12a"
+    },
+    {
+      "path": "validation/overnight-20260918/archive/pack-verification.json",
+      "bytes": 272,
+      "sha256": "863c914f89c3fbf406e28849358a15f8820a510c54e1dbc77f18e9136736ff90"
+    },
+    {
+      "path": "validation/overnight-20260918/archive/verification.json",
+      "bytes": 323,
+      "sha256": "6c203761f9c4a4da0b71477c1a0ed2fcdb27da00247ef2e204b117cdce6bf717"
+    },
+    {
+      "path": "validation/overnight-20260918/provider-verification.json",
+      "bytes": 11786,
+      "sha256": "996590427b76fd946a3f441aa2d68a564584f3de91391c16200642453b21f291"
+    },
+    {
+      "path": "validation/overnight-20260918/fresh-proof/ROOT",
+      "bytes": 1875,
+      "sha256": "2594389e8d27d31aab3ac430cff64584af68c7cb2cd27c4d43dffac4a0be0ec8"
+    },
+    {
+      "path": "validation/overnight-20260918/fresh-proof/build.log",
+      "bytes": 202,
+      "sha256": "6f5c9d5f0e821a0973c17d4fd07ed333bae6f4af9fb14becac450c584b07780f"
+    },
+    {
+      "path": "validation/overnight-20260918/fresh-proof/diagnostics.json.gz",
+      "bytes": 28212148,
+      "sha256": "49e6965fefad95675fb767e8fb195503fc3dcdb1fb7b56a595de502053de3522"
+    },
+    {
+      "path": "validation/overnight-20260918/fresh-proof/manifest.json",
+      "bytes": 110063,
+      "sha256": "316538ac38c19b67d9e85f29f8d5d195332b42af793fe852ab3f9980014f6c7c"
+    },
+    {
+      "path": "validation/overnight-20260918/fresh-proof/parent.json",
+      "bytes": 39738,
+      "sha256": "96f3cca489ff1b261505d75a2a2e3889f8677b1c07b2103deb2cdf7abb311577"
+    },
+    {
+      "path": "validation/overnight-20260918/fresh-proof/result.json",
+      "bytes": 227564,
+      "sha256": "46105b1562824ca784d058855d31473c1138bb265bf52a79c8322bd4b3764c26"
+    },
+    {
+      "path": "validation/overnight-20260918/fresh-proof/summary.json",
+      "bytes": 605,
+      "sha256": "a787fb689c8483cc6caf9a2ddcceabd6641ce90c907ff886b3fc78c6cc3249fd"
+    },
+    {
+      "path": "validation/overnight-20260918/fresh-proof/warning-review.json",
+      "bytes": 10570,
+      "sha256": "997d58d378aaf8b7d3b5e164ba883c912f77ab97a71d059490669a8aa242806f"
+    },
+    {
+      "path": "validation/overnight-20260918/runner/RECOVERY.md",
+      "bytes": 2673,
+      "sha256": "c848c79b9f9c79974972ca02f11747959b32ae161261da67841184f7c23f7b7a"
+    },
+    {
+      "path": "validation/overnight-20260918/runner/REVIEW.md",
+      "bytes": 1880,
+      "sha256": "c23f7f7eae6ac92814e980338ad299c6a599a30126eafec6d30e911e437721e5"
+    },
+    {
+      "path": "validation/overnight-20260918/runner/WORKER.md",
+      "bytes": 9410,
+      "sha256": "e5ff878d09b21ff3034650c175b621c7b51d869dadcd9bda3123527b12b4d30a"
+    },
+    {
+      "path": "validation/overnight-20260918/runner/hooks.json",
+      "bytes": 1471,
+      "sha256": "8663979382e48d23c90d3d56659bce22f2fe4bf2885d4917ba0e641f0204dc57"
+    },
+    {
+      "path": "validation/overnight-20260918/runner/installed-manifest.json",
+      "bytes": 523,
+      "sha256": "b5e071075d9c766415e67f61466d9141404fa609379781541a890da7deccf9be"
+    },
+    {
+      "path": "validation/overnight-20260918/runner/overnight.py",
+      "bytes": 36553,
+      "sha256": "51eaa173c6bd80b9bab1734727f0e4fbcf822b8eb1157ed50cdd0594a734e036"
+    },
+    {
+      "path": "validation/overnight-20260918/runner/overnight_hook.py",
+      "bytes": 6507,
+      "sha256": "8f6165383205f44512aa84f9037932d83622daf051fa94de6e858dfc81f8623f"
+    },
+    {
+      "path": "validation/overnight-20260918/runner/result.schema.json",
+      "bytes": 445,
+      "sha256": "ba478e352e522b144a15040e9a445dfc9295aa0087e292300047d9772b7d5d36"
+    },
+    {
+      "path": "validation/overnight-20260918/jobs-reconciled.json",
+      "bytes": 109684,
+      "sha256": "85435b75956adfbab19e85f79f569173e5377d693f0bfa9f300368599047f321"
+    },
+    {
+      "path": "validation/overnight-20260918/previous-handoff.md",
+      "bytes": 8036,
+      "sha256": "d0009cbda17325d98cd842e5e2d505fa8be4e5cc33f29e3cadd77339990ab3cd"
+    },
+    {
+      "path": "validation/overnight-20260918/replay/certificates/cases.json",
+      "bytes": 648,
+      "sha256": "e45b47e685187fb658894bb260e0214bbafb950955749d7cbaaa64c835bc2de5"
+    },
+    {
+      "path": "validation/overnight-20260918/replay/certificates/complete-results.json",
+      "bytes": 45212,
+      "sha256": "3182e687f3517bc11ca602ade2642a59e5300064525b4514d8e3516a0e742559"
+    },
+    {
+      "path": "validation/overnight-20260918/replay/certificates/execute.ML",
+      "bytes": 12959,
+      "sha256": "88ee17c98c0ad7eac55bd9d13af755b4a1172a09348ef3f86adab008f45d2f06"
+    },
+    {
+      "path": "validation/overnight-20260918/replay/certificates/execution-inputs.json",
+      "bytes": 164167,
+      "sha256": "0d77c28d1324d9f25b78815795cfdecec98afec913a82fc6f1e5a172eeb3e989"
+    },
+    {
+      "path": "validation/overnight-20260918/replay/certificates/physical-runtime.json",
+      "bytes": 364,
+      "sha256": "9635382617d58b91a8bc7708e6047d3b3bf7e6240b0a441e867b846b34fd7c12"
+    },
+    {
+      "path": "validation/overnight-20260918/replay/certificates/receipt.json",
+      "bytes": 649125,
+      "sha256": "7032923569c6c88ae04677ff6fea111d21076ff083a31cd1f730460afcaa0d8b"
+    },
+    {
+      "path": "validation/overnight-20260918/replay/certificates/reconstruction.json",
+      "bytes": 217,
+      "sha256": "5983ad05d80bd9dd9158f973947ef59307b299653e8487b4f730cf97e7445a30"
+    },
+    {
+      "path": "validation/overnight-20260918/replay/certificates/results.log.gz",
+      "bytes": 16720,
+      "sha256": "b73de069f6cdd4e087272730a22c2ef471b5e153062b6187bcf07640170d41b9"
+    },
+    {
+      "path": "validation/overnight-20260918/replay/certificates/runtime-command.json",
+      "bytes": 546,
+      "sha256": "986c251e6d516b725788907779e0f4bcfc60d47cbe82aab469014f439dee0ed7"
+    },
+    {
+      "path": "validation/overnight-20260918/replay/materials/cases.json",
+      "bytes": 559,
+      "sha256": "263de32a537d032a5a60c9571866311fa688effee406cffdf06dfd0ed723c6e8"
+    },
+    {
+      "path": "validation/overnight-20260918/replay/materials/execute.ML",
+      "bytes": 14189,
+      "sha256": "9d26cb5164c0c6bd6ab93e9ba1ab08a4c232f63c613c2a102ea7609980352c38"
+    },
+    {
+      "path": "validation/overnight-20260918/replay/materials/execution-inputs.json",
+      "bytes": 164155,
+      "sha256": "cf6075b0fe61ca65bab89194907a06fe6f5584882280b63e46632d27dcaa4e02"
+    },
+    {
+      "path": "validation/overnight-20260918/replay/materials/physical-runtime.json",
+      "bytes": 382,
+      "sha256": "80aa95cb62f8c083a702379ec68a815a4add31e96aeb0b1c9cf7903f69aa33dd"
+    },
+    {
+      "path": "validation/overnight-20260918/replay/materials/receipt.json",
+      "bytes": 436445,
+      "sha256": "b33c6d3650654c09e79c8bbeffc16a1d004be9593f98af1b69d266c48a730fe3"
+    },
+    {
+      "path": "validation/overnight-20260918/replay/materials/reconstruction.json",
+      "bytes": 149,
+      "sha256": "ab95d682b9f02d31ba53c671321f5c06ec1447bb27cf1b4063e7f3d8749a413f"
+    },
+    {
+      "path": "validation/overnight-20260918/replay/materials/results.log.gz",
+      "bytes": 218,
+      "sha256": "33874a30230e401240b4645c4174c89ec23e2de0b2888581a7b90cf2c9d14471"
+    },
+    {
+      "path": "validation/overnight-20260918/replay/materials/runtime-command.json",
+      "bytes": 540,
+      "sha256": "691c1a2fd9703353dd36d3672cfcdb8bac87ab03a25bbc794218047078641e8d"
+    },
+    {
+      "path": "validation/overnight-20260918/replay/materials-v2/cases.json",
+      "bytes": 559,
+      "sha256": "263de32a537d032a5a60c9571866311fa688effee406cffdf06dfd0ed723c6e8"
+    },
+    {
+      "path": "validation/overnight-20260918/replay/materials-v2/complete-results.json",
+      "bytes": 36845,
+      "sha256": "db01e73e42f3e4ff967069b16bb12284d99e7a24c95ecd6fd9178927f02e7d3f"
+    },
+    {
+      "path": "validation/overnight-20260918/replay/materials-v2/execute.ML",
+      "bytes": 14237,
+      "sha256": "bb4647b702aadc0a1817981c3ada1f5a320598ca782bddecce2af04724131e71"
+    },
+    {
+      "path": "validation/overnight-20260918/replay/materials-v2/execution-inputs.json",
+      "bytes": 164164,
+      "sha256": "f0d1000b077729da43f87c89e02eb16b8ee1927ca155f55b639714cb106229dc"
+    },
+    {
+      "path": "validation/overnight-20260918/replay/materials-v2/physical-runtime.json",
+      "bytes": 375,
+      "sha256": "52696c1a1854c926fc2e69700aee6c688a5145158b17557d9f18158b32003ccc"
+    },
+    {
+      "path": "validation/overnight-20260918/replay/materials-v2/receipt.json",
+      "bytes": 640756,
+      "sha256": "668a473dce20c87cf02d1cd7dc4bfe85f0ece43609d22f57a20bb5555c70e42f"
+    },
+    {
+      "path": "validation/overnight-20260918/replay/materials-v2/reconstruction.json",
+      "bytes": 214,
+      "sha256": "8ffcd0e9750c1d1ca4f89f669d806c6f66e08fc792e3747f330cc0d074bf0972"
+    },
+    {
+      "path": "validation/overnight-20260918/replay/materials-v2/results.log.gz",
+      "bytes": 15680,
+      "sha256": "8a67b5868ec3a0fce7ad730a6b8ae6cca8c4524c222b8ed1de9a6cd5341b57e9"
+    },
+    {
+      "path": "validation/overnight-20260918/replay/materials-v2/runtime-command.json",
+      "bytes": 546,
+      "sha256": "64c0bf40edb199d0a07c0182bddbe8859d0069b2cc3e27cc7a9996fb3cbe17ce"
+    },
+    {
+      "path": "validation/overnight-20260918/fresh-exports/Native_Control_Consolidated_20260918-export.log",
+      "bytes": 454,
+      "sha256": "2d9eb6e25edab2b83ae2f3bae9d8008cc8f3ebb4c5f4ee071b79d4a0c9208437"
+    },
+    {
+      "path": "validation/overnight-20260918/fresh-exports/native_control_child_review.proof.json",
+      "bytes": 114115,
+      "sha256": "27717a1e3758462ba7ae1850ff6bf4c6dee38fbd1808e21a8747b8fe012f7711"
+    },
+    {
+      "path": "validation/overnight-20260918/fresh-exports/native_control_source_execution.proof.json",
+      "bytes": 114452,
+      "sha256": "71de983077441a4f16fec14c9e5925816ee95722309f016b712dcea868056816"
+    },
+    {
+      "path": "validation/overnight-20260918/fresh-exports/receipt.json",
+      "bytes": 580638,
+      "sha256": "3e09721999bbfa7859d3903e36ca7f4c7e722812c3b7c14cfdc0c519ac758011"
+    },
+    {
+      "path": "validation/overnight-20260918/reconstruction.json",
+      "bytes": 3894,
+      "sha256": "e8f5a4fd64ac676f80afe3755b78b335479490e15ac70a1fab233181dc94f433"
+    },
+    {
+      "path": "validation/overnight-20260918/archive-roundtrip.json",
+      "bytes": 364,
+      "sha256": "ae2a189dbae5f1bd1ab743bda5c7c3493ada1af1ac1ed09fbc332cb582c89f73"
+    },
+    {
+      "path": "validation/overnight-20260918/consolidation.json",
+      "bytes": 588,
+      "sha256": "7f0bb61a796c72db3f4dfadd872bac03832bef6f4b7cbf545ba06bf0d227753e"
+    },
+    {
+      "path": "validation/overnight-20260918/host-failures.json",
+      "bytes": 797,
+      "sha256": "27a2a39b47591c329682059aa0d0112707f85c26eb2084bfb4c06eeca2fa9446"
+    },
+    {
+      "path": "validation/overnight-20260918/checks.json",
+      "bytes": 2310,
+      "sha256": "03db23198c86eb4904af6261d6016b9fe643af48e538a5b8ce7b9d330317513f"
+    }
+  ],
+  "removed_local_trees": [
+    {
+      "path": "validation/native-control-artifact-20260918",
+      "files": 5023,
+      "bytes": 322010828,
+      "checked_against": "All individual hashes in d85a02e:validation/overnight-20260918/archive/index.json.gz",
+      "manifest_sha256": "0a06885bd133daadbec9ccf87a3437222a2f8d46d3603221b06bd2d25e9a9717",
+      "disposition": "superseded evidence copies; current accepted sources and native requests are independently reconstructible; unique diagnostic/candidate source copied to unfinished/ before retirement"
+    },
+    {
+      "path": "validation/native-control-cause-20260918",
+      "files": 258,
+      "bytes": 62158296,
+      "checked_against": "All individual hashes in d85a02e:validation/overnight-20260918/archive/index.json.gz",
+      "manifest_sha256": "97736f50466164d41f191984f902a6d7a559ed686b8ff25cb14cd33b1ff09f02",
+      "disposition": "superseded evidence copies; current accepted sources and native requests are independently reconstructible; unique diagnostic/candidate source copied to unfinished/ before retirement"
+    },
+    {
+      "path": "validation/native-control-children-20260918",
+      "files": 20,
+      "bytes": 76696819,
+      "checked_against": "All individual hashes in d85a02e:validation/overnight-20260918/archive/index.json.gz",
+      "manifest_sha256": "b957b3329a0de3dfbcdf8b5b844ca72016b91d9606c1fa049ccd33c8bcf5cb0f",
+      "disposition": "superseded evidence copies; current accepted sources and native requests are independently reconstructible; unique diagnostic/candidate source copied to unfinished/ before retirement"
+    },
+    {
+      "path": "validation/native-control-context-20260918",
+      "files": 118,
+      "bytes": 20555396,
+      "checked_against": "All individual hashes in d85a02e:validation/overnight-20260918/archive/index.json.gz",
+      "manifest_sha256": "88ed64b1b2c2fe7c1c08aecc745d4d31dbeab3f979ea1708a9f4bf01adf673e7",
+      "disposition": "superseded evidence copies; current accepted sources and native requests are independently reconstructible; unique diagnostic/candidate source copied to unfinished/ before retirement"
+    },
+    {
+      "path": "validation/native-control-frontier-20260918",
+      "files": 23,
+      "bytes": 858982,
+      "checked_against": "All individual hashes in d85a02e:validation/overnight-20260918/archive/index.json.gz",
+      "manifest_sha256": "750e4708a2bb8aa8bb8914bf4be00609d099ca3187d22d3df6b1ddbe01e46a3a",
+      "disposition": "superseded evidence copies; current accepted sources and native requests are independently reconstructible; unique diagnostic/candidate source copied to unfinished/ before retirement"
+    },
+    {
+      "path": "validation/native-control-installation-20260918",
+      "files": 3478,
+      "bytes": 302359072,
+      "checked_against": "All individual hashes in d85a02e:validation/overnight-20260918/archive/index.json.gz",
+      "manifest_sha256": "7dcfecfee7b9a40c18c2c86f80ae87d71c8ba7113641f5d31cbf4990f3e36153",
+      "disposition": "superseded evidence copies; current accepted sources and native requests are independently reconstructible; unique diagnostic/candidate source copied to unfinished/ before retirement"
+    },
+    {
+      "path": "validation/native-control-judgment-20260918",
+      "files": 3944,
+      "bytes": 230973996,
+      "checked_against": "All individual hashes in d85a02e:validation/overnight-20260918/archive/index.json.gz",
+      "manifest_sha256": "df9ef87618fcb1a3d70e0cfa7d496da2bbf32cb76141aa50145add6537063350",
+      "disposition": "superseded evidence copies; current accepted sources and native requests are independently reconstructible; unique diagnostic/candidate source copied to unfinished/ before retirement"
+    },
+    {
+      "path": "validation/native-control-receiving-20260918",
+      "files": 3118,
+      "bytes": 220522758,
+      "checked_against": "All individual hashes in d85a02e:validation/overnight-20260918/archive/index.json.gz",
+      "manifest_sha256": "5a4b4184666798cc0a37bc3f61eeec5f2452fdfffefe023ff2f751316d2de00f",
+      "disposition": "superseded evidence copies; current accepted sources and native requests are independently reconstructible; unique diagnostic/candidate source copied to unfinished/ before retirement"
+    },
+    {
+      "path": "validation/native-control-source-20260918",
+      "files": 236,
+      "bytes": 51127194,
+      "checked_against": "All individual hashes in d85a02e:validation/overnight-20260918/archive/index.json.gz",
+      "manifest_sha256": "01cc2dce7381d77e16fd01ac617b9165f46fd4e4808ae2321fdfaadb7ff9ec3f",
+      "disposition": "superseded evidence copies; current accepted sources and native requests are independently reconstructible; unique diagnostic/candidate source copied to unfinished/ before retirement"
+    }
+  ],
+  "replacements": {
+    "accepted_sources": "theories/ and ROOT; integration.json identifies all 53 unchanged adopted theories",
+    "unfinished_sources": "unfinished/inventory.json",
+    "complete_input_boundary": "sources.json, using tools/materialize_source_boundary.py",
+    "native_requests_and_expected_report_boundaries": [
+      "requests/",
+      "requests.json"
+    ],
+    "proof_and_execution_evidence": "verified.json",
+    "rebuild_commands": [
+      "python3 -B tools/reconstruct_overnight.py prove --output <fresh proof directory>",
+      "python3 -B tools/reconstruct_overnight.py export --context <proof directory> --output <fresh exports directory>",
+      "python3 -B tools/reconstruct_overnight.py replay certificates --exports <exports directory> --output <fresh run directory>",
+      "python3 -B tools/reconstruct_overnight.py replay materials --exports <exports directory> --output <fresh run directory>"
+    ]
+  },
+  "dispositions": [
+    "Generated words, exports, duplicate source snapshots, full diagnostic dumps and obsolete receipts are reproduced from their retained boundaries or superseded by the accepted fresh HOL/replay checks.",
+    "Earlier failed source variants are superseded by the committed accepted source; latest distinct diagnostic/candidate theories remain as source files, outside ROOT.",
+    "Supervisor source/configuration and complete historical execution evidence remain recoverable from the preceding commit; neither is a current build input.",
+    "Original historical PID namespace liveness remains unknown. This owner-requested retirement of verified duplicate evidence makes no assertion of process exit and sends no signals. Protected original /tmp providers are left untouched; no reconstruction depends on them."
+  ],
+  "boundary": "Physical storage accounting only. No proof, facet, timeout or native admission requirement changed. Historical bulk remains in Git history; this cleanup does not rewrite history.",
+  "status": "retired",
+  "finished_utc": "2026-09-18T06:58:51.697057+00:00",
+  "removed_regenerated_runs": [
+    {
+      "path": ".build/overnight-cleanup",
+      "files": 3368,
+      "bytes": 172097379,
+      "replaced_by": [
+        "validation/overnight-20260918/sources.json",
+        "validation/overnight-20260918/requests.json",
+        "validation/overnight-20260918/verified.json"
+      ],
+      "disposition": "Completed materialization/check outputs, old replay copies, and the temporary capture-index copy; fully accounted for before removal."
+    },
+    {
+      "path": ".build/overnight-20260918/certificates",
+      "files": 1125,
+      "bytes": 57564997,
+      "replaced_by": [
+        "validation/overnight-20260918/sources.json",
+        "validation/overnight-20260918/requests.json",
+        "validation/overnight-20260918/verified.json"
+      ],
+      "disposition": "Completed materialization/check outputs, old replay copies, and the temporary capture-index copy; fully accounted for before removal."
+    },
+    {
+      "path": ".build/overnight-20260918/materials",
+      "files": 1120,
+      "bytes": 38823333,
+      "replaced_by": [
+        "validation/overnight-20260918/sources.json",
+        "validation/overnight-20260918/requests.json",
+        "validation/overnight-20260918/verified.json"
+      ],
+      "disposition": "Completed materialization/check outputs, old replay copies, and the temporary capture-index copy; fully accounted for before removal."
+    },
+    {
+      "path": ".build/overnight-20260918/materials-v2",
+      "files": 1125,
+      "bytes": 53942379,
+      "replaced_by": [
+        "validation/overnight-20260918/sources.json",
+        "validation/overnight-20260918/requests.json",
+        "validation/overnight-20260918/verified.json"
+      ],
+      "disposition": "Completed materialization/check outputs, old replay copies, and the temporary capture-index copy; fully accounted for before removal."
+    }
+  ]
+}

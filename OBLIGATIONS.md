@@ -1383,6 +1383,7 @@ replay/cause/history and governing-policy/workflow obligations remain open.
 [HANDOFF.md](HANDOFF.md) states the next batch, original prerequisites and the
 remaining authority, locality, dependency, executor and first-use requirements.
 Conditions 1–4, practical 5a and 6 remain open; theoretical 5b is deferred.
-A lossless repository archive removes dependence on temporary files but does not
-settle the stronger boundary-only evidence design. Historical unknown process
-identities are retained as uncertainty; none is a dependency of the fresh rebuild.
+Current retention uses the source closure, executable requests and complete-report
+identities; generated bulk was retired after the owner identified over-retention.
+The broader native evidence/workflow account remains open. Historical process
+identities remain uncertain; none is a dependency of the fresh rebuild.

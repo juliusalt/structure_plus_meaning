@@ -1,44 +1,43 @@
-# Overnight consolidation, 2026-09-18
+# Overnight source and reconstruction boundary
 
-The [current handoff](../../HANDOFF.md) gives the semantic boundary, obligations
-and rebuild commands. These host records locate evidence; they confer no semantics.
-The historical base is `a863e709ff27067485ff6939e2bd6626982bd680`.
+This checkpoint retains inputs, compact verification records and useful unfinished
+source. Generated proofs, exports, native words, execution archives and full
+diagnostic dumps are not current repository inputs. The previous bulk checkpoint
+remains recoverable from commit `d85a02e`; no reconstruction reads it.
 
-Original STATE reached segment 10; HANDOFF still described segment 9. JOBS has
-207 entries: 111 exit-zero, 93 nonzero exits, two interruptions and one retention
-job recorded running. The supervisor stopped at 2026-09-18T06:12:33.648667Z.
-Material review completed before that stop; no subsequent application-result
-selection theory was found. `jobs-reconciled.json` preserves original outcomes
-and process uncertainty without converting an unknown status into termination.
+[HANDOFF.md](../../HANDOFF.md) states the original semantic scope, results, open
+obligations and commands. The 53 accepted theory texts are unchanged. The complete
+repository still has the Development_Seed contract-argument defect.
 
-| Files | Purpose |
+| Retained file | Why it is needed |
 | --- | --- |
-| `integration.json` | 53 integrated theories and original provider/source identities. |
-| `provider-verification.json` | Read-only reconciliation of 37 historical contexts, including the base. |
-| `fresh-proof/` | Fresh HOL proof, exact inputs, complete terminal diagnostics and summary. |
-| `requests/`, `requests.json` | Original native request functions, presenter, requirements and complete expected assessments. Historical driver mains are not executed. |
-| `replay/` | Consolidation execution receipts, complete logs and reconstruction comparisons, including physical failures. |
-| `archive/index.json.gz` | Every original path mapped to exact bytes. |
-| `archive/pack/` | Non-Git blobs in a Zstandard tar stream split into ordered chunks. |
-| `archive/verification.json`, `archive/pack-verification.json` | Two-pass original capture checks and independent complete decoding checks. |
-| `archive/capture.json` | Scope: all extant segment 1–10 trees, baseline provider, nine retention directories, and overnight state/run completion snapshots. |
-| `runner/` | Preserved supervisor/hook sources and configuration, not automatically installed or started. |
+| `integration.json` | Accepted theory roots and original source/provider identities. |
+| `sources.json` | Complete theory/Python input closure and fixtures in the existing source-boundary format. |
+| `requests/` | Original executable native requests and diagnostic presenter; the historical driver mains are not run. |
+| `requests.json` | Original requirements and timeouts, driver identities, expected complete-report and native-word boundaries. |
+| `verified.json` | Compact records of proof/export/replay validation, warning counts and unresolved historical process identities. |
+| `unfinished/` | Nine distinct diagnostic/candidate theories, explicitly outside the accepted ROOT scope. |
+| `retirement.json` | What was removed, where its source/evidence is retained, and how generated outputs are rebuilt. |
 
-The archive represents 272,562 paths and 6,082 distinct byte strings; 1,915 are
-Git blobs reachable from the baseline. Original trees occupy about 5.42 GB.
-Generated native words, exports and failed attempts are conservatively preserved
-alongside requests; this does not claim the stronger condition-3 retention design
-is finished. Python caches and agent telemetry/encrypted response streams are
-not development inputs.
+The expected assessment boundary hashes the same complete stable assessment that
+the prior checkpoint compared directly. It omits only the same timings, display
+scope and physical-completion fields as that comparison. Every result and control
+is covered; native word sizes/digests are retained separately. These identify
+reconstructed bytes; the original proved contracts establish their meaning.
+No supplied satisfaction table or new native admission rule is introduced.
 
-Verification reads only Git and this directory. Extraction verifies bytes and
-writes historical paths under a fresh output directory. Absolute names in old
-receipts are provenance, not live inputs or portable accepted heaps. Rebuild
-theories to obtain a usable fresh provider.
+Use the existing materializer to check the full input closure independently:
 
-The initial simultaneous material replay failed before native evaluation on a
-JVM `hsperfdata` collision across sandbox PID namespaces. Its full failure is
-retained; the subsequent fresh launch passed and matched the complete assessment.
-No native expression,
-facet, timeout or expected report was weakened. Complete proof/runtime diagnostics
-retain warnings; timing is observed cost, not speedup or practical-usefulness evidence.
+```sh
+python3 -B tools/materialize_source_boundary.py --project . --manifest validation/overnight-20260918/sources.json --output .build/overnight-source
+```
+
+Then use the prove/export/replay commands in HANDOFF.md. Neither the archive nor
+old temporary providers are needed. Sources execution and projection preparation
+remain unresolved operations; a timeout is not a negative semantic result.
+
+The cleanup removes the nine ignored original validation trees after verifying
+every file against the prior checkpoint. Their blanket ignore rules are removed.
+Original `/tmp` providers remain untouched because historical PID-namespace exit
+evidence is incomplete; these optional caches are not reconstruction inputs.
+Historical bulk stays in Git history, consistent with earlier retirements.

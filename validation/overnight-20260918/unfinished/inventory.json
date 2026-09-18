@@ -1,0 +1,59 @@
+{
+  "history_commit": "d85a02e",
+  "sources": [
+    {
+      "source": "validation/native-control-frontier-20260918/Native_Control_Boundary_Diagnostics.thy",
+      "retained": "validation/overnight-20260918/unfinished/Native_Control_Boundary_Diagnostics.thy",
+      "sha256": "05985380ee51c8f96540facfd280fbeb61c4bc316b60b002afb32a7017400bbb",
+      "status": "Historical diagnostic/candidate, outside the accepted ROOT scope; no new proof acceptance claimed."
+    },
+    {
+      "source": "validation/native-control-frontier-20260918/Native_Control_Policy_Attribution.thy",
+      "retained": "validation/overnight-20260918/unfinished/Native_Control_Policy_Attribution.thy",
+      "sha256": "81802182648f89e4b60ed9042f0cf21bfa63145b8f7ad81bde2158d13abdcaff",
+      "status": "Historical diagnostic/candidate, outside the accepted ROOT scope; no new proof acceptance claimed."
+    },
+    {
+      "source": "validation/native-control-context-20260918/Native_Control_Context_Run-v2.thy",
+      "retained": "validation/overnight-20260918/unfinished/Native_Control_Context_Run.thy",
+      "sha256": "b27e10322260b744bc126b0b01808bbb2b8d82590c5fde35c35c4afecc26487b",
+      "status": "Historical diagnostic/candidate, outside the accepted ROOT scope; no new proof acceptance claimed."
+    },
+    {
+      "source": "validation/native-control-context-20260918/Native_Control_Context_Selection-v2.thy",
+      "retained": "validation/overnight-20260918/unfinished/Native_Control_Context_Selection.thy",
+      "sha256": "bc3cdb953afc3a9e721ddcdd9bbff118117cc494b211e43064990f48c25564b3",
+      "status": "Historical diagnostic/candidate, outside the accepted ROOT scope; no new proof acceptance claimed."
+    },
+    {
+      "source": "validation/native-control-context-20260918/Native_Control_Equality_Controls.thy",
+      "retained": "validation/overnight-20260918/unfinished/Native_Control_Equality_Controls.thy",
+      "sha256": "bfc3d035d3511462f50bae44e0b9ad04f219ced47825941d71984dbe5c451aa4",
+      "status": "Historical diagnostic/candidate, outside the accepted ROOT scope; no new proof acceptance claimed."
+    },
+    {
+      "source": "validation/native-control-context-20260918/Native_Control_Review_Run.thy",
+      "retained": "validation/overnight-20260918/unfinished/Native_Control_Review_Run.thy",
+      "sha256": "77b542226933aa35ad5f45cd8a82a2b4a538b17f50eadfdeade5033c70ab0e43",
+      "status": "Historical diagnostic/candidate, outside the accepted ROOT scope; no new proof acceptance claimed."
+    },
+    {
+      "source": "validation/native-control-judgment-20260918/Native_Control_False_Statement.thy",
+      "retained": "validation/overnight-20260918/unfinished/Native_Control_False_Statement.thy",
+      "sha256": "59c5d759e70098714ca51cd8fe35095c4c4a50a1241846fa466d9af4f6cf5f0c",
+      "status": "Historical diagnostic/candidate, outside the accepted ROOT scope; no new proof acceptance claimed."
+    },
+    {
+      "source": "validation/native-control-installation-20260918/candidate-sources/source-definition-diagnostic/Native_Control_Definition_Diagnostic.thy",
+      "retained": "validation/overnight-20260918/unfinished/Native_Control_Definition_Diagnostic.thy",
+      "sha256": "83d3a52884885d5eb0b788cc4572d6ab1a64a1bfb5aac36ab235fdc31e69280a",
+      "status": "Historical diagnostic/candidate, outside the accepted ROOT scope; no new proof acceptance claimed."
+    },
+    {
+      "source": "validation/native-control-installation-20260918/candidate-sources/source-code-v6/Native_Control_Quotation_Diagnostic.thy",
+      "retained": "validation/overnight-20260918/unfinished/Native_Control_Quotation_Diagnostic.thy",
+      "sha256": "d7ecdd7545313931edfd6168263d0117f53239e1ac3f593c6bfe8e642ca6fb16",
+      "status": "Historical diagnostic/candidate, outside the accepted ROOT scope; no new proof acceptance claimed."
+    }
+  ]
+}

@@ -2586,9 +2586,36 @@ are preserved in the current handoff. A physical JVM launch failure and archive
 decoder memory-limit failure were retained/repaired as transport issues, without
 changing native expressions, proofs, checks or timeouts.
 
-The archive binds each original path to exact bytes, independently verifies
-decoding and uses Git history for unchanged inputs. Fresh proof/replay and archive
-extraction have no old provider requirement. Those host mechanisms are not native
-retention authority and do not establish condition 3's stronger boundary-only
-design. Remaining original premises, broader authority/workflow requirements,
-O-73, O-85, practical 5a and genesis remain explicit in HANDOFF.md and OBLIGATIONS.md.
+The initial consolidation retained a lossless historical archive as well as
+reconstruction inputs. The owner subsequently identified that this stored
+reproducible bulk unnecessarily; the correction below retires it. The bootstrap
+proofs and native execution results are unchanged. Remaining original premises,
+broader authority/workflow requirements, O-73, O-85, practical 5a and genesis remain
+explicit in HANDOFF.md and OBLIGATIONS.md.
+
+
+### Retention correction after owner review
+
+The owner identified that the consolidation stored reproducible bulk despite
+the earlier source-only retention practice. That criticism is accepted: archive
+compression did not satisfy the requested retention boundary. The cleanup retains
+all 53 accepted theory texts, original native requests, the complete import/input
+closure, compact proof/execution records and expected complete-report identities.
+Nine distinct non-adopted diagnostic/candidate theories are preserved as source;
+older failed variants remain historical rather than current dependencies.
+
+The same native certificate/material questions run from a source-only copy. The
+new compact identity covers the same complete stable assessment as the earlier
+direct equality check, including every control, and separately retains native
+word identities. Tests expose changed controls even when native word identities
+are held fixed. No theorem, native expression, observation, facet, admission or
+timeout changed. The existing source-boundary materializer verifies the inputs.
+The retirement record binds the removed local copies to the preceding committed
+index; it asserts no native retention authority or old process termination.
+This corrects host retention without declaring the whole workflow or genesis done.
+
+Both cleaned replays passed: 20 certificate questions and 15 completed material
+questions match their complete report boundaries. Projection subject 0 remains
+unresolved. All 1,112 source inputs and nine candidate source identities were
+checked; four focused reconstruction tests passed. Generated check copies were
+then retired against the compact verification and source boundary.

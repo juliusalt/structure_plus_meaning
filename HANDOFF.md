@@ -17,19 +17,18 @@ scope**, not a successful build of the whole `ROOT` session.
 
 Fresh exports match the overnight modules byte for byte. Both the certificate
 and material replays match their complete original assessments and native words.
-Storage checks verify the whole archive and round-trip all 2,248 segment-10 files.
+The cleanup retains complete report identities and a source-only reconstruction
+boundary. Generated output is rebuilt when needed.
 
 [validation/overnight-20260918](validation/overnight-20260918/README.md) retains
-sources, failed attempts, drivers, receipts, logs, native results and 207 job
-records. The archive resolves unchanged sources from Git history and stores each
-other byte string once. Original paths in receipts are historical identifiers,
-not required filesystem locations. Fresh commands below create new evidence;
-old receipts are never rewritten into acceptance evidence. No old `/tmp`
-provider, heap or active pointer is needed.
+the source closure, native requests, expected complete-report identities, compact
+verification and the retirement record. Unique diagnostics/candidates are explicit
+source files under `unfinished/`, outside ROOT. Full historical logs, generated
+outputs and superseded snapshots remain recoverable from commit `d85a02e`; none is
+a current reconstruction input. No old `/tmp` provider or active pointer is needed.
 
-Unaccepted drafts, including the diagnostic theories omitted from the accepted
-scope, remain in the archive. Segment 10 proposed application-result selection
-and source-reader staging but left no implemented theory candidate for them.
+Segment 10 proposed application-result selection and source-reader staging but
+left no implemented theory candidate for them.
 The ordinary whole-session check still encounters the earlier missing argument
 to `Development_Refinement` in `Development_Seed`. Choosing that argument remains
 a semantic development problem; its expected recipe reports are placeholders.
@@ -71,11 +70,11 @@ premises. No installed guard certificate, replay or governing cause exists.
 
 Use Python 3.14 and Isabelle2025-2 (`isabelle` on PATH; the existing runtime helper
 expects Poly/ML under `/opt/isabelle`). This is the normative bootstrap toolchain.
-Heaps are generated caches. Each output directory must be fresh. Archive checks
-require Git history containing the recorded baseline commit, as in a full clone.
+Heaps are generated caches. Each output directory must be fresh. Current proof
+and replay reconstruction reads only current repository inputs and the toolchain.
 
 ```sh
-python3 -B tools/overnight_archive.py verify
+python3 -B tools/materialize_source_boundary.py --project . --manifest validation/overnight-20260918/sources.json --output .build/next-native-source
 python3 -B tools/reconstruct_overnight.py prove --output .build/next-native-proof
 python3 -B tools/reconstruct_overnight.py export --context .build/next-native-proof --output .build/next-native-exports
 python3 -B tools/reconstruct_overnight.py replay certificates --exports .build/next-native-exports --output .build/next-certificates
@@ -85,21 +84,16 @@ python3 -B tools/reconstruct_overnight.py replay materials --exports .build/next
 Proof builds directly from HOL without the active-context pointer. Export
 verifies/adopts only the new context. Replay loads unchanged historical
 request/assessment function ASTs with fresh paths and compares complete
-assessments and native word identities. Material timeout outcomes can change;
+assessment boundaries and native word identities. Material timeout outcomes can change;
 review a difference rather than force it to match. Concurrent JVM jobs must
 share a process namespace: separate sandbox namespaces can collide in shared
 `hsperfdata`. Native per-subject material preparation remains parallel.
 
 The fresh proof can supply `tools/prove_context.py --parent-project` for covered
-theories; do not activate it as a full repository context. Inspect old drafts:
-
-```sh
-python3 -B tools/overnight_archive.py extract --prefix /tmp/native-control-segment10-20260918 --output .build/inspect-segment10
-```
-
-Extraction places historical paths *under* the chosen output. It does not recreate
-or adopt a historical heap. All other segments and retention directories are
-indexed the same way. Old binary heaps are rebuildable caches.
+theories; do not activate it as a full repository context. Useful unaccepted
+source is directly inspectable in
+[unfinished/](validation/overnight-20260918/unfinished/README.md). It is not part
+of the accepted theory scope. No archive extractor or historical heap is needed.
 
 ## Remaining obligations and next content batch
 
@@ -124,11 +118,12 @@ indexed the same way. Old binary heaps are rebuildable caches.
 5. Repair the seed's actual contract choice through its native account, run the
    complete repository check and reconstruct the placeholder recipe. Conditions
    1–4, practical 5a and 6 remain open; theoretical 5b is deferred. O-73 stays Open,
-   O-85 Partial, and genesis absent. Conservative lossless archival storage does
-   not settle condition 3's stronger boundary-only retention requirement.
+   O-85 Partial, and genesis absent. This checkpoint now retains reconstruction
+   boundaries; the broader native retention/workflow account is still open.
 
 The old segment-9 retention job and several interrupted/timed-out descendants
 lack positive exit evidence in their original PID namespaces. Their records are
-preserved; current numeric PIDs are not identities. Fresh consolidation does not
-depend on them. Original optional caches remain locally, ignored at their exact
-paths; identify any old process before deleting its inputs or signalling it.
+preserved; current numeric PIDs are not identities. Current reconstruction does not
+depend on them. The owner-requested cleanup removed verified duplicate validation
+trees without signalling processes or claiming exit evidence. Original temporary
+provider caches remain untouched; their historical paths are not build inputs.

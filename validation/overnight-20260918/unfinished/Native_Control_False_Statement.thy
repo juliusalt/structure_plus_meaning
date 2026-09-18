@@ -1,0 +1,6 @@
+theory Native_Control_False_Statement
+  imports Native_Control_Judgment_Review
+begin
+lemma false_projection_statement: "syntax_join_refinement Left_Projection"
+  using left_projection_is_not_a_refinement by blast
+end

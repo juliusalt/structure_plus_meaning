@@ -1,7 +1,0 @@
-{
-  "status": "verified",
-  "files": 2248,
-  "scope": "Every extracted segment-10 file compared to the committed historical path-to-byte index; only repository archive and Git were used for extraction.",
-  "historical_prefix": "/tmp/native-control-segment10-20260918",
-  "archive_index_sha256": "20d4ff5ca1b67b057e75a5c0ada19142f36bacc7975c1036708712aec7e619cd"
-}

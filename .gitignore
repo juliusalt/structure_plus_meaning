@@ -8,15 +8,3 @@ __pycache__/
 /.overnight/
 /.codex/overnight/
 /.codex/hooks.json
-
-# Exact original retention trees preserved in validation/overnight-20260918/archive.
-# Kept locally while historical process identities remain unresolved.
-/validation/native-control-artifact-20260918/
-/validation/native-control-cause-20260918/
-/validation/native-control-children-20260918/
-/validation/native-control-context-20260918/
-/validation/native-control-frontier-20260918/
-/validation/native-control-installation-20260918/
-/validation/native-control-judgment-20260918/
-/validation/native-control-receiving-20260918/
-/validation/native-control-source-20260918/

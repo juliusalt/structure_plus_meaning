@@ -51,6 +51,20 @@ def assignment(tree, name):
                 and any(isinstance(t, ast.Name) and t.id == name for t in n.targets))
 
 
+def assessment_boundary(assessment):
+    """Identify the complete stable report without retaining its generated bulk.
+
+    These are reconstruction identities, not native satisfaction observations.
+    Only the same physical/presentation fields excluded by the original replay
+    comparison are omitted. Every result, control and native word remains bound.
+    """
+    stable = {k: v for k, v in assessment.items()
+              if k not in ('timings', 'scope', 'physical_completion')}
+    raw = json.dumps(stable, sort_keys=True, separators=(',', ':'), allow_nan=False).encode()
+    return {'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest(),
+            'words': stable['words']}
+
+
 def request_functions(name, output):
     """Load only the original request/assessment functions, with new file locators.
 
@@ -91,15 +105,13 @@ def replay(name, exports, output):
         boundary=meta['boundary'], timeout=meta['timeout'], project=ROOT)
     comparison = {'request': name, 'status': result['status'],
                   'boundary': 'Historical result equality is a reproducibility check, not a new admission rule.'}
-    if result['status'] == 'accepted' and 'expected_assessment' in meta:
-        actual = {k: v for k, v in result['assessment'].items()
-                  if k not in ('timings', 'scope', 'physical_completion')}
-        comparison['complete_assessment_equal'] = actual == meta['expected_assessment']
-        comparison['different_fields'] = sorted(k for k in actual.keys() | meta['expected_assessment'].keys()
-            if actual.get(k) != meta['expected_assessment'].get(k))
+    if result['status'] == 'accepted' and 'expected_boundary' in meta:
+        actual = assessment_boundary(result['assessment'])
+        comparison['report_boundaries_equal'] = actual == meta['expected_boundary']
+        comparison['report_boundary'] = actual
     (output / 'reconstruction.json').write_text(json.dumps(comparison, indent=2) + '\n')
     print(json.dumps(comparison))
-    return int(result['status'] != 'accepted' or comparison.get('complete_assessment_equal') is False)
+    return int(result['status'] != 'accepted' or comparison.get('report_boundaries_equal') is False)
 
 
 def main():

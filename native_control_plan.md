@@ -800,7 +800,9 @@ implemented. The existing Development_Seed contract-argument defect also remains
 No original requirement, owner authority, stage gate or cost gate was weakened.
 The next batch and all broader governance obligations are explicit in HANDOFF.md.
 
-Repository-only preservation/rebuild is now available. The conservative archive
-still retains generated historical evidence, so condition 3's stronger
-boundary-only retention design is not declared satisfied. Practical 5a and
-conditions 1–4 and 6 remain open; only theoretical 5b stays deferred.
+Repository-only rebuild uses the retained source closure, executable native
+requests and compact expected report boundaries. The owner-requested cleanup
+removed generated historical bulk from the current tree and preserved unique
+unfinished source. This storage cleanup does not settle the broader native
+retention/workflow account. Practical 5a and conditions 1–4 and 6 remain open;
+only theoretical 5b stays deferred.

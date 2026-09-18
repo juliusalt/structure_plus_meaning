@@ -1,0 +1,14 @@
+{
+  "session": "Native_Control_Consolidated_20260918",
+  "return_code": 0,
+  "sources": 1080,
+  "session_errors": [],
+  "message_counts": {
+    "writeln_message": 42276,
+    "warning_message": 611,
+    "information_message": 791,
+    "legacy_message": 529
+  },
+  "complete_diagnostics": "fresh-proof/diagnostics.json.gz",
+  "boundary": "Every retained session error and PIDE/messages export is read directly from the terminal database, independently of the theory-timing domain. Positions refer to the exact retained rebuilt source. Completed commands and messages do not establish session acceptance."
+}

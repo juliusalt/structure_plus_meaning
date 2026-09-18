@@ -1740,3 +1740,30 @@ replaces encoding complete targets and predecessor subtrees as words at every no
 which had been the dominant replay cost. Concurrency settings stay at 16 proof
 threads, eight recipe jobs and default Poly/ML heaps because memory, allocation,
 stop-the-world collection and sequential dependency chains bound the machine's use.
+
+
+## Consolidated overnight reusable content — 2026-09-18
+
+The accepted source inventory and fresh bootstrap proof are retained at
+[overnight-20260918](validation/overnight-20260918/README.md). These reusable
+contracts were introduced in the overnight work and are now repository theories:
+
+| Theory | Reusable content and retained prerequisites |
+| --- | --- |
+| Optional_View_Refinement | Optional receiving-view refinement; a successful view still needs the original subject/result connection. |
+| Faceted_Native_Questions | Native questions over concrete subjects and computed facets; supplied observations are not substituted for their operations. |
+| Conditional_Application_Review | Application methods checked against requested output and the original schema instance/material requirements; ordinary child truth is separate. |
+| Cached_Faceted_Questions | Prepared-question equations for internally constructed caches; arbitrary supplied caches are not interchangeable. |
+| Admitted_Conditional_Applications | Consume the original report before returning the application; preserve the complete original requirements. |
+| Certificate_Construction_Review | Compare complete optional proof results; both requested domain and original proof checking are required for the conjunction. |
+| Material_Application_Observations | Actual head-located literal material operands imply original schema/material satisfaction; no child-truth or general-coverage claim. |
+| Finite_Presented_Enumeration | Exact enumeration under an injective presentation; presentation order supplies no priority. |
+| Factor_Certificate_Policy_Continuation | Original certificate replay plus policy-record replay; history extension additionally requires exact policy/use/entry/material alignment. |
+
+Native_Control theories instantiate these contracts on the actual checked union
+judgment, original guard and child occurrences. The reconstructed complete
+certificate/material results are the same as the retained overnight results.
+The unresolved projection, installed source, coordinate transport, root proof and
+governing cause are not replaced by host explanations or successful leaf cases.
+The next application-result-selection proposal has not yet established equality
+of complete results. Wider workflow adequacy and first-use enforcement remain open.

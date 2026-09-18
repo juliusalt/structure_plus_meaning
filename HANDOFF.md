@@ -1,119 +1,134 @@
-# Handoff — native control plan, stage 1 seeded
+# Handoff — overnight work consolidated; native-control goal open
 
-Checkpoint: 2026-09-18. This continues the sessions that committed the native speedup
-batch (`c4dfad1`); the owner paused optimization, so the work since then implements
-stage 1 of [native_control_plan.md](native_control_plan.md#stage-1--seed-the-native-development-state).
-Read [DEVELOPMENT_WORKFLOW.md](DEVELOPMENT_WORKFLOW.md) and [AGENTS.md](AGENTS.md) first;
-this file records only the current state, the evidence that exists, and what is open.
+Checkpoint: 2026-09-18. Read [AGENTS.md](AGENTS.md) and
+[DEVELOPMENT_WORKFLOW.md](DEVELOPMENT_WORKFLOW.md) first. This supersedes the
+stage-1 seed handoff and segment-9 recovery handoff. The owner's current request
+was consolidation, preservation, repository-only reconstruction and a commit;
+the native-control plan and genesis are not complete.
 
-## What is committed
+## Committed work and validation boundary
 
-The stage-1 theories are in `theories/` and listed in `ROOT`; what each one states is in
-its [THEORY_MAP.md](THEORY_MAP.md) row and is not repeated here. In dependency order:
-`Isabelle_Constant_Closure`, `Isabelle_Terms`, `Isabelle_Entities`, `Isabelle_Renaming`,
-`Isabelle_Acceptance`, `Isabelle_Entity_Export`, `Development_Problems`,
-`Development_Seed`, `Native_Development_Seed`, `Development_Policy`. Four shared base
-theories gained reused content: `Finite_Presented_Collections`,
-`Finite_Presented_Coordinates` (definitions moved up from
-`Finite_Presented_Storage_Notions`), `Finite_Observation_Contracts` (now instantiating
-`Isabelle_Constant_Closure`) and `Inference_Embeddings` (the finite rule-table embedding).
+53 theories are integrated into `theories/` and `ROOT`, byte-identical to their
+accepted overnight providers. The [inventory](validation/overnight-20260918/integration.json)
+binds each theory to its original source and provider. A fresh Isabelle/HOL build
+checked their entire 1,080-theory closure with zero project theories reused in
+311.491 seconds including startup, without session errors. This is a **partial
+scope**, not a successful build of the whole `ROOT` session.
 
-`tools/reconstruct_native_development_seed.py` adds the recipe that reconstructs the
-seeded state from the checked context, and `tools/probe_theories.py` and
-`tools/retire_temporary_storage.py` are the two host tools this work needed.
+Fresh exports match the overnight modules byte for byte. Both the certificate
+and material replays match their complete original assessments and native words.
+Storage checks verify the whole archive and round-trip all 2,248 segment-10 files.
 
-## What the evidence covers, and what it does not
+[validation/overnight-20260918](validation/overnight-20260918/README.md) retains
+sources, failed attempts, drivers, receipts, logs, native results and 207 job
+records. The archive resolves unchanged sources from Git history and stores each
+other byte string once. Original paths in receipts are historical identifiers,
+not required filesystem locations. Fresh commands below create new evidence;
+old receipts are never rewritten into acceptance evidence. No old `/tmp`
+provider, heap or active pointer is needed.
 
-- **The batch does not load yet.** With every proof checked in place, one probe loads it
-  in 9.1 s and stops at a type error in `Development_Seed`: `development_seed_candidate`
-  and `development_seed_leaf` apply `Development_Refinement` with no argument, while
-  `Development_Problems` gives every contract the term its answer must establish. Nothing
-  after that definition has been loaded, so further errors may follow it.
-- **The proof that hid this is repaired.** No probe had ever completed before this session.
-  With forked proofs the loader returns once a theory is registered and its theorems are
-  stated, and `isabelle_term_rename_injective` had not returned after 413 s: its induction
-  hypotheses were handed to the simplifier, which turns each into a conditional rewrite of
-  an arbitrary equation between components. Instantiated at the components the case
-  analysis supplies, `Isabelle_Renaming` loads in 0.6 s with every proof checked in place.
-  The refused check of 2026-09-17 (`*** Timeout` after 1,209 s, 517 of 1,686 theories
-  rebuilt against a 1,200 s session timeout) is very likely that same proof: rebuild volume
-  does not account for it, since a complete proof of 1,677 theories from HOL took 470 s.
-- **Everything the seed stands on loads.** `Isabelle_Constant_Closure`, `Isabelle_Terms`,
-  `Isabelle_Entities`, `Isabelle_Renaming`, `Isabelle_Acceptance`, `Isabelle_Entity_Export`,
-  `Development_Problems` and `Development_Policy` load with no error and with their proofs
-  checked in place, against the accepted base session `Native_Complete_1789647297`
-  (1,675 accepted theories, adopted 2026-09-17 15:24). A probe observes nothing about the
-  517 dependents of the changed base theories and is not a repository check.
-- **The recipe's expected reports are a placeholder.**
-  `validation/reconstruction/native-development-seed-reports.json` holds zero records and
-  empty digests; until an accepted run supplies the boundaries, that recipe cannot report
-  `reports_equal`.
-- **The plan's own basis** is `validation/native-control-plan-trace.json`: the trace of the
-  existing contracts this plan revision reuses, with its own boundary statement. It claims
-  no satisfaction table, no native admission of the plan and no condition-5a use.
+Unaccepted drafts, including the diagnostic theories omitted from the accepted
+scope, remain in the archive. Segment 10 proposed application-result selection
+and source-reader staging but left no implemented theory candidate for them.
+The ordinary whole-session check still encounters the earlier missing argument
+to `Development_Refinement` in `Development_Seed`. Choosing that argument remains
+a semantic development problem; its expected recipe reports are placeholders.
 
-## First actions
+## Latest native results
 
-1. **Decide what a seeded problem's contract states, then repair `Development_Seed`.**
-   `Development_Problems` says the contract is the term the answer must establish. The
-   structure already fixes part of the answer: a candidate's subject is the head constants
-   of its roots and it is decomposed into one leaf per constant of that subject, so each
-   leaf corresponds to exactly one root term while a candidate covers several. Whether a
-   candidate over several roots is one problem or one problem per root, and which term each
-   carries, is a decision for the process — not a term chosen to make the file typecheck.
-   The probe below gives a 9 s cycle on it, and `Native_Development_Seed` and the recipe
-   scopes `development_seed_unanswered` and `development_seed_replay_answered` follow from
-   the same decision.
-2. **Re-establish the base.** It lived in `/tmp` by design — Isabelle binds an accepted
-   heap to the absolute path of its sources, so an accepted context is never relocated or
-   copied. Nothing unique is lost when `/tmp` is discarded
-   (`validation/temporary-cleanup.json` records this), but a discarded base costs one
-   complete build to restore:
+The actual subject is the checked rooted context and complete proposition for
+`Original_Union`, with the universally quantified `finite_syntax_join` refinement.
+`Native_Control_Syntax_Statements` checks theorem propositions and absence of
+hypotheses. This covers neither arbitrary theorems nor every paused refinement.
 
-   ```sh
-   python -B tools/incremental_check.py establish --base /tmp/structural-accepted --threads 16 --timeout 3600
-   ```
+The admitted root application retains the original quoted guard, four bindings
+and all three sockets. Native observation selects `Observed_Parts` under both
+original facets. An application is not a root proof.
 
-   That accepts the committed sources in one fixed directory, so a change to the four
-   shared base theories of this batch is rebuilt once inside the base instead of inside
-   every later check. Never point `--base` at a copy of an existing accepted directory.
-3. **Check and retain.** With a current base:
+The certificate review retains all original full/leaf demands and both
+`Requested_Certificates` and `Checked_Certificates`. Full children, projection
+and quotation have no original two-facet choice. The natural body leaf has a
+singleton complete proof-set result, preserved under reversal and duplication.
+All absent reports refuse. One quotation control with only
+`Requested_Certificates` accepts the supplied original-body report; exact question
+equality remains unknown. Do not claim every wrong-report control refused.
 
-   ```sh
-   python -B tools/incremental_check.py check --output /tmp/NEW-UNIQUE-DIR --jobs 8 --threads 16
-   python -B tools/incremental_check.py retain --output /tmp/NEW-UNIQUE-DIR
-   ```
+The material review, completed after the older handoff, finished quotation and
+both body clauses. Projection timed out at 90 seconds and is unresolved. All
+15 completed method choices return `None`; multiple satisfactory methods do not
+select a unique method. Complete application-value equality is still unknown.
+All 15 absent/wrong-body report controls refuse. Timeout supplies no negative
+semantic observation.
 
-   The first accepted run of the `native-development-seed` recipe supplies the report
-   boundaries that replace the placeholder file; write them from that run, not by hand.
-4. **Continue stage 1.** Open gate items, in the order their subjects exist:
-   - `Development_Policy` states and proves the first loop's one original requirement
-     (an admitted payload is the presentation of an accepted entity) and the refusal of an
-     absent entity. Still to state: supported goals, compiled guards and the fixed
-     source/entry bindings, and the control in which a substituted permissive policy is
-     refused.
-   - Basis elements with their authority; owner-level elements exactly those the owner
-     stated. Problems already carry authority and none is owner-level.
-   - Locality: the read-state difference caused by a theory change lies within that
-     theory's entities and their dependents.
-   - Provenance: an entity from a failed, stale or different-context build is not admitted.
+Guard installation proves source existence and definition-coordinate transport
+under its installation premise. Actual source execution timed out: no complete
+returned source record was accepted. Definition-site injection does not transport
+clause, variable or socket proof coordinates. Certificate/policy continuation
+retains actual original proof checking, literal replay and aligned policy/history
+premises. No installed guard certificate, replay or governing cause exists.
 
-## Cycle and pitfalls measured here
+## Rebuild without overnight temporary files
 
-- **Probe cycle.** `python -B tools/probe_theories.py --work DIR` loads every workspace
-  theory that the base does not contain, resolving unchanged imports from the heap. One
-  probe per directory, and read `DIR/probe.log` while it runs. `--parallel-proofs 0`
-  attributes elapsed time to one failing proof; leave it unset for a pass/fail probe.
-  A changed *base* theory is taken from the heap and reported, or supplied by a
-  `--prelude` theory that states the added content on top of the heap and is named in a
-  `--substitute`. Once the base is re-established from the committed sources, no prelude
-  is needed for this batch.
-- **Proof search over quantified facts is not cheap here.** Against a heap of this size,
-  `blast`/`auto` over a universally quantified iff, and `auto ... split:` over definitions
-  that unfold into nested cases, ran for ten minutes where explicit instantiation and
-  `simp only:` load in seconds. Every proof in these theories is written that way, and the
-  receiving proofs consume one plain equation (`isabelle_acceptance_membership`) instead of
-  re-deriving the connection.
-- **A theory or constant named after an Isar keyword silently truncates the proof** that
-  follows it; the parser cut the proof and the next command began enumerating.
-- Run every tool with `python -B`: a run without it leaves `tools/__pycache__` behind.
+Use Python 3.14 and Isabelle2025-2 (`isabelle` on PATH; the existing runtime helper
+expects Poly/ML under `/opt/isabelle`). This is the normative bootstrap toolchain.
+Heaps are generated caches. Each output directory must be fresh. Archive checks
+require Git history containing the recorded baseline commit, as in a full clone.
+
+```sh
+python3 -B tools/overnight_archive.py verify
+python3 -B tools/reconstruct_overnight.py prove --output .build/next-native-proof
+python3 -B tools/reconstruct_overnight.py export --context .build/next-native-proof --output .build/next-native-exports
+python3 -B tools/reconstruct_overnight.py replay certificates --exports .build/next-native-exports --output .build/next-certificates
+python3 -B tools/reconstruct_overnight.py replay materials --exports .build/next-native-exports --output .build/next-materials
+```
+
+Proof builds directly from HOL without the active-context pointer. Export
+verifies/adopts only the new context. Replay loads unchanged historical
+request/assessment function ASTs with fresh paths and compares complete
+assessments and native word identities. Material timeout outcomes can change;
+review a difference rather than force it to match. Concurrent JVM jobs must
+share a process namespace: separate sandbox namespaces can collide in shared
+`hsperfdata`. Native per-subject material preparation remains parallel.
+
+The fresh proof can supply `tools/prove_context.py --parent-project` for covered
+theories; do not activate it as a full repository context. Inspect old drafts:
+
+```sh
+python3 -B tools/overnight_archive.py extract --prefix /tmp/native-control-segment10-20260918 --output .build/inspect-segment10
+```
+
+Extraction places historical paths *under* the chosen output. It does not recreate
+or adopt a historical heap. All other segments and retention directories are
+indexed the same way. Old binary heaps are rebuildable caches.
+
+## Remaining obligations and next content batch
+
+1. Submit the application-result-selection gap and source/material bottlenecks
+   through the native/bootstrap process. Instantiate faceted/singleton contracts
+   with complete values and both original facets; establish their equality and
+   observation equations. Expose source-reader/material substages without changing
+   the operations. No optimization is selected by this storage consolidation.
+2. Construct/check projection and quotation certificates and the full child
+   family. Establish natural-to-installed clause/variable/socket proof transport
+   or an independently checked native-source construction. Then construct the
+   root proof, literal replay and aligned policy cause/history.
+3. Preserve every `finite_program_evaluation_ready` premise: formed source,
+   coverage of **every** clause at demanded definitions and demand closure.
+   The guard lacks head variables `{1,2,3}`; projection needs material variables.
+   Source existence or one leaf cannot discharge these premises. Do not increase
+   timeouts or weaken checks to bypass the missing account.
+4. Establish owner-authorized governing requirements, fixed policy/source/entry,
+   authority/current basis, derived support and least contexts, dependency/absence/
+   invalidation, recursively admitted selection/scheduling/requests, inert
+   executors, predecessor-admitted amendments and first-use factoring.
+5. Repair the seed's actual contract choice through its native account, run the
+   complete repository check and reconstruct the placeholder recipe. Conditions
+   1–4, practical 5a and 6 remain open; theoretical 5b is deferred. O-73 stays Open,
+   O-85 Partial, and genesis absent. Conservative lossless archival storage does
+   not settle condition 3's stronger boundary-only retention requirement.
+
+The old segment-9 retention job and several interrupted/timed-out descendants
+lack positive exit evidence in their original PID namespaces. Their records are
+preserved; current numeric PIDs are not identities. Fresh consolidation does not
+depend on them. Original optional caches remain locally, ignored at their exact
+paths; identify any old process before deleting its inputs or signalling it.

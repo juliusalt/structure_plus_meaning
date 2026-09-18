@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "properties": {
+    "status": {"type": "string", "enum": ["continue", "candidate_complete", "blocked"]},
+    "summary": {"type": "string"},
+    "next_action": {"type": "string"},
+    "handoff_markdown": {"type": "string"},
+    "evidence_paths": {"type": "array", "items": {"type": "string"}}
+  },
+  "required": ["status", "summary", "next_action", "handoff_markdown", "evidence_paths"],
+  "additionalProperties": false
+}

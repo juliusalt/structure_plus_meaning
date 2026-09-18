@@ -1,0 +1,83 @@
+{
+  "certificates": {
+    "status": "accepted",
+    "comparison": {
+      "request": "certificates",
+      "status": "accepted",
+      "boundary": "Historical result equality is a reproducibility check, not a new admission rule.",
+      "complete_assessment_equal": true,
+      "different_fields": []
+    },
+    "runtime": {
+      "status": "accepted",
+      "workers": 8,
+      "seconds": 56.666660868999315,
+      "cpu_user_seconds": 67.852506,
+      "cpu_system_seconds": 1.090089,
+      "runtime_command_sha256": "986c251e6d516b725788907779e0f4bcfc60d47cbe82aab469014f439dee0ed7",
+      "boundary": "Physical execution and retention metadata only. The proved native source and its registered complete subject contract establish meaning."
+    },
+    "words": {
+      "original": {
+        "bytes": 19196518,
+        "sha256": "623efb4421f4b6086cf731ca5f86dd0647d522a56a7bebc90b457c332b5347ca"
+      },
+      "children": {
+        "bytes": 36386657,
+        "sha256": "f42ae7f7f997e4115ba22b4c304af3ddc48f79234e03492831a4c3ae9ed46622"
+      },
+      "applications": {
+        "bytes": 44136249,
+        "sha256": "d375b4949471dc32fa661f5d5108c26eebed5db9b9b5c97a979260429baba4eb"
+      },
+      "certificates": {
+        "bytes": 22268857,
+        "sha256": "1eacd6a2ee46166e23578928a9b6b5731ee623a1e471dddc68b4ec8fad8cf068"
+      }
+    },
+    "question": "Which available certificate constructions satisfy all original full and leaf child demands and the original proof checker? Independently scoped material-application questions remain unexecuted obligations.",
+    "boundary": "certificate_observation_exact, certificate_result_choice_original, cause_child_occurrences_exact, cause_child_schema_subjects_exact, cause_child_application_choice_original. Installed source transport and cause remain outstanding.",
+    "input_count": 1113
+  },
+  "materials-v2": {
+    "status": "accepted",
+    "comparison": {
+      "request": "materials",
+      "status": "accepted",
+      "boundary": "Historical result equality is a reproducibility check, not a new admission rule.",
+      "complete_assessment_equal": true,
+      "different_fields": []
+    },
+    "runtime": {
+      "status": "accepted",
+      "workers": 8,
+      "seconds": 142.32265714599635,
+      "cpu_user_seconds": 151.210507,
+      "cpu_system_seconds": 0.9696779999999999,
+      "runtime_command_sha256": "64c0bf40edb199d0a07c0182bddbe8859d0069b2cc3e27cc7a9996fb3cbe17ce",
+      "boundary": "Physical execution and retention metadata only. The proved native source and its registered complete subject contract establish meaning."
+    },
+    "words": {
+      "original": {
+        "bytes": 19196518,
+        "sha256": "623efb4421f4b6086cf731ca5f86dd0647d522a56a7bebc90b457c332b5347ca"
+      },
+      "children": {
+        "bytes": 31525314,
+        "sha256": "9d7af82efdd6d97b25c2a7133084e920476b57e4148fe6850b7b081f4eef4186"
+      },
+      "applications": {
+        "bytes": 44136249,
+        "sha256": "d375b4949471dc32fa661f5d5108c26eebed5db9b9b5c97a979260429baba4eb"
+      },
+      "certificates": {
+        "bytes": 1,
+        "sha256": "beead77994cf573341ec17b58bbf7eb34d2711c993c1d976b128b3188dc1829a"
+      }
+    },
+    "question": "For every actual original child schema, which available application constructions satisfy the requested result and complete original schema/material obligations? All unavailable computations remain unresolved.",
+    "boundary": "certificate_observation_exact, certificate_result_choice_original, cause_child_occurrences_exact, cause_child_schema_subjects_exact, cause_child_application_choice_original. Installed source transport and cause remain outstanding.",
+    "input_count": 1113
+  },
+  "input_boundary": "Fresh replay inputs contain no /tmp/native-* paths. Fresh proof was from HOL with no project providers. Runtime/helper installation remains the normative bootstrap toolchain."
+}

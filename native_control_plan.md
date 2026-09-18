@@ -779,3 +779,28 @@ condition 5a. No native state yet represents the repository's development. This
 revision is a candidate contract trace and implementation plan; its unrepresented
 requirements remain explicit. O-73 is open, O-85 remains partial, and genesis has
 not occurred.
+
+
+## Consolidated overnight checkpoint — 2026-09-18
+
+The owner requested preservation, reconciliation and a commit before further
+development. [HANDOFF.md](HANDOFF.md) is the current continuation point; the
+[retained evidence](validation/overnight-20260918/README.md) supersedes the stale
+segment-9 operational handoff. All 53 integrated theory texts are unchanged from
+their accepted providers. A fresh 1,080-theory partial proof from HOL and complete
+certificate/material replay establish the recorded bounded results without any
+overnight temporary provider. They do not complete a stage or the whole plan.
+
+The actual union judgment, installed-guard construction contracts, computed
+original root application and natural body-leaf certificate are available.
+Projection material preparation, projection/quotation/full-child certificates,
+actual installed source execution, proof-coordinate transport and the root
+replay/cause remain open. Application-result selection was proposed, not
+implemented. The existing Development_Seed contract-argument defect also remains.
+No original requirement, owner authority, stage gate or cost gate was weakened.
+The next batch and all broader governance obligations are explicit in HANDOFF.md.
+
+Repository-only preservation/rebuild is now available. The conservative archive
+still retains generated historical evidence, so condition 3's stronger
+boundary-only retention design is not declared satisfied. Practical 5a and
+conditions 1–4 and 6 remain open; only theoretical 5b stays deferred.

@@ -1364,3 +1364,25 @@ O-85 and genesis remain open; theoretical 5b is deferred.
 Generation checks and readiness execute their original equations in every export; the
 resource review kept 16 proof threads, eight recipe jobs and default heaps. No
 obligation row changes status.
+
+
+## Overnight native-control consolidation — 2026-09-18
+
+At the owner's request, the overnight additions are integrated and their exact
+source/evidence boundary is retained in
+[validation/overnight-20260918](validation/overnight-20260918/README.md). The fresh
+partial proof checks 1,080 theories from HOL with zero project context reuse;
+certificate and material replays reproduce the complete original assessments.
+This is not a complete repository check: Development_Seed still lacks the actual
+Development_Refinement proposition argument, and its recipe remains a placeholder.
+
+No obligation row changes status. O-73 remains Open, O-85 Partial, genesis absent.
+Projection material preparation times out; full/projection/quotation certificate
+construction, actual installed source execution, proof-coordinate transport, root
+replay/cause/history and governing-policy/workflow obligations remain open.
+[HANDOFF.md](HANDOFF.md) states the next batch, original prerequisites and the
+remaining authority, locality, dependency, executor and first-use requirements.
+Conditions 1–4, practical 5a and 6 remain open; theoretical 5b is deferred.
+A lossless repository archive removes dependence on temporary files but does not
+settle the stronger boundary-only evidence design. Historical unknown process
+identities are retained as uncertainty; none is a dependency of the fresh rebuild.

@@ -1,0 +1,377 @@
+{
+  "status": "verified",
+  "contexts_including_base": 37,
+  "providers": [
+    {
+      "original_directory": "/tmp/native-control-segment1-20260918T0052Z/foundation-proof",
+      "session": "Native_Control_Foundation_20260918_0052",
+      "status": "accepted",
+      "checked_theories": 217,
+      "sources": 1386,
+      "roots": [
+        "Development_Policy",
+        "Development_Problems",
+        "Isabelle_Entity_Export",
+        "Native_Development_Steering",
+        "Native_Source_Development",
+        "Builtin_Investigation_Execution"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment2-20260918/execution-proof",
+      "session": "Native_Control_Execution_20260918",
+      "status": "accepted",
+      "checked_theories": 2,
+      "sources": 1394,
+      "roots": [
+        "Native_Control_Context_Execution"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment2-20260918/projection-proof-v2",
+      "session": "Native_Control_Projection_V2_20260918",
+      "status": "accepted",
+      "checked_theories": 1,
+      "sources": 1387,
+      "roots": [
+        "Native_Control_Context_Contract"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment2-20260918/subject-proof",
+      "session": "Native_Control_Subject_20260918",
+      "status": "accepted",
+      "checked_theories": 6,
+      "sources": 1392,
+      "roots": [
+        "Native_Control_Seed_Subject"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment3-20260918/acceptance-profile-proof",
+      "session": "Native_Control_Acceptance_Profile_20260918",
+      "status": "accepted",
+      "checked_theories": 1,
+      "sources": 1399,
+      "roots": [
+        "Native_Control_Acceptance_Profile"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment3-20260918/compile-proof",
+      "session": "Native_Control_Compile_Profile_20260918",
+      "status": "accepted",
+      "checked_theories": 1,
+      "sources": 1396,
+      "roots": [
+        "Native_Control_Compile_Profile"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment3-20260918/composition-proof-v4",
+      "session": "Native_Control_Refinement_Composition_V4_20260918",
+      "status": "accepted",
+      "checked_theories": 1,
+      "sources": 1398,
+      "roots": [
+        "Native_Control_Refinement_Composition"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment3-20260918/observation-proof-v2",
+      "session": "Native_Control_Union_Observation_V2_20260918",
+      "status": "accepted",
+      "checked_theories": 1,
+      "sources": 1398,
+      "roots": [
+        "Native_Control_Union_Observation_Execution"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment3-20260918/profile-proof",
+      "session": "Native_Control_Source_Profile_20260918",
+      "status": "accepted",
+      "checked_theories": 1,
+      "sources": 1395,
+      "roots": [
+        "Native_Control_Source_Profile"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment3-20260918/syntax-proof",
+      "session": "Native_Control_Syntax_Execution_20260918",
+      "status": "accepted",
+      "checked_theories": 1,
+      "sources": 1398,
+      "roots": [
+        "Native_Control_Syntax_Execution"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment3-20260918/union-proof-v3",
+      "session": "Native_Control_Union_V3_20260918",
+      "status": "accepted",
+      "checked_theories": 1,
+      "sources": 1397,
+      "roots": [
+        "Native_Control_Syntax_Candidate"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment4-20260918/judgment-proof-v2",
+      "session": "Native_Control_Judgment_V2_20260918",
+      "status": "accepted",
+      "checked_theories": 3,
+      "sources": 1401,
+      "roots": [
+        "Native_Control_Judgment_Review"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment4-20260918/literal-boundary-proof",
+      "session": "Native_Control_Literal_Boundary_20260918",
+      "status": "accepted",
+      "checked_theories": 1,
+      "sources": 1407,
+      "roots": [
+        "Native_Control_Literal_Boundary"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment4-20260918/receiver-proof",
+      "session": "Native_Control_Judgment_Receiver_20260918",
+      "status": "accepted",
+      "checked_theories": 1,
+      "sources": 1401,
+      "roots": [
+        "Native_Control_Judgment_Review"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment4-20260918/scope-proof-v2",
+      "session": "Native_Control_Judgment_Scope_V2_20260918",
+      "status": "accepted",
+      "checked_theories": 4,
+      "sources": 1405,
+      "roots": [
+        "Native_Control_Judgment_Scope",
+        "Native_Control_Judgment_Graph"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment4-20260918/source-bridge-proof-v2",
+      "session": "Native_Control_Judgment_Source_V2_20260918",
+      "status": "accepted",
+      "checked_theories": 1,
+      "sources": 1406,
+      "roots": [
+        "Native_Control_Judgment_Source"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment5-20260918/artifact-batch-proof-v4",
+      "session": "Native_Control_Artifact_Batch_V4_20260918",
+      "status": "accepted",
+      "checked_theories": 2,
+      "sources": 1409,
+      "roots": [
+        "Native_Control_Artifact_Comparison",
+        "Native_Control_Quoted_Judgment"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment5-20260918/artifact-reuse-proof-v6",
+      "session": "Native_Control_Artifact_Reuse_V6_20260918",
+      "status": "accepted",
+      "checked_theories": 2,
+      "sources": 1412,
+      "roots": [
+        "Native_Control_Artifact_Reused_Execution"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment5-20260918/artifact-source-proof-v2",
+      "session": "Native_Control_Artifact_Source_V2_20260918",
+      "status": "accepted",
+      "checked_theories": 1,
+      "sources": 1410,
+      "roots": [
+        "Native_Control_Artifact_Source"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment5-20260918/closed-installation-proof",
+      "session": "Native_Control_Closed_Installation_20260918",
+      "status": "accepted",
+      "checked_theories": 1,
+      "sources": 1410,
+      "roots": [
+        "Native_Control_Closed_Installation"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment6-20260918/constructed-view-proof-v5",
+      "session": "Native_Control_Constructed_Source_View_V5_20260918",
+      "status": "accepted",
+      "checked_theories": 1,
+      "sources": 1423,
+      "roots": [
+        "Native_Control_Constructed_Source_View"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment6-20260918/guard-batch-proof-v4",
+      "session": "Native_Control_Guard_Batch_V4_20260918",
+      "status": "accepted",
+      "checked_theories": 3,
+      "sources": 1415,
+      "roots": [
+        "Native_Control_Finite_Guard",
+        "Native_Control_Guard_Transport"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment6-20260918/installation-proof-v10",
+      "session": "Native_Control_Installation_V10_20260918",
+      "status": "accepted",
+      "checked_theories": 4,
+      "sources": 1422,
+      "roots": [
+        "Native_Control_Installed_Guard",
+        "Native_Control_Guard_Execution"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment6-20260918/installed-reader-proof",
+      "session": "Native_Control_Installed_Reader_20260918",
+      "status": "accepted",
+      "checked_theories": 1,
+      "sources": 1422,
+      "roots": [
+        "Native_Control_Guard_Execution"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment6-20260918/quotation-code-proof-v8",
+      "session": "Native_Control_Quotation_Code_V8_20260918",
+      "status": "accepted",
+      "checked_theories": 2,
+      "sources": 1418,
+      "roots": [
+        "Native_Control_Quotation_Code"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment6-20260918/selection-proof",
+      "session": "Native_Control_Admitted_Selection_20260918",
+      "status": "accepted",
+      "checked_theories": 1,
+      "sources": 1416,
+      "roots": [
+        "Native_Control_Admitted_Selection"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment7-20260918/receiving-proof-v3",
+      "session": "Native_Control_Reviewed_Receiving_V3_20260918",
+      "status": "accepted",
+      "checked_theories": 1,
+      "sources": 1428,
+      "roots": [
+        "Native_Control_Reviewed_Receiving"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment7-20260918/review-proof-v4",
+      "session": "Native_Control_Receiving_Review_V4_20260918",
+      "status": "accepted",
+      "checked_theories": 4,
+      "sources": 1427,
+      "roots": [
+        "Native_Control_Receiving_Controls"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment8-20260918/continuation-proof-v4",
+      "session": "Native_Control_Cause_Continuation_V4_20260918",
+      "status": "accepted",
+      "checked_theories": 2,
+      "sources": 1432,
+      "roots": [
+        "Native_Control_Cause_Continuation"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment8-20260918/prepared-proof-v1",
+      "session": "Native_Control_Prepared_Cause_V1_20260918",
+      "status": "accepted",
+      "checked_theories": 3,
+      "sources": 1435,
+      "roots": [
+        "Native_Control_Prepared_Cause_Review"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment8-20260918/root-proof-v2",
+      "session": "Native_Control_Cause_Root_V2_20260918",
+      "status": "accepted",
+      "checked_theories": 2,
+      "sources": 1430,
+      "roots": [
+        "Native_Control_Cause_Review"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment8-20260918/root-proof-v3",
+      "session": "Native_Control_Cause_Root_V3_20260918",
+      "status": "accepted",
+      "checked_theories": 2,
+      "sources": 1430,
+      "roots": [
+        "Native_Control_Cause_Review"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment8-20260918/root-proof-v4",
+      "session": "Native_Control_Cause_Root_V4_20260918",
+      "status": "accepted",
+      "checked_theories": 1,
+      "sources": 1432,
+      "roots": [
+        "Native_Control_Cause_Review"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment8-20260918/selected-proof-v4",
+      "session": "Native_Control_Selected_Root_V4_20260918",
+      "status": "accepted",
+      "checked_theories": 26,
+      "sources": 1461,
+      "roots": [
+        "Native_Control_Selected_Root"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment9-20260918/child-proof-v8",
+      "session": "Native_Control_Child_V8_20260918",
+      "status": "accepted",
+      "checked_theories": 6,
+      "sources": 1467,
+      "roots": [
+        "Native_Control_Child_Review",
+        "Native_Control_Sourced_Children"
+      ]
+    },
+    {
+      "original_directory": "/tmp/native-control-segment9-20260918/source-execution-proof-v2",
+      "session": "Native_Control_Source_Execution_V2_20260918",
+      "status": "accepted",
+      "checked_theories": 1,
+      "sources": 1468,
+      "roots": [
+        "Native_Control_Source_Execution"
+      ]
+    }
+  ],
+  "boundary": "Historical immutable source and provider identities, including retained heap/database identities. Fresh reconstruction uses no old provider or heap."
+}

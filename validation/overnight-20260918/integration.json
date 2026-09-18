@@ -1,0 +1,536 @@
+{
+  "base_commit": "a863e709ff27067485ff6939e2bd6626982bd680",
+  "scope": "Byte-identical theory text supplied by the recorded Isabelle providers. No new semantics or native decision claimed by this mechanical owner-requested consolidation. Diagnostics and unaccepted drafts remain in the archive.",
+  "theories": [
+    {
+      "theory": "Admitted_Conditional_Applications",
+      "sha256": "9e559e1831cc0473297d48e879f903c236548559d729d4f8f2b6497eafaaacdf",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Admitted_Conditional_Applications.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment8-20260918/selected-proof-v4",
+        "session": "Native_Control_Selected_Root_V4_20260918",
+        "theory": "Native_Control_Selected_Root_V4_20260918.Admitted_Conditional_Applications"
+      }
+    },
+    {
+      "theory": "Cached_Faceted_Questions",
+      "sha256": "4371c0ee625d35bb6738a4988444485418ed88c512e496a8008909935c2263ae",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Cached_Faceted_Questions.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment8-20260918/prepared-proof-v1",
+        "session": "Native_Control_Prepared_Cause_V1_20260918",
+        "theory": "Native_Control_Prepared_Cause_V1_20260918.Cached_Faceted_Questions"
+      }
+    },
+    {
+      "theory": "Certificate_Construction_Review",
+      "sha256": "c912f3f33d68b21788beb93b57bd26e1fb170f33f5373c987eaa04b1392062be",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Certificate_Construction_Review.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment9-20260918/child-proof-v8",
+        "session": "Native_Control_Child_V8_20260918",
+        "theory": "Native_Control_Child_V8_20260918.Certificate_Construction_Review"
+      }
+    },
+    {
+      "theory": "Conditional_Application_Review",
+      "sha256": "f8de0e9bd9345bda6af7d6979d34a1e11e64f2c7618097dc373ad212e92ba41a",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Conditional_Application_Review.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment8-20260918/root-proof-v3",
+        "session": "Native_Control_Cause_Root_V3_20260918",
+        "theory": "Native_Control_Cause_Root_V3_20260918.Conditional_Application_Review"
+      }
+    },
+    {
+      "theory": "Faceted_Native_Questions",
+      "sha256": "017f29b9ab0bc5c3624d5db188a6b76004a01be79fbe1f5a18564064ce1bcec2",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Faceted_Native_Questions.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment7-20260918/review-proof-v4",
+        "session": "Native_Control_Receiving_Review_V4_20260918",
+        "theory": "Native_Control_Receiving_Review_V4_20260918.Faceted_Native_Questions"
+      }
+    },
+    {
+      "theory": "Factor_Certificate_Policy_Continuation",
+      "sha256": "d43f3ed896819e99c159116056fcbcef4c16d1ad27069d1404de3714460123a0",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Factor_Certificate_Policy_Continuation.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment8-20260918/continuation-proof-v4",
+        "session": "Native_Control_Cause_Continuation_V4_20260918",
+        "theory": "Native_Control_Cause_Continuation_V4_20260918.Factor_Certificate_Policy_Continuation"
+      }
+    },
+    {
+      "theory": "Finite_Presented_Enumeration",
+      "sha256": "d433205e372598189dadcfad5d3c896a53b5b1b74383b5d1e9805b720ee38897",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Finite_Presented_Enumeration.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment9-20260918/child-proof-v8",
+        "session": "Native_Control_Child_V8_20260918",
+        "theory": "Native_Control_Child_V8_20260918.Finite_Presented_Enumeration"
+      }
+    },
+    {
+      "theory": "Material_Application_Observations",
+      "sha256": "1c25c53aaaaebe90c2d8f85a6f4d98f2dd12285b7496e52efebf48d2034e9bc7",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Material_Application_Observations.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment9-20260918/child-proof-v8",
+        "session": "Native_Control_Child_V8_20260918",
+        "theory": "Native_Control_Child_V8_20260918.Material_Application_Observations"
+      }
+    },
+    {
+      "theory": "Native_Control_Admitted_Selection",
+      "sha256": "d247272d71056f9278e8f850a9ff53c052afecf81127909e8e57a47adb2d80a1",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Admitted_Selection.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment6-20260918/selection-proof",
+        "session": "Native_Control_Admitted_Selection_20260918",
+        "theory": "Native_Control_Admitted_Selection_20260918.Native_Control_Admitted_Selection"
+      }
+    },
+    {
+      "theory": "Native_Control_Artifact_Comparison",
+      "sha256": "075e3b97d70070f7068dc1ae0b1a14c00949086e7dd27c34018a9d02cf66d650",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Artifact_Comparison.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment5-20260918/artifact-batch-proof-v4",
+        "session": "Native_Control_Artifact_Batch_V4_20260918",
+        "theory": "Native_Control_Artifact_Batch_V4_20260918.Native_Control_Artifact_Comparison"
+      }
+    },
+    {
+      "theory": "Native_Control_Artifact_Reused_Execution",
+      "sha256": "a64b801684e273d5f73dc1be3f09f122875a953c98aac399289363d14847c15a",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Artifact_Reused_Execution.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment5-20260918/artifact-reuse-proof-v6",
+        "session": "Native_Control_Artifact_Reuse_V6_20260918",
+        "theory": "Native_Control_Artifact_Reuse_V6_20260918.Native_Control_Artifact_Reused_Execution"
+      }
+    },
+    {
+      "theory": "Native_Control_Artifact_Source",
+      "sha256": "2b2a536439ea99e4429e0373fecc9c23c4f9bf314b04bdd50e6ca7e051d753fa",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Artifact_Source.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment5-20260918/artifact-source-proof-v2",
+        "session": "Native_Control_Artifact_Source_V2_20260918",
+        "theory": "Native_Control_Artifact_Source_V2_20260918.Native_Control_Artifact_Source"
+      }
+    },
+    {
+      "theory": "Native_Control_Cause_Continuation",
+      "sha256": "715be19c4de16282b8cf9f923faba96c4fe4a54670e60b8c27af26ca3dc63efb",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Cause_Continuation.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment8-20260918/continuation-proof-v4",
+        "session": "Native_Control_Cause_Continuation_V4_20260918",
+        "theory": "Native_Control_Cause_Continuation_V4_20260918.Native_Control_Cause_Continuation"
+      }
+    },
+    {
+      "theory": "Native_Control_Cause_Review",
+      "sha256": "27c6327687a4a9fb94900abbbad7c4ee1a8aaf52fc02c17a343c673be80034e2",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Cause_Review.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment8-20260918/root-proof-v4",
+        "session": "Native_Control_Cause_Root_V4_20260918",
+        "theory": "Native_Control_Cause_Root_V4_20260918.Native_Control_Cause_Review"
+      }
+    },
+    {
+      "theory": "Native_Control_Child_Review",
+      "sha256": "3a49cef61084dc32e1d41730b9997abf28c2012fb3f8ce577154c31328d5c938",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Child_Review.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment9-20260918/child-proof-v8",
+        "session": "Native_Control_Child_V8_20260918",
+        "theory": "Native_Control_Child_V8_20260918.Native_Control_Child_Review"
+      }
+    },
+    {
+      "theory": "Native_Control_Closed_Installation",
+      "sha256": "cfef3aeefe0756fcf0a11d6e8690632c4ca91c6b7b232384b2488b4935bc35fc",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Closed_Installation.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment6-20260918/guard-batch-proof-v4",
+        "session": "Native_Control_Guard_Batch_V4_20260918",
+        "theory": "Native_Control_Guard_Batch_V4_20260918.Native_Control_Closed_Installation"
+      }
+    },
+    {
+      "theory": "Native_Control_Compile_Profile",
+      "sha256": "a127e4808f2d550860e8033ac53bd5b2b7ac7a3c7b28c4cd91d9e81bf3bfa29c",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Compile_Profile.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment3-20260918/compile-proof",
+        "session": "Native_Control_Compile_Profile_20260918",
+        "theory": "Native_Control_Compile_Profile_20260918.Native_Control_Compile_Profile"
+      }
+    },
+    {
+      "theory": "Native_Control_Constructed_Source_View",
+      "sha256": "7558e3983d23013e991f1b5638c36fbbd1906229d314283d8be5762ba0388232",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Constructed_Source_View.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment6-20260918/constructed-view-proof-v5",
+        "session": "Native_Control_Constructed_Source_View_V5_20260918",
+        "theory": "Native_Control_Constructed_Source_View_V5_20260918.Native_Control_Constructed_Source_View"
+      }
+    },
+    {
+      "theory": "Native_Control_Context_Contract",
+      "sha256": "bf9d3be791ae21ae0e5491e090ac52e5bfeff635d3ae8351d207aed060ce1990",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Context_Contract.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment2-20260918/execution-proof",
+        "session": "Native_Control_Execution_20260918",
+        "theory": "Native_Control_Execution_20260918.Native_Control_Context_Contract"
+      }
+    },
+    {
+      "theory": "Native_Control_Context_Execution",
+      "sha256": "b2b0f173de255c24131493d3564f999ecd0f43135b298befc62680475d3a555b",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Context_Execution.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment2-20260918/execution-proof",
+        "session": "Native_Control_Execution_20260918",
+        "theory": "Native_Control_Execution_20260918.Native_Control_Context_Execution"
+      }
+    },
+    {
+      "theory": "Native_Control_Definition_Facts",
+      "sha256": "4e68f2563128250d6c231b21d576b91ef52453c8ce99cc0c57e1e3d032b8eed9",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Definition_Facts.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment6-20260918/installation-proof-v10",
+        "session": "Native_Control_Installation_V10_20260918",
+        "theory": "Native_Control_Installation_V10_20260918.Native_Control_Definition_Facts"
+      }
+    },
+    {
+      "theory": "Native_Control_Filtered_Judgment",
+      "sha256": "d46ce3fd2d4d1282fda1a0028a6c8bb2d141a9f4b0700949e882611d17db3ed3",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Filtered_Judgment.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment4-20260918/judgment-proof-v2",
+        "session": "Native_Control_Judgment_V2_20260918",
+        "theory": "Native_Control_Judgment_V2_20260918.Native_Control_Filtered_Judgment"
+      }
+    },
+    {
+      "theory": "Native_Control_Finite_Guard",
+      "sha256": "cbf211756c614802e6f3cb8beb5360cbfa36d81ac9e447b6ae92869500ee79c6",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Finite_Guard.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment6-20260918/guard-batch-proof-v4",
+        "session": "Native_Control_Guard_Batch_V4_20260918",
+        "theory": "Native_Control_Guard_Batch_V4_20260918.Native_Control_Finite_Guard"
+      }
+    },
+    {
+      "theory": "Native_Control_Guard_Construction",
+      "sha256": "9a8efa149db6f4f87708369c050ead36d48e8fb16c7d791e46c5249d1c60026b",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Guard_Construction.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment6-20260918/installation-proof-v10",
+        "session": "Native_Control_Installation_V10_20260918",
+        "theory": "Native_Control_Installation_V10_20260918.Native_Control_Guard_Construction"
+      }
+    },
+    {
+      "theory": "Native_Control_Guard_Execution",
+      "sha256": "b1ba90f4881002984154a84d3d101014f792592f69c1c9cf9b1b71b3d95d3000",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Guard_Execution.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment6-20260918/installed-reader-proof",
+        "session": "Native_Control_Installed_Reader_20260918",
+        "theory": "Native_Control_Installed_Reader_20260918.Native_Control_Guard_Execution"
+      }
+    },
+    {
+      "theory": "Native_Control_Guard_Source",
+      "sha256": "3539d4fea2b6834bac970d6916fcd629ebebc2f1d4d987ae717adc46ca012825",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Guard_Source.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment9-20260918/child-proof-v8",
+        "session": "Native_Control_Child_V8_20260918",
+        "theory": "Native_Control_Child_V8_20260918.Native_Control_Guard_Source"
+      }
+    },
+    {
+      "theory": "Native_Control_Guard_Transport",
+      "sha256": "186a40c8dd7db8b55996cc34aaab68484ec86fe7f282b7253ad1d358c858c5a4",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Guard_Transport.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment6-20260918/guard-batch-proof-v4",
+        "session": "Native_Control_Guard_Batch_V4_20260918",
+        "theory": "Native_Control_Guard_Batch_V4_20260918.Native_Control_Guard_Transport"
+      }
+    },
+    {
+      "theory": "Native_Control_Installed_Guard",
+      "sha256": "a2b81012d989a2abaec9b2de5267e7cf7f7d9823c616ececc9fb273376953622",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Installed_Guard.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment6-20260918/installation-proof-v10",
+        "session": "Native_Control_Installation_V10_20260918",
+        "theory": "Native_Control_Installation_V10_20260918.Native_Control_Installed_Guard"
+      }
+    },
+    {
+      "theory": "Native_Control_Judgment_Graph",
+      "sha256": "8078ce8c17bb111d993fad2a5c4d7d6cf342f45cd98becc679ee2206efe971de",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Judgment_Graph.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment4-20260918/scope-proof-v2",
+        "session": "Native_Control_Judgment_Scope_V2_20260918",
+        "theory": "Native_Control_Judgment_Scope_V2_20260918.Native_Control_Judgment_Graph"
+      }
+    },
+    {
+      "theory": "Native_Control_Judgment_Review",
+      "sha256": "98b2aa0b74bb373f7d7c56c46267f6c0e3a7b8e01c30818772878d530ea57eb1",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Judgment_Review.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment4-20260918/receiver-proof",
+        "session": "Native_Control_Judgment_Receiver_20260918",
+        "theory": "Native_Control_Judgment_Receiver_20260918.Native_Control_Judgment_Review"
+      }
+    },
+    {
+      "theory": "Native_Control_Judgment_Scope",
+      "sha256": "05ce49a3940e5aa91942a089c91316091f61acf175e0fb6ded47f874034f65dc",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Judgment_Scope.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment4-20260918/scope-proof-v2",
+        "session": "Native_Control_Judgment_Scope_V2_20260918",
+        "theory": "Native_Control_Judgment_Scope_V2_20260918.Native_Control_Judgment_Scope"
+      }
+    },
+    {
+      "theory": "Native_Control_Judgment_Source",
+      "sha256": "e5d90aa37aa5f15c2c6d83a541fd3e6e92e9f3b310bba95dd3234a3009cfdade",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Judgment_Source.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment4-20260918/source-bridge-proof-v2",
+        "session": "Native_Control_Judgment_Source_V2_20260918",
+        "theory": "Native_Control_Judgment_Source_V2_20260918.Native_Control_Judgment_Source"
+      }
+    },
+    {
+      "theory": "Native_Control_Literal_Boundary",
+      "sha256": "4805e3ddd6cac613b1ee05a4c7f3607c438ee139ba013e680953339c9fcd64b9",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Literal_Boundary.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment4-20260918/literal-boundary-proof",
+        "session": "Native_Control_Literal_Boundary_20260918",
+        "theory": "Native_Control_Literal_Boundary_20260918.Native_Control_Literal_Boundary"
+      }
+    },
+    {
+      "theory": "Native_Control_Prepared_Cause_Review",
+      "sha256": "0e696b309f08c3f387aa8610abd7e7e5168e35d3558ab3f4bec5957d6ec733dc",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Prepared_Cause_Review.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment8-20260918/prepared-proof-v1",
+        "session": "Native_Control_Prepared_Cause_V1_20260918",
+        "theory": "Native_Control_Prepared_Cause_V1_20260918.Native_Control_Prepared_Cause_Review"
+      }
+    },
+    {
+      "theory": "Native_Control_Quotation_Code",
+      "sha256": "346bf3e119f1388ea5f869b7136b4bb1ee282303e364241d62e6baf13c42ddc9",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Quotation_Code.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment6-20260918/quotation-code-proof-v8",
+        "session": "Native_Control_Quotation_Code_V8_20260918",
+        "theory": "Native_Control_Quotation_Code_V8_20260918.Native_Control_Quotation_Code"
+      }
+    },
+    {
+      "theory": "Native_Control_Quotation_Construction",
+      "sha256": "285c0bf23c21b7edc15ce810d4a9718e19b48104f4ab342a3595e5e85be685b1",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Quotation_Construction.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment5-20260918/artifact-reuse-proof-v6",
+        "session": "Native_Control_Artifact_Reuse_V6_20260918",
+        "theory": "Native_Control_Artifact_Reuse_V6_20260918.Native_Control_Quotation_Construction"
+      }
+    },
+    {
+      "theory": "Native_Control_Quotation_Representation",
+      "sha256": "694c7d52318c8b12ef9404260e9a54f9a46fff3ebfe591db764761dba8d432b1",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Quotation_Representation.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment6-20260918/quotation-code-proof-v8",
+        "session": "Native_Control_Quotation_Code_V8_20260918",
+        "theory": "Native_Control_Quotation_Code_V8_20260918.Native_Control_Quotation_Representation"
+      }
+    },
+    {
+      "theory": "Native_Control_Quoted_Judgment",
+      "sha256": "7154ddf5dabbd28a4fc429d86f8553ca33fb2ec0e09aca6d2f9616216d385f69",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Quoted_Judgment.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment5-20260918/artifact-batch-proof-v4",
+        "session": "Native_Control_Artifact_Batch_V4_20260918",
+        "theory": "Native_Control_Artifact_Batch_V4_20260918.Native_Control_Quoted_Judgment"
+      }
+    },
+    {
+      "theory": "Native_Control_Receiving_Controls",
+      "sha256": "e69717da05064f67faa6fa2a5ce4af842b0c19899210e1573065f6d90a97c96d",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Receiving_Controls.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment7-20260918/review-proof-v4",
+        "session": "Native_Control_Receiving_Review_V4_20260918",
+        "theory": "Native_Control_Receiving_Review_V4_20260918.Native_Control_Receiving_Controls"
+      }
+    },
+    {
+      "theory": "Native_Control_Receiving_Review",
+      "sha256": "2911bb2d7129e77e52f68c0c4fc80cf52a0d788ade732a9e55f38aea4cf90efe",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Receiving_Review.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment7-20260918/review-proof-v4",
+        "session": "Native_Control_Receiving_Review_V4_20260918",
+        "theory": "Native_Control_Receiving_Review_V4_20260918.Native_Control_Receiving_Review"
+      }
+    },
+    {
+      "theory": "Native_Control_Refinement_Composition",
+      "sha256": "1afeb1a6af55151dc116dc23cd0dd4535e74aba70ff85f57632891fb9a8a401a",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Refinement_Composition.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment3-20260918/composition-proof-v4",
+        "session": "Native_Control_Refinement_Composition_V4_20260918",
+        "theory": "Native_Control_Refinement_Composition_V4_20260918.Native_Control_Refinement_Composition"
+      }
+    },
+    {
+      "theory": "Native_Control_Reviewed_Receiving",
+      "sha256": "1e1259b6854385976b87e7609e666acb8a3b8a820ff4b2b24b2e3ab9e8621b15",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Reviewed_Receiving.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment7-20260918/receiving-proof-v3",
+        "session": "Native_Control_Reviewed_Receiving_V3_20260918",
+        "theory": "Native_Control_Reviewed_Receiving_V3_20260918.Native_Control_Reviewed_Receiving"
+      }
+    },
+    {
+      "theory": "Native_Control_Seed_Subject",
+      "sha256": "9cb0cde680c430939c0db6bbbe3e48c8068dc4a593ab9609c6ff884879eb5ffe",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Seed_Subject.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment2-20260918/subject-proof",
+        "session": "Native_Control_Subject_20260918",
+        "theory": "Native_Control_Subject_20260918.Native_Control_Seed_Subject"
+      }
+    },
+    {
+      "theory": "Native_Control_Selected_Root",
+      "sha256": "1190b9c1a3fa7b596b3b567435a19d7aca3789dd7052aba712c2d16a16108bb8",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Selected_Root.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment8-20260918/selected-proof-v4",
+        "session": "Native_Control_Selected_Root_V4_20260918",
+        "theory": "Native_Control_Selected_Root_V4_20260918.Native_Control_Selected_Root"
+      }
+    },
+    {
+      "theory": "Native_Control_Source_Execution",
+      "sha256": "66dfa0b3d2d6dcdfe28718e254f3eb779451fb1d106b6f52d04ec375eddb757c",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Source_Execution.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment9-20260918/source-execution-proof-v2",
+        "session": "Native_Control_Source_Execution_V2_20260918",
+        "theory": "Native_Control_Source_Execution_V2_20260918.Native_Control_Source_Execution"
+      }
+    },
+    {
+      "theory": "Native_Control_Source_Profile",
+      "sha256": "0f6d4b7b5ba8f7fc0f9938662199d615040f651b2ff94ffed9000f44ea7cfdc6",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Source_Profile.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment3-20260918/profile-proof",
+        "session": "Native_Control_Source_Profile_20260918",
+        "theory": "Native_Control_Source_Profile_20260918.Native_Control_Source_Profile"
+      }
+    },
+    {
+      "theory": "Native_Control_Sourced_Children",
+      "sha256": "7e947173172457cc262495ef1ab91d7d51b6622abda11efd44c28315d4020127",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Sourced_Children.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment9-20260918/child-proof-v8",
+        "session": "Native_Control_Child_V8_20260918",
+        "theory": "Native_Control_Child_V8_20260918.Native_Control_Sourced_Children"
+      }
+    },
+    {
+      "theory": "Native_Control_Syntax_Candidate",
+      "sha256": "41d4b479fb36882539213f8ae90ef100ded8b9b0038dc1ee55fdce28b8ce5f47",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Syntax_Candidate.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment3-20260918/union-proof-v3",
+        "session": "Native_Control_Union_V3_20260918",
+        "theory": "Native_Control_Union_V3_20260918.Native_Control_Syntax_Candidate"
+      }
+    },
+    {
+      "theory": "Native_Control_Syntax_Execution",
+      "sha256": "d7ab96883dcb3ac28f6279dbdc6cf5bd449c58058184d9965309de71672edbb8",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Syntax_Execution.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment4-20260918/scope-proof-v2",
+        "session": "Native_Control_Judgment_Scope_V2_20260918",
+        "theory": "Native_Control_Judgment_Scope_V2_20260918.Native_Control_Syntax_Execution"
+      }
+    },
+    {
+      "theory": "Native_Control_Syntax_Statements",
+      "sha256": "ba919bbc3b90626809c8f4e3f6d6e0704a0d6188e39b05e2bc598a81a89f24f6",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Syntax_Statements.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment4-20260918/judgment-proof-v2",
+        "session": "Native_Control_Judgment_V2_20260918",
+        "theory": "Native_Control_Judgment_V2_20260918.Native_Control_Syntax_Statements"
+      }
+    },
+    {
+      "theory": "Native_Control_Union_Observation_Execution",
+      "sha256": "e7fff6a079c424e8842ae74890ddc0e48bf7724f158636e7971f6774eeac3309",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Native_Control_Union_Observation_Execution.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment4-20260918/scope-proof-v2",
+        "session": "Native_Control_Judgment_Scope_V2_20260918",
+        "theory": "Native_Control_Judgment_Scope_V2_20260918.Native_Control_Union_Observation_Execution"
+      }
+    },
+    {
+      "theory": "Optional_View_Refinement",
+      "sha256": "fe6de2d455ca7011383cea704662cf18e5295e5f6518754e65ec2e85d7c8b821",
+      "original_source": "/tmp/native-control-segment9-20260918/source-execution-v2/theories/Optional_View_Refinement.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment7-20260918/review-proof-v4",
+        "session": "Native_Control_Receiving_Review_V4_20260918",
+        "theory": "Native_Control_Receiving_Review_V4_20260918.Optional_View_Refinement"
+      }
+    },
+    {
+      "theory": "Native_Control_Acceptance_Profile",
+      "sha256": "94ca6c4eab0464c5f71415fb408399b18d949191b73e51d74b2eb83d81498423",
+      "original_source": "/tmp/native-control-segment3-20260918/acceptance-profile-proof/original-sources/Native_Control_Acceptance_Profile.thy",
+      "provider": {
+        "directory": "/tmp/native-control-segment3-20260918/acceptance-profile-proof",
+        "session": "Native_Control_Acceptance_Profile_20260918",
+        "theory": "Native_Control_Acceptance_Profile_20260918.Native_Control_Acceptance_Profile"
+      }
+    }
+  ]
+}

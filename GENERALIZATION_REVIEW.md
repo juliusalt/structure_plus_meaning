@@ -2556,3 +2556,39 @@ recipes with 3 GB heaps exhausted memory (59.9 GB used, load 17.8) and inflated 
 time by half, while eight jobs with default heaps stayed at 28.8 GB; the settings were
 kept and the structural limits recorded. The owner then paused optimization in favour
 of using the machinery.
+
+
+## Owner-requested overnight consolidation — 2026-09-18
+
+Original problem: reconcile current files, overnight STATE/HANDOFF/JOBS and latest
+logs; retain all useful unfinished work; commit a repository-only continuation
+boundary. This is storage and bootstrap validation of existing content. It does
+not select a new semantic method or substitute host metadata for native admission.
+The owner's explicit commit request supersedes the earlier overnight task's
+no-automatic-commit instruction.
+
+Premises and reusable content: the exact 37 historical provider contexts were
+verified; integrated texts match their providers. The retained native questions
+use the actual original union/guard/child subjects and existing faceted, prepared
+application, certificate and continuation contracts, including every original
+facet and report prerequisite. The 53-theory group was exercised together through
+a fresh 1,080-theory HOL proof. Complete certificate and material questions were
+re-executed from fresh byte-identical exports, retaining full criticism, scope
+controls and native words; complete assessments matched. No manually supplied
+satisfaction row or fabricated proof was introduced.
+
+Independent criticism found that the segment-9 handoff omitted segment-10's
+completed material review; the retention registry's running entry did not prove
+completion or current liveness; source existence did not supply an executed
+source; method ambiguity did not establish equal result values; and the complete
+repository still contains the seed contract-argument failure. These distinctions
+are preserved in the current handoff. A physical JVM launch failure and archive
+decoder memory-limit failure were retained/repaired as transport issues, without
+changing native expressions, proofs, checks or timeouts.
+
+The archive binds each original path to exact bytes, independently verifies
+decoding and uses Git history for unchanged inputs. Fresh proof/replay and archive
+extraction have no old provider requirement. Those host mechanisms are not native
+retention authority and do not establish condition 3's stronger boundary-only
+design. Remaining original premises, broader authority/workflow requirements,
+O-73, O-85, practical 5a and genesis remain explicit in HANDOFF.md and OBLIGATIONS.md.

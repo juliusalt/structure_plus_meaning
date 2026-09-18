@@ -637,8 +637,7 @@ lemma development_record_data_injective:
     development_generation_data_injective development_request_data_injective development_refinement_repair_data_injective)
 
 definition development_loop_data :: "(development_packet \<Rightarrow> finite_factor_term) \<Rightarrow> development_loop \<Rightarrow> finite_factor_term" where
-  "development_loop_data packet=finite_pair_presentation (finite_pair_presentation (finite_sequence_presentation isabelle_term_data)
-      isabelle_context_data)
+  "development_loop_data packet=finite_pair_presentation isabelle_rooted_context_data
     (finite_pair_presentation development_problems_data
       (finite_pair_presentation development_dependencies_data
         (finite_pair_presentation (finite_collection_presentation development_problem_data)
@@ -648,8 +647,8 @@ lemma development_loop_data_injective:
   assumes packet: "inj packet"
   shows "inj (development_loop_data packet)"
   unfolding development_loop_data_def
-  by (intro finite_pair_presentation_injective finite_sequence_presentation_injective isabelle_term_data_injective
-    isabelle_context_data_injective development_problems_data_injective development_dependencies_data_injective
+  by (intro finite_pair_presentation_injective finite_sequence_presentation_injective isabelle_rooted_context_data_injective
+    development_problems_data_injective development_dependencies_data_injective
     finite_collection_presentation_injective development_problem_data_injective
     development_record_data_injective[OF packet])
 

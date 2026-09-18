@@ -1593,6 +1593,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Workflow_Evidence_Meaning
     Native_Source_Development
     Ordered_Term_Demands
+    Development_Answer_0ccf746fe2cf
     Native_Execution_Refinements
     Factor_Development_Execution_Sharing
     Factor_Workflow_Execution_Sharing
@@ -1617,6 +1618,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Ordered_Set_Difference
     Factor_Ordered_Generation_Checking
     Factor_Recovered_Graph_Sharing
+    Finite_Demanded_Closures
+    Factor_Demanded_Package_Readings
     Parallel_History_Source_Rows
     Parallel_Presented_Investigations
     Indexed_Term_Words
@@ -1708,6 +1711,9 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Policy
     Development_Decomposition
     Development_Successor
+    RRA_Finite_Transactions
+    Development_Publication
+    Development_Seed_Publication
     Admitted_Conditional_Applications
     Cached_Faceted_Questions
     Certificate_Construction_Review

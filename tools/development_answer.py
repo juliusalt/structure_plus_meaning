@@ -2,12 +2,21 @@
 """Check an executor's answer to a development request and present its native verdict.
 
 The harness moves bytes and invokes the checked tools; it decides nothing. It places the answer's
-declared parts (new definitions, the equation and its proof) inside a fixed frame whose context is
-the theory that defines the requested state, re-exports that state from the same roots in the
-answer's checked context, and exports the native verdict of the request on the two states. Isabelle
-accepts or refuses the theories; the exported verdict computation judges the difference; the
-presented word is the retained evidence. Answer content is never read beyond being placed, and no
-generated text is retained: the answer file, the base context and the verdict word reproduce it.
+declared parts (new definitions, the equation and its proof) inside a fixed frame, re-exports the
+requested state from the same roots in the answer's checked context, and exports the native verdict
+of the request on the two states. Isabelle accepts or refuses the theories; the exported verdict
+computation judges the difference; the presented word is the retained evidence. Answer content is
+never read beyond being placed, and no generated text is retained: the answer file, the base context
+and the verdict word reproduce it.
+
+An answer to a request of the refinement layer is framed where it would be adopted: its theory
+imports exactly the theories the layer's import boundary imports, and the request state is defined
+beside it from the boundary itself. The theory Isabelle accepts is therefore the theory adoption
+installs, and there is one acceptance, not a second one in another context. The theory is named by
+the answer's own content, so its name is stable across replays and unique in the session; that name
+is a transport choice, not a correspondence. Once an answer's theory is part of the repository, the
+answer is adopted: the harness does not frame it again and judges the published state as the answer
+to the request that state presents, which is an unchanged answer when the adoption is exact.
 """
 from __future__ import annotations
 
@@ -42,6 +51,8 @@ STATES = {'development_seed': {'kind': 'development_seed', 'context': 'Native_Co
                                'verdicts': 'Development_Seed_Verification'},
           'refinement_layer': {'kind': 'refinement_layer', 'context': 'Development_Request',
                                'layer': 'Native_Execution_Refinements', 'verdicts': 'Development_Successor'}}
+# The theory that supplies the frame's fact: the code equations in effect for the subject.
+FRAME_FACTS = 'Isabelle_Constant_Closure'
 FIELDS = {'request', 'definitions', 'equation', 'proof'}
 QUALIFIED = re.compile(r'[A-Za-z][A-Za-z_0-9]*(\.[A-Za-z][A-Za-z_0-9]*)+')
 
@@ -72,30 +83,58 @@ DEMANDED = (
     '      development_demanded_constants,answered,[])"\n\n')
 
 
-def answer_theory(state, answer):
+def answer_name(answer):
+    """The answer's theory name, derived from its canonical content alone."""
+    canonical = json.dumps(answer, sort_keys=True, separators=(',', ':')).encode()
+    return 'Development_Answer_' + hashlib.sha256(canonical).hexdigest()[:12]
+
+
+def frame_imports(state, project=ROOT):
+    """The frame of an answer: where it is adopted for the refinement layer, above the state otherwise."""
+    if 'layer' not in state:
+        return [state['context']]
+    layer = project / 'theories' / (state['layer'] + '.thy')
+    return [*investigate.theory_imports(layer.read_text(), state['layer']), FRAME_FACTS]
+
+
+def answer_theory(state, answer, project=ROOT):
     subject = answer['request']['subject']
-    return ('theory Development_Answer\n  imports ' + state['context'] + '\nbegin\n\n'
-            'local_setup \\<open>fn lthy => snd (Local_Theory.note ((\\<^binding>\\<open>development_demanded_code\\<close>, []),\n'
-            '  Isabelle_Entity_Export.code_equation_theorems (Proof_Context.theory_of lthy) ' + json.dumps(subject) + ') lthy)\\<close>\n\n'
+    return ('theory ' + answer_name(answer) + '\n  imports ' + ' '.join(frame_imports(state, project)) + '\nbegin\n\n'
+            'local_setup \\<open>Isabelle_Constant_Closure.note_code_equations \\<^binding>\\<open>development_demanded_code\\<close>\n'
+            '  ' + json.dumps(subject) + '\\<close>\n\n'
             + answer['definitions'].strip() + '\n\n'
-            'declare [[code drop: ' + answer['request']['subject'] + ']]\n\n'
+            'declare [[code drop: ' + subject + ']]\n\n'
             'lemma development_answer [code]:\n  "' + answer['equation'] + '"\n'
             + answer['proof'].rstrip() + '\n\nend\n')
 
 
-def verification_theory(name, state, subject):
+def adopted(answer, project=ROOT):
+    """An answer whose theory is a theory of the project is part of its published state."""
+    return (project / 'theories' / (answer_name(answer) + '.thy')).is_file()
+
+
+def verification_theory(name, state, subject, theory=None):
+    """The verdict of the answer framed in theory; without a theory, of the published state itself."""
     literal = "STR ''" + subject + "''"
-    return ('theory Development_Answer_Verification\n  imports Development_Answer ' + state['verdicts'] + ' Development_Refinement_Repair\n'
-            'begin\n\n'
-            'local_setup \\<open>Isabelle_Entity_Export.define_again \\<^binding>\\<open>development_answer\\<close>\n'
-            '  (@{thm ' + name + '_roots_def}, @{thm ' + name + '_context_def}) \\<^theory>\\<open>Development_Answer\\<close>\\<close>\n\n'
-            +
-            'declare development_answer_context_def [code] development_answer_roots_def [code]\n'
-            '  development_answer_introduced_def [code]\n\n'
-            'definition development_answer_state :: isabelle_rooted_context where\n'
-            '  "development_answer_state=(development_answer_roots,development_answer_context)"\n\n'
-            'definition development_answer_introduced_positions :: "nat list" where\n'
-            '  "development_answer_introduced_positions=List.map_filter isabelle_head_constant development_answer_introduced"\n\n'
+    if theory is None:
+        answer_state = ('definition development_answer_context :: isabelle_context where\n'
+                        '  "development_answer_context=' + name + '_context"\n\n'
+                        'definition development_answer_state :: isabelle_rooted_context where\n'
+                        '  "development_answer_state=' + name + '_state"\n\n'
+                        'definition development_answer_introduced_positions :: "nat list" where\n'
+                        '  "development_answer_introduced_positions=[]"\n\n')
+    else:
+        answer_state = ('local_setup \\<open>Isabelle_Entity_Export.define_again \\<^binding>\\<open>development_answer\\<close>\n'
+                        '  (@{thm ' + name + '_roots_def}, @{thm ' + name + '_context_def}) \\<^theory>\\<open>' + theory + '\\<close>\\<close>\n\n'
+                        'declare development_answer_context_def [code] development_answer_roots_def [code]\n'
+                        '  development_answer_introduced_def [code]\n\n'
+                        'definition development_answer_state :: isabelle_rooted_context where\n'
+                        '  "development_answer_state=(development_answer_roots,development_answer_context)"\n\n'
+                        'definition development_answer_introduced_positions :: "nat list" where\n'
+                        '  "development_answer_introduced_positions=List.map_filter isabelle_head_constant development_answer_introduced"\n\n')
+    imports = [state['context'], *([theory] if theory else []), state['verdicts'], 'Development_Refinement_Repair']
+    return ('theory Development_Answer_Verification\n  imports ' + ' '.join(imports) + '\n'
+            'begin\n\n' + answer_state +
             'definition development_answer_verdict :: "development_problem fset \\<Rightarrow>\n'
             '    (development_refinement_verdict\\<times>development_refinement_repair) option" where\n'
             '  "development_answer_verdict answered=map_option (\\<lambda>r. (development_refinement_verdict ' + name + '_state r\n'
@@ -192,7 +231,9 @@ def overlay(output, generated):
     (project / 'theories').mkdir(parents=True)
     root = (ROOT / 'ROOT').read_text()
     (project / 'ROOT').write_text(root.rstrip('\n') + ''.join('\n    ' + name for name in generated) + '\n')
-    for source in (ROOT / 'theories').glob('*.thy'):
+    sources = {source.stem: source for source in (ROOT / 'theories').glob('*.thy')}
+    assert not set(generated) & set(sources), 'A generated theory would replace a repository theory.'
+    for source in sources.values():
         (project / 'theories' / source.name).symlink_to(source)
     for name, text in generated.items():
         (project / 'theories' / (name + '.thy')).write_text(text)
@@ -258,6 +299,7 @@ def main():
     commands = parser.add_subparsers(dest='command', required=True)
     judged = commands.add_parser('answer', help='Judge an answer.')
     judged.add_argument('--answer', type=Path, required=True)
+    judged.add_argument('--retain', type=Path, help='Write the retained record of a judged answer here.')
     presented = commands.add_parser('packet', help='Present the packet of a request.')
     presented.add_argument('--state', required=True, choices=sorted(STATES))
     presented.add_argument('--subject', required=True)
@@ -279,13 +321,16 @@ def main():
     generated = {}
     if 'layer' in state:
         generated['Development_Request'] = request_theory(state, answer['request']['subject'])
-    generated['Development_Answer'] = answer_theory(state, answer)
-    generated['Development_Answer_Verification'] = verification_theory(name, state, answer['request']['subject'])
+    theory = None if adopted(answer) else answer_name(answer)
+    if theory is not None:
+        generated[theory] = answer_theory(state, answer)
+    generated['Development_Answer_Verification'] = verification_theory(name, state, answer['request']['subject'], theory)
     project = overlay(output, generated)
-    session = 'Development_Answer_' + digest[:12]
+    session = 'Development_Judgment_' + digest[:12]
     steps = []
     record = {'status': 'failed', 'answer': str(args.answer.resolve()), 'answer_sha256': digest,
-              'request': answer['request'], 'base': str(base), 'session': session, 'steps': steps}
+              'request': answer['request'], 'base': str(base), 'session': session, 'steps': steps,
+              'theory': answer_name(answer), 'adopted': theory is None}
     try:
         steps.append(run('proof', [sys.executable, '-B', TOOLS / 'prove_context.py', '--parent-project', base,
                                    '--project', project, '--output', output / 'proof', '--session', session,
@@ -329,8 +374,19 @@ def main():
         else:
             leftover.unlink(missing_ok=True)
     write_json(output / 'answer.json', record)
+    if args.retain is not None and record['status'] == 'judged':
+        write_json(args.retain, retained_record(answer, digest, base, record))
     print(json.dumps({k: record[k] for k in ('status', 'accepted', 'summary', 'verdict_word', 'error') if k in record}))
     return 0 if record['status'] == 'judged' else 1
+
+
+def retained_record(answer, digest, base, record):
+    """The retained boundary of a judgment: the answer, the harness and base it was judged with, the outcome."""
+    receipt = base / 'accepted-context.json'
+    return {'answer': answer, 'answer_sha256': digest, 'harness_sha256': investigate.file_hash(Path(__file__)),
+            'base_receipt_sha256': investigate.file_hash(receipt) if receipt.is_file() else None,
+            'status': record['status'], 'steps': {step['name']: step['exit_code'] for step in record['steps']},
+            'summary': record['summary'], 'verdict_word': record['verdict_word']}
 
 
 if __name__ == '__main__':

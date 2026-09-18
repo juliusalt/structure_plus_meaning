@@ -1,0 +1,387 @@
+{
+  "source": "/home/julius/.codex/sessions/2026/09/05/rollout-2026-09-05T00-22-30-01a06e4d-3c6b-7de3-bc8a-19eb780569e2.jsonl",
+  "session_id": "01a06e4d-3c6b-7de3-bc8a-19eb780569e2",
+  "source_sha256": "1b27ad51321ea6c5471c9c4fa3bdb7afe7209443ead96333ae340030b6c86e7d",
+  "source_bytes": 1288690734,
+  "source_lines": 180179,
+  "scan_errors": [],
+  "recorded_user_messages": 77,
+  "cli_history_inputs": 55,
+  "user_messages_absent_from_cli_history": 27,
+  "topics": 15,
+  "selected_source_messages": 18,
+  "document_sha256": "4fe48e4d18f1d8b4c1aba171a65f94354e3de89e6fe4a303804a5f782850e3fa",
+  "selection_policy": "One representative per enduring principle; complementary qualifications retained; verbatim excerpts rather than repeated whole messages. Editorial selection is not a native verdict.",
+  "sections": [
+    {
+      "title": "Intent comes before fallible generated detail",
+      "context": "The opening goal explains how to infer intent. Its historical completion loop is omitted.",
+      "excerpts": [
+        {
+          "source_line": 10,
+          "byte_offset": 46908,
+          "timestamp": "2026-09-04T21:22:54.384Z",
+          "record_sha256": "9accd66ccc0eb3dfe535d900eef732b1720beeb33141ed4716752d64f8b47f83",
+          "text_sha256": "719c7c35956a6920f4bddb8a8da3d44c7fd98478be2f52f588ae1a939bfd6dae",
+          "start": 6,
+          "end": 1164,
+          "quote_sha256": "195ef32b47195769fcf8e3c9c4b25eb53cc0447b7612f16130beeb9fb3f19e1b"
+        },
+        {
+          "source_line": 10,
+          "byte_offset": 46908,
+          "timestamp": "2026-09-04T21:22:54.384Z",
+          "record_sha256": "9accd66ccc0eb3dfe535d900eef732b1720beeb33141ed4716752d64f8b47f83",
+          "text_sha256": "719c7c35956a6920f4bddb8a8da3d44c7fd98478be2f52f588ae1a939bfd6dae",
+          "start": 1774,
+          "end": 2021,
+          "quote_sha256": "04cd6cbe8384570dbf0144d52ebe84ec82fac6223ae96612704a35b191ccb1ed"
+        }
+      ]
+    },
+    {
+      "title": "Exact presentation classes replace privileged quotation",
+      "context": "This explicitly supersedes the earlier single-grammar and quotation-principality requirements.",
+      "excerpts": [
+        {
+          "source_line": 53232,
+          "byte_offset": 380028926,
+          "timestamp": "2026-09-07T21:43:20.627Z",
+          "record_sha256": "62f0325b36a58502cb2ae3cc2a4ca5730574ed0b3e21124c48acfc8600dcb883",
+          "text_sha256": "466ba353f89cf4c21db75b86080ad7b58820362f8c64e3e57cb1d620cfa8c9c2",
+          "start": 0,
+          "end": 230,
+          "quote_sha256": "b0a7c1f37da948cf6731de70347eb13c5e03899c315b0d39f58950d708a64913"
+        },
+        {
+          "source_line": 53232,
+          "byte_offset": 380028926,
+          "timestamp": "2026-09-07T21:43:20.627Z",
+          "record_sha256": "62f0325b36a58502cb2ae3cc2a4ca5730574ed0b3e21124c48acfc8600dcb883",
+          "text_sha256": "466ba353f89cf4c21db75b86080ad7b58820362f8c64e3e57cb1d620cfa8c9c2",
+          "start": 462,
+          "end": 2199,
+          "quote_sha256": "921db9a8fd4240382682d197697b5651b81e5d6e12ecae9826d7162ccfa5863d"
+        }
+      ]
+    },
+    {
+      "title": "Notions are independent of requirements; meaning stays local",
+      "context": "The two paragraphs state the intended separation and why local contracts matter.",
+      "excerpts": [
+        {
+          "source_line": 60408,
+          "byte_offset": 452315700,
+          "timestamp": "2026-09-08T07:26:16.653Z",
+          "record_sha256": "70967b60acfbb6fd75f236c9a09a9cd11a4a380640f781d974ae12dc544fcbe1",
+          "text_sha256": "7e59fb486637f3c1ba627c54e78aa8d8c60ebcea6e6b7685add93d487ee34e38",
+          "start": 0,
+          "end": 460,
+          "quote_sha256": "fd7fe672705ced814d8bb3809d09301796aa0b937a7f560672209dd6d9209462"
+        },
+        {
+          "source_line": 60408,
+          "byte_offset": 452315700,
+          "timestamp": "2026-09-08T07:26:16.653Z",
+          "record_sha256": "70967b60acfbb6fd75f236c9a09a9cd11a4a380640f781d974ae12dc544fcbe1",
+          "text_sha256": "7e59fb486637f3c1ba627c54e78aa8d8c60ebcea6e6b7685add93d487ee34e38",
+          "start": 462,
+          "end": 1107,
+          "quote_sha256": "b9983d7f9a359607490b9970b3e1cdfe6a8068ddcd371ae5d486076c849e490f"
+        }
+      ]
+    },
+    {
+      "title": "Meaningful depth makes reasoning reusable",
+      "context": "The qualification that this is an investigation, not a prescribed mechanism or a universal assumption, is retained.",
+      "excerpts": [
+        {
+          "source_line": 72735,
+          "byte_offset": 547058492,
+          "timestamp": "2026-09-08T22:45:37.304Z",
+          "record_sha256": "c232f7f464360e58ddd6a515e5eec029842da881a11ea5f29d558e2c7058d2c1",
+          "text_sha256": "867a89bcc6e192b22b25088fa0c20c70a331e6da8b46d244eafadee47b45e613",
+          "start": 190,
+          "end": 708,
+          "quote_sha256": "98d4bdc3b172247d46ebadd5e624539611118c7a0b519e603c0e9a5a72473ddc"
+        },
+        {
+          "source_line": 72735,
+          "byte_offset": 547058492,
+          "timestamp": "2026-09-08T22:45:37.304Z",
+          "record_sha256": "c232f7f464360e58ddd6a515e5eec029842da881a11ea5f29d558e2c7058d2c1",
+          "text_sha256": "867a89bcc6e192b22b25088fa0c20c70a331e6da8b46d244eafadee47b45e613",
+          "start": 710,
+          "end": 1307,
+          "quote_sha256": "0834da3d4b66cac570438157d6eaa8b05b692e876649300604ef3aa387c3c66e"
+        },
+        {
+          "source_line": 72735,
+          "byte_offset": 547058492,
+          "timestamp": "2026-09-08T22:45:37.304Z",
+          "record_sha256": "c232f7f464360e58ddd6a515e5eec029842da881a11ea5f29d558e2c7058d2c1",
+          "text_sha256": "867a89bcc6e192b22b25088fa0c20c70a331e6da8b46d244eafadee47b45e613",
+          "start": 1309,
+          "end": 2146,
+          "quote_sha256": "5d9eb893a017792440aacae1761294b74ce1b63988709c91801020c3754b6642"
+        },
+        {
+          "source_line": 72735,
+          "byte_offset": 547058492,
+          "timestamp": "2026-09-08T22:45:37.304Z",
+          "record_sha256": "c232f7f464360e58ddd6a515e5eec029842da881a11ea5f29d558e2c7058d2c1",
+          "text_sha256": "867a89bcc6e192b22b25088fa0c20c70a331e6da8b46d244eafadee47b45e613",
+          "start": 2489,
+          "end": 3139,
+          "quote_sha256": "4fa49533dc4f448c8f1254fc8e03c564939c9440e5d6c14fde4fb62526de548a"
+        },
+        {
+          "source_line": 72735,
+          "byte_offset": 547058492,
+          "timestamp": "2026-09-08T22:45:37.304Z",
+          "record_sha256": "c232f7f464360e58ddd6a515e5eec029842da881a11ea5f29d558e2c7058d2c1",
+          "text_sha256": "867a89bcc6e192b22b25088fa0c20c70a331e6da8b46d244eafadee47b45e613",
+          "start": 3141,
+          "end": 3617,
+          "quote_sha256": "48b571f2992b8242a1b428cf085cdaf7cbc219ee6c50e2754faaecf1bb44940d"
+        },
+        {
+          "source_line": 72735,
+          "byte_offset": 547058492,
+          "timestamp": "2026-09-08T22:45:37.304Z",
+          "record_sha256": "c232f7f464360e58ddd6a515e5eec029842da881a11ea5f29d558e2c7058d2c1",
+          "text_sha256": "867a89bcc6e192b22b25088fa0c20c70a331e6da8b46d244eafadee47b45e613",
+          "start": 3619,
+          "end": 3872,
+          "quote_sha256": "52345bbdd2aec0e70534d19478310a0f0d9fa15bc91baebd78c2b682b36be7d1"
+        },
+        {
+          "source_line": 72735,
+          "byte_offset": 547058492,
+          "timestamp": "2026-09-08T22:45:37.304Z",
+          "record_sha256": "c232f7f464360e58ddd6a515e5eec029842da881a11ea5f29d558e2c7058d2c1",
+          "text_sha256": "867a89bcc6e192b22b25088fa0c20c70a331e6da8b46d244eafadee47b45e613",
+          "start": 3874,
+          "end": 4150,
+          "quote_sha256": "9301aed509cb8ecbe81eca27c3a190725fbdfde72ca27ef8fb02fb9e2e9469b4"
+        }
+      ]
+    },
+    {
+      "title": "Depth decisions must explain and guide investigation",
+      "context": "This criticism concerns the then-current depth decision, not a claim that the same defect remains today.",
+      "excerpts": [
+        {
+          "source_line": 83500,
+          "byte_offset": 638155481,
+          "timestamp": "2026-09-09T15:44:47.390Z",
+          "record_sha256": "633fa90c0076bafb49db3301c5a1e0ad7fa3511d1b3fdb7881b7025b5f2a3328",
+          "text_sha256": "b42a373d803e4223bb3871b929565bbdb74e89a9bb52c10fdb38416e895195d5",
+          "start": 144,
+          "end": 976,
+          "quote_sha256": "67d733f988012b3b8d0e4b876cd5b4b13b4929b0b057d0aa0c26de786d9793a2"
+        },
+        {
+          "source_line": 83500,
+          "byte_offset": 638155481,
+          "timestamp": "2026-09-09T15:44:47.390Z",
+          "record_sha256": "633fa90c0076bafb49db3301c5a1e0ad7fa3511d1b3fdb7881b7025b5f2a3328",
+          "text_sha256": "b42a373d803e4223bb3871b929565bbdb74e89a9bb52c10fdb38416e895195d5",
+          "start": 978,
+          "end": 1221,
+          "quote_sha256": "56ad995b7ff986138d264a8b7ccc1d0528cd06f724db91bcd4b69bac3f4178b0"
+        }
+      ]
+    },
+    {
+      "title": "Reuse reasoning at first use; drive decisions through the machinery",
+      "context": "One comprehensive statement covers both the content workflow and batched host scheduling; repetitive reminders are omitted.",
+      "excerpts": [
+        {
+          "source_line": 99894,
+          "byte_offset": 762781943,
+          "timestamp": "2026-09-10T18:59:50.447Z",
+          "record_sha256": "d2766e3c4ca2cc1df72b8df3a02763ac76f82342a7c906a0cd8564a4a22f9515",
+          "text_sha256": "2622bf1b0b8607e8a36cee8f1d47582bd6cfccfa7e2516b6a80fec502422a3db",
+          "start": 0,
+          "end": 2347,
+          "quote_sha256": "2622bf1b0b8607e8a36cee8f1d47582bd6cfccfa7e2516b6a80fec502422a3db"
+        }
+      ]
+    },
+    {
+      "title": "Concrete subjects and derived observations",
+      "context": "The owner identifies why a supplied table and a retained description do not establish an observation, then asks for compatible partial bindings.",
+      "excerpts": [
+        {
+          "source_line": 110235,
+          "byte_offset": 829703609,
+          "timestamp": "2026-09-11T13:23:29.393Z",
+          "record_sha256": "8cd79f1edc3a8155cf3c4f1cf732f12cc771404f47a30524aaf3034747bc6e87",
+          "text_sha256": "95ee14b1f1861d7a7e6cce111a50a3fc37ab280798923b1cd777a88420b75aa3",
+          "start": 67,
+          "end": 1324,
+          "quote_sha256": "3eb8569e7e17041931dbde981068479bbc7d09b70d98e5d675817fa385a8fc49"
+        }
+      ]
+    },
+    {
+      "title": "Construct candidates; separate search from its meaning",
+      "context": "This distinguishes scoped construction from ranking hand-written alternatives and directed execution from complete denotation.",
+      "excerpts": [
+        {
+          "source_line": 114114,
+          "byte_offset": 854150270,
+          "timestamp": "2026-09-11T19:09:43.410Z",
+          "record_sha256": "9ffe96977f4485a24f81feb27124a65e3da5be1f7c853f27a4f2af1d8cc336ac",
+          "text_sha256": "9311c6280863ec4881c353f9ce23e5492de08d1a0d1f5c234e0467d8f4157a35",
+          "start": 80,
+          "end": 1492,
+          "quote_sha256": "3e9d11cc9834422a6f57cf775747b3e09d86c7f3e167f161f181143f05163a9d"
+        }
+      ]
+    },
+    {
+      "title": "Improve the machinery through its contribution to content quality",
+      "context": "The owner explicitly distinguishes this assessment from execution speed.",
+      "excerpts": [
+        {
+          "source_line": 98224,
+          "byte_offset": 751243383,
+          "timestamp": "2026-09-10T16:39:03.342Z",
+          "record_sha256": "cbc525db3042d16847c4fe6b6a9fff0febb1f90647d040a76a545be5dfe05668",
+          "text_sha256": "411fc6d99f2f1ad95fad96254f3917527c039773d23c03617d9727cccbe9a6d1",
+          "start": 310,
+          "end": 906,
+          "quote_sha256": "86ee6df8bafd91651c90eb33c9b0dfad7207e83848f63f305954854e173c3864"
+        }
+      ]
+    },
+    {
+      "title": "No outside semantics, with Isabelle’s bootstrap role preserved",
+      "context": "These are a directive and its explicit clarification; they must be read together.",
+      "excerpts": [
+        {
+          "source_line": 127522,
+          "byte_offset": 942763361,
+          "timestamp": "2026-09-12T17:39:39.139Z",
+          "record_sha256": "f68b8b0da5ad052df7e248e527bb83637cda7f2d1de4bb9e0d0591669f91aca4",
+          "text_sha256": "25d3a2f5bb222db992fce7537f6e39910a5e6edf9c597207539c2685ceaeb167",
+          "start": 0,
+          "end": 98,
+          "quote_sha256": "25d3a2f5bb222db992fce7537f6e39910a5e6edf9c597207539c2685ceaeb167"
+        },
+        {
+          "source_line": 127693,
+          "byte_offset": 943363958,
+          "timestamp": "2026-09-12T18:08:10.346Z",
+          "record_sha256": "e0ba13a9fd37d8858907d844387d7223bb93d7042e656cc9e5701f1afc2ace81",
+          "text_sha256": "84ece6aafb7eb695aae3150d0fd445e990c9180c9fd67a628d8870819dd6aef5",
+          "start": 0,
+          "end": 93,
+          "quote_sha256": "84ece6aafb7eb695aae3150d0fd445e990c9180c9fd67a628d8870819dd6aef5"
+        }
+      ]
+    },
+    {
+      "title": "Parallel problems, one agent",
+      "context": "The second message qualifies the first. This concerns independent work, not concurrent development agents.",
+      "excerpts": [
+        {
+          "source_line": 156587,
+          "byte_offset": 1131643472,
+          "timestamp": "2026-09-14T19:26:16.331Z",
+          "record_sha256": "20b3cf5a877d6905898d17d668bb50874da40d78e144147be3ddcc70a6933113",
+          "text_sha256": "abf75509d677d139054c3d1f573f2ec95f1eab32dd30aab729c3734c138a98cd",
+          "start": 0,
+          "end": 331,
+          "quote_sha256": "abf75509d677d139054c3d1f573f2ec95f1eab32dd30aab729c3734c138a98cd"
+        },
+        {
+          "source_line": 156609,
+          "byte_offset": 1131995040,
+          "timestamp": "2026-09-14T19:27:29.383Z",
+          "record_sha256": "7fa60003e142f8d53d87cf64490506228f8e933944fd3317291a9c6d8b1f55d1",
+          "text_sha256": "60093cb13c29c2b483a86e1d1a06ade5e9c2fe64ca6a80cc474d1b2fccc7a608",
+          "start": 0,
+          "end": 36,
+          "quote_sha256": "60093cb13c29c2b483a86e1d1a06ade5e9c2fe64ca6a80cc474d1b2fccc7a608"
+        }
+      ]
+    },
+    {
+      "title": "High-level goals and structurally available parallelism",
+      "context": "The performance sprint was ending. The lasting direction is to establish the workflow by construction, then use component 6 for remaining details.",
+      "excerpts": [
+        {
+          "source_line": 172833,
+          "byte_offset": 1233889501,
+          "timestamp": "2026-09-15T21:21:11.107Z",
+          "record_sha256": "010c75022e69b2abda6173b2966f4ddfec2846482146ab9ae10a7460fa478e42",
+          "text_sha256": "1b794de9921ed5c36aab84222a2a76057a9f8cfe9f9f2ee6d51e9465e9ceac37",
+          "start": 168,
+          "end": 659,
+          "quote_sha256": "24f0cfee2b5fe2a540451e7ebe7c972cf908dd8e8ad7d7ca0d8b74823f1fda3f"
+        },
+        {
+          "source_line": 172888,
+          "byte_offset": 1234281114,
+          "timestamp": "2026-09-15T21:24:20.728Z",
+          "record_sha256": "4b82fca9a3596c84dac95fb600b1b131e60faa4da7b72d1e602abbaf4a0c70f1",
+          "text_sha256": "1015de2b58c28c5471f99190c020476282d59e1f3d4e633722c941bd85614b01",
+          "start": 0,
+          "end": 250,
+          "quote_sha256": "1015de2b58c28c5471f99190c020476282d59e1f3d4e633722c941bd85614b01"
+        }
+      ]
+    },
+    {
+      "title": "Practical usefulness before resolution; theoretical bounds after genesis",
+      "context": "This also asks for substantial candidate batches and grouped repair instead of prolonged analysis of small changes.",
+      "excerpts": [
+        {
+          "source_line": 178792,
+          "byte_offset": 1278469391,
+          "timestamp": "2026-09-16T06:06:09.635Z",
+          "record_sha256": "da87459d1858f1eec065821403d8aa2f0571d83fedbae65add2da13b91c9f967",
+          "text_sha256": "dbdb44baa5a496552b2e3e81df06e282dfa9b5b4e37cdda03c03d1131bfec59d",
+          "start": 37,
+          "end": 736,
+          "quote_sha256": "94af2ed8c2dc3eac0ce71e72609746a15e0ee414f6b8ab588cc89cc44254cad4"
+        }
+      ]
+    },
+    {
+      "title": "Retain the workflow across compaction",
+      "context": "The enduring requirement is retained without another copy of the scheduling rules.",
+      "excerpts": [
+        {
+          "source_line": 115632,
+          "byte_offset": 860289884,
+          "timestamp": "2026-09-11T21:06:06.723Z",
+          "record_sha256": "0137473b934006f056d10629febc4d0f3954188484f45123ef16e78178f3691f",
+          "text_sha256": "3ebf87260e7609b3200a4138d62c660a2583fe2fc9f7d68d72c689fe95a07a31",
+          "start": 166,
+          "end": 283,
+          "quote_sha256": "5f517f833d1bb69a6b0359342adc59c70511916db22380503acea408d8e32887"
+        }
+      ]
+    },
+    {
+      "title": "Retire temporary material when no longer needed",
+      "context": "This follows a storage incident; the future cleanup requirement is the lasting point.",
+      "excerpts": [
+        {
+          "source_line": 122063,
+          "byte_offset": 902722854,
+          "timestamp": "2026-09-12T06:59:12.438Z",
+          "record_sha256": "54461cc25b8a6c12f1fae6bc537043031d4bd89eaf33eeaecc8025cfc8972cb6",
+          "text_sha256": "2cc9a461f03b3e80316f78042d9bd744ef1b0b4c87337f816b8684b1a73e5498",
+          "start": 46,
+          "end": 134,
+          "quote_sha256": "38cb8c4f3e99d739ef9681a4c4db72199e9e1e13e6dfcc62b920bc870b5d1bca"
+        }
+      ]
+    }
+  ]
+}

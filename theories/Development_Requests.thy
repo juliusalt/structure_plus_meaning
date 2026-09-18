@@ -45,11 +45,12 @@ proof -
   then show ?thesis by (rule development_ready_independent)
 qed
 
-section \<open>A request carries the demanded statement, its support and its least context\<close>
+section \<open>A request carries its constant, its support and its least context\<close>
 
 text \<open>
-  A refinement request carries its problem, the statement its answer must establish, the
-  support its answer may use and the context that support needs. The support starts from the
+  A refinement request carries its problem, the constant its answer refines, the support its
+  answer may use and the context that support needs; the incumbent statements an answer
+  replaces are the refined entities of that context. The support starts from the
   exported dependencies of the entities being refined: the constants their statements
   mention. The context is those entities together with the declarations of the support in
   the state, and nothing else, so it is exactly determined by the state; it is closed under
@@ -165,7 +166,7 @@ theorem development_refinement_request_fields:
   assumes request: "development_refinement_request C r a c=Some (p,s,S,E)"
   shows "development_refinement_problem C r a c=Some p" "problem_contract p=Development_Refinement s"
     "problem_subject p={|c|}" "S=development_request_support C c" "E=development_request_context C c"
-    "Isabelle_Code_Equation s |\<in>| E"
+    "\<forall>q\<in>set (development_refinement_statements C c). Isabelle_Code_Equation q |\<in>| E"
 proof -
   obtain k where problem: "development_refinement_problem C r a c=Some p"
     and contract: "development_refinement_contract C c=Some k" and shape: "p=Development_Problem {|c|} k r a"
@@ -174,18 +175,14 @@ proof -
   have statement: "problem_contract p=Development_Refinement s" "S=development_request_support C c"
     "E=development_request_context C c"
     using request problem by (auto simp: development_refinement_request_def split: development_contract.splits)
-  have demanded: "development_refinement_contract C c=Some (Development_Refinement s)"
-    using contract statement(1) shape by simp
-  have present: "Isabelle_Code_Equation s\<in>set (snd C) \<and>
-      c\<in>set (isabelle_entity_subjects (fst C) (isabelle_development_constants (snd C)) (Isabelle_Code_Equation s))"
-    by (rule development_refinement_contract_statement[OF demanded])
   show "development_refinement_problem C r a c=Some p" by (rule problem)
   show "problem_contract p=Development_Refinement s" by (rule statement(1))
   show "problem_subject p={|c|}" by (rule development_refinement_problem_subject[OF problem])
   show "S=development_request_support C c" by (rule statement(2))
   show "E=development_request_context C c" by (rule statement(3))
-  show "Isabelle_Code_Equation s |\<in>| E"
-    using present by (simp add: statement(3) development_request_context_exact development_refinement_scope_member)
+  show "\<forall>q\<in>set (development_refinement_statements C c). Isabelle_Code_Equation q |\<in>| E"
+    by (auto simp: statement(3) development_request_context_exact development_refinement_scope_member
+      development_refinement_statements_state)
 qed
 
 definition development_request_data :: "development_request \<Rightarrow> finite_factor_term" where
@@ -209,7 +206,7 @@ text \<open>
   A request is constructed, not yet issued. Issuing it as a leaf needs an admitted account
   of its decomposition scope; no decomposition schema for a refinement problem is
   represented in the development library yet, so that absence is the only ground for
-  leafhood and is retained as such. Whether an answer satisfies the demanded statement, stays
+  leafhood and is retained as such. Whether an answer states equations of the constant, stays
   within the support and leaves every other entity unchanged is the verifier's question.
 \<close>
 

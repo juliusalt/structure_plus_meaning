@@ -1,0 +1,343 @@
+{
+ "control": true,
+ "record": "validation/development-answers/demanded-reformulated.json",
+ "record_sha256": "676bde5b8e3eab784dc668b39b7140a5973545ac7dcc67f45381eb31adaa1c87",
+ "status": "adopted",
+ "steps": {
+  "check": {
+   "costs": {
+    "allocated-environments": {
+     "retained_seconds": 2.32,
+     "seconds": 2.42
+    },
+    "artifact-lookup": {
+     "retained_seconds": 1.57,
+     "seconds": 1.82
+    },
+    "builtin-investigations": {
+     "retained_seconds": 2.17,
+     "seconds": 2.02
+    },
+    "cached-grafts": {
+     "retained_seconds": 2.52,
+     "seconds": 2.52
+    },
+    "certificate-coverage": {
+     "retained_seconds": 3.12,
+     "seconds": 3.37
+    },
+    "certificate-development": {
+     "retained_seconds": 3.62,
+     "seconds": 3.57
+    },
+    "certificate-input-development": {
+     "retained_seconds": 3.77,
+     "seconds": 4.02
+    },
+    "certificate-scope-repair": {
+     "retained_seconds": 3.12,
+     "seconds": 3.27
+    },
+    "certified-causes": {
+     "retained_seconds": 26.52,
+     "seconds": 30.85
+    },
+    "concurrent-history": {
+     "retained_seconds": 12.56,
+     "seconds": 12.64
+    },
+    "constructed-history": {
+     "retained_seconds": 24.99,
+     "seconds": 26.1
+    },
+    "data-reading": {
+     "retained_seconds": 3.87,
+     "seconds": 3.92
+    },
+    "decision-replay": {
+     "retained_seconds": 6.84,
+     "seconds": 6.88
+    },
+    "digit-allocation": {
+     "retained_seconds": 2.47,
+     "seconds": 2.57
+    },
+    "digit-generation": {
+     "retained_seconds": 3.17,
+     "seconds": 3.27
+    },
+    "digit-history": {
+     "retained_seconds": 14.0,
+     "seconds": 14.0
+    },
+    "digit-replay": {
+     "retained_seconds": 44.67,
+     "seconds": 43.78
+    },
+    "encoded-environments": {
+     "retained_seconds": 3.07,
+     "seconds": 3.02
+    },
+    "environment-grafts": {
+     "retained_seconds": 2.22,
+     "seconds": 2.07
+    },
+    "environment-updates": {
+     "retained_seconds": 2.27,
+     "seconds": 2.32
+    },
+    "generation-records": {
+     "retained_seconds": 2.92,
+     "seconds": 3.12
+    },
+    "graft-admission": {
+     "retained_seconds": 2.22,
+     "seconds": 2.17
+    },
+    "history-index": {
+     "retained_seconds": 12.51,
+     "seconds": 12.45
+    },
+    "indexed-generation": {
+     "retained_seconds": 3.22,
+     "seconds": 3.17
+    },
+    "known-history": {
+     "retained_seconds": 15.36,
+     "seconds": 14.81
+    },
+    "literal-replay": {
+     "retained_seconds": 3.47,
+     "seconds": 3.57
+    },
+    "native-admission": {
+     "retained_seconds": 7.89,
+     "seconds": 7.63
+    },
+    "native-certificate-replay": {
+     "retained_seconds": 4.42,
+     "seconds": 4.57
+    },
+    "native-certificates": {
+     "retained_seconds": 4.22,
+     "seconds": 4.47
+    },
+    "native-child": {
+     "retained_seconds": 4.67,
+     "seconds": 4.92
+    },
+    "native-derivations": {
+     "retained_seconds": 4.27,
+     "seconds": 4.32
+    },
+    "native-development": {
+     "retained_seconds": 7.54,
+     "seconds": 7.63
+    },
+    "native-development-seed": {
+     "retained_seconds": 51.08,
+     "seconds": 14.7
+    },
+    "native-evaluation": {
+     "retained_seconds": 2.92,
+     "seconds": 3.17
+    },
+    "native-graphs": {
+     "retained_seconds": 5.73,
+     "seconds": 5.42
+    },
+    "native-histories": {
+     "retained_seconds": 3.62,
+     "seconds": 3.62
+    },
+    "native-nodes": {
+     "retained_seconds": 2.92,
+     "seconds": 3.12
+    },
+    "native-requirements": {
+     "retained_seconds": 6.23,
+     "seconds": 6.43
+    },
+    "native-sources": {
+     "retained_seconds": 2.82,
+     "seconds": 3.02
+    },
+    "native-steering": {
+     "retained_seconds": 35.78,
+     "seconds": 16.12
+    },
+    "native-workflow": {
+     "retained_seconds": 36.49,
+     "seconds": 12.35
+    },
+    "quoted-history": {
+     "retained_seconds": 23.78,
+     "seconds": 24.99
+    },
+    "required-causes": {
+     "retained_seconds": 4.82,
+     "seconds": 5.07
+    },
+    "required-history": {
+     "retained_seconds": 6.48,
+     "seconds": 6.63
+    },
+    "requirement-decisions": {
+     "retained_seconds": 3.42,
+     "seconds": 3.62
+    },
+    "source-development": {
+     "retained_seconds": 38.21,
+     "seconds": 20.13
+    },
+    "use-allocation": {
+     "retained_seconds": 2.22,
+     "seconds": 2.07
+    },
+    "use-codecs": {
+     "retained_seconds": 1.97,
+     "seconds": 1.97
+    }
+   },
+   "error": null,
+   "exit_code": 0,
+   "phases": {
+    "base_and_impact": 0.26,
+    "execution_impact": 1.12,
+    "export": 2.82,
+    "proof": 165.99,
+    "recipe_impact": 0.35,
+    "recipes_and_host_tests": 48.17
+   },
+   "rebuilt_theories": 150,
+   "recipes": {
+    "accepted": [
+     "allocated-environments",
+     "artifact-lookup",
+     "builtin-investigations",
+     "cached-grafts",
+     "certificate-coverage",
+     "certificate-development",
+     "certificate-input-development",
+     "certificate-scope-repair",
+     "certified-causes",
+     "concurrent-history",
+     "constructed-history",
+     "data-reading",
+     "decision-replay",
+     "digit-allocation",
+     "digit-generation",
+     "digit-history",
+     "digit-replay",
+     "encoded-environments",
+     "environment-grafts",
+     "environment-updates",
+     "generation-records",
+     "graft-admission",
+     "history-index",
+     "indexed-generation",
+     "known-history",
+     "literal-replay",
+     "native-admission",
+     "native-certificate-replay",
+     "native-certificates",
+     "native-child",
+     "native-derivations",
+     "native-development",
+     "native-development-seed",
+     "native-evaluation",
+     "native-graphs",
+     "native-histories",
+     "native-nodes",
+     "native-requirements",
+     "native-sources",
+     "native-steering",
+     "native-workflow",
+     "quoted-history",
+     "required-causes",
+     "required-history",
+     "requirement-decisions",
+     "source-development",
+     "use-allocation",
+     "use-codecs"
+    ],
+    "failed": [],
+    "reused": [
+     "native-extensions",
+     "requirement-plans",
+     "requirement-sources"
+    ],
+    "unchanged": []
+   },
+   "seconds": 225.01,
+   "status": "accepted"
+  },
+  "installation": {
+   "layer_sha256": "7f9aae1c9c2be673f02c81b30eee3ad560fa43bbcbfc93bbee610dbe4d752878",
+   "root_sha256": "331cabb12d956f35ce727071acf77ddd9a517dc2ad5749e7f181559b9a303fd1",
+   "theory": "theories/Development_Answer_5aba3385cee9.thy",
+   "theory_sha256": "6148385d0c00104fa275e6f55cf26564913d4c910c0937572312305d00099aef"
+  },
+  "precondition": {
+   "accepted": true,
+   "adopted": false,
+   "error": null,
+   "seconds": 13.89,
+   "status": "judged",
+   "summary": {
+    "accepted": true,
+    "counts": [
+     1,
+     1,
+     0,
+     0,
+     1,
+     1,
+     0,
+     0
+    ],
+    "definition_problems": 0,
+    "excess": [],
+    "extension": true,
+    "introduced": [],
+    "repaired": true
+   },
+   "verdict_word": {
+    "bytes": 5664,
+    "sha256": "f11986312595f03c4e46822427e81441b4f9debdb8ed79ea013e3011c2cec29b"
+   }
+  },
+  "published": {
+   "accepted": true,
+   "adopted": true,
+   "error": null,
+   "seconds": 14.34,
+   "status": "judged",
+   "summary": {
+    "accepted": true,
+    "counts": [
+     0,
+     0,
+     0,
+     0,
+     1,
+     1,
+     0,
+     1
+    ],
+    "definition_problems": 0,
+    "excess": [],
+    "extension": true,
+    "introduced": [],
+    "repaired": true
+   },
+   "verdict_word": {
+    "bytes": 4195,
+    "sha256": "c501857558f719222089e6578a33428e4e73df802b91991b3fbc5159a9ac607d"
+   }
+  }
+ },
+ "theory": "Development_Answer_5aba3385cee9",
+ "withdrawn": true,
+ "workspace": "an isolated copy of the working tree (rsync without .build/.git), removed after the run"
+}

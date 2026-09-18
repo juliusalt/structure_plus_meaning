@@ -8,13 +8,13 @@
    "subject": "Ordered_Member_Trees.ordered_member_tree"
   }
  },
- "answer_sha256": "166f3ef82e884172cd5a32fd417a8cfa3652ce037628a7f37ebd417db9e4072c",
- "base_receipt_sha256": "18dd42dc09e59758f4c488fb0f6b6b12d01ccb332e9552421c272ff546cae23a",
- "harness_sha256": "5fd0a86e050c1982ac2c649ad5472cf29086490b4ec6eec16aec7d5cb99e4f98",
+ "answer_sha256": "613b5b150e1e4de4a7e21ff4ec21d9096c22253faab32aff741f52fdf136e9c2",
+ "base_receipt_sha256": "58fd74b93e19e92a9c34995fe10e97b38fd31e6961736db881be03531a759163",
+ "harness_sha256": "7901674b130da0a7056fac554582df33e818e8073ea8128309dcf2d4729a3069",
  "status": "judged",
  "steps": {
-  "export": 0,
   "proof": 0,
+  "export": 0,
   "verdict": 0
  },
  "summary": {
@@ -29,14 +29,14 @@
    0,
    1
   ],
-  "definition_problems": 0,
   "excess": [],
-  "extension": true,
   "introduced": [],
-  "repaired": true
+  "repaired": true,
+  "extension": true,
+  "definition_problems": 0
  },
  "verdict_word": {
-  "bytes": 3664,
-  "sha256": "4773036e2c093ecf3e57da61cfbf3ca400365440612a8f05e01a93faf2d0d97f"
+  "bytes": 2712,
+  "sha256": "08560cc64e877e41fa23977b7c44727725c070e5e136be4b50d86e04b31b3ea5"
  }
 }

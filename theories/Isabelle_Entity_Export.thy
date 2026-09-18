@@ -7,9 +7,10 @@ section \<open>A checked theory context defines the entities reachable from its 
 text \<open>
   The exporter runs inside the checked context. It follows the shared constant closure:
   a development constant contributes its kernel definitions, the non-definitional axioms
-  that mention it and the code equations in effect; a constant of the fixed Isabelle/HOL
-  base contributes nothing. Types and terms are translated constructor by constructor,
-  and every name is a position in one table of the defined context. The result is an
+  that mention it and the code equations in effect, as declared (read by the shared closure
+  under an empty simpset); a constant of the fixed Isabelle/HOL base contributes nothing. Types
+  and terms are translated constructor by constructor, and every name is a position in one
+  table of the defined context. The result is an
   ordinary definition of the checked context, so a failed build defines nothing and every
   later use reads exactly the defined value.
 \<close>
@@ -29,17 +30,6 @@ datatype item = Definition | Specification | Code_Equation;
 (*Positions and indices are binary numerals, so a long table costs no successor chain.*)
 fun number i = HOLogic.mk_number \<^typ>\<open>nat\<close> i;
 
-(*The code equations in effect for a constant of a checked context.*)
-fun code_equation_theorems thy c =
-  let val ctxt = Proof_Context.init_global thy in
-    (case try (Code.get_cert ctxt []) c of
-      NONE => []
-    | SOME cert =>
-        (case try (Code.equations_of_cert thy) cert of
-          SOME (_, SOME equations) => map_filter (fn (_, (SOME th, _)) => SOME th | _ => NONE) equations
-        | _ => []))
-  end;
-
 (*The declarations and items of the constants reached from the roots of a checked context.
   Only an expanded constant contributes items; every other development constant reached is
   on the frontier of the state and is extended when work demands it.*)
@@ -52,7 +42,7 @@ fun context_items thy expand roots =
           if Symtab.defined definitional name then I
           else fold (fn c => Symtab.cons_list (c, (name, prop))) (Term.add_const_names prop []))
         (Theory.all_axioms_of thy) Symtab.empty;
-    fun code_equations c = map Thm.prop_of (code_equation_theorems thy c);
+    fun code_equations c = map Thm.prop_of (Isabelle_Constant_Closure.code_equation_theorems thy c);
     fun items c =
       if base_constant thy c orelse not (expand c) then []
       else
@@ -162,18 +152,20 @@ fun defined_root_names roots_def context_def =
   in distinct (op =) (map root (HOLogic.dest_list (Thm.rhs_of roots_def |> Thm.term_of))) end;
 
 (*Define NAME_context and NAME_roots again in the current context, from the same roots as a
-  state defined in an ancestor context, and NAME_introduced as the constants a given theory
-  declares. Those constants are expanded and seeded besides the roots, so the state holds
+  state defined in an ancestor context, and NAME_introduced as the logical constants a given
+  theory declares. Those constants are expanded and seeded besides the roots, so the state holds
   their specifications even when no root reaches them; an introduced constant no root reaches
-  is then an unreached entity of the state, not an invisible one.*)
+  is then an unreached entity of the state, not an invisible one. An abbreviation is syntax: it
+  declares no logical constant, so it introduces no entity.*)
 fun define_again binding (roots_def, context_def) introducing lthy =
   let
     val thy = Proof_Context.theory_of lthy;
     val root_names = defined_root_names roots_def context_def;
     val theory_name = Context.theory_long_name introducing;
     val introduced =
-      filter (fn c => declaring_theory thy c = theory_name)
-        (map #1 (#constants (Consts.dest (Sign.consts_of thy))));
+      map_filter (fn (c, (_, NONE)) => if declaring_theory thy c = theory_name then SOME c else NONE
+                   | _ => NONE)
+        (#constants (Consts.dest (Sign.consts_of thy)));
     val expand = member (op =) (root_names @ introduced);
     val (context, root_list, group_lists) =
       context_terms thy expand root_names introduced [("_introduced", introduced)];

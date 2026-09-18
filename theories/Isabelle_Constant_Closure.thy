@@ -34,13 +34,36 @@ fun closure items constants seeds =
             end;
   in expand seeds Symtab.empty Symtab.empty end;
 
+(*The code equations in effect for a constant of a checked context, exactly as they were declared.
+  Certifying them is not reading them: the code generator certifies a declared equation only after
+  its function transformers (a Suc pattern under Code_Target_Nat is no constructor until one of them
+  rewrites the family), and certifying under the theory's global simpset rewrites every equation by
+  all simplification rules, while the code graph's certificate also carries the sorts demanded by
+  what the constant calls, so it is not local to the constant. The declared equations are what a
+  certificate is built from: every function transformer receives them, and the reading takes them
+  from that receipt, transforms nothing and only unoverloads class operations as certification
+  does. A constant without declared equations (unimplemented, abstract or a projection) has none.*)
+fun code_equation_theorems thy c =
+  let
+    val ctxt = Simplifier.empty_simpset (Proof_Context.init_global thy);
+    val declared = Unsynchronized.ref ([] : thm list);
+    fun receive equations = (declared := map fst equations; NONE);
+    val _ = try (Code.get_cert ctxt [receive]) c;
+  in map (Axclass.unoverload ctxt) (! declared) end;
+
+(*Note the code equations in effect for a constant under a binding of the local theory.*)
+fun note_code_equations binding c lthy =
+  snd (Local_Theory.note ((binding, []), code_equation_theorems (Proof_Context.theory_of lthy) c) lthy);
+
 end
 \<close>
 
 text \<open>
   The traversal is shared by every exporter that presents checked context content: an
   exporter chooses which items a constant contributes and which constants an item mentions.
-  It computes a selection inside the checked context; it establishes no semantic claim.
+  It computes a selection inside the checked context; it establishes no semantic claim. The
+  code equations in effect for a constant are read here too, so the exporter and every frame
+  that offers them as a fact read them in one way.
 \<close>
 
 end

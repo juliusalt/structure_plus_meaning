@@ -1,0 +1,263 @@
+{
+  "topics": 13,
+  "original_bytes": 42352,
+  "filtered_bytes": 8998,
+  "original_sha256": "e0756ca866c67195becb232fc678a1dcd4c89f77401b805ecc9be7e65fbbd92c",
+  "document_sha256": "1a3922bb010916e82c70e35eb044250f965f1d814fc6f0508ad9d573cd626910",
+  "sections": [
+    {
+      "title": "Explicit distinctions and the minimal data basis",
+      "context": "OD-1 replaces primitive profile choices with a general basis and requires equivalence proofs before retiring old definitions.",
+      "excerpts": [
+        {
+          "source": "/home/julius/.claude/projects/-home-julius-structure-and-semantics/675829c7-7203-41d3-bd67-bac8986a472b.jsonl",
+          "session_id": "675829c7-7203-41d3-bd67-bac8986a472b",
+          "line": 372,
+          "byte_offset": 1081429,
+          "timestamp": "2026-09-04T14:20:43.484Z",
+          "record_sha256": "6cb8483b1d0933d33169f855f077fda9ea7542b03760b3ed0fd35ec5e71c766f",
+          "start": 0,
+          "end": 896,
+          "text_sha256": "0032cce4b348dcc51dcd6ae7a06ba0aabe1366602db841e75b58271e2226596e",
+          "quote_sha256": "1c928c20bab8326b18f3ec58f57c2abbc5924693ccd8325a4a6b35456fff72af"
+        }
+      ]
+    },
+    {
+      "title": "Predecessor-authorized foundation transitions",
+      "context": "OD-2 states the bootstrap boundary, prohibits successor self-authorization, and preserves prior judgments’ meanings.",
+      "excerpts": [
+        {
+          "source": "/home/julius/.claude/projects/-home-julius-structure-and-semantics/675829c7-7203-41d3-bd67-bac8986a472b.jsonl",
+          "session_id": "675829c7-7203-41d3-bd67-bac8986a472b",
+          "line": 372,
+          "byte_offset": 1081429,
+          "timestamp": "2026-09-04T14:20:43.484Z",
+          "record_sha256": "6cb8483b1d0933d33169f855f077fda9ea7542b03760b3ed0fd35ec5e71c766f",
+          "start": 896,
+          "end": 1827,
+          "text_sha256": "0032cce4b348dcc51dcd6ae7a06ba0aabe1366602db841e75b58271e2226596e",
+          "quote_sha256": "59f171d12512587ce0de752e5078dd9db6795f14736c7e3c7e08fbc4f39d2176"
+        }
+      ]
+    },
+    {
+      "title": "Truth, owner authority, and generated material",
+      "context": "The closing question about Isabelle and adequacy remains a question, not a revocation of the bootstrap role.",
+      "excerpts": [
+        {
+          "source": "/home/julius/.claude/projects/-home-julius-structure-and-semantics/1b03843e-20e7-4ece-834d-7f3461878792.jsonl",
+          "session_id": "1b03843e-20e7-4ece-834d-7f3461878792",
+          "line": 485,
+          "byte_offset": 2413260,
+          "timestamp": "2026-09-17T16:47:23.840Z",
+          "record_sha256": "86d7a52c5fa97565f070988b08ff8cf5fd0f68bc5245bb45821a6582c3a3e53b",
+          "start": 0,
+          "end": 384,
+          "text_sha256": "6f6979383e21f815f8592c0da46a909424bd0399c656ddcacd1ea6e703a1b2aa",
+          "quote_sha256": "6f6979383e21f815f8592c0da46a909424bd0399c656ddcacd1ea6e703a1b2aa"
+        }
+      ]
+    },
+    {
+      "title": "Adequacy has a revisable current basis",
+      "context": "The distinct adequacy correction is retained; the local-contract point is already in the Codex selection.",
+      "excerpts": [
+        {
+          "source": "/home/julius/.claude/projects/-home-julius-structure-and-semantics/1b03843e-20e7-4ece-834d-7f3461878792.jsonl",
+          "session_id": "1b03843e-20e7-4ece-834d-7f3461878792",
+          "line": 445,
+          "byte_offset": 2259678,
+          "timestamp": "2026-09-17T16:33:56.104Z",
+          "record_sha256": "ba76df3d4ae56586c02a053d09212ec99ba9ba012cdb32e9d3b748c7ed528c1b",
+          "start": 241,
+          "end": 671,
+          "text_sha256": "3515923cbbcca24fea3baf2d4fe9393c639d7931306578ebe1d6a4a934be5669",
+          "quote_sha256": "f228ff40d0cfab295a36cb01836e4aa0512b5f1a04ff487d20e2c7a15d2c0414"
+        }
+      ]
+    },
+    {
+      "title": "The native process controls development; agents are replaceable tools",
+      "context": "This fuller later formulation replaces repetitions of the controller-inversion requirement.",
+      "excerpts": [
+        {
+          "source": "/home/julius/.claude/projects/-home-julius-structure-and-semantics/b4e19bfd-f639-4b34-b60f-0ab7ea87bbb3.jsonl",
+          "session_id": "b4e19bfd-f639-4b34-b60f-0ab7ea87bbb3",
+          "line": 1666,
+          "byte_offset": 6035007,
+          "timestamp": "2026-09-17T14:05:57.460Z",
+          "record_sha256": "107d0d3fd91e625a1518c3d856810cd494ed33eade928a8679a6e7bc5fef0aa9",
+          "start": 0,
+          "end": 1007,
+          "text_sha256": "d31aaf6574b47447c714dfef2cafb511ed7c8993bd534b0ee9e24f67438c4d43",
+          "quote_sha256": "d31aaf6574b47447c714dfef2cafb511ed7c8993bd534b0ee9e24f67438c4d43"
+        }
+      ]
+    },
+    {
+      "title": "Reuse existing admission machinery",
+      "context": "This responds to treating decision as a new notion. It is not evidence that every present implementation gap is resolved.",
+      "excerpts": [
+        {
+          "source": "/home/julius/.claude/projects/-home-julius-structure-and-semantics/b4e19bfd-f639-4b34-b60f-0ab7ea87bbb3.jsonl",
+          "session_id": "b4e19bfd-f639-4b34-b60f-0ab7ea87bbb3",
+          "line": 1693,
+          "byte_offset": 6150242,
+          "timestamp": "2026-09-17T14:14:27.539Z",
+          "record_sha256": "8222d6d9b4ae1ab8f51f8d1488c185344959ceb925a886d67dce43ba49bf1973",
+          "start": 0,
+          "end": 131,
+          "text_sha256": "0bc2a045c8de08b93b02ed91d587c480dc1a708b0336b77830f66d600e32ec33",
+          "quote_sha256": "0bc2a045c8de08b93b02ed91d587c480dc1a708b0336b77830f66d600e32ec33"
+        }
+      ]
+    },
+    {
+      "title": "Give executors narrow tasks through meaningful depth",
+      "context": "The every-problem rule is already in the Codex selection; this adds executor task granularity.",
+      "excerpts": [
+        {
+          "source": "/home/julius/.claude/projects/-home-julius-structure-and-semantics/b4e19bfd-f639-4b34-b60f-0ab7ea87bbb3.jsonl",
+          "session_id": "b4e19bfd-f639-4b34-b60f-0ab7ea87bbb3",
+          "line": 1790,
+          "byte_offset": 6557003,
+          "timestamp": "2026-09-17T14:45:27.499Z",
+          "record_sha256": "0e3c8537099933f188ac1a06eaa0dbd0b5b30008f859719180d052c5a7d89385",
+          "start": 409,
+          "end": 542,
+          "text_sha256": "bd8bc6d19f02fdbd9dfad72899ee1c7d3ecd60c1dac777c3ae6f31bfd591a99c",
+          "quote_sha256": "d6635e9f103c2b8c1b36ae1c951368bd6f892505d8afe2de6e97637c8d0c86c6"
+        }
+      ]
+    },
+    {
+      "title": "Review meaning rather than surface form",
+      "context": "One representative replaces repeated commit-review requests.",
+      "excerpts": [
+        {
+          "source": "/home/julius/.claude/projects/-home-julius-structure-and-semantics/675829c7-7203-41d3-bd67-bac8986a472b.jsonl",
+          "session_id": "675829c7-7203-41d3-bd67-bac8986a472b",
+          "line": 1272,
+          "byte_offset": 3486695,
+          "timestamp": "2026-09-11T17:02:54.506Z",
+          "record_sha256": "cf24cc1a7afe9595949d6eff9e209d8352d6648746f0c3284af66227a919c96f",
+          "start": 114,
+          "end": 243,
+          "text_sha256": "6ad8f5b79122a3fb2ba402098ec7d690a763c431415c69475617b1c628334db2",
+          "quote_sha256": "411ec5e04936ac81065af7b9b99c62bdbb07a3cf25db5de082a4fec9fd317b0d"
+        }
+      ]
+    },
+    {
+      "title": "Keep the resolution open",
+      "context": "A proposed review prompt prescribed a remedy. The owner asks that finding the resolution itself remain part of the problem.",
+      "excerpts": [
+        {
+          "source": "/home/julius/.claude/projects/-home-julius-structure-and-semantics/675829c7-7203-41d3-bd67-bac8986a472b.jsonl",
+          "session_id": "675829c7-7203-41d3-bd67-bac8986a472b",
+          "line": 1855,
+          "byte_offset": 4621466,
+          "timestamp": "2026-09-12T12:04:12.220Z",
+          "record_sha256": "959d13b0b0694b68df25d12283f987b1c57a9e062f7edd7592700fdbc3d65658",
+          "start": 0,
+          "end": 135,
+          "text_sha256": "7f4a20dac3dbf0e2099f62a2a19cf27ae7610cf25b4b6f62f06856dfd59943ea",
+          "quote_sha256": "7f4a20dac3dbf0e2099f62a2a19cf27ae7610cf25b4b6f62f06856dfd59943ea"
+        }
+      ]
+    },
+    {
+      "title": "Retain reproducibility without generated bulk",
+      "context": "This question occurs within a proposed agent prompt; it does not endorse every claim in the quoted draft.",
+      "excerpts": [
+        {
+          "source": "/home/julius/.claude/projects/-home-julius-structure-and-semantics/675829c7-7203-41d3-bd67-bac8986a472b.jsonl",
+          "session_id": "675829c7-7203-41d3-bd67-bac8986a472b",
+          "line": 1844,
+          "byte_offset": 4603471,
+          "timestamp": "2026-09-12T12:01:34.306Z",
+          "record_sha256": "99708ae7e27811ab8cf8e8851ab4c0dfa81af2de1e8daa55e06f2c8f5dff8a92",
+          "start": 1192,
+          "end": 1330,
+          "text_sha256": "88581d3ebad1e08f4a0f20562343cf9bee5f7edc8a9d811f84a5c316c683e073",
+          "quote_sha256": "35116e8fdb26de0cb279848a0a52df804f49a95f1d5a6978f4992e477ed7add0"
+        }
+      ]
+    },
+    {
+      "title": "Preserve order when it belongs to the notion",
+      "context": "In discussing disregarding order, the owner makes the intrinsic notion the deciding criterion.",
+      "excerpts": [
+        {
+          "source": "/home/julius/.claude/projects/-home-julius-structure-and-semantics/30c4d4f0-aed2-4636-9a6b-ff8c01b105ee.jsonl",
+          "session_id": "30c4d4f0-aed2-4636-9a6b-ff8c01b105ee",
+          "line": 4350,
+          "byte_offset": 10428083,
+          "timestamp": "2026-09-16T18:54:35.899Z",
+          "record_sha256": "667e889d223d0e2e593a1afffc7f6a3cdf47608c5b52cc6b8f25fc845a5d1a9e",
+          "start": 0,
+          "end": 157,
+          "text_sha256": "226bb9efbb1af17ddcc2a586f317b45884b43922fbddb47c675f328884d44fe8",
+          "quote_sha256": "226bb9efbb1af17ddcc2a586f317b45884b43922fbddb47c675f328884d44fe8"
+        }
+      ]
+    },
+    {
+      "title": "Keep development execution practical",
+      "context": "The lasting tool-use rule replaces near-duplicate goal prompts. The separate cycle target concerns the entire validation/commit process.",
+      "excerpts": [
+        {
+          "source": "/home/julius/.claude/projects/-home-julius-structure-and-semantics/30c4d4f0-aed2-4636-9a6b-ff8c01b105ee.jsonl",
+          "session_id": "30c4d4f0-aed2-4636-9a6b-ff8c01b105ee",
+          "line": 3152,
+          "byte_offset": 7435720,
+          "timestamp": "2026-09-16T17:54:47.118Z",
+          "record_sha256": "c5599274f5bd488958a84b08daaffd70e663876a2a96624cc61006f2f6397309",
+          "start": 193,
+          "end": 251,
+          "text_sha256": "13d51363be012ad7b072b800f514a62714034e553585ae9a8fdc06b87a547dfd",
+          "quote_sha256": "02a01dbb85ed0e293ebee4976fd205483b8569c43d9d271b2e5865c925e67a16"
+        },
+        {
+          "source": "/home/julius/.claude/projects/-home-julius-structure-and-semantics/ee5a042b-a0ac-4bea-bd04-c63d6e213243.jsonl",
+          "session_id": "ee5a042b-a0ac-4bea-bd04-c63d6e213243",
+          "line": 8,
+          "byte_offset": 4336,
+          "timestamp": "2026-09-18T10:45:48.110Z",
+          "record_sha256": "c5107e67bdfe3c58d4873d2b435d5a9ae22dbb9e7df80bfe9405a46762b26b00",
+          "start": 913,
+          "end": 1728,
+          "text_sha256": "a8a8e131bb1f47a57f0c8e951149a79a12636021c3b301317eb5eaea77ddee91",
+          "quote_sha256": "a3a30e74e0b176436c53bee03389f8b342e985dca1eb84ab13161ca9f9a4da6a"
+        }
+      ]
+    },
+    {
+      "title": "Proceed provisionally, record the choice, and ask",
+      "context": "This later direction supersedes the earlier blanket instruction to stop when a preference is undetermined. Provisional inference does not become owner authority.",
+      "excerpts": [
+        {
+          "source": "/home/julius/.claude/projects/-home-julius-structure-and-semantics/9e401968-d7f3-4aed-ab80-fd7151749129.jsonl",
+          "session_id": "9e401968-d7f3-4aed-ab80-fd7151749129",
+          "line": 441,
+          "byte_offset": 4169980,
+          "timestamp": "2026-09-18T13:42:59.583Z",
+          "record_sha256": "dfbd72c211a2b8ec126e8388630eb4584902bbdfb5f392bfe9cf04fecd394b39",
+          "start": 0,
+          "end": 175,
+          "text_sha256": "9ac314c41cb82164fec0b9898c162a0bd526445116acd2cc601f0bc7a2fcfd3f",
+          "quote_sha256": "9ac314c41cb82164fec0b9898c162a0bd526445116acd2cc601f0bc7a2fcfd3f"
+        }
+      ]
+    }
+  ],
+  "header": [
+    "# Owner directions from Claude sessions",
+    "",
+    "Blockquotes are verbatim excerpts, including original spelling. Titles and context notes are editorial. Questions remain questions; historical criticism does not assert that a defect persists. Newer owner directions take precedence. Historical requests do not authorize new commits, pushes, or process changes.",
+    "Session IDs and transcript line numbers appear below.",
+    ""
+  ],
+  "reviewed_through": "2026-09-18T20:12:42Z"
+}

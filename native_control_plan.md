@@ -964,3 +964,139 @@ loop (condition 5a), the library holding derived decomposition rules, owner-auth
 extension (stage 4), agent isolation, the native record of generated residual choices, and the
 remaining stage-1 gate items (provenance and locality of theory changes). Every choice made in this
 work outside the process remains a residual.
+
+## Answers framed where they are adopted; the state reads declared code equations — 2026-09-18
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Frame an answer above the theory that defines the requested state, and check it again in a smaller context when it is adopted. | An answer to a refinement-layer request is framed where it is adopted: its theory imports exactly the imports of the layer's boundary `Native_Execution_Refinements`, the request state is defined beside it from the boundary, and the verification imports both. The theory Isabelle accepts is the theory adoption installs, so there is one acceptance, not a second one in another context. The answer's theory is named by the answer's canonical content; that is a transport choice (unique and stable across replays), recorded as a residual, not a correspondence. |
+| The code equations in effect are read through `Code.get_cert` in the theory's global context. | `get_cert` preprocesses every declared equation with the simpset of the context it is given; under the global context that is every simplification rule, so every exported state presented simp-normalized equations — neither the declared ones nor the code generator's preprocessed ones. A control answer stating `map (\<lambda>y. y) xs` was read as the incumbent. The reading (now owned by `Isabelle_Constant_Closure`, shared by the exporter and every answer frame) is under an empty simpset: the entity kind is the declared, certified code equations. Declared rather than preprocessed is a choice about the subject of every refinement verdict and support check, recorded as a residual with this reason; the states, and every word that presents them, changed once and were re-recorded as re-evaluations. |
+| Adoption: carry an accepted answer into its layer, words unchanged, cost ranked, successor equal to the adopted state. | `tools/development_adoption.py` judges the retained answer again (its verdict word must be the retained one: nothing it read has moved, which is the transaction's comparison of the expected incumbent), installs the judged theory byte for byte at the boundary, runs the ordinary check (every word equal), and judges the answer once more in the adopted workspace, where it is part of the published state and must be an unchanged answer; a refused step withdraws. Measured recipe seconds are retained beside the retained ones as observations. Not established: a native selection record into a published development state (no persistent native history exists to append it to), ranking by measured cost (no internal account of a physical measurement; for a real adoption the decision is answer versus incumbent, an unmet requirement), adoption of seeded-state answers, and real development consumed through the loop (5a): the exercised adoption is a control. An answer's frame imports every earlier adoption, which orders independent adoptions and makes superseding one invalidate the later ones; a frame should import exactly the adoptions its request context depends on. |
+
+Evidence: the control `demanded-reformulated` restates `ordered_member_tree` through `map (\<lambda>y. y)`;
+judged, it removes the incumbent equation and adds its own (accepted). Adopted in an isolated copy of the
+working tree ([receipt](validation/development-adoptions/Development_Answer_5aba3385cee9.json)): the
+precondition held, the judged theory was installed at the boundary, 150 theories were proved again
+(166 s), 48 recipes executed with every word equal to its retained word and 3 were reused, the answer
+was then judged in the adopted workspace as an accepted unchanged answer, and the adoption was withdrawn.
+The measured recipe seconds sit beside the retained ones (certified causes 30.9 against 26.5 seconds,
+the rest within a few percent) and decide nothing. A complete source proof of all 1,757 theories took
+524 seconds and reset the base to one level; the reading's correction then changed no exported module,
+so every recipe was reused.
+
+## A refinement's contract is its constant — 2026-09-18
+
+The first on-demand request for a subject with more than one code equation was refused before
+any answer existed: `finite_data_walk` (a `fun` with equations for `0` and `Suc n`) had no
+problem, because its contract was the single demanded statement and two distinct statements
+counted as ambiguity. The execution corrected the notion rather than the subject.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| A refinement's contract is the single demanded statement; several distinct statements are refused as ambiguity. | The request table fixes a refinement by its constant ("Equality to an existing constant"), and an answer establishes new equations of that constant; it never establishes the statements it replaces. The contract is the constant as the state declares it (declared once, and stated by at least one demanded statement), and the incumbent is the whole family of demanded statements, read from the request's own least context and never chosen among. The problem's identity no longer changes when an adopted answer replaces its incumbent, so "answered" is relative to the incumbent it was answered against, which is the recorded-reading account the persistent history still has to hold. Storing the family in the contract instead was rejected: it repeats what the context holds and makes every adoption pose a new problem. |
+| The packet presents the demanded statement; the deterministic executor restates it. | The packet presents the refined constant with its type, and the incumbent equations are the code-equation items of its context; the deterministic executor restates the single incumbent equation. An answer states exactly one equation, so an incumbent of several equations has no restating answer: a limit of the answer frame, recorded, not yet lifted. |
+
+| The code equations in effect are the declared equations certified alone, under an empty simpset. | Certification alone silently read nothing for a constant whose declared equations only certify after the code generator's function transformers (`finite_data_walk`'s `Suc` patterns under `Code_Target_Nat`): the state presented it with no executable content and no problem. The code graph's certificate is complete but not local (it carries the sorts demanded by the constant's callees, so a callee's change would alter a caller's presented equation, against the verdict and request currency). The reading now takes the declared equations in effect from `Code.get_cert`'s own hook, the list every function transformer receives, transforms nothing and only unoverloads as certification does: local to the constant and exactly as declared. A separate dependency reading of what the generated code calls (preprocessing included) is still open. |
+
+The choice of this contract notion and of the equation reading were made outside a native
+question and are residuals with the reasons above. The words of the seed recipe's problems, loop, verification and succession reports
+and the verdict words of the retained answers changed once and are re-recorded as re-evaluations.
+
+## The declared-equation reading on the base; the first real answer reuses existing indexes — 2026-09-18
+
+The reading of the previous section had never been checked: its check was stopped unfinished. Its
+proof (519 rebuilt theories, 233 s) was accepted, every recipe but the seed recipe was reused, and
+all ten seed words changed. A probe on the new proof found every structural observation of the seed
+unchanged (80 entities of the same kinds, ten problems with one incumbent code equation each, the
+same control observations), so the words changed because the presented equation terms changed from
+the certified to the declared form; they were re-recorded, the new proof became the base, and the
+confirming check was accepted. The seven retained answers whose words changed kept their outcomes
+and were re-recorded; the deterministic executor answers the regenerated packet exactly as before.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Index the walk's rows with a new grouping (`grouped_rows`: an ordered tree from a key to the list of its rows). | An index is an existing notion before it is a new one. Every reader of the complete data walk is a relation keyed by an address (incidence rows by their head, functional and counted attachments by their atom), and `Binary_Relation_Stores` already holds such a relation under the address's binary path (`RRA_Binary_Use_Paths`), as `RRA_Indexed_Artifact_Lookup` does for uses; the carrier is read through `Ordered_Member_Trees`. The walk reads counted attachments only for their absence at an address, so set buckets suffice and no multiplicity-preserving index is needed. The answer introduces the walk stated over its readers and its indexed instance, and no index notion. |
+| An answer's introduced constants are the constants its theory declares. | An abbreviation declares no logical constant, yet the exporter's `define_again` read one as introduced and refused the answer ("Not a logical constant"). The answer now states the readers explicitly; the exporter is to collect logical constants only. |
+
+The answer (`validation/development-answers/indexed-data-walk.json`) was refused for its six
+introduced constants, repaired over the extension that defines them and accepted there, so it is
+adoptable through the repaired request. On the seed's own data syntax the indexed walk returns the
+scan walk's result for 1 to 32 entities, and costs 0.116 against 5.9 seconds at 8,817 carrier
+addresses and 4.2 seconds at 124,981, where the scan was stopped. The criticism retained with it: the
+walk is stated a second time over readers because a refinement answer may only add definitions and one
+equation, and replacing the original definition by the reader instance is a definition request the
+process does not issue yet; the answer was written by an unisolated agent from the packet; choosing
+this constant, and not a seeded root, remains a residual (owner question Q2 in the ledger).
+
+The answer was adopted through the repaired request
+([receipt](validation/development-adoptions/Development_Answer_0ccf746fe2cf.json)): the retained word
+was reproduced, the judged theory was installed at the boundary, the check proved 150 theories again
+and executed the 11 recipes the change reaches with every word equal (40 reused), and the published
+state judged the answer unchanged. The next check made that workspace the base (154 theories, 11
+recipes equal, together with the exporter's reading of logical constants only). The adopted walk is
+consumed where the finished process reads recorded causes back: on the seed's entities as
+whole-artifact targets, reading a certified base cause takes 0.14, 0.19, 0.31 and 0.55 seconds at
+1, 2, 4 and 8 entities (cause artifacts of 6,657 to 19,789 carrier addresses), against 1.1, 1.6, 3.6
+and 9.7 seconds before, so the quadratic growth is gone; the recipes that read causes back ran in
+10.9 against 26.5 seconds (certified causes) and 27.7 against 44.7 seconds (digit replay) under
+the check's load. These are observations for condition 5a, retained with the receipt; no ranking is
+derived from them. The adoption itself is still a host tool: the selection of the answer into a
+published development state had no native record.
+
+## Publication is a transaction against the published state — 2026-09-18
+
+Stage 2's gate asks that an admitted answer be selected into a published successor. The development's
+"generation" had been a tuple of problem, context, payload and verdict, and adoption was a host tool
+that installed bytes after comparing a retained word. Both are now instances of the library's own
+notions.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| An accepted verdict is recorded as a generation (a tuple), and adopting it installs the answer. | Development generations are the library's generations: finite generations whose locus, payload and cause are exact targets (the complete data quotations of their presentations) and whose predecessors are generations. Admission records an answer in the history; selection is a separate transaction into the published snapshot, executed on finite generations and proved to be `RRA_Transaction`'s transaction on the decoded cores (`RRA_Finite_Transactions`, `finite_transact_exact`). |
+| A problem is identified by its subject positions, origin and authority. | A locus is where at most one selection stands: the problem's contract presented with the names it uses, independent of origin and authority, so every problem about one constant stands at one locus. The presentation of a value with its names is invariant under every correspondence of tables (`development_local_contract_renamed`, `isabelle_local_entities_renamed`), so a locus reads the same from every state that holds its names. |
+| Adoption's precondition is that the retained verdict word is unchanged. | The publishing transaction expects the incumbent generation the answer was judged against: if the locus still holds it, the answer replaces exactly that locus and every other selection stays (`development_publication_applied`); if the locus has moved, the result is the complete observed comparison and no successor (`development_publication_conflict`). Both are the structural replacement theorems carried through the exactness theorem, not proved again. The host's word comparison remains the physical precondition of installing bytes. |
+
+Evidence: the seed recipe's publication report. The published state starts from ten incumbents (base
+generations whose payload is the incumbent family and whose recorded cause is its acceptance by the
+checked context). For every issued request the unchanged answer, published over its incumbent,
+applies; the answer with the reversed table, admitted against the same incumbent, then conflicts
+because the locus holds the first answer; the two answers present equal payloads; publishing all
+ten unchanged answers in turn applies every transaction, since each writes only its own locus.
+
+Not established: the recorded causes (acceptance, verdict) are not yet certified under the first
+loop's policy (the certified-policy-cause route through the required history is measured and now
+fast, but not joined); an answer's predecessors hold only the incumbent, not base generations of the
+other entities of its request context; the refinement layer's published state is not represented
+natively, so the host adoption of the indexed walk has no native transaction record yet; and this
+construction was chosen outside the process, a residual like the others.
+
+## A package is read where its roots demand; quotations grow with their depth — 2026-09-19
+
+Certifying an admitted answer's cause under the first loop's policy reads the policy back, and the
+policy holds the payload as a literal target. That read had been measured to grow with roughly the cube
+of the payload (0.001, 0.007, 0.042 and 0.310 seconds at payloads of 101, 201, 401 and 801 addresses).
+Two causes were attributed on small samples before anything changed, and the first is fixed.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| A package is read by reading a definition at every position of its environment and keeping the ones its roots reach. | Reading a definition at a site no root reaches is not part of reading the package. `Finite_Demanded_Closures` states a rooted reading both ways, over a universe of sites and as a frontier traversal that reads each site once after a root has demanded it, and proves them equal under the reading's own boundary: every site with a row lies in the universe (`finite_demanded_readings_exact`). `Factor_Demanded_Package_Readings` supplies that boundary from the definition grammar (a definition is read from a record at its use, so its root is a position of the environment) and makes the traversal the code of the package's sites and definition graph, with environment formation checked once. |
+| The remaining cost of reading a policy is carried by the fsets of readings that contain the payload. | A probe of the same read with the payload built two ways settles it. The executable complete data quotation (`finite_data_syntax`) addresses each child of a pair by prefixing its addresses, so in a data list the addresses of the k-th element have length about k: at 3,201 addresses their total length is 1,281,600, and every sort, comparison and formation check of the payload pays it. The same quotation with compact addresses (a node counter written in base-256 digits) has total length 6,146; formation falls from 0.055 to 0.002 seconds, the ground policy from 0.203 to 0.008 and reading the policy back from 0.741 to 0.036. At a real seed payload's size (11,601 addresses) the compact read takes 0.217 seconds against 10.4. A complete data quotation admits every injective formed readdressing (`complete_data_quotation_every_addressing`), so the compact construction is another member of the same class, not a new notion. |
+
+Evidence for the first correction: reading a one-target ground source back fell from 0.310 to 0.041
+seconds at a payload of 801 addresses and from 14.1 to 10.4 at 11,601; constructing the policy fell from
+28.3 to 2.3 seconds. The repository check that advanced the base to `.build/check-20260918z` proved the
+152 dependent theories again in 194 seconds and re-executed 33 recipes with every report word equal (18
+reused; 168 tool and 35 kernel tests). Recipes that read native packages ran faster than their retained
+runs: the native workflow 36.5 to 14.1 seconds, steering 35.8 to 18.3, source development 38.2 to 21.3
+and the seed recipe 75.8 to 36.6. Digit replay and the history family ran slower inside the check (digit
+replay 27.2 to 44.8), but alone on the same export they are faster than retained (18.7 and 9.0 against
+27.2 and 14.4 seconds for digit replay and known history): the check's eight concurrent recipe jobs, not
+the traversal, made the difference.
+
+Next, before the certified cause itself: the executable quotation becomes the compact member of the
+class, with its readdressing proved from the existing push laws, and every report word that presents a
+quotation is re-recorded as a re-evaluation of its presentation. The same prefix addressing makes the
+native compiler's syntax quadratic in a term's depth (the measured quadratic compile of native
+installation); that is the next instance of the same correction. The choice of both fixes, like the
+certified-cause route they serve, was made outside the process and is a residual.
+

@@ -1,56 +1,407 @@
-# Handoff — the native loop verifies, repairs, admits and issues; adoption open
+# Handoff — compact data quotations next, then certified development causes
 
-Checkpoint: 2026-09-18, second session of the day. Read [AGENTS.md](AGENTS.md) and
+## impl-8 session (2026-09-19) — impl-7's batch validated and committed; next batch designed and measured
+
+- Owner direction (ledger, memory `commit-push-at-milestones`): at each validated milestone commit in the
+  existing style and push to origin. The milestone commit after check z holds every batch since d0b70ea.
+- impl-7's demanded package reading is validated: probe `.build/probe-impl8-a` (both theories, every proof,
+  4.2 s); `incremental_check.py check --advance-base --output .build/check-20260918z` ACCEPTED (152 theories,
+  194 s proof; 33 recipes re-executed, every word equal; 18 reused; 168 tool + 35 kernel tests), retained.
+  ACTIVE BASE: `.build/check-20260918z/proof` (lineage z -> x -> w -> u -> s -> p -> complete-20260918n;
+  reset with a complete proof when its cost shows). THEORY_MAP rows added for Finite_Demanded_Closures,
+  Factor_Demanded_Package_Readings and the missing Development_Answer_0ccf746fe2cf; REASONING_REUSE and plan
+  sections written ("A package is read where its roots demand; quotations grow with their depth").
+- Check comparison (recipes vs retained): faster native-workflow 36.5->14.1, native-steering 35.8->18.3,
+  source-development 38.2->21.3, seed 75.8->36.6; slower in the check digit-replay 27.2->44.8 and the history
+  family +8..9 s, but ALONE on the same export (`.build/impl8/alone-*`) digit-replay 18.7 s and known-history
+  9.0 s, both faster than retained: load, not the traversal.
+- ROOT CAUSE of the remaining certified-cause cost, measured (probe `.build/probe-impl8-d`, theory parked in
+  `.build/impl8/Probe_Impl8_Compact.thy`): `finite_data_syntax` addresses a pair's children by prefixing
+  (`finite_pair_syntax` = Cons 2 / Cons 3), so addresses in a data list have length ~ their depth; at 3,201
+  addresses the total address length is 1,281,600 (compact: 6,146). Compact counter addresses (base-256 digits
+  of a node counter, same incidence shape): formed 0.055->0.002 s, ground source 0.203->0.008, policy read
+  0.741->0.036; at 11,601 addresses the compact read is 0.217 s vs 10.4 s. The probe's `compact_rows`/`base256`
+  are the construction to prove.
+- NEXT BATCH (B1, designed): make the executable complete data quotation compact. Consumers use only
+  `finite_data_syntax_domain` and `finite_data_syntax_complete_quotation` (root []): Factor_Finite_Judgment_Quotation,
+  Factor_Constructed_Judgment_Sources, Finite_Requirement_Artifact_Admission (plus definitional uses in
+  Development_Publication, Factor_Certified_Cause_Assessment, Factor_Digit_Replay_Variants, Factor_Known_Cause_Reports,
+  Factor_Prepared_Cause_Scope_Reports, Factor_Certified_Cause_Variants). Plan: an address `compact_address k`
+  (injective, octets, `compact_address 0 = []` so the root stays []), a node count and an address map
+  `data_syntax_address n t` defined by the same recursion as `term_syntax`; prove it injective and formed on
+  the carrier of `term_syntax t` (children get disjoint counter intervals) and prove the compact rows decode to
+  `push_object (data_syntax_address 0 t) (term_syntax t)` from `push_structure_composes`/`_cong` and
+  `push_basis_composes`/`_cong`; then `complete_data_quoted_at` holds with f = that map. Redefine
+  `finite_data_syntax` as the compact construction (its contract `decode = push f (term_syntax t)` replaces
+  `decode = term_syntax t`), replace `Factor_Finite_Accumulated_Data_Syntax`'s code equation, re-prove the two
+  consumer contracts. Every word presenting a quotation changes (seed publication, causes of digit replay,
+  histories, certified/required causes, literal replay?, requirement artifacts): re-record them as
+  re-evaluations of the presentation after checking a sample's structural observations are unchanged.
+  Then B2 = certified development causes (impl-6's design below) over the compact payload target.
+- Scratch: `.build/impl8/` (probe theories and solo recipe runs), probes `.build/probe-impl8-*`. Nothing runs.
+
+
+## impl-7 session (2026-09-18 night) — its batch was validated and committed by impl-8
+
+The owner said "Ok write the handoff and stop" while the last probe was running. State below is exact.
+
+- WHAT THIS BATCH DOES (impl-6's parked blocker fix, now written and almost verified): a native package
+  read a definition at EVERY position of the environment (`finite_native_definition_rows` over
+  `finite_environment_positions`), so reading one package cost the material beside it — the cause impl-6
+  measured behind the superlinear cause read-back. Two new theories replace that by a frontier traversal:
+  - `theories/Finite_Demanded_Closures.thy` (generic, reusable): `finite_site_rows`, `finite_row_successors`,
+    `finite_row_edges`, `finite_rooted_sites` (the universe formulation), `finite_demanded_step` /
+    `finite_demanded_readings` (while_option over (visited,frontier,rows)) and
+    `finite_demanded_readings_exact`: under the premise "every site with a row lies in the universe" the
+    traversal returns exactly the rooted sites and the rows there. Also `finite_edge_closure_empty`.
+  - `theories/Factor_Demanded_Package_Readings.thy` (instance): `finite_definition_site_reading(_formed)`,
+    `finite_definition_dependencies`, the premise proved from the existing definition grammar
+    (`finite_definition_reading_position`, via `native_definition_position`), the two rewritings
+    (`..._edges_row_edges`, `..._rows_at_sites`), `finite_demanded_definition_readings(_formed)` and the two
+    code equations for `finite_native_definition_sites` / `finite_native_definition_graph`, guarded by one
+    environment-formation check (the guard is otherwise paid at every site read).
+    `Factor_Recovered_Graph_Sharing.finite_native_definition_graph_shared_code` and
+    `finite_native_definition_sites_def` are `code del`-ed here.
+  - `ROOT` (both theories, after `Factor_Recovered_Graph_Sharing`) and
+    `theories/Native_Execution_Refinements.thy` (imports `Factor_Demanded_Package_Readings`) are updated.
+- STATE OF VERIFICATION: the two theories loaded with every proof checked (probe `.build/probe-impl7-a`,
+  4.2 s, `loaded: true`) BEFORE the last two edits. The last probe run failed only at
+  `finite_native_definition_graph_unformed` (`ffilter P {||} = {||}` not reduced); the same failure one
+  lemma earlier was fixed by `auto simp: ... fset_eq_iff ffilter.rep_eq bot_fset.rep_eq sup_fset.rep_eq`
+  and that fix is now applied to the graph lemma too but NOT YET PROBED. Next command (≈50 s):
+  `python3 -B tools/probe_theories.py --work .build/probe-impl7-g --theory Finite_Demanded_Closures
+   --theory Factor_Demanded_Package_Readings --parallel-proofs 0 --timeout 240`
+  Then THEORY_MAP.md rows are still missing (add rows for both theories and
+  `Factor_Demanded_Package_Readings` to the `Native_Execution_Refinements` import list), then the full
+  `incremental_check.py check --output .build/check-20260918z` (expect ~150 theories rebuilt and EVERY
+  recipe re-executed because the exported module changes; every report word must stay equal — that is the
+  validation of this batch), then `--advance-base` and `retain`.
+- MEASURED (probes `.build/probe-impl7-b/-c/-d/-e`, synthetic payload = data list of n elements, carrier
+  4n+1; old numbers from impl-6's `.build/impl6/probe-scaling.log`):
+  - `finite_native_source` of a one-target ground source: 0.310 s -> 0.041 s at carrier 801; 14.1 s -> 10.4 s
+    at carrier 11,601 (the size of a real seed payload). Construction (`finite_ground_source`) 28.3 -> 2.3 s.
+  - The environment-size factor is gone; what remains grows with the PAYLOAD artifact alone.
+  - Attribution of the remainder (probe `-c`/`-e`, carrier 3,201, 4 artifacts of 9/19/26/3,201 addresses):
+    the two definition sites sit in artifacts of 26 and 19 addresses, yet one site reading costs 0.24 s —
+    about 5x the whole-artifact formation check (0.048 s) — and grows 4x per doubling. So the cost is in
+    carrying the literal target's whole artifact through the reading fsets (deep structural comparison in
+    every fset union/dedup over readings that contain `Finite_Whole R`), not in the sites read.
+    `..._readings_formed` saves only ~18% over the guarded reading. NEXT CAUSE TO FIX, if the process
+    selects it: readings compared by an ordered key (`Ordered_Artifact_Comparison`, `Keyed_Finite_Sets`,
+    `Complete_Value_References`) instead of by whole artifacts — or, per impl-6's design, a cause that
+    quotes one data term rather than a whole-artifact target.
+- Scratch parked outside `theories/`: `.build/impl7-probe-cost1.thy`, `-cost2.thy`, `-cost3.thy` (the cost
+  probes; copy back into `theories/` only while probing). Probe dirs `.build/probe-impl7-a..f` can be
+  removed. No job is running. ACTIVE BASE unchanged: `.build/check-20260918x/proof`.
+- NOT STARTED (impl-6's designed next batch, unchanged): certify development causes under the first loop's
+  policy (`development_policy_source_with`, the family policy over one quoted target, the certified
+  generation route through `finite_prepare_required_history` / `finite_native_program_proofs` /
+  `finite_certificate_replay` / `finite_required_history_attempt`), predecessors as the request-context
+  generation, then the adoption's native transaction. Its criticism and the open owner questions Q1/Q2 are
+  in impl-6's section below and in `.claude/orchestration/owner-ledger.md`.
+
+## impl-6 session (2026-09-18 night) — in progress, nothing committed
+
+- impl-5's publication batch is on the base: the seed recipe run on check x's export reproduced all ten
+  earlier words and gave the new `presentation-publication` word (stage 20.5 s), recorded in
+  `validation/reconstruction/native-development-seed-reports.json`; `.build/check-20260918x/proof` was
+  adopted; `.build/check-20260918y` (no rebuild, seed recipe 19.7 s, 50 reused, 168+35 tests) accepted and
+  retained. ACTIVE BASE: `.build/check-20260918x/proof` (lineage x -> w -> u -> s -> p -> complete-20260918n).
+  Removed: check v, probes impl3-b/impl4-a/b/impl5-a/b/c. impl-2's probe stays in `.build/impl3-scratch/`.
+- Cost observed: the seed recipe went 7.5 s -> 19.7 s wall because the publication stage alone takes ~20 s
+  (others ~5-8 s). Attributed (probe below): one publication row 0.86 s, one transaction 0.40 s, the word
+  2.1 s for 153,177,377 bits (~19 MB; generation targets are whole artifacts, so the report word presents
+  every artifact's rows — a presentation to reconsider: the targets are complete data quotations, so their
+  data terms are the smaller member of the same presentation class).
+- NEXT BATCH (designed, nothing written yet): certify development causes under the first loop's policy
+  (HANDOFF item 1), predecessors as the request-context generation, then the adoption's native transaction.
+  Design decided (record as residuals when written): (a) generalize `Development_Policy` to
+  `development_policy_source_with present xs` (ground source over any injective presentation; the entity
+  policy becomes its instance) — the family policy is that constructor over the ONE item
+  `Finite_Target (Finite_Whole R)`, R = the complete data quotation of the family presented with its names
+  (`isabelle_local_entities`), guarded by `set es ⊆ set (snd C)` (the checked context accepted them), so a
+  cause quotes one target instead of the whole state (the n×|policy| growth kb A1 flagged); (b) a certified
+  generation = ground source -> `finite_prepare_required_history` -> `finite_native_program_proofs` ->
+  `finite_certificate_replay` -> `finite_required_history_attempt` (record + `finite_certified_policy_cause`),
+  i.e. impl-2's route with the material shared per request, predecessors as rows; (c) the answer generation's
+  predecessors = {incumbent generation, request-context generation (payload = the request's least context
+  presented with its names)}.
+- BLOCKER MEASURED FIRST (probe `.build/impl6/Probe_Publication_Cost.thy`, log `.build/impl6/probe-scaling.log`):
+  certifying ONE cause for a seed payload took policy construction 28.3 s, policy read 14.1 s, proofs 14.7 s
+  (payload artifact 11,589 carrier addresses). Scaling on synthetic payloads (carrier 101/201/401/801):
+  formation 0.000/0.000/0.001/0.002 s and ground-source installation 0.000/0.001/0.003/0.008 s are linear,
+  but reading the installed program back (`finite_native_source`) is 0.001/0.007/0.042/0.310 s and
+  `finite_prepare_required_history` 0.003/0.014/0.088/0.618 s — about x7 per doubling (~cubic).
+  CAUSE FOUND: `Factor_Executable_Packages.finite_native_definition_rows` reads a definition at EVERY
+  position of the environment (`finite_environment_positions E`), so every address of a literal target
+  artifact is probed, each probe scanning that artifact; `finite_proof_node_rows` (recovered graphs) does the
+  same. The package only needs the sites reachable from its roots.
+  FIX (designed, next implementer): a generic theory `Finite_Demanded_Closures` — `finite_site_rows`,
+  `finite_row_edges`, `finite_rooted_sites` (the present all-positions formulation) and a frontier traversal
+  `finite_demanded_step`/`finite_demanded_readings` (while_option over (visited,frontier,rows), reading each
+  demanded site once), with `finite_demanded_readings_exact` proving it returns exactly the rooted sites and
+  the rows at them. Invariant: S∩T={}, S∪T ⊆ sites, roots ⊆ S∪T, S closed under Edges into S∪T, A = rows at S;
+  measure `2*fcard((U∪roots)-S) + (if T={||} then 0 else 1)` with `measure_while_option_Some`; leastness of
+  `finite_rooted_sites` by `trancl_induct` (`finite_edge_closure_correct`, and `|∈|` is set membership in
+  `fset`). Then code equations for `finite_native_definition_sites`/`_graph`/`finite_native_package_readings`
+  (replacing `Factor_Recovered_Graph_Sharing.finite_native_definition_graph_shared_code`, which must be
+  `code del`-ed) and, if the replay stays slow, the same for `finite_recovered_graph` (its edges are
+  (child,parent), so roots={|root|} with successors = the children of a read node). New theory goes into
+  `Native_Execution_Refinements`' imports; every recipe re-executes (words must be equal).
+
+- State at rotation: no job running; nothing committed; workspace clean of probes (the probe theory is parked
+  in `.build/impl6/`, not in `theories/`). Uncommitted edits are impl-5's batch plus this session's
+  `validation/reconstruction/native-development-seed-reports.json` (publication word) and HANDOFF.md.
+- Criticism of the parked design (base terms): the family policy lists only the payload's family, so the
+  rule that admits is the fixed constructor plus Isabelle's acceptance of the checked context, not the ground
+  listing (owner question Q1); the alternative (a policy listing every unit of the state) is the same rule at
+  n×|policy| cost, so the choice rests on cost, which has no internal account (Q2) — record it as a residual
+  with that reason. Certification is acceptance entering native admission; the verdict stays the recorded
+  admission evidence of the history, not a native predicate.
+
+## impl-5 session (2026-09-18 night) — superseded by impl-6 above, nothing committed
+
+- impl-4's open items are done: the walk adoption receipt is retained as
+  `validation/development-adoptions/Development_Answer_0ccf746fe2cf.json` (READMEs of development-adoptions and
+  development-answers describe it and the control `demanded-reformulated`); the exporter reads logical constants
+  only (`define_again` in `Isabelle_Entity_Export`); `.build/check-20260918w --advance-base` was accepted (154
+  theories, 197.7 s proof, 11 recipes equal, 168+35 tests) and retained. ACTIVE BASE: `.build/check-20260918w/proof`.
+- 5a evidence measured (probe `.build/probe-impl5-a`, impl-2's `Probe_Entity_Targets`, removed from theories/):
+  certified base cause read-back 0.14/0.19/0.31/0.55 s at 1/2/4/8 entities, was 1.1/1.6/3.6/9.7 s. Recorded in the
+  plan section "The declared-equation reading on the base; ...".
+- NEW, probed (all proofs checked on base w, `.build/probe-impl5-c`): `RRA_Finite_Transactions`,
+  `Development_Publication`, `Development_Seed_Publication`; execution: 10 incumbents, all 10 first publications
+  applied, all 10 second publications conflict, payloads equal, sequential publication applies all 10. ROOT,
+  THEORY_MAP, `Native_Development_Seed` (imports/exports `development_seed_publication_value`), the recipe stage
+  `presentation-publication` in `tools/reconstruct_native_development_seed.py` (with boundary text), the plan
+  section "Publication is a transaction against the published state" and the REASONING_REUSE section are written.
+- FINISHED at rotation (proof accepted: 4 theories rebuilt, 31.4 s; only `native-development-seed` failed, as
+  expected for the new stage — verify the other stage words are unchanged before recording): `incremental_check.py check --advance-base --output .build/check-20260918x` (log
+  `.build/check-20260918x.out`). Expected: proof accepted, seed recipe FAILS only for the new stage (no expected
+  word) — possibly also old stages if exports changed (they should not). Then: copy
+  `report_boundaries['presentation-publication']` from `.build/check-20260918x/recipes/native-development-seed/reconstruction.json`
+  into `validation/reconstruction/native-development-seed-reports.json` (`reports` dict), `incremental_check.py
+  adopt --proof .build/check-20260918x/proof`, run `check --output .build/check-20260918y` (no rebuild), then
+  `incremental_check.py retain --output .build/check-20260918y`. If a proof fails, fix at the reported line.
+- Cleanup after that: remove `.build/check-20260918v`, `.build/probe-impl4-a`, `.build/probe-impl4-b`,
+  `.build/probe-impl5-a/b/c`, `.build/probe-impl3-b` (keep lineage p, s, u, w, x and complete-20260918n).
+- NEXT batch: (1) certify development causes under the first loop's policy (impl-2's route:
+  `finite_construct_source_requirements` over the ground source of entity targets, `finite_native_program_proofs`,
+  `finite_certificate_replay`, `finite_required_history_step`; its read-back is now fast); (2) predecessors as base
+  generations of the request context's entities; (3) the refinement layer's published state natively, so
+  `tools/development_adoption.py` records the native transaction of an adoption.
+- Criticism of this batch (base terms): admission (verdict + policy) and selection (transaction into the
+  snapshot) are kept apart; history keeps every admitted answer while the snapshot selects one per locus; the
+  locus is the problem's contract, not its payload; publication expects exactly what was read at the locus.
+  Open in it: causes are recorded judgments (acceptance, verdict) not yet certified under the policy (L2: impl-2's
+  route through `finite_required_history_step`); predecessors hold only the incumbent, not base generations of the
+  other context entities; the refinement layer's published state is not native yet, so the host adoption tool
+  still installs without a native transaction record; the choice of this batch was made outside the process.
+
+## impl-4 session (2026-09-18 night) — superseded by impl-5 above, nothing committed
+
+- Facts impl-3 could not record (from the maintenance session; impl-3 was stopped at 18:59 local by the
+  owner's "stop everything"): check-20260918t was killed unfinished (no result); after its last handoff
+  write impl-3 added `--rerecord` to `tools/replay_development_answers.py` and changed the
+  REASONING_REUSE.md code-equation row to "read exactly as declared". The knowledge base `kb` no longer
+  exists; `.claude/orchestration/state/qa.log` is history only.
+- The declared-equation reading is validated: `Isabelle_Entities` text now says "exactly as declared";
+  `.build/check-20260918u --advance-base` proved 519 rebuilt theories (233 s) and failed only on the ten
+  seed words, as expected. A probe on that proof (`.build/probe-impl4-a`) showed every structural seed
+  observation unchanged (104 names; 18 base, 10 development, 32 frontier constants, 10 definitions, 10
+  code equations, all Pure equalities; 10 problems, one incumbent equation each, none unstated; without
+  Pure.eq 20 malformed and 70 unreached, without HOL.eq nothing; 2 ungrouped candidates), so only the
+  presented equation terms changed. The seed words were re-recorded from u's reconstruction, the seed
+  recipe's boundary text now states the contract as the declared constant with its incumbent family, u was
+  adopted as the base, and `.build/check-20260918v` (no rebuild, seed recipe 7.49 s, 50 reused, 168 tool
+  and 35 kernel tests) was accepted and retained. Active base: `.build/check-20260918u/proof` (parent s ->
+  p -> complete-20260918n).
+- Owner ledger: Q1 (bootstrap admission rule vs OD-2), Q2 (authority of the first loop's problems and a
+  cost criterion), Q3 (what Isabelle establishes about adequacy) recorded with provisional choices.
+- Retained answers re-recorded on base u (`replay_development_answers.py --rerecord`): all outcomes equal to
+  HEAD, only words changed; `deterministic.json` packet/executor digests updated (the regenerated packet gives
+  the identical executor answer).
+- FIRST REAL ADOPTION DONE: the walk answer was revised to reuse `Binary_Relation_Stores` +
+  `address_binary_path` and `Ordered_Member_Trees` (no new index notion; scratch
+  `.build/impl4-scratch/Probe_Indexed_Walk2.thy`, answer `.build/impl4/walk-answer.json`), judged
+  (`validation/development-answers/indexed-data-walk.json`: refused for 6 introduced constants, repaired,
+  extension accepted) and adopted by `tools/development_adoption.py` (receipt
+  `.build/impl4/walk-adoption/receipt.json`: status adopted, check accepted 205 s, 150 theories rebuilt,
+  11 recipes executed with equal words, 40 reused). The workspace now holds
+  `theories/Development_Answer_0ccf746fe2cf.thy`, imported by `Native_Execution_Refinements` (and in ROOT).
+  Probe: indexed walk 0.116 s vs scan 5.9 s at 8,817 addresses; 4.2 s at 124,981.
+- NOT YET DONE (next, in order): (1) copy the adoption receipt to `validation/development-adoptions/`
+  (name by theory) and add README entries there and in `validation/development-answers/README.md`;
+  (2) apply the parked exporter fix `.build/impl4/exporter-abbreviations.txt` to
+  `theories/Isabelle_Entity_Export.thy` (define_again collects logical constants only);
+  (3) `incremental_check.py check --advance-base --output .build/check-20260918w` then `retain`;
+  (4) measure the cause read-back after adoption with impl-2's probe
+  (`.build/impl3-scratch/Probe_Entity_Targets.thy`, copy into theories/ only while probing; earlier
+  1.1/1.6/3.6/9.7 s at 1/2/4/8 entities) as the 5a "consumed by later work" evidence; (5) add the adoption
+  results to the plan section "The declared-equation reading on the base; ..." (already appended, lacks the
+  adoption outcome) and to REASONING_REUSE (rows appended).
+- Designed, not started: `RRA_Finite_Transactions` — an executable finite layer of RRA_Transaction
+  (finite_snapshot = finite_generation fset, decode_finite_snapshot, finite_snapshot_formed via fcard of
+  loci, finite_snapshot_lookup via finite_singleton_option, finite_transaction record, finite_transact
+  returning Finite_Applied/Finite_Conflict, exactness against `transact`), then development publication as
+  an advancement (`Factor_Continuation.factor_advances`: transact + continuation permission) with loci =
+  problem presentations, payload = answer entities, cause = verdict; history separate from the snapshot.
+- Owner said (ledger): never wait in the foreground; waiters only with run_in_background.
+
+Checkpoint: 2026-09-18, third session of the day (impl-1 under the kb orchestration; questions and
+answers in `.claude/orchestration/state/qa.log`). Read [AGENTS.md](AGENTS.md) and
 [DEVELOPMENT_WORKFLOW.md](DEVELOPMENT_WORKFLOW.md) first. The owner's current goal is implementing
-[native_control_plan.md](native_control_plan.md) (the plan is broad structure, not source of truth);
-its last three sections record what this session established and what is open. Do not drift into
+[native_control_plan.md](native_control_plan.md) (broad structure, not source of truth); its last four
+dated sections record what the recent sessions established and what is open. Do not drift into
 optimizing validation fixtures: the owner stopped that twice; work on plan items directly.
 
-## State at this checkpoint
+## State at this checkpoint (uncommitted batch on top of d0b70ea)
 
-Everything below is committed and validated by the repository check `.build/check-20260918m`
-(accepted, heapless, 41 s: every recipe word as recorded, 165 tool tests and 35 kernel tests). The
-active base (`/tmp/structural-active-context.json`) is `.build/check-20260918k/proof`, a chain of
-nine levels back to `.build/overnight-20260918/proof`; stop advancing it on routine checks and reset
-it with a complete proof when the chain's cost shows.
+- Base: a complete source proof `.build/complete-20260918n` (1,757 theories, 524 s) was adopted, then
+  advanced once by `.build/check-20260918p/proof` (stored heap; 511 theories rebuilt for the reading
+  fix); the active pointer names `.build/check-20260918p/proof`. `.build/check-20260918p` is retained
+  (all 51 recipes reused, 168 tool and 35 kernel tests). `.build/check-20260918q` validated the final
+  texts of this batch (accepted: 68 theories rebuilt in 164 s, 50 recipes unchanged, 1 reused, 168 tool and
+  35 kernel tests) and is retained. No job is running. The batch is complete and uncommitted (commit only
+  on the owner's word). Older `.build/check-*`
+  directories back to `overnight-20260918` are superseded; remove them once nothing refers to them.
+- Theories changed: `Isabelle_Constant_Closure` owns `code_equation_theorems` (read under an EMPTY
+  simpset — the global context had rewritten every declared code equation by all simp rules) and
+  `note_code_equations`; `Isabelle_Entity_Export` uses it; `Isabelle_Entities` presents a rooted state
+  once (`isabelle_rooted_context_data`), reused by `Development_Successor` and
+  `Native_Control_Syntax_Statements` (`Native_Control_Quotation_Construction` unfolds it); texts say the
+  code-equation entity kind means declared, certified equations (a residual choice with its reason).
+- Tools: `tools/development_answer.py` names an answer's theory by its canonical content, frames a
+  refinement-layer answer at its adoption position (the boundary's imports), judges an adopted answer as
+  the published state's unchanged answer, and `--retain PATH` writes the retained record;
+  `tools/development_adoption.py --record R --output DIR [--control]` adopts (precondition, install,
+  check, re-judgment, receipt; withdraws on refusal or for a control). Tests in
+  `tools/test_development_answer.py`.
+- Evidence: `validation/development-answers/demanded-reformulated.json` (control with a different
+  equation, accepted), `introduced-helper.json` re-recorded (its helper is now named under the answer's
+  theory), the other five replay unchanged; `validation/development-adoptions/` holds the control's
+  adoption receipt (run in an isolated copy, withdrawn).
+- Plan, REASONING_REUSE, THEORY_MAP, the answer and adoption READMEs are updated.
 
-- Native questions settle through ordered keys (`Keyed_Native_Evaluation` over the source-shared
-  workflow equations; `Ordered_Member_Trees` is the one member index): a decision over sixteen
-  candidates fell from 7.2 to 4.8 s. What remains is attributed: the scope-review stage settles a
-  product demand of 14,289 calls for 4,765 settled ones; nothing else is large.
-- The verifier: `Isabelle_State_Difference` (two states through the names they share),
-  `Development_Refinement_Verification` (verdict and local contract), `Development_Refinement_Repair`
-  (a refused answer's extension, revised request, definition problems, conservativity verdict).
-- The loop: `Development_Decomposition` (library rules apart from prerequisites; issuing only
-  leaves; broad requests refused), `Development_Successor` (admission as a generation under the first
-  loop's policy, whose converse `development_policy_admits_member` is now proved; successor with
-  transported readiness; history of selection, issue, answer and repair records; concurrent
-  admission of independent answers; re-evaluation of absence readings), `Development_Request_Packets`
-  (the executor's packet as the exporter's inverse reading).
-- The seed recipe presents the verification controls and the recorded selection, issuing (empty
-  library and a cyclic control library), re-evaluation and succession.
-- Tools: `tools/development_answer.py packet --state S --subject C --output DIR` presents a request's
-  packet; `... answer --answer FILE --output DIR` judges an answer (states `development_seed` and
-  `refinement_layer`, the latter deriving a request on demand for any constant of the refinement
-  layer); `tools/development_executor.py` answers from a packet alone;
-  `tools/replay_development_answers.py --output DIR` reconstructs every retained answer. Seven
-  answers are retained in [validation/development-answers](validation/development-answers/README.md).
+## impl-3 session (2026-09-18 evening) — in progress, nothing committed
+
+- The walk packet failed (`exception Match` at `the (development_named_request ...)`): `finite_data_walk` has
+  two code equations and the contract was the single demanded statement, so no problem existed. kb Q1/A1
+  (qa.log): contract = the constant as the state declares it; incumbent = the demanded family in the least
+  context. Implemented: `isabelle_declaration_term` (Isabelle_Entities), `development_refinement_declarations`
+  and the new contract (Development_Refinement_Contracts; `_contract_constant`, `_contract_unstated` replace
+  `_contract_statement`, `_refuses_ambiguity`), request fields lemma (incumbent family in the context),
+  packet field `constant`, seed axiom control states the incumbent equations, executor restates the single
+  incumbent. Plan section "A refinement's contract is its constant", REASONING_REUSE and THEORY_MAP rows.
+  Residual: the contract notion was chosen outside a native question. Limit recorded: one-equation frame.
+- Indexed walk proved (scratch `.build/impl3-scratch/Probe_Indexed_Walk.thy`, moved out of theories/; probe
+  `.build/probe-impl3-a` loaded): identical results for 1..80 seed entities; old walk 4.27 s vs indexed
+  0.12 s at 8,817 carrier addresses (old: 0.017/0.018/0.024/0.034/0.069/4.27 s at 541..8,817). Reuse answer
+  to kb A2: `Binary_Relation_Stores` keeps no multiplicity (fset buckets) and needs binary path keys, so the
+  counted bag slice would stay a scan; `grouped_rows` groups rows under any linear key with multiplicity;
+  the carrier uses `Ordered_Member_Trees`. Answer prepared: `.build/impl3/walk-answer.json` (definitions =
+  the scratch sections 1-3; equation `finite_data_walk n C r=indexed_data_walk C n r`).
+- `tools/development_adoption.py` adopts a repaired answer (route `repaired request`: summary.repaired and
+  summary.extension) besides an accepted one.
+- Contract batch validated: check-20260918r failed only on the seed words expected to change (problems,
+  problems-answered, loop, succession; verification unchanged), re-recorded in
+  `validation/reconstruction/native-development-seed-reports.json`; `check-20260918s --advance-base`
+  accepted (68 theories, 175.6 s proof) and retained; active base = `.build/check-20260918s/proof`
+  (parent check-20260918p -> complete-20260918n). Superseded checks, overnight dir and their heaps removed.
+- The walk packet still failed: the demanded state held NO code equation of `finite_data_walk` (impl-1's
+  reading `get_cert ctxt []` cannot certify Suc-pattern equations without the generator's function
+  transformers; the silent `[]` hid it). kb Q2/A2: graph certificate rejected (not local: carries callees'
+  sort demands). Implemented: `Isabelle_Constant_Closure.code_equation_theorems` = declared equations
+  captured through `Code.get_cert`'s transformer hook (receiver returns NONE), unoverloaded; probe
+  (`.build/impl3-scratch/Probe_Code_Reading.thy`): finite_data_walk 2 equations, 11/13 compared constants
+  differ in form from the certified reading (HOL = vs Pure ==), notable as theorems in a local theory.
+  Plan row added. TODO once the check is done: Isabelle_Entities text still says "declared and certified"
+  (lines ~10-13) -> "as declared"; kb A2 open items: dependency reading from the code graph, Abstr/Proj specs.
+- Running: `.build/check-20260918t` (reading change; ~500 dependents of Isabelle_Constant_Closure). Expect
+  seed recipe words to change everywhere -> re-record the seed reports from its reconstruction.json (all
+  stages), then `check --advance-base` (fresh dir), then `incremental_check.py retain`.
+- Retained answers: replay on base s showed 7 of 8 words differ (failed-proof reconstructs); re-record all
+  after the reading change is on the base: per record extract `answer`, run `development_answer.py answer
+  --answer A --output DIR --retain validation/development-answers/NAME.json`; deterministic.json also keeps
+  executor/packet digests (regenerate its packet: `development_answer.py packet --state development_seed
+  --subject Factor_Digit_Replay_Methods.digit_replay_inspect`, run tools/development_executor.py, compare).
+- Then: packet for finite_data_walk (two incumbent equations now), judge `.build/impl3/walk-answer.json`
+  with `--retain validation/development-answers/indexed-data-walk.json` (expect refused for introduced
+  constants, repaired + extension accepted), adopt with tools/development_adoption.py (real, not control),
+  retain costs (certified causes before/after, 21.3-30.9 s). kb A1/A2 criticisms still to answer in the
+  record: depth (definition requests), ranking by measured cost (no internal account).
+
+## impl-2 session (2026-09-18 evening) — parked, nothing committed, nothing adopted
+
+Measured (probe on the base heap, `theories/Probe_Entity_Targets.thy`, scratch, not in ROOT): seed entities
+as whole-artifact literal targets (`Finite_Target (Finite_Whole (finite data syntax of isabelle_entity_data e))`),
+policy = `finite_construct_source_requirements` over `finite_ground_source` of the targets, certificates by
+`finite_native_program_proofs`, replay by `finite_certificate_replays`, record by `finite_required_history_step`.
+Every stage is milliseconds EXCEPT reading the cause back: `finite_certified_base_cause` and the alignment fBex
+over `finite_generation_judgment_readings` take 1.1/1.6/3.6/9.7 s at 1/2/4/8 entities, cause artifacts of
+6,657/8,377/12,393/19,789 carrier addresses (quadratic). Cause: the complete data walk
+(`finite_data_walk`, Factor_Complete_Data_Walks) scans all incidence rows (`finite_headed_incidence`), all
+bindings/bag (`finite_payload_values`, `finite_basis_slice`) and the carrier per node.
+
+In progress (task 1): an indexed walk, `theories/Probe_Indexed_Walk.thy` (scratch, not in ROOT): walk
+parameterized by readers (`data_walk_read` heads/slice/member), `data_walk_read_artifact` = `finite_data_walk`,
+readers indexed once (`grouped_rows` RBT by head / by address, `ordered_member_tree` for the carrier),
+`indexed_data_walk_exact`. Last probe: 4 proofs still fail (leaf_values_read_artifact needs
+`finite_payload_leaf_body_def` unfolded under ffilter (use ffilter_cong/fset_eqI); `filter_mset_eq_empty_iff`
+does not exist (use `filter_mset_eq_conv`/multiset_eq_iff or `filter_mset_empty_conv`);
+artifact_head_index_exact and artifact_slice_index_exact need `force`/explicit image rewriting);
+first timing: carrier 541, new walk 0.005 s. Rerun with
+`python3 -B tools/probe_theories.py --work .build/probe-impl2-b --theory Probe_Indexed_Walk --timeout 380`.
+Decision (provisional, a residual; kb Q2/A2 in qa.log): refine `Factor_Complete_Data_Walks.finite_data_walk`
+(NOT the seed root `finite_complete_data_readings_prepared`) through the loop: its declaration stays on the
+seed's frontier, so the seed state and seed words do not change, avoiding the seeded-state adoption case (kb
+A2.4, still open). Route: packet (running at start of rotation: `.build/impl2/walk-packet`, log
+`.build/impl2/walk-packet.out`; `development_answer.py packet --state refinement_layer --subject
+Factor_Complete_Data_Walks.finite_data_walk`) -> answer written from the packet (retain packet + answer;
+unisolated executor = residual) with equation `finite_data_walk n C r=indexed_data_walk C n r` and the helpers
+as introduced constants -> `development_answer.py answer --retain` -> repair (introduced helpers) ->
+EXTEND `tools/development_adoption.py` to adopt a repaired answer (today it asserts summary.accepted, the first
+verdict) -> adopt -> measure before/after on the same samples and on certified-causes (21.3 s), retain as
+observations. kb A2 criticism to answer: earlier "index" candidates were rejected
+(validation/reconstruction/decision-replay-cost-measurements.json) — confirm this is new evidence; reuse
+Binary_Relation_Stores/Keyed_Finite_Sets instead of a new grouping if they fit; depth (three leaves: index
+with lookup contract, indexed walk = finite_data_walk, the equation) and definition requests are open.
+Then task 2: seed units as RRA base generations under the seed policy (kb A1): unit = (entity kind, subject
+names) family, locus by names (isabelle_name_data), payload = self-contained presentation (local name table);
+acceptance made presentation-parametric (no duplicate); re-sample the n*|policy| growth (each cause quotes the
+whole ground policy) as its own machinery problem. Verdict as a second requirement goal (kb A1.3) is a candidate.
+OWNER QUESTION (provisional choice, proceed without waiting, ask via kb): a policy built from each answer's own
+checked context conflicts with OD-2 ("No successor may justify its own adoption under rules introduced only by
+itself"); provisional: during bootstrap the fixed rule is Isabelle acceptance of the checked context + the
+verdict, instantiated per context; after genesis only the amendment/transition chain. Not sent to the owner yet.
+Scratch to remove when done: theories/Probe_Entity_Targets.thy, theories/Probe_Indexed_Walk.thy,
+.build/probe-impl2-a, .build/probe-impl2-b.
 
 ## Next
 
-1. Adoption: carry an accepted answer into its layer as a repository theory, check that every
-   affected report word is unchanged and rank its measured cost; the successor state must then equal
-   the adopted state (the replay of the same answer becomes an unchanged answer).
-2. Derived decomposition in the library: turn a repair's definition problems into prerequisites
-   issued as their own requests (definition requests), instead of answering them with the refused
-   answer's text.
-3. The native record of residual choices (stage 1/5 gate), owner-authorized policy extension
-   (stage 4, needs the owner), agent isolation beyond the deterministic executor (stage 3), and the
-   stage-1 provenance and locality items.
-4. Pitfalls met this session: never wait or kill with a pattern contained in the command's own
-   command line (`pgrep`/`pkill -f`); Isar keywords as labels or variables (`premises`, `context`,
-   `record`, `done`) fail far from the cause; `blast`/`auto` on existential goals can run for minutes
-   in this heap, so give witnesses; keep a check's inputs fixed while it runs.
+1. Development generations as RRA generations (kb A2, qa.log): present problems, entities and verdicts
+   as whole-artifact targets through their injective presentations (Factor_Finite_Term_Encoding,
+   Factor_Finite_Data_Syntax, Factor_Target_Values), so every existing contract applies — certified
+   policy cause, history append (`finite_required_history_append_valid`), one-locus replacement
+   (RRA_Replacement) and publication (RRA_Publication's snapshot/dependency/evidence selections).
+   Predecessors = the generations that established the request context (plan, Verifying step 5); base
+   entities need base generations (Factor_Base_Cause, Factor_Base_Programs). Submit this route and the
+   generic-selection route with their coverage of cause/append/publication as facets. Known cost on the
+   path: native installation's quadratic compile — fix at its cause.
+2. The persistent history: one development state whose roots grow by demand (reuse the repair's
+   extension and `define_again`); the history holds refusals and admitted-unselected answers too;
+   adoption frames import exactly the adoptions their request context depends on (a DAG, not the
+   current chain through the boundary's full imports); any linearization is identification only.
+3. Still open: ranking by measured cost (no internal account of a physical measurement), seeded-state
+   adoption, a real (non-control) adoption consumed by later work (5a), the native residual record,
+   stage 4 policy extension (proceed provisionally under the owner's 2026-09-18 direction, ask via kb),
+   agent isolation, stage-1 provenance and locality (adoption can exercise locality).
+4. Pitfalls: never wait or kill with a pattern contained in the command's own command line; Isar
+   keywords as labels fail far from the cause; `blast`/`auto` on existential goals can run for minutes;
+   keep a check's inputs fixed while it runs; `sleep` in the foreground is blocked — wait on PIDs
+   (`tail --pid`) in one background waiter; three concurrent heavy Isabelle runs reached 59 of 60 GiB —
+   run one check at a time beside at most a few harness sessions; zsh does not word-split `$VAR`
+   (use `bash -c`).
 
 ## Committed work and validation boundary
 

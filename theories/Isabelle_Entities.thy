@@ -7,7 +7,10 @@ section \<open>Checked contexts present development entities\<close>
 text \<open>
   A constant of the fixed Isabelle/HOL base is presented only by its declaration. An
   expanded development constant also brings its kernel definitions, the non-definitional
-  specifications that mention it and the code equations in effect in the checked context.
+  specifications that mention it and the code equations in effect in the checked context. A
+  code equation is presented exactly as it was declared: it is not rewritten by any
+  simplification rule, and it is the output neither of the code generator's function
+  transformers nor of its preprocessor, which a refinement neither states nor answers for.
   A development constant that this state mentions without expanding is declared on its
   frontier, so the state states exactly how far it reaches and extends on demand.
   A context is its name table together with these entities; every name position of an
@@ -77,6 +80,20 @@ lemma isabelle_context_data_injective [intro]: "inj isabelle_context_data"
   by (intro finite_pair_presentation_injective isabelle_names_data_injective
     finite_sequence_presentation_injective isabelle_entity_data_injective)
 
+text \<open>
+  A rooted state is its ordered roots together with the context they reach; it is presented as
+  that pair, so two states with equal presentations have equal roots, tables and entities.
+\<close>
+
+definition isabelle_rooted_context_data :: "isabelle_rooted_context \<Rightarrow> finite_factor_term" where
+  "isabelle_rooted_context_data=finite_pair_presentation (finite_sequence_presentation isabelle_term_data)
+    isabelle_context_data"
+
+lemma isabelle_rooted_context_data_injective [intro]: "inj isabelle_rooted_context_data"
+  unfolding isabelle_rooted_context_data_def
+  by (intro finite_pair_presentation_injective finite_sequence_presentation_injective
+    isabelle_term_data_injective isabelle_context_data_injective)
+
 section \<open>Constants, equations and subjects are read structurally\<close>
 
 fun isabelle_term_constants :: "isabelle_term \<Rightarrow> nat list" where
@@ -127,6 +144,19 @@ fun isabelle_declared_constant :: "isabelle_entity \<Rightarrow> nat option" whe
 | "isabelle_declared_constant (Isabelle_Definition p)=None"
 | "isabelle_declared_constant (Isabelle_Specification p)=None"
 | "isabelle_declared_constant (Isabelle_Code_Equation p)=None"
+
+text \<open>
+  A declaration states its constant as a term of the table carrying the declared type; that term
+  is what a use naming the constant itself, rather than one of its statements, refers to.
+\<close>
+
+fun isabelle_declaration_term :: "isabelle_entity \<Rightarrow> isabelle_term option" where
+  "isabelle_declaration_term (Isabelle_Base_Constant t)=Some t"
+| "isabelle_declaration_term (Isabelle_Development_Constant t)=Some t"
+| "isabelle_declaration_term (Isabelle_Frontier_Constant t)=Some t"
+| "isabelle_declaration_term (Isabelle_Definition p)=None"
+| "isabelle_declaration_term (Isabelle_Specification p)=None"
+| "isabelle_declaration_term (Isabelle_Code_Equation p)=None"
 
 fun isabelle_specified_proposition :: "isabelle_entity \<Rightarrow> isabelle_term option" where
   "isabelle_specified_proposition (Isabelle_Base_Constant t)=None"

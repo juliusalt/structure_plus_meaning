@@ -9,12 +9,12 @@
   }
  },
  "answer_sha256": "1f001831862c08aa862f3ee8698103fe1c2b09178a0a6358bbf78f924d2e7632",
- "base_receipt_sha256": "18dd42dc09e59758f4c488fb0f6b6b12d01ccb332e9552421c272ff546cae23a",
- "harness_sha256": "5fd0a86e050c1982ac2c649ad5472cf29086490b4ec6eec16aec7d5cb99e4f98",
+ "base_receipt_sha256": "58fd74b93e19e92a9c34995fe10e97b38fd31e6961736db881be03531a759163",
+ "harness_sha256": "7901674b130da0a7056fac554582df33e818e8073ea8128309dcf2d4729a3069",
  "status": "judged",
  "steps": {
-  "export": 0,
   "proof": 0,
+  "export": 0,
   "verdict": 0
  },
  "summary": {
@@ -26,16 +26,16 @@
    0,
    1
   ],
-  "definition_problems": 0,
   "excess": [
    "FSet.fimage"
   ],
-  "extension": true,
   "introduced": [],
-  "repaired": true
+  "repaired": true,
+  "extension": true,
+  "definition_problems": 0
  },
  "verdict_word": {
-  "bytes": 66891,
-  "sha256": "afa2cd9c2694b5d47afa2e6dc1bf18ad625a43e9eb71e4ccd79fecb00cb922ae"
+  "bytes": 61475,
+  "sha256": "19b8d5254511ce5c313361bdc1d869049b0966ed085cdfb485bd4a58cc2ad1af"
  }
 }

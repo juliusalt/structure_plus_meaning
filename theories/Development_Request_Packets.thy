@@ -8,15 +8,15 @@ text \<open>
   An executor receives the request and nothing else. The request is a native value over the
   positions of its state's name table; its presentation to an executor reads every position
   back to the name the table holds there and every presented type and term back to the Isabelle
-  type and term the exporter translated, so the executor reads the demanded statement, the
-  issued support and the least context exactly as the checked context states them. The reading
+  type and term the exporter translated, so the executor reads the refined constant, the
+  issued support and the least context, which holds the incumbent equations, exactly as the checked context states them. The reading
   is the inverse of the exporter's translation; it adds no content and chooses nothing. Schematic
   variables and schematic type variables are read as free ones, because an answer states them in
   a lemma.
 \<close>
 
-definition development_packet_statement :: "development_request \<Rightarrow> isabelle_term" where
-  "development_packet_statement r=fst (snd r)"
+definition development_packet_constant :: "development_request \<Rightarrow> isabelle_term" where
+  "development_packet_constant r=fst (snd r)"
 
 definition development_packet_support :: "development_request \<Rightarrow> nat list" where
   "development_packet_support r=sorted_list_of_fset (fst (snd (snd r)))"
@@ -69,14 +69,14 @@ fun declaration ctxt (Const (c, T)) =
       "{\"name\":" ^ json_string c ^ ",\"type\":" ^ json_string (Pretty.pure_string_of (Syntax.pretty_typ ctxt T)) ^ "}"
   | declaration ctxt t = json_string (text ctxt t);
 
-(*The packet of the request a state presents for a subject: the demanded statement, the issued
+(*The packet of the request a state presents for a subject: the refined constant, the issued
   support as declarations of the state, the least context, the facts the answer theory provides
   and the declared form of an answer.*)
 fun packet ctxt {state, subject, context, request} =
   let
     val evaluate = Code_Evaluation.dynamic_value_strict ctxt;
     val names = map HOLogic.dest_literal (HOLogic.dest_list (evaluate (HOLogic.mk_fst context)));
-    val statement = term names (evaluate \<^Const>\<open>development_packet_statement for request\<close>);
+    val constant = term names (evaluate \<^Const>\<open>development_packet_constant for request\<close>);
     val support = map number (HOLogic.dest_list (evaluate \<^Const>\<open>development_packet_support for request\<close>));
     val entities = map (entity names) (HOLogic.dest_list (evaluate \<^Const>\<open>development_packet_context for context request\<close>));
     val declared = map_filter (fn ("declaration", t) => SOME t | _ => NONE) entities;
@@ -86,7 +86,7 @@ fun packet ctxt {state, subject, context, request} =
     val items = filter (fn (kind, _) => kind <> "declaration") entities;
   in
     "{\"request\":{\"state\":" ^ json_string state ^ ",\"subject\":" ^ json_string subject ^ "}," ^
-    "\"statement\":" ^ json_string (text ctxt statement) ^ "," ^
+    "\"constant\":" ^ declaration ctxt constant ^ "," ^
     "\"support\":[" ^ commas (map (declaration ctxt) support_declarations) ^ "]," ^
     "\"context\":[" ^ commas (map (fn (kind, t) => "{\"kind\":" ^ json_string kind ^ ",\"text\":" ^
       json_string (text ctxt t) ^ "}") items) ^ "]," ^

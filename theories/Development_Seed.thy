@@ -9,10 +9,11 @@ text \<open>
   problems it carries and reads them from that one state rather than defining it again.
 
   Each root constant is one refinement problem whose subject is that constant and whose
-  contract is the code equation the state states for it. The scope of a constant and the
-  demand a refinement makes of that scope are both read from the state's own entities, so no
-  author supplies the term an answer must establish, and a constant the state states no
-  single demanded statement for yields no problem and is retained instead.
+  contract is the constant as the state declares it; its incumbent is the family of code
+  equations the state states for it. The scope of a constant and the demand a refinement makes
+  of that scope are both read from the state's own entities, so no author supplies what an
+  answer replaces, and a constant the state states no demanded statement for yields no problem
+  and is retained instead.
 
   Every seeded problem records the residual origin of its subject: identifying these
   constants from the measured candidates is a choice generated outside the native process,
@@ -40,8 +41,8 @@ definition development_seed_dependencies :: development_dependencies where
     Development_Residual Development_Generated development_seed_root_constants"
 
 text \<open>
-  A problem depends on the problems of the other root constants its own demanded statement
-  mentions. That relation is read from the actual statements, so it replaces the grouping of
+  A problem depends on the problems of the other root constants that its own demanded statements
+  mention. That relation is read from the actual statements, so it replaces the grouping of
   roots into measured candidates as the state's dependency structure. Readiness is then the
   existing computation on those actual dependencies.
 

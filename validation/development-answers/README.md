@@ -33,3 +33,28 @@ answer is then a re-evaluation for the process.
 `refinement_layer`): the harness exports the state of `Ordered_Member_Trees.ordered_member_tree`
 alone from `Native_Execution_Refinements`, and the answer restates its code equation. It is accepted,
 and its successor answers the one problem that state poses.
+
+Since 2026-09-18 an answer's theory is named by the answer's canonical content
+(`Development_Answer_<digest>`), and an answer to a refinement-layer request is framed where it would
+be adopted: its theory imports exactly the imports of the layer's boundary, beside the request state,
+so the theory Isabelle accepts is the theory an adoption installs
+([development-adoptions](../development-adoptions/README.md)). The frame's fact
+`development_demanded_code` is read by `Isabelle_Constant_Closure`, the reading the exporter uses.
+A record whose answer introduces a constant presents that constant under its theory's name, so the
+records made under the earlier fixed name `Development_Answer` differ in exactly that name.
+
+`demanded-reformulated.json` is a control on the same refinement-layer request: it states
+`ordered_member_tree` through `map (\<lambda>y. y)`, so the verdict reads the incumbent equation removed and
+its own added, and accepts it. It was adopted and withdrawn in an isolated copy
+([receipt](../development-adoptions/Development_Answer_5aba3385cee9.json)).
+
+`indexed-data-walk.json` is the first real answer: the request for
+`Factor_Complete_Data_Walks.finite_data_walk` (two incumbent code equations) is answered by the complete
+data walk stated over four readers of an artifact and its indexed instance, whose address-keyed readers
+are `Binary_Relation_Stores` under `address_binary_path` and whose carrier is read through
+`Ordered_Member_Trees`. The verdict refuses it for its six introduced constants; the repair extends the
+request state by exactly their declarations and specifications, the extension is conservative, and the
+same answer is accepted against the request issued again. It was adopted through that repaired request
+([receipt](../development-adoptions/Development_Answer_0ccf746fe2cf.json)). The answer was written by an
+agent from the packet without isolation, and choosing this constant rather than a seeded root was made
+outside the process; both are residuals.

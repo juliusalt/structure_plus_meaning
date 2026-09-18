@@ -1,0 +1,26 @@
+{
+  "promptCacheTtl": "1h",
+  "hooks": {
+    "PreCompact": [
+      {
+        "matcher": "auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/orchestration/ctx_gauge.py tripwire base-overflow"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sleep 10"
+          }
+        ]
+      }
+    ]
+  }
+}

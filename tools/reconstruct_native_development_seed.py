@@ -18,6 +18,7 @@ RECIPE = Recipe(
         Execution('presentation-loop', 'check_presented_report.py', ('--project', '{project}', '--theory', 'Native_Development_Seed', '--module', 'Native_Development_Seed', '--report', 'development_seed_loop_value', '--scope', 'development_seed_unanswered', '--workers', '4', '--timeout', '1200'), 1300),
         Execution('presentation-verification', 'check_presented_report.py', ('--project', '{project}', '--theory', 'Native_Development_Seed', '--module', 'Native_Development_Seed', '--report', 'development_seed_verification_value', '--scope', 'development_seed_unanswered', '--workers', '4', '--timeout', '1200'), 1300),
         Execution('presentation-succession', 'check_presented_report.py', ('--project', '{project}', '--theory', 'Native_Development_Seed', '--module', 'Native_Development_Seed', '--report', 'development_seed_succession_value', '--scope', 'development_seed_unanswered', '--workers', '4', '--timeout', '1200'), 1300),
+        Execution('presentation-publication', 'check_presented_report.py', ('--project', '{project}', '--theory', 'Native_Development_Seed', '--module', 'Native_Development_Seed', '--report', 'development_seed_publication_value', '--scope', 'development_seed_unanswered', '--workers', '4', '--timeout', '1200'), 1300),
     ),),
     boundary='The checked context defines the roots of the three paused refinement candidates, the entities '
              'their expansion contributes and the frontier of development constants it does not expand. The '
@@ -39,11 +40,12 @@ RECIPE = Recipe(
              'entities and reads no name. The exporter\'s selection inside the checked '
              'context, the adequacy of these roots to the candidates and every extension of the frontier '
              'remain open. The problem report presents one refinement problem per root constant: its subject '
-             'is that constant and its contract is the code equation the state states for it, selected by the '
+             'is that constant, its contract is the constant as the state declares it, and its incumbent is the '
+             'family of code equations the state states for it, read exactly as declared and selected by the '
              'computed refinement condition on the actual entities rather than supplied. A kernel definition '
              'of the same constant has the same subject reading and is refused, because a refinement does not '
-             'replace a definition; a constant the state states no single equation for yields no problem and '
-             'is retained as unstated. Dependencies are read from those actual statements: a problem depends '
+             'replace a definition; a constant the state declares other than exactly once, or states no code '
+             'equation for, yields no problem and is retained as unstated. Dependencies are read from those actual statements: a problem depends '
              'on the problems of the other root constants its own statement mentions, with the mentioned '
              'constant as the premise slot, so no grouping and no list position enters. A grouping of more '
              'than one constant is retained as an obstruction, because no entity and no term of the state '
@@ -67,7 +69,17 @@ RECIPE = Recipe(
              'report admits, for every request, the unchanged answer and the answer with the reversed table as '
              'generations of the seeded development: each successor carries the answered problem, its generation '
              'and every other problem moved with the correspondence, and computes the readiness of the successor and '
-             'the currency of every request; neither answer changes what a request reads.')
+             'the currency of every request; neither answer changes what a request reads. The publication '
+             'report is the published state of the seeded development: one base generation per problem at the '
+             'problem\'s locus, which is its contract presented with the names it uses, with the incumbent '
+             'equations as payload and their acceptance by the checked context as recorded cause. For every '
+             'issued request the unchanged answer, published by the transaction that expects the incumbent it '
+             'was judged against, replaces exactly that locus; the answer with the reversed table, admitted '
+             'against the same incumbent, conflicts with the complete observed comparison, because the locus '
+             'now holds the first answer; the two answers present equal payloads; and publishing all unchanged '
+             'answers in turn applies every transaction. Transactions are executed on finite generations and '
+             'are proved to be the structural transactions on the decoded cores; whether the recorded causes '
+             'are valid under the first loop\'s policy is not judged by this report.')
 
 
 if __name__ == '__main__':

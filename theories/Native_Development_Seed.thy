@@ -1,5 +1,5 @@
 theory Native_Development_Seed
-  imports Development_Seed_Verification Native_Execution_Refinements
+  imports Development_Seed_Publication Native_Execution_Refinements
 begin
 
 export_code development_seed_report_value development_seed_state development_seed_missing_declaration
@@ -7,6 +7,7 @@ export_code development_seed_report_value development_seed_state development_see
   development_seed_reports_value
   development_seed_problem_value development_seed_unanswered development_seed_answered
   development_seed_loop_value development_seed_verification_value development_seed_succession_value
+  development_seed_publication_value
   finite_term_shared_word_fold
   in Eval module_name Native_Development_Seed file_prefix "native_development_seed"
 

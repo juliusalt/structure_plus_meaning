@@ -29,7 +29,7 @@ lemma isabelle_entity_closed [simp]:
 
 lemma syntax_judgment_data_closed [simp]:
   "self_contained_term (decode_finite_term (syntax_judgment_data s))"
-  by (simp add: syntax_judgment_data_def isabelle_context_data_def finite_pair_presentation_def
+  by (simp add: syntax_judgment_data_def isabelle_rooted_context_data_def isabelle_context_data_def finite_pair_presentation_def
     isabelle_names_data_def isabelle_name_data_def finite_sequence_presentation_def
     finite_data_list_closed data_list_term_self_contained list_all_iff comp_def)
 

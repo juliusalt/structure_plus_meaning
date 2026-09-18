@@ -93,48 +93,66 @@ lemma development_refinement_refuses_specification:
   "\<not>development_refinement_demanded (Isabelle_Specification p)"
   by (simp add: development_refinement_demanded_def)
 
-section \<open>A demanded statement is selected only when the state states exactly one\<close>
+section \<open>The contract of a refinement is its constant; its incumbent is the demanded family\<close>
 
 text \<open>
-  The contract is the state's single demanded statement for the constant, recognized by the
-  existing singleton reading: the same statement presented twice is still one statement, and
-  no position of the entity list decides the contract. A constant the state states more than
-  one distinct statement for, or none, has no contract, and the state retains that absence
-  instead of taking one of them.
+  A refinement is fixed by its constant: an answer establishes new code equations of that
+  constant, and the equations it replaces are what the state already states of it, not a term
+  the answer must establish. The contract is therefore the constant as the state declares it, a
+  term of the state's table with its declared type, and the incumbent is the whole family of
+  demanded statements, read from the scope and never chosen among. The constant is recognized by
+  the existing singleton reading of its declarations, so a repeated declaration is still one and
+  distinct declarations are refused rather than resolved by position. A constant the state
+  declares other than exactly once, or of which it states no demanded statement, has no
+  contract and is retained instead; a constant of several code equations is one problem whose
+  incumbent is that whole family. Because the contract names the constant and not its current
+  equations, the problem keeps its identity when an adopted answer replaces them.
 \<close>
+
+definition development_refinement_declarations :: "isabelle_context \<Rightarrow> nat \<Rightarrow> isabelle_term list" where
+  "development_refinement_declarations C c=List.map_filter
+    (\<lambda>e. if isabelle_declared_constant e=Some c then isabelle_declaration_term e else None) (snd C)"
+
+lemma development_refinement_declarations_member:
+  "t\<in>set (development_refinement_declarations C c) \<longleftrightarrow>
+    (\<exists>e\<in>set (snd C). isabelle_declared_constant e=Some c \<and> isabelle_declaration_term e=Some t)"
+  by (simp only: development_refinement_declarations_def map_filter_member) (auto split: if_splits)
 
 definition development_refinement_contract ::
     "isabelle_context \<Rightarrow> nat \<Rightarrow> development_contract option" where
-  "development_refinement_contract C c=map_option Development_Refinement
-    (list_singleton_option (development_refinement_statements C c))"
+  "development_refinement_contract C c=(if development_refinement_statements C c=[] then None
+    else map_option Development_Refinement (list_singleton_option (development_refinement_declarations C c)))"
 
 theorem development_refinement_contract_exact:
   "development_refinement_contract C c=Some k \<longleftrightarrow>
-    (\<exists>p. k=Development_Refinement p \<and> set (development_refinement_statements C c)={p})"
-  by (auto simp: development_refinement_contract_def list_singleton_option_some
-    split: option.splits)
+    (\<exists>t. k=Development_Refinement t \<and> set (development_refinement_declarations C c)={t} \<and>
+      development_refinement_statements C c\<noteq>[])"
+  by (cases "development_refinement_statements C c=[]")
+    (auto simp: development_refinement_contract_def list_singleton_option_some map_option_eq_Some)
 
-lemma development_refinement_contract_refuses_ambiguity:
-  assumes "\<nexists>p. set (development_refinement_statements C c)={p}"
+lemma development_refinement_contract_unstated:
+  assumes "development_refinement_statements C c=[] \<or>
+    (\<nexists>t. set (development_refinement_declarations C c)={t})"
   shows "development_refinement_contract C c=None"
 proof (rule ccontr)
   assume "development_refinement_contract C c\<noteq>None"
   then obtain k where "development_refinement_contract C c=Some k" by auto
-  then obtain p where "set (development_refinement_statements C c)={p}"
+  then obtain t where "set (development_refinement_declarations C c)={t}"
+    and "development_refinement_statements C c\<noteq>[]"
     by (simp only: development_refinement_contract_exact) auto
   then show False using assms by blast
 qed
 
-corollary development_refinement_contract_statement:
-  assumes "development_refinement_contract C c=Some (Development_Refinement p)"
-  shows "Isabelle_Code_Equation p\<in>set (snd C) \<and>
-    c\<in>set (isabelle_entity_subjects (fst C) (isabelle_development_constants (snd C))
-      (Isabelle_Code_Equation p))"
+corollary development_refinement_contract_constant:
+  assumes "development_refinement_contract C c=Some (Development_Refinement t)"
+  shows "(\<exists>e\<in>set (snd C). isabelle_declared_constant e=Some c \<and> isabelle_declaration_term e=Some t) \<and>
+    development_refinement_statements C c\<noteq>[]"
 proof -
-  have single: "set (development_refinement_statements C c)={p}"
-    using assms by (simp only: development_refinement_contract_exact) auto
-  have "p\<in>set (development_refinement_statements C c)" by (simp only: single) simp
-  then show ?thesis by (simp only: development_refinement_statements_state)
+  have single: "set (development_refinement_declarations C c)={t}"
+    and stated: "development_refinement_statements C c\<noteq>[]"
+    using assms by (simp_all only: development_refinement_contract_exact) auto
+  have "t\<in>set (development_refinement_declarations C c)" by (simp only: single) simp
+  then show ?thesis using stated by (simp only: development_refinement_declarations_member) blast
 qed
 
 section \<open>The selection is the admitted answer of a native question on the actual state\<close>
@@ -144,8 +162,8 @@ text \<open>
   original condition is the computed demand, so the existing filtered question contract
   applies without restating it. Admission establishes the demand at every admitted entity,
   and the admitted entity's proposition is one of the demanded statements. The question
-  admits every entity of the scope satisfying the demand; the contract is obtained only when
-  that is exactly one. Ranging the candidates over the whole entity list instead would
+  admits every entity of the scope satisfying the demand, and the admitted entities are the
+  incumbent family of the problem. Ranging the candidates over the whole entity list instead would
   conflate what the problem is about with what its answer must establish, and would submit
   every entity of the state to a question about one constant.
 \<close>
@@ -187,10 +205,10 @@ qed
 section \<open>Problems and their dependencies are computed from the same state\<close>
 
 text \<open>
-  A refinement problem of a constant carries that constant as its subject and the state's
-  demanded statement as its contract; a constant with no contract yields no problem. The
+  A refinement problem of a constant carries that constant as its subject and the constant as
+  the state declares it as its contract; a constant with no contract yields no problem. The
   origin and authority are supplied by the use, not by this construction. A problem depends
-  on the problems of the other constants of the given scope that its own statement mentions,
+  on the problems of the other constants of the given scope that its own statements mention,
   which is read from the statement rather than from a grouping: the mentioned constant is
   the premise slot, so distinct constants occupy distinct slots and no list order enters.
 \<close>

@@ -107,17 +107,15 @@ lemma syntax_judgment_at_proposition:
   by (auto simp: syntax_judgment_truth_def inj_eq[OF syntax_proposition_injective])
 
 definition syntax_judgment_data :: "syntax_judgment_subject \<Rightarrow> finite_factor_term" where
-  "syntax_judgment_data=finite_pair_presentation
-    (finite_pair_presentation (finite_sequence_presentation isabelle_term_data) isabelle_context_data)
-    isabelle_term_data"
+  "syntax_judgment_data=finite_pair_presentation isabelle_rooted_context_data isabelle_term_data"
 
 lemma syntax_judgment_data_injective: "inj syntax_judgment_data"
   unfolding syntax_judgment_data_def
-  by (intro finite_pair_presentation_injective finite_sequence_presentation_injective
-    isabelle_context_data_injective isabelle_term_data_injective)
+  by (intro finite_pair_presentation_injective isabelle_rooted_context_data_injective
+    isabelle_term_data_injective)
 
 lemma syntax_judgment_data_formed [simp]: "finite_term_formed (syntax_judgment_data s)"
-  by (simp add: syntax_judgment_data_def finite_pair_presentation_def
+  by (simp add: syntax_judgment_data_def isabelle_rooted_context_data_def finite_pair_presentation_def
     isabelle_context_data_def finite_sequence_presentation_def finite_data_list_formed list_all_iff)
 
 text \<open>This local truth predicate concerns exactly the three whole syntax

@@ -10,7 +10,7 @@ text \<open>
   answer. The unchanged state and its reversed table are answers that keep the demanded
   statement; the verdict must accept both, and the second shows that it reads no position.
   Every other control changes what a refinement may not change, or changes the subject's
-  equation outside the support: stating the demanded statement as an axiom, dropping the
+  equation outside the support: stating the subject's equations as axioms, dropping the
   subject's equations, stating the equation through a constant the state does not know,
   changing the equations of the other seeded subjects, and removing the subject's kernel
   definition. Each control is derived from the request and the state, names no position of
@@ -34,7 +34,8 @@ definition development_seed_controls :: "development_request \<Rightarrow> isabe
       fresh=Isabelle_Constant (length names) (Isabelle_Type_Application (length names) []) in
     [development_seed_state,
      development_seed_renamed,
-     (R,(names,es@[Isabelle_Specification s])),
+     (R,(names,es@map (\<lambda>e. Isabelle_Specification (the (isabelle_code_equation_proposition e)))
+       (filter (development_answer_equation C P) es))),
      (R,(names,filter (\<lambda>e. \<not>development_answer_equation C P e) es)),
      (R,(names@[development_absent_name names],
        map (\<lambda>e. if development_answer_equation C P e

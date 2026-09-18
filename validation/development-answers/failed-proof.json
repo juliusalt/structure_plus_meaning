@@ -1,0 +1,19 @@
+{
+ "answer": {
+  "definitions": "",
+  "equation": "digit_replay_inspect (result,reference,causes)=(\\<lambda>f. False)",
+  "proof": "  by simp",
+  "request": {
+   "state": "development_seed",
+   "subject": "Factor_Digit_Replay_Methods.digit_replay_inspect"
+  }
+ },
+ "answer_sha256": "56b3aaf58981be31a0e786a212026677791831f1efb209a173622b18c30badc2",
+ "base_receipt_sha256": "18dd42dc09e59758f4c488fb0f6b6b12d01ccb332e9552421c272ff546cae23a",
+ "harness_sha256": "5fd0a86e050c1982ac2c649ad5472cf29086490b4ec6eec16aec7d5cb99e4f98",
+ "refusal": "The answer or its verification theory was not accepted.",
+ "status": "failed",
+ "steps": {
+  "proof": 1
+ }
+}

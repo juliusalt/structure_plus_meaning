@@ -18,6 +18,7 @@ from pathlib import Path
 import subprocess
 import time
 
+import build
 import execution_support as investigate
 import incremental_check
 import proof_contexts
@@ -81,14 +82,19 @@ def probe(base, work, targets, loaded, substitutions, prelude, parallel_proofs, 
                       + 'val _ = writeln "%s";\n' % marker)
     log = work / 'probe.log'
     options = [] if parallel_proofs is None else ['-o', 'parallel_proofs=%d' % parallel_proofs]
-    command = ['isabelle', 'ML_process', '-d', str(base), '-l', context['session'], *options, '-f', str(script)]
+    directories = [argument for directory in context['directories'] for argument in ('-d', directory)]
+    command = ['isabelle', 'ML_process', *directories, '-l', context['session'], *options, '-f', str(script)]
     started = time.monotonic()
     with log.open('w') as stream:
-        completed = subprocess.run(command, env=incremental_check.ENV, stdout=stream,
-                                   stderr=subprocess.STDOUT, timeout=timeout)
+        try:
+            returncode = build.run_session(command, env=incremental_check.ENV, stdout=stream,
+                                           stderr=subprocess.STDOUT, timeout=timeout)
+        except subprocess.TimeoutExpired:
+            returncode = 'timeout'
+
     text = log.read_text()
     return {'base': str(base), 'session': context['session'], 'seconds': round(time.monotonic() - started, 1),
-            'exit': completed.returncode, 'loaded': marker in text, 'order': order,
+            'exit': returncode, 'loaded': marker in text, 'order': order,
             'parallel_proofs': parallel_proofs,
             'substituted': substitutions, 'prelude': sorted(prelude),
             'from_heap_despite_change': sorted(set(differing) - loaded - set(substitutions)),

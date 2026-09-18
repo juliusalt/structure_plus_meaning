@@ -11,6 +11,7 @@ import time
 import traceback
 import uuid
 
+from build import run_session
 from evidence_io import digest, write_json
 from machine_reports import unique_object
 from materialize_source_boundary import materialize
@@ -50,8 +51,8 @@ def main(argv=None):
         started = time.monotonic()
         with log.open('x') as stream:
             try:
-                code = subprocess.run(list(map(str, command)), cwd=cwd, env=environment,
-                                      stdout=stream, stderr=subprocess.STDOUT, timeout=timeout).returncode
+                code = run_session(list(map(str, command)), cwd=cwd, env=environment,
+                                   stdout=stream, stderr=subprocess.STDOUT, timeout=timeout)
             except subprocess.TimeoutExpired:
                 code = 'timeout'
         result = {'name': name, 'command': list(map(str, command)), 'exit_code': code,

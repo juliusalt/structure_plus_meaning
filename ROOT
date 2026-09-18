@@ -1592,9 +1592,12 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Source_Development_Subjects
     Factor_Workflow_Evidence_Meaning
     Native_Source_Development
+    Ordered_Term_Demands
     Native_Execution_Refinements
     Factor_Development_Execution_Sharing
     Factor_Workflow_Execution_Sharing
+    Keyed_Finite_Sets
+    Keyed_Native_Evaluation
     Factor_Source_Execution_Sharing
     Factor_Steered_Execution_Sharing
     Complete_Term_References
@@ -1605,6 +1608,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Collection_Subset_Execution
     Finite_Filtered_Keyed_Products
     RRA_Linked_Record_Candidates
+    Ordered_Member_Trees
     Ordered_Finite_Rows
     Finite_Investigation_Basis_Sharing
     Factor_Invariant_Evaluation_Sharing
@@ -1684,13 +1688,26 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Isabelle_Constant_Closure
     Isabelle_Terms
     Isabelle_Entities
+    Isabelle_Code_Equations
     Isabelle_Renaming
+    Isabelle_State_Difference
+    Factor_Finite_Ground_Evaluation
     Isabelle_Acceptance
     Isabelle_Entity_Export
     Development_Problems
+    Filtered_Native_Questions
+    Development_Refinement_Contracts
+    Development_Requests
+    Development_Refinement_Verification
+    Development_Refinement_Repair
+    Development_Request_Packets
     Development_Seed
+    Development_Seed_Loop
+    Development_Seed_Verification
     Native_Development_Seed
     Development_Policy
+    Development_Decomposition
+    Development_Successor
     Admitted_Conditional_Applications
     Cached_Faceted_Questions
     Certificate_Construction_Review

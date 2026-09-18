@@ -1,6 +1,6 @@
 theory Factor_Source_Execution_Sharing
   imports Factor_Source_Development_Cycle Factor_Steered_Execution_Sharing
-    Factor_Workflow_Execution_Sharing
+    Keyed_Native_Evaluation
 begin
 
 definition source_development_result_fields where

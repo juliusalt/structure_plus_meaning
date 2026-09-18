@@ -60,4 +60,24 @@ lemma finite_unless_member:
   "x |\<in>| (if P then {||} else A) \<longleftrightarrow> \<not>P \<and> x |\<in>| A"
   by (cases P) auto
 
+section \<open>The product of two finite sets\<close>
+
+context
+  includes fset.lifting
+begin
+
+lift_definition finite_pairs :: "'a fset \<Rightarrow> 'b fset \<Rightarrow> ('a\<times>'b) fset" is "\<lambda>A B. A\<times>B"
+  by simp
+
+end
+
+lemma finite_pairs_member [simp]: "(a,b) |\<in>| finite_pairs A B \<longleftrightarrow> a |\<in>| A \<and> b |\<in>| B"
+  by (simp add: finite_pairs.rep_eq)
+
+text \<open>
+  The product is listed pair by pair from the listings of its factors, so it is formed in time
+  proportional to its size; a union of the images of one factor would compare every new pair
+  with every pair already collected.
+\<close>
+
 end

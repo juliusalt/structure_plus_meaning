@@ -4,7 +4,6 @@ from pathlib import Path
 import tempfile
 import unittest
 from unittest.mock import patch
-from types import SimpleNamespace
 import sys
 
 import execution_support as investigate
@@ -79,7 +78,7 @@ class ProvedCodeTests(unittest.TestCase):
             proved_code.proved_export(self.proof, project=self.root)
 
     def execute(self, name, assess, returncode=0):
-        with patch("proved_code.subprocess.run", return_value=SimpleNamespace(returncode=returncode)):
+        with patch("proved_code.build.run_session", return_value=returncode):
             return proved_code.checked_execution(self.proof, Path(sys.executable), self.root / name,
                 required_theories=["Fixture"], inputs={"value": [1, 2]}, input_paths=[],
                 program=lambda engine, data: "val checked = true;\n", assess=assess,

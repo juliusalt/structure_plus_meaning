@@ -2,40 +2,6 @@ theory Native_Control_Admitted_Selection
   imports Native_Control_Finite_Guard
 begin
 
-section \<open>Reusable consumers retain the original native admission\<close>
-
-definition native_admitted_subjects where
-  "native_admitted_subjects subjects question report=(case question of None \<Rightarrow> None
-    | Some Q \<Rightarrow> map_option (\<lambda>accepted. map (nth subjects)
-      (filter (\<lambda>i. finite_development_index i\<in>set accepted) [0..<length subjects]))
-        (native_development_admission Q report))"
-
-lemma native_admitted_subjects_fields:
-  assumes result: "native_admitted_subjects subjects question report=Some xs" and member: "x\<in>set xs"
-  obtains Q accepted i where "question=Some Q" "native_development_admission Q report=Some accepted"
-    "i<length subjects" "finite_development_index i\<in>set accepted" "x=subjects!i"
-  using result member by (auto simp: native_admitted_subjects_def split: option.splits)
-
-definition native_admitted_choice where
-  "native_admitted_choice subjects question report=(case native_admitted_subjects subjects question report of
-    None \<Rightarrow> None | Some xs \<Rightarrow> list_singleton_option xs)"
-
-lemma native_admitted_choice_fields:
-  assumes chosen: "native_admitted_choice subjects question report=Some x"
-  obtains Q accepted i where "question=Some Q" "native_development_admission Q report=Some accepted"
-    "i<length subjects" "finite_development_index i\<in>set accepted" "x=subjects!i"
-proof -
-  obtain xs where result: "native_admitted_subjects subjects question report=Some xs" and member: "x\<in>set xs"
-    using chosen by (auto simp: native_admitted_choice_def list_singleton_option_some split: option.splits)
-  show thesis by (rule native_admitted_subjects_fields[OF result member]) (rule that; assumption)
-qed
-
-theorem filtered_admitted_choice_condition:
-  assumes chosen: "native_admitted_choice subjects (filtered_development_question subjects condition) report=Some x"
-  shows "condition x"
-  by (rule native_admitted_choice_fields[OF chosen])
-    (use filtered_development_admission in blast)
-
 section \<open>The two previous native decisions gate the actual source request\<close>
 
 definition judgment_artifact_choice where

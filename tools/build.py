@@ -79,22 +79,79 @@ def interruption_signals():
             signal.signal(signum, handler)
 
 
+def process_descendants(pid: int) -> list[int]:
+    """Every live descendant of a process, read from /proc before anything is signalled.
+
+    Isabelle starts Poly/ML through a helper that opens a session of its own, so the
+    process group of the spawned command does not contain it; the tree still does.
+    """
+    found, pending = [], [pid]
+    while pending:
+        parent = pending.pop()
+        try:
+            tasks = os.listdir(f'/proc/{parent}/task')
+        except OSError:
+            continue
+        for task in tasks:
+            try:
+                children = Path(f'/proc/{parent}/task/{task}/children').read_text().split()
+            except OSError:
+                continue
+            for child in map(int, children):
+                if child not in found:
+                    found.append(child)
+                    pending.append(child)
+    return found
+
+
+def signal_tree(pids: list[int], groups: set[int], signum: int) -> None:
+    for group in groups:
+        try:
+            os.killpg(group, signum)
+        except (ProcessLookupError, PermissionError):
+            pass
+    for pid in pids:
+        try:
+            os.kill(pid, signum)
+        except (ProcessLookupError, PermissionError):
+            pass
+
+
 def stop_process(process: subprocess.Popen) -> None:
-    """Stop the whole spawned session, including surviving child processes."""
-    try:
-        os.killpg(process.pid, signal.SIGTERM)
-    except ProcessLookupError:
-        pass
+    """Stop the whole spawned tree, including descendants that opened sessions of their own."""
+    tree = process_descendants(process.pid)
+    members = {process.pid, *tree}
+    groups = {process.pid}
+    for pid in tree:
+        try:
+            group = os.getpgid(pid)
+        except ProcessLookupError:
+            continue
+        if group in members:
+            groups.add(group)
+    signal_tree(tree, groups, signal.SIGTERM)
     try:
         process.wait(timeout=2)
     except subprocess.TimeoutExpired:
         pass
     finally:
-        try:
-            os.killpg(process.pid, signal.SIGKILL)
-        except ProcessLookupError:
-            pass
+        tree += [pid for pid in process_descendants(process.pid) if pid not in members]
+        signal_tree(tree, groups, signal.SIGKILL)
         process.wait()
+
+
+def run_session(command: list[str], *, timeout: float | None = None, **options) -> int:
+    """Run a command as its own session and stop the whole session once it returns.
+
+    A timeout raises subprocess.TimeoutExpired as subprocess.run does, but no process the
+    command started survives it: stopping only the direct child leaves the Isabelle JVM and
+    Poly/ML processes it spawned running with no reader of their result.
+    """
+    process = subprocess.Popen(command, start_new_session=True, **options)
+    try:
+        return process.wait(timeout=timeout)
+    finally:
+        stop_process(process)
 
 
 def run_command(command: list[str], env: dict, log, verbose: bool = False, *, display: bool = True) -> tuple[int, str]:

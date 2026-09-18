@@ -8,6 +8,7 @@ import sys
 import traceback
 import uuid
 
+import build
 import execution_support as investigate
 import native_execution_runtime
 from evidence_io import write_json
@@ -107,10 +108,9 @@ def checked_execution(proof_path, poly, output, *, required_theories, inputs,
         archive_execution_inputs(output, receipt, tracked, external=[poly])
         log_path = output / "results.log"
         with log_path.open("w") as log:
-            result = subprocess.run(command, stdout=log,
-                                    stderr=subprocess.STDOUT, timeout=timeout)
-        receipt["exit_code"] = result.returncode
-        assert result.returncode == 0, "See the retained results.log."
+            returncode = build.run_session(command, stdout=log, stderr=subprocess.STDOUT, timeout=timeout)
+        receipt["exit_code"] = returncode
+        assert returncode == 0, "See the retained results.log."
         assessment = assess(inputs, log_path.read_text())
         stable = execution_inputs_unchanged(tracked, receipt, external=[poly])
         assert stable, "Execution source, input or retained evidence changed."

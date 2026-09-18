@@ -806,3 +806,161 @@ removed generated historical bulk from the current tree and preserved unique
 unfinished source. This storage cleanup does not settle the broader native
 retention/workflow account. Practical 5a and conditions 1–4 and 6 remain open;
 only theoretical 5b stays deferred.
+
+## Seeded contracts and dependencies computed — 2026-09-18
+
+Stage 1's gate requires that every seeded problem have a structural contract and
+dependencies. The seed had neither: `Development_Seed` applied `Development_Refinement` to
+no argument, so the theory did not load, and its dependencies were the supplied grouping of
+roots into the three measured candidates. Both are now computed on the actual state, and
+the state is read from the one accepted definition instead of being exported a second time.
+
+What the plan's text said about this stage is corrected by the execution rather than by
+argument.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Decompose each measured refinement candidate into one leaf problem per constant, with the candidate as their parent. | The candidate is not a problem: a contract is one term an answer must establish, and the state states no single refinement of several constants. Each root constant is one problem with its own demanded statement, and a grouping of more than one constant is retained as an obstruction. |
+| Take the grouping of roots into candidates as the seeded dependency structure. | Dependencies are read from the actual demanded statements. On this state that reading finds none: the ten problems are independent, and the grouping asserted a structure the state does not supply. |
+| Submit a decision's candidates as the state's entities and let the computed condition select. | Separate the readings. The scope of a constant is what the state presents about it; the demand selects what a refinement must establish inside that scope. Conflating them submits every entity to a question about one constant, which did not return in 243 seconds, against 11 seconds for the scoped question and its admission over all ten roots. |
+| Recognize a unique selection by the length of the selected list. | Instantiate the existing singleton reading: the same statement presented twice is one statement, and several distinct statements are refused rather than resolved by position. |
+
+The reusable content extracted at this use is recorded in
+[REASONING_REUSE.md](REASONING_REUSE.md). `Filtered_Native_Questions` was extracted from
+`Native_Control_Syntax_Candidate`, which now instantiates it, and `Faceted_Native_Questions`
+was already a second user of it through the import chain: the first-use rule had been
+violated by the theory that states it.
+
+This settles one clause of the stage-1 gate for the seeded problems and nothing else. The
+acceptance contract, the first loop's authorized policy, owner authority, the read-state
+correspondence and the renaming controls are unchanged. Selecting these ten root constants
+from the measured candidates is still a residual generated outside the process, recorded as
+the origin of every seeded problem. No answer to any seeded problem exists, so stage 2 has
+not begun, and stages 3 to 5 are untouched.
+
+## Seed presentations executed; acceptance consumes its contract — 2026-09-18
+
+The seed recipe had never run. Its first execution exposed a cost and a defect in the seed's
+account, and both are settled by the execution rather than by argument.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Decide acceptance at each use by installing the supplied entities as a ground program, reading it back and evaluating the demand natively. | The acceptance contract, proved once, already states the decision; with the native evaluation of a ground source proved total, the notion's code equation is that contract. On the seeded 80 entities the native route did not return in 2,281 seconds and the contract answers in 0.001. The route's cost (quadratic syntax joins, forest unions and wrapper attachment in native installation) is a measured machinery problem, not a reason to weaken a use. |
+| One control moving `HOL.eq` exposes the names the reading depends on. | Every definition and code equation of the seeded state is a Pure equality, so that control observed nothing. The controls are derived from the equation reader's recognized names: without `Pure.eq` twenty entities lose their subjects and seventy are unreached; without `HOL.eq` nothing changes. |
+| A runner's timeout ends the run it started. | Stopping only the wrapper left five Isabelle processes computing for 25 minutes after their recipe had failed. Every runner now stops the whole process session. |
+
+For the stage-1 gate this establishes the seed recipe's report boundaries from an accepted
+run, the renaming control's image of the original observations, and controls that expose the
+state's actual name dependence. The acceptance notion is unchanged in meaning; its execution
+now consumes its local contract, as every use must. Choosing this refinement and deriving the
+controls from the reader are choices generated outside the process and are recorded as
+residuals, like the choice of the seeded roots; the process has not yet selected or admitted
+any of them. The remaining gate items (provenance of the checked build, locality of a theory
+change, the first loop's authorized policy and owner-level basis elements) are unchanged.
+
+## The first loop's selection, schedule and requests are native — 2026-09-18
+
+Stage 2 has begun on the seeded problems. Which problems are taken is the admitted answer of
+a native question on their computed readiness; the admitted problems are one group of
+independent work because no ready problem is a prerequisite of another; and every admitted
+problem is requested with its demanded statement, its support (the constants its refined
+entities mention) and its least context (those entities and the declarations of the
+support), proved exact, closed and least. The executed decisions, the group and the requests
+are one report of the seed recipe, reconstructed with every check.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Settlement is the least closure of the answered problems under the dependency rows. | A row fires only once its own problem is answered. Otherwise a problem without prerequisites counts as settled unanswered and a problem depending on it is scheduled beside it. |
+| A native decision's execution is evidence recorded beside the state. | The executed packets are part of the reconstructed report, so the contract decisions of the seed, which had run only in a probe, are now reconstructible evidence. |
+
+Not yet established: leafhood rests only on the absence of any refinement decomposition in
+the development library, which is recorded as such; no request has been issued; the verifier
+of a refinement answer, executor isolation, admission as a generation under policy and the
+adoption of an answer remain the next constructions. The selection criterion is readiness
+alone; a policy criterion beyond it needs the owner's authorization.
+
+
+## Answers are judged by the difference they make — 2026-09-18
+
+Stage 2's next construction was the verifier of an answer. It exists now, together with the
+transport that brings an executor's answer to it and the repair a refusal derives. Every
+native question of the loop also became cheaper at its cause.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Verify a theory answer by re-exporting and comparing it with the request's statement, support and context. | The answer is the state its checked context defines, exported again from the request state's roots; the verdict reads the difference between the two states through the names both tables share (`Isabelle_State_Difference`). A refinement may replace the subject's code equations and nothing else, its equations must stay within the issued support, and the answer state must be closed and keep the roots. Removal of declarations nothing mentions is read from the closure, not permitted by name. |
+| An answer whose dependencies exceed the support is refused, and the refusal becomes a context or decomposition problem. | The verdict names the excess constants and the checked context names the constants the answer introduced. The repair is computed from them: the request state extended by exactly that material with the new names appended, the request issued again with the excess in its support, one definition problem per introduced constant, and a conservativity judgment of the extension. On real answers the same answer is then accepted against the request issued again. Admitting the extension and the definition problems remains the process's decision; the repair is not yet a schema of the development library. |
+| Check an answer "in exactly the request's proof context". | The Isabelle proof context of a request is the theory that defines the requested state; the harness frames the answer's declared parts (new definitions, the equation, its proof) there, checks the answer and its verification heaplessly on the accepted base and presents the verdict word. The least native context (the request's entities) is a different notion from this Isabelle context; checking in a smaller Isabelle context is its own bridge problem. |
+| Take one of the measured paused refinements as the first answer and work it out. | Each of them needs constants outside its subject's support (a keyed replay comparison, an index built once per data walk, formation carried by callers), so each is a decomposed problem whose definition problems and support extension the process derives from the refusal. Working one out by hand before the loop can admit and adopt answers is the executor's work done out of order; it was stopped after two timing probes (one replay selection: packet 6.2 of 9.5 seconds). |
+| Leave the cost of native questions for later. | Every loop step is a native question, so the cost is paid by the end package and was removed at its cause: settlement, histories, evidence and generation look up settled calls through ordered keys, composed over the existing source-shared equations. A decision over sixteen candidates fell from 7.2 to 4.8 seconds; the remaining superlinear cost is measured and open. |
+
+Evidence: the seed recipe presents seven derived answer states for every seeded request and
+reconstructs with every earlier word unchanged; five real answers to the request for
+`digit_replay_inspect` are retained in [validation/development-answers](validation/development-answers/README.md)
+(accepted restatement; Isabelle refusal; axiom refused and not repairable; excess support and
+an introduced helper, each refused and repaired).
+
+Still not established for the stage-2 gate: admission of an accepted answer as a generation
+whose cause is certified under the first loop's policy; selection into a published successor
+state that carries the answered problems, the derived definition problems and the changed
+dependencies; adoption of a refinement into the refinement layer with every affected report
+word unchanged and its cost ranked; retention and replay of the whole problem tree; and the
+isolation of an answer from theory-level commands beyond its declared parts (stage 3). The
+answers above are controls of the process, not refinements to adopt. Every choice made here
+outside the process — the harness's frame, the proof context, the controls and the order of
+this work — is a residual under the bootstrap record.
+
+## Admission, succession, packets and interchangeable executors — 2026-09-18
+
+The loop now carries an admitted answer to a successor state, records its own decisions, presents
+requests to executors as packets and shows that the executor does not matter.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Admission as a generation whose cause is certified under policy. | An accepted verdict is recorded as a generation (locus: the problem; predecessors: the request's context; payload: the subject's equations in the answer state; cause: the verdict). The first loop's policy admits exactly the accepted entities; its converse was stated only in prose and is now its proved contract (`development_policy_admits_member`), which the generation consumes. |
+| The successor state, from which the next problems derive. | Problems are carried, not recomputed from the new state: they and their dependencies move with the correspondence of the two tables (dependencies as the existing embedding of a rule table), readiness is transported by the existing renaming theorem of the least closure (`development_successor_ready`), the answered problem is recorded, and a request stays current exactly when no entity of its context was removed. Recomputing problems from the answer state would pose the answered refinement again as a new problem. |
+| Selection, decomposition, scheduling and request construction are admitted generations. | The development's history records its decisions: the selection as the executed native packet with the admitted problems, each admitted answer as its generation, and each repair as the refused request with its repair; a repaired answer moves the development through the extended request, with the derived definition problems answered by the answer's own definitions. Scheduling (the independent group) is still a theorem about the selection, not a separate record. |
+| An executor receives the request presentation. | The packet is the request read back through the exporter's inverse translation: the demanded statement, the issued support as typed declarations and the least context, in Isabelle syntax, with the facts the answer frame provides; it names no file, theory or tool. A deterministic executor answers from the packet alone; its answer, an agent's answer stating the same equation and the replay of the retained answer yield the identical admission word. |
+| Requests exist only for the seeded roots. | The harness derives a request on demand for any constant of the refinement layer: a generated request theory exports the state of that one subject, and the request, loop state and verdict are computed natively on it. Choosing the subject is a residual; the demanded request carries that origin. |
+
+Evidence: seven retained answers ([validation/development-answers](validation/development-answers/README.md))
+replay with identical outcomes and verdict words (`tools/replay_development_answers.py`); the
+seed recipe presents the recorded selection and the succession of the unchanged answers.
+
+Not established: adoption of a refinement into the refinement layer with unchanged report words
+and ranked cost, and therefore any real development consumed through the loop (condition 5a).
+An attempted real answer — `finite_program_applications` without its repeated admission checks —
+was proved but measured no change in a native decision (2.15 against 2.15 seconds at sixteen
+candidates), so it was not submitted as useful work; the remaining decision cost needs attribution
+before any refinement is proposed. Executor isolation is shown only for a deterministic executor:
+an agent is not yet confined to its packet, and an answer's text may still carry theory commands
+outside the frame's declared parts, which the verdict sees only within the state's reach.
+
+## Leafhood and issuing — 2026-09-18
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Leafhood rests on the absence of any refinement decomposition in the development library, recorded in prose. | Prerequisites and decompositions are separate relations. A prerequisite row fires only once its own problem is answered; a decomposition rule of the development library fires when all its subproblems are settled, and its head is never answered on its own. Settlement is the least closure of both, so composition is the existing finite-inference law (`development_composition_settles`) and a missing subproblem settles nothing. A problem is issued only as a leaf of the library with settled prerequisites (`development_issuable`); a problem some rule decomposes is refused as a broad request (`development_broad_refused`). With an empty library issuability is exactly the existing readiness. |
+| A request is constructed, not issued. | Issuing records every issued request in the development's history together with its library reading, the absence of any rule for its problem, so extending the library reaches exactly the issued requests whose reading it changes. The seeded library is empty and all ten selected problems are issued; a control library that decomposes every problem into itself issues nothing, because every problem is broad and the unsupported cycle settles nothing. |
+
+The development library itself still holds no rule for refinement problems, and no rule is
+derived yet: the repair of a refused answer is the first decomposition the process computes, but
+it is recorded as a repair, not added to the library as a schema.
+
+## Concurrent answers and re-evaluation — 2026-09-18
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Parallel assessment is not concurrent adoption; transaction composition needs its own instance. | For the independent group a selection issues, the instance is proved: an accepted answer to one request leaves every request for another subject current (`development_admitted_keeps_independent_current`), because the verdict lets an answer replace only its own subject's code equations and the closed answer state keeps the one declaration of every constant still mentioned. The premise, that the request state declares every constant once, is decided by the state and holds for the seed. The group can therefore be answered concurrently and admitted in any order. |
+| Re-evaluation is scheduled, not cascaded; readings include absences. | Against a changed library the issue records whose absence reading no longer holds are computed from the history (`development_reevaluations_exact`), and a library extension whose new rules have no issued problem as head reaches none of them (`development_reevaluations_local`). The seed shows both: under its own library no issued request is stale, under the cyclic control library all ten are. |
+
+This session's checkpoint: stages 1–2 have a native state, native selection, issuing with leaf
+readings, request construction, packets, a verdict with a local contract, a derived repair,
+admission as a generation under the first loop's policy, succession with transported readiness,
+concurrent admission of independent answers, and re-evaluation of absence readings; stage 3 has
+a deterministic executor that answers from the packet alone with the same admission as an agent.
+Open: adoption of an accepted refinement into its layer and real development consumed through the
+loop (condition 5a), the library holding derived decomposition rules, owner-authorized policy
+extension (stage 4), agent isolation, the native record of generated residual choices, and the
+remaining stage-1 gate items (provenance and locality of theory changes). Every choice made in this
+work outside the process remains a residual.

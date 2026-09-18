@@ -11,6 +11,7 @@ theory Native_Execution_Refinements
     Factor_Invariant_Evaluation_Sharing Factor_Formation_Once_Readings Factor_Join_Reading_Conditions
     Factor_Recovered_Graph_Sharing Parallel_Presented_Investigations Indexed_Term_Words Ordered_Term_Comparison
     Factor_Policy_Scope_Sharing Factor_Formation_Once_Definitions Factor_Complete_Data_Walks Finite_Ordered_Set_Difference Factor_Ordered_Generation_Checking
+    Ordered_Term_Demands
 begin
 
 text \<open>The export boundary consumes the existing complete-result refinements.

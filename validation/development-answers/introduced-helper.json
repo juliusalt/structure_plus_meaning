@@ -1,0 +1,43 @@
+{
+ "answer": {
+  "definitions": "definition development_helper where \"development_helper=prepared_reader_inspection nested_replay_value\"",
+  "equation": "digit_replay_inspect (result,reference,causes)=development_helper (result,reference)",
+  "proof": "  by (simp only: development_helper_def digit_replay_inspect_nested_code)",
+  "request": {
+   "state": "development_seed",
+   "subject": "Factor_Digit_Replay_Methods.digit_replay_inspect"
+  }
+ },
+ "answer_sha256": "94c46b745da2deeea16af968e26d80f5f7cf3273bf8f0213ae6641756717e42a",
+ "base_receipt_sha256": "18dd42dc09e59758f4c488fb0f6b6b12d01ccb332e9552421c272ff546cae23a",
+ "harness_sha256": "5fd0a86e050c1982ac2c649ad5472cf29086490b4ec6eec16aec7d5cb99e4f98",
+ "status": "judged",
+ "steps": {
+  "export": 0,
+  "proof": 0,
+  "verdict": 0
+ },
+ "summary": {
+  "accepted": false,
+  "counts": [
+   1,
+   4,
+   0,
+   3,
+   1
+  ],
+  "definition_problems": 1,
+  "excess": [
+   "Development_Answer.development_helper"
+  ],
+  "extension": true,
+  "introduced": [
+   "Development_Answer.development_helper"
+  ],
+  "repaired": true
+ },
+ "verdict_word": {
+  "bytes": 46849,
+  "sha256": "e7bb2b371aa26f824b8bc0281fcf95bd13ab4920f7f017ca31fd5a9391ee932d"
+ }
+}

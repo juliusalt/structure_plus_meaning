@@ -10,6 +10,7 @@ import subprocess
 import traceback
 import uuid
 
+import build
 import execution_support as investigate
 import native_execution_runtime
 import proved_code
@@ -90,7 +91,7 @@ def main():
             proof, engine, program(engine, inputs, word), poly, output, workers=args.workers)
         runtime = output / 'execute.ML'
         runtime.write_text(code)
-        modules = [investigate, native_execution_runtime, proved_code]
+        modules = [build, investigate, native_execution_runtime, proved_code]
         paths = {proof_path, engine, poly, runtime, input_file, Path(__file__).resolve(),
                  *(Path(m.__file__).resolve() for m in modules), *(Path(p) for p in sources),
                  *runtime_inputs, output / 'runtime-command.json'}
@@ -98,9 +99,9 @@ def main():
         write_json(output / 'execution-inputs.json', tracked)
         proved_code.archive_execution_inputs(output, receipt, tracked, external=[poly])
         with (output / 'native.log').open('w') as log:
-            completed = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, timeout=args.timeout)
-        receipt['exit_code'] = completed.returncode
-        assert completed.returncode == 0, 'See the retained native.log.'
+            returncode = build.run_session(command, stdout=log, stderr=subprocess.STDOUT, timeout=args.timeout)
+        receipt['exit_code'] = returncode
+        assert returncode == 0, 'See the retained native.log.'
         value = retain_word(word, output / 'report.word.gz')
         word.unlink()
         assert value['bytes'] > 0

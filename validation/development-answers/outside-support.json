@@ -1,0 +1,41 @@
+{
+ "answer": {
+  "definitions": "",
+  "equation": "digit_replay_inspect (result,reference,causes)=finite_reader_inspect (fimage nested_replay_value result,fimage nested_replay_value reference)",
+  "proof": "  by (simp add: digit_replay_inspect_nested_code prepared_reader_inspection_def Let_def)",
+  "request": {
+   "state": "development_seed",
+   "subject": "Factor_Digit_Replay_Methods.digit_replay_inspect"
+  }
+ },
+ "answer_sha256": "1f001831862c08aa862f3ee8698103fe1c2b09178a0a6358bbf78f924d2e7632",
+ "base_receipt_sha256": "18dd42dc09e59758f4c488fb0f6b6b12d01ccb332e9552421c272ff546cae23a",
+ "harness_sha256": "5fd0a86e050c1982ac2c649ad5472cf29086490b4ec6eec16aec7d5cb99e4f98",
+ "status": "judged",
+ "steps": {
+  "export": 0,
+  "proof": 0,
+  "verdict": 0
+ },
+ "summary": {
+  "accepted": false,
+  "counts": [
+   1,
+   1,
+   0,
+   0,
+   1
+  ],
+  "definition_problems": 0,
+  "excess": [
+   "FSet.fimage"
+  ],
+  "extension": true,
+  "introduced": [],
+  "repaired": true
+ },
+ "verdict_word": {
+  "bytes": 66891,
+  "sha256": "afa2cd9c2694b5d47afa2e6dc1bf18ad625a43e9eb71e4ccd79fecb00cb922ae"
+ }
+}

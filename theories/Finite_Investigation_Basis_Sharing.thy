@@ -74,10 +74,6 @@ proof -
     by (simp only: shape Let_def listed)
 qed
 
-lemma ordered_member_tree_none:
-  "RBT.lookup (ordered_member_tree A) x=None \<longleftrightarrow> x\<notin>fset A"
-  using ordered_member_tree_exact[of A x] by blast
-
 declare investigation_basis_def[code del]
 
 lemma investigation_basis_ordered_code [code]:

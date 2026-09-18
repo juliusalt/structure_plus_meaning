@@ -2,7 +2,6 @@ theory Native_Control_Context_Execution
   imports Native_Development_Steering Native_Control_Context_Contract Native_Control_Seed_Subject
 begin
 
-declare development_seed_context_def [code] development_seed_roots_def [code]
 
 definition context_execution_changed :: isabelle_context where
   "context_execution_changed=(map (\<lambda>s. if s=STR ''HOL.eq'' then STR ''HOL.eq.moved'' else s)

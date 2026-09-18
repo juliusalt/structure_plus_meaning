@@ -9,6 +9,7 @@ import subprocess
 import sys
 import time
 
+from build import run_session
 from evidence_io import digest, write_json
 from machine_reports import boundary, unique_object
 
@@ -93,6 +94,7 @@ def main(recipe, entrypoint, argv=None):
     steps = []
     tracked = {str(path): digest(path) for path in
                (entrypoint, Path(__file__).resolve(), Path(__file__).with_name("machine_reports.py"),
+                Path(__file__).with_name("build.py"),
                 args.expected.resolve())}
 
     def run(name, command, timeout):
@@ -100,8 +102,8 @@ def main(recipe, entrypoint, argv=None):
         started = time.monotonic()
         with log.open("x") as stream:
             try:
-                code = subprocess.run(list(map(str, command)), cwd=project, env=env,
-                                      stdout=stream, stderr=subprocess.STDOUT, timeout=timeout).returncode
+                code = run_session(list(map(str, command)), cwd=project, env=env,
+                                   stdout=stream, stderr=subprocess.STDOUT, timeout=timeout)
             except subprocess.TimeoutExpired:
                 code = "timeout"
         record = {"name": name, "command": list(map(str, command)), "exit_code": code,

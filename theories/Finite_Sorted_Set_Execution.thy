@@ -12,6 +12,55 @@ lemma sorted_list_of_set_after_sort:
   by (rule sorted_distinct_set_unique)
     (simp_all add: sorted_remdups_adj_distinct)
 
+section \<open>An unordered listing is sorted by merging\<close>
+
+text \<open>
+  Sorting a listing of a linearly ordered type has one result: every sorted permutation of
+  the listing is it, because equal elements are identical. A merge sort computes that result
+  with a number of comparisons proportional to the length times its logarithm, where the
+  library's insertion sort compares every pair.
+\<close>
+
+fun merge_ascending :: "'a::linorder list \<Rightarrow> 'a list \<Rightarrow> 'a list" where
+  "merge_ascending [] ys=ys"
+| "merge_ascending xs []=xs"
+| "merge_ascending (x#xs) (y#ys)=(if y<x then y#merge_ascending (x#xs) ys
+    else x#merge_ascending xs (y#ys))"
+
+lemma merge_ascending_mset: "mset (merge_ascending xs ys)=mset xs+mset ys"
+  by (induction xs ys rule: merge_ascending.induct) simp_all
+
+lemma merge_ascending_set: "set (merge_ascending xs ys)=set xs\<union>set ys"
+  by (induction xs ys rule: merge_ascending.induct) auto
+
+lemma merge_ascending_sorted:
+  "sorted xs \<Longrightarrow> sorted ys \<Longrightarrow> sorted (merge_ascending xs ys)"
+  by (induction xs ys rule: merge_ascending.induct) (auto simp: merge_ascending_set)
+
+function ascending_sort :: "'a::linorder list \<Rightarrow> 'a list" where
+  "ascending_sort []=[]"
+| "ascending_sort [x]=[x]"
+| "ascending_sort (x#y#zs)=merge_ascending
+    (ascending_sort (take ((length zs+2) div 2) (x#y#zs)))
+    (ascending_sort (drop ((length zs+2) div 2) (x#y#zs)))"
+  by pat_completeness auto
+termination by (relation "measure length") auto
+
+lemma ascending_sort_mset: "mset (ascending_sort xs)=mset xs"
+proof (induction xs rule: ascending_sort.induct)
+  case (3 x y zs)
+  let ?n="(length zs+2) div 2"
+  have "mset (take ?n (x#y#zs))+mset (drop ?n (x#y#zs))=mset (x#y#zs)"
+    by (simp only: mset_append[symmetric] append_take_drop_id)
+  then show ?case by (simp only: ascending_sort.simps(3) merge_ascending_mset 3)
+qed simp_all
+
+lemma ascending_sort_sorted: "sorted (ascending_sort xs)"
+  by (induction xs rule: ascending_sort.induct) (simp_all add: merge_ascending_sorted)
+
+theorem sort_ascending_sort: "sort xs=ascending_sort xs"
+  by (rule properties_for_sort) (simp_all only: ascending_sort_mset ascending_sort_sorted)
+
 section \<open>Canonical listings are recognized by one adjacent pass\<close>
 
 fun ascending_listing :: "'a::linorder list \<Rightarrow> bool" where
@@ -37,15 +86,15 @@ lemma nondescending_listing_exact: "nondescending_listing xs \<longleftrightarro
 declare sorted_list_of_set_sort_remdups[code del]
 
 lemma sorted_list_of_set_listing_code [code]:
-  "sorted_list_of_set (set xs)=(if ascending_listing xs then xs else remdups_adj (sort xs))"
-  by (rule sorted_distinct_set_unique)
-    (simp_all add: ascending_listing_exact sorted_remdups_adj_distinct)
+  "sorted_list_of_set (set xs)=(if ascending_listing xs then xs else remdups_adj (ascending_sort xs))"
+  by (simp only: sort_ascending_sort[symmetric])
+    (rule sorted_distinct_set_unique, simp_all add: ascending_listing_exact sorted_remdups_adj_distinct)
 
 declare sorted_list_of_multiset_mset[code del]
 
 lemma sorted_list_of_multiset_listing_code [code]:
-  "sorted_list_of_multiset (mset xs)=(if nondescending_listing xs then xs else sort xs)"
-  by (simp add: nondescending_listing_exact sorted_sort_id)
+  "sorted_list_of_multiset (mset xs)=(if nondescending_listing xs then xs else ascending_sort xs)"
+  by (simp add: nondescending_listing_exact sorted_sort_id sort_ascending_sort[symmetric])
 
 text \<open>
   A finite set listed in strictly ascending order already is its canonical

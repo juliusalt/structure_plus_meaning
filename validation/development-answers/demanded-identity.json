@@ -1,0 +1,42 @@
+{
+ "answer": {
+  "definitions": "",
+  "equation": "ordered_member_tree A=RBT.bulkload (map (\\<lambda>x. (x,())) (sorted_list_of_fset A))",
+  "proof": "  by (simp only: ordered_member_tree_def)",
+  "request": {
+   "state": "refinement_layer",
+   "subject": "Ordered_Member_Trees.ordered_member_tree"
+  }
+ },
+ "answer_sha256": "166f3ef82e884172cd5a32fd417a8cfa3652ce037628a7f37ebd417db9e4072c",
+ "base_receipt_sha256": "18dd42dc09e59758f4c488fb0f6b6b12d01ccb332e9552421c272ff546cae23a",
+ "harness_sha256": "5fd0a86e050c1982ac2c649ad5472cf29086490b4ec6eec16aec7d5cb99e4f98",
+ "status": "judged",
+ "steps": {
+  "export": 0,
+  "proof": 0,
+  "verdict": 0
+ },
+ "summary": {
+  "accepted": true,
+  "counts": [
+   0,
+   0,
+   0,
+   0,
+   1,
+   1,
+   0,
+   1
+  ],
+  "definition_problems": 0,
+  "excess": [],
+  "extension": true,
+  "introduced": [],
+  "repaired": true
+ },
+ "verdict_word": {
+  "bytes": 3664,
+  "sha256": "4773036e2c093ecf3e57da61cfbf3ca400365440612a8f05e01a93faf2d0d97f"
+ }
+}

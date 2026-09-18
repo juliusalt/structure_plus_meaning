@@ -1,5 +1,5 @@
 theory Isabelle_Acceptance
-  imports Isabelle_Renaming Factor_Finite_Ground_Source Factor_Finite_Native_Evaluation
+  imports Isabelle_Renaming Factor_Finite_Ground_Evaluation
 begin
 
 section \<open>Accepted entities are the positive meaning of one ground program\<close>
@@ -158,6 +158,57 @@ proof -
   show "fset refused=set demands-set es"
     using decided by (auto simp: readings(2) fset_of_list.rep_eq)
 qed
+
+text \<open>
+  The decision is also total. Every demand is made at the entry of the installed ground
+  source, and the checked evaluator answers every such demand, so the exact theorem above
+  describes every result and not only the successful ones. The notion's contract therefore
+  determines the whole decision: the demanded entities, split by membership in the supplied
+  ones.
+\<close>
+
+theorem isabelle_demand_acceptance_members:
+  "isabelle_demand_acceptance es demands=Some (fset_of_list (filter (\<lambda>e. e\<in>set es) demands),
+    fset_of_list (filter (\<lambda>e. e\<notin>set es) demands))"
+proof -
+  obtain d F u where source: "isabelle_acceptance_source es=Some (d,F,u)"
+    using isabelle_acceptance_source_total by blast
+  let ?D="fset_of_list (map (\<lambda>e. (d,isabelle_entity_data e)) demands)"
+  have entry: "fst q=d" if demanded: "q |\<in>| ?D" for q
+    using demanded by (auto simp: fset_of_list_elem)
+  obtain P A where evaluation: "finite_native_program_evaluation F u [] ?D=Some (P,A)"
+    by (rule finite_ground_source_evaluation_total[OF source[unfolded isabelle_acceptance_source_def] entry])
+  let ?accepted="fset_of_list (filter (\<lambda>e. (d,isabelle_entity_data e) |\<in>| A) demands)"
+  let ?refused="fset_of_list (filter (\<lambda>e. (d,isabelle_entity_data e) |\<notin>| A) demands)"
+  have result: "isabelle_demand_acceptance es demands=Some (?accepted,?refused)"
+    by (simp only: isabelle_demand_acceptance_def source evaluation option.case prod.case)
+  have accepted: "?accepted=fset_of_list (filter (\<lambda>e. e\<in>set es) demands)"
+  proof -
+    have "fset ?accepted=set demands\<inter>set es" by (rule isabelle_demand_acceptance_exact(1)[OF result])
+    also have "\<dots>=fset (fset_of_list (filter (\<lambda>e. e\<in>set es) demands))" by (auto simp: fset_of_list.rep_eq)
+    finally show ?thesis by (simp only: fset_inject)
+  qed
+  have refused: "?refused=fset_of_list (filter (\<lambda>e. e\<notin>set es) demands)"
+  proof -
+    have "fset ?refused=set demands-set es" by (rule isabelle_demand_acceptance_exact(2)[OF result])
+    also have "\<dots>=fset (fset_of_list (filter (\<lambda>e. e\<notin>set es) demands))" by (auto simp: fset_of_list.rep_eq)
+    finally show ?thesis by (simp only: fset_inject)
+  qed
+  show ?thesis by (simp only: result accepted refused)
+qed
+
+text \<open>
+  A use consumes this contract instead of establishing the decision again. Executing the
+  definition installs every supplied entity as a ground clause, compiles the syntax of the
+  whole family and reads the package back before a single demand is decided; on the seeded
+  development state of 80 entities it did not return in 2,281 seconds, and compiling the
+  ground definition alone did not return in 1,363 seconds. The equation below computes the
+  same value from the theorem, so every execution of the notion answers by membership while
+  its meaning stays the native decision it was defined as.
+\<close>
+
+declare isabelle_demand_acceptance_def [code del]
+declare isabelle_demand_acceptance_members [code]
 
 type_synonym isabelle_acceptance_assessment = "(isabelle_entity fset\<times>isabelle_entity fset) option"
 

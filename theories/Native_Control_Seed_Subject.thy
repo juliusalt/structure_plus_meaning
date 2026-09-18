@@ -23,6 +23,10 @@ local_setup \<open>Isabelle_Entity_Export.define \<^binding>\<open>development_s
      \<^term>\<open>finite_pattern_vector_readings\<close>, \<^term>\<open>finite_native_schema_readings\<close>,
      \<^term>\<open>finite_scoped_pattern_readings\<close>])]\<close>
 
+declare development_seed_context_def [code] development_seed_roots_def [code]
+  development_seed_replay_roots_def [code] development_seed_walk_roots_def [code]
+  development_seed_formation_roots_def [code]
+
 definition development_seed_state :: isabelle_rooted_context where
   "development_seed_state=(development_seed_roots,development_seed_context)"
 
@@ -53,6 +57,12 @@ definition development_seed_report_data :: "development_seed_report \<Rightarrow
   "development_seed_report_data=finite_pair_presentation isabelle_terms_data
     (finite_pair_presentation isabelle_context_data
       (finite_pair_presentation isabelle_context_assessment_data isabelle_acceptance_assessment_data))"
+
+lemma development_seed_report_data_injective [intro]: "inj development_seed_report_data"
+  unfolding development_seed_report_data_def
+  by (intro finite_pair_presentation_injective isabelle_collections_injective(3)
+    isabelle_context_data_injective isabelle_context_assessment_data_injective
+    isabelle_acceptance_assessment_data_injective)
 
 definition development_seed_report_value :: "isabelle_rooted_context \<Rightarrow> finite_factor_term" where
   "development_seed_report_value S=development_seed_report_data (development_seed_report S)"

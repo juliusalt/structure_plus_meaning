@@ -27,6 +27,7 @@ import threading
 import time
 import uuid
 
+import build
 import check
 import execution_support as investigate
 import native_execution_runtime
@@ -136,8 +137,8 @@ def run_logged(command, log, timeout):
     started = time.monotonic()
     with log.open('w') as stream:
         try:
-            code = subprocess.run(command, cwd=ROOT, env=ENV, stdout=stream, stderr=subprocess.STDOUT,
-                                  timeout=timeout).returncode
+            code = build.run_session(command, cwd=ROOT, env=ENV, stdout=stream, stderr=subprocess.STDOUT,
+                                     timeout=timeout)
         except subprocess.TimeoutExpired:
             code = 'timeout'
     return code, time.monotonic() - started

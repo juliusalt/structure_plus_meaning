@@ -1,0 +1,45 @@
+{
+ "answer": {
+  "definitions": "",
+  "equation": "digit_replay_inspect\n (result::((nat \\<times>\n            nat list option finite_artifact_environment) \\<times>\n           nat list option \\<times>\n           finite_exact_target generation_structure \\<times>\n           nat list option finite_artifact_environment \\<times>\n           (nat list, nat list) finite_structured_object) option fset,\n  reference::((nat \\<times>\n               nat list option finite_artifact_environment) \\<times>\n              nat list option \\<times>\n              finite_exact_target generation_structure \\<times>\n              nat list option finite_artifact_environment \\<times>\n              (nat list, nat list) finite_structured_object) option fset,\n  causes::'a) \\<equiv>\nprepared_reader_inspection nested_replay_value (result, reference)",
+  "proof": "  by (rule development_demanded_code)",
+  "request": {
+   "state": "development_seed",
+   "subject": "Factor_Digit_Replay_Methods.digit_replay_inspect"
+  }
+ },
+ "answer_sha256": "972de38e0d82ead133633e982995fde4b9e6302faedef5ca95825d7e6e2bd83f",
+ "base_receipt_sha256": "18dd42dc09e59758f4c488fb0f6b6b12d01ccb332e9552421c272ff546cae23a",
+ "executor": "tools/development_executor.py",
+ "executor_sha256": "38ae70499967314c4643a6c594eaa15c351bdab9a8242cb9ea0f0b130d688edd",
+ "harness_sha256": "5fd0a86e050c1982ac2c649ad5472cf29086490b4ec6eec16aec7d5cb99e4f98",
+ "packet_sha256": "69c314c56742197e7cb8a0655038385269480d38c8bfd3592d31503dd33a00e7",
+ "status": "judged",
+ "steps": {
+  "export": 0,
+  "proof": 0,
+  "verdict": 0
+ },
+ "summary": {
+  "accepted": true,
+  "counts": [
+   0,
+   0,
+   0,
+   0,
+   1,
+   1,
+   9,
+   10
+  ],
+  "definition_problems": 0,
+  "excess": [],
+  "extension": true,
+  "introduced": [],
+  "repaired": true
+ },
+ "verdict_word": {
+  "bytes": 62757,
+  "sha256": "71cba7fbb6490b6bc015c88c1c3bc484acd4191e08bf308ead9bd2cdda5014a7"
+ }
+}

@@ -1,5 +1,5 @@
 theory Native_Control_Syntax_Candidate
-  imports Native_Control_Compile_Profile
+  imports Native_Control_Compile_Profile Filtered_Native_Questions
 begin
 
 section \<open>Exact finite union with an explicit enumeration boundary\<close>
@@ -25,34 +25,6 @@ definition finite_syntax_join_enumerated where
 lemma finite_syntax_join_enumerated_exact:
   "finite_syntax_join_enumerated f g U I R S=finite_syntax_join f g U I R S"
   by (simp add: finite_syntax_join_enumerated_def finite_syntax_join_def enumerated_union_exact)
-
-section \<open>One reusable native question for computed predicates on actual subjects\<close>
-
-definition filtered_development_indices where
-  "filtered_development_indices subjects condition=
-    map finite_development_index (filter (\<lambda>i. condition (subjects!i)) [0..<length subjects])"
-
-definition filtered_development_question where
-  "filtered_development_question subjects condition=finite_development_question
-    (map finite_development_index [0..<length subjects])
-    [filtered_development_indices subjects condition]"
-
-lemma filtered_development_indices_exact:
-  "finite_development_index i\<in>set (filtered_development_indices subjects condition)
-    \<longleftrightarrow> i<length subjects \<and> condition (subjects!i)"
-  by (auto simp: filtered_development_indices_def)
-
-theorem filtered_development_admission:
-  assumes question: "filtered_development_question subjects condition=Some Q"
-    and admission: "native_development_admission Q report=Some accepted"
-    and selected: "finite_development_index i\<in>set accepted"
-  shows "i<length subjects \<and> condition (subjects!i)"
-proof -
-  have inside: "finite_development_index i\<in>set (filtered_development_indices subjects condition)"
-    by (rule finite_development_original_conditions[OF question[unfolded filtered_development_question_def]
-      admission selected]) simp
-  then show ?thesis by (simp only: filtered_development_indices_exact)
-qed
 
 section \<open>Complete union observations on the actual seed's pattern carriers\<close>
 

@@ -1,0 +1,39 @@
+{
+ "answer": {
+  "definitions": "axiomatization where development_axiom: \"digit_replay_inspect (result,reference,causes) f=False\"",
+  "equation": "digit_replay_inspect (result,reference,causes)=prepared_reader_inspection nested_replay_value (result,reference)",
+  "proof": "  by (rule digit_replay_inspect_nested_code)",
+  "request": {
+   "state": "development_seed",
+   "subject": "Factor_Digit_Replay_Methods.digit_replay_inspect"
+  }
+ },
+ "answer_sha256": "27c9743a547f5bbc08f2239e951b4f148026a4a8ec8b0bbaa78d99e53e1fbe94",
+ "base_receipt_sha256": "18dd42dc09e59758f4c488fb0f6b6b12d01ccb332e9552421c272ff546cae23a",
+ "harness_sha256": "5fd0a86e050c1982ac2c649ad5472cf29086490b4ec6eec16aec7d5cb99e4f98",
+ "status": "judged",
+ "steps": {
+  "export": 0,
+  "proof": 0,
+  "verdict": 0
+ },
+ "summary": {
+  "accepted": false,
+  "counts": [
+   0,
+   6,
+   0,
+   6,
+   1
+  ],
+  "definition_problems": 0,
+  "excess": [],
+  "extension": true,
+  "introduced": [],
+  "repaired": false
+ },
+ "verdict_word": {
+  "bytes": 32815,
+  "sha256": "48f0065141d259494ce316b2ccdc8b00feac3cf37135d7adb46d3fc57a22f4e9"
+ }
+}

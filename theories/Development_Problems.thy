@@ -117,18 +117,39 @@ text \<open>
   A problem depends on the problems whose answers its own answer needs. These are the rule
   families of the existing finite inference account, so settlement is its least closure,
   backward demand is the existing demand construction, and an unsupported cycle settles
-  nothing. Readiness is computed from the actual dependencies; no list order enters.
+  nothing. A row fires only once its own problem is answered: an answer does not settle a
+  problem whose prerequisites are unsettled, and a problem with no prerequisites is not
+  settled before it is answered. Readiness is computed from the actual dependencies; no list
+  order enters.
 \<close>
 
 type_synonym development_dependencies = "(development_problem\<times>(nat\<times>development_problem) fset) fset"
 
+definition development_answered_rules ::
+    "development_dependencies \<Rightarrow> development_problem fset \<Rightarrow> development_dependencies" where
+  "development_answered_rules D answered=ffilter (\<lambda>(p,H). p |\<in>| answered) D"
+
 definition development_settled ::
     "development_dependencies \<Rightarrow> development_problem fset \<Rightarrow> development_problem set" where
-  "development_settled D answered=finite_inference_result D answered"
+  "development_settled D answered=finite_inference_result (development_answered_rules D answered) {||}"
 
 theorem development_settled_exact:
-  "development_settled D answered=inference_closure (finite_inference_rules D) (fset answered)"
+  "development_settled D answered=
+    inference_closure (finite_inference_rules (development_answered_rules D answered)) {}"
   by (simp add: development_settled_def finite_inference_result_exact)
+
+theorem development_settled_answered:
+  assumes settled: "p\<in>development_settled D answered"
+  shows "p |\<in>| answered"
+proof -
+  let ?R="finite_inference_rules (development_answered_rules D answered)"
+  have "p\<in>inference_consequences ?R (inference_closure ?R {})"
+    using settled inference_closure_unfold[of ?R "{}"] by (simp only: development_settled_exact) blast
+  then obtain H where "?R p H" by (auto simp: inference_consequences_def)
+  then obtain G where "(p,G) |\<in>| development_answered_rules D answered"
+    by (auto simp: finite_inference_rules_def)
+  then show ?thesis by (simp add: development_answered_rules_def)
+qed
 
 definition development_decompositions ::
     "development_dependencies \<Rightarrow> development_problem \<Rightarrow> (nat\<times>development_problem) fset fset" where
@@ -161,7 +182,7 @@ definition development_ready ::
 theorem development_ready_exact:
   "development_ready D answered p \<longleftrightarrow> p |\<notin>| answered \<and>
     fBall (development_premises D p)
-      (\<lambda>q. q\<in>inference_closure (finite_inference_rules D) (fset answered))"
+      (\<lambda>q. q\<in>inference_closure (finite_inference_rules (development_answered_rules D answered)) {})"
   by (simp add: development_ready_def development_settled_exact)
 
 theorem an_unsettled_premise_refuses_readiness:
@@ -173,6 +194,23 @@ proof
     by (simp add: development_ready_def)
   then have "q\<in>development_settled D answered" by (rule fbspec[OF _ premise])
   then show False using unsettled by simp
+qed
+
+text \<open>
+  Readiness is also what makes a group of problems independent work: a ready problem's
+  prerequisites are settled, hence answered, while a ready problem is unanswered, so no ready
+  problem is a prerequisite of another.
+\<close>
+
+theorem development_ready_independent:
+  assumes first: "development_ready D answered p" and second: "development_ready D answered q"
+  shows "q |\<notin>| development_premises D p"
+proof
+  assume premise: "q |\<in>| development_premises D p"
+  have "q\<in>development_settled D answered"
+    using first premise by (auto simp: development_ready_def)
+  then have "q |\<in>| answered" by (rule development_settled_answered)
+  then show False using second by (simp add: development_ready_def)
 qed
 
 definition development_ready_problems ::

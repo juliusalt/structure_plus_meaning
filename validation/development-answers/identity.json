@@ -1,0 +1,42 @@
+{
+ "answer": {
+  "definitions": "",
+  "equation": "digit_replay_inspect (result,reference,causes)=prepared_reader_inspection nested_replay_value (result,reference)",
+  "proof": "  by (rule digit_replay_inspect_nested_code)",
+  "request": {
+   "state": "development_seed",
+   "subject": "Factor_Digit_Replay_Methods.digit_replay_inspect"
+  }
+ },
+ "answer_sha256": "14b052ebbd5885ca8633d05ed233760fdd368b2e5f4890620501ad87086f07af",
+ "base_receipt_sha256": "18dd42dc09e59758f4c488fb0f6b6b12d01ccb332e9552421c272ff546cae23a",
+ "harness_sha256": "5fd0a86e050c1982ac2c649ad5472cf29086490b4ec6eec16aec7d5cb99e4f98",
+ "status": "judged",
+ "steps": {
+  "export": 0,
+  "proof": 0,
+  "verdict": 0
+ },
+ "summary": {
+  "accepted": true,
+  "counts": [
+   0,
+   0,
+   0,
+   0,
+   1,
+   1,
+   9,
+   10
+  ],
+  "definition_problems": 0,
+  "excess": [],
+  "extension": true,
+  "introduced": [],
+  "repaired": true
+ },
+ "verdict_word": {
+  "bytes": 62757,
+  "sha256": "71cba7fbb6490b6bc015c88c1c3bc484acd4191e08bf308ead9bd2cdda5014a7"
+ }
+}

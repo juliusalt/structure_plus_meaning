@@ -1767,3 +1767,148 @@ The unresolved projection, installed source, coordinate transport, root proof an
 governing cause are not replaced by host explanations or successful leaf cases.
 The next application-result-selection proposal has not yet established equality
 of complete results. Wider workflow adequacy and first-use enforcement remain open.
+
+## The seeded refinement contracts and the filtered question — 2026-09-18
+
+The seeded development state's problems carried no contract argument: `Development_Seed`
+applied the `Development_Refinement` constructor to nothing, so the theory did not load and
+the complete repository check stopped there. Choosing that argument was a semantic problem,
+and it is now answered by readings computed on the actual state rather than by an author.
+
+| Theory | Reusable content and retained prerequisites |
+| --- | --- |
+| Isabelle_Code_Equations | The entity language's code-equation reading, separate from the subject reading that a definition of the same constant shares. It refuses every other entity kind and states nothing about the equation it returns. |
+| Filtered_Native_Questions | The native question whose candidates are actual subjects and whose single original condition is computed on each of them, with its admission contract. Extracted from its first use in `Native_Control_Syntax_Candidate`, which now instantiates it. It supplies no observation or preference: several candidates may satisfy the condition, and an empty subject list or unsatisfied condition yields no question. |
+| Development_Refinement_Contracts | A constant's scope in a context, a refinement's demand on that scope, the single demanded statement as the problem's contract, the refusal of ambiguity, and the problems and dependencies read from the actual statements. An admitted index yields a demanded statement; it establishes no proof that an answer satisfies that statement. |
+
+Two readings are kept apart: the scope of a constant is what the state presents about it,
+and the demand selects what a refinement must establish within that scope. The kernel
+definition of a constant is in the same scope, because the existing subject reading gives
+both the same subject, and the demand refuses it. Conflating them would submit every entity
+of the state to a question about one constant: measured on the seeded state, that question
+did not return in 243 seconds, while the scoped question and its native admission for all
+ten root constants complete in 11 seconds including the load.
+
+What the execution found on the seeded state, rather than what was expected of it:
+
+- Each of the ten root constants has a scope of exactly two entities, its kernel definition
+  and its code equation, and exactly one of them is demanded. `native_development_admission`
+  admits exactly the computed demand for every root.
+- Every root therefore has a contract, and none is retained as unstated.
+- The demanded statements mention no other root, so every computed premise set is empty and
+  the ten problems are independent. The grouping into three measured candidates asserted a
+  dependency structure the state's own statements do not supply. The kernel definitions do
+  mention one other root, which is a different relation and not the refinement's.
+- Two of the three groups cover more than one constant. The root code equations are Pure
+  equalities and the name table holds no `HOL.Trueprop`, so no entity and no term of the
+  state states the refinement of several constants at once. Those groupings are retained as
+  an obstruction instead of being joined or resolved by position.
+
+The contract argument, the scope, the demand and the dependencies are computed; the
+selection of these ten root constants from the measured candidates remains a residual
+generated outside the process, and every seeded problem records that origin and generated
+authority. No seeded problem carries owner authority. Nothing here establishes that an
+answer satisfies a demanded statement, that these roots are adequate to the measured
+candidates, or that the refinement work itself has been done.
+
+## The acceptance decision consumes its contract — 2026-09-18
+
+The seed recipe's five rooted-state presentations each reached the 1200-second timeout
+without output. The cost was attributed on samples before anything changed: the context term
+forms in 0.3 seconds, while `isabelle_demand_acceptance` over the state's 80 entities did not
+return in 2,281 seconds. Timed stage by stage, reading the guard source, forming the ground
+program, checking agreement, placing and renaming its definitions are all instant; compiling
+the ground definition into its syntax artifact did not return in 1,363 seconds. Compiled one
+at a time, the 80 clauses (31,060 term nodes, 124,800 carrier addresses) take 43.2 seconds,
+growing with the square of the term (the largest, 4,382 nodes, takes 13.6 seconds); the
+compiled forest then joins every carrier through right-nested unions of listed finite sets,
+each inserting member by member into the growing list.
+
+| Theory | Reusable content and retained prerequisites |
+| --- | --- |
+| Factor_Finite_Ground_Evaluation | Every clause an installed ground source places at its entry is an alpha variant of a placed exact recognizer, so it has no premise and no variable; native evaluation therefore answers every demand at the entry of any installed ground source. It consumes the installation contract (`finite_source_native_run`), the renamed clause family and `schema_family_variant_origin`; it decides no demand, and the exact evaluation contract still states the answer. |
+| Isabelle_Acceptance | `isabelle_demand_acceptance_members`: the decision is total and equals the demanded entities split by membership in the supplied ones. It is derived from the notion's existing exact theorem and the ground-source totality, and it is the code equation of the notion, so every execution consumes the contract instead of installing, compiling and reading back a program to decide membership again. |
+| Native_Control_Seed_Subject | The seed report's presentation now carries its injectivity contract, which the family presentation of controls composes. |
+| Development_Seed | The name-moving controls are derived from the equation reader's own `isabelle_equality_names`, one control for each recognized name, instead of one name chosen by hand. |
+
+The contract was the only thing the notion's execution had to establish: its exact theorem
+already states which demanded entities are accepted, and only the unanswered case stood
+between that theorem and an equation. Proving the operation total closed it without any
+statement about cost, so the notion's semantic scope did not grow; its uses now read the
+contract. The seed's acceptance computes in 0.001 seconds and every seed presentation
+completes in about 2.2 seconds.
+
+The compile cost itself is not repaired. The syntax join of listed finite sets, the forest
+of compiled schemas and the attachment of every wrapper structure are quadratic in the
+artifact they build, and every native installation of a program of this size meets them.
+That is a machinery problem with a measured account, retained for the process to select;
+the overnight union-candidate subject (`Native_Control_Syntax_Candidate`) already concerns
+the same join.
+
+The first execution of the seed's controls also exposed a defect in the account. The
+moved-equality control replaced `HOL.eq`, but every definition and code equation of the
+state is a Pure equality, so the control observed nothing: every observation in its report
+equalled the state's.
+Derived from the reader instead, the controls show that without `Pure.eq` the twenty
+definitions and code equations lose their subjects and are malformed and seventy entities
+are no longer reached from the roots, while without `HOL.eq` nothing changes. The claim that
+the old control reported lost readings was written before the recipe had ever run.
+
+## The first loop selects, groups and requests natively — 2026-09-18
+
+The seeded problems now pass through the first steps of the loop as native decisions over
+the actual state, and the executed decisions are part of the reconstructed report.
+
+| Theory | Reusable content and retained prerequisites |
+| --- | --- |
+| Development_Problems | Settlement is corrected: a dependency row fires only once its own problem is answered. Before, a problem without prerequisites was settled with nothing answered, so a problem depending on it was ready before its prerequisite had an answer; on the seeded state, which has no prerequisites, readiness is unchanged. Ready problems are pairwise independent (`development_ready_independent`). |
+| Filtered_Native_Questions | The admitted subjects and single admitted choice, which had lived in the overnight `Native_Control_Admitted_Selection` behind its guard imports, are the reusable consumers of any native question and are now stated here; `native_packet_subjects` reads them from an executed packet without admitting its report a second time, and `filtered_admitted_subjects_condition` gives the computed condition at every admitted subject. |
+| Development_Requests | Selection of the next problems is the filtered question on their computed readiness, with every ready problem admitted and ties kept; admitted problems form one independent group. A refinement request carries its problem, its demanded statement, the constants the refined entities mention as support, and their least context: the refined entities and the declarations of the support, proved exact, closed under mentioned constants and contained in every closed part of the state containing the refined entities. |
+| Development_Seed_Loop | The seed's ten contract decisions and its selection decision as executed native packets, the admitted group and one request per admitted problem, presented in one report of the seed recipe. |
+
+Executed on the seeded state: each contract decision admits exactly the demanded code
+equation, the selection admits all ten problems, and every request's context holds the two
+refined entities and one declaration for each support constant (support between 7 and 22
+constants). The whole report executes in 9.2 seconds. Before this batch the contract
+decisions had been executed only in a probe, so their evidence was not reconstructible;
+it now is.
+
+The requests are constructed, not issued: leafhood still rests on the absence of any
+decomposition schema for refinement problems, and the verifier of an answer is the next
+construction. A native question over sixteen candidates still costs about 13 seconds, with
+term equality in the scope review dominating; that cost is being attributed and removed,
+because every loop step is such a question.
+
+## Native questions settle through keys; answers are judged by their state difference — 2026-09-18
+
+Every loop step is a native question, so its cost is paid by the end package; it was fixed at
+its cause. Answers to requests are verified without being reconstructed: the verdict reads the
+state an answer's checked context defines.
+
+| Theory or tool | Reusable content and retained prerequisites |
+| --- | --- |
+| Ordered_Member_Trees | The ordered member index and last-occurrence deduplication, factored out of `Ordered_Finite_Rows` at their second use; investigations and keyed evaluation now instantiate the one index. |
+| Keyed_Finite_Sets | Listing, union, equality and membership of finite sets through an ordered key with a left inverse; a subset test is one index lookup per member (`keyed_members_subset`). |
+| Keyed_Native_Evaluation | Inference steps, histories, witnesses, settlement and program evaluation through keyed lookups, each proved equal to the original, composed over the source-shared workflow equations of `Factor_Workflow_Execution_Sharing` rather than competing with them. A native decision over sixteen candidates fell from 7.2 to 4.8 seconds (eight: 0.77 to 0.43); the scope-review stage from 3.0 to 1.45 and its evidence check from 3.3 to 1.7 seconds. The remaining cost is superlinear (application matching, term formation checks and term equality inside the stage; generation 0.37 seconds at sixteen) and is the next measured problem of this path. |
+| Ordered_Term_Demands, Finite_Sorted_Set_Execution, Finite_Set_Composition, Factor_Invariant_Evaluation_Sharing | Term components listed once in canonical order, term demands formed as products, a proved merge sort for canonical listings, and applications computed once per history and evaluation; all compute the original values. |
+| Isabelle_State_Difference | The correspondence of two checked states through the names both tables hold, and their removed and added entities; the difference accounts for both states completely and is empty against any renaming of a state (`isabelle_state_renamed_unchanged`). The read-state locality of a theory change in the stage-1 gate is an instance of this notion. |
+| Development_Refinement_Verification | The verdict of a refinement answer from the request state, the request and the answer state, and its local contract (`development_refinement_verdict_contract`): only the subject's code equations change, they stay within the issued support, the answer state is closed and keeps the roots. |
+| Development_Refinement_Repair | A refused answer's repair computed from its verdict: the extended request state, the request issued again, the definition problems of introduced constants and the conservativity verdict of the extension; the extension keeps every entity and position of the request state (`development_request_extension_persists`). This decomposition is computed, not yet a schema of the development library. |
+| Development_Seed_Verification | Seven derived answer states per seeded request exercising acceptance and every refusal of the verdict, presented in the seed recipe. |
+| Isabelle_Entity_Export (`define_again`), tools/development_answer.py | The same roots exported again in an answer's checked context, with the constants the answer introduces expanded and seeded; the harness frames an answer body in the theory that defines the requested state, checks it heaplessly on the accepted base, exports the verdict and repair, and presents their word. It moves bytes only; five retained answers (validation/development-answers) exercise acceptance, an Isabelle refusal, an axiom, excess support and an introduced helper. |
+
+The request's Isabelle proof context is the theory that defines the requested state. Checking
+an answer in a smaller Isabelle context, the answer's own isolation from theory-level commands
+beyond its declared parts, admission of an accepted answer as a generation under the first
+loop's policy, adoption into the refinement layer and the successor state are not constructed.
+
+## Admission, succession, issuing and executors — 2026-09-18
+
+| Theory or tool | Reusable content and retained prerequisites |
+| --- | --- |
+| Development_Policy (`development_policy_admits_member`) | The converse of the first loop's policy contract: every accepted entity is admitted. The contract now states in a theorem what its text stated. |
+| Development_Successor | Admission of an accepted answer as a generation; problems and dependencies moved by the correspondence, reusing `finite_embedded_inferences` and `finite_inference_result_renaming` rather than a new transport; the history of recorded decisions with a record presentation composed from existing option and pair presentations; the repaired successor. |
+| Development_Decomposition | The library of decomposition rules beside prerequisites, with issuability, the broad-request refusal and the composition law instantiated from the least closure. |
+| Development_Request_Packets, tools/development_executor.py | The executor's packet as the exporter's inverse reading, and a deterministic executor that answers from the packet alone; its admission word equals an agent's for the same equation and the retained replay. |
+| tools/replay_development_answers.py | Reconstruction of every retained answer against the active base, comparing outcome and verdict word; a differing word is a re-evaluation, not a replay failure. |
+| Development_Successor (`development_admitted_keeps_independent_current`, `development_reevaluations_exact`, `development_reevaluations_local`) | Concurrent admission of the independent group through the verdict's contract and the closure of the answer state, with the declared-once premise computed on the state; re-evaluation of absence readings computed from the history, reaching exactly the issues whose readings changed. |

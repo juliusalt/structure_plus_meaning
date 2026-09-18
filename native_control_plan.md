@@ -1100,3 +1100,24 @@ native compiler's syntax quadratic in a term's depth (the measured quadratic com
 installation); that is the next instance of the same correction. The choice of both fixes, like the
 certified-cause route they serve, was made outside the process and is a residual.
 
+
+## The executable quotation is compact — 2026-09-19
+
+The previous section attributed the remaining cost of reading a policy back to the addresses of
+the executable complete data quotation. That correction is now on the base, together with one
+correction the execution exposed.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| The executable complete data quotation addresses the children of a pair by prefixing their addresses. | The quotation is the data syntax readdressed by a node counter in construction order, written in binary digits (`Factor_Finite_Data_Syntax`): the numbering is exactly an interval over the carrier, hence injective, and the finite constructors decode to the syntax pushed by it. The quotation contract `finite_data_syntax_complete_quotation` keeps its statement, because a complete data quotation admits every injective formed readdressing, so no consumer changed. Thirteen report words that present quotations changed only by the readdressing and were re-recorded as re-evaluations of their presentation. |
+| A construction's rows are finite sets, whatever order the construction produces them in. | Canonical order is what every later reader's fast path recognizes (`Finite_Sorted_Set_Execution`). The prefix construction had produced ascending rows by an accident of its addresses; compact rows arrive in construction order, so every later listing, comparison and formation check sorted them again, and the history recipes ran slower alone than their retained runs inside a loaded check (digit history 15.0 against 11.3 seconds, concurrent history 19.0 against 13.6, history index 14.4 against 11.1). The rows are now listed once in canonical order where they are constructed (`finite_syntax_rows_object_listed`, `finite_data_syntax_accumulated_code`): at 4,000 rows the construction takes 0.032 seconds including that sort, and twenty listings take 0.027 seconds against 0.446, twenty equalities 0.061 against 0.849 and twenty formation checks 0.514 against 1.077. |
+
+Evidence: the check that put the compact quotation on the base (`.build/check-20260919a`) proved 302
+theories in 207.5 seconds; the check that added the listing and advanced the base to
+`.build/check-20260919c` proved 153 theories in 196.8 seconds and re-executed the 13 recipes whose
+export changed with every report word equal (168 tool and 35 kernel tests). Run alone on that export,
+digit history takes 7.2 seconds, history index 6.5, concurrent history 6.6, known history 7.1 and
+digit replay 7.7; before the compact quotation digit replay and known history took 18.7 and 9.0
+seconds alone. The same prefix addressing still makes the native compiler's syntax quadratic in a
+term's depth, which remains the next instance of this correction. Both fixes were chosen outside the
+process, like the certified-cause route they serve, and are residuals.

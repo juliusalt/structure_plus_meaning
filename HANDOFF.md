@@ -1,45 +1,69 @@
-# Handoff — compact data quotations next, then certified development causes
+# Handoff — B1 committed; B2 certified development causes in progress
 
-## impl-8 session (2026-09-19) — impl-7's batch validated and committed; next batch designed and measured
+## impl-9 session (2026-09-19)
 
-- Owner direction (ledger, memory `commit-push-at-milestones`): at each validated milestone commit in the
-  existing style and push to origin. The milestone commit after check z holds every batch since d0b70ea.
-- impl-7's demanded package reading is validated: probe `.build/probe-impl8-a` (both theories, every proof,
-  4.2 s); `incremental_check.py check --advance-base --output .build/check-20260918z` ACCEPTED (152 theories,
-  194 s proof; 33 recipes re-executed, every word equal; 18 reused; 168 tool + 35 kernel tests), retained.
-  ACTIVE BASE: `.build/check-20260918z/proof` (lineage z -> x -> w -> u -> s -> p -> complete-20260918n;
-  reset with a complete proof when its cost shows). THEORY_MAP rows added for Finite_Demanded_Closures,
-  Factor_Demanded_Package_Readings and the missing Development_Answer_0ccf746fe2cf; REASONING_REUSE and plan
-  sections written ("A package is read where its roots demand; quotations grow with their depth").
-- Check comparison (recipes vs retained): faster native-workflow 36.5->14.1, native-steering 35.8->18.3,
-  source-development 38.2->21.3, seed 75.8->36.6; slower in the check digit-replay 27.2->44.8 and the history
-  family +8..9 s, but ALONE on the same export (`.build/impl8/alone-*`) digit-replay 18.7 s and known-history
-  9.0 s, both faster than retained: load, not the traversal.
-- ROOT CAUSE of the remaining certified-cause cost, measured (probe `.build/probe-impl8-d`, theory parked in
-  `.build/impl8/Probe_Impl8_Compact.thy`): `finite_data_syntax` addresses a pair's children by prefixing
-  (`finite_pair_syntax` = Cons 2 / Cons 3), so addresses in a data list have length ~ their depth; at 3,201
-  addresses the total address length is 1,281,600 (compact: 6,146). Compact counter addresses (base-256 digits
-  of a node counter, same incidence shape): formed 0.055->0.002 s, ground source 0.203->0.008, policy read
-  0.741->0.036; at 11,601 addresses the compact read is 0.217 s vs 10.4 s. The probe's `compact_rows`/`base256`
-  are the construction to prove.
-- NEXT BATCH (B1, designed): make the executable complete data quotation compact. Consumers use only
-  `finite_data_syntax_domain` and `finite_data_syntax_complete_quotation` (root []): Factor_Finite_Judgment_Quotation,
-  Factor_Constructed_Judgment_Sources, Finite_Requirement_Artifact_Admission (plus definitional uses in
-  Development_Publication, Factor_Certified_Cause_Assessment, Factor_Digit_Replay_Variants, Factor_Known_Cause_Reports,
-  Factor_Prepared_Cause_Scope_Reports, Factor_Certified_Cause_Variants). Plan: an address `compact_address k`
-  (injective, octets, `compact_address 0 = []` so the root stays []), a node count and an address map
-  `data_syntax_address n t` defined by the same recursion as `term_syntax`; prove it injective and formed on
-  the carrier of `term_syntax t` (children get disjoint counter intervals) and prove the compact rows decode to
-  `push_object (data_syntax_address 0 t) (term_syntax t)` from `push_structure_composes`/`_cong` and
-  `push_basis_composes`/`_cong`; then `complete_data_quoted_at` holds with f = that map. Redefine
-  `finite_data_syntax` as the compact construction (its contract `decode = push f (term_syntax t)` replaces
-  `decode = term_syntax t`), replace `Factor_Finite_Accumulated_Data_Syntax`'s code equation, re-prove the two
-  consumer contracts. Every word presenting a quotation changes (seed publication, causes of digit replay,
-  histories, certified/required causes, literal replay?, requirement artifacts): re-record them as
-  re-evaluations of the presentation after checking a sample's structural observations are unchanged.
-  Then B2 = certified development causes (impl-6's design below) over the compact payload target.
-- Scratch: `.build/impl8/` (probe theories and solo recipe runs), probes `.build/probe-impl8-*`. Nothing runs.
+- B1 DONE, VALIDATED, COMMITTED AND PUSHED (see the commit after 78ae153, "Address complete data quotations
+  compactly ..."). The regression impl-8 found is fixed at its cause: compact quotation rows arrive in
+  construction order, so every later listing/equality/formation sorted them again. Now
+  `Factor_Finite_Syntax_Accumulation.finite_syntax_rows_object_listed` (listing each row family again in
+  canonical order presents the same object) and `Factor_Finite_Accumulated_Data_Syntax`:
+  `finite_data_syntax_accumulated` (the old statement, no longer code) and `finite_data_syntax_accumulated_code
+  [code]` (rows listed once in canonical order). Probe: build 0.032 s at 4,000 rows incl. the sort; x20 listing
+  0.027 vs 0.446, equality 0.061 vs 0.849, formation 0.514 vs 1.077.
+- Check `.build/check-20260919c --advance-base`: accepted, 153 theories in 196.8 s, the 13 recipes whose export
+  changed re-executed with every word equal, 168 tool + 35 kernel tests; retained. ACTIVE BASE:
+  `.build/check-20260919c/proof` (lineage c -> a -> z -> x -> w -> u -> s -> p -> complete-20260918n; nine
+  levels — reset with a complete proof when its cost shows). History recipes alone on c's export: digit
+  history 7.2 s, history index 6.5, concurrent history 6.6, known history 7.1, digit replay 7.7.
+- Plan section "The executable quotation is compact — 2026-09-19", REASONING_REUSE and THEORY_MAP rows written.
+- Removed: check b, probe-impl8-*/impl9-a, impl3/impl4 run outputs (replay, packets, judged, adoption copy),
+  impl8 solo runs. Kept: scratch .thy drafts in `.build/impl3-scratch`, `.build/impl4`, `.build/impl6`,
+  `.build/impl8`, `.build/impl9`.
+- NEXT (B2): certified development causes — see impl-8's design below; impl-9 is refining it in
+  `.build/impl9/` (drafts are not in `theories/` so checks keep fixed inputs).
 
+
+## impl-8 session (2026-09-19) — parked at the context limit; B1 validated, NOT committed
+
+- Commit 78ae153 (pushed) holds everything through impl-7's batch. Owner direction (ledger + memory
+  `commit-push-at-milestones`): commit and push at validated milestones, existing style, no attribution.
+- B1 DONE AND VALIDATED (uncommitted): the executable complete data quotation is compact.
+  `theories/Factor_Finite_Data_Syntax.thy` (compact_syntax_address from natural_binary_digits,
+  data_syntax_position/_address, data_syntax_carrier interval, finite_data_syntax_at, contracts
+  finite_data_syntax_domain/_sound/_exact/_complete_quotation), `Factor_Finite_Syntax_Accumulation.thy`
+  (five-address finite_syntax_rows_pair; prefix pair lemmas removed), `Factor_Finite_Accumulated_Data_Syntax.thy`
+  (counter-threaded rows, finite_data_syntax_accumulated_code). THEORY_MAP rows and a REASONING_REUSE
+  section written. check a (`.build/check-20260919a`, 302 theories, 207.5 s) accepted every proof; 13 recipe
+  words changed only by the readdressing (exit 0, same record shapes, smaller words) and were re-recorded
+  in `validation/reconstruction/*-reports.json`; `adopt --proof .build/check-20260919a/proof`; check b
+  (`.build/check-20260919b`) ACCEPTED and RETAINED. ACTIVE BASE: `.build/check-20260919a/proof`.
+- OPEN REGRESSION, cause verified, fix designed (do this FIRST): history recipes are slower alone
+  (digit-history 15.0 s, concurrent-history 19.0, history-index 14.4 vs retained 11.3/13.6/11.1). Probe
+  `.build/probe-impl8-l` (theory `.build/impl8/Probe_Impl8_Sorted.thy`): the prefix construction emitted its
+  rows in ascending order, so canonical listings took the linear fast path; compact rows are unordered, so
+  every listing/equality sorts again (x20 at 4,000 elements: listing 0.446 vs 0.024 s sorted, equality 0.849
+  vs 0.084, formation 1.077 vs 0.545). FIX: in Factor_Finite_Accumulated_Data_Syntax's code equation return
+  `finite_syntax_rows_object (sorted_list_of_set (set U), sorted_list_of_set (set I), sorted_list_of_set (set B))`
+  (same fsets: one lemma via set_sorted_list_of_set; add imports "HOL-Library.List_Lexorder"
+  "HOL-Library.Product_Lexorder"). Then check (words unchanged expected: same fset values), measure the
+  history recipes alone, write the plan section "The executable quotation is compact" (evidence above +
+  this fix), and COMMIT + PUSH B1.
+- NEXT BATCH B2 (drafted, not probed): certified development causes. Generalized policy ready in
+  `.build/impl8/Development_Policy.thy.new` (development_policy_source_with over listed presentations,
+  development_policy_with_exact; entity policy = instance via development_policy_source_listed); copy it over
+  theories/Development_Policy.thy. Draft theory `.build/impl8/Probe_Certified_Causes.thy`:
+  development_certified_generation xs H l rows R (policy -> native source -> program proofs -> pick
+  certificate -> finite_certificate_replay -> finite_record_native_replay -> finite_certified_policy_cause),
+  theorems _cause and _listed (payload target is listed), plus stage timings and a seed publication shape
+  check. Design: one environment of generations; incumbents recorded first, each certified under the
+  policy listing its family's compact quotation target; each answer recorded from that environment citing
+  its incumbent's row, certified under the policy that lists its payload only when the verdict accepted
+  it (the constructor's condition; the verdict stays in the development history record). The required
+  history is NOT used: its single fixed policy and own-member predecessors do not fit per-answer evidence.
+  Then Development_Publication/Seed_Publication consume certified records (compute answer records once per
+  request, Parallel.map). Residuals: the per-answer listing policy (Q1), this route choice.
+- Scratch: `.build/impl8/` (probe theories, transplant.py, solo runs). Nothing runs. Remove
+  `.build/probe-impl8-*` and `.build/check-20260918z`-era dirs no longer in the lineage when convenient.
 
 ## impl-7 session (2026-09-18 night) — its batch was validated and committed by impl-8
 

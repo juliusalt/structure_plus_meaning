@@ -1262,3 +1262,43 @@ that runs ML would have to be added to the refused names; a method whose theorem
 oracle (`eval`) is refused neither by this reading nor by the repository's escape scan, and whether an
 answer may use one needs its own account; and the choice of the declared kinds was made outside the
 process and is a residual.
+
+## The loop's decisions are admitted generations — 2026-09-19
+
+Stage 2's gate asks that selection, decomposition, scheduling and request construction be admitted
+generations. The loop recorded its decisions only in its history: the executed selection packet with the
+problems it admitted, and each issued request with the library reading it rested on. An admitted answer
+cited only the incumbent it was judged against, not the request it answered.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| A decision of the loop is a record in the development's history. | The history keeps the evidence (the packet, the reading, the verdict); the decision itself is admitted as a generation at the locus of its kind, as an answer is (`Development_Decision_Generations`): a selection at the development's selection locus with the loci of the admitted problems as payload, an issue at its problem's issue locus with the problem's locus, the names of its support and its library reading as payload. Both are recorded through the one construction that records any presented payload under the policy listing it (`development_payload_generation_with`, extracted from the family generation at this second use), so their causes are certified calls of that policy (`development_selection_generation_certified`, `development_issue_generation_certified`). A decision generation is constructed only for the decisions the loop made: its native selection of ready problems and the requests it issues for the selected leaves (`development_loop_decisions_made`). |
+| An issue or a selection stands where a problem stands. | Decisions stand at loci of their own kind, proved distinct from every problem locus (`development_decision_loci_distinct`), and distinct formed loci are distinct targets (`development_data_target_injective`): at most one current request per problem and one current selection per development, and a transaction admitting an issue never meets a problem's incumbent. Admission where nothing stood is the published state's admission transaction (`development_publication_admitted`). |
+| An answer's predecessors are its incumbent; the request context would need a generation of its own (B4). | An answer cites the issue of the request it answers (`development_answer_citations`); the issue cites the incumbent and the selection that admitted the problem, so the incumbent is the answer's ancestor and only direct edges are recorded. The request's support is in the issue's payload; its context is the refined entities with the declarations of that support, read from the state the request was made in, so no context generation is needed. |
+| Scheduling is a separate record. | The admitted problems are the independent group (`development_selected_independent`), so a schedule generation would restate the selection's payload; none is recorded. |
+| Record a generation by checking its environment and reading every cited predecessor back. | A chain of recordings establishes both facts itself: recording leaves a formed environment that includes the one recorded in and reads the recorded generation back (`development_payload_generation_recorded`), and a reading survives inclusion (`finite_check_generation_included`). Recording is stated once over the record constructor (`development_payload_generation_using`, as the library's replay and policy attempts are), and the chains the development makes (a judged answer's publication, the seed report) execute with the library's known-predecessor constructor (`finite_construct_known_original_generation_exact`, instantiated for the third time; `development_answer_publication_known`, `development_seed_publication_from_known`). Reading a predecessor back had cost its whole cause, 350,817 addresses for a seed incumbent. |
+
+Evidence: a probe on the base heap checked every proof in place. The seed report records ten
+incumbents, the selection, ten issues and twenty answers, and executes their fifty-one transactions (in
+every row the issue is admitted, the first answer applies and the second conflicts; the sequential
+publication applies all twenty-one); with the known constructor it computes in 51.4 seconds, against
+149.9 with every predecessor read back and 38.0 before the decisions were recorded. The publication of
+one judged answer (its incumbent, its issue and the answer) takes 19.6 seconds, against 10.2 when no
+issue was recorded. The check that advanced the base to `.build/check-20260919k` proved the six changed
+theories in 40.0 seconds and executed the seed recipe with every earlier word equal; the publication word
+changed, since its generations are new, and its stage took 149 seconds for a word of 39.6 MB (90.9 seconds
+and 32.6 MB before). Presenting the word costs more than computing the report: every transaction result
+presents its whole successor snapshot, which its predecessor and the transaction already determine, so the
+word grows with the product of the publications and the snapshot's size. The confirming check was
+accepted and retained, with 171 tool and 35 kernel tests passing. Replaying the fourteen retained answers
+on the new base reproduced every refusal and failure and reported the adopted walk; the six judged answers
+kept every verdict word, and their publication words changed because the publication now records the
+issue, so they were re-recorded, and a second replay reconstructed all of them.
+
+Open: the rule that admits a decision is its constructor's contract (the loop's selection and issuing),
+as an answer's acceptance by its checked context is, and a reader of the generation alone does not see it;
+a later round's selection supersedes the first only once a persistent development state holds both; the
+harness records a request judged on demand with no selection, since it made none; decompositions have no
+generation because the library holds no rule; a report presents every transaction's successor snapshot
+whole, although only what the transaction changes is not already determined; and the choice of this design,
+like the earlier ones, was made outside the process and is a residual.

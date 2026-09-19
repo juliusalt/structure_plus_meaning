@@ -74,16 +74,24 @@ RECIPE = Recipe(
              'problem\'s locus, which is its contract presented with the names it uses, with the incumbent '
              'equations presented with their names as payload, each recorded in an environment of its own; its '
              'cause is a certified call of the policy that lists that family\'s complete data quotation, which is '
-             'constructed only because every entity of the family is an entity of the checked context. For every '
-             'issued request the unchanged answer, certified in the same way from the answer state and recorded '
-             'beside the incumbent it was judged against, citing it, is published by the transaction that expects '
-             'that incumbent and replaces exactly its locus; the answer with the reversed table, certified against '
-             'the same incumbent, conflicts with the complete observed comparison, because the locus now holds the '
-             'first answer; the two answers present equal payloads; and publishing all unchanged answers in turn '
-             'applies every transaction. Transactions are executed on finite generations and are proved to be the '
+             'constructed only because every entity of the family is an entity of the checked context. The '
+             'round\'s decisions, the loop\'s own native selection of the ready problems and the requests it issues '
+             'for the selected leaves of the seeded library, are certified generations too: the selection, whose '
+             'payload is the loci of the admitted problems, at the development\'s selection locus, and every issue, '
+             'whose payload is its problem\'s locus, the names of its support and the library reading it rested on, '
+             'at its problem\'s issue locus, recorded beside the incumbent and citing it and the selection; each is '
+             'certified under the policy that lists its payload, constructed only for the decision the loop made. '
+             'For every issued request the issue is admitted where no issue stood, and the unchanged answer, '
+             'certified in the same way from the answer state and recorded beside the issue, citing the issue, '
+             'whose predecessor the incumbent is, is published by the transaction that expects the incumbent and replaces exactly its '
+             'locus; the answer with the reversed table, certified against the same incumbent, conflicts with the '
+             'complete observed comparison, because the locus now holds the first answer; the two answers present '
+             'equal payloads; and publishing the selection, every issue and all unchanged answers in turn applies '
+             'every transaction. Transactions are executed on finite generations and are proved to be the '
              'structural transactions on the decoded cores. A recorded cause carries the policy that lists its '
-             'family, not the checked context: that the family was accepted is the constructor\'s contract, and '
-             'the verdict that admitted an answer stays in the development\'s history.')
+             'payload, not the checked context or the loop: that the family was accepted, or the decision made, is '
+             'the constructor\'s contract, and the verdict that admitted an answer and the packet that admitted the '
+             'selection stay in the development\'s history.')
 
 
 if __name__ == '__main__':

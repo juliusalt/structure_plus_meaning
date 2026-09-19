@@ -1,4 +1,47 @@
-# Handoff — B5 (answers confined to declared parts) committed; G1 (decisions as admitted generations) next
+# Handoff — G1 committed; B6 (machinery residual problems) in progress
+
+## impl-14 session (2026-09-19)
+
+- G1 FINISHED: confirming replay `.build/impl13/replay-b` gave {"replayed": 14, "reconstructed": 13, "adopted":
+  ["indexed-data-walk"], "differing": []}; plan section "The loop's decisions are admitted generations — 2026-09-19"
+  appended; committed and pushed as "Admit the loop's decisions as generations and record them with known readings".
+  ACTIVE BASE: `.build/check-20260919k/proof`.
+
+## impl-13 session (2026-09-19) — parked at the context limit; G1 validated (committed by impl-14)
+
+- G1 DONE in theories/ (answers cite only the issue; recording stated over the record constructor `_using`,
+  `_with` = original instances with `_with_unfold` lemmas; chain tops execute with the known-predecessor
+  constructor: `development_answer_publication_known [code]`, `development_seed_publication_from_known` used
+  by `development_seed_publication_prepared`). Probe `.build/probe-impl13-a`: all proofs, seed publication
+  51.4 s (149.9 without known readings, 38.0 before G1), harness publication 19.6 s.
+- VALIDATED: check `.build/check-20260919k --advance-base` (6 theories 40.0 s; seed recipe failed only on the
+  publication word, re-recorded 09ccf853->a4525800), `adopt --proof .build/check-20260919k/proof` (ACTIVE BASE:
+  check k), confirming check `.build/check-20260919l` ACCEPTED (seed recipe 142 s) and RETAINED (171+35 tests).
+  `replay_development_answers.py --rerecord`: 7 refusals/failures reconstructed, walk adopted, 6 judged answers
+  re-recorded (verdict words unchanged; publication words, base/harness digests and B5's parts step changed).
+- RUNNING at park: confirming replay `.build/impl13/replay-b` (pid `.build/impl13/replay-b.pid`, summary
+  `.build/impl13/replay-b.out`): expect {"reconstructed": 13, "adopted": ["indexed-data-walk"], "differing": []}.
+- TO FINISH G1 (in order): (1) read replay-b.out; if all reconstructed, append `.build/impl12/plan-g1-draft.md`
+  (complete; its last evidence sentence claims the second replay reconstructed all six — fix if not) to
+  native_control_plan.md; (2) commit with the message in `.build/impl13/commit-g1.txt` (replace the trailing
+  word REPLAY by the replay result sentence; NO attribution) and `git push origin main`; (3) remove scratch:
+  `.build/impl12/g1`, `.build/probe-impl13-a`, `.build/probe-impl13-b`, `.build/impl13/replay-*`,
+  `.build/check-20260919l` after commit (heapless confirm check; retained in validation).
+- Uncommitted edits (all part of G1): theories Development_{Publication,Certified_Generations,Decision_Generations
+  (new),Admitted_Publication,Seed_Publication}.thy, ROOT, THEORY_MAP.md, REASONING_REUSE.md (G1 section incl.
+  known readings), tools/reconstruct_native_development_seed.py (boundary text), validation/development-answers/
+  {6 records, README.md}, validation/reconstruction/native-development-seed-*.json, validation/incremental-check.json,
+  validation/reconstruction/current-verified.json, HANDOFF.md.
+- OPEN, recorded in the plan draft: the seed report presents every transaction's whole successor snapshot (word
+  39.6 MB, stage ~145 s; quadratic in publications; retention/condition 3); cause size ~30x payload (payload
+  quoted twice) blocks recording large payloads (notion families 1K-60K addresses, probe impl13-b).
+- NEXT BATCH B6 (provisional, residual choice; design `.build/impl13/b6-design.md`, probe `.build/impl13/basis/
+  Probe_Machinery_State.thy` measured the loop's 8 notions as a state: 103 names, 80 entities, 0.7 s): the
+  machinery's notions become native residual problems — unify definition problems (contract = the constant as
+  declared, like refinement; the repair's definition problems use it, re-record retained answers), factor the
+  statement reading of Development_Refinement_Contracts (code equations vs kernel definitions) at its second use,
+  a machinery state rooted at the loop's notions, residual problems (origin Residual, authority Generated) with
+  dependencies, readiness and the native selection, in a recipe of its own.
 
 ## impl-12 session (2026-09-19)
 
@@ -11,24 +54,36 @@
   adopted, and failed-proof differed only because its old record named its failure `refusal`: renamed to `error`, the
   replay now compares `error` too, and a re-judgment reproduced the error. Plan section "Answers are confined to their
   declared parts — 2026-09-19" appended; owner question Q4 (agent executor) added to the ledger.
-- NEXT BATCH G1 (chosen provisionally: the plan's stage-2 gate names "selection, decomposition, scheduling and request
-  construction are admitted generations" first; impl-11 designed it and folded B4 into it). Design:
-  - Loci per decision kind, as tagged presentations whose disjointness from problem loci is PROVED: problem locus
-    (existing `development_problem_locus`), issue locus (tag + problem locus: at most one current request per problem),
-    selection locus (tag + collection of the problem loci chosen among: at most one current selection per problem family).
-  - Selection generation: payload = presentation of the admitted problems' loci; judged by the B2 listing policy
-    (`development_policy_judgment [payload]`), constructed only when `development_loop_selection` admitted exactly those
-    problems (guard = the native question's admission; constructor contract states it); own environment; a later
-    round replaces it by a transaction expecting the previous selection.
-  - Issue generation per issued request: payload = problem locus + library reading presented with names (the request's
-    support and context are functions of the state and the problem, so they are not stored again); recorded in the
-    problem's incumbent environment, citing the incumbent (the request's incumbent family); guard = issuable + request_of.
-  - Answer generation cites incumbent AND issue (B4 resolved: the answer rests on the request that was issued).
-  - The records of `Development_Successor` stay as admission evidence (packet, verdict, repair); generations are the
-    admitted elements (the B2 split). Scheduling gets no generation: the selection's payload is the independent group
-    (`development_selected_independent`), so a schedule record would repeat it.
-  - Consumers: the published snapshot over all loci (finite_locus_publications), re-evaluation read from the issue
-    generations' readings; seed report stage + recipe word.
+- G1 IN PROGRESS, UNCOMMITTED (impl-12 parked at the context limit). All in theories/ + ROOT:
+  - Development_Publication: `development_issue_locus`, `development_selection_locus`, `development_decision_loci_distinct`,
+    `development_data_target_injective`, `development_publication_admitted` (admission at an absent locus).
+  - Development_Certified_Generations: `development_payload_generation_with` (+ `_fields`, `_certified`), family/incumbent/
+    answer restated through it; `development_judged_generation_fields` moved here; `development_answer_citations` = rows at
+    the problem's ISSUE locus only (answer cites the issue; the issue cites the incumbent: direct edges only).
+  - NEW theories/Development_Decision_Generations.thy (ROOT after Certified_Generations): selection/issue payloads,
+    `_generation_with`, `_fields`, `_certified`, `development_loop_decisions(_made)`, `development_recorded_issue_with`
+    (returns env, answer rows [issue row], Q) + `_fields`.
+  - Development_Admitted_Publication: publication = (incumbent, issue, answer, results); issue admitted then answer
+    replaces incumbent; `development_answer_publication_applied` (both apply); `development_answer_published` needs both.
+  - Development_Seed_Publication: rewritten (decisions once via `development_loop_decisions`; selection + issues +
+    answers; prepared keys incl. decision payloads; report (S0, Sel, rows (Q,G,H,results,equal), sequential)).
+  - THEORY_MAP rows, REASONING_REUSE section "The loop's decisions are admitted generations", seed recipe boundary text
+    (tools/reconstruct_native_development_seed.py) are written; plan section drafted in `.build/impl12/plan-g1-draft.md`
+    (fill COST-AND-EVIDENCE, fix its "answer cites incumbent and issue" to "cites the issue").
+  - PROBE STATUS: renamed copies in `.build/impl12/g1/` (G1_*.thy; regenerate from theories/ with the sed-rename used in
+    this session: Development_X -> G1_X for the five theories). Before the citation change all proofs LOADED and the
+    executed seed publication summary was [1,10,10,10,10,21,21,10] (correct) but took 133 s vs 38 s before G1.
+    Attribution (G1_Probe_Attribution.thy, code_reflect): recording in the incumbent's env re-checks env formation (1.0 s)
+    and re-reads cited predecessors (incumbent cause 350,817 addresses): answer citing incumbent+issue 20.2 s vs 9.5 s.
+    FIX APPLIED (not yet probed): answers cite only the issue. RUNNING: probe `.build/probe-impl12-a` (PID file
+    `.build/probe-impl12-a.pid`, output `.build/probe-impl12-a.out`, log `.build/probe-impl12-a/probe.log`, grep PROBE):
+    expect loaded + summary [1,10,10,10,10,21,21,10] and a lower time. If still slow: carry known predecessors with the
+    library's `finite_construct_known_original_generation` (+ `finite_check_generation_included`, recording contract
+    `finite_construct_generation_record_correct`) via a recorder parameter, code equations at the chain tops.
+  - THEN: `incremental_check.py check --advance-base --output .build/check-20260919k`; seed recipe will fail only on the
+    publication word -> re-record it in validation/reconstruction/native-development-seed-reports.json, `adopt --proof`,
+    confirm check, retain; `replay_development_answers.py --rerecord` (publication words change; verdict words must not);
+    append plan section; commit+push G1.
 - Stage-3 remainder (agent executor confined to its packet) waits on Q4; deterministic executor + replay carry it now.
 
 ## impl-11 session (2026-09-19)

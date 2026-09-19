@@ -1,6 +1,6 @@
 theory Development_Certified_Generations
   imports Development_Publication Development_Policy Factor_Certificate_Policy_Readiness
-    Factor_Finite_Native_Proof_Construction
+    Factor_Finite_Native_Proof_Construction RRA_Known_Original_Generation_Rows RRA_Finite_Generation_Monotonicity
 begin
 
 section \<open>A policy's judgment of a payload\<close>
@@ -223,6 +223,10 @@ definition development_payload_judgment ::
      None \<Rightarrow> None
    | Some R \<Rightarrow> map_option (Pair R) (development_policy_judgment [Finite_Target (Finite_Whole R)] R))"
 
+type_synonym development_generation_row = "(local_address option\<times>local_address)\<times>finite_generation"
+
+type_synonym development_payload_judge = "finite_factor_term \<Rightarrow> (finite_exact_artifact\<times>development_policy_judgment) option"
+
 definition development_judged_generation ::
     "(finite_exact_artifact\<times>development_policy_judgment) \<Rightarrow> local_address option finite_artifact_environment \<Rightarrow>
       finite_exact_target \<Rightarrow> ((local_address option\<times>local_address)\<times>finite_generation) list \<Rightarrow>
@@ -237,12 +241,149 @@ lemma development_payload_judgment_certified:
     (simp_all add: development_payload_judgment_def development_judged_generation_def
       development_certified_generation_def)
 
+lemma development_judged_generation_fields:
+  assumes recorded: "development_judged_generation judged H l rows=Some (B,u,G)"
+  shows "generation_locus G=l" "finite_generation_formed G" "generation_predecessors G=fset_of_list (map snd rows)"
+proof -
+  obtain R j where judged: "judged=(R,j)" by (cases judged) auto
+  obtain d K pu B0 au root J C where shape: "j=(d,K,pu,B0,au,root,J,C)" by (cases j) auto
+  have built: "finite_construct_generation_record H l (Finite_Whole R) (Finite_Whole C) rows=Some (B,u,G)"
+    using recorded by (simp add: development_judged_generation_def development_recorded_generation_def judged shape)
+  note constructed=finite_construct_generation_record_correct[OF built]
+  show "generation_locus G=l" "generation_predecessors G=fset_of_list (map snd rows)"
+    using constructed(2) by (simp_all add: finite_generation_record_core_def)
+  show "finite_generation_formed G" by (rule finite_check_generation_formed[OF constructed(6)])
+qed
+
+section \<open>Any presented payload is admitted under the policy that lists it\<close>
+
+text \<open>
+  Recording a payload's judgment is one construction whatever the payload presents: a family of
+  entities, a selection of problems or an issued request. Each use supplies its payload's presentation
+  and the locus it stands at, and the judge that judges it; with the judgment itself as judge, the
+  recorded cause is a certified call of the policy that lists exactly that payload. What the payload
+  must satisfy before it is recorded is the use's own guard, stated by the use's constructor.
+\<close>
+
+definition development_payload_generation_with ::
+    "development_payload_judge \<Rightarrow> finite_factor_term \<Rightarrow> local_address option finite_artifact_environment \<Rightarrow>
+      finite_exact_target \<Rightarrow> development_generation_row list \<Rightarrow>
+      (local_address option finite_artifact_environment\<times>local_address option\<times>finite_generation) option" where
+  "development_payload_generation_with judge t H l rows=Option.bind (judge t) (\<lambda>judged. development_judged_generation judged H l rows)"
+
+lemma development_payload_generation_fields:
+  assumes built: "development_payload_generation_with judge t H l rows=Some (B,u,G)"
+  shows "generation_locus G=l" "finite_generation_formed G" "generation_predecessors G=fset_of_list (map snd rows)"
+proof -
+  obtain judged where "development_judged_generation judged H l rows=Some (B,u,G)"
+    using built by (auto simp: development_payload_generation_with_def bind_eq_Some_conv)
+  then show "generation_locus G=l" "finite_generation_formed G" "generation_predecessors G=fset_of_list (map snd rows)"
+    by (rule development_judged_generation_fields)+
+qed
+
+text \<open>
+  Recording leaves a formed environment that includes the one recorded in, and the recorded generation
+  reads back at its site there: the contract of the library's record constructor
+  (\<open>finite_construct_generation_record_correct\<close>). A generation read at a site stays read there in every
+  formed environment that includes it (\<open>finite_check_generation_included\<close>).
+\<close>
+
+lemma development_payload_generation_recorded:
+  assumes built: "development_payload_generation_with judge t H l rows=Some (B,u,G)"
+  shows "finite_environment_formed B" "finite_environment_included H B" "finite_check_generation G B u []"
+proof -
+  obtain R j where recorded: "development_judged_generation (R,j) H l rows=Some (B,u,G)"
+    using built by (auto simp: development_payload_generation_with_def bind_eq_Some_conv)
+  obtain d K pu B0 au root J C where shape: "j=(d,K,pu,B0,au,root,J,C)" by (cases j) auto
+  have constructed: "finite_construct_generation_record H l (Finite_Whole R) (Finite_Whole C) rows=Some (B,u,G)"
+    using recorded by (simp add: development_judged_generation_def development_recorded_generation_def shape)
+  note correct=finite_construct_generation_record_correct[OF constructed]
+  show "finite_environment_formed B" by (rule correct(3))
+  show "finite_environment_included H B" using correct(4) by (simp only: finite_environment_included_correct)
+  show "finite_check_generation G B u []" by (rule correct(6))
+qed
+
+lemma development_rows_carried:
+  assumes rows: "list_all (\<lambda>(d,G). finite_check_generation G H (fst d) (snd d)) rows"
+    and included: "finite_environment_included H B" and formed: "finite_environment_formed B"
+  shows "list_all (\<lambda>(d,G). finite_check_generation G B (fst d) (snd d)) rows"
+  using rows finite_check_generation_included[OF _ included formed] by (auto simp: list_all_iff)
+
+section \<open>A recording whose cited readings are known does not read them again\<close>
+
+text \<open>
+  The constructor of a generation checks that the environment it records in is formed and reads every
+  cited predecessor back at its site before it records. A development records into environments it has
+  itself recorded, citing generations it has just recorded there, so both facts are known from the
+  contract of the recording that produced them; reading a predecessor back costs its whole cause, which
+  holds its payload twice. The library states the same construction with the readings taken as known
+  (\<open>finite_construct_known_original_generation\<close>) and proves it equal to the original whenever they hold
+  (\<open>finite_construct_known_original_generation_exact\<close>). Recording is therefore stated once over the
+  constructor, as the library's replay and policy attempts are, and each chain of recordings the
+  development makes executes with the known constructor where it has established the readings.
+\<close>
+
+type_synonym development_constructor = "local_address option finite_artifact_environment \<Rightarrow> finite_exact_target \<Rightarrow>
+    finite_exact_target \<Rightarrow> finite_exact_target \<Rightarrow> development_generation_row list \<Rightarrow>
+    (local_address option finite_artifact_environment\<times>local_address option\<times>finite_generation) option"
+
+definition development_payload_generation_using ::
+    "development_constructor \<Rightarrow> development_payload_judge \<Rightarrow> finite_factor_term \<Rightarrow>
+      local_address option finite_artifact_environment \<Rightarrow> finite_exact_target \<Rightarrow> development_generation_row list \<Rightarrow>
+      (local_address option finite_artifact_environment\<times>local_address option\<times>finite_generation) option" where
+  "development_payload_generation_using construct judge t H l rows=Option.bind (judge t)
+     (\<lambda>(R,d,K,pu,B,au,root,J,C). construct H l (Finite_Whole R) (Finite_Whole C) rows)"
+
+lemma development_payload_generation_using_original:
+  "development_payload_generation_using finite_construct_generation_record judge t H l rows=
+    development_payload_generation_with judge t H l rows"
+  by (cases "judge t") (auto simp: development_payload_generation_using_def development_payload_generation_with_def
+    development_judged_generation_def development_recorded_generation_def split: prod.splits)
+
+lemma development_payload_generation_using_known:
+  assumes formed: "finite_environment_formed H"
+    and rows: "list_all (\<lambda>(d,G). finite_check_generation G H (fst d) (snd d)) rows"
+  shows "development_payload_generation_using finite_construct_known_original_generation judge t H l rows=
+    development_payload_generation_with judge t H l rows"
+  by (simp only: development_payload_generation_using_original[symmetric] development_payload_generation_using_def
+    finite_construct_known_original_generation_exact[OF formed rows])
+
+theorem development_payload_generation_certified:
+  assumes built: "development_payload_generation_with development_payload_judgment t H l rows=Some (B,u,G)"
+  obtains R d K pu E root where "development_data_target t=Some (generation_payload G)"
+    "generation_payload G=Finite_Whole R"
+    "development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,K,pu)"
+    "certified_policy_cause_at (decode_finite_environment K) pu [] d (decode_finite_environment B) u []
+      (decode_finite_generation G) (decode_finite_environment E) root (decode_finite_object R)"
+    "generation_locus G=l" "generation_predecessors G=fset_of_list (map snd rows)"
+    "finite_check_generation G B u []"
+    "environment_included (decode_finite_environment H) (decode_finite_environment B)"
+proof -
+  obtain R where quoted: "finite_data_syntax (decode_finite_term t)=Some R"
+    using built by (cases "finite_data_syntax (decode_finite_term t)")
+      (simp_all add: development_payload_generation_with_def development_payload_judgment_def)
+  have certified: "development_certified_generation [Finite_Target (Finite_Whole R)] H l rows R=Some (B,u,G)"
+    using built by (simp only: development_payload_generation_with_def development_payload_judgment_certified[OF quoted])
+  obtain d K pu E root where policy: "development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,K,pu)"
+    and cause: "certified_policy_cause_at (decode_finite_environment K) pu [] d (decode_finite_environment B) u []
+      (decode_finite_generation G) (decode_finite_environment E) root (decode_finite_object R)"
+    and fields: "generation_locus G=l" "generation_predecessors G=fset_of_list (map snd rows)"
+      "generation_payload G=Finite_Whole R" "finite_check_generation G B u []"
+      "environment_included (decode_finite_environment H) (decode_finite_environment B)"
+    by (rule development_certified_generation_certified[OF certified]) blast
+  have target: "development_data_target t=Some (generation_payload G)"
+    using quoted fields(3) by (simp add: development_data_target_def)
+  show thesis by (rule that[OF target fields(3) policy cause fields(1,2,4,5)])
+qed
+
+section \<open>A family's payload is its acceptance\<close>
+
 definition development_family_generation ::
     "isabelle_context \<Rightarrow> isabelle_entity list \<Rightarrow> local_address option finite_artifact_environment \<Rightarrow>
-      finite_exact_target \<Rightarrow> ((local_address option\<times>local_address)\<times>finite_generation) list \<Rightarrow>
+      finite_exact_target \<Rightarrow> development_generation_row list \<Rightarrow>
       (local_address option finite_artifact_environment\<times>local_address option\<times>finite_generation) option" where
   "development_family_generation C es H l rows=Option.bind (development_family_key C es)
-     (\<lambda>t. Option.bind (development_payload_judgment t) (\<lambda>judged. development_judged_generation judged H l rows))"
+     (\<lambda>t. development_payload_generation_with development_payload_judgment t H l rows)"
 
 theorem development_family_generation_certified:
   assumes built: "development_family_generation C es H l rows=Some (B,u,G)"
@@ -259,23 +400,18 @@ proof -
   have accepted: "set es\<subseteq>set (snd C)"
     using built by (simp add: development_family_generation_def development_family_key_def split: if_splits)
   let ?t="isabelle_context_data (isabelle_local_entities (fst C) es)"
-  have judged: "Option.bind (development_payload_judgment ?t)
-      (\<lambda>judged. development_judged_generation judged H l rows)=Some (B,u,G)"
+  have generated: "development_payload_generation_with development_payload_judgment ?t H l rows=Some (B,u,G)"
     using built accepted by (simp add: development_family_generation_def development_family_key_def)
-  obtain R where quoted: "finite_data_syntax (decode_finite_term ?t)=Some R"
-    using judged by (cases "finite_data_syntax (decode_finite_term ?t)") (simp_all add: development_payload_judgment_def)
-  have certified: "development_certified_generation [Finite_Target (Finite_Whole R)] H l rows R=Some (B,u,G)"
-    using judged by (simp only: development_payload_judgment_certified[OF quoted])
-  obtain d K pu E root where policy: "development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,K,pu)"
+  obtain R d K pu E root where target: "development_data_target ?t=Some (generation_payload G)"
+    and whole: "generation_payload G=Finite_Whole R"
+    and policy: "development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,K,pu)"
     and cause: "certified_policy_cause_at (decode_finite_environment K) pu [] d (decode_finite_environment B) u []
       (decode_finite_generation G) (decode_finite_environment E) root (decode_finite_object R)"
     and fields: "generation_locus G=l" "generation_predecessors G=fset_of_list (map snd rows)"
-      "generation_payload G=Finite_Whole R" "finite_check_generation G B u []"
+      "finite_check_generation G B u []"
       "environment_included (decode_finite_environment H) (decode_finite_environment B)"
-    by (rule development_certified_generation_certified[OF certified]) blast
-  have target: "development_data_target ?t=Some (generation_payload G)"
-    using quoted fields(3) by (simp add: development_data_target_def)
-  show thesis by (rule that[OF accepted target fields(3) policy cause fields(1,2,4,5)])
+    by (rule development_payload_generation_certified[OF generated]) blast
+  show thesis by (rule that[OF accepted target whole policy cause fields])
 qed
 
 section \<open>Incumbents and answers are admitted as certified generations\<close>
@@ -284,8 +420,8 @@ text \<open>
   The incumbent of a problem is its base generation: the family of code equations of the problem's
   subject, recorded at the problem's locus with no predecessor. Having no predecessor, it is recorded
   in an environment of its own, so the incumbents of independent problems are recorded independently.
-  An admitted answer is recorded in the environment of the incumbent it was judged against and cites
-  the incumbents at its problem's locus. Its family is the subject's equations in the answer state; it
+  An admitted answer is recorded in the environment of the incumbent it was judged against and cites the
+  issue of the request it answers, which cites that incumbent. Its family is the subject's equations in the answer state; it
   is recorded only when the verdict accepted it, which is the condition of the answer's generation in
   the history, and its cause certifies the family's acceptance by the answer's checked context. A
   generation read in another environment is the same core, so the environment it is recorded in
@@ -296,10 +432,6 @@ text \<open>
   judges the same.
 \<close>
 
-type_synonym development_generation_row = "(local_address option\<times>local_address)\<times>finite_generation"
-
-type_synonym development_payload_judge = "finite_factor_term \<Rightarrow> (finite_exact_artifact\<times>development_policy_judgment) option"
-
 definition development_incumbent_key ::
     "isabelle_rooted_context \<Rightarrow> development_problem \<Rightarrow> (finite_exact_target\<times>finite_factor_term) option" where
   "development_incumbent_key S p=Option.bind (development_data_target (development_problem_locus (fst (snd S)) p))
@@ -309,7 +441,18 @@ definition development_incumbent_with ::
     "development_payload_judge \<Rightarrow> isabelle_rooted_context \<Rightarrow> development_problem \<Rightarrow>
       (local_address option finite_artifact_environment\<times>local_address option\<times>finite_generation) option" where
   "development_incumbent_with judge S p=Option.bind (development_incumbent_key S p)
-     (\<lambda>(l,t). Option.bind (judge t) (\<lambda>judged. development_judged_generation judged (finite_enumerated_environment [] []) l []))"
+     (\<lambda>(l,t). development_payload_generation_with judge t (finite_enumerated_environment [] []) l [])"
+
+lemma development_incumbent_with_recorded:
+  assumes built: "development_incumbent_with judge S p=Some (B,u,I)"
+  shows "finite_environment_formed B" "finite_check_generation I B u []"
+proof -
+  obtain l t where generated: "development_payload_generation_with judge t (finite_enumerated_environment [] []) l []=
+      Some (B,u,I)"
+    using built by (auto simp: development_incumbent_with_def bind_eq_Some_conv split: prod.splits)
+  show "finite_environment_formed B" "finite_check_generation I B u []"
+    by (rule development_payload_generation_recorded[OF generated])+
+qed
 
 definition development_certified_incumbent ::
     "isabelle_rooted_context \<Rightarrow> development_problem \<Rightarrow>
@@ -348,13 +491,52 @@ definition development_answer_key ::
    | Some (p,E,payload,v) \<Rightarrow> Option.bind (development_data_target (development_problem_locus (fst (snd S)) p))
        (\<lambda>l. map_option (Pair l) (development_family_key (snd S') payload)))"
 
+text \<open>
+  An answer cites the issue of the request it answers, at the problem's issue locus. The issue cites the
+  incumbent the request was made against, so the incumbent is an ancestor of the answer and is not cited
+  again: only direct edges are recorded. Every other row the use supplies is not cited.
+\<close>
+
+definition development_answer_citations ::
+    "String.literal list \<Rightarrow> development_problem \<Rightarrow> finite_exact_target \<Rightarrow> development_generation_row list \<Rightarrow>
+      development_generation_row list" where
+  "development_answer_citations names p l rows=filter (\<lambda>(d,G).
+     development_data_target (development_issue_locus names p)=Some (generation_locus G)) rows"
+
+definition development_answer_using ::
+    "development_constructor \<Rightarrow> development_payload_judge \<Rightarrow> isabelle_rooted_context \<Rightarrow> development_request \<Rightarrow>
+      isabelle_rooted_context \<Rightarrow> local_address option finite_artifact_environment \<Rightarrow> development_generation_row list \<Rightarrow>
+      (local_address option finite_artifact_environment\<times>local_address option\<times>finite_generation) option" where
+  "development_answer_using construct judge S r S' H rows=Option.bind (development_answer_key S r S')
+     (\<lambda>(l,t). development_payload_generation_using construct judge t H l
+        (development_answer_citations (fst (snd S)) (fst r) l rows))"
+
 definition development_answer_with ::
     "development_payload_judge \<Rightarrow> isabelle_rooted_context \<Rightarrow> development_request \<Rightarrow> isabelle_rooted_context \<Rightarrow>
       local_address option finite_artifact_environment \<Rightarrow> development_generation_row list \<Rightarrow>
       (local_address option finite_artifact_environment\<times>local_address option\<times>finite_generation) option" where
+  "development_answer_with=development_answer_using finite_construct_generation_record"
+
+lemma development_answer_with_unfold:
   "development_answer_with judge S r S' H rows=Option.bind (development_answer_key S r S')
-     (\<lambda>(l,t). Option.bind (judge t) (\<lambda>judged. development_judged_generation judged H l
-        (filter (\<lambda>(d,G). generation_locus G=l) rows)))"
+     (\<lambda>(l,t). development_payload_generation_with judge t H l (development_answer_citations (fst (snd S)) (fst r) l rows))"
+  by (simp only: development_answer_with_def development_answer_using_def development_payload_generation_using_original)
+
+lemma development_answer_using_known:
+  assumes formed: "finite_environment_formed H"
+    and rows: "list_all (\<lambda>(d,G). finite_check_generation G H (fst d) (snd d)) rows"
+  shows "development_answer_using finite_construct_known_original_generation judge S r S' H rows=
+    development_answer_with judge S r S' H rows"
+proof -
+  have cited: "list_all (\<lambda>(d,G). finite_check_generation G H (fst d) (snd d))
+      (development_answer_citations (fst (snd S)) (fst r) l rows)" for l
+    using rows by (auto simp: development_answer_citations_def list_all_iff)
+  have known: "development_payload_generation_using finite_construct_known_original_generation judge t H l
+      (development_answer_citations (fst (snd S)) (fst r) l rows)=
+    development_payload_generation_with judge t H l (development_answer_citations (fst (snd S)) (fst r) l rows)" for l t
+    by (rule development_payload_generation_using_known[OF formed cited])
+  show ?thesis by (simp only: development_answer_using_def development_answer_with_unfold known)
+qed
 
 definition development_certified_answer ::
     "isabelle_rooted_context \<Rightarrow> development_request \<Rightarrow> isabelle_rooted_context \<Rightarrow>
@@ -366,16 +548,16 @@ lemma development_certified_answer_family:
   "development_certified_answer S r S' H rows=(case development_answer_generation S r S' of
      None \<Rightarrow> None
    | Some (p,E,payload,v) \<Rightarrow> Option.bind (development_data_target (development_problem_locus (fst (snd S)) p))
-       (\<lambda>l. development_family_generation (snd S') payload H l (filter (\<lambda>(d,G). generation_locus G=l) rows)))"
+       (\<lambda>l. development_family_generation (snd S') payload H l (development_answer_citations (fst (snd S)) (fst r) l rows)))"
 proof (cases "development_answer_generation S r S'")
   case None
-  then show ?thesis by (simp add: development_certified_answer_def development_answer_with_def development_answer_key_def)
+  then show ?thesis by (simp add: development_certified_answer_def development_answer_with_unfold development_answer_key_def)
 next
   case (Some generation)
   obtain p E payload v where shape: "generation=(p,E,payload,v)" by (cases generation) auto
   show ?thesis
     by (cases "development_data_target (development_problem_locus (fst (snd S)) p)")
-      (simp_all add: Some shape development_certified_answer_def development_answer_with_def development_answer_key_def
+      (simp_all add: Some shape development_certified_answer_def development_answer_with_unfold development_answer_key_def
         development_family_generation_def Option.bind_map_option comp_def)
 qed
 
@@ -384,12 +566,12 @@ theorem development_certified_answer_accepted:
   obtains p E payload v l where "development_answer_generation S r S'=Some (p,E,payload,v)"
     "development_refinement_accepted v" "p=fst r"
     "development_data_target (development_problem_locus (fst (snd S)) p)=Some l"
-    "development_family_generation (snd S') payload H l (filter (\<lambda>(d,G). generation_locus G=l) rows)=Some (B,u,G)"
+    "development_family_generation (snd S') payload H l (development_answer_citations (fst (snd S)) (fst r) l rows)=Some (B,u,G)"
 proof -
   obtain p E payload v where generation: "development_answer_generation S r S'=Some (p,E,payload,v)"
     using built by (auto simp: development_certified_answer_family split: option.splits)
   obtain l where locus: "development_data_target (development_problem_locus (fst (snd S)) p)=Some l"
-    and family: "development_family_generation (snd S') payload H l (filter (\<lambda>(d,G). generation_locus G=l) rows)=Some (B,u,G)"
+    and family: "development_family_generation (snd S') payload H l (development_answer_citations (fst (snd S)) (fst r) l rows)=Some (B,u,G)"
     using built generation by (auto simp: development_certified_answer_family bind_eq_Some_conv)
   have accepted: "development_refinement_accepted v"
     by (rule development_answer_generation_payload(1)[OF generation])

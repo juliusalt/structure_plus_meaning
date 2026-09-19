@@ -16,7 +16,11 @@ policy that lists their family, and the transaction that publishes the answer ov
 was judged against. A repaired answer is admitted, and published, against the request issued again
 over the extension. The summary's `published` reads whether that transaction applied; admission and
 selection stay separate words, and a refused answer publishes nothing while its incumbent is still
-judged.
+judged. Since the loop's decisions are admitted generations (`Development_Decision_Generations`), the
+publication also records the issue of the request, made on demand and so citing no selection, at the
+problem's issue locus, citing the incumbent; the answer cites the issue, the issue is admitted where no
+issue stood and the answer then replaces the incumbent. The six judged answers were re-recorded then:
+their publication words changed and their verdict words did not.
 
 Since 2026-09-19 Isabelle also reads every framed answer's declared parts, before the answer's theory
 exists, with the outer syntax of the answer's frame (`Development_Answer_Parts`). An answer whose parts

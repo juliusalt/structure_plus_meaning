@@ -1609,3 +1609,74 @@ Isabelle-judged verdict; connecting them to the native judgment follows. The nat
 by positions in its own name list and distinguishes kinds by tags, which the owner's question Q6 in the
 ledger concerns. The executor is deterministic; no agent has answered a native packet (Q4). The choice of
 this batch was made outside the loop and is a residual.
+
+## Structure is explicit; octets are inert — 2026-09-19
+
+The owner (2026-09-19, ledger, answering Q6): RRA separates inert opaque data, the octet payloads atoms
+carry, from structure, the incidence; nothing at that level can stop octets from carrying encoded structure,
+and it is Factor's semantics that is to enforce structurality, non-nominality, non-conflation, irredundancy,
+reuse and generalization by making them visible in the structure worked on. Encoding structure as opaque data
+to define meaning is cardinally opposed to that. Implementation may use such encodings where they are useful,
+but an implementation that is non-structural throughout cannot itself adhere to the principles, so the
+implementation is structural too, and a non-structural efficiency is a structurally presented idea that is
+applied. Octets are for truly inert data; structure may be carried as inert by other structures where it is
+truly not needed there; wherever structure is used, it is explicit.
+
+The assessment holds against the material of this plan, with one precision: Factor's semantics does not
+yet enforce the discipline by itself, since a pattern may state a payload literal and a program may compare
+payloads, so a program can read octets as structure; enforcement needs an explicit criterion, which task 1
+states. What the development layer uses as structure is largely carried in octets:
+
+| Where | Structure carried in octets | Read by |
+|---|---|---|
+| `Isabelle_Terms`, `Isabelle_Entities` | constructor tags (`[0]`..`[5]`) distinguish constants, variables, bound variables, abstractions, applications, and the six entity kinds; a definition and a code equation of one term differ only in an octet | every reader and the kind readings (`isabelle_code_equation_proposition`, `isabelle_definition_proposition`) through the datatypes the tags present |
+| name tables | a reference to a constant, type constructor or variable is its position in a table, presented as a binary natural in an octet payload; names are ASCII octets | subjects, mentions, support, closure, the correspondence of tables |
+| bound variables | de Bruijn indices as binary naturals | term readers and renaming |
+| the equation reading | `Pure.eq`, `HOL.eq` and `HOL.Trueprop` recognised by comparing name strings (`isabelle_equality_names`) | every subject reading; the seed's controls expose exactly this dependence |
+| `Development_Problems` | origin, authority and contract kind as tags | problems, loci, the residual record |
+| decisions | readiness, contracts, verdicts and selection are proved HOL computations over these datatypes, reflected into native questions as ground facets | admission of every loop decision |
+| efficiency | indexes (binary paths, ordered trees) are proved code equations of HOL functions, not notions of the state | every native execution |
+
+Incidence already does real work where the older foundation is used: complete data quotation, the indexed
+readers of artifacts, the adopted walk, generation citations, records and families. The development layer
+reaches that machinery only through trees of pairs whose leaves carry its distinctions. The presentation
+classes guarantee that each presentation is exact and replaceable, but exactness does not make a
+distinction visible to Factor: a Factor program must compare octets to tell a definition from a code
+equation. Two parts are inert and may stay octets: the characters of a name, used only to present a state to
+an executor or to translate an answer back into Isabelle text, and words in transport, which carry an
+artifact's complete data until its reader reads it structurally.
+
+Tasks, each a problem for the process (recorded here and in HANDOFF.md until the native record holds them):
+
+1. **Audit and its criterion.** Classify every octet use of the native-control material as inert or as
+   structure read by a decision, with the decision that reads it; the table above is the first pass. The
+   criterion is structural and reuses an existing argument: `Factor_Positive_Parametricity` proves that a
+   program's meaning is invariant under every map of targets fixing the targets its patterns state literally
+   (`positive_meaning_target_map`); the same argument over payload values makes the payload literals of a
+   program exactly the octets it reads as structure, while comparing two payloads for equality stays inert.
+   Generalizing that theorem from targets to payloads gives both the audit and the admission condition that
+   refuses a decision reading octets as structure.
+2. **Structural Isabelle states.** Constants, type constructors and variables are atoms; an occurrence cites
+   its atom (the existing citation grammar) instead of carrying a table position; a bound variable cites its
+   binder (the binder scopes of `Factor_Patterns`); a name is an inert payload of its atom, read only by
+   presentation and installation; the kinds of entity are the families of the state's record (declarations,
+   definitions, specifications, code equations, roots), not tags; the base constants the readers need
+   (`Pure.eq`, `HOL.eq`, `HOL.Trueprop`) are cited from the fixed base's structure instead of recognised by
+   name. Readers with exact contracts connect the structural state to the present datatypes, so every
+   established theorem transfers while the datatypes are retired use by use.
+3. **Structural development notions.** Problems (subject by citation, contract, origin and authority as
+   roles), requests, verdicts, answers and packets are presented the same way; an answer's edit is a
+   structure over the request state's atoms, not a list of positions in its own name list.
+4. **Decisions as native programs.** Readiness, the verdict of a kind and the selection conditions become
+   Factor definitions over the structural state, each with its local contract proved once, so a native
+   question evaluates the condition instead of admitting a reflected table of its results.
+5. **Efficiency as structure.** An index of a relation by a structural key, the demanded traversal, keyed
+   sets and the other refinements are presented as notions of the state with their contracts and applied as
+   refinements, so the implementation's efficiency is itself structural and reusable.
+6. **Transport.** Packets and answers travel as the complete data of their artifacts; the word stays
+   inert carriage, and nothing reads structure from it except the artifact's reader.
+
+Order, provisionally (a residual until the process derives it): 1 and 2 first, since every other task reads
+the Isabelle state; then 3 with the native answers of the previous section re-presented over it; 4 and 5
+follow as the decisions and refinements are touched. Until then the tagged presentations stay exact and
+replaceable, and each is recorded as a use of octets as structure.

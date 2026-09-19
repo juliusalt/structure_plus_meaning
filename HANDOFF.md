@@ -35,7 +35,18 @@
   patterns (e.g. `Finite_Payload [Suc 0]`) and `0`/`Suc` fuel mixed with list patterns are refused by the code
   generator under Code_Target_Nat: read tags as values and give `case n of 0 => .. | Suc m => ..` code equations; prove
   them with `cases` (simp does not rewrite inside case branches, so `n - 1` forms fail).
-- B12c DESIGN (next): installation of an admitted native answer = translate its added entities through the packet's
+- OWNER DIRECTION 2026-09-19 (ledger, answers Q6): structure must be explicit; octets only for truly inert data;
+  implementation structural too, with efficiency a structurally presented idea. Analysis and SIX TASKS are in the plan
+  section "Structure is explicit; octets are inert — 2026-09-19": (1) audit + payload-parametricity criterion
+  (generalize Factor_Positive_Parametricity's target map to payload values: payload literals of a program = octets
+  read as structure); (2) structural Isabelle states (constants/type constructors/variables as atoms, occurrences as
+  citations, bound variables citing binders as in Factor_Patterns, names inert payloads, entity kinds as families of
+  the state's record, base constants cited from the fixed base instead of name comparison, exact readers to the
+  present datatypes so theorems transfer); (3) structural development notions and native answers over the state's
+  atoms; (4) decisions as Factor programs with local contracts; (5) efficiency (indexes, demanded traversal, keyed
+  sets) as notions of the state applied as refinements; (6) transport as inert carriage of artifacts' complete data.
+  Provisional order: 1 and 2 first. THIS IS THE NEXT WORK, ahead of B12c.
+- B12c DESIGN (after the structure tasks begin): installation of an admitted native answer = translate its added entities through the packet's
   inverse reading (the ML of Development_Request_Packets) into Isabelle text {definitions, equation}, request the proof
   as a narrower request (deterministic: `by (rule development_demanded_code)` for a restating answer), judge the text
   with the existing frame harness (`development_answer.py answer`), and compare the re-exported answer state with the

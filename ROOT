@@ -1625,6 +1625,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Demanded_Graph_Readings
     Listed_Set_Unions
     RRA_Listed_Environment_Positions
+    RRA_Inserted_Attachments
     Factor_Indexed_Readings
     Parallel_History_Source_Rows
     Parallel_Presented_Investigations

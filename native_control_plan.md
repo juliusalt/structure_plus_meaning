@@ -1411,3 +1411,47 @@ list pairing every candidate pair with every observation row, and their sets of 
 by member; building a question's ground source also grows steeply (0.45 seconds at 128 candidates, 9.7 at
 256); so a selection over the few hundred residuals of the development layer is not yet affordable. This
 batch, like the earlier ones, was chosen and made outside the loop and is a residual.
+
+
+## A question's comparison is asked through indexes and its wrapper by insertion — 2026-09-19
+
+After the previous section a native question's revision grew with the fourth power of its candidates
+(70.7 seconds at 256), and building its ground source nearly as steeply (9.7 seconds at 256). Attributed
+part by part on the new base, three causes remained, each in the representation of a set the question
+computes once and then reads.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| An investigation asks whether two candidates are related, and whether a candidate is observed, by membership in the lists that present the relation and the observation rows. | Each list is indexed once through the existing ordered member index (`ordered_member_tree_listed`) and every such question is one lookup; the lists have up to one row per pair of candidates. |
+| The repairs order their rows against every candidate pair joined with every observation row, and unite their sets of pairs member by member. | Selecting from a list reads only the last occurrence of each member, so the order in which each distinct observation pair occurs once selects the same rows (`investigation_select_loss_order`); at 256 candidates that list has 65,536 rows instead of 8,388,608. The residual comparisons, conflicts and available repairs are listed unions, the existing `Listed_Set_Unions` pattern. |
+| Attaching a record or family structure to an artifact unites the artifact with the structure. | The union inserts each member of its left operand into its right one, and the artifact stood on the left, so wrapping the compiled definition of a question over n candidates cost the square of the artifact. With the operands exchanged the structure's few members are inserted into the artifact (`RRA_Inserted_Attachments`); the overnight review's enumerated union is an exact alternative that sorts both operands and stays a candidate. |
+
+Evidence: on a probe of the base heap, with every proof checked in place, a native question over 64,
+128, 256 and 512 candidates is constructed in 0.21, 0.87, 5.3 and 64.6 seconds (4.4 and 68.6 seconds at
+128 and 256 before). At 256 candidates its revision takes 0.69 seconds (70.7 before), its comparison 0.017
+(1.75) and building its ground source 0.115 (9.1); what remains there is the generation (2.5 seconds), the
+observations (1.8) and the scope review (0.37). The check that advanced the base to `.build/check-20260919s`
+proved the 161 changed and dependent theories in 211.5 seconds and executed all 50 recipes with every report
+word equal, as refinements must leave them; the confirming check executed them again with every word equal
+and was retained, with 171 tool and 35 kernel tests passing. The four recipes that present native questions
+ran 0.3 to 0.7 seconds faster than in the previous check in the check that advanced the base, and 1.6 to 2.1
+seconds slower in the confirming one, under the load of fifty concurrent executions rather than eleven; the
+seed recipe took 175.4, 202.3 and 152.0 seconds in the three checks. Replaying the fourteen retained answers on the new base reconstructed thirteen
+with every word equal and reported the adopted walk as the published state's unchanged answer.
+
+Open: at 512 candidates the generation (24.8 seconds), the observations (18.2) and the scope review
+(17.5) dominate and revision takes 5.2: the first two read the installed ground program back, which still
+grows with about the 2.5th power of its rows, and the review searches its whole input once for each call it
+evaluates. Measured next on the selection this served: the loop closure of the machinery's fourteen notions
+reaches 409 constants declared in the 102 theories added since the plan's accepted base, which as a state
+hold 820 names and 1,381 entities and pose 362 residual problems under the definition reading; 313 of
+them depend on another residual their definitions mention, so the other 49 are ready and are what the
+native selection admits. That state is presented by
+a term of 3.0 million nodes: it is defined in 24.9 seconds, but compiling it into executable code, together
+with these counts and the selection, took 392 seconds. Of its 226,238 constructors 192,806 present types:
+every occurrence of a constant carries its whole translated type, so a type is presented once for every
+occurrence, while the terms without their types have 33,432 constructors and the 2,869 distinct types they
+mention have 6,124 distinct nodes. The size of a state, and of everything computed from it natively,
+therefore grows with the types its terms mention rather than with the terms, and compiling it is the next
+cost on the loop's path. This batch, like the earlier ones, was chosen and made outside the loop and is a
+residual.

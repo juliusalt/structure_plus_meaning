@@ -1,4 +1,26 @@
-# Handoff — B7 committed by impl-17; B9 (native question revision and source cost) in progress
+# Handoff — impl-18 working: B9 COMMITTED+PUSHED; B10 (development-layer residual record) in design
+
+## CURRENT STATE (impl-18, read first)
+
+- ACTIVE BASE: `.build/check-20260919s/proof` (B9's check, adopted). Confirming check `.build/check-20260919t`
+  ACCEPTED (no rebuild, 50 recipes re-executed all words equal, 171+35 tests) and RETAINED. Replay
+  `.build/impl17/replay-b`: 13 reconstructed, walk adopted, none differing. B9 plan section "A question's
+  comparison is asked through indexes and its wrapper by insertion — 2026-09-19" and its REASONING_REUSE
+  section appended; COMMITTED+PUSHED ("Ask a question's comparison through indexes and wrap its program by
+  insertion").
+- B10 MEASURED (probe `.build/probe-impl17-m`, theory `.build/impl17/layer/Probe_Development_Layer.thy`): the
+  loop closure of the machinery's 14 roots restricted to the 102 theories added since c4dfad1 = 409 constants;
+  state 820 names, 1,381 entities, 3.0M HOL nodes; define 24.9 s; code_reflect compile + counts + selection
+  392 s; 362 residual problems (definition reading), 313 depend on another, 49 ready = 49 selected.
+  Type sizes (probe `.build/probe-impl18-a`, theory `.build/impl18/typesize/Probe_Type_Sizes.thy`,
+  constructor counts): layer full 226,238, terms without types 33,432, types at constant occurrences 162,828,
+  other types 19,604; typargs instead of occurrence types 116,685; distinct-type table 128,099 (2,869 types);
+  hash-consed type DAG 66,494 (6,124 nodes). Machinery (14 roots): full 23,311, skeleton 1,870, DAG 4,439.
+- RUNNING: probe `.build/probe-impl18-b` (theory `.build/impl18/compile/Probe_Compile_Cost.thy`): compile cost
+  per node kind (20,000 numerals / type constructors / zeros / units) to attribute the 392 s (numerals vs
+  constructors vs codegen vs ML compile). Output `.build/impl18/probe-b.out`, log `.build/probe-impl18-b/probe.log`.
+- Scratch to remove: `.build/probe-impl17-*`, `.build/probe-impl16-*`, `.build/impl16/solo`, `.build/impl15`,
+  checks q/r (keep s, t and s's lineage).
 
 ## impl-17 session (2026-09-19)
 
@@ -14,20 +36,26 @@
   Replay --rerecord (`.build/impl17/replay-a`): 13 reconstructed with every word equal, walk adopted, none differing.
   Plan section "A native question evaluates what its requests demand — 2026-09-19" and REASONING_REUSE section appended;
   COMMITTED+PUSHED ("Present question candidates in binary and evaluate only what a stage's requests demand").
-- MEASURED on base q (probe `.build/impl17/stages`): question construct 0.011/0.022/0.084/0.42/4.4/68.6 s and admission
-  0.013/0.027/0.084/0.49/5.4/71.5 s at 8..256 candidates; review 0.091 s at 128 (was 21.7). Revision dominates (n^4).
-- B9 (next, provisional residual: an inevitable cost on the loop's path): (i) indexed membership of the comparison
-  relation and observation rows (probe `.build/impl17/b9probe/Probe_B9_Indexed.thy`: lemmas proved; 256 candidates
-  construct 13.7 s, admission 21.4 s; compare 1.75 -> 0.035 s; revise 70.7 -> 17.5 s) -> move the lemmas IN PLACE into
-  Finite_Investigation_Execution_Sharing (assessed/selected) and Finite_Investigation_Basis_Sharing (basis/repairs/retain);
-  (ii) remaining revise cost: per-pair profile recomputation + list-based ffUnion of up to n^2 residual pairs
-  (finite_basis_residual, sound facets, conflicts, available repairs, unrepairable) -> listed unions (`[code abstract]` with
-  `listed_image_union`, the RRA_Listed_Environment_Positions pattern) and profiles computed once; parts probe
-  `.build/impl17/b9parts` running; (iii) question source construction 0.42 -> 9.1 s at 128 -> 256 (ground source
-  install), probe `.build/impl17/srcprobe` running.
-- RESIDUAL RECORD SCOPE (measured, probe `.build/impl17/closure`): the 14 loop notions reach 1,535 development constants
-  (closure depth 20; 298 in Development_*/Isabelle_* theories). Exporting the full closure as one state
-  (`Isabelle_Entity_Export.define`, probe `.build/impl17/residual`) did not finish in 420 s: infeasible as one state.
+- B7(a)+(c) COMMITTED+PUSHED 83225db ("Present question candidates in binary and evaluate only what a stage's requests demand").
+- B9 INSTALLED (theories/: Ordered_Member_Trees `ordered_member_tree_listed`; Finite_Investigation_Execution_Sharing and
+  Finite_Investigation_Basis_Sharing indexed relation/rows + `investigation_loss_order`/`investigation_select_loss_order`;
+  Factor_Invariant_Evaluation_Sharing listed residual/conflicts/available repairs (`[code abstract]`); NEW
+  RRA_Inserted_Attachments (attach unions with operands exchanged); ROOT, NER import, THEORY_MAP rows). Staging and install
+  script `.build/impl17/b9/`. Proofs checked by probe `.build/probe-impl17-k` (renamed copies). RUNNING: check
+  `.build/check-20260919s --advance-base` (proof accepted 3:18; recipes executing; ALL words must be equal — pure
+  refinements). Then: adopt, confirming check, retain, replay; docs drafts `.build/impl17/rr-b9.md`,
+  `.build/impl17/plan-b9-draft.md` (fill EVIDENCE/OPEN); commit+push.
+- B9 MEASURED (probe `.build/impl17/b9all`, all three fixes): question construct 0.21/0.87/5.3/64.6 s at 64/128/256/512
+  (68.6 at 256 before B9); at 256: ground source 0.115 s (9.1), revise 0.69 (70.7), compare 0.017 (1.75), review 0.37,
+  generation 2.5, observations 1.8. At 512: generation 24.8, observations 18.2, review 17.5, revise 5.2 s (package
+  read-back ~n^2.5 and the review's per-call search of its whole input remain).
+- EXPORT MEASURED (probe `.build/impl17/export`): context nodes 338K/925K/2.3M/6.0M/13.1M at 100/200/400/800/1535 closure
+  constants (every constant occurrence carries its whole translated type: ~160x the kernel+code term size); items and
+  certification linear (certify 5.1 s at 13.1M); `Local_Theory.define` of the full closure did not finish in 413 s.
+  A type table (types as positions, like names) would make state size linear: needed if states grow past ~1,000 constants.
+- NEXT (B10, provisional residual choice): residual record over the development layer = the loop closure's constants
+  declared in the 102 theories added since the plan's accepted base c4dfad1 (`.build/impl17/root-c4dfad1.txt` vs
+  `root-now.txt`); measure its size and export cost first; owner question to add (scope of the record).
 
 ## impl-16 session (2026-09-19) — parked at the context limit; its B7(b) committed by impl-17
 

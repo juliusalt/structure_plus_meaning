@@ -65,9 +65,14 @@ lemma ordered_member_tree_none:
   "RBT.lookup (ordered_member_tree A) x=None \<longleftrightarrow> x\<notin>fset A"
   using ordered_member_tree_exact[of A x] by blast
 
+lemma ordered_member_tree_listed:
+  "RBT.lookup (ordered_member_tree (fset_of_list xs)) x\<noteq>None \<longleftrightarrow> x\<in>set xs"
+  by (simp only: ordered_member_tree_exact fset_of_list.rep_eq)
+
 text \<open>
   A complete finite set of a linearly ordered type is indexed once through its canonical
-  listing, and each membership question is then one lookup. Repetitions are removed by one
+  listing, and each membership question is then one lookup; a listed set, a list read as the set of its
+  members, is indexed the same way (`ordered_member_tree_listed`). Repetitions are removed by one
   pass that records the rows already retained. Both operations compute the original set,
   list and truth values; the index is shared by every use that asks membership questions of
   one set.

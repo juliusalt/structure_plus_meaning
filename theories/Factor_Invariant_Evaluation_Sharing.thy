@@ -5,6 +5,7 @@ theory Factor_Invariant_Evaluation_Sharing
     Factor_Finite_Program_Applications
     Finite_Observation_Repairs
     Factor_Schema_Generation
+    Listed_Set_Unions
 begin
 
 section \<open>Loop-invariant subcomputations are computed once\<close>
@@ -62,12 +63,12 @@ lemma finite_candidate_losses_shared_code [code]:
 
 declare finite_basis_residual_def[code del]
 
-lemma finite_basis_residual_shared_code [code]:
-  "finite_basis_residual C F table relation=ffUnion (fimage (\<lambda>c.
+lemma finite_basis_residual_listed_code [code abstract]:
+  "fset (finite_basis_residual C F table relation)=listed_image_union (\<lambda>c.
     let P=fset (finite_candidate_profile F table c) in
-    fimage (\<lambda>d. (c,d)) (ffilter (\<lambda>d.
-      relation c d \<noteq> (P\<subseteq>fset (finite_candidate_profile F table d))) C)) C)"
-  by (simp only: finite_basis_residual_def Let_def)
+    Pair c ` Set.filter (\<lambda>d. relation c d\<noteq>(P\<subseteq>fset (finite_candidate_profile F table d))) (fset C)) (fset C)"
+  by (auto simp: finite_basis_residual_def listed_image_union_def Let_def ffUnion.rep_eq fimage.rep_eq
+    ffilter.rep_eq Set.filter_eq)
 
 declare finite_sound_observation_facets_def[code del]
 
@@ -76,6 +77,28 @@ lemma finite_sound_observation_facets_shared_code [code]:
     fBall C (\<lambda>c. let P=fset (finite_candidate_profile {|f|} table c) in fBall C (\<lambda>d. relation c d \<longrightarrow>
       P\<subseteq>fset (finite_candidate_profile {|f|} table d)))) U"
   by (simp only: finite_sound_observation_facets_def Let_def)
+
+text \<open>
+  The residual comparisons and the conflicts and repairs derived from them are sets of candidate
+  pairs, each computed once and then only read. United member by member they cost the square of
+  their size, which grows with the square of the candidates; listed, each is built in one pass.
+\<close>
+
+lemma finite_observation_conflicts_listed_code [code abstract]:
+  "fset (finite_observation_conflicts C relation F table)=listed_image_union (\<lambda>c.
+    listed_image_union (\<lambda>d. if relation c d then
+      (\<lambda>(f,w). (c,d,f,w)) ` fset (finite_candidate_losses F table c d) else {}) (fset C)) (fset C)"
+  by (auto simp: finite_observation_conflicts_def listed_image_union_def ffUnion.rep_eq fimage.rep_eq
+    split: if_splits)
+
+lemma finite_available_observation_repairs_listed_code [code abstract]:
+  "fset (finite_available_observation_repairs C relation U F table)=(let
+     A=ffilter (\<lambda>f. f\<notin>fset F) (finite_sound_observation_facets C relation U table) in
+     listed_image_union (\<lambda>(c,d). if relation c d then {} else
+       (\<lambda>(f,w). (c,d,f,w)) ` fset (finite_candidate_losses A table c d))
+       (fset (finite_basis_residual C F table relation)))"
+  by (auto simp: finite_available_observation_repairs_def listed_image_union_def Let_def ffUnion.rep_eq
+    fimage.rep_eq split: if_splits)
 
 lemma filter_map_single_pass:
   "map g (filter P xs)=concat (map (\<lambda>x. if P x then [g x] else []) xs)"

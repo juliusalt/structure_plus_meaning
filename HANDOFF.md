@@ -1,6 +1,6 @@
 # Handoff — impl-21: B12 (native answers) committed; the owner's structure direction recorded with its tasks
 
-## impl-21 session (2026-09-19, read first)
+## impl-21 session (2026-09-19, read first) — rotated at the context limit; nothing running, nothing uncommitted
 
 - OWNER (ledger): the owner's Codex-session question (06:56 UTC) whether everything above the RRA foundation uses
   octets rather than incidence is recorded with the Codex answer and a new question Q6 (provisional choice: B12 keeps
@@ -46,21 +46,24 @@
   atoms; (4) decisions as Factor programs with local contracts; (5) efficiency (indexes, demanded traversal, keyed
   sets) as notions of the state applied as refinements; (6) transport as inert carriage of artifacts' complete data.
   Provisional order: 1 and 2 first. THIS IS THE NEXT WORK, ahead of B12c.
-- TASK 2 DESIGN SKETCH (impl-21, a residual until derived): the state as ONE exact artifact built from existing RRA
-  grammar, no tags: root = record [roots, declarations, definitions, specifications, code-equations] of FAMILIES
-  (`family_at`; kind = the family an entity sits in). A declaration is an atom carrying its name as an inert functional
-  payload (read only by presentation/installation) plus a type structure. A constant or type-constructor occurrence is
-  a Local citation (`raw_citation_at R r (Local a)`: headed incidence {(r,a)}) to its declaration atom. Application =
-  two-field record [function, argument] (`record_at`); abstraction = record [binder, type, body] with bound
-  occurrences Local citations to the binder atom (as `pattern_quoted_at` variables cite `binder_scope_at` binders): no
-  de Bruijn numbers. Free/schematic variables and type variables = atoms declared in the entity's own family, names
-  inert. Base constants the readers need (Pure.eq, HOL.eq, HOL.Trueprop) are External citations to anchors of ONE
-  fixed base artifact, identified as exact anchors (artifact value + address), not by name strings. Contract: a reader
-  `structural state -> isabelle_rooted_context option` exact UP TO table correspondence (it recovers the state in a
-  canonical table order): `isabelle_table_correspondence` + the renaming theorems carry every established observation
-  (assessment, problems, verdict) to the structural state, so datatypes can be retired use by use. First step: define
-  construction + reader for types and terms (reuse `record_at`, `family_at`, citation readers, `literal_syntax` ideas,
-  `RRA_Syntax_Families` constructors), probe on the seed state (80 entities) for size and read-back cost.
+- TASK 2 DESIGN (impl-21, a residual until derived; worked through, not yet coded): the state as ONE exact artifact
+  (rows with compact addresses as `finite_data_syntax_at`/`Factor_Finite_Syntax_Accumulation` build them), root = a
+  record of FAMILIES by role: name atoms per role (constants, type constructors, classes, free names, schematic names,
+  type-free names, type-variable names), entity families per kind (base/development/frontier declarations,
+  definitions, specifications, code equations) and the roots. A name atom carries its string as an inert functional
+  payload, read only by presentation and installation; a reference is a Local citation node (incidence (r,r,a)) to the
+  atom, so name identity is atom identity and the table position disappears. Constructors without tags: application
+  = two-field record; abstraction = record [binder atom, type, body], a bound occurrence is a Local citation to its
+  binder (no de Bruijn numbers); constant vs free vs schematic occurrence = "citation + type" (+ index for schematic),
+  distinguished by the FAMILY of the cited atom, an explicit structural read; type application = record [citation to
+  the type constructor atom, argument types...] (arity is record length); type-free/type-variable = citation + sort
+  record (+ index). Inert data that may stay octets: name strings, schematic indices (compared only for equality).
+  Sorts stay ordered records (the datatype holds lists). Base constants the equation reading needs (Pure.eq, HOL.eq,
+  HOL.Trueprop) become cited anchors of one fixed base artifact instead of name comparisons. Contract: construction
+  allocates name atoms in table order, so the reader is exact literally (`read (construct S) = Some S` for states
+  whose positions the table holds) and any other allocation reads as a table correspondence, which the renaming
+  theorems carry. Then re-present answers/packets over these atoms (task 3) and restate decisions over the artifact
+  (task 4) with the payload-parametricity criterion (task 1) as their admission condition.
 - B12c DESIGN (after the structure tasks begin): installation of an admitted native answer = translate its added entities through the packet's
   inverse reading (the ML of Development_Request_Packets) into Isabelle text {definitions, equation}, request the proof
   as a narrower request (deterministic: `by (rule development_demanded_code)` for a restating answer), judge the text

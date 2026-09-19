@@ -45,7 +45,12 @@
   ready entry; transfer `native_development_ready` to the installed entry through the installation contract
   (`finite_install_source_entry_conditions`) and the decode/renaming contracts; the question's candidates become
   the argument terms (table, answered, open, key) of the ready problems' presentation, and the facet is no longer a
-  computed row list; seed/machinery words change: re-record. (3) audit `finite_system_payloads` of the program's dependency closure; (4) verdict and request construction
+  computed row list; seed/machinery words change: re-record. (3) audit the program's dependency closure. FINDING (impl-22): the readiness clauses call selection (5), which
+  recognizes data (2), and payload recognition goes through `Factor_Distinct_Payloads`: distinct payloads are
+  established by a MATERIAL premise (`distinct_payloads_material`: the payloads are the distinct carrier addresses
+  of a witness artifact). So the closure is not observation-free and the payload criterion of task 1 does not
+  cover it; what that material witness reads (octets as addresses, a formation and distinctness check, not a
+  decision on content) needs its own classification, perhaps a criterion for material premises; (4) verdict and request construction
   natively. Earlier notes on the staged definitions follow.
 - READINESS DEFINITIONS STAGED AND PROVED (probe `.build/probe-impl22-d` loaded, 5.9 s):
   `.build/impl22/r1/Development_Native_Readiness.thy` = sites 200 (settled: every key of a list settled;

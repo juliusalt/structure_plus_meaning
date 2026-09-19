@@ -1680,3 +1680,31 @@ Order, provisionally (a residual until the process derives it): 1 and 2 first, s
 the Isabelle state; then 3 with the native answers of the previous section re-presented over it; 4 and 5
 follow as the decisions and refinements are touched. Until then the tagged presentations stay exact and
 replaceable, and each is recorded as a use of octets as structure.
+
+## A program's payload literals are the octets it reads — 2026-09-19
+
+Task 1 of the previous section asked for the criterion by which a use of octets is judged inert or
+read as structure, stated by reusing an existing argument rather than by inspection.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| `Factor_Positive_Parametricity` proves that the meaning of a program without material premises is closed under every map of the targets its patterns do not state, and that two targets it does not state are indistinguishable to it. | The argument is stated once over the leaves of a term, its targets and its payloads (`positive_meaning_leaf_map`, `positive_meaning_leaf_involution`, `positive_meaning_unlisted_leaves`), and the target theorem is its instance. Its second instance is the criterion: the payloads a program states literally (`system_payloads`) are exactly the octets it reads as structure, because two payloads it does not state are indistinguishable to it (`positive_meaning_unlisted_payloads`); every other octet is inert to it, compared at most for equality through a variable that occurs twice. A program with material premises reads artifact data by definition and stays outside the criterion. |
+| The octet uses of the native-control material are classified by inspection (the table of the previous section). | The payloads a finite program states are computed from its patterns and equal those of the program it decodes to (`finite_system_payloads_exact`), so which octets a decision reads is computed on the actual program without running it; a ground program built from rows states every octet of its rows (`finite_term_payloads_exact_pattern`). |
+
+Evidence: on a probe of the base heap the audit reads the programs of the seed's actual selection
+question back from their sources and computes their payload literals in 0.77 seconds. The question's
+source program states 10 payloads, the empty payload and the binary digits of the nine nonzero
+candidate indices, and so does its readiness condition, which admits all ten problems: the decision
+is a table of its own answers, and it reads every index as structure. The scope critic, a program
+written for the review's shape, states one payload, the empty payload that terminates every data
+list. The check that advanced the base to `.build/check-20260919aa` proved the
+78 changed and dependent theories in 88.9 seconds; no recipe's execution boundary changed, since no
+exported code did, and it was retained with 177 tool and 35 kernel tests passing.
+
+Open: the admission condition this criterion gives (a decision's program states no payload that is
+not admitted as inert) would refuse every decision of the loop today, since each is a ground table of
+its computed answers; it is enforced as the decisions become programs over the structural state
+(tasks 2 to 4). What the empty payload's use as a list terminator is, an inert delimiter or structure,
+is a question for those tasks too. HOL computations that produce the rows are outside native
+programs; the criterion sees them only through the rows they produce. This batch was chosen and made
+outside the loop and is a residual.

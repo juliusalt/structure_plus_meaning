@@ -154,6 +154,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Positive_Locality
     Factor_System_Unions
     Factor_Positive_Parametricity
+    Factor_Finite_Payload_Literals
     Factor_Material_Meaning
     Factor_Native_Meaning
     Factor_Native_Equality

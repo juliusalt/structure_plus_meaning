@@ -1,4 +1,34 @@
-# Handoff — impl-21: B12 (native answers) committed; the owner's structure direction recorded with its tasks
+# Handoff — impl-22: task 1 (payload-literal criterion) committed; task 2 (structural Isabelle state) next
+
+## impl-22 session (2026-09-19, read first)
+
+- TASK 1 DONE AND COMMITTED: `Factor_Positive_Parametricity` restated over the LEAVES of a term (targets and
+  payloads): `positive_meaning_leaf_map`, `positive_meaning_leaf_involution`, `positive_meaning_unlisted_leaves`;
+  instances `positive_meaning_unlisted_targets` (unchanged statement) and `positive_meaning_unlisted_payloads`;
+  `system_payloads` = the octets a program reads as structure. NEW `Factor_Finite_Payload_Literals`
+  (`finite_system_payloads_exact`, `finite_term_payloads_exact_pattern`). Audit probe (`.build/impl22/audit/`,
+  seed selection question): source and readiness programs state 10 payloads (the candidate indices), the scope
+  critic states only `[]`. Check `.build/check-20260919aa --advance-base` ACCEPTED (78 theories 88.9 s, no recipe
+  reached, 177+35 tests) and RETAINED. ACTIVE BASE: `.build/check-20260919aa/proof`. Plan section "A program's
+  payload literals are the octets it reads — 2026-09-19", RR section, THEORY_MAP rows.
+- NEXT = TASK 2 (structural Isabelle state). Decisions reasoned in impl-22 (refine impl-21's design below):
+  (a) one NAME ATOM per table position (payload leaf, inert string) in a names FAMILY, so any table (unused or
+  repeated names included) is presentable; (b) ROLE ATOMS per used (role, position) — constant, type constructor,
+  class, free, schematic, type-free, type-variable — each a Local citation node to its name atom, in one family per
+  role; an occurrence references its ROLE atom, so Const vs Free is the family of the referenced atom and name
+  identity is name-atom identity; (c) occurrence shapes: Const/Free = record [role atom, type node]; Var = record
+  [role atom, index leaf, type node]; App = record [t, u]; Abs = record [binder atom, type node, body]; Bound = the
+  binder atom itself as the field endpoint (binders family; reader keeps the binder stack); TApp = record
+  [tycon atom, arg types..]; TFree = record [tfree atom, sort record]; TVar = record [tvar atom, index leaf, sort];
+  distinctions by arity + the referenced atom's family, no tags; (d) type nodes SHARED, built from the exporter's
+  type table (`Isabelle_Type_Tables`: `isabelle_type_node` list, arguments = earlier positions), a types family;
+  (e) entities: one family per kind, members = term roots; roots family; families are UNORDERED and the reader
+  lists members in ADDRESS ORDER (identification only), so construction must allocate addresses whose
+  lexicographic order (`List_Lexorder`) is allocation order: e.g. length-prefixed big-endian digits (prove
+  monotone); (f) reader over `Factor_Indexed_Readings.artifact_reading` (read_record_candidates,
+  read_citation_candidates, read_family_candidates, read_payload_leaf_body) so the indexed reading applies;
+  exactness `read (construct S) = Some S` via closed-form heads of the constructed artifact. First slice suggested:
+  names + type roles + shared type table (types are ~85% of a state), then terms/binders, entities, roots.
 
 ## impl-21 session (2026-09-19, read first) — rotated at the context limit; nothing running, nothing uncommitted
 

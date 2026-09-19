@@ -34,7 +34,15 @@
   key images of `snd ` fset H` for H in `development_decompositions D p`, set A = key ` answered, set Opn = keys of
   unanswered ps) and `native_development_ready`: native 202 on (key p) <-> `development_ready D answered p`, via
   `table_settled T A` <-> key ` `development_settled D answered` (both directions: table_settled.induct; and
-  `development_settled_exact` + `finite_inference_exact` induction with `inference_closure` step); (2) the selection question evaluating the native program. Pointers: a ground condition today is
+  `development_settled_exact` + `finite_inference_exact` induction with `inference_closure` step); (2a) FIRST (impl-22's recommendation from the audit finding in (3)): RESTATE native readiness over its OWN
+  membership definition instead of selection (5): member(x, Pair x r) and member(x, Pair y r) :- member(x, r)
+  (entry lookup likewise: entry(q, Hs, Pair (Pair q Hs) r) and entry(..., Pair y r) :- entry(..., r)). The program is
+  then closed (no callee in `bag_comparison_system`), observation-free (no material data recognition), states only
+  the list terminator `[]` (task 1's criterion applies: `system_payloads = {[]}`), needs no `data_elements`
+  premise in its contracts, and its finite presentation is its own clauses, installable as a view over
+  `finite_guard_source_program True` exactly like `finite_ground_program`. Re-prove `native_settled_exact`,
+  `native_ready_exact` (membership replaces `data_selection_sound/complete`) and keep `native_development_ready`.
+  (2) the selection question evaluating the native program. Pointers: a ground condition today is
   `finite_ground_condition xs = map_option (development_existing_condition d F u) (finite_ground_source xs)` with
   `finite_ground_source xs = finite_install_source_entry (finite_guard_source True) None [0] (finite_ground_program
   xs) (Some [],[])` and `finite_ground_program xs = finite_add_view_definition (finite_guard_source_program True)

@@ -2037,3 +2037,9 @@ loop's policy, adoption into the refinement layer and the successor state are no
 | Isabelle_Entities | An entity is stated over its term (`'t isabelle_entity_with`), as a term is over its types. |
 | Isabelle_Type_Tables | A table of type nodes whose arguments are positions of earlier nodes, read in order into an ordered index (`isabelle_type_table`); its reading is exact at every position of an ordered table (`isabelle_type_table_exact`). A state or a list of terms presented over positions of such a table is read back by the entity's and the term's maps (`isabelle_shared_context`, `isabelle_shared_terms`). Which table presents a state is the exporter's transport, as its name table is. |
 | Isabelle_Entity_Export | Every exported state, its roots and its groups are defined through a table holding each distinct type once; a term over any presentation of its types is translated by one function (`term_with`), of which the kernel's form (`term_term`) and the table's form are instances. The context construction takes further terms for its name table, so a caller presenting propositions against the same table (`Native_Control_Syntax_Statements`) reuses it instead of building a second context. |
+
+## The residual record reaches the notions' constituents — 2026-09-19
+
+| Theory | Reusable content and retained prerequisites |
+| --- | --- |
+| Development_Machinery | The record's roots are the loop's notions and their constituents, the development constants the notions' items mention, computed by the exporter's closure (`context_items`) from the notions rather than listed; every root poses its residual problem through the existing constant-problem construction, so a notion's residual depends on its constituents' residuals by the same reading of definitions. How far the record reaches is a residual choice (owner question Q5). |

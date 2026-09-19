@@ -2,7 +2,7 @@ theory Development_Machinery
   imports Native_Control_Seed_Subject Development_Admitted_Publication Development_Presentation
 begin
 
-section \<open>The loop's own notions as a checked state\<close>
+section \<open>The loop's own notions and their constituents as a checked state\<close>
 
 text \<open>
   The notions the first loop's judgments consult were defined outside the native process, like
@@ -10,33 +10,48 @@ text \<open>
   ready, how the next problems are selected and issued, what a request carries, how an answer is
   judged and a refused one repaired, which policy admits a payload, how a certified generation is
   recorded, where a problem stands, how the loop's decisions are recorded, how an admitted answer
-  is published and how the development moves to its successor. The checked context presents these
-  notions as a state in the same way as the seed: the roots are expanded, and every development
-  constant they mention stands on the frontier and is extended when work demands it. Which
-  notions are roots is a residual choice generated outside the process; it gains no authority
-  from this definition.
+  is published and how the development moves to its successor. So were the development constants
+  their definitions are made of. The checked context presents these notions and their
+  constituents as a state in the same way as the seed: the notions and every development constant
+  their items mention are the roots and are expanded, and every development constant the
+  constituents mention in turn stands on the frontier and is extended when work demands it.
+  Which notions are roots, and how far the record reaches, are residual choices generated
+  outside the process; they gain no authority from this definition.
 \<close>
 
-local_setup \<open>Isabelle_Entity_Export.define \<^binding>\<open>development_machinery\<close>
-  [("_problem_roots", [\<^term>\<open>development_constant_problem\<close>, \<^term>\<open>development_constant_dependencies\<close>,
-     \<^term>\<open>development_ready\<close>, \<^term>\<open>development_selection_question\<close>, \<^term>\<open>development_issuable\<close>]),
-   ("_answer_roots", [\<^term>\<open>development_refinement_request\<close>, \<^term>\<open>development_refinement_verdict\<close>,
-     \<^term>\<open>development_refinement_repair\<close>]),
-   ("_admission_roots", [\<^term>\<open>development_policy_source_with\<close>, \<^term>\<open>development_payload_generation_with\<close>,
-     \<^term>\<open>development_problem_locus\<close>, \<^term>\<open>development_loop_decisions\<close>,
-     \<^term>\<open>development_answer_publication\<close>, \<^term>\<open>development_successor\<close>])]\<close>
+local_setup \<open>fn lthy =>
+  let
+    val thy = Proof_Context.theory_of lthy;
+    val notions =
+      [("_problem_roots", [\<^term>\<open>development_constant_problem\<close>, \<^term>\<open>development_constant_dependencies\<close>,
+         \<^term>\<open>development_ready\<close>, \<^term>\<open>development_selection_question\<close>, \<^term>\<open>development_issuable\<close>]),
+       ("_answer_roots", [\<^term>\<open>development_refinement_request\<close>, \<^term>\<open>development_refinement_verdict\<close>,
+         \<^term>\<open>development_refinement_repair\<close>]),
+       ("_admission_roots", [\<^term>\<open>development_policy_source_with\<close>, \<^term>\<open>development_payload_generation_with\<close>,
+         \<^term>\<open>development_problem_locus\<close>, \<^term>\<open>development_loop_decisions\<close>,
+         \<^term>\<open>development_answer_publication\<close>, \<^term>\<open>development_successor\<close>])];
+    val names = distinct (op =) (maps (fn (_, ts) => maps (fn t => rev (Term.add_const_names t [])) ts) notions);
+    (*The constituents are the development constants the notions' items mention: the frontier of the
+      state the notions alone would define.*)
+    val (reached, _) = Isabelle_Entity_Export.context_items thy (member (op =) names) names;
+    val constituents = filter (fn c => not (Isabelle_Entity_Export.base_constant thy c)
+      andalso not (member (op =) names c)) reached;
+  in
+    Isabelle_Entity_Export.define \<^binding>\<open>development_machinery\<close>
+      (notions @ [("_constituent_roots", map (fn c => Const (c, Sign.the_const_type thy c)) constituents)]) lthy
+  end\<close>
 
 declare development_machinery_context_def [code] development_machinery_roots_def [code]
   development_machinery_problem_roots_def [code] development_machinery_answer_roots_def [code]
-  development_machinery_admission_roots_def [code]
+  development_machinery_admission_roots_def [code] development_machinery_constituent_roots_def [code]
 
 definition development_machinery_state :: isabelle_rooted_context where
   "development_machinery_state=(development_machinery_roots,development_machinery_context)"
 
-section \<open>Every root notion is a residual problem of its definition\<close>
+section \<open>Every root is a residual problem of its definition\<close>
 
 text \<open>
-  Each root notion is a choice made outside the process, and it is represented as the problem of
+  Each root is a choice made outside the process, and it is represented as the problem of
   its constant under the definition reading: its subject is the constant, its contract the
   constant as the checked context declares it, marked as a definition, its incumbent the kernel
   definitions the state states for it, its origin a residual and its authority generated. The
@@ -44,7 +59,10 @@ text \<open>
   discharged or superseded only by an answer admitted at its problem's locus, and until then it
   justifies nothing. A residual depends on the residuals of the other roots its kernel definitions
   mention, because its definition means what it does only through theirs; that relation is read
-  from the definitions, not supplied, and it orders the discharge of the residuals.
+  from the definitions, not supplied, and it orders the discharge of the residuals. With the
+  constituents among the roots, a notion's residual depends on the residuals of what it is made of,
+  so the loop takes constituents before the notions composed of them; a constituent's own
+  constituents stand on the frontier, so its readiness is relative to how far the record reaches.
 \<close>
 
 definition development_machinery_root_constants :: "nat list" where

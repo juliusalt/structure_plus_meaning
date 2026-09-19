@@ -1492,3 +1492,17 @@ its types inline, and holding them once in the notion itself would change every 
 presents a state is the exporter's transport, with no native account, as its name table has none. With the
 layer's state affordable, the residual record can reach beyond the loop's fourteen notions (owner question Q5).
 This batch, like the earlier ones, was chosen and made outside the loop and is a residual.
+
+## The residual record reaches the notions' constituents — 2026-09-19
+
+With a state's types held once, a residual record larger than the loop's fourteen notions became affordable.
+Owner question Q5 asks how far the record should reach; the provisional choice extends it by demand, one level
+of the frontier at a time.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| The residual record holds the fourteen notions of the loop, and the development constants their definitions mention stand on the frontier. | The record reaches the notions' constituents: the notions and every development constant their items mention are the roots, computed by the exporter's own closure from the notions (`context_items`), and each poses its residual problem under the definition reading; the constituents' own constituents stand on the frontier. A notion's residual therefore depends on the residuals of what it is made of, so the loop's selection takes constituents before the notions composed of them, where the fourteen notions alone were selected although their constituents were unrecorded residuals. A constituent's readiness is relative to how far the record reaches. |
+
+Evidence: on a probe of the base heap the machinery state holds 335 names and 380 entities from 65 roots, a defining term of 196,776 nodes compiled with its counts in 12.5 seconds. The roots pose 64 residual problems, each with its dependency row; with nothing answered 34 are ready, the constituents that depend on no other recorded residual, and the executed selection admits exactly those 34 (the loop report computes in 0.27 seconds). The check that advanced the base to `.build/check-20260919x2` proved the two changed theories in 40.6 seconds and executed the machinery recipe, whose three stages exited cleanly and changed their words, since the state they present is larger; the words were re-recorded and the proof adopted, and the confirming check executed the recipe again with every word equal and was retained, with 171 tool and 35 kernel tests passing. No retained answer is judged against the machinery state, so none was replayed.
+
+Open: the one root the definition reading states no problem for is `Pure.eq`, the kernel's equality. The exporter decides whether a constant belongs to the fixed base by the session qualifier of the name of the theory that declared it, and the theory Pure has none, so every constant of Pure is read as a development constant: every state presents Pure's constants on its frontier instead of as base constants, and here `Pure.eq`, which every kernel definition mentions, became a constituent and was expanded, bringing the non-definitional axioms that mention it into the state. That reading is corrected next. A constituent's readiness is relative to how far the record reaches: 30 of the 64 residuals wait for another, and the constituents' own constituents stand on the frontier (owner question Q5). A selected residual still cannot be answered, since no request or verdict of a definition problem exists. The choice of this extension, like the earlier ones, was made outside the process and is a residual.

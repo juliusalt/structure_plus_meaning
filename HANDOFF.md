@@ -1,25 +1,23 @@
-# Handoff — impl-19: B10a committed; B10b (residual record reaches the notions' constituents) next
+# Handoff — impl-19: B10a, B10b committed; B10c (Pure's constants are base) next
 
 ## impl-19 session (2026-09-19, read first)
 
-- ACTIVE BASE: `.build/check-20260919v/proof` (lineage v -> s,q,p,...). Confirming check `.build/check-20260919w`
-  ACCEPTED (1,780 contexts reused, both recipes equal, 171+35 tests) and RETAINED. Replay `.build/impl19/replay-a`
-  (--rerecord): 13 reconstructed with every word equal, walk adopted, none differing.
-- B10a COMMITTED+PUSHED: "Hold each type of an exported state once" (plan section "A state holds each type once"
-  and REASONING_REUSE section appended; owner ledger Q5 included).
-- NEXT: B10b, staged by impl-18 in `.build/impl18/b10b/` (`Development_Machinery.thy`: roots = the 14 notions +
-  `_constituent_roots`, the development constants the notions' items mention, computed by the exporter's
-  `context_items`; `reconstruct_native_development_machinery.py` boundary text). Probe (impl-18,
-  `.build/probe-impl18-i`): 196,776 nodes, compile+counts 12.5 s; 335 names, 380 entities, 65 roots, 64 problems
-  (1 unstated), 34 ready = 34 selected; loop report 0.27 s. Steps: copy into theories/ and tools/, THEORY_MAP row
-  of Development_Machinery (roots = notions + constituents), `check --advance-base --output .build/check-20260919x2`
-  (machinery words change: re-record with `.build/impl14/record_words.py CHECK native-development-machinery`),
-  adopt, confirming check, retain; fill `.build/impl18/docs/plan-b10b.md`/`rr-b10b.md` EVIDENCE/OPEN, append,
-  commit+push.
-- impl-18's B10a details (measurements, attribution) are in the plan section "A state holds each type once".
-- NEXT PROBLEM after B10b (B11, provisional, being designed by impl-19): see "B11 design" below when written.
+- ACTIVE BASE: `.build/check-20260919x2/proof` (B10b's check, adopted; lineage x2 -> v -> s,q,p,...). Confirming
+  check `.build/check-20260919x3` ACCEPTED (1,780 reused, machinery recipe equal, 171+35 tests) and RETAINED.
+- B10a COMMITTED+PUSHED 5c26b79 "Hold each type of an exported state once".
+- B10b COMMITTED+PUSHED "Extend the residual record to the notions' constituents" (plan + REASONING_REUSE sections).
+- FOUND (probe `.build/probe-impl19-a`, theory `.build/impl19/probe1/Probe_Machinery_Names.thy`): the one unstated
+  machinery root is `Pure.eq`. `Isabelle_Entity_Export.base_constant` takes the session qualifier of the declaring
+  theory's long name; the theory `Pure` is named "Pure" (no qualifier), so every Pure constant is read as a
+  development constant: frontier in every state (seed, refinement layer, machinery), and in the machinery state
+  Pure.eq is a constituent root and is expanded (the non-definitional axioms mentioning it enter the state).
+  The 34 ready residuals are named in that probe's log.
+- NEXT (B10c): fix `base_constant` (an unqualified theory long name is its own session: Pure), check
+  --advance-base (Isabelle_Entity_Export has ~78 dependents; seed + machinery words change; retained answers'
+  verdict/publication words change -> replay --rerecord), plan section, commit+push. Then B11 (definition requests
+  and the verdict of a definition answer; design notes below).
 - Scratch to remove: `.build/probe-impl18-*`, `.build/impl18/{typesize,compile,literal,dagsize,shared,names,
-  l3probe,b10bprobe}`, `.build/check-20260919w` after the next check is retained.
+  l3probe,b10bprobe}`, `.build/check-20260919w` (superseded by x3).
 
 ## impl-17 session (2026-09-19)
 

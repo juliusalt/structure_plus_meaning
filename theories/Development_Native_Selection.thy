@@ -1,5 +1,5 @@
 theory Development_Native_Selection
-  imports Development_Native_Readiness Development_Problems Factor_Finite_Development_Questions
+  imports Development_Native_Readiness Natural_Binary_Digits Development_Problems Factor_Finite_Development_Questions
     Complete_Value_References
 begin
 
@@ -11,8 +11,8 @@ text \<open>
   problem's readiness is judged with the table of the rows its settledness reads: the answered problems
   reachable from its premises through answered problems. An open premise ends settlement whether its row is
   present or not, so the table holds exactly the answered rows the reading can reach, and nothing else of the
-  development enters it. The keys are formed terms and distinct problems have distinct keys; which list
-  presents a finite set is the presentation's choice. On such a presentation the native readiness of a
+  development enters it. The keys are paths and distinct problems have distinct keys; which list presents a
+  finite set is the presentation's choice. On such a presentation the native readiness of a
   problem's row is exactly the development's readiness of the problem, so every consumer of the
   development's readiness can consume the native definition.
 \<close>
@@ -21,16 +21,16 @@ definition readiness_edges :: "development_dependencies \<Rightarrow> developmen
     (development_problem\<times>development_problem) set" where
   "readiness_edges D answered={(r,q). (\<exists>H. (r,H) |\<in>| D \<and> q\<in>snd ` fset H) \<and> q |\<in>| answered}"
 
-definition readiness_entry :: "(development_problem \<Rightarrow> factor_term) \<Rightarrow> development_problem fset \<Rightarrow>
-    (development_problem \<Rightarrow> factor_term list list) \<Rightarrow> development_problem \<Rightarrow> factor_term\<times>bool\<times>factor_term list list" where
+definition readiness_entry :: "(development_problem \<Rightarrow> bool list) \<Rightarrow> development_problem fset \<Rightarrow>
+    (development_problem \<Rightarrow> bool list list list) \<Rightarrow> development_problem \<Rightarrow> bool list\<times>bool\<times>bool list list list" where
   "readiness_entry key answered hs p=(key p,p |\<in>| answered,hs p)"
 
 definition readiness_presents ::
-    "(development_problem \<Rightarrow> factor_term) \<Rightarrow> development_dependencies \<Rightarrow> development_problem fset \<Rightarrow>
-      development_problem list \<Rightarrow> (development_problem \<Rightarrow> factor_term list list) \<Rightarrow>
+    "(development_problem \<Rightarrow> bool list) \<Rightarrow> development_dependencies \<Rightarrow> development_problem fset \<Rightarrow>
+      development_problem list \<Rightarrow> (development_problem \<Rightarrow> bool list list list) \<Rightarrow>
       (development_problem \<Rightarrow> readiness_table) \<Rightarrow> bool" where
   "readiness_presents key D answered ps hs cone \<longleftrightarrow>
-    inj_on key (set ps) \<and> (\<forall>p\<in>set ps. term_formed (key p)) \<and>
+    inj_on key (set ps) \<and>
     (\<forall>p H. (p,H) |\<in>| D \<longrightarrow> p\<in>set ps \<and> snd ` fset H\<subseteq>set ps \<and> single_valued (fset H)) \<and>
     fset answered\<subseteq>set ps \<and>
     (\<forall>p\<in>set ps. set (map set (hs p))=(\<lambda>H. key ` snd ` fset H) ` fset (development_decompositions D p)) \<and>
@@ -48,37 +48,21 @@ next
   then show "H |\<in>| development_decompositions D p" by (simp add: development_decompositions_def)
 qed
 
-lemma readiness_presents_decompositions_formed:
-  assumes presents: "readiness_presents key D answered ps hs cone" and p: "p\<in>set ps"
-  shows "\<forall>h\<in>set (hs p). \<forall>x\<in>set h. term_formed x"
-proof (intro ballI)
-  fix h x assume h: "h\<in>set (hs p)" and x: "x\<in>set h"
-  have keyed: "\<forall>p\<in>set ps. term_formed (key p)"
-    and rows: "\<forall>p H. (p,H) |\<in>| D \<longrightarrow> p\<in>set ps \<and> snd ` fset H\<subseteq>set ps \<and> single_valued (fset H)"
-    and sets: "set (map set (hs p))=(\<lambda>H. key ` snd ` fset H) ` fset (development_decompositions D p)"
-    using presents p by (simp_all add: readiness_presents_def)
-  have "set h\<in>(\<lambda>H. key ` snd ` fset H) ` fset (development_decompositions D p)"
-    using h sets by (metis image_eqI list.set_map)
-  then obtain H where H: "H |\<in>| development_decompositions D p" and hH: "set h=key ` snd ` fset H" by blast
-  then obtain q where q: "q\<in>snd ` fset H" and xq: "x=key q" using x by auto
-  have "(p,H) |\<in>| D" using H by (simp add: development_decompositions_member)
-  then have "q\<in>set ps" using rows q by blast
-  then show "term_formed x" using keyed xq by blast
-qed
-
 lemma readiness_presents_formed:
   assumes presents: "readiness_presents key D answered ps hs cone" and p: "p\<in>set ps"
   shows "readiness_table_formed (cone p)"
 proof -
-  have within: "set (cone p)\<subseteq>readiness_entry key answered hs ` set ps" and keyed: "\<forall>p\<in>set ps. term_formed (key p)"
+  have within: "set (cone p)\<subseteq>readiness_entry key answered hs ` set ps" and injective: "inj_on key (set ps)"
     using presents p by (auto simp: readiness_presents_def)
   show ?thesis
-    unfolding readiness_table_formed_def
-  proof
-    fix e assume "e\<in>set (cone p)"
-    then obtain q where q: "q\<in>set ps" and eq: "e=readiness_entry key answered hs q" using within by blast
-    show "term_formed (fst e) \<and> (\<forall>h\<in>set (snd (snd e)). \<forall>x\<in>set h. term_formed x)"
-      using keyed q readiness_presents_decompositions_formed[OF presents q] by (simp add: eq readiness_entry_def)
+    unfolding readiness_table_formed_def single_valued_def
+  proof (intro allI impI)
+    fix k v w assume first: "(k,v)\<in>set (cone p)" and second: "(k,w)\<in>set (cone p)"
+    obtain q where q: "q\<in>set ps" and eq: "(k,v)=readiness_entry key answered hs q" using first within by blast
+    obtain r where r: "r\<in>set ps" and er: "(k,w)=readiness_entry key answered hs r" using second within by blast
+    have "key q=key r" using eq er by (simp add: readiness_entry_def)
+    then have "q=r" using injective q r by (auto dest: inj_onD)
+    then show "v=w" using eq er by (metis prod.inject)
   qed
 qed
 
@@ -193,13 +177,10 @@ qed
 theorem native_development_ready:
   assumes presents: "readiness_presents key D answered ps hs cone" and p: "p\<in>set ps" and xf: "term_formed x"
   shows "(readiness_ready,Pair_Term x (Pair_Term (readiness_table_term (cone p))
-      (Pair_Term (key p) (readiness_value (p |\<in>| answered) (hs p)))))
+      (Pair_Term (path_term (key p)) (readiness_value (p |\<in>| answered) (hs p)))))
       \<in>positive_meaning native_readiness_system \<longleftrightarrow> development_ready D answered p"
 proof -
   have formed: "readiness_table_formed (cone p)" by (rule readiness_presents_formed[OF presents p])
-  have kf: "term_formed (key p)" using presents p by (simp add: readiness_presents_def)
-  have hf: "\<forall>h\<in>set (hs p). \<forall>x\<in>set h. term_formed x"
-    by (rule readiness_presents_decompositions_formed[OF presents p])
   have injective: "inj_on key (set ps)"
     and rows: "\<forall>p H. (p,H) |\<in>| D \<longrightarrow> p\<in>set ps \<and> snd ` fset H\<subseteq>set ps \<and> single_valued (fset H)"
     and sets: "set (map set (hs p))=(\<lambda>H. key ` snd ` fset H) ` fset (development_decompositions D p)"
@@ -244,24 +225,25 @@ proof -
     qed
   qed
   show ?thesis
-    using native_ready_exact[OF xf formed kf hf, of "p |\<in>| answered"] covered by (simp add: development_ready_def)
+    using native_ready_exact[OF xf formed path_term_formed, of "key p" "p |\<in>| answered" "hs p"] covered
+    by (simp add: development_ready_def)
 qed
 
 section \<open>The development's readiness as native candidates\<close>
 
 text \<open>
-  The problems of a selection are presented to native readiness by their rows. A problem's key is the
-  position of its first occurrence among the problems, the value reference index of the problem; its row
-  holds the key, the problem's status and its decompositions, each the collection of its premise keys. Each
-  candidate of the question is a problem's row together with the table of the rows its settledness reads:
-  the rows of the answered problems reachable from its premises through answered problems, computed once
-  for all candidates as the transitive closure of the answered-premise edges. The question judges each
-  candidate on its own, so its subject is empty. Positions identify problems here and order nothing: native
-  readiness compares keys only for equality.
+  The problems of a selection are presented to native readiness by their rows. A problem's key is the path of
+  the binary digits of the position of its first occurrence among the problems, the value reference index of
+  the problem; its row holds the key, the problem's status and its decompositions, each the collection of its
+  premise keys. Each candidate of the question is a problem's row together with the path store of the rows
+  its settledness reads: the rows of the answered problems reachable from its premises through answered
+  problems, computed once for all candidates as the transitive closure of the answered-premise edges. The
+  question judges each candidate on its own, so its subject is empty. Positions identify problems here and
+  order nothing: native readiness descends a store along a key and compares nothing else.
 \<close>
 
-definition development_readiness_key :: "development_problem list \<Rightarrow> development_problem \<Rightarrow> finite_factor_term" where
-  "development_readiness_key ps p=finite_development_index
+definition development_readiness_key :: "development_problem list \<Rightarrow> development_problem \<Rightarrow> bool list" where
+  "development_readiness_key ps p=natural_binary_digits
     (case value_reference_index p ps of None \<Rightarrow> length ps | Some i \<Rightarrow> i)"
 
 fun finite_data_list_elements :: "finite_factor_term \<Rightarrow> finite_factor_term list" where
@@ -272,12 +254,13 @@ lemma finite_data_list_elements_list [simp]: "finite_data_list_elements (finite_
   by (induction xs) simp_all
 
 definition development_readiness_decompositions :: "development_dependencies \<Rightarrow> development_problem list \<Rightarrow>
-    development_problem \<Rightarrow> finite_factor_term list list" where
-  "development_readiness_decompositions D ps p=map finite_data_list_elements (ordered_finite_terms
-    (fimage (finite_collection_presentation (development_readiness_key ps \<circ> snd)) (development_decompositions D p)))"
+    development_problem \<Rightarrow> bool list list list" where
+  "development_readiness_decompositions D ps p=map (map finite_path_bits \<circ> finite_data_list_elements)
+    (ordered_finite_terms (fimage (finite_collection_presentation (finite_path \<circ> development_readiness_key ps \<circ> snd))
+      (development_decompositions D p)))"
 
 definition development_readiness_entry :: "development_dependencies \<Rightarrow> development_problem fset \<Rightarrow>
-    development_problem list \<Rightarrow> development_problem \<Rightarrow> finite_factor_term\<times>bool\<times>finite_factor_term list list" where
+    development_problem list \<Rightarrow> development_problem \<Rightarrow> bool list\<times>bool\<times>bool list list list" where
   "development_readiness_entry D answered ps p=(development_readiness_key ps p,p |\<in>| answered,
     development_readiness_decompositions D ps p)"
 
@@ -292,7 +275,7 @@ definition development_readiness_closure :: "development_dependencies \<Rightarr
 
 definition development_readiness_cone :: "development_dependencies \<Rightarrow> development_problem fset \<Rightarrow>
     development_problem list \<Rightarrow> (development_problem\<times>development_problem) fset \<Rightarrow> development_problem \<Rightarrow>
-      (finite_factor_term\<times>bool\<times>finite_factor_term list list) list" where
+      readiness_table" where
   "development_readiness_cone D answered ps E p=map (development_readiness_entry D answered ps)
     (filter (\<lambda>q. (p,q) |\<in>| E) ps)"
 
@@ -317,7 +300,7 @@ definition development_readiness_scope_closed :: "development_dependencies \<Rig
 lemma development_readiness_key_at:
   assumes "p\<in>set ps"
   obtains i where "value_reference_index p ps=Some i" "i<length ps" "ps!i=p"
-    "development_readiness_key ps p=finite_development_index i"
+    "development_readiness_key ps p=natural_binary_digits i"
 proof -
   obtain i where index: "value_reference_index p ps=Some i"
     using assms value_reference_index_absent[of p ps] by (cases "value_reference_index p ps") auto
@@ -330,18 +313,23 @@ lemma development_readiness_key_injective:
     and same: "development_readiness_key ps p=development_readiness_key ps q"
   shows "p=q"
 proof -
-  obtain i where "ps!i=p" "development_readiness_key ps p=finite_development_index i"
+  obtain i where "ps!i=p" "development_readiness_key ps p=natural_binary_digits i"
     by (rule development_readiness_key_at[OF p])
-  moreover obtain j where "ps!j=q" "development_readiness_key ps q=finite_development_index j"
+  moreover obtain j where "ps!j=q" "development_readiness_key ps q=natural_binary_digits j"
     by (rule development_readiness_key_at[OF q])
   ultimately show ?thesis using same by simp
 qed
 
 lemma development_readiness_decompositions_sets:
-  "set (map set (map (map decode_finite_term) (development_readiness_decompositions D ps p)))=
-    (\<lambda>H. (decode_finite_term \<circ> development_readiness_key ps) ` snd ` fset H) ` fset (development_decompositions D p)"
+  "set (map set (development_readiness_decompositions D ps p))=
+    (\<lambda>H. development_readiness_key ps ` snd ` fset H) ` fset (development_decompositions D p)"
   by (auto simp: development_readiness_decompositions_def ordered_finite_terms_set
     finite_collection_presentation_def image_image fimage.rep_eq)
+
+lemma development_readiness_entry_readiness:
+  "development_readiness_entry D answered ps=
+    readiness_entry (development_readiness_key ps) answered (development_readiness_decompositions D ps)"
+  by (rule ext) (simp add: development_readiness_entry_def readiness_entry_def)
 
 lemma finite_readiness_edges_member:
   "(r,q) |\<in>| finite_readiness_edges D answered \<longleftrightarrow> (\<exists>H. (r,H) |\<in>| D \<and> q\<in>snd ` fset H) \<and> q |\<in>| answered"
@@ -387,13 +375,9 @@ qed
 
 theorem development_readiness_presents:
   assumes closed: "development_readiness_scope_closed D answered ps"
-  shows "readiness_presents (decode_finite_term \<circ> development_readiness_key ps) D answered ps
-    (\<lambda>p. map (map decode_finite_term) (development_readiness_decompositions D ps p))
-    (\<lambda>p. decode_readiness_table (development_readiness_cone D answered ps (development_readiness_closure D answered) p))"
+  shows "readiness_presents (development_readiness_key ps) D answered ps (development_readiness_decompositions D ps)
+    (development_readiness_cone D answered ps (development_readiness_closure D answered))"
 proof -
-  let ?key="decode_finite_term \<circ> development_readiness_key ps"
-  let ?hs="\<lambda>p. map (map decode_finite_term) (development_readiness_decompositions D ps p)"
-  let ?cone="\<lambda>p. decode_readiness_table (development_readiness_cone D answered ps (development_readiness_closure D answered) p)"
   have all: "fBall D (\<lambda>(p,H). p\<in>set ps \<and> fBall H (\<lambda>(s,q). q\<in>set ps) \<and> finite_relation_functional H)"
     and answered_all: "fBall answered (\<lambda>p. p\<in>set ps)"
     using closed by (simp_all add: development_readiness_scope_closed_def)
@@ -413,26 +397,19 @@ proof -
   qed
   have within: "fset answered\<subseteq>set ps"
     using fbspec[OF answered_all] by blast
-  have injective: "inj_on ?key (set ps)"
+  have injective: "inj_on (development_readiness_key ps) (set ps)"
     by (rule inj_onI) (auto intro: development_readiness_key_injective)
-  have formed: "\<forall>p\<in>set ps. term_formed (?key p)"
-  proof
-    fix p assume "p\<in>set ps"
-    have "finite_term_formed (development_readiness_key ps p)"
-      by (simp only: development_readiness_key_def finite_development_index_formed)
-    then show "term_formed (?key p)" by (simp only: comp_def finite_term_formed_correct[symmetric])
-  qed
-  have entries: "\<forall>p\<in>set ps. set (map set (?hs p))=(\<lambda>H. ?key ` snd ` fset H) ` fset (development_decompositions D p)"
+  have entries: "\<forall>p\<in>set ps. set (map set (development_readiness_decompositions D ps p))=
+      (\<lambda>H. development_readiness_key ps ` snd ` fset H) ` fset (development_decompositions D p)"
     by (intro ballI) (rule development_readiness_decompositions_sets)
-  have decoded: "decode_readiness_table (map (development_readiness_entry D answered ps) qs)=
-      map (readiness_entry ?key answered ?hs) qs" for qs
-    by (simp add: decode_readiness_table_def development_readiness_entry_def readiness_entry_def)
-  have coned: "\<forall>p\<in>set ps. set (?cone p)=
-      readiness_entry ?key answered ?hs ` {q\<in>set ps. (p,q)\<in>(readiness_edges D answered)\<^sup>+}"
-    by (simp add: development_readiness_cone_def decoded development_readiness_closure_exact)
+  have coned: "\<forall>p\<in>set ps. set (development_readiness_cone D answered ps (development_readiness_closure D answered) p)=
+      readiness_entry (development_readiness_key ps) answered (development_readiness_decompositions D ps) `
+        {q\<in>set ps. (p,q)\<in>(readiness_edges D answered)\<^sup>+}"
+    by (simp add: development_readiness_cone_def development_readiness_entry_readiness
+      development_readiness_closure_exact)
   show ?thesis
     unfolding readiness_presents_def
-    using injective formed rows within entries coned by blast
+    using injective rows within entries coned by blast
 qed
 
 end

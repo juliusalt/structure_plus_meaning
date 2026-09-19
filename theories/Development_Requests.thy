@@ -41,13 +41,13 @@ proof -
   have holds: "development_condition_holds C (Finite_Payload [])
       (development_readiness_candidate D answered ps (development_readiness_closure D answered) p)"
     by (rule finite_subject_question_conditions[OF constructed admission chosen]) (simp add: condition)
-  let ?key="decode_finite_term \<circ> development_readiness_key ps"
-  let ?hs="\<lambda>p. map (map decode_finite_term) (development_readiness_decompositions D ps p)"
-  let ?cone="\<lambda>p. decode_readiness_table (development_readiness_cone D answered ps (development_readiness_closure D answered) p)"
+  let ?key="development_readiness_key ps"
+  let ?hs="development_readiness_decompositions D ps"
+  let ?cone="development_readiness_cone D answered ps (development_readiness_closure D answered)"
   have presents: "readiness_presents ?key D answered ps ?hs ?cone"
     by (rule development_readiness_presents[OF closed])
   have native: "(readiness_ready,Pair_Term (Payload_Term []) (Pair_Term (readiness_table_term (?cone p))
-      (Pair_Term (?key p) (readiness_value (p |\<in>| answered) (?hs p)))))\<in>positive_meaning native_readiness_system"
+      (Pair_Term (path_term (?key p)) (readiness_value (p |\<in>| answered) (?hs p)))))\<in>positive_meaning native_readiness_system"
     using holds by (simp add: native_readiness_condition_exact[OF condition] development_readiness_candidate_def
       decode_finite_readiness_table decode_finite_readiness_row)
   have xf: "term_formed (Payload_Term [])" by (simp add: octets_formed_def)

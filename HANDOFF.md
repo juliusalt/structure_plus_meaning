@@ -1,6 +1,64 @@
-# Handoff — impl-28: native selection committed (base ae, check af retained); next the native verdict
+# Handoff — impl-29: readiness over path stores committed (base ai, check aj retained); next the engine's cost
 
-## impl-28 session (2026-09-19, read first)
+## impl-29 session (2026-09-19, read first)
+
+- DONE: the batch below is validated and COMMITTED AND PUSHED as "Present readiness keys as paths and its tables as
+  path stores" (message `.build/impl29/commit.txt`; `.claude/orchestration/*` and `tools/__pycache__/*` not staged).
+  ACTIVE BASE: `.build/check-20260919ai/proof` (child of `.build/complete-20260919ag`; keep ag). Confirming check
+  `.build/check-20260919aj` ACCEPTED and RETAINED. Payload audit (`.build/probe-impl29-c`): scope, readiness condition
+  and scope critic of the selection question state only [] on seed and machinery; native selection = HOL ready list
+  (10/10 seed, 36/65 machinery). Replay `.build/impl29/replay-a`: 16 replayed, 15 reconstructed, walk adopted, none
+  differing. Plan section "Keys and tables are structure — 2026-09-19" and RR section appended.
+
+- BATCH (impl-28's chosen next batch, provisional residual): KEYS AND TABLES ARE STRUCTURE. INSTALLED in theories/
+  (uncommitted) by `python3 .build/impl29/make_install.py` from the candidates `.build/impl29/cand/` (serial probe
+  `.build/probe-impl29-b` LOADED, every proof checked): NEW `Native_Path_Stores` (ROOT after
+  Native_Collection_Programs): bits/paths as shapes, `store_term`, native store search (found/left/right) with
+  `native_store_search_program.sound/exact` over ARBITRARY keys, `path_store`, `path_store_found` (unconditional),
+  `path_store_lookup` (single-valued rows), `finite_path`, `finite_path_bits`, `finite_store`. Rewritten
+  `Development_Native_Readiness` (keys = bool lists, table = path store of rows, `readiness_table_formed` =
+  single-valued, invariant over `readiness_settled_key`; contracts `native_settled_exact` over `path_term bs`,
+  `native_every_settled` over `readiness_decompositions`, `native_ready_exact`), `Development_Native_Selection`
+  (keys = `natural_binary_digits` of first positions, `readiness_presents_formed` = single-valued cone),
+  `Development_Requests` (consumer proof: keys no longer decoded). THEORY_MAP rows updated by the same script.
+  Generators: `.build/impl29/make_readiness.py` (+ `readiness-subject.thy`, `readiness-ready.thy`),
+  `.build/impl29/make_selection.py` (+ `selection-candidates.thy`).
+- MEASURED (probe `.build/probe-impl29-a`, chain all answered, native readiness evaluated): closure calls
+  30/62/134/214/294/646 at n=4/8/16/24/32/64 (was 41/109/341/701/1189), closure seconds 0.001/0.004/0.097/0.71/2.6/82
+  (was .../0.78/9.4/58), ready 0.32/2.2/8.1 s at 16/24/32 (was 2.0/25/163). Calls are now linear; the per-call cost
+  (deep equality of calls that all carry the context table; impl-28's ML profile at 24: 93% in
+  `equal_finite_factor_term`) makes time still ~n^4.5. That engine cost is paid by every native program that carries a
+  context (the verdict and request construction to come), so it is the NEXT BATCH: calls/rows/applications sets in
+  the demanded traversal and evaluation compared through an ordered key that compares a pair's RIGHT component first
+  (the context comes first in every notion, so a left-first order traverses the whole context on every comparison),
+  or keyed call sets (impl-28's plan (b)); attribute on the chain probe first.
+- CHECK ai DONE (21 theories rebuilt, proof 33 s, 177+35 tests): both recipes every stage exit 0; ONLY
+  `presentation-loop` changed in seed and machinery (all later words equal: same problems selected). Words recorded;
+  `adopt --proof .build/check-20260919ai/proof` (ACTIVE BASE: ai). RUNNING at this note: confirming check
+  `.build/check-20260919aj` (log `.build/check-20260919aj.out`) and the payload audit + selected-equal probe
+  `.build/probe-impl29-c` (theory `.build/impl29/audit/Probe_Impl29_Audit.thy`, summary `.build/impl29/probe-c.out`).
+  Then: retain aj, replay answers, fill AUDIT/CONFIRM/REPLAY in `.build/impl29/docs/plan-section.md`, append it to the
+  plan and `rr-section.md` to REASONING_REUSE.md, VALIDATION in `.build/impl29/commit.txt`, commit (no
+  `.claude/orchestration/*`, no `tools/__pycache__/*`), push.
+- NEXT BATCH (engine cost of context-carrying programs). MEASURED (probe `.build/impl29/keys/P29_Keys.thy`, chain,
+  base ai): closure (demanded traversal, plain fsets) 0.10/0.74/2.8 s at 16/24/32; evaluation over the closure: plain
+  `finite_program_evaluation` 0.22/1.58 s at 16/24 (net of closure), keyed (`keyed_program_evaluation native_call_key
+  ...`, what the stages use) 0.17/0.95 s, keyed with a MIRRORED call key (right-first comparison) 0.19/0.94 s: the
+  mirrored key does NOT help, so comparisons inside the keyed evaluation are not the bottleneck; DROP that idea. The
+  cost is in the demanded traversal (`finite_program_call_closure`: `S |∪| T`, `succ |-| visited`, `A |∪| rows` with
+  rows = whole applications carrying the context) and in computing each call's applications
+  (`finite_program_applications P {|q|}`: matching, bindings, formation of values that include the context).
+  ATTRIBUTE FIRST (ML profile of the closure alone at 32 on that probe, and a variant of the traversal that keeps
+  rows out of the accumulated set), then fix at the cause with proved code equations used in the monomorphic stage
+  equations of `Keyed_Native_Evaluation` (a polymorphic `[code]` lemma is dropped, impl-26).
+- (earlier) RUNNING: `incremental_check.py check --advance-base --output .build/check-20260919ai` (log
+  `.build/check-20260919ai.out`). EXPECTED: seed and machinery recipes' selection words change (keys and tables are
+  new presentations) -> check every stage exit 0 and that the later seed words are EQUAL (same problems selected),
+  re-record with `.build/impl14/record_words.py CHECK RECIPE`, `adopt --proof .build/check-20260919ai/proof`,
+  confirming check, retain, replay (`tools/replay_development_answers.py --output .build/impl29/replay-a`), payload
+  audit of the selection question (expect only []), plan + RR sections, commit + push.
+
+## impl-28 session (2026-09-19)
 
 - CHECK ad (impl-27's) proved all 1791 theories (392 s) but the seed and machinery exports did not compile:
   `native_every_nil`/`native_member_here` are polymorphic rule values; impl-25's candidate had
@@ -19,7 +77,43 @@
 - Plan section "The selection question evaluates native readiness — 2026-09-19" and the RR section appended;
   COMMITTED AND PUSHED as "Select the next problems by evaluating native readiness" (message
   `.build/impl28/commit.txt`; `.claude/orchestration/*` and `tools/__pycache__/*` deliberately not staged).
-- NEXT BATCH (provisional residual; Q7 step 2): the verdict of a kind as a native definition. Design: the native
+- BASE RESET: complete source proof `.build/complete-20260919ag` (all 1791 theories, 9.5 min) ADOPTED; ACTIVE BASE is
+  this one-level context (probes load in ~4 s). Confirming check `.build/check-20260919ah` ACCEPTED (all theories
+  and recipes reused, 177+35 tests) and RETAINED. The 30-level lineage and its heaps were removed (.build 26 GB ->
+  46 MB). `.build/impl14/record_words.py` and `.build/impl27/make_install.py` are kept (still used).
+- NEXT BATCH CHOSEN (provisional residual, impl-28): KEYS AND TABLES ARE STRUCTURE. A problem's key is the binary
+  path of its first position presented as shapes (bit 0 = leaf, bit 1 = pair of leaves), a table is a trie
+  (`Binary_Path_Stores` presented: empty = leaf, node = Pair value (Pair left right)), and native search descends
+  it (3 rules: found at the empty path, left on bit 0, right on bit 1) with its contract proved once
+  (holds on presented store and key <-> store_lookup = Some value). Readiness then settles through trie lookup
+  instead of walking the table, and the selection question states no octet but the empty payload anywhere
+  (scope included), so by the payload criterion it reads no octet as structure: both Open items of the committed
+  section. Engine probe first: `.build/impl28/engine/Probe_Engine_Scale.thy` (chain all answered, n=4..32, closure
+  size, applications, ready, ML profile at 24) to attribute per-call cost vs call count.
+- PARKED AT THE CONTEXT LIMIT (impl-28). Uncommitted: only these HANDOFF notes. CANDIDATE DONE:
+  `.build/impl28/cand/Native_Path_Stores.thy` LOADS with every proof checked (serial probe, 3.6 s): bit/path terms
+  (shapes), `store_term`, native store search family (found/left/right rules) with `unfold` and `exact` over
+  `path_term bs`, `path_store` + `path_store_lookup` (distinct keys), finite `finite_path`/`finite_store` + decode.
+  TODO in it: restate `unfold`/`exact` over an ARBITRARY key term (key=Payload [] | Pair (bit) rest; exact: key is
+  some `path_term bs`), since readiness' invariant quantifies over arbitrary keys; generalize `path_store_lookup` to
+  single-valued rows (duplicate problems give equal rows). ROOT: after Native_Collection_Programs.
+- ENGINE PROBE (`.build/probe-impl28-engine/probe.log`, chain all answered): closure calls 41/109/341/701 at n=4/8/16/24
+  but closure time 0.001/0.015/0.78/9.4 s, ready 2.0 s at 16, 25 s at 24 -> both call count (linear table walk, ~n^2)
+  and per-call cost (fset dedupe by deep equality of calls carrying the table) matter. ML profile at 24 was still
+  running at park (read the log). FIX PLAN: (a) readiness over path stores (below); (b) keyed call sets in the
+  demanded traversal: `finite_program_call_readings` (Factor_Demanded_Program_Calls l.212) over
+  `finite_demanded_readings` should get a keyed code equation using `native_call_key`/`native_call_unkey`
+  (Keyed_Native_Evaluation) and `keyed_union`/`ordered_member_tree` (Keyed_Finite_Sets), proved equal.
+- READINESS OVER PATH STORES (Development_Native_Readiness + Development_Native_Selection + consumers in
+  Development_Requests): table = `(bool list x bool x bool list list) list`; `readiness_value a hs` decompositions as
+  data lists of `path_term`s; `readiness_table_term T = store_term rv (path_store rows)`; formed = single-valued
+  keys; search family = `native_store_search_rules readiness_settled_search readiness_answered`; invariants over
+  arbitrary keys ("exists bs. k=path_term bs and ..."); `native_ready_exact` with `path_term k`. Selection: key =
+  `natural_binary_digits` of the first index; decompositions listed via ordered finite path terms then read back
+  with a `finite_path_bits` reader; `readiness_presents` with bool-list keys. Then check --advance-base (every
+  native-question recipe word changes: re-record), confirm, measure chain 32/64, payload audit (expect only []),
+  plan/RR sections, commit + push.
+- LATER (provisional, Q7 step 2): the verdict of a kind as a native definition. Design: the native
   machinery reads a state through rows whose kind statuses (replaceable/demanded by the problem's kind), declared
   name, subject names and mention names are explicit structure and whose statement is inert (its local
   presentation, `isabelle_local_entities`), so rows compare across request and answer states by equality; the

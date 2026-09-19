@@ -1,5 +1,5 @@
 theory Development_Native_Readiness
-  imports Native_Collection_Programs Finite_Presented_Collections
+  imports Native_Path_Stores
 begin
 
 section \<open>Readiness is a native definition\<close>
@@ -14,7 +14,9 @@ text \<open>
   with; the program compares problems only for equality, through variables that occur twice.
 
   The program is closed: it is composed of the native collection notions (every and some element of a list,
-  the value a keyed table holds) at its own sites, and of three rules of its own. Settlement is a least
+  the value a path store holds at a path) at its own sites, and of three rules of its own. A key is a path,
+  a list of bits each of which is a shape, and the table of rows is the path store of the rows, so a row is
+  found by descending the store along its key rather than by walking the table. Settlement is a least
   closure, which positive meaning is: a problem is settled when its row in the table is answered and one of
   its decompositions has every premise settled. A row is ready when it is open and every premise of every
   one of its decompositions is settled. Every rule's conclusion binds every variable
@@ -72,7 +74,7 @@ definition readiness_ready_rule ::
 definition readiness_definitions :: "(local_address option definition_site\<times>
     (local_address\<times>(local_address,local_address,local_address option definition_site) finite_factor_schema) list) list" where
   "readiness_definitions=[(readiness_settled,[([0],readiness_settled_rule)]),
-    (readiness_settled_search,native_keyed_search_rules readiness_settled_search readiness_answered),
+    (readiness_settled_search,native_store_search_rules readiness_settled_search readiness_answered),
     (readiness_answered,[([0],readiness_answered_rule)]),
     (readiness_some,native_some_rules readiness_some readiness_all),
     (readiness_all,native_every_rules readiness_all readiness_settled),
@@ -122,10 +124,11 @@ interpretation readiness_settled_family: native_rule_family native_readiness_sys
     "[([0],readiness_settled_rule)]"
   by (rule native_readiness_family) (simp_all add: readiness_definitions_def readiness_settled_rule_def)
 
-interpretation readiness_settled_searches: native_keyed_search_program native_readiness_system
+interpretation readiness_settled_searches: native_store_search_program native_readiness_system
     readiness_settled_search readiness_answered
-  unfolding native_keyed_search_program_def by (rule native_readiness_family)
-    (simp_all add: readiness_definitions_def native_keyed_search_rules_def native_found_rule_def native_skip_rule_def)
+  unfolding native_store_search_program_def by (rule native_readiness_family)
+    (simp_all add: readiness_definitions_def native_store_search_rules_def native_store_found_rule_def
+      native_store_left_rule_def native_store_right_rule_def)
 
 interpretation readiness_answered_family: native_rule_family native_readiness_system readiness_answered
     "[([0],readiness_answered_rule)]"
@@ -151,12 +154,13 @@ section \<open>The subject: rows of problems and their settlement\<close>
 
 text \<open>
   A row holds a problem's key, whether it is answered, and the list of its decompositions, each the list of
-  its premise keys. A key is settled in a table of rows when an answered row of the table holds it and one
-  of its decompositions has every premise settled; this least closure is stated here once, and native
-  settlement computes exactly it on every table whose keys are formed terms.
+  its premise keys. A key is a path, so a table of rows is a list of paths with their values, and the table is
+  presented as the path store of its rows. A key is settled in a table of rows when an answered row of the
+  table holds it and one of its decompositions has every premise settled; this least closure is stated here
+  once, and native settlement computes exactly it on every single-valued table.
 \<close>
 
-type_synonym readiness_table = "(factor_term\<times>bool\<times>factor_term list list) list"
+type_synonym readiness_table = "(bool list\<times>bool\<times>bool list list list) list"
 
 definition readiness_status :: "bool \<Rightarrow> factor_term" where
   "readiness_status answered=(if answered then Payload_Term [] else Pair_Term (Payload_Term []) (Payload_Term []))"
@@ -170,101 +174,106 @@ lemma readiness_status_open: "readiness_status a=Pair_Term (Payload_Term []) (Pa
 lemma readiness_status_formed [simp]: "term_formed (readiness_status a)"
   by (cases a) (simp_all add: readiness_status_def octets_formed_def)
 
-definition readiness_value :: "bool \<Rightarrow> factor_term list list \<Rightarrow> factor_term" where
-  "readiness_value a hs=Pair_Term (readiness_status a) (data_list_term (map data_list_term hs))"
+definition readiness_decompositions :: "bool list list list \<Rightarrow> factor_term" where
+  "readiness_decompositions hs=data_list_term (map (\<lambda>h. data_list_term (map path_term h)) hs)"
 
-lemma readiness_value_formed:
-  "term_formed (readiness_value a hs) \<longleftrightarrow> (\<forall>h\<in>set hs. \<forall>x\<in>set h. term_formed x)"
-  by (simp add: readiness_value_def data_list_term_formed)
+lemma readiness_decompositions_formed [simp]: "term_formed (readiness_decompositions hs)"
+  by (simp add: readiness_decompositions_def data_list_term_formed)
 
-definition readiness_rows :: "readiness_table \<Rightarrow> (factor_term\<times>factor_term) list" where
-  "readiness_rows T=map (\<lambda>(k,a,hs). (k,readiness_value a hs)) T"
+definition readiness_value :: "bool \<Rightarrow> bool list list list \<Rightarrow> factor_term" where
+  "readiness_value a hs=Pair_Term (readiness_status a) (readiness_decompositions hs)"
+
+lemma readiness_value_formed [simp]: "term_formed (readiness_value a hs)"
+  by (simp add: readiness_value_def)
+
+definition readiness_row_value :: "bool\<times>bool list list list \<Rightarrow> factor_term" where
+  "readiness_row_value r=readiness_value (fst r) (snd r)"
+
+lemma readiness_row_value_formed [simp]: "term_formed (readiness_row_value r)"
+  by (simp add: readiness_row_value_def)
 
 definition readiness_table_term :: "readiness_table \<Rightarrow> factor_term" where
-  "readiness_table_term T=data_list_term (map (case_prod Pair_Term) (readiness_rows T))"
+  "readiness_table_term T=store_term readiness_row_value (path_store T)"
 
 definition readiness_table_formed :: "readiness_table \<Rightarrow> bool" where
-  "readiness_table_formed T \<longleftrightarrow>
-    (\<forall>e\<in>set T. term_formed (fst e) \<and> (\<forall>h\<in>set (snd (snd e)). \<forall>x\<in>set h. term_formed x))"
+  "readiness_table_formed T \<longleftrightarrow> single_valued (set T)"
 
-inductive_set table_settled :: "readiness_table \<Rightarrow> factor_term set" for T where
+inductive_set table_settled :: "readiness_table \<Rightarrow> bool list set" for T where
   settle: "(k,True,hs)\<in>set T \<Longrightarrow> h\<in>set hs \<Longrightarrow> \<forall>x\<in>set h. x\<in>table_settled T \<Longrightarrow> k\<in>table_settled T"
 
-lemma readiness_rows_member:
-  "(k,v)\<in>set (readiness_rows T) \<longleftrightarrow> (\<exists>a hs. (k,a,hs)\<in>set T \<and> v=readiness_value a hs)"
-proof
-  assume "(k,v)\<in>set (readiness_rows T)"
-  then show "\<exists>a hs. (k,a,hs)\<in>set T \<and> v=readiness_value a hs" by (auto simp: readiness_rows_def)
-next
-  assume "\<exists>a hs. (k,a,hs)\<in>set T \<and> v=readiness_value a hs"
-  then obtain a hs where entry: "(k,a,hs)\<in>set T" and valued: "v=readiness_value a hs" by blast
-  show "(k,v)\<in>set (readiness_rows T)" unfolding readiness_rows_def set_map
-    by (rule rev_image_eqI[OF entry]) (simp add: valued)
-qed
+lemma readiness_table_term_formed [simp]: "term_formed (readiness_table_term T)"
+  by (simp add: readiness_table_term_def store_term_formed)
 
-lemma readiness_rows_formed:
-  assumes "readiness_table_formed T"
-  shows "\<forall>(a,v)\<in>set (readiness_rows T). term_formed a \<and> term_formed v"
-  using assms by (force simp: readiness_table_formed_def readiness_rows_def readiness_value_formed)
+lemma readiness_table_found:
+  assumes "store_lookup (path_store T) k=Some v"
+  shows "(k,v)\<in>set T"
+  by (rule path_store_found[OF assms])
 
-lemma readiness_table_term_formed:
-  assumes formed: "readiness_table_formed T"
-  shows "term_formed (readiness_table_term T)"
-  using readiness_rows_formed[OF formed] by (simp add: readiness_table_term_def data_rows_formed)
+lemma readiness_table_lookup:
+  assumes formed: "readiness_table_formed T" and row: "(k,a,hs)\<in>set T"
+  shows "store_lookup (path_store T) k=Some (a,hs)"
+  using path_store_lookup[of T k "(a,hs)"] formed row by (simp add: readiness_table_formed_def)
 
 section \<open>Native settlement is the least closure\<close>
 
+definition readiness_settled_key :: "readiness_table \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "readiness_settled_key T z \<longleftrightarrow> (\<exists>bs. z=path_term bs \<and> bs\<in>table_settled T)"
+
+lemma readiness_settled_key_path [simp]: "readiness_settled_key T (path_term bs) \<longleftrightarrow> bs\<in>table_settled T"
+  by (auto simp: readiness_settled_key_def path_term_injective)
+
 definition readiness_answered_at :: "readiness_table \<Rightarrow> factor_term \<Rightarrow> bool" where
   "readiness_answered_at T v \<longleftrightarrow> (\<exists>w. v=Pair_Term (Payload_Term []) w \<and>
-    (\<forall>vs. w=data_list_term vs \<longrightarrow> (\<exists>u\<in>set vs. \<forall>zs. u=data_list_term zs \<longrightarrow> (\<forall>z\<in>set zs. z\<in>table_settled T))))"
+    (\<forall>vs. w=data_list_term vs \<longrightarrow>
+      (\<exists>u\<in>set vs. \<forall>zs. u=data_list_term zs \<longrightarrow> (\<forall>z\<in>set zs. readiness_settled_key T z))))"
 
 definition readiness_invariant :: "local_address option definition_site \<Rightarrow> factor_term \<Rightarrow> bool" where
   "readiness_invariant d t \<longleftrightarrow>
-    (d=readiness_settled \<longrightarrow> (\<forall>T k. t=Pair_Term (readiness_table_term T) k \<longrightarrow> k\<in>table_settled T)) \<and>
-    (d=readiness_settled_search \<longrightarrow> (\<forall>T k R. t=Pair_Term (readiness_table_term T)
-        (Pair_Term k (data_list_term (map (case_prod Pair_Term) R))) \<longrightarrow>
-      (\<exists>v. (k,v)\<in>set R \<and> readiness_answered_at T v))) \<and>
+    (d=readiness_settled \<longrightarrow> (\<forall>T k. t=Pair_Term (readiness_table_term T) k \<longrightarrow> readiness_settled_key T k)) \<and>
+    (d=readiness_settled_search \<longrightarrow> (\<forall>T k S. t=Pair_Term (readiness_table_term T)
+        (Pair_Term k (store_term readiness_row_value S)) \<longrightarrow>
+      (\<exists>bs v. k=path_term bs \<and> store_lookup S bs=Some v \<and> readiness_answered_at T (readiness_row_value v)))) \<and>
     (d=readiness_answered \<longrightarrow> (\<forall>T v. t=Pair_Term (readiness_table_term T) v \<longrightarrow> readiness_answered_at T v)) \<and>
     (d=readiness_some \<longrightarrow> (\<forall>T vs. t=Pair_Term (readiness_table_term T) (data_list_term vs) \<longrightarrow>
-      (\<exists>v\<in>set vs. \<forall>zs. v=data_list_term zs \<longrightarrow> (\<forall>z\<in>set zs. z\<in>table_settled T)))) \<and>
+      (\<exists>v\<in>set vs. \<forall>zs. v=data_list_term zs \<longrightarrow> (\<forall>z\<in>set zs. readiness_settled_key T z)))) \<and>
     (d=readiness_all \<longrightarrow> (\<forall>T zs. t=Pair_Term (readiness_table_term T) (data_list_term zs) \<longrightarrow>
-      (\<forall>z\<in>set zs. z\<in>table_settled T)))"
+      (\<forall>z\<in>set zs. readiness_settled_key T z)))"
 
 lemma readiness_invariant_sites:
   "readiness_invariant readiness_settled t \<longleftrightarrow>
-    (\<forall>T k. t=Pair_Term (readiness_table_term T) k \<longrightarrow> k\<in>table_settled T)"
+    (\<forall>T k. t=Pair_Term (readiness_table_term T) k \<longrightarrow> readiness_settled_key T k)"
   "readiness_invariant readiness_settled_search t \<longleftrightarrow>
-    (\<forall>T k R. t=Pair_Term (readiness_table_term T) (Pair_Term k (data_list_term (map (case_prod Pair_Term) R))) \<longrightarrow>
-      (\<exists>v. (k,v)\<in>set R \<and> readiness_answered_at T v))"
+    (\<forall>T k S. t=Pair_Term (readiness_table_term T) (Pair_Term k (store_term readiness_row_value S)) \<longrightarrow>
+      (\<exists>bs v. k=path_term bs \<and> store_lookup S bs=Some v \<and> readiness_answered_at T (readiness_row_value v)))"
   "readiness_invariant readiness_answered t \<longleftrightarrow>
     (\<forall>T v. t=Pair_Term (readiness_table_term T) v \<longrightarrow> readiness_answered_at T v)"
   "readiness_invariant readiness_some t \<longleftrightarrow>
     (\<forall>T vs. t=Pair_Term (readiness_table_term T) (data_list_term vs) \<longrightarrow>
-      (\<exists>v\<in>set vs. \<forall>zs. v=data_list_term zs \<longrightarrow> (\<forall>z\<in>set zs. z\<in>table_settled T)))"
+      (\<exists>v\<in>set vs. \<forall>zs. v=data_list_term zs \<longrightarrow> (\<forall>z\<in>set zs. readiness_settled_key T z)))"
   "readiness_invariant readiness_all t \<longleftrightarrow>
-    (\<forall>T zs. t=Pair_Term (readiness_table_term T) (data_list_term zs) \<longrightarrow> (\<forall>z\<in>set zs. z\<in>table_settled T))"
+    (\<forall>T zs. t=Pair_Term (readiness_table_term T) (data_list_term zs) \<longrightarrow> (\<forall>z\<in>set zs. readiness_settled_key T z))"
   by (simp_all add: readiness_invariant_def)
 
 lemma readiness_invariant_settled_at:
   assumes "readiness_invariant readiness_settled (Pair_Term (readiness_table_term T) k)"
-  shows "k\<in>table_settled T"
+  shows "readiness_settled_key T k"
 proof -
   have "\<forall>T' k'. Pair_Term (readiness_table_term T) k=Pair_Term (readiness_table_term T') k' \<longrightarrow>
-      k'\<in>table_settled T'"
+      readiness_settled_key T' k'"
     using assms by (simp only: readiness_invariant_sites)
   from this[rule_format, of T k] show ?thesis by simp
 qed
 
 lemma readiness_invariant_search_at:
   assumes "readiness_invariant readiness_settled_search
-    (Pair_Term (readiness_table_term T) (Pair_Term k (data_list_term (map (case_prod Pair_Term) R))))"
-  shows "\<exists>v. (k,v)\<in>set R \<and> readiness_answered_at T v"
+    (Pair_Term (readiness_table_term T) (Pair_Term k (store_term readiness_row_value S)))"
+  shows "\<exists>bs v. k=path_term bs \<and> store_lookup S bs=Some v \<and> readiness_answered_at T (readiness_row_value v)"
 proof -
-  have "\<forall>T' k' R'. Pair_Term (readiness_table_term T) (Pair_Term k (data_list_term (map (case_prod Pair_Term) R)))=
-      Pair_Term (readiness_table_term T') (Pair_Term k' (data_list_term (map (case_prod Pair_Term) R'))) \<longrightarrow>
-      (\<exists>v. (k',v)\<in>set R' \<and> readiness_answered_at T' v)"
+  have "\<forall>T' k' S'. Pair_Term (readiness_table_term T) (Pair_Term k (store_term readiness_row_value S))=
+      Pair_Term (readiness_table_term T') (Pair_Term k' (store_term readiness_row_value S')) \<longrightarrow>
+      (\<exists>bs v. k'=path_term bs \<and> store_lookup S' bs=Some v \<and> readiness_answered_at T' (readiness_row_value v))"
     using assms by (simp only: readiness_invariant_sites)
-  from this[rule_format, of T k R] show ?thesis by simp
+  from this[rule_format, of T k S] show ?thesis by simp
 qed
 
 lemma readiness_invariant_answered_at:
@@ -279,45 +288,47 @@ qed
 
 lemma readiness_invariant_some_at:
   assumes "readiness_invariant readiness_some (Pair_Term (readiness_table_term T) (data_list_term vs))"
-  shows "\<exists>v\<in>set vs. \<forall>zs. v=data_list_term zs \<longrightarrow> (\<forall>z\<in>set zs. z\<in>table_settled T)"
+  shows "\<exists>v\<in>set vs. \<forall>zs. v=data_list_term zs \<longrightarrow> (\<forall>z\<in>set zs. readiness_settled_key T z)"
 proof -
   have "\<forall>T' vs'. Pair_Term (readiness_table_term T) (data_list_term vs)=
       Pair_Term (readiness_table_term T') (data_list_term vs') \<longrightarrow>
-      (\<exists>v\<in>set vs'. \<forall>zs. v=data_list_term zs \<longrightarrow> (\<forall>z\<in>set zs. z\<in>table_settled T'))"
+      (\<exists>v\<in>set vs'. \<forall>zs. v=data_list_term zs \<longrightarrow> (\<forall>z\<in>set zs. readiness_settled_key T' z))"
     using assms by (simp only: readiness_invariant_sites)
   from this[rule_format, of T vs] show ?thesis by simp
 qed
 
 lemma readiness_invariant_all_at:
   assumes "readiness_invariant readiness_all (Pair_Term (readiness_table_term T) (data_list_term zs))"
-  shows "\<forall>z\<in>set zs. z\<in>table_settled T"
+  shows "\<forall>z\<in>set zs. readiness_settled_key T z"
 proof -
   have "\<forall>T' zs'. Pair_Term (readiness_table_term T) (data_list_term zs)=
-      Pair_Term (readiness_table_term T') (data_list_term zs') \<longrightarrow> (\<forall>z\<in>set zs'. z\<in>table_settled T')"
+      Pair_Term (readiness_table_term T') (data_list_term zs') \<longrightarrow> (\<forall>z\<in>set zs'. readiness_settled_key T' z)"
     using assms by (simp only: readiness_invariant_sites)
   from this[rule_format, of T zs] show ?thesis by simp
 qed
 
 lemma readiness_answered_settled:
-  assumes row: "(k,v)\<in>set (readiness_rows T)" and answered: "readiness_answered_at T v"
+  assumes row: "(k,v)\<in>set T" and answered: "readiness_answered_at T (readiness_row_value v)"
   shows "k\<in>table_settled T"
 proof -
-  obtain a hs where entry: "(k,a,hs)\<in>set T" and valued: "v=readiness_value a hs"
-    using row by (auto simp: readiness_rows_member)
-  obtain w where vw: "v=Pair_Term (Payload_Term []) w"
-    and some: "\<forall>vs. w=data_list_term vs \<longrightarrow> (\<exists>u\<in>set vs. \<forall>zs. u=data_list_term zs \<longrightarrow> (\<forall>z\<in>set zs. z\<in>table_settled T))"
+  obtain a hs where v: "v=(a,hs)" by (cases v)
+  obtain w where vw: "readiness_row_value v=Pair_Term (Payload_Term []) w"
+    and some: "\<forall>vs. w=data_list_term vs \<longrightarrow>
+      (\<exists>u\<in>set vs. \<forall>zs. u=data_list_term zs \<longrightarrow> (\<forall>z\<in>set zs. readiness_settled_key T z))"
     using answered by (auto simp: readiness_answered_at_def)
-  have same: "Pair_Term (readiness_status a) (data_list_term (map data_list_term hs))=Pair_Term (Payload_Term []) w"
-    using vw valued by (simp add: readiness_value_def)
-  have status: "readiness_status a=Payload_Term []" and ww: "w=data_list_term (map data_list_term hs)"
-    using same by simp_all
-  have entry': "(k,True,hs)\<in>set T" using entry status by (simp add: readiness_status_answered)
-  obtain u where u: "u\<in>set (map data_list_term hs)"
-    and settled_u: "\<forall>zs. u=data_list_term zs \<longrightarrow> (\<forall>z\<in>set zs. z\<in>table_settled T)"
+  have same: "Pair_Term (readiness_status a) (readiness_decompositions hs)=Pair_Term (Payload_Term []) w"
+    using vw by (simp add: v readiness_row_value_def readiness_value_def)
+  have status: "readiness_status a=Payload_Term []"
+    and ww: "w=data_list_term (map (\<lambda>h. data_list_term (map path_term h)) hs)"
+    using same by (simp_all add: readiness_decompositions_def)
+  have entry: "(k,True,hs)\<in>set T" using row status by (simp add: v readiness_status_answered)
+  obtain u where u: "u\<in>set (map (\<lambda>h. data_list_term (map path_term h)) hs)"
+    and settled_u: "\<forall>zs. u=data_list_term zs \<longrightarrow> (\<forall>z\<in>set zs. readiness_settled_key T z)"
     using some ww by blast
-  obtain h where h: "h\<in>set hs" and uh: "u=data_list_term h" using u by auto
-  have "\<forall>x\<in>set h. x\<in>table_settled T" using settled_u uh by blast
-  then show ?thesis by (rule table_settled.settle[OF entry' h])
+  obtain h where h: "h\<in>set hs" and uh: "u=data_list_term (map path_term h)" using u by auto
+  have "\<forall>z\<in>set (map path_term h). readiness_settled_key T z" using settled_u[rule_format, OF uh] by blast
+  then have "\<forall>x\<in>set h. x\<in>table_settled T" by simp
+  then show ?thesis by (rule table_settled.settle[OF entry h])
 qed
 
 theorem readiness_invariant_holds:
@@ -348,36 +359,56 @@ proof (rule positive_valuation_induct[OF holds, where property=readiness_invaria
     have given: "(readiness_settled_search,Pair_Term (f [0]) (Pair_Term (f [1]) (f [0])))\<in>Y"
       using native_rule_support[OF into[unfolded rule readiness_settled_rule_def]] by simp
     have search: "(readiness_settled_search,Pair_Term (readiness_table_term T)
-        (Pair_Term k (data_list_term (map (case_prod Pair_Term) (readiness_rows T)))))\<in>Y"
+        (Pair_Term k (store_term readiness_row_value (path_store T))))\<in>Y"
       using given fields by (simp add: readiness_table_term_def)
-    obtain v where row: "(k,v)\<in>set (readiness_rows T)" and found: "readiness_answered_at T v"
+    obtain bs v where key: "k=path_term bs" and lookup: "store_lookup (path_store T) bs=Some v"
+      and found: "readiness_answered_at T (readiness_row_value v)"
       using readiness_invariant_search_at[OF Y_invariant[OF search]] by blast
-    show "k\<in>table_settled T" by (rule readiness_answered_settled[OF row found])
+    have "bs\<in>table_settled T" by (rule readiness_answered_settled[OF readiness_table_found[OF lookup] found])
+    then show "readiness_settled_key T k" using key by simp
   next
-    fix T k R
+    fix T k S'
     assume site: "d=readiness_settled_search"
       and shape: "evaluate_pattern f (schema_conclusion S)=Pair_Term (readiness_table_term T)
-        (Pair_Term k (data_list_term (map (case_prod Pair_Term) R)))"
+        (Pair_Term k (store_term readiness_row_value S'))"
     have clause': "((readiness_settled_search,c),S)\<in>system_clauses native_readiness_system"
       using clause site by simp
-    obtain a v R' where R: "R=(a,v)#R'"
-      and choice: "(a=k \<and> (readiness_answered,Pair_Term (readiness_table_term T) v)\<in>Y) \<or>
-        (readiness_settled_search,Pair_Term (readiness_table_term T)
-          (Pair_Term k (data_list_term (map (case_prod Pair_Term) R'))))\<in>Y"
-      using readiness_settled_searches.unfold[OF clause' into shape] by blast
-    show "\<exists>v. (k,v)\<in>set R \<and> readiness_answered_at T v"
-      using choice
-    proof
-      assume found: "a=k \<and> (readiness_answered,Pair_Term (readiness_table_term T) v)\<in>Y"
-      have "readiness_answered_at T v"
-        by (rule readiness_invariant_answered_at[OF Y_invariant[OF found[THEN conjunct2]]])
-      then show ?thesis using R found by auto
+    have cases: "(\<exists>v l r. k=Payload_Term [] \<and> S'=Store_Node (Some v) l r \<and>
+          (readiness_answered,Pair_Term (readiness_table_term T) (readiness_row_value v))\<in>Y) \<or>
+        (\<exists>k' v l r. k=Pair_Term (bit_term False) k' \<and> S'=Store_Node v l r \<and>
+          (readiness_settled_search,Pair_Term (readiness_table_term T)
+            (Pair_Term k' (store_term readiness_row_value l)))\<in>Y) \<or>
+        (\<exists>k' v l r. k=Pair_Term (bit_term True) k' \<and> S'=Store_Node v l r \<and>
+          (readiness_settled_search,Pair_Term (readiness_table_term T)
+            (Pair_Term k' (store_term readiness_row_value r)))\<in>Y)"
+      by (rule readiness_settled_searches.unfold[OF clause' into shape])
+    show "\<exists>bs v. k=path_term bs \<and> store_lookup S' bs=Some v \<and> readiness_answered_at T (readiness_row_value v)"
+      using cases
+    proof (elim disjE exE conjE)
+      fix v l r
+      assume k: "k=Payload_Term []" and S': "S'=Store_Node (Some v) l r"
+        and answered: "(readiness_answered,Pair_Term (readiness_table_term T) (readiness_row_value v))\<in>Y"
+      have "readiness_answered_at T (readiness_row_value v)"
+        by (rule readiness_invariant_answered_at[OF Y_invariant[OF answered]])
+      then show ?thesis using k S' by (intro exI[of _ "[]"] exI[of _ v]) simp
     next
-      assume rest: "(readiness_settled_search,Pair_Term (readiness_table_term T)
-        (Pair_Term k (data_list_term (map (case_prod Pair_Term) R'))))\<in>Y"
-      obtain w where "(k,w)\<in>set R'" "readiness_answered_at T w"
-        using readiness_invariant_search_at[OF Y_invariant[OF rest]] by blast
-      then show ?thesis using R by auto
+      fix k' v l r
+      assume k: "k=Pair_Term (bit_term False) k'" and S': "S'=Store_Node v l r"
+        and inner: "(readiness_settled_search,Pair_Term (readiness_table_term T)
+          (Pair_Term k' (store_term readiness_row_value l)))\<in>Y"
+      obtain bs w where k': "k'=path_term bs" and lookup: "store_lookup l bs=Some w"
+        and found: "readiness_answered_at T (readiness_row_value w)"
+        using readiness_invariant_search_at[OF Y_invariant[OF inner]] by blast
+      show ?thesis using k k' S' lookup found by (intro exI[of _ "False#bs"] exI[of _ w]) simp
+    next
+      fix k' v l r
+      assume k: "k=Pair_Term (bit_term True) k'" and S': "S'=Store_Node v l r"
+        and inner: "(readiness_settled_search,Pair_Term (readiness_table_term T)
+          (Pair_Term k' (store_term readiness_row_value r)))\<in>Y"
+      obtain bs w where k': "k'=path_term bs" and lookup: "store_lookup r bs=Some w"
+        and found: "readiness_answered_at T (readiness_row_value w)"
+        using readiness_invariant_search_at[OF Y_invariant[OF inner]] by blast
+      show ?thesis using k k' S' lookup found by (intro exI[of _ "True#bs"] exI[of _ w]) simp
     qed
   next
     fix T v
@@ -390,12 +421,12 @@ proof (rule positive_valuation_induct[OF holds, where property=readiness_invaria
     have given: "(readiness_some,Pair_Term (f [0]) (f [1]))\<in>Y"
       using native_rule_support[OF into[unfolded rule readiness_answered_rule_def]] by simp
     have some: "\<forall>vs. f [1]=data_list_term vs \<longrightarrow>
-        (\<exists>u\<in>set vs. \<forall>zs. u=data_list_term zs \<longrightarrow> (\<forall>z\<in>set zs. z\<in>table_settled T))"
+        (\<exists>u\<in>set vs. \<forall>zs. u=data_list_term zs \<longrightarrow> (\<forall>z\<in>set zs. readiness_settled_key T z))"
     proof (intro allI impI)
       fix vs assume valued: "f [1]=data_list_term vs"
       have "(readiness_some,Pair_Term (readiness_table_term T) (data_list_term vs))\<in>Y"
         using given fields(1) valued by simp
-      then show "\<exists>u\<in>set vs. \<forall>zs. u=data_list_term zs \<longrightarrow> (\<forall>z\<in>set zs. z\<in>table_settled T)"
+      then show "\<exists>u\<in>set vs. \<forall>zs. u=data_list_term zs \<longrightarrow> (\<forall>z\<in>set zs. readiness_settled_key T z)"
         by (rule readiness_invariant_some_at[OF Y_invariant])
     qed
     show "readiness_answered_at T v" unfolding readiness_answered_at_def using fields(2) some by blast
@@ -409,20 +440,20 @@ proof (rule positive_valuation_induct[OF holds, where property=readiness_invaria
       and choice: "(readiness_all,Pair_Term (readiness_table_term T) h)\<in>Y \<or>
         (readiness_some,Pair_Term (readiness_table_term T) (data_list_term vs'))\<in>Y"
       using readiness_somes.unfold[OF clause' into shape] by blast
-    show "\<exists>v\<in>set vs. \<forall>zs. v=data_list_term zs \<longrightarrow> (\<forall>z\<in>set zs. z\<in>table_settled T)"
+    show "\<exists>v\<in>set vs. \<forall>zs. v=data_list_term zs \<longrightarrow> (\<forall>z\<in>set zs. readiness_settled_key T z)"
       using choice
     proof
       assume all: "(readiness_all,Pair_Term (readiness_table_term T) h)\<in>Y"
-      have "\<forall>zs. h=data_list_term zs \<longrightarrow> (\<forall>z\<in>set zs. z\<in>table_settled T)"
+      have "\<forall>zs. h=data_list_term zs \<longrightarrow> (\<forall>z\<in>set zs. readiness_settled_key T z)"
       proof (intro allI impI)
         fix zs assume valued: "h=data_list_term zs"
-        show "\<forall>z\<in>set zs. z\<in>table_settled T"
+        show "\<forall>z\<in>set zs. readiness_settled_key T z"
           by (rule readiness_invariant_all_at[OF Y_invariant[OF all[unfolded valued]]])
       qed
       then show ?thesis using vs by auto
     next
       assume rest: "(readiness_some,Pair_Term (readiness_table_term T) (data_list_term vs'))\<in>Y"
-      have "\<exists>v\<in>set vs'. \<forall>zs. v=data_list_term zs \<longrightarrow> (\<forall>z\<in>set zs. z\<in>table_settled T)"
+      have "\<exists>v\<in>set vs'. \<forall>zs. v=data_list_term zs \<longrightarrow> (\<forall>z\<in>set zs. readiness_settled_key T z)"
         by (rule readiness_invariant_some_at[OF Y_invariant[OF rest]])
       then show ?thesis using vs by auto
     qed
@@ -435,7 +466,7 @@ proof (rule positive_valuation_induct[OF holds, where property=readiness_invaria
     have cases: "zs=[] \<or> (\<exists>z zs'. zs=z#zs' \<and> (readiness_settled,Pair_Term (readiness_table_term T) z)\<in>Y \<and>
         (readiness_all,Pair_Term (readiness_table_term T) (data_list_term zs'))\<in>Y)"
       by (rule readiness_alls.unfold[OF clause' into shape])
-    show "\<forall>z\<in>set zs. z\<in>table_settled T"
+    show "\<forall>z\<in>set zs. readiness_settled_key T z"
       using cases
     proof
       assume "zs=[]"
@@ -447,84 +478,79 @@ proof (rule positive_valuation_induct[OF holds, where property=readiness_invaria
         and head: "(readiness_settled,Pair_Term (readiness_table_term T) z)\<in>Y"
         and tail: "(readiness_all,Pair_Term (readiness_table_term T) (data_list_term zs'))\<in>Y"
         by blast
-      have "z\<in>table_settled T" by (rule readiness_invariant_settled_at[OF Y_invariant[OF head]])
-      moreover have "\<forall>z\<in>set zs'. z\<in>table_settled T" by (rule readiness_invariant_all_at[OF Y_invariant[OF tail]])
+      have "readiness_settled_key T z" by (rule readiness_invariant_settled_at[OF Y_invariant[OF head]])
+      moreover have "\<forall>z\<in>set zs'. readiness_settled_key T z"
+        by (rule readiness_invariant_all_at[OF Y_invariant[OF tail]])
       ultimately show ?thesis using zs by simp
     qed
   qed
 qed
 
 theorem native_settled_sound:
-  assumes "(readiness_settled,Pair_Term (readiness_table_term T) k)\<in>positive_meaning native_readiness_system"
-  shows "k\<in>table_settled T"
-  by (rule readiness_invariant_settled_at[OF readiness_invariant_holds[OF assms]])
+  assumes "(readiness_settled,Pair_Term (readiness_table_term T) (path_term bs))\<in>positive_meaning native_readiness_system"
+  shows "bs\<in>table_settled T"
+  using readiness_invariant_settled_at[OF readiness_invariant_holds[OF assms]] by simp
 
 theorem native_settled_complete:
-  assumes formed: "readiness_table_formed T" and settled: "k\<in>table_settled T"
-  shows "(readiness_settled,Pair_Term (readiness_table_term T) k)\<in>positive_meaning native_readiness_system"
+  assumes formed: "readiness_table_formed T" and settled: "bs\<in>table_settled T"
+  shows "(readiness_settled,Pair_Term (readiness_table_term T) (path_term bs))\<in>positive_meaning native_readiness_system"
   using settled
 proof (induction rule: table_settled.induct)
   case (settle k hs h)
   let ?c="readiness_table_term T"
-  have cf: "term_formed ?c" by (rule readiness_table_term_formed[OF formed])
-  have given: "\<forall>x\<in>set h. (readiness_settled,Pair_Term ?c x)\<in>positive_meaning native_readiness_system"
+  have cf: "term_formed ?c" by simp
+  have given: "\<forall>x\<in>set h. (readiness_settled,Pair_Term ?c (path_term x))\<in>positive_meaning native_readiness_system"
     using settle.IH by blast
-  have all: "(readiness_all,Pair_Term ?c (data_list_term h))\<in>positive_meaning native_readiness_system"
+  have all: "(readiness_all,Pair_Term ?c (data_list_term (map path_term h)))\<in>positive_meaning native_readiness_system"
     using cf given by (simp add: readiness_alls.exact)
-  have hs_formed: "\<forall>g\<in>set (map data_list_term hs). term_formed g"
-    using formed settle.hyps(1) by (force simp: readiness_table_formed_def data_list_term_formed)
-  have some: "(readiness_some,Pair_Term ?c (data_list_term (map data_list_term hs)))\<in>positive_meaning native_readiness_system"
-    using cf hs_formed all settle.hyps(2) by (auto simp: readiness_somes.exact)
-  have hf: "term_formed (data_list_term (map data_list_term hs))"
-    using hs_formed by (simp add: data_list_term_formed)
-  have "(readiness_answered,evaluate_pattern (native_values [?c,data_list_term (map data_list_term hs)])
+  have some: "(readiness_some,Pair_Term ?c (readiness_decompositions hs))\<in>positive_meaning native_readiness_system"
+    using cf all settle.hyps(2) by (auto simp: readiness_somes.exact readiness_decompositions_def data_list_term_formed)
+  have "(readiness_answered,evaluate_pattern (native_values [?c,readiness_decompositions hs])
       (decode_finite_pattern (Finite_Pattern_Pair (native_var 0)
         (Finite_Pattern_Pair (Finite_Pattern_Payload []) (native_var 1)))))\<in>positive_meaning native_readiness_system"
     by (rule readiness_answered_family.native_step[where c="[0]" and
         ps="[([0],(readiness_some,Finite_Pattern_Pair (native_var 0) (native_var 1)))]"])
-      (use some cf hf in \<open>simp_all add: readiness_answered_rule_def\<close>)
-  then have answered: "(readiness_answered,Pair_Term ?c (readiness_value True hs))\<in>positive_meaning native_readiness_system"
-    by (simp add: readiness_value_def readiness_status_def)
-  have rows_formed: "\<forall>(a,v)\<in>set (readiness_rows T). term_formed a \<and> term_formed v"
-    by (rule readiness_rows_formed[OF formed])
-  have kf: "term_formed k" using formed settle.hyps(1) by (force simp: readiness_table_formed_def)
-  have row: "(k,readiness_value True hs)\<in>set (readiness_rows T)"
-    using settle.hyps(1) by (force simp: readiness_rows_def)
-  have search: "(readiness_settled_search,Pair_Term ?c (Pair_Term k
-      (data_list_term (map (case_prod Pair_Term) (readiness_rows T)))))\<in>positive_meaning native_readiness_system"
-    using cf kf rows_formed answered row by (auto simp: readiness_settled_searches.exact)
-  have "(readiness_settled,evaluate_pattern (native_values [?c,k])
+      (use some cf in \<open>simp_all add: readiness_answered_rule_def\<close>)
+  then have answered: "(readiness_answered,Pair_Term ?c (readiness_row_value (True,hs)))
+      \<in>positive_meaning native_readiness_system"
+    by (simp add: readiness_row_value_def readiness_value_def readiness_status_def)
+  have lookup: "store_lookup (path_store T) k=Some (True,hs)"
+    by (rule readiness_table_lookup[OF formed settle.hyps(1)])
+  have search: "(readiness_settled_search,Pair_Term ?c (Pair_Term (path_term k)
+      (store_term readiness_row_value (path_store T))))\<in>positive_meaning native_readiness_system"
+    using cf answered lookup
+    by (auto simp: readiness_settled_searches.exact[OF readiness_row_value_formed] path_term_injective)
+  have "(readiness_settled,evaluate_pattern (native_values [?c,path_term k])
       (decode_finite_pattern (Finite_Pattern_Pair (native_var 0) (native_var 1))))\<in>positive_meaning native_readiness_system"
     by (rule readiness_settled_family.native_step[where c="[0]" and
         ps="[([0],(readiness_settled_search,Finite_Pattern_Pair (native_var 0)
           (Finite_Pattern_Pair (native_var 1) (native_var 0))))]"])
-      (use search cf kf in \<open>simp_all add: readiness_settled_rule_def readiness_table_term_def\<close>)
+      (use search cf in \<open>simp_all add: readiness_settled_rule_def readiness_table_term_def\<close>)
   then show ?case by simp
 qed
 
 theorem native_settled_exact:
   assumes formed: "readiness_table_formed T"
-  shows "(readiness_settled,Pair_Term (readiness_table_term T) k)\<in>positive_meaning native_readiness_system \<longleftrightarrow>
-    k\<in>table_settled T"
+  shows "(readiness_settled,Pair_Term (readiness_table_term T) (path_term bs))\<in>positive_meaning native_readiness_system \<longleftrightarrow>
+    bs\<in>table_settled T"
   using native_settled_sound native_settled_complete[OF formed] by blast
 
 section \<open>Native readiness\<close>
 
 lemma native_every_settled:
-  assumes formed: "readiness_table_formed T" and decompositions: "\<forall>h\<in>set hs. \<forall>x\<in>set h. term_formed x"
-  shows "(readiness_every,Pair_Term (readiness_table_term T) (data_list_term (map data_list_term hs)))
+  assumes formed: "readiness_table_formed T"
+  shows "(readiness_every,Pair_Term (readiness_table_term T) (readiness_decompositions hs))
       \<in>positive_meaning native_readiness_system \<longleftrightarrow> (\<forall>h\<in>set hs. \<forall>x\<in>set h. x\<in>table_settled T)"
 proof -
-  have cf: "term_formed (readiness_table_term T)" by (rule readiness_table_term_formed[OF formed])
-  have each: "(readiness_all,Pair_Term (readiness_table_term T) (data_list_term h))\<in>positive_meaning native_readiness_system
-      \<longleftrightarrow> (\<forall>x\<in>set h. x\<in>table_settled T)" for h
+  have cf: "term_formed (readiness_table_term T)" by simp
+  have each: "(readiness_all,Pair_Term (readiness_table_term T) (data_list_term (map path_term h)))
+      \<in>positive_meaning native_readiness_system \<longleftrightarrow> (\<forall>x\<in>set h. x\<in>table_settled T)" for h
     using readiness_alls.exact cf native_settled_exact[OF formed] by simp
-  show ?thesis using readiness_everys.exact cf each by simp
+  show ?thesis using readiness_everys.exact cf each by (simp add: readiness_decompositions_def)
 qed
 
 theorem native_ready_exact:
   assumes xf: "term_formed x" and formed: "readiness_table_formed T" and kf: "term_formed k"
-    and hs_formed: "\<forall>h\<in>set hs. \<forall>x\<in>set h. term_formed x"
   shows "(readiness_ready,Pair_Term x (Pair_Term (readiness_table_term T) (Pair_Term k (readiness_value a hs))))
       \<in>positive_meaning native_readiness_system \<longleftrightarrow> \<not>a \<and> (\<forall>h\<in>set hs. \<forall>x\<in>set h. x\<in>table_settled T)"
 proof
@@ -539,30 +565,28 @@ proof
     by (rule readiness_ready_family.holds_cases[OF holds])
   have F: "F=readiness_ready_rule" using rule by simp
   have fields: "f [1]=readiness_table_term T" "readiness_status a=Pair_Term (Payload_Term []) (Payload_Term [])"
-      "f [3]=data_list_term (map data_list_term hs)"
+      "f [3]=readiness_decompositions hs"
     using shape by (auto simp: F readiness_ready_rule_def readiness_value_def)
   have opened: "\<not>a" using fields(2) by (simp add: readiness_status_open)
   have given: "(readiness_every,Pair_Term (f [1]) (f [3]))\<in>positive_meaning native_readiness_system"
     using native_rule_support[OF support[unfolded F readiness_ready_rule_def]] by simp
   have "\<forall>h\<in>set hs. \<forall>x\<in>set h. x\<in>table_settled T"
-    using given fields(1,3) native_every_settled[OF formed hs_formed] by simp
+    using given fields(1,3) native_every_settled[OF formed] by simp
   then show "\<not>a \<and> (\<forall>h\<in>set hs. \<forall>x\<in>set h. x\<in>table_settled T)" using opened by blast
 next
   assume "\<not>a \<and> (\<forall>h\<in>set hs. \<forall>x\<in>set h. x\<in>table_settled T)"
   then have opened: "\<not>a" and settled: "\<forall>h\<in>set hs. \<forall>x\<in>set h. x\<in>table_settled T" by blast+
   let ?c="readiness_table_term T"
-  have cf: "term_formed ?c" by (rule readiness_table_term_formed[OF formed])
-  have every: "(readiness_every,Pair_Term ?c (data_list_term (map data_list_term hs)))\<in>positive_meaning native_readiness_system"
-    using native_every_settled[OF formed hs_formed] settled by simp
-  have hf: "term_formed (data_list_term (map data_list_term hs))"
-    using hs_formed by (simp add: data_list_term_formed)
-  have "(readiness_ready,evaluate_pattern (native_values [x,?c,k,data_list_term (map data_list_term hs)])
+  have cf: "term_formed ?c" by simp
+  have every: "(readiness_every,Pair_Term ?c (readiness_decompositions hs))\<in>positive_meaning native_readiness_system"
+    using native_every_settled[OF formed] settled by simp
+  have "(readiness_ready,evaluate_pattern (native_values [x,?c,k,readiness_decompositions hs])
       (decode_finite_pattern (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1)
         (Finite_Pattern_Pair (native_var 2) (Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Pattern_Payload [])
           (Finite_Pattern_Payload [])) (native_var 3)))))))\<in>positive_meaning native_readiness_system"
     by (rule readiness_ready_family.native_step[where c="[0]" and
         ps="[([0],(readiness_every,Finite_Pattern_Pair (native_var 1) (native_var 3)))]"])
-      (use every xf cf kf hf in \<open>simp_all add: readiness_ready_rule_def\<close>)
+      (use every xf cf kf in \<open>simp_all add: readiness_ready_rule_def\<close>)
   then show "(readiness_ready,Pair_Term x (Pair_Term ?c (Pair_Term k (readiness_value a hs))))
       \<in>positive_meaning native_readiness_system"
     using opened by (simp add: readiness_value_def readiness_status_def)
@@ -571,9 +595,9 @@ qed
 section \<open>Rows and tables are presented by their finite terms\<close>
 
 text \<open>
-  A row given by executable terms, its key and the lists of premise keys of its decompositions, presents
-  the row of its decoded terms, and a table of such rows presents the table of its decoded rows: the
-  status is the leaf or the pair of leaves, a decomposition the data list of its premise keys.
+  A row's executable term presents the row: its key is the path of its bits, its status the leaf or the pair
+  of leaves, a decomposition the data list of its premise paths. A table's executable term is the executable
+  store of its rows, which presents the path store of the rows.
 \<close>
 
 definition finite_readiness_status :: "bool \<Rightarrow> finite_factor_term" where
@@ -583,27 +607,34 @@ lemma decode_finite_readiness_status [simp]:
   "decode_finite_term (finite_readiness_status a)=readiness_status a"
   by (cases a) (simp_all add: finite_readiness_status_def readiness_status_def)
 
-definition finite_readiness_row :: "finite_factor_term \<Rightarrow> bool \<Rightarrow> finite_factor_term list list \<Rightarrow> finite_factor_term" where
-  "finite_readiness_row k a hs=Finite_Pair k (Finite_Pair (finite_readiness_status a)
-    (finite_data_list (map finite_data_list hs)))"
+definition finite_readiness_value :: "bool \<Rightarrow> bool list list list \<Rightarrow> finite_factor_term" where
+  "finite_readiness_value a hs=Finite_Pair (finite_readiness_status a)
+    (finite_data_list (map (\<lambda>h. finite_data_list (map finite_path h)) hs))"
+
+lemma decode_finite_readiness_value [simp]:
+  "decode_finite_term (finite_readiness_value a hs)=readiness_value a hs"
+  by (simp add: finite_readiness_value_def readiness_value_def readiness_decompositions_def comp_def)
+
+definition finite_readiness_row_value :: "bool\<times>bool list list list \<Rightarrow> finite_factor_term" where
+  "finite_readiness_row_value r=finite_readiness_value (fst r) (snd r)"
+
+lemma decode_finite_readiness_row_value: "decode_finite_term \<circ> finite_readiness_row_value=readiness_row_value"
+  by (rule ext) (simp add: finite_readiness_row_value_def readiness_row_value_def)
+
+definition finite_readiness_row :: "bool list \<Rightarrow> bool \<Rightarrow> bool list list list \<Rightarrow> finite_factor_term" where
+  "finite_readiness_row k a hs=Finite_Pair (finite_path k) (finite_readiness_value a hs)"
 
 lemma decode_finite_readiness_row:
-  "decode_finite_term (finite_readiness_row k a hs)=
-    Pair_Term (decode_finite_term k) (readiness_value a (map (map decode_finite_term) hs))"
-  by (simp add: finite_readiness_row_def readiness_value_def comp_def)
+  "decode_finite_term (finite_readiness_row k a hs)=Pair_Term (path_term k) (readiness_value a hs)"
+  by (simp add: finite_readiness_row_def)
 
-definition finite_readiness_table :: "(finite_factor_term\<times>bool\<times>finite_factor_term list list) list \<Rightarrow>
-    finite_factor_term" where
-  "finite_readiness_table T=finite_data_list (map (\<lambda>(k,a,hs). finite_readiness_row k a hs) T)"
-
-definition decode_readiness_table :: "(finite_factor_term\<times>bool\<times>finite_factor_term list list) list \<Rightarrow>
-    readiness_table" where
-  "decode_readiness_table T=map (\<lambda>(k,a,hs). (decode_finite_term k,a,map (map decode_finite_term) hs)) T"
+definition finite_readiness_table :: "readiness_table \<Rightarrow> finite_factor_term" where
+  "finite_readiness_table T=finite_store finite_readiness_row_value (path_store T)"
 
 lemma decode_finite_readiness_table:
-  "decode_finite_term (finite_readiness_table T)=readiness_table_term (decode_readiness_table T)"
-  by (induction T) (auto simp: finite_readiness_table_def decode_readiness_table_def readiness_table_term_def
-    readiness_rows_def decode_finite_readiness_row)
+  "decode_finite_term (finite_readiness_table T)=readiness_table_term T"
+  by (simp add: finite_readiness_table_def readiness_table_term_def decode_finite_store
+    decode_finite_readiness_row_value)
 
 section \<open>Native readiness is a condition of its own\<close>
 
@@ -640,11 +671,12 @@ theorem native_readiness_condition_exact:
   by (simp only: native_readiness_system_def)
 
 text \<open>
-  The program's own clauses state the empty payload, which ends every list and is the status of an answered
-  row, and no other octet: problems are compared only for equality. Its contracts state its meaning on every
-  table whose keys are formed terms: settlement is the closure \<open>table_settled\<close>, and a row is ready exactly
-  when it is open and every premise of every one of its decompositions is settled in the table it is judged
-  with. Nothing here decides a problem by reading its key or the subject beside it.
+  The program's own clauses state the empty payload, which ends every list, is the status of an answered row,
+  is one bit's shape and the empty store, and no other octet: a key is a path of shapes, and problems are
+  compared only for equality. Its contracts state its meaning on every single-valued table: settlement is the
+  closure \<open>table_settled\<close>, and a row is ready exactly when it is open and every premise of every one of its
+  decompositions is settled in the table it is judged with. Nothing here decides a problem by reading its key
+  or the subject beside it.
 \<close>
 
 end

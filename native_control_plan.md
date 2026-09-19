@@ -1821,3 +1821,44 @@ costs quadratic calls (a chain of 32 problems, half answered: 3.0 s); a keyed st
 notion is the structural way to remove it. The verdict of a kind and request construction are the next native
 definitions. The choice of this batch, and of the candidate's table as the locality of readiness, were made
 outside the loop and are residuals.
+
+## Keys and tables are structure — 2026-09-19
+
+The two open items of "The selection question evaluates native readiness": the selection question read the octets
+of the problems' positions as structure, and a candidate's table was searched by a linear walk.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| A problem's key is its first position presented as a binary natural payload, and the scope states the candidates literally, so the scope program reads the key's octets as structure. | A key is a path: the binary digits of the first position, each a shape, the empty payload for one direction and a pair of empty payloads for the other (`path_term`, `Native_Path_Stores`). The candidates, the scope and the condition state no octet but the empty payload, so by the payload criterion nothing of the selection reads an octet as structure; two problems are told apart by the shapes of their keys, and positions still order nothing. |
+| A candidate's table is a data list of rows searched by a linear walk (the keyed search), so a chain of answered premises costs calls quadratic in its length. | An index is an existing notion before it is a new one: the table is the binary path store of `Binary_Path_Stores` presented as structure (`store_term`: the empty store a leaf, a node its optional value beside its two children), and its native search descends the store along the key, one call per bit (`native_store_search_rules`), with its contract proved once (`native_store_search_program.exact`). The path store of rows is exact on single-valued rows (`path_store_lookup`), which every presented cone is because keys are distinct (`readiness_presents_formed`); a value found is a row's value whatever the rows (`path_store_found`), which is all soundness needs. |
+| The search's contract is stated for keys that are paths (impl-28's candidate). | Settlement's invariant quantifies over every argument its sites can be called with, so the contract is stated for every key term: a key that is not a path, a target or a nonempty payload, has no search that holds (`native_store_search_program.sound`). A contract that holds only on the presented subdomain would leave the invariant unproved on the rest. |
+
+Evidence: a serial probe on the accepted base loaded the four changed theories with every proof checked. On a
+chain of answered problems, evaluating native readiness now makes 30, 62, 134, 214, 294 and 646 calls at 4, 8, 16,
+24, 32 and 64 problems (41, 109, 341, 701 and 1,189 at 4 to 32 before), and readiness at 16, 24 and 32 problems takes
+0.32, 2.2 and 8.1 seconds (2.0, 25 and 163 before). The check that advanced the base to `.build/check-20260919ai`
+proved the 21 changed and dependent theories in 33 seconds with 177 tool and 35 kernel tests passing, and executed
+the seed and machinery recipes with every stage exiting normally: in both only the word of the loop report changed,
+which presents the selection packet, and every later word (verification, succession, publication, native answers)
+is equal, since the same problems are selected. On a probe of the new base, the
+payload literals of the selection question are the empty payload alone in its scope program, its readiness
+condition and its scope critic, on the seed and on the machinery alike (the scope and condition had stated the ten
+candidate indices before, by the audit of "A program's payload literals are the octets it reads"), and the native
+selection admits exactly the development's ready problems on both. The words were recorded, and the confirming check
+executed both recipes again with every word equal and was retained, with 177 tool and 35 kernel tests passing.
+Replaying the sixteen retained answers reconstructed fifteen
+with every word equal and reported the adopted walk as the published state's unchanged answer. A probe of the new
+base also measured the evaluation that stages use (keyed by the call's ordered term) against a key that compares a
+pair's right component first: 0.95 and 0.94 seconds at 24 problems, so the comparisons inside the keyed evaluation
+are not where the remaining cost lies.
+
+Open: calls are now linear in a chain's length, but every call carries the candidate's whole table as its context,
+and the evaluation's sets of calls, rows and applications compare terms structurally from the left, so every
+comparison of two calls of one candidate traverses that table: on impl-28's profile 93 percent of the time was that
+equality, and a chain of 64 answered problems still costs 82 seconds for its closure. Every native program that
+carries a context pays this, the verdict of a kind and request construction included, so the engine's comparison
+of calls is the next problem: sets of calls compared through an ordered key that meets the distinguishing part
+before the context (the context comes first in every collection notion), or keyed call sets throughout the demanded
+traversal and evaluation; the measurement above rules out the first for the evaluation, so the demanded traversal
+and the computation of each call's applications are to be attributed first. The choice of this batch, and of binary digits of first positions as the paths, were made
+outside the loop and are residuals.

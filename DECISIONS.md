@@ -8920,3 +8920,161 @@ machinery's reach within five seconds and the seed's within 0.2. The choice of t
 and of the bound was made outside the loop and is a residual.
 
 Recorded 2026-09-19 (task T2's decision); it is committed with task T3.
+
+## A problem is decomposed through the constants its answer needs
+
+The owner's method is depth: "the agents are not supposed to get broad problems that take a very
+big amount of context", and the plan states it as its own rule. The loop does not meet it. The
+development library holds no rule, so `development_issuable_without_library` makes issuability
+exactly readiness, every problem is a leaf, and the one decomposition the process computes — the
+repair of a refused answer — fires after the broad request has been issued and answered, records
+its derived problems in the prerequisite table with empty premise sets, and answers them in the
+same breath. The same gap shows from the answer's side: a refinement of several constants sharing
+new helpers reaches no executor, because the frame states one equation. This entry settles what a
+decomposition is in the machinery that exists, which problems decompose into what, what its
+generation records, and what the answer frame must become. It changes no theory.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Decomposition needs a notion of its own — a decision, a task or a verifier. | It needs none. A decomposition is an **obligation reduction of a problem's contract to its subproblems' contracts**, presented as a row of the development library. Fix `T p` = "the state states, for `problem_subject p`, the statements the kind of `problem_contract p` demands, and the verdict of that kind accepts it against the state `p` was posed in"; the verdict is already stated once over the reading and the kind (`development_constant_verdict`), so `T` is too. A row `(p,H) |∈| L` is a decomposition exactly when `obligation_reduction {p} T T (λ_. fset H)` holds, and `obligation_reduction_discharge` is then the law that composes verified subresults into the parent's result. Nothing is added to `Development_Decomposition`: the row type, the composition law `development_composition_settles`, the leaf reading `development_leaf_reading` and the refusal `development_broad_refused` are already there, and `L` is empty only because nothing constructs a row. |
+| The library's rows are settlement claims; their soundness is not stated. | Soundness is `inference_sound T (finite_inference_rules (development_answered_rules D answered \|∪\| L))`, and `inference_closure_sound` then gives that **every problem the composed settlement settles has its contract established** — `development_composed_settled` is already that closure. It has two sources, one predicate: a prerequisite row of `D` fires only once its own head is answered, so its soundness is the accepted verdict's contract (`development_constant_verdict_contract`); a library row of `L` claims its head, so its soundness is the schema's own proof. `inference_supplies_reduction` is the bridge, turning the sound family and a row into the per-row reduction, so the two are one fact stated once. |
+| A decomposition of a decomposition needs its own composition law, and a tree of them needs another. | Neither. Nesting is `obligation_reduction_compose`, whose `obligation_substitution` qualifies every grandchild by its parent's socket, so equal subproblems at different sockets stay distinct (`substitution_keeps_equal_conditions_separate`) — depth is composition of reductions, and occurrences never merge. A subproblem already answered is discharged as `K` by `obligation_reduction_residual`, and `reduced_requirement_complete` settles the parent when no occurrence remains, so an answered subproblem is not answered again. The whole tree of a root problem discharges by `schema_graph_development_complete`: the graph is the tree of applications, the known calls the admitted answers, and the residual the unanswered leaves, which `schema_graph_residual_keeps_assertion_origins` keeps with their sockets. |
+| A row of the library is a table an author writes for a problem. | A row is an **application of a schema**, and the schema is a Factor schema over the native presentation of problems: its conclusion is the parent's problem row as a pattern, its premise sockets are the subproblems as patterns, and its material premises are the structural conditions it reads off the state. Generating the rows of `L` at the actual problems is the existing generation (`finite_generated_schema_applications`), and it is a native question over the problems as readiness and selection are — the library is a native program, `L` the set of its applications. A written row is the reasoning done twice at the second problem, against the repository's first-use rule; `Factor_Learned_Schemas.schema_scheme_rule_sound` is how a decomposition performed once becomes a schema, retaining its assertion and material sockets. |
+| The repair of a refused answer is not a schema of the development library. | It is the **first application of the general schema, made after the fact**. Its output belongs in `L` as a row, not in `D` as empty-premise rows answered in the same breath: recorded as a row, the loop's only computed decomposition becomes an application of the schema every later problem instantiates before it is issued, which is what the first-use rule asks and what turns the repair from an end into depth. |
+| A refinement's least context can be made smaller by decomposing the request. | It cannot. `development_request_context` is determined by the state and `development_request_context_least` proves it is the least closed part containing the refined entities, so no decomposition shrinks the context of a request for one constant. What is too large is the **problem**: either its subject is several constants, each bringing its scope and support, or its one constant's statements mention very many others. The decomposition reduces the problem, and the children's contexts are smaller because their subjects and supports are. |
+
+### The general schema, and its three instances
+
+**The schema.** A problem of a constant whose demanded statements cannot be established within its
+issued support decomposes into: one **definition problem** for each intermediate constant the
+application names, and one problem of the parent's own kind for each constant of its subject, over
+the state extended by those intermediates and with them in its support. The material premises read
+off the state: the parent's support, the intermediates, and the partition of the support among
+them. The schema names its intermediates; it never invents them, and the two admissible sources
+are the state (a constant on its frontier, or one the parent's statements mention that the support
+excludes) and a refusal (the excess and introduced constants the repair already computes).
+
+The ordering is carried by `D`, not by `L`. Each refinement child has the definition children as
+**prerequisites**, because a refinement using an intermediate cannot be issued before the state
+states it. That keeps the two relations apart exactly as `Development_Decomposition` does, and
+readiness then schedules the intermediates first and the refinements afterwards as one independent
+group (`development_ready_independent`).
+
+**Instance A — several constants sharing helpers.** The parent's subject is `{c_1,…,c_n}`
+(`problem_subject` is already an `fset`, and the verdict and `development_answer_equations` already
+range over the set), its answer needs `h_1,…,h_m`. Children: `m` definition problems, exactly the
+`development_definition_problems` the repair builds, and `n` refinement problems of one constant
+each, whose support is the parent's together with the `h_j`. The reduction is the disjoint one: the
+parent's contract is the conjunction of the children's, discharged by
+`obligation_reduction_discharge`.
+
+**Instance B — an oversized least context.** The subject is a singleton whose statements mention
+very many constants. One intermediate `d` carries a named part `S_1` of the support; the children
+are the definition problem of `d`, whose context is what `d`'s definition mentions, and the
+refinement problem of the parent's constant stated through `d`, whose context is its scope with `d`
+and the remainder `S_2`. B is A with `n = 1` and `m = 1`, the intermediate chosen to split the
+support. The partition is a computed observation of the state, not a threshold.
+
+**Instance C — the repair.** The intermediates are the constants a refused answer introduced and
+the excess of its support, and the parent is issued again over the extended state. A is the general
+schema; B and C are its instances, and C is the one the loop already computes.
+
+**Not designed here.** A **proof problem**'s contract is a term, and it decomposes by the term's own
+structure — its premises are the subproblems — which is the shape `schema_graph_development_complete`
+was written for. The development has no proof request class, so no proof problem exists to decompose;
+naming the shape fixes that the schema above is about constants, not about every contract kind.
+
+### What a decomposition's generation records
+
+The pattern is fixed by "The loop's decisions are admitted generations": a decision stands at a
+locus of its own kind, is recorded by `development_payload_generation_with` under the policy listing
+its payload, cites only direct predecessors, and its cause is a certified call of that policy.
+
+- **Locus**: the parent problem's **decomposition locus**, a fourth kind beside the problem, issue
+  and selection loci and proved distinct from them as they are from each other
+  (`development_decision_loci_distinct`, `development_data_target_injective`). At most one current
+  decomposition per problem: a second row for the same problem meets the first at that locus and
+  the admission transaction refuses it, which is how `development_ambiguous` — a problem with more
+  than one decomposition — is resolved as an explicit distinction rather than by joining premises.
+- **Payload**: the row — the parent's locus, the sockets with the loci of the subproblems, the
+  schema applied with its bindings, and the material observations the application read (the
+  support, the intermediates, the partition).
+- **Cause**: the certified policy call, as every other decision's is, consuming
+  `development_policy_admits_member`.
+- **Predecessors**: the selection that admitted the parent problem, and, for instance C, the
+  refusal the application was derived from. Not the parent's incumbent: the selection already cites
+  it, and only direct edges are recorded.
+
+The generation records that the row **is an application of an admitted schema**; it does not record
+that the composition is sound. Soundness is a property of the schema, proved once when the schema
+is admitted, in its own generation whose payload is the schema and whose cause certifies that
+proof. Every application consumes that contract and re-establishes nothing — the local-contract
+rule, applied to the library.
+
+This closes the open item "decompositions have no generation because the library holds no rule":
+with rows there is a generation, and the rule that admits one is its constructor's contract, as for
+a selection and an issue.
+
+### What the answer frame must become
+
+Since "Answers are native content, judged natively", an answer is the **edit it makes to the request
+state** — entities removed, entities added — read by `development_native_answer_bits_read_exact`.
+That form is already kind-neutral, and every leaf of a decomposition is a problem of one constant of
+one kind, so **a decomposed answer composes without changing the native answer at all**. What must
+change is narrower than it looked:
+
+1. **A request is named by its problem, not by its subject constant.** `development_named_request`
+   selects the single request whose subject is that position. After a decomposition a constant can
+   be the subject of a definition problem and of a refinement problem, and a parent shares its
+   subject with its children, so that selector finds several and answers none. An answer must name
+   the **problem's locus**, and the packet must carry it: one field of the packet, one change of the
+   selector.
+2. **The packet must state the kind and the declared form.** Already open under "Answers are
+   confined to their declared parts"; a decomposition makes it necessary, because the executor of a
+   definition leaf and the executor of a refinement leaf receive structurally different demands and
+   only the packet distinguishes them.
+3. **The Isabelle frame must read its demanded part by the kind of the request.** The declared parts
+   are `definitions`, `equation`, `proof`; a definition answer must state a kernel definition
+   (`development_definition_verdict_contract`), not a code equation. Since the parts already separate
+   what the answer introduces from what it states, this is a reading of which part carries the
+   demanded statement, not a new part — and it is needed only when installation is built, which is
+   its own request class.
+
+**What must not change**: the one-equation limit recorded in "A refinement's contract is its
+constant" is not lifted. The decomposition's whole point is that a multi-constant refinement never
+reaches an executor; lifting the frame instead of decomposing would be breadth where the owner asked
+for depth.
+
+### What this needs from stage 4, and what it does without
+
+Three questions are policy criteria under the ledger's Q2 and are the owner's. Each has a provisional
+choice under which the design stands meanwhile, and none of them blocks it.
+
+- **Which decomposition, when several apply.** A selection criterion. Meanwhile: an ambiguous problem
+  is not issued and not decomposed, the ambiguity is recorded as a problem of its own, and the
+  existing machinery already stands still correctly — `development_broad_refused` refuses to issue
+  it and an undecided head stays unsettled.
+- **When a decomposition is demanded rather than merely applicable.** A threshold on context size
+  would be a policy criterion. Meanwhile: no threshold is asserted. The schema's material premises
+  decide applicability from the state, and a problem no schema applies to is a leaf, as today.
+- **Whether a derived subproblem inherits its parent's authority.** Meanwhile: it does not. The
+  origin is `Development_Demand` and the authority `Development_Generated`, as the repair already
+  sets them; the owner authorized the problem, not this decomposition of it.
+
+Without stage 4 the design has everything else: the schema and its soundness are truth, not policy;
+the refusal to issue a decomposed problem is structural; the generation uses the decision pattern and
+the policy the first loop already has; and the ordering of intermediates before refinements is
+readiness over `D`, already proved.
+
+### Limits
+
+Nothing is built here, and no theory changed. The schema is a native definition whose argument is the
+problems and the state, so the cost measured in "A native definition over a state re-verifies its
+context in every call" bounds its affordability as it bounds the verdict's: the design is independent
+of that measurement, the build is not. The predicate `T` has no native definition yet — the verdict is
+stated once over the reading and the kind, so `T` can be stated over it, but making it native belongs
+to the verdict. Whether a decomposition may itself be answered by an executor proposing the
+intermediates is not designed: the schemas here read theirs off the state or off a refusal. The choice
+of this design, like the earlier ones, was made outside the loop and is a residual.
+
+Recorded 2026-09-20 (task 2's decision; a design, no theory changes).

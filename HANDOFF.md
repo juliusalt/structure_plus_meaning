@@ -1,6 +1,6 @@
 # Handoff — impl-22: task 1, native readiness and its correspondence to development_ready committed; next = the selection question evaluates the native program
 
-## impl-22 session (2026-09-19, read first)
+## impl-22 session (2026-09-19, read first) — rotated at the context limit; nothing running, nothing uncommitted; (2a) not started
 
 - TASK 1 DONE AND COMMITTED: `Factor_Positive_Parametricity` restated over the LEAVES of a term (targets and
   payloads): `positive_meaning_leaf_map`, `positive_meaning_leaf_involution`, `positive_meaning_unlisted_leaves`;

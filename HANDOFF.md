@@ -34,10 +34,18 @@
   key images of `snd ` fset H` for H in `development_decompositions D p`, set A = key ` answered, set Opn = keys of
   unanswered ps) and `native_development_ready`: native 202 on (key p) <-> `development_ready D answered p`, via
   `table_settled T A` <-> key ` `development_settled D answered` (both directions: table_settled.induct; and
-  `development_settled_exact` + `finite_inference_exact` induction with `inference_closure` step); (2) the
-  selection question evaluating the native program: candidates the argument terms, condition = the native
-  readiness program (not `finite_ground_condition` of computed rows), seed + machinery words change: re-record;
-  (3) audit `finite_system_payloads` of the program's dependency closure; (4) verdict and request construction
+  `development_settled_exact` + `finite_inference_exact` induction with `inference_closure` step); (2) the selection question evaluating the native program. Pointers: a ground condition today is
+  `finite_ground_condition xs = map_option (development_existing_condition d F u) (finite_ground_source xs)` with
+  `finite_ground_source xs = finite_install_source_entry (finite_guard_source True) None [0] (finite_ground_program
+  xs) (Some [],[])` and `finite_ground_program xs = finite_add_view_definition (finite_guard_source_program True)
+  (Some [],[]) (Finite_Variable []) (finite_ground_clauses xs)`. Plan: a finite native readiness program = the
+  readiness definitions (settled, every, ready) added as finite views over `finite_guard_source_program True`
+  (check that it holds the selection/data-list definitions the readiness clauses call; if not, add their finite
+  presentations), installed by `finite_install_source_entry`, condition `development_existing_condition` at the
+  ready entry; transfer `native_development_ready` to the installed entry through the installation contract
+  (`finite_install_source_entry_conditions`) and the decode/renaming contracts; the question's candidates become
+  the argument terms (table, answered, open, key) of the ready problems' presentation, and the facet is no longer a
+  computed row list; seed/machinery words change: re-record. (3) audit `finite_system_payloads` of the program's dependency closure; (4) verdict and request construction
   natively. Earlier notes on the staged definitions follow.
 - READINESS DEFINITIONS STAGED AND PROVED (probe `.build/probe-impl22-d` loaded, 5.9 s):
   `.build/impl22/r1/Development_Native_Readiness.thy` = sites 200 (settled: every key of a list settled;

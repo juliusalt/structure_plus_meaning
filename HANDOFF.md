@@ -1,110 +1,81 @@
 # Handoff
 
-The planner's state: the graph and why it has this shape, the decisions, what each finished task delivered, the
-open questions, and what an episode left unhandled. What is settled is in DECISIONS.md, native_control_plan.md,
-THEORY_MAP.md and REASONING_REUSE.md; the owner's directions and the questions that are the owner's are in
-`.claude/orchestration/owner-ledger.md`; the history of every rotation is in git and in `.build/handoff-archive/`
-(the last long form: `HANDOFF-impl30-20260919.md`).
+The history of every rotation is in git and in `.build/handoff-archive/` (the last long form:
+`HANDOFF-impl30-20260919.md`); what is settled is in native_control_plan.md, DECISIONS.md and THEORY_MAP.md. The
+owner's directions and open questions are in `.claude/orchestration/owner-ledger.md`. Each batch records what it
+settles once, where it is read (DEVELOPMENT_WORKFLOW.md): its decisions as an entry of DECISIONS.md, a theory's reuse
+in its THEORY_MAP.md row, the evidence also in its commit message, what remains in the graph; the plan changes only
+with its structure, the stages' standing or the direction of the work.
 
 ## Graph
 
-The orchestration's first planning episode (plan-1, 2026-09-20) built this graph from the plan's "Where the stages
-stand" and "The direction of the work", DECISIONS.md, the owner's directions of 2026-09-19, the commit history since
-the plan's base `c4dfad1`, and the last implementer's work order, which it re-formed.
+Two lines, and the owner's two directions of 2026-09-19 order them.
 
-**Why this shape.** Two owner directions of 2026-09-19 set the work. Native definitions are normative and Isabelle
-verifies them, which ordered the loop's notions as native definitions — readiness, the verdict of a kind, request
-construction, then problems whose subjects are native definitions, then translation into Isabelle (Q7). And structure
-is explicit while octets are inert, six tasks of which the audit and its criterion are done. Between the development
-and both directions stands one measured obstacle: a native definition whose argument is a whole state re-verifies the
-context every call carries, measured at 171.8 s against 0.99 s in HOL. The verdict and request construction are
-exactly such definitions, and condition 5a — real development at acceptable observed cost — has no answer while it
-stands. So the engine's cost is first, and the verdict's design waits on its measurement.
+**The engine line (5, 6, 7, 8).** T2 measured a native definition whose argument is a whole state: it re-verifies
+the context every call carries — the machinery's reach at 171.8 s natively against 0.99 s in HOL (DECISIONS.md, "A
+native definition over a state re-verifies its context in every call"). Every remaining notion of the Q7 order is a
+definition of that shape, so the cost is on the critical path of the owner's direction that native definitions are
+normative, and of condition 5a; the owner's standing direction is that such a cost is fixed now at its cause. #5
+finalizes the first of the two decided refinements (constructed applications; after it, seed evaluation 0.403 s from
+1.224, machinery reach about 44 s from 171.8); #7 is the second (evaluate over the positions of the demanded calls,
+against a bound of 5 s). A third — the store search taking its store before its key — is a task only if #7's
+measurement finds key comparisons dominant; #8 judges that against the probe, not against #7's report.
 
-Four tasks:
+**The Q7 line (3, 9, 10, then the builds).** #3 designs the verdict of a kind as a native definition over structural
+rows, folding in the paused structural-Isabelle-state work by demand. #9 designs the development notions themselves
+as structure — problems, requests, answers, packets — which is the octet direction's task 3, promoted because two
+build lines need it: the decomposition's schema matches on problems, and the verdict and request construction read
+them. #10 briefs the decomposition's build.
 
-- **#1 the engine (brief, unblocked).** The installed applications theory finalized, then the evaluation over the
-  positions of the demanded calls, with the measurement that decides whether a third refinement follows. It owns the
-  working tree, which holds that installed theory.
-- **#2 decomposition (design, unblocked, parallel to #1).** The loop has no decomposition, so every problem is a leaf
-  and depth — the owner's stated method — is unmet; the same gap appears from the answer's side as the frame that
-  states one equation. It depends on nothing in the engine line, so it runs alongside it.
-- **#3 the verdict (design, after #1).** The Q7 order's next notion, with the state's rows made structure by demand,
-  which is where the octet direction bites.
-- **#4 efficiency as structure (design, after #1).** The octet direction's task 5, overdue by the repository's own
-  first-use rule at the third refinement of one engine.
+**#4** (efficiency as structure, the octet direction's task 5) is ready and independent of both lines; its instances
+are the refinements imported through `Native_Execution_Refinements` together with #5's and #7's — six, past first
+use. It blocks nothing, and every further refinement is another instance, so it stands last and loses nothing by it.
 
-**Order** (`v2.py queue 1 5 6 7 8 2 3 4`). #1 first: the owner's standing direction that a cost the finished package must pay
-is fixed now at its cause, the uncommitted work it holds, and the measurement every later task's affordability rests
-on. #2 second because it is the only task independent of that measurement and the owner's method requires it. #3
-third: the Q7 order's next step, the owner's latest direction. #4 fourth: the same direction's task 5.
-
-**Departures from the superseded queue** (the last implementer's T3–T10; git and `.build/handoff-archive/` keep it):
-
-- T3 and T4 become one brief (#1): one line of engine work, one detailing, with the measurement returning to the
-  planner.
-- T5 (the store search taking its store before its key) is not created: it is conditional on #1's measurement, and
-  creating it now would presume that measurement.
-- T6 becomes #3, strengthened: the state's rows as structure, that is, the paused octet-direction task 2 folded in by
-  demand rather than built ahead, reusing the worked design that was handed off before it was paused.
-- T7–T10 are not created: they rest on #3's entry, which will be their input as an artifact. Creating them now would
-  rest them on reasoning not yet written. The next episode plans them from #3's entry and #1's measurement.
-- Added #2 (decomposition) and #4 (efficiency as structure), which the queue did not hold; both answer owner
-  directions the queue left uncarried.
-
-**plan-2 (2026-09-20)** kept that shape and detailed #1: #5 finalizes the installed applications theory, #6 reviews it,
-#7 evaluates a native program over the positions of its demanded calls, #8 reviews that; each review is blocked by its
-build, #7 by both. Two premises plan-1 wrote above are corrected. Order is the queue's, not the blockers': #3 and #4
-stay blocked by #1 alone, because the queue already puts them after #8, so #7's measurement reaches them in fact, and a
-blocker would say falsely that a design cannot be written if the engine line is dropped or re-ordered. And #4 does not
-need a third engine refinement as its third instance: the refinements imported through `Native_Execution_Refinements`
--- linked record candidates, investigation basis sharing, invariant evaluation sharing, formation-once readings -- with
-#5's and #7's make six, which is past first use rather than short of it.
+Order (queue `5 6 7 8 3 9 10 4`): the owner's latest directions first, then dependency, then what can change other
+tasks, then size. The engine line leads because both design lines rest on its measurement for their builds; #9 waits
+on #3 so that it inherits the row treatment rather than deciding it twice; #10 waits on #9 and #8. #9 and #10 precede
+#4 (plan-4, reordering the tail the appending of #9 and #10 had left).
 
 ## Decisions
 
-- **The Q7 order stands provisionally, with the engine's cost taken before its second step.** Basis: every remaining
-  notion of that order is a native definition over a whole state, and at 171.8 s that shape is unusable; the owner's
-  direction of 2026-09-18 makes such a cost one that is fixed now at its cause. The order itself is the ledger's Q7,
-  unanswered. (plan-1, 2026-09-20)
-- **The stage-2 open items the old queue dropped are not dropped.** Decomposition is #2. The refusal that an absent
-  certified generation cannot tell from an unavailable input, and the absence of a persistent published development
-  state for the refinement layer, are recorded under Open and take their turn after #3. (plan-1, 2026-09-20)
-- **Nothing is planned that rests on reasoning not yet written.** A task's inputs are artifacts; a decision that a
-  later task must respect is an entry of DECISIONS.md written by a design task, not a predecessor's reasoning.
-  (plan-1, 2026-09-20)
-- **Order is the queue's; a blocker records a dependency on an artifact.** A task is blocked when it needs something
-  that must first exist, not when it should merely come later. Ordering lives in `v2.py queue`, which re-orders freely,
-  while a blocker encoding order would misstate what a task can be written from. (plan-2, 2026-09-20)
-- **The third engine refinement -- the store search taking its store before its key -- is not a task until #7's
-  measurement.** #7 brings the measurement and the share of key comparisons to the planner, #8 judges both against the
-  probe rather than against #7's report, and the task is created then if that share is dominant. (plan-2, 2026-09-20)
-- **The decomposition's build is ordered after the engine measurement, not with its design.** design-2 found that the
-  schema's applications are generated by a native question over the problems and the state, so its argument is a whole
-  state and the 171.8 s bounds it exactly as it bounds the verdict's. #2 finishes as a design; the build's brief is
-  blocked by #2's accepted entry and by #8. (plan-2, 2026-09-20)
-- Settled decisions are entries of DECISIONS.md; a theory's reuse is its THEORY_MAP.md row; the plan changes only
-  with its structure, the stages' standing or the direction of the work (DEVELOPMENT_WORKFLOW.md).
+Taken by the planning episodes, where they are not entries of DECISIONS.md:
+
+- **The Q7 order stands provisionally, with the engine's cost before its second step.** Basis: T2's measurement and
+  the owner's 2026-09-18 direction on inevitable costs. An owner answer to Q7 reorders the whole graph.
+- **Order is the queue's; a blocker records a dependency on an artifact, not a wish about order.** A design is not
+  blocked on a measurement it does not consume: what #3 must respect is that the verdict is a definition over a whole
+  state, not the number. The number decides whether its *build* can follow.
+- **No new native definition of a development notion is built over the tagged-tree presentation.** The decomposition
+  entry presupposes the presentation its schema ranges over and does not define it; building over the present one
+  would put a new use of octets as structure into new code, against the owner's direction of 2026-09-19 07:34. Hence
+  #9 before #10.
+- **Q2 is extended rather than split.** The decomposition raises three policy criteria of Q2's own family; they are
+  recorded in the ledger under Q2 with their provisional choices, not asked as a new question.
+- **#9 and #10 before #4, and any later refinement after #4.** #9 is the prerequisite of the decomposition's build
+  and of the verdict's and request construction's builds; #10 creates that build's tasks; #4 unlocks nothing and
+  grows richer with every further instance. The reverse order was an artifact of appending #9 and #10 to the tail,
+  not a decision. Its one constraint: a refinement written after #4's entry must apply its notion, so the conditional
+  store-search task (if #7's measurement makes it one) follows #4 rather than adding a seventh un-factored instance.
+- **No task rests on reasoning not yet written.** The verdict's build, request construction, native problems and the
+  translation wait for #3's and #9's entries; the third engine refinement waits for #7's measurement.
+
+Settled and written elsewhere: DECISIONS.md holds every batch's decisions in order, 191 entries; the newest are "A
+problem is decomposed through the constants its answer needs" (the decomposition design, #2), "A native definition
+over a state re-verifies its context in every call", "The reach of a state is a native definition", "Calls are keyed
+where they differ".
 
 ## Delivered
 
-- **T2 (commit `c11eea1e`).** Calls keyed where they differ; the reach of a state defined natively. It measured every
-  native definition whose argument is a whole state: the machinery's reach at 171.8 s natively against 0.99 s in HOL,
-  closure 3.8 s, evaluation over 640 s. Its decision is DECISIONS.md's "A native definition over a state re-verifies
-  its context in every call"; that measurement is the reason for #1 and the bound for #3's affordability.
-- **T3, installed and not finalized.** `theories/Factor_Constructed_Program_Applications.thy` with its `ROOT` entry
-  after `Listed_Set_Unions`, its import in `theories/Native_Execution_Refinements.thy` and its `THEORY_MAP.md` row;
-  every proof loads on a serial probe. Measured (probe `.build/probe-impl31-d`, log `probe.log`; source copy
-  `.build/impl31/t3/`): seed closure 0.014 s (was 0.063), seed evaluation 0.403 s (was 1.224) and equal to HOL,
-  machinery closure 0.784 s (was 3.83), machinery evaluation 43.812 s with 217 results and equal to HOL. #1 finalizes
-  it: check with every recipe word equal, answers replayed, its DECISIONS entry and THEORY_MAP row.
-- **#1 (brief).** Tasks #5-#8: #5 finalizes the installed applications theory with its check, DECISIONS entry,
-  THEORY_MAP row and commit; #6 reviews that finalization; #7 evaluates a native program over the positions of its
-  demanded calls; #8 reviews it and its measurement. No task for the third refinement: it is the planner's, on #7's
-  measurement.
-- Everything committed before that is in DECISIONS.md, whose entries carry each batch's decisions, evidence and
-  limits in order; the condensation of 2026-09-19 (`b1ded6c2`) moved the plan's dated sections there and the
-  per-theory reuse rows into THEORY_MAP.md.
+- **#1 (brief)** produced the engine line, #5 through #8.
+- **#2 (design), accepted and committed 2026-09-20 as `0ac9502e`** — DECISIONS.md, 191st entry, 157 lines. A decomposition is a row of the
+  development library that is an obligation reduction of the parent's contract to its subproblems', presented as an
+  application of one Factor schema over the native presentation of problems; `L` was merely empty and
+  `development_loop_issue` already takes it. Composition is `obligation_reduction_discharge`, `inference_sound` with
+  `inference_closure_sound`, `obligation_reduction_compose` with `obligation_substitution` for depth, and
+  `schema_graph_development_complete` for the tree. Soundness is the schema's, proved once and consumed by every
+  application. It corrected its own brief: `development_request_context_least` proves no decomposition shrinks a
+  one-constant request, so an oversized context decomposes the problem instead. The answer frame's one-equation limit
+  stays unlifted by design. Its six follow-ups are #10's subject. Verdict: `.build/tasks/2/verdict.md`.
 
 ## Open
 
@@ -112,49 +83,48 @@ The owner's questions, each with the provisional choice that stands meanwhile, a
 
 - **Q1** the admission rule of a bootstrap adoption and OD-2. Bites when an admitted native answer is installed as
   Isabelle material — the request class the Q7 order names last.
-- **Q2** authority of the first loop's problems and its selection criterion. Bites in #2, which must say what
-  requirements a decomposed problem meets, and in any selection beyond readiness.
+- **Q2** authority of the first loop's problems and its selection criterion, extended 2026-09-20 with the
+  decomposition's three policy criteria (which decomposition when several apply; when one is demanded rather than
+  applicable; whether a derived subproblem inherits its parent's authority). Bites in #10's builds and in any
+  selection beyond readiness.
 - **Q3** what Isabelle establishes about adequacy. Bites when DEVELOPMENT_WORKFLOW.md and plan.md §0.1 are next
   touched; unplanned.
 - **Q4** an agent executor confined to its packet. Bites at the plan's stage 3 gate; unplanned.
-- **Q5** how far the native residual record reaches. Bites in #3, which grows the structural state by demand on the
-  same principle.
+- **Q5** how far the native residual record reaches. Bites in #3 and #9, which grow the structural state and the
+  structural notions by demand on the same principle.
 - **Q7** the order of work under the direction that native definitions are normative. It orders this whole graph; an
   answer reorders it.
 
 Not yet planned, in the order they are expected to be planned:
 
-1. The decomposition's build (after #2's accepted entry and #8). Its three known parts, from design-2: the schema and
-   the native presentation of problems it ranges over; the repair's derived definition problems recorded as a row of
-   the library rather than as empty-premise rows answered in the same breath, so that the loop's only computed
-   decomposition comes out as an application of the general schema -- this part is not additive-only and its review
-   checks that preservation; and the request and packet changes the decomposition forces, namely a request named by its
-   problem's locus rather than by its subject constant (`development_named_request` otherwise finds several and answers
-   none) and a packet stating the kind and the declared form. The Isabelle frame reading its demanded part by the kind
-   waits for the installation request class, and the one-equation limit of a refinement's contract stays unlifted by
-   design, because the decomposition makes a multi-constant refinement never reach an executor.
-2. The verdict's build and request construction (after #3's entry; the old T7-T9).
-3. Problems whose subjects are native definitions, answered natively, and the translation of admitted native content
-   into Isabelle material -- the owner's direction of 2026-09-19 06:21 and the last step of the Q7 order (the old T10).
+1. The verdict's build and request construction (after #3's and #9's entries; the old T7-T9).
+2. Problems whose subjects are native definitions, answered natively, and the translation of admitted native content
+   into Isabelle material — the owner's direction of 2026-09-19 06:21 and the last step of the Q7 order (the old T10).
+3. A proof request class, and with it the decomposition of a proof problem, which the decomposition entry names and
+   leaves undesigned for want of it (refinement and definition problems are requested and judged; a proof problem is
+   not). It needs request construction (item 1) for its support and least context, and its first question is what the
+   native content of a proof answer is: the library holds native derivations, certificates and replay for calls of
+   native programs, while a contract proved against a HOL counterpart is Isabelle material by nature. That question is
+   the owner's direction of 2026-09-19 06:21 met head-on, and it is where Q1 bites.
 4. The refusal that an absent certified generation cannot tell from an unavailable input: an empty result and a
    failed one are kept apart everywhere else in the library, and not here.
 5. A persistent native published state for the refinement layer: without one, an adoption records the transaction of
    its judgment rather than one against a history, and a later selection cannot supersede an earlier one.
-6. The octet direction's tasks 3 (structural development notions) and 6 (transport), after the notions of task 4 are
-   native.
+6. The octet direction's task 6 (transport: packets and answers travelling as the complete data of their artifacts,
+   the word inert carriage) — unless #9 settles it, which is #9's to say.
 7. The plan's stages 4 (policy extended from owner directions) and 5 (the machinery improving itself through the
    process), not begun beyond the machinery's notions posed as residual problems; the harness, the adoption tool and
    the checks still have no notion in the state.
 
 ## Now
 
-- #5 is under way and owns the working tree. The uncommitted content it finalizes: `ROOT`, `THEORY_MAP.md`,
-  `theories/Factor_Constructed_Program_Applications.thy`, `theories/Native_Execution_Refinements.thy`.
-- #2 is running. When it finishes, judge it (`v2.py verdict 2`) and read whether its entry says which native
-  presentation of problems its schema ranges over: plan-2 asked for that in answering its finding. If the entry leaves
-  it to the octet direction's task 3, that presentation is the decomposition build's first prerequisite.
+- **#5 is under way and owns the working tree**, parked (13 minutes at plan-4's start, while #3 produces). The
+  uncommitted content it finalizes: `ROOT`, `THEORY_MAP.md`, `theories/Factor_Constructed_Program_Applications.thy`,
+  `theories/Native_Execution_Refinements.thy`. Nothing else in the engine line can move meanwhile; if it does not
+  resume, split it over what exists or re-plan it.
+- **#3 is running** (the verdict over structural rows). #9 is blocked on its entry; when it lands, read whether its
+  row treatment is stated generally enough for #9 to consume, or only for the state's entities.
 - `tools/__pycache__/build.cpython-314.pyc` is tracked and shows as modified. It is a generated build artifact, it
   belongs to no task, and it should be untracked by the next commit that touches `tools/`; it is not a question for
   the owner. `.claude/orchestration/base_pack.py` is the orchestration's own and belongs to whatever changed it.
-- plan-2 answered both questions it was given -- q1 on #3's and #4's blockers and on the third refinement, q2 on the
-  decomposition's cost and on what its entry must state -- and left nothing else unhandled.
+- plan-4 handled its only event (#2's commit), reordered the queue tail, and left nothing unhandled.

@@ -9078,3 +9078,197 @@ intermediates is not designed: the schemas here read theirs off the state or off
 of this design, like the earlier ones, was made outside the loop and is a residual.
 
 Recorded 2026-09-20 (task 2's decision; a design, no theory changes).
+
+## The verdict of a kind is a native definition over a state's rows
+
+The Q7 order's next notion after readiness and the reach. The verdict is the loop's central
+judgment — it is what decides an answer — and it is still a HOL function whose results a native
+question would have to admit as a table. It is also where the owner's other direction of 2026-09-19
+bites hardest: the state a verdict reads is a tagged tree, where an entity's kind is an octet, a
+reference to a constant is a position in a name table, and a definition and a code equation of one
+term differ only in an octet, so a program that tells them apart reads those octets as structure.
+This entry settles what the verdict reads as structure, what stays inert, how much of a structural
+Isabelle state it demands, each of its fields as a native program, its contract and its build order.
+It changes no theory.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| The verdict is a HOL function (`development_constant_verdict`) and a native question would admit a table of its results. | It is a native definition over two states' rows, with its contract proved once against `development_verdict_accepted (development_constant_verdict replaceable demanded S r S')`, as readiness is proved against `development_ready` and the reach against `isabelle_reached_constants`. The HOL function becomes the specification the contract states, retired use by use. |
+| Making the verdict native needs the whole structural Isabelle state of the paused task 2 (terms as citation graphs, abstractions with binder atoms, types and sorts as records). | The verdict reads five things of an entity — its kind, the constant it declares, the constants it is a statement of, the constants it mentions, and its identity across the two states — and reads nothing inside a statement. It demands the **relational skeleton** of a state and no more: constants as atoms, entity rows in families by kind, and declared/subjects/mentions as citations. The statement stays inert, carried as its local presentation. The paused design's term structure is demanded by translation and installation, and is not built ahead. |
+| A row's kind is a datum it carries, so a program compares kinds. | A row's kind is **the family that holds it**. No program compares a kind and no octet distinguishes a definition from a code equation; the verdict's two kind arguments, what an answer may replace and what it must state, become selections of families, and the refinement and definition verdicts stay instances of the one definition at their selections. |
+| Rows of two states are compared by renaming one through the correspondence of the name tables (`isabelle_state_embedding`) and testing membership. | A row's key is determined by its identity and the two presentations share one key assignment, so key equality is identity equality across the states and the correspondence never appears. Comparing whole statements, which is what the name-table route costs, is replaced by a search in a path store. |
+| Deciding "this entity was removed" needs the absence of a row, and absence is a negation, which positive meaning does not have. | Acceptance never needs absence. Every field of it is an `every` or a `some` with membership decided by a search, and "removed implies permitted" is written "found or permitted", a disjunction, which is two clauses of one definition. Absence is needed only for the **reasons** a refusal carries, and absence in a path store is itself positive: a store is a leaf or a node whose optional value is a shape, and absence descends it. Acceptance and the reasons are dual positive programs, neither defined as the other's negation. |
+| The closure assessment of a state is the smallest part of the verdict's reading and is therefore built first (the paused design's order). | It holds one way and fails the other, so the order is by what of the state a field demands. `malformed` and `undeclared` are among the smallest programs of the whole verdict and are built early; `unreached` composes the reach, carries its cost and is built last. The smallest field of the verdict is not in the assessment at all: it is the existence of a demanded statement. |
+
+### The rows the verdict reads
+
+A state is presented as a record of families, each a store of rows keyed by a path, as readiness's
+table and the reach's table already are.
+
+- A **constant is an atom**. Its name is an inert functional payload, read only by presentation and
+  installation. Every reference to a constant — the subject, the support, a declaration's constant,
+  a statement's subjects and mentions — is a citation of that atom. Name-table positions disappear,
+  and with them the correspondence and the assessment's *unknown positions*, whose defect is caught
+  instead by *undeclared*.
+- There is **one entity family per kind** (base, development and frontier declarations;
+  definitions; specifications; code equations) and one for the roots.
+- A **row** holds its key; the key of the constant it declares; the keys of the constants it is a
+  statement of; the keys of the constants it mentions; and its **identity**, the entity's local
+  presentation (`isabelle_local_entities`), carried inert.
+
+The statement stays inert because the verdict uses no structure of it, only its identity, which is
+the case the owner's direction of 2026-09-19 expressly permits: structural data may be carried as
+inert by other structures where it is truly not needed, provided that wherever structure is used it
+is explicit. Carried inert, a statement is compared only through a variable occurring twice, so by
+the payload criterion the verdict states no octet of it and reads none of it as structure.
+`isabelle_local_entities_renamed` already proves that presentation invariant under every
+correspondence of tables, which is what lets rows compare across the two states.
+
+The line between what is presented and what is decided is not a matter of taste. *Which constant a
+term is an equation of* and *which constants it mentions* are facts about Isabelle content, and
+Isabelle content is opaque to the native machinery: reading a term is the presentation of Isabelle
+content as native structure, whose fidelity Isabelle verifies, not a native notion. *Whether every
+mention lies in the support*, *whether a removed entity was permitted*, *whether the state is
+closed* are the decision, and they are native. This is the line readiness drew: what the payload
+audit refuses is a table of a decision's answers, not a presentation of its subject.
+
+Of the worked structural-state design handed off before it was paused, this keeps the constants as
+atoms, references as citations, entity families per kind and the roots, and the contract shape in
+which construction allocates atoms in the table's order so the reader is exact while any other
+allocation reads as a correspondence the renaming theorems carry. It does not build the terms as
+citation graphs, the base constants as cited anchors of a fixed base artifact, or
+`.build/impl22/t2/Finite_Structural_Graphs.thy`, which stays uninstalled: the verdict's rows are
+native data in path stores, as readiness's and the reach's are.
+
+### Each field as a native program
+
+| Field of `development_constant_verdict` | Native program |
+|---|---|
+| `statements` nonempty | *some* row of a demanded family has the subject among its subjects |
+| `excess` empty | *every* row of a replaceable family with the subject: *every* key of its mentions is found in the support store |
+| assessment: malformed | *every* row declares a constant, or has a subject, or lies in a specification family |
+| assessment: undeclared | *every* key mentioned by a row or a root is found in the declaration store |
+| assessment: unreached | *every* row's constant is reached: the composition with `Native_Table_Reach` |
+| assessment: unknown | vacuous: a reference is a citation to an atom of the state |
+| `unpermitted_removed` empty | *every* row of the request state: its key is found in the answer state's store, or it is a replaceable-family row with the subject, or it is a declaration row |
+| `unpermitted_added` empty | *every* row of the answer state: its key is found in the request state's store, or it is a replaceable-family row with the subject |
+| `roots` | the two root families agree pairwise on their keys |
+| `tables` | a condition of the presentation: each name names at most one atom |
+
+Three conditions the presentation carries rather than the verdict computing them are named with
+their owner: distinct names, the vacuity of unknown positions, and — for the report's `removed` and
+`added` to be the answer's own two lists — that the edit is reduced. The first belongs to the
+answer's reader; the last is decided over the edit's two lists against the rows, which is the size
+of the edit times the rows and not the rows squared. None is assumed silently.
+
+### The contract
+
+One presentation relation and one theorem, in the shape of `native_development_ready`. `state_presents S rows`
+carries: keys distinct and determined by identity; one family per kind holding exactly the entities
+of that kind; declared, subjects and mentions the keys of the corresponding atoms; the roots as a
+family; distinct names; single-valued stores; no reference outside the state's atoms. `keys_shared`
+says the two presentations use one key assignment; `request_presents` gives the subject and support
+as keys; `kinds_present` gives the two kind predicates as the family selections holding exactly
+their entities. Under those premises the entry's positive meaning is
+`development_verdict_accepted (development_constant_verdict replaceable demanded S r S')`, with a
+lemma per field stating its own HOL field first and the entry's proof the conjunction that
+`development_verdict_accepted` unfolds to. Every use of an accepted verdict goes on consuming
+`development_constant_verdict_contract` unchanged.
+
+### The build order, smallest first
+
+The rows and their presentation; then `statements` (one `some`, one state, the subject); `malformed`
+(one `every`, one state); `excess` (nested `every` with the support store, and the first field the
+repair reads); `undeclared` (the same search shape at the declaration family); `roots` (a small
+related-list traversal); the permitted removed and added rows (the first fields needing the shared
+key assignment); `unreached` last, composing the reach, because its affordability is the engine's
+and not the verdict's; then the entry with its contract and the two instances; then store absence in
+`Native_Path_Stores` — the missing half of the search, by the library's own rule that an empty
+result and a failed one are kept apart — and the witness relations, `excess` first because the
+repair reads it. Splitting the assessment this way is what lets the verdict be built and checked
+before the engine's measurement is in.
+
+Reused and not rebuilt: `Native_Collection_Programs`, `Native_Path_Stores`, `Native_Table_Reach`
+with `Isabelle_Native_Reach`, `native_rule_family` and `finite_rule_program`,
+`finite_program_condition` and `finite_standalone_condition`, `Isabelle_Local_Names`, and
+`Development_Constant_Verification` as the specification. New: the verdict's own rules, the
+presentation, and store absence. No index, decision or comparison notion is introduced.
+
+### Affordability
+
+The verdict's acceptance costs, on a state of `n` entity rows, `m` mentions and `c` constants: one
+`every` over the rows per permitted-row field with a search each, one traversal of the mentions with
+at most `c` distinct declaredness calls, the subject's own statements against the support, and one
+reach. On the machinery's state (337 entities, 217 constants, 1,561 mentions) that is of the order
+of 14,000 calls against the reach's 3,397, so **one judgment costs about four reaches** and the
+reach is the unit in which the verdict's cost is stated.
+
+The engine measurement this rests on had not returned when this was written. What is measured: the
+machinery's reach took 171.8 seconds natively against 0.99 in HOL before the engine work; the first
+refinement (constructed applications, listed applications, premise functionality) brought the
+machinery's closure to 0.784 seconds and its evaluation to 43.812 seconds with the same 217 results,
+and the seed's evaluation to 0.403 seconds, equal to HOL; the bound set for the second refinement is
+the machinery's reach within five seconds and the seed's within 0.2. At that bound one judgment on
+the machinery's state costs of the order of 20 seconds and one on the seed's under a second, which
+makes a single judgment affordable and is the first time a native definition over a whole state
+would be. At the first refinement alone it is of the order of 180 seconds, which is not.
+
+A **stage** of judgments is not affordable at either figure: the machinery's verification stage
+exercises seven controls on each of 32 requests, so 224 answer states at four reaches each is of the
+order of 4,500 seconds at the bound, against 22.4 seconds for the HOL stage. The remedy is
+structural and is named here rather than worked around: an answer is an edit, and the assessment of
+an edited state — its reach and its declaredness — should be read from the state's own assessment
+and the edit, a native definition of its own whose contract is against the assessment of the edited
+state. Until it exists the loop can judge an answer natively but cannot run a verification stage
+natively.
+
+### What the tasks built on this must respect
+
+The statement stays inert and no program of the verdict reads inside it. The kind is the family that
+holds a row, never a datum it carries. Acceptance is positive and needs no absence; absence is built
+only for the witnesses, and neither side is defined as the other's negation. Each field's contract is
+proved once and consumed, and no use of an accepted verdict re-establishes what
+`development_constant_verdict_contract` gives. The refinement and definition verdicts are instances
+of the one definition at their family selections, never a second definition. The entry's rule passes
+each field only the part it reads, so only the assessment's calls carry the whole state.
+
+### Open
+
+The incremental assessment above; the presentation's own reading of Isabelle content, which stays
+outside the native machinery until translation runs the other way, and with it the equation reading's
+comparison of the base constants' names; the answer reader's obligation to refuse a duplicated name;
+and the request construction that follows the verdict in the Q7 order, over these same rows. This
+design was made outside the loop and is a residual.
+
+Recorded 2026-09-20 (task 3's decision; a design, no theory changes).
+
+## A formed call's applications are constructed, not verified again
+
+The first of the two refinements decided in "A native definition over a state re-verifies its context
+in every call": the constructed applications, the listed applications of a demand and the functionality
+of premises. It is a refinement and not a change of meaning. `finite_program_applications` and
+`finite_premise_functional` keep their original meanings on their whole declared domains; what changes
+is the equations that execute them, each conditional on premises the theory proves — a formed system, a
+formed call, and, for the clause-level fact, heads that cover their variables. The acceptance of the
+batch is therefore word equality: a changed recipe word would be a failure, not a result.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| A call's applications are constructed by matching the clause's head against the call and instantiating its premises, and then verified again as admitted instances: formation of every value bound and of every premise call, membership of each value in its own bindings, the interfaces' acceptance of the call and of every premise call — each a traversal of the table the call carries, although the construction placed each value there. | For a formed program and a call whose term is formed, the constructed applications of the call are exactly its applications (`finite_constructed_applications_exact`, over `finite_constructed_applications`). Three facts carry it, each stated for its own subject. The shape of a pattern (`finite_pattern_fits`: its pairs and literal leaves) decides its instance under its own match, so a formed term is accepted exactly when it fits and the rows the match returns are functional (`finite_pattern_accepts_fits`, over `finite_matching_rows` and `finite_matching_functional`, through `relation_rows_functional`). A clause whose head covers its variables has at a formed call exactly the instance its shape gives (`finite_constructed_instance`), and the construction checks that coverage itself rather than assuming it (`finite_requested_constructed`). An instance is admitted exactly when the interfaces accept the call and every premise call (`finite_admitted_constructed`, over `finite_interface_fits`), because every value bound is a subterm of the call and every premise call an instance of formed patterns with those values. Their join at one clause is `finite_constructed_requests_exact` over `finite_constructed_requests`. The call's formation is checked once, and no check traverses a value the construction placed. |
+| The applications of a demand are computed call by call and united as finite sets, which compares every application with every other and meets the shared context first. | The applications of distinct calls have distinct heads, so they are listed call by call without being compared (`finite_program_applications_listed`, a `code abstract` equation over `listed_image_union`). The equation is guarded on the system's formation, and the two boundaries it needs are stated: an unformed system and an unformed call each have no application (`finite_program_applications_unformed_system`, `finite_program_applications_unformed`), so the guard returns the original value and not merely a default. |
+| Every round of an evaluation checks that a rule's premises are functional by comparing every premise with every other, itself included. | Premise functionality is the functionality of a relation (`finite_premise_functional_rows`, a code equation reducing `finite_premise_functional` to `finite_relation_functional`), whose existing execution compares a row only with the rows after it. Two premises at distinct sockets are never compared by their calls, and no premise is compared with itself. |
+
+**Evidence.** Measured on the installed work before the check (probe `.build/probe-impl31-d`, log
+`probe.log`; source copy `.build/impl31/t3/`; probe theory `.build/impl31/t2/P31_Engine_Profile.thy`):
+the seeded state's demanded closure 0.014 seconds against 0.063 before, its evaluation 0.403 against
+1.224 and equal to the HOL result; the machinery's closure 0.784 against 3.83, its evaluation 43.812
+seconds with 217 results and equal to the HOL result. CHECK_NUMBERS REPLAY_NUMBERS
+
+**Open.** The second refinement of the line — the evaluation over the positions of the demanded calls,
+where the rule table is renamed by the injective map sending each demanded call to its position among
+the keys of the demand — is the next step and is not taken here. The bound the line is to meet is
+unchanged and not yet met: the machinery's reach within five seconds and the seeded state's within 0.2,
+against the 44.6 and 0.417 seconds this batch leaves. The choice of these refinements, of their order
+and of the bound was made outside the loop and is a residual.
+
+Recorded 2026-09-20, commit `…`.

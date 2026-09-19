@@ -2,11 +2,13 @@
 
 An adoption carries an accepted answer to a request of the refinement layer into the published
 repository state. `tools/development_adoption.py --record R --output DIR` judges the retained answer
-again and requires its retained verdict word (nothing the answer read has moved), installs the theory
+again and requires its retained verdict and publication words (nothing the answer read has moved) and
+that its admitted, certified generation publishes over the incumbent it was judged against, installs the theory
 Isabelle accepted when the answer was judged, byte for byte, as a repository theory imported by the
 layer's boundary `Native_Execution_Refinements`, runs the ordinary incremental check (every report
 word equal to its retained word), and judges the answer once more in the adopted workspace, where its
-theory is part of the published state and must be an unchanged answer. A refused step withdraws the
+theory is part of the published state and must be an unchanged answer that publishes over the incumbent
+it now is. A refused step withdraws the
 installation. The receipt keeps every step and the measured seconds of every executed recipe beside
 its retained seconds, as observations: no ranking or selection is derived from them, because no
 internal account of a physical measurement exists yet.
@@ -21,7 +23,12 @@ refinement to adopt. Controls are run in an isolated working copy of the reposit
 published state never holds them; only their receipts are retained here.
 
 `Development_Answer_5aba3385cee9.json` is the receipt of the control `demanded-reformulated`
-(`ordered_member_tree` restated through `map (\<lambda>y. y)`), adopted and withdrawn in an isolated copy.
+(`ordered_member_tree` restated through `map (\<lambda>y. y)`). It was first adopted and withdrawn in an
+isolated copy; on 2026-09-19 it was adopted again through the publication gate in the working tree and
+withdrawn by the tool (the working tree held it only while the adoption ran): the precondition judged it
+accepted and published (26.9 s), the check proved 151 theories again (170 s of proof, 315 s in all),
+executed 48 recipes with every word equal and reused 3, and the published state judged it an unchanged
+answer that publishes over the incumbent it had become (27.3 s).
 
 `Development_Answer_0ccf746fe2cf.json` is the first adoption of a real answer: the indexed complete data
 walk answering the request for `Factor_Complete_Data_Walks.finite_data_walk`

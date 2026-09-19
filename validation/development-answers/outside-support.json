@@ -9,13 +9,14 @@
   }
  },
  "answer_sha256": "1f001831862c08aa862f3ee8698103fe1c2b09178a0a6358bbf78f924d2e7632",
- "base_receipt_sha256": "58fd74b93e19e92a9c34995fe10e97b38fd31e6961736db881be03531a759163",
- "harness_sha256": "7901674b130da0a7056fac554582df33e818e8073ea8128309dcf2d4729a3069",
+ "base_receipt_sha256": "ed0f0a641da232073388189d9153dbea37c21114a78457d1f34128381e681e34",
+ "harness_sha256": "c215d597f2a7d0b3e0d2e9eabe18ab5a3f1deca728902dadd7f7cded71f5461b",
  "status": "judged",
  "steps": {
   "proof": 0,
   "export": 0,
-  "verdict": 0
+  "verdict": 0,
+  "publication": 0
  },
  "summary": {
   "accepted": false,
@@ -32,10 +33,15 @@
   "introduced": [],
   "repaired": true,
   "extension": true,
-  "definition_problems": 0
+  "definition_problems": 0,
+  "published": true
  },
  "verdict_word": {
   "bytes": 61475,
   "sha256": "19b8d5254511ce5c313361bdc1d869049b0966ed085cdfb485bd4a58cc2ad1af"
+ },
+ "publication_word": {
+  "bytes": 28883252,
+  "sha256": "a6132a5466a73aef27ed4a5da93095f03325dbe668f061a1826a2802016333df"
  }
 }

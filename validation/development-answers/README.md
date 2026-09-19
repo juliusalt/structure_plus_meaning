@@ -4,9 +4,19 @@ Each record retains an executor's answer exactly as submitted (the declared pres
 definitions, the equation and its proof, and the request it answers, named by its state and the
 subject's name), the outcome of `tools/development_answer.py` on it, the digest of the harness and
 the receipt of the accepted base context it was checked against. The framing theories, the proof
-session, the export and the presented word are reproduced from these by running the harness again
+session, the export and the presented words are reproduced from these by running the harness again
 on that base; they are not retained. A judged answer's `verdict_word` is the size and SHA-256 of
-the presented verdict and repair, and `summary` is the harness's diagnostic reading of them.
+the presented verdict and repair, its `publication_word` those of the presented publication (below),
+and `summary` is the harness's diagnostic reading of them.
+
+Since 2026-09-19 the harness also presents the publication of every judged answer as its own report
+(`Development_Admitted_Publication`): the incumbent of the request state and, when the answer is
+admitted, the answer recorded beside it, both as generations whose causes are certified under the
+policy that lists their family, and the transaction that publishes the answer over the incumbent it
+was judged against. A repaired answer is admitted, and published, against the request issued again
+over the extension. The summary's `published` reads whether that transaction applied; admission and
+selection stay separate words, and a refused answer publishes nothing while its incumbent is still
+judged.
 
 These five answers exercise the loop on the seeded request for
 `Factor_Digit_Replay_Methods.digit_replay_inspect`: the subject's current equation restated
@@ -25,9 +35,12 @@ equation stated by an agent, and to the word retained for it: an answer is admit
 defines, not by who states it.
 
 `python3 -B tools/replay_development_answers.py --output DIR` runs the harness again on every
-retained answer against the active base and compares outcome and verdict word with the record. A
-differing word marks a record whose requested state or verdict changed since it was made; that
-answer is then a re-evaluation for the process.
+retained answer against the active base and compares outcome, verdict word and publication word with
+the record. A differing word marks a record whose requested state, verdict or publication changed
+since it was made; that answer is then a re-evaluation for the process. An adopted answer's record is
+the judgment that admitted it before adoption; the harness now judges the published state instead, so
+the replay reports its present judgment beside the record and never re-records it
+(`indexed-data-walk.json` keeps its admission, without a publication word).
 
 `demanded-identity.json` answers a request derived on demand in the refinement layer (state
 `refinement_layer`): the harness exports the state of `Ordered_Member_Trees.ordered_member_tree`

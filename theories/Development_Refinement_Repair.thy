@@ -219,6 +219,18 @@ text \<open>
   process's decision, not this computation's.
 \<close>
 
+text \<open>
+  The state a repaired answer is judged against again is the request state extended by exactly the
+  material of the constants the verdict found outside the support and of the constants the answer
+  introduces. The repaired successor moves the development to it, and an admitted answer's route
+  reads it; both take it from here.
+\<close>
+
+definition development_repair_state ::
+    "isabelle_rooted_context \<Rightarrow> development_request \<Rightarrow> isabelle_rooted_context \<Rightarrow> nat list \<Rightarrow> isabelle_rooted_context" where
+  "development_repair_state S r S' I=development_request_extension S S'
+     (development_refinement_verdict_excess (development_refinement_verdict S r S')) I"
+
 definition development_extension_verdict_data :: "development_extension_verdict \<Rightarrow> finite_factor_term" where
   "development_extension_verdict_data=finite_pair_presentation (finite_sequence_presentation isabelle_entity_data)
     (finite_pair_presentation (finite_sequence_presentation isabelle_entity_data)

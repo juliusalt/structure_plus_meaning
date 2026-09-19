@@ -132,7 +132,8 @@ def verification_theory(name, state, subject, theory=None):
                         '  "development_answer_state=(development_answer_roots,development_answer_context)"\n\n'
                         'definition development_answer_introduced_positions :: "nat list" where\n'
                         '  "development_answer_introduced_positions=List.map_filter isabelle_head_constant development_answer_introduced"\n\n')
-    imports = [state['context'], *([theory] if theory else []), state['verdicts'], 'Development_Refinement_Repair']
+    imports = [state['context'], *([theory] if theory else []), state['verdicts'], 'Development_Refinement_Repair',
+               'Development_Admitted_Publication']
     return ('theory Development_Answer_Verification\n  imports ' + ' '.join(imports) + '\n'
             'begin\n\n' + answer_state +
             'definition development_answer_verdict :: "development_problem fset \\<Rightarrow>\n'
@@ -156,18 +157,28 @@ def verification_theory(name, state, subject, theory=None):
             '      (finite_pair_presentation (finite_sequence_presentation development_generation_data)\n'
             '        (finite_pair_presentation development_problems_data (finite_sequence_presentation finite_boolean_data)))))\n'
             '    (development_answer_verdict answered,development_answer_successor answered)"\n\n'
+            'definition development_answer_admitted_publication :: "development_problem fset \\<Rightarrow>\n'
+            '    development_answer_publication option" where\n'
+            '  "development_answer_admitted_publication answered=map_option (\\<lambda>r. development_admitted_publication\n'
+            '    ' + name + '_state r development_answer_state development_answer_introduced_positions)\n'
+            '    (development_named_request ' + name + '_context (' + name + '_requests answered) ' + literal + ')"\n\n'
+            'definition development_answer_publication_value :: "development_problem fset \\<Rightarrow> finite_factor_term" where\n'
+            '  "development_answer_publication_value answered=finite_option_presentation development_answer_publication_data\n'
+            '    (development_answer_admitted_publication answered)"\n\n'
             'definition development_answer_names :: "nat list \\<Rightarrow> String.literal list" where\n'
             '  "development_answer_names=List.map_filter (isabelle_name_at (fst development_answer_context))"\n\n'
             'definition development_answer_summary :: "development_problem fset \\<Rightarrow>\n'
-            '    (bool\\<times>nat list\\<times>String.literal list\\<times>String.literal list\\<times>bool\\<times>bool\\<times>nat) option" where\n'
+            '    (bool\\<times>nat list\\<times>String.literal list\\<times>String.literal list\\<times>bool\\<times>bool\\<times>nat\\<times>bool) option" where\n'
             '  "development_answer_summary answered=map_option (\\<lambda>(v,(e,ds,r,v2,a2)). (development_refinement_accepted v,\n'
             '    development_refinement_verdict_counts v@(case development_answer_successor answered of None \\<Rightarrow> []\n'
             '      | Some (closed,history,ready,current) \\<Rightarrow> [length history,length ready,length (filter id current)]),\n'
             '    development_answer_names (development_refinement_verdict_excess v),\n'
             '    development_answer_names development_answer_introduced_positions,\n'
-            '    a2,development_extension_accepted e,length ds))\n'
+            '    a2,development_extension_accepted e,length ds,case development_answer_admitted_publication answered of\n'
+            '      None \\<Rightarrow> False | Some P \\<Rightarrow> development_answer_published P))\n'
             '    (development_answer_verdict answered)"\n\n'
-            'export_code development_answer_verdict_value development_answer_summary ' + name + '_unanswered\n'
+            'export_code development_answer_verdict_value development_answer_publication_value development_answer_summary\n'
+            '  ' + name + '_unanswered\n'
             '  finite_term_shared_word_fold integer_of_nat\n'
             '  in Eval module_name Development_Answer_Verification file_prefix "development_answer_verification"\n\n'
             'end\n')
@@ -198,11 +209,12 @@ def summary_text(engine, name):
             'fun words xs = "[" ^ String.concatWith "," (map (fn s => "\\"" ^ s ^ "\\"") xs) ^ "]";\n'
             'val () = case N.development_answer_summary N.' + name + '_unanswered of\n'
             '    NONE => print "SUMMARY null\\n"\n'
-            '  | SOME (accepted, (counts, (excess, (introduced, (repaired, (extension, definitions)))))) =>\n'
+            '  | SOME (accepted, (counts, (excess, (introduced, (repaired, (extension, (definitions, published))))))) =>\n'
             '      print ("SUMMARY {\\"accepted\\":" ^ Bool.toString accepted ^ ",\\"counts\\":[" ^\n'
             '      String.concatWith "," (map nat counts) ^ "],\\"excess\\":" ^ words excess ^ ",\\"introduced\\":" ^\n'
             '      words introduced ^ ",\\"repaired\\":" ^ Bool.toString repaired ^ ",\\"extension\\":" ^\n'
-            '      Bool.toString extension ^ ",\\"definition_problems\\":" ^ nat definitions ^ "}\\n");\n')
+            '      Bool.toString extension ^ ",\\"definition_problems\\":" ^ nat definitions ^\n'
+            '      ",\\"published\\":" ^ Bool.toString published ^ "}\\n");\n')
 
 
 def validate(answer):
@@ -350,6 +362,13 @@ def main():
                                      '--workers', '4', '--timeout', args.timeout, '--output', output / 'verdict'],
                          output / 'verdict.log', args.timeout + 60))
         assert steps[-1]['exit_code'] == 0, 'The verdict presentation failed.'
+        steps.append(run('publication', [sys.executable, '-B', TOOLS / 'check_presented_report.py', '--proof', proof,
+                                         '--poly', POLY, '--project', project, '--theory', 'Development_Answer_Verification',
+                                         '--module', 'Development_Answer_Verification', '--report',
+                                         'development_answer_publication_value', '--scope', name + '_unanswered',
+                                         '--workers', '4', '--timeout', args.timeout, '--output', output / 'publication'],
+                         output / 'publication.log', args.timeout + 60))
+        assert steps[-1]['exit_code'] == 0, 'The publication presentation failed.'
         receipt = proved_code.checked_execution(
             proof, POLY, output / 'summary', required_theories=['Development_Answer_Verification'], inputs={},
             input_paths=[], program=summary_program(name), assess=lambda _i, text: text,
@@ -361,7 +380,8 @@ def main():
         assert len(lines) == 1, 'Expected one verdict summary.'
         summary = json.loads(lines[0][len('SUMMARY '):])
         word = json.loads((output / 'verdict' / 'receipt.json').read_text())['word']
-        record.update(status='judged', verdict_word=word, summary=summary,
+        publication = json.loads((output / 'publication' / 'receipt.json').read_text())['word']
+        record.update(status='judged', verdict_word=word, publication_word=publication, summary=summary,
                       accepted=bool(summary and summary['accepted']))
     except (AssertionError, OSError, ValueError, KeyError) as error:
         record['error'] = str(error)
@@ -376,7 +396,8 @@ def main():
     write_json(output / 'answer.json', record)
     if args.retain is not None and record['status'] == 'judged':
         write_json(args.retain, retained_record(answer, digest, base, record))
-    print(json.dumps({k: record[k] for k in ('status', 'accepted', 'summary', 'verdict_word', 'error') if k in record}))
+    print(json.dumps({k: record[k] for k in ('status', 'accepted', 'summary', 'verdict_word', 'publication_word', 'error')
+                      if k in record}))
     return 0 if record['status'] == 'judged' else 1
 
 
@@ -386,7 +407,8 @@ def retained_record(answer, digest, base, record):
     return {'answer': answer, 'answer_sha256': digest, 'harness_sha256': investigate.file_hash(Path(__file__)),
             'base_receipt_sha256': investigate.file_hash(receipt) if receipt.is_file() else None,
             'status': record['status'], 'steps': {step['name']: step['exit_code'] for step in record['steps']},
-            'summary': record['summary'], 'verdict_word': record['verdict_word']}
+            'summary': record['summary'], 'verdict_word': record['verdict_word'],
+            'publication_word': record['publication_word']}
 
 
 if __name__ == '__main__':

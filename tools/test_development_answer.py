@@ -57,6 +57,15 @@ class FrameTest(unittest.TestCase):
         self.assertIn('"development_answer_introduced_positions=[]"', text)
         self.assertNotIn('define_again', text)
 
+    def test_verification_publishes_the_admitted_answer(self):
+        state = development_answer.STATES['refinement_layer']
+        text = development_answer.verification_theory('development_demanded', state, 'Theory_Name.constant_name')
+        self.assertIn('Development_Refinement_Repair Development_Admitted_Publication\nbegin', text)
+        self.assertIn('development_admitted_publication\n    development_demanded_state r development_answer_state '
+                      'development_answer_introduced_positions', text)
+        self.assertIn('export_code development_answer_verdict_value development_answer_publication_value', text)
+        self.assertIn('development_answer_published P', text)
+
     def test_malformed_answers_are_refused_before_any_build(self):
         with tempfile.TemporaryDirectory() as directory:
             for broken in [{**ANSWER, 'extra': ''},

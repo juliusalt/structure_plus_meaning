@@ -15,7 +15,41 @@
   When accepted: `incremental_check.py retain --output .build/check-20260919g`, then COMMIT+PUSH the B2 milestone.
 - Plan section "Development causes are certified under the first loop's policy — 2026-09-19" is appended (numbers filled);
   THEORY_MAP rows, REASONING_REUSE section, seed recipe boundary text were already current.
-- B3 DESIGN (refined this session, not started): keep admission and selection apart as separate REPORTS — the harness's
+- B2 COMMITTED+PUSHED: 001113f "Certify development causes under the first loop's policy" (check g retained).
+- B3 IMPLEMENTED (uncommitted): theories/Development_Admitted_Publication.thy (route `development_admitted_route`,
+  `development_answer_publication(_with)`, `development_admitted_publication`, theorems `_applied` for every judge, prepared
+  parallel judgments, presentation `development_answer_publication_data`, predicate `development_answer_published`; probe
+  `.build/probe-impl11-c` loaded, unchanged seed answer publishes in 10.2 s, renamed in 14.9 s); `development_repair_state`
+  added to Development_Refinement_Repair and used by Development_Successor's repaired successor (no inline restatement);
+  ROOT, THEORY_MAP, REASONING_REUSE section "Admitted answers are published natively"; harness: second presented report
+  `development_answer_publication_value` -> `publication_word`, summary field `published`; replay compares both words;
+  adoption requires `published` and equal publication words; tests (10 pass); answers README.
+- DONE: `.build/check-20260919h --advance-base` ACCEPTED (8 theories, 38.8 s, no recipe reached, 169+35 tests) and
+  RETAINED. ACTIVE BASE: `.build/check-20260919h/proof` (lineage h->f->e->...). Replay --rerecord: every verdict word
+  equal; seven judged records gained publication words; the ADOPTED walk record was restored from HEAD (its record is
+  the pre-adoption admission; the replay tool now never re-records adopted answers and reports them separately).
+  Control adoption of demanded-reformulated through the new gate: adopted+withdrawn (check 151 theories 170 s, 48
+  recipes equal); receipt copied to validation/development-adoptions/Development_Answer_5aba3385cee9.json; READMEs and the
+  plan section "Admitted answers are published natively — 2026-09-19" written.
+- RUNNING: confirming replay `.build/impl11/replay-b` (no --rerecord; expect 8 reconstructed + walk adopted). When it
+  reconstructs: COMMIT+PUSH B3.
+- NEXT BATCH (B5, chosen provisionally, reason below): answer parts isolation (stage 3). The harness builds the answer
+  theory by string concatenation, so an executor's `definitions` can carry any theory command (ML, setup, declare,
+  code_printing — ML can even run shell commands during judgment), the `equation` can close its quotes and the `proof` can
+  continue past its lemma. Design: a repository theory `Development_Answer_Parts` (ML) that parses the three fields with
+  Isabelle's own outer syntax in the frame's keyword table and refuses anything but whitelisted theory commands
+  (definition, fun, function, termination, primrec, lemma/theorem/corollary WITHOUT attributes, text/section headings) and
+  whitelisted proof commands; the equation must lex as one string token and the proof as proof commands closing the
+  lemma; a harness step `parts` runs it in its own small session (imports = frame imports + the parts theory) BEFORE the
+  answer theory is ever processed; refusal is recorded with its reason. Open after it: base-name shadowing by introduced
+  constants.
+- B4 DEFERRED (criticism): the request context is already the answer's dependency reading in the development history
+  (the answer record keeps E, the issue record its library reading, and request currency is computed from E); a single
+  "context generation" has no natural locus (the problem's locus holds the incumbent; a locus equal to its payload
+  conflates locus and payload) and no consumer until re-evaluation reads RRA predecessors instead of those records. Revisit
+  together with G1 (selection/issue/scheduling recorded as certified generations, guarded by their own admission — the
+  B2 family-policy pattern generalized by a guard; loci per record kind).
+- B3 DESIGN (as implemented above): keep admission and selection apart as separate REPORTS — the harness's
   verdict word stays unchanged (no re-record of verdicts); a second presented report `development_answer_publication_value`
   (certified incumbent of the request state, the certified answer recorded beside it, finite_locus_publications over the
   incumbent's snapshot; repaired answers against `development_request_extension` + the reissued request) gives a

@@ -1192,3 +1192,34 @@ are its incumbent only, not the generation of the request context it was judged 
 by the harness (`tools/development_answer.py`) are not yet certified or published natively, so the
 adoption of a refinement-layer answer records no native transaction. The choice of this batch and of
 its route was made outside the process and is a residual.
+
+## Admitted answers are published natively — 2026-09-19
+
+The seed's generations are certified since the previous section, but an answer judged by the harness
+was still neither admitted as a generation nor published: the harness presented its verdict and
+repair, and the adoption tool installed bytes after comparing a word. Every judged answer is now
+admitted and published natively, beside its verdict.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| The harness presents the verdict and repair of an answer; admission as a generation and publication happen only in the seed report. | The harness presents a second report beside the verdict (`Development_Admitted_Publication`): the incumbent of the request state and, when the answer is admitted, the answer recorded beside it, both generations whose causes are certified under the policy that lists their family, and the transaction that publishes the answer over the incumbent it was judged against. Admission and selection keep separate words: the verdict word holds the judgment, the publication word the generations and the transaction. That the transaction applies whenever both generations exist is the published state's replacement theorem instantiated (`development_answer_publication_applied`, for every judge), and the adoption tool requires it (`published`) before it installs and again in the adopted workspace. |
+| A repaired answer is admitted against the extension, which the repaired successor states inline. | The route an answer is admitted through (`development_admitted_route`: its own request when the verdict accepts it, the request issued again over the extension when only the constants it introduces refused it and the repair accepts) reads the extension from `development_repair_state`, now stated once in `Development_Refinement_Repair` and used by the repaired successor too. |
+| Re-recording a retained answer whose words changed replaces its record. | An adopted answer is judged by the harness as the published state's unchanged answer, so its retained record, the judgment that admitted it before adoption, can no longer be reproduced; re-recording it would erase the evidence of the admission. The replay reports an adopted answer's present judgment beside its record and never re-records it. |
+
+Evidence: a probe on the base heap (every proof checked) publishes the first seed request's
+unchanged answer in 10.2 seconds, the family judged once, and the answer with the reversed table in
+14.9; both apply. The check that advanced the base to `.build/check-20260919h` proved the eight
+changed theories in 38.8 seconds and reached no recipe (169 tool and 35 kernel tests). Replaying the
+nine retained answers on that base reproduced every verdict word; the seven judged answers that are
+not adopted gained publication words (0.6 to 1.3 MB for requests of the refinement layer, 7.6 MB for
+seeded requests, 12.1 and 28.9 MB for the two repaired answers, whose answers differ from their
+incumbents), every admitted answer published and every refused one published nothing; the
+publication step takes 3.6 to 3.9 seconds for a request of the refinement layer and 11.6 to 17.9 for
+a seeded one. The control `demanded-reformulated` was adopted again through the new gate and withdrawn: the precondition judged it accepted and published, the check proved 151 theories again in 170 seconds and executed 48 recipes with every word equal (3 reused), and the adopted workspace judged it an unchanged answer publishing over the incumbent it had become.
+
+Open: the published state a judgment publishes into holds the incumbent alone, because the refinement
+layer has no persistent native published state, so an adoption records the transaction of its
+judgment rather than a transaction against a history; the harness computes the certification twice,
+once for the word and once for its summary; an absent incumbent does not distinguish a refused family
+from a failed judgment; and an answer's predecessors are its incumbent only. The design of this batch
+was chosen outside the process and is a residual.

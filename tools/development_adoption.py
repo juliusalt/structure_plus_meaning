@@ -6,18 +6,21 @@ judged, framed where it is adopted, becomes a theory of the repository that the 
 boundary imports. The tool moves bytes and invokes the checked tools; it decides nothing. Each step
 is judged by the existing machinery:
 
-1. The retained answer is judged again against the present workspace, and its verdict word must be
-   the retained one: nothing the answer was accepted against has moved. A differing word makes the
-   answer a re-evaluation for the process, and nothing is installed. An answer is adoptable when its
-   verdict accepts it, or when the verdict refuses it only for constants it introduces and the
-   repair derived from that refusal accepts it: the extension defining those constants is
-   conservative and the answer is accepted against the request issued again over the extension.
-   The derived definition problems are answered by the answer's own definitions.
+1. The retained answer is judged again against the present workspace, and its verdict and
+   publication words must be the retained ones: nothing the answer was accepted against has moved.
+   A differing word makes the answer a re-evaluation for the process, and nothing is installed. An
+   answer is adoptable when its verdict accepts it, or when the verdict refuses it only for constants
+   it introduces and the repair derived from that refusal accepts it: the extension defining those
+   constants is conservative and the answer is accepted against the request issued again over the
+   extension. The derived definition problems are answered by the answer's own definitions. In both
+   routes the admitted answer's certified generation must publish over the incumbent it was judged
+   against: the native transaction that expects that incumbent at the problem's locus applies.
 2. The judged theory is installed byte for byte and the boundary imports it.
 3. The ordinary incremental check proves the changed theories and executes every recipe whose
    execution boundary the change reaches; every report word must equal its retained word.
 4. The answer is judged again in the adopted workspace, where its theory is part of the published
-   state; it must be accepted as an unchanged answer, with nothing removed or added.
+   state; it must be accepted as an unchanged answer, with nothing removed or added, whose
+   certified generation again publishes over the incumbent it now is.
 
 Any refused step withdraws the installation. The receipt retains every step and, for every executed
 recipe, its measured seconds beside its retained seconds. Measured cost is an observation; nothing
@@ -99,6 +102,8 @@ def recipe_costs(summary):
 def adoptable(summary):
     """The route through which a judged answer is adoptable, if any."""
     summary = summary or {}
+    if not summary.get('published'):
+        return None
     if summary.get('accepted'):
         return 'request'
     if summary.get('repaired') and summary.get('extension'):
@@ -125,12 +130,15 @@ def adopt(args):
     original = None
     try:
         before = judge(answer_file, output / 'before', args.timeout)
-        receipt['steps']['precondition'] = {k: before.get(k) for k in ('status', 'accepted', 'verdict_word', 'summary',
-                                                                       'adopted', 'seconds', 'error')}
+        receipt['steps']['precondition'] = {k: before.get(k) for k in ('status', 'accepted', 'verdict_word',
+                                                                       'publication_word', 'summary', 'adopted',
+                                                                       'seconds', 'error')}
         assert before['status'] == 'judged' and adoptable(before.get('summary')) == route, \
             'The answer is no longer accepted through the retained route.'
         assert before['verdict_word'] == record['verdict_word'], \
             'The verdict changed since the answer was retained: it is a re-evaluation, not an adoption.'
+        assert before.get('publication_word') == record.get('publication_word'), \
+            'The publication changed since the answer was retained: it is a re-evaluation, not an adoption.'
         installed, original = install(answer, output / 'before')
         receipt['steps']['installation'] = installed
         started = time.monotonic()
@@ -147,12 +155,15 @@ def adopt(args):
                                      'costs': recipe_costs(summary)}
         assert code == 0 and summary['status'] == 'accepted', 'A report word changed or the check failed.'
         after = judge(answer_file, output / 'after', args.timeout)
-        receipt['steps']['published'] = {k: after.get(k) for k in ('status', 'accepted', 'verdict_word', 'summary',
-                                                                   'adopted', 'seconds', 'error')}
+        receipt['steps']['published'] = {k: after.get(k) for k in ('status', 'accepted', 'verdict_word',
+                                                                   'publication_word', 'summary', 'adopted',
+                                                                   'seconds', 'error')}
         counts = (after.get('summary') or {}).get('counts', [])
         assert after['status'] == 'judged' and after.get('accepted') and after.get('adopted'), \
             'The published state does not accept the adopted answer.'
         assert counts[:4] == [0, 0, 0, 0], 'The published state differs from the adopted answer.'
+        assert (after.get('summary') or {}).get('published'), \
+            'The adopted answer does not publish over the incumbent it now is.'
         receipt['status'] = 'adopted'
     except (AssertionError, OSError, ValueError, KeyError) as error:
         receipt['error'] = str(error)

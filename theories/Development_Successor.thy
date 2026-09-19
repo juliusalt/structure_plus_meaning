@@ -288,8 +288,7 @@ definition development_repaired_successor ::
     let R=development_refinement_repair S r S' I in
     case R of (extension,definitions,r',v',accepted') \<Rightarrow>
       if development_extension_accepted extension \<and> accepted' then
-        development_successor (development_request_extension S S'
-            (development_refinement_verdict_excess (development_refinement_verdict S r S')) I,
+        development_successor (development_repair_state S r S' I,
           ps@definitions,D |\<union>| fset_of_list (map (\<lambda>q. (q,{||})) definitions),
           answered |\<union>| fset_of_list definitions,history@[Development_Repair_Record r R]) r' S'
       else None)"
@@ -306,7 +305,7 @@ proof -
     by (cases "development_refinement_repair S r S' I") auto
   have fields: "development_extension_accepted extension" "a"
     using successor by (auto simp: development_repaired_successor_def repair Let_def split: if_splits)
-  let ?E="development_request_extension S S' (development_refinement_verdict_excess (development_refinement_verdict S r S')) I"
+  let ?E="development_repair_state S r S' I"
   have moved: "development_successor (?E,ps@definitions,D |\<union>| fset_of_list (map (\<lambda>q. (q,{||})) definitions),
       answered |\<union>| fset_of_list definitions,history@[Development_Repair_Record r (extension,definitions,r',v',a)]) r' S'=Some L'"
     using successor fields by (simp add: development_repaired_successor_def repair Let_def)

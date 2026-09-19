@@ -1,49 +1,96 @@
 theory Development_Requests
-  imports Development_Refinement_Contracts
+  imports Development_Refinement_Contracts Development_Native_Selection
 begin
 
 section \<open>The next problems are the admitted answer of a native question on the actual problems\<close>
 
 text \<open>
-  Which problems to take next is itself decided through the native process: the candidates
-  are the actual problems and the single original condition is their computed readiness, so
-  the existing filtered question and its admission contract apply without restating them.
-  Every ready problem is admitted and no preference among them is supplied; ties stay
-  explicit, and no list position or name orders them.
+  The next problems are the admitted answer of a question whose scope is the candidates of the problems
+  and whose condition is native readiness. No table of computed readiness is supplied: the condition is the
+  native definition, and the question states only its candidates, each the row a problem is read by with
+  the rows its settledness reads. A question is posed only over a closed problem scope, one whose
+  dependencies and answered problems are among its problems; the problems admitted are those whose
+  candidates the question admits.
 \<close>
 
-definition development_selection_question ::
-    "development_dependencies \<Rightarrow> development_problem fset \<Rightarrow> development_problem list \<Rightarrow>
-      native_development_question option" where
-  "development_selection_question D answered ps=
-    filtered_development_question ps (development_ready D answered)"
+definition development_selection_question :: "development_dependencies \<Rightarrow> development_problem fset \<Rightarrow>
+    development_problem list \<Rightarrow> native_development_question option" where
+  "development_selection_question D answered ps=(if development_readiness_scope_closed D answered ps
+    then finite_subject_question (Finite_Payload []) (development_readiness_candidates D answered ps)
+      [native_readiness_condition] else None)"
+
+definition development_admitted_problems :: "development_dependencies \<Rightarrow> development_problem fset \<Rightarrow>
+    development_problem list \<Rightarrow> finite_factor_term list option \<Rightarrow> development_problem list option" where
+  "development_admitted_problems D answered ps admission=map_option (\<lambda>accepted.
+    let E=development_readiness_closure D answered in
+    filter (\<lambda>p. development_readiness_candidate D answered ps E p\<in>set accepted) ps) admission"
+
+theorem development_admitted_ready:
+  assumes question: "development_selection_question D answered ps=Some Q"
+    and admission: "native_development_admission Q report=Some accepted"
+    and p: "p\<in>set ps"
+    and chosen: "development_readiness_candidate D answered ps (development_readiness_closure D answered) p\<in>set accepted"
+  shows "development_ready D answered p"
+proof -
+  have closed: "development_readiness_scope_closed D answered ps"
+    and constructed: "finite_subject_question (Finite_Payload []) (development_readiness_candidates D answered ps)
+      [native_readiness_condition]=Some Q"
+    using question by (simp_all add: development_selection_question_def split: if_splits)
+  obtain C where condition: "native_readiness_condition=Some C"
+    using native_readiness_condition_total by blast
+  have holds: "development_condition_holds C (Finite_Payload [])
+      (development_readiness_candidate D answered ps (development_readiness_closure D answered) p)"
+    by (rule finite_subject_question_conditions[OF constructed admission chosen]) (simp add: condition)
+  let ?key="decode_finite_term \<circ> development_readiness_key ps"
+  let ?hs="\<lambda>p. map (map decode_finite_term) (development_readiness_decompositions D ps p)"
+  let ?cone="\<lambda>p. decode_readiness_table (development_readiness_cone D answered ps (development_readiness_closure D answered) p)"
+  have presents: "readiness_presents ?key D answered ps ?hs ?cone"
+    by (rule development_readiness_presents[OF closed])
+  have native: "(readiness_ready,Pair_Term (Payload_Term []) (Pair_Term (readiness_table_term (?cone p))
+      (Pair_Term (?key p) (readiness_value (p |\<in>| answered) (?hs p)))))\<in>positive_meaning native_readiness_system"
+    using holds by (simp add: native_readiness_condition_exact[OF condition] development_readiness_candidate_def
+      decode_finite_readiness_table decode_finite_readiness_row)
+  have xf: "term_formed (Payload_Term [])" by (simp add: octets_formed_def)
+  show ?thesis using native_development_ready[OF presents p xf] native by simp
+qed
 
 theorem development_selected_ready:
-  assumes admitted: "native_admitted_subjects ps (development_selection_question D answered ps) report=Some xs"
+  assumes question: "development_selection_question D answered ps=Some Q"
+    and selected: "development_admitted_problems D answered ps (native_development_admission Q report)=Some xs"
     and member: "p\<in>set xs"
   shows "p\<in>set ps \<and> development_ready D answered p"
-  by (rule filtered_admitted_subjects_condition[OF admitted[unfolded development_selection_question_def] member])
+proof -
+  obtain accepted where admission: "native_development_admission Q report=Some accepted"
+    and xs: "xs=filter (\<lambda>p. development_readiness_candidate D answered ps
+      (development_readiness_closure D answered) p\<in>set accepted) ps"
+    using selected by (auto simp: development_admitted_problems_def Let_def)
+  have p: "p\<in>set ps"
+    and chosen: "development_readiness_candidate D answered ps (development_readiness_closure D answered) p\<in>set accepted"
+    using member xs by simp_all
+  show ?thesis using development_admitted_ready[OF question admission p chosen] p by blast
+qed
+
+theorem development_selected_independent:
+  assumes question: "development_selection_question D answered ps=Some Q"
+    and selected: "development_admitted_problems D answered ps (native_development_admission Q report)=Some xs"
+    and first: "p\<in>set xs" and second: "q\<in>set xs"
+  shows "q |\<notin>| development_premises D p"
+proof -
+  have "development_ready D answered p" "development_ready D answered q"
+    using development_selected_ready[OF question selected first]
+      development_selected_ready[OF question selected second] by simp_all
+  then show ?thesis by (rule development_ready_independent)
+qed
 
 section \<open>The admitted problems are one group of independent work\<close>
 
 text \<open>
   The schedule of the admitted problems is read from the same dependencies: no admitted
-  problem is a prerequisite of another, so they form one group that may be worked on
-  concurrently. Adopting their answers concurrently is a separate question for the
-  transaction contracts; this group establishes only that no admitted answer waits for
-  another.
+  problem is a prerequisite of another (\<open>development_selected_independent\<close>), so they form one
+  group that may be worked on concurrently. Adopting their answers concurrently is a separate
+  question for the transaction contracts; this group establishes only that no admitted answer
+  waits for another.
 \<close>
-
-theorem development_selected_independent:
-  assumes admitted: "native_admitted_subjects ps (development_selection_question D answered ps) report=Some xs"
-    and first: "p\<in>set xs" and second: "q\<in>set xs"
-  shows "q |\<notin>| development_premises D p"
-proof -
-  have "development_ready D answered p" "development_ready D answered q"
-    using development_selected_ready[OF admitted first] development_selected_ready[OF admitted second]
-    by simp_all
-  then show ?thesis by (rule development_ready_independent)
-qed
 
 section \<open>An executed selection admits only ready problems\<close>
 
@@ -61,24 +108,40 @@ definition development_selection_packet ::
   "development_selection_packet D answered ps=map_option native_development_packet
     (development_selection_question D answered ps)"
 
+definition development_packet_problems ::
+    "development_dependencies \<Rightarrow> development_problem fset \<Rightarrow> development_problem list \<Rightarrow>
+      native_development_question\<times>native_development_report\<times>finite_factor_term list option \<Rightarrow>
+      development_problem list option" where
+  "development_packet_problems D answered ps packet=(case packet of (Q,report,admission) \<Rightarrow>
+    development_admitted_problems D answered ps admission)"
+
 definition development_packet_selected ::
     "development_dependencies \<Rightarrow> development_problem fset \<Rightarrow> development_problem list \<Rightarrow>
       development_problem list option" where
   "development_packet_selected D answered ps=Option.bind (development_selection_packet D answered ps)
-    (native_packet_subjects ps)"
+    (development_packet_problems D answered ps)"
+
+theorem development_packet_problems_ready:
+  assumes question: "development_selection_question D answered ps=Some Q"
+    and admitted: "development_packet_problems D answered ps (native_development_packet Q)=Some xs"
+    and member: "p\<in>set xs"
+  shows "p\<in>set ps \<and> development_ready D answered p"
+proof -
+  have "development_admitted_problems D answered ps
+      (native_development_admission Q (construct_native_development Q))=Some xs"
+    using admitted by (simp add: development_packet_problems_def native_development_packet_def Let_def)
+  then show ?thesis by (rule development_selected_ready[OF question _ member])
+qed
 
 theorem development_packet_selected_ready:
   assumes selected: "development_packet_selected D answered ps=Some xs" and member: "p\<in>set xs"
   shows "p\<in>set ps \<and> development_ready D answered p"
 proof -
   obtain Q where question: "development_selection_question D answered ps=Some Q"
-    and admitted: "native_packet_subjects ps (native_development_packet Q)=Some xs"
+    and admitted: "development_packet_problems D answered ps (native_development_packet Q)=Some xs"
     using selected by (auto simp: development_packet_selected_def development_selection_packet_def
       bind_eq_Some_conv map_option_eq_Some)
-  have "native_admitted_subjects ps (development_selection_question D answered ps)
-      (construct_native_development Q)=Some xs"
-    using admitted by (simp add: native_packet_subjects_admitted question)
-  then show ?thesis by (rule development_selected_ready[OF _ member])
+  show ?thesis by (rule development_packet_problems_ready[OF question admitted member])
 qed
 
 section \<open>A request carries its constant, its support and its least context\<close>

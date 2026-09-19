@@ -282,4 +282,151 @@ text \<open>
   in the universe is the caller's to establish for its own reading.
 \<close>
 
+section \<open>A traversal that returns has read a closed set of sites\<close>
+
+text \<open>
+  The traversal needs no universe to be correct: whenever it returns, the sites it read contain the
+  roots, every site a read row demands is among them, and its rows are exactly the rows at them. A
+  universe only bounds it, so that it returns; a reading whose demanded sites stay in a finite set
+  returns for that reason, and wherever a closed universe contains the roots the traversal is the
+  one bounded by that universe.
+\<close>
+
+definition finite_demanded_closed_invariant ::
+    "('s \<Rightarrow> 'r fset) \<Rightarrow> ('r \<Rightarrow> 's fset) \<Rightarrow> 's fset \<Rightarrow> 's fset \<times> 's fset \<times> ('s \<times> 'r) fset \<Rightarrow> bool" where
+  "finite_demanded_closed_invariant read succ roots q \<longleftrightarrow> (case q of (S,T,A) \<Rightarrow>
+    S |\<inter>| T={||} \<and> roots |\<subseteq>| S |\<union>| T \<and>
+    (\<forall>d x e. d |\<in>| S \<longrightarrow> x |\<in>| read d \<longrightarrow> e |\<in>| succ x \<longrightarrow> e |\<in>| S |\<union>| T) \<and>
+    A=finite_site_rows read S)"
+
+lemma finite_demanded_step_closed_invariant:
+  assumes inv: "finite_demanded_closed_invariant read succ roots (S,T,A)"
+  shows "finite_demanded_closed_invariant read succ roots (finite_demanded_step read succ (S,T,A))"
+proof -
+  let ?visited="S |\<union>| T"
+  let ?next="finite_row_successors read succ T |-| ?visited"
+  have step: "finite_demanded_step read succ (S,T,A)=(?visited,?next,A |\<union>| finite_site_rows read T)"
+    by (simp add: finite_demanded_step_def Let_def)
+  have rooted: "roots |\<subseteq>| ?visited" and collected: "A=finite_site_rows read S"
+    using inv by (simp_all add: finite_demanded_closed_invariant_def)
+  have closed: "e |\<in>| ?visited" if "d |\<in>| S" "x |\<in>| read d" "e |\<in>| succ x" for d x e
+    using inv that by (simp add: finite_demanded_closed_invariant_def)
+  have disjoint': "?visited |\<inter>| ?next={||}" by auto
+  have rooted': "roots |\<subseteq>| ?visited |\<union>| ?next" using rooted by auto
+  have closed': "e |\<in>| ?visited |\<union>| ?next"
+    if site: "d |\<in>| ?visited" and row: "x |\<in>| read d" and demanded: "e |\<in>| succ x" for d x e
+  proof (cases "d |\<in>| S")
+    case True
+    show ?thesis using closed[OF True row demanded] by auto
+  next
+    case False
+    have frontier: "d |\<in>| T" using site False by auto
+    have "e |\<in>| finite_row_successors read succ T"
+      using frontier row demanded by (auto simp: finite_row_successors_member)
+    then show ?thesis by auto
+  qed
+  have rows_read: "A |\<union>| finite_site_rows read T=finite_site_rows read ?visited"
+    by (simp add: collected finite_site_rows_union)
+  show ?thesis
+    unfolding step finite_demanded_closed_invariant_def prod.case
+    using disjoint' rooted' closed' rows_read by blast
+qed
+
+theorem finite_demanded_readings_closed:
+  assumes result: "finite_demanded_readings read succ roots=Some (S,A)"
+  shows "roots |\<subseteq>| S" "\<And>d x e. d |\<in>| S \<Longrightarrow> x |\<in>| read d \<Longrightarrow> e |\<in>| succ x \<Longrightarrow> e |\<in>| S"
+    "A=finite_site_rows read S"
+proof -
+  let ?P="finite_demanded_closed_invariant read succ roots"
+  let ?b="\<lambda>(S,T,A). T \<noteq> {||}"
+  let ?c="finite_demanded_step read succ"
+  obtain T where run: "while_option ?b ?c ({||},roots,{||})=Some (S,T,A)"
+    using result by (auto simp: finite_demanded_readings_def)
+  have inv: "?P (S,T,A)"
+  proof (rule while_option_rule[where b="?b" and c="?c" and s="({||},roots,{||})"])
+    show "?P (?c s)" if "?P s" "?b s" for s
+    proof -
+      obtain S' T' A' where shape: "s=(S',T',A')" by (cases s) auto
+      show ?thesis using finite_demanded_step_closed_invariant[of read succ roots S' T' A'] that shape by simp
+    qed
+    show "while_option ?b ?c ({||},roots,{||})=Some (S,T,A)" by (rule run)
+    show "?P ({||},roots,{||})" by (simp add: finite_demanded_closed_invariant_def)
+  qed
+  have stop: "\<not> ?b (S,T,A)" by (rule while_option_stop[OF run])
+  have empty: "T={||}" using stop by simp
+  show "roots |\<subseteq>| S" using inv empty by (simp add: finite_demanded_closed_invariant_def)
+  show "e |\<in>| S" if "d |\<in>| S" "x |\<in>| read d" "e |\<in>| succ x" for d x e
+    using inv empty that by (simp add: finite_demanded_closed_invariant_def)
+  show "A=finite_site_rows read S" using inv by (simp add: finite_demanded_closed_invariant_def)
+qed
+
+section \<open>A closed universe containing the roots bounds the traversal\<close>
+
+lemma finite_site_rows_cong:
+  assumes "\<And>d. d |\<in>| T \<Longrightarrow> read d=read' d"
+  shows "finite_site_rows read T=finite_site_rows read' T"
+  using assms by (auto simp: finite_site_rows_member)
+
+lemma finite_row_successors_cong:
+  assumes "\<And>d. d |\<in>| T \<Longrightarrow> read d=read' d"
+  shows "finite_row_successors read succ T=finite_row_successors read' succ T"
+  by (simp only: finite_row_successors_def finite_site_rows_cong[OF assms])
+
+theorem finite_demanded_readings_within:
+  assumes roots: "roots |\<subseteq>| U"
+    and closed: "\<And>d x e. d |\<in>| U \<Longrightarrow> x |\<in>| read d \<Longrightarrow> e |\<in>| succ x \<Longrightarrow> e |\<in>| U"
+  shows "finite_demanded_readings read succ roots=
+    finite_demanded_readings (\<lambda>d. if d |\<in>| U then read d else {||}) succ roots"
+proof -
+  let ?read="\<lambda>d. if d |\<in>| U then read d else {||}"
+  let ?b="\<lambda>(S,T,A). T \<noteq> {||}"
+  let ?P="\<lambda>(S::'a fset,T,A::('a\<times>'b) fset). S |\<union>| T |\<subseteq>| U"
+  have commute: "map_option id (while_option ?b (finite_demanded_step read succ) ({||},roots,{||}))=
+      while_option ?b (finite_demanded_step ?read succ) (id ({||},roots,{||}))"
+  proof (rule while_option_commute_invariant[where P="?P"])
+    show "?P (finite_demanded_step read succ s)" if inv: "?P s" and active: "?b s" for s
+    proof -
+      obtain S T A where shape: "s=(S,T,A)" by (cases s) auto
+      have inside: "S |\<union>| T |\<subseteq>| U" using inv shape by simp
+      have successors: "finite_row_successors read succ T |\<subseteq>| U"
+      proof (rule fsubsetI)
+        fix e assume "e |\<in>| finite_row_successors read succ T"
+        then obtain d x where "d |\<in>| T" "x |\<in>| read d" "e |\<in>| succ x"
+          by (auto simp: finite_row_successors_member)
+        then show "e |\<in>| U" using inside closed by blast
+      qed
+      show ?thesis using inside successors
+        by (auto simp: shape finite_demanded_step_def Let_def)
+    qed
+    show "?b s=?b (id s)" for s by simp
+    show "id (finite_demanded_step read succ s)=finite_demanded_step ?read succ (id s)"
+      if inv: "?P s" and active: "?b s" for s
+    proof -
+      obtain S T A where shape: "s=(S,T,A)" by (cases s) auto
+      have agree: "read d=?read d" if "d |\<in>| T" for d using inv shape that by auto
+      show ?thesis
+        by (simp add: shape finite_demanded_step_def Let_def finite_site_rows_cong[OF agree]
+          finite_row_successors_cong[OF agree])
+    qed
+    show "?P ({||},roots,{||})" using roots by simp
+  qed
+  show ?thesis
+    using commute by (simp add: finite_demanded_readings_def option.map_id)
+qed
+
+corollary finite_demanded_readings_within_exact:
+  assumes roots: "roots |\<subseteq>| U"
+    and closed: "\<And>d x e. d |\<in>| U \<Longrightarrow> x |\<in>| read d \<Longrightarrow> e |\<in>| succ x \<Longrightarrow> e |\<in>| U"
+  shows "finite_demanded_readings read succ roots=
+    Some (finite_rooted_sites (\<lambda>d. if d |\<in>| U then read d else {||}) succ U roots,
+      finite_site_rows (\<lambda>d. if d |\<in>| U then read d else {||})
+        (finite_rooted_sites (\<lambda>d. if d |\<in>| U then read d else {||}) succ U roots))"
+proof -
+  have rows: "(if d |\<in>| U then read d else {||}) \<noteq> {||} \<Longrightarrow> d |\<in>| U" for d
+    by (simp split: if_splits)
+  show ?thesis
+    by (rule trans[OF finite_demanded_readings_within[OF roots closed]
+      finite_demanded_readings_exact[OF rows]])
+qed
+
 end

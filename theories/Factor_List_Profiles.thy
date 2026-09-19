@@ -128,6 +128,81 @@ corollary lists:
 
 end
 
+section \<open>Every element of a list, in a context, is one notion\<close>
+
+text \<open>
+  Checking every element of a list in a supplied context is one notion, whatever program presents
+  it: the relation at the list's site satisfies the recursion below, and on every data list that is
+  exactly the check of every element in the context. A program presents the notion by establishing the
+  recursion for its own clauses, and the list semantics is then this argument, stated once.
+\<close>
+
+locale context_list_rule_relation =
+  fixes M :: "('d\<times>factor_term) set" and element list :: 'd
+  assumes equation: "\<And>t. (list,t)\<in>M \<longleftrightarrow> (\<exists>a. t=Pair_Term a (Payload_Term []) \<and> term_formed a) \<or>
+    (\<exists>a x y. t=Pair_Term a (Pair_Term x y) \<and> (element,Pair_Term a x)\<in>M \<and> (list,Pair_Term a y)\<in>M)"
+begin
+
+lemma sound_at:
+  assumes "(list,Pair_Term a r)\<in>M"
+  shows "\<exists>xs. r=data_list_term xs \<and> term_formed a \<and> (\<forall>x\<in>set xs. (element,Pair_Term a x)\<in>M)"
+  using assms
+proof (induction r)
+  case (Target_Term target)
+  then show ?case by (simp only: equation[of "Pair_Term a (Target_Term target)"]) simp
+next
+  case (Payload_Term bytes)
+  have "bytes=[] \<and> term_formed a"
+    using Payload_Term.prems by (simp only: equation[of "Pair_Term a (Payload_Term bytes)"]) simp
+  then show ?case by (intro exI[of _ "[]"]) simp
+next
+  case (Pair_Term x y)
+  have parts: "(element,Pair_Term a x)\<in>M" "(list,Pair_Term a y)\<in>M"
+    using Pair_Term.prems by (simp_all only: equation[of "Pair_Term a (Pair_Term x y)"]) simp_all
+  obtain xs where tail: "y=data_list_term xs" "term_formed a" "\<forall>z\<in>set xs. (element,Pair_Term a z)\<in>M"
+    using Pair_Term.IH(2)[OF parts(2)] by blast
+  show ?case by (intro exI[of _ "x#xs"]) (use parts tail in simp)
+qed
+
+theorem sound:
+  assumes holds: "(list,t)\<in>M"
+  shows "\<exists>a xs. t=Pair_Term a (data_list_term xs) \<and> term_formed a \<and>
+    (\<forall>x\<in>set xs. (element,Pair_Term a x)\<in>M)"
+proof -
+  obtain a r where t: "t=Pair_Term a r"
+    using holds by (simp only: equation[of t]) blast
+  show ?thesis using sound_at[OF holds[unfolded t]] t by blast
+qed
+
+theorem complete:
+  assumes "term_formed a" "\<forall>x\<in>set xs. (element,Pair_Term a x)\<in>M"
+  shows "(list,Pair_Term a (data_list_term xs))\<in>M"
+  using assms(2)
+proof (induction xs)
+  case Nil
+  show ?case using assms(1) by (subst equation) simp
+next
+  case (Cons x xs)
+  have head: "(element,Pair_Term a x)\<in>M" and tail: "(list,Pair_Term a (data_list_term xs))\<in>M"
+    using Cons by simp_all
+  have "\<exists>a' x' y. Pair_Term a (data_list_term (x#xs))=Pair_Term a' (Pair_Term x' y) \<and>
+      (element,Pair_Term a' x')\<in>M \<and> (list,Pair_Term a' y)\<in>M"
+    using head tail by (intro exI[of _ a] exI[of _ x] exI[of _ "data_list_term xs"]) simp
+  then show ?case by (subst equation) blast
+qed
+
+theorem exact:
+  "(list,t)\<in>M \<longleftrightarrow> (\<exists>a xs. t=Pair_Term a (data_list_term xs) \<and> term_formed a \<and>
+    (\<forall>x\<in>set xs. (element,Pair_Term a x)\<in>M))"
+  using sound complete by blast
+
+corollary lists:
+  "(list,Pair_Term a (data_list_term xs))\<in>M \<longleftrightarrow>
+    term_formed a \<and> (\<forall>x\<in>set xs. (element,Pair_Term a x)\<in>M)"
+  by (auto simp: exact data_list_term_injective)
+
+end
+
 section \<open>A supplied context accompanies every element call\<close>
 
 definition context_list_nil_schema :: "(nat,nat,nat) factor_schema" where
@@ -172,85 +247,79 @@ proof -
   show ?thesis by (rule ordinary_positive_valuation_step[OF member ordinary assignment head support])
 qed
 
-theorem sound:
-  assumes holds: "(list_site,t)\<in>positive_meaning P"
-  shows "\<exists>a xs. t=Pair_Term a (data_list_term xs) \<and> term_formed a \<and>
-    (\<forall>x\<in>set xs. (element_site,Pair_Term a x)\<in>positive_meaning P)"
-proof -
-  let ?Q="\<lambda>t. \<exists>a xs. t=Pair_Term a (data_list_term xs) \<and> term_formed a \<and>
-    (\<forall>x\<in>set xs. (element_site,Pair_Term a x)\<in>positive_meaning P)"
-  have invariant: "list_site=list_site \<longrightarrow> ?Q t"
-  proof (rule positive_valuation_induct[OF holds, where property="\<lambda>d t. d=list_site \<longrightarrow> ?Q t"])
-    fix d c S f
-    assume clause: "((d,c),S)\<in>system_clauses P"
-      and assignment: "\<forall>a\<in>schema_variables S. term_formed (f a)"
-      and head: "schema_call_formed P d (evaluate_pattern f (schema_conclusion S))"
-      and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
-        (e,evaluate_pattern f p)\<in>positive_meaning P \<and>
-        (e=list_site \<longrightarrow> ?Q (evaluate_pattern f p))"
-    show "d=list_site \<longrightarrow> ?Q (evaluate_pattern f (schema_conclusion S))"
-    proof
-      assume "d=list_site"
-      then have cases: "S=context_list_nil_schema \<or> S=context_list_step_schema element_site list_site"
-        using clause by (auto simp: family context_list_clauses_def)
-      then show "?Q (evaluate_pattern f (schema_conclusion S))"
-      proof
-        assume schema: "S=context_list_nil_schema"
-        have formed: "term_formed (f 0)"
-          using assignment by (simp add: schema context_list_nil_schema_def schema_variables_def)
-        show ?thesis by (intro exI[of _ "f 0"] exI[of _ "[]"])
-          (use formed in \<open>simp add: schema context_list_nil_schema_def\<close>)
-      next
-        assume schema: "S=context_list_step_schema element_site list_site"
-        have first: "(element_site,Pair_Term (f 0) (f 1))\<in>positive_meaning P"
-          using support schema by (auto simp: context_list_step_schema_def)
-        obtain xs where tail: "f 2=data_list_term xs" "term_formed (f 0)"
-          "\<forall>x\<in>set xs. (element_site,Pair_Term (f 0) x)\<in>positive_meaning P"
-          using support[rule_format, of 1 list_site "Pattern_Pair data_x data_z"] schema
-          by (auto simp: context_list_step_schema_def)
-        show ?thesis by (intro exI[of _ "f 0"] exI[of _ "f 1#xs"])
-          (use first tail in \<open>simp add: schema context_list_step_schema_def\<close>)
-      qed
-    qed
+lemma relation_equation:
+  "(list_site,t)\<in>positive_meaning P \<longleftrightarrow> (\<exists>a. t=Pair_Term a (Payload_Term []) \<and> term_formed a) \<or>
+    (\<exists>a x y. t=Pair_Term a (Pair_Term x y) \<and> (element_site,Pair_Term a x)\<in>positive_meaning P \<and>
+      (list_site,Pair_Term a y)\<in>positive_meaning P)"
+proof
+  assume holds: "(list_site,t)\<in>positive_meaning P"
+  obtain c S where member: "(c,S)\<in>system_clause_family P list_site"
+    and rule_instance: "schema_rule_instance S (positive_meaning P) t"
+    using holds positive_variable_rule_family[OF call] by blast
+  have clause: "((list_site,c),S)\<in>system_clauses P" using member by (simp add: system_clause_member)
+  have sf: "schema_formed S" using clause system_formed by (auto simp: schema_system_formed_def)
+  have cases: "S=context_list_nil_schema \<or> S=context_list_step_schema element_site list_site"
+    using clause by (auto simp: family context_list_clauses_def)
+  have ordinary: "schema_material_premises S={}"
+    using cases by (auto simp: context_list_nil_schema_def context_list_step_schema_def)
+  obtain f where assignment: "\<forall>a\<in>schema_variables S. term_formed (f a)"
+    and shape: "t=evaluate_pattern f (schema_conclusion S)"
+    and support: "\<forall>s d p. (s,d,p)\<in>schema_premises S \<longrightarrow> (d,evaluate_pattern f p)\<in>positive_meaning P"
+    using rule_instance ordinary_schema_rule_valuation[OF sf ordinary] by blast
+  show "(\<exists>a. t=Pair_Term a (Payload_Term []) \<and> term_formed a) \<or>
+    (\<exists>a x y. t=Pair_Term a (Pair_Term x y) \<and> (element_site,Pair_Term a x)\<in>positive_meaning P \<and>
+      (list_site,Pair_Term a y)\<in>positive_meaning P)"
+    using cases
+  proof
+    assume schema: "S=context_list_nil_schema"
+    have "term_formed (f 0)"
+      using assignment by (simp add: schema context_list_nil_schema_def schema_variables_def)
+    then show ?thesis using shape by (simp add: schema context_list_nil_schema_def)
+  next
+    assume schema: "S=context_list_step_schema element_site list_site"
+    have first: "(element_site,Pair_Term (f 0) (f 1))\<in>positive_meaning P"
+      using support schema by (auto simp: context_list_step_schema_def)
+    have tail: "(list_site,Pair_Term (f 0) (f 2))\<in>positive_meaning P"
+      using support[rule_format, of 1 list_site "Pattern_Pair data_x data_z"] schema
+      by (auto simp: context_list_step_schema_def)
+    show ?thesis using shape first tail by (simp add: schema context_list_step_schema_def)
   qed
-  show ?thesis using invariant by simp
-qed
-
-theorem complete:
-  assumes "term_formed a" "\<forall>x\<in>set xs. (element_site,Pair_Term a x)\<in>positive_meaning P"
-  shows "(list_site,Pair_Term a (data_list_term xs))\<in>positive_meaning P"
-  using assms
-proof (induction xs)
-  case Nil
-  have result: "(list_site,evaluate_pattern (\<lambda>_. a) (schema_conclusion context_list_nil_schema))
-    \<in>positive_meaning P"
-    by (rule rule[where c=0])
-      (use Nil.prems in \<open>auto simp: context_list_clauses_def context_list_nil_schema_def schema_variables_def\<close>)
-  show ?case using result by (simp add: context_list_nil_schema_def)
 next
-  case (Cons x xs)
-  have first: "(element_site,Pair_Term a x)\<in>positive_meaning P"
-    and tail: "(list_site,Pair_Term a (data_list_term xs))\<in>positive_meaning P" using Cons by auto
-  have formed: "term_formed x" "term_formed (data_list_term xs)"
-    using element_formed[OF first] schema_call_formed_target[OF positive_meaning_formed[OF tail]] by auto
-  let ?f="\<lambda>i::nat. if i=0 then a else if i=1 then x else data_list_term xs"
-  have result: "(list_site,evaluate_pattern ?f (schema_conclusion (context_list_step_schema element_site list_site)))
-    \<in>positive_meaning P"
-    by (rule rule[where c=1])
-      (use Cons.prems formed first tail in \<open>auto simp: context_list_clauses_def context_list_step_schema_def schema_variables_def\<close>)
-  show ?case using result by (simp add: context_list_step_schema_def)
+  assume "(\<exists>a. t=Pair_Term a (Payload_Term []) \<and> term_formed a) \<or>
+    (\<exists>a x y. t=Pair_Term a (Pair_Term x y) \<and> (element_site,Pair_Term a x)\<in>positive_meaning P \<and>
+      (list_site,Pair_Term a y)\<in>positive_meaning P)"
+  then show "(list_site,t)\<in>positive_meaning P"
+  proof
+    assume "\<exists>a. t=Pair_Term a (Payload_Term []) \<and> term_formed a"
+    then obtain a where t: "t=Pair_Term a (Payload_Term [])" and af: "term_formed a" by blast
+    have "(list_site,evaluate_pattern (\<lambda>_. a) (schema_conclusion context_list_nil_schema))\<in>positive_meaning P"
+      by (rule rule[where c=0])
+        (use af in \<open>auto simp: context_list_clauses_def context_list_nil_schema_def schema_variables_def\<close>)
+    then show ?thesis using t by (simp add: context_list_nil_schema_def)
+  next
+    assume "\<exists>a x y. t=Pair_Term a (Pair_Term x y) \<and> (element_site,Pair_Term a x)\<in>positive_meaning P \<and>
+      (list_site,Pair_Term a y)\<in>positive_meaning P"
+    then obtain a x y where t: "t=Pair_Term a (Pair_Term x y)"
+      and first: "(element_site,Pair_Term a x)\<in>positive_meaning P"
+      and tail: "(list_site,Pair_Term a y)\<in>positive_meaning P" by blast
+    have formed: "term_formed a" "term_formed x" "term_formed y"
+      using element_formed[OF first] schema_call_formed_target[OF positive_meaning_formed[OF tail]] by auto
+    let ?f="\<lambda>i::nat. if i=0 then a else if i=1 then x else y"
+    have "(list_site,evaluate_pattern ?f (schema_conclusion (context_list_step_schema element_site list_site)))
+        \<in>positive_meaning P"
+      by (rule rule[where c=1])
+        (use formed first tail in \<open>auto simp: context_list_clauses_def context_list_step_schema_def schema_variables_def\<close>)
+    then show ?thesis using t by (simp add: context_list_step_schema_def)
+  qed
 qed
 
-theorem exact:
-  "(list_site,t)\<in>positive_meaning P \<longleftrightarrow>
-    (\<exists>a xs. t=Pair_Term a (data_list_term xs) \<and> term_formed a \<and>
-      (\<forall>x\<in>set xs. (element_site,Pair_Term a x)\<in>positive_meaning P))"
-  using sound complete by blast
+sublocale semantics: context_list_rule_relation "positive_meaning P" element_site list_site
+  by unfold_locales (rule relation_equation)
 
-corollary lists:
-  "(list_site,Pair_Term a (data_list_term xs))\<in>positive_meaning P \<longleftrightarrow>
-    term_formed a \<and> (\<forall>x\<in>set xs. (element_site,Pair_Term a x)\<in>positive_meaning P)"
-  by (auto simp: exact data_list_term_injective)
+lemmas sound = semantics.sound
+lemmas complete = semantics.complete
+lemmas exact = semantics.exact
+lemmas lists = semantics.lists
 
 end
 

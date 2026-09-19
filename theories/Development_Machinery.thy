@@ -161,7 +161,8 @@ definition development_machinery_loop_report ::
   "development_machinery_loop_report answered=(let packet=development_selection_packet
       development_machinery_dependencies answered development_machinery_problems in
     (development_machinery_contract_packets,packet,
-     Option.bind packet (native_packet_subjects development_machinery_problems)))"
+     Option.bind packet (development_packet_problems development_machinery_dependencies answered
+       development_machinery_problems)))"
 
 lemma development_machinery_loop_report_selected:
   "snd (snd (development_machinery_loop_report answered))=development_packet_selected

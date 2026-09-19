@@ -194,4 +194,120 @@ text \<open>
   one large term, as a scope review does, searches it once for each call it reads.
 \<close>
 
+section \<open>A request demands the calls its applications premise, wherever they lead\<close>
+
+text \<open>
+  A requested call demands the calls its applications premise, and those demand theirs. Read at
+  every demanded call, this is the frontier traversal of \<open>Finite_Demanded_Closures\<close> without a
+  universe, and whenever it returns, the calls it read are closed under the program's applications
+  (\<open>finite_program_call_closure_closed\<close>), so evaluating over them answers every request by its
+  positive meaning. The term demand is not needed to bound it: a program whose premises call only on
+  components of the requested arguments stays inside the term demand, and there the traversal is the
+  one bounded by it (\<open>finite_program_call_closure_term\<close>); a program whose premises pair components
+  into new arguments, as every definition that carries a context through a recursion does, is
+  followed to exactly the calls it demands. A program whose demanded calls are infinite never
+  returns; the closure is then the requests alone, and no evaluation over it is available.
+\<close>
+
+definition finite_program_call_readings where
+  "finite_program_call_readings P R=finite_demanded_readings (\<lambda>q. finite_program_applications P {|q|})
+    finite_application_premise_calls R"
+
+definition finite_program_call_closure where
+  "finite_program_call_closure P R=(case finite_program_call_readings P R of None \<Rightarrow> R | Some (S,A) \<Rightarrow> S)"
+
+lemma finite_program_call_closure_requests: "R |\<subseteq>| finite_program_call_closure P R"
+proof (cases "finite_program_call_readings P R")
+  case None
+  then show ?thesis by (simp add: finite_program_call_closure_def)
+next
+  case (Some r)
+  obtain S A where r: "r=(S,A)" by (cases r)
+  have "R |\<subseteq>| S"
+    by (rule finite_demanded_readings_closed(1)[OF Some[unfolded finite_program_call_readings_def r]])
+  then show ?thesis by (simp add: finite_program_call_closure_def Some r)
+qed
+
+theorem finite_program_call_closure_closed:
+  assumes available: "finite_program_call_readings P R=Some (S,A)"
+  shows "finite_program_demand_closed P (finite_program_call_closure P R)"
+proof -
+  have D: "finite_program_call_closure P R=S" by (simp add: finite_program_call_closure_def available)
+  have closed: "e |\<in>| S"
+    if "q |\<in>| S" "x |\<in>| finite_program_applications P {|q|}" "e |\<in>| finite_application_premise_calls x" for q x e
+    by (rule finite_demanded_readings_closed(2)[OF available[unfolded finite_program_call_readings_def] that])
+  have demanded_premises: "fimage snd H |\<subseteq>| S"
+    if member: "(d,c,t,V,H) |\<in>| finite_program_applications P S" for d c t V H
+  proof (rule fsubsetI)
+    fix e assume called: "e |\<in>| fimage snd H"
+    have site: "(d,t) |\<in>| S" using member by (simp add: finite_program_application_member)
+    have read: "(d,c,t,V,H) |\<in>| finite_program_applications P {|(d,t)|}"
+      using member by (simp add: finite_program_application_member)
+    show "e |\<in>| S"
+      by (rule closed[OF site read]) (use called in \<open>simp add: finite_application_premise_calls_def\<close>)
+  qed
+  show ?thesis
+    unfolding D finite_program_demand_closed_def finite_program_rule_table_def
+    using demanded_premises by force
+qed
+
+theorem finite_program_call_closure_term:
+  assumes closed: "finite_program_demand_closed P (finite_program_term_demand P T)"
+    and requests: "R |\<subseteq>| finite_program_term_demand P T"
+  shows "finite_program_call_closure P R=finite_program_demanded_calls P T R"
+proof -
+  let ?U="finite_program_term_demand P T"
+  have universe: "e |\<in>| ?U"
+    if site: "d |\<in>| ?U" and read: "x |\<in>| finite_program_applications P {|d|}"
+      and premise: "e |\<in>| finite_application_premise_calls x" for d x e
+  proof -
+    obtain d0 c t V H where shape: "x=(d0,c,t,V,H)" by (cases x) auto
+    have application: "x |\<in>| finite_program_applications P ?U"
+      using read finite_program_applications_call[OF site] by blast
+    have rule: "((d0,t),H) |\<in>| finite_program_rule_table P ?U"
+      unfolding finite_program_rule_table_def using application by (force simp: shape)
+    have "fimage snd H |\<subseteq>| ?U"
+      using fbspec[OF closed[unfolded finite_program_demand_closed_def] rule] by simp
+    then show ?thesis using premise by (auto simp: shape finite_application_premise_calls_def)
+  qed
+  have read: "(\<lambda>q. if q |\<in>| ?U then finite_program_applications P {|q|} else {||})=
+      finite_call_applications_within P ?U"
+    by (rule ext) (simp only: finite_call_applications_within_def)
+  have readings: "finite_program_call_readings P R=
+      finite_demanded_readings (finite_call_applications_within P ?U) finite_application_premise_calls R"
+    unfolding finite_program_call_readings_def read[symmetric]
+    by (rule finite_demanded_readings_within[OF requests universe])
+  show ?thesis
+    by (simp add: finite_program_call_closure_def readings finite_program_demanded_calls_def
+      finite_demanded_readings_exact[OF finite_call_applications_within_universe])
+qed
+
+theorem finite_program_call_closure_ready:
+  assumes ready: "finite_program_evaluation_ready P (finite_program_term_demand P T)"
+    and requests: "R |\<subseteq>| finite_program_term_demand P T"
+  shows "finite_program_evaluation_ready P (finite_program_call_closure P R)"
+proof -
+  have closed: "finite_program_demand_closed P (finite_program_term_demand P T)"
+    using ready by (simp add: finite_program_evaluation_ready_def)
+  show ?thesis
+    unfolding finite_program_call_closure_term[OF closed requests]
+    by (rule finite_program_demanded_calls_ready[OF ready requests])
+qed
+
+theorem finite_program_call_closure_available_ready:
+  assumes formed: "finite_system_formed P"
+    and covered: "finite_program_head_covered P (finite_program_call_closure P R)"
+    and available: "finite_program_call_readings P R=Some (S,A)"
+  shows "finite_program_evaluation_ready P (finite_program_call_closure P R)"
+  unfolding finite_program_evaluation_ready_def
+  using formed covered finite_program_call_closure_closed[OF available] by blast
+
+text \<open>
+  Wherever the term demand of the requested arguments is ready, the calls the requests demand are
+  the ones the bounded traversal read, so every evaluation that was available over them is available
+  and unchanged; wherever the traversal returns on a program whose clauses bind every variable in
+  their heads, the evaluation over what it read is available, including where the term demand was
+  never closed.
+\<close>
+
 end

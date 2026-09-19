@@ -1775,3 +1775,49 @@ Open: the selection question still admits a table of computed readiness; it is n
 program on its actual subjects, which needs the program installed as a native package (the executable
 compilation of an ordinary finite program) and the question's candidates presented as the program's
 arguments. The choice of this batch was made outside the loop and is a residual.
+
+
+## The selection question evaluates native readiness — 2026-09-19
+
+The next step of the order of "Native definitions are normative": the loop's first native definition decides
+which problems are taken, instead of a table of its HOL counterpart's results.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| The selection question admits a ground table of computed readiness: its facet is the positions of the ready problems, so the question states its answers. | Each candidate of the question is a problem's row (its key, its status as structure, and its decompositions as lists of premise keys) together with the table of the rows its settledness reads, and the only condition is the native readiness program installed as a condition of its own (`native_readiness_condition`). An admitted candidate is a ready problem (`development_selected_ready`) because on every presentation the native readiness of a row with its table is the development's readiness (`native_development_ready`, `development_readiness_presents`); nothing about readiness is supplied beside the question. |
+| The question's subject carries the development's whole table of rows, and every candidate is judged against it (impl-26's route, measured). | A reading whose result depends on other subjects is not local, and carrying that dependence in the subject made every call of every candidate carry the whole table: the machinery's selection took 89.6 s, 90.8 s of the stages in the observations. A candidate now carries exactly the rows its reading can reach, the answered problems reachable from its premises through answered problems (an open premise ends settlement whether its row is present or not), computed once as the transitive closure of the answered-premise edges (`development_readiness_closure`); the question's subject is empty. |
+| Native readiness is built on the library's selection of an occurrence from a data list, whose recognition of data goes through a material premise. | Readiness is composed of native collection notions at its own sites, every and some element of a list in a context and the value a keyed table holds (`Native_Collection_Programs`), each a family of ordinary rules over native coordinates whose conclusion binds every variable its premises use, with its local contract proved once (`native_rule_family`), and of three rules of its own: settlement, an answered row, readiness. The status of a problem is structure of its row, a leaf when answered and a pair of leaves when open. The program is closed, has no material premise and states no octet but the empty payload, so by the payload criterion it reads no octet as structure; problems are compared only for equality. |
+| Every element of a list in a context is checked by the library's context-list profile, stated for programs over natural coordinates. | The notion is stated once over any relation satisfying its recursion (`context_list_rule_relation`); the library's profile and the native family each establish the recursion for their own clauses and share the list semantics, so the argument is not repeated at the second coordinate type. |
+| A native question pairs the empty problem with each candidate through a ground program of rows, and a condition is the ground program of a facet's rows. | A question has a subject and a scope (`finite_subject_question`): the scope is a native program holding of any subject paired with each candidate, one rule per candidate whose premise is the guard source's universal recognizer, so a question states its candidates and never restates its subject; a condition is any native program installed beside the guard source and read at one of its entries (`finite_program_condition`), of which the ground condition of a facet and the scope critic are instances, and a program of its own is installed with the guard source (`finite_standalone_condition`). Every earlier question is the question of the empty subject. |
+| A stage evaluates the calls of the term demand of its arguments. | A program whose premises pair components into new arguments, as every definition carrying a context through a recursion does, demands calls outside the term demand, and the stage then had no evaluation: the native selection question was admitted nowhere. The stage demand is the closure of its requests under the premises of their applications (`finite_program_call_closure`), read by the frontier traversal without a universe (`finite_demanded_readings_closed`); where the term demand is closed the closure is the calls it bounded before (`finite_program_call_closure_term`), so every existing stage evaluates the same calls. |
+
+Evidence: on probes of the base heap the native selection returns the same problems as the reflected
+table on the seed, the machinery and a chain control, the seed's in 0.059 seconds (0.020 for the table) and the
+machinery's in 0.647 (0.203); carrying the whole table in the question's subject had taken 89.6 seconds on the
+machinery. The first check of the batch proved the 969 changed and dependent theories in 392 seconds (the list
+profile alone has 964 dependents), and the generated code of the seed and machinery modules did not compile: a
+rule without a site of its own is a polymorphic value, which the generated program could not use at the site type
+of its use, so its code is inlined where it is used, as the candidates had it and the installation had lost. The
+check that advanced the base to `.build/check-20260919ae` proved the 87 changed and dependent theories in 159
+seconds and executed every native-question recipe with every stage exiting normally. The seed recipe changed only
+its loop word, which presents the selection packet; every later word (verification, succession, publication,
+native answers) is equal, since the same ten problems are selected. The machinery recipe's five words changed,
+since its state is the loop's own notions, which the batch redefines: the state now holds 313 names and 355
+entities from 65 roots, posing 65 residual problems, 36 of them ready with nothing answered. The steering and
+source-development recipes changed the words of their stages with a nonempty question, which is now built through
+the scope program; on probes of the earlier and the new base their decisions are identical (the full scope admits
+producer 0 alone, one question admits 0 and 8, the empty scope poses no question), and so is every subsequent
+steered result and every source-development admission. On a probe of the new base the native selection admits
+exactly the development's ready problems, 10 of 10 on the seed and 36 of 65 on the machinery. The words were
+recorded, and the confirming check executed the six native-question recipes again with every word equal
+and was retained, with 177 tool and 35 kernel tests passing. Replaying the sixteen retained answers reconstructed
+fifteen with every word equal and reported the adopted walk as the published state's unchanged answer.
+
+Open: the scope states its candidates literally, so by the payload criterion the scope program reads the
+octets of the problems' binary positions as structure while the decision reads none; identity of problems is
+carried by those octets, and its structural form (problems as atoms, keys as citations) belongs to the tasks of
+"Structure is explicit". A candidate's table is searched by a linear walk, so a long chain of answered premises
+costs quadratic calls (a chain of 32 problems, half answered: 3.0 s); a keyed structure presented as a native
+notion is the structural way to remove it. The verdict of a kind and request construction are the next native
+definitions. The choice of this batch, and of the candidate's table as the locality of readiness, were made
+outside the loop and are residuals.

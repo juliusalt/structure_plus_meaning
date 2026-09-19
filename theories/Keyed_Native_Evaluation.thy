@@ -210,7 +210,7 @@ lemma evaluate_workflow_stage_keyed_code [code]:
     | Some ys \<Rightarrow> (case finite_native_source (workflow_source S)
         (workflow_source_use S) (workflow_source_root S) of None \<Rightarrow> None
       | Some P \<Rightarrow> if workflow_entry S |\<notin>| finite_system_definitions P then None else
-        let D=finite_program_demanded_calls P (fset_of_list (map (Finite_Pair x) ys))
+        let D=finite_program_call_closure P
           (fimage (Pair (workflow_entry S)) (fset_of_list (map (Finite_Pair x) ys))) in
         map_option (\<lambda>(A,T). (P,D,A,T,
           filter (\<lambda>y. (workflow_entry S,Finite_Pair x y) |\<in>| A) ys))
@@ -222,7 +222,7 @@ lemma workflow_stage_reference_keyed_code [code]:
     | Some ys \<Rightarrow> (case finite_native_source (workflow_source S)
         (workflow_source_use S) (workflow_source_root S) of None \<Rightarrow> None
       | Some P \<Rightarrow> if workflow_entry S |\<notin>| finite_system_definitions P then None else
-        let D=finite_program_demanded_calls P (fset_of_list (map (Finite_Pair x) ys))
+        let D=finite_program_call_closure P
           (fimage (Pair (workflow_entry S)) (fset_of_list (map (Finite_Pair x) ys))) in
         map_option (\<lambda>A. filter (\<lambda>y. (workflow_entry S,Finite_Pair x y) |\<in>| A) ys)
           (keyed_program_evaluation native_call_key native_call_unkey P D)))"
@@ -240,7 +240,7 @@ lemma workflow_stage_evidence_keyed_code [code]:
     (case workflow_scope_result S input of None \<Rightarrow> False | Some scope \<Rightarrow>
       finite_native_source (workflow_source S) (workflow_source_use S) (workflow_source_root S)=Some P \<and>
       workflow_entry S |\<in>| finite_system_definitions P \<and>
-      keyed_equal native_call_key D (finite_program_demanded_calls P (fset_of_list (map (Finite_Pair input) scope))
+      keyed_equal native_call_key D (finite_program_call_closure P
         (fimage (Pair (workflow_entry S)) (fset_of_list (map (Finite_Pair input) scope)))) \<and>
       keyed_program_evaluation native_call_key native_call_unkey P D=Some A \<and>
       keyed_equal native_call_key (fimage fst T) A \<and> finite_inspection_rows_hold (finite_proof_inspection P T) \<and>

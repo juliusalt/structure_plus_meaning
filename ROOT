@@ -1588,6 +1588,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Native_Workflow_Execution_Base
     Native_Workflow_Execution
     Factor_Development_Criterion_Sources
+    Native_Collection_Programs
     Factor_Finite_Development_Questions
     Factor_Source_Development_Admission
     Factor_Source_Development_Cases

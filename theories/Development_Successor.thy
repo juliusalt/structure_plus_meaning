@@ -223,7 +223,7 @@ definition development_loop_selection :: "development_loop \<Rightarrow> (develo
     case development_selection_question D answered ps of None \<Rightarrow> None
     | Some Q \<Rightarrow> (let packet=native_development_packet Q in
         map_option (\<lambda>xs. ((S,ps,D,answered,history@[Development_Selection_Record packet xs]),xs))
-          (native_packet_subjects ps packet)))"
+          (development_packet_problems D answered ps packet)))"
 
 theorem development_loop_selection_ready:
   assumes selection: "development_loop_selection (S,ps,D,answered,history)=Some (L',xs)" and member: "p\<in>set xs"
@@ -231,12 +231,10 @@ theorem development_loop_selection_ready:
     "\<exists>packet. L'=(S,ps,D,answered,history@[Development_Selection_Record packet xs])"
 proof -
   obtain Q where question: "development_selection_question D answered ps=Some Q"
-    and admitted: "native_packet_subjects ps (native_development_packet Q)=Some xs"
+    and admitted: "development_packet_problems D answered ps (native_development_packet Q)=Some xs"
     and state: "L'=(S,ps,D,answered,history@[Development_Selection_Record (native_development_packet Q) xs])"
     using selection by (auto simp: development_loop_selection_def Let_def split: option.splits)
-  have "native_admitted_subjects ps (development_selection_question D answered ps) (construct_native_development Q)=Some xs"
-    using admitted by (simp add: native_packet_subjects_admitted question)
-  then show "p\<in>set ps \<and> development_ready D answered p" by (rule development_selected_ready[OF _ member])
+  show "p\<in>set ps \<and> development_ready D answered p" by (rule development_packet_problems_ready[OF question admitted member])
   show "\<exists>packet. L'=(S,ps,D,answered,history@[Development_Selection_Record packet xs])" using state by blast
 qed
 

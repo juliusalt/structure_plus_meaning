@@ -46,7 +46,7 @@ definition workflow_stage_requests :: "native_workflow_stage \<Rightarrow> finit
 
 definition workflow_stage_demand :: "local_address option finite_native_system \<Rightarrow> native_workflow_stage \<Rightarrow>
     finite_factor_term \<Rightarrow> (local_address option definition_site \<times> finite_factor_term) fset" where
-  "workflow_stage_demand P S x=finite_program_demanded_calls P (workflow_stage_arguments S x) (workflow_stage_requests S x)"
+  "workflow_stage_demand P S x=finite_program_call_closure P (workflow_stage_requests S x)"
 
 lemma workflow_stage_demand_requests:
   assumes member: "y\<in>set (workflow_scope_values S x)"
@@ -55,7 +55,7 @@ proof -
   have requested: "(workflow_entry S,Finite_Pair x y) |\<in>| workflow_stage_requests S x"
     using member by (auto simp: workflow_stage_requests_def workflow_stage_arguments_def fset_of_list.rep_eq)
   show ?thesis
-    using finite_program_demanded_calls_requests requested
+    using finite_program_call_closure_requests requested
     by (simp only: workflow_stage_demand_def; blast)
 qed
 
@@ -75,7 +75,7 @@ lemma workflow_stage_demand_ready:
     and entry: "workflow_entry S |\<in>| finite_system_definitions P"
   shows "finite_program_evaluation_ready P (workflow_stage_demand P S x)"
   unfolding workflow_stage_demand_def
-  by (rule finite_program_demanded_calls_ready[OF ready workflow_stage_requests_demanded[OF entry]])
+  by (rule finite_program_call_closure_ready[OF ready workflow_stage_requests_demanded[OF entry]])
 
 definition evaluate_workflow_stage ::
   "native_workflow_stage \<Rightarrow> finite_factor_term \<Rightarrow> native_workflow_stage_result option" where

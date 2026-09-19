@@ -48,7 +48,7 @@ text \<open>
 
 lemma filtered_development_question_refuses_empty_subjects:
   "filtered_development_question [] condition=None"
-  by (simp add: filtered_development_question_def finite_development_question_def)
+  by (simp add: filtered_development_question_def finite_development_question_def finite_subject_question_def)
 
 lemma filtered_development_unsatisfied_facet:
   assumes "\<forall>i<length subjects. \<not>condition (subjects!i)"

@@ -31,15 +31,15 @@ definition development_steering_question_from where
       (map (development_criterion_values table nquestions) development_facets))"
 
 lemma development_steering_question_from_equation:
-  "development_steering_question_from table nquestions=(let source=finite_ground_source (map development_method_row development_methods);
+  "development_steering_question_from table nquestions=(let source=finite_development_source (map (\<lambda>m. Finite_Payload [m]) development_methods);
     cs=map (\<lambda>f. finite_ground_condition (development_criterion_rows table nquestions f)) development_facets in
     if nquestions=0 \<or> \<not>list_all (\<lambda>C. C\<noteq>None) cs then None else
       case source of None \<Rightarrow> None | Some (d,F,u) \<Rightarrow>
         Some \<lparr>development_source=F,development_source_use=u,development_source_root=[],development_generator_entry=d,
           development_problem=Finite_Payload [],development_conditions=map the cs,
           development_scope_criticism=development_scope_condition True,development_selected_facets=[]\<rparr>)"
-  by (auto simp: development_steering_question_from_def finite_development_question_def
-    finite_development_source_def finite_development_rows_def development_criterion_values_def
+  by (auto simp: development_steering_question_from_def finite_development_question_def finite_subject_question_def
+    finite_development_rows_def development_criterion_values_def
     development_criterion_rows_def development_method_row_function development_methods_def
     development_facets_def Let_def comp_def split: option.splits prod.splits if_splits)
 

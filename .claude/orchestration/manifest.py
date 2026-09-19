@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """What a base holds (its load list), and which of it has gone stale since it was loaded.
 
-  manifest.py list [WHO]       the files of that base's load list (impl, mid, impl2), one per line, by tier
-  manifest.py snapshot [impl]  record a digest of every held file (run once, after that role's load)
-  manifest.py changed [impl]   one line naming the held files that differ from that role's snapshot
-  manifest.py size [impl]      one line: files, characters, estimated tokens
+  manifest.py list [WHO]       the files of that base's load list (max, xhigh, high), one per line, by tier
+  manifest.py snapshot [WHO]   record a digest of every held file (run once, after that role's load)
+  manifest.py changed [WHO]    one line naming the held files that differ from that role's snapshot
+  manifest.py size [WHO]       one line: files, characters, estimated tokens
 
 A loaded context is append-only, so a held file is a snapshot; `changed` is
 how its holder learns which of its copies no longer match the repository.
@@ -21,7 +21,7 @@ sys.path.insert(0, HERE)
 from digest import held_text  # noqa: E402
 PROJECT = os.path.dirname(os.path.dirname(HERE))
 STATE = os.environ.get("ORCH_STATE_DIR") or os.path.join(HERE, "state")
-WHO = sys.argv[2] if len(sys.argv) > 2 else "impl"
+WHO = sys.argv[2] if len(sys.argv) > 2 else "max"
 MANIFEST = os.path.join(STATE, f"{WHO}-manifest.json")
 # characters per token measured on this project's Opus 5 transcripts, 2026-09-18 (select_base_load.py uses the same)
 RATIO = {".md": 3.05, ".txt": 3.05, ".thy": 2.46, ".py": 2.54}
@@ -34,11 +34,11 @@ LINE_LIMIT = 1800  # a Read cuts every line after 2,000 characters
 
 # One load list per base: the planner's and the knowledge base's (max), the middle one (xhigh), the implementation
 # one (high). ORCH_LOAD_LIST overrides it (base.sh exports it).
-LISTS = {"impl": "base-load-planner.txt", "mid": "base-load-mid.txt", "impl2": "base-load-impl2.txt"}
+LISTS = {"max": "base-load-max.txt", "xhigh": "base-load-xhigh.txt", "high": "base-load-high.txt"}
 
 
 def load_list():
-    return os.environ.get("ORCH_LOAD_LIST") or os.path.join(HERE, LISTS.get(WHO, "base-load-planner.txt"))
+    return os.environ.get("ORCH_LOAD_LIST") or os.path.join(HERE, LISTS.get(WHO, "base-load-max.txt"))
 
 
 def held_files():

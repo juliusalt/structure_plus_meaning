@@ -1,6 +1,6 @@
 #!/bin/sh
 # The orchestration daemon: once a minute it runs watchdog.py (the sessions, what is held warm for consultation, then
-# the dispatch), and it keeps the sealed bases' prompt-cache entries alive: impl (the planner's base, which the
+# the dispatch), and it keeps the sealed bases' prompt-cache entries alive: max (the planner's base, which the
 # knowledge base forks) and, once the base topic has built them, mid (the middle base of task designers, investigators
 # and reviewers) and impl2 (the implementation base of implementers and fixers). A cache entry lives one TTL past its
 # last hit, and a working fork's requests count as hits on its base (measured 2026-09-18), so the gauge hook refreshes
@@ -25,7 +25,7 @@ active() { python3 -c 'import json, sys; sys.exit(0 if json.load(open(sys.argv[1
 while :; do
   "$HERE/watchdog.py" >/dev/null 2>&1
   any=0
-  for who in impl mid impl2; do
+  for who in max xhigh high; do
     [ -e "$STATE/$who-base.json" ] || continue
     any=1
     [ "$(age "$STATE/$who-base.used")" -gt "$idle_max" ] && continue

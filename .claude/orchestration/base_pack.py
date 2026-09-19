@@ -19,7 +19,7 @@ Isabelle symbols appear as glyphs, omission notes are short, layout outside
 strings is compact, the theory-name index shares prefixes and theory headers are
 compact. Lemma names stay written out. Every other variant is built for
 comparison only. Estimates use byte-per-token ratios measured on Opus 5;
-`base.sh impl status` reports the loaded context. count does not launch a model
+`base.sh max status` reports the loaded context. count does not launch a model
 or change the active base.
 """
 import argparse
@@ -694,7 +694,7 @@ def report(meta):
               f"Target: {manifest.TARGET:,} (ORCH_BASE_TARGET)" + (
                   f"; the load is about {estimate - manifest.TARGET:,} over it" if estimate > manifest.TARGET else ""),
               "The other rows are reversible notations kept for comparison; none of them is loaded.",
-              "Estimates use measured byte-per-token ratios; base.sh impl status reports the loaded context.", ""]
+              "Estimates use measured byte-per-token ratios; base.sh max status reports the loaded context.", ""]
     return "\n".join(lines)
 
 

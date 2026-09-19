@@ -167,7 +167,7 @@ class World:
 
     # ------------------------------------------------------------ state and fixtures
 
-    def base(self, who="impl", sid="base-sid"):
+    def base(self, who="max", sid="base-sid"):
         (self.state / f"{who}-base.json").write_text(json.dumps(
             {"sessionId": sid, "model": "claude-opus-5[1m]", "effort": "max", "name": f"{who}-base"}))
 
@@ -202,7 +202,7 @@ class World:
                 {"name": name, "id": f"id-{sid}", "sessionId": sid, "kind": "background", "status": status,
                  "state": "working", "cwd": str(self.project)}])
         rec = dict(dict(name=name, role=role, sid=sid, id=f"id-{sid}", state=state, model="claude-opus-5[1m]",
-                        effort="max", settings="worker-settings.json", origin="impl", started=time.time(),
+                        effort="max", settings="worker-settings.json", origin="max", started=time.time(),
                         sealed=not live), **fields)
         st = self.st() or {}
         sessions = st.get("sessions", {})

@@ -6,7 +6,7 @@ set -u
 [ "${1:-}" = "--no-attach" ] && START_NO_ATTACH=1
 HERE=$(cd "$(dirname "$0")" && pwd); PROJECT=${ORCH_PROJECT:-$(cd "$HERE/../.." && pwd)}; STATE="${ORCH_STATE_DIR:-$HERE/state}"
 cd "$PROJECT" || exit 1; mkdir -p "$STATE"
-[ -e "$STATE/impl-base.json" ] || { echo "refused: no sealed base (base.sh impl build, status, seal): every session is a fork of it"; exit 3; }
+[ -e "$STATE/max-base.json" ] || { echo "refused: no sealed base (base.sh max build, status, seal): every session is a fork of it"; exit 3; }
 rm -f "$STATE/stopped"
 "$HERE/v2.py" start
 "$HERE/warm_daemon.sh" --ensure

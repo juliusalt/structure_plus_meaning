@@ -33,19 +33,19 @@ continues (see "The owner's directions").
 
 | Role | Session | Does | Forks, effort |
 |---|---|---|---|
-| knowledge base | `kb-N` | holds what the development knows beyond the library: HANDOFF.md, the owner's words, every episode's notes; never works | the planner's base (`impl`), max |
+| knowledge base | `kb-N` | holds what the development knows beyond the library: HANDOFF.md, the owner's words, every episode's notes; never works | the planner's base (`max`), max |
 | planner | `plan-N` | an episode on a batch of events: the graph, the order, the high-level decisions, verdicts on designs and investigations, notes for the knowledge base | the knowledge base, max |
 | designer | `design-ID` | a conceptual decision, written into the plan or DECISIONS.md | the knowledge base, max |
-| task designer | `brief-ID` | a brief task: the planner's plan of a detailing, carried out as build and fix tasks, each with its review tasks | the middle base (`mid`), xhigh |
+| task designer | `brief-ID` | a brief task: the planner's plan of a detailing, carried out as build and fix tasks, each with its review tasks | the middle base (`xhigh`), xhigh |
 | investigator | `investigate-ID` | measures and finds out; findings written | the middle base, xhigh |
 | reviewer | `review-ID` | a review task: a finished build or fix judged by the review's plan; one complete verdict, a summary for the planner, follow-ups | the middle base, xhigh |
-| implementer | `implement-ID` | a written design built | the implementation base (`impl2`), high |
+| implementer | `implement-ID` | a written design built | the implementation base (`high`), high |
 | fixer | `fix-ID` | a failed check or a rejected review repaired, when the task's own session cannot take it | the implementation base, high |
 | consultation | `ask-qN` | one question answered by a fork of the consulted session | the consulted session |
 
 A fork runs at its origin's effort: an effort change invalidates the messages cache (API documentation, prompt
 caching, invalidation hierarchy), so choosing a task's effort is choosing what its session forks. Until the base topic
-builds `mid` and `impl2`, their roles fork the present base at max. Each role's first message is its protocol
+builds `xhigh` and `high`, their roles fork the present base at max. Each role's first message is its protocol
 (`protocols/<role>.md`, with the shared parts `protocols/_*.md`): its name, its piece of work, the held files changed
 since the load, and the rules it works under. The base's system prompt describes the v1 implementer; every protocol
 names what of it does not apply, and the hooks behave exactly as the protocols say.
@@ -229,7 +229,7 @@ fork's first request until its tools have loaded.
 
 ## How the base is loaded
 
-`base.sh impl build` (also `build-packed`) runs `base_pack.py build`: it freezes every file of the load list as
+`base.sh max build` (also `build-packed`) runs `base_pack.py build`: it freezes every file of the load list as
 its digest, checks that each digest can be restored byte for byte, and splits the bundle into chunks of at most
 120,000 bytes: a Bash result is shown whole up to `bashOutputMaxChars` (128,000 characters, set in every settings file;
 Claude Code's default is 30,000, past which it saves the output to a file and shows a preview), which does not enter
@@ -250,7 +250,7 @@ must be identical for a fork to read the base from cache. A bare `claude --bg --
 keeps them: a woken lean session listed the same tools and read its whole prefix from cache (verified 2026-09-19).
 
 Verified 2026-09-19 through the real scripts with the real model, effort and flags: a small packed base built by
-`base.sh impl build` loaded through Bash, `check-load` accepted its transcript, and a fork started by the v1
+`base.sh max build` loaded through Bash, `check-load` accepted its transcript, and a fork started by the v1
 launcher read it from cache on its first request, `cache_read=20062 cache_write=97` against a base context of
 20,064.
 
@@ -258,7 +258,7 @@ launcher read it from cache on its first request, `cache_read=20062 cache_write=
 transcript and the final `LOADED <pack id>` after them; a model's claim or a context size is not enough. Claude
 Code stores a Bash result without its trailing newline, so the chunk envelopes are matched without it
 (verified 2026-09-19 with a real two-chunk load; the earlier exact match found none). A packed base is not
-extended: change the list and build again. `base.sh impl build-files` is the older loader, in which the session
+extended: change the list and build again. `base.sh max build-files` is the older loader, in which the session
 reads every listed file with the Read tool; its printed list carries the tier comments.
 
 Every pack also holds the other combinations of layers for comparison, including the plain bundle and the fact
@@ -378,7 +378,7 @@ estimate of 699K, and Fable tokenized the same material to within a thousand tok
 | `session_row.py`, `session_fork_check.py` | a named session's listing row; whether a fork's first request read its origin from cache (logged by `v2.py`) |
 | `efficiency.py` | how each session spent its window and what it produced, by role |
 | `base.sh`, `base_pack.py`, `base-settings.json` | pack the list, load it chunk by chunk, check the load, seal, warm and drop the base; `pack_notation.py` holds the comparison notations; `base-bootstrap.txt` belongs to `build-files` |
-| `base-load-planner.txt`, `base-load-mid.txt`, `base-load-impl2.txt` | the load list of each base: the planner's and the knowledge base's (max), the middle one (xhigh), the implementation one (high); `notes/bases-design.md` is why each holds what it holds |
+| `base-load-max.txt`, `base-load-xhigh.txt`, `base-load-high.txt` | the load list of each base: the planner's and the knowledge base's (max), the middle one (xhigh), the implementation one (high); `notes/bases-design.md` is why each holds what it holds |
 | `library-prompt.md` | the system prompt of every base, which every fork inherits: the standing goal, what the session holds, the settled distinctions, the owner, the harness |
 | `select_base_load.py`, `idea_candidates.py`, `idea-candidates.md`, `manifest.py`, `digest.py` | the lists' generated tiers and indexes, the owner's curation table, the snapshot that names held files changed since the load, the statement digests |
 | `owner-ledger.md` | the owner's directions verbatim, and open questions with the provisional choice made |

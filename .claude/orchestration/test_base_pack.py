@@ -390,19 +390,19 @@ else:
                        ORCH_STATE_DIR=str(state), BASE_PACK_DIR=str(directory),
                        BASE_NAME="packed-test", PACK_TEST_AGENT=str(root / "agent.json"),
                        PACK_TEST_ARGS=str(root / "args.json"))
-            result = subprocess.run(["sh", str(p.HERE / "base.sh"), "impl", "build-packed"],
+            result = subprocess.run(["sh", str(p.HERE / "base.sh"), "max", "build-packed"],
                                     env=env, capture_output=True, text=True, timeout=15)
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-            record = json.loads((state / "impl-base-building.json").read_text())
+            record = json.loads((state / "max-base-building.json").read_text())
             self.assertEqual(record["pack"], str(directory))
             self.assertEqual(record["name"], "packed-test")
             args = json.loads((root / "args.json").read_text())
             self.assertIn("emit", args[-1])
             self.assertIn(p.load(directory)["id"], args[-1])
-            self.assertFalse((state / "impl-base.json").exists())
-            (state / "impl-base.json").write_text(json.dumps(record))
+            self.assertFalse((state / "max-base.json").exists())
+            (state / "max-base.json").write_text(json.dumps(record))
             before = (root / "args.json").read_text()
-            extension = subprocess.run(["sh", str(p.HERE / "base.sh"), "impl", "extend", str(fake)],
+            extension = subprocess.run(["sh", str(p.HERE / "base.sh"), "max", "extend", str(fake)],
                                        env=env, capture_output=True, text=True, timeout=5)
             self.assertEqual(extension.returncode, 3)
             self.assertIn("frozen", extension.stdout)

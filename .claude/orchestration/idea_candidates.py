@@ -41,7 +41,7 @@ def tok(n):
     p = os.path.join(PROJECT, "theories", n + ".thy")  # as held: statements, without proofs
     return len(held_text(p)[0].encode()) / 2.46 / 1000 if os.path.exists(p) else 0
 held = set()
-for ln in open(os.path.join(HERE, "base-load-planner.txt")):
+for ln in open(os.path.join(HERE, "base-load-max.txt")):
     m = re.match(r"theories/([A-Za-z_0-9]+)\.thy", ln.strip())
     if m:
         held.add(m.group(1))

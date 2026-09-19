@@ -101,8 +101,8 @@ def main():
               + (f", {len(st['notes'])} notes pending" if st["notes"] else ""))
         if kb.get("kb_state") == "sealed" and not st.get("kb_building") and ctx > v2.KB_MAX - v2.KB_MARGIN:
             print("ATTENTION the knowledge base loads near its limit even fresh: condensing HANDOFF.md is asked of the "
-                  "planner, and a base rebuild (yours: base.sh impl build, status, seal) takes in what the documents "
-                  "hold; " + v2.stale("impl"))
+                  "planner, and a base rebuild (yours: base.sh max build, status, seal) takes in what the documents "
+                  "hold; " + v2.stale("max"))
     elif not st.get("kb_building"):
         print("ATTENTION no knowledge base (the dispatch builds one)")
     for label, roles, fix in (("planner", {"planner"}, False), ("producing", v2.PRODUCING, False),

@@ -3,8 +3,9 @@
 # (`--resume <base> --fork-session`): they start with the base's whole context read from the prompt cache
 # instead of re-reading and re-writing it, and are discarded when full. Sealing (stopping) the base keeps
 # its prefix fixed, and the keep-warm daemon keeps its cache entry alive between forks.
-# The three bases: impl (the planner and the knowledge base, max, base-load-planner.txt), mid (designer, task designer,
-# investigator, reviewer, xhigh, base-load-mid.txt) and impl2 (implementer, fixer, high, base-load-impl2.txt); each
+# The three bases, named by their effort: max (the planner and the knowledge base, base-load-max.txt), xhigh
+# (designer, task designer,
+# investigator, reviewer, xhigh, base-load-xhigh.txt) and impl2 (implementer, fixer, high, base-load-high.txt); each
 # carries library-prompt.md as its system prompt, which every fork inherits.
 #   base.sh WHO build           freeze the base's load list into a verified pack and start loading it in a background
 #                               session, chunk by chunk through Bash (returns at once); BASE_PACK_DIR can name an
@@ -23,10 +24,10 @@ HERE=$(cd "$(dirname "$0")" && pwd); PROJECT=$(cd "$HERE/../.." && pwd); STATE="
 cd "$PROJECT" || exit 1; mkdir -p "$STATE"
 who=${1:-}; cmd=${2:-}
 case "$who" in
-  impl)  name=${BASE_NAME:-impl-base};  effort=${BASE_EFFORT:-max};   list=base-load-planner.txt ;;
-  mid)   name=${BASE_NAME:-mid-base};   effort=${BASE_EFFORT:-xhigh}; list=base-load-mid.txt ;;
-  impl2) name=${BASE_NAME:-impl2-base}; effort=${BASE_EFFORT:-high};  list=base-load-impl2.txt ;;
-  *) echo "usage: base.sh impl|mid|impl2 pack|build|build-files|status|seal|extend <file>|warm|drop" >&2; exit 2 ;;
+  max)   name=${BASE_NAME:-max-base};   effort=${BASE_EFFORT:-max};   list=base-load-max.txt ;;
+  xhigh) name=${BASE_NAME:-xhigh-base}; effort=${BASE_EFFORT:-xhigh}; list=base-load-xhigh.txt ;;
+  high)  name=${BASE_NAME:-high-base};  effort=${BASE_EFFORT:-high};  list=base-load-high.txt ;;
+  *) echo "usage: base.sh max|xhigh|high pack|build|build-files|status|seal|extend <file>|warm|drop" >&2; exit 2 ;;
 esac
 model=${BASE_MODEL:-claude-opus-5[1m]}
 role="$HERE/library-prompt.md"  # one role-neutral system prompt for every base; each fork's first message says its role
@@ -138,5 +139,5 @@ PY
     case "$result" in OK*) touch "$STATE/$who-base.hit"; rm -f "$STATE/$who-base.miss" ;; MISS*) touch "$STATE/$who-base.hit"; echo x >> "$STATE/$who-base.miss" ;; esac
     echo "$(date +%Y-%m-%dT%H:%M:%S) warm $who: $result" ;;
   drop) rm -f "$rec" "$building" "$STATE/$who-manifest.json" "$STATE/$who-base.hit" "$STATE/$who-base.used" "$STATE/$who-base.miss"; echo "$who base forgotten; live sessions start plain" ;;
-  *) echo "usage: base.sh impl pack|build|build-files|status|seal|extend <file>|warm|drop" >&2; exit 2 ;;
+  *) echo "usage: base.sh max pack|build|build-files|status|seal|extend <file>|warm|drop" >&2; exit 2 ;;
 esac

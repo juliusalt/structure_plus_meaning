@@ -18,7 +18,7 @@ class GaugeTests(unittest.TestCase):
         self.w.kb()
         self.w.session("plan-1", "planner", "p1", origin="kb-1", settings="planner-settings.json")
         self.w.session("implement-4", "implementer", "w4", task="4")
-        self.w.session("review-3", "reviewer", "r3", task="3", origin="mid")
+        self.w.session("review-3", "reviewer", "r3", task="3", origin="xhigh")
         self.w.session("kb-2", "kb", "k2")
 
     def tearDown(self):
@@ -86,10 +86,10 @@ class GaugeTests(unittest.TestCase):
         old = time.time() - 3000
         for name in ("plan-1", "kb-1"):
             self.w.hit(name, age=3000)
-        (self.w.state / "impl-base.hit").write_text("")
-        os.utime(self.w.state / "impl-base.hit", (old, old))
+        (self.w.state / "max-base.hit").write_text("")
+        os.utime(self.w.state / "max-base.hit", (old, old))
         self.gauge("p1")
-        for path in ("hits/plan-1", "hits/kb-1", "impl-base.hit"):
+        for path in ("hits/plan-1", "hits/kb-1", "max-base.hit"):
             self.assertGreater((self.w.state / path).stat().st_mtime, old + 100, path)
 
     def test_a_session_ends_its_turn_only_when_its_piece_of_work_has_ended_or_it_waits(self):

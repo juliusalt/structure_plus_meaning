@@ -157,12 +157,12 @@ class InProcessTests(unittest.TestCase):
             v2._leave = real
 
     def test_warmth_follows_the_last_hit_down_the_origins(self):
-        self.world.session("kb-1", "kb", "k", origin="impl", warm=False)
+        self.world.session("kb-1", "kb", "k", origin="max", warm=False)
         self.world.session("ask-q1", "consultant", "a", origin="kb-1", warm=False)
         self.assertFalse(v2.warm("kb-1"))
         v2.hit_chain("ask-q1")
         self.assertTrue(v2.warm("kb-1") and v2.warm("ask-q1"))
-        self.assertTrue((self.world.state / "impl-base.hit").exists())
+        self.assertTrue((self.world.state / "max-base.hit").exists())
         self.world.hit("kb-1", age=v2.WARM_MAX + 5)
         self.assertFalse(v2.warm("kb-1"))
 
@@ -248,7 +248,7 @@ class PlanningTests(Flow):
         self.assertEqual(self.as_("plan-1", "queue", "1", "2"), "queued")
         # the queue dispatches: task 1, a build, to the producing slot; task 2, a brief task, to a task designer
         (impl,) = self.forks("implement-")
-        self.assertEqual(impl[impl.index("--resume") + 1], "base-sid")  # impl2 falls back to the present base
+        self.assertEqual(impl[impl.index("--resume") + 1], "base-sid")  # the high base falls back to the max one
         self.assertIn("Deliverable: `theories/Ready.thy`", impl[-1])
         (brief,) = self.forks("brief-")
         self.assertIn("Reach", brief[-1])
@@ -308,12 +308,12 @@ class PlanningTests(Flow):
         self.assertIn("The planning episode plan-1 is gone before it ended", again[-1])
 
     def test_a_designer_forks_the_middle_base_and_gathers_the_handoff(self):
-        self.w.base("mid", sid="mid-sid")
+        self.w.base("xhigh", sid="xhigh-sid")
         self.w.task("4", description=BRIEF.replace("Kind: build", "Kind: design"))
         self.w.set_st(queue=["4"])
         self.w.v2("dispatch")
         (design,) = self.forks("design-")
-        self.assertEqual(design[design.index("--resume") + 1], "mid-sid")
+        self.assertEqual(design[design.index("--resume") + 1], "xhigh-sid")
         self.assertTrue(design[design.index("--settings") + 1].endswith("worker-settings.json"))
         self.assertIn("Open your first gather with HANDOFF.md", design[-1])
 

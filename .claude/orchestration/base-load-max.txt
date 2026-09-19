@@ -1,15 +1,16 @@
-# DRAFT (2026-09-19, revised after the owner's answers): the middle base's load list (`mid`, xhigh: designer, task
-# designer, investigator, reviewer): design B of notes/bases-design.md, not in use; the owner builds the base. Ordered
-# from reference to direction: what exists, the founding theories as signatures, the central ideas' statements, the
-# working frontier as definitions, the check and measurement tools, then the decisions by name, the reasoning
-# inventory, the plan, and last the owner's words and the operating rules. Measured by a real pack: 581K with the plan
-# and REASONING_REUSE.md as they are, about 523K once they are condensed (the owner's aim: about 530K). In the layered
-# design (section 8) the tiers up to the central ideas are the stable reference and the rest, with HANDOFF.md before
-# the owner's words, is the frontier layer. The frontier is re-measured at each build from the sessions of the roles
-# that use it. Comments are curation notes; they never reach the loaded text.
+# DRAFT (2026-09-19, revised after the owner's answers): the load list of the planner's and the knowledge base's
+# base (`max`, max): design A″ of notes/bases-design.md with the founding theories at definitions (the owner's
+# choice), not in use; the owner builds the base. Ordered from reference to direction, since the most recent tokens
+# weigh most: what exists, the founding theories as definitions and the central ideas' statements; then the decisions
+# by name, the reasoning inventory, the plan, and last the owner's words and the operating rules. The knowledge base's
+# own load (HANDOFF.md, the ledger, the owner's new words) follows it. Measured by a real pack: 532K with the plan and
+# REASONING_REUSE.md as they are, about 474K once they are condensed (notes/bases-design.md, section 10). In the
+# layered design (section 8) the tiers up to the central ideas are the stable reference and the rest moves into the
+# knowledge base's own load. HANDOFF.md, owner-ledger.md and state/owner-directions-new.md are never held here.
+# Comments are curation notes; they never reach the loaded text.
 # pinned: what exists — every theory source name, in ROOT order (generated from current source files; grep the map or source for content)
 .claude/orchestration/state/held/theory-names.md
-# every other founding theory, as signatures (generated: commentary, definitions, locales and the names of what is proved; one per notion of the library's vocabulary, in import order)
+# every other founding theory, as definitions (generated: commentary, definitions, locales and the names of what is proved; one per notion of the library's vocabulary, in import order)
 theories/RRA_Data_Views.thy
 theories/RRA_Environment.thy
 theories/RRA_Finite_Environments.thy
@@ -292,62 +293,6 @@ theories/RRA_Indexed_Artifact_Lookup.thy
 # pinned idea: base causes and programs
 theories/Factor_Base_Cause.thy
 theories/Factor_Base_Programs.thy
-# the working frontier (the 40 theories v1 implementers consulted most in 24 sessions; re-measure from the implementers' sessions at build time), as definitions
-theories/Development_Requests.thy
-theories/Development_Successor.thy
-theories/Development_Machinery.thy
-theories/Keyed_Native_Evaluation.thy
-theories/Development_Native_Readiness.thy
-theories/Factor_Workflow_Stage.thy
-theories/Factor_Demanded_Program_Calls.thy
-theories/Development_Native_Selection.thy
-theories/Factor_Development_Cases.thy
-theories/Development_Seed_Loop.thy
-theories/Natural_Binary_Digits.thy
-theories/Native_Collection_Programs.thy
-theories/Development_Constant_Problems.thy
-theories/Development_Refinement_Repair.thy
-theories/Factor_Development_Conditions.thy
-theories/Native_Development_Machinery.thy
-theories/Development_Certified_Generations.thy
-theories/Native_Execution_Refinements.thy
-theories/Isabelle_State_Difference.thy
-theories/Isabelle_Terms.thy
-theories/Factor_Finite_Ground_Source.thy
-theories/Filtered_Native_Questions.thy
-theories/Development_Refinement_Verification.thy
-theories/Factor_Development_Criterion_Sources.thy
-theories/Development_Policy.thy
-theories/Factor_Finite_Data_Syntax.thy
-theories/Factor_Workflow_Execution_Sharing.thy
-theories/Isabelle_Entities.thy
-theories/Factor_Native_Generation.thy
-theories/Finite_Presented_Coordinates.thy
-theories/Development_Decomposition.thy
-theories/Finite_Binary_Values.thy
-theories/Isabelle_Entity_Export.thy
-theories/Development_Constant_Verification.thy
-theories/Factor_Formation_Once_Readings.thy
-theories/Factor_Indexed_Readings.thy
-theories/Development_Definition_Verification.thy
-theories/Factor_Executable_Schemas.thy
-theories/Development_Admitted_Publication.thy
-theories/Development_Refinement_Contracts.thy
-# the check and measurement workflow's tools (docstrings, signatures, arguments)
-tools/probe_theories.py
-tools/incremental_check.py
-tools/build.py
-tools/check.py
-tools/replay_development_answers.py
-tools/development_answer.py
-tools/reconstruct_native_development_seed.py
-tools/reconstruct_native_development_machinery.py
-tools/prove_context.py
-tools/proof_contexts.py
-tools/export_proved_code.py
-tools/development_adoption.py
-tools/investigate.py
-tools/native_execution_runtime.py
 # pinned: the decisions, as an index (generated at pack time: DECISIONS.md's headings and first sentences)
 .claude/orchestration/state/held/decisions-index.md
 # pinned: the accumulated reasoning that further generalization must reuse
@@ -361,3 +306,58 @@ native_control_plan.md
 AGENTS.md
 DEVELOPMENT_WORKFLOW.md
 problems.txt
+# optional (never loaded; move a line into a pinned tier to hold it)
+theories/Development_Answer_0ccf746fe2cf.thy  # a current addition of 2026-09-18, dropped from A″: stale; the knowledge base's HANDOFF.md and gathers carry what is new
+theories/Development_Publication.thy  # a current addition of 2026-09-18, dropped from A″: stale; the knowledge base's HANDOFF.md and gathers carry what is new
+theories/Development_Seed_Publication.thy  # a current addition of 2026-09-18, dropped from A″: stale; the knowledge base's HANDOFF.md and gathers carry what is new
+theories/Factor_Demanded_Package_Readings.thy  # a current addition of 2026-09-18, dropped from A″: stale; the knowledge base's HANDOFF.md and gathers carry what is new
+theories/Finite_Demanded_Closures.thy  # a current addition of 2026-09-18, dropped from A″: stale; the knowledge base's HANDOFF.md and gathers carry what is new
+theories/RRA_Finite_Transactions.thy  # a current addition of 2026-09-18, dropped from A″: stale; the knowledge base's HANDOFF.md and gathers carry what is new
+theories/Native_Development_Seed.thy  # the implementers' measured working frontier from here, for the implementation base
+tools/probe_theories.py  # 7 sessions, 116K pulled, ~1K tokens
+theories/Ordered_Finite_Rows.thy  # 2 sessions, 14K pulled, ~1K tokens
+theories/Native_Execution_Refinements.thy  # 3 sessions, 12K pulled, ~1K tokens
+theories/Native_Control_Seed_Subject.thy  # 4 sessions, 18K pulled, ~1K tokens
+theories/Native_Control_Admitted_Selection.thy  # 2 sessions, 13K pulled, ~1K tokens
+theories/Development_Policy.thy  # 4 sessions, 20K pulled, ~1K tokens
+tools/prove_context.py  # 5 sessions, 22K pulled, ~1K tokens
+tools/development_executor.py  # 4 sessions, 5K pulled, ~1K tokens
+theories/Isabelle_Entities.thy  # 7 sessions, 45K pulled, ~7K tokens
+theories/Isabelle_Code_Equations.thy  # 3 sessions, 6K pulled, ~1K tokens
+tools/incremental_check.py  # 6 sessions, 75K pulled, ~2K tokens
+tools/reconstruct_native_development_seed.py  # 5 sessions, 21K pulled, ~1K tokens
+theories/Native_Control_Syntax_Candidate.thy  # 2 sessions, 11K pulled, ~2K tokens
+tools/check_presented_report.py  # 3 sessions, 16K pulled, ~1K tokens
+theories/Native_Control_Context_Execution.thy  # 2 sessions, 7K pulled, ~1K tokens
+tools/reconstruction.py  # 4 sessions, 16K pulled, ~1K tokens
+theories/Finite_Sorted_Set_Execution.thy  # 2 sessions, 9K pulled, ~1K tokens
+theories/Isabelle_Entity_Export.thy  # 5 sessions, 17K pulled, ~1K tokens
+theories/Finite_Set_Composition.thy  # 2 sessions, 5K pulled, ~1K tokens
+theories/Development_Problems.thy  # 4 sessions, 23K pulled, ~5K tokens
+tools/development_answer.py  # 4 sessions, 40K pulled, ~1K tokens
+tools/replay_development_answers.py  # 4 sessions, 6K pulled, ~1K tokens
+tools/check.py  # 2 sessions, 5K pulled, ~1K tokens
+theories/Isabelle_Acceptance.thy  # 3 sessions, 20K pulled, ~2K tokens
+theories/Filtered_Native_Questions.thy  # 3 sessions, 8K pulled, ~2K tokens
+tools/development_adoption.py  # 3 sessions, 13K pulled, ~1K tokens
+tools/proved_code.py  # 2 sessions, 8K pulled, ~1K tokens
+theories/Ordered_Term_Demands.thy  # 2 sessions, 2K pulled, ~1K tokens
+theories/Development_Refinement_Contracts.thy  # 3 sessions, 20K pulled, ~6K tokens
+tools/native_execution_runtime.py  # 2 sessions, 2K pulled, ~1K tokens
+tools/export_proved_code.py  # 3 sessions, 13K pulled, ~1K tokens
+tools/proof_contexts.py  # 4 sessions, 18K pulled, ~1K tokens
+theories/Isabelle_Renaming.thy  # 3 sessions, 21K pulled, ~6K tokens
+theories/Factor_Finite_Program_Applications.thy  # 2 sessions, 7K pulled, ~1K tokens
+theories/Factor_Invariant_Evaluation_Sharing.thy  # 2 sessions, 5K pulled, ~2K tokens
+theories/Development_Seed_Verification.thy  # 4 sessions, 8K pulled, ~4K tokens
+theories/Ordered_Term_Comparison.thy  # 2 sessions, 4K pulled, ~1K tokens
+theories/Development_Request_Packets.thy  # 4 sessions, 4K pulled, ~1K tokens
+tools/test_development_answer.py  # 3 sessions, 3K pulled, ~1K tokens
+tools/reconstruct_native_sources.py  # 1 sessions, 1K pulled, ~1K tokens
+THEORY_MAP.md
+DECISIONS.md
+OBLIGATIONS.md
+ADMISSION.md
+GENERALIZATION_REVIEW.md
+README.md
+plan.md

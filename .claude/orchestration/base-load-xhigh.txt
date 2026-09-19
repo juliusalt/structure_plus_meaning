@@ -1,15 +1,15 @@
-# DRAFT (2026-09-19, revised after the owner's answers): the implementation base's load list (`impl2`, high:
-# implementer, fixer): design C″ of notes/bases-design.md, not in use; the owner builds the base. No plan and no
-# reasoning inventory: a build or fix brief states what of them it rests on (protocols/_brief.md). Ordered from
-# reference to direction: what each theory holds (the theory map's index, without the theories held below), the
-# founding theories as signatures, the central ideas' statements, the working frontier's statements, the check
-# workflow's tools, and last the owner's words and the operating rules. Measured by a real pack: about 536K (482K with
-# the founding theories at the outline level, which is not built: section 7). In the layered design (section 8) the
-# tiers up to the central ideas are the stable reference and the rest is the frontier layer. Comments are curation
-# notes; they never reach the loaded text.
-# pinned: what each theory holds (generated at pack time: the first clause of its THEORY_MAP.md row, the theories this list holds left out)
-.claude/orchestration/state/held/theory-map-index.md
-# every other founding theory, as signatures (generated: commentary, each definition by its name and type, locales and the names of what is proved; one per notion of the library's vocabulary, in import order)
+# DRAFT (2026-09-19, revised after the owner's answers): the middle base's load list (`xhigh`, xhigh: designer, task
+# designer, investigator, reviewer): design B of notes/bases-design.md, not in use; the owner builds the base. Ordered
+# from reference to direction: what exists, the founding theories as signatures, the central ideas' statements, the
+# working frontier as definitions, the check and measurement tools, then the decisions by name, the reasoning
+# inventory, the plan, and last the owner's words and the operating rules. Measured by a real pack: 581K with the plan
+# and REASONING_REUSE.md as they are, about 523K once they are condensed (the owner's aim: about 530K). In the layered
+# design (section 8) the tiers up to the central ideas are the stable reference and the rest, with HANDOFF.md before
+# the owner's words, is the frontier layer. The frontier is re-measured at each build from the sessions of the roles
+# that use it. Comments are curation notes; they never reach the loaded text.
+# pinned: what exists — every theory source name, in ROOT order (generated from current source files; grep the map or source for content)
+.claude/orchestration/state/held/theory-names.md
+# every other founding theory, as signatures (generated: commentary, definitions, locales and the names of what is proved; one per notion of the library's vocabulary, in import order)
 theories/RRA_Data_Views.thy
 theories/RRA_Environment.thy
 theories/RRA_Finite_Environments.thy
@@ -292,7 +292,7 @@ theories/RRA_Indexed_Artifact_Lookup.thy
 # pinned idea: base causes and programs
 theories/Factor_Base_Cause.thy
 theories/Factor_Base_Programs.thy
-# the working frontier (the 40 theories v1 implementers consulted most in 24 sessions; re-measure from the implementers' sessions at build time), as statements
+# the working frontier (the 40 theories v1 implementers consulted most in 24 sessions; re-measure from the implementers' sessions at build time), as definitions
 theories/Development_Requests.thy
 theories/Development_Successor.thy
 theories/Development_Machinery.thy
@@ -342,6 +342,18 @@ tools/replay_development_answers.py
 tools/development_answer.py
 tools/reconstruct_native_development_seed.py
 tools/reconstruct_native_development_machinery.py
+tools/prove_context.py
+tools/proof_contexts.py
+tools/export_proved_code.py
+tools/development_adoption.py
+tools/investigate.py
+tools/native_execution_runtime.py
+# pinned: the decisions, as an index (generated at pack time: DECISIONS.md's headings and first sentences)
+.claude/orchestration/state/held/decisions-index.md
+# pinned: the accumulated reasoning that further generalization must reuse
+REASONING_REUSE.md
+# pinned: the plan (the basis of nearly every correction the first run's implementers needed)
+native_control_plan.md
 # pinned: the owner's voice and the operating rules
 .claude/orchestration/codex-owner-directions.md
 .claude/orchestration/owner-directions.md

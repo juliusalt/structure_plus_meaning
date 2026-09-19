@@ -27,7 +27,7 @@ base rebuild is the owner's (the orchestration only tells when it is due).
 1. Simulate the whole run end to end and fix what it finds: done in f4318413 (the file locks, the Isabelle limits,
    the background-job rule, queue last, the owner-episode timeout came from it). Still worth doing again after any
    change: walk `start.sh` → kb-1 → plan-1 → brief task → implementer + review tasks → check → verdicts → commit.
-2. Begin the base work with the planner/knowledge-base base (the `impl` base), aimed at about 500K: look at what its
+2. Begin the base work with the planner/knowledge-base base (the `max` base), aimed at about 500K: look at what its
    context actually is (the pack under `state/base-pack-*`, `base-load.txt`, `implementer-prompt.md` as its system
    prompt), judge whether it does what the planner, the knowledge base and the designers need, and propose
    improvements and what must be updated or integrated before the next run. The owner added: the order in which the
@@ -36,7 +36,7 @@ base rebuild is the owner's (the orchestration only tells when it is due).
 
 ## Open points to raise with the owner
 
-- `base.sh` handles only `impl`; `mid` and `impl2` need it when those bases are built.
+- `base.sh` handles only `max`; `xhigh` and `high` need it when those bases are built.
 - Unverified live: a fork of the knowledge base reading its cache with planner-settings.json's task-list variable;
   resuming a sealed non-base session and keeping it warm by forked pings; a fork of a sealed fork (a layer, the
   knowledge base) reading its cache; CLAUDE_CODE_SESSION_ID in background sessions' commands (the binary sets it for
@@ -56,7 +56,7 @@ and the options for the scheduling sentences; the condensation's mapping, part b
 Built in session 212840df (not committed): `base_pack.py` shortens `(* equations omitted: N lines *)` and its legend
 names `[signatures]`; `select_base_load.refresh_indexes` (the theory names, the decision index, and the theory map
 index without the theories the list holds) runs in `base.sh` before a new pack is frozen; the three drafts
-(`base-load-planner.txt`, `base-load-mid.txt`, `base-load-impl2.txt`) at the decided designs, each packed and
+(`base-load-max.txt`, `base-load-xhigh.txt`, `base-load-high.txt`) at the decided designs, each packed and
 verified; `library-prompt.md` for all three bases, with option (b) for the scheduling sentences;
 `protocols/_brief.md`'s rule that a build or fix brief states what of the plan and the reasoning it rests on; the
 README. 132 tests pass (`python3 -m pytest -q test_*.py` in this directory).

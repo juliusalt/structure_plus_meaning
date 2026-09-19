@@ -125,7 +125,7 @@ names of the 310 held theories, about 3K). A design task has the room its base l
 and rules last; no plan, no reasoning inventory. A build or fix brief states what of them it rests on under Decided, or
 names the section its first gather reads; a task that needs more is a design task (`protocols/_brief.md`, added).
 
-Draft lists: `base-load-planner.txt` (A″), `base-load-mid.txt` (B), `base-load-impl2.txt` (C″); each packs and verifies
+Draft lists: `base-load-max.txt` (A″), `base-load-xhigh.txt` (B), `base-load-high.txt` (C″); each packs and verifies
 as it stands (462K, 581K, 536K; A and B fall to 404K and 523K once the plan and the reasoning are condensed).
 
 ## 6. Levers, measured
@@ -212,7 +212,7 @@ every 4 to 6 commits, 8 to 10 times a day of continuous work, about 5 to 7M a da
 Rule: the harness refreshes a layer at the start of a run and when the held files changed since it was loaded reach
 20% of its tokens, checked after each commit; the knowledge base is rebuilt at its limit as before.
 
-To build: the load lists mark where the layer begins; `base.sh` builds the stable bases of `impl`, `mid` and `impl2`
+To build: the load lists mark where the layer begins; `base.sh` builds the stable bases of `max`, `xhigh` and `high`
 (each with its list, `library-prompt.md`, its model and effort) and a layer (fork the sealed stable base, load the
 layer's pack, seal, record it); `v2.py` forks a base's layer when its record exists, and the knowledge base loads A's
 layer part; `manifest.py` snapshots and reports stale files per layer, with their share; the warm daemon pings layers;
@@ -326,7 +326,7 @@ designs, packed and verified; the brief form's rule for the implementation base;
 bases; no cap on design tasks (`v2.room_of`, the brief form, the test); the condensation (section 10).
 
 To build:
-1. **The layered bases** (section 8): the lists' layer mark, `base.sh` for `impl`, `mid` and `impl2` and their layers,
+1. **The layered bases** (section 8): the lists' layer mark, `base.sh` for `max`, `xhigh` and `high` and their layers,
    `v2.py`'s forks of layers and the knowledge base's load of A's layer part, `manifest.py` per layer, the warm
    daemon, the refresh rule in the watchdog, `health.py`.
 2. **The frontier, measured anew at each layer refresh**, from the sessions of the roles that use it:

@@ -70,17 +70,17 @@ PLANNER_SECTIONS = ("Graph", "Decisions", "Delivered", "Open", "Now")
 # Roles: what a session of the role forks (a base, "kb", or for a consultation the consulted session), its settings
 # (a fork uses its origin's: the knowledge base's forks all take planner-settings.json), the prefix of its name,
 # whether it reads statements only, and whether it may edit the task graph.
-BASES = ("impl", "mid", "impl2")  # the planner's base (max), the middle base (xhigh), the implementation base (high)
-FALLBACK = {"mid": ("impl",), "impl2": ("impl",)}  # until the base topic builds them, their roles fork the present base
+BASES = ("max", "xhigh", "high")  # the planner's base (max), the middle base (xhigh), the implementation base (high)
+FALLBACK = {"xhigh": ("max",), "high": ("max",)}  # until the base topic builds them, their roles fork the present base
 ROLES = {
-    "kb": dict(origin="impl", settings="planner-settings.json", prefix="kb", statements=True, graph=False),
+    "kb": dict(origin="max", settings="planner-settings.json", prefix="kb", statements=True, graph=False),
     "planner": dict(origin="kb", settings="planner-settings.json", prefix="plan", statements=True, graph=True),
-    "designer": dict(origin="mid", settings="worker-settings.json", prefix="design", statements=False, graph=False),
-    "task-designer": dict(origin="mid", settings="planner-settings.json", prefix="brief", statements=True, graph=True),
-    "investigator": dict(origin="mid", settings="worker-settings.json", prefix="investigate", statements=False, graph=False),
-    "reviewer": dict(origin="mid", settings="worker-settings.json", prefix="review", statements=False, graph=False),
-    "implementer": dict(origin="impl2", settings="worker-settings.json", prefix="implement", statements=False, graph=False),
-    "fixer": dict(origin="impl2", settings="worker-settings.json", prefix="fix", statements=False, graph=False),
+    "designer": dict(origin="xhigh", settings="worker-settings.json", prefix="design", statements=False, graph=False),
+    "task-designer": dict(origin="xhigh", settings="planner-settings.json", prefix="brief", statements=True, graph=True),
+    "investigator": dict(origin="xhigh", settings="worker-settings.json", prefix="investigate", statements=False, graph=False),
+    "reviewer": dict(origin="xhigh", settings="worker-settings.json", prefix="review", statements=False, graph=False),
+    "implementer": dict(origin="high", settings="worker-settings.json", prefix="implement", statements=False, graph=False),
+    "fixer": dict(origin="high", settings="worker-settings.json", prefix="fix", statements=False, graph=False),
     "consultant": dict(origin=None, settings=None, prefix="ask", statements=None, graph=False),
 }
 PRODUCER = {"design": "designer", "investigate": "investigator", "build": "implementer", "fix": "fixer"}
@@ -947,7 +947,7 @@ def room_of(kind):
     gather."""
     who = ROLES[PRODUCER.get(kind) or {"brief": "task-designer", "review": "reviewer"}[kind]]["origin"]
     try:
-        who = base_record(who)[0] or "impl"
+        who = base_record(who)[0] or "max"
         context = json.load(open(os.path.join(STATE, f"{who}-base.json")))["context"]
     except (OSError, ValueError, KeyError, TypeError):
         context = 560_000  # the present base, measured 2026-09-19
@@ -1076,8 +1076,8 @@ def notes_path(kb):
 
 def kb_build():
     """A new knowledge base, forked from the planner's base: it reads what it is to hold and is sealed when it has."""
-    if not base_record("impl")[1]:
-        log("no knowledge base started: there is no sealed base (base.sh impl build, then seal)")
+    if not base_record("max")[1]:
+        log("no knowledge base started: there is no sealed base (base.sh max build, then seal)")
         return None
     owner_words()
     previous = peek()["kb"]
@@ -1087,7 +1087,7 @@ def kb_build():
 
     def prompt(name):
         # HANDOFF.md holds what outlasts a knowledge base; the notes told only its predecessor what changed
-        return render("kb", NAME=name, STALE=stale(base_record("impl")[0] or "impl"))
+        return render("kb", NAME=name, STALE=stale(base_record("max")[0] or "max"))
     name = launch("kb", key, prompt, kb_state="building", previous=previous)
     if name:
         with state() as st:
@@ -1111,7 +1111,7 @@ def kb_care():
             ctx = context_of(s["sid"])
             with state() as w:
                 w["sessions"][building].update(state="done", kb_state="sealed", context=ctx, built_context=ctx,
-                                               base_sid=(base_record("impl")[1] or {}).get("sid"))
+                                               base_sid=(base_record("max")[1] or {}).get("sid"))
                 w["kb"], w["kb_building"] = building, None
                 if ctx > KB_MAX - KB_MARGIN:
                     event(w, "the harness", f"The knowledge base {building} loads at {ctx // 1000}K, near its limit of "
@@ -1129,7 +1129,7 @@ def kb_care():
     # a successor is built while the present one still serves: once it has grown within KB_MARGIN of its limit (a fresh
     # one that loads that large is not rebuilt again), or when the owner has rebuilt the base it was forked from
     grown = ctx > KB_MAX - KB_MARGIN and ctx > built + KB_MARGIN
-    rebased = rec.get("base_sid") and rec["base_sid"] != (base_record("impl")[1] or {}).get("sid")
+    rebased = rec.get("base_sid") and rec["base_sid"] != (base_record("max")[1] or {}).get("sid")
     if not kb or rec.get("state") == "lost" or (rec.get("kb_state") == "sealed" and not warm(kb)) or grown or rebased:
         kb_build()
         return
@@ -1212,7 +1212,7 @@ def start_producer(tid):
     os.makedirs(os.path.join(BUILD, tid), exist_ok=True)
     json.dump({"task": tid, "deliverables": deliverables(brief), "drafts": f".build/tasks/{tid}/", "inputs": inputs(brief)},
               open(os.path.join(BUILD, tid, "brief.json"), "w"))
-    base = base_record(ROLES[role]["origin"])[0] or "impl"
+    base = base_record(ROLES[role]["origin"])[0] or "max"
     name = launch(role, tid, lambda name: render(role, NAME=name, ID=tid, KIND=kind, SUBJECT=task.get("subject", ""),
                                                  BRIEF=brief.strip(), STALE=stale(base)), task=tid)
     with state() as st:
@@ -1327,7 +1327,7 @@ def start_review(rid, tid):
         REVIEW=(review.get("description") or "").strip() if own else "(no review task was briefed: judge the task "
         "against its brief, step by step, then against the principles)",
         BRIEF=(task.get("description") or "").strip(), SESSION=t.get("session", "-"),
-        STALE=stale(base_record("mid")[0] or "impl"),
+        STALE=stale(base_record("xhigh")[0] or "max"),
         BEFORE=f"A previous review rejected it; its findings are in .build/tasks/{rid}/review.md. Judge those findings "
                "and whatever the fix broke; add nothing else." if r.get("verdict") == "reject" else ""),
         task=rid, reviews=tid)
@@ -1344,7 +1344,7 @@ def start_brief(tid):
     name = launch("task-designer", tid, lambda name: render(
         "task-designer", NAME=name, ID=tid, SUBJECT=task.get("subject", ""), BRIEF=(task.get("description") or "").strip(),
         WHY=(task.get("metadata") or {}).get("why", "-"), GRAPH=graph_text(), LIST=LIST,
-        STALE=stale(base_record("mid")[0] or "impl")), task=tid)
+        STALE=stale(base_record("xhigh")[0] or "max")), task=tid)
     with state() as w:
         if name:
             w["tasks"][tid].update(stage="running", session=name, role="task-designer")
@@ -1422,7 +1422,7 @@ def quick_fix():
             task = read_task(tid) or {}
             name = launch("fixer", tid, lambda name: render(
                 "fixer", NAME=name, ID=tid, BRIEF=(task.get("description") or "").strip(), WHAT=text,
-                STALE=stale(base_record("impl2")[0] or "impl")), task=tid, fix={"since": time.time()})
+                STALE=stale(base_record("high")[0] or "max")), task=tid, fix={"since": time.time()})
         with state() as w:
             w["tasks"][tid]["fixing"] = name
             if name:

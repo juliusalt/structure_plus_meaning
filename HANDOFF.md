@@ -1,4 +1,4 @@
-# Handoff — impl-22: task 1 committed; owner: native definitions are normative; next = readiness as a native definition
+# Handoff — impl-22: task 1 and native readiness (table-level contract) committed; next = readiness meets development_ready
 
 ## impl-22 session (2026-09-19, read first)
 
@@ -22,6 +22,37 @@
   `digits256.simps[of 0]`), `digits256_bound` disjunction order, the replicate split in `ordered_code_less`
   (`replicate_add`), `structural_object_fields` needs `fset_of_list.rep_eq`/`count_empty`, and the finite-member
   step in `structural_heads_at_address` (`fset_of_list.rep_eq`). Keep only if native structures need it.
+- NATIVE READINESS INSTALLED AND COMMITTED: `theories/Development_Native_Readiness.thy` (ROOT after
+  Development_Problems) with contracts `native_settled_exact` (closure `table_settled` over a `readiness_table`),
+  `native_every_settled_exact`, `native_ready_exact` (keys open + every decomposition settled). Check
+  `.build/check-20260919ab --advance-base` ACCEPTED (1 theory, 33.7 s, 177+35 tests) and RETAINED. ACTIVE BASE:
+  `.build/check-20260919ab/proof`. NEXT (in order): (1) `readiness_presents key D answered ps T A Opn` (inj key on
+  ps, keys data, D's heads/premises and answered within ps, `map fst T = map key ps`, each entry's decompositions =
+  key images of `snd ` fset H` for H in `development_decompositions D p`, set A = key ` answered, set Opn = keys of
+  unanswered ps) and `native_development_ready`: native 202 on (key p) <-> `development_ready D answered p`, via
+  `table_settled T A` <-> key ` `development_settled D answered` (both directions: table_settled.induct; and
+  `development_settled_exact` + `finite_inference_exact` induction with `inference_closure` step); (2) the
+  selection question evaluating the native program: candidates the argument terms, condition = the native
+  readiness program (not `finite_ground_condition` of computed rows), seed + machinery words change: re-record;
+  (3) audit `finite_system_payloads` of the program's dependency closure; (4) verdict and request construction
+  natively. Earlier notes on the staged definitions follow.
+- READINESS DEFINITIONS STAGED AND PROVED (probe `.build/probe-impl22-d` loaded, 5.9 s):
+  `.build/impl22/r1/Development_Native_Readiness.thy` = sites 200 (settled: every key of a list settled;
+  nil + step: select entry (q,Hs) from D [5], q member of Ans [5], select decomposition H from Hs [5], 200 on H,
+  200 on rest), 201 (context list over decompositions: `context_list_clauses 200 201`, interpretation
+  `native_decompositions: context_list_profile`), 202 (ready: p member of Open [5], entry (p,Hs) of D [5], 201 on
+  Hs). Argument of 202: Pair (Pair (Pair D Ans) Open) p; context of 200/201: Pair D Ans. Only literal: [].
+  NEXT: the CONTRACT (the verification of consistency): for an injective key into formed self-contained terms,
+  D presented as entries (key p, list of decompositions each a list of premise keys; decompositions =
+  `development_decompositions`, premises = `fimage snd`), Ans/Open the keys of answered/other problems:
+  (202, ..) in `positive_meaning native_readiness_system` <-> `development_ready D answered p`. Soundness of 200 by
+  `positive_valuation_induct` (property fixed to the one context; selection by `data_selection_exact`, key
+  injective); completeness by induction on `finite_inference` (via `development_settled_exact`,
+  `finite_inference_exact`) proving "settled p ==> for every rest with 200 on rest, 200 on key p # rest", the
+  decomposition list folded from the nil clause; steps by `ordinary_positive_valuation_step` (as
+  `bag_comparison_rule`); 201 by `native_decompositions.exact`; 202 by `native_readiness_view.view_meaning`.
+  Then the selection question's condition program = this program, candidates (D,A,Open,p); install (ROOT after
+  Development_Problems... needs Factor_Bag_Difference), check, commit.
 - NEXT BATCH (provisional, Q7): READINESS AS A NATIVE DEFINITION. Argument term = (D, A, p): D a data list of rows
   (problem key, premise-key list) with keys = `development_problem_data` terms (self-contained data), A the answered
   keys, p the candidate; everything passed as the argument so the program states no data literals (payload

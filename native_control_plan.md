@@ -1742,3 +1742,21 @@ its contract proved against the existing HOL readiness, and the selection questi
 of a kind and request construction; then problems whose subjects are native definitions, answered natively; then
 the translation of native content into Isabelle for verification. Until then the existing loop keeps posing its
 problems about HOL constants as the bootstrap loop. This revision was made outside the loop and is a residual.
+
+## Readiness is a native definition — 2026-09-19
+
+The first step of the order of the previous section.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Readiness is a HOL function (`development_ready`), and the selection question admits a table of its results. | Readiness is a native definition (`Development_Native_Readiness`): settlement, the check of every decomposition and readiness are Factor definitions whose meaning is their positive meaning, built on the existing selection of a data list. The argument carries the whole subject, the table of problem keys with their decompositions, the answered keys and the open keys, so the status of a problem is structure of the argument; the program compares keys only for equality and its own clauses state no octet but the terminator of data lists. Isabelle verifies it: on every table whose keys and decompositions are data, settlement is the least closure of the table (`native_settled_exact`) and a key is ready exactly when it is open and every premise of every one of its decompositions is settled (`native_ready_exact`). |
+
+Evidence: on a probe of the base heap the theory loads with every proof checked in 8.2 seconds. The check that advanced the base to
+`.build/check-20260919ab` proved it in 33.7 seconds, reached no recipe and was retained with 177 tool and
+35 kernel tests passing.
+
+Open: presenting the development's dependencies and answered problems as the table and proving the closure
+equal to `development_settled`, so that the native definition's contract meets the development's readiness;
+the selection question evaluating the native program on its actual subjects instead of admitting a table;
+and the payload audit of the program's whole dependency closure (the selection and data recognition it
+calls). The choice of this batch was made outside the loop and is a residual.

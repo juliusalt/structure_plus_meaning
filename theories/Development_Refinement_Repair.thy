@@ -1,5 +1,5 @@
 theory Development_Refinement_Repair
-  imports Development_Refinement_Verification
+  imports Development_Refinement_Verification Isabelle_Local_Names
 begin
 
 section \<open>A refused answer derives the extension of its request\<close>
@@ -17,22 +17,6 @@ text \<open>
   remove nothing, may state no axiom, and may define only constants the request state did not
   know. Nothing here admits the extension; it computes what must be admitted.
 \<close>
-
-subsection \<open>Renamings that fix every used position leave an entity unchanged\<close>
-
-lemma isabelle_type_rename_id: "isabelle_type_rename id T=T"
-  by (induction T) (simp_all add: map_idI)
-
-lemma isabelle_term_rename_id: "isabelle_term_rename id t=t"
-  by (induction t) (simp_all add: isabelle_type_rename_id[unfolded id_def])
-
-lemma isabelle_entity_rename_id: "isabelle_entity_rename id e=e"
-  by (cases e) (simp_all add: isabelle_term_rename_id)
-
-lemma isabelle_name_position_append:
-  "isabelle_name_position (xs@ys) n=(case isabelle_name_position xs n of Some j \<Rightarrow> Some j
-    | None \<Rightarrow> map_option ((+) (length xs)) (isabelle_name_position ys n))"
-  by (induction xs) (cases "isabelle_name_position ys n"; auto split: option.splits)+
 
 lemma isabelle_state_embedding_prefix:
   assumes distinct: "distinct names" and bound: "i<length names"
@@ -95,9 +79,6 @@ text \<open>
   defined through a constant the request state never read brings that constant's declaration
   with it, so the extension is closed exactly as far as the answer reaches.
 \<close>
-
-definition isabelle_appended_names :: "String.literal list \<Rightarrow> String.literal list \<Rightarrow> String.literal list" where
-  "isabelle_appended_names names names'=names@filter (\<lambda>n. n\<notin>set names) names'"
 
 definition development_request_extension ::
     "isabelle_rooted_context \<Rightarrow> isabelle_rooted_context \<Rightarrow> nat list \<Rightarrow> nat list \<Rightarrow> isabelle_rooted_context" where

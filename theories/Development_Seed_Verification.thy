@@ -1,5 +1,6 @@
 theory Development_Seed_Verification
   imports Development_Seed_Loop Development_Refinement_Verification Development_Successor
+    Development_Native_Answers
 begin
 
 section \<open>The verdict is exercised on answer states derived from each request\<close>
@@ -13,9 +14,10 @@ text \<open>
   equation outside the support: stating the subject's equations as axioms, dropping the
   subject's equations, stating the equation through a constant the state does not know,
   changing the equations of the other seeded subjects, and removing the subject's kernel
-  definition. The controls are the answer states `development_answer_controls` derives under the
-  code-equation reading: each is derived from the request and the state, names no position of
-  either list and selects no subject.
+  definition. The controls are native answers derived from the request and the state under the
+  code-equation reading (`development_control_answers`), applied to the seeded state as an
+  executor's answer is (`development_answer_controls`): each names no position of either list and
+  selects no subject.
 \<close>
 
 definition development_seed_controls :: "development_request \<Rightarrow> isabelle_rooted_context list" where
@@ -52,6 +54,42 @@ text \<open>
   verdict on the state its checked context defines.
 \<close>
 
+
+section \<open>The issued requests are answered natively\<close>
+
+text \<open>
+  An executor answers a request natively: its answer is the edit it makes to the request state,
+  presented with the names it uses, and it arrives as the padded word of that presentation. For every
+  issued request the restating answer is transported as its word, read back by the answer's exact
+  reader and judged by the refinement verdict on the answer state; the same word without its
+  terminating bit presents no answer and is refused. An executor's answer is judged in the same way
+  against the request named by its subject, and that request is presented to the executor natively
+  as its packet. These judgments establish that an answer is admissible for installation; whether
+  its equation holds is Isabelle's acceptance when it is installed, a request of its own.
+\<close>
+
+definition development_seed_native_answers ::
+    "development_problem fset \<Rightarrow> (development_native_judgment\<times>bool) list" where
+  "development_seed_native_answers answered=development_native_answers development_refinement_verdict
+    isabelle_code_equation_proposition development_seed_state (development_seed_requests answered)"
+
+definition development_seed_native_answers_value :: "development_problem fset \<Rightarrow> finite_factor_term" where
+  "development_seed_native_answers_value answered=
+    development_native_answers_data (development_seed_native_answers answered)"
+
+definition development_seed_native_judgment_value :: "String.literal \<Rightarrow> bool list \<Rightarrow> finite_factor_term" where
+  "development_seed_native_judgment_value n bits=development_named_native_judgment_data
+    (development_named_native_judgment development_refinement_verdict development_seed_state
+      (development_seed_requests development_seed_unanswered) n bits)"
+
+definition development_seed_native_summary ::
+    "String.literal \<Rightarrow> bool list \<Rightarrow> (bool\<times>bool\<times>nat list\<times>String.literal list\<times>nat list) option" where
+  "development_seed_native_summary n bits=development_native_summary development_refinement_verdict
+    development_seed_state (development_seed_requests development_seed_unanswered) n bits"
+
+definition development_seed_native_packet_value :: "String.literal \<Rightarrow> finite_factor_term" where
+  "development_seed_native_packet_value n=development_named_native_packet_data isabelle_code_equation_proposition
+    development_seed_state (development_seed_requests development_seed_unanswered) n"
 
 section \<open>An admitted answer moves the seeded development to its successor\<close>
 

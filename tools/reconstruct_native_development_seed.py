@@ -19,6 +19,7 @@ RECIPE = Recipe(
         Execution('presentation-verification', 'check_presented_report.py', ('--project', '{project}', '--theory', 'Native_Development_Seed', '--module', 'Native_Development_Seed', '--report', 'development_seed_verification_value', '--scope', 'development_seed_unanswered', '--workers', '4', '--timeout', '1200'), 1300),
         Execution('presentation-succession', 'check_presented_report.py', ('--project', '{project}', '--theory', 'Native_Development_Seed', '--module', 'Native_Development_Seed', '--report', 'development_seed_succession_value', '--scope', 'development_seed_unanswered', '--workers', '4', '--timeout', '1200'), 1300),
         Execution('presentation-publication', 'check_presented_report.py', ('--project', '{project}', '--theory', 'Native_Development_Seed', '--module', 'Native_Development_Seed', '--report', 'development_seed_publication_value', '--scope', 'development_seed_unanswered', '--workers', '4', '--timeout', '1200'), 1300),
+        Execution('presentation-native-answers', 'check_presented_report.py', ('--project', '{project}', '--theory', 'Native_Development_Seed', '--module', 'Native_Development_Seed', '--report', 'development_seed_native_answers_value', '--scope', 'development_seed_unanswered', '--workers', '4', '--timeout', '1200'), 1300),
     ),),
     boundary='The checked context defines the roots of the three paused refinement candidates, the entities '
              'their expansion contributes and the frontier of development constants it does not expand. The '
@@ -91,7 +92,14 @@ RECIPE = Recipe(
              'structural transactions on the decoded cores. A recorded cause carries the policy that lists its '
              'payload, not the checked context or the loop: that the family was accepted, or the decision made, is '
              'the constructor\'s contract, and the verdict that admitted an answer and the packet that admitted the '
-             'selection stay in the development\'s history.')
+             'selection stay in the development\'s history. The native-answers report answers every issued '
+             'request natively: the restating answer, the edit that removes the subject\'s incumbent equations its '
+             'context holds and adds them again, presented with the names it uses, is transported as the padded '
+             'word of its presentation, read back by the answer\'s exact reader and judged by the refinement '
+             'verdict on the answer state that the answer applied to the request state defines; the same word '
+             'without its terminating bit presents no answer and is refused. The judgment establishes that an '
+             'answer is admissible for installation; that its equation holds is Isabelle\'s acceptance when it is '
+             'installed, which this report does not judge.')
 
 
 if __name__ == '__main__':

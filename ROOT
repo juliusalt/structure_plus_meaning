@@ -1302,6 +1302,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Presented_Reviews
     Finite_Presented_Histories
     Finite_Term_Words
+    Finite_Presentation_Readers
+    Finite_Term_Word_Readers
     Required_History_Presentation
     Required_History_Execution
     RRA_Use_Prefix_Embeddings
@@ -1698,10 +1700,12 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Isabelle_Constant_Closure
     Isabelle_Terms
     Isabelle_Entities
+    Isabelle_Readers
     Isabelle_Type_Tables
     Isabelle_Code_Equations
     Isabelle_Renaming
     Isabelle_State_Difference
+    Isabelle_Local_Names
     Factor_Finite_Ground_Evaluation
     Isabelle_Acceptance
     Isabelle_Entity_Export
@@ -1713,6 +1717,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Constant_Verification
     Development_Refinement_Verification
     Development_Definition_Verification
+    Development_Native_Answers
     Development_Refinement_Repair
     Development_Request_Packets
     Development_Seed

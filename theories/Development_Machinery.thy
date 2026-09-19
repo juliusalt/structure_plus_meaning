@@ -1,6 +1,6 @@
 theory Development_Machinery
   imports Native_Control_Seed_Subject Development_Admitted_Publication Development_Presentation
-    Development_Definition_Verification
+    Development_Definition_Verification Development_Native_Answers
 begin
 
 section \<open>The loop's own notions and their constituents as a checked state\<close>
@@ -245,19 +245,32 @@ proof -
     using requested parts by auto
 qed
 
+text \<open>
+  The loop selects the ready residuals and issues the selected leaves once; the verification and the
+  native answers below both read the requests that one issue made.
+\<close>
+
+definition development_machinery_issue ::
+    "development_problem fset \<Rightarrow> (development_loop\<times>development_request list\<times>development_problem list) option" where
+  "development_machinery_issue answered=map_option (\<lambda>(L,xs). development_loop_issue {||} development_machinery_request_of L xs)
+     (development_loop_selection (development_machinery_state,development_machinery_problems,
+       development_machinery_dependencies,answered,[]))"
+
+definition development_machinery_requests :: "development_problem fset \<Rightarrow> development_request list" where
+  "development_machinery_requests answered=(case development_machinery_issue answered of None \<Rightarrow> []
+     | Some (L,issued,unissued) \<Rightarrow> issued)"
+
 type_synonym development_machinery_verification =
   "(development_request list\<times>development_problem list\<times>(development_constant_verdict\<times>bool) list list) option"
 
 definition development_machinery_verification ::
     "development_problem fset \<Rightarrow> development_machinery_verification" where
-  "development_machinery_verification answered=map_option (\<lambda>(L,xs).
-     case development_loop_issue {||} development_machinery_request_of L xs of (L',issued,unissued) \<Rightarrow>
+  "development_machinery_verification answered=map_option (\<lambda>(L',issued,unissued).
        (issued,unissued,Parallel.map (\<lambda>r. map (\<lambda>S'.
           let v=development_definition_verdict development_machinery_state r S' in (v,development_verdict_accepted v))
          (development_answer_controls isabelle_definition_proposition Isabelle_Definition development_machinery_state
            development_machinery_renamed (fset_of_list development_machinery_root_constants) r)) issued))
-     (development_loop_selection (development_machinery_state,development_machinery_problems,
-       development_machinery_dependencies,answered,[]))"
+     (development_machinery_issue answered)"
 
 definition development_machinery_verification_data ::
     "development_machinery_verification \<Rightarrow> finite_factor_term" where
@@ -286,5 +299,38 @@ text \<open>
   replaceable statements of the subject. An actual definition answer is judged by the same verdict
   on the state its checked context defines.
 \<close>
+
+section \<open>The issued definition requests are answered natively\<close>
+
+text \<open>
+  Every issued definition request is answered natively, as a seeded request is: the restating answer
+  removes the subject's kernel definitions its context holds and adds them again, is transported as
+  its word, read back by its exact reader and judged by the definition verdict; the word without its
+  terminating bit is refused. An executor's answer to a residual named by its subject is judged in
+  the same way, and the request is presented to the executor natively as its packet.
+\<close>
+
+definition development_machinery_native_answers ::
+    "development_problem fset \<Rightarrow> (development_native_judgment\<times>bool) list" where
+  "development_machinery_native_answers answered=development_native_answers development_definition_verdict
+    isabelle_definition_proposition development_machinery_state (development_machinery_requests answered)"
+
+definition development_machinery_native_answers_value :: "development_problem fset \<Rightarrow> finite_factor_term" where
+  "development_machinery_native_answers_value answered=
+    development_native_answers_data (development_machinery_native_answers answered)"
+
+definition development_machinery_native_judgment_value :: "String.literal \<Rightarrow> bool list \<Rightarrow> finite_factor_term" where
+  "development_machinery_native_judgment_value n bits=development_named_native_judgment_data
+    (development_named_native_judgment development_definition_verdict development_machinery_state
+      (development_machinery_requests development_machinery_unanswered) n bits)"
+
+definition development_machinery_native_summary ::
+    "String.literal \<Rightarrow> bool list \<Rightarrow> (bool\<times>bool\<times>nat list\<times>String.literal list\<times>nat list) option" where
+  "development_machinery_native_summary n bits=development_native_summary development_definition_verdict
+    development_machinery_state (development_machinery_requests development_machinery_unanswered) n bits"
+
+definition development_machinery_native_packet_value :: "String.literal \<Rightarrow> finite_factor_term" where
+  "development_machinery_native_packet_value n=development_named_native_packet_data isabelle_definition_proposition
+    development_machinery_state (development_machinery_requests development_machinery_unanswered) n"
 
 end

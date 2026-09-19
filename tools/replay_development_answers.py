@@ -19,6 +19,10 @@ An adopted answer, whose theory is a theory of the repository, is judged by the 
 state's unchanged answer. Its record is the judgment that admitted it before it was adopted, which the
 harness no longer frames; that record is historical evidence of the admission and is never re-recorded.
 The replay reports its present judgment beside the record and does not count it as a reconstruction.
+
+A native answer (a record marked native) is judged again natively by `native_answers.py judge`: its octets
+are read by the native reader of the request's state and judged by the verdict of the request's kind, and
+the judgment word and summary are compared with the record, as the verdict word of a framed answer is.
 """
 from __future__ import annotations
 
@@ -36,8 +40,33 @@ ROOT = Path(__file__).resolve().parents[1]
 RECORDS = ROOT / 'validation' / 'development-answers'
 
 
+def replay_native(record_path, record, output, timeout, rerecord=False):
+    directory = output / record_path.stem
+    directory.mkdir(parents=True)
+    answer = directory / 'answer.json'
+    answer.write_text(json.dumps(record['answer'], indent=1) + '\n')
+    completed = subprocess.run([sys.executable, '-B', str(ROOT / 'tools' / 'native_answers.py'), 'judge',
+                                '--answer', str(answer), '--output', str(directory / 'run'), '--timeout', str(timeout),
+                                '--retain', str(directory / 'retained.json')],
+                               cwd=ROOT, capture_output=True, text=True, timeout=timeout + 300)
+    observed = json.loads((directory / 'run' / 'answer.json').read_text()) if (directory / 'run' / 'answer.json').is_file() \
+        else {'status': 'failed', 'error': completed.stdout[-2000:] + completed.stderr[-2000:]}
+    same = observed['status'] == record['status'] and all(observed.get(k) == record.get(k)
+                                                          for k in ('judgment_word', 'summary'))
+    if rerecord and not same and observed['status'] == record['status'] == 'judged':
+        retained = json.loads((directory / 'retained.json').read_text())
+        record_path.write_text(json.dumps({**record, **retained}, indent=1) + '\n')
+    return record_path.stem, {'status': observed['status'], 'expected_status': record['status'],
+                              'judgment_word': observed.get('judgment_word'),
+                              'expected_judgment_word': record.get('judgment_word'),
+                              'summary': observed.get('summary'), 'expected_summary': record.get('summary'),
+                              'error': observed.get('error'), 'adopted': False, 'reconstructed': same}
+
+
 def replay(record_path, output, timeout, rerecord=False):
     record = json.loads(record_path.read_text())
+    if record.get('native'):
+        return replay_native(record_path, record, output, timeout, rerecord)
     adopted = development_answer.adopted(record['answer'])
     directory = output / record_path.stem
     directory.mkdir(parents=True)

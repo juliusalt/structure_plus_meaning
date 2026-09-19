@@ -5,7 +5,9 @@ begin
 export_code development_seed_report_value development_machinery_state
   development_machinery_problem_value development_machinery_loop_value
   development_machinery_verification_value development_machinery_unanswered
-  finite_term_shared_word_fold
+  development_machinery_native_answers_value development_machinery_native_judgment_value
+  development_machinery_native_summary development_machinery_native_packet_value
+  finite_term_shared_word_fold integer_of_nat
   in Eval module_name Native_Development_Machinery file_prefix "native_development_machinery"
 
 end

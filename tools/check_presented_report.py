@@ -19,6 +19,7 @@ from evidence_io import write_json
 TAG = 'PRESENTED_REPORT_WORD'
 CONSTANT = re.compile(r'[a-z][a-z_0-9]*')
 MODULE = re.compile(r'[A-Z][A-Za-z_0-9]*')
+SUBJECT = re.compile(r"[A-Za-z][A-Za-z_0-9']*(\.[A-Za-z][A-Za-z_0-9']*)*")
 BOUNDARY = ('The exported report value presents the complete report through the presentations of its notions; '
             'each presentation identifies its subject exactly, and a store exactly by its original view. '
             'finite_term_shared_word_fold delivers the proved prefix-free digit word of that presentation, with every '
@@ -28,11 +29,25 @@ BOUNDARY = ('The exported report value presents the complete report through the 
             'The chosen collection order of a word carries no meaning of its own.')
 
 
+BITS = ('fun octet_bits w = List.tabulate (8, fn i => Word8.andb (Word8.>> (w, Word.fromInt (7 - i)), 0w1) = 0w1);\n'
+        'fun file_bits path = let val stream = BinIO.openIn path; val octets = BinIO.inputAll stream\n'
+        '  in BinIO.closeIn stream; List.concat (Word8Vector.foldr (fn (w, acc) => octet_bits w :: acc) [] octets) end;\n')
+
+
 def program(engine, inputs, word):
-    """Stream the proved word of one report value into a byte file."""
-    report = ' '.join('N.' + inputs[name] for name in ['report', 'scope', 'selections'] if inputs[name] is not None)
+    """Stream the proved word of one report value into a byte file.
+
+    The value is the report applied to its constant arguments, then to a subject name and to the bits of a
+    supplied file of octets, each when given; the octets are unpacked most significant bit first, padding
+    included, so the value's own reader decides what they present."""
+    arguments = ['N.' + inputs[name] for name in ['report', 'scope', 'selections'] if inputs.get(name) is not None]
+    if inputs.get('subject') is not None:
+        arguments.append(investigate.ml_string(inputs['subject']))
+    if inputs.get('bits') is not None:
+        arguments.append('(file_bits ' + investigate.ml_string(inputs['bits']) + ')')
+    report = ' '.join(arguments)
     return ('use ' + investigate.ml_string(str(engine)) + ';\n'
-            'structure N = ' + inputs['module'] + ';\n'
+            'structure N = ' + inputs['module'] + ';\n' + (BITS if inputs.get('bits') is not None else '') +
             'val stream = BinIO.openOut ' + investigate.ml_string(str(word)) + ';\n'
             'fun sink (acc, n) b =\n'
             '  let val acc = acc * 2 + (if b then 1 else 0)\n'
@@ -58,9 +73,12 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ['proof', 'poly', 'project', 'output']:
         parser.add_argument('--' + name, type=Path, required=True)
-    for name in ['module', 'report', 'scope']:
+    for name in ['module', 'report']:
         parser.add_argument('--' + name, required=True)
+    parser.add_argument('--scope', help='First constant argument of the report value.')
     parser.add_argument('--selections', help='Second argument of the report value; omitted for a report of its scope alone.')
+    parser.add_argument('--subject', help='A name argument of the report value, after its constant arguments.')
+    parser.add_argument('--bits', type=Path, help='A file of octets whose bits are the last argument of the report value.')
     parser.add_argument('--theory', help='Exporting Isabelle theory; defaults to the ML module name.')
     parser.add_argument('--workers', type=int, default=16)
     parser.add_argument('--timeout', type=int, default=2400)
@@ -71,8 +89,12 @@ def main():
     theory = args.theory or args.module
     assert MODULE.fullmatch(theory)
     assert 1 <= args.workers <= 16
-    assert all(CONSTANT.fullmatch(getattr(args, name)) for name in ['report', 'scope'])
-    assert args.selections is None or CONSTANT.fullmatch(args.selections)
+    assert CONSTANT.fullmatch(args.report)
+    assert args.scope is not None or args.subject is not None, 'A report value takes a scope or a subject.'
+    assert all(getattr(args, name) is None or CONSTANT.fullmatch(getattr(args, name)) for name in ['scope', 'selections'])
+    assert args.subject is None or SUBJECT.fullmatch(args.subject)
+    bits = None if args.bits is None else args.bits.resolve()
+    assert bits is None or bits.is_file()
     output, poly = args.output.resolve(), args.poly.resolve()
     proof_path = args.proof.resolve()
     proof, engine, sources = proved_code.proved_export(proof_path, required_theories=[theory],
@@ -80,7 +102,8 @@ def main():
     assert not output.exists(), 'Retain preceding executions and use a new directory.'
     output.mkdir(parents=True)
     inputs = {'theory': theory, 'module': args.module, 'report': args.report,
-              'scope': args.scope, 'selections': args.selections}
+              'scope': args.scope, 'selections': args.selections, 'subject': args.subject,
+              'bits': None if bits is None else str(bits)}
     receipt = {'status': 'failed', 'invocation': str(uuid.uuid4()), 'inputs': inputs,
                'workers': args.workers, 'boundary': BOUNDARY}
     word = output / 'report.word'
@@ -94,7 +117,7 @@ def main():
         modules = [build, investigate, native_execution_runtime, proved_code]
         paths = {proof_path, engine, poly, runtime, input_file, Path(__file__).resolve(),
                  *(Path(m.__file__).resolve() for m in modules), *(Path(p) for p in sources),
-                 *runtime_inputs, output / 'runtime-command.json'}
+                 *runtime_inputs, output / 'runtime-command.json', *([bits] if bits is not None else [])}
         tracked = {str(p): investigate.file_hash(p) for p in paths}
         write_json(output / 'execution-inputs.json', tracked)
         proved_code.archive_execution_inputs(output, receipt, tracked, external=[poly])

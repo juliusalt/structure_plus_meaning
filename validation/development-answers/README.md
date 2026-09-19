@@ -90,3 +90,19 @@ same answer is accepted against the request issued again. It was adopted through
 ([receipt](../development-adoptions/Development_Answer_0ccf746fe2cf.json)). The answer was written by an
 agent from the packet without isolation, and choosing this constant rather than a seeded root was made
 outside the process; both are residuals.
+
+Since 2026-09-19 an answer can be native content instead of Isabelle text (`native: true` in its record):
+the edit it makes to the request state, the entities it removes and adds presented with the names they
+use (`Development_Native_Answers`). `tools/native_answers.py packet` presents the native packet of a
+request (its constant, support, least context and incumbent, with their names) as a word and reads it
+back; `tools/development_executor.py --native` answers it; `tools/native_answers.py judge` packs the
+answer into the octets of its word and has the exported native judgment read and judge them. The record
+retains the answer, the digest of its octets, the judgment word and a summary (read, accepted, the
+verdict's counts, the constants outside the support, and the numbers of names, removed and added
+entities). The judgment establishes admissibility for installation; installing a native answer as
+Isabelle material, and Isabelle's acceptance of it, is a separate request.
+
+`native-restating.json` is the deterministic executor's native answer to the seeded request for
+`Factor_Digit_Replay_Methods.digit_replay_inspect`: it removes the packet's incumbent equation and adds it
+again over the packet's thirty names, and is read and accepted. `native-dropped.json` removes the
+incumbent and adds nothing; it is read and refused, the subject being left without its equation.

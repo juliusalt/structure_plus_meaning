@@ -8,7 +8,9 @@ export_code development_seed_report_value development_seed_state development_see
   development_seed_problem_value development_seed_unanswered development_seed_answered
   development_seed_loop_value development_seed_verification_value development_seed_succession_value
   development_seed_publication_value
-  finite_term_shared_word_fold
+  development_seed_native_answers_value development_seed_native_judgment_value development_seed_native_summary
+  development_seed_native_packet_value
+  finite_term_shared_word_fold integer_of_nat
   in Eval module_name Native_Development_Seed file_prefix "native_development_seed"
 
 end

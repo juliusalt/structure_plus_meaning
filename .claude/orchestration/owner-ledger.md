@@ -22,6 +22,26 @@ this file first and writes to it at once when the owner speaks. An entry leaves 
 
 > Judging from the commit notes the current workflow is the following - the problems are native, the machinery used to resolve them is native, but the packets are posed to give answers in Isabelle rather than native answers. Ofcourse in the end to verify a proof before genesis any new material needs to become Isabelle material, however it seems to me that there is a conflation between having to have the machinery that allows for the mapping and installation of native content as Isabelle machinery and having to produce that Isabelle content for every packet. That is these two steps could be seperated where packets first produce native content which can then be evaluated by native machinery allowing to use all of the existing native theory to evaluate the content and then as a seperate problem, once the content is deemed admisable by the machinery the translation and installation machinery can be used to add it as Isabelle content. I can be wrong analyze critically what I said.
 
+**2026-09-19 06:56 UTC** (in Codex session 01a0b872, not to an implementer; recorded here by impl-21 from
+`.claude/orchestration/state/owner-directions-new.md`):
+
+> The RRA structures carry incidence and octets, but it seems to me that everything that is built on top of the foundation is using octects and not really incidence is that true? I might be completely wrong
+
+**2026-09-19 06:59 UTC** (same Codex session, after its first answer pointed to the older foundation):
+
+> Look into mainly the new material developed for native_control_plan.
+
+The Codex answer (generated, not owner-level) concluded that for the native-control material the concern is
+substantially justified: development notions (entity kinds, problem origins and authorities, Isabelle terms) are
+Isabelle datatypes presented as trees of pairs with octet tags, incidence carries only the tree shape, references
+are positions in a name table, and decisions (readiness, contracts, verdicts) are computed by proved HOL functions
+and reflected into native questions as ground facets; incidence does real work in quotation, the indexed readers,
+the adopted walk and generation citations. See Q6.
+
+**2026-09-19** (to impl-21, while the confirming check of B12, the native answers, was running; answers Q6):
+
+> The idea behind the rra structure was to seperate opaque inert data with no structure and structure by allowing atoms to carry octet payloads. On the level of allowed structure this is the best you can do, you cannot force someone using rra not to use the octets to carry actual encoded structural data. The idea was that this should be enforced by factor semantics - it is all designed to facilitate my priciples of structurlity, non-nominality, non-conflation, irredundancy, reuse, generalization by having all of these be clearly visible from the structure you are working on. Hence encoding structure as opaque data to define meaning is cardinally oposed to what I am trying to achieve. Note however that this does not imply that it can't be used this way for implementation if that is usefull - but there is even a trap here - if all implementation is non-structural then it can't itself adhere to my principles. Thus even implementation should be structural with the non-structural efficiency as a structurally presented idea that can be applied. Once you finish working on the current task reason about everything I said, see if it is correct and then make the appropriate tasks to combat this - the only time octects should be used are for trully inert opaque data with no structure - but this again needs to be nuanced and not taken literally - in some cases structural data can be carried as inert by other structures when it is truly non needed - the key is that all if structure is used then it needs to be explicit.
+
 ## Open questions to the owner
 
 Each question below is being worked around with a provisional choice; the choice stays generated, not
@@ -80,3 +100,7 @@ a notion's residual depends on the residuals of what it is made of and the loop 
 theories that predate the plan stay the bootstrap library established under Isabelle's authority. Question:
 should the record instead cover every constant defined since the plan's accepted base, every constant the
 loop's notions reach, or the whole workspace?
+
+Q6 (incidence versus tagged trees, asked 2026-09-19 by impl-21) was answered by the owner's direction of
+2026-09-19 above; the plan section "Structure is explicit; octets are inert — 2026-09-19" records the analysis
+and the tasks, taken next with the structural Isabelle state first (the order is impl-21's inference).

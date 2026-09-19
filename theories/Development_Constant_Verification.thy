@@ -200,46 +200,4 @@ lemma development_verdict_data_injective [intro]: "inj development_verdict_data"
     isabelle_entity_data_injective isabelle_position_data_injective
     isabelle_context_assessment_data_injective finite_boolean_data_injective)
 
-section \<open>Derived answer states exercise a verdict\<close>
-
-text \<open>
-  Before an answer of a kind exists, its verdict is exercised on answer states derived from the
-  requested state and the request itself, each standing for one kind of answer. The unchanged state
-  and its renaming are answers that keep the demanded statements; the verdict must accept both, and
-  the second shows that it reads no position. The other controls state the subject's demanded
-  statements as axioms, drop them, state them through a constant the state does not know, drop the
-  demanded statements of the other subjects, and drop the subject's other statements. Each is
-  derived from the request, the reading of its kind and the state; none names a position of either
-  list or selects a subject. Which of them a verdict accepts is fixed by what its kind may replace.
-\<close>
-
-fun isabelle_right_wrap :: "isabelle_term \<Rightarrow> isabelle_term \<Rightarrow> isabelle_term" where
-  "isabelle_right_wrap g (Isabelle_Application (Isabelle_Application (Isabelle_Constant e T) l) r)=
-    Isabelle_Application (Isabelle_Application (Isabelle_Constant e T) l) (Isabelle_Application g r)"
-| "isabelle_right_wrap g (Isabelle_Application (Isabelle_Constant j T) p)=
-    Isabelle_Application (Isabelle_Constant j T) (isabelle_right_wrap g p)"
-| "isabelle_right_wrap g t=t"
-
-definition development_absent_name :: "String.literal list \<Rightarrow> String.literal" where
-  "development_absent_name names=foldr (+) names STR ''.absent''"
-
-definition development_answer_controls ::
-    "(isabelle_entity \<Rightarrow> isabelle_term option) \<Rightarrow> (isabelle_term \<Rightarrow> isabelle_entity) \<Rightarrow>
-      isabelle_rooted_context \<Rightarrow> isabelle_rooted_context \<Rightarrow> nat fset \<Rightarrow> development_request \<Rightarrow>
-      isabelle_rooted_context list" where
-  "development_answer_controls reading restate S renamed subjects r=(case r of (p,s,support,E) \<Rightarrow>
-    let (R,C)=S; names=fst C; es=snd C; P=problem_subject p; others=subjects |-| P;
-      stated=development_answer_statement (development_demanded reading) C;
-      fresh=Isabelle_Constant (length names) (Isabelle_Type_Application (length names) []) in
-    [S,
-     renamed,
-     (R,(names,es@map (\<lambda>e. Isabelle_Specification (the (reading e))) (filter (stated P) es))),
-     (R,(names,filter (\<lambda>e. \<not>stated P e) es)),
-     (R,(names@[development_absent_name names],
-       map (\<lambda>e. if stated P e then restate (isabelle_right_wrap fresh (the (reading e))) else e) es@
-       [Isabelle_Development_Constant fresh])),
-     (R,(names,filter (\<lambda>e. \<not>stated others e) es)),
-     (R,(names,filter (\<lambda>e. \<not>(isabelle_specified_proposition e\<noteq>None \<and> reading e=None \<and>
-       list_ex (\<lambda>c. c |\<in>| P) (isabelle_entity_subjects names (isabelle_development_constants es) e))) es))])"
-
 end

@@ -12,6 +12,7 @@ RECIPE = Recipe(
         Execution('presentation-problems', 'check_presented_report.py', ('--project', '{project}', '--theory', 'Native_Development_Machinery', '--module', 'Native_Development_Machinery', '--report', 'development_machinery_problem_value', '--scope', 'development_machinery_unanswered', '--workers', '4', '--timeout', '1200'), 1300),
         Execution('presentation-loop', 'check_presented_report.py', ('--project', '{project}', '--theory', 'Native_Development_Machinery', '--module', 'Native_Development_Machinery', '--report', 'development_machinery_loop_value', '--scope', 'development_machinery_unanswered', '--workers', '4', '--timeout', '1200'), 1300),
         Execution('presentation-verification', 'check_presented_report.py', ('--project', '{project}', '--theory', 'Native_Development_Machinery', '--module', 'Native_Development_Machinery', '--report', 'development_machinery_verification_value', '--scope', 'development_machinery_unanswered', '--workers', '4', '--timeout', '1200'), 1300),
+        Execution('presentation-native-answers', 'check_presented_report.py', ('--project', '{project}', '--theory', 'Native_Development_Machinery', '--module', 'Native_Development_Machinery', '--report', 'development_machinery_native_answers_value', '--scope', 'development_machinery_unanswered', '--workers', '4', '--timeout', '1200'), 1300),
     ),),
     boundary='The checked context defines the notions the first loop\'s judgments consult as a rooted state, '
              'in the same way as the seeded state: the problem a constant poses and its dependencies, '
@@ -45,7 +46,12 @@ RECIPE = Recipe(
              'and dropping the subject\'s code equations is accepted. That the library\'s contracts of a '
              'residual still hold under a new definition is Isabelle\'s acceptance of an actual answer, '
              'which this recipe does not judge; the requirements an answer to a residual must meet beyond '
-             'those contracts are not established by this recipe.')
+             'those contracts are not established by this recipe. The native-answers report answers every issued '
+             'definition request natively: the restating answer removes the subject\'s kernel definitions its '
+             'context holds and adds them again, is presented with the names it uses, transported as the padded '
+             'word of its presentation, read back by its exact reader and judged by the definition verdict on the '
+             'answer state; the word without its terminating bit is refused. The judgment establishes that an '
+             'answer is admissible for installation, not that the library\'s contracts hold under it.')
 
 
 if __name__ == '__main__':

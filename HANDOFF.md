@@ -1,16 +1,86 @@
-# Handoff — impl-20: B11 committed; B12 (native answers) in design
+# Handoff — impl-21: B12 (native answers) committed; the owner's structure direction recorded with its tasks
 
-## impl-20 session (2026-09-19, read first)
+## impl-21 session (2026-09-19, read first)
 
-- B11 COMMITTED+PUSHED ("Request and judge definition problems through the verdict of a problem of a constant"):
-  check x8 (advance, 17 theories 47.5 s), x9 recorded the machinery words, x10 confirming ACCEPTED+RETAINED,
-  replay-c 13 reconstructed + walk adopted. ACTIVE BASE: `.build/check-20260919x8/proof`.
-  Probe (`.build/impl20/cand-a/Probe_B11_Verdicts.thy`): machinery 300 names/337 entities/61 roots/61
-  residuals/32 ready = 32 issued definition requests; pattern TTFFFFT for 29, TTFFFFF for 3 (their code
-  equations are the only statements reaching some declarations: unreached 10/1/1).
-- NEXT BATCH B12 (owner direction 2026-09-19, ledger): NATIVE ANSWERS. Design in progress (see below).
-- Scratch tool: `.build/impl20/run_native.py` (runs an ML body against an Eval export; only exported names
-  are visible in the structure).
+- OWNER (ledger): the owner's Codex-session question (06:56 UTC) whether everything above the RRA foundation uses
+  octets rather than incidence is recorded with the Codex answer and a new question Q6 (provisional choice: B12 keeps
+  exact tagged-tree presentations; structural re-presentation is a recorded machinery problem).
+- B12 DONE IN theories/ (uncommitted until the commit below): NEW Finite_Presentation_Readers, Finite_Term_Word_Readers
+  (pattern-free code equations for the fuel readers), Isabelle_Readers (tag read as a value, no Suc patterns),
+  Isabelle_Local_Names (factored out of Development_Publication; rename id/compose and appended names moved from
+  Development_Refinement_Repair; the duplicate cong lemmas removed), Development_Native_Answers; controls moved out of
+  Development_Constant_Verification into native answers; Development_Seed_Verification and Development_Machinery gained
+  native answers (machinery issue factored as `development_machinery_issue`); exports; ROOT; THEORY_MAP; recipes gained
+  stage `presentation-native-answers`. tools: check_presented_report `--subject`/`--bits` (scope optional),
+  tools/native_answers.py (encoder, decoder, `packet`, `judge`), development_executor `--native`,
+  replay_development_answers native records, test_native_answers.py (6 tests). Retained native records
+  validation/development-answers/native-{restating,dropped}.json + README. Plan section "Answers are native content,
+  judged natively" and RR section appended.
+- VALIDATION: probe `.build/probe-impl21-d` loaded (controls equal on seed+machinery; RAX for 10+32 requests). Check
+  `.build/check-20260919y --advance-base`: proof 52 s; seed 11 words equal + new word; machinery 4 words changed ONLY by
+  the three moved qualified names (name tables diffed: 61 roots/300 names/337 entities both; `.build/impl21/oldnames`);
+  words recorded; `adopt --proof .build/check-20260919y/proof` (ACTIVE BASE: y). Check `.build/check-20260919z`
+  (confirming + every recipe re-executed because the report tool changed) failed only on host tests (retained request
+  programs call `program()` without the new keys: made optional); `.build/check-20260919z2` ACCEPTED (52 recipes, every
+  word equal; 177 tool + 35 kernel tests) and RETAINED. Replay `.build/impl21/replay-a`: 16 replayed, 15 reconstructed
+  (both native), walk adopted. B12 COMMITTED AND PUSHED ("Answer requests natively and judge the answers natively").
+- NEXT: when z is accepted (all words equal): `incremental_check.py retain --output .build/check-20260919z`; replay
+  `replay_development_answers.py --output .build/impl21/replay-a` (expect 15 reconstructed incl. 2 native + walk adopted);
+  commit (existing style, no attribution) + push. Then B12c: installation request class (native answer -> Isabelle
+  text through the packet inverse reading, frame, proof request, Isabelle check, round-trip equality) and connecting
+  admission/publication to the native judgment.
+- PITFALLS met: `check_presented_report.py` is in EVERY recipe's execution boundary: editing it while a check runs
+  fails that check's input-stability test, and any edit re-executes all 52 recipes in the next check (~3 min). Retained
+  request programs call its `program()` with only module/report/scope/selections (keep new keys optional). Nested `Suc`
+  patterns (e.g. `Finite_Payload [Suc 0]`) and `0`/`Suc` fuel mixed with list patterns are refused by the code
+  generator under Code_Target_Nat: read tags as values and give `case n of 0 => .. | Suc m => ..` code equations; prove
+  them with `cases` (simp does not rewrite inside case branches, so `n - 1` forms fail).
+- B12c DESIGN (next): installation of an admitted native answer = translate its added entities through the packet's
+  inverse reading (the ML of Development_Request_Packets) into Isabelle text {definitions, equation}, request the proof
+  as a narrower request (deterministic: `by (rule development_demanded_code)` for a restating answer), judge the text
+  with the existing frame harness (`development_answer.py answer`), and compare the re-exported answer state with the
+  native answer state (a verification-theory report: `isabelle_state_removed/added` between them empty). Then admit and
+  publish from the native judgment (Development_Admitted_Publication consumes the Isabelle-judged verdict today).
+- Lineage is 24 levels (y -> x8 -> x4 -> x2 -> v -> ... -> complete-20260918n); a complete proof reset (~9 min) would
+  shorten probe/load time when convenient.
+- Scratch: `.build/impl20/*`, `.build/impl21/*`; superseded checks and probes were removed this session.
+
+
+## impl-20 session (2026-09-19, read first) — parked at the context limit, B12 IN PROGRESS, nothing uncommitted in theories/
+
+- B11 COMMITTED+PUSHED 21d235ae. ACTIVE BASE `.build/check-20260919x8/proof` (x10 retained).
+- B12 = NATIVE ANSWERS (owner direction 2026-09-19). ALL WORK IS STAGED in `.build/impl20/b12/` (theories/ untouched):
+  - `Finite_Presentation_Readers.thy` (finite_reads contract; payload, read-through, storage path, binary natural,
+    pair, sequence readers) — PROVED (probe loaded).
+  - `Isabelle_Readers.thy` (name/names/position/sort/type/term/entity/context readers, exact) — PROVED.
+  - `Finite_Term_Word_Readers.thy` (digit address word, term word with fuel, shared word of target-free terms,
+    padding; `finite_padded_term_read_exact`) — PROVED.
+  - `Development_Native_Answers.thy` (answer = (names, removed, added); data+reader; word; answer state; answer_of +
+    round trip `development_native_answer_of_state`; native judgment + exactness; restating answer; controls moved
+    here as native answers `development_control_answers`/`development_answer_controls`; native answers report,
+    named judgment, summary; native packet + data) — last probe error was `development_native_judgment_exact`,
+    fixed; RUNNING probe `.build/probe-impl20-d` (summary `.build/impl20/probe-d.out`, grep PROBE in its probe.log):
+    `Probe_B12_Native.thy` checks OLD vs NEW control verdicts equal (seed + machinery) and native answers R/A/X flags.
+  - `Development_Constant_Verification.thy` = theories/ copy with the controls section REMOVED (moved to Native_Answers).
+- TO DO next (in order): (1) finish probe-d (expect controls equal True, native rows RAX); (2) stage edits:
+  Development_Seed_Verification imports Development_Native_Answers + `development_seed_native_answers(_value)`,
+  `development_seed_native_judgment_value n bits` (named judgment data, requests `development_seed_requests
+  development_seed_unanswered`), `development_seed_native_summary`, `development_seed_native_packet_value n`
+  (=`development_named_native_packet_data isabelle_code_equation_proposition ...`); Development_Machinery imports
+  Native_Answers, factor `development_machinery_issue` (selection+issue) used by verification and new
+  `development_machinery_requests`, same four natives with definition verdict/reading; exports in
+  Native_Development_Seed/Machinery (+ integer_of_nat); ROOT entries (readers after Isabelle_Entities-ish deps,
+  Native_Answers after Development_Publication/Definition_Verification); recipe stages `presentation-native-answers`
+  (null placeholders); THEORY_MAP rows. (3) `tools/native_answers.py` WRITTEN (JSON->data term->word->octets; untested
+  against Isabelle: add a probe comparing `development_native_answer_word` bits with Python for one answer);
+  still to do: word DECODER (packet word -> JSON), `check_presented_report.py` args `--subject`/`--bits` (scope
+  optional), harness `development_answer.py native` + `native-packet` commands, executor `--native` (answer =
+  names, incumbent removed and added), replay of native records, tests, retained native answers. (4) check
+  --advance-base (verification words expected EQUAL if controls-equal probe is True; new stage words recorded),
+  adopt, confirm, retain, replay; plan section (correction rows: answers native; controls are native answers;
+  packets/answers as words both ways) + RR section; commit+push.
+- Scratch: `.build/impl20/{cand-a,run_native.py,verification.ML,run-verification}`, probes `.build/probe-impl20-{a,b,c,d}`;
+  old: `.build/probe-impl18-*`, `.build/impl18/*`, `.build/probe-impl19-{a,b}`, checks w,x2..x7,x9 removable.
 
 ## impl-19 session (2026-09-19, read first)
 

@@ -1572,3 +1572,40 @@ Open: no definition answer exists, and no answer of either kind is yet a native 
 publication are stated for refinement answers judged by the harness only. Native answers, their reader
 and their native judgment come next, then installation as its own request class. The choice of this
 batch was made outside the loop and is a residual.
+
+## Answers are native content, judged natively — 2026-09-19
+
+The owner's direction of the previous section is now implemented for the judgment: an answer is native
+content, and the native machinery evaluates it before anything becomes Isabelle material.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| An executor returns theory text; the harness frames it, Isabelle checks it and the checked context is exported again before the verdict reads it. | An answer is the edit it makes to the request state: the entities it removes and the entities it adds, presented with the names they use (`Development_Native_Answers`). It arrives as the padded word of its presentation and is read by a reader with an exact contract (`development_native_answer_bits_read_exact`); the answer state is the request state with the edit applied, and an edit of a state presented as an answer performs exactly that edit (`development_native_answer_of_state`); the native judgment is the verdict of the request's kind on the two states (`development_native_judgment_exact`). No theory is checked per answer. The judgment establishes admissibility for installation, not truth: that what an answer states holds is Isabelle's acceptance when it is installed, a request class of its own that is not built yet. |
+| The verdict is exercised on answer states assembled beside it. | The controls are native answers derived from the request (`development_control_answers`), applied to the request state as an executor's answer is (`development_answer_controls`). They give exactly the earlier verdicts: the seed's verification word is unchanged. |
+| The executor receives Isabelle text read back through the exporter's inverse translation. | The native packet is the request presented with the names it uses: the constant, the issued support, the least context and the incumbent statements (`development_native_packet`), transported as a word. The host decodes that word only to give an executor its rendering (`tools/native_answers.py packet`), and the answer returns as the octets of a native answer's word (`tools/native_answers.py judge`); the reader decides what arrived, so a transport mistake can change which answer arrives but not what is judged of it. |
+| A value presented with the names it uses is stated inside `Development_Publication`, which also restates three renaming lemmas of `Isabelle_State_Difference`. | One theory owns the notion, `Isabelle_Local_Names`: local names and embeddings, their invariance under every correspondence of tables, the identity and composition of renamings, and the table extended by the names it lacks. Publication, the repaired request, answers and packets instantiate it; the duplicate lemmas are gone. |
+
+Evidence: the check that advanced the base to `.build/check-20260919y` proved the changed and dependent
+theories in 52 seconds. The seed recipe executed every earlier stage with its word equal, including the
+verification stage, whose controls are now native answers, and a new stage presents the native answers of
+the ten issued requests (8.3 seconds): each restating answer is read from its word and accepted, and the
+same word without its terminating bit is refused. The machinery recipe's four words changed; comparing the
+machinery state's name tables before and after shows the same 61 roots, 300 names and 337 entities, the
+tables differing exactly in the qualified names of the three constants moved into `Isabelle_Local_Names`,
+so the change is that renaming. Its new stage presents the native answers of the 32 issued definition
+requests (14.9 seconds), each read and accepted and its truncated word refused. A probe on the earlier base
+compared the old and the new controls on every seeded and machinery request and found them equal. The
+report tool gained a subject name and a file of octets as arguments, so the next check executed every
+recipe again, each with every word equal. End to end on the new base: the native packet of the request for
+`digit_replay_inspect` (a word of 13,554 bytes; 30 names, 9 context entities, one incumbent equation) was
+read back, the deterministic executor answered it natively, and the native judgment read the answer's
+octets and accepted it; the answer that removes the equation and adds nothing was read and refused. Both
+are retained in `validation/development-answers` and replay natively.
+
+Open: installation of an admitted native answer as Isabelle material (translation through the packet's
+inverse reading, the frame, the proof as a narrower request, Isabelle's check and the round trip of the
+exported state) is the next request class. Admission as a generation and publication still consume the
+Isabelle-judged verdict; connecting them to the native judgment follows. The native answer refers to names
+by positions in its own name list and distinguishes kinds by tags, which the owner's question Q6 in the
+ledger concerns. The executor is deterministic; no agent has answered a native packet (Q4). The choice of
+this batch was made outside the loop and is a residual.

@@ -1,73 +1,6 @@
 theory Development_Publication
-  imports Development_Successor RRA_Finite_Transactions Factor_Finite_Data_Syntax Finite_Presented_Structures
+  imports Development_Successor Isabelle_Local_Names RRA_Finite_Transactions Factor_Finite_Data_Syntax Finite_Presented_Structures
 begin
-
-section \<open>A presented value carries the names it uses\<close>
-
-text \<open>
-  A generation is read beside states whose name tables differ, so its locus and payload carry
-  the names they use: every position a value mentions is replaced by the position of its name
-  in the list of the names the value mentions, in the order they first occur, through the
-  existing embedding of one table into another. The presentation then depends on the value's
-  structure and its names and on no other position of the table; a correspondence of tables
-  leaves it unchanged.
-\<close>
-
-definition isabelle_local_names :: "String.literal list \<Rightarrow> nat list \<Rightarrow> String.literal list" where
-  "isabelle_local_names names ps=remdups (List.map_filter (isabelle_name_at names) ps)"
-
-definition isabelle_local_embedding :: "String.literal list \<Rightarrow> nat list \<Rightarrow> nat \<Rightarrow> nat" where
-  "isabelle_local_embedding names ps=isabelle_state_embedding names (isabelle_local_names names ps)"
-
-lemma isabelle_type_rename_compose:
-  "isabelle_type_rename g (isabelle_type_rename f T)=isabelle_type_rename (g \<circ> f) T"
-  by (induction T) auto
-
-lemma isabelle_term_rename_compose:
-  "isabelle_term_rename g (isabelle_term_rename f t)=isabelle_term_rename (g \<circ> f) t"
-  by (induction t) (simp_all add: isabelle_type_rename_compose comp_def)
-
-lemma isabelle_type_rename_cong:
-  "\<forall>i\<in>set (isabelle_type_positions T). f i=g i \<Longrightarrow> isabelle_type_rename f T=isabelle_type_rename g T"
-  by (induction T) auto
-
-lemma isabelle_term_rename_cong:
-  "\<forall>i\<in>set (isabelle_term_positions t). f i=g i \<Longrightarrow> isabelle_term_rename f t=isabelle_term_rename g t"
-  by (induction t) (auto intro: isabelle_type_rename_cong)
-
-lemma isabelle_entity_rename_compose:
-  "isabelle_entity_rename g (isabelle_entity_rename f e)=isabelle_entity_rename (g \<circ> f) e"
-  by (cases e) (simp_all add: isabelle_term_rename_compose)
-
-lemma isabelle_entity_rename_cong:
-  "\<forall>i\<in>set (isabelle_entity_positions e). f i=g i \<Longrightarrow> isabelle_entity_rename f e=isabelle_entity_rename g e"
-  by (cases e) (auto simp: isabelle_entity_positions_def intro: isabelle_term_rename_cong)
-
-lemma isabelle_local_names_renamed:
-  assumes corr: "isabelle_table_correspondence f names names'"
-  shows "List.map_filter (isabelle_name_at names') (map f ps)=List.map_filter (isabelle_name_at names) ps"
-  by (induction ps) (simp_all add: isabelle_table_correspondence_name[OF corr] split: option.split)
-
-lemma isabelle_local_embedding_renamed:
-  assumes corr: "isabelle_table_correspondence f names names'"
-    and member: "i\<in>set ps" and inside: "i<length names"
-  shows "isabelle_local_embedding names' (map f ps) (f i)=isabelle_local_embedding names ps i"
-proof -
-  let ?L="isabelle_local_names names ps"
-  have local: "isabelle_local_names names' (map f ps)=?L"
-    by (simp add: isabelle_local_names_def isabelle_local_names_renamed[OF corr])
-  have named: "isabelle_name_at names i=Some (names!i)"
-    using inside by (simp add: isabelle_name_at_def)
-  have "names!i\<in>set (List.map_filter (isabelle_name_at names) ps)"
-    using member named by (auto simp: map_filter_member)
-  then have used: "names!i\<in>set ?L" by (simp add: isabelle_local_names_def)
-  obtain j where found: "isabelle_name_position ?L (names!i)=Some j"
-    using used isabelle_name_position_none[of ?L "names!i"] by (cases "isabelle_name_position ?L (names!i)") auto
-  have moved: "isabelle_name_at names' (f i)=Some (names!i)"
-    using named by (simp add: isabelle_table_correspondence_name[OF corr])
-  show ?thesis
-    by (simp add: isabelle_local_embedding_def local isabelle_state_embedding_def named moved found)
-qed
 
 section \<open>A contract presented with its names locates its problem\<close>
 
@@ -113,40 +46,6 @@ proof -
     by (simp only: development_contract_rename_compose development_contract_rename_cong[OF agree])
   show ?thesis
     by (simp only: development_local_contract_def Let_def positions names renamed)
-qed
-
-definition isabelle_local_entities :: "String.literal list \<Rightarrow> isabelle_entity list \<Rightarrow> isabelle_context" where
-  "isabelle_local_entities names es=(let ps=concat (map isabelle_entity_positions es) in
-    (isabelle_local_names names ps,map (isabelle_entity_rename (isabelle_local_embedding names ps)) es))"
-
-theorem isabelle_local_entities_renamed:
-  assumes corr: "isabelle_table_correspondence f names names'"
-    and inside: "\<forall>e\<in>set es. \<forall>i\<in>set (isabelle_entity_positions e). i<length names"
-  shows "isabelle_local_entities names' (map (isabelle_entity_rename f) es)=isabelle_local_entities names es"
-proof -
-  let ?ps="concat (map isabelle_entity_positions es)"
-  have positions: "concat (map isabelle_entity_positions (map (isabelle_entity_rename f) es))=map f ?ps"
-    by (induction es) (simp_all add: isabelle_entity_rename_positions)
-  have names: "isabelle_local_names names' (map f ?ps)=isabelle_local_names names ?ps"
-    by (simp add: isabelle_local_names_def isabelle_local_names_renamed[OF corr])
-  have entity: "isabelle_entity_rename (isabelle_local_embedding names' (map f ?ps)) (isabelle_entity_rename f e)=
-      isabelle_entity_rename (isabelle_local_embedding names ?ps) e" if member: "e\<in>set es" for e
-  proof -
-    have agree: "\<forall>i\<in>set (isabelle_entity_positions e).
-        (isabelle_local_embedding names' (map f ?ps) \<circ> f) i=isabelle_local_embedding names ?ps i"
-    proof
-      fix i assume position: "i\<in>set (isabelle_entity_positions e)"
-      have "i\<in>set ?ps" using member position by auto
-      moreover have "i<length names" using member position inside by auto
-      ultimately show "(isabelle_local_embedding names' (map f ?ps) \<circ> f) i=isabelle_local_embedding names ?ps i"
-        by (simp add: isabelle_local_embedding_renamed[OF corr])
-    qed
-    show ?thesis
-      by (simp only: isabelle_entity_rename_compose isabelle_entity_rename_cong[OF agree])
-  qed
-  show ?thesis
-    unfolding isabelle_local_entities_def Let_def positions names
-    by (simp add: entity)
 qed
 
 text \<open>

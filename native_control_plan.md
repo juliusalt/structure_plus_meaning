@@ -1760,3 +1760,18 @@ equal to `development_settled`, so that the native definition's contract meets t
 the selection question evaluating the native program on its actual subjects instead of admitting a table;
 and the payload audit of the program's whole dependency closure (the selection and data recognition it
 calls). The choice of this batch was made outside the loop and is a residual.
+
+## The development's readiness is native readiness — 2026-09-19
+
+| Earlier proposal or state | Correction |
+|---|---|
+| The native readiness of the previous section is verified against the closure of its own table. | The development's problems, dependencies and answered problems are presented as that table (`readiness_presents`: distinct data keys, each problem's decompositions as lists of premise keys, the answered and open keys), and on every such presentation the native readiness of a problem's key is exactly the development's readiness (`native_development_ready`), the table's closure being `development_settled` in both directions. The development's readiness is therefore consumable as the native definition. |
+
+Evidence: on a probe of the base heap the theory loads with every proof checked in 5.9 seconds. The check that advanced the base to
+`.build/check-20260919ac` proved it in 31.4 seconds, reached no recipe and was retained with 177 tool and
+35 kernel tests passing.
+
+Open: the selection question still admits a table of computed readiness; it is next to evaluate the native
+program on its actual subjects, which needs the program installed as a native package (the executable
+compilation of an ordinary finite program) and the question's candidates presented as the program's
+arguments. The choice of this batch was made outside the loop and is a residual.

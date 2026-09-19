@@ -1,4 +1,4 @@
-# Handoff — impl-22: task 1 and native readiness (table-level contract) committed; next = readiness meets development_ready
+# Handoff — impl-22: task 1, native readiness and its correspondence to development_ready committed; next = the selection question evaluates the native program
 
 ## impl-22 session (2026-09-19, read first)
 
@@ -26,7 +26,10 @@
   Development_Problems) with contracts `native_settled_exact` (closure `table_settled` over a `readiness_table`),
   `native_every_settled_exact`, `native_ready_exact` (keys open + every decomposition settled). Check
   `.build/check-20260919ab --advance-base` ACCEPTED (1 theory, 33.7 s, 177+35 tests) and RETAINED. ACTIVE BASE:
-  `.build/check-20260919ab/proof`. NEXT (in order): (1) `readiness_presents key D answered ps T A Opn` (inj key on
+  `.build/check-20260919ab/proof`. DONE SINCE: (1) below is `theories/Development_Native_Selection.thy`
+  (`readiness_presents`, `native_development_ready`), check `.build/check-20260919ac --advance-base` ACCEPTED
+  (31.4 s, 177+35 tests) and RETAINED; ACTIVE BASE `.build/check-20260919ac/proof`. NEXT is (2).
+  NEXT (in order): (1) `readiness_presents key D answered ps T A Opn` (inj key on
   ps, keys data, D's heads/premises and answered within ps, `map fst T = map key ps`, each entry's decompositions =
   key images of `snd ` fset H` for H in `development_decompositions D p`, set A = key ` answered, set Opn = keys of
   unanswered ps) and `native_development_ready`: native 202 on (key p) <-> `development_ready D answered p`, via

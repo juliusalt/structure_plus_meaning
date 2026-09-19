@@ -46,6 +46,21 @@
   atoms; (4) decisions as Factor programs with local contracts; (5) efficiency (indexes, demanded traversal, keyed
   sets) as notions of the state applied as refinements; (6) transport as inert carriage of artifacts' complete data.
   Provisional order: 1 and 2 first. THIS IS THE NEXT WORK, ahead of B12c.
+- TASK 2 DESIGN SKETCH (impl-21, a residual until derived): the state as ONE exact artifact built from existing RRA
+  grammar, no tags: root = record [roots, declarations, definitions, specifications, code-equations] of FAMILIES
+  (`family_at`; kind = the family an entity sits in). A declaration is an atom carrying its name as an inert functional
+  payload (read only by presentation/installation) plus a type structure. A constant or type-constructor occurrence is
+  a Local citation (`raw_citation_at R r (Local a)`: headed incidence {(r,a)}) to its declaration atom. Application =
+  two-field record [function, argument] (`record_at`); abstraction = record [binder, type, body] with bound
+  occurrences Local citations to the binder atom (as `pattern_quoted_at` variables cite `binder_scope_at` binders): no
+  de Bruijn numbers. Free/schematic variables and type variables = atoms declared in the entity's own family, names
+  inert. Base constants the readers need (Pure.eq, HOL.eq, HOL.Trueprop) are External citations to anchors of ONE
+  fixed base artifact, identified as exact anchors (artifact value + address), not by name strings. Contract: a reader
+  `structural state -> isabelle_rooted_context option` exact UP TO table correspondence (it recovers the state in a
+  canonical table order): `isabelle_table_correspondence` + the renaming theorems carry every established observation
+  (assessment, problems, verdict) to the structural state, so datatypes can be retired use by use. First step: define
+  construction + reader for types and terms (reuse `record_at`, `family_at`, citation readers, `literal_syntax` ideas,
+  `RRA_Syntax_Families` constructors), probe on the seed state (80 entities) for size and read-back cost.
 - B12c DESIGN (after the structure tasks begin): installation of an admitted native answer = translate its added entities through the packet's
   inverse reading (the ML of Development_Request_Packets) into Isabelle text {definitions, equation}, request the proof
   as a narrower request (deterministic: `by (rule development_demanded_code)` for a restating answer), judge the text

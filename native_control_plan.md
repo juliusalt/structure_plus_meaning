@@ -1862,3 +1862,28 @@ before the context (the context comes first in every collection notion), or keye
 traversal and evaluation; the measurement above rules out the first for the evaluation, so the demanded traversal
 and the computation of each call's applications are to be attributed first. The choice of this batch, and of binary digits of first positions as the paths, were made
 outside the loop and are residuals.
+
+## A closure keeps no applications — 2026-09-19
+
+The first step on the open item of "Keys and tables are structure": where the evaluation of a context-carrying
+native program spends its time.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| A stage's demand is the closure of its requests read by the frontier traversal, which keeps every row it reads: each call with each of its applications. | The closure keeps only the calls: every application carries its call's whole argument, the context included, so keeping the rows compared every row read with every row kept, and the closure then discarded them. The traversal of the sites alone (`finite_demanded_sites`) steps exactly as the traversal does on its sites and frontier, so it returns the same sites (`finite_demanded_sites_readings`), and the closure is computed through it (`finite_program_call_closure_sites`, a code equation). |
+| The remaining cost of a context-carrying evaluation lies in the comparisons inside the keyed evaluation, which meet the context first (the design recorded with the previous batch). | Measured on the chain: a key comparing a pair's right component first changes the keyed evaluation's time by nothing that matters (0.95 against 0.94 seconds at 24 problems), and a profile of the closure puts 95 percent of its time in structural equality of calls inside the traversal's set operations while computing one call's applications costs nothing measurable. The traversal is the cause, so it is refined first. |
+
+Evidence: on a probe of the base heap the two appended sections load with every proof checked. On a chain of answered
+problems the closure takes 0.044 and 1.19 seconds at 16 and 32 problems without the rows, against 0.090 and 2.56 with
+them, and reaches the same calls. The check that advanced the base to `.build/check-20260919ak` proved the 210
+changed and dependent theories in 172 seconds and executed the six native-question recipes (seed, machinery,
+steering, development, source development and workflow) with every word equal to its retained word, as a
+refinement must; it was retained with 177 tool and 35 kernel tests passing. Replaying the sixteen retained answers
+reconstructed fifteen with every word equal and reported the adopted walk as the published state's unchanged answer.
+
+Open: the traversal's union of the visited calls with the frontier and the difference of the successors from them
+still compare calls structurally, and every call of a candidate shares its context, so the closure still grows
+steeply with a chain's length (4.6th power between 32 and 48 problems). A traversal that keeps the visited calls in an
+ordered index across its steps, with each call's key computed once, proved equal to `finite_demanded_sites`, is the
+next refinement; the evaluation's own set operations follow. The choice of this step was made outside the loop and is
+a residual.

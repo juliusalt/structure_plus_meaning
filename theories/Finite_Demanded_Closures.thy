@@ -429,4 +429,43 @@ proof -
       finite_demanded_readings_exact[OF rows]])
 qed
 
+section \<open>The sites a traversal reaches, without its rows\<close>
+
+text \<open>
+  A reading that needs only the sites the roots reach need not keep the rows read at them: the traversal of
+  the sites alone steps exactly as the traversal above does on its first two components, so it returns the
+  same sites. Keeping the rows costs a comparison of every row read with every row already kept, and a row
+  holds whatever the reading returns at its site.
+\<close>
+
+definition finite_demanded_sites_step ::
+  "('s \<Rightarrow> 'r fset) \<Rightarrow> ('r \<Rightarrow> 's fset) \<Rightarrow> 's fset \<times> 's fset \<Rightarrow> 's fset \<times> 's fset" where
+  "finite_demanded_sites_step read succ q=(case q of (S,T) \<Rightarrow>
+    (let visited=S |\<union>| T in (visited,finite_row_successors read succ T |-| visited)))"
+
+definition finite_demanded_sites ::
+  "('s \<Rightarrow> 'r fset) \<Rightarrow> ('r \<Rightarrow> 's fset) \<Rightarrow> 's fset \<Rightarrow> 's fset option" where
+  "finite_demanded_sites read succ roots=map_option fst
+    (while_option (\<lambda>(S,T). T \<noteq> {||}) (finite_demanded_sites_step read succ) ({||},roots))"
+
+theorem finite_demanded_sites_readings:
+  "finite_demanded_sites read succ roots=map_option fst (finite_demanded_readings read succ roots)"
+proof -
+  let ?s="({||},roots,finite_site_rows read {||})"
+  have commute: "map_option (\<lambda>(S,T,A). (S,T))
+      (while_option (\<lambda>(S,T,A). T \<noteq> {||}) (finite_demanded_step read succ) ?s)=
+    while_option (\<lambda>(S,T). T \<noteq> {||}) (finite_demanded_sites_step read succ) ((\<lambda>(S,T,A). (S,T)) ?s)"
+    by (rule while_option_commute_invariant[where P="\<lambda>_. True"])
+      (auto simp: finite_demanded_step_def finite_demanded_sites_step_def Let_def split: prod.splits)
+  have "map_option fst (finite_demanded_readings read succ roots)=
+      map_option fst (map_option (\<lambda>(S,T,A). (S,T))
+        (while_option (\<lambda>(S,T,A). T \<noteq> {||}) (finite_demanded_step read succ) ?s))"
+    by (simp add: finite_demanded_readings_def option.map_comp comp_def split_def)
+  moreover have "map_option (\<lambda>(S,T,A). (S,T))
+      (while_option (\<lambda>(S,T,A). T \<noteq> {||}) (finite_demanded_step read succ) ({||},roots,{||}))=
+    while_option (\<lambda>(S,T). T \<noteq> {||}) (finite_demanded_sites_step read succ) ({||},roots)"
+    using commute by simp
+  ultimately show ?thesis by (simp add: finite_demanded_sites_def)
+qed
+
 end

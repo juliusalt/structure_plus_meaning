@@ -1,4 +1,17 @@
-# Handoff — impl-29: readiness over path stores committed (base ai, check aj retained); next the engine's cost
+# Handoff — impl-30: closure without applications committed (base ak); next the verdict of a kind as native rows
+
+## impl-30 session (2026-09-19, read first)
+
+- DONE: impl-29's second batch ("closure keeps no applications") validated by check ak (210 theories, 172 s, six
+  native-question recipes with every word equal, 177+35 tests), RETAINED (`retain --output .build/check-20260919ak`),
+  answers replayed (`.build/impl30/replay-a`: 16 replayed, 15 reconstructed, walk adopted, none differing), plan and
+  RR sections appended, COMMITTED AND PUSHED as "Close demanded calls without keeping their applications" (message
+  `.build/impl30/commit-sites.txt`). ACTIVE BASE: `.build/check-20260919ak/proof` (child of ai, which is a child of
+  `.build/complete-20260919ag`; keep all three).
+- PARKED (not taken): impl-29's third batch candidate `.build/impl29/keyedsites/Keyed_Demanded_Sites.thy` (visited
+  sites in an ordered member index). It still builds each step's successor set through `finite_row_successors`
+  (unions of rows that carry the context), so it removes only the visited check; no real loop step blocks today
+  (seed selection 0.06 s, machinery 0.65 s). Take it when a native program over a real state blocks, after attributing.
 
 ## impl-29 session (2026-09-19, read first)
 
@@ -10,6 +23,37 @@
   (10/10 seed, 36/65 machinery). Replay `.build/impl29/replay-a`: 16 replayed, 15 reconstructed, walk adopted, none
   differing. Plan section "Keys and tables are structure — 2026-09-19" and RR section appended.
 
+- PARKED AT THE CONTEXT LIMIT (impl-29). Batch 1 committed+pushed 3f280b99. SECOND BATCH below is installed,
+  UNCOMMITTED; its check ak FINISHED ACCEPTED after park (210 theories rebuilt, proof 172 s, recipes+tests 143 s, no
+  failed recipe, 177 tool tests; log `.build/check-20260919ak.out`), so the next steps start from retain:
+  when it ends, require status accepted with every recipe word equal (pure refinement); if accepted the base advanced
+  to ak (check `/tmp/structural-active-context.json`); run a confirming check if the tool requires, retain; fill
+  EVIDENCE in `.build/impl29/docs/plan-sites.md` (numbers: closure 0.044/1.19 s at 16/32 vs 0.090/2.56; mirrored key
+  0.94 vs 0.95 s at 24; profile 95% equality) and append it to native_control_plan.md, append
+  `.build/impl29/docs/rr-sites.md` to REASONING_REUSE.md, fill VALIDATION in `.build/impl29/commit-sites.txt`, commit
+  (stage theories/Finite_Demanded_Closures.thy, theories/Factor_Demanded_Program_Calls.thy, THEORY_MAP.md, HANDOFF.md,
+  plan, RR, validation/*; NOT .claude/orchestration/*, tools/__pycache__/*), push.
+  THIRD BATCH CANDIDATE (not yet probed): `.build/impl29/keyedsites/Keyed_Demanded_Sites.thy` (visited kept as a list
+  plus an ordered member index across steps; `keyed_demanded_sites_exact` = `finite_demanded_sites`); probe it on the
+  base that contains ak's sections, install as a new theory (ROOT before Keyed_Native_Evaluation), then prove
+  `finite_program_call_closure P R` equal to the keyed traversal with `native_call_key`/`native_call_unkey` and use it
+  in the three monomorphic stage code equations of Keyed_Native_Evaluation (l.201-240); measure on the chain
+  (`.build/impl29/sitesproof/P29_Sites_Check.thy` pattern), check (all words equal), commit.
+- SECOND BATCH (uncommitted, check RUNNING at park): the closure keeps no rows. Profile (`.build/impl29/profile`, closure at
+  32): 95% deep term equality; one call's applications cost nothing measurable. NEW in theories/ (appended sections):
+  `Finite_Demanded_Closures`: `finite_demanded_sites_step`, `finite_demanded_sites`, `finite_demanded_sites_readings`
+  (= `map_option fst (finite_demanded_readings ...)`, via `while_option_commute_invariant`; note: the projected triple
+  must be typed by the traversal, hence `finite_site_rows read {||}` in `?s`); `Factor_Demanded_Program_Calls`:
+  `finite_program_call_closure_sites [code]`. Sources `.build/impl29/sitesproof/{closures,calls}-section.txt`, probe
+  `P29_Sites_Check` LOADED serially: closure 0.044/1.19 s at 16/32 (was 0.090/2.56), same calls. THEORY_MAP rows
+  extended. RUNNING: `incremental_check.py check --advance-base --output .build/check-20260919ak` (pid in
+  `.build/impl29/check-ak.pid`, log `.build/check-20260919ak.out`): many theories rebuild (Finite_Demanded_Closures is
+  widely imported); EVERY recipe word must be EQUAL (pure refinement). If accepted: adopt is automatic with
+  --advance-base? NO: run `incremental_check.py adopt --proof .build/check-20260919ak/proof` only if needed (check the
+  active context file); retain ak; plan section row + RR row; commit "Close demanded calls without keeping their
+  applications"; push. Remaining growth (~n^4.6 on the chain) is the traversal's `S |∪| T` and `succ |-| visited`
+  over calls whose arguments share the context: an incremental keyed traversal (visited as an ordered member tree kept
+  across steps, keys computed once per call) proved equal to `finite_demanded_sites` is the next step.
 - BATCH (impl-28's chosen next batch, provisional residual): KEYS AND TABLES ARE STRUCTURE. INSTALLED in theories/
   (uncommitted) by `python3 .build/impl29/make_install.py` from the candidates `.build/impl29/cand/` (serial probe
   `.build/probe-impl29-b` LOADED, every proof checked): NEW `Native_Path_Stores` (ROOT after

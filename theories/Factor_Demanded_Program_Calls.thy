@@ -310,4 +310,15 @@ text \<open>
   never closed.
 \<close>
 
+text \<open>
+  The closure keeps only the calls its traversal reaches, so it is computed by the traversal of the sites
+  alone, which returns the same calls without keeping the applications read at them.
+\<close>
+
+lemma finite_program_call_closure_sites [code]:
+  "finite_program_call_closure P R=(case finite_demanded_sites (\<lambda>q. finite_program_applications P {|q|})
+    finite_application_premise_calls R of None \<Rightarrow> R | Some S \<Rightarrow> S)"
+  by (simp add: finite_program_call_closure_def finite_program_call_readings_def finite_demanded_sites_readings
+    split: option.splits prod.splits)
+
 end

@@ -42,6 +42,11 @@ the adopted walk and generation citations. See Q6.
 
 > The idea behind the rra structure was to seperate opaque inert data with no structure and structure by allowing atoms to carry octet payloads. On the level of allowed structure this is the best you can do, you cannot force someone using rra not to use the octets to carry actual encoded structural data. The idea was that this should be enforced by factor semantics - it is all designed to facilitate my priciples of structurlity, non-nominality, non-conflation, irredundancy, reuse, generalization by having all of these be clearly visible from the structure you are working on. Hence encoding structure as opaque data to define meaning is cardinally oposed to what I am trying to achieve. Note however that this does not imply that it can't be used this way for implementation if that is usefull - but there is even a trap here - if all implementation is non-structural then it can't itself adhere to my principles. Thus even implementation should be structural with the non-structural efficiency as a structurally presented idea that can be applied. Once you finish working on the current task reason about everything I said, see if it is correct and then make the appropriate tasks to combat this - the only time octects should be used are for trully inert opaque data with no structure - but this again needs to be nuanced and not taken literally - in some cases structural data can be carried as inert by other structures when it is truly non needed - the key is that all if structure is used then it needs to be explicit.
 
+**2026-09-19** (to impl-22, while the first theory of task 2, a structural graph presentation of the Isabelle
+state, was being probed):
+
+> I think there is one more important misunderstanding which I myself encouraged and never distinguished. From what I said it can be reasonably concluded that the normative definition of a notion(and every other definition) is the Isabelle one before the genesis - but this goes completely against everything that we are trying to do as the semantics of Isabelle are not the subject of the native machinery and thus everything defined in Isabelle is opaque to the native machinery(with the exception of the machinery that is yet to be created which will translate faithfully the native content into Isabelle). The role of Isabelle is to verify that the native reasoning and definitions are internally consistent before the native machinery can itself verify this. Thus everything we develop should be native content with native semantics and native structures only translated when required. This will facilitate the use of all of the machinery we have been working so hard to develop rather than relying on the opaque understanding of Isabelle semantics on the part of the implementer to make sure that what we are doing is sensible.
+
 ## Open questions to the owner
 
 Each question below is being worked around with a provisional choice; the choice stays generated, not
@@ -104,3 +109,15 @@ loop's notions reach, or the whole workspace?
 Q6 (incidence versus tagged trees, asked 2026-09-19 by impl-21) was answered by the owner's direction of
 2026-09-19 above; the plan section "Structure is explicit; octets are inert — 2026-09-19" records the analysis
 and the tasks, taken next with the structural Isabelle state first (the order is impl-21's inference).
+
+**Q7 (asked 2026-09-19 by impl-22) — the order of work under the direction that native definitions are
+normative.** Provisional choice: task 2 (a structural presentation of Isabelle's theory content) is paused; the
+loop's notions become native definitions first, beginning with readiness (a Factor program over a native
+presentation of problems, dependencies and the answered set given as its argument, its contract proved in Isabelle
+against the existing HOL readiness, evaluated by the selection question instead of a reflected table), then the
+verdict of a kind and request construction, then problems whose subjects are native definitions with native
+answers, then translation of native content into Isabelle for verification; the existing loop keeps posing its
+problems about HOL constants as the bootstrap loop meanwhile. Basis: the direction of 2026-09-19 above, the
+payload audit of the selection question (a table of its answers), and the Factor library's existing pattern of
+native programs with contracts proved once. Question: is this the order you intend, and should the loop keep
+posing problems about HOL constants (refinements of HOL functions) at all, or only about native definitions?

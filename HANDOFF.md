@@ -1,4 +1,4 @@
-# Handoff — impl-22: task 1 (payload-literal criterion) committed; task 2 (structural Isabelle state) next
+# Handoff — impl-22: task 1 committed; owner: native definitions are normative; next = readiness as a native definition
 
 ## impl-22 session (2026-09-19, read first)
 
@@ -11,24 +11,29 @@
   critic states only `[]`. Check `.build/check-20260919aa --advance-base` ACCEPTED (78 theories 88.9 s, no recipe
   reached, 177+35 tests) and RETAINED. ACTIVE BASE: `.build/check-20260919aa/proof`. Plan section "A program's
   payload literals are the octets it reads — 2026-09-19", RR section, THEORY_MAP rows.
-- NEXT = TASK 2 (structural Isabelle state). Decisions reasoned in impl-22 (refine impl-21's design below):
-  (a) one NAME ATOM per table position (payload leaf, inert string) in a names FAMILY, so any table (unused or
-  repeated names included) is presentable; (b) ROLE ATOMS per used (role, position) — constant, type constructor,
-  class, free, schematic, type-free, type-variable — each a Local citation node to its name atom, in one family per
-  role; an occurrence references its ROLE atom, so Const vs Free is the family of the referenced atom and name
-  identity is name-atom identity; (c) occurrence shapes: Const/Free = record [role atom, type node]; Var = record
-  [role atom, index leaf, type node]; App = record [t, u]; Abs = record [binder atom, type node, body]; Bound = the
-  binder atom itself as the field endpoint (binders family; reader keeps the binder stack); TApp = record
-  [tycon atom, arg types..]; TFree = record [tfree atom, sort record]; TVar = record [tvar atom, index leaf, sort];
-  distinctions by arity + the referenced atom's family, no tags; (d) type nodes SHARED, built from the exporter's
-  type table (`Isabelle_Type_Tables`: `isabelle_type_node` list, arguments = earlier positions), a types family;
-  (e) entities: one family per kind, members = term roots; roots family; families are UNORDERED and the reader
-  lists members in ADDRESS ORDER (identification only), so construction must allocate addresses whose
-  lexicographic order (`List_Lexorder`) is allocation order: e.g. length-prefixed big-endian digits (prove
-  monotone); (f) reader over `Factor_Indexed_Readings.artifact_reading` (read_record_candidates,
-  read_citation_candidates, read_family_candidates, read_payload_leaf_body) so the indexed reading applies;
-  exactness `read (construct S) = Some S` via closed-form heads of the constructed artifact. First slice suggested:
-  names + type roles + shared type table (types are ~85% of a state), then terms/binders, entities, roots.
+- OWNER DIRECTION 2026-09-19 (ledger, to impl-22; memory `native-definitions-normative`): native definitions are
+  normative; Isabelle content is opaque to the native machinery; Isabelle verifies internal consistency of native
+  definitions/reasoning; develop native content, translate to Isabelle only when required. Plan section "Native
+  definitions are normative; Isabelle verifies them — 2026-09-19" and owner question Q7 record the provisional reorder.
+- TASK 2 (structural presentation of Isabelle content) PAUSED. Its drafted foundation stays UNINSTALLED in
+  `.build/impl22/t2/Finite_Structural_Graphs.thy` (ordered addresses `ordered_code`, graph presentation
+  `structural_artifact`, exact readings `structural_record_candidates`/`_family_`/`_citation_`/`_payload_leaf_at`,
+  family listing by socket order). Probe `.build/probe-impl22-c` left 5 failing steps: digits256.simps for 0 (use
+  `digits256.simps[of 0]`), `digits256_bound` disjunction order, the replicate split in `ordered_code_less`
+  (`replicate_add`), `structural_object_fields` needs `fset_of_list.rep_eq`/`count_empty`, and the finite-member
+  step in `structural_heads_at_address` (`fset_of_list.rep_eq`). Keep only if native structures need it.
+- NEXT BATCH (provisional, Q7): READINESS AS A NATIVE DEFINITION. Argument term = (D, A, p): D a data list of rows
+  (problem key, premise-key list) with keys = `development_problem_data` terms (self-contained data), A the answered
+  keys, p the candidate; everything passed as the argument so the program states no data literals (payload
+  criterion: only generic list-terminator literals). Program over the existing data-list definitions
+  (`Factor_Bag_Comparison` selection/membership, `Factor_Bag_Difference` data absence 132, `Factor_List_Profiles`
+  context lists): settled(D,A,q) :- a row (q,H) of D, q member of A, every key of H settled (least closure = the
+  positive meaning, matching `development_settled`'s rule filter by answered problems); ready(D,A,p) :- p absent
+  from A, and for every row (k,H) of D either k differs from p or all of H are settled. Contract proved once:
+  native ready on the presented arguments <-> `development_ready D answered p`. Then the selection question's
+  candidates are (D,A,p) triples and its condition program is the native readiness program (no reflected facet
+  table); executed on the seed; audit its payload literals (expect only []). Then the verdict and request
+  construction the same way; then problems about native definitions; then native->Isabelle translation.
 
 ## impl-21 session (2026-09-19, read first) — rotated at the context limit; nothing running, nothing uncommitted
 

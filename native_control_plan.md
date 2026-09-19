@@ -1708,3 +1708,37 @@ its computed answers; it is enforced as the decisions become programs over the s
 is a question for those tasks too. HOL computations that produce the rows are outside native
 programs; the criterion sees them only through the rows they produce. This batch was chosen and made
 outside the loop and is a residual.
+
+## Native definitions are normative; Isabelle verifies them — 2026-09-19
+
+The owner (2026-09-19, ledger) corrected a misunderstanding the earlier directions allowed: before genesis the
+normative definition of a notion is not its Isabelle definition. Isabelle's semantics is not the subject of the
+native machinery, so everything defined in Isabelle is opaque to it, except the machinery, still to be built,
+that translates native content faithfully into Isabelle. Isabelle's role is to verify that native reasoning and
+definitions are internally consistent until the native machinery can verify this itself; everything developed is
+native content with native semantics and native structure, translated only when required.
+
+The assessment holds against this plan's material. The older Factor library already follows the pattern: native
+programs whose meaning is their positive meaning (equality, artifact and generation admission, value comparisons,
+certified causes, the finite native evaluation of installed programs), each with its contract proved once in
+Isabelle. The development layer built for this plan does not: its notions (a problem's contract, readiness,
+requests, the verdict of a kind, selection, publication) are HOL functions, and a native question admits a ground
+table of their results, which the previous section's audit shows directly (the seed's selection question states
+its answers). Isabelle remains normative for truth before genesis in one precise sense: it proves that a native
+definition's positive meaning meets its contract and that native reasoning is sound; Factor's semantics and those
+bootstrap proofs are HOL by necessity, and native mathematical-proof admission (O-85) is their eventual native
+account.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| The development's notions are HOL definitions; native questions admit ground tables of their results; the tasks of "Structure is explicit" make their presentations structural. | Each notion of the development is a native definition: a Factor program over native structure, whose meaning is its positive meaning, with its contract proved once in Isabelle, which is the verification of its consistency. A native question evaluates the notion's program on the actual subjects passed as its argument instead of admitting a table; the HOL functions that compute the same results are the specifications the contracts state, retired use by use. The payload criterion of the previous section is the admission condition such a program meets: its literals are the octets it reads as structure. |
+| Task 2 presents Isabelle's theory content as structure: atoms, citations, binders and families. | Isabelle's theory content is opaque to the native machinery whatever its presentation, so a structural presentation of it does not make a notion native. Task 2 as designed is paused; the structural graph presentation drafted for it (`.build/impl22/t2/Finite_Structural_Graphs.thy`, not installed) is kept for presenting native structures where that is needed. |
+| Installation translates an admitted native answer about an Isabelle constant into Isabelle text (the next request class of "Answers are native content"). | Translation runs from native content into Isabelle, for verification. An answer about an Isabelle constant stays Isabelle content until its subject is a native definition. |
+
+Order, provisionally (a residual, and owner question Q7 in the ledger): first the loop's notions as native
+definitions, beginning with readiness, since settlement is a least closure and positive meaning is one: a native
+program over a native presentation of the problems, their dependencies and the answered set given as its argument,
+its contract proved against the existing HOL readiness, and the selection question evaluating it; then the verdict
+of a kind and request construction; then problems whose subjects are native definitions, answered natively; then
+the translation of native content into Isabelle for verification. Until then the existing loop keeps posing its
+problems about HOL constants as the bootstrap loop. This revision was made outside the loop and is a residual.

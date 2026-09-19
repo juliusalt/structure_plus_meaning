@@ -1536,3 +1536,39 @@ changed, since the assessment of an answer state presents its frontier, so they 
 Open: which sessions form the base is a fixed list of the exporter (Pure, HOL and HOL-Library) with no
 native account, as its name table has none; this batch was chosen and made outside the loop and is a
 residual.
+
+## Definition problems are requested and judged — 2026-09-19
+
+The residual record of the previous sections held the loop's notions as definition problems, and a
+selected residual could not be answered: neither a request nor a verdict of a definition problem existed,
+the request and the verdict being stated for refinements only.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| A request and a verdict are stated for refinement problems. | The request of a problem of a constant and the verdict of an answer to it are stated once over the reading and the kind (`development_constant_request`, `development_constant_verdict`): the kind fixes which statements of the subject an answer may replace and which kind of statement it must state; nothing else may change, the subject's statements stay within the issued support, the answer state is closed and keeps the roots, and an accepted verdict's contract is proved once (`development_constant_verdict_contract`). The refinement request and verdict are their code-equation instances, extracted at this second use, and every statement their consumers read is unchanged. The definition request and verdict are their definition-reading instances: a definition answer replaces the subject's kernel definitions and the code equations derived from them, and must state a kernel definition (`development_definition_verdict_contract`). That the library's contracts of the constant still hold under a new definition is not read from the state. |
+| The seed's seven verdict controls are answer states of the seed. | They are the answer states that exercise any verdict before answers of its kind exist, stated over a reading (`development_answer_controls`); the seed's controls are their code-equation instance. |
+| A selected residual waits for a verifier of a definition answer. | The machinery issues its selected residuals as definition requests through the loop's issuing (`development_machinery_issued`: each issued request is the definition request of a selected, ready residual) and exercises the definition verdict on the seven answer states derived from each (`development_machinery_verification`). |
+| Pose a packet to be answered in Isabelle: the executor returns theory text, the harness frames it as a theory, Isabelle checks it and the checked context is exported again for the verdict; a definition answer would next be framed in place, replacing the definition in the theory that states it. | The owner (2026-09-19, ledger): packets first produce native content, which the native machinery evaluates with all of its existing theory, and translating and installing content the machinery has admitted into Isabelle is a separate problem. Judging an answer needs no Isabelle check: the verdict, its repair and admission read only the request state and the answer state, and the answer state is the request state with the answer applied, which native computation forms. An answer is therefore a native value, presented with the names it uses and read back by a reader with an exact contract, and its judgment runs natively with no theory checked per answer. What native judgment establishes is admissibility for installation, not truth: whether what an answer states holds, and whether the library's contracts of a replaced definition still hold, is Isabelle's acceptance when the answer is installed. Installation is its own request class: the admitted answer is translated through the packet's inverse reading and framed, the proof of what it states is requested separately as a narrower request, Isabelle checks it, and the state exported again must equal the native answer state; selection into the published state and adoption follow installation. The in-place Isabelle harness for definition answers is not built. |
+
+Evidence: the check that advanced the base to `.build/check-20260919x8` proved the 17 changed and
+dependent theories in 47.5 seconds, and the seed recipe executed with every word equal, since the
+refinement request, verdict and controls are instances of the general ones. The machinery recipe's three
+words changed, since its roots gained the definition request and verdict among the loop's notions and
+their constituents, and a fourth stage presents the verification; the words were recorded, and the
+confirming check executed both recipes again with every word equal (the verification stage in 22.4
+seconds) and was retained, with 171 tool and 35 kernel tests passing. The machinery state now holds 300
+names and 337 entities from 61 roots, posing 61 residual problems with 89 development constants on the
+frontier; with nothing answered 32 are ready, and the loop selects and issues all 32 as definition
+requests. For every request the definition verdict accepts the unchanged answer and its renaming and
+refuses the subject's definitions stated as axioms, the dropped definitions, the definitions stated
+through an unknown constant and the dropped definitions of the other residuals. Dropping the subject's
+code equations is accepted for 29 requests and refused for three (`development_contract_data`,
+`isabelle_state_embedding`, `development_answer_publication_with`): their code equations are the only
+statements reaching some declarations of the state (ten, one and one), which that control keeps, so its
+answer state is not closed. Replaying the fourteen retained answers reconstructed thirteen with every
+word equal and reported the adopted walk as the published state's unchanged answer.
+
+Open: no definition answer exists, and no answer of either kind is yet a native value; admission and
+publication are stated for refinement answers judged by the harness only. Native answers, their reader
+and their native judgment come next, then installation as its own request class. The choice of this
+batch was made outside the loop and is a residual.

@@ -3,7 +3,8 @@ theory Native_Development_Machinery
 begin
 
 export_code development_seed_report_value development_machinery_state
-  development_machinery_problem_value development_machinery_loop_value development_machinery_unanswered
+  development_machinery_problem_value development_machinery_loop_value
+  development_machinery_verification_value development_machinery_unanswered
   finite_term_shared_word_fold
   in Eval module_name Native_Development_Machinery file_prefix "native_development_machinery"
 

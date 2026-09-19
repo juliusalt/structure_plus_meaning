@@ -564,7 +564,7 @@ qed
 theorem development_certified_answer_accepted:
   assumes built: "development_certified_answer S r S' H rows=Some (B,u,G)"
   obtains p E payload v l where "development_answer_generation S r S'=Some (p,E,payload,v)"
-    "development_refinement_accepted v" "p=fst r"
+    "development_verdict_accepted v" "p=fst r"
     "development_data_target (development_problem_locus (fst (snd S)) p)=Some l"
     "development_family_generation (snd S') payload H l (development_answer_citations (fst (snd S)) (fst r) l rows)=Some (B,u,G)"
 proof -
@@ -573,7 +573,7 @@ proof -
   obtain l where locus: "development_data_target (development_problem_locus (fst (snd S)) p)=Some l"
     and family: "development_family_generation (snd S') payload H l (development_answer_citations (fst (snd S)) (fst r) l rows)=Some (B,u,G)"
     using built generation by (auto simp: development_certified_answer_family bind_eq_Some_conv)
-  have accepted: "development_refinement_accepted v"
+  have accepted: "development_verdict_accepted v"
     by (rule development_answer_generation_payload(1)[OF generation])
   have problem: "p=fst r"
     using generation by (auto simp: development_answer_generation_def Let_def split: prod.splits if_splits)

@@ -191,12 +191,51 @@ proof
   qed
 qed
 
+text \<open>
+  A request of a problem of a constant carries the problem, the constant as the state declares it,
+  the support and the least context; the kind of the problem selects only which statements of the
+  constant's scope are its incumbent, and the context holds them all. The construction is stated
+  once over the reading and the kind: the refinement request is its instance under the
+  code-equation reading, the definition request its instance under the definition reading.
+\<close>
+
+definition development_constant_request :: "(isabelle_entity \<Rightarrow> isabelle_term option) \<Rightarrow>
+    (isabelle_term \<Rightarrow> development_contract) \<Rightarrow> isabelle_context \<Rightarrow> development_origin \<Rightarrow>
+    development_authority \<Rightarrow> nat \<Rightarrow> development_request option" where
+  "development_constant_request reading kind C r a c=map_option (\<lambda>s.
+     (Development_Problem {|c|} (kind s) r a,s,development_request_support C c,development_request_context C c))
+     (development_stated_constant reading C c)"
+
+theorem development_constant_request_fields:
+  assumes request: "development_constant_request reading kind C r a c=Some (p,s,S,E)"
+  shows "development_constant_problem reading kind C r a c=Some p" "problem_contract p=kind s"
+    "problem_subject p={|c|}" "S=development_request_support C c" "E=development_request_context C c"
+    "\<And>q. q\<in>set (development_statements reading C c) \<Longrightarrow> \<exists>e. reading e=Some q \<and> e |\<in>| E"
+proof -
+  have stated: "development_stated_constant reading C c=Some s"
+    and problem: "p=Development_Problem {|c|} (kind s) r a"
+    and fields: "S=development_request_support C c" "E=development_request_context C c"
+    using request by (auto simp: development_constant_request_def)
+  show "development_constant_problem reading kind C r a c=Some p"
+    by (simp add: development_constant_problem_def development_constant_contract_def stated problem)
+  show "problem_contract p=kind s" by (simp add: problem)
+  show "problem_subject p={|c|}" by (simp add: problem)
+  show "S=development_request_support C c" by (rule fields(1))
+  show "E=development_request_context C c" by (rule fields(2))
+  show "\<exists>e. reading e=Some q \<and> e |\<in>| E" if statement: "q\<in>set (development_statements reading C c)" for q
+  proof -
+    obtain e where scope: "e\<in>set (development_constant_scope C c)" and read: "reading e=Some q"
+      using statement unfolding development_statements_exact by blast
+    have state: "e\<in>set (snd C)" using scope by (simp only: development_constant_scope_member)
+    have "e |\<in>| E" unfolding fields(2) development_request_context_exact using state scope by blast
+    then show ?thesis using read by blast
+  qed
+qed
+
 definition development_refinement_request :: "isabelle_context \<Rightarrow> development_origin \<Rightarrow>
     development_authority \<Rightarrow> nat \<Rightarrow> development_request option" where
-  "development_refinement_request C r a c=(case development_refinement_problem C r a c of None \<Rightarrow> None
-     | Some p \<Rightarrow> (case problem_contract p of
-         Development_Refinement s \<Rightarrow> Some (p,s,development_request_support C c,development_request_context C c)
-       | _ \<Rightarrow> None))"
+  "development_refinement_request C r a c=development_constant_request isabelle_code_equation_proposition
+     Development_Refinement C r a c"
 
 theorem development_refinement_request_fields:
   assumes request: "development_refinement_request C r a c=Some (p,s,S,E)"
@@ -204,21 +243,23 @@ theorem development_refinement_request_fields:
     "problem_subject p={|c|}" "S=development_request_support C c" "E=development_request_context C c"
     "\<forall>q\<in>set (development_refinement_statements C c). Isabelle_Code_Equation q |\<in>| E"
 proof -
-  obtain k where problem: "development_refinement_problem C r a c=Some p"
-    and contract: "development_refinement_contract C c=Some k" and shape: "p=Development_Problem {|c|} k r a"
-    using request by (auto simp: development_refinement_request_def development_refinement_problem_contract
-      split: option.splits development_contract.splits)
-  have statement: "problem_contract p=Development_Refinement s" "S=development_request_support C c"
-    "E=development_request_context C c"
-    using request problem by (auto simp: development_refinement_request_def split: development_contract.splits)
-  show "development_refinement_problem C r a c=Some p" by (rule problem)
-  show "problem_contract p=Development_Refinement s" by (rule statement(1))
-  show "problem_subject p={|c|}" by (rule development_refinement_problem_subject[OF problem])
-  show "S=development_request_support C c" by (rule statement(2))
-  show "E=development_request_context C c" by (rule statement(3))
+  note fields=development_constant_request_fields[OF request[unfolded development_refinement_request_def]]
+  show "development_refinement_problem C r a c=Some p"
+    by (simp only: development_refinement_problem_def fields(1))
+  show "problem_contract p=Development_Refinement s" by (rule fields(2))
+  show "problem_subject p={|c|}" by (rule fields(3))
+  show "S=development_request_support C c" by (rule fields(4))
+  show "E=development_request_context C c" by (rule fields(5))
   show "\<forall>q\<in>set (development_refinement_statements C c). Isabelle_Code_Equation q |\<in>| E"
-    by (auto simp: statement(3) development_request_context_exact development_constant_scope_member
-      development_refinement_statements_state)
+  proof
+    fix q assume "q\<in>set (development_refinement_statements C c)"
+    then have "q\<in>set (development_statements isabelle_code_equation_proposition C c)"
+      by (simp only: development_refinement_statements_def)
+    then obtain e where read: "isabelle_code_equation_proposition e=Some q" and member: "e |\<in>| E"
+      using fields(6) by blast
+    have "e=Isabelle_Code_Equation q" using read by (simp only: isabelle_code_equation_proposition_exact)
+    then show "Isabelle_Code_Equation q |\<in>| E" using member by simp
+  qed
 qed
 
 definition development_request_data :: "development_request \<Rightarrow> finite_factor_term" where

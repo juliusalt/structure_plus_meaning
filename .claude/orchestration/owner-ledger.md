@@ -18,6 +18,10 @@ this file first and writes to it at once when the owner speaks. An entry leaves 
 
 > Once in a while when a milestone is reached the directory should be commited and pushed to the remote using the same style as already existing commits. Add this to memory.
 
+**2026-09-19** (to impl-19, while the check of B11, the definition requests and verdict, was running):
+
+> Judging from the commit notes the current workflow is the following - the problems are native, the machinery used to resolve them is native, but the packets are posed to give answers in Isabelle rather than native answers. Ofcourse in the end to verify a proof before genesis any new material needs to become Isabelle material, however it seems to me that there is a conflation between having to have the machinery that allows for the mapping and installation of native content as Isabelle machinery and having to produce that Isabelle content for every packet. That is these two steps could be seperated where packets first produce native content which can then be evaluated by native machinery allowing to use all of the existing native theory to evaluate the content and then as a seperate problem, once the content is deemed admisable by the machinery the translation and installation machinery can be used to add it as Isabelle content. I can be wrong analyze critically what I said.
+
 ## Open questions to the owner
 
 Each question below is being worked around with a provisional choice; the choice stays generated, not

@@ -13,53 +13,30 @@ text \<open>
   equation outside the support: stating the subject's equations as axioms, dropping the
   subject's equations, stating the equation through a constant the state does not know,
   changing the equations of the other seeded subjects, and removing the subject's kernel
-  definition. Each control is derived from the request and the state, names no position of
+  definition. The controls are the answer states `development_answer_controls` derives under the
+  code-equation reading: each is derived from the request and the state, names no position of
   either list and selects no subject.
 \<close>
 
-fun isabelle_right_wrap :: "isabelle_term \<Rightarrow> isabelle_term \<Rightarrow> isabelle_term" where
-  "isabelle_right_wrap g (Isabelle_Application (Isabelle_Application (Isabelle_Constant e T) l) r)=
-    Isabelle_Application (Isabelle_Application (Isabelle_Constant e T) l) (Isabelle_Application g r)"
-| "isabelle_right_wrap g (Isabelle_Application (Isabelle_Constant j T) p)=
-    Isabelle_Application (Isabelle_Constant j T) (isabelle_right_wrap g p)"
-| "isabelle_right_wrap g t=t"
-
-definition development_absent_name :: "String.literal list \<Rightarrow> String.literal" where
-  "development_absent_name names=foldr (+) names STR ''.absent''"
-
 definition development_seed_controls :: "development_request \<Rightarrow> isabelle_rooted_context list" where
-  "development_seed_controls r=(case r of (p,s,support,E) \<Rightarrow>
-    let (R,C)=development_seed_state; names=fst C; es=snd C; P=problem_subject p;
-      others=fset_of_list development_seed_root_constants |-| P;
-      fresh=Isabelle_Constant (length names) (Isabelle_Type_Application (length names) []) in
-    [development_seed_state,
-     development_seed_renamed,
-     (R,(names,es@map (\<lambda>e. Isabelle_Specification (the (isabelle_code_equation_proposition e)))
-       (filter (development_answer_equation C P) es))),
-     (R,(names,filter (\<lambda>e. \<not>development_answer_equation C P e) es)),
-     (R,(names@[development_absent_name names],
-       map (\<lambda>e. if development_answer_equation C P e
-         then Isabelle_Code_Equation (isabelle_right_wrap fresh (the (isabelle_code_equation_proposition e))) else e) es@
-       [Isabelle_Development_Constant fresh])),
-     (R,(names,filter (\<lambda>e. \<not>development_answer_equation C others e) es)),
-     (R,(names,filter (\<lambda>e. \<not>(isabelle_specified_proposition e\<noteq>None \<and> isabelle_code_equation_proposition e=None \<and>
-       list_ex (\<lambda>c. c |\<in>| P) (isabelle_entity_subjects names (isabelle_development_constants es) e))) es))])"
+  "development_seed_controls=development_answer_controls isabelle_code_equation_proposition Isabelle_Code_Equation
+    development_seed_state development_seed_renamed (fset_of_list development_seed_root_constants)"
 
-type_synonym development_seed_verification = "(development_refinement_verdict\<times>bool) list list"
+type_synonym development_seed_verification = "(development_constant_verdict\<times>bool) list list"
 
 definition development_seed_verification :: "development_problem fset \<Rightarrow> development_seed_verification" where
   "development_seed_verification answered=Parallel.map (\<lambda>r. map (\<lambda>S'.
-     let v=development_refinement_verdict development_seed_state r S' in (v,development_refinement_accepted v))
+     let v=development_refinement_verdict development_seed_state r S' in (v,development_verdict_accepted v))
      (development_seed_controls r)) (development_seed_requests answered)"
 
 definition development_seed_verification_data :: "development_seed_verification \<Rightarrow> finite_factor_term" where
   "development_seed_verification_data=finite_sequence_presentation (finite_sequence_presentation
-    (finite_pair_presentation development_refinement_verdict_data finite_boolean_data))"
+    (finite_pair_presentation development_verdict_data finite_boolean_data))"
 
 lemma development_seed_verification_data_injective [intro]: "inj development_seed_verification_data"
   unfolding development_seed_verification_data_def
   by (intro finite_sequence_presentation_injective finite_pair_presentation_injective
-    development_refinement_verdict_data_injective finite_boolean_data_injective)
+    development_verdict_data_injective finite_boolean_data_injective)
 
 definition development_seed_verification_value :: "development_problem fset \<Rightarrow> finite_factor_term" where
   "development_seed_verification_value answered=

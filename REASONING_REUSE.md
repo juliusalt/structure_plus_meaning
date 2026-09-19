@@ -2049,3 +2049,13 @@ loop's policy, adoption into the refinement layer and the successor state are no
 | Theory | Reusable content and retained prerequisites |
 | --- | --- |
 | Isabelle_Entity_Export | A constant belongs to the fixed base when the session of the theory that declared it is a base session (`declaring_session`): a theory's long name is qualified by its session except the theory Pure's, whose long name is its session, so reading the qualifier alone had made every constant of Pure a development constant. |
+
+## Definition requests and the verdict of a definition answer — 2026-09-19
+
+| Theory | Reusable content and retained prerequisites |
+| --- | --- |
+| Development_Requests | The request of a problem of a constant is stated once over the reading and the kind (`development_constant_request`, `development_constant_request_fields`): the problem, the constant as the state declares it, the support and the least context of the constant's whole scope. The refinement request is its code-equation instance, extracted at this second use. |
+| Development_Constant_Verification | The verdict of an answer to a problem of a constant, stated once over which statements of the subject an answer may replace and which kind it must state (`development_constant_verdict`), with its acceptance, its contract (`development_constant_verdict_contract`), counts, excess and presentation, the named request, and the answer states that exercise a verdict before answers of its kind exist (`development_answer_controls`, the seed's seven controls stated over a reading). |
+| Development_Refinement_Verification | The refinement verdict and the subject's equations, excess and contract as the code-equation instances of the general verdict; every statement their consumers read is unchanged. |
+| Development_Definition_Verification | The definition request (the definition-reading instance of the request of a constant) and the verdict of a definition answer: its subject's kernel definitions and the code equations derived from them are replaceable, a kernel definition is demanded, nothing else may change (`development_definition_verdict_contract`). Isabelle's acceptance of the answer's installation, not the state, establishes that the library's contracts of the constant still hold. |
+| Development_Machinery | The selected residuals issued as definition requests through the loop's issuing (`development_machinery_issued`: every issued request is the definition request of a selected, ready residual) and the definition verdict exercised on the answer states derived from each (`development_machinery_verification`). |

@@ -116,35 +116,35 @@ text \<open>
   what decides it.
 \<close>
 
-type_synonym development_generation = "development_problem\<times>isabelle_entity fset\<times>isabelle_entity list\<times>development_refinement_verdict"
+type_synonym development_generation = "development_problem\<times>isabelle_entity fset\<times>isabelle_entity list\<times>development_constant_verdict"
 
 definition development_answer_generation ::
     "isabelle_rooted_context \<Rightarrow> development_request \<Rightarrow> isabelle_rooted_context \<Rightarrow> development_generation option" where
   "development_answer_generation S r S'=(case r of (p,s,support,E) \<Rightarrow>
     let v=development_refinement_verdict S r S' in
-    if development_refinement_accepted v then
+    if development_verdict_accepted v then
       Some (p,E,development_answer_equations (snd S')
         (fimage (isabelle_state_embedding (fst (snd S)) (fst (snd S'))) (problem_subject p)),v)
     else None)"
 
 theorem development_answer_generation_payload:
   assumes generation: "development_answer_generation S r S'=Some (p,E,payload,v)"
-  shows "development_refinement_accepted v" "set payload\<subseteq>set (snd (snd S'))" "payload\<noteq>[]"
+  shows "development_verdict_accepted v" "set payload\<subseteq>set (snd (snd S'))" "payload\<noteq>[]"
 proof -
   obtain q s support E' where request: "r=(q,s,support,E')" by (cases r) auto
-  have accepted: "development_refinement_accepted (development_refinement_verdict S r S')"
+  have accepted: "development_verdict_accepted (development_refinement_verdict S r S')"
     and fields: "p=q" "E=E'" "payload=development_answer_equations (snd S')
       (fimage (isabelle_state_embedding (fst (snd S)) (fst (snd S'))) (problem_subject q))"
       "v=development_refinement_verdict S r S'"
     using generation by (auto simp: development_answer_generation_def request Let_def split: if_splits)
-  show "development_refinement_accepted v" using accepted by (simp only: fields(4))
+  show "development_verdict_accepted v" using accepted by (simp only: fields(4))
   show "set payload\<subseteq>set (snd (snd S'))"
-    by (simp add: fields(3) development_answer_equations_def)
+    by (simp add: fields(3) development_answer_equations_exact)
   obtain e' where member: "e'\<in>set (snd (snd S'))"
     and answer: "development_answer_equation (snd S')
       (fimage (isabelle_state_embedding (fst (snd S)) (fst (snd S'))) (problem_subject q)) e'"
     using development_refinement_verdict_contract(3)[OF accepted[unfolded request]] by blast
-  have "e'\<in>set payload" using member answer by (simp add: fields(3) development_answer_equations_def)
+  have "e'\<in>set payload" using member answer by (simp add: fields(3) development_answer_equations_exact)
   then show "payload\<noteq>[]" by auto
 qed
 
@@ -486,7 +486,7 @@ next
 qed
 
 theorem development_admitted_keeps_independent_current:
-  assumes accepted: "development_refinement_accepted (development_refinement_verdict S (p,s,support,E) S')"
+  assumes accepted: "development_verdict_accepted (development_refinement_verdict S (p,s,support,E) S')"
     and subject: "problem_subject p={|c|}" and other: "d\<noteq>c"
     and declared_once: "distinct (List.map_filter isabelle_declared_constant (snd (snd S)))"
   shows "development_request_current (snd S) (snd S') (q,t,development_request_support (snd S) d,
@@ -506,7 +506,7 @@ proof -
       assume "development_answer_equation ?C (problem_subject p) x"
       then obtain e where equation: "isabelle_code_equation_proposition x=Some e"
         and hit: "list_ex (\<lambda>c'. c' |\<in>| problem_subject p) (isabelle_entity_subjects (fst ?C) (isabelle_development_constants (snd ?C)) x)"
-        by (auto simp: development_answer_equation_def)
+        by (auto simp: development_answer_equation_exact)
       have code: "x=Isabelle_Code_Equation e" using equation by (simp only: isabelle_code_equation_proposition_exact)
       have "set (isabelle_entity_subjects (fst ?C) (isabelle_development_constants (snd ?C)) x)\<subseteq>{d}"
       proof (cases "Option.bind (isabelle_equation_left (fst ?C) e) isabelle_head_constant")
@@ -559,7 +559,7 @@ proof -
           development_answer_equation ?C' (fimage ?f (problem_subject p)) y"
         using contract(2)[OF y] by simp
       moreover have "\<not>development_answer_equation ?C' (fimage ?f (problem_subject p)) y"
-        using names by (cases y) (auto simp: development_answer_equation_def)
+        using names by (cases y) (auto simp: development_answer_equation_exact)
       ultimately obtain e0 where e0: "e0\<in>set (snd ?C)" and image: "y=isabelle_entity_rename ?f e0" by blast
       have "map_option ?f (isabelle_declared_constant e0)=Some (?f d')"
         using names by (simp add: image isabelle_entity_rename_declared)
@@ -586,13 +586,13 @@ lemma development_dependencies_data_injective [intro]: "inj development_dependen
 definition development_generation_data :: "development_generation \<Rightarrow> finite_factor_term" where
   "development_generation_data=finite_pair_presentation development_problem_data
     (finite_pair_presentation isabelle_entities_data
-      (finite_pair_presentation (finite_sequence_presentation isabelle_entity_data) development_refinement_verdict_data))"
+      (finite_pair_presentation (finite_sequence_presentation isabelle_entity_data) development_verdict_data))"
 
 lemma development_generation_data_injective [intro]: "inj development_generation_data"
   unfolding development_generation_data_def
   by (intro finite_pair_presentation_injective development_problem_data_injective
     isabelle_collections_injective finite_sequence_presentation_injective isabelle_entity_data_injective
-    development_refinement_verdict_data_injective)
+    development_verdict_data_injective)
 
 text \<open>
   A record is presented through a presentation of the executed packet it may carry, supplied by

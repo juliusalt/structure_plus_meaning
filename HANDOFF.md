@@ -1,27 +1,52 @@
-# Handoff — impl-19: B10a, B10b, B10c committed; B11 (definition requests and verdict) staged
+# Handoff — impl-20: B11 committed; B12 (native answers) in design
+
+## impl-20 session (2026-09-19, read first)
+
+- B11 COMMITTED+PUSHED ("Request and judge definition problems through the verdict of a problem of a constant"):
+  check x8 (advance, 17 theories 47.5 s), x9 recorded the machinery words, x10 confirming ACCEPTED+RETAINED,
+  replay-c 13 reconstructed + walk adopted. ACTIVE BASE: `.build/check-20260919x8/proof`.
+  Probe (`.build/impl20/cand-a/Probe_B11_Verdicts.thy`): machinery 300 names/337 entities/61 roots/61
+  residuals/32 ready = 32 issued definition requests; pattern TTFFFFT for 29, TTFFFFF for 3 (their code
+  equations are the only statements reaching some declarations: unreached 10/1/1).
+- NEXT BATCH B12 (owner direction 2026-09-19, ledger): NATIVE ANSWERS. Design in progress (see below).
+- Scratch tool: `.build/impl20/run_native.py` (runs an ML body against an Eval export; only exported names
+  are visible in the structure).
 
 ## impl-19 session (2026-09-19, read first)
 
-- ACTIVE BASE: `.build/check-20260919x4/proof` (B10c's check, adopted; lineage x4 -> x2 -> v -> s,q,p,...).
-  Confirming check `.build/check-20260919x5` ACCEPTED and RETAINED. Replay `.build/impl19/replay-b` (--rerecord):
-  7 refusals/failures reconstructed, walk adopted, 6 judged answers re-recorded (verdict words only).
-- B10a COMMITTED+PUSHED 5c26b79; B10b COMMITTED+PUSHED 958632de; B10c COMMITTED+PUSHED "Read Pure's constants as
-  base constants of every state" (Isabelle_Entity_Export `declaring_session`).
-- B11 STAGED in `.build/impl19/b11/` (install with `python3 .build/impl19/b11/install.py`, which copies 11 theories
-  + 2 tools and edits ROOT and THEORY_MAP): `Development_Requests` (`development_constant_request`, refinement request =
-  instance), NEW `Development_Constant_Verification` (general verdict `development_constant_verdict replaceable
-  demanded`, `development_verdict_accepted`, contract, `development_named_request` moved here, counts/excess/data,
-  `development_answer_controls` = the seed's 7 controls over a reading), `Development_Refinement_Verification`
-  (code-equation instances), NEW `Development_Definition_Verification` (definition request + verdict + contract),
-  renames (`development_refinement_accepted`->`development_verdict_accepted`, `_verdict_data`->`development_verdict_data`,
-  counts/excess, type -> `development_constant_verdict`) in Successor, Admitted_Publication, Certified_Generations,
-  Repair, Seed_Verification (controls = instance), harness `tools/development_answer.py`; Development_Machinery (roots
-  + definition request/verdict notions; `development_machinery_issued`, `development_machinery_verification` issuing the
-  34 selected residuals and judging the 7 controls each), Native_Development_Machinery export, machinery recipe stage
-  `presentation-verification`. NOT YET CHECKED. Expected: seed words all EQUAL (pure refactoring), machinery words
-  change (roots + new stage), replay of 14 answers reconstructs all (confirms B10c's re-recorded words too).
-- Scratch to remove: `.build/probe-impl18-*`, `.build/impl18/{typesize,compile,literal,dagsize,shared,names,
-  l3probe,b10bprobe}`, `.build/check-20260919w` (superseded by x3).
+- COMMITTED+PUSHED: B10a 5c26b79, B10b 958632de, B10c 4c22044d ("Read Pure's constants as base constants").
+- OWNER DIRECTION (ledger, 2026-09-19): answers should be NATIVE content evaluated by native machinery first;
+  translation/installation into Isabelle is a SEPARATE problem after native admission. impl-19 agreed in chat and
+  analysed: native judgment is not truth (admission = admissible-for-installation; selection/adoption wait for
+  Isabelle acceptance at installation); installation = translate (packet inverse translation) + frame + proof as a
+  separate narrower request + Isabelle check + re-export round-trip equality; type errors/derived code equations/
+  fun helpers surface at installation; native answers need a native reader with exact contract (complete data
+  quotation readers), interim: word-digest transport check. CONSEQUENCE: the in-place Isabelle definition-answer
+  harness (old B12 idea) is DROPPED. NEXT BATCH (B12): native answers (a native delta applied to the request state:
+  answer state computed natively; native verdict/admission; declared native presentation + reader), then
+  installation as its own request class. Record this as a correction row in the plan's B11/B12 section.
+- ACTIVE BASE: `.build/check-20260919x8/proof` (B11's proof, adopted; all 11 seed words EQUAL = refactoring exact).
+- RUNNING (pid file none; script `.build/impl19/chain-b11.sh`, log `.build/impl19/chain-b11.log`): check x9 (machinery
+  recipe with placeholder `presentation-verification: null` -> fails on null word) -> `record_words` (output
+  `.build/impl19/record-b11.out`; ALL 4 machinery words change: roots gained definition request/verdict) -> confirming
+  check `.build/check-20260919x10` -> replay `.build/impl19/replay-c` (NO rerecord; expect 13 reconstructed + walk;
+  confirms B10c's re-recorded words under the renamed harness). If x9 shows a stage exit != 0, the chain stops.
+- B11 UNCOMMITTED (installed): theories Development_Requests (development_constant_request), NEW
+  Development_Constant_Verification, Development_Refinement_Verification (instances), NEW
+  Development_Definition_Verification, renames in Successor/Admitted_Publication/Certified_Generations/Repair/
+  Seed_Verification (controls = instance), Development_Machinery (definition notions as roots,
+  `development_machinery_issued`, `development_machinery_verification`), Native_Development_Machinery; tools
+  development_answer.py (renamed verdict names), reconstruct_native_development_machinery.py (new stage); ROOT;
+  THEORY_MAP; validation machinery reports placeholder; owner ledger entry. Staging copies in `.build/impl19/b11/`.
+- TO FINISH B11: check chain results (x9 words recorded, x10 accepted, replay-c 13+walk); read the verification
+  word's stage time; retain x10 (`incremental_check.py retain --output .build/check-20260919x10`); write plan section
+  (draft RR section `.build/impl19/docs/rr-b11.md`; plan text: general request/verdict, definition instances,
+  machinery issues 34 selected residuals as definition requests and judges 7 controls each [expected accepted
+  pattern T,T,F,F,F,F,T], correction row for the owner's native-answer direction, criticism: verdict reads only the
+  state, library contracts = Isabelle acceptance, no admission/publication for definitions yet), append both, commit
+  (existing style, no attribution) + push.
+- Scratch to remove: `.build/probe-impl18-*`, `.build/impl18/{typesize,compile,literal,dagsize,shared,names,l3probe,
+  b10bprobe}`, `.build/probe-impl19-{a,b}`, checks w, x3, x5, x6, x7, x9 after the commit (keep x8 lineage + x10).
 
 ## impl-17 session (2026-09-19)
 

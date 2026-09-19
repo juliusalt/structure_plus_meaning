@@ -1,5 +1,6 @@
 theory Development_Machinery
   imports Native_Control_Seed_Subject Development_Admitted_Publication Development_Presentation
+    Development_Definition_Verification
 begin
 
 section \<open>The loop's own notions and their constituents as a checked state\<close>
@@ -8,7 +9,8 @@ text \<open>
   The notions the first loop's judgments consult were defined outside the native process, like
   the seeded roots: which problem a constant poses and what it depends on, when a problem is
   ready, how the next problems are selected and issued, what a request carries, how an answer is
-  judged and a refused one repaired, which policy admits a payload, how a certified generation is
+  judged and a refused one repaired, what a definition request carries and how a definition answer
+  is judged, which policy admits a payload, how a certified generation is
   recorded, where a problem stands, how the loop's decisions are recorded, how an admitted answer
   is published and how the development moves to its successor. So were the development constants
   their definitions are made of. The checked context presents these notions and their
@@ -26,7 +28,8 @@ local_setup \<open>fn lthy =>
       [("_problem_roots", [\<^term>\<open>development_constant_problem\<close>, \<^term>\<open>development_constant_dependencies\<close>,
          \<^term>\<open>development_ready\<close>, \<^term>\<open>development_selection_question\<close>, \<^term>\<open>development_issuable\<close>]),
        ("_answer_roots", [\<^term>\<open>development_refinement_request\<close>, \<^term>\<open>development_refinement_verdict\<close>,
-         \<^term>\<open>development_refinement_repair\<close>]),
+         \<^term>\<open>development_refinement_repair\<close>, \<^term>\<open>development_definition_request\<close>,
+         \<^term>\<open>development_definition_verdict\<close>]),
        ("_admission_roots", [\<^term>\<open>development_policy_source_with\<close>, \<^term>\<open>development_payload_generation_with\<close>,
          \<^term>\<open>development_problem_locus\<close>, \<^term>\<open>development_loop_decisions\<close>,
          \<^term>\<open>development_answer_publication\<close>, \<^term>\<open>development_successor\<close>])];
@@ -188,6 +191,100 @@ text \<open>
   the loop report presents the contract decision of every root, the selection and the selected
   residuals. Whether these roots are adequate to the loop, the requirements an answer to a
   residual must meet, and the verifier of a definition answer are not established here.
+\<close>
+
+section \<open>The selected residuals are issued as definition requests\<close>
+
+text \<open>
+  A residual is a definition problem, so the loop issues its selected residuals as definition
+  requests: the request of the problem's one subject constant under the definition reading, with the
+  support and the least context of the constant's scope. The machinery's library holds no
+  decomposition rule, so every selected residual is a leaf and is issued with the reading of that
+  absence. No answer to a definition request exists yet, so the definition verdict is exercised on
+  the answer states derived from each request under the definition reading
+  (`development_answer_controls`): the unchanged state and its renaming must be accepted; the
+  subject's definitions stated as axioms, dropped, or stated through a constant the state does not
+  know must be refused, as must dropping the other residuals' definitions; and dropping the
+  subject's code equations must be accepted, since they are derived from its definition and a
+  definition answer replaces them.
+\<close>
+
+definition development_machinery_renamed :: isabelle_rooted_context where
+  "development_machinery_renamed=isabelle_rooted_rename
+    (isabelle_reversal (length (fst development_machinery_context)))
+    (rev (fst development_machinery_context)) development_machinery_state"
+
+definition development_machinery_request_of :: "development_problem \<Rightarrow> development_request option" where
+  "development_machinery_request_of p=(case sorted_list_of_fset (problem_subject p) of
+     [c] \<Rightarrow> development_definition_request development_machinery_context Development_Residual Development_Generated c
+   | _ \<Rightarrow> None)"
+
+theorem development_machinery_issued:
+  assumes selection: "development_loop_selection (development_machinery_state,development_machinery_problems,
+      development_machinery_dependencies,answered,[])=Some (L,xs)"
+    and issue: "development_loop_issue {||} development_machinery_request_of L xs=(L',issued,unissued)"
+    and member: "r\<in>set issued"
+  shows "fst r\<in>set development_machinery_problems \<and> development_ready development_machinery_dependencies answered (fst r)"
+    "\<exists>c. problem_subject (fst r)={|c|} \<and>
+      development_definition_request development_machinery_context Development_Residual Development_Generated c=Some r"
+proof -
+  obtain Q where state: "L=(development_machinery_state,development_machinery_problems,
+      development_machinery_dependencies,answered,[Development_Selection_Record (native_development_packet Q) xs])"
+    using selection by (auto simp: development_loop_selection_def Let_def split: option.splits)
+  note leaf=development_loop_issue_leaf[OF issue[unfolded state] member]
+  show "fst r\<in>set development_machinery_problems \<and> development_ready development_machinery_dependencies answered (fst r)"
+    by (rule development_loop_selection_ready(1)[OF selection leaf(1)])
+  obtain c where requested: "development_definition_request development_machinery_context
+      Development_Residual Development_Generated c=Some r"
+    using leaf(4) by (auto simp: development_machinery_request_of_def split: list.splits)
+  obtain p s S E where parts: "r=(p,s,S,E)" by (cases r) auto
+  have "problem_subject p={|c|}"
+    by (rule development_definition_request_fields(3)[OF requested[unfolded parts]])
+  then show "\<exists>c. problem_subject (fst r)={|c|} \<and>
+      development_definition_request development_machinery_context Development_Residual Development_Generated c=Some r"
+    using requested parts by auto
+qed
+
+type_synonym development_machinery_verification =
+  "(development_request list\<times>development_problem list\<times>(development_constant_verdict\<times>bool) list list) option"
+
+definition development_machinery_verification ::
+    "development_problem fset \<Rightarrow> development_machinery_verification" where
+  "development_machinery_verification answered=map_option (\<lambda>(L,xs).
+     case development_loop_issue {||} development_machinery_request_of L xs of (L',issued,unissued) \<Rightarrow>
+       (issued,unissued,Parallel.map (\<lambda>r. map (\<lambda>S'.
+          let v=development_definition_verdict development_machinery_state r S' in (v,development_verdict_accepted v))
+         (development_answer_controls isabelle_definition_proposition Isabelle_Definition development_machinery_state
+           development_machinery_renamed (fset_of_list development_machinery_root_constants) r)) issued))
+     (development_loop_selection (development_machinery_state,development_machinery_problems,
+       development_machinery_dependencies,answered,[]))"
+
+definition development_machinery_verification_data ::
+    "development_machinery_verification \<Rightarrow> finite_factor_term" where
+  "development_machinery_verification_data=finite_option_presentation
+    (finite_pair_presentation development_requests_data (finite_pair_presentation development_problems_data
+      (finite_sequence_presentation (finite_sequence_presentation
+        (finite_pair_presentation development_verdict_data finite_boolean_data)))))"
+
+lemma development_machinery_verification_data_injective [intro]: "inj development_machinery_verification_data"
+  unfolding development_machinery_verification_data_def
+  by (intro finite_option_presentation_injective finite_pair_presentation_injective development_requests_data_injective
+    development_problems_data_injective finite_sequence_presentation_injective development_verdict_data_injective
+    finite_boolean_data_injective)
+
+definition development_machinery_verification_value ::
+    "development_problem fset \<Rightarrow> finite_factor_term" where
+  "development_machinery_verification_value answered=
+    development_machinery_verification_data (development_machinery_verification answered)"
+
+text \<open>
+  The expected verdicts are fixed by the kinds of answer, not by the residuals: both unchanged
+  answers are accepted; the axiom is an added entity that is no definition or code equation of the
+  subject; the dropped definitions leave the subject without a definition; the unknown constant is
+  an added declaration and the one constant outside the support; the other residuals' definitions
+  are removed entities a definition answer may not remove; the dropped code equations are
+  replaceable statements of the subject. An actual definition answer is judged by the same verdict
+  on the state its checked context defines.
 \<close>
 
 end

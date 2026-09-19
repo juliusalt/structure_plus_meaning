@@ -1710,7 +1710,9 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Constant_Problems
     Development_Refinement_Contracts
     Development_Requests
+    Development_Constant_Verification
     Development_Refinement_Verification
+    Development_Definition_Verification
     Development_Refinement_Repair
     Development_Request_Packets
     Development_Seed

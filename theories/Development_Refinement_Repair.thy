@@ -194,17 +194,17 @@ theorem development_extension_contract:
     filter_empty_conv split: option.splits)
 
 type_synonym development_refinement_repair =
-  "development_extension_verdict\<times>development_problem list\<times>development_request\<times>development_refinement_verdict\<times>bool"
+  "development_extension_verdict\<times>development_problem list\<times>development_request\<times>development_constant_verdict\<times>bool"
 
 definition development_refinement_repair ::
     "isabelle_rooted_context \<Rightarrow> development_request \<Rightarrow> isabelle_rooted_context \<Rightarrow> nat list \<Rightarrow>
       development_refinement_repair" where
   "development_refinement_repair S r S' I=(let v=development_refinement_verdict S r S';
-     X=development_refinement_verdict_excess v; E=development_request_extension S S' X I;
+     X=development_verdict_excess v; E=development_request_extension S S' X I;
      g=isabelle_state_embedding (fst (snd S')) (fst (snd E)); X'=map g X; I'=map g I;
      r'=development_extended_request E r X'; v'=development_refinement_verdict E r' S' in
      (development_extension_verdict (snd S) (snd E) I',development_definition_problems E I',r',v',
-      development_refinement_accepted v'))"
+      development_verdict_accepted v'))"
 
 text \<open>
   The repair composes two judgments: the extension, admitted as its own problems, and the same
@@ -224,7 +224,7 @@ text \<open>
 definition development_repair_state ::
     "isabelle_rooted_context \<Rightarrow> development_request \<Rightarrow> isabelle_rooted_context \<Rightarrow> nat list \<Rightarrow> isabelle_rooted_context" where
   "development_repair_state S r S' I=development_request_extension S S'
-     (development_refinement_verdict_excess (development_refinement_verdict S r S')) I"
+     (development_verdict_excess (development_refinement_verdict S r S')) I"
 
 definition development_extension_verdict_data :: "development_extension_verdict \<Rightarrow> finite_factor_term" where
   "development_extension_verdict_data=finite_pair_presentation (finite_sequence_presentation isabelle_entity_data)
@@ -240,12 +240,12 @@ definition development_refinement_repair_data :: "development_refinement_repair 
   "development_refinement_repair_data=finite_pair_presentation development_extension_verdict_data
     (finite_pair_presentation development_problems_data
       (finite_pair_presentation development_request_data
-        (finite_pair_presentation development_refinement_verdict_data finite_boolean_data)))"
+        (finite_pair_presentation development_verdict_data finite_boolean_data)))"
 
 lemma development_refinement_repair_data_injective [intro]: "inj development_refinement_repair_data"
   unfolding development_refinement_repair_data_def
   by (intro finite_pair_presentation_injective development_extension_verdict_data_injective
     development_problems_data_injective development_request_data_injective
-    development_refinement_verdict_data_injective finite_boolean_data_injective)
+    development_verdict_data_injective finite_boolean_data_injective)
 
 end

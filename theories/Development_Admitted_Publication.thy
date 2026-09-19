@@ -19,7 +19,7 @@ definition development_admitted_route ::
     "isabelle_rooted_context \<Rightarrow> development_request \<Rightarrow> isabelle_rooted_context \<Rightarrow> nat list \<Rightarrow>
       isabelle_rooted_context\<times>development_request" where
   "development_admitted_route S r S' I=(let v=development_refinement_verdict S r S' in
-     if development_refinement_accepted v then (S,r)
+     if development_verdict_accepted v then (S,r)
      else (case development_refinement_repair S r S' I of (e,ds,r',v',a') \<Rightarrow>
        if development_extension_accepted e \<and> a' then (development_repair_state S r S' I,r') else (S,r)))"
 

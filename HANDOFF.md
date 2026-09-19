@@ -1,21 +1,25 @@
-# Handoff — impl-19: B10a, B10b committed; B10c (Pure's constants are base) next
+# Handoff — impl-19: B10a, B10b, B10c committed; B11 (definition requests and verdict) staged
 
 ## impl-19 session (2026-09-19, read first)
 
-- ACTIVE BASE: `.build/check-20260919x2/proof` (B10b's check, adopted; lineage x2 -> v -> s,q,p,...). Confirming
-  check `.build/check-20260919x3` ACCEPTED (1,780 reused, machinery recipe equal, 171+35 tests) and RETAINED.
-- B10a COMMITTED+PUSHED 5c26b79 "Hold each type of an exported state once".
-- B10b COMMITTED+PUSHED "Extend the residual record to the notions' constituents" (plan + REASONING_REUSE sections).
-- FOUND (probe `.build/probe-impl19-a`, theory `.build/impl19/probe1/Probe_Machinery_Names.thy`): the one unstated
-  machinery root is `Pure.eq`. `Isabelle_Entity_Export.base_constant` takes the session qualifier of the declaring
-  theory's long name; the theory `Pure` is named "Pure" (no qualifier), so every Pure constant is read as a
-  development constant: frontier in every state (seed, refinement layer, machinery), and in the machinery state
-  Pure.eq is a constituent root and is expanded (the non-definitional axioms mentioning it enter the state).
-  The 34 ready residuals are named in that probe's log.
-- NEXT (B10c): fix `base_constant` (an unqualified theory long name is its own session: Pure), check
-  --advance-base (Isabelle_Entity_Export has ~78 dependents; seed + machinery words change; retained answers'
-  verdict/publication words change -> replay --rerecord), plan section, commit+push. Then B11 (definition requests
-  and the verdict of a definition answer; design notes below).
+- ACTIVE BASE: `.build/check-20260919x4/proof` (B10c's check, adopted; lineage x4 -> x2 -> v -> s,q,p,...).
+  Confirming check `.build/check-20260919x5` ACCEPTED and RETAINED. Replay `.build/impl19/replay-b` (--rerecord):
+  7 refusals/failures reconstructed, walk adopted, 6 judged answers re-recorded (verdict words only).
+- B10a COMMITTED+PUSHED 5c26b79; B10b COMMITTED+PUSHED 958632de; B10c COMMITTED+PUSHED "Read Pure's constants as
+  base constants of every state" (Isabelle_Entity_Export `declaring_session`).
+- B11 STAGED in `.build/impl19/b11/` (install with `python3 .build/impl19/b11/install.py`, which copies 11 theories
+  + 2 tools and edits ROOT and THEORY_MAP): `Development_Requests` (`development_constant_request`, refinement request =
+  instance), NEW `Development_Constant_Verification` (general verdict `development_constant_verdict replaceable
+  demanded`, `development_verdict_accepted`, contract, `development_named_request` moved here, counts/excess/data,
+  `development_answer_controls` = the seed's 7 controls over a reading), `Development_Refinement_Verification`
+  (code-equation instances), NEW `Development_Definition_Verification` (definition request + verdict + contract),
+  renames (`development_refinement_accepted`->`development_verdict_accepted`, `_verdict_data`->`development_verdict_data`,
+  counts/excess, type -> `development_constant_verdict`) in Successor, Admitted_Publication, Certified_Generations,
+  Repair, Seed_Verification (controls = instance), harness `tools/development_answer.py`; Development_Machinery (roots
+  + definition request/verdict notions; `development_machinery_issued`, `development_machinery_verification` issuing the
+  34 selected residuals and judging the 7 controls each), Native_Development_Machinery export, machinery recipe stage
+  `presentation-verification`. NOT YET CHECKED. Expected: seed words all EQUAL (pure refactoring), machinery words
+  change (roots + new stage), replay of 14 answers reconstructs all (confirms B10c's re-recorded words too).
 - Scratch to remove: `.build/probe-impl18-*`, `.build/impl18/{typesize,compile,literal,dagsize,shared,names,
   l3probe,b10bprobe}`, `.build/check-20260919w` (superseded by x3).
 

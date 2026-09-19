@@ -2043,3 +2043,9 @@ loop's policy, adoption into the refinement layer and the successor state are no
 | Theory | Reusable content and retained prerequisites |
 | --- | --- |
 | Development_Machinery | The record's roots are the loop's notions and their constituents, the development constants the notions' items mention, computed by the exporter's closure (`context_items`) from the notions rather than listed; every root poses its residual problem through the existing constant-problem construction, so a notion's residual depends on its constituents' residuals by the same reading of definitions. How far the record reaches is a residual choice (owner question Q5). |
+
+## Pure's constants are base constants — 2026-09-19
+
+| Theory | Reusable content and retained prerequisites |
+| --- | --- |
+| Isabelle_Entity_Export | A constant belongs to the fixed base when the session of the theory that declared it is a base session (`declaring_session`): a theory's long name is qualified by its session except the theory Pure's, whose long name is its session, so reading the qualifier alone had made every constant of Pure a development constant. |

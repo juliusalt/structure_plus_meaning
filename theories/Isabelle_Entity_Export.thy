@@ -23,9 +23,18 @@ struct
 
 val base_sessions = ["Pure", "HOL", "HOL-Library"];
 
-fun base_constant thy name =
-  member (op =) base_sessions
-    (Long_Name.qualifier (#theory_long_name (Name_Space.the_entry (Sign.const_space thy) name)));
+(*The theory long name that declared a constant.*)
+fun declaring_theory thy name =
+  #theory_long_name (Name_Space.the_entry (Sign.const_space thy) name);
+
+(*The session of the theory that declared a constant. A theory's long name is qualified by its
+  session, except the theory Pure, whose long name is the name of its session: read by its
+  qualifier alone, every constant of Pure would be a development constant.*)
+fun declaring_session thy name =
+  let val theory = declaring_theory thy name
+  in (case Long_Name.qualifier theory of "" => theory | session => session) end;
+
+fun base_constant thy name = member (op =) base_sessions (declaring_session thy name);
 
 datatype item = Definition | Specification | Code_Equation;
 
@@ -56,10 +65,6 @@ fun context_items thy expand roots =
     val (seen, selected) =
       Isabelle_Constant_Closure.closure items (fn (_, prop) => Term.add_const_names prop []) roots;
   in (Symtab.keys seen, map snd (Symtab.dest selected)) end;
-
-(*The theory long name that declared a constant.*)
-fun declaring_theory thy name =
-  #theory_long_name (Name_Space.the_entry (Sign.const_space thy) name);
 
 (*Every name a type or term uses, in the order of its occurrences.*)
 fun type_names (Type (c, Ts)) = c :: maps type_names Ts

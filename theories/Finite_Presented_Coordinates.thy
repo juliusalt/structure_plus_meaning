@@ -1,6 +1,6 @@
 theory Finite_Presented_Coordinates
   imports Finite_Presented_Collections
-    Factor_Coordinate_Values Natural_Binary_Digits
+    Factor_Coordinate_Values Finite_Binary_Values
     Factor_Premise_Instances
     Factor_Report_Programs
     Factor_Environment_Values
@@ -26,32 +26,9 @@ proof (rule injI)
   then show "m=n" by (rule injD[OF natural_data_term_injective])
 qed
 
-definition finite_storage_path_value where
- "finite_storage_path_value path=Finite_Payload (map (\<lambda>b. if b then 1 else 0) path)"
-
-lemma finite_storage_path_value_injective [intro]: "inj finite_storage_path_value"
-proof -
- have digit: "inj (\<lambda>b. if b then (1::nat) else 0)" by (auto simp: inj_def)
- show ?thesis by (rule injI) (simp add: finite_storage_path_value_def inj_map_eq_map[OF digit])
-qed
-
-text \<open>A bit path is one flat native payload of its exact zero/one digits.
- This injective presentation preserves long paths without a deeply nested pair
- per bit. It changes the presentation, not the path, its length or any reading.\<close>
-
-definition finite_binary_natural_value where
- "finite_binary_natural_value n=finite_storage_path_value (natural_binary_digits n)"
-lemma finite_binary_natural_value_injective [intro]: "inj finite_binary_natural_value"
- by (rule injI) (simp add: finite_binary_natural_value_def inj_eq[OF finite_storage_path_value_injective])
 lemma finite_binary_natural_identity:
  "finite_binary_natural_value n=finite_binary_natural_value m \<longleftrightarrow> finite_natural_data n=finite_natural_data m"
  by (simp only: inj_eq[OF finite_binary_natural_value_injective] inj_eq[OF finite_natural_data_injective])
-
-lemma finite_storage_path_value_formed [simp]: "finite_term_formed (finite_storage_path_value path)"
-  by (auto simp: finite_storage_path_value_def octets_formed_def)
-
-lemma finite_binary_natural_value_formed [simp]: "finite_term_formed (finite_binary_natural_value n)"
-  by (simp add: finite_binary_natural_value_def)
 
 definition finite_boolean_data :: "bool \<Rightarrow> finite_factor_term" where
   "finite_boolean_data b=finite_natural_data (if b then 1 else 0)"

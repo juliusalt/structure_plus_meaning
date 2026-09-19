@@ -1,5 +1,5 @@
 theory Factor_Finite_Development_Questions
-  imports Factor_Development_Criterion_Sources
+  imports Factor_Development_Criterion_Sources Finite_Binary_Values
 begin
 
 definition finite_development_rows where
@@ -100,18 +100,18 @@ proof -
 qed
 
 definition finite_development_index where
-  "finite_development_index n=the (finite_self_contained_term (natural_data_term n))"
+  "finite_development_index n=finite_binary_natural_value n"
 
 lemma finite_development_index_decode [simp]:
-  "decode_finite_term (finite_development_index n)=natural_data_term n"
-  by (simp only: finite_development_index_def; rule decode_finite_self_contained_term) simp
+  "decode_finite_term (finite_development_index n)=Payload_Term (map (\<lambda>b. if b then 1 else 0) (natural_binary_digits n))"
+  by (simp add: finite_development_index_def finite_binary_natural_value_def finite_storage_path_value_def)
 
 lemma finite_development_index_formed [simp]: "finite_term_formed (finite_development_index n)"
-  by (simp only: finite_term_formed_correct finite_development_index_decode) simp
+  by (simp add: finite_development_index_def)
 
 lemma finite_development_index_eq [simp]:
   "finite_development_index m=finite_development_index n \<longleftrightarrow> m=n"
-  by (metis finite_development_index_decode injD[OF natural_data_term_injective])
+  by (simp add: finite_development_index_def inj_eq[OF finite_binary_natural_value_injective])
 
 text \<open>
   This reusable constructor reflects finite value families into ordinary native
@@ -120,8 +120,9 @@ text \<open>
   establish how every facet family was computed from its complete original
   subjects. The scope observation compares the actual native generation with
   every supplied candidate value; it is not a proposed coverage flag.
-  Natural coordinates retain their existing complete data presentation without
-  introducing the byte bound of an opaque payload.
+  A candidate's index is the binary presentation of its natural: one payload of its digits,
+  without the byte bound of a single octet, whose size grows with the number of digits rather
+  than with the index, so a question over n candidates has a source of O(n log n) addresses.
 \<close>
 
 end

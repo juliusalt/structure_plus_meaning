@@ -8,7 +8,7 @@ definition workflow_stage_reference :: "native_workflow_stage \<Rightarrow> fini
     case finite_native_source (workflow_source S)
       (workflow_source_use S) (workflow_source_root S) of None \<Rightarrow> None
     | Some P \<Rightarrow> (if workflow_entry S |\<notin>| finite_system_definitions P then None else
-      let D=finite_program_term_demand P (workflow_stage_arguments S x) in
+      let D=workflow_stage_demand P S x in
       map_option (\<lambda>(Q,A). filter (\<lambda>y. (workflow_entry S,Finite_Pair x y) |\<in>| A)
         (workflow_scope_values S x))
         (finite_native_program_evaluation (workflow_source S) (workflow_source_use S)
@@ -48,7 +48,7 @@ definition workflow_stage_evidence :: "native_workflow_stage \<Rightarrow> finit
     workflow_scope_result S input\<noteq>None \<and>
     finite_native_source (workflow_source S) (workflow_source_use S) (workflow_source_root S)=Some P \<and>
     workflow_entry S |\<in>| finite_system_definitions P \<and>
-    D=finite_program_term_demand P (workflow_stage_arguments S input) \<and>
+    D=workflow_stage_demand P S input \<and>
     finite_native_program_evaluation (workflow_source S) (workflow_source_use S)
       (workflow_source_root S) D=Some (P,A) \<and>
     fimage fst T=A \<and> finite_inspection_rows_hold (finite_proof_inspection P T) \<and>

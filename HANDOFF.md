@@ -1,11 +1,33 @@
-# Handoff — B7(b) committed by impl-17; B7(a)+(c) (binary indices, demanded scope review) next
+# Handoff — B7 committed by impl-17; B9 (native question revision and source cost) in progress
 
 ## impl-17 session (2026-09-19)
 
-- B7(b) COMMITTED+PUSHED ("Ask an artifact through its reading when syntax is read back"): impl-16's validated
-  batch with the plan section "Syntax readings ask an artifact through its reading — 2026-09-19" appended
-  (SOLO replaced by the solo-run sentence). ACTIVE BASE unchanged: `.build/check-20260919p/proof`.
-- NEXT: B7(a)+(c) from `.build/impl16/ac/` + `.build/impl16/c7/` as described in the impl-16 section below.
+- B7(b) COMMITTED+PUSHED a785747 ("Ask an artifact through its reading when syntax is read back").
+- B7(a)+(c) INSTALLED AND VALIDATED, UNCOMMITTED: staging `.build/impl17/ac/` (impl-16's staging + fixed proof step,
+  corrected readiness text, `workflow_stage_requests_demanded`/`workflow_stage_demand_ready`, and Keyed_Native_Evaluation's
+  three keyed code equations over the demanded calls, which impl-16's staging had missed) copied into theories/;
+  ROOT (Finite_Binary_Values, Factor_Demanded_Program_Calls), THEORY_MAP rows (installer misplaced the Workflow_Stage row
+  into Workflow_Execution's: repaired). Check `.build/check-20260919q --advance-base`: 275 theories 212 s accepted; 5
+  storage recipes words equal; 6 native-question recipes changed ONLY question-packet words (all stages exit 0; seed
+  succession/publication words equal) -> re-recorded; `adopt --proof .build/check-20260919q/proof` (ACTIVE BASE: q);
+  confirming check `.build/check-20260919r` ACCEPTED (11 recipes equal, 171+35 tests) and RETAINED.
+  Replay --rerecord (`.build/impl17/replay-a`): 13 reconstructed with every word equal, walk adopted, none differing.
+  Plan section "A native question evaluates what its requests demand — 2026-09-19" and REASONING_REUSE section appended;
+  COMMITTED+PUSHED ("Present question candidates in binary and evaluate only what a stage's requests demand").
+- MEASURED on base q (probe `.build/impl17/stages`): question construct 0.011/0.022/0.084/0.42/4.4/68.6 s and admission
+  0.013/0.027/0.084/0.49/5.4/71.5 s at 8..256 candidates; review 0.091 s at 128 (was 21.7). Revision dominates (n^4).
+- B9 (next, provisional residual: an inevitable cost on the loop's path): (i) indexed membership of the comparison
+  relation and observation rows (probe `.build/impl17/b9probe/Probe_B9_Indexed.thy`: lemmas proved; 256 candidates
+  construct 13.7 s, admission 21.4 s; compare 1.75 -> 0.035 s; revise 70.7 -> 17.5 s) -> move the lemmas IN PLACE into
+  Finite_Investigation_Execution_Sharing (assessed/selected) and Finite_Investigation_Basis_Sharing (basis/repairs/retain);
+  (ii) remaining revise cost: per-pair profile recomputation + list-based ffUnion of up to n^2 residual pairs
+  (finite_basis_residual, sound facets, conflicts, available repairs, unrepairable) -> listed unions (`[code abstract]` with
+  `listed_image_union`, the RRA_Listed_Environment_Positions pattern) and profiles computed once; parts probe
+  `.build/impl17/b9parts` running; (iii) question source construction 0.42 -> 9.1 s at 128 -> 256 (ground source
+  install), probe `.build/impl17/srcprobe` running.
+- RESIDUAL RECORD SCOPE (measured, probe `.build/impl17/closure`): the 14 loop notions reach 1,535 development constants
+  (closure depth 20; 298 in Development_*/Isabelle_* theories). Exporting the full closure as one state
+  (`Isabelle_Entity_Export.define`, probe `.build/impl17/residual`) did not finish in 420 s: infeasible as one state.
 
 ## impl-16 session (2026-09-19) — parked at the context limit; its B7(b) committed by impl-17
 

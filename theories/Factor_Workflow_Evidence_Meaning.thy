@@ -16,7 +16,7 @@ theorem workflow_stage_evidence_exact:
 proof -
   have source: "finite_native_source (workflow_source S) (workflow_source_use S) (workflow_source_root S)=Some P"
     and entry: "workflow_entry S |\<in>| finite_system_definitions P"
-    and demand: "D=finite_program_term_demand P (workflow_stage_arguments S x)"
+    and demand: "D=workflow_stage_demand P S x"
     and evaluation: "finite_native_program_evaluation (workflow_source S) (workflow_source_use S)
       (workflow_source_root S) D=Some (P,A)"
     and selected: "ys=filter (\<lambda>y. (workflow_entry S,Finite_Pair x y) |\<in>| A) (workflow_scope_values S x)"
@@ -25,8 +25,7 @@ proof -
     if member: "y\<in>set (workflow_scope_values S x)" for y
   proof -
     have asked: "(workflow_entry S,Finite_Pair x y) |\<in>| D"
-      unfolding demand by (rule finite_program_term_demand_root[OF entry])
-        (use member in \<open>auto simp: workflow_stage_arguments_def fset_of_list.rep_eq\<close>)
+      unfolding demand by (rule workflow_stage_demand_requests[OF member])
     show ?thesis using finite_native_program_evaluation_call[OF evaluation asked]
       by (simp add: workflow_stage_relation_at_source[OF source entry] member)
   qed

@@ -1375,3 +1375,39 @@ artifact row with every other; the seven formation problems of the seed keep the
 refinement of many constants sharing new helpers cannot pass through the answer frame, which states one
 equation and no code declarations, so this batch, like the earlier machinery batches, was made outside the
 loop and is a residual.
+
+## A native question evaluates what its requests demand — 2026-09-19
+
+The previous section removed the first of three compounding costs of a native question. The other two
+were in the question's own presentation and in its scope review: every candidate was identified by the
+unary data term of its index, so a question over n candidates carried a source quadratic in n and a
+review input ten times larger than its binary presentation; and every workflow stage, the scope review
+among them, evaluated every definition of its source at every component of every pair it was asked
+about, although the stage asks only whether its entry holds of those pairs.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| A candidate of a native question is identified by the complete data term of its index. | Its index is the binary presentation of the natural (`finite_development_index`, the storage notions' `finite_binary_natural_value`, moved below the presentations into `Finite_Binary_Values` at this second use rather than restated). The question reads only the equality of indices, which the presentation's injectivity supplies; a question over n candidates has a source of O(n log n) addresses. |
+| A workflow stage evaluates the term demand of its pairs. | A stage evaluates the calls its pairs demand (`workflow_stage_demand`): the frontier traversal of `Finite_Demanded_Closures`, a third time, from the requested calls through the premise calls of their applications, bounded by the term demand so it terminates for every program (`Factor_Demanded_Program_Calls`). Evaluation over any ready demand answers exactly the demanded calls that hold, so the stage's exactness, its reference and the meaning of its evidence keep their statements, and every client consumed them unchanged; wherever the term demand was ready the demanded calls are (`workflow_stage_demand_ready`). The keyed code equations of `Keyed_Native_Evaluation` restated the old demand and now restate this one. |
+
+Evidence: the check that advanced the base to `.build/check-20260919q` proved the 275 changed and
+dependent theories in 212 seconds and executed the eleven recipes whose exported code changed. The five
+that present storage notions through the moved binary presentation reproduced every word; the six that
+present native questions (the development, steering, source-development, workflow, machinery and seed
+recipes) exited cleanly and changed exactly the words of the stages that present question packets, which
+were re-recorded; the seed's succession and publication words, which consume what its selection admits,
+did not change. The confirming check was accepted and retained, with 171 tool and 35 kernel tests
+passing. On the new base a native question over 8, 16, 32, 64, 128 and 256 candidates is constructed in
+0.011, 0.022, 0.084, 0.42, 4.4 and 68.6 seconds and admitted in 0.013, 0.027, 0.084, 0.49, 5.4 and 71.5
+seconds (27.7 and 42.6 seconds at 128 before); its scope review takes 0.091 seconds at 128 candidates,
+against 21.7 before, and its input is 2.2 million bits at 128 candidates. Replaying the fourteen retained
+answers on the new base reconstructed thirteen with every word equal and reported the adopted walk as the
+published state's unchanged answer.
+
+Open: the revision of a question's comparison now dominates it (0.016, 0.23, 3.6 and 70.7 seconds at 32,
+64, 128 and 256 candidates, growing with the fourth power): the comparison relation and the observation
+rows are asked by membership in lists of up to n squared pairs, the repairs order their rows against a
+list pairing every candidate pair with every observation row, and their sets of pairs are united member
+by member; building a question's ground source also grows steeply (0.45 seconds at 128 candidates, 9.7 at
+256); so a selection over the few hundred residuals of the development layer is not yet affordable. This
+batch, like the earlier ones, was chosen and made outside the loop and is a residual.

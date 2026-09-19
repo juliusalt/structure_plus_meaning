@@ -1,5 +1,6 @@
 theory Factor_Workflow_Stage
   imports Factor_Finite_Native_Proof_Construction Factor_Native_Generation_Semantics
+    Factor_Demanded_Program_Calls
 begin
 
 datatype workflow_output_scope =
@@ -39,13 +40,50 @@ definition workflow_stage_arguments :: "native_workflow_stage \<Rightarrow> fini
   "workflow_stage_arguments S x=fset_of_list
     (map (Finite_Pair x) (workflow_scope_values S x))"
 
+definition workflow_stage_requests :: "native_workflow_stage \<Rightarrow> finite_factor_term \<Rightarrow>
+    (local_address option definition_site \<times> finite_factor_term) fset" where
+  "workflow_stage_requests S x=fimage (Pair (workflow_entry S)) (workflow_stage_arguments S x)"
+
+definition workflow_stage_demand :: "local_address option finite_native_system \<Rightarrow> native_workflow_stage \<Rightarrow>
+    finite_factor_term \<Rightarrow> (local_address option definition_site \<times> finite_factor_term) fset" where
+  "workflow_stage_demand P S x=finite_program_demanded_calls P (workflow_stage_arguments S x) (workflow_stage_requests S x)"
+
+lemma workflow_stage_demand_requests:
+  assumes member: "y\<in>set (workflow_scope_values S x)"
+  shows "(workflow_entry S,Finite_Pair x y) |\<in>| workflow_stage_demand P S x"
+proof -
+  have requested: "(workflow_entry S,Finite_Pair x y) |\<in>| workflow_stage_requests S x"
+    using member by (auto simp: workflow_stage_requests_def workflow_stage_arguments_def fset_of_list.rep_eq)
+  show ?thesis
+    using finite_program_demanded_calls_requests requested
+    by (simp only: workflow_stage_demand_def; blast)
+qed
+
+lemma workflow_stage_requests_demanded:
+  assumes entry: "workflow_entry S |\<in>| finite_system_definitions P"
+  shows "workflow_stage_requests S x |\<subseteq>| finite_program_term_demand P (workflow_stage_arguments S x)"
+proof (rule fsubsetI)
+  fix q assume requested: "q |\<in>| workflow_stage_requests S x"
+  then obtain t where call: "q=(workflow_entry S,t)" and argument: "t |\<in>| workflow_stage_arguments S x"
+    by (auto simp: workflow_stage_requests_def fimage_iff)
+  show "q |\<in>| finite_program_term_demand P (workflow_stage_arguments S x)"
+    unfolding call by (rule finite_program_term_demand_root[OF entry argument])
+qed
+
+lemma workflow_stage_demand_ready:
+  assumes ready: "finite_program_evaluation_ready P (finite_program_term_demand P (workflow_stage_arguments S x))"
+    and entry: "workflow_entry S |\<in>| finite_system_definitions P"
+  shows "finite_program_evaluation_ready P (workflow_stage_demand P S x)"
+  unfolding workflow_stage_demand_def
+  by (rule finite_program_demanded_calls_ready[OF ready workflow_stage_requests_demanded[OF entry]])
+
 definition evaluate_workflow_stage ::
   "native_workflow_stage \<Rightarrow> finite_factor_term \<Rightarrow> native_workflow_stage_result option" where
   "evaluate_workflow_stage S x=(if workflow_scope_result S x=None then None else
     case finite_native_source (workflow_source S)
       (workflow_source_use S) (workflow_source_root S) of None \<Rightarrow> None
     | Some P \<Rightarrow> (if workflow_entry S |\<notin>| finite_system_definitions P then None else
-      let D=finite_program_term_demand P (workflow_stage_arguments S x) in
+      let D=workflow_stage_demand P S x in
       map_option (\<lambda>(Q,A,T). (Q,D,A,T,
         filter (\<lambda>y. (workflow_entry S,Finite_Pair x y) |\<in>| A)
           (workflow_scope_values S x)))
@@ -67,7 +105,7 @@ lemma evaluate_workflow_stage_fields:
   shows "finite_native_source (workflow_source S) (workflow_source_use S)
       (workflow_source_root S)=Some P"
     "workflow_entry S |\<in>| finite_system_definitions P"
-    "D=finite_program_term_demand P (workflow_stage_arguments S x)"
+    "D=workflow_stage_demand P S x"
     "finite_native_program_proofs (workflow_source S) (workflow_source_use S)
       (workflow_source_root S) D=Some (P,A,T)"
     "ys=filter (\<lambda>y. (workflow_entry S,Finite_Pair x y) |\<in>| A)
@@ -77,7 +115,7 @@ proof -
   obtain Q where original: "finite_native_source (workflow_source S) (workflow_source_use S)
       (workflow_source_root S)=Some Q"
     and entry: "workflow_entry S |\<in>| finite_system_definitions Q"
-    and demand: "D=finite_program_term_demand Q (workflow_stage_arguments S x)"
+    and demand: "D=workflow_stage_demand Q S x"
     and proofs: "finite_native_program_proofs (workflow_source S) (workflow_source_use S)
       (workflow_source_root S) D=Some (P,A,T)"
     and selected: "ys=filter (\<lambda>y. (workflow_entry S,Finite_Pair x y) |\<in>| A)
@@ -93,7 +131,7 @@ proof -
   show "finite_native_source (workflow_source S) (workflow_source_use S)
       (workflow_source_root S)=Some P"
     "workflow_entry S |\<in>| finite_system_definitions P"
-    "D=finite_program_term_demand P (workflow_stage_arguments S x)"
+    "D=workflow_stage_demand P S x"
     "finite_native_program_proofs (workflow_source S) (workflow_source_use S)
       (workflow_source_root S) D=Some (P,A,T)"
     "ys=filter (\<lambda>y. (workflow_entry S,Finite_Pair x y) |\<in>| A)
@@ -111,7 +149,7 @@ proof -
   have source: "finite_native_source (workflow_source S) (workflow_source_use S)
       (workflow_source_root S)=Some P"
     and entry: "workflow_entry S |\<in>| finite_system_definitions P"
-    and demand: "D=finite_program_term_demand P (workflow_stage_arguments S x)"
+    and demand: "D=workflow_stage_demand P S x"
     and proofs: "finite_native_program_proofs (workflow_source S) (workflow_source_use S)
       (workflow_source_root S) D=Some (P,A,T)"
     and selected: "ys=filter (\<lambda>y. (workflow_entry S,Finite_Pair x y) |\<in>| A)
@@ -123,9 +161,7 @@ proof -
     if member: "y\<in>set (workflow_scope_values S x)" for y
   proof -
     have asked: "(workflow_entry S,Finite_Pair x y) |\<in>| D"
-      unfolding demand
-      by (rule finite_program_term_demand_root[OF entry])
-        (use member in \<open>auto simp: workflow_stage_arguments_def fset_of_list.rep_eq\<close>)
+      unfolding demand by (rule workflow_stage_demand_requests[OF member])
     show ?thesis using finite_native_program_evaluation_call[OF
       finite_native_program_proofs_evaluation[OF proofs] asked] by simp
   qed
@@ -147,7 +183,10 @@ qed
 
 text \<open>
   A stage reads its actual native source and derives answers and certificates
-  for every permitted complete input/output pair. No truth or certificate is
+  for every permitted complete input/output pair. It evaluates the calls those pairs
+  demand through the applications of the source's clauses, bounded by the components
+  of the pairs, and no other call; wherever evaluating every definition at every component
+  of the pairs was available, so is this evaluation (`workflow_stage_demand_ready`). No truth or certificate is
   supplied by the caller. Candidate order and repeated values are retained.
   An unreadable source, absent entry or unavailable finite evaluation prevents
   the stage from returning a result; a successful empty answer is distinct.

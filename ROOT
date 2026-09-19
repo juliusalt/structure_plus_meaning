@@ -1327,6 +1327,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Delimited_Bit_Words
     Finite_Codec_Observations
     Natural_Binary_Digits
+    Finite_Binary_Values
     Prefix_Code_Words
     RRA_Digit_Natural_Paths
     RRA_Digit_Use_Paths
@@ -1619,6 +1620,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Ordered_Generation_Checking
     Factor_Recovered_Graph_Sharing
     Finite_Demanded_Closures
+    Factor_Demanded_Program_Calls
     Factor_Demanded_Package_Readings
     Factor_Demanded_Graph_Readings
     Listed_Set_Unions

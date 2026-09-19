@@ -1,4 +1,102 @@
-# Handoff — B6 committed (machinery residual problems); B7 (native question cost at scale) next
+# Handoff — B7(b) committed by impl-17; B7(a)+(c) (binary indices, demanded scope review) next
+
+## impl-17 session (2026-09-19)
+
+- B7(b) COMMITTED+PUSHED ("Ask an artifact through its reading when syntax is read back"): impl-16's validated
+  batch with the plan section "Syntax readings ask an artifact through its reading — 2026-09-19" appended
+  (SOLO replaced by the solo-run sentence). ACTIVE BASE unchanged: `.build/check-20260919p/proof`.
+- NEXT: B7(a)+(c) from `.build/impl16/ac/` + `.build/impl16/c7/` as described in the impl-16 section below.
+
+## impl-16 session (2026-09-19) — parked at the context limit; its B7(b) committed by impl-17
+
+- ACTIVE BASE: `.build/check-20260919p/proof` (check p ACCEPTED with --advance-base and RETAINED: 153 theories 208.2 s,
+  37 recipes re-executed with EVERY word equal, 171+35 tests). Nothing runs. Nothing committed this session.
+- B7(b) DONE, VALIDATED, UNCOMMITTED: `theories/Factor_Indexed_Readings.thy` (readings over the SET of artifact readings at
+  a use, exact for every environment, code equations only for the `_formed` readers = seed frontier constants; the
+  guarded entries = 7 of the seed's 10 roots keep their code, so the seed state is unchanged), ROOT, NER import,
+  THEORY_MAP row, REASONING_REUSE section (final text). impl-15's first version (entries' code replaced) failed check o on
+  all 11 seed words (would answer 7 seeded problems outside the loop) and was removed.
+  TO COMMIT (successor, first): append `.build/impl16/plan-b7b-draft.md` to native_control_plan.md, replacing the word
+  SOLO by: "Run alone after the check, recipes whose check times had grown under the load of 37 concurrent executions ran
+  faster than their retained times: digit replay 7.7 s (13.4 retained), quoted history 8.7 s (13.9), the machinery
+  recipe 15.8 s summed (27.1) and the seed recipe 186.9 s summed (216.7)." Then commit (existing style, NO attribution)
+  and `git push origin main`. Check comparison (in check p vs retained, under load): 33 of 37 slower, e.g. seed stage sum
+  216.7->343.8, digit replay 13.4->25.0, machinery 27.1->49.8 — all explained by load per the solo runs above.
+- MEASURED (reworked candidate): package read 0.006/0.020/0.086/0.322 s at 16/32/64/128 rows (was 0.031/0.287/3.766 at
+  16-64); whole native question (binary candidates) construct 0.12/0.29/1.02/4.41/27.7 s, admission 0.15/0.36/1.31/5.92/
+  42.6 s at 8..128; unary indices construct 0.33/2.74/38.2 s at 8/16/32 (review input 10x larger). Scope review
+  attribution (probe `.build/probe-impl16-e`, theory `.build/impl16/review/`): at 64 candidates the term demand has 4,960
+  calls, evaluation 3.93 s, certificates 3.67 s; the DEMANDED calls are 1 call, 0.012 s evaluation, same answers.
+- NEXT BATCH B7(a)+(c), STAGED in `.build/impl16/ac/` (+ `install.py` copies them into theories/ and edits ROOT and
+  THEORY_MAP): Finite_Binary_Values (new), Finite_Presented_Coordinates, Factor_Finite_Development_Questions (binary
+  `finite_development_index`), Factor_Demanded_Program_Calls (new; STALE copy — take the current one from
+  `.build/impl16/c7/`), Factor_Workflow_{Stage,Reference,Evidence_Meaning,Execution_Sharing} (stage demand =
+  `workflow_stage_demand` = `finite_program_demanded_calls`). Probe of the C7-renamed chain passed before the readiness
+  lemmas were added. ONE FAILING STEP in `.build/impl16/c7/Factor_Demanded_Program_Calls.thy` line ~113
+  (`finite_program_demanded_calls_closed`, the `edge` proof): goal `e ∈ snd ` fset H` from `called: e |∈| fimage snd H`
+  -> add `fimage.rep_eq` (or use `called[unfolded fimage.rep_eq]`) to the simp list. Probe:
+  `python3 -B tools/probe_theories.py --work .build/probe-impl16-j --candidates .build/impl16/c7 --theory
+  Factor_Demanded_Program_Calls --parallel-proofs 0 --timeout 240`. Then add to Factor_Workflow_Stage (c7/real + ac):
+  `workflow_stage_requests_demanded` (requests ⊆ term demand when entry ∈ defs, via finite_program_term_demand_root) and
+  `workflow_stage_demand_ready` (from `finite_program_demanded_calls_ready`), regenerate `.build/impl16/c7/probe/C7_*`
+  (renaming script in this session: prefix C7_, strip `export_code ... checking SML`) and re-probe the chain; copy c7 into
+  ac; run install.py; write REASONING_REUSE section; `incremental_check.py check --advance-base --output
+  .build/check-20260919q`: native-question recipe words WILL change (index presentation, stage D/A/T): verify all stages
+  exit 0, re-record with `.build/impl14/record_words.py CHECK RECIPE`, `adopt --proof`, confirming check, retain, replay
+  retained answers `--rerecord`, plan section, commit+push. ~272 theories rebuild.
+- Scratch to remove after commit: `.build/probe-impl16-{b,d,e,g,h,i,j}`, `.build/impl16/solo`, `.build/impl15`.
+
+## impl-15 session (2026-09-19)
+
+- ACTIVE BASE unchanged: `.build/check-20260919m/proof`. Nothing committed yet this session; scratch in `.build/impl15/`.
+- B7 MEASURED with a carrier-size fix (candidate `.build/impl15/cand/Ordered_Finite_Cardinality.thy`: code_unfold
+  `fcard (A::'a::linorder fset)=length (sorted_list_of_fset A)`; probes `.build/probe-impl15-{a,b,c}`): the fuel
+  `fcard (finite_carrier ..)` of every pattern/term reading was the remdups; with the fix the package read at
+  16/32/64/128/256 payload rows costs source 0.019/0.128/0.808/6.32/51.9 s (was 0.031/0.287/3.766 at 16/32/64):
+  still ~n^3. Profile at 128 rows: equal_lista+filtera ~85% = whole-artifact scans per node
+  (`finite_headed_incidence`, `finite_payload_values`, `finite_basis_slice`, carrier membership), ~40-80 scans per
+  clause; sorting for fcard ~12%. Stage probe (unary indices): construct 25.3 s at 24 candidates, 99.6 s at 32;
+  selection 32 candidates 225 s. Three separate factors: (b) per-node artifact scans in the formed readers
+  (dominant), (a) unary development indices (`finite_development_index` = unary `natural_data_term`; source O(n^2);
+  the existing binary notion is `finite_binary_natural_value` in Finite_Presented_Coordinates, one payload leaf),
+  (c) the scope review evaluates the whole question as data (term demand over all components).
+- B7 DESIGN (being implemented): an artifact reading record (heads, values, counted, member, size) with the
+  scanning reading of an artifact and an indexed reading built once (reusing the walk answer's index lemmas
+  `indexed_heads_exact`, `indexed_values_exact`, `indexed_counted_exact`, `finite_payload_at_read`,
+  `finite_slice_empty_read` from Development_Answer_0ccf746fe2cf), proved equal; the lowest syntax bodies stated
+  once over a reading (instances = the existing functions); the formed reader family
+  (Factor_Formation_Once_Readings/Definitions) converted in place to take the reading of the one artifact at the
+  read use (formed environments hold at most one artifact per use), built once per entry. Then (a) binary indices
+  (words change: re-record), then measure (c).
+- B7(b) CANDIDATE WRITTEN, ALMOST PROVED (parked by impl-15 at the context limit; nothing in theories/ changed):
+  `.build/impl15/cand2/Factor_Indexed_Readings.thy` (reading record, scanned/indexed readings + equality,
+  bodies over a reading with `_scanned` instance lemmas, use-level readings over `A :: artifact_reading option`
+  with `_exact` lemmas stated for any `A` with `artifact_reading_at E u=A`, code equations replacing the
+  formed-once/demanded ones). Probe: `python3 -B tools/probe_theories.py --work .build/probe-impl15-d --candidates
+  .build/impl15/cand2 --candidates .build/impl15/parts2 --theory Probe_Indexed_Parts --timeout 380` (forked proofs
+  collect all errors; log `.build/probe-impl15-d/probe.log`, grep `Failed to finish`). ONLY TWO PROOFS FAIL:
+  `read_schema_readings_exact` and `read_scoped_pattern_readings_exact` (Some branch: the body/scoped lemma was
+  instantiated with the abstract A, the goal has `Some (scanned C)`): add `read_schema_body_readings_exact[OF formed]`
+  resp. `read_scoped_record_exact[OF formed]` and `reading` to the final `simp_all only` (premise
+  `artifact_reading_at E u=Some ..` then discharges via reading + case premise). MEASURED (code loads even with
+  the failing proofs): package source read 0.006/0.019/0.070/0.327 s at 16/32/64/128 payload rows (was
+  0.031/0.287/3.766/- ; with only the fcard fix 0.019/0.128/0.808/6.32); remaining ~n^2 is environment formation
+  (O(A^2), 0.104 s at 3117 addresses) and root family; package read repeats its traversal ~3x (sites, formed,
+  graph) - one-traversal code equation for `finite_native_package_readings` is a follow-up.
+- NEXT (in order): (1) fix the two proofs, confirm `loaded: true` with `--parallel-proofs 0`; run the stage probe
+  `.build/impl15/stages2/Probe_Indexed_Stages.thy` (binary-presented candidates, 8..128) as its own probe dir to
+  measure the whole question; (2) integrate: copy Factor_Indexed_Readings into theories/, ROOT (after
+  Factor_Demanded_Package_Readings / Development_Answer_0ccf746fe2cf), import it in Native_Execution_Refinements,
+  THEORY_MAP row, REASONING_REUSE section, plan section; `incremental_check.py check --advance-base --output
+  .build/check-20260919o` (every recipe re-executes; ALL words must be equal), adopt, confirm, retain, commit+push;
+  (3) B7(a) binary indices prepared in `.build/impl15/binary/` (new theories/Finite_Binary_Values.thy, edited
+  Finite_Presented_Coordinates.thy and Factor_Finite_Development_Questions.thy; ROOT entry needed near
+  Natural_Binary_Digits): apply after (2) validates; words of every recipe presenting native questions change ->
+  re-record with `.build/impl14/record_words.py CHECK RECIPE`, replay retained answers `--rerecord`; (4) measure (c)
+  the scope review; (5) then task 3 (residual record over the whole development layer).
+- The fcard code_unfold candidate (`.build/impl15/cand/Ordered_Finite_Cardinality.thy`) is superseded by the
+  reading's size field (computed once per reading); do not integrate it unless a measurement asks for it.
+- Probe dirs `.build/probe-impl15-{a,b,c}` can be removed; keep `-d`. Nothing runs.
 
 ## impl-14 session (2026-09-19)
 
@@ -33,6 +131,35 @@
   revision, admission) at 4/8/16/32 with a code_reflect probe, fix at the cause as proved code equations (preferably
   as refinement answers through the loop: demanded request, answer, verdict, adoption), then extend the residual
   record to the whole development layer.
+- B7 ATTRIBUTION (probes in `.build/impl14/{stages,rows,parts}/`, code_reflect; probe dirs `.build/probe-impl14-{c,d,e}`):
+  stages at 4/8/16/24 candidates: generation 0.006/0.058/1.12/8.48 s, compiled conditions 0.006/0.058/1.13/8.51,
+  observations 0.012/0.116/2.24/17.0, scope review 0.08/0.24/1.83/8.54 (review input 35K/101K/482K/1.38M bits),
+  compare/revise ~0. All three dominant stages read an installed ground program back (`finite_native_source`).
+  Rows probe: reading back a ground program of n one-octet payload rows costs 0.005/0.031/0.289/4.24 s at
+  8/16/32/64 (~n^3-4 in the row COUNT), unary natural index rows 0.030/0.579/4.40 at 8/16/24 (worse: row size adds).
+  Suspected cause: per-call whole-artifact scans in the syntax readers (`finite_headed_incidence` filters every
+  incidence row, `finite_data_empty_on`/`finite_payload_values` every binding, per socket and per node), multiplied
+  by the n clauses of one artifact. Package probe (parts: root family, definition readings/sites/graph, program,
+  package formed, source) running at 16/32/64 to confirm which part dominates. Fix direction (walk answer pattern):
+  syntax readers stated over artifact readers, instantiated with indexes built once per artifact
+  (`Binary_Relation_Stores` by `address_binary_path`, `Ordered_Member_Trees`); indices of native questions are unary
+  (`finite_development_index` = unary `natural_data_term`), a second, separate factor.
+- B7 PARKED by impl-14 at the context limit (nothing running, nothing uncommitted except this HANDOFF). Package probe
+  (`.build/impl14/parts/Probe_Package_Parts.thy`, 16/32/64 payload rows, artifact 237/429/813 addresses): ONE
+  definition read 0.006/0.055/0.812 s; sites 0.012/0.112/1.505, graph and program the same traversal again,
+  package-formed 0.018/0.172/2.252, whole source read 0.031/0.287/3.766 -> the package read repeats the same
+  demanded traversal ~4-5 times (sites, graph/program, formed check): compute it ONCE (code equation for
+  `finite_native_package_readings`/`finite_native_source` from one `finite_demanded_readings` result).
+  TIME PROFILE of one definition read at 64 rows (`.build/impl14/profile/Probe_Package_Profile.thy`; ML_Profiling
+  with `Private_Output.tracing_fn` routed to writeln; parse `ML_profiling_entry name=..count=..` from the log):
+  remdups 691 of 878 ticks, equal_lista 96, filtera 72. HOL-Library FSet executes finite sets as lists via
+  `code_unfold` of `fimage/ffilter/sup_fset/fset_of_list .rep_eq`, so `ffUnion (fimage ..)` builds lists that keep
+  duplicates, and cardinality/equality/singleton tests dedupe them quadratically with deep equality. NEXT: find
+  which reader call feeds remdups (fcard in `finite_record_candidates`/`finite_singleton_option`, set equality in
+  `finite_family_body_at`, `finite_socket_readings`), then give the readers deduplicated listings (ordered keys where
+  a key exists, `Keyed_Finite_Sets`/`Ordered_Member_Trees`) as proved code equations; re-run the stage probe
+  (`.build/impl14/stages`) and the selection scaling probe (`.build/impl14/scale`) to measure. Probe dirs
+  `.build/probe-impl14-{c,d,e,f}` can be removed.
 
 ## impl-13 session (2026-09-19) — parked at the context limit; G1 validated (committed by impl-14)
 

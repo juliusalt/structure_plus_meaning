@@ -1341,3 +1341,37 @@ owner's (Q2); the development constants on the machinery state's frontier are no
 state is extended to them; tool residuals (the harness, the adoption tool, the checks) have no notion in
 the state; and the choice of the roots, like the choice of this batch, was made outside the process and
 is a residual.
+
+
+## Syntax readings ask an artifact through its reading — 2026-09-19
+
+Every step of the loop is a native question, and the question was steeply superlinear in its candidates:
+1.7, 2.5 and 15.3 seconds at 4, 8 and 16 candidates, with 32 not returning, so the selection over a
+residual record of hundreds of constants could not run. Attributed stage by stage, three separate causes
+compounded: the syntax readings that read an installed program back scanned the whole artifact for each
+question they asked of it, the candidates' indices are unary naturals, and the scope review evaluates
+every definition of its program at every component of the whole question. This batch removes the first.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| A syntax reading asks its artifact by scanning it. | Every reading asks the same questions at an address (the rows headed there, the values attached there, whether a counted value is attached, carrier membership) and bounds its recursion by the carrier's size; the reading of an artifact carries the answers (`Factor_Indexed_Readings`). It is the notion the adopted walk answer had stated as four separate readers. Its indexed instance answers through the indexes that answer introduced, built once per reading and proved equal to the scanned one, and the walk now takes the same reading, so an artifact's indexes are built in one place. The formed-once readings are restated over the readings of the artifacts at a use, exactly for every environment, and take them once where a reading begins. |
+| Refine the guarded reading entries (the definition, schema, scoped-pattern, family, call, record and vector readings). | Seven of the seeded state's ten roots are those entries, and the state reads its roots' code equations in effect: a first version that replaced them was refused by the repository check, every seed word having changed, since it would have answered seven seeded refinement problems outside the loop. The entries keep their code; the readings they guard, which the seeded state keeps on its frontier, are refined instead, as the walk answer refined its frontier subject. |
+
+Evidence: at 16, 32, 64 and 128 payload rows reading an installed ground program back takes 0.006, 0.020,
+0.086 and 0.322 seconds, against 0.031, 0.287 and 3.766 seconds at 16 to 64 rows before. With
+binary-presented candidates a whole native question is constructed in 0.12, 0.29, 1.02, 4.41 and 27.7
+seconds at 8, 16, 32, 64 and 128 candidates and admitted in 0.15, 0.36, 1.31, 5.92 and 42.6 (with unary
+indices the construction had taken 99.6 seconds at 32). The check that advanced the base to
+`.build/check-20260919p` proved the 153 changed and dependent theories in 208.2 seconds and executed 37
+recipes with every word equal; 171 tool and 35 kernel tests passed. Run alone after the check, the
+recipes whose times had grown under the load of 37 concurrent executions ran faster than their retained
+times: digit replay in 7.7 seconds (13.4 retained), quoted history in 8.7 (13.9), the machinery recipe in
+15.8 summed over its stages (27.1) and the seed recipe in 186.9 summed (216.7).
+
+Open: the scope review now dominates a native question (21.7 of 27.7 seconds at 128 candidates) and the
+unary indices inflate its input tenfold (next); readings are built per reading of a use, so a package
+whose definitions share one artifact builds them once per site; environment formation compares every
+artifact row with every other; the seven formation problems of the seed keep their incumbents; a
+refinement of many constants sharing new helpers cannot pass through the answer frame, which states one
+equation and no code declarations, so this batch, like the earlier machinery batches, was made outside the
+loop and is a residual.

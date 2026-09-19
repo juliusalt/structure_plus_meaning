@@ -51,3 +51,15 @@ Isabelle establishes the bootstrap account's adequacy. Provisional choice (the p
 establishes truth and formal adequacy between stated accounts only; adequacy to your intent is a current
 basis under your authority, criticized and improved by the process. Question: is that the reading you want
 the workflow document to state?
+
+**Q4 (asked 2026-09-19 by impl-12) — an agent executor confined to its packet.** Stage 3's gate asks that
+an agent, a deterministic program and a replayed retained answer yield the same admission. The harness
+now confines an answer's text to its declared parts (`Development_Answer_Parts`), and the deterministic
+executor and replays yield identical admissions; no agent has answered a packet as its only input, and
+the one real answer (the indexed walk) was written by an unisolated implementer. Running an agent as an
+executor means invoking a model (for example the `claude` command without tools, given only the packet),
+which spends your usage and differs from the standing "no concurrent agents" direction of 2026-09-14,
+although the plan names agents as executors. Provisional choice: no agent executor is run; the
+deterministic executor and replays carry the interchangeability evidence, and the unisolated walk answer
+stays a recorded residual. Question: may the harness run a model as an inert executor on packets, with no
+tools and nothing but the packet as input?

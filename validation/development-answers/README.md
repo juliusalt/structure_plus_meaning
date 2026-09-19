@@ -18,6 +18,21 @@ over the extension. The summary's `published` reads whether that transaction app
 selection stay separate words, and a refused answer publishes nothing while its incumbent is still
 judged.
 
+Since 2026-09-19 Isabelle also reads every framed answer's declared parts, before the answer's theory
+exists, with the outer syntax of the answer's frame (`Development_Answer_Parts`). An answer whose parts
+hold anything but definitional commands, theorem statements with their proofs and document text, one
+proposition and one proof is `refused`, with Isabelle's reason as its `refusal`, and its theory is never
+processed. Five controls on the seeded request exercise that reading, each refused with its reason:
+`injected-ml.json` (definitions that run ML), `escaped-equation.json` (an equation that closes its quotes
+and continues with commands), `continued-proof.json` (a proof followed by a command that runs ML),
+`declared-attribute.json` (a lemma declared as a simplification rule, which would act on every theory
+importing the adopted answer) and `ml-method.json` (a proof by a method that runs ML). `axiom.json`, which
+had reached the verdict and been refused for its axiom, is now refused at its parts, because
+`axiomatization` is not a declared part; the verdict's refusal of axioms stays exercised natively by the
+seed's derived answer states. A failed judgment (Isabelle refused the answer's theory or its
+verification) is a different outcome: `failed-proof.json` retains its failure as `error`, the
+harness's field, and the replay compares it as it compares a refusal.
+
 These five answers exercise the loop on the seeded request for
 `Factor_Digit_Replay_Methods.digit_replay_inspect`: the subject's current equation restated
 (accepted), a proof Isabelle refuses, an added axiom (refused; not repairable), an equation using a

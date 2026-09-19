@@ -1721,6 +1721,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Certified_Generations
     Development_Seed_Publication
     Development_Admitted_Publication
+    Development_Answer_Parts
     Admitted_Conditional_Applications
     Cached_Faceted_Questions
     Certificate_Construction_Review

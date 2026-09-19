@@ -66,6 +66,29 @@ class FrameTest(unittest.TestCase):
         self.assertIn('export_code development_answer_verdict_value development_answer_publication_value', text)
         self.assertIn('development_answer_published P', text)
 
+    def test_parts_are_read_as_strings_in_the_frame(self):
+        state = development_answer.STATES['development_seed']
+        injected = {**ANSWER, 'definitions': '  ML \\<open>val _ = ()\\<close>\n', 'proof': '  by simp\n\n'}
+        text = development_answer.parts_theory(state, injected)
+        self.assertTrue(text.startswith('theory Development_Answer_Parts_Check\n  imports Native_Control_Seed_Subject '
+                                        'Development_Answer_Parts\nbegin\n'))
+        definitions, equation, proof = development_answer.placed_parts(injected)
+        self.assertEqual(definitions, 'ML \\<open>val _ = ()\\<close>')
+        self.assertEqual(proof, '  by simp')
+        for part in (definitions, equation, proof):
+            self.assertIn(development_answer.investigate.ml_string(part), text)
+        self.assertNotIn('ML \\<open>val', text)
+        framed = development_answer.answer_theory(state, injected)
+        self.assertIn(definitions + '\n\ndeclare [[code drop:', framed)
+        self.assertIn('"' + equation + '"\n' + proof + '\n\nend\n', framed)
+
+    def test_refusal_is_read_from_isabelle_logs(self):
+        with tempfile.TemporaryDirectory() as directory:
+            log = Path(directory) / 'build.log'
+            log.write_text("*** The answer's definitions part is refused: the command ML is not a declared part\n*** At")
+            self.assertEqual(development_answer.parts_refusal(Path(directory) / 'missing.log', Path(directory)),
+                             "The answer's definitions part is refused: the command ML is not a declared part")
+
     def test_malformed_answers_are_refused_before_any_build(self):
         with tempfile.TemporaryDirectory() as directory:
             for broken in [{**ANSWER, 'extra': ''},

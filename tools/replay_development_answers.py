@@ -50,8 +50,8 @@ def replay(record_path, output, timeout, rerecord=False):
     observed = json.loads((directory / 'run' / 'answer.json').read_text()) if (directory / 'run' / 'answer.json').is_file() \
         else {'status': 'failed', 'error': completed.stdout[-2000:] + completed.stderr[-2000:]}
     same_status = observed['status'] == record['status']
-    same_word = all(observed.get(word) == record.get(word) for word in ('verdict_word', 'publication_word'))
-    if rerecord and same_status and not same_word and observed['status'] == 'judged' and not adopted:
+    same_word = all(observed.get(word) == record.get(word) for word in ('verdict_word', 'publication_word', 'refusal', 'error'))
+    if rerecord and same_status and not same_word and observed['status'] in ('judged', 'refused') and not adopted:
         retained = json.loads((directory / 'retained.json').read_text())
         record_path.write_text(json.dumps({**record, **retained}, indent=1) + '\n')
     return record_path.stem, {'status': observed['status'], 'expected_status': record['status'],
@@ -59,6 +59,8 @@ def replay(record_path, output, timeout, rerecord=False):
                               'expected_verdict_word': record.get('verdict_word'),
                               'publication_word': observed.get('publication_word'),
                               'expected_publication_word': record.get('publication_word'),
+                              'refusal': observed.get('refusal'), 'expected_refusal': record.get('refusal'),
+                              'error': observed.get('error'), 'expected_error': record.get('error'),
                               'adopted': adopted, 'reconstructed': same_status and same_word and not adopted}
 
 

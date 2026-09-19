@@ -1223,3 +1223,42 @@ judgment rather than a transaction against a history; the harness computes the c
 once for the word and once for its summary; an absent incumbent does not distinguish a refused family
 from a failed judgment; and an answer's predecessors are its incumbent only. The design of this batch
 was chosen outside the process and is a residual.
+
+## Answers are confined to their declared parts — 2026-09-19
+
+Stage 3 asks that any attempt of an executor to exceed its request cannot affect admission. The harness
+placed an answer's declared parts into the answer's theory by concatenating text, so a part could hold
+any theory text: the definitions could run ML (and ML can run a shell command while the answer is being
+judged), declare simplification rules or code equations acting on every theory that would import the
+adopted answer, or add axioms; the equation could close its quotes and continue with commands; and the
+proof could continue past its lemma. The verdict sees only what reaches the exported state.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| An answer's text may carry theory commands outside the frame's declared parts, which the verdict sees only within the state's reach. | Before the answer's theory exists, Isabelle reads its three parts with the outer syntax of the answer's frame (`Development_Answer_Parts`), in a session of its own that imports exactly the frame's imports and holds the parts only as ML strings of decimal escapes, so no part can close the text it is held in. A part is refused unless it has the declared form: definitional commands, theorem statements with their proofs and document text, with no attribute or target; proof commands only; one proposition; no method that runs ML and no control or document antiquotation; and no name the definitions introduce already names a constant or a fact of the frame, since the adopted answer would otherwise change what that name reads as in every theory importing it. A refused answer is recorded with Isabelle's reason and never framed. The reading decides form, never meaning, and it is Isabelle's syntax, not a host parser. |
+| Read every part as outer syntax. | The equation is inner syntax: it is read as the one string token the answer's theory places it in, and its content is not lexed as outer syntax, where a string literal of HOL (`STR ''HOL.eq''`) is an error token and a sound equation would have been refused. |
+| A retained failed judgment names its failure `refusal`. | A failed judgment (Isabelle refused the answer's theory or its verification) and a refused answer (its parts are not of the declared form) are different outcomes; the failure is retained as `error`, the harness's own field, and the replay compares both. |
+
+Evidence: a probe on the base heap reads the walk answer's definitions (sections, texts, definitions,
+primitive recursions, lemmas and theorems with structured proofs) and a structured proof as declared
+parts, and refuses sixteen injections, each with its reason: ML, setup and declare commands, an
+attribute on a lemma and on a definition, a locale target, an axiomatization, an equation that closes
+its quotes, a proof continued by a command, a tactic method, sorry, an antiquotation in text, an
+unterminated string, an empty proof, a theory end, and a definition and a lemma whose names already name
+a constant and a fact of the frame. The check that advanced the base to `.build/check-20260919j` proved
+the new theory in 22.8 seconds and reached no recipe (171 tool and 35 kernel tests). Five controls on the
+seeded request (definitions that run ML, an equation that closes its quotes and continues with commands,
+a proof followed by a command that runs ML, a lemma declared as a simplification rule, a proof by a
+method that runs ML) and the earlier axiom answer were each refused at their parts, with Isabelle's
+reason, in about 16 seconds and before any answer theory was processed; the axiom answer, which had
+reached the verdict and been refused for its axiom, is now refused as an `axiomatization`. Replaying the
+fourteen retained answers on that base reproduced every verdict and publication word of the six judged
+answers that are not adopted (the parts reading refused none of them), every refusal, the failure of the
+answer Isabelle refuses, and reported the adopted walk as the published state's unchanged answer.
+
+Open: the packet does not yet state the declared form to the executor; the executor is not yet run with
+the packet as its only input (an agent executor is owner question Q4); a method defined by a later theory
+that runs ML would have to be added to the refused names; a method whose theorem rests on an evaluation
+oracle (`eval`) is refused neither by this reading nor by the repository's escape scan, and whether an
+answer may use one needs its own account; and the choice of the declared kinds was made outside the
+process and is a residual.

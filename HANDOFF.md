@@ -1,4 +1,35 @@
-# Handoff — B2 certified development causes on the base; B3 (harness publication) next
+# Handoff — B5 (answers confined to declared parts) committed; G1 (decisions as admitted generations) next
+
+## impl-12 session (2026-09-19)
+
+- B5 VALIDATED AND COMMITTED (see git log): theories/Development_Answer_Parts.thy is the final version (name-shadowing
+  refusal; the equation is no longer lexed as outer syntax, which would refuse `STR ''..''` literals). Check
+  `.build/check-20260919j --advance-base` ACCEPTED (1 theory, 22.8 s proof, no recipe, 171+35 tests) and RETAINED.
+  ACTIVE BASE: `.build/check-20260919j/proof` (lineage j->i->h->f->e->d->c->a->...).
+  Six controls (validation/development-answers/{injected-ml,escaped-equation,continued-proof,declared-attribute,
+  ml-method,axiom}.json) refused at their parts in ~16 s each; replay of all 14 retained answers reconstructed 12, walk
+  adopted, and failed-proof differed only because its old record named its failure `refusal`: renamed to `error`, the
+  replay now compares `error` too, and a re-judgment reproduced the error. Plan section "Answers are confined to their
+  declared parts — 2026-09-19" appended; owner question Q4 (agent executor) added to the ledger.
+- NEXT BATCH G1 (chosen provisionally: the plan's stage-2 gate names "selection, decomposition, scheduling and request
+  construction are admitted generations" first; impl-11 designed it and folded B4 into it). Design:
+  - Loci per decision kind, as tagged presentations whose disjointness from problem loci is PROVED: problem locus
+    (existing `development_problem_locus`), issue locus (tag + problem locus: at most one current request per problem),
+    selection locus (tag + collection of the problem loci chosen among: at most one current selection per problem family).
+  - Selection generation: payload = presentation of the admitted problems' loci; judged by the B2 listing policy
+    (`development_policy_judgment [payload]`), constructed only when `development_loop_selection` admitted exactly those
+    problems (guard = the native question's admission; constructor contract states it); own environment; a later
+    round replaces it by a transaction expecting the previous selection.
+  - Issue generation per issued request: payload = problem locus + library reading presented with names (the request's
+    support and context are functions of the state and the problem, so they are not stored again); recorded in the
+    problem's incumbent environment, citing the incumbent (the request's incumbent family); guard = issuable + request_of.
+  - Answer generation cites incumbent AND issue (B4 resolved: the answer rests on the request that was issued).
+  - The records of `Development_Successor` stay as admission evidence (packet, verdict, repair); generations are the
+    admitted elements (the B2 split). Scheduling gets no generation: the selection's payload is the independent group
+    (`development_selected_independent`), so a schedule record would repeat it.
+  - Consumers: the published snapshot over all loci (finite_locus_publications), re-evaluation read from the issue
+    generations' readings; seed report stage + recipe word.
+- Stage-3 remainder (agent executor confined to its packet) waits on Q4; deterministic executor + replay carry it now.
 
 ## impl-11 session (2026-09-19)
 

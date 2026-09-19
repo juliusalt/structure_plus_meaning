@@ -17,6 +17,11 @@ the answer's own content, so its name is stable across replays and unique in the
 is a transport choice, not a correspondence. Once an answer's theory is part of the repository, the
 answer is adopted: the harness does not frame it again and judges the published state as the answer
 to the request that state presents, which is an unchanged answer when the adoption is exact.
+
+Before an answer is framed, Isabelle reads its declared parts with the outer syntax of the frame
+(Development_Answer_Parts), in a session of its own that holds the parts only as ML strings. An answer
+whose parts hold anything but definitional commands, theorem statements and their proofs, document text,
+one proposition and one proof is refused with Isabelle's reason, and its theory is never processed.
 """
 from __future__ import annotations
 
@@ -53,6 +58,8 @@ STATES = {'development_seed': {'kind': 'development_seed', 'context': 'Native_Co
                                'layer': 'Native_Execution_Refinements', 'verdicts': 'Development_Successor'}}
 # The theory that supplies the frame's fact: the code equations in effect for the subject.
 FRAME_FACTS = 'Isabelle_Constant_Closure'
+# The theory that reads an answer's declared parts in the frame's syntax before the answer's theory exists.
+PARTS = 'Development_Answer_Parts'
 FIELDS = {'request', 'definitions', 'equation', 'proof'}
 QUALIFIED = re.compile(r'[A-Za-z][A-Za-z_0-9]*(\.[A-Za-z][A-Za-z_0-9]*)+')
 
@@ -102,10 +109,27 @@ def answer_theory(state, answer, project=ROOT):
     return ('theory ' + answer_name(answer) + '\n  imports ' + ' '.join(frame_imports(state, project)) + '\nbegin\n\n'
             'local_setup \\<open>Isabelle_Constant_Closure.note_code_equations \\<^binding>\\<open>development_demanded_code\\<close>\n'
             '  ' + json.dumps(subject) + '\\<close>\n\n'
-            + answer['definitions'].strip() + '\n\n'
+            + placed_parts(answer)[0] + '\n\n'
             'declare [[code drop: ' + subject + ']]\n\n'
-            'lemma development_answer [code]:\n  "' + answer['equation'] + '"\n'
-            + answer['proof'].rstrip() + '\n\nend\n')
+            'lemma development_answer [code]:\n  "' + placed_parts(answer)[1] + '"\n'
+            + placed_parts(answer)[2] + '\n\nend\n')
+
+
+def placed_parts(answer):
+    """The three parts exactly as the answer's theory places them."""
+    return answer['definitions'].strip(), answer['equation'], answer['proof'].rstrip()
+
+
+def parts_theory(state, answer, project=ROOT):
+    """The theory that reads the answer's parts with the outer syntax of the answer's frame.
+
+It imports exactly the frame's imports, so it reads with the keywords the answer's theory would be
+read with, and it holds the parts only as ML strings: nothing in them is processed as theory text."""
+    definitions, equation, proof = placed_parts(answer)
+    return ('theory Development_Answer_Parts_Check\n  imports ' + ' '.join([*frame_imports(state, project), PARTS])
+            + '\nbegin\n\nML \\<open>Development_Answer_Parts.check \\<^theory>\n  ('
+            + investigate.ml_string(definitions) + ',\n   ' + investigate.ml_string(equation) + ',\n   '
+            + investigate.ml_string(proof) + ')\\<close>\n\nend\n')
 
 
 def adopted(answer, project=ROOT):
@@ -237,6 +261,19 @@ def run(name, command, log, timeout):
     return {'name': name, 'exit_code': code, 'seconds': round(time.monotonic() - started, 2), 'log': str(log)}
 
 
+REFUSAL = re.compile(r"The answer's (?:definitions|equation|proof) part is refused: [^\n]*")
+
+
+def parts_refusal(*paths):
+    """The reason Isabelle gave for refusing an answer's parts, read from the logs of the reading."""
+    for path in paths:
+        for log in ([path] if path.is_file() else sorted(path.rglob('*.log')) if path.is_dir() else []):
+            found = REFUSAL.search(log.read_text(errors='replace'))
+            if found:
+                return found.group(0).rstrip()
+    return None
+
+
 def overlay(output, generated):
     """A project whose theories are the repository's and the generated ones, declared in its ROOT."""
     project = output / 'project'
@@ -339,66 +376,79 @@ def main():
     generated['Development_Answer_Verification'] = verification_theory(name, state, answer['request']['subject'], theory)
     project = overlay(output, generated)
     session = 'Development_Judgment_' + digest[:12]
+    parts_session = 'Development_Parts_' + digest[:12]
     steps = []
     record = {'status': 'failed', 'answer': str(args.answer.resolve()), 'answer_sha256': digest,
               'request': answer['request'], 'base': str(base), 'session': session, 'steps': steps,
               'theory': answer_name(answer), 'adopted': theory is None}
     try:
-        steps.append(run('proof', [sys.executable, '-B', TOOLS / 'prove_context.py', '--parent-project', base,
-                                   '--project', project, '--output', output / 'proof', '--session', session,
-                                   '--without-heap', '--threads', '16', '--timeout', args.timeout,
-                                   'Development_Answer_Verification'], output / 'proof.log', args.timeout + 60))
-        assert steps[-1]['exit_code'] == 0, 'The answer or its verification theory was not accepted.'
-        steps.append(run('export', [sys.executable, '-B', TOOLS / 'export_proved_code.py', '--proof',
-                                    output / 'proof' / 'result.json', '--project', project, '--output', output / 'export',
-                                    '--module', 'Development_Answer_Verification:development_answer_verification.ML'],
-                         output / 'export.log', 300))
-        assert steps[-1]['exit_code'] == 0, 'Export failed.'
-        proof = output / 'export' / 'development_answer_verification.proof.json'
-        steps.append(run('verdict', [sys.executable, '-B', TOOLS / 'check_presented_report.py', '--proof', proof,
-                                     '--poly', POLY, '--project', project, '--theory', 'Development_Answer_Verification',
-                                     '--module', 'Development_Answer_Verification', '--report',
-                                     'development_answer_verdict_value', '--scope', name + '_unanswered',
-                                     '--workers', '4', '--timeout', args.timeout, '--output', output / 'verdict'],
-                         output / 'verdict.log', args.timeout + 60))
-        assert steps[-1]['exit_code'] == 0, 'The verdict presentation failed.'
-        steps.append(run('publication', [sys.executable, '-B', TOOLS / 'check_presented_report.py', '--proof', proof,
+        if theory is not None:
+            parts = overlay(output / 'parts', {'Development_Answer_Parts_Check': parts_theory(state, answer)})
+            steps.append(run('parts', [sys.executable, '-B', TOOLS / 'prove_context.py', '--parent-project', base,
+                                       '--project', parts, '--output', output / 'parts' / 'proof', '--session',
+                                       parts_session, '--without-heap', '--threads', '4', '--timeout', args.timeout,
+                                       'Development_Answer_Parts_Check'], output / 'parts.log', args.timeout + 60))
+            if steps[-1]['exit_code'] != 0:
+                reason = parts_refusal(output / 'parts.log', output / 'parts')
+                assert reason is not None, "The answer's parts could not be read."
+                record.update(status='refused', refusal=reason, accepted=False)
+        if record['status'] != 'refused':
+            steps.append(run('proof', [sys.executable, '-B', TOOLS / 'prove_context.py', '--parent-project', base,
+                                       '--project', project, '--output', output / 'proof', '--session', session,
+                                       '--without-heap', '--threads', '16', '--timeout', args.timeout,
+                                       'Development_Answer_Verification'], output / 'proof.log', args.timeout + 60))
+            assert steps[-1]['exit_code'] == 0, 'The answer or its verification theory was not accepted.'
+            steps.append(run('export', [sys.executable, '-B', TOOLS / 'export_proved_code.py', '--proof',
+                                        output / 'proof' / 'result.json', '--project', project, '--output', output / 'export',
+                                        '--module', 'Development_Answer_Verification:development_answer_verification.ML'],
+                             output / 'export.log', 300))
+            assert steps[-1]['exit_code'] == 0, 'Export failed.'
+            proof = output / 'export' / 'development_answer_verification.proof.json'
+            steps.append(run('verdict', [sys.executable, '-B', TOOLS / 'check_presented_report.py', '--proof', proof,
                                          '--poly', POLY, '--project', project, '--theory', 'Development_Answer_Verification',
                                          '--module', 'Development_Answer_Verification', '--report',
-                                         'development_answer_publication_value', '--scope', name + '_unanswered',
-                                         '--workers', '4', '--timeout', args.timeout, '--output', output / 'publication'],
-                         output / 'publication.log', args.timeout + 60))
-        assert steps[-1]['exit_code'] == 0, 'The publication presentation failed.'
-        receipt = proved_code.checked_execution(
-            proof, POLY, output / 'summary', required_theories=['Development_Answer_Verification'], inputs={},
-            input_paths=[], program=summary_program(name), assess=lambda _i, text: text,
-            question='Which reasons does the native verdict of this answer retain?',
-            boundary='A diagnostic reading of the exported verdict; the presented word is the evidence.',
-            timeout=args.timeout, project=project)
-        assert receipt['status'] == 'accepted', receipt.get('error')
-        lines = [line for line in receipt['assessment'].splitlines() if line.startswith('SUMMARY ')]
-        assert len(lines) == 1, 'Expected one verdict summary.'
-        summary = json.loads(lines[0][len('SUMMARY '):])
-        word = json.loads((output / 'verdict' / 'receipt.json').read_text())['word']
-        publication = json.loads((output / 'publication' / 'receipt.json').read_text())['word']
-        record.update(status='judged', verdict_word=word, publication_word=publication, summary=summary,
-                      accepted=bool(summary and summary['accepted']))
+                                         'development_answer_verdict_value', '--scope', name + '_unanswered',
+                                         '--workers', '4', '--timeout', args.timeout, '--output', output / 'verdict'],
+                             output / 'verdict.log', args.timeout + 60))
+            assert steps[-1]['exit_code'] == 0, 'The verdict presentation failed.'
+            steps.append(run('publication', [sys.executable, '-B', TOOLS / 'check_presented_report.py', '--proof', proof,
+                                             '--poly', POLY, '--project', project, '--theory', 'Development_Answer_Verification',
+                                             '--module', 'Development_Answer_Verification', '--report',
+                                             'development_answer_publication_value', '--scope', name + '_unanswered',
+                                             '--workers', '4', '--timeout', args.timeout, '--output', output / 'publication'],
+                             output / 'publication.log', args.timeout + 60))
+            assert steps[-1]['exit_code'] == 0, 'The publication presentation failed.'
+            receipt = proved_code.checked_execution(
+                proof, POLY, output / 'summary', required_theories=['Development_Answer_Verification'], inputs={},
+                input_paths=[], program=summary_program(name), assess=lambda _i, text: text,
+                question='Which reasons does the native verdict of this answer retain?',
+                boundary='A diagnostic reading of the exported verdict; the presented word is the evidence.',
+                timeout=args.timeout, project=project)
+            assert receipt['status'] == 'accepted', receipt.get('error')
+            lines = [line for line in receipt['assessment'].splitlines() if line.startswith('SUMMARY ')]
+            assert len(lines) == 1, 'Expected one verdict summary.'
+            summary = json.loads(lines[0][len('SUMMARY '):])
+            word = json.loads((output / 'verdict' / 'receipt.json').read_text())['word']
+            publication = json.loads((output / 'publication' / 'receipt.json').read_text())['word']
+            record.update(status='judged', verdict_word=word, publication_word=publication, summary=summary,
+                          accepted=bool(summary and summary['accepted']))
     except (AssertionError, OSError, ValueError, KeyError) as error:
         record['error'] = str(error)
     finally:
-        for suffix in ('.db', '.gz'):
-            (HEAPS / 'log' / (session + suffix)).unlink(missing_ok=True)
-        leftover = HEAPS / 'log' / session
-        if leftover.is_dir():
-            shutil.rmtree(leftover)
-        else:
-            leftover.unlink(missing_ok=True)
+        for name_of_session in (session, parts_session):
+            for suffix in ('.db', '.gz'):
+                (HEAPS / 'log' / (name_of_session + suffix)).unlink(missing_ok=True)
+            leftover = HEAPS / 'log' / name_of_session
+            if leftover.is_dir():
+                shutil.rmtree(leftover)
+            else:
+                leftover.unlink(missing_ok=True)
     write_json(output / 'answer.json', record)
-    if args.retain is not None and record['status'] == 'judged':
+    if args.retain is not None and record['status'] in ('judged', 'refused'):
         write_json(args.retain, retained_record(answer, digest, base, record))
-    print(json.dumps({k: record[k] for k in ('status', 'accepted', 'summary', 'verdict_word', 'publication_word', 'error')
-                      if k in record}))
-    return 0 if record['status'] == 'judged' else 1
+    print(json.dumps({k: record[k] for k in ('status', 'accepted', 'summary', 'verdict_word', 'publication_word',
+                                              'refusal', 'error') if k in record}))
+    return 0 if record['status'] in ('judged', 'refused') else 1
 
 
 def retained_record(answer, digest, base, record):
@@ -407,8 +457,9 @@ def retained_record(answer, digest, base, record):
     return {'answer': answer, 'answer_sha256': digest, 'harness_sha256': investigate.file_hash(Path(__file__)),
             'base_receipt_sha256': investigate.file_hash(receipt) if receipt.is_file() else None,
             'status': record['status'], 'steps': {step['name']: step['exit_code'] for step in record['steps']},
-            'summary': record['summary'], 'verdict_word': record['verdict_word'],
-            'publication_word': record['publication_word']}
+            **({'summary': record['summary'], 'verdict_word': record['verdict_word'],
+                'publication_word': record['publication_word']} if record['status'] == 'judged'
+               else {'refusal': record['refusal']})}
 
 
 if __name__ == '__main__':

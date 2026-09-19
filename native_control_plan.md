@@ -1455,3 +1455,40 @@ mention have 6,124 distinct nodes. The size of a state, and of everything comput
 therefore grows with the types its terms mention rather than with the terms, and compiling it is the next
 cost on the loop's path. This batch, like the earlier ones, was chosen and made outside the loop and is a
 residual.
+
+## A state holds each type once — 2026-09-19
+
+The previous section found the development layer's state presented by a term of 3.0 million nodes whose
+compilation took 392 seconds, every occurrence of a constant carrying its whole type. The cost was attributed
+on samples before anything changed. Isabelle's code generator pays about 60 to 120 microseconds for every node
+of a defining term, whatever the node is, while compiling the generated code costs little; so a state costs
+what its defining term holds. Literals transport no cheaper: a single integer of 200,000 bits took 51 seconds
+to define and 104 to generate, a string of 25,000 characters 13 and 14. Binding each type once by nested
+`let`s shrank the layer's term to 588,000 nodes but nested 6,124 binders, and generating its code took 345
+seconds. What remained was to hold less: 192,806 of the layer state's 226,238 constructors present types,
+while its 2,869 distinct types have 6,124 distinct nodes.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| A definition presents a state as the kernel's terms, with a type at every occurrence. | The definition holds every distinct type once, as a node of a table whose arguments are positions of earlier nodes, and presents its entities over positions of that table (`Isabelle_Type_Tables`); the table is read once into an ordered index and every occurrence reads one value. Terms and entities are stated over what presents their parts (`'ty isabelle_term_with`, `'t isabelle_entity_with`), so the presentation over positions is the same datatype and its reading is the datatype's own map, not a second translation; the table's reading is exact at every position of an ordered table (`isabelle_type_table_exact`). The state read back is the state, so every observation, presentation and word of it is unchanged. |
+| Bind each type once where the definition is stated. | A binding scope nests the whole state under one binder per type, and the generated code for thousands of nested bindings did not scale; a table has no binders. |
+| `Native_Control_Syntax_Statements` builds its context beside the exporter. | It takes the exporter's construction, with its propositions added to the name table, so one construction states every exported context. |
+
+Evidence: on a probe of the base heap the shared presentation of the machinery state is a defining term of
+72,121 nodes (281,395 before; its roots 3,736 against 6,795), defined in 0.37 seconds and compiled in about one
+second, and its reading equals the accepted state: the state, its roots and both groups are equal as
+presentations. The development layer's state (409 roots, 1,381 entities) is a term of 839,656 nodes, defined in
+8.9 seconds and compiled together with its counts in 23.0 seconds. The check that advanced the base to
+`.build/check-20260919v` proved the 78 changed and dependent theories in 176.8 seconds; the seed recipe executed
+with every word equal, and the machinery recipe executed in 5.7 seconds (12.3 in the previous base's check) and
+changed its three words, because the checked context's content changed with the datatypes: the loop's notions
+are stated over the parameterized term and entity types, so the machinery state names `isabelle_term_with`,
+`isabelle_entity_with` and `isabelle_type` where it had named `isabelle_term` and `isabelle_entity` (151 names
+against 150). The words were re-recorded as re-evaluations and the proof adopted. The confirming check reused all 1,780 proof contexts, executed both recipes with every word equal (the machinery recipe in 5.9 seconds, the seed recipe in 113.4) and was retained with 171 tool and 35 kernel tests passing; replaying the fourteen retained answers on the new base reconstructed thirteen with every word equal and reported the adopted walk as the published state's unchanged answer.
+
+Open: the table's numerals make the layer's term 839,656 nodes where shared nodes alone would need about
+534,000; native computations over a state still read a type at every occurrence, since the state notion keeps
+its types inline, and holding them once in the notion itself would change every consumer and word; which table
+presents a state is the exporter's transport, with no native account, as its name table has none. With the
+layer's state affordable, the residual record can reach beyond the loop's fourteen notions (owner question Q5).
+This batch, like the earlier ones, was chosen and made outside the loop and is a residual.

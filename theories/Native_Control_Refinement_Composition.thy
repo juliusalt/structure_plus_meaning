@@ -97,7 +97,8 @@ proof
 qed
 
 lemma seed_union_scope_nonempty: "profile_terms ()\<noteq>[]"
-  by (simp only: profile_terms_def map_is_Nil_conv development_seed_context_def snd_conv list.distinct; blast)
+  by (simp only: profile_terms_def map_is_Nil_conv development_seed_context_def isabelle_shared_context_fields
+    list.distinct not_False_eq_True)
 
 corollary native_seed_union_refines_syntax:
   assumes question: "union_execution_question ()=Some Q"

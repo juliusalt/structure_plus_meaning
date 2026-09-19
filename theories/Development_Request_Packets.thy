@@ -43,20 +43,20 @@ fun typ names (\<^Const_>\<open>Isabelle_Type_Application for c Ts\<close>) =
   | typ _ t = raise TERM ("Not a presented type", [t]);
 
 (*Schematic variables become free variables of the same name and type.*)
-fun term names (\<^Const_>\<open>Isabelle_Constant for c T\<close>) = Const (nth names (number c), typ names T)
-  | term names (\<^Const_>\<open>Isabelle_Free for x T\<close>) = Free (nth names (number x), typ names T)
-  | term names (\<^Const_>\<open>Isabelle_Variable for x _ T\<close>) = Free (nth names (number x), typ names T)
-  | term _ (\<^Const_>\<open>Isabelle_Bound for i\<close>) = Bound (number i)
-  | term names (\<^Const_>\<open>Isabelle_Abstraction for T t\<close>) = Abs ("x", typ names T, term names t)
-  | term names (\<^Const_>\<open>Isabelle_Application for t u\<close>) = term names t $ term names u
+fun term names (\<^Const_>\<open>Isabelle_Constant _ for c T\<close>) = Const (nth names (number c), typ names T)
+  | term names (\<^Const_>\<open>Isabelle_Free _ for x T\<close>) = Free (nth names (number x), typ names T)
+  | term names (\<^Const_>\<open>Isabelle_Variable _ for x _ T\<close>) = Free (nth names (number x), typ names T)
+  | term _ (\<^Const_>\<open>Isabelle_Bound _ for i\<close>) = Bound (number i)
+  | term names (\<^Const_>\<open>Isabelle_Abstraction _ for T t\<close>) = Abs ("x", typ names T, term names t)
+  | term names (\<^Const_>\<open>Isabelle_Application _ for t u\<close>) = term names t $ term names u
   | term _ t = raise TERM ("Not a presented term", [t]);
 
-fun entity names (\<^Const_>\<open>Isabelle_Base_Constant for t\<close>) = ("declaration", term names t)
-  | entity names (\<^Const_>\<open>Isabelle_Development_Constant for t\<close>) = ("declaration", term names t)
-  | entity names (\<^Const_>\<open>Isabelle_Frontier_Constant for t\<close>) = ("declaration", term names t)
-  | entity names (\<^Const_>\<open>Isabelle_Definition for p\<close>) = ("definition", term names p)
-  | entity names (\<^Const_>\<open>Isabelle_Specification for p\<close>) = ("specification", term names p)
-  | entity names (\<^Const_>\<open>Isabelle_Code_Equation for p\<close>) = ("code equation", term names p)
+fun entity names (\<^Const_>\<open>Isabelle_Base_Constant _ for t\<close>) = ("declaration", term names t)
+  | entity names (\<^Const_>\<open>Isabelle_Development_Constant _ for t\<close>) = ("declaration", term names t)
+  | entity names (\<^Const_>\<open>Isabelle_Frontier_Constant _ for t\<close>) = ("declaration", term names t)
+  | entity names (\<^Const_>\<open>Isabelle_Definition _ for p\<close>) = ("definition", term names p)
+  | entity names (\<^Const_>\<open>Isabelle_Specification _ for p\<close>) = ("specification", term names p)
+  | entity names (\<^Const_>\<open>Isabelle_Code_Equation _ for p\<close>) = ("code equation", term names p)
   | entity _ t = raise TERM ("Not a presented entity", [t]);
 
 fun json_string s =

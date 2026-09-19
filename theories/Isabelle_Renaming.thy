@@ -181,7 +181,7 @@ lemma isabelle_term_rename_head:
 
 lemma isabelle_entity_rename_declared:
   "isabelle_declared_constant (isabelle_entity_rename f e)=map_option f (isabelle_declared_constant e)"
-  by (cases e) (simp_all split: isabelle_term.splits)
+  by (cases e) (simp_all split: isabelle_term_with.splits)
 
 lemma isabelle_entity_rename_specified:
   "isabelle_specified_proposition (isabelle_entity_rename f e)=
@@ -191,12 +191,12 @@ lemma isabelle_entity_rename_specified:
 lemma isabelle_rename_development_constants:
   "isabelle_development_constants (map (isabelle_entity_rename f) es)=map f (isabelle_development_constants es)"
   unfolding isabelle_development_constants_def
-  by (rule map_filter_rename) (case_tac x; simp_all split: isabelle_term.splits)
+  by (rule map_filter_rename) (case_tac x; simp_all split: isabelle_term_with.splits)
 
 lemma isabelle_rename_frontier_constants:
   "isabelle_frontier_constants (map (isabelle_entity_rename f) es)=map f (isabelle_frontier_constants es)"
   unfolding isabelle_frontier_constants_def
-  by (rule map_filter_rename) (case_tac x; simp_all split: isabelle_term.splits)
+  by (rule map_filter_rename) (case_tac x; simp_all split: isabelle_term_with.splits)
 
 lemma isabelle_rename_declared_list:
   "List.map_filter isabelle_declared_constant (map (isabelle_entity_rename f) es)=
@@ -356,7 +356,7 @@ proof -
       (case e of Isabelle_Specification p \<Rightarrow> False
         | _ \<Rightarrow> isabelle_declared_constant e=None \<and> isabelle_entity_subjects (fst C) [] e=[])" for e
     by (cases e) (simp_all add: subjects isabelle_rename_equation_head[OF corr]
-      split: isabelle_term.splits option.splits)
+      split: isabelle_term_with.splits option.splits)
   have filtered: "filter (\<lambda>e. case e of Isabelle_Specification p \<Rightarrow> False
         | _ \<Rightarrow> isabelle_declared_constant e=None \<and> isabelle_entity_subjects names' [] e=[])
       (map (isabelle_entity_rename f) (snd C))=

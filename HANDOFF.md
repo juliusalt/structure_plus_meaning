@@ -1,26 +1,25 @@
-# Handoff — impl-18 working: B9 COMMITTED+PUSHED; B10 (development-layer residual record) in design
+# Handoff — impl-19: B10a committed; B10b (residual record reaches the notions' constituents) next
 
-## CURRENT STATE (impl-18, read first)
+## impl-19 session (2026-09-19, read first)
 
-- ACTIVE BASE: `.build/check-20260919s/proof` (B9's check, adopted). Confirming check `.build/check-20260919t`
-  ACCEPTED (no rebuild, 50 recipes re-executed all words equal, 171+35 tests) and RETAINED. Replay
-  `.build/impl17/replay-b`: 13 reconstructed, walk adopted, none differing. B9 plan section "A question's
-  comparison is asked through indexes and its wrapper by insertion — 2026-09-19" and its REASONING_REUSE
-  section appended; COMMITTED+PUSHED ("Ask a question's comparison through indexes and wrap its program by
-  insertion").
-- B10 MEASURED (probe `.build/probe-impl17-m`, theory `.build/impl17/layer/Probe_Development_Layer.thy`): the
-  loop closure of the machinery's 14 roots restricted to the 102 theories added since c4dfad1 = 409 constants;
-  state 820 names, 1,381 entities, 3.0M HOL nodes; define 24.9 s; code_reflect compile + counts + selection
-  392 s; 362 residual problems (definition reading), 313 depend on another, 49 ready = 49 selected.
-  Type sizes (probe `.build/probe-impl18-a`, theory `.build/impl18/typesize/Probe_Type_Sizes.thy`,
-  constructor counts): layer full 226,238, terms without types 33,432, types at constant occurrences 162,828,
-  other types 19,604; typargs instead of occurrence types 116,685; distinct-type table 128,099 (2,869 types);
-  hash-consed type DAG 66,494 (6,124 nodes). Machinery (14 roots): full 23,311, skeleton 1,870, DAG 4,439.
-- RUNNING: probe `.build/probe-impl18-b` (theory `.build/impl18/compile/Probe_Compile_Cost.thy`): compile cost
-  per node kind (20,000 numerals / type constructors / zeros / units) to attribute the 392 s (numerals vs
-  constructors vs codegen vs ML compile). Output `.build/impl18/probe-b.out`, log `.build/probe-impl18-b/probe.log`.
-- Scratch to remove: `.build/probe-impl17-*`, `.build/probe-impl16-*`, `.build/impl16/solo`, `.build/impl15`,
-  checks q/r (keep s, t and s's lineage).
+- ACTIVE BASE: `.build/check-20260919v/proof` (lineage v -> s,q,p,...). Confirming check `.build/check-20260919w`
+  ACCEPTED (1,780 contexts reused, both recipes equal, 171+35 tests) and RETAINED. Replay `.build/impl19/replay-a`
+  (--rerecord): 13 reconstructed with every word equal, walk adopted, none differing.
+- B10a COMMITTED+PUSHED: "Hold each type of an exported state once" (plan section "A state holds each type once"
+  and REASONING_REUSE section appended; owner ledger Q5 included).
+- NEXT: B10b, staged by impl-18 in `.build/impl18/b10b/` (`Development_Machinery.thy`: roots = the 14 notions +
+  `_constituent_roots`, the development constants the notions' items mention, computed by the exporter's
+  `context_items`; `reconstruct_native_development_machinery.py` boundary text). Probe (impl-18,
+  `.build/probe-impl18-i`): 196,776 nodes, compile+counts 12.5 s; 335 names, 380 entities, 65 roots, 64 problems
+  (1 unstated), 34 ready = 34 selected; loop report 0.27 s. Steps: copy into theories/ and tools/, THEORY_MAP row
+  of Development_Machinery (roots = notions + constituents), `check --advance-base --output .build/check-20260919x2`
+  (machinery words change: re-record with `.build/impl14/record_words.py CHECK native-development-machinery`),
+  adopt, confirming check, retain; fill `.build/impl18/docs/plan-b10b.md`/`rr-b10b.md` EVIDENCE/OPEN, append,
+  commit+push.
+- impl-18's B10a details (measurements, attribution) are in the plan section "A state holds each type once".
+- NEXT PROBLEM after B10b (B11, provisional, being designed by impl-19): see "B11 design" below when written.
+- Scratch to remove: `.build/probe-impl18-*`, `.build/impl18/{typesize,compile,literal,dagsize,shared,names,
+  l3probe,b10bprobe}`, `.build/check-20260919w` after the next check is retained.
 
 ## impl-17 session (2026-09-19)
 

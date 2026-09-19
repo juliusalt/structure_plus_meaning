@@ -9,7 +9,10 @@ text \<open>
   bound name, so structural equality of terms is the kernel's equality up to renaming of
   bound variables. Every name of a type constructor, class, constant, free or schematic
   variable is a position in the name table of its context, so a term retains the
-  distinctions of the kernel without repeating any name.
+  distinctions of the kernel without repeating any name. A term is stated over what presents
+  its types: the kernel's term carries a type at every constant, variable and abstraction
+  (\<open>isabelle_term\<close>), and a term whose types are presented elsewhere is the same datatype
+  over that presentation, read back through the datatype's own map.
 \<close>
 
 datatype isabelle_type =
@@ -17,13 +20,15 @@ datatype isabelle_type =
   | Isabelle_Type_Free nat "nat list"
   | Isabelle_Type_Variable nat nat "nat list"
 
-datatype isabelle_term =
-    Isabelle_Constant nat isabelle_type
-  | Isabelle_Free nat isabelle_type
-  | Isabelle_Variable nat nat isabelle_type
+datatype 'ty isabelle_term_with =
+    Isabelle_Constant nat 'ty
+  | Isabelle_Free nat 'ty
+  | Isabelle_Variable nat nat 'ty
   | Isabelle_Bound nat
-  | Isabelle_Abstraction isabelle_type isabelle_term
-  | Isabelle_Application isabelle_term isabelle_term
+  | Isabelle_Abstraction 'ty "'ty isabelle_term_with"
+  | Isabelle_Application "'ty isabelle_term_with" "'ty isabelle_term_with"
+
+type_synonym isabelle_term = "isabelle_type isabelle_term_with"
 
 section \<open>Names, positions, types and terms have injective executable presentations\<close>
 

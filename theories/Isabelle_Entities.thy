@@ -14,16 +14,19 @@ text \<open>
   A development constant that this state mentions without expanding is declared on its
   frontier, so the state states exactly how far it reaches and extends on demand.
   A context is its name table together with these entities; every name position of an
-  entity is a position of that table.
+  entity is a position of that table. An entity is stated over its term, as a term is over its
+  types, so an entity whose term presents its types elsewhere is the same datatype.
 \<close>
 
-datatype isabelle_entity =
-    Isabelle_Base_Constant isabelle_term
-  | Isabelle_Development_Constant isabelle_term
-  | Isabelle_Frontier_Constant isabelle_term
-  | Isabelle_Definition isabelle_term
-  | Isabelle_Specification isabelle_term
-  | Isabelle_Code_Equation isabelle_term
+datatype 't isabelle_entity_with =
+    Isabelle_Base_Constant 't
+  | Isabelle_Development_Constant 't
+  | Isabelle_Frontier_Constant 't
+  | Isabelle_Definition 't
+  | Isabelle_Specification 't
+  | Isabelle_Code_Equation 't
+
+type_synonym isabelle_entity = "isabelle_term isabelle_entity_with"
 
 type_synonym isabelle_context = "String.literal list\<times>isabelle_entity list"
 

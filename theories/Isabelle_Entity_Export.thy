@@ -1,5 +1,5 @@
 theory Isabelle_Entity_Export
-  imports Isabelle_Entities Isabelle_Constant_Closure
+  imports Isabelle_Type_Tables Isabelle_Constant_Closure
 begin
 
 section \<open>A checked theory context defines the entities reachable from its roots\<close>
@@ -10,9 +10,11 @@ text \<open>
   that mention it and the code equations in effect, as declared (read by the shared closure
   under an empty simpset); a constant of the fixed Isabelle/HOL base contributes nothing. Types
   and terms are translated constructor by constructor, and every name is a position in one
-  table of the defined context. The result is an
-  ordinary definition of the checked context, so a failed build defines nothing and every
-  later use reads exactly the defined value.
+  table of the defined context. The definition holds every distinct type once, as a node of a
+  table of types, and presents terms over positions of that table (\<open>Isabelle_Type_Tables\<close>):
+  the kernel repeats a type at every occurrence, and presented once per occurrence the types made
+  up nine in ten of a state's constructors. The result is an ordinary definition of the checked
+  context, so a failed build defines nothing and every later use reads exactly the defined value.
 \<close>
 
 ML \<open>
@@ -80,44 +82,84 @@ fun type_term position (Type (c, Ts)) =
       \<^Const>\<open>Isabelle_Type_Variable\<close> $ position a $ number i $
         HOLogic.mk_list \<^typ>\<open>nat\<close> (map position S);
 
-fun term_term position (Const (c, T)) =
-      \<^Const>\<open>Isabelle_Constant\<close> $ position c $ type_term position T
-  | term_term position (Free (x, T)) = \<^Const>\<open>Isabelle_Free\<close> $ position x $ type_term position T
-  | term_term position (Var ((x, i), T)) =
-      \<^Const>\<open>Isabelle_Variable\<close> $ position x $ number i $ type_term position T
-  | term_term position (Bound i) = \<^Const>\<open>Isabelle_Bound\<close> $ number i
-  | term_term position (Abs (_, T, t)) =
-      \<^Const>\<open>Isabelle_Abstraction\<close> $ type_term position T $ term_term position t
-  | term_term position (t $ u) =
-      \<^Const>\<open>Isabelle_Application\<close> $ term_term position t $ term_term position u;
+(*A term over a presentation of its types: typT is the type presenting a type, typ presents one.*)
+fun term_with typT typ position =
+  let
+    fun term (Const (c, T)) = \<^Const>\<open>Isabelle_Constant typT\<close> $ position c $ typ T
+      | term (Free (x, T)) = \<^Const>\<open>Isabelle_Free typT\<close> $ position x $ typ T
+      | term (Var ((x, i), T)) = \<^Const>\<open>Isabelle_Variable typT\<close> $ position x $ number i $ typ T
+      | term (Bound i) = \<^Const>\<open>Isabelle_Bound typT\<close> $ number i
+      | term (Abs (_, T, t)) = \<^Const>\<open>Isabelle_Abstraction typT\<close> $ typ T $ term t
+      | term (t $ u) = \<^Const>\<open>Isabelle_Application typT\<close> $ term t $ term u;
+  in term end;
+
+(*A term carrying its types, as the kernel's term does.*)
+fun term_term position = term_with \<^typ>\<open>isabelle_type\<close> (type_term position) position;
+
+(*Every distinct type of the terms once, each argument before its application: the positions of
+  the types and the nodes of the table in order.*)
+fun type_table position terms =
+  let
+    fun collect T (index, nodes, count) =
+      if Typtab.defined index T then (index, nodes, count)
+      else
+        let
+          val (index', nodes', count') =
+            (case T of Type (_, Ts) => fold collect Ts (index, nodes, count) | _ => (index, nodes, count));
+          fun at U = number (the (Typtab.lookup index' U));
+          val node =
+            (case T of
+              Type (c, Ts) => \<^Const>\<open>Isabelle_Node_Application\<close> $ position c $
+                HOLogic.mk_list \<^typ>\<open>nat\<close> (map at Ts)
+            | TFree (a, S) => \<^Const>\<open>Isabelle_Node_Free\<close> $ position a $
+                HOLogic.mk_list \<^typ>\<open>nat\<close> (map position S)
+            | TVar ((a, i), S) => \<^Const>\<open>Isabelle_Node_Variable\<close> $ position a $ number i $
+                HOLogic.mk_list \<^typ>\<open>nat\<close> (map position S));
+        in (Typtab.update (T, count') index', node :: nodes', count' + 1) end;
+    val (index, nodes, _) = fold (fn t => Term.fold_types collect t) terms (Typtab.empty, [], 0);
+  in
+    (term_with \<^typ>\<open>nat\<close> (fn T => number (the (Typtab.lookup index T))) position,
+      HOLogic.mk_list \<^typ>\<open>isabelle_type_node\<close> (rev nodes))
+  end;
+
+(*Terms read back through their own table of types.*)
+fun shared_terms position terms =
+  let val (term, nodes) = type_table position terms
+  in \<^Const>\<open>isabelle_shared_terms\<close> $ nodes $
+    HOLogic.mk_list \<^typ>\<open>isabelle_shared_term\<close> (map term terms)
+  end;
 
 (*The defined context: one name table, the declarations of every reached constant and the
-  items the expanded constants contribute; the roots are defined as the constants they name.*)
-fun context_terms thy expand root_names seeds groups =
+  items the expanded constants contribute, every distinct type held once; the roots are defined
+  as the constants they name. The name table also holds the names of any further terms the
+  caller presents against it.*)
+fun context_terms thy expand root_names seeds groups further =
   let
     val (constants, items) = context_items thy expand (root_names @ seeds);
     fun constant c = Const (c, Sign.the_const_type thy c);
     val roots = map constant root_names;
     val declarations = map constant constants;
-    val table = sort_distinct string_ord (maps term_names (roots @ declarations @ map snd items));
+    val props = map snd items;
+    val table = sort_distinct string_ord (maps term_names (roots @ declarations @ props @ further));
     val positions = Symtab.make (map_index (fn (i, name) => (name, i)) table);
     fun position name = number (the (Symtab.lookup positions name));
+    val (term, nodes) = type_table position (declarations @ props);
+    val entityT = \<^typ>\<open>isabelle_shared_term\<close>;
     fun declaration c =
-      (if base_constant thy c then \<^Const>\<open>Isabelle_Base_Constant\<close>
-        else if expand c then \<^Const>\<open>Isabelle_Development_Constant\<close>
-        else \<^Const>\<open>Isabelle_Frontier_Constant\<close>)
-        $ term_term position (constant c);
-    fun item (Definition, prop) = \<^Const>\<open>Isabelle_Definition\<close> $ term_term position prop
-      | item (Specification, prop) = \<^Const>\<open>Isabelle_Specification\<close> $ term_term position prop
-      | item (Code_Equation, prop) = \<^Const>\<open>Isabelle_Code_Equation\<close> $ term_term position prop;
+      (if base_constant thy c then \<^Const>\<open>Isabelle_Base_Constant entityT\<close>
+        else if expand c then \<^Const>\<open>Isabelle_Development_Constant entityT\<close>
+        else \<^Const>\<open>Isabelle_Frontier_Constant entityT\<close>)
+        $ term (constant c);
+    fun item (Definition, prop) = \<^Const>\<open>Isabelle_Definition entityT\<close> $ term prop
+      | item (Specification, prop) = \<^Const>\<open>Isabelle_Specification entityT\<close> $ term prop
+      | item (Code_Equation, prop) = \<^Const>\<open>Isabelle_Code_Equation entityT\<close> $ term prop;
     val names_term = HOLogic.mk_list \<^typ>\<open>String.literal\<close> (map HOLogic.mk_literal table);
     val entities_term =
-      HOLogic.mk_list \<^typ>\<open>isabelle_entity\<close> (map declaration constants @ map item items);
-    fun root_terms names =
-      HOLogic.mk_list \<^typ>\<open>isabelle_term\<close> (map (term_term position o constant) names);
+      HOLogic.mk_list \<^typ>\<open>isabelle_shared_entity\<close> (map declaration constants @ map item items);
+    fun root_terms names = shared_terms position (map constant names);
   in
-    (HOLogic.mk_prod (names_term, entities_term), root_terms root_names,
-      map (fn (suffix, names) => (suffix, root_terms names)) groups)
+    (\<^Const>\<open>isabelle_shared_context\<close> $ names_term $ nodes $ entities_term, root_terms root_names,
+      map (fn (suffix, names) => (suffix, root_terms names)) groups, position)
   end;
 
 (*Define NAME_context, NAME_roots and the roots of each named group. Every group is read
@@ -130,8 +172,8 @@ fun define binding groups lthy =
     fun names_of terms = distinct (op =) (maps (fn t => rev (Term.add_const_names t [])) terms);
     val group_names = map (apsnd names_of) groups;
     val root_names = distinct (op =) (maps snd group_names);
-    val (context, root_list, group_lists) =
-      context_terms thy (member (op =) root_names) root_names [] group_names;
+    val (context, root_list, group_lists, _) =
+      context_terms thy (member (op =) root_names) root_names [] group_names [];
     fun define_value suffix value =
       let val name = Binding.suffix_name suffix binding
       in Local_Theory.define ((name, NoSyn), ((Thm.def_binding name, []), value)) #> snd end;
@@ -144,12 +186,18 @@ fun define binding groups lthy =
   from the definition of its roots, resolved in the table of the definition of its context.*)
 fun defined_root_names roots_def context_def =
   let
+    fun arguments def = snd (strip_comb (Thm.term_of (Thm.rhs_of def)));
     val names =
-      HOLogic.dest_list (fst (HOLogic.dest_prod (Thm.rhs_of context_def |> Thm.term_of)))
-      |> map HOLogic.dest_literal;
-    fun root (\<^Const_>\<open>Isabelle_Constant for position _\<close>) = nth names (snd (HOLogic.dest_number position))
+      (case arguments context_def of
+        [names, _, _] => map HOLogic.dest_literal (HOLogic.dest_list names)
+      | _ => raise THM ("Not a shared context definition", 0, [context_def]));
+    val roots =
+      (case arguments roots_def of
+        [_, roots] => HOLogic.dest_list roots
+      | _ => raise THM ("Not a shared roots definition", 0, [roots_def]));
+    fun root (\<^Const_>\<open>Isabelle_Constant _ for position _\<close>) = nth names (snd (HOLogic.dest_number position))
       | root t = raise TERM ("Root is not a constant", [t]);
-  in distinct (op =) (map root (HOLogic.dest_list (Thm.rhs_of roots_def |> Thm.term_of))) end;
+  in distinct (op =) (map root roots) end;
 
 (*Define NAME_context and NAME_roots again in the current context, from the same roots as a
   state defined in an ancestor context, and NAME_introduced as the logical constants a given
@@ -167,8 +215,8 @@ fun define_again binding (roots_def, context_def) introducing lthy =
                    | _ => NONE)
         (#constants (Consts.dest (Sign.consts_of thy)));
     val expand = member (op =) (root_names @ introduced);
-    val (context, root_list, group_lists) =
-      context_terms thy expand root_names introduced [("_introduced", introduced)];
+    val (context, root_list, group_lists, _) =
+      context_terms thy expand root_names introduced [("_introduced", introduced)] [];
     fun define_value suffix value =
       let val name = Binding.suffix_name suffix binding
       in Local_Theory.define ((name, NoSyn), ((Thm.def_binding name, []), value)) #> snd end;

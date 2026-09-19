@@ -1698,6 +1698,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Isabelle_Constant_Closure
     Isabelle_Terms
     Isabelle_Entities
+    Isabelle_Type_Tables
     Isabelle_Code_Equations
     Isabelle_Renaming
     Isabelle_State_Difference

@@ -63,3 +63,16 @@ although the plan names agents as executors. Provisional choice: no agent execut
 deterministic executor and replays carry the interchangeability evidence, and the unisolated walk answer
 stays a recorded residual. Question: may the harness run a model as an inert executor on packets, with no
 tools and nothing but the packet as input?
+
+**Q5 (asked 2026-09-19 by impl-18) — how far the native residual record reaches.** The plan asks every
+choice generated outside the process to be a recorded residual. The native record holds the fourteen notions
+of the loop as residual problems, and their definitions mention further development constants on the state's
+frontier; followed transitively, the loop's notions reach about 1,500 development constants, 409 of them
+declared in the 102 theories added since the plan's accepted base c4dfad1, and the whole workspace holds far
+more, nearly all written before the native process existed. A native selection over more than a few hundred
+residuals is not yet affordable. Provisional choice: the record grows by demand from the loop's notions, one
+level of their frontier at a time, starting with the constituents their definitions mention directly, so that
+a notion's residual depends on the residuals of what it is made of and the loop takes constituents first; the
+theories that predate the plan stay the bootstrap library established under Isabelle's authority. Question:
+should the record instead cover every constant defined since the plan's accepted base, every constant the
+loop's notions reach, or the whole workspace?

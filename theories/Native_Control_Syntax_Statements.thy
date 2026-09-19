@@ -25,24 +25,9 @@ local_setup \<open>fn lthy =>
       \<^term>\<open>enumerated_union :: local_address fset => local_address fset => local_address fset\<close>,
       \<^term>\<open>finite_syntax_join\<close>] @ candidates;
     val root_names = distinct (op =) (maps (fn t => Term.add_const_names t []) roots);
-    val (constants, items) = Isabelle_Entity_Export.context_items thy
-      (member (op =) root_names) root_names;
-    fun constant c = Const (c, Sign.the_const_type thy c);
-    val table = sort_distinct string_ord (maps Isabelle_Entity_Export.term_names
-      (propositions @ roots @ map constant constants @ map snd items));
-    val positions = Symtab.make (map_index (fn (i,n) => (n,i)) table);
-    fun position n = Isabelle_Entity_Export.number (the (Symtab.lookup positions n));
+    val (context, _, _, position) = Isabelle_Entity_Export.context_terms thy
+      (member (op =) root_names) root_names [] [] (propositions @ roots);
     val encode = Isabelle_Entity_Export.term_term position;
-    fun declaration c =
-      (if Isabelle_Entity_Export.base_constant thy c then \<^Const>\<open>Isabelle_Base_Constant\<close>
-       else if member (op =) root_names c then \<^Const>\<open>Isabelle_Development_Constant\<close>
-       else \<^Const>\<open>Isabelle_Frontier_Constant\<close>) $ encode (constant c);
-    fun item (Isabelle_Entity_Export.Definition,p) = \<^Const>\<open>Isabelle_Definition\<close> $ encode p
-      | item (Isabelle_Entity_Export.Specification,p) = \<^Const>\<open>Isabelle_Specification\<close> $ encode p
-      | item (Isabelle_Entity_Export.Code_Equation,p) = \<^Const>\<open>Isabelle_Code_Equation\<close> $ encode p;
-    val context = HOLogic.mk_prod
-      (HOLogic.mk_list \<^typ>\<open>String.literal\<close> (map HOLogic.mk_literal table),
-       HOLogic.mk_list \<^typ>\<open>isabelle_entity\<close> (map declaration constants @ map item items));
     fun define name value = Local_Theory.define
       ((Binding.name name,NoSyn),((Binding.name (name ^ "_def"),[]),value)) #> snd;
   in lthy

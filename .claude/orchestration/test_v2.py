@@ -348,7 +348,7 @@ class TaskTests(Flow):
         self.w.write(".build/tasks/1/commit.md", "m")
         out = self.as_(self.impl, "finalize", "1", "--check", "true", "--files", "theories/Ready.thy", "--message",
                        ".build/tasks/1/commit.md")
-        self.assertIn("refused: task 9 holds the working tree", out)
+        self.assertIn("refused: task 9's finalization is in flight and one runs at a time", out)
         self.w.write("theories/X.thy", "task 9's theory\n")
         code = (f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2\n"
                 "v2.own('9', ['theories/X.thy'])\nwith v2.state() as st: v2.to_planner(st, '9', 'the finalizer', 'failed twice')")
@@ -416,6 +416,30 @@ class TaskTests(Flow):
         self.assertEqual(self.t("1")["stage"], "running")
         self.assertIn("The run you parked for has ended", self.resumes(sid)[-1][3])
         self.assertTrue((self.w.project / "theories/Ready.thy").exists())  # its changes are back
+
+    def test_a_check_parks_whoever_else_holds_changes_and_a_review_does_not(self):
+        self.w.write("theories/Other.thy", "another task's theory\n")
+        subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                        "v2.own('1', ['theories/Other.thy'])"], env=self.w.env, check=True)
+        self.w.write(".build/tasks/9/finalize.json", json.dumps({"check": "true", "files": ["DECISIONS.md"], "message": "m"}))
+        st = self.w.st()
+        st["tasks"]["9"] = {"stage": "reviewing"}
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.w.v2("dispatch")
+        self.assertEqual(self.t("1")["stage"], "running")  # a review holds its own files only: work goes on
+        st = self.w.st()
+        st["tasks"]["9"]["stage"] = "checking"
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.w.v2("dispatch")
+        self.assertEqual(self.t("1")["stage"], "parked")  # the check sees the tree: its changes left it
+        self.assertFalse((self.w.project / "theories/Other.thy").exists())
+        self.assertIn("check is running and sees the working tree", json.dumps(self.w.mail(self.impl)))
+        st = self.w.st()
+        st["tasks"]["9"]["stage"] = "reviewing"
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.w.v2("dispatch")
+        self.assertEqual(self.t("1")["stage"], "running")  # back once the check has ended, its files untouched by 9
+        self.assertTrue((self.w.project / "theories/Other.thy").exists())
 
     def test_a_session_still_working_is_told_when_the_fix_it_reported_lands(self):
         self.as_(self.impl, "escalate", "--efficiency", "the closure is quadratic")
@@ -518,14 +542,14 @@ class TaskTests(Flow):
         for n, s in st["sessions"].items():
             if n.startswith("implement-") and n != self.impl:
                 s["state"] = "done"
-        st["tasks"]["9"] = {"stage": "reviewing"}  # another task's finalization holds the working tree
+        st["tasks"]["9"] = {"stage": "checking"}  # another task's check holds the working tree
         self.w.write(".build/tasks/9/finalize.json", json.dumps({"check": "true", "files": ["theories/X.thy"], "message": "m"}))
         (self.w.state / "v2.json").write_text(json.dumps(st))
         self.w.v2("dispatch")
         self.assertEqual(self.t("1")["stage"], "running")  # its wait is over: the slot is its before any new task
         resumed = self.resumes(self.s(self.impl)["sid"])[-1][3]
         self.assertIn("has landed (task 3)", resumed)
-        self.assertIn("Task 9 holds the working tree now: draft under .build/tasks/1/ meanwhile", resumed)
+        self.assertIn("Task 9 holds the working tree now: draft under .build/tasks/1/ meanwhile", resumed)  # its check
         st = self.w.st()
         st["tasks"]["9"]["stage"] = "done"
         (self.w.state / "v2.json").write_text(json.dumps(st))

@@ -10,7 +10,7 @@ was replaced is measured in `notes/efficiency-baseline.md`.
 
 ## Use
 
-    .claude/orchestration/base.sh WHO build     # WHO is impl, mid or impl2: freeze its load list into a verified pack and load it
+    .claude/orchestration/base.sh WHO build     # WHO is max, xhigh or high: freeze its load list into a verified pack and load it
     .claude/orchestration/base.sh WHO status    # until the load has ended its turn (the measured context)
     .claude/orchestration/base.sh WHO seal      # check every chunk arrived, snapshot the frozen sources, stop it, record it
     .claude/orchestration/start.sh              # make the orchestration active (the knowledge base first), follow the planning episodes here

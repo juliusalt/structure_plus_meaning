@@ -689,11 +689,60 @@ def tree_holder(st, rec=None):
     for tid, t in st["tasks"].items():
         if tid in own:
             continue
-        if t.get("stage") in FINISHING and os.path.exists(os.path.join(BUILD, tid, "finalize.json")):
-            return tid  # a finalization with files to commit; one with nothing to commit holds nothing
+        if t.get("stage") == "checking" and os.path.exists(os.path.join(BUILD, tid, "finalize.json")):
+            return tid  # its check is running and sees the working tree, which must hold its changes alone
         if t.get("stage") == "parked" and (t.get("parked") or {}).get("holds_tree"):
             return tid  # parked for its own run, which reads its changes in the working tree
     return None
+
+
+def locked_files(st, rec):
+    """{file: task} of the finalizations in flight that are not this session's own: their files are theirs until they
+    are committed, while the rest of the working tree stays open (only a running check holds it whole)."""
+    own = {rec.get("task"), rec.get("reviews")}
+    out = {}
+    for tid, t in st["tasks"].items():
+        if t.get("stage") in FINISHING and tid not in own:
+            try:
+                for f in json.load(open(os.path.join(BUILD, tid, "finalize.json")))["files"]:
+                    out[os.path.normpath(os.path.join(PROJECT, f))] = tid
+            except (OSError, ValueError, KeyError):
+                pass
+    return out
+
+
+def finalizing(st, rec=None):
+    """The other task whose finalization is in flight (one runs at a time: a second task's check would see the first's
+    uncommitted files), or None."""
+    own = {(rec or {}).get("task"), (rec or {}).get("reviews")}
+    return next((tid for tid, t in st["tasks"].items() if t.get("stage") in FINISHING and tid not in own
+                 and os.path.exists(os.path.join(BUILD, tid, "finalize.json"))), None)
+
+
+def check_isolation():
+    """A check sees the working tree: before one runs, every other task's changes leave it. A task whose session still
+    works is parked (its changes set aside), and resumed when the check's task has landed."""
+    st = peek()
+    checking = next((tid for tid, t in st["tasks"].items() if t.get("stage") == "checking"), None)
+    if not checking:
+        return
+    with owners() as o:
+        changed = {p: o.get(p) for p in changed_paths()}
+    for tid, t in st["tasks"].items():
+        if tid == checking or t.get("stage") not in ("running", "fixing") or tid not in changed.values():
+            continue
+        name = t.get("session")
+        aside = leave(tid, f"task {checking}'s check")
+        with state() as w:
+            w["tasks"][tid].update(stage="parked", parked={"since": time.time(), "for": "tree", "why": "", "after": None,
+                                                           "holds_tree": False, "questions": [], "holder": checking})
+            if name in w["sessions"]:
+                w["sessions"][name]["state"] = "parked"
+        if name:
+            deliver(name, "the harness", f"Task {checking}'s check is running and sees the working tree, so your changes "
+                    f"left it and your task is parked.{aside} End your turn; you are resumed, your context intact, when "
+                    "the check's task has landed and the producing slot is free.")
+        log(f"parked {tid} while task {checking}'s check runs")
 
 
 def mark_tree_wait(name, holder):
@@ -755,6 +804,15 @@ def _leave(tid, why):
     log(f"set aside {len(paths)} changed paths of task {tid} ({why})")
     return (f" Its uncommitted changes ({len(paths)} paths: {', '.join(paths[:6])}{', …' if len(paths) > 6 else ''}) are "
             f"set aside under .build/tasks/{tid}/shelf/; a task that continues them starts with `v2.py unshelve {tid}`.")
+
+
+def shelved_paths(tid):
+    """The working-tree paths a task left set aside, as absolute paths."""
+    try:
+        manifest = json.load(open(os.path.join(BUILD, tid, "shelf", "manifest.json")))
+    except (OSError, ValueError):
+        return set()
+    return {os.path.normpath(os.path.join(PROJECT, e["path"])) for e in manifest}
 
 
 def take_up(tid, task=None):
@@ -1240,7 +1298,13 @@ def parked_ready(st, tid, p):
     if kind == "run":
         return not p.get("holds_tree")
     if kind == "tree":
-        return not tree_holder(st, {"task": tid})
+        if tree_holder(st, {"task": tid}):
+            return False  # a check is running and sees the working tree
+        other = finalizing(st, {"task": tid})
+        if not other:
+            return True
+        mine = shelved_paths(tid)  # its own files are back only where the finalization in flight holds none of them
+        return not (mine & set(locked_files(st, {"task": tid})))
     if kind == "answer":
         return all((st["asks"].get(q) or {}).get("state") == "answered" for q in p.get("questions", []))
     return False
@@ -1486,7 +1550,8 @@ def dispatch_once():
     st = peek()
     if not st["active"] or os.path.exists(os.path.join(STATE, "stopped")):
         return
-    for part in (tree_care, parking_care, efficiency_care, kb_care, produce, support, quick_fix, consult, plan):
+    for part in (tree_care, check_isolation, parking_care, efficiency_care, kb_care, produce, support, quick_fix,
+                 consult, plan):
         try:  # one part that fails does not hold up the others; it is logged, and tried again at the next dispatch
             part()
         except Exception as e:  # noqa: BLE001
@@ -1805,7 +1870,7 @@ def cmd_park(kind, text=""):
     if kind != "run" and jobs:
         return (f"refused: your runs {', '.join(jobs)} are going on: park for them (`v2.py park run`), or stop them "
                 "(TaskStop) first")
-    holder = tree_holder(st, c)
+    holder = tree_holder(st, c) or finalizing(st, c)
     if kind == "tree" and not holder:
         return "the working tree is free: install what you drafted and continue"
     questions = [q for q, a in st["asks"].items() if a["from"] == c["name"] and a["state"] != "answered"]
@@ -1850,10 +1915,11 @@ def cmd_finalize(tid, args):
     refused = own_task(tid)
     if refused:
         return refused
-    holder = tree_holder(peek(), caller())
+    holder = finalizing(peek(), caller())
     if holder:
-        return (f"refused: task {holder} holds the working tree, and your finalization begins when it has let it go: "
-                "install what you drafted then; with nothing else to do meanwhile, park (`v2.py park tree`)")
+        return (f"refused: task {holder}'s finalization is in flight and one runs at a time, since a check sees the "
+                "working tree: yours begins when it has landed. Install what you drafted then; with nothing productive "
+                "left meanwhile, park (`v2.py park tree`)")
     check, files, message = None, [], None
     while args:
         a = args.pop(0)

@@ -75,6 +75,17 @@ stays readiness alone, and the problem actually worked (`finite_data_walk`, whos
 recorded causes back) is chosen outside the process and recorded as a residual. Question: do you authorize
 those candidates as first-loop problems, and a cost criterion for selection?
 
+Extended 2026-09-20 (plan-3, after the decomposition design): decomposing a problem raises three more
+criteria of the same family, each decided provisionally in DECISIONS.md's "A problem is decomposed through
+the constants its answer needs" and each yours. Which decomposition applies when several do — meanwhile an
+ambiguous problem is neither issued nor decomposed, the ambiguity becomes its own problem, and the machinery
+stands still correctly. When a decomposition is demanded rather than merely applicable — meanwhile no
+threshold, the schema's material premises decide from the state; a threshold on a request's cost or size
+would be the cost criterion this question already asks about. Whether a derived subproblem inherits its
+parent's authority — meanwhile no, it is `Development_Demand` / `Development_Generated`, as the repair
+already sets them. Basis: authority is yours to grant (owner authority order), so a derived problem cannot
+acquire it, and a criterion that decides which problems are taken is policy under stage 4.
+
 **Q3 (asked 2026-09-18 by impl-4) — what Isabelle establishes about adequacy.** You said: "I am not sure
 how it can establish adequacy or why should it." DEVELOPMENT_WORKFLOW.md and plan.md §0.1 still say that
 Isabelle establishes the bootstrap account's adequacy. Provisional choice (the plan's reading): Isabelle

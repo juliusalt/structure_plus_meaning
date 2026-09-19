@@ -63,13 +63,16 @@ README. 132 tests pass (`python3 -m pytest -q test_*.py` in this directory).
 
 ## Continue here
 
-The owner's sixth round (2026-09-19): a performance problem is reported (`v2.py escalate --efficiency`) and the work goes
-on; no producing session waits holding the producing slot: with nothing productive left it parks (`v2.py park
-run|fix|tree|answer`), the slot goes to the next task, and it is resumed first when its wait is over (drafting if the
-tree is still held; its changes come back when it is free). The Stop hook lets a producing session end its turn only with
-its result recorded or parked. The prompt's addition and the protocols say so. Earlier: the owner's words recorded
-mechanically (UserPromptSubmit hook); one owner of the working tree; the first episode's brief. 152 tests pass. Not
-committed.
+Committed on 2026-09-20 (the owner: "fix the gaps, commit all the work on the orchestrator and then build the new
+bases, seal them, start the orchestrator and then monitor"): the whole orchestration (3e27d792), the condensation of
+the documents (b1ded6c2, without T3's THEORY_MAP row, which is T3's), and the bases named by their effort (769c71bf):
+max (planner, knowledge base), xhigh (designer, task designer, investigator, reviewer), high (implementer, fixer), with
+base-load-max.txt, base-load-xhigh.txt, base-load-high.txt and library-prompt.md as the system prompt of all three.
+The gaps closed first: `v2.py tell ID "..."` (the planner, or the owner, tells the sessions working on a task what
+changes their work) and questions asked only by sessions working on a task and by planning episodes.
 
-Still to build when the owner says: the layered bases (`notes/bases-design.md` section 8); then a whole run against
-the fake. Still the owner's: committing the condensation (HANDOFF.md, "The condensation"); the base rebuild.
+Building now: the three bases (packed 470K, 519K, 524K), then seal, `start.sh`, and the run watched. The layered bases
+(`notes/bases-design.md` section 8) are still to build, and the frontier tiers of the xhigh and high lists are still
+the ones measured from the v1 implementers.
+
+The owner, 2026-09-20, while the first tasks ran: do not build the layered bases now. The three bases stay whole; the xhigh and high frontiers are the ones measured from the v1 implementers, and refreshing them is a base rebuild, which is the owner's.

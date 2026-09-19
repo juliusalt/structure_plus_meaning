@@ -694,7 +694,7 @@ def report(meta):
               f"Target: {manifest.TARGET:,} (ORCH_BASE_TARGET)" + (
                   f"; the load is about {estimate - manifest.TARGET:,} over it" if estimate > manifest.TARGET else ""),
               "The other rows are reversible notations kept for comparison; none of them is loaded.",
-              "Estimates use measured byte-per-token ratios; base.sh max status reports the loaded context.", ""]
+              "Estimates use measured byte-per-token ratios; base.sh WHO status reports the loaded context.", ""]
     return "\n".join(lines)
 
 

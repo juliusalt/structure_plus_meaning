@@ -319,8 +319,13 @@ class SharingTests(Guarded):
 
     def test_a_finalization_in_flight_holds_the_working_tree_and_the_tree_is_given_back(self):
         self.w.set_st(tasks={"1": {"stage": "reviewing"}, "2": {"stage": "running", "session": "implement-2"}})
+        # a review holds only its own files; the whole working tree is held while a check runs
+        self.assertIn("ROOT belongs to task 1's finalization, which is reviewing",
+                      self.guard("Edit", {"file_path": str(self.w.project / "ROOT")}))
+        self.assertIsNone(self.guard("Edit", {"file_path": str(self.w.project / "theories/Elsewhere.thy")}))
+        self.w.set_st(tasks={"1": {"stage": "checking"}, "2": {"stage": "running", "session": "implement-2"}})
         reason = self.guard("Edit", {"file_path": str(self.w.project / "theories/Other.thy")})
-        self.assertIn("Task 1 holds the working tree (its finalization, reviewing", reason)
+        self.assertIn("Task 1 holds the working tree (its finalization, checking", reason)
         self.assertIn("drafts under .build/tasks/2/", reason)
         self.assertIsNotNone(self.guard("Bash", {"command": "echo x >> ROOT"}))  # a shell write, any file
         self.assertIsNotNone(self.guard("Bash", {"command": "rm theories/Old.thy"}))

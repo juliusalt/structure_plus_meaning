@@ -537,6 +537,13 @@ def write_guard(tool, inp, command, rec, cwd):
     if rec.get("role") != "planner" and os.path.join(v2.PROJECT, "HANDOFF.md") in targets:
         return deny("HANDOFF.md is the planner's state: what you did goes into your result, which reaches the planner.")
     st = v2.peek()
+    locked = v2.locked_files(st, rec)
+    for t in targets:  # the files of a finalization in flight are its own until it is committed
+        if t in locked:
+            task = locked[t]
+            return deny(f"{os.path.relpath(t, v2.PROJECT)} belongs to task {task}'s finalization, which is "
+                        f"{st['tasks'][task]['stage']}: no other session writes it until that task has landed. Write "
+                        f"your change to a draft under .build/tasks/{rec.get('task')}/ and install it after.")
     holder = v2.tree_holder(st, rec)
     tree = [t for t in targets if t.startswith(v2.PROJECT + os.sep) and not v2.exempt(os.path.relpath(t, v2.PROJECT))]
     if holder and tree:

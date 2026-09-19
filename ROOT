@@ -1715,7 +1715,10 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Decomposition
     Development_Successor
     RRA_Finite_Transactions
+    RRA_Formed_Snapshot_Transactions
     Development_Publication
+    Factor_Certificate_Policy_Readiness
+    Development_Certified_Generations
     Development_Seed_Publication
     Admitted_Conditional_Applications
     Cached_Faceted_Questions

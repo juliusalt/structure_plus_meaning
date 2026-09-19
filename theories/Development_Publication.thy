@@ -166,75 +166,13 @@ section \<open>Generations of the development are generations of the library\<cl
 text \<open>
   A presented value becomes an exact target as the whole artifact of its complete data
   quotation. A generation of the development is then an ordinary finite generation: its locus,
-  payload and cause are such targets and its predecessors are generations. Formation of these
-  values establishes nothing about the validity of a cause.
+  payload and cause are such targets and its predecessors are generations. Development_Certified_Generations
+  records its cause as a certified call of the policy that lists the family it records; formation of
+  these values establishes nothing about the validity of a cause.
 \<close>
 
 definition development_data_target :: "finite_factor_term \<Rightarrow> finite_exact_target option" where
   "development_data_target t=map_option Finite_Whole (finite_data_syntax (decode_finite_term t))"
-
-definition development_generation_value ::
-    "finite_factor_term \<Rightarrow> finite_generation fset \<Rightarrow> finite_factor_term \<Rightarrow> finite_factor_term \<Rightarrow>
-      finite_generation option" where
-  "development_generation_value l P p c=(case development_data_target l of None \<Rightarrow> None
-     | Some l' \<Rightarrow> (case development_data_target p of None \<Rightarrow> None
-       | Some p' \<Rightarrow> map_option (\<lambda>c'. Generation l' P p' c') (development_data_target c)))"
-
-lemma development_generation_value_fields:
-  assumes "development_generation_value l P p c=Some G"
-  shows "development_data_target l=Some (generation_locus G)" "generation_predecessors G=P"
-    "development_data_target p=Some (generation_payload G)" "development_data_target c=Some (generation_cause G)"
-  using assms by (auto simp: development_generation_value_def split: option.splits)
-
-text \<open>
-  The incumbent of a problem is the family of code equations the checked context states for its
-  subject. It is a base generation: its locus is the problem's, its payload is that family
-  presented with its names, its cause is the acceptance of the family by the checked context,
-  and it has no predecessor, because the checked build established it before the process.
-\<close>
-
-definition development_incumbent_generation :: "isabelle_rooted_context \<Rightarrow> development_problem \<Rightarrow> finite_generation option" where
-  "development_incumbent_generation S p=(let C=snd S; es=development_answer_equations C (problem_subject p) in
-    development_generation_value (development_problem_locus (fst C) p) {||}
-      (isabelle_context_data (isabelle_local_entities (fst C) es))
-      (isabelle_acceptance_assessment_data (isabelle_demand_acceptance (snd C) es)))"
-
-definition development_incumbent_snapshot :: "isabelle_rooted_context \<Rightarrow> development_problem list \<Rightarrow> finite_snapshot option" where
-  "development_incumbent_snapshot S ps=map_option fset_of_list (those (map (development_incumbent_generation S) ps))"
-
-text \<open>
-  An admitted answer is published as a generation at its problem's locus: its payload is the
-  subject's equations in the answer state presented with their names, its cause is the verdict
-  that accepted it, and its predecessor is the incumbent it was judged against, whose equations
-  the request's context holds. The admitted answer itself is recorded in the history whether or
-  not it is ever published.
-\<close>
-
-definition development_answer_publication ::
-    "isabelle_rooted_context \<Rightarrow> development_request \<Rightarrow> isabelle_rooted_context \<Rightarrow> finite_generation option \<Rightarrow>
-      finite_generation option" where
-  "development_answer_publication S r S' incumbent=(case development_answer_generation S r S' of
-     None \<Rightarrow> None
-   | Some (p,E,payload,v) \<Rightarrow> development_generation_value (development_problem_locus (fst (snd S)) p)
-       (case incumbent of None \<Rightarrow> {||} | Some G \<Rightarrow> {|G|})
-       (isabelle_context_data (isabelle_local_entities (fst (snd S')) payload))
-       (development_refinement_verdict_data v))"
-
-lemma development_answer_publication_locus:
-  assumes published: "development_answer_publication S r S' incumbent=Some G"
-  shows "development_data_target (development_problem_locus (fst (snd S)) (fst r))=Some (generation_locus G)"
-proof -
-  obtain p E payload v where generation: "development_answer_generation S r S'=Some (p,E,payload,v)"
-    using published by (auto simp: development_answer_publication_def split: option.splits)
-  have problem: "p=fst r"
-    using generation by (auto simp: development_answer_generation_def Let_def split: prod.splits if_splits)
-  have presented: "development_generation_value (development_problem_locus (fst (snd S)) p)
-      (case incumbent of None \<Rightarrow> {||} | Some G \<Rightarrow> {|G|})
-      (isabelle_context_data (isabelle_local_entities (fst (snd S')) payload))
-      (development_refinement_verdict_data v)=Some G"
-    using published generation by (simp add: development_answer_publication_def)
-  show ?thesis using development_generation_value_fields(1)[OF presented] problem by simp
-qed
 
 section \<open>Publication is a transaction against the published state\<close>
 

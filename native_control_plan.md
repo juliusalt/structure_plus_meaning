@@ -1151,3 +1151,44 @@ cause is known: the existing known-scope contract (`Factor_Known_Replay_Policy`,
 policy exactly when the policy package is read and the quoted scope aligns with it, so the constructor
 consumes that contract instead of reading back what it has just written. A reader of a retained history
 still reads each cause back; that cost and the cause's size remain open.
+
+## Development causes are certified under the first loop's policy — 2026-09-19
+
+Stage 2's gate asks that an admitted answer be recorded as a generation whose cause is certified
+under the first loop's policy. The development's generations had recorded their verdict (answers) and
+their acceptance (incumbents) as causes whose validity was a separate, unmade judgment. Every
+generation of the seeded development is now certified, through the library's own composition.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| A published generation records its verdict or its acceptance as its cause, and whether that cause is valid under the policy is judged elsewhere. | Every development generation's cause is a certified call of a policy (`Development_Certified_Generations`). A policy's judgment of a payload constructs a certificate from the policy's program for the demand of its definitions on the payload, replays it, quotes the replayed scope and checks it against the policy; recording the judgment constructs the generation beside the predecessors it cites. Judgment-then-recording is proved to be the existing `certificate_policy_record` composition (`development_certified_generation_route`), so its contracts (the certified policy cause, the recorded generation's fields) hold without being proved again, and what the cause certifies is the policy's contract: the payload is one of the listed presentations (`development_certified_generation_listed`). The uncertified constructors are removed from `Development_Publication`; the verdict that admitted an answer stays in the development's history, not in the published generation. |
+| Check a recorded cause by reading it back. | The constructor knows the scope it has just quoted: the known-scope condition (`Factor_Known_Replay_Policy`) checks the policy on that scope directly, and the replay's own contract supplies the readiness the recording rechecked (`Factor_Certificate_Policy_Readiness`). Reading the cause back had cost 13.7 of about 20 seconds per generation at the first seed family's payload of 11,589 addresses. |
+| The first loop's policy is the ground program of the state's entities. | That policy is the instance of a policy over any list of presentations (`development_policy_source_with`, whose contract states exactly what it admits). A family is recorded under the policy listing its complete data quotation, constructed only when every entity of the family is an entity of the checked context, so a cause stays bounded by the family it records. The recorded cause carries that policy but not the checked context: the family's acceptance is the constructor's contract, not something a reader of the generation alone can see. This choice, like the route, was made outside the process and is a residual (owner question Q1). |
+| Every generation recomputes its policy's judgment. | A judgment is a function of the listed presentations and the payload alone; it is keyed by the family's presentation with its names, and a use judges each presented family once however many generations record it (`development_payload_judgment`; the seed report prepares its ten judgments in parallel through `parallel_computed_function`). Incumbents are base generations in environments of their own, so independent problems are recorded independently; an accepted answer is recorded in its incumbent's environment and cites it. |
+| A transaction checks the formation of the whole snapshot it is executed on. | Formation is an invariant of the published snapshot: a successful transaction returns a formed snapshot, so publishing generations in turn (`finite_locus_publications`, `RRA_Formed_Snapshot_Transactions`) checks the starting snapshot once. Rechecking it had cost 2.65 seconds per transaction over the ten certified incumbents. |
+
+Evidence (probe on the base heap, every proof checked in place, first seed family): the policy takes
+0.35 seconds, its certificate 0.37, the certificate replay 1.62, and quoting the replayed scope,
+checking it against the policy and recording the generation 4.6, against 3.98 plus 13.7 for recording
+and reading the cause back. The cause holds 350,817 addresses, thirty times the payload: the payload
+appears twice, once as the policy's literal and once as the call's argument, and the quotation presents
+each as data. The whole seed publication (ten incumbents, twenty answers, their twenty transactions and
+the sequential publication of ten) took 109 seconds with every certification computed separately and
+every transaction rechecking the snapshot, and takes 38.0 with each family judged once and formation
+carried; every first publication applies, every second one conflicts, the payloads of each request's
+two answers are equal and the sequential publication applies all ten. The repository check that
+advanced the base to `.build/check-20260919f` proved the nine changed theories in 39 seconds; the seed
+recipe re-executed with every earlier word equal and only the publication word changed, as the
+certified generations it presents are new. Its publication stage now takes 90.9 seconds (20.5 before),
+presenting 32.6 MB of generations against 19 MB, and it is the longest recipe of any check that
+re-executes the seed.
+
+Open, in the library's terms: the family policy lists only the payload it certifies, so the certificate
+is exact but the rule that admits is the constructor's acceptance guard (Q1); an absent certified
+generation does not distinguish a refused payload from an unavailable input, although the library keeps
+empty and failed results apart; the cause holds the payload twice and the published state presents
+every cause whole; a reader of a retained history still reads each cause back; an answer's predecessors
+are its incumbent only, not the generation of the request context it was judged in; the answers judged
+by the harness (`tools/development_answer.py`) are not yet certified or published natively, so the
+adoption of a refinement-layer answer records no native transaction. The choice of this batch and of
+its route was made outside the process and is a residual.

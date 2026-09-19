@@ -72,14 +72,18 @@ RECIPE = Recipe(
              'the currency of every request; neither answer changes what a request reads. The publication '
              'report is the published state of the seeded development: one base generation per problem at the '
              'problem\'s locus, which is its contract presented with the names it uses, with the incumbent '
-             'equations as payload and their acceptance by the checked context as recorded cause. For every '
-             'issued request the unchanged answer, published by the transaction that expects the incumbent it '
-             'was judged against, replaces exactly that locus; the answer with the reversed table, admitted '
-             'against the same incumbent, conflicts with the complete observed comparison, because the locus '
-             'now holds the first answer; the two answers present equal payloads; and publishing all unchanged '
-             'answers in turn applies every transaction. Transactions are executed on finite generations and '
-             'are proved to be the structural transactions on the decoded cores; whether the recorded causes '
-             'are valid under the first loop\'s policy is not judged by this report.')
+             'equations presented with their names as payload, each recorded in an environment of its own; its '
+             'cause is a certified call of the policy that lists that family\'s complete data quotation, which is '
+             'constructed only because every entity of the family is an entity of the checked context. For every '
+             'issued request the unchanged answer, certified in the same way from the answer state and recorded '
+             'beside the incumbent it was judged against, citing it, is published by the transaction that expects '
+             'that incumbent and replaces exactly its locus; the answer with the reversed table, certified against '
+             'the same incumbent, conflicts with the complete observed comparison, because the locus now holds the '
+             'first answer; the two answers present equal payloads; and publishing all unchanged answers in turn '
+             'applies every transaction. Transactions are executed on finite generations and are proved to be the '
+             'structural transactions on the decoded cores. A recorded cause carries the policy that lists its '
+             'family, not the checked context: that the family was accepted is the constructor\'s contract, and '
+             'the verdict that admitted an answer stays in the development\'s history.')
 
 
 if __name__ == '__main__':

@@ -1,68 +1,104 @@
 theory Development_Seed_Publication
-  imports Development_Seed_Verification Development_Publication
+  imports Development_Seed_Verification Development_Certified_Generations RRA_Formed_Snapshot_Transactions
+    Parallel_Computed_Preparation
 begin
 
-section \<open>The seeded development publishes admitted answers by transactions\<close>
+section \<open>The seeded development publishes certified generations by transactions\<close>
 
 text \<open>
   The published state of the seeded development starts from its incumbents: one base generation
-  for each problem, at the problem's locus. For every issued request, the unchanged answer is
-  published by the transaction that expects the incumbent the request was issued against, and it
-  replaces that incumbent. The answer with the reversed table, admitted against the same
-  incumbent, is then published by the same kind of transaction and conflicts, because the locus
-  now holds the first answer: both answers are admitted generations of the history, and one is
-  selected. The two answers present the same payload, because a payload carries the names it uses
-  and the reversal is a correspondence of tables. Publishing the unchanged answers of all issued
-  requests one after another applies every transaction, since each writes only its own locus.
+  for each problem, at the problem's locus, recorded with its cause certified under the policy of
+  its family's acceptance by the checked context. For every issued request, the unchanged answer is
+  recorded beside the incumbent it was judged against, cites it, is certified in the same way and is
+  published by the transaction that expects that incumbent; it replaces it. The answer with the
+  reversed table, admitted against the same incumbent, is then published by the same kind of
+  transaction and conflicts, because the locus now holds the first answer. The two answers present
+  the same payload, because a payload carries the names it uses and the reversal is a correspondence
+  of tables. Publishing the unchanged answers of all issued requests one after another applies every
+  transaction, since each writes only its own locus.
 \<close>
 
-definition development_seed_incumbents :: "finite_snapshot option" where
-  "development_seed_incumbents=development_incumbent_snapshot development_seed_state development_seed_problems"
+type_synonym development_seed_incumbent = "development_problem\<times>
+  (local_address option finite_artifact_environment\<times>local_address option\<times>finite_generation) option"
 
-definition development_seed_expected :: "development_request \<Rightarrow> finite_generation option" where
-  "development_seed_expected r=Option.bind development_seed_incumbents (\<lambda>S0.
-     Option.bind (development_data_target (development_problem_locus (fst (snd development_seed_state)) (fst r)))
-       (finite_snapshot_lookup S0))"
+definition development_seed_incumbents_with ::
+    "development_payload_judge \<Rightarrow> development_problem list \<Rightarrow> development_seed_incumbent list" where
+  "development_seed_incumbents_with judge ps=
+    Parallel.map (\<lambda>p. (p,development_incumbent_with judge development_seed_state p)) ps"
+
+definition development_seed_snapshot :: "development_seed_incumbent list \<Rightarrow> finite_snapshot option" where
+  "development_seed_snapshot xs=map_option fset_of_list (those (map (\<lambda>(p,x). map_option (\<lambda>(B,u,G). G) x) xs))"
+
+definition development_seed_incumbent_of :: "development_seed_incumbent list \<Rightarrow> development_request \<Rightarrow>
+    (local_address option finite_artifact_environment\<times>local_address option\<times>finite_generation) option" where
+  "development_seed_incumbent_of xs r=Option.bind (find (\<lambda>(p,x). p=fst r) xs) snd"
+
+definition development_seed_answer_with :: "development_payload_judge \<Rightarrow> development_seed_incumbent list \<Rightarrow>
+    development_request \<Rightarrow> isabelle_rooted_context \<Rightarrow> finite_generation option" where
+  "development_seed_answer_with judge xs r S'=Option.bind (development_seed_incumbent_of xs r) (\<lambda>(B,u,I).
+     map_option (\<lambda>(B',u',G). G) (development_answer_with judge development_seed_state r S' B [((u,[]),I)]))"
 
 type_synonym development_seed_publication_row = "finite_generation option\<times>finite_generation option\<times>
-  finite_transaction_result option\<times>finite_transaction_result option\<times>bool"
+  finite_transaction_result option list\<times>bool"
 
-definition development_seed_publication_row :: "development_request \<Rightarrow> development_seed_publication_row" where
-  "development_seed_publication_row r=(let I=development_seed_expected r;
-     G=development_answer_publication development_seed_state r development_seed_state I;
-     H=development_answer_publication development_seed_state r development_seed_renamed I;
-     first=(case (development_seed_incumbents,G) of
-       (Some S0,Some G') \<Rightarrow> finite_transact S0 (finite_locus_transaction I G') | _ \<Rightarrow> None);
-     second=(case (first,H) of
-       (Some (Finite_Applied U),Some H') \<Rightarrow> finite_transact U (finite_locus_transaction I H') | _ \<Rightarrow> None)
-   in (G,H,first,second,map_option generation_payload G=map_option generation_payload H))"
+text \<open>
+  A row publishes the two answers of one request in turn over the incumbent both were judged against,
+  starting from the published incumbents.
+\<close>
 
-fun development_seed_publish_all ::
-    "finite_snapshot \<Rightarrow> development_request list \<Rightarrow> finite_transaction_result option list" where
-  "development_seed_publish_all S []=[]"
-| "development_seed_publish_all S (r#rs)=(let I=development_seed_expected r in
-    case development_answer_publication development_seed_state r development_seed_state I of
-      None \<Rightarrow> None#development_seed_publish_all S rs
-    | Some G \<Rightarrow> (let result=finite_transact S (finite_locus_transaction I G) in
-        result#(case result of Some (Finite_Applied U) \<Rightarrow> development_seed_publish_all U rs
-          | _ \<Rightarrow> development_seed_publish_all S rs)))"
+definition development_seed_publication_row_with :: "development_payload_judge \<Rightarrow> development_seed_incumbent list \<Rightarrow>
+    finite_snapshot option \<Rightarrow> development_request \<Rightarrow> development_seed_publication_row" where
+  "development_seed_publication_row_with judge xs S0 r=(let I=map_option (\<lambda>(B,u,G). G) (development_seed_incumbent_of xs r);
+     G=development_seed_answer_with judge xs r development_seed_state;
+     H=development_seed_answer_with judge xs r development_seed_renamed
+   in (G,H,(case S0 of None \<Rightarrow> [] | Some S \<Rightarrow> finite_locus_publications S [(I,G),(I,H)]),
+     map_option generation_payload G=map_option generation_payload H))"
 
 type_synonym development_seed_publication = "finite_snapshot option\<times>development_seed_publication_row list\<times>
   finite_transaction_result option list"
 
+definition development_seed_publication_with ::
+    "development_payload_judge \<Rightarrow> development_problem fset \<Rightarrow> development_seed_publication" where
+  "development_seed_publication_with judge answered=(let rs=development_seed_requests answered;
+     xs=development_seed_incumbents_with judge development_seed_problems;
+     S0=development_seed_snapshot xs;
+     rows=Parallel.map (development_seed_publication_row_with judge xs S0) rs in
+     (S0,rows,case S0 of None \<Rightarrow> []
+       | Some S \<Rightarrow> finite_locus_publications S (map (\<lambda>(r,(G,H,results,equal)).
+           (map_option (\<lambda>(B,u,G). G) (development_seed_incumbent_of xs r),G)) (zip rs rows))))"
+
 definition development_seed_publication :: "development_problem fset \<Rightarrow> development_seed_publication" where
-  "development_seed_publication answered=(let rs=development_seed_requests answered in
-     (development_seed_incumbents,Parallel.map development_seed_publication_row rs,
-      case development_seed_incumbents of None \<Rightarrow> [] | Some S0 \<Rightarrow> development_seed_publish_all S0 rs))"
+  "development_seed_publication answered=development_seed_publication_with development_payload_judgment answered"
+
+section \<open>Each family is judged once\<close>
+
+text \<open>
+  The judgment of a family is a function of the family's presentation with its names, so the report
+  judges each family of a problem once, in parallel, and every incumbent and answer whose family has
+  that presentation is recorded with the one judgment. An answer whose family differs is judged when it
+  is recorded. The report is unchanged, because the prepared function is the judgment itself.
+\<close>
+
+definition development_seed_family_keys :: "finite_factor_term list" where
+  "development_seed_family_keys=List.map_filter (\<lambda>p. map_option snd (development_incumbent_key development_seed_state p))
+    development_seed_problems"
+
+declare development_seed_publication_def [code del]
+
+lemma development_seed_publication_prepared [code]:
+  "development_seed_publication answered=development_seed_publication_with
+     (parallel_computed_function development_payload_judgment development_seed_family_keys) answered"
+  by (simp only: development_seed_publication_def parallel_computed_function_exact)
+
+section \<open>The report is presented through the presentations of its notions\<close>
 
 definition development_seed_publication_data :: "development_seed_publication \<Rightarrow> finite_factor_term" where
   "development_seed_publication_data=finite_pair_presentation (finite_option_presentation finite_snapshot_value)
     (finite_pair_presentation (finite_sequence_presentation
       (finite_pair_presentation (finite_option_presentation finite_target_generation_value)
         (finite_pair_presentation (finite_option_presentation finite_target_generation_value)
-          (finite_pair_presentation (finite_option_presentation finite_transaction_result_value)
-            (finite_pair_presentation (finite_option_presentation finite_transaction_result_value)
-              finite_boolean_data)))))
+          (finite_pair_presentation (finite_sequence_presentation (finite_option_presentation finite_transaction_result_value))
+            finite_boolean_data))))
       (finite_sequence_presentation (finite_option_presentation finite_transaction_result_value)))"
 
 lemma development_seed_publication_data_injective [intro]: "inj development_seed_publication_data"
@@ -75,12 +111,12 @@ definition development_seed_publication_value :: "development_problem fset \<Rig
     development_seed_publication_data (development_seed_publication answered)"
 
 text \<open>
-  The expected outcomes follow from the kinds of transaction, not from the seeded values: every
-  first publication applies, every second one conflicts with its complete observation, the two
-  payloads of a request are equal, and the sequential publication applies all of them. The
-  incumbents' causes are the acceptance of their equations by the checked context and the
-  answers' causes are their verdicts; whether these recorded causes are valid under the first
-  loop's policy is a separate judgment this report does not make.
+  The expected outcomes follow from the kinds of transaction, not from the seeded values: in every
+  row the first publication applies and the second conflicts with its complete observation, the two
+  payloads of a request are equal, and the sequential publication applies all of them. Every
+  generation's cause is a certified call of the policy that lists its family's quotation, whose
+  constructor requires the family to be entities of the checked context; the verdict that admitted
+  an answer is recorded in the development's history, not in the published generation.
 \<close>
 
 end

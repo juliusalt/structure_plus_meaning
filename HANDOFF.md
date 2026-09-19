@@ -1,4 +1,27 @@
-# Handoff — graph readings and listed positions committed; B2 certified development causes in progress
+# Handoff — B2 certified development causes on the base; B3 (harness publication) next
+
+## impl-11 session (2026-09-19)
+
+- B2 INSTALLED from `.build/impl10/b2/` (theories/Development_Certified_Generations.thy, Factor_Certificate_Policy_Readiness.thy,
+  RRA_Formed_Snapshot_Transactions.thy; Probe_Seed_Publication.thy -> theories/Development_Seed_Publication.thy with the
+  theory name changed back); ROOT lists RRA_Formed_Snapshot_Transactions after RRA_Finite_Transactions and
+  Factor_Certificate_Policy_Readiness before Development_Certified_Generations. Probe `.build/probe-impl10-a` finished:
+  loaded true (every proof checked), publication 38.0 s (was 109), publication value 55.9 s, summary 1,10,10,10,10.
+- Check `.build/check-20260919f --advance-base`: proof accepted (9 theories, 39.1 s); seed recipe failed ONLY on
+  presentation-publication (all ten other words equal); stage 90.9 s, word 32.6 MB (was 20.5 s, 19 MB). The new word
+  `09ccf853...` is re-recorded in validation/reconstruction/native-development-seed-reports.json; `adopt --proof
+  .build/check-20260919f/proof` done. ACTIVE BASE: `.build/check-20260919f/proof` (lineage f->e->d->...).
+- RUNNING: confirming check `.build/check-20260919g` (PID in `.build/check-20260919g.pid`, log `.build/check-20260919g.out`).
+  When accepted: `incremental_check.py retain --output .build/check-20260919g`, then COMMIT+PUSH the B2 milestone.
+- Plan section "Development causes are certified under the first loop's policy — 2026-09-19" is appended (numbers filled);
+  THEORY_MAP rows, REASONING_REUSE section, seed recipe boundary text were already current.
+- B3 DESIGN (refined this session, not started): keep admission and selection apart as separate REPORTS — the harness's
+  verdict word stays unchanged (no re-record of verdicts); a second presented report `development_answer_publication_value`
+  (certified incumbent of the request state, the certified answer recorded beside it, finite_locus_publications over the
+  incumbent's snapshot; repaired answers against `development_request_extension` + the reissued request) gives a
+  `publication_word` and summary field `published`; the reusable composition goes into a repository theory (not the
+  generated harness text); `tools/development_adoption.py adoptable()` requires published; replay/re-record adds the
+  publication word to the eight retained answers.
 
 ## impl-10 session (2026-09-19)
 
@@ -12,10 +35,41 @@
   record 3.976 (cause 350,817 addresses: the payload twice, as policy literal and as call argument), check 13.736 (reads the
   cause back), ok true; the second family (17,649) did not finish its replay before the 400 s probe timeout (load time
   unknown, not attributed).
-- B2 decision: `development_recorded_generation` REUSES `policy_record_replay_from_source finite_construct_generation_record`
-  (Factor_Known_Replay_Policy; exactness `policy_record_replay_from_source_exact` in the `generation_record_backend` locale,
-  instance `original_generation_backend`), which checks package + alignment on the quoted scope instead of reading the
-  cause back. The draft's hand-written record+check is replaced by that instance.
+- COMMITTED+PUSHED 7961fce "Read proof graphs on demand and list environment positions once". Base e.
+- B2 (certified development causes), PARKED MID-BATCH, uncommitted. Current design (all proofs checked in probes up to the
+  timing theory): scratch `.build/impl10/b2/` holds the CURRENT versions: `Development_Certified_Generations.thy`
+  (judgment `development_policy_judgment` = policy -> certificate -> replay -> quote -> known-scope check, a function of
+  the payload alone; recording `development_recorded_generation`; `development_certified_generation_route` proves
+  judgment+recording = library `certificate_policy_record`; family key/payload judgment; incumbent/answer via a supplied
+  judge `_with`), `Factor_Certificate_Policy_Readiness.thy` (NEW: readiness from the replay contract + code eq for
+  certificate_policy_record), `RRA_Formed_Snapshot_Transactions.thy` (NEW: finite_transact_formed, formation carried,
+  `finite_locus_publications` formed-once code), `Probe_Seed_Publication.thy` (= the new Development_Seed_Publication,
+  theory name to change back; judgments prepared by parallel_computed_function; rows/publication via
+  finite_locus_publications; row type now (G,H,results list,equal)), `Development_Policy_Prelude.thy` (probe only),
+  `Probe_Impl10_B2.thy` (timings).
+- theories/ currently holds STALE B2 copies: Development_Certified_Generations.thy (first version) and
+  Development_Seed_Publication.thy (impl-9 draft) -> REPLACE with the .build/impl10/b2 versions; add
+  RRA_Formed_Snapshot_Transactions (ROOT after RRA_Finite_Transactions) and Factor_Certificate_Policy_Readiness (ROOT before
+  Development_Certified_Generations). Already correct in theories/: Development_Policy.thy (generalized),
+  Development_Publication.thy (uncertified constructors removed, text edited). ROOT already lists
+  Development_Certified_Generations. THEORY_MAP rows, REASONING_REUSE section "Development causes are certified", seed
+  recipe boundary text (tools/reconstruct_native_development_seed.py) already describe the CURRENT design.
+- RUNNING at park: probe `.build/probe-impl10-a` (PID 3903556; log `.build/probe-impl10-a/probe.log`, summary
+  `.build/probe-impl10-a.out`): read PROBE lines judgments10 / publication / publication_value. Before the split:
+  per generation policy 0.35 s, certificate 0.35, replay 1.6, record 5.3; ten incumbents parallel 13.5 s; one answer 9.8 s;
+  snapshot formation 2.65 s per transaction; whole seed publication 109 s (results correct: 10 applied, 10 conflicts,
+  equal payloads, 10 sequential applied). Probe code context must import Native_Execution_Refinements.
+  At park the probe was still running (judged 10 in 0.000 s: "judgments10" timed only the prepared function's
+  construction, since parallel_computed_function is lazy only in its keys -- read the "publication" line for the real
+  cost); its background waiter was killed for low memory (60 GiB machine, 12 free), the probe itself survived.
+- NEXT: fill `.build/impl10/plan-b2-draft.md` (numbers marked ~) and append it to native_control_plan.md; copy theories;
+  `incremental_check.py check --advance-base --output .build/check-20260919f` (expect only the seed recipe's
+  presentation-publication word to change: re-record it from the check's reconstruction.json into
+  validation/reconstruction/native-development-seed-reports.json, `adopt --proof`, re-check, retain); commit+push.
+- THEN B3: the answer harness's verification theory (tools/development_answer.py verification_theory) also computes the
+  native publication (certified incumbent of the request state + certified answer + finite_locus_publications over it;
+  for repaired answers against the extended state/reissued request), in the verdict word and summary; adoption requires
+  it applied; re-record retained answers. B4: answer predecessors include the request-context generation.
 
 ## impl-9 session (2026-09-19) — parked at the context limit
 

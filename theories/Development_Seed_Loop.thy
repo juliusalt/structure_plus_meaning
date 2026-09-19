@@ -15,36 +15,22 @@ text \<open>
 \<close>
 
 definition development_seed_contract_packets where
-  "development_seed_contract_packets=Parallel.map (\<lambda>c. map_option native_development_packet
-    (development_refinement_question development_seed_context c)) development_seed_root_constants"
-
-definition development_seed_selection :: "development_problem fset \<Rightarrow> native_development_question option" where
-  "development_seed_selection answered=development_selection_question development_seed_dependencies
-    answered development_seed_problems"
+  "development_seed_contract_packets=development_contract_packets isabelle_code_equation_proposition
+    development_seed_context development_seed_root_constants"
 
 definition development_seed_selection_packet where
-  "development_seed_selection_packet answered=map_option native_development_packet
-    (development_seed_selection answered)"
+  "development_seed_selection_packet answered=development_selection_packet development_seed_dependencies
+    answered development_seed_problems"
 
 definition development_seed_selected :: "development_problem fset \<Rightarrow> development_problem list option" where
-  "development_seed_selected answered=Option.bind (development_seed_selection_packet answered)
-    (native_packet_subjects development_seed_problems)"
+  "development_seed_selected answered=development_packet_selected development_seed_dependencies
+    answered development_seed_problems"
 
 theorem development_seed_selected_ready:
   assumes selected: "development_seed_selected answered=Some xs" and member: "p\<in>set xs"
   shows "p\<in>set development_seed_problems \<and>
     development_ready development_seed_dependencies answered p"
-proof -
-  obtain Q where question: "development_seed_selection answered=Some Q"
-    and admitted: "native_packet_subjects development_seed_problems (native_development_packet Q)=Some xs"
-    using selected by (auto simp: development_seed_selected_def development_seed_selection_packet_def
-      bind_eq_Some_conv map_option_eq_Some)
-  have "native_admitted_subjects development_seed_problems
-      (development_selection_question development_seed_dependencies answered development_seed_problems)
-      (construct_native_development Q)=Some xs"
-    using admitted question by (simp add: native_packet_subjects_admitted development_seed_selection_def)
-  then show ?thesis by (rule development_selected_ready[OF _ member])
-qed
+  by (rule development_packet_selected_ready[OF selected[unfolded development_seed_selected_def] member])
 
 corollary development_seed_selected_independent:
   assumes selected: "development_seed_selected answered=Some xs" and first: "p\<in>set xs" and second: "q\<in>set xs"

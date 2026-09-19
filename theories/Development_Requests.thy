@@ -45,6 +45,42 @@ proof -
   then show ?thesis by (rule development_ready_independent)
 qed
 
+section \<open>An executed selection admits only ready problems\<close>
+
+text \<open>
+  A selection is executed by the native producer of its question and checked by its admission.
+  The executed packet (question, report and admission) is the evidence of the decision, and the
+  selected problems are read from its admission without admitting the report a second time. Every
+  selected problem is ready: that is the question's admission contract read through the packet,
+  so every development that selects its next problems natively instantiates it here.
+\<close>
+
+definition development_selection_packet ::
+    "development_dependencies \<Rightarrow> development_problem fset \<Rightarrow> development_problem list \<Rightarrow>
+      (native_development_question\<times>native_development_report\<times>finite_factor_term list option) option" where
+  "development_selection_packet D answered ps=map_option native_development_packet
+    (development_selection_question D answered ps)"
+
+definition development_packet_selected ::
+    "development_dependencies \<Rightarrow> development_problem fset \<Rightarrow> development_problem list \<Rightarrow>
+      development_problem list option" where
+  "development_packet_selected D answered ps=Option.bind (development_selection_packet D answered ps)
+    (native_packet_subjects ps)"
+
+theorem development_packet_selected_ready:
+  assumes selected: "development_packet_selected D answered ps=Some xs" and member: "p\<in>set xs"
+  shows "p\<in>set ps \<and> development_ready D answered p"
+proof -
+  obtain Q where question: "development_selection_question D answered ps=Some Q"
+    and admitted: "native_packet_subjects ps (native_development_packet Q)=Some xs"
+    using selected by (auto simp: development_packet_selected_def development_selection_packet_def
+      bind_eq_Some_conv map_option_eq_Some)
+  have "native_admitted_subjects ps (development_selection_question D answered ps)
+      (construct_native_development Q)=Some xs"
+    using admitted by (simp add: native_packet_subjects_admitted question)
+  then show ?thesis by (rule development_selected_ready[OF _ member])
+qed
+
 section \<open>A request carries its constant, its support and its least context\<close>
 
 text \<open>
@@ -63,40 +99,40 @@ type_synonym development_request = "development_problem\<times>isabelle_term\<ti
 definition development_request_support :: "isabelle_context \<Rightarrow> nat \<Rightarrow> nat fset" where
   "development_request_support C c=fset_of_list (concat (List.map_filter
      (\<lambda>e. map_option isabelle_term_constants (isabelle_specified_proposition e))
-     (development_refinement_scope C c)))"
+     (development_constant_scope C c)))"
 
 definition development_request_context :: "isabelle_context \<Rightarrow> nat \<Rightarrow> isabelle_entity fset" where
-  "development_request_context C c=fset_of_list (filter (\<lambda>e. e\<in>set (development_refinement_scope C c) \<or>
+  "development_request_context C c=fset_of_list (filter (\<lambda>e. e\<in>set (development_constant_scope C c) \<or>
      (case isabelle_declared_constant e of None \<Rightarrow> False
       | Some d \<Rightarrow> d |\<in>| development_request_support C c)) (snd C))"
 
 lemma development_request_support_member:
   "d |\<in>| development_request_support C c \<longleftrightarrow>
-    (\<exists>e\<in>set (development_refinement_scope C c). \<exists>p. isabelle_specified_proposition e=Some p \<and>
+    (\<exists>e\<in>set (development_constant_scope C c). \<exists>p. isabelle_specified_proposition e=Some p \<and>
       d\<in>set (isabelle_term_constants p))"
 proof
   assume "d |\<in>| development_request_support C c"
   then obtain l where listed: "l\<in>set (List.map_filter
       (\<lambda>e. map_option isabelle_term_constants (isabelle_specified_proposition e))
-      (development_refinement_scope C c))" and inside: "d\<in>set l"
+      (development_constant_scope C c))" and inside: "d\<in>set l"
     by (auto simp: development_request_support_def fset_of_list_elem)
-  obtain e where scope: "e\<in>set (development_refinement_scope C c)"
+  obtain e where scope: "e\<in>set (development_constant_scope C c)"
     and read: "map_option isabelle_term_constants (isabelle_specified_proposition e)=Some l"
     using listed by (auto simp: map_filter_member)
   obtain p where statement: "isabelle_specified_proposition e=Some p" and constants: "l=isabelle_term_constants p"
     using read by (auto simp: map_option_eq_Some)
-  show "\<exists>e\<in>set (development_refinement_scope C c). \<exists>p. isabelle_specified_proposition e=Some p \<and>
+  show "\<exists>e\<in>set (development_constant_scope C c). \<exists>p. isabelle_specified_proposition e=Some p \<and>
       d\<in>set (isabelle_term_constants p)"
     using scope statement inside constants by blast
 next
-  assume "\<exists>e\<in>set (development_refinement_scope C c). \<exists>p. isabelle_specified_proposition e=Some p \<and>
+  assume "\<exists>e\<in>set (development_constant_scope C c). \<exists>p. isabelle_specified_proposition e=Some p \<and>
       d\<in>set (isabelle_term_constants p)"
-  then obtain e p where scope: "e\<in>set (development_refinement_scope C c)"
+  then obtain e p where scope: "e\<in>set (development_constant_scope C c)"
     and statement: "isabelle_specified_proposition e=Some p" and inside: "d\<in>set (isabelle_term_constants p)"
     by blast
   have "isabelle_term_constants p\<in>set (List.map_filter
       (\<lambda>e. map_option isabelle_term_constants (isabelle_specified_proposition e))
-      (development_refinement_scope C c))"
+      (development_constant_scope C c))"
     using scope statement by (auto simp: map_filter_member)
   then show "d |\<in>| development_request_support C c"
     using inside by (auto simp: development_request_support_def fset_of_list_elem)
@@ -104,7 +140,7 @@ qed
 
 theorem development_request_context_exact:
   "e |\<in>| development_request_context C c \<longleftrightarrow> e\<in>set (snd C) \<and>
-    (e\<in>set (development_refinement_scope C c) \<or>
+    (e\<in>set (development_constant_scope C c) \<or>
      (\<exists>d. isabelle_declared_constant e=Some d \<and> d |\<in>| development_request_support C c))"
   by (auto simp: development_request_context_def fset_of_list_elem split: option.splits)
 
@@ -118,9 +154,9 @@ theorem development_request_context_closed:
     and declared: "e'\<in>set (snd C)" and declares: "isabelle_declared_constant e'=Some d"
   shows "e' |\<in>| development_request_context C c"
 proof -
-  have refined: "e\<in>set (development_refinement_scope C c)"
+  have refined: "e\<in>set (development_constant_scope C c)"
   proof -
-    have "e\<in>set (development_refinement_scope C c) \<or>
+    have "e\<in>set (development_constant_scope C c) \<or>
         (\<exists>d. isabelle_declared_constant e=Some d \<and> d |\<in>| development_request_support C c)"
       using member by (simp only: development_request_context_exact)
     then show ?thesis using statement isabelle_declaration_specifies_nothing by fastforce
@@ -131,24 +167,24 @@ proof -
 qed
 
 theorem development_request_context_least:
-  assumes scope: "set (development_refinement_scope C c)\<subseteq>F"
+  assumes scope: "set (development_constant_scope C c)\<subseteq>F"
     and closed: "\<And>e p d e'. e\<in>F \<Longrightarrow> isabelle_specified_proposition e=Some p \<Longrightarrow>
       d\<in>set (isabelle_term_constants p) \<Longrightarrow> e'\<in>set (snd C) \<Longrightarrow> isabelle_declared_constant e'=Some d \<Longrightarrow> e'\<in>F"
   shows "fset (development_request_context C c)\<subseteq>F"
 proof
   fix e assume "e\<in>fset (development_request_context C c)"
-  then have state: "e\<in>set (snd C)" and origin: "e\<in>set (development_refinement_scope C c) \<or>
+  then have state: "e\<in>set (snd C)" and origin: "e\<in>set (development_constant_scope C c) \<or>
       (\<exists>d. isabelle_declared_constant e=Some d \<and> d |\<in>| development_request_support C c)"
     by (simp_all only: development_request_context_exact)
   show "e\<in>F"
-  proof (cases "e\<in>set (development_refinement_scope C c)")
+  proof (cases "e\<in>set (development_constant_scope C c)")
     case True
     then show ?thesis using scope by blast
   next
     case False
     then obtain d where declares: "isabelle_declared_constant e=Some d"
       and supported: "d |\<in>| development_request_support C c" using origin by blast
-    obtain x p where refined: "x\<in>set (development_refinement_scope C c)"
+    obtain x p where refined: "x\<in>set (development_constant_scope C c)"
       and statement: "isabelle_specified_proposition x=Some p" and mentioned: "d\<in>set (isabelle_term_constants p)"
       using supported by (auto simp: development_request_support_member)
     show ?thesis by (rule closed[OF _ statement mentioned state declares]) (use refined scope in blast)
@@ -170,7 +206,7 @@ theorem development_refinement_request_fields:
 proof -
   obtain k where problem: "development_refinement_problem C r a c=Some p"
     and contract: "development_refinement_contract C c=Some k" and shape: "p=Development_Problem {|c|} k r a"
-    using request by (auto simp: development_refinement_request_def development_refinement_problem_def
+    using request by (auto simp: development_refinement_request_def development_refinement_problem_contract
       split: option.splits development_contract.splits)
   have statement: "problem_contract p=Development_Refinement s" "S=development_request_support C c"
     "E=development_request_context C c"
@@ -181,7 +217,7 @@ proof -
   show "S=development_request_support C c" by (rule statement(2))
   show "E=development_request_context C c" by (rule statement(3))
   show "\<forall>q\<in>set (development_refinement_statements C c). Isabelle_Code_Equation q |\<in>| E"
-    by (auto simp: statement(3) development_request_context_exact development_refinement_scope_member
+    by (auto simp: statement(3) development_request_context_exact development_constant_scope_member
       development_refinement_statements_state)
 qed
 

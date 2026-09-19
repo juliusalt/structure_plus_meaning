@@ -142,18 +142,14 @@ qed
 subsection \<open>The request issued again, the definition problems and the judgment of the extension\<close>
 
 text \<open>
-  A definition problem demands the kernel definition of its subject. That reading of the entity
-  language is separate from the code-equation reading: a definition and a code equation of one
-  constant share their subjects, and only the entity kind tells the two demands apart.
+  An introduced constant becomes the problem of that constant under the definition reading:
+  its subject is the constant, its contract the constant as the extended state declares it,
+  marked as a definition, and its incumbent the kernel definitions the extended state states for
+  it, which are the answer's own. It is the same notion as a refinement problem with the other
+  reading, so a definition problem keeps its identity when a later answer replaces the
+  definition, and an introduced constant the extension defines other than by a kernel definition
+  yields no problem.
 \<close>
-
-fun isabelle_definition_proposition :: "isabelle_entity \<Rightarrow> isabelle_term option" where
-  "isabelle_definition_proposition (Isabelle_Definition p)=Some p"
-| "isabelle_definition_proposition _=None"
-
-lemma isabelle_definition_proposition_exact:
-  "isabelle_definition_proposition e=Some p \<longleftrightarrow> e=Isabelle_Definition p"
-  by (cases e) simp_all
 
 definition development_extended_request ::
     "isabelle_rooted_context \<Rightarrow> development_request \<Rightarrow> nat list \<Rightarrow> development_request" where
@@ -162,9 +158,8 @@ definition development_extended_request ::
        Some d \<Rightarrow> d\<in>set X | None \<Rightarrow> False) (snd (snd S)))))"
 
 definition development_definition_problems :: "isabelle_rooted_context \<Rightarrow> nat list \<Rightarrow> development_problem list" where
-  "development_definition_problems S I=List.map_filter (\<lambda>i. map_option (\<lambda>q.
-     Development_Problem {|i|} (Development_Definition q) Development_Demand Development_Generated)
-     (list_singleton_option (List.map_filter isabelle_definition_proposition (development_refinement_scope (snd S) i)))) I"
+  "development_definition_problems S I=development_constant_problems isabelle_definition_proposition
+     Development_Definition (snd S) Development_Demand Development_Generated I"
 
 definition development_extension_permitted :: "isabelle_context \<Rightarrow> nat list \<Rightarrow> isabelle_entity \<Rightarrow> bool" where
   "development_extension_permitted C I e \<longleftrightarrow> isabelle_declared_constant e\<noteq>None \<or>

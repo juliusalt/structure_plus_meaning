@@ -1,4 +1,4 @@
-# Handoff — G1 committed; B6 (machinery residual problems) in progress
+# Handoff — B6 committed (machinery residual problems); B7 (native question cost at scale) next
 
 ## impl-14 session (2026-09-19)
 
@@ -6,6 +6,33 @@
   ["indexed-data-walk"], "differing": []}; plan section "The loop's decisions are admitted generations — 2026-09-19"
   appended; committed and pushed as "Admit the loop's decisions as generations and record them with known readings".
   ACTIVE BASE: `.build/check-20260919k/proof`.
+- B6 WRITTEN (uncommitted): NEW theories/Development_Constant_Problems.thy (problem of a constant over (reading, kind):
+  scope, statements, stated constant, contract, question, contract packets, problem, mentions, premises, dependencies,
+  problems, unstated + contracts); Development_Refinement_Contracts = code-equation instance only; isabelle_definition_
+  proposition moved to Isabelle_Code_Equations; development_refinement_scope renamed development_constant_scope
+  (Requests, Successor); Repair's definition problems = constant problems under the definition reading (contract = the
+  constant as declared); Requests: development_selection_packet / development_packet_selected(_ready) (3rd use), used by
+  Seed_Loop; NEW theories/Development_Machinery.thy (14 roots, residual problems, dependencies, contract packets,
+  selection, problem/loop reports) and Native_Development_Machinery.thy; ROOT; NEW recipe
+  tools/reconstruct_native_development_machinery.py with placeholder validation/reconstruction/native-development-
+  machinery-reports.json (all null); THEORY_MAP rows; REASONING_REUSE section; plan draft `.build/impl14/plan-b6-draft.md`.
+- B6 VALIDATED: check `.build/check-20260919m --advance-base` (19 theories 44.9 s; seed words all equal 162.6 s;
+  machinery recipe failed only on null words) -> words recorded (`.build/impl14/record_words.py CHECK RECIPE`), `adopt
+  --proof .build/check-20260919m/proof` (ACTIVE BASE: check m), confirming check `.build/check-20260919n` ACCEPTED and
+  RETAINED (171+35 tests). Probe of the state: 150 names, 121 entities, 51 frontier, 14 residuals, none unstated,
+  3 dependencies, 11 ready = 11 selected (6.6 s). Plan draft `.build/impl14/plan-b6-draft.md` (only REPLAY left),
+  commit message `.build/impl14/commit-b6.txt` (REPLAY left).
+- Replay --rerecord: 12 reconstructed, walk adopted, introduced-helper re-recorded (verdict word only: its repair's
+  definition problem carries the helper as declared). Plan section "The loop's notions are native residual problems —
+  2026-09-19" appended; B6 COMMITTED+PUSHED ("Pose the loop's own notions as native residual problems").
+- NEXT BATCH B7 (chosen provisionally, a residual; reason: an inevitable cost on the loop's own path): the native
+  selection question is steeply superlinear (probe `.build/probe-impl14-b`, theory `.build/impl14/scale/
+  Probe_Selection_Scale.thy`: 1.7 s at 4 candidates, 2.5 at 8, 15.3 at 16; 32 and 64 did not finish in the probe's
+  budget), so selection over the complete residual record (~330 development constants) is infeasible. Attribute per
+  stage (question construction, generation, compiled conditions, observations, review input, scope review, comparison,
+  revision, admission) at 4/8/16/32 with a code_reflect probe, fix at the cause as proved code equations (preferably
+  as refinement answers through the loop: demanded request, answer, verdict, adoption), then extend the residual
+  record to the whole development layer.
 
 ## impl-13 session (2026-09-19) — parked at the context limit; G1 validated (committed by impl-14)
 

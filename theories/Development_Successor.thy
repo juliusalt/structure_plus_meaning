@@ -496,10 +496,10 @@ proof -
   let ?f="isabelle_state_embedding (fst ?C) (fst ?C')"
   note contract=development_refinement_verdict_contract[OF accepted]
   have scoped: "isabelle_entity_rename ?f x\<in>set (snd ?C')"
-    if member: "x\<in>set (development_refinement_scope ?C d)" for x
+    if member: "x\<in>set (development_constant_scope ?C d)" for x
   proof -
     have state: "x\<in>set (snd ?C)" and subjects: "d\<in>set (isabelle_entity_subjects (fst ?C) (isabelle_development_constants (snd ?C)) x)"
-      using member by (simp_all add: development_refinement_scope_member)
+      using member by (simp_all add: development_constant_scope_member)
     have undeclared: "isabelle_declared_constant x=None" using subjects by (cases x) auto
     have "\<not>development_answer_equation ?C (problem_subject p) x"
     proof
@@ -523,18 +523,18 @@ proof -
   show ?thesis
   proof (unfold development_request_current_def prod.case, rule fBallI)
     fix e assume member: "e |\<in>| development_request_context ?C d"
-    have state: "e\<in>set (snd ?C)" and origin: "e\<in>set (development_refinement_scope ?C d) \<or>
+    have state: "e\<in>set (snd ?C)" and origin: "e\<in>set (development_constant_scope ?C d) \<or>
         (\<exists>d'. isabelle_declared_constant e=Some d' \<and> d' |\<in>| development_request_support ?C d)"
       using member by (simp_all only: development_request_context_exact)
     show "isabelle_entity_rename ?f e\<in>set (snd ?C')"
-    proof (cases "e\<in>set (development_refinement_scope ?C d)")
+    proof (cases "e\<in>set (development_constant_scope ?C d)")
       case True
       then show ?thesis by (rule scoped)
     next
       case False
       then obtain d' where declares: "isabelle_declared_constant e=Some d'"
         and supported: "d' |\<in>| development_request_support ?C d" using origin by blast
-      obtain x q where x: "x\<in>set (development_refinement_scope ?C d)" and statement: "isabelle_specified_proposition x=Some q"
+      obtain x q where x: "x\<in>set (development_constant_scope ?C d)" and statement: "isabelle_specified_proposition x=Some q"
         and mentions: "d'\<in>set (isabelle_term_constants q)"
         using supported by (auto simp: development_request_support_member)
       have persisting: "isabelle_entity_rename ?f x\<in>set (snd ?C')" by (rule scoped[OF x])

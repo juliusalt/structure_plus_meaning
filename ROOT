@@ -1702,6 +1702,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Isabelle_Entity_Export
     Development_Problems
     Filtered_Native_Questions
+    Development_Constant_Problems
     Development_Refinement_Contracts
     Development_Requests
     Development_Refinement_Verification
@@ -1722,6 +1723,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Decision_Generations
     Development_Seed_Publication
     Development_Admitted_Publication
+    Development_Machinery
+    Native_Development_Machinery
     Development_Answer_Parts
     Admitted_Conditional_Applications
     Cached_Faceted_Questions

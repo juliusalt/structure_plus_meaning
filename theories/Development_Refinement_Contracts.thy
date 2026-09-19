@@ -1,343 +1,61 @@
 theory Development_Refinement_Contracts
-  imports Isabelle_Code_Equations Development_Problems Filtered_Native_Questions
-    Finite_Singleton_Selection
+  imports Development_Constant_Problems
 begin
 
-section \<open>Selecting from a list by an optional reading\<close>
+section \<open>A refinement is the problem of a constant that reads its code equations\<close>
 
 text \<open>
-  Every selection below reads each element of an actual list and keeps the results the
-  reading returns. Its membership is the library's optional image of that reading, so the
-  argument is instantiated once here and never repeated in the selections that follow.
+  A refinement replaces the executable content of one constant, so the statements it demands
+  are the code equations of that constant in the state it is made against, never a kernel
+  definition, and its contract is the constant as the state declares it, marked as a
+  refinement. A constant of several code equations is one problem whose incumbent is that
+  whole family. Each construction below is the problem of a constant under the code-equation
+  reading; the request, the seed and the loop use these instances, and every contract they
+  carry is the contract of the general construction.
 \<close>
-
-lemma map_filter_member:
-  "y\<in>set (List.map_filter f xs) \<longleftrightarrow> (\<exists>x\<in>set xs. f x=Some y)"
-  by (induction xs) (auto simp: List.map_filter_simps split: option.splits)
-
-section \<open>The contract of a refinement is a code equation of its subject\<close>
-
-text \<open>
-  A problem's contract is the term its answer must establish. A refinement replaces the
-  executable content of one constant, so the term it must establish is a code equation of
-  that constant in the state it is made against.
-
-  Two readings carry that, and they are kept apart. The scope of a constant is the entities
-  the state presents about it, read by the existing subject reading; it fixes what the
-  problem is about. What a refinement demands of an entity of that scope is read separately
-  by the code-equation reading. A kernel definition of the constant is in the same scope,
-  because it has the same subject, and is refused by the demand, because a refinement does
-  not replace a definition. Neither reading is supplied: both are computed on the actual
-  entities of the state.
-\<close>
-
-definition development_refinement_scope ::
-    "isabelle_context \<Rightarrow> nat \<Rightarrow> isabelle_entity list" where
-  "development_refinement_scope C c=filter
-    (\<lambda>e. c\<in>set (isabelle_entity_subjects (fst C) (isabelle_development_constants (snd C)) e))
-    (snd C)"
-
-definition development_refinement_demanded :: "isabelle_entity \<Rightarrow> bool" where
-  "development_refinement_demanded e \<longleftrightarrow> isabelle_code_equation_proposition e\<noteq>None"
-
-lemma development_refinement_scope_member:
-  "e\<in>set (development_refinement_scope C c) \<longleftrightarrow> e\<in>set (snd C) \<and>
-    c\<in>set (isabelle_entity_subjects (fst C) (isabelle_development_constants (snd C)) e)"
-  by (simp add: development_refinement_scope_def)
 
 definition development_refinement_statements :: "isabelle_context \<Rightarrow> nat \<Rightarrow> isabelle_term list" where
-  "development_refinement_statements C c=List.map_filter isabelle_code_equation_proposition
-    (development_refinement_scope C c)"
-
-theorem development_refinement_statements_exact:
-  "p\<in>set (development_refinement_statements C c) \<longleftrightarrow>
-    Isabelle_Code_Equation p\<in>set (development_refinement_scope C c)"
-  by (simp only: development_refinement_statements_def map_filter_member
-    isabelle_code_equation_proposition_exact) blast
+  "development_refinement_statements C c=development_statements isabelle_code_equation_proposition C c"
 
 corollary development_refinement_statements_state:
   "p\<in>set (development_refinement_statements C c) \<longleftrightarrow>
     Isabelle_Code_Equation p\<in>set (snd C) \<and>
     c\<in>set (isabelle_entity_subjects (fst C) (isabelle_development_constants (snd C))
       (Isabelle_Code_Equation p))"
-  by (simp only: development_refinement_statements_exact development_refinement_scope_member)
+  by (simp add: development_refinement_statements_def development_statements_exact
+    isabelle_code_equation_proposition_exact development_constant_scope_member)
 
-theorem development_refinement_statements_demanded:
-  "p\<in>set (development_refinement_statements C c) \<longleftrightarrow>
-    (\<exists>e\<in>set (development_refinement_scope C c).
-      development_refinement_demanded e \<and> isabelle_code_equation_proposition e=Some p)"
-  by (simp only: development_refinement_statements_def map_filter_member
-    development_refinement_demanded_def) auto
-
-text \<open>
-  A definition and a code equation of one constant have the same subjects, so only the
-  entity kind separates the two demands. Both statements are computed on the actual state;
-  neither is supplied.
-\<close>
-
-theorem development_refinement_separates_definition:
-  assumes equation: "Isabelle_Code_Equation p\<in>set (snd C)"
-    and kernel: "Isabelle_Definition p\<in>set (snd C)" and subject: "c\<in>set (isabelle_entity_subjects (fst C) (isabelle_development_constants (snd C))
-      (Isabelle_Code_Equation p))"
-  shows "Isabelle_Code_Equation p\<in>set (development_refinement_scope C c) \<and>
-    Isabelle_Definition p\<in>set (development_refinement_scope C c) \<and>
-    development_refinement_demanded (Isabelle_Code_Equation p) \<and>
-    \<not>development_refinement_demanded (Isabelle_Definition p)"
-  using assms by (simp add: development_refinement_scope_member development_refinement_demanded_def)
-
-lemma development_refinement_refuses_declaration:
-  "\<not>development_refinement_demanded (Isabelle_Development_Constant t)"
-  by (simp add: development_refinement_demanded_def)
-
-lemma development_refinement_refuses_specification:
-  "\<not>development_refinement_demanded (Isabelle_Specification p)"
-  by (simp add: development_refinement_demanded_def)
-
-section \<open>The contract of a refinement is its constant; its incumbent is the demanded family\<close>
-
-text \<open>
-  A refinement is fixed by its constant: an answer establishes new code equations of that
-  constant, and the equations it replaces are what the state already states of it, not a term
-  the answer must establish. The contract is therefore the constant as the state declares it, a
-  term of the state's table with its declared type, and the incumbent is the whole family of
-  demanded statements, read from the scope and never chosen among. The constant is recognized by
-  the existing singleton reading of its declarations, so a repeated declaration is still one and
-  distinct declarations are refused rather than resolved by position. A constant the state
-  declares other than exactly once, or of which it states no demanded statement, has no
-  contract and is retained instead; a constant of several code equations is one problem whose
-  incumbent is that whole family. Because the contract names the constant and not its current
-  equations, the problem keeps its identity when an adopted answer replaces them.
-\<close>
-
-definition development_refinement_declarations :: "isabelle_context \<Rightarrow> nat \<Rightarrow> isabelle_term list" where
-  "development_refinement_declarations C c=List.map_filter
-    (\<lambda>e. if isabelle_declared_constant e=Some c then isabelle_declaration_term e else None) (snd C)"
-
-lemma development_refinement_declarations_member:
-  "t\<in>set (development_refinement_declarations C c) \<longleftrightarrow>
-    (\<exists>e\<in>set (snd C). isabelle_declared_constant e=Some c \<and> isabelle_declaration_term e=Some t)"
-  by (simp only: development_refinement_declarations_def map_filter_member) (auto split: if_splits)
-
-definition development_refinement_contract ::
-    "isabelle_context \<Rightarrow> nat \<Rightarrow> development_contract option" where
-  "development_refinement_contract C c=(if development_refinement_statements C c=[] then None
-    else map_option Development_Refinement (list_singleton_option (development_refinement_declarations C c)))"
-
-theorem development_refinement_contract_exact:
-  "development_refinement_contract C c=Some k \<longleftrightarrow>
-    (\<exists>t. k=Development_Refinement t \<and> set (development_refinement_declarations C c)={t} \<and>
-      development_refinement_statements C c\<noteq>[])"
-  by (cases "development_refinement_statements C c=[]")
-    (auto simp: development_refinement_contract_def list_singleton_option_some map_option_eq_Some)
-
-lemma development_refinement_contract_unstated:
-  assumes "development_refinement_statements C c=[] \<or>
-    (\<nexists>t. set (development_refinement_declarations C c)={t})"
-  shows "development_refinement_contract C c=None"
-proof (rule ccontr)
-  assume "development_refinement_contract C c\<noteq>None"
-  then obtain k where "development_refinement_contract C c=Some k" by auto
-  then obtain t where "set (development_refinement_declarations C c)={t}"
-    and "development_refinement_statements C c\<noteq>[]"
-    by (simp only: development_refinement_contract_exact) auto
-  then show False using assms by blast
-qed
-
-corollary development_refinement_contract_constant:
-  assumes "development_refinement_contract C c=Some (Development_Refinement t)"
-  shows "(\<exists>e\<in>set (snd C). isabelle_declared_constant e=Some c \<and> isabelle_declaration_term e=Some t) \<and>
-    development_refinement_statements C c\<noteq>[]"
-proof -
-  have single: "set (development_refinement_declarations C c)={t}"
-    and stated: "development_refinement_statements C c\<noteq>[]"
-    using assms by (simp_all only: development_refinement_contract_exact) auto
-  have "t\<in>set (development_refinement_declarations C c)" by (simp only: single) simp
-  then show ?thesis using stated by (simp only: development_refinement_declarations_member) blast
-qed
-
-section \<open>The selection is the admitted answer of a native question on the actual state\<close>
-
-text \<open>
-  The candidates of the question are the entities of the constant's own scope and its single
-  original condition is the computed demand, so the existing filtered question contract
-  applies without restating it. Admission establishes the demand at every admitted entity,
-  and the admitted entity's proposition is one of the demanded statements. The question
-  admits every entity of the scope satisfying the demand, and the admitted entities are the
-  incumbent family of the problem. Ranging the candidates over the whole entity list instead would
-  conflate what the problem is about with what its answer must establish, and would submit
-  every entity of the state to a question about one constant.
-\<close>
-
-definition development_refinement_question where
-  "development_refinement_question C c=filtered_development_question
-    (development_refinement_scope C c) development_refinement_demanded"
-
-theorem development_refinement_admission:
-  assumes question: "development_refinement_question C c=Some Q"
-    and admission: "native_development_admission Q report=Some accepted"
-    and selected: "finite_development_index i\<in>set accepted"
-  shows "i<length (development_refinement_scope C c) \<and>
-    development_refinement_demanded (development_refinement_scope C c!i)"
-  by (rule filtered_development_admission[OF question[unfolded development_refinement_question_def]
-    admission selected])
-
-theorem development_refinement_admitted_statement:
-  assumes question: "development_refinement_question C c=Some Q"
-    and admission: "native_development_admission Q report=Some accepted"
-    and selected: "finite_development_index i\<in>set accepted"
-  obtains p where "development_refinement_scope C c!i=Isabelle_Code_Equation p"
-    "p\<in>set (development_refinement_statements C c)"
-proof -
-  have condition: "i<length (development_refinement_scope C c)"
-      "development_refinement_demanded (development_refinement_scope C c!i)"
-    using development_refinement_admission[OF assms] by simp_all
-  obtain p where equation: "development_refinement_scope C c!i=Isabelle_Code_Equation p"
-    using condition(2) by (cases "development_refinement_scope C c!i")
-      (auto simp: development_refinement_demanded_def)
-  have present: "Isabelle_Code_Equation p\<in>set (development_refinement_scope C c)"
-    using nth_mem[OF condition(1)] by (simp only: equation)
-  show thesis
-    by (rule that[OF equation])
-      (simp only: development_refinement_statements_demanded, rule bexI[OF _ present],
-        simp add: development_refinement_demanded_def)
-qed
-
-section \<open>Problems and their dependencies are computed from the same state\<close>
-
-text \<open>
-  A refinement problem of a constant carries that constant as its subject and the constant as
-  the state declares it as its contract; a constant with no contract yields no problem. The
-  origin and authority are supplied by the use, not by this construction. A problem depends
-  on the problems of the other constants of the given scope that its own statements mention,
-  which is read from the statement rather than from a grouping: the mentioned constant is
-  the premise slot, so distinct constants occupy distinct slots and no list order enters.
-\<close>
+definition development_refinement_contract :: "isabelle_context \<Rightarrow> nat \<Rightarrow> development_contract option" where
+  "development_refinement_contract C c=development_constant_contract isabelle_code_equation_proposition
+    Development_Refinement C c"
 
 definition development_refinement_problem :: "isabelle_context \<Rightarrow> development_origin \<Rightarrow>
     development_authority \<Rightarrow> nat \<Rightarrow> development_problem option" where
-  "development_refinement_problem C r a c=map_option
-    (\<lambda>k. Development_Problem {|c|} k r a) (development_refinement_contract C c)"
+  "development_refinement_problem C r a c=development_constant_problem isabelle_code_equation_proposition
+    Development_Refinement C r a c"
+
+lemma development_refinement_problem_contract:
+  "development_refinement_problem C r a c=map_option (\<lambda>k. Development_Problem {|c|} k r a)
+    (development_refinement_contract C c)"
+  by (simp only: development_refinement_problem_def development_constant_problem_def
+    development_refinement_contract_def)
 
 lemma development_refinement_problem_subject:
   assumes "development_refinement_problem C r a c=Some p"
   shows "problem_subject p={|c|}"
-  using assms by (auto simp: development_refinement_problem_def)
-
-lemma development_refinement_problem_injective:
-  assumes first: "development_refinement_problem C r a c=Some p"
-    and second: "development_refinement_problem C r a d=Some p"
-  shows "c=d"
-proof -
-  have subjects: "{|c|}={|d|}"
-    using development_refinement_problem_subject[OF first]
-      development_refinement_problem_subject[OF second] by simp
-  have "c |\<in>| {|c|}" by simp
-  then have "c |\<in>| {|d|}" by (simp only: subjects)
-  then show "c=d" by simp
-qed
-
-definition development_refinement_mentions ::
-    "isabelle_context \<Rightarrow> nat list \<Rightarrow> nat \<Rightarrow> nat list" where
-  "development_refinement_mentions C cs c=remdups (filter (\<lambda>d. d\<in>set cs \<and> d\<noteq>c)
-    (concat (map isabelle_term_constants (development_refinement_statements C c))))"
-
-theorem development_refinement_mentions_exact:
-  "d\<in>set (development_refinement_mentions C cs c) \<longleftrightarrow>
-    d\<in>set cs \<and> d\<noteq>c \<and> (\<exists>p\<in>set (development_refinement_statements C c).
-      d\<in>set (isabelle_term_constants p))"
-  by (auto simp: development_refinement_mentions_def)
-
-definition development_refinement_premises :: "isabelle_context \<Rightarrow> development_origin \<Rightarrow>
-    development_authority \<Rightarrow> nat list \<Rightarrow> nat \<Rightarrow> (nat\<times>development_problem) fset" where
-  "development_refinement_premises C r a cs c=fset_of_list (List.map_filter
-    (\<lambda>d. map_option (Pair d) (development_refinement_problem C r a d))
-    (development_refinement_mentions C cs c))"
-
-definition development_refinement_dependencies :: "isabelle_context \<Rightarrow> development_origin \<Rightarrow>
-    development_authority \<Rightarrow> nat list \<Rightarrow> development_dependencies" where
-  "development_refinement_dependencies C r a cs=fset_of_list (List.map_filter
-    (\<lambda>c. map_option (\<lambda>p. (p,development_refinement_premises C r a cs c))
-      (development_refinement_problem C r a c)) cs)"
+  by (rule development_constant_problem_subject[OF assms[unfolded development_refinement_problem_def]])
 
 definition development_refinement_problems :: "isabelle_context \<Rightarrow> development_origin \<Rightarrow>
     development_authority \<Rightarrow> nat list \<Rightarrow> development_problem list" where
-  "development_refinement_problems C r a cs=List.map_filter
-    (development_refinement_problem C r a) cs"
+  "development_refinement_problems C r a cs=development_constant_problems isabelle_code_equation_proposition
+    Development_Refinement C r a cs"
 
-definition development_refinement_unstated ::
-    "isabelle_context \<Rightarrow> nat list \<Rightarrow> nat fset" where
-  "development_refinement_unstated C cs=fset_of_list
-    (filter (\<lambda>c. development_refinement_contract C c=None) cs)"
+definition development_refinement_dependencies :: "isabelle_context \<Rightarrow> development_origin \<Rightarrow>
+    development_authority \<Rightarrow> nat list \<Rightarrow> development_dependencies" where
+  "development_refinement_dependencies C r a cs=development_constant_dependencies
+    isabelle_code_equation_proposition Development_Refinement C r a cs"
 
-theorem development_refinement_problems_exact:
-  "p\<in>set (development_refinement_problems C r a cs) \<longleftrightarrow>
-    (\<exists>c\<in>set cs. development_refinement_problem C r a c=Some p)"
-  by (simp only: development_refinement_problems_def map_filter_member)
-
-theorem development_refinement_unstated_exact:
-  "c |\<in>| development_refinement_unstated C cs \<longleftrightarrow>
-    c\<in>set cs \<and> development_refinement_problem C r a c=None"
-  by (auto simp: development_refinement_unstated_def development_refinement_problem_def
-    fset_of_list_elem)
-
-text \<open>
-  Each problem in scope contributes exactly one decomposition, namely the premises computed
-  from its own statement. Two constants in scope never yield one problem, so the
-  decompositions of a problem are not joined and the state reports no ambiguity that the
-  computation did not find.
-\<close>
-
-theorem development_refinement_decomposition_exact:
-  assumes problem: "development_refinement_problem C r a c=Some p" and scope: "c\<in>set cs"
-  shows "development_decompositions (development_refinement_dependencies C r a cs) p=
-    {|development_refinement_premises C r a cs c|}"
-proof -
-  let ?entry="\<lambda>c. map_option (\<lambda>p. (p,development_refinement_premises C r a cs c))
-    (development_refinement_problem C r a c)"
-  have member: "(q,H) |\<in>| development_refinement_dependencies C r a cs \<longleftrightarrow>
-      (\<exists>d\<in>set cs. ?entry d=Some (q,H))" for q H
-    by (simp only: development_refinement_dependencies_def fset_of_list_elem map_filter_member)
-  have selected: "(q,H) |\<in>| development_refinement_dependencies C r a cs \<and> q=p \<longleftrightarrow>
-      q=p \<and> H=development_refinement_premises C r a cs c" for q H
-  proof
-    assume "(q,H) |\<in>| development_refinement_dependencies C r a cs \<and> q=p"
-    then obtain d where inside: "d\<in>set cs" and entry: "?entry d=Some (q,H)" and equal: "q=p"
-      using member by blast
-    have found: "development_refinement_problem C r a d=Some q"
-      and computed: "H=development_refinement_premises C r a cs d"
-      using entry by (auto split: option.splits)
-    have "d=c" using development_refinement_problem_injective[OF found[unfolded equal] problem] .
-    then show "q=p \<and> H=development_refinement_premises C r a cs c" using equal computed by simp
-  next
-    assume "q=p \<and> H=development_refinement_premises C r a cs c"
-    then show "(q,H) |\<in>| development_refinement_dependencies C r a cs \<and> q=p"
-      using member[of q H] problem scope by auto
-  qed
-  have rows: "ffilter (\<lambda>(q,H). q=p) (development_refinement_dependencies C r a cs)=
-      {|(p,development_refinement_premises C r a cs c)|}"
-    by (rule fset_eqI) (use selected in \<open>auto split: prod.splits\<close>)
-  show ?thesis by (simp only: development_decompositions_def rows) simp
-qed
-
-corollary development_refinement_premises_exact:
-  assumes problem: "development_refinement_problem C r a c=Some p" and scope: "c\<in>set cs"
-  shows "development_premises (development_refinement_dependencies C r a cs) p=
-    fimage snd (development_refinement_premises C r a cs c)"
-proof (rule fset_eqI)
-  fix q
-  show "q |\<in>| development_premises (development_refinement_dependencies C r a cs) p \<longleftrightarrow>
-      q |\<in>| fimage snd (development_refinement_premises C r a cs c)"
-    by (simp only: development_premises_member
-      development_refinement_decomposition_exact[OF problem scope]) simp
-qed
-
-corollary development_refinement_not_ambiguous:
-  assumes problem: "development_refinement_problem C r a c=Some p" and scope: "c\<in>set cs"
-  shows "p\<notin>set (development_ambiguous (development_refinement_dependencies C r a cs) ps)"
-proof -
-  have single: "fcard (development_decompositions (development_refinement_dependencies C r a cs) p)=1"
-    by (simp only: development_refinement_decomposition_exact[OF problem scope] fcard_finsert_if) simp
-  show ?thesis by (simp add: development_ambiguous_def single)
-qed
+definition development_refinement_unstated :: "isabelle_context \<Rightarrow> nat list \<Rightarrow> nat fset" where
+  "development_refinement_unstated C cs=development_constant_unstated isabelle_code_equation_proposition C cs"
 
 end

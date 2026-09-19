@@ -43,8 +43,8 @@ These five answers exercise the loop on the seeded request for
 constant outside the issued support (refused; the extension adds its declaration and the same
 answer is accepted against the request issued again), and an equation through a helper the answer
 introduces (refused; the extension adds the helper's declaration, definition and code equation,
-one definition problem is derived, and the same answer is accepted against the request issued
-again). They are controls of the process, not refinements to adopt.
+one definition problem is derived, whose contract is the helper as the extension declares it, and the
+same answer is accepted against the request issued again). They are controls of the process, not refinements to adopt.
 
 `deterministic.json` is the answer `tools/development_executor.py` computed from the packet of the
 same request alone (`tools/development_answer.py packet`; the record keeps the packet's digest and

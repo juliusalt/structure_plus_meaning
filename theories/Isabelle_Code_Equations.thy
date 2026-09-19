@@ -54,4 +54,21 @@ lemma isabelle_definition_and_code_equation_share_subjects:
     isabelle_entity_subjects names D (Isabelle_Code_Equation p)"
   by simp
 
+section \<open>A state reads the kernel definitions of a constant separately too\<close>
+
+text \<open>
+  A definition replaces what a constant is defined as, so the statement it demands is a kernel
+  definition and never a code equation. This reading is kept apart from the code-equation
+  reading for the same reason: a definition and a code equation of one constant share their
+  subjects, and only the entity kind tells the two demands apart.
+\<close>
+
+fun isabelle_definition_proposition :: "isabelle_entity \<Rightarrow> isabelle_term option" where
+  "isabelle_definition_proposition (Isabelle_Definition p)=Some p"
+| "isabelle_definition_proposition _=None"
+
+lemma isabelle_definition_proposition_exact:
+  "isabelle_definition_proposition e=Some p \<longleftrightarrow> e=Isabelle_Definition p"
+  by (cases e) simp_all
+
 end

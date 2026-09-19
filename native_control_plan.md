@@ -1302,3 +1302,42 @@ harness records a request judged on demand with no selection, since it made none
 generation because the library holds no rule; a report presents every transaction's successor snapshot
 whole, although only what the transaction changes is not already determined; and the choice of this design,
 like the earlier ones, was made outside the process and is a residual.
+
+## The loop's notions are native residual problems — 2026-09-19
+
+Stage 1 asks that the remaining work be represented as problems with their dependencies, and stage 2
+that every choice still generated outside the process be a recorded residual. Every notion of the loop
+(what a problem is, when it is ready, how it is selected, issued, requested, judged, repaired, admitted,
+recorded, published and succeeded) was defined by an implementer outside the process, and those
+residuals were recorded only in prose at the end of each dated section. The native state held the ten
+seeded refinement problems and nothing about the machinery that poses them.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Every choice made outside the process is a residual recorded in prose beside the work. | The choices that are notions of the loop are native problems. The checked context defines the loop's notions as a rooted state, as it defines the seed (`Development_Machinery`: fourteen roots, from the problem of a constant to the successor, with the frontier of every development constant they mention), and each root is the problem of its constant under the definition reading, with a residual origin and generated authority (`development_machinery_problems_residual`). The residual record of these notions is that problem list: a residual is discharged or superseded only by an answer admitted at its problem's locus, and until then it justifies nothing. |
+| A definition problem's contract is its kernel definition (the repair's definition problems). | A definition problem is the problem of a constant under the definition reading: its contract is the constant as the state declares it, marked as a definition, and its incumbent the kernel definitions, as a refinement's contract is the constant and its incumbent the code equations. The construction is stated once over the reading and the kind (`Development_Constant_Problems`, extracted at this second use); the refinement's notions and the repair's definition problems are its instances, so a definition problem keeps its identity when a later answer replaces the definition, and a refinement and a definition of one constant are different problems (`development_readings_separate`). |
+| The next machinery work is chosen by the implementer. | A residual depends on the residuals of the other roots its kernel definitions mention, read from the definitions; readiness is computed from those dependencies, and the next residuals are the admitted answer of the loop's own selection question, executed in the machinery recipe (`development_packet_selected`, the selection argument factored at its third use after the seed loop and the loop's recorded selection). |
+
+Evidence: the check that advanced the base to `.build/check-20260919m` proved the nineteen changed and
+dependent theories in 44.9 seconds, executed the seed recipe with every word equal (162.6 seconds) and
+executed the new machinery recipe (state 6.1, problems 6.0 and loop 13.9 seconds); its words were recorded,
+the proof adopted, and the confirming check was accepted and retained, with 171 tool and 35 kernel tests
+passing. A probe of the machinery state on the new base reads 150 names and 121 entities, with no unknown
+position, undeclared constant, malformed or unreached entity, and 51 development constants on the
+frontier. Each of the fourteen roots has exactly one kernel definition, so there are fourteen residual
+problems and no unstated root. Three dependencies are read from the definitions: the dependencies of a
+constant's problems on the problem of a constant, the selection question on readiness and the repair on
+the verdict. With nothing answered the other eleven residuals are ready, and the executed selection admits
+exactly those eleven (6.6 seconds). Replaying the fourteen retained answers on the new base
+reconstructed twelve, reported the adopted walk as the published state's unchanged answer, and differed only
+for the answer that introduces a helper: its repair's definition problem now carries the helper as declared
+instead of its definition, so its verdict word was re-recorded (38,209 against 40,325 bytes), with its outcome
+and publication word unchanged.
+
+Open: an answer to a residual needs the requirements it must meet (stage 4's encodings of the owner's
+directions) and a verifier of a definition answer, neither of which exists, so a selected residual cannot
+yet be answered and the selection admits every ready residual, since a criterion beyond readiness is the
+owner's (Q2); the development constants on the machinery state's frontier are not in the record until the
+state is extended to them; tool residuals (the harness, the adoption tool, the checks) have no notion in
+the state; and the choice of the roots, like the choice of this batch, was made outside the process and
+is a residual.

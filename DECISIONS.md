@@ -7705,3 +7705,1218 @@ and those observations; the native package witnesses are supplied by the
 bootstrap construction theorem. Runtime construction and native admission of
 the complete source, correspondence, request and installed-program record are
 still required by the full development protocol.
+
+## Consolidated overnight checkpoint
+
+The owner requested preservation, reconciliation and a commit before further
+development. [HANDOFF.md](HANDOFF.md) is the current continuation point; the
+[retained evidence](validation/overnight-20260918/README.md) supersedes the stale
+segment-9 operational handoff. All 53 integrated theory texts are unchanged from
+their accepted providers. A fresh 1,080-theory partial proof from HOL and complete
+certificate/material replay establish the recorded bounded results without any
+overnight temporary provider. They do not complete a stage or the whole plan.
+
+The actual union judgment, installed-guard construction contracts, computed
+original root application and natural body-leaf certificate are available.
+Projection material preparation, projection/quotation/full-child certificates,
+actual installed source execution, proof-coordinate transport and the root
+replay/cause remain open. Application-result selection was proposed, not
+implemented. The existing Development_Seed contract-argument defect also remains.
+No original requirement, owner authority, stage gate or cost gate was weakened.
+The next batch and all broader governance obligations are explicit in HANDOFF.md.
+
+Repository-only rebuild uses the retained source closure, executable native
+requests and compact expected report boundaries. The owner-requested cleanup
+removed generated historical bulk from the current tree and preserved unique
+unfinished source. This storage cleanup does not settle the broader native
+retention/workflow account. Practical 5a and conditions 1–4 and 6 remain open;
+only theoretical 5b stays deferred.
+
+Recorded 2026-09-18, commit `d85a02ee`.
+
+## Seeded contracts and dependencies computed
+
+Stage 1's gate requires that every seeded problem have a structural contract and
+dependencies. The seed had neither: `Development_Seed` applied `Development_Refinement` to
+no argument, so the theory did not load, and its dependencies were the supplied grouping of
+roots into the three measured candidates. Both are now computed on the actual state, and
+the state is read from the one accepted definition instead of being exported a second time.
+
+What the plan's text said about this stage is corrected by the execution rather than by
+argument.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Decompose each measured refinement candidate into one leaf problem per constant, with the candidate as their parent. | The candidate is not a problem: a contract is one term an answer must establish, and the state states no single refinement of several constants. Each root constant is one problem with its own demanded statement, and a grouping of more than one constant is retained as an obstruction. |
+| Take the grouping of roots into candidates as the seeded dependency structure. | Dependencies are read from the actual demanded statements. On this state that reading finds none: the ten problems are independent, and the grouping asserted a structure the state does not supply. |
+| Submit a decision's candidates as the state's entities and let the computed condition select. | Separate the readings. The scope of a constant is what the state presents about it; the demand selects what a refinement must establish inside that scope. Conflating them submits every entity to a question about one constant, which did not return in 243 seconds, against 11 seconds for the scoped question and its admission over all ten roots. |
+| Recognize a unique selection by the length of the selected list. | Instantiate the existing singleton reading: the same statement presented twice is one statement, and several distinct statements are refused rather than resolved by position. |
+
+The reusable content extracted at this use is recorded in
+[REASONING_REUSE.md](REASONING_REUSE.md). `Filtered_Native_Questions` was extracted from
+`Native_Control_Syntax_Candidate`, which now instantiates it, and `Faceted_Native_Questions`
+was already a second user of it through the import chain: the first-use rule had been
+violated by the theory that states it.
+
+This settles one clause of the stage-1 gate for the seeded problems and nothing else. The
+acceptance contract, the first loop's authorized policy, owner authority, the read-state
+correspondence and the renaming controls are unchanged. Selecting these ten root constants
+from the measured candidates is still a residual generated outside the process, recorded as
+the origin of every seeded problem. No answer to any seeded problem exists, so stage 2 has
+not begun, and stages 3 to 5 are untouched.
+
+Recorded 2026-09-18, commit `d0b70ea2`.
+
+## Seed presentations executed; acceptance consumes its contract
+
+The seed recipe had never run. Its first execution exposed a cost and a defect in the seed's
+account, and both are settled by the execution rather than by argument.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Decide acceptance at each use by installing the supplied entities as a ground program, reading it back and evaluating the demand natively. | The acceptance contract, proved once, already states the decision; with the native evaluation of a ground source proved total, the notion's code equation is that contract. On the seeded 80 entities the native route did not return in 2,281 seconds and the contract answers in 0.001. The route's cost (quadratic syntax joins, forest unions and wrapper attachment in native installation) is a measured machinery problem, not a reason to weaken a use. |
+| One control moving `HOL.eq` exposes the names the reading depends on. | Every definition and code equation of the seeded state is a Pure equality, so that control observed nothing. The controls are derived from the equation reader's recognized names: without `Pure.eq` twenty entities lose their subjects and seventy are unreached; without `HOL.eq` nothing changes. |
+| A runner's timeout ends the run it started. | Stopping only the wrapper left five Isabelle processes computing for 25 minutes after their recipe had failed. Every runner now stops the whole process session. |
+
+For the stage-1 gate this establishes the seed recipe's report boundaries from an accepted
+run, the renaming control's image of the original observations, and controls that expose the
+state's actual name dependence. The acceptance notion is unchanged in meaning; its execution
+now consumes its local contract, as every use must. Choosing this refinement and deriving the
+controls from the reader are choices generated outside the process and are recorded as
+residuals, like the choice of the seeded roots; the process has not yet selected or admitted
+any of them. The remaining gate items (provenance of the checked build, locality of a theory
+change, the first loop's authorized policy and owner-level basis elements) are unchanged.
+
+Recorded 2026-09-18, commit `d0b70ea2`.
+
+## The first loop's selection, schedule and requests are native
+
+Stage 2 has begun on the seeded problems. Which problems are taken is the admitted answer of
+a native question on their computed readiness; the admitted problems are one group of
+independent work because no ready problem is a prerequisite of another; and every admitted
+problem is requested with its demanded statement, its support (the constants its refined
+entities mention) and its least context (those entities and the declarations of the
+support), proved exact, closed and least. The executed decisions, the group and the requests
+are one report of the seed recipe, reconstructed with every check.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Settlement is the least closure of the answered problems under the dependency rows. | A row fires only once its own problem is answered. Otherwise a problem without prerequisites counts as settled unanswered and a problem depending on it is scheduled beside it. |
+| A native decision's execution is evidence recorded beside the state. | The executed packets are part of the reconstructed report, so the contract decisions of the seed, which had run only in a probe, are now reconstructible evidence. |
+
+Not yet established: leafhood rests only on the absence of any refinement decomposition in
+the development library, which is recorded as such; no request has been issued; the verifier
+of a refinement answer, executor isolation, admission as a generation under policy and the
+adoption of an answer remain the next constructions. The selection criterion is readiness
+alone; a policy criterion beyond it needs the owner's authorization.
+
+Recorded 2026-09-18, commit `d0b70ea2`.
+
+## Answers are judged by the difference they make
+
+Stage 2's next construction was the verifier of an answer. It exists now, together with the
+transport that brings an executor's answer to it and the repair a refusal derives. Every
+native question of the loop also became cheaper at its cause.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Verify a theory answer by re-exporting and comparing it with the request's statement, support and context. | The answer is the state its checked context defines, exported again from the request state's roots; the verdict reads the difference between the two states through the names both tables share (`Isabelle_State_Difference`). A refinement may replace the subject's code equations and nothing else, its equations must stay within the issued support, and the answer state must be closed and keep the roots. Removal of declarations nothing mentions is read from the closure, not permitted by name. |
+| An answer whose dependencies exceed the support is refused, and the refusal becomes a context or decomposition problem. | The verdict names the excess constants and the checked context names the constants the answer introduced. The repair is computed from them: the request state extended by exactly that material with the new names appended, the request issued again with the excess in its support, one definition problem per introduced constant, and a conservativity judgment of the extension. On real answers the same answer is then accepted against the request issued again. Admitting the extension and the definition problems remains the process's decision; the repair is not yet a schema of the development library. |
+| Check an answer "in exactly the request's proof context". | The Isabelle proof context of a request is the theory that defines the requested state; the harness frames the answer's declared parts (new definitions, the equation, its proof) there, checks the answer and its verification heaplessly on the accepted base and presents the verdict word. The least native context (the request's entities) is a different notion from this Isabelle context; checking in a smaller Isabelle context is its own bridge problem. |
+| Take one of the measured paused refinements as the first answer and work it out. | Each of them needs constants outside its subject's support (a keyed replay comparison, an index built once per data walk, formation carried by callers), so each is a decomposed problem whose definition problems and support extension the process derives from the refusal. Working one out by hand before the loop can admit and adopt answers is the executor's work done out of order; it was stopped after two timing probes (one replay selection: packet 6.2 of 9.5 seconds). |
+| Leave the cost of native questions for later. | Every loop step is a native question, so the cost is paid by the end package and was removed at its cause: settlement, histories, evidence and generation look up settled calls through ordered keys, composed over the existing source-shared equations. A decision over sixteen candidates fell from 7.2 to 4.8 seconds; the remaining superlinear cost is measured and open. |
+
+Evidence: the seed recipe presents seven derived answer states for every seeded request and
+reconstructs with every earlier word unchanged; five real answers to the request for
+`digit_replay_inspect` are retained in [validation/development-answers](validation/development-answers/README.md)
+(accepted restatement; Isabelle refusal; axiom refused and not repairable; excess support and
+an introduced helper, each refused and repaired).
+
+Still not established for the stage-2 gate: admission of an accepted answer as a generation
+whose cause is certified under the first loop's policy; selection into a published successor
+state that carries the answered problems, the derived definition problems and the changed
+dependencies; adoption of a refinement into the refinement layer with every affected report
+word unchanged and its cost ranked; retention and replay of the whole problem tree; and the
+isolation of an answer from theory-level commands beyond its declared parts (stage 3). The
+answers above are controls of the process, not refinements to adopt. Every choice made here
+outside the process — the harness's frame, the proof context, the controls and the order of
+this work — is a residual under the bootstrap record.
+
+Recorded 2026-09-18, commit `d0b70ea2`.
+
+## Admission, succession, packets and interchangeable executors
+
+The loop now carries an admitted answer to a successor state, records its own decisions, presents
+requests to executors as packets and shows that the executor does not matter.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Admission as a generation whose cause is certified under policy. | An accepted verdict is recorded as a generation (locus: the problem; predecessors: the request's context; payload: the subject's equations in the answer state; cause: the verdict). The first loop's policy admits exactly the accepted entities; its converse was stated only in prose and is now its proved contract (`development_policy_admits_member`), which the generation consumes. |
+| The successor state, from which the next problems derive. | Problems are carried, not recomputed from the new state: they and their dependencies move with the correspondence of the two tables (dependencies as the existing embedding of a rule table), readiness is transported by the existing renaming theorem of the least closure (`development_successor_ready`), the answered problem is recorded, and a request stays current exactly when no entity of its context was removed. Recomputing problems from the answer state would pose the answered refinement again as a new problem. |
+| Selection, decomposition, scheduling and request construction are admitted generations. | The development's history records its decisions: the selection as the executed native packet with the admitted problems, each admitted answer as its generation, and each repair as the refused request with its repair; a repaired answer moves the development through the extended request, with the derived definition problems answered by the answer's own definitions. Scheduling (the independent group) is still a theorem about the selection, not a separate record. |
+| An executor receives the request presentation. | The packet is the request read back through the exporter's inverse translation: the demanded statement, the issued support as typed declarations and the least context, in Isabelle syntax, with the facts the answer frame provides; it names no file, theory or tool. A deterministic executor answers from the packet alone; its answer, an agent's answer stating the same equation and the replay of the retained answer yield the identical admission word. |
+| Requests exist only for the seeded roots. | The harness derives a request on demand for any constant of the refinement layer: a generated request theory exports the state of that one subject, and the request, loop state and verdict are computed natively on it. Choosing the subject is a residual; the demanded request carries that origin. |
+
+Evidence: seven retained answers ([validation/development-answers](validation/development-answers/README.md))
+replay with identical outcomes and verdict words (`tools/replay_development_answers.py`); the
+seed recipe presents the recorded selection and the succession of the unchanged answers.
+
+Not established: adoption of a refinement into the refinement layer with unchanged report words
+and ranked cost, and therefore any real development consumed through the loop (condition 5a).
+An attempted real answer — `finite_program_applications` without its repeated admission checks —
+was proved but measured no change in a native decision (2.15 against 2.15 seconds at sixteen
+candidates), so it was not submitted as useful work; the remaining decision cost needs attribution
+before any refinement is proposed. Executor isolation is shown only for a deterministic executor:
+an agent is not yet confined to its packet, and an answer's text may still carry theory commands
+outside the frame's declared parts, which the verdict sees only within the state's reach.
+
+Recorded 2026-09-18, commit `d0b70ea2`.
+
+## Leafhood and issuing
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Leafhood rests on the absence of any refinement decomposition in the development library, recorded in prose. | Prerequisites and decompositions are separate relations. A prerequisite row fires only once its own problem is answered; a decomposition rule of the development library fires when all its subproblems are settled, and its head is never answered on its own. Settlement is the least closure of both, so composition is the existing finite-inference law (`development_composition_settles`) and a missing subproblem settles nothing. A problem is issued only as a leaf of the library with settled prerequisites (`development_issuable`); a problem some rule decomposes is refused as a broad request (`development_broad_refused`). With an empty library issuability is exactly the existing readiness. |
+| A request is constructed, not issued. | Issuing records every issued request in the development's history together with its library reading, the absence of any rule for its problem, so extending the library reaches exactly the issued requests whose reading it changes. The seeded library is empty and all ten selected problems are issued; a control library that decomposes every problem into itself issues nothing, because every problem is broad and the unsupported cycle settles nothing. |
+
+The development library itself still holds no rule for refinement problems, and no rule is
+derived yet: the repair of a refused answer is the first decomposition the process computes, but
+it is recorded as a repair, not added to the library as a schema.
+
+Recorded 2026-09-18, commit `d0b70ea2`.
+
+## Concurrent answers and re-evaluation
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Parallel assessment is not concurrent adoption; transaction composition needs its own instance. | For the independent group a selection issues, the instance is proved: an accepted answer to one request leaves every request for another subject current (`development_admitted_keeps_independent_current`), because the verdict lets an answer replace only its own subject's code equations and the closed answer state keeps the one declaration of every constant still mentioned. The premise, that the request state declares every constant once, is decided by the state and holds for the seed. The group can therefore be answered concurrently and admitted in any order. |
+| Re-evaluation is scheduled, not cascaded; readings include absences. | Against a changed library the issue records whose absence reading no longer holds are computed from the history (`development_reevaluations_exact`), and a library extension whose new rules have no issued problem as head reaches none of them (`development_reevaluations_local`). The seed shows both: under its own library no issued request is stale, under the cyclic control library all ten are. |
+
+This session's checkpoint: stages 1–2 have a native state, native selection, issuing with leaf
+readings, request construction, packets, a verdict with a local contract, a derived repair,
+admission as a generation under the first loop's policy, succession with transported readiness,
+concurrent admission of independent answers, and re-evaluation of absence readings; stage 3 has
+a deterministic executor that answers from the packet alone with the same admission as an agent.
+Open: adoption of an accepted refinement into its layer and real development consumed through the
+loop (condition 5a), the library holding derived decomposition rules, owner-authorized policy
+extension (stage 4), agent isolation, the native record of generated residual choices, and the
+remaining stage-1 gate items (provenance and locality of theory changes). Every choice made in this
+work outside the process remains a residual.
+
+Recorded 2026-09-18, commit `d0b70ea2`.
+
+## Answers framed where they are adopted; the state reads declared code equations
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Frame an answer above the theory that defines the requested state, and check it again in a smaller context when it is adopted. | An answer to a refinement-layer request is framed where it is adopted: its theory imports exactly the imports of the layer's boundary `Native_Execution_Refinements`, the request state is defined beside it from the boundary, and the verification imports both. The theory Isabelle accepts is the theory adoption installs, so there is one acceptance, not a second one in another context. The answer's theory is named by the answer's canonical content; that is a transport choice (unique and stable across replays), recorded as a residual, not a correspondence. |
+| The code equations in effect are read through `Code.get_cert` in the theory's global context. | `get_cert` preprocesses every declared equation with the simpset of the context it is given; under the global context that is every simplification rule, so every exported state presented simp-normalized equations — neither the declared ones nor the code generator's preprocessed ones. A control answer stating `map (\<lambda>y. y) xs` was read as the incumbent. The reading (now owned by `Isabelle_Constant_Closure`, shared by the exporter and every answer frame) is under an empty simpset: the entity kind is the declared, certified code equations. Declared rather than preprocessed is a choice about the subject of every refinement verdict and support check, recorded as a residual with this reason; the states, and every word that presents them, changed once and were re-recorded as re-evaluations. |
+| Adoption: carry an accepted answer into its layer, words unchanged, cost ranked, successor equal to the adopted state. | `tools/development_adoption.py` judges the retained answer again (its verdict word must be the retained one: nothing it read has moved, which is the transaction's comparison of the expected incumbent), installs the judged theory byte for byte at the boundary, runs the ordinary check (every word equal), and judges the answer once more in the adopted workspace, where it is part of the published state and must be an unchanged answer; a refused step withdraws. Measured recipe seconds are retained beside the retained ones as observations. Not established: a native selection record into a published development state (no persistent native history exists to append it to), ranking by measured cost (no internal account of a physical measurement; for a real adoption the decision is answer versus incumbent, an unmet requirement), adoption of seeded-state answers, and real development consumed through the loop (5a): the exercised adoption is a control. An answer's frame imports every earlier adoption, which orders independent adoptions and makes superseding one invalidate the later ones; a frame should import exactly the adoptions its request context depends on. |
+
+Evidence: the control `demanded-reformulated` restates `ordered_member_tree` through `map (\<lambda>y. y)`;
+judged, it removes the incumbent equation and adds its own (accepted). Adopted in an isolated copy of the
+working tree ([receipt](validation/development-adoptions/Development_Answer_5aba3385cee9.json)): the
+precondition held, the judged theory was installed at the boundary, 150 theories were proved again
+(166 s), 48 recipes executed with every word equal to its retained word and 3 were reused, the answer
+was then judged in the adopted workspace as an accepted unchanged answer, and the adoption was withdrawn.
+The measured recipe seconds sit beside the retained ones (certified causes 30.9 against 26.5 seconds,
+the rest within a few percent) and decide nothing. A complete source proof of all 1,757 theories took
+524 seconds and reset the base to one level; the reading's correction then changed no exported module,
+so every recipe was reused.
+
+Recorded 2026-09-18, commit `78ae1536`.
+
+## A refinement's contract is its constant
+
+The first on-demand request for a subject with more than one code equation was refused before
+any answer existed: `finite_data_walk` (a `fun` with equations for `0` and `Suc n`) had no
+problem, because its contract was the single demanded statement and two distinct statements
+counted as ambiguity. The execution corrected the notion rather than the subject.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| A refinement's contract is the single demanded statement; several distinct statements are refused as ambiguity. | The request table fixes a refinement by its constant ("Equality to an existing constant"), and an answer establishes new equations of that constant; it never establishes the statements it replaces. The contract is the constant as the state declares it (declared once, and stated by at least one demanded statement), and the incumbent is the whole family of demanded statements, read from the request's own least context and never chosen among. The problem's identity no longer changes when an adopted answer replaces its incumbent, so "answered" is relative to the incumbent it was answered against, which is the recorded-reading account the persistent history still has to hold. Storing the family in the contract instead was rejected: it repeats what the context holds and makes every adoption pose a new problem. |
+| The packet presents the demanded statement; the deterministic executor restates it. | The packet presents the refined constant with its type, and the incumbent equations are the code-equation items of its context; the deterministic executor restates the single incumbent equation. An answer states exactly one equation, so an incumbent of several equations has no restating answer: a limit of the answer frame, recorded, not yet lifted. |
+
+| The code equations in effect are the declared equations certified alone, under an empty simpset. | Certification alone silently read nothing for a constant whose declared equations only certify after the code generator's function transformers (`finite_data_walk`'s `Suc` patterns under `Code_Target_Nat`): the state presented it with no executable content and no problem. The code graph's certificate is complete but not local (it carries the sorts demanded by the constant's callees, so a callee's change would alter a caller's presented equation, against the verdict and request currency). The reading now takes the declared equations in effect from `Code.get_cert`'s own hook, the list every function transformer receives, transforms nothing and only unoverloads as certification does: local to the constant and exactly as declared. A separate dependency reading of what the generated code calls (preprocessing included) is still open. |
+
+The choice of this contract notion and of the equation reading were made outside a native
+question and are residuals with the reasons above. The words of the seed recipe's problems, loop, verification and succession reports
+and the verdict words of the retained answers changed once and are re-recorded as re-evaluations.
+
+Recorded 2026-09-18, commit `78ae1536`.
+
+## The declared-equation reading on the base; the first real answer reuses existing indexes
+
+The reading of the previous section had never been checked: its check was stopped unfinished. Its
+proof (519 rebuilt theories, 233 s) was accepted, every recipe but the seed recipe was reused, and
+all ten seed words changed. A probe on the new proof found every structural observation of the seed
+unchanged (80 entities of the same kinds, ten problems with one incumbent code equation each, the
+same control observations), so the words changed because the presented equation terms changed from
+the certified to the declared form; they were re-recorded, the new proof became the base, and the
+confirming check was accepted. The seven retained answers whose words changed kept their outcomes
+and were re-recorded; the deterministic executor answers the regenerated packet exactly as before.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Index the walk's rows with a new grouping (`grouped_rows`: an ordered tree from a key to the list of its rows). | An index is an existing notion before it is a new one. Every reader of the complete data walk is a relation keyed by an address (incidence rows by their head, functional and counted attachments by their atom), and `Binary_Relation_Stores` already holds such a relation under the address's binary path (`RRA_Binary_Use_Paths`), as `RRA_Indexed_Artifact_Lookup` does for uses; the carrier is read through `Ordered_Member_Trees`. The walk reads counted attachments only for their absence at an address, so set buckets suffice and no multiplicity-preserving index is needed. The answer introduces the walk stated over its readers and its indexed instance, and no index notion. |
+| An answer's introduced constants are the constants its theory declares. | An abbreviation declares no logical constant, yet the exporter's `define_again` read one as introduced and refused the answer ("Not a logical constant"). The answer now states the readers explicitly; the exporter is to collect logical constants only. |
+
+The answer (`validation/development-answers/indexed-data-walk.json`) was refused for its six
+introduced constants, repaired over the extension that defines them and accepted there, so it is
+adoptable through the repaired request. On the seed's own data syntax the indexed walk returns the
+scan walk's result for 1 to 32 entities, and costs 0.116 against 5.9 seconds at 8,817 carrier
+addresses and 4.2 seconds at 124,981, where the scan was stopped. The criticism retained with it: the
+walk is stated a second time over readers because a refinement answer may only add definitions and one
+equation, and replacing the original definition by the reader instance is a definition request the
+process does not issue yet; the answer was written by an unisolated agent from the packet; choosing
+this constant, and not a seeded root, remains a residual (owner question Q2 in the ledger).
+
+The answer was adopted through the repaired request
+([receipt](validation/development-adoptions/Development_Answer_0ccf746fe2cf.json)): the retained word
+was reproduced, the judged theory was installed at the boundary, the check proved 150 theories again
+and executed the 11 recipes the change reaches with every word equal (40 reused), and the published
+state judged the answer unchanged. The next check made that workspace the base (154 theories, 11
+recipes equal, together with the exporter's reading of logical constants only). The adopted walk is
+consumed where the finished process reads recorded causes back: on the seed's entities as
+whole-artifact targets, reading a certified base cause takes 0.14, 0.19, 0.31 and 0.55 seconds at
+1, 2, 4 and 8 entities (cause artifacts of 6,657 to 19,789 carrier addresses), against 1.1, 1.6, 3.6
+and 9.7 seconds before, so the quadratic growth is gone; the recipes that read causes back ran in
+10.9 against 26.5 seconds (certified causes) and 27.7 against 44.7 seconds (digit replay) under
+the check's load. These are observations for condition 5a, retained with the receipt; no ranking is
+derived from them. The adoption itself is still a host tool: the selection of the answer into a
+published development state had no native record.
+
+Recorded 2026-09-18, commit `78ae1536`.
+
+## Publication is a transaction against the published state
+
+Stage 2's gate asks that an admitted answer be selected into a published successor. The development's
+"generation" had been a tuple of problem, context, payload and verdict, and adoption was a host tool
+that installed bytes after comparing a retained word. Both are now instances of the library's own
+notions.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| An accepted verdict is recorded as a generation (a tuple), and adopting it installs the answer. | Development generations are the library's generations: finite generations whose locus, payload and cause are exact targets (the complete data quotations of their presentations) and whose predecessors are generations. Admission records an answer in the history; selection is a separate transaction into the published snapshot, executed on finite generations and proved to be `RRA_Transaction`'s transaction on the decoded cores (`RRA_Finite_Transactions`, `finite_transact_exact`). |
+| A problem is identified by its subject positions, origin and authority. | A locus is where at most one selection stands: the problem's contract presented with the names it uses, independent of origin and authority, so every problem about one constant stands at one locus. The presentation of a value with its names is invariant under every correspondence of tables (`development_local_contract_renamed`, `isabelle_local_entities_renamed`), so a locus reads the same from every state that holds its names. |
+| Adoption's precondition is that the retained verdict word is unchanged. | The publishing transaction expects the incumbent generation the answer was judged against: if the locus still holds it, the answer replaces exactly that locus and every other selection stays (`development_publication_applied`); if the locus has moved, the result is the complete observed comparison and no successor (`development_publication_conflict`). Both are the structural replacement theorems carried through the exactness theorem, not proved again. The host's word comparison remains the physical precondition of installing bytes. |
+
+Evidence: the seed recipe's publication report. The published state starts from ten incumbents (base
+generations whose payload is the incumbent family and whose recorded cause is its acceptance by the
+checked context). For every issued request the unchanged answer, published over its incumbent,
+applies; the answer with the reversed table, admitted against the same incumbent, then conflicts
+because the locus holds the first answer; the two answers present equal payloads; publishing all
+ten unchanged answers in turn applies every transaction, since each writes only its own locus.
+
+Not established: the recorded causes (acceptance, verdict) are not yet certified under the first
+loop's policy (the certified-policy-cause route through the required history is measured and now
+fast, but not joined); an answer's predecessors hold only the incumbent, not base generations of the
+other entities of its request context; the refinement layer's published state is not represented
+natively, so the host adoption of the indexed walk has no native transaction record yet; and this
+construction was chosen outside the process, a residual like the others.
+
+Recorded 2026-09-18, commit `78ae1536`.
+
+## A package is read where its roots demand; quotations grow with their depth
+
+Certifying an admitted answer's cause under the first loop's policy reads the policy back, and the
+policy holds the payload as a literal target. That read had been measured to grow with roughly the cube
+of the payload (0.001, 0.007, 0.042 and 0.310 seconds at payloads of 101, 201, 401 and 801 addresses).
+Two causes were attributed on small samples before anything changed, and the first is fixed.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| A package is read by reading a definition at every position of its environment and keeping the ones its roots reach. | Reading a definition at a site no root reaches is not part of reading the package. `Finite_Demanded_Closures` states a rooted reading both ways, over a universe of sites and as a frontier traversal that reads each site once after a root has demanded it, and proves them equal under the reading's own boundary: every site with a row lies in the universe (`finite_demanded_readings_exact`). `Factor_Demanded_Package_Readings` supplies that boundary from the definition grammar (a definition is read from a record at its use, so its root is a position of the environment) and makes the traversal the code of the package's sites and definition graph, with environment formation checked once. |
+| The remaining cost of reading a policy is carried by the fsets of readings that contain the payload. | A probe of the same read with the payload built two ways settles it. The executable complete data quotation (`finite_data_syntax`) addresses each child of a pair by prefixing its addresses, so in a data list the addresses of the k-th element have length about k: at 3,201 addresses their total length is 1,281,600, and every sort, comparison and formation check of the payload pays it. The same quotation with compact addresses (a node counter written in base-256 digits) has total length 6,146; formation falls from 0.055 to 0.002 seconds, the ground policy from 0.203 to 0.008 and reading the policy back from 0.741 to 0.036. At a real seed payload's size (11,601 addresses) the compact read takes 0.217 seconds against 10.4. A complete data quotation admits every injective formed readdressing (`complete_data_quotation_every_addressing`), so the compact construction is another member of the same class, not a new notion. |
+
+Evidence for the first correction: reading a one-target ground source back fell from 0.310 to 0.041
+seconds at a payload of 801 addresses and from 14.1 to 10.4 at 11,601; constructing the policy fell from
+28.3 to 2.3 seconds. The repository check that advanced the base to `.build/check-20260918z` proved the
+152 dependent theories again in 194 seconds and re-executed 33 recipes with every report word equal (18
+reused; 168 tool and 35 kernel tests). Recipes that read native packages ran faster than their retained
+runs: the native workflow 36.5 to 14.1 seconds, steering 35.8 to 18.3, source development 38.2 to 21.3
+and the seed recipe 75.8 to 36.6. Digit replay and the history family ran slower inside the check (digit
+replay 27.2 to 44.8), but alone on the same export they are faster than retained (18.7 and 9.0 against
+27.2 and 14.4 seconds for digit replay and known history): the check's eight concurrent recipe jobs, not
+the traversal, made the difference.
+
+Next, before the certified cause itself: the executable quotation becomes the compact member of the
+class, with its readdressing proved from the existing push laws, and every report word that presents a
+quotation is re-recorded as a re-evaluation of its presentation. The same prefix addressing makes the
+native compiler's syntax quadratic in a term's depth (the measured quadratic compile of native
+installation); that is the next instance of the same correction. The choice of both fixes, like the
+certified-cause route they serve, was made outside the process and is a residual.
+
+Recorded 2026-09-19, commit `78ae1536`.
+
+## The executable quotation is compact
+
+The previous section attributed the remaining cost of reading a policy back to the addresses of
+the executable complete data quotation. That correction is now on the base, together with one
+correction the execution exposed.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| The executable complete data quotation addresses the children of a pair by prefixing their addresses. | The quotation is the data syntax readdressed by a node counter in construction order, written in binary digits (`Factor_Finite_Data_Syntax`): the numbering is exactly an interval over the carrier, hence injective, and the finite constructors decode to the syntax pushed by it. The quotation contract `finite_data_syntax_complete_quotation` keeps its statement, because a complete data quotation admits every injective formed readdressing, so no consumer changed. Thirteen report words that present quotations changed only by the readdressing and were re-recorded as re-evaluations of their presentation. |
+| A construction's rows are finite sets, whatever order the construction produces them in. | Canonical order is what every later reader's fast path recognizes (`Finite_Sorted_Set_Execution`). The prefix construction had produced ascending rows by an accident of its addresses; compact rows arrive in construction order, so every later listing, comparison and formation check sorted them again, and the history recipes ran slower alone than their retained runs inside a loaded check (digit history 15.0 against 11.3 seconds, concurrent history 19.0 against 13.6, history index 14.4 against 11.1). The rows are now listed once in canonical order where they are constructed (`finite_syntax_rows_object_listed`, `finite_data_syntax_accumulated_code`): at 4,000 rows the construction takes 0.032 seconds including that sort, and twenty listings take 0.027 seconds against 0.446, twenty equalities 0.061 against 0.849 and twenty formation checks 0.514 against 1.077. |
+
+Evidence: the check that put the compact quotation on the base (`.build/check-20260919a`) proved 302
+theories in 207.5 seconds; the check that added the listing and advanced the base to
+`.build/check-20260919c` proved 153 theories in 196.8 seconds and re-executed the 13 recipes whose
+export changed with every report word equal (168 tool and 35 kernel tests). Run alone on that export,
+digit history takes 7.2 seconds, history index 6.5, concurrent history 6.6, known history 7.1 and
+digit replay 7.7; before the compact quotation digit replay and known history took 18.7 and 9.0
+seconds alone. The same prefix addressing still makes the native compiler's syntax quadratic in a
+term's depth, which remains the next instance of this correction. Both fixes were chosen outside the
+process, like the certified-cause route they serve, and are residuals.
+
+Recorded 2026-09-19, commit `5ea1fbf8`.
+
+## Certified causes pay for what they read
+
+Certifying an admitted answer's cause replays the policy's judgment on the payload and records the
+replayed scope. With the policy read on demand and the quotation compact, two further costs grew with
+the literal payload although nothing read it. Both were attributed on synthetic payloads before
+anything changed.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| A recovered proof graph reads a node at every position of its environment and keeps the nodes its root reaches. | The proof graph is the second instance of the demanded reading (`Factor_Demanded_Graph_Readings`): a node is read only at the sites its root reaches through the premises the nodes discharge, and the node grammar supplies the reading's boundary (a node is read from a record at its use). Replaying a judgment on a whole artifact had read a node at every address of the literal: 0.35, 2.5 and 19.6 seconds at 401, 801 and 1,601 addresses, against 0.011, 0.024 and 0.050 for the demanded reading. |
+| The positions of an environment are collected by the library's union of finite sets. | The library inserts one listing into another member by member, testing each insertion against every member present, so collecting the positions of an environment holding a literal of n addresses cost n². A union computed once and then only read is listed (`Listed_Set_Unions`: the concatenation of the listings, equal to the union by definition) and the positions are the listed union of each artifact's carrier (`RRA_Listed_Environment_Positions`). An accumulation iterated to a fixed point keeps the library's union, because its repetitions would grow every round. At payloads of 1,601, 3,201 and 6,401 addresses, application readiness fell from 0.049, 0.189 and 0.764 seconds to 0.002, 0.003 and 0.007, and installing the certificate's graph from 0.140, 0.558 and 2.474 to 0.005, 0.010 and 0.025; the whole certificate replay takes 1.3 seconds at 11,601 addresses. |
+
+Evidence: the check that put the demanded graph reading on the base (`.build/check-20260919d`) proved
+151 theories in 201.9 seconds and re-executed 15 recipes with every report word equal; the check that
+added the listed positions and advanced the base to `.build/check-20260919e` proved 152 theories in
+200.3 seconds and re-executed 16 recipes with every report word equal (168 tool and 35 kernel tests).
+The recipes hold no large literal, so their times are unchanged within the noise of eight concurrent
+jobs.
+
+Measured next, on the first seed problem's family (a payload of 11,589 addresses): constructing the
+policy takes 0.33 seconds, its certificates 0.34, the replay 1.56 and recording the generation 3.98,
+which quotes the replayed judgment's least scope as a cause of 350,817 addresses (it holds the payload
+twice, once as the policy's literal and once as the call's argument). Checking that recorded cause
+against the policy then takes 13.7 seconds, because it reads the whole cause back. At construction the
+cause is known: the existing known-scope contract (`Factor_Known_Replay_Policy`,
+`policy_record_replay_from_source_exact`) already states that a replayed record is certified under a
+policy exactly when the policy package is read and the quoted scope aligns with it, so the constructor
+consumes that contract instead of reading back what it has just written. A reader of a retained history
+still reads each cause back; that cost and the cause's size remain open.
+
+Recorded 2026-09-19, commit `7961fceb`.
+
+## Development causes are certified under the first loop's policy
+
+Stage 2's gate asks that an admitted answer be recorded as a generation whose cause is certified
+under the first loop's policy. The development's generations had recorded their verdict (answers) and
+their acceptance (incumbents) as causes whose validity was a separate, unmade judgment. Every
+generation of the seeded development is now certified, through the library's own composition.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| A published generation records its verdict or its acceptance as its cause, and whether that cause is valid under the policy is judged elsewhere. | Every development generation's cause is a certified call of a policy (`Development_Certified_Generations`). A policy's judgment of a payload constructs a certificate from the policy's program for the demand of its definitions on the payload, replays it, quotes the replayed scope and checks it against the policy; recording the judgment constructs the generation beside the predecessors it cites. Judgment-then-recording is proved to be the existing `certificate_policy_record` composition (`development_certified_generation_route`), so its contracts (the certified policy cause, the recorded generation's fields) hold without being proved again, and what the cause certifies is the policy's contract: the payload is one of the listed presentations (`development_certified_generation_listed`). The uncertified constructors are removed from `Development_Publication`; the verdict that admitted an answer stays in the development's history, not in the published generation. |
+| Check a recorded cause by reading it back. | The constructor knows the scope it has just quoted: the known-scope condition (`Factor_Known_Replay_Policy`) checks the policy on that scope directly, and the replay's own contract supplies the readiness the recording rechecked (`Factor_Certificate_Policy_Readiness`). Reading the cause back had cost 13.7 of about 20 seconds per generation at the first seed family's payload of 11,589 addresses. |
+| The first loop's policy is the ground program of the state's entities. | That policy is the instance of a policy over any list of presentations (`development_policy_source_with`, whose contract states exactly what it admits). A family is recorded under the policy listing its complete data quotation, constructed only when every entity of the family is an entity of the checked context, so a cause stays bounded by the family it records. The recorded cause carries that policy but not the checked context: the family's acceptance is the constructor's contract, not something a reader of the generation alone can see. This choice, like the route, was made outside the process and is a residual (owner question Q1). |
+| Every generation recomputes its policy's judgment. | A judgment is a function of the listed presentations and the payload alone; it is keyed by the family's presentation with its names, and a use judges each presented family once however many generations record it (`development_payload_judgment`; the seed report prepares its ten judgments in parallel through `parallel_computed_function`). Incumbents are base generations in environments of their own, so independent problems are recorded independently; an accepted answer is recorded in its incumbent's environment and cites it. |
+| A transaction checks the formation of the whole snapshot it is executed on. | Formation is an invariant of the published snapshot: a successful transaction returns a formed snapshot, so publishing generations in turn (`finite_locus_publications`, `RRA_Formed_Snapshot_Transactions`) checks the starting snapshot once. Rechecking it had cost 2.65 seconds per transaction over the ten certified incumbents. |
+
+Evidence (probe on the base heap, every proof checked in place, first seed family): the policy takes
+0.35 seconds, its certificate 0.37, the certificate replay 1.62, and quoting the replayed scope,
+checking it against the policy and recording the generation 4.6, against 3.98 plus 13.7 for recording
+and reading the cause back. The cause holds 350,817 addresses, thirty times the payload: the payload
+appears twice, once as the policy's literal and once as the call's argument, and the quotation presents
+each as data. The whole seed publication (ten incumbents, twenty answers, their twenty transactions and
+the sequential publication of ten) took 109 seconds with every certification computed separately and
+every transaction rechecking the snapshot, and takes 38.0 with each family judged once and formation
+carried; every first publication applies, every second one conflicts, the payloads of each request's
+two answers are equal and the sequential publication applies all ten. The repository check that
+advanced the base to `.build/check-20260919f` proved the nine changed theories in 39 seconds; the seed
+recipe re-executed with every earlier word equal and only the publication word changed, as the
+certified generations it presents are new. Its publication stage now takes 90.9 seconds (20.5 before),
+presenting 32.6 MB of generations against 19 MB, and it is the longest recipe of any check that
+re-executes the seed.
+
+Open, in the library's terms: the family policy lists only the payload it certifies, so the certificate
+is exact but the rule that admits is the constructor's acceptance guard (Q1); an absent certified
+generation does not distinguish a refused payload from an unavailable input, although the library keeps
+empty and failed results apart; the cause holds the payload twice and the published state presents
+every cause whole; a reader of a retained history still reads each cause back; an answer's predecessors
+are its incumbent only, not the generation of the request context it was judged in; the answers judged
+by the harness (`tools/development_answer.py`) are not yet certified or published natively, so the
+adoption of a refinement-layer answer records no native transaction. The choice of this batch and of
+its route was made outside the process and is a residual.
+
+Recorded 2026-09-19, commit `001113ff`.
+
+## Admitted answers are published natively
+
+The seed's generations are certified since the previous section, but an answer judged by the harness
+was still neither admitted as a generation nor published: the harness presented its verdict and
+repair, and the adoption tool installed bytes after comparing a word. Every judged answer is now
+admitted and published natively, beside its verdict.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| The harness presents the verdict and repair of an answer; admission as a generation and publication happen only in the seed report. | The harness presents a second report beside the verdict (`Development_Admitted_Publication`): the incumbent of the request state and, when the answer is admitted, the answer recorded beside it, both generations whose causes are certified under the policy that lists their family, and the transaction that publishes the answer over the incumbent it was judged against. Admission and selection keep separate words: the verdict word holds the judgment, the publication word the generations and the transaction. That the transaction applies whenever both generations exist is the published state's replacement theorem instantiated (`development_answer_publication_applied`, for every judge), and the adoption tool requires it (`published`) before it installs and again in the adopted workspace. |
+| A repaired answer is admitted against the extension, which the repaired successor states inline. | The route an answer is admitted through (`development_admitted_route`: its own request when the verdict accepts it, the request issued again over the extension when only the constants it introduces refused it and the repair accepts) reads the extension from `development_repair_state`, now stated once in `Development_Refinement_Repair` and used by the repaired successor too. |
+| Re-recording a retained answer whose words changed replaces its record. | An adopted answer is judged by the harness as the published state's unchanged answer, so its retained record, the judgment that admitted it before adoption, can no longer be reproduced; re-recording it would erase the evidence of the admission. The replay reports an adopted answer's present judgment beside its record and never re-records it. |
+
+Evidence: a probe on the base heap (every proof checked) publishes the first seed request's
+unchanged answer in 10.2 seconds, the family judged once, and the answer with the reversed table in
+14.9; both apply. The check that advanced the base to `.build/check-20260919h` proved the eight
+changed theories in 38.8 seconds and reached no recipe (169 tool and 35 kernel tests). Replaying the
+nine retained answers on that base reproduced every verdict word; the seven judged answers that are
+not adopted gained publication words (0.6 to 1.3 MB for requests of the refinement layer, 7.6 MB for
+seeded requests, 12.1 and 28.9 MB for the two repaired answers, whose answers differ from their
+incumbents), every admitted answer published and every refused one published nothing; the
+publication step takes 3.6 to 3.9 seconds for a request of the refinement layer and 11.6 to 17.9 for
+a seeded one. The control `demanded-reformulated` was adopted again through the new gate and withdrawn: the precondition judged it accepted and published, the check proved 151 theories again in 170 seconds and executed 48 recipes with every word equal (3 reused), and the adopted workspace judged it an unchanged answer publishing over the incumbent it had become.
+
+Open: the published state a judgment publishes into holds the incumbent alone, because the refinement
+layer has no persistent native published state, so an adoption records the transaction of its
+judgment rather than a transaction against a history; the harness computes the certification twice,
+once for the word and once for its summary; an absent incumbent does not distinguish a refused family
+from a failed judgment; and an answer's predecessors are its incumbent only. The design of this batch
+was chosen outside the process and is a residual.
+
+Recorded 2026-09-19, commit `c1915e2f`.
+
+## Answers are confined to their declared parts
+
+Stage 3 asks that any attempt of an executor to exceed its request cannot affect admission. The harness
+placed an answer's declared parts into the answer's theory by concatenating text, so a part could hold
+any theory text: the definitions could run ML (and ML can run a shell command while the answer is being
+judged), declare simplification rules or code equations acting on every theory that would import the
+adopted answer, or add axioms; the equation could close its quotes and continue with commands; and the
+proof could continue past its lemma. The verdict sees only what reaches the exported state.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| An answer's text may carry theory commands outside the frame's declared parts, which the verdict sees only within the state's reach. | Before the answer's theory exists, Isabelle reads its three parts with the outer syntax of the answer's frame (`Development_Answer_Parts`), in a session of its own that imports exactly the frame's imports and holds the parts only as ML strings of decimal escapes, so no part can close the text it is held in. A part is refused unless it has the declared form: definitional commands, theorem statements with their proofs and document text, with no attribute or target; proof commands only; one proposition; no method that runs ML and no control or document antiquotation; and no name the definitions introduce already names a constant or a fact of the frame, since the adopted answer would otherwise change what that name reads as in every theory importing it. A refused answer is recorded with Isabelle's reason and never framed. The reading decides form, never meaning, and it is Isabelle's syntax, not a host parser. |
+| Read every part as outer syntax. | The equation is inner syntax: it is read as the one string token the answer's theory places it in, and its content is not lexed as outer syntax, where a string literal of HOL (`STR ''HOL.eq''`) is an error token and a sound equation would have been refused. |
+| A retained failed judgment names its failure `refusal`. | A failed judgment (Isabelle refused the answer's theory or its verification) and a refused answer (its parts are not of the declared form) are different outcomes; the failure is retained as `error`, the harness's own field, and the replay compares both. |
+
+Evidence: a probe on the base heap reads the walk answer's definitions (sections, texts, definitions,
+primitive recursions, lemmas and theorems with structured proofs) and a structured proof as declared
+parts, and refuses sixteen injections, each with its reason: ML, setup and declare commands, an
+attribute on a lemma and on a definition, a locale target, an axiomatization, an equation that closes
+its quotes, a proof continued by a command, a tactic method, sorry, an antiquotation in text, an
+unterminated string, an empty proof, a theory end, and a definition and a lemma whose names already name
+a constant and a fact of the frame. The check that advanced the base to `.build/check-20260919j` proved
+the new theory in 22.8 seconds and reached no recipe (171 tool and 35 kernel tests). Five controls on the
+seeded request (definitions that run ML, an equation that closes its quotes and continues with commands,
+a proof followed by a command that runs ML, a lemma declared as a simplification rule, a proof by a
+method that runs ML) and the earlier axiom answer were each refused at their parts, with Isabelle's
+reason, in about 16 seconds and before any answer theory was processed; the axiom answer, which had
+reached the verdict and been refused for its axiom, is now refused as an `axiomatization`. Replaying the
+fourteen retained answers on that base reproduced every verdict and publication word of the six judged
+answers that are not adopted (the parts reading refused none of them), every refusal, the failure of the
+answer Isabelle refuses, and reported the adopted walk as the published state's unchanged answer.
+
+Open: the packet does not yet state the declared form to the executor; the executor is not yet run with
+the packet as its only input (an agent executor is owner question Q4); a method defined by a later theory
+that runs ML would have to be added to the refused names; a method whose theorem rests on an evaluation
+oracle (`eval`) is refused neither by this reading nor by the repository's escape scan, and whether an
+answer may use one needs its own account; and the choice of the declared kinds was made outside the
+process and is a residual.
+
+Recorded 2026-09-19, commit `54855405`.
+
+## The loop's decisions are admitted generations
+
+Stage 2's gate asks that selection, decomposition, scheduling and request construction be admitted
+generations. The loop recorded its decisions only in its history: the executed selection packet with the
+problems it admitted, and each issued request with the library reading it rested on. An admitted answer
+cited only the incumbent it was judged against, not the request it answered.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| A decision of the loop is a record in the development's history. | The history keeps the evidence (the packet, the reading, the verdict); the decision itself is admitted as a generation at the locus of its kind, as an answer is (`Development_Decision_Generations`): a selection at the development's selection locus with the loci of the admitted problems as payload, an issue at its problem's issue locus with the problem's locus, the names of its support and its library reading as payload. Both are recorded through the one construction that records any presented payload under the policy listing it (`development_payload_generation_with`, extracted from the family generation at this second use), so their causes are certified calls of that policy (`development_selection_generation_certified`, `development_issue_generation_certified`). A decision generation is constructed only for the decisions the loop made: its native selection of ready problems and the requests it issues for the selected leaves (`development_loop_decisions_made`). |
+| An issue or a selection stands where a problem stands. | Decisions stand at loci of their own kind, proved distinct from every problem locus (`development_decision_loci_distinct`), and distinct formed loci are distinct targets (`development_data_target_injective`): at most one current request per problem and one current selection per development, and a transaction admitting an issue never meets a problem's incumbent. Admission where nothing stood is the published state's admission transaction (`development_publication_admitted`). |
+| An answer's predecessors are its incumbent; the request context would need a generation of its own (B4). | An answer cites the issue of the request it answers (`development_answer_citations`); the issue cites the incumbent and the selection that admitted the problem, so the incumbent is the answer's ancestor and only direct edges are recorded. The request's support is in the issue's payload; its context is the refined entities with the declarations of that support, read from the state the request was made in, so no context generation is needed. |
+| Scheduling is a separate record. | The admitted problems are the independent group (`development_selected_independent`), so a schedule generation would restate the selection's payload; none is recorded. |
+| Record a generation by checking its environment and reading every cited predecessor back. | A chain of recordings establishes both facts itself: recording leaves a formed environment that includes the one recorded in and reads the recorded generation back (`development_payload_generation_recorded`), and a reading survives inclusion (`finite_check_generation_included`). Recording is stated once over the record constructor (`development_payload_generation_using`, as the library's replay and policy attempts are), and the chains the development makes (a judged answer's publication, the seed report) execute with the library's known-predecessor constructor (`finite_construct_known_original_generation_exact`, instantiated for the third time; `development_answer_publication_known`, `development_seed_publication_from_known`). Reading a predecessor back had cost its whole cause, 350,817 addresses for a seed incumbent. |
+
+Evidence: a probe on the base heap checked every proof in place. The seed report records ten
+incumbents, the selection, ten issues and twenty answers, and executes their fifty-one transactions (in
+every row the issue is admitted, the first answer applies and the second conflicts; the sequential
+publication applies all twenty-one); with the known constructor it computes in 51.4 seconds, against
+149.9 with every predecessor read back and 38.0 before the decisions were recorded. The publication of
+one judged answer (its incumbent, its issue and the answer) takes 19.6 seconds, against 10.2 when no
+issue was recorded. The check that advanced the base to `.build/check-20260919k` proved the six changed
+theories in 40.0 seconds and executed the seed recipe with every earlier word equal; the publication word
+changed, since its generations are new, and its stage took 149 seconds for a word of 39.6 MB (90.9 seconds
+and 32.6 MB before). Presenting the word costs more than computing the report: every transaction result
+presents its whole successor snapshot, which its predecessor and the transaction already determine, so the
+word grows with the product of the publications and the snapshot's size. The confirming check was
+accepted and retained, with 171 tool and 35 kernel tests passing. Replaying the fourteen retained answers
+on the new base reproduced every refusal and failure and reported the adopted walk; the six judged answers
+kept every verdict word, and their publication words changed because the publication now records the
+issue, so they were re-recorded, and a second replay reconstructed all of them.
+
+Open: the rule that admits a decision is its constructor's contract (the loop's selection and issuing),
+as an answer's acceptance by its checked context is, and a reader of the generation alone does not see it;
+a later round's selection supersedes the first only once a persistent development state holds both; the
+harness records a request judged on demand with no selection, since it made none; decompositions have no
+generation because the library holds no rule; a report presents every transaction's successor snapshot
+whole, although only what the transaction changes is not already determined; and the choice of this design,
+like the earlier ones, was made outside the process and is a residual.
+
+Recorded 2026-09-19, commit `5a412634`.
+
+## The loop's notions are native residual problems
+
+Stage 1 asks that the remaining work be represented as problems with their dependencies, and stage 2
+that every choice still generated outside the process be a recorded residual. Every notion of the loop
+(what a problem is, when it is ready, how it is selected, issued, requested, judged, repaired, admitted,
+recorded, published and succeeded) was defined by an implementer outside the process, and those
+residuals were recorded only in prose at the end of each dated section. The native state held the ten
+seeded refinement problems and nothing about the machinery that poses them.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Every choice made outside the process is a residual recorded in prose beside the work. | The choices that are notions of the loop are native problems. The checked context defines the loop's notions as a rooted state, as it defines the seed (`Development_Machinery`: fourteen roots, from the problem of a constant to the successor, with the frontier of every development constant they mention), and each root is the problem of its constant under the definition reading, with a residual origin and generated authority (`development_machinery_problems_residual`). The residual record of these notions is that problem list: a residual is discharged or superseded only by an answer admitted at its problem's locus, and until then it justifies nothing. |
+| A definition problem's contract is its kernel definition (the repair's definition problems). | A definition problem is the problem of a constant under the definition reading: its contract is the constant as the state declares it, marked as a definition, and its incumbent the kernel definitions, as a refinement's contract is the constant and its incumbent the code equations. The construction is stated once over the reading and the kind (`Development_Constant_Problems`, extracted at this second use); the refinement's notions and the repair's definition problems are its instances, so a definition problem keeps its identity when a later answer replaces the definition, and a refinement and a definition of one constant are different problems (`development_readings_separate`). |
+| The next machinery work is chosen by the implementer. | A residual depends on the residuals of the other roots its kernel definitions mention, read from the definitions; readiness is computed from those dependencies, and the next residuals are the admitted answer of the loop's own selection question, executed in the machinery recipe (`development_packet_selected`, the selection argument factored at its third use after the seed loop and the loop's recorded selection). |
+
+Evidence: the check that advanced the base to `.build/check-20260919m` proved the nineteen changed and
+dependent theories in 44.9 seconds, executed the seed recipe with every word equal (162.6 seconds) and
+executed the new machinery recipe (state 6.1, problems 6.0 and loop 13.9 seconds); its words were recorded,
+the proof adopted, and the confirming check was accepted and retained, with 171 tool and 35 kernel tests
+passing. A probe of the machinery state on the new base reads 150 names and 121 entities, with no unknown
+position, undeclared constant, malformed or unreached entity, and 51 development constants on the
+frontier. Each of the fourteen roots has exactly one kernel definition, so there are fourteen residual
+problems and no unstated root. Three dependencies are read from the definitions: the dependencies of a
+constant's problems on the problem of a constant, the selection question on readiness and the repair on
+the verdict. With nothing answered the other eleven residuals are ready, and the executed selection admits
+exactly those eleven (6.6 seconds). Replaying the fourteen retained answers on the new base
+reconstructed twelve, reported the adopted walk as the published state's unchanged answer, and differed only
+for the answer that introduces a helper: its repair's definition problem now carries the helper as declared
+instead of its definition, so its verdict word was re-recorded (38,209 against 40,325 bytes), with its outcome
+and publication word unchanged.
+
+Open: an answer to a residual needs the requirements it must meet (stage 4's encodings of the owner's
+directions) and a verifier of a definition answer, neither of which exists, so a selected residual cannot
+yet be answered and the selection admits every ready residual, since a criterion beyond readiness is the
+owner's (Q2); the development constants on the machinery state's frontier are not in the record until the
+state is extended to them; tool residuals (the harness, the adoption tool, the checks) have no notion in
+the state; and the choice of the roots, like the choice of this batch, was made outside the process and
+is a residual.
+
+Recorded 2026-09-19, commit `c8126481`.
+
+## Syntax readings ask an artifact through its reading
+
+Every step of the loop is a native question, and the question was steeply superlinear in its candidates:
+1.7, 2.5 and 15.3 seconds at 4, 8 and 16 candidates, with 32 not returning, so the selection over a
+residual record of hundreds of constants could not run. Attributed stage by stage, three separate causes
+compounded: the syntax readings that read an installed program back scanned the whole artifact for each
+question they asked of it, the candidates' indices are unary naturals, and the scope review evaluates
+every definition of its program at every component of the whole question. This batch removes the first.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| A syntax reading asks its artifact by scanning it. | Every reading asks the same questions at an address (the rows headed there, the values attached there, whether a counted value is attached, carrier membership) and bounds its recursion by the carrier's size; the reading of an artifact carries the answers (`Factor_Indexed_Readings`). It is the notion the adopted walk answer had stated as four separate readers. Its indexed instance answers through the indexes that answer introduced, built once per reading and proved equal to the scanned one, and the walk now takes the same reading, so an artifact's indexes are built in one place. The formed-once readings are restated over the readings of the artifacts at a use, exactly for every environment, and take them once where a reading begins. |
+| Refine the guarded reading entries (the definition, schema, scoped-pattern, family, call, record and vector readings). | Seven of the seeded state's ten roots are those entries, and the state reads its roots' code equations in effect: a first version that replaced them was refused by the repository check, every seed word having changed, since it would have answered seven seeded refinement problems outside the loop. The entries keep their code; the readings they guard, which the seeded state keeps on its frontier, are refined instead, as the walk answer refined its frontier subject. |
+
+Evidence: at 16, 32, 64 and 128 payload rows reading an installed ground program back takes 0.006, 0.020,
+0.086 and 0.322 seconds, against 0.031, 0.287 and 3.766 seconds at 16 to 64 rows before. With
+binary-presented candidates a whole native question is constructed in 0.12, 0.29, 1.02, 4.41 and 27.7
+seconds at 8, 16, 32, 64 and 128 candidates and admitted in 0.15, 0.36, 1.31, 5.92 and 42.6 (with unary
+indices the construction had taken 99.6 seconds at 32). The check that advanced the base to
+`.build/check-20260919p` proved the 153 changed and dependent theories in 208.2 seconds and executed 37
+recipes with every word equal; 171 tool and 35 kernel tests passed. Run alone after the check, the
+recipes whose times had grown under the load of 37 concurrent executions ran faster than their retained
+times: digit replay in 7.7 seconds (13.4 retained), quoted history in 8.7 (13.9), the machinery recipe in
+15.8 summed over its stages (27.1) and the seed recipe in 186.9 summed (216.7).
+
+Open: the scope review now dominates a native question (21.7 of 27.7 seconds at 128 candidates) and the
+unary indices inflate its input tenfold (next); readings are built per reading of a use, so a package
+whose definitions share one artifact builds them once per site; environment formation compares every
+artifact row with every other; the seven formation problems of the seed keep their incumbents; a
+refinement of many constants sharing new helpers cannot pass through the answer frame, which states one
+equation and no code declarations, so this batch, like the earlier machinery batches, was made outside the
+loop and is a residual.
+
+Recorded 2026-09-19, commit `a7857478`.
+
+## A native question evaluates what its requests demand
+
+The previous section removed the first of three compounding costs of a native question. The other two
+were in the question's own presentation and in its scope review: every candidate was identified by the
+unary data term of its index, so a question over n candidates carried a source quadratic in n and a
+review input ten times larger than its binary presentation; and every workflow stage, the scope review
+among them, evaluated every definition of its source at every component of every pair it was asked
+about, although the stage asks only whether its entry holds of those pairs.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| A candidate of a native question is identified by the complete data term of its index. | Its index is the binary presentation of the natural (`finite_development_index`, the storage notions' `finite_binary_natural_value`, moved below the presentations into `Finite_Binary_Values` at this second use rather than restated). The question reads only the equality of indices, which the presentation's injectivity supplies; a question over n candidates has a source of O(n log n) addresses. |
+| A workflow stage evaluates the term demand of its pairs. | A stage evaluates the calls its pairs demand (`workflow_stage_demand`): the frontier traversal of `Finite_Demanded_Closures`, a third time, from the requested calls through the premise calls of their applications, bounded by the term demand so it terminates for every program (`Factor_Demanded_Program_Calls`). Evaluation over any ready demand answers exactly the demanded calls that hold, so the stage's exactness, its reference and the meaning of its evidence keep their statements, and every client consumed them unchanged; wherever the term demand was ready the demanded calls are (`workflow_stage_demand_ready`). The keyed code equations of `Keyed_Native_Evaluation` restated the old demand and now restate this one. |
+
+Evidence: the check that advanced the base to `.build/check-20260919q` proved the 275 changed and
+dependent theories in 212 seconds and executed the eleven recipes whose exported code changed. The five
+that present storage notions through the moved binary presentation reproduced every word; the six that
+present native questions (the development, steering, source-development, workflow, machinery and seed
+recipes) exited cleanly and changed exactly the words of the stages that present question packets, which
+were re-recorded; the seed's succession and publication words, which consume what its selection admits,
+did not change. The confirming check was accepted and retained, with 171 tool and 35 kernel tests
+passing. On the new base a native question over 8, 16, 32, 64, 128 and 256 candidates is constructed in
+0.011, 0.022, 0.084, 0.42, 4.4 and 68.6 seconds and admitted in 0.013, 0.027, 0.084, 0.49, 5.4 and 71.5
+seconds (27.7 and 42.6 seconds at 128 before); its scope review takes 0.091 seconds at 128 candidates,
+against 21.7 before, and its input is 2.2 million bits at 128 candidates. Replaying the fourteen retained
+answers on the new base reconstructed thirteen with every word equal and reported the adopted walk as the
+published state's unchanged answer.
+
+Open: the revision of a question's comparison now dominates it (0.016, 0.23, 3.6 and 70.7 seconds at 32,
+64, 128 and 256 candidates, growing with the fourth power): the comparison relation and the observation
+rows are asked by membership in lists of up to n squared pairs, the repairs order their rows against a
+list pairing every candidate pair with every observation row, and their sets of pairs are united member
+by member; building a question's ground source also grows steeply (0.45 seconds at 128 candidates, 9.7 at
+256); so a selection over the few hundred residuals of the development layer is not yet affordable. This
+batch, like the earlier ones, was chosen and made outside the loop and is a residual.
+
+Recorded 2026-09-19, commit `83225db7`.
+
+## A question's comparison is asked through indexes and its wrapper by insertion
+
+After the previous section a native question's revision grew with the fourth power of its candidates
+(70.7 seconds at 256), and building its ground source nearly as steeply (9.7 seconds at 256). Attributed
+part by part on the new base, three causes remained, each in the representation of a set the question
+computes once and then reads.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| An investigation asks whether two candidates are related, and whether a candidate is observed, by membership in the lists that present the relation and the observation rows. | Each list is indexed once through the existing ordered member index (`ordered_member_tree_listed`) and every such question is one lookup; the lists have up to one row per pair of candidates. |
+| The repairs order their rows against every candidate pair joined with every observation row, and unite their sets of pairs member by member. | Selecting from a list reads only the last occurrence of each member, so the order in which each distinct observation pair occurs once selects the same rows (`investigation_select_loss_order`); at 256 candidates that list has 65,536 rows instead of 8,388,608. The residual comparisons, conflicts and available repairs are listed unions, the existing `Listed_Set_Unions` pattern. |
+| Attaching a record or family structure to an artifact unites the artifact with the structure. | The union inserts each member of its left operand into its right one, and the artifact stood on the left, so wrapping the compiled definition of a question over n candidates cost the square of the artifact. With the operands exchanged the structure's few members are inserted into the artifact (`RRA_Inserted_Attachments`); the overnight review's enumerated union is an exact alternative that sorts both operands and stays a candidate. |
+
+Evidence: on a probe of the base heap, with every proof checked in place, a native question over 64,
+128, 256 and 512 candidates is constructed in 0.21, 0.87, 5.3 and 64.6 seconds (4.4 and 68.6 seconds at
+128 and 256 before). At 256 candidates its revision takes 0.69 seconds (70.7 before), its comparison 0.017
+(1.75) and building its ground source 0.115 (9.1); what remains there is the generation (2.5 seconds), the
+observations (1.8) and the scope review (0.37). The check that advanced the base to `.build/check-20260919s`
+proved the 161 changed and dependent theories in 211.5 seconds and executed all 50 recipes with every report
+word equal, as refinements must leave them; the confirming check executed them again with every word equal
+and was retained, with 171 tool and 35 kernel tests passing. The four recipes that present native questions
+ran 0.3 to 0.7 seconds faster than in the previous check in the check that advanced the base, and 1.6 to 2.1
+seconds slower in the confirming one, under the load of fifty concurrent executions rather than eleven; the
+seed recipe took 175.4, 202.3 and 152.0 seconds in the three checks. Replaying the fourteen retained answers on the new base reconstructed thirteen
+with every word equal and reported the adopted walk as the published state's unchanged answer.
+
+Open: at 512 candidates the generation (24.8 seconds), the observations (18.2) and the scope review
+(17.5) dominate and revision takes 5.2: the first two read the installed ground program back, which still
+grows with about the 2.5th power of its rows, and the review searches its whole input once for each call it
+evaluates. Measured next on the selection this served: the loop closure of the machinery's fourteen notions
+reaches 409 constants declared in the 102 theories added since the plan's accepted base, which as a state
+hold 820 names and 1,381 entities and pose 362 residual problems under the definition reading; 313 of
+them depend on another residual their definitions mention, so the other 49 are ready and are what the
+native selection admits. That state is presented by
+a term of 3.0 million nodes: it is defined in 24.9 seconds, but compiling it into executable code, together
+with these counts and the selection, took 392 seconds. Of its 226,238 constructors 192,806 present types:
+every occurrence of a constant carries its whole translated type, so a type is presented once for every
+occurrence, while the terms without their types have 33,432 constructors and the 2,869 distinct types they
+mention have 6,124 distinct nodes. The size of a state, and of everything computed from it natively,
+therefore grows with the types its terms mention rather than with the terms, and compiling it is the next
+cost on the loop's path. This batch, like the earlier ones, was chosen and made outside the loop and is a
+residual.
+
+Recorded 2026-09-19, commit `1b99c17b`.
+
+## A state holds each type once
+
+The previous section found the development layer's state presented by a term of 3.0 million nodes whose
+compilation took 392 seconds, every occurrence of a constant carrying its whole type. The cost was attributed
+on samples before anything changed. Isabelle's code generator pays about 60 to 120 microseconds for every node
+of a defining term, whatever the node is, while compiling the generated code costs little; so a state costs
+what its defining term holds. Literals transport no cheaper: a single integer of 200,000 bits took 51 seconds
+to define and 104 to generate, a string of 25,000 characters 13 and 14. Binding each type once by nested
+`let`s shrank the layer's term to 588,000 nodes but nested 6,124 binders, and generating its code took 345
+seconds. What remained was to hold less: 192,806 of the layer state's 226,238 constructors present types,
+while its 2,869 distinct types have 6,124 distinct nodes.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| A definition presents a state as the kernel's terms, with a type at every occurrence. | The definition holds every distinct type once, as a node of a table whose arguments are positions of earlier nodes, and presents its entities over positions of that table (`Isabelle_Type_Tables`); the table is read once into an ordered index and every occurrence reads one value. Terms and entities are stated over what presents their parts (`'ty isabelle_term_with`, `'t isabelle_entity_with`), so the presentation over positions is the same datatype and its reading is the datatype's own map, not a second translation; the table's reading is exact at every position of an ordered table (`isabelle_type_table_exact`). The state read back is the state, so every observation, presentation and word of it is unchanged. |
+| Bind each type once where the definition is stated. | A binding scope nests the whole state under one binder per type, and the generated code for thousands of nested bindings did not scale; a table has no binders. |
+| `Native_Control_Syntax_Statements` builds its context beside the exporter. | It takes the exporter's construction, with its propositions added to the name table, so one construction states every exported context. |
+
+Evidence: on a probe of the base heap the shared presentation of the machinery state is a defining term of
+72,121 nodes (281,395 before; its roots 3,736 against 6,795), defined in 0.37 seconds and compiled in about one
+second, and its reading equals the accepted state: the state, its roots and both groups are equal as
+presentations. The development layer's state (409 roots, 1,381 entities) is a term of 839,656 nodes, defined in
+8.9 seconds and compiled together with its counts in 23.0 seconds. The check that advanced the base to
+`.build/check-20260919v` proved the 78 changed and dependent theories in 176.8 seconds; the seed recipe executed
+with every word equal, and the machinery recipe executed in 5.7 seconds (12.3 in the previous base's check) and
+changed its three words, because the checked context's content changed with the datatypes: the loop's notions
+are stated over the parameterized term and entity types, so the machinery state names `isabelle_term_with`,
+`isabelle_entity_with` and `isabelle_type` where it had named `isabelle_term` and `isabelle_entity` (151 names
+against 150). The words were re-recorded as re-evaluations and the proof adopted. The confirming check reused all 1,780 proof contexts, executed both recipes with every word equal (the machinery recipe in 5.9 seconds, the seed recipe in 113.4) and was retained with 171 tool and 35 kernel tests passing; replaying the fourteen retained answers on the new base reconstructed thirteen with every word equal and reported the adopted walk as the published state's unchanged answer.
+
+Open: the table's numerals make the layer's term 839,656 nodes where shared nodes alone would need about
+534,000; native computations over a state still read a type at every occurrence, since the state notion keeps
+its types inline, and holding them once in the notion itself would change every consumer and word; which table
+presents a state is the exporter's transport, with no native account, as its name table has none. With the
+layer's state affordable, the residual record can reach beyond the loop's fourteen notions (owner question Q5).
+This batch, like the earlier ones, was chosen and made outside the loop and is a residual.
+
+Recorded 2026-09-19, commit `5c26b791`.
+
+## The residual record reaches the notions' constituents
+
+With a state's types held once, a residual record larger than the loop's fourteen notions became affordable.
+Owner question Q5 asks how far the record should reach; the provisional choice extends it by demand, one level
+of the frontier at a time.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| The residual record holds the fourteen notions of the loop, and the development constants their definitions mention stand on the frontier. | The record reaches the notions' constituents: the notions and every development constant their items mention are the roots, computed by the exporter's own closure from the notions (`context_items`), and each poses its residual problem under the definition reading; the constituents' own constituents stand on the frontier. A notion's residual therefore depends on the residuals of what it is made of, so the loop's selection takes constituents before the notions composed of them, where the fourteen notions alone were selected although their constituents were unrecorded residuals. A constituent's readiness is relative to how far the record reaches. |
+
+Evidence: on a probe of the base heap the machinery state holds 335 names and 380 entities from 65 roots, a defining term of 196,776 nodes compiled with its counts in 12.5 seconds. The roots pose 64 residual problems, each with its dependency row; with nothing answered 34 are ready, the constituents that depend on no other recorded residual, and the executed selection admits exactly those 34 (the loop report computes in 0.27 seconds). The check that advanced the base to `.build/check-20260919x2` proved the two changed theories in 40.6 seconds and executed the machinery recipe, whose three stages exited cleanly and changed their words, since the state they present is larger; the words were re-recorded and the proof adopted, and the confirming check executed the recipe again with every word equal and was retained, with 171 tool and 35 kernel tests passing. No retained answer is judged against the machinery state, so none was replayed.
+
+Open: the one root the definition reading states no problem for is `Pure.eq`, the kernel's equality. The exporter decides whether a constant belongs to the fixed base by the session qualifier of the name of the theory that declared it, and the theory Pure has none, so every constant of Pure is read as a development constant: every state presents Pure's constants on its frontier instead of as base constants, and here `Pure.eq`, which every kernel definition mentions, became a constituent and was expanded, bringing the non-definitional axioms that mention it into the state. That reading is corrected next. A constituent's readiness is relative to how far the record reaches: 30 of the 64 residuals wait for another, and the constituents' own constituents stand on the frontier (owner question Q5). A selected residual still cannot be answered, since no request or verdict of a definition problem exists. The choice of this extension, like the earlier ones, was made outside the process and is a residual.
+
+Recorded 2026-09-19, commit `958632de`.
+
+## Pure's constants are base constants
+
+Extending the residual record exposed a defect of the state's reading: its one unstated root was
+`Pure.eq`. The exporter decides whether a constant belongs to the fixed Isabelle/HOL base by the session
+qualifier of the long name of the theory that declared it, and the theory Pure's long name is the name of
+its session, without a qualifier, so every constant of Pure was read as a development constant: every
+state presented Pure's constants on its frontier instead of as base constants, and the machinery state
+expanded `Pure.eq`, which every kernel definition mentions, as a constituent, bringing the non-definitional
+axioms that mention it into the state.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| A constant belongs to the base when the qualifier of its theory's long name is a base session. | A constant belongs to the base when the session of the theory that declared it is a base session; a theory's long name is qualified by its session except the theory Pure's, whose long name is its session (`declaring_session` in `Isabelle_Entity_Export`). Pure's constants are base constants of every state, and a frontier holds development constants only. |
+
+Evidence: the check that advanced the base to `.build/check-20260919x4` proved the 57 changed and
+dependent theories in 174.2 seconds. The seed recipe executed its eleven stages cleanly and changed exactly
+the eight words that present a state or a verdict (the state and its four controls, the loop, the
+verification and the succession), while the problem, answered-problem and publication words stayed equal;
+the machinery recipe changed its three words. The words were re-recorded as re-evaluations and the proof
+adopted; the confirming check executed both recipes again with every word equal and was retained, with 171
+tool and 35 kernel tests passing. The machinery state now holds 326 names and 366 entities from 64 roots;
+every root poses its residual problem and none is unstated, and the same 34 residuals are ready and
+selected. Replaying the fourteen retained answers reproduced the seven refusals and failures and reported
+the adopted walk; the six judged answers kept their outcomes and publication words, and their verdict words
+changed, since the assessment of an answer state presents its frontier, so they were re-recorded.
+
+Open: which sessions form the base is a fixed list of the exporter (Pure, HOL and HOL-Library) with no
+native account, as its name table has none; this batch was chosen and made outside the loop and is a
+residual.
+
+Recorded 2026-09-19, commit `4c22044d`.
+
+## Definition problems are requested and judged
+
+The residual record of the previous sections held the loop's notions as definition problems, and a
+selected residual could not be answered: neither a request nor a verdict of a definition problem existed,
+the request and the verdict being stated for refinements only.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| A request and a verdict are stated for refinement problems. | The request of a problem of a constant and the verdict of an answer to it are stated once over the reading and the kind (`development_constant_request`, `development_constant_verdict`): the kind fixes which statements of the subject an answer may replace and which kind of statement it must state; nothing else may change, the subject's statements stay within the issued support, the answer state is closed and keeps the roots, and an accepted verdict's contract is proved once (`development_constant_verdict_contract`). The refinement request and verdict are their code-equation instances, extracted at this second use, and every statement their consumers read is unchanged. The definition request and verdict are their definition-reading instances: a definition answer replaces the subject's kernel definitions and the code equations derived from them, and must state a kernel definition (`development_definition_verdict_contract`). That the library's contracts of the constant still hold under a new definition is not read from the state. |
+| The seed's seven verdict controls are answer states of the seed. | They are the answer states that exercise any verdict before answers of its kind exist, stated over a reading (`development_answer_controls`); the seed's controls are their code-equation instance. |
+| A selected residual waits for a verifier of a definition answer. | The machinery issues its selected residuals as definition requests through the loop's issuing (`development_machinery_issued`: each issued request is the definition request of a selected, ready residual) and exercises the definition verdict on the seven answer states derived from each (`development_machinery_verification`). |
+| Pose a packet to be answered in Isabelle: the executor returns theory text, the harness frames it as a theory, Isabelle checks it and the checked context is exported again for the verdict; a definition answer would next be framed in place, replacing the definition in the theory that states it. | The owner (2026-09-19, ledger): packets first produce native content, which the native machinery evaluates with all of its existing theory, and translating and installing content the machinery has admitted into Isabelle is a separate problem. Judging an answer needs no Isabelle check: the verdict, its repair and admission read only the request state and the answer state, and the answer state is the request state with the answer applied, which native computation forms. An answer is therefore a native value, presented with the names it uses and read back by a reader with an exact contract, and its judgment runs natively with no theory checked per answer. What native judgment establishes is admissibility for installation, not truth: whether what an answer states holds, and whether the library's contracts of a replaced definition still hold, is Isabelle's acceptance when the answer is installed. Installation is its own request class: the admitted answer is translated through the packet's inverse reading and framed, the proof of what it states is requested separately as a narrower request, Isabelle checks it, and the state exported again must equal the native answer state; selection into the published state and adoption follow installation. The in-place Isabelle harness for definition answers is not built. |
+
+Evidence: the check that advanced the base to `.build/check-20260919x8` proved the 17 changed and
+dependent theories in 47.5 seconds, and the seed recipe executed with every word equal, since the
+refinement request, verdict and controls are instances of the general ones. The machinery recipe's three
+words changed, since its roots gained the definition request and verdict among the loop's notions and
+their constituents, and a fourth stage presents the verification; the words were recorded, and the
+confirming check executed both recipes again with every word equal (the verification stage in 22.4
+seconds) and was retained, with 171 tool and 35 kernel tests passing. The machinery state now holds 300
+names and 337 entities from 61 roots, posing 61 residual problems with 89 development constants on the
+frontier; with nothing answered 32 are ready, and the loop selects and issues all 32 as definition
+requests. For every request the definition verdict accepts the unchanged answer and its renaming and
+refuses the subject's definitions stated as axioms, the dropped definitions, the definitions stated
+through an unknown constant and the dropped definitions of the other residuals. Dropping the subject's
+code equations is accepted for 29 requests and refused for three (`development_contract_data`,
+`isabelle_state_embedding`, `development_answer_publication_with`): their code equations are the only
+statements reaching some declarations of the state (ten, one and one), which that control keeps, so its
+answer state is not closed. Replaying the fourteen retained answers reconstructed thirteen with every
+word equal and reported the adopted walk as the published state's unchanged answer.
+
+Open: no definition answer exists, and no answer of either kind is yet a native value; admission and
+publication are stated for refinement answers judged by the harness only. Native answers, their reader
+and their native judgment come next, then installation as its own request class. The choice of this
+batch was made outside the loop and is a residual.
+
+Recorded 2026-09-19, commit `21d235ae`.
+
+## Answers are native content, judged natively
+
+The owner's direction of the previous section is now implemented for the judgment: an answer is native
+content, and the native machinery evaluates it before anything becomes Isabelle material.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| An executor returns theory text; the harness frames it, Isabelle checks it and the checked context is exported again before the verdict reads it. | An answer is the edit it makes to the request state: the entities it removes and the entities it adds, presented with the names they use (`Development_Native_Answers`). It arrives as the padded word of its presentation and is read by a reader with an exact contract (`development_native_answer_bits_read_exact`); the answer state is the request state with the edit applied, and an edit of a state presented as an answer performs exactly that edit (`development_native_answer_of_state`); the native judgment is the verdict of the request's kind on the two states (`development_native_judgment_exact`). No theory is checked per answer. The judgment establishes admissibility for installation, not truth: that what an answer states holds is Isabelle's acceptance when it is installed, a request class of its own that is not built yet. |
+| The verdict is exercised on answer states assembled beside it. | The controls are native answers derived from the request (`development_control_answers`), applied to the request state as an executor's answer is (`development_answer_controls`). They give exactly the earlier verdicts: the seed's verification word is unchanged. |
+| The executor receives Isabelle text read back through the exporter's inverse translation. | The native packet is the request presented with the names it uses: the constant, the issued support, the least context and the incumbent statements (`development_native_packet`), transported as a word. The host decodes that word only to give an executor its rendering (`tools/native_answers.py packet`), and the answer returns as the octets of a native answer's word (`tools/native_answers.py judge`); the reader decides what arrived, so a transport mistake can change which answer arrives but not what is judged of it. |
+| A value presented with the names it uses is stated inside `Development_Publication`, which also restates three renaming lemmas of `Isabelle_State_Difference`. | One theory owns the notion, `Isabelle_Local_Names`: local names and embeddings, their invariance under every correspondence of tables, the identity and composition of renamings, and the table extended by the names it lacks. Publication, the repaired request, answers and packets instantiate it; the duplicate lemmas are gone. |
+
+Evidence: the check that advanced the base to `.build/check-20260919y` proved the changed and dependent
+theories in 52 seconds. The seed recipe executed every earlier stage with its word equal, including the
+verification stage, whose controls are now native answers, and a new stage presents the native answers of
+the ten issued requests (8.3 seconds): each restating answer is read from its word and accepted, and the
+same word without its terminating bit is refused. The machinery recipe's four words changed; comparing the
+machinery state's name tables before and after shows the same 61 roots, 300 names and 337 entities, the
+tables differing exactly in the qualified names of the three constants moved into `Isabelle_Local_Names`,
+so the change is that renaming. Its new stage presents the native answers of the 32 issued definition
+requests (14.9 seconds), each read and accepted and its truncated word refused. A probe on the earlier base
+compared the old and the new controls on every seeded and machinery request and found them equal. The
+report tool gained a subject name and a file of octets as arguments, so the next check executed every
+recipe again, each with every word equal. End to end on the new base: the native packet of the request for
+`digit_replay_inspect` (a word of 13,554 bytes; 30 names, 9 context entities, one incumbent equation) was
+read back, the deterministic executor answered it natively, and the native judgment read the answer's
+octets and accepted it; the answer that removes the equation and adds nothing was read and refused. Both
+are retained in `validation/development-answers` and replay natively.
+
+Open: installation of an admitted native answer as Isabelle material (translation through the packet's
+inverse reading, the frame, the proof as a narrower request, Isabelle's check and the round trip of the
+exported state) is the next request class. Admission as a generation and publication still consume the
+Isabelle-judged verdict; connecting them to the native judgment follows. The native answer refers to names
+by positions in its own name list and distinguishes kinds by tags, which the owner's question Q6 in the
+ledger concerns. The executor is deterministic; no agent has answered a native packet (Q4). The choice of
+this batch was made outside the loop and is a residual.
+
+Recorded 2026-09-19, commit `cbca4964`.
+
+## Structure is explicit; octets are inert
+
+The owner (2026-09-19, ledger, answering Q6): RRA separates inert opaque data, the octet payloads atoms
+carry, from structure, the incidence; nothing at that level can stop octets from carrying encoded structure,
+and it is Factor's semantics that is to enforce structurality, non-nominality, non-conflation, irredundancy,
+reuse and generalization by making them visible in the structure worked on. Encoding structure as opaque data
+to define meaning is cardinally opposed to that. Implementation may use such encodings where they are useful,
+but an implementation that is non-structural throughout cannot itself adhere to the principles, so the
+implementation is structural too, and a non-structural efficiency is a structurally presented idea that is
+applied. Octets are for truly inert data; structure may be carried as inert by other structures where it is
+truly not needed there; wherever structure is used, it is explicit.
+
+The assessment holds against the material of this plan, with one precision: Factor's semantics does not
+yet enforce the discipline by itself, since a pattern may state a payload literal and a program may compare
+payloads, so a program can read octets as structure; enforcement needs an explicit criterion, which task 1
+states. What the development layer uses as structure is largely carried in octets:
+
+| Where | Structure carried in octets | Read by |
+|---|---|---|
+| `Isabelle_Terms`, `Isabelle_Entities` | constructor tags (`[0]`..`[5]`) distinguish constants, variables, bound variables, abstractions, applications, and the six entity kinds; a definition and a code equation of one term differ only in an octet | every reader and the kind readings (`isabelle_code_equation_proposition`, `isabelle_definition_proposition`) through the datatypes the tags present |
+| name tables | a reference to a constant, type constructor or variable is its position in a table, presented as a binary natural in an octet payload; names are ASCII octets | subjects, mentions, support, closure, the correspondence of tables |
+| bound variables | de Bruijn indices as binary naturals | term readers and renaming |
+| the equation reading | `Pure.eq`, `HOL.eq` and `HOL.Trueprop` recognised by comparing name strings (`isabelle_equality_names`) | every subject reading; the seed's controls expose exactly this dependence |
+| `Development_Problems` | origin, authority and contract kind as tags | problems, loci, the residual record |
+| decisions | readiness, contracts, verdicts and selection are proved HOL computations over these datatypes, reflected into native questions as ground facets | admission of every loop decision |
+| efficiency | indexes (binary paths, ordered trees) are proved code equations of HOL functions, not notions of the state | every native execution |
+
+Incidence already does real work where the older foundation is used: complete data quotation, the indexed
+readers of artifacts, the adopted walk, generation citations, records and families. The development layer
+reaches that machinery only through trees of pairs whose leaves carry its distinctions. The presentation
+classes guarantee that each presentation is exact and replaceable, but exactness does not make a
+distinction visible to Factor: a Factor program must compare octets to tell a definition from a code
+equation. Two parts are inert and may stay octets: the characters of a name, used only to present a state to
+an executor or to translate an answer back into Isabelle text, and words in transport, which carry an
+artifact's complete data until its reader reads it structurally.
+
+The tasks and their order are in native_control_plan.md, under the direction of the work.
+
+Recorded 2026-09-19, commit `9538b364`.
+
+## A program's payload literals are the octets it reads
+
+Task 1 of the previous section asked for the criterion by which a use of octets is judged inert or
+read as structure, stated by reusing an existing argument rather than by inspection.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| `Factor_Positive_Parametricity` proves that the meaning of a program without material premises is closed under every map of the targets its patterns do not state, and that two targets it does not state are indistinguishable to it. | The argument is stated once over the leaves of a term, its targets and its payloads (`positive_meaning_leaf_map`, `positive_meaning_leaf_involution`, `positive_meaning_unlisted_leaves`), and the target theorem is its instance. Its second instance is the criterion: the payloads a program states literally (`system_payloads`) are exactly the octets it reads as structure, because two payloads it does not state are indistinguishable to it (`positive_meaning_unlisted_payloads`); every other octet is inert to it, compared at most for equality through a variable that occurs twice. A program with material premises reads artifact data by definition and stays outside the criterion. |
+| The octet uses of the native-control material are classified by inspection (the table of the previous section). | The payloads a finite program states are computed from its patterns and equal those of the program it decodes to (`finite_system_payloads_exact`), so which octets a decision reads is computed on the actual program without running it; a ground program built from rows states every octet of its rows (`finite_term_payloads_exact_pattern`). |
+
+Evidence: on a probe of the base heap the audit reads the programs of the seed's actual selection
+question back from their sources and computes their payload literals in 0.77 seconds. The question's
+source program states 10 payloads, the empty payload and the binary digits of the nine nonzero
+candidate indices, and so does its readiness condition, which admits all ten problems: the decision
+is a table of its own answers, and it reads every index as structure. The scope critic, a program
+written for the review's shape, states one payload, the empty payload that terminates every data
+list. The check that advanced the base to `.build/check-20260919aa` proved the
+78 changed and dependent theories in 88.9 seconds; no recipe's execution boundary changed, since no
+exported code did, and it was retained with 177 tool and 35 kernel tests passing.
+
+Open: the admission condition this criterion gives (a decision's program states no payload that is
+not admitted as inert) would refuse every decision of the loop today, since each is a ground table of
+its computed answers; it is enforced as the decisions become programs over the structural state
+(tasks 2 to 4). What the empty payload's use as a list terminator is, an inert delimiter or structure,
+is a question for those tasks too. HOL computations that produce the rows are outside native
+programs; the criterion sees them only through the rows they produce. This batch was chosen and made
+outside the loop and is a residual.
+
+Recorded 2026-09-19, commit `ec989116`.
+
+## Native definitions are normative; Isabelle verifies them
+
+The owner (2026-09-19, ledger) corrected a misunderstanding the earlier directions allowed: before genesis the
+normative definition of a notion is not its Isabelle definition. Isabelle's semantics is not the subject of the
+native machinery, so everything defined in Isabelle is opaque to it, except the machinery, still to be built,
+that translates native content faithfully into Isabelle. Isabelle's role is to verify that native reasoning and
+definitions are internally consistent until the native machinery can verify this itself; everything developed is
+native content with native semantics and native structure, translated only when required.
+
+The assessment holds against this plan's material. The older Factor library already follows the pattern: native
+programs whose meaning is their positive meaning (equality, artifact and generation admission, value comparisons,
+certified causes, the finite native evaluation of installed programs), each with its contract proved once in
+Isabelle. The development layer built for this plan does not: its notions (a problem's contract, readiness,
+requests, the verdict of a kind, selection, publication) are HOL functions, and a native question admits a ground
+table of their results, which the previous section's audit shows directly (the seed's selection question states
+its answers). Isabelle remains normative for truth before genesis in one precise sense: it proves that a native
+definition's positive meaning meets its contract and that native reasoning is sound; Factor's semantics and those
+bootstrap proofs are HOL by necessity, and native mathematical-proof admission (O-85) is their eventual native
+account.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| The development's notions are HOL definitions; native questions admit ground tables of their results; the tasks of "Structure is explicit" make their presentations structural. | Each notion of the development is a native definition: a Factor program over native structure, whose meaning is its positive meaning, with its contract proved once in Isabelle, which is the verification of its consistency. A native question evaluates the notion's program on the actual subjects passed as its argument instead of admitting a table; the HOL functions that compute the same results are the specifications the contracts state, retired use by use. The payload criterion of the previous section is the admission condition such a program meets: its literals are the octets it reads as structure. |
+| Task 2 presents Isabelle's theory content as structure: atoms, citations, binders and families. | Isabelle's theory content is opaque to the native machinery whatever its presentation, so a structural presentation of it does not make a notion native. Task 2 as designed is paused; the structural graph presentation drafted for it (`.build/impl22/t2/Finite_Structural_Graphs.thy`, not installed) is kept for presenting native structures where that is needed. |
+| Installation translates an admitted native answer about an Isabelle constant into Isabelle text (the next request class of "Answers are native content"). | Translation runs from native content into Isabelle, for verification. An answer about an Isabelle constant stays Isabelle content until its subject is a native definition. |
+
+The tasks and their order are in native_control_plan.md, under the direction of the work.
+
+Recorded 2026-09-19, commit `8a5d8fac`.
+
+## Readiness is a native definition
+
+The first step of the order of the previous section.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Readiness is a HOL function (`development_ready`), and the selection question admits a table of its results. | Readiness is a native definition (`Development_Native_Readiness`): settlement, the check of every decomposition and readiness are Factor definitions whose meaning is their positive meaning, built on the existing selection of a data list. The argument carries the whole subject, the table of problem keys with their decompositions, the answered keys and the open keys, so the status of a problem is structure of the argument; the program compares keys only for equality and its own clauses state no octet but the terminator of data lists. Isabelle verifies it: on every table whose keys and decompositions are data, settlement is the least closure of the table (`native_settled_exact`) and a key is ready exactly when it is open and every premise of every one of its decompositions is settled (`native_ready_exact`). |
+
+Evidence: on a probe of the base heap the theory loads with every proof checked in 8.2 seconds. The check that advanced the base to
+`.build/check-20260919ab` proved it in 33.7 seconds, reached no recipe and was retained with 177 tool and
+35 kernel tests passing.
+
+Open: presenting the development's dependencies and answered problems as the table and proving the closure
+equal to `development_settled`, so that the native definition's contract meets the development's readiness;
+the selection question evaluating the native program on its actual subjects instead of admitting a table;
+and the payload audit of the program's whole dependency closure (the selection and data recognition it
+calls). The choice of this batch was made outside the loop and is a residual.
+
+Recorded 2026-09-19, commit `8e82e477`.
+
+## The development's readiness is native readiness
+
+| Earlier proposal or state | Correction |
+|---|---|
+| The native readiness of the previous section is verified against the closure of its own table. | The development's problems, dependencies and answered problems are presented as that table (`readiness_presents`: distinct data keys, each problem's decompositions as lists of premise keys, the answered and open keys), and on every such presentation the native readiness of a problem's key is exactly the development's readiness (`native_development_ready`), the table's closure being `development_settled` in both directions. The development's readiness is therefore consumable as the native definition. |
+
+Evidence: on a probe of the base heap the theory loads with every proof checked in 5.9 seconds. The check that advanced the base to
+`.build/check-20260919ac` proved it in 31.4 seconds, reached no recipe and was retained with 177 tool and
+35 kernel tests passing.
+
+Open: the selection question still admits a table of computed readiness; it is next to evaluate the native
+program on its actual subjects, which needs the program installed as a native package (the executable
+compilation of an ordinary finite program) and the question's candidates presented as the program's
+arguments. The choice of this batch was made outside the loop and is a residual.
+
+Recorded 2026-09-19, commit `2d55b781`.
+
+## The selection question evaluates native readiness
+
+The next step of the order of "Native definitions are normative": the loop's first native definition decides
+which problems are taken, instead of a table of its HOL counterpart's results.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| The selection question admits a ground table of computed readiness: its facet is the positions of the ready problems, so the question states its answers. | Each candidate of the question is a problem's row (its key, its status as structure, and its decompositions as lists of premise keys) together with the table of the rows its settledness reads, and the only condition is the native readiness program installed as a condition of its own (`native_readiness_condition`). An admitted candidate is a ready problem (`development_selected_ready`) because on every presentation the native readiness of a row with its table is the development's readiness (`native_development_ready`, `development_readiness_presents`); nothing about readiness is supplied beside the question. |
+| The question's subject carries the development's whole table of rows, and every candidate is judged against it (impl-26's route, measured). | A reading whose result depends on other subjects is not local, and carrying that dependence in the subject made every call of every candidate carry the whole table: the machinery's selection took 89.6 s, 90.8 s of the stages in the observations. A candidate now carries exactly the rows its reading can reach, the answered problems reachable from its premises through answered problems (an open premise ends settlement whether its row is present or not), computed once as the transitive closure of the answered-premise edges (`development_readiness_closure`); the question's subject is empty. |
+| Native readiness is built on the library's selection of an occurrence from a data list, whose recognition of data goes through a material premise. | Readiness is composed of native collection notions at its own sites, every and some element of a list in a context and the value a keyed table holds (`Native_Collection_Programs`), each a family of ordinary rules over native coordinates whose conclusion binds every variable its premises use, with its local contract proved once (`native_rule_family`), and of three rules of its own: settlement, an answered row, readiness. The status of a problem is structure of its row, a leaf when answered and a pair of leaves when open. The program is closed, has no material premise and states no octet but the empty payload, so by the payload criterion it reads no octet as structure; problems are compared only for equality. |
+| Every element of a list in a context is checked by the library's context-list profile, stated for programs over natural coordinates. | The notion is stated once over any relation satisfying its recursion (`context_list_rule_relation`); the library's profile and the native family each establish the recursion for their own clauses and share the list semantics, so the argument is not repeated at the second coordinate type. |
+| A native question pairs the empty problem with each candidate through a ground program of rows, and a condition is the ground program of a facet's rows. | A question has a subject and a scope (`finite_subject_question`): the scope is a native program holding of any subject paired with each candidate, one rule per candidate whose premise is the guard source's universal recognizer, so a question states its candidates and never restates its subject; a condition is any native program installed beside the guard source and read at one of its entries (`finite_program_condition`), of which the ground condition of a facet and the scope critic are instances, and a program of its own is installed with the guard source (`finite_standalone_condition`). Every earlier question is the question of the empty subject. |
+| A stage evaluates the calls of the term demand of its arguments. | A program whose premises pair components into new arguments, as every definition carrying a context through a recursion does, demands calls outside the term demand, and the stage then had no evaluation: the native selection question was admitted nowhere. The stage demand is the closure of its requests under the premises of their applications (`finite_program_call_closure`), read by the frontier traversal without a universe (`finite_demanded_readings_closed`); where the term demand is closed the closure is the calls it bounded before (`finite_program_call_closure_term`), so every existing stage evaluates the same calls. |
+
+Evidence: on probes of the base heap the native selection returns the same problems as the reflected
+table on the seed, the machinery and a chain control, the seed's in 0.059 seconds (0.020 for the table) and the
+machinery's in 0.647 (0.203); carrying the whole table in the question's subject had taken 89.6 seconds on the
+machinery. The first check of the batch proved the 969 changed and dependent theories in 392 seconds (the list
+profile alone has 964 dependents), and the generated code of the seed and machinery modules did not compile: a
+rule without a site of its own is a polymorphic value, which the generated program could not use at the site type
+of its use, so its code is inlined where it is used, as the candidates had it and the installation had lost. The
+check that advanced the base to `.build/check-20260919ae` proved the 87 changed and dependent theories in 159
+seconds and executed every native-question recipe with every stage exiting normally. The seed recipe changed only
+its loop word, which presents the selection packet; every later word (verification, succession, publication,
+native answers) is equal, since the same ten problems are selected. The machinery recipe's five words changed,
+since its state is the loop's own notions, which the batch redefines: the state now holds 313 names and 355
+entities from 65 roots, posing 65 residual problems, 36 of them ready with nothing answered. The steering and
+source-development recipes changed the words of their stages with a nonempty question, which is now built through
+the scope program; on probes of the earlier and the new base their decisions are identical (the full scope admits
+producer 0 alone, one question admits 0 and 8, the empty scope poses no question), and so is every subsequent
+steered result and every source-development admission. On a probe of the new base the native selection admits
+exactly the development's ready problems, 10 of 10 on the seed and 36 of 65 on the machinery. The words were
+recorded, and the confirming check executed the six native-question recipes again with every word equal
+and was retained, with 177 tool and 35 kernel tests passing. Replaying the sixteen retained answers reconstructed
+fifteen with every word equal and reported the adopted walk as the published state's unchanged answer.
+
+Open: the scope states its candidates literally, so by the payload criterion the scope program reads the
+octets of the problems' binary positions as structure while the decision reads none; identity of problems is
+carried by those octets, and its structural form (problems as atoms, keys as citations) belongs to the tasks of
+"Structure is explicit". A candidate's table is searched by a linear walk, so a long chain of answered premises
+costs quadratic calls (a chain of 32 problems, half answered: 3.0 s); a keyed structure presented as a native
+notion is the structural way to remove it. The verdict of a kind and request construction are the next native
+definitions. The choice of this batch, and of the candidate's table as the locality of readiness, were made
+outside the loop and are residuals.
+
+Recorded 2026-09-19, commit `acde64b1`.
+
+## Keys and tables are structure
+
+The two open items of "The selection question evaluates native readiness": the selection question read the octets
+of the problems' positions as structure, and a candidate's table was searched by a linear walk.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| A problem's key is its first position presented as a binary natural payload, and the scope states the candidates literally, so the scope program reads the key's octets as structure. | A key is a path: the binary digits of the first position, each a shape, the empty payload for one direction and a pair of empty payloads for the other (`path_term`, `Native_Path_Stores`). The candidates, the scope and the condition state no octet but the empty payload, so by the payload criterion nothing of the selection reads an octet as structure; two problems are told apart by the shapes of their keys, and positions still order nothing. |
+| A candidate's table is a data list of rows searched by a linear walk (the keyed search), so a chain of answered premises costs calls quadratic in its length. | An index is an existing notion before it is a new one: the table is the binary path store of `Binary_Path_Stores` presented as structure (`store_term`: the empty store a leaf, a node its optional value beside its two children), and its native search descends the store along the key, one call per bit (`native_store_search_rules`), with its contract proved once (`native_store_search_program.exact`). The path store of rows is exact on single-valued rows (`path_store_lookup`), which every presented cone is because keys are distinct (`readiness_presents_formed`); a value found is a row's value whatever the rows (`path_store_found`), which is all soundness needs. |
+| The search's contract is stated for keys that are paths (impl-28's candidate). | Settlement's invariant quantifies over every argument its sites can be called with, so the contract is stated for every key term: a key that is not a path, a target or a nonempty payload, has no search that holds (`native_store_search_program.sound`). A contract that holds only on the presented subdomain would leave the invariant unproved on the rest. |
+
+Evidence: a serial probe on the accepted base loaded the four changed theories with every proof checked. On a
+chain of answered problems, evaluating native readiness now makes 30, 62, 134, 214, 294 and 646 calls at 4, 8, 16,
+24, 32 and 64 problems (41, 109, 341, 701 and 1,189 at 4 to 32 before), and readiness at 16, 24 and 32 problems takes
+0.32, 2.2 and 8.1 seconds (2.0, 25 and 163 before). The check that advanced the base to `.build/check-20260919ai`
+proved the 21 changed and dependent theories in 33 seconds with 177 tool and 35 kernel tests passing, and executed
+the seed and machinery recipes with every stage exiting normally: in both only the word of the loop report changed,
+which presents the selection packet, and every later word (verification, succession, publication, native answers)
+is equal, since the same problems are selected. On a probe of the new base, the
+payload literals of the selection question are the empty payload alone in its scope program, its readiness
+condition and its scope critic, on the seed and on the machinery alike (the scope and condition had stated the ten
+candidate indices before, by the audit of "A program's payload literals are the octets it reads"), and the native
+selection admits exactly the development's ready problems on both. The words were recorded, and the confirming check
+executed both recipes again with every word equal and was retained, with 177 tool and 35 kernel tests passing.
+Replaying the sixteen retained answers reconstructed fifteen
+with every word equal and reported the adopted walk as the published state's unchanged answer. A probe of the new
+base also measured the evaluation that stages use (keyed by the call's ordered term) against a key that compares a
+pair's right component first: 0.95 and 0.94 seconds at 24 problems, so the comparisons inside the keyed evaluation
+are not where the remaining cost lies.
+
+Open: calls are now linear in a chain's length, but every call carries the candidate's whole table as its context,
+and the evaluation's sets of calls, rows and applications compare terms structurally from the left, so every
+comparison of two calls of one candidate traverses that table: on impl-28's profile 93 percent of the time was that
+equality, and a chain of 64 answered problems still costs 82 seconds for its closure. Every native program that
+carries a context pays this, the verdict of a kind and request construction included, so the engine's comparison
+of calls is the next problem: sets of calls compared through an ordered key that meets the distinguishing part
+before the context (the context comes first in every collection notion), or keyed call sets throughout the demanded
+traversal and evaluation; the measurement above rules out the first for the evaluation, so the demanded traversal
+and the computation of each call's applications are to be attributed first. The choice of this batch, and of binary digits of first positions as the paths, were made
+outside the loop and are residuals.
+
+Recorded 2026-09-19, commit `3f280b99`.
+
+## A closure keeps no applications
+
+The first step on the open item of "Keys and tables are structure": where the evaluation of a context-carrying
+native program spends its time.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| A stage's demand is the closure of its requests read by the frontier traversal, which keeps every row it reads: each call with each of its applications. | The closure keeps only the calls: every application carries its call's whole argument, the context included, so keeping the rows compared every row read with every row kept, and the closure then discarded them. The traversal of the sites alone (`finite_demanded_sites`) steps exactly as the traversal does on its sites and frontier, so it returns the same sites (`finite_demanded_sites_readings`), and the closure is computed through it (`finite_program_call_closure_sites`, a code equation). |
+| The remaining cost of a context-carrying evaluation lies in the comparisons inside the keyed evaluation, which meet the context first (the design recorded with the previous batch). | Measured on the chain: a key comparing a pair's right component first changes the keyed evaluation's time by nothing that matters (0.95 against 0.94 seconds at 24 problems), and a profile of the closure puts 95 percent of its time in structural equality of calls inside the traversal's set operations while computing one call's applications costs nothing measurable. The traversal is the cause, so it is refined first. |
+
+Evidence: on a probe of the base heap the two appended sections load with every proof checked. On a chain of answered
+problems the closure takes 0.044 and 1.19 seconds at 16 and 32 problems without the rows, against 0.090 and 2.56 with
+them, and reaches the same calls. The check that advanced the base to `.build/check-20260919ak` proved the 210
+changed and dependent theories in 172 seconds and executed the six native-question recipes (seed, machinery,
+steering, development, source development and workflow) with every word equal to its retained word, as a
+refinement must; it was retained with 177 tool and 35 kernel tests passing. Replaying the sixteen retained answers
+reconstructed fifteen with every word equal and reported the adopted walk as the published state's unchanged answer.
+
+Open: the traversal's union of the visited calls with the frontier and the difference of the successors from them
+still compare calls structurally, and every call of a candidate shares its context, so the closure still grows
+steeply with a chain's length (4.6th power between 32 and 48 problems). A traversal that keeps the visited calls in an
+ordered index across its steps, with each call's key computed once, proved equal to `finite_demanded_sites`, is the
+next refinement; the evaluation's own set operations follow. The choice of this step was made outside the loop and is
+a residual.
+
+Recorded 2026-09-19, commit `d2665a6f`.
+
+## Calls are keyed where they differ
+
+The open item of "A closure keeps no applications": the demanded traversal compared calls structurally in the set
+operations of every step, and every call of one evaluation shares its context.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| The demanded traversal unites its visited calls with the frontier and subtracts them from the successors at every step, as finite sets compared term by term. | The visited calls are kept in an ordered member index across the steps, and the successors of the frontier are joined as one sorted listing of their keys (`keyed_demanded_sites`); for every key with a left inverse the traversal returns exactly the sites of `finite_demanded_sites` (`keyed_demanded_sites_exact`), so a stage's demand is its closure computed through keys (`keyed_call_closure`, `keyed_call_closure_exact`) in the generation, stage, reference and evidence code equations of `Keyed_Native_Evaluation`. |
+| A key comparing a pair's right component first does not help the keyed evaluation (0.95 against 0.94 seconds at 24 problems). | That key built the mirror of every call before comparing it. Every collection notion passes its context as the left component of its argument, so the calls of one evaluation differ on the right; a call's key is now its site with its term ordered at the right component of a pair first (`Right_Ordered_Terms`): the order of the mirrored term, computed on the term itself (`finite_term_compare_right`, `finite_term_compare_right_mirror`), with the equality of keys decided by the same comparison. Two calls of one context are compared where they differ, and only equal calls are traversed completely. |
+| The context comes first in every notion, so the equality of all terms can be decided at a pair's right component first (tried in this batch: the chain's closure fell from 1.41 to 0.12 seconds at 32 problems). | Which component tells two terms apart is a convention of the programs that build them, not a property of terms: presented generations share their right components, and the seed recipe's publication stage, which compares them, took 163.7 seconds against 142.5 in an isolated run. The global equality was withdrawn; only the keys of calls, whose convention the evaluation knows, are ordered right first. |
+
+Evidence: on probes of the base heap, a chain of answered problems takes 0.072, 0.82 and 3.85 seconds in the keyed
+evaluation at 16, 32 and 48 problems with right-ordered keys, against 0.19, 2.85 and 14.6 seconds with keys ordered left
+first and the same closure; the reach of the seeded state (next section) closes its 595 calls in 0.478 seconds through
+the keyed traversal against 9.47 seconds through the traversal of finite sets. The check that advanced the base to
+`.build/check-20260919ao` proved the 156 changed and dependent theories in 169 seconds and executed the six
+native-question recipes with every word equal to its retained word, as a refinement must; their stage times equal
+check ak's within the variation between runs (the seed's publication stage 141.3 against 142.5 seconds, the
+machinery's verification 38.2 against 36.9). It was retained with 177 tool and 35 kernel tests passing. Replaying the sixteen retained answers reconstructed fifteen with every word equal and
+reported the adopted walk as the published state's unchanged answer.
+
+Open: every call of a context-carrying program still carries the whole context, so an evaluation over a whole state
+pays the context in every call: the machinery's reach spends 121.9 of its 171.8 seconds closing 3,397 calls that each
+carry the state's table. Where a call's cost lies (formation of the values bound, comparisons of equal subterms, the
+store search, the rounds of the evaluation) is to be attributed before the engine is refined further; a presentation
+in which calls carry keys instead of the table is among the candidates. The choice of this batch was made outside the
+loop and is a residual.
+
+Recorded 2026-09-19, commit `c11eea1e`.
+
+## The reach of a state is a native definition
+
+The verdict of a kind judges that an answer state is closed from its roots, which is the reach of the state; the
+reach is the first native definition the verdict needs whose argument is a whole state.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| The constants a state reaches are the least closure of its reach rules computed in HOL (`isabelle_reached_constants`), which the verdict and the context assessment read. | Reach over a table of rows is a native definition (`Native_Table_Reach`): a row holds its key (a path), whether it is a root (a leaf) or not (a pair of leaves), and the keys of its predecessors; a key is reached when its row is a root or some predecessor is reached. It is composed of two collection notions (some element in a context, the search of a path store) and three rules of its own, states no octet but the empty payload, and on every single-valued table its positive meaning is the least closure of the table (`native_reached_exact`). A state presents its reach as the table of its constants, keyed by the binary digits of their positions, rooted at the heads of the state's roots, each preceded by the subjects whose statements mention it (`Isabelle_Native_Reach`); native reach on that table is exactly `isabelle_reached_constants` (`isabelle_native_reached`). |
+
+Evidence: on a serial probe of the base heap both theories load with every proof checked in 4.3 seconds. On the
+seeded state (60 constants, 186 mentions) native reach evaluates 595 calls in 0.874 seconds and returns the constants
+the HOL reach returns in 0.007 seconds; on the machinery's state (217 constants, 1,561 mentions, 3,397 calls) it
+returns all 217 in 171.8 seconds against 0.99. The check of the previous section proved both theories.
+
+Open: no decision reads native reach yet; the verdict of a kind as a native definition, whose closedness reads it, is
+the next design. At 171.8 seconds on the machinery the reach is not usable in a stage, which makes the engine's
+per-call cost of the previous section its prerequisite. The keys are the binary digits of positions in the state's
+name table, a presentation of Isabelle content, which the verdict's design is to reconsider. The choice of this batch
+was made outside the loop and is a residual.
+
+Recorded 2026-09-19, commit `c11eea1e`.
+
+## A native definition over a state re-verifies its context in every call
+
+The open items of "Calls are keyed where they differ" and "The reach of a state is a native definition": the
+machinery's reach took 171.8 seconds natively against 0.99 in HOL, and every native definition whose argument is a
+whole state pays what it pays. Where the time goes was measured before deciding what to refine.
+
+| Stage (the machinery's reach: 217 constants, 3,397 calls, each carrying a table of 37,835 nodes) | Measured on the base of `.build/check-20260919ao` | Cause |
+|---|---|---|
+| The demanded closure | 3.8 seconds (121.9 before the keys' equality compared right first); profile: 43 percent structural equality of terms, 41 percent formation of terms, 14 percent comparisons of keys | A call's applications are constructed by matching the clause's head against the call and instantiating its premises, and then verified again as an admitted instance: formation of every value bound and of every premise call, membership of each value in its own bindings (an equality of the value with itself), the interface's acceptance of the call and of each premise call, once for the requested application and again for the admitted instance. Every check traverses the table the call carries, although the construction placed each value there. Formation of all 3,397 calls, checked once each, takes 0.18 seconds. |
+| The evaluation over the closure | On the seeded state 1.22 seconds against 0.063 for its closure; profile: 68 percent structural equality of terms, 28 percent comparisons of keys, 2 percent formation. On the machinery it did not return within 640 seconds under profiling. | The applications of every demanded call are computed again and united as finite sets, which compares every application with every other and meets the shared context first; every round then sorts the keys of the settled calls, looks every premise up by its key (a present key is recognized only after its term is compared completely) and compares the settled sets. |
+| Comparisons of keys | 14 and 28 percent above | A key orders its term at a pair's right component first, and the store search passes its key before its store, so two searches at one node compare that node's whole subtree before their keys. |
+
+| Earlier proposal or state | Correction |
+|---|---|
+| The applications of a call are verified by the admitted-instance check after matching and instantiation have constructed them. | For a formed program and a call whose term is formed, the applications constructed by matching each clause's head (its pairs and literal leaves, and equal values at a variable's repeated occurrences, read as the functionality of the rows the match returns, `relation_rows_functional`), instantiating its premises, and checking its material premises and the shapes the interfaces accept are exactly its admitted applications, when the heads of the called definition cover their variables: every value bound is a subterm of the call and every premise call an instance of formed patterns with those values. The call's formation is checked once, and no check traverses a value the construction placed. Decided as a code equation of `finite_program_applications` with that contract; it serves every native evaluation. |
+| The applications of a demand are united as finite sets. | The applications of distinct calls have distinct heads, so the applications of a demand are listed call by call without comparing them (the listed union of `Listed_Set_Unions`, a union computed once and then only read). |
+| Every round checks that each rule's premises are functional by comparing every premise with every other, itself included. | Premise functionality is the functionality of a relation, whose existing execution compares each row only with the rows after it (`relation_rows_functional`), so distinct premise sockets are never compared by their calls. |
+| Every round of the evaluation compares calls through their keys. | The evaluation renames its rule table by the injective map sending each demanded call to its position among the keys of the demand, found through the ordered tree of those keys, and every other call to itself; the least closure of the renamed table is the renamed least closure (`finite_inference_result_renaming`), so the rounds compare positions, and each call is compared through its key once, when the table is renamed. |
+| A state's rows could be installed as ground clauses, so that calls carry keys and not the table (a candidate named with the previous section). | Not taken: the cost is the re-verification of the carried table, which the refinements above remove at its cause for every context-carrying program; a program per state would add a compilation and a contract per state, and the verdict compares the rows of two states, which is direct when the states are arguments. |
+| The store search passes its key before its store. | Kept until the refinements above are measured: if comparisons of keys then dominate, the search takes its store before its key so that a key ordered right first meets the key first, which changes the readiness and reach programs and their recorded words. |
+
+The refinements are taken in two steps: the constructed applications, the listed applications of a demand and the
+functionality of premises first, then the evaluation over positions, each with every recipe word unchanged. The bound they are to meet: the
+machinery's reach within five seconds and the seed's within 0.2. The choice of these refinements, of their order
+and of the bound was made outside the loop and is a residual.
+
+Recorded 2026-09-19 (task T2's decision); it is committed with task T3.

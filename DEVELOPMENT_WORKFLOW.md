@@ -130,6 +130,15 @@ copies that are no longer needed. Record the retained evidence that replaces
 those copies. Keep temporary storage bounded throughout the work, including
 after failed runs; do not accumulate obsolete files under `/tmp`.
 
+Record what a batch settles once, where it is read by topic: its decisions, with
+their reasons, evidence and limits, as an entry of [DECISIONS.md](DECISIONS.md);
+what a theory offers for reuse, in that theory's row of
+[THEORY_MAP.md](THEORY_MAP.md); the evidence also in the commit message; what
+remains open in the task graph. [native_control_plan.md](native_control_plan.md)
+changes only with its structure, the stages' standing or the direction of the
+work, and [REASONING_REUSE.md](REASONING_REUSE.md) only for a pattern of reasoning
+it does not already state.
+
 Current implementation boundaries and the accumulated reasoning inventory are
 recorded in [REASONING_REUSE.md](REASONING_REUSE.md). The continuing content review
 rule and historical evidence are in [GENERALIZATION_REVIEW.md](GENERALIZATION_REVIEW.md).

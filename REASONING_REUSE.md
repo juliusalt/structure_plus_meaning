@@ -557,7 +557,6 @@ reports. Empty and repeated subject families remain valid; ambiguous indices
 fail the structural subject gate. These results do not retrospectively justify
 older observation functions whose subjects are given only by registry prose.
 
-
 ## The fixed interfaces present their actual observation subjects
 
 All thirteen fixed investigations instantiate `Finite_Derived_Observations`.
@@ -963,7 +962,6 @@ case. Only the original history constructor is adequate in this scope. Native
 proof-artifact construction, mathematical-proof checking, complete development
 record enforcement, the full cost account and genesis remain separate problems.
 
-
 The complete native node constructor shares recursive term quotation, literal
 and citation tables, full row and table assembly, record framing and generic
 block installation. The original abstract inference-node assembly and its
@@ -982,7 +980,6 @@ Only the complete constructor is adequate. This is fresh local allocation;
 searching for an existing matching node, constructing and replaying complete
 derivation graphs, native mathematical-proof checking, the full cost account,
 development-cycle enforcement and genesis remain separate requirements.
-
 
 Source-derived certificates now instantiate the existing inference-proof
 structure with finite terms. `Finite_Functional_Selections` constructs every
@@ -1013,7 +1010,6 @@ The followed comparison has no residual. Recursive explanation traces, actual
 source positioning, graph placement and replay, native mathematical-proof
 checking, complete development admission and enforcement, the full physical cost
 account and genesis remain separate requirements.
-
 
 Whole native graph construction now shares the complete rooted code-family
 argument with the original abstract construction. Existing coordinate extension,
@@ -1144,7 +1140,6 @@ selection derives the fixture directly from the native constructor, preserving
 every failure position. Workflow policy and transitions, complete subject and
 criticism coverage, historical permission and physical cost remain open.
 
-
 ## Reusing original policy and stored invariants
 
 The [original-policy cause gate](validation/reconstruction/required-causes.md)
@@ -1167,7 +1162,6 @@ update. The generation constructor must still adopt that store and establish
 its own allocation and cost contracts. Scoped store formation does not enforce
 all development-workflow requirements.
 
-
 ## Original histories and fresh-prefix embeddings
 
 The history transition reuses original policy construction, certified-cause
@@ -1186,7 +1180,6 @@ allocation instance separates semantic conditions from word-coordinate growth.
 The current unary component path and physical cost are not discharged by that
 growth theorem. The common constructor and view contracts must still be used
 when allocation is joined to the actual generation store.
-
 
 ## Encoded stores and shared-boundary grafts
 
@@ -1211,7 +1204,6 @@ original merge and rename equations, with mapping, whole-output, formation and
 coordinate conditions kept explicit. Cached digit state, indexed generation
 integration and full physical cost still require their own contracts and runs.
 
-
 ## Complete allocation results and guarded graft prerequisites
 
 Complete index equivalence transfers existing bound and formation arguments to
@@ -1229,7 +1221,6 @@ theorem proves the alternative full-merge check. Native comparisons preserve
 the previous raw constructor subjects while adding admission and complete
 optional results. Closed cached indexed grafts and generation-store adoption
 remain subsequent uses requiring their own complete contracts and executions.
-
 
 ## Original guarded grafts in a persistent digit store
 
@@ -1249,7 +1240,6 @@ results, previous source correspondence and persistent histories. A valid
 bound is not assumed minimal. Indexed generation and history adoption remain
 subsequent uses requiring their own complete contracts and executions.
 
-
 ## Original history transitions with complete membership indexes
 
 Generic encoded site relations establish whole lookup and insertion equations
@@ -1266,7 +1256,6 @@ Shared actual operations feed the candidate family through exact preparation
 equations. Original-source recovery and subsequent-step construction reuse
 these complete contracts. Indexed generation construction and full development
 adoption remain later uses with their own outstanding premises.
-
 
 ## Original generation readers over complete lookups
 
@@ -1285,7 +1274,6 @@ with any complete downstream view. Complete pre-loading sources and native
 projection equality distinguish finite-set presentation order from relation
 identity. The report, shared-preparation and assessment contracts instantiate
 the existing relation-reader and subject-investigation machinery.
-
 
 ## General generation installation and complete optional composition
 
@@ -1310,7 +1298,6 @@ generation assessment preserve their separate questions. Shared preparation,
 whole subject projection, registered observations and revisions reuse the
 existing investigation content with the actual constructor candidates.
 
-
 ## Complete history components, policy scopes and optional result views
 
 The fixed header and variable material and ledger have one complete reconstruction
@@ -1333,7 +1320,6 @@ projection. Complete subject and reference equations feed the existing registere
 investigation and revision machinery. Cache fidelity, original validity,
 complete output correctness and historical reachability remain distinct.
 
-
 ## Established readings, constructor congruence and complete result identity
 
 An established original generation reading for each predecessor reduces the
@@ -1352,7 +1338,6 @@ subject conditions and methods with their actual shifted indices.
 The shared compressed execution transport, complete packet parser and existing
 reconstruction checks preserve every byte and parsed field. They establish storage
 and execution boundaries; the original Isabelle contracts establish meaning.
-
 
 ## Complete structural identity and checks on actual result scopes
 
@@ -1388,7 +1373,6 @@ history and actual index guard instantiate the known predecessor equation.
 This composes the two established refinements through the existing guarded
 append and injective optional result contracts.
 
-
 ## Complete execution sharing and independent native tasks
 
 Actual computed caches retain complete values and execute the original function
@@ -1420,7 +1404,6 @@ These contracts support the two concurrent packet reconstructions. The physical
 speed measurements do not prove the accumulated-process cost condition or select
 future development problems. Full workflow construction and the six conditions
 in problems.txt remain the next high-level objective.
-
 
 ## Closed native workflow and its operative producer choice
 
@@ -1473,7 +1456,6 @@ extension interface does not establish broader discovery or practical
 usefulness. Condition 5a remains open; condition 5b is deferred until after
 genesis. These are reusable bootstrap contracts, not a self-authorized handoff.
 
-
 ## Execution refinements chosen from complete native profiles
 
 Three repeated execution arguments are now reusable code contracts at their
@@ -1511,7 +1493,6 @@ and their results
 reach reports through raw finite-set list order, so a refinement needs either
 a representation-preserving equation or a presentation-invariant comparison.
 
-
 ## Validation cycle batch
 
 A join of two readings is admissible exactly when twelve pairwise footprint
@@ -1531,7 +1512,6 @@ An accepted proof base is reused by proving only changed theories and their
 dependents over its heap, and a recipe is executed again only when its complete
 source manifest changed. Isabelle binds a heap to the absolute paths of its
 sources, so the base keeps one fixed directory.
-
 
 ## Presented report batch
 
@@ -1741,24 +1721,11 @@ which had been the dominant replay cost. Concurrency settings stay at 16 proof
 threads, eight recipe jobs and default Poly/ML heaps because memory, allocation,
 stop-the-world collection and sequential dependency chains bound the machine's use.
 
-
 ## Consolidated overnight reusable content — 2026-09-18
 
 The accepted source inventory and fresh bootstrap proof are retained at
 [overnight-20260918](validation/overnight-20260918/README.md). These reusable
 contracts were introduced in the overnight work and are now repository theories:
-
-| Theory | Reusable content and retained prerequisites |
-| --- | --- |
-| Optional_View_Refinement | Optional receiving-view refinement; a successful view still needs the original subject/result connection. |
-| Faceted_Native_Questions | Native questions over concrete subjects and computed facets; supplied observations are not substituted for their operations. |
-| Conditional_Application_Review | Application methods checked against requested output and the original schema instance/material requirements; ordinary child truth is separate. |
-| Cached_Faceted_Questions | Prepared-question equations for internally constructed caches; arbitrary supplied caches are not interchangeable. |
-| Admitted_Conditional_Applications | Consume the original report before returning the application; preserve the complete original requirements. |
-| Certificate_Construction_Review | Compare complete optional proof results; both requested domain and original proof checking are required for the conjunction. |
-| Material_Application_Observations | Actual head-located literal material operands imply original schema/material satisfaction; no child-truth or general-coverage claim. |
-| Finite_Presented_Enumeration | Exact enumeration under an injective presentation; presentation order supplies no priority. |
-| Factor_Certificate_Policy_Continuation | Original certificate replay plus policy-record replay; history extension additionally requires exact policy/use/entry/material alignment. |
 
 Native_Control theories instantiate these contracts on the actual checked union
 judgment, original guard and child occurrences. The reconstructed complete
@@ -1774,12 +1741,6 @@ The seeded development state's problems carried no contract argument: `Developme
 applied the `Development_Refinement` constructor to nothing, so the theory did not load and
 the complete repository check stopped there. Choosing that argument was a semantic problem,
 and it is now answered by readings computed on the actual state rather than by an author.
-
-| Theory | Reusable content and retained prerequisites |
-| --- | --- |
-| Isabelle_Code_Equations | The entity language's code-equation reading, separate from the subject reading that a definition of the same constant shares. It refuses every other entity kind and states nothing about the equation it returns. |
-| Filtered_Native_Questions | The native question whose candidates are actual subjects and whose single original condition is computed on each of them, with its admission contract. Extracted from its first use in `Native_Control_Syntax_Candidate`, which now instantiates it. It supplies no observation or preference: several candidates may satisfy the condition, and an empty subject list or unsatisfied condition yields no question. |
-| Development_Refinement_Contracts | A constant's scope in a context, a refinement's demand on that scope, the constant as the state declares it as the problem's contract (refused unless declared once and stated by at least one demanded statement), the whole demanded family as its incumbent, and the problems and dependencies read from the actual statements. An admitted index yields a demanded statement of the incumbent; it establishes nothing about an answer. The contract was first the single demanded statement; a constant of several code equations (`finite_data_walk`, two equations) then had no problem at all, which exposed that the statement is identification of the incumbent, not what an answer establishes. |
 
 Two readings are kept apart: the scope of a constant is what the state presents about it,
 and the demand selects what a refinement must establish within that scope. The kernel
@@ -1824,13 +1785,6 @@ growing with the square of the term (the largest, 4,382 nodes, takes 13.6 second
 compiled forest then joins every carrier through right-nested unions of listed finite sets,
 each inserting member by member into the growing list.
 
-| Theory | Reusable content and retained prerequisites |
-| --- | --- |
-| Factor_Finite_Ground_Evaluation | Every clause an installed ground source places at its entry is an alpha variant of a placed exact recognizer, so it has no premise and no variable; native evaluation therefore answers every demand at the entry of any installed ground source. It consumes the installation contract (`finite_source_native_run`), the renamed clause family and `schema_family_variant_origin`; it decides no demand, and the exact evaluation contract still states the answer. |
-| Isabelle_Acceptance | `isabelle_demand_acceptance_members`: the decision is total and equals the demanded entities split by membership in the supplied ones. It is derived from the notion's existing exact theorem and the ground-source totality, and it is the code equation of the notion, so every execution consumes the contract instead of installing, compiling and reading back a program to decide membership again. |
-| Native_Control_Seed_Subject | The seed report's presentation now carries its injectivity contract, which the family presentation of controls composes. |
-| Development_Seed | The name-moving controls are derived from the equation reader's own `isabelle_equality_names`, one control for each recognized name, instead of one name chosen by hand. |
-
 The contract was the only thing the notion's execution had to establish: its exact theorem
 already states which demanded entities are accepted, and only the unanswered case stood
 between that theorem and an equation. Proving the operation total closed it without any
@@ -1859,13 +1813,6 @@ the old control reported lost readings was written before the recipe had ever ru
 The seeded problems now pass through the first steps of the loop as native decisions over
 the actual state, and the executed decisions are part of the reconstructed report.
 
-| Theory | Reusable content and retained prerequisites |
-| --- | --- |
-| Development_Problems | Settlement is corrected: a dependency row fires only once its own problem is answered. Before, a problem without prerequisites was settled with nothing answered, so a problem depending on it was ready before its prerequisite had an answer; on the seeded state, which has no prerequisites, readiness is unchanged. Ready problems are pairwise independent (`development_ready_independent`). |
-| Filtered_Native_Questions | The admitted subjects and single admitted choice, which had lived in the overnight `Native_Control_Admitted_Selection` behind its guard imports, are the reusable consumers of any native question and are now stated here; `native_packet_subjects` reads them from an executed packet without admitting its report a second time, and `filtered_admitted_subjects_condition` gives the computed condition at every admitted subject. |
-| Development_Requests | Selection of the next problems is the filtered question on their computed readiness, with every ready problem admitted and ties kept; admitted problems form one independent group. A refinement request carries its problem, its constant, the constants the refined entities mention as support, and their least context: the refined entities and the declarations of the support, proved exact, closed under mentioned constants and contained in every closed part of the state containing the refined entities. |
-| Development_Seed_Loop | The seed's ten contract decisions and its selection decision as executed native packets, the admitted group and one request per admitted problem, presented in one report of the seed recipe. |
-
 Executed on the seeded state: each contract decision admits exactly the demanded code
 equation, the selection admits all ten problems, and every request's context holds the two
 refined entities and one declaration for each support constant (support between 7 and 22
@@ -1887,14 +1834,6 @@ state an answer's checked context defines.
 
 | Theory or tool | Reusable content and retained prerequisites |
 | --- | --- |
-| Ordered_Member_Trees | The ordered member index and last-occurrence deduplication, factored out of `Ordered_Finite_Rows` at their second use; investigations and keyed evaluation now instantiate the one index. |
-| Keyed_Finite_Sets | Listing, union, equality and membership of finite sets through an ordered key with a left inverse; a subset test is one index lookup per member (`keyed_members_subset`). |
-| Keyed_Native_Evaluation | Inference steps, histories, witnesses, settlement and program evaluation through keyed lookups, each proved equal to the original, composed over the source-shared workflow equations of `Factor_Workflow_Execution_Sharing` rather than competing with them. A native decision over sixteen candidates fell from 7.2 to 4.8 seconds (eight: 0.77 to 0.43); the scope-review stage from 3.0 to 1.45 and its evidence check from 3.3 to 1.7 seconds. The remaining cost is superlinear (application matching, term formation checks and term equality inside the stage; generation 0.37 seconds at sixteen) and is the next measured problem of this path. |
-| Ordered_Term_Demands, Finite_Sorted_Set_Execution, Finite_Set_Composition, Factor_Invariant_Evaluation_Sharing | Term components listed once in canonical order, term demands formed as products, a proved merge sort for canonical listings, and applications computed once per history and evaluation; all compute the original values. |
-| Isabelle_State_Difference | The correspondence of two checked states through the names both tables hold, and their removed and added entities; the difference accounts for both states completely and is empty against any renaming of a state (`isabelle_state_renamed_unchanged`). The read-state locality of a theory change in the stage-1 gate is an instance of this notion. |
-| Development_Refinement_Verification | The verdict of a refinement answer from the request state, the request and the answer state, and its local contract (`development_refinement_verdict_contract`): only the subject's code equations change, they stay within the issued support, the answer state is closed and keeps the roots. |
-| Development_Refinement_Repair | A refused answer's repair computed from its verdict: the extended request state, the request issued again, the definition problems of introduced constants and the conservativity verdict of the extension; the extension keeps every entity and position of the request state (`development_request_extension_persists`). This decomposition is computed, not yet a schema of the development library. |
-| Development_Seed_Verification | Seven derived answer states per seeded request exercising acceptance and every refusal of the verdict, presented in the seed recipe. |
 | Isabelle_Entity_Export (`define_again`), tools/development_answer.py | The same roots exported again in an answer's checked context, with the constants the answer introduces expanded and seeded; the harness frames an answer body in the theory that defines the requested state, checks it heaplessly on the accepted base, exports the verdict and repair, and presents their word. It moves bytes only; five retained answers (validation/development-answers) exercise acceptance, an Isabelle refusal, an axiom, excess support and an introduced helper. |
 
 The request's Isabelle proof context is the theory that defines the requested state. Checking
@@ -1906,219 +1845,19 @@ loop's policy, adoption into the refinement layer and the successor state are no
 
 | Theory or tool | Reusable content and retained prerequisites |
 | --- | --- |
-| Development_Policy (`development_policy_admits_member`) | The converse of the first loop's policy contract: every accepted entity is admitted. The contract now states in a theorem what its text stated. |
-| Development_Successor | Admission of an accepted answer as a generation; problems and dependencies moved by the correspondence, reusing `finite_embedded_inferences` and `finite_inference_result_renaming` rather than a new transport; the history of recorded decisions with a record presentation composed from existing option and pair presentations; the repaired successor. |
-| Development_Decomposition | The library of decomposition rules beside prerequisites, with issuability, the broad-request refusal and the composition law instantiated from the least closure. |
 | Development_Request_Packets, tools/development_executor.py | The executor's packet as the exporter's inverse reading (the refined constant, its support, its least context with the incumbent equations), and a deterministic executor that answers from the packet alone by restating a single incumbent equation; its admission word equals an agent's for the same equation and the retained replay. An answer states one equation: an incumbent of several equations has no restating answer, a limit of the answer frame. |
 | tools/replay_development_answers.py | Reconstruction of every retained answer against the active base, comparing outcome and verdict word; a differing word is a re-evaluation, not a replay failure. |
-| Development_Successor (`development_admitted_keeps_independent_current`, `development_reevaluations_exact`, `development_reevaluations_local`) | Concurrent admission of the independent group through the verdict's contract and the closure of the answer state, with the declared-once premise computed on the state; re-evaluation of absence readings computed from the history, reaching exactly the issues whose readings changed. |
 
 ## Answers framed where they are adopted; declared code equations — 2026-09-18
 
 | Theory or tool | Reusable content and retained prerequisites |
 | --- | --- |
-| Isabelle_Constant_Closure (`code_equation_theorems`, `note_code_equations`) | The code equations in effect for a constant, read exactly as declared, moved here from the exporter so the exporter and every answer frame read them in one way. Under the global context the certificate had been rewritten by every simplification rule; an answer's own equation could be read as the incumbent. Certified alone (empty simpset, no function transformers) the reading silently returned nothing for Suc-pattern equations under Code_Target_Nat; the code graph's certificate is not local (callees' sort demands). The declared equations are now taken from the list `Code.get_cert` hands every function transformer, untransformed, unoverloaded as certification does. |
-| Isabelle_Entities (`isabelle_rooted_context_data`) | One presentation of a rooted state (ordered roots and context), reused by the loop presentation and the syntax judgments instead of composing it inline. |
 | tools/development_answer.py | An answer's theory is named by the answer's canonical content; a refinement-layer answer is framed at its adoption position (the boundary's imports), beside the request state, so its one acceptance is the adopted one; an answer whose theory is a repository theory is judged as the published state's unchanged answer; `--retain` writes the retained record. The name is a transport choice, recorded as a residual. |
 | tools/development_adoption.py | Adoption of an accepted refinement-layer answer: re-judged verdict word equal to the retained one (the expected incumbent has not moved), byte-exact installation at `Native_Execution_Refinements`, the ordinary check (every word equal), re-judgment as an unchanged answer in the adopted workspace; measured recipe seconds retained as observations; withdrawal on refusal and for controls. No native selection record and no ranking: both have no internal account yet. |
-
-
-## The first real answer and its indexes — 2026-09-18
-
-| Theory or tool | Reusable content and retained prerequisites |
-| --- | --- |
-| Development_Answer_0ccf746fe2cf (the adopted answer to `Factor_Complete_Data_Walks.finite_data_walk`) | The complete data walk stated once over four readers of an artifact (incidence rows headed at an address, functional values there, whether a counted value is attached there, carrier membership), proved equal to the existing walk when supplied with the artifact's own readers, and its indexed instance: the three address-keyed relations held by `Binary_Relation_Stores` under `address_binary_path`, the carrier by `Ordered_Member_Trees`. `address_relation_store_member` is the one membership law every address-keyed store uses. The walk's second statement over readers is a limit of the refinement frame, not a second notion to reuse. |
-| Isabelle_Entity_Export (`define_again`) | An answer's introduced constants are the logical constants its theory declares; an abbreviation declares none (pending edit, parked in `.build/impl4/exporter-abbreviations.txt` until the adoption check completes). |
-
-## Publication is a transaction against the published state — 2026-09-18
-
-| Theory | Reusable content and retained prerequisites |
-| --- | --- |
-| RRA_Finite_Transactions | The executable instance of `RRA_Selection` and `RRA_Transaction` over finite generations: snapshot formation (at most one generation per locus, `fcard` of the loci), lookup through the existing singleton reading, comparison, update and observed comparison, each equal to the original on the decoded cores, so `finite_transact_exact` gives every structural transaction theorem to the executed one. `finite_locus_transaction` is the transaction a publisher builds from what it read at one locus: replacement of that generation, or admission when the locus was absent. Nothing here creates succession or validates a cause. |
-| Development_Publication | The names a presented value uses, carried with it: the existing table embedding into the list of the names the value mentions; its local contract is invariance under every correspondence of tables (`development_local_contract_renamed`, `isabelle_local_entities_renamed`), with renaming composition and congruence on the positions a value uses as the reusable steps. A problem's locus is its contract with its names, so every problem posed about one constant stands at one locus. Development generations are library generations whose targets are complete data quotations; incumbents are base generations; an admitted answer is published by the transaction expecting the incumbent it was judged against, which replaces exactly its locus or yields the complete observed comparison (`development_publication_applied`, `development_publication_conflict`, both instantiated from `RRA_Replacement` through the exactness theorem, not proved again). Causes are recorded judgments (acceptance, verdict); their validity under the policy is a separate judgment. |
-| Development_Seed_Publication | The seed's published state and its controls: the first publication of each request applies, the second over the same incumbent conflicts, the two answers' payloads are equal, the sequential publication of all answers applies. |
-
-## The package reading is demanded — 2026-09-19
-
-| Theory | Reusable content and retained prerequisites |
-| --- | --- |
-| Finite_Demanded_Closures | A rooted reading of rows at sites, stated over a universe of sites (`finite_rooted_sites`: the rows at the sites the roots reach through the edges the rows supply) and as a frontier traversal that reads each demanded site once, only after a root has reached it (`finite_demanded_readings`). `finite_demanded_readings_exact` proves that both return the same sites and the same rows under the reading's own boundary: every site with a row lies in the universe. The universe, the reading and the successors are the caller's; nothing here judges what a row means. Recovered proof graphs are its second instance (`Factor_Demanded_Graph_Readings`). |
-| Factor_Demanded_Package_Readings | The package instance. The definition grammar supplies the boundary: a definition is read from a record of the artifact at its use, so its root is a position of the environment (`finite_definition_reading_position`). The traversal becomes the code of `finite_native_definition_sites` and `finite_native_definition_graph`, reading a definition only at the sites the roots reach and checking environment formation once; package formation, the recovered program and every reading built on them keep their values. Before, a definition was read at every position of the environment, including every address of every literal target, so reading a policy cost the payload it admits. |
-| Factor_Demanded_Graph_Readings | The second instance: a recovered proof graph reads a node only at the sites its root reaches through the premises the nodes discharge (successors: the children a node's premises cite). The node grammar supplies the boundary (`finite_proof_reading_position`); the universe formulation's sites are the traversal's through the converse of the discharge edges (`finite_native_proof_sites_rooted`), and so are its rows (`finite_demanded_proof_readings`); the traversal is the code of `finite_recovered_graph`, with formation checked once. Found by attribution: replaying a judgment on a whole artifact read a node at every address of the literal (at 401, 801 and 1,601 addresses 0.35, 2.5 and 19.6 seconds; the demanded graph reading takes 0.011, 0.024 and 0.050). |
-
-## The executable quotation is compact — 2026-09-19
-
-| Theory | Reusable content and retained prerequisites |
-| --- | --- |
-| Factor_Finite_Data_Syntax | The executable complete data quotation is the data syntax readdressed. `data_syntax_position` numbers the nodes by a counter in construction order and `data_syntax_carrier` proves that the numbering is exactly an interval over the carrier, so it is injective; `compact_syntax_address` writes a number in binary digits (reusing `natural_binary_digits`; injective, formed, the root keeps the empty address). `finite_data_syntax_sound`/`_exact` state the result as `push_object` of the syntax by that map, and `finite_data_syntax_complete_quotation` keeps its statement, so every consumer of the quotation contract is unchanged. The interval argument applies to any syntax whose construction addresses children by prefixing: the native compiler's pattern, schema and definition syntax is the next instance. |
-| Factor_Finite_Syntax_Accumulation | Pair rows stated by a node's root, two ports and two child roots (`finite_syntax_rows_pair`), so accumulated rows serve every addressing of the syntax; the prefix-specific pair accumulation was removed as unused. Rows listed again in their canonical order present the same object (`finite_syntax_rows_object_listed`): a construction whose rows arrive in another order lists them once, and every later reader meets a canonical listing. |
-| Factor_Finite_Accumulated_Data_Syntax | The quotation's code: rows built at their final compact address while threading the node counter, accumulated once (`finite_data_syntax_rows_exact`, `finite_data_syntax_accumulated`) and listed once in canonical order (`finite_data_syntax_accumulated_code`). The prefix construction had emitted its rows in ascending order by accident of its addresses; compact rows arrive in construction order, and without the listing every later listing, comparison and formation check of a quotation sorted it again (at 4,000 rows, twenty listings 0.446 against 0.027 seconds, twenty equalities 0.849 against 0.061). Canonical order is a property the consumers' fast paths read (`Finite_Sorted_Set_Execution`), so a producer of finite sets states it where it constructs them. |
-
-## Unions computed once are listed — 2026-09-19
-
-| Theory | Reusable content and retained prerequisites |
-| --- | --- |
-| Listed_Set_Unions | The library executes the union of two listed sets by inserting one listing into the other member by member, each insertion tested against every member present, so a union of many parts costs the square of the whole. A union that is computed once and then only read is the same set whatever its listing repeats: `listed_union` is the union by definition and its code concatenates the listings; `listed_image_union` joins the images of a listed set in one pass (`listed_image_union_code`, from `listed_image_union_fold`). Retained limits: the listing is not canonical and may repeat a member present in two parts, so a consumer that lists or compares the result sorts it again, and an accumulation iterated to a fixed point keeps the library's union. Membership is still a scan of the listing; a consumer asking many membership questions of one set uses the existing ordered member index (`Ordered_Member_Trees`) instead. |
-| RRA_Listed_Environment_Positions | The first use: the positions of an environment are the listed union of each artifact's carrier paired with its use (`finite_environment_positions_listed`, the abstract code of the finite set). Environment positions are read by the fresh-coordinate, readiness, anchor and judgment readers of certified causes; with a literal target of thousands of addresses in the environment they had cost the square of that target (application readiness 0.049, 0.189 and 0.764 seconds at payloads of 1,601, 3,201 and 6,401 addresses; 0.002, 0.003 and 0.007 listed). |
-
-
-## Development causes are certified — 2026-09-19
-
-| Theory | Reusable content and retained prerequisites |
-| --- | --- |
-| Development_Policy | A policy over any list of presentations (`development_policy_source_with`): its contract states exactly what it admits, the listed presentations (`development_policy_with_exact`), and supplies its installed package (`development_policy_with_package`). The entity policy of the first loop is its instance over the presentations of the checked context's entities (`development_policy_source_listed`), so its theorems are now instances of the general contract rather than separate proofs. Why a list was chosen is the constructor's contract, never the policy's. |
-| Development_Certified_Generations | A policy's judgment of a payload is separated from recording it. The judgment (`development_policy_judgment`) constructs a certificate from the policy's program for the demand of its definitions on the payload (the policy's entry calls the listing entry on the same payload, so the demand of the entry alone is not closed), replays it, quotes the replayed scope and checks it against the policy with the known-scope condition of `Factor_Known_Replay_Policy`; it depends on the listed presentations and the payload alone. Recording it (`development_recorded_generation`) constructs the generation in an environment of generations beside cited predecessors. `development_certified_generation_route` proves judgment-then-recording to be the library's `certificate_policy_record` composition, so every contract of that composition holds without being proved again. The earlier draft restated that composition by hand and checked the recorded cause by reading it back: 13.7 of about 20 seconds per generation at a seed payload. A family's judgment is keyed by the family's presentation with its names, and incumbents and answers are stated through a supplied judge equal to the judgment, so a use judges each presented family once however many generations record it. Retained limits: a family's policy lists only that family, so the recorded cause carries the policy but not the checked context, and the family's acceptance is the constructor's contract (owner question Q1); the cause quotes the replayed scope, which holds the payload twice, once as the policy's literal and once as the call's argument; and an absent result does not distinguish a refused payload from an unavailable input. |
-| Factor_Certificate_Policy_Readiness | Recording a replayed judgment rechecked that the replay environment proves the call and that the call's argument is the whole payload; the certificate replay's contract already states both of the environment it constructs (`certificate_replay_literal_ready`), so the composition records by the quotation attempt alone (`certificate_policy_record_ready_code`) and the judgment does not recheck them. |
-| RRA_Formed_Snapshot_Transactions | Formation is an invariant of the published snapshot, not a property to recheck: a successful transaction returns a formed snapshot (`finite_transact_applied_formed`), so a transaction on it checks only itself (`finite_transact_formed_exact`). `finite_locus_publications` publishes generations in turn, each against the snapshot the previous one left, and checks the starting snapshot once (`finite_locus_publications_code`); a snapshot that is not formed refuses every transaction. Checking the whole snapshot at every step had made each publication pay for every generation published before it (2.65 seconds per transaction over ten certified seed incumbents). |
-
-## Admitted answers are published natively — 2026-09-19
-
-| Theory | Reusable content and retained prerequisites |
-| --- | --- |
-| Development_Refinement_Repair | `development_repair_state`: the state a repaired answer is judged against again is stated once; the repaired successor had restated it inline and an admitted answer's route would have restated it again. `development_refinement_repair` keeps its own let-bound extension, because stating it through this definition would compute the verdict a second time for every judged answer. |
-| Development_Admitted_Publication | The route an answer is admitted through (`development_admitted_route`) and its publication (`development_answer_publication`) compose existing notions only: the certified incumbent and answer of `Development_Certified_Generations`, the locus transaction and `finite_locus_publications`. That the publication applies is the replacement theorem of the published state instantiated (`development_answer_publication_applied`), holding for every judge because the locus and formation of a recorded generation do not depend on its judgment (`development_judged_generation_fields`). The harness (`tools/development_answer.py`) presents it as its own report beside the verdict, so admission (the verdict and the certified generation) and selection (the transaction) stay separate words. Retained limits: the published state the transaction runs on holds the incumbent alone, since no persistent published state of the refinement layer exists; an absent incumbent does not distinguish a refused family from a failed judgment; and the harness computes the certification twice, once for the word and once for its summary. |
 
 ## Answers are confined to their declared parts — 2026-09-19
 
 | Theory or tool | Reusable content and retained prerequisites |
 | --- | --- |
-| Development_Answer_Parts | The declared parts of an answer are read by Isabelle's outer syntax with the keywords of the context the answer is framed in, never by the host: tokens, commands and their kinds are Isabelle's own (`Token.explode`, command tokens, keyword tokens), so the reading follows every command the frame's imports declare. It refuses by form alone: commands outside the declared kinds, attributes and targets in declarations and statements (they would act beyond the answer's own constants once its theory is adopted), a proof that continues past its lemma, an equation that is not one string token, a method that runs ML, and control or document antiquotations. The meaning of the parts stays the verdict's. A name the definitions introduce must not already name a constant or a fact of the frame (`Sign.intern_const`, `Global_Theory.intern_fact`), since the adopted answer would change what it reads as in every importing theory. Retained limits: the packet does not yet state the declared form to the executor, and methods defined by later theories that run ML would have to be added to the refused names. |
 | tools/development_answer.py | The reading runs in a session of its own that imports exactly the frame's imports and holds the parts only as ML strings (`parts_theory`), before the answer's theory exists; a refused answer is recorded with Isabelle's reason (`refusal`) and never framed. |
 
-## The loop's decisions are admitted generations — 2026-09-19
-
-| Theory | Reusable content and retained prerequisites |
-| --- | --- |
-| Development_Publication | Loci of decisions beside the loci of problems: the issue locus of a problem and the development's selection locus, distinguished by the constructor of their presentation and proved distinct from every problem locus (`development_decision_loci_distinct`). Distinct formed loci are distinct targets because a complete data quotation determines its value (`development_data_target_injective`, from `complete_data_quotation_whole_unique`), so a transaction admitting an issue never meets the incumbent of a problem. Admission at an absent locus (`development_publication_admitted`) is the admission transaction of the published state executed through the exactness theorem, as the replacement was. |
-| Development_Certified_Generations | `development_payload_generation_with`: recording any presented payload under the policy that lists it is one construction, extracted at its second use; the family generation, the incumbent and the answer are restated through it, and its contract (`development_payload_generation_certified`) is the family contract without the family's guard, so each use proves only its own guard. `development_judged_generation_fields` moved here from the publication, where it had been proved for the one use. An answer's citations are named (`development_answer_citations`): the issue at its problem's issue locus, and nothing else, because the issue cites the incumbent and only direct edges are recorded. Recording is stated over the record constructor (`development_payload_generation_using`), as the library's replay and policy attempts are (`policy_record_replay_from_source`, `digit_history_source_attempt_using`), and a chain that records into environments it has itself recorded, citing generations it has just recorded, executes with the known-predecessor constructor: `finite_construct_known_original_generation_exact` instantiated a third time, after the known history control and the digit history. Its premises (a formed environment, cited rows that read back) are the contract of the recording that produced them (`development_payload_generation_recorded`) carried by inclusion (`finite_check_generation_included`). |
-| Development_Decision_Generations | A selection and an issue are payloads of the same construction, so their certified contracts are instances (`development_selection_generation_certified`, `development_issue_generation_certified`). The round's decisions are read from the loop's own selection and issuing (`development_loop_decisions_made` composes `development_loop_selection_ready` and `development_loop_issue_leaf`), so no decision generation is constructed for a decision the loop did not make. A schedule is not recorded: the admitted problems are already the independent group (`development_selected_independent`). The chain tops, a judged answer's publication and the seed report, give code equations that record with known readings (`development_answer_publication_known`, `development_seed_publication_from_known`); the definitions keep the original constructor, so every contract is stated of the original. |
-
-## Problems of a constant, and the loop's notions as residuals — 2026-09-19
-
-| Theory | Reusable content and retained prerequisites |
-| --- | --- |
-| Development_Constant_Problems | The problem of a constant is stated once, over the reading that selects its demanded statements and the constructor that marks its kind: the scope, the statements, the constant as the state declares it when it states a demanded statement (`development_stated_constant`), the contract, the native question and its executed packets for a list of constants (`development_contract_packets`), the problem, its dependencies read from its statements, the unstated constants, and the decomposition, premise and non-ambiguity contracts. Extracted at its second use: the repair's definition problems had restated the refinement's construction for kernel definitions, with a different contract (the definition proposition instead of the constant), so a definition problem changed identity whenever its definition changed. A refinement and a definition of one constant are different problems because the kind is part of the contract (`development_readings_separate`). Retained limits: a reading is a function the caller supplies, so pairing it with the right constructor is the caller's (the two instances pair them); the contract of what an answer to a definition problem must establish beyond its constant is not stated. |
-| Development_Refinement_Contracts | The refinement's notions are the instances under the code-equation reading; their contracts are the general ones, and only the two facts its users consume are restated (`development_refinement_statements_state`, `development_refinement_problem_subject`), with the problem's former defining shape as `development_refinement_problem_contract`. |
-| Isabelle_Code_Equations | The definition reading (`isabelle_definition_proposition`) moved here from the repair, beside the code-equation reading it is kept apart from. |
-| Development_Requests | An executed selection admits only ready problems, read from its admission without admitting the report again (`development_selection_packet`, `development_packet_selected`, `development_packet_selected_ready`): factored at its third use, after the seed loop and the loop's recorded selection; the seed loop and the machinery instantiate it. |
-| Development_Machinery | The loop's own notions become native residual problems through the existing constructions only: the exporter defines them as a rooted state, each root is the problem of its constant under the definition reading with origin residual and authority generated, dependencies are read from the kernel definitions, and the contract decisions and the selection are the loop's own questions. Retained limits: which notions are roots is a residual choice, the frontier's development constants are not residuals of the record until the state is extended to them, tool residuals have no notion in the state, and no requirement or verifier of a definition answer exists, so a selected residual cannot yet be answered. |
-
-## An artifact is asked through its reading — 2026-09-19
-
-| Theory | Reusable content and retained prerequisites |
-| --- | --- |
-| Factor_Indexed_Readings | Every syntax reading of an artifact asks it the same questions at an address: the incidence rows headed there, the functional values attached there, whether a counted value is attached there and whether the address is in the carrier, and pattern and term readings bound their recursion by the carrier's size. The reading of an artifact (`artifact_reading`) collects the answers; it is the notion the adopted walk answer had stated as four separate readers, now carried as one value. The scanned reading asks by traversing the artifact; the indexed reading answers through the indexes the walk answer introduced (the address-keyed relation stores of `Binary_Relation_Stores` under `address_binary_path` and the ordered member index of `Ordered_Member_Trees`), built once per reading, and the two are equal (`indexed_artifact_reading_exact`, from the walk answer's `indexed_heads_exact`, `indexed_values_exact`, `indexed_counted_exact`). The walk takes the same reading (`indexed_data_walk_reading_code`), so the indexes of an artifact are built in one place. Each lowest syntax body is stated once over a reading and is the formation-free body under the scanned reading (`read_*`, `*_scanned`). The readings of a use take the readings of the artifacts there (`artifact_readings_at`) and union over them exactly as the formed-once readings union over the artifacts, so they are the formed-once readings for every environment, with no formation premise (`read_*_at`); the formed-once readings then take the readings of a use once, where a reading begins (`*_formed_read_code`), and the guarded entries above them keep their code equations. Found by attribution: reading an installed ground program back asked 40 to 80 whole-artifact scans per clause (85% of the time at 128 rows); at 16, 32, 64 and 128 payload rows the package read now takes 0.006, 0.019, 0.070 and 0.327 seconds, against 0.031, 0.287 and 3.766 seconds at 16 to 64 rows before. A first version replaced the guarded entries' code equations; the repository check found every word of the seed recipe changed, because the seeded state reads the code equations in effect of its roots and seven of its ten roots are those entries, so that version would have answered seven seeded refinement problems outside the loop. Refining the readings the entries guard, which the seeded state keeps on its frontier, is the move the walk answer made for its own subject. Retained limits: the readings are built per reading of a use, so a package whose definitions share one artifact builds them once per definition site; environment formation is still checked by comparing every artifact row with every other (0.104 seconds at 3,117 addresses), and a package read still traverses its demanded sites three times (sites, formation, graph); a reading's fields are functions, so a reading has no presentation and is never a subject of a report. |
-
-## A native question evaluates what its requests demand — 2026-09-19
-
-| Theory | Reusable content and retained prerequisites |
-| --- | --- |
-| Finite_Binary_Values | The binary presentation of a bit path and of a natural (`finite_storage_path_value`, `finite_binary_natural_value`): one flat payload of the exact zero/one digits, injective and formed, whose size is the number of digits. Moved from `Finite_Presented_Coordinates`, which imports it, below the presentation theories at its second use, the candidates of native questions, so the storage notions and the questions read one presentation. |
-| Factor_Finite_Development_Questions | A candidate's index is the binary presentation of its natural (`finite_development_index`), so a question over n candidates has a source of O(n log n) addresses. The unary natural data term it replaced grew the source quadratically and made the scope review's input ten times larger; the question reads only the equality of indices (`finite_development_index_eq`), which the presentation's injectivity supplies. |
-| Factor_Demanded_Program_Calls | The calls that requested calls demand (`finite_program_demanded_calls`): the third instance of the frontier traversal of `Finite_Demanded_Closures`, after package and proof-graph readings. The rows at a call are the applications there and their successors the premise calls; the term demand of the requested arguments bounds the traversal, so it terminates for every program (`finite_program_demanded_calls_rooted`). The requests are demanded (`finite_program_demanded_calls_requests`), and wherever the term demand is ready so are the demanded calls (`finite_program_demanded_calls_ready`), so an evaluation over them answers every request by its positive meaning wherever the term demand's did. Its code asks the bound by searching the requested arguments for a call's argument (`finite_term_contains`), so the components of a large argument are never listed. Retained: where the term demand is not ready the demanded calls may or may not be, and wherever they are ready they answer every request exactly. |
-| Factor_Workflow_Stage, Factor_Workflow_Reference, Factor_Workflow_Evidence_Meaning, Factor_Workflow_Execution_Sharing, Keyed_Native_Evaluation | A stage evaluates the calls its pairs demand (`workflow_stage_demand`) instead of every definition of its source at every component of every pair. The requests lie in the term demand whenever the entry is a definition (`workflow_stage_requests_demanded`), so the stage is available wherever the earlier one was (`workflow_stage_demand_ready`); the stage's exactness theorem, its reference and the meaning of its evidence keep their statements, so every client consumed them unchanged, and the keyed code equations restate the same demand. |
-
-
-## A question's comparison and wrapper are asked through indexes and insertion — 2026-09-19
-
-| Theory | Reusable content and retained prerequisites |
-| --- | --- |
-| Ordered_Member_Trees | A listed set, a list read as the set of its members, is indexed like a finite set (`ordered_member_tree_listed`); the membership lemma every indexed question below consumes. |
-| Finite_Investigation_Execution_Sharing | The observation rows and the comparison relation of an assessed investigation are each indexed once and asked by lookup; they had been scanned, a list of up to one row per candidate pair for each question, which made comparing n candidates grow with the fourth power of n. The ordered results are unchanged. |
-| Finite_Investigation_Basis_Sharing | The basis, repairs and retention ask the comparison relation through its index. The repairs order their rows against every candidate pair joined with each distinct observation pair once (`investigation_loss_order`): selecting from a list reads only the last occurrence of each member, and the last occurrences of the two lists have one order (`investigation_loss_order_remdups`, from `remdups_concat_remdups` and the library's `remdups_append2` and `remdups_map_remdups`), so the same rows are selected (`investigation_select_loss_order`) from a list of the pairs times the distinct observation pairs instead of the pairs times every observation row. |
-| Factor_Invariant_Evaluation_Sharing | The residual comparisons, conflicts and available repairs of an investigation are sets of candidate pairs computed once and then read, so they are listed unions (`Listed_Set_Unions`, the pattern of `RRA_Listed_Environment_Positions`) instead of unions inserting member by member. |
-| RRA_Inserted_Attachments | The library executes a union by inserting each member of its left operand into its right one; attaching a structure to an artifact put the whole artifact on the left, so each record or family wrapper cost the square of the artifact. The same union with its operands exchanged inserts the structure's few members into the artifact (`finite_attach_structure_inserting_code`). The overnight review's enumerated union (`Native_Control_Syntax_Candidate`) is an exact alternative that sorts both operands; exchanging the operands needs no order and no listing, and the join of syntax forests, measured cheap, keeps the library's union. |
-
-## A state holds each type once — 2026-09-19
-
-| Theory | Reusable content and retained prerequisites |
-| --- | --- |
-| Isabelle_Terms | A term is stated over what presents its types (`'ty isabelle_term_with`); the kernel's term (`isabelle_term`) is its instance with a type at every occurrence. A term over positions of a table of types is the same datatype, and reading it back is the datatype's own map, so no second term notion or translation is introduced. |
-| Isabelle_Entities | An entity is stated over its term (`'t isabelle_entity_with`), as a term is over its types. |
-| Isabelle_Type_Tables | A table of type nodes whose arguments are positions of earlier nodes, read in order into an ordered index (`isabelle_type_table`); its reading is exact at every position of an ordered table (`isabelle_type_table_exact`). A state or a list of terms presented over positions of such a table is read back by the entity's and the term's maps (`isabelle_shared_context`, `isabelle_shared_terms`). Which table presents a state is the exporter's transport, as its name table is. |
-| Isabelle_Entity_Export | Every exported state, its roots and its groups are defined through a table holding each distinct type once; a term over any presentation of its types is translated by one function (`term_with`), of which the kernel's form (`term_term`) and the table's form are instances. The context construction takes further terms for its name table, so a caller presenting propositions against the same table (`Native_Control_Syntax_Statements`) reuses it instead of building a second context. |
-
-## The residual record reaches the notions' constituents — 2026-09-19
-
-| Theory | Reusable content and retained prerequisites |
-| --- | --- |
-| Development_Machinery | The record's roots are the loop's notions and their constituents, the development constants the notions' items mention, computed by the exporter's closure (`context_items`) from the notions rather than listed; every root poses its residual problem through the existing constant-problem construction, so a notion's residual depends on its constituents' residuals by the same reading of definitions. How far the record reaches is a residual choice (owner question Q5). |
-
-## Pure's constants are base constants — 2026-09-19
-
-| Theory | Reusable content and retained prerequisites |
-| --- | --- |
-| Isabelle_Entity_Export | A constant belongs to the fixed base when the session of the theory that declared it is a base session (`declaring_session`): a theory's long name is qualified by its session except the theory Pure's, whose long name is its session, so reading the qualifier alone had made every constant of Pure a development constant. |
-
-## Definition requests and the verdict of a definition answer — 2026-09-19
-
-| Theory | Reusable content and retained prerequisites |
-| --- | --- |
-| Development_Requests | The request of a problem of a constant is stated once over the reading and the kind (`development_constant_request`, `development_constant_request_fields`): the problem, the constant as the state declares it, the support and the least context of the constant's whole scope. The refinement request is its code-equation instance, extracted at this second use. |
-| Development_Constant_Verification | The verdict of an answer to a problem of a constant, stated once over which statements of the subject an answer may replace and which kind it must state (`development_constant_verdict`), with its acceptance, its contract (`development_constant_verdict_contract`), counts, excess and presentation, the named request, and the answer states that exercise a verdict before answers of its kind exist (`development_answer_controls`, the seed's seven controls stated over a reading). |
-| Development_Refinement_Verification | The refinement verdict and the subject's equations, excess and contract as the code-equation instances of the general verdict; every statement their consumers read is unchanged. |
-| Development_Definition_Verification | The definition request (the definition-reading instance of the request of a constant) and the verdict of a definition answer: its subject's kernel definitions and the code equations derived from them are replaceable, a kernel definition is demanded, nothing else may change (`development_definition_verdict_contract`). Isabelle's acceptance of the answer's installation, not the state, establishes that the library's contracts of the constant still hold. |
-| Development_Machinery | The selected residuals issued as definition requests through the loop's issuing (`development_machinery_issued`: every issued request is the definition request of a selected, ready residual) and the definition verdict exercised on the answer states derived from each (`development_machinery_verification`). |
-
-## Native answers and their readers — 2026-09-19
-
-| Theory | Reusable content and retained prerequisites |
-| --- | --- |
-| Finite_Presentation_Readers | A reader of a presentation (`finite_reads`): a term is read as a value exactly when it presents that value, so a presentation with an exact reader is injective; payload, partial-inverse, storage-path, binary-natural, pair and sequence readers compose as their presentations do, and no composed reader is proved again. |
-| Finite_Term_Word_Readers | The digit words of naturals, addresses and terms without targets, and the padding of a transported word, read back exactly (`finite_padded_term_read_exact`). The host only unpacks octets into bits. |
-| Isabelle_Readers | Exact readers of names, positions, sorts, types, terms, entities and contexts; a constructor is identified by the payload its presentation begins with, read as a value. |
-| Isabelle_Local_Names | The presentation of a value with the names it uses, stated once (moved out of `Development_Publication` at its third use), with the identity and composition of renamings and the table extended by the names it lacks. |
-| Development_Native_Answers | An answer as native content with its exact reader and word, the answer state, the round trip of an edit (`development_native_answer_of_state`), the native judgment under any verdict (`development_native_judgment_exact`), the restating answer, the control answers every verdict is exercised on, the native answers of issued requests, the judgment and summary of a named answer, and the native packet. Admissibility for installation only; installation is its own request. |
-
-## Leaves a program does not state are inert to it — 2026-09-19
-
-| Theory | Reusable content and retained prerequisites |
-| --- | --- |
-| Factor_Positive_Parametricity | The argument that an observation-free program's meaning is closed under every change of the leaves its patterns do not state is stated once over the leaves of a term, its targets and its payloads (`positive_meaning_leaf_map`, `positive_meaning_leaf_involution`), and two leaves a program does not state are indistinguishable to it (`positive_meaning_unlisted_leaves`). The target argument that stood here before is its instance (`positive_meaning_unlisted_targets`), and the payload argument its second instance (`positive_meaning_unlisted_payloads`): the payloads a program states literally (`system_payloads`) are exactly the octets it reads as structure, and every other octet is inert to it, compared at most for equality through a variable that occurs twice. Material premises read artifact data by definition and stay outside the criterion. |
-| Factor_Finite_Payload_Literals | The payloads a finite program states, computed from its patterns and equal to those of the program it decodes to (`finite_system_payloads_exact`), so which octets a decision reads as structure is computed on the actual program, without running it. The payloads of a finite term are those an exact recognizer of it states (`finite_term_payloads_exact_pattern`), so a ground program built from rows reads every octet of its rows. |
-
-## Readiness is a native definition — 2026-09-19
-
-| Theory | Reusable content and retained prerequisites |
-| --- | --- |
-| Development_Native_Readiness | The first notion of the loop defined natively, following the owner's direction that native definitions are normative: settlement (a least closure, which positive meaning is), the check of every decomposition (an instance of the existing context-list profile) and readiness, as Factor definitions over the existing selection (site 5); the argument carries the table of keys with their decompositions, the answered keys and the open keys, so a status is structure of the argument and keys are compared only for equality. Its contracts are proved once over every table whose keys and decompositions are data (`native_settled_exact`, `native_every_settled_exact`, `native_ready_exact`); soundness by `positive_valuation_induct` with the property fixed to the one context, completeness by induction on the closure with `ordinary_positive_valuation_step`, as the data-list theories do. The connection of the closure to `development_settled` and the selection question's use of the program are still to come. |
-| Development_Native_Selection | The development presented as the table native readiness reads (`readiness_presents`), and on every such presentation the native readiness of a problem's key is exactly `development_ready` (`native_development_ready`), through the equality of the table's closure with `development_settled` in both directions (`table_settled_development`, `development_table_settled`). A premise family that is not single-valued never fires in the development's closure, so the presentation requires single-valued premise families, which the development's dependency rows are. Every consumer of the development's readiness can consume the native definition through this theorem. |
-
-
-## The selection question evaluates native readiness — 2026-09-19
-
-| Theory | Reusable content and retained prerequisites |
-| --- | --- |
-| Factor_List_Profiles | Every element of a list in a context is one notion over any relation satisfying its recursion (`context_list_rule_relation`: `sound`, `complete`, `exact`, `lists`); the library's profile establishes the recursion for its clauses (`context_list_profile.relation_equation`) and takes its list semantics from the notion, with every earlier theorem name and statement kept. |
-| Native_Collection_Programs | Native definitions over native coordinates: ordinary rules whose conclusion binds every variable their premises use (`finite_native_rule`), a family of rules at one site with its unfolding and step proved once (`native_rule_family`: `holds_cases`, `step`, `native_step`), the collection notions membership (`native_member_program.exact`), every element in a context (`native_every_program`, presenting the shared `context_list_rule_relation`), some element (`native_some_program.exact`) and the value a keyed table holds (`native_keyed_search_program.exact`), each with an `unfold` for rule applications supported in any relation, which least-fixed-point arguments over programs composed of them consume; a program is the families at its sites (`finite_rule_program`). |
-| Factor_Development_Cases, Factor_Development_Criterion_Sources | A condition is a native program installed beside the guard source and read at one of its entries (`finite_program_condition`, exact and total); the ground condition of a finite family and the scope critic are its instances, and a program of its own is installed together with the guard source, its entry keeping its own meaning (`finite_standalone_condition`). |
-| Factor_Finite_Development_Questions | A question has a subject and a scope: the scope program holds of any subject paired with each candidate (`finite_scope_rule`, `finite_scope_program_meaning`, `finite_development_source_meaning`), and a question of a subject judges each candidate by its conditions on the subject (`finite_subject_question`, `finite_subject_question_conditions`). The questions over finite value families are the question of the empty subject. |
-| Finite_Demanded_Closures, Factor_Demanded_Program_Calls, Factor_Workflow_Stage | The frontier traversal is correct without a universe whenever it returns (`finite_demanded_readings_closed`) and is bounded by any closed universe containing its roots (`finite_demanded_readings_within`); a request demands the calls its applications premise wherever they lead (`finite_program_call_closure`: `_requests`, `_closed`, `_term`, `_ready`, `_available_ready`), and a stage evaluates exactly that closure of its requests. |
-| Development_Native_Readiness | Readiness as a closed finite rule program over rows with a structural status: settlement over a table (`table_settled`, `native_settled_exact`), readiness of a row judged with a table (`native_ready_exact`), soundness by `positive_valuation_induct` over the collection notions' `unfold` lemmas; its finite presentation (`finite_readiness_row`, `finite_readiness_table`) and its condition of its own (`native_readiness_condition`, total and exact). Replaces the earlier program over the selection of data-list occurrences. |
-| Development_Native_Selection | The development presented as rows with the table each row's settledness reads (`readiness_presents`: keys, decompositions, and per problem the answered problems reachable through answered premises, `readiness_edges`), with `native_development_ready`; the finite candidates keyed by first positions (`development_readiness_key`, `development_readiness_closure`, `development_readiness_cone`, `development_readiness_candidate`), which present it on every closed problem scope (`development_readiness_presents`). |
-| Development_Requests | The selection question is the question of the empty subject whose candidates are the problems' rows with their tables and whose condition is native readiness; the selected problems are those whose candidates it admits (`development_admitted_problems`, `development_packet_problems`), and `development_selected_ready`, `development_selected_independent` and `development_packet_selected_ready` state what they did. |
-
-## Keys and tables as structure — 2026-09-19
-
-| Theory | Reusable content and retained prerequisites |
-| --- | --- |
-| Native_Path_Stores | A bit is a shape and a path is the data list of its bits (`path_term`, injective, formed); the binary path store is presented as structure (`store_term`), and its native search along a key in a context is a family of three ordinary rules (`native_store_search_rules`) whose local contract is proved once for every key term (`native_store_search_program.sound`, `.exact`: the search holds exactly when the key is a path at which the store holds a value checked in the context). The path store of a list of rows (`path_store`) holds only row values (`path_store_found`, no premise) and is exact on single-valued rows (`path_store_lookup`); executable paths and stores are read back exactly (`finite_path_bits`, `decode_finite_store`). Any native definition that looks a value up by a key instantiates it; the keyed walk stays for tables whose keys are not paths. |
-| Development_Native_Readiness | Readiness reads its table through the store search: keys are paths, the table is the path store of the rows, formation is single-valuedness of the rows, and the contracts (`native_settled_exact`, `native_every_settled`, `native_ready_exact`) are restated over paths; the invariant carries settled keys as paths (`readiness_settled_key`). |
-| Development_Native_Selection | Keys are the binary digits of first positions; a presented cone is single-valued because keys are distinct on the problems (`readiness_presents_formed`), so the formation premise of the native contracts is discharged by the presentation. |
-
-
-## A closure keeps no applications — 2026-09-19
-
-| Theory | Reusable content and retained prerequisites |
-| --- | --- |
-| Finite_Demanded_Closures, Factor_Demanded_Program_Calls | The traversal of the sites alone (`finite_demanded_sites`) is the traversal's projection onto its sites and frontier (`finite_demanded_sites_readings`, through `while_option_commute_invariant`: a projection that commutes with the step commutes with the loop); a reading that needs only the reached sites instantiates it and keeps no rows, and the closure of a program's calls does (`finite_program_call_closure_sites`). |
-
-## Calls keyed where they differ; the reach of a state — 2026-09-19
-
-| Theory | Reusable content and retained prerequisites |
-| --- | --- |
-| Right_Ordered_Terms | A linear order on executable terms comparing a pair's right component first: the order of the mirrored term (`mirror_term`, an involution), computed on the term itself (`finite_term_compare_right`, `finite_term_compare_right_mirror`), with the equality of ordered terms decided by the same comparison. Keys over terms whose left components are shared use it. It rests on the convention of the programs building the terms (a notion passes its context on the left), not on a property of terms, so it is chosen per key and never as the equality of all terms: decided globally, it made the comparison of presented generations, which share their right components, 15 percent slower. |
-| Keyed_Demanded_Sites | The traversal of demanded sites with its visited sites in an ordered member index kept across steps and the successors of the frontier joined as one sorted listing of keys; for every key with a left inverse it returns the sites of `finite_demanded_sites` (`keyed_demanded_sites_exact`). |
-| Keyed_Native_Evaluation (`keyed_call_closure`) | The closure of a stage's requests through the keyed traversal (`keyed_call_closure_exact`), used by the generation, stage, reference and evidence code equations; the keys of calls order their terms right first. |
-| Native_Table_Reach | Reach over a table of predecessor rows as a native definition over the collection notions and the path store search: its positive meaning is the least closure `table_reached` on every single-valued table (`native_reached_exact`); finite presentation `finite_reach_table`. Any least closure over a table of predecessor rows instantiates it. |
-| Isabelle_Native_Reach | The reach table of a state (keys the binary digits of constant positions, roots the heads of the state's roots, predecessors the subjects whose statements mention a constant) and `isabelle_native_reached`: native reach on it is `isabelle_reached_constants`. |

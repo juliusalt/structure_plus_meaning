@@ -4,7 +4,7 @@
 Mechanical, no reading added: every word of a theory name that at least MIN theories carry is a notion; its
 founding theory is the first in THEORY_MAP.md's (import) order that carries it; beside it stand that theory's
 size, how many theories depend on it transitively, and the opening of the map's own description. The owner
-marks what belongs in the base; base-load.txt's pinned idea tiers are then written from the marks.
+marks what belongs in the base; the load lists' pinned idea tiers are then written from the marks.
 """
 import collections
 import os
@@ -41,7 +41,7 @@ def tok(n):
     p = os.path.join(PROJECT, "theories", n + ".thy")  # as held: statements, without proofs
     return len(held_text(p)[0].encode()) / 2.46 / 1000 if os.path.exists(p) else 0
 held = set()
-for ln in open(os.path.join(HERE, "base-load.txt")):
+for ln in open(os.path.join(HERE, "base-load-planner.txt")):
     m = re.match(r"theories/([A-Za-z_0-9]+)\.thy", ln.strip())
     if m:
         held.add(m.group(1))

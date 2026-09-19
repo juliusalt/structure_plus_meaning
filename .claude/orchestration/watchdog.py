@@ -1,57 +1,52 @@
 #!/usr/bin/env python3
-"""Supervise the single implementer. Run once a minute by warm_daemon.sh; no model is involved.
+"""Supervise the sessions and keep what may be consulted warm. Run once a minute by warm_daemon.sh; no model is involved.
 
-Rules:
-  rotate   state/rotate exists (the implementer declared itself ready, or reached the hard threshold, or
-           compaction was about to start) and the implementer is idle, or the flag has stood for
-           ROTATE_MAX seconds whatever it is doing: run rotate.sh auto.
-  gone     the implementer named in state/current-impl has not been listed for GONE_CHECKS runs (a crash, a
-           kill): run rotate.sh auto, which starts the next one from HANDOFF.md.
-  limit    the idle implementer's last reply is the synthetic usage-limit notice ("You've hit your session
-           limit · resets 5:40pm") and the reset time has passed: wake it. Nothing else restarts a
-           background session when the limit resets.
-  stalled  the implementer has been idle for IDLE_MAX seconds without a declared wait and without rotation
-           being due (an API error or an interrupted turn ends a turn without the stop hook): wake it.
-Waking is `claude stop` plus a bare `claude --bg --resume <session> "<prompt>"`, which keeps the session's id,
-name, saved options (settings and hooks included) and its prompt cache while that is alive (verified
-2026-09-18). A session is woken at most once in BACKOFF seconds. Nothing is done while state/stopped exists
-(stop.sh writes it, start.sh removes it). Every action is one line in state/watchdog.log.
+  live       a session gone for GONE_CHECKS runs is lost: its piece of work goes back (a producing session's task to the
+             planner, a review or a brief to be started again, a planning episode's events to the next one, a question
+             to be asked again, the knowledge base to be rebuilt). An idle session with mail is resumed with it; one
+             stopped by the usage limit is resumed once the limit has reset; one at the end of its window is stopped
+             and its piece of work goes back; one whose piece of work has ended, or that waits, is sealed (stopped:
+             it can be resumed or forked while warm); one whose turn ended without any of that (an API error, a lost
+             turn) is resumed to continue after IDLE_MAX seconds.
+  held       a sealed session something may still consult or continue is pinged before its cache expires (v2.ping):
+             the knowledge base always; a task's session while its task is being checked, reviewed, fixed or
+             committed; its reviewer while a re-review may come; a waiting (parked) session for v2.HOLD_PARK seconds,
+             after which it is resumed to record a partial result; a task designer or a designer while tasks it
+             briefed or designed are open, for at most v2.HOLD_MAX seconds. Anything else is released.
+  finishing  a quick fix past its budget and a grace is stopped, the task given to the planner; a check or commit whose
+             finalizer has not reported within FINAL_MAX seconds counts as failed.
+  dispatch   then v2.dispatch: the knowledge base, the producing slot, the supporting slot, a quick fix, a
+             consultation, a planning episode.
+Nothing is done while state/stopped exists or the orchestration is inactive. Every action is one line in state/v2.log.
 """
 import datetime
 import json
 import os
 import re
+import signal
 import subprocess
 import sys
 import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-PROJECT = os.path.dirname(os.path.dirname(HERE))
-STATE = os.environ.get("ORCH_STATE_DIR") or os.path.join(HERE, "state")
-TRANSCRIPTS = os.path.expanduser("~/.claude/projects/" + PROJECT.replace("/", "-").replace("_", "-"))
-IDLE_MAX = int(os.environ.get("ORCH_IDLE_MAX", 600))
-ROTATE_MAX = int(os.environ.get("ORCH_ROTATE_MAX", 120))
+sys.path.insert(0, HERE)
+import v2  # noqa: E402
+
+STATE = v2.STATE
+IDLE_MAX = int(os.environ.get("ORCH_IDLE_MAX", 300))
 GONE_CHECKS = int(os.environ.get("ORCH_GONE_CHECKS", 3))
 BACKOFF = int(os.environ.get("ORCH_WAKE_BACKOFF", 600))
-
-IMPL_WAKE = ("You were stopped ({why}) and have been woken. Continue the work "
-             "exactly where you stopped, following your system prompt. Background commands you had running did not survive the restart: check their "
-             "outputs and relaunch what is still needed.")
-
-def log(text):
-    os.makedirs(STATE, exist_ok=True)
-    with open(os.path.join(STATE, "watchdog.log"), "a") as f:
-        f.write(f"{time.strftime('%Y-%m-%dT%H:%M:%S')} {text}\n")
-
-
-def row(name):
-    out = subprocess.run([os.path.join(HERE, "session_row.py"), name], capture_output=True, text=True).stdout.split()
-    return dict(zip(("kind", "id", "activity", "sid", "state"), out)) if len(out) >= 4 else None
+# The finalizer waits for Isabelle at most ORCH_ISABELLE_WAIT and runs its check at most ORCH_FINAL_MAX; past both and a
+# margin it is given up. A finalizer that is gone without having reported is given up after START_GRACE.
+FINAL_MAX = int(os.environ.get("ORCH_ISABELLE_WAIT", 3600)) + int(os.environ.get("ORCH_FINAL_MAX", 3600)) + 600
+START_GRACE = 120
+GRACE = 180
+OWNER_IDLE = int(os.environ.get("ORCH_OWNER_IDLE", 1800))  # an episode the owner left: asked to end
 
 
 def last_reply(sid):
     """(model, text, epoch) of the last assistant entry, read from the transcript's tail."""
-    path = f"{TRANSCRIPTS}/{sid}.jsonl"
+    path = f"{v2.TRANSCRIPTS}/{sid}.jsonl"
     try:
         size = os.path.getsize(path)
         with open(path, "rb") as f:
@@ -67,9 +62,8 @@ def last_reply(sid):
         if d.get("type") == "assistant":
             m = d.get("message") or {}
             text = " ".join(c.get("text", "") for c in m.get("content") or [] if isinstance(c, dict))
-            ts = d.get("timestamp", "")
             try:
-                epoch = datetime.datetime.fromisoformat(ts.replace("Z", "+00:00")).timestamp()
+                epoch = datetime.datetime.fromisoformat(d.get("timestamp", "").replace("Z", "+00:00")).timestamp()
             except ValueError:
                 epoch = 0
             return m.get("model"), text, epoch
@@ -96,72 +90,279 @@ def age(name):
         return None
 
 
-def wake(name, r, why, prompt):
-    mark = f"{name}.woken"
-    if (age(mark) or BACKOFF + 1) < BACKOFF:
-        return
-    open(os.path.join(STATE, mark), "w").write(why + "\n")
-    subprocess.run(["claude", "stop", r["id"]], capture_output=True, text=True, cwd=PROJECT)
-    time.sleep(2)
-    out = subprocess.run(["claude", "--bg", "--resume", r["sid"], prompt.format(why=why)],
-                         capture_output=True, text=True, cwd=PROJECT)
-    log(f"woke {name} ({why}): {(out.stdout + out.stderr).strip().splitlines()[0][:160] if (out.stdout + out.stderr).strip() else 'no output'}")
+def gone(name):
+    """Whether a session has been missing for GONE_CHECKS runs in a row (counted in state/gone-<name>)."""
+    path = os.path.join(STATE, f"gone-{name}")
+    n = int(open(path).read() or 0) + 1 if os.path.exists(path) else 1
+    if n >= GONE_CHECKS:
+        os.remove(path)
+        return True
+    open(path, "w").write(str(n))
+    return False
 
 
-def rotate(why):
-    mark = "rotated"
-    if (age(mark) or BACKOFF + 1) < 120:
+def seen(name):
+    try:
+        os.remove(os.path.join(STATE, f"gone-{name}"))
+    except OSError:
+        pass
+
+
+def hard(s):
+    return os.path.exists(os.path.join(STATE, "flags", f"{s.get('sid')}.hard"))
+
+
+# ---------------------------------------------------------------- a session's piece of work goes back
+
+def lost(name, why):
+    """A session that can no longer continue: its piece of work goes back, by its role."""
+    with v2.state() as st:
+        s = st["sessions"][name]
+        s["state"], tid = "lost", s.get("task")
+        t = st["tasks"].get(tid or "") or {}
+        role = s["role"]
+        if role in v2.PRODUCING:
+            t["stage"] = "planner"
+            t["fixing"] = None
+            v2.event(st, "the harness", f"{name} ({role}) on task {tid} {why}; what it wrote is on disk "
+                     f"(.build/tasks/{tid}/ and its deliverables): split or re-plan the task over what exists.")
+        elif role == "reviewer":  # its review task is taken up again by a new reviewer
+            x = st["tasks"].get(s.get("reviews") or "") or {}
+            t["reviewing"], x["reviewing"] = None, None
+            if t.get("reviewed_by") == name:
+                t["reviewed_by"] = None
+                t.pop("round", None)
+        elif role == "task-designer":  # its brief task is taken up again
+            if t.get("stage") == "running":
+                t["stage"] = "ready"
+        elif role == "planner":
+            st["events"] = (s.get("events") or []) + st["events"]
+            v2.event(st, "the harness", f"The planning episode {name} {why} before it ended; its events are given again.")
+        elif role == "consultant" and s.get("qid") in st["asks"]:
+            st["asks"][s["qid"]]["state"] = "queued"
+        elif role == "kb" and st.get("kb_building") == name:
+            st["kb_building"] = None
+        elif role == "kb":
+            s["kb_state"] = "lost"
+    v2.log(f"{name} {why}")
+    v2.release(name)
+    if role in v2.PRODUCING and tid:  # stopped now: its changes leave the working tree
+        aside = v2.leave(tid, "lost")
+        if aside:
+            with v2.state() as st:
+                v2.event(st, "the harness", f"Task {tid}:{aside}")
+
+
+def care(name, s):
+    """One live session: gone, mail, usage limit, end of window, sealing, stalls."""
+    if s["state"] == "starting":
+        if time.time() - s.get("starting", 0) > v2.START_MAX:
+            lost(name, "never started")
         return
-    open(os.path.join(STATE, mark), "w").write(why + "\n")
-    out = subprocess.run([os.path.join(HERE, "rotate.sh"), "auto"], capture_output=True, text=True, cwd=PROJECT)
-    log(f"rotation ({why}): " + " | ".join((out.stdout + out.stderr).strip().splitlines())[:400])
+    r = v2.row(name)
+    if not r:
+        if s["state"] in v2.LIVE and gone(name):
+            lost(name, "is gone")
+        elif s["state"] not in v2.LIVE:
+            with v2.state() as st:
+                st["sessions"][name]["sealed"] = True
+        return
+    seen(name)
+    if r["activity"] != "idle":
+        return
+    if s["role"] == "kb":
+        return  # v2.kb_care seals it when it has replied INTEGRATED
+    model, said, at = last_reply(s["sid"])
+    if s["state"] in v2.LIVE and v2.has_mail(name) and not v2.running_jobs(name):
+        mail = v2.take_mail(name)
+        if mail and not v2.resume(name, mail):
+            v2.post(name, "the harness", mail)  # kept; a session gone cold cannot take it
+            if not v2.warm(name):
+                lost(name, "went cold before its mail reached it")
+        return
+    if model == "<synthetic>" and re.search(r"hit your .*limit", said, re.I):
+        if time.time() >= reset_epoch(said, at) + 90 and (age(f"{name}.woken") or BACKOFF + 1) > BACKOFF:
+            v2.resume(name, "You were stopped by the account's usage limit, which has now reset. Continue.")
+        return
+    if hard(s) and s["state"] in v2.LIVE:
+        lost(name, "reached the end of its window")
+        return
+    if v2.running_jobs(name):
+        return  # stopping it would kill its jobs: their completion runs its turn
+    if s.get("owner") and at and time.time() - at > OWNER_IDLE and (age(f"{name}.woken") or BACKOFF + 1) > BACKOFF:
+        v2.resume(name, "The owner has been silent for half an hour: record every direction they gave in the ledger, "
+                        "write HANDOFF.md and your notes, and end the episode (`v2.py planned --notes FILE`).")
+        return
+    waiting = s["role"] not in v2.PRODUCING and any(
+        q["from"] == name and q["state"] != "answered" for q in v2.peek()["asks"].values())
+    if waiting and s["state"] == "working":
+        with v2.state() as st:
+            st["sessions"][name]["state"] = "waiting"  # holds its slot; held warm until its answer wakes it
+    if s["state"] in ("done", "parked") or waiting:
+        v2.seal(name)
+        return
+    if s.get("owner"):
+        return  # it waits for the owner
+    if at and time.time() - at > IDLE_MAX and (age(f"{name}.woken") or BACKOFF + 1) > BACKOFF:
+        if not v2.resume(name, "Your turn ended before your piece of work did. Continue; your turn ends when it has "
+                               "ended, or while you wait on a question of your own."):
+            lost(name, "stalled and went cold")
+
+
+# ---------------------------------------------------------------- holding
+
+def held(st, name, s):
+    """Why a sealed session is kept warm, or None."""
+    if s.get("released") or s["state"] == "lost" or not s.get("sid"):
+        return None
+    if name == st["kb"]:
+        return "the knowledge base"
+    tasks = st["tasks"]
+    t = tasks.get(s.get("task") or "") or {}
+    ended = s.get("ended") or s.get("started") or 0
+    if s["state"] == "parked":
+        return "waits on its efficiency fix"
+    if s["state"] == "waiting":
+        return "waits on the answer to its question"
+    if s["role"] in v2.PRODUCING and t.get("session") == name and t.get("stage") in ("checking", "reviewing", "fixing",
+                                                                                     "committing"):
+        return f"its task is {t['stage']}"
+    x = tasks.get(s.get("reviews") or "") or {}
+    if s["role"] == "reviewer" and t.get("reviewed_by") == name and t.get("verdict") == "reject" \
+            and x.get("stage") in ("fixing", "checking", "reviewing"):
+        return "a re-review may come"
+    if time.time() - ended > v2.HOLD_MAX:
+        return None
+    if s["role"] == "task-designer" and any(x.get("briefed_by") == name and x.get("stage") != "done" for x in tasks.values()):
+        return "tasks it briefed are open"
+    if s["role"] == "designer":
+        for tid, x in tasks.items():
+            if x.get("stage") != "done" and s.get("task") in ((v2.read_task(tid) or {}).get("blockedBy") or []):
+                return "tasks built on its design are open"
+    return None
+
+
+def pinging(name):
+    a = age(f"ping-{name}")
+    return a is not None and a < 600
+
+
+def holds():
+    st = v2.peek()
+    for name, s in st["sessions"].items():
+        if (s["state"] in v2.LIVE and not (s["state"] == "waiting" and s.get("sealed"))) or s.get("released") or (
+                s["role"] == "kb" and name != st["kb"]):
+            continue
+        why = held(st, name, s)
+        if why is None:
+            if not s.get("sealed") and v2.running_jobs(name):
+                continue  # live with jobs of its own: stopping it would kill them
+            if s.get("sealed") or s["state"] in ("done", "lost"):
+                v2.release(name)
+                v2.log(f"released {name}")
+            continue
+        if s["state"] in ("parked", "waiting") and not v2.warm(name):
+            lost(name, "went cold while it waited")
+            continue
+        since = (((st["tasks"].get(s.get("task")) or {}).get("parked") or {}).get("since") if s["state"] == "parked" else
+                 min((q["asked"] for q in st["asks"].values() if q["from"] == name and q["state"] != "answered"),
+                     default=None))
+        if s["state"] in ("parked", "waiting") and since and time.time() - since > v2.HOLD_PARK:
+            what = "The fix you waited for has not landed" if s["state"] == "parked" else "No answer to your question came"
+            if not v2.resume(name, f"{what} within {v2.HOLD_PARK // 3600} hours. Record a partial result now "
+                                   f"(`v2.py result {s.get('task')}`): what exists, and what remains."):
+                lost(name, "went cold while it waited")
+            continue
+        if v2.hit_age(name) > v2.PING_AGE and not pinging(name):
+            open(os.path.join(STATE, f"ping-{name}"), "w").write(str(time.time()))
+            subprocess.Popen([sys.executable, os.path.join(HERE, "v2.py"), "ping", name], stdout=subprocess.DEVNULL,
+                             stderr=subprocess.DEVNULL, start_new_session=True)
+
+
+# ---------------------------------------------------------------- finishing
+
+def finalizer_pids(tid):
+    """The finalizer's process and its check's process group (each started as its own session)."""
+    try:
+        return [int(x) for x in open(os.path.join(v2.BUILD, tid, "finalizer.pid")).read().split()]
+    except (OSError, ValueError):
+        return []
+
+
+def finalizer_alive(tid):
+    pids = finalizer_pids(tid)
+    return bool(pids) and os.path.exists(f"/proc/{pids[0]}")
+
+
+def end_finalizer(tid):
+    """A finalizer given up: it and its check end before its task leaves the working tree."""
+    for sig in (signal.SIGTERM, signal.SIGKILL):
+        for pid in finalizer_pids(tid):
+            try:
+                os.killpg(pid, sig)
+            except OSError:
+                pass
+        time.sleep(2)
+
+
+def finishing():
+    st = v2.peek()
+    for tid, t in st["tasks"].items():
+        stage = t.get("stage")
+        if stage in ("checking", "committing"):
+            since = t.get("finishing_since")
+            if not since:
+                with v2.state() as w:
+                    w["tasks"][tid]["finishing_since"] = time.time()
+                continue
+            alive = finalizer_alive(tid)
+            why = (f"has not reported within {FINAL_MAX // 60} minutes" if alive and time.time() - since > FINAL_MAX else
+                   "ended without reporting" if not alive and time.time() - since > START_GRACE else None)
+            if why:
+                if alive:
+                    end_finalizer(tid)
+                with v2.state() as w:
+                    w["tasks"][tid]["finishing_since"] = None
+                    v2.to_planner(w, tid, "the harness", f"The finalizer of task {tid} {why} ({stage}); see "
+                                  f".build/tasks/{tid}/finalize.log.")
+        elif t.get("finishing_since"):
+            with v2.state() as w:
+                w["tasks"][tid]["finishing_since"] = None
+    for name, s in st["sessions"].items():
+        fix = s.get("fix")
+        if fix and s["state"] in v2.LIVE and time.time() - fix["since"] > v2.FIX_MINUTES * 60 + GRACE:
+            r = v2.row(name)
+            if not r or r["activity"] == "idle":
+                lost(name, "outgrew its quick fix's budget")
+
+
+def watch():
+    """The care of every live session, the finalizations, what is held warm, the archive: each part on its own, so that
+    one that fails (logged) holds up nothing else."""
+    for name, s in list(v2.peek()["sessions"].items()):
+        if (s["state"] in v2.LIVE and not (s["state"] == "waiting" and s.get("sealed"))) or (
+                s["role"] == "kb" and not s.get("sealed") and not s.get("released")):
+            contained(f"care of {name}", care, name, s)
+    for part in (finishing, holds, v2.archive):
+        contained(part.__name__, part)
+
+
+def contained(what, fn, *args):
+    try:
+        fn(*args)
+    except Exception as e:  # noqa: BLE001
+        v2.log(f"watchdog error in {what}: {e!r}")
 
 
 def main():
-    if os.path.exists(os.path.join(STATE, "stopped")):
+    if os.path.exists(os.path.join(STATE, "stopped")) or not v2.peek()["active"]:
         return
-    now = time.time()
-    try:
-        impl = open(os.path.join(STATE, "current-impl")).read().strip() or None
-    except OSError:
-        impl = None
-    if not impl:
-        return
-    r = row(impl)
-    gone_file = os.path.join(STATE, "impl-gone-count")
-    if r is None:
-        n = int(open(gone_file).read() or 0) + 1 if os.path.exists(gone_file) else 1
-        open(gone_file, "w").write(str(n))
-        if n >= GONE_CHECKS:
-            os.remove(gone_file)
-            rotate(f"{impl} is no longer listed")
-        return
-    if os.path.exists(gone_file):
-        os.remove(gone_file)
-    if r["kind"] != "background":
-        return
-    flag_age = age("rotate")
-    if flag_age is not None and (r["activity"] == "idle" or flag_age > ROTATE_MAX):
-        rotate("the implementer is ready" if r["activity"] == "idle" else "the rotate flag has stood for minutes")
-        return
-    if r["activity"] != "idle":
-        return
-    model, text, said_at = last_reply(r["sid"])
-    if model == "<synthetic>" and re.search(r"hit your .*limit", text, re.I):
-        if now >= reset_epoch(text, said_at) + 90:
-            wake(impl, r, "the account's usage limit, which has now reset", IMPL_WAKE)
-        return
-    idle_for = now - said_at if said_at else 0
-    if age("waiting") is None:
-        declared = age("waiting-declared") is not None  # a declared wait gets three times as long
-        if idle_for > IDLE_MAX * (3 if declared else 1):
-            wake(impl, r, "you have been idle for a long time" + (" waiting for the owner" if declared else
-                 " without the goal being reached and without a declared wait"), IMPL_WAKE)
+    v2.dispatch(pre=watch, wait=True)  # the care and the dispatch under one lock
 
 
 if __name__ == "__main__":
     try:
         main()
     except Exception as e:  # the daemon must survive anything here
-        log(f"watchdog error: {e!r}")
+        v2.log(f"watchdog error: {e!r}")
         sys.exit(0)

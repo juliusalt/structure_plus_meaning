@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
-"""Regenerate the measured tier of base-load.txt so that a loaded base lands on the target size.
+"""Regenerate the measured tier of a base's load list (manifest.load_list) so that it lands on the target size.
 
 The list has three parts. The `# pinned…` tiers are kept as written and chosen deliberately, to set the
 implementer's direction: the owner's words, the operating rules, the plan, the reasoning inventory, the names
 of all theories, and the founding theories of the library's own ideas. `# measured` is generated here: the
 frontier and the tools recent implementers actually worked in. `# optional` is kept as written, never loaded.
-This script also regenerates state/held/theory-names.md from the current theory
-files, in ROOT order, followed by any files not listed there.
+This script also regenerates state/held/theory-names.md from the current theory files, in ROOT order, followed by
+any files not listed there, and the other generated indexes: decisions-index.md and, when the load list holds it,
+theory-map-index.md without the theories that list holds anyway.
 
 The measured tier is chosen from what the implementer sessions actually consulted: for every file named in
-a tool call of the last SESSIONS Opus sessions of this project, the sessions that touched it and the
-characters pulled from it. A file qualifies when at least MIN_SESSIONS sessions consulted it and what they
+a tool call of the last SESSIONS Opus sessions of this project that work on the library (a session that works
+on the orchestration is left out, as extract_owner_directions.py tells it), the sessions that touched it and
+the characters pulled from it. A file qualifies when at least MIN_SESSIONS sessions consulted it and what they
 pulled amounts to at least MIN_SHARE of the file (a name that merely occurs in commands does not qualify).
 Candidates are ranked by density — characters pulled per session, per character of file: what holding the
 file saves against what holding it costs — and taken until the budget is full. If room remains, a second pass
@@ -24,7 +26,7 @@ is ORCH_BASE_TARGET (530,000, everything included; manifest.TARGET) less the lea
 and one tool call per chunk.
 
 usage: select_base_load.py [--dry-run | --refresh-index]
---refresh-index updates only the theory-name catalogue, without selecting or removing load-list entries.
+--refresh-index updates only the generated indexes (refresh_indexes), without selecting or removing load-list entries.
 """
 import glob
 import json
@@ -38,8 +40,9 @@ sys.path.insert(0, HERE)
 from digest import held_text  # noqa: E402
 from idea_candidates import founding_theories  # noqa: E402
 import manifest  # noqa: E402
-from base_pack import (BOOTSTRAP_PREFIX, CHUNK_BYTES, CALL_TOKENS, INDEX_RATIO, PACKED_RATIO,  # noqa: E402
-                       SELECTED_FACTOR, SESSION_TOKENS)
+from base_pack import (CHUNK_BYTES, CALL_TOKENS, INDEX_RATIO, PACKED_RATIO, SELECTED_FACTOR,  # noqa: E402
+                       SESSION_TOKENS)
+from extract_owner_directions import BASE_LOADS, LIBRARY_ROLES, claude_session  # noqa: E402
 PROJECT = os.path.dirname(os.path.dirname(HERE))
 TRANSCRIPTS = os.path.expanduser("~/.claude/projects/" + PROJECT.replace("/", "-").replace("_", "-"))
 TARGET = manifest.TARGET
@@ -62,7 +65,7 @@ def tokens(path, level="statements"):
 
 def is_base_load(head):
     """A session that loaded a base (file by file or bundled), as opposed to one that works."""
-    return "You are being loaded as the base" in head or BOOTSTRAP_PREFIX in head
+    return any(prefix in head for prefix in BASE_LOADS)
 
 
 def expand(pattern):
@@ -76,8 +79,10 @@ def implementer_sessions():
     for f in sorted(glob.glob(TRANSCRIPTS + "/*.jsonl"), key=os.path.getmtime, reverse=True):
         head = open(f, errors="ignore").read(600_000)
         if '"model":"claude-opus' in head and "connectivity probe" not in head:
-            if is_base_load(head) and "You are impl-" not in open(f, errors="ignore").read():
+            if is_base_load(head) and not any(p in open(f, errors="ignore").read() for p in LIBRARY_ROLES):
                 continue  # a base itself, not a fork of one
+            if claude_session(f)[1]:
+                continue  # it works on the orchestration, not on the library
             out.append(f)
         if len(out) == SESSIONS:
             break
@@ -91,7 +96,7 @@ def measure(files):
         own = not is_base_load(open(f, errors="ignore").read(600_000))
         for line in open(f, errors="ignore"):
             if not own:  # a fork: everything before its own first message is a copy of the base's load
-                own = '"You are impl-' in line or "You are impl-" in line[:400]
+                own = any('"' + p in line or p in line[:400] for p in LIBRARY_ROLES)
                 continue
             if '"tool_use"' not in line and '"tool_result"' not in line:
                 continue
@@ -154,12 +159,51 @@ def theory_names():
     return len(names) + len(extra)
 
 
-def main():
+def theory_map_index(skip=()):
+    """Every theory of THEORY_MAP.md with the first clause of what its row says it holds, in the map's order: what
+    exists and what it is for, one line each (implementers looked the map up in 21 of 24 sessions). Theories whose
+    digest a base holds anyway (`skip`) are left out."""
+    rows = re.findall(r"^\| (\w+) \| [^|]* \| (.*?) \|$", open(os.path.join(PROJECT, "THEORY_MAP.md"), errors="ignore").read(), re.M)
+    out = ["# What each theory holds: the first clause of its THEORY_MAP.md row (grep the map or the source for the rest).", ""]
+    out += [f"{name}: {re.split(r'[;.]', content)[0].strip()}" for name, content in rows if name != "Theory" and name not in skip]
+    held = os.path.join(HERE, "state", "held")
+    os.makedirs(held, exist_ok=True)
+    open(os.path.join(held, "theory-map-index.md"), "w").write("\n".join(out) + "\n")
+    return len(out) - 2
+
+
+def decisions_index():
+    """Every decision of DECISIONS.md by its heading and the first sentence under it: the decisions known by name,
+    each read in full where it is written."""
+    text = open(os.path.join(PROJECT, "DECISIONS.md"), errors="ignore").read()
+    out = ["# The decisions of DECISIONS.md, by heading and first sentence (read the section itself before relying on it).", ""]
+    for head, body in re.findall(r"^(#{2,3} .+)\n+([^\n#][^\n]*(?:\n[^\n#][^\n]*)*)", text, re.M):
+        prose = " ".join(body.split())
+        end = prose.find(". ")
+        out.append(f"{head} — {prose[:end + 1] if 0 <= end < 400 else prose[:300]}")
+    held = os.path.join(HERE, "state", "held")
+    os.makedirs(held, exist_ok=True)
+    open(os.path.join(held, "decisions-index.md"), "w").write("\n".join(out) + "\n")
+    return len(out) - 2
+
+
+def refresh_indexes():
+    """Regenerate the indexes a load list may hold from the current sources: the theory names, the decisions, and,
+    when the list holds it, the theory map's index without the theories the list holds anyway."""
     count = theory_names()
+    decisions_index()
+    listed = open(manifest.load_list()).read()
+    if "theory-map-index.md" in listed:
+        theory_map_index(skip={os.path.basename(p)[:-4] for _, p in manifest.held_files() if p.endswith(".thy")})
+    return count
+
+
+def main():
+    count = refresh_indexes()
     print(f"theory-names.md: {count} names")
     if "--refresh-index" in sys.argv:
         return
-    path = os.path.join(HERE, "base-load.txt")
+    path = manifest.load_list()
     text = open(path).read()
     at = {k: re.search(rf"^# {k}\b", text, re.M).start() for k in ("pinned", "every", "measured", "optional")}  # the first pinned tier
     head = text[: at["pinned"]]
@@ -226,7 +270,7 @@ def main():
           f"largest: {[(r, t // 1000) for _, r, t in sorted(left_out, key=lambda x: -x[2])[:4]]}")
     if "--dry-run" not in sys.argv:
         open(path, "w").write(head + pinned_block + "\n".join(every_block) + "\n" + "\n".join(block) + "\n" + optional_block)
-        print("base-load.txt rewritten")
+        print(f"{os.path.basename(path)} rewritten")
 
 
 if __name__ == "__main__":

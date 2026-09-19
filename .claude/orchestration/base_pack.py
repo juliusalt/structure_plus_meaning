@@ -41,7 +41,7 @@ from digest import py_digest, thy_digest
 from pack_notation import FACTS, expand_facts, fact_edits, theory_name
 
 FORMAT = 2
-CHUNK_BYTES = 20_000
+CHUNK_BYTES = 120_000  # a Bash result is shown whole up to bashOutputMaxChars (128,000 characters, base-settings.json)
 LEGEND = """# Loaded reference library
 The original source paths and digest levels are retained below. This is reference
 material, with the same authority as its sources. Read the current source before
@@ -55,7 +55,7 @@ Repeated prose is shown once between EXCERPT markers; REPEAT uses that exact
 excerpt, including its quotation marks and attribution, at the indicated place.
 Source line numbers refer to the original files, not this display.
 """
-NOTE = re.compile(r"\(\* (proof|code) omitted: ([0-9]+) lines \*\)")
+NOTE = re.compile(r"\(\* (proof|code|equations) omitted: ([0-9]+) lines \*\)")
 ESCAPE = re.compile(r"\\<[^>]+>")
 NEW_LEGEND = LEGEND.replace(
     "Isabelle escapes are displayed using Isabelle's Unicode symbol table.",
@@ -76,10 +76,11 @@ relying on how something is proved; line numbers refer to the source files.
 PACKED_LEGEND = r"""# Reference library
 Each section is one source file, named in its === header; a header showing only a digest level belongs to
 theories/X.thy for the theory X that follows it. Theory and tool texts are digests of their sources:
-declarations, statements and commentary verbatim, with (* proof:N *) or (* code:N *) where N lines are
-omitted. [statements] keeps every lemma and theorem statement; [definitions] keeps the definitions and lists
-only the names of what is proved. Indentation outside strings, cartouches and comments is removed. Isabelle
-symbols are shown as glyphs such as ⇒ ⟹ ∀ ‹ ›; the files spell them as escapes such as \<Rightarrow>
+declarations, statements and commentary verbatim, with (* proof:N *), (* code:N *) or (* equations:N *)
+where N lines are omitted. [statements] keeps every lemma and theorem statement; [definitions] keeps the
+definitions and lists only the names of what is proved; [signatures] is [definitions] with each definition
+cut to its name and type up to `where`. Indentation outside strings, cartouches and comments is removed.
+Isabelle symbols are shown as glyphs such as ⇒ ⟹ ∀ ‹ ›; the files spell them as escapes such as \<Rightarrow>
 \<Longrightarrow> \<forall> \<open> \<close>, and text written into a theory must use the escapes, because
 Isabelle rejects the glyphs. The theory-name index explains its prefix notation where it uses it. Read the
 current source before editing it or relying on how something is proved; line numbers refer to the source files.
@@ -458,7 +459,7 @@ def render(sources, symbols, stage):
             text, edits = apply_edits(text, repeats[i])
         layers = [edits]
         before_facts = None
-        if "shared-fact-prefixes" in on and source["level"] == "definitions" and source["path"].endswith(".thy"):
+        if "shared-fact-prefixes" in on and source["level"] in ("definitions", "signatures") and source["path"].endswith(".thy"):
             before_facts = text
             text, edits = apply_edits(text, fact_edits(text, source.get("literal_fact_notes", ())))
             layers.append(edits)

@@ -6,8 +6,10 @@ Default: preserve owner-directions-selection.json and render its verbatim excerp
 --raw: explicitly run the legacy chronological collector and its truncation rules.
 --new: write state/owner-directions-new.md, the owner's typed words given after the curated selections were
        collected (`reviewed_through` in owner-directions-selection.json), from Claude sessions and interactive
-       Codex sessions of this repository. Sessions that work on the orchestration itself are left out.
-       rotate.sh runs this before every implementer starts, and the implementer reads it.
+       Codex sessions of this repository, including what the owner typed while a session was working. Sessions
+       that work on the orchestration itself are left out: sessions other than implementers whose own tool
+       calls name anything of this directory beyond the working files. v2.py runs this before every planner
+       starts, and the planner reads it.
 """
 import glob
 import json
@@ -25,21 +27,29 @@ SESSIONS = os.path.expanduser("~/.claude/projects/" + PROJECT.replace("/", "-").
 SKIP = re.compile(r"^\s*(\[Request interrupted[^\]]*\]|continue|/compact|/clear)\s*$", re.I)
 WRAPPED = ("<task-notification>", "<system-reminder>", "<local-command", "<command-message>", "[SYSTEM NOTIFICATION")
 PEER = ("<cross-session-message", "[Cross-session")
-# launch prompts written by rotate.sh and kb.sh are not the owner's typed words
-LAUNCH = ("You are impl-", "Load the knowledge base as your instructions describe", "You are being loaded as the base",
-          "You are the live kb", "Keep-warm ping", "Load the reference library;", "You are loading a sealed base",
-          "You were stopped (")
+# A base's load: a fork carries its base's conversation as the first part of its own transcript.
+BASE_LOADS = ("You are being loaded as the base", "Load the reference library;")
+IMPLEMENTER = "You are impl-"  # the start of an implementer (v1), which works on the library whatever it looks up
+# the starts of the sessions that work on the library whatever they look up: v1 implementers, and every role of v2
+LIBRARY_ROLES = (IMPLEMENTER, "You are kb-", "You are plan-", "You are design-", "You are brief-", "You are investigate-",
+                 "You are review-", "You are implement-", "You are fix-", "You are ask-")
+# launch prompts written by the harness are not the owner's typed words
+# and neither is what the harness says to a session: its mail, its wakes, its stop hook's reasons
+LAUNCH = BASE_LOADS + LIBRARY_ROLES + ("Load the knowledge base as your instructions describe", "You are the live kb",
+                                       "Keep-warm ping", "You are loading a sealed base", "You were stopped",
+                                       "Your turn ended without a result", "Stop hook feedback:", "Message from ",
+                                       "[harness]")
 LONG, KEEP = 4000, 600
 STATE = os.environ.get("ORCH_STATE_DIR") or os.path.join(HERE, "state")
 CODEX_SESSIONS = os.path.expanduser(os.environ.get("CODEX_SESSIONS", "~/.codex/sessions"))
 CODEX_WRAPPED = ("<environment_context", "<user_instructions", "# AGENTS.md", "<permissions", "<turn_aborted",
                  "<recommended_plugins", "<codex_internal_context")
 ORCHESTRATION = re.compile(r"\.claude/orchestration(?:/((?:state/)?[\w.-]+))?")
-# What an implementer itself reads or runs there. A tool call naming anything else of the directory marks a
-# session that works on the orchestration, whose conversation is about it rather than about the library.
-WORKING_FILES = {"owner-ledger.md", "impl_state.sh", "owner-directions.md", "codex-owner-directions.md",
-                 "state/owner-directions-new.md"}
-BASE_EMIT = re.compile(r"base_pack\.py\S*\s+emit\b")  # a fork's copy of its base's load
+# What a session working on the library itself reads or runs there. A tool call naming anything else of the directory
+# marks a session of no role (and no v1 implementer) as one that works on the orchestration, whose
+# conversation is about it rather than about the library.
+WORKING_FILES = {"owner-ledger.md", "owner-directions.md", "codex-owner-directions.md", "state/owner-directions-new.md",
+                 "show.py"}
 
 
 def typed_text(d):
@@ -70,17 +80,30 @@ def owner_statement(t, goals, session):
 
 
 def works_on_orchestration(text):
-    if BASE_EMIT.search(text):
-        return False
     return any(name not in WORKING_FILES for name in ORCHESTRATION.findall(text))
 
 
+def queued_text(d):
+    """What the owner typed while the session was working: Claude Code records it as a queued command."""
+    a = d.get("attachment") or {}
+    if a.get("type") != "queued_command" or a.get("commandMode", "prompt") != "prompt" \
+            or (a.get("origin") or {}).get("kind") != "human":
+        return ""
+    p = a.get("prompt")
+    if isinstance(p, list):
+        p = "\n".join(x.get("text", "") for x in p if isinstance(x, dict) and x.get("type") == "text")
+    return p if isinstance(p, str) else ""
+
+
 def claude_session(path):
-    """(timestamp, line, typed text) of the user messages, and whether the session works on the orchestration."""
-    messages, orchestration = [], False
+    """(timestamp, line, typed text) of the owner's messages, and whether the session works on the orchestration.
+
+    A fork's copy of its base's load is not its own work, and an implementer works on the library whatever it
+    looks up in this directory."""
+    messages, touched, implementer, copied = [], False, False, False
     for n, line in enumerate(open(path, errors="ignore"), 1):
-        user, tool = '"type":"user"' in line, '"tool_use"' in line
-        if not user and not (tool and not orchestration):
+        user, queued, tool = '"type":"user"' in line, '"queued_command"' in line, '"tool_use"' in line
+        if not user and not queued and not (tool and not touched and not copied):
             continue
         try:
             d = json.loads(line)
@@ -88,15 +111,23 @@ def claude_session(path):
             continue
         if d.get("isSidechain"):
             continue
+        text = ""
         if d.get("type") == "user" and not (d.get("isMeta") or d.get("isCompactSummary")):
             text = typed_text(d)
-            if text.strip():
-                messages.append((d.get("timestamp", ""), n, text))
-        elif d.get("type") == "assistant":
+        elif d.get("type") == "attachment":
+            text = queued_text(d)
+        elif d.get("type") == "assistant" and not copied and not touched:
             for c in (d.get("message") or {}).get("content") or []:
                 if isinstance(c, dict) and c.get("type") == "tool_use":
-                    orchestration = orchestration or works_on_orchestration(json.dumps(c.get("input") or {}))
-    return messages, orchestration
+                    touched = touched or works_on_orchestration(json.dumps(c.get("input") or {}))
+        if text.strip():
+            messages.append((d.get("timestamp", ""), n, text))
+            if text.lstrip().startswith(BASE_LOADS):
+                copied = True
+            elif not any(w in text for w in WRAPPED + PEER):
+                copied = False
+                implementer = implementer or text.lstrip().startswith(LIBRARY_ROLES)
+    return messages, touched and not implementer
 
 
 def codex_session(path):

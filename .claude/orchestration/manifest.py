@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""What the base holds (base-load.txt), and which of it has gone stale since it was loaded.
+"""What a base holds (its load list), and which of it has gone stale since it was loaded.
 
-  manifest.py list [impl]      the files of base-load.txt, one per line, by tier
+  manifest.py list [WHO]       the files of that base's load list (impl, mid, impl2), one per line, by tier
   manifest.py snapshot [impl]  record a digest of every held file (run once, after that role's load)
   manifest.py changed [impl]   one line naming the held files that differ from that role's snapshot
   manifest.py size [impl]      one line: files, characters, estimated tokens
@@ -32,10 +32,19 @@ TARGET = int(os.environ.get("ORCH_BASE_TARGET", 530_000))  # loaded, everything 
 LINE_LIMIT = 1800  # a Read cuts every line after 2,000 characters
 
 
+# One load list per base: the planner's and the knowledge base's (max), the middle one (xhigh), the implementation
+# one (high). ORCH_LOAD_LIST overrides it (base.sh exports it).
+LISTS = {"impl": "base-load-planner.txt", "mid": "base-load-mid.txt", "impl2": "base-load-impl2.txt"}
+
+
+def load_list():
+    return os.environ.get("ORCH_LOAD_LIST") or os.path.join(HERE, LISTS.get(WHO, "base-load-planner.txt"))
+
+
 def held_files():
-    """(tier, path) for every file matched by base-load.txt; optional tiers are skipped."""
+    """(tier, path) for every file matched by the base's load list; optional tiers are skipped."""
     tier, out, seen = "", [], set()
-    for raw in open(os.environ.get("ORCH_LOAD_LIST") or os.path.join(HERE, "base-load.txt")):
+    for raw in open(load_list()):
         line = raw.split("  #")[0].strip()  # a trailing "  # …" is a comment
         if line.startswith("#"):
             tier = line.lstrip("# ").strip()
@@ -48,7 +57,7 @@ def held_files():
         for p in sorted(glob.glob(pattern)):
             if p not in seen and os.path.isfile(p):
                 seen.add(p)
-                LEVELS[p] = "definitions" if "as definitions" in tier else "statements"
+                LEVELS[p] = next((lv for lv in ("signatures", "definitions") if f"as {lv}" in tier), "statements")
                 out.append((tier, p))
     return out
 
@@ -98,7 +107,7 @@ def main():
     mode = sys.argv[1] if len(sys.argv) > 1 else "changed"
     files = held_files()
     if mode == "list":
-        print("# Paths under state/held/statements and state/held/definitions are digests of the like-named theories and "
+        print("# Paths under state/held/statements, state/held/definitions and state/held/signatures are digests of the like-named theories and "
               "tools: proofs and code omitted. Read each listed path as given.")
         tier = None
         for t, p in files:

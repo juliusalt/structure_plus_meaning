@@ -12,7 +12,7 @@ import os
 import subprocess
 import sys
 
-PROJECT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+PROJECT = os.environ.get("ORCH_PROJECT") or os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 try:
     rows = json.loads(subprocess.run(["claude", "agents", "--json"], capture_output=True, text=True, timeout=60).stdout)
 except (ValueError, OSError, subprocess.SubprocessError):

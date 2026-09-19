@@ -1,8 +1,9 @@
 # Owner ledger
 
-The owner's directions to an implementer, verbatim and dated, newest last; and the questions that are the
-owner's to answer, each with the provisional choice made meanwhile and its basis. Every implementer reads
-this file first and writes to it at once when the owner speaks. An entry leaves when the repository records it.
+The owner's directions, verbatim and dated, newest last; and the questions that are the owner's to answer, each
+with the provisional choice made meanwhile and its basis. Since the orchestration's v2, what the owner types to an
+orchestrated session is recorded here by the harness, naming the session and its task; every knowledge base loads
+this file. An entry leaves when the repository records it.
 
 ## Owner directions
 

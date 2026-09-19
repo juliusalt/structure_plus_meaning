@@ -5,7 +5,8 @@ A theory: every command verbatim — header, commentary, definitions, datatypes,
 interpretations, declarations, and the statements of all lemmas and theorems — with each proof replaced by a
 comment giving its length (and, on request, the library facts it cites). ML bodies are replaced the same way.
 At the coarser level "definitions" the lemmas and theorems are reduced to their names, in place, so that a
-notion, its commentary and the list of what is proved about it stay in view at about half the size. A Python tool:
+notion, its commentary and the list of what is proved about it stay in view at about half the size; at "signatures"
+a definition is further reduced to its name and type, its equations left out (about three quarters of that). A Python tool:
 its module docstring, constants, signatures with docstrings, and command-line arguments.
 
 This is a mechanical projection of the source, verbatim where it keeps anything; it adds no reading and
@@ -146,10 +147,16 @@ def cites(proof):
 NAMED = re.compile(r"^\s*(?:private\s+|qualified\s+)?\w+\s+(?:\([^)]*\)\s*)?([A-Za-z][A-Za-z0-9_']*)")
 
 
+DEFINING = {"definition", "abbreviation", "fun", "function", "primrec", "primcorec", "corec", "partial_function",
+            "inductive", "inductive_set", "coinductive", "coinductive_set"}
+
+
 def thy_digest(text, level="statements", with_cites=False):
     """level "statements": every command verbatim, proofs replaced by a comment.
     level "definitions": commentary, definitions, datatypes, locales and declarations verbatim; of the lemmas
-    and theorems only their names, in place, so the notion and everything proved about it stay in view."""
+    and theorems only their names, in place, so the notion and everything proved about it stay in view.
+    level "signatures": as "definitions", but a definition by its name and type up to `where`, its equations
+    replaced by a comment: what each notion is and how it is typed, without how it is computed."""
     out, pending = [], []
 
     def flush():
@@ -158,9 +165,20 @@ def thy_digest(text, level="statements", with_cites=False):
             pending.clear()
 
     for cmd, lines in chunks(text):
-        if cmd in GOAL and level == "definitions" and cmd in ("lemma", "theorem", "corollary", "proposition", "schematic_goal"):
+        if cmd in GOAL and level in ("definitions", "signatures") and cmd in ("lemma", "theorem", "corollary", "proposition",
+                                                                            "schematic_goal"):
             m = NAMED.match(lines[0])
             pending.append(m.group(1) if m else "(unnamed)")
+        elif cmd in DEFINING and level == "signatures":
+            flush()
+            head = []
+            for line in lines:
+                head.append(line)
+                if re.search(r"\bwhere\b", line):
+                    break
+            out.extend(head)
+            if len(head) < len(lines):
+                out.append(f"  (* equations omitted: {len(lines) - len(head)} lines *)")
         elif cmd in GOAL:
             flush()
             stmt, proof = split_goal(lines)

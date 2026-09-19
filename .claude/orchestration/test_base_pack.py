@@ -12,6 +12,8 @@ from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import base_pack as p
+from digest import thy_digest
+import manifest
 import pack_notation as notation
 
 
@@ -63,6 +65,34 @@ class PackingTests(unittest.TestCase):
         self.assertIn("(* proof:28 *)", packed)
         self.assertEqual(p.restore_text(packed, edits), original)
 
+    def test_signatures_keep_the_type_and_shorten_the_equations_note(self):
+        source = ('theory T imports Main begin\n'
+                  'definition f ::\n  "nat \\<Rightarrow> nat" where\n  "f n = n + 1"\n'
+                  'fun g :: "nat \\<Rightarrow> nat" where\n  "g 0 = 0"\n| "g (Suc n) = g n"\n'
+                  'lemma f_pos: "0 < f n"\n  by (simp add: f_def)\n'
+                  'end\n')
+        held = thy_digest(source, "signatures")
+        self.assertIn('"nat \\<Rightarrow> nat" where', held)
+        self.assertNotIn("n + 1", held)
+        self.assertIn("(* equations omitted: 1 lines *)", held)
+        self.assertIn("(* equations omitted: 2 lines *)", held)
+        self.assertIn("(* proved here: f_pos *)", held)
+        packed, edits = p.pack_theory(held, {"\\<Rightarrow>": "⇒"}, 3)
+        self.assertIn("(* equations:2 *)", packed)
+        self.assertEqual(p.restore_text(packed, edits), held)
+
+    def test_tier_header_names_the_digest_level(self):
+        with tempfile.TemporaryDirectory() as temp:
+            listed = Path(temp) / "list.txt"
+            thy = Path(temp) / "T.thy"
+            thy.write_text("theory T imports Main begin\nend\n")
+            listed.write_text(f"# founding, as signatures\n{thy}\n# central, as definitions\n{temp}/U.thy\n")
+            (Path(temp) / "U.thy").write_text("theory U imports Main begin\nend\n")
+            with patch.dict(os.environ, {"ORCH_LOAD_LIST": str(listed)}):
+                manifest.held_files()
+            self.assertEqual(manifest.level_of(str(thy)), "signatures")
+            self.assertEqual(manifest.level_of(f"{temp}/U.thy"), "definitions")
+
     def test_opaque_contents_keep_whitespace(self):
         original = ('theory T imports Main begin\n\n'
                     '  definition s where "s = \'\'a  b\'\'"\n'
@@ -99,6 +129,27 @@ class PackingTests(unittest.TestCase):
         self.assertEqual(p.expand_index(after), second)
         self.assertEqual(p.restore_text(packed, edits), original)
 
+    def test_map_index_leaves_out_what_the_list_holds(self):
+        import select_base_load as selector
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "theories").mkdir()
+            for name in ("A", "B"):
+                (root / "theories" / (name + ".thy")).write_text("theory " + name + " begin end\n")
+            (root / "ROOT").write_text("session Test = HOL +\n  theories\n    A\n    B\n")
+            (root / "THEORY_MAP.md").write_text("| Theory | Imports | Content |\n|---|---|---|\n"
+                                                "| A | Main | What A holds; more |\n| B | A | What B holds. More |\n")
+            (root / "DECISIONS.md").write_text("# Decisions\n\n## One\n\nThe first. Then more.\n")
+            listed = root / "list.txt"
+            listed.write_text(f"# founding\n{root}/theories/A.thy\n# index\n{root}/state/held/theory-map-index.md\n")
+            with patch.object(selector, "PROJECT", str(root)), patch.object(selector, "HERE", str(root)), \
+                    patch.dict(os.environ, {"ORCH_LOAD_LIST": str(listed)}):
+                selector.refresh_indexes()
+            index = (root / "state/held/theory-map-index.md").read_text()
+            self.assertIn("B: What B holds", index)
+            self.assertNotIn("A: ", index)
+            self.assertIn("## One — The first.", (root / "state/held/decisions-index.md").read_text())
+
     def test_catalogue_includes_sources_missing_from_the_map(self):
         import select_base_load as selector
         with tempfile.TemporaryDirectory() as temp:
@@ -112,6 +163,31 @@ class PackingTests(unittest.TestCase):
             text = (root / "state/held/theory-names.md").read_text()
             self.assertEqual(p.index_names(text), ["B", "A", "New"])
             self.assertIn("Additional source files not listed in ROOT", text)
+
+    def test_selector_measures_implementers_not_bases_or_orchestration(self):
+        import select_base_load as selector
+        def session(*texts_and_commands):
+            records = []
+            for kind, value in texts_and_commands:
+                if kind == "user":
+                    records.append({"type": "user", "message": {"role": "user", "content": value}})
+                else:
+                    records.append({"type": "assistant", "message": {"model": "claude-opus-5", "content": [
+                        {"type": "tool_use", "name": "Bash", "input": {"command": value}}]}})
+            return "".join(json.dumps(r, separators=(",", ":")) + "\n" for r in records)
+        load = ("user", p.BOOTSTRAP_PREFIX + " For PART=1 through 2, run the command below.")
+        emit = ("tool", "/usr/bin/python3 .claude/orchestration/base_pack.py emit /pack 1")
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "base.jsonl").write_text(session(load, emit))
+            (root / "impl.jsonl").write_text(session(load, emit, ("user", "You are impl-3, a working copy."),
+                                                     ("tool", "cat .claude/orchestration/state/v2.json"),
+                                                     ("tool", "sed -n 1,40p theories/RRA_Selection.thy")))
+            (root / "orch.jsonl").write_text(session(("user", "Review the orchestrator."),
+                                                     ("tool", "cat .claude/orchestration/watchdog.py"),
+                                                     ("tool", "sed -n 1,40p theories/RRA_Selection.thy")))
+            with patch.object(selector, "TRANSCRIPTS", str(root)):
+                self.assertEqual([Path(f).name for f in selector.implementer_sessions()], ["impl.jsonl"])
 
     def test_utf8_chunks_handle_long_lines_without_loss(self):
         original = "⇒" * 1000 + "\n" + "x\n" * 400

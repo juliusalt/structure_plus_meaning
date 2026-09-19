@@ -3,28 +3,36 @@
 # (`--resume <base> --fork-session`): they start with the base's whole context read from the prompt cache
 # instead of re-reading and re-writing it, and are discarded when full. Sealing (stopping) the base keeps
 # its prefix fixed, and the keep-warm daemon keeps its cache entry alive between forks.
-#   base.sh impl build          freeze base-load.txt into a verified pack and start loading it in a background
+# The three bases: impl (the planner and the knowledge base, max, base-load-planner.txt), mid (designer, task designer,
+# investigator, reviewer, xhigh, base-load-mid.txt) and impl2 (implementer, fixer, high, base-load-impl2.txt); each
+# carries library-prompt.md as its system prompt, which every fork inherits.
+#   base.sh WHO build           freeze the base's load list into a verified pack and start loading it in a background
 #                               session, chunk by chunk through Bash (returns at once); BASE_PACK_DIR can name an
 #                               already frozen pack. build-packed is the same command.
-#   base.sh impl pack           prepare and verify a pack without launching a session
-#   base.sh impl build-files    the older loader: the session reads every listed file with the Read tool
-#   base.sh impl status         one line: load state, measured context against the expected size
-#   base.sh impl seal           when the load has finished: verify its size, snapshot the held files, stop it, record it
-#   base.sh impl extend <file>  have a file-loaded base read one more file (the prefix grows, the cache stays valid);
+#   base.sh WHO pack            prepare and verify a pack without launching a session
+#   base.sh WHO build-files     the older loader: the session reads every listed file with the Read tool
+#   base.sh WHO status          one line: load state, measured context against the expected size
+#   base.sh WHO seal            when the load has finished: verify its size, snapshot the held files, stop it, record it
+#   base.sh WHO extend <file>   have a file-loaded base read one more file (the prefix grows, the cache stays valid);
 #                               seal again after. A packed base is rebuilt instead.
-#   base.sh impl warm           hit the base's cache entry with a throwaway fork, verify the hit, delete the fork
+#   base.sh WHO warm            hit the base's cache entry with a throwaway fork, verify the hit, delete the fork
 #                                    (each ping's text is unique, so the longest cached prefix it can match is the base itself)
-#   base.sh impl drop           forget the base; live sessions then start plain
+#   base.sh WHO drop            forget the base; the roles that fork it start from the planner's base instead
 set -u
 HERE=$(cd "$(dirname "$0")" && pwd); PROJECT=$(cd "$HERE/../.." && pwd); STATE="${ORCH_STATE_DIR:-$HERE/state}"
 cd "$PROJECT" || exit 1; mkdir -p "$STATE"
 who=${1:-}; cmd=${2:-}
 case "$who" in
-  impl) name=${BASE_NAME:-impl-base}; model=${BASE_MODEL:-${IMPL_MODEL:-claude-opus-5[1m]}}; effort=${BASE_EFFORT:-${IMPL_EFFORT:-max}}; role="$HERE/implementer-prompt.md" ;;
-  *) echo "usage: base.sh impl pack|build|build-files|status|seal|extend <file>|warm|drop" >&2; exit 2 ;;
+  impl)  name=${BASE_NAME:-impl-base};  effort=${BASE_EFFORT:-max};   list=base-load-planner.txt ;;
+  mid)   name=${BASE_NAME:-mid-base};   effort=${BASE_EFFORT:-xhigh}; list=base-load-mid.txt ;;
+  impl2) name=${BASE_NAME:-impl2-base}; effort=${BASE_EFFORT:-high};  list=base-load-impl2.txt ;;
+  *) echo "usage: base.sh impl|mid|impl2 pack|build|build-files|status|seal|extend <file>|warm|drop" >&2; exit 2 ;;
 esac
+model=${BASE_MODEL:-claude-opus-5[1m]}
+role="$HERE/library-prompt.md"  # one role-neutral system prompt for every base; each fork's first message says its role
+export ORCH_LOAD_LIST="${ORCH_LOAD_LIST:-$HERE/$list}"
 # The base and every session forked from it start with exactly these tools and no connectors or skills list:
-# the prefix must be identical for a fork to read the base from cache. The same file is read by rotate.sh.
+# the prefix must be identical for a fork to read the base from cache. The same file is read by v2.py (fork).
 LEAN=$(cat "$HERE/session-flags")
 rec="$STATE/$who-base.json"; building="$STATE/$who-base-building.json"; SESSIONS="$HOME/.claude/projects/$(echo "$PROJECT" | tr '/_' '--')"
 field() { python3 -c "import json,sys; print(json.load(open(sys.argv[1])).get(sys.argv[2],''))" "$1" "$2" 2>/dev/null; }
@@ -43,6 +51,7 @@ prepare_pack() {
   if [ -e "$packed/pack.json" ]; then
     python3 "$HERE/base_pack.py" verify "$packed" || return $?
   else
+    python3 "$HERE/select_base_load.py" --refresh-index >/dev/null || return $?  # the generated indexes, current
     python3 "$HERE/base_pack.py" build --output "$packed" || return $?
   fi
   echo "packed base: $packed"
@@ -104,7 +113,7 @@ json.dump(d, open(sys.argv[2], "w"))
 PY
     rm -f "$building"; touch "$STATE/$who-base.hit" "$STATE/$who-base.used"; daemon
     target=${ORCH_BASE_TARGET:-530000}  # manifest.TARGET
-    [ "$ctx" -gt $(( target * 103 / 100 )) ] && echo "note: measured $ctx is over the $target target; trim base-load.txt (select_base_load.py with a lower ORCH_BASE_TARGET) before the next build"
+    [ "$ctx" -gt $(( target * 103 / 100 )) ] && echo "note: measured $ctx is over the $target target; trim $list before the next build"
     echo "sealed $who base $sid at $ctx tokens (target $target); its forks have about $(( (${ORCH_WINDOW:-1000000} - ctx) / 1000 ))K of room; keep-warm daemon running" ;;
   extend)
     file=${3:?usage: base.sh $who extend <file>}; [ -e "$rec" ] || { echo "no sealed $who base"; exit 1; }

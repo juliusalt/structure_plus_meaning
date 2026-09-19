@@ -1,0 +1,71 @@
+{
+  "promptCacheTtl": "1h",
+  "env": {
+    "CLAUDE_CODE_TASK_LIST_ID": "orchestration-graph"
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read|Bash|Grep|Glob|Agent|TaskOutput|TaskCreate|TaskUpdate",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/orchestration/work_meter.py guard"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/orchestration/ctx_gauge.py gauge"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/orchestration/ctx_gauge.py stop"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/orchestration/ctx_gauge.py tripwire"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sleep 10"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/orchestration/ctx_gauge.py owner"
+          }
+        ]
+      }
+    ]
+  },
+  "bashOutputMaxChars": 128000
+}

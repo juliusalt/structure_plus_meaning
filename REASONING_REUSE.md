@@ -1861,3 +1861,59 @@ loop's policy, adoption into the refinement layer and the successor state are no
 | --- | --- |
 | tools/development_answer.py | The reading runs in a session of its own that imports exactly the frame's imports and holds the parts only as ML strings (`parts_theory`), before the answer's theory exists; a refused answer is recorded with Isabelle's reason (`refusal`) and never framed. |
 
+## An index of a carrier by a key, and the notions a refinement applies — 2026-09-20
+
+One argument has been applied to the engine five times without being stated: a set searched by
+comparing complete values is replaced by one searched at a key, and the same obligations are derived
+again for each new carrier. The repeated argument, its premises and its conclusion:
+
+**Given** a carrier (a finite set, a finite relation, an addressed structure), a key that
+distinguishes on it (injective there, or with a left inverse `unkey (key x) = x`), and an index
+built once from the carrier whose search follows the key, **every operation through the index
+returns the original set, relation, list or truth value.** Three laws come with it, each already
+proved where it stands: only the key is ordered, so an index imposes no order on the subject it
+indexes (`Finite_Functional_Enumeration`, `Finite_Ordered_Representatives`); the index is built once
+and shared by every question of one carrier (`Ordered_Member_Trees`, `Factor_Indexed_Readings`); and
+the index presents its carrier and acquires no subject of its own — the shape of the tree, the order
+of insertion and the position of a key are not subjects, and where a lookup would otherwise acquire
+one the use states the premise that keeps it a presentation (`Binary_Relation_Stores`,
+`Native_Path_Stores`, `path_store_lookup`).
+
+**Existing native content.** Four carriers already carry the contract: `Ordered_Member_Trees` (a
+finite set of a linearly ordered type, and a list read as its members), `Keyed_Finite_Sets` (a set
+with a keyed left inverse), `Binary_Path_Stores` with `Binary_Relation_Stores` and
+`Binary_Nested_Stores` (a relation, and a nested relation, over binary paths), and
+`Native_Path_Stores` (a native table of rows searched inside a Factor program, keyed by a path of
+shapes and not an octet). Five uses instantiate them: `RRA_Indexed_Artifact_Lookup`,
+`Factor_Indexed_Readings`, a native question's comparison and repairs, a candidate's table, and the
+demanded traversal with the evaluation's calls (`Keyed_Demanded_Sites`, `Keyed_Native_Evaluation`).
+A new carrier proves four things and nothing else: that the key distinguishes on the carrier, that
+the index represents it, that each operation the use needs returns the original value, and, where
+the index is updated, that the update preserves every other lookup. A native carrier proves them of
+its program's positive meaning and for every argument its site can be called with, not only for the
+keys its use presents.
+
+**Missing use by development.** The notion has no statement, so each carrier re-derives its
+obligations and no use can cite it as a use cites a presentation class; whether it needs a theory of
+its own is open. Which key to choose is not in the contract and must not enter it: two keys
+satisfying it have differed tenfold in the same evaluation, so an index's benefit is an observation
+of a use, reported, never a claim of the notion — the distinction `Binary_Path_Stores` already keeps
+between a structural step count and a physical cost.
+
+**The criterion the index is the first case of.** A refinement is structural when it applies a
+notion: a statement with its own subject and contract, at a level where a second use instantiates it
+rather than repeats it. Word equality of every report word remains the acceptance of a refinement,
+which is what keeps it a refinement and not a change of meaning; structurality is a second and
+separate condition, and it is what the owner's direction of 2026-09-19 asks of implementation. The
+criterion is already met elsewhere: the traversal's projection to its sites is stated over the
+general traversal (`finite_demanded_sites_readings` in `Finite_Demanded_Closures`) and instantiated
+by the program's closure (`finite_program_call_closure_sites`); the constructed applications, the
+listed union of a demand's applications and the functionality of premises each cite a statement of
+their own. It is not met by code equations proved in place — formation established once at a
+traversal's entry, an invariant computed once, the smaller operand inserted into the larger, a
+reader generating only the candidates it can accept — each of which restates one argument across its
+uses. A second notion is at its second use and is the next to factor: an argument ordered so that
+comparison meets what differs first (`Right_Ordered_Terms` with `native_call_key`), whose limit is
+already recorded — which component tells two terms apart is a convention of the programs that build
+them, not a property of terms. The basis, the instances and the limits are in DECISIONS.md, "A
+refinement applies a notion; an index is one".

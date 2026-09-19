@@ -9262,7 +9262,7 @@ batch is therefore word equality: a changed recipe word would be a failure, not 
 `probe.log`; source copy `.build/impl31/t3/`; probe theory `.build/impl31/t2/P31_Engine_Profile.thy`):
 the seeded state's demanded closure 0.014 seconds against 0.063 before, its evaluation 0.403 against
 1.224 and equal to the HOL result; the machinery's closure 0.784 against 3.83, its evaluation 43.812
-seconds with 217 results and equal to the HOL result. CHECK_NUMBERS REPLAY_NUMBERS
+seconds with 217 results and equal to the HOL result. The check `tools/incremental_check.py check --advance-base` (`.build/check-20260920a`, 341.51 seconds, the base advanced to its proof context) proved 153 of the 1,797 theories and reused 1,644, and executed all 33 recipes: every one accepted, so every recipe word equals its retained word and no recipe failed. The 177 tool tests and the 35 kernel tests pass. REPLAY_NUMBERS
 
 **Open.** The second refinement of the line — the evaluation over the positions of the demanded calls,
 where the rule table is renamed by the injective map sending each demanded call to its position among
@@ -9270,5 +9270,202 @@ the keys of the demand — is the next step and is not taken here. The bound the
 unchanged and not yet met: the machinery's reach within five seconds and the seeded state's within 0.2,
 against the 44.6 and 0.417 seconds this batch leaves. The choice of these refinements, of their order
 and of the bound was made outside the loop and is a residual.
+
+Recorded 2026-09-20, commit `…`.
+
+## A refinement applies a notion; an index is one
+
+The owner's direction of 2026-09-19: "even implementation should be structural with the
+non-structural efficiency as a structurally presented idea that can be applied", which the plan
+carries as task 5 of that direction. The occasion is that one argument has now been applied to the
+engine five times without ever being stated. Each time a set searched by comparing complete values
+was replaced by one searched at a key; each time the same obligations were derived again for a new
+carrier; and no use can cite the idea, because there is nothing to cite. The repository's own rule
+is that a generalizable argument is factored at its first use.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| A refinement is a code equation whose acceptance is word equality, justified by its own proof. | Word equality is what makes it a refinement and not a change of meaning ("A formed call's applications are constructed, not verified again"), and it stays the acceptance. Structurality is a second and separate condition: the refinement applies a *notion* — a statement with its own subject and contract, at a level where a second use instantiates it rather than repeats it. A code equation proved in place presents no idea; nothing of it can be applied to a second carrier, so the implementation cannot itself hold to reuse, generalization and non-conflation, which is the trap the direction names. |
+| "An index is an existing notion before it is a new one" ("Keys and tables are structure"), so a use takes the existing theory. | That says which theory to import; it does not say what the notion is, what a use must supply or what it may then assume. The index of a carrier by a key has three constituents and one contract, stated below; a use cites that contract as it cites a presentation class, and a new carrier proves four obligations and nothing else. |
+| The three refinements of the engine line — the closure that keeps no applications, calls keyed where they differ, the evaluation over the positions of the demanded calls — apply one argument. | Two apply the index; one applies a different notion, and that one is the exemplar of what the direction asks. The closure keeps only its sites because the traversal's projection to its sites is stated once over the general traversal (`finite_demanded_sites`, `finite_demanded_sites_readings` in `Finite_Demanded_Closures`) and the program's closure instantiates it (`finite_program_call_closure_sites`). The idea was placed where any traversal can take it, and taken. The index's argument, at its fifth application, was not. |
+| The refinements are of the engine, so their notion belongs to the engine. | The carriers are a finite set, a finite relation, an addressed artifact and a native table of rows; the uses are a question's comparison, an artifact's readings, a candidate's table, a stage's demand and an evaluation's calls. The notion is of the repository, and its native carrier (`Native_Path_Stores`) is the one that makes it a notion of the state rather than of the host. |
+
+### The notion
+
+**An index of a carrier by a key.** Given
+
+- a **carrier** — the finite set, finite relation or addressed structure searched;
+- a **key** — a structural map from a member, or from a query, into a linearly ordered type or a
+  path, which *distinguishes on the carrier*: injective there, or with a left inverse
+  `unkey (key x) = x` recovering the member from its key;
+- an **index** — a structure built once from the carrier whose search follows the key: a tree
+  ordered by the key, a sorted listing of keys, a store branched on the path;
+
+the contract is that **every operation through the index returns the original set, relation, list or
+truth value** — the original union, the original equality, the original membership, the original
+closure. Not a compatible one, and not one up to an order.
+
+Three laws follow and are what make the notion worth citing rather than re-deriving:
+
+1. *Only the key is ordered.* `Finite_Functional_Enumeration`: "Only the keys require an order.
+   Values can be complete terms, patterns, or other structures with no chosen ordering."
+   `Finite_Ordered_Representatives`: "Only labels require an order; values need no imposed
+   ordering." An index therefore imposes no order on the subject it indexes, and the identification
+   it makes is of keys, never of members.
+2. *The index is built once and shared.* `Ordered_Member_Trees`: "the index is shared by every use
+   that asks membership questions of one set." A use that builds an index per question has not
+   applied the notion; `Factor_Indexed_Readings` is where this is taken seriously, the artifact's
+   four indexes built once for a reading and the adopted walk taking that same reading.
+3. *The index presents its carrier and nothing else.* `Binary_Relation_Stores`: "Formation and
+   single-valuedness are separate conditions and are never assumed by lookup", and
+   `Native_Path_Stores`: "The store of the rows is a notion of its rows, not of the order in which
+   the rows were inserted, only where the rows are single-valued: that is the premise under which
+   the lookup contract above holds, and every use of a path store states it." The shape of the tree,
+   the order of insertion and the position of a key are not subjects. Where the index would
+   otherwise acquire one — a lookup on rows that are not single-valued — the use states the premise
+   that keeps it a presentation, as `readiness_presents_formed` does for a presented cone.
+
+Nothing about cost belongs to the contract; see *Where efficiency stays an observation* below.
+
+### Its carriers, and what each proves
+
+| carrier | theory | key | contract |
+|---|---|---|---|
+| a finite set of a linearly ordered type, and a list read as the set of its members | `Ordered_Member_Trees` | the member under its own order | `ordered_member_tree_exact`, `ordered_member_tree_listed`, `ordered_remdups_exact` |
+| a finite set whose members have an ordered key with a left inverse | `Keyed_Finite_Sets` | `key`, under `unkey (key x) = x` | `keyed_rows_set`, `keyed_set_exact`, `keyed_union_exact`, `keyed_equal_exact`, `keyed_member_lookup`, `keyed_members_subset` |
+| a finite relation, and a nested relation by two keys, whose keys have injective binary paths | `Binary_Path_Stores`, `Binary_Relation_Stores`, `Binary_Nested_Stores`, over the paths of `RRA_Binary_Use_Paths` and `RRA_Digit_Natural_Paths` | the path of the key | `relation_store_member`, `nested_relation_store_member`, `store_lookup_update`, `store_off_path_preserved`, `store_canonical` |
+| a native table of rows, searched inside a Factor program | `Native_Path_Stores` | a path of shapes — incidence, not an octet tag | `native_store_search_program.exact` with `.sound`, over `path_store_lookup` and `path_store_found` |
+
+`Finite_Functional_Enumeration` and `Finite_Ordered_Representatives` state the first law for a
+functional relation — its listing in the order of its keys, the value at a key, the least key of a
+value's fibre (`finite_functional_rows_exact`, `finite_relation_option_correct`,
+`finite_representative_map_injective`) — and are where "only the key is ordered" already stands.
+
+**A new carrier proves four things, and nothing else.** (1) *The key distinguishes on the carrier*:
+injectivity there, or a left inverse — `native_call_inverse`, the `⋀x. unkey (key x)=x` premise of
+`Keyed_Finite_Sets`, `use_binary_path_injective`, `path_term_injective`. (2) *The index represents
+the carrier*: one member equation — `relation_store_member`, `ordered_member_tree_exact`,
+`indexed_artifacts_at_exact`, `path_store_lookup`. (3) *Each operation returns the original value*:
+one equation per operation the use needs, and only those — `keyed_union_exact`,
+`keyed_demanded_sites_exact`, `keyed_program_evaluation_exact`. (4) *An update preserves everything
+else*, where the index is updated rather than built once — `store_lookup_update`,
+`store_off_path_preserved`, `nested_relation_lookup_insert`, `indexed_artifacts_insert`.
+
+A native carrier proves (1) to (4) about its program's positive meaning, and one thing more: the
+contract holds for **every** argument the site can be called with, not only for the keys the use
+presents. `native_store_search_program.sound` covers a target and a non-empty payload, because
+"Settlement's invariant quantifies over every argument its sites can be called with ... A contract
+that holds only on the presented subdomain would leave the invariant unproved on the rest" ("Keys
+and tables are structure").
+
+### Which refinements are instances, and which are not
+
+Instances of the index, in the order they were made, none of them citing a common statement:
+`RRA_Indexed_Artifact_Lookup` (an environment's artifacts keyed by the use path);
+`Factor_Indexed_Readings` (an artifact's readings, "Syntax readings ask an artifact through its
+reading"); the comparison relation and observation rows of a native question, through
+`ordered_member_tree_listed` ("A question's comparison is asked through indexes and its wrapper by
+insertion"); a candidate's table as a native path store ("Keys and tables are structure"); the
+demanded traversal's visited sites and the evaluation's calls (`Keyed_Demanded_Sites`,
+`Keyed_Native_Evaluation`, "Calls are keyed where they differ"). In view: the evaluation over the
+positions of the demanded calls, whose map is found "through the ordered tree of those keys" — an
+instance whose carrier is the demand and whose key is the position, and whose own entry records it.
+`Finite_Term_Words` builds such an index inside another notion — the first-occurrence table of
+`Complete_Value_References`, an artifact keyed by its natural index — but what it exports is the
+word's cancellation, so the index is a means there and not a further carrier.
+
+Not instances, each applying or owing its own notion:
+
+- *The closure that keeps no applications* applies the traversal's projection to its sites,
+  `finite_demanded_sites_readings`, stated over the general traversal of `Finite_Demanded_Closures`
+  and instantiated by `finite_program_call_closure_sites`. It is the exemplar, not a shortfall.
+- *The constructed applications* ("A formed call's applications are constructed, not verified
+  again") apply the contract that a construction needs no re-verification, carried by
+  `finite_constructed_applications_exact` and its three subject-level facts; *the listed
+  applications of a demand* apply `Listed_Set_Unions`; *premise functionality* applies
+  `relation_rows_functional`. Each cites a statement, so each satisfies the criterion through its
+  own notion.
+- *Formation established once at a traversal's entry* (`Factor_Formation_Once_Readings`,
+  `Factor_Formation_Once_Definitions`), *an invariant of a traversal computed once*
+  (`Factor_Invariant_Evaluation_Sharing`), *the smaller operand inserted into the larger*
+  (`RRA_Inserted_Attachments`), *a reader generating only the candidates it can accept*
+  (`RRA_Linked_Record_Candidates`) are code equations proved in place. They restate one argument
+  apiece across their uses and have no statement of their own; whether each becomes a notion is for
+  the planner, and the criterion above is the test.
+- *Exact caches and prepared functions* (`Exact_Cache_Readings`, `Prepared_Computed_Functions`,
+  `Finite_Evaluation_Caches`) are kindred and already factored, and are a different notion: a cache
+  is keyed by an actual input and falls back to the original function on a miss, where an index is
+  built from its carrier and is total on it. *Order-preserving parallel evaluation*
+  (`Parallel_Assessment_Execution`) is a third. *Right-ordered terms* (`Right_Ordered_Terms`,
+  `Linear_Comparisons`, the ordered comparisons) supply the orders keys use and are the notion's
+  prerequisite, not instances of it.
+
+### Where efficiency stays an observation
+
+The contract fixes what a key must be and what the operations must return. It says nothing about
+which key to choose, and that is deliberate: two keys can satisfy it and differ tenfold. A key that
+compares a pair's right component first by building the mirror of every call changed the keyed
+evaluation by nothing (0.95 against 0.94 seconds at 24 problems, "Keys and tables are structure");
+the same ordering computed on the term itself made it 0.072, 0.82 and 3.85 seconds at 16, 32 and 48
+problems against 0.19, 2.85 and 14.6 ("Calls are keyed where they differ"). Both distinguish; both
+return the original value. Whether an index pays is measured per use and reported, as
+`Binary_Path_Stores` already keeps apart — "Key encoding, value construction and comparison, and
+physical costs are distinct from this explicit structural step count." That is what makes the idea
+*applicable* in the owner's sense: a use may apply it and find that it does not pay, without the
+notion being wrong, and without the measurement becoming part of any contract.
+
+Presenting a non-structural efficiency therefore amounts to four things, for these carriers, and a
+fast implementation supplies none of them: the idea is a notion with a contract, stated where a
+second use reads it; its material is structure wherever a native definition reads it
+(`Native_Path_Stores` keys by shapes, so "a native program searching a path store reads no octet as
+structure") and inert carriage only where nothing reads it; the index presents its carrier and
+acquires no subject of its own; and the efficiency stays an observation of a use.
+
+### The store search that would take its store before its key
+
+"A native definition over a state re-verifies its context in every call" kept the reordering of the
+native store search for the case where comparisons of keys dominate after the two refinements of
+that line. Against the notion it is two questions, not one.
+
+It is **not** an instance of the index: the carrier and the key are unchanged, and the present
+argument order already distinguishes. What it would apply is the idea `native_call_key` applies —
+*an argument ordered so that comparison meets what differs first* — which is a second notion, so far
+applied once, with its limit already recorded: "Which component tells two terms apart is a
+convention of the programs that build them, not a property of terms", which is why the global
+right-first equality was withdrawn and only keys whose convention the evaluation knows are ordered
+right first. A store search reordered so that a right-ordered key meets the key before the store is
+that same convention, held this time by the search's own rules.
+
+And it is **not a refinement** under the repository's acceptance: reordering the conclusion patterns
+of `native_store_found_rule`, `native_store_left_rule` and `native_store_right_rule` changes the
+programs, hence the readiness and reach artifacts, hence the recorded words of the recipes that
+present them. To be taken it must supply: the search's contract re-proved in the new shape, for
+every key term and not only for paths (`native_store_search_program.exact` with `.sound`); the
+contracts of every definition built over it re-proved (`native_settled_exact`, `native_ready_exact`,
+`native_reached_exact`, `isabelle_native_reached`); the changed words re-recorded with the statement
+of why they changed, as "A native question evaluates what its requests demand" did for the stages
+whose packets it changed; and the measurement that justifies it, which is the next entry's to
+supply. Without key comparisons dominating there, it is not taken at all.
+
+### Evidence and limits
+
+This is a reading of what the repository holds; it changes no theory and proves nothing new. Its
+evidence is the five instances and their contracts named above, the three laws quoted from the
+theories that already prove them, and the two measurements of different keys under one contract. It
+does not establish that the notion is best stated as a locale, a type or a set of parameterized
+definitions, nor that stating it is worth what it costs: whether it needs a theory of its own, and
+what re-proving the four carriers against it would cost, is the planner's. Until such a theory
+exists, a use instantiates the notion by citing this entry and the carrier theory it takes, and
+proves the four obligations for its key.
+
+**Open.** The second notion, an argument ordered so that comparison meets what differs first, is
+stated here only as far as the store-search question needs; it is at its second use and is the next
+candidate to factor. The four code equations named as neither instances nor notions
+(`Factor_Formation_Once_Readings`, `Factor_Invariant_Evaluation_Sharing`, `RRA_Inserted_Attachments`,
+`RRA_Linked_Record_Candidates`) each restate one argument across their uses and have no statement;
+whether each becomes a notion is a decision of its own. Nothing here is a criterion for *taking* a
+refinement: that a refinement applies a notion does not say it should be made, and the measurement
+that decides it remains an observation under the cost criterion of Q2. This entry was written
+outside the loop and is a residual.
 
 Recorded 2026-09-20, commit `…`.

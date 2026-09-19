@@ -1,5 +1,5 @@
 theory Keyed_Native_Evaluation
-  imports Keyed_Finite_Sets Ordered_Finite_Terms Factor_Workflow_Execution_Sharing
+  imports Keyed_Finite_Sets Keyed_Demanded_Sites Ordered_Finite_Terms Right_Ordered_Terms Factor_Workflow_Execution_Sharing
     Factor_Finite_Application_Proofs Factor_Finite_Native_Proof_Construction
 begin
 
@@ -181,52 +181,72 @@ qed
 section \<open>Workflow stages evaluate, check and generate through keyed calls\<close>
 
 text \<open>
-  The calls of a native program are its definition sites paired with terms, and the ordered
-  presentation of a term with the site is a key whose left inverse recovers the call. The
+  The calls of a native program are its definition sites paired with terms, and a term ordered at
+  the right component of a pair first, with the site, is a key whose left inverse recovers the call:
+  every notion passes its context on the left, so two calls of one context are told apart where they
+  differ and only equal calls are compared completely. The
   equations below restate the source-shared equations of each workflow operation with the
   keyed evaluation, history and comparisons; every result is the original result.
 \<close>
 
 definition native_call_key :: "local_address option definition_site\<times>finite_factor_term \<Rightarrow>
-    local_address option definition_site\<times>ordered_factor_term" where
-  "native_call_key q=(fst q,Ordered_Factor_Term (snd q))"
+    local_address option definition_site\<times>right_ordered_term" where
+  "native_call_key q=(fst q,Right_Ordered_Term (snd q))"
 
-definition native_call_unkey :: "local_address option definition_site\<times>ordered_factor_term \<Rightarrow>
+definition native_call_unkey :: "local_address option definition_site\<times>right_ordered_term \<Rightarrow>
     local_address option definition_site\<times>finite_factor_term" where
-  "native_call_unkey k=(fst k,unordered_factor_term (snd k))"
+  "native_call_unkey k=(fst k,unright_term (snd k))"
 
 lemma native_call_inverse: "native_call_unkey (native_call_key q)=q"
   by (simp add: native_call_key_def native_call_unkey_def)
+
+text \<open>
+  The demand of a stage is the closure of its requests, read by the traversal of the demanded sites; with
+  the calls keyed, the traversal keeps its visited calls in an ordered index and joins the successors of its
+  frontier as one sorted listing of keys, so it computes the same calls.
+\<close>
+
+definition keyed_call_closure where
+  "keyed_call_closure key unkey P R=(case keyed_demanded_sites key unkey (\<lambda>q. finite_program_applications P {|q|})
+    finite_application_premise_calls R of None \<Rightarrow> R | Some S \<Rightarrow> S)"
+
+lemma keyed_call_closure_exact:
+  assumes inverse: "\<And>x. unkey (key x)=x"
+  shows "keyed_call_closure key unkey P R=finite_program_call_closure P R"
+  by (simp only: keyed_call_closure_def keyed_demanded_sites_exact[OF inverse] finite_program_call_closure_sites)
 
 lemma finite_native_generation_keyed_code [code]:
   "finite_native_generation E u r x=(case finite_native_source E u r of None \<Rightarrow> None
     | Some P \<Rightarrow> let D=finite_program_term_demand P {|x|} in
       map_option (\<lambda>A. (P,D,A,finite_program_generation_rows P
         (finite_native_seed_rows P x A))) (keyed_program_evaluation native_call_key native_call_unkey P D))"
-  by (simp only: finite_native_generation_source_shared_code keyed_program_evaluation_exact[OF native_call_inverse])
+  by (simp only: finite_native_generation_source_shared_code keyed_program_evaluation_exact[OF native_call_inverse]
+    keyed_call_closure_exact[OF native_call_inverse])
 
 lemma evaluate_workflow_stage_keyed_code [code]:
   "evaluate_workflow_stage S x=(case workflow_scope_result S x of None \<Rightarrow> None
     | Some ys \<Rightarrow> (case finite_native_source (workflow_source S)
         (workflow_source_use S) (workflow_source_root S) of None \<Rightarrow> None
       | Some P \<Rightarrow> if workflow_entry S |\<notin>| finite_system_definitions P then None else
-        let D=finite_program_call_closure P
+        let D=keyed_call_closure native_call_key native_call_unkey P
           (fimage (Pair (workflow_entry S)) (fset_of_list (map (Finite_Pair x) ys))) in
         map_option (\<lambda>(A,T). (P,D,A,T,
           filter (\<lambda>y. (workflow_entry S,Finite_Pair x y) |\<in>| A) ys))
           (keyed_program_proofs native_call_key native_call_unkey P D)))"
-  by (simp only: evaluate_workflow_stage_source_shared_code keyed_program_proofs_exact[OF native_call_inverse])
+  by (simp only: evaluate_workflow_stage_source_shared_code keyed_program_proofs_exact[OF native_call_inverse]
+    keyed_call_closure_exact[OF native_call_inverse])
 
 lemma workflow_stage_reference_keyed_code [code]:
   "workflow_stage_reference S x=(case workflow_scope_result S x of None \<Rightarrow> None
     | Some ys \<Rightarrow> (case finite_native_source (workflow_source S)
         (workflow_source_use S) (workflow_source_root S) of None \<Rightarrow> None
       | Some P \<Rightarrow> if workflow_entry S |\<notin>| finite_system_definitions P then None else
-        let D=finite_program_call_closure P
+        let D=keyed_call_closure native_call_key native_call_unkey P
           (fimage (Pair (workflow_entry S)) (fset_of_list (map (Finite_Pair x) ys))) in
         map_option (\<lambda>A. filter (\<lambda>y. (workflow_entry S,Finite_Pair x y) |\<in>| A) ys)
           (keyed_program_evaluation native_call_key native_call_unkey P D)))"
-  by (simp only: workflow_stage_reference_source_shared_code keyed_program_evaluation_exact[OF native_call_inverse])
+  by (simp only: workflow_stage_reference_source_shared_code keyed_program_evaluation_exact[OF native_call_inverse]
+    keyed_call_closure_exact[OF native_call_inverse])
 
 text \<open>
   The evidence of a stage is checked against an independent evaluation of the original
@@ -240,13 +260,13 @@ lemma workflow_stage_evidence_keyed_code [code]:
     (case workflow_scope_result S input of None \<Rightarrow> False | Some scope \<Rightarrow>
       finite_native_source (workflow_source S) (workflow_source_use S) (workflow_source_root S)=Some P \<and>
       workflow_entry S |\<in>| finite_system_definitions P \<and>
-      keyed_equal native_call_key D (finite_program_call_closure P
+      keyed_equal native_call_key D (keyed_call_closure native_call_key native_call_unkey P
         (fimage (Pair (workflow_entry S)) (fset_of_list (map (Finite_Pair input) scope)))) \<and>
       keyed_program_evaluation native_call_key native_call_unkey P D=Some A \<and>
       keyed_equal native_call_key (fimage fst T) A \<and> finite_inspection_rows_hold (finite_proof_inspection P T) \<and>
       ys=filter (\<lambda>y. (workflow_entry S,Finite_Pair input y) |\<in>| A) scope))"
   by (simp only: workflow_stage_evidence_source_shared_code keyed_program_evaluation_exact[OF native_call_inverse]
-    keyed_equal_exact[OF native_call_inverse])
+    keyed_equal_exact[OF native_call_inverse] keyed_call_closure_exact[OF native_call_inverse])
 
 text \<open>
   Each operation computes its original result: the keyed history is the original history, the

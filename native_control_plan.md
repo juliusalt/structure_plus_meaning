@@ -1887,3 +1887,51 @@ steeply with a chain's length (4.6th power between 32 and 48 problems). A traver
 ordered index across its steps, with each call's key computed once, proved equal to `finite_demanded_sites`, is the
 next refinement; the evaluation's own set operations follow. The choice of this step was made outside the loop and is
 a residual.
+
+## Calls are keyed where they differ — 2026-09-19
+
+The open item of "A closure keeps no applications": the demanded traversal compared calls structurally in the set
+operations of every step, and every call of one evaluation shares its context.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| The demanded traversal unites its visited calls with the frontier and subtracts them from the successors at every step, as finite sets compared term by term. | The visited calls are kept in an ordered member index across the steps, and the successors of the frontier are joined as one sorted listing of their keys (`keyed_demanded_sites`); for every key with a left inverse the traversal returns exactly the sites of `finite_demanded_sites` (`keyed_demanded_sites_exact`), so a stage's demand is its closure computed through keys (`keyed_call_closure`, `keyed_call_closure_exact`) in the generation, stage, reference and evidence code equations of `Keyed_Native_Evaluation`. |
+| A key comparing a pair's right component first does not help the keyed evaluation (0.95 against 0.94 seconds at 24 problems). | That key built the mirror of every call before comparing it. Every collection notion passes its context as the left component of its argument, so the calls of one evaluation differ on the right; a call's key is now its site with its term ordered at the right component of a pair first (`Right_Ordered_Terms`): the order of the mirrored term, computed on the term itself (`finite_term_compare_right`, `finite_term_compare_right_mirror`), with the equality of keys decided by the same comparison. Two calls of one context are compared where they differ, and only equal calls are traversed completely. |
+| The context comes first in every notion, so the equality of all terms can be decided at a pair's right component first (tried in this batch: the chain's closure fell from 1.41 to 0.12 seconds at 32 problems). | Which component tells two terms apart is a convention of the programs that build them, not a property of terms: presented generations share their right components, and the seed recipe's publication stage, which compares them, took 163.7 seconds against 142.5 in an isolated run. The global equality was withdrawn; only the keys of calls, whose convention the evaluation knows, are ordered right first. |
+
+Evidence: on probes of the base heap, a chain of answered problems takes 0.072, 0.82 and 3.85 seconds in the keyed
+evaluation at 16, 32 and 48 problems with right-ordered keys, against 0.19, 2.85 and 14.6 seconds with keys ordered left
+first and the same closure; the reach of the seeded state (next section) closes its 595 calls in 0.478 seconds through
+the keyed traversal against 9.47 seconds through the traversal of finite sets. The check that advanced the base to
+`.build/check-20260919ao` proved the 156 changed and dependent theories in 169 seconds and executed the six
+native-question recipes with every word equal to its retained word, as a refinement must; their stage times equal
+check ak's within the variation between runs (the seed's publication stage 141.3 against 142.5 seconds, the
+machinery's verification 38.2 against 36.9). It was retained with 177 tool and 35 kernel tests passing. Replaying the sixteen retained answers reconstructed fifteen with every word equal and
+reported the adopted walk as the published state's unchanged answer.
+
+Open: every call of a context-carrying program still carries the whole context, so an evaluation over a whole state
+pays the context in every call: the machinery's reach spends 121.9 of its 171.8 seconds closing 3,397 calls that each
+carry the state's table. Where a call's cost lies (formation of the values bound, comparisons of equal subterms, the
+store search, the rounds of the evaluation) is to be attributed before the engine is refined further; a presentation
+in which calls carry keys instead of the table is among the candidates. The choice of this batch was made outside the
+loop and is a residual.
+
+## The reach of a state is a native definition — 2026-09-19
+
+The verdict of a kind judges that an answer state is closed from its roots, which is the reach of the state; the
+reach is the first native definition the verdict needs whose argument is a whole state.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| The constants a state reaches are the least closure of its reach rules computed in HOL (`isabelle_reached_constants`), which the verdict and the context assessment read. | Reach over a table of rows is a native definition (`Native_Table_Reach`): a row holds its key (a path), whether it is a root (a leaf) or not (a pair of leaves), and the keys of its predecessors; a key is reached when its row is a root or some predecessor is reached. It is composed of two collection notions (some element in a context, the search of a path store) and three rules of its own, states no octet but the empty payload, and on every single-valued table its positive meaning is the least closure of the table (`native_reached_exact`). A state presents its reach as the table of its constants, keyed by the binary digits of their positions, rooted at the heads of the state's roots, each preceded by the subjects whose statements mention it (`Isabelle_Native_Reach`); native reach on that table is exactly `isabelle_reached_constants` (`isabelle_native_reached`). |
+
+Evidence: on a serial probe of the base heap both theories load with every proof checked in 4.3 seconds. On the
+seeded state (60 constants, 186 mentions) native reach evaluates 595 calls in 0.874 seconds and returns the constants
+the HOL reach returns in 0.007 seconds; on the machinery's state (217 constants, 1,561 mentions, 3,397 calls) it
+returns all 217 in 171.8 seconds against 0.99. The check of the previous section proved both theories.
+
+Open: no decision reads native reach yet; the verdict of a kind as a native definition, whose closedness reads it, is
+the next design. At 171.8 seconds on the machinery the reach is not usable in a stage, which makes the engine's
+per-call cost of the previous section its prerequisite. The keys are the binary digits of positions in the state's
+name table, a presentation of Isabelle content, which the verdict's design is to reconsider. The choice of this batch
+was made outside the loop and is a residual.

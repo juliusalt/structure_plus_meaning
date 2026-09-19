@@ -1296,6 +1296,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Linear_Comparisons
     Ordered_Artifact_Comparison
     Ordered_Term_Comparison
+    Right_Ordered_Terms
     Finite_Presented_Collections
     Finite_Presented_Coordinates
     Finite_Presented_Structures
@@ -1626,6 +1627,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Recovered_Graph_Sharing
     Finite_Demanded_Closures
     Factor_Demanded_Program_Calls
+    Keyed_Demanded_Sites
     Factor_Demanded_Package_Readings
     Factor_Demanded_Graph_Readings
     Listed_Set_Unions
@@ -1714,6 +1716,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Isabelle_Entity_Export
     Development_Problems
     Development_Native_Readiness
+    Native_Table_Reach
+    Isabelle_Native_Reach
     Development_Native_Selection
     Filtered_Native_Questions
     Development_Constant_Problems

@@ -2112,3 +2112,13 @@ loop's policy, adoption into the refinement layer and the successor state are no
 | Theory | Reusable content and retained prerequisites |
 | --- | --- |
 | Finite_Demanded_Closures, Factor_Demanded_Program_Calls | The traversal of the sites alone (`finite_demanded_sites`) is the traversal's projection onto its sites and frontier (`finite_demanded_sites_readings`, through `while_option_commute_invariant`: a projection that commutes with the step commutes with the loop); a reading that needs only the reached sites instantiates it and keeps no rows, and the closure of a program's calls does (`finite_program_call_closure_sites`). |
+
+## Calls keyed where they differ; the reach of a state — 2026-09-19
+
+| Theory | Reusable content and retained prerequisites |
+| --- | --- |
+| Right_Ordered_Terms | A linear order on executable terms comparing a pair's right component first: the order of the mirrored term (`mirror_term`, an involution), computed on the term itself (`finite_term_compare_right`, `finite_term_compare_right_mirror`), with the equality of ordered terms decided by the same comparison. Keys over terms whose left components are shared use it. It rests on the convention of the programs building the terms (a notion passes its context on the left), not on a property of terms, so it is chosen per key and never as the equality of all terms: decided globally, it made the comparison of presented generations, which share their right components, 15 percent slower. |
+| Keyed_Demanded_Sites | The traversal of demanded sites with its visited sites in an ordered member index kept across steps and the successors of the frontier joined as one sorted listing of keys; for every key with a left inverse it returns the sites of `finite_demanded_sites` (`keyed_demanded_sites_exact`). |
+| Keyed_Native_Evaluation (`keyed_call_closure`) | The closure of a stage's requests through the keyed traversal (`keyed_call_closure_exact`), used by the generation, stage, reference and evidence code equations; the keys of calls order their terms right first. |
+| Native_Table_Reach | Reach over a table of predecessor rows as a native definition over the collection notions and the path store search: its positive meaning is the least closure `table_reached` on every single-valued table (`native_reached_exact`); finite presentation `finite_reach_table`. Any least closure over a table of predecessor rows instantiates it. |
+| Isabelle_Native_Reach | The reach table of a state (keys the binary digits of constant positions, roots the heads of the state's roots, predecessors the subjects whose statements mention a constant) and `isabelle_native_reached`: native reach on it is `isabelle_reached_constants`. |

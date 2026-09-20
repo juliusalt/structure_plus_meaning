@@ -245,6 +245,27 @@ class StartTests(Flow):
         self.assertEqual(v2_first(self.w), "")
 
 
+    def test_a_fresh_start_drops_the_events_it_supersedes(self):
+        # an unhandled event is carried for ever, and two classes go false while they wait. plan-31 was given two
+        # fresh charges, for two different runs, and two notices saying the working tree was inconsistent — of a
+        # tree that was consistent, written three hours and two runs earlier (2026-09-20).
+        self.w.base()
+        self.w.kb()
+        self.w.write("HANDOFF.md", PLANNER_STATE)
+        self.w.write("ROOT", "session S = HOL +\n  theories\n    Base\n")
+        self.w.write("theories/Base.thy", "theory Base imports Main begin end\n")
+        self.w.set_st(active=False, events=[
+            {"at": "2026-09-20T21:08:54", "from": "the owner", "text": "an older charge", "kind": "fresh-charge"},
+            {"at": "2026-09-20T20:24:21", "from": "the harness", "text": "the tree is inconsistent",
+             "kind": "tree-trouble", "tree": None},
+            {"at": "2026-09-20T20:25:57", "from": "the harness", "text": "implement-9 was interrupted"}])
+        self.w.v2("start", "--fresh")
+        texts = [e["text"] for e in self.w.st()["events"]]
+        self.assertNotIn("an older charge", texts)            # superseded: a charge is about the run that issued it
+        self.assertNotIn("the tree is inconsistent", texts)   # the tree is consistent now, so it is no longer true
+        self.assertIn("implement-9 was interrupted", texts)   # untouched: what it has not handled it still needs
+        self.assertEqual(len([t for t in texts if "This run begins on a knowledge base built fresh" in t]), 1)
+
     def test_a_fresh_start_runs_nothing_of_the_old_graph_until_the_planner_queues(self):
         # the run of 2026-09-20 began --fresh, charged its planner to take stock, and dispatched the old queue in the
         # same breath: task 7 was started, checked, reviewed and committed within ten minutes, before the planner had

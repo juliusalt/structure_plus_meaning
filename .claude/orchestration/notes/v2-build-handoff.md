@@ -1016,3 +1016,39 @@ And one self-inflicted: a range delete meant to remove the duplicate rule took `
 with it. `import v2` still succeeded — they are only resolved at call time — and the suite caught it.
 
 **267 tests pass.**
+
+## 2026-09-20 22:30 — the third fresh start, and two false things it was still being told
+
+`start.sh --fresh`: kb-4 released, **kb-5** at 492,851 tokens, **plan-31** forked from it, graph held, nothing of the
+old queue started. Three of the day's repairs proved themselves in the first second of the dispatch:
+
+    22:26:23 the stage of 18, 5, 9 followed the task list: they are completed
+    22:26:23 task 22 has stood with the planner for 77 min
+    22:26:23 task 46 has stood with the planner for 71 min; it holds the working tree
+
+The stale stages healed, so the new planner is not told to re-plan three committed tasks; the two dropped tasks were
+named; and the tree-holding notice fired, which is the deadlock found while monitoring the second run.
+
+Its first message (43,207 characters) carries the shape line, `v2.py accept`, `v2.py blockers`, the hold, and the
+detail-versus-goal rule.
+
+**But the audit of what it was told found two things wrong, both from events carried across runs.**
+
+- **Two false notices, still being delivered.** The events of 20:24:21 and 20:25:41 — *"The working tree is
+  inconsistent … Every task's check refuses on this"* — were false about the shared tree when written (the trouble
+  was `.build/trees/46`) and are false now. `tree_checked` was repaired hours ago, but the events already in the
+  queue are re-delivered to every new planner, unhandled, for ever. plan-31 read them as its first two messages.
+- **The fresh charge twice**, for two different runs: the 21:08:54 one that plan-30 never handled, and this run's at
+  22:26:21. Identical text, two copies.
+
+`fresh_sweep` now drops, at a fresh start only, the events that start supersedes: a prior fresh charge, and a
+tree-trouble notice whose tree is no longer in trouble (`event(..., kind=...)` carries the class and the tree).
+Nothing else is touched — what the planner has not handled it still needs. One test, checked against the unrepaired
+code.
+
+**plan-31 was sent a correction** naming both notices, saying what was actually inconsistent and that the shared tree
+needs no repair. It is live and has read them, so the harness's repair alone would have left it acting on a false
+premise.
+
+**267 tests pass.** Still unexercised: `propose` → `accept`. Briefs are detained (width 3, 2 slots), so the first one
+may not run for a while, and the id-allocation question stands until it does.

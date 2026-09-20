@@ -251,9 +251,35 @@ def iso(epoch=None):
     return time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime(epoch)) + f".{int(epoch * 1000) % 1000:03d}Z"
 
 
-def event(st, sender, text):
-    """Something for the next planning episode."""
-    st["events"].append({"at": time.strftime("%Y-%m-%dT%H:%M:%S"), "from": sender, "text": text})
+def event(st, sender, text, kind=None):
+    """Something for the planner. `kind` names a class of event that can go stale, so that one whose subject has
+    since changed is not carried to the next planner as though it were still true (see fresh_sweep)."""
+    st["events"].append({"at": time.strftime("%Y-%m-%dT%H:%M:%S"), "from": sender, "text": text,
+                         **({"kind": kind} if kind else {})})
+
+
+def fresh_sweep(w):
+    """Events a fresh start supersedes, dropped before its charge is added.
+
+    An event nobody handled is carried for ever, and two classes of it become false while they wait. A tree-trouble
+    notice states what a tree was when it was written: on 2026-09-20 two of them said "the working tree is
+    inconsistent … every task's check refuses on this" of a tree that was consistent, and they were still being
+    delivered to a new planner three hours and two runs later. And a fresh charge is about the run that issued it,
+    so the one a lost planner never handled is not a charge for this run — plan-31 was given two, for two different
+    runs, in one message. Nothing else is touched: what the planner has not handled it still needs."""
+    kept, dropped = [], []
+    for e in w["events"]:
+        if e.get("kind") == "fresh-charge":
+            dropped.append(e)
+        elif e.get("kind") == "tree-trouble" and not tree_trouble(e.get("tree")):
+            dropped.append(e)
+        else:
+            kept.append(e)
+    w["events"] = kept
+    if dropped:
+        log(f"a fresh start supersedes {len(dropped)} unhandled event(s): "
+            + ", ".join(sorted({e.get("kind") for e in dropped})))
+    return dropped
 
 
 # ---------------------------------------------------------------- the owner's words
@@ -1168,8 +1194,10 @@ def tree_checked(who, what, tree=None):
     if told is None or told > TREE_TOLD or _read(mark, STATE) != said:
         open(os.path.join(STATE, mark), "w").write(said)
         with state() as st:
-            event(st, "the harness", f"{whose[0].upper()}{whose[1:]} is inconsistent after {what}: "
-                  + "; ".join(trouble) + reach)
+            e = {"kind": "tree-trouble", "tree": tree}
+            st["events"].append({"at": time.strftime("%Y-%m-%dT%H:%M:%S"), "from": "the harness", **e,
+                                 "text": f"{whose[0].upper()}{whose[1:]} is inconsistent after {what}: "
+                                         + "; ".join(trouble) + reach})
     return trouble
 
 
@@ -3701,7 +3729,8 @@ def cmd_start(fresh=False):
         st["active"] = True
         first = not st["kb"] and not st.get("kb_building")
         if fresh:
-            event(st, "the owner", FRESH_CHARGE)
+            fresh_sweep(st)  # a charge for a run that is over, and a tree that is no longer in trouble
+            event(st, "the owner", FRESH_CHARGE, kind="fresh-charge")
         elif first and not st.get("plan_ended"):
             event(st, "the harness", "The orchestration starts, and there is no task graph yet: build it (the first "
                   "episode's part of this message says from what).")

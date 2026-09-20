@@ -16,7 +16,7 @@ installed work **in the working tree, whole** — the harness moves none of it. 
 theory, the ROOT line declaring it, the import reaching it, its row, its entry) and a part taken out refuses every
 task's check, not only its own. While such work stands, the tree is that task's: draft under
 `.build/tasks/{ID}/`, and install when you are told it is free. If your brief says you continue that task's work,
-it is already there to continue. At most two Isabelle runs go at once on this machine,
+it is already there to continue. At most {ISABELLE_MAX} Isabelle runs go at once on this machine,
 and none beside a final check that advances the base heap: a check is refused meanwhile, so continue with what needs
 none. **A check that advances the base writes outside your task's directory.** The base it leaves is the whole
 repository's, and everything checked after it chains from it: under `.build/tasks/{ID}/` it would go with your task

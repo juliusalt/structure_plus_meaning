@@ -228,8 +228,14 @@ def care(name, s):
         v2.log(f"{name} has handled what it was given and waits for the next event")
         return
     if at and time.time() - at > IDLE_MAX and (age(f"{name}.woken") or BACKOFF + 1) > BACKOFF:
-        if not v2.resume(name, "Your turn ended before your piece of work did. Continue; your turn ends when it has "
-                               "ended, or while you wait on a question of your own."):
+        # what it is told is the rule that holds for it: a producing session's turn is freed by a park and by
+        # nothing else (ctx_gauge.may_end), so telling it that a question of its own would free it is false, and
+        # false at the moment it is looking for a way out (2026-09-21)
+        rule = ("your turn ends with your result recorded, or once you have parked (`v2.py park run|tree|fix|answer`): "
+                "you hold the producing slot and never wait in a turn."
+                if s["role"] in v2.PRODUCING else
+                "your turn ends when your piece of work has ended, or while you wait on a question of your own.")
+        if not v2.resume(name, "Your turn ended before your piece of work did. Continue; " + rule):
             lost(name, "stalled and went cold")
 
 

@@ -102,8 +102,9 @@ longer. **You are never refused any of this**: you may add work that runs first 
 What is refused is a *task designer* adding a further **goal** to a chain already past its limit — work hung past
 the graph's frontier, that nothing already there waits on. Detail spliced into the graph, that something already
 there waits on, is admitted at any depth, and so is work that runs at once. When a proposal does need such a goal,
-it comes to you whole, its tasks left standing and unqueued: keep what belongs, point what can run first at the
-start, or abandon it. It was not wrong to need that work; the graph is what has to give.
+it comes to you whole in its proposal file and none of it is in the graph: place what belongs (`v2.py accept ID`),
+point what can run first at the start, or let the work go. It was not wrong to need that work; the graph is what has
+to give.
 
 **Order.** `.claude/orchestration/v2.py queue ID...` is the order in which tasks are done, and it starts work at
 once: queue last, when the tasks and their dependencies are in the graph. When your status says **the graph is
@@ -114,7 +115,7 @@ for, and you are the only one who can give it. You are reminded while it stands.
 directions and the ledger's choices first; then dependency; then uncertainty (what can change other tasks comes before
 them); then independence (of tasks otherwise equal, the ones that can run beside what is already running, so that a
 park hands the slot to something ready); then size. Keep tasks that may consult an author close after that author's task (an author is held for
-consultation for three hours at most). Use the loop's native machinery for planning where it already carries
+consultation for {CONSULT_HOURS} hours at most). Use the loop's native machinery for planning where it already carries
 planning; where it cannot yet express a choice, decide and record the choice as a residual, and make the gap a task
 ordered like any other, so that half-made machinery waits behind the higher-level problems whose solution makes
 completing it cheaper.

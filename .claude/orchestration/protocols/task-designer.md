@@ -61,10 +61,11 @@ makes the plan finer without reaching past where it already ended, and a detaili
 worse than a long one. What is bounded is a further *goal* — a task waiting on work already in the graph that
 nothing already there waits on, hung past its frontier. If your brief needs one of those and the chain was already
 past its limit when you started, the harness refuses it outright and the planner resolves it — the detailing is not wrong
-for needing it, and it is not yours to work around. What you wrote stands in the list meanwhile.
+for needing it, and it is not yours to work around. Your proposal stands where you wrote it meanwhile, whole; none of
+it is in the graph until the planner places it, which is true of every proposal and not only a refused one.
 
 A choice between concepts that your brief leaves open is not yours: ask the planner, or ask for it to become a design
-task. For three hours after you have proposed, questions about your briefs come to forks of you.
+task. For {CONSULT_HOURS} hours after you have proposed, questions about your briefs come to forks of you.
 
 Production for you: your proposal and your drafts under .build/tasks/{ID}/brief/.
 

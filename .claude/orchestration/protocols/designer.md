@@ -13,7 +13,7 @@ your brief names: they hold what the development decided since the library was l
 
 You decide a conceptual question at full depth and write the decision where the tasks that use it will read it (an
 entry of DECISIONS.md; the plan only where its structure, the stages' standing or the direction of the work changes):
-what is decided, why, what was weighed and rejected, and what the tasks built on it must respect. The tasks that implement it take your written decision as their input; for three hours after you
+what is decided, why, what was weighed and rejected, and what the tasks built on it must respect. The tasks that implement it take your written decision as their input; for {CONSULT_HOURS} hours after you
 finish, their questions about it come to forks of you, so write what they will need. The owner's principles bind the
 decision: reuse and extend what exists, never duplicate; native definitions are normative; each notion's semantic
 scope is established once, in its founding theory.

@@ -305,9 +305,18 @@ class WatchdogTests(unittest.TestCase):
         self.run_watchdog()
         (resume,) = self.resumed("w4")
         self.assertIn("Your turn ended before your piece of work did", resume[3])
+        # and the rule it is given is the one that holds for a producing session
+        self.assertIn("once you have parked (`v2.py park run|tree|fix|answer`)", resume[3])
+        self.assertNotIn("while you wait on a question of your own", resume[3])
         self.w.set_status("implement-4", "idle")
         self.run_watchdog()
         self.assertEqual(len(self.resumed("w4")), 1)
+        # a supporting session is given the rule that holds for it
+        self.w.session("review-4", "reviewer", "r4", task="4", status="idle")
+        self.said("r4", ago=600)
+        self.run_watchdog()
+        (resume,) = self.resumed("r4")
+        self.assertIn("or while you wait on a question of your own", resume[3])
 
     # ------------------------------------------------------------ held sessions
 

@@ -1643,6 +1643,8 @@ def render(role, **values):
                   WIDTH=str(graph_figures()[0]), DEPTH=str(graph_figures()[1]),
                   SLOTS=str(GRAPH_WIDTH or WORKERS_MAX),
                   FIX_ROUNDS=str(FIX_ROUNDS), HOLD_HOURS=str(HOLD_PARK // 3600), ROOM_DESIGN=str(room_of("design") // 1000),
+                  # a number a protocol states in prose is one the harness can change under it: these are its own
+                  CONSULT_HOURS=str(HOLD_MAX // 3600), ISABELLE_MAX=str(ISABELLE_MAX),
                   ROOM_TASK=str(room_of("build") // 1000), **values)
     missing = [k for k in dict.fromkeys(re.findall(r"\{([A-Z][A-Z_]{2,})\}", text)) if k not in values]
     for k, v in values.items():
@@ -2705,9 +2707,10 @@ def held_graph():
               + (f"{len(waiting)} tasks stand in the queue ({' '.join(waiting[:12])}"
                  + (", …" if len(waiting) > 12 else "") + ") and not one of them will start — no build, no fix, no "
                  "review, no brief — while this stands. " if waiting else "The queue is empty. ")
-              + "Two things end it, and only you can do either: drop what the graph no longer needs (`v2.py drop ID`, "
-                "and take the task out of the list), and then say what the order of the rest is (`v2.py queue ID …`), "
-                "which is what lifts the hold. Dropping alone does not lift it, and neither does re-planning: the "
+              + "Two things are yours to do here, and only the second ends it: drop what the graph no longer needs "
+                "(`v2.py drop ID`, and take the task out of the list), then say what the order of the rest is "
+                "(`v2.py queue ID …`), which is what lifts the hold. Dropping alone does not lift it, and neither "
+                "does re-planning: the "
                 f"order is the word the harness waits for. You are told again in {GRAPH_HELD_EVERY // 60} minutes "
                 "while this lasts.")
     log("the graph is held and the planner is told; its order lifts it")

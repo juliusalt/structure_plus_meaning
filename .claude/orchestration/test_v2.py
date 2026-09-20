@@ -541,11 +541,12 @@ class PlanningTests(Flow):
         subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); "
                         "import v2; v2.running_jobs('implement-4')"], env=self.w.env, capture_output=True, text=True)
         self.assertEqual((self.w.state / "v2.log").read_text().count("could not be read"), before)  # not every call
-        self.w.session("implement-5", "implementer", None, task="5")
+        self.w.session("implement-5", "implementer", "w5", task="5")   # started, nothing written yet
         out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); "
                               "import v2; print(v2.running_jobs('implement-5'))"],
                              env=self.w.env, capture_output=True, text=True)
-        self.assertEqual(out.stdout.strip(), "[]", out.stderr)   # never started: no transcript, and nothing is said
+        self.assertEqual(out.stdout.strip(), "[]", out.stderr)   # no transcript yet: no job, and nothing is said
+        self.assertEqual((self.w.state / "v2.log").read_text().count("could not be read"), before)
 
     def test_a_hold_whose_file_cannot_be_read_still_holds(self):
         # a hold is a switch that must fail closed: the file being there is what holds, and reading it is only how
@@ -2605,4 +2606,9 @@ class WalkTests(Flow):
         # 5. every event of the whole walk reached the one planner, and no second was ever forked
         self.assertEqual(len(self.forks("plan-")), 1)
         self.assertIn("is committed as", self.heard())
-        self.assertNotIn("lost", (self.w.state / "v2.log").read_text())
+        said = (self.w.state / "v2.log").read_text()
+        self.assertNotIn("lost", said)
+        # nothing in a walk that went right needs anybody: an ATTENTION here is the harness crying wolf, and a log
+        # with one in it is a log the owner learns to skim (a transcript not yet written read as one unreadable,
+        # 2026-09-21)
+        self.assertNotIn("ATTENTION", said)

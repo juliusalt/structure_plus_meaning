@@ -730,8 +730,8 @@ def running_jobs(name):
         with open(path, "rb") as f:
             f.seek(max(0, size - 4_000_000))
             text = f.read().decode(errors="ignore")
-    except KeyError:
-        return []      # it never started: it has no session to have jobs
+    except (KeyError, FileNotFoundError):
+        return []      # it never started, or has written nothing yet: either way it has started no job
     except OSError as e:
         # [] is "no job of its own runs", and the harness seals or resumes a session on that, which kills whatever
         # it started. Nothing said so when the transcript could not be read at all (2026-09-21).

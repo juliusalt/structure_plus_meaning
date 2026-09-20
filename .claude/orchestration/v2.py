@@ -1775,11 +1775,6 @@ def integrated(rec, since):
     return at > since and "INTEGRATED" in text
 
 
-def kb_context():
-    st = peek()
-    return (st["sessions"].get(st["kb"] or "") or {}).get("context") or 0
-
-
 def kb_ready():
     """The knowledge base can be forked: sealed and warm, and not past its limit while its successor is being built
     (a fork of it would have less than its room)."""
@@ -2697,7 +2692,7 @@ def tidied():
         except (OSError, ValueError):
             packs.add(None)
     sweep_packs = None not in packs  # a base whose record cannot be read: its pack is not swept on a guess
-    gone = []
+    gone = trees_tidied()  # written for this sweep and never called from it, so a tree holding nothing stayed
     sids = {s.get("sid") for s in peek()["sessions"].values()}
     for name in os.listdir(STATE):
         if name.startswith("work-") and name.endswith(".snap") and name[5:-5] not in sids:

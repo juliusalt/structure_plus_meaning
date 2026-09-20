@@ -592,24 +592,12 @@ EXTENSIONS = {"md", "thy", "py", "json", "jsonl", "sh", "txt", "out", "log", "di
               "cfg", "csv", "tsv", "pyc", "lock", "ML", "tex", "html", "svg", "png"}
 
 
-def path_like(word, cwd):
-    """The file a word of a command names, or None. A command carries heredocs, quoted text and prose, and every word
-    that ends a sentence has a dot in it, so a word counts only when it names something that is there, or a new file
-    of a known kind in a directory that is (2026-09-20: the owner record held 319 entries, five of them paths)."""
-    for w in re.findall(r"[A-Za-z0-9_./~-]+", word):
-        if not w or w.startswith("-") or w.endswith(".") or ".." in w or w == "/dev/null":
-            continue
-        full = os.path.normpath(os.path.join(cwd or v2.PROJECT, os.path.expanduser(w)))
-        base = os.path.basename(w)
-        ext = base.rsplit(".", 1)[-1] if "." in base[1:] else ""
-        if os.path.lexists(full) or (ext in EXTENSIONS and os.path.isdir(os.path.dirname(full))):
-            yield full
-
-
 def write_targets(tool, inp, command, cwd):
     """The files a command writes: an Edit's or Write's file, the targets of its redirections and file commands, and
     the paths a script inside it names where it writes them. A path a command merely mentions is not one: a heredoc's
-    prose naming `ROOT` had drafts under a task's own directory refused as writes to the tree (2026-09-20)."""
+    prose naming `ROOT` had drafts under a task's own directory refused as writes to the tree (2026-09-20). What
+    keeps prose out is shell_syntax, which drops heredoc bodies, quoted words and Isabelle's symbols before any of
+    this reads them — not a test of the word itself, which would have to drop `ROOT` and every file not yet made."""
     if tool in ("Edit", "Write", "MultiEdit", "NotebookEdit"):
         p = inp.get("file_path") or inp.get("notebook_path") or ""
         return [os.path.normpath(p if os.path.isabs(p) else os.path.join(cwd or v2.PROJECT, p))] if p else []

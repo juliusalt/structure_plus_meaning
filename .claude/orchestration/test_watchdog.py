@@ -276,12 +276,12 @@ class WatchdogTests(unittest.TestCase):
         self.assertEqual(launched[1:], [str(Path(watchdog.HERE) / "base.sh"), "xhigh", "layer"])
         self.assertIn("31% of what it holds has changed", (self.w.state / "v2.log").read_text())
 
-    def test_a_layer_is_refreshed_at_the_start_of_a_run_whatever_has_changed(self):
+    def test_a_layer_can_be_asked_for_by_hand_whatever_has_changed(self):
         self.layer()
         (self.w.state / "xhigh-layer.refresh").write_text("1")
         self.assertEqual(len(self.run_layers(0.0)), 1)
         self.assertFalse((self.w.state / "xhigh-layer.refresh").exists())  # asked once, not at every run
-        self.assertIn("at the start of the run", (self.w.state / "v2.log").read_text())
+        self.assertIn("asked for by hand", (self.w.state / "v2.log").read_text())
 
     def test_a_base_with_no_layer_is_left_alone(self):
         self.assertEqual(self.run_layers(0.9), [])

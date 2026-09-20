@@ -375,8 +375,8 @@ LAYER_EVERY = int(os.environ.get("ORCH_LAYER_EVERY", 900))  # how often the shar
 
 
 def layers():
-    """Refresh a base's frontier layer when what it holds has moved. The rule of notes/bases-design.md section 8: at
-    the start of a run, and when the held files changed since the layer loaded reach ORCH_LAYER_STALE of its tokens —
+    """Refresh a base's frontier layer when what it holds has moved: when the held files changed since the layer
+    loaded reach ORCH_LAYER_STALE of its tokens, or when `state/<who>-layer.refresh` asks for one by hand —
     replaying the 30 commits of 2026-09-19 that came to 6 refreshes for the middle base and 7 for the implementation
     one in 15.5 hours, about every 2.5 to 3 hours of continuous work. The stable reference under it is the owner's to
     rebuild and is never touched here."""
@@ -395,7 +395,7 @@ def layers():
         with contextlib.suppress(OSError):
             os.remove(os.path.join(STATE, f"{who}-layer.refresh"))
         v2.log(f"the {who} layer is refreshed: {share:.0%} of what it holds has changed since it loaded"
-               if not asked else f"the {who} layer is refreshed at the start of the run")
+               if not asked else f"the {who} layer is refreshed, asked for by hand")
         subprocess.Popen(["sh", os.path.join(HERE, "base.sh"), who, "layer"], cwd=v2.PROJECT,
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
 

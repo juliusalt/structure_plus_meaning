@@ -269,6 +269,25 @@ session ends its turn only when its piece of work has ended, while it waits, or,
 between its events and a session the owner speaks to, always); PreCompact `ctx_gauge.py tripwire`; SessionStart sleeps ten seconds, which holds a
 fork's first request until its tools have loaded.
 
+## The bases and their layers
+
+Each base's load list is split by a `# === layer ===` line. Above it is the **stable reference** — the founding
+theories and the central ideas — which the owner builds and seals and which changes only when the library's
+vocabulary does: it moved by nothing at all in the twelve hours the layers moved by 84K, 95K and 122K tokens. Below
+it is the **frontier layer**: the generated indexes, the working frontier, the tools, the decisions by name, the
+reasoning inventory, the plan and the owner's words last. The harness builds the layer as a fork of the sealed
+stable base (`base.sh WHO layer`), seals it, and records it; from then on every role of that base forks the *layer*,
+and `v2.py start` refuses while a split base has none, since its roles would fork a reference with nothing that
+steers them.
+
+A fork of the layer reads the whole prefix under it from cache — measured on 2026-09-20: a fork of the sealed
+knowledge base read 538,051 of its 538,044 tokens and wrote 62 — so one keep-warm ping serves the layer and the base
+under it. The layer is refreshed when the files it holds have changed by `ORCH_LAYER_STALE` (20%) of its tokens, or
+when `state/<who>-layer.refresh` asks; a refresh re-measures the working frontier from the sessions of the roles
+that fork that base, writes 112K to 234K instead of rebuilding 473K to 518K, and leaves the reference untouched. The
+layer it replaces is stopped but not removed, and its snapshot is kept while any session still holds it, so a session
+forked before a refresh is told what changed against the load it actually has.
+
 ## How the base is loaded
 
 `base.sh max build` (also `build-packed`) runs `base_pack.py build`: it freezes every file of the load list as

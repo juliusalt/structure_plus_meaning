@@ -3251,9 +3251,9 @@ def cmd_start(fresh=False):
                   "episode's part of this message says from what).")
         for i in st.pop("interrupted", []):
             event(st, "the harness", i)
-    for who in BASES:  # a run starts on a current frontier: every layer is refreshed before anything forks it
-        if os.path.exists(os.path.join(STATE, f"{who}-layer.json")):
-            open(os.path.join(STATE, f"{who}-layer.refresh"), "w").write(str(time.time()))
+    # A run does not refresh its layers on principle. The staleness rule already refreshes one whose files have
+    # moved, within a minute of starting, and marking them here rebuilt three layers that had just been built
+    # (2026-09-20). `state/<who>-layer.refresh` still forces one by hand.
     dispatch()
     st = peek()
     return f"active; knowledge base {st['kb'] or st.get('kb_building') or 'not started (see state/v2.log)'}"

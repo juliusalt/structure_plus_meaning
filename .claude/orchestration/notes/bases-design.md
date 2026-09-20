@@ -593,3 +593,22 @@ xhigh and statements for high.
 **Builds**: all six packs verify; each bootstrap names exactly the chunk count its pack has (8/4, 6/7, 6/7); the
 largest chunk is 108,296 bytes against the 128,000 a Bash result shows whole. `seal` writes `<who>-manifest.json`
 for a stable base and `layer` writes `<who>-layer-manifest.json` and a copy under the layer's own session.
+
+### The build itself (2026-09-20 20:00)
+
+Sealed, all six parts, each verified by `check-load` against its pack:
+
+| base | stable | with its layer | room a fork has | chunks |
+|---|---:|---:|---:|---|
+| max | 348,004 | **478,130** | 428K | 8 + 4 |
+| xhigh | 274,147 | **503,712** | 403K | 6 + 7 |
+| high | 274,258 | **523,233** | 383K | 6 + 7 |
+
+`xhigh` and `high` packed their stable parts to the *same* hash — their references are identical by construction,
+which is the coherence check passing in the strongest form. The knowledge base built on the max layer came to
+485,374: its own load is about 7K now that HANDOFF.md is 479 tokens rather than 27,090.
+
+One fault, found by it happening: `cmd_start` marked every layer for refresh at the start of a run, so three layers
+that had just been built were rebuilt immediately. The staleness rule already refreshes a layer whose files have
+moved, within a minute of starting, so the mark was redundant as well as wasteful. It is gone; a refresh happens on
+staleness, or when `state/<who>-layer.refresh` asks for one by hand.

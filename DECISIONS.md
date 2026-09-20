@@ -9248,13 +9248,19 @@ The first of the two refinements decided in "A native definition over a state re
 in every call": the constructed applications, the listed applications of a demand and the functionality
 of premises. It is a refinement and not a change of meaning. `finite_program_applications` and
 `finite_premise_functional` keep their original meanings on their whole declared domains; what changes
-is the equations that execute them, each conditional on premises the theory proves — a formed system, a
-formed call, and, for the clause-level fact, heads that cover their variables. The acceptance of the
+is the equations that execute them. Both installed equations are unconditional and total:
+`finite_premise_functional_rows` is an identity with no premise, and `finite_program_applications_listed`
+is a `code abstract` equation that carries the formation tests inside its own guards, which is why the
+boundaries of those guards are proved (`finite_program_applications_unformed`,
+`finite_program_applications_unformed_system`). What rests on premises — a formed system, a formed call,
+and, for the clause-level fact, heads that cover their variables — is the proof that they compute the
+original value (`finite_constructed_applications_exact`, `finite_constructed_instance`,
+`finite_admitted_constructed`). The acceptance of the
 batch is therefore word equality: a changed recipe word would be a failure, not a result.
 
 | Earlier proposal or state | Correction |
 |---|---|
-| A call's applications are constructed by matching the clause's head against the call and instantiating its premises, and then verified again as admitted instances: formation of every value bound and of every premise call, membership of each value in its own bindings, the interfaces' acceptance of the call and of every premise call — each a traversal of the table the call carries, although the construction placed each value there. | For a formed program and a call whose term is formed, the constructed applications of the call are exactly its applications (`finite_constructed_applications_exact`, over `finite_constructed_applications`). Three facts carry it, each stated for its own subject. The shape of a pattern (`finite_pattern_fits`: its pairs and literal leaves) decides its instance under its own match, so a formed term is accepted exactly when it fits and the rows the match returns are functional (`finite_pattern_accepts_fits`, over `finite_matching_rows` and `finite_matching_functional`, through `relation_rows_functional`). A clause whose head covers its variables has at a formed call exactly the instance its shape gives (`finite_constructed_instance`), and the construction checks that coverage itself rather than assuming it (`finite_requested_constructed`). An instance is admitted exactly when the interfaces accept the call and every premise call (`finite_admitted_constructed`, over `finite_interface_fits`), because every value bound is a subterm of the call and every premise call an instance of formed patterns with those values. Their join at one clause is `finite_constructed_requests_exact` over `finite_constructed_requests`. The call's formation is checked once, and no check traverses a value the construction placed. |
+| A call's applications are constructed by matching the clause's head against the call and instantiating its premises, and then verified again as admitted instances: formation of every value bound and of every premise call, membership of each value in its own bindings, the interfaces' acceptance of the call and of every premise call — each a traversal of the table the call carries, although the construction placed each value there. | For a formed program and a call whose term is formed, the constructed applications of the call are exactly its applications (`finite_constructed_applications_exact`, over `finite_constructed_applications`). Three facts carry it, each stated for its own subject. The shape of a pattern (`finite_pattern_fits`: its pairs and literal leaves) decides its instance under its own match, so a formed term is accepted exactly when it fits and the rows the match returns are functional (`finite_pattern_accepts_fits`, over `finite_matching_rows` and `finite_matching_functional`, through `relation_rows_functional`). A clause whose head covers its variables has at a formed call exactly the instance its shape gives (`finite_constructed_instance`), and the construction checks that coverage itself rather than assuming it (`finite_requested_constructed`). An instance is admitted exactly when the interfaces accept the call and every premise call (`finite_admitted_constructed`, over `finite_interface_fits`), because every value bound is a subterm of the call and every premise call an instance of formed patterns with those values. Their join at one clause is `finite_constructed_requests_exact` over `finite_constructed_requests`. What the construction replaces is `finite_schema_call_formed`, whose `finite_pattern_accepts` carries `finite_term_formed x`: at a formed system and a formed call, the formation of a constructed value and of a constructed premise call is never established again. What remains of the acceptance is each pattern's shape and the equalities at a variable's repeated occurrences — one traversal of the constructed value per premise per clause, through `finite_interface_fits` — together with the material check over the constructed bindings. |
 | The applications of a demand are computed call by call and united as finite sets, which compares every application with every other and meets the shared context first. | The applications of distinct calls have distinct heads, so they are listed call by call without being compared (`finite_program_applications_listed`, a `code abstract` equation over `listed_image_union`). The equation is guarded on the system's formation, and the two boundaries it needs are stated: an unformed system and an unformed call each have no application (`finite_program_applications_unformed_system`, `finite_program_applications_unformed`), so the guard returns the original value and not merely a default. |
 | Every round of an evaluation checks that a rule's premises are functional by comparing every premise with every other, itself included. | Premise functionality is the functionality of a relation (`finite_premise_functional_rows`, a code equation reducing `finite_premise_functional` to `finite_relation_functional`), whose existing execution compares a row only with the rows after it. Two premises at distinct sockets are never compared by their calls, and no premise is compared with itself. |
 
@@ -9262,7 +9268,7 @@ batch is therefore word equality: a changed recipe word would be a failure, not 
 `probe.log`; source copy `.build/impl31/t3/`; probe theory `.build/impl31/t2/P31_Engine_Profile.thy`):
 the seeded state's demanded closure 0.014 seconds against 0.063 before, its evaluation 0.403 against
 1.224 and equal to the HOL result; the machinery's closure 0.784 against 3.83, its evaluation 43.812
-seconds with 217 results and equal to the HOL result. The check `tools/incremental_check.py check --advance-base` (`.build/check-20260920a`, 341.51 seconds, the base advanced to its proof context) proved 153 of the 1,797 theories and reused 1,644, and executed all 33 recipes: every one accepted, so every recipe word equals its retained word and no recipe failed. The 177 tool tests and the 35 kernel tests pass. REPLAY_NUMBERS
+seconds with 217 results and equal to the HOL result. The check `tools/incremental_check.py check --advance-base` (`.build/check-20260920a`, 341.51 seconds, the base advanced to its proof context) proved 153 of the 1,797 theories and reused 1,644, and executed 33 of the 52 recipes, the other 19 reusing their accepted executions: every executed recipe accepted, so every recipe word equals its retained word and no recipe failed. The 177 tool tests and the 35 kernel tests pass. Replaying the sixteen retained answers reconstructed fifteen with every word equal and reported the adopted walk as the published state's unchanged answer, none differing.
 
 **Open.** The second refinement of the line — the evaluation over the positions of the demanded calls,
 where the rule table is renamed by the injective map sending each demanded call to its position among
@@ -9271,7 +9277,11 @@ unchanged and not yet met: the machinery's reach within five seconds and the see
 against the 44.6 and 0.417 seconds this batch leaves. The choice of these refinements, of their order
 and of the bound was made outside the loop and is a residual.
 
-Recorded 2026-09-20, commit `…`.
+This entry reached the repository early, in commit `47dcda77`, which carries none of the theory,
+`ROOT` entry, import or row it records; the finalizer no longer carries another task's uncommitted
+file, and the line below is closed with the commit that does carry them.
+
+Recorded 2026-09-20, commit `47dcda77`.
 
 ## A refinement applies a notion; an index is one
 
@@ -9468,4 +9478,4 @@ refinement: that a refinement applies a notion does not say it should be made, a
 that decides it remains an observation under the cost criterion of Q2. This entry was written
 outside the loop and is a residual.
 
-Recorded 2026-09-20, commit `…`.
+Recorded 2026-09-20, commit `524a3ab3`.

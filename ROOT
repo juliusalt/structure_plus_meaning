@@ -1631,6 +1631,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Demanded_Package_Readings
     Factor_Demanded_Graph_Readings
     Listed_Set_Unions
+    Factor_Constructed_Program_Applications
     RRA_Listed_Environment_Positions
     RRA_Inserted_Attachments
     Factor_Indexed_Readings

@@ -263,6 +263,21 @@ re-verifies its context in every call".
   cycle time this whole line pays, and they are what the engine line's refinements move; #7 records them with its
   measurement, so that what the refinements buy is read where the owner's single-digit-minute cycle is judged.
 
+- **A task whose check advanced the base returns to the planner with its batch, and the graph owns the window.**
+  #5's advancing check moved the base to a context holding its uncommitted theory; the tree was then shelved back to
+  HEAD without it, so #17's replay read a tree and a base that disagreed, lost two answers and triggered a quick fix
+  chasing a failure that was not its own. The harness now refuses to set aside a path the active base was advanced
+  with, which closes the tree's half. The planner's half: such a task may return — nothing in its work failed, and the
+  disagreement is one-way, a base *behind* the tree being harmless because a check rebuilds what changed since it —
+  but from that moment the graph holds **exactly one open task whose deliverable is that batch's commit**, and it leads
+  the queue; no other task takes the tree until it lands. That is what #19 is, and why #15 and #17 stand behind it. If
+  such a task is abandoned rather than finished, the base is moved off its content before the tree is reverted.
+  Advancing only at the end of a finalization was weighed and refused: a check reuses only from the active base, so a
+  later check that advanced instead would re-pay the whole batch's rebuild (153 theories, 341 s for #5). What moves the
+  base and when is a host choice with no notion in the state, a recorded residual beside the run limit (Not yet
+  planned, item 9); what that account must express is that the uncommitted work the base holds is exactly what one open
+  task will commit.
+
 ## Delivered
 
 - **#1 (brief)** produced the engine line, #5 through #8.
@@ -420,9 +435,9 @@ Not yet planned, in the order they are expected to be planned:
    presentation), no longer a design and no longer conditional on #9.
 9. The plan's stages 4 (policy extended from owner directions) and 5 (the machinery improving itself through the
    process), not begun beyond the machinery's notions posed as residual problems; the harness, the adoption tool and
-   the checks still have no notion in the state. One instance is already in hand: the machine's run limit is a
-   constant in one tool (see Decisions), and every other tool that spawns Isabelle should take it from one place,
-   which that account is what supplies.
+   the checks still have no notion in the state. Two instances are in hand, both recorded under Decisions and both held meanwhile by a planning rule: what moves
+   the active base and when, and the machine's run limit, a constant in one tool that every other tool spawning
+   Isabelle should take from one place. That account is what supplies them properly.
 
 ## Now
 - **#19 finishes #5's batch; #6 then reviews the committed content.** Nothing in the work failed at any point.
@@ -450,8 +465,9 @@ Not yet planned, in the order they are expected to be planned:
   change no longer takes a heredoc's words for filenames. The tree defect was repaired earlier (`b82f0662`, "Hold the
   whole working tree only while a check runs"). A fifth is repaired since plan-14: a check that cannot run — a command
   naming an output directory that exists, or omitting `--output` — is no longer counted as a failed check, and goes
-  back to the session to correct the command at no cost in rounds; both forms had cost #5's batch a round apiece. The
-  planner's side of the `{WHAT}` defect stands as a decision whatever the handoff now carries.
+  back to the session to correct the command at no cost in rounds; both forms had cost #5's batch a round apiece. The planner's side of the `{WHAT}` defect stands as a decision whatever the handoff now carries. A sixth is
+  repaired since plan-15: a path the active base was advanced with can no longer be set aside, which is what made
+  #17's replay read a tree and a base that disagreed (Decisions).
 - **Two are left, for the orchestration, which repairs its own.** The harness counts the Isabelle runs of the
   commands it knows about, not the runs a command spawns inside itself, so two separately bounded commands still
   exceed the machine's two — the cross-tool sum fix-17 reports (Decisions, q5). And a task's finalization holds
@@ -469,3 +485,11 @@ Not yet planned, in the order they are expected to be planned:
   placed rather than lost: the attribution #7 must make before it builds is in #7's metadata and in Graph, the
   `ffilter_singleton` shortfall in Not yet planned item 6, and the misattributed early commit in task 5's report is
   already repaired by the harness. The queue is `19 6 15 17 7 8 16 11 14 10 13`.
+- plan-16 had one event, took the one decision it asks (Decisions, the base and the tree), created no task and changed
+  neither the graph nor the order. Two things follow. **#17's earlier failed check is not evidence about #17**: it read
+  a tree shelved behind the active base. Telling its session was refused (none works on 17 by the time plan-16 ran),
+  so whoever next judges #17 reads it here: the verdict is on the change and the re-check. And **two uncommitted batches stand in the tree at once** — #5's, which #19 finishes, and #17's — which is
+  safe only because the finalizer refuses to commit another task's uncommitted file; each commit takes its own paths,
+  and #15 appends both finished entries after #6. Refused as tasks, each with its reason: hardening the replay against
+  a tree/base disagreement (the hazard is gone mechanically, and item 9's account supersedes a second mechanism), and
+  planning item 9 now (it would jump the Q7 order and the engine line).

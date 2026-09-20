@@ -18,7 +18,10 @@ working tree freely but write only under your task's directory: write new files 
 and keep your edits of existing files for after; you are told when the tree is yours, then install your drafts and
 continue. A producing session with nothing productive left meanwhile parks for it (`.claude/orchestration/v2.py park
 tree`); a final job is handed over only while the tree is the session's own. No session stages, commits, stashes, checks out or
-resets anything: the finalizer commits. A task that leaves unfinished (parked, partial, lost) leaves its
+resets anything: the finalizer commits. A finalization holds the files it will commit while its check runs, while a
+quick fix repairs them, and while it commits — not while it is reviewed: a review reads what was checked and writes
+nothing, so that window is when an append to a shared record (DECISIONS.md, THEORY_MAP.md, ROOT) lands. If yours is
+refused, you are told when the file is free. A task that leaves unfinished (parked, partial, lost) leaves its
 installed work **in the working tree, whole** — the harness moves none of it. A change here is a set of parts (a
 theory, the ROOT line declaring it, the import reaching it, its row, its entry) and a part taken out refuses every
 task's check, not only its own. While such work stands, the tree is that task's: draft under

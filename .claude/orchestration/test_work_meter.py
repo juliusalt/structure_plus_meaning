@@ -360,10 +360,15 @@ class SharingTests(Guarded):
             {"check": "true", "files": ["theories/Ready.thy", "ROOT"], "message": "m"}))
 
     def test_a_finalization_in_flight_holds_the_working_tree_and_the_tree_is_given_back(self):
+        # a review reads what was checked and writes nothing, so its files are free meanwhile: an append to a shared
+        # record waited behind a whole check, review and commit until 2026-09-20
         self.w.set_st(tasks={"1": {"stage": "reviewing"}, "2": {"stage": "running", "session": "implement-2"}})
-        # a review holds only its own files; the whole working tree is held while a check runs
-        self.assertIn("ROOT belongs to task 1's finalization, which is reviewing",
-                      self.guard("Edit", {"file_path": str(self.w.project / "ROOT")}))
+        self.assertIsNone(self.guard("Edit", {"file_path": str(self.w.project / "ROOT")}))
+        # they are its own while it checks, while a quick fix repairs them, and while it commits
+        for stage in ("committing", "fixing"):
+            self.w.set_st(tasks={"1": {"stage": stage}, "2": {"stage": "running", "session": "implement-2"}})
+            self.assertIn(f"ROOT belongs to task 1's finalization, which is {stage}",
+                          self.guard("Edit", {"file_path": str(self.w.project / "ROOT")}))
         self.assertIsNone(self.guard("Edit", {"file_path": str(self.w.project / "theories/Elsewhere.thy")}))
         self.w.set_st(tasks={"1": {"stage": "checking"}, "2": {"stage": "running", "session": "implement-2"}})
         reason = self.guard("Edit", {"file_path": str(self.w.project / "theories/Other.thy")})

@@ -237,7 +237,13 @@ def committed_run(tid):
     d = os.path.join(v2.BUILD, tid)
     spec = json.load(open(os.path.join(d, "finalize.json")))
     files = list(spec["files"])
-    theirs = foreign(tid, files)
+    theirs, waited = foreign(tid, files), 0
+    while theirs and waited < v2.COMMIT_WAIT:  # its files were free while this task was reviewed: an append may be
+        if waited == 0:                        # in flight, and it lands in seconds — a commit waits rather than fails
+            v2.log(f"the commit of task {tid} waits for {', '.join(f'{f} (task {x})' for f, x in theirs.items())}")
+        time.sleep(5)
+        waited += 5
+        theirs = foreign(tid, files)
     if theirs:
         return refuse(tid, "the commit would carry another task's uncommitted work: "
                       + ", ".join(f"{f} (task {t})" for f, t in theirs.items())

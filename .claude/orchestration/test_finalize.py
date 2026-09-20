@@ -188,7 +188,8 @@ class FinalizeTests(unittest.TestCase):
         self.w.set_st(tasks={"3": {"stage": "committing", "role": "implementer", "session": "implement-3"},
                              "4": {"stage": "running"}})
         (self.w.state / "tree-owners.json").write_text(json.dumps({"THEORY_MAP.md": "4"}))
-        self.assertEqual(self.w.run("finalize.py", "commit", "3")[0], 1)
+        # it waits for an append in flight to land, and refuses only when it does not
+        self.assertEqual(self.w.run("finalize.py", "commit", "3", env={"ORCH_COMMIT_WAIT": "0"})[0], 1)
         self.assertEqual(self.w.git("log", "--format=%s"), "start\n")
         self.assertIn("THEORY_MAP.md (task 4)", self.outcome()["commit_error"])
         self.assertEqual(self.stage(), "planner")

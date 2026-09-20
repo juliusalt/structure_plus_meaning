@@ -559,6 +559,12 @@ def finish(name, how="done"):
 
 
 FINISHING = ("checking", "reviewing", "fixing", "committing")
+# A finalization held its files from its check through its review to its commit — minutes of checking, then a whole
+# review — and an append to DECISIONS.md waited behind all of it (six refusals across two tasks, 2026-09-20). A
+# review reads what was checked; it does not write, and nothing it reads changes if another task appends meanwhile.
+# So the files are the finalization's while it checks, while a quick fix repairs them, and while it commits.
+HOLDS_FILES = ("checking", "fixing", "committing")
+COMMIT_WAIT = int(os.environ.get("ORCH_COMMIT_WAIT", 600))  # for another task's append to land before a commit
 ISABELLE_MAX = int(os.environ.get("ORCH_ISABELLE_MAX", 2))  # concurrent Isabelle runs (three reached 59 of 60 GiB)
 ADVANCES = re.compile(r"--advance-base\b|\badopt\b")  # a check that moves the base heap under every other run
 
@@ -758,7 +764,7 @@ def locked_files(st, rec):
     own = {rec.get("task"), rec.get("reviews")}
     out = {}
     for tid, t in st["tasks"].items():
-        if t.get("stage") in FINISHING and tid not in own:
+        if t.get("stage") in HOLDS_FILES and tid not in own:
             try:
                 for f in json.load(open(os.path.join(BUILD, tid, "finalize.json")))["files"]:
                     out[os.path.normpath(os.path.join(PROJECT, f))] = tid

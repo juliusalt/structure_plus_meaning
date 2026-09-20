@@ -405,12 +405,19 @@ def deliver(name, sender, text):
     post(name, sender, text)
     if s.get("state") not in ("working", "waiting", "idle"):
         return
+    hand_mail(name)
+
+
+def hand_mail(name):
+    """Give a session what is in its box, if it can take it now. A busy one reads it through its hooks at its next
+    tool call; a resume that fails puts every message back with its own sender. deliver() and wake_planner() both
+    ended in these six lines, written out twice and free to be repaired in one of the two."""
     r = row(name)
     if r and (r["activity"] == "busy" or running_jobs(name)):
         return
     messages = unread(name)
     if messages and not resume(name, mail_text(messages)):
-        keep_mail(name, messages)  # kept for when it runs again, each with its own sender
+        keep_mail(name, messages)
 
 
 # ---------------------------------------------------------------- sessions
@@ -2404,12 +2411,7 @@ def planner_live(st):
 def wake_planner(name):
     """Give the planner what has arrived. A turn that is running reads it through its hooks at its next tool call;
     one between events is resumed with it at once."""
-    r = row(name)
-    if r and (r["activity"] == "busy" or running_jobs(name)):
-        return
-    messages = unread(name)
-    if messages and not resume(name, mail_text(messages)):
-        keep_mail(name, messages)  # kept for when it runs again, each with its own sender
+    hand_mail(name)
 
 
 def plan():

@@ -540,6 +540,25 @@ class PlanningTests(Flow):
         self.assertIn("implement-9 already waits", told)
         self.assertIn("parks for a task that cannot complete", told)
 
+    def test_a_brief_not_in_form_is_named_again_and_not_only_once(self):
+        # task_state said it once, when it first read the brief, and never again; the standstill does not list an
+        # unformed task either, so one simply never ran and nothing said so a second time (2026-09-20)
+        self.w.task("4", subject="Its brief is not in form", description="Kind: build\nno fields at all\n")
+        self.w.set_st(queue=["4"], tasks={})
+        self.w.v2("dispatch")
+        self.assertEqual(self.t("4")["stage"], "unformed")
+        self.assertIn("Task 4 is queued but its brief is not in form", self.heard())
+        before = self.heard().count("not in form")
+        self.w.v2("dispatch")
+        self.assertEqual(self.heard().count("not in form"), before)   # not at every dispatch
+        mark = self.w.state / "returned-4"
+        old_at = time.time() - v2.RETURNED_AFTER - 60
+        mark.write_text(str(old_at))
+        os.utime(mark, (old_at, old_at))
+        self.w.v2("dispatch")
+        self.assertIn("has stood", self.heard())
+        self.assertIn("with its brief not in form", self.heard())
+
     def test_a_task_that_came_back_is_named_on_its_own_and_not_only_in_a_standstill(self):
         # tasks 5, 9, 18 and 21 stood with the planner for hours. The only thing that said so was standstill(),
         # which is suppressed while anything works and while the planner deliberates, so the notice reached the
@@ -793,6 +812,26 @@ class PlanningTests(Flow):
         for role in v2.ROLES:
             named = _re.findall(r"\{\{([\w-]+)\}\}", (Path(v2.PROTOCOLS) / f"{role}.md").read_text())
             self.assertEqual(sorted(named), sorted(set(named)), f"{role} includes a part twice")
+
+    def test_every_command_a_protocol_names_exists_and_its_role_may_run_it(self):
+        # protocols are what the agents act on, so a command renamed or withdrawn leaves them following an
+        # instruction that refuses: `briefed` outlived its command, and the task designer was told to run
+        # `v2.py blockers` after its graph rights were taken away (2026-09-20)
+        import re as _re
+        source = open(Path(v2.HERE) / "v2.py").read()
+        cli = set(_re.findall(r'c == "([a-z-]+)"', source))
+        graph_only = {"blockers", "queue", "drop", "after", "planned", "carried", "tell", "accept"}
+        for f in sorted(os.listdir(Path(v2.PROTOCOLS))):
+            if not f.endswith(".md"):
+                continue
+            named = set(_re.findall(r"v2\.py\s+([a-z-]+)", open(Path(v2.PROTOCOLS) / f).read()))
+            for cmd in named:
+                self.assertIn(cmd, cli, f"protocols/{f} names `v2.py {cmd}`, which is not a command")
+            role = f[:-3]
+            if role in v2.ROLES and not v2.ROLES[role].get("graph"):
+                self.assertFalse(named & graph_only,
+                                 f"protocols/{f}: {role} does not edit the graph and is told to run "
+                                 f"{', '.join(sorted(named & graph_only))}")
 
     def test_no_role_s_first_message_carries_a_placeholder_of_its_own_protocol(self):
         # a protocol's shared parts name {STALE} and the fixer's names {WHAT}: a render that does not pass them sent
@@ -1691,6 +1730,18 @@ class SupportTests(Flow):
                                              "description": REVIEW_TASK.format(task="b")}])
         self.assertIn("proposed 2 task(s)", ok)
 
+
+    def test_a_new_task_is_allocated_above_claude_codes_own_high_water_mark(self):
+        # Claude Code allocates ids from `.highwatermark` beside the task files. Taking one above the files alone
+        # hands back an id it is about to use again, and the task written here would be overwritten: on 2026-09-20
+        # the mark stood at 51 with task 52 already written (2026-09-20).
+        self.w.task("3", subject="the highest file")
+        (self.w.tasks / ".highwatermark").write_text("9")
+        out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                              "print(v2.create_task('s', 'd', {}, []))"],
+                             env=self.w.env, capture_output=True, text=True).stdout.strip()
+        self.assertEqual(out, "10")                                        # above the mark, not above the files
+        self.assertEqual((self.w.tasks / ".highwatermark").read_text(), "10")   # and the mark is raised to it
 
     def test_the_designer_proposes_and_only_the_planner_writes_the_graph(self):
         # the task designer held graph rights and wrote straight into the task list, which IS the graph. It proposes

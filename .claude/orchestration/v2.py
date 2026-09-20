@@ -1799,7 +1799,10 @@ def task_state(st, tid):
     if t.get("stage") in (None, "unformed", "ready"):
         task = read_task(tid)
         if task and task.get("status") == "completed":
-            t["stage"] = "done"
+            t["stage"] = "done"  # the narrow half of the rule reconcile_stages holds in general: this one runs
+            # inside produce()'s own walk of the queue, so a queued task is never dispatched after the planner has
+            # completed it, whatever the stage said. reconcile_stages covers the tasks this never reaches — the
+            # unqueued, and the ones already running — and neither is the sole guard.
         elif task and t.get("stage") != "ready":
             problems = brief_problems(task.get("description", ""))
             if not problems:
@@ -2479,7 +2482,11 @@ def reconcile_stages():
     dispatches, because produce() reads the stage and the reconciliation must have happened first.
 
     A completed task that is *running* or finalizing is not healed but named: a live session on finished work is a
-    conflict the planner has to resolve, not bookkeeping to tidy."""
+    conflict the planner has to resolve, not bookkeeping to tidy.
+
+    task_state() holds the same rule for a *queued* task, inside produce()'s own walk, and has since before this: a
+    queued task was never dispatched after the planner completed it. This is the general case, not the guard that
+    case rests on."""
     st = peek()
     heal = [tid for tid, x in st["tasks"].items() if (x or {}).get("stage") in NOT_STARTED
             and (read_task(tid) or {}).get("status") == "completed"]
@@ -2502,7 +2509,10 @@ def reconcile_stages():
 
 
 def returned_tasks():
-    """A task given back to the planner (stage "planner") is moved by nothing else: no session takes it and no queue
+    """Every task that only the planner can clear, named to it while it stands: one given back to it, one whose
+    proposal is not placed, and one whose brief is not in form.
+
+    A task given back to the planner (stage "planner") is moved by nothing else: no session takes it and no queue
     reaches it. Until 2026-09-20 the only thing that said so was standstill(), which is suppressed while anything
     works and while the planner deliberates — and deps_done() names such a task only to a queued dependent, hourly,
     and only if one exists. So tasks 5, 9, 18 and 21 stood with the planner for hours and were named 11.5 minutes
@@ -2513,9 +2523,14 @@ def returned_tasks():
     mine = set(with_the_planner(st))
     for tid, t in sorted(st["tasks"].items()):
         mark = os.path.join(STATE, f"returned-{tid}")
-        if tid not in mine:
+        stage = (t or {}).get("stage")
+        # Three conditions, one period and one marker: a task nothing but the planner can clear. `unformed` was told
+        # once, when task_state first read its brief, and then never again — the standstill does not list it either,
+        # so a task whose brief is not in form simply never ran and nothing said so a second time (2026-09-20).
+        owed = tid in mine or (stage == "proposed" and t.get("proposal")) or stage == "unformed"
+        if not owed:
             with contextlib.suppress(OSError):
-                os.remove(mark)  # re-planned: the next time it comes back is counted afresh
+                os.remove(mark)  # cleared: the next time it comes back is counted afresh
             continue
         try:  # the file holds when it first stood there; its mtime is when that was last said
             since = time.time() - float(open(mark).read())
@@ -2525,6 +2540,21 @@ def returned_tasks():
         if since < RETURNED_AFTER or (age_of(f"returned-{tid}") or 0) < RETURNED_AFTER:
             continue
         os.utime(mark, None)
+        if stage == "unformed":
+            with state() as w:
+                event(w, "the harness", f"Task {tid} has stood {int(since // 60)} minutes with its brief not in "
+                      "form, so nothing takes it up and nothing will: the harness said so once, when it first read "
+                      "it, and says it again only here. Put the brief in form, or drop the task.")
+            log(f"task {tid} has stood {int(since // 60)} min with its brief not in form")
+            continue
+        if stage == "proposed":
+            with state() as w:
+                event(w, "the harness", f"Brief task {tid} proposed {t.get('proposed', '?')} task(s) "
+                      f"{int(since // 60)} minutes ago and they are still not in the graph. Nothing else places them "
+                      f"— the graph is yours alone: read {t.get('proposal')} and place them (`v2.py accept {tid}`), "
+                      "or say what to change and leave them where they are. Until you do, none of that work exists.")
+            log(f"brief {tid} has waited {int(since // 60)} min to be placed")
+            continue
         # A task that came back may also be the one whose installed work stands in the working tree, and then it
         # holds the tree: every other producing session is refused it and parks, and nothing will let it go, because
         # nothing moves a task that is with the planner. That is the blocker-not-in-the-list shape over the tree, and
@@ -2546,33 +2576,6 @@ def returned_tasks():
 
 
 GRAPH_HELD_EVERY = int(os.environ.get("ORCH_GRAPH_HELD_EVERY", 1800))  # how often a held graph is named again
-
-
-def proposals_waiting():
-    """A brief that has proposed sits at stage "proposed" until the planner places it. Nothing else moves it: it is
-    not in FINISHING, no slot takes it, and its session has ended. Named to the planner while it stands, on the same
-    period as a task that came back — otherwise the work waits on a word that may never come, which is the shape
-    that cost the run of 2026-09-20 three times over."""
-    for tid, t in sorted(peek()["tasks"].items()):
-        mark = os.path.join(STATE, f"proposed-{tid}")
-        if (t or {}).get("stage") != "proposed":
-            with contextlib.suppress(OSError):
-                os.remove(mark)
-            continue
-        try:
-            since = time.time() - float(open(mark).read())
-        except (OSError, ValueError):
-            open(mark, "w").write(str(time.time()))
-            continue
-        if since < RETURNED_AFTER or (age_of(f"proposed-{tid}") or 0) < RETURNED_AFTER:
-            continue
-        os.utime(mark, None)
-        with state() as w:
-            event(w, "the harness", f"Brief task {tid} proposed {t.get('proposed', '?')} task(s) "
-                  f"{int(since // 60)} minutes ago and they are still not in the graph. Nothing else places them — "
-                  f"the graph is yours alone: read {t.get('proposal')} and place them (`v2.py accept {tid}`), or "
-                  "say what to change and leave them where they are. Until you do, none of that work exists.")
-        log(f"brief {tid} has waited {int(since // 60)} min to be placed")
 
 
 def held_graph():
@@ -2722,7 +2725,7 @@ def dispatch_once():
         return
     for part in (reconcile_stages, tree_care, check_isolation, parking_care, fix_deadlock, efficiency_care, kb_care, produce, support,
                  quick_fix, tidied,
-                 consult, returned_tasks, proposals_waiting, held_graph, standstill, plan):  # before plan: what they say reaches it now
+                 consult, returned_tasks, held_graph, standstill, plan):  # before plan: what they say reaches it now
         try:  # one part that fails does not hold up the others; it is logged, and tried again at the next dispatch
             part()
         except Exception as e:  # noqa: BLE001
@@ -3300,14 +3303,28 @@ def create_task(subject, description, metadata, blocked_by):
     not edit the list (the owner, 2026-09-20)."""
     d = os.path.join(TASKS, LIST)
     os.makedirs(d, exist_ok=True)
+    # Claude Code allocates ids from `.highwatermark` beside the task files, so taking one above the files alone
+    # would hand back an id it is about to use again and overwrite the task written here. On 2026-09-20 the mark
+    # stood at 51 with task 52 already written, which is exactly that gap. The id goes above both, the mark is
+    # raised to it, and an id whose file exists is never taken.
+    mark = os.path.join(d, ".highwatermark")
     with open(os.path.join(d, ".alloc.lock"), "w") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)
         used = {int(f[:-5]) for f in os.listdir(d) if f[:-5].isdigit() and f.endswith(".json")}
-        tid = str(max(used, default=0) + 1)
+        try:
+            high = int((open(mark).read().strip() or "0"))
+        except (OSError, ValueError):
+            high = 0
+        n = max(high, max(used, default=0)) + 1
+        tid = str(n)
+        if os.path.exists(task_path(tid)):  # never silently over a task that is there
+            raise RuntimeError(f"task {tid} already exists: the id allocation is not sound")
         json.dump({"id": tid, "subject": subject, "description": description, "status": "pending",
                    "metadata": metadata, "blocks": [], "blockedBy": list(blocked_by)},
                   open(task_path(tid) + ".tmp", "w"), indent=2)
         os.replace(task_path(tid) + ".tmp", task_path(tid))
+        with contextlib.suppress(OSError):
+            open(mark, "w").write(str(n))
     return tid
 
 

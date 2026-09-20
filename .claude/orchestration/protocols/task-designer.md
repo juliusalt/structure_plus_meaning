@@ -39,10 +39,8 @@ limit and the detailing you were given needs one of those, **do not write it and
 it**: say so, record your result with what the work needs and why, and it is the planner's to resolve. A proposal
 that needs it is refused whole, so deciding first is what saves the work.
 
-**Independence.** Most of the graph's shape is drawn here. `addBlockedBy` only adds an edge; to take one out or
-point a task elsewhere, set what it waits on whole (`.claude/orchestration/v2.py blockers ID ID...`, `none` for
-nothing), so a shape you get wrong is corrected rather than left. Every `addBlockedBy` you write is a session that
-cannot start, so write one only where it is real: the task's inputs are another's artifacts, or its brief rests on a
+**Independence.** Most of the graph's shape is proposed here, and the planner places it as you propose it. Every
+`blockedBy` you write is a session that cannot start, so write one only where it is real: the task's inputs are another's artifacts, or its brief rests on a
 decision another takes. The order of your brief's plan is not a dependency; neither is tidiness. Where the steps
 touch different notions, or the same notion at different loci, make them tasks that can run side by side and say in
 each `why` what it does not wait for. Never buy that at the cost of the work: do not split a piece of reasoning that

@@ -332,6 +332,40 @@ class PlanningTests(Flow):
         self.assertEqual(self.w.read_task("3")["blockedBy"], [])
         self.assertIn("waits for its fix, task 3, which was blocked by 2", self.heard())
 
+    def test_a_dependency_written_the_wrong_way_round_can_be_taken_back(self):
+        # the planner wrote `after 7 48` meaning the other way, could not remove it, and adopted an order it had not
+        # chosen rather than deadlock the graph (2026-09-20)
+        self.w.task("1", subject="The waiting task")
+        self.w.task("2", subject="The fix")
+        self.w.set_st(tasks={"1": {"stage": "running"}, "2": {"stage": "ready"}})
+        self.w.session("plan-1", "planner", "p1", state="working")
+        said = self.as_("plan-1", "after", "1", "2")
+        self.assertIn("TASK 1 WAITS FOR TASK 2", said)  # the direction, in full
+        self.assertIn("v2.py after 2 1", said)          # and how to say the other one
+        self.assertEqual(self.w.st()["tasks"]["1"]["efficiency_fix"], "2")
+        back = self.as_("plan-1", "after", "1", "none")
+        self.assertIn("waits for nothing now", back)
+        self.assertIn("it waited for task 2", back)
+        self.assertIsNone(self.w.st()["tasks"]["1"].get("efficiency_fix"))
+
+    def test_state_that_nothing_names_any_more_is_swept(self):
+        (self.w.state / "old-session.woken").write_text("x")
+        os.utime(self.w.state / "old-session.woken", (time.time() - 200_000, time.time() - 200_000))
+        (self.w.state / "fresh.woken").write_text("x")
+        (self.w.state / "base-pack-20260101T000000-1").mkdir()
+        for who in ("max", "xhigh", "high"):  # every base names its pack, as a built one does
+            f = self.w.state / f"{who}-base.json"
+            d = json.loads(f.read_text()) if f.exists() else {"sid": who, "model": "m", "effort": who}
+            d["pack"] = str(self.w.state / f"base-pack-{who}")
+            f.write_text(json.dumps(d))
+        gone = eval(subprocess.run(
+            [sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+             "print(repr(sorted(v2.tidied())))"], env=self.w.env, capture_output=True, text=True).stdout.strip())
+        self.assertIn("base-pack-20260101T000000-1", gone)  # no base names it
+        self.assertIn("old-session.woken", gone)
+        self.assertNotIn("fresh.woken", gone)              # a wake attach.sh may still read
+        self.assertTrue((self.w.state / "fresh.woken").exists())
+
     def test_the_planner_cannot_name_a_fix_that_waits_on_the_task_it_fixes(self):
         self.w.task("1", subject="The waiting task")
         self.w.task("2", subject="The fix", blockedBy=["1"])
@@ -339,7 +373,7 @@ class PlanningTests(Flow):
         self.w.session("plan-1", "planner", "p1", state="working")
         self.assertIn("could never land", self.as_("plan-1", "after", "1", "2"))
         self.w.task("3", subject="A fix of its own", blockedBy=[])
-        self.assertIn("task 1 is told when 3 has landed", self.as_("plan-1", "after", "1", "3"))
+        self.assertIn("TASK 1 WAITS FOR TASK 3", self.as_("plan-1", "after", "1", "3"))
 
     def test_a_fresh_knowledge_base_near_its_limit_asks_for_condensing_and_a_base_rebuild(self):
         self.w.set_st(kb_building="kb-2")
@@ -765,7 +799,7 @@ class TaskTests(Flow):
         self.assertIn("the reach takes 640 s", self.heard())
         self.w.task("3", subject="Faster reach")
         self.w.session("plan-2", "planner", "p2", settings="planner-settings.json", origin="kb-1")
-        self.assertIn("task 1 is told when 3 has landed", self.as_("plan-2", "after", "1", "3"))
+        self.assertIn("TASK 1 WAITS FOR TASK 3", self.as_("plan-2", "after", "1", "3"))
         out = self.as_(self.impl, "park", "fix", "nothing else is left, and the fix is sooner than the run")
         self.assertTrue(out.startswith("parked: end your turn now; another worker produces meanwhile"))
         self.assertEqual((self.t("1")["stage"], self.s(self.impl)["state"]), ("parked", "parked"))

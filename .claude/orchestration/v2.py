@@ -89,6 +89,8 @@ LIVE = ("starting", "working", "waiting")  # a session in one of these holds its
 JOB_STALE = int(os.environ.get("ORCH_JOB_STALE", 7200))  # a background job whose output stands still this long is dead
 SPEC_ERRORS = int(os.environ.get("ORCH_SPEC_ERRORS", 2))  # tries at a check command that is not runnable
 FIX_MINUTES = int(os.environ.get("ORCH_FIX_MINUTES", 15))
+TIDY_EVERY = int(os.environ.get("ORCH_TIDY_EVERY", 3600))  # how often state nothing names is swept
+WOKEN_KEEP = int(os.environ.get("ORCH_WOKEN_KEEP", 86400))  # a wake mark, for attach.sh to read
 BRIEF_BACKLOG = int(os.environ.get("ORCH_BRIEF_BACKLOG", 6))  # open build and fix tasks past which no brief is detailed:
 # a brief task is the graph's multiplier (one turned into 26 tasks on 2026-09-20), and the supporting slot detailing work while the builders are blocked makes the queue diverge from what they can consume (the owner, 2026-09-20)
 WORKERS_MAX = int(os.environ.get("ORCH_WORKERS", 1))  # sessions working at once, over every slot: the owner's
@@ -1930,12 +1932,41 @@ def fix_deadlock():
         log(f"dropped the blockers {', '.join(circle)} of task {fix}: they waited on task {tid}, which waits for it")
 
 
+def tidied():
+    """State that outlives what it was about: a wake mark once its session is long gone, and the frozen sources of a
+    base no base names any more. Every one of the day's stalls was state nobody removed, and these are the harmless
+    end of that class — removed rather than left to be read by someone later."""
+    if (age_of("tidied") or TIDY_EVERY + 1) < TIDY_EVERY:
+        return []
+    open(os.path.join(STATE, "tidied"), "w").write(str(time.time()))
+    packs = set()
+    for who in BASES:
+        try:
+            packs.add(json.load(open(os.path.join(STATE, f"{who}-base.json"))).get("pack"))
+        except (OSError, ValueError):
+            packs.add(None)
+    sweep_packs = None not in packs  # a base whose record cannot be read: its pack is not swept on a guess
+    gone = []
+    for name in os.listdir(STATE):
+        path = os.path.join(STATE, name)
+        if name.endswith(".woken") and (age_of(name) or 0) > WOKEN_KEEP:
+            os.remove(path)
+            gone.append(name)
+        elif sweep_packs and name.startswith("base-pack-") and os.path.isdir(path) and path not in packs:
+            shutil.rmtree(path, ignore_errors=True)
+            gone.append(name)
+    if gone:
+        log(f"tidied {len(gone)} piece(s) of state nothing names any more: {', '.join(sorted(gone)[:6])}"
+            + (", …" if len(gone) > 6 else ""))
+    return gone
+
+
 def dispatch_once():
     st = peek()
     if not st["active"] or os.path.exists(os.path.join(STATE, "stopped")):
         return
     for part in (tree_care, check_isolation, parking_care, fix_deadlock, efficiency_care, kb_care, produce, support,
-                 quick_fix,
+                 quick_fix, tidied,
                  consult, plan):
         try:  # one part that fails does not hold up the others; it is logged, and tried again at the next dispatch
             part()
@@ -2622,6 +2653,13 @@ def cmd_after(tid, other):
         t = st["tasks"].get(tid)
         if t is None:
             return f"refused: task {tid} is not known"
+        if other == "none":  # always: a relation written the wrong way round is taken back, parked or not
+            had = t.pop("efficiency_fix", None)
+            t.pop("fix_told", None)
+            if t.get("stage") == "parked" and (t.get("parked") or {}).get("for") == "fix":
+                t["parked"]["after"] = "none"
+            return (f"task {tid} waits for nothing now" + (f" (it waited for task {had})" if had else
+                    "; it was waiting for nothing"))
         if other != "none":
             tasks = {x["id"]: x for x in all_tasks()}
             circle = [b for b in (tasks.get(other) or {}).get("blockedBy") or [] if waits_on(tasks, b, tid)]
@@ -2635,9 +2673,13 @@ def cmd_after(tid, other):
         elif other == "none":
             return f"refused: task {tid} is not parked for a fix"
     kick()
+    # the direction, in full, because it was written the wrong way round once and could not be taken back
+    which = (f"TASK {tid} WAITS FOR TASK {other}: {tid} is told when {other} lands, and continues then. Task {other} "
+             f"is told nothing and waits for nothing. If you meant it the other way, `v2.py after {other} {tid}`, and "
+             f"`v2.py after {tid} none` takes this one back.")
     if t.get("stage") == "parked" and (t.get("parked") or {}).get("for", "fix") == "fix":
-        return f"task {tid} continues when {other} has landed" if other != "none" else f"task {tid} continues"
-    return f"task {tid} is told when {other} has landed, and waits on it if it parks for its fix"
+        return f"task {tid} continues when {other} has landed. " + which
+    return which
 
 
 def efficiency_care():

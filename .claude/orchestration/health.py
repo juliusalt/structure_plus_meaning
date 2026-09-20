@@ -47,6 +47,9 @@ def session(label, s, now):
         return (("ATTENTION " if now - s.get("starting", now) > v2.START_MAX else "")
                 + f"{label}: {s['name']} starting for {minutes(now - s.get('starting', now))}")
     r = v2.row(s["name"])
+    if not r and s.get("state") == "idle":  # the planner between its events is sealed, and a sealed session is not
+        return (f"{label}: {s['name']} waits for its next event, sealed and held warm, last hit "  # listed: that is
+                f"{minutes(v2.hit_age(s['name']))} ago")                                           # what idle means
     if not r:
         return f"ATTENTION {label}: {s['name']} is not listed (the watchdog acts after {w.GONE_CHECKS} minutes)"
     ctx = ctx_gauge.context_tokens(f"{v2.TRANSCRIPTS}/{s['sid']}.jsonl")

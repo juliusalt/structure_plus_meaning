@@ -490,3 +490,71 @@ are built and the run is to begin: `rm .claude/orchestration/state/no-launch`.
 **Rule for anyone working on this machinery: a check that starts a session is not a check.** Ask the question the
 command would ask — `manifest.has_layer()` rather than `base.sh WHO layer`, the status rather than `start` — and let
 the tests do the same; the one that caused this ran `base.sh WHO layer` inside a unit test.
+
+---
+
+# Handoff, 2026-09-20 20:20 — the run is live on layered bases and one planner
+
+Read this, then `README.md` (how it works now) and `notes/bases-design.md` sections 13–17 (the bases as they were
+built). The owner's standing rules for this work are unchanged: nothing about the orchestration goes into the project
+memory (notes go in `notes/`); nothing said in orchestrator sessions goes into the owner ledger; the base rebuild is
+the owner's (the orchestration only tells when it is due).
+
+## Where it stands
+
+**The orchestration is running.** Six base parts built and sealed at 20:02–20:03, `start.sh --fresh` at 20:04.
+
+| base | stable | with its layer | room a fork has |
+|---|---:|---:|---:|
+| max | 348,004 | 478,130 | 428K |
+| xhigh | 274,147 | 503,712 | 403K |
+| high | 274,258 | 523,233 | 383K |
+
+`kb-3` holds the knowledge at 485,374 (its own load is ~7K now HANDOFF.md is 479 tokens). `plan-29` is the planner,
+idle between its events and held warm, charged by the owner to take stock before it queues anything. Task 7 was
+reviewed, accepted and committed as `44738c20` in the first ten minutes. Everything of the harness is committed and
+pushed through `504cc34d`; **239 tests pass** (`python3 -m pytest -q test_*.py` in `.claude/orchestration`).
+
+Uncommitted in the working tree: the in-flight work of tasks 22, 46, 48 and 50, which is theirs and not to be
+committed on their behalf — the planner's charge is to take stock of it.
+
+## What changed today, in one line each
+
+- **The planner is one long-lived session.** Events reach it as they happen, each its own message; it is not a
+  worker, so the rate never holds one back. Between events it is `idle`: sealed, held warm, woken by the next. It
+  ends once, when its window is full, and writes then the notes the knowledge base takes up.
+- **The bases are layered.** A `# === layer ===` line splits each list into a stable reference the owner builds and
+  a frontier layer the harness refreshes. Every role forks the layer; a fork of a layer reads the base under it from
+  cache, so one ping serves both. A refresh writes 112K–234K instead of rebuilding 473K–518K.
+- **HANDOFF.md is the state, `PLANNING_LOG.md` is the log.** The old 81K HANDOFF.md is the log's first entry.
+- **`ORCH_WORKERS=2`**: a reviewer or task designer runs beside the producer. One producing session at a time
+  regardless — that is `produce()`, not the rate.
+- Repairs: a failed resume says so; mail goes back with its senders; a standstill is named to the planner; a check
+  that would leave the base in a task's directory is refused; each role is told where it really works and given only
+  the protocol parts that hold for it; `state/no-launch` stops anything starting a session.
+
+## What to watch first
+
+1. **`plan-29`'s taking of stock.** It has the owner's charge and eleven events. Watch that it drops what the graph
+   no longer needs, writes HANDOFF.md as a state, and puts what was done into `PLANNING_LOG.md`. `claude attach` it,
+   or `attach.sh planner`.
+2. **The layers' first refresh.** All three are 0% stale. The rule fires at 20%; watch that `base.sh WHO layer` runs
+   to a seal, that the old layer is stopped and not removed, and that a session forked before it is told what changed
+   against the load it actually holds.
+3. **`health.py`.** It now names each layer's stale share, the trees standing, the hold, the planner between events,
+   and HANDOFF.md's size.
+
+## What is not done, and what to be careful of
+
+- **Worktrees are off** (`ORCH_TREES=0`). A session started with its cwd in a worktree is invisible to the harness:
+  `session_row.py` matches by cwd and `v2.TRANSCRIPTS` resolves through `PROJECT`, so the listing, the gauge, the
+  meter, `running_jobs` and the fork check all miss it. On the first live run two sessions ran that way unseen.
+  Turning them on again means making session discovery and transcript resolution follow the session, not the project.
+- **`.build/trees/46` and `.build/trees/49`** still hold a minute's work from those two sessions, named by
+  `health.py`. The planner has been told and it is its call.
+- **A check that starts a session is not a check.** Three times in one afternoon a command run to *test* something
+  started real sessions — `v2.py start` is not a dry run, `base.sh WHO layer` builds one, and a unit test that
+  invokes either does too. Ask the question the command would ask (`manifest.has_layer()`, the status), and set
+  `state/no-launch` while working on the machinery.
+- Unsearched still: the guard's read limits and batching rules, the knowledge base's growth and condensation, the
+  review protocol itself, and anything that only shows under real concurrency.

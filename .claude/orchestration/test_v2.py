@@ -919,6 +919,14 @@ class SupportTests(Flow):
         self.w.v2("dispatch")
         self.assertEqual(len(self.forks("brief-")), 1)  # one at a time
 
+    def test_a_blocker_that_is_not_in_the_task_list_is_named(self):
+        # task 6 waited on task 18, which had been dropped; nothing said so and the planner had to find it
+        self.w.task("3", subject="Waiting on a task that is gone", blockedBy=["99"])
+        out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                              "print(v2.deps_done('3'))"], env=self.w.env, capture_output=True, text=True).stdout
+        self.assertEqual(out.strip(), "False")
+        self.assertIn("which is not in the task list", json.dumps(self.w.st()["events"]))
+
     def test_mail_is_kept_when_the_resume_that_would_carry_it_fails(self):
         # produce() took the mail into the text of a resume and discarded it when the resume failed; the watchdog's
         # own path kept it, this one did not (2026-09-20)

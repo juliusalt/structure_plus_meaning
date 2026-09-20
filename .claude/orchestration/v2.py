@@ -89,6 +89,7 @@ LIVE = ("starting", "working", "waiting")  # a session in one of these holds its
 JOB_STALE = int(os.environ.get("ORCH_JOB_STALE", 7200))  # a background job whose output stands still this long is dead
 SPEC_ERRORS = int(os.environ.get("ORCH_SPEC_ERRORS", 2))  # tries at a check command that is not runnable
 FIX_MINUTES = int(os.environ.get("ORCH_FIX_MINUTES", 15))
+LOST_BLOCKER = 3600  # how often a task waiting for a blocker that is not there is named
 TIDY_EVERY = int(os.environ.get("ORCH_TIDY_EVERY", 3600))  # how often state nothing names is swept
 WOKEN_KEEP = int(os.environ.get("ORCH_WOKEN_KEEP", 86400))  # a wake mark, for attach.sh to read
 BRIEF_BACKLOG = int(os.environ.get("ORCH_BRIEF_BACKLOG", 6))  # open build and fix tasks past which no brief is detailed:
@@ -791,8 +792,10 @@ def finalizing(st, rec=None):
     """The other task whose finalization is in flight (one runs at a time: a second task's check would see the first's
     uncommitted files), or None."""
     own = {(rec or {}).get("task"), (rec or {}).get("reviews")}
+    mine_apart = TREES and (rec or {}).get("task") and worktree_of((rec or {}).get("task")) != PROJECT
     return next((tid for tid, t in st["tasks"].items() if t.get("stage") in FINISHING and tid not in own
-                 and os.path.exists(os.path.join(BUILD, tid, "finalize.json"))), None)
+                 and os.path.exists(os.path.join(BUILD, tid, "finalize.json"))
+                 and not (mine_apart and worktree_of(tid) != PROJECT)), None)  # each in its own tree: no waiting
 
 
 def check_isolation():
@@ -1113,7 +1116,21 @@ def graph_text(full=False):
 
 def deps_done(tid):
     t = read_task(tid) or {}
-    return all((read_task(d) or {}).get("status") == "completed" for d in t.get("blockedBy") or [])
+    done = True
+    for d in t.get("blockedBy") or []:
+        blocker = read_task(d)
+        if blocker is None:  # dropped, or never written: nothing will ever complete it
+            done = False
+            if (age_of(f"blocker-{tid}-{d}") or LOST_BLOCKER + 1) > LOST_BLOCKER:
+                open(os.path.join(STATE, f"blocker-{tid}-{d}"), "w").write(str(time.time()))
+                with state() as st:
+                    event(st, "the harness", f"Task {tid} waits for task {d}, which is not in the task list — "
+                          f"dropped, or never written. Nothing will complete it, so {tid} waits for ever: re-point "
+                          "its blocker or drop it too.")
+                log(f"task {tid} waits for task {d}, which is not in the task list")
+        elif blocker.get("status") != "completed":
+            done = False
+    return done
 
 
 # ---------------------------------------------------------------- forms

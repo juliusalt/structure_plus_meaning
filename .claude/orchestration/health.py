@@ -148,18 +148,56 @@ def bases_and_trees():
                                     for x in trees))
 
 
+def standing(st, now):
+    """What the state holds whoever is running: the queue and the tasks' stages, the questions, and the events
+    waiting for the next planning episode. A stopped or an inactive run is the state a restart meets, so it is
+    shown there too: health said "stopped at ..." and nothing more, and the parked tasks, the proposals nobody
+    placed and the reviews left orphaned were visible nowhere while it stood still (2026-09-21)."""
+    stages = [f"{tid}:{(st['tasks'].get(tid) or {}).get('stage', '?')}" for tid in st["queue"]]
+    print("queue: " + (" ".join(stages) or "empty"))
+    with_planner = set(v2.with_the_planner(st))
+    for tid, t in st["tasks"].items():
+        if t.get("stage") == "parked":
+            p = t.get("parked") or {}
+            waits = {"run": "its own run", "tree": f"the working tree (task {p.get('holder')})",
+                     "fix": f"its fix (task {p.get('after')})" if p.get("after") else "the planner to name its fix",
+                     "answer": "the answer to its question"}.get(p.get("for"), p.get("after") or "the planner")
+            print(f"parked: task {tid} for {minutes(now - p.get('since', now))} of {v2.HOLD_PARK // 3600} h, waits on "
+                  f"{waits}" + (f": {p.get('why', '')[:100]}" if p.get("why") else ""))
+        elif t.get("stage") == "proposed":
+            print(f"ATTENTION task {tid}: {t.get('proposed', '?')} task(s) proposed and not placed — only the "
+                  f"planner places them ({t.get('proposal')})")
+        elif t.get("stage") in ("checking", "reviewing", "fixing", "committing", "planner"):
+            # a stage of "planner" the graph does not agree with is the harness's own bookkeeping, which nothing
+            # clears when a task is completed or dropped elsewhere: tasks 5, 9, 18 and 21 read as the planner's here
+            # long after three were committed and the fourth dropped (2026-09-20)
+            stale = t["stage"] == "planner" and tid not in with_planner
+            print(f"task {tid}: {t['stage']}" + (f" (checks failed {t['checks_failed']})" if t.get("checks_failed") else "")
+                  + (f" (rejected {t['rejections']})" if t.get("rejections") else "")
+                  + (" — stale, and nothing is told of it: the list says "
+                     + ((v2.read_task(tid) or {}).get("status") or "it is not there at all") if stale else ""))
+    for qid, q in st["asks"].items():
+        if q["state"] != "answered":
+            print(("ATTENTION " if now - q["asked"] > 1800 else "") + f"question {qid} from {q['from']} to {q['target']}, "
+                  f"{q['state']} for {minutes(now - q['asked'])}: {q['text'][:100]}")
+    if st["events"]:
+        print(f"events for the next planning episode: {len(st['events'])}, the oldest from {st['events'][0]['at']}")
+
+
 def main():
     now = time.time()
     print(time.strftime("health at %Y-%m-%d %H:%M:%S"))
     mem = {k: int(v.split()[0]) // 1024 for k, v in (ln.split(":") for ln in open("/proc/meminfo")) if k in ("MemTotal", "MemAvailable")}
     print(f"memory: {mem['MemAvailable'] // 1024} GiB available of {mem['MemTotal'] // 1024}")
     bases_and_trees()
+    st = v2.peek()
     if read("stopped"):
         print(f"stopped at {read('stopped')}; start.sh resumes")  # the marker says when, not who wrote it
+        standing(st, now)
         return
-    st = v2.peek()
     if not st["active"]:
         print("the orchestration is inactive; start.sh starts it")
+        standing(st, now)
         return
     pid = read("warm.pid")
     trouble = v2.tree_trouble()
@@ -189,38 +227,10 @@ def main():
         if not s and label == "planner":  # it is in no slot between its events, and it is alive there
             s = st["sessions"].get(v2.planner_live(st) or "")
         print(session(label, s, now) if s else f"{label}: -")
-    stages = [f"{tid}:{(st['tasks'].get(tid) or {}).get('stage', '?')}" for tid in st["queue"]]
-    print("queue: " + (" ".join(stages) or "empty"))
+    standing(st, now)
     if not v2.slot(st, v2.PRODUCING) and not any((st["tasks"].get(t) or {}).get("stage") in ("ready", "brief")
                                                   for t in st["queue"]):
         print("ATTENTION nothing is producing and nothing is ready or to be briefed: the planner queues the next tasks")
-    with_planner = set(v2.with_the_planner(st))
-    for tid, t in st["tasks"].items():
-        if t.get("stage") == "parked":
-            p = t.get("parked") or {}
-            waits = {"run": "its own run", "tree": f"the working tree (task {p.get('holder')})",
-                     "fix": f"its fix (task {p.get('after')})" if p.get("after") else "the planner to name its fix",
-                     "answer": "the answer to its question"}.get(p.get("for"), p.get("after") or "the planner")
-            print(f"parked: task {tid} for {minutes(now - p.get('since', now))} of {v2.HOLD_PARK // 3600} h, waits on "
-                  f"{waits}" + (f": {p.get('why', '')[:100]}" if p.get("why") else ""))
-        elif t.get("stage") == "proposed":
-            print(f"ATTENTION task {tid}: {t.get('proposed', '?')} task(s) proposed and not placed — only the "
-                  f"planner places them ({t.get('proposal')})")
-        elif t.get("stage") in ("checking", "reviewing", "fixing", "committing", "planner"):
-            # a stage of "planner" the graph does not agree with is the harness's own bookkeeping, which nothing
-            # clears when a task is completed or dropped elsewhere: tasks 5, 9, 18 and 21 read as the planner's here
-            # long after three were committed and the fourth dropped (2026-09-20)
-            stale = t["stage"] == "planner" and tid not in with_planner
-            print(f"task {tid}: {t['stage']}" + (f" (checks failed {t['checks_failed']})" if t.get("checks_failed") else "")
-                  + (f" (rejected {t['rejections']})" if t.get("rejections") else "")
-                  + (" — stale, and nothing is told of it: the list says "
-                     + ((v2.read_task(tid) or {}).get("status") or "it is not there at all") if stale else ""))
-    for qid, q in st["asks"].items():
-        if q["state"] != "answered":
-            print(("ATTENTION " if now - q["asked"] > 1800 else "") + f"question {qid} from {q['from']} to {q['target']}, "
-                  f"{q['state']} for {minutes(now - q['asked'])}: {q['text'][:100]}")
-    if st["events"]:
-        print(f"events for the next planning episode: {len(st['events'])}, the oldest from {st['events'][0]['at']}")
     held = [(n, w.held(st, n, s)) for n, s in st["sessions"].items() if s["state"] not in v2.LIVE and not s.get("released")]
     for n, why in held:
         if why:

@@ -2542,16 +2542,26 @@ def reconcile_stages():
                 w["tasks"][tid]["stage"] = "done"
         log("the stage of " + ", ".join(sorted(heal)) + " followed the task list: they are completed")
     for tid, x in sorted(st["tasks"].items()):
-        if (x or {}).get("stage") in NOT_STARTED + ("done",) or (read_task(tid) or {}).get("status") != "completed":
+        if (x or {}).get("stage") in NOT_STARTED + ("done",):
             continue
+        task = read_task(tid)
+        # A task taken out of the list is the same conflict as one completed in it: the harness is working on what the
+        # graph no longer has. Only "completed" was read here, and the planner does take tasks out — 21 and 51 were
+        # gone from the list while the state still held them (2026-09-21). Their stage is the planner's, so they fall
+        # above; a *parked* task taken out would have been resumed by produce() with nothing said.
+        if task is not None and task.get("status") != "completed":
+            continue
+        gone = task is None
         if (age_of(f"finished-{tid}") or LOST_BLOCKER + 1) > LOST_BLOCKER:
             open(os.path.join(STATE, f"finished-{tid}"), "w").write(str(time.time()))
             with state() as w:
-                event(w, "the harness", f"Task {tid} is completed in the task list and the harness has it "
-                      f"{x.get('stage')}, with {x.get('session') or 'a session'} on it. One of the two is wrong: "
-                      "stop the work (`v2.py drop " + tid + "`) if it is done, or set the task back to pending if it "
-                      "is not.")
-            log(f"task {tid} is completed in the list and {x.get('stage')} in the harness")
+                event(w, "the harness", f"Task {tid} is "
+                      + ("not in the task list at all" if gone else "completed in the task list")
+                      + f" and the harness has it {x.get('stage')}, with {x.get('session') or 'a session'} on it. One "
+                      "of the two is wrong: stop the work (`v2.py drop " + tid + "`) if it is done, or "
+                      + ("put the task back in the list" if gone else "set the task back to pending") + " if it is not.")
+            log(f"task {tid} is " + ("not in the list" if gone else "completed in the list")
+                + f" and {x.get('stage')} in the harness")
 
 
 def returned_tasks():

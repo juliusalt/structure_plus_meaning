@@ -1104,6 +1104,20 @@ class TaskTests(Flow):
         self.w.write(".build/tasks/1/review.md", VERDICT.format(v=v, f=findings))
         return self.as_(name, "verdict", "1", v, "--file", ".build/tasks/1/review.md")
 
+    def test_a_task_taken_out_of_the_list_while_the_harness_works_on_it_is_named(self):
+        # the planner does take tasks out of the list: 21 and 51 were gone from it on 2026-09-20 while the state
+        # still held them. The conflict check read "completed" alone, so a task deleted under a live session — or a
+        # parked one, which produce() resumes on its own — was the one case nothing said anything about.
+        (self.w.tasks / "1.json").unlink()
+        self.w.v2("dispatch")
+        self.assertIn("Task 1 is not in the task list at all", self.heard())
+        self.assertIn("task 1 is not in the list and running in the harness", (self.w.state / "v2.log").read_text())
+        # and the same conflict when it is there and completed, which is the half that was already covered
+        self.w.task("1", status="completed")
+        (self.w.state / "finished-1").unlink()
+        self.w.v2("dispatch")
+        self.assertIn("Task 1 is completed in the task list", self.heard())
+
     def test_a_session_that_ends_with_its_question_open_is_told_where_the_answer_goes(self):
         # six of nineteen answers on 2026-09-20 came to a session that had ended, and the planner carried each
         self.assertIn("asked as q1", self.as_(self.impl, "ask", "--to", "planner", "Which of the two?"))

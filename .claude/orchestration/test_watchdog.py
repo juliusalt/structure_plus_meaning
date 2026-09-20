@@ -56,8 +56,13 @@ class WatchdogTests(unittest.TestCase):
         (self.w.state / "v2.json").write_text(json.dumps(st))
 
     def heard(self):
-        return " ".join(e["text"] for e in self.w.st()["events"]) + " ".join(
-            c["args"][-1] for c in self.w.calls("--bg") if "-n" in c["args"])
+        """What the planner has been told: the events not yet with it, those a planner was started on, and those
+        delivered to one that lives. Mail was missing here, so a notice that arrived after a planner had started
+        read as never said (2026-09-21)."""
+        return (" ".join(e["text"] for e in self.w.st()["events"])
+                + " ".join(c["args"][-1] for c in self.w.calls("--bg") if "-n" in c["args"])
+                + " ".join(m["text"] for n in self.w.st()["sessions"] if n.startswith("plan-")
+                           for m in self.w.mail(n)))
 
     # ------------------------------------------------------------ nothing to do
 

@@ -81,6 +81,25 @@ class EfficiencyTests(unittest.TestCase):
         self.assertIn("mean of 1 implement session:", table)
         self.assertIn("mean of 1 impl session:", table)
 
+    def test_a_fork_is_measured_by_its_own_launch_prompt_and_not_its_origins(self):
+        # a fork's transcript replays its origin's, so the origin's launch prompt stands in it too: taking the first
+        # named every planner and every consultation kb-1 and counted the knowledge base's requests as theirs, so
+        # no `plan` session appeared in the report at all and the kb's mean was every fork's (2026-09-21)
+        self.w.transcript("p2", [
+            user(self.ts(-50), "You are kb-1, the knowledge base of the development."),
+            call(9, self.ts(-49), "Read", {"file_path": str(self.w.project / "theories/Ready.thy")}),
+            result(9, self.ts(-48), "z" * 4000),
+            user(self.ts(0), "You are plan-2, the planner of the development."),
+            call(1, self.ts(1), "Bash", {"command": ".claude/orchestration/show.py --statement ready"}),
+            result(1, self.ts(1.1), "lemma ready")])
+        code, out, err = self.w.run("efficiency.py", "--json")
+        self.assertEqual(code, 0, err)
+        rows = {r["name"]: r for r in json.loads(out)}
+        self.assertIn("plan-2", rows)
+        self.assertNotIn("kb-1", rows)                       # the fork is not its origin
+        self.assertEqual(rows["plan-2"]["requests"], 1)      # and the origin's requests are not its own
+        self.assertEqual(rows["plan-2"]["reads"], 1)
+
 
 if __name__ == "__main__":
     unittest.main()

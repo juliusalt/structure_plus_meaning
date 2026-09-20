@@ -53,15 +53,22 @@ def session(path):
         except ValueError:
             continue
         m = d.get("message") or {}
-        if name is None:
-            if d.get("type") == "user" and not d.get("isSidechain"):
-                c = m.get("content")
-                text = c if isinstance(c, str) else " ".join(x.get("text", "") for x in c or [] if isinstance(x, dict))
-                s = START.match(text or "")
-                if s:
-                    name, role, first = s.group(1), s.group(2), epoch(d["timestamp"])
-            continue
-        if d.get("isSidechain"):
+        if d.get("type") == "user" and not d.get("isSidechain"):
+            c = m.get("content")
+            text = c if isinstance(c, str) else " ".join(x.get("text", "") for x in c or [] if isinstance(x, dict))
+            s = START.match(text or "")
+            if s:
+                # a fork's transcript replays its origin's, so the origin's own launch prompt stands in it too. The
+                # last one is this session's own, and everything before it is what it forked: taking the first
+                # named every planner and every consultation kb-1 and counted the base's requests as theirs, which
+                # is why no `plan` session appeared in the report at all (2026-09-21).
+                name, role, first = s.group(1), s.group(2), epoch(d["timestamp"])
+                reqs, calls, results, reads = {}, {}, collections.Counter(), collections.Counter()
+                read_tok = reread_tok = 0
+                seen, refused = set(), 0
+                last = first_write = None
+                continue
+        if name is None or d.get("isSidechain"):
             continue
         ts = d.get("timestamp")
         if ts:

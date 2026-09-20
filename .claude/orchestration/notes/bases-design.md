@@ -362,3 +362,26 @@ The answers to this revision (2026-09-19):
 - The condensation: "ok", and "do not hold off": done (section 10), written into HANDOFF.md for T3.
 - A's founding theories at definitions.
 - The system prompt: the owner reads the updated `library-prompt.md` before deciding.
+
+## The working tree, and whether it must be one (2026-09-20)
+
+Measured, not inferred. A check never builds from the working tree: it assembles a copy under
+`.build/check-*/proof/` with its own ROOT and theory sources rewritten to qualified imports, and builds a session
+named `Incremental_<random hex>`. Heaps live under `/tmp/structural-isabelle/.isabelle/*/heaps/*/<session>` and are
+found **by session name**; the lineage is a chain of proof-context directories recorded by absolute path. The project
+root is `Path(__file__).resolve().parents[1]`, so it follows the tools.
+
+A check run inside a `git worktree` at `/tmp/orch-worktree-probe`, against the base of the main checkout:
+
+    "base": ".../check-20260920a/proof", "theories": 1797, "reused_theories": 1797,
+    "phases": {"base_and_impact": 0.25, "recipes_and_host_tests": 165.43}, "seconds": 172.88, "status": "accepted"
+
+Every theory reused, nothing rebuilt. **Heaps are not bound to the working tree's path.** The rule they seemed to
+follow — "a copy at another path rebuilds and deletes the heap" — is a rule about *session names*: a copy that
+carries `.build` with it carries the same names, and Isabelle keeps one heap per name, so the copy overwrites the
+original's. A fresh worktree has no `.build` (it is ignored), generates new names, and collides with nothing.
+
+So a worktree per producing task is open, and it would replace the shelf with `git merge` — line-level, which is the
+granularity every failure of 2026-09-20 lacked (ROOT lines, DECISIONS entries, THEORY_MAP rows). What stays global
+and must stay exclusive: the heap directory, `/tmp/structural-active-context.json`, and the base advance itself.
+Not built: it is an architecture, and the day's lesson is not to change one under a live run.

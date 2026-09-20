@@ -18,11 +18,17 @@ working tree freely but write only under your task's directory: write new files 
 and keep your edits of existing files for after; you are told when the tree is yours, then install your drafts and
 continue. A producing session with nothing productive left meanwhile parks for it (`.claude/orchestration/v2.py park
 tree`); a final job is handed over only while the tree is the session's own. No session stages, commits, stashes, checks out or
-resets anything: the finalizer commits. A task that leaves unfinished (parked, partial, lost) has its changes set aside
-under its directory once its session has stopped; `.claude/orchestration/v2.py unshelve ID` brings them back, merged
-onto what has landed since, when your brief says you continue it. At most two Isabelle runs go at once on this machine,
+resets anything: the finalizer commits. A task that leaves unfinished (parked, partial, lost) leaves its
+installed work **in the working tree, whole** — the harness moves none of it. A change here is a set of parts (a
+theory, the ROOT line declaring it, the import reaching it, its row, its entry) and a part taken out refuses every
+task's check, not only its own. While such work stands, the tree is that task's: draft under
+`.build/tasks/{ID}/`, and install when you are told it is free. If your brief says you continue that task's work,
+it is already there to continue. At most two Isabelle runs go at once on this machine,
 and none beside a final check that advances the base heap: a check is refused meanwhile, so continue with what needs
-none.
+none. A run whose result is a **timing** takes the machine the same way, and must: a neighbour distorts the number as
+surely as it exceeds the memory. Claim it before you launch (`.claude/orchestration/v2.py measuring "what you
+measure"`), which is refused while anything else runs; the hold ends with your run, so claim it again for the next
+measurement. A run that only checks proofs needs no claim and may go beside another.
 
 **Checks.** Run checks in the background where your plan puts them and after a repair, not after every edit; continue
 meanwhile with what follows or with an independent part, and the completion arrives while you work. A producing

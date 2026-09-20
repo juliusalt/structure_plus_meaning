@@ -39,12 +39,20 @@ addBlockedBy for its dependencies. You write the design and investigation tasks,
 and the brief tasks: the plan of a detailing, which a task designer carries out by writing the build and fix tasks
 and a review task for each. A brief task's Deliverable names the tasks it is to brief; its plan is the course of the
 detailing (which tasks, in which order, depending on what, what each must respect), and a part of the graph too big
-for one task designer is several brief tasks. Form each task so that the reasoning it needs is in it and its inputs
+for one task designer is several brief tasks. Queue no brief while the builders already have a full queue: the
+harness detains a brief task while {BRIEF_BACKLOG} or more build and fix tasks are open (its status line says so), because one
+brief becomes many tasks and a single producing slot consumes them one at a time. Detail what will be built next, not
+everything that will be built. Form each task so that the reasoning it needs is in it and its inputs
 are artifacts, never a predecessor's reasoning; a conceptual decision is a design task whose deliverable is the
 decision written as an entry of DECISIONS.md (the plan changes only with its structure, the stages' standing or the
 direction of the work). The kind decides the session and its effort: design (a designer, a fork of the middle
 base), investigate (an investigator), build (an implementer), fix (a fixer), brief (a task
 designer), review (a reviewer). A task that is not in form is not taken up; you are told why.
+
+**Answers that reached nobody.** A session that asks without blocking and ends in the same turn is gone when its
+answer comes, and a session that has ended reads no mail. Your status line lists any such answer with the file it was
+written to; what it decides reaches the work only if you put it there — the Planner's line of each task it bears on,
+or HANDOFF.md. When you have, say so (`.claude/orchestration/v2.py carried QID "where"`), and it stops being listed.
 
 {{brief}}
 

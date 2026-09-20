@@ -1,6 +1,7 @@
 """The guards (work_meter.py guard, a PreToolUse hook) and what a worker reads and produces (recorded by the gauge's
 PostToolUse call), run as the hooks run, in a throwaway world (fakes.py)."""
 import json
+import os
 from pathlib import Path
 import sys
 import time
@@ -310,6 +311,47 @@ class RoleTests(Guarded):
         self.assertIsNotNone(self.guard("Read", {"file_path": "theories/Ready.thy"}))
 
 
+class WriteTargetTests(Guarded):
+    """What a command is taken to write: the record of who owns a working-tree change rests on it."""
+
+    def targets(self, command):
+        import work_meter
+        return [os.path.relpath(p, str(self.w.project))
+                for p in work_meter.write_targets("Bash", {"command": command}, command, str(self.w.project))]
+
+    def test_a_quoted_pattern_and_a_heredoc_are_data_and_not_shell_syntax(self):
+        # a read-only grep for conflict markers was refused as a write to the tree, and a draft under a task's own
+        # directory was refused because its prose named ROOT (2026-09-20, reported by a session)
+        markers = """grep -c '^<<<<<<<\\|^>>>>>>>\\|^=======$' DECISIONS.md && grep -n '^## ' DECISIONS.md"""
+        self.assertEqual(work_meter.kind("Bash", {"command": markers}), "read")
+        self.assertEqual(self.targets(markers), [])
+        draft = ("mkdir -p .build/tasks/46 && cat > .build/tasks/46/X.thy <<'EOF'\n"
+                 "text \\<open>its ROOT entry names the session\\<close>\nEOF")
+        self.assertEqual(work_meter.kind("Bash", {"command": draft}), "write")
+        self.assertEqual(self.targets(draft), [".build/tasks/46/X.thy", ".build/tasks/46"])
+
+    def test_a_redirection_to_a_quoted_name_is_still_a_write(self):
+        self.assertEqual(work_meter.kind("Bash", {"command": 'echo x > "a file.md"'}), "write")
+        self.assertIn("a file.md", self.targets('echo x > "a file.md"'))
+
+    def test_a_heredoc_s_prose_is_not_a_set_of_filenames(self):
+        # the record held 319 entries, five of them paths, because every word ending a sentence has a dot in it
+        self.w.write("DECISIONS.md", "# Decisions\n")
+        command = ("python3 - <<'PY'\nfrom pathlib import Path\n"
+                   "# a row of the library. a notion. the reading. those. it.\n"
+                   "Path('DECISIONS.md').write_text('x')\nPY")
+        self.assertEqual(self.targets(command), ["DECISIONS.md"])
+
+    def test_a_redirection_and_a_file_command_name_paths_whatever_they_are_called(self):
+        self.assertIn("ROOT", self.targets("echo x >> ROOT"))
+        self.assertIn(".build/new.out", self.targets("true > .build/new.out"))
+        self.assertIn("theories/Gone.thy", self.targets("rm theories/Gone.thy"))
+
+    def test_a_new_file_of_a_known_kind_in_a_directory_that_exists_counts(self):
+        self.assertIn(".build/tasks/1/result.md", self.targets("cp x .build/tasks/1/result.md"))
+        self.assertEqual(self.targets("sed -i 's/^Recorded 2026-09-20\\.$/Recorded/' nowhere/at/all"), [])
+
+
 class SharingTests(Guarded):
     def setUp(self):
         super().setUp()
@@ -362,10 +404,19 @@ class SharingTests(Guarded):
     def test_handoff_is_the_planners(self):
         self.assertIn("HANDOFF.md is the planner's state", self.guard("Write", {"file_path": "HANDOFF.md"}))
 
-    def test_no_check_beside_a_final_check_that_advances_the_base(self):
-        (self.w.state / "isabelle-exclusive").write_text("1")
+    def test_no_check_beside_a_measurement_either(self):
+        # a run whose result is a timing holds the machine the same way a base-advancing check does
+        (self.w.state / "isabelle-exclusive").write_text(json.dumps(
+            {"task": "1", "why": "a measurement of the machinery's evaluation", "session": "implement-1",
+             "at": time.time()}))
         reason = self.guard("Bash", {"command": "python3 tools/probe_theories.py Ready"})
-        self.assertIn("Task 1's final check is advancing the base heap", reason)
+        self.assertIn("Task 1 holds the machine (a measurement of the machinery's evaluation)", reason)
+        self.assertIn("Continue with what needs no check", reason)
+
+    def test_no_check_beside_a_final_check_that_advances_the_base(self):
+        (self.w.state / "isabelle-exclusive").write_text(f"1 {os.getpid()}")  # its check is running
+        reason = self.guard("Bash", {"command": "python3 tools/probe_theories.py Ready"})
+        self.assertIn("Task 1 holds the machine (its final check advances the base heap)", reason)
         (self.w.state / "isabelle-exclusive").unlink()
         self.assertIsNone(self.guard("Bash", {"command": "python3 tools/probe_theories.py Ready"}))
 

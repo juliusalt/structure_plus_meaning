@@ -88,6 +88,9 @@ def main():
         print("the orchestration is inactive; start.sh starts it")
         return
     pid = read("warm.pid")
+    trouble = v2.tree_trouble()
+    print(("ATTENTION the working tree refuses every check: " + "; ".join(trouble[:3])) if trouble
+          else "working tree: consistent (every theory declared, every declaration present, no dangling import)")
     print("daemon: alive" if pid and os.path.exists(f"/proc/{pid}") else "ATTENTION daemon is not running: start.sh starts it")
     kb = st["sessions"].get(st["kb"] or "")
     if st.get("kb_building"):
@@ -118,8 +121,11 @@ def main():
     for tid, t in st["tasks"].items():
         if t.get("stage") == "parked":
             p = t.get("parked") or {}
+            waits = {"run": "its own run", "tree": f"the working tree (task {p.get('holder')})",
+                     "fix": f"its fix (task {p.get('after')})" if p.get("after") else "the planner to name its fix",
+                     "answer": "the answer to its question"}.get(p.get("for"), p.get("after") or "the planner")
             print(f"parked: task {tid} for {minutes(now - p.get('since', now))} of {v2.HOLD_PARK // 3600} h, waits on "
-                  f"{p.get('after') or 'the planner'}: {p.get('why', '')[:100]}")
+                  f"{waits}" + (f": {p.get('why', '')[:100]}" if p.get("why") else ""))
         elif t.get("stage") in ("checking", "reviewing", "fixing", "committing", "planner"):
             print(f"task {tid}: {t['stage']}" + (f" (checks failed {t['checks_failed']})" if t.get("checks_failed") else "")
                   + (f" (rejected {t['rejections']})" if t.get("rejections") else ""))

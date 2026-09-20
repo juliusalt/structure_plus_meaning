@@ -57,8 +57,37 @@ SED = re.compile(r"""^sed\s+-n\s+(['"]?)(\d+),(\d+)p\1\s+(\S+)$""")
 CAT = re.compile(r"^cat\s+(\S+)$")
 HEAD = re.compile(r"^head\s+(?:-n\s*|-)(\d+)\s+(\S+)$")
 TAIL = re.compile(r"^tail\s+(?:-n\s*|-)(\d+)\s+(\S+)$")
-WRITE = re.compile(r"write_text\(|\bsed\s+-i\b|(?<![0-9&])>>?\s*(?!/dev/null\b|&)[^\s|;&>]+|\btee\s+(?:-a\s+)?[^\s|;&]+"
-                   r"|(?:^|[;&|]\s*)(?:cp|mv|install|rm|touch|ln|mkdir|rmdir|truncate|chmod)\s")
+# What the shell itself does, read on the command with its heredoc bodies and quoted words removed: a grep pattern
+# holding `>>`, or a theory's \<open>, is data and not a redirection (2026-09-20).
+WRITE_SHELL = re.compile(r"\bsed\s+-i\b|(?<![0-9&])>>?\s*(?!/dev/null\b|&)[^\s|;&>]+|\btee\s+(?:-a\s+)?[^\s|;&]+"
+                         r"|(?:^|[;&|]\s*)(?:cp|mv|install|rm|touch|ln|mkdir|rmdir|truncate|chmod)\s")
+# What a script inside the command writes, named where it writes it
+WRITE_SCRIPT = re.compile(r"""\.write_text\(|\.writelines\(|shutil\.(?:copy|move)|open\(\s*[^)]*['"][wa]""")
+HEREDOC = re.compile(r"<<-?\s*(['\"]?)(\w+)\1\r?\n.*?^\s*\2\s*$", re.S | re.M)
+QUOTED = re.compile(r"'[^']*'|\"[^\"]*\"")
+REDIRECT = re.compile(r"""(?<![0-9&])>>?\s*(?:'([^']+)'|"([^"]+)"|([^\s|;&>]+))""")
+# a path a script inside the command writes to, named literally
+SCRIPT_TARGET = re.compile(r"""(?:Path\(\s*|open\(\s*)['"]([^'"]+)['"]\s*\)?\s*(?:\.\s*write_text|\.\s*open\(\s*['"][wa])"""
+                           r"""|open\(\s*['"]([^'"]+)['"]\s*,\s*['"][wa]""")
+
+
+def shell_syntax(command):
+    """The command as the shell reads it: a heredoc body is data, and so is a quoted word — unless a redirection is
+    what precedes it, so that `grep '>>'` names nothing while `> "a file"` still names its file (2026-09-20)."""
+    text, kept, i = HEREDOC.sub(" <<heredoc ", command or ""), [], 0
+    for m in QUOTED.finditer(text):
+        kept.append(text[i:m.start()])
+        kept.append(m.group(0) if kept[-1].rstrip().endswith(">") else " ")
+        i = m.end()
+    kept.append(text[i:])
+    return "".join(kept)
+
+
+def redirections(command):
+    """The targets of the command's redirections."""
+    return [m for match in REDIRECT.findall(shell_syntax(command)) for m in match if m]
+
+
 # git commands that change the index, the working tree or the history: the finalizer's alone
 GIT_MUTATE = re.compile(r"\bgit\s+(?:-[Cc]\s+\S+\s+)*(?:add|commit|stash|checkout|reset|restore|rm|mv|merge|rebase|push|pull"
                         r"|clean|switch|cherry-pick|revert|apply|am|update-index|update-ref|worktree|gc|prune|filter-branch"
@@ -278,7 +307,7 @@ def kind(tool, inp):
             return "own"
         if CHECK.search(c):
             return "check"
-        if WRITE.search(c):
+        if WRITE_SHELL.search(shell_syntax(c)) or WRITE_SCRIPT.search(c):
             return "write"
         if READS.match(c):
             return "read"
@@ -463,10 +492,11 @@ def session_guard(hook, rec):
         if refused:
             return refused
     if k == "check":
-        holder, runs = v2.exclusive_holder(), v2.isabelle_runs()
+        claim, runs = v2.exclusive_claim(), v2.isabelle_runs()
+        holder = claim["task"] if claim else None
         if holder and holder not in (rec.get("task"), rec.get("reviews")):
-            return deny(f"Task {holder}'s final check is advancing the base heap: no other check runs meanwhile. Continue "
-                        "with what needs no check (drafts, the next step's writing); try the check after.")
+            return deny(f"Task {holder} holds the machine ({claim['why']}): nothing else runs meanwhile. Continue with "
+                        "what needs no check (drafts, the next step's writing); try it after.")
         if runs >= v2.ISABELLE_MAX:
             return deny(f"{runs} Isabelle runs are going on this machine (at most {v2.ISABELLE_MAX}: three have filled its "
                         "memory). Continue with what needs no check; try it when one has ended.")
@@ -515,19 +545,44 @@ def session_guard(hook, rec):
     return None
 
 
+EXTENSIONS = {"md", "thy", "py", "json", "jsonl", "sh", "txt", "out", "log", "diff", "patch", "yaml", "yml", "toml",
+              "cfg", "csv", "tsv", "pyc", "lock", "ML", "tex", "html", "svg", "png"}
+
+
+def path_like(word, cwd):
+    """The file a word of a command names, or None. A command carries heredocs, quoted text and prose, and every word
+    that ends a sentence has a dot in it, so a word counts only when it names something that is there, or a new file
+    of a known kind in a directory that is (2026-09-20: the owner record held 319 entries, five of them paths)."""
+    for w in re.findall(r"[A-Za-z0-9_./~-]+", word):
+        if not w or w.startswith("-") or w.endswith(".") or ".." in w or w == "/dev/null":
+            continue
+        full = os.path.normpath(os.path.join(cwd or v2.PROJECT, os.path.expanduser(w)))
+        base = os.path.basename(w)
+        ext = base.rsplit(".", 1)[-1] if "." in base[1:] else ""
+        if os.path.lexists(full) or (ext in EXTENSIONS and os.path.isdir(os.path.dirname(full))):
+            yield full
+
+
 def write_targets(tool, inp, command, cwd):
-    """The files a write names: an Edit's or Write's file, or the paths a shell write mentions."""
+    """The files a command writes: an Edit's or Write's file, the targets of its redirections and file commands, and
+    the paths a script inside it names where it writes them. A path a command merely mentions is not one: a heredoc's
+    prose naming `ROOT` had drafts under a task's own directory refused as writes to the tree (2026-09-20)."""
     if tool in ("Edit", "Write", "MultiEdit", "NotebookEdit"):
         p = inp.get("file_path") or inp.get("notebook_path") or ""
         return [os.path.normpath(p if os.path.isabs(p) else os.path.join(cwd or v2.PROJECT, p))] if p else []
-    names = [w for words in segments(command) for w in words[1:] if not w.startswith("-") and ("/" in w or "." in w)]
-    names += re.findall(r"(?<![0-9&])>>?\s*([^\s|;&>]+)", command)  # redirections, whatever the file is called
-    for words in segments(command):
-        if words and os.path.basename(words[0]) in ("rm", "rmdir", "touch", "truncate", "mkdir", "ln", "chmod", "mv", "cp",
-                                                    "install", "tee"):
-            names += [w for w in words[1:] if not w.startswith("-")]
-    return list(dict.fromkeys(os.path.normpath(os.path.join(cwd or v2.PROJECT, w)) for w in names
-                              if w != "/dev/null"))
+    command = command or ""
+    names = redirections(command)
+    for words in segments(shell_syntax(command)):
+        if not words:
+            continue
+        cmd, operands = os.path.basename(words[0]), [w for w in words[1:] if not w.startswith("-")]
+        if cmd in ("rm", "rmdir", "touch", "truncate", "mkdir", "ln", "chmod", "mv", "cp", "install", "tee"):
+            names += operands
+        elif cmd == "sed" and any(w.startswith("-i") for w in words[1:]):  # its script is not one of its files
+            names += [w for w in operands if os.path.lexists(os.path.join(cwd or v2.PROJECT, w))]
+    names += [m for match in SCRIPT_TARGET.findall(command) for m in match if m]
+    return list(dict.fromkeys(os.path.normpath(os.path.join(cwd or v2.PROJECT, os.path.expanduser(w.strip("'\"`"))))
+                              for w in names if w.strip("'\"`") not in ("", "/dev/null")))
 
 
 def write_guard(tool, inp, command, rec, cwd):

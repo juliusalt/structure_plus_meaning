@@ -221,7 +221,9 @@ def held(st, name, s):
     t = tasks.get(s.get("task") or "") or {}
     ended = s.get("ended") or s.get("started") or 0
     if s["state"] == "parked":
-        return "waits on its efficiency fix"
+        return {"run": "waits on its own run", "tree": "waits on the working tree",
+                "fix": "waits on its efficiency fix",
+                "answer": "waits on the answer to its question"}.get((t.get("parked") or {}).get("for"), "parked")
     if s["state"] == "waiting":
         return "waits on the answer to its question"
     if s["role"] in v2.PRODUCING and t.get("session") == name and t.get("stage") in ("checking", "reviewing", "fixing",

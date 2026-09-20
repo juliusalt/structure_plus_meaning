@@ -124,7 +124,12 @@ class World:
         self.env = {k: v for k, v in os.environ.items() if not k.startswith(("CLAUDE", "AI_AGENT", "ORCH_"))}
         self.env.update(PATH=str(self.root / "bin") + os.pathsep + os.environ["PATH"], HOME=str(self.home),
                         FAKE_ROOT=str(self.root), ORCH_PROJECT=str(self.project), ORCH_STATE_DIR=str(self.state),
-                        ORCH_PAUSE="0", ORCH_CACHE_CHECK="0", ORCH_SYNC="1", ORCH_EPISODE_GAP="0",
+                        ORCH_ISABELLE_RUNS="0",  # no run of this machine is this world's
+                        ORCH_WORKERS="8",  # the slots' own capacity; the owner's rate is a setting, tested apart
+                        ORCH_EPISODE_GAP="0", ORCH_URGENT_GAP="0",
+                        ORCH_ACTIVE_CONTEXT=str(self.state / "active-context.json"),
+                       
+                        ORCH_PAUSE="0", ORCH_CACHE_CHECK="0", ORCH_SYNC="1",
                         CODEX_SESSIONS=str(self.home / "codex"), ORCH_LEDGER=str(self.root / "owner-ledger.md"))
 
     def close(self):

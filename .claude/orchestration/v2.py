@@ -853,6 +853,13 @@ IMPORTS = re.compile(r"\bimports\b(.*?)\bbegin\b", re.S)  # the header, one line
 MARKERS = re.compile(r"^(?:<{7}|>{7}|={7})(?:\s|$)", re.M)
 
 
+def _read(name):
+    try:
+        return open(os.path.join(PROJECT, name), errors="ignore").read()
+    except OSError:
+        return ""
+
+
 def tree_trouble():
     """What is wrong with the working tree as a whole, in the terms the checks refuse on. Each of these refuses every
     task's check and not only the one whose change caused it, so each is the orchestration's to notice rather than a
@@ -864,7 +871,16 @@ def tree_trouble():
         present = {f[:-4] for f in os.listdir(os.path.join(PROJECT, "theories")) if f.endswith(".thy")}
     except OSError:
         return []  # no ROOT or no theories/: not a tree these terms are about, and nothing to say of it
-    listed = set(THEORY_LINE.findall(root))
+    declared = THEORY_LINE.findall(root)
+    listed = set(declared)
+    for name in sorted({n for n in declared if declared.count(n) > 1}):
+        out.append(f"ROOT declares {name} {declared.count(name)} times")
+    headings = re.findall(r"^## (.+?)\s*$", _read("DECISIONS.md"), re.M)
+    for head in sorted({h for h in headings if headings.count(h) > 1}):
+        out.append(f"DECISIONS.md holds the entry \"{head}\" {headings.count(head)} times")
+    rows = [r for r in re.findall(r"^\| ([A-Za-z_][\w]*) \|", _read("THEORY_MAP.md"), re.M) if r != "Theory"]
+    for row in sorted({r for r in rows if rows.count(r) > 1}):
+        out.append(f"THEORY_MAP.md holds the row of {row} {rows.count(row)} times")
     for name in sorted(present - listed):
         out.append(f"theories/{name}.thy is in the tree and no ROOT line declares it")
     for name in sorted(listed - present):

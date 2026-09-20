@@ -1,0 +1,10 @@
+# The index files every task appends to. Two tasks branching from one commit write their lines in the same place —
+# a ROOT entry after the same theory, an entry at the end of DECISIONS.md, a row in THEORY_MAP.md — and a three-way
+# merge cannot order two insertions at one position, so it conflicts although nothing disagrees. The union driver
+# keeps both sides' lines, which is what is meant. What it can get wrong is caught rather than trusted: it keeps a
+# line one side deleted (a retired theory comes back) and it keeps both copies when the same line is added twice, and
+# the orchestration's tree invariant reports a ROOT entry with no theory, a theory with no entry, a declaration made
+# twice, an entry or a row written twice (v2.tree_trouble).
+ROOT merge=union
+DECISIONS.md merge=union
+THEORY_MAP.md merge=union

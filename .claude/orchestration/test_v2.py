@@ -499,14 +499,38 @@ class TaskTests(Flow):
         self.assertTrue((self.w.project / "theories/Mine.thy").exists())
         self.assertTrue((self.w.project / "theories/Theirs.thy").exists())
 
-        # and two lines written at the same place do not merge: git says which file, and nothing is lost
+        # two lines written at the same place do not merge by themselves: git names the file and nothing is lost
         self.assertEqual(eval(run('print(repr(v2.merged("3")))').strip()), ["ROOT"])
         self.assertIn("    Mine\n", (self.w.project / "ROOT").read_text())  # the merge is undone, not resolved
         self.assertNotIn("<<<<<<<", (self.w.project / "ROOT").read_text())
         self.assertIn("Same", self.w.git("show", "task/3:ROOT"))  # and the task's own line stands on its branch
+        # with the union driver they do merge, and both lines stand
+        self.w.write(".gitattributes", "ROOT merge=union\n")
+        self.w.git("add", ".gitattributes")
+        self.w.git("commit", "-q", "-m", "the index files merge by union")
+        self.assertIsNone(eval(run('print(repr(v2.merged("3")))').strip()))
+        root = (self.w.project / "ROOT").read_text()
+        self.assertIn("    Mine\n", root)
+        self.assertIn("    Same\n", root)
         for tid in ("1", "2", "3"):
             run(f'v2.worktree_gone({tid!r})')
         self.assertFalse(Path(self.w.project, ".build/trees/1").exists())
+
+    def test_what_a_union_merge_can_get_wrong_is_reported(self):
+        # union keeps both sides' lines, so it keeps one a side deleted and keeps two copies of one added twice.
+        # Neither is trusted: the tree invariant reads ROOT, DECISIONS.md and THEORY_MAP.md and says so.
+        self.w.write("ROOT", "session S = HOL +\n  theories\n    Base\n    Retired\n    Twice\n    Twice\n")
+        self.w.write("theories/Base.thy", "theory Base imports Main begin end\n")
+        self.w.write("theories/Twice.thy", "theory Twice imports Main begin end\n")
+        self.w.write("DECISIONS.md", "## One decision\n\nx\n\n## One decision\n\ny\n")
+        self.w.write("THEORY_MAP.md", "| Theory | Direct imports | Content |\n| Base | Main | a |\n| Base | Main | a |\n")
+        out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                              "print(chr(10).join(v2.tree_trouble()))"], env=self.w.env, capture_output=True,
+                             text=True).stdout
+        self.assertIn("ROOT declares Retired, which is not in theories/", out)  # a line union brought back
+        self.assertIn("ROOT declares Twice 2 times", out)
+        self.assertIn('DECISIONS.md holds the entry "One decision" 2 times', out)
+        self.assertIn("THEORY_MAP.md holds the row of Base 2 times", out)
 
     def test_a_task_that_stops_leaves_its_change_whole(self):
         # a change here is a set of parts — a theory, the ROOT line that declares it, the import that reaches it —

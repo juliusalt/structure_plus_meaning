@@ -66,6 +66,8 @@ CASES = [
      'if False}', "graph_calls_done", "work the repository does not hold"),
     ("v2.py", '        raise RuntimeError(f"{what} ({path}) is there and cannot be read: {e!r}. Nothing writes over it; move it "\n                           "aside only when you know what it should hold.") from e', '        return {}',
      "never_written_over", "a kept file that cannot be read"),
+    ("v2.py", '        except OSError as e:\n            # a ledger that is there and cannot be read was replaced by a fresh header and this one entry: every\n            # direction the owner had ever given, gone, under the lock that was meant to protect them. The words are\n            # kept in the log instead and the file is left alone (2026-09-21).\n            log(f"ATTENTION the owner ledger could not be read ({e!r}) and is left untouched. What was said, in "\n                f"full:\\n{entry}")\n', '        except OSError:\n            s = "# Owner ledger"\n',
+     "owner_types", "a ledger that cannot be read"),
 ]
 bad = []
 for fname, old, new, k, label in CASES:

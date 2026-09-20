@@ -331,14 +331,22 @@ def owner_said(rec, text):
              + "\n".join("> " + ln if ln.strip() else ">" for ln in text.splitlines()) + "\n\n")
     with open(LEDGER + ".lock", "w") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)
+        s = None
         try:
             s = open(LEDGER).read()
-        except OSError:
+        except FileNotFoundError:
             s = "# Owner ledger\n\n## Owner directions\n\n## Open questions to the owner\n"
-        at = s.find("## Open questions to the owner")
-        s = s[:at] + entry + s[at:] if at >= 0 else s.rstrip("\n") + "\n\n" + entry
-        open(LEDGER + ".tmp", "w").write(s)
-        os.replace(LEDGER + ".tmp", LEDGER)
+        except OSError as e:
+            # a ledger that is there and cannot be read was replaced by a fresh header and this one entry: every
+            # direction the owner had ever given, gone, under the lock that was meant to protect them. The words are
+            # kept in the log instead and the file is left alone (2026-09-21).
+            log(f"ATTENTION the owner ledger could not be read ({e!r}) and is left untouched. What was said, in "
+                f"full:\n{entry}")
+        if s is not None:
+            at = s.find("## Open questions to the owner")
+            s = s[:at] + entry + s[at:] if at >= 0 else s.rstrip("\n") + "\n\n" + entry
+            open(LEDGER + ".tmp", "w").write(s)
+            os.replace(LEDGER + ".tmp", LEDGER)
     if rec["role"] != "planner":
         with state() as st:
             event(st, "the owner", f"The owner said {where}: {text}")

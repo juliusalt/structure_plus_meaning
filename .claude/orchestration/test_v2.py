@@ -2460,6 +2460,17 @@ class HarnessTests(Flow):
         events = [e["text"] for e in self.w.st()["events"]]
         self.assertEqual(len(events), 1)  # a planning episode acts on what it is told itself
         self.assertIn("The owner said to implement-4 (implementer, task 4): Use the path store", events[0])
+        # a ledger that is there and cannot be read was replaced by a fresh header and the one new entry: every
+        # direction the owner had ever given, gone. It is left alone, the words are kept in the log, and the
+        # planner is still told (2026-09-21)
+        ledger.unlink()
+        ledger.mkdir()                                     # there, and no read of it can succeed
+        typed("i4", "And keep the ordering notion at its second use.")
+        self.assertTrue(ledger.is_dir())
+        said = (self.w.state / "v2.log").read_text()
+        self.assertIn("the owner ledger could not be read", said)
+        self.assertIn("keep the ordering notion at its second use", said)
+        self.assertIn("keep the ordering notion", " ".join(e["text"] for e in self.w.st()["events"]))
 
     def test_status_and_who(self):
         self.w.task("1")

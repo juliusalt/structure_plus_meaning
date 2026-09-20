@@ -603,6 +603,23 @@ class PlanningTests(Flow):
                              env=self.w.env, capture_output=True, text=True)
         self.assertEqual(out.stdout.strip(), "4 None", out.stderr)   # and one that is not there is still None
 
+    def test_a_task_the_planner_puts_back_to_pending_and_queues_runs_again(self):
+        # `done` is terminal bookkeeping that task_state never re-reads, so that a task accepted by its review is
+        # not started a second time in the window before the planner completes it in the list. A task the planner
+        # puts BACK to pending and names in its order is one it means to run, and nothing would ever start it: it
+        # sat in the queue, not startable, and nothing named it (2026-09-21).
+        self.w.task("4", description=BRIEF, subject="Done, and wanted again", status="completed")
+        self.w.set_st(queue=[], tasks={"4": {"stage": "done", "kind": "build"}})
+        self.w.session("plan-1", "planner", "p1", settings="planner-settings.json")
+        self.as_("plan-1", "queue", "4")
+        self.assertEqual(self.t("4")["stage"], "done")        # the list still calls it completed: it stands
+        self.w.task("4", description=BRIEF, subject="Done, and wanted again", status="pending")
+        self.as_("plan-1", "queue", "4")
+        self.assertEqual(self.w.st()["queue"], ["4"])
+        self.w.v2("dispatch")
+        self.assertEqual(self.t("4")["stage"], "running")     # read afresh from its brief, and started
+        self.assertEqual(len(self.forks("implement-4")), 1)
+
     def test_a_queued_task_that_is_not_in_the_list_is_no_longer_startable(self):
         # the planner's first message of 2026-09-20 said "startable now: 21 14"; task 21 had been dropped and was
         # not in the list at all. startable() read its blockers off a record that was not there, so an empty list of

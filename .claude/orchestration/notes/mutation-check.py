@@ -78,6 +78,8 @@ CASES = [
      "usage_limit", "the limit before the mail"),
     ("efficiency.py", '            if s:\n                # a fork', '            if s and name is None:\n                # a fork',
      "own_launch_prompt", "a fork measured as itself"),
+    ("v2.py", 'if t.get("stage") in ("planner", "unformed") or reopened:', 'if t.get("stage") in ("planner", "unformed"):',
+     "puts_back_to_pending", "a task the planner re-opens"),
 ]
 bad = []
 for fname, old, new, k, label in CASES:

@@ -3701,7 +3701,13 @@ def cmd_queue(ids):
     with state() as st:
         for tid in ids:
             t = st["tasks"].get(tid) or {}
-            if t.get("stage") in ("planner", "unformed"):  # re-planned: its stage is read afresh from its brief
+            # `done` is terminal bookkeeping and task_state never reads it again, deliberately: between a verdict
+            # accepting a task and the planner completing it in the list, re-reading would start the work a second
+            # time. But a task the planner has put BACK to pending and then named in its order is one it means to
+            # run, and nothing would ever start it again — it would sit in the queue, not startable, unnamed by
+            # anything (2026-09-21). The list decides: only a task the list no longer calls completed is re-read.
+            reopened = t.get("stage") == "done" and (read_task(tid) or {}).get("status") not in ("completed", None)
+            if t.get("stage") in ("planner", "unformed") or reopened:  # re-planned: its stage is read afresh
                 st["tasks"][tid] = {k: v for k, v in t.items() if k in ("briefed_by", "briefing", "review_tasks", "reviews")}
         order = list(ids)
         kept = [tid for tid in st["queue"] if tid not in order and (st["tasks"].get(tid) or {}).get("queued_at", 0) > since

@@ -558,3 +558,212 @@ committed on their behalf — the planner's charge is to take stock of it.
   `state/no-launch` while working on the machinery.
 - Unsearched still: the guard's read limits and batching rules, the knowledge base's growth and condensation, the
   review protocol itself, and anything that only shows under real concurrency.
+
+---
+
+# 2026-09-20 20:26 — the guard was never wired to the tools that write
+
+The owner stopped the run ("something is completely wrong; only leave the warmth daemon") while the first live run's
+state was being read. What the reading had found by then is below; whether it is what the owner saw is not settled.
+
+## The stop
+
+`stop.sh` was **not** used: it kills the warm daemon first, and the daemon was to stay. Instead `v2.py stop` alone
+(sealed `plan-29`, `implement-46.4` and `implement-22.4`; the orchestration inactive; what was interrupted recorded as
+an event for the next episode), then `state/stopped` written by hand so the watchdog is inert on both of its
+conditions, and `state/no-launch` set with its reason. The daemon lives (pid 2940345), all three bases warm, all three
+layers 0% stale, no check running, no poly or java process left. `start.sh` resumes; `rm state/no-launch` releases.
+
+## What was wrong
+
+The PreToolUse matcher of `planner-settings.json` and `worker-settings.json` was
+`Read|Bash|Grep|Glob|Agent|TaskOutput|TaskCreate|TaskUpdate`. **`Write`, `Edit`, `MultiEdit` and `NotebookEdit` were
+not in it**, though `kind()`'s first branch is exactly those four. So `work_meter.py guard` never ran for the tool the
+roles actually write with, for the whole run, and with it neither of the two things that branch does:
+
+- `write_guard` — HANDOFF.md and `PLANNING_LOG.md` being the planner's alone, a finalization's locked files, and a
+  tree another task holds — was unenforced against every Write and Edit. Only writes named inside a Bash command were
+  ever guarded.
+- `v2.own` recorded nothing, so the tree's ownership was built from the words of Bash commands alone.
+
+Measured on the live state before it was repaired: `state/tree-owners.json` held **123 entries, 7 of which named
+anything that exists** (four of those seven directories), and **not one named a path that had changed**. So
+`tree_writer` was `None`, `tree_holder` was `None`, and `in_main_tree` was False for tasks 46, 22, 48 and 50 — the
+harness believed nobody owned the uncommitted work of four tasks. That is why task 46 was handed a worktree at
+20:11:56 with its work standing in the one tree, which is the incident that ended with `.build/trees/46` and
+`.build/trees/49` discarded.
+
+**Why no test saw it.** Every test calls the guard directly (`self.guard("Write", …)`), which is past the matcher that
+decides whether it runs. `test_writes_to_the_working_tree_are_attributed_to_the_task` and `test_handoff_is_the_planners`
+both passed throughout, testing logic that was never reached. This is the day's own class once more — a thing tested
+past the gate that governs it — and it is the second time the gate itself was the fault, after `.hit` meaning
+"pinged" rather than "warm".
+
+## What was done
+
+- The matcher in both settings files now names the four write tools first. The two files still differ in nothing but
+  `CLAUDE_CODE_TASK_LIST_ID` (its test still passes).
+- `work_meter.GUARDED_TOOLS` and `UNGUARDED_TOOLS` say which tools the guard acts on and which it deliberately does
+  not (`ToolSearch`: matching it would change nothing). Two tests in `HookWiringTests`: the matcher of both files
+  matches every guarded tool, and the tool names `kind()` and `session_guard()` themselves contain are exactly those
+  two tuples — so a tool given a branch cannot be left out of the matcher again. The first fails against the old
+  matcher, on `Write`, in both files.
+- **`state/tree-owners.json` rebuilt** from each task's own `finalize.json` (46, 22, 50) and result (48, which has
+  written none): the nine paths standing changed, the 123 old entries dropped. `tree_writer` is now 46, the other
+  three serialize behind it — the designed mechanism — `in_main_tree` is True for all four, and `leave` reports what
+  a task leaves. The old file is not kept; `git diff` and the tasks' records are its source.
+- **Isabelle cartouches are no longer read as redirections.** `\<open>a row \<exists>q.` yielded `['a', 'q.']`:
+  `ISABELLE_SYMBOL` is stripped in `shell_syntax` now, since `\<` is no shell syntax and the `>` closing one is no
+  redirection. That is where 116 of the 123 entries came from — theory text reaching the parser outside a heredoc it
+  could strip, an indented delimiter being enough. One test, which fails without it.
+- `v2.NO_LAUNCH`'s comment said the hold stops a keep-warm ping. The code three lines below says the opposite and is
+  right; the comment is corrected.
+- The README's hook paragraph now states that the matcher must name every tool of `GUARDED_TOOLS`, and why.
+
+**242 tests pass** (`python3 -m pytest -q test_*.py` here). Nothing is committed — the standing rule.
+
+## What is not verified, and what to watch
+
+- **The fix is verified by test and by reading, never live.** Nothing has run under the new matcher: the run is
+  stopped and `no-launch` is on, and starting a session to check it would be the thing the hold exists to prevent.
+  On the first restart, watch that a worker's Write of a working-tree file appears in `state/tree-owners.json` under
+  its task. That single line is the whole verification.
+- **Sessions already sealed keep the old settings**; a bare resume does not re-read them. `plan-29`, `kb-3` and the
+  two implementers were started before the change, so the guard still will not see their writes. Only sessions
+  started after it are covered — and a knowledge base is only rebuilt on its own or by `--fresh`.
+- Tools reaching `kind()`'s `other` branch are still outside the matcher, so they cost no round at the moment they
+  are used. This is deliberate and not the same defect: `rounds_since` counts from the transcript and not from hook
+  calls, so the count is right and only the moment of enforcement moves — the next matched tool refuses on the true
+  figure. Adding them would tighten the meter past what its limits were measured against, which is the owner's call.
+- Unsearched still, and now with one more reason to look: every other place where a predicate is tested past the
+  thing that gates it.
+
+---
+
+# 2026-09-20 21:00 — four things the owner named, and what the record actually showed
+
+The owner, after the stop: the orchestrator worker's message about the worktrees never reached the planner; the
+messages the planner did get may have contained false information; a fresh start should not run the old graph before
+the planner activates it; and why did the notice about dead tasks come so late. The run is stopped, `no-launch` is on,
+only the warm daemon runs. **250 tests pass.** Nothing is committed.
+
+## 1. The worktree message — it did arrive, and the path it took has no guarantee
+
+Corrected: at 20:14:59 the orchestrator worker wrote it with `v2.event(st, "the harness", "Two producing sessions
+were started in working trees of their own…")`; it reached `plan-29` at 20:15:34 as a **PostToolUse hook
+attachment**, and the planner acted on it — that paragraph is in HANDOFF.md and is where "Their trees are discarded"
+comes from. It is invisible as a message, which is why it looked lost: it is not one of the eight `[harness] Message
+from…` turns in the transcript.
+
+It arrived by luck. `plan()` finds the planner busy, so it only `post()`s and leaves the hooks to show it; the hooks
+do not run again after the turn's last tool call; the planner is then sealed, and **nothing opens that box again** —
+`plan()` returns at once while no new event has come, and `care()` is reached only for `LIVE` sessions, which `idle`
+is not. So a message to the planner waited for the *next* message, and with none it waited for ever. Here the next
+message was the standstill a minute later.
+
+`watchdog.planner_mail()` now wakes a sealed planner that has mail; cold, `holds()` loses it and its events go back.
+Two tests, both failing without it — and the first version of them passed against the unfixed code, because a
+standstill was supplying the next event: the test needs something working for the hole to show.
+
+## 2. The messages it did get — three were false, and they were most of what it was told
+
+`plan-29` received eight messages in its life: four prompts, then
+
+- **the standstill (20:16:44)**, which said tasks 5, 9, 18 and 21 "came back and have not been re-planned". **All
+  four were false**: 5, 9 and 18 are committed and `completed` in the graph, 21 was dropped and is not in the task
+  list at all. `st["tasks"][id]["stage"]` is the harness's own bookkeeping and nothing clears it when a task finishes
+  or is dropped elsewhere. `with_the_planner()` now asks the graph, and both readers use it.
+- **q20 from implement-46.4 (20:20:52)** — honest: it said which tree it had run in.
+- **two identical notices (20:24, 20:25)**: "The working tree is inconsistent … ROOT declares Development_Loci, which
+  is not in theories/ … Every task's check refuses on this". The shared tree held the file and was consistent
+  throughout (`tree_trouble()` → none, then and now). The trouble was task 46's **own worktree**, branched from a
+  HEAD that declares a theory whose file is untracked. `tree_checked()` now names which tree, scopes the claim to
+  that tree's own checks, and does not repeat the same trouble within `TREE_TOLD`.
+
+And in the planner's **first message**: `startable now: 21 14`. Task 21 was not in the list, and `startable()` read
+its blockers off a record that was not there — an empty list of blockers made it ready for ever. `startable()` and
+`produce()` now skip a queued id with no task record.
+
+So of everything `plan-29` was told about the state of the work, the larger part was wrong.
+
+## 3. A fresh start no longer runs the graph it inherited
+
+`--fresh` charged the planner to take stock and dispatched the old queue in the same breath: task 7 was started,
+checked, reviewed and committed within ten minutes, before the planner had said what of the graph still stood.
+`state/graph-held` now holds it: `produce()`, `support()` and `quick_fix()` start nothing while it exists — the
+planner, the knowledge base and consultations are untouched, since taking stock is what the hold is for. The
+planner's own order (`v2.py queue ID …`) lifts it. The status, `health.py` and the standstill all say it is held and
+what lifts it, so the hold cannot be silent.
+
+**It is set now.** This run began `--fresh` and `plan-29` was stopped while still taking stock, so the graph standing
+here is the old run's and no planner has accepted it.
+
+## 4. Why the dead-task notice came late — it did not, and that is the fault
+
+It was not a timer. The dead-task lines exist **only** inside `standstill()`, which is suppressed while anything
+works and while the planner deliberates. `plan-29` deliberated from 20:05:07 to 20:16:44, and the standstill fired in
+the same second its turn ended. `deps_done()` names such a task only to a queued dependent, hourly, and only if one
+exists — no queued task named 5, 9, 18 or 21, so it never fired at all (no `blocker-*` markers were written).
+
+So with work in flight it would not have been said at all. `returned_tasks()` now names a task that has stood with
+the planner for `ORCH_RETURNED_AFTER` (30 min) on its own, every dispatch, independent of whether the orchestration
+has anything to do — and, through `with_the_planner()`, only when the graph agrees the task is still pending.
+
+## What to watch
+
+- **None of this is verified live** — the run is stopped and `no-launch` is on. On the first restart: that the
+  planner is woken with what is in its box while something else works; that the graph stays held until it queues;
+  that nothing says a completed task is the planner's.
+- `planner_mail()` runs before `holds()` on purpose: a warm planner is woken, a cold one is lost in the same pass.
+- The graph hold has no timeout by design — it ends when the planner says the order. If the planner never queues,
+  the standstill names the hold every 30 minutes and the status carries it in every first message.
+
+---
+
+# 2026-09-20 21:15 — the warmth is the layer's, and the hold now reminds
+
+Two questions from the owner on the state as it stands.
+
+## Why only xhigh looked refreshed, and what is actually kept warm
+
+Nothing was wrong. `base.sh WHO warm` forks **the layer** when there is one — "what the roles fork is what must stay
+warm, and a fork of a layer reads the whole prefix under it" — so the 20:52 ping of xhigh was of layer `cc8f0c3b` at
+503,712 tokens, which is the xhigh layer built at 20:02:58, not the 274K stable base. One ping keeps both alive.
+
+The three looked different because the daemon pings a base only when its `<who>-base.hit` mark is older than
+`ORCH_WARM_EVERY` (2400 s), and **a live fork's tool calls touch that mark through the gauge hook**. `plan-29` forks
+max and the two implementers fork high, and they were still working at 20:24–20:25, so max and high were marked hit
+then and were not due until ~21:04. xhigh had no fork after the 20:02 rebuild, aged past 2400, and was pinged at
+20:51. Confirmed live at 21:14: max and high came due and `warm-high` was busy pinging.
+
+The one defect was the label. `health.py` said "base xhigh: warm at …" of a ping that had refreshed the layer — the
+same class as `.hit` meaning "pinged" rather than "warm". It now says `layer xhigh (with the base under it)` when a
+layer exists, and `base xhigh` only when none does.
+
+**Worth knowing, and not fixed here:** with the run stopped, the daemon is the only thing keeping the layers alive
+and it does so on that 2400 s cycle, which is the intended behaviour. But `layers()` — the staleness refresh — runs
+in the watchdog, which is inert while stopped, so a layer whose files have moved is not rebuilt until the run is
+started again. That is right, and it means the first minutes after a restart may rebuild a layer.
+
+## The graph hold now tells the planner, repeatedly, and says what lifts it
+
+The hold ends on the planner's word alone, so it must not depend on `standstill()` — that answers a different
+question and is suppressed while anything works, while the planner deliberates, and while it has events waiting. A
+planner that dropped what the graph no longer needed and then forgot to give the order would have had nothing tell
+it that the run was standing on its word.
+
+Four places now carry it, and they say the same thing:
+
+- **`protocols/planner.md`**, so it is in every planner's context from its first message: while the graph is held
+  nothing of it starts, dropping does not lift it, re-planning does not lift it, the order does.
+- **`FRESH_CHARGE`**, which carries the first telling on a fresh start (and sets `graph-held.told`, so the reminder
+  does not also fire in the same breath).
+- **`v2.status`**, which the planner reads in its first message: `THE GRAPH IS HELD: …`.
+- **`held_graph()`**, a dispatch part of its own: every `ORCH_GRAPH_HELD_EVERY` (30 min) while the hold stands, as
+  its own event, naming how many tasks are waiting and which, and that **dropping alone does not lift it**. It stops
+  the moment the hold is lifted, and clears its marker so a later hold starts afresh.
+
+`standstill()` also names the hold instead of telling the planner to queue what it cannot.
+
+**251 tests pass.** The reminder's test checks all three: silent at the start (the charge has said it), silent at the
+next dispatch, said again once it has stood that long, and stopped when the hold goes.

@@ -262,7 +262,10 @@ the same scripts; they differ in one thing only, `CLAUDE_CODE_TASK_LIST_ID`, whi
 list that is the graph. Every session on it sees the others' edits to it injected into its context, so only the two
 roles that edit the graph are given it — the knowledge base was on it until 2026-09-20, could not edit it, and
 passed what was injected on to every session forked from it. Every other session's task list is its own, named by
-its own session, and the bases have none. Both wire the same scripts, which act by role (`v2.role_of`, from `state/v2.json`): PreToolUse `work_meter.py guard`;
+its own session, and the bases have none. Both wire the same scripts, which act by role (`v2.role_of`, from `state/v2.json`): PreToolUse `work_meter.py guard`
+— whose matcher must name every tool of `work_meter.GUARDED_TOOLS`, because a tool left out of it never reaches the
+guard at all and that guard's refusals and records simply do not happen (the write tools stood outside it for the
+whole first live run of 2026-09-20, and the tests, which call the guard directly, all passed meanwhile);
 PostToolUse `ctx_gauge.py gauge` (mail, the notice near the window's end at 907K and the end mark at 942K, below the
 972K the API has accepted, the session's reading and production, the warmth marks); Stop `ctx_gauge.py stop` (a
 session ends its turn only when its piece of work has ended, while it waits, or, for the knowledge base, the planner

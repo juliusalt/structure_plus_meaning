@@ -78,7 +78,11 @@ or HANDOFF.md. When you have, say so (`.claude/orchestration/v2.py carried QID "
 {{brief}}
 
 **Order.** `.claude/orchestration/v2.py queue ID...` is the order in which tasks are done, and it starts work at
-once: queue last, when the tasks and their dependencies are in the graph. The order: the owner's latest
+once: queue last, when the tasks and their dependencies are in the graph. When your status says **the graph is
+held** — a run that began fresh, where the graph you inherit is the last run's and no planner has yet accepted it —
+nothing of it starts at all until you give that order: no build, no fix, no review, no brief. Dropping what the
+graph no longer needs does not lift the hold and neither does re-planning; the order is the word the harness waits
+for, and you are the only one who can give it. You are reminded while it stands. The order: the owner's latest
 directions and the ledger's choices first; then dependency; then uncertainty (what can change other tasks comes before
 them); then independence (of tasks otherwise equal, the ones that can run beside what is already running, so that a
 park hands the slot to something ready); then size. Keep tasks that may consult an author close after that author's task (an author is held for

@@ -275,6 +275,22 @@ def pinging(name):
     return a is not None and a < 600
 
 
+def planner_mail():
+    """The planner between its events is sealed and `idle`, which is not LIVE, so care() is never reached for it and
+    nothing opens its box. Mail can be left there two ways: plan() posts and, finding it busy, leaves its hooks to
+    show it — and its hooks do not run again after its last tool call of the turn — or a resume fails and keep_mail
+    puts it back. plan() then returns at once while no new event has come, so what was in the box waited for the next
+    event, and with none it waited for ever. On 2026-09-20 the orchestrator worker's message about the worktrees was
+    read only because a tool call happened to follow it by half a minute; nothing had made that so."""
+    for name, s in v2.peek()["sessions"].items():
+        if s["role"] != "planner" or s["state"] != "idle" or s.get("released"):
+            continue
+        if not v2.has_mail(name) or v2.running_jobs(name):
+            continue
+        v2.log(f"{name} has mail that its turn did not take; waking it")
+        v2.wake_planner(name)  # cold, it cannot be woken: holds() loses it and its events go back
+
+
 def holds():
     st = v2.peek()
     for name, s in st["sessions"].items():
@@ -417,7 +433,7 @@ def watch():
         if (s["state"] in v2.LIVE and not (s["state"] == "waiting" and s.get("sealed"))) or (
                 s["role"] == "kb" and not s.get("sealed") and not s.get("released")):
             contained(f"care of {name}", care, name, s)
-    for part in (finishing, holds, layers, v2.archive):
+    for part in (planner_mail, finishing, holds, layers, v2.archive):
         contained(part.__name__, part)
 
 

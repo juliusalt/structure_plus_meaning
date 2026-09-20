@@ -71,10 +71,18 @@ SCRIPT_TARGET = re.compile(r"""(?:Path\(\s*|open\(\s*)['"]([^'"]+)['"]\s*\)?\s*(
                            r"""|open\(\s*['"]([^'"]+)['"]\s*,\s*['"][wa]""")
 
 
+# Isabelle's symbols and cartouches (\<open>, \<close>, \<exists>, \<Rightarrow>): `\<` is no shell syntax and the
+# `>` that closes one is no redirection. Theory text that reaches this parser outside a heredoc it could strip — an
+# indented delimiter is enough — otherwise names one file per cartouche, and named 116 of the 123 entries the tree's
+# ownership held on 2026-09-20: `a`, `q.`, `lemma`, `The`, the word after every `\<open>`.
+ISABELLE_SYMBOL = re.compile(r"\\<[A-Za-z][A-Za-z0-9_^]*>")
+
+
 def shell_syntax(command):
-    """The command as the shell reads it: a heredoc body is data, and so is a quoted word — unless a redirection is
-    what precedes it, so that `grep '>>'` names nothing while `> "a file"` still names its file (2026-09-20)."""
-    text, kept, i = HEREDOC.sub(" <<heredoc ", command or ""), [], 0
+    """The command as the shell reads it: a heredoc body is data, an Isabelle symbol is data, and so is a quoted word
+    — unless a redirection is what precedes it, so that `grep '>>'` names nothing while `> "a file"` still names its
+    file (2026-09-20)."""
+    text, kept, i = ISABELLE_SYMBOL.sub(" ", HEREDOC.sub(" <<heredoc ", command or "")), [], 0
     for m in QUOTED.finditer(text):
         kept.append(text[i:m.start()])
         kept.append(m.group(0) if kept[-1].rstrip().endswith(">") else " ")
@@ -290,6 +298,22 @@ def covered(ranges, first, last):
         if line > last:
             return True
     return line > last
+
+
+# The tools the guard acts on, and so the tools the PreToolUse matcher of planner-settings.json and
+# worker-settings.json must name: a tool left out of that matcher never reaches the guard at all, and its refusals
+# and its records simply do not happen. Write, Edit, MultiEdit and NotebookEdit were left out of it for the whole
+# first live run (2026-09-20): every write of the roles' usual tool went unguarded — HANDOFF.md, a finalization's
+# locked files and a tree another task holds were all open to them — and the tree's ownership was built from the
+# words of Bash commands alone, 116 of its 123 entries being shell and Isabelle fragments with not one of them
+# naming a path that had changed. The tests call the guard directly, which is past the matcher, so only
+# test_the_settings_let_every_guarded_tool_reach_the_guard sees this.
+GUARDED_TOOLS = ("Write", "Edit", "MultiEdit", "NotebookEdit",   # the write guard, and who owns a change of the tree
+                 "Read", "Grep", "Glob",                          # what is already in the session's context
+                 "Bash",                                          # checks, waiting, git, and writes by command
+                 "Agent", "TaskOutput", "TaskCreate", "TaskUpdate")  # refused outright, or left to the graph's roles
+# Named by kind() and deliberately not in the matcher: matching them would change nothing.
+UNGUARDED_TOOLS = ("ToolSearch",)  # the harness's own commands: nothing is refused and nothing is counted
 
 
 def kind(tool, inp):

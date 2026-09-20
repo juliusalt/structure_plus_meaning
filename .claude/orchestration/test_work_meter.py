@@ -1,7 +1,9 @@
 """The guards (work_meter.py guard, a PreToolUse hook) and what a worker reads and produces (recorded by the gauge's
 PostToolUse call), run as the hooks run, in a throwaway world (fakes.py)."""
+import inspect
 import json
 import os
+import re
 from pathlib import Path
 import sys
 import time
@@ -348,6 +350,16 @@ class WriteTargetTests(Guarded):
         self.assertEqual(work_meter.kind("Bash", {"command": draft}), "write")
         self.assertEqual(self.targets(draft), [".build/tasks/46/X.thy", ".build/tasks/46"])
 
+    def test_an_isabelle_cartouche_is_not_a_redirection(self):
+        # every `\<open>` was read as a redirection and the word after it recorded as a file: 116 of the 123 entries
+        # the tree's ownership held on 2026-09-20 were words of theory text that reached the parser this way
+        theory = ("python3 - <<PY\nprint('x')\nPY\n"
+                  "text \\<open>a row \\<exists>q. fBall A\\<close>")
+        self.assertEqual(self.targets(theory), [])
+        self.assertEqual(work_meter.redirections("lemma x: \\<open>The reading\\<close>"), [])
+        # and a redirection beside one is still a redirection
+        self.assertIn("theories/X.thy", self.targets("echo '\\<open>k\\<close>' > theories/X.thy"))
+
     def test_a_redirection_to_a_quoted_name_is_still_a_write(self):
         self.assertEqual(work_meter.kind("Bash", {"command": 'echo x > "a file.md"'}), "write")
         self.assertIn("a file.md", self.targets('echo x > "a file.md"'))
@@ -455,6 +467,36 @@ class RoundsTests(unittest.TestCase):
             self.assertEqual(work_meter.rounds_since(path, since, "tu-c"), 2)  # b and c; c makes the call
             self.assertEqual(work_meter.rounds_since(path, since, "tu-d"), 3)  # the calling request not yet written
             self.assertEqual(work_meter.rounds_since(path, None), 0)
+
+
+class HookWiringTests(unittest.TestCase):
+    """Whether the guard runs at all. Every other test in this file calls it directly, which is past the matcher in
+    the settings files that decides which tools reach it — so on 2026-09-20 Write, Edit, MultiEdit and NotebookEdit
+    stood outside that matcher for the whole first live run, no write was guarded, the tree's ownership was built
+    from the words of Bash commands alone, and every test here still passed."""
+
+    def matcher(self, settings):
+        hooks = json.load(open(HERE / settings))["hooks"]["PreToolUse"]
+        wired = [h["matcher"] for h in hooks
+                 if any("work_meter.py guard" in x.get("command", "") for x in h["hooks"])]
+        self.assertEqual(len(wired), 1, f"{settings} wires work_meter.py guard {len(wired)} times, not once")
+        return wired[0]
+
+    def test_the_settings_let_every_guarded_tool_reach_the_guard(self):
+        for settings in ("planner-settings.json", "worker-settings.json"):
+            matcher = self.matcher(settings)
+            for tool in work_meter.GUARDED_TOOLS:
+                self.assertTrue(re.search(matcher, tool),
+                                f"{tool} never reaches the guard in {settings}: the matcher is {matcher!r}, so the "
+                                f"guard's refusals and records for it simply do not happen")
+
+    def test_the_guarded_tools_are_the_ones_the_guard_itself_names(self):
+        # a tool given a branch in kind() or in session_guard() and left out of GUARDED_TOOLS would be left out of
+        # the matcher too, and nothing above would notice
+        source = inspect.getsource(work_meter.kind) + inspect.getsource(work_meter.session_guard)
+        named = {n for n in re.findall(r"""['"]([A-Z][A-Za-z]+)['"]""", source)}
+        self.assertEqual(named, set(work_meter.GUARDED_TOOLS) | set(work_meter.UNGUARDED_TOOLS),
+                         "the tools the guard names and the tools it declares it guards have drifted apart")
 
 
 class _World:

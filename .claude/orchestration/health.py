@@ -91,8 +91,11 @@ def bases_and_trees():
         at = last[-1].split()[0]
         misses = os.path.join(v2.STATE, f"{who}-base.miss")
         n = len(open(misses).read().split()) if os.path.exists(misses) else 0
+        # `base.sh WHO warm` forks the layer when there is one — what the roles fork is what must stay warm, and a
+        # fork of a layer reads the stable base under it — so saying "base" of that ping named the wrong thing.
+        what = f"layer {who} (with the base under it)" if v2.layer_record(who) else f"base {who}"
         print(("ATTENTION " if n >= 2 else "")
-              + f"base {who}: {'warm' if ' OK' in last[-1] else 'was COLD and was rewritten'} at {at[11:19]}"
+              + f"{what}: {'warm' if ' OK' in last[-1] else 'was COLD and was rewritten'} at {at[11:19]}"
               + (f", {n} miss(es); two stop its pings" if n else ""))
     for who in v2.BASES:
         path = os.path.join(v2.STATE, f"{who}-layer.json")
@@ -121,6 +124,9 @@ def bases_and_trees():
               + f"layer {who}: {rec.get('context', 0) // 1000}K, sealed {rec.get('sealed', '?')[11:19]}, "
               + f"{share:.0%} of what it holds has changed"
               + (" — it is being built again" if building else " — it is refreshed" if due else ""))
+    graph = v2.graph_held()
+    if graph:
+        print(f"the graph is held: {graph}; the planner's `v2.py queue` releases it")
     hold = v2.held_back()
     if hold:
         print(f"ATTENTION nothing starts a session: the hold is on ({hold}). Keep-warm pings still go. "
@@ -149,7 +155,7 @@ def main():
     print(f"memory: {mem['MemAvailable'] // 1024} GiB available of {mem['MemTotal'] // 1024}")
     bases_and_trees()
     if read("stopped"):
-        print(f"stopped by stop.sh at {read('stopped')}; start.sh resumes")
+        print(f"stopped at {read('stopped')}; start.sh resumes")  # the marker says when, not who wrote it
         return
     st = v2.peek()
     if not st["active"]:

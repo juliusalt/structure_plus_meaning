@@ -106,6 +106,7 @@ KB_INTEGRATE_MAX = int(os.environ.get("ORCH_KB_INTEGRATE_MAX", 1200))  # a knowl
 CLAUDE_MAX = int(os.environ.get("ORCH_CLAUDE_MAX", 180))  # a CLI call that never returns
 KB_BUILD_MAX = int(os.environ.get("ORCH_KB_BUILD_MAX", 3600))  # a load that never replies, likewise
 LOST_BLOCKER = 3600  # how often a task waiting for a blocker that is not there is named
+TREE_TOLD = 900  # how often the same trouble in the same tree is put to the planner again
 TIDY_EVERY = int(os.environ.get("ORCH_TIDY_EVERY", 3600))  # how often state nothing names is swept
 WOKEN_KEEP = int(os.environ.get("ORCH_WOKEN_KEEP", 86400))  # a wake mark, for attach.sh to read
 BRIEF_BACKLOG = int(os.environ.get("ORCH_BRIEF_BACKLOG", 6))  # open build and fix tasks past which no brief is detailed:
@@ -346,9 +347,24 @@ def deliver(name, sender, text):
 # ---------------------------------------------------------------- sessions
 
 NO_LAUNCH = "no-launch"  # while state/no-launch exists nothing starts a session: not the dispatch, not a base
-# build, not a layer refresh, not a keep-warm ping. Stopping, removing and listing still work. It is the owner's
-# switch for the time between "the machinery is ready" and "begin", and it exists because starting a session by
-# accident costs a cold write of a whole base (2026-09-20).
+# build, not a layer refresh. A keep-warm ping does go through (claude(warm_ping=True), and base.sh WHO warm is not
+# among the commands it holds): it keeps alive what already exists rather than spending anything, and holding it
+# would let the bases go cold, which is the very cost this guards against. Stopping, removing and listing still
+# work. It is the owner's switch for the time between "the machinery is ready" and "begin", and it exists because
+# starting a session by accident costs a cold write of a whole base (2026-09-20).
+
+
+GRAPH_HELD = "graph-held"  # while state/graph-held exists no task session starts: the graph is the old run's and
+# the planner has not yet said what of it still stands. The planner, the knowledge base and consultations of it are
+# not held — taking stock is exactly what the hold is for — and the planner's own order (v2.py queue) lifts it.
+
+
+def graph_held():
+    """The reason no task of the graph may start, or ""."""
+    try:
+        return open(os.path.join(STATE, GRAPH_HELD)).read().strip() or "state/graph-held is set"
+    except OSError:
+        return ""
 
 
 def held_back():
@@ -1114,14 +1130,31 @@ BASE_IN_A_TASK = (
 
 
 def tree_checked(who, what, tree=None):
-    """Say at once when the tree has been left in a state every check refuses, naming what did it."""
+    """Say at once when a tree has been left in a state its checks refuse, naming which tree and what did it.
+
+    Until 2026-09-20 this said "the working tree" whatever tree it had been given, and added that every task's check
+    refuses on it — true of the shared tree, false of a task's own worktree, which nothing but that task checks. The
+    planner was told twice, at 20:24 and 20:25, that the working tree was inconsistent because ROOT declared
+    Development_Loci with no file; the shared tree had the file and was consistent throughout, and the trouble was
+    task 46's worktree alone, branched from a HEAD that declares a theory whose file is untracked. The same trouble
+    is not repeated for the same tree within TREE_TOLD."""
     trouble = tree_trouble(tree)
-    if trouble:
-        log(f"ATTENTION the working tree is inconsistent after {what} ({who}): " + "; ".join(trouble[:4]))
+    if not trouble:
+        return trouble
+    own = os.path.relpath(tree, PROJECT) if tree and os.path.realpath(tree) != os.path.realpath(PROJECT) else ""
+    whose = f"the working tree of task {os.path.basename(own)} ({own})" if own else "the working tree"
+    reach = (". Its own checks refuse on this until it is put right; the shared working tree is not affected."
+             if own else
+             ". Every task's check refuses on this, not only the one whose change caused it, so nothing can "
+             "be checked until it is put right.")
+    log(f"ATTENTION {whose} is inconsistent after {what} ({who}): " + "; ".join(trouble[:4]))
+    mark, said = "tree-told-" + re.sub(r"\W+", "-", own or "main"), "; ".join(trouble)
+    told = age_of(mark)  # not `or TREE_TOLD + 1`: an age of 0.0 is falsy and would read as never told
+    if told is None or told > TREE_TOLD or _read(mark, STATE) != said:
+        open(os.path.join(STATE, mark), "w").write(said)
         with state() as st:
-            event(st, "the harness", f"The working tree is inconsistent after {what}: " + "; ".join(trouble)
-                  + ". Every task's check refuses on this, not only the one whose change caused it, so nothing can "
-                  "be checked until it is put right.")
+            event(st, "the harness", f"{whose[0].upper()}{whose[1:]} is inconsistent after {what}: "
+                  + "; ".join(trouble) + reach)
     return trouble
 
 
@@ -1925,6 +1958,8 @@ def tree_writer(st):
 def produce():
     """The producing slot: a parked task whose wait is over first (its changes come back into the free working tree),
     then the first ready task in the queue."""
+    if graph_held():
+        return
     st = peek()
     if slot(st, PRODUCING):
         return
@@ -1958,6 +1993,9 @@ def produce():
             return
     failed = st.get("start_failed") or {}
     for tid in st["queue"]:
+        if read_task(tid) is None:
+            continue  # in the queue with no record in the list: nothing to brief a session from, and deps_done()
+            # reads no blockers off a task that is not there, so it would start for ever (2026-09-20: task 21)
         with state() as w:
             t = dict(task_state(w, tid))
         if t.get("stage") != "ready" or t.get("kind") not in PRODUCING_KINDS or not deps_done(tid):
@@ -2052,6 +2090,10 @@ def startable(st=None):
     for tid in st["queue"]:
         if (st["tasks"].get(tid) or {}).get("stage") != "ready":
             continue
+        if tid not in tasks:
+            continue  # deleted from the list while the queue kept it: with no record it has no blockers either, so
+            # it read as startable for ever. On 2026-09-20 the planner's first message said "startable now: 21 14"
+            # and task 21 had been dropped and was not in the list at all — one of the two was a phantom.
         blockers = (tasks.get(tid) or {}).get("blockedBy") or []
         if all((tasks.get(b) or {}).get("status") == "completed" for b in blockers):
             out.append(tid)
@@ -2067,6 +2109,8 @@ def build_backlog(st=None):
 def support():
     """The one supporting slot: a review task of a finished build or fix, or a brief task; the brief first when nothing
     is ready for the producing slot."""
+    if graph_held():
+        return
     st = peek()
     if slot(st, SUPPORTING):
         return
@@ -2101,6 +2145,8 @@ def support():
 def quick_fix():
     """The quick-fix slot: a task whose check failed or whose review rejected it, once: its own session resumed while
     warm, a fixer otherwise."""
+    if graph_held():
+        return
     st = peek()
     if slot(st, PRODUCING, fix=True):
         return
@@ -2263,6 +2309,90 @@ def fix_deadlock():
 STANDSTILL_EVERY = int(os.environ.get("ORCH_STANDSTILL_EVERY", 1800))  # how often a standstill is named again
 
 
+RETURNED_AFTER = int(os.environ.get("ORCH_RETURNED_AFTER", 1800))  # how long a task may stand with the planner unnamed
+
+
+def with_the_planner(st):
+    """The tasks that really are the planner's to move: stage "planner" (given back, ended partial, failed its check)
+    and still pending in the graph. The stage is the harness's own bookkeeping and is never cleared when the task is
+    completed or dropped elsewhere, so on 2026-09-20 the standstill told the planner that tasks 5, 9, 18 and 21 had
+    come back and needed re-planning when 5, 9 and 18 were committed and completed and 21 had been dropped and was
+    not in the list at all — four statements, all false, and the only thing it was told about tasks that day."""
+    out = []
+    for tid, t in sorted(st["tasks"].items()):
+        if (t or {}).get("stage") != "planner":
+            continue
+        task = read_task(tid)
+        if task is None or task.get("status") == "completed":
+            continue  # dropped, or finished by the path that does not clear the stage
+        out.append(tid)
+    return out
+
+
+def returned_tasks():
+    """A task given back to the planner (stage "planner") is moved by nothing else: no session takes it and no queue
+    reaches it. Until 2026-09-20 the only thing that said so was standstill(), which is suppressed while anything
+    works and while the planner deliberates — and deps_done() names such a task only to a queued dependent, hourly,
+    and only if one exists. So tasks 5, 9, 18 and 21 stood with the planner for hours and were named 11.5 minutes
+    into the run, at the first second its turn ended into a standstill; nothing about that was a timer, and with work
+    in flight it would not have been said at all. Named here on its own, so the notice does not wait on the
+    orchestration having nothing to do."""
+    st = peek()
+    mine = set(with_the_planner(st))
+    for tid, t in sorted(st["tasks"].items()):
+        mark = os.path.join(STATE, f"returned-{tid}")
+        if tid not in mine:
+            with contextlib.suppress(OSError):
+                os.remove(mark)  # re-planned: the next time it comes back is counted afresh
+            continue
+        try:  # the file holds when it first stood there; its mtime is when that was last said
+            since = time.time() - float(open(mark).read())
+        except (OSError, ValueError):
+            open(mark, "w").write(str(time.time()))
+            continue
+        if since < RETURNED_AFTER or (age_of(f"returned-{tid}") or 0) < RETURNED_AFTER:
+            continue
+        os.utime(mark, None)
+        with state() as w:
+            event(w, "the harness", f"Task {tid} has stood with you for {int(since // 60)} minutes: it came back and "
+                  "has not been re-planned, and nothing else moves it. Re-plan it, split it over what exists, or "
+                  "drop it (`v2.py drop`) — while it stands, anything that waits on it waits for ever.")
+        log(f"task {tid} has stood with the planner for {int(since // 60)} min")
+
+
+GRAPH_HELD_EVERY = int(os.environ.get("ORCH_GRAPH_HELD_EVERY", 1800))  # how often a held graph is named again
+
+
+def held_graph():
+    """While the graph is held nothing of it runs and only the planner can lift it, so it is named to the planner as
+    its own event and named again while it lasts. Not left to standstill(), which answers a different question and is
+    suppressed while anything works, while the planner deliberates and while it has events waiting: a planner that
+    dropped what the graph no longer needs and then forgot to say the order would have had nothing tell it that the
+    run was standing still on its word alone."""
+    why = graph_held()
+    if not why:
+        with contextlib.suppress(OSError):
+            os.remove(os.path.join(STATE, "graph-held.told"))
+        return
+    told = age_of("graph-held.told")
+    if told is not None and told < GRAPH_HELD_EVERY:
+        return
+    open(os.path.join(STATE, "graph-held.told"), "w").write(str(time.time()))
+    st = peek()
+    waiting = [tid for tid in st["queue"] if (st["tasks"].get(tid) or {}).get("stage") not in ("done", None)]
+    with state() as w:
+        event(w, "the harness", f"The graph is held, and nothing of it runs: {why}. "
+              + (f"{len(waiting)} tasks stand in the queue ({' '.join(waiting[:12])}"
+                 + (", …" if len(waiting) > 12 else "") + ") and not one of them will start — no build, no fix, no "
+                 "review, no brief — while this stands. " if waiting else "The queue is empty. ")
+              + "Two things end it, and only you can do either: drop what the graph no longer needs (`v2.py drop ID`, "
+                "and take the task out of the list), and then say what the order of the rest is (`v2.py queue ID …`), "
+                "which is what lifts the hold. Dropping alone does not lift it, and neither does re-planning: the "
+                f"order is the word the harness waits for. You are told again in {GRAPH_HELD_EVERY // 60} minutes "
+                "while this lasts.")
+    log("the graph is held and the planner is told; its order lifts it")
+
+
 def standstill():
     """Nothing is working, nothing has happened, and only the planner can move the graph — but the planner is woken by
     events, and there are none. The orchestration stood still three times this way on 2026-09-20 (01:34–03:35,
@@ -2286,7 +2416,7 @@ def standstill():
     if (age_of("standstill") or STANDSTILL_EVERY + 1) < STANDSTILL_EVERY:
         return
     open(os.path.join(STATE, "standstill"), "w").write(str(time.time()))
-    stands = []
+    stands, mine = [], set(with_the_planner(st))
     for tid, t in sorted(st["tasks"].items()):
         p = t.get("parked") or {}
         if t.get("stage") == "parked":
@@ -2294,7 +2424,7 @@ def standstill():
             stands.append(f"task {tid} has been parked {mins} min for "
                           + {"run": "its own run", "tree": "the working tree", "fix": f"task {p.get('after')}",
                              "answer": "the answer to its question"}.get(p.get("for"), p.get("for") or "something"))
-        elif t.get("stage") == "planner":
+        elif tid in mine:
             stands.append(f"task {tid} is yours: it came back and has not been re-planned")
     for tid in st["queue"]:
         t = st["tasks"].get(tid) or {}
@@ -2309,9 +2439,12 @@ def standstill():
         event(w, "the harness", "Nothing is working and nothing in the queue can start: only you can move this. "
               + ("What stands: " + "; ".join(stands) + ". " if stands else "Nothing is parked and nothing is blocked. ")
               + (f"{len(backlog)} build and fix tasks are open" if backlog else "No build or fix task is open")
-              + f", and the queue is {' '.join(st['queue']) or 'empty'}. Queue what can be done, take back a wait that "
-              "cannot end (`v2.py after ID none`), or re-plan what came back to you. You are told again in "
-              f"{STANDSTILL_EVERY // 60} minutes while this lasts.")
+              + f", and the queue is {' '.join(st['queue']) or 'empty'}. "
+              + ("The graph is held and that is why none of it starts (" + graph_held() + "): your order "
+                 "(`v2.py queue ID ...`) is what releases it. " if graph_held() else
+                 "Queue what can be done, take back a wait that cannot end (`v2.py after ID none`), or re-plan what "
+                 "came back to you. ")
+              + f"You are told again in {STANDSTILL_EVERY // 60} minutes while this lasts.")
     log("standstill: nothing is working and nothing can start; the planner is told")
 
 
@@ -2377,7 +2510,7 @@ def dispatch_once():
         return
     for part in (tree_care, check_isolation, parking_care, fix_deadlock, efficiency_care, kb_care, produce, support,
                  quick_fix, tidied,
-                 consult, standstill, plan):  # standstill before plan: what it says reaches the planner in this pass
+                 consult, returned_tasks, held_graph, standstill, plan):  # before plan: what they say reaches it now
         try:  # one part that fails does not hold up the others; it is logged, and tried again at the next dispatch
             part()
         except Exception as e:  # noqa: BLE001
@@ -3054,6 +3187,11 @@ def cmd_queue(ids):
                 at += 1
             order.insert(at, tid)
         st["queue"] = order
+    if graph_held():  # the planner has said what the order is: the graph it inherited is now the graph it chose
+        with contextlib.suppress(OSError):
+            os.remove(os.path.join(STATE, GRAPH_HELD))
+        log("the graph is released: the planner has queued")
+        kick()
     missing = [tid for tid in ids if not read_task(tid)]
     kick()
     return "queued" + (f"; kept, briefed since this episode began: {', '.join(kept)}" if kept else "") + (
@@ -3172,6 +3310,9 @@ FRESH_CHARGE = (
     "- **What the graph no longer needs.** Drop what is superseded, what a fault made necessary, and what the work "
     "already answers (`v2.py drop ID`, and take the task out of the list). Say why in your notes: a task dropped "
     "without a reason comes back.\n"
+    "Until you have taken stock the graph is **held**: nothing of it runs — no build, no fix, no review, no brief — "
+    "and your order (`v2.py queue ID …`) is what lifts it. Dropping alone does not, and neither does re-planning. "
+    "Nothing waits on a timer, so take the time this needs; you are reminded while the hold stands.\n"
     "- **What the structure should now be.** The harness has changed under you and the protocols carry what bears on "
     "planning: you live across your events and see each as it happens; two sessions work at once, so a review runs "
     "beside a producer; a task that parks hands the producing slot to anything independent that is ready; and your "
@@ -3247,6 +3388,12 @@ def cmd_start(fresh=False):
             release(old_kb)
         log(f"the knowledge base {old_kb or '(none)'} is left behind; the next one loads HANDOFF.md, the ledger and "
             "the owner's words, and nothing else")
+        open(os.path.join(STATE, GRAPH_HELD), "w").write(
+            "this run began fresh and the planner has not yet said what of the old graph still stands. The charge is "
+            "to take stock first; the graph is released by the planner's own order (v2.py queue ...)")
+        open(os.path.join(STATE, "graph-held.told"), "w").write(str(time.time()))  # the charge carries the first
+        # telling; held_graph() reminds only if the hold is still standing GRAPH_HELD_EVERY later
+        log("the graph is held: no task starts until the planner has taken stock and queued")
     with state() as st:
         st["active"] = True
         first = not st["kb"] and not st.get("kb_building")
@@ -3378,6 +3525,10 @@ def cmd_status():
         out.append(f"{label}: " + (f"{s['name']}" + (f" on {s['task']}" if s.get("task") else "") + f" ({s['state']})"
                                    if s else "-"))
     out.append("queue: " + (" ".join(f"{t}:{(st['tasks'].get(t) or {}).get('stage', '?')}" for t in st["queue"]) or "-"))
+    if graph_held():
+        out.append("THE GRAPH IS HELD: " + graph_held() + ". Nothing of it starts meanwhile — no build, no fix, no "
+                   "review, no brief — and you are the only one who can lift it. Take stock first, then say what the "
+                   "order is (`v2.py queue ID ...`), which releases it; the tasks you drop before that never run.")
     busy = working(st)
     out.append(f"working: {len(busy)} of at most {WORKERS_MAX}" + (f" ({', '.join(busy)})" if busy else ""))
     size, biggest, its = handoff_size()

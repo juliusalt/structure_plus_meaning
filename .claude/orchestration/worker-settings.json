@@ -3,7 +3,7 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Read|Bash|Grep|Glob|Agent|TaskOutput|TaskCreate|TaskUpdate",
+        "matcher": "Write|Edit|MultiEdit|NotebookEdit|Read|Bash|Grep|Glob|Agent|TaskOutput|TaskCreate|TaskUpdate",
         "hooks": [
           {
             "type": "command",

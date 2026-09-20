@@ -134,6 +134,51 @@ class WatchdogTests(unittest.TestCase):
         self.assertFalse(self.s("plan-1").get("released"))  # never released while it lives
         self.assertTrue((self.w.state / "ping-plan-1").exists())  # pinged before its cache expires
 
+    def test_mail_left_in_a_sealed_planners_box_is_not_left_there(self):
+        # plan() posts to the planner and wakes it; when that resume fails the mail goes back into its box
+        # (keep_mail) and nothing opens it again: plan() returns at once while no new event has come, and care() is
+        # reached only for LIVE sessions, which the planner between its events (`idle`, sealed) is not. The wait was
+        # unbounded — a message to the planner waited for the next message, and if none came, for ever.
+        self.w.session("plan-1", "planner", "p1", state="idle", live=False, settings="planner-settings.json",
+                       origin="kb-1", events=[{"at": "2026-09-20T20:14:59", "from": "the harness", "text": "trees"}])
+        self.w.session("implement-9", "implementer", "w9", task="9")  # something works: no standstill to carry it
+        (self.w.state / "mail").mkdir(exist_ok=True)
+        (self.w.state / "mail" / "plan-1.jsonl").write_text(json.dumps(
+            {"from": "the harness", "text": "the worktrees", "at": "2026-09-20T20:15:08"}) + "\n")
+        self.run_watchdog()
+        told = " ".join(str(c["args"][-1]) for c in self.w.calls("--bg") if "--resume" in c["args"])
+        self.assertIn("the worktrees", told)
+        self.assertFalse(v2.has_mail("plan-1"))
+
+    def test_a_sealed_planner_gone_cold_with_mail_gives_its_events_back(self):
+        self.w.session("plan-1", "planner", "p1", state="idle", live=False, settings="planner-settings.json",
+                       origin="kb-1", events=[{"at": "2026-09-20T20:14:59", "from": "x", "text": "not handled"}])
+        (self.w.state / "mail").mkdir(exist_ok=True)
+        (self.w.state / "mail" / "plan-1.jsonl").write_text(json.dumps(
+            {"from": "x", "text": "not handled", "at": "2026-09-20T20:15:08"}) + "\n")
+        self.w.hit("plan-1", age=v2.WARM_MAX + 60)
+        self.run_watchdog()
+        self.assertEqual(self.s("plan-1")["state"], "lost")
+        started = [c["args"][-1] for c in self.w.calls("--bg")
+                   if "-n" in c["args"] and c["args"][c["args"].index("-n") + 1].startswith("plan-")]
+        self.assertTrue(started and "not handled" in started[0], started)
+
+    def test_a_completed_or_dropped_task_is_not_named_as_the_planners_to_re_plan(self):
+        # on 2026-09-20 the standstill told the planner that tasks 5, 9, 18 and 21 had come back and had not been
+        # re-planned. 5, 9 and 18 were committed and completed; 21 had been dropped and was not in the list at all.
+        # All four statements were false, and they were the only thing about tasks it was told that day: the stage is
+        # the harness's own bookkeeping, which nothing clears, and the graph is what says what is still to be done.
+        self.w.session("plan-1", "planner", "p1", state="idle", live=False, settings="planner-settings.json")
+        self.w.task("4", subject="Finished elsewhere", status="completed")
+        self.w.task("6", subject="Really back with the planner")
+        self.w.set_st(queue=[], tasks={"4": {"stage": "planner"}, "5": {"stage": "planner"},
+                                       "6": {"stage": "planner"}})
+        self.run_watchdog()
+        told = " ".join(str(c["args"][-1]) for c in self.w.calls("--bg") if "--resume" in c["args"])
+        self.assertIn("task 6 is yours", told)
+        self.assertNotIn("task 4 is yours", told)  # completed in the graph
+        self.assertNotIn("task 5 is yours", told)  # dropped: not in the task list at all
+
     def test_a_standstill_is_named_to_the_planner_because_only_it_can_move_the_graph(self):
         # the orchestration stood still three times on 2026-09-20 (six and a half hours), and only health.py said so
         self.w.session("plan-1", "planner", "p1", state="idle", live=False, settings="planner-settings.json")

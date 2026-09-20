@@ -245,6 +245,60 @@ class StartTests(Flow):
         self.assertEqual(v2_first(self.w), "")
 
 
+    def test_a_fresh_start_runs_nothing_of_the_old_graph_until_the_planner_queues(self):
+        # the run of 2026-09-20 began --fresh, charged its planner to take stock, and dispatched the old queue in the
+        # same breath: task 7 was started, checked, reviewed and committed within ten minutes, before the planner had
+        # said what of the inherited graph still stood (the owner).
+        self.w.base()
+        self.w.kb()
+        self.w.write("HANDOFF.md", PLANNER_STATE)
+        self.w.task("1")
+        self.w.set_st(active=False, queue=["1"], tasks={"1": {"stage": "ready", "kind": "build"}})
+        self.w.v2("start", "--fresh")
+        self.assertTrue((self.w.state / "graph-held").exists())
+        self.w.reply(self.s("kb-2")["sid"], "INTEGRATED")
+        self.w.v2("dispatch")
+        (plan,) = self.forks("plan-")
+        self.assertIn("THE GRAPH IS HELD", plan[-1])         # it is told, and told how to lift it
+        self.assertIn("Take stock first", plan[-1])
+        self.assertEqual(self.forks("implement-"), [])       # and nothing of the old graph has started
+        self.assertEqual(self.t("1")["stage"], "ready")
+        # the planner's own order is what releases it
+        self.as_("plan-1", "queue", "1")
+        self.assertFalse((self.w.state / "graph-held").exists())
+        self.w.v2("dispatch")
+        self.assertEqual(len(self.forks("implement-")), 1)
+
+    def test_a_held_graph_is_named_again_while_it_stands_and_stops_when_it_is_lifted(self):
+        # the hold ends on the planner's word alone, so it must not depend on a standstill: that is suppressed while
+        # anything works, while the planner deliberates and while it has events waiting, and a planner that dropped
+        # what the graph no longer needs and then forgot the order would have had nothing tell it (the owner)
+        self.w.base()
+        self.w.kb()
+        self.w.write("HANDOFF.md", PLANNER_STATE)
+        self.w.task("1")
+        self.w.set_st(active=False, queue=["1"], tasks={"1": {"stage": "ready", "kind": "build"}})
+        self.w.v2("start", "--fresh")
+        self.assertIn("the graph is **held**", self.heard())  # the charge carries the first telling
+        self.assertNotIn("The graph is held, and nothing of it runs", self.heard())  # and the reminder does not
+        # not at every dispatch either
+        before = len(self.w.st()["events"]) + len(self.w.calls("--bg"))
+        self.w.v2("dispatch")
+        self.assertEqual(len(self.w.st()["events"]) + len(self.w.calls("--bg")), before)
+        # but it is named once the hold has stood that long
+        told = self.w.state / "graph-held.told"
+        old_at = time.time() - v2.GRAPH_HELD_EVERY - 60
+        told.write_text(str(old_at))
+        os.utime(told, (old_at, old_at))
+        self.w.v2("dispatch")
+        self.assertIn("The graph is held, and nothing of it runs", self.heard())
+        self.assertIn("not one of them will start", self.heard())
+        self.assertIn("Dropping alone does not lift it", self.heard())
+        # and it stops the moment the hold is lifted
+        (self.w.state / "graph-held").unlink()
+        self.w.v2("dispatch")
+        self.assertFalse(told.exists())
+
     def test_a_fresh_start_leaves_the_knowledge_base_behind_and_charges_the_first_planner(self):
         # the graph a run inherits was drawn under a harness that has changed, and some of it exists only because of
         # faults since fixed: the planner takes stock before it queues anything (the owner, 2026-09-20)
@@ -306,6 +360,40 @@ class PlanningTests(Flow):
     def event(self, text, sender="the harness"):
         st = self.w.st()
         self.w.set_st(events=st["events"] + [{"at": time.strftime("%Y-%m-%dT%H:%M:%S"), "from": sender, "text": text}])
+
+    def test_a_queued_task_that_is_not_in_the_list_is_no_longer_startable(self):
+        # the planner's first message of 2026-09-20 said "startable now: 21 14"; task 21 had been dropped and was
+        # not in the list at all. startable() read its blockers off a record that was not there, so an empty list of
+        # blockers made it ready for ever, and produce() would have tried to start it with nothing to brief from.
+        self.w.task("14", subject="A real one")
+        self.w.set_st(queue=["21", "14"], tasks={"21": {"stage": "ready", "kind": "build"},
+                                                 "14": {"stage": "ready", "kind": "build"}})
+        out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                              "print(' '.join(v2.startable()))"],
+                             env=self.w.env, capture_output=True, text=True).stdout.strip()
+        self.assertEqual(out, "14")
+        self.w.v2("dispatch")
+        self.assertEqual(self.forks("implement-21"), [])  # nothing is started for a task with no record
+
+    def test_a_task_that_came_back_is_named_on_its_own_and_not_only_in_a_standstill(self):
+        # tasks 5, 9, 18 and 21 stood with the planner for hours. The only thing that said so was standstill(),
+        # which is suppressed while anything works and while the planner deliberates, so the notice reached the
+        # planner 11.5 minutes into the run of 2026-09-20 at the first second its turn ended — and with work still in
+        # flight it would not have been said at all.
+        self.w.task("4", subject="Came back to the planner")
+        self.w.session("implement-9", "implementer", "w9", task="9")  # something works: this is no standstill
+        self.w.set_st(tasks={"4": {"stage": "planner", "kind": "build"},
+                             "9": {"stage": "running", "kind": "build", "session": "implement-9"}})
+        self.w.v2("dispatch")
+        self.assertNotIn("has stood with you", self.heard())  # not at once: it may be re-planned in a moment
+        mark = self.w.state / "returned-4"
+        self.assertTrue(mark.exists())  # first seen, and counted from here
+        old = time.time() - v2.RETURNED_AFTER - 60
+        mark.write_text(str(old))
+        os.utime(mark, (old, old))
+        self.w.v2("dispatch")
+        self.assertIn("Task 4 has stood with you", self.heard())
+        self.assertIn("nothing else moves it", self.heard())
 
     def test_one_planner_lives_across_its_events_and_each_reaches_it_as_its_own_message(self):
         # 23 of the 48 sessions of 2026-09-20 were planning episodes, each a fork of the knowledge base at about
@@ -869,6 +957,38 @@ class TaskTests(Flow):
         self.assertIn("ROOT declares Twice 2 times", out)
         self.assertIn('DECISIONS.md holds the entry "One decision" 2 times', out)
         self.assertIn("THEORY_MAP.md holds the row of Base 2 times", out)
+
+    def test_trouble_in_a_tasks_own_tree_is_not_reported_as_the_shared_one(self):
+        # on 2026-09-20 the planner was told twice, at 20:24 and 20:25, that "the working tree is inconsistent …
+        # ROOT declares Development_Loci, which is not in theories/" and that every task's check refuses on it. The
+        # shared tree held the file and was consistent throughout; the trouble was task 46's own worktree, branched
+        # from a HEAD that declares a theory whose file is untracked, and nothing but task 46 checks that tree.
+        self.w.write("ROOT", "session S = HOL +\n  theories\n    Base\n")
+        self.w.write("theories/Base.thy", "theory Base imports Main begin end\n")
+        self.w.write(".build/trees/46/ROOT", "session S = HOL +\n  theories\n    Base\n    Loci\n")
+        self.w.write(".build/trees/46/theories/Base.thy", "theory Base imports Main begin end\n")
+        call = (f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2, os; "
+                "v2.tree_checked('the harness', \"task 46's check was about to run\", "
+                "os.path.join(v2.PROJECT, '.build/trees/46'))")
+        subprocess.run([sys.executable, "-c", call], env=self.w.env, capture_output=True, text=True)
+        told = " ".join(e["text"] for e in self.w.st()["events"])
+        self.assertIn("The working tree of task 46 (.build/trees/46) is inconsistent", told)
+        self.assertIn("ROOT declares Loci, which is not in theories/", told)
+        self.assertIn("the shared working tree is not affected", told)
+        self.assertNotIn("Every task's check refuses", told)
+        # and the same trouble in the same tree is not put to it again at the next attempt
+        subprocess.run([sys.executable, "-c", call], env=self.w.env, capture_output=True, text=True)
+        self.assertEqual(len(self.w.st()["events"]), 1)
+
+    def test_trouble_in_the_shared_tree_still_says_every_check_refuses(self):
+        self.w.write("ROOT", "session S = HOL +\n  theories\n    Base\n    Gone\n")
+        self.w.write("theories/Base.thy", "theory Base imports Main begin end\n")
+        subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                        "v2.tree_checked('the harness', 'a commit', None)"],
+                       env=self.w.env, capture_output=True, text=True)
+        told = " ".join(e["text"] for e in self.w.st()["events"])
+        self.assertIn("The working tree is inconsistent after a commit", told)
+        self.assertIn("Every task's check refuses on this", told)
 
     def test_a_task_that_stops_leaves_its_change_whole(self):
         # a change here is a set of parts — a theory, the ROOT line that declares it, the import that reaches it —

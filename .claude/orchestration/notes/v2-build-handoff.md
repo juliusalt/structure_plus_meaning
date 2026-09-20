@@ -1115,7 +1115,11 @@ Working through every facet with the run stopped. What follows is what was found
 ## The loop the owner saw
 
 `fix-49.2` was captured into `.build/trees/49` because `worktree_of()` read the directory alone and never consulted
-`TREES`. A worktree carries its own `.claude/orchestration`, and `state/` is gitignored, so it ran **a parallel
+`TREES`. **Correction to what this note first said:** I wrote that `tree_text` had told it, in the same message, that
+it worked in the one tree, and that the two disagreed. They did not. `tree_text` keys off the same directory and
+never consulted `TREES` either, so the session was told it had a tree of its own and was started in one — consistent,
+and both wrong. My reading came from calling `tree_text` with a session record where it wants a task id, so the path
+did not exist and it fell to the other branch. Both now consult `TREES`. A worktree carries its own `.claude/orchestration`, and `state/` is gitignored, so it ran **a parallel
 harness against a parallel state**. The real harness saw nothing of its finalize or its result, declared it gone,
 handed task 49 back to the planner — and it sat blocked by the worktree's own stop hook, recording its result twice
 and never able to end. Its own `obstruction.md` records the loop. The same root produced the two false "the working

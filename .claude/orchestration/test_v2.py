@@ -266,6 +266,19 @@ class StartTests(Flow):
         self.assertEqual(out, str(self.w.project))   # the one tree, not the worktree it sits in
         self.assertTrue((wt / ".git").is_file())     # which is how it is told apart, without a git call
 
+    def test_a_session_is_not_told_it_has_a_tree_that_trees_being_off_denies_it(self):
+        # tree_text keyed off the directory alone, exactly as worktree_of did: with trees off and a tree left on
+        # disk it would say "you are started in it" while worktree_of starts the session in the one tree
+        (self.w.project / ".build/trees/9").mkdir(parents=True, exist_ok=True)
+        said = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                               "print(v2.tree_text('9'))"],
+                              env=dict(self.w.env, ORCH_TREES="0"), capture_output=True, text=True).stdout
+        self.assertIn("You work in the repository's one working tree", said)
+        on = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                             "print(v2.tree_text('9'))"],
+                            env=dict(self.w.env, ORCH_TREES="1"), capture_output=True, text=True).stdout
+        self.assertIn("Your working tree is your task's own", on)
+
     def test_a_tree_left_behind_does_not_capture_its_task_while_trees_are_off(self):
         # worktree_of read the directory alone, so a tree left by an earlier run captured its task for ever after
         # ORCH_TREES was turned off: fix-49.2's cwd was .build/trees/49, the tree the planner had declared

@@ -1958,7 +1958,11 @@ def tree_text(tid, tree=None):
     planner, the task designer, the reviewer and the consultations have none, and a producing task whose work already
     stands in the one tree keeps working there. A session that believes it has a tree it has not writes into a path
     that is not there."""
-    if tree or os.path.isdir(os.path.join(PROJECT, TREE_DIR, str(tid))):
+    # TREES, not the directory alone: a tree left behind by an earlier run would otherwise tell a session it is
+    # started in a worktree while worktree_of, which does consult TREES, starts it in the one tree. That is the
+    # same fault as worktree_of's, in the other direction, and it is why fix-49.2 was told it had a tree of its own
+    # on 2026-09-20 — I reported the opposite at the time, having called this with a record where it wants a task id.
+    if tree or (TREES and os.path.isdir(os.path.join(PROJECT, TREE_DIR, str(tid)))):
         return (f"**Your working tree is your task's own.** You are started in it (`{TREE_DIR}/{tid}`, a git worktree "
                 f"on the branch `task/{tid}`), it is a whole checkout, and `.build` in it is the one `.build`: your "
                 "drafts, the checks' output and their lineage are where they have always been. Install into it, check "

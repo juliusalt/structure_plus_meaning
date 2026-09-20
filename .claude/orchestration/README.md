@@ -36,7 +36,7 @@ continues (see "The owner's directions").
 |---|---|---|---|
 | knowledge base | `kb-N` | holds what the development knows beyond the library: HANDOFF.md, the owner's words, every planner's notes; never works | the planner's base (`max`), max |
 | planner | `plan-N` | one long-lived session: every event as it happens, the graph, the order, the high-level decisions, verdicts on designs and investigations, and at the end of its window the notes for the knowledge base | the knowledge base, max |
-| designer | `design-ID` | a conceptual decision, written into the plan or DECISIONS.md | the knowledge base, max |
+| designer | `design-ID` | a conceptual decision, written into the plan or DECISIONS.md | the middle base (`xhigh`), xhigh |
 | task designer | `brief-ID` | a brief task: the planner's plan of a detailing, carried out as build and fix tasks, each with its review tasks | the middle base (`xhigh`), xhigh |
 | investigator | `investigate-ID` | measures and finds out; findings written | the middle base, xhigh |
 | reviewer | `review-ID` | a review task: a finished build or fix judged by the review's plan; one complete verdict, a summary for the planner, follow-ups | the middle base, xhigh |
@@ -258,11 +258,12 @@ hook reads stays small. The watchdog's care and the dispatch run under one lock.
 
 ## Hooks
 
-`planner-settings.json` (the planner and the task designers) and `worker-settings.json` (every other session) wire
+`planner-settings.json` (the planner) and `worker-settings.json` (every other session) wire
 the same scripts; they differ in one thing only, `CLAUDE_CODE_TASK_LIST_ID`, which puts a session on the shared task
-list that is the graph. Every session on it sees the others' edits to it injected into its context, so only the two
-roles that edit the graph are given it — the knowledge base was on it until 2026-09-20, could not edit it, and
-passed what was injected on to every session forked from it. Every other session's task list is its own, named by
+list that is the graph. Every session on it sees the others' edits to it injected into its context, so only the one
+role that edits the graph is given it — the knowledge base was on it until 2026-09-20, could not edit it, and
+passed what was injected on to every session forked from it; the task designer was on it until 2026-09-21, when it
+stopped writing tasks and began proposing them. Every other session's task list is its own, named by
 its own session, and the bases have none. Both wire the same scripts, which act by role (`v2.role_of`, from `state/v2.json`): PreToolUse `work_meter.py guard`
 — whose matcher must name every tool of `work_meter.GUARDED_TOOLS`, because a tool left out of it never reaches the
 guard at all and that guard's refusals and records simply do not happen (the write tools stood outside it for the

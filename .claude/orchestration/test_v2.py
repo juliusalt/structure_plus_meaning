@@ -969,6 +969,25 @@ class PlanningTests(Flow):
                 continue
             self.assertIn(cmd, cli, f"a message names `v2.py {cmd}`, which is not a command")
 
+    def test_the_readme_s_roles_table_names_the_base_each_role_actually_forks(self):
+        # the owner's first page: it said a designer forks the knowledge base at max while ROLES has had it fork the
+        # middle base, and its own prose two pages down said the middle base (2026-09-21)
+        import re as _re
+        rows = {}
+        for line in open(Path(v2.HERE) / "README.md"):
+            cells = [c.strip() for c in line.strip().strip("|").split("|")]
+            if len(cells) == 4 and cells[1].startswith("`"):
+                rows[cells[1].strip("`").split("-")[0]] = cells[3]
+        for role, spec in v2.ROLES.items():
+            origin = spec["origin"]
+            while origin and origin not in v2.BASES:      # the planner forks the knowledge base, which forks max
+                origin = (v2.ROLES.get(origin) or {}).get("origin")
+            cell = rows.get(spec["prefix"])
+            self.assertIsNotNone(cell, f"README's roles table has no row for {spec['prefix']}-N ({role})")
+            if origin:
+                self.assertTrue(_re.search(rf"\b{origin}\b", cell),
+                                f"README says {role} forks '{cell}'; ROLES makes it a fork of {origin}")
+
     def test_no_message_or_protocol_names_an_option_its_command_does_not_read(self):
         # the other half of the `briefed` fault: a command that stays and an option that is renamed leaves every
         # instruction naming it refused at the moment it is followed

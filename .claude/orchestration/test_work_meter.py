@@ -150,6 +150,7 @@ class WorkerGuardTests(Guarded):
         self.assertIn(f"{work_meter.ROUNDS} requests and about 0K tokens of reading since your last production", reason)
         self.assertIsNone(self.guard("Bash", {"command": "ls"}, tool_use=f"t{self.n}"))  # recorded already: not twice
         self.assertIsNone(self.guard("Edit", {"file_path": str(self.thy)}, tool_use="t-new"))  # writing is never refused
+        self.assertIsNotNone(self.guard("WebSearch", {"query": "isabelle locale"}, tool_use="t-new"))  # a read too
         self.assertIsNone(self.guard("Bash", {"command": ".claude/orchestration/v2.py ask 1 x"}, tool_use="t-new"))
         # the protocols write the harness's own commands both ways, and the short form is the one that ends a turn
         self.assertIsNone(self.guard("Bash", {"command": "v2.py park run"}, tool_use="t-new"))

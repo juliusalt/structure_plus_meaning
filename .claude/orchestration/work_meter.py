@@ -324,7 +324,9 @@ def covered(ranges, first, last):
 # naming a path that had changed. The tests call the guard directly, which is past the matcher, so only
 # test_the_settings_let_every_guarded_tool_reach_the_guard sees this.
 GUARDED_TOOLS = ("Write", "Edit", "MultiEdit", "NotebookEdit",   # the write guard, and who owns a change of the tree
-                 "Read", "Grep", "Glob",                          # what is already in the session's context
+                 "Read", "Grep", "Glob", "WebFetch", "WebSearch",  # what is already in the session's context, and
+                 # what is read from outside it: session-flags gives both, and a read the meter never saw was a read
+                 # that cost nothing against the budget every other read is held to (2026-09-21)
                  "Bash",                                          # checks, waiting, git, and writes by command
                  "Agent", "TaskOutput", "TaskCreate", "TaskUpdate")  # refused outright, or left to the graph's roles
 # Named by kind() and deliberately not in the matcher: matching them would change nothing.
@@ -335,7 +337,7 @@ def kind(tool, inp):
     """write, read, check, own (the harness's commands), or other."""
     if tool in ("Edit", "Write", "MultiEdit", "NotebookEdit"):
         return "write"
-    if tool in ("Read", "Grep", "Glob"):
+    if tool in ("Read", "Grep", "Glob", "WebFetch", "WebSearch"):
         return "read"
     if tool in ("TaskCreate", "TaskUpdate"):
         return "task"

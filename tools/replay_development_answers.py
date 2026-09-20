@@ -24,6 +24,18 @@ A native answer (a record marked native) is judged again natively by `native_ans
 are read by the native reader of the request's state and judged by the verdict of the request's kind, and
 the judgment word and summary are compared with the record, as the verdict word of a framed answer is.
 
+An answer whose judgment could not be produced is reported apart from one whose word differs. A run
+produces a judgment when the harness leaves its answer, whatever that answer says: a refusal and a
+failed build are judgments the harness made, and their words are compared like any other. A run that
+left no answer at all, because its Isabelle build never ran or died, produced nothing to compare, so it
+is neither a reconstruction nor a re-evaluation: it is reported as `failed`, with the error the run left,
+and `differing` holds only words that were compared and differed. A planner reads a differing word as a
+re-evaluation of that answer and a failed run as a fault of this run alone.
+
+The run's elapsed wall seconds are reported beside the run count on the error stream and in the summary,
+so that the observed cost of a replay is readable where its counts are; each answer's own seconds are in
+its row of the summary.
+
 Every replayed answer runs the answer harness, and each of those runs an Isabelle build, so the worker
 count is the number of Isabelle runs the replay holds at once. This machine takes at most two at once,
 so the default is two and the documented command stays within that limit as written; the run count the
@@ -38,6 +50,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+import time
 
 import development_answer
 
@@ -56,22 +69,26 @@ def replay_native(record_path, record, output, timeout, rerecord=False):
     directory.mkdir(parents=True)
     answer = directory / 'answer.json'
     answer.write_text(json.dumps(record['answer'], indent=1) + '\n')
+    started = time.monotonic()
     completed = subprocess.run([sys.executable, '-B', str(ROOT / 'tools' / 'native_answers.py'), 'judge',
                                 '--answer', str(answer), '--output', str(directory / 'run'), '--timeout', str(timeout),
                                 '--retain', str(directory / 'retained.json')],
                                cwd=ROOT, capture_output=True, text=True, timeout=timeout + 300)
-    observed = json.loads((directory / 'run' / 'answer.json').read_text()) if (directory / 'run' / 'answer.json').is_file() \
+    elapsed = round(time.monotonic() - started, 1)
+    produced = (directory / 'run' / 'answer.json').is_file()
+    observed = json.loads((directory / 'run' / 'answer.json').read_text()) if produced \
         else {'status': 'failed', 'error': completed.stdout[-2000:] + completed.stderr[-2000:]}
-    same = observed['status'] == record['status'] and all(observed.get(k) == record.get(k)
-                                                          for k in ('judgment_word', 'summary'))
-    if rerecord and not same and observed['status'] == record['status'] == 'judged':
+    same = produced and observed['status'] == record['status'] and all(observed.get(k) == record.get(k)
+                                                                      for k in ('judgment_word', 'summary'))
+    if rerecord and not same and produced and observed['status'] == record['status'] == 'judged':
         retained = json.loads((directory / 'retained.json').read_text())
         record_path.write_text(json.dumps({**record, **retained}, indent=1) + '\n')
     return record_path.stem, {'status': observed['status'], 'expected_status': record['status'],
                               'judgment_word': observed.get('judgment_word'),
                               'expected_judgment_word': record.get('judgment_word'),
                               'summary': observed.get('summary'), 'expected_summary': record.get('summary'),
-                              'error': observed.get('error'), 'adopted': False, 'reconstructed': same}
+                              'error': observed.get('error'), 'adopted': False, 'produced': produced,
+                              'elapsed_seconds': elapsed, 'reconstructed': same}
 
 
 def replay(record_path, output, timeout, rerecord=False):
@@ -83,15 +100,18 @@ def replay(record_path, output, timeout, rerecord=False):
     directory.mkdir(parents=True)
     answer = directory / 'answer.json'
     answer.write_text(json.dumps(record['answer'], indent=1) + '\n')
+    started = time.monotonic()
     completed = subprocess.run([sys.executable, '-B', str(ROOT / 'tools' / 'development_answer.py'), 'answer',
                                 '--answer', str(answer), '--output', str(directory / 'run'), '--timeout', str(timeout),
                                 '--retain', str(directory / 'retained.json')],
                                cwd=ROOT, capture_output=True, text=True, timeout=timeout + 300)
-    observed = json.loads((directory / 'run' / 'answer.json').read_text()) if (directory / 'run' / 'answer.json').is_file() \
+    elapsed = round(time.monotonic() - started, 1)
+    produced = (directory / 'run' / 'answer.json').is_file()
+    observed = json.loads((directory / 'run' / 'answer.json').read_text()) if produced \
         else {'status': 'failed', 'error': completed.stdout[-2000:] + completed.stderr[-2000:]}
     same_status = observed['status'] == record['status']
     same_word = all(observed.get(word) == record.get(word) for word in ('verdict_word', 'publication_word', 'refusal', 'error'))
-    if rerecord and same_status and not same_word and observed['status'] in ('judged', 'refused') and not adopted:
+    if rerecord and produced and same_status and not same_word and observed['status'] in ('judged', 'refused') and not adopted:
         retained = json.loads((directory / 'retained.json').read_text())
         record_path.write_text(json.dumps({**record, **retained}, indent=1) + '\n')
     return record_path.stem, {'status': observed['status'], 'expected_status': record['status'],
@@ -101,7 +121,8 @@ def replay(record_path, output, timeout, rerecord=False):
                               'expected_publication_word': record.get('publication_word'),
                               'refusal': observed.get('refusal'), 'expected_refusal': record.get('refusal'),
                               'error': observed.get('error'), 'expected_error': record.get('error'),
-                              'adopted': adopted, 'reconstructed': same_status and same_word and not adopted}
+                              'adopted': adopted, 'produced': produced, 'elapsed_seconds': elapsed,
+                              'reconstructed': produced and same_status and same_word and not adopted}
 
 
 def main():
@@ -125,18 +146,26 @@ def main():
     assert not output.exists(), 'Use a fresh replay directory.'
     output.mkdir(parents=True)
     records = sorted(RECORDS.glob('*.json'))
+    started = time.monotonic()
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
         results = dict(pool.map(lambda path: replay(path, output, args.timeout, args.rerecord), records))
+    elapsed = round(time.monotonic() - started, 1)
+    # A run that left no answer produced no judgment, so no word was compared: it is reported apart
+    # from the answers whose compared word differs, which are the re-evaluations for the process.
+    failed = sorted(n for n, r in results.items() if not r['produced'])
+    differing = sorted(n for n, r in results.items() if r['produced'] and not r['reconstructed'] and not r['adopted'])
     report = {'replayed': len(results), 'reconstructed': sum(r['reconstructed'] for r in results.values()),
-              'adopted': sorted(n for n, r in results.items() if r['adopted']), 'answers': results}
+              'adopted': sorted(n for n, r in results.items() if r['adopted']), 'differing': differing,
+              'failed': failed, 'elapsed_seconds': elapsed, 'answers': results}
     (output / 'replay.json').write_text(json.dumps(report, indent=1, sort_keys=True) + '\n')
     if not args.keep:
         for name in results:
             shutil.rmtree(output / name, ignore_errors=True)
-    differing = sorted(n for n, r in results.items() if not r['reconstructed'] and not r['adopted'])
+    print(f'replay held {args.workers} Isabelle run(s) at once and took {elapsed}s', file=sys.stderr)
     print(json.dumps({'replayed': report['replayed'], 'reconstructed': report['reconstructed'],
-                      'adopted': report['adopted'], 'differing': differing}))
-    return 0 if not differing else 1
+                      'adopted': report['adopted'], 'differing': differing, 'failed': failed,
+                      'elapsed_seconds': elapsed}))
+    return 0 if not differing and not failed else 1
 
 
 if __name__ == '__main__':

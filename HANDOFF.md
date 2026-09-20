@@ -29,20 +29,34 @@ demanded call — a linear scan that is itself an index candidate under #4's not
 the definition site). Whether the positions renaming or that lookup dominates is a measurement, and it is #7's first
 step rather than an assumption; its brief predates the finding, so the finding is in its metadata. #8 judges #7's
 measurement against the probe, not against #7's report, and reports the share of key comparisons; what follows from
-that share is no longer a third refinement, and no longer one question either (see Decisions).
+that share is no longer a third refinement, and no longer one question either (see Decisions). #7's interim report has
+the refinement proved and loading, its contract exactness on the whole domain with the renaming's formedness premise
+established for every program rule table rather than worked around; but it was measured beside another worker's run, so
+only its ratio inside one run stands — the seed 1.63x, keyed 0.783 s to positioned 0.482 s, both answering 594 and
+agreeing — and a claimed re-run is going (Decisions: a timing claims the machine). At that ratio the machinery's 44.6 s
+becomes about 27, and the bound of 5 stays open by a wide margin, so the episode that reads #8's report expects to
+decide the interface index rather than the store search, and #13 may then be that build's prerequisite rather than a
+standalone factoring.
 
 **The Q7 line (16, 11, 14, 10, then the further builds).** #3 designed the verdict of a kind as a native definition
 over structural rows and is committed; what the verdict needs of the paused structural-Isabelle-state work is the
 first step of its own build. #9 designed the development notions themselves as structure — the octet direction's
 task 3, promoted because three lines need it — and found them one notion: **a row at a locus of the development's
 published state**, the locus a path, a kind and a role prefixes of it, origin and authority families of citations.
-Nothing builds that presentation, so **#16** briefs it: four contracts in the entry's order, the retirements, and the
-recipe words re-established once. #11 briefs the verdict's build from #3's entry, whose first step is the state's own
-rows. #14 restates a native question's candidates over the locus #9 assigns — design-9 found the last read of octets
+Nothing builds that presentation, so **#16** briefed it, and its ten tasks are in the graph and queued: **#22–#31**,
+five builds each with its review — the locus (a path of role, kind and the subject's key), the presentation relation
+for development rows, the request at a locus as one search rather than a name lookup, the row presenters with their
+injectivity, and the retirement of the six tagged presentations with the recipe words re-established once, the one
+task of the line whose check cannot accept by word equality. Every definition of that line takes the state's
+constant-key assignment as a parameter with an injectivity premise, so it is independent of the verdict's line
+(Decisions). #11 briefs the verdict's build from #3's entry, whose first step is the state's own
+rows; of the tasks it creates only those ranging over the *development* rows — a request's subject and support, an
+answer at a locus — are blocked by #30, the rest being over the state's own rows, which #9's entry consumes
+unchanged. #14 restates a native question's candidates over the locus #9 assigns — design-9 found the last read of octets
 as structure on the loop's path, the filtered development question stating each candidate as a payload of binary
 digits while its scope program distinguishes candidates by those digits, and every contract decision of the seed and
 of the machinery made by that question — and since the locus it assigns is a *state* row's, its build waits on the
-verdict build's first step. #10 briefs the decomposition's build. **#15** is the one append neither #9 nor #12 could
+verdict build's first step. #10 briefs the decomposition's build, its build tasks blocked by #30. **#15** is the one append neither #9 nor #12 could
 make while another task's finalization held DECISIONS.md; it settles two lines of that file besides — task 5's closing
 hash, and the one repair of review-6's findings that no reviewer saw — and **#21** judges the file it leaves.
 
@@ -56,13 +70,15 @@ statement checked once and interpreted by those carriers, the uses re-cited, not
 produced among the answers whose word differs, and reports no elapsed time. Every acceptance after it is read through
 that summary, so it takes the tree's free window before the engine line's long build.
 
-Order (queue `15 20 21 7 8 16 11 14 10 13`): the owner's latest directions first, then dependency, then what can
-change other tasks, then size. #15 leads, with #21 its review: it needs the free tree for minutes and a build behind it
-would hold the tree for hours, and the file it writes is what every brief after it reads. #20 runs beside them — its
+Order (queue `20 21 7 8 22 23 24 25 26 27 28 29 30 31 11 14 10 13`): the owner's latest directions first, then dependency, then what can
+change other tasks, then size. #15 led and is committed (`2edcabd3`); **#21**, its review, still runs first: #15 needed
+the free tree for minutes where a build behind it would have held the tree for hours, and the file it wrote is what
+every brief after it reads. #20 runs beside them — its
 only dependency is the free tree, which parking manages. The engine line is then contiguous, because it bounds what every native definition
-over a state costs and its finalization holds the tree until it ends. #16 leads the Q7 line's remainder: the
-presentation it briefs is what #11, #14 and #10 all build over, and a brief written after it can name its build tasks
-as dependencies, which a brief written before it cannot. #11 before #14 and #10 — the verdict is the Q7 order's next
+over a state costs and its finalization holds the tree until it ends. **#22–#31** lead the Q7 line's remainder: the
+presentation they build is what #11, #14 and #10 all build over, and a brief written after #16 can name its build
+tasks as dependencies, which a brief written before it cannot. Ten tasks stand there by that dependency alone and
+not by priority. #11 before #14 and #10 — the verdict is the Q7 order's next
 notion, its build's first step is the state's rows that #14's build needs, and it establishes the presentation
 relation with its key and invariance lemmas that the decomposition's schema then reuses rather than re-deciding. #14
 no longer precedes the two briefs: the constraint that made plan-7 put it there — no build may introduce a new use of
@@ -246,6 +262,50 @@ Taken by the planning episodes, where they are not entries of DECISIONS.md:
   Every batch that touches the export boundary pays both, so they are the cycle time this whole line pays and what
   its refinements move; #7 records them with its measurement, where the owner's single-digit-minute cycle is judged.
 
+- **A run whose result is a timing claims the machine, and a number measured beside another run is not evidence.**
+  #7's first measurement was launched and then parked with another worker's run beside it, and the same keyed
+  evaluation came out at 153.7 s against the 43.8 s a claimed probe had measured — 3.5x, on the very number a bound of
+  5 s is judged against. So its absolutes are not recorded and its ratio inside one run is (seed 1.63x). Every brief
+  whose acceptance includes a measurement says that the run claims the machine (`v2.py measuring`) and that the report
+  says it did; a refused claim is the protocol working, not a licence to measure anyway.
+- **A design entry is not rewritten when the implementation narrows what it predicted.** The entry is the record of
+  what was decided, with its reasons and limits, and the plan's adequacy account keeps a decision's historical basis;
+  but a claim of fact that a later task reads must not stand alone once it is false. So the sentence stays and gains a
+  marked correction naming the entry that states the fact, in the form the file already uses for corrections. T2's cell
+  ending "no check traverses a value the construction placed" is the first case, and #20 carries it: what is never
+  established again is the *formation* of a constructed value and of a constructed premise call, while one pattern
+  traversal per premise per clause remains. It is the third pass over one cluster of phrase-level claims (a quick fix,
+  #19, now #20), which is the cost of the shortfall item 9's account removes.
+- **An appending brief closes every entry whose change has landed and leaves at most one open closing line.** The
+  finalizer's filler takes the file's last open line, so a two-entry append with an open earlier entry and a closed
+  later one would record the wrong heading and close the wrong line; #15 was safe by arithmetic, not by design. The
+  mechanism's half is the orchestration's (Now).
+
+- **A partial presentation is honest; a total one that maps the omitted case somewhere is not (q8).** #9 leaves two
+  cases its presentation does not reach, and neither is instantiated today: a problem whose authority is
+  `Development_Truth`, and a problem whose subject is not exactly one constant. Both are answered by one rule: the
+  presentation stays partial and the partiality is a **premise**, never a total map onto a neighbouring case, which
+  would conflate; and the computed observation naming the omitted case is owed **at the first real instance**, of the
+  kind `development_without_subject` already provides, not before, because today it would name the empty set. #22's
+  partial `development_problem_locus_at` and #24's relation over located rows are right as briefed, and #25 judges
+  that the partiality is a premise. The second case arises, if at all, from the decomposition — #2's entry decomposes
+  a multi-constant refinement precisely so that it never reaches an executor, so such a parent is a problem over
+  several constants — and #10 carries the two shapes it may take (a locus whose subject component is not a single
+  key, or retention unlocated with the library row citing it otherwise).
+- **`Development_Truth` is kept, presented partially, and its retirement is not a task (q8).** Truth is not an
+  authority a problem carries: the order truth-owner-generated says what may override what, while a problem's
+  authority records who put it there, and only the owner and the process do. So the two-case optional citation #22
+  builds is complete for every problem that exists. It is not retired, because it names a case the plan states and
+  has not implemented — a proved contradiction between truth and an owner-level element retained as a conflict for
+  the owner — and deleting it would delete that placeholder. If something ever assigns it, what it cites is the
+  derivation establishing the contradiction and not an owner record: a design question at the first real instance,
+  and not a thing to invent now.
+- **The development rows' definitions take the state's constant-key assignment as a parameter (q8, brief-16's
+  decision, confirmed).** With an injectivity premise, as `readiness_presents` takes `key` and asks only
+  `inj_on key`. It is the library's local-contract pattern, it makes #22–#30 independent of the verdict's line
+  instead of waiting on the structural state, and a key assignment fixed inside a locus would be the very nominality
+  #9's entry removes.
+
 Watch: an empty result and a failed one are kept apart — store absence in `Native_Path_Stores` (inside the verdict's
 build), the refusal that cannot tell an absent certified generation from an unavailable input (item 5), and now the
 replay's summary counting an unproduced judgment among the differing words (#20). The third is host transport and is
@@ -363,6 +423,21 @@ call's applications are constructed, not verified again" (#5).
   and accepted. Its four non-blocking follow-ups are all placed: #7's attribution in #7's metadata,
   `ffilter_singleton` at item 6, the misattributed early commit repaired by the harness, and the check's own cost in
   Decisions. The one repair no reviewer saw is #15's step 4 and #21's judgment.
+- **#15 (fix), committed 2026-09-20 as `2edcabd3`** — the one append neither #9 nor #12 could make while another task's
+  finalization held DECISIONS.md: task 9's entry (397 lines, its draft's exact length, and the file's only open closing
+  line, so the filler reaches it) and task 12's (46 lines, closing `9bb1dd7a`), one blank apart in the file's own
+  separation, with task 5's closing hash corrected from `47dcda77` to `6227819a` and the paragraph above it untouched —
+  two hunks, and the arithmetic leaves no room for an edited body. Its step 4, the read-back of the one repair no
+  reviewer had seen, repaired nothing and said why: both places already state finding 1's fact and `THEORY_MAP.md` is
+  untouched. Its third finding — the same rejected sentence still standing in T2's own entry — it handed to the
+  planner, as its brief assigned, and #20 carries it (Decisions). #21 judges the file it leaves.
+- **#16 (brief), delivered 2026-09-20** — #9's four contracts as **#22–#31**, five builds each with its review,
+  chained 22 → 23 → 24 → 25 → {26, 28} → {27, 29} → 30 → 31: the locus, the presentation relation, the request at a
+  locus, the row presenters, and the retirement with the one-off word change. Two decisions of its own that later
+  work needs: every definition takes the state's constant-key assignment as a **parameter** with an injectivity
+  premise (Decisions), which is what makes the line independent of the verdict's; and `Development_Problems`'
+  datatypes are not changed, so a retirement of a constructor would be a task after this line. It reserved #9's two
+  residuals for the planner rather than deciding them itself (q8, answered in Decisions).
 
 ## Open
 
@@ -380,7 +455,7 @@ The owner's questions, each with the provisional choice that stands meanwhile, a
 - **Q5** how far the native residual record reaches. #9 answered its own side of it provisionally and kept it apart:
   a notion is presented structurally when a *decision reads* it, not when a definition mentions it, which is narrower
   than Q5's demand about which constants get residual problems, and a wider record would add problems, not decisions.
-  Bites now in #16 and in whatever next grows the notions.
+  Bites now in #22–#31 and in whatever next grows the notions.
 - **Q7** the order of work under the direction that native definitions are normative. It orders this whole graph; an
   answer reorders it.
 
@@ -426,14 +501,14 @@ Not yet planned, in the order they are expected to be planned:
    must therefore name three times. That account is what supplies them properly.
 
 ## Now
-- **#15 leads, with #21 after it.** #15 installs both finished entries — #9's at `.build/tasks/9/entry.md` and #12's
-  at `.build/tasks/12/decisions-entry.md`, both final, bodies not to be edited, #12's closing line naming `9bb1dd7a`
-  and #9's left open for the filler — corrects task 5's closing line to `6227819a`, and reads review-6's finding 1
-  back against the cell it names in DECISIONS.md and the same words in the `THEORY_MAP.md` row, which a quick fix
-  repaired and no reviewer has seen; a phrase is repaired there, or "unchanged, and why" is reported. #21 judges the
-  file it leaves, that repair included — the window review-6 could not have. #20 runs beside them, making the replay
-  report a failed run apart from a differing word and its elapsed seconds beside its run count, which every acceptance
-  after it is read through. Neither has a decision left in it.
+- **#21 leads, with #20 beside it, and both build lines have started.** #15 is committed (`2edcabd3`) and #21 judges
+  the file it left — the two appended entries against their drafts, the three closing lines, and the one repair no
+  reviewer had seen. #20 makes the replay report a failed run apart from a differing word and its elapsed seconds
+  beside its run count, which every acceptance after it is read through; it carries besides, by mail, the marked
+  correction of T2's cell, the recipe-count phrase if it still stands, and the `.pyc` untracking with
+  `tools/__pycache__/` ignored, its commit message naming them. If #20 lands first those corrections are in #21's
+  file: they are the planner's, their content is settled, and #21 says whether they are as described. Neither task
+  has a decision left in it. Meanwhile #22 builds the locus and brief-11 writes the verdict's build; #7 is parked.
 - **The harness's defects.** Seven are repaired: a stopped or stale background job no longer blocks a session for ever
   (the defect that cost #5 its session); no session is sent a protocol with an unsubstituted placeholder; the
   finalizer refuses to commit another task's uncommitted file, and fills the commit hashes earlier entries waited for;
@@ -443,7 +518,7 @@ Not yet planned, in the order they are expected to be planned:
   that stops an unfilled stand-in reaching the history is narrowed to this repository's drafting forms, having read
   `{ISABELLE_RUN_LIMIT}` — the tool's own constant inside its own f-strings — as a placeholder and refused #17's
   commit once. The tree defect was repaired earlier (`b82f0662`).
-- **Four are left, for the orchestration, which repairs its own.** The harness counts the Isabelle runs of the
+- **Six are left, for the orchestration, which repairs its own.** The harness counts the Isabelle runs of the
   commands it knows about, not the runs a command spawns inside itself, so two separately bounded commands still
   exceed the machine's two (Decisions, q5) — and **the finalizer is itself a launcher that broke it**: its first check
   ran beside #5's base-advancing check, two native answers failed with `AssertionError: Export failed.` from
@@ -454,16 +529,34 @@ Not yet planned, in the order they are expected to be planned:
   entry can be appended meanwhile, although an append conflicts with no other append (Decisions, q6). And a review task is completed only by its
   subject's commit, so a review whose subject returns to the planner and is continued under another task can never
   complete and no dispatch can start it — #6, closed by the planner while every brief in the graph stood behind it.
-  The uncommitted
-  `.claude/orchestration/*` edits are the orchestration's own.
+  And the pending-commit filler records only the file's last open closing line
+  (`finalize.py:record_pending_commit` takes `open_at[-1]`), so a two-entry append whose earlier entry is open and
+  later one closed would record the wrong heading; #15 was safe because the file carried exactly one open line in
+  total. And the tree hold is stricter than the stated protocol: while #20 held the tree, every Bash call of #15 was
+  refused — read-only ones and drafts under its own task directory included — so a textual task running no check and
+  touching one file lost a whole window to a collision on its first step, where the protocol says reads anywhere and
+  writes under `.build/tasks/<id>/`. The finalizer does commit by path: `2edcabd3` carries only DECISIONS.md, with
+  HANDOFF.md, eight `.claude/orchestration/*` files and the tracked `.pyc` modified beside it and left out. The
+  uncommitted `.claude/orchestration/*` edits are the orchestration's own.
 - `tools/__pycache__/build.cpython-314.pyc` is tracked and shows as modified. It is a generated build artifact
-  belonging to no task; #20 is the next task that touches `tools/`, and its commit message should instruct the
-  finalizer to untrack it. Not a question for the owner.
-- plan-18 handled both its events and left nothing unhandled. It closed **#6** against review-19's verdict, which
-  released the whole graph — every brief stood behind it and nothing could have started once #20 ended — rewrote
-  **#15** to carry the closing-line correction the harness asked for and a bounded read-back of the one repair no
-  reviewer saw, and created **#21** to judge the file #15 leaves. It took two rules into Decisions (a review task is
-  alive only while its subject can still commit; who closes a trailing entry). It created nothing else: review-19's
-  five follow-ups were placed by plan-17 or answered by the harness's filler repair, and the second event's other
-  reading — re-pointing #15 and #7 at #19 — was refused, because it leaves in the graph a task no dispatch can ever
-  start. The queue is `15 20 21 7 8 16 11 14 10 13`.
+  belonging to no task; #20, the next task that touches `tools/`, is told to have its commit message untrack it and to
+  add `tools/__pycache__/` to `.gitignore`, so it stops appearing in every diff. Not a question for the owner.
+- **plan-20 answered q8, queued #16's ten tasks and created no task**, each candidate refused with a reason: the
+  retirement of `Development_Truth` (it names the plan's unimplemented conflict-with-truth case, so keeping it costs
+  a partial presentation while deleting it costs the placeholder), an observation naming problems with a
+  non-singleton subject (today it names the empty set, and the case arises from the decomposition, which #10
+  carries), and re-opening #16's key-assignment parameter (it is the library's own local-contract pattern). Its three
+  rules are in Decisions. plan-19's refusals stand: the cross-tool run sum (the harness's half, item 9's account
+  otherwise), the filler's `open_at[-1]` and the tree hold (the orchestration repairs its own), and the `.pyc` (one
+  line, riding #20); so does its answer to **q7** — the bound is not #7's to close, a timing run claims the machine,
+  and the report must carry the profiled key share, the attribution of what remains after the renaming (review-6's
+  interface-table scan) and the check's own recipe seconds.
+- **Unhandled, for the next episode: #11's tasks are in the graph and unqueued.** While plan-20 worked, brief-11
+  created **#32–#44** — the verdict's rows and presentation, its statements and malformed fields, its excess and
+  undeclared fields, its roots and difference fields, its `unreached` field over the native reach, its entry rule with
+  the contract and two instances, and store absence — each build with its review, and it may add more. They are not
+  queued because the order is set only when the tasks *and their dependencies* are both in the graph. Expected place:
+  after #31 and before #14 and #10, which consume them. The next episode also confirms that the blocker on #30 sits
+  where the dependency is real: brief-11 was told, and then corrected, that only the tasks ranging over the
+  *development* rows' presentation carry it — a request's subject and support, an answer at a locus — while the tasks
+  over the state's own entity rows do not, #9's entry consuming those unchanged and leaving them to #3.

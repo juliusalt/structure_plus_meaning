@@ -8907,7 +8907,7 @@ whole state pays what it pays. Where the time goes was measured before deciding 
 
 | Earlier proposal or state | Correction |
 |---|---|
-| The applications of a call are verified by the admitted-instance check after matching and instantiation have constructed them. | For a formed program and a call whose term is formed, the applications constructed by matching each clause's head (its pairs and literal leaves, and equal values at a variable's repeated occurrences, read as the functionality of the rows the match returns, `relation_rows_functional`), instantiating its premises, and checking its material premises and the shapes the interfaces accept are exactly its admitted applications, when the heads of the called definition cover their variables: every value bound is a subterm of the call and every premise call an instance of formed patterns with those values. The call's formation is checked once, and no check traverses a value the construction placed. Decided as a code equation of `finite_program_applications` with that contract; it serves every native evaluation. |
+| The applications of a call are verified by the admitted-instance check after matching and instantiation have constructed them. | For a formed program and a call whose term is formed, the applications constructed by matching each clause's head (its pairs and literal leaves, and equal values at a variable's repeated occurrences, read as the functionality of the rows the match returns, `relation_rows_functional`), instantiating its premises, and checking its material premises and the shapes the interfaces accept are exactly its admitted applications, when the heads of the called definition cover their variables: every value bound is a subterm of the call and every premise call an instance of formed patterns with those values. The call's formation is checked once, and no check traverses a value the construction placed. **Corrected** (task 20, 2026-09-20): what is never established again is the formation of a constructed value and of a constructed premise call, while one pattern traversal of the constructed value per premise per clause remains, as "A formed call's applications are constructed, not verified again" states. Decided as a code equation of `finite_program_applications` with that contract; it serves every native evaluation. |
 | The applications of a demand are united as finite sets. | The applications of distinct calls have distinct heads, so the applications of a demand are listed call by call without comparing them (the listed union of `Listed_Set_Unions`, a union computed once and then only read). |
 | Every round checks that each rule's premises are functional by comparing every premise with every other, itself included. | Premise functionality is the functionality of a relation, whose existing execution compares each row only with the rows after it (`relation_rows_functional`), so distinct premise sockets are never compared by their calls. |
 | Every round of the evaluation compares calls through their keys. | The evaluation renames its rule table by the injective map sending each demanded call to its position among the keys of the demand, found through the ordered tree of those keys, and every other call to itself; the least closure of the renamed table is the renamed least closure (`finite_inference_result_renaming`), so the rounds compare positions, and each call is compared through its key once, when the table is renamed. |
@@ -9876,7 +9876,7 @@ notion; an index is one" applied, not the payload kept.
 
 This design was made outside the loop and is a residual.
 
-Recorded 2026-09-20, commit `…`.
+Recorded 2026-09-20, commit `2edcabd3`.
 
 ## An acceptance step's cost is within the machine's limit as its command is written
 
@@ -9924,3 +9924,36 @@ for another tool that spawns Isabelle to import rather than restate. No document
 for this command, so no document was corrected.
 
 Recorded 2026-09-20, commit `9bb1dd7a`.
+
+## A replay's failed run is not an answer whose word differs
+
+`tools/replay_development_answers.py` reported every answer that was not reconstructed as
+`differing`, so a run whose Isabelle build never left an answer — as two native records were left by
+the failed run behind task 17, with `judgment_word: null` and no word compared at all — read as a
+re-evaluation, which this plan reserves for the planner, and had to be told apart by hand from the
+records. The library's rule that an empty result and a failed one are kept apart
+(`Finite_Prepared_Results`, and the store absence of `Native_Path_Stores`) is applied here a third
+time, in the process's own tooling: a run produces a judgment when the harness leaves its answer,
+whatever that answer says, so a refusal and a failed build are judgments and their words are compared
+like any other, while a run that left nothing is reported as `failed` with the error it left.
+`differing` keeps its name and now means only a word that was compared and differed, so a planner
+reads a differing word as a re-evaluation of that answer and a failed run as a fault of the run
+alone; a summary retained before this change keeps its old meaning and nothing is rewritten. The same
+run now reports its elapsed wall seconds beside the run count and in the summary, and each answer's
+seconds in its row, because every acceptance from here on is read through this summary and condition
+5a of problems.txt wants the observed cost retained: no record held it before.
+
+### Evidence and limits
+
+The documented command on the sixteen retained answers: sixteen replayed, fifteen reconstructed, the adopted `indexed-data-walk` reported as the
+published state's unchanged answer, and both the differing and the failed group empty, the run taking
+283.6 s at two Isabelle runs at once and its answers 9.5 s to 97.1 s each. The failed group is not
+exercised by these records, since every harness run left its answer; the classification is decided by
+whether the harness's `answer.json` exists, which is the one condition under which the replay
+synthesizes a status of its own, and the two records of task 17 are the observed case it was written
+for. Nothing else of the tool's behaviour changes: the same answers are replayed, judged and
+reported, and every field but `failed`, `produced` and `elapsed_seconds` keeps its name. The
+machine's run budget is untouched: `ISABELLE_RUN_LIMIT` stands with its reason, and the sum across
+tools remains the harness's.
+
+Recorded 2026-09-20, commit `…`.

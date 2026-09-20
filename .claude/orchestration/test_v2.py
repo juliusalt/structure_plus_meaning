@@ -434,6 +434,28 @@ class PlanningTests(Flow):
         st = self.w.st()
         self.w.set_st(events=st["events"] + [{"at": time.strftime("%Y-%m-%dT%H:%M:%S"), "from": sender, "text": text}])
 
+    def test_the_status_the_messages_and_the_rule_read_the_same_figures(self):
+        # the status showed the build-and-fix depth while start_brief records and cmd_propose compares the whole
+        # graph's, so the planner read 10 where the rule applied 11; and the task designer was told a width of 2
+        # against the status's 1, because its message did not skip what no slot can take (2026-09-21)
+        self.w.task("1", description=BRIEF, metadata={"kind": "build"})
+        self.w.task("2", description=REVIEW_TASK.format(task="1"), metadata={"kind": "review"}, blockedBy=["1"])
+        self.w.task("3", description=BRIEF, metadata={"kind": "build"}, blockedBy=["2"])
+        self.w.task("4", description=BRIEF, metadata={"kind": "build"})   # given back: no slot can take it
+        self.w.set_st(queue=["1", "2", "3"], tasks={"4": {"stage": "planner", "kind": "build"}})
+        out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                              "w, d = v2.graph_figures(); print(w, d); "
+                              "print(v2.render('task-designer', NAME='b', ID='9', SUBJECT='s', BRIEF='b', WHY='-', "
+                              "GRAPH='g', LIST=v2.LIST, STALE='-'))"],
+                             env=self.w.env, capture_output=True, text=True).stdout
+        width, depth = out.splitlines()[0].split()
+        self.assertEqual((width, depth), ("1", "3"))          # 4 is skipped; the chain 3 -> 2 -> 1 is the whole one
+        self.assertIn(f"The chain is **{depth}** tasks deep", out)
+        self.assertIn(f"{width} build and fix tasks can start", out)
+        said = self.w.v2("status")
+        self.assertIn(f"{width} build and fix tasks can start", said)
+        self.assertIn(f"the chain is {depth} deep", said)
+
     def test_the_graphs_shape_is_what_can_run_and_how_long_the_chain_is(self):
         # a count of open tasks says neither: on 2026-09-20 the graph held 17 open build and fix tasks, which
         # detained every brief, while only 5 of them could start at all and the chain was 19 deep

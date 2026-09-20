@@ -1600,8 +1600,9 @@ def render(role, **values):
     for _ in range(2):
         text = re.sub(r"\{\{([\w-]+)\}\}", lambda m: open(os.path.join(PROTOCOLS, f"_{m.group(1)}.md")).read().strip(), text)
     values = dict(ROUNDS=str(ROUNDS), READ=str(READ_TOKENS // 1000), CIRCLING=str(CIRCLING), FIX_MINUTES=str(FIX_MINUTES),
-                  BRIEF_BACKLOG=str(BRIEF_BACKLOG), GRAPH_DEPTH=str(GRAPH_DEPTH), DEPTH=str(graph_shape()[1]),
-                  WIDTH=str(graph_shape(("build", "fix"))[0]), SLOTS=str(GRAPH_WIDTH or WORKERS_MAX),
+                  BRIEF_BACKLOG=str(BRIEF_BACKLOG), GRAPH_DEPTH=str(GRAPH_DEPTH),
+                  WIDTH=str(graph_figures()[0]), DEPTH=str(graph_figures()[1]),
+                  SLOTS=str(GRAPH_WIDTH or WORKERS_MAX),
                   FIX_ROUNDS=str(FIX_ROUNDS), HOLD_HOURS=str(HOLD_PARK // 3600), ROOM_DESIGN=str(room_of("design") // 1000),
                   ROOM_TASK=str(room_of("build") // 1000), **values)
     missing = [k for k in dict.fromkeys(re.findall(r"\{([A-Z][A-Z_]{2,})\}", text)) if k not in values]
@@ -2255,6 +2256,18 @@ def graph_shape(kinds=None, skip=()):
             len(open_))
 
 
+def graph_figures(st=None):
+    """(width, depth) as the rule uses them, so the status, the roles' messages and the check cannot differ.
+
+    The width is the build and fix work a slot could take — a task that came back to the planner has every blocker
+    done and no slot can take it. The depth is the WHOLE graph's longest chain, because that is what start_brief
+    records and what cmd_propose compares against GRAPH_DEPTH: showing the build-and-fix depth instead said 10 to
+    the planner while the rule was applying 11, and the task designer was told a width of 2 against the status's 1
+    (2026-09-21)."""
+    st = st or peek()
+    return graph_shape(("build", "fix"), skip=with_the_planner(st))[0], graph_shape()[1]
+
+
 def build_backlog(st=None):
     """The build and fix tasks that are not completed: what the one producing slot has still to do."""
     return [x["id"] for x in all_tasks() if x.get("status") != "completed"
@@ -2281,7 +2294,7 @@ def support():
             briefs.append(tid)
         ready = ready or (live and t.get("stage") == "ready" and t.get("kind") in PRODUCING_KINDS and deps_done(tid))
     backlog = build_backlog()
-    width, depth, _ = graph_shape(("build", "fix"), skip=with_the_planner(st))
+    width, depth = graph_figures(st)
     room = GRAPH_WIDTH or WORKERS_MAX
     why = (f"{width} build and fix tasks can start and there are {room} slots to take them" if width >= room else
            f"{len(backlog)} build and fix tasks are open, past the ceiling of {BRIEF_BACKLOG}"
@@ -4008,7 +4021,7 @@ def cmd_status():
                + ("" if len(ready) > 1 else " — nothing else can start while what runs is parked or checking; only a "
                   "wider graph changes that"))
     backlog = build_backlog(st)
-    width, depth, _ = graph_shape(("build", "fix"), skip=with_the_planner(st))
+    width, depth = graph_figures(st)
     room = GRAPH_WIDTH or WORKERS_MAX
     out.append(f"graph: {width} build and fix tasks can start, {room} slots to take them; the chain is {depth} deep "
                f"(at most {GRAPH_DEPTH} before a brief may add only detail and work that runs first); "

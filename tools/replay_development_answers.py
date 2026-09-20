@@ -23,6 +23,11 @@ The replay reports its present judgment beside the record and does not count it 
 A native answer (a record marked native) is judged again natively by `native_answers.py judge`: its octets
 are read by the native reader of the request's state and judged by the verdict of the request's kind, and
 the judgment word and summary are compared with the record, as the verdict word of a framed answer is.
+
+Every replayed answer runs the answer harness, and each of those runs an Isabelle build, so the worker
+count is the number of Isabelle runs the replay holds at once. This machine takes at most two at once,
+so the default is two and the documented command stays within that limit as written; the run count the
+replay will hold is reported before it begins, so the cost is visible to whatever launches it.
 """
 from __future__ import annotations
 
@@ -38,6 +43,12 @@ import development_answer
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORDS = ROOT / 'validation' / 'development-answers'
+# The machine's limit, one fact about the machine rather than one per tool: heavy Isabelle runs share
+# one machine of 60 GiB and the harness refuses a third, so at most two stand at once. Another tool
+# that spawns Isabelle imports this name rather than restating the number. One Isabelle build runs per
+# worker here, so the worker count is the number of runs held at once, and taking this as the default
+# keeps the documented command within the limit as it is written.
+ISABELLE_RUN_LIMIT = 2
 
 
 def replay_native(record_path, record, output, timeout, rerecord=False):
@@ -96,11 +107,20 @@ def replay(record_path, output, timeout, rerecord=False):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, required=True)
-    parser.add_argument('--workers', type=int, default=4)
+    parser.add_argument('--workers', type=int, default=ISABELLE_RUN_LIMIT,
+                        help=f'Answers replayed at once, each holding one Isabelle build for its run. This '
+                             f'machine takes at most {ISABELLE_RUN_LIMIT} Isabelle runs at once, so the default '
+                             f'is {ISABELLE_RUN_LIMIT} and the command stays within the limit as written; lower '
+                             f'it to 1 beside another run, and raise it only on a machine known to be free.')
     parser.add_argument('--timeout', type=int, default=600)
     parser.add_argument('--keep', action='store_true', help='Keep the replayed runs instead of removing them.')
     parser.add_argument('--rerecord', action='store_true', help='Retain again every judged answer whose word differs.')
     args = parser.parse_args()
+    if args.workers > ISABELLE_RUN_LIMIT:
+        print(f"replay holds {args.workers} Isabelle runs at once, above this machine's limit of "
+              f'{ISABELLE_RUN_LIMIT}; runs beside it may be refused for want of memory', file=sys.stderr)
+    else:
+        print(f'replay holds {args.workers} Isabelle run(s) at once', file=sys.stderr)
     output = args.output.resolve()
     assert not output.exists(), 'Use a fresh replay directory.'
     output.mkdir(parents=True)

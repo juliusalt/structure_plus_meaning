@@ -2000,6 +2000,11 @@ def tidied():
             packs.add(None)
     sweep_packs = None not in packs  # a base whose record cannot be read: its pack is not swept on a guess
     gone = []
+    sids = {s.get("sid") for s in peek()["sessions"].values()}
+    for name in os.listdir(STATE):
+        if name.startswith("work-") and name.endswith(".snap") and name[5:-5] not in sids:
+            shutil.rmtree(os.path.join(STATE, name), ignore_errors=True)  # the session it measured is gone
+            gone.append(name)
     for name in os.listdir(STATE):
         path = os.path.join(STATE, name)
         if name.endswith(".woken") and (age_of(name) or 0) > WOKEN_KEEP:

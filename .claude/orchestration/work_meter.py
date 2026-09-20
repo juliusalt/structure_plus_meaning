@@ -353,9 +353,24 @@ def deliverable_files(brief):
             out.append(full)
     drafts = os.path.join(v2.PROJECT, brief.get("drafts", ""))
     if brief.get("drafts") and os.path.isdir(drafts):
-        out += [os.path.join(r, f) for r, _, fs in os.walk(drafts) for f in fs
-                if f not in ("brief.json", "result.md", "finalize.json", "finalize.log", "finalized.json")]
+        out += [os.path.join(r, f) for r, _, fs in os.walk(drafts) for f in fs if written_by_hand(r, f)]
     return sorted(set(out))
+
+
+# What production is measured in is what a session writes: a theory, a document, code. A run's output under the same
+# directory is not production, and snapshotting it cost 68,706 files and 6.0 GB for one session on 2026-09-20, walked
+# and copied again on every tool call.
+PRODUCED = (".thy", ".md", ".py", ".sh", ".ML", ".sml", ".txt", ".diff", ".patch")
+RUN_OUTPUT = ("probe", "replay", "check-", "complete-", "recipes", "exports", "export", "proof", "run", "log")
+NOT_PRODUCTION = ("brief.json", "result.md", "finalize.json", "finalize.log", "finalized.json", "root-lines.json")
+
+
+def written_by_hand(directory, name):
+    """Whether a file under a task's drafts is something the session wrote, rather than something a run left there."""
+    if name in NOT_PRODUCTION or not name.endswith(PRODUCED):
+        return False
+    parts = os.path.normpath(directory).split(os.sep)
+    return not any(p.startswith(RUN_OUTPUT) for p in parts)
 
 
 def units(path):

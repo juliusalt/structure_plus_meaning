@@ -6,6 +6,7 @@ from pathlib import Path
 import sys
 import time
 import unittest
+from unittest.mock import patch
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
@@ -309,6 +310,23 @@ class RoleTests(Guarded):
         self.w.session("kb-1", "kb", "s1")
         self.assertIsNone(self.guard("Read", {"file_path": "HANDOFF.md"}))
         self.assertIsNotNone(self.guard("Read", {"file_path": "theories/Ready.thy"}))
+
+
+class ProductionFilesTests(Guarded):
+    """What a session's production is measured over: what it wrote, not what its runs left beside it."""
+
+    def test_a_run_s_output_under_the_drafts_is_not_production(self):
+        # one session's snapshot held 68,706 files and 6.0 GB, walked and copied again on every tool call
+        for path in (".build/tasks/1/entry.md", ".build/tasks/1/Theory.thy", ".build/tasks/1/install.py",
+                     ".build/tasks/1/probe3/probe.log", ".build/tasks/1/probe3/theories/P.thy",
+                     ".build/tasks/1/replay/run/summary.json", ".build/tasks/1/check-a/recipes/x/receipt.json",
+                     ".build/tasks/1/result.md"):
+            self.w.write(path, "x")
+        with patch.object(work_meter.v2, "PROJECT", str(self.w.project)):
+            files = [os.path.relpath(f, str(self.w.project))
+                     for f in work_meter.deliverable_files({"deliverables": [], "drafts": ".build/tasks/1/"})]
+        self.assertEqual(sorted(files), [".build/tasks/1/Theory.thy", ".build/tasks/1/entry.md",
+                                         ".build/tasks/1/install.py"])
 
 
 class WriteTargetTests(Guarded):

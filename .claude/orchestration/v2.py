@@ -2178,8 +2178,8 @@ def landed(qid, q, sender, text):
     unread in the mailboxes of sessions that had ended, their substance surviving only because the planner had also
     written it into HANDOFF.md and the tasks."""
     s = peek()["sessions"].get(q["from"]) or {}
-    if s.get("state") in ("working", "waiting") and not s.get("released"):
-        with state() as w:
+    if s.get("state") not in ("done", "lost") and not s.get("released"):
+        with state() as w:  # parked, waiting, working or starting: it is alive, and its mail reaches it when it goes on
             w["asks"][qid]["delivered"] = True
         return True
     tid = s.get("task") or q.get("task")

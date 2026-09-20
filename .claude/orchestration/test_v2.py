@@ -854,6 +854,21 @@ class SupportTests(Flow):
         self.w.v2("dispatch")
         self.assertEqual(len(self.forks("brief-")), 1)  # one at a time
 
+    def test_an_answer_to_a_parked_session_is_not_called_lost(self):
+        # parked is alive: the session reads its mail when it is resumed, and four answers were declared lost to
+        # sessions that were only waiting for the working tree (2026-09-20)
+        self.w.session("implement-3", "implementer", "i3", task="3", state="working")
+        self.w.task("3", subject="A build")
+        self.as_("implement-3", "ask", "--to", "planner", "Which of the two?")
+        self.w.set_st(sessions={k: (v | {"state": "parked"} if k == "implement-3" else v)
+                                for k, v in self.w.st()["sessions"].items()})
+        self.w.session("plan-3", "planner", "p3", state="working")
+        self.w.v2("reply", "q1", "The first one.", env=self.w.as_session("p3"))
+        self.assertIs(self.w.st()["asks"]["q1"]["delivered"], True)
+        log = self.w.state / "v2.log"
+        self.assertNotIn("reached nobody", log.read_text() if log.exists() else "")
+        self.assertIn("The first one.", json.dumps(self.w.mail("implement-3")))  # it waits in its mail
+
     def test_an_answer_to_a_session_that_has_ended_is_written_where_the_work_reads_it(self):
         # a designer or task designer asks without blocking and finishes in the same turn; four of twelve answers sat
         # unread in the mailboxes of sessions that had ended (2026-09-20)

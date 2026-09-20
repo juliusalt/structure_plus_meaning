@@ -818,6 +818,18 @@ class PlanningTests(Flow):
             named = _re.findall(r"\{\{([\w-]+)\}\}", (Path(v2.PROTOCOLS) / f"{role}.md").read_text())
             self.assertEqual(sorted(named), sorted(set(named)), f"{role} includes a part twice")
 
+    def test_no_message_names_a_command_that_is_not_one(self):
+        # `briefed` outlived its command in ctx_gauge's end-of-window instruction, which is what a session is told to
+        # run when its window closes — the one moment it cannot afford a refusal (2026-09-20)
+        import re as _re
+        here = Path(v2.HERE)
+        src = "".join(open(here / f).read() for f in ("v2.py", "work_meter.py", "ctx_gauge.py", "finalize.py"))
+        cli = set(_re.findall(r'c == "([a-z-]+)"', open(here / "v2.py").read()))
+        for cmd in sorted(set(_re.findall(r"v2\.py\s+([a-z-]+)", src))):
+            if cmd == "run":       # "v2.py run from there" — prose about running it, not a command
+                continue
+            self.assertIn(cmd, cli, f"a message names `v2.py {cmd}`, which is not a command")
+
     def test_every_command_a_protocol_names_exists_and_its_role_may_run_it(self):
         # protocols are what the agents act on, so a command renamed or withdrawn leaves them following an
         # instruction that refuses: `briefed` outlived its command, and the task designer was told to run
@@ -2135,6 +2147,28 @@ class WalkTests(Flow):
         self.assertIn("Deliverable: `theories/Ready.thy`", impl[-1])
         self.assertIn("You work in the repository's one working tree", impl[-1])  # true: no tree of its own here
         self.assertEqual(len(v2.working(self.w.st())), 2)        # a producer and a supporter, side by side
+
+        # 3b. the task designer proposes; it does not edit the graph, and the planner places what it proposed
+        bsid = self.s("brief-2")["sid"]
+        d = self.w.project / ".build/tasks/2/brief"
+        d.mkdir(parents=True, exist_ok=True)
+        (d / "proposal.json").write_text(json.dumps([
+            {"key": "reach", "subject": "The reach", "why": "it is next", "blockedBy": [], "description": BRIEF},
+            {"key": "reach-review", "subject": "Judge the reach", "why": "-", "blockedBy": ["reach"],
+             "description": REVIEW_TASK.format(task="reach")}]))
+        self.assertIn("proposed 2 task(s)", self.w.v2(
+            "propose", "2", ".build/tasks/2/brief/proposal.json", env=self.w.as_session(bsid)))
+        self.assertEqual(self.t("2")["stage"], "proposed")
+        self.assertIn("proposes 2 task(s) and where to place them", self.heard())
+        self.assertIn("placed reach as", self.as_("plan-1", "accept", "2"))
+        made = {json.loads((self.w.tasks / f).read_text())["subject"]: json.loads((self.w.tasks / f).read_text())
+                for f in os.listdir(self.w.tasks) if f.endswith(".json")}
+        reach, judge = made["The reach"], made["Judge the reach"]
+        self.assertEqual(judge["blockedBy"], [reach["id"]])              # its local key resolved to the id allocated
+        st = self.w.st()
+        self.assertEqual(st["tasks"][judge["id"]]["reviews"], reach["id"])
+        self.assertIn(reach["id"], st["queue"])                          # queued after the brief that proposed it
+        self.assertEqual((st["tasks"]["2"]["stage"], self.w.read_task("2")["status"]), ("done", "completed"))
 
         # 4. the task finishes, is checked, reviewed and committed
         self.w.write("theories/Ready.thy", "theory Ready imports Main begin end\n")

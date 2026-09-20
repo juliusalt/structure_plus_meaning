@@ -130,9 +130,10 @@ ENDS = {
                "notes the knowledge base is to hold — everything you have settled since you began, aggregated, with "
                "what has since been answered or superseded left out — and end "
                "(`.claude/orchestration/v2.py planned --notes FILE`); the next planner starts from what you leave",
-    "task-designer": "put the tasks you have briefed into the graph in form, each build or fix with its review task, "
-                     "and record them (`.claude/orchestration/v2.py briefed {task} NEW...`); what you could not brief "
-                     "goes to the planner (`v2.py ask --to planner`)",
+    "task-designer": "write the tasks you have briefed, each build or fix with its review task, and where each one "
+                     "goes, to .build/tasks/{task}/brief/proposal.json, and propose them "
+                     "(`.claude/orchestration/v2.py propose {task} .build/tasks/{task}/brief/proposal.json`) — the "
+                     "planner places them; what you could not brief goes to it too (`v2.py ask --to planner`)",
     "reviewer": "write your verdict (.build/tasks/{task}/review.md) and record it "
                 "(`.claude/orchestration/v2.py verdict {task} accept|reject --file .build/tasks/{task}/review.md`)",
     "consultant": "answer (`.claude/orchestration/v2.py reply {qid} TEXT`)",

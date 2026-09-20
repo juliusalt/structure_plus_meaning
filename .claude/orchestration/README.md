@@ -117,8 +117,9 @@ checking, which is how 2026-09-20 stood still for six and a half hours.
 ## Tasks and briefs
 
 The graph is the Claude Code task list `orchestration-graph` (`CLAUDE_CODE_TASK_LIST_ID` in `planner-settings.json`),
-edited by the planner and the task designers and by nobody else (the guard refuses TaskCreate and TaskUpdate
-to the other roles that carry that setting). `v2.py queue ID...` is the order. `v2.py` marks a task in progress with
+edited by the planner and by nobody else — the guard refuses TaskCreate and TaskUpdate to every other role, the task
+designer included, which proposes its tasks and their placement instead (`v2.py propose`, then the planner's
+`v2.py accept`). `v2.py queue ID...` is the order. `v2.py` marks a task in progress with
 its session when it starts, and completed when it is done, under Claude Code's own lock on the task file
 (proper-lockfile's `<file>.lock` directory, stale after 10 s, read from Claude Code 2.1.273).
 
@@ -147,7 +148,7 @@ re-plans the task.
 
 The guards (`work_meter.py`, PreToolUse) refuse; they do not remind; they hold for every working role. Production is a
 change to the role's own deliverable (the implementer's theories and code, the designer's decision, the investigator's
-findings, the task designer's briefs and graph edits, the reviewer's verdict, the planner's HANDOFF.md, notes and graph
+findings, the task designer's proposal, the reviewer's verdict, the planner's HANDOFF.md, notes and graph
 edits, a consultation's reply) that adds or changes content: in a theory a command added or changed, comments and
 layout aside, or 40 words of commentary; in a document 40 words added or rewritten; in code 5 lines (as multisets:
 moved or deleted words do not count). Between two productions a session takes at most 3 requests and reads at most 20K

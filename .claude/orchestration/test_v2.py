@@ -1646,18 +1646,39 @@ class SupportTests(Flow):
         st = self.w.st()
         st["tasks"]["2"]["depth_at_start"] = v2.GRAPH_DEPTH + 1
         (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.w.task("7", description=BRIEF, subject="already in the graph")   # and nothing waits on what 5 becomes
         self.w.task("5", description=BRIEF, blockedBy=["7"])       # 7 was already there and is not finished
         self.w.task("6", description=REVIEW_TASK.format(task="5"), blockedBy=["5"])
         said = self.w.v2("briefed", "2", "5", "6", env=self.w.as_session(sid))
         # rejected outright, and the planner resolves it: the detailing is not asked to contort itself to fit the
         # bound, because a brief bent to satisfy the harness is worse than one that waits (the owner, 2026-09-20)
         self.assertIn("refused, and the planner has it", said)
-        self.assertIn("needs 5 to wait on work already in the graph", said)   # 6 waits on 5, inside the group
+        self.assertIn("5 are further goals, not further detail", said)   # 6 waits on 5, inside the group
+        self.assertIn("Detail spliced into the graph is admitted at any depth", said)
         self.assertIn("do not re-shape the detailing to fit it", said)
         self.assertEqual(self.t("2")["stage"], "planner")
         self.assertNotIn("5", self.w.st()["queue"])                # nothing it wrote is queued
         self.assertIn("Brief task 2 is yours to resolve", self.heard())
+        self.assertIn("Detail spliced into the graph is admitted at any depth", self.heard())
         self.assertIn("the detailing is not wrong for needing it", self.heard())
+
+    def test_detail_spliced_into_the_graph_is_not_a_further_goal(self):
+        # adding more detail to a task graph is fine; adding further goals is not (the owner, 2026-09-20). Detail is
+        # work something already there waits on — the graph expressed more finely, not reaching past where it ended.
+        self.w.task("40", subject="already there")
+        self.w.task("41", subject="already there too", blockedBy=["42"])   # re-pointed onto the new work
+        self.w.task("42", subject="spliced between 40 and 41", blockedBy=["40"])
+        self.w.task("43", subject="its review", blockedBy=["42"])
+        self.w.task("44", subject="runs now")
+        self.w.task("45", subject="hung past the frontier", blockedBy=["41"])
+        out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                              "print(v2.further_goals('b', ['42','43'])); "
+                              "print(v2.further_goals('b', ['44'])); "
+                              "print(v2.further_goals('b', ['45']))"],
+                             env=self.w.env, capture_output=True, text=True).stdout.split("\n")
+        self.assertEqual(out[0], "[]")        # the middle: 41 waits on it, so it is detail whatever the depth
+        self.assertEqual(out[1], "[]")        # the start: runs now
+        self.assertEqual(out[2], "['45']")    # the end: nothing already there waits on it — a further goal
 
     def test_a_brief_is_admitted_when_the_graph_is_narrow_however_many_tasks_exist(self):
         # seven open build tasks in one chain: the old rule detained every brief at six open, while only ONE of them

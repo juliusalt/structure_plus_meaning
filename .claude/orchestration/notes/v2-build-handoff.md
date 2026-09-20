@@ -905,3 +905,35 @@ new rule rather than the count.
   that starts now is in the add-at-the-start-only case — which is the intent, and worth seeing happen once.
 - A brief rejected this way costs a whole task-designer session. That is accepted: the alternative is a contorted
   detailing.
+
+## 2026-09-20 22:10 — detail is not a further goal
+
+The owner, on the rule above: *"it is not right to not allow adding in the middle because adding more detail to a
+task graph is fine adding further goals is not fine."*
+
+The first cut measured the wrong thing. It flagged any new task waiting on open work that was already there, which
+catches a task **spliced into** the graph exactly as it catches one **hung past** it — and splicing is what a brief
+is for. A brief exists to make planned work concrete, so it necessarily writes tasks inside the span of what was
+planned; a detailing bent to keep a chain short is worse than a long one.
+
+`further_goals(bid, new)` now separates them:
+
+- **detail** — something that was already in the graph waits on it, through the group. The plan expressed more
+  finely, not reaching past where it already ended. **Admitted at any depth.**
+- **a further goal** — it waits on open work already in the graph and *nothing* already there waits on it: the
+  graph growing outward rather than finer. **This is what GRAPH_DEPTH bounds.**
+- **the start** — waits on nothing open. Always admitted; it is what widens the graph.
+- Inside the group — waiting only on the brief's own tasks or on the brief task itself — is neither: that is how a
+  review task waits on the build it reviews, and how a brief's first task waits on the brief. The group is read
+  whole, so a task deep inside it is still detail when anything pre-existing waits on the group at all.
+
+Measured on a fixture: a task spliced between two existing ones → `[]`; one that runs now → `[]`; one hung past the
+frontier → flagged. One tightening came with it: a blocker that is **not in the task list** is not "work already in
+the graph", so it no longer makes a task read as a further goal.
+
+**263 tests pass.** The messages, the status and both protocols now say detail and goal rather than middle and end.
+
+**Left open:** brief 11 wrote task 32 waiting on 30, 31, 27 — work from brief 16, which brief 11's own task did not
+wait on. Under this rule that is a further goal and would be refused today. It was a real finding (the seam), and by
+the owner's rule it is exactly the case to refuse outright and let the planner resolve. Worth watching that the
+refusal reads as a finding handed over and not as a fault.

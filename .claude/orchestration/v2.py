@@ -3134,16 +3134,39 @@ def cmd_result(tid):
         if open_asks else "")
 
 
-def added_to_the_end(bid, new):
-    """Of the tasks a brief wrote, those that hang off the END of the scheduling chain: ones waiting on a task that
-    was already there and is not finished. A task waiting only on the brief's own new tasks is not one of them — it
-    is inside the group, which is how a review task waits on the build it reviews — and a task waiting on nothing
-    open is at the start, and is what widens the graph."""
+def further_goals(bid, new):
+    """Of the tasks a brief wrote, those that are further GOALS rather than further detail.
+
+    Detail is work spliced into the graph: something that was already there waits on it, so the graph is expressed
+    more finely without reaching past where it already ended. Inserting into the middle of a chain is detail and is
+    admitted whatever the depth — a brief exists to make planned work concrete, and a detailing bent to keep a chain
+    short is worse than a long one (the owner, 2026-09-20).
+
+    A further goal is work hung past the frontier: it waits on open work that was already there, and nothing that
+    was already there waits on it. That is the graph growing outward rather than growing finer, and it is what the
+    depth bounds.
+
+    A task waiting only on the brief's own tasks, or on the brief task itself, is inside the group: that is how a
+    review task waits on the build it reviews, and how a brief's first task waits on the brief. The group is read
+    whole, so a task deep inside it still counts as detail when a pre-existing task waits on the group at all."""
     tasks = {t["id"]: t for t in all_tasks()}
-    fresh = set(new) | {bid}
+    group = set(new) | {bid}
+    is_open = lambda b: b in tasks and tasks[b].get("status") != "completed"
+    # every task of the group that something already in the graph waits on, through the group
+    fed, edge = set(), [x for x in tasks.values()
+                        if x["id"] not in group and x.get("status") != "completed"]
+    seen = set()
+    stack = [b for x in edge for b in (x.get("blockedBy") or []) if b in group]
+    while stack:
+        tid = stack.pop()
+        if tid in seen:
+            continue
+        seen.add(tid)
+        fed.add(tid)
+        stack += [b for b in ((tasks.get(tid) or {}).get("blockedBy") or []) if b in group]
     return sorted(t for t in new
-                  if any(b not in fresh and (tasks.get(b) or {}).get("status") != "completed"
-                         for b in ((tasks.get(t) or {}).get("blockedBy") or [])))
+                  if t not in fed
+                  and any(b not in group and is_open(b) for b in ((tasks.get(t) or {}).get("blockedBy") or [])))
 
 
 def returned_for_depth(bid, new, at_end, depth):
@@ -3155,18 +3178,20 @@ def returned_for_depth(bid, new, at_end, depth):
     with state() as w:
         w["tasks"].setdefault(bid, {})["stage"] = "planner"
         event(w, "the harness", f"Brief task {bid} is yours to resolve. Its detailing needs {', '.join(at_end)} to "
-              f"wait on work that was already in the graph, and the chain was {depth} tasks deep when the brief "
-              f"started (at most {GRAPH_DEPTH}): more work hung off that end is refused, and the detailing is not "
-              "wrong for needing it. So the graph is what has to give. Its tasks stand in the list "
+              f"to be further goals — they wait on work already in the graph and nothing already there waits on "
+              f"them — and the chain was {depth} tasks deep when the brief started (at most {GRAPH_DEPTH}). Detail "
+              "spliced into the graph is admitted at any depth; work hung past its frontier is not, and the "
+              "detailing is not wrong for needing it. So the graph is what has to give. Its tasks stand in the list "
               f"({', '.join(new)}) and none is queued: keep what belongs, point what can run first at the start "
               "(`v2.py blockers ID ...`, `none` for nothing), abandon what the graph no longer needs, or shorten the "
               "chain these wait on. Nothing runs until you queue it.")
     log(f"brief {bid} needs {len(at_end)} task(s) on the end of a chain {depth} deep: refused, and the planner has it")
     kick()
-    return (f"refused, and the planner has it: this detailing needs {', '.join(at_end)} to wait on work already in "
-            f"the graph, and the chain was {depth} deep when this brief started (at most {GRAPH_DEPTH}). That is the "
-            "graph's problem and not your brief's — do not re-shape the detailing to fit it, and do not split what "
-            "belongs together. What you wrote stands in the list. Record your result (`v2.py result " + bid + "`) "
+    return (f"refused, and the planner has it: {', '.join(at_end)} are further goals, not further detail — they "
+            "wait on work already in the graph and nothing already there waits on them — and the chain was "
+            f"{depth} deep when this brief started (at most {GRAPH_DEPTH}). Detail spliced into the graph is "
+            "admitted at any depth; this reaches past its frontier. That is the graph's problem and not your "
+            "brief's — do not re-shape the detailing to fit it, and do not split what belongs together. What you wrote stands in the list. Record your result (`v2.py result " + bid + "`) "
             "with what you briefed and why each task waits on what it does, so the planner can resolve it, and end "
             "your turn.")
 
@@ -3196,7 +3221,7 @@ def cmd_briefed(bid, new):
             problems.append(f"review task {r} reviews {t}, which is not in the task list")
     if problems:
         return "refused: the briefs are not in form:\n- " + "\n- ".join(problems)
-    at_end = added_to_the_end(bid, new)
+    at_end = further_goals(bid, new)
     depth = (peek()["tasks"].get(bid) or {}).get("depth_at_start")
     if at_end and depth is not None and depth >= GRAPH_DEPTH:
         return returned_for_depth(bid, new, at_end, depth)
@@ -3718,8 +3743,9 @@ def cmd_status():
                + ("; no brief is detailed while there is already as much independent work as there are slots — one "
                   "is admitted again when the slots have taken what can start, and a brief is what widens a graph "
                   "rather than what drains it" if width >= room else "")
-               + ("; a brief that starts now may add work that runs first and not more work hung off the end, and is "
-                  "returned to you if it does" if depth >= GRAPH_DEPTH else ""))
+               + ("; a brief that starts now may add detail at any depth — work spliced in, that something "
+                  "already there waits on — but not further goals hung past the graph's frontier, which are refused "
+                  "and come to you" if depth >= GRAPH_DEPTH else ""))
     parked = [f"{tid} ({int(time.time() - t['parked']['since']) // 60} min, after {t['parked'].get('after') or '?'})"
               for tid, t in st["tasks"].items() if t.get("stage") == "parked"]
     if parked:

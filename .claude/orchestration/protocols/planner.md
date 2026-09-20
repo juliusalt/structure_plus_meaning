@@ -89,8 +89,9 @@ how many slots there are to take them, and how deep the chain is. A brief is det
 below the slots — a brief is what widens a graph, not what drains it — and it is admitted again when the slots have
 taken what can already start. A task added to the end of the longest chain does not make the run faster; it makes it
 longer. **You are never refused any of this**: you may add work that runs first and re-point any edge (`v2.py
-blockers ID ID...`), whenever you judge that what you planned before is wrong. What is refused is a *task designer*
-hanging more work off the end of a chain already past its limit — its brief then comes to you with its tasks left
+blockers ID ID...`), whenever you judge that what you planned before is wrong. What is refused is a *task designer* adding a further
+*goal* to a chain already past its limit — work hung past the graph's frontier, that nothing already there waits on.
+Detail spliced into the graph is admitted at any depth — its brief then comes to you with its tasks left
 standing, unqueued, and you keep what belongs, point what can run first at the start, or abandon it. It was not
 wrong to need that work; the graph is what has to give.
 

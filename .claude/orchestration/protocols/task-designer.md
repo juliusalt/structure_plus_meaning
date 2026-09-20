@@ -43,8 +43,11 @@ reviews and on nothing else.
 
 **The graph's shape is not yours to bend.** Brief the work as the work is: do not split what belongs together, do
 not make a task wait on something it does not need, and do not contort a detailing to make the graph look wider than
-it is. If what your brief needs is a task waiting on work already in the graph, and the chain was already past its
-limit when you started, the harness refuses that outright and the planner resolves it — the detailing is not wrong
+it is. Detail is always admitted, however deep the graph: work spliced into it, that something already there waits on,
+makes the plan finer without reaching past where it already ended, and a detailing bent to keep a chain short is
+worse than a long one. What is bounded is a further *goal* — a task waiting on work already in the graph that
+nothing already there waits on, hung past its frontier. If your brief needs one of those and the chain was already
+past its limit when you started, the harness refuses it outright and the planner resolves it — the detailing is not wrong
 for needing it, and it is not yours to work around. What you wrote stands in the list meanwhile.
 
 A choice between concepts that your brief leaves open is not yours: ask the planner, or ask for it to become a design
